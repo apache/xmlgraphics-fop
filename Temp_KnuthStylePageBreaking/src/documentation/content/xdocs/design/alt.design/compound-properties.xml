@@ -1,0 +1,234 @@
+<?xml version="1.0" standalone="no"?>
+<!--
+  Copyright 1999-2004 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
+    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/core/context/resources/schema/dtd/document-v12.dtd">
+
+<document>
+  <header>
+    <title>Compound properties</title>
+    <authors>
+      <person name="Peter B. West" email="pbwest@powerup.com.au"/>
+    </authors>
+  </header>
+  <body>
+    <section>
+      <title>Compound properties in XSLFO</title>
+      <table>
+        <tr>
+          <th>Property type</th> 
+          <th>Section</th>
+          <th>Inherited</th>
+          <th>'inherit'</th>
+        </tr>
+        <tr>
+          <th>&lt;length-range&gt;</th>
+        </tr>
+        <tr>
+          <th>minimum</th>
+        </tr>
+        <tr>
+          <th>optimum</th>
+        </tr>
+        <tr>
+          <th>maximum</th>
+        </tr>
+        <tr>
+          <td>block-progression-dimension</td>
+          <td>7.14.1</td>
+          <td>no</td>
+          <td>yes</td>
+        </tr>
+        <tr>
+          <td>inline-progression-dimension</td>
+          <td>7.14.5</td>
+          <td>no</td>
+          <td>yes</td>
+        </tr>
+        <tr>
+          <td>leader-length</td>
+          <td>7.21.4</td>
+          <td>yes</td>
+          <td>yes</td>
+        </tr>
+        <tr>
+          <th>&lt;length-conditional&gt;</th>
+        </tr>
+        <tr>
+          <th>length</th>
+        </tr>
+        <tr>
+          <th>conditionality</th>
+        </tr>
+        <tr>
+          <td>border-after-width</td>
+          <td>7.7.12</td>
+          <td>no</td>
+          <td>yes</td>
+        </tr>
+        <tr>
+          <td>border-before-width</td>
+          <td>7.7.9</td>
+          <td>no</td>
+          <td>yes</td>
+        </tr>
+        <tr>
+          <td>border-end-width</td>
+          <td>7.7.18</td>
+          <td>no</td>
+          <td>yes</td>
+        </tr>
+        <tr>
+          <td>border-start-width</td>
+          <td>7.7.15</td>
+          <td>no</td>
+          <td>yes</td>
+        </tr>
+        <tr>
+          <td>padding-after</td>
+          <td>7.7.32</td>
+          <td>no</td>
+          <td>yes</td>
+        </tr>
+        <tr>
+          <td>padding-before</td>
+          <td>7.7.31</td>
+          <td>no</td>
+          <td>yes</td>
+        </tr>
+        <tr>
+          <td>padding-end</td>
+          <td>7.7.34</td>
+          <td>no</td>
+          <td>yes</td>
+        </tr>
+        <tr>
+          <td>padding-start</td>
+          <td>7.7.33</td>
+          <td>no</td>
+          <td>yes</td>
+        </tr>
+        <tr>
+          <th>&lt;length-bp-ip-direction&gt;</th>
+        </tr>
+        <tr>
+          <th>block-progression-direction</th>
+        </tr>
+        <tr>
+          <th>inline-progression-direction</th>
+        </tr>
+        <tr>
+          <td>border-separation</td>
+          <td>7.26.5</td>
+          <td>yes</td>
+          <td>yes</td>
+        </tr>
+        <tr>
+          <th>&lt;space&gt;</th>
+        </tr>
+        <tr>
+          <th>minimum</th>
+        </tr>
+        <tr>
+          <th>optimum</th>
+        </tr>
+        <tr>
+          <th>maximum</th>
+        </tr>
+        <tr>
+          <th>precedence</th>
+        </tr>
+        <tr>
+          <th>conditionality</th>
+        </tr>
+        <tr>
+          <td>letter-spacing</td>
+          <td>7.16.2</td>
+          <td>yes</td>
+          <td>yes</td>
+        </tr>
+        <tr>
+          <td>line-height</td>
+          <td>7.15.4</td>
+          <td>yes</td>
+          <td>yes</td>
+        </tr>
+        <tr>
+          <td>space-after</td>
+          <td>7.10.6</td>
+          <td>no</td>
+          <td>yes</td>
+        </tr>
+        <tr>
+          <td>space-before</td>
+          <td>7.10.5</td>
+          <td>no</td>
+          <td>yes</td>
+        </tr>
+        <tr>
+          <td>space-end</td>
+          <td>7.11.1</td>
+          <td>no</td>
+          <td>yes</td>
+        </tr>
+        <tr>
+          <td>space-start</td>
+          <td>7.11.2</td>
+          <td>no</td>
+          <td>yes</td>
+        </tr>
+        <tr>
+          <td>word-spacing</td>
+          <td>7.16.8</td>
+          <td>yes</td>
+          <td>yes</td>
+        </tr>
+        <tr>
+          <th>&lt;keep&gt;</th>
+        </tr>
+        <tr>
+          <th>within-line</th>
+        </tr>
+        <tr>
+          <th>within-column</th>
+        </tr>
+        <tr>
+          <th>within-page</th>
+        </tr>
+        <tr>
+          <td>keep-together</td>
+          <td>7.19.3</td>
+          <td>yes</td>
+          <td>yes</td>
+        </tr>
+        <tr>
+          <td>keep-with-next</td>
+          <td>7.19.4</td>
+          <td>no</td>
+          <td>yes</td>
+        </tr>
+        <tr>
+          <td>keep-with-previous</td>
+          <td>7.19.5</td>
+          <td>no</td>
+          <td>yes</td>
+        </tr>
+      </table>
+    </section>
+  </body>
+</document>
+

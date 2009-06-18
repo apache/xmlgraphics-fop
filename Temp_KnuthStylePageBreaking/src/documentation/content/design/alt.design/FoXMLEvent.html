@@ -1,0 +1,238 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<!--
+  Copyright 2001-2004 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<!-- Created by htmlize-0.67 in css mode. -->
+<html>
+  <head>
+    <title>FoXMLEvent.java</title>
+    <style type="text/css">
+    <!--
+      body {
+        color: #000000;
+        background-color: #faf0e6;
+      } /* default */
+      .comment {
+        color: #00008b;
+        background-color: #faf0e6;
+      } /* font-lock-comment-face */
+      .jde-java-font-lock-package {
+        color: #0000cd;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-package-face */
+      .jde-java-font-lock-constant {
+        color: #5f9ea0;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-constant-face */
+      .function-name {
+        color: #8b2323;
+        background-color: #faf0e6;
+      } /* font-lock-function-name-face */
+      .variable-name {
+        color: #8b008b;
+        background-color: #faf0e6;
+      } /* font-lock-variable-name-face */
+      .jde-java-font-lock-doc-tag {
+        color: #008b00;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-doc-tag-face */
+      .keyword {
+        color: #8b0000;
+        background-color: #faf0e6;
+      } /* font-lock-keyword-face */
+      .jde-java-font-lock-italic {
+        background-color: #faf0e6;
+        font-style: italic;
+      } /* jde-java-font-lock-italic-face */
+      .jde-java-font-lock-modifier {
+        color: #da70d6;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-modifier-face */
+      .string {
+        color: #008b00;
+        background-color: #faf0e6;
+      } /* font-lock-string-face */
+      .type {
+        color: #4682b4;
+        background-color: #faf0e6;
+      } /* font-lock-type-face */
+      a {
+        color: inherit;
+        background-color: inherit;
+        font: inherit;
+        text-decoration: inherit;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+    -->
+    </style>
+  </head>
+  <body>
+    <pre>
+<span class="comment">/*
+ * Copyright 2001-2004 The Apache Software Foundation.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */</span>
+<span class="keyword">package</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">xml</span>;
+
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">apps</span>.<span class="type">FOPException</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">fo</span>.<span class="type">FObjectNames</span>;
+
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">xml</span>.<span class="jde-java-font-lock-package">sax</span>.<span class="jde-java-font-lock-package">helpers</span>.<span class="type">AttributesImpl</span>;
+
+<span class="comment">/**
+ * This is a data class to encapsulate the data of an individual XML
+ * parse event in an XML-FO file. The current version, while defining
+ * accessor methods, leaves the component data of the event as protected.
+ * The &lt;tt&gt;XMLSerialHandler&lt;/tt&gt; methods set the values directly.
+ * @author &lt;a href=&quot;mailto:pbwest@powerup.com.au&quot;&gt;Peter B. West&lt;/a&gt;
+ */</span>
+
+<span class="jde-java-font-lock-modifier">public</span> <span class="keyword">class</span> <span class="function-name" id="FoXMLEventClass">FoXMLEvent</span> <span class="keyword">extends</span> <span class="type">XMLEvent</span> {
+
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">String</span> <span class="variable-name" id="tag">tag</span> = &quot;<span class="string">$Name$</span>&quot;;
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">String</span> <span class="variable-name" id="revision">revision</span> = &quot;<span class="string">$Revision$</span>&quot;;
+
+    <span class="comment">/** The FO type, as defined in FObjectNames, of fo: XML events. */</span>
+    <span class="jde-java-font-lock-modifier">protected</span> <span class="type">int</span> <span class="variable-name" id="foType">foType</span> = FObjectNames.<span class="jde-java-font-lock-constant" id="NO_FO">NO_FO</span>;
+
+    <span class="comment">/**
+     * The one-argument constructor uses the default initialization values:
+     * NOEVENT for the event &lt;i&gt;</span><span class="jde-java-font-lock-italic">type</span><span class="comment">&lt;/i&gt;, and null references for all others
+     * except &lt;i&gt;</span><span class="jde-java-font-lock-italic">namespaces</span><span class="comment">&lt;/i&gt;.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="function-name" id="FoXMLEvent">FoXMLEvent</span> (<span class="type">XMLNamespaces</span> <span class="variable-name" id="namespaces">namespaces</span>) {
+        <span class="keyword">super</span>(namespaces);
+    }
+
+    <span class="comment">/**
+     * The fully defined constructor takes values for each of the data
+     * elements.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="function-name">FoXMLEvent</span>(<span class="type">int</span> <span class="variable-name" id="type">type</span>, <span class="type">String</span> <span class="variable-name">chars</span>, <span class="type">int</span> <span class="variable-name">uriIndex</span>,
+                    <span class="type">String</span> <span class="variable-name" id="localName">localName</span>, <span class="type">String</span> <span class="variable-name">qName</span>,
+                    <span class="type">AttributesImpl</span> <span class="variable-name" id="attributes">attributes</span>, <span class="type">XMLNamespaces</span> <span class="variable-name">namespaces</span>,
+                    <span class="type">int</span> <span class="variable-name">foType</span>)
+    {
+        <span class="keyword">super</span>
+            (type, chars, uriIndex, localName, qName, attributes, namespaces);
+        <span class="keyword">this</span>.foType = foType;
+    }
+
+    <span class="comment">/**
+     * The cloning constructor takes a reference to an existing
+     * &lt;tt&gt;FoXMLEvent&lt;/tt&gt; object.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="function-name">FoXMLEvent</span>(<span class="type">FoXMLEvent</span> <span class="variable-name" id="ev">ev</span>) {
+        <span class="keyword">super</span>(ev);
+        foType = ev.foType;
+    }
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="function-name">FoXMLEvent</span>(<span class="type">int</span> <span class="variable-name">type</span>, <span class="type">String</span> <span class="variable-name">chars</span>, <span class="type">XMLNamespaces</span> <span class="variable-name">namespaces</span>) {
+        <span class="keyword">super</span>(type, chars, namespaces);
+    }
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="function-name">FoXMLEvent</span>(<span class="type">int</span> <span class="variable-name">type</span>, <span class="type">int</span> <span class="variable-name">uriIndex</span>, <span class="type">AttributesImpl</span> <span class="variable-name">attributes</span>,
+                    <span class="type">XMLNamespaces</span> <span class="variable-name">namespaces</span>, <span class="type">int</span> <span class="variable-name">foType</span>) {
+        <span class="keyword">super</span>(namespaces);
+        <span class="keyword">this</span>.type = type;
+        <span class="keyword">this</span>.uriIndex = uriIndex;
+        <span class="keyword">this</span>.attributes = attributes;
+        <span class="keyword">this</span>.foType = foType;
+    }
+
+    <span class="comment">/**
+     * Clear the fields of this event.  Provided for pool operations.
+     * Neither the &lt;i&gt;</span><span class="jde-java-font-lock-italic">namespaces&lt;/i&gt; nor the &lt;i&gt;id</span><span class="comment">&lt;/i&gt; field is cleared.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> the cleared &lt;tt&gt;XMLEvent&lt;/tt&gt; event.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">XMLEvent</span> <span class="function-name" id="clear">clear</span>() {
+        foType = FObjectNames.<span class="jde-java-font-lock-constant">NO_FO</span>;
+        <span class="keyword">return</span> <span class="keyword">super</span>.clear();
+    }
+
+    <span class="comment">/**
+     * Clear the fields of this event.  Provided for pool operations.
+     * Neither the &lt;i&gt;</span><span class="jde-java-font-lock-italic">namespaces&lt;/i&gt; nor the &lt;i&gt;id</span><span class="comment">&lt;/i&gt; field is cleared.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> the cleared &lt;tt&gt;XMLEvent&lt;/tt&gt; event.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">FoXMLEvent</span> <span class="function-name" id="clearFo">clearFo</span>() {
+        <span class="keyword">return</span> (<span class="type">FoXMLEvent</span>)clear();
+    }
+
+    <span class="comment">/**
+     * Copy the fields of the argument event to this event.
+     * Provided for pool operations.
+     * Neither the &lt;i&gt;</span><span class="jde-java-font-lock-italic">namespaces&lt;/i&gt; nor the &lt;i&gt;id</span><span class="comment">&lt;/i&gt; field is copied.
+     * The &lt;i&gt;</span><span class="jde-java-font-lock-italic">namespaces</span><span class="comment">&lt;/i&gt; field is not cleared.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">ev</span><span class="comment"> the &lt;tt&gt;XMLEvent&lt;/tt&gt; to copy.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> the copied &lt;tt&gt;XMLEvent&lt;/tt&gt; event.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">XMLEvent</span> <span class="function-name" id="copyEvent">copyEvent</span>(<span class="type">FoXMLEvent</span> <span class="variable-name">ev</span>) {
+        foType = ev.foType;
+        <span class="keyword">return</span> <span class="keyword">super</span>.copyEvent(ev);
+    }
+
+    <span class="comment">/**
+     * Copy the fields of the argument event to this event.
+     * Provided for pool operations.
+     * Neither the &lt;i&gt;</span><span class="jde-java-font-lock-italic">namespaces&lt;/i&gt; nor the &lt;i&gt;id</span><span class="comment">&lt;/i&gt; field is copied.
+     * The &lt;i&gt;</span><span class="jde-java-font-lock-italic">namespaces</span><span class="comment">&lt;/i&gt; field is not cleared.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> the copied &lt;tt&gt;XMLEvent&lt;/tt&gt; event.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">FoXMLEvent</span> <span class="function-name" id="copyFoEvent">copyFoEvent</span>(<span class="type">FoXMLEvent</span> <span class="variable-name">ev</span>) {
+        <span class="keyword">return</span> (<span class="type">FoXMLEvent</span>)copyEvent(ev);
+    }
+
+    <span class="comment">/**
+     * Get the FO type of this &lt;i&gt;</span><span class="jde-java-font-lock-italic">FoXMLEvent</span><span class="comment">&lt;/i&gt;.
+     * </span><span class="jde-java-font-lock-doc-tag">@returns</span><span class="comment"> the FO type.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">int</span> <span class="function-name" id="getFoType">getFoType</span>() { <span class="keyword">return</span> foType; }
+
+    <span class="comment">/**
+     * Set the FO type of this &lt;i&gt;</span><span class="jde-java-font-lock-italic">FoXMLEvent</span><span class="comment">&lt;/i&gt;.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">foType</span><span class="comment"> -the FO type.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">void</span> <span class="function-name" id="setFoType">setFoType</span>(<span class="type">int</span> <span class="variable-name">foType</span>) { <span class="keyword">this</span>.foType = foType; }
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">String</span> <span class="function-name" id="toString">toString</span>() {
+        <span class="type">String</span> <span class="variable-name" id="tstr">tstr</span>;
+        <span class="keyword">try</span> {
+            tstr = &quot;<span class="string">FO type: </span>&quot; + FObjectNames.getFOName(foType) + &quot;<span class="string">\n</span>&quot;;
+        } <span class="keyword">catch</span> (<span class="type">FOPException</span> <span class="variable-name" id="e">e</span>) {
+            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">RuntimeException</span>(e.getMessage());
+        }
+        tstr = tstr + <span class="keyword">super</span>.toString();
+        <span class="keyword">return</span> tstr;
+    }
+
+}
+</pre>
+  </body>
+</html>

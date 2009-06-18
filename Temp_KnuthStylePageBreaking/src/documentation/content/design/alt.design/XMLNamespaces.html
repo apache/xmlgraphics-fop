@@ -1,0 +1,245 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<!--
+  Copyright 2001-2004 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<!-- Created by htmlize-0.67 in css mode. -->
+<html>
+  <head>
+    <title>XMLNamespaces.java</title>
+    <style type="text/css">
+    <!--
+      body {
+        color: #000000;
+        background-color: #faf0e6;
+      } /* default */
+      .jde-java-font-lock-modifier {
+        color: #da70d6;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-modifier-face */
+      .comment {
+        color: #00008b;
+        background-color: #faf0e6;
+      } /* font-lock-comment-face */
+      .function-name {
+        color: #8b2323;
+        background-color: #faf0e6;
+      } /* font-lock-function-name-face */
+      .jde-java-font-lock-package {
+        color: #0000cd;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-package-face */
+      .jde-java-font-lock-constant {
+        color: #5f9ea0;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-constant-face */
+      .keyword {
+        color: #8b0000;
+        background-color: #faf0e6;
+      } /* font-lock-keyword-face */
+      .jde-java-font-lock-doc-tag {
+        color: #008b00;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-doc-tag-face */
+      .jde-java-font-lock-number {
+        color: #bc8f8f;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-number-face */
+      .string {
+        color: #008b00;
+        background-color: #faf0e6;
+      } /* font-lock-string-face */
+      .variable-name {
+        color: #8b008b;
+        background-color: #faf0e6;
+      } /* font-lock-variable-name-face */
+      .jde-java-font-lock-italic {
+        background-color: #faf0e6;
+        font-style: italic;
+      } /* jde-java-font-lock-italic-face */
+      .type {
+        color: #4682b4;
+        background-color: #faf0e6;
+      } /* font-lock-type-face */
+      a {
+        color: inherit;
+        background-color: inherit;
+        font: inherit;
+        text-decoration: inherit;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+    -->
+    </style>
+  </head>
+  <body>
+    <pre>
+<span class="comment">/*
+ * Copyright 2001-2004 The Apache Software Foundation.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */</span>
+ 
+<span class="keyword">package</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">xml</span>;
+
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">datatypes</span>.<span class="type">Ints</span>;
+
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">java</span>.<span class="jde-java-font-lock-package">util</span>.<span class="type">HashMap</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">java</span>.<span class="jde-java-font-lock-package">util</span>.<span class="type">ArrayList</span>;
+
+<span class="comment">/**
+ * Maintains the namespaces encountered by an invocation of
+ * &lt;tt&gt;XMLSerialHandler&lt;/tt&gt;.
+ * &lt;p&gt;One instance of &lt;i&gt;</span><span class="jde-java-font-lock-italic">XMLNamespaces</span><span class="comment">&lt;/i&gt; is maintained across all
+ * documents that may be processed in a single invocation of
+ * &lt;tt&gt;XMLSerialhandler&lt;/tt&gt;.  A reference to that instance is kept with
+ * every instance of &lt;tt&gt;XMLEvent&lt;/tt&gt;.
+ * @author &lt;a href=&quot;mailto:pbwest@powerup.com.au&quot;&gt;Peter B. West&lt;/a&gt;
+ */</span>
+
+<span class="jde-java-font-lock-modifier">public</span> <span class="keyword">class</span> <span class="function-name" id="XMLNamespacesClass">XMLNamespaces</span> {
+
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">String</span> <span class="variable-name" id="tag">tag</span> = &quot;<span class="string">$Name$</span>&quot;;
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">String</span> <span class="variable-name" id="revision">revision</span> = &quot;<span class="string">$Revision$</span>&quot;;
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">String</span> <span class="variable-name" id="DefAttrNSpace">DefAttrNSpace</span> = &quot;&quot;;
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">String</span> <span class="variable-name" id="XSLNamespace">XSLNamespace</span> =
+        &quot;<span class="string">http://www.w3.org/1999/XSL/Format</span>&quot;;
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">String</span> <span class="variable-name" id="SVGNamespace">SVGNamespace</span> = &quot;<span class="string">http://www.w3.org/2000/svg</span>&quot;;
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">String</span> <span class="variable-name" id="XlinkNamespace">XlinkNamespace</span> =
+        &quot;<span class="string">http://www.w3.org/1999/xlink</span>&quot;;
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">int</span> <span class="variable-name" id="DefAttrNSIndex">DefAttrNSIndex</span> = <span class="jde-java-font-lock-number">0</span>;
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">int</span> <span class="variable-name" id="XSLNSpaceIndex">XSLNSpaceIndex</span> = <span class="jde-java-font-lock-number">1</span>;
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">int</span> <span class="variable-name" id="SVGNSpaceIndex">SVGNSpaceIndex</span> = <span class="jde-java-font-lock-number">2</span>;
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">int</span> <span class="variable-name" id="XLinkNSpaceIndex">XLinkNSpaceIndex</span> = <span class="jde-java-font-lock-number">3</span>;
+
+    <span class="comment">/**
+     * A &lt;tt&gt;HashMap&lt;/tt&gt; mapping a namespace URI to an &lt;tt&gt;int&lt;/tt&gt;
+     * index.  The HashMap is initialized with a few well-known URIs.  As
+     * URIs are encountered in parsing, they are converted to an integer
+     * index by lookup in this HashMap.  If the URI has not been seen, it
+     * is added to the &lt;i&gt;</span><span class="jde-java-font-lock-italic">uriIndices&lt;/i&gt; and &lt;i&gt;uris</span><span class="comment">&lt;/i&gt; for future reference.
+     * &lt;b&gt;It is vital that no URI, once added, ever be deleted
+     * from this &lt;tt&gt;HashMap&lt;/tt&gt;&lt;/b&gt;.
+     * &lt;p&gt;&lt;tt&gt;HashMap&lt;/&gt; is unsynchronized, so accesses and updates must be
+     * protected.
+     * &lt;p&gt;
+     * Updates will be very rare, and accesses are directly related to the
+     * number of elements (and attributes) encountered.
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="type">HashMap</span> <span class="variable-name" id="uriIndices">uriIndices</span>;
+    <span class="comment">/**
+     * A &lt;tt&gt;ArrayList&lt;/tt&gt; of namespace URIs.  Effectively, a mapping of
+     * an &lt;tt&gt;int&lt;/tt&gt; index onto a URI.
+     * ArrayList is initialized with a few well-known URIs.  As
+     * URIs are encountered in parsing, they are converted to an integer
+     * index by lookup in the &lt;i&gt;</span><span class="jde-java-font-lock-italic">uriIndices</span><span class="comment">&lt;/i&gt; Hashmap. If the URI has not
+     * been seen, it is added to &lt;i&gt;</span><span class="jde-java-font-lock-italic">uriIndices&lt;/i&gt; and &lt;i&gt;uris</span><span class="comment">&lt;/i&gt;
+     * for future reference.
+     * &lt;p&gt;
+     * &lt;tt&gt;ArrayList&lt;/&gt; is unsynchronized, so access and updates must be
+     * protected.  Both will be more rare than accesses to &lt;i&gt;</span><span class="jde-java-font-lock-italic">uriIndices</span><span class="comment">&lt;/i&gt;.
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="type">ArrayList</span> <span class="variable-name" id="uris">uris</span>;
+
+    <span class="comment">/**
+     * A sequence object for use by &lt;tt&gt;XMLEvent&lt;/tt&gt;s.  Because an
+     * &lt;tt&gt;XMLEvent&lt;/tt&gt; object must always be associated with an
+     * &lt;i&gt;</span><span class="jde-java-font-lock-italic">XMLNamespace</span><span class="comment">&lt;/i&gt; object, this namespace object will act as a
+     * singleton for &lt;tt&gt;XMLEvent&lt;/tt&gt;s.  This field provides a
+     * counter for those objects.  The range of values which may be
+     * assigned to &lt;i&gt;</span><span class="jde-java-font-lock-italic">sequence&lt;/i&gt; is restricted by &lt;i&gt;seqMask</span><span class="comment">&lt;/i&gt;.
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="type">int</span> <span class="variable-name" id="sequence">sequence</span> = <span class="jde-java-font-lock-number">0</span>;
+
+    <span class="comment">/** Mask to restrict the range of values within which &lt;i&gt;</span><span class="jde-java-font-lock-italic">sequence</span><span class="comment">&lt;/i&gt;
+     * may cycle.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">int</span> <span class="variable-name" id="seqMask">seqMask</span> = (<span class="jde-java-font-lock-number">1</span> &lt;&lt; <span class="jde-java-font-lock-number">20</span>) - <span class="jde-java-font-lock-number">1</span>;
+
+    <span class="comment">/**
+     * The access function for the sequence.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> the next positive sequence number.  This number may wrap
+     * but is guaranteed to be within the range seqMask &gt;= sequence &gt;= 0.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">int</span> <span class="function-name" id="getSequence">getSequence</span>() {
+        sequence = ++sequence &amp; seqMask;
+        <span class="keyword">return</span> sequence;
+    }
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="function-name" id="XMLNamespaces">XMLNamespaces</span>() {
+        uriIndices = <span class="keyword">new</span> <span class="type">HashMap</span>(<span class="jde-java-font-lock-number">4</span>);
+        uris = <span class="keyword">new</span> <span class="type">ArrayList</span>(<span class="jde-java-font-lock-number">4</span>);
+        uriIndices.put(DefAttrNSpace, Ints.consts.get(DefAttrNSIndex));
+        uris.add(DefAttrNSIndex, DefAttrNSpace);
+        uriIndices.put(XSLNamespace, Ints.consts.get(XSLNSpaceIndex));
+        uris.add(XSLNSpaceIndex, XSLNamespace);
+        uriIndices.put(SVGNamespace, Ints.consts.get(SVGNSpaceIndex));
+        uris.add(SVGNSpaceIndex, SVGNamespace);
+        uriIndices.put(XlinkNamespace, Ints.consts.get(XLinkNSpaceIndex));
+        uris.add(XLinkNSpaceIndex, XlinkNamespace);
+    }
+
+    <span class="comment">/**
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> size of the &lt;tt&gt;uris&lt;/tt&gt; &lt;ttArrayList&lt;/tt&gt;.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">synchronized</span> <span class="type">int</span> <span class="function-name" id="getUrisSize">getUrisSize</span>() {
+        <span class="keyword">return</span> uris.size();
+    }
+
+    <span class="comment">/**
+     * If the URI is not pre-defined, and has not been seen before, add
+     * it to the stored namespaces, and return the index.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name" id="uri">uri</span><span class="comment"> the namespace uri
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> integer index of the namespace URI
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">synchronized</span> <span class="type">int</span> <span class="function-name" id="getURIIndex">getURIIndex</span>(<span class="type">String</span> <span class="variable-name">uri</span>) {
+        <span class="type">int</span> <span class="variable-name" id="i">i</span>;
+        <span class="type">Integer</span> <span class="variable-name" id="intg">intg</span> = (<span class="type">Integer</span>)uriIndices.get(uri);
+        <span class="keyword">if</span> (intg == <span class="jde-java-font-lock-constant" id="null">null</span>) {
+            <span class="comment">// update the indices
+</span>            i = uris.size();
+            <span class="comment">//System.out.println(&quot;****Adding namespace &quot; + uri + &quot; &quot; + i);
+</span>            uriIndices.put(uri, Ints.consts.get(i));
+            uris.add(i, uri);
+            <span class="keyword">return</span> i;
+        }
+        <span class="comment">// not null - found the integer
+</span>        <span class="keyword">return</span> intg.intValue();
+    }
+
+    <span class="comment">/**
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name" id="index">index</span><span class="comment"> the integer index of the namespace URI
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> the corresponding namespace URI
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">synchronized</span> <span class="type">String</span> <span class="function-name" id="getIndexURI">getIndexURI</span>(<span class="type">int</span> <span class="variable-name">index</span>) {
+        <span class="keyword">return</span> (<span class="type">String</span>)uris.get(index);
+    }
+
+}
+</pre>
+  </body>
+</html>

@@ -1,0 +1,1367 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<!--
+  Copyright 2001-2004 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<!-- Created by htmlize-0.67 in css mode. -->
+<html>
+  <head>
+    <title>SyncedFoXmlEventsBuffer.java</title>
+    <style type="text/css">
+    <!--
+      body {
+        color: #000000;
+        background-color: #faf0e6;
+      } /* default */
+      .reference {
+        color: #cd0000;
+        background-color: #faf0e6;
+      } /* font-lock-reference-face */
+      .comment {
+        color: #00008b;
+        background-color: #faf0e6;
+      } /* font-lock-comment-face */
+      .jde-java-font-lock-package {
+        color: #0000cd;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-package-face */
+      .jde-java-font-lock-constant {
+        color: #5f9ea0;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-constant-face */
+      .function-name {
+        color: #8b2323;
+        background-color: #faf0e6;
+      } /* font-lock-function-name-face */
+      .variable-name {
+        color: #8b008b;
+        background-color: #faf0e6;
+      } /* font-lock-variable-name-face */
+      .jde-java-font-lock-bold {
+        background-color: #faf0e6;
+        font-weight: bold;
+      } /* jde-java-font-lock-bold-face */
+      .jde-java-font-lock-doc-tag {
+        color: #008b00;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-doc-tag-face */
+      .keyword {
+        color: #8b0000;
+        background-color: #faf0e6;
+      } /* font-lock-keyword-face */
+      .jde-java-font-lock-number {
+        color: #bc8f8f;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-number-face */
+      .jde-java-font-lock-code {
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-code-face */
+      .jde-java-font-lock-italic {
+        background-color: #faf0e6;
+        font-style: italic;
+      } /* jde-java-font-lock-italic-face */
+      .jde-java-font-lock-modifier {
+        color: #da70d6;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-modifier-face */
+      .string {
+        color: #008b00;
+        background-color: #faf0e6;
+      } /* font-lock-string-face */
+      .type {
+        color: #4682b4;
+        background-color: #faf0e6;
+      } /* font-lock-type-face */
+      a {
+        color: inherit;
+        background-color: inherit;
+        font: inherit;
+        text-decoration: inherit;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+    -->
+    </style>
+  </head>
+  <body>
+    <pre>
+<span class="comment">/*
+ * Copyright 2001-2004 The Apache Software Foundation.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */</span>
+ 
+<span class="keyword">package</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">xml</span>;
+
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">datastructs</span>.<span class="type">SyncedCircularBuffer</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">apps</span>.<span class="type">FOPException</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">fo</span>.<span class="type">FObjectNames</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">fo</span>.<span class="type">FObjectSets</span>;
+
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">xml</span>.<span class="type">FoXMLEventPool</span>;
+
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">java</span>.<span class="jde-java-font-lock-package">util</span>.<span class="type">NoSuchElementException</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">java</span>.<span class="jde-java-font-lock-package">util</span>.<span class="type">LinkedList</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">java</span>.<span class="jde-java-font-lock-package">util</span>.<span class="type">Iterator</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">java</span>.<span class="jde-java-font-lock-package">util</span>.<span class="type">BitSet</span>;
+
+<span class="comment">/**
+ * A synchronized circular buffer for FoXMLEvents.
+ * </span><span class="jde-java-font-lock-doc-tag">@see</span><span class="comment"> </span><span class="jde-java-font-lock-code">org.apache.fop.datastructs.SyncedCircularBuffer</span><span class="comment">
+ * @author &lt;a href=&quot;mailto:pbwest@powerup.com.au&quot;&gt;Peter B. West&lt;/a&gt;
+ */</span>
+<span class="jde-java-font-lock-modifier">public</span> <span class="keyword">class</span> <span class="function-name" id="SyncedFoXmlEventsBufferClass">SyncedFoXmlEventsBuffer</span> <span class="keyword">extends</span> <span class="type">SyncedCircularBuffer</span> {
+
+    <span class="comment">/**
+     * Constant for &lt;i&gt;</span><span class="jde-java-font-lock-italic">discardEvent</span><span class="comment">&lt;/i&gt; field of
+     * &lt;i&gt;getEndElement(boolean discardEvent, FoXMLEvent(, boolean)).
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">boolean</span> <span class="variable-name" id="DISCARD_EV">DISCARD_EV</span> = <span class="jde-java-font-lock-constant" id="true">true</span>,
+                                 <span class="jde-java-font-lock-constant" id="RETAIN_EV">RETAIN_EV</span> = <span class="jde-java-font-lock-constant">false</span>;
+
+    <span class="comment">/**
+     * Maintains an index of namespace URIs.  These can then be referred to
+     * by an &lt;tt&gt;int&lt;/tt&gt; index.
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="type">XMLNamespaces</span> <span class="variable-name" id="namespaces">namespaces</span>;
+
+    <span class="comment">/**
+     * The FoXMLEventPool for this buffer.
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="type">FoXMLEventPool</span> <span class="variable-name" id="pool">pool</span>;
+
+    <span class="comment">/**
+     * No-argument constructor sets up a buffer with the default number of
+     * elements.
+     * The producer and consumer &lt;tt&gt;Thread&lt;/tt&gt;s default to the current
+     * thread at the time of instantiation.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="function-name" id="SyncedFoXmlEventsBuffer">SyncedFoXmlEventsBuffer</span>()
+        <span class="keyword">throws</span> <span class="type">IllegalArgumentException</span>
+    {
+        <span class="keyword">super</span>();
+        namespaces = <span class="keyword">new</span> <span class="type">XMLNamespaces</span>();
+        pool = <span class="keyword">new</span> <span class="type">FoXMLEventPool</span>(namespaces, <span class="jde-java-font-lock-constant" id="DEFAULTBUFSIZE">DEFAULTBUFSIZE</span>);
+    }
+
+    <span class="comment">/**
+     * Constructor taking one argument; the size of the buffer.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name" id="size">size</span><span class="comment"> the size of the buffer.  Must be &gt; 1.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="function-name">SyncedFoXmlEventsBuffer</span>(<span class="type">int</span> <span class="variable-name">size</span>)
+        <span class="keyword">throws</span> <span class="type">IllegalArgumentException</span>
+    {
+        <span class="keyword">super</span>(size);
+        namespaces = <span class="keyword">new</span> <span class="type">XMLNamespaces</span>();
+        pool = <span class="keyword">new</span> <span class="type">FoXMLEventPool</span>(namespaces);
+    }
+
+    <span class="comment">/**
+     * Get the &lt;tt&gt;XMLNamespaces&lt;/tt&gt; from this buffer.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> - the namespaces object.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">XMLNamespaces</span> <span class="function-name" id="getNamespaces">getNamespaces</span>() { <span class="keyword">return</span> namespaces; }
+
+    <span class="comment">/**
+     * Get the &lt;tt&gt;FoXMLEventPool&lt;/tt&gt; from this buffer.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> - the pool object.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">FoXMLEventPool</span> <span class="function-name" id="getPool">getPool</span>() { <span class="keyword">return</span> pool; }
+
+    <span class="comment">/**
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> next event from the SyncedCircularBuffer
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">FOPException.</span><span class="comment">  The purpose of this method is to catch
+     * and transform any InterruptedException exceptions thrown by the
+     * &lt;tt&gt;SyncedCircularBuffer&lt;/tt&gt;.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">FoXMLEvent</span> <span class="function-name" id="getEvent">getEvent</span>() <span class="keyword">throws</span> <span class="type">FOPException</span> {
+        <span class="type">FoXMLEvent</span> <span class="variable-name" id="ev">ev</span>;
+        <span class="keyword">try</span> {
+            ev = (<span class="type">FoXMLEvent</span>)get();
+            <span class="comment">//System.out.println(&quot;getEvent: &quot; + ev);
+</span>            <span class="keyword">return</span> ev;
+        } <span class="keyword">catch</span> (<span class="type">InterruptedException</span> <span class="variable-name" id="e">e</span>) {
+            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">FOPException</span>(e);
+        }
+    }
+
+    <span class="comment">/**
+     * Get the next event of the given type from the buffer.  Discard
+     * intervening events.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name" id="eventType">eventType</span><span class="comment"> - the &lt;tt&gt;int&lt;/tt&gt; event type.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> an event of the given type.
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">FOPException</span><span class="comment"> if buffer errors or interrupts occur.
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">NoSuchElementException</span><span class="comment"> if the event is not found.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">FoXMLEvent</span> <span class="function-name" id="getTypedEvent">getTypedEvent</span>(<span class="type">int</span> <span class="variable-name">eventType</span>) <span class="keyword">throws</span> <span class="type">FOPException</span> {
+        <span class="type">FoXMLEvent</span> <span class="variable-name">ev</span> = getEvent();
+        <span class="keyword">while</span> (ev != <span class="jde-java-font-lock-constant" id="null">null</span> &amp;&amp; ev.type != eventType) {
+            ev = getEvent();
+        }
+        <span class="keyword">if</span> (ev == <span class="jde-java-font-lock-constant">null</span>) {
+            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">NoSuchElementException</span>
+                        (XMLEvent.eventTypeName(eventType) + &quot;<span class="string"> not found.</span>&quot;);
+        }
+        <span class="keyword">return</span> ev;
+    }
+
+    <span class="comment">/**
+     * Get the next event of the given type and with the given &lt;tt&gt;QName&lt;/tt&gt;
+     * from the buffer.  Discard intervening events.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">eventType</span><span class="comment"> - the &lt;tt&gt;int&lt;/tt&gt; event type.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name" id="qName">qName</span><span class="comment"> a &lt;tt&gt;String&lt;/tt&gt; with the &lt;tt&gt;QName&lt;/tt&gt; of the
+     * required element.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> an event of the given type.
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">FOPException</span><span class="comment"> if buffer errors or interrupts occur.
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">NoSuchElementException</span><span class="comment"> if the event is not found.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">FoXMLEvent</span> <span class="function-name">getTypedEvent</span>(<span class="type">int</span> <span class="variable-name">eventType</span>, <span class="type">String</span> <span class="variable-name">qName</span>)
+                <span class="keyword">throws</span> <span class="type">FOPException</span>
+    {
+        <span class="type">FoXMLEvent</span> <span class="variable-name">ev</span> = getEvent();
+        <span class="keyword">while</span> (ev != <span class="jde-java-font-lock-constant">null</span> &amp;&amp;
+               ! (ev.type == eventType &amp;&amp; ev.qName.equals(qName))) {
+            ev = getEvent();
+        }
+        <span class="keyword">if</span> (ev == <span class="jde-java-font-lock-constant">null</span>) {
+            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">NoSuchElementException</span>
+            (XMLEvent.eventTypeName(eventType) + &quot;<span class="string"> </span>&quot; + qName + &quot;<span class="string"> not found.</span>&quot;);
+        }
+        <span class="keyword">return</span> ev;
+    }
+
+    <span class="comment">/**
+     * Get the next event of the given type, and with the given URI index and
+     * local name, from the buffer.  Discard intervening events.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">eventType</span><span class="comment"> - the &lt;tt&gt;int&lt;/tt&gt; event type.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name" id="uriIndex">uriIndex</span><span class="comment"> - the &lt;tt&gt;int&lt;/tt&gt; URI index maintained in the
+     * &lt;tt&gt;XMLNamespaces&lt;/tt&gt; object.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name" id="localName">localName</span><span class="comment"> a &lt;tt&gt;String&lt;/tt&gt; with the local name of the
+     * required element.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> an event of the given type.
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">FOPException</span><span class="comment"> if buffer errors or interrupts occur.
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">NoSuchElementException</span><span class="comment"> if the event is not found.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">FoXMLEvent</span> <span class="variable-name">getTypedEvent</span>
+                            (<span class="type">int</span> <span class="variable-name">eventType</span>, <span class="type">int</span> <span class="variable-name">uriIndex</span>, <span class="type">String</span> <span class="variable-name">localName</span>)
+                <span class="keyword">throws</span> <span class="type">FOPException</span>
+    {
+        <span class="type">FoXMLEvent</span> <span class="variable-name">ev</span> = getEvent();
+        <span class="keyword">while</span> (ev != <span class="jde-java-font-lock-constant">null</span> &amp;&amp;
+               ! (ev.type == eventType
+                  &amp;&amp; ev.uriIndex == uriIndex
+                  &amp;&amp; ev.localName.equals(localName))) {
+            pool.surrenderEvent(ev);
+            ev = getEvent();
+        }
+        <span class="keyword">if</span> (ev == <span class="jde-java-font-lock-constant">null</span>)
+            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">NoSuchElementException</span>
+                    (XMLEvent.eventTypeName(eventType)
+                             + namespaces.getIndexURI(uriIndex)
+                                       + &quot;<span class="string">:</span>&quot; + localName + &quot;<span class="string"> not found.</span>&quot;);
+        <span class="keyword">return</span> ev;
+    }
+
+    <span class="comment">/**
+     * Get the next event of the given type, from the fo: namespace, with
+     * the given FO type.  Discard intervening events.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">eventType</span><span class="comment"> - the &lt;tt&gt;int&lt;/tt&gt; event type.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name" id="foType">foType</span><span class="comment"> - the &lt;tt&gt;int&lt;/tt&gt; FO type.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> an event of the given type.
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">FOPException</span><span class="comment"> if buffer errors or interrupts occur.
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">NoSuchElementException</span><span class="comment"> if the event is not found.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">FoXMLEvent</span> <span class="function-name">getTypedEvent</span>(<span class="type">int</span> <span class="variable-name">eventType</span>, <span class="type">int</span> <span class="variable-name">foType</span>)
+                <span class="keyword">throws</span> <span class="type">FOPException</span>
+    {
+        <span class="type">FoXMLEvent</span> <span class="variable-name">ev</span> = getEvent();
+        <span class="keyword">while</span> (ev != <span class="jde-java-font-lock-constant">null</span> &amp;&amp;
+               ! (ev.type == eventType &amp;&amp; ev.foType == foType)) {
+            pool.surrenderEvent(ev);
+            ev = getEvent();
+        }
+        <span class="keyword">if</span> (ev == <span class="jde-java-font-lock-constant">null</span>)
+            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">NoSuchElementException</span>
+                    (XMLEvent.eventTypeName(eventType)
+                             + &quot;<span class="string"> FO type </span>&quot; + foType + &quot;<span class="string"> not found.</span>&quot;);
+        <span class="keyword">return</span> ev;
+    }
+
+    <span class="comment">/**
+     * Return the next element if it is of the required type.  If the next
+     * element is not of the required type, push it back onto the buffer.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">eventType</span><span class="comment"> - the &lt;tt&gt;int&lt;/tt&gt; event type.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name" id="discardWhiteSpace">discardWhiteSpace</span><span class="comment"> - if true, discard any &lt;tt&gt;characters&lt;/tt&gt;
+     * events which contain only whitespace.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> an event of the required type.  If the next
+     * event detected is not of the required type, &lt;tt&gt;null&lt;/tt&gt; is returned.
+     * The erroneous event is pushed back.
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">FOPException</span><span class="comment"> if buffer errors or interrupts occur.
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">NoSuchElementException</span><span class="comment"> if the buffer is empty.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">FoXMLEvent</span> <span class="variable-name" id="expectTypedEvent">expectTypedEvent</span>
+                                    (<span class="type">int</span> <span class="variable-name">eventType</span>, <span class="type">boolean</span> <span class="variable-name">discardWhiteSpace</span>)
+                <span class="keyword">throws</span> <span class="type">FOPException</span>
+    {
+        <span class="type">FoXMLEvent</span> <span class="variable-name">ev</span> = getEvent();
+        <span class="keyword">if</span> (discardWhiteSpace) {
+            <span class="keyword">while</span> (ev != <span class="jde-java-font-lock-constant">null</span> &amp;&amp; ev.type == <span class="reference">XMLEvent</span>.<span class="type">CHARACTERS</span>
+                   &amp;&amp; ev.chars.trim().equals(&quot;&quot;)) {
+                pool.surrenderEvent(ev);
+                ev = getEvent();
+            }
+        }
+        <span class="keyword">if</span> (ev != <span class="jde-java-font-lock-constant">null</span> &amp;&amp; ev.type == eventType) {
+            <span class="keyword">return</span> ev;
+        }
+        <span class="keyword">if</span> (ev == <span class="jde-java-font-lock-constant">null</span>)
+            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">NoSuchElementException</span>
+                        (XMLEvent.eventTypeName(eventType)
+                                           + &quot;<span class="string"> not found: end of buffer.</span>&quot;);
+        pushBack(ev);
+        <span class="keyword">return</span> <span class="jde-java-font-lock-constant">null</span>;
+    }
+
+    <span class="comment">/**
+     * Return the next element if it is of the required type and has the
+     * required &lt;tt&gt;QName&lt;/tt&gt;.  If the next
+     * element is not of the required type, push it back onto the buffer.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">eventType</span><span class="comment"> - the &lt;tt&gt;int&lt;/tt&gt; event type.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">qName</span><span class="comment"> a &lt;tt&gt;String&lt;/tt&gt; with the &lt;tt&gt;QName&lt;/tt&gt; of the
+     * required element.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">discardWhiteSpace</span><span class="comment"> - if true, discard any &lt;tt&gt;characters&lt;/tt&gt;
+     * events which contain only whitespace.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> an event of the required type.  If the next
+     * event detected is not of the required type, &lt;tt&gt;null&lt;/tt&gt; is returned.
+     * The erroneous event is pushed back.
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">FOPException</span><span class="comment"> if buffer errors or interrupts occur.
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">NoSuchElementException</span><span class="comment"> if the event is not found.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">FoXMLEvent</span> <span class="variable-name">expectTypedEvent</span>
+                    (<span class="type">int</span> <span class="variable-name">eventType</span>, <span class="type">String</span> <span class="variable-name">qName</span>, <span class="type">boolean</span> <span class="variable-name">discardWhiteSpace</span>)
+                <span class="keyword">throws</span> <span class="type">FOPException</span>
+    {
+        <span class="type">FoXMLEvent</span> <span class="variable-name">ev</span> = getEvent();
+        <span class="keyword">if</span> (discardWhiteSpace) {
+            <span class="keyword">while</span> (ev != <span class="jde-java-font-lock-constant">null</span> &amp;&amp; ev.type == <span class="reference">XMLEvent</span>.<span class="type">CHARACTERS</span>
+                   &amp;&amp; ev.chars.trim().equals(&quot;&quot;)) {
+                pool.surrenderEvent(ev);
+                ev = getEvent();
+            }
+        }
+        <span class="keyword">if</span> (ev != <span class="jde-java-font-lock-constant">null</span> &amp;&amp; ev.type == eventType &amp;&amp; ev.qName.equals(qName)) {
+            <span class="keyword">return</span> ev;
+        }
+        <span class="keyword">if</span> (ev == <span class="jde-java-font-lock-constant">null</span>)
+            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">NoSuchElementException</span>
+                        (XMLEvent.eventTypeName(eventType)
+                                           + &quot;<span class="string"> not found: end of buffer.</span>&quot;);
+        pushBack(ev);
+        <span class="keyword">return</span> <span class="jde-java-font-lock-constant">null</span>;
+    }
+
+    <span class="comment">/**
+     * Return the next element if it is of the required type and has the
+     * required URI index and local name.  If the next
+     * element is not of the required type, push it back onto the buffer.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">eventType</span><span class="comment"> - the &lt;tt&gt;int&lt;/tt&gt; event type.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">uriIndex</span><span class="comment"> - the &lt;tt&gt;int&lt;/tt&gt; URI index.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">localName</span><span class="comment"> a &lt;tt&gt;String&lt;/tt&gt; with the local name of the
+     * required element.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">discardWhiteSpace</span><span class="comment"> - if true, discard any &lt;tt&gt;characters&lt;/tt&gt;
+     * events which contain only whitespace.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> an event of the required type.  If the next
+     * event detected is not of the required type, &lt;tt&gt;null&lt;/tt&gt; is returned.
+     * The erroneous event is pushed back.
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">FOPException</span><span class="comment"> if buffer errors or interrupts occur.
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">NoSuchElementException</span><span class="comment"> if end of buffer detected.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">FoXMLEvent</span> <span class="variable-name">expectTypedEvent</span>
+                            (<span class="type">int</span> <span class="variable-name">eventType</span>, <span class="type">int</span> <span class="variable-name">uriIndex</span>,
+                                 <span class="type">String</span> <span class="variable-name">localName</span>, <span class="type">boolean</span> <span class="variable-name">discardWhiteSpace</span>)
+                <span class="keyword">throws</span> <span class="type">FOPException</span>
+    {
+        <span class="type">FoXMLEvent</span> <span class="variable-name">ev</span> = getEvent();
+        <span class="keyword">if</span> (discardWhiteSpace) {
+            <span class="keyword">while</span> (ev != <span class="jde-java-font-lock-constant">null</span> &amp;&amp; ev.type == <span class="reference">XMLEvent</span>.<span class="type">CHARACTERS</span>
+                   &amp;&amp; ev.chars.trim().equals(&quot;&quot;)) {
+                pool.surrenderEvent(ev);
+                ev = getEvent();
+            }
+        }
+        <span class="keyword">if</span> (ev != <span class="jde-java-font-lock-constant">null</span>
+                &amp;&amp; ev.type == eventType
+                   &amp;&amp; ev.uriIndex == uriIndex
+                       &amp;&amp; ev.localName.equals(localName)) {
+            <span class="keyword">return</span> ev;
+        }
+        <span class="keyword">if</span> (ev == <span class="jde-java-font-lock-constant">null</span>)
+            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">NoSuchElementException</span>
+                        (XMLEvent.eventTypeName(eventType)
+                                           + &quot;<span class="string"> not found: end of buffer.</span>&quot;);
+        pushBack(ev);
+        <span class="keyword">return</span> <span class="jde-java-font-lock-constant">null</span>;
+    }
+
+    <span class="comment">/**
+     * Return the next element if it is of the required type and has the
+     * required FO type.  If the next
+     * element is not of the required type, push it back onto the buffer.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">eventType</span><span class="comment"> - the &lt;tt&gt;int&lt;/tt&gt; event type.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">foType</span><span class="comment"> - the &lt;tt&gt;int&lt;/tt&gt; FO type.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">discardWhiteSpace</span><span class="comment"> - if true, discard any &lt;tt&gt;characters&lt;/tt&gt;
+     * events which contain only whitespace.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> an event of the required type.  If the next
+     * event detected is not of the required type, &lt;tt&gt;null&lt;/tt&gt; is returned.
+     * The erroneous event is pushed back.
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">FOPException</span><span class="comment"> if buffer errors or interrupts occur.
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">NoSuchElementException</span><span class="comment"> if end of buffer detected.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">FoXMLEvent</span> <span class="variable-name">expectTypedEvent</span>
+                    (<span class="type">int</span> <span class="variable-name">eventType</span>, <span class="type">int</span> <span class="variable-name">foType</span>, <span class="type">boolean</span> <span class="variable-name">discardWhiteSpace</span>)
+                <span class="keyword">throws</span> <span class="type">FOPException</span>
+    {
+        <span class="type">FoXMLEvent</span> <span class="variable-name">ev</span> = getEvent();
+        <span class="keyword">if</span> (discardWhiteSpace) {
+            <span class="keyword">while</span> (ev != <span class="jde-java-font-lock-constant">null</span> &amp;&amp; ev.type == <span class="reference">XMLEvent</span>.<span class="type">CHARACTERS</span>
+                   &amp;&amp; ev.chars.trim().equals(&quot;&quot;)) {
+                pool.surrenderEvent(ev);
+                ev = getEvent();
+            }
+        }
+        <span class="keyword">if</span> (ev != <span class="jde-java-font-lock-constant">null</span> &amp;&amp; ev.type == eventType &amp;&amp; ev.foType == foType) {
+            <span class="keyword">return</span> ev;
+        }
+        <span class="keyword">if</span> (ev == <span class="jde-java-font-lock-constant">null</span>)
+            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">NoSuchElementException</span>
+                        (XMLEvent.eventTypeName(eventType)
+                                           + &quot;<span class="string"> not found: end of buffer.</span>&quot;);
+        pushBack(ev);
+        <span class="keyword">return</span> <span class="jde-java-font-lock-constant">null</span>;
+    }
+
+    <span class="comment">/**
+     * Get the next ENDDOCUMENT event from the buffer.  Discard any other
+     * events preceding the ENDDOCUMENT event.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> an ENDDOCUMENT event
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">FOPException</span><span class="comment"> if buffer errors or interrupts occur
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">NoSuchElementException</span><span class="comment"> if the event is not found
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">FoXMLEvent</span> <span class="function-name" id="getEndDocument">getEndDocument</span>() <span class="keyword">throws</span> <span class="type">FOPException</span> {
+        <span class="keyword">return</span> getTypedEvent(XMLEvent.<span class="jde-java-font-lock-constant" id="ENDDOCUMENT">ENDDOCUMENT</span>);
+    }
+
+    <span class="comment">/**
+     * Return the next element if it is an ENDDOCUMENT.  If the next
+     * element is not of the required type, push it back onto the buffer.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">discardWhiteSpace</span><span class="comment"> - if true, discard any &lt;tt&gt;characters&lt;/tt&gt;
+     * events which contain only whitespace.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> an ENDDOCUMENT event. If the next
+     * event detected is not of the required type, &lt;tt&gt;null&lt;/tt&gt; is returned.
+     * The erroneous event is pushed back.
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">FOPException</span><span class="comment"> if buffer errors or interrupts occur
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">NoSuchElementException</span><span class="comment"> if end of buffer detected.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">FoXMLEvent</span> <span class="function-name" id="expectEndDocument">expectEndDocument</span>(<span class="type">boolean</span> <span class="variable-name">discardWhiteSpace</span>)
+                <span class="keyword">throws</span> <span class="type">FOPException</span>
+    {
+        <span class="keyword">return</span> expectTypedEvent(XMLEvent.<span class="jde-java-font-lock-constant">ENDDOCUMENT</span>, discardWhiteSpace);
+    }
+
+    <span class="comment">/**
+     * Get the next STARTELEMENT event from the buffer.  Discard any other
+     * events preceding the STARTELEMENT event.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> a STARTELEMENT event
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">FOPException</span><span class="comment"> if buffer errors or interrupts occur
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">NoSuchElementException</span><span class="comment"> if the event is not found
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">FoXMLEvent</span> <span class="function-name" id="getStartElement">getStartElement</span>() <span class="keyword">throws</span> <span class="type">FOPException</span> {
+        <span class="keyword">return</span> getTypedEvent(XMLEvent.<span class="jde-java-font-lock-constant" id="STARTELEMENT">STARTELEMENT</span>);
+    }
+
+    <span class="comment">/**
+     * Return the next element if it is a STARTELEMENT.  If the next
+     * element is not of the required type, push it back onto the buffer.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">discardWhiteSpace</span><span class="comment"> - if true, discard any &lt;tt&gt;characters&lt;/tt&gt;
+     * events which contain only whitespace.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> a STARTELEMENT event.  If the next
+     * event detected is not of the required type, &lt;tt&gt;null&lt;/tt&gt; is returned.
+     * The erroneous event is pushed back.
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">FOPException</span><span class="comment"> if buffer errors or interrupts occur
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">NoSuchElementException</span><span class="comment"> if end of buffer detected.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">FoXMLEvent</span> <span class="function-name" id="expectStartElement">expectStartElement</span>(<span class="type">boolean</span> <span class="variable-name">discardWhiteSpace</span>)
+                <span class="keyword">throws</span> <span class="type">FOPException</span>
+    {
+        <span class="keyword">return</span> expectTypedEvent(XMLEvent.<span class="jde-java-font-lock-constant">STARTELEMENT</span>, discardWhiteSpace);
+    }
+
+    <span class="comment">/**
+     * Get the next STARTELEMENT event with the given &lt;tt&gt;QName&lt;/tt&gt;
+     * from the buffer.  Discard any other events preceding the
+     * STARTELEMENT event.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">qName</span><span class="comment"> a &lt;tt&gt;String&lt;/tt&gt; with the &lt;tt&gt;QName&lt;/tt&gt; of the
+     * required STARTELEMENT
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> a STARTELEMENT event
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">FOPException</span><span class="comment"> if buffer errors or interrupts occur
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">NoSuchElementException</span><span class="comment"> if the event is not found
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">FoXMLEvent</span> <span class="function-name">getStartElement</span>(<span class="type">String</span> <span class="variable-name">qName</span>) <span class="keyword">throws</span> <span class="type">FOPException</span>
+    {
+        <span class="keyword">return</span> getTypedEvent(XMLEvent.<span class="jde-java-font-lock-constant">STARTELEMENT</span>, qName);
+    }
+
+    <span class="comment">/**
+     * Return the next element if it is a STARTELEMENT with the given
+     * &lt;tt&gt;QName&lt;/tt&gt;.  If the next
+     * element is not of the required type, push it back onto the buffer.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">qName</span><span class="comment"> a &lt;tt&gt;String&lt;/tt&gt; with the &lt;tt&gt;QName&lt;/tt&gt; of the
+     * required STARTELEMENT
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">discardWhiteSpace</span><span class="comment"> - if true, discard any &lt;tt&gt;characters&lt;/tt&gt;
+     * events which contain only whitespace.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> a STARTELEMENT event.  If the next
+     * event detected is not of the required type, &lt;tt&gt;null&lt;/tt&gt; is returned.
+     * The erroneous event is pushed back.
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">FOPException</span><span class="comment"> if buffer errors or interrupts occur
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">NoSuchElementException</span><span class="comment"> if end of buffer detected.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">FoXMLEvent</span> <span class="variable-name">expectStartElement</span>
+                                (<span class="type">String</span> <span class="variable-name">qName</span>, <span class="type">boolean</span> <span class="variable-name">discardWhiteSpace</span>)
+        <span class="keyword">throws</span> <span class="type">FOPException</span>
+    {
+        <span class="keyword">return</span> expectTypedEvent
+                        (XMLEvent.<span class="jde-java-font-lock-constant">STARTELEMENT</span>, qName, discardWhiteSpace);
+    }
+
+    <span class="comment">/**
+     * Get the next STARTELEMENT event with the given URI index and local name
+     * from the buffer.  Discard any other events preceding the
+     * STARTELEMENT event.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">uriIndex</span><span class="comment"> an &lt;tt&gt;int&lt;/tt&gt; with the index of the URI of the
+     * required URI
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">localName</span><span class="comment"> a &lt;tt&gt;String&lt;/tt&gt; with the local name of the
+     * required STARTELEMENT
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> a STARTELEMENT event
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">FOPException</span><span class="comment"> if buffer errors or interrupts occur
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">NoSuchElementException</span><span class="comment"> if the event is not found
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">FoXMLEvent</span> <span class="function-name">getStartElement</span>(<span class="type">int</span> <span class="variable-name">uriIndex</span>, <span class="type">String</span> <span class="variable-name">localName</span>)
+        <span class="keyword">throws</span> <span class="type">FOPException</span>
+    {
+        <span class="keyword">return</span> getTypedEvent(XMLEvent.<span class="jde-java-font-lock-constant">STARTELEMENT</span>, uriIndex, localName);
+    }
+
+    <span class="comment">/**
+     * Return the next element if it is a STARTELEMENT with the given
+     * URI index and local name.  If the next
+     * element is not of the required type, push it back onto the buffer.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">uriIndex</span><span class="comment"> an &lt;tt&gt;int&lt;/tt&gt; URI index.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">localName</span><span class="comment"> a &lt;tt&gt;String&lt;/tt&gt; with the local name of the
+     * required STARTELEMENT
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">discardWhiteSpace</span><span class="comment"> - if true, discard any &lt;tt&gt;characters&lt;/tt&gt;
+     * events which contain only whitespace.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> a STARTELEMENT event.  If the next
+     * event detected is not of the required type, &lt;tt&gt;null&lt;/tt&gt; is returned.
+     * The erroneous event is pushed back.
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">FOPException</span><span class="comment"> if buffer errors or interrupts occur
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">NoSuchElementException</span><span class="comment"> if end of buffer detected.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">FoXMLEvent</span> <span class="variable-name">expectStartElement</span>
+                (<span class="type">int</span> <span class="variable-name">uriIndex</span>, <span class="type">String</span> <span class="variable-name">localName</span>, <span class="type">boolean</span> <span class="variable-name">discardWhiteSpace</span>)
+        <span class="keyword">throws</span> <span class="type">FOPException</span>
+    {
+        <span class="keyword">return</span> expectTypedEvent
+            (XMLEvent.<span class="jde-java-font-lock-constant">STARTELEMENT</span>, uriIndex, localName, discardWhiteSpace);
+    }
+
+    <span class="comment">/**
+     * From the buffer get the next STARTELEMENT event from the fo: namespace
+     * with the given FO object type.
+     *  Discard any other events preceding the
+     * STARTELEMENT event.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">foType</span><span class="comment"> - the &lt;tt&gt;int&lt;/tt&gt; FO object type, as defined in
+     * &lt;tt&gt;FObjectNames&lt;/tt&gt;.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> a matching STARTELEMENT event.
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">FOPException</span><span class="comment"> if buffer errors or interrupts occur
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">NoSuchElementException</span><span class="comment"> if the event is not found
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">FoXMLEvent</span> <span class="function-name">getStartElement</span>(<span class="type">int</span> <span class="variable-name">foType</span>)
+        <span class="keyword">throws</span> <span class="type">FOPException</span>
+    {
+        <span class="keyword">return</span> getTypedEvent(XMLEvent.<span class="jde-java-font-lock-constant">STARTELEMENT</span>, foType);
+    }
+
+    <span class="comment">/**
+     * From the buffer return the next STARTELEMENT event from the fo:
+     * namespace with the given FO object type.  If the next
+     * element is not of the required type, push it back onto the buffer.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">foType</span><span class="comment"> - the &lt;tt&gt;int&lt;/tt&gt; FO object type, as defined in
+     * &lt;tt&gt;FObjectNames&lt;/tt&gt;.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">discardWhiteSpace</span><span class="comment"> - if true, discard any &lt;tt&gt;characters&lt;/tt&gt;
+     * events which contain only whitespace.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> a matching STARTELEMENT event.  If the next
+     * event detected is not of the required type, &lt;tt&gt;null&lt;/tt&gt; is returned.
+     * The erroneous event is pushed back.
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">FOPException</span><span class="comment"> if buffer errors or interrupts occur
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">NoSuchElementException</span><span class="comment"> if end of buffer detected.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">FoXMLEvent</span> <span class="variable-name">expectStartElement</span>
+                                    (<span class="type">int</span> <span class="variable-name">foType</span>, <span class="type">boolean</span> <span class="variable-name">discardWhiteSpace</span>)
+        <span class="keyword">throws</span> <span class="type">FOPException</span>
+    {
+        <span class="keyword">return</span> expectTypedEvent
+            (XMLEvent.<span class="jde-java-font-lock-constant">STARTELEMENT</span>, foType, discardWhiteSpace);
+    }
+
+    <span class="comment">/**
+     * Get one of a list of possible STARTELEMENT events.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name" id="list">list</span><span class="comment"> a &lt;tt&gt;LinkedList&lt;/tt&gt; containing either &lt;tt&gt;String&lt;/tt&gt;s
+     * with the &lt;tt&gt;QName&lt;/tt&gt;, or &lt;tt&gt;UriLocalName&lt;/tt&gt;
+     * objects with the URI index and local name of one of the required
+     * STARTELEMENT events.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">discardWhiteSpace</span><span class="comment"> - if true, discard any &lt;tt&gt;characters&lt;/tt&gt;
+     * events which contain only whitespace.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> a STARTELEMENT event
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">FOPException</span><span class="comment"> if buffer errors or interrupts occur
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">NoSuchElementException</span><span class="comment"> if the event is not found
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">FoXMLEvent</span> <span class="variable-name">getStartElement</span>
+                                (<span class="type">LinkedList</span> <span class="variable-name">list</span>, <span class="type">boolean</span> <span class="variable-name">discardWhiteSpace</span>)
+        <span class="keyword">throws</span> <span class="type">FOPException</span>
+    {
+        <span class="type">FoXMLEvent</span> <span class="variable-name">ev</span>;
+        <span class="keyword">do</span> {
+            ev = expectStartElement(list, discardWhiteSpace);
+            <span class="keyword">if</span> (ev != <span class="jde-java-font-lock-constant">null</span>) <span class="keyword">return</span> ev;
+            <span class="comment">// The non-matching event has been pushed back.
+</span>            <span class="comment">// Get it and discard.  Note that if the first attempt to
+</span>            <span class="comment">// getEvent() returns null, the expectStartElement() calls
+</span>            <span class="comment">// return null.
+</span>            ev = getEvent();
+            pool.surrenderEvent(ev);
+        } <span class="keyword">while</span> (ev != <span class="jde-java-font-lock-constant">null</span>);
+        <span class="comment">// Exit from this while loop is only by discovery of null event
+</span>        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">NoSuchElementException</span>
+                    (&quot;<span class="string">StartElement from list not found.</span>&quot;);
+    }
+
+    <span class="comment">/**
+     * Get one of a list of possible STARTELEMENT events.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">list</span><span class="comment"> a &lt;tt&gt;LinkedList&lt;/tt&gt; containing either &lt;tt&gt;String&lt;/tt&gt;s
+     * with the &lt;tt&gt;QName&lt;/tt&gt;, or &lt;tt&gt;UriLocalName&lt;/tt&gt;
+     * objects with the URI index and local name of one of the required
+     * STARTELEMENT events.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">discardWhiteSpace</span><span class="comment"> - if true, discard any &lt;tt&gt;characters&lt;/tt&gt;
+     * events which contain only whitespace.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> a STARTELEMENT event.  If the next
+     * event detected is not of the required type, &lt;tt&gt;null&lt;/tt&gt; is returned.
+     * The erroneous event is pushed back.
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">FOPException</span><span class="comment"> if buffer errors or interrupts occur
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">NoSuchElementException</span><span class="comment"> if end of buffer detected.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">FoXMLEvent</span> <span class="variable-name">expectStartElement</span>
+                                (<span class="type">LinkedList</span> <span class="variable-name">list</span>, <span class="type">boolean</span> <span class="variable-name">discardWhiteSpace</span>)
+        <span class="keyword">throws</span> <span class="type">FOPException</span>
+    {
+        <span class="type">FoXMLEvent</span> <span class="variable-name">ev</span>;
+        <span class="type">Iterator</span> <span class="variable-name" id="elements">elements</span> = list.iterator();
+        <span class="keyword">while</span> (elements.hasNext()) {
+            <span class="type">Object</span> <span class="variable-name" id="o">o</span> = elements.next();
+            <span class="keyword">if</span> (o <span class="keyword">instanceof</span> <span class="type">String</span>) {
+                ev = expectStartElement((<span class="type">String</span>) o, discardWhiteSpace);
+                <span class="comment">// Found it!
+</span>                <span class="keyword">if</span> (ev != <span class="jde-java-font-lock-constant">null</span>) <span class="keyword">return</span> ev;
+            } <span class="keyword">else</span> <span class="keyword">if</span> (o <span class="keyword">instanceof</span> <span class="type">UriLocalName</span>) {
+                ev = expectStartElement
+                        (((<span class="type">UriLocalName</span>) o).uriIndex,
+                         ((<span class="type">UriLocalName</span>) o).localName,
+                         discardWhiteSpace);
+                <span class="comment">// Found it!
+</span>                <span class="keyword">if</span> (ev != <span class="jde-java-font-lock-constant">null</span>) <span class="keyword">return</span> ev;
+            } <span class="keyword">else</span> <span class="keyword">if</span> (o <span class="keyword">instanceof</span> <span class="type">Integer</span>) {
+                ev = expectStartElement(((<span class="type">Integer</span>)o).intValue(),
+                                        discardWhiteSpace);
+                <span class="keyword">if</span> (ev != <span class="jde-java-font-lock-constant">null</span>) <span class="keyword">return</span> ev;
+            } <span class="keyword">else</span>
+                <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">FOPException</span>
+                        (&quot;<span class="string">Invalid list elements for getStartElement</span>&quot;);
+        }
+        <span class="keyword">return</span> <span class="jde-java-font-lock-constant">null</span>;
+    }
+
+    <span class="comment">/**
+     * Get one of a array of possible STARTELEMENT events.  Scan and discard
+     * events until a STARTELEMENT event is found whose URI index and
+     * local name matches one of those in the argument
+     * &lt;tt&gt;UriLocalName[]&lt;/tt&gt; array.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">list</span><span class="comment"> an array containing &lt;tt&gt;UriLocalName&lt;/tt&gt;
+     * objects with the URI index and local name of
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">discardWhiteSpace</span><span class="comment"> - if true, discard any &lt;tt&gt;characters&lt;/tt&gt;
+     * events which contain only whitespace.
+     * STARTELEMENT events, one of which is required.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> the next matching STARTELEMENT event from the buffer.
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">FOPException</span><span class="comment"> if buffer errors or interrupts occur
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">NoSuchElementException</span><span class="comment"> if the event is not found
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">FoXMLEvent</span> <span class="variable-name">getStartElement</span>
+                    (<span class="type">UriLocalName</span>[] <span class="variable-name">list</span>, <span class="type">boolean</span> <span class="variable-name">discardWhiteSpace</span>)
+        <span class="keyword">throws</span> <span class="type">FOPException</span>
+    {
+        <span class="type">FoXMLEvent</span> <span class="variable-name">ev</span>;
+        <span class="keyword">do</span> {
+            ev = expectStartElement(list, discardWhiteSpace);
+            <span class="keyword">if</span> (ev != <span class="jde-java-font-lock-constant">null</span>) <span class="keyword">return</span> ev;
+            <span class="comment">// The non-matching event has been pushed back.
+</span>            <span class="comment">// Get it and discard.  Note that if the first attempt to
+</span>            <span class="comment">// getEvent() returns null, the expectStartElement() calls
+</span>            <span class="comment">// will throw a NoSuchElementException
+</span>            ev = getEvent();
+            pool.surrenderEvent(ev);
+        } <span class="keyword">while</span> (ev != <span class="jde-java-font-lock-constant">null</span>);
+        <span class="comment">// Exit from this while loop is only by discovery of null event
+</span>        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">NoSuchElementException</span>
+                    (&quot;<span class="string">StartElement from list not found.</span>&quot;);
+    }
+
+    <span class="comment">/**
+     * Expect one of an array of possible STARTELEMENT events.  The next
+     * STARTELEMENT must have a URI index and local name which match
+     * an element of the argument &lt;tt&gt;UriLocalName[]&lt;/tt&gt; list.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">list</span><span class="comment"> an &lt;tt&gt;UriLocalName[]&lt;/tt&gt; array containing the
+     * namespace Uri index and LocalName
+     * of possible events, one of which must be the next returned.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">discardWhiteSpace</span><span class="comment"> - if true, discard any &lt;tt&gt;characters&lt;/tt&gt;
+     * events which contain only whitespace.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> the matching STARTELEMENT event. If the next
+     * event detected is not of the required type, &lt;tt&gt;null&lt;/tt&gt; is returned.
+     * The erroneous event is pushed back.
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">FOPException</span><span class="comment"> if buffer errors or interrupts occur
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">NoSuchElementException</span><span class="comment"> if end of buffer detected.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">FoXMLEvent</span> <span class="variable-name">expectStartElement</span>
+                    (<span class="type">UriLocalName</span>[] <span class="variable-name">list</span>, <span class="type">boolean</span> <span class="variable-name">discardWhiteSpace</span>)
+        <span class="keyword">throws</span> <span class="type">FOPException</span>
+    {
+        <span class="type">FoXMLEvent</span> <span class="variable-name">ev</span>;
+        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable-name" id="i">i</span> = <span class="jde-java-font-lock-number">0</span>; i &lt; list.length; i++) {
+            ev = expectStartElement(list[i].uriIndex,
+                                    list[i].localName,
+                                    discardWhiteSpace);
+            <span class="comment">// Found it!
+</span>            <span class="keyword">if</span> (ev != <span class="jde-java-font-lock-constant">null</span>) <span class="keyword">return</span> ev;
+        }
+        <span class="keyword">return</span> <span class="jde-java-font-lock-constant">null</span>;
+    }
+
+    <span class="comment">/**
+     * Get one of a array of possible STARTELEMENT events.  Scan and discard
+     * events until a STARTELEMENT event is found whose &lt;tt&gt;QName&lt;/tt&gt;
+     * matches one of those in the argument &lt;tt&gt;String[]&lt;/tt&gt; array.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">list</span><span class="comment"> a &lt;tt&gt;String[]&lt;/tt&gt; array containing &lt;tt&gt;QName&lt;/tt&gt;s,
+     * one of which is required.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">discardWhiteSpace</span><span class="comment"> - if true, discard any &lt;tt&gt;characters&lt;/tt&gt;
+     * events which contain only whitespace.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> the next matching STARTELEMENT event from the buffer.
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">FOPException</span><span class="comment"> if buffer errors or interrupts occur
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">NoSuchElementException</span><span class="comment"> if the event is not found
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">FoXMLEvent</span> <span class="function-name">getStartElement</span>(<span class="type">String</span>[] <span class="variable-name">list</span>, <span class="type">boolean</span> <span class="variable-name">discardWhiteSpace</span>)
+        <span class="keyword">throws</span> <span class="type">FOPException</span>
+    {
+        <span class="type">FoXMLEvent</span> <span class="variable-name">ev</span>;
+        <span class="keyword">do</span> {
+            ev = expectStartElement(list, discardWhiteSpace);
+            <span class="keyword">if</span> (ev != <span class="jde-java-font-lock-constant">null</span>) <span class="keyword">return</span> ev;
+            <span class="comment">// The non-matching event has been pushed back.
+</span>            <span class="comment">// Get it and discard.  Note that if the first attempt to
+</span>            <span class="comment">// getEvent() returns null, the expectStartElement() calls
+</span>            <span class="comment">// will throw a NoSuchElementException
+</span>            ev = getEvent();
+            pool.surrenderEvent(ev);
+        } <span class="keyword">while</span> (ev != <span class="jde-java-font-lock-constant">null</span>);
+        <span class="comment">// Exit from this while loop is only by discovery of null event
+</span>        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">NoSuchElementException</span>
+                    (&quot;<span class="string">StartElement from array not found.</span>&quot;);
+    }
+
+    <span class="comment">/**
+     * Expect one of an array of possible STARTELEMENT events.  The next
+     * STARTELEMENT must have a &lt;tt&gt;QName&lt;/tt&gt; which matches an element
+     * of the argument &lt;tt&gt;String[]&lt;/tt&gt; list.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">list</span><span class="comment"> a &lt;tt&gt;String[]&lt;/tt&gt; array containing &lt;tt&gt;QName&lt;/tt&gt;s
+     * of possible events, one of which must be the next returned.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">discardWhiteSpace</span><span class="comment"> - if true, discard any &lt;tt&gt;characters&lt;/tt&gt;
+     * events which contain only whitespace.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> the matching STARTELEMENT event.If the next
+     * event detected is not of the required type, &lt;tt&gt;null&lt;/tt&gt; is returned.
+     * The erroneous event is pushed back.
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">FOPException</span><span class="comment"> if buffer errors or interrupts occur
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">NoSuchElementException</span><span class="comment"> if end of buffer detected.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">FoXMLEvent</span> <span class="variable-name">expectStartElement</span>
+                                    (<span class="type">String</span>[] <span class="variable-name">list</span>, <span class="type">boolean</span> <span class="variable-name">discardWhiteSpace</span>)
+        <span class="keyword">throws</span> <span class="type">FOPException</span>
+    {
+        <span class="type">FoXMLEvent</span> <span class="variable-name">ev</span>;
+        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable-name">i</span> = <span class="jde-java-font-lock-number">0</span>; i &lt; list.length; i++) {
+            ev = expectStartElement(list[i], discardWhiteSpace);
+            <span class="comment">// Found it!
+</span>            <span class="keyword">if</span> (ev != <span class="jde-java-font-lock-constant">null</span>) <span class="keyword">return</span> ev;
+        }
+        <span class="keyword">return</span> <span class="jde-java-font-lock-constant">null</span>;
+    }
+
+    <span class="comment">/**
+     * Get one of a array of possible STARTELEMENT events.  Scan and discard
+     * events until a STARTELEMENT event is found which is in the fo:
+     * namespace and whose FO type matches one of those in the argument
+     * &lt;tt&gt;int&lt;/tt&gt; array.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">list</span><span class="comment"> an &lt;tt&gt;int[]&lt;/tt&gt; array containing FO types
+     * one of which is required.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">discardWhiteSpace</span><span class="comment"> - if true, discard any &lt;tt&gt;characters&lt;/tt&gt;
+     * events which contain only whitespace.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> the next matching STARTELEMENT event from the buffer.
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">FOPException</span><span class="comment"> if buffer errors or interrupts occur
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">NoSuchElementException</span><span class="comment"> if the event is not found
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">FoXMLEvent</span> <span class="function-name">getStartElement</span>(<span class="type">int</span>[] <span class="variable-name">list</span>, <span class="type">boolean</span> <span class="variable-name">discardWhiteSpace</span>)
+        <span class="keyword">throws</span> <span class="type">FOPException</span>
+    {
+        <span class="type">FoXMLEvent</span> <span class="variable-name">ev</span>;
+        <span class="keyword">do</span> {
+            ev = expectStartElement(list, discardWhiteSpace);
+            <span class="keyword">if</span> (ev != <span class="jde-java-font-lock-constant">null</span>) <span class="keyword">return</span> ev;
+            <span class="comment">// The non-matching event has been pushed back.
+</span>            <span class="comment">// Get it and discard.  Note that if the first attempt to
+</span>            <span class="comment">// getEvent() returns null, the expectStartElement() calls
+</span>            <span class="comment">// will throw a NoSuchElementException
+</span>            ev = getEvent();
+            pool.surrenderEvent(ev);
+        } <span class="keyword">while</span> (ev != <span class="jde-java-font-lock-constant">null</span>);
+        <span class="comment">// Exit from this while loop is only by discovery of null event
+</span>        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">NoSuchElementException</span>
+                    (&quot;<span class="string">StartElement from array not found.</span>&quot;);
+    }
+
+    <span class="comment">/**
+     * Expect one of an array of possible STARTELEMENT events.  The next
+     * STARTELEMENT must be in the fo: namespace, and must have an FO type
+     * which matches one of those in the argument &lt;tt&gt;int[]&lt;/tt&gt; list.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">list</span><span class="comment"> a &lt;tt&gt;int[]&lt;/tt&gt; array containing the FO types
+     * of possible events, one of which must be the next returned.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">discardWhiteSpace</span><span class="comment"> - if true, discard any &lt;tt&gt;characters&lt;/tt&gt;
+     * events which contain only whitespace.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> the matching STARTELEMENT event.If the next
+     * event detected is not of the required type, &lt;tt&gt;null&lt;/tt&gt; is returned.
+     * The erroneous event is pushed back.
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">FOPException</span><span class="comment"> if buffer errors or interrupts occur
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">NoSuchElementException</span><span class="comment"> if end of buffer detected.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">FoXMLEvent</span> <span class="variable-name">expectStartElement</span>
+                                    (<span class="type">int</span>[] <span class="variable-name">list</span>, <span class="type">boolean</span> <span class="variable-name">discardWhiteSpace</span>)
+        <span class="keyword">throws</span> <span class="type">FOPException</span>
+    {
+        <span class="type">FoXMLEvent</span> <span class="variable-name">ev</span>;
+        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable-name">i</span> = <span class="jde-java-font-lock-number">0</span>; i &lt; list.length; i++) {
+            ev = expectStartElement(list[i], discardWhiteSpace);
+            <span class="comment">// Found it!
+</span>            <span class="keyword">if</span> (ev != <span class="jde-java-font-lock-constant">null</span>) <span class="keyword">return</span> ev;
+        }
+        <span class="keyword">return</span> <span class="jde-java-font-lock-constant">null</span>;
+    }
+
+    <span class="comment">/**
+     * Get one of a &lt;tt&gt;BitSet&lt;/tt&gt; of possible STARTELEMENT events.  Scan
+     * and discard events until a STARTELEMENT event is found which is in
+     * the fo: namespace and whose FO type matches one of those in the
+     * argument &lt;tt&gt;BitSet&lt;/tt&gt;.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name" id="set">set</span><span class="comment"> a &lt;tt&gt;BitSet&lt;/tt&gt; containing FO types one of which is
+     * required.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">discardWhiteSpace</span><span class="comment"> - if true, discard any &lt;tt&gt;characters&lt;/tt&gt;
+     * events which contain only whitespace.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> the next matching STARTELEMENT event from the buffer.
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">FOPException</span><span class="comment"> if buffer errors or interrupts occur
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">NoSuchElementException</span><span class="comment"> if the event is not found
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">FoXMLEvent</span> <span class="function-name">getStartElement</span>(<span class="type">BitSet</span> <span class="variable-name">set</span>, <span class="type">boolean</span> <span class="variable-name">discardWhiteSpace</span>)
+        <span class="keyword">throws</span> <span class="type">FOPException</span>
+    {
+        <span class="type">FoXMLEvent</span> <span class="variable-name">ev</span>;
+        <span class="keyword">do</span> {
+            <span class="keyword">try</span> {
+                ev = expectStartElement(set, discardWhiteSpace);
+                <span class="keyword">if</span> (ev != <span class="jde-java-font-lock-constant">null</span>) <span class="keyword">return</span> ev;
+                <span class="comment">// The non-matching event has been pushed back.
+</span>                <span class="comment">// Get it and discard.  Note that if the first attempt to
+</span>                <span class="comment">// getEvent() returns null, the expectStartElement() calls
+</span>                <span class="comment">// will throw a NoSuchElementException
+</span>                ev = getEvent();
+                pool.surrenderEvent(ev);
+            } <span class="keyword">catch</span>(<span class="type">UnexpectedStartElementException</span> <span class="variable-name">e</span>) {
+                ev = getEvent();
+                pool.surrenderEvent(ev);
+            }
+        } <span class="keyword">while</span> (ev != <span class="jde-java-font-lock-constant">null</span>);
+        <span class="comment">// Exit from this while loop is only by discovery of null event
+</span>        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">NoSuchElementException</span>
+                    (&quot;<span class="string">StartElement from BitSet not found.</span>&quot;);
+    }
+
+    <span class="comment">/**
+     * Expect one of an &lt;tt&gt;BitSet&lt;/tt&gt; of possible STARTELEMENT events.
+     * The next STARTELEMENT must be in the fo: namespace, and must have an
+     * FO type which matches one of those in the argument &lt;tt&gt;BitSet&lt;/tt&gt;.
+     * &lt;p&gt;TODO:&lt;br&gt;
+     * This method should be retro-fitted to list and array versions.
+     *
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">set</span><span class="comment"> a &lt;tt&gt;BitSet&lt;/tt&gt; containing the FO types
+     * of possible events, one of which must be the next returned.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">discardWhiteSpace</span><span class="comment"> - if true, discard any &lt;tt&gt;characters&lt;/tt&gt;
+     * events which contain only whitespace.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> the matching STARTELEMENT event.If the next
+     * event detected is not of the required type, &lt;tt&gt;null&lt;/tt&gt; is returned.
+     * The erroneous event is pushed back.
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">FOPException</span><span class="comment"> if buffer errors or interrupts occur
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">NoSuchElementException</span><span class="comment"> if end of buffer detected.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">FoXMLEvent</span> <span class="variable-name">expectStartElement</span>
+                                    (<span class="type">BitSet</span> <span class="variable-name">set</span>, <span class="type">boolean</span> <span class="variable-name">discardWhiteSpace</span>)
+        <span class="keyword">throws</span> <span class="type">FOPException</span>, <span class="type">UnexpectedStartElementException</span>
+    {
+        <span class="type">FoXMLEvent</span> <span class="variable-name">ev</span>;
+        ev = expectTypedEvent(XMLEvent.<span class="jde-java-font-lock-constant">STARTELEMENT</span>, discardWhiteSpace);
+        <span class="keyword">if</span> (ev == <span class="jde-java-font-lock-constant">null</span>) <span class="keyword">return</span> ev;
+
+        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable-name">i</span> = set.nextSetBit(<span class="jde-java-font-lock-number">0</span>); i &gt;= <span class="jde-java-font-lock-number">0</span>; i = set.nextSetBit(++i)) {
+            <span class="keyword">if</span> (ev.foType == i)
+                <span class="keyword">return</span> ev; <span class="comment">// Found it!
+</span>        }
+        <span class="comment">// Not found - push the STARTELEMENT event back and throw an
+</span>        <span class="comment">// UnexpectedStartElementException
+</span>        pushBack(ev);
+        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">UnexpectedStartElementException</span>
+                (&quot;<span class="string">Unexpected START element: </span>&quot; + ev.getQName());
+    }
+
+    <span class="comment">/**
+     * Expect that the next element will be a STARTELEMENT for one of the
+     * flow objects which are members of %block; from
+     * &lt;b&gt;</span><span class="jde-java-font-lock-bold">6.2 Formatting Object Content</span><span class="comment">&lt;/b&gt;, including out-of-line flow
+     * objects which may occur except as descendents of out-of-line formatting
+     * objects.  White space is discarded.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> the &lt;tt&gt;FoXMLEvent found. If any other events are encountered
+     * return &lt;tt&gt;null&lt;/tt&gt;.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">FoXMLEvent</span> <span class="function-name" id="expectBlock">expectBlock</span>()
+        <span class="keyword">throws</span> <span class="type">FOPException</span>, <span class="type">UnexpectedStartElementException</span>
+    {
+        <span class="keyword">return</span> expectStartElement
+                (FObjectSets.blockEntity, XMLEvent.<span class="jde-java-font-lock-constant" id="DISCARD_W_SPACE">DISCARD_W_SPACE</span>);
+    }
+
+    <span class="comment">/**
+     * Expect that the next element will be a STARTELEMENT for one of the
+     * flow objects which are members of %block; from
+     * &lt;b&gt;</span><span class="jde-java-font-lock-bold">6.2 Formatting Object Content</span><span class="comment">&lt;/b&gt;, excluding out-of-line flow
+     * objects which may not occur as descendents of out-of-line formatting
+     * objects.  White space is discarded.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> the &lt;tt&gt;FoXMLEvent found. If any other events are encountered
+     * return &lt;tt&gt;null&lt;/tt&gt;.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">FoXMLEvent</span> <span class="function-name" id="expectOutOfLineBlock">expectOutOfLineBlock</span>()
+        <span class="keyword">throws</span> <span class="type">FOPException</span>, <span class="type">UnexpectedStartElementException</span>
+    {
+        <span class="keyword">return</span> expectStartElement
+                (FObjectSets.outOfLineBlockSet, XMLEvent.<span class="jde-java-font-lock-constant">DISCARD_W_SPACE</span>);
+    }
+
+    <span class="comment">/**
+     * Expect that the next element will be a STARTELEMENT for one of the
+     * flow objects which are members of (#PCDATA|%inline;) from
+     * &lt;b&gt;</span><span class="jde-java-font-lock-bold">6.2 Formatting Object Content</span><span class="comment">&lt;/b&gt;, including out-of-line flow
+     * objects which may occur except as descendents of out-of-line
+     * formatting objects.  White space is retained, and
+     * will appear as #PCDATA, i.e, as an instance of FoCharacters.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> the &lt;tt&gt;FoXMLEvent found. If any other events are encountered
+     * return &lt;tt&gt;null&lt;/tt&gt;.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">FoXMLEvent</span> <span class="function-name" id="expectPcdataOrInline">expectPcdataOrInline</span>()
+        <span class="keyword">throws</span> <span class="type">FOPException</span>, <span class="type">UnexpectedStartElementException</span>
+    {
+        <span class="type">FoXMLEvent</span> <span class="variable-name">ev</span> = expectStartElement
+                (FObjectSets.normalPcdataInlineSet, XMLEvent.<span class="jde-java-font-lock-constant" id="RETAIN_W_SPACE">RETAIN_W_SPACE</span>);
+        <span class="keyword">if</span> (ev == <span class="jde-java-font-lock-constant">null</span>)
+            ev = expectCharacters();
+        <span class="keyword">return</span> ev;
+    }
+
+    <span class="comment">/**
+     * Expect that the next element will be a STARTELEMENT for one of the
+     * flow objects which are members of (#PCDATA|%inline;) from
+     * &lt;b&gt;</span><span class="jde-java-font-lock-bold">6.2 Formatting Object Content</span><span class="comment">&lt;/b&gt;, excluding out-of-line flow
+     * objects which may not occur as descendents of out-of-line formatting
+     * objects.  White space is retained, and
+     * will appear as #PCDATA, i.e, as an instance of FoCharacters.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> the &lt;tt&gt;FoXMLEvent found. If any other events are encountered
+     * return &lt;tt&gt;null&lt;/tt&gt;.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">FoXMLEvent</span> <span class="function-name" id="expectOutOfLinePcdataOrInline">expectOutOfLinePcdataOrInline</span>()
+        <span class="keyword">throws</span> <span class="type">FOPException</span>, <span class="type">UnexpectedStartElementException</span>
+    {
+        <span class="type">FoXMLEvent</span> <span class="variable-name">ev</span> = expectStartElement
+                    (FObjectSets.inlineEntity, XMLEvent.<span class="jde-java-font-lock-constant">RETAIN_W_SPACE</span>);
+        <span class="keyword">if</span> (ev == <span class="jde-java-font-lock-constant">null</span>)
+            ev = expectCharacters();
+        <span class="keyword">return</span> ev;
+    }
+
+    <span class="comment">/**
+     * Expect that the next element will be a STARTELEMENT for one of the
+     * flow objects which are members of (#PCDATA|%inline;|%block;) from
+     * &lt;b&gt;</span><span class="jde-java-font-lock-bold">6.2 Formatting Object Content</span><span class="comment">&lt;/b&gt;, including out-of-line flow
+     * objects which may occur except as descendents of out-of-line
+     * formatting objects.  White space is retained, and
+     * will appear as #PCDATA, i.e, as an instance of FoCharacters.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> the &lt;tt&gt;FoXMLEvent&lt;/tt&gt; found. If any other events are
+     * encountered return &lt;tt&gt;null&lt;/tt&gt;.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">FoXMLEvent</span> <span class="function-name" id="expectPcdataOrInlineOrBlock">expectPcdataOrInlineOrBlock</span>()
+        <span class="keyword">throws</span> <span class="type">FOPException</span>, <span class="type">UnexpectedStartElementException</span>
+    {
+        <span class="type">FoXMLEvent</span> <span class="variable-name">ev</span> = expectStartElement
+            (FObjectSets.normalPcdataBlockInlineSet, XMLEvent.<span class="jde-java-font-lock-constant">RETAIN_W_SPACE</span>);
+        <span class="keyword">if</span> (ev == <span class="jde-java-font-lock-constant">null</span>)
+            ev = expectCharacters();
+        <span class="keyword">return</span> ev;
+    }
+
+    <span class="comment">/**
+     * Expect that the next element will be a STARTELEMENT for one of the
+     * flow objects which are members of (#PCDATA|%inline;|%block;) from
+     * &lt;b&gt;</span><span class="jde-java-font-lock-bold">6.2 Formatting Object Content</span><span class="comment">&lt;/b&gt;, excluding out-of-line flow
+     * objects which may not occur as descendents of out-of-line formatting
+     * objects.  White space is retained, and
+     * will appear as #PCDATA, i.e, as an instance of FoCharacters.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> the &lt;tt&gt;FoXMLEvent&lt;/tt&gt; found. If any other events are
+     * encountered return &lt;tt&gt;null&lt;/tt&gt;.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">FoXMLEvent</span> <span class="function-name" id="expectOutOfLinePcdataOrInlineOrBlock">expectOutOfLinePcdataOrInlineOrBlock</span>()
+        <span class="keyword">throws</span> <span class="type">FOPException</span>, <span class="type">UnexpectedStartElementException</span>
+    {
+        <span class="type">FoXMLEvent</span> <span class="variable-name">ev</span> = expectStartElement
+            (FObjectSets.outOfLinePcdataBlockInlineSet,
+                                                     XMLEvent.<span class="jde-java-font-lock-constant">RETAIN_W_SPACE</span>);
+        <span class="keyword">if</span> (ev == <span class="jde-java-font-lock-constant">null</span>)
+            ev = expectCharacters();
+        <span class="keyword">return</span> ev;
+    }
+
+    <span class="comment">/**
+     * Get the next ENDELEMENT event from the buffer.  Discard any other
+     * events preceding the ENDELEMENT event.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> an ENDELEMENT event
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">FOPException</span><span class="comment"> if buffer errors or interrupts occur
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">NoSuchElementException</span><span class="comment"> if the event is not found
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">FoXMLEvent</span> <span class="function-name" id="getEndElement">getEndElement</span>() <span class="keyword">throws</span> <span class="type">FOPException</span> {
+        <span class="keyword">return</span> getTypedEvent(XMLEvent.<span class="jde-java-font-lock-constant" id="ENDELEMENT">ENDELEMENT</span>);
+    }
+
+    <span class="comment">/**
+     * Return the next element if it is an ENDELEMENT.  If the next
+     * element is not of the required type, push it back onto the buffer.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">discardWhiteSpace</span><span class="comment"> - if true, discard any &lt;tt&gt;characters&lt;/tt&gt;
+     * events which contain only whitespace.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> a matching ENDELEMENT event.  If the next
+     * event detected is not of the required type, &lt;tt&gt;null&lt;/tt&gt; is returned.
+     * The erroneous event is pushed back.
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">FOPException</span><span class="comment"> if buffer errors or interrupts occur
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">NoSuchElementException</span><span class="comment"> if ENDELEMENT is not the next
+     * event detected.  The erroneous event is pushed back.
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">NoSuchElementException</span><span class="comment"> if end of buffer detected.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">FoXMLEvent</span> <span class="function-name" id="expectEndElement">expectEndElement</span>(<span class="type">boolean</span> <span class="variable-name">discardWhiteSpace</span>)
+                <span class="keyword">throws</span> <span class="type">FOPException</span>
+    {
+        <span class="keyword">return</span> expectTypedEvent(XMLEvent.<span class="jde-java-font-lock-constant">ENDELEMENT</span>, discardWhiteSpace);
+    }
+
+    <span class="comment">/**
+     * Get the next ENDELEMENT event with the given &lt;tt&gt;QName&lt;/tt&gt;
+     * from the buffer.  Discard any other events preceding the
+     * ENDELEMENT event.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">qName</span><span class="comment"> a &lt;tt&gt;String&lt;/tt&gt; with the &lt;tt&gt;QName&lt;/tt&gt; of the
+     * required STARTELEMENT
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> an ENDELEMENT event
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">FOPException</span><span class="comment"> if buffer errors or interrupts occur
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">NoSuchElementException</span><span class="comment"> if the event is not found
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">FoXMLEvent</span> <span class="function-name">getEndElement</span>(<span class="type">String</span> <span class="variable-name">qName</span>) <span class="keyword">throws</span> <span class="type">FOPException</span>
+    {
+        <span class="keyword">return</span> getTypedEvent(XMLEvent.<span class="jde-java-font-lock-constant">ENDELEMENT</span>, qName);
+    }
+
+    <span class="comment">/**
+     * Return the next element if it is an ENDELEMENT with the given
+     * &lt;tt&gt;QName&lt;/tt&gt;.  If the next
+     * element is not of the required type, push it back onto the buffer.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">qName</span><span class="comment"> a &lt;tt&gt;String&lt;/tt&gt; with the &lt;tt&gt;QName&lt;/tt&gt; of the
+     * required ENDELEMENT
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">discardWhiteSpace</span><span class="comment"> - if true, discard any &lt;tt&gt;characters&lt;/tt&gt;
+     * events which contain only whitespace.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> an ENDELEMENT with the given qname.  If the next
+     * event detected is not an ENDELEMENT, &lt;tt&gt;null&lt;/tt&gt; is returned.
+     * The erroneous event is pushed back.
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">FOPException</span><span class="comment"> if buffer errors or interrupts occur
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">NoSuchElementException</span><span class="comment"> if end of buffer detected.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">FoXMLEvent</span> <span class="function-name">expectEndElement</span>(<span class="type">String</span> <span class="variable-name">qName</span>, <span class="type">boolean</span> <span class="variable-name">discardWhiteSpace</span>)
+        <span class="keyword">throws</span> <span class="type">FOPException</span>
+    {
+        <span class="keyword">return</span> expectTypedEvent(XMLEvent.<span class="jde-java-font-lock-constant">ENDELEMENT</span>, qName, discardWhiteSpace);
+    }
+
+    <span class="comment">/**
+     * Get the next ENDELEMENT event with the given URI index and local name
+     * from the buffer.  Discard any other events preceding the
+     * ENDELEMENT event.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">uriIndex</span><span class="comment"> an &lt;tt&gt;int&lt;/tt&gt; with the index of the URI of the
+     * required URI
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">localName</span><span class="comment"> a &lt;tt&gt;String&lt;/tt&gt; with the local name of the
+     * required ENDELEMENT
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> an ENDELEMENT event
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">FOPException</span><span class="comment"> if buffer errors or interrupts occur
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">NoSuchElementException</span><span class="comment"> if the event is not found
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">FoXMLEvent</span> <span class="function-name">getEndElement</span>(<span class="type">int</span> <span class="variable-name">uriIndex</span>, <span class="type">String</span> <span class="variable-name">localName</span>)
+        <span class="keyword">throws</span> <span class="type">FOPException</span>
+    {
+        <span class="keyword">return</span> getTypedEvent(XMLEvent.<span class="jde-java-font-lock-constant">ENDELEMENT</span>, uriIndex, localName);
+    }
+
+    <span class="comment">/**
+     * Return the next element if it is an ENDELEMENT with the given
+     * URI index and local name.  If the next
+     * element is not of the required type, push it back onto the buffer.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">uriIndex</span><span class="comment"> an &lt;tt&gt;int&lt;/tt&gt; with the index of the URI of the
+     * required URI
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">localName</span><span class="comment"> a &lt;tt&gt;String&lt;/tt&gt; with the local name of the
+     * required ENDELEMENT
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">discardWhiteSpace</span><span class="comment"> - if true, discard any &lt;tt&gt;characters&lt;/tt&gt;
+     * events which contain only whitespace.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> a matching ENDELEMENT event.
+     * If the next
+     * event detected is not an ENDELEMENT, &lt;tt&gt;null&lt;/tt&gt; is returned.
+     * The erroneous event is pushed back.
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">FOPException</span><span class="comment"> if buffer errors or interrupts occur
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">NoSuchElementException</span><span class="comment"> if end of buffer detected.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">FoXMLEvent</span> <span class="variable-name">expectEndElement</span>
+                (<span class="type">int</span> <span class="variable-name">uriIndex</span>, <span class="type">String</span> <span class="variable-name">localName</span>, <span class="type">boolean</span> <span class="variable-name">discardWhiteSpace</span>)
+        <span class="keyword">throws</span> <span class="type">FOPException</span>
+    {
+        <span class="keyword">return</span> expectTypedEvent
+                (XMLEvent.<span class="jde-java-font-lock-constant">ENDELEMENT</span>, uriIndex, localName, discardWhiteSpace);
+    }
+
+    <span class="comment">/**
+     * Get the next ENDELEMENT event with the given Fo type
+     * from the buffer.  Discard any other events preceding the
+     * ENDELEMENT event.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">foType</span><span class="comment"> - the FO type of the required ENDELEMENT
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> a matching ENDELEMENT event.
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">FOPException</span><span class="comment"> if buffer errors or interrupts occur
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">NoSuchElementException</span><span class="comment"> if the event is not found
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">FoXMLEvent</span> <span class="function-name">getEndElement</span>(<span class="type">int</span> <span class="variable-name">foType</span>) <span class="keyword">throws</span> <span class="type">FOPException</span>
+    {
+        <span class="keyword">return</span> getTypedEvent(XMLEvent.<span class="jde-java-font-lock-constant">ENDELEMENT</span>, foType);
+    }
+
+    <span class="comment">/**
+     * Return the next element if it is an ENDELEMENT with the given
+     * FO type.  If the next
+     * element is not of the required type, push it back onto the buffer.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">foType</span><span class="comment"> - the FO type of the required ENDELEMENT
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">discardWhiteSpace</span><span class="comment"> - if true, discard any &lt;tt&gt;characters&lt;/tt&gt;
+     * events which contain only whitespace.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> a matching ENDELEMENT.  If the next
+     * event detected is not an ENDELEMENT, &lt;tt&gt;null&lt;/tt&gt; is returned.
+     * The erroneous event is pushed back.
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">FOPException</span><span class="comment"> if buffer errors or interrupts occur
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">NoSuchElementException</span><span class="comment"> if end of buffer detected.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">FoXMLEvent</span> <span class="function-name">expectEndElement</span>(<span class="type">int</span> <span class="variable-name">foType</span>, <span class="type">boolean</span> <span class="variable-name">discardWhiteSpace</span>)
+        <span class="keyword">throws</span> <span class="type">FOPException</span>
+    {
+        <span class="keyword">return</span> expectTypedEvent
+                            (XMLEvent.<span class="jde-java-font-lock-constant">ENDELEMENT</span>, foType, discardWhiteSpace);
+    }
+
+    <span class="comment">/**
+     * Get the next ENDELEMENT event, with the same URI index and local name
+     * as the &lt;tt&gt;FoXMLEvent&lt;/tt&gt; argument, from the buffer.
+     * Discard any other events preceding the ENDELEMENT event.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name" id="event">event</span><span class="comment"> an &lt;tt&gt;FoXMLEvent&lt;/tt&gt;.  Only the uriIndex and the
+     * localName from the event are used.  It is intended that the FoXMLEvent
+     * returned to the corresponding get/expectStartElement() call be used.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> an ENDELEMENT event
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">FOPException</span><span class="comment"> if buffer errors or interrupts occur
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">NoSuchElementException</span><span class="comment"> if the event is not found
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">FoXMLEvent</span> <span class="function-name">getEndElement</span>(<span class="type">FoXMLEvent</span> <span class="variable-name">event</span>) <span class="keyword">throws</span> <span class="type">FOPException</span>
+    {
+        <span class="keyword">if</span> (event.foType != FObjectNames.<span class="jde-java-font-lock-constant" id="NO_FO">NO_FO</span>)
+            <span class="keyword">return</span> getTypedEvent(XMLEvent.<span class="jde-java-font-lock-constant">ENDELEMENT</span>, event.foType);
+        <span class="keyword">return</span> getTypedEvent
+                    (XMLEvent.<span class="jde-java-font-lock-constant">ENDELEMENT</span>, event.uriIndex, event.localName);
+    }
+
+    <span class="comment">/**
+     * Return the next element if it is an ENDELEMENT with the same
+     * URI index and local name as the &lt;tt&gt;FoXMLEvent argument&lt;/tt&gt;.  If the
+     * next element is not of the required type, push it back onto the buffer.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">event</span><span class="comment"> an &lt;tt&gt;FoXMLEvent&lt;/tt&gt;.  Only the uriIndex and the
+     * localName from the event are used.  It is intended that the FoXMLEvent
+     * returned to the corresponding get/expectStartElement() call be used.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">discardWhiteSpace</span><span class="comment"> - if true, discard any &lt;tt&gt;characters&lt;/tt&gt;
+     * events which contain only whitespace.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> a matching ENDELEMENT event.  If the next
+     * event detected is not an ENDELEMENT, &lt;tt&gt;null&lt;/tt&gt; is returned.
+     * The erroneous event is pushed back.
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">FOPException</span><span class="comment"> if buffer errors or interrupts occur
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">NoSuchElementException</span><span class="comment"> if end of buffer detected.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">FoXMLEvent</span> <span class="variable-name">expectEndElement</span>
+                                (<span class="type">FoXMLEvent</span> <span class="variable-name">event</span>, <span class="type">boolean</span> <span class="variable-name">discardWhiteSpace</span>)
+        <span class="keyword">throws</span> <span class="type">FOPException</span>
+    {
+        <span class="keyword">if</span> (event.foType != FObjectNames.<span class="jde-java-font-lock-constant">NO_FO</span>)
+            <span class="keyword">return</span> expectTypedEvent
+                    (XMLEvent.<span class="jde-java-font-lock-constant">ENDELEMENT</span>, event.foType, discardWhiteSpace);
+        <span class="keyword">return</span> expectTypedEvent
+                (XMLEvent.<span class="jde-java-font-lock-constant">ENDELEMENT</span>, event.uriIndex, event.localName,
+                                                         discardWhiteSpace);
+    }
+
+    <span class="comment">/**
+     * Get the next ENDELEMENT event, with the same URI index and local name
+     * as the &lt;tt&gt;FoXMLEvent&lt;/tt&gt; argument, from the buffer.
+     * Discard any other events preceding the ENDELEMENT event.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name" id="discardEvent">discardEvent</span><span class="comment"> the argument event may be discarded.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">event</span><span class="comment"> an &lt;tt&gt;FoXMLEvent&lt;/tt&gt;.  Only the uriIndex and the
+     * localName from the event are used.  It is intended that the FoXMLEvent
+     * returned to the corresponding get/expectStartElement() call be used.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> an ENDELEMENT event
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">FOPException</span><span class="comment"> if buffer errors or interrupts occur
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">NoSuchElementException</span><span class="comment"> if the event is not found
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">FoXMLEvent</span> <span class="function-name">getEndElement</span>(<span class="type">boolean</span> <span class="variable-name">discardEvent</span>, <span class="type">FoXMLEvent</span> <span class="variable-name">event</span>)
+        <span class="keyword">throws</span> <span class="type">FOPException</span>
+    {
+        <span class="type">FoXMLEvent</span> <span class="variable-name">ev</span>;
+        <span class="keyword">if</span> (event.foType != FObjectNames.<span class="jde-java-font-lock-constant">NO_FO</span>)
+            ev = getTypedEvent(XMLEvent.<span class="jde-java-font-lock-constant">ENDELEMENT</span>, event.foType);
+        <span class="keyword">else</span>
+            ev = getTypedEvent
+                    (XMLEvent.<span class="jde-java-font-lock-constant">ENDELEMENT</span>, event.uriIndex, event.localName);
+        <span class="keyword">if</span> (discardEvent) {
+            <span class="comment">//System.out.println(&quot;discardEvent&quot;);
+</span>            pool.surrenderEvent(event);
+        }
+        <span class="keyword">return</span> ev;
+    }
+
+    <span class="comment">/**
+     * Return the next element if it is an ENDELEMENT with the same
+     * URI index and local name as the &lt;tt&gt;FoXMLEvent argument&lt;/tt&gt;.  If the
+     * next element is not of the required type, push it back onto the buffer.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">discardEvent</span><span class="comment"> the argument event may be discarded.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">event</span><span class="comment"> an &lt;tt&gt;FoXMLEvent&lt;/tt&gt;.  Only the uriIndex and the
+     * localName from the event are used.  It is intended that the FoXMLEvent
+     * returned to the corresponding get/expectStartElement() call be used.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">discardWhiteSpace</span><span class="comment"> - if true, discard any &lt;tt&gt;characters&lt;/tt&gt;
+     * events which contain only whitespace.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> a matching ENDELEMENT event.  If the next
+     * event detected is not an ENDELEMENT, &lt;tt&gt;null&lt;/tt&gt; is returned.
+     * The erroneous event is pushed back.
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">FOPException</span><span class="comment"> if buffer errors or interrupts occur
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">NoSuchElementException</span><span class="comment"> if end of buffer detected.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">FoXMLEvent</span> <span class="variable-name">expectEndElement</span>
+        (<span class="type">boolean</span> <span class="variable-name">discardEvent</span>, <span class="type">FoXMLEvent</span> <span class="variable-name">event</span>, <span class="type">boolean</span> <span class="variable-name">discardWhiteSpace</span>)
+        <span class="keyword">throws</span> <span class="type">FOPException</span>
+    {
+        <span class="type">FoXMLEvent</span> <span class="variable-name">ev</span>;
+        <span class="keyword">if</span> (event.foType != FObjectNames.<span class="jde-java-font-lock-constant">NO_FO</span>)
+            ev = expectTypedEvent
+                    (XMLEvent.<span class="jde-java-font-lock-constant">ENDELEMENT</span>, event.foType, discardWhiteSpace);
+        <span class="keyword">else</span>
+            ev = expectTypedEvent
+                (XMLEvent.<span class="jde-java-font-lock-constant">ENDELEMENT</span>, event.uriIndex, event.localName,
+                                                         discardWhiteSpace);
+        <span class="keyword">if</span> (discardEvent)
+            pool.surrenderEvent(event);
+        <span class="keyword">return</span> ev;
+    }
+
+    <span class="comment">/**
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> a CHARACTERS event
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">FOPException</span><span class="comment"> if buffer errors or interrupts occur
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">NoSuchElementException</span><span class="comment"> if the event is not found
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">FoXMLEvent</span> <span class="function-name" id="getCharacters">getCharacters</span>() <span class="keyword">throws</span> <span class="type">FOPException</span> {
+        <span class="type">FoXMLEvent</span> <span class="variable-name">ev</span> = getEvent();
+        <span class="keyword">while</span> (ev != <span class="jde-java-font-lock-constant">null</span> &amp;&amp; ev.type != XMLEvent.<span class="jde-java-font-lock-constant">CHARACTERS</span>) {
+            pool.surrenderEvent(ev);
+            ev = getEvent();
+        }
+        <span class="keyword">if</span> (ev == <span class="jde-java-font-lock-constant">null</span>) {
+            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">NoSuchElementException</span>(&quot;<span class="string">Characters not found.</span>&quot;);
+        }
+        <span class="keyword">return</span> ev;
+    }
+
+    <span class="comment">/**
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> a CHARACTERS event.  If the next event detected is not
+     * a CHARACTERS event, &lt;tt&gt;null&lt;/tt&gt; is returned.
+     * The erroneous event is pushed back.
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">FOPException</span><span class="comment"> if buffer errors or interrupts occur
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">NoSuchElementException</span><span class="comment"> if end of buffer detected.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">FoXMLEvent</span> <span class="function-name" id="expectCharacters">expectCharacters</span>() <span class="keyword">throws</span> <span class="type">FOPException</span> {
+        <span class="type">FoXMLEvent</span> <span class="variable-name">ev</span> = getEvent();
+        <span class="keyword">if</span> (ev != <span class="jde-java-font-lock-constant">null</span> &amp;&amp; ev.type == XMLEvent.<span class="jde-java-font-lock-constant">CHARACTERS</span>) {
+            <span class="keyword">return</span> ev;
+        }
+        pushBack(ev);
+        <span class="keyword">return</span> <span class="jde-java-font-lock-constant">null</span>;
+    }
+
+}
+</pre>
+  </body>
+</html>

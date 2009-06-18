@@ -1,0 +1,385 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<!--
+  Copyright 2001-2002,2004 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<!-- Created by htmlize-0.67 in css mode. -->
+<html>
+  <head>
+    <title>FOPropertySets.java</title>
+    <style type="text/css">
+    <!--
+      body {
+        color: #000000;
+        background-color: #faf0e6;
+      } /* default */
+      .function-name {
+        color: #8b2323;
+        background-color: #faf0e6;
+      } /* font-lock-function-name-face */
+      .jde-java-font-lock-italic {
+        background-color: #faf0e6;
+        font-style: italic;
+      } /* jde-java-font-lock-italic-face */
+      .jde-java-font-lock-modifier {
+        color: #da70d6;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-modifier-face */
+      .keyword {
+        color: #8b0000;
+        background-color: #faf0e6;
+      } /* font-lock-keyword-face */
+      .variable-name {
+        color: #8b008b;
+        background-color: #faf0e6;
+      } /* font-lock-variable-name-face */
+      .string {
+        color: #008b00;
+        background-color: #faf0e6;
+      } /* font-lock-string-face */
+      .jde-java-font-lock-package {
+        color: #0000cd;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-package-face */
+      .jde-java-font-lock-constant {
+        color: #5f9ea0;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-constant-face */
+      .type {
+        color: #4682b4;
+        background-color: #faf0e6;
+      } /* font-lock-type-face */
+      .comment {
+        color: #00008b;
+        background-color: #faf0e6;
+      } /* font-lock-comment-face */
+      .jde-java-font-lock-number {
+        color: #bc8f8f;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-number-face */
+      a {
+        color: inherit;
+        background-color: inherit;
+        font: inherit;
+        text-decoration: inherit;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+    -->
+    </style>
+  </head>
+  <body>
+    <pre>
+<span class="comment">/*
+ * Copyright 2001-2002,2004 The Apache Software Foundation.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */</span>
+
+<span class="keyword">package</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">fo</span>;
+
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">java</span>.<span class="jde-java-font-lock-package">lang</span>.<span class="type">Character</span>;
+
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">java</span>.<span class="jde-java-font-lock-package">util</span>.<span class="type">HashMap</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">java</span>.<span class="jde-java-font-lock-package">util</span>.<span class="type">HashSet</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">java</span>.<span class="jde-java-font-lock-package">util</span>.<span class="type">StringTokenizer</span>;
+
+<span class="comment">// Only for tree property set partitions
+</span><span class="keyword">import</span> <span class="jde-java-font-lock-package">java</span>.<span class="jde-java-font-lock-package">util</span>.<span class="type">BitSet</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">java</span>.<span class="jde-java-font-lock-package">util</span>.<span class="type">Iterator</span>;
+
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">apps</span>.<span class="type">FOPException</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">fo</span>.<span class="type">FObjectNames</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">fo</span>.<span class="type">PropertySets</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">fo</span>.<span class="type">PropNames</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">fo</span>.<span class="type">FONode</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">datatypes</span>.<span class="type">Ints</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">datastructs</span>.<span class="type">ROIntArray</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">datastructs</span>.<span class="type">ROBitSet</span>;
+
+<span class="comment">/**
+ * Data class relating sets of properties to Flow Objects.
+ * @author &lt;a href=&quot;mailto:pbwest@powerup.com.au&quot;&gt;Peter B. West&lt;/a&gt;
+ */</span>
+
+<span class="jde-java-font-lock-modifier">public</span> <span class="keyword">class</span> <span class="function-name" id="FOPropertySetsClass">FOPropertySets</span> {
+
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">String</span> <span class="variable-name" id="tag">tag</span> = &quot;<span class="string">$Name$</span>&quot;;
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">String</span> <span class="variable-name" id="revision">revision</span> = &quot;<span class="string">$Revision$</span>&quot;;
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">String</span> <span class="variable-name" id="packageNamePrefix">packageNamePrefix</span> = &quot;<span class="string">org.apache.fop</span>&quot;;
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="type">String</span> <span class="function-name" id="getAttrSetName">getAttrSetName</span>(<span class="type">int</span> <span class="variable-name" id="ancestry">ancestry</span>) <span class="keyword">throws</span> <span class="type">FOPException</span> {
+        <span class="keyword">if</span> ((ancestry &amp; FONode.<span class="jde-java-font-lock-constant" id="MC_MARKER">MC_MARKER</span>) != <span class="jde-java-font-lock-number">0</span>)
+            <span class="keyword">return</span> &quot;<span class="string">MARKER</span>&quot;;
+        <span class="keyword">if</span> ((ancestry &amp; FONode.<span class="jde-java-font-lock-constant" id="FLOW">FLOW</span>) != <span class="jde-java-font-lock-number">0</span>)
+            <span class="keyword">return</span> &quot;<span class="string">FLOW</span>&quot;;
+        <span class="keyword">if</span> ((ancestry &amp; FONode.<span class="jde-java-font-lock-constant" id="STATIC">STATIC</span>) != <span class="jde-java-font-lock-number">0</span>)
+            <span class="keyword">return</span> &quot;<span class="string">STATIC</span>&quot;;
+        <span class="keyword">if</span> ((ancestry &amp; FONode.<span class="jde-java-font-lock-constant" id="TITLE">TITLE</span>) != <span class="jde-java-font-lock-number">0</span>)
+            <span class="keyword">return</span> &quot;<span class="string">TITLE</span>&quot;;
+        <span class="keyword">if</span> ((ancestry &amp; FONode.<span class="jde-java-font-lock-constant" id="PAGESEQ">PAGESEQ</span>) != <span class="jde-java-font-lock-number">0</span>)
+            <span class="keyword">return</span> &quot;<span class="string">PAGESEQ</span>&quot;;
+        <span class="keyword">if</span> ((ancestry &amp; FONode.<span class="jde-java-font-lock-constant" id="SEQ_MASTER">SEQ_MASTER</span>) != <span class="jde-java-font-lock-number">0</span>)
+            <span class="keyword">return</span> &quot;<span class="string">SEQ_MASTER</span>&quot;;
+        <span class="keyword">if</span> ((ancestry &amp; FONode.<span class="jde-java-font-lock-constant" id="LAYOUT">LAYOUT</span>) != <span class="jde-java-font-lock-number">0</span>)
+            <span class="keyword">return</span> &quot;<span class="string">LAYOUT_MASTER</span>&quot;;
+        <span class="keyword">if</span> ((ancestry &amp; FONode.<span class="jde-java-font-lock-constant" id="DECLARATIONS">DECLARATIONS</span>) != <span class="jde-java-font-lock-number">0</span>)
+            <span class="keyword">return</span> &quot;<span class="string">DECLARATIONS</span>&quot;;
+        <span class="keyword">if</span> ((ancestry &amp; FONode.<span class="jde-java-font-lock-constant" id="ROOT">ROOT</span>) != <span class="jde-java-font-lock-number">0</span>)
+            <span class="keyword">return</span> &quot;<span class="string">ROOT</span>&quot;;
+        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">FOPException</span>(&quot;<span class="string">Invalid attribute set: </span>&quot; + ancestry);
+    }
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="type">ROBitSet</span> <span class="function-name" id="getAttrROBitSet">getAttrROBitSet</span>(<span class="type">int</span> <span class="variable-name">ancestry</span>)
+            <span class="keyword">throws</span> <span class="type">FOPException</span>
+    {
+        <span class="keyword">if</span> ((ancestry &amp; FONode.<span class="jde-java-font-lock-constant">MC_MARKER</span>) != <span class="jde-java-font-lock-number">0</span>)
+            <span class="keyword">return</span> markerAllSet;
+        <span class="keyword">if</span> ((ancestry &amp; FONode.<span class="jde-java-font-lock-constant">FLOW</span>) != <span class="jde-java-font-lock-number">0</span>)
+            <span class="keyword">return</span> flowAllSet;
+        <span class="keyword">if</span> ((ancestry &amp; FONode.<span class="jde-java-font-lock-constant">STATIC</span>) != <span class="jde-java-font-lock-number">0</span>)
+            <span class="keyword">return</span> staticAllSet;
+        <span class="keyword">if</span> ((ancestry &amp; FONode.<span class="jde-java-font-lock-constant">TITLE</span>) != <span class="jde-java-font-lock-number">0</span>)
+            <span class="keyword">return</span> titleAllSet;
+        <span class="keyword">if</span> ((ancestry &amp; FONode.<span class="jde-java-font-lock-constant">PAGESEQ</span>) != <span class="jde-java-font-lock-number">0</span>)
+            <span class="keyword">return</span> pageSeqSet;
+        <span class="keyword">if</span> ((ancestry &amp; FONode.<span class="jde-java-font-lock-constant">SEQ_MASTER</span>) != <span class="jde-java-font-lock-number">0</span>)
+            <span class="keyword">return</span> seqMasterSet;
+        <span class="keyword">if</span> ((ancestry &amp; FONode.<span class="jde-java-font-lock-constant">LAYOUT</span>) != <span class="jde-java-font-lock-number">0</span>)
+            <span class="keyword">return</span> layoutMasterSet;
+        <span class="keyword">if</span> ((ancestry &amp; FONode.<span class="jde-java-font-lock-constant">DECLARATIONS</span>) != <span class="jde-java-font-lock-number">0</span>)
+            <span class="keyword">return</span> declarationsAll;
+        <span class="keyword">if</span> ((ancestry &amp; FONode.<span class="jde-java-font-lock-constant">ROOT</span>) != <span class="jde-java-font-lock-number">0</span>)
+            <span class="keyword">return</span> allProps;
+        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">FOPException</span>(&quot;<span class="string">Invalid attribute set: </span>&quot; + ancestry);
+    }
+
+    <span class="comment">/**
+     * Set of all properties available at fo:root.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROBitSet</span> <span class="variable-name" id="allProps">allProps</span>;
+
+    <span class="comment">/**
+     * set of all properties which are
+     * usable within the declarations subtree.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROBitSet</span> <span class="variable-name" id="declarationsAll">declarationsAll</span>;
+
+    <span class="comment">/**
+     * set of all properties which are
+     * usable within the page-sequence-master-set subtree.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROBitSet</span> <span class="variable-name" id="seqMasterSet">seqMasterSet</span>;
+
+    <span class="comment">/**
+     * set of all properties which are
+     * usable within the layout-master-set subtree.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROBitSet</span> <span class="variable-name" id="layoutMasterSet">layoutMasterSet</span>;
+
+    <span class="comment">/**
+     * set of all properties which are
+     * usable within the page sequence subtree.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROBitSet</span> <span class="variable-name" id="pageSeqSet">pageSeqSet</span>;
+
+    <span class="comment">/**
+     * set of all properties which are
+     * usable within the fo:flow subtree.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROBitSet</span> <span class="variable-name" id="flowAllSet">flowAllSet</span>;
+
+    <span class="comment">/**
+     * set of all properties which are
+     * usable &lt;i&gt;</span><span class="jde-java-font-lock-italic">within</span><span class="comment">&lt;/i&gt; the fo:marker subtree.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROBitSet</span> <span class="variable-name" id="markerAllSet">markerAllSet</span>;
+
+    <span class="comment">/**
+     * set of all properties which are
+     * usable within the fo:static-content subtree.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROBitSet</span> <span class="variable-name" id="staticAllSet">staticAllSet</span>;
+
+    <span class="comment">/**
+     * set of all properties which are
+     * usable within the fo:title subtree.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROBitSet</span> <span class="variable-name" id="titleAllSet">titleAllSet</span>;
+
+    <span class="jde-java-font-lock-modifier">static</span> {
+
+        <span class="comment">// fill the BitSet of all properties
+</span>        <span class="type">BitSet</span> <span class="variable-name" id="allprops">allprops</span> = <span class="keyword">new</span> <span class="type">BitSet</span>(PropNames.<span class="jde-java-font-lock-constant" id="LAST_PROPERTY_INDEX">LAST_PROPERTY_INDEX</span> + <span class="jde-java-font-lock-number">1</span>);
+        allprops.set(<span class="jde-java-font-lock-number">1</span>, PropNames.<span class="jde-java-font-lock-constant">LAST_PROPERTY_INDEX</span>);
+
+        allProps = <span class="keyword">new</span> <span class="type">ROBitSet</span>(allprops);
+
+        <span class="comment">//root only set of properties - properties for exclusive use on the
+</span>        <span class="comment">// root element
+</span>        <span class="type">BitSet</span> <span class="variable-name" id="rootonly">rootonly</span> = <span class="keyword">new</span> <span class="type">BitSet</span>(PropNames.<span class="jde-java-font-lock-constant" id="MEDIA_USAGE">MEDIA_USAGE</span> + <span class="jde-java-font-lock-number">1</span>);
+        rootonly.set(PropNames.<span class="jde-java-font-lock-constant">MEDIA_USAGE</span>);
+
+        <span class="comment">//declarations only set of properties - properties for exclusive use
+</span>        <span class="comment">// in the declarations SUBTREE
+</span>        <span class="type">BitSet</span> <span class="variable-name" id="declarationsonly">declarationsonly</span> = <span class="keyword">new</span> <span class="type">BitSet</span>();
+        declarationsonly.set(PropNames.<span class="jde-java-font-lock-constant" id="COLOR_PROFILE_NAME">COLOR_PROFILE_NAME</span>);
+        declarationsonly.set(PropNames.<span class="jde-java-font-lock-constant" id="RENDERING_INTENT">RENDERING_INTENT</span>);
+
+        <span class="comment">// set of all declarations properties - properties which may be
+</span>        <span class="comment">// used in the declarations SUBTREE
+</span>        <span class="type">BitSet</span> <span class="variable-name" id="declarationsall">declarationsall</span> = (<span class="type">BitSet</span>)declarationsonly.clone();
+        declarationsall.set(PropNames.<span class="jde-java-font-lock-constant" id="SRC">SRC</span>);
+
+        declarationsAll = <span class="keyword">new</span> <span class="type">ROBitSet</span>(declarationsall);
+
+        <span class="comment">// seq-master-only set of properties for exclusive use within
+</span>        <span class="comment">// the page-sequence-master subtree
+</span>        <span class="type">BitSet</span> <span class="variable-name" id="seqmasteronly">seqmasteronly</span> = <span class="keyword">new</span> <span class="type">BitSet</span>();
+        seqmasteronly.set(PropNames.<span class="jde-java-font-lock-constant" id="MAXIMUM_REPEATS">MAXIMUM_REPEATS</span>);
+        seqmasteronly.set(PropNames.<span class="jde-java-font-lock-constant" id="PAGE_POSITION">PAGE_POSITION</span>);
+        seqmasteronly.set(PropNames.<span class="jde-java-font-lock-constant" id="ODD_OR_EVEN">ODD_OR_EVEN</span>);
+        seqmasteronly.set(PropNames.<span class="jde-java-font-lock-constant" id="BLANK_OR_NOT_BLANK">BLANK_OR_NOT_BLANK</span>);
+
+        <span class="comment">// seq-master-set set of properties for use within
+</span>        <span class="comment">// the page-sequence-master subtree
+</span>        <span class="type">BitSet</span> <span class="variable-name" id="seqmasterset">seqmasterset</span> = (<span class="type">BitSet</span>)seqmasteronly.clone();
+        seqmasterset.set(PropNames.<span class="jde-java-font-lock-constant" id="MASTER_NAME">MASTER_NAME</span>);
+        seqmasterset.set(PropNames.<span class="jde-java-font-lock-constant" id="MASTER_REFERENCE">MASTER_REFERENCE</span>);
+
+        seqMasterSet = <span class="keyword">new</span> <span class="type">ROBitSet</span>(seqmasterset);
+
+        <span class="comment">//layout-master-set only set of properties - properties for exclusive
+</span>        <span class="comment">// use within the layout-master-set SUBTREE
+</span>        <span class="type">BitSet</span> <span class="variable-name" id="layoutmasteronly">layoutmasteronly</span> = (<span class="type">BitSet</span>)seqmasteronly.clone();
+        layoutmasteronly.set(PropNames.<span class="jde-java-font-lock-constant">MASTER_NAME</span>);
+        layoutmasteronly.set(PropNames.<span class="jde-java-font-lock-constant" id="PAGE_HEIGHT">PAGE_HEIGHT</span>);
+        layoutmasteronly.set(PropNames.<span class="jde-java-font-lock-constant" id="PAGE_WIDTH">PAGE_WIDTH</span>);
+        layoutmasteronly.set(PropNames.<span class="jde-java-font-lock-constant" id="COLUMN_COUNT">COLUMN_COUNT</span>);
+        layoutmasteronly.set(PropNames.<span class="jde-java-font-lock-constant" id="COLUMN_GAP">COLUMN_GAP</span>);
+        layoutmasteronly.set(PropNames.<span class="jde-java-font-lock-constant" id="REGION_NAME">REGION_NAME</span>);
+        layoutmasteronly.set(PropNames.<span class="jde-java-font-lock-constant" id="EXTENT">EXTENT</span>);
+        layoutmasteronly.set(PropNames.<span class="jde-java-font-lock-constant" id="PRECEDENCE">PRECEDENCE</span>);
+
+        <span class="comment">// set of all layout-master-set properties - properties which may be
+</span>        <span class="comment">// used in the layout-master-set SUBTREE
+</span>        <span class="comment">// Add the layout-master-set exclusive properties
+</span>        <span class="type">BitSet</span> <span class="variable-name" id="layoutmasterset">layoutmasterset</span> = (<span class="type">BitSet</span>)layoutmasteronly.clone();
+
+        layoutmasterset.set(PropNames.<span class="jde-java-font-lock-constant">MASTER_REFERENCE</span>);
+        layoutmasterset.set(PropNames.<span class="jde-java-font-lock-constant" id="REFERENCE_ORIENTATION">REFERENCE_ORIENTATION</span>);
+        layoutmasterset.set(PropNames.<span class="jde-java-font-lock-constant" id="WRITING_MODE">WRITING_MODE</span>);
+        layoutmasterset.set(PropNames.<span class="jde-java-font-lock-constant" id="CLIP">CLIP</span>);
+        layoutmasterset.set(PropNames.<span class="jde-java-font-lock-constant" id="DISPLAY_ALIGN">DISPLAY_ALIGN</span>);
+        layoutmasterset.set(PropNames.<span class="jde-java-font-lock-constant" id="OVERFLOW">OVERFLOW</span>);
+
+        <span class="comment">// Add the common margin properties - block
+</span>	layoutmasterset.or(PropertySets.marginBlockSet);
+        <span class="comment">// Add the common border properties
+</span>	layoutmasterset.or(PropertySets.borderSet);
+        <span class="comment">// Add the common padding properties
+</span>	layoutmasterset.or(PropertySets.paddingSet);
+        <span class="comment">// Add the common background properties
+</span>	layoutmasterset.or(PropertySets.backgroundSet);
+        layoutMasterSet = <span class="keyword">new</span> <span class="type">ROBitSet</span>(layoutmasterset);
+
+        <span class="type">BitSet</span> <span class="variable-name" id="flowonlyset">flowonlyset</span> = <span class="keyword">new</span> <span class="type">BitSet</span>();
+        flowonlyset.set(PropNames.<span class="jde-java-font-lock-constant" id="MARKER_CLASS_NAME">MARKER_CLASS_NAME</span>);
+
+        <span class="type">BitSet</span> <span class="variable-name" id="staticonlyset">staticonlyset</span> = <span class="keyword">new</span> <span class="type">BitSet</span>();
+        staticonlyset.set(PropNames.<span class="jde-java-font-lock-constant" id="RETRIEVE_CLASS_NAME">RETRIEVE_CLASS_NAME</span>);
+        staticonlyset.set(PropNames.<span class="jde-java-font-lock-constant" id="RETRIEVE_POSITION">RETRIEVE_POSITION</span>);
+        staticonlyset.set(PropNames.<span class="jde-java-font-lock-constant" id="RETRIEVE_BOUNDARY">RETRIEVE_BOUNDARY</span>);
+
+        <span class="comment">// pageseqonly contains the properties which are exclusive to
+</span>        <span class="comment">// fo:pagesequence
+</span>        <span class="type">BitSet</span> <span class="variable-name" id="pageseqonly">pageseqonly</span> = <span class="keyword">new</span> <span class="type">BitSet</span>();
+        pageseqonly.set(PropNames.<span class="jde-java-font-lock-constant" id="FORMAT">FORMAT</span>);
+        pageseqonly.set(PropNames.<span class="jde-java-font-lock-constant" id="LETTER_VALUE">LETTER_VALUE</span>);
+        pageseqonly.set(PropNames.<span class="jde-java-font-lock-constant" id="GROUPING_SEPARATOR">GROUPING_SEPARATOR</span>);
+        pageseqonly.set(PropNames.<span class="jde-java-font-lock-constant" id="GROUPING_SIZE">GROUPING_SIZE</span>);
+        pageseqonly.set(PropNames.<span class="jde-java-font-lock-constant" id="INITIAL_PAGE_NUMBER">INITIAL_PAGE_NUMBER</span>);
+        pageseqonly.set(PropNames.<span class="jde-java-font-lock-constant" id="FORCE_PAGE_COUNT">FORCE_PAGE_COUNT</span>);
+
+        <span class="comment">// pageseqset may contain any of the exclusive elements of the
+</span>        <span class="comment">// flow set or the static-content set, which may be accessed by
+</span>        <span class="comment">// the from-nearest-specified-property() function.
+</span>        <span class="type">BitSet</span> <span class="variable-name" id="pageseqset">pageseqset</span> = (<span class="type">BitSet</span>)allprops.clone();
+        pageseqset.andNot(rootonly);
+        pageseqset.andNot(declarationsonly);
+        pageseqset.andNot(layoutmasteronly);
+        pageSeqSet = <span class="keyword">new</span> <span class="type">ROBitSet</span>(pageseqset);
+
+        <span class="type">BitSet</span> <span class="variable-name" id="flowallset">flowallset</span> = (<span class="type">BitSet</span>)pageseqset.clone();
+        flowallset.andNot(pageseqonly);
+        flowallset.andNot(staticonlyset);
+
+        flowAllSet = <span class="keyword">new</span> <span class="type">ROBitSet</span>(flowallset);
+
+        <span class="type">BitSet</span> <span class="variable-name" id="staticallset">staticallset</span> = (<span class="type">BitSet</span>)pageseqset.clone();
+        staticallset.andNot(pageseqonly);
+        staticallset.andNot(flowonlyset);
+
+        staticAllSet = <span class="keyword">new</span> <span class="type">ROBitSet</span>(staticallset);
+
+        <span class="type">BitSet</span> <span class="variable-name" id="markerallset">markerallset</span> = (<span class="type">BitSet</span>)flowallset.clone();
+        markerallset.clear(PropNames.<span class="jde-java-font-lock-constant">MARKER_CLASS_NAME</span>);
+
+        markerAllSet = <span class="keyword">new</span> <span class="type">ROBitSet</span>(markerallset);
+
+        <span class="comment">// markers are not allowed within fo:title
+</span>        titleAllSet = markerAllSet;
+    }
+
+    <span class="comment">/**
+     * ReferenceArea trait mappings.  Immutable BitSet of FOs for which
+     * the &lt;tt&gt;reference-area&lt;/tt&gt; trait is true.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROBitSet</span> <span class="variable-name" id="isReferenceArea">isReferenceArea</span>;
+    <span class="jde-java-font-lock-modifier">static</span> {
+        <span class="type">BitSet</span> <span class="variable-name" id="refareas">refareas</span> = <span class="keyword">new</span> <span class="type">BitSet</span>(FObjectNames.<span class="jde-java-font-lock-constant" id="LAST_FO">LAST_FO</span> + <span class="jde-java-font-lock-number">1</span>);
+        refareas.set(FObjectNames.<span class="jde-java-font-lock-constant" id="SIMPLE_PAGE_MASTER">SIMPLE_PAGE_MASTER</span>);
+        refareas.set(FObjectNames.<span class="jde-java-font-lock-constant" id="REGION_AFTER">REGION_AFTER</span>);
+        refareas.set(FObjectNames.<span class="jde-java-font-lock-constant" id="REGION_BEFORE">REGION_BEFORE</span>);
+        refareas.set(FObjectNames.<span class="jde-java-font-lock-constant" id="REGION_BODY">REGION_BODY</span>);
+        refareas.set(FObjectNames.<span class="jde-java-font-lock-constant" id="REGION_END">REGION_END</span>);
+        refareas.set(FObjectNames.<span class="jde-java-font-lock-constant" id="REGION_START">REGION_START</span>);
+        refareas.set(FObjectNames.<span class="jde-java-font-lock-constant" id="BLOCK_CONTAINER">BLOCK_CONTAINER</span>);
+        refareas.set(FObjectNames.<span class="jde-java-font-lock-constant" id="INLINE_CONTAINER">INLINE_CONTAINER</span>);
+        refareas.set(FObjectNames.<span class="jde-java-font-lock-constant" id="TABLE">TABLE</span>);
+        refareas.set(FObjectNames.<span class="jde-java-font-lock-constant" id="TABLE_CAPTION">TABLE_CAPTION</span>);
+        refareas.set(FObjectNames.<span class="jde-java-font-lock-constant" id="TABLE_CELL">TABLE_CELL</span>);
+        refareas.set(FObjectNames.<span class="jde-java-font-lock-constant">TITLE</span>);
+
+        isReferenceArea = <span class="keyword">new</span> <span class="type">ROBitSet</span>(refareas);
+    }
+
+}
+
+</pre>
+  </body>
+</html>

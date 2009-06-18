@@ -1,0 +1,38 @@
+FOP README
+
+    What is FOP?
+    FOP is the world's first print formatter driven by XSL formatting
+    objects. It is a Java application that reads a formatting object
+    tree conforming to the XSL 1.0 Recommendation (15 October 2001) and
+    then turns it into a PDF document or allows you to preview it
+    directly on screen.
+
+    FOP is part of Apache's XML Graphics project. The homepage of FOP is
+    http://xml.apache.org/fop.  Our resources page is at 
+    http://xml.apache.org/fop/resources.html.
+    
+    Please report bugs to bugzilla at http://issues.apache.org/bugzilla/
+
+    A mailing list for how to use FOP is at fop-user@xml.apache.org (subscribe 
+    at fop-dev-subscribe@xml.apache.org)
+
+    Before you post any questions, please have a look at the FAQ at
+    http://xml.apache.org/fop/fo.html.
+
+
+Instructions for building FOP from source code:
+
+    FOP uses Apache Ant as its build system.  You can download Apache Ant
+    from http://ant.apache.org.
+    
+    Ant installation instructions:
+    1. Download and install Ant
+    2. Set the ANT_HOME environment variable to the directory where you've
+       placed Ant.
+    3. Add "%%ANT_HOME%%\bin" to your PATH so the "ant.bat" batch file
+       can be executed from wherever needed.
+    4. (optional) Download JUnit and place junit-*.jar in %%ANT_HOME%%\lib.
+       This enables the JUnit test cases.
+	
+    After Ant is installed, you can build FOP simply by navigating to
+    the FOP base directory and typing "ant".

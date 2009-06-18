@@ -1,0 +1,457 @@
+<?xml version="1.0"?>
+<!--
+  Copyright 1999-2004 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<html>
+  <head>
+    <META http-equiv="Content-Type" content="text/html;
+                                                charset=ISO-8859-1" />
+    <title>Property Expression Parsing</title>
+  </head>
+  <body marginheight="0" marginwidth="0" topmargin="0" leftmargin="0" text="#000000" bgcolor="#FFFFFF">
+    <script type="text/javascript" src="codedisplay.js" />
+    <div class="content">
+      <h1>Property Expression Parsing</h1>
+      <p>
+        <font size="-2">by Peter B. West</font>
+      </p>
+      <ul class="minitoc">
+        <li>
+          <a href="#N10014">Property expression parsing</a>
+          <ul class="minitoc">
+            <li>
+              <a href="#N10044">Data types</a>
+            </li>
+            <li>
+              <a href="#N10252">Tokenizer</a>
+            </li>
+            <li>
+              <a href="#N1029C">Parser</a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+
+      <a name="N10014"></a>
+      <h3>Property expression parsing</h3>
+      <!-- N.B. height for toggleCode changed from 50% to 400 because
+          Mozilla seems to get confused by percentage heights within
+          table elements.
+      -->
+      <p>
+        The parsing of property value expressions is handled by two
+        closely related classes: <span id = "span00" ></span ><a href=
+        "javascript:toggleCode( 'span00',
+        'PropertyTokenizer.html#PropertyTokenizerClass', '400', '100%'
+        )" ><span class= "codefrag"
+        >org.apache.fop.fo.expr.PropertyTokenizer</span></a> and its
+        subclass, <span id = "span01" ></span ><a href=
+        "javascript:toggleCode( 'span01',
+        'PropertyParser.html#PropertyParserClass', '400', '100%' )"
+        ><span class= "codefrag"
+        >org.apache.fop.fo.expr.PropertyParser</span></a>, and by
+        <span class= "codefrag" >refineParsing(int, FONode,
+        PropertyValue)</span> methods in the individual property
+        classes.  <span class= "codefrag" >PropertyTokenizer</span>,
+        as the name suggests, handles the tokenizing of the
+        expression, handing <span id = "span02" ></span ><a href=
+        "javascript:toggleCode( 'span02',
+        'PropertyTokenizer.html#EOF', '400', '100%' )"
+        ><em>tokens</em></a> back to its subclass, <span class=
+        "codefrag" >PropertyParser</span>. <span class= "codefrag"
+        >PropertyParser</span>, in turn, returns a <span id = "span03"
+        ></span ><a href= "javascript:toggleCode( 'span03',
+        'PropertyValueList.html#PropertyValueListClass', '400', '100%'
+        )" ><span class= "codefrag">PropertyValueList</span></a>, a
+        list of <span id = "span04" ></span ><a href=
+        "javascript:toggleCode( 'span04',
+        'PropertyValue.html#PropertyValueInterface', '400', '100%' )"
+        ><span class= "codefrag">PropertyValue</span></a>s.
+      </p>
+      <p>
+        The tokenizer and parser rely in turn on the datatype
+        definitions from the <span class= "codefrag"
+        >org.apache.fop.datatypes</span> package, which include the
+        <span id = "span05" ></span ><a href= "javascript:toggleCode(
+        'span05', 'PropertyValue.html#NO_TYPE', '400', '100%' )"
+        ><span class= "codefrag" >PropertyValue</span> datatype
+        constant definitions</a>.
+      </p>
+      <a name="N10044"></a>
+      <h4>Data types</h4>
+      <p>
+        The data types currently defined in
+        <span class= "codefrag" >org.apache.fop.datatypes</span> include:
+      </p>
+      <table class="ForrestTable" cellspacing="1" cellpadding="4">
+
+          <tr>
+            <th colspan="2" rowspan="1">Numbers and lengths</th>
+          </tr>
+
+          <tr>
+            <th colspan="1" rowspan="1">Numeric</th>
+            <td colspan="3" rowspan="1">
+              The fundamental length data type.  <em>Numerics</em> of
+              various types are constructed by the classes listed
+              below.
+            </td>
+          </tr>
+
+          <tr>
+            <td colspan="1" rowspan="1"></td>
+            <th colspan="3"
+                rowspan="1">Constructor classes for <em>Numeric</em></th>
+          </tr>
+
+          <tr>
+            <td colspan="1" rowspan="1"></td>
+            <td colspan="1" rowspan="1">Ems</td>
+            <td colspan="2" rowspan="1">Relative length in <em>ems</em></td>
+          </tr>
+
+          <tr>
+            <td colspan="1" rowspan="1"></td>
+            <td colspan="1" rowspan="1">IntegerType</td>
+            <td colspan="1" rowspan="1"></td>
+          </tr>
+
+          <tr>
+            <td colspan="1" rowspan="1"></td>
+            <td colspan="1" rowspan="1">Length</td>
+            <td colspan="2" rowspan="1">In centimetres(cm), millimetres(mm),
+              inches(in), points(pt), picas(pc) or pixels(px)</td>
+          </tr>
+
+          <tr>
+            <td colspan="1" rowspan="1"></td>
+            <td colspan="1" rowspan="1">Percentage</td>
+            <td colspan="1" rowspan="1"></td>
+          </tr>
+
+          <tr>
+            <th colspan="1" rowspan="1">Other Numeric</th>
+            <td colspan="3" rowspan="1">
+              Other numeric vaues which do not interact with the
+              lengths represented by <em>Numeric</em> values.
+            </td>
+          </tr>
+
+          <tr>
+            <td colspan="1" rowspan="1"></td>
+            <td colspan="1" rowspan="1">Angle</td>
+            <td colspan="2" rowspan="1">In degrees(deg), gradients(grad) or
+              radians(rad)</td>
+          </tr>
+
+          <tr>
+            <td colspan="1" rowspan="1"></td>
+            <td colspan="1" rowspan="1">Frequency</td>
+            <td colspan="2" rowspan="1">In hertz(Hz) or kilohertz(kHz)</td>
+          </tr>
+
+          <tr>
+            <td colspan="1" rowspan="1"></td>
+            <td colspan="1" rowspan="1">Time</td>
+            <td colspan="1" rowspan="1">In seconds(s) or milliseconds(ms)</td>
+          </tr>
+
+          <tr>
+            <th colspan="2" rowspan="1">Strings</th>
+          </tr>
+
+          <tr>
+            <th colspan="1" rowspan="1">StringType</th>
+            <td colspan="3" rowspan="1">
+              Base class for data types which result in a <em>String</em>.
+            </td>
+          </tr>
+
+          <tr>
+            <td colspan="1" rowspan="1"></td>
+            <th colspan="1" rowspan="1">Literal</th>
+            <td colspan="2" rowspan="1">
+              A subclass of <em>StringType</em> for literals which
+              exceed the constraints of an <em>NCName</em>.
+            </td>
+          </tr>
+
+          <tr>
+            <td colspan="1" rowspan="1"></td>
+            <th colspan="1" rowspan="1">MimeType</th>
+            <td colspan="2" rowspan="1">
+              A subclass of <em>StringType</em> for literals which
+              represent a mime type.
+            </td>
+          </tr>
+
+          <tr>
+            <td colspan="1" rowspan="1"></td>
+            <th colspan="1" rowspan="1">UriType</th>
+            <td colspan="2" rowspan="1">
+              A subclass of <em>StringType</em> for literals which
+              represent a URI, as specified by the argument to
+              <em>url()</em>.
+            </td>
+          </tr>
+
+          <tr>
+            <td colspan="1" rowspan="1"></td>
+            <th colspan="1" rowspan="1">NCName</th>
+            <td colspan="2" rowspan="1">
+              A subclass of <em>StringType</em> for literals which
+              meet the constraints of an <em>NCName</em>.
+            </td>
+          </tr>
+
+          <tr>
+            <td colspan="1" rowspan="1"></td>
+            <td colspan="1" rowspan="1"></td>
+            <th colspan="1" rowspan="1">Country</th>
+            <td colspan="1" rowspan="1">An RFC 3066/ISO 3166 country code.</td>
+          </tr>
+
+          <tr>
+            <td colspan="1" rowspan="1"></td>
+            <td colspan="1" rowspan="1"></td>
+            <th colspan="1" rowspan="1">Language</th>
+            <td colspan="1" rowspan="1">An RFC 3066/ISO 639 language code.</td>
+          </tr>
+
+          <tr>
+            <td colspan="1" rowspan="1"></td>
+            <td colspan="1" rowspan="1"></td>
+            <th colspan="1" rowspan="1">Script</th>
+            <td colspan="1" rowspan="1">An ISO 15924 script code.</td>
+          </tr>
+
+          <tr>
+            <th colspan="2" rowspan="1">Enumerated types</th>
+          </tr>
+
+          <tr>
+            <th colspan="1" rowspan="1">EnumType</th>
+            <td colspan="3" rowspan="1">
+              An integer representing one of the tokens in a set of
+              enumeration values.
+            </td>
+          </tr>
+
+          <tr>
+            <td colspan="1" rowspan="1"></td>
+            <th colspan="1" rowspan="1">MappedNumeric</th>
+            <td colspan="2" rowspan="1">
+              A subclass of <em>EnumType</em>.  Maintains a
+              <em>Numeric</em> with the value to which the associated
+              "raw" enumeration token maps.  E.g., the
+              <em>font-size</em> enumeration value "medium" maps to
+              the <em>Numeric</em> "12pt".
+            </td>
+          </tr>
+
+          <tr>
+            <th colspan="2" rowspan="1">Colors</th>
+          </tr>
+
+          <tr>
+            <th colspan="1" rowspan="1">ColorType</th>
+            <td colspan="3" rowspan="1">
+              Maintains a four-element array of float, derived from
+              the name of a standard colour, the name returned by a
+              call to <em>system-color()</em>, or an RGB
+              specification.
+            </td>
+          </tr>
+
+          <tr>
+            <th colspan="2" rowspan="1">Fonts</th>
+          </tr>
+
+          <tr>
+            <th colspan="1" rowspan="1">FontFamilySet</th>
+            <td colspan="3" rowspan="1">
+              Maintains an array of <em>String</em>s containing a
+              prioritized list of possibly generic font family names.
+            </td>
+          </tr>
+
+          <tr>
+            <th colspan="2" rowspan="1">Pseudo-types</th>
+          </tr>
+
+          <tr>
+            <td colspan="4" rowspan="1">
+              A variety of pseudo-types have been defined as
+              convenience types for frequently appearing enumeration
+              token values, or for other special purposes.
+            </td>
+          </tr>
+
+          <tr>
+            <th colspan="1" rowspan="1">Inherit</th>
+            <td colspan="3" rowspan="1">
+              For values of <em>inherit</em>.
+            </td>
+          </tr>
+
+          <tr>
+            <th colspan="1" rowspan="1">Auto</th>
+            <td colspan="3" rowspan="1">
+              For values of <em>auto</em>.
+            </td>
+          </tr>
+
+          <tr>
+            <th colspan="1" rowspan="1">None</th>
+            <td colspan="3" rowspan="1">
+              For values of <em>none</em>.
+            </td>
+          </tr>
+
+          <tr>
+            <th colspan="1" rowspan="1">Bool</th>
+            <td colspan="3" rowspan="1">
+              For values of <em>true/false</em>.
+            </td>
+          </tr>
+
+          <tr>
+            <th colspan="1" rowspan="1">FromNearestSpecified</th>
+            <td colspan="3" rowspan="1">
+              Created to ensure that, when associated with
+              a shorthand, the <em>from-nearest-specified-value()</em>
+              core function is the sole component of the expression.
+            </td>
+          </tr>
+
+          <tr>
+            <th colspan="1" rowspan="1">FromParent</th>
+            <td colspan="3" rowspan="1">
+              Created to ensure that, when associated with
+              a shorthand, the <em>from-parent()</em>
+              core function is the sole component of the expression.
+            </td>
+          </tr>
+
+      </table>
+      <a name="N10252"></a>
+      <h4>Tokenizer</h4>
+      <p>
+        As mentioned above, the <span class= "codefrag"
+        >PropertyTokenizer</span> hands <span id = "span06" ></span
+        ><a href= "javascript:toggleCode( 'span06',
+        'PropertyTokenizer.html#EOF', '400', '100%' )"
+        ><em>tokens</em></a> back to its subclass, <span class=
+        "codefrag" >PropertyParser</span>.  Most of these tokens are
+        self-explanatory, but a few need further comment.
+      </p>
+      <dl>
+
+        <dt>AUTO</dt>
+
+        <dd>
+          Because of its frequency of occurrence, and the fact that it
+          is always the <em>initial value</em> for any property which
+          supports it, AUTO has been promoted into a pseudo-type with
+          its on datatype class.  Therefore, it is also reported as a
+          token.
+        </dd>
+
+        <dt>NONE</dt>
+
+        <dd>
+          Similarly to AUTO, NONE has been promoted to a pseudo-type
+          because of its frequency.
+        </dd>
+
+        <dt>BOOL</dt>
+
+        <dd>
+          There is a <em>de facto</em> boolean type buried in the
+          enumeration types for many of the properties.  It had been
+          specified as a type in its own right in this code.
+        </dd>
+
+        <dt>MIMETYPE</dt>
+
+        <dd>
+          The property <span class= "codefrag" >content-type</span>
+          introduces this complication.  It can have two values of the
+          form <strong>content-type:</strong><em>mime-type</em>
+          (e.g. <span class= "codefrag"
+          >content-type="content-type:xml/svg"</span>) or
+          <strong>namespace-prefix:</strong><em>prefix</em>
+          (e.g. <span class= "codefrag"
+          >content-type="namespace-prefix:svg"</span>).  The
+          experimental code reduces these options to the payload in
+          each case: an <span class= "codefrag" >NCName</span> in the
+          case of a namespace prefix, and a MIMETYPE in the case of a
+          content-type specification.  <span class= "codefrag"
+          >NCName</span>s cannot contain a "/".
+        </dd>
+
+      </dl>
+      <a name="N1029C"></a>
+      <h4>Parser</h4>
+      <p>
+        The parser returns a <span id = "span07" ></span ><a href=
+        "javascript:toggleCode( 'span07',
+        'PropertyValueList.html#PropertyValueListClass', '400', '100%'
+        )" ><span class= "codefrag" >PropertyValueList</span ></a>,
+        necessary because of the possibility that a list of <span id =
+        "span08" ></span ><a href= "javascript:toggleCode( 'span08',
+        'PropertyValue.html#PropertyValueInterface', '400', '100%' )"
+        ><span class= "codefrag" >PropertyValue</span ></a> elements
+        may be returned from the expressions of some properties.
+      </p>
+      <p>
+
+        <span class= "codefrag" >PropertyValueList</span>s may contain
+        <span class= "codefrag" >PropertyValue</span>s or other <span
+        class= "codefrag" >PropertyValueList</span>s.  This latter
+        provision is necessitated by some of the more peculiar
+        expression possibilities, <em>e.g.</em> <em>font</em> and
+        <em>text-shadow</em>.  <em>text-shadow</em> may contain whitespace
+        separated sublists of either two or three elements, separated
+        from one another by commas.  To accommodate this peculiarity,
+        comma separated elements are added to the top-level list,
+        while whitespace separated values are always collected into
+        sublists to be added to the top-level list.
+      </p>
+      <p>
+        Other special cases include the processing of the core
+        functions <span class= "codefrag" >from-parent()</span> and
+        <span class= "codefrag" >from-nearest-specified-value()</span>
+        when these function calls are assigned to a shorthand
+        property, or used with a shorthand property name as an
+        argument.  In these cases, the function call must be the sole
+        component of the expression.  The pseudo-element classes <span
+        class= "codefrag" >FromParent</span> and <span
+        class= "codefrag" >FromNearestSpecified</span> are generated in
+        these circumstances so that an exception will be thrown if
+        they are involved in expression evaluation with other
+        components. (See Rec. Section 5.10.4 Property Value
+        Functions.)
+      </p>
+      <p>
+        The experimental code is a simple extension of the existing
+        parser code, which itself borrowed heavily from James
+        Clark's XT processor.
+      </p>
+
+    </div>
+  </body>
+</html>

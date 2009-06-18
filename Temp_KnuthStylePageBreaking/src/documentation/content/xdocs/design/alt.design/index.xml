@@ -1,0 +1,143 @@
+<?xml version="1.0" standalone="no"?>
+<!--
+  Copyright 1999-2004 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
+    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/core/context/resources/schema/dtd/document-v12.dtd">
+
+<!-- $Id$ -->
+
+<document>
+  <header>
+    <title>FOP Alternative Design</title>
+    <subtitle>Alternative Design Approach to FOP</subtitle>
+    <version>$Revision$ $Name$</version>
+    <authors>
+      <person name="Peter B. West" email="pbwest@powerup.com.au"/>
+    </authors>
+  </header>
+  
+  <body>
+    <section>
+      <title>Alternative Design</title>
+      <p>
+	This section of the FOP web site contains notes on approaches
+	to an alternative design for FOP.  The individual documents
+	here are fragmentary, being notes of particular issues,
+	without an overall framework as yet.
+      </p>
+      <p>
+	The main aims of this redesign effort are:
+      </p>
+      <ul>
+	<li>full conformance with the Recommendation</li>
+	<li>no limitation on the size of files</li>
+	<li>increased performance</li>
+	<li>reduced memory footprint</li>
+      </ul>
+      <p>
+	Secondary aims include:
+      </p>
+      <ul>
+	<li>increased performance</li>
+	<li>reduced memory footprint</li>
+      </ul>
+      <p>
+	In order to achieve these aims, the primary areas
+	of design interest are:
+      </p>
+      <ul>
+	<li>
+	  Representing properties, for most purposes, as integers.
+	</li>
+        <li>
+          Implementing a top-down processing model for each of the
+          processing components.
+        </li>
+	<li>
+	  Distributing FOP processing over a number of threads with
+	  single-point downstream communication and flow control by
+	  means of traditional producer/consumer queues.  The threads
+	  so far under consideration are:
+	  <ul>
+	    <li>XML parser</li>
+	    <li>FO tree builder</li>
+	    <li>layout engine</li>
+	    <li>Area tree builder</li>
+	  </ul>
+	</li>
+        <li>
+          Redesigning XML parsing and FO tree building using a
+          <strong>pull-parsing</strong> methodology with integrated FO
+          input validation.
+        </li>
+        <li>
+          Representing vital relationships among the elements with
+          appropriate data structures.  These include:
+          <ul>
+            <li>
+              Representing trees with explicit Tree objects, rather than
+              as implicit relationships among other objects.
+            </li>
+            <li>
+              Drawing threads through the tree nodes to
+              represent linear layout relationships for resolving
+              keeps, breaks and space specifiers. 
+            </li>
+          </ul>
+        </li>
+	<li>
+	  Caching integrated into the tree node access methods.
+	</li>
+      </ul>
+      <section>
+        <title>Status and availability</title>
+	<p>
+	  The <em>ALT DESIGN</em> effort is not taking place on the
+	  main line of development, represented by the <em>HEAD</em>
+	  tag on the CVS trunk.  The source is available via the
+	  FOP_0-20-0_Alt-Design tag.  This code has only a
+	  non-<em>Ant</em> build environment based on some small unix
+	  shell scripts and the <em>jikes</em> compiler.  The parser
+	  stage and the FO tree building code is present.  The first
+	  example of producer/consumer binding is working, the Tree
+	  class and the Node class with inner <em>iterator</em>
+	  classes are available and working.  Property handling is
+	  almost complete, and all FO classes are present and
+          sufficiently complete to allow for FO tree building.
+	</p>
+        <p>
+          <link href=
+          "http://marc.theaimsgroup.com/%3Fl=fop-dev%26m=103890259919360%26w=2"
+          >Preliminary results</link> and <link href=
+          "http://marc.theaimsgroup.com/%3Fl=fop-dev%26m=103918886413611%26w=2"
+          >follow-up testing</link> of FO tree building shows memory
+          reductions of almost 50% compared to the most recently tuned
+          version of the maintenance version of the code (FOP 0.20.5
+          RC).  Alt-Design FO tree building was also slightly faster,
+          in spite of the use of pull parsing implemented on top of
+          SAX.
+        </p>
+	<p>
+	  Currently, only <link href="mailto:pbwest@powerup.com.au">Peter
+	  West</link> is working on the ALT DESIGN sub-project.
+	</p>
+      </section>
+    </section>
+
+  </body>
+</document>
+

@@ -1,0 +1,220 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<!--
+  Copyright 2001-2004 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<!-- Created by htmlize-0.67 in css mode. -->
+<html>
+  <head>
+    <title>PropertyValue.java</title>
+    <style type="text/css">
+    <!--
+      body {
+        color: #000000;
+        background-color: #faf0e6;
+      } /* default */
+      .jde-java-font-lock-package {
+        color: #0000cd;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-package-face */
+      .jde-java-font-lock-constant {
+        color: #5f9ea0;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-constant-face */
+      .keyword {
+        color: #8b0000;
+        background-color: #faf0e6;
+      } /* font-lock-keyword-face */
+      .jde-java-font-lock-doc-tag {
+        color: #008b00;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-doc-tag-face */
+      .jde-java-font-lock-number {
+        color: #bc8f8f;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-number-face */
+      .jde-java-font-lock-italic {
+        background-color: #faf0e6;
+        font-style: italic;
+      } /* jde-java-font-lock-italic-face */
+      .string {
+        color: #008b00;
+        background-color: #faf0e6;
+      } /* font-lock-string-face */
+      .variable-name {
+        color: #8b008b;
+        background-color: #faf0e6;
+      } /* font-lock-variable-name-face */
+      .jde-java-font-lock-modifier {
+        color: #da70d6;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-modifier-face */
+      .type {
+        color: #4682b4;
+        background-color: #faf0e6;
+      } /* font-lock-type-face */
+      .comment {
+        color: #00008b;
+        background-color: #faf0e6;
+      } /* font-lock-comment-face */
+      .function-name {
+        color: #8b2323;
+        background-color: #faf0e6;
+      } /* font-lock-function-name-face */
+      a {
+        color: inherit;
+        background-color: inherit;
+        font: inherit;
+        text-decoration: inherit;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+    -->
+    </style>
+  </head>
+  <body>
+    <pre>
+<span class="comment">/*
+ * Copyright 2001-2004 The Apache Software Foundation.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */</span>
+ 
+<span class="keyword">package</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">datatypes</span>;
+
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">fo</span>.<span class="jde-java-font-lock-package">expr</span>.<span class="type">PropertyException</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">fo</span>.<span class="type">FONode</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">datastructs</span>.<span class="type">ROStringArray</span>;
+
+<span class="comment">/**
+ * Base interface for all property value types.
+ * @author &lt;a href=&quot;mailto:pbwest@powerup.com.au&quot;&gt;Peter B. West&lt;/a&gt;
+ */</span>
+
+<span class="jde-java-font-lock-modifier">public</span> <span class="keyword">interface</span> <span class="function-name" id="PropertyValueInterface">PropertyValue</span> {
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">int</span>
+                        <span class="jde-java-font-lock-constant" id="NO_TYPE">NO_TYPE</span> = <span class="jde-java-font-lock-number">0</span>
+                         ,<span class="jde-java-font-lock-constant" id="ANGLE">ANGLE</span> = <span class="jde-java-font-lock-number">1</span>
+                          ,<span class="jde-java-font-lock-constant" id="AUTO">AUTO</span> = <span class="jde-java-font-lock-number">2</span>
+                          ,<span class="jde-java-font-lock-constant" id="BOOL">BOOL</span> = <span class="jde-java-font-lock-number">3</span>
+                    ,<span class="jde-java-font-lock-constant" id="COLOR_TYPE">COLOR_TYPE</span> = <span class="jde-java-font-lock-number">4</span>
+                       ,<span class="jde-java-font-lock-constant" id="COUNTRY">COUNTRY</span> = <span class="jde-java-font-lock-number">5</span>
+                          ,<span class="jde-java-font-lock-constant" id="ENUM">ENUM</span> = <span class="jde-java-font-lock-number">6</span>
+                   ,<span class="jde-java-font-lock-constant" id="FONT_FAMILY">FONT_FAMILY</span> = <span class="jde-java-font-lock-number">7</span>
+                     ,<span class="jde-java-font-lock-constant" id="FREQUENCY">FREQUENCY</span> = <span class="jde-java-font-lock-number">8</span>
+        ,<span class="jde-java-font-lock-constant" id="FROM_NEAREST_SPECIFIED">FROM_NEAREST_SPECIFIED</span> = <span class="jde-java-font-lock-number">9</span>
+                   ,<span class="jde-java-font-lock-constant" id="FROM_PARENT">FROM_PARENT</span> = <span class="jde-java-font-lock-number">10</span>
+                       ,<span class="jde-java-font-lock-constant" id="INHERIT">INHERIT</span> = <span class="jde-java-font-lock-number">11</span>
+               ,<span class="jde-java-font-lock-constant" id="INHERITED_VALUE">INHERITED_VALUE</span> = <span class="jde-java-font-lock-number">12</span>
+                       ,<span class="jde-java-font-lock-constant" id="INTEGER">INTEGER</span> = <span class="jde-java-font-lock-number">13</span>
+                      ,<span class="jde-java-font-lock-constant" id="LANGUAGE">LANGUAGE</span> = <span class="jde-java-font-lock-number">14</span>
+                       ,<span class="jde-java-font-lock-constant" id="LITERAL">LITERAL</span> = <span class="jde-java-font-lock-number">15</span>
+                ,<span class="jde-java-font-lock-constant" id="MAPPED_NUMERIC">MAPPED_NUMERIC</span> = <span class="jde-java-font-lock-number">16</span>
+                     ,<span class="jde-java-font-lock-constant" id="MIME_TYPE">MIME_TYPE</span> = <span class="jde-java-font-lock-number">17</span>
+                        ,<span class="jde-java-font-lock-constant" id="NCNAME">NCNAME</span> = <span class="jde-java-font-lock-number">18</span>
+                          ,<span class="jde-java-font-lock-constant" id="NONE">NONE</span> = <span class="jde-java-font-lock-number">19</span>
+                       ,<span class="jde-java-font-lock-constant" id="NUMERIC">NUMERIC</span> = <span class="jde-java-font-lock-number">20</span>
+                        ,<span class="jde-java-font-lock-constant" id="SCRIPT">SCRIPT</span> = <span class="jde-java-font-lock-number">21</span>
+                 ,<span class="jde-java-font-lock-constant" id="SHADOW_EFFECT">SHADOW_EFFECT</span> = <span class="jde-java-font-lock-number">22</span>
+                         ,<span class="jde-java-font-lock-constant" id="SLASH">SLASH</span> = <span class="jde-java-font-lock-number">23</span>
+              ,<span class="jde-java-font-lock-constant" id="TEXT_DECORATIONS">TEXT_DECORATIONS</span> = <span class="jde-java-font-lock-number">24</span>
+                ,<span class="jde-java-font-lock-constant" id="TEXT_DECORATOR">TEXT_DECORATOR</span> = <span class="jde-java-font-lock-number">25</span>
+                          ,<span class="jde-java-font-lock-constant" id="TIME">TIME</span> = <span class="jde-java-font-lock-number">26</span>
+                      ,<span class="jde-java-font-lock-constant" id="URI_TYPE">URI_TYPE</span> = <span class="jde-java-font-lock-number">27</span>
+                          ,<span class="jde-java-font-lock-constant" id="LIST">LIST</span> = <span class="jde-java-font-lock-number">28</span>
+
+            ,<span class="jde-java-font-lock-constant" id="LAST_PROPERTY_TYPE">LAST_PROPERTY_TYPE</span> = <span class="jde-java-font-lock-constant">LIST</span>;
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROStringArray</span> <span class="variable-name" id="propertyTypes">propertyTypes</span> =
+        <span class="keyword">new</span> <span class="type">ROStringArray</span>(<span class="keyword">new</span> <span class="type">String</span>[] {
+        &quot;<span class="string">NO_TYPE</span>&quot;
+        ,&quot;<span class="string">ANGLE</span>&quot;
+        ,&quot;<span class="string">AUTO</span>&quot;
+        ,&quot;<span class="string">BOOL</span>&quot;
+        ,&quot;<span class="string">COLOR_TYPE</span>&quot;
+        ,&quot;<span class="string">COUNTRY</span>&quot;
+        ,&quot;<span class="string">ENUM</span>&quot;
+        ,&quot;<span class="string">FONT_FAMILY</span>&quot;
+        ,&quot;<span class="string">FREQUENCY</span>&quot;
+        ,&quot;<span class="string">FROM_NEAREST_SPECIFIED</span>&quot;
+        ,&quot;<span class="string">FROM_PARENT</span>&quot;
+        ,&quot;<span class="string">INHERIT</span>&quot;
+        ,&quot;<span class="string">INHERITED_VALUE</span>&quot;
+        ,&quot;<span class="string">INTEGER</span>&quot;
+        ,&quot;<span class="string">LANGUAGE</span>&quot;
+        ,&quot;<span class="string">LITERAL</span>&quot;
+        ,&quot;<span class="string">MAPPED_NUMERIC</span>&quot;
+        ,&quot;<span class="string">MIME_TYPE</span>&quot;
+        ,&quot;<span class="string">NCNAME</span>&quot;
+        ,&quot;<span class="string">NONE</span>&quot;
+        ,&quot;<span class="string">NUMERIC</span>&quot;
+        ,&quot;<span class="string">SCRIPT</span>&quot;
+        ,&quot;<span class="string">SHADOW_EFFECT</span>&quot;
+        ,&quot;<span class="string">SLASH</span>&quot;
+        ,&quot;<span class="string">TEXT_DECORATIONS</span>&quot;
+        ,&quot;<span class="string">TEXT_DECORATOR</span>&quot;
+        ,&quot;<span class="string">TIME</span>&quot;
+        ,&quot;<span class="string">URI_LIST</span>&quot;
+        ,&quot;<span class="string">LIST</span>&quot;
+    });
+
+    <span class="comment">/**
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> &lt;tt&gt;int&lt;/tt&gt; property index.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">int</span> <span class="function-name" id="getProperty">getProperty</span>();
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">void</span> <span class="function-name" id="setProperty">setProperty</span>(<span class="type">int</span> <span class="variable-name" id="index">index</span>) <span class="keyword">throws</span> <span class="type">PropertyException</span>;
+
+    <span class="comment">/**
+     * Get the &lt;tt&gt;int&lt;/tt&gt; type of property value.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> type field of the &lt;tt&gt;PropertyValue&lt;/tt&gt;.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">int</span> <span class="function-name" id="getType">getType</span>();
+
+    <span class="comment">/**
+     * In some circumstances, the property against which a type is to be
+     * validated may not be the same as the property against which this
+     * &lt;i&gt;</span><span class="jde-java-font-lock-italic">PropertyValue</span><span class="comment">&lt;/i&gt; is defined.  A specific property argument is
+     * then required.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name" id="testProperty">testProperty</span><span class="comment"> &lt;tt&gt;int&lt;/tt&gt; property index of the property
+     * for which the type is to be validated.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name" id="type">type</span><span class="comment"> &lt;tt&gt;int&lt;/tt&gt; bitmap of data types to check for
+     * validity against this property.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">void</span> <span class="function-name" id="validate">validate</span>(<span class="type">int</span> <span class="variable-name">testProperty</span>, <span class="type">int</span> <span class="variable-name">type</span>)
+        <span class="keyword">throws</span> <span class="type">PropertyException</span>;
+
+    <span class="comment">/**
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">type</span><span class="comment"> &lt;tt&gt;int&lt;/tt&gt; bitmap of data types to check for
+     * validity against this property.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">void</span> <span class="function-name">validate</span>(<span class="type">int</span> <span class="variable-name">type</span>) <span class="keyword">throws</span> <span class="type">PropertyException</span>;
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">Object</span> <span class="function-name" id="clone">clone</span>() <span class="keyword">throws</span> <span class="type">CloneNotSupportedException</span>;
+
+}
+</pre>
+  </body>
+</html>

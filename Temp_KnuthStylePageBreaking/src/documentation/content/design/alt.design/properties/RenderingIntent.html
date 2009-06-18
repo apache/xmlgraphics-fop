@@ -1,0 +1,149 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<!--
+  Copyright 2001-2004 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<!-- Created by htmlize-0.67 in css mode. -->
+<html>
+  <head>
+    <title>RenderingIntent.java</title>
+    <style type="text/css">
+    <!--
+      body {
+        color: #000000;
+        background-color: #faf0e6;
+      } /* default */
+      .variable-name {
+        color: #8b008b;
+        background-color: #faf0e6;
+      } /* font-lock-variable-name-face */
+      .jde-java-font-lock-package {
+        color: #0000cd;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-package-face */
+      .jde-java-font-lock-constant {
+        color: #5f9ea0;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-constant-face */
+      .keyword {
+        color: #8b0000;
+        background-color: #faf0e6;
+      } /* font-lock-keyword-face */
+      .string {
+        color: #008b00;
+        background-color: #faf0e6;
+      } /* font-lock-string-face */
+      .jde-java-font-lock-number {
+        color: #bc8f8f;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-number-face */
+      .type {
+        color: #4682b4;
+        background-color: #faf0e6;
+      } /* font-lock-type-face */
+      .jde-java-font-lock-modifier {
+        color: #da70d6;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-modifier-face */
+      .function-name {
+        color: #8b2323;
+        background-color: #faf0e6;
+      } /* font-lock-function-name-face */
+      a {
+        color: inherit;
+        background-color: inherit;
+        font: inherit;
+        text-decoration: inherit;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+    -->
+    </style>
+  </head>
+  <body>
+    <pre>
+<span class="comment">/*
+ * Copyright 2001-2004 The Apache Software Foundation.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */</span>
+ 
+<span class="keyword">package</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">fo</span>.<span class="jde-java-font-lock-package">properties</span>;
+
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">fo</span>.<span class="jde-java-font-lock-package">expr</span>.<span class="type">PropertyException</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">datastructs</span>.<span class="type">ROStringArray</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">datatypes</span>.<span class="type">Ints</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">fo</span>.<span class="jde-java-font-lock-package">properties</span>.<span class="type">Property</span>;
+
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">java</span>.<span class="jde-java-font-lock-package">util</span>.<span class="type">Map</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">java</span>.<span class="jde-java-font-lock-package">util</span>.<span class="type">HashMap</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">java</span>.<span class="jde-java-font-lock-package">util</span>.<span class="type">Collections</span>;
+
+<span class="jde-java-font-lock-modifier">public</span> <span class="keyword">class</span> <span class="function-name" id="RenderingIntentClass">RenderingIntent</span> <span class="keyword">extends</span> <span class="type">Property</span>  {
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">int</span> <span class="variable-name" id="dataTypes">dataTypes</span> = <span class="jde-java-font-lock-constant" id="AUTO">AUTO</span> | <span class="jde-java-font-lock-constant">ENUM</span> | <span class="jde-java-font-lock-constant">INHERIT</span>;
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">int</span> <span class="variable-name" id="traitMapping">traitMapping</span> = <span class="jde-java-font-lock-constant" id="FORMATTING">FORMATTING</span>;
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">int</span> <span class="variable-name" id="initialValueType">initialValueType</span> = <span class="jde-java-font-lock-constant" id="AUTO_IT">AUTO_IT</span>;
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">int</span> <span class="variable-name" id="PERCEPTUAL">PERCEPTUAL</span> = <span class="jde-java-font-lock-number">1</span>;
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">int</span> <span class="variable-name" id="RELATIVE_COLORIMETRIC">RELATIVE_COLORIMETRIC</span> = <span class="jde-java-font-lock-number">2</span>;
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">int</span> <span class="variable-name" id="SATURATION">SATURATION</span> = <span class="jde-java-font-lock-number">3</span>;
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">int</span> <span class="variable-name" id="ABSOLUTE_COLORIMETRIC">ABSOLUTE_COLORIMETRIC</span> = <span class="jde-java-font-lock-number">4</span>;
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">int</span> <span class="variable-name" id="inherited">inherited</span> = <span class="jde-java-font-lock-constant" id="NO">NO</span>;
+
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">String</span>[] <span class="variable-name" id="rwEnums">rwEnums</span> = {
+        <span class="jde-java-font-lock-constant" id="null">null</span>
+        ,&quot;<span class="string">perceptual</span>&quot;
+        ,&quot;<span class="string">relative-colorimetric</span>&quot;
+        ,&quot;<span class="string">saturation</span>&quot;
+        ,&quot;<span class="string">absolute-colorimetric</span>&quot;
+    };
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">HashMap</span> <span class="variable-name" id="rwEnumHash">rwEnumHash</span>;
+    <span class="jde-java-font-lock-modifier">static</span> {
+        rwEnumHash = <span class="keyword">new</span> <span class="type">HashMap</span>(rwEnums.length);
+        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable-name" id="i">i</span> = <span class="jde-java-font-lock-number">1</span>; i &lt; rwEnums.length; i++ ) {
+            rwEnumHash.put((<span class="type">Object</span>)rwEnums[i],
+                                (<span class="type">Object</span>) Ints.consts.get(i));
+        }
+    }
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">int</span> <span class="function-name" id="getEnumIndex">getEnumIndex</span>(<span class="type">String</span> <span class="variable-name" id="enum">enum</span>)
+        <span class="keyword">throws</span> <span class="type">PropertyException</span>
+    {
+        <span class="type">Integer</span> <span class="variable-name" id="ii">ii</span> = (<span class="type">Integer</span>)(rwEnumHash.get(enum));
+        <span class="keyword">if</span> (ii == <span class="jde-java-font-lock-constant">null</span>)
+            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">PropertyException</span>(&quot;<span class="string">Unknown enum value: </span>&quot; + enum);
+        <span class="keyword">return</span> ii.intValue();
+    }
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">String</span> <span class="function-name" id="getEnumText">getEnumText</span>(<span class="type">int</span> <span class="variable-name" id="index">index</span>)
+        <span class="keyword">throws</span> <span class="type">PropertyException</span>
+    {
+        <span class="keyword">if</span> (index &lt; <span class="jde-java-font-lock-number">1</span> || index &gt;= rwEnums.length)
+            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">PropertyException</span>(&quot;<span class="string">index out of range: </span>&quot; + index);
+        <span class="keyword">return</span> rwEnums[index];
+    }
+}
+
+</pre>
+  </body>
+</html>

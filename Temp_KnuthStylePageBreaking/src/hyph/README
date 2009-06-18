@@ -1,0 +1,43 @@
+Hyphenation
+
+Fop comes with some hyphenation pattern. If you need a hyphenation
+pattern which isn't included in the distribution, do the following:
+
+1. get the TeX hyphenation pattern file and turn it into an xml file
+   which conforms to the hyphenation.dtd in the sub directory /hyph
+
+2. name this new file following this schema: languageCode_countryCode.xml.
+   If you don't need a country code, leave it away, p.e. the file name
+   for an American english hyphenation pattern would look like this:
+   en_US.xml.
+   For an Italian file: it.xml.
+   Language and country codes must be the same as in xsl:fo, that is follow
+   ISO 639 <http://www.ics.uci.edu/pub/ietf/http/related/iso639.txt> and
+   ISO 3166 <http://www.ics.uci.edu/pub/ietf/http/related/iso3166.txt>
+   respectively.
+   NOTE: The ISO 639/ISO 3166 convention is that language names are
+   written in lower case, while country codes are written in upper case.
+
+3. If you have build your new hyphenation pattern file successfully there are
+   two ways to make it accessible to Fop.
+   a) Put this new file into the directory /hyph and rebuild Fop. The file will
+      be picked up and added to the fop.jar.
+   b) Put the file into a directory of your choice and specify this directory
+      in the userconfig.xml in the entry <hyphenation-dir>
+
+4. If the license of your hyphenation pattern file does allow it, please send
+   it to the list fop-dev, so it can be made part of the Fop distribution.
+
+the following hyphenation patterns are part of the Fop distribution
+
+da      Danish
+de      German (traditional)
+de_DR   German (new spelling)
+en      American English
+en_GB   British English
+en_US   American English
+es      Spanish
+fi      Finnish
+fr      French
+it      Italian
+nl      Dutch (new official Dutch spelling)

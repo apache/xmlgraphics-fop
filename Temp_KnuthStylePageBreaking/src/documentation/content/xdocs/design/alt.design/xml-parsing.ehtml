@@ -1,0 +1,366 @@
+<?xml version="1.0"?>
+<!--
+  Copyright 1999-2004 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<html>
+  <body text="#000000" bgcolor="#FFFFFF">
+    <script type="text/javascript" src="codedisplay.js" />
+    <div class="content">
+      <h1>Implementing Pull Parsing</h1>
+      <p>
+        <font size="-2">by Peter B. West</font>
+      </p>
+      <ul class="minitoc">
+        <li>
+          <a href="#An+alternative+parsing+methodology">An alternative
+            parsing methodology</a>
+          <ul class="minitoc">
+            <li>
+              <a href="#Structure+of+SAX+parsing">Structure of SAX parsing</a>
+            </li>
+            <li>
+              <a href="#Cluttered+callbacks">Cluttered callbacks</a>
+            </li>
+            <li>
+              <a href="#From+">From push to pull parsing</a>
+            </li>
+            <li>
+              <a href="#FoXMLEvent+me%5Bthods">FoXMLEvent me[thods</a>
+            </li>
+            <li>
+              <a href="#FOP+modularisation">FOP modularisation</a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+
+      <a name="N101C5"></a><a name="An+alternative+parsing+methodology"></a>
+      <h3>An alternative parsing methodology</h3>
+      <div style="margin-left: 0 ; border: 2px">
+        <p>
+          This note proposes an alternative method of integrating the
+          output of the SAX parsing of the Flow Object (FO) tree into
+          FOP processing.  The pupose of the proposed changes is to
+          provide for:
+        </p>
+        <ul>
+
+          <li>
+            better decomposition of FOP into processing phases
+          </li>
+
+          <li>
+            top-down FO tree building, providing
+          </li>
+
+          <li>
+            integrated validation of FO tree input.
+          </li>
+
+        </ul>
+        <a name="N101DA"></a><a name="Structure+of+SAX+parsing"></a>
+        <h4>Structure of SAX parsing</h4>
+        <div style="margin-left: 0 ; border: 2px">
+          <p>
+            Figure 1 is a schematic representation of the process of
+            SAX parsing of an input source.  SAX parsing involves the
+            registration, with an object implementing the <span
+            class="codefrag">XMLReader</span> interface, of a <span
+            class="codefrag">ContentHandler</span> which contains a
+            callback routine for each of the event types encountered
+            by the parser, e.g., <span
+            class="codefrag">startDocument()</span>, <span
+            class="codefrag">startElement()</span>, <span
+            class="codefrag">characters()</span>, <span
+            class="codefrag">endElement()</span> and <span
+            class="codefrag">endDocument()</span>.  Parsing is
+            initiated by a call to the <span
+            class="codefrag">parser()</span> method of the <span
+            class="codefrag">XMLReader</span>.  Note that the call to
+            <span class="codefrag">parser()</span> and the calls to
+            individual callback methods are synchronous: <span
+            class="codefrag">parser()</span> will only return when the
+            last callback method returns, and each callback must
+            complete before the next is called.<br/> <br/>
+
+            <strong>Figure 1</strong>
+
+          </p>
+          <div align="center">
+            <img class="figure" alt="SAX parsing schematic"
+                 src="images/design/alt.design/SAXParsing.png" /></div>
+          <p>
+            In the process of parsing, the hierarchical structure of the
+            original FO tree is flattened into a number of streams of
+            events of the same type which are reported in the sequence
+            in which they are encountered.  Apart from that, the API
+            imposes no structure or constraint which expresses the
+            relationship between, e.g., a startElement event and the
+            endElement event for the same element.  To the extent that
+            such relationship information is required, it must be
+            managed by the callback routines.
+          </p>
+          <p>
+            The most direct approach here is to build the tree
+            "invisibly"; to bury within the callback routines the
+            necessary code to construct the tree.  In the simplest
+            case, the whole of the FO tree is built within the call
+            to <span class="codefrag">parser()</span>, and that
+            in-memory tree is subsequently processed to (a) validate
+            the FO structure, and (b) construct the Area tree.  The
+            problem with this approach is the potential size of the
+            FO tree in memory.  FOP has suffered from this problem
+            in the past.
+          </p>
+        </div>
+        <a name="N10218"></a><a name="Cluttered+callbacks"></a>
+        <h4>Cluttered callbacks</h4>
+        <div style="margin-left: 0 ; border: 2px">
+          <p>
+            On the other hand, the callback code may become
+            increasingly complex as tree validation and the triggering
+            of the Area tree processing and subsequent rendering is
+            moved into the callbacks, typically the <span
+            class="codefrag">endElement()</span> method.  In order to
+            overcome acute memory problems, the FOP code was recently
+            modified in this way, to trigger Area tree building and
+            rendering in the <span
+            class="codefrag">endElement()</span> method, when the end
+            of a page-sequence was detected.
+          </p>
+          <p>
+            The drawback with such a method is that it becomes difficult
+            to detemine the order of events and the circumstances in
+            which any particular processing events are triggered.  When
+            the processing events are inherently self-contained, this is
+            irrelevant.  But the more complex and context-dependent the
+            relationships are among the processing elements, the more
+            obscurity is engendered in the code by such "side-effect"
+            processing.
+          </p>
+        </div>
+        <a name="N1022B"></a><a name="From+"></a>
+        <h4>From push to pull parsing</h4>
+        <div style="margin-left: 0 ; border: 2px">
+          <p>
+            In order to solve the simultaneous problems of exposing
+            the structure of the processing and minimising in-memory
+            requirements, the experimental code separates the
+            parsing of the input source from the building of the FO
+            tree and all downstream processing.  The callback
+            routines become minimal, consisting of the creation and
+            buffering of <span class="codefrag">XMLEvent</span>
+            objects as a <em>producer</em>.  All of these objects
+            are effectively merged into a single event stream, in
+            strict event order, for subsequent access by the FO tree
+            building process, acting as a <em>consumer</em>.  This,
+            essentially, is the difference between <em>push</em> and
+            <em>pull</em> parsing.  In itself, this does not reduce
+            the footprint.  This occurs when the approach is
+            generalised to modularise FOP processing.<br/> <br/>
+            <strong>Figure 2</strong>
+
+          </p>
+          <div align="center">
+            <img class="figure" alt="XML event buffer"
+                 src="images/design/alt.design/pull-parsing.png" /></div>
+          <p>
+            The most useful change that this brings about is the switch
+            from <em>passive</em> to <em>active</em> XML element
+            processing.  The process of parsing now becomes visible to
+            the controlling process.  All local validation requirements,
+            all object and data structure building, are initiated by the
+            process(es) <em>get</em>ting from the queue - in the case
+            above, the FO tree builder.
+          </p>
+        </div>
+        <a name="N10260"></a><a name="FoXMLEvent+methods"></a>
+        <h4>FoXMLEvent methods</h4>
+        <div style="margin-left: 0 ; border: 2px">
+          <a name="FoXMLEvent-methods"></a>
+          <p>
+            The experimental code uses a class <span id = "span00"
+            /><span class = "codefrag" ><a
+            href="javascript:toggleCode( 'span00',
+            'FoXMLEvent.html#FoXMLEventClass', '400', '100%'
+            )">FoXMLEvent</a></span > to provide the objects which are
+            placed in the queue.  <em>FoXMLEvent</em> includes a
+            variety of methods to access elements in the queue.
+            Namespace URIs encountered in parsing are maintained in an
+            <span id = "span01" /><span class="codefrag"><a
+            href="javascript:toggleCode( 'span01',
+            'XMLNamespaces.html#XMLNamespacesClass', '400', '100%'
+            )">XMLNamespaces</a></span> object where they are
+            associated with a unique integer index.  This integer
+            value is used in the signature of some of the access
+            methods.
+          </p>
+          <p>
+            The class which manages the buffer is <span id = "span02"
+            /><span class = "codefrag" ><a href =
+            "javascript:toggleCode( 'span02',
+            'SyncedFoXmlEventsBuffer.html#SyncedFoXmlEventsBufferClass',
+            '400', '100%' )" >SyncedFoXmlEventsBuffer</a>.</span >
+          </p>
+          <dl>
+
+            <dt>
+              <span id = "span03" /><a href="javascript:toggleCode(
+              'span03', 'SyncedFoXmlEventsBuffer.html#getEvent',
+              '400', '100%' )">FoXMLEvent
+              getEvent(SyncedCircularBuffer events)</a>
+            </dt>
+
+            <dd>
+              This is the basis of all of the queue access methods.  It
+              returns the next element from the queue, which may be a
+              pushback element.
+            </dd>
+
+            <dt>
+              <span id = "span04" /><a href="javascript:toggleCode(
+              'span04', 'SyncedFoXmlEventsBuffer.html#getTypedEvent',
+              '400', '100%' )">FoXMLEvent getTypedEvent()</a>
+            </dt>
+
+            <dd>
+              A series of these methods provide for the recovery only
+              of events of a particular event type, and possibly other
+              specific characteristics.  <em>Get</em> methods discard
+              input which does not meet the requirements.  E.g.
+              <dl>
+                <dt>
+                  <span id = "span040" /><a
+                  href="javascript:toggleCode( 'span040',
+                  'SyncedFoXmlEventsBuffer.html#getEndDocument',
+                  '400', '100%' )">FoXMLEvent getEndDocument()</a>
+                </dt>
+                <dd>
+                  Discard input until and EndDocument event occurs.
+                  Return this event.
+                </dd>
+                <dt>
+                  <span id = "span041" /><a
+                  href="javascript:toggleCode( 'span041',
+                  'SyncedFoXmlEventsBuffer.html#getStartElement',
+                  '400', '100%' )">FoXMLEvent getStartElement()</a>
+                </dt>
+                <dd>
+                  A series of <span class = "codefrag"
+                  >getStartElement</span > methods provide for
+                  discarding input until a StartElement event of the
+                  appropriate type occurs.  This event is returned.
+                  This series of methods includes some which accept a
+                  list of Element specifiers.
+                </dd>
+              </dl>
+            </dd>
+
+            <dt>
+              <span id = "span05" /><a href="javascript:toggleCode(
+              'span05',
+              'SyncedFoXmlEventsBuffer.html#expectTypedEvent', '400',
+              '100%' )">FoXMLEvent expectTypedEvent()</a>
+            </dt>
+
+            <dd>
+              A series of these methods provide for the recovery only
+              of events of a particular event type, and possibly other
+              specific characteristics.  <em>Expect</em> methods throw
+              an exception on input which does not meet the
+              requirements.  <em>Expect</em> methods generally take a
+              <span class = "codefrag" >boolean</span> argument
+              specifying whitespace treatment.  Examples include:
+              <dl>
+                <dt>
+                  <span id = "span050" /><a
+                  href="javascript:toggleCode( 'span050',
+                  'SyncedFoXmlEventsBuffer.html#expectEndDocument',
+                  '400', '100%' )">FoXMLEvent expectEndDocument()</a>
+                </dt>
+                <dd>
+                  Expect an EndDocument event. Return this event.
+                </dd>
+                <dt>
+                  <span id = "span051" /><a
+                  href="javascript:toggleCode( 'span051',
+                  'SyncedFoXmlEventsBuffer.html#expectStartElement',
+                  '400', '100%' )">FoXMLEvent expectStartElement()</a>
+                </dt>
+                <dd>
+                  A series of <span class = "codefrag"
+                  >expectStartElement</span > methods provide for
+                  examinging the pending input for a StartElement
+                  event of the appropriate type.  This event is
+                  returned.  This series of methods includes some
+                  which accept a list of Element specifiers.
+                </dd>
+              </dl>
+            </dd>
+          </dl>
+        </div>
+        <a name="N102FE"></a><a name="FOP+modularisation"></a>
+        <h4>FOP modularisation</h4>
+        <div style="margin-left: 0 ; border: 2px">
+          <p>
+            This same principle can be extended to the other major
+            sub-systems of FOP processing.  In each case, while it is
+            possible to hold a complete intermediate result in memory,
+            the memory costs of that approach are too high.  The
+            sub-systems - xml parsing, FO tree construction, Area tree
+            construction and rendering - must run in parallel if the
+            footprint is to be kept manageable.  By creating a series of
+            producer-consumer pairs linked by synchronized buffers,
+            logical isolation can be achieved while rates of processing
+            remain coupled.  By introducing feedback loops conveying
+            information about the completion of processing of the
+            elements, sub-systems can dispose of or precis those
+            elements without having to be tightly coupled to downstream
+            processes.
+            <br/>
+            <br/>
+
+            <strong>Figure 3</strong>
+
+          </p>
+          <div align="center">
+            <img class="figure" alt="FOP modularisation"
+                 src="images/design/alt.design/processPlumbing.png" />
+          </div>
+
+          <p>
+            In the case of communication between the FO tree
+            building process and the layout process, feedback is
+            required in order to parse expressions containing
+            lengths expressed as a percentage of some enclosing
+            area.  This communication is incorporated within the
+            general model of inter-phase communication discussed above.
+            <br/><br/>
+            <strong>Figure 4</strong>
+
+          </p>
+          <div align="center">
+            <img class="figure" alt="FO - layout interaction"
+                 src="images/design/alt.design/fo-layout-interaction.png" />
+          </div>
+
+
+        </div>
+      </div>
+
+    </div>
+  </body>
+</html>

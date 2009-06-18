@@ -1,0 +1,324 @@
+<?xml version="1.0"?>
+<!--
+  Copyright 1999-2004 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<html>
+  <body marginheight="0" marginwidth="0" topmargin="0" leftmargin="0" text="#000000" bgcolor="#FFFFFF">
+    <script type="text/javascript" src="codedisplay.js" />
+    <div class="content">
+      <h1>Enumerated Data Values</h1>
+      <ul class="minitoc">
+        <li>
+          <a href="#N1000C">Enumerated Data Values</a>
+          <ul class="minitoc">
+            <li>
+              <a href="#N10020">Array representation</a>
+            </li>
+            <li>
+              <a href="#N1005C">HashMap representation</a>
+            </li>
+            <li>
+              <a href="#N1009D">
+                Factoring Out Common Enumeration Values
+              </a>
+            </li>
+            <li>
+              <a href="#N100DD">Mapped Numeric Values</a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+
+      <a name="N1000C"></a>
+      <h3>Enumerated Data Values</h3>
+      <p>
+        Property classes which allow enumerated data types must encode
+        integer constants representing the enumeration tokens, and
+        must provide a way of translating between the tokens and the
+        integers, and <em>vice versa</em>.  Depending on the number of
+        tokens in an enumeration set, the mapping from token to
+        integer is maintained in an array or a <span
+        class="codefrag">HashMap</span>.  The switch-over point from
+        array to <span class="codefrag">HashMap</span> was determined
+        by some highly implementation-dependent testing to be in the
+        region of four to five elements.
+      </p>
+      <p>
+        Many properties share common sets of enumeration tokens,
+        e.g. those which allow color values, and those applying to
+        borders and padding.  A special case of enumerated value is
+        the mapped numeric enumeration, in which a token maps to a
+        Numeric value.  These situations are discussed below.
+      </p>
+      <a name="N10020"></a>
+      <h4>Array representation</h4>
+      <!-- N.B. height for toggleCode changed from 50% to 400 because
+          Mozilla seems to get confused by percentage heights within
+          table elements.
+      -->
+      <p>
+
+        <span id = "span00" ></span ><a href= "javascript:toggleCode(
+        'span00', 'Direction.html#DirectionClass', '400', '100%' )"
+        ><span
+        class="codefrag">org.apache.fop.fo.properties.Direction</span></a>
+        is an example of a class which supports an enumerated value
+        with a small set of tokens.  The <span id = "span01" ></span
+        ><a href= "javascript:toggleCode( 'span01',
+        'Direction.html#dataTypes', '400', '100%' )" ><span
+        class="codefrag">dataTypes</span></a> field contains the <span
+        id = "span02" ></span ><a href= "javascript:toggleCode(
+        'span02', 'Property.html#NOTYPE', '400', '100%' )" ><span
+        class="codefrag">ENUM</span> data type constant, defined in
+        <span class="codefrag">Property</span></a>.  The enumeration
+        integer constants are defined as <span class="codefrag">public
+        static final int</span> values, <span id = "span03" ></span
+        ><a href= "javascript:toggleCode( 'span03',
+        'Direction.html#LTR', '400', '100%') "><span class="codefrag'
+        )" >LTR</span> and <span class="codefrag">RTL</span></a>.
+        Associating enumeration tokens with these integer constants
+        occurs in the array <a href=
+        "javascript:window.top.displayCode( 'Direction.html#rwEnums'
+        )" ><span class="codefrag">String[] rwEnums</span></a>, which
+        is initialized with the token strings.  By convention, zero is
+        never used to represent a valid enumeration constant, anywhere
+        in this code.  It is, of course, critical that synchronization
+        between <span class="codefrag">rwEnums</span> and the
+        enumeration constants be maintained.
+      </p>
+      <p>
+        The publicly accessible mapping from enumeration token to
+        enumeration constant is achieved through the method <span id =
+        "span04" ></span ><a href= "javascript:toggleCode( 'span04',
+        'Direction.html#getEnumIndex', '400', '100%' )" ><span
+        class="codefrag">int getEnumIndex(String)</span></a>.  The
+        corresponding mapping from enumeration constant to enumeration
+        token is achieved through the method <span id = "span05"
+        ></span ><a href= "javascript:toggleCode( 'span05',
+        'Direction.html#getEnumText', '400', '100%' )" ><span
+        class="codefrag">String getEnumText(int)</span></a>.
+      </p>
+      <a name="N1005C"></a>
+      <h4>HashMap representation</h4>
+      <p>
+
+        <span id = "span06" ></span ><a href= "javascript:toggleCode(
+        'span06', 'RenderingIntent.html#RenderingIntentClass', '400',
+        '100%' )" ><span class="codefrag"
+        >org.apache.fop.fo.properties.RenderingIntent</span ></a> is
+        an example of a class which supports an enumerated value with
+        a larger set of tokens.  The <span id = "span07" ></span ><a
+        href= "javascript:toggleCode( 'span07',
+        'RenderingIntent.html#dataTypes', '400', '100%' )" ><span
+        class="codefrag">dataTypes</span></a> field contains the <span
+        id = "span08" ></span ><a href= "javascript:toggleCode(
+        'span08', 'Property.html#NOTYPE', '400', '100%' )" ><span
+        class="codefrag">ENUM</span> data type constant, defined in
+        <span class="codefrag">Property</span></a>.  Enumeration
+        integer constants are defined as <span id = "span09" ></span
+        ><a href= "javascript:toggleCode( 'span09',
+        'RenderingIntent.html#PERCEPTUAL', '400', '100%' )" ><span
+        class="codefrag">public static final int</span></a> values.
+        Zero is never used to represent a valid enumeration constant.
+        The enumeration tokens are stored in the array <span id =
+        "span10" ></span ><a href= "javascript:toggleCode( 'span10',
+        'RenderingIntent.html#rwEnums', '400', '100%' )" ><span
+        class="codefrag">String[] rwEnums</span></a>, which is
+        initialized with the token strings.  Association of
+        enumeration tokens with the integer constants occurs in the
+        <span class="codefrag">HashMap</span> <span id = "span11"
+        ></span ><a href= "javascript:toggleCode( 'span11',
+        'RenderingIntent.html#rwEnumHash"><span class="codefrag',
+        '400', '100%' )" > rwEnumHash</span></a>, which is initialized
+        from the token array in a <span class="codefrag">static
+        {}</span> initializer.  It is, of course, critical that
+        synchronization between <span class="codefrag">rwEnums</span>
+        and the enumeration constants be maintained.
+      </p>
+      <p>
+        The publicly accessible mapping from enumeration token to
+        enumeration constant is achieved through the method <span id =
+        "span12" ></span ><a href= "javascript:toggleCode( 'span12',
+        'RenderingIntent.html#getEnumIndex', '400', '100%' )" ><span
+        class="codefrag">int getEnumIndex(String)</span></a>.  The
+        corresponding mapping from enumeration constant to enumeration
+        token is achieved through the method <span id = "span13"
+        ></span ><a href= "javascript:toggleCode( 'span13',
+        'RenderingIntent.html#getEnumText', '400', '100%' )" ><span
+        class="codefrag">String getEnumText(int)</span></a>.
+      </p>
+      <a name="N1009D"></a>
+      <h4 id="common-enum-values">
+        Factoring Out Common Enumeration Values
+      </h4>
+      <p>
+        When a number of properties support a common enumerated value,
+        that value and its associated access methods may be factored
+        out to a new class, which each of the properties then extends.
+        An example of such a common super-class is <span id = "span14"
+        ></span ><a href= "javascript:toggleCode( 'span14',
+        'BorderCommonStyle.html#BorderCommonStyleClass', '400', '100%'
+        )" ><span class="codefrag">BorderCommonStyle</span></a>.  Like
+        a property with a normal HashMap representation of an
+        enumerated value, BorderCommonStyle defines <span id =
+        "span15" ></span ><a href= "javascript:toggleCode( 'span15',
+        'BorderCommonStyle.html#HIDDEN', '400', '100%' )" ><span
+        class="codefrag">public static final int</span></a>
+        enumeration integer constants.  Similarly, the enumeration
+        tokens are stored in the array <span id = "span16" ></span ><a
+        href= "javascript:toggleCode( 'span16',
+        'BorderCommonStyle.html#rwEnums', '400', '100%' )" ><span
+        class="codefrag">String[] rwEnums</span></a>, and the
+        association of enumeration tokens with the integer constants
+        occurs in the <span class="codefrag">HashMap</span> <span id =
+        "span17" ></span ><a href= "javascript:toggleCode( 'span17',
+        'BorderCommonStyle.html#rwEnumHash', '400', '100%' )" ><span
+        class="codefrag"> rwEnumHash</span></a>, initialized in a
+        <span class="codefrag">static {}</span> initializer.  The
+        mapping methods <span id = "span18" ></span ><a href=
+        "javascript:toggleCode( 'span18',
+        'BorderCommonStyle.html#getEnumIndex', '400', '100%' )" ><span
+        class="codefrag">int getEnumIndex(String)</span></a> and <span
+        id = "span19" ></span ><a href= "javascript:toggleCode(
+        'span19', 'BorderCommonStyle.html#getEnumText', '400', '100%'
+        )" ><span class="codefrag">String getEnumText(int)</span></a>
+        are also present.
+      </p>
+      <p>
+        Notice, however, that the class has none of the static data
+        constants described in the discussion of <a
+        href="simple-properties.html">simple properties</a>.  These
+        values are defined in the individual sub-classes of this
+        class, e.g. <span id = "span20" ></span ><a href=
+        "javascript:toggleCode( 'span20',
+        'BorderLeftStyle.html#BorderLeftStyleClass', '400', '100%' )"
+        ><span class="codefrag">BorderLeftStyle</span></a>.  None of
+        the above fields or methods occur, and <span
+        class="codefrag">BorderLeftStyle</span> is left looking like
+        an example of a simple property.  The enumeration mapping
+        methods are, however, available through the super-class <span
+        class="codefrag">BorderCommonStyle</span>.
+      </p>
+      <a name="N100DD"></a>
+      <h4>Mapped Numeric Values</h4>
+      <p>
+        In "normal" enumerated values, the token is, effectively,
+        passed directly into the layout operation of the flow object
+        to which the property is applied.  Some enumerated values,
+        however, generate a <span class="codefrag">Numeric</span>
+        result.  Their resolution involves mapping the token to the
+        indicated <span class="codefrag">Numeric</span> value.
+      </p>
+      <p>
+        An example is the <span id = "span21" ></span ><a href=
+        "javascript:toggleCode( 'span21',
+        'BorderCommonWidth.html#BorderCommonWidthClass', '400', '100%'
+        )" ><span class="codefrag">BorderCommonWidth</span></a>
+        property.  This, like the example of <a
+        href="#common-enum-values"><span
+        class="codefrag">BorderCommonStyle</span></a> above, also
+        represents common enumerated values which have been factored
+        out to form a super-class for particular properties.  <span
+        class="codefrag">BorderCommonWidth</span>, therefore, also
+        defines <span id = "span22" ></span ><a href=
+        "javascript:toggleCode( 'span22',
+        'BorderCommonWidth.html#THIN', '400', '100%' )" ><span
+        class="codefrag">enumeration constant values</span></a> and an
+        array of tokens.  In this case, there is no <span
+        class="codefrag">HashMap</span>, because of the limited number
+        of tokens, but the mapping methods <span id = "span23" ></span
+        ><a href= "javascript:toggleCode( 'span23',
+        'BorderCommonWidth.html#getEnumIndex', '400', '100%' )" ><span
+        class="codefrag">int getEnumIndex(String)</span></a> and <span
+        id = "span24" ></span ><a href= "javascript:toggleCode(
+        'span24', 'BorderCommonWidth.html#getEnumText', '400', '100%'
+        )" ><span class="codefrag">String getEnumText(int)</span></a>
+        are present.
+      </p>
+      <p>
+        The added element in this property is the array <span id =
+        "span25" ></span ><a href= "javascript:toggleCode( 'span25',
+        'BorderCommonWidth.html#mappedPoints', '400', '100%' )" ><span
+        class="codefrag">double[] mappedPoints</span></a>.  The
+        entries in this array must by maintained in syncronization
+        with the <span id = "span26" ></span ><a href=
+        "javascript:toggleCode( 'span26',
+        'BorderCommonWidth.html#rwEnums', '400', '100%' )" ><span
+        class="codefrag">String[] rwEnums</span></a> array of tokens
+        and the set of <span id = "span27" ></span ><a href=
+        "javascript:toggleCode( 'span27',
+        'BorderCommonWidth.html#THIN', '400', '100%' )" >enumeration
+        constants</a>.  The mapping from token to Numeric value is
+        achieved by the <span id = "span28" ></span ><a href=
+        "javascript:toggleCode( 'span28',
+        'BorderCommonWidth.html#getMappedLength', '400', '100%' )"
+        ><span class="codefrag">Numeric getMappedLength(FONode, int,
+        int)</span></a> method.
+      </p>
+      <p>
+
+        <span id = "span29" ></span ><a href= "javascript:toggleCode(
+        'span29', 'BorderLeftWidth.html#BorderLeftWidthClass', '400',
+        '100%' )" ><span class="codefrag">BorderLeftWidth</span></a>
+        extends <span id = "span30" ></span ><a href=
+        "javascript:toggleCode( 'span30', 'BorderCommonWidth.html',
+        '400', '100%' )" ><span
+        class="codefrag">BorderCommonWidth</span></a>.  It includes
+        the basic static data, like <a
+        href="simple-properties.html">simple properties</a>, and, in
+        this case, the <span id = "span31" ></span ><a href=
+        "javascript:toggleCode( 'span31',
+        'BorderLeftWidth.html#getInitialValue', '400', '100%' )"
+        ><span class="codefrag">PropertyValue
+        getInitialValue(int)</span></a> method to derive the initial
+        value.
+      </p>
+      <a name="N10139"></a>
+      <h4>Deriving Mapped Numeric Values</h4>
+      <p>
+        As usual with property values, the usual method of deriving a
+        mapped numeric value is by calling the <span id = "span32"
+        ></span ><a href= "javascript:toggleCode( 'span32',
+        '../PropertyConsts.html#getMappedNumeric', '400', '100%' )"
+        ><span class="codefrag">Numeric getMappedNumeric(FONode, int,
+        int)</span></a> method in <span id = "span33" ></span ><a
+        href= "javascript:toggleCode( 'span33',
+        '../PropertyConsts.html#pconsts', '400', '100%' )" ><span
+        class="codefrag">pconsts</span></a>.  All properties which
+        support a mapped numeric value must have a <span
+        class="codefrag">Numeric getMappedNumeric(FONode, int)</span>
+        method, which will be called through its singleton instance,
+        stored in the <span id = "span34" ></span ><a href=
+        "javascript:toggleCode( 'span34',
+        'PropertyConsts.html#properties', '400', '100%' )" ><span
+        class= "codefrag" >properties</span ></a> array, by the <span
+        class="codefrag">PropertyConsts</span> method.
+      </p>
+
+      <p>
+        <strong>Previous:</strong> <a href= "getInitialValue.html"
+                                  >getInitialValue()</a>
+      </p>
+      <!--
+      <p>
+        <strong>Next:</strong> <a href= "getInitialValue.html"
+                                  >getInitialValue()</a>
+      </p>
+-->
+
+    </div>
+  </body>
+</html>

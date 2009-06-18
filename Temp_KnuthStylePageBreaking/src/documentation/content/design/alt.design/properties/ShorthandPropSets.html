@@ -1,0 +1,1093 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<!--
+  Copyright 2001-2004 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<!-- Created by htmlize-0.67 in css mode. -->
+<html>
+  <head>
+    <title>ShorthandPropSets.java</title>
+    <style type="text/css">
+    <!--
+      body {
+        color: #000000;
+        background-color: #faf0e6;
+      } /* default */
+      .reference {
+        color: #cd0000;
+        background-color: #faf0e6;
+      } /* font-lock-reference-face */
+      .function-name {
+        color: #8b2323;
+        background-color: #faf0e6;
+      } /* font-lock-function-name-face */
+      .jde-java-font-lock-italic {
+        background-color: #faf0e6;
+        font-style: italic;
+      } /* jde-java-font-lock-italic-face */
+      .jde-java-font-lock-modifier {
+        color: #da70d6;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-modifier-face */
+      .keyword {
+        color: #8b0000;
+        background-color: #faf0e6;
+      } /* font-lock-keyword-face */
+      .jde-java-font-lock-link {
+        color: #0000ff;
+        background-color: #faf0e6;
+        text-decoration: underline;
+      } /* jde-java-font-lock-link-face */
+      .variable-name {
+        color: #8b008b;
+        background-color: #faf0e6;
+      } /* font-lock-variable-name-face */
+      .string {
+        color: #008b00;
+        background-color: #faf0e6;
+      } /* font-lock-string-face */
+      .jde-java-font-lock-package {
+        color: #0000cd;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-package-face */
+      .jde-java-font-lock-constant {
+        color: #5f9ea0;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-constant-face */
+      .type {
+        color: #4682b4;
+        background-color: #faf0e6;
+      } /* font-lock-type-face */
+      .jde-java-font-lock-bold {
+        background-color: #faf0e6;
+        font-weight: bold;
+      } /* jde-java-font-lock-bold-face */
+      .jde-java-font-lock-doc-tag {
+        color: #008b00;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-doc-tag-face */
+      .comment {
+        color: #00008b;
+        background-color: #faf0e6;
+      } /* font-lock-comment-face */
+      .jde-java-font-lock-number {
+        color: #bc8f8f;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-number-face */
+      a {
+        color: inherit;
+        background-color: inherit;
+        font: inherit;
+        text-decoration: inherit;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+    -->
+    </style>
+  </head>
+  <body>
+    <pre>
+<span class="comment">/*
+ * Copyright 2001-2004 The Apache Software Foundation.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */</span>
+ 
+<span class="keyword">package</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">fo</span>;
+
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">java</span>.<span class="jde-java-font-lock-package">lang</span>.<span class="type">CloneNotSupportedException</span>;
+
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">java</span>.<span class="jde-java-font-lock-package">util</span>.<span class="type">Set</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">java</span>.<span class="jde-java-font-lock-package">util</span>.<span class="type">BitSet</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">java</span>.<span class="jde-java-font-lock-package">util</span>.<span class="type">HashSet</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">java</span>.<span class="jde-java-font-lock-package">util</span>.<span class="type">HashMap</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">java</span>.<span class="jde-java-font-lock-package">util</span>.<span class="type">List</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">java</span>.<span class="jde-java-font-lock-package">util</span>.<span class="type">ListIterator</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">java</span>.<span class="jde-java-font-lock-package">util</span>.<span class="type">Iterator</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">java</span>.<span class="jde-java-font-lock-package">util</span>.<span class="type">Arrays</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">java</span>.<span class="jde-java-font-lock-package">util</span>.<span class="type">Collections</span>;
+
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">fo</span>.<span class="jde-java-font-lock-package">expr</span>.<span class="type">PropertyException</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">datatypes</span>.<span class="type">PropertyValue</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">datatypes</span>.<span class="type">PropertyValueList</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">fo</span>.<span class="type">PropNames</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">fo</span>.<span class="type">PropertyConsts</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">datastructs</span>.<span class="type">ROIntArray</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">datastructs</span>.<span class="type">ROBitSet</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">datatypes</span>.<span class="type">Ints</span>;
+
+<span class="comment">/**
+ * This class contains &lt;tt&gt;ROIntArray&lt;/tt&gt;s which encode the various sets of
+ * properties into which the shorthand and compound properties expand, and
+ * utility methods for manipulating these expansions.
+ * </span><span class="jde-java-font-lock-doc-tag">@author</span><span class="comment"> &lt;a href=&quot;mailto:pbwest@powerup.com.au&quot;&gt;</span><span class="jde-java-font-lock-link">Peter B. West</span><span class="comment">&lt;/a&gt;
+ */</span>
+<span class="jde-java-font-lock-modifier">public</span> <span class="keyword">class</span> <span class="function-name" id="ShorthandPropSetsClass">ShorthandPropSets</span> {
+
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">String</span> <span class="variable-name" id="tag">tag</span> = &quot;<span class="string">$Name$</span>&quot;;
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">String</span> <span class="variable-name" id="revision">revision</span> = &quot;<span class="string">$Revision$</span>&quot;;
+
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">String</span> <span class="variable-name" id="packageName">packageName</span> = &quot;<span class="string">org.apache.fop.fo</span>&quot;;
+
+
+    <span class="comment">// My preference here for shorthands which expand to compound properties
+</span>    <span class="comment">// would be to expand only to the compound, and allow compounds to be
+</span>    <span class="comment">// &quot;normally&quot; expanded in a second step.  Unfortunately, the shorthand
+</span>    <span class="comment">// border-spacing expands (potentially) into both of the elements of
+</span>    <span class="comment">// the border-separation compound.  However, other compound expansions
+</span>    <span class="comment">// are defined with only a single value for the compound, so I will
+</span>    <span class="comment">// treat border-separation as a special case in the event that two
+</span>    <span class="comment">// values are provided.
+</span>    <span class="comment">// I''m not sure whether a shorthand specification which sets a compound
+</span>    <span class="comment">// property with a single top-level value should be regarded as a
+</span>    <span class="comment">// specification for the purposes of inheritance, but I will assume so
+</span>    <span class="comment">// until further notice.
+</span>    <span class="comment">// pbw
+</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">int</span>[] <span class="variable-name" id="backgroundPosition">backgroundPosition</span> = {
+        <span class="reference">PropNames</span>.<span class="type">BACKGROUND_POSITION_HORIZONTAL</span>
+        ,<span class="reference">PropNames</span>.<span class="type">BACKGROUND_POSITION_VERTICAL</span>
+    };
+
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">int</span>[] <span class="variable-name" id="borderColor">borderColor</span> = {
+        <span class="reference">PropNames</span>.<span class="type">BORDER_TOP_COLOR</span>
+        ,<span class="reference">PropNames</span>.<span class="type">BORDER_RIGHT_COLOR</span>
+        ,<span class="reference">PropNames</span>.<span class="type">BORDER_BOTTOM_COLOR</span>
+        ,<span class="reference">PropNames</span>.<span class="type">BORDER_LEFT_COLOR</span>
+    };
+
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">int</span>[] <span class="variable-name" id="borderStyle">borderStyle</span> = {
+        <span class="reference">PropNames</span>.<span class="type">BORDER_TOP_STYLE</span>
+        ,<span class="reference">PropNames</span>.<span class="type">BORDER_RIGHT_STYLE</span>
+        ,<span class="reference">PropNames</span>.<span class="type">BORDER_BOTTOM_STYLE</span>
+        ,<span class="reference">PropNames</span>.<span class="type">BORDER_LEFT_STYLE</span>
+    };
+
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">int</span>[] <span class="variable-name" id="borderWidth">borderWidth</span> = {
+        <span class="reference">PropNames</span>.<span class="type">BORDER_TOP_WIDTH</span>
+        ,<span class="reference">PropNames</span>.<span class="type">BORDER_RIGHT_WIDTH</span>
+        ,<span class="reference">PropNames</span>.<span class="type">BORDER_BOTTOM_WIDTH</span>
+        ,<span class="reference">PropNames</span>.<span class="type">BORDER_LEFT_WIDTH</span>
+    };
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="backgroundExpansion">backgroundExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[][] {
+            <span class="keyword">new</span> <span class="type">int</span>[] {
+                <span class="reference">PropNames</span>.<span class="type">BACKGROUND_COLOR</span>
+                ,<span class="reference">PropNames</span>.<span class="type">BACKGROUND_IMAGE</span>
+                ,<span class="reference">PropNames</span>.<span class="type">BACKGROUND_REPEAT</span>
+                ,<span class="reference">PropNames</span>.<span class="type">BACKGROUND_ATTACHMENT</span>
+                ,<span class="reference">PropNames</span>.<span class="type">BACKGROUND_POSITION_HORIZONTAL</span>
+                ,<span class="reference">PropNames</span>.<span class="type">BACKGROUND_POSITION_VERTICAL</span>
+            }, backgroundPosition});
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="backgroundPositionExpansion">backgroundPositionExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(backgroundPosition);
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="borderExpansion">borderExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[][] { borderStyle, borderColor, borderWidth });
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="borderStyleExpansion">borderStyleExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(borderStyle);
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="borderColorExpansion">borderColorExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(borderColor);
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="borderWidthExpansion">borderWidthExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(borderWidth);
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="borderTopExpansion">borderTopExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {
+            <span class="reference">PropNames</span>.<span class="type">BORDER_TOP_STYLE</span>
+            ,<span class="reference">PropNames</span>.<span class="type">BORDER_TOP_COLOR</span>
+            ,<span class="reference">PropNames</span>.<span class="type">BORDER_TOP_WIDTH</span>
+        });
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="borderRightExpansion">borderRightExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {
+            <span class="reference">PropNames</span>.<span class="type">BORDER_RIGHT_STYLE</span>
+            ,<span class="reference">PropNames</span>.<span class="type">BORDER_RIGHT_COLOR</span>
+            ,<span class="reference">PropNames</span>.<span class="type">BORDER_RIGHT_WIDTH</span>
+        });
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="borderBottomExpansion">borderBottomExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {
+            <span class="reference">PropNames</span>.<span class="type">BORDER_BOTTOM_STYLE</span>
+            ,<span class="reference">PropNames</span>.<span class="type">BORDER_BOTTOM_COLOR</span>
+            ,<span class="reference">PropNames</span>.<span class="type">BORDER_BOTTOM_WIDTH</span>
+        });
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="borderLeftExpansion">borderLeftExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {
+            <span class="reference">PropNames</span>.<span class="type">BORDER_LEFT_STYLE</span>
+            ,<span class="reference">PropNames</span>.<span class="type">BORDER_LEFT_COLOR</span>
+            ,<span class="reference">PropNames</span>.<span class="type">BORDER_LEFT_WIDTH</span>
+        });
+
+    <span class="comment">/**
+     * Watch this one.  &lt;i&gt;</span><span class="jde-java-font-lock-italic">border-spacing</span><span class="comment">&lt;/i&gt; is a shorthand which expands
+     * into the components of the &lt;tt&gt;&amp;lt;border-separation&amp;gt;&lt;/tt&gt; compound
+     * property.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="borderSpacingExpansion">borderSpacingExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {
+            <span class="reference">PropNames</span>.<span class="type">BORDER_SEPARATION</span>
+        });
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="cueExpansion">cueExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {
+            <span class="reference">PropNames</span>.<span class="type">CUE_BEFORE</span>
+            ,<span class="reference">PropNames</span>.<span class="type">CUE_AFTER</span>
+        });
+
+    <span class="comment">/**
+     * Another nasty one.  &lt;i&gt;</span><span class="jde-java-font-lock-italic">font</span><span class="comment">&lt;/i&gt; expands, in part, into
+     * &lt;i&gt;</span><span class="jde-java-font-lock-italic">line-height</span><span class="comment">&lt;/i&gt;, which is itself a compound property with a
+     * &lt;tt&gt;&amp;lt;space&amp;gt;&lt;/tt&gt; value.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="fontExpansion">fontExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {
+            <span class="reference">PropNames</span>.<span class="type">FONT_FAMILY</span>
+            ,<span class="reference">PropNames</span>.<span class="type">FONT_STYLE</span>
+            ,<span class="reference">PropNames</span>.<span class="type">FONT_VARIANT</span>
+            ,<span class="reference">PropNames</span>.<span class="type">FONT_WEIGHT</span>
+            ,<span class="reference">PropNames</span>.<span class="type">FONT_SIZE</span>
+            ,<span class="reference">PropNames</span>.<span class="type">LINE_HEIGHT</span>
+            ,<span class="reference">PropNames</span>.<span class="type">FONT_SIZE_ADJUST</span>
+            ,<span class="reference">PropNames</span>.<span class="type">FONT_STRETCH</span>
+            ,<span class="reference">PropNames</span>.<span class="type">FONT_SELECTION_STRATEGY</span>
+        });
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="marginExpansion">marginExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {
+            <span class="reference">PropNames</span>.<span class="type">MARGIN_TOP</span>
+            ,<span class="reference">PropNames</span>.<span class="type">MARGIN_RIGHT</span>
+            ,<span class="reference">PropNames</span>.<span class="type">MARGIN_BOTTOM</span>
+            ,<span class="reference">PropNames</span>.<span class="type">MARGIN_LEFT</span>
+        });
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="paddingExpansion">paddingExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {
+            <span class="reference">PropNames</span>.<span class="type">PADDING_TOP</span>
+            ,<span class="reference">PropNames</span>.<span class="type">PADDING_RIGHT</span>
+            ,<span class="reference">PropNames</span>.<span class="type">PADDING_BOTTOM</span>
+            ,<span class="reference">PropNames</span>.<span class="type">PADDING_LEFT</span>
+        });
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="pageBreakAfterExpansion">pageBreakAfterExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {
+            <span class="reference">PropNames</span>.<span class="type">BREAK_AFTER</span>
+            ,<span class="reference">PropNames</span>.<span class="type">KEEP_WITH_NEXT</span>
+        });
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="pageBreakBeforeExpansion">pageBreakBeforeExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {
+            <span class="reference">PropNames</span>.<span class="type">BREAK_BEFORE</span>
+            ,<span class="reference">PropNames</span>.<span class="type">KEEP_WITH_PREVIOUS</span>
+        });
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="pageBreakInsideExpansion">pageBreakInsideExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {
+            <span class="reference">PropNames</span>.<span class="type">KEEP_TOGETHER</span>
+        });
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="pauseExpansion">pauseExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {
+            <span class="reference">PropNames</span>.<span class="type">PAUSE_BEFORE</span>
+            ,<span class="reference">PropNames</span>.<span class="type">PAUSE_AFTER</span>
+        });
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="positionExpansion">positionExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {
+            <span class="reference">PropNames</span>.<span class="type">RELATIVE_POSITION</span>
+            ,<span class="reference">PropNames</span>.<span class="type">ABSOLUTE_POSITION</span>
+        });
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="sizeExpansion">sizeExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {
+            <span class="reference">PropNames</span>.<span class="type">PAGE_HEIGHT</span>
+            ,<span class="reference">PropNames</span>.<span class="type">PAGE_WIDTH</span>
+        });
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="verticalAlignExpansion">verticalAlignExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {
+            <span class="reference">PropNames</span>.<span class="type">ALIGNMENT_BASELINE</span>
+            ,<span class="reference">PropNames</span>.<span class="type">ALIGNMENT_ADJUST</span>
+            ,<span class="reference">PropNames</span>.<span class="type">BASELINE_SHIFT</span>
+            ,<span class="reference">PropNames</span>.<span class="type">DOMINANT_BASELINE</span>
+        });
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="whiteSpaceExpansion">whiteSpaceExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {
+            <span class="reference">PropNames</span>.<span class="type">LINEFEED_TREATMENT</span>
+            ,<span class="reference">PropNames</span>.<span class="type">WHITE_SPACE_COLLAPSE</span>
+            ,<span class="reference">PropNames</span>.<span class="type">WHITE_SPACE_TREATMENT</span>
+            ,<span class="reference">PropNames</span>.<span class="type">WRAP_OPTION</span>
+        });
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="xmlLangExpansion">xmlLangExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {
+            <span class="reference">PropNames</span>.<span class="type">COUNTRY</span>
+            ,<span class="reference">PropNames</span>.<span class="type">LANGUAGE</span>
+        });
+
+    <span class="comment">/**
+     * Shorthand properties.  Where properties interact, they are listed
+     * in increasing precision.
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">int</span>[] <span class="variable-name" id="shorthands">shorthands</span> = {
+            <span class="reference">PropNames</span>.<span class="type">BACKGROUND</span>
+            ,<span class="reference">PropNames</span>.<span class="type">BACKGROUND_POSITION</span>
+            ,<span class="reference">PropNames</span>.<span class="type">BORDER</span>
+            ,<span class="reference">PropNames</span>.<span class="type">BORDER_STYLE</span>
+            ,<span class="reference">PropNames</span>.<span class="type">BORDER_COLOR</span>
+            ,<span class="reference">PropNames</span>.<span class="type">BORDER_WIDTH</span>
+            ,<span class="reference">PropNames</span>.<span class="type">BORDER_TOP</span>
+            ,<span class="reference">PropNames</span>.<span class="type">BORDER_RIGHT</span>
+            ,<span class="reference">PropNames</span>.<span class="type">BORDER_BOTTOM</span>
+            ,<span class="reference">PropNames</span>.<span class="type">BORDER_LEFT</span>
+            ,<span class="reference">PropNames</span>.<span class="type">BORDER_SPACING</span>
+            ,<span class="reference">PropNames</span>.<span class="type">CUE</span>
+            ,<span class="reference">PropNames</span>.<span class="type">FONT</span>
+            ,<span class="reference">PropNames</span>.<span class="type">MARGIN</span>
+            ,<span class="reference">PropNames</span>.<span class="type">PADDING</span>
+            ,<span class="reference">PropNames</span>.<span class="type">PAGE_BREAK_AFTER</span>
+            ,<span class="reference">PropNames</span>.<span class="type">PAGE_BREAK_BEFORE</span>
+            ,<span class="reference">PropNames</span>.<span class="type">PAGE_BREAK_INSIDE</span>
+            ,<span class="reference">PropNames</span>.<span class="type">PAUSE</span>
+            ,<span class="reference">PropNames</span>.<span class="type">POSITION</span>
+            ,<span class="reference">PropNames</span>.<span class="type">SIZE</span>
+            ,<span class="reference">PropNames</span>.<span class="type">VERTICAL_ALIGN</span>
+            ,<span class="reference">PropNames</span>.<span class="type">WHITE_SPACE</span>
+            ,<span class="reference">PropNames</span>.<span class="type">XML_LANG</span>
+        };
+
+    <span class="comment">/**
+     * Array of &lt;i&gt;</span><span class="jde-java-font-lock-italic">ROIntArray&lt;/i&gt;&lt;b&gt;</span><span class="jde-java-font-lock-bold"> in same order as &lt;i&gt;shorthands&lt;/i&gt;</span><span class="comment">&lt;/b&gt;
+     * &lt;i&gt;</span><span class="jde-java-font-lock-italic">ROIntArray</span><span class="comment">&lt;/i&gt;.
+     * If a public view of this is required, use
+     * Collections.unmodifiableList(Arrays.asList(shorthandExpansions))
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span>[] <span class="variable-name" id="shorthandExpansions">shorthandExpansions</span> = {
+        backgroundExpansion
+        ,backgroundPositionExpansion
+        ,borderExpansion
+        ,borderStyleExpansion
+        ,borderColorExpansion
+        ,borderWidthExpansion
+        ,borderTopExpansion
+        ,borderRightExpansion
+        ,borderBottomExpansion
+        ,borderLeftExpansion
+        ,borderSpacingExpansion
+        ,cueExpansion
+        ,fontExpansion
+        ,marginExpansion
+        ,paddingExpansion
+        ,pageBreakAfterExpansion
+        ,pageBreakBeforeExpansion
+        ,pageBreakInsideExpansion
+        ,pauseExpansion
+        ,positionExpansion
+        ,sizeExpansion
+        ,verticalAlignExpansion
+        ,whiteSpaceExpansion
+        ,xmlLangExpansion
+    };
+
+    <span class="comment">/**
+     * Map property index to shorthand array index
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">HashMap</span> <span class="variable-name" id="shorthandMap">shorthandMap</span>;
+    <span class="jde-java-font-lock-modifier">static</span> {
+        shorthandMap = <span class="keyword">new</span> <span class="type">HashMap</span>(shorthands.length);
+        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable-name" id="i">i</span> = <span class="jde-java-font-lock-number">0</span>; i &lt; shorthands.length; i++) {
+            shorthandMap.put
+                    ((<span class="type">Object</span>)(Ints.consts.get(shorthands[i])), 
+                     (<span class="type">Object</span>)(Ints.consts.get(i)));
+        }
+    }
+
+    <span class="comment">/**
+     * RO Shorthand properties.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="roShorthands">roShorthands</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(shorthands);
+
+    <span class="comment">/**
+     * A &lt;tt&gt;ROBitSet&lt;/tt&gt; of the shorthand properties.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROBitSet</span> <span class="variable-name" id="shorthandPropSet">shorthandPropSet</span>;
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">BitSet</span> <span class="variable-name" id="shorthandpropset">shorthandpropset</span>;
+    <span class="jde-java-font-lock-modifier">static</span> {
+        shorthandpropset = <span class="keyword">new</span> <span class="type">BitSet</span>(PropNames.<span class="jde-java-font-lock-constant" id="LAST_PROPERTY_INDEX">LAST_PROPERTY_INDEX</span> + <span class="jde-java-font-lock-number">1</span>);
+        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable-name">i</span> = <span class="jde-java-font-lock-number">0</span>; i &lt; shorthands.length; i++)
+            shorthandpropset.set(shorthands[i]);
+        shorthandPropSet = <span class="keyword">new</span> <span class="type">ROBitSet</span>(shorthandpropset);
+    }
+
+    <span class="comment">/**
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name" id="property">property</span><span class="comment"> &lt;tt&gt;int&lt;/tt&gt; property index
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> &lt;tt&gt;ROIntArray&lt;/tt&gt; containing the expansion list for
+     * this shorthand.
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">&lt;tt&gt;PropertyException&lt;/tt&gt;</span><span class="comment"> if this is not a valid
+     * shorthand property
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="type">ROIntArray</span> <span class="function-name" id="getSHandExpansionSet">getSHandExpansionSet</span>(<span class="type">int</span> <span class="variable-name">property</span>)
+        <span class="keyword">throws</span> <span class="type">PropertyException</span>
+    {
+        <span class="comment">// Is the property of the argument a shorthand?
+</span>        <span class="type">Integer</span> <span class="variable-name" id="sHIndex">sHIndex</span> =
+                (<span class="type">Integer</span>)(shorthandMap.get(Ints.consts.get(property)));
+        <span class="keyword">if</span> (sHIndex == <span class="jde-java-font-lock-constant" id="null">null</span>) {
+            <span class="type">String</span> <span class="variable-name" id="propname">propname</span> = PropNames.getPropertyName(property);
+            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">PropertyException</span>
+                    (propname + &quot;<span class="string"> not a shorthand property</span>&quot;);
+        }
+        <span class="comment">// Get the array of indices of the properties in the
+</span>        <span class="comment">// expansion of this shorthand
+</span>        <span class="keyword">return</span> shorthandExpansions[sHIndex.intValue()];
+    }
+
+    <span class="comment">/**
+     * Expand the shorthand property associated with the
+     * &lt;tt&gt;PropertyValue&lt;/tt&gt; argument by copying the given value for each
+     * property in the expansion.  The &lt;em&gt;</span><span class="jde-java-font-lock-italic">property</span><span class="comment">&lt;/em&gt; field of each
+     * &lt;tt&gt;PropertyValue&lt;/tt&gt; will be set to one of the proeprties in the
+     * shorthand expansion.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name" id="value">value</span><span class="comment"> a &lt;tt&gt;propertyValue&lt;/tt&gt; whose &lt;em&gt;</span><span class="jde-java-font-lock-italic">property</span><span class="comment">&lt;/em&gt; field
+     *  is assumed to be set to a shorthand property.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> &lt;tt&gt;PropertyValueList&lt;/tt&gt; containing a list of
+     *  &lt;tt&gt;PropertyValue&lt;/tt&gt;s, one for each property in the expansion of
+     *  the shorthand property.
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">PropertyException
+</span><span class="comment">     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="type">PropertyValueList</span> <span class="function-name" id="expandAndCopySHand">expandAndCopySHand</span>(<span class="type">PropertyValue</span> <span class="variable-name">value</span>)
+        <span class="keyword">throws</span> <span class="type">PropertyException</span>
+    {
+        <span class="comment">// The property associated with this PropertyValue
+</span>        <span class="type">int</span> <span class="variable-name">property</span> = value.getProperty();
+        <span class="type">ROIntArray</span> <span class="variable-name" id="expansion">expansion</span> = getSHandExpansionSet(property);
+        <span class="type">PropertyValueList</span> <span class="variable-name" id="list">list</span> = <span class="keyword">new</span> <span class="type">PropertyValueList</span>(property);
+        <span class="keyword">return</span> copyValueToSet(value, expansion, list);
+    }
+
+    <span class="comment">/**
+     * Generate a list of the intial values of each property in a
+     * shorthand expansion.  Note that this will be a list of
+     * &lt;b&gt;</span><span class="jde-java-font-lock-bold">references</span><span class="comment">&lt;/b&gt; to the initial values.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name" id="foTree">foTree</span><span class="comment"> the &lt;tt&gt;FOTree&lt;/tt&gt; for which properties are being
+     * processed
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">property</span><span class="comment"> &lt;tt&gt;int&lt;/tt&gt; property index
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> &lt;tt&gt;PropertyValueList&lt;/tt&gt; containing the intial value
+     * expansions for the (shorthand) property
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">&lt;tt&gt;PropertyException&lt;/tt&gt;
+</span><span class="comment">     */</span>
+     <span class="comment">/*
+      Don't do this.  Shorthands should not expand initial values, because
+      a distinction is needed between those properties which are given
+      a specified value and those which are set by normal inheritance or from
+      their initial values.  This so that fromSpecifiedValue() will work.
+
+    public static PropertyValueList initialValueSHandExpansion
+        (FOTree foTree, int property)
+        throws PropertyException
+    {
+        ROIntArray expansion = getSHandExpansionSet(property);
+        PropertyValueList list = new PropertyValueList(property);
+        for (int i = 0; i &lt; expansion.length; i++) {
+            int expandedProp = expansion.get(i);
+            PropertyValue specified
+                    = foTree.getInitialSpecifiedValue(expandedProp);
+            list.add(specified);
+        }
+        return list;
+    }
+    */</span>
+
+    <span class="comment">/**
+     * Given a shorthand expansion list and a &lt;tt&gt;PropertyValue&lt;/tt&gt;,
+     * override the list element corresponding to the &lt;tt&gt;PropertyValue&lt;/tt&gt;.
+     * Correspondence is based on the &lt;em&gt;</span><span class="jde-java-font-lock-italic">property</span><span class="comment">&lt;/em&gt; field of the
+     * &lt;tt&gt;PropertyValue&lt;/tt&gt;.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name" id="expansionList">expansionList</span><span class="comment"> the expansion &lt;tt&gt;PropertyValueList&lt;/tt&gt;
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name" id="element">element</span><span class="comment"> the overriding &lt;tt&gt;PropertyValue&lt;/tt&gt;
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> &lt;tt&gt;PropertyValueList&lt;/tt&gt; the expansion list with the
+     *  appropriate element reset
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">&lt;tt&gt;PropertyException&lt;/tt&gt;
+</span><span class="comment">     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="type">PropertyValueList</span> <span class="variable-name" id="overrideSHandElement">overrideSHandElement</span>
+        (<span class="type">PropertyValueList</span> <span class="variable-name">expansionList</span>, <span class="type">PropertyValue</span> <span class="variable-name">element</span>)
+        <span class="keyword">throws</span> <span class="type">PropertyException</span>
+    {
+        <span class="type">int</span> <span class="variable-name" id="elementProp">elementProp</span> = element.getProperty();
+        <span class="type">ListIterator</span> <span class="variable-name" id="elements">elements</span> = expansionList.listIterator();
+        <span class="keyword">while</span> (elements.hasNext()) {
+            <span class="type">PropertyValue</span> <span class="variable-name" id="next">next</span> = (<span class="type">PropertyValue</span>)(elements.next());
+            <span class="keyword">if</span> (next.getProperty() == elementProp) {
+                elements.set(element);
+                <span class="keyword">return</span> expansionList;
+            }
+        }
+        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">PropertyException</span>
+                (&quot;<span class="string">Unmatched property </span>&quot; + elementProp +
+                 &quot;<span class="string"> in expansion list for </span>&quot; + expansionList.getProperty());
+    }
+
+    <span class="comment">/**
+     * Given a shorthand expansion list and a &lt;tt&gt;PropertyValueList&lt;/tt&gt;,
+     * override the expansion list elements corresponding to the elements
+     * of the &lt;tt&gt;PropertyValueList&lt;/tt&gt;.
+     * Correspondence is based on the &lt;em&gt;</span><span class="jde-java-font-lock-italic">property</span><span class="comment">&lt;/em&gt; field of the
+     * &lt;tt&gt;PropertyValue&lt;/tt&gt;.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">expansionList</span><span class="comment"> the expansion &lt;tt&gt;PropertyValueList&lt;/tt&gt;
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">list</span><span class="comment"> the overriding &lt;tt&gt;PropertyValueList&lt;/tt&gt;
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> &lt;tt&gt;PropertyValueList&lt;/tt&gt; the new expansion list with
+     *  appropriate elements reset
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">&lt;tt&gt;PropertyException&lt;/tt&gt;
+</span><span class="comment">     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="type">PropertyValueList</span> <span class="variable-name" id="overrideSHandElements">overrideSHandElements</span>
+        (<span class="type">PropertyValueList</span> <span class="variable-name">expansionList</span>, <span class="type">PropertyValueList</span> <span class="variable-name">list</span>)
+        <span class="keyword">throws</span> <span class="type">PropertyException</span>
+    {
+        <span class="comment">// From the overriding list, form an array of PropertyValue references
+</span>        <span class="comment">// an array of property indices and an array of booleans,
+</span>        <span class="type">int</span> <span class="variable-name" id="listsize">listsize</span> = list.size();
+        <span class="type">Object</span>[] <span class="variable-name" id="listrefs">listrefs</span> = <span class="keyword">new</span> <span class="type">Object</span>[listsize];
+        <span class="type">int</span>[] <span class="variable-name" id="listprops">listprops</span> = <span class="keyword">new</span> <span class="type">int</span>[listsize];
+        <span class="type">boolean</span>[] <span class="variable-name" id="propseen">propseen</span> = <span class="keyword">new</span> <span class="type">boolean</span>[listsize];
+        <span class="type">Iterator</span> <span class="variable-name" id="listels">listels</span> = list.iterator();
+        <span class="type">int</span> <span class="variable-name">i</span> = <span class="jde-java-font-lock-number">0</span>;
+        <span class="keyword">while</span> (listels.hasNext()) {
+            listrefs[i] = listels.next();
+            listprops[i] = ((<span class="type">PropertyValue</span>)listrefs[i]).getProperty();
+            i++;
+        }
+
+        <span class="type">ListIterator</span> <span class="variable-name">elements</span> = expansionList.listIterator();
+        <span class="keyword">while</span> (elements.hasNext()) {
+            <span class="type">PropertyValue</span> <span class="variable-name">next</span> = (<span class="type">PropertyValue</span>)(elements.next());
+            <span class="type">int</span> <span class="variable-name" id="expprop">expprop</span> = next.getProperty();
+            <span class="keyword">for</span> (i = <span class="jde-java-font-lock-number">0</span>; i &lt; listsize; i++) {
+                <span class="keyword">if</span> (expprop != listprops[i]) <span class="keyword">continue</span>;
+                elements.set(listrefs[i]);
+                propseen[i] = <span class="jde-java-font-lock-constant" id="true">true</span>;
+            }
+        }
+        <span class="comment">// Check for unmatched override elements
+</span>        <span class="type">String</span> <span class="variable-name" id="unmatched">unmatched</span> = &quot;&quot;;
+        <span class="type">boolean</span> <span class="variable-name" id="someunmatched">someunmatched</span> = <span class="jde-java-font-lock-constant" id="false">false</span>;
+        <span class="keyword">for</span> (i = <span class="jde-java-font-lock-number">0</span>; i &lt; listsize; i++) {
+            <span class="keyword">if</span> ( ! propseen[i]) {
+                someunmatched = <span class="jde-java-font-lock-constant">true</span>;
+                unmatched = unmatched + &quot;<span class="string"> </span>&quot; +
+                        PropNames.getPropertyName(listprops[i]);
+            }
+        }
+        <span class="keyword">if</span> (someunmatched)
+            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">PropertyException</span>
+                (&quot;<span class="string">Unmatched properties:</span>&quot; + unmatched +
+                 &quot;<span class="string"> : in expansion list for </span>&quot; + expansionList.getProperty());
+        <span class="keyword">return</span> expansionList;
+    }
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="blockProgressionDimensionCopyExpansion">blockProgressionDimensionCopyExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {
+            <span class="reference">PropNames</span>.<span class="type">BLOCK_PROGRESSION_DIMENSION_MINIMUM</span>
+            ,<span class="reference">PropNames</span>.<span class="type">BLOCK_PROGRESSION_DIMENSION_OPTIMUM</span>
+            ,<span class="reference">PropNames</span>.<span class="type">BLOCK_PROGRESSION_DIMENSION_MAXIMUM</span>
+        });
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="blockProgressionDimensionNonCopyExpansion">blockProgressionDimensionNonCopyExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {});
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="borderAfterWidthCopyExpansion">borderAfterWidthCopyExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {
+            <span class="reference">PropNames</span>.<span class="type">BORDER_AFTER_WIDTH_LENGTH</span>
+        });
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="borderAfterWidthNonCopyExpansion">borderAfterWidthNonCopyExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {
+            <span class="reference">PropNames</span>.<span class="type">BORDER_AFTER_WIDTH_CONDITIONALITY</span>
+        });
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="borderBeforeWidthCopyExpansion">borderBeforeWidthCopyExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {
+            <span class="reference">PropNames</span>.<span class="type">BORDER_BEFORE_WIDTH_LENGTH</span>
+        });
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="borderBeforeWidthNonCopyExpansion">borderBeforeWidthNonCopyExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {
+            <span class="reference">PropNames</span>.<span class="type">BORDER_BEFORE_WIDTH_CONDITIONALITY</span>
+        });
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="borderEndWidthCopyExpansion">borderEndWidthCopyExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {
+            <span class="reference">PropNames</span>.<span class="type">BORDER_END_WIDTH_LENGTH</span>
+        });
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="borderEndWidthNonCopyExpansion">borderEndWidthNonCopyExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {
+            <span class="reference">PropNames</span>.<span class="type">BORDER_END_WIDTH_CONDITIONALITY</span>
+        });
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="borderStartWidthCopyExpansion">borderStartWidthCopyExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {
+            <span class="reference">PropNames</span>.<span class="type">BORDER_START_WIDTH_LENGTH</span>
+        });
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="borderStartWidthNonCopyExpansion">borderStartWidthNonCopyExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {
+            <span class="reference">PropNames</span>.<span class="type">BORDER_START_WIDTH_CONDITIONALITY</span>
+        });
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="borderSeparationCopyExpansion">borderSeparationCopyExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {
+            <span class="reference">PropNames</span>.<span class="type">BORDER_SEPARATION_BLOCK_PROGRESSION_DIRECTION</span>
+            ,<span class="reference">PropNames</span>.<span class="type">BORDER_SEPARATION_INLINE_PROGRESSION_DIRECTION</span>
+        });
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="borderSeparationNonCopyExpansion">borderSeparationNonCopyExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {});
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="inlineProgressionDimensionCopyExpansion">inlineProgressionDimensionCopyExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {
+            <span class="reference">PropNames</span>.<span class="type">INLINE_PROGRESSION_DIMENSION_MINIMUM</span>
+            ,<span class="reference">PropNames</span>.<span class="type">INLINE_PROGRESSION_DIMENSION_OPTIMUM</span>
+            ,<span class="reference">PropNames</span>.<span class="type">INLINE_PROGRESSION_DIMENSION_MAXIMUM</span>
+        });
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="inlineProgressionDimensionNonCopyExpansion">inlineProgressionDimensionNonCopyExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {});
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="keepTogetherCopyExpansion">keepTogetherCopyExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {
+            <span class="reference">PropNames</span>.<span class="type">KEEP_TOGETHER_WITHIN_LINE</span>
+            ,<span class="reference">PropNames</span>.<span class="type">KEEP_TOGETHER_WITHIN_COLUMN</span>
+            ,<span class="reference">PropNames</span>.<span class="type">KEEP_TOGETHER_WITHIN_PAGE</span>
+        });
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="keepTogetherNonCopyExpansion">keepTogetherNonCopyExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {});
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="keepWithNextCopyExpansion">keepWithNextCopyExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {
+            <span class="reference">PropNames</span>.<span class="type">KEEP_WITH_NEXT_WITHIN_LINE</span>
+            ,<span class="reference">PropNames</span>.<span class="type">KEEP_WITH_NEXT_WITHIN_COLUMN</span>
+            ,<span class="reference">PropNames</span>.<span class="type">KEEP_WITH_NEXT_WITHIN_PAGE</span>
+        });
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="keepWithNextNonCopyExpansion">keepWithNextNonCopyExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {});
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="keepWithPreviousCopyExpansion">keepWithPreviousCopyExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {
+            <span class="reference">PropNames</span>.<span class="type">KEEP_WITH_PREVIOUS_WITHIN_LINE</span>
+            ,<span class="reference">PropNames</span>.<span class="type">KEEP_WITH_PREVIOUS_WITHIN_COLUMN</span>
+            ,<span class="reference">PropNames</span>.<span class="type">KEEP_WITH_PREVIOUS_WITHIN_PAGE</span>
+        });
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="keepWithPreviousNonCopyExpansion">keepWithPreviousNonCopyExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {});
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="leaderLengthCopyExpansion">leaderLengthCopyExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {
+            <span class="reference">PropNames</span>.<span class="type">LEADER_LENGTH_MINIMUM</span>
+            ,<span class="reference">PropNames</span>.<span class="type">LEADER_LENGTH_OPTIMUM</span>
+            ,<span class="reference">PropNames</span>.<span class="type">LEADER_LENGTH_MAXIMUM</span>
+        });
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="leaderLengthNonCopyExpansion">leaderLengthNonCopyExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {});
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="letterSpacingCopyExpansion">letterSpacingCopyExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {
+            <span class="reference">PropNames</span>.<span class="type">LETTER_SPACING_MINIMUM</span>
+            ,<span class="reference">PropNames</span>.<span class="type">LETTER_SPACING_OPTIMUM</span>
+            ,<span class="reference">PropNames</span>.<span class="type">LETTER_SPACING_MAXIMUM</span>
+        });
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="letterSpacingNonCopyExpansion">letterSpacingNonCopyExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {
+            <span class="reference">PropNames</span>.<span class="type">LETTER_SPACING_CONDITIONALITY</span>
+            ,<span class="reference">PropNames</span>.<span class="type">LETTER_SPACING_PRECEDENCE</span>
+        });
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="lineHeightCopyExpansion">lineHeightCopyExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {
+            <span class="reference">PropNames</span>.<span class="type">LINE_HEIGHT_MINIMUM</span>
+            ,<span class="reference">PropNames</span>.<span class="type">LINE_HEIGHT_OPTIMUM</span>
+            ,<span class="reference">PropNames</span>.<span class="type">LINE_HEIGHT_MAXIMUM</span>
+        });
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="lineHeightNonCopyExpansion">lineHeightNonCopyExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {
+            <span class="reference">PropNames</span>.<span class="type">LINE_HEIGHT_CONDITIONALITY</span>
+            ,<span class="reference">PropNames</span>.<span class="type">LINE_HEIGHT_PRECEDENCE</span>
+        });
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="paddingAfterCopyExpansion">paddingAfterCopyExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {
+            <span class="reference">PropNames</span>.<span class="type">PADDING_AFTER_LENGTH</span>
+        });
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="paddingAfterNonCopyExpansion">paddingAfterNonCopyExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {
+            <span class="reference">PropNames</span>.<span class="type">PADDING_AFTER_CONDITIONALITY</span>
+        });
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="paddingBeforeCopyExpansion">paddingBeforeCopyExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {
+            <span class="reference">PropNames</span>.<span class="type">PADDING_BEFORE_LENGTH</span>
+        });
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="paddingBeforeNonCopyExpansion">paddingBeforeNonCopyExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {
+            <span class="reference">PropNames</span>.<span class="type">PADDING_BEFORE_CONDITIONALITY</span>
+        });
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="paddingEndCopyExpansion">paddingEndCopyExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {
+            <span class="reference">PropNames</span>.<span class="type">PADDING_END_LENGTH</span>
+        });
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="paddingEndNonCopyExpansion">paddingEndNonCopyExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {
+            <span class="reference">PropNames</span>.<span class="type">PADDING_END_CONDITIONALITY</span>
+        });
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="paddingStartCopyExpansion">paddingStartCopyExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {
+            <span class="reference">PropNames</span>.<span class="type">PADDING_START_LENGTH</span>
+        });
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="paddingStartNonCopyExpansion">paddingStartNonCopyExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {
+            <span class="reference">PropNames</span>.<span class="type">PADDING_START_CONDITIONALITY</span>
+        });
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="spaceAfterCopyExpansion">spaceAfterCopyExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {
+            <span class="reference">PropNames</span>.<span class="type">SPACE_AFTER_MINIMUM</span>
+            ,<span class="reference">PropNames</span>.<span class="type">SPACE_AFTER_OPTIMUM</span>
+            ,<span class="reference">PropNames</span>.<span class="type">SPACE_AFTER_MAXIMUM</span>
+        });
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="spaceAfterNonCopyExpansion">spaceAfterNonCopyExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {
+            <span class="reference">PropNames</span>.<span class="type">SPACE_AFTER_CONDITIONALITY</span>
+            ,<span class="reference">PropNames</span>.<span class="type">SPACE_AFTER_PRECEDENCE</span>
+        });
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="spaceBeforeCopyExpansion">spaceBeforeCopyExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {
+            <span class="reference">PropNames</span>.<span class="type">SPACE_BEFORE_MINIMUM</span>
+            ,<span class="reference">PropNames</span>.<span class="type">SPACE_BEFORE_OPTIMUM</span>
+            ,<span class="reference">PropNames</span>.<span class="type">SPACE_BEFORE_MAXIMUM</span>
+        });
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="spaceBeforeNonCopyExpansion">spaceBeforeNonCopyExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {
+            <span class="reference">PropNames</span>.<span class="type">SPACE_BEFORE_CONDITIONALITY</span>
+            ,<span class="reference">PropNames</span>.<span class="type">SPACE_BEFORE_PRECEDENCE</span>
+        });
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="spaceEndCopyExpansion">spaceEndCopyExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {
+            <span class="reference">PropNames</span>.<span class="type">SPACE_END_MINIMUM</span>
+            ,<span class="reference">PropNames</span>.<span class="type">SPACE_END_OPTIMUM</span>
+            ,<span class="reference">PropNames</span>.<span class="type">SPACE_END_MAXIMUM</span>
+        });
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="spaceEndNonCopyExpansion">spaceEndNonCopyExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {
+            <span class="reference">PropNames</span>.<span class="type">SPACE_END_CONDITIONALITY</span>
+            ,<span class="reference">PropNames</span>.<span class="type">SPACE_END_PRECEDENCE</span>
+        });
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="spaceStartCopyExpansion">spaceStartCopyExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {
+            <span class="reference">PropNames</span>.<span class="type">SPACE_START_MINIMUM</span>
+            ,<span class="reference">PropNames</span>.<span class="type">SPACE_START_OPTIMUM</span>
+            ,<span class="reference">PropNames</span>.<span class="type">SPACE_START_MAXIMUM</span>
+        });
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="spaceStartNonCopyExpansion">spaceStartNonCopyExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {
+            <span class="reference">PropNames</span>.<span class="type">SPACE_START_CONDITIONALITY</span>
+            ,<span class="reference">PropNames</span>.<span class="type">SPACE_START_PRECEDENCE</span>
+        });
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="wordSpacingCopyExpansion">wordSpacingCopyExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {
+            <span class="reference">PropNames</span>.<span class="type">WORD_SPACING_MINIMUM</span>
+            ,<span class="reference">PropNames</span>.<span class="type">WORD_SPACING_OPTIMUM</span>
+            ,<span class="reference">PropNames</span>.<span class="type">WORD_SPACING_MAXIMUM</span>
+        });
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="wordSpacingNonCopyExpansion">wordSpacingNonCopyExpansion</span> =
+        <span class="keyword">new</span> <span class="type">ROIntArray</span>(<span class="keyword">new</span> <span class="type">int</span>[] {
+            <span class="reference">PropNames</span>.<span class="type">WORD_SPACING_CONDITIONALITY</span>
+            ,<span class="reference">PropNames</span>.<span class="type">WORD_SPACING_PRECEDENCE</span>
+        });
+
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">int</span>[] <span class="variable-name" id="compounds">compounds</span> = {
+        <span class="reference">PropNames</span>.<span class="type">BLOCK_PROGRESSION_DIMENSION</span>
+        ,<span class="reference">PropNames</span>.<span class="type">BORDER_AFTER_WIDTH</span>
+        ,<span class="reference">PropNames</span>.<span class="type">BORDER_BEFORE_WIDTH</span>
+        ,<span class="reference">PropNames</span>.<span class="type">BORDER_END_WIDTH</span>
+        ,<span class="reference">PropNames</span>.<span class="type">BORDER_START_WIDTH</span>
+        ,<span class="reference">PropNames</span>.<span class="type">BORDER_SEPARATION</span>
+        ,<span class="reference">PropNames</span>.<span class="type">INLINE_PROGRESSION_DIMENSION</span>
+        ,<span class="reference">PropNames</span>.<span class="type">KEEP_TOGETHER</span>
+        ,<span class="reference">PropNames</span>.<span class="type">KEEP_WITH_NEXT</span>
+        ,<span class="reference">PropNames</span>.<span class="type">KEEP_WITH_PREVIOUS</span>
+        ,<span class="reference">PropNames</span>.<span class="type">LEADER_LENGTH</span>
+        ,<span class="reference">PropNames</span>.<span class="type">LETTER_SPACING</span>
+        ,<span class="reference">PropNames</span>.<span class="type">LINE_HEIGHT</span>
+        ,<span class="reference">PropNames</span>.<span class="type">PADDING_AFTER</span>
+        ,<span class="reference">PropNames</span>.<span class="type">PADDING_BEFORE</span>
+        ,<span class="reference">PropNames</span>.<span class="type">PADDING_END</span>
+        ,<span class="reference">PropNames</span>.<span class="type">PADDING_START</span>
+        ,<span class="reference">PropNames</span>.<span class="type">SPACE_AFTER</span>
+        ,<span class="reference">PropNames</span>.<span class="type">SPACE_BEFORE</span>
+        ,<span class="reference">PropNames</span>.<span class="type">SPACE_END</span>
+        ,<span class="reference">PropNames</span>.<span class="type">SPACE_START</span>
+        ,<span class="reference">PropNames</span>.<span class="type">WORD_SPACING</span>
+    };
+
+    <span class="comment">/**
+     * Map property index to compound array index
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">HashMap</span> <span class="variable-name" id="compoundMap">compoundMap</span>;
+    <span class="jde-java-font-lock-modifier">static</span> {
+        compoundMap = <span class="keyword">new</span> <span class="type">HashMap</span>(compounds.length);
+        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable-name">i</span> = <span class="jde-java-font-lock-number">0</span>; i &lt; compounds.length; i++) {
+            compoundMap.put
+                    ((<span class="type">Object</span>)(Ints.consts.get(compounds[i])), 
+                     (<span class="type">Object</span>)(Ints.consts.get(i)));
+        }
+    }
+
+    <span class="comment">/**
+     * RO compound properties.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span> <span class="variable-name" id="roCompounds">roCompounds</span>;
+    <span class="jde-java-font-lock-modifier">static</span> {
+        roCompounds = <span class="keyword">new</span> <span class="type">ROIntArray</span>(compounds);
+    }
+
+    <span class="comment">/**
+     * A &lt;tt&gt;ROBitSet&lt;/tt&gt; of the compound properties.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROBitSet</span> <span class="variable-name" id="compoundPropSet">compoundPropSet</span>;
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">BitSet</span> <span class="variable-name" id="compoundpropset">compoundpropset</span>;
+
+    <span class="comment">/**
+     * a &lt;tt&gt;ROBitSet of shorthand and compound properties.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROBitSet</span> <span class="variable-name" id="shorthandCompoundProps">shorthandCompoundProps</span>;
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">BitSet</span> <span class="variable-name" id="shorthandcompoundprops">shorthandcompoundprops</span>;
+
+    <span class="jde-java-font-lock-modifier">static</span> {
+        compoundpropset = <span class="keyword">new</span> <span class="type">BitSet</span>(PropNames.<span class="jde-java-font-lock-constant">LAST_PROPERTY_INDEX</span> + <span class="jde-java-font-lock-number">1</span>);
+        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable-name">i</span> = <span class="jde-java-font-lock-number">0</span>; i &lt; compounds.length; i++)
+            compoundpropset.set(compounds[i]);
+        compoundPropSet = <span class="keyword">new</span> <span class="type">ROBitSet</span>(compoundpropset);
+        shorthandcompoundprops = <span class="keyword">new</span> <span class="type">BitSet</span>();
+        shorthandcompoundprops.or(compoundpropset);
+        shorthandcompoundprops.or(shorthandpropset);
+        shorthandCompoundProps = <span class="keyword">new</span> <span class="type">ROBitSet</span>(shorthandcompoundprops);
+    }
+
+    <span class="comment">/**
+     * Array of &lt;i&gt;</span><span class="jde-java-font-lock-italic">ROIntArray</span><span class="comment">&lt;/i&gt;&lt;b&gt; of the copy expansion properties of
+     * compounds in same order as &lt;i&gt;</span><span class="jde-java-font-lock-italic">compounds</span><span class="comment">&lt;/i&gt;&lt;/b&gt;
+     * &lt;i&gt;</span><span class="jde-java-font-lock-italic">ROIntArray</span><span class="comment">&lt;/i&gt;.
+     * If a public view of this is required, use
+     * Collections.unmodifiableList(Arrays.asList(compoundCopyExpansions))
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span>[] <span class="variable-name" id="compoundCopyExpansions">compoundCopyExpansions</span> = {
+        blockProgressionDimensionCopyExpansion
+        ,borderAfterWidthCopyExpansion
+        ,borderBeforeWidthCopyExpansion
+        ,borderEndWidthCopyExpansion
+        ,borderStartWidthCopyExpansion
+        ,borderSeparationCopyExpansion
+        ,inlineProgressionDimensionCopyExpansion
+        ,keepTogetherCopyExpansion
+        ,keepWithNextCopyExpansion
+        ,keepWithPreviousCopyExpansion
+        ,leaderLengthCopyExpansion
+        ,letterSpacingCopyExpansion
+        ,lineHeightCopyExpansion
+        ,paddingAfterCopyExpansion
+        ,paddingBeforeCopyExpansion
+        ,paddingEndCopyExpansion
+        ,paddingStartCopyExpansion
+        ,spaceAfterCopyExpansion
+        ,spaceBeforeCopyExpansion
+        ,spaceEndCopyExpansion
+        ,spaceStartCopyExpansion
+        ,wordSpacingCopyExpansion
+    };
+
+    <span class="comment">/**
+     * Array of &lt;i&gt;</span><span class="jde-java-font-lock-italic">ROIntArray</span><span class="comment">&lt;/i&gt;&lt;b&gt; of the non-copy expansion properties of
+     * compounds in same order as &lt;i&gt;</span><span class="jde-java-font-lock-italic">compounds</span><span class="comment">&lt;/i&gt;&lt;/b&gt;
+     * &lt;i&gt;</span><span class="jde-java-font-lock-italic">ROIntArray</span><span class="comment">&lt;/i&gt;.
+     * If a public view of this is required, use
+     * Collections.unmodifiableList(Arrays.asList(compoundNonCopyExpansions))
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROIntArray</span>[] <span class="variable-name" id="compoundNonCopyExpansions">compoundNonCopyExpansions</span> = {
+        blockProgressionDimensionNonCopyExpansion
+        ,borderAfterWidthNonCopyExpansion
+        ,borderBeforeWidthNonCopyExpansion
+        ,borderEndWidthNonCopyExpansion
+        ,borderStartWidthNonCopyExpansion
+        ,borderSeparationNonCopyExpansion
+        ,inlineProgressionDimensionNonCopyExpansion
+        ,keepTogetherNonCopyExpansion
+        ,keepWithNextNonCopyExpansion
+        ,keepWithPreviousNonCopyExpansion
+        ,leaderLengthNonCopyExpansion
+        ,letterSpacingNonCopyExpansion
+        ,lineHeightNonCopyExpansion
+        ,paddingAfterNonCopyExpansion
+        ,paddingBeforeNonCopyExpansion
+        ,paddingEndNonCopyExpansion
+        ,paddingStartNonCopyExpansion
+        ,spaceAfterNonCopyExpansion
+        ,spaceBeforeNonCopyExpansion
+        ,spaceEndNonCopyExpansion
+        ,spaceStartNonCopyExpansion
+        ,wordSpacingNonCopyExpansion
+    };
+
+    <span class="comment">/**
+     * Expand the &lt;tt&gt;PropertyValue&lt;/tt&gt; assigned to a compound property
+     * into &lt;tt&gt;propertyValues&lt;/tt&gt; for the individual property components.
+     * N.B. This method assumes that the set of expansion properties is
+     * comprised of a copy and a non-copy set.  For example, &amp;lt;space&amp;gt;
+     * compounds have a copy set of .minimum, .optimum and .maximum, and a
+     * non-copy set of .precedence and .conditionality. For each element of
+     * the copy set, the given value is cloned.  For each member of the
+     * non-copy set, a reference to the initial value is taken.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">foTree</span><span class="comment"> - the &lt;tt&gt;FOTree&lt;/tt&gt; for which properties are being
+     * developed.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">value</span><span class="comment"> - the &lt;tt&gt;PropertyValue&lt;/tt&gt; to be cloned for the copy
+     * set members.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> a &lt;tt&gt;PropertyValueList&lt;/tt&gt; containing the copy set
+     * expansions followed by the non-copy set expansions, in the order
+     * they are defined in appropriate &lt;tt&gt;ROIntArray&lt;/tt&gt;s in this class.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="type">PropertyValueList</span> <span class="variable-name" id="expandCompoundProperty">expandCompoundProperty</span>
+                                        (<span class="type">FOTree</span> <span class="variable-name">foTree</span>, <span class="type">PropertyValue</span> <span class="variable-name">value</span>)
+        <span class="keyword">throws</span> <span class="type">PropertyException</span>
+    {
+        <span class="type">int</span> <span class="variable-name">property</span> = value.getProperty();
+        <span class="type">Integer</span> <span class="variable-name" id="compoundX">compoundX</span> =
+                    (<span class="type">Integer</span>)(compoundMap.get(Ints.consts.get(property)));
+        <span class="keyword">if</span> (compoundX == <span class="jde-java-font-lock-constant">null</span>)
+            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">PropertyException</span>
+                (PropNames.getPropertyName(property) + &quot;<span class="string"> (</span>&quot; + property + &quot;<span class="string">) </span>&quot;
+                + &quot;<span class="string"> is not a compound property.</span>&quot;);
+        <span class="type">int</span> <span class="variable-name" id="compoundIdx">compoundIdx</span> = compoundX.intValue();
+        <span class="type">PropertyValueList</span> <span class="variable-name">list</span> = <span class="keyword">new</span> <span class="type">PropertyValueList</span>(property);
+        <span class="type">ROIntArray</span> <span class="variable-name">expansion</span>;
+        <span class="comment">// Expand the copy components
+</span>        list = copyValueToSet
+                        (value, compoundCopyExpansions[compoundIdx], list);
+        <span class="comment">// Expand the non-copy components
+</span>        <span class="keyword">return</span> initialValueCompoundExpansion
+                    (foTree, compoundNonCopyExpansions[compoundIdx], list);
+    }
+
+    <span class="comment">/**
+     * Clone the given property value for each property in the given
+     * expansion set.  Append the new property values to the given list.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">value</span><span class="comment"> - the property value to clone.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name" id="expansionSet">expansionSet</span><span class="comment"> - the set of indices of the expansion properties.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">list</span><span class="comment"> - the list to which to append the expansion elements.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> the original &lt;tt&gt;PropertyValueList&lt;/tt&gt; containing the
+     * appended expansions.
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">&lt;tt&gt;PropertyException&lt;/tt&gt;
+</span><span class="comment">     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="type">PropertyValueList</span> <span class="function-name" id="copyValueToSet">copyValueToSet</span>(<span class="type">PropertyValue</span> <span class="variable-name">value</span>,
+                            <span class="type">ROIntArray</span> <span class="variable-name">expansionSet</span>, <span class="type">PropertyValueList</span> <span class="variable-name">list</span>)
+        <span class="keyword">throws</span> <span class="type">PropertyException</span>
+    {
+        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable-name">i</span> = <span class="jde-java-font-lock-number">0</span>; i &lt; expansionSet.length; i++) {
+            <span class="type">int</span> <span class="variable-name" id="expandedProp">expandedProp</span> = expansionSet.get(i);
+            <span class="type">PropertyValue</span> <span class="variable-name" id="expandedPropValue">expandedPropValue</span>;
+            <span class="comment">//   The PropertyValue must be cloneable
+</span>            <span class="comment">// The property associated with each PV in the expansion will
+</span>            <span class="comment">// necessarily be different.
+</span>            <span class="keyword">try</span> {
+                expandedPropValue = (<span class="type">PropertyValue</span>)(value.clone());
+            } <span class="keyword">catch</span> (<span class="type">CloneNotSupportedException</span> <span class="variable-name" id="e">e</span>) {
+                <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">PropertyException</span>(e.getMessage());
+            }
+
+            expandedPropValue.setProperty(expandedProp);
+            list.add(expandedPropValue);
+        }
+        <span class="keyword">return</span> list;
+    }
+
+    <span class="comment">/**
+     * Append the initial values of each non-copy property in a
+     * compound expansion to a list.  Note that these elements will be
+     * &lt;b&gt;</span><span class="jde-java-font-lock-bold">references</span><span class="comment">&lt;/b&gt; to the initial values. Note also that, in the
+     * expansion of a compound value, the initial value comonents are
+     * regarded as having been specified.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">foTree</span><span class="comment"> - the &lt;tt&gt;FOTree&lt;/tt&gt; of the node whose properties are
+     * being processed.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">expansion</span><span class="comment"> - the set of indices of the expansion properties.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">list</span><span class="comment"> - the list to which to append the expansion elements.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> the original &lt;tt&gt;PropertyValueList&lt;/tt&gt; containing the
+     * appended initial value expansions for the (compound) property.
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">&lt;tt&gt;PropertyException&lt;/tt&gt;
+</span><span class="comment">     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="type">PropertyValueList</span> <span class="variable-name" id="initialValueCompoundExpansion">initialValueCompoundExpansion</span>
+                (<span class="type">FOTree</span> <span class="variable-name">foTree</span>, <span class="type">ROIntArray</span> <span class="variable-name">expansion</span>, <span class="type">PropertyValueList</span> <span class="variable-name">list</span>)
+        <span class="keyword">throws</span> <span class="type">PropertyException</span>
+    {
+        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable-name">i</span> = <span class="jde-java-font-lock-number">0</span>; i &lt; expansion.length; i++) {
+            <span class="type">int</span> <span class="variable-name">expandedProp</span> = expansion.get(i);
+            <span class="type">PropertyValue</span> <span class="variable-name" id="specified">specified</span>
+                    = PropertyConsts.pconsts.getInitialValue(expandedProp);
+            list.add(specified);
+        }
+        <span class="keyword">return</span> list;
+    }
+
+    <span class="jde-java-font-lock-modifier">private</span> <span class="function-name" id="ShorthandPropSets">ShorthandPropSets</span> (){}
+
+}
+</pre>
+  </body>
+</html>

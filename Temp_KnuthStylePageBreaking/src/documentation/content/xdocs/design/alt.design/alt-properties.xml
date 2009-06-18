@@ -1,0 +1,169 @@
+<?xml version="1.0" standalone="no"?>
+<!--
+  Copyright 1999-2004 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
+    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/core/context/resources/schema/dtd/document-v12.dtd">
+
+<document>
+  <header>
+    <title>Implementing Properties</title>
+    <authors>
+      <person id="pbw" name="Peter B. West" email="pbwest@powerup.com.au"/>
+    </authors>
+  </header>
+  <body>
+    <section>
+      <title>An alternative properties implementation</title>
+      <note> 
+        The following discussion focusses on the relationship between
+        Flow Objects in the Flow Object tree, and properties.  There
+        is no (or only passing) discussion of the relationship between
+        properties and traits, and by extension, between properties
+        and the Area tree.
+      </note>
+      <p>
+        Property handling is complex and expensive. Varying numbers of
+        properties <strong>apply</strong> to individual Flow Objects
+        <strong>(FOs)</strong> in the <strong>FO tree </strong> but
+        any property may effectively be assigned a value on any
+        element of the tree.  If that property is inheritable, its
+        defined value will then be available to any children of the
+        defining FO.
+      </p>
+      <note>
+        <em>(XSL 1.0 Rec)</em> <strong>5.1.4 Inheritance</strong>
+        ...The inheritable properties can be placed on any formatting
+        object.
+      </note>
+      <p>
+        Even if the value is not inheritable, it may be accessed by
+        its children through the <code>inherit</code> keyword or the
+        <code>from-parent()</code> core function, and potentially by
+        any of its descendents through the
+        <code>from-nearest-specified-value()</code> core function.
+      </p>
+      <p>
+        In addition to the assigned values of properties, almost every
+        property has an <strong>initial value</strong> which is used
+        when no value has been assigned.
+      </p>
+      <section>
+        <title>The history problem</title>
+        <p>
+          The difficulty and expense of handling properties comes from
+          this univeral inheritance possibility.  The list of properties
+          which are assigned values on any particular <em>FO</em>
+          element will not generally be large, but a current value is
+          required for each property which applies to the <em>FO</em>
+          being processed.
+        </p>
+        <p>
+          The environment from which these values may be selected
+          includes, for each <em>FO</em>, <strong>for each applicable
+          property</strong>, the value assigned on this <em>FO</em>,
+          the value which applied to the parent of this <em>FO</em>,
+          the nearest value specified on an ancestor of this element,
+          and the initial value of the property.
+        </p>
+      </section>
+      <section>
+        <title>The construction hierarchy</title>
+        <p>
+          Properties are resoved in the <strong>FO tree</strong> in a
+          strictly hierarchical manner.  Nodes are detected in the
+          input in a <strong>pre-order</strong> traversal, and are
+          built in the same order.  This imples that there are two
+          phases, or states, of property resolution and construction.
+          Any particular FO node is either in a state of constructing
+          its own subtree, or in a stable state where the subtree
+          construction is complete.  These states have differenct data
+          requirements.
+        </p>
+        <dl>
+          <dt>Subtree building</dt>
+          <dd>
+            In this state, all properties defined on this node, or any
+            of its ancestors must be available to the subtree.  In
+            effect, any property defined on this node must be
+            available to its descendants, as all properties defined on
+            any ancestor are available to this node.
+          </dd>
+          <dt>Stable: subtree building complete</dt>
+          <dd>
+            In this state, only the properties <strong>applicable to
+            this node</strong> need be available.
+          </dd>
+        </dl>
+      </section>
+      <section>
+        <title>Representing properties: &lt;property&gt; classes</title>
+        <section>
+          <title>Class vs instance</title>
+          <p>
+            What information is required of &lt;property&gt; objects?
+            More particularly, what information is particular to the
+            &lt;property&gt; classes, and what to the instantiated
+            objects?  The answer to this question depend largely on
+            how the &lt;property&gt; objects are used in the context
+            of layout and Area tree construction.  The approach taken
+            in this implementation is that properties are simply flags
+            on certain data values associated with FOs.  The semantics
+            of these flags are determined within the layout engine.
+          </p>
+          <p>
+            Certain constant information attaches to individual
+            &lt;property&gt; classes.  This information is detailed in
+            the descriptions of individual properties in <em>Section
+            7</em> of the specification.  Such information is
+            represented in <strong>class</strong> fields and data
+            structures within the classes.
+          </p>
+          <p>
+            The "instance" information content of a &lt;property&gt;
+            is:
+          </p>
+          <ul>
+            <li>
+              explicitly, the <code>PropertyValue</code> datum of
+              the property, and
+            </li>
+            <li>
+              implicitly, the <strong>Flow Object</strong> to which
+              the property is attached.
+            </li>
+          </ul>
+          <p>
+            Properties, then, serve essentially to link <em>FO
+            instances</em> with <em>PropertyValue instances</em>,
+            attaching certain invariant semantic markers to the
+            PropertyValues in the process.  In this implementation,
+            these functions can be realised entirely within the
+            &lt;property&gt; <strong>classes</strong> themselves,
+            without the need to instantiate any objects.  In practice,
+            <strong>&lt;property&gt; singletons</strong> are
+            instantiated to make access to some invariants simpler.
+          </p>
+        </section>
+      </section>
+      <p>
+        <strong>Next:</strong> <link href="classes-overview.html"
+                                     >property classes overview.</link>
+      </p>
+    </section>
+  </body>
+</document>
+

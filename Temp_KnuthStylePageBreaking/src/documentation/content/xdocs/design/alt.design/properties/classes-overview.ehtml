@@ -1,0 +1,371 @@
+<?xml version="1.0"?>
+<!--
+  Copyright 1999-2004 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<html>
+  <body marginheight= "0" marginwidth= "0" topmargin= "0" leftmargin= "0" text= "#000000" bgcolor= "#FFFFFF" >
+    <script type="text/javascript" src="codedisplay.js" />
+    <div class= "content" >
+      <h1>Property classes overview</h1>
+      <p>
+        <font size= "-2" >by Peter B. West</font>
+      </p>
+      <ul class= "minitoc" >
+        <li>
+          <a href = "#N10014" >Properties: packages</a>
+          <ul class= "minitoc" >
+            <li>
+              <a href = "#N10019" >org.apache.fop.fo</a>
+            </li>
+            <li>
+              <a href = "#N100AC" >org.apache.fop.fo.properties</a>
+            </li>
+            <li>
+              <a href = "#N100EE" >org.apache.fop.fo.expr</a>
+            </li>
+            <li>
+              <a href = "#N10134" >org.apache.fop.datatypes</a>
+            </li>
+            <li>
+              <a href = "#N101A2"
+              >org.apache.fop.datatypes.indirect</a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <a name= "N10014" ></a> <h3>Properties: packages</h3>
+      <a name= "N10019" ></a> <h4>org.apache.fop.fo</h4>
+      <!-- N.B. height for toggleCode changed from 50% to 400 because
+          Mozilla seems to get confused by percentage heights within
+          table elements.
+      -->
+      <dl>
+        <dt>
+          <span id="span00" ></span>
+          <a href = "javascript:toggleCode('span00',
+             'PropNames.html#PropNamesClass', '400', '100%'
+          )" ><em>PropNames</em></a>
+        </dt>
+        <dd>
+          This class maintains an array of <span id="span01"
+          ></span><a href= "javascript:toggleCode( 'span01',
+          'PropNames.html#propertyNames', '400', '100%' )" >property
+          names</a>, synchronized to a complete set of property name
+          <span id="span02" ></span><a href = "javascript:toggleCode(
+          'span02', 'PropNames.html#NO_PROPERTY', '400', '100%' )"
+          >constants</a> for indexing property-based arrays.  It
+          includes methods to <span id="span03" ></span><a href =
+          "javascript:toggleCode( 'span03',
+          'PropNames.html#getPropertyName', '400', '100%' )" >convert
+          an index to a name</a> and to <span id="span04" ></span><a
+          href = "javascript:toggleCode( 'span04',
+          'PropNames.html#getPropertyIndex', '400', '100%' )" >convert
+          a property name to an index</a>.
+        </dd>
+        <dt>
+          <a href = "PropertyConsts-class.html" ><em>PropertyConsts</em></a>
+        </dt>
+        <dd>
+          A singleton instance of <span class= "codefrag"
+          >PropertyConsts</span> is created by the static initializer
+          of the <span id="span05" ></span><a href =
+          "javascript:toggleCode( 'span05',
+          'PropertyConsts.html#pconsts', '400', '100%' )" >pconsts</a>
+          field.  Working from the property indices defined in
+          PropNames, the methods in this class collect and supply the
+          values of fields defined in property objects into
+          arrays.<br/> The heart of this class in the method <span
+          id="span06" ></span><a href = "javascript:toggleCode(
+          'span06', 'PropertyConsts.html#setupProperty', '400', '100%'
+          )" >setupProperty</a>, which constructs the property name
+          from the index, instantiates a singleton of the appropriate
+          class, and extracts static fields by reflection from that
+          instance into the arrays of field values.
+        </dd>
+        <dt>
+          <span id="span07" ></span><a href = "javascript:toggleCode(
+          'span07', 'PropertySets.html#PropertySetsClass', '400',
+          '100%' )" ><em>PropertySets</em></a>
+        </dt>
+        <dd>
+          This class provides a number of <span class= "codefrag"
+          >ROBitSet</span>s representing many of the sets of
+          properties defined in <em>Section 7</em> of the
+          specification.  Note that the <span id="span08" ></span
+          ><a href= "javascript:toggleCode( 'span08',
+          'PropertySets.html#borderProps', '400', '100%' )"
+          ><em>Border</em></a>, <span id="span09" ></span ><a href=
+          "javascript:toggleCode( 'span09',
+          'PropertySets.html#paddingProps', '400', '100%' )"
+          ><em>Padding</em></a> and <span id="span10" ></span><a
+          href= "javascript:toggleCode( 'span10',
+          'PropertySets.html#backgroundProps', '400', '100%'
+          )"><em>Background</em></a> sets are defined separately.
+        </dd>
+        <dt>
+          <span id="span11" ></span><a href = "javascript:toggleCode(
+          'span11', '../FOPropertySets.html#FOPropertySetsClass',
+          '400', '100%' )"><em>FOPropertySets</em></a>
+        </dt>
+        <dd>
+          This class provides a number of <span class= "codefrag"
+          >ROBitSet</span>s representing sets of properties which are
+          applicable in particular subtrees of the FO tree.  These
+          sets are provided so that other properties can be ignored
+          during processing of the subtrees.
+        </dd>
+        <dt>
+          <span id="span12" ></span><a href = "javascript:toggleCode(
+          'span12', 'ShorthandPropSets.html#ShorthandPropSetsClass',
+          '400', '100%' )"><em>ShorthandPropSets</em></a>
+        </dt>
+        <dd>
+          This class contains arrays of <span id="span13" ></span><a
+          href = "javascript:toggleCode( 'span13',
+          'ShorthandPropSets.html#shorthands', '400', '100%' )"
+          >shorthand property indices</a> and <span id="span14"
+          ></span><a href = "javascript:toggleCode( 'span14',
+          'ShorthandPropSets.html#compounds', '400', '100%' )"
+          >compound property indices</a>, and <span class= "codefrag"
+          >ROBitSet</span>s representing the expansion sets of these
+          shorthands and compounds.  Various methods useful in the
+          expansion of these properties are also included.
+        </dd>
+        <dt>
+          <span id="span15" ></span><a href = "javascript:toggleCode(
+          'span15', 'FOAttributes.html#FOAttributesClass', '400',
+          '100%' )"><em>FOAttributes</em></a>
+        </dt>
+        <dd>
+          This class manages the attribute set that is associated with
+          a SAX <span class= "codefrag" >startElement</span> event.
+          <em>fo:</em> namespace attributes are entered into a <span
+          id = "span16" ></span ><a href = "javascript:toggleCode(
+          'span16', 'FOAttributes.html#foAttrMap', '400', '100%' )"
+          ><span class= "codefrag" >HashMap</span></a>, indexed by the
+          <em>fo:</em> property index.  As other namespaces are
+          encountered, the values are entered into namespace-specific
+          <span id="span17" ></span><a href = "javascript:toggleCode(
+          'span17', 'FOAttributes.html#nSpaceAttrMaps', '400', '100%'
+          )"><span class= "codefrag" >HashMap</span>s</a>, indexed by
+          the <em>local name</em> of the attribute.
+        </dd>
+      </dl>
+      <a name= "N100AC" ></a><a name= "property-classes" ></a>
+      <h4>org.apache.fop.fo.properties</h4>
+      <dl>
+        <dt>
+          <span id="span18" ></span><a href="javascript:toggleCode(
+          'span18', 'Property.html#PropertyClass', '400', '100%' )"
+          ><em>Property</em></a>
+        </dt>
+        <dd>
+          The base class for all individual property classes.
+          There are 320 properties in all.
+        </dd>
+        <dt>
+          <em>ColumnNumber</em>
+        </dt>
+        <dd>
+          The actual property class with the lowest index
+          number, followed in the index order by properties required
+          for further processing, e.g. FontSize.
+        </dd>
+        <dt>
+          <em>....</em>
+        </dt>
+        <dd>....</dd>
+        <dt>
+          <em>Background</em>
+        </dt>
+        <dd>
+          First in index order of the remainining shorthand
+          properties, followed in index order by all other remaining
+          shorthands.
+        </dd>
+        <dt>
+          <em>....</em>
+        </dt>
+        <dd>....</dd>
+        <dt>
+          <em>AbsolutePosition</em>
+        </dt>
+        <dd>
+          First in index order of the remaining properties.  Within
+          this ordering, compound properties precede their expansion
+          properties, and corresponding relative properties precede
+          corresponding absolute properties.
+        </dd>
+        <dt>
+          <em>....</em>
+        </dt>
+        <dd>....</dd>
+        <dt>
+          <em>ZIndex</em>
+        </dt>
+        <dd>
+          The property class with the highest index
+          number.
+        </dd>
+      </dl>
+      <a name= "N100EE" ></a>
+      <h4>org.apache.fop.fo.expr</h4>
+      <dl>
+        <dt>
+          <span id="span19" ></span><a href = "javascript:toggleCode(
+          'span19', 'PropertyTokenizer.html#PropertyTokenizerClass',
+          '400', '100%' )"><em>PropertyTokenizer</em></a>
+        </dt>
+        <dd>
+          The tokenizer for the property expression parser.  Defines a
+          set of <span id="span20" ></span><a href =
+          "javascript:toggleCode( 'span20',
+          'PropertyTokenizer.html#EOF', '400', '100%' )" >token
+          constants</a> and returns these with associated token
+          values.
+        </dd>
+        <dt>
+          <span id="span21" ></span><a href = "javascript:toggleCode(
+          'span21', 'PropertyParser.html#PropertyParserClass', '400',
+          '100%' )"><em>PropertyParser</em></a>
+        </dt>
+        <dd>
+          This extends <span class= "codefrag"
+          >PropertyTokenizer</span>.  It parses property
+          expressions on the basis of the tokens passed to it by its
+          superclass, generating <span class= "codefrag"
+          >PropertyValue</span>s, including <span class= "codefrag"
+          >PropertyValueList</span>s.
+        </dd>
+        <dt>
+          <em>PropertyException</em>
+        </dt>
+        <dd>
+          The basic class for all property-related exceptions.
+          It extends <span class= "codefrag" >FOPException</span>. It
+          is housed in this package by historical accident.
+        </dd>
+        <dt>
+          <em>DataTypeNotImplementedException</em>
+          <br/>
+          <em>FunctionNotImplementedException</em>
+          <br/>
+          <em>PropertyNotImplementedException</em>
+        </dt>
+        <dd>
+          A set of particular exceptions extending <span class=
+          "codefrag" >PropertyException</span>.  Also in this package
+          by accident.
+        </dd>
+      </dl>
+      <a name= "N10134" ></a>
+      <h4>org.apache.fop.datatypes</h4>
+      <dl>
+        <dt>
+          <span id="span22" ></span><a href = "javascript:toggleCode(
+          'span22', 'PropertyValue.html#PropertyValueInterface',
+          '400', '100%' )"><em>PropertyValue</em></a>
+        </dt>
+        <dd>
+          An <em>interface</em> which all <span class= "codefrag"
+          >PropertyValue</span> classes must implement.  In addition
+          to a few methods, <span class= "codefrag"
+          >PropertyValue</span> defines the set of <span id="span23"
+          ></span><a href = "javascript:toggleCode( 'span23',
+          'PropertyValue.html#NO_TYPE', '400', '100%' )"
+          >constants</a> which the <span class= "codefrag"
+          >getType()</span> method may return; i.e. the valid set of
+          <span class= "codefrag" >PropertyValue</span> types.
+        </dd>
+        <dt>
+          <span id="span24" ></span><a href = "javascript:toggleCode(
+          'span24',
+          'AbstractPropertyValue.html#AbstractPropertyValueClass',
+          '400', '100%' )"><em>AbstractPropertyValue</em></a>
+        </dt>
+        <dd>
+          An abstract implementation of the <span class= "codefrag"
+          >PropertyValue</span> interface.  Most actual property value
+          classes extend <span class= "codefrag"
+          >AbstractPropertyValue</span>.
+        </dd>
+        <dt>
+          <span id="span25" ></span><a href = "javascript:toggleCode(
+          'span25', 'PropertyValueList.html#PropertyValueListClass',
+          '400', '100%' )"><em>PropertyValueList</em></a>
+        </dt>
+        <dd>
+          This class extends <span class= "codefrag"
+          >LinkedList</span> and implements <span class= "codefrag"
+          >PropertyValue</span>.  It is used whenever the process of
+          resolving a property expression yields a list of <span
+          class= "codefrag" >PropertyValue</span> elements; notably
+          during the processing of shorthands and "compound"
+          properties.
+        </dd>
+        <dt>
+          <em>StringType</em>
+        </dt>
+        <dd>
+          A basic type extending <span class= "codefrag"
+          >AbstractPropertyValue</span>.  Extended by <span class=
+          "codefrag" >NCName</span>.
+        </dd>
+        <dt>
+          <em>NCName</em>
+        </dt>
+        <dd>
+          Extends <span class= "codefrag" >StringType</span> to represent
+          NCName strings.
+        </dd>
+        <dt>
+          <em>EnumType</em>
+        </dt>
+        <dd>
+          Extends <span class= "codefrag"
+          >AbstractPropertyValue</span> to represented enumerated
+          types.
+        </dd>
+        <dt>
+          <em>Other types</em>
+        </dt>
+        <dd>
+          All other types extend one of the above classes.
+        </dd>
+      </dl>
+      <a name= "N101A2" ></a>
+      <h4>org.apache.fop.datatypes.indirect</h4>
+      <dl>
+        <dt>
+          <em>IndirectValue</em>
+        </dt>
+        <dd>
+          The base type for all indirect value types; extends
+          <span class= "codefrag" >AbstractPropertyValue</span>.
+        </dd>
+      </dl>
+      <p>
+        <strong>Previous:</strong> <a href = "introduction.html"
+        >Introduction</a>
+      </p>
+      <p>
+        <strong>Next:</strong> <a href= "PropertyConsts-class.html"
+                                     >The PropertyConsts class</a>
+      </p>
+    </div>
+
+  </body>
+</html>

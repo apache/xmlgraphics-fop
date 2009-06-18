@@ -1,0 +1,621 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<!--
+  Copyright 2001-2004 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<!-- Created by htmlize-0.67 in css mode. -->
+<html>
+  <head>
+    <title>PropertyConsts.java</title>
+    <style type="text/css">
+    <!--
+      body {
+        color: #000000;
+        background-color: #faf0e6;
+      } /* default */
+      .jde-java-font-lock-code {
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-code-face */
+      .function-name {
+        color: #8b2323;
+        background-color: #faf0e6;
+      } /* font-lock-function-name-face */
+      .jde-java-font-lock-italic {
+        background-color: #faf0e6;
+        font-style: italic;
+      } /* jde-java-font-lock-italic-face */
+      .jde-java-font-lock-modifier {
+        color: #da70d6;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-modifier-face */
+      .keyword {
+        color: #8b0000;
+        background-color: #faf0e6;
+      } /* font-lock-keyword-face */
+      .jde-java-font-lock-link {
+        color: #0000ff;
+        background-color: #faf0e6;
+        text-decoration: underline;
+      } /* jde-java-font-lock-link-face */
+      .variable-name {
+        color: #8b008b;
+        background-color: #faf0e6;
+      } /* font-lock-variable-name-face */
+      .string {
+        color: #008b00;
+        background-color: #faf0e6;
+      } /* font-lock-string-face */
+      .jde-java-font-lock-package {
+        color: #0000cd;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-package-face */
+      .jde-java-font-lock-constant {
+        color: #5f9ea0;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-constant-face */
+      .type {
+        color: #4682b4;
+        background-color: #faf0e6;
+      } /* font-lock-type-face */
+      .jde-java-font-lock-bold {
+        background-color: #faf0e6;
+        font-weight: bold;
+      } /* jde-java-font-lock-bold-face */
+      .jde-java-font-lock-doc-tag {
+        color: #008b00;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-doc-tag-face */
+      .comment {
+        color: #00008b;
+        background-color: #faf0e6;
+      } /* font-lock-comment-face */
+      .jde-java-font-lock-number {
+        color: #bc8f8f;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-number-face */
+      a {
+        color: inherit;
+        background-color: inherit;
+        font: inherit;
+        text-decoration: inherit;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+    -->
+    </style>
+  </head>
+  <body>
+    <pre>
+<span class="comment">/*
+ * Copyright 2001-2004 The Apache Software Foundation.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */</span>
+ 
+<span class="keyword">package</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">fo</span>;
+
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">java</span>.<span class="jde-java-font-lock-package">lang</span>.<span class="type">Character</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">java</span>.<span class="jde-java-font-lock-package">lang</span>.<span class="jde-java-font-lock-package">reflect</span>.<span class="type">Method</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">java</span>.<span class="jde-java-font-lock-package">lang</span>.<span class="jde-java-font-lock-package">reflect</span>.<span class="type">InvocationTargetException</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">java</span>.<span class="jde-java-font-lock-package">util</span>.<span class="type">Arrays</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">java</span>.<span class="jde-java-font-lock-package">util</span>.<span class="type">Collections</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">java</span>.<span class="jde-java-font-lock-package">util</span>.<span class="type">HashMap</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">java</span>.<span class="jde-java-font-lock-package">util</span>.<span class="type">Map</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">java</span>.<span class="jde-java-font-lock-package">util</span>.<span class="type">List</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">java</span>.<span class="jde-java-font-lock-package">util</span>.<span class="type">HashSet</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">java</span>.<span class="jde-java-font-lock-package">util</span>.<span class="type">LinkedList</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">java</span>.<span class="jde-java-font-lock-package">util</span>.<span class="type">BitSet</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">java</span>.<span class="jde-java-font-lock-package">util</span>.<span class="type">StringTokenizer</span>;
+
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">fo</span>.<span class="type">FOTree</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">fo</span>.<span class="type">FONode</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">fo</span>.<span class="type">PropNames</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">fo</span>.<span class="jde-java-font-lock-package">properties</span>.<span class="type">Property</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">fo</span>.<span class="jde-java-font-lock-package">expr</span>.<span class="type">PropertyException</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">datatypes</span>.<span class="type">Numeric</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">datatypes</span>.<span class="type">Ints</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">datastructs</span>.<span class="type">ROIntArray</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">datastructs</span>.<span class="type">ROStringArray</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">datastructs</span>.<span class="type">ROBitSet</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">datatypes</span>.<span class="type">PropertyValue</span>;
+
+<span class="comment">/**
+ * This class contains a number of arrays containing values indexed by the
+ * property index value, determined from the PropNames class.  These arrays
+ * provide a means of accessing information about the nature of a property
+ * through the property index value.
+ * &lt;p&gt;Most of these arrays are initialised piecemeal as information is
+ * required about a particular property.
+ * There are also &lt;tt&gt;HashMap&lt;/tt&gt;s which encode the various sets of
+ * properties which are defined to apply to each of the Flow Objects,
+ * and a &lt;tt&gt;BitSet&lt;/tt&gt; of those properties which are
+ * automatically inherited.  The &lt;tt&gt;HashMap&lt;/tt&gt;s provide a convenient
+ * means of specifying the relationship between FOs and properties.
+ * </span><span class="jde-java-font-lock-doc-tag">@author</span><span class="comment"> &lt;a href=&quot;mailto:pbwest@powerup.com.au&quot;&gt;</span><span class="jde-java-font-lock-link">Peter B. West</span><span class="comment">&lt;/a&gt;
+ */</span>
+<span class="jde-java-font-lock-modifier">public</span> <span class="keyword">class</span> <span class="function-name" id="PropertyConstsClass">PropertyConsts</span> {
+
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">String</span> <span class="variable-name" id="tag">tag</span> = &quot;<span class="string">$Name$</span>&quot;;
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">String</span> <span class="variable-name" id="revision">revision</span> = &quot;<span class="string">$Revision$</span>&quot;;
+
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">String</span> <span class="variable-name" id="packageName">packageName</span> = &quot;<span class="string">org.apache.fop.fo</span>&quot;;
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">PropertyConsts</span> <span class="variable-name" id="pconsts">pconsts</span>;
+    <span class="jde-java-font-lock-modifier">static</span> {
+        <span class="keyword">try</span> {
+            pconsts = <span class="keyword">new</span> <span class="type">PropertyConsts</span>();
+        } <span class="keyword">catch</span> (<span class="type">PropertyException</span> <span class="variable-name" id="e">e</span>) {
+            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">RuntimeException</span>(e.getMessage());
+        }
+    }
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">PropertyConsts</span> <span class="function-name" id="getPropertyConsts">getPropertyConsts</span>() {
+        <span class="keyword">return</span> pconsts;
+    }
+
+
+    <span class="comment">/**
+     * A Property[] array containing Property objects corresponding to each
+     * of the property indices in &lt;tt&gt;PropNames&lt;/tt&gt;.
+     * Initially empty, entries are filled on demand as calls for details
+     * about individual properties are made.
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">Property</span>[] <span class="variable-name" id="properties">properties</span>
+                        = <span class="keyword">new</span> <span class="type">Property</span>[PropNames.<span class="jde-java-font-lock-constant" id="LAST_PROPERTY_INDEX">LAST_PROPERTY_INDEX</span> + <span class="jde-java-font-lock-number">1</span>];
+
+    <span class="comment">/**
+     * A Class[] array containing Class objects corresponding to each of the
+     * class names in the classNames array.  Elements are set
+     * in parallel to the creation of the class names in
+     * the classNames array.  It can be indexed by the property name
+     * constants defined in this file.
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">Class</span>[] <span class="variable-name" id="classes">classes</span>
+                            = <span class="keyword">new</span> <span class="type">Class</span>[PropNames.<span class="jde-java-font-lock-constant">LAST_PROPERTY_INDEX</span> + <span class="jde-java-font-lock-number">1</span>];
+
+    <span class="comment">/**
+     * A String[] array of the property class names.  This array is
+     * effectively 1-based, with the first element being unused.
+     * The elements of this array are set by converting the FO
+     * property names from the array PropNames.propertyNames into class
+     * names by converting the first character of every component word to
+     * upper case, and removing all punctuation characters.
+     * It can be indexed by the property name constants defined in
+     * the PropNames class.
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">String</span>[] <span class="variable-name" id="classNames">classNames</span>
+                            = <span class="keyword">new</span> <span class="type">String</span>[PropNames.<span class="jde-java-font-lock-constant">LAST_PROPERTY_INDEX</span> + <span class="jde-java-font-lock-number">1</span>];
+
+    <span class="comment">/**
+     * A HashMap whose elements are an integer index value keyed by the name
+     * of a property class.  The index value is the index of the property
+     * class name in the classNames[] array.
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">HashMap</span> <span class="variable-name" id="classToIndex">classToIndex</span>
+                        = <span class="keyword">new</span> <span class="type">HashMap</span>(PropNames.<span class="jde-java-font-lock-constant">LAST_PROPERTY_INDEX</span> + <span class="jde-java-font-lock-number">1</span>);
+
+    <span class="comment">/**
+     * An &lt;tt&gt;int[]&lt;/tt&gt; containing the &lt;i&gt;</span><span class="jde-java-font-lock-italic">inherited</span><span class="comment">&lt;/i&gt; values from the
+     * &lt;tt&gt;Property&lt;/tt&gt; classes.
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">int</span>[] <span class="variable-name" id="inherited">inherited</span>
+                            = <span class="keyword">new</span> <span class="type">int</span>[PropNames.<span class="jde-java-font-lock-constant">LAST_PROPERTY_INDEX</span> + <span class="jde-java-font-lock-number">1</span>];
+
+    <span class="comment">/**
+     * A &lt;tt&gt;BitSet&lt;/tt&gt; of properties which are normally inherited
+     * (strictly, not not inherited).
+     * It is defined relative to the set of all properties; i.e. the
+     * inheritability of any property can be established by testing the
+     * bit in this set that corresponds to the queried property's index.
+     * &lt;p&gt;The &lt;tt&gt;BitSet&lt;/tt&gt; is private and is the basis for
+     * &lt;i&gt;</span><span class="jde-java-font-lock-italic">inheritedProperties</span><span class="comment">&lt;/i&gt;.
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">BitSet</span> <span class="variable-name" id="inheritedprops">inheritedprops</span>
+                            = <span class="keyword">new</span> <span class="type">BitSet</span>(PropNames.<span class="jde-java-font-lock-constant">LAST_PROPERTY_INDEX</span> + <span class="jde-java-font-lock-number">1</span>);
+
+    <span class="comment">/**
+     * An int[] array of the types of the &lt;i&gt;</span><span class="jde-java-font-lock-italic">initialValue</span><span class="comment">&lt;/i&gt; field of each
+     * property.  The array is indexed by the index value constants that are
+     * defined in the PropNames class in parallel to the
+     * PropNames.propertyNames[] array.
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">int</span>[] <span class="variable-name" id="initialValueTypes">initialValueTypes</span>
+                            = <span class="keyword">new</span> <span class="type">int</span>[PropNames.<span class="jde-java-font-lock-constant">LAST_PROPERTY_INDEX</span> + <span class="jde-java-font-lock-number">1</span>];
+
+    <span class="comment">/**
+     * A &lt;tt&gt;PropertyValue&lt;/tt&gt; array containing the initial values of
+     * each of the properties.
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">PropertyValue</span>[] <span class="variable-name" id="initialValues">initialValues</span>
+                    = <span class="keyword">new</span> <span class="type">PropertyValue</span>[PropNames.<span class="jde-java-font-lock-constant">LAST_PROPERTY_INDEX</span> + <span class="jde-java-font-lock-number">1</span>];
+
+    <span class="comment">/**
+     * An int[] array of the values of the &lt;i&gt;</span><span class="jde-java-font-lock-italic">dataTypes</span><span class="comment">&lt;/i&gt; field of each
+     * property.  The array is indexed by the index value constants that are
+     * defined in the PropNames class in parallel to the
+     * PropNames.propertyNames[] array.
+     * The array elements are set from the values of the
+     * &lt;i&gt;</span><span class="jde-java-font-lock-italic">dataTypes</span><span class="comment">&lt;/i&gt; field in each property class.
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">int</span>[] <span class="variable-name" id="datatypes">datatypes</span>
+                            = <span class="keyword">new</span> <span class="type">int</span>[PropNames.<span class="jde-java-font-lock-constant">LAST_PROPERTY_INDEX</span> + <span class="jde-java-font-lock-number">1</span>];
+
+    <span class="comment">/**
+     * An int[] array of the values of the &lt;i&gt;</span><span class="jde-java-font-lock-italic">traitMapping</span><span class="comment">&lt;/i&gt; field of each
+     * property.  The array is indexed by the index value constants that are
+     * defined in the PropNames class in parallel to the
+     * PropNames.propertyNames[] array.
+     * The array elements are set from the values of the
+     * &lt;i&gt;</span><span class="jde-java-font-lock-italic">traitMapping</span><span class="comment">&lt;/i&gt; field in each property class.
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">int</span>[] <span class="variable-name" id="traitMappings">traitMappings</span>
+                            = <span class="keyword">new</span> <span class="type">int</span>[PropNames.<span class="jde-java-font-lock-constant">LAST_PROPERTY_INDEX</span> + <span class="jde-java-font-lock-number">1</span>];
+
+    <span class="comment">/**
+     * Get the initial value type for a property name.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name" id="property">property</span><span class="comment"> String name of the FO property
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> int enumerated initialValueType.  These constants are defined
+     * as static final ints in this class.  Note that an undefined property
+     * name will return the constant defined as NOTYPE_IT
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">int</span> <span class="function-name" id="getInitialValueType">getInitialValueType</span>(<span class="type">String</span> <span class="variable-name">property</span>)
+                    <span class="keyword">throws</span> <span class="type">PropertyException</span>
+    {
+        <span class="comment">// Get the property index then index into the initialvaluetypes array
+</span>        <span class="keyword">return</span> getInitialValueType(PropNames.getPropertyIndex(property));
+    }
+
+    <span class="comment">/**
+     * get the initial value type for a property index.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name" id="propindex">propindex</span><span class="comment"> int index of the FO property
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> int enumerated initialValueType.  These constants are defined
+     * as static final ints in the Property class.
+     * </span><span class="jde-java-font-lock-doc-tag">@throws</span><span class="comment"> </span><span class="type">PropertyException
+</span><span class="comment">     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">int</span> <span class="function-name">getInitialValueType</span>(<span class="type">int</span> <span class="variable-name">propindex</span>)
+            <span class="keyword">throws</span> <span class="type">PropertyException</span>
+    {
+        setupProperty(propindex);
+        <span class="comment">//System.out.println(&quot;getInitialValueType: &quot; + propindex + &quot; &quot;
+</span>                            <span class="comment">//+ initialValueTypes[propindex]);
+</span>        <span class="keyword">return</span> initialValueTypes[propindex];
+    }
+
+    <span class="comment">/**
+     * Get the initial value &lt;tt&gt;PropertyValue&lt;/tt&gt; for a given property.
+     * Note that this is a &lt;b&gt;</span><span class="jde-java-font-lock-bold">raw</span><span class="comment">&lt;/b&gt; value; if it is
+     * an unresolved percentage that value will be returned.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name" id="index">index</span><span class="comment"> - the property index.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> a &lt;tt&gt;PropertyValue&lt;/tt&gt; containing the initial property
+     * value element for the indexed property.
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">&lt;tt&gt;PropertyException&lt;/tt&gt;
+</span><span class="comment">     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">PropertyValue</span> <span class="function-name" id="getInitialValue">getInitialValue</span>(<span class="type">int</span> <span class="variable-name">propindex</span>)
+            <span class="keyword">throws</span> <span class="type">PropertyException</span>
+    {
+        <span class="keyword">if</span> (initialValues[propindex] != <span class="jde-java-font-lock-constant" id="null">null</span>)
+            <span class="keyword">return</span> initialValues[propindex];
+        <span class="comment">//System.out.println(&quot;PropertyConts.getInitialValue(&quot; + propindex
+</span>                           <span class="comment">//+ &quot;) &quot; + PropNames.getPropertyName(propindex));
+</span>        <span class="keyword">return</span>
+            (initialValues[propindex] =
+                    setupProperty(propindex).getInitialValue(propindex));
+    }
+
+    <span class="comment">/**
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">propindex</span><span class="comment"> &lt;tt&gt;int&lt;/tt&gt; index of the property
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name" id="foNode">foNode</span><span class="comment"> the node whose properties are being constructed.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name" id="value">value</span><span class="comment"> the &lt;tt&gt;PropertyValue&lt;/tt&gt; being refined.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> &lt;tt&gt;PropertyValue&lt;/tt&gt; constructed by the property's
+     * &lt;i&gt;</span><span class="jde-java-font-lock-italic">refineParsing</span><span class="comment">&lt;/i&gt; method
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">&lt;tt&gt;PropertyException&lt;/tt&gt;
+</span><span class="comment">     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">PropertyValue</span> <span class="variable-name" id="refineParsing">refineParsing</span>
+                        (<span class="type">int</span> <span class="variable-name">propindex</span>, <span class="type">FONode</span> <span class="variable-name">foNode</span>, <span class="type">PropertyValue</span> <span class="variable-name">value</span>)
+        <span class="keyword">throws</span> <span class="type">PropertyException</span>
+    {
+        <span class="type">Property</span> <span class="variable-name">property</span> = setupProperty(propindex);
+        <span class="keyword">return</span> property.refineParsing(propindex, foNode, value);
+    }
+
+    <span class="comment">/**
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">propindex</span><span class="comment"> &lt;tt&gt;int&lt;/tt&gt; index of the property
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">foNode</span><span class="comment"> the node whose properties are being constructed.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">value</span><span class="comment"> the &lt;tt&gt;PropertyValue&lt;/tt&gt; being refined.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name" id="nested">nested</span><span class="comment"> - &lt;tt&gt;boolean&lt;/tt&gt; indicating whether this method is
+     * called normally (false), or as part of another &lt;i&gt;</span><span class="jde-java-font-lock-italic">refineParsing</span><span class="comment">&lt;/i&gt;
+     * method.
+     * </span><span class="jde-java-font-lock-doc-tag">@see</span><span class="comment"> </span><span class="jde-java-font-lock-code">#refineParsing</span><span class="comment">(FOTree,PropertyValue)
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> &lt;tt&gt;PropertyValue&lt;/tt&gt; constructed by the property's
+     * &lt;i&gt;</span><span class="jde-java-font-lock-italic">refineParsing</span><span class="comment">&lt;/i&gt; method
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">&lt;tt&gt;PropertyException&lt;/tt&gt;
+</span><span class="comment">     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">PropertyValue</span> <span class="variable-name">refineParsing</span>
+        (<span class="type">int</span> <span class="variable-name">propindex</span>, <span class="type">FONode</span> <span class="variable-name">foNode</span>, <span class="type">PropertyValue</span> <span class="variable-name">value</span>, <span class="type">boolean</span> <span class="variable-name">isNested</span>)
+        <span class="keyword">throws</span> <span class="type">PropertyException</span>
+    {
+        <span class="type">Property</span> <span class="variable-name">property</span> = setupProperty(propindex);
+        <span class="keyword">return</span> property.refineParsing(propindex, foNode, value, isNested);
+    }
+
+    <span class="comment">/**
+     * Get the &lt;tt&gt;Numeric&lt;/tt&gt; value corresponding to an enumerated value.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">foNode</span><span class="comment"> the &lt;tt&gt;FONode&lt;/tt&gt; being built
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">propindex</span><span class="comment"> int index of the FO property
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name" id="enum">enum</span><span class="comment"> - the integer equivalent of the enumeration keyword.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> the &lt;tt&gt;Numeric&lt;/tt&gt; result.
+     * </span><span class="jde-java-font-lock-doc-tag">@throws</span><span class="comment"> </span><span class="type">PropertyException.
+</span><span class="comment">     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">Numeric</span> <span class="function-name" id="getMappedNumeric">getMappedNumeric</span>(<span class="type">FONode</span> <span class="variable-name">foNode</span>, <span class="type">int</span> <span class="variable-name">propindex</span>, <span class="type">int</span> <span class="variable-name">enum</span>)
+            <span class="keyword">throws</span> <span class="type">PropertyException</span>
+    {
+        <span class="type">Property</span> <span class="variable-name">property</span> = setupProperty(propindex);
+        <span class="keyword">if</span> ((datatypes[propindex] &amp; Property.<span class="jde-java-font-lock-constant" id="MAPPED_LENGTH">MAPPED_LENGTH</span>) != <span class="jde-java-font-lock-number">0</span>)
+            <span class="keyword">return</span> property.getMappedLength(foNode, enum);
+        <span class="keyword">else</span>
+            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">PropertyException</span>
+                (&quot;<span class="string">MAPPED_LENGTH not valid in </span>&quot;
+                                    + PropNames.getPropertyName(propindex));
+    }
+
+    <span class="comment">/**
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">propindex</span><span class="comment"> int index of the FO property
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> int type of inheritance for this property
+     * (See constants defined in Properties.)
+     * </span><span class="jde-java-font-lock-doc-tag">@throws</span><span class="comment"> </span><span class="type">PropertyException.
+</span><span class="comment">     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">int</span> <span class="function-name" id="inheritance">inheritance</span>(<span class="type">String</span> <span class="variable-name">property</span>) <span class="keyword">throws</span> <span class="type">PropertyException</span> {
+        <span class="keyword">return</span> inheritance(PropNames.getPropertyIndex(property));
+    }
+
+    <span class="comment">/**
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">propindex</span><span class="comment"> int index of the FO property
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> int type of inheritance for this property
+     * (See constants defined in Property.)
+     * </span><span class="jde-java-font-lock-doc-tag">@throws</span><span class="comment"> </span><span class="type">PropertyException.
+</span><span class="comment">     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">int</span> <span class="function-name">inheritance</span>(<span class="type">int</span> <span class="variable-name">propindex</span>) <span class="keyword">throws</span> <span class="type">PropertyException</span> {
+        setupProperty(propindex);
+        <span class="keyword">return</span> inherited[propindex];
+    }
+
+    <span class="comment">/**
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">propindex</span><span class="comment"> int index of the FO property
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> &lt;tt&gt;boolean&lt;/tt&gt; is property inherited?
+     * </span><span class="jde-java-font-lock-doc-tag">@throws</span><span class="comment"> </span><span class="type">PropertyException.
+</span><span class="comment">     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">boolean</span> <span class="function-name" id="isInherited">isInherited</span>(<span class="type">int</span> <span class="variable-name">propindex</span>) <span class="keyword">throws</span> <span class="type">PropertyException</span> {
+        <span class="type">Property</span> <span class="variable-name">property</span> = setupProperty(propindex);
+        <span class="keyword">return</span> inherited[propindex] != Property.<span class="jde-java-font-lock-constant" id="NO">NO</span>;
+    }
+
+    <span class="comment">/**
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">property</span><span class="comment"> String name of the FO property
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> &lt;tt&gt;boolean&lt;/tt&gt; is property inherited?
+     * </span><span class="jde-java-font-lock-doc-tag">@throws</span><span class="comment"> </span><span class="type">PropertyException.
+</span><span class="comment">     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">boolean</span> <span class="function-name">isInherited</span>(<span class="type">String</span> <span class="variable-name">property</span>) <span class="keyword">throws</span> <span class="type">PropertyException</span> {
+        <span class="keyword">return</span> isInherited(PropNames.getPropertyIndex(property));
+    }
+
+    <span class="comment">/**
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">propindex</span><span class="comment"> int index of the FO property
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> &lt;tt&gt;boolean&lt;/tt&gt; is property a shorthand?
+     * </span><span class="jde-java-font-lock-doc-tag">@throws</span><span class="comment"> </span><span class="type">PropertyException.
+</span><span class="comment">     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">boolean</span> <span class="function-name" id="isShorthand">isShorthand</span>(<span class="type">int</span> <span class="variable-name">propindex</span>) <span class="keyword">throws</span> <span class="type">PropertyException</span> {
+        <span class="type">Property</span> <span class="variable-name">property</span> = setupProperty(propindex);
+        <span class="keyword">return</span> (datatypes[propindex] &amp; Property.<span class="jde-java-font-lock-constant" id="SHORTHAND">SHORTHAND</span>) != <span class="jde-java-font-lock-number">0</span>;
+    }
+
+    <span class="comment">/**
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">property</span><span class="comment"> String name of the FO property
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> &lt;tt&gt;boolean&lt;/tt&gt; is property a shorthand?
+     * </span><span class="jde-java-font-lock-doc-tag">@throws</span><span class="comment"> </span><span class="type">PropertyException.
+</span><span class="comment">     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">boolean</span> <span class="function-name">isShorthand</span>(<span class="type">String</span> <span class="variable-name">property</span>) <span class="keyword">throws</span> <span class="type">PropertyException</span> {
+        <span class="keyword">return</span> isShorthand(PropNames.getPropertyIndex(property));
+    }
+
+    <span class="comment">/**
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name" id="propertyIndex">propertyIndex</span><span class="comment"> int index of the FO property
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> &lt;tt&gt;boolean&lt;/tt&gt; is property a compound?
+     * </span><span class="jde-java-font-lock-doc-tag">@throws</span><span class="comment"> </span><span class="type">PropertyException.
+</span><span class="comment">     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">boolean</span> <span class="function-name" id="isCompound">isCompound</span>(<span class="type">int</span> <span class="variable-name">propertyIndex</span>) <span class="keyword">throws</span> <span class="type">PropertyException</span> {
+        <span class="type">Property</span> <span class="variable-name">property</span> = setupProperty(propertyIndex);
+        <span class="keyword">return</span> (datatypes[propertyIndex] &amp; Property.<span class="jde-java-font-lock-constant" id="COMPOUND">COMPOUND</span>) != <span class="jde-java-font-lock-number">0</span>;
+    }
+
+    <span class="comment">/**
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">property</span><span class="comment"> String name of the FO property
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> &lt;tt&gt;boolean&lt;/tt&gt; is property a compound?
+     * </span><span class="jde-java-font-lock-doc-tag">@throws</span><span class="comment"> </span><span class="type">PropertyException.
+</span><span class="comment">     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">boolean</span> <span class="function-name">isCompound</span>(<span class="type">String</span> <span class="variable-name">property</span>) <span class="keyword">throws</span> <span class="type">PropertyException</span> {
+        <span class="keyword">return</span> isCompound(PropNames.getPropertyIndex(property));
+    }
+
+    <span class="comment">/**
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">propertyIndex</span><span class="comment"> int index of the FO property
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> &lt;tt&gt;int&lt;/tt&gt; dataTypes value.
+     * </span><span class="jde-java-font-lock-doc-tag">@throws</span><span class="comment"> </span><span class="type">PropertyException.
+</span><span class="comment">     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">int</span> <span class="function-name" id="getDataTypes">getDataTypes</span>(<span class="type">int</span> <span class="variable-name">propertyIndex</span>) <span class="keyword">throws</span> <span class="type">PropertyException</span> {
+        <span class="type">Property</span> <span class="variable-name">property</span> = setupProperty(propertyIndex);
+        <span class="keyword">return</span> datatypes[propertyIndex];
+    }
+
+    <span class="comment">/**
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">property</span><span class="comment"> String name of the FO property
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> &lt;tt&gt;int&lt;/tt&gt; dataTypes value.
+     * </span><span class="jde-java-font-lock-doc-tag">@throws</span><span class="comment"> </span><span class="type">PropertyException.
+</span><span class="comment">     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">int</span> <span class="function-name">getDataTypes</span>(<span class="type">String</span> <span class="variable-name">property</span>) <span class="keyword">throws</span> <span class="type">PropertyException</span> {
+        <span class="keyword">return</span> getDataTypes(PropNames.getPropertyIndex(property));
+    }
+
+    <span class="comment">/**
+     * Map the integer value of an enum into its mapped value.
+     * Only valid when the datatype of the property includes MAPPED_ENUM.
+     * &lt;p&gt;Generally, the path will be enumText-&gt;enumIndex-&gt;mappedEnumText.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">index</span><span class="comment"> &lt;tt&gt;int&lt;/tt&gt; containing the enumeration index.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name" id="enumMap">enumMap</span><span class="comment"> an &lt;tt&gt;ROStringArray&lt;/tt&gt; of the &lt;tt&gt;String&lt;/tt&gt;s 
+     * with the mapped enumeration values.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> a &lt;tt&gt;String&lt;/tt&gt; with the mapped enumeration text.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">String</span> <span class="function-name" id="enumIndexToMapping">enumIndexToMapping</span>(<span class="type">int</span> <span class="variable-name">index</span>, <span class="type">ROStringArray</span> <span class="variable-name">enumMap</span>)
+    {
+        <span class="keyword">return</span> enumMap.get(index);
+    }
+
+    <span class="comment">/**
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">propindex</span><span class="comment"> &lt;tt&gt;int&lt;/tt&gt; property index.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">enum</span><span class="comment"> &lt;tt&gt;String&lt;/tt&gt; containing the enumeration text.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> &lt;tt&gt;int&lt;/tt&gt; constant representing the enumeration value.
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">PropertyException
+</span><span class="comment">     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">int</span> <span class="function-name" id="getEnumIndex">getEnumIndex</span>(<span class="type">int</span> <span class="variable-name">propindex</span>, <span class="type">String</span> <span class="variable-name">enum</span>)
+                    <span class="keyword">throws</span> <span class="type">PropertyException</span>
+    {
+        <span class="type">Property</span> <span class="variable-name">property</span> = setupProperty(propindex);
+        <span class="keyword">return</span> property.getEnumIndex(enum);
+    }
+
+    <span class="comment">/**
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">propindex</span><span class="comment"> &lt;tt&gt;int&lt;/tt&gt; property index.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name" id="enumIndex">enumIndex</span><span class="comment"> &lt;tt&gt;int&lt;/tt&gt; containing the enumeration index.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> &lt;tt&gt;String&lt;/tt&gt; containing the enumeration text.
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">PropertyException
+</span><span class="comment">     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">String</span> <span class="function-name" id="getEnumText">getEnumText</span>(<span class="type">int</span> <span class="variable-name">propindex</span>, <span class="type">int</span> <span class="variable-name">enumIndex</span>)
+                    <span class="keyword">throws</span> <span class="type">PropertyException</span>
+    {
+        <span class="type">Property</span> <span class="variable-name">property</span> = setupProperty(propindex);
+        <span class="keyword">return</span> property.getEnumText(enumIndex);
+    }
+
+    <span class="comment">/**
+     * Set up the details of a single property and return the
+     * &lt;tt&gt;Property&lt;/tt&gt; object.  If the &lt;tt&gt;Property&lt;/tt&gt; object
+     * corresponding to the property index has not been resolved before,
+     * derive the Class and Property objects, and extract certain field
+     * values from the Property.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">propindex</span><span class="comment"> - the &lt;tt&gt;int&lt;/tt&gt; index.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> - the &lt;tt&gt;Property&lt;/tt&gt; corresponding to the index.
+     * </span><span class="jde-java-font-lock-doc-tag">@throws</span><span class="comment"> </span><span class="type">&lt;tt&gt;PropertyException.
+</span><span class="comment">     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">Property</span> <span class="function-name" id="setupProperty">setupProperty</span>(<span class="type">int</span> <span class="variable-name">propindex</span>)
+            <span class="keyword">throws</span> <span class="type">PropertyException</span>
+    {
+        <span class="type">String</span> <span class="variable-name" id="cname">cname</span> = &quot;&quot;;
+        <span class="type">Class</span> <span class="variable-name" id="pclass">pclass</span>;
+        <span class="type">Property</span> <span class="variable-name">property</span>;
+
+        <span class="comment">//System.out.println(&quot;setupProperty &quot; + propindex + &quot; &quot;
+</span>                            <span class="comment">//+ PropNames.getPropertyName(propindex));
+</span>        <span class="keyword">if</span> ((property = properties[propindex]) != <span class="jde-java-font-lock-constant">null</span>) <span class="keyword">return</span> property;
+
+        <span class="comment">// Get the property class name
+</span>        <span class="type">StringTokenizer</span> <span class="variable-name" id="stoke">stoke</span>;
+        stoke = <span class="keyword">new</span> <span class="type">StringTokenizer</span>
+                            (PropNames.getPropertyName(propindex), &quot;<span class="string">-.:</span>&quot;);
+        <span class="keyword">while</span> (stoke.hasMoreTokens()) {
+            <span class="type">String</span> <span class="variable-name" id="token">token</span> = stoke.nextToken();
+            <span class="type">String</span> <span class="variable-name" id="pname">pname</span> = <span class="keyword">new</span> <span class="type">Character</span>(
+                                Character.toUpperCase(token.charAt(<span class="jde-java-font-lock-number">0</span>))
+                            ).toString() + token.substring(<span class="jde-java-font-lock-number">1</span>);
+            cname = cname + pname;
+        }
+        classNames[propindex] = cname;
+        
+        <span class="comment">// Set up the classToIndex Hashmap with the name of the
+</span>        <span class="comment">// property class as a key, and the integer index as a value
+</span>        <span class="keyword">if</span> (classToIndex.put(cname, Ints.consts.get(propindex)) != <span class="jde-java-font-lock-constant">null</span>)
+            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">PropertyException</span>
+                (&quot;<span class="string">Duplicate values in classToIndex for key </span>&quot; + cname);
+
+        <span class="comment">// Get the class for this property name
+</span>        <span class="type">String</span> <span class="variable-name" id="name">name</span> = packageName + &quot;<span class="string">.properties.</span>&quot; + cname;
+        <span class="keyword">try</span> {
+            <span class="comment">//System.out.println(&quot;classes[&quot;+propindex+&quot;] &quot;+name);//DEBUG
+</span>            pclass = Class.forName(name);
+            classes[propindex] = pclass;
+
+            <span class="comment">// Instantiate the class
+</span>            property = (<span class="type">Property</span>)(pclass.newInstance());
+            properties[propindex] = property;
+            <span class="comment">//System.out.println
+</span>                    <span class="comment">//(&quot;property name &quot;
+</span>                     <span class="comment">//+ property.getClass().getName());
+</span>            <span class="comment">//System.out.println
+</span>            <span class="comment">//(&quot;property name &quot; +
+</span>            <span class="comment">//properties[propindex].getClass().getName());
+</span>
+            <span class="comment">// Set inheritance value
+</span>            <span class="keyword">if</span> ((inherited[propindex]
+                                = pclass.getField(&quot;<span class="string">inherited</span>&quot;).getInt(<span class="jde-java-font-lock-constant">null</span>))
+                    != Property.<span class="jde-java-font-lock-constant">NO</span>)
+                            inheritedprops.set(propindex);
+            <span class="comment">// Set datatypes
+</span>            datatypes[propindex] = pclass.getField(&quot;<span class="string">dataTypes</span>&quot;).getInt(<span class="jde-java-font-lock-constant">null</span>);
+            <span class="comment">//System.out.println(&quot;datatypes &quot; + datatypes[propindex] + &quot;\n&quot;
+</span>                           <span class="comment">//+ Property.listDataTypes(datatypes[propindex]));
+</span>
+            <span class="comment">// Set initialValueTypes
+</span>            initialValueTypes[propindex] =
+                            pclass.getField(&quot;<span class="string">initialValueType</span>&quot;).getInt(<span class="jde-java-font-lock-constant">null</span>);
+            <span class="comment">//System.out.println(&quot;initialValueType &quot;
+</span>                               <span class="comment">//+ initialValueTypes[propindex]);
+</span>
+            traitMappings[propindex] =
+                                pclass.getField(&quot;<span class="string">traitMapping</span>&quot;).getInt(<span class="jde-java-font-lock-constant">null</span>);
+
+        } <span class="keyword">catch</span> (<span class="type">ClassNotFoundException</span> <span class="variable-name">e</span>) {
+            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">PropertyException</span>
+                    (&quot;<span class="string">ClassNotFoundException</span>&quot; + e.getMessage());
+        } <span class="keyword">catch</span> (<span class="type">IllegalAccessException</span> <span class="variable-name">e</span>) {
+            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">PropertyException</span>
+                    (&quot;<span class="string">IllegalAccessException</span>&quot; + e.getMessage());
+        } <span class="keyword">catch</span> (<span class="type">InstantiationException</span> <span class="variable-name">e</span>) {
+            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">PropertyException</span>
+                    (&quot;<span class="string">InstantiationException</span>&quot; + e.getMessage());
+        }
+        <span class="keyword">catch</span> (<span class="type">NoSuchFieldException</span> <span class="variable-name">e</span>) {
+            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">PropertyException</span>
+                    (&quot;<span class="string">NoSuchFieldException</span>&quot; + e.getMessage());
+        }
+
+        <span class="keyword">return</span> property;
+    }
+
+
+    <span class="jde-java-font-lock-modifier">private</span> <span class="function-name" id="PropertyConsts">PropertyConsts</span> () <span class="keyword">throws</span> <span class="type">PropertyException</span> {}
+
+}
+</pre>
+  </body>
+</html>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+  Copyright 1999-2004 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<!DOCTYPE faqs PUBLIC "-//APACHE//DTD FAQ V1.1//EN"
+    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/core/context/resources/schema/dtd/faq-v12.dtd">
+
+<faqs title="FOP Development: FAQ">
+  <part id="part_general">
+    <title>General Questions</title>
+    <faq>
+      <question>How can I contribute?</question>
+      <answer>
+        <p>There are many ways that you can help:</p>
+        <ul>
+          <li>You can help us implement missing features that are needed in order to comply with the standard. See the <link href="../compliance.html">Standards Compliance</link> for more details.</li>
+          <li>You can help us address bug reports. See <link href="../bugs.html#issues_existing">bugzilla</link> for more information.</li>
+          <li>You can help support our user base by answering questions on the fop-user mailing list.</li>
+          <li>You can help us document FOP better.</li>
+        </ul>
+      </answer>
+    </faq>
+  </part>
+  <part id="part_documentation">
+    <title>Documentation</title>
+    <faq id="javadoc_location">
+      <question>How do I get the javadocs for FOP?</question>
+      <answer>
+        <p>Currently, the only way to get FOP javadocs is to <link href="../download.html">
+        Download the source code</link> and then <link href="../compiling.html">Build
+        FOP</link> using the ant build task "javadocs".</p>
+      </answer>
+    </faq>
+  </part>
+  <part id="part_further_help">
+    <title>Further Help</title>
+    <faq id="other_faqs">
+      <question>I don't see my question addressed here. Are there other FAQs?</question>
+      <answer>
+        <p>Yes. See also the <link href="../faq.html">FOP General FAQs</link>.</p>
+      </answer>
+    </faq>
+  </part>
+</faqs>
+

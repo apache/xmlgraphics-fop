@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2005 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks block-level space properties.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal" white-space-collapse="true">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block space-after="-8pt">overlapping block1, negative space-after</fo:block>
+          <fo:block background-color="orange">normal block1</fo:block>
+          <fo:block space-before="5pt">spaced block1</fo:block>
+          <fo:block space-after="5pt">spaced block2</fo:block>
+          <fo:block background-color="orange">normal block2</fo:block>
+          <fo:block space-before="-8pt">overlapping block2, negative space-before</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <!-- overlapping block1 -->
+    <eval expected="360000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/@ipda"/>
+    <eval expected="14400" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/@bpda"/>
+    <!-- space after overlapping block1 -->
+    <eval expected="-8000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/@bpd"/>
+    <!-- normal block1 -->
+    <eval expected="360000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[3]/@ipda"/>
+    <eval expected="14400" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[3]/@bpda"/>
+    <!-- space before spaced block1 -->
+    <eval expected="5000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[4]/@bpd"/>
+    <!-- spaced block1 -->
+    <eval expected="360000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[5]/@ipda"/>
+    <eval expected="14400" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[5]/@bpda"/>
+    <!-- spaced block2 -->
+    <eval expected="360000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[6]/@ipda"/>
+    <eval expected="14400" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[6]/@bpda"/>
+    <!-- space after spaced block2 -->
+    <eval expected="5000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[7]/@bpd"/>
+    <!-- normal block2 -->
+    <eval expected="360000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[8]/@ipda"/>
+    <eval expected="14400" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[8]/@bpda"/>
+    <!-- space before overlapping block2 -->
+    <eval expected="-8000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[9]/@bpd"/>
+    <!-- overlapping block2 -->
+    <eval expected="360000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[10]/@ipda"/>
+    <eval expected="14400" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[10]/@bpda"/>
+  </checks>
+</testcase>

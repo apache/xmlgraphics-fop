@@ -1,0 +1,169 @@
+<test  xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+<data>
+
+<fo:block>
+Test the alignment of text inside a block
+</fo:block>
+
+<fo:block>
+-
+</fo:block>
+
+<fo:block>
+text text text text text text text text text text text text text text text text
+text text text text text text text text text text text text text text text text
+text text text text text text text text text text text text text text text text
+</fo:block>
+
+<fo:block>
+-
+</fo:block>
+
+<fo:block text-align="start">
+text text text text text text text text text text text text text text text text
+text text text text text text text text text text text text text text text text
+text text text text text text text text text text text text text text text text
+</fo:block>
+
+<fo:block>
+-
+</fo:block>
+
+<fo:block text-align="end">
+text text text text text text text text text text text text text text text text
+text text text text text text text text text text text text text text text text
+text text text text text text text text text text text text text text text text
+</fo:block>
+
+<fo:block>
+-
+</fo:block>
+
+<fo:block text-align="justify">
+a bit of text a bit of text a bit of text a bit of text a bit of text a bit of text
+a bit of text a bit of text a bit of text a bit of text a bit of text a bit of text
+a bit of text a bit of text a bit of text a bit of text a bit of text a bit of text
+a bit of text a bit of text a bit of text a bit of text a bit of text a bit of text
+a bit of text a bit of text a bit of text a bit of text a bit of text a bit of text
+</fo:block>
+
+<fo:block>
+-
+</fo:block>
+
+<fo:block text-align="center">
+text text text text text text text text text text text text text text text text
+text text text text text text text text text text text text text text text text
+text text text text text text text text text text text text text text text text
+</fo:block>
+
+<fo:block>
+-
+</fo:block>
+
+<fo:block text-align="center" text-align-last="relative">
+text text text text text text text text text text text text text text text text
+text text text text text text text text text text text text text text text text
+text text text text text text text text text text text text text text text text
+</fo:block>
+
+<fo:block>
+-
+</fo:block>
+
+<fo:block text-align="center" text-align-last="end">
+texttext texttext texttext text texttexttext texttext texttext text text
+text text text text texttext texttext text texttexttext text text text text
+text text text text text text text text text text text text text text text text
+</fo:block>
+
+<fo:block>
+-
+</fo:block>
+
+<fo:block text-align="center" text-align-last="justify">
+texttext text texttext texttext texttext texttext texttext texttext text
+texttext texttext texttext texttext texttext texttext texttext texttext
+text text text text text text text text text text text text text text text text
+</fo:block>
+
+<fo:block>
+-
+</fo:block>
+
+<fo:block text-align="center" text-align-last="inside">
+texttext texttext texttext texttext texttext texttext texttext texttext
+text texttext text texttext text texttext text texttext texttext texttext
+text text text text text text text text text text text text text text text text
+</fo:block>
+
+<fo:block>
+-
+</fo:block>
+
+<fo:block text-align="center" text-indent="10pt">
+texttext texttext texttext texttext texttext texttext texttext texttext
+text texttext text texttext text texttext text texttext texttext texttext
+text text text text text text text text text text text text text text text text
+</fo:block>
+
+<fo:block>
+-
+</fo:block>
+
+<fo:block text-align="start" text-indent="30%">
+texttext texttext texttext texttext texttext texttext texttext texttext
+text texttext text texttext text texttext text texttext texttext texttext
+text text text text text text text text text text text text text text text text
+</fo:block>
+
+<fo:block>
+-
+</fo:block>
+
+<fo:block text-align="end" text-indent="15pt">
+<fo:block text-align="start" text-indent="inherit">
+texttext texttext texttext texttext texttext texttext texttext texttext
+text texttext text texttext text texttext text texttext texttext texttext
+text text text text text text text text text text text text text text text text
+</fo:block>
+</fo:block>
+
+<fo:block>
+-
+</fo:block>
+
+<fo:block text-align="end" last-line-end-indent="20%">
+texttext texttext texttext texttext texttext texttext texttext texttext
+text texttext text texttext text texttext text texttext texttext texttext
+text text text text text text text text text text text text text text text text
+</fo:block>
+
+<fo:block>
+-
+</fo:block>
+
+<fo:block text-align="center" last-line-end-indent="40pt">
+texttext texttext texttext texttext texttext texttext texttext texttext
+text texttext text texttext text texttext text texttext texttext texttext
+text text text text text text text text text text text text text text text text
+</fo:block>
+
+<fo:block>
+-
+</fo:block>
+
+<fo:block text-align="justify" last-line-end-indent="20%">
+texttext texttext texttext texttext texttext texttext texttext texttext
+</fo:block>
+
+<fo:block>
+-
+</fo:block>
+
+<fo:block text-align="justify" text-indent="30pt" last-line-end-indent="20%">
+texttext texttext texttext texttext texttext texttext texttext texttext
+</fo:block>
+
+</data>
+</test>

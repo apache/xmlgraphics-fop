@@ -1,0 +1,254 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<!--
+  Copyright 1999-2004 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<!-- Created by htmlize-0.67 in css mode. -->
+<html>
+  <head>
+    <title>AbstractPropertyValue.java</title>
+    <style type="text/css">
+    <!--
+      body {
+        color: #000000;
+        background-color: #faf0e6;
+      } /* default */
+      .jde-java-font-lock-package {
+        color: #0000cd;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-package-face */
+      .jde-java-font-lock-constant {
+        color: #5f9ea0;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-constant-face */
+      .keyword {
+        color: #8b0000;
+        background-color: #faf0e6;
+      } /* font-lock-keyword-face */
+      .jde-java-font-lock-doc-tag {
+        color: #008b00;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-doc-tag-face */
+      .jde-java-font-lock-number {
+        color: #bc8f8f;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-number-face */
+      .jde-java-font-lock-italic {
+        background-color: #faf0e6;
+        font-style: italic;
+      } /* jde-java-font-lock-italic-face */
+      .string {
+        color: #008b00;
+        background-color: #faf0e6;
+      } /* font-lock-string-face */
+      .variable-name {
+        color: #8b008b;
+        background-color: #faf0e6;
+      } /* font-lock-variable-name-face */
+      .jde-java-font-lock-modifier {
+        color: #da70d6;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-modifier-face */
+      .type {
+        color: #4682b4;
+        background-color: #faf0e6;
+      } /* font-lock-type-face */
+      .comment {
+        color: #00008b;
+        background-color: #faf0e6;
+      } /* font-lock-comment-face */
+      .function-name {
+        color: #8b2323;
+        background-color: #faf0e6;
+      } /* font-lock-function-name-face */
+      a {
+        color: inherit;
+        background-color: inherit;
+        font: inherit;
+        text-decoration: inherit;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+    -->
+    </style>
+  </head>
+  <body>
+    <pre>
+<span class="comment">/*
+ * Copyright 2001-2004 The Apache Software Foundation.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */</span>
+ 
+<span class="keyword">package</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">datatypes</span>;
+
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">fo</span>.<span class="type">PropertyConsts</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">fo</span>.<span class="type">PropNames</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">fo</span>.<span class="jde-java-font-lock-package">properties</span>.<span class="jde-java-font-lock-number">*</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">fo</span>.<span class="type">FONode</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">fo</span>.<span class="jde-java-font-lock-package">expr</span>.<span class="type">PropertyException</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">datatypes</span>.<span class="type">PropertyValue</span>;
+
+<span class="comment">/**
+ * Base abstract class for all property value types.
+ * @author &lt;a href=&quot;mailto:pbwest@powerup.com.au&quot;&gt;Peter B. West&lt;/a&gt;
+ */</span>
+
+<span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">abstract</span> <span class="keyword">class</span> <span class="function-name" id="AbstractPropertyValueClass">AbstractPropertyValue</span>
+    <span class="keyword">implements</span> <span class="type">PropertyValue</span>, <span class="type">Cloneable</span>
+{
+    
+    <span class="comment">/**
+     * An integer index to the type of property of which this is a value.
+     */</span>
+    <span class="jde-java-font-lock-modifier">protected</span> <span class="type">int</span> <span class="variable-name" id="property">property</span>;
+    
+    <span class="comment">/**
+     * An integer property type.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">int</span> <span class="variable-name" id="type">type</span>;
+
+    <span class="comment">/**
+     * The PropertyConsts singleton.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">PropertyConsts</span> <span class="variable-name" id="propertyConsts">propertyConsts</span>;
+    
+    <span class="comment">/**
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name" id="index">index</span><span class="comment"> index of the property in the property arrays.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">type</span><span class="comment"> of this value
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="function-name" id="AbstractPropertyValue">AbstractPropertyValue</span>(<span class="type">int</span> <span class="variable-name">index</span>, <span class="type">int</span> <span class="variable-name">type</span>)
+        <span class="keyword">throws</span> <span class="type">PropertyException</span>
+     {
+        <span class="keyword">if</span> (index &lt; <span class="jde-java-font-lock-number">1</span> || index &gt; PropNames.<span class="jde-java-font-lock-constant" id="LAST_PROPERTY_INDEX">LAST_PROPERTY_INDEX</span>)
+            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">PropertyException</span>(&quot;<span class="string">Invalid property index: </span>&quot; + index);
+        <span class="keyword">if</span> (type &lt; <span class="jde-java-font-lock-number">0</span> || type &gt; PropertyValue.<span class="jde-java-font-lock-constant" id="LAST_PROPERTY_TYPE">LAST_PROPERTY_TYPE</span>)
+            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">PropertyException</span>(&quot;<span class="string">Invalid property type: </span>&quot; + type);
+        property = index;
+        <span class="keyword">this</span>.type = type;
+        propertyConsts = PropertyConsts.getPropertyConsts();
+    }
+
+    <span class="comment">/**
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name" id="propertyName">propertyName</span><span class="comment"> a &lt;tt&gt;String&lt;/tt&gt; containing the property name.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="function-name">AbstractPropertyValue</span>(<span class="type">String</span> <span class="variable-name">propertyName</span>, <span class="type">int</span> <span class="variable-name">type</span>)
+        <span class="keyword">throws</span> <span class="type">PropertyException</span>
+    {
+        propertyConsts = PropertyConsts.getPropertyConsts();
+        property = PropNames.getPropertyIndex(propertyName);
+        <span class="keyword">if</span> (property &lt; <span class="jde-java-font-lock-number">1</span> || property &gt; PropNames.<span class="jde-java-font-lock-constant">LAST_PROPERTY_INDEX</span>)
+            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">PropertyException</span>(&quot;<span class="string">Invalid property index: </span>&quot; + property);
+        <span class="keyword">if</span> (type &lt; <span class="jde-java-font-lock-number">0</span> || type &gt; PropertyValue.<span class="jde-java-font-lock-constant">LAST_PROPERTY_TYPE</span>)
+            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">PropertyException</span>(&quot;<span class="string">Invalid property type: </span>&quot; + type);
+        <span class="keyword">this</span>.type = type;
+    }
+
+    <span class="comment">/**
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> &lt;tt&gt;int&lt;/tt&gt; property index.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">int</span> <span class="function-name" id="getProperty">getProperty</span>() {
+        <span class="keyword">return</span> property;
+    }
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">void</span> <span class="function-name" id="setProperty">setProperty</span>(<span class="type">int</span> <span class="variable-name">index</span>) <span class="keyword">throws</span> <span class="type">PropertyException</span> {
+        <span class="keyword">if</span> (index &lt; <span class="jde-java-font-lock-number">0</span> || index &gt; PropNames.<span class="jde-java-font-lock-constant">LAST_PROPERTY_INDEX</span>)
+            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">PropertyException</span>(&quot;<span class="string">Invalid property index: </span>&quot; + index);
+        property = index;
+    }
+
+    <span class="comment">/**
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> type field of the &lt;tt&gt;PropertyValue&lt;/tt&gt;.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">int</span> <span class="function-name" id="getType">getType</span>() {
+        <span class="keyword">return</span> type;
+    }
+
+    <span class="comment">/**
+     * In some circumstances, the property against which a type is to be
+     * validated may not be the same as the property against which this
+     * &lt;i&gt;</span><span class="jde-java-font-lock-italic">AbstractPropertyValue</span><span class="comment">&lt;/i&gt; is defined.
+     * A specific property argument is then required.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name" id="testProperty">testProperty</span><span class="comment"> &lt;tt&gt;int&lt;/tt&gt; property index of the property
+     * for which the type is to be validated.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">type</span><span class="comment"> &lt;tt&gt;int&lt;/tt&gt; bitmap of data types to check for
+     * validity against this property.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">void</span> <span class="function-name" id="validate">validate</span>(<span class="type">int</span> <span class="variable-name">testProperty</span>, <span class="type">int</span> <span class="variable-name">type</span>)
+        <span class="keyword">throws</span> <span class="type">PropertyException</span>
+    {
+        <span class="comment">// N.B. PROPERTY_SPECIFIC inheritance may require more specialized
+</span>        <span class="comment">// checks.  Only line-height comes into this category.
+</span>
+        <span class="comment">// N.B. The first commented-out condition means that I cannot validate
+</span>        <span class="comment">// unless the property is NOT inherited.
+</span>        <span class="comment">// I can't remember why I put this
+</span>        <span class="comment">// condition in here.  Removing it.  pbw 2002/02/18
+</span>        <span class="comment">//if (propertyConsts.inherited.get(testProperty) == Property.NO
+</span>        <span class="comment">//&amp;&amp; (propertyConsts.getDataTypes(testProperty) &amp; type) == 0) {
+</span>
+            <span class="keyword">if</span> ((propertyConsts.getDataTypes(testProperty) &amp; type) == <span class="jde-java-font-lock-number">0</span>) {
+            <span class="type">String</span> <span class="variable-name" id="pname">pname</span> = PropNames.getPropertyName(testProperty);
+            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">PropertyException</span>
+                    (&quot;<span class="string">Datatype(s) </span>&quot; +
+                     Property.listDataTypes(type) +
+                     &quot;<span class="string"> not defined on </span>&quot; + pname);
+        }
+    }
+
+    <span class="comment">/**
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">type</span><span class="comment"> &lt;tt&gt;int&lt;/tt&gt; bitmap of data types to check for
+     * validity against this property.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">void</span> <span class="function-name">validate</span>(<span class="type">int</span> <span class="variable-name">type</span>) <span class="keyword">throws</span> <span class="type">PropertyException</span> {
+        <span class="comment">// N.B. PROPERTY_SPECIFIC inheritance may require more specialized
+</span>        <span class="comment">// checks.  Only line-height comes into this category.
+</span>        validate(property, type);
+    }
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="type">String</span> <span class="function-name" id="typeString">typeString</span>(<span class="type">int</span> <span class="variable-name">type</span>) {
+        <span class="keyword">if</span> (type &lt; <span class="jde-java-font-lock-number">0</span> || type &gt;PropertyValue.<span class="jde-java-font-lock-constant">LAST_PROPERTY_TYPE</span>)
+            <span class="keyword">return</span> &quot;<span class="string">Property type out of range</span>&quot;;
+        <span class="keyword">return</span> PropertyValue.propertyTypes.get(type);
+    }
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">String</span> <span class="function-name" id="toString">toString</span>() {
+        <span class="keyword">try</span> {
+            <span class="keyword">return</span> &quot;<span class="string">Property: </span>&quot; + PropNames.getPropertyName(property)
+                    + &quot;<span class="string"> Index: </span>&quot; + property + &quot;<span class="string"> Type: </span>&quot; +
+                    typeString(type);
+        } <span class="keyword">catch</span> (<span class="type">PropertyException</span> <span class="variable-name" id="e">e</span>) {
+            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">RuntimeException</span>(e.getMessage());
+        }
+    }
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">Object</span> <span class="function-name" id="clone">clone</span>() <span class="keyword">throws</span> <span class="type">CloneNotSupportedException</span> {
+        <span class="keyword">return</span> <span class="keyword">super</span>.clone();
+    }
+}
+</pre>
+  </body>
+</html>

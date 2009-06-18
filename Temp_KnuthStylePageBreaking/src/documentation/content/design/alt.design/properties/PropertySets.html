@@ -1,0 +1,442 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<!--
+  Copyright 2001-2004 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<!-- Created by htmlize-0.67 in css mode. -->
+<html>
+  <head>
+    <title>PropertySets.java</title>
+    <style type="text/css">
+    <!--
+      body {
+        color: #000000;
+        background-color: #faf0e6;
+      } /* default */
+      .jde-java-font-lock-modifier {
+        color: #da70d6;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-modifier-face */
+      .keyword {
+        color: #8b0000;
+        background-color: #faf0e6;
+      } /* font-lock-keyword-face */
+      .jde-java-font-lock-link {
+        color: #0000ff;
+        background-color: #faf0e6;
+        text-decoration: underline;
+      } /* jde-java-font-lock-link-face */
+      .variable-name {
+        color: #8b008b;
+        background-color: #faf0e6;
+      } /* font-lock-variable-name-face */
+      .string {
+        color: #008b00;
+        background-color: #faf0e6;
+      } /* font-lock-string-face */
+      .jde-java-font-lock-package {
+        color: #0000cd;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-package-face */
+      .jde-java-font-lock-constant {
+        color: #5f9ea0;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-constant-face */
+      .type {
+        color: #4682b4;
+        background-color: #faf0e6;
+      } /* font-lock-type-face */
+      .jde-java-font-lock-bold {
+        background-color: #faf0e6;
+        font-weight: bold;
+      } /* jde-java-font-lock-bold-face */
+      .jde-java-font-lock-doc-tag {
+        color: #008b00;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-doc-tag-face */
+      .comment {
+        color: #00008b;
+        background-color: #faf0e6;
+      } /* font-lock-comment-face */
+      .function-name {
+        color: #8b2323;
+        background-color: #faf0e6;
+      } /* font-lock-function-name-face */
+      a {
+        color: inherit;
+        background-color: inherit;
+        font: inherit;
+        text-decoration: inherit;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+    -->
+    </style>
+  </head>
+  <body>
+    <pre>
+<span class="comment">/*
+ * Copyright 2001-2004 The Apache Software Foundation.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */</span>
+ 
+<span class="keyword">package</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">fo</span>;
+
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">java</span>.<span class="jde-java-font-lock-package">util</span>.<span class="type">BitSet</span>;
+
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">fo</span>.<span class="type">PropNames</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">datastructs</span>.<span class="type">ROBitSet</span>;
+
+<span class="comment">/**
+ * This class contains &lt;tt&gt;ROBitSet&lt;/tt&gt;s which encode the various sets of
+ * properties which are defined to apply to each of the Flow Objects.  These 
+ * &lt;tt&gt;ROBitSet&lt;/tt&gt;s provide a convenient means of specifying the
+ * relationship between FOs and properties.
+ * </span><span class="jde-java-font-lock-doc-tag">@author</span><span class="comment"> &lt;a href=&quot;mailto:pbwest@powerup.com.au&quot;&gt;</span><span class="jde-java-font-lock-link">Peter B. West</span><span class="comment">&lt;/a&gt;
+ */</span>
+<span class="jde-java-font-lock-modifier">public</span> <span class="keyword">class</span> <span class="function-name" id="PropertySetsClass">PropertySets</span> {
+
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">String</span> <span class="variable-name" id="tag">tag</span> = &quot;<span class="string">$Name$</span>&quot;;
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">String</span> <span class="variable-name" id="revision">revision</span> = &quot;<span class="string">$Revision$</span>&quot;;
+
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">String</span> <span class="variable-name" id="packageName">packageName</span> = &quot;<span class="string">org.apache.fop.fo</span>&quot;;
+
+    <span class="comment">/**
+     * &lt;tt&gt;BitSet&lt;/tt&gt; of the &lt;tt&gt;Integer&lt;/tt&gt; objects corresponding to the
+     * constant index of each property in the set of
+     * &lt;b&gt;</span><span class="jde-java-font-lock-bold">Common Accessibility Properties</span><span class="comment">&lt;/b&gt;.
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">BitSet</span> <span class="variable-name" id="accessibilityProps">accessibilityProps</span> = <span class="keyword">new</span> <span class="type">BitSet</span>();
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROBitSet</span> <span class="variable-name" id="accessibilitySet">accessibilitySet</span>;
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="type">BitSet</span> <span class="function-name" id="accessibilitySetClone">accessibilitySetClone</span>() {
+        <span class="keyword">return</span> (<span class="type">BitSet</span>)(accessibilityProps.clone());
+    }
+
+    <span class="jde-java-font-lock-modifier">static</span> {
+         accessibilityProps.set(PropNames.<span class="jde-java-font-lock-constant" id="ROLE">ROLE</span>);       
+         accessibilityProps.set(PropNames.<span class="jde-java-font-lock-constant" id="SOURCE_DOCUMENT">SOURCE_DOCUMENT</span>);
+         accessibilitySet = <span class="keyword">new</span> <span class="type">ROBitSet</span>(accessibilityProps);
+    }
+    <span class="comment">/**
+     * &lt;tt&gt;BitSet&lt;/tt&gt; of the &lt;tt&gt;Integer&lt;/tt&gt; objects corresponding to the
+     * constant index of each property in the set of
+     * &lt;b&gt;</span><span class="jde-java-font-lock-bold">Common Absolute Position Properties</span><span class="comment">&lt;/b&gt;.
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">BitSet</span> <span class="variable-name" id="absolutePositionProps">absolutePositionProps</span> = <span class="keyword">new</span> <span class="type">BitSet</span>();
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROBitSet</span> <span class="variable-name" id="absolutePositionSet">absolutePositionSet</span>;
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="type">BitSet</span> <span class="function-name" id="absolutePositionSetClone">absolutePositionSetClone</span>() {
+        <span class="keyword">return</span> (<span class="type">BitSet</span>)(absolutePositionProps.clone());
+    }
+
+    <span class="jde-java-font-lock-modifier">static</span> {
+        absolutePositionProps.set(PropNames.<span class="jde-java-font-lock-constant" id="ABSOLUTE_POSITION">ABSOLUTE_POSITION</span>);
+        absolutePositionProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BOTTOM">BOTTOM</span>);
+        absolutePositionProps.set(PropNames.<span class="jde-java-font-lock-constant" id="LEFT">LEFT</span>);
+        absolutePositionProps.set(PropNames.<span class="jde-java-font-lock-constant" id="RIGHT">RIGHT</span>);
+        absolutePositionProps.set(PropNames.<span class="jde-java-font-lock-constant" id="TOP">TOP</span>);
+        absolutePositionSet = <span class="keyword">new</span> <span class="type">ROBitSet</span>(absolutePositionProps);
+    }
+    <span class="comment">/**
+     * &lt;tt&gt;BitSet&lt;/tt&gt; of the &lt;tt&gt;Integer&lt;/tt&gt; objects corresponding to the
+     * constant index of each property in the set of
+     * &lt;b&gt;</span><span class="jde-java-font-lock-bold">Common Aural Properties</span><span class="comment">&lt;/b&gt;.
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">BitSet</span> <span class="variable-name" id="auralProps">auralProps</span> = <span class="keyword">new</span> <span class="type">BitSet</span>();
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROBitSet</span> <span class="variable-name" id="auralSet">auralSet</span>;
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="type">BitSet</span> <span class="function-name" id="auralSetClone">auralSetClone</span>() {
+        <span class="keyword">return</span> (<span class="type">BitSet</span>)(auralProps.clone());
+    }
+
+    <span class="jde-java-font-lock-modifier">static</span> {
+        auralProps.set(PropNames.<span class="jde-java-font-lock-constant" id="AZIMUTH">AZIMUTH</span>);
+        auralProps.set(PropNames.<span class="jde-java-font-lock-constant" id="CUE_AFTER">CUE_AFTER</span>);
+        auralProps.set(PropNames.<span class="jde-java-font-lock-constant" id="CUE_BEFORE">CUE_BEFORE</span>);
+        auralProps.set(PropNames.<span class="jde-java-font-lock-constant" id="ELEVATION">ELEVATION</span>);
+        auralProps.set(PropNames.<span class="jde-java-font-lock-constant" id="PAUSE_AFTER">PAUSE_AFTER</span>);
+        auralProps.set(PropNames.<span class="jde-java-font-lock-constant" id="PAUSE_BEFORE">PAUSE_BEFORE</span>);
+        auralProps.set(PropNames.<span class="jde-java-font-lock-constant" id="PITCH">PITCH</span>);
+        auralProps.set(PropNames.<span class="jde-java-font-lock-constant" id="PITCH_RANGE">PITCH_RANGE</span>);
+        auralProps.set(PropNames.<span class="jde-java-font-lock-constant" id="PLAY_DURING">PLAY_DURING</span>);
+        auralProps.set(PropNames.<span class="jde-java-font-lock-constant" id="RICHNESS">RICHNESS</span>);
+        auralProps.set(PropNames.<span class="jde-java-font-lock-constant" id="SPEAK">SPEAK</span>);
+        auralProps.set(PropNames.<span class="jde-java-font-lock-constant" id="SPEAK_HEADER">SPEAK_HEADER</span>);
+        auralProps.set(PropNames.<span class="jde-java-font-lock-constant" id="SPEAK_NUMERAL">SPEAK_NUMERAL</span>);
+        auralProps.set(PropNames.<span class="jde-java-font-lock-constant" id="SPEAK_PUNCTUATION">SPEAK_PUNCTUATION</span>);
+        auralProps.set(PropNames.<span class="jde-java-font-lock-constant" id="SPEECH_RATE">SPEECH_RATE</span>);
+        auralProps.set(PropNames.<span class="jde-java-font-lock-constant" id="STRESS">STRESS</span>);
+        auralProps.set(PropNames.<span class="jde-java-font-lock-constant" id="VOICE_FAMILY">VOICE_FAMILY</span>);
+        auralProps.set(PropNames.<span class="jde-java-font-lock-constant" id="VOLUME">VOLUME</span>);
+        auralSet = <span class="keyword">new</span> <span class="type">ROBitSet</span>(auralProps);
+    }
+    <span class="comment">/**
+     * &lt;tt&gt;BitSet&lt;/tt&gt; of the &lt;tt&gt;Integer&lt;/tt&gt; objects corresponding to the
+     * constant index of each property in the set of
+     * &lt;b&gt;</span><span class="jde-java-font-lock-bold">Common Background Properties</span><span class="comment">&lt;/b&gt;.
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">BitSet</span> <span class="variable-name" id="backgroundProps">backgroundProps</span> = <span class="keyword">new</span> <span class="type">BitSet</span>();
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROBitSet</span> <span class="variable-name" id="backgroundSet">backgroundSet</span>;
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="type">BitSet</span> <span class="function-name" id="backgroundSetClone">backgroundSetClone</span>() {
+        <span class="keyword">return</span> (<span class="type">BitSet</span>)(backgroundProps.clone());
+    }
+
+    <span class="jde-java-font-lock-modifier">static</span> {
+        backgroundProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BACKGROUND">BACKGROUND</span>);
+        backgroundProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BACKGROUND_ATTACHMENT">BACKGROUND_ATTACHMENT</span>);
+        backgroundProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BACKGROUND_COLOR">BACKGROUND_COLOR</span>);
+        backgroundProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BACKGROUND_IMAGE">BACKGROUND_IMAGE</span>);
+        backgroundProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BACKGROUND_POSITION">BACKGROUND_POSITION</span>);
+        backgroundProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BACKGROUND_POSITION_HORIZONTAL">BACKGROUND_POSITION_HORIZONTAL</span>);
+        backgroundProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BACKGROUND_POSITION_VERTICAL">BACKGROUND_POSITION_VERTICAL</span>);
+        backgroundProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BACKGROUND_REPEAT">BACKGROUND_REPEAT</span>);
+        backgroundSet = <span class="keyword">new</span> <span class="type">ROBitSet</span>(backgroundProps);
+    }
+    <span class="comment">/**
+     * &lt;tt&gt;BitSet&lt;/tt&gt; of the &lt;tt&gt;Integer&lt;/tt&gt; objects corresponding to the
+     * constant index of each property in the set of
+     * &lt;b&gt;</span><span class="jde-java-font-lock-bold">Common Border Properties</span><span class="comment">&lt;/b&gt;.
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">BitSet</span> <span class="variable-name" id="borderProps">borderProps</span> = <span class="keyword">new</span> <span class="type">BitSet</span>();
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROBitSet</span> <span class="variable-name" id="borderSet">borderSet</span>;
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="type">BitSet</span> <span class="function-name" id="borderSetClone">borderSetClone</span>() {
+        <span class="keyword">return</span> (<span class="type">BitSet</span>)(borderProps.clone());
+    }
+
+    <span class="jde-java-font-lock-modifier">static</span> {
+        borderProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BORDER">BORDER</span>);
+        borderProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BORDER_AFTER_COLOR">BORDER_AFTER_COLOR</span>);
+        borderProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BORDER_AFTER_STYLE">BORDER_AFTER_STYLE</span>);
+        borderProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BORDER_AFTER_WIDTH">BORDER_AFTER_WIDTH</span>);
+        borderProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BORDER_AFTER_WIDTH_LENGTH">BORDER_AFTER_WIDTH_LENGTH</span>);
+        borderProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BORDER_AFTER_WIDTH_CONDITIONALITY">BORDER_AFTER_WIDTH_CONDITIONALITY</span>);
+        borderProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BORDER_BEFORE_COLOR">BORDER_BEFORE_COLOR</span>);
+        borderProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BORDER_BEFORE_STYLE">BORDER_BEFORE_STYLE</span>);
+        borderProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BORDER_BEFORE_WIDTH">BORDER_BEFORE_WIDTH</span>);
+        borderProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BORDER_BEFORE_WIDTH_LENGTH">BORDER_BEFORE_WIDTH_LENGTH</span>);
+        borderProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BORDER_BEFORE_WIDTH_CONDITIONALITY">BORDER_BEFORE_WIDTH_CONDITIONALITY</span>);
+        borderProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BORDER_BOTTOM">BORDER_BOTTOM</span>);
+        borderProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BORDER_BOTTOM_COLOR">BORDER_BOTTOM_COLOR</span>);
+        borderProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BORDER_BOTTOM_STYLE">BORDER_BOTTOM_STYLE</span>);
+        borderProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BORDER_BOTTOM_WIDTH">BORDER_BOTTOM_WIDTH</span>);
+        borderProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BORDER_COLOR">BORDER_COLOR</span>);
+        borderProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BORDER_END_COLOR">BORDER_END_COLOR</span>);
+        borderProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BORDER_END_STYLE">BORDER_END_STYLE</span>);
+        borderProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BORDER_END_WIDTH">BORDER_END_WIDTH</span>);
+        borderProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BORDER_END_WIDTH_LENGTH">BORDER_END_WIDTH_LENGTH</span>);
+        borderProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BORDER_END_WIDTH_CONDITIONALITY">BORDER_END_WIDTH_CONDITIONALITY</span>);
+        borderProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BORDER_LEFT">BORDER_LEFT</span>);
+        borderProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BORDER_LEFT_COLOR">BORDER_LEFT_COLOR</span>);
+        borderProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BORDER_LEFT_STYLE">BORDER_LEFT_STYLE</span>);
+        borderProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BORDER_LEFT_WIDTH">BORDER_LEFT_WIDTH</span>);
+        borderProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BORDER_RIGHT">BORDER_RIGHT</span>);
+        borderProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BORDER_RIGHT_COLOR">BORDER_RIGHT_COLOR</span>);
+        borderProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BORDER_RIGHT_STYLE">BORDER_RIGHT_STYLE</span>);
+        borderProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BORDER_RIGHT_WIDTH">BORDER_RIGHT_WIDTH</span>);
+        borderProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BORDER_START_COLOR">BORDER_START_COLOR</span>);
+        borderProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BORDER_START_STYLE">BORDER_START_STYLE</span>);
+        borderProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BORDER_START_WIDTH">BORDER_START_WIDTH</span>);
+        borderProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BORDER_START_WIDTH_LENGTH">BORDER_START_WIDTH_LENGTH</span>);
+        borderProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BORDER_START_WIDTH_CONDITIONALITY">BORDER_START_WIDTH_CONDITIONALITY</span>);
+        borderProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BORDER_STYLE">BORDER_STYLE</span>);
+        borderProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BORDER_TOP">BORDER_TOP</span>);
+        borderProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BORDER_TOP_COLOR">BORDER_TOP_COLOR</span>);
+        borderProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BORDER_TOP_STYLE">BORDER_TOP_STYLE</span>);
+        borderProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BORDER_TOP_WIDTH">BORDER_TOP_WIDTH</span>);
+        borderProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BORDER_WIDTH">BORDER_WIDTH</span>);
+        borderSet = <span class="keyword">new</span> <span class="type">ROBitSet</span>(borderProps);
+    }
+    <span class="comment">/**
+     * &lt;tt&gt;BitSet&lt;/tt&gt; of the &lt;tt&gt;Integer&lt;/tt&gt; objects corresponding to the
+     * constant index of each property in the set of
+     * &lt;b&gt;</span><span class="jde-java-font-lock-bold">Common Font Properties</span><span class="comment">&lt;/b&gt;.
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">BitSet</span> <span class="variable-name" id="fontProps">fontProps</span> = <span class="keyword">new</span> <span class="type">BitSet</span>();
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROBitSet</span> <span class="variable-name" id="fontSet">fontSet</span>;
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="type">BitSet</span> <span class="function-name" id="fontSetClone">fontSetClone</span>() {
+        <span class="keyword">return</span> (<span class="type">BitSet</span>)(fontProps.clone());
+    }
+
+    <span class="jde-java-font-lock-modifier">static</span> {
+        fontProps.set(PropNames.<span class="jde-java-font-lock-constant" id="FONT">FONT</span>);
+        fontProps.set(PropNames.<span class="jde-java-font-lock-constant" id="FONT_FAMILY">FONT_FAMILY</span>);
+        fontProps.set(PropNames.<span class="jde-java-font-lock-constant" id="FONT_SELECTION_STRATEGY">FONT_SELECTION_STRATEGY</span>);
+        fontProps.set(PropNames.<span class="jde-java-font-lock-constant" id="FONT_SIZE">FONT_SIZE</span>);
+        fontProps.set(PropNames.<span class="jde-java-font-lock-constant" id="FONT_SIZE_ADJUST">FONT_SIZE_ADJUST</span>);
+        fontProps.set(PropNames.<span class="jde-java-font-lock-constant" id="FONT_STRETCH">FONT_STRETCH</span>);
+        fontProps.set(PropNames.<span class="jde-java-font-lock-constant" id="FONT_STYLE">FONT_STYLE</span>);
+        fontProps.set(PropNames.<span class="jde-java-font-lock-constant" id="FONT_VARIANT">FONT_VARIANT</span>);
+        fontProps.set(PropNames.<span class="jde-java-font-lock-constant" id="FONT_WEIGHT">FONT_WEIGHT</span>);
+        fontSet = <span class="keyword">new</span> <span class="type">ROBitSet</span>(fontProps);
+    }
+    <span class="comment">/**
+     * &lt;tt&gt;BitSet&lt;/tt&gt; of the &lt;tt&gt;Integer&lt;/tt&gt; objects corresponding to the
+     * constant index of each property in the set of
+     * &lt;b&gt;</span><span class="jde-java-font-lock-bold">Common Hyphenation Properties</span><span class="comment">&lt;/b&gt;.
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">BitSet</span> <span class="variable-name" id="hyphenationProps">hyphenationProps</span> = <span class="keyword">new</span> <span class="type">BitSet</span>();
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROBitSet</span> <span class="variable-name" id="hyphenationSet">hyphenationSet</span>;
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="type">BitSet</span> <span class="function-name" id="hyphenationSetClone">hyphenationSetClone</span>() {
+        <span class="keyword">return</span> (<span class="type">BitSet</span>)(hyphenationProps.clone());
+    }
+
+    <span class="jde-java-font-lock-modifier">static</span> {
+        hyphenationProps.set(PropNames.<span class="jde-java-font-lock-constant" id="COUNTRY">COUNTRY</span>);
+        hyphenationProps.set(PropNames.<span class="jde-java-font-lock-constant" id="LANGUAGE">LANGUAGE</span>);
+        hyphenationProps.set(PropNames.<span class="jde-java-font-lock-constant" id="SCRIPT">SCRIPT</span>);
+        hyphenationProps.set(PropNames.<span class="jde-java-font-lock-constant" id="HYPHENATE">HYPHENATE</span>);
+        hyphenationProps.set(PropNames.<span class="jde-java-font-lock-constant" id="HYPHENATION_CHARACTER">HYPHENATION_CHARACTER</span>);
+        hyphenationProps.set(PropNames.<span class="jde-java-font-lock-constant" id="HYPHENATION_PUSH_CHARACTER_COUNT">HYPHENATION_PUSH_CHARACTER_COUNT</span>);
+        hyphenationProps.set(PropNames.<span class="jde-java-font-lock-constant" id="HYPHENATION_REMAIN_CHARACTER_COUNT">HYPHENATION_REMAIN_CHARACTER_COUNT</span>);
+        hyphenationSet = <span class="keyword">new</span> <span class="type">ROBitSet</span>(hyphenationProps);
+    }
+    <span class="comment">/**
+     * &lt;tt&gt;BitSet&lt;/tt&gt; of the &lt;tt&gt;Integer&lt;/tt&gt; objects corresponding to the
+     * constant index of each property in the set of
+     * &lt;b&gt;</span><span class="jde-java-font-lock-bold">Common Margin-Block Properties</span><span class="comment">&lt;/b&gt;.
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">BitSet</span> <span class="variable-name" id="marginBlockProps">marginBlockProps</span> = <span class="keyword">new</span> <span class="type">BitSet</span>();
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROBitSet</span> <span class="variable-name" id="marginBlockSet">marginBlockSet</span>;
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="type">BitSet</span> <span class="function-name" id="marginBlockSetClone">marginBlockSetClone</span>() {
+        <span class="keyword">return</span> (<span class="type">BitSet</span>)(marginBlockProps.clone());
+    }
+
+    <span class="jde-java-font-lock-modifier">static</span> {
+        marginBlockProps.set(PropNames.<span class="jde-java-font-lock-constant" id="MARGIN">MARGIN</span>);
+        marginBlockProps.set(PropNames.<span class="jde-java-font-lock-constant" id="MARGIN_BOTTOM">MARGIN_BOTTOM</span>);
+        marginBlockProps.set(PropNames.<span class="jde-java-font-lock-constant" id="MARGIN_LEFT">MARGIN_LEFT</span>);
+        marginBlockProps.set(PropNames.<span class="jde-java-font-lock-constant" id="MARGIN_RIGHT">MARGIN_RIGHT</span>);
+        marginBlockProps.set(PropNames.<span class="jde-java-font-lock-constant" id="MARGIN_TOP">MARGIN_TOP</span>);
+        marginBlockSet = <span class="keyword">new</span> <span class="type">ROBitSet</span>(marginBlockProps);
+    }
+    <span class="comment">/**
+     * &lt;tt&gt;BitSet&lt;/tt&gt; of the &lt;tt&gt;Integer&lt;/tt&gt; objects corresponding to the
+     * constant index of each property in the set of
+     * &lt;b&gt;</span><span class="jde-java-font-lock-bold">Common Margin-Inline Properties</span><span class="comment">&lt;/b&gt;.
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">BitSet</span> <span class="variable-name" id="marginInlineProps">marginInlineProps</span> = <span class="keyword">new</span> <span class="type">BitSet</span>();
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROBitSet</span> <span class="variable-name" id="marginInlineSet">marginInlineSet</span>;
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="type">BitSet</span> <span class="function-name" id="marginInlineSetClone">marginInlineSetClone</span>() {
+        <span class="keyword">return</span> (<span class="type">BitSet</span>)(marginInlineProps.clone());
+    }
+
+    <span class="jde-java-font-lock-modifier">static</span> {
+        marginInlineProps.set(PropNames.<span class="jde-java-font-lock-constant" id="SPACE_END">SPACE_END</span>);
+        marginInlineProps.set(PropNames.<span class="jde-java-font-lock-constant" id="SPACE_START">SPACE_START</span>);
+        marginInlineSet = <span class="keyword">new</span> <span class="type">ROBitSet</span>(marginInlineProps);
+    }
+    <span class="comment">/**
+     * &lt;tt&gt;BitSet&lt;/tt&gt; of the &lt;tt&gt;Integer&lt;/tt&gt; objects corresponding to the
+     * constant index of each property in the set of
+     * &lt;b&gt;</span><span class="jde-java-font-lock-bold">Common Padding Properties</span><span class="comment">&lt;/b&gt;.
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">BitSet</span> <span class="variable-name" id="paddingProps">paddingProps</span> = <span class="keyword">new</span> <span class="type">BitSet</span>();
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROBitSet</span> <span class="variable-name" id="paddingSet">paddingSet</span>;
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="type">BitSet</span> <span class="function-name" id="paddingSetClone">paddingSetClone</span>() {
+        <span class="keyword">return</span> (<span class="type">BitSet</span>)(paddingProps.clone());
+    }
+
+    <span class="jde-java-font-lock-modifier">static</span> {
+        paddingProps.set(PropNames.<span class="jde-java-font-lock-constant" id="PADDING">PADDING</span>);
+        paddingProps.set(PropNames.<span class="jde-java-font-lock-constant" id="PADDING_AFTER">PADDING_AFTER</span>);
+        paddingProps.set(PropNames.<span class="jde-java-font-lock-constant" id="PADDING_AFTER_LENGTH">PADDING_AFTER_LENGTH</span>);
+        paddingProps.set(PropNames.<span class="jde-java-font-lock-constant" id="PADDING_AFTER_CONDITIONALITY">PADDING_AFTER_CONDITIONALITY</span>);
+        paddingProps.set(PropNames.<span class="jde-java-font-lock-constant" id="PADDING_BEFORE">PADDING_BEFORE</span>);
+        paddingProps.set(PropNames.<span class="jde-java-font-lock-constant" id="PADDING_BEFORE_LENGTH">PADDING_BEFORE_LENGTH</span>);
+        paddingProps.set(PropNames.<span class="jde-java-font-lock-constant" id="PADDING_BEFORE_CONDITIONALITY">PADDING_BEFORE_CONDITIONALITY</span>);
+        paddingProps.set(PropNames.<span class="jde-java-font-lock-constant" id="PADDING_BOTTOM">PADDING_BOTTOM</span>);
+        paddingProps.set(PropNames.<span class="jde-java-font-lock-constant" id="PADDING_END">PADDING_END</span>);
+        paddingProps.set(PropNames.<span class="jde-java-font-lock-constant" id="PADDING_END_LENGTH">PADDING_END_LENGTH</span>);
+        paddingProps.set(PropNames.<span class="jde-java-font-lock-constant" id="PADDING_END_CONDITIONALITY">PADDING_END_CONDITIONALITY</span>);
+        paddingProps.set(PropNames.<span class="jde-java-font-lock-constant" id="PADDING_LEFT">PADDING_LEFT</span>);
+        paddingProps.set(PropNames.<span class="jde-java-font-lock-constant" id="PADDING_RIGHT">PADDING_RIGHT</span>);
+        paddingProps.set(PropNames.<span class="jde-java-font-lock-constant" id="PADDING_START">PADDING_START</span>);
+        paddingProps.set(PropNames.<span class="jde-java-font-lock-constant" id="PADDING_START_LENGTH">PADDING_START_LENGTH</span>);
+        paddingProps.set(PropNames.<span class="jde-java-font-lock-constant" id="PADDING_START_CONDITIONALITY">PADDING_START_CONDITIONALITY</span>);
+        paddingProps.set(PropNames.<span class="jde-java-font-lock-constant" id="PADDING_TOP">PADDING_TOP</span>);
+        paddingSet = <span class="keyword">new</span> <span class="type">ROBitSet</span>(paddingProps);
+    }
+    <span class="comment">/**
+     * &lt;tt&gt;BitSet&lt;/tt&gt; of the &lt;tt&gt;Integer&lt;/tt&gt; objects corresponding to the
+     * constant index of each property in the set of
+     * &lt;b&gt;</span><span class="jde-java-font-lock-bold">Common Relative Position Properties</span><span class="comment">&lt;/b&gt;.
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">BitSet</span> <span class="variable-name" id="relativePositionProps">relativePositionProps</span> = <span class="keyword">new</span> <span class="type">BitSet</span>();
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROBitSet</span> <span class="variable-name" id="relativePositionSet">relativePositionSet</span>;
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="type">BitSet</span> <span class="function-name" id="relativePositionSetClone">relativePositionSetClone</span>() {
+        <span class="keyword">return</span> (<span class="type">BitSet</span>)(relativePositionProps.clone());
+    }
+
+    <span class="jde-java-font-lock-modifier">static</span> {
+        relativePositionProps.set(PropNames.<span class="jde-java-font-lock-constant" id="RELATIVE_POSITION">RELATIVE_POSITION</span>);
+        relativePositionProps.set(PropNames.<span class="jde-java-font-lock-constant">BOTTOM</span>);
+        relativePositionProps.set(PropNames.<span class="jde-java-font-lock-constant">LEFT</span>);
+        relativePositionProps.set(PropNames.<span class="jde-java-font-lock-constant">RIGHT</span>);
+        relativePositionProps.set(PropNames.<span class="jde-java-font-lock-constant">TOP</span>);
+        relativePositionSet =
+                    <span class="keyword">new</span> <span class="type">ROBitSet</span>(relativePositionProps);
+    }
+    <span class="comment">/**
+     * &lt;tt&gt;BitSet&lt;/tt&gt; of the &lt;tt&gt;Integer&lt;/tt&gt; objects corresponding to the
+     * constant index of each property in the set of
+     * &lt;b&gt;</span><span class="jde-java-font-lock-bold">Common Table Properties</span><span class="comment">&lt;/b&gt;.
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">BitSet</span> <span class="variable-name" id="tableProps">tableProps</span> = <span class="keyword">new</span> <span class="type">BitSet</span>();
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">ROBitSet</span> <span class="variable-name" id="tableSet">tableSet</span>;
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="type">BitSet</span> <span class="function-name" id="tableSetClone">tableSetClone</span>() {
+        <span class="keyword">return</span> (<span class="type">BitSet</span>)(tableProps.clone());
+    }
+
+    <span class="jde-java-font-lock-modifier">static</span> {
+        tableProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BORDER_AFTER_PRECEDENCE">BORDER_AFTER_PRECEDENCE</span>);
+        tableProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BORDER_BEFORE_PRECEDENCE">BORDER_BEFORE_PRECEDENCE</span>);
+        tableProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BORDER_COLLAPSE">BORDER_COLLAPSE</span>);
+        tableProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BORDER_END_PRECEDENCE">BORDER_END_PRECEDENCE</span>);
+        tableProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BORDER_SEPARATION">BORDER_SEPARATION</span>);
+        tableProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BORDER_SEPARATION_BLOCK_PROGRESSION_DIRECTION">BORDER_SEPARATION_BLOCK_PROGRESSION_DIRECTION</span>);
+        tableProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BORDER_SEPARATION_INLINE_PROGRESSION_DIRECTION">BORDER_SEPARATION_INLINE_PROGRESSION_DIRECTION</span>);
+        tableProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BORDER_SPACING">BORDER_SPACING</span>);
+        tableProps.set(PropNames.<span class="jde-java-font-lock-constant" id="BORDER_START_PRECEDENCE">BORDER_START_PRECEDENCE</span>);
+        tableProps.set(PropNames.<span class="jde-java-font-lock-constant" id="CAPTION_SIDE">CAPTION_SIDE</span>);
+        tableProps.set(PropNames.<span class="jde-java-font-lock-constant" id="COLUMN_NUMBER">COLUMN_NUMBER</span>);
+        tableProps.set(PropNames.<span class="jde-java-font-lock-constant" id="COLUMN_WIDTH">COLUMN_WIDTH</span>);
+        tableProps.set(PropNames.<span class="jde-java-font-lock-constant" id="EMPTY_CELLS">EMPTY_CELLS</span>);
+        tableProps.set(PropNames.<span class="jde-java-font-lock-constant" id="ENDS_ROW">ENDS_ROW</span>);
+        tableProps.set(PropNames.<span class="jde-java-font-lock-constant" id="NUMBER_COLUMNS_REPEATED">NUMBER_COLUMNS_REPEATED</span>);
+        tableProps.set(PropNames.<span class="jde-java-font-lock-constant" id="NUMBER_COLUMNS_SPANNED">NUMBER_COLUMNS_SPANNED</span>);
+        tableProps.set(PropNames.<span class="jde-java-font-lock-constant" id="NUMBER_ROWS_SPANNED">NUMBER_ROWS_SPANNED</span>);
+        tableProps.set(PropNames.<span class="jde-java-font-lock-constant" id="STARTS_ROW">STARTS_ROW</span>);
+        tableProps.set(PropNames.<span class="jde-java-font-lock-constant" id="TABLE_LAYOUT">TABLE_LAYOUT</span>);
+        tableProps.set(PropNames.<span class="jde-java-font-lock-constant" id="TABLE_OMIT_FOOTER_AT_BREAK">TABLE_OMIT_FOOTER_AT_BREAK</span>);
+        tableProps.set(PropNames.<span class="jde-java-font-lock-constant" id="TABLE_OMIT_HEADER_AT_BREAK">TABLE_OMIT_HEADER_AT_BREAK</span>);
+        tableSet = <span class="keyword">new</span> <span class="type">ROBitSet</span>(tableProps);
+    }
+
+    <span class="jde-java-font-lock-modifier">private</span> <span class="function-name" id="PropertySets">PropertySets</span> (){}
+
+}
+</pre>
+  </body>
+</html>

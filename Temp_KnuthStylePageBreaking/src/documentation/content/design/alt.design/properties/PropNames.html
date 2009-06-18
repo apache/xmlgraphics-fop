@@ -1,0 +1,891 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<!--
+  Copyright 2001-2004 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<!-- Created by htmlize-0.67 in css mode. -->
+<html>
+  <head>
+    <title>PropNames.java</title>
+    <style type="text/css">
+    <!--
+      body {
+        color: #000000;
+        background-color: #faf0e6;
+      } /* default */
+      .function-name {
+        color: #8b2323;
+        background-color: #faf0e6;
+      } /* font-lock-function-name-face */
+      .jde-java-font-lock-italic {
+        background-color: #faf0e6;
+        font-style: italic;
+      } /* jde-java-font-lock-italic-face */
+      .jde-java-font-lock-modifier {
+        color: #da70d6;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-modifier-face */
+      .keyword {
+        color: #8b0000;
+        background-color: #faf0e6;
+      } /* font-lock-keyword-face */
+      .variable-name {
+        color: #8b008b;
+        background-color: #faf0e6;
+      } /* font-lock-variable-name-face */
+      .string {
+        color: #008b00;
+        background-color: #faf0e6;
+      } /* font-lock-string-face */
+      .jde-java-font-lock-package {
+        color: #0000cd;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-package-face */
+      .jde-java-font-lock-constant {
+        color: #5f9ea0;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-constant-face */
+      .type {
+        color: #4682b4;
+        background-color: #faf0e6;
+      } /* font-lock-type-face */
+      .jde-java-font-lock-doc-tag {
+        color: #008b00;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-doc-tag-face */
+      .comment {
+        color: #00008b;
+        background-color: #faf0e6;
+      } /* font-lock-comment-face */
+      .jde-java-font-lock-number {
+        color: #bc8f8f;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-number-face */
+      a {
+        color: inherit;
+        background-color: inherit;
+        font: inherit;
+        text-decoration: inherit;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+    -->
+    </style>
+  </head>
+  <body>
+    <pre>
+<span class="comment">/*
+ * Copyright 2001-2004 The Apache Software Foundation.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */</span>
+ 
+<span class="keyword">package</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">fo</span>;
+
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">java</span>.<span class="jde-java-font-lock-package">util</span>.<span class="type">HashMap</span>;
+
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">fo</span>.<span class="jde-java-font-lock-package">expr</span>.<span class="type">PropertyException</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">datatypes</span>.<span class="type">Ints</span>;
+
+<span class="comment">/**
+ * A class of constants; an array of all property names and the constants
+ * by which to refer to them.
+ * @author &lt;a href=&quot;mailto:pbwest@powerup.com.au&quot;&gt;Peter B. West&lt;/a&gt;
+ */</span>
+
+<span class="jde-java-font-lock-modifier">public</span> <span class="keyword">class</span> <span class="function-name" id="PropNamesClass">PropNames</span> {
+
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">String</span> <span class="variable-name" id="tag">tag</span> = &quot;<span class="string">$Name$</span>&quot;;
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">String</span> <span class="variable-name" id="revision">revision</span> = &quot;<span class="string">$Revision$</span>&quot;;
+
+    <span class="comment">/*
+     * List of property constants in property processing order -
+     * FONT, FONT_SIZE first
+     * Shorthands must precede any of their expansion elements.
+     * Compounds must precede any of their components.
+     * The list of property constants can be regenerated in XEmacs by setting
+     * the region on the list of constants. (C-Space at the beginning,
+     * move to last line, C-x C-x to exchange mark and point.)  Then run
+     * a shell command on the region with replacement (M-1 M-|).  Use
+     * the perl command:
+     * perl -p -e 'BEGIN{$n=0};$n++ if s/= [0-9]+,/= $n,/'
+     * Alternatively, start at a given point in the list by setting the
+     * appropriate start value for $n.
+     *
+     * in vi, set mark `</span><span class="jde-java-font-lock-doc-tag">a</span><span class="comment">' at the last line and
+     * !'aperl... etc
+     */</span>
+     <span class="comment">/** Constant for matching property defined in &lt;i&gt;</span><span class="jde-java-font-lock-italic">XSLFO</span><span class="comment">&lt;/i&gt;. */</span>
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">int</span>
+                                    <span class="jde-java-font-lock-constant" id="NO_PROPERTY">NO_PROPERTY</span> = <span class="jde-java-font-lock-number">0</span>,
+            <span class="comment">// Properties setting up environment for from-table-column(),
+</span>            <span class="comment">// e.g. font-size = from-table-column()
+</span>                                  <span class="jde-java-font-lock-constant" id="COLUMN_NUMBER">COLUMN_NUMBER</span> = <span class="jde-java-font-lock-number">1</span>,
+                         <span class="jde-java-font-lock-constant" id="NUMBER_COLUMNS_SPANNED">NUMBER_COLUMNS_SPANNED</span> = <span class="jde-java-font-lock-number">2</span>,
+            <span class="comment">// Properties setting font-size first
+</span>            <span class="comment">// Shorthand first
+</span>                                           <span class="jde-java-font-lock-constant" id="FONT">FONT</span> = <span class="jde-java-font-lock-number">3</span>,
+                                      <span class="jde-java-font-lock-constant" id="FONT_SIZE">FONT_SIZE</span> = <span class="jde-java-font-lock-number">4</span>,
+            <span class="comment">// Writing mode early for handling of corresponding values
+</span>                                   <span class="jde-java-font-lock-constant" id="WRITING_MODE">WRITING_MODE</span> = <span class="jde-java-font-lock-number">5</span>,
+            <span class="comment">// All other shorthands
+</span>                                     <span class="jde-java-font-lock-constant" id="BACKGROUND">BACKGROUND</span> = <span class="jde-java-font-lock-number">6</span>,
+                            <span class="jde-java-font-lock-constant" id="BACKGROUND_POSITION">BACKGROUND_POSITION</span> = <span class="jde-java-font-lock-number">7</span>,
+                                         <span class="jde-java-font-lock-constant" id="BORDER">BORDER</span> = <span class="jde-java-font-lock-number">8</span>,
+                                   <span class="jde-java-font-lock-constant" id="BORDER_COLOR">BORDER_COLOR</span> = <span class="jde-java-font-lock-number">9</span>,
+                                   <span class="jde-java-font-lock-constant" id="BORDER_STYLE">BORDER_STYLE</span> = <span class="jde-java-font-lock-number">10</span>,
+                                   <span class="jde-java-font-lock-constant" id="BORDER_WIDTH">BORDER_WIDTH</span> = <span class="jde-java-font-lock-number">11</span>,
+                                  <span class="jde-java-font-lock-constant" id="BORDER_BOTTOM">BORDER_BOTTOM</span> = <span class="jde-java-font-lock-number">12</span>,
+                                    <span class="jde-java-font-lock-constant" id="BORDER_LEFT">BORDER_LEFT</span> = <span class="jde-java-font-lock-number">13</span>,
+                                   <span class="jde-java-font-lock-constant" id="BORDER_RIGHT">BORDER_RIGHT</span> = <span class="jde-java-font-lock-number">14</span>,
+                                     <span class="jde-java-font-lock-constant" id="BORDER_TOP">BORDER_TOP</span> = <span class="jde-java-font-lock-number">15</span>,
+                                 <span class="jde-java-font-lock-constant" id="BORDER_SPACING">BORDER_SPACING</span> = <span class="jde-java-font-lock-number">16</span>,
+                                            <span class="jde-java-font-lock-constant" id="CUE">CUE</span> = <span class="jde-java-font-lock-number">17</span>,
+                                         <span class="jde-java-font-lock-constant" id="MARGIN">MARGIN</span> = <span class="jde-java-font-lock-number">18</span>,
+                                        <span class="jde-java-font-lock-constant" id="PADDING">PADDING</span> = <span class="jde-java-font-lock-number">19</span>,
+                               <span class="jde-java-font-lock-constant" id="PAGE_BREAK_AFTER">PAGE_BREAK_AFTER</span> = <span class="jde-java-font-lock-number">20</span>,
+                              <span class="jde-java-font-lock-constant" id="PAGE_BREAK_BEFORE">PAGE_BREAK_BEFORE</span> = <span class="jde-java-font-lock-number">21</span>,
+                              <span class="jde-java-font-lock-constant" id="PAGE_BREAK_INSIDE">PAGE_BREAK_INSIDE</span> = <span class="jde-java-font-lock-number">22</span>,
+                                          <span class="jde-java-font-lock-constant" id="PAUSE">PAUSE</span> = <span class="jde-java-font-lock-number">23</span>,
+                                       <span class="jde-java-font-lock-constant" id="POSITION">POSITION</span> = <span class="jde-java-font-lock-number">24</span>,
+                                           <span class="jde-java-font-lock-constant" id="SIZE">SIZE</span> = <span class="jde-java-font-lock-number">25</span>,
+                                 <span class="jde-java-font-lock-constant" id="VERTICAL_ALIGN">VERTICAL_ALIGN</span> = <span class="jde-java-font-lock-number">26</span>,
+                                    <span class="jde-java-font-lock-constant" id="WHITE_SPACE">WHITE_SPACE</span> = <span class="jde-java-font-lock-number">27</span>,
+                                       <span class="jde-java-font-lock-constant" id="XML_LANG">XML_LANG</span> = <span class="jde-java-font-lock-number">28</span>,
+            <span class="comment">// Non-shorthand properties
+</span>            <span class="comment">// Within these, compounds precede their components
+</span>            <span class="comment">// and corresponding relative properties
+</span>            <span class="comment">// precede corresponding absolute properties
+</span>                              <span class="jde-java-font-lock-constant" id="ABSOLUTE_POSITION">ABSOLUTE_POSITION</span> = <span class="jde-java-font-lock-number">29</span>,
+                                   <span class="jde-java-font-lock-constant" id="ACTIVE_STATE">ACTIVE_STATE</span> = <span class="jde-java-font-lock-number">30</span>,
+                               <span class="jde-java-font-lock-constant" id="ALIGNMENT_ADJUST">ALIGNMENT_ADJUST</span> = <span class="jde-java-font-lock-number">31</span>,
+                             <span class="jde-java-font-lock-constant" id="ALIGNMENT_BASELINE">ALIGNMENT_BASELINE</span> = <span class="jde-java-font-lock-number">32</span>,
+                                   <span class="jde-java-font-lock-constant" id="AUTO_RESTORE">AUTO_RESTORE</span> = <span class="jde-java-font-lock-number">33</span>,
+                                        <span class="jde-java-font-lock-constant" id="AZIMUTH">AZIMUTH</span> = <span class="jde-java-font-lock-number">34</span>,
+                          <span class="jde-java-font-lock-constant" id="BACKGROUND_ATTACHMENT">BACKGROUND_ATTACHMENT</span> = <span class="jde-java-font-lock-number">35</span>,
+                               <span class="jde-java-font-lock-constant" id="BACKGROUND_COLOR">BACKGROUND_COLOR</span> = <span class="jde-java-font-lock-number">36</span>,
+                               <span class="jde-java-font-lock-constant" id="BACKGROUND_IMAGE">BACKGROUND_IMAGE</span> = <span class="jde-java-font-lock-number">37</span>,
+                 <span class="jde-java-font-lock-constant" id="BACKGROUND_POSITION_HORIZONTAL">BACKGROUND_POSITION_HORIZONTAL</span> = <span class="jde-java-font-lock-number">38</span>,
+                   <span class="jde-java-font-lock-constant" id="BACKGROUND_POSITION_VERTICAL">BACKGROUND_POSITION_VERTICAL</span> = <span class="jde-java-font-lock-number">39</span>,
+                              <span class="jde-java-font-lock-constant" id="BACKGROUND_REPEAT">BACKGROUND_REPEAT</span> = <span class="jde-java-font-lock-number">40</span>,
+                                 <span class="jde-java-font-lock-constant" id="BASELINE_SHIFT">BASELINE_SHIFT</span> = <span class="jde-java-font-lock-number">41</span>,
+                             <span class="jde-java-font-lock-constant" id="BLANK_OR_NOT_BLANK">BLANK_OR_NOT_BLANK</span> = <span class="jde-java-font-lock-number">42</span>,
+                    <span class="jde-java-font-lock-constant" id="BLOCK_PROGRESSION_DIMENSION">BLOCK_PROGRESSION_DIMENSION</span> = <span class="jde-java-font-lock-number">43</span>,
+            <span class="jde-java-font-lock-constant" id="BLOCK_PROGRESSION_DIMENSION_MINIMUM">BLOCK_PROGRESSION_DIMENSION_MINIMUM</span> = <span class="jde-java-font-lock-number">44</span>,
+            <span class="jde-java-font-lock-constant" id="BLOCK_PROGRESSION_DIMENSION_OPTIMUM">BLOCK_PROGRESSION_DIMENSION_OPTIMUM</span> = <span class="jde-java-font-lock-number">45</span>,
+            <span class="jde-java-font-lock-constant" id="BLOCK_PROGRESSION_DIMENSION_MAXIMUM">BLOCK_PROGRESSION_DIMENSION_MAXIMUM</span> = <span class="jde-java-font-lock-number">46</span>,
+
+        <span class="comment">// Border corresponding properties
+</span>                             <span class="jde-java-font-lock-constant" id="BORDER_AFTER_COLOR">BORDER_AFTER_COLOR</span> = <span class="jde-java-font-lock-number">47</span>,
+                        <span class="jde-java-font-lock-constant" id="BORDER_AFTER_PRECEDENCE">BORDER_AFTER_PRECEDENCE</span> = <span class="jde-java-font-lock-number">48</span>,
+                             <span class="jde-java-font-lock-constant" id="BORDER_AFTER_STYLE">BORDER_AFTER_STYLE</span> = <span class="jde-java-font-lock-number">49</span>,
+                             <span class="jde-java-font-lock-constant" id="BORDER_AFTER_WIDTH">BORDER_AFTER_WIDTH</span> = <span class="jde-java-font-lock-number">50</span>,
+                      <span class="jde-java-font-lock-constant" id="BORDER_AFTER_WIDTH_LENGTH">BORDER_AFTER_WIDTH_LENGTH</span> = <span class="jde-java-font-lock-number">51</span>,
+              <span class="jde-java-font-lock-constant" id="BORDER_AFTER_WIDTH_CONDITIONALITY">BORDER_AFTER_WIDTH_CONDITIONALITY</span> = <span class="jde-java-font-lock-number">52</span>,
+                            <span class="jde-java-font-lock-constant" id="BORDER_BEFORE_COLOR">BORDER_BEFORE_COLOR</span> = <span class="jde-java-font-lock-number">53</span>,
+                       <span class="jde-java-font-lock-constant" id="BORDER_BEFORE_PRECEDENCE">BORDER_BEFORE_PRECEDENCE</span> = <span class="jde-java-font-lock-number">54</span>,
+                            <span class="jde-java-font-lock-constant" id="BORDER_BEFORE_STYLE">BORDER_BEFORE_STYLE</span> = <span class="jde-java-font-lock-number">55</span>,
+                            <span class="jde-java-font-lock-constant" id="BORDER_BEFORE_WIDTH">BORDER_BEFORE_WIDTH</span> = <span class="jde-java-font-lock-number">56</span>,
+                     <span class="jde-java-font-lock-constant" id="BORDER_BEFORE_WIDTH_LENGTH">BORDER_BEFORE_WIDTH_LENGTH</span> = <span class="jde-java-font-lock-number">57</span>,
+             <span class="jde-java-font-lock-constant" id="BORDER_BEFORE_WIDTH_CONDITIONALITY">BORDER_BEFORE_WIDTH_CONDITIONALITY</span> = <span class="jde-java-font-lock-number">58</span>,
+                               <span class="jde-java-font-lock-constant" id="BORDER_END_COLOR">BORDER_END_COLOR</span> = <span class="jde-java-font-lock-number">59</span>,
+                          <span class="jde-java-font-lock-constant" id="BORDER_END_PRECEDENCE">BORDER_END_PRECEDENCE</span> = <span class="jde-java-font-lock-number">60</span>,
+                               <span class="jde-java-font-lock-constant" id="BORDER_END_STYLE">BORDER_END_STYLE</span> = <span class="jde-java-font-lock-number">61</span>,
+                               <span class="jde-java-font-lock-constant" id="BORDER_END_WIDTH">BORDER_END_WIDTH</span> = <span class="jde-java-font-lock-number">62</span>,
+                        <span class="jde-java-font-lock-constant" id="BORDER_END_WIDTH_LENGTH">BORDER_END_WIDTH_LENGTH</span> = <span class="jde-java-font-lock-number">63</span>,
+                <span class="jde-java-font-lock-constant" id="BORDER_END_WIDTH_CONDITIONALITY">BORDER_END_WIDTH_CONDITIONALITY</span> = <span class="jde-java-font-lock-number">64</span>,
+                             <span class="jde-java-font-lock-constant" id="BORDER_START_COLOR">BORDER_START_COLOR</span> = <span class="jde-java-font-lock-number">65</span>,
+                        <span class="jde-java-font-lock-constant" id="BORDER_START_PRECEDENCE">BORDER_START_PRECEDENCE</span> = <span class="jde-java-font-lock-number">66</span>,
+                             <span class="jde-java-font-lock-constant" id="BORDER_START_STYLE">BORDER_START_STYLE</span> = <span class="jde-java-font-lock-number">67</span>,
+                             <span class="jde-java-font-lock-constant" id="BORDER_START_WIDTH">BORDER_START_WIDTH</span> = <span class="jde-java-font-lock-number">68</span>,
+                      <span class="jde-java-font-lock-constant" id="BORDER_START_WIDTH_LENGTH">BORDER_START_WIDTH_LENGTH</span> = <span class="jde-java-font-lock-number">69</span>,
+              <span class="jde-java-font-lock-constant" id="BORDER_START_WIDTH_CONDITIONALITY">BORDER_START_WIDTH_CONDITIONALITY</span> = <span class="jde-java-font-lock-number">70</span>,
+
+                            <span class="jde-java-font-lock-constant" id="BORDER_BOTTOM_COLOR">BORDER_BOTTOM_COLOR</span> = <span class="jde-java-font-lock-number">71</span>,
+                            <span class="jde-java-font-lock-constant" id="BORDER_BOTTOM_STYLE">BORDER_BOTTOM_STYLE</span> = <span class="jde-java-font-lock-number">72</span>,
+                            <span class="jde-java-font-lock-constant" id="BORDER_BOTTOM_WIDTH">BORDER_BOTTOM_WIDTH</span> = <span class="jde-java-font-lock-number">73</span>,
+                              <span class="jde-java-font-lock-constant" id="BORDER_LEFT_COLOR">BORDER_LEFT_COLOR</span> = <span class="jde-java-font-lock-number">74</span>,
+                              <span class="jde-java-font-lock-constant" id="BORDER_LEFT_STYLE">BORDER_LEFT_STYLE</span> = <span class="jde-java-font-lock-number">75</span>,
+                              <span class="jde-java-font-lock-constant" id="BORDER_LEFT_WIDTH">BORDER_LEFT_WIDTH</span> = <span class="jde-java-font-lock-number">76</span>,
+                             <span class="jde-java-font-lock-constant" id="BORDER_RIGHT_COLOR">BORDER_RIGHT_COLOR</span> = <span class="jde-java-font-lock-number">77</span>,
+                             <span class="jde-java-font-lock-constant" id="BORDER_RIGHT_STYLE">BORDER_RIGHT_STYLE</span> = <span class="jde-java-font-lock-number">78</span>,
+                             <span class="jde-java-font-lock-constant" id="BORDER_RIGHT_WIDTH">BORDER_RIGHT_WIDTH</span> = <span class="jde-java-font-lock-number">79</span>,
+                               <span class="jde-java-font-lock-constant" id="BORDER_TOP_COLOR">BORDER_TOP_COLOR</span> = <span class="jde-java-font-lock-number">80</span>,
+                               <span class="jde-java-font-lock-constant" id="BORDER_TOP_STYLE">BORDER_TOP_STYLE</span> = <span class="jde-java-font-lock-number">81</span>,
+                               <span class="jde-java-font-lock-constant" id="BORDER_TOP_WIDTH">BORDER_TOP_WIDTH</span> = <span class="jde-java-font-lock-number">82</span>,
+
+                                <span class="jde-java-font-lock-constant" id="BORDER_COLLAPSE">BORDER_COLLAPSE</span> = <span class="jde-java-font-lock-number">83</span>,
+                              <span class="jde-java-font-lock-constant" id="BORDER_SEPARATION">BORDER_SEPARATION</span> = <span class="jde-java-font-lock-number">84</span>,
+  <span class="jde-java-font-lock-constant" id="BORDER_SEPARATION_BLOCK_PROGRESSION_DIRECTION">BORDER_SEPARATION_BLOCK_PROGRESSION_DIRECTION</span> = <span class="jde-java-font-lock-number">85</span>,
+ <span class="jde-java-font-lock-constant" id="BORDER_SEPARATION_INLINE_PROGRESSION_DIRECTION">BORDER_SEPARATION_INLINE_PROGRESSION_DIRECTION</span> = <span class="jde-java-font-lock-number">86</span>,
+                                         <span class="jde-java-font-lock-constant" id="BOTTOM">BOTTOM</span> = <span class="jde-java-font-lock-number">87</span>,
+                                    <span class="jde-java-font-lock-constant" id="BREAK_AFTER">BREAK_AFTER</span> = <span class="jde-java-font-lock-number">88</span>,
+                                   <span class="jde-java-font-lock-constant" id="BREAK_BEFORE">BREAK_BEFORE</span> = <span class="jde-java-font-lock-number">89</span>,
+                                   <span class="jde-java-font-lock-constant" id="CAPTION_SIDE">CAPTION_SIDE</span> = <span class="jde-java-font-lock-number">90</span>,
+                                      <span class="jde-java-font-lock-constant" id="CASE_NAME">CASE_NAME</span> = <span class="jde-java-font-lock-number">91</span>,
+                                     <span class="jde-java-font-lock-constant" id="CASE_TITLE">CASE_TITLE</span> = <span class="jde-java-font-lock-number">92</span>,
+                                      <span class="jde-java-font-lock-constant" id="CHARACTER">CHARACTER</span> = <span class="jde-java-font-lock-number">93</span>,
+                                          <span class="jde-java-font-lock-constant" id="CLEAR">CLEAR</span> = <span class="jde-java-font-lock-number">94</span>,
+                                           <span class="jde-java-font-lock-constant" id="CLIP">CLIP</span> = <span class="jde-java-font-lock-number">95</span>,
+                                          <span class="jde-java-font-lock-constant" id="COLOR">COLOR</span> = <span class="jde-java-font-lock-number">96</span>,
+                             <span class="jde-java-font-lock-constant" id="COLOR_PROFILE_NAME">COLOR_PROFILE_NAME</span> = <span class="jde-java-font-lock-number">97</span>,
+                                   <span class="jde-java-font-lock-constant" id="COLUMN_COUNT">COLUMN_COUNT</span> = <span class="jde-java-font-lock-number">98</span>,
+                                     <span class="jde-java-font-lock-constant" id="COLUMN_GAP">COLUMN_GAP</span> = <span class="jde-java-font-lock-number">99</span>,
+                                   <span class="jde-java-font-lock-constant" id="COLUMN_WIDTH">COLUMN_WIDTH</span> = <span class="jde-java-font-lock-number">100</span>,
+                                 <span class="jde-java-font-lock-constant" id="CONTENT_HEIGHT">CONTENT_HEIGHT</span> = <span class="jde-java-font-lock-number">101</span>,
+                                   <span class="jde-java-font-lock-constant" id="CONTENT_TYPE">CONTENT_TYPE</span> = <span class="jde-java-font-lock-number">102</span>,
+                                  <span class="jde-java-font-lock-constant" id="CONTENT_WIDTH">CONTENT_WIDTH</span> = <span class="jde-java-font-lock-number">103</span>,
+                                        <span class="jde-java-font-lock-constant" id="COUNTRY">COUNTRY</span> = <span class="jde-java-font-lock-number">104</span>,
+                                      <span class="jde-java-font-lock-constant" id="CUE_AFTER">CUE_AFTER</span> = <span class="jde-java-font-lock-number">105</span>,
+                                     <span class="jde-java-font-lock-constant" id="CUE_BEFORE">CUE_BEFORE</span> = <span class="jde-java-font-lock-number">106</span>,
+                   <span class="jde-java-font-lock-constant" id="DESTINATION_PLACEMENT_OFFSET">DESTINATION_PLACEMENT_OFFSET</span> = <span class="jde-java-font-lock-number">107</span>,
+                                      <span class="jde-java-font-lock-constant" id="DIRECTION">DIRECTION</span> = <span class="jde-java-font-lock-number">108</span>,
+                                  <span class="jde-java-font-lock-constant" id="DISPLAY_ALIGN">DISPLAY_ALIGN</span> = <span class="jde-java-font-lock-number">109</span>,
+                              <span class="jde-java-font-lock-constant" id="DOMINANT_BASELINE">DOMINANT_BASELINE</span> = <span class="jde-java-font-lock-number">110</span>,
+                                      <span class="jde-java-font-lock-constant" id="ELEVATION">ELEVATION</span> = <span class="jde-java-font-lock-number">111</span>,
+                                    <span class="jde-java-font-lock-constant" id="EMPTY_CELLS">EMPTY_CELLS</span> = <span class="jde-java-font-lock-number">112</span>,
+                                     <span class="jde-java-font-lock-constant" id="END_INDENT">END_INDENT</span> = <span class="jde-java-font-lock-number">113</span>,
+                                       <span class="jde-java-font-lock-constant" id="ENDS_ROW">ENDS_ROW</span> = <span class="jde-java-font-lock-number">114</span>,
+                                         <span class="jde-java-font-lock-constant" id="EXTENT">EXTENT</span> = <span class="jde-java-font-lock-number">115</span>,
+                           <span class="jde-java-font-lock-constant" id="EXTERNAL_DESTINATION">EXTERNAL_DESTINATION</span> = <span class="jde-java-font-lock-number">116</span>,
+                                          <span class="jde-java-font-lock-constant" id="FLOAT">FLOAT</span> = <span class="jde-java-font-lock-number">117</span>,
+                                      <span class="jde-java-font-lock-constant" id="FLOW_NAME">FLOW_NAME</span> = <span class="jde-java-font-lock-number">118</span>,
+                                    <span class="jde-java-font-lock-constant" id="FONT_FAMILY">FONT_FAMILY</span> = <span class="jde-java-font-lock-number">119</span>,
+                        <span class="jde-java-font-lock-constant" id="FONT_SELECTION_STRATEGY">FONT_SELECTION_STRATEGY</span> = <span class="jde-java-font-lock-number">120</span>,
+                               <span class="jde-java-font-lock-constant" id="FONT_SIZE_ADJUST">FONT_SIZE_ADJUST</span> = <span class="jde-java-font-lock-number">121</span>,
+                                   <span class="jde-java-font-lock-constant" id="FONT_STRETCH">FONT_STRETCH</span> = <span class="jde-java-font-lock-number">122</span>,
+                                     <span class="jde-java-font-lock-constant" id="FONT_STYLE">FONT_STYLE</span> = <span class="jde-java-font-lock-number">123</span>,
+                                   <span class="jde-java-font-lock-constant" id="FONT_VARIANT">FONT_VARIANT</span> = <span class="jde-java-font-lock-number">124</span>,
+                                    <span class="jde-java-font-lock-constant" id="FONT_WEIGHT">FONT_WEIGHT</span> = <span class="jde-java-font-lock-number">125</span>,
+                               <span class="jde-java-font-lock-constant" id="FORCE_PAGE_COUNT">FORCE_PAGE_COUNT</span> = <span class="jde-java-font-lock-number">126</span>,
+                                         <span class="jde-java-font-lock-constant" id="FORMAT">FORMAT</span> = <span class="jde-java-font-lock-number">127</span>,
+                   <span class="jde-java-font-lock-constant" id="GLYPH_ORIENTATION_HORIZONTAL">GLYPH_ORIENTATION_HORIZONTAL</span> = <span class="jde-java-font-lock-number">128</span>,
+                     <span class="jde-java-font-lock-constant" id="GLYPH_ORIENTATION_VERTICAL">GLYPH_ORIENTATION_VERTICAL</span> = <span class="jde-java-font-lock-number">129</span>,
+                             <span class="jde-java-font-lock-constant" id="GROUPING_SEPARATOR">GROUPING_SEPARATOR</span> = <span class="jde-java-font-lock-number">130</span>,
+                                  <span class="jde-java-font-lock-constant" id="GROUPING_SIZE">GROUPING_SIZE</span> = <span class="jde-java-font-lock-number">131</span>,
+                                         <span class="jde-java-font-lock-constant" id="HEIGHT">HEIGHT</span> = <span class="jde-java-font-lock-number">132</span>,
+                                      <span class="jde-java-font-lock-constant" id="HYPHENATE">HYPHENATE</span> = <span class="jde-java-font-lock-number">133</span>,
+                          <span class="jde-java-font-lock-constant" id="HYPHENATION_CHARACTER">HYPHENATION_CHARACTER</span> = <span class="jde-java-font-lock-number">134</span>,
+                               <span class="jde-java-font-lock-constant" id="HYPHENATION_KEEP">HYPHENATION_KEEP</span> = <span class="jde-java-font-lock-number">135</span>,
+                       <span class="jde-java-font-lock-constant" id="HYPHENATION_LADDER_COUNT">HYPHENATION_LADDER_COUNT</span> = <span class="jde-java-font-lock-number">136</span>,
+               <span class="jde-java-font-lock-constant" id="HYPHENATION_PUSH_CHARACTER_COUNT">HYPHENATION_PUSH_CHARACTER_COUNT</span> = <span class="jde-java-font-lock-number">137</span>,
+             <span class="jde-java-font-lock-constant" id="HYPHENATION_REMAIN_CHARACTER_COUNT">HYPHENATION_REMAIN_CHARACTER_COUNT</span> = <span class="jde-java-font-lock-number">138</span>,
+                                             <span class="jde-java-font-lock-constant" id="ID">ID</span> = <span class="jde-java-font-lock-number">139</span>,
+                           <span class="jde-java-font-lock-constant" id="INDICATE_DESTINATION">INDICATE_DESTINATION</span> = <span class="jde-java-font-lock-number">140</span>,
+                            <span class="jde-java-font-lock-constant" id="INITIAL_PAGE_NUMBER">INITIAL_PAGE_NUMBER</span> = <span class="jde-java-font-lock-number">141</span>,
+                   <span class="jde-java-font-lock-constant" id="INLINE_PROGRESSION_DIMENSION">INLINE_PROGRESSION_DIMENSION</span> = <span class="jde-java-font-lock-number">142</span>,
+           <span class="jde-java-font-lock-constant" id="INLINE_PROGRESSION_DIMENSION_MINIMUM">INLINE_PROGRESSION_DIMENSION_MINIMUM</span> = <span class="jde-java-font-lock-number">143</span>,
+           <span class="jde-java-font-lock-constant" id="INLINE_PROGRESSION_DIMENSION_OPTIMUM">INLINE_PROGRESSION_DIMENSION_OPTIMUM</span> = <span class="jde-java-font-lock-number">144</span>,
+           <span class="jde-java-font-lock-constant" id="INLINE_PROGRESSION_DIMENSION_MAXIMUM">INLINE_PROGRESSION_DIMENSION_MAXIMUM</span> = <span class="jde-java-font-lock-number">145</span>,
+                           <span class="jde-java-font-lock-constant" id="INTERNAL_DESTINATION">INTERNAL_DESTINATION</span> = <span class="jde-java-font-lock-number">146</span>,
+                             <span class="jde-java-font-lock-constant" id="INTRUSION_DISPLACE">INTRUSION_DISPLACE</span> = <span class="jde-java-font-lock-number">147</span>,
+                                  <span class="jde-java-font-lock-constant" id="KEEP_TOGETHER">KEEP_TOGETHER</span> = <span class="jde-java-font-lock-number">148</span>,
+                      <span class="jde-java-font-lock-constant" id="KEEP_TOGETHER_WITHIN_LINE">KEEP_TOGETHER_WITHIN_LINE</span> = <span class="jde-java-font-lock-number">149</span>,
+                      <span class="jde-java-font-lock-constant" id="KEEP_TOGETHER_WITHIN_PAGE">KEEP_TOGETHER_WITHIN_PAGE</span> = <span class="jde-java-font-lock-number">150</span>,
+                    <span class="jde-java-font-lock-constant" id="KEEP_TOGETHER_WITHIN_COLUMN">KEEP_TOGETHER_WITHIN_COLUMN</span> = <span class="jde-java-font-lock-number">151</span>,
+                                 <span class="jde-java-font-lock-constant" id="KEEP_WITH_NEXT">KEEP_WITH_NEXT</span> = <span class="jde-java-font-lock-number">152</span>,
+                     <span class="jde-java-font-lock-constant" id="KEEP_WITH_NEXT_WITHIN_LINE">KEEP_WITH_NEXT_WITHIN_LINE</span> = <span class="jde-java-font-lock-number">153</span>,
+                     <span class="jde-java-font-lock-constant" id="KEEP_WITH_NEXT_WITHIN_PAGE">KEEP_WITH_NEXT_WITHIN_PAGE</span> = <span class="jde-java-font-lock-number">154</span>,
+                   <span class="jde-java-font-lock-constant" id="KEEP_WITH_NEXT_WITHIN_COLUMN">KEEP_WITH_NEXT_WITHIN_COLUMN</span> = <span class="jde-java-font-lock-number">155</span>,
+                             <span class="jde-java-font-lock-constant" id="KEEP_WITH_PREVIOUS">KEEP_WITH_PREVIOUS</span> = <span class="jde-java-font-lock-number">156</span>,
+                 <span class="jde-java-font-lock-constant" id="KEEP_WITH_PREVIOUS_WITHIN_LINE">KEEP_WITH_PREVIOUS_WITHIN_LINE</span> = <span class="jde-java-font-lock-number">157</span>,
+                 <span class="jde-java-font-lock-constant" id="KEEP_WITH_PREVIOUS_WITHIN_PAGE">KEEP_WITH_PREVIOUS_WITHIN_PAGE</span> = <span class="jde-java-font-lock-number">158</span>,
+               <span class="jde-java-font-lock-constant" id="KEEP_WITH_PREVIOUS_WITHIN_COLUMN">KEEP_WITH_PREVIOUS_WITHIN_COLUMN</span> = <span class="jde-java-font-lock-number">159</span>,
+                                       <span class="jde-java-font-lock-constant" id="LANGUAGE">LANGUAGE</span> = <span class="jde-java-font-lock-number">160</span>,
+                           <span class="jde-java-font-lock-constant" id="LAST_LINE_END_INDENT">LAST_LINE_END_INDENT</span> = <span class="jde-java-font-lock-number">161</span>,
+                               <span class="jde-java-font-lock-constant" id="LEADER_ALIGNMENT">LEADER_ALIGNMENT</span> = <span class="jde-java-font-lock-number">162</span>,
+                                  <span class="jde-java-font-lock-constant" id="LEADER_LENGTH">LEADER_LENGTH</span> = <span class="jde-java-font-lock-number">163</span>,
+                          <span class="jde-java-font-lock-constant" id="LEADER_LENGTH_MINIMUM">LEADER_LENGTH_MINIMUM</span> = <span class="jde-java-font-lock-number">164</span>,
+                          <span class="jde-java-font-lock-constant" id="LEADER_LENGTH_OPTIMUM">LEADER_LENGTH_OPTIMUM</span> = <span class="jde-java-font-lock-number">165</span>,
+                          <span class="jde-java-font-lock-constant" id="LEADER_LENGTH_MAXIMUM">LEADER_LENGTH_MAXIMUM</span> = <span class="jde-java-font-lock-number">166</span>,
+                                 <span class="jde-java-font-lock-constant" id="LEADER_PATTERN">LEADER_PATTERN</span> = <span class="jde-java-font-lock-number">167</span>,
+                           <span class="jde-java-font-lock-constant" id="LEADER_PATTERN_WIDTH">LEADER_PATTERN_WIDTH</span> = <span class="jde-java-font-lock-number">168</span>,
+                                           <span class="jde-java-font-lock-constant" id="LEFT">LEFT</span> = <span class="jde-java-font-lock-number">169</span>,
+                                 <span class="jde-java-font-lock-constant" id="LETTER_SPACING">LETTER_SPACING</span> = <span class="jde-java-font-lock-number">170</span>,
+                         <span class="jde-java-font-lock-constant" id="LETTER_SPACING_MINIMUM">LETTER_SPACING_MINIMUM</span> = <span class="jde-java-font-lock-number">171</span>,
+                         <span class="jde-java-font-lock-constant" id="LETTER_SPACING_OPTIMUM">LETTER_SPACING_OPTIMUM</span> = <span class="jde-java-font-lock-number">172</span>,
+                         <span class="jde-java-font-lock-constant" id="LETTER_SPACING_MAXIMUM">LETTER_SPACING_MAXIMUM</span> = <span class="jde-java-font-lock-number">173</span>,
+                  <span class="jde-java-font-lock-constant" id="LETTER_SPACING_CONDITIONALITY">LETTER_SPACING_CONDITIONALITY</span> = <span class="jde-java-font-lock-number">174</span>,
+                      <span class="jde-java-font-lock-constant" id="LETTER_SPACING_PRECEDENCE">LETTER_SPACING_PRECEDENCE</span> = <span class="jde-java-font-lock-number">175</span>,
+                                   <span class="jde-java-font-lock-constant" id="LETTER_VALUE">LETTER_VALUE</span> = <span class="jde-java-font-lock-number">176</span>,
+                             <span class="jde-java-font-lock-constant" id="LINEFEED_TREATMENT">LINEFEED_TREATMENT</span> = <span class="jde-java-font-lock-number">177</span>,
+                                    <span class="jde-java-font-lock-constant" id="LINE_HEIGHT">LINE_HEIGHT</span> = <span class="jde-java-font-lock-number">178</span>,
+                            <span class="jde-java-font-lock-constant" id="LINE_HEIGHT_MINIMUM">LINE_HEIGHT_MINIMUM</span> = <span class="jde-java-font-lock-number">179</span>,
+                            <span class="jde-java-font-lock-constant" id="LINE_HEIGHT_OPTIMUM">LINE_HEIGHT_OPTIMUM</span> = <span class="jde-java-font-lock-number">180</span>,
+                            <span class="jde-java-font-lock-constant" id="LINE_HEIGHT_MAXIMUM">LINE_HEIGHT_MAXIMUM</span> = <span class="jde-java-font-lock-number">181</span>,
+                     <span class="jde-java-font-lock-constant" id="LINE_HEIGHT_CONDITIONALITY">LINE_HEIGHT_CONDITIONALITY</span> = <span class="jde-java-font-lock-number">182</span>,
+                         <span class="jde-java-font-lock-constant" id="LINE_HEIGHT_PRECEDENCE">LINE_HEIGHT_PRECEDENCE</span> = <span class="jde-java-font-lock-number">183</span>,
+                   <span class="jde-java-font-lock-constant" id="LINE_HEIGHT_SHIFT_ADJUSTMENT">LINE_HEIGHT_SHIFT_ADJUSTMENT</span> = <span class="jde-java-font-lock-number">184</span>,
+                         <span class="jde-java-font-lock-constant" id="LINE_STACKING_STRATEGY">LINE_STACKING_STRATEGY</span> = <span class="jde-java-font-lock-number">185</span>,
+
+                              <span class="jde-java-font-lock-constant" id="MARKER_CLASS_NAME">MARKER_CLASS_NAME</span> = <span class="jde-java-font-lock-number">186</span>,
+                                    <span class="jde-java-font-lock-constant" id="MASTER_NAME">MASTER_NAME</span> = <span class="jde-java-font-lock-number">187</span>,
+                               <span class="jde-java-font-lock-constant" id="MASTER_REFERENCE">MASTER_REFERENCE</span> = <span class="jde-java-font-lock-number">188</span>,
+                                     <span class="jde-java-font-lock-constant" id="MAX_HEIGHT">MAX_HEIGHT</span> = <span class="jde-java-font-lock-number">189</span>,
+                                <span class="jde-java-font-lock-constant" id="MAXIMUM_REPEATS">MAXIMUM_REPEATS</span> = <span class="jde-java-font-lock-number">190</span>,
+                                      <span class="jde-java-font-lock-constant" id="MAX_WIDTH">MAX_WIDTH</span> = <span class="jde-java-font-lock-number">191</span>,
+                                    <span class="jde-java-font-lock-constant" id="MEDIA_USAGE">MEDIA_USAGE</span> = <span class="jde-java-font-lock-number">192</span>,
+                                     <span class="jde-java-font-lock-constant" id="MIN_HEIGHT">MIN_HEIGHT</span> = <span class="jde-java-font-lock-number">193</span>,
+                                      <span class="jde-java-font-lock-constant" id="MIN_WIDTH">MIN_WIDTH</span> = <span class="jde-java-font-lock-number">194</span>,
+                        <span class="jde-java-font-lock-constant" id="NUMBER_COLUMNS_REPEATED">NUMBER_COLUMNS_REPEATED</span> = <span class="jde-java-font-lock-number">195</span>,
+                            <span class="jde-java-font-lock-constant" id="NUMBER_ROWS_SPANNED">NUMBER_ROWS_SPANNED</span> = <span class="jde-java-font-lock-number">196</span>,
+                                    <span class="jde-java-font-lock-constant" id="ODD_OR_EVEN">ODD_OR_EVEN</span> = <span class="jde-java-font-lock-number">197</span>,
+                                        <span class="jde-java-font-lock-constant" id="ORPHANS">ORPHANS</span> = <span class="jde-java-font-lock-number">198</span>,
+                                       <span class="jde-java-font-lock-constant" id="OVERFLOW">OVERFLOW</span> = <span class="jde-java-font-lock-number">199</span>,
+
+        <span class="comment">// Padding corresponding properties
+</span>                                  <span class="jde-java-font-lock-constant" id="PADDING_AFTER">PADDING_AFTER</span> = <span class="jde-java-font-lock-number">200</span>,
+                           <span class="jde-java-font-lock-constant" id="PADDING_AFTER_LENGTH">PADDING_AFTER_LENGTH</span> = <span class="jde-java-font-lock-number">201</span>,
+                   <span class="jde-java-font-lock-constant" id="PADDING_AFTER_CONDITIONALITY">PADDING_AFTER_CONDITIONALITY</span> = <span class="jde-java-font-lock-number">202</span>,
+                                 <span class="jde-java-font-lock-constant" id="PADDING_BEFORE">PADDING_BEFORE</span> = <span class="jde-java-font-lock-number">203</span>,
+                          <span class="jde-java-font-lock-constant" id="PADDING_BEFORE_LENGTH">PADDING_BEFORE_LENGTH</span> = <span class="jde-java-font-lock-number">204</span>,
+                  <span class="jde-java-font-lock-constant" id="PADDING_BEFORE_CONDITIONALITY">PADDING_BEFORE_CONDITIONALITY</span> = <span class="jde-java-font-lock-number">205</span>,
+                                    <span class="jde-java-font-lock-constant" id="PADDING_END">PADDING_END</span> = <span class="jde-java-font-lock-number">206</span>,
+                             <span class="jde-java-font-lock-constant" id="PADDING_END_LENGTH">PADDING_END_LENGTH</span> = <span class="jde-java-font-lock-number">207</span>,
+                     <span class="jde-java-font-lock-constant" id="PADDING_END_CONDITIONALITY">PADDING_END_CONDITIONALITY</span> = <span class="jde-java-font-lock-number">208</span>,
+                                  <span class="jde-java-font-lock-constant" id="PADDING_START">PADDING_START</span> = <span class="jde-java-font-lock-number">209</span>,
+                           <span class="jde-java-font-lock-constant" id="PADDING_START_LENGTH">PADDING_START_LENGTH</span> = <span class="jde-java-font-lock-number">210</span>,
+                   <span class="jde-java-font-lock-constant" id="PADDING_START_CONDITIONALITY">PADDING_START_CONDITIONALITY</span> = <span class="jde-java-font-lock-number">211</span>,
+
+                                 <span class="jde-java-font-lock-constant" id="PADDING_BOTTOM">PADDING_BOTTOM</span> = <span class="jde-java-font-lock-number">212</span>,
+                                   <span class="jde-java-font-lock-constant" id="PADDING_LEFT">PADDING_LEFT</span> = <span class="jde-java-font-lock-number">213</span>,
+                                  <span class="jde-java-font-lock-constant" id="PADDING_RIGHT">PADDING_RIGHT</span> = <span class="jde-java-font-lock-number">214</span>,
+                                    <span class="jde-java-font-lock-constant" id="PADDING_TOP">PADDING_TOP</span> = <span class="jde-java-font-lock-number">215</span>,
+
+                                    <span class="jde-java-font-lock-constant" id="PAGE_HEIGHT">PAGE_HEIGHT</span> = <span class="jde-java-font-lock-number">216</span>,
+                                  <span class="jde-java-font-lock-constant" id="PAGE_POSITION">PAGE_POSITION</span> = <span class="jde-java-font-lock-number">217</span>,
+                                     <span class="jde-java-font-lock-constant" id="PAGE_WIDTH">PAGE_WIDTH</span> = <span class="jde-java-font-lock-number">218</span>,
+                                    <span class="jde-java-font-lock-constant" id="PAUSE_AFTER">PAUSE_AFTER</span> = <span class="jde-java-font-lock-number">219</span>,
+                                   <span class="jde-java-font-lock-constant" id="PAUSE_BEFORE">PAUSE_BEFORE</span> = <span class="jde-java-font-lock-number">220</span>,
+                                          <span class="jde-java-font-lock-constant" id="PITCH">PITCH</span> = <span class="jde-java-font-lock-number">221</span>,
+                                    <span class="jde-java-font-lock-constant" id="PITCH_RANGE">PITCH_RANGE</span> = <span class="jde-java-font-lock-number">222</span>,
+                                    <span class="jde-java-font-lock-constant" id="PLAY_DURING">PLAY_DURING</span> = <span class="jde-java-font-lock-number">223</span>,
+                                     <span class="jde-java-font-lock-constant" id="PRECEDENCE">PRECEDENCE</span> = <span class="jde-java-font-lock-number">224</span>,
+            <span class="jde-java-font-lock-constant" id="PROVISIONAL_DISTANCE_BETWEEN_STARTS">PROVISIONAL_DISTANCE_BETWEEN_STARTS</span> = <span class="jde-java-font-lock-number">225</span>,
+                   <span class="jde-java-font-lock-constant" id="PROVISIONAL_LABEL_SEPARATION">PROVISIONAL_LABEL_SEPARATION</span> = <span class="jde-java-font-lock-number">226</span>,
+                          <span class="jde-java-font-lock-constant" id="REFERENCE_ORIENTATION">REFERENCE_ORIENTATION</span> = <span class="jde-java-font-lock-number">227</span>,
+                                         <span class="jde-java-font-lock-constant" id="REF_ID">REF_ID</span> = <span class="jde-java-font-lock-number">228</span>,
+                                    <span class="jde-java-font-lock-constant" id="REGION_NAME">REGION_NAME</span> = <span class="jde-java-font-lock-number">229</span>,
+                                 <span class="jde-java-font-lock-constant" id="RELATIVE_ALIGN">RELATIVE_ALIGN</span> = <span class="jde-java-font-lock-number">230</span>,
+                              <span class="jde-java-font-lock-constant" id="RELATIVE_POSITION">RELATIVE_POSITION</span> = <span class="jde-java-font-lock-number">231</span>,
+                               <span class="jde-java-font-lock-constant" id="RENDERING_INTENT">RENDERING_INTENT</span> = <span class="jde-java-font-lock-number">232</span>,
+                              <span class="jde-java-font-lock-constant" id="RETRIEVE_BOUNDARY">RETRIEVE_BOUNDARY</span> = <span class="jde-java-font-lock-number">233</span>,
+                            <span class="jde-java-font-lock-constant" id="RETRIEVE_CLASS_NAME">RETRIEVE_CLASS_NAME</span> = <span class="jde-java-font-lock-number">234</span>,
+                              <span class="jde-java-font-lock-constant" id="RETRIEVE_POSITION">RETRIEVE_POSITION</span> = <span class="jde-java-font-lock-number">235</span>,
+                                       <span class="jde-java-font-lock-constant" id="RICHNESS">RICHNESS</span> = <span class="jde-java-font-lock-number">236</span>,
+                                          <span class="jde-java-font-lock-constant" id="RIGHT">RIGHT</span> = <span class="jde-java-font-lock-number">237</span>,
+                                           <span class="jde-java-font-lock-constant" id="ROLE">ROLE</span> = <span class="jde-java-font-lock-number">238</span>,
+                                     <span class="jde-java-font-lock-constant" id="RULE_STYLE">RULE_STYLE</span> = <span class="jde-java-font-lock-number">239</span>,
+                                 <span class="jde-java-font-lock-constant" id="RULE_THICKNESS">RULE_THICKNESS</span> = <span class="jde-java-font-lock-number">240</span>,
+                                        <span class="jde-java-font-lock-constant" id="SCALING">SCALING</span> = <span class="jde-java-font-lock-number">241</span>,
+                                 <span class="jde-java-font-lock-constant" id="SCALING_METHOD">SCALING_METHOD</span> = <span class="jde-java-font-lock-number">242</span>,
+                                   <span class="jde-java-font-lock-constant" id="SCORE_SPACES">SCORE_SPACES</span> = <span class="jde-java-font-lock-number">243</span>,
+                                         <span class="jde-java-font-lock-constant" id="SCRIPT">SCRIPT</span> = <span class="jde-java-font-lock-number">244</span>,
+                               <span class="jde-java-font-lock-constant" id="SHOW_DESTINATION">SHOW_DESTINATION</span> = <span class="jde-java-font-lock-number">245</span>,
+                                <span class="jde-java-font-lock-constant" id="SOURCE_DOCUMENT">SOURCE_DOCUMENT</span> = <span class="jde-java-font-lock-number">246</span>,
+
+        <span class="comment">// Space/margin corresponding properties
+</span>                                    <span class="jde-java-font-lock-constant" id="SPACE_AFTER">SPACE_AFTER</span> = <span class="jde-java-font-lock-number">247</span>,
+                            <span class="jde-java-font-lock-constant" id="SPACE_AFTER_MINIMUM">SPACE_AFTER_MINIMUM</span> = <span class="jde-java-font-lock-number">248</span>,
+                            <span class="jde-java-font-lock-constant" id="SPACE_AFTER_OPTIMUM">SPACE_AFTER_OPTIMUM</span> = <span class="jde-java-font-lock-number">249</span>,
+                            <span class="jde-java-font-lock-constant" id="SPACE_AFTER_MAXIMUM">SPACE_AFTER_MAXIMUM</span> = <span class="jde-java-font-lock-number">250</span>,
+                     <span class="jde-java-font-lock-constant" id="SPACE_AFTER_CONDITIONALITY">SPACE_AFTER_CONDITIONALITY</span> = <span class="jde-java-font-lock-number">251</span>,
+                         <span class="jde-java-font-lock-constant" id="SPACE_AFTER_PRECEDENCE">SPACE_AFTER_PRECEDENCE</span> = <span class="jde-java-font-lock-number">252</span>,
+                                   <span class="jde-java-font-lock-constant" id="SPACE_BEFORE">SPACE_BEFORE</span> = <span class="jde-java-font-lock-number">253</span>,
+                           <span class="jde-java-font-lock-constant" id="SPACE_BEFORE_MINIMUM">SPACE_BEFORE_MINIMUM</span> = <span class="jde-java-font-lock-number">254</span>,
+                           <span class="jde-java-font-lock-constant" id="SPACE_BEFORE_OPTIMUM">SPACE_BEFORE_OPTIMUM</span> = <span class="jde-java-font-lock-number">255</span>,
+                           <span class="jde-java-font-lock-constant" id="SPACE_BEFORE_MAXIMUM">SPACE_BEFORE_MAXIMUM</span> = <span class="jde-java-font-lock-number">256</span>,
+                    <span class="jde-java-font-lock-constant" id="SPACE_BEFORE_CONDITIONALITY">SPACE_BEFORE_CONDITIONALITY</span> = <span class="jde-java-font-lock-number">257</span>,
+                        <span class="jde-java-font-lock-constant" id="SPACE_BEFORE_PRECEDENCE">SPACE_BEFORE_PRECEDENCE</span> = <span class="jde-java-font-lock-number">258</span>,
+                                      <span class="jde-java-font-lock-constant" id="SPACE_END">SPACE_END</span> = <span class="jde-java-font-lock-number">259</span>,
+                              <span class="jde-java-font-lock-constant" id="SPACE_END_MINIMUM">SPACE_END_MINIMUM</span> = <span class="jde-java-font-lock-number">260</span>,
+                              <span class="jde-java-font-lock-constant" id="SPACE_END_OPTIMUM">SPACE_END_OPTIMUM</span> = <span class="jde-java-font-lock-number">261</span>,
+                              <span class="jde-java-font-lock-constant" id="SPACE_END_MAXIMUM">SPACE_END_MAXIMUM</span> = <span class="jde-java-font-lock-number">262</span>,
+                       <span class="jde-java-font-lock-constant" id="SPACE_END_CONDITIONALITY">SPACE_END_CONDITIONALITY</span> = <span class="jde-java-font-lock-number">263</span>,
+                           <span class="jde-java-font-lock-constant" id="SPACE_END_PRECEDENCE">SPACE_END_PRECEDENCE</span> = <span class="jde-java-font-lock-number">264</span>,
+                                    <span class="jde-java-font-lock-constant" id="SPACE_START">SPACE_START</span> = <span class="jde-java-font-lock-number">265</span>,
+                            <span class="jde-java-font-lock-constant" id="SPACE_START_MINIMUM">SPACE_START_MINIMUM</span> = <span class="jde-java-font-lock-number">266</span>,
+                            <span class="jde-java-font-lock-constant" id="SPACE_START_OPTIMUM">SPACE_START_OPTIMUM</span> = <span class="jde-java-font-lock-number">267</span>,
+                            <span class="jde-java-font-lock-constant" id="SPACE_START_MAXIMUM">SPACE_START_MAXIMUM</span> = <span class="jde-java-font-lock-number">268</span>,
+                     <span class="jde-java-font-lock-constant" id="SPACE_START_CONDITIONALITY">SPACE_START_CONDITIONALITY</span> = <span class="jde-java-font-lock-number">269</span>,
+                         <span class="jde-java-font-lock-constant" id="SPACE_START_PRECEDENCE">SPACE_START_PRECEDENCE</span> = <span class="jde-java-font-lock-number">270</span>,
+
+                                  <span class="jde-java-font-lock-constant" id="MARGIN_BOTTOM">MARGIN_BOTTOM</span> = <span class="jde-java-font-lock-number">271</span>,
+                                    <span class="jde-java-font-lock-constant" id="MARGIN_LEFT">MARGIN_LEFT</span> = <span class="jde-java-font-lock-number">272</span>,
+                                   <span class="jde-java-font-lock-constant" id="MARGIN_RIGHT">MARGIN_RIGHT</span> = <span class="jde-java-font-lock-number">273</span>,
+                                     <span class="jde-java-font-lock-constant" id="MARGIN_TOP">MARGIN_TOP</span> = <span class="jde-java-font-lock-number">274</span>,
+
+                                           <span class="jde-java-font-lock-constant" id="SPAN">SPAN</span> = <span class="jde-java-font-lock-number">275</span>,
+                                          <span class="jde-java-font-lock-constant" id="SPEAK">SPEAK</span> = <span class="jde-java-font-lock-number">276</span>,
+                                   <span class="jde-java-font-lock-constant" id="SPEAK_HEADER">SPEAK_HEADER</span> = <span class="jde-java-font-lock-number">277</span>,
+                                  <span class="jde-java-font-lock-constant" id="SPEAK_NUMERAL">SPEAK_NUMERAL</span> = <span class="jde-java-font-lock-number">278</span>,
+                              <span class="jde-java-font-lock-constant" id="SPEAK_PUNCTUATION">SPEAK_PUNCTUATION</span> = <span class="jde-java-font-lock-number">279</span>,
+                                    <span class="jde-java-font-lock-constant" id="SPEECH_RATE">SPEECH_RATE</span> = <span class="jde-java-font-lock-number">280</span>,
+                                            <span class="jde-java-font-lock-constant" id="SRC">SRC</span> = <span class="jde-java-font-lock-number">281</span>,
+                                   <span class="jde-java-font-lock-constant" id="START_INDENT">START_INDENT</span> = <span class="jde-java-font-lock-number">282</span>,
+                                 <span class="jde-java-font-lock-constant" id="STARTING_STATE">STARTING_STATE</span> = <span class="jde-java-font-lock-number">283</span>,
+                                     <span class="jde-java-font-lock-constant" id="STARTS_ROW">STARTS_ROW</span> = <span class="jde-java-font-lock-number">284</span>,
+                                         <span class="jde-java-font-lock-constant" id="STRESS">STRESS</span> = <span class="jde-java-font-lock-number">285</span>,
+                         <span class="jde-java-font-lock-constant" id="SUPPRESS_AT_LINE_BREAK">SUPPRESS_AT_LINE_BREAK</span> = <span class="jde-java-font-lock-number">286</span>,
+                                      <span class="jde-java-font-lock-constant" id="SWITCH_TO">SWITCH_TO</span> = <span class="jde-java-font-lock-number">287</span>,
+                                   <span class="jde-java-font-lock-constant" id="TABLE_LAYOUT">TABLE_LAYOUT</span> = <span class="jde-java-font-lock-number">288</span>,
+                     <span class="jde-java-font-lock-constant" id="TABLE_OMIT_FOOTER_AT_BREAK">TABLE_OMIT_FOOTER_AT_BREAK</span> = <span class="jde-java-font-lock-number">289</span>,
+                     <span class="jde-java-font-lock-constant" id="TABLE_OMIT_HEADER_AT_BREAK">TABLE_OMIT_HEADER_AT_BREAK</span> = <span class="jde-java-font-lock-number">290</span>,
+                    <span class="jde-java-font-lock-constant" id="TARGET_PRESENTATION_CONTEXT">TARGET_PRESENTATION_CONTEXT</span> = <span class="jde-java-font-lock-number">291</span>,
+                      <span class="jde-java-font-lock-constant" id="TARGET_PROCESSING_CONTEXT">TARGET_PROCESSING_CONTEXT</span> = <span class="jde-java-font-lock-number">292</span>,
+                              <span class="jde-java-font-lock-constant" id="TARGET_STYLESHEET">TARGET_STYLESHEET</span> = <span class="jde-java-font-lock-number">293</span>,
+                                     <span class="jde-java-font-lock-constant" id="TEXT_ALIGN">TEXT_ALIGN</span> = <span class="jde-java-font-lock-number">294</span>,
+                                <span class="jde-java-font-lock-constant" id="TEXT_ALIGN_LAST">TEXT_ALIGN_LAST</span> = <span class="jde-java-font-lock-number">295</span>,
+                                  <span class="jde-java-font-lock-constant" id="TEXT_ALTITUDE">TEXT_ALTITUDE</span> = <span class="jde-java-font-lock-number">296</span>,
+                                <span class="jde-java-font-lock-constant" id="TEXT_DECORATION">TEXT_DECORATION</span> = <span class="jde-java-font-lock-number">297</span>,
+                                     <span class="jde-java-font-lock-constant" id="TEXT_DEPTH">TEXT_DEPTH</span> = <span class="jde-java-font-lock-number">298</span>,
+                                    <span class="jde-java-font-lock-constant" id="TEXT_INDENT">TEXT_INDENT</span> = <span class="jde-java-font-lock-number">299</span>,
+                                    <span class="jde-java-font-lock-constant" id="TEXT_SHADOW">TEXT_SHADOW</span> = <span class="jde-java-font-lock-number">300</span>,
+                                 <span class="jde-java-font-lock-constant" id="TEXT_TRANSFORM">TEXT_TRANSFORM</span> = <span class="jde-java-font-lock-number">301</span>,
+                                            <span class="jde-java-font-lock-constant" id="TOP">TOP</span> = <span class="jde-java-font-lock-number">302</span>,
+                            <span class="jde-java-font-lock-constant" id="TREAT_AS_WORD_SPACE">TREAT_AS_WORD_SPACE</span> = <span class="jde-java-font-lock-number">303</span>,
+                                   <span class="jde-java-font-lock-constant" id="UNICODE_BIDI">UNICODE_BIDI</span> = <span class="jde-java-font-lock-number">304</span>,
+        <span class="jde-java-font-lock-constant" id="USAGE_CONTEXT_OF_SUPPRESS_AT_LINE_BREAK">USAGE_CONTEXT_OF_SUPPRESS_AT_LINE_BREAK</span> = <span class="jde-java-font-lock-number">305</span>,
+                                     <span class="jde-java-font-lock-constant" id="VISIBILITY">VISIBILITY</span> = <span class="jde-java-font-lock-number">306</span>,
+                                   <span class="jde-java-font-lock-constant" id="VOICE_FAMILY">VOICE_FAMILY</span> = <span class="jde-java-font-lock-number">307</span>,
+                                         <span class="jde-java-font-lock-constant" id="VOLUME">VOLUME</span> = <span class="jde-java-font-lock-number">308</span>,
+                           <span class="jde-java-font-lock-constant" id="WHITE_SPACE_COLLAPSE">WHITE_SPACE_COLLAPSE</span> = <span class="jde-java-font-lock-number">309</span>,
+                          <span class="jde-java-font-lock-constant" id="WHITE_SPACE_TREATMENT">WHITE_SPACE_TREATMENT</span> = <span class="jde-java-font-lock-number">310</span>,
+                                         <span class="jde-java-font-lock-constant" id="WIDOWS">WIDOWS</span> = <span class="jde-java-font-lock-number">311</span>,
+                                          <span class="jde-java-font-lock-constant" id="WIDTH">WIDTH</span> = <span class="jde-java-font-lock-number">312</span>,
+                                   <span class="jde-java-font-lock-constant" id="WORD_SPACING">WORD_SPACING</span> = <span class="jde-java-font-lock-number">313</span>,
+                           <span class="jde-java-font-lock-constant" id="WORD_SPACING_MINIMUM">WORD_SPACING_MINIMUM</span> = <span class="jde-java-font-lock-number">314</span>,
+                           <span class="jde-java-font-lock-constant" id="WORD_SPACING_OPTIMUM">WORD_SPACING_OPTIMUM</span> = <span class="jde-java-font-lock-number">315</span>,
+                           <span class="jde-java-font-lock-constant" id="WORD_SPACING_MAXIMUM">WORD_SPACING_MAXIMUM</span> = <span class="jde-java-font-lock-number">316</span>,
+                    <span class="jde-java-font-lock-constant" id="WORD_SPACING_CONDITIONALITY">WORD_SPACING_CONDITIONALITY</span> = <span class="jde-java-font-lock-number">317</span>,
+                        <span class="jde-java-font-lock-constant" id="WORD_SPACING_PRECEDENCE">WORD_SPACING_PRECEDENCE</span> = <span class="jde-java-font-lock-number">318</span>,
+                                    <span class="jde-java-font-lock-constant" id="WRAP_OPTION">WRAP_OPTION</span> = <span class="jde-java-font-lock-number">319</span>,
+                                        <span class="jde-java-font-lock-constant" id="Z_INDEX">Z_INDEX</span> = <span class="jde-java-font-lock-number">320</span>,
+        
+                            <span class="jde-java-font-lock-constant" id="LAST_PROPERTY_INDEX">LAST_PROPERTY_INDEX</span> = <span class="jde-java-font-lock-constant">Z_INDEX</span>;
+
+
+    <span class="comment">/**
+     * A String[] array containing the names of all of the FO properties.
+     * The array is effectively 1-based, as the first element is null.
+     * The list of int constants referring to the properties must be manually
+     * kept in sync with the names in this array, as the constants can be
+     * used to index into this, and the other property arrays.
+     */</span>
+
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">String</span>[] <span class="variable-name" id="propertyNames">propertyNames</span> = {
+                                        &quot;<span class="string">no-property</span>&quot;  <span class="comment">// 0
+</span>
+                                     ,&quot;<span class="string">column-number</span>&quot;  <span class="comment">// 1
+</span>                            ,&quot;<span class="string">number-columns-spanned</span>&quot;  <span class="comment">// 2
+</span>
+                                              ,&quot;<span class="string">font</span>&quot;  <span class="comment">// 3
+</span>                                         ,&quot;<span class="string">font-size</span>&quot;  <span class="comment">// 4
+</span>
+                                      ,&quot;<span class="string">writing-mode</span>&quot;  <span class="comment">// 5
+</span>
+                                        ,&quot;<span class="string">background</span>&quot;  <span class="comment">// 6
+</span>                               ,&quot;<span class="string">background-position</span>&quot;  <span class="comment">// 7
+</span>                                            ,&quot;<span class="string">border</span>&quot;  <span class="comment">// 8
+</span>                                      ,&quot;<span class="string">border-color</span>&quot;  <span class="comment">// 9
+</span>                                      ,&quot;<span class="string">border-style</span>&quot;  <span class="comment">// 10
+</span>                                      ,&quot;<span class="string">border-width</span>&quot;  <span class="comment">// 11
+</span>                                     ,&quot;<span class="string">border-bottom</span>&quot;  <span class="comment">// 12
+</span>                                       ,&quot;<span class="string">border-left</span>&quot;  <span class="comment">// 13
+</span>                                      ,&quot;<span class="string">border-right</span>&quot;  <span class="comment">// 14
+</span>                                        ,&quot;<span class="string">border-top</span>&quot;  <span class="comment">// 15
+</span>                                    ,&quot;<span class="string">border-spacing</span>&quot;  <span class="comment">// 16
+</span>                                               ,&quot;<span class="string">cue</span>&quot;  <span class="comment">// 17
+</span>                                            ,&quot;<span class="string">margin</span>&quot;  <span class="comment">// 18
+</span>                                           ,&quot;<span class="string">padding</span>&quot;  <span class="comment">// 19
+</span>                                  ,&quot;<span class="string">page-break-after</span>&quot;  <span class="comment">// 20
+</span>                                 ,&quot;<span class="string">page-break-before</span>&quot;  <span class="comment">// 21
+</span>                                 ,&quot;<span class="string">page-break-inside</span>&quot;  <span class="comment">// 22
+</span>                                             ,&quot;<span class="string">pause</span>&quot;  <span class="comment">// 23
+</span>                                          ,&quot;<span class="string">position</span>&quot;  <span class="comment">// 24
+</span>                                              ,&quot;<span class="string">size</span>&quot;  <span class="comment">// 25
+</span>                                    ,&quot;<span class="string">vertical-align</span>&quot;  <span class="comment">// 26
+</span>                                       ,&quot;<span class="string">white-space</span>&quot;  <span class="comment">// 27
+</span>                                          ,&quot;<span class="string">xml:lang</span>&quot;  <span class="comment">// 28
+</span>
+                                 ,&quot;<span class="string">absolute-position</span>&quot;  <span class="comment">// 29
+</span>                                      ,&quot;<span class="string">active-state</span>&quot;  <span class="comment">// 30
+</span>                                  ,&quot;<span class="string">alignment-adjust</span>&quot;  <span class="comment">// 31
+</span>                                ,&quot;<span class="string">alignment-baseline</span>&quot;  <span class="comment">// 32
+</span>                                      ,&quot;<span class="string">auto-restore</span>&quot;  <span class="comment">// 33
+</span>                                           ,&quot;<span class="string">azimuth</span>&quot;  <span class="comment">// 34
+</span>                             ,&quot;<span class="string">background-attachment</span>&quot;  <span class="comment">// 35
+</span>                                  ,&quot;<span class="string">background-color</span>&quot;  <span class="comment">// 36
+</span>                                  ,&quot;<span class="string">background-image</span>&quot;  <span class="comment">// 37
+</span>                    ,&quot;<span class="string">background-position-horizontal</span>&quot;  <span class="comment">// 38
+</span>                      ,&quot;<span class="string">background-position-vertical</span>&quot;  <span class="comment">// 39
+</span>                                 ,&quot;<span class="string">background-repeat</span>&quot;  <span class="comment">// 40
+</span>                                    ,&quot;<span class="string">baseline-shift</span>&quot;  <span class="comment">// 41
+</span>                                ,&quot;<span class="string">blank-or-not-blank</span>&quot;  <span class="comment">// 42
+</span>                       ,&quot;<span class="string">block-progression-dimension</span>&quot;  <span class="comment">// 43
+</span>               ,&quot;<span class="string">block-progression-dimension.minimum</span>&quot;  <span class="comment">// 44
+</span>               ,&quot;<span class="string">block-progression-dimension.optimum</span>&quot;  <span class="comment">// 45
+</span>               ,&quot;<span class="string">block-progression-dimension.maximum</span>&quot;  <span class="comment">// 46
+</span>
+                                ,&quot;<span class="string">border-after-color</span>&quot;  <span class="comment">// 47
+</span>                           ,&quot;<span class="string">border-after-precedence</span>&quot;  <span class="comment">// 48
+</span>                                ,&quot;<span class="string">border-after-style</span>&quot;  <span class="comment">// 49
+</span>                                ,&quot;<span class="string">border-after-width</span>&quot;  <span class="comment">// 50
+</span>                         ,&quot;<span class="string">border-after-width.length</span>&quot;  <span class="comment">// 51
+</span>                 ,&quot;<span class="string">border-after-width.conditionality</span>&quot;  <span class="comment">// 52
+</span>                               ,&quot;<span class="string">border-before-color</span>&quot;  <span class="comment">// 53
+</span>                          ,&quot;<span class="string">border-before-precedence</span>&quot;  <span class="comment">// 54
+</span>                               ,&quot;<span class="string">border-before-style</span>&quot;  <span class="comment">// 55
+</span>                               ,&quot;<span class="string">border-before-width</span>&quot;  <span class="comment">// 56
+</span>                        ,&quot;<span class="string">border-before-width.length</span>&quot;  <span class="comment">// 57
+</span>                ,&quot;<span class="string">border-before-width.conditionality</span>&quot;  <span class="comment">// 58
+</span>                                  ,&quot;<span class="string">border-end-color</span>&quot;  <span class="comment">// 59
+</span>                             ,&quot;<span class="string">border-end-precedence</span>&quot;  <span class="comment">// 60
+</span>                                  ,&quot;<span class="string">border-end-style</span>&quot;  <span class="comment">// 61
+</span>                                  ,&quot;<span class="string">border-end-width</span>&quot;  <span class="comment">// 62
+</span>                           ,&quot;<span class="string">border-end-width.length</span>&quot;  <span class="comment">// 63
+</span>                   ,&quot;<span class="string">border-end-width.conditionality</span>&quot;  <span class="comment">// 64
+</span>                                ,&quot;<span class="string">border-start-color</span>&quot;  <span class="comment">// 65
+</span>                           ,&quot;<span class="string">border-start-precedence</span>&quot;  <span class="comment">// 66
+</span>                                ,&quot;<span class="string">border-start-style</span>&quot;  <span class="comment">// 67
+</span>                                ,&quot;<span class="string">border-start-width</span>&quot;  <span class="comment">// 68
+</span>                         ,&quot;<span class="string">border-start-width.length</span>&quot;  <span class="comment">// 69
+</span>                 ,&quot;<span class="string">border-start-width.conditionality</span>&quot;  <span class="comment">// 70
+</span>
+                               ,&quot;<span class="string">border-bottom-color</span>&quot;  <span class="comment">// 71
+</span>                               ,&quot;<span class="string">border-bottom-style</span>&quot;  <span class="comment">// 72
+</span>                               ,&quot;<span class="string">border-bottom-width</span>&quot;  <span class="comment">// 73
+</span>                                 ,&quot;<span class="string">border-left-color</span>&quot;  <span class="comment">// 74
+</span>                                 ,&quot;<span class="string">border-left-style</span>&quot;  <span class="comment">// 75
+</span>                                 ,&quot;<span class="string">border-left-width</span>&quot;  <span class="comment">// 76
+</span>                                ,&quot;<span class="string">border-right-color</span>&quot;  <span class="comment">// 77
+</span>                                ,&quot;<span class="string">border-right-style</span>&quot;  <span class="comment">// 78
+</span>                                ,&quot;<span class="string">border-right-width</span>&quot;  <span class="comment">// 79
+</span>                                  ,&quot;<span class="string">border-top-color</span>&quot;  <span class="comment">// 80
+</span>                                  ,&quot;<span class="string">border-top-style</span>&quot;  <span class="comment">// 81
+</span>                                  ,&quot;<span class="string">border-top-width</span>&quot;  <span class="comment">// 82
+</span>
+                                   ,&quot;<span class="string">border-collapse</span>&quot;  <span class="comment">// 83
+</span>                                 ,&quot;<span class="string">border-separation</span>&quot;  <span class="comment">// 84
+</span>     ,&quot;<span class="string">border-separation.block-progression-direction</span>&quot;  <span class="comment">// 85
+</span>    ,&quot;<span class="string">border-separation.inline-progression-direction</span>&quot;  <span class="comment">// 86
+</span>                                            ,&quot;<span class="string">bottom</span>&quot;  <span class="comment">// 87
+</span>                                       ,&quot;<span class="string">break-after</span>&quot;  <span class="comment">// 88
+</span>                                      ,&quot;<span class="string">break-before</span>&quot;  <span class="comment">// 89
+</span>                                      ,&quot;<span class="string">caption-side</span>&quot;  <span class="comment">// 90
+</span>                                         ,&quot;<span class="string">case-name</span>&quot;  <span class="comment">// 91
+</span>                                        ,&quot;<span class="string">case-title</span>&quot;  <span class="comment">// 92
+</span>                                         ,&quot;<span class="string">character</span>&quot;  <span class="comment">// 93
+</span>                                             ,&quot;<span class="string">clear</span>&quot;  <span class="comment">// 94
+</span>                                              ,&quot;<span class="string">clip</span>&quot;  <span class="comment">// 95
+</span>                                             ,&quot;<span class="string">color</span>&quot;  <span class="comment">// 96
+</span>                                ,&quot;<span class="string">color-profile-name</span>&quot;  <span class="comment">// 97
+</span>                                      ,&quot;<span class="string">column-count</span>&quot;  <span class="comment">// 98
+</span>                                        ,&quot;<span class="string">column-gap</span>&quot;  <span class="comment">// 99
+</span>                                      ,&quot;<span class="string">column-width</span>&quot;  <span class="comment">// 100
+</span>                                    ,&quot;<span class="string">content-height</span>&quot;  <span class="comment">// 101
+</span>                                      ,&quot;<span class="string">content-type</span>&quot;  <span class="comment">// 102
+</span>                                     ,&quot;<span class="string">content-width</span>&quot;  <span class="comment">// 103
+</span>                                           ,&quot;<span class="string">country</span>&quot;  <span class="comment">// 104
+</span>                                         ,&quot;<span class="string">cue-after</span>&quot;  <span class="comment">// 105
+</span>                                        ,&quot;<span class="string">cue-before</span>&quot;  <span class="comment">// 106
+</span>                      ,&quot;<span class="string">destination-placement-offset</span>&quot;  <span class="comment">// 107
+</span>                                         ,&quot;<span class="string">direction</span>&quot;  <span class="comment">// 108
+</span>                                     ,&quot;<span class="string">display-align</span>&quot;  <span class="comment">// 109
+</span>                                 ,&quot;<span class="string">dominant-baseline</span>&quot;  <span class="comment">// 110
+</span>                                         ,&quot;<span class="string">elevation</span>&quot;  <span class="comment">// 111
+</span>                                       ,&quot;<span class="string">empty-cells</span>&quot;  <span class="comment">// 112
+</span>                                        ,&quot;<span class="string">end-indent</span>&quot;  <span class="comment">// 113
+</span>                                          ,&quot;<span class="string">ends-row</span>&quot;  <span class="comment">// 114
+</span>                                            ,&quot;<span class="string">extent</span>&quot;  <span class="comment">// 115
+</span>                              ,&quot;<span class="string">external-destination</span>&quot;  <span class="comment">// 116
+</span>                                             ,&quot;<span class="string">float</span>&quot;  <span class="comment">// 117
+</span>                                         ,&quot;<span class="string">flow-name</span>&quot;  <span class="comment">// 118
+</span>                                       ,&quot;<span class="string">font-family</span>&quot;  <span class="comment">// 119
+</span>                           ,&quot;<span class="string">font-selection-strategy</span>&quot;  <span class="comment">// 120
+</span>                                  ,&quot;<span class="string">font-size-adjust</span>&quot;  <span class="comment">// 121
+</span>                                      ,&quot;<span class="string">font-stretch</span>&quot;  <span class="comment">// 122
+</span>                                        ,&quot;<span class="string">font-style</span>&quot;  <span class="comment">// 123
+</span>                                      ,&quot;<span class="string">font-variant</span>&quot;  <span class="comment">// 124
+</span>                                       ,&quot;<span class="string">font-weight</span>&quot;  <span class="comment">// 125
+</span>                                  ,&quot;<span class="string">force-page-count</span>&quot;  <span class="comment">// 126
+</span>                                            ,&quot;<span class="string">format</span>&quot;  <span class="comment">// 127
+</span>                      ,&quot;<span class="string">glyph-orientation-horizontal</span>&quot;  <span class="comment">// 128
+</span>                        ,&quot;<span class="string">glyph-orientation-vertical</span>&quot;  <span class="comment">// 129
+</span>                                ,&quot;<span class="string">grouping-separator</span>&quot;  <span class="comment">// 130
+</span>                                     ,&quot;<span class="string">grouping-size</span>&quot;  <span class="comment">// 131
+</span>                                            ,&quot;<span class="string">height</span>&quot;  <span class="comment">// 132
+</span>                                         ,&quot;<span class="string">hyphenate</span>&quot;  <span class="comment">// 133
+</span>                             ,&quot;<span class="string">hyphenation-character</span>&quot;  <span class="comment">// 134
+</span>                                  ,&quot;<span class="string">hyphenation-keep</span>&quot;  <span class="comment">// 135
+</span>                          ,&quot;<span class="string">hyphenation-ladder-count</span>&quot;  <span class="comment">// 136
+</span>                  ,&quot;<span class="string">hyphenation-push-character-count</span>&quot;  <span class="comment">// 137
+</span>                ,&quot;<span class="string">hyphenation-remain-character-count</span>&quot;  <span class="comment">// 138
+</span>                                                ,&quot;<span class="string">id</span>&quot;  <span class="comment">// 139
+</span>                              ,&quot;<span class="string">indicate-destination</span>&quot;  <span class="comment">// 140
+</span>                               ,&quot;<span class="string">initial-page-number</span>&quot;  <span class="comment">// 141
+</span>                      ,&quot;<span class="string">inline-progression-dimension</span>&quot;  <span class="comment">// 142
+</span>              ,&quot;<span class="string">inline-progression-dimension.minimum</span>&quot;  <span class="comment">// 143
+</span>              ,&quot;<span class="string">inline-progression-dimension.optimum</span>&quot;  <span class="comment">// 144
+</span>              ,&quot;<span class="string">inline-progression-dimension.maximum</span>&quot;  <span class="comment">// 145
+</span>                              ,&quot;<span class="string">internal-destination</span>&quot;  <span class="comment">// 146
+</span>                                ,&quot;<span class="string">intrusion-displace</span>&quot;  <span class="comment">// 147
+</span>                                     ,&quot;<span class="string">keep-together</span>&quot;  <span class="comment">// 148
+</span>                         ,&quot;<span class="string">keep-together.within-line</span>&quot;  <span class="comment">// 149
+</span>                       ,&quot;<span class="string">keep-together.within-column</span>&quot;  <span class="comment">// 150
+</span>                         ,&quot;<span class="string">keep-together.within-page</span>&quot;  <span class="comment">// 151
+</span>                                    ,&quot;<span class="string">keep-with-next</span>&quot;  <span class="comment">// 152
+</span>                        ,&quot;<span class="string">keep-with-next.within-line</span>&quot;  <span class="comment">// 153
+</span>                      ,&quot;<span class="string">keep-with-next.within-column</span>&quot;  <span class="comment">// 154
+</span>                        ,&quot;<span class="string">keep-with-next.within-page</span>&quot;  <span class="comment">// 155
+</span>                                ,&quot;<span class="string">keep-with-previous</span>&quot;  <span class="comment">// 156
+</span>                    ,&quot;<span class="string">keep-with-previous.within-line</span>&quot;  <span class="comment">// 157
+</span>                  ,&quot;<span class="string">keep-with-previous.within-column</span>&quot;  <span class="comment">// 158
+</span>                    ,&quot;<span class="string">keep-with-previous.within-page</span>&quot;  <span class="comment">// 159
+</span>                                          ,&quot;<span class="string">language</span>&quot;  <span class="comment">// 160
+</span>                              ,&quot;<span class="string">last-line-end-indent</span>&quot;  <span class="comment">// 161
+</span>                                  ,&quot;<span class="string">leader-alignment</span>&quot;  <span class="comment">// 162
+</span>                                     ,&quot;<span class="string">leader-length</span>&quot;  <span class="comment">// 163
+</span>                             ,&quot;<span class="string">leader-length.minimum</span>&quot;  <span class="comment">// 164
+</span>                             ,&quot;<span class="string">leader-length.optimum</span>&quot;  <span class="comment">// 165
+</span>                             ,&quot;<span class="string">leader-length.maximum</span>&quot;  <span class="comment">// 166
+</span>                                    ,&quot;<span class="string">leader-pattern</span>&quot;  <span class="comment">// 167
+</span>                              ,&quot;<span class="string">leader-pattern-width</span>&quot;  <span class="comment">// 168
+</span>                                              ,&quot;<span class="string">left</span>&quot;  <span class="comment">// 169
+</span>                                    ,&quot;<span class="string">letter-spacing</span>&quot;  <span class="comment">// 170
+</span>                            ,&quot;<span class="string">letter-spacing.minimum</span>&quot;  <span class="comment">// 171
+</span>                            ,&quot;<span class="string">letter-spacing.optimum</span>&quot;  <span class="comment">// 172
+</span>                            ,&quot;<span class="string">letter-spacing.maximum</span>&quot;  <span class="comment">// 173
+</span>                     ,&quot;<span class="string">letter-spacing.conditionality</span>&quot;  <span class="comment">// 174
+</span>                         ,&quot;<span class="string">letter-spacing.precedence</span>&quot;  <span class="comment">// 175
+</span>                                      ,&quot;<span class="string">letter-value</span>&quot;  <span class="comment">// 176
+</span>                                ,&quot;<span class="string">linefeed-treatment</span>&quot;  <span class="comment">// 177
+</span>                                       ,&quot;<span class="string">line-height</span>&quot;  <span class="comment">// 178
+</span>                               ,&quot;<span class="string">line-height.minimum</span>&quot;  <span class="comment">// 179
+</span>                               ,&quot;<span class="string">line-height.optimum</span>&quot;  <span class="comment">// 180
+</span>                               ,&quot;<span class="string">line-height.maximum</span>&quot;  <span class="comment">// 181
+</span>                        ,&quot;<span class="string">line-height.conditionality</span>&quot;  <span class="comment">// 182
+</span>                            ,&quot;<span class="string">line-height.precedence</span>&quot;  <span class="comment">// 183
+</span>                      ,&quot;<span class="string">line-height-shift-adjustment</span>&quot;  <span class="comment">// 184
+</span>                            ,&quot;<span class="string">line-stacking-strategy</span>&quot;  <span class="comment">// 185
+</span>
+                                 ,&quot;<span class="string">marker-class-name</span>&quot;  <span class="comment">// 186
+</span>                                       ,&quot;<span class="string">master-name</span>&quot;  <span class="comment">// 187
+</span>                                  ,&quot;<span class="string">master-reference</span>&quot;  <span class="comment">// 188
+</span>                                        ,&quot;<span class="string">max-height</span>&quot;  <span class="comment">// 189
+</span>                                   ,&quot;<span class="string">maximum-repeats</span>&quot;  <span class="comment">// 190
+</span>                                         ,&quot;<span class="string">max-width</span>&quot;  <span class="comment">// 191
+</span>                                       ,&quot;<span class="string">media-usage</span>&quot;  <span class="comment">// 192
+</span>                                        ,&quot;<span class="string">min-height</span>&quot;  <span class="comment">// 193
+</span>                                         ,&quot;<span class="string">min-width</span>&quot;  <span class="comment">// 194
+</span>                           ,&quot;<span class="string">number-columns-repeated</span>&quot;  <span class="comment">// 195
+</span>                               ,&quot;<span class="string">number-rows-spanned</span>&quot;  <span class="comment">// 196
+</span>                                       ,&quot;<span class="string">odd-or-even</span>&quot;  <span class="comment">// 197
+</span>                                           ,&quot;<span class="string">orphans</span>&quot;  <span class="comment">// 198
+</span>                                          ,&quot;<span class="string">overflow</span>&quot;  <span class="comment">// 199
+</span>
+                                     ,&quot;<span class="string">padding-after</span>&quot;  <span class="comment">// 200
+</span>                              ,&quot;<span class="string">padding-after.length</span>&quot;  <span class="comment">// 201
+</span>                      ,&quot;<span class="string">padding-after.conditionality</span>&quot;  <span class="comment">// 202
+</span>                                    ,&quot;<span class="string">padding-before</span>&quot;  <span class="comment">// 203
+</span>                             ,&quot;<span class="string">padding-before.length</span>&quot;  <span class="comment">// 204
+</span>                     ,&quot;<span class="string">padding-before.conditionality</span>&quot;  <span class="comment">// 205
+</span>                                       ,&quot;<span class="string">padding-end</span>&quot;  <span class="comment">// 206
+</span>                                ,&quot;<span class="string">padding-end.length</span>&quot;  <span class="comment">// 207
+</span>                        ,&quot;<span class="string">padding-end.conditionality</span>&quot;  <span class="comment">// 208
+</span>                                     ,&quot;<span class="string">padding-start</span>&quot;  <span class="comment">// 209
+</span>                              ,&quot;<span class="string">padding-start.length</span>&quot;  <span class="comment">// 210
+</span>                      ,&quot;<span class="string">padding-start.conditionality</span>&quot;  <span class="comment">// 211
+</span>
+                                    ,&quot;<span class="string">padding-bottom</span>&quot;  <span class="comment">// 212
+</span>                                      ,&quot;<span class="string">padding-left</span>&quot;  <span class="comment">// 213
+</span>                                     ,&quot;<span class="string">padding-right</span>&quot;  <span class="comment">// 214
+</span>                                       ,&quot;<span class="string">padding-top</span>&quot;  <span class="comment">// 215
+</span>
+                                       ,&quot;<span class="string">page-height</span>&quot;  <span class="comment">// 216
+</span>                                     ,&quot;<span class="string">page-position</span>&quot;  <span class="comment">// 217
+</span>                                        ,&quot;<span class="string">page-width</span>&quot;  <span class="comment">// 218
+</span>                                       ,&quot;<span class="string">pause-after</span>&quot;  <span class="comment">// 219
+</span>                                      ,&quot;<span class="string">pause-before</span>&quot;  <span class="comment">// 220
+</span>                                             ,&quot;<span class="string">pitch</span>&quot;  <span class="comment">// 221
+</span>                                       ,&quot;<span class="string">pitch-range</span>&quot;  <span class="comment">// 222
+</span>                                       ,&quot;<span class="string">play-during</span>&quot;  <span class="comment">// 223
+</span>                                        ,&quot;<span class="string">precedence</span>&quot;  <span class="comment">// 224
+</span>               ,&quot;<span class="string">provisional-distance-between-starts</span>&quot;  <span class="comment">// 225
+</span>                      ,&quot;<span class="string">provisional-label-separation</span>&quot;  <span class="comment">// 226
+</span>                             ,&quot;<span class="string">reference-orientation</span>&quot;  <span class="comment">// 227
+</span>                                            ,&quot;<span class="string">ref-id</span>&quot;  <span class="comment">// 228
+</span>                                       ,&quot;<span class="string">region-name</span>&quot;  <span class="comment">// 229
+</span>                                    ,&quot;<span class="string">relative-align</span>&quot;  <span class="comment">// 230
+</span>                                 ,&quot;<span class="string">relative-position</span>&quot;  <span class="comment">// 231
+</span>                                  ,&quot;<span class="string">rendering-intent</span>&quot;  <span class="comment">// 232
+</span>                                 ,&quot;<span class="string">retrieve-boundary</span>&quot;  <span class="comment">// 233
+</span>                               ,&quot;<span class="string">retrieve-class-name</span>&quot;  <span class="comment">// 234
+</span>                                 ,&quot;<span class="string">retrieve-position</span>&quot;  <span class="comment">// 235
+</span>                                          ,&quot;<span class="string">richness</span>&quot;  <span class="comment">// 236
+</span>                                             ,&quot;<span class="string">right</span>&quot;  <span class="comment">// 237
+</span>                                              ,&quot;<span class="string">role</span>&quot;  <span class="comment">// 238
+</span>                                        ,&quot;<span class="string">rule-style</span>&quot;  <span class="comment">// 239
+</span>                                    ,&quot;<span class="string">rule-thickness</span>&quot;  <span class="comment">// 240
+</span>                                           ,&quot;<span class="string">scaling</span>&quot;  <span class="comment">// 241
+</span>                                    ,&quot;<span class="string">scaling-method</span>&quot;  <span class="comment">// 242
+</span>                                      ,&quot;<span class="string">score-spaces</span>&quot;  <span class="comment">// 243
+</span>                                            ,&quot;<span class="string">script</span>&quot;  <span class="comment">// 244
+</span>                                  ,&quot;<span class="string">show-destination</span>&quot;  <span class="comment">// 245
+</span>                                   ,&quot;<span class="string">source-document</span>&quot;  <span class="comment">// 246
+</span>
+                                       ,&quot;<span class="string">space-after</span>&quot;  <span class="comment">// 247
+</span>                               ,&quot;<span class="string">space-after.minimum</span>&quot;  <span class="comment">// 248
+</span>                               ,&quot;<span class="string">space-after.optimum</span>&quot;  <span class="comment">// 249
+</span>                               ,&quot;<span class="string">space-after.maximum</span>&quot;  <span class="comment">// 250
+</span>                        ,&quot;<span class="string">space-after.conditionality</span>&quot;  <span class="comment">// 251
+</span>                            ,&quot;<span class="string">space-after.precedence</span>&quot;  <span class="comment">// 252
+</span>                                      ,&quot;<span class="string">space-before</span>&quot;  <span class="comment">// 253
+</span>                              ,&quot;<span class="string">space-before.minimum</span>&quot;  <span class="comment">// 254
+</span>                              ,&quot;<span class="string">space-before.optimum</span>&quot;  <span class="comment">// 255
+</span>                              ,&quot;<span class="string">space-before.maximum</span>&quot;  <span class="comment">// 256
+</span>                       ,&quot;<span class="string">space-before.conditionality</span>&quot;  <span class="comment">// 257
+</span>                           ,&quot;<span class="string">space-before.precedence</span>&quot;  <span class="comment">// 258
+</span>                                         ,&quot;<span class="string">space-end</span>&quot;  <span class="comment">// 259
+</span>                                 ,&quot;<span class="string">space-end.minimum</span>&quot;  <span class="comment">// 260
+</span>                                 ,&quot;<span class="string">space-end.optimum</span>&quot;  <span class="comment">// 261
+</span>                                 ,&quot;<span class="string">space-end.maximum</span>&quot;  <span class="comment">// 262
+</span>                          ,&quot;<span class="string">space-end.conditionality</span>&quot;  <span class="comment">// 263
+</span>                              ,&quot;<span class="string">space-end.precedence</span>&quot;  <span class="comment">// 264
+</span>                                       ,&quot;<span class="string">space-start</span>&quot;  <span class="comment">// 265
+</span>                               ,&quot;<span class="string">space-start.minimum</span>&quot;  <span class="comment">// 266
+</span>                               ,&quot;<span class="string">space-start.optimum</span>&quot;  <span class="comment">// 267
+</span>                               ,&quot;<span class="string">space-start.maximum</span>&quot;  <span class="comment">// 268
+</span>                        ,&quot;<span class="string">space-start.conditionality</span>&quot;  <span class="comment">// 269
+</span>                            ,&quot;<span class="string">space-start.precedence</span>&quot;  <span class="comment">// 270
+</span>
+                                     ,&quot;<span class="string">margin-bottom</span>&quot;  <span class="comment">// 271
+</span>                                       ,&quot;<span class="string">margin-left</span>&quot;  <span class="comment">// 272
+</span>                                      ,&quot;<span class="string">margin-right</span>&quot;  <span class="comment">// 273
+</span>                                        ,&quot;<span class="string">margin-top</span>&quot;  <span class="comment">// 274
+</span>
+                                              ,&quot;<span class="string">span</span>&quot;  <span class="comment">// 275
+</span>                                             ,&quot;<span class="string">speak</span>&quot;  <span class="comment">// 276
+</span>                                      ,&quot;<span class="string">speak-header</span>&quot;  <span class="comment">// 277
+</span>                                     ,&quot;<span class="string">speak-numeral</span>&quot;  <span class="comment">// 278
+</span>                                 ,&quot;<span class="string">speak-punctuation</span>&quot;  <span class="comment">// 279
+</span>                                       ,&quot;<span class="string">speech-rate</span>&quot;  <span class="comment">// 280
+</span>                                               ,&quot;<span class="string">src</span>&quot;  <span class="comment">// 281
+</span>                                      ,&quot;<span class="string">start-indent</span>&quot;  <span class="comment">// 282
+</span>                                    ,&quot;<span class="string">starting-state</span>&quot;  <span class="comment">// 283
+</span>                                        ,&quot;<span class="string">starts-row</span>&quot;  <span class="comment">// 284
+</span>                                            ,&quot;<span class="string">stress</span>&quot;  <span class="comment">// 285
+</span>                            ,&quot;<span class="string">suppress-at-line-break</span>&quot;  <span class="comment">// 286
+</span>                                         ,&quot;<span class="string">switch-to</span>&quot;  <span class="comment">// 287
+</span>                                      ,&quot;<span class="string">table-layout</span>&quot;  <span class="comment">// 288
+</span>                        ,&quot;<span class="string">table-omit-footer-at-break</span>&quot;  <span class="comment">// 289
+</span>                        ,&quot;<span class="string">table-omit-header-at-break</span>&quot;  <span class="comment">// 290
+</span>                       ,&quot;<span class="string">target-presentation-context</span>&quot;  <span class="comment">// 291
+</span>                         ,&quot;<span class="string">target-processing-context</span>&quot;  <span class="comment">// 292
+</span>                                 ,&quot;<span class="string">target-stylesheet</span>&quot;  <span class="comment">// 293
+</span>                                        ,&quot;<span class="string">text-align</span>&quot;  <span class="comment">// 294
+</span>                                   ,&quot;<span class="string">text-align-last</span>&quot;  <span class="comment">// 295
+</span>                                     ,&quot;<span class="string">text-altitude</span>&quot;  <span class="comment">// 296
+</span>                                   ,&quot;<span class="string">text-decoration</span>&quot;  <span class="comment">// 297
+</span>                                        ,&quot;<span class="string">text-depth</span>&quot;  <span class="comment">// 298
+</span>                                       ,&quot;<span class="string">text-indent</span>&quot;  <span class="comment">// 299
+</span>                                       ,&quot;<span class="string">text-shadow</span>&quot;  <span class="comment">// 300
+</span>                                    ,&quot;<span class="string">text-transform</span>&quot;  <span class="comment">// 301
+</span>                                               ,&quot;<span class="string">top</span>&quot;  <span class="comment">// 302
+</span>                               ,&quot;<span class="string">treat-as-word-space</span>&quot;  <span class="comment">// 303
+</span>                                      ,&quot;<span class="string">unicode-bidi</span>&quot;  <span class="comment">// 304
+</span>           ,&quot;<span class="string">usage-context-of-suppress-at-line-break</span>&quot;  <span class="comment">// 305
+</span>                                        ,&quot;<span class="string">visibility</span>&quot;  <span class="comment">// 306
+</span>                                      ,&quot;<span class="string">voice-family</span>&quot;  <span class="comment">// 307
+</span>                                            ,&quot;<span class="string">volume</span>&quot;  <span class="comment">// 308
+</span>                              ,&quot;<span class="string">white-space-collapse</span>&quot;  <span class="comment">// 309
+</span>                             ,&quot;<span class="string">white-space-treatment</span>&quot;  <span class="comment">// 310
+</span>                                            ,&quot;<span class="string">widows</span>&quot;  <span class="comment">// 311
+</span>                                             ,&quot;<span class="string">width</span>&quot;  <span class="comment">// 312
+</span>                                      ,&quot;<span class="string">word-spacing</span>&quot;  <span class="comment">// 313
+</span>                              ,&quot;<span class="string">word-spacing-minimum</span>&quot;  <span class="comment">// 314
+</span>                              ,&quot;<span class="string">word-spacing-optimum</span>&quot;  <span class="comment">// 315
+</span>                              ,&quot;<span class="string">word-spacing-maximum</span>&quot;  <span class="comment">// 316
+</span>                       ,&quot;<span class="string">word-spacing-conditionality</span>&quot;  <span class="comment">// 317
+</span>                           ,&quot;<span class="string">word-spacing-precedence</span>&quot;  <span class="comment">// 318
+</span>                                       ,&quot;<span class="string">wrap-option</span>&quot;  <span class="comment">// 319
+</span>                                           ,&quot;<span class="string">z-index</span>&quot;  <span class="comment">// 320
+</span>    };
+
+    <span class="comment">/**
+     * A &lt;tt&gt;hashMap&lt;/tt&gt; mapping property names (the keys) to
+     * property integer indices.
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">HashMap</span> <span class="variable-name" id="toIndex">toIndex</span>;
+    <span class="jde-java-font-lock-modifier">static</span> {
+        toIndex = <span class="keyword">new</span> <span class="type">HashMap</span>(<span class="jde-java-font-lock-constant">LAST_PROPERTY_INDEX</span> + <span class="jde-java-font-lock-number">1</span>);
+        <span class="comment">// Set up the toIndex Hashmap with the name of the
+</span>        <span class="comment">// property as a key, and the integer index as a value
+</span>        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable-name" id="i">i</span> = <span class="jde-java-font-lock-number">0</span>; i &lt;= <span class="jde-java-font-lock-constant">LAST_PROPERTY_INDEX</span>; i++) {
+            <span class="keyword">if</span> (toIndex.put(propertyNames[i],
+                                    Ints.consts.get(i)) != <span class="jde-java-font-lock-constant" id="null">null</span>) {
+                <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">RuntimeException</span>(
+                    &quot;<span class="string">Duplicate values in toIndex for key </span>&quot; +
+                    propertyNames[i]);
+            }
+        }
+    }
+
+    <span class="comment">/**
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name" id="propindex">propindex</span><span class="comment"> &lt;tt&gt;int&lt;/tt&gt; index of the FO property.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> &lt;tt&gt;String&lt;/tt&gt; name of the indexd FO property.
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">PropertyException</span><span class="comment"> if the property index is invalid.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="type">String</span> <span class="function-name" id="getPropertyName">getPropertyName</span>(<span class="type">int</span> <span class="variable-name">propindex</span>)
+                <span class="keyword">throws</span> <span class="type">PropertyException</span>
+    {
+        <span class="keyword">if</span> (propindex &lt; <span class="jde-java-font-lock-number">0</span> || propindex &gt; <span class="jde-java-font-lock-constant">LAST_PROPERTY_INDEX</span>)
+                <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">PropertyException</span>
+                        (&quot;<span class="string">getPropertyName: index is invalid: </span>&quot; + propindex);
+        <span class="keyword">return</span> propertyNames[propindex];
+    }
+
+    <span class="comment">/**
+     * Get the property index of a property name.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">propindex</span><span class="comment"> &lt;tt&gt;int&lt;/tt&gt; index of the FO property.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> &lt;tt&gt;String&lt;/tt&gt; name of the indexd FO property.
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">PropertyException</span><span class="comment"> if the property index is invalid.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="jde-java-font-lock-modifier">static</span> <span class="type">int</span> <span class="function-name" id="getPropertyIndex">getPropertyIndex</span>(<span class="type">String</span> <span class="variable-name" id="name">name</span>)
+        <span class="keyword">throws</span> <span class="type">PropertyException</span>
+    {
+        <span class="type">Integer</span> <span class="variable-name" id="intg">intg</span> = (<span class="type">Integer</span>)(toIndex.get(name));
+        <span class="keyword">if</span> (intg == <span class="jde-java-font-lock-constant">null</span>)
+            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">PropertyException</span>
+                                (&quot;<span class="string">Property name '</span>&quot; + name + &quot;<span class="string">' is unknown.</span>&quot;);
+        <span class="keyword">return</span> intg.intValue();
+    }
+
+}
+</pre>
+  </body>
+</html>

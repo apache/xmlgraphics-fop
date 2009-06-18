@@ -1,0 +1,674 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<!--
+  Copyright 2001-2004 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<!-- Created by htmlize-0.67 in css mode. -->
+<html>
+  <head>
+    <title>PropertyTokenizer.java</title>
+    <style type="text/css">
+    <!--
+      body {
+        color: #000000;
+        background-color: #faf0e6;
+      } /* default */
+      .function-name {
+        color: #8b2323;
+        background-color: #faf0e6;
+      } /* font-lock-function-name-face */
+      .jde-java-font-lock-italic {
+        background-color: #faf0e6;
+        font-style: italic;
+      } /* jde-java-font-lock-italic-face */
+      .jde-java-font-lock-modifier {
+        color: #da70d6;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-modifier-face */
+      .keyword {
+        color: #8b0000;
+        background-color: #faf0e6;
+      } /* font-lock-keyword-face */
+      .variable-name {
+        color: #8b008b;
+        background-color: #faf0e6;
+      } /* font-lock-variable-name-face */
+      .string {
+        color: #008b00;
+        background-color: #faf0e6;
+      } /* font-lock-string-face */
+      .jde-java-font-lock-package {
+        color: #0000cd;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-package-face */
+      .jde-java-font-lock-constant {
+        color: #5f9ea0;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-constant-face */
+      .type {
+        color: #4682b4;
+        background-color: #faf0e6;
+      } /* font-lock-type-face */
+      .jde-java-font-lock-doc-tag {
+        color: #008b00;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-doc-tag-face */
+      .comment {
+        color: #00008b;
+        background-color: #faf0e6;
+      } /* font-lock-comment-face */
+      .jde-java-font-lock-number {
+        color: #bc8f8f;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-number-face */
+      a {
+        color: inherit;
+        background-color: inherit;
+        font: inherit;
+        text-decoration: inherit;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+    -->
+    </style>
+  </head>
+  <body>
+    <pre>
+<span class="comment">/*
+ * Copyright 2001-2004 The Apache Software Foundation.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */</span>
+ 
+<span class="keyword">package</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">fo</span>.<span class="jde-java-font-lock-package">expr</span>;
+
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">datatypes</span>.<span class="type">Numeric</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">datatypes</span>.<span class="type">Length</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">datatypes</span>.<span class="type">Frequency</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">datatypes</span>.<span class="type">Time</span>;
+
+<span class="comment">/**
+ * Class to tokenize XSL FO property expression.
+ * This class is heavily based on the epxression tokenizer in James Clark's
+ * XT, an XSLT processor.
+ */</span>
+<span class="keyword">class</span> <span class="function-name" id="PropertyTokenizerClass">PropertyTokenizer</span> {
+
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">String</span> <span class="variable-name" id="tag">tag</span> = &quot;<span class="string">$Name$</span>&quot;;
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">String</span> <span class="variable-name" id="revision">revision</span> = &quot;<span class="string">$Revision$</span>&quot;;
+
+    <span class="comment">/*
+     * Maintain the numbering of this list in (X)Emacs by issuing
+     * a shell command on the region with replacement (M-1 M-|).  Use
+     * the perl command:
+     * perl -p -e 'BEGIN{$n=0};$n++ if s/= [0-9]+/= $n/'
+     *
+     * in vi, set mark `</span><span class="jde-java-font-lock-doc-tag">a</span><span class="comment">' at the last line and
+     * !'aperl... etc
+     */</span>
+    <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">int</span>
+                 <span class="jde-java-font-lock-constant" id="EOF">EOF</span> = <span class="jde-java-font-lock-number">0</span>
+             ,<span class="jde-java-font-lock-constant" id="NCNAME">NCNAME</span> = <span class="jde-java-font-lock-number">1</span>
+           ,<span class="jde-java-font-lock-constant" id="MULTIPLY">MULTIPLY</span> = <span class="jde-java-font-lock-number">2</span>
+               ,<span class="jde-java-font-lock-constant" id="LPAR">LPAR</span> = <span class="jde-java-font-lock-number">3</span>
+               ,<span class="jde-java-font-lock-constant" id="RPAR">RPAR</span> = <span class="jde-java-font-lock-number">4</span>
+            ,<span class="jde-java-font-lock-constant" id="LITERAL">LITERAL</span> = <span class="jde-java-font-lock-number">5</span>
+      ,<span class="jde-java-font-lock-constant" id="FUNCTION_LPAR">FUNCTION_LPAR</span> = <span class="jde-java-font-lock-number">6</span>
+               ,<span class="jde-java-font-lock-constant" id="PLUS">PLUS</span> = <span class="jde-java-font-lock-number">7</span>
+              ,<span class="jde-java-font-lock-constant" id="MINUS">MINUS</span> = <span class="jde-java-font-lock-number">8</span>
+                ,<span class="jde-java-font-lock-constant" id="MOD">MOD</span> = <span class="jde-java-font-lock-number">9</span>
+                ,<span class="jde-java-font-lock-constant" id="DIV">DIV</span> = <span class="jde-java-font-lock-number">10</span>
+              ,<span class="jde-java-font-lock-constant" id="COMMA">COMMA</span> = <span class="jde-java-font-lock-number">11</span>
+            ,<span class="jde-java-font-lock-constant" id="PERCENT">PERCENT</span> = <span class="jde-java-font-lock-number">12</span>
+          ,<span class="jde-java-font-lock-constant" id="COLORSPEC">COLORSPEC</span> = <span class="jde-java-font-lock-number">13</span>
+              ,<span class="jde-java-font-lock-constant" id="FLOAT">FLOAT</span> = <span class="jde-java-font-lock-number">14</span>
+            ,<span class="jde-java-font-lock-constant" id="INTEGER">INTEGER</span> = <span class="jde-java-font-lock-number">15</span>
+    ,<span class="jde-java-font-lock-constant" id="ABSOLUTE_LENGTH">ABSOLUTE_LENGTH</span> = <span class="jde-java-font-lock-number">16</span>
+    ,<span class="jde-java-font-lock-constant" id="RELATIVE_LENGTH">RELATIVE_LENGTH</span> = <span class="jde-java-font-lock-number">17</span>
+               ,<span class="jde-java-font-lock-constant" id="TIME">TIME</span> = <span class="jde-java-font-lock-number">18</span>
+               ,<span class="jde-java-font-lock-constant" id="FREQ">FREQ</span> = <span class="jde-java-font-lock-number">19</span>
+              ,<span class="jde-java-font-lock-constant" id="ANGLE">ANGLE</span> = <span class="jde-java-font-lock-number">20</span>
+            ,<span class="jde-java-font-lock-constant" id="INHERIT">INHERIT</span> = <span class="jde-java-font-lock-number">21</span>
+               ,<span class="jde-java-font-lock-constant" id="AUTO">AUTO</span> = <span class="jde-java-font-lock-number">22</span>
+               ,<span class="jde-java-font-lock-constant" id="NONE">NONE</span> = <span class="jde-java-font-lock-number">23</span>
+               ,<span class="jde-java-font-lock-constant" id="BOOL">BOOL</span> = <span class="jde-java-font-lock-number">24</span>
+                ,<span class="jde-java-font-lock-constant" id="URI">URI</span> = <span class="jde-java-font-lock-number">25</span>
+           ,<span class="jde-java-font-lock-constant" id="MIMETYPE">MIMETYPE</span> = <span class="jde-java-font-lock-number">26</span>
+              ,<span class="jde-java-font-lock-constant" id="SLASH">SLASH</span> = <span class="jde-java-font-lock-number">27</span>
+            <span class="comment">// NO_UNIT is a transient token for internal use only.  It is
+</span>            <span class="comment">// never set as the end result of parsing a token.
+</span>            ,<span class="jde-java-font-lock-constant" id="NO_UNIT">NO_UNIT</span> = <span class="jde-java-font-lock-number">28</span>
+            <span class="comment">//,NSPREFIX = 29
+</span>            <span class="comment">//,WHITESPACE = 30
+</span>                     ;
+
+    <span class="comment">/*
+     * Absolute unit type constants
+     */</span>
+    <span class="type">int</span> <span class="variable-name" id="currentToken">currentToken</span> = <span class="jde-java-font-lock-constant">EOF</span>;
+    <span class="type">String</span> <span class="variable-name" id="currentTokenValue">currentTokenValue</span> = <span class="jde-java-font-lock-constant" id="null">null</span>;
+    <span class="jde-java-font-lock-modifier">protected</span> <span class="type">int</span> <span class="variable-name" id="currentUnitIndex">currentUnitIndex</span> = <span class="jde-java-font-lock-number">0</span>;
+    <span class="jde-java-font-lock-modifier">protected</span> <span class="type">int</span> <span class="variable-name" id="currentUnit">currentUnit</span>;
+    <span class="jde-java-font-lock-modifier">protected</span> <span class="type">String</span> <span class="variable-name" id="unitString">unitString</span>;
+    <span class="jde-java-font-lock-modifier">protected</span> <span class="type">String</span> <span class="variable-name" id="uri">uri</span>;
+
+    <span class="jde-java-font-lock-modifier">private</span> <span class="type">int</span> <span class="variable-name" id="currentTokenStartIndex">currentTokenStartIndex</span> = <span class="jde-java-font-lock-number">0</span>;
+    <span class="jde-java-font-lock-modifier">private</span> <span class="type">String</span> <span class="variable-name" id="expr">expr</span> = <span class="jde-java-font-lock-constant">null</span>;
+    <span class="jde-java-font-lock-modifier">private</span> <span class="type">int</span> <span class="variable-name" id="exprIndex">exprIndex</span> = <span class="jde-java-font-lock-number">0</span>;
+    <span class="jde-java-font-lock-modifier">private</span> <span class="type">int</span> <span class="variable-name" id="exprLength">exprLength</span>;
+    <span class="jde-java-font-lock-modifier">protected</span> <span class="type">int</span> <span class="variable-name" id="property">property</span>;
+
+    <span class="jde-java-font-lock-modifier">protected</span> <span class="function-name" id="PropertyTokenizer">PropertyTokenizer</span>() {}
+
+    <span class="comment">/**
+     * Initialize this tokenizer to tokenize the passed
+     * String as a value of the passed property.
+     * It is assumed that the subclass has made any necessary
+     * synchronization arrangements.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">property</span><span class="comment"> an &lt;tt&gt;int&lt;/tt&gt; containing the property index.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name" id="s">s</span><span class="comment"> The Property expression to tokenize.
+     */</span>
+    <span class="jde-java-font-lock-modifier">protected</span> <span class="type">void</span> <span class="function-name" id="initialize">initialize</span>(<span class="type">int</span> <span class="variable-name">property</span>, <span class="type">String</span> <span class="variable-name">s</span>) {
+        expr = s;
+        exprLength = s.length();
+        <span class="keyword">this</span>.property = property;
+        <span class="comment">//System.out.println(&quot;-----Tokenizer initialized: &quot; + expr);
+</span>    }
+
+    <span class="comment">/**
+     * Reset the tokenizer to null (or equivalent) values.
+     * Synchronization is achieved in the subclass.
+     */</span>
+    <span class="jde-java-font-lock-modifier">protected</span> <span class="type">void</span> <span class="function-name" id="reset">reset</span>() {
+        expr = <span class="jde-java-font-lock-constant">null</span>;
+        exprIndex = <span class="jde-java-font-lock-number">0</span>;
+        exprLength = <span class="jde-java-font-lock-number">0</span>;
+        currentToken = <span class="jde-java-font-lock-constant">EOF</span>;
+        currentTokenValue = <span class="jde-java-font-lock-constant">null</span>;
+        property = <span class="jde-java-font-lock-number">0</span>;
+        <span class="comment">//System.out.println(&quot;-----Tokenizer reset.&quot;);
+</span>    }
+
+    <span class="comment">/**
+     * Get the current expression
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> - the expression.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">String</span> <span class="function-name" id="getExpr">getExpr</span>() {
+        <span class="keyword">return</span> expr;
+    }
+
+    <span class="comment">/**
+     * Return the next token in the expression string.
+     * This sets the following package visible variables:
+     * currentToken  An enumerated value identifying the recognized token
+     * currentTokenValue  A String containing the token contents
+     * currentUnit  If currentToken = ABSOLUTE_LENGTH, TIME or FREQUENCY,
+     * an enumerated value identifying the unit.
+     * </span><span class="jde-java-font-lock-doc-tag">@throws</span><span class="comment"> </span><span class="type">PropertyException</span><span class="comment"> If un unrecognized token is encountered.
+     */</span>
+    <span class="type">void</span> <span class="function-name" id="next">next</span>() <span class="keyword">throws</span> <span class="type">PropertyException</span> {
+        <span class="comment">//System.out.println(&quot;expr:&quot; + expr + &quot;:  exprIndex: &quot; + exprIndex);
+</span>        currentTokenValue = <span class="jde-java-font-lock-constant">null</span>;
+        currentTokenStartIndex = exprIndex;
+        <span class="type">boolean</span> <span class="variable-name" id="bSawDecimal">bSawDecimal</span>;
+        <span class="keyword">for</span> (; ; ) {
+            <span class="keyword">if</span> (exprIndex &gt;= exprLength) {
+                currentToken = <span class="jde-java-font-lock-constant">EOF</span>;
+                <span class="keyword">return</span>;
+            }
+            <span class="type">char</span> <span class="variable-name" id="c">c</span> = expr.charAt(exprIndex++);
+            <span class="keyword">switch</span> (c) {
+            <span class="keyword">case</span> '<span class="string"> </span>':
+            <span class="keyword">case</span> '<span class="string">\t</span>':
+            <span class="keyword">case</span> '<span class="string">\r</span>':
+            <span class="keyword">case</span> '<span class="string">\n</span>':
+                <span class="comment">// Whitespace characters are valid within strings.
+</span>                <span class="comment">// in font family names, sequences of whitespace are
+</span>                <span class="comment">// compressed into a single space. (Rec 7.8.2)
+</span>                <span class="comment">//scanWhitespace();
+</span>                <span class="comment">//currentToken = WHITESPACE;
+</span>                <span class="comment">//currentTokenValue = expr.substring(currentTokenStartIndex,
+</span>                <span class="comment">//                                   exprIndex);
+</span>                <span class="comment">//return;
+</span>                currentTokenStartIndex = exprIndex;
+                <span class="keyword">break</span>;
+            <span class="keyword">case</span> '<span class="string">,</span>':
+                currentToken = <span class="jde-java-font-lock-constant">COMMA</span>;
+                <span class="keyword">return</span>;
+            <span class="keyword">case</span> '<span class="string">+</span>':
+                currentToken = <span class="jde-java-font-lock-constant">PLUS</span>;
+                <span class="keyword">return</span>;
+            <span class="keyword">case</span> '<span class="string">-</span>':
+                currentToken = <span class="jde-java-font-lock-constant">MINUS</span>;
+                <span class="keyword">return</span>;
+            <span class="keyword">case</span> '<span class="string">(</span>':
+                currentToken = <span class="jde-java-font-lock-constant">LPAR</span>;
+                <span class="keyword">return</span>;
+            <span class="keyword">case</span> '<span class="string">)</span>':
+                currentToken = <span class="jde-java-font-lock-constant">RPAR</span>;
+                <span class="keyword">return</span>;
+            <span class="keyword">case</span> '<span class="string">&quot;</span>':
+            <span class="keyword">case</span> '<span class="string">\'</span>':
+                exprIndex = expr.indexOf(c, exprIndex);
+                <span class="keyword">if</span> (exprIndex &lt; <span class="jde-java-font-lock-number">0</span>) {
+                    exprIndex = currentTokenStartIndex + <span class="jde-java-font-lock-number">1</span>;
+                    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">PropertyException</span>(&quot;<span class="string">missing quote</span>&quot;);
+                }
+                currentTokenValue = expr.substring(currentTokenStartIndex
+                                                   + <span class="jde-java-font-lock-number">1</span>, exprIndex++);
+                currentToken = <span class="jde-java-font-lock-constant">LITERAL</span>;
+                <span class="keyword">return</span>;
+            <span class="keyword">case</span> '<span class="string">*</span>':
+                currentToken = <span class="jde-java-font-lock-constant">MULTIPLY</span>;
+                <span class="keyword">return</span>;
+            <span class="keyword">case</span> '<span class="string">0</span>':
+            <span class="keyword">case</span> '<span class="string">1</span>':
+            <span class="keyword">case</span> '<span class="string">2</span>':
+            <span class="keyword">case</span> '<span class="string">3</span>':
+            <span class="keyword">case</span> '<span class="string">4</span>':
+            <span class="keyword">case</span> '<span class="string">5</span>':
+            <span class="keyword">case</span> '<span class="string">6</span>':
+            <span class="keyword">case</span> '<span class="string">7</span>':
+            <span class="keyword">case</span> '<span class="string">8</span>':
+            <span class="keyword">case</span> '<span class="string">9</span>':
+                scanDigits();
+                <span class="keyword">if</span> (exprIndex &lt; exprLength &amp;&amp; expr.charAt(exprIndex) == '<span class="string">.</span>') {
+                    exprIndex++;
+                    bSawDecimal = <span class="jde-java-font-lock-constant" id="true">true</span>;
+                    <span class="keyword">if</span> (exprIndex &lt; exprLength
+                            &amp;&amp; isDigit(expr.charAt(exprIndex))) {
+                        exprIndex++;
+                        scanDigits();
+                    }
+                } <span class="keyword">else</span>
+                    bSawDecimal = <span class="jde-java-font-lock-constant" id="false">false</span>;
+                currentUnitIndex = exprIndex;
+                <span class="keyword">if</span> (exprIndex &lt; exprLength &amp;&amp; expr.charAt(exprIndex) == '<span class="string">%</span>') {
+                    currentToken = <span class="jde-java-font-lock-constant">PERCENT</span>;
+                    unitString = &quot;<span class="string">%</span>&quot;;
+                    exprIndex++;
+                } <span class="keyword">else</span> {
+                    <span class="comment">// Check for possible unit name following number
+</span>                    currentToken = scanUnitName();
+                    <span class="keyword">if</span> (currentToken == <span class="jde-java-font-lock-constant">NO_UNIT</span>)
+                        currentToken = bSawDecimal ? <span class="jde-java-font-lock-constant">FLOAT</span> : <span class="jde-java-font-lock-constant">INTEGER</span>;
+                }
+                currentTokenValue = expr.substring(currentTokenStartIndex,
+                                                   currentUnitIndex);
+                <span class="keyword">return</span>;
+
+            <span class="keyword">case</span> '<span class="string">.</span>':
+                <span class="keyword">if</span> (exprIndex &lt; exprLength
+                        &amp;&amp; isDigit(expr.charAt(exprIndex))) {
+                    ++exprIndex;
+                    scanDigits();
+                    currentUnitIndex = exprIndex;
+                    <span class="keyword">if</span> (exprIndex &lt; exprLength
+                            &amp;&amp; expr.charAt(exprIndex) == '<span class="string">%</span>') {
+                        exprIndex++;
+                        currentToken = <span class="jde-java-font-lock-constant">PERCENT</span>;
+                    } <span class="keyword">else</span> {
+                        <span class="comment">// Check for possible unit name following number
+</span>                        currentToken = scanUnitName();
+                        <span class="keyword">if</span> (currentToken == <span class="jde-java-font-lock-constant">NO_UNIT</span>)
+                            currentToken = <span class="jde-java-font-lock-constant">FLOAT</span>;
+                    }
+                    currentTokenValue = expr.substring(currentTokenStartIndex,
+                                                       currentUnitIndex);
+                    <span class="keyword">return</span>;
+                }
+                <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">PropertyException</span>(&quot;<span class="string">illegal character '.'</span>&quot;);
+
+            <span class="keyword">case</span> '<span class="string">#</span>':    <span class="comment">// Start of color value
+</span>                <span class="keyword">if</span> (exprIndex &lt; exprLength
+                        &amp;&amp; isHexDigit(expr.charAt(exprIndex))) {
+                    <span class="type">int</span> <span class="variable-name" id="len">len</span>;
+                    ++exprIndex;
+                    scanHexDigits();
+                    currentToken = <span class="jde-java-font-lock-constant">COLORSPEC</span>;
+                    currentTokenValue = expr.substring(currentTokenStartIndex,
+                                                       exprIndex);
+                    <span class="comment">// Probably should have some multiple of 3 for length!
+</span>                    len = exprIndex - currentTokenStartIndex;
+                    <span class="keyword">if</span> (len == <span class="jde-java-font-lock-number">4</span> || len == <span class="jde-java-font-lock-number">7</span>) <span class="keyword">return</span>;
+                    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">PropertyException</span>(&quot;<span class="string">color not 3 or 6 hex digits</span>&quot;);
+                } <span class="keyword">else</span> {
+                    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">PropertyException</span>(&quot;<span class="string">illegal character '#'</span>&quot;);
+                }
+
+            <span class="keyword">case</span> '<span class="string">/</span>':
+                currentToken = <span class="jde-java-font-lock-constant">SLASH</span>;
+                <span class="keyword">return</span>;
+
+            <span class="keyword">default</span>:
+                --exprIndex;
+                scanName();
+                <span class="keyword">if</span> (exprIndex == currentTokenStartIndex)
+                    <span class="comment">// Not a name - must be a &lt;string&gt;
+</span>                    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">PropertyException</span>
+                            (&quot;<span class="string">illegal character '</span>&quot;
+                             + expr.charAt(exprIndex) + &quot;<span class="string">'</span>&quot;);
+                currentTokenValue = expr.substring(currentTokenStartIndex,
+                                                   exprIndex);
+                <span class="keyword">if</span> (currentTokenValue.equals(&quot;<span class="string">mod</span>&quot;)) {
+                    currentToken = <span class="jde-java-font-lock-constant">MOD</span>;
+                   <span class="keyword">return</span>;
+                }
+                <span class="keyword">if</span> (currentTokenValue.equals(&quot;<span class="string">div</span>&quot;)) {
+                    currentToken = <span class="jde-java-font-lock-constant">DIV</span>;
+                    <span class="keyword">return</span>;
+                }
+                <span class="keyword">if</span> (currentTokenValue.equals(&quot;<span class="string">inherit</span>&quot;)) {
+                    currentToken = <span class="jde-java-font-lock-constant">INHERIT</span>;
+                    <span class="keyword">return</span>;
+                }
+                <span class="keyword">if</span> (currentTokenValue.equals(&quot;<span class="string">auto</span>&quot;)) {
+                    currentToken = <span class="jde-java-font-lock-constant">AUTO</span>;
+                    <span class="keyword">return</span>;
+                }
+                <span class="keyword">if</span> (currentTokenValue.equals(&quot;<span class="string">none</span>&quot;)) {
+                    currentToken = <span class="jde-java-font-lock-constant">NONE</span>;
+                    <span class="keyword">return</span>;
+                }
+                <span class="keyword">if</span> (currentTokenValue.equals(&quot;<span class="string">true</span>&quot;)
+                    || currentTokenValue.equals(&quot;<span class="string">false</span>&quot;)) {
+                    currentToken = <span class="jde-java-font-lock-constant">BOOL</span>;
+                    <span class="keyword">return</span>;
+                }
+                <span class="comment">// Quick and dirty url &quot;parsing&quot;.  Assume that a
+</span>                <span class="comment">// URI-SPECIFICATION must be the only component of a
+</span>                <span class="comment">// property value expression
+</span>                <span class="keyword">if</span> (currentTokenValue.equals(&quot;<span class="string">url</span>&quot;)
+                    &amp;&amp; expr.charAt(exprIndex) == '<span class="string">(</span>') {
+                    <span class="keyword">if</span> (! scanUrl()) {
+                        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">PropertyException</span>
+                                (&quot;<span class="string">Invalid url expression :</span>&quot; +
+                                 expr.substring(exprIndex));
+                    }
+                    currentToken = <span class="jde-java-font-lock-constant">URI</span>;
+                    <span class="keyword">return</span>;
+                }
+                <span class="keyword">if</span> (currentTokenValue.equals(&quot;<span class="string">content-type</span>&quot;)) {
+                    <span class="comment">// content-type attribute value.  Must be followed
+</span>                    <span class="comment">// by a mime type
+</span>                    <span class="keyword">if</span> (expr.charAt(exprIndex) == '<span class="string">:</span>') {
+                        <span class="type">int</span> <span class="variable-name" id="mimeptr">mimeptr</span> = ++exprIndex;
+                        scanMimeType();
+                        currentToken = <span class="jde-java-font-lock-constant">MIMETYPE</span>;
+                        currentTokenValue =
+                                expr.substring(mimeptr, exprIndex);
+                        <span class="keyword">return</span>;
+                    }
+                    <span class="comment">// else it's just a name
+</span>                }
+                <span class="keyword">if</span> (currentTokenValue.equals(&quot;<span class="string">namespace-prefix</span>&quot;)) {
+                    <span class="comment">// content-type attribute value.  Must be followed
+</span>                    <span class="comment">// by a declared namespace-prefix or null
+</span>                    <span class="keyword">if</span> (expr.charAt(exprIndex) == '<span class="string">:</span>') {
+                        <span class="type">int</span> <span class="variable-name" id="nsptr">nsptr</span> = ++exprIndex;
+                        scanName();   <span class="comment">// Allowed to be empty
+</span>                        currentToken = <span class="jde-java-font-lock-constant">NCNAME</span>;
+                        currentTokenValue =
+                                expr.substring(nsptr, exprIndex);
+                        <span class="keyword">return</span>;
+                    }
+                    <span class="comment">// else it's just a name
+</span>                }
+                <span class="keyword">if</span> (followingParen()) {
+                    currentToken = <span class="jde-java-font-lock-constant">FUNCTION_LPAR</span>;
+                } <span class="keyword">else</span> {
+                    currentToken = <span class="jde-java-font-lock-constant">NCNAME</span>;
+                }
+                <span class="keyword">return</span>;
+            }
+        }
+    }
+
+    <span class="comment">/**
+     * Attempt to recognize a valid UnitName token in the input expression.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> token value appropriate to UnitName: ABSOLUTE_LENGTH,
+     * RELATIVE_LENGTH or NO_UNIT.
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">PropertyException</span><span class="comment"> if an NCName not a UnitName recognized.
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="type">int</span> <span class="function-name" id="scanUnitName">scanUnitName</span>() <span class="keyword">throws</span> <span class="type">PropertyException</span> {
+        currentUnitIndex = exprIndex;
+        scanName();
+        <span class="keyword">if</span> (currentUnitIndex &lt; exprIndex) {
+            unitString = expr.substring(currentUnitIndex, exprIndex);
+            <span class="keyword">if</span> (unitString.equals(&quot;<span class="string">em</span>&quot;)) <span class="keyword">return</span> <span class="jde-java-font-lock-constant">RELATIVE_LENGTH</span>;
+            <span class="keyword">if</span> (unitString.equals(&quot;<span class="string">cm</span>&quot;)) {
+                currentUnit = Length.<span class="jde-java-font-lock-constant" id="CM">CM</span>;
+                <span class="keyword">return</span> <span class="jde-java-font-lock-constant">ABSOLUTE_LENGTH</span>;
+            }
+            <span class="keyword">if</span> (unitString.equals(&quot;<span class="string">mm</span>&quot;)) {
+                currentUnit = Length.<span class="jde-java-font-lock-constant" id="MM">MM</span>;
+                <span class="keyword">return</span> <span class="jde-java-font-lock-constant">ABSOLUTE_LENGTH</span>;
+            }
+            <span class="keyword">if</span> (unitString.equals(&quot;<span class="string">in</span>&quot;)) {
+                currentUnit = Length.<span class="jde-java-font-lock-constant" id="IN">IN</span>;
+                <span class="keyword">return</span> <span class="jde-java-font-lock-constant">ABSOLUTE_LENGTH</span>;
+            }
+            <span class="keyword">if</span> (unitString.equals(&quot;<span class="string">pt</span>&quot;)) {
+                currentUnit = Length.<span class="jde-java-font-lock-constant" id="PT">PT</span>;
+                <span class="keyword">return</span> <span class="jde-java-font-lock-constant">ABSOLUTE_LENGTH</span>;
+            }
+            <span class="keyword">if</span> (unitString.equals(&quot;<span class="string">pc</span>&quot;)) {
+                currentUnit = Length.<span class="jde-java-font-lock-constant" id="PC">PC</span>;
+                <span class="keyword">return</span> <span class="jde-java-font-lock-constant">ABSOLUTE_LENGTH</span>;
+            }
+            <span class="keyword">if</span> (unitString.equals(&quot;<span class="string">px</span>&quot;)) {
+                currentUnit = Length.<span class="jde-java-font-lock-constant" id="PX">PX</span>;
+                <span class="keyword">return</span> <span class="jde-java-font-lock-constant">ABSOLUTE_LENGTH</span>;
+            }
+            <span class="keyword">if</span> (unitString.equals(&quot;<span class="string">s</span>&quot;)) {
+                currentUnit = Time.<span class="jde-java-font-lock-constant" id="SEC">SEC</span>;
+                <span class="keyword">return</span> <span class="jde-java-font-lock-constant">TIME</span>;
+            }
+            <span class="keyword">if</span> (unitString.equals(&quot;<span class="string">ms</span>&quot;)) {
+                currentUnit = Time.<span class="jde-java-font-lock-constant" id="MSEC">MSEC</span>;
+                <span class="keyword">return</span> <span class="jde-java-font-lock-constant">TIME</span>;
+            }
+            <span class="keyword">if</span> (unitString.equals(&quot;<span class="string">Hz</span>&quot;)) {
+                currentUnit = Frequency.<span class="jde-java-font-lock-constant" id="HZ">HZ</span>;
+                <span class="keyword">return</span> <span class="jde-java-font-lock-constant">FREQ</span>;
+            }
+            <span class="keyword">if</span> (unitString.equals(&quot;<span class="string">kHz</span>&quot;)) {
+                currentUnit = Frequency.<span class="jde-java-font-lock-constant" id="KHZ">KHZ</span>;
+                <span class="keyword">return</span> <span class="jde-java-font-lock-constant">FREQ</span>;
+            }
+            <span class="comment">// Not a UnitName
+</span>            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">PropertyException</span>
+                    (&quot;<span class="string">NCName following a number is not a UnitName</span>&quot;);
+        } <span class="keyword">else</span> { <span class="comment">// No NCName found
+</span>            <span class="keyword">return</span> <span class="jde-java-font-lock-constant">NO_UNIT</span>;
+        }
+    }
+
+    <span class="comment">/**
+     * Attempt to recognize a valid NAME token in the input expression.
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="type">void</span> <span class="function-name" id="scanName">scanName</span>() {
+        <span class="keyword">if</span> (exprIndex &lt; exprLength &amp;&amp; isNameStartChar(expr.charAt(exprIndex)))
+            <span class="keyword">while</span> (++exprIndex &lt; exprLength
+                   &amp;&amp; isNameChar(expr.charAt(exprIndex)));
+    }
+
+    <span class="comment">/**
+     * Attempt to recognize a valid sequence of decimal digits in the
+     * input expression.
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="type">void</span> <span class="function-name" id="scanDigits">scanDigits</span>() {
+        <span class="keyword">while</span> (exprIndex &lt; exprLength &amp;&amp; isDigit(expr.charAt(exprIndex)))
+            exprIndex++;
+    }
+
+    <span class="comment">/**
+     * Scan to the end of a sequence of whitespace characters in the
+     * input expression.
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="type">void</span> <span class="function-name" id="scanWhitespace">scanWhitespace</span>() {
+        <span class="keyword">while</span> (exprIndex &lt; exprLength &amp;&amp; isSpace(expr.charAt(exprIndex)))
+            exprIndex++;
+    }
+
+    <span class="comment">/**
+     * Attempt to recognize a valid sequence of hexadecimal digits in the
+     * input expression.
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="type">void</span> <span class="function-name" id="scanHexDigits">scanHexDigits</span>() {
+        <span class="keyword">while</span> (exprIndex &lt; exprLength &amp;&amp; isHexDigit(expr.charAt(exprIndex)))
+            exprIndex++;
+    }
+
+    <span class="comment">/**
+     * Attempt to recognize a mime-type.  Working definition here:
+     * NCName/NCName (NCName as recognized by scanName()).
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="type">void</span> <span class="function-name" id="scanMimeType">scanMimeType</span>() <span class="keyword">throws</span> <span class="type">PropertyException</span> {
+        <span class="type">int</span> <span class="variable-name" id="part1">part1</span> = exprIndex;
+        scanName();
+        <span class="keyword">if</span> (part1 != exprIndex) {
+            <span class="keyword">if</span> (expr.charAt(exprIndex) == '<span class="string">/</span>') {
+                <span class="type">int</span> <span class="variable-name" id="part2">part2</span> = ++exprIndex;
+                scanName();
+                <span class="keyword">if</span> (part2 != exprIndex)
+                    <span class="keyword">return</span>;
+            }
+        }
+        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">PropertyException</span>(&quot;<span class="string">Mime type expected; found:</span>&quot; +
+                                    expr.substring(part1));
+    }
+
+    <span class="comment">/**
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> a boolean value indicating whether the following non-whitespace
+     * character is an opening parenthesis.
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="type">boolean</span> <span class="function-name" id="followingParen">followingParen</span>() {
+        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable-name" id="i">i</span> = exprIndex; i &lt; exprLength; i++) {
+            <span class="keyword">switch</span> (expr.charAt(i)) {
+            <span class="keyword">case</span> '<span class="string">(</span>':
+                exprIndex = i + <span class="jde-java-font-lock-number">1</span>;
+                <span class="keyword">return</span> <span class="jde-java-font-lock-constant">true</span>;
+            <span class="keyword">case</span> '<span class="string"> </span>':
+            <span class="keyword">case</span> '<span class="string">\r</span>':
+            <span class="keyword">case</span> '<span class="string">\n</span>':
+            <span class="keyword">case</span> '<span class="string">\t</span>':
+                <span class="keyword">break</span>;
+            <span class="keyword">default</span>:
+                <span class="keyword">return</span> <span class="jde-java-font-lock-constant">false</span>;
+            }
+        }
+        <span class="keyword">return</span> <span class="jde-java-font-lock-constant">false</span>;
+    }
+
+    <span class="comment">/**
+     * Primitive URI extractor.  Assumes that the only contents of a
+     * URI-SPECIFICATION property type is a complete uri-specification.
+     * No checking is done on the syntactical validity of the URI.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> a boolean indicating whether the remainder of the
+     * characters form the body of a &lt;tt&gt;url(...)&lt;/tt&gt; specification.
+     * As a side-effect, sets the &lt;tt&gt;protected&lt;/tt&gt; field &lt;i&gt;</span><span class="jde-java-font-lock-italic">uri</span><span class="comment">&lt;/i&gt;
+     * and sets &lt;i&gt;</span><span class="jde-java-font-lock-italic">exprIndex</span><span class="comment">&lt;/i&gt; past the end of the expression, when
+     * returning a &lt;tt&gt;true&lt;/tt&gt; value.
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="type">boolean</span> <span class="function-name" id="scanUrl">scanUrl</span>() {
+        <span class="type">char</span> <span class="variable-name" id="ch">ch</span>;
+        <span class="type">String</span> <span class="variable-name" id="str">str</span> = expr.substring(exprIndex).trim();
+        <span class="keyword">if</span> (str.charAt(str.length() - <span class="jde-java-font-lock-number">1</span>) != '<span class="string">)</span>') <span class="keyword">return</span> <span class="jde-java-font-lock-constant">false</span>;
+        <span class="comment">// Remove closing parenthesis and trim
+</span>        str = str.substring(<span class="jde-java-font-lock-number">0</span>, str.length() - <span class="jde-java-font-lock-number">1</span>).trim();
+        <span class="keyword">if</span> ((ch = str.charAt(<span class="jde-java-font-lock-number">0</span>)) == '<span class="string">&quot;</span>' || ch == '<span class="string">\'</span>') {
+            <span class="keyword">if</span> (str.charAt(str.length() - <span class="jde-java-font-lock-number">1</span>) != ch) <span class="keyword">return</span> <span class="jde-java-font-lock-constant">false</span>;
+            str = str.substring(<span class="jde-java-font-lock-number">1</span>, str.length() - <span class="jde-java-font-lock-number">1</span>);
+        }
+        uri = str.trim();
+        exprIndex = expr.length();
+        <span class="keyword">return</span> <span class="jde-java-font-lock-constant">true</span>;
+    }
+
+    <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">String</span> <span class="variable-name" id="nameStartChars">nameStartChars</span> =
+        &quot;<span class="string">_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</span>&quot;;
+    <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">String</span> <span class="variable-name" id="nameChars">nameChars</span> = &quot;<span class="string">.-0123456789</span>&quot;;
+    <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">String</span> <span class="variable-name" id="digits">digits</span> = &quot;<span class="string">0123456789</span>&quot;;
+    <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">String</span> <span class="variable-name" id="hexchars">hexchars</span> = digits + &quot;<span class="string">abcdefABCDEF</span>&quot;;
+
+    <span class="comment">/**
+     * Return a boolean value indicating whether the argument is a
+     * decimal digit (0-9).
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">c</span><span class="comment"> The character to check
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">boolean</span> <span class="function-name" id="isDigit">isDigit</span>(<span class="type">char</span> <span class="variable-name">c</span>) {
+        <span class="keyword">return</span> digits.indexOf(c) &gt;= <span class="jde-java-font-lock-number">0</span>;
+    }
+
+    <span class="comment">/**
+     * Return a boolean value indicating whether the argument is a
+     * hexadecimal digit (0-9, A-F, a-f).
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">c</span><span class="comment"> The character to check
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">boolean</span> <span class="function-name" id="isHexDigit">isHexDigit</span>(<span class="type">char</span> <span class="variable-name">c</span>) {
+        <span class="keyword">return</span> hexchars.indexOf(c) &gt;= <span class="jde-java-font-lock-number">0</span>;
+    }
+
+    <span class="comment">/**
+     * Return a boolean value indicating whether the argument is whitespace
+     * as defined by XSL (space, newline, CR, tab).
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">c</span><span class="comment"> The character to check
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">boolean</span> <span class="function-name" id="isSpace">isSpace</span>(<span class="type">char</span> <span class="variable-name">c</span>) {
+        <span class="keyword">switch</span> (c) {
+        <span class="keyword">case</span> '<span class="string"> </span>':
+        <span class="keyword">case</span> '<span class="string">\r</span>':
+        <span class="keyword">case</span> '<span class="string">\n</span>':
+        <span class="keyword">case</span> '<span class="string">\t</span>':
+            <span class="keyword">return</span> <span class="jde-java-font-lock-constant">true</span>;
+        }
+        <span class="keyword">return</span> <span class="jde-java-font-lock-constant">false</span>;
+    }
+
+    <span class="comment">/**
+     * Return a  boolean value indicating whether the argument is a valid name
+     * start character, ie. can start a NAME as defined by XSL.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">c</span><span class="comment"> The character to check
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">boolean</span> <span class="function-name" id="isNameStartChar">isNameStartChar</span>(<span class="type">char</span> <span class="variable-name">c</span>) {
+        <span class="keyword">return</span> nameStartChars.indexOf(c) &gt;= <span class="jde-java-font-lock-number">0</span> || c &gt;= <span class="jde-java-font-lock-number">0x80</span>;
+    }
+
+    <span class="comment">/**
+     * Return a  boolean value indicating whether the argument is a valid name
+     * character, ie. can occur in a NAME as defined by XSL.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">c</span><span class="comment"> The character to check
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">boolean</span> <span class="function-name" id="isNameChar">isNameChar</span>(<span class="type">char</span> <span class="variable-name">c</span>) {
+        <span class="keyword">return</span> nameStartChars.indexOf(c) &gt;= <span class="jde-java-font-lock-number">0</span> || nameChars.indexOf(c) &gt;= <span class="jde-java-font-lock-number">0</span>
+               || c &gt;= <span class="jde-java-font-lock-number">0x80</span>;
+    }
+
+}
+</pre>
+  </body>
+</html>

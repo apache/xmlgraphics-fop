@@ -1,0 +1,1063 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<!--
+  Copyright 2001-2004 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<!-- Created by htmlize-0.67 in css mode. -->
+<html>
+  <head>
+    <title>PropertyParser.java</title>
+    <style type="text/css">
+    <!--
+      body {
+        color: #000000;
+        background-color: #faf0e6;
+      } /* default */
+      .jde-java-font-lock-number {
+        color: #bc8f8f;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-number-face */
+      .function-name {
+        color: #8b2323;
+        background-color: #faf0e6;
+      } /* font-lock-function-name-face */
+      .jde-java-font-lock-italic {
+        background-color: #faf0e6;
+        font-style: italic;
+      } /* jde-java-font-lock-italic-face */
+      .jde-java-font-lock-modifier {
+        color: #da70d6;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-modifier-face */
+      .keyword {
+        color: #8b0000;
+        background-color: #faf0e6;
+      } /* font-lock-keyword-face */
+      .variable-name {
+        color: #8b008b;
+        background-color: #faf0e6;
+      } /* font-lock-variable-name-face */
+      .string {
+        color: #008b00;
+        background-color: #faf0e6;
+      } /* font-lock-string-face */
+      .jde-java-font-lock-package {
+        color: #0000cd;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-package-face */
+      .jde-java-font-lock-constant {
+        color: #5f9ea0;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-constant-face */
+      .type {
+        color: #4682b4;
+        background-color: #faf0e6;
+      } /* font-lock-type-face */
+      .jde-java-font-lock-bold {
+        background-color: #faf0e6;
+        font-weight: bold;
+      } /* jde-java-font-lock-bold-face */
+      .jde-java-font-lock-doc-tag {
+        color: #008b00;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-doc-tag-face */
+      .comment {
+        color: #00008b;
+        background-color: #faf0e6;
+      } /* font-lock-comment-face */
+      .reference {
+        color: #cd0000;
+        background-color: #faf0e6;
+      } /* font-lock-reference-face */
+      a {
+        color: inherit;
+        background-color: inherit;
+        font: inherit;
+        text-decoration: inherit;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+    -->
+    </style>
+  </head>
+  <body>
+    <pre>
+<span class="comment">/*
+ * Copyright 2001-2004 The Apache Software Foundation.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */</span>
+ 
+<span class="keyword">package</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">fo</span>.<span class="jde-java-font-lock-package">expr</span>;
+
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">fo</span>.<span class="type">PropertyConsts</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">fo</span>.<span class="jde-java-font-lock-package">properties</span>.<span class="type">Property</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">fo</span>.<span class="type">PropNames</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">fo</span>.<span class="type">FOTree</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">fo</span>.<span class="type">FONode</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">fo</span>.<span class="jde-java-font-lock-package">expr</span>.<span class="type">SystemFontFunction</span>;
+
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">datatypes</span>.<span class="type">PropertyValue</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">datatypes</span>.<span class="type">PropertyValueList</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">datatypes</span>.<span class="type">Numeric</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">datatypes</span>.<span class="type">Literal</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">datatypes</span>.<span class="type">NCName</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">datatypes</span>.<span class="type">Percentage</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">datatypes</span>.<span class="type">Ems</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">datatypes</span>.<span class="type">IntegerType</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">datatypes</span>.<span class="type">Length</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">datatypes</span>.<span class="type">Time</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">datatypes</span>.<span class="type">Frequency</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">datatypes</span>.<span class="type">Angle</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">datatypes</span>.<span class="type">Bool</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">datatypes</span>.<span class="type">Auto</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">datatypes</span>.<span class="type">None</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">datatypes</span>.<span class="type">Slash</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">datatypes</span>.<span class="type">ColorType</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">datatypes</span>.<span class="type">StringType</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">datatypes</span>.<span class="type">MimeType</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">datatypes</span>.<span class="type">UriType</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">datatypes</span>.<span class="jde-java-font-lock-package">indirect</span>.<span class="type">Inherit</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">datatypes</span>.<span class="jde-java-font-lock-package">indirect</span>.<span class="type">InheritedValue</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">datatypes</span>.<span class="jde-java-font-lock-package">indirect</span>.<span class="type">FromParent</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">datatypes</span>.<span class="jde-java-font-lock-package">indirect</span>.<span class="type">FromNearestSpecified</span>;
+
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">java</span>.<span class="jde-java-font-lock-package">util</span>.<span class="type">HashMap</span>;
+
+<span class="comment">/**
+ * Class to parse XSL FO property expression.
+ * This class is heavily based on the expression parser in James Clark's
+ * XT, an XSLT processor.
+ *
+ * PropertyParser objects are re-usable.  The constructor simply creates the
+ * object.  To parse an expression, the public method &lt;i&gt;</span><span class="jde-java-font-lock-italic">Parse</span><span class="comment">&lt;/i&gt; is
+ * called.
+ */</span>
+<span class="jde-java-font-lock-modifier">public</span> <span class="keyword">class</span> <span class="function-name" id="PropertyParserClass">PropertyParser</span> <span class="keyword">extends</span> <span class="type">PropertyTokenizer</span> {
+
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">String</span> <span class="variable-name" id="tag">tag</span> = &quot;<span class="string">$Name$</span>&quot;;
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">String</span> <span class="variable-name" id="revision">revision</span> = &quot;<span class="string">$Revision$</span>&quot;;
+
+    <span class="comment">/** The FO tree which has initiated this parser */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="type">FOTree</span> <span class="variable-name" id="foTree">foTree</span>;
+    <span class="comment">/** The FONode which has initiated this parser */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="type">FONode</span> <span class="variable-name" id="node">node</span>;
+
+    <span class="jde-java-font-lock-modifier">public</span> <span class="function-name" id="PropertyParser">PropertyParser</span>(<span class="type">FOTree</span> <span class="variable-name">foTree</span>) {
+        <span class="keyword">super</span>();
+        <span class="keyword">this</span>.foTree = foTree;
+    }
+
+    <span class="comment">/**
+     * Parse the property expression described in the instance variables.
+     * 
+     * &lt;p&gt;The &lt;tt&gt;PropertyValue&lt;/tt&gt; returned by this function has the
+     * following characteristics:
+     * If the expression resolves to a single element that object is returned
+     * directly in an object which implements &lt;PropertyValue&lt;/tt&gt;.
+     *
+     * &lt;p&gt;If the expression cannot be resolved into a single object, the set
+     * to which it resolves is returned in a &lt;tt&gt;PropertyValueList&lt;/tt&gt; object
+     * (which itself implements &lt;tt&gt;PropertyValue&lt;/tt&gt;).
+     *
+     * &lt;p&gt;The &lt;tt&gt;PropertyValueList&lt;/tt&gt; contains objects whose corresponding
+     * elements in the original expression were separated by &lt;em&gt;</span><span class="jde-java-font-lock-italic">commas</span><span class="comment">&lt;/em&gt;.
+     *
+     * &lt;p&gt;Objects whose corresponding elements in the original expression
+     * were separated by spaces are composed into a sublist contained in
+     * another &lt;tt&gt;PropertyValueList&lt;/tt&gt;.  If all of the elements in the
+     * expression were separated by spaces, the returned
+     * &lt;tt&gt;PropertyValueList&lt;/tt&gt; will contain one element, a
+     * &lt;tt&gt;PropertyValueList&lt;/tt&gt; containing objects representing each of
+     * the space-separated elements in the original expression.
+     *
+     * &lt;p&gt;E.g., if a &lt;b&gt;</span><span class="jde-java-font-lock-bold">font-family</span><span class="comment">&lt;/b&gt; property is assigned the string
+     * &lt;em&gt;</span><span class="jde-java-font-lock-italic">Palatino, New Century Schoolbook, serif</span><span class="comment">&lt;/em&gt;, the returned value
+     * will look like this:
+     * &lt;pre&gt;
+     * PropertyValueList(NCName('Palatino')
+     *                   PropertyValueList(NCName('New')
+     *                                     NCName('Century')
+     *                                     NCName('Schoolbook') )
+     *                   NCName('serif') )
+     * &lt;/pre&gt;
+     * &lt;p&gt;If the property had been assigned the string
+     * &lt;em&gt;</span><span class="jde-java-font-lock-italic">Palatino, &quot;New Century Schoolbook&quot;, serif</span><span class="comment">&lt;/em&gt;, the returned value
+     * would look like this:
+     * &lt;pre&gt;
+     * PropertyValueList(NCName('Palatino')
+     *                   NCName('New Century Schoolbook')
+     *                   NCName('serif') )
+     * &lt;/pre&gt;
+     * &lt;p&gt;If a &lt;b&gt;</span><span class="jde-java-font-lock-bold">background-position</span><span class="comment">&lt;/b&gt; property is assigned the string
+     * &lt;em&gt;</span><span class="jde-java-font-lock-italic">top center</span><span class="comment">&lt;/em&gt;, the returned value will look like this:
+     * &lt;pre&gt;
+     * PropertyValueList(PropertyValueList(NCName('top')
+     *                                     NCName('center') ) )
+     * &lt;/pre&gt;
+     *
+     * &lt;p&gt;Note: If the property expression String is empty, a StringProperty
+     * object holding an empty String is returned.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">node</span><span class="comment"> - the &lt;tt&gt;FONode&lt;/tt&gt; for which the property expression
+     * is being resolved.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name" id="property">property</span><span class="comment"> - an &lt;tt&gt;int&lt;/tt&gt; containing the property index.
+     * which the property expression is to be evaluated.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name" id="expr">expr</span><span class="comment"> - the specified value (attribute on the xml element).
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> a PropertyValue holding the parsed result.
+     * </span><span class="jde-java-font-lock-doc-tag">@throws</span><span class="comment"> </span><span class="type">PropertyException</span><span class="comment"> if the &quot;expr&quot; cannot be parsed as a
+     * PropertyValue.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">PropertyValue</span> <span class="function-name" id="parse">parse</span>(<span class="type">FONode</span> <span class="variable-name">node</span>, <span class="type">int</span> <span class="variable-name">property</span>, <span class="type">String</span> <span class="variable-name">expr</span>)
+        <span class="keyword">throws</span> <span class="type">PropertyException</span>
+    {
+        <span class="comment">//System.out.println(&quot;-----Entering parse:&quot;
+</span>        <span class="comment">// + PropNames.getPropertyName(property) + &quot; &quot; + expr);
+</span>        <span class="jde-java-font-lock-modifier">synchronized</span> (<span class="keyword">this</span>) {
+            <span class="comment">// make sure this parser is available
+</span>            <span class="keyword">if</span> (getExpr() != <span class="jde-java-font-lock-constant" id="null">null</span>) <span class="comment">// the parser is currently active
+</span>                <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">PropertyException</span>
+                        (&quot;<span class="string">PropertyParser is currently active: </span>&quot; + getExpr());
+            initialize(property, expr);
+            <span class="keyword">this</span>.node = node;
+        }
+
+        next();
+        <span class="keyword">if</span> (currentToken == <span class="jde-java-font-lock-constant" id="EOF">EOF</span>)
+            <span class="comment">// prop value is empty
+</span>            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">PropertyException</span>
+                    (&quot;<span class="string">No token recognized in :</span>&quot; + expr + &quot;<span class="string">:</span>&quot;);
+
+        <span class="type">PropertyValueList</span> <span class="variable-name" id="propList">propList</span> = <span class="keyword">new</span> <span class="type">PropertyValueList</span>(property);
+        <span class="keyword">while</span> (<span class="jde-java-font-lock-constant" id="true">true</span>) {
+            <span class="type">PropertyValue</span> <span class="variable-name" id="prop">prop</span> = parseAdditiveExpr();
+            <span class="keyword">if</span> (currentToken == <span class="jde-java-font-lock-constant">EOF</span>) {
+                <span class="comment">// end of the expression - add to list and go
+</span>                <span class="keyword">if</span> (propList.size() != <span class="jde-java-font-lock-number">0</span>) {
+                    propList.add(prop);
+                    reset();
+                    <span class="keyword">return</span> propList;
+                } <span class="keyword">else</span> { <span class="comment">// list is empty
+</span>                    reset();
+                    <span class="keyword">return</span> prop;
+                }
+            }
+            <span class="comment">// throw away commas separating arguments.  These can occur
+</span>            <span class="comment">// in font-family and voice-family.  Commas are regarded here
+</span>            <span class="comment">// as separators of list and sublist elements.
+</span>            <span class="comment">// See 7.16.5 &quot;text-shadow&quot; in the 1.0 Recommendation for an
+</span>            <span class="comment">// example of sublists.
+</span>            <span class="keyword">if</span> (currentToken == <span class="jde-java-font-lock-constant" id="COMMA">COMMA</span>) {
+                next();
+                propList.add(prop);
+            } <span class="keyword">else</span> { <span class="comment">// whitespace separates list elements; make a sublist
+</span>                propList.add(parseSublist(prop));
+                <span class="keyword">if</span> (currentToken == <span class="jde-java-font-lock-constant">EOF</span>) {
+                    reset();
+                    <span class="keyword">return</span> propList;
+                }
+            }
+        }
+    }
+
+    <span class="comment">/**
+     * &lt;p&gt;Parse a property values sublist - a list of whitespace separated
+     * &lt;tt&gt;PropertyValue&lt;/tt&gt;s.
+     * &lt;p&gt;
+     * Property value expressions for various properties may contain lists
+     * of values, which may be separated by whitespace or by commas.  See,
+     * e.g., 7.6.17 &quot;voice-family&quot; and 7.8.2 &quot;font-family&quot;.  The shorthands
+     * may also contain lists of elements, generally (or exclusively)
+     * whitespace separated.  7.16.5 &quot;text-shadow&quot; allows whitespace
+     * separated length doubles or triples to be specified for individual
+     * shadow effects, with multiple shadow effects, each separated by
+     * commmas.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name" id="initialValue">initialValue</span><span class="comment"> a &lt;tt&gt;PropertyValue&lt;/tt&gt; to assign as the initial
+     * value of the sublist.  The detection of this value, which is
+     * whitespace separated from a subsequent value,  has been the
+     * trigger for the creation of the sublist.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> a &lt;tt&gt;PropertyValueList&lt;/tt&gt; containing the sublist.  The
+     * indicatior for the end of the sublist is the end of the expression,
+     * or a comma.
+     */</span>
+    <span class="type">PropertyValueList</span> <span class="function-name" id="parseSublist">parseSublist</span>(<span class="type">PropertyValue</span> <span class="variable-name">initialValue</span>)
+        <span class="keyword">throws</span> <span class="type">PropertyException</span>
+    {
+        <span class="type">PropertyValueList</span> <span class="variable-name" id="sublist">sublist</span> = <span class="keyword">new</span> <span class="type">PropertyValueList</span>(property);
+        sublist.add(initialValue);
+        <span class="keyword">while</span> (<span class="jde-java-font-lock-constant">true</span>) {
+            <span class="type">PropertyValue</span> <span class="variable-name">prop</span> = parseAdditiveExpr();
+            <span class="keyword">if</span> (currentToken == <span class="jde-java-font-lock-constant">EOF</span>) {
+                <span class="comment">// end of the expression - add to sublist and go
+</span>                sublist.add(prop);
+                <span class="keyword">return</span> sublist;
+            }
+            <span class="comment">// Comma separates next element - end of sublist
+</span>            <span class="keyword">if</span> (currentToken == <span class="jde-java-font-lock-constant">COMMA</span>) {
+                next();
+                sublist.add(prop);
+                <span class="keyword">return</span> sublist;
+            } <span class="keyword">else</span> { <span class="comment">// whitespace separates next elements; add to sublist
+</span>                sublist.add(prop);
+            }
+        }
+    }
+
+    <span class="comment">/**
+     * Reset the parser by resetting the tokenizer to null (or equivalent)
+     * values.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">void</span> <span class="function-name" id="resetParser">resetParser</span>() {
+        <span class="jde-java-font-lock-modifier">synchronized</span> (<span class="keyword">this</span>) {
+            <span class="comment">//elementsSeen = 0;
+</span>            <span class="comment">//restrictedValueFunctSeen = null;
+</span>            reset();
+        }
+    }
+
+    <span class="comment">/**
+     * Generate an arithmetic error string.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> arithmetic error message.
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="type">String</span> <span class="function-name" id="arithErrorStr">arithErrorStr</span>() {
+        <span class="keyword">return</span> &quot;<span class="string">Arithmetic operator not followed by Numeric or integer: </span>&quot;
+                + getExpr();
+    }
+
+
+    <span class="comment">/**
+     * Generate an function numeric argument error string.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> function numeric argument error message.
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="type">String</span> <span class="function-name" id="funcNumericErrorStr">funcNumericErrorStr</span>() {
+        <span class="keyword">return</span> &quot;<span class="string">Function requires Numeric or integer argument: </span>&quot;
+                + getExpr();
+    }
+
+    <span class="comment">/**
+     * Try to parse an addition or subtraction expression and return the
+     * resulting PropertyValue.
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="type">PropertyValue</span> <span class="function-name" id="parseAdditiveExpr">parseAdditiveExpr</span>() <span class="keyword">throws</span> <span class="type">PropertyException</span> {
+        <span class="comment">// Evaluate and put result on the operand stack
+</span>        <span class="comment">//System.out.println(&quot;parseAdd&quot;);
+</span>        <span class="type">PropertyValue</span> <span class="variable-name">prop</span> = parseMultiplicativeExpr();
+        <span class="type">PropertyValue</span> <span class="variable-name" id="pv">pv</span>;
+        <span class="reference">outer</span>:
+        <span class="keyword">for</span> (; ; ) {
+            <span class="reference">inner</span>:
+            <span class="keyword">switch</span> (prop.getType()) {
+            <span class="keyword">case</span> <span class="reference">PropertyValue.NUMERIC</span>: {
+                <span class="keyword">switch</span> (currentToken) {
+                <span class="keyword">case</span> <span class="reference">PLUS</span>:
+                    next();
+                    pv = parseMultiplicativeExpr();
+                    <span class="keyword">switch</span> (pv.getType()) {
+                    <span class="keyword">case</span> <span class="reference">PropertyValue.NUMERIC</span>:
+                        ((<span class="type">Numeric</span>)prop).add((<span class="type">Numeric</span>)pv);
+                        <span class="keyword">break</span> <span class="reference">inner</span>;
+                    <span class="keyword">case</span> <span class="reference">PropertyValue.INTEGER</span>:
+                        ((<span class="type">Numeric</span>)prop).add((<span class="type">double</span>)
+                                            (((<span class="type">IntegerType</span>)pv).getInt()));
+                        <span class="keyword">break</span> <span class="reference">inner</span>;
+                    <span class="keyword">default</span>:
+                        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">PropertyException</span>(arithErrorStr());
+                    }
+                <span class="keyword">case</span> <span class="reference">MINUS</span>:
+                    next();
+                    pv = parseMultiplicativeExpr();
+                    <span class="keyword">switch</span> (pv.getType()) {
+                    <span class="keyword">case</span> <span class="reference">PropertyValue.NUMERIC</span>:
+                        ((<span class="type">Numeric</span>)prop).subtract((<span class="type">Numeric</span>)pv);
+                        <span class="keyword">break</span> <span class="reference">inner</span>;
+                    <span class="keyword">case</span> <span class="reference">PropertyValue.INTEGER</span>:
+                        ((<span class="type">Numeric</span>)prop).subtract((<span class="type">double</span>)
+                                             (((<span class="type">IntegerType</span>)pv).getInt()));
+                        <span class="keyword">break</span> <span class="reference">inner</span>;
+                    <span class="keyword">default</span>:
+                        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">PropertyException</span>(arithErrorStr());
+                    }
+                <span class="keyword">default</span>:
+                    <span class="keyword">break</span> <span class="reference">outer</span>;
+                }
+            }
+            <span class="keyword">case</span> <span class="reference">PropertyValue.INTEGER</span>: {
+                <span class="type">int</span> <span class="variable-name" id="intVal">intVal</span> = ((<span class="type">IntegerType</span>)prop).getInt();
+                <span class="keyword">switch</span> (currentToken) {
+                <span class="keyword">case</span> <span class="reference">PLUS</span>:
+                    next();
+                    pv = parseMultiplicativeExpr();
+                    <span class="keyword">switch</span> (pv.getType()) {
+                    <span class="keyword">case</span> <span class="reference">PropertyValue.NUMERIC</span>:
+                        prop = ((<span class="type">Numeric</span>)pv).add((<span class="type">double</span>)intVal);
+                        <span class="keyword">break</span> <span class="reference">inner</span>;
+                    <span class="keyword">case</span> <span class="reference">PropertyValue.INTEGER</span>:
+                        ((<span class="type">IntegerType</span>)prop).setInt(intVal +
+                                            ((<span class="type">IntegerType</span>)pv).getInt());
+                        <span class="keyword">break</span> <span class="reference">inner</span>;
+                    <span class="keyword">default</span>:
+                        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">PropertyException</span>(arithErrorStr());
+                    }
+                <span class="keyword">case</span> <span class="reference">MINUS</span>:
+                    next();
+                    pv = parseMultiplicativeExpr();
+                    <span class="keyword">switch</span> (pv.getType()) {
+                    <span class="keyword">case</span> <span class="reference">PropertyValue.NUMERIC</span>:
+                        ((<span class="type">Numeric</span>)pv).add((<span class="type">double</span>)(-intVal));
+                        prop = ((<span class="type">Numeric</span>)pv).negate();
+                        <span class="keyword">break</span> <span class="reference">inner</span>;
+                    <span class="keyword">case</span> <span class="reference">PropertyValue.INTEGER</span>:
+                        ((<span class="type">IntegerType</span>)prop).setInt(intVal +
+                                            ((<span class="type">IntegerType</span>)pv).getInt());
+                        <span class="keyword">break</span> <span class="reference">inner</span>;
+                    <span class="keyword">default</span>:
+                        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">PropertyException</span>(arithErrorStr());
+                    }
+                <span class="keyword">default</span>:
+                    <span class="keyword">break</span> <span class="reference">outer</span>;
+                }
+            }
+            <span class="keyword">default</span>:
+                <span class="keyword">break</span> <span class="reference">outer</span>;
+            }
+        }
+        <span class="keyword">return</span> prop;
+    }
+
+    <span class="comment">/**
+     * Try to parse a multiply, divide or modulo expression and return
+     * the resulting PropertyValue.
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="type">PropertyValue</span> <span class="function-name" id="parseMultiplicativeExpr">parseMultiplicativeExpr</span>() <span class="keyword">throws</span> <span class="type">PropertyException</span> {
+        <span class="comment">//System.out.println(&quot;parseMult&quot;);
+</span>        <span class="type">PropertyValue</span> <span class="variable-name">prop</span> = parseUnaryExpr();
+        <span class="type">PropertyValue</span> <span class="variable-name">pv</span>;
+        <span class="reference">outer</span>:
+        <span class="comment">// Outer loop exists to handle a sequence of multiplicative operations
+</span>        <span class="comment">// e.g. 5 * 4 / 2
+</span>        <span class="comment">// break outer; will terminate the multiplicative expression parsing
+</span>        <span class="comment">// break inner; will look for another trailing multiplicative
+</span>        <span class="comment">// operator.
+</span>        <span class="keyword">for</span> (; ; ) {
+            <span class="reference">inner</span>:
+            <span class="keyword">switch</span> (prop.getType()) {
+            <span class="keyword">case</span> <span class="reference">PropertyValue.NUMERIC</span>:
+                <span class="keyword">switch</span> (currentToken) {
+                <span class="keyword">case</span> <span class="reference">DIV</span>:
+                    next();
+                    pv = parseUnaryExpr();
+                    <span class="keyword">switch</span> (pv.getType()) {
+                    <span class="keyword">case</span> <span class="reference">PropertyValue.INTEGER</span>:
+                        ((<span class="type">Numeric</span>)prop).divide
+                                        ((<span class="type">double</span>)(((<span class="type">IntegerType</span>)pv).getInt()));
+                        <span class="keyword">break</span> <span class="reference">inner</span>;
+                    <span class="keyword">case</span> <span class="reference">PropertyValue.NUMERIC</span>:
+                        ((<span class="type">Numeric</span>)prop).divide((<span class="type">Numeric</span>)pv);
+                        <span class="keyword">break</span> <span class="reference">inner</span>;
+                    <span class="keyword">default</span>:
+                        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">PropertyException</span>(arithErrorStr());
+                    }
+                <span class="keyword">case</span> <span class="reference">MOD</span>:
+                    next();
+                    pv = parseUnaryExpr();
+                    <span class="keyword">switch</span> (pv.getType()) {
+                    <span class="keyword">case</span> <span class="reference">PropertyValue.INTEGER</span>:
+                        ((<span class="type">Numeric</span>)prop).mod
+                                        ((<span class="type">double</span>)(((<span class="type">IntegerType</span>)pv).getInt()));
+                        <span class="keyword">break</span> <span class="reference">inner</span>;
+                    <span class="keyword">case</span> <span class="reference">PropertyValue.NUMERIC</span>:
+                        ((<span class="type">Numeric</span>)prop).mod((<span class="type">Numeric</span>)pv);
+                        <span class="keyword">break</span> <span class="reference">inner</span>;
+                    <span class="keyword">default</span>:
+                        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">PropertyException</span>(arithErrorStr());
+                    }
+                <span class="keyword">case</span> <span class="reference">MULTIPLY</span>:
+                    next();
+                    pv = parseUnaryExpr();
+                    <span class="keyword">switch</span> (pv.getType()) {
+                    <span class="keyword">case</span> <span class="reference">PropertyValue.INTEGER</span>:
+                        ((<span class="type">Numeric</span>)prop).multiply
+                                        ((<span class="type">double</span>)(((<span class="type">IntegerType</span>)pv).getInt()));
+                        <span class="keyword">break</span> <span class="reference">inner</span>;
+                    <span class="keyword">case</span> <span class="reference">PropertyValue.NUMERIC</span>:
+                        ((<span class="type">Numeric</span>)prop).multiply((<span class="type">Numeric</span>)pv);
+                        <span class="keyword">break</span> <span class="reference">inner</span>;
+                    <span class="keyword">default</span>:
+                        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">PropertyException</span>(arithErrorStr());
+                    }
+                <span class="keyword">default</span>:
+                    <span class="keyword">break</span> <span class="reference">outer</span>;
+                }
+                <span class="comment">// N.B. The above case cannot fall through to here
+</span>            <span class="keyword">case</span> <span class="reference">PropertyValue.INTEGER</span>:
+                <span class="comment">// This code treats all multiplicative operations as implicit
+</span>                <span class="comment">// operations on doubles.  It might be reasonable to allow
+</span>                <span class="comment">// an integer multiply.
+</span>                <span class="type">int</span> <span class="variable-name">intVal</span> = ((<span class="type">IntegerType</span>)prop).getInt();
+                <span class="keyword">switch</span> (currentToken) {
+                <span class="keyword">case</span> <span class="reference">DIV</span>:
+                    next();
+                    pv = parseUnaryExpr();
+                    <span class="keyword">switch</span> (pv.getType()) {
+                    <span class="keyword">case</span> <span class="reference">PropertyValue.INTEGER</span>:
+                        prop = <span class="keyword">new</span> <span class="type">Numeric</span>(property,
+                            (<span class="type">double</span>)intVal / ((<span class="type">IntegerType</span>)pv).getInt());
+                        <span class="keyword">break</span> <span class="reference">inner</span>;
+                    <span class="keyword">case</span> <span class="reference">PropertyValue.NUMERIC</span>:
+                        prop = (<span class="keyword">new</span> <span class="type">Numeric</span>(property, (<span class="type">double</span>)intVal))
+                                                        .divide((<span class="type">Numeric</span>)pv);
+                        <span class="keyword">break</span> <span class="reference">inner</span>;
+                    <span class="keyword">default</span>:
+                        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">PropertyException</span>(arithErrorStr());
+                    }
+                <span class="keyword">case</span> <span class="reference">MOD</span>:
+                    next();
+                    pv = parseUnaryExpr();
+                    <span class="keyword">switch</span> (pv.getType()) {
+                    <span class="keyword">case</span> <span class="reference">PropertyValue.INTEGER</span>:
+                        prop = <span class="keyword">new</span> <span class="type">Numeric</span>(property,
+                                ((<span class="type">double</span>)intVal) % ((<span class="type">IntegerType</span>)pv).getInt());
+                        <span class="keyword">break</span> <span class="reference">inner</span>;
+                    <span class="keyword">case</span> <span class="reference">PropertyValue.NUMERIC</span>:
+                        prop = (<span class="keyword">new</span> <span class="type">Numeric</span>(property, (<span class="type">double</span>)intVal))
+                                                        .mod((<span class="type">Numeric</span>)pv);
+                        <span class="keyword">break</span> <span class="reference">inner</span>;
+                    <span class="keyword">default</span>:
+                        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">PropertyException</span>(arithErrorStr());
+                    }
+                <span class="keyword">case</span> <span class="reference">MULTIPLY</span>:
+                    next();
+                    pv = parseUnaryExpr();
+                    <span class="keyword">switch</span> (pv.getType()) {
+                    <span class="keyword">case</span> <span class="reference">PropertyValue.INTEGER</span>:
+                        prop = <span class="keyword">new</span> <span class="type">Numeric</span>(property,
+                            ((<span class="type">double</span>)intVal) * ((<span class="type">IntegerType</span>)pv).getInt());
+                        <span class="keyword">break</span> <span class="reference">inner</span>;
+                    <span class="keyword">case</span> <span class="reference">PropertyValue.NUMERIC</span>:
+                        prop = (<span class="keyword">new</span> <span class="type">Numeric</span>(property, (<span class="type">double</span>)intVal))
+                                                   .multiply((<span class="type">Numeric</span>)pv);
+                        <span class="keyword">break</span> <span class="reference">inner</span>;
+                    <span class="keyword">default</span>:
+                        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">PropertyException</span>(arithErrorStr());
+                    }
+                <span class="keyword">default</span>:
+                    <span class="keyword">break</span> <span class="reference">outer</span>;
+                }
+            <span class="keyword">default</span>:
+                <span class="keyword">break</span> <span class="reference">outer</span>;
+            }
+        }
+        <span class="keyword">return</span> prop;
+    }
+
+    <span class="comment">/**
+     * Try to parse a unary minus expression and return the
+     * resulting PropertyValue.
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="type">PropertyValue</span> <span class="function-name" id="parseUnaryExpr">parseUnaryExpr</span>() <span class="keyword">throws</span> <span class="type">PropertyException</span> {
+        <span class="comment">//System.out.println(&quot;Unary entry&quot;);
+</span>        <span class="keyword">if</span> (currentToken == <span class="jde-java-font-lock-constant" id="MINUS">MINUS</span>) {
+            next();
+            <span class="type">PropertyValue</span> <span class="variable-name">pv</span> = parseUnaryExpr();
+            <span class="keyword">switch</span> (pv.getType()) {
+            <span class="keyword">case</span> <span class="reference">PropertyValue.NUMERIC</span>:
+                <span class="keyword">return</span> ((<span class="type">Numeric</span>)pv).negate();
+            <span class="keyword">case</span> <span class="reference">PropertyValue.INTEGER</span>:
+                ((<span class="type">IntegerType</span>)pv).setInt( -((<span class="type">IntegerType</span>)pv).getInt());
+                <span class="keyword">return</span> pv;
+            <span class="keyword">default</span>:
+                <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">PropertyException</span>(arithErrorStr());
+            }
+        }
+        <span class="keyword">return</span> parsePrimaryExpr();
+    }
+
+
+    <span class="comment">/**
+     * Checks that the current token is a right parenthesis
+     * and throws an exception if this isn't the case.
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">void</span> <span class="function-name" id="expectRpar">expectRpar</span>() <span class="keyword">throws</span> <span class="type">PropertyException</span> {
+        <span class="keyword">if</span> (currentToken != <span class="jde-java-font-lock-constant" id="RPAR">RPAR</span>)
+            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">PropertyException</span>(&quot;<span class="string">expected )</span>&quot;);
+        next();
+    }
+
+    <span class="comment">/**
+     * Try to parse a primary expression and return the
+     * resulting PropertyValue.
+     * A primary expression is either a parenthesized expression or an
+     * expression representing a primitive PropertyValue datatype, such as a
+     * string literal, an NCname, a number or a unit expression, or a
+     * function call expression.
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="type">PropertyValue</span> <span class="function-name" id="parsePrimaryExpr">parsePrimaryExpr</span>() <span class="keyword">throws</span> <span class="type">PropertyException</span> {
+        <span class="type">PropertyValue</span> <span class="variable-name">prop</span>;
+        <span class="comment">//System.out.println(&quot;Primary currentToken:&quot; + currentToken + &quot; &quot;
+</span>        <span class="comment">//                   + currentTokenValue);
+</span>        <span class="keyword">switch</span> (currentToken) {
+        <span class="keyword">case</span> <span class="reference">LPAR</span>:
+            next();
+            prop = parseAdditiveExpr();
+            expectRpar();
+            <span class="comment">// Do this here, rather than breaking, because expectRpar()
+</span>            <span class="comment">// consumes the right parenthesis and calls next().
+</span>            <span class="keyword">return</span> prop;
+
+        <span class="keyword">case</span> <span class="reference">LITERAL</span>:
+            prop = <span class="keyword">new</span> <span class="type">Literal</span>(property, currentTokenValue);
+            <span class="keyword">break</span>;
+
+        <span class="keyword">case</span> <span class="reference">NCNAME</span>:
+            <span class="comment">// Interpret this in context of the property or do it later?
+</span>            prop = <span class="keyword">new</span> <span class="type">NCName</span>(property, currentTokenValue);
+            <span class="keyword">break</span>;
+
+        <span class="keyword">case</span> <span class="reference">FLOAT</span>:
+            <span class="comment">// Do I need to differentiate here between floats and integers?
+</span>            prop = <span class="keyword">new</span> <span class="type">Numeric</span>
+                    (property, Double.parseDouble(currentTokenValue));
+            <span class="keyword">break</span>;
+
+        <span class="keyword">case</span> <span class="reference">INTEGER</span>:
+            prop = <span class="keyword">new</span> <span class="type">IntegerType</span>
+                    (property, Integer.parseInt(currentTokenValue));
+            <span class="keyword">break</span>;
+
+        <span class="keyword">case</span> <span class="reference">PERCENT</span>:
+            <span class="comment">/*
+             * Generate a Percentage object with the percentage number.
+             * The constructor converts this to a straight multiplicative
+             * factor by dividing by 100.
+             */</span>
+            prop = Percentage.makePercentage
+                    (property, Double.parseDouble(currentTokenValue));
+            <span class="keyword">break</span>;
+
+        <span class="keyword">case</span> <span class="reference">ABSOLUTE_LENGTH</span>:
+            prop = Length.makeLength(property,
+                              Double.parseDouble(currentTokenValue),
+                              currentUnit);
+            <span class="keyword">break</span>;
+        <span class="keyword">case</span> <span class="reference">TIME</span>:
+            prop = <span class="keyword">new</span> <span class="type">Time</span>(property, currentUnit,
+                            Double.parseDouble(currentTokenValue));
+            <span class="keyword">break</span>;
+        <span class="keyword">case</span> <span class="reference">FREQ</span>:
+            prop = <span class="keyword">new</span> <span class="type">Frequency</span>(property, currentUnit,
+                                 Double.parseDouble(currentTokenValue));
+            <span class="keyword">break</span>;
+        <span class="keyword">case</span> <span class="reference">ANGLE</span>:
+            prop = <span class="keyword">new</span> <span class="type">Angle</span>(property, currentUnit,
+                             Double.parseDouble(currentTokenValue));
+            <span class="keyword">break</span>;
+        <span class="keyword">case</span> <span class="reference">RELATIVE_LENGTH</span>:
+            prop = Ems.makeEms(node, property,
+                               Double.parseDouble(currentTokenValue));
+            <span class="keyword">break</span>;
+
+        <span class="keyword">case</span> <span class="reference">COLORSPEC</span>:
+            prop = <span class="keyword">new</span> <span class="type">ColorType</span>(property, currentTokenValue);
+            <span class="keyword">break</span>;
+
+        <span class="keyword">case</span> <span class="reference">BOOL</span>:
+            prop = <span class="keyword">new</span> <span class="type">Bool</span>(property, currentTokenValue);
+            <span class="keyword">break</span>;
+
+        <span class="keyword">case</span> <span class="reference">AUTO</span>:
+            prop = <span class="keyword">new</span> <span class="type">Auto</span>(property);
+            <span class="keyword">break</span>;
+
+        <span class="keyword">case</span> <span class="reference">NONE</span>:
+            prop = <span class="keyword">new</span> <span class="type">None</span>(property);
+            <span class="keyword">break</span>;
+
+        <span class="keyword">case</span> <span class="reference">INHERIT</span>:
+            prop = <span class="keyword">new</span> <span class="type">Inherit</span>(property);
+            <span class="comment">//throw new PropertyException(&quot;INHERIT not supported&quot;);
+</span>            <span class="keyword">break</span>;
+
+        <span class="keyword">case</span> <span class="reference">URI</span>:
+            prop = <span class="keyword">new</span> <span class="type">UriType</span>(property, currentTokenValue);
+            <span class="keyword">break</span>;
+
+        <span class="keyword">case</span> <span class="reference">MIMETYPE</span>:
+            prop = <span class="keyword">new</span> <span class="type">MimeType</span>(property, currentTokenValue);
+            <span class="keyword">break</span>;
+
+        <span class="keyword">case</span> <span class="reference">SLASH</span>:
+            prop = <span class="keyword">new</span> <span class="type">Slash</span>(property);
+            <span class="keyword">break</span>;
+
+        <span class="keyword">case</span> <span class="reference">FUNCTION_LPAR</span>: {
+            <span class="comment">// N.B. parseArgs() invokes expectRpar at the end of argument
+</span>            <span class="comment">// processing, so, like LPAR processing, next() is not called
+</span>            <span class="comment">// and the return from this method must be premature
+</span>            prop = <span class="jde-java-font-lock-constant">null</span>;
+            <span class="type">int</span> <span class="variable-name" id="funcType">funcType</span> = PropertyValue.<span class="jde-java-font-lock-constant" id="NO_TYPE">NO_TYPE</span>;
+            <span class="type">String</span> <span class="variable-name" id="function">function</span> = currentTokenValue;
+            next();
+            <span class="keyword">do</span> {
+                <span class="comment">// Numeric functions
+</span>                <span class="keyword">if</span> (function.equals(&quot;<span class="string">floor</span>&quot;)) {
+                    <span class="type">PropertyValue</span>[] <span class="variable-name" id="args">args</span> = parseArgs(<span class="jde-java-font-lock-number">1</span>);
+                    <span class="keyword">switch</span> (args[<span class="jde-java-font-lock-number">0</span>].getType()) {
+                    <span class="keyword">case</span> <span class="reference">PropertyValue.INTEGER</span>:
+                        args[<span class="jde-java-font-lock-number">0</span>] =
+                            <span class="keyword">new</span> <span class="type">Numeric</span>
+                                (property, ((<span class="type">IntegerType</span>)args[<span class="jde-java-font-lock-number">0</span>]).getInt());
+                    <span class="keyword">case</span> <span class="reference">PropertyValue.NUMERIC</span>:
+                        prop = <span class="keyword">new</span> <span class="type">Numeric</span>
+                                (property, ((<span class="type">Numeric</span>)args[<span class="jde-java-font-lock-number">0</span>]).floor());
+                        <span class="keyword">break</span>;
+                    <span class="keyword">default</span>:
+                        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">PropertyException</span>(funcNumericErrorStr());
+                    }
+                    <span class="keyword">break</span>;
+                }
+                <span class="keyword">if</span> (function.equals(&quot;<span class="string">ceiling</span>&quot;)) {
+                    <span class="type">PropertyValue</span>[] <span class="variable-name">args</span> = parseArgs(<span class="jde-java-font-lock-number">1</span>);
+                    <span class="keyword">switch</span> (args[<span class="jde-java-font-lock-number">0</span>].getType()) {
+                    <span class="keyword">case</span> <span class="reference">PropertyValue.INTEGER</span>:
+                        args[<span class="jde-java-font-lock-number">0</span>] =
+                            <span class="keyword">new</span> <span class="type">Numeric</span>
+                                (property, ((<span class="type">IntegerType</span>)args[<span class="jde-java-font-lock-number">0</span>]).getInt());
+                    <span class="keyword">case</span> <span class="reference">PropertyValue.NUMERIC</span>:
+                        prop = <span class="keyword">new</span> <span class="type">Numeric</span>
+                                (property, ((<span class="type">Numeric</span>)args[<span class="jde-java-font-lock-number">0</span>]).ceiling());
+                        <span class="keyword">break</span>;
+                    <span class="keyword">default</span>:
+                        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">PropertyException</span>(funcNumericErrorStr());
+                    }
+                    <span class="keyword">break</span>;
+                }
+                <span class="keyword">if</span> (function.equals(&quot;<span class="string">round</span>&quot;)) {
+                    <span class="type">PropertyValue</span>[] <span class="variable-name">args</span> = parseArgs(<span class="jde-java-font-lock-number">1</span>);
+                    <span class="keyword">switch</span> (args[<span class="jde-java-font-lock-number">0</span>].getType()) {
+                    <span class="keyword">case</span> <span class="reference">PropertyValue.INTEGER</span>:
+                        args[<span class="jde-java-font-lock-number">0</span>] =
+                            <span class="keyword">new</span> <span class="type">Numeric</span>
+                                (property, ((<span class="type">IntegerType</span>)args[<span class="jde-java-font-lock-number">0</span>]).getInt());
+                    <span class="keyword">case</span> <span class="reference">PropertyValue.NUMERIC</span>:
+                        prop = <span class="keyword">new</span> <span class="type">Numeric</span>
+                                (property, ((<span class="type">Numeric</span>)args[<span class="jde-java-font-lock-number">0</span>]).round());
+                        <span class="keyword">break</span>;
+                    <span class="keyword">default</span>:
+                        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">PropertyException</span>(funcNumericErrorStr());
+                    }
+                    <span class="keyword">break</span>;
+                }
+                <span class="keyword">if</span> (function.equals(&quot;<span class="string">min</span>&quot;)) {
+                    <span class="type">PropertyValue</span>[] <span class="variable-name">args</span> = parseArgs(<span class="jde-java-font-lock-number">2</span>);
+                    <span class="keyword">switch</span> (args[<span class="jde-java-font-lock-number">0</span>].getType()) {
+                    <span class="keyword">case</span> <span class="reference">PropertyValue.INTEGER</span>:
+                        args[<span class="jde-java-font-lock-number">0</span>] =
+                            <span class="keyword">new</span> <span class="type">Numeric</span>
+                                (property, ((<span class="type">IntegerType</span>)args[<span class="jde-java-font-lock-number">0</span>]).getInt());
+                    <span class="keyword">case</span> <span class="reference">PropertyValue.NUMERIC</span>:
+                        prop = ((<span class="type">Numeric</span>)args[<span class="jde-java-font-lock-number">0</span>]).min((<span class="type">Numeric</span>)args[<span class="jde-java-font-lock-number">1</span>]);
+                        <span class="keyword">break</span>;
+                    <span class="keyword">default</span>:
+                        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">PropertyException</span>(funcNumericErrorStr());
+                    }
+                    <span class="keyword">break</span>;
+                }
+                <span class="keyword">if</span> (function.equals(&quot;<span class="string">max</span>&quot;)) {
+                    <span class="type">PropertyValue</span>[] <span class="variable-name">args</span> = parseArgs(<span class="jde-java-font-lock-number">2</span>);
+                    <span class="keyword">switch</span> (args[<span class="jde-java-font-lock-number">0</span>].getType()) {
+                    <span class="keyword">case</span> <span class="reference">PropertyValue.INTEGER</span>:
+                        args[<span class="jde-java-font-lock-number">0</span>] =
+                            <span class="keyword">new</span> <span class="type">Numeric</span>
+                                (property, ((<span class="type">IntegerType</span>)args[<span class="jde-java-font-lock-number">0</span>]).getInt());
+                    <span class="keyword">case</span> <span class="reference">PropertyValue.NUMERIC</span>:
+                        prop = ((<span class="type">Numeric</span>)args[<span class="jde-java-font-lock-number">0</span>]).max((<span class="type">Numeric</span>)args[<span class="jde-java-font-lock-number">1</span>]);
+                        <span class="keyword">break</span>;
+                    <span class="keyword">default</span>:
+                        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">PropertyException</span>(funcNumericErrorStr());
+                    }
+                    <span class="keyword">break</span>;
+                }
+                <span class="keyword">if</span> (function.equals(&quot;<span class="string">abs</span>&quot;)) {
+                    <span class="type">PropertyValue</span>[] <span class="variable-name">args</span> = parseArgs(<span class="jde-java-font-lock-number">1</span>);
+                    <span class="keyword">switch</span> (args[<span class="jde-java-font-lock-number">0</span>].getType()) {
+                    <span class="keyword">case</span> <span class="reference">PropertyValue.INTEGER</span>:
+                        args[<span class="jde-java-font-lock-number">0</span>] =
+                            <span class="keyword">new</span> <span class="type">Numeric</span>
+                                (property, ((<span class="type">IntegerType</span>)args[<span class="jde-java-font-lock-number">0</span>]).getInt());
+                    <span class="keyword">case</span> <span class="reference">PropertyValue.NUMERIC</span>:
+                        prop = ((<span class="type">Numeric</span>)args[<span class="jde-java-font-lock-number">0</span>]).abs();
+                        <span class="keyword">break</span>;
+                    <span class="keyword">default</span>:
+                        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">PropertyException</span>(funcNumericErrorStr());
+                    }
+                    <span class="keyword">break</span>;
+                }
+
+                <span class="comment">// Color functions
+</span>                <span class="keyword">if</span> (function.equals(&quot;<span class="string">rgb</span>&quot;)) {
+                    <span class="comment">// Currently arguments must all be integers.
+</span>                    <span class="type">PropertyValue</span>[] <span class="variable-name">args</span> = parseArgs(<span class="jde-java-font-lock-number">3</span>);
+                    <span class="keyword">switch</span> (args[<span class="jde-java-font-lock-number">0</span>].getType()) {
+                    <span class="keyword">case</span> <span class="reference">PropertyValue.INTEGER</span>:
+                        prop = <span class="keyword">new</span> <span class="type">ColorType</span>
+                                (property, ((<span class="type">IntegerType</span>)args[<span class="jde-java-font-lock-number">0</span>]).getInt(),
+                                 ((<span class="type">IntegerType</span>)args[<span class="jde-java-font-lock-number">1</span>]).getInt(),
+                                 ((<span class="type">IntegerType</span>)args[<span class="jde-java-font-lock-number">2</span>]).getInt());
+                        <span class="keyword">break</span>;
+                    <span class="keyword">case</span> <span class="reference">PropertyValue.NUMERIC</span>:
+                        prop = <span class="keyword">new</span> <span class="type">ColorType</span>
+                                (property, ((<span class="type">Numeric</span>)args[<span class="jde-java-font-lock-number">0</span>]).asInt(),
+                                 ((<span class="type">Numeric</span>)args[<span class="jde-java-font-lock-number">1</span>]).asInt(),
+                                 ((<span class="type">Numeric</span>)args[<span class="jde-java-font-lock-number">2</span>]).asInt());
+                        <span class="keyword">break</span>;
+                    <span class="keyword">default</span>:
+                        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">PropertyException</span>(funcNumericErrorStr());
+                    }
+                    <span class="keyword">break</span>;
+                }
+                <span class="keyword">if</span> (function.equals(&quot;<span class="string">rgb-icc</span>&quot;)) {
+                    <span class="type">PropertyValue</span>[] <span class="variable-name">args</span> = parseArgs(<span class="jde-java-font-lock-number">6</span>);
+                    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">FunctionNotImplementedException</span>(&quot;<span class="string">rgb-icc</span>&quot;);
+                    <span class="comment">//break;
+</span>                }
+                <span class="keyword">if</span> (function.equals(&quot;<span class="string">system-color</span>&quot;)) {
+                    <span class="type">PropertyValue</span>[] <span class="variable-name">args</span> = parseArgs(<span class="jde-java-font-lock-number">1</span>);
+                    prop = <span class="keyword">new</span> <span class="type">ColorType</span>
+                            (property, ((<span class="type">StringType</span>)args[<span class="jde-java-font-lock-number">0</span>]).getString());
+                    <span class="keyword">break</span>;
+                }
+
+                <span class="comment">// Font function
+</span>                <span class="keyword">if</span> (function.equals(&quot;<span class="string">system-font</span>&quot;)) {
+                    <span class="type">PropertyValue</span>[] <span class="variable-name">args</span> = parseArgs(<span class="jde-java-font-lock-number">1</span>, <span class="jde-java-font-lock-number">2</span>);
+                    <span class="keyword">if</span> (args.length == <span class="jde-java-font-lock-number">1</span>) {
+                        prop = SystemFontFunction.systemFontCharacteristic
+                                (property,
+                                 ((<span class="type">StringType</span>)args[<span class="jde-java-font-lock-number">0</span>]).getString());
+                    } <span class="keyword">else</span> {
+                        <span class="comment">// 2 args
+</span>                        prop = SystemFontFunction.systemFontCharacteristic
+                                (property,
+                                 ((<span class="type">StringType</span>)args[<span class="jde-java-font-lock-number">0</span>]).getString(),
+                                 ((<span class="type">StringType</span>)args[<span class="jde-java-font-lock-number">1</span>]).getString());
+                    }
+                    <span class="keyword">break</span>;
+                }
+
+                <span class="comment">// Property value functions
+</span>                <span class="keyword">if</span> (function.equals(&quot;<span class="string">label-end</span>&quot;)) {
+                    <span class="type">PropertyValue</span>[] <span class="variable-name">args</span> = parseArgs(<span class="jde-java-font-lock-number">0</span>);
+                    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">FunctionNotImplementedException</span>(&quot;<span class="string">label-end</span>&quot;);
+                    <span class="comment">//break;
+</span>                }
+                <span class="keyword">if</span> (function.equals(&quot;<span class="string">body-start</span>&quot;)) {
+                    <span class="type">PropertyValue</span>[] <span class="variable-name">args</span> = parseArgs(<span class="jde-java-font-lock-number">0</span>);
+                    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">FunctionNotImplementedException</span>(&quot;<span class="string">body-start</span>&quot;);
+                    <span class="comment">//break;
+</span>                }
+                <span class="keyword">if</span> (function.equals(&quot;<span class="string">inherited-property-value</span>&quot;)) {
+                    <span class="type">int</span> <span class="variable-name" id="propindex">propindex</span> = property;
+                    <span class="type">PropertyValue</span>[] <span class="variable-name">args</span> = parseArgs(<span class="jde-java-font-lock-number">0</span>, <span class="jde-java-font-lock-number">1</span>);
+                    <span class="keyword">if</span> (args.length != <span class="jde-java-font-lock-number">0</span>)
+                        propindex = PropNames.getPropertyIndex(
+                                ((<span class="type">StringType</span>)args[<span class="jde-java-font-lock-number">0</span>]).getString());
+
+                    <span class="comment">// If it's a compound, return an InheritedValue object
+</span>                    <span class="keyword">if</span> (PropertyConsts.pconsts.isCompound(propindex)) {
+                        prop = <span class="keyword">new</span> <span class="type">InheritedValue</span>(property, propindex);
+                        <span class="keyword">break</span>;
+                    }
+                    <span class="comment">// Is it an inherited property?
+</span>                    <span class="keyword">if</span> (PropertyConsts.pconsts.inheritance(propindex)
+                                                            == Property.<span class="jde-java-font-lock-constant" id="NO">NO</span>)
+                        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">PropertyException</span>
+                                (&quot;<span class="string">inherited-property-value: </span>&quot;
+                                 + PropNames.getPropertyName(propindex)
+                                 + &quot;<span class="string"> is not inherited.</span>&quot;);
+                    <span class="comment">// Not a compound, and inherited - try to resolve it
+</span>                    prop = node.fromParent(property, propindex);
+                    <span class="keyword">break</span>;
+                }
+                <span class="comment">// N.B. see comments on classes FromNearestSpecified and
+</span>                <span class="comment">// FromParent for explanation of this section
+</span>                <span class="keyword">if</span> (function.equals(&quot;<span class="string">from-parent</span>&quot;))
+                    funcType = PropertyValue.<span class="jde-java-font-lock-constant" id="FROM_PARENT">FROM_PARENT</span>;
+                <span class="keyword">if</span> (function.equals(&quot;<span class="string">from-nearest-specified-value</span>&quot;))
+                    funcType = PropertyValue.<span class="jde-java-font-lock-constant" id="FROM_NEAREST_SPECIFIED">FROM_NEAREST_SPECIFIED</span>;
+                <span class="keyword">if</span> (funcType == <span class="reference">PropertyValue</span>.<span class="type">FROM_PARENT</span>
+                    || funcType == PropertyValue.<span class="jde-java-font-lock-constant">FROM_NEAREST_SPECIFIED</span>)
+                {
+                    <span class="comment">// Preset the return value in case of a shorthand property
+</span>                    <span class="keyword">switch</span> (funcType) {
+                    <span class="keyword">case</span> <span class="reference">PropertyValue.FROM_PARENT</span>:
+                        prop = <span class="keyword">new</span> <span class="type">FromParent</span>(property);
+                    <span class="keyword">case</span> <span class="reference">PropertyValue.FROM_NEAREST_SPECIFIED</span>:
+                        prop = <span class="keyword">new</span> <span class="type">FromNearestSpecified</span>(property);
+                    }
+
+                    <span class="type">PropertyValue</span>[] <span class="variable-name">args</span> = parseArgs(<span class="jde-java-font-lock-number">0</span>, <span class="jde-java-font-lock-number">1</span>);
+                    <span class="keyword">if</span> (args.length == <span class="jde-java-font-lock-number">0</span>) {
+                        <span class="keyword">if</span> (! (PropertyConsts.pconsts.isShorthand(property)
+                           || PropertyConsts.pconsts.isCompound(property))) {
+                            <span class="comment">// develop the function value and return it as
+</span>                            <span class="comment">// a property.
+</span>                            <span class="keyword">switch</span> (funcType) {
+                            <span class="keyword">case</span> <span class="reference">PropertyValue.FROM_PARENT</span>:
+                                prop = node.fromParent(property);
+                            <span class="keyword">case</span> <span class="reference">PropertyValue.FROM_NEAREST_SPECIFIED</span>:
+                                prop = node.fromNearestSpecified(property);
+                            }
+                        }
+                        <span class="comment">// else a shorthand/compound - do nothing;
+</span>                        <span class="comment">// prop has been
+</span>                        <span class="comment">// set to the appropriate pseudo-propertyValue
+</span>                    } <span class="keyword">else</span> { <span class="comment">// one argument - it must be a property name
+</span>                        <span class="keyword">if</span> ( ! (args[<span class="jde-java-font-lock-number">0</span>] <span class="keyword">instanceof</span> <span class="type">NCName</span>))
+                            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">PropertyException</span>
+                                    (function + &quot;<span class="string"> function requires</span>&quot;
+                                     + &quot;<span class="string"> property name arg.</span>&quot;);
+                        <span class="comment">// else arg[0] is an NCName
+</span>                        <span class="type">NCName</span> <span class="variable-name" id="ncname">ncname</span> = (<span class="type">NCName</span>)args[<span class="jde-java-font-lock-number">0</span>];
+                        <span class="type">String</span> <span class="variable-name" id="propname">propname</span> = ncname.getNCName();
+                        <span class="type">int</span> <span class="variable-name" id="nameindex">nameindex</span> =
+                                PropNames.getPropertyIndex(propname);
+                        <span class="keyword">if</span> (PropertyConsts.pconsts.isShorthand(nameindex)
+                            || PropertyConsts.pconsts.isCompound(nameindex)) {
+                            <span class="comment">// the argument is a shorthand/compound property -
+</span>                            <span class="comment">// it must be the same as the property being
+</span>                            <span class="comment">// assigned to.
+</span>                            <span class="comment">// see 5.10.4 Property Value Functions
+</span>                            <span class="keyword">if</span> ( ! (nameindex == property))
+                                <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">PropertyException</span>
+                                        (function +
+                                         &quot;<span class="string"> argument </span>&quot; + propname +
+                                         &quot;<span class="string"> does not match property </span>&quot; +
+                                         PropNames.getPropertyName(property));
+                            <span class="comment">// else perform shorthand/compound processing
+</span>                            <span class="comment">// i.e. do nothing;
+</span>                            <span class="comment">// prop has been set to the correct
+</span>                            <span class="comment">// pseudo-propertyValue
+</span>                        }
+                        <span class="keyword">else</span> {   <span class="comment">// An NCName but not a shorthand/compound
+</span>                            <span class="comment">// Perform normal from-? processing
+</span>                            <span class="keyword">switch</span> (funcType) {
+                            <span class="keyword">case</span> <span class="reference">PropertyValue.FROM_PARENT</span>:
+                                prop = node.fromParent(property, nameindex);
+                            <span class="keyword">case</span> <span class="reference">PropertyValue.FROM_NEAREST_SPECIFIED</span>:
+                                prop = node.fromNearestSpecified
+                                                        (property, nameindex);
+                            }
+                        }
+                    }
+                    <span class="keyword">break</span>;
+                }
+                <span class="keyword">if</span> (function.equals(&quot;<span class="string">from-table-column</span>&quot;)) {
+                    <span class="type">PropertyValue</span>[] <span class="variable-name">args</span> = parseArgs(<span class="jde-java-font-lock-number">0</span>, <span class="jde-java-font-lock-number">1</span>);
+                    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">FunctionNotImplementedException</span>
+                            (&quot;<span class="string">from-table-column</span>&quot;);
+                    <span class="comment">//break;
+</span>                }
+                <span class="keyword">if</span> (function.equals(&quot;<span class="string">proportional-column-width</span>&quot;)) {
+                    <span class="type">PropertyValue</span>[] <span class="variable-name">args</span> = parseArgs(<span class="jde-java-font-lock-number">1</span>);
+                    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">FunctionNotImplementedException</span>
+                            (&quot;<span class="string">proportional-column-width</span>&quot;);
+                    <span class="comment">//break;
+</span>                }
+                <span class="keyword">if</span> (function.equals(&quot;<span class="string">merge-property-values</span>&quot;)) {
+                    <span class="type">PropertyValue</span>[] <span class="variable-name">args</span> = parseArgs(<span class="jde-java-font-lock-number">0</span>, <span class="jde-java-font-lock-number">1</span>);
+                    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">FunctionNotImplementedException</span>
+                            (&quot;<span class="string">merge-property-values</span>&quot;);
+                    <span class="comment">//break;
+</span>                }
+                <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">PropertyException</span>(&quot;<span class="string">no such function: </span>&quot;
+                                                        + function);
+            } <span class="keyword">while</span> (<span class="jde-java-font-lock-constant" id="false">false</span>);
+            <span class="keyword">return</span> prop;
+        }
+        <span class="keyword">default</span>:
+            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">PropertyException</span>(&quot;<span class="string">syntax error</span>&quot;);
+        }
+        next();
+        <span class="keyword">return</span> prop;
+    }
+
+    <span class="comment">/**
+     * Parse a comma separated list of function arguments. Each argument
+     * may itself be an expression. This method consumes the closing right
+     * parenthesis of the argument list.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name" id="nbArgs">nbArgs</span><span class="comment"> The number of arguments expected by the function.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> &lt;tt&gt;PropertyValueList&lt;/tt&gt; of &lt;tt&gt;PropertyValue&lt;/tt&gt; objects
+     * representing the arguments found.
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">PropertyException
+</span><span class="comment">     */</span>
+    <span class="type">PropertyValue</span>[] <span class="function-name" id="parseArgs">parseArgs</span>(<span class="type">int</span> <span class="variable-name">nbArgs</span>) <span class="keyword">throws</span> <span class="type">PropertyException</span> {
+        <span class="keyword">return</span> parseArgs(nbArgs, nbArgs);
+    }
+
+    <span class="comment">/**
+     * Parse a comma separated list of function arguments. Each argument
+     * may itself be an expression. This method consumes the closing right
+     * parenthesis of the argument list.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name" id="minArgs">minArgs</span><span class="comment"> The minimum number of arguments expected by the function.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name" id="maxArgs">maxArgs</span><span class="comment"> The maximum number of arguments expected by the function.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> &lt;tt&gt;PropertyValueList&lt;/tt&gt; of &lt;tt&gt;PropertyValue&lt;/tt&gt; objects
+     * representing the arguments found.  N.B.  The actual number of arguments
+     * returned is guaranteed to be between minArgs and maxArgs, inclusive,
+     * but the actual list of args found is terminated by the end of the
+     * array, or the first null element.
+     * </span><span class="jde-java-font-lock-doc-tag">@exception</span><span class="comment"> </span><span class="type">PropertyException
+</span><span class="comment">     */</span>
+    <span class="type">PropertyValue</span>[] <span class="function-name">parseArgs</span>(<span class="type">int</span> <span class="variable-name">minArgs</span>, <span class="type">int</span> <span class="variable-name">maxArgs</span>)
+        <span class="keyword">throws</span> <span class="type">PropertyException</span>
+    {
+        <span class="type">PropertyValue</span>[] <span class="variable-name">args</span> = <span class="keyword">new</span> <span class="type">PropertyValue</span>[maxArgs];
+        <span class="type">PropertyValue</span> <span class="variable-name">prop</span>;
+        <span class="type">int</span> <span class="variable-name" id="i">i</span> = <span class="jde-java-font-lock-number">0</span>;
+        <span class="keyword">if</span> (currentToken == <span class="jde-java-font-lock-constant">RPAR</span>) {
+            <span class="comment">// No args: func()
+</span>            next();
+        } <span class="keyword">else</span> {
+            <span class="keyword">while</span> (<span class="jde-java-font-lock-constant">true</span>) {
+                prop = parseAdditiveExpr();
+                <span class="keyword">if</span> (i &lt; maxArgs) {
+                    args[i++] = prop;
+                }
+                <span class="comment">// ignore extra args
+</span>                <span class="keyword">if</span> (currentToken != <span class="jde-java-font-lock-constant">COMMA</span>)
+                    <span class="keyword">break</span>;
+                next();
+            }
+            expectRpar();
+        }
+        <span class="keyword">if</span> (minArgs &gt; i || i &gt; maxArgs) {
+            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">PropertyException</span>(&quot;<span class="string">Wrong number of args for function</span>&quot;);
+        }
+        <span class="keyword">return</span> args;
+    }
+
+}
+</pre>
+  </body>
+</html>

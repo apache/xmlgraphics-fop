@@ -1,0 +1,156 @@
+<?xml version="1.0" standalone="no"?>
+<!--
+  Copyright 1999-2004 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
+    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/core/context/resources/schema/dtd/document-v12.dtd">
+
+<document>
+  <header>
+    <title>Implementing footnotes</title>
+    <authors>
+      <person name="Peter B. West" email="pbwest@powerup.com.au"/>
+    </authors>
+  </header>
+  <body>
+    <section>
+      <title>Implementing footnotes in FOP</title>
+      <p>  
+        Footnotes present difficulties for page layout primarily
+        because their point of invocation in the flow is different
+        from their point of appearance in the area tree.  All of the
+        content lines of a footnote may appear on the same page as its
+        invocation point, all may appear on a following page, or the
+        lines may be split over a page or pages.  (This characteristic
+        leads to another problem when a footnote overflows the last
+        page of flow content, but that difficulty will not be 
+        discussed here.)  This note considers some aspects of the
+        implementation of footnotes in a galley-based design.
+      </p>
+      <section>
+        <title>Footnotes and galleys</title>
+        <p>
+          In the structure described in the <link href= "galleys.html"
+          >introduction to FOP galleys</link>, footnotes would be
+          pre-processed as galleys themselves, but they would remain
+          attached as subtrees to their points of invocation in the
+          main text.  Allocation to a footnote-reference-area would
+          only occur in the resolution to Area nodes.
+        </p>
+        <p>
+          When footnotes are introduced, the communication between
+          galleys and layout manager, as mentioned <link href=
+          "galleys.html#pre-processing" >above</link>, would be
+          affected.  The returned information would two b-p-d values:
+          the primary line-area b-p-d impact and the footnote b-p-d
+          impact.  The distinction is necessary for two reasons; to
+          alert the layout manager to the first footnote of the page,
+          and because the footnote b-p-d will always impact the
+          main-reference-area b-p-d, whereas the primary inline-area
+          may not, e.g. in the case of multiple span-areas.
+        </p>
+      </section>
+      <section>
+        <title>Multiple columns and footnotes</title>
+        <note> 
+          A possible method for multi-column layout and balancing
+          with footnotes, using a galley-based approach.
+        </note>
+        <p>
+          This note assumes a galley, as discussed <link href=
+          "galleys.html" >elsewhere</link>, flowing text with
+          footnotes and possibly other blocks into a possibly
+          multi-column area.  The logic of flowing into multiple
+          columns is trivially applied to a single column.  The galley
+          is manipulated within the context of the <em>layout
+          tree</em>.
+        </p>
+        <p>
+          Associated with the galley are two sets of data.
+          One contains the maps of all "natural" break-points and
+          the of all hyphenation break-points.  This set is
+          constructed at the time of construction of the galley and
+          is a constant for a given galley.  The second contains
+          dynamic data which represents one possible attempt to lay
+          out the galley.  There may be multiple sets of such data
+          to reflect varying attempts.  The data of this set are,
+          essentially, representations of line-areas, with the supporting
+          information necessary to determine these line-areas.
+        </p>
+        <p>
+          The line-area data includes the boundaries within the
+          galley of each line-area, the boundaries of each column
+          and the boundaries of the "page", or main area.  When a
+          line-area boundary occurs at a hyphenation point, a
+          "virtual hyphen" is assumed and accounted for in the
+          i-p-d.  As mentioned, individual footnote galleys will
+          hang from the parent galley.  The associated data of the
+          footnote galleys is similar: a once-only break-points map,
+          and one or more line-area maps.  No column boundaries are
+          required, but a page boundary is required at the end of
+          the last footnote or where a footnote breaks across a page
+          boundary.
+        </p>
+        <p>
+          A number of b-p-d values are also maintained.  For each
+          line-area, the b-p-d, the main area b-p-d increment, the
+          footnote b-p-d increment and the footnote's page-related
+          b-p-d increment are required.  The main-area b-p-d
+          increments for any particular line-area are dependent on
+          the column position of the line-area.  Total b-p-d's are
+          also kept: total footnote b-p-d, total main area b-p-d,
+          and totals for each column.<br/><br/>
+          <strong>Figure 1</strong> Columns before first footnote.
+        </p>
+        <figure src=
+        "images/design/alt.design/initial-column-values.png" alt=
+        "Columns before first footnote"/>
+      </section>
+      <section>
+        <title>Balancing columns</title>
+        <p>
+          <strong>Figure 2</strong> Adding a line area with first
+          footnote.
+        </p>
+        <figure src= "images/design/alt.design/line-area-5.png"
+                alt= "Columns after adding first footnote"/>
+        <p>
+          Columns are balanced dynamically in the galley preliminary
+          layout.  While the galley retains its basic linear
+          structure, the accompanying data structures accomplish
+          column distribution and balancing.  As each line-area is
+          added, the columns are re-balanced.  <strong>N.B.</strong>
+          This re-balancing involves only some of the dynamic data
+          associated with the participating galley(s).  The data
+          structures associating breakpoints with the beginning and
+          end of individual line areas does not change in
+          re-balancing; only the association of line-area with column,
+          and, possibly, the various impact values for each line-area.
+          <br/><br/>
+          <strong>Figure 3</strong> Adding a line area with next
+          footnote.
+        </p>
+        <figure src= "images/design/alt.design/line-area-6.png"
+                alt= "Columns after adding next footnote"/>
+      </section>
+      <section>
+        <title>Layout managers in the flow of control</title>
+        <note>To be developed.</note>
+      </section>
+    </section>
+  </body>
+</document>
+

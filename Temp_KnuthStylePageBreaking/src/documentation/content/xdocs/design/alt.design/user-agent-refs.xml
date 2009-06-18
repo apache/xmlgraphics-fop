@@ -1,0 +1,929 @@
+<?xml version="1.0" standalone="no"?>
+<!--
+  Copyright 1999-2004 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
+    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/core/context/resources/schema/dtd/document-v12.dtd">
+
+<document>
+  <header>
+    <title>User agent refs</title>
+    <authors>
+      <person name="Peter B. West" email="pbwest@powerup.com.au"/>
+    </authors>
+  </header>
+  <body>
+    <section>
+      <title>User Agent references in XSLFO</title>
+      <section>
+        <title>4.9.2 Viewport Geometry</title>
+        <p>
+          If the block-progression-dimension of the reference-area is
+          larger than that of the viewport-area and the overflow trait
+          for the reference-area is scroll, then the
+          inline-scroll-amount and block-scroll-amount are determined
+          by a scrolling mechanism, if any, provided by the
+          <strong>user agent</strong>. Otherwise, both are zero.
+        </p>
+      </section>
+      <section>
+        <title>5.1.3 Actual Values</title>
+        <p>
+          A computed value is in principle ready to be used, but a
+          user agent may not be able to make use of the value in a
+          given environment. For example, a <strong>user
+            agent</strong> may only be able to render borders with
+          integer pixel widths and may, therefore, have to adjust the
+          computed width to an integral number of media pixels.
+        </p>
+      </section>
+      <section>
+        <title>5.5.7 Font Properties</title>
+        <p>
+          There is no XSL mechanism to specify a particular font;
+          instead, a selected font is chosen from the fonts available
+          to the <strong>User Agent</strong> based on a set of
+          selection criteria. The selection criteria are the following
+          font properties: "font-family", "font-style",
+          "font-variant", "font-weight", "font-stretch", and
+          "font-size", plus, for some formatting objects, one or more
+          characters.
+        </p>
+      </section>
+      <section>
+        <title>5.9.13.1 Pixels</title>
+        <p>
+          If the <strong>User Agent</strong> chooses a measurement for
+          a 'px' that does not match an integer number of device dots
+          in each axis it may produce undesirable effects...
+        </p>
+      </section>
+      <section>
+        <title>5.10.4 Property Value Functions</title>
+        <section>
+          <title>Function: object merge-property-values( NCName)</title>
+          <p>
+            The merge-property-values function returns a value of the
+            property whose name matches the argument, or if omitted
+            for the property for which the expression is being
+            evaluated. The value returned is the specified value on
+            the last fo:multi-property-set, of the parent
+            fo:multi-properties, that applies to the <strong>User
+              Agent</strong> state. If there is no such value, the
+            computed value of the parent fo:multi-properties is
+            returned...
+          </p>
+          <p>
+            The test for applicability of a <strong>User
+              Agent</strong> state is specified using the "active-state"
+            property.
+          </p>
+        </section>
+      </section>
+      <section>
+        <title>6.3 Formatting Objects Summary</title>
+        <section>
+          <title>multi-property-set</title>
+          <p>
+            The fo:multi-property-set is used to specify an
+            alternative set of formatting properties that, dependent
+            on a <strong>User Agent</strong> state, are applied to the
+            content.
+          </p>
+        </section>
+        <section>
+          <title>title</title>
+          <p>
+            The fo:title formatting object is used to associate a
+            title with a given page-sequence. This title may be used
+            by an interactive <strong>User Agent</strong> to identify
+            the pages. For example, the content of the fo:title can be
+            formatted and displayed in a "title" window or in a "tool
+            tip".
+          </p>
+        </section>
+      </section>
+      <section>
+        <title>6.4.1.2 Page-masters</title>
+        <p>
+          ... When pages are used with a <strong>User Agent</strong>
+          such as a Web browser, it is common that the each document
+          has only one page. The viewport used to view the page
+          determines the size of the page. When pages are placed on
+          non-interactive media, such as sheets of paper, pages
+          correspond to one or more of the surfaces of the paper.
+        </p>
+      </section>
+      <section>
+        <title>6.4.20 fo:title</title>
+        <section>
+          <title>Common Usage:</title>
+          <p>
+            ... This title may be used by an interactive <strong>User
+              Agent</strong> to identify the pages.
+          </p>
+        </section>
+      </section>
+      <section>
+        <title>6.6.3 fo:character</title>
+        <section>
+          <title>Constraints:</title>
+          <p>
+            The dimensions of the areas are determined by the font
+            metrics for the glyph.
+          </p>
+          <p>
+            When formatting an fo:character with a
+            "treat-as-word-space" value of "true", the <strong>User
+              Agent</strong> may use a different method for determining
+            the inline-progression-dimension of the area.
+          </p>
+        </section>
+      </section>
+      <section>
+        <title>6.9 Dynamic Effects: Link and Multi Formatting
+          Objects</title>
+        <section>
+          <title>6.9.1 Introduction</title>
+          <p>
+            Dynamic effects, whereby user actions (including
+            <strong>User Agent</strong> state) can influence the
+            behavior and/or representation of portions of a document,
+            can be achieved through the use of the formatting objects
+            included in this section:
+          </p>
+          <ul>
+            <li>One-directional single-target links.</li>
+            <li>
+              The ability to switch between the display of two or more
+              formatting object subtrees. This can be used for, e.g.,
+              expandable/collapsible table of contents, display of an
+              icon or a full table or graphic.
+            </li>
+            <li>
+              The ability to switch between different property values,
+              such as color or font-weight, depending on a
+              <strong>User Agent</strong> state, such as "hover".
+            </li>
+          </ul>
+        </section>
+      </section>
+      <section>
+        <title>6.10 Out-of-Line Formatting Objects</title>
+        <section>
+          <title>6.10.1.3 Conditional Sub-Regions</title>
+          <p>
+            ... There may be limits on how much space conditionally
+            generated areas can borrow from the
+            region-reference-area. It is left to the <strong>user
+              agent</strong> to decide these limits.
+          </p>
+          <p>
+            ... An interactive <strong>user agent</strong> may choose
+            to create "hot links" to the footnotes from the
+            footnote-citation, or create "hot links" to the
+            before-floats from an implicit citation, instead of
+            realizing conditional sub-regions.
+          </p>
+        </section>
+      </section>
+      <section>
+        <title>6.10.2 fo:float</title>
+        <section>
+          <title>Constraints:</title>
+          <p>
+            ... The <strong>user agent</strong> may make its own
+            determination, after taking into account the intrusion
+            adjustments caused by one or more overlapping side-floats,
+            that the remaining space in the
+            inline-progression-direction is insufficient for the next
+            side-float or normal block-area. The <strong>user
+              agent</strong> may address this by causing the next
+            side-float or normal block-area to "clear" one of the
+            relevant side-floats, as described in the "clear" property
+            description, so the intrusion adjustment is sufficiently
+            reduced. Of the side-floats that could be cleared to meet
+            this constraint, the side-float that is actually cleared
+            must be the one whose after-edge is closest to the
+            before-edge of the parent reference-area.
+          </p>
+          <p>
+            The <strong>user agent</strong> may determine sufficiency
+            of space by using a fixed length, or by some heuristic
+            such as whether an entire word fits into the available
+            space, or by some combination, in order to handle text and
+            images.
+          </p>
+        </section>
+      </section>
+      <section>
+        <title>6.10.3 fo:footnote</title>
+        <section>
+          <title>Constraints:</title>
+          <p>
+            ... The second block-area and any additional block-areas
+            returned by an fo:footnote must be placed on the
+            immediately subsequent pages to the page containing the
+            first block-area returned by the fo:footnote, before any
+            other content is placed. If a subsequent page does not
+            contain a region-body, the <strong>user agent</strong>
+            must use the region-master of the last page that did
+            contain a region-body to hold the additional block-areas.
+          </p>
+        </section>
+      </section>
+      <section>
+        <title>7.3 Reference Rectangle for Percentage Computations</title>
+        <p>...</p>
+        <section>
+          <title>Exceptions ...</title>
+          <p>
+            5. When the absolute-position is "fixed", the containing
+            block is defined by the nearest ancestor viewport area. If
+            there is no ancestor viewport area, the containing block
+            is defined by the <strong>user agent</strong>.
+          </p>
+        </section>
+      </section>
+      <section>
+        <title>7.6.5 "pause-after" 7.6.6 "pause-before" 7.6.17
+        "voice-family"</title>
+        <p>
+          Initial: depends on <strong>user agent</strong>
+        </p>
+      </section>
+      <section>
+        <title>7.7.1 "background-attachment"</title>
+        <section>
+          <title>fixed</title>
+          <p>
+            ... <strong>User agents</strong> may treat fixed as
+            scroll. However, it is recommended they interpret fixed
+            correctly, at least for the HTML and BODY elements, since
+            there is no way for an author to provide an image only for
+            those browsers that support fixed.
+          </p>
+        </section>
+      </section>
+      <section>
+        <title>7.7.9 "border-before-width"</title>
+        <section>
+          <title>&lt;length-conditional&gt;</title>
+          <p>
+            ... If border-before-width is specified using one of the
+            width keywords the .conditional component is set to
+            "discard" and the .length component to a <strong>User
+              Agent</strong> dependent length.
+          </p>
+        </section>
+      </section>
+      <section>
+        <title>7.7.19 "border-top-color"</title>
+        <section>
+          <title>&lt;color&gt;</title>
+          <p>
+            ... If an element's border color is not specified with a
+            "border" property, <strong>user agents</strong> must use
+            the value of the element's "color" property as the
+            computed value for the border color.
+          </p>
+        </section>
+      </section>
+      <section>
+        <title>7.7.20 "border-top-style"</title>
+        <p>
+          Conforming HTML <strong>user agents</strong> may interpret
+          'dotted', 'dashed', 'double', 'groove', 'ridge', 'inset',
+          and 'outset' to be 'solid'.
+        </p>
+      </section>
+      <section>
+        <title>7.7.21 "border-top-width"</title>
+        <section>
+          <title>thin ... medium ... thick ...</title>
+          <p>
+            ... The interpretation of the first three values depends
+            on the <strong>user agent</strong>.
+          </p>
+        </section>
+      </section>
+      <section>
+        <title>7.8.2 "font-family"</title>
+        <p>Initial: depends on <strong>user agent</strong></p>
+      </section>
+      <section>
+        <title>7.8.3 "font-selection-strategy"</title>
+        <p>
+          There is no XSL mechanism to specify a particular font;
+          instead, a selected font is chosen from the fonts available
+          to the <strong>User Agent</strong> based on a set of
+          selection criteria. The selection criteria are the following
+          font properties: "font-family", "font-style",
+          "font-variant", "font-weight", "font-stretch", and
+          "font-size", plus, for some formatting objects, one or more
+          characters.
+        </p>
+        <p>
+          ... This fallback may be to seek a match using a
+          <strong>User Agent</strong> default "font-family", or it may
+          be a more elaborate fallback strategy where, for example,
+          "Helvetica" would be used as a fallback for "Univers".
+        </p>
+        <p>
+          If no match has been found for a particular character, there
+          is no selected font and the <strong>User Agent</strong>
+          should provide a visual indication that a character is not
+          being displayed (for example, using the 'missing character'
+          glyph).
+        </p>
+      </section>
+      <section>
+        <title>7.8.4 "font-size"</title>
+        <section>
+          <title>&lt;absolute-size&gt;</title>
+          <p>
+            An &lt;absolute-size&gt; keyword refers to an entry in a
+            table of font sizes computed and kept by the <strong>user
+              agent</strong>. Possible values are:<br/>[ xx-small |
+            x-small | small | medium | large | x-large | xx-large ]
+          </p>
+        </section>
+        <section>
+          <title>&lt;relative-size&gt;</title>
+          <p>
+            A &lt;relative-size&gt; keyword is interpreted relative to
+            the table of font sizes and the font size of the parent
+            element. Possible values are:<br/>[ larger | smaller
+            ]<br/>For example, if the parent element has a font size
+            of "medium", a value of "larger" will make the font size
+            of the current element be "large". If the parent element's
+            size is not close to a table entry, the <strong>user
+              agent</strong> is free to interpolate between table
+            entries or round off to the closest one. The <strong>user
+              agent</strong> may have to extrapolate table values if the
+            numerical value goes beyond the keywords.
+          </p>
+        </section>
+        <section>
+          <title>&lt;length&gt;</title>
+          <p>
+            A length value specifies an absolute font size (that is
+            independent of the <strong>user agent</strong>'s font
+            table).
+          </p>
+        </section>
+      </section>
+      <section>
+        <title>7.8.8 "font-variant"</title>
+        <section>
+          <title>small-caps</title>
+          <p>
+            ... If a genuine small-caps font is not available,
+            <strong>user agents</strong> should simulate a small-caps
+            font...
+          </p>
+        </section>
+      </section>
+      <section>
+        <title>7.8.9 "font-weight"</title>
+        <section>
+          <title>XSL modifications to the CSS definition:</title>
+          <p>
+            ... The association of other weights within a family to
+            the numerical weight values is intended only to preserve
+            the ordering of weights within that family. <strong>User
+              agents</strong> must map names to values in a way that
+            preserves visual order; a face mapped to a value must not
+            be lighter than faces mapped to lower values. There is no
+            guarantee on how a <strong>user agent</strong> will map
+            fonts within a family to weight values. However, the
+            following heuristics...
+          </p>
+        </section>
+      </section>
+      <section>
+        <title>7.13.1 "alignment-adjust"</title>
+        <section>
+          <title>auto</title>
+          <p>
+            ... If the baseline-identifier does not exist in the
+            baseline-table for the glyph or other inline-area, then
+            the <strong>User Agent</strong> may either use heuristics
+            to determine where that missing baseline would be or may
+            use the dominant-baseline as a fallback.
+          </p>
+        </section>
+      </section>
+      <section>
+        <title>7.13.3 "baseline-shift"</title>
+        <section>
+          <title>sub/super</title>
+          <p>
+            ... Because in most fonts the subscript position is
+            normally given relative to the "alphabetic" baseline, the
+            <strong>User Agent</strong> may compute the effective
+            position for sub/superscripts <em>[sub: spec typo!]</em>
+            when some other baseline is dominant. ... If there is no
+            applicable font data the <strong>User Agent</strong> may
+            use heuristics to determine the offset.
+          </p>
+        </section>
+      </section>
+      <section>
+        <title>7.13.5 "dominant-baseline"</title>
+        <p>
+          ... If there is no baseline-table in the nominal font or if
+          the baseline-table lacks an entry for the desired baseline,
+          then the <strong>User Agent</strong> may use heuristics to
+          determine the position of the desired baseline.
+        </p>
+      </section>
+      <section>
+        <title>7.14.11 "scaling-method"</title>
+        <section>
+          <title>auto</title>
+          <p>
+            The <strong>User Agent</strong> is free to choose either
+            resampling, integer scaling, or any other scaling method.
+          </p>
+        </section>
+        <section>
+          <title>integer-pixels</title>
+          <p>
+            The <strong>User Agent</strong> should scale the image
+            such that each pixel in the original image is scaled to
+            the nearest integer number of device-pixels that yields an
+            image less-then-or-equal-to the image size derived from
+            the content-height, content-width, and scaling properties.
+          </p>
+        </section>
+        <section>
+          <title>resample-any-method</title>
+          <p>
+            The <strong>User Agent</strong> should resample the
+            supplied image to provide an image that fills the size
+            derived from the content-height, content-width, and
+            scaling properties. The <strong>user agent</strong> may
+            use any sampling method.
+          </p>
+        </section>
+        <p>
+          ... This is defined as a preference to allow the
+          <strong>user agent</strong> the flexibility to adapt to
+          device limitations and to accommodate over-constrained
+          situations involving min/max dimensions and scale factors.
+        </p>
+      </section>
+      <section>
+        <title>7.14.12 "width"</title>
+        <p>
+          ... The width of a replaced element's box is intrinsic and
+          may be scaled by the <strong>user agent </strong> if the
+          value of this property is different than 'auto'.
+        </p>
+      </section>
+      <section>
+        <title>7.15.4 "line-height"</title>
+        <section>
+          <title>normal</title>
+          <p>
+            Tells <strong>user agents</strong> to set the computed
+            value to a "reasonable" value based on the font size of
+            the element.
+          </p>
+        </section>
+        <p>
+          ... When an element contains text that is rendered in more
+          than one font, <strong>user agents</strong> should determine
+          the "line-height" value according to the largest font size.
+        </p>
+      </section>
+      <section>
+        <title>7.15.9 "text-align"</title>
+        <p>
+          ... The actual justification algorithm used is <strong>user
+            agent</strong> and written language dependent.<br/>
+          Conforming <strong>user agents</strong> may interpret the
+          value 'justify' as 'left' or 'right', depending on whether
+          the element's default writing direction is left-to-right or
+          right-to-left, respectively.
+        </p>
+      </section>
+      <section>
+        <title>7.15.11 "text-indent"</title>
+        <p>
+          ... <strong>User agents</strong> should render this
+          indentation as blank space.
+        </p>
+      </section>
+      <section>
+        <title>7.16.2 "letter-spacing"</title>
+        <section>
+          <title>normal</title>
+          <p>
+            The spacing is the normal spacing for the current
+            font. This value allows the <strong>user agent</strong> to
+            alter the space between characters in order to justify
+            text.
+          </p>
+        </section>
+        <section>
+          <title>&lt;length&gt;</title>
+          <p>
+            This value indicates inter-character space in addition to
+            the default space between characters. Values may be
+            negative, but there may be implementation-specific
+            limits. <strong>User agents</strong> may not further
+            increase or decrease the inter-character space in order to
+            justify text.
+          </p>
+        </section>
+        <p>
+          Character-spacing algorithms are <strong>user agent</strong>
+          dependent. Character spacing may also be influenced by
+          justification (see the "text-align" property).<br/> When the
+          resultant space between two characters is not the same as
+          the default space, <strong>user agents</strong> should not
+          use ligatures.<br/> Conforming <strong>user agents</strong>
+          may consider the value of the 'letter-spacing' property to
+          be 'normal'.
+        </p>
+        <section>
+          <title>XSL modifications to the CSS definition:</title>
+          <p>
+            ...  For "normal": .optimum = "the normal spacing for the
+            current font" / 2, .maximum = auto, .minimum = auto,
+            .precedence = force, and .conditionality = discard. A
+            value of auto for a component implies that the limits are
+            <strong>User Agent</strong> specific.
+          </p>
+          <p>
+            ... The CSS statement that "Conforming <strong>user
+              agents</strong> may consider the value of the
+            'letter-spacing' property to be 'normal'." does not apply
+            in XSL, if the <strong>User Agent</strong> implements the
+            "Extended" property set.
+          </p>
+          <p>
+            ... The algorithm for resolving the adjusted values
+            between word spacing and letter spacing is <strong>User
+              Agent</strong> dependent.
+          </p>
+        </section>
+      </section>
+      <section>
+        <title>7.16.4 "text-decoration"</title>
+        <p>
+          ... If the element has no content or no text content (e.g.,
+          the IMG element in HTML), <strong>user agents</strong> must
+          ignore this property.
+        </p>
+        <section>
+          <title>blink</title>
+          <p>
+            ...  Conforming <strong>user agents</strong> are not
+            required to support this value.
+          </p>
+        </section>
+      </section>
+      <section>
+        <title>7.16.6 "text-transform"</title>
+        <p>
+          ... Conforming <strong>user agents</strong> may consider the
+          value of "text-transform" to be "none" for characters that
+          are not from the ISO Latin-1 repertoire and for elements in
+          languages for which the transformation is different from
+          that specified by the case-conversion tables of Unicode or
+          ISO 10646.
+        </p>
+      </section>
+      <section>
+        <title>7.16.8 "word-spacing"</title>
+        <p>
+          ... Word spacing algorithms are <strong>user
+            agent</strong>-dependent.
+        </p>
+        <section>
+          <title>XSL modifications to the CSS definition:</title>
+          <p>
+            ... The algorithm for resolving the adjusted values
+            between word spacing and letter spacing is <strong>User
+              Agent</strong> dependent.
+          </p>
+        </section>
+      </section>
+      <section>
+        <title>7.17.1 "color"</title>
+        <p>Initial: depends on <strong>user agent</strong></p>
+      </section>
+      <section>
+        <title>7.17.3 "rendering-intent"</title>
+        <section>
+          <title>auto</title>
+          <p>
+            This is the default behavior. The <strong>User
+              Agent</strong> determines the best intent based on the
+            content type. For image content containing an embedded
+            profile, it shall be assumed that the intent specified
+            within the profile is the desired intent. Otherwise, the
+            <strong>user agent</strong> shall use the current profile
+            and force the intent, overriding any intent that might be
+            stored in the profile itself.
+          </p>
+        </section>
+      </section>
+      <section>
+        <title>7.20.2 "overflow"</title>
+        <section>
+          <title>scroll</title>
+          <p>
+            This value indicates that the content is clipped and that
+            if the <strong>user agent</strong> uses a scrolling
+            mechanism that is visible on the screen (such as a scroll
+            bar or a panner), that mechanism should be displayed for a
+            box whether or not any of its content is clipped.
+          </p>
+        </section>
+        <section>
+          <title>auto</title>
+          <p>
+            The behavior of the "auto" value is <strong>user
+              agent</strong> dependent, but should cause a scrolling
+            mechanism to be provided for overflowing boxes.
+          </p>
+        </section>
+      </section>
+      <section>
+        <title>7.21.2 "leader-pattern"</title>
+        <section>
+          <title>dots</title>
+          <p>
+            ... The choice of dot character is dependent on the
+            <strong>user agent</strong>.
+          </p>
+        </section>
+      </section>
+      <section>
+        <title>7.21.4 "leader-length"</title>
+        <p>
+          ... <strong>User agents</strong> may choose to use the value
+          of "leader-length.optimum" to determine where to break the
+          line, then use the minimum and maximum values during line
+          justification.
+        </p>
+      </section>
+      <section>
+        <title>7.25.11 "media-usage"</title>
+        <section>
+          <title>auto</title>
+          <p>
+            The <strong>User Agent</strong> determines which value of
+            "media-usage" (other than the "auto" value) is used. The
+            <strong>User Agent</strong> may consider the type of media
+            on which the presentation is to be placed in making this
+            determination.<br/> NOTE:<br/> For example, the
+            <strong>User Agent </strong> could use the following
+            decision process. If the media is not continuous and is of
+            fixed bounded size, then the "paginate" (described below)
+            is used. Otherwise, the "bounded-in-one-dimension" is
+            used.
+          </p>
+        </section>
+        <section>
+          <title>bounded-in-one-dimension</title>
+          <p>
+            ... It is an error if more or less than one of
+            "page-height" or "page-width" is specified on the first
+            page master that is used. The <strong>User Agent</strong>
+            may recover as follows:...
+          </p>
+        </section>
+        <section>
+          <title>unbounded</title>
+          <p>
+            Only one page is generated per fo:page-sequence descendant
+            from the fo:root. Neither "page-height" nor "page-width"
+            may be specified on any page master that is used. If a
+            value is specified for either property, it is an error and
+            a <strong>User Agent</strong> may recover by ignoring the
+            specified value. ...
+          </p>
+        </section>
+      </section>
+      <section>
+        <title>7.25.13 "page-height"</title>
+        <section>
+          <title>auto</title>
+          <p>
+            The "page-height" shall be determined, in the case of
+            continuous media, from the size of the <strong>User
+              Agent</strong> window...
+          </p>
+        </section>
+        <section>
+          <title>NOTE:</title>
+          <p>
+            A <strong>User Agent</strong> may provide a way to declare
+            the media for which formatting is to be done. This may be
+            different from the media on which the formatted result is
+            viewed. For example, a browser <strong>User Agent</strong>
+            may be used to preview pages that are formatted for sheet
+            media. In that case, the size calculation is based on the
+            media for which formatting is done rather than the media
+            being currently used.
+          </p>
+        </section>
+      </section>
+      <section>
+        <title>7.25.15 "page-width"</title>
+        <section>
+          <title>auto</title>
+          <p>
+            The "page-width" shall be determined, in the case of
+            continuous media, from the size of the <strong>User
+              Agent</strong> window...
+          </p>
+        </section>
+      </section>
+      <section>
+        <title>7.26.5 "border-separation"</title>
+        <section>
+          <title>&lt;length-bp-ip-direction&gt;</title>
+          <p>
+            ... Rows, columns, row groups, and column groups cannot
+            have borders (i.e., <strong>user agents</strong> must
+            ignore the border properties for those elements).
+          </p>
+        </section>
+      </section>
+      <section>
+        <title>7.26.7 "caption-side"</title>
+        <p>
+          ... For a caption that is on the left or right side of a
+          table box, on the other hand, a value other than "auto" for
+          "width" sets the width explicitly, but "auto" tells the
+          <strong>user agent</strong> to chose a "reasonable width".
+        </p>
+      </section>
+      <section>
+        <title>7.27.2 "glyph-orientation-horizontal"</title>
+        <section>
+          <title>&lt;angle&gt;</title>
+          <p>
+            ... The <strong>User Agent</strong> shall round the value
+            of the angle to the closest of the permitted values.
+          </p>
+        </section>
+      </section>
+      <section>
+        <title>7.27.3 "glyph-orientation-vertical"</title>
+        <section>
+          <title>auto</title>
+          <p>
+            ... The determination of which characters should be
+            auto-rotated may vary across <strong>User Agents</strong>.
+          </p>
+        </section>
+        <section>
+          <title>&lt;angle&gt;</title>
+          <p>
+            ... The <strong>User Agent</strong> shall round the value
+            of the angle to the closest of the permitted values.
+          </p>
+        </section>
+      </section>
+      <section>
+        <title>7.27.6 "unicode-bidi"</title>
+        <section>
+          <title>XSL modifications to the CSS definition:</title>
+          <p>
+            ... Fallback:<br/> If it is not possible to present the
+            characters in the correct order, then the
+            <strong>UserAgent </strong> should display either a
+            'missing character' glyph or display some indication that
+            the content cannot be correctly rendered.
+          </p>
+        </section>
+      </section>
+      <section>
+        <title>7.28.1 "content-type"</title>
+        <p>
+          ... This property specifies the content-type and may be used
+          by a <strong>User Agent</strong> to select a rendering
+          processor for the object.
+        </p>
+        <section>
+          <title>auto</title>
+          <p>
+            No identification of the content-type. The <strong>User
+              Agent</strong> may determine it by "sniffing" or by other
+            means.
+          </p>
+        </section>
+      </section>
+      <section>
+        <title>7.29.5 "border-color"</title>
+        <p>
+          ... If an element's border color is not specified with a
+          "border" property, <strong>user agents</strong> must use the
+          value of the element's "color" property as the computed
+          value for the border color.
+        </p>
+      </section>
+      <section>
+        <title>7.29.9 "border-spacing"</title>
+        <p>
+          ... Rows, columns, row groups, and column groups cannot have
+          borders (i.e., <strong>user agents</strong> must ignore the
+          border properties for those elements).
+        </p>
+      </section>
+      <section>
+        <title>7.29.13 "font"</title>
+        <p>
+          ... If no font with the indicated characteristics exists on
+          a given platform, the <strong>user agent</strong> should
+          either intelligently substitute (e.g., a smaller version of
+          the "caption" font might be used for the "small-caption"
+          font), or substitute a <strong>user agent</strong> default
+          font.
+        </p>
+      </section>
+      <section>
+        <title>7.29.19 "pause"</title>
+        <p>Initial: depends on <strong>user agent</strong></p>
+      </section>
+      <section>
+        <title>7.29.21 "size"</title>
+        <p>
+          ... Relative page boxes allow <strong>user agents</strong>
+          to scale a document and make optimal use of the target size.
+        </p>
+        <p>
+          ... <strong>User agents</strong> may allow users to control
+          the transfer of the page box to the sheet (e.g., rotating an
+          absolute page box that's being printed).
+        </p>
+        <ul>
+          <li>
+            Rendering page boxes that do not fit a target sheet<br/>
+            If a page box does not fit the target sheet dimensions,
+            the <strong>user agent</strong> may choose to:
+            <ul>
+              <li>
+                Rotate the page box 90 degrees if this will make the
+                page box fit.
+              </li>
+              <li>Scale the page to fit the target.</li>
+            </ul>
+            The <strong>user agent</strong> should consult the user
+            before performing these operations.
+          </li>
+          <li>
+            Positioning the page box on the sheet<br/> When the page
+            box is smaller than the target size, the <strong>user
+              agent</strong> is free to place the page box anywhere on
+            the sheet.
+          </li>
+        </ul>
+      </section>
+      <section>
+        <title>7.29.23 "white-space"</title>
+        <section>
+          <title>normal</title>
+          <p>
+            This value directs <strong>user agents</strong> to
+            collapse sequences of whitespace, and break lines as
+            necessary to fill line boxes. ...
+          </p>
+        </section>
+        <section>
+          <title>pre</title>
+          <p>
+            This value prevents <strong>user agents</strong> from
+            collapsing sequences of whitespace. ...
+          </p>
+        </section>
+        <p>
+          ... Conforming <strong>user agents</strong> may ignore the
+          'white-space' property in author and user style sheets but
+          must specify a value for it in the default style sheet.
+        </p>
+      </section>
+    </section>
+  </body>
+</document>
+

@@ -1,0 +1,426 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<!--
+  Copyright 2001-2004 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<!-- Created by htmlize-0.67 in css mode. -->
+<html>
+  <head>
+    <title>FOAttributes.java</title>
+    <style type="text/css">
+    <!--
+      body {
+        color: #000000;
+        background-color: #faf0e6;
+      } /* default */
+      .jde-java-font-lock-number {
+        color: #bc8f8f;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-number-face */
+      .function-name {
+        color: #8b2323;
+        background-color: #faf0e6;
+      } /* font-lock-function-name-face */
+      .jde-java-font-lock-italic {
+        background-color: #faf0e6;
+        font-style: italic;
+      } /* jde-java-font-lock-italic-face */
+      .jde-java-font-lock-modifier {
+        color: #da70d6;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-modifier-face */
+      .keyword {
+        color: #8b0000;
+        background-color: #faf0e6;
+      } /* font-lock-keyword-face */
+      .variable-name {
+        color: #8b008b;
+        background-color: #faf0e6;
+      } /* font-lock-variable-name-face */
+      .string {
+        color: #008b00;
+        background-color: #faf0e6;
+      } /* font-lock-string-face */
+      .jde-java-font-lock-package {
+        color: #0000cd;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-package-face */
+      .jde-java-font-lock-constant {
+        color: #5f9ea0;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-constant-face */
+      .type {
+        color: #4682b4;
+        background-color: #faf0e6;
+      } /* font-lock-type-face */
+      .jde-java-font-lock-doc-tag {
+        color: #008b00;
+        background-color: #faf0e6;
+      } /* jde-java-font-lock-doc-tag-face */
+      .comment {
+        color: #00008b;
+        background-color: #faf0e6;
+      } /* font-lock-comment-face */
+      .reference {
+        color: #cd0000;
+        background-color: #faf0e6;
+      } /* font-lock-reference-face */
+      a {
+        color: inherit;
+        background-color: inherit;
+        font: inherit;
+        text-decoration: inherit;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+    -->
+    </style>
+  </head>
+  <body>
+    <pre>
+<span class="comment">/*
+ * Copyright 2001-2004 The Apache Software Foundation.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */</span>
+ 
+<span class="keyword">package</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">fo</span>;
+
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">apps</span>.<span class="type">FOPException</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">fo</span>.<span class="jde-java-font-lock-package">expr</span>.<span class="type">PropertyException</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">fo</span>.<span class="type">PropertyConsts</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">fo</span>.<span class="type">FObjectNames</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">datatypes</span>.<span class="type">Ints</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">messaging</span>.<span class="type">MessageHandler</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">xml</span>.<span class="type">FoXMLEvent</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">apache</span>.<span class="jde-java-font-lock-package">fop</span>.<span class="jde-java-font-lock-package">xml</span>.<span class="type">XMLNamespaces</span>;
+
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">org</span>.<span class="jde-java-font-lock-package">xml</span>.<span class="jde-java-font-lock-package">sax</span>.<span class="type">Attributes</span>;
+
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">java</span>.<span class="jde-java-font-lock-package">util</span>.<span class="type">Iterator</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">java</span>.<span class="jde-java-font-lock-package">util</span>.<span class="type">ArrayList</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">java</span>.<span class="jde-java-font-lock-package">util</span>.<span class="type">HashMap</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">java</span>.<span class="jde-java-font-lock-package">util</span>.<span class="type">List</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">java</span>.<span class="jde-java-font-lock-package">util</span>.<span class="type">Map</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">java</span>.<span class="jde-java-font-lock-package">util</span>.<span class="type">Collections</span>;
+<span class="keyword">import</span> <span class="jde-java-font-lock-package">java</span>.<span class="jde-java-font-lock-package">util</span>.<span class="type">Arrays</span>;
+
+<span class="comment">/**
+ * The FO Attributes data structures and methods needed to manage the
+ * Attributes associated with FO nodes.
+ * @author &lt;a href=&quot;mailto:pbwest@powerup.com.au&quot;&gt;Peter B. West&lt;/a&gt;
+ */</span>
+
+<span class="jde-java-font-lock-modifier">public</span> <span class="keyword">class</span> <span class="function-name" id="FOAttributesClass">FOAttributes</span> {
+
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">String</span> <span class="variable-name" id="tag">tag</span> = &quot;<span class="string">$Name$</span>&quot;;
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="jde-java-font-lock-modifier">final</span> <span class="type">String</span> <span class="variable-name" id="revision">revision</span> = &quot;<span class="string">$Revision$</span>&quot;;
+
+    <span class="comment">/**
+     * &lt;i&gt;</span><span class="jde-java-font-lock-italic">nSpaceAttrMaps</span><span class="comment">&lt;/i&gt; is an &lt;tt&gt;ArrayList&lt;/tt&gt; to hold the array of 
+     * &lt;tt&gt;HashMap&lt;/tt&gt;s which contain the attribute lists for each
+     * namespace which may be active for a particular FO element.  The
+     * &lt;tt&gt;ArrayList&lt;/tt&gt; is indexed by the URIIndex for this namespace
+     * which is maintained in an &lt;tt&gt;XMLNamespaces&lt;/tt&gt; object by the
+     * &lt;tt&gt;FOTree&lt;/tt&gt; object which is processing the FO input.  The
+     * values in the &lt;tt&gt;HashMap&lt;/tt&gt;s are indexed by the local name of the
+     * attribute.
+     * The &lt;tt&gt;ArrayList&lt;/tt&gt; will not be created for a particular instance
+     * of &lt;tt&gt;FOAttributes&lt;/tt&gt; unless a namespace other than the standard
+     * XSL namespace is activated for this instance.
+     * See &lt;i&gt;</span><span class="jde-java-font-lock-italic">foAttrMap</span><span class="comment">&lt;/i&gt;.
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="type">ArrayList</span> <span class="variable-name" id="nSpaceAttrMaps">nSpaceAttrMaps</span>;
+
+    <span class="comment">/**
+     * &lt;i&gt;</span><span class="jde-java-font-lock-italic">foAttrMap</span><span class="comment">&lt;/i&gt; is a &lt;tt&gt;HashMap&lt;/tt&gt; to hold the FO namespace
+     * attribute list specified in the FO element with which this list is
+     * associated.  The &lt;tt&gt;String&lt;/tt&gt; attribute value is stored
+     * indexed by the integer constant property identifier from
+     * &lt;tt&gt;PropertyConsts&lt;/tt&gt;.
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="type">HashMap</span> <span class="variable-name" id="foAttrMap">foAttrMap</span> = <span class="keyword">new</span> <span class="type">HashMap</span>(<span class="jde-java-font-lock-number">0</span>);
+
+    <span class="comment">/**
+     * A sorted array of the keys (property indices) of the values in
+     * &lt;i&gt;</span><span class="jde-java-font-lock-italic">foAttrMap</span><span class="comment">&lt;/i&gt;.
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="type">Integer</span>[] <span class="variable-name" id="foAttrKeys">foAttrKeys</span> = <span class="jde-java-font-lock-constant" id="null">null</span>;
+
+    <span class="comment">/**
+     * A static array of &lt;tt&gt;Integer&lt;/tt&gt; as a template for the generation
+     * of the &lt;i&gt;</span><span class="jde-java-font-lock-italic">foAttrKeys</span><span class="comment">&lt;/i&gt; array.
+     */</span>
+    <span class="jde-java-font-lock-modifier">private</span> <span class="jde-java-font-lock-modifier">static</span> <span class="type">Integer</span>[] <span class="variable-name" id="integerArray">integerArray</span>
+                                    = <span class="keyword">new</span> <span class="type">Integer</span>[] { Ints.consts.get(<span class="jde-java-font-lock-number">0</span>) };
+
+    <span class="comment">/**
+     * Construct an &lt;i&gt;</span><span class="jde-java-font-lock-italic">FOAttributes</span><span class="comment">&lt;/i&gt; object.
+     * &lt;p&gt;The &lt;tt&gt;Attributes&lt;/tt&gt; object on the event is scanned, and each
+     * attribute is examined.  If the attribute is in the default namespace
+     * for fo: attributes, it is an fo: property, and its value is entered
+     * into the &lt;i&gt;</span><span class="jde-java-font-lock-italic">foAttrMap</span><span class="comment">&lt;/i&gt; &lt;tt&gt;Hashmap&lt;/tt&gt; indexed by the property
+     * index.
+     * &lt;p&gt;If the attribute does not belong to the default namespace, its
+     * value is entered into the appropriate &lt;tt&gt;HashMap&lt;/tt&gt; in the
+     * &lt;tt&gt;ArrayList&lt;/tt&gt; &lt;i&gt;</span><span class="jde-java-font-lock-italic">nSpaceAttrMaps</span><span class="comment">&lt;/i&gt;, indexed by the attribute's
+     * local name.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name" id="event">event</span><span class="comment"> - the FO XML event which triggered construction of the
+     * parent &lt;tt&gt;FONode&lt;/tt&gt;.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name" id="foNode">foNode</span><span class="comment"> - the &lt;tt&gt;FONode&lt;/tt&gt; with which these attributes are
+     * associated.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="function-name" id="FOAttributes">FOAttributes</span>(<span class="type">FoXMLEvent</span> <span class="variable-name">event</span>, <span class="type">FONode</span> <span class="variable-name">foNode</span>) <span class="keyword">throws</span> <span class="type">FOPException</span> {
+
+        <span class="comment">// If the event is null, there is no event associated with this
+</span>        <span class="comment">// node, probably because this is a manufactured node; e.g.,
+</span>        <span class="comment">// an &quot;invented&quot; FopageSequenceMaster.  The default initialisation
+</span>        <span class="comment">// includes an empty foAttrMap HashMap.
+</span>        <span class="keyword">if</span> (event == <span class="jde-java-font-lock-constant">null</span>) <span class="keyword">return</span>;
+
+        <span class="keyword">if</span> (event.getFoType() == FObjectNames.<span class="jde-java-font-lock-constant" id="PCDATA">PCDATA</span>)
+            <span class="keyword">return</span>;  <span class="comment">// go with the empty foAttrMap
+</span>
+        <span class="comment">// Create the foAttrMap.
+</span>        <span class="type">Attributes</span> <span class="variable-name" id="attributes">attributes</span> = event.getAttributes();
+        <span class="keyword">if</span> (attributes == <span class="jde-java-font-lock-constant">null</span>) <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">FOPException</span>
+                                       (&quot;<span class="string">No Attributes in XMLEvent</span>&quot;);
+        <span class="type">int</span> <span class="variable-name" id="propIndex">propIndex</span>;
+        <span class="type">HashMap</span> <span class="variable-name" id="tmpHash">tmpHash</span>;
+        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable-name" id="i">i</span> = <span class="jde-java-font-lock-number">0</span>; i &lt; attributes.getLength(); i++) {
+            <span class="type">String</span> <span class="variable-name" id="attrUri">attrUri</span> = attributes.getURI(i);
+            <span class="type">String</span> <span class="variable-name" id="attrLocalname">attrLocalname</span> = attributes.getLocalName(i);
+            <span class="type">String</span> <span class="variable-name" id="attrQName">attrQName</span> = attributes.getQName(i);
+            <span class="type">int</span> <span class="variable-name" id="sep">sep</span> = attrQName.indexOf('<span class="string">:</span>');
+            <span class="type">String</span> <span class="variable-name" id="prefix">prefix</span> = attrQName.substring(<span class="jde-java-font-lock-number">0</span>, (sep == -<span class="jde-java-font-lock-number">1</span> ? <span class="jde-java-font-lock-number">0</span> : sep));
+            <span class="keyword">if</span> (prefix.equals(&quot;<span class="string">xmlns</span>&quot;)) <span class="keyword">break</span>;
+            <span class="type">String</span> <span class="variable-name" id="attrValue">attrValue</span> = attributes.getValue(i);
+            <span class="type">int</span> <span class="variable-name" id="attrUriIndex">attrUriIndex</span> = foNode.namespaces.getURIIndex(attrUri);
+
+            <span class="comment">//System.out.println(&quot;FONode:&quot; + event);
+</span>            <span class="keyword">if</span> (attrUriIndex == XMLNamespaces.DefAttrNSIndex) {
+                <span class="comment">// Standard FO namespace
+</span>                <span class="comment">// Catch default namespace declaration here.
+</span>                <span class="keyword">if</span> (attrLocalname.equals(&quot;<span class="string">xmlns</span>&quot;)) <span class="keyword">break</span>;
+                <span class="comment">// Is this a known (valid) property?
+</span>                propIndex = PropNames.getPropertyIndex(attrLocalname);
+                    <span class="comment">// Known attribute name
+</span>                foAttrMap.put(Ints.consts.get(propIndex), attrValue);
+            } <span class="keyword">else</span> { <span class="comment">// Not the XSL FO namespace
+</span>                <span class="type">int</span> <span class="variable-name" id="j">j</span>;
+                <span class="keyword">if</span> (nSpaceAttrMaps == <span class="jde-java-font-lock-constant">null</span>) {
+                    <span class="comment">//Create the list
+</span>                    System.out.println(&quot;<span class="string">Creating nSpaceAttrMaps</span>&quot;);
+                    nSpaceAttrMaps = <span class="keyword">new</span> <span class="type">ArrayList</span>(attrUriIndex + <span class="jde-java-font-lock-number">1</span>);
+                    <span class="comment">// Add the fo list
+</span>                    <span class="keyword">for</span> (j = <span class="jde-java-font-lock-number">0</span>; j &lt; XMLNamespaces.DefAttrNSIndex; j++)
+                        nSpaceAttrMaps.add(<span class="keyword">new</span> <span class="type">HashMap</span>(<span class="jde-java-font-lock-number">0</span>));
+
+                    System.out.println(&quot;<span class="string">Adding foAttrMap</span>&quot;);
+                    nSpaceAttrMaps.add(foAttrMap);
+                }
+                <span class="comment">// Make sure there are elements between the last current
+</span>                <span class="comment">// and the one to be added
+</span>                <span class="keyword">for</span> (j = nSpaceAttrMaps.size(); j &lt;= attrUriIndex; j++)
+                    nSpaceAttrMaps.add(<span class="keyword">new</span> <span class="type">HashMap</span>(<span class="jde-java-font-lock-number">0</span>));
+                
+                <span class="comment">// Does a HashMap exist for this namespace?
+</span>                <span class="keyword">if</span> ((tmpHash =
+                     (<span class="type">HashMap</span>)nSpaceAttrMaps.get(attrUriIndex)) == <span class="jde-java-font-lock-constant">null</span>) {
+                    tmpHash = <span class="keyword">new</span> <span class="type">HashMap</span>(<span class="jde-java-font-lock-number">1</span>);
+                    nSpaceAttrMaps.set(attrUriIndex, tmpHash);
+                }
+                <span class="comment">// Now put this value in the HashMap
+</span>                tmpHash.put(attrLocalname, attrValue);
+            }
+        }
+        <span class="comment">// Set up the sorted array of the foAttr keys, if foAttrMap has
+</span>        <span class="comment">// any entries.
+</span>        <span class="keyword">if</span> (foAttrMap.size() &gt; <span class="jde-java-font-lock-number">0</span>) {
+            foAttrKeys = (<span class="type">Integer</span>[])(foAttrMap.keySet().toArray(integerArray));
+            Arrays.sort(foAttrKeys);
+        }
+        <span class="comment">// Finished with the Attributes object
+</span>        event.setAttributes(<span class="jde-java-font-lock-constant">null</span>);
+    }
+
+    <span class="comment">/**
+     * Get the default namespace attribute values as an unmodifiable
+     * &lt;tt&gt;Map&lt;/tt&gt;.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> a unmodifiable &lt;tt&gt;Map&lt;/tt&gt; containing the the attribute
+     * values for all of the default attribute namespace attributes in this
+     * attribute list, indexed by the property name index from
+     * &lt;tt&gt;PropNames&lt;/tt&gt;.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">Map</span> <span class="function-name" id="getFixedFoAttrMap">getFixedFoAttrMap</span>() {
+        <span class="keyword">return</span> Collections.unmodifiableMap((<span class="type">Map</span>)foAttrMap);
+    }
+
+    <span class="comment">/**
+     * Get the &lt;tt&gt;HashMap&lt;/tt&gt; of all default namespace attributes.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> &lt;tt&gt;HashMap&lt;/tt&gt; &lt;i&gt;</span><span class="jde-java-font-lock-italic">foAttrMap</span><span class="comment">&lt;/i&gt; containing the the attribute
+     * values for all of the default attribute namespace attributes in this
+     * attribute list, indexed by the property name index from
+     * &lt;tt&gt;PropNames&lt;/tt&gt;.  This HashMap may be changed by the calling
+     * process.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">HashMap</span> <span class="function-name" id="getFoAttrMap">getFoAttrMap</span>() {
+        <span class="keyword">return</span> foAttrMap;
+    }
+
+    <span class="comment">/**
+     * Get the sorted array of property index keys for the default namespace
+     * attributes.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> &lt;tt&gt;Integer[]&lt;/tt&gt; &lt;i&gt;</span><span class="jde-java-font-lock-italic">foAttrKeys</span><span class="comment">&lt;/i&gt; containing the the
+     * sorted keys (the property indices from &lt;tt&gt;PropNames&lt;/tt&gt;) of the
+     * attribute values for all of the default attribute namespace attributes
+     * in this attribute list.
+     * Warning: This array may be changed by the calling process.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">Integer</span>[] <span class="function-name" id="getFoAttrKeys">getFoAttrKeys</span>() {
+        <span class="keyword">return</span> foAttrKeys;
+    }
+
+    <span class="comment">/**
+     * A convenience method for accessing attribute values from the default
+     * attribute namespace.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name" id="property">property</span><span class="comment"> an &lt;tt&gt;int&lt;/tt&gt; containing the property name index
+     * from &lt;tt&gt;PropNames&lt;/tt&gt;.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> a &lt;tt&gt;String&lt;/tt&gt; containing the associated property value.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">String</span> <span class="function-name" id="getFoAttrValue">getFoAttrValue</span>(<span class="type">int</span> <span class="variable-name">property</span>) {
+        <span class="keyword">return</span> (<span class="type">String</span>)(foAttrMap.get(Ints.consts.get(property)));
+    }
+
+    <span class="comment">/**
+     * A convenience method for accessing attribute values from the default
+     * attribute namespace.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name" id="propertyName">propertyName</span><span class="comment"> a &lt;tt&gt;String&lt;/tt&gt; containing the property name.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> a &lt;tt&gt;String&lt;/tt&gt; containing the associated property value.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">String</span> <span class="function-name">getFoAttrValue</span>(<span class="type">String</span> <span class="variable-name">propertyName</span>)
+        <span class="keyword">throws</span> <span class="type">PropertyException</span>
+    {
+        <span class="keyword">return</span> getFoAttrValue(PropNames.getPropertyIndex(propertyName));
+    }
+
+    <span class="comment">/**
+     * Get an unmodifiable &lt;tt&gt;Map&lt;/tt&gt; of the attribute values for a
+     * particular namespace.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name" id="uriIndex">uriIndex</span><span class="comment"> an &lt;tt&gt;int&lt;/tt&gt; containing the index of the attribute
+     * values namespace, maintained in an &lt;tt&gt;XMLEvent&lt;/tt&gt; &lt;tt&gt;static&lt;/tt&gt;
+     * array.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> an unmodifiable &lt;tt&gt;Map&lt;/tt&gt; of the attribute values
+     * within the indexed namespace, for this attribute list, indexed by the
+     * local name of the attribute.  The &lt;tt&gt;Map&lt;/tt&gt; returned is
+     * derived from the one maintained in &lt;i&gt;</span><span class="jde-java-font-lock-italic">nSpaceAttrMaps</span><span class="comment">&lt;/i&gt;.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">Map</span> <span class="function-name" id="getAttrMap">getAttrMap</span>(<span class="type">int</span> <span class="variable-name">uriIndex</span>) {
+        <span class="keyword">if</span> (uriIndex == XMLNamespaces.DefAttrNSIndex)
+            <span class="keyword">return</span> Collections.unmodifiableMap((<span class="type">Map</span>)foAttrMap);
+        <span class="keyword">if</span> (nSpaceAttrMaps != <span class="jde-java-font-lock-constant">null</span>) {
+            <span class="keyword">if</span> (uriIndex &gt;= nSpaceAttrMaps.size()) <span class="keyword">return</span> <span class="jde-java-font-lock-constant">null</span>;
+            <span class="keyword">return</span> Collections.unmodifiableMap
+                    ((<span class="type">Map</span>)(nSpaceAttrMaps.get(uriIndex)));
+        } <span class="keyword">else</span> {
+            <span class="keyword">return</span> <span class="jde-java-font-lock-constant">null</span>;
+        }
+    }
+
+    <span class="comment">/**
+     * Get the value of an attribute in a particular namespace.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name">uriIndex</span><span class="comment"> an &lt;tt&gt;int&lt;/tt&gt; index of the URIs maintained
+     * by &lt;tt&gt;XMLEvent&lt;/tt&gt;.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name" id="localName">localName</span><span class="comment"> a &lt;tt&gt;String&lt;/tt&gt; with the local name of the
+     * attribute.  In the case of the default attribute namespace, this
+     * will be the fo property name.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> a &lt;tt&gt;String&lt;/tt&gt; containing the value of the attribute.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">String</span> <span class="function-name" id="getUriAttrValue">getUriAttrValue</span>(<span class="type">int</span> <span class="variable-name">uriIndex</span>, <span class="type">String</span> <span class="variable-name">localName</span>)
+        <span class="keyword">throws</span> <span class="type">PropertyException</span>
+    {
+        <span class="keyword">if</span> (uriIndex == XMLNamespaces.DefAttrNSIndex)
+            <span class="keyword">return</span> getFoAttrValue(PropNames.getPropertyIndex(localName));
+        <span class="keyword">return</span> (String)
+                (((<span class="type">HashMap</span>)nSpaceAttrMaps.get(uriIndex)).get(localName));
+    }
+
+    <span class="comment">/**
+     * Get the size of the &lt;i&gt;</span><span class="jde-java-font-lock-italic">foAttrMap</span><span class="comment">&lt;/i&gt; &lt;tt&gt;HashMap&lt;/tt&gt;
+     * containing attributes for the default fo: namespace
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> an &lt;tt&gt;int&lt;/tt&gt; containing the size.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">int</span> <span class="function-name" id="getFoAttrMapSize">getFoAttrMapSize</span>() {
+        <span class="keyword">return</span> foAttrMap.size();
+    }
+
+    <span class="comment">/**
+     * Get the size of the &lt;i&gt;</span><span class="jde-java-font-lock-italic">nSpaceAttrMaps</span><span class="comment">&lt;/i&gt; &lt;tt&gt;ArrayList&lt;/tt&gt;
+     * containing attribute namespaces active in this set of attributes.
+     * &lt;i&gt;</span><span class="jde-java-font-lock-italic">N.B.</span><span class="comment">&lt;/i&gt; this may be zero if only the default attribute
+     * namespace has been seen in the attribute set.
+     * </span><span class="jde-java-font-lock-doc-tag">@return</span><span class="comment"> an &lt;tt&gt;int&lt;/tt&gt; containing the size.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">int</span> <span class="function-name" id="getNSpaceAttrMapsSize">getNSpaceAttrMapsSize</span>() {
+        <span class="keyword">if</span> (nSpaceAttrMaps == <span class="jde-java-font-lock-constant">null</span>)
+            <span class="keyword">return</span> <span class="jde-java-font-lock-number">0</span>;
+        <span class="keyword">return</span> nSpaceAttrMaps.size();
+    }
+
+    <span class="comment">/**
+     * Merge attributes from another &lt;tt&gt;FOAttributes&lt;/tt&gt; into &lt;i&gt;</span><span class="jde-java-font-lock-italic">this</span><span class="comment">&lt;/i&gt;.
+     * </span><span class="jde-java-font-lock-doc-tag">@param</span><span class="comment"> </span><span class="variable-name" id="foAttrs">foAttrs</span><span class="comment"> the &lt;tt&gt;FOAttributes&lt;/tt&gt; containing the attributes
+     * to merge.
+     */</span>
+    <span class="jde-java-font-lock-modifier">public</span> <span class="type">void</span> <span class="function-name" id="merge">merge</span>(<span class="type">FOAttributes</span> <span class="variable-name">foAttrs</span>) {
+        foAttrMap.putAll(foAttrs.getFoAttrMap());
+        <span class="type">int</span> <span class="variable-name" id="attrLen">attrLen</span> = foAttrs.getNSpaceAttrMapsSize();
+        <span class="keyword">if</span> (attrLen != <span class="jde-java-font-lock-number">0</span>) {
+            <span class="comment">// something to copy
+</span>            <span class="keyword">if</span> (nSpaceAttrMaps == <span class="jde-java-font-lock-constant">null</span>) {
+                <span class="comment">// no &quot;foreign&quot; attribute lists in this
+</span>                <span class="comment">// copy the others in
+</span>                nSpaceAttrMaps = <span class="keyword">new</span> <span class="type">ArrayList</span>(attrLen);
+            }
+            <span class="comment">// If the merging ArrayList of namespaces is larger, add the
+</span>            <span class="comment">// extra elements and initialise each to an empty HashMap
+</span>            <span class="keyword">for</span> (<span class="type">int</span> <span class="variable-name">i</span> = nSpaceAttrMaps.size(); i &lt; attrLen; i++)
+                nSpaceAttrMaps.add(<span class="keyword">new</span> <span class="type">HashMap</span>(<span class="jde-java-font-lock-number">0</span>));
+            <span class="comment">// Except for foAttrs, which has already been merged, merge
+</span>            <span class="comment">// the entries from the merging foAttrs
+</span>            <span class="keyword">for</span> (<span class="type">int</span> <span class="variable-name">i</span> = <span class="jde-java-font-lock-number">0</span>; i &lt; attrLen; i++) {
+                <span class="comment">// skip foAttrMap
+</span>                <span class="keyword">if</span> (i == <span class="reference">XMLNamespaces</span>.<span class="type">DefAttrNSIndex</span>) <span class="keyword">continue</span>;
+               ((<span class="type">HashMap</span>) nSpaceAttrMaps.get(i))
+                       .putAll(foAttrs.getAttrMap(i));
+            }
+        }
+    }
+
+}<span class="comment">// FOAttributes
+</span></pre>
+  </body>
+</html>

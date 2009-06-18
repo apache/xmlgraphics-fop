@@ -1,0 +1,78 @@
+/*
+ * Copyright 1999-2004 The Apache Software Foundation.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/* $Id$ */
+
+package org.apache.fop.datatypes;
+
+import org.apache.fop.fo.expr.PropertyException;
+
+/**
+ * An interface for classes that can participate in numeric operations.
+ * All the numeric operation (+, -, *, ...) are expressed in terms of
+ * this Numeric interface.
+ * Numerics has a value (getNumericValue) and a dimension (getDimension).
+ * Numerics can be either absolute or relative. Relative numerics
+ * must be resolved against base value before the value can be used.
+ * <p>
+ * To support relative numerics internally in the expresion parser and
+ * during evaulation one additional methods exists: isAbsolute() which 
+ * return true for absolute numerics and false for relative numerics.
+ */
+public interface Numeric {
+    /**
+     * Return the value of this Numeric
+     * @return the computed value.
+     * @throws PropertyException
+     */
+    double getNumericValue() throws PropertyException;
+    
+    /**
+     * Return the dimension of this numeric. Plain numbers has a dimension of
+     * 0 and length has a dimension of 1. Other dimension can occur as a result
+     * of multiplications and divisions.
+     * @return the dimension.
+     */
+    int getDimension();
+
+    /**
+     * Return true if the numeric is an absolute value. Relative values are
+     * percentages and table-column-units. All other numerics are absolute.
+     * @return true when the numeric is absolute.
+     */
+    boolean isAbsolute();
+
+    /**
+     * Returns the value of this numeric as an int.
+     * @return the value as an integer.
+     */
+    public int getValue();
+
+    /**
+     * Return the resolved value. This method will becalled during evaluation 
+     * of the expression tree and relative numerics can then return a 
+     * resolved absolute Numeric. Absolute numerics can just return themself.
+     * 
+     * @return A resolved value.
+     * @throws PropertyException
+     */
+    //Numeric getResolved() throws PropertyException;
+
+    /**
+     * Return the enum value that is stored in this numeric.
+     */
+    public int getEnum();
+}

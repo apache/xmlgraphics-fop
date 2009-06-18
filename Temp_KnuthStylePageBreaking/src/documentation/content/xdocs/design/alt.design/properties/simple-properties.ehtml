@@ -1,0 +1,260 @@
+<?xml version="1.0"?>
+<!--
+  Copyright 1999-2004 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<html>
+  <body marginheight="0" marginwidth="0" topmargin="0" leftmargin="0" text="#000000" bgcolor="#FFFFFF">
+    <script type="text/javascript" src="codedisplay.js" />
+    <div class="content">
+      <h1>Simple property Classes</h1>
+      <p>
+        <font size="-2">by Peter B. West</font>
+      </p>
+      <ul class="minitoc">
+        <li>
+          <a href="#N10014">Introduction</a>
+        </li>
+        <li>
+          <a href="#N10026">Common data</a>
+        </li>
+        <li>
+          <a href="#N10075">Accessing property Data Constants</a>
+        </li>
+      </ul>
+
+      <a name="N10014"></a>
+      <h3>Introduction</h3>
+      <!-- N.B. height for toggleCode changed from 50% to 400 because
+          Mozilla seems to get confused by percentage heights within
+          table elements.
+      -->
+      <p>
+        An <a href="classes-overview.html">overview of the properties
+        and classes</a> involved in handling properties has already
+        been given.  This discussion will go in detail into the way
+        data are represented within properties.  Iit is important to
+        keep in mind that the primary avenue of access to the data and
+        the methods of property classes is the <span id = "span00"
+        ></span ><a href= "javascript:toggleCode( 'span00',
+        'PropertyConsts.html#PropertyConstsClass', '400', '100%' )"
+        ><span class="codefrag">PropertyConsts</span></a> class and
+        its singleton object.
+      </p>
+
+      <a name="N10026"></a>
+      <h3>Common data</h3>
+      <p>
+
+        <span id = "span01" ></span ><a href= "javascript:toggleCode(
+        'span01', 'Character.html', '400', '100%' )" ><span
+        class="codefrag">org.apache.fop.fo.properties.Character</span></a>
+        is an example of a basic property class.  The data fields
+        common to all properties are:
+      </p>
+      <dl>
+
+        <dt>
+
+          <span class="codefrag">final int dataTypes</span>
+
+        </dt>
+
+        <dd>
+          This field defines the allowable data types which may be
+          assigned to the property.  The value is chosen from the data
+          type constants defined in <span id = "span02" ></span ><a
+          href= "javascript:toggleCode( 'span02',
+          'Property.html#NOTYPE', '400', '100%' )" ><span
+          class="codefrag">org.apache.fop.fo.properties.Property</span></a>,
+          and may consist of more than one of those constants,
+          bit-ORed together.
+        </dd>
+
+        <dt>
+
+          <span class="codefrag">final int traitMapping</span>
+
+        </dt>
+
+        <dd>
+          This field defines the mapping of properties to traits in
+          the <span class="codefrag">Area tree</span>. The value is
+          chosen from the trait mapping constants defined in <span id
+          = "span03" ></span ><a href= "javascript:toggleCode(
+          'span03', 'Property.html#NO_TRAIT', '400', '100%' )" ><span
+          class="codefrag">org.apache.fop.fo.properties.Property</span></a>,
+          and may consist of more than one of those constants,
+          bit-ORed together.
+        </dd>
+
+        <dt>
+
+          <span class="codefrag">final int initialValueType</span>
+
+        </dt>
+
+        <dd>
+          This field defines the data type of the initial value
+          assigned to the property.  The value is chosen from the
+          initial value type constants defined in <span id = "span04"
+          ></span ><a href= "javascript:toggleCode( 'span04',
+          'Property.html#NOTYPE_IT', '400', '100%' )" ><span
+          class="codefrag">org.apache.fop.fo.properties.Property</span></a>.
+          In the simplest property classes, such as <span
+          class="codefrag">Character</span>, there is no defined
+          initial value type.
+        </dd>
+
+        <dt>
+
+          <span class="codefrag">final int inherited</span>
+
+        </dt>
+
+        <dd>
+          This field defines the kind of inheritance applicable to the
+          property.  The value is chosen from the inheritance
+          constants defined in <span id = "span05" ></span ><a href=
+          "javascript:toggleCode( 'span05', 'Property.html#NO', '400',
+          '100%' )" ><span
+          class="codefrag">org.apache.fop.fo.properties.Property</span></a>.
+        </dd>
+
+      </dl>
+
+      <a name="N10075"></a>
+      <h3>Accessing property Data Constants</h3>
+      <p>
+        The constants above are generally accessed through the arrays
+        maintained in the <span id = "span06" ></span ><a href=
+        "javascript:toggleCode( 'span06',
+        'PropertyConsts.html#PropertyConstsClass', '400', '100%' )"
+        ><span class="codefrag">PropertyConsts</span></a> singleton
+        <span id = "span07" ></span ><a href= "javascript:toggleCode(
+        'span07', 'PropertyConsts.html#pconsts', '400', '100%' )"
+        ><span class="codefrag">pconsts</span></a>.  The first
+        invocation of the method <span id = "span08" ></span ><a href=
+        "javascript:toggleCode( 'span08',
+        'PropertyConsts.html#setupProperty', '400', '100%' )" ><span
+        class="codefrag">setupProperty</span></a> on the property
+        generates a <span class="codefrag">Class</span> instance for
+        the class, and stores it in the array <span id = "span09"
+        ></span ><a href= "javascript:toggleCode( 'span09',
+        'PropertyConsts.html#classes', '400', '100%' )" ><span
+        class="codefrag">classes</span></a>.  This <span
+        class="codefrag">Class</span> object is used, in turn, to
+        instantiate the singleton instance of the class, which is
+        stored in the <span id = "span10" ></span ><a href=
+        "javascript:toggleCode( 'span10',
+        'PropertyConsts.html#properties', '400', '100%' )" ><span
+        class="codefrag">Property[] properties</span></a> array of
+        <span id = "span11" ></span ><a href= "javascript:toggleCode(
+        'span11', '../PropertyConsts.html#pconsts', '400', '100%' )"
+        ><span class="codefrag">pconsts</span></a>.
+      </p>
+      <p>
+
+        <em>Reflection</em> methods are then used, via the same <span
+        class="codefrag">Class</span> instance, to extract and store
+        the static data fields.  These arrays and associated access
+        methods are:
+      </p>
+      <dl>
+
+        <dt>
+
+          <span id = "span12" ></span ><a href=
+          "javascript:toggleCode( 'span12',
+          'PropertyConsts.html#datatypes', '400', '100%' )" ><span
+          class="codefrag">int[] datatypes</span></a>
+
+        </dt>
+
+        <dd>
+
+          <span id = "span13" ></span ><a href=
+          "javascript:toggleCode( 'span13',
+          'PropertyConsts.html#getDataTypes', '400', '100%' )" ><span
+          class="codefrag">int getDataTypes(int)</span></a>
+
+        </dd>
+
+        <dt>
+
+          <span id = "span14" ></span ><a href=
+          "javascript:toggleCode( 'span14',
+          'PropertyConsts.html#traitMappings', '400', '100%' )" ><span
+          class="codefrag">int[] traitMappings</span></a>
+
+        </dt>
+
+        <dd>
+
+          <em>No access method yet defined.</em>
+
+        </dd>
+
+        <dt>
+
+          <span id = "span15" ></span ><a href=
+          "javascript:toggleCode( 'span15',
+          'PropertyConsts.html#initialValueTypes', '400', '100%' )"
+          ><span class="codefrag">int[] initialValueTypes</span></a>
+
+        </dt>
+
+        <dd>
+
+          <span id = "span16" ></span ><a href=
+          "javascript:toggleCode( 'span16',
+          'PropertyConsts.html#getInitialValueType', '400', '100%' )"
+          ><span class="codefrag">int
+          getInitialValueType(int)</span></a>
+
+        </dd>
+
+        <dt>
+
+          <span id = "span17" ></span ><a href=
+          "javascript:toggleCode( 'span17',
+          'PropertyConsts.html#inherited', '400', '100%' )" ><span
+          class="codefrag">int[] inherited</span></a>
+
+        </dt>
+
+        <dd>
+
+          <span id = "span18" ></span ><a href=
+          "javascript:toggleCode( 'span18',
+          'PropertyConsts.html#inheritance', '400', '100%' )" ><span
+          class="codefrag">int inheritance(int)</span></a>
+
+        </dd>
+
+      </dl>
+
+      <p>
+        <strong>Previous:</strong> <a href = "PropertyConsts-class.html"
+        >PropertyConsts class</a>
+      </p>
+      <p>
+        <strong>Next:</strong> <a href= "getInitialValue.html"
+                                  >getInitialValue()</a>
+      </p>
+
+    </div>
+  </body>
+</html>
