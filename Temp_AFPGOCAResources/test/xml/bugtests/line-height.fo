@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+  <fo:layout-master-set>
+      <fo:simple-page-master master-name="simplePM"
+                    page-height="25cm"
+                    page-width="20cm"
+                    margin-top="1cm"
+                    margin-bottom="1cm"
+                    margin-left="1.5cm"
+                    margin-right="1.5cm">
+        <fo:region-body margin-top="3cm" margin-bottom="3cm"/>
+        <fo:region-before extent="2.5cm"/>
+        <fo:region-after extent="2.5cm"/>
+      </fo:simple-page-master>
+  </fo:layout-master-set>
+
+  <fo:page-sequence master-reference="simplePM">
+      <fo:flow flow-name="xsl-region-body">
+      <fo:block font-weight="bold" text-align="center">
+        <fo:inline text-decoration="underline">
+          Absolute Values
+        </fo:inline>
+      </fo:block>
+
+
+      <fo:block line-height="12pt" font-size="8pt">
+        This text has a fixed line height of 12pt and its font size is 8pt.
+        This text has a fixed line height of 12pt and its font size is 8pt.
+        This text has a fixed line height of 12pt and its font size is 8pt.
+        This text has a fixed line height of 12pt and its font size is 8pt.
+        This text has a fixed line height of 12pt and its font size is 8pt.
+      </fo:block>
+
+
+      <fo:block text-align="start" space-before.optimum="6pt" line-height="12pt" font-size="12pt">
+        This text has a fixed line height of 12pt and its font size is 12pt.
+        This text has a fixed line height of 12pt and its font size is 12pt.
+        This text has a fixed line height of 12pt and its font size is 12pt.
+        This text has a fixed line height of 12pt and its font size is 12pt.
+        This text has a fixed line height of 12pt and its font size is 12pt.
+      </fo:block>
+
+
+      <fo:block text-align="start" space-before.optimum="6pt" line-height="12pt" font-size="16pt">
+        This text has a fixed line height of 12pt and its font size is 16pt.
+        This text has a fixed line height of 12pt and its font size is 16pt.
+        This text has a fixed line height of 12pt and its font size is 16pt.
+        This text has a fixed line height of 12pt and its font size is 16pt.
+        This text has a fixed line height of 12pt and its font size is 16pt.
+      </fo:block>
+
+      <fo:block font-weight="bold" text-align="center">
+        <fo:inline text-decoration="underline">
+          Relative Values
+        </fo:inline>
+      </fo:block>
+
+      <fo:block text-align="start" space-before.optimum="6pt" line-height="normal" font-size="10pt">
+        This text has a normal line height at font size of 10pt.
+        This text has a normal line height at font size of 10pt.
+        This text has a normal line height at font size of 10pt.
+        This text has a normal line height at font size of 10pt.
+        This text has a normal line height at font size of 10pt.
+      </fo:block>
+
+      <fo:block text-align="start" space-before.optimum="6pt" line-height="normal" font-size="14pt">
+        This text has a normal line height at font size of 14pt.
+        This text has a normal line height at font size of 14pt.
+        This text has a normal line height at font size of 14pt.
+        This text has a normal line height at font size of 14pt.
+        This text has a normal line height at font size of 14pt.
+      </fo:block>
+
+      <fo:block text-align="start" space-before.optimum="6pt" line-height="1.0" font-size="10pt">
+        This text is single-spaced at font size of 10pt.
+        This text is single-spaced at font size of 10pt.
+        This text is single-spaced at font size of 10pt.
+        This text is single-spaced at font size of 10pt.
+        This text is single-spaced at font size of 10pt.
+      </fo:block>
+
+      <fo:block text-align="start" space-before.optimum="6pt" line-height="1.0" font-size="14pt">
+        This text is single-spaced at font size of 14pt.
+        This text is single-spaced at font size of 14pt.
+        This text is single-spaced at font size of 14pt.
+        This text is single-spaced at font size of 14pt.
+        This text is single-spaced at font size of 14pt.
+      </fo:block>
+
+      <fo:block text-align="start" space-before.optimum="6pt" line-height="2.0" font-size="10pt">
+        This text is double-spaced at font size of 10pt.
+        This text is double-spaced at font size of 10pt.
+        This text is double-spaced at font size of 10pt.
+        This text is double-spaced at font size of 10pt.
+        This text is double-spaced at font size of 10pt.
+      </fo:block>
+
+      <fo:block text-align="start" space-before.optimum="6pt" line-height="2.0" font-size="14pt">
+        This text is double-spaced at font size of 14pt.
+        This text is double-spaced at font size of 14pt.
+        This text is double-spaced at font size of 14pt.
+        This text is double-spaced at font size of 14pt.
+        This text is double-spaced at font size of 14pt.
+      </fo:block>
+
+      </fo:flow>
+  </fo:page-sequence>
+</fo:root>

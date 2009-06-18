@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks external-graphics with size properties.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>
+            <fo:external-graphic src="../../resources/images/box1.png" 
+              overflow="hidden" background-color="yellow" id="box-org"/>
+          </fo:block>
+          <fo:block>
+            <fo:external-graphic src="../../resources/images/box1.png" 
+              inline-progression-dimension="1in"
+              block-progression-dimension="1in"
+              content-width="scale-down-to-fit"
+              content-height="scale-down-to-fit"
+              text-align="center" display-align="center"
+              overflow="hidden" background-color="yellow" id="box1"/>
+            <fo:external-graphic src="../../resources/images/box1.png" 
+              inline-progression-dimension="0.5in"
+              block-progression-dimension="0.5in"
+              content-width="scale-up-to-fit"
+              content-height="scale-up-to-fit"
+              text-align="center" display-align="center"
+              overflow="hidden" background-color="yellow" id="box1a"/>
+          </fo:block>
+          <fo:block>
+            <fo:external-graphic src="../../resources/images/box1.png" 
+              inline-progression-dimension="2in"
+              block-progression-dimension="1in"
+              content-width="scale-down-to-fit"
+              content-height="scale-down-to-fit"
+              text-align="center" display-align="center"
+              overflow="hidden" background-color="yellow" id="box2"/>
+            <fo:external-graphic src="../../resources/images/box1.png" 
+              inline-progression-dimension="1in"
+              block-progression-dimension="2in"
+              content-width="scale-down-to-fit"
+              content-height="scale-down-to-fit"
+              text-align="center" display-align="center"
+              overflow="hidden" background-color="yellow" id="box3"/>
+          </fo:block>
+          <fo:block>
+            <fo:external-graphic src="../../resources/images/box1.png" 
+              inline-progression-dimension="0.5in"
+              block-progression-dimension="0.4in"
+              content-width="scale-up-to-fit"
+              content-height="scale-up-to-fit"
+              text-align="center" display-align="center"
+              overflow="hidden" background-color="yellow" id="box2a"/>
+          </fo:block>
+          <fo:block>EOF</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <!-- use intrinsic size -->
+    <eval expected="40009" xpath="//viewport[@prod-id='box-org']/@ipd"/>
+    <eval expected="40009" xpath="//viewport[@prod-id='box-org']/@bpd"/>
+    <eval expected="0 0 40009 40009" xpath="//viewport[@prod-id='box-org']/@pos"/>
+
+    <!-- bigger viewport (square) -->
+    <eval expected="72000" xpath="//viewport[@prod-id='box1']/@ipd"/>
+    <eval expected="72000" xpath="//viewport[@prod-id='box1']/@bpd"/>
+    <eval expected="15995 15995 40009 40009" xpath="//viewport[@prod-id='box1']/@pos"/>
+
+    <!-- smaller viewport (square) -->
+    <eval expected="36000" xpath="//viewport[@prod-id='box1a']/@ipd"/>
+    <eval expected="36000" xpath="//viewport[@prod-id='box1a']/@bpd"/>
+    <eval expected="-2004 -2004 40009 40009" xpath="//viewport[@prod-id='box1a']/@pos"/>
+    
+    <!-- bigger viewport (rectangular) -->
+    <eval expected="144000" xpath="//viewport[@prod-id='box2']/@ipd"/>
+    <eval expected="72000" xpath="//viewport[@prod-id='box2']/@bpd"/>
+    <eval expected="51995 15995 40009 40009" xpath="//viewport[@prod-id='box2']/@pos"/>
+
+    <!-- bigger viewport (rectangular case 2) -->
+    <eval expected="72000" xpath="//viewport[@prod-id='box3']/@ipd"/>
+    <eval expected="144000" xpath="//viewport[@prod-id='box3']/@bpd"/>
+    <eval expected="15995 51995 40009 40009" xpath="//viewport[@prod-id='box3']/@pos"/>
+
+    <!-- smaller viewport (rectangular case) -->
+    <eval expected="36000" xpath="//viewport[@prod-id='box2a']/@ipd"/>
+    <eval expected="28800" xpath="//viewport[@prod-id='box2a']/@bpd"/>
+    <eval expected="-2004 -5604 40009 40009" xpath="//viewport[@prod-id='box2a']/@pos"/>
+  </checks>
+</testcase>

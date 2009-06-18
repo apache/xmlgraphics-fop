@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  * Licensed to the Apache Software Foundation (ASF) under one or more
+  * contributor license agreements.  See the NOTICE file distributed with
+  * this work for additional information regarding copyright ownership.
+  * The ASF licenses this file to You under the Apache License, Version 2.0
+  * (the "License"); you may not use this file except in compliance with
+  * the License.  You may obtain a copy of the License at
+  * 
+  *      http://www.apache.org/licenses/LICENSE-2.0
+  * 
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  -->
+
+<!-- $Id$ -->
+
+<!--
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+                         "docbookx.dtd">
+  -->
+
+  <chapter>
+	<title>Phase 2: Building the Area tree</title>
+
+	<section>
+	  <title>Initiating the layout process</title>
+
+<para>In the <literal>PageSequence.endOfNode()</literal> method, the
+<literal>AreaTreeHandler</literal> object
+<literal>foEventHandler</literal>'s method 
+<literal>endPageSequence</literal> is called. This method constructs a
+<literal>PageSequenceLayoutManager</literal> for the
+<literal>PageSequence</literal> FO node, which manages all page-related
+layout.</para>
+
+<screen>
+org.apache.fop.fo.pagination.PageSequence.endOfNode():
+this.getFOEventHandler().getFOEventHandler().endPageSequence(this):
+-> foTreeBuilder.getFOEventHandler().endPageSequence(this)
+-> foEventHandler.endPageSequence(this) (type AreaTreeHandler):
+</screen>
+
+<para>This method creates a new
+<literal>PageSequenceLayoutManager</literal> for the
+<literal>PageSequence</literal> FO node. The pages in this page sequence
+are completely layed out by the
+<literal>PageSequenceLayoutManager</literal>, in its
+<literal>activateLayout</literal> method. The first step in the layout
+process is getting the page setup from the page masters. Then the FO tree
+is processed.</para>
+
+<screen>
+  [1] org.apache.fop.layoutmgr.PageSequenceLayoutManager.activateLayout (PageLayoutManager.java:211)
+  [2] org.apache.fop.fo.area.AreaTreeHandler.endPageSequence (AreaTreeHandler.java:242)
+  [3] org.apache.fop.fo.pagination.PageSequence.endOfNode (PageSequence.java:202)
+  [4] org.apache.fop.fo.FOTreeBuilder.endElement (FOTreeBuilder.java:292)
+  ... parser stuff
+  [13] org.apache.xerces.parsers.AbstractSAXParser.parse (null)
+  [14] org.apache.xalan.transformer.TransformerIdentityImpl.transform (null)
+  [15] org.apache.fop.apps.InputHandler.render (InputHandler.java:120)
+  [16] org.apache.fop.apps.Fop.main (Fop.java:102)
+</screen>
+
+<screen>
+main[1] dump pageSLM
+ pageSLM = {
+    areaTreeHandler= org.apache.fop.area.AreaTreeHandler  (id=79)
+    areaTreeModel= org.apache.fop.area.RenderPagesModel  (id=81)
+    bFinished= false
+    bFirstPage= false
+    bInited= false
+    childLMiter= org.apache.fop.layoutmgr.LMiter  (id=85)
+    childLMs= java.util.ArrayList  (id=89)
+    curBody= null
+    curChildLM= null
+    curFlow= null
+    curPage= null
+    currentSimplePageMaster= null
+    curSpan= null
+    curSpanColumns= 0
+    flowBPD= 0
+    flowIPD= 0
+    fobj= org.apache.fop.fo.pagination.PageSequence  (id=12)
+    fobjIter= java.util.AbstractList$ListItr  (id=90)
+    isFirstPage= true
+    markers= null
+    pageCount= 1
+    pageNumberGenerator= null
+    pageNumberString= null
+    parentLM= null
+    staticContentLMs= java.util.HashMap  (id=93)
+}
+</screen>
+    
+<para>The above calling sequence contains one configuration
+ point. FOP's area tree building process can be modified by
+ registering a different LayoutManagerMaker with the Area tree
+ handler. The LayoutManagerMaker controls the creation of Layout
+ Managers.
+<warning>
+		<simpara>TO BE EXPANDED</simpara>
+	  </warning></para>
+
+	</section>
+
+	<section>
+	  <title>Creating the page and body areas</title>
+
+	  <section>
+		<title>Overview</title>
+
+	<para>Create the layout (<literal>activateLayout</literal>) <itemizedlist spacing="compact">
+		<listitem>
+		  <para>First create a new Page Viewport
+(<literal>makeNewPage</literal>). <itemizedlist spacing="compact"> 
+		      <listitem>
+				<para>First finish the current page
+(<literal>finishPage</literal>).</para>
+			  </listitem>
+		      <listitem>
+				<para>Then create the new page viewport
+(<literal>createPage</literal>). <itemizedlist spacing="compact">
+					<listitem>
+					  <para>First get the page master
+(<literal>getSimplePageMasterToUse</literal>, 
+<literal>pageSequence.getPageSequenceMaster</literal> or
+<literal>pageSequence.getSimplePageMaster</literal>).</para> 
+					</listitem>
+					<listitem>
+					  <para>Then get the body
+(<literal>currentSimplePageMaster.getRegion</literal>, from
+<literal>currentSimplePageMaster</literal>'s
+<literal>regions</literal> map).</para>
+					</listitem>
+					<listitem>
+					  <para>Then create the page viewport
+(<literal>createPageAreas(currentSimplePageMaster)</literal>).
+<itemizedlist spacing="compact"> 
+						  <listitem>
+							<para>From the properties of the page
+master create the page reference rectangle, a new page, a new
+FODimension object, and a CTM object.</para>
+						  </listitem>
+						  <listitem>
+							<para>For each region in the page master
+(in our example we only have a body): <itemizedlist spacing="compact">
+								<listitem>
+								  <para>make a region viewport
+(<literal>makeRegionViewport</literal>), which involves calculating
+the position of the region on the page, using the FODimension and CTM
+objects.
+</para>
+								</listitem>
+								<listitem>
+								  <para>make the reference area
+(<literal>makeRegionBodyReferenceArea</literal>,
+<literal>makeRegionReferenceArea</literal>).</para>
+								</listitem>
+							  </itemizedlist></para>
+						  </listitem>
+						</itemizedlist></para>
+					</listitem>
+				  </itemizedlist></para>
+			  </listitem>
+			</itemizedlist></para>
+		</listitem>
+	  </itemizedlist></para>
+
+	  <para>At this point the page viewport and its region viewports
+have been laid out.</para>
+
+	  <para> <itemizedlist spacing="compact">
+		<listitem>
+		  <simpara>Then create the body's main reference area
+(<literal>createBodyMainReferenceArea</literal>).</simpara>
+		</listitem>
+		<listitem>
+		  <simpara>Then create a Span
+(<literal>createSpan</literal>).</simpara>
+		</listitem>
+		<listitem>
+		  <simpara>And get the flowIPD
+(curFlow.<literal>getIPD</literal>()).</simpara>
+		</listitem>
+	  </itemizedlist></para>
+
+	  <para>At this point the body has a single span area with a
+single flow area without children.
+</para>
+
+	  </section>
+
+	  <section>
+		<title>Detailed view</title>
+
+		<para>The call stack when creating the region viewports:
+<screen>
+  [1] org.apache.fop.layoutmgr.PageLayoutManager.makeRegionViewport (PageLayoutManager.java:832)
+  [2] org.apache.fop.layoutmgr.PageLayoutManager.createPageAreas (PageLayoutManager.java:805)
+  [3] org.apache.fop.layoutmgr.PageLayoutManager.createPage (PageLayoutManager.java:748)
+  [4] org.apache.fop.layoutmgr.PageLayoutManager.makeNewPage (PageLayoutManager.java:467)
+  [5] org.apache.fop.layoutmgr.PageLayoutManager.activateLayout (PageLayoutManager.java:220)
+</screen>
+</para>
+
+<para>At the end of <literal>createPageAreas</literal> the following
+properties of the page have been established:</para>
+
+<para>The page reference rectangle:
+<screen>
+ pageRefRect = {
+    x: 56692
+    y: 56692
+    width: 481891
+    height: 728505
+    serialVersionUID: -4345857070255674764
+}
+</screen>
+</para>
+
+<para>The page reference area:
+<screen>
+ page = {
+    regionBefore: null
+    regionStart: null
+    regionBody: instance of org.apache.fop.area.RegionViewport(id=1279)
+    regionEnd: null
+    regionAfter: null
+    unresolved: null
+}
+</screen>
+
+<screen>
+ page.regionBody = {
+    region: instance of org.apache.fop.area.BodyRegion(id=1280)
+    viewArea: instance of java.awt.Rectangle(id=1281)
+    clip: false
+    org.apache.fop.area.Area.areaClass: 0
+    org.apache.fop.area.Area.ipd: 0
+    org.apache.fop.area.Area.props: null
+}
+</screen>
+
+<screen>
+ page.regionBody.region = {
+    beforeFloat: null
+    mainReference: null
+    footnote: null
+    columnGap: 18000
+    columnCount: 1
+    refIPD: 0
+    org.apache.fop.area.RegionReference.regionClass: 2
+    org.apache.fop.area.RegionReference.ctm: instance of org.apache.fop.area.CTM(id=1282)
+    org.apache.fop.area.RegionReference.blocks: instance of java.util.ArrayList(id=1283)
+    org.apache.fop.area.Area.areaClass: 0
+    org.apache.fop.area.Area.ipd: 0
+    org.apache.fop.area.Area.props: null
+}
+</screen>
+
+<screen>
+ page.regionBody.viewArea = {
+    x: 56692
+    y: 56692
+    width: 481891
+    height: 728505
+    serialVersionUID: -4345857070255674764
+}
+</screen>
+</para>
+
+<para>The <literal>PageViewport</literal> is returned:</para>
+
+<screen>
+ curPage = {
+    page: instance of org.apache.fop.area.Page(id=1261)
+    viewArea: instance of java.awt.Rectangle(id=1289)
+    clip: false
+    pageNumber: null
+    idReferences: null
+    unresolved: null
+    pendingResolved: null
+    markerFirstStart: null
+    markerLastStart: null
+    markerFirstAny: null
+    markerLastEnd: null
+    markerLastAny: null
+}
+</screen>
+
+<para>When <literal>makeNewPage</literal> returns, the Page
+LayoutManager has a Page Viewport and a Body Region object. The layout
+dimensions have been calculated:</para>
+
+<screen>
+ this = {
+    pageNumberGenerator: instance of org.apache.fop.fo.pagination.PageNumberGenerator(id=1003)
+    pageCount: 1
+    pageNumberString: "1"
+    isFirstPage: false
+    bFirstPage: false
+    curPage: instance of org.apache.fop.area.PageViewport(id=1288)
+    curBody: instance of org.apache.fop.area.BodyRegion(id=1280)
+    curSpan: null
+    curSpanColumns: 0
+    curFlow: null
+    flowBPD: 728505
+    flowIPD: 0
+    areaTree: instance of org.apache.fop.area.AreaTree(id=1005)
+    pageSequence: instance of org.apache.fop.fo.pagination.PageSequence(id=1006)
+    currentSimplePageMaster: instance of org.apache.fop.fo.pagination.SimplePageMaster(id=1007)
+    staticContentLMs: instance of java.util.HashMap(id=1008)
+    lmls: instance of org.apache.fop.layoutmgr.LayoutManagerLS(id=1009)
+    org.apache.fop.layoutmgr.AbstractLayoutManager.userAgent: instance of org.apache.fop.apps.FOUserAgent(id=1010)
+    org.apache.fop.layoutmgr.AbstractLayoutManager.parentLM: null
+    org.apache.fop.layoutmgr.AbstractLayoutManager.fobj: instance of org.apache.fop.fo.pagination.PageSequence(id=1006)
+    org.apache.fop.layoutmgr.AbstractLayoutManager.foID: null
+    org.apache.fop.layoutmgr.AbstractLayoutManager.markers: null
+    org.apache.fop.layoutmgr.AbstractLayoutManager.bFinished: false
+    org.apache.fop.layoutmgr.AbstractLayoutManager.curChildLM: null
+    org.apache.fop.layoutmgr.AbstractLayoutManager.childLMiter: instance of org.apache.fop.layoutmgr.LMiter(id=1011)
+    org.apache.fop.layoutmgr.AbstractLayoutManager.bInited: false
+}
+</screen>
+
+<para>The method <literal>createBodyMainReferenceArea()</literal> adds
+a <literal>MainReferenceArea</literal> to the body region:</para>
+
+<screen>
+ curBody = {
+    beforeFloat: null
+    mainReference: instance of org.apache.fop.area.MainReference(id=1293)
+    footnote: null
+    columnGap: 18000
+    columnCount: 1
+    refIPD: 0
+    org.apache.fop.area.RegionReference.regionClass: 2
+    org.apache.fop.area.RegionReference.ctm: instance of org.apache.fop.area.CTM(id=1282)
+    org.apache.fop.area.RegionReference.blocks: instance of java.util.ArrayList(id=1283)
+    org.apache.fop.area.Area.areaClass: 0
+    org.apache.fop.area.Area.ipd: 0
+    org.apache.fop.area.Area.props: null
+}
+</screen>
+
+<screen>
+ curBody.mainReference = {
+    spanAreas: instance of java.util.ArrayList(id=1294)
+    columnGap: 0
+    width: 0
+    org.apache.fop.area.Area.areaClass: 0
+    org.apache.fop.area.Area.ipd: 0
+    org.apache.fop.area.Area.props: null
+}
+</screen>
+
+<screen>
+ curBody.mainReference.spanAreas = "[]"
+</screen>
+
+<para>After <literal>createSpan(1)</literal>:</para>
+
+<screen>
+ curBody.mainReference.spanAreas = "[org.apache.fop.area.Span@1581e80]"
+</screen>
+
+<screen>
+ curBody.mainReference.spanAreas.get(0) = {
+    flowAreas: instance of java.util.ArrayList(id=1299)
+    height: 0
+    org.apache.fop.area.Area.areaClass: 0
+    org.apache.fop.area.Area.ipd: 481891
+    org.apache.fop.area.Area.props: null
+}
+</screen>
+
+	  </section>
+	</section>
+  </chapter>
+
+<!-- Local Variables: --> 
+<!-- current-language-environment: UTF-8 -->
+<!-- coding: utf-8 --> 
+<!-- default-input-method: TeX --> 
+<!-- End: -->

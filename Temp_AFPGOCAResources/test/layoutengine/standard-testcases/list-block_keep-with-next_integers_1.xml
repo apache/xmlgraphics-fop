@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks keep-with-next with lists.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" widows="0" orphans="0">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="10 * 14.4pt">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>block1</fo:block>
+          <fo:list-block 
+              provisional-distance-between-starts="25mm"
+              provisional-label-separation="5mm" 
+              keep-with-next.within-column="1">
+            <fo:list-item>
+              <fo:list-item-label end-indent="label-end()">
+                <fo:block>label1</fo:block>
+              </fo:list-item-label>
+              <fo:list-item-body start-indent="body-start()">
+                <fo:block>item1</fo:block>
+              </fo:list-item-body>
+            </fo:list-item>
+            <fo:list-item>
+              <fo:list-item-label end-indent="label-end()">
+                <fo:block>label2</fo:block>
+              </fo:list-item-label>
+              <fo:list-item-body start-indent="body-start()">
+                <fo:block>item2</fo:block>
+              </fo:list-item-body>
+            </fo:list-item>
+          </fo:list-block>
+          <fo:block>block2</fo:block>
+          <fo:list-block 
+              provisional-distance-between-starts="25mm"
+              provisional-label-separation="5mm">
+            <fo:list-item keep-with-next.within-column="1">
+              <fo:list-item-label end-indent="label-end()">
+                <fo:block>label1</fo:block>
+              </fo:list-item-label>
+              <fo:list-item-body start-indent="body-start()">
+                <fo:block>item1</fo:block>
+                <fo:block keep-with-next.within-column="1">item1</fo:block>
+                <fo:block>item1</fo:block>
+                <fo:block>item1</fo:block>
+              </fo:list-item-body>
+            </fo:list-item>
+            <fo:list-item>
+              <fo:list-item-label end-indent="label-end()">
+                <fo:block>label2</fo:block>
+              </fo:list-item-label>
+              <fo:list-item-body start-indent="body-start()">
+                <fo:block>item2</fo:block>
+              </fo:list-item-body>
+            </fo:list-item>
+          </fo:list-block>
+          <fo:block>block3</fo:block>
+          <fo:list-block keep-with-next.within-column="1"
+              provisional-distance-between-starts="25mm"
+              provisional-label-separation="5mm">
+            <fo:list-item keep-with-next.within-column="2">
+              <fo:list-item-label end-indent="label-end()">
+                <fo:block keep-with-next.within-column="always">label1</fo:block>
+              </fo:list-item-label>
+              <fo:list-item-body start-indent="body-start()">
+                <fo:block>item1</fo:block>
+              </fo:list-item-body>
+            </fo:list-item>
+          </fo:list-block>
+          <fo:block>block4</fo:block>
+          <fo:list-block
+              provisional-distance-between-starts="25mm"
+              provisional-label-separation="5mm">
+            <fo:list-item >
+              <fo:list-item-label end-indent="label-end()">
+                <fo:block keep-with-next.within-column="1">label1</fo:block>
+              </fo:list-item-label>
+              <fo:list-item-body start-indent="body-start()">
+                <fo:block>item1</fo:block>
+                <fo:block>item1</fo:block>
+              </fo:list-item-body>
+            </fo:list-item>
+          </fo:list-block>
+          <fo:block>block5</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <element-list category="breaker">
+      <box/>
+      <penalty w="0" p="0"/>
+      <!-- list 1 starts -->
+      <box/>
+      <penalty w="0" p="0"/>
+      <box/>
+      <!-- list 1 end -->
+      <penalty w="0" p="999"/>
+      <box/>
+      <penalty w="0" p="0"/>
+      <!-- list 2 starts -->
+      <box/>
+      <penalty w="0" p="0"/>
+      <box/>
+      <penalty w="0" p="999"/>
+      <box/>
+      <penalty w="0" p="0"/>
+      <box/>
+      <penalty w="0" p="999"/>
+      <box/>
+      <!-- list 2 end -->
+      <penalty w="0" p="0"/>
+      <box/>
+      <penalty w="0" p="0"/>
+      <!-- list 3 starts -->
+      <box/>
+      <!-- list 3 end -->
+      <penalty w="0" p="INF"/>
+      <box/>
+      <penalty w="0" p="0"/>
+      <!-- list 4 starts -->
+      <box/>
+      <penalty w="0" p="999"/>
+      <box/>
+      <!-- list 4 end -->
+      <penalty w="0" p="999"/>
+      <box/>
+      
+      <skip>3</skip>
+    </element-list>
+  </checks>
+</testcase>

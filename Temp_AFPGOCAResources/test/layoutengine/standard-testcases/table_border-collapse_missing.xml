@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks the behaviour in the collapsing border model when table-cells are missing.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="page" page-height="5in" page-width="5in" margin="0.5in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="page">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:table table-layout="fixed" width="100%"
+              border-collapse="collapse" border="solid 4pt black">
+            <fo:table-column column-width="proportional-column-width(2)"/>
+            <fo:table-column column-width="proportional-column-width(1)"/>
+            <fo:table-column column-width="proportional-column-width(2)"/>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell border="solid 4pt red">
+                  <fo:block>cell A1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell border="solid 4pt green">
+                  <fo:block>cell B1</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell border="solid 4pt red">
+                  <fo:block>cell A2</fo:block>
+                </fo:table-cell>
+                <fo:table-cell border="solid 4pt green">
+                  <fo:block>cell B2</fo:block>
+                </fo:table-cell>
+                <fo:table-cell border="solid 4pt blue">
+                  <fo:block>cell C2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell border="solid 4pt red">
+                  <fo:block>cell A3</fo:block>
+                </fo:table-cell>
+                <fo:table-cell border="solid 4pt blue" column-number="3">
+                  <fo:block>cell C3</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell border="solid 4pt blue" column-number="3">
+                  <fo:block>cell C4</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell border="solid 4pt red">
+                  <fo:block>cell A5</fo:block>
+                </fo:table-cell>
+                <fo:table-cell border="solid 4pt blue" column-number="3">
+                  <fo:block>cell C5</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell border="solid 4pt green" column-number="2">
+                  <fo:block>cell B6</fo:block>
+                </fo:table-cell>
+                <fo:table-cell border="solid 4pt blue">
+                  <fo:block>cell C6</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+          <fo:table table-layout="fixed" width="100%" space-before="1.7in"
+            border-collapse="collapse" border="solid 4pt black">
+            <fo:table-column column-width="proportional-column-width(1)" number-columns-repeated="3"/>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell border="solid 4pt red">
+                  <fo:block>cell A1 cell A1 cell A1 cell A1 cell A1 cell A1 cell A1 cell A1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell border="solid 4pt green">
+                  <fo:block>cell B1</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <!-- empty cell in row 1 (C1) -->
+    <eval expected="true"                                xpath="//pageViewport[@nr='1']//flow/block[1]/block[3]/@is-reference-area"/>
+    <eval expected="absolute"                            xpath="//pageViewport[@nr='1']//flow/block[1]/block[3]/@positioning"/>
+    <eval expected="14400"                               xpath="//pageViewport[@nr='1']//flow/block[1]/block[3]/@bpd"/>
+    <eval expected="22400"                               xpath="//pageViewport[@nr='1']//flow/block[1]/block[3]/@bpda"/>
+    <eval expected="111200"                              xpath="//pageViewport[@nr='1']//flow/block[1]/block[3]/@ipd"/>
+    <eval expected="119200"                              xpath="//pageViewport[@nr='1']//flow/block[1]/block[3]/@ipda"/>
+    <eval expected="-2000"                               xpath="//pageViewport[@nr='1']//flow/block[1]/block[3]/@top-offset"/>
+    <eval expected="174800"                              xpath="//pageViewport[@nr='1']//flow/block[1]/block[3]/@left-offset"/>
+    <eval expected="(solid,#000000,4000,collapse-outer)" xpath="//pageViewport[@nr='1']//flow/block[1]/block[3]/@border-before"/>
+    <eval expected="(solid,#008000,4000,collapse-inner)" xpath="//pageViewport[@nr='1']//flow/block[1]/block[3]/@border-start"/>
+    <eval expected="(solid,#0000ff,4000,collapse-inner)" xpath="//pageViewport[@nr='1']//flow/block[1]/block[3]/@border-after"/>
+    <eval expected="(solid,#000000,4000,collapse-outer)" xpath="//pageViewport[@nr='1']//flow/block[1]/block[3]/@border-end"/>
+    <!-- empty cell in row 3 (B3) -->
+    <eval expected="16400"                               xpath="//pageViewport[@nr='1']//flow/block[1]/block[8]/@bpd"/>
+    <eval expected="20400"                               xpath="//pageViewport[@nr='1']//flow/block[1]/block[8]/@bpda"/>
+    <eval expected="53600"                               xpath="//pageViewport[@nr='1']//flow/block[1]/block[8]/@ipd"/>
+    <eval expected="61600"                               xpath="//pageViewport[@nr='1']//flow/block[1]/block[8]/@ipda"/>
+    <eval expected="34800"                               xpath="//pageViewport[@nr='1']//flow/block[1]/block[8]/@top-offset"/>
+    <eval expected="117200"                              xpath="//pageViewport[@nr='1']//flow/block[1]/block[8]/@left-offset"/>
+    <eval expected="(solid,#008000,4000,collapse-inner)" xpath="//pageViewport[@nr='1']//flow/block[1]/block[8]/@border-before"/>
+    <eval expected="(solid,#ff0000,4000,collapse-inner)" xpath="//pageViewport[@nr='1']//flow/block[1]/block[8]/@border-start"/>
+    <true xpath="not(boolean(//pageViewport[@nr='1']//flow/block[1]/block[8]/@border-after))" fail-msg="border-after in B3 must be absent"/>
+    <eval expected="(solid,#0000ff,4000,collapse-inner)" xpath="//pageViewport[@nr='1']//flow/block[1]/block[8]/@border-end"/>
+    <!-- empty cell in row 4 (A4) -->
+    <eval expected="14400"                               xpath="//pageViewport[@nr='1']//flow/block[1]/block[10]/@bpd"/>
+    <eval expected="22400"                               xpath="//pageViewport[@nr='1']//flow/block[1]/block[10]/@bpda"/>
+    <eval expected="113200"                              xpath="//pageViewport[@nr='1']//flow/block[1]/block[10]/@ipd"/>
+    <eval expected="117200"                              xpath="//pageViewport[@nr='1']//flow/block[1]/block[10]/@ipda"/>
+    <eval expected="53200"                               xpath="//pageViewport[@nr='1']//flow/block[1]/block[10]/@top-offset"/>
+    <eval expected="2000"                                xpath="//pageViewport[@nr='1']//flow/block[1]/block[10]/@left-offset"/>
+    <eval expected="(solid,#ff0000,4000,collapse-inner)" xpath="//pageViewport[@nr='1']//flow/block[1]/block[10]/@border-before"/>
+    <eval expected="(solid,#000000,4000,collapse-outer)" xpath="//pageViewport[@nr='1']//flow/block[1]/block[10]/@border-start"/>
+    <eval expected="(solid,#ff0000,4000,collapse-inner)" xpath="//pageViewport[@nr='1']//flow/block[1]/block[10]/@border-after"/>
+    <true xpath="not(boolean(//pageViewport[@nr='1']//flow/block[1]/block[10]/@border-end))" fail-msg="border-end in A4 must be absent"/>
+    <!-- empty cell in row 4 (B4) -->
+    <eval expected="18400"                               xpath="//pageViewport[@nr='1']//flow/block[1]/block[11]/@bpd"/>
+    <eval expected="18400"                               xpath="//pageViewport[@nr='1']//flow/block[1]/block[11]/@bpda"/>
+    <eval expected="55600"                               xpath="//pageViewport[@nr='1']//flow/block[1]/block[11]/@ipd"/>
+    <eval expected="59600"                               xpath="//pageViewport[@nr='1']//flow/block[1]/block[11]/@ipda"/>
+    <eval expected="55200"                               xpath="//pageViewport[@nr='1']//flow/block[1]/block[11]/@top-offset"/>
+    <eval expected="115200"                              xpath="//pageViewport[@nr='1']//flow/block[1]/block[11]/@left-offset"/>
+    <true xpath="not(boolean(//pageViewport[@nr='1']//flow/block[1]/block[11]/@border-before))" fail-msg="border-before in B4 must be absent"/>
+    <true xpath="not(boolean(//pageViewport[@nr='1']//flow/block[1]/block[11]/@border-start))" fail-msg="border-start in B4 must be absent"/>
+    <true xpath="not(boolean(//pageViewport[@nr='1']//flow/block[1]/block[11]/@border-after))" fail-msg="border-after in B4 must be absent"/>
+    <eval expected="(solid,#0000ff,4000,collapse-inner)" xpath="//pageViewport[@nr='1']//flow/block[1]/block[11]/@border-end"/>
+    <!-- empty cell in row 6 (A6) -->
+    <eval expected="14400"                               xpath="//pageViewport[@nr='1']//flow/block[1]/block[16]/@bpd"/>
+    <eval expected="22400"                               xpath="//pageViewport[@nr='1']//flow/block[1]/block[16]/@bpda"/>
+    <eval expected="111200"                              xpath="//pageViewport[@nr='1']//flow/block[1]/block[16]/@ipd"/>
+    <eval expected="119200"                              xpath="//pageViewport[@nr='1']//flow/block[1]/block[16]/@ipda"/>
+    <eval expected="90000"                               xpath="//pageViewport[@nr='1']//flow/block[1]/block[16]/@top-offset"/>
+    <eval expected="2000"                                xpath="//pageViewport[@nr='1']//flow/block[1]/block[16]/@left-offset"/>
+    <eval expected="(solid,#ff0000,4000,collapse-inner)" xpath="//pageViewport[@nr='1']//flow/block[1]/block[16]/@border-before"/>
+    <eval expected="(solid,#000000,4000,collapse-outer)" xpath="//pageViewport[@nr='1']//flow/block[1]/block[16]/@border-start"/>
+    <eval expected="(solid,#000000,4000,collapse-outer)" xpath="//pageViewport[@nr='1']//flow/block[1]/block[16]/@border-after"/>
+    <eval expected="(solid,#008000,4000,collapse-inner)" xpath="//pageViewport[@nr='1']//flow/block[1]/block[16]/@border-end"/>
+    
+    <!-- *** second table *** -->
+    <!-- empty cell in row 1 (C1) -->
+    <eval expected="28800"                               xpath="//pageViewport[@nr='1']//flow/block[2]/block[3]/@bpd"/>
+    <eval expected="32800"                               xpath="//pageViewport[@nr='1']//flow/block[2]/block[3]/@bpda"/>
+    <eval expected="92000"                               xpath="//pageViewport[@nr='1']//flow/block[2]/block[3]/@ipd"/>
+    <eval expected="100000"                              xpath="//pageViewport[@nr='1']//flow/block[2]/block[3]/@ipda"/>
+    <eval expected="-2000"                               xpath="//pageViewport[@nr='1']//flow/block[2]/block[3]/@top-offset"/>
+    <eval expected="194000"                              xpath="//pageViewport[@nr='1']//flow/block[2]/block[3]/@left-offset"/>
+    <eval expected="(solid,#000000,4000,collapse-outer)" xpath="//pageViewport[@nr='1']//flow/block[2]/block[3]/@border-before"/>
+    <eval expected="(solid,#008000,4000,collapse-inner)" xpath="//pageViewport[@nr='1']//flow/block[2]/block[3]/@border-start"/>
+    <true xpath="not(boolean(//pageViewport[@nr='1']//flow/block[2]/block[3]/@border-after))" fail-msg="border-after in C1 must be absent"/>
+    <eval expected="(solid,#000000,4000,collapse-outer)" xpath="//pageViewport[@nr='1']//flow/block[2]/block[3]/@border-end"/>
+    <!-- empty cell in row 1 (C1), continued on next page -->
+    <eval expected="28800"                               xpath="//pageViewport[@nr='2']//flow/block[1]/block[3]/@bpd"/>
+    <eval expected="32800"                               xpath="//pageViewport[@nr='2']//flow/block[1]/block[3]/@bpda"/>
+    <eval expected="92000"                               xpath="//pageViewport[@nr='2']//flow/block[1]/block[3]/@ipd"/>
+    <eval expected="100000"                              xpath="//pageViewport[@nr='2']//flow/block[1]/block[3]/@ipda"/>
+    <true xpath="not(boolean(//pageViewport[@nr='2']//flow/block[1]/block[3]/@top-offset))" fail-msg="must not have a top-offset"/>
+    <eval expected="194000"                              xpath="//pageViewport[@nr='2']//flow/block[1]/block[3]/@left-offset"/>
+    <true xpath="not(boolean(//pageViewport[@nr='2']//flow/block[1]/block[3]/@border-before))" fail-msg="border-after in C1 must be absent"/>
+    <eval expected="(solid,#008000,4000,collapse-inner)" xpath="//pageViewport[@nr='2']//flow/block[1]/block[3]/@border-start"/>
+    <eval expected="(solid,#000000,4000,collapse-outer)" xpath="//pageViewport[@nr='2']//flow/block[1]/block[3]/@border-after"/>
+    <eval expected="(solid,#000000,4000,collapse-outer)" xpath="//pageViewport[@nr='2']//flow/block[1]/block[3]/@border-end"/>
+    
+  </checks>
+</testcase>

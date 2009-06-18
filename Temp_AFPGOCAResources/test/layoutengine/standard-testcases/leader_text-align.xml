@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks fo:leader with different text-align
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal" white-space-collapse="true">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>
+            <fo:leader leader-pattern="dots"/>
+               dots
+          </fo:block>
+          <fo:block>
+            <fo:leader leader-pattern="rule" rule-style="double"/>
+               rule double
+          </fo:block>
+          <fo:block>
+            <fo:leader leader-pattern="space"/>
+               space
+          </fo:block>
+          <fo:block>
+            <fo:leader leader-pattern="use-content">x</fo:leader>
+               use-content x
+          </fo:block>
+          <fo:block text-align-last="justify">
+            <fo:leader leader-pattern="dots"/>
+               dots text-align-last="justify"
+          </fo:block>
+          <fo:block text-align-last="justify">
+            <fo:leader leader-pattern="rule" rule-style="double"/>
+               rule double text-align-last="justify"
+          </fo:block>
+          <fo:block text-align-last="justify">
+            <fo:leader leader-pattern="space"/>
+               space text-align-last="justify"
+          </fo:block>
+          <fo:block text-align-last="justify">
+            <fo:leader leader-pattern="use-content">x</fo:leader>
+               use-content x text-align-last="justify"
+          </fo:block>
+          <fo:block text-align-last="end">
+            <fo:leader leader-pattern="dots"/>
+               dots text-align-last="end"
+          </fo:block>
+          <fo:block text-align-last="end">
+            <fo:leader leader-pattern="rule" rule-style="double"/>
+               rule double text-align-last="end"
+          </fo:block>
+          <fo:block text-align-last="end">
+            <fo:leader leader-pattern="space"/>
+               space text-align-last="end"
+          </fo:block>
+          <fo:block text-align-last="end">
+            <fo:leader leader-pattern="use-content">x</fo:leader>
+               use-content x text-align-last="end"
+          </fo:block>
+          <fo:block text-align-last="center">
+            <fo:leader leader-pattern="dots"/>
+               dots text-align-last="center"
+          </fo:block>
+          <fo:block text-align-last="center">
+            <fo:leader leader-pattern="rule" rule-style="double"/>
+               rule double text-align-last="center"
+          </fo:block>
+          <fo:block text-align-last="center">
+            <fo:leader leader-pattern="space"/>
+               space text-align-last="center"
+          </fo:block>
+          <fo:block text-align-last="center">
+            <fo:leader leader-pattern="use-content">x</fo:leader>
+               use-content x text-align-last="center"
+          </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="360000" xpath="//flow/block[1]/lineArea/@ipd"/>
+    <eval expected="12000" xpath="//flow/block[1]/lineArea/inlineparent/@ipd"/>
+
+    <eval expected="360000" xpath="//flow/block[2]/lineArea/@ipd"/>
+    <eval expected="12000" xpath="//flow/block[2]/lineArea/leader/@ipd"/>
+
+    <eval expected="360000" xpath="//flow/block[3]/lineArea/@ipd"/>
+    <eval expected="12000" xpath="//flow/block[3]/lineArea/space/@ipd"/>
+
+    <eval expected="360000" xpath="//flow/block[4]/lineArea/@ipd"/>
+    <eval expected="12000" xpath="//flow/block[4]/lineArea/inlineparent/@ipd"/>
+
+    <eval expected="360000" xpath="//flow/block[5]/lineArea/@ipd"/>
+    <eval expected="211186" xpath="//flow/block[5]/lineArea/inlineparent/@ipd"/>
+
+    <eval expected="360000" xpath="//flow/block[6]/lineArea/@ipd"/>
+    <eval expected="174081" xpath="//flow/block[6]/lineArea/leader/@ipd"/>
+
+    <eval expected="360000" xpath="//flow/block[7]/lineArea/@ipd"/>
+    <eval expected="201939" xpath="//flow/block[7]/lineArea/space/@ipd"/>
+
+    <eval expected="360000" xpath="//flow/block[8]/lineArea/@ipd"/>
+    <eval expected="161589" xpath="//flow/block[8]/lineArea/inlineparent/@ipd"/>
+
+    <eval expected="360000" xpath="//flow/block[9]/lineArea/@ipd"/>
+    <eval expected="211752" xpath="//flow/block[9]/lineArea/@start-indent"/>
+    <eval expected="12000" xpath="//flow/block[9]/lineArea/inlineparent/@ipd"/>
+
+    <eval expected="360000" xpath="//flow/block[10]/lineArea/@ipd"/>
+    <eval expected="175068" xpath="//flow/block[10]/lineArea/@start-indent"/>
+    <eval expected="12000" xpath="//flow/block[10]/lineArea/leader/@ipd"/>
+
+    <eval expected="360000" xpath="//flow/block[11]/lineArea/@ipd"/>
+    <eval expected="202416" xpath="//flow/block[11]/lineArea/@start-indent"/>
+    <eval expected="12000" xpath="//flow/block[11]/lineArea/space/@ipd"/>
+
+    <eval expected="360000" xpath="//flow/block[12]/lineArea/@ipd"/>
+    <eval expected="162396" xpath="//flow/block[12]/lineArea/@start-indent"/>
+    <eval expected="12000" xpath="//flow/block[12]/lineArea/inlineparent/@ipd"/>
+
+    <eval expected="360000" xpath="//flow/block[13]/lineArea/@ipd"/>
+    <eval expected="99210" xpath="//flow/block[13]/lineArea/@start-indent"/>
+    <eval expected="12000" xpath="//flow/block[13]/lineArea/inlineparent/@ipd"/>
+
+    <eval expected="360000" xpath="//flow/block[14]/lineArea/@ipd"/>
+    <eval expected="80868" xpath="//flow/block[14]/lineArea/@start-indent"/>
+    <eval expected="12000" xpath="//flow/block[14]/lineArea/leader/@ipd"/>
+
+    <eval expected="360000" xpath="//flow/block[15]/lineArea/@ipd"/>
+    <eval expected="94542" xpath="//flow/block[15]/lineArea/@start-indent"/>
+    <eval expected="12000" xpath="//flow/block[15]/lineArea/space/@ipd"/>
+
+    <eval expected="360000" xpath="//flow/block[16]/lineArea/@ipd"/>
+    <eval expected="74532" xpath="//flow/block[16]/lineArea/@start-indent"/>
+    <eval expected="12000" xpath="//flow/block[16]/lineArea/inlineparent/@ipd"/>
+  </checks>
+</testcase>

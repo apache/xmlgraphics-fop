@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<!--<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20000303 Stylable//EN"
+"http://www.w3.org/TR/2000/03/WD-SVG-20000303/DTD/svg-20000303-stylable.dtd">-->
+<svg xml:space="preserve" x="-3.11174in" y="-4.15204in" width="1.73528in" height="0.317961in" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality" viewBox="-7904 0 4408 808">
+  <g id="Ebene 1">
+    <g>
+      <rect id="45625816" style="fill:none;stroke:#1F1A17;stroke-width:8" x="-7900" y="4" width="1900" height="800"/>
+      <text x="-7705" y="556" style="fill:#1F1A17;font-weight:normal;font-size:423;font-family:Helvetica,Arial,sans-serif">XSL-FO</text>
+    </g>
+    <g>
+      <path id="45626344" style="fill:none;stroke:#1F1A17;stroke-width:8" d="M-6000 404l1100 0m-550 0"/>
+      <path id="45626344" style="fill:#1F1A17" d="M-5069 311l169 93 -169 93 0 -186 169 93z"/>
+    </g>
+    <text x="-5792" y="304" style="fill:#1F1A17;font-weight:normal;font-size:284;font-family:Helvetica,Arial,sans-serif">FOP</text>
+    <g>
+      <text x="-4614" y="556" style="fill:#1F1A17;font-weight:normal;font-size:423;font-family:Helvetica,Arial,sans-serif">PDF</text>
+      <rect id="45626520" style="fill:none;stroke:#1F1A17;stroke-width:8" x="-4900" y="4" width="1400" height="800"/>
+    </g>
+  </g>
+</svg>

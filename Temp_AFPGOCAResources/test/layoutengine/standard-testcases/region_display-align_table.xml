@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks the implementation of display-align in all regions.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="before" page-width="5in" page-height="5in" margin="10pt">
+          <fo:region-body background-color="rgb(100%, 100%, 80%)" margin="30pt" display-align="before"/>
+          <fo:region-before background-color="rgb(100%, 80%, 80%)" extent="30pt" display-align="before"/>
+          <fo:region-after background-color="rgb(80%, 80%, 80%)" extent="30pt" display-align="before"/>
+          <fo:region-start background-color="rgb(80%, 100%, 80%)" extent="30pt" display-align="before"/>
+          <fo:region-end background-color="rgb(80%, 80%, 100%)" extent="30pt" display-align="before"/>
+        </fo:simple-page-master>
+        <fo:simple-page-master master-name="center" page-width="5in" page-height="5in" margin="10pt">
+          <fo:region-body background-color="rgb(100%, 100%, 80%)" margin="30pt" display-align="center"/>
+          <fo:region-before background-color="rgb(100%, 80%, 80%)" extent="30pt" display-align="center"/>
+          <fo:region-after background-color="rgb(80%, 80%, 80%)" extent="30pt" display-align="center"/>
+          <fo:region-start background-color="rgb(80%, 100%, 80%)" extent="30pt" display-align="center"/>
+          <fo:region-end background-color="rgb(80%, 80%, 100%)" extent="30pt" display-align="center"/>
+        </fo:simple-page-master>
+        <fo:simple-page-master master-name="after" page-width="5in" page-height="5in" margin="10pt">
+          <fo:region-body background-color="rgb(100%, 100%, 80%)" margin="30pt" display-align="after"/>
+          <fo:region-before background-color="rgb(100%, 80%, 80%)" extent="30pt" display-align="after"/>
+          <fo:region-after background-color="rgb(80%, 80%, 80%)" extent="30pt" display-align="after"/>
+          <fo:region-start background-color="rgb(80%, 100%, 80%)" extent="30pt" display-align="after"/>
+          <fo:region-end background-color="rgb(80%, 80%, 100%)" extent="30pt" display-align="after"/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      
+      <fo:page-sequence master-reference="before">
+        <fo:static-content flow-name="xsl-region-before">
+          <fo:table width="20pt" table-layout="fixed" border="1pt solid red" border-collapse="separate">
+			  <fo:table-column column-number="1" width="100%"/>
+			  <fo:table-body>
+				  <fo:table-row>
+					  <fo:table-cell column-number="1">
+						  <fo:block>X</fo:block>
+					  </fo:table-cell>
+				  </fo:table-row>
+			  </fo:table-body>
+          </fo:table>
+        </fo:static-content>
+        <fo:static-content flow-name="xsl-region-after">
+          <fo:table width="20pt" table-layout="fixed" border="1pt solid red" border-collapse="separate">
+			  <fo:table-column column-number="1" width="100%"/>
+			  <fo:table-body>
+				  <fo:table-row>
+					  <fo:table-cell column-number="1">
+						  <fo:block>X</fo:block>
+					  </fo:table-cell>
+				  </fo:table-row>
+			  </fo:table-body>
+          </fo:table> 
+       </fo:static-content>
+        <fo:static-content flow-name="xsl-region-start">
+          <fo:table width="20pt" table-layout="fixed" border="1pt solid red" border-collapse="separate">
+			  <fo:table-column column-number="1" width="100%"/>
+			  <fo:table-body>
+				  <fo:table-row>
+					  <fo:table-cell column-number="1">
+						  <fo:block>X</fo:block>
+					  </fo:table-cell>
+				  </fo:table-row>
+			  </fo:table-body>
+          </fo:table>
+        </fo:static-content>
+        <fo:static-content flow-name="xsl-region-end">
+          <fo:table width="20pt" table-layout="fixed" border="1pt solid red" border-collapse="separate">
+			  <fo:table-column column-number="1" width="100%"/>
+			  <fo:table-body>
+				  <fo:table-row>
+					  <fo:table-cell column-number="1">
+						  <fo:block>X</fo:block>
+					  </fo:table-cell>
+				  </fo:table-row>
+			  </fo:table-body>
+          </fo:table>
+        </fo:static-content>
+		<fo:flow flow-name="xsl-region-body">
+          <fo:table width="20pt" table-layout="fixed" border="1pt solid red" border-collapse="separate">
+			  <fo:table-column column-number="1" width="100%"/>
+			  <fo:table-body>
+				  <fo:table-row>
+					  <fo:table-cell column-number="1">
+						  <fo:block>X</fo:block>
+					  </fo:table-cell>
+				  </fo:table-row>
+			  </fo:table-body>
+          </fo:table>
+        </fo:flow>
+      </fo:page-sequence>
+
+      <fo:page-sequence master-reference="center">
+        <fo:static-content flow-name="xsl-region-before">
+          <fo:table width="20pt" table-layout="fixed" border="1pt solid red" border-collapse="separate">
+			  <fo:table-column column-number="1" width="100%"/>
+			  <fo:table-body>
+				  <fo:table-row>
+					  <fo:table-cell column-number="1">
+						  <fo:block>X</fo:block>
+					  </fo:table-cell>
+				  </fo:table-row>
+			  </fo:table-body>
+          </fo:table>
+        </fo:static-content>
+        <fo:static-content flow-name="xsl-region-after">
+          <fo:table width="20pt" table-layout="fixed" border="1pt solid red" border-collapse="separate">
+			  <fo:table-column column-number="1" width="100%"/>
+			  <fo:table-body>
+				  <fo:table-row>
+					  <fo:table-cell column-number="1">
+						  <fo:block>X</fo:block>
+					  </fo:table-cell>
+				  </fo:table-row>
+			  </fo:table-body>
+          </fo:table>
+       </fo:static-content>
+        <fo:static-content flow-name="xsl-region-start">
+          <fo:table width="20pt" table-layout="fixed" border="1pt solid red" border-collapse="separate">
+			  <fo:table-column column-number="1" width="100%"/>
+			  <fo:table-body>
+				  <fo:table-row>
+					  <fo:table-cell column-number="1">
+						  <fo:block>X</fo:block>
+					  </fo:table-cell>
+				  </fo:table-row>
+			  </fo:table-body>
+          </fo:table>
+        </fo:static-content>
+        <fo:static-content flow-name="xsl-region-end">
+          <fo:table width="20pt" table-layout="fixed" border="1pt solid red" border-collapse="separate">
+			  <fo:table-column column-number="1" width="100%"/>
+			  <fo:table-body>
+				  <fo:table-row>
+					  <fo:table-cell column-number="1">
+						  <fo:block>X</fo:block>
+					  </fo:table-cell>
+				  </fo:table-row>
+			  </fo:table-body>
+          </fo:table>
+        </fo:static-content>
+		<fo:flow flow-name="xsl-region-body">
+          <fo:table width="20pt" table-layout="fixed" border="1pt solid red" border-collapse="separate">
+			  <fo:table-column column-number="1" width="100%"/>
+			  <fo:table-body>
+				  <fo:table-row>
+					  <fo:table-cell column-number="1">
+						  <fo:block>X</fo:block>
+					  </fo:table-cell>
+				  </fo:table-row>
+			  </fo:table-body>
+          </fo:table>
+        </fo:flow>
+      </fo:page-sequence>
+
+      <fo:page-sequence master-reference="after">
+        <fo:static-content flow-name="xsl-region-before">
+          <fo:table width="20pt" table-layout="fixed" border="1pt solid red" border-collapse="separate">
+			  <fo:table-column column-number="1" width="100%"/>
+			  <fo:table-body>
+				  <fo:table-row>
+					  <fo:table-cell column-number="1">
+						  <fo:block>X</fo:block>
+					  </fo:table-cell>
+				  </fo:table-row>
+			  </fo:table-body>
+          </fo:table>
+        </fo:static-content>
+        <fo:static-content flow-name="xsl-region-after">
+          <fo:table width="20pt" table-layout="fixed" border="1pt solid red" border-collapse="separate">
+			  <fo:table-column column-number="1" width="100%"/>
+			  <fo:table-body>
+				  <fo:table-row>
+					  <fo:table-cell column-number="1">
+						  <fo:block>X</fo:block>
+					  </fo:table-cell>
+				  </fo:table-row>
+			  </fo:table-body>
+          </fo:table>
+        </fo:static-content>
+        <fo:static-content flow-name="xsl-region-start">
+          <fo:table width="20pt" table-layout="fixed" border="1pt solid red" border-collapse="separate">
+			  <fo:table-column column-number="1" width="100%"/>
+			  <fo:table-body>
+				  <fo:table-row>
+					  <fo:table-cell column-number="1">
+						  <fo:block>X</fo:block>
+					  </fo:table-cell>
+				  </fo:table-row>
+			  </fo:table-body>
+          </fo:table>
+        </fo:static-content>
+        <fo:static-content flow-name="xsl-region-end">
+          <fo:table width="20pt" table-layout="fixed" border="1pt solid red" border-collapse="separate">
+			  <fo:table-column column-number="1" width="100%"/>
+			  <fo:table-body>
+				  <fo:table-row>
+					  <fo:table-cell column-number="1">
+						  <fo:block>X</fo:block>
+					  </fo:table-cell>
+				  </fo:table-row>
+			  </fo:table-body>
+          </fo:table>
+        </fo:static-content>
+		<fo:flow flow-name="xsl-region-body">
+          <fo:table width="20pt" table-layout="fixed" border="1pt solid red" border-collapse="separate">
+			  <fo:table-column column-number="1" width="100%"/>
+			  <fo:table-body>
+				  <fo:table-row>
+					  <fo:table-cell column-number="1">
+						  <fo:block>X</fo:block>
+					  </fo:table-cell>
+				  </fo:table-row>
+			  </fo:table-body>
+          </fo:table>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="0 0 360000 360000" xpath="//pageViewport[1]/@bounds"/>
+    <!-- display-align="center" -->
+    <eval expected="6800" xpath="//pageViewport[@nr='2']//regionBefore/block[1]/@bpd"/>
+    <eval expected="161800" xpath="//pageViewport[@nr='2']//regionStart/block[1]/@bpd"/>
+    <eval expected="161800" xpath="//pageViewport[@nr='2']//regionEnd/block[1]/@bpd"/>
+    <eval expected="6800" xpath="//pageViewport[@nr='2']//regionAfter/block[1]/@bpd"/>
+    <eval expected="131800" xpath="//pageViewport[@nr='2']//regionBody//block[1]/@bpd"/>
+    <!-- display-align="after" -->
+    <eval expected="13600" xpath="//pageViewport[@nr='3']//regionBefore/block[1]/@bpd"/>
+    <eval expected="323600" xpath="//pageViewport[@nr='3']//regionStart/block[1]/@bpd"/>
+    <eval expected="323600" xpath="//pageViewport[@nr='3']//regionEnd/block[1]/@bpd"/>
+    <eval expected="13600" xpath="//pageViewport[@nr='3']//regionAfter/block[1]/@bpd"/>
+    <eval expected="263600" xpath="//pageViewport[@nr='3']//regionBody//block[1]/@bpd"/>
+  </checks>
+</testcase>

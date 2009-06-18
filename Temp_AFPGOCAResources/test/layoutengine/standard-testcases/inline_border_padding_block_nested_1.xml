@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks fo:inlines with border and padding properties and nested inner blocks.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in" margin="5pt">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal" white-space-collapse="true" language="en">
+        <fo:flow flow-name="xsl-region-body" font-size="10pt">
+          <fo:block background-color="silver" margin="3pt 0pt 3pt 0pt">
+            Before inline
+            <fo:inline border="solid 1pt red" padding="2pt" background-color="yellow"><fo:block>starting with a block</fo:block>
+              after block</fo:inline>
+            After inline
+          </fo:block>
+          <fo:block background-color="silver" margin="3pt 0pt 3pt 0pt">
+            Before inline
+            <fo:inline border="solid 1pt red" padding="2pt" background-color="yellow">before block
+              <fo:block>having a block at the end of an inline</fo:block></fo:inline>
+            After inline
+          </fo:block>
+          <fo:block background-color="silver" margin="3pt 0pt 3pt 0pt">
+            Before inline
+              <fo:inline 
+                border="solid 1pt red"
+                border-start-width.length="1pt" 
+                border-end-width.length="1pt" 
+                padding="1pt"
+                padding-start.length="2pt" 
+                padding-end.length="2pt" 
+                background-color="yellow">before block
+                <fo:block>As far as the laws of mathematics refer to reality, they are not certain,
+            and as far as they are certain, they do not refer to reality - Albert Einstein</fo:block>
+            after block</fo:inline>
+            After inline
+          </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="347000" xpath="//flow/block[1]/lineArea[2]/inlineblockparent/@ipd"/>
+    <eval expected="350000" xpath="//flow/block[1]/lineArea[2]/inlineblockparent/@ipda"/>
+    <eval expected="3000" xpath="//flow/block[1]/lineArea[2]/inlineblockparent/@offset"/>
+    <eval expected="(solid,#ff0000,1000)" xpath="//flow/block[1]/lineArea[2]/inlineblockparent/@border-after"/>
+    <eval expected="(solid,#ff0000,1000)" xpath="//flow/block[1]/lineArea[2]/inlineblockparent/@border-before"/>
+    <eval expected="(solid,#ff0000,1000)" xpath="//flow/block[1]/lineArea[2]/inlineblockparent/@border-start"/>
+    <eval expected="2000" xpath="//flow/block[1]/lineArea[2]/inlineblockparent/@padding-after"/>
+    <eval expected="2000" xpath="//flow/block[1]/lineArea[2]/inlineblockparent/@padding-before"/>
+    <eval expected="2000" xpath="//flow/block[1]/lineArea[2]/inlineblockparent/@padding-start"/>
+    <eval expected="46130" xpath="//flow/block[1]/lineArea[3]/inlineparent/@ipd"/>
+    <eval expected="49130" xpath="//flow/block[1]/lineArea[3]/inlineparent/@ipda"/>
+    <eval expected="(solid,#ff0000,1000)" xpath="//flow/block[1]/lineArea[3]/inlineparent/@border-after"/>
+    <eval expected="(solid,#ff0000,1000)" xpath="//flow/block[1]/lineArea[3]/inlineparent/@border-before"/>
+    <eval expected="(solid,#ff0000,1000)" xpath="//flow/block[1]/lineArea[3]/inlineparent/@border-end"/>
+    <eval expected="2000" xpath="//flow/block[1]/lineArea[3]/inlineparent/@padding-after"/>
+    <eval expected="2000" xpath="//flow/block[1]/lineArea[3]/inlineparent/@padding-before"/>
+    <eval expected="2000" xpath="//flow/block[1]/lineArea[3]/inlineparent/@padding-end"/>
+
+    <eval expected="54470" xpath="//flow/block[2]/lineArea[1]/inlineparent/@ipd"/>
+    <eval expected="57470" xpath="//flow/block[2]/lineArea[1]/inlineparent/@ipda"/>
+    <eval expected="3000" xpath="//flow/block[2]/lineArea[2]/inlineblockparent/@offset"/>
+    <eval expected="(solid,#ff0000,1000)" xpath="//flow/block[2]/lineArea[1]/inlineparent/@border-after"/>
+    <eval expected="(solid,#ff0000,1000)" xpath="//flow/block[2]/lineArea[1]/inlineparent/@border-before"/>
+    <eval expected="(solid,#ff0000,1000)" xpath="//flow/block[2]/lineArea[1]/inlineparent/@border-start"/>
+    <eval expected="2000" xpath="//flow/block[2]/lineArea[1]/inlineparent/@padding-after"/>
+    <eval expected="2000" xpath="//flow/block[2]/lineArea[1]/inlineparent/@padding-before"/>
+    <eval expected="2000" xpath="//flow/block[2]/lineArea[1]/inlineparent/@padding-start"/>
+    <eval expected="347000" xpath="//flow/block[2]/lineArea[2]/inlineblockparent/@ipd"/>
+    <eval expected="350000" xpath="//flow/block[2]/lineArea[2]/inlineblockparent/@ipda"/>
+    <eval expected="(solid,#ff0000,1000)" xpath="//flow/block[2]/lineArea[2]/inlineblockparent/@border-after"/>
+    <eval expected="(solid,#ff0000,1000)" xpath="//flow/block[2]/lineArea[2]/inlineblockparent/@border-before"/>
+    <eval expected="(solid,#ff0000,1000)" xpath="//flow/block[2]/lineArea[2]/inlineblockparent/@border-end"/>
+    <eval expected="2000" xpath="//flow/block[2]/lineArea[2]/inlineblockparent/@padding-after"/>
+    <eval expected="2000" xpath="//flow/block[2]/lineArea[2]/inlineblockparent/@padding-before"/>
+    <eval expected="2000" xpath="//flow/block[2]/lineArea[2]/inlineblockparent/@padding-end"/>
+    
+    <eval expected="54470" xpath="//flow/block[3]/lineArea[1]/inlineparent/@ipd"/>
+    <eval expected="57470" xpath="//flow/block[3]/lineArea[1]/inlineparent/@ipda"/>
+    <eval expected="(solid,#ff0000,1000)" xpath="//flow/block[3]/lineArea[1]/inlineparent/@border-after"/>
+    <eval expected="(solid,#ff0000,1000)" xpath="//flow/block[3]/lineArea[1]/inlineparent/@border-before"/>
+    <eval expected="(solid,#ff0000,1000)" xpath="//flow/block[3]/lineArea[1]/inlineparent/@border-start"/>
+    <eval expected="1000" xpath="//flow/block[3]/lineArea[1]/inlineparent/@padding-after"/>
+    <eval expected="1000" xpath="//flow/block[3]/lineArea[1]/inlineparent/@padding-before"/>
+    <eval expected="2000" xpath="//flow/block[3]/lineArea[1]/inlineparent/@padding-start"/>
+    <eval expected="350000" xpath="//flow/block[3]/lineArea[2]/inlineblockparent/@ipd"/>
+    <eval expected="350000" xpath="//flow/block[3]/lineArea[2]/inlineblockparent/@ipda"/>
+    <eval expected="(solid,#ff0000,1000)" xpath="//flow/block[3]/lineArea[2]/inlineblockparent/@border-after"/>
+    <eval expected="(solid,#ff0000,1000)" xpath="//flow/block[3]/lineArea[2]/inlineblockparent/@border-before"/>
+    <eval expected="2000" xpath="//flow/block[3]/lineArea[2]/inlineblockparent/@offset"/>
+    <eval expected="1000" xpath="//flow/block[3]/lineArea[2]/inlineblockparent/@padding-after"/>
+    <eval expected="1000" xpath="//flow/block[3]/lineArea[2]/inlineblockparent/@padding-before"/>
+    <eval expected="350000" xpath="//flow/block[3]/lineArea[3]/inlineblockparent/@ipd"/>
+    <eval expected="350000" xpath="//flow/block[3]/lineArea[3]/inlineblockparent/@ipda"/>
+    <eval expected="(solid,#ff0000,1000)" xpath="//flow/block[3]/lineArea[3]/inlineblockparent/@border-after"/>
+    <eval expected="(solid,#ff0000,1000)" xpath="//flow/block[3]/lineArea[3]/inlineblockparent/@border-before"/>
+    <eval expected="2000" xpath="//flow/block[3]/lineArea[3]/inlineblockparent/@offset"/>
+    <eval expected="1000" xpath="//flow/block[3]/lineArea[3]/inlineblockparent/@padding-after"/>
+    <eval expected="1000" xpath="//flow/block[3]/lineArea[3]/inlineblockparent/@padding-before"/>
+    <eval expected="46130" xpath="//flow/block[3]/lineArea[4]/inlineparent/@ipd"/>
+    <eval expected="49130" xpath="//flow/block[3]/lineArea[4]/inlineparent/@ipda"/>
+    <eval expected="(solid,#ff0000,1000)" xpath="//flow/block[3]/lineArea[4]/inlineparent/@border-after"/>
+    <eval expected="(solid,#ff0000,1000)" xpath="//flow/block[3]/lineArea[4]/inlineparent/@border-before"/>
+    <eval expected="(solid,#ff0000,1000)" xpath="//flow/block[3]/lineArea[4]/inlineparent/@border-end"/>
+    <eval expected="1000" xpath="//flow/block[3]/lineArea[4]/inlineparent/@padding-after"/>
+    <eval expected="1000" xpath="//flow/block[3]/lineArea[4]/inlineparent/@padding-before"/>
+    <eval expected="2000" xpath="//flow/block[3]/lineArea[4]/inlineparent/@padding-end"/>
+    
+  </checks>
+</testcase>
