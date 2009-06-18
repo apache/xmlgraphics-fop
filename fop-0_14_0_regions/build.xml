@@ -1,0 +1,403 @@
+<?xml version="1.0"?>
+
+<!-- ===========================================================================
+
+
+                           * ================= *
+                           |  How to build Fop |
+                           * ================= *
+
+           Adaption from the Cocoon build.xml written by Stefano Mazzocchi
+                by Giacomo Pati with some addition by Fotis Jannidis 
+
+
+Introduction
+============
+
+FOP is the world's first print formatter driven by XSL formatting objects. It 
+is a Java 1.1 application that reads a formatting object tree and then turns 
+it into a PDF document. The formatting object tree, can be in the form of an 
+XML document (output by an XSLT engine like XT or Xalan) or can be passed in 
+memory as a DOM Document or (in the case of XT) SAX events.
+    
+FOP is part of Apache's XML project. The homepage of FOP is 
+http:/xml.apache.org/fop 
+
+HTML-Documentation can be found in the subdirectory ./docs. 
+
+
+Installing the build tools
+==========================
+
+The Fop build system is based on Jakarta Ant, which is a Java building tool
+originally developed for the Jakarta Tomcat project but now used in many other
+Apache projects and extended by many developers.
+
+Ant is a little but very handy tool that uses a build file written in XML
+(this file) as building instructions. For more information refer to
+"http://jakarta.apache.org/ant/".
+
+To make things easier for you, the Fop distribution contains a
+precompiled version of Ant and the build scripts take care of all the
+classpath issues except the following:
+
+You need to have xerces.jar, xalan.jar and bsf.jar (comes with xalan) in 
+your classpath. You can get those from http://xml.apache.org/xerces and 
+http://xml.apache.org/xalan respectively.
+
+Additionaly you have to make sure, that the "JAVA_HOME" environment
+property should be set to match the JVM you want to use. That's it.
+
+
+Building instructions
+=====================
+
+First, make sure your current working directory is where this very file is 
+located. Then type
+
+  ./build.sh (unix)
+  .\build.bat (win32)
+
+if everything is right and all the required packages are visible, this action
+will generate a file called "fop.jar" in the "./build" directory. Note, that
+if you do further development, compilation time is reduced since Ant is able
+to detect which files have changed an to recompile them at need.
+
+If something went wrong, go to the FAQ section below.
+
+Also, you'll note that reusing a single JVM instance for each task, increases
+tremendously the performance of the whole build system, compared to other
+tools (i.e. make or shell scripts) where a new JVM is started for each task.
+
+
+
+Build targets
+=============
+
+The build system is not only responsible of compiling Fop into a jar file,
+but is also responsible for creating the HTML documentation, javadocs,
+distributions and web site. In fact, the file you have here is _exactly_ what
+is used by fop maintainers to take care of everything in the Fop
+project, no less and no more. (only partially implemented)
+
+These are the meaningful targets for this build file:
+
+ - package [default] -> creates ./build/fop.jar
+ - usage -> shows a help screen
+ - codegen -> generates needed java sources from xml resources
+ - docs -> generates the HTML documentation in ./build/docs
+ - javadocs -> generates the API documentation in ./build/javadocs
+ - dist -> generates the Fop distribution
+ - clean -> restores the distribution to its original and clean state 
+            (excepting dist files)
+ - distclean -> restores the distribution to its original and clean state
+ - site -> generates the web site in ../xml-site/targets/fop (not yet impl.)
+
+====================================== FAQ =====================================
+
+1) Why some of the classes present in the original jar are not built anymore?
+
+The fop build system is very flexible: if a module requires a package that
+is not present in the classpath at build time, the module is skipped but
+the built process is not stopped.
+
+Here is a list of such modules and what you have to download to build them:
+
+ org.apache.fop.apps.XTCommandLine ===>
+       James Clark's XT (http://www.jclark.com/)
+
+2) I see a lot of warnings starting like this: "Warning: file modified in the future:"
+Sometimes ant gives out this warnings, but the build is finished without any problems
+
+
+============================================================================ -->
+
+<project default="package" basedir=".">
+
+  <!-- =================================================================== -->
+  <!-- Initialization target                                               -->
+  <!-- =================================================================== -->
+  <target name="init">
+    <tstamp/>
+    <property name="Name" value="Fop"/>
+    <property name="name" value="fop"/>
+    <property name="version" value="0.13"/>
+    <property name="year" value="1999-2000"/>
+
+    <echo message="------------------- ${Name} ${version} [${year}] ----------------"/>
+
+    <property name="build.compiler" value="classic"/>
+    <property name="debug" value="off"/>
+    <property name="optimize" value="on"/>
+    <property name="deprecation" value="off"/>
+
+    <property name="src.dir" value="./src"/>
+    <property name="src.codegen" value="./src/codegen"/>
+    <property name="docs.dir" value="./docs"/>
+    <property name="lib.dir" value="./lib"/>
+    <property name="packages" value="org.apache.fop.*"/>
+
+    <property name="doc.generator" value="org.apache.stylebook.StyleBook"/>
+    <property name="doc.generator.package" value="${lib.dir}/stylebook-1.0-b2.jar"/>
+
+    <property name="build.dir" value="./build"/>
+    <property name="build.src" value="./build/src"/>
+    <property name="build.codegen" value="./build/src/codegen"/>
+    <property name="build.dest" value="./build/classes"/>
+    <property name="build.docs" value="./build/docs"/>
+    <property name="build.javadocs" value="./build/javadocs"/>
+
+    <property name="dist.dir" value="./dist"/>
+
+    <property name="properties.dir" value="org/apache/fop/fo/properties"/>
+    <property name="fonts.dir" value="org/apache/fop/render/pdf/fonts"/>
+    <property name="replacestring" value="org/apache/fop"/>
+    <property name="ignore_this" value="ignore_this.java"/>
+    <property name="jimi" value="JimiImage.java"/>
+
+    <property name="xslt" value="org.apache.xalan.xslt.Process"/>
+    <property name="src.properties.xsl" value="${src.codegen}/properties.xsl"/>
+    <property name="properties.xml" value="${build.codegen}/properties.xml"/>
+    <property name="properties.xsl" value="${build.codegen}/properties.xsl"/>
+    <property name="src.charlist.xsl" value="${src.codegen}/code-point-mapping.xsl"/>
+    <property name="charlist.xml" value="${build.codegen}/charlist.xml"/>
+    <property name="charlist.xsl" value="${build.codegen}/code-point-mapping.xsl"/>  
+    <property name="fontfile.xsl" value="${build.codegen}/font-file.xsl"/>  
+    <property name="Courier.xml" value="${build.codegen}/Courier.xml"/>  
+    <property name="Courier-Oblique.xml" value="${build.codegen}/Courier-Oblique.xml"/>
+    <property name="Courier-Bold.xml" value="${build.codegen}/Courier-Bold.xml"/>  
+    <property name="Courier-BoldOblique.xml" value="${build.codegen}/Courier-BoldOblique.xml"/>
+    <property name="Helvetica.xml" value="${build.codegen}/Helvetica.xml"/>
+    <property name="Helvetica-Oblique.xml" value="${build.codegen}/Helvetica-Oblique.xml"/> 
+    <property name="Helvetica-Bold.xml" value="${build.codegen}/Helvetica-Bold.xml"/>
+    <property name="Helvetica-BoldOblique.xml" value="${build.codegen}/Helvetica-BoldOblique.xml"/>
+    <property name="Times-Roman.xml" value="${build.codegen}/Times-Roman.xml"/>
+    <property name="Times-Italic.xml" value="${build.codegen}/Times-Italic.xml"/>  
+    <property name="Times-Bold.xml" value="${build.codegen}/Times-Bold.xml"/>  
+    <property name="Times-BoldItalic.xml" value="${build.codegen}/Times-BoldItalic.xml"/>
+    <property name="ZapfDingbats.xml" value="${build.codegen}/ZapfDingbats.xml"/>
+    <property name="Symbol.xml" value="${build.codegen}/Symbol.xml"/>
+
+    <taskdef name="xslt" classname="Xslt"/>
+    <available property="xt.present" classname="com.jclark.xsl.sax.XSLProcessor"/>
+    <available property="jimi.present" classname="com.sun.jimi.core.Jimi"/>
+
+    <filter token="${replacestring}" value="${build.src}/${replacestring}"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Help on usage                                                       -->
+  <!-- =================================================================== -->
+  <target name="usage">
+    <echo message=""/>
+    <echo message=""/>
+    <echo message="${Name} Build file"/>
+    <echo message="-------------------------------------------------------------"/>
+    <echo message=""/>
+    <echo message=" available targets are:"/>
+    <echo message=""/>
+    <echo message="   package   --> generates the ${name}.jar file (default)"/>
+    <echo message="   codegen   --> generates the java files from the xml resources"/>
+    <echo message="   compile   --> compiles the source code"/>
+    <echo message="   docs      --> generates the HTML documentation"/>
+    <echo message="   javadocs  --> generates the API documentation (java 1.2 only)"/>
+    <echo message="   dist      --> generates the ${Name} distribution as .tar.gz and .zip"/>
+    <echo message="   clean     --> cleans up the directory (except for the dist files)"/>
+    <echo message="   distclean --> cleans up the directory"/>
+    <echo message="   site      --> generates the ${Name} web site (not yet implemented)"/>
+    <echo message=""/>
+    <echo message=" See the comments inside the build.xml file for more details."/>
+    <echo message="-------------------------------------------------------------"/>
+    <echo message=""/>
+    <echo message=""/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Prepares the build directory                                        -->
+  <!-- =================================================================== -->
+  <target name="prepare" depends="init">
+    <!-- create directories -->
+    <echo message="Preparing the build directories"/>
+    <mkdir dir="${build.dir}"/>
+    <mkdir dir="${build.src}"/>
+    <mkdir dir="${build.src}/${properties.dir}"/>
+    <mkdir dir="${build.src}/${fonts.dir}"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- copies some source files if xt is present                           -->
+  <!-- =================================================================== -->
+  <target name="prepare-xt" depends="prepare" if="xt.present">
+    <copydir src="${src.dir}"
+             dest="${build.src}"
+             includes="**/XT*,**/PDFOutputHandler.java"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- copies special image class only if Jimi library is present          -->
+  <!-- =================================================================== -->
+  <target name="prepare-jimi" depends="prepare" if="jimi.present">
+    <echo message="Jimi library is present. Fop installs jimi support."/>
+    <copydir src="${src.dir}"
+             dest="${build.src}"
+             includes="**/${jimi}"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Prepares the source code                                            -->
+  <!-- =================================================================== -->
+  <target name="prepare-src" depends="prepare, prepare-xt, prepare-jimi">
+    <!-- copy src files -->
+    <copydir src="${src.dir}"
+             dest="${build.src}"
+             excludes="**/Makefile*, **/package.html, **/XT*,**/PDFOutputHandler.java,**/${jimi}"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Generate the source code                                            -->
+  <!-- =================================================================== -->
+  <target name="codegen" depends="prepare">
+    <!-- resetting codegen directory -->
+    <echo message="Resetting codegen directory"/>
+
+    <!-- copy codegen directory -->
+    <copydir src="${src.codegen}" dest="${build.codegen}" filtering="on"/>
+
+    <!-- generate the java files from xml resources -->
+    <echo message="Generating the java files from xml resources"/>
+    <xslt infile="${properties.xml}" xsltfile="${properties.xsl}"
+        outfile="${build.src}/${replacestring}/fo/properties/${ignore_this}" smart="yes"/>
+    <xslt infile="${charlist.xml}" xsltfile="${charlist.xsl}" 
+        outfile="${build.src}/${replacestring}/render/pdf/CodePointMapping.java" smart="yes"/>
+    <xslt infile="${Courier.xml}" xsltfile="${fontfile.xsl}"
+        outfile="${build.src}/${replacestring}/render/pdf/fonts/Courier.java" smart="yes"/>
+    <xslt infile="${Courier-Oblique.xml}" xsltfile="${fontfile.xsl}"
+        outfile="${build.src}/${replacestring}/render/pdf/fonts/CourierOblique.java" smart="yes"/>
+    <xslt infile="${Courier-Bold.xml}" xsltfile="${fontfile.xsl}"
+        outfile="${build.src}/${replacestring}/render/pdf/fonts/CourierBold.java" smart="yes"/>
+    <xslt infile="${Courier-BoldOblique.xml}" xsltfile="${fontfile.xsl}"
+        outfile="${build.src}/${replacestring}/render/pdf/fonts/CourierBoldOblique.java" smart="yes"/>
+    <xslt infile="${Helvetica.xml}" xsltfile="${fontfile.xsl}"
+        outfile="${build.src}/${replacestring}/render/pdf/fonts/Helvetica.java" smart="yes"/>
+    <xslt infile="${Helvetica-Oblique.xml}" xsltfile="${fontfile.xsl}"
+        outfile="${build.src}/${replacestring}/render/pdf/fonts/HelveticaOblique.java" smart="yes"/>
+    <xslt infile="${Helvetica-Bold.xml}" xsltfile="${fontfile.xsl}"
+        outfile="${build.src}/${replacestring}/render/pdf/fonts/HelveticaBold.java" smart="yes"/>
+    <xslt infile="${Helvetica-BoldOblique.xml}" xsltfile="${fontfile.xsl}"
+        outfile="${build.src}/${replacestring}/render/pdf/fonts/HelveticaBoldOblique.java" smart="yes"/>
+    <xslt infile="${Times-Roman.xml}" xsltfile="${fontfile.xsl}"
+        outfile="${build.src}/${replacestring}/render/pdf/fonts/TimesRoman.java" smart="yes"/>
+    <xslt infile="${Times-Italic.xml}" xsltfile="${fontfile.xsl}"
+        outfile="${build.src}/${replacestring}/render/pdf/fonts/TimesItalic.java" smart="yes"/>
+    <xslt infile="${Times-Bold.xml}" xsltfile="${fontfile.xsl}"
+        outfile="${build.src}/${replacestring}/render/pdf/fonts/TimesBold.java" smart="yes"/>
+    <xslt infile="${Times-BoldItalic.xml}" xsltfile="${fontfile.xsl}"
+        outfile="${build.src}/${replacestring}/render/pdf/fonts/TimesBoldItalic.java" smart="yes"/>
+    <xslt infile="${ZapfDingbats.xml}" xsltfile="${fontfile.xsl}"
+        outfile="${build.src}/${replacestring}/render/pdf/fonts/ZapfDingbats.java" smart="yes"/>
+    <xslt infile="${Symbol.xml}" xsltfile="${fontfile.xsl}"
+        outfile="${build.src}/${replacestring}/render/pdf/fonts/Symbol.java" smart="yes"/>
+
+
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Compiles the source directory                                       -->
+  <!-- =================================================================== -->
+  <target name="compile" depends="codegen, prepare-src">
+    <echo message="Compiling the sources "/>
+    <!-- create directories -->
+    <mkdir dir="${build.dest}"/>
+
+    <javac srcdir="${build.src}"
+           destdir="${build.dest}"
+           debug="${debug}"
+           deprecation="${deprecation}"
+           optimize="${optimize}"
+           excludes="**/${ignore_this},${jimi}"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Creates the class package                                           -->
+  <!-- =================================================================== -->
+  <target name="package" depends="compile">
+    <echo message="Creating the jar file ${build.dir}/${name}.jar"/>
+    <jar jarfile="${build.dir}/${name}.jar"
+         basedir="${build.dest}"
+         includes="org/**"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Prepares the docs                                                   -->
+  <!-- =================================================================== -->
+  <target name="prepare-docs" depends="init">
+    <mkdir dir="${build.docs}"/>
+    <!-- sets exec permission for antRun on Unix systems. necessary for javadoc-->
+    <chmod src="${lib.dir}/bin/antRun" perm="ugo+rx" />
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Copying the documentation files                                     -->
+  <!-- =================================================================== -->
+  <target name="docs" depends="prepare-docs">
+    <echo message="Copying doc files "/>
+    <copydir src="${docs.dir}" dest="${build.docs}" />
+    <copydir src="${lib.dir}" dest="${build.dir}/${lib.dir}" />
+    <copyfile src="build.xml" dest="${build.dir}/build.xml" /> 
+    <copyfile src="${basedir}/README" dest="${build.dir}/README" />
+    <copyfile src="${basedir}/STATUS" dest="${build.dir}/STATUS" />
+    <copyfile src="${basedir}/LICENSE" dest="${build.dir}/LICENSE" />
+    <copyfile src="${basedir}/FAQ" dest="${build.dir}/FAQ" />
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Creates the API documentation                                       -->
+  <!-- =================================================================== -->
+  <target name="javadocs" depends="prepare-src">
+    <echo message="Producing the javadoc files "/>
+    <mkdir dir="${build.javadocs}"/>
+    <javadoc packagenames="${packages}"
+             sourcepath="${build.src}"
+             destdir="${build.javadocs}"
+             author="true"
+             version="true"
+             windowtitle="${Name} API"
+             doctitle="${Name}"
+             bottom="Copyright &#169; ${year} Apache Software Foundation. All Rights Reserved."
+    />
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Creates the distribution                                            -->
+  <!-- =================================================================== -->
+  <target name="dist" depends="package, docs, javadocs">
+    <echo message="Building the distribution files (zip,tar)"/>
+    <mkdir dir="${dist.dir}"/>
+    <copyfile src="${basedir}/build.sh" dest="${dist.dir}/build.sh" />
+    <chmod src="${dist.dir}/build.sh" perm="ugo+rx" />
+    <copyfile src="${basedir}/build.bat" dest="${dist.dir}/build.bat" />
+    <copydir src="${build.dir}" dest="${dist.dir}" 
+        excludes="**/classes/**, **/${ignore_this}"/>
+    <zip zipfile="${Name}-${version}.zip" basedir="${dist.dir}" includes="**"/>
+    <tar tarfile="${Name}-${version}.tar" basedir="${dist.dir}" includes="**"/>
+    <gzip zipfile="${Name}-${version}.tar.gz" src="${Name}-${version}.tar" />
+    <delete file="${Name}-${version}.tar"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Clean targets                                                       -->
+  <!-- =================================================================== -->
+  <target name="clean" depends="init">
+    <deltree dir="${build.dir}"/>
+  </target>
+
+  <target name="distclean" depends="clean">
+    <deltree dir="${dist.dir}"/>
+    <delete file="${Name}-${version}.tar.gz"/>
+    <delete file="${Name}-${version}.tar"/>
+    <delete file="${Name}-${version}.zip"/>
+  </target>
+
+</project>
+
+<!-- End of file -->

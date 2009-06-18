@@ -1,0 +1,55 @@
+<?xml version="1.0" standalone="no"?>
+
+
+
+<!-- getting involved -->
+
+<s1 title="Getting involved">
+<!--  <p>Our main website <jump href="http://xml.apache.org/overview.html">xml.apache.org</jump> 
+     has a detailed description how to get involved. </p> The following is just a brief outline 
+     containing the addresses concerning Fop.</p>-->
+  <s2 title="Read the Status file">
+  <p>The Status file contains the list of features people are working on at the moment. 
+     And an outline what steps are next.</p>
+  </s2>
+  <s2 title="Subscribe to the fop discussion list">
+  <p>You can subscribe to fop-dev@xml.apache.org by sending an email 
+        to <jump href="mailto:fop-dev-subscribe@xml.apache.org">fop-dev-subscribe@xml.apache.org</jump></p>
+  <p>Sending bug reports and feature requests to the list is a welcome and important contribution to 
+     developing Fop.  </p>
+  <p>Read also the <jump href="http://xml-archive.webweaving.org/xml-archive-fop/">archive</jump> 
+     of the discussion list fop-dev to get an idea of the issues being discussed. </p>
+  </s2>
+  <s2 title="Look at the developer's code using cvs">
+  <p>Between releases the newest code can be accessed via cvs. To do this you need to install a cvs 
+     client on your computer if it is not already there. An explanation how to connect to the 
+     Fop source repository can be found at <jump href="http://xml.apache.org/cvs.html">http://xml.apache.org/cvs.html</jump>. 
+     An introduction into cvs and the cvs manual can be found in the 
+     <jump href="http://xml.apache.org/library.html">reference library</jump>.</p>
+  <p>All changes to the code repository are annonced in a special discussion group. You can subscribe 
+     to fop-cvs@xml.apache.org by sending an email to <jump href="mailto:fop-cvs-subscribe@xml.apache.org">
+     fop-cvs-subscribe@xml.apache.org</jump>. If you want to contribute to the development of Fop you should subscribe, 
+     because it is important that you follow changes being made. </p>
+  </s2>
+  <s2 title="Contributing code and documentation">
+  <p>If you want to contribute code (p.e. a bugfix) or documentation (p.e. an additional example), please do the following: </p>
+  <p>1) Make sure your code doesn't break the existing one and that Fop still compiles.</p>
+  <p>2) Create a file which shows the differences to the existing code.</p>
+  <p>3) Send this file to fop-dev@xml.apache.org.</p>
+  <p>One of the committers will test your code and commit it to the code repository.</p>
+  <p>BTW: The Apache project knows different roles for contributors, namely 'users', 'developers', 'committers' and the 'Project 
+     Management Committee' (An explanation of these roles can be found <jump href="http://xml.apache.org/roles.html">here</jump>).</p>
+  </s2>
+  <s2 title="Get familiar with the Fop related standards">
+  <p>At the moment Fop is mainly a tools to render XSL:FO files to pdf. Therefore if you want to contribute to Fop you should become
+     familiar with these standards. You can find their internet addresses on our <jump href="specs.html">website</jump>.</p>
+  </s2>
+  <s2 title="Fop's architecture">
+  <p>A bird's eye view on the way Fop operates can be found in the document <jump href="architecture.html">FOP Mechanics</jump></p>
+  <p>If you want to extend the functionality of FOP by adding new formatting objects, you should do the following: </p>
+  <p>1. FO Object: Write a class which contains the description of your formatting object and put it into the package fop.fo.flow, fop.fo.pagination (if it is a property it goes to fop.fo.properties. The classes in this package are generated via an xslt stylesheet located in codegen/properties.xml)</p>
+  <p>2. Element Mapping: Add it to the list in fop.fo.StandardElementMapping (if it is a property you need to add it to fop.fo.PropertyListBuilder)</p>
+  <p>3. Area: Either your need can be fulfilled within one of the existing classes in fop.layout, then just add the code to handle the new fo/property or you must write a new one.</p>
+  <p>4. Renderer: Choose the renderer you are interested in. If you worked on an existing layout class you must add code to handle the new features to the already existing area specific method in the renderer class. Otherwise you have to add a new method. </p>
+  </s2>
+</s1>

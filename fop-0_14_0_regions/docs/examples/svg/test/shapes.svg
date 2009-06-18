@@ -1,0 +1,50 @@
+<?xml version="1.0" standalone="yes"?>
+
+<svg:svg width="600" height="600" xmlns:svg="http://www.w3.org/2000/svg">
+
+  <svg:defs>
+    <svg:marker id="Triangle"
+		viewBox="0 0 10 10" refX="5" refY="5"
+		markerWidth="4" markerHeight="4"
+		orient="auto">
+	<svg:path id = "mypath" d="M 0 0 L 10 5 L 0 10 z" style="fill:black; stroke:red; stroke-width:2; 
+                 stroke-dasharray:none; marker:url(#Circle);"/>
+    </svg:marker>
+
+    <svg:marker id="Circle"
+            viewBox="0 0 10 10" refX="5" refY="5"
+            markerWidth="5" markerHeight="5"
+            orient="auto">
+      <svg:circle cx="5" cy="5" r="5" style="fill:none; stroke-width:2; stroke:blue; stroke-dasharray:none"/>
+    </svg:marker>
+
+    <svg:marker id="Square" viewBox="0 0 20 20" refX="10" refY="10"
+            markerWidth="3" markerHeight="3"
+            orient="auto">
+      <svg:rect x ="0" y="0" width="20" height="20" style="fill:teal; stroke:none"/>
+    </svg:marker>
+      
+
+  </svg:defs>
+
+  <svg:title> Simple shapes </svg:title>
+  
+  <svg:rect x = "120" y="120" width="100" height="150" style="fill:blue; stroke:black; stroke-width:4; stroke-linejoin:round" />
+
+  <svg:circle cx="300" cy="400" r="50" style="fill:rgb(50%,75%,100%); stroke:navy; stroke-width:2; stroke-dasharray: 5 2" />
+
+  <svg:ellipse cx="450" cy="200" rx="50" ry="100" style="fill:#bc1203; stroke:none"/>
+
+  <svg:polyline points="100 100 150 100 150 150 200 150 200 200 250 200 250 250 300 250 300 300 350 300 350 350 
+                    400 350 400 400 450 400 450 450 500 450 500 500" 
+            style="stroke:lime; stroke-width: 3; stroke-linejoin: round; stroke-linecap:round; stroke-opacity:50%;
+                   marker-start:url(#Circle);marker-mid:url(#Square);marker-end:url(#Triangle)" />
+
+  <svg:polygon points="50 100 100 50 500 50 550 100 550 500 500 550 100 550 50 500" 
+            style="stroke:aqua; stroke-width: 15; stroke-linejoin:round" />
+
+  <svg:line x1="100" x2="500" y1="500" y2="100" 
+            style="stroke:rgb(255,255,0); stroke-width:8; stroke-dasharray: 5 5 10 5 15 5 10 5;
+                     marker-start:url(#Circle);marker-end:url(#Triangle)"   />
+
+</svg:svg>

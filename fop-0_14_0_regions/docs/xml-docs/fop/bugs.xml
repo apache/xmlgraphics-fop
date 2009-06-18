@@ -1,0 +1,29 @@
+<?xml version="1.0" standalone="no"?>
+
+
+
+<!-- Bugs -->
+
+<s1 title="Bugs">
+  <s2 title="How to report bugs">
+    <p>Please report bugs to the discussion list fop-dev@xml.apache.org and put 
+       the word [BUG] in the subject line. </p>
+    <p>Please make sure, before you report a bug, that it is not mentioned in the FAQ or 
+       in the list of open bugs in the file STATUS in the start directory of the Fop
+       distribution. </p>
+    <p>Please make your description as concise as possible and send an example fo 
+       file with your report, which just demonstrates the problem. Thanks for your help!</p>
+  </s2>
+  <s2 title="Known bugs">
+    <ul>
+      <li>Colour not continued onto subsequent pages, if coloured block goes over page.</li>
+      <li>SVG linearGradients don't appear the same as in other SVG Viewers</li>
+      <li>colour not continued onto subsequent pages if coloured block goes over page </li>
+      <li>no SVG support in AWTCommandLine </li>
+      <li>keep-next doesn't work and doubles the text lines which should be moved to the next page</li>
+      <li>lists containing list do not keep their indentation correctly over a page boundary</li>
+    </ul>
+  </s2>
+</s1>
+
+

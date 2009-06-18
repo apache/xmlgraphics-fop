@@ -1,0 +1,211 @@
+/*-- $Id$ --
+
+ ============================================================================
+                   The Apache Software License, Version 1.1
+ ============================================================================
+
+    Copyright (C) 1999 The Apache Software Foundation. All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without modifica-
+ tion, are permitted provided that the following conditions are met:
+
+ 1. Redistributions of  source code must  retain the above copyright  notice,
+    this list of conditions and the following disclaimer.
+
+ 2. Redistributions in binary form must reproduce the above copyright notice,
+    this list of conditions and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
+
+ 3. The end-user documentation included with the redistribution, if any, must
+    include  the following  acknowledgment:  "This product includes  software
+    developed  by the  Apache Software Foundation  (http://www.apache.org/)."
+    Alternately, this  acknowledgment may  appear in the software itself,  if
+    and wherever such third-party acknowledgments normally appear.
+
+ 4. The names "FOP" and  "Apache Software Foundation"  must not be used to
+    endorse  or promote  products derived  from this  software without  prior
+    written permission. For written permission, please contact
+    apache@apache.org.
+
+ 5. Products  derived from this software may not  be called "Apache", nor may
+    "Apache" appear  in their name,  without prior written permission  of the
+    Apache Software Foundation.
+
+ THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ FITNESS  FOR A PARTICULAR  PURPOSE ARE  DISCLAIMED.  IN NO  EVENT SHALL  THE
+ APACHE SOFTWARE  FOUNDATION  OR ITS CONTRIBUTORS  BE LIABLE FOR  ANY DIRECT,
+ INDIRECT, INCIDENTAL, SPECIAL,  EXEMPLARY, OR CONSEQUENTIAL  DAMAGES (INCLU-
+ DING, BUT NOT LIMITED TO, PROCUREMENT  OF SUBSTITUTE GOODS OR SERVICES; LOSS
+ OF USE, DATA, OR  PROFITS; OR BUSINESS  INTERRUPTION)  HOWEVER CAUSED AND ON
+ ANY  THEORY OF LIABILITY,  WHETHER  IN CONTRACT,  STRICT LIABILITY,  OR TORT
+ (INCLUDING  NEGLIGENCE OR  OTHERWISE) ARISING IN  ANY WAY OUT OF THE  USE OF
+ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+ This software  consists of voluntary contributions made  by many individuals
+ on  behalf of the Apache Software  Foundation and was  originally created by
+ James Tauber <jtauber@jtauber.com>. For more  information on the Apache
+ Software Foundation, please see <http://www.apache.org/>.
+
+ */
+package org.apache.fop.dom.svg;
+
+import java.util.*;
+
+import org.apache.fop.dom.ElementImpl;
+
+import org.w3c.dom.svg.*;
+import org.w3c.dom.*;
+import org.w3c.dom.events.*;
+
+/**
+ *
+ */
+public class SVGDocumentImpl extends ElementImpl implements SVGDocument {
+	String title;
+	public static final String namespaceURI = "http://www.w3.org/2000/svg";
+
+	public SVGDocumentImpl()
+	{
+		ownerDoc = this;
+	}
+
+	public String getTitle()
+	{
+		return title;
+	}
+
+	public void setTitle(String title)
+	{
+		this.title = title;
+	}
+
+    public String getNamespaceURI()
+	{
+		return namespaceURI;
+	}
+
+	public String getReferrer()
+	{
+		return null;
+	}
+
+	public String getDomain()
+	{
+		return null;
+	}
+
+	public String getURL()
+	{
+		return "";
+	}
+
+	public SVGSVGElement getRootElement()
+	{
+		return (SVGSVGElement)childs.elementAt(0);
+	}
+
+	public Element getElementById(String elementId)
+	{
+		SVGSVGElement svg = getRootElement();
+		return findChild(svg, elementId);
+	}
+
+	protected Element findChild(Node ele, String id)
+	{
+		NodeList nl = ele.getChildNodes();
+		for(int count = 0; count < nl.getLength(); count++) {
+			Node n = nl.item(count);
+			if(n instanceof SVGElement) {
+				if(id.equals(((SVGElement)n).getId())) {
+					return (Element)n;
+				}
+			}
+			if(n != null) {
+				Element el = findChild(n, id);
+				if(el != null) {
+					return el;
+				}
+			}
+		}
+		return null;
+	}
+
+	public Event createEvent(String eventType)
+                                    throws DOMException
+	{
+		return null;
+	}
+
+	public DOMImplementation getImplementation()
+	{
+		return null;
+	}
+
+	public EntityReference createEntityReference(String str)
+	{
+		return null;
+	}
+
+	public DocumentFragment createDocumentFragment()
+	{
+		return null;
+	}
+
+	public Text createTextNode(String str)
+	{
+		return null;
+	}
+
+	public Element createElement(String str)
+	{
+		return null;
+	}
+
+  public Element createElementNS(String namespaceURI,
+                                 String qualifiedName){
+    return null;
+  }
+
+	public ProcessingInstruction createProcessingInstruction(String s1, String s2)
+	{
+		return null;
+	}
+
+	public DocumentType getDoctype()
+	{
+		return null;
+	}
+
+	public CDATASection createCDATASection(String str)
+	{
+		return null;
+	}
+
+	public Comment createComment(String str)
+	{
+		return null;
+	}
+
+	public Attr createAttribute(String str)
+	{
+		return null;
+	}
+
+    public Attr createAttributeNS(String namespaceURI,
+                                  String qualifiedName)
+                                  throws DOMException
+    {
+		return null;
+    }
+
+	public Element getDocumentElement()
+	{
+		return null;
+	}
+
+  public Node importNode(Node importedNode, boolean deep)
+  {
+    return null;
+  }
+}

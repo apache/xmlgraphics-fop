@@ -1,0 +1,45 @@
+<?xml version="1.0" standalone="yes"?>
+
+<svg:svg width="400px" height="150px" xmlns:svg="http://www.w3.org/2000/svg">
+  <svg:title>Nested</svg:title>
+  <svg:desc>Example Nested - Nested transformations</svg:desc>
+  
+  <svg:g style="fill:none; stroke:black; stroke-width:3">
+    <!-- Draw the axes of the original coordinate system -->
+    <svg:line x1="0" y1="1.5" x2="400" y2="1.5" />
+    <svg:line x1="1.5" y1="0" x2="1.5" y2="150" />
+  </svg:g>
+
+  <!-- First, a translate -->
+  <svg:g transform="translate(50,90)">
+    <svg:g style="fill:none; stroke:red; stroke-width:3">
+      <svg:line x1="0" y1="0" x2="50" y2="0" />
+      <svg:line x1="0" y1="0" x2="0" y2="50" />
+    </svg:g>
+    <svg:text x="0" y="0" style="font-size:16; font-family:Verdana">
+      ....Translate(1)
+    </svg:text>
+
+    <!-- Second, a rotate -->
+    <svg:g transform="rotate(-45)">
+      <svg:g style="fill:none; stroke:green; stroke-width:3">
+        <svg:line x1="0" y1="0" x2="50" y2="0" />
+        <svg:line x1="0" y1="0" x2="0" y2="50" />
+      </svg:g>
+      <svg:text x="0" y="0" style="font-size:16; font-family:Verdana">
+        ....Rotate(2)
+      </svg:text>
+
+      <!-- Third, another translate -->
+      <svg:g transform="translate(130,160)">
+        <svg:g style="fill:none; stroke:blue; stroke-width:3">
+          <svg:line x1="0" y1="0" x2="50" y2="0" />
+          <svg:line x1="0" y1="0" x2="0" y2="50" />
+        </svg:g>
+        <svg:text x="0" y="0" style="font-size:16; font-family:Verdana">
+          ....Translate(3)
+        </svg:text>
+      </svg:g>
+    </svg:g>
+  </svg:g>
+</svg:svg>

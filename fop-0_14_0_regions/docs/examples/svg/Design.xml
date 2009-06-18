@@ -1,0 +1,366 @@
+<?xml version="1.0"?>
+<!DOCTYPE Document SYSTEM "Document.dtd">
+<Document>
+	<Title>SVG in FOP Design</Title>
+	<Description>The design for implementing SVG rendering inside FOP. This is out of date.</Description>
+	<ExternalChapter file="Todo.xml"/>
+	<Chapter>
+		<Title>SVG Elements</Title>
+		<Section>
+			<Title>Purpose</Title>
+			<SubSection>
+				<Title>Background</Title>
+				<Body>
+					<p>
+						FOP is a formatting object parser written in Java.
+					</p>
+					<p>
+						Apache is heading the effort to create the parser to create
+						PDF documents from XML files including formatting objects.
+					</p>
+					<p>
+						SVG is another XML structure type that contains scaleable
+						vector graphics. This document is about embedding SVG data
+						inside a FOP XML structure so that the SVG will be rendered
+						to the resulting PDF document.
+					</p>
+				</Body>
+			</SubSection>
+			<SubSection>
+				<Title>Aim</Title>
+				<Body>
+					<p>
+						The primary aim is to enable the parsing of all SVG elements
+						as described in the document "CR-SVG-20000802.pdf". This applies
+						to the stylable elements.
+					</p>
+					<p>
+						The java interface is available from -
+						"http://www.w3.org/TR/2000/CR-SVG-20000802/java-binding.zip"
+					</p>
+					<p>
+						As the SVG elements include information for animation and
+						other things then not all elements or properties will be
+						rendered.
+					</p>
+					<p>
+						The implementation should be considered as separate from
+						the implementation and rendering of the FOP and PDF data.
+						This will allow it to be more general and to be used for
+						direct drawing or printing.
+					</p>
+				</Body>
+			</SubSection>
+		</Section>
+	</Chapter>
+	<Chapter>
+		<Title>Design</Title>
+		<Section>
+			<Title>FOP Rendering</Title>
+			<ExternalDiagram file="arch-diagrams.xml">fop</ExternalDiagram>
+			<SubSection>
+				<Title>Rendering Process</Title>
+				<ExternalDiagram file="arch-diagrams.xml">fop-flow</ExternalDiagram>
+				<Body>
+					<p>
+						The process of converting an FOP XML file into the
+						PDF document is handled by the FOP parser.
+					</p>
+					<p>
+						The document is first turned into an in memory hierarchy
+						of objects that represent the fo document. The objects are
+						then layed out into pages. The objects are then rendered
+						into PDF data.
+					</p>
+					<p>
+						These three steps are separate.
+					</p>
+				</Body>
+			</SubSection>
+		</Section>
+	</Chapter>
+	<Chapter>
+		<Title>Design</Title>
+		<Section>
+			<Title>Overall Design of SVG elements</Title>
+			<ExternalDiagram file="arch-diagrams.xml">overall</ExternalDiagram>
+			<SubSection>
+				<Title>SVG Nodes</Title>
+				<Body>
+					<p>
+						The FObj.layout is called whenever the parser encounters an
+						XML node. The class that is called depends on the element
+						mapping.
+					</p>
+					<p>
+						The &lt;svg:g&gt; element is used to contain other elements
+						including other &lt;svg:g&gt;'s. This element is purely to
+						set style and transform data on other elements.
+						The GraphicsCreator interface is used to create Graphic
+						element that can be placed into the &lt;svg:g&gt; graphic.
+					</p>
+					<p>
+						The &lt;svg:text&gt; element can contain elements that modify
+						the position and style of text. The TextElement interface is
+						used to create the element which is placed in a list along
+						with any strings in the text node.
+					</p>
+				</Body>
+			</SubSection>
+			<SubSection>
+				<Title>SVG Graphic Elements</Title>
+				<Body>
+					<p>
+						All drawing elements in an SVG area must extend the Graphic
+						class. This provides information about the style and transform.
+						Transform is accumulative, therefore the transform for a
+						particular element is obtained by combining all the transforms
+						of the current element and all super elements. A list is
+						created by adding each succesive transform into a list.
+					</p>
+					<p>
+						The graphic elements also contain style data, this behaves
+						in a different manner. The style for an element is obtained
+						by starting with the top ancestor of the element and overriding
+						any style elements set in each of the elements in the hierachy.
+						This is done by using an style infromation map.
+					</p>
+				</Body>
+			</SubSection>
+			<SubSection>
+				<Title>Rendering</Title>
+				<Body>
+					<p>
+						The main purpose of the SVG elements in this context
+						is to be able to render the data to a PDF document.
+						This should not limit the approach or the usefullness
+						of the SVG in memory data.
+					</p>
+					<p>
+						The data should contain all the available information
+						without changing the meaning of elements or properties.
+					</p>
+					<p>
+						The are some examples of data that should be interpreted
+						when rendering, or otherwise presenting the data to the user,
+						which can be altered and still be eqivalent.
+						This includes paths that contain multiple moveto's and
+						the closepath part. Since the information is necessary
+						for the proper display and editing then the information
+						should always be retained with the original meaning.
+						The path end points etc differ depending on the path
+						instructions.
+					</p>
+				</Body>
+			</SubSection>
+		</Section>
+	</Chapter>
+	<Chapter>
+		<Title>Integration</Title>
+		<Section>
+			<Title>Integration of SVG with FOP</Title>
+			<ExternalDiagram file="arch-diagrams.xml">integration</ExternalDiagram>
+			<SubSection>
+				<Title>Areas of Interaction</Title>
+				<Body>
+					<p>
+						The PDF renderer converts all the FOP data into the
+						PDF markup. This is also where the SVG elements are
+						output into the PDF stream.
+					</p>
+					<p>
+						The FOP parsing incorporates the idea of areas that
+						contain FONode data. These nodes contain the data
+						that is rendered into the area. The SVG element
+						(&lt;svg:svg&gt; element) forms an area. Then as each
+						SVG subnode is parsed it is placed within the SVG area.
+						The SVG area then contains a list of Graphic elements
+						that constitute the SVG graphic. Almost all Graphic
+						elements can have style and transform properties.
+						These properties are place into the graphic element.
+					</p>
+					<p>
+						As the &lt;svg:g&gt; element can contain many other
+						Graphic elements then it must be able to create and add
+						the Graphic to itself as each subnode is parsed.
+					</p>
+				</Body>
+			</SubSection>
+			<SubSection>
+				<Title>XML Specifics</Title>
+				<Body>
+					<p>
+						An SVG area can be placed within a &lt;fo:block&gt; ??.
+						This is provided that the appropriate svg namespace is
+						defined.
+						All the svg elements must be within the &lt;svg:svg&gt;
+						element.
+					</p>
+					<p>
+						When the SVG area is being parsed then it must be able
+						to create a representative data set in memory for use
+						later.
+					</p>
+					<p>
+						The data must fully represent the information in a way
+						that is efficient to create and use.
+					</p>
+					<p>
+						There are a few elements that can contain other elements,
+						these include &lt;svg:g&gt;, &lt;svg:text&gt;, &lt;svg:use&gt; etc.
+						The FOP parser technique uses <b>layout()</b> to create
+						a component and layout it within the area. This is not suitable
+						for elements that are not directly sub nodes of the SVG
+						area. The technique used is for the SVG elements is to implement
+						an interface suitable for the element. For example the Rect
+						implements GraphicsCreator so that the parent G can create
+						the Graphics object when the parser calls <b>addChild</b>.
+					</p>
+				</Body>
+			</SubSection>
+			<SubSection>
+				<Title>Rendering</Title>
+				<Body>
+					<p>
+						The SVG area contains a list of all the svg elements that can
+						be drawn. This list is simply iterated and each element drawn
+						in order.
+						Each subsequent element always draws over the previous element.
+					</p>
+					<p>
+						The drawing is clipped to the SVG area bounds.
+					</p>
+					<p>
+						As each element may contain its own style and transform
+						then before each element is rendered the style and
+						coordinate matrix ?? are set if it has changed.
+					</p>
+				</Body>
+			</SubSection>
+		</Section>
+	</Chapter>
+	<Chapter>
+		<Title>Design of Components</Title>
+		<Section>
+			<Title>Graphic Elements</Title>
+			<ExternalDiagram file="arch-diagrams.xml">graphic</ExternalDiagram>
+			<SubSection>
+				<Title>Class Hierachy</Title>
+				<Body>
+					<p>
+						All usual graphic elements that can be drawn in the SVG
+						area or a &lt;svg:g&gt; element must extend the Graphic
+						class. This serves as a common object type and to hold
+						information about the style and transform of the element.
+						Since the style and transform inherit information (in a way
+						that cannnot be done with simple XML inheritance) then
+						each graphic element also stores the parent element (if
+						applicable).
+					</p>
+					<p>
+						The text element may contain TSpan elements which are not
+						themselves Graphic elements.
+					</p>
+					<p>
+						The SVG area contains the title, description, definitions
+						and all the Graphic objects.
+					</p>
+				</Body>
+			</SubSection>
+			<SubSection>
+				<Title>Grouping</Title>
+				<Body>
+					<p>
+						The SVG area contains a list of Graphic elements that
+						can be rendered.
+					</p>
+					<p>
+						The SVG area also contains definitions of Graphic
+						elements that can be used by other graphic elements
+						for clipping, paths etc. The definitions must contain
+						a unique id (XML id) which can be used to refer to them.
+					</p>
+				</Body>
+			</SubSection>
+		</Section>
+		<Section>
+			<Title>XML Data</Title>
+			<ExternalDiagram file="arch-diagrams.xml">nodes</ExternalDiagram>
+			<SubSection>
+				<Title>Nodes</Title>
+				<Body>
+					<p>
+						There are two important type of information, these
+						are the XML nodes and the properties of these nodes.
+						The parsing process used with FOP uses element mapping
+						and property mapping to enable the creation of objects
+						that correspond to each node or property.
+					</p>
+				</Body>
+			</SubSection>
+			<SubSection>
+				<Title>Properties</Title>
+				<Body>
+					<p>
+						There are a number of important element properties that
+						differ and extend the FOP properties.
+					</p>
+					<p>
+						The style and transform properties have particular
+						behaviours that are handled through the Graphic object.
+					</p>
+				</Body>
+			</SubSection>
+			<SubSection>
+				<Title>Parsing Process</Title>
+				<Body>
+					<p>
+						There are three steps going from the SVG data (contained
+						in the FOP) to the resulting PDF document (or other
+						rendering result).
+					</p>
+					<p>
+						When the fop parsing encounters an &lt;svg:svg&gt; element
+						then it creates and SVG area object. The layout is called
+						for this object which parses all sub nodes. Each sub node
+						can then parse its information and add itself to the area.
+					</p>
+					<p>
+						The layout of each node is done before any of the sub nodes
+						of the particular node, this means that the information
+						for the node is incomplete when it is added to the area.
+					</p>
+					<p>
+						The parsing of the node is converted into a Graphic element
+						with its style and transform set. The G element can add the
+						Graphic to itself or the element can add itself to the SVG
+						area.
+					</p>
+					<p>
+						Once the parsing is complete we have a representation of
+						the SVG data in memory. This information can then be used
+						to render/manipulate etc.
+					</p>
+					<p>
+						The pdf rendering is done by rendering each element in the
+						SVG area. The style is set for the element before it is
+						rendered. If the element is a G or text object then each
+						sub-element is rendered.
+					</p>
+				</Body>
+			</SubSection>
+			<SubSection>
+				<Title>Graphic</Title>
+				<Body>
+					<p>
+						<ExternalDiagram file="arch-diagrams.xml">graphic-structure</ExternalDiagram>
+						The graphic elements (almost) all contain style and transform
+						data. This is stored in a way that allows the information
+						to be combined when determining the style/transform for an element
+						with style/transform set in one or more ancestors.
+					</p>
+				</Body>
+			</SubSection>
+		</Section>
+	</Chapter>
+</Document>

@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<!DOCTYPE Document SYSTEM "Document.dtd">
+<Document>
+	<Title>SVG Tests</Title>
+	<Description>
+	    Some test SVG documents embedded into fo.
+	</Description>
+	<ExternalChapter file="BasicExamples.xml"/>
+	<ExternalChapter file="LargeExamples.xml"/>
+</Document>
