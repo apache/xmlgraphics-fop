@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2006 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks the last-line-end-indent property.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block last-line-end-indent="20pt" text-align="end" id="end">
+In olden times when wishing still helped one, there lived a king whose daughters 
+were all beautiful; and the youngest was so beautiful that the sun itself, which 
+has seen so much, was astonished whenever it shone in her face.
+          </fo:block>
+          <fo:block last-line-end-indent="20pt" text-align="justify" text-align-last="justify" id="justify">
+In olden times when wishing still helped one, there lived a king whose daughters 
+were all beautiful; and the youngest was so beautiful that the sun itself, which 
+has seen so much, was astonished whenever it shone in her face.
+          </fo:block>
+          <fo:block last-line-end-indent="-20pt" end-indent="20pt" text-align="justify" text-align-last="justify" id="lastneg">
+In olden times when wishing still helped one, there lived a king whose daughters 
+were all beautiful; and the youngest was so beautiful that the sun itself, which 
+has seen so much, was astonished whenever it shone in her face.
+          </fo:block>
+          <fo:block last-line-end-indent="50%" text-align="justify" text-align-last="justify" id="justify50">
+In olden times when wishing still helped one, there lived a king whose daughters 
+were all beautiful; and the youngest was so beautiful that the sun itself, which 
+has seen so much, was astonished whenever it shone in her face.
+          </fo:block>
+          <fo:block last-line-end-indent="50%" text-align="center" id="center">
+In olden times when wishing still helped one, there lived a king whose daughters 
+were all beautiful; and the youngest was so beautiful that the sun itself, which 
+has seen so much, was astonished whenever it shone in her face.
+          </fo:block>
+          <fo:block last-line-end-indent="20pt" text-align="justify" text-align-last="justify" id="nested">
+This is just for testing purpose and this line will be indented.
+
+            <fo:block>This is the nested block.</fo:block>
+
+The text following the nested block should be indented as well. The text following 
+the nested block should be indented as well. 
+          </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="360000" xpath="//block[@prod-id='end']/lineArea[1]/@start-indent + //block[@prod-id='end']/lineArea[1]/text/@ipd"/>
+    <eval expected="360000" xpath="//block[@prod-id='end']/lineArea[2]/@start-indent + //block[@prod-id='end']/lineArea[2]/text/@ipd"/>
+    <eval expected="360000" xpath="//block[@prod-id='end']/lineArea[3]/@start-indent + //block[@prod-id='end']/lineArea[3]/text/@ipd"/>
+    <eval expected="340000" xpath="//block[@prod-id='end']/lineArea[4]/@start-indent + //block[@prod-id='end']/lineArea[4]/text/@ipd"/>
+    <!-- 360000 - 20000 = 340000 -->
+  
+    <eval expected="360000" xpath="//block[@prod-id='justify']/lineArea[1]/text/@ipd"/>
+    <eval expected="360000" xpath="//block[@prod-id='justify']/lineArea[2]/text/@ipd"/>
+    <eval expected="360000" xpath="//block[@prod-id='justify']/lineArea[3]/text/@ipd"/>
+    <eval expected="340000" xpath="//block[@prod-id='justify']/lineArea[4]/text/@ipd"/>
+
+    <eval expected="340000" xpath="//block[@prod-id='lastneg']/lineArea[1]/text/@ipd"/>
+    <eval expected="340000" xpath="//block[@prod-id='lastneg']/lineArea[2]/text/@ipd"/>
+    <eval expected="340000" xpath="//block[@prod-id='lastneg']/lineArea[3]/text/@ipd"/>
+    <eval expected="360000" xpath="//block[@prod-id='lastneg']/lineArea[4]/text/@ipd"/>
+
+    <eval expected="360000" xpath="//block[@prod-id='justify50']/lineArea[1]/text/@ipd"/>
+    <eval expected="360000" xpath="//block[@prod-id='justify50']/lineArea[2]/text/@ipd"/>
+    <eval expected="360000" xpath="//block[@prod-id='justify50']/lineArea[3]/text/@ipd"/>
+    <eval expected="180000" xpath="//block[@prod-id='justify50']/lineArea[4]/text/@ipd"/>
+
+    <eval expected="360000" xpath="(2 * //block[@prod-id='center']/lineArea[1]/@start-indent) + //block[@prod-id='center']/lineArea[1]/text/@ipd"/>
+    <eval expected="360000" xpath="(2 * //block[@prod-id='center']/lineArea[2]/@start-indent) + //block[@prod-id='center']/lineArea[2]/text/@ipd"/>
+    <eval expected="360000" xpath="(2 * //block[@prod-id='center']/lineArea[3]/@start-indent) + //block[@prod-id='center']/lineArea[3]/text/@ipd"/>
+    <eval expected="360000" xpath="(2 * //block[@prod-id='center']/lineArea[4]/@start-indent) + //block[@prod-id='center']/lineArea[4]/text/@ipd"/>
+    <eval expected="180000" xpath="(2 * //block[@prod-id='center']/lineArea[5]/@start-indent) + //block[@prod-id='center']/lineArea[5]/text/@ipd"/>
+
+    <!-- 7.15.3, XSL 1.0: this block is end-indented because its following sibling is a block and not a line. This is in contrast to the specified behaviour of text-indent. -->
+    <eval expected="340000" xpath="//block[@prod-id='nested']/lineArea[1]/text/@ipd"/>
+    <eval expected="340000" xpath="//block[@prod-id='nested']/block[1]/lineArea[1]/text/@ipd"/>
+    <eval expected="360000" xpath="//block[@prod-id='nested']/lineArea[2]/text/@ipd"/>
+    <eval expected="340000" xpath="//block[@prod-id='nested']/lineArea[3]/text/@ipd"/>
+  </checks>
+</testcase>

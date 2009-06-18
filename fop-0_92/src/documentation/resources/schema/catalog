@@ -1,0 +1,7 @@
+-- OASIS TR 9401 Catalog for Forrest --
+
+OVERRIDE YES
+
+-- custom doctype --
+PUBLIC "-//APACHE//DTD Compliance V1.0//EN" "dtd/compliance-v10.dtd"
+

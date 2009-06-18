@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2006 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks page-position="last".
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+          <fo:region-body margin-bottom="1in" column-count="2" column-gap="10pt" background-color="lightgray"/>
+          <fo:region-after extent="1in" display-align="after"/>
+        </fo:simple-page-master>
+        <fo:simple-page-master master-name="last" page-width="5in" page-height="5in">
+          <fo:region-body margin-bottom="3in" column-count="2" column-gap="10pt" background-color="rgb(250,250,240)"/>
+          <fo:region-after extent="1in" display-align="after"/>
+        </fo:simple-page-master>
+        <fo:page-sequence-master master-name="master">
+          <fo:repeatable-page-master-alternatives>
+            <fo:conditional-page-master-reference master-reference="last" page-position="last"/>
+            <fo:conditional-page-master-reference master-reference="normal" page-position="any"/>
+          </fo:repeatable-page-master-alternatives>
+        </fo:page-sequence-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="master" id="replace-last">
+        <fo:static-content flow-name="xsl-region-after">
+          <fo:block text-align="end">page <fo:page-number/> of <fo:page-number-citation ref-id="eof"/></fo:block>
+        </fo:static-content>
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block-container id="boxA0" height="1.5in" background-color="yellow" text-align="center" display-align="center" break-after="page">
+            <fo:block>box0</fo:block>
+          </fo:block-container>
+          <fo:block-container id="boxA1" height="1.5in" background-color="yellow" text-align="center" display-align="center">
+            <fo:block>box1</fo:block>
+          </fo:block-container>
+          <fo:block-container id="boxA2" height="1.5in" background-color="orange" text-align="center" display-align="center">
+            <fo:block>box2</fo:block>
+          </fo:block-container>
+          <fo:block-container id="boxA3" height="1.5in" background-color="yellow" text-align="center" display-align="center">
+            <fo:block>box3</fo:block>
+          </fo:block-container>
+          <fo:block-container id="boxA4" height="1.5in" background-color="orange" text-align="center" display-align="center">
+            <fo:block>box4</fo:block>
+          </fo:block-container>
+          <fo:block-container id="boxA5" height="1.5in" background-color="yellow" text-align="center" display-align="center">
+            <fo:block>box5</fo:block>
+          </fo:block-container>
+          <fo:block-container id="boxA6" height="1.5in" background-color="orange" text-align="center" display-align="center">
+            <fo:block>box6</fo:block>
+          </fo:block-container>
+          <fo:block-container id="boxA7" height="1.5in" background-color="yellow" text-align="center" display-align="center">
+            <fo:block>box7</fo:block>
+          </fo:block-container>
+          <fo:block-container id="boxA8" height="1.5in" background-color="orange" text-align="center" display-align="center">
+            <fo:block>box8</fo:block>
+          </fo:block-container>
+          <fo:block-container id="boxA9" height="1.5in" background-color="yellow" text-align="center" display-align="center">
+            <fo:block>box9</fo:block>
+          </fo:block-container>
+          <fo:block-container id="boxA10" height="1.5in" background-color="orange" text-align="center" display-align="center">
+            <fo:block>box10</fo:block>
+          </fo:block-container>
+          <fo:block id="eof"/>
+        </fo:flow>
+      </fo:page-sequence>
+      <fo:page-sequence master-reference="master" id="blank-last">
+        <fo:static-content flow-name="xsl-region-after">
+          <fo:block text-align="end">page <fo:page-number/> of <fo:page-number-citation ref-id="eof"/></fo:block>
+        </fo:static-content>
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block-container id="boxB1" height="1.5in" background-color="yellow" text-align="center" display-align="center">
+            <fo:block>box1</fo:block>
+          </fo:block-container>
+          <fo:block-container id="boxB2" height="1.5in" background-color="orange" text-align="center" display-align="center">
+            <fo:block>box2</fo:block>
+          </fo:block-container>
+          <fo:block-container id="boxB3" height="1.5in" background-color="yellow" text-align="center" display-align="center">
+            <fo:block>box3</fo:block>
+          </fo:block-container>
+          <fo:block-container id="boxB4" height="1.5in" background-color="orange" text-align="center" display-align="center">
+            <fo:block>box4</fo:block>
+          </fo:block-container>
+          <fo:block-container id="boxB5" height="1.5in" background-color="yellow" text-align="center" display-align="center">
+            <fo:block>box5</fo:block>
+          </fo:block-container>
+          <fo:block-container id="boxB6" height="1.5in" background-color="orange" text-align="center" display-align="center">
+            <fo:block>box6</fo:block>
+          </fo:block-container>
+          <fo:block-container id="boxB7" height="1.5in" background-color="yellow" text-align="center" display-align="center">
+            <fo:block>box7</fo:block>
+          </fo:block-container>
+          <fo:block-container id="boxB8" height="1.5in" background-color="orange" text-align="center" display-align="center">
+            <fo:block>box8</fo:block>
+          </fo:block-container>
+          <fo:block-container id="boxB9" height="1.5in" background-color="yellow" text-align="center" display-align="center">
+            <fo:block>box9</fo:block>
+          </fo:block-container>
+          <fo:block-container id="boxB10" height="1.5in" background-color="orange" text-align="center" display-align="center">
+            <fo:block>box10</fo:block>
+          </fo:block-container>
+          <fo:block-container id="boxB11" height="1.5in" background-color="orange" text-align="center" display-align="center">
+            <fo:block>box11</fo:block>
+          </fo:block-container>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="4" xpath="count(//pageSequence[1]/pageViewport)"/>
+    <eval expected="1" xpath="//block[@prod-id='boxA0']/ancestor::pageViewport/@nr"/>
+    <eval expected="2" xpath="//block[@prod-id='boxA1']/ancestor::pageViewport/@nr"/>
+    <eval expected="2" xpath="//block[@prod-id='boxA2']/ancestor::pageViewport/@nr"/>
+    <eval expected="2" xpath="//block[@prod-id='boxA3']/ancestor::pageViewport/@nr"/>
+    <eval expected="2" xpath="//block[@prod-id='boxA4']/ancestor::pageViewport/@nr"/>
+    <eval expected="3" xpath="//block[@prod-id='boxA5']/ancestor::pageViewport/@nr"/>
+    <eval expected="3" xpath="//block[@prod-id='boxA6']/ancestor::pageViewport/@nr"/>
+    <eval expected="3" xpath="//block[@prod-id='boxA7']/ancestor::pageViewport/@nr"/>
+    <eval expected="3" xpath="//block[@prod-id='boxA8']/ancestor::pageViewport/@nr"/>
+    <eval expected="4" xpath="//block[@prod-id='boxA9']/ancestor::pageViewport/@nr"/>
+    <eval expected="4" xpath="//block[@prod-id='boxA10']/ancestor::pageViewport/@nr"/>
+    <eval expected="288000" xpath="//pageViewport[@nr='1']/descendant::regionBody/@bpd"/>
+    <eval expected="288000" xpath="//pageViewport[@nr='2']/descendant::regionBody/@bpd"/>
+    <eval expected="288000" xpath="//pageViewport[@nr='3']/descendant::regionBody/@bpd"/>
+    <eval expected="144000" xpath="//pageViewport[@nr='4']/descendant::regionBody/@bpd"/>
+    <eval expected="normal" xpath="//pageViewport[@nr='1']/@simple-page-master-name"/>
+    <eval expected="normal" xpath="//pageViewport[@nr='2']/@simple-page-master-name"/>
+    <eval expected="normal" xpath="//pageViewport[@nr='3']/@simple-page-master-name"/>
+    <eval expected="last" xpath="//pageViewport[@nr='4']/@simple-page-master-name"/>
+
+    <eval expected="4" xpath="count(//pageSequence[2]/pageViewport)"/>
+    <eval expected="5" xpath="//block[@prod-id='boxB1']/ancestor::pageViewport/@nr"/>
+    <eval expected="5" xpath="//block[@prod-id='boxB2']/ancestor::pageViewport/@nr"/>
+    <eval expected="5" xpath="//block[@prod-id='boxB3']/ancestor::pageViewport/@nr"/>
+    <eval expected="5" xpath="//block[@prod-id='boxB4']/ancestor::pageViewport/@nr"/>
+    <eval expected="6" xpath="//block[@prod-id='boxB5']/ancestor::pageViewport/@nr"/>
+    <eval expected="6" xpath="//block[@prod-id='boxB6']/ancestor::pageViewport/@nr"/>
+    <eval expected="6" xpath="//block[@prod-id='boxB7']/ancestor::pageViewport/@nr"/>
+    <eval expected="6" xpath="//block[@prod-id='boxB8']/ancestor::pageViewport/@nr"/>
+    <eval expected="7" xpath="//block[@prod-id='boxB9']/ancestor::pageViewport/@nr"/>
+    <eval expected="7" xpath="//block[@prod-id='boxB10']/ancestor::pageViewport/@nr"/>
+    <eval expected="7" xpath="//block[@prod-id='boxB11']/ancestor::pageViewport/@nr"/>
+    <eval expected="288000" xpath="//pageViewport[@nr='5']/descendant::regionBody/@bpd"/>
+    <eval expected="288000" xpath="//pageViewport[@nr='6']/descendant::regionBody/@bpd"/>
+    <eval expected="288000" xpath="//pageViewport[@nr='7']/descendant::regionBody/@bpd"/>
+    <eval expected="144000" xpath="//pageViewport[@nr='8']/descendant::regionBody/@bpd"/>
+    <eval expected="normal" xpath="//pageViewport[@nr='5']/@simple-page-master-name"/>
+    <eval expected="normal" xpath="//pageViewport[@nr='6']/@simple-page-master-name"/>
+    <eval expected="normal" xpath="//pageViewport[@nr='7']/@simple-page-master-name"/>
+    <eval expected="last" xpath="//pageViewport[@nr='8']/@simple-page-master-name"/>
+  </checks>
+</testcase>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2005-2006 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks white space handling for white-space-treatment
+      with white-space-collapse="false".
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal" white-space-collapse="false">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block white-space-treatment="ignore-if-surrounding-linefeed" background-color="silver" margin="1pt 0pt 1pt 0pt">
+  ignore-if-surrounding-linefeed                                               
+  all                                                                          
+  spaces                                                                       
+</fo:block>
+          <fo:block white-space-treatment="ignore" background-color="silver" margin="1pt 0pt 1pt 0pt">
+  ignore                                                                       
+  all                                                                          
+  spaces                                                                       
+</fo:block>
+          <fo:block white-space-treatment="preserve" background-color="silver" margin="1pt 0pt 1pt 0pt">
+  preserve                                                                     
+  all                                                                          
+  spaces                                                                       
+</fo:block>
+          <fo:block white-space-treatment="ignore-if-before-linefeed" background-color="silver" margin="1pt 0pt 1pt 0pt">
+  ignore-if-before-linefeed                                                    
+  all                                                                          
+  spaces                                                                       
+</fo:block>
+          <fo:block white-space-treatment="ignore-if-after-linefeed" background-color="silver" margin="1pt 0pt 1pt 0pt">
+  ignore-if-after-linefeed                                                     
+  all                                                                          
+  spaces                                                                       
+</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="2" xpath="count(//flow/block[1]/lineArea)"/>
+    <eval expected="2" xpath="count(//flow/block[1]/lineArea[1]/text/word)"/>
+    <eval expected="50" xpath="count(//flow/block[1]/lineArea[1]/text/space)"/>
+    <eval expected="1" xpath="count(//flow/block[1]/lineArea[2]/text/word)"/>
+    <eval expected="0" xpath="count(//flow/block[1]/lineArea[2]/text/space)"/>
+
+    <eval expected="1" xpath="count(//flow/block[2]/lineArea)"/>
+    <eval expected="1" xpath="count(//flow/block[2]/lineArea[1]/text/word)"/>
+    <eval expected="0" xpath="count(//flow/block[2]/lineArea[1]/text/space)"/>
+    
+    <eval expected="3" xpath="count(//flow/block[3]/lineArea)"/>
+    <eval expected="2" xpath="count(//flow/block[3]/lineArea[1]/text/word)"/>
+    <eval expected="90" xpath="count(//flow/block[3]/lineArea[1]/text/space)"/>
+    <eval expected="1" xpath="count(//flow/block[3]/lineArea[2]/text/word)"/>
+    <eval expected="96" xpath="count(//flow/block[3]/lineArea[2]/text/space)"/>
+    <eval expected="0" xpath="count(//flow/block[3]/lineArea[3]/text/word)"/>
+    <eval expected="38" xpath="count(//flow/block[3]/lineArea[3]/text/space)"/>
+    
+    <eval expected="2" xpath="count(//flow/block[4]/lineArea)"/>
+    <eval expected="2" xpath="count(//flow/block[4]/lineArea[1]/text/word)"/>
+    <eval expected="58" xpath="count(//flow/block[4]/lineArea[1]/text/space)"/>
+    <eval expected="1" xpath="count(//flow/block[4]/lineArea[2]/text/word)"/>
+    <eval expected="77" xpath="count(//flow/block[4]/lineArea[2]/text/space)"/>
+    
+    <eval expected="2" xpath="count(//flow/block[5]/lineArea)"/>
+    <eval expected="2" xpath="count(//flow/block[5]/lineArea[1]/text/word)"/>
+    <eval expected="56" xpath="count(//flow/block[5]/lineArea[1]/text/space)"/>
+    <eval expected="1" xpath="count(//flow/block[5]/lineArea[2]/text/word)"/>
+    <eval expected="72" xpath="count(//flow/block[5]/lineArea[2]/text/space)"/>
+    
+  </checks>
+</testcase>

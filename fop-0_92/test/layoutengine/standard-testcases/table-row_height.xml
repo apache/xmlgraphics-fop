@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2005 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks tables, especially table-rows. This test: height and block-progression-dimension.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal" white-space-collapse="true">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:table table-layout="fixed">
+            <fo:table-column column-width="2in"/>
+            <fo:table-column column-width="3in"/>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>cell1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>cell2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row height="20pt" background-color="yellow">
+                <fo:table-cell>
+                  <fo:block>cell3</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>cell4</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row block-progression-dimension="20pt" background-color="orange">
+                <fo:table-cell>
+                  <fo:block>cell5</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>cell6</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>cell7</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>cell8</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <!-- row 1 -->
+    <eval expected="144000" xpath="//flow/block[1]/block[1]/@ipd"/>
+    <eval expected="14400" xpath="//flow/block[1]/block[1]/@bpd"/>
+    <eval expected="216000" xpath="//flow/block[1]/block[2]/@ipd"/>
+    <eval expected="14400" xpath="//flow/block[1]/block[2]/@bpd"/>
+
+    <!-- row 2 -->
+    <eval expected="360000" xpath="//flow/block[1]/block[3]/@ipd"/>
+    <eval expected="20000" xpath="//flow/block[1]/block[3]/@bpd"/> <!-- background-area generated for the row -->
+    <eval expected="color=#ffff00" xpath="//flow/block[1]/block[3]/@background"/>
+    <eval expected="144000" xpath="//flow/block[1]/block[4]/@ipd"/>
+    <eval expected="20000" xpath="//flow/block[1]/block[4]/@bpd"/>
+    <eval expected="216000" xpath="//flow/block[1]/block[5]/@ipd"/>
+    <eval expected="20000" xpath="//flow/block[1]/block[5]/@bpd"/>
+
+    <!-- row 3 -->
+    <eval expected="360000" xpath="//flow/block[1]/block[6]/@ipd"/>
+    <eval expected="20000" xpath="//flow/block[1]/block[6]/@bpd"/> <!-- background-area generated for the row -->
+    <eval expected="color=#ffa500" xpath="//flow/block[1]/block[6]/@background"/>
+    <eval expected="144000" xpath="//flow/block[1]/block[7]/@ipd"/>
+    <eval expected="20000" xpath="//flow/block[1]/block[7]/@bpd"/>
+    <eval expected="216000" xpath="//flow/block[1]/block[8]/@ipd"/>
+    <eval expected="20000" xpath="//flow/block[1]/block[8]/@bpd"/>
+
+    <!-- row 4 -->
+    <eval expected="144000" xpath="//flow/block[1]/block[9]/@ipd"/>
+    <eval expected="14400" xpath="//flow/block[1]/block[9]/@bpd"/>
+    <eval expected="216000" xpath="//flow/block[1]/block[10]/@ipd"/>
+    <eval expected="14400" xpath="//flow/block[1]/block[10]/@bpd"/>
+  </checks>
+</testcase>

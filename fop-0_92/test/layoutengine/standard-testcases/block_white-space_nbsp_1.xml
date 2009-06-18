@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2005-2006 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks non breaking white space (nbsp).
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal" white-space-collapse="true">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block background-color="silver" id="single">&#160;single&#160;nbsp&#160;around&#160;</fo:block>
+          <fo:block background-color="red" id="only">&#160;</fo:block>
+          <fo:block background-color="silver" id="double">&#160;&#160;after&#160;&#160;empty&#160;&#160;line&#160;&#160;</fo:block>
+          <fo:block background-color="silver" id="single-justify" text-align="justify" text-align-last="justify" space-before="5pt">&#160;single&#160;nbsp&#160;around&#160;</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="11100" xpath="//flow/block[1]/lineArea/@bpd"/>
+    <eval expected="4" xpath="count(//flow/block[1]/lineArea/text/space)"/>
+    <eval expected="11100" xpath="//flow/block[2]/lineArea/@bpd"/>
+    <eval expected="1" xpath="count(//flow/block[2]/lineArea/text/space)"/>
+    <eval expected="11100" xpath="//flow/block[3]/lineArea/@bpd"/>
+    <eval expected="8" xpath="count(//flow/block[3]/lineArea/text/space)"/>
+    <eval expected="11100" xpath="//flow/block[4]/lineArea/@bpd"/>
+    <eval expected="3" xpath="count(//flow/block[4]/lineArea/text/space)"/> <!-- trailing nbsp is removed by LineLM -->
+    
+    <!-- nbsp must be adjustable -->
+    <true xpath="not(//flow/block[4]/lineArea/text/space[1]/@adj = 'false')"/>
+    
+    <element-list category="line" id="single">
+      <box w="3336"/>
+      <box/>
+      <box w="3336"/>
+      <box/>
+      <box w="3336"/>
+      <box/>
+      <box w="3336"/>
+      <skip>3</skip>
+    </element-list>
+    
+    <element-list category="line" id="only">
+      <box w="3336"/>
+      <skip>3</skip>
+    </element-list>
+    
+    <element-list category="line" id="double">
+      <box w="3336"/>
+      <box w="3336"/>
+      <box/>
+      <box w="3336"/>
+      <box w="3336"/>
+      <box/>
+      <box w="3336"/>
+      <box w="3336"/>
+      <box/>
+      <box w="3336"/>
+      <box w="3336"/>
+      <skip>3</skip>
+    </element-list>
+    
+    <element-list category="line" id="single-justify">
+      <box w="0"/>
+      <penalty p="INF"/>
+      <glue w="3336" y="1668" z="1112"/>
+      <box/>
+      <box w="0"/>
+      <penalty p="INF"/>
+      <glue w="3336" y="1668" z="1112"/>
+      <box/>
+      <box w="0"/>
+      <penalty p="INF"/>
+      <glue w="3336" y="1668" z="1112"/>
+      <box/>
+      <box w="0"/>
+      <penalty p="INF"/>
+      <glue w="3336" y="1668" z="1112"/>
+      <skip>3</skip>
+    </element-list>
+    
+  </checks>
+</testcase>

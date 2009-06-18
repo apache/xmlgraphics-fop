@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2005-2006 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks fo:character with vertical-align property.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal" white-space-collapse="true">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block background-color="silver" margin="2pt 0pt 2pt 0pt" font-size="20pt">
+            vertical-align<fo:character font-size="10pt" background-color="yellow" character="=" />not specified
+          </fo:block>
+          <fo:block background-color="silver" margin="2pt 0pt 2pt 0pt" font-size="20pt">
+            vertical-align<fo:character font-size="10pt" vertical-align="baseline" background-color="yellow" character="=" />baseline
+          </fo:block>
+          <fo:block background-color="silver" margin="2pt 0pt 2pt 0pt" font-size="20pt">
+            vertical-align<fo:character font-size="10pt" vertical-align="top" background-color="yellow" character="=" />top
+          </fo:block>
+          <fo:block background-color="silver" margin="2pt 0pt 2pt 0pt" font-size="20pt">
+            vertical-align<fo:character font-size="10pt" vertical-align="middle" background-color="yellow" character="=" />middle
+          </fo:block>
+          <fo:block background-color="silver" margin="2pt 0pt 2pt 0pt" font-size="20pt">
+            vertical-align<fo:character font-size="10pt" vertical-align="bottom" background-color="yellow" character="=" />bottom
+          </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="7180" xpath="//flow/block[1]/lineArea/text[2]/@offset"/>
+    <eval expected="7180" xpath="//flow/block[2]/lineArea/text[2]/@offset"/>
+    <eval expected="0" xpath="//flow/block[3]/lineArea/text[2]/@offset"/>
+    <eval expected="4565" xpath="//flow/block[4]/lineArea/text[2]/@offset"/>
+    <eval expected="9250" xpath="//flow/block[5]/lineArea/text[2]/@offset"/>
+  </checks>
+</testcase>
