@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 1999-2005 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
+    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/core/context/resources/schema/dtd/document-v12.dtd">
+<document>
+  <header>
+    <title>FOP Development: Release Mechanics</title>
+    <version>$Revision$</version>
+  </header>
+  <body>
+    <section id="intro">
+      <title>Introduction</title>
+      <p>This page documents the process of creating a FOP release.
+FOP releases are coordinated by one member of the team (currently Christian Geisert), so others do not ordinarily need to use this information.
+The purpose of documenting it here is to facilitate consistency, ensure that the process is captured, and to allow others to comment on the process.</p>
+      <p>The checklist below was assembled from Christian Geisert's notes. It will be expanded in the future as he has time.</p>
+    </section>
+    <section id="checklist">
+      <title>Checklist</title>
+      <ul>
+        <li>Determine whether this is a Release Candidate or a Release.</li>
+        <li>Determine whether further testing is required.</li>
+        <li>Commit any outstanding changes</li>
+        <li>Edit release notes (relnotes.xml, README, status.xml in the root and in xdocs).</li>
+        <li>Update version number in build.xml, and commit the change.</li>
+        <li>Copy trunk documentation directory to a new directory with the version number and update any links and the .htaccess file for redirections.</li>
+        <li>Update the index.xml for the new version.</li>
+        <li>Update the version numbers on the compliance page.</li>
+        <li>Tag the source tree with the release ID. For example, if the release is 0.91beta:
+          <code>svn copy https://svn.apache.org/repos/asf/xmlgraphics/fop/trunk https://svn.apache.org/repos/asf/xmlgraphics/fop/tags/fop-0_91beta</code></li>
+        <li>Make a fresh checkout with the just created tag:
+          <code>https://svn.apache.org/repos/asf/xmlgraphics/fop/tags/fop-0_91beta</code></li>
+        <li>Copy jimi and jai to lib/ (jimi-1.0.jar, jai_core.jar, jai_codec.jar)</li>
+        <li>Copy jce-jdk13-119.jar from <link href="http://www.bouncycastle.org/latest_releases.html">
+          from http://www.bouncycastle.org/latest_releases.html</link> to lib/</li>
+        <li>Alternatively, create a build-local.properties file that points to the above libs.</li>
+        <li>Run build[.sh] dist. Do this once using Sun JDK 1.3.1_15 or later and once with Sun JDK 1.4.2_08 or later. A Forrest installation is needed.</li>
+        <li>Create signatures. Don't forget to upload your KEY:
+          <code>gpg -a -b --force-v3-sigs fop-0.91beta.tar.gz etc.</code></li>
+        <li>Upload to people.apache.org. (An account on minotaur is needed):
+          <code>scp fop-0.91beta*.tar.gz* 
+chrisg@people.apache.org:/www/www.apache.org/dist/xmlgraphics/fop/</code></li>
+        <li>Check permissions:
+          <code>chmod 664 ... ; chgrp xmlgraphics ...</code></li>
+        <li>Add MD5 sums: <code>md5 fop-0.91beta-bin.tar.gz &gt;
+          fop-0.91beta-bin.tar.gz.md5</code></li>
+        <li>Make a test download.</li>
+        <li>Update HEADER.html and README.html in people.apache.org:/www/www.apache.org/dist/xmlgraphics/fop/</li>
+        <li>Wait 24 hours (for the mirrors to catch up).</li>
+        <li>Post announcements on fop-dev and fop-user and other related mailing lists.</li>
+        <li>Add bugzilla entry for the new release id.</li>
+      </ul>
+    </section>
+    <section id="other-checklists">
+      <title>Resources</title>
+      <p>The following is a sample of some other project release checlists, which might be consulted for ideas:</p>
+      <ul>
+        <li><jump href="http://svn.apache.org/repos/asf/xmlgraphics/batik/trunk/MAINTAIN">Apache Batik</jump></li>
+        <li><jump href="http://svn.apache.org/repos/asf/ant/core/trunk/ReleaseInstructions">Apache Ant</jump></li>
+        <li><jump href="http://jakarta.apache.org/cactus/participating/release_checklist.html">Apache Cactus</jump></li>
+      </ul>
+      <p>Following are links with information about mirroring:</p>
+      <ul>
+        <li><jump href="http://www.apache.org/dev/mirrors.html">Apache Mirroring</jump></li>
+        <li>Stefan Bodewig's <jump href="http://people.apache.org/~bodewig/mirror.html">Making your Downloads Mirrorable</jump></li>
+      </ul>
+    </section>
+    <section id="announcements">
+      <title>Announcing the release</title>
+      <p>Here's a collected list of places where to announce new FOP releases:</p>
+      <ul>
+        <li>fop-dev@xmlgraphics.apache.org</li>
+        <li>fop-users@xmlgraphics.apache.org</li>
+        <li>general@xmlgraphics.apache.org</li>
+        <li>general@xml.apache.org</li>
+        <li>announce@apache.org</li>
+        <li>XSL-FO@yahoogroups.com</li>
+        <li>www-xsl-fo@w3.org</li>
+        <li>docbook-apps@lists.oasis-open.org</li>
+        <li>dita-users@yahoogroups.com (http://dita-ot.sourceforge.net/)</li>
+        <li>http://xslfo-zone.com/news/index.jsp</li>
+        <li>http://www.w3.org/Style/XSL/</li>
+        <li>http://freshmeat.net/projects/fop/</li>
+        <li>any others?</li>
+      </ul>
+    </section>
+  </body>
+</document>

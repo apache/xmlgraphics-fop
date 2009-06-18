@@ -1,0 +1,310 @@
+<?xml version="1.0" standalone="no"?>
+<!--
+  Copyright 1999-2005 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
+    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/core/context/resources/schema/dtd/document-v12.dtd">
+<document>
+  <header>
+    <title>FOP: Hyphenation</title>
+    <version>$Revision$</version>
+  </header>
+  <body>
+    <section id="support">
+    <title>Hyphenation Support</title>
+    <section id="intro">
+      <title>Introduction</title>
+      <p>FOP uses Liang's hyphenation algorithm, well known from TeX. It needs
+       language specific patterns and other data for operation.</p>
+      <p>Because of <link href="#license-issues">licensing issues</link> (and for 
+       convenience), all hyphenation patterns for FOP are made available through 
+       the <fork href="http://offo.sourceforge.net/hyphenation/index.html">Objects For 
+       Formatting Objects</fork> project.</p>
+      <note>If you have made improvements to an existing FOP hyphenation pattern, 
+       or if you have created one from scratch, please consider contributing these 
+       to OFFO so that they can benefit other FOP users as well. 
+       Please inquire on the <link href="../maillist.html#fop-user">FOP User
+       mailing list</link>.</note>
+    </section>
+    <section id="using">
+      <title>Using Hyphenation</title>
+      <p>
+        In order to get words hyphenated, hyphenation has to be
+        enabled explicitely (set property hyphenation="true") and a
+        language has to be defined (e.g. language="en"). Optionally, a
+        country can be specified (e.g. country="GB").
+      </p>
+      <p>
+        If hyphenation is requested, at first a serialized instance
+        containing precompiled hyphenation patterns is looked up in
+        the classpath. If only a language is specified, a ressource
+        named <code>hyph/&lt;language>.hyp</code> is loaded. If both
+        language and country are specified, the ressource
+        <code>hyph/&lt;language>_&lt;country>.hyp</code> is looked up,
+        and if this fails, the loader looks also for
+        <code>hyph/&lt;language>.hyp</code>. 
+      </p>
+      <p>
+        If no precompiled patterns are found, FOP tries to load raw
+        patterns from the an XML file name
+        <code>/hyph/&lt;language>.xml</code> respective
+        <code>/hyph/&lt;language>_&lt;country>.xml</code> . The /hyph
+        prefix is hardcoded and can't be configured. Note that this
+        usually constitues an absolute file path. FOP can't load raw
+        patterns from other sources than files.
+      </p>
+      <p>
+        If you think hyphenation is enabled but words aren't
+        hyphenated, check whether FOP finds the relevant hyphenation
+        patterns:
+      </p>
+      <ol>
+        <li>Did you download and install the hyphenation patterns
+        properly? In case you downloaded the files from OFFO, check
+        whether you have downloaded the patterns for the correct FOP
+        version (0.20.5 or the development version), and check whether
+        you followed the installation instructions.</li>
+        <li>Check whether you have spelled the language code and
+        optionally the country code correctly. Note that the country
+        codes are in uppercase, by convention. This matters.</li>
+      </ol>
+      <p>
+        If hyphenation works in general, but specific words aren't
+        hyphenated, or aren't hyphenated as expected, you may have one
+        of the following problems:
+      </p>
+      <ol>
+        <li>The patters contain a bug, or simply wont do as you
+        expect. In order to reduce the amount of patters, they are
+        usually cut some slack.</li>
+        <li>The patterns may be for an unexpected, unofficial or
+        outdated dialect of the language. For example, the turkish
+        patterns were (and maybe still are) made for 17c Osman rather
+        than modern turkish.</li>
+        <li>The word may contain invisible characters which prevent it
+        from being parsed properly from the content stream, or from
+        being properly matched. Examples of such characters are the
+        soft hyphen (U+00AD) and the zero width joiner (U+200D). You
+        have to remove them in order to get the words hyphenated
+        properly. OTOH, you can use them in order to prevent certain
+        (unwanted, spurious or incorrect) hyphenations</li>
+        <li>If the word contains characters which can be composed from
+        other Unicode characters, or vice versa (e.g. U+00E4 "latin
+        small a with diaresis" and U+0061 U+0308 "latin small a"
+        "combining diaresis"), the patterns may just contain the
+        opposite form. FOP doesn't run <link
+        href="http://www.unicode.org/reports/tr15/">Unicode
+        normalization</link> on either the content nor on the
+        patterns. You have no choice but to check which form the
+        patterns use and adapt your FO source.</li>
+      </ol>
+    </section>
+    <section id="license-issues">
+      <title>License Issues</title>
+      <p>Many of the hyphenation files distributed with TeX and its offspring are
+       licenced under the <fork href="http://www.latex-project.org/lppl.html">LaTeX
+       Project Public License (LPPL)</fork>, which prevents them from being
+       distributed with Apache software. The LPPL puts restrictions on file names
+       in redistributed derived works which we feel can't guarantee. Some
+       hyphenation pattern files have other or additional restrictions, for
+       example against use for commercial purposes.</p>
+      <p>Although Apache FOP cannot redistribute hyphenation pattern files that do
+       not conform with its license scheme, that does not necessarily prevent users
+       from using such hyphenation patterns with FOP. However, it does place on
+       the user the responsibility for determining whether the user can rightly use
+       such hyphenation patterns under the hyphenation pattern license.</p>
+      <warning>The user is responsible to settle license issues for hyphenation
+       pattern files that are obtained from non-Apache sources.</warning>
+    </section>
+    <section id="sources">
+      <title>Sources of Custom Hyphenation Pattern Files</title>
+      <p>The most important source of hyphenation pattern files is the
+       <fork href="http://www.ctan.org/tex-archive/language/hyphenation/">CTAN TeX
+        Archive</fork>.</p>
+    </section>
+    <section id="install">
+      <title>Installing Custom Hyphenation Patterns</title>
+      <p>To install a custom hyphenation pattern for use with FOP:</p>
+      <ol>
+        <li>Convert the TeX hyphenation pattern file to the FOP format. The FOP
+         format is an xml file conforming to the DTD found at
+         <code>{fop-dir}/hyph/hyphenation.dtd</code>.</li>
+        <li>Name this new file following this schema:
+         <code>languageCode_countryCode.xml</code>. The country code is
+          optional, and should be used only if needed. For example:
+          <ul>
+            <li><code>en_US.xml</code> would be the file name for American
+             English hyphenation patterns.</li>
+            <li><code>it.xml</code> would be the file name for Italian
+             hyphenation patterns.</li>
+          </ul>
+          The language and country codes must match the XSL-FO input, which
+          follows <link href="http://www.ics.uci.edu/pub/ietf/http/related/iso639.txt">ISO
+          639</link> (languages) and <link href="http://www.ics.uci.edu/pub/ietf/http/related/iso3166.txt">ISO
+          3166</link> (countries). NOTE: The ISO 639/ISO 3166 convention is that
+          language names are written in lower case, while country codes are written
+          in upper case. FOP does not check whether the language and country specified
+          in the FO source are actually from the current standard, but it relies
+          on it being two letter strings in a few places. So you can make up your
+          own codes for custom hyphenation patterns, but they should be two
+          letter strings too (patches for proper handling extensions are welcome)</li>
+        <li>There are basically three ways to make the FOP-compatible hyphenation pattern 
+          file(s) accessible to FOP:
+          <ul>
+            <li>Download the precompiled JAR from <fork href="http://offo.sourceforge.net/hyphenation/index.html">OFFO
+            </fork> and place it either in the <code>{fop-dir}/lib</code> directory, or 
+             in a directory of your choice (and append the full path to the JAR to 
+             the environment variable <code>FOP_HYPHENATION_PATH</code>).</li>
+            <li>Download the desired FOP-compatible hyphenation pattern file(s) from 
+             <fork href="http://offo.sourceforge.net/hyphenation/index.html">OFFO</fork>,
+             and/or take your self created hyphenation pattern file(s), 
+             <ul>
+                <li>place them in the directory <code>{fop-dir}/hyph</code>, </li>
+                <li>or place them in a directory of your choice and set the Ant variable
+                <code>user.hyph.dir</code> to point to that directory (in
+                <code>build-local.properties</code>),</li>
+             </ul>
+             and run Ant with build target
+             <code>jar-hyphenation</code>. This will create a JAR containing the 
+             compiled patterns in <code>{fop-dir}/build</code> that will be added to the 
+             classpath on the next run.
+             (When FOP is built from scratch, and there are pattern source file(s) 
+             present in the directory pointed to by the
+             <code>user.hyph.dir</code> variable, this JAR will automatically 
+             be created from the supplied pattern(s)).</li>
+            <li>Put the pattern source file(s) into a directory of your choice and 
+             configure FOP to look for custom patterns in this directory, by setting the
+             <link href="configuration.html#hyphenation-dir">&lt;hyphenation-dir&gt;</link> 
+             configuration option.</li>
+          </ul>
+        </li>
+      </ol>
+      <warning>
+        Either of these three options will ensure hyphenation is working when using
+        FOP from the command-line. If FOP is being embedded, remember to add the location(s)
+        of the hyphenation JAR(s) to the CLASSPATH (option 1 and 2) or to set the 
+        <link href="configuration.html#hyphenation-dir">&lt;hyphenation-dir&gt;</link> 
+        configuration option programmatically (option 3).
+      </warning>
+    </section>
+  </section>
+  <section id="patterns">
+    <title>Hyphenation Patterns</title>
+    <p>If you would like to build your own hyphenation pattern files, or modify
+     existing ones, this section will help you understand how to do so. Even
+     when creating a pattern file from scratch, it may be beneficial to start
+     with an existing file and modify it. See <fork href="http://offo.sourceforge.net/hyphenation/index.html">
+     OFFO's Hyphenation page</fork> for examples. 
+     Here is a brief explanation of the contents of FOP's hyphenation patterns:</p>
+    <warning>The remaining content of this section should be considered "draft"
+     quality. It was drafted from theoretical literature, and has not been
+     tested against actual FOP behavior. It may contain errors or omissions.
+     Do not rely on these instructions without testing everything stated here.
+     If you use these instructions, please provide feedback on the
+     <link href="../maillist.html#fop-user">FOP User mailing list</link>, either
+     confirming their accuracy, or raising specific problems that we can
+     address.</warning>
+    <ul>
+      <li>The root of the pattern file is the &lt;hyphenation-info> element.</li>
+      <li>&lt;hyphen-char>: its attribute "value" contains the character signalling
+       a hyphen in the &lt;exceptions> section. It has nothing to do with the
+       hyphenation character used in FOP, use the XSLFO hyphenation-character
+       property for defining the hyphenation character there. At some points
+       a dash U+002D is hardwired in the code, so you'd better use this too
+       (patches to rectify the situation are welcome). There is no default,
+       if you declare exceptions with hyphenations, you must declare the
+       hyphen-char too.</li>
+      <li>&lt;hyphen-min> contains two attributes:
+        <ul>
+          <li>before: the minimum number of characters in a word allowed to exist
+           on a line immediately preceding a hyphenated word-break.</li>
+          <li>after: the minimum number of characters in a word allowed to exist
+           on a line immediately after a hyphenated word-break.</li>
+        </ul>
+        This element is unused and not even read. It should be considered a
+        documentation for parameters used during pattern generation.
+      </li>
+      <li>&lt;classes> contains whitespace-separated character sets. The members
+       of each set should be treated as equivalent for purposes of hyphenation,
+       usually upper and lower case of the same character. The first character
+       of the set is the canonical character, the patterns and exceptions
+       should only contain these canonical representation characters (except
+       digits for weight, the period (.) as word delimiter in the patterns and
+       the hyphen char in exceptions, of course).</li>
+      <li>&lt;exceptions> contains whitespace-separated words, each of which
+       has either explicit hyphen characters to denote acceptable breakage
+       points, or no hyphen characters, to indicate that this word should
+       never be hyphenated, or contain explicit &lt;hyp> elements for specifying
+       changes of spelling due to hyphenation (like backen -> bak-ken or
+       Stoffarbe -> Stoff-farbe in the old german spelling). Exceptions override
+       the patterns described below. Explicit &lt;hyp> declarations don't work
+       yet (patches welcome). Exceptions are generally a bit brittle, test
+       carefully.</li>
+      <li>&lt;patterns> includes whitespace-separated patterns, which are what
+       drive most hyphenation decisions. The characters in these patterns are
+       explained as follows:
+        <ul>
+          <li>non-numeric characters represent characters in a sub-word to be
+           evaluated</li>
+          <li>the period character (.) represents a word boundary, i.e. either
+           the beginning or ending of a word</li>
+          <li>numeric characters represent a scoring system for indicating the
+           acceptability of a hyphen in this location. Odd numbers represent an
+           acceptable location for a hyphen, with higher values overriding lower
+           inhibiting values. Even numbers indicate an unacceptable location, with
+           higher values overriding lower values indicating an acceptable position.
+           A value of zero (inhibiting) is implied when there is no number present.
+           Generally patterns are constructed so that valuse greater than 4 are rare.
+           Due to a bug currently patterns with values of 8 and greater don't
+           have an effect, so don't wonder.</li>
+        </ul>
+        Here are some examples from the English patterns file:
+        <ul>
+          <li>Knuth (<em>The TeXBook</em>, Appendix H) uses the example <strong>hach4</strong>, which indicates that it is extremely undesirable to place a hyphen after the substring "hach", for example in the word "toothach-es".</li>
+          <li><strong>.leg5e</strong> indicates that "leg-e", when it occurs at the beginning of a word, is a very good place to place a hyphen, if one is needed. Words like "leg-end" and "leg-er-de-main" fit this pattern.</li>
+        </ul>
+        Note that the algorithm that uses this data searches for each of the word's substrings in the patterns, and chooses the <em>highest</em> value found for letter combination.
+      </li>
+    </ul>
+    <p>If you want to convert a TeX hyphenation pattern file, you have to undo
+     the TeX encoding for non-ASCII text. FOP uses Unicode, and the patterns
+     must be proper Unicode too. You should be aware of the XML encoding issues,
+     preferably use a good Unicode editor.</p>
+    <p>Note that FOP does not do Unicode character normalization. If you use
+     combining chars for accents and other character decorations, you must
+     declare character classes for them, and use the same sequence of base character
+     and combining marks in the XSLFO source, otherwise the pattern wouldn't match.
+     Fortunately, Unicode provides precomposed characters for all important cases
+     in common languages, until now nobody run seriously into this issue. Some dead
+     languages and dialects, especially ancient ones, may pose a real problem
+     though.</p>
+    <p>If you want to generate your own patterns, an open-source utility called
+     patgen is available on many Unix/Linux distributions and every TeX
+     distribution which can be used to assist in
+     creating pattern files from dictionaries. Pattern creation for languages like
+     english or german is an art. If you can, read Frank Liang's original paper
+     "Word Hy-phen-a-tion by Com-pu-ter" (yes, with hyphens). It is not available
+     online. The original patgen.web source, included in the TeX source distributions,
+     contains valuable comments, unfortunately technical details obscure often the
+     high level issues. Another important source is
+     <fork href="http://www.ctan.org/tex-archive/systems/knuth/tex/texbook.tex">The
+     TeX Book</fork>, appendix H (either read the TeX source, or run it through
+     TeX to typeset it). Secondary articles, for example the works by Petr Sojka,
+     may alos give some much needed insigth into problems arising in automated
+     hyphenation.</p>
+  </section>
+  </body>
+</document>

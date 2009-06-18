@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2006 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks markers and white-space-collapse inheritance.
+      This is currently incorrectly handled in that the white-space-collapse property
+      value active in the fo:marker context is applied instead of the value of the
+      white-space-collapse property the fo:retrieve-marker-context.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+          <fo:region-body margin-top="1in" margin-bottom="1in"/>
+          <fo:region-before extent="1in"/>
+          <fo:region-after extent="1in"/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal">
+        <fo:static-content flow-name="xsl-region-before">
+          <fo:block background-color="yellow" white-space-collapse="false">
+            1. Marker <fo:retrieve-marker retrieve-class-name="m1" />
+          </fo:block>
+          <fo:block background-color="yellow">
+            1. Marker <fo:retrieve-marker retrieve-class-name="m1" />
+          </fo:block>
+        </fo:static-content>
+        <fo:static-content flow-name="xsl-region-after">
+          <fo:block background-color="yellow" white-space-collapse="false">
+            2. Marker <fo:retrieve-marker retrieve-class-name="m2" />
+          </fo:block>
+          <fo:block background-color="yellow">
+            2. Marker <fo:retrieve-marker retrieve-class-name="m2" />
+          </fo:block>
+        </fo:static-content>
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block background-color="red" white-space-collapse="false">
+            <fo:marker marker-class-name="m1">
+              <fo:block>
+                First   marker  with  whitespace  around
+              </fo:block>
+            </fo:marker>
+          </fo:block>
+          <fo:block background-color="green">
+            <fo:marker marker-class-name="m2">
+              <fo:block>
+                Second  marker  with  whitespace  around
+              </fo:block>
+            </fo:marker>
+          </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <!-- These checks do not have the correct values -->
+    <eval expected="1" xpath="count(//regionBefore/block[1]/block/lineArea/text/space)"/>
+    <eval expected="4" xpath="count(//regionBefore/block[2]/block/lineArea/text/space)"/>
+
+    <eval expected="1" xpath="count(//regionAfter/block[1]/block/lineArea/text/space)"/>
+    <eval expected="4" xpath="count(//regionAfter/block[2]/block/lineArea/text/space)"/>
+  </checks>
+</testcase>

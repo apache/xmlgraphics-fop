@@ -1,0 +1,144 @@
+$Id$
+
+==============================================================================
+  APACHE FOP  -  README
+==============================================================================
+
+Contents of this file:
+ - What is FOP?
+ - Where to get help?
+ - How do I build FOP?
+ - How do I run FOP?
+ - Release Notes
+
+==============================================================================
+
+
+What is FOP?
+---------------
+
+Apache FOP is the world's first print formatter driven by XSL formatting 
+objects. It is a Java application that reads a formatting object tree 
+conforming to the XSL 1.0 Recommendation (15 October 2001) and then turns it 
+into a PDF document, certain other output formats or allows you to preview it 
+directly on screen.
+
+Apache FOP is part of Apache's XML Graphics project. The homepage of Apache 
+FOP is http://xmlgraphics.apache.org/fop/.
+    
+    
+Where to get help?
+---------------------    
+    
+http://xmlgraphics.apache.org/fop/gethelp.html
+    
+A mailing list where you can get all your questions about FOP answered is at 
+fop-users@xmlgraphics.apache.org. You can subscribe by sending an empty mail 
+to fop-users-subscribe@xmlgraphics.apache.org.
+
+Before you post any questions, please have a look at the FAQ at 
+http://xmlgraphics.apache.org/fop/faq.html and FO help page at 
+http://xmlgraphics.apache.org/fop/fo.html.
+
+Please report bugs to bugzilla at http://issues.apache.org/bugzilla/
+
+
+How do I build FOP?
+----------------------
+
+If you've downloaded a binary distribution, you don't need to build FOP.
+
+Otherwise, please follow the instructions found here:
+http://xmlgraphics.apache.org/fop/0.90/compiling.html
+
+
+How do I run FOP?
+--------------------
+
+Simply by typing "fop" on the command-line. Without any parameters you
+will receive a screen with instruction on how to call FOP from the
+command-line.
+
+For more details, see: http://xmlgraphics.apache.org/fop/latest/running.html
+
+==============================================================================
+  RELEASE NOTES
+==============================================================================
+
+Version 0.91 beta
+---------------------
+
+We don't list all the changes since the 0.20.5 release, since this release 
+represents the first after a complete redesign of the FOP codebase. This 
+is basically a new software. But the changes since 0.90 alpha 1 can be looked
+up under http://xmlgraphics.apache.org/fop/changes.html.
+
+Upgrading from 0.20.5:
+Please read http://xmlgraphics.apache.org/fop/latest/upgrading.html
+
+The Apache FOP team asks you for your continued feedback on the new software.
+We're also interested in success stories with the new release. So if the
+latest version works fine for you, please tell us! And if it doesn't, you
+may tell us as well, of course. ;-)
+
+Caveats:
+
+    - This release is a beta release. If you intend to use this software 
+      in a production environment, please perform careful testing.
+    - The API is not to be considered stable, yet. Please be prepared 
+      for the API to be changed in a backwards-incompatible way.
+    - You may experience different behaviour compared to version 0.20.5.
+      Please consult the "Upgrading" page indicated above for details.
+
+Known issues:
+
+    - PCL, MIF and SVG support have not been restored, yet.
+    - Java2D/AWT support contains some problems, for example with 
+      block-containers.
+    - Support for kerning has not been restored, yet.
+    - Auto table layout is not implemented, yet.
+    - The collapsing border model on tables is not implemented, yet. Please 
+      use border-collapse="separate" for now.
+    - Footnotes may overlap with text of the region-body in multi-column 
+      documents.
+    - Space resolution does not work between footnote regions.
+    - There's a problem involving nested block-containers and 
+      reference-orientation 180/-180 (Bugzilla #36391)
+    - block-containers with no height currently don't create a fence for
+      spaces as they should (they behave like a normal block).
+    - Preserved linefeeds in fo:character are not handled correctly.
+    - Zero-width spaces are not handled correctly.
+    - An empty block currently produces a fence for stacking constraints
+      which it shouldn't.
+    - There are several small problems around white space handling.
+    - Images currently don't shrink so they fit on a page when they are 
+      too big and shrinking is allowed to happen.
+    - Block-level content in fo:inlines may produce unwelcome results.
+    - inline-container may not work as expected.
+    - letter-spacing and word-spacing properties may not work as expected.
+    - leaders with leader-pattern="use-content" may not work as expected.
+    - keep-with-previous doesn't work inside tables and lists, yet.
+    - White space on direct inline-level children of a marker is not 
+      handled correctly.
+    - If two consecutive pages don't have the same available width, the 
+      content currently isn't properly fit into the available space on
+      the new page.
+    - background-images on page-number-citations are not placed correctly.
+    - Not all FO elements can be referenced by their "id", most notably:
+      table-body, table-header, table-footer and table-row.
+    - The backgrounds of table-body, table-header, table-footer and 
+      table-column are not painted, yet.
+    - Border and padding conditionality are not supported on table-cells, yet.
+    - Copy/Paste from PDF content in Acrobat Reader is not supported for
+      text using embedded TrueType fonts.
+    - Column balancing in multi-column documents may not work as expected
+      (Bugzilla #36356)
+    - Omitting fo:table-column or having fo:table-column without a column-width 
+      and attempting to create columns implicitly from the first
+      table row is not implemented, yet (Bugzilla #35656).
+    - Leaders with the "rule" pattern don't work for PostScript output.
+    - break-after may in some cases cause subsequent content to be swallowed. 
+      Please use break-before, if possible.
+    - Internal basic-links don't point to the exact location on a page, yet, 
+      as they did in 0.20.5. Currently you land in the upper left corner of 
+      the page.

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2005 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks the value of the penalties between
+      KnuthBlockBoxes in inline context, with and without keep conditions.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+
+      <fo:page-sequence master-reference="normal" white-space-collapse="true">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block><fo:inline>Before
+              <fo:block id="b1" background-color="silver"><fo:inline>Before1
+                  <fo:block id="b11" background-color="grey">A1=B1,</fo:block>
+                  <fo:block id="b12">C1=D1.</fo:block>after1</fo:inline></fo:block>
+              <fo:block id="b2" background-color="lightgrey" keep-together.within-page="always"><fo:inline>Before2
+                  <fo:block id="b21" background-color="grey">A2=B2,</fo:block>
+                  <fo:block id="b22">C2=D2.</fo:block>after2</fo:inline></fo:block>
+              <fo:block id="b3" background-color="silver"><fo:inline>Before3
+                  <fo:block id="b31" keep-with-next.within-page="always" background-color="grey">A3=B3,</fo:block>
+                  <fo:block id="b32">C3=D3.</fo:block>after3</fo:inline></fo:block>after</fo:inline></fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <element-list category="breaker">
+      <skip>5</skip>
+      <!-- penalty between blocks b11 and b12, set by InlineLM in b1 -->
+      <penalty w="0" p="0"/>
+      <skip>6</skip>
+      <!-- penalty between blocks b21 and b22, set by InlineLM in b2 -->
+      <!-- keep-together.within-page="always" -->
+      <penalty w="0" p="1000"/>
+      <skip>6</skip>
+      <!-- penalty between blocks b31 and b32, set by InlineLM in b3 -->
+      <!-- keep-with-next.within-page="always" -->
+      <penalty w="0" p="1000"/>
+      <skip>5</skip>
+      <skip>3</skip>
+    </element-list>
+  </checks>
+</testcase>			          

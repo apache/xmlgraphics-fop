@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+  Copyright 2005 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
+         xmlns:test="http://xmlgraphics.apache.org/fop/test">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="lr-tb-0"
+          page-width="indefinite" page-height="indefinite"
+          writing-mode="lr-tb"
+          margin="20pt">
+      <!-- page-width should properly fall back to 8.26 * 72000 -->
+      <test:assert property="page-width" expected="594720mpt" />
+      <fo:region-body />
+    </fo:simple-page-master>
+    <fo:simple-page-master master-name="lr-tb-90" 
+          page-width="indefinite" page-height="indefinite"
+          writing-mode="lr-tb" reference-orientation="90"
+          margin="20pt">
+      <!-- page-height should properly fall back to 11 * 72000 -->
+      <test:assert property="page-height" expected="792000mpt" />
+      <fo:region-body />
+    </fo:simple-page-master>
+    <fo:simple-page-master master-name="tb-rl-0"
+          page-width="indefinite" page-height="indefinite"
+          writing-mode="tb-rl" reference-orientation="0"
+          margin="20pt">
+      <!-- page-height should properly fall back to 11 * 72000 -->
+      <test:assert property="page-height" expected="792000mpt" />
+      <fo:region-body />
+    </fo:simple-page-master>
+    <fo:simple-page-master master-name="tb-rl-90"
+          page-width="indefinite" page-height="indefinite"
+          writing-mode="tb-rl" reference-orientation="90"
+          margin="20pt">
+      <!-- page-width should properly fall back to 8.26 * 72000 -->
+      <test:assert property="page-width" expected="594720mpt" />
+      <fo:region-body />
+    </fo:simple-page-master>
+  </fo:layout-master-set>
+  <fo:page-sequence master-reference="lr-tb-0">
+    <fo:flow flow-name="xsl-region-body">
+      <fo:block>Testing page-height and page-width both "indefinite"</fo:block>
+    </fo:flow>
+  </fo:page-sequence>
+  <fo:page-sequence master-reference="lr-tb-90">
+    <fo:flow flow-name="xsl-region-body">
+      <fo:block>Testing page-height and page-width both "indefinite"</fo:block>
+    </fo:flow>
+  </fo:page-sequence>
+  <fo:page-sequence master-reference="tb-rl-0">
+    <fo:flow flow-name="xsl-region-body">
+      <fo:block>Testing page-height and page-width both "indefinite"</fo:block>
+    </fo:flow>
+  </fo:page-sequence>
+  <fo:page-sequence master-reference="tb-rl-90">
+    <fo:flow flow-name="xsl-region-body">
+      <fo:block>Testing page-height and page-width both "indefinite"</fo:block>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>

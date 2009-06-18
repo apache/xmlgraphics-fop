@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2005 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+  <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:test="http://xmlgraphics.apache.org/fop/test">
+    <fo:layout-master-set>
+      <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+        <fo:region-body/>
+      </fo:simple-page-master>
+    </fo:layout-master-set>
+    <fo:page-sequence master-reference="normal">
+      <fo:flow flow-name="xsl-region-body">
+        <fo:block white-space="normal">
+          <test:assert property="linefeed-treatment" expected="TREAT_AS_SPACE" />
+          <test:assert property="white-space-treatment" expected="IGNORE_IF_SURROUNDING_LINEFEED" />
+          <test:assert property="white-space-collapse" expected="TRUE" />
+          <test:assert property="wrap-option" expected="WRAP" />
+          Block 1: testing white-space="normal"
+        </fo:block>
+        <fo:block white-space="pre">
+          <test:assert property="linefeed-treatment" expected="PRESERVE" />
+          <test:assert property="white-space-treatment" expected="PRESERVE" />
+          <test:assert property="white-space-collapse" expected="FALSE" />
+          <test:assert property="wrap-option" expected="NO_WRAP" />
+          Block 2: testing white-space="pre"
+        </fo:block>
+        <fo:block white-space="no-wrap">
+          <test:assert property="linefeed-treatment" expected="TREAT_AS_SPACE" />
+          <test:assert property="white-space-treatment" expected="IGNORE_IF_SURROUNDING_LINEFEED" />
+          <test:assert property="white-space-collapse" expected="TRUE" />
+          <test:assert property="wrap-option" expected="NO_WRAP" />
+          Block 3: testing white-space="no-wrap"
+        </fo:block>
+      </fo:flow>
+    </fo:page-sequence>
+  </fo:root>
+
