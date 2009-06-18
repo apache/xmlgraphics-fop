@@ -1,0 +1,97 @@
+<?xml version="1.0"?>
+
+<!-- =========================================================================== -->
+
+<project default="runtest" basedir=".">
+
+  <!-- =================================================================== -->
+  <!-- Initialization target                                               -->
+  <!-- =================================================================== -->
+  <target name="init">
+    <tstamp/>
+    <mkdir dir="tests"/>
+    <property name="referenceDir" value="reference"/>
+    <property name="testDir" value="tests"/>
+    <property name="foDir" value="fo"/>
+    <taskdef name="fop" classname="Fop"/>
+    <taskdef name="compare" classname="Compare"/>
+
+
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Help on usage                                                       -->
+  <!-- =================================================================== -->
+  <target name="usage">
+    <echo message=""/>
+    <echo message=""/>
+    <echo message="USAGE of runtests"/>
+    <echo message="-------------------------------------------------------------"/>
+    <echo message=""/>
+    <echo message=" available targets are:"/>
+    <echo message=""/>
+    <echo message="   compare  --> generates new pdf test files and compares them to reference files (default)"/>
+    <echo message="   reference --> generates new reference pdf files"/>
+    <echo message=" See the comments inside the build.xml file for more details."/>
+    <echo message="-------------------------------------------------------------"/>
+    <echo message=""/>
+    <echo message=""/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Produces new test pdf files                                         -->
+  <!-- =================================================================== -->
+  <target name="creating new test pdf files" depends="init">
+    <fop fofile="${foDir}/normal.fo" pdffile="${testDir}/normal.pdf"/>
+    <fop fofile="${foDir}/table.fo"  pdffile="${testDir}/table.pdf"/>
+    <fop fofile="${foDir}/list.fo"   pdffile="${testDir}/list.pdf"/>
+    <fop fofile="${foDir}/link.fo"   pdffile="${testDir}/link.pdf"/> 
+    <fop fofile="${foDir}/border.fo"   pdffile="${testDir}/border.pdf"/> 
+    <fop fofile="${foDir}/images.fo"   pdffile="${testDir}/images.pdf"/> 
+    <fop fofile="${foDir}/extensive.fo"   pdffile="${testDir}/extensive.pdf"/> 
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Compares new test pdf files to reference pdf files                  -->
+  <!-- =================================================================== -->
+  <target name="compare" depends ="creating new test pdf files">
+    <compare referenceDirectory  = "${referenceDir}" 
+             testDirectory       = "${testDir}" 
+             filenames           = "normal.pdf,table.pdf,list.pdf,link.pdf,border.pdf,images.pdf,extensive.pdf"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Produces new reference pdf files                                         -->
+  <!-- =================================================================== -->
+  <target name="reference">
+    <fop fofile="${foDir}/normal.fo" pdffile="${referenceDir}/normal.pdf"/>
+    <fop fofile="${foDir}/table.fo"  pdffile="${referenceDir}/table.pdf"/>
+    <fop fofile="${foDir}/list.fo"   pdffile="${referenceDir}/list.pdf"/>
+    <fop fofile="${foDir}/link.fo"   pdffile="${referenceDir}/link.pdf"/>
+    <fop fofile="${foDir}/border.fo"   pdffile="${referenceDir}/border.pdf"/>
+    <fop fofile="${foDir}/images.fo"   pdffile="${referenceDir}/images.pdf"/>
+    <fop fofile="${foDir}/extensive.fo"   pdffile="${referenceDir}/extensive.pdf"/>
+  </target>
+
+
+
+
+  <!-- =================================================================== -->
+  <!-- Starts the test                                                     -->
+  <!-- =================================================================== -->
+  <target name="runtest" depends="compare">
+    <echo message="Running Fop tests"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Clean targets                                                       -->
+  <!-- =================================================================== -->
+  <target name="clean" depends="init">
+    <deltree dir="${build.dir}"/>
+    
+  </target>
+
+
+</project>
+
+<!-- End of file -->

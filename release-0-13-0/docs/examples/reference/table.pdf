@@ -1,0 +1,189 @@
+%PDF-1.3
+1 0 obj
+<< /Type /Catalog
+/Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages
+/Count 1
+/Kids [18 0 R ] >>
+endobj
+3 0 obj
+<< /Type /Info
+/Producer (FOP 0.12.2 [dev]) >>
+endobj
+4 0 obj
+<< 
+/Font << /F11 5 0 R /F10 6 0 R /F9 7 0 R /F8 8 0 R /F7 9 0 R /F6 10 0 R /F5 11 0 R /F4 12 0 R /F3 13 0 R /F2 14 0 R /F1 15 0 R /F12 16 0 R >> 
+/ProcSet [ /PDF /ImageC /Text ] >> 
+endobj
+5 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F11
+/BaseFont /Courier-Bold
+/Encoding /WinAnsiEncoding >>
+endobj
+6 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F10
+/BaseFont /Courier-Oblique
+/Encoding /WinAnsiEncoding >>
+endobj
+7 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F9
+/BaseFont /Courier
+/Encoding /WinAnsiEncoding >>
+endobj
+8 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F8
+/BaseFont /Times-BoldItalic
+/Encoding /WinAnsiEncoding >>
+endobj
+9 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F7
+/BaseFont /Times-Bold
+/Encoding /WinAnsiEncoding >>
+endobj
+10 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F6
+/BaseFont /Times-Italic
+/Encoding /WinAnsiEncoding >>
+endobj
+11 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F5
+/BaseFont /Times-Roman
+/Encoding /WinAnsiEncoding >>
+endobj
+12 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F4
+/BaseFont /Helvetica-BoldOblique
+/Encoding /WinAnsiEncoding >>
+endobj
+13 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F3
+/BaseFont /Helvetica-Bold
+/Encoding /WinAnsiEncoding >>
+endobj
+14 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F2
+/BaseFont /Helvetica-Oblique
+/Encoding /WinAnsiEncoding >>
+endobj
+15 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F1
+/BaseFont /Helvetica
+/Encoding /WinAnsiEncoding >>
+endobj
+16 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F12
+/BaseFont /Courier-BoldOblique
+/Encoding /WinAnsiEncoding >>
+endobj
+17 0 obj
+<< /Length 1420 >>
+stream
+BT
+/F3 10 Tf
+1 0 0 1 85.875 721.415 Tm (Content) Tj
+/F1 10 Tf
+1 0 0 1 86.445 708.165 Tm (A\)) Tj
+1 0 0 1 99.225 708.165 Tm (What) Tj
+1 0 0 1 125.345 708.165 Tm (is) Tj
+1 0 0 1 135.345 708.165 Tm (FOP?) Tj
+1 0 0 1 86.445 696.915 Tm (B\)) Tj
+1 0 0 1 99.225 696.915 Tm (Downloading) Tj
+1 0 0 1 159.805 696.915 Tm (FOP) Tj
+1 0 0 1 85.895 685.665 Tm (C\)) Tj
+1 0 0 1 99.225 685.665 Tm (Running) Tj
+1 0 0 1 139.245 685.665 Tm (FOP) Tj
+1 0 0 1 85.895 674.415 Tm (D\)) Tj
+1 0 0 1 99.225 674.415 Tm (Embedding) Tj
+1 0 0 1 152.585 674.415 Tm (FOP) Tj
+1 0 0 1 86.445 663.165 Tm (E\)) Tj
+1 0 0 1 99.225 663.165 Tm (What's) Tj
+1 0 0 1 132.255 663.165 Tm (Implemented?) Tj
+1 0 0 1 87.005 651.915 Tm (F\)) Tj
+1 0 0 1 99.225 651.915 Tm (Limitations) Tj
+1 0 0 1 85.335 640.665 Tm (G\)) Tj
+1 0 0 1 99.225 640.665 Tm (Bugs) Tj
+1 0 0 1 85.895 629.415 Tm (H\)) Tj
+1 0 0 1 99.225 629.415 Tm (Compiling) Tj
+1 0 0 1 146.455 629.415 Tm (FOP) Tj
+1 0 0 1 90.335 618.165 Tm (I\)) Tj
+1 0 0 1 99.225 618.165 Tm (Getting) Tj
+1 0 0 1 134.245 618.165 Tm (involved) Tj
+1 0 0 1 88.115 606.915 Tm (J\)) Tj
+1 0 0 1 99.225 606.915 Tm (FOP) Tj
+1 0 0 1 122.565 606.915 Tm (Relevant) Tj
+1 0 0 1 164.805 606.915 Tm (Specifications) Tj
+1 0 0 1 86.445 595.665 Tm (K\)) Tj
+1 0 0 1 99.225 595.665 Tm (Licence) Tj
+/F5 10 Tf
+1 0 0 1 480.305 804.815 Tm (FOP) Tj
+1 0 0 1 501.145 804.815 Tm (-) Tj
+1 0 0 1 506.975 804.815 Tm (p.) Tj
+1 0 0 1 516.975 804.815 Tm (1) Tj
+ET
+
+endstream
+endobj
+18 0 obj
+<< /Type /Page
+/Parent 2 0 R
+/MediaBox [ 0 0 595 841 ]
+/Resources 4 0 R
+/Contents 17 0 R
+>>
+endobj
+xref
+0 19
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000117 00000 n 
+0000000179 00000 n 
+0000000377 00000 n 
+0000000488 00000 n 
+0000000602 00000 n 
+0000000707 00000 n 
+0000000821 00000 n 
+0000000929 00000 n 
+0000001040 00000 n 
+0000001150 00000 n 
+0000001270 00000 n 
+0000001383 00000 n 
+0000001499 00000 n 
+0000001607 00000 n 
+0000001726 00000 n 
+0000003198 00000 n 
+trailer
+<<
+/Size 19
+/Root 1 0 R
+/Info 3 0 R
+>>
+startxref
+3306
+%%EOF

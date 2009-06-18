@@ -1,0 +1,1272 @@
+%PDF-1.3
+1 0 obj
+<< /Type /Catalog
+/Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages
+/Count 7
+/Kids [18 0 R 20 0 R 22 0 R 24 0 R 26 0 R 28 0 R 30 0 R ] >>
+endobj
+3 0 obj
+<< /Type /Info
+/Producer (FOP 0.12.2 [dev]) >>
+endobj
+4 0 obj
+<< 
+/Font << /F11 5 0 R /F10 6 0 R /F9 7 0 R /F8 8 0 R /F7 9 0 R /F6 10 0 R /F5 11 0 R /F4 12 0 R /F3 13 0 R /F2 14 0 R /F1 15 0 R /F12 16 0 R >> 
+/ProcSet [ /PDF /ImageC /Text ] >> 
+endobj
+5 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F11
+/BaseFont /Courier-Bold
+/Encoding /WinAnsiEncoding >>
+endobj
+6 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F10
+/BaseFont /Courier-Oblique
+/Encoding /WinAnsiEncoding >>
+endobj
+7 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F9
+/BaseFont /Courier
+/Encoding /WinAnsiEncoding >>
+endobj
+8 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F8
+/BaseFont /Times-BoldItalic
+/Encoding /WinAnsiEncoding >>
+endobj
+9 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F7
+/BaseFont /Times-Bold
+/Encoding /WinAnsiEncoding >>
+endobj
+10 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F6
+/BaseFont /Times-Italic
+/Encoding /WinAnsiEncoding >>
+endobj
+11 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F5
+/BaseFont /Times-Roman
+/Encoding /WinAnsiEncoding >>
+endobj
+12 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F4
+/BaseFont /Helvetica-BoldOblique
+/Encoding /WinAnsiEncoding >>
+endobj
+13 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F3
+/BaseFont /Helvetica-Bold
+/Encoding /WinAnsiEncoding >>
+endobj
+14 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F2
+/BaseFont /Helvetica-Oblique
+/Encoding /WinAnsiEncoding >>
+endobj
+15 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F1
+/BaseFont /Helvetica
+/Encoding /WinAnsiEncoding >>
+endobj
+16 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F12
+/BaseFont /Courier-BoldOblique
+/Encoding /WinAnsiEncoding >>
+endobj
+17 0 obj
+<< /Length 13043 >>
+stream
+BT
+/F1 12 Tf
+1 0 0 1 100.0 732.184 Tm (A) Tj
+1 0 0 1 111.34 732.184 Tm (Block) Tj
+1 0 0 1 360.608 718.684 Tm (An) Tj
+1 0 0 1 378.62 718.684 Tm (End) Tj
+1 0 0 1 403.304 718.684 Tm (Aligned) Tj
+1 0 0 1 446.66 718.684 Tm (Block) Tj
+1 0 0 1 241.314 705.184 Tm (A) Tj
+1 0 0 1 252.654 705.184 Tm (Centered) Tj
+1 0 0 1 305.346 705.184 Tm (Block) Tj
+1 0 0 1 100.0 691.684 Tm (This) Tj
+1 0 0 1 126.004 691.684 Tm (is) Tj
+1 0 0 1 138.004 691.684 Tm (a) Tj
+1 0 0 1 148.012 691.684 Tm (multiple) Tj
+1 0 0 1 192.688 691.684 Tm (line) Tj
+1 0 0 1 214.696 691.684 Tm (block) Tj
+1 0 0 1 246.04 691.684 Tm (that) Tj
+1 0 0 1 269.392 691.684 Tm (extends) Tj
+1 0 0 1 314.752 691.684 Tm (over) Tj
+1 0 0 1 341.428 691.684 Tm (more) Tj
+1 0 0 1 372.1 691.684 Tm (than) Tj
+1 0 0 1 398.788 691.684 Tm (one) Tj
+1 0 0 1 422.14 691.684 Tm (line.) Tj
+1 0 0 1 100.0 678.184 Tm (There) Tj
+1 0 0 1 134.68 678.184 Tm (should) Tj
+1 0 0 1 173.368 678.184 Tm (be) Tj
+1 0 0 1 190.048 678.184 Tm (appropriate) Tj
+1 0 0 1 254.08 678.184 Tm (line) Tj
+1 0 0 1 276.088 678.184 Tm (breaks.) Tj
+1 0 0 1 318.772 678.184 Tm (Alignment) Tj
+1 0 0 1 375.46 678.184 Tm (is) Tj
+1 0 0 1 387.46 678.184 Tm (default.) Tj
+1 0 0 1 131.852 664.684 Tm (This) Tj
+1 0 0 1 157.856 664.684 Tm (is) Tj
+1 0 0 1 169.856 664.684 Tm (a) Tj
+1 0 0 1 179.864 664.684 Tm (multiple) Tj
+1 0 0 1 224.54 664.684 Tm (line) Tj
+1 0 0 1 246.548 664.684 Tm (block) Tj
+1 0 0 1 277.892 664.684 Tm (that) Tj
+1 0 0 1 301.244 664.684 Tm (extends) Tj
+1 0 0 1 346.604 664.684 Tm (over) Tj
+1 0 0 1 373.28 664.684 Tm (more) Tj
+1 0 0 1 403.952 664.684 Tm (than) Tj
+1 0 0 1 430.64 664.684 Tm (one) Tj
+1 0 0 1 453.992 664.684 Tm (line.) Tj
+1 0 0 1 165.188 651.184 Tm (There) Tj
+1 0 0 1 199.868 651.184 Tm (should) Tj
+1 0 0 1 238.556 651.184 Tm (be) Tj
+1 0 0 1 255.236 651.184 Tm (appropriate) Tj
+1 0 0 1 319.268 651.184 Tm (line) Tj
+1 0 0 1 341.276 651.184 Tm (breaks.) Tj
+1 0 0 1 383.96 651.184 Tm (Alignment) Tj
+1 0 0 1 440.648 651.184 Tm (is) Tj
+1 0 0 1 452.648 651.184 Tm (end.) Tj
+1 0 0 1 115.926 637.684 Tm (This) Tj
+1 0 0 1 141.93 637.684 Tm (is) Tj
+1 0 0 1 153.93 637.684 Tm (a) Tj
+1 0 0 1 163.938 637.684 Tm (multiple) Tj
+1 0 0 1 208.614 637.684 Tm (line) Tj
+1 0 0 1 230.622 637.684 Tm (block) Tj
+1 0 0 1 261.966 637.684 Tm (that) Tj
+1 0 0 1 285.318 637.684 Tm (extends) Tj
+1 0 0 1 330.678 637.684 Tm (over) Tj
+1 0 0 1 357.354 637.684 Tm (more) Tj
+1 0 0 1 388.026 637.684 Tm (than) Tj
+1 0 0 1 414.714 637.684 Tm (one) Tj
+1 0 0 1 438.066 637.684 Tm (line.) Tj
+1 0 0 1 119.256 624.184 Tm (There) Tj
+1 0 0 1 153.936 624.184 Tm (should) Tj
+1 0 0 1 192.624 624.184 Tm (be) Tj
+1 0 0 1 209.304 624.184 Tm (appropriate) Tj
+1 0 0 1 273.336 624.184 Tm (line) Tj
+1 0 0 1 295.344 624.184 Tm (breaks.) Tj
+1 0 0 1 338.028 624.184 Tm (Alignment) Tj
+1 0 0 1 394.716 624.184 Tm (is) Tj
+1 0 0 1 406.716 624.184 Tm (centered.) Tj
+1 0 0 1 100.0 610.684 Tm (This) Tj
+1 0 0 1 128.658 610.684 Tm (is) Tj
+1 0 0 1 143.312 610.684 Tm (a) Tj
+1 0 0 1 155.974 610.684 Tm (multiple) Tj
+1 0 0 1 203.304 610.684 Tm (line) Tj
+1 0 0 1 227.966 610.684 Tm (block) Tj
+1 0 0 1 261.964 610.684 Tm (that) Tj
+1 0 0 1 287.97 610.684 Tm (extends) Tj
+1 0 0 1 335.984 610.684 Tm (over) Tj
+1 0 0 1 365.314 610.684 Tm (more) Tj
+1 0 0 1 398.64 610.684 Tm (than) Tj
+1 0 0 1 427.982 610.684 Tm (one) Tj
+1 0 0 1 453.988 610.684 Tm (line.) Tj
+1 0 0 1 100.0 597.184 Tm (There) Tj
+1 0 0 1 135.584 597.184 Tm (should) Tj
+1 0 0 1 175.176 597.184 Tm (be) Tj
+1 0 0 1 192.76 597.184 Tm (appropriate) Tj
+1 0 0 1 257.696 597.184 Tm (line) Tj
+1 0 0 1 280.608 597.184 Tm (breaks.) Tj
+1 0 0 1 324.196 597.184 Tm (I'm) Tj
+1 0 0 1 344.06 597.184 Tm (going) Tj
+1 0 0 1 377.652 597.184 Tm (to) Tj
+1 0 0 1 391.9 597.184 Tm (keep) Tj
+1 0 0 1 422.156 597.184 Tm (going) Tj
+1 0 0 1 455.748 597.184 Tm (so) Tj
+1 0 0 1 472.66 597.184 Tm (I) Tj
+1 0 0 1 100.0 583.684 Tm (can) Tj
+1 0 0 1 124.871 583.684 Tm (get) Tj
+1 0 0 1 147.078 583.684 Tm (three) Tj
+1 0 0 1 179.953 583.684 Tm (lines) Tj
+1 0 0 1 210.152 583.684 Tm (to) Tj
+1 0 0 1 225.687 583.684 Tm (check) Tj
+1 0 0 1 262.558 583.684 Tm (how) Tj
+1 0 0 1 290.093 583.684 Tm (all) Tj
+1 0 0 1 307.62 583.684 Tm (but) Tj
+1 0 0 1 329.827 583.684 Tm (the) Tj
+1 0 0 1 352.034 583.684 Tm (last) Tj
+1 0 0 1 376.233 583.684 Tm (justify.) Tj
+1 0 0 1 415.768 583.684 Tm (There,) Tj
+1 0 0 1 455.975 583.684 Tm (that) Tj
+1 0 0 1 100.0 570.184 Tm (should) Tj
+1 0 0 1 138.688 570.184 Tm (do) Tj
+1 0 0 1 155.368 570.184 Tm (it.) Tj
+1 0 0 1 168.04 570.184 Tm (Alignment) Tj
+1 0 0 1 224.728 570.184 Tm (is) Tj
+1 0 0 1 236.728 570.184 Tm (justified.) Tj
+1 0 0 1 100.0 556.684 Tm (A) Tj
+1 0 0 1 111.34 556.684 Tm (block) Tj
+1 0 0 1 142.684 556.684 Tm (for) Tj
+1 0 0 1 160.024 556.684 Tm (comparison) Tj
+1 0 0 1 100.0 531.184 Tm (A) Tj
+1 0 0 1 111.34 531.184 Tm (block) Tj
+1 0 0 1 142.684 531.184 Tm (with) Tj
+1 0 0 1 167.356 531.184 Tm (12pt) Tj
+1 0 0 1 194.044 531.184 Tm (space-before) Tj
+1 0 0 1 100.0 517.684 Tm (A) Tj
+1 0 0 1 111.34 517.684 Tm (block) Tj
+1 0 0 1 142.684 517.684 Tm (for) Tj
+1 0 0 1 160.024 517.684 Tm (comparison) Tj
+1 0 0 1 100.0 504.184 Tm (A) Tj
+1 0 0 1 111.34 504.184 Tm (block) Tj
+1 0 0 1 142.684 504.184 Tm (with) Tj
+1 0 0 1 167.356 504.184 Tm (12pt) Tj
+1 0 0 1 194.044 504.184 Tm (space-after) Tj
+1 0 0 1 100.0 478.684 Tm (A) Tj
+1 0 0 1 111.34 478.684 Tm (block) Tj
+1 0 0 1 142.684 478.684 Tm (for) Tj
+1 0 0 1 160.024 478.684 Tm (comparison) Tj
+1 0 0 1 100.0 453.184 Tm (A) Tj
+1 0 0 1 111.34 453.184 Tm (block) Tj
+1 0 0 1 142.684 453.184 Tm (with) Tj
+1 0 0 1 167.356 453.184 Tm (both) Tj
+1 0 0 1 194.044 453.184 Tm (12pt) Tj
+1 0 0 1 220.732 453.184 Tm (space-before) Tj
+1 0 0 1 294.1 453.184 Tm (and) Tj
+1 0 0 1 317.452 453.184 Tm (space-after) Tj
+1 0 0 1 100.0 427.684 Tm (A) Tj
+1 0 0 1 111.34 427.684 Tm (block) Tj
+1 0 0 1 142.684 427.684 Tm (for) Tj
+1 0 0 1 160.024 427.684 Tm (comparison) Tj
+1 0 0 1 150.0 414.184 Tm (This) Tj
+1 0 0 1 176.004 414.184 Tm (is) Tj
+1 0 0 1 188.004 414.184 Tm (a) Tj
+1 0 0 1 198.012 414.184 Tm (multiple) Tj
+1 0 0 1 242.688 414.184 Tm (line) Tj
+1 0 0 1 264.696 414.184 Tm (block) Tj
+1 0 0 1 296.04 414.184 Tm (that) Tj
+1 0 0 1 319.392 414.184 Tm (extends) Tj
+1 0 0 1 364.752 414.184 Tm (over) Tj
+1 0 0 1 391.428 414.184 Tm (more) Tj
+1 0 0 1 422.1 414.184 Tm (than) Tj
+1 0 0 1 448.788 414.184 Tm (one) Tj
+1 0 0 1 150.0 400.684 Tm (line.) Tj
+1 0 0 1 175.344 400.684 Tm (There) Tj
+1 0 0 1 210.024 400.684 Tm (should) Tj
+1 0 0 1 248.712 400.684 Tm (be) Tj
+1 0 0 1 265.392 400.684 Tm (appropriate) Tj
+1 0 0 1 329.424 400.684 Tm (line) Tj
+1 0 0 1 351.432 400.684 Tm (breaks.) Tj
+1 0 0 1 394.116 400.684 Tm (There) Tj
+1 0 0 1 428.796 400.684 Tm (is) Tj
+1 0 0 1 440.796 400.684 Tm (a) Tj
+1 0 0 1 150.0 387.184 Tm (start-indent) Tj
+1 0 0 1 213.36 387.184 Tm (of) Tj
+1 0 0 1 226.704 387.184 Tm (50pt.) Tj
+1 0 0 1 100.0 373.684 Tm (This) Tj
+1 0 0 1 126.004 373.684 Tm (is) Tj
+1 0 0 1 138.004 373.684 Tm (a) Tj
+1 0 0 1 148.012 373.684 Tm (multiple) Tj
+1 0 0 1 192.688 373.684 Tm (line) Tj
+1 0 0 1 214.696 373.684 Tm (block) Tj
+1 0 0 1 246.04 373.684 Tm (that) Tj
+1 0 0 1 269.392 373.684 Tm (extends) Tj
+1 0 0 1 314.752 373.684 Tm (over) Tj
+1 0 0 1 341.428 373.684 Tm (more) Tj
+1 0 0 1 372.1 373.684 Tm (than) Tj
+1 0 0 1 398.788 373.684 Tm (one) Tj
+1 0 0 1 100.0 360.184 Tm (line.) Tj
+1 0 0 1 125.344 360.184 Tm (There) Tj
+1 0 0 1 160.024 360.184 Tm (should) Tj
+1 0 0 1 198.712 360.184 Tm (be) Tj
+1 0 0 1 215.392 360.184 Tm (appropriate) Tj
+1 0 0 1 279.424 360.184 Tm (line) Tj
+1 0 0 1 301.432 360.184 Tm (breaks.) Tj
+1 0 0 1 344.116 360.184 Tm (There) Tj
+1 0 0 1 378.796 360.184 Tm (is) Tj
+1 0 0 1 390.796 360.184 Tm (an) Tj
+1 0 0 1 100.0 346.684 Tm (end-indent) Tj
+1 0 0 1 160.036 346.684 Tm (of) Tj
+1 0 0 1 173.38 346.684 Tm (50pt.) Tj
+1 0 0 1 150.0 333.184 Tm (This) Tj
+1 0 0 1 176.004 333.184 Tm (is) Tj
+1 0 0 1 188.004 333.184 Tm (a) Tj
+1 0 0 1 198.012 333.184 Tm (multiple) Tj
+1 0 0 1 242.688 333.184 Tm (line) Tj
+1 0 0 1 264.696 333.184 Tm (block) Tj
+1 0 0 1 296.04 333.184 Tm (that) Tj
+1 0 0 1 319.392 333.184 Tm (extends) Tj
+1 0 0 1 364.752 333.184 Tm (over) Tj
+1 0 0 1 391.428 333.184 Tm (more) Tj
+1 0 0 1 150.0 319.684 Tm (than) Tj
+1 0 0 1 176.688 319.684 Tm (one) Tj
+1 0 0 1 200.04 319.684 Tm (line.) Tj
+1 0 0 1 225.384 319.684 Tm (There) Tj
+1 0 0 1 260.064 319.684 Tm (should) Tj
+1 0 0 1 298.752 319.684 Tm (be) Tj
+1 0 0 1 315.432 319.684 Tm (appropriate) Tj
+1 0 0 1 379.464 319.684 Tm (line) Tj
+1 0 0 1 150.0 306.184 Tm (breaks.) Tj
+1 0 0 1 192.684 306.184 Tm (There) Tj
+1 0 0 1 227.364 306.184 Tm (is) Tj
+1 0 0 1 239.364 306.184 Tm (a) Tj
+1 0 0 1 249.372 306.184 Tm (start-indent) Tj
+1 0 0 1 312.732 306.184 Tm (and) Tj
+1 0 0 1 336.084 306.184 Tm (end-indent) Tj
+1 0 0 1 396.12 306.184 Tm (of) Tj
+1 0 0 1 150.0 292.684 Tm (50pt.) Tj
+/F1 15 Tf
+1 0 0 1 100.0 278.53 Tm (This) Tj
+1 0 0 1 132.505 278.53 Tm (is) Tj
+1 0 0 1 147.505 278.53 Tm (a) Tj
+1 0 0 1 160.015 278.53 Tm (multiple) Tj
+1 0 0 1 215.86 278.53 Tm (line) Tj
+1 0 0 1 243.37 278.53 Tm (block) Tj
+1 0 0 1 282.55 278.53 Tm (that) Tj
+1 0 0 1 311.74 278.53 Tm (extends) Tj
+1 0 0 1 368.44 278.53 Tm (over) Tj
+1 0 0 1 401.785 278.53 Tm (more) Tj
+1 0 0 1 440.125 278.53 Tm (than) Tj
+1 0 0 1 100.0 265.255 Tm (one) Tj
+1 0 0 1 129.19 265.255 Tm (line.) Tj
+1 0 0 1 160.87 265.255 Tm (There) Tj
+1 0 0 1 204.22 265.255 Tm (should) Tj
+1 0 0 1 252.58 265.255 Tm (be) Tj
+1 0 0 1 273.43 265.255 Tm (appropriate) Tj
+1 0 0 1 353.47 265.255 Tm (line) Tj
+1 0 0 1 380.98 265.255 Tm (breaks.) Tj
+1 0 0 1 434.335 265.255 Tm (The) Tj
+1 0 0 1 100.0 251.98 Tm (font-size) Tj
+1 0 0 1 160.855 251.98 Tm (is) Tj
+1 0 0 1 175.855 251.98 Tm (set) Tj
+1 0 0 1 200.035 251.98 Tm (to) Tj
+1 0 0 1 216.715 251.98 Tm (15pt.) Tj
+/F1 12 Tf
+1 0 0 1 100.0 236.559 Tm (This) Tj
+1 0 0 1 126.004 236.559 Tm (is) Tj
+1 0 0 1 138.004 236.559 Tm (a) Tj
+1 0 0 1 148.012 236.559 Tm (multiple) Tj
+1 0 0 1 192.688 236.559 Tm (line) Tj
+1 0 0 1 214.696 236.559 Tm (block) Tj
+1 0 0 1 246.04 236.559 Tm (that) Tj
+1 0 0 1 269.392 236.559 Tm (extends) Tj
+1 0 0 1 314.752 236.559 Tm (over) Tj
+1 0 0 1 341.428 236.559 Tm (more) Tj
+1 0 0 1 372.1 236.559 Tm (than) Tj
+1 0 0 1 398.788 236.559 Tm (one) Tj
+1 0 0 1 422.14 236.559 Tm (line.) Tj
+1 0 0 1 100.0 217.459 Tm (There) Tj
+1 0 0 1 134.68 217.459 Tm (should) Tj
+1 0 0 1 173.368 217.459 Tm (be) Tj
+1 0 0 1 190.048 217.459 Tm (appropriate) Tj
+1 0 0 1 254.08 217.459 Tm (line) Tj
+1 0 0 1 276.088 217.459 Tm (breaks.) Tj
+1 0 0 1 318.772 217.459 Tm (The) Tj
+1 0 0 1 342.784 217.459 Tm (line-height) Tj
+1 0 0 1 401.476 217.459 Tm (is) Tj
+1 0 0 1 413.476 217.459 Tm (set) Tj
+1 0 0 1 432.82 217.459 Tm (to) Tj
+1 0 0 1 446.164 217.459 Tm (20pt.) Tj
+/F1 15 Tf
+1 0 0 1 100.0 197.705 Tm (This) Tj
+1 0 0 1 132.505 197.705 Tm (is) Tj
+1 0 0 1 147.505 197.705 Tm (a) Tj
+1 0 0 1 160.015 197.705 Tm (multiple) Tj
+1 0 0 1 215.86 197.705 Tm (line) Tj
+1 0 0 1 243.37 197.705 Tm (block) Tj
+1 0 0 1 282.55 197.705 Tm (that) Tj
+1 0 0 1 311.74 197.705 Tm (extends) Tj
+1 0 0 1 368.44 197.705 Tm (over) Tj
+1 0 0 1 401.785 197.705 Tm (more) Tj
+1 0 0 1 440.125 197.705 Tm (than) Tj
+1 0 0 1 100.0 178.83 Tm (one) Tj
+1 0 0 1 129.19 178.83 Tm (line.) Tj
+1 0 0 1 160.87 178.83 Tm (There) Tj
+1 0 0 1 204.22 178.83 Tm (should) Tj
+1 0 0 1 252.58 178.83 Tm (be) Tj
+1 0 0 1 273.43 178.83 Tm (appropriate) Tj
+1 0 0 1 353.47 178.83 Tm (line) Tj
+1 0 0 1 380.98 178.83 Tm (breaks.) Tj
+1 0 0 1 434.335 178.83 Tm (The) Tj
+1 0 0 1 100.0 159.955 Tm (font-size) Tj
+1 0 0 1 160.855 159.955 Tm (is) Tj
+1 0 0 1 175.855 159.955 Tm (set) Tj
+1 0 0 1 200.035 159.955 Tm (to) Tj
+1 0 0 1 216.715 159.955 Tm (15pt) Tj
+1 0 0 1 250.075 159.955 Tm (and) Tj
+1 0 0 1 279.265 159.955 Tm (the) Tj
+1 0 0 1 304.285 159.955 Tm (line-height) Tj
+1 0 0 1 377.65 159.955 Tm (is) Tj
+1 0 0 1 392.65 159.955 Tm (set) Tj
+1 0 0 1 416.83 159.955 Tm (to) Tj
+1 0 0 1 433.51 159.955 Tm (20pt.) Tj
+1 0 0 1 100.0 143.58 Tm (This) Tj
+1 0 0 1 132.505 143.58 Tm (is) Tj
+1 0 0 1 147.505 143.58 Tm (a) Tj
+1 0 0 1 160.015 143.58 Tm (multiple) Tj
+1 0 0 1 215.86 143.58 Tm (line) Tj
+1 0 0 1 243.37 143.58 Tm (block) Tj
+1 0 0 1 282.55 143.58 Tm (that) Tj
+1 0 0 1 311.74 143.58 Tm (extends) Tj
+1 0 0 1 368.44 143.58 Tm (over) Tj
+1 0 0 1 401.785 143.58 Tm (more) Tj
+1 0 0 1 440.125 143.58 Tm (than) Tj
+1 0 0 1 100.0 129.705 Tm (one) Tj
+1 0 0 1 129.19 129.705 Tm (line.) Tj
+1 0 0 1 160.87 129.705 Tm (There) Tj
+1 0 0 1 204.22 129.705 Tm (should) Tj
+1 0 0 1 252.58 129.705 Tm (be) Tj
+1 0 0 1 273.43 129.705 Tm (appropriate) Tj
+1 0 0 1 353.47 129.705 Tm (line) Tj
+1 0 0 1 380.98 129.705 Tm (breaks.) Tj
+1 0 0 1 434.335 129.705 Tm (The) Tj
+1 0 0 1 100.0 115.83 Tm (font-size) Tj
+1 0 0 1 160.855 115.83 Tm (is) Tj
+1 0 0 1 175.855 115.83 Tm (set) Tj
+1 0 0 1 200.035 115.83 Tm (to) Tj
+1 0 0 1 216.715 115.83 Tm (15pt) Tj
+1 0 0 1 250.075 115.83 Tm (and) Tj
+1 0 0 1 279.265 115.83 Tm (the) Tj
+1 0 0 1 304.285 115.83 Tm (line-height) Tj
+1 0 0 1 377.65 115.83 Tm (is) Tj
+1 0 0 1 392.65 115.83 Tm (set) Tj
+1 0 0 1 416.83 115.83 Tm (to) Tj
+1 0 0 1 433.51 115.83 Tm (15pt.) Tj
+/F1 12 Tf
+1 0 0 1 100.0 78.909 Tm (A) Tj
+1 0 0 1 111.34 78.909 Tm (block) Tj
+1 0 0 1 142.684 78.909 Tm (within) Tj
+1 0 0 1 176.692 78.909 Tm (a) Tj
+1 0 0 1 186.7 78.909 Tm (block) Tj
+ET
+
+endstream
+endobj
+18 0 obj
+<< /Type /Page
+/Parent 2 0 R
+/MediaBox [ 0 0 576 792 ]
+/Resources 4 0 R
+/Contents 17 0 R
+>>
+endobj
+19 0 obj
+<< /Length 7406 >>
+stream
+BT
+/F1 12 Tf
+1 0 0 1 100.0 720.184 Tm (Text) Tj
+1 0 0 1 126.676 720.184 Tm (before) Tj
+1 0 0 1 100.0 694.684 Tm (A) Tj
+1 0 0 1 111.34 694.684 Tm (block) Tj
+1 0 0 1 142.684 694.684 Tm (within) Tj
+1 0 0 1 176.692 694.684 Tm (a) Tj
+1 0 0 1 186.7 694.684 Tm (block) Tj
+1 0 0 1 100.0 669.184 Tm (Text) Tj
+1 0 0 1 126.676 669.184 Tm (after) Tj
+1 0 0 1 150.0 631.684 Tm (Text) Tj
+1 0 0 1 176.676 631.684 Tm (before) Tj
+1 0 0 1 150.0 606.184 Tm (A) Tj
+1 0 0 1 161.34 606.184 Tm (block) Tj
+1 0 0 1 192.684 606.184 Tm (within) Tj
+1 0 0 1 226.692 606.184 Tm (a) Tj
+1 0 0 1 236.7 606.184 Tm (block) Tj
+1 0 0 1 268.044 606.184 Tm (with) Tj
+1 0 0 1 292.716 606.184 Tm (50pt) Tj
+1 0 0 1 319.404 606.184 Tm (start-intent) Tj
+1 0 0 1 150.0 580.684 Tm (Text) Tj
+1 0 0 1 176.676 580.684 Tm (after) Tj
+1 0 0 1 150.0 543.184 Tm (And) Tj
+1 0 0 1 174.684 543.184 Tm (again) Tj
+1 0 0 1 207.372 543.184 Tm (for) Tj
+1 0 0 1 224.712 543.184 Tm (the) Tj
+1 0 0 1 244.728 543.184 Tm (page) Tj
+1 0 0 1 274.752 543.184 Tm (break,) Tj
+1 0 0 1 311.436 543.184 Tm (text) Tj
+1 0 0 1 334.116 543.184 Tm (before) Tj
+1 0 0 1 150.0 517.684 Tm (A) Tj
+1 0 0 1 161.34 517.684 Tm (block) Tj
+1 0 0 1 192.684 517.684 Tm (within) Tj
+1 0 0 1 226.692 517.684 Tm (a) Tj
+1 0 0 1 236.7 517.684 Tm (block) Tj
+1 0 0 1 268.044 517.684 Tm (with) Tj
+1 0 0 1 292.716 517.684 Tm (50pt) Tj
+1 0 0 1 319.404 517.684 Tm (start-intent) Tj
+1 0 0 1 150.0 492.184 Tm (Text) Tj
+1 0 0 1 176.676 492.184 Tm (after) Tj
+1 0 0 1 150.0 454.684 Tm (Text) Tj
+1 0 0 1 176.676 454.684 Tm (before) Tj
+1 0 0 1 150.0 429.184 Tm (A) Tj
+1 0 0 1 161.34 429.184 Tm (block) Tj
+1 0 0 1 192.684 429.184 Tm (with) Tj
+1 0 0 1 217.356 429.184 Tm (50pt) Tj
+1 0 0 1 244.044 429.184 Tm (start-indent) Tj
+1 0 0 1 307.404 429.184 Tm (within) Tj
+1 0 0 1 341.412 429.184 Tm (a) Tj
+1 0 0 1 351.42 429.184 Tm (block) Tj
+1 0 0 1 382.764 429.184 Tm (with) Tj
+1 0 0 1 407.436 429.184 Tm (50pt) Tj
+1 0 0 1 150.0 415.684 Tm (start-intent) Tj
+1 0 0 1 150.0 390.184 Tm (Text) Tj
+1 0 0 1 176.676 390.184 Tm (after) Tj
+1 0 0 1 150.0 352.684 Tm (Text) Tj
+1 0 0 1 176.676 352.684 Tm (before) Tj
+1 0 0 1 200.0 327.184 Tm (A) Tj
+1 0 0 1 211.34 327.184 Tm (block) Tj
+1 0 0 1 242.684 327.184 Tm (with) Tj
+1 0 0 1 267.356 327.184 Tm (100pt) Tj
+1 0 0 1 300.716 327.184 Tm (start-indent) Tj
+1 0 0 1 364.076 327.184 Tm (within) Tj
+1 0 0 1 398.084 327.184 Tm (a) Tj
+1 0 0 1 408.092 327.184 Tm (block) Tj
+1 0 0 1 439.436 327.184 Tm (with) Tj
+1 0 0 1 200.0 313.684 Tm (50pt) Tj
+1 0 0 1 226.688 313.684 Tm (start-intent) Tj
+1 0 0 1 150.0 288.184 Tm (Text) Tj
+1 0 0 1 176.676 288.184 Tm (after) Tj
+1 0 0 1 100.0 250.684 Tm (\225) Tj
+1 0 0 1 112.0 250.684 Tm (This) Tj
+1 0 0 1 139.658 250.684 Tm (is) Tj
+1 0 0 1 153.312 250.684 Tm (a) Tj
+1 0 0 1 164.974 250.684 Tm (multiple) Tj
+1 0 0 1 211.304 250.684 Tm (line) Tj
+1 0 0 1 234.966 250.684 Tm (block) Tj
+1 0 0 1 267.964 250.684 Tm (that) Tj
+1 0 0 1 292.97 250.684 Tm (extends) Tj
+1 0 0 1 339.984 250.684 Tm (over) Tj
+1 0 0 1 368.314 250.684 Tm (more) Tj
+1 0 0 1 400.64 250.684 Tm (than) Tj
+1 0 0 1 428.982 250.684 Tm (one) Tj
+1 0 0 1 453.988 250.684 Tm (line.) Tj
+1 0 0 1 112.0 237.184 Tm (There) Tj
+1 0 0 1 146.68 237.184 Tm (should) Tj
+1 0 0 1 185.368 237.184 Tm (be) Tj
+1 0 0 1 202.048 237.184 Tm (appropriate) Tj
+1 0 0 1 266.08 237.184 Tm (line) Tj
+1 0 0 1 288.088 237.184 Tm (breaks.) Tj
+1 0 0 1 100.0 223.684 Tm (\225) Tj
+1 0 0 1 112.0 223.684 Tm (This) Tj
+1 0 0 1 139.658 223.684 Tm (is) Tj
+1 0 0 1 153.312 223.684 Tm (a) Tj
+1 0 0 1 164.974 223.684 Tm (multiple) Tj
+1 0 0 1 211.304 223.684 Tm (line) Tj
+1 0 0 1 234.966 223.684 Tm (block) Tj
+1 0 0 1 267.964 223.684 Tm (that) Tj
+1 0 0 1 292.97 223.684 Tm (extends) Tj
+1 0 0 1 339.984 223.684 Tm (over) Tj
+1 0 0 1 368.314 223.684 Tm (more) Tj
+1 0 0 1 400.64 223.684 Tm (than) Tj
+1 0 0 1 428.982 223.684 Tm (one) Tj
+1 0 0 1 453.988 223.684 Tm (line.) Tj
+1 0 0 1 112.0 210.184 Tm (There) Tj
+1 0 0 1 146.68 210.184 Tm (should) Tj
+1 0 0 1 185.368 210.184 Tm (be) Tj
+1 0 0 1 202.048 210.184 Tm (appropriate) Tj
+1 0 0 1 266.08 210.184 Tm (line) Tj
+1 0 0 1 288.088 210.184 Tm (breaks.) Tj
+1 0 0 1 112.0 196.684 Tm (This) Tj
+1 0 0 1 139.658 196.684 Tm (is) Tj
+1 0 0 1 153.312 196.684 Tm (a) Tj
+1 0 0 1 164.974 196.684 Tm (multiple) Tj
+1 0 0 1 211.304 196.684 Tm (line) Tj
+1 0 0 1 234.966 196.684 Tm (block) Tj
+1 0 0 1 267.964 196.684 Tm (that) Tj
+1 0 0 1 292.97 196.684 Tm (extends) Tj
+1 0 0 1 339.984 196.684 Tm (over) Tj
+1 0 0 1 368.314 196.684 Tm (more) Tj
+1 0 0 1 400.64 196.684 Tm (than) Tj
+1 0 0 1 428.982 196.684 Tm (one) Tj
+1 0 0 1 453.988 196.684 Tm (line.) Tj
+1 0 0 1 112.0 183.184 Tm (There) Tj
+1 0 0 1 146.68 183.184 Tm (should) Tj
+1 0 0 1 185.368 183.184 Tm (be) Tj
+1 0 0 1 202.048 183.184 Tm (appropriate) Tj
+1 0 0 1 266.08 183.184 Tm (line) Tj
+1 0 0 1 288.088 183.184 Tm (breaks.) Tj
+1 0 0 1 112.0 169.684 Tm (This) Tj
+1 0 0 1 139.658 169.684 Tm (is) Tj
+1 0 0 1 153.312 169.684 Tm (a) Tj
+1 0 0 1 164.974 169.684 Tm (multiple) Tj
+1 0 0 1 211.304 169.684 Tm (line) Tj
+1 0 0 1 234.966 169.684 Tm (block) Tj
+1 0 0 1 267.964 169.684 Tm (that) Tj
+1 0 0 1 292.97 169.684 Tm (extends) Tj
+1 0 0 1 339.984 169.684 Tm (over) Tj
+1 0 0 1 368.314 169.684 Tm (more) Tj
+1 0 0 1 400.64 169.684 Tm (than) Tj
+1 0 0 1 428.982 169.684 Tm (one) Tj
+1 0 0 1 453.988 169.684 Tm (line.) Tj
+1 0 0 1 112.0 156.184 Tm (There) Tj
+1 0 0 1 146.68 156.184 Tm (should) Tj
+1 0 0 1 185.368 156.184 Tm (be) Tj
+1 0 0 1 202.048 156.184 Tm (appropriate) Tj
+1 0 0 1 266.08 156.184 Tm (line) Tj
+1 0 0 1 288.088 156.184 Tm (breaks.) Tj
+1 0 0 1 150.0 130.684 Tm (\225) Tj
+1 0 0 1 162.0 130.684 Tm (This) Tj
+1 0 0 1 189.858 130.684 Tm (is) Tj
+1 0 0 1 203.712 130.684 Tm (a) Tj
+1 0 0 1 215.574 130.684 Tm (multiple) Tj
+1 0 0 1 262.104 130.684 Tm (line) Tj
+1 0 0 1 285.966 130.684 Tm (block) Tj
+1 0 0 1 319.164 130.684 Tm (that) Tj
+1 0 0 1 344.37 130.684 Tm (extends) Tj
+1 0 0 1 391.584 130.684 Tm (over) Tj
+1 0 0 1 420.114 130.684 Tm (more) Tj
+1 0 0 1 452.64 130.684 Tm (than) Tj
+1 0 0 1 162.0 117.184 Tm (one) Tj
+1 0 0 1 188.584 117.184 Tm (line.) Tj
+1 0 0 1 217.16 117.184 Tm (There) Tj
+1 0 0 1 255.072 117.184 Tm (should) Tj
+1 0 0 1 296.992 117.184 Tm (be) Tj
+1 0 0 1 316.904 117.184 Tm (appropriate) Tj
+1 0 0 1 384.168 117.184 Tm (line) Tj
+1 0 0 1 409.408 117.184 Tm (breaks.) Tj
+1 0 0 1 455.324 117.184 Tm (The) Tj
+1 0 0 1 162.0 103.684 Tm (list-block) Tj
+1 0 0 1 215.618 103.684 Tm (has) Tj
+1 0 0 1 241.912 103.684 Tm (a) Tj
+1 0 0 1 255.534 103.684 Tm (start-indent) Tj
+1 0 0 1 322.508 103.684 Tm (of) Tj
+1 0 0 1 339.466 103.684 Tm (50pt) Tj
+1 0 0 1 369.768 103.684 Tm (and) Tj
+1 0 0 1 396.734 103.684 Tm (a) Tj
+1 0 0 1 410.356 103.684 Tm (text-align) Tj
+1 0 0 1 465.99 103.684 Tm (of) Tj
+1 0 0 1 162.0 90.184 Tm (justified.) Tj
+1 0 0 1 150.0 76.684 Tm (\225) Tj
+1 0 0 1 162.0 76.684 Tm (This) Tj
+1 0 0 1 189.858 76.684 Tm (is) Tj
+1 0 0 1 203.712 76.684 Tm (a) Tj
+1 0 0 1 215.574 76.684 Tm (multiple) Tj
+1 0 0 1 262.104 76.684 Tm (line) Tj
+1 0 0 1 285.966 76.684 Tm (block) Tj
+1 0 0 1 319.164 76.684 Tm (that) Tj
+1 0 0 1 344.37 76.684 Tm (extends) Tj
+1 0 0 1 391.584 76.684 Tm (over) Tj
+1 0 0 1 420.114 76.684 Tm (more) Tj
+1 0 0 1 452.64 76.684 Tm (than) Tj
+1 0 0 1 162.0 63.184 Tm (one) Tj
+1 0 0 1 185.352 63.184 Tm (line.) Tj
+1 0 0 1 210.696 63.184 Tm (There) Tj
+1 0 0 1 245.376 63.184 Tm (should) Tj
+1 0 0 1 284.064 63.184 Tm (be) Tj
+1 0 0 1 300.744 63.184 Tm (appropriate) Tj
+1 0 0 1 364.776 63.184 Tm (line) Tj
+1 0 0 1 386.784 63.184 Tm (breaks.) Tj
+ET
+
+endstream
+endobj
+20 0 obj
+<< /Type /Page
+/Parent 2 0 R
+/MediaBox [ 0 0 576 792 ]
+/Resources 4 0 R
+/Contents 19 0 R
+>>
+endobj
+21 0 obj
+<< /Length 6797 >>
+stream
+BT
+/F1 12 Tf
+1 0 0 1 162.0 732.184 Tm (This) Tj
+1 0 0 1 188.325 732.184 Tm (is) Tj
+1 0 0 1 200.646 732.184 Tm (a) Tj
+1 0 0 1 210.975 732.184 Tm (second) Tj
+1 0 0 1 253.32 732.184 Tm (multiple) Tj
+1 0 0 1 298.317 732.184 Tm (line) Tj
+1 0 0 1 320.646 732.184 Tm (block) Tj
+1 0 0 1 352.311 732.184 Tm (that) Tj
+1 0 0 1 375.984 732.184 Tm (extends) Tj
+1 0 0 1 421.665 732.184 Tm (over) Tj
+1 0 0 1 448.662 732.184 Tm (more) Tj
+1 0 0 1 162.0 718.684 Tm (than) Tj
+1 0 0 1 188.688 718.684 Tm (one) Tj
+1 0 0 1 212.04 718.684 Tm (line.) Tj
+1 0 0 1 237.384 718.684 Tm (There) Tj
+1 0 0 1 272.064 718.684 Tm (should) Tj
+1 0 0 1 310.752 718.684 Tm (be) Tj
+1 0 0 1 327.432 718.684 Tm (appropriate) Tj
+1 0 0 1 391.464 718.684 Tm (line) Tj
+1 0 0 1 413.472 718.684 Tm (breaks.) Tj
+1 0 0 1 162.0 705.184 Tm (This) Tj
+1 0 0 1 189.86 705.184 Tm (is) Tj
+1 0 0 1 203.716 705.184 Tm (a) Tj
+1 0 0 1 215.58 705.184 Tm (third) Tj
+1 0 0 1 244.112 705.184 Tm (multiple) Tj
+1 0 0 1 290.644 705.184 Tm (line) Tj
+1 0 0 1 314.508 705.184 Tm (block) Tj
+1 0 0 1 347.708 705.184 Tm (that) Tj
+1 0 0 1 372.916 705.184 Tm (extends) Tj
+1 0 0 1 420.132 705.184 Tm (over) Tj
+1 0 0 1 448.664 705.184 Tm (more) Tj
+1 0 0 1 162.0 691.684 Tm (than) Tj
+1 0 0 1 188.688 691.684 Tm (one) Tj
+1 0 0 1 212.04 691.684 Tm (line.) Tj
+1 0 0 1 237.384 691.684 Tm (There) Tj
+1 0 0 1 272.064 691.684 Tm (should) Tj
+1 0 0 1 310.752 691.684 Tm (be) Tj
+1 0 0 1 327.432 691.684 Tm (appropriate) Tj
+1 0 0 1 391.464 691.684 Tm (line) Tj
+1 0 0 1 413.472 691.684 Tm (breaks.) Tj
+1 0 0 1 100.0 666.184 Tm (\225) Tj
+1 0 0 1 112.0 666.184 Tm (This) Tj
+1 0 0 1 139.658 666.184 Tm (is) Tj
+1 0 0 1 153.312 666.184 Tm (a) Tj
+1 0 0 1 164.974 666.184 Tm (multiple) Tj
+1 0 0 1 211.304 666.184 Tm (line) Tj
+1 0 0 1 234.966 666.184 Tm (block) Tj
+1 0 0 1 267.964 666.184 Tm (that) Tj
+1 0 0 1 292.97 666.184 Tm (extends) Tj
+1 0 0 1 339.984 666.184 Tm (over) Tj
+1 0 0 1 368.314 666.184 Tm (more) Tj
+1 0 0 1 400.64 666.184 Tm (than) Tj
+1 0 0 1 428.982 666.184 Tm (one) Tj
+1 0 0 1 453.988 666.184 Tm (line.) Tj
+1 0 0 1 112.0 652.684 Tm (There) Tj
+1 0 0 1 146.68 652.684 Tm (should) Tj
+1 0 0 1 185.368 652.684 Tm (be) Tj
+1 0 0 1 202.048 652.684 Tm (appropriate) Tj
+1 0 0 1 266.08 652.684 Tm (line) Tj
+1 0 0 1 288.088 652.684 Tm (breaks.) Tj
+1 0 0 1 212.0 639.184 Tm (This) Tj
+1 0 0 1 242.756 639.184 Tm (is) Tj
+1 0 0 1 259.508 639.184 Tm (a) Tj
+1 0 0 1 274.268 639.184 Tm (multiple) Tj
+1 0 0 1 323.696 639.184 Tm (line) Tj
+1 0 0 1 350.456 639.184 Tm (block) Tj
+1 0 0 1 386.552 639.184 Tm (with) Tj
+1 0 0 1 415.976 639.184 Tm (start-indent) Tj
+1 0 0 1 212.0 625.684 Tm (100pt) Tj
+1 0 0 1 250.007 625.684 Tm (that) Tj
+1 0 0 1 278.006 625.684 Tm (extends) Tj
+1 0 0 1 328.013 625.684 Tm (over) Tj
+1 0 0 1 359.336 625.684 Tm (more) Tj
+1 0 0 1 394.655 625.684 Tm (than) Tj
+1 0 0 1 425.99 625.684 Tm (one) Tj
+1 0 0 1 453.989 625.684 Tm (line.) Tj
+1 0 0 1 212.0 612.184 Tm (There) Tj
+1 0 0 1 246.68 612.184 Tm (should) Tj
+1 0 0 1 285.368 612.184 Tm (be) Tj
+1 0 0 1 302.048 612.184 Tm (appropriate) Tj
+1 0 0 1 366.08 612.184 Tm (line) Tj
+1 0 0 1 388.088 612.184 Tm (breaks.) Tj
+1 0 0 1 112.0 598.684 Tm (This) Tj
+1 0 0 1 139.658 598.684 Tm (is) Tj
+1 0 0 1 153.312 598.684 Tm (a) Tj
+1 0 0 1 164.974 598.684 Tm (multiple) Tj
+1 0 0 1 211.304 598.684 Tm (line) Tj
+1 0 0 1 234.966 598.684 Tm (block) Tj
+1 0 0 1 267.964 598.684 Tm (that) Tj
+1 0 0 1 292.97 598.684 Tm (extends) Tj
+1 0 0 1 339.984 598.684 Tm (over) Tj
+1 0 0 1 368.314 598.684 Tm (more) Tj
+1 0 0 1 400.64 598.684 Tm (than) Tj
+1 0 0 1 428.982 598.684 Tm (one) Tj
+1 0 0 1 453.988 598.684 Tm (line.) Tj
+1 0 0 1 112.0 585.184 Tm (There) Tj
+1 0 0 1 146.68 585.184 Tm (should) Tj
+1 0 0 1 185.368 585.184 Tm (be) Tj
+1 0 0 1 202.048 585.184 Tm (appropriate) Tj
+1 0 0 1 266.08 585.184 Tm (line) Tj
+1 0 0 1 288.088 585.184 Tm (breaks.) Tj
+1 0 0 1 100.0 571.684 Tm (\225) Tj
+1 0 0 1 112.0 571.684 Tm (This) Tj
+1 0 0 1 139.658 571.684 Tm (is) Tj
+1 0 0 1 153.312 571.684 Tm (a) Tj
+1 0 0 1 164.974 571.684 Tm (multiple) Tj
+1 0 0 1 211.304 571.684 Tm (line) Tj
+1 0 0 1 234.966 571.684 Tm (block) Tj
+1 0 0 1 267.964 571.684 Tm (that) Tj
+1 0 0 1 292.97 571.684 Tm (extends) Tj
+1 0 0 1 339.984 571.684 Tm (over) Tj
+1 0 0 1 368.314 571.684 Tm (more) Tj
+1 0 0 1 400.64 571.684 Tm (than) Tj
+1 0 0 1 428.982 571.684 Tm (one) Tj
+1 0 0 1 453.988 571.684 Tm (line.) Tj
+1 0 0 1 112.0 558.184 Tm (There) Tj
+1 0 0 1 146.68 558.184 Tm (should) Tj
+1 0 0 1 185.368 558.184 Tm (be) Tj
+1 0 0 1 202.048 558.184 Tm (appropriate) Tj
+1 0 0 1 266.08 558.184 Tm (line) Tj
+1 0 0 1 288.088 558.184 Tm (breaks.) Tj
+1 0 0 1 112.0 544.684 Tm (This) Tj
+1 0 0 1 138.171 544.684 Tm (is) Tj
+1 0 0 1 150.338 544.684 Tm (an) Tj
+1 0 0 1 167.185 544.684 Tm (embedded) Tj
+1 0 0 1 227.388 544.684 Tm (multiple) Tj
+1 0 0 1 272.231 544.684 Tm (line) Tj
+1 0 0 1 294.406 544.684 Tm (block) Tj
+1 0 0 1 325.917 544.684 Tm (that) Tj
+1 0 0 1 349.436 544.684 Tm (extends) Tj
+1 0 0 1 394.963 544.684 Tm (over) Tj
+1 0 0 1 421.806 544.684 Tm (more) Tj
+1 0 0 1 452.645 544.684 Tm (than) Tj
+1 0 0 1 112.0 531.184 Tm (one) Tj
+1 0 0 1 135.352 531.184 Tm (line.) Tj
+1 0 0 1 160.696 531.184 Tm (There) Tj
+1 0 0 1 195.376 531.184 Tm (should) Tj
+1 0 0 1 234.064 531.184 Tm (be) Tj
+1 0 0 1 250.744 531.184 Tm (appropriate) Tj
+1 0 0 1 314.776 531.184 Tm (line) Tj
+1 0 0 1 336.784 531.184 Tm (breaks.) Tj
+1 0 0 1 112.0 517.684 Tm (This) Tj
+1 0 0 1 139.658 517.684 Tm (is) Tj
+1 0 0 1 153.312 517.684 Tm (a) Tj
+1 0 0 1 164.974 517.684 Tm (multiple) Tj
+1 0 0 1 211.304 517.684 Tm (line) Tj
+1 0 0 1 234.966 517.684 Tm (block) Tj
+1 0 0 1 267.964 517.684 Tm (that) Tj
+1 0 0 1 292.97 517.684 Tm (extends) Tj
+1 0 0 1 339.984 517.684 Tm (over) Tj
+1 0 0 1 368.314 517.684 Tm (more) Tj
+1 0 0 1 400.64 517.684 Tm (than) Tj
+1 0 0 1 428.982 517.684 Tm (one) Tj
+1 0 0 1 453.988 517.684 Tm (line.) Tj
+1 0 0 1 112.0 504.184 Tm (There) Tj
+1 0 0 1 146.68 504.184 Tm (should) Tj
+1 0 0 1 185.368 504.184 Tm (be) Tj
+1 0 0 1 202.048 504.184 Tm (appropriate) Tj
+1 0 0 1 266.08 504.184 Tm (line) Tj
+1 0 0 1 288.088 504.184 Tm (breaks.) Tj
+1 0 0 1 100.0 478.684 Tm (\225) Tj
+1 0 0 1 112.0 478.684 Tm (A) Tj
+1 0 0 1 123.34 478.684 Tm (block) Tj
+1 0 0 1 154.684 478.684 Tm (in) Tj
+1 0 0 1 167.356 478.684 Tm (a) Tj
+1 0 0 1 177.364 478.684 Tm (list-item-body) Tj
+1 0 0 1 100.0 465.184 Tm (\225) Tj
+1 0 0 1 136.0 465.184 Tm (\225) Tj
+1 0 0 1 124.0 465.184 Tm (This) Tj
+1 0 0 1 150.004 465.184 Tm (is) Tj
+1 0 0 1 162.004 465.184 Tm (a) Tj
+1 0 0 1 172.012 465.184 Tm (list) Tj
+1 0 0 1 190.012 465.184 Tm (item) Tj
+1 0 0 1 216.016 465.184 Tm (in) Tj
+1 0 0 1 228.688 465.184 Tm (a) Tj
+1 0 0 1 238.696 465.184 Tm (list) Tj
+1 0 0 1 256.696 465.184 Tm (that) Tj
+1 0 0 1 280.048 465.184 Tm (is) Tj
+1 0 0 1 292.048 465.184 Tm (itself) Tj
+1 0 0 1 320.056 465.184 Tm (a) Tj
+1 0 0 1 330.064 465.184 Tm (list) Tj
+1 0 0 1 348.064 465.184 Tm (item) Tj
+ET
+
+endstream
+endobj
+22 0 obj
+<< /Type /Page
+/Parent 2 0 R
+/MediaBox [ 0 0 576 792 ]
+/Resources 4 0 R
+/Contents 21 0 R
+>>
+endobj
+23 0 obj
+<< /Length 3148 >>
+stream
+BT
+/F1 24 Tf
+1 0 0 1 100.0 710.768 Tm (Next) Tj
+1 0 0 1 156.016 710.768 Tm (Stage) Tj
+/F1 12 Tf
+1 0 0 1 100.0 681.984 Tm (Right,) Tj
+1 0 0 1 134.68 681.984 Tm (now) Tj
+1 0 0 1 160.024 681.984 Tm (we) Tj
+1 0 0 1 178.696 681.984 Tm (are) Tj
+1 0 0 1 199.372 681.984 Tm (ready) Tj
+1 0 0 1 232.72 681.984 Tm (to) Tj
+1 0 0 1 246.064 681.984 Tm (try) Tj
+1 0 0 1 262.732 681.984 Tm (some) Tj
+1 0 0 1 295.408 681.984 Tm (newly) Tj
+1 0 0 1 329.416 681.984 Tm (implemented) Tj
+1 0 0 1 401.44 681.984 Tm (things) Tj
+1 0 0 1 436.792 681.984 Tm (like) Tj
+1 0 0 1 100.0 668.484 Tm (rules.) Tj
+1 0 0 1 132.676 668.484 Tm (What) Tj
+1 0 0 1 164.02 668.484 Tm (follows) Tj
+1 0 0 1 204.028 668.484 Tm (is) Tj
+1 0 0 1 216.028 668.484 Tm (a) Tj
+1 0 0 1 226.036 668.484 Tm (display) Tj
+1 0 0 1 266.716 668.484 Tm (rule) Tj
+1 0 0 1 290.056 668.484 Tm (of) Tj
+1 0 0 1 303.4 668.484 Tm (default) Tj
+1 0 0 1 342.76 668.484 Tm (thickness) Tj
+1 0 0 1 396.112 668.484 Tm (1pt) Tj
+1 0 0 1 416.128 668.484 Tm (and) Tj
+1 0 0 1 439.48 668.484 Tm (a) Tj
+1 0 0 1 100.0 654.984 Tm (space-before) Tj
+1 0 0 1 173.368 654.984 Tm (and) Tj
+1 0 0 1 196.72 654.984 Tm (space-after) Tj
+1 0 0 1 260.08 654.984 Tm (of) Tj
+1 0 0 1 273.424 654.984 Tm (12pt.) Tj
+0.0 0.0 0.0 RG
+100.0 639.3 m 476.0 639.3 l 1.0 w S
+0 0 0 RG
+1 0 0 1 100.0 617.484 Tm (Now) Tj
+1 0 0 1 127.336 617.484 Tm (what) Tj
+1 0 0 1 156.016 617.484 Tm (follows) Tj
+1 0 0 1 196.024 617.484 Tm (is) Tj
+1 0 0 1 208.024 617.484 Tm (a) Tj
+1 0 0 1 218.032 617.484 Tm (display-rule) Tj
+1 0 0 1 282.712 617.484 Tm (of) Tj
+1 0 0 1 296.056 617.484 Tm (thickness) Tj
+1 0 0 1 349.408 617.484 Tm (5pt) Tj
+1 0 0 1 369.424 617.484 Tm (with) Tj
+1 0 0 1 394.096 617.484 Tm (start-indent) Tj
+1 0 0 1 457.456 617.484 Tm (of) Tj
+1 0 0 1 100.0 603.984 Tm (100pt) Tj
+1 0 0 1 133.36 603.984 Tm (\(same) Tj
+1 0 0 1 170.032 603.984 Tm (space-before/after) Tj
+1 0 0 1 270.748 603.984 Tm (as) Tj
+1 0 0 1 286.756 603.984 Tm (before\).) Tj
+0.0 0.0 0.0 RG
+200.0 588.3 m 476.0 588.3 l 5.0 w S
+0 0 0 RG
+/F1 24 Tf
+0.33333334 0.0 0.0 rg
+1 0 0 1 100.0 545.068 Tm (C) Tj
+0.46666667 0.0 0.0 rg
+1 0 0 1 117.328 545.068 Tm (o) Tj
+0.6 0.0 0.0 rg
+1 0 0 1 130.672 545.068 Tm (l) Tj
+0.73333335 0.0 0.0 rg
+1 0 0 1 136.0 545.068 Tm (o) Tj
+0.8666667 0.0 0.0 rg
+1 0 0 1 149.344 545.068 Tm (u) Tj
+1.0 0.0 0.0 rg
+1 0 0 1 162.688 545.068 Tm (r) Tj
+/F1 12 Tf
+0.0 0.0 0.0 rg
+1 0 0 1 100.0 516.284 Tm (black) Tj
+0.0 0.5 0.0 rg
+1 0 0 1 100.0 502.784 Tm (green) Tj
+0.75 0.75 0.75 rg
+1 0 0 1 100.0 489.284 Tm (silver) Tj
+0.0 1.0 0.0 rg
+1 0 0 1 100.0 475.784 Tm (lime) Tj
+0.5 0.5 0.5 rg
+1 0 0 1 100.0 462.284 Tm (gray) Tj
+0.5 0.5 0.0 rg
+1 0 0 1 100.0 448.784 Tm (olive) Tj
+1.0 1.0 1.0 rg
+1 0 0 1 100.0 435.284 Tm (white) Tj
+1.0 1.0 0.0 rg
+1 0 0 1 100.0 421.784 Tm (yellow) Tj
+0.5 0.0 0.0 rg
+1 0 0 1 100.0 408.284 Tm (maroon) Tj
+0.0 0.0 0.5 rg
+1 0 0 1 100.0 394.784 Tm (navy) Tj
+1.0 0.0 0.0 rg
+1 0 0 1 100.0 381.284 Tm (red) Tj
+0.0 0.0 1.0 rg
+1 0 0 1 100.0 367.784 Tm (blue) Tj
+0.5 0.0 0.5 rg
+1 0 0 1 100.0 354.284 Tm (purple) Tj
+0.0 0.5 0.5 rg
+1 0 0 1 100.0 340.784 Tm (teal) Tj
+1.0 0.0 1.0 rg
+1 0 0 1 100.0 327.284 Tm (fuchsia) Tj
+0.0 1.0 1.0 rg
+1 0 0 1 100.0 313.784 Tm (aqua) Tj
+ET
+
+endstream
+endobj
+24 0 obj
+<< /Type /Page
+/Parent 2 0 R
+/MediaBox [ 0 0 576 792 ]
+/Resources 4 0 R
+/Contents 23 0 R
+>>
+endobj
+25 0 obj
+<< /Length 7 >>
+stream
+BT
+ET
+
+endstream
+endobj
+26 0 obj
+<< /Type /Page
+/Parent 2 0 R
+/MediaBox [ 0 0 576 792 ]
+/Resources 4 0 R
+/Contents 25 0 R
+>>
+endobj
+27 0 obj
+<< /Length 5482 >>
+stream
+BT
+/F1 24 Tf
+0.0 0.0 0.0 rg
+1 0 0 1 100.0 710.768 Tm (Wrap) Tj
+/F1 12 Tf
+1 0 0 1 100.0 669.984 Tm (This) Tj
+1 0 0 1 126.004 669.984 Tm (is) Tj
+1 0 0 1 138.004 669.984 Tm (a) Tj
+1 0 0 1 148.012 669.984 Tm (rather) Tj
+1 0 0 1 182.692 669.984 Tm (long) Tj
+1 0 0 1 208.708 669.984 Tm (sentence) Tj
+1 0 0 1 260.74 669.984 Tm (that) Tj
+1 0 0 1 284.092 669.984 Tm (is) Tj
+1 0 0 1 296.092 669.984 Tm (going) Tj
+1 0 0 1 328.78 669.984 Tm (to) Tj
+1 0 0 1 342.124 669.984 Tm (keep) Tj
+1 0 0 1 371.476 669.984 Tm (on) Tj
+1 0 0 1 388.156 669.984 Tm (going) Tj
+1 0 0 1 420.844 669.984 Tm (and) Tj
+1 0 0 1 100.0 656.484 Tm (going,) Tj
+1 0 0 1 136.024 656.484 Tm (not) Tj
+1 0 0 1 156.04 656.484 Tm (really) Tj
+1 0 0 1 188.044 656.484 Tm (to) Tj
+1 0 0 1 201.388 656.484 Tm (demonstrate) Tj
+1 0 0 1 271.42 656.484 Tm (anything) Tj
+1 0 0 1 320.116 656.484 Tm (other) Tj
+1 0 0 1 350.8 656.484 Tm (that) Tj
+1 0 0 1 374.152 656.484 Tm (normal) Tj
+1 0 0 1 414.16 656.484 Tm (wrapping) Tj
+1 0 0 1 100.0 642.984 Tm (because) Tj
+1 0 0 1 148.696 642.984 Tm (the) Tj
+1 0 0 1 168.712 642.984 Tm (following) Tj
+1 0 0 1 218.728 642.984 Tm (paragraph) Tj
+1 0 0 1 276.76 642.984 Tm (will) Tj
+1 0 0 1 296.752 642.984 Tm (show) Tj
+1 0 0 1 328.096 642.984 Tm (what) Tj
+1 0 0 1 356.776 642.984 Tm (happens) Tj
+1 0 0 1 406.144 642.984 Tm (when) Tj
+1 0 0 1 100.0 629.484 Tm (wrap-option) Tj
+1 0 0 1 166.024 629.484 Tm (is) Tj
+1 0 0 1 178.024 629.484 Tm (set) Tj
+1 0 0 1 197.368 629.484 Tm (to) Tj
+1 0 0 1 210.712 629.484 Tm (no-wrap.) Tj
+1 0 0 1 100.0 603.984 Tm (This) Tj
+1 0 0 1 126.004 603.984 Tm (is) Tj
+1 0 0 1 138.004 603.984 Tm (a) Tj
+1 0 0 1 148.012 603.984 Tm (rather) Tj
+1 0 0 1 182.692 603.984 Tm (long) Tj
+1 0 0 1 208.708 603.984 Tm (sentence) Tj
+1 0 0 1 260.74 603.984 Tm (that) Tj
+1 0 0 1 284.092 603.984 Tm (is) Tj
+1 0 0 1 296.092 603.984 Tm (going) Tj
+1 0 0 1 328.78 603.984 Tm (to) Tj
+1 0 0 1 342.124 603.984 Tm (keep) Tj
+1 0 0 1 371.476 603.984 Tm (on) Tj
+1 0 0 1 388.156 603.984 Tm (going) Tj
+1 0 0 1 420.844 603.984 Tm (and) Tj
+1 0 0 1 444.196 603.984 Tm (going) Tj
+1 0 0 1 476.884 603.984 Tm (to) Tj
+1 0 0 1 490.228 603.984 Tm (demonstrate) Tj
+1 0 0 1 560.26 603.984 Tm (what) Tj
+1 0 0 1 588.94 603.984 Tm (happens) Tj
+1 0 0 1 638.308 603.984 Tm (when) Tj
+1 0 0 1 670.324 603.984 Tm (wrap-option) Tj
+1 0 0 1 736.348 603.984 Tm (is) Tj
+1 0 0 1 748.348 603.984 Tm (set) Tj
+1 0 0 1 767.692 603.984 Tm (to) Tj
+1 0 0 1 781.036 603.984 Tm (no-wrap) Tj
+1 0 0 1 827.716 603.984 Tm (which) Tj
+1 0 0 1 861.724 603.984 Tm (is) Tj
+1 0 0 1 873.724 603.984 Tm (unlike) Tj
+1 0 0 1 908.404 603.984 Tm (the) Tj
+1 0 0 1 928.42 603.984 Tm (preceding) Tj
+1 0 0 1 984.448 603.984 Tm (sentence) Tj
+1 0 0 1 1036.48 603.984 Tm (where) Tj
+1 0 0 1 1072.492 603.984 Tm (it) Tj
+1 0 0 1 1081.828 603.984 Tm (defaults) Tj
+1 0 0 1 1127.188 603.984 Tm (to) Tj
+1 0 0 1 1140.532 603.984 Tm (wrap.) Tj
+1 0 0 1 100.0 578.484 Tm (This) Tj
+1 0 0 1 126.004 578.484 Tm (is) Tj
+1 0 0 1 138.004 578.484 Tm (a) Tj
+1 0 0 1 148.012 578.484 Tm (rather) Tj
+1 0 0 1 182.692 578.484 Tm (long) Tj
+1 0 0 1 208.708 578.484 Tm (sentence) Tj
+1 0 0 1 260.74 578.484 Tm (that) Tj
+1 0 0 1 284.092 578.484 Tm (is) Tj
+1 0 0 1 296.092 578.484 Tm (going) Tj
+1 0 0 1 328.78 578.484 Tm (to) Tj
+1 0 0 1 342.124 578.484 Tm (keep) Tj
+1 0 0 1 371.476 578.484 Tm (on) Tj
+1 0 0 1 388.156 578.484 Tm (going) Tj
+1 0 0 1 420.844 578.484 Tm (and) Tj
+1 0 0 1 100.0 564.984 Tm (going,) Tj
+1 0 0 1 136.024 564.984 Tm (not) Tj
+1 0 0 1 156.04 564.984 Tm (really) Tj
+1 0 0 1 188.044 564.984 Tm (to) Tj
+1 0 0 1 201.388 564.984 Tm (demonstrate) Tj
+1 0 0 1 271.42 564.984 Tm (anything) Tj
+1 0 0 1 320.116 564.984 Tm (other) Tj
+1 0 0 1 350.8 564.984 Tm (that) Tj
+1 0 0 1 374.152 564.984 Tm (normal) Tj
+1 0 0 1 414.16 564.984 Tm (wrapping) Tj
+1 0 0 1 100.0 551.484 Tm (but) Tj
+1 0 0 1 120.016 551.484 Tm (it) Tj
+1 0 0 1 129.352 551.484 Tm (differs) Tj
+1 0 0 1 165.364 551.484 Tm (from) Tj
+1 0 0 1 192.7 551.484 Tm (the) Tj
+1 0 0 1 212.716 551.484 Tm (first) Tj
+1 0 0 1 235.384 551.484 Tm (of) Tj
+1 0 0 1 248.728 551.484 Tm (these) Tj
+1 0 0 1 281.416 551.484 Tm (three) Tj
+1 0 0 1 312.1 551.484 Tm (sentences) Tj
+1 0 0 1 370.132 551.484 Tm (in) Tj
+1 0 0 1 382.804 551.484 Tm (that) Tj
+1 0 0 1 406.156 551.484 Tm (wrap) Tj
+1 0 0 1 435.496 551.484 Tm (is) Tj
+1 0 0 1 447.496 551.484 Tm (set) Tj
+1 0 0 1 100.0 537.984 Tm (explicitly.) Tj
+/F1 24 Tf
+1 0 0 1 100.0 503.068 Tm (White) Tj
+1 0 0 1 168.016 503.068 Tm (Space) Tj
+1 0 0 1 242.728 503.068 Tm (Treatment) Tj
+/F1 12 Tf
+1 0 0 1 100.0 474.284 Tm (This) Tj
+1 0 0 1 126.004 474.284 Tm (is) Tj
+1 0 0 1 138.004 474.284 Tm (default!) Tj
+1 0 0 1 100.0 460.784 Tm (This) Tj
+1 0 0 1 162.7 460.784 Tm (is) Tj
+1 0 0 1 211.396 460.784 Tm (preserve!) Tj
+1 0 0 1 100.0 447.284 Tm (This) Tj
+1 0 0 1 126.004 447.284 Tm (is) Tj
+1 0 0 1 138.004 447.284 Tm (collapse!) Tj
+1 0 0 1 100.0 433.784 Tm (This) Tj
+1 0 0 1 122.668 433.784 Tm (is) Tj
+1 0 0 1 131.332 433.784 Tm (ignore!) Tj
+/F9 12 Tf
+1 0 0 1 107.2 385.856 Tm (<?xml) Tj
+1 0 0 1 150.4 385.856 Tm (version="1.0"?>) Tj
+1 0 0 1 107.2 362.192 Tm (<document>) Tj
+1 0 0 1 136.0 338.528 Tm (<heading>This) Tj
+1 0 0 1 236.8 338.528 Tm (is) Tj
+1 0 0 1 258.4 338.528 Tm (a) Tj
+1 0 0 1 272.8 338.528 Tm (heading</heading>) Tj
+1 0 0 1 136.0 314.864 Tm (<list>) Tj
+1 0 0 1 164.8 291.2 Tm (<item>Item) Tj
+1 0 0 1 244.0 291.2 Tm (one</item>) Tj
+1 0 0 1 164.8 267.536 Tm (<item>Item) Tj
+1 0 0 1 244.0 267.536 Tm (two</item>) Tj
+1 0 0 1 136.0 243.872 Tm (</list>) Tj
+1 0 0 1 107.2 220.208 Tm (</document>) Tj
+ET
+
+endstream
+endobj
+28 0 obj
+<< /Type /Page
+/Parent 2 0 R
+/MediaBox [ 0 0 576 792 ]
+/Resources 4 0 R
+/Contents 27 0 R
+>>
+endobj
+29 0 obj
+<< /Length 641 >>
+stream
+BT
+/F1 24 Tf
+1 0 0 1 100.0 710.768 Tm (Embedded) Tj
+1 0 0 1 222.736 710.768 Tm (SVG) Tj
+0.0 0.0 0.0 RG
+120.0 671.8 100.0 -100.0 re S
+0 0 0 RG
+0.0 0.0 0.0 RG
+120.0 671.8 m 220.0 571.8 l 0.0 w S
+0 0 0 RG
+0.0 0.0 0.0 RG
+220.0 671.8 m 120.0 571.8 l 0.0 w S
+0 0 0 RG
+1 0 0 1 120.0 541.8 Tm (Hello SVG!) Tj
+/F1 12 Tf
+1 0 0 1 100.0 481.984 Tm (The) Tj
+1 0 0 1 124.012 481.984 Tm (above) Tj
+1 0 0 1 160.036 481.984 Tm (is) Tj
+1 0 0 1 172.036 481.984 Tm (an) Tj
+1 0 0 1 188.716 481.984 Tm (example) Tj
+1 0 0 1 237.4 481.984 Tm (of) Tj
+1 0 0 1 250.744 481.984 Tm (an) Tj
+1 0 0 1 267.424 481.984 Tm (SVG) Tj
+1 0 0 1 296.104 481.984 Tm (graphic) Tj
+ET
+
+endstream
+endobj
+30 0 obj
+<< /Type /Page
+/Parent 2 0 R
+/MediaBox [ 0 0 576 792 ]
+/Resources 4 0 R
+/Contents 29 0 R
+>>
+endobj
+xref
+0 31
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000159 00000 n 
+0000000221 00000 n 
+0000000419 00000 n 
+0000000530 00000 n 
+0000000644 00000 n 
+0000000749 00000 n 
+0000000863 00000 n 
+0000000971 00000 n 
+0000001082 00000 n 
+0000001192 00000 n 
+0000001312 00000 n 
+0000001425 00000 n 
+0000001541 00000 n 
+0000001649 00000 n 
+0000001768 00000 n 
+0000014864 00000 n 
+0000014972 00000 n 
+0000022430 00000 n 
+0000022538 00000 n 
+0000029387 00000 n 
+0000029495 00000 n 
+0000032695 00000 n 
+0000032803 00000 n 
+0000032859 00000 n 
+0000032967 00000 n 
+0000038501 00000 n 
+0000038609 00000 n 
+0000039301 00000 n 
+trailer
+<<
+/Size 31
+/Root 1 0 R
+/Info 3 0 R
+>>
+startxref
+39409
+%%EOF

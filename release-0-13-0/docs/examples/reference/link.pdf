@@ -1,0 +1,765 @@
+%PDF-1.3
+1 0 obj
+<< /Type /Catalog
+/Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages
+/Count 1
+/Kids [18 0 R ] >>
+endobj
+3 0 obj
+<< /Type /Info
+/Producer (FOP 0.12.2 [dev]) >>
+endobj
+4 0 obj
+<< 
+/Font << /F11 5 0 R /F10 6 0 R /F9 7 0 R /F8 8 0 R /F7 9 0 R /F6 10 0 R /F5 11 0 R /F4 12 0 R /F3 13 0 R /F2 14 0 R /F1 15 0 R /F12 16 0 R >> 
+/ProcSet [ /PDF /ImageC /Text ] >> 
+endobj
+5 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F11
+/BaseFont /Courier-Bold
+/Encoding /WinAnsiEncoding >>
+endobj
+6 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F10
+/BaseFont /Courier-Oblique
+/Encoding /WinAnsiEncoding >>
+endobj
+7 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F9
+/BaseFont /Courier
+/Encoding /WinAnsiEncoding >>
+endobj
+8 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F8
+/BaseFont /Times-BoldItalic
+/Encoding /WinAnsiEncoding >>
+endobj
+9 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F7
+/BaseFont /Times-Bold
+/Encoding /WinAnsiEncoding >>
+endobj
+10 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F6
+/BaseFont /Times-Italic
+/Encoding /WinAnsiEncoding >>
+endobj
+11 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F5
+/BaseFont /Times-Roman
+/Encoding /WinAnsiEncoding >>
+endobj
+12 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F4
+/BaseFont /Helvetica-BoldOblique
+/Encoding /WinAnsiEncoding >>
+endobj
+13 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F3
+/BaseFont /Helvetica-Bold
+/Encoding /WinAnsiEncoding >>
+endobj
+14 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F2
+/BaseFont /Helvetica-Oblique
+/Encoding /WinAnsiEncoding >>
+endobj
+15 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F1
+/BaseFont /Helvetica
+/Encoding /WinAnsiEncoding >>
+endobj
+16 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F12
+/BaseFont /Courier-BoldOblique
+/Encoding /WinAnsiEncoding >>
+endobj
+17 0 obj
+<< /Length 13971 >>
+stream
+BT
+/F1 12 Tf
+1 0 0 1 260.991 718.779 Tm (1.) Tj
+1 0 0 1 274.335 718.779 Tm (normal.pdf) Tj
+1 0 0 1 291.681 705.279 Tm (---) Tj
+1 0 0 1 159.159 691.779 Tm (2.) Tj
+1 0 0 1 172.503 691.779 Tm (A) Tj
+1 0 0 1 183.843 691.779 Tm (one) Tj
+1 0 0 1 207.195 691.779 Tm (line) Tj
+1 0 0 1 229.203 691.779 Tm (example) Tj
+1 0 0 1 277.887 691.779 Tm (\(text-align='start'\):) Tj
+1 0 0 1 376.167 691.779 Tm (normal.pdf) Tj
+1 0 0 1 291.681 678.279 Tm (---) Tj
+1 0 0 1 70.875 664.779 Tm (3.) Tj
+1 0 0 1 84.219 664.779 Tm (A) Tj
+1 0 0 1 95.559 664.779 Tm (multiline) Tj
+1 0 0 1 142.899 664.779 Tm (text) Tj
+1 0 0 1 165.579 664.779 Tm (\(text-align='start'\).) Tj
+1 0 0 1 263.859 664.779 Tm (The) Tj
+1 0 0 1 287.871 664.779 Tm (Extensible) Tj
+1 0 0 1 346.563 664.779 Tm (Markup) Tj
+1 0 0 1 389.907 664.779 Tm (Language) Tj
+1 0 0 1 446.619 664.779 Tm (\(XML\)) Tj
+1 0 0 1 482.619 664.779 Tm (is) Tj
+1 0 0 1 494.619 664.779 Tm (a) Tj
+1 0 0 1 70.875 651.279 Tm (subset) Tj
+1 0 0 1 109.563 651.279 Tm (of) Tj
+1 0 0 1 122.907 651.279 Tm (SGML) Tj
+1 0 0 1 160.251 651.279 Tm (that) Tj
+1 0 0 1 183.603 651.279 Tm (is) Tj
+1 0 0 1 195.603 651.279 Tm (completely) Tj
+1 0 0 1 256.287 651.279 Tm (described) Tj
+1 0 0 1 311.643 651.279 Tm (in) Tj
+1 0 0 1 324.315 651.279 Tm (this) Tj
+1 0 0 1 346.323 651.279 Tm (document.) Tj
+1 0 0 1 405.687 651.279 Tm (Its) Tj
+1 0 0 1 421.695 651.279 Tm (goal) Tj
+1 0 0 1 447.711 651.279 Tm (is) Tj
+1 0 0 1 459.711 651.279 Tm (to) Tj
+1 0 0 1 473.055 651.279 Tm (enable) Tj
+1 0 0 1 70.875 637.779 Tm (generic) Tj
+1 0 0 1 113.559 637.779 Tm (SGML) Tj
+1 0 0 1 150.903 637.779 Tm (to) Tj
+1 0 0 1 164.247 637.779 Tm (be) Tj
+1 0 0 1 180.927 637.779 Tm (served,) Tj
+1 0 0 1 223.611 637.779 Tm (received,) Tj
+1 0 0 1 275.631 637.779 Tm (and) Tj
+1 0 0 1 298.983 637.779 Tm (processed) Tj
+1 0 0 1 357.675 637.779 Tm (on) Tj
+1 0 0 1 374.355 637.779 Tm (the) Tj
+1 0 0 1 394.371 637.779 Tm (Web) Tj
+1 0 0 1 422.379 637.779 Tm (in) Tj
+1 0 0 1 435.051 637.779 Tm (the) Tj
+1 0 0 1 455.067 637.779 Tm (way) Tj
+1 0 0 1 479.739 637.779 Tm (that) Tj
+1 0 0 1 503.091 637.779 Tm (is) Tj
+1 0 0 1 70.875 624.279 Tm (now) Tj
+1 0 0 1 96.219 624.279 Tm (possible) Tj
+1 0 0 1 143.571 624.279 Tm (with) Tj
+1 0 0 1 168.243 624.279 Tm (HTML.) Tj
+1 0 0 1 207.579 624.279 Tm (XML) Tj
+1 0 0 1 235.587 624.279 Tm (has) Tj
+1 0 0 1 258.267 624.279 Tm (been) Tj
+1 0 0 1 288.291 624.279 Tm (designed) Tj
+1 0 0 1 340.323 624.279 Tm (for) Tj
+1 0 0 1 357.663 624.279 Tm (ease) Tj
+1 0 0 1 387.015 624.279 Tm (of) Tj
+1 0 0 1 400.359 624.279 Tm (implementation) Tj
+1 0 0 1 485.055 624.279 Tm (and) Tj
+1 0 0 1 508.407 624.279 Tm (for) Tj
+1 0 0 1 70.875 610.779 Tm (interoperability) Tj
+1 0 0 1 152.235 610.779 Tm (with) Tj
+1 0 0 1 176.907 610.779 Tm (both) Tj
+1 0 0 1 203.595 610.779 Tm (SGML) Tj
+1 0 0 1 240.939 610.779 Tm (and) Tj
+1 0 0 1 264.291 610.779 Tm (HTML.) Tj
+1 0 0 1 303.627 610.779 Tm (For) Tj
+1 0 0 1 324.963 610.779 Tm (further) Tj
+1 0 0 1 362.979 610.779 Tm (information) Tj
+1 0 0 1 425.667 610.779 Tm (go) Tj
+1 0 0 1 442.347 610.779 Tm (to) Tj
+1 0 0 1 455.691 610.779 Tm (normal.pdf) Tj
+1 0 0 1 291.681 597.279 Tm (---) Tj
+1 0 0 1 75.795 583.779 Tm (4.) Tj
+1 0 0 1 89.139 583.779 Tm (A) Tj
+1 0 0 1 100.479 583.779 Tm (multiline) Tj
+1 0 0 1 147.819 583.779 Tm (text) Tj
+1 0 0 1 170.499 583.779 Tm (\(text-align='centered'\).) Tj
+1 0 0 1 292.131 583.779 Tm (The) Tj
+1 0 0 1 316.143 583.779 Tm (Extensible) Tj
+1 0 0 1 374.835 583.779 Tm (Markup) Tj
+1 0 0 1 418.179 583.779 Tm (Language) Tj
+1 0 0 1 474.891 583.779 Tm (\(XML\)) Tj
+1 0 0 1 510.891 583.779 Tm (is) Tj
+1 0 0 1 73.569 570.279 Tm (a) Tj
+1 0 0 1 83.577 570.279 Tm (subset) Tj
+1 0 0 1 122.265 570.279 Tm (of) Tj
+1 0 0 1 135.609 570.279 Tm (SGML) Tj
+1 0 0 1 172.953 570.279 Tm (that) Tj
+1 0 0 1 196.305 570.279 Tm (is) Tj
+1 0 0 1 208.305 570.279 Tm (completely) Tj
+1 0 0 1 268.989 570.279 Tm (described) Tj
+1 0 0 1 324.345 570.279 Tm (in) Tj
+1 0 0 1 337.017 570.279 Tm (this) Tj
+1 0 0 1 359.025 570.279 Tm (document.) Tj
+1 0 0 1 418.389 570.279 Tm (Its) Tj
+1 0 0 1 434.397 570.279 Tm (goal) Tj
+1 0 0 1 460.413 570.279 Tm (is) Tj
+1 0 0 1 472.413 570.279 Tm (to) Tj
+1 0 0 1 485.757 570.279 Tm (enable) Tj
+1 0 0 1 77.235 556.779 Tm (generic) Tj
+1 0 0 1 119.919 556.779 Tm (SGML) Tj
+1 0 0 1 157.263 556.779 Tm (to) Tj
+1 0 0 1 170.607 556.779 Tm (be) Tj
+1 0 0 1 187.287 556.779 Tm (served,) Tj
+1 0 0 1 229.971 556.779 Tm (received,) Tj
+1 0 0 1 281.991 556.779 Tm (and) Tj
+1 0 0 1 305.343 556.779 Tm (processed) Tj
+1 0 0 1 364.035 556.779 Tm (on) Tj
+1 0 0 1 380.715 556.779 Tm (the) Tj
+1 0 0 1 400.731 556.779 Tm (Web) Tj
+1 0 0 1 428.739 556.779 Tm (in) Tj
+1 0 0 1 441.411 556.779 Tm (the) Tj
+1 0 0 1 461.427 556.779 Tm (way) Tj
+1 0 0 1 486.099 556.779 Tm (that) Tj
+1 0 0 1 509.451 556.779 Tm (is) Tj
+1 0 0 1 71.907 543.279 Tm (now) Tj
+1 0 0 1 97.251 543.279 Tm (possible) Tj
+1 0 0 1 144.603 543.279 Tm (with) Tj
+1 0 0 1 169.275 543.279 Tm (HTML.) Tj
+1 0 0 1 208.611 543.279 Tm (XML) Tj
+1 0 0 1 236.619 543.279 Tm (has) Tj
+1 0 0 1 259.299 543.279 Tm (been) Tj
+1 0 0 1 289.323 543.279 Tm (designed) Tj
+1 0 0 1 341.355 543.279 Tm (for) Tj
+1 0 0 1 358.695 543.279 Tm (ease) Tj
+1 0 0 1 388.047 543.279 Tm (of) Tj
+1 0 0 1 401.391 543.279 Tm (implementation) Tj
+1 0 0 1 486.087 543.279 Tm (and) Tj
+1 0 0 1 509.439 543.279 Tm (for) Tj
+1 0 0 1 75.255 529.779 Tm (interoperability) Tj
+1 0 0 1 156.615 529.779 Tm (with) Tj
+1 0 0 1 181.287 529.779 Tm (both) Tj
+1 0 0 1 207.975 529.779 Tm (SGML) Tj
+1 0 0 1 245.319 529.779 Tm (and) Tj
+1 0 0 1 268.671 529.779 Tm (HTML.) Tj
+1 0 0 1 308.007 529.779 Tm (For) Tj
+1 0 0 1 329.343 529.779 Tm (further) Tj
+1 0 0 1 367.359 529.779 Tm (information) Tj
+1 0 0 1 430.047 529.779 Tm (go) Tj
+1 0 0 1 446.727 529.779 Tm (to) Tj
+1 0 0 1 460.071 529.779 Tm (normal.pdf) Tj
+1 0 0 1 291.681 516.279 Tm (---) Tj
+1 0 0 1 97.383 502.779 Tm (5.) Tj
+1 0 0 1 110.727 502.779 Tm (A) Tj
+1 0 0 1 122.067 502.779 Tm (multiline) Tj
+1 0 0 1 169.407 502.779 Tm (text) Tj
+1 0 0 1 192.087 502.779 Tm (\(text-align='end'\).) Tj
+1 0 0 1 287.043 502.779 Tm (The) Tj
+1 0 0 1 311.055 502.779 Tm (Extensible) Tj
+1 0 0 1 369.747 502.779 Tm (Markup) Tj
+1 0 0 1 413.091 502.779 Tm (Language) Tj
+1 0 0 1 469.803 502.779 Tm (\(XML\)) Tj
+1 0 0 1 505.803 502.779 Tm (is) Tj
+1 0 0 1 517.803 502.779 Tm (a) Tj
+1 0 0 1 86.271 489.279 Tm (subset) Tj
+1 0 0 1 124.959 489.279 Tm (of) Tj
+1 0 0 1 138.303 489.279 Tm (SGML) Tj
+1 0 0 1 175.647 489.279 Tm (that) Tj
+1 0 0 1 198.999 489.279 Tm (is) Tj
+1 0 0 1 210.999 489.279 Tm (completely) Tj
+1 0 0 1 271.683 489.279 Tm (described) Tj
+1 0 0 1 327.039 489.279 Tm (in) Tj
+1 0 0 1 339.711 489.279 Tm (this) Tj
+1 0 0 1 361.719 489.279 Tm (document.) Tj
+1 0 0 1 421.083 489.279 Tm (Its) Tj
+1 0 0 1 437.091 489.279 Tm (goal) Tj
+1 0 0 1 463.107 489.279 Tm (is) Tj
+1 0 0 1 475.107 489.279 Tm (to) Tj
+1 0 0 1 488.451 489.279 Tm (enable) Tj
+1 0 0 1 83.595 475.779 Tm (generic) Tj
+1 0 0 1 126.279 475.779 Tm (SGML) Tj
+1 0 0 1 163.623 475.779 Tm (to) Tj
+1 0 0 1 176.967 475.779 Tm (be) Tj
+1 0 0 1 193.647 475.779 Tm (served,) Tj
+1 0 0 1 236.331 475.779 Tm (received,) Tj
+1 0 0 1 288.351 475.779 Tm (and) Tj
+1 0 0 1 311.703 475.779 Tm (processed) Tj
+1 0 0 1 370.395 475.779 Tm (on) Tj
+1 0 0 1 387.075 475.779 Tm (the) Tj
+1 0 0 1 407.091 475.779 Tm (Web) Tj
+1 0 0 1 435.099 475.779 Tm (in) Tj
+1 0 0 1 447.771 475.779 Tm (the) Tj
+1 0 0 1 467.787 475.779 Tm (way) Tj
+1 0 0 1 492.459 475.779 Tm (that) Tj
+1 0 0 1 515.811 475.779 Tm (is) Tj
+1 0 0 1 72.939 462.279 Tm (now) Tj
+1 0 0 1 98.283 462.279 Tm (possible) Tj
+1 0 0 1 145.635 462.279 Tm (with) Tj
+1 0 0 1 170.307 462.279 Tm (HTML.) Tj
+1 0 0 1 209.643 462.279 Tm (XML) Tj
+1 0 0 1 237.651 462.279 Tm (has) Tj
+1 0 0 1 260.331 462.279 Tm (been) Tj
+1 0 0 1 290.355 462.279 Tm (designed) Tj
+1 0 0 1 342.387 462.279 Tm (for) Tj
+1 0 0 1 359.727 462.279 Tm (ease) Tj
+1 0 0 1 389.079 462.279 Tm (of) Tj
+1 0 0 1 402.423 462.279 Tm (implementation) Tj
+1 0 0 1 487.119 462.279 Tm (and) Tj
+1 0 0 1 510.471 462.279 Tm (for) Tj
+1 0 0 1 79.635 448.779 Tm (interoperability) Tj
+1 0 0 1 160.995 448.779 Tm (with) Tj
+1 0 0 1 185.667 448.779 Tm (both) Tj
+1 0 0 1 212.355 448.779 Tm (SGML) Tj
+1 0 0 1 249.699 448.779 Tm (and) Tj
+1 0 0 1 273.051 448.779 Tm (HTML.) Tj
+1 0 0 1 312.387 448.779 Tm (For) Tj
+1 0 0 1 333.723 448.779 Tm (further) Tj
+1 0 0 1 371.739 448.779 Tm (information) Tj
+1 0 0 1 434.427 448.779 Tm (go) Tj
+1 0 0 1 451.107 448.779 Tm (to) Tj
+1 0 0 1 464.451 448.779 Tm (normal.pdf) Tj
+1 0 0 1 291.681 435.279 Tm (---) Tj
+/F5 12 Tf
+1 0 0 1 70.875 411.399 Tm (6.) Tj
+1 0 0 1 82.875 411.399 Tm (A) Tj
+1 0 0 1 94.539 411.399 Tm (multiline) Tj
+1 0 0 1 140.883 411.399 Tm (text) Tj
+1 0 0 1 161.883 411.399 Tm (\(text-align='start',) Tj
+1 0 0 1 249.627 411.399 Tm (space-before.optimum=6pt,) Tj
+1 0 0 1 385.371 411.399 Tm (font-family=serif) Tj
+1 0 0 1 70.875 388.599 Tm (padding-top="3pt"\).) Tj
+1 0 0 1 170.763 388.599 Tm (The) Tj
+1 0 0 1 192.423 388.599 Tm (Extensible) Tj
+1 0 0 1 246.087 388.599 Tm (Markup) Tj
+1 0 0 1 287.079 388.599 Tm (Language) Tj
+1 0 0 1 337.395 388.599 Tm (\(XML\)) Tj
+1 0 0 1 375.051 388.599 Tm (is) Tj
+1 0 0 1 386.055 388.599 Tm (a) Tj
+1 0 0 1 394.383 388.599 Tm (subset) Tj
+1 0 0 1 427.383 388.599 Tm (of) Tj
+1 0 0 1 440.379 388.599 Tm (SGML) Tj
+1 0 0 1 476.715 388.599 Tm (that) Tj
+1 0 0 1 497.715 388.599 Tm (is) Tj
+1 0 0 1 70.875 365.799 Tm (completely) Tj
+1 0 0 1 127.203 365.799 Tm (described) Tj
+1 0 0 1 176.187 365.799 Tm (in) Tj
+1 0 0 1 188.523 365.799 Tm (this) Tj
+1 0 0 1 208.863 365.799 Tm (document.) Tj
+1 0 0 1 262.191 365.799 Tm (Its) Tj
+1 0 0 1 277.191 365.799 Tm (goal) Tj
+1 0 0 1 300.855 365.799 Tm (is) Tj
+1 0 0 1 311.859 365.799 Tm (to) Tj
+1 0 0 1 324.195 365.799 Tm (enable) Tj
+1 0 0 1 358.515 365.799 Tm (generic) Tj
+1 0 0 1 396.831 365.799 Tm (SGML) Tj
+1 0 0 1 433.167 365.799 Tm (to) Tj
+1 0 0 1 445.503 365.799 Tm (be) Tj
+1 0 0 1 459.831 365.799 Tm (served,) Tj
+1 0 0 1 70.875 342.999 Tm (received,) Tj
+1 0 0 1 117.519 342.999 Tm (and) Tj
+1 0 0 1 137.847 342.999 Tm (processed) Tj
+1 0 0 1 188.163 342.999 Tm (on) Tj
+1 0 0 1 203.163 342.999 Tm (the) Tj
+1 0 0 1 220.827 342.999 Tm (Web) Tj
+1 0 0 1 246.483 342.999 Tm (in) Tj
+1 0 0 1 258.819 342.999 Tm (the) Tj
+1 0 0 1 276.483 342.999 Tm (way) Tj
+1 0 0 1 299.475 342.999 Tm (that) Tj
+1 0 0 1 320.475 342.999 Tm (is) Tj
+1 0 0 1 331.479 342.999 Tm (now) Tj
+1 0 0 1 355.143 342.999 Tm (possible) Tj
+1 0 0 1 397.479 342.999 Tm (with) Tj
+1 0 0 1 421.815 342.999 Tm (HTML.) Tj
+1 0 0 1 461.811 342.999 Tm (XML) Tj
+1 0 0 1 491.475 342.999 Tm (has) Tj
+1 0 0 1 70.875 320.199 Tm (been) Tj
+1 0 0 1 96.531 320.199 Tm (designed) Tj
+1 0 0 1 142.191 320.199 Tm (for) Tj
+1 0 0 1 159.183 320.199 Tm (ease) Tj
+1 0 0 1 182.835 320.199 Tm (of) Tj
+1 0 0 1 195.831 320.199 Tm (implementation) Tj
+1 0 0 1 274.167 320.199 Tm (and) Tj
+1 0 0 1 294.495 320.199 Tm (for) Tj
+1 0 0 1 311.487 320.199 Tm (interoperability) Tj
+1 0 0 1 388.479 320.199 Tm (with) Tj
+1 0 0 1 412.815 320.199 Tm (both) Tj
+1 0 0 1 437.151 320.199 Tm (SGML) Tj
+1 0 0 1 473.487 320.199 Tm (and) Tj
+1 0 0 1 70.875 297.399 Tm (HTML.) Tj
+1 0 0 1 110.871 297.399 Tm (For) Tj
+1 0 0 1 130.539 297.399 Tm (further) Tj
+1 0 0 1 166.191 297.399 Tm (information) Tj
+1 0 0 1 225.855 297.399 Tm (go) Tj
+1 0 0 1 240.855 297.399 Tm (to) Tj
+1 0 0 1 253.191 297.399 Tm (normal.pdf) Tj
+1 0 0 1 70.875 268.599 Tm (7.) Tj
+1 0 0 1 82.875 268.599 Tm (A) Tj
+1 0 0 1 94.539 268.599 Tm (multiline) Tj
+1 0 0 1 140.883 268.599 Tm (text) Tj
+1 0 0 1 161.883 268.599 Tm (\(text-align='start',) Tj
+1 0 0 1 249.627 268.599 Tm (space-before.optimum=6pt,) Tj
+1 0 0 1 385.371 268.599 Tm (font-family=serif,) Tj
+1 0 0 1 70.875 245.799 Tm (padding-top="3pt"\).) Tj
+1 0 0 1 170.763 245.799 Tm (The) Tj
+1 0 0 1 192.423 245.799 Tm (Extensible) Tj
+1 0 0 1 246.087 245.799 Tm (Markup) Tj
+1 0 0 1 287.079 245.799 Tm (Language) Tj
+1 0 0 1 337.395 245.799 Tm (\(XML\)) Tj
+1 0 0 1 375.051 245.799 Tm (is) Tj
+1 0 0 1 386.055 245.799 Tm (a) Tj
+1 0 0 1 394.383 245.799 Tm (subset) Tj
+1 0 0 1 427.383 245.799 Tm (of) Tj
+1 0 0 1 440.379 245.799 Tm (SGML) Tj
+1 0 0 1 476.715 245.799 Tm (that) Tj
+1 0 0 1 497.715 245.799 Tm (is) Tj
+1 0 0 1 70.875 222.999 Tm (completely) Tj
+1 0 0 1 127.203 222.999 Tm (described) Tj
+1 0 0 1 176.187 222.999 Tm (in) Tj
+1 0 0 1 188.523 222.999 Tm (this) Tj
+1 0 0 1 208.863 222.999 Tm (document.) Tj
+1 0 0 1 262.191 222.999 Tm (Its) Tj
+1 0 0 1 277.191 222.999 Tm (goal) Tj
+1 0 0 1 300.855 222.999 Tm (is) Tj
+1 0 0 1 311.859 222.999 Tm (to) Tj
+1 0 0 1 324.195 222.999 Tm (enable) Tj
+1 0 0 1 358.515 222.999 Tm (generic) Tj
+1 0 0 1 396.831 222.999 Tm (SGML) Tj
+1 0 0 1 433.167 222.999 Tm (to) Tj
+1 0 0 1 445.503 222.999 Tm (be) Tj
+1 0 0 1 459.831 222.999 Tm (served,) Tj
+1 0 0 1 70.875 200.199 Tm (received,) Tj
+1 0 0 1 117.519 200.199 Tm (and) Tj
+1 0 0 1 137.847 200.199 Tm (processed) Tj
+1 0 0 1 188.163 200.199 Tm (on) Tj
+1 0 0 1 203.163 200.199 Tm (the) Tj
+1 0 0 1 220.827 200.199 Tm (Web) Tj
+1 0 0 1 246.483 200.199 Tm (in) Tj
+1 0 0 1 258.819 200.199 Tm (the) Tj
+1 0 0 1 276.483 200.199 Tm (way) Tj
+1 0 0 1 299.475 200.199 Tm (that) Tj
+1 0 0 1 320.475 200.199 Tm (is) Tj
+1 0 0 1 331.479 200.199 Tm (now) Tj
+1 0 0 1 355.143 200.199 Tm (possible) Tj
+1 0 0 1 397.479 200.199 Tm (with) Tj
+1 0 0 1 421.815 200.199 Tm (HTML.) Tj
+1 0 0 1 461.811 200.199 Tm (XML) Tj
+1 0 0 1 491.475 200.199 Tm (has) Tj
+1 0 0 1 70.875 177.399 Tm (been) Tj
+1 0 0 1 96.531 177.399 Tm (designed) Tj
+1 0 0 1 142.191 177.399 Tm (for) Tj
+1 0 0 1 159.183 177.399 Tm (ease) Tj
+1 0 0 1 182.835 177.399 Tm (of) Tj
+1 0 0 1 195.831 177.399 Tm (implementation) Tj
+1 0 0 1 274.167 177.399 Tm (and) Tj
+1 0 0 1 294.495 177.399 Tm (for) Tj
+1 0 0 1 311.487 177.399 Tm (interoperability) Tj
+1 0 0 1 388.479 177.399 Tm (with) Tj
+1 0 0 1 412.815 177.399 Tm (both) Tj
+1 0 0 1 437.151 177.399 Tm (SGML) Tj
+1 0 0 1 473.487 177.399 Tm (and) Tj
+1 0 0 1 70.875 154.599 Tm (HTML.) Tj
+1 0 0 1 110.871 154.599 Tm (For) Tj
+1 0 0 1 130.539 154.599 Tm (further) Tj
+1 0 0 1 166.191 154.599 Tm (information) Tj
+1 0 0 1 225.855 154.599 Tm (go) Tj
+1 0 0 1 240.855 154.599 Tm (to) Tj
+1 0 0 1 253.191 154.599 Tm (normal.pdf) Tj
+ET
+
+endstream
+endobj
+18 0 obj
+<< /Type /Page
+/Parent 2 0 R
+/MediaBox [ 0 0 595 841 ]
+/Resources 4 0 R
+/Contents 17 0 R
+/Annots 19 0 R
+>>
+endobj
+19 0 obj
+[
+20 0 R
+23 0 R
+26 0 R
+29 0 R
+32 0 R
+35 0 R
+38 0 R
+41 0 R
+44 0 R
+]
+endobj
+20 0 obj
+<< /Type /Annot
+/Subtype /Link
+/Rect [ 274.335 728.595 331.023 714.195 ]
+/C [ 0 0 0 ]
+/Border [ 0 0 0 ]
+/A 22 0 R
+/H /I
+>>
+endobj
+21 0 obj
+<<
+/Type /FileSpec
+/F (normal.pdf)
+>>
+endobj
+22 0 obj
+<<
+/S /GoToR
+/F 21 0 R
+/D [ 0 /XYZ null null null ] 
+>>
+endobj
+23 0 obj
+<< /Type /Annot
+/Subtype /Link
+/Rect [ 376.167 701.595 432.855 687.195 ]
+/C [ 0 0 0 ]
+/Border [ 0 0 0 ]
+/A 25 0 R
+/H /I
+>>
+endobj
+24 0 obj
+<<
+/Type /FileSpec
+/F (normal.pdf)
+>>
+endobj
+25 0 obj
+<<
+/S /GoToR
+/F 24 0 R
+/D [ 0 /XYZ null null null ] 
+>>
+endobj
+26 0 obj
+<< /Type /Annot
+/Subtype /Link
+/Rect [ 455.691 620.595 512.379 606.195 ]
+/C [ 0 0 0 ]
+/Border [ 0 0 0 ]
+/A 28 0 R
+/H /I
+>>
+endobj
+27 0 obj
+<<
+/Type /FileSpec
+/F (normal.pdf)
+>>
+endobj
+28 0 obj
+<<
+/S /GoToR
+/F 27 0 R
+/D [ 0 /XYZ null null null ] 
+>>
+endobj
+29 0 obj
+<< /Type /Annot
+/Subtype /Link
+/Rect [ 460.071 539.595 516.759 525.195 ]
+/C [ 0 0 0 ]
+/Border [ 0 0 0 ]
+/A 31 0 R
+/H /I
+>>
+endobj
+30 0 obj
+<<
+/Type /FileSpec
+/F (normal.pdf)
+>>
+endobj
+31 0 obj
+<<
+/S /GoToR
+/F 30 0 R
+/D [ 0 /XYZ null null null ] 
+>>
+endobj
+32 0 obj
+<< /Type /Annot
+/Subtype /Link
+/Rect [ 464.451 458.595 521.139 444.195 ]
+/C [ 0 0 0 ]
+/Border [ 0 0 0 ]
+/A 34 0 R
+/H /I
+>>
+endobj
+33 0 obj
+<<
+/Type /FileSpec
+/F (normal.pdf)
+>>
+endobj
+34 0 obj
+<<
+/S /GoToR
+/F 33 0 R
+/D [ 0 /XYZ null null null ] 
+>>
+endobj
+35 0 obj
+<< /Type /Annot
+/Subtype /Link
+/Rect [ 358.515 379.995 393.831 355.995 ]
+/C [ 0 0 0 ]
+/Border [ 0 0 0 ]
+/A 37 0 R
+/H /I
+>>
+endobj
+36 0 obj
+<<
+/Type /FileSpec
+/F (normal.pdf)
+>>
+endobj
+37 0 obj
+<<
+/S /GoToR
+/F 36 0 R
+/D [ 0 /XYZ null null null ] 
+>>
+endobj
+38 0 obj
+<< /Type /Annot
+/Subtype /Link
+/Rect [ 253.191 311.595 306.183 287.595 ]
+/C [ 0 0 0 ]
+/Border [ 0 0 0 ]
+/A 40 0 R
+/H /I
+>>
+endobj
+39 0 obj
+<<
+/Type /FileSpec
+/F (normal.pdf)
+>>
+endobj
+40 0 obj
+<<
+/S /GoToR
+/F 39 0 R
+/D [ 0 /XYZ null null null ] 
+>>
+endobj
+41 0 obj
+<< /Type /Annot
+/Subtype /Link
+/Rect [ 358.515 234.195 393.831 210.195 ]
+/C [ 0 0 0 ]
+/Border [ 0 0 0 ]
+/A 43 0 R
+/H /I
+>>
+endobj
+42 0 obj
+<<
+/Type /FileSpec
+/F (normal.pdf)
+>>
+endobj
+43 0 obj
+<<
+/S /GoToR
+/F 42 0 R
+/D [ 0 /XYZ null null null ] 
+>>
+endobj
+44 0 obj
+<< /Type /Annot
+/Subtype /Link
+/Rect [ 253.191 165.795 306.183 141.795 ]
+/C [ 0 0 0 ]
+/Border [ 0 0 0 ]
+/A 46 0 R
+/H /I
+>>
+endobj
+45 0 obj
+<<
+/Type /FileSpec
+/F (normal.pdf)
+>>
+endobj
+46 0 obj
+<<
+/S /GoToR
+/F 45 0 R
+/D [ 0 /XYZ null null null ] 
+>>
+endobj
+xref
+0 47
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000117 00000 n 
+0000000179 00000 n 
+0000000377 00000 n 
+0000000488 00000 n 
+0000000602 00000 n 
+0000000707 00000 n 
+0000000821 00000 n 
+0000000929 00000 n 
+0000001040 00000 n 
+0000001150 00000 n 
+0000001270 00000 n 
+0000001383 00000 n 
+0000001499 00000 n 
+0000001607 00000 n 
+0000001726 00000 n 
+0000015750 00000 n 
+0000015873 00000 n 
+0000015956 00000 n 
+0000016095 00000 n 
+0000016149 00000 n 
+0000016221 00000 n 
+0000016360 00000 n 
+0000016414 00000 n 
+0000016486 00000 n 
+0000016625 00000 n 
+0000016679 00000 n 
+0000016751 00000 n 
+0000016890 00000 n 
+0000016944 00000 n 
+0000017016 00000 n 
+0000017155 00000 n 
+0000017209 00000 n 
+0000017281 00000 n 
+0000017420 00000 n 
+0000017474 00000 n 
+0000017546 00000 n 
+0000017685 00000 n 
+0000017739 00000 n 
+0000017811 00000 n 
+0000017950 00000 n 
+0000018004 00000 n 
+0000018076 00000 n 
+0000018215 00000 n 
+0000018269 00000 n 
+trailer
+<<
+/Size 47
+/Root 1 0 R
+/Info 3 0 R
+>>
+startxref
+18341
+%%EOF
