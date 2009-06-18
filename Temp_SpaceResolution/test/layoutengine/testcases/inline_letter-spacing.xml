@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2005 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks inline level letter-spacing.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal" white-space-collapse="true">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>In all the following tests the &lt;fo:inline&gt; is wrappped around the 
+          first and last characters of the block and this section of text:
+          glyph-areas stacked with no extra space between the allocation-rectangles</fo:block>
+          <fo:block>Next inline has letter-spacing="normal":</fo:block>
+          <fo:block><fo:inline letter-spacing="normal">D</fo:inline>efault space between characters is defined to be 0pt, i.e., 
+          <fo:inline letter-spacing="normal">glyph-areas stacked with no extra space between the allocation-rectangles</fo:inline>
+          of the glyph-areas<fo:inline letter-spacing="normal">.</fo:inline></fo:block>
+          <fo:block>Next inline has letter-spacing="0pt":</fo:block>
+          <fo:block><fo:inline letter-spacing="0pt">D</fo:inline>efault space between characters is defined to be 0pt, i.e., 
+          <fo:inline letter-spacing="0pt">glyph-areas stacked with no extra space between the allocation-rectangles</fo:inline>
+          of the glyph-areas<fo:inline letter-spacing="0pt">.</fo:inline></fo:block>
+          <fo:block>Next inline has letter-spacing="2pt":</fo:block>
+          <fo:block><fo:inline letter-spacing="2pt">D</fo:inline>efault space between characters is defined to be 0pt, i.e., 
+          <fo:inline letter-spacing="2pt">glyph-areas stacked with no extra space between the allocation-rectangles</fo:inline>
+          of the glyph-areas<fo:inline letter-spacing="2pt">.</fo:inline></fo:block>
+          <fo:block>Next inline has letter-spacing.optimum="2pt" letter-spacing.minimum="0pt" letter-spacing.maximum="4pt":</fo:block>
+          <fo:block><fo:inline letter-spacing.optimum="2pt" letter-spacing.minimum="0pt" letter-spacing.maximum="4pt">D</fo:inline>efault space between characters is defined to be 0pt, i.e., 
+          <fo:inline letter-spacing.optimum="2pt" letter-spacing.minimum="0pt" letter-spacing.maximum="4pt">glyph-areas stacked with no extra space between the allocation-rectangles</fo:inline>
+          of the glyph-areas<fo:inline letter-spacing.optimum="2pt" letter-spacing.minimum="0pt" letter-spacing.maximum="4pt">.</fo:inline></fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+  </checks>
+</testcase>

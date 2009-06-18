@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2005 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks text-decoration (inheritance and color).
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal" white-space-collapse="true">
+        <fo:flow flow-name="xsl-region-body">
+          <!-- nested inlines -->
+          <fo:block>normal <fo:inline color="blue" text-decoration="underline">under <fo:inline color="red" text-decoration="line-through">through</fo:inline> <fo:inline text-decoration="none">none</fo:inline> under</fo:inline> normal</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <!-- *** nested inlines *** -->
+    <true xpath="not(//flow/block[1]/lineArea/*[1]/@underline-score)"/> <!-- normal -->
+    <true xpath="not(//flow/block[1]/lineArea/*[1]/@through-score)"/>
+    <eval xpath="name(//flow/block[1]/lineArea/*[1])" expected="text"/>
+    <eval xpath="//flow/block[1]/lineArea/*[1]/@color" expected="#000000"/>
+    
+    <eval xpath="name(//flow/block[1]/lineArea/*[2])" expected="inlineparent"/>
+    
+    <eval xpath="name(//flow/block[1]/lineArea/*[2]/*[1])" expected="text"/> <!-- under -->
+    <eval xpath="//flow/block[1]/lineArea/*[2]/*[1]/@color" expected="#0000ff"/>
+    <true xpath="//flow/block[1]/lineArea/*[2]/*[1]/@underline-score"/>
+    <eval xpath="//flow/block[1]/lineArea/*[2]/*[1]/@underline-score-color" expected="#0000ff"/>
+    <true xpath="not(//flow/block[1]/lineArea/*[2]/*[1]/*[1]/@through-score)"/>
+    
+    <eval xpath="name(//flow/block[1]/lineArea/*[2]/*[2])" expected="inlineparent"/>
+    
+    <eval xpath="name(//flow/block[1]/lineArea/*[2]/*[2]/*[1])" expected="text"/> <!--through -->
+    <eval xpath="//flow/block[1]/lineArea/*[2]/*[2]/*[1]/@color" expected="#ff0000"/>
+    <true xpath="//flow/block[1]/lineArea/*[2]/*[2]/*[1]/@underline-score"/>
+    <eval xpath="//flow/block[1]/lineArea/*[2]/*[2]/*[1]/@underline-score-color" expected="#0000ff"/>
+    <true xpath="//flow/block[1]/lineArea/*[2]/*[2]/*[1]/@through-score"/>
+    <eval xpath="//flow/block[1]/lineArea/*[2]/*[2]/*[1]/@through-score-color" expected="#ff0000"/>
+
+    <eval xpath="name(//flow/block[1]/lineArea/*[2]/*[3])" expected="text"/> <!-- a space -->
+    <eval xpath="//flow/block[1]/lineArea/*[2]/*[3]/@color" expected="#0000ff"/>
+    <true xpath="//flow/block[1]/lineArea/*[2]/*[3]/@underline-score"/>
+    <eval xpath="//flow/block[1]/lineArea/*[2]/*[3]/@underline-score-color" expected="#0000ff"/>
+    <true xpath="not(//flow/block[1]/lineArea/*[2]/*[3]/*[1]/@through-score)"/>
+    
+    <eval xpath="name(//flow/block[1]/lineArea/*[2]/*[4])" expected="inlineparent"/>
+    
+    <eval xpath="name(//flow/block[1]/lineArea/*[2]/*[4]/*[1])" expected="text"/> <!-- none -->
+    <eval xpath="//flow/block[1]/lineArea/*[2]/*[4]/*[1]/@color" expected="#0000ff"/>
+    <true xpath="not(//flow/block[1]/lineArea/*[2]/*[4]/*[1]/@underline-score)"/>
+    <true xpath="not(//flow/block[1]/lineArea/*[2]/*[4]/*[1]/@through-score)"/>
+
+    <eval xpath="name(//flow/block[1]/lineArea/*[2]/*[5])" expected="text"/> <!-- under -->
+    <eval xpath="//flow/block[1]/lineArea/*[2]/*[5]/@color" expected="#0000ff"/>
+    <true xpath="//flow/block[1]/lineArea/*[2]/*[5]/@underline-score"/>
+    <eval xpath="//flow/block[1]/lineArea/*[2]/*[5]/@underline-score-color" expected="#0000ff"/>
+    <true xpath="not(//flow/block[1]/lineArea/*[2]/*[5]/*[1]/@through-score)"/>
+
+    <true xpath="not(//flow/block[1]/lineArea/*[3]/@underline-score)"/> <!-- normal -->
+    <true xpath="not(//flow/block[1]/lineArea/*[3]/@through-score)"/>
+    <eval xpath="name(//flow/block[1]/lineArea/*[3])" expected="text"/>
+    <eval xpath="//flow/block[1]/lineArea/*[3]/@color" expected="#000000"/>
+    
+  </checks>
+</testcase>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2005 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks absolutely positioned block-containers.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal" white-space-collapse="true">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block-container left="10pt" top="10pt" width="3in" height="20pt" absolute-position="absolute" background-color="orange">
+            <fo:block background-color="yellow">absolutely positioned width/height</fo:block>
+          </fo:block-container>
+          <fo:block-container left="10pt" top="40pt" right="10pt" bottom="10pt" absolute-position="absolute" background-color="orange">
+            <fo:block background-color="yellow">absolutely positioned right/bottom</fo:block>
+          </fo:block-container>
+          <fo:block color="lightgrey">
+            This is some background-text. 
+            This is some background-text. 
+            This is some background-text. 
+            This is some background-text. 
+            This is some background-text. 
+            This is some background-text. 
+            <fo:block-container left="100pt" top="100pt" right="100pt" bottom="100pt" absolute-position="absolute" background-color="orange" color="black">
+              <fo:block background-color="yellow">absolutely positioned right/bottom (inside a block)</fo:block>
+            </fo:block-container>
+            This is some background-text. 
+            This is some background-text. 
+            This is some background-text.
+          </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <!-- *** first block-container *** -->
+    <true xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/@is-viewport-area"/>
+    <eval expected="absolute" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/@positioning"/>
+    <eval expected="216000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/@ipd"/>
+    <eval expected="216000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/@ipda"/>
+    <eval expected="20000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/@bpd"/>
+    <eval expected="20000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/@bpda"/>
+    <eval expected="10000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/@left-position"/>
+    <eval expected="10000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/@top-position"/>
+    <!--   -> containing block (skipping dummy block)-->
+    <eval expected="216000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/block[1]/block[1]/@ipd"/>
+    <eval expected="216000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[1]/block[1]/block[1]/@ipda"/>
+
+    <!-- *** second block-container *** -->
+    <true xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/@is-viewport-area"/>
+    <eval expected="absolute" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/@positioning"/>
+    <eval expected="340000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/@ipd"/>
+    <eval expected="340000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/@ipda"/>
+    <eval expected="310000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/@bpd"/>
+    <eval expected="310000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/@bpda"/>
+    <eval expected="10000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/@left-position"/>
+    <eval expected="40000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/@top-position"/>
+    <!--   -> containing block (skipping dummy block)-->
+    <eval expected="340000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/block[1]/block[1]/@ipd"/>
+    <eval expected="340000" xpath="/areaTree/pageSequence/pageViewport/page[1]/regionViewport/regionBody/mainReference/span/flow/block[2]/block[1]/block[1]/@ipda"/>
+
+    <!-- *** third block-container *** -->
+    <true xpath="//flow/block[3]/block[1]/@is-viewport-area"/>
+    <eval expected="absolute" xpath="//flow/block[3]/block[1]/@positioning"/>
+    <eval expected="160000" xpath="//flow/block[3]/block[1]/@ipd"/>
+    <eval expected="160000" xpath="//flow/block[3]/block[1]/@ipda"/>
+    <eval expected="160000" xpath="//flow/block[3]/block[1]/@bpd"/>
+    <eval expected="160000" xpath="//flow/block[3]/block[1]/@bpda"/>
+    <eval expected="100000" xpath="//flow/block[3]/block[1]/@left-position"/>
+    <eval expected="100000" xpath="//flow/block[3]/block[1]/@top-position"/>
+
+  </checks>
+</testcase>

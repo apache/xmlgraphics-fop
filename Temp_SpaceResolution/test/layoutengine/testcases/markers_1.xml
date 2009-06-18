@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2005 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks markers.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+          <fo:region-body margin="0.5in 0"/>
+          <fo:region-before extent="0.5in"/>
+          <fo:region-after extent="0.5in"/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal" white-space-collapse="true">
+        <fo:static-content flow-name="xsl-region-before">
+          <fo:block>
+            page <fo:page-number/>
+          </fo:block>
+          <fo:block background-color="yellow">
+            <fo:retrieve-marker retrieve-class-name="test" retrieve-boundary="page" retrieve-position="first-starting-within-page"/>
+          </fo:block>
+        </fo:static-content>
+        <fo:static-content flow-name="xsl-region-after">
+          <fo:block text-align="end" background-color="yellow">
+            <fo:retrieve-marker retrieve-class-name="test" retrieve-boundary="page" retrieve-position="last-starting-within-page"/>
+          </fo:block>
+          <fo:block text-align="end" background-color="yellow">
+            <fo:retrieve-marker retrieve-class-name="test" retrieve-boundary="page" retrieve-position="last-ending-within-page"/>
+          </fo:block>
+        </fo:static-content>
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block-container height="1in">
+            <fo:block>
+              <fo:marker marker-class-name="test">block1</fo:marker>block1</fo:block>
+          </fo:block-container>
+          <fo:block-container height="1in">
+            <fo:block>
+              <fo:marker marker-class-name="test">block2</fo:marker>block2</fo:block>
+          </fo:block-container>
+          <fo:block-container height="1in">
+            <fo:block>
+              <fo:marker marker-class-name="test">block3</fo:marker>block3</fo:block>
+          </fo:block-container>
+          <fo:block-container height="1in">
+            <fo:block>
+              <fo:marker marker-class-name="test">block4</fo:marker>block4</fo:block>
+          </fo:block-container>
+          <fo:block-container height="1in">
+            <fo:block>
+              <fo:marker marker-class-name="test">block5</fo:marker>block5</fo:block>
+          </fo:block-container>
+          <fo:block-container height="1in">
+            <fo:block>
+              <fo:marker marker-class-name="test">block6</fo:marker>block6</fo:block>
+          </fo:block-container>
+          <fo:block-container height="1in">
+            <fo:block>
+              <fo:marker marker-class-name="test">block7</fo:marker>block7</fo:block>
+          </fo:block-container>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <!-- First check that the page breaking is correct -->
+    <eval expected="block1" xpath="//pageViewport[1]/page/regionViewport[3]/regionBody/mainReference/span/flow/block[1]/block/block[1]/lineArea"/>
+    <eval expected="block2" xpath="//pageViewport[1]/page/regionViewport[3]/regionBody/mainReference/span/flow/block[2]/block/block[1]/lineArea"/>
+    <eval expected="block3" xpath="//pageViewport[1]/page/regionViewport[3]/regionBody/mainReference/span/flow/block[3]/block/block[1]/lineArea"/>
+    <eval expected="block4" xpath="//pageViewport[1]/page/regionViewport[3]/regionBody/mainReference/span/flow/block[4]/block/block[1]/lineArea"/>
+
+    <eval expected="block5" xpath="//pageViewport[2]/page/regionViewport[3]/regionBody/mainReference/span/flow/block[1]/block/block[1]/lineArea"/>
+    <eval expected="block6" xpath="//pageViewport[2]/page/regionViewport[3]/regionBody/mainReference/span/flow/block[2]/block/block[1]/lineArea"/>
+    <eval expected="block7" xpath="//pageViewport[2]/page/regionViewport[3]/regionBody/mainReference/span/flow/block[3]/block/block[1]/lineArea"/>
+
+    <!-- Now we can check the markers -->
+    <eval expected="1" xpath="//pageViewport[1]/page/regionViewport[1]/regionBefore/block[1]/lineArea/text[2]"/> <!-- page number -->
+    <eval expected="block1" xpath="//pageViewport[1]/page/regionViewport[1]/regionBefore/block[2]/lineArea"/>
+    <eval expected="block4" xpath="//pageViewport[1]/page/regionViewport[2]/regionAfter/block[1]/lineArea"/>
+    <eval expected="block4" xpath="//pageViewport[1]/page/regionViewport[2]/regionAfter/block[2]/lineArea"/>
+
+    <eval expected="2" xpath="//pageViewport[2]/page/regionViewport[1]/regionBefore/block[1]/lineArea/text[2]"/> <!-- page number -->
+    <eval expected="block5" xpath="//pageViewport[2]/page/regionViewport[1]/regionBefore/block[2]/lineArea"/>
+    <eval expected="block7" xpath="//pageViewport[2]/page/regionViewport[2]/regionAfter/block[1]/lineArea"/>
+    <eval expected="block7" xpath="//pageViewport[2]/page/regionViewport[2]/regionAfter/block[2]/lineArea"/>
+  </checks>
+</testcase>

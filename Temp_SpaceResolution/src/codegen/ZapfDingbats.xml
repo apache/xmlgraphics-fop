@@ -1,0 +1,231 @@
+<!--
+  Copyright 1999-2004 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<font-metrics>
+  <font-name>ZapfDingbats</font-name>
+  <class-name>ZapfDingbats</class-name>
+  <encoding>ZapfDingbatsEncoding</encoding>
+  <cap-height>820</cap-height>
+  <x-height>426</x-height>
+  <ascender>820</ascender>
+  <descender>-143</descender>
+  <first-char>32</first-char>
+  <last-char>255</last-char>
+  <widths>
+    <char name="space" width="278"/>
+    <char name="a1" width="974"/>
+    <char name="a2" width="961"/>
+    <char name="a202" width="974"/>
+    <char name="a3" width="980"/>
+    <char name="a4" width="719"/>
+    <char name="a5" width="789"/>
+    <char name="a119" width="790"/>
+    <char name="a118" width="791"/>
+    <char name="a117" width="690"/>
+    <char name="a11" width="960"/>
+    <char name="a12" width="939"/>
+    <char name="a13" width="549"/>
+    <char name="a14" width="855"/>
+    <char name="a15" width="911"/>
+    <char name="a16" width="933"/>
+    <char name="a105" width="911"/>
+    <char name="a17" width="945"/>
+    <char name="a18" width="974"/>
+    <char name="a19" width="755"/>
+    <char name="a20" width="846"/>
+    <char name="a21" width="762"/>
+    <char name="a22" width="761"/>
+    <char name="a23" width="571"/>
+    <char name="a24" width="677"/>
+    <char name="a25" width="763"/>
+    <char name="a26" width="760"/>
+    <char name="a27" width="759"/>
+    <char name="a28" width="754"/>
+    <char name="a6" width="494"/>
+    <char name="a7" width="552"/>
+    <char name="a8" width="537"/>
+    <char name="a9" width="577"/>
+    <char name="a10" width="692"/>
+    <char name="a29" width="786"/>
+    <char name="a30" width="788"/>
+    <char name="a31" width="788"/>
+    <char name="a32" width="790"/>
+    <char name="a33" width="793"/>
+    <char name="a34" width="794"/>
+    <char name="a35" width="816"/>
+    <char name="a36" width="823"/>
+    <char name="a37" width="789"/>
+    <char name="a38" width="841"/>
+    <char name="a39" width="823"/>
+    <char name="a40" width="833"/>
+    <char name="a41" width="816"/>
+    <char name="a42" width="831"/>
+    <char name="a43" width="923"/>
+    <char name="a44" width="744"/>
+    <char name="a45" width="723"/>
+    <char name="a46" width="749"/>
+    <char name="a47" width="790"/>
+    <char name="a48" width="792"/>
+    <char name="a49" width="695"/>
+    <char name="a50" width="776"/>
+    <char name="a51" width="768"/>
+    <char name="a52" width="792"/>
+    <char name="a53" width="759"/>
+    <char name="a54" width="707"/>
+    <char name="a55" width="708"/>
+    <char name="a56" width="682"/>
+    <char name="a57" width="701"/>
+    <char name="a58" width="826"/>
+    <char name="a59" width="815"/>
+    <char name="a60" width="789"/>
+    <char name="a61" width="789"/>
+    <char name="a62" width="707"/>
+    <char name="a63" width="687"/>
+    <char name="a64" width="696"/>
+    <char name="a65" width="689"/>
+    <char name="a66" width="786"/>
+    <char name="a67" width="787"/>
+    <char name="a68" width="713"/>
+    <char name="a69" width="791"/>
+    <char name="a70" width="785"/>
+    <char name="a71" width="791"/>
+    <char name="a72" width="873"/>
+    <char name="a73" width="761"/>
+    <char name="a74" width="762"/>
+    <char name="a203" width="762"/>
+    <char name="a75" width="759"/>
+    <char name="a204" width="759"/>
+    <char name="a76" width="892"/>
+    <char name="a77" width="892"/>
+    <char name="a78" width="788"/>
+    <char name="a79" width="784"/>
+    <char name="a81" width="438"/>
+    <char name="a82" width="138"/>
+    <char name="a83" width="277"/>
+    <char name="a84" width="415"/>
+    <char name="a97" width="392"/>
+    <char name="a98" width="392"/>
+    <char name="a99" width="668"/>
+    <char name="a100" width="668"/>
+    <char name="a101" width="732"/>
+    <char name="a102" width="544"/>
+    <char name="a103" width="544"/>
+    <char name="a104" width="910"/>
+    <char name="a106" width="667"/>
+    <char name="a107" width="760"/>
+    <char name="a108" width="760"/>
+    <char name="a112" width="776"/>
+    <char name="a111" width="595"/>
+    <char name="a110" width="694"/>
+    <char name="a109" width="626"/>
+    <char name="a120" width="788"/>
+    <char name="a121" width="788"/>
+    <char name="a122" width="788"/>
+    <char name="a123" width="788"/>
+    <char name="a124" width="788"/>
+    <char name="a125" width="788"/>
+    <char name="a126" width="788"/>
+    <char name="a127" width="788"/>
+    <char name="a128" width="788"/>
+    <char name="a129" width="788"/>
+    <char name="a130" width="788"/>
+    <char name="a131" width="788"/>
+    <char name="a132" width="788"/>
+    <char name="a133" width="788"/>
+    <char name="a134" width="788"/>
+    <char name="a135" width="788"/>
+    <char name="a136" width="788"/>
+    <char name="a137" width="788"/>
+    <char name="a138" width="788"/>
+    <char name="a139" width="788"/>
+    <char name="a140" width="788"/>
+    <char name="a141" width="788"/>
+    <char name="a142" width="788"/>
+    <char name="a143" width="788"/>
+    <char name="a144" width="788"/>
+    <char name="a145" width="788"/>
+    <char name="a146" width="788"/>
+    <char name="a147" width="788"/>
+    <char name="a148" width="788"/>
+    <char name="a149" width="788"/>
+    <char name="a150" width="788"/>
+    <char name="a151" width="788"/>
+    <char name="a152" width="788"/>
+    <char name="a153" width="788"/>
+    <char name="a154" width="788"/>
+    <char name="a155" width="788"/>
+    <char name="a156" width="788"/>
+    <char name="a157" width="788"/>
+    <char name="a158" width="788"/>
+    <char name="a159" width="788"/>
+    <char name="a160" width="894"/>
+    <char name="a161" width="838"/>
+    <char name="a163" width="1016"/>
+    <char name="a164" width="458"/>
+    <char name="a196" width="748"/>
+    <char name="a165" width="924"/>
+    <char name="a192" width="748"/>
+    <char name="a166" width="918"/>
+    <char name="a167" width="927"/>
+    <char name="a168" width="928"/>
+    <char name="a169" width="928"/>
+    <char name="a170" width="834"/>
+    <char name="a171" width="873"/>
+    <char name="a172" width="828"/>
+    <char name="a173" width="924"/>
+    <char name="a162" width="924"/>
+    <char name="a174" width="917"/>
+    <char name="a175" width="930"/>
+    <char name="a176" width="931"/>
+    <char name="a177" width="463"/>
+    <char name="a178" width="883"/>
+    <char name="a179" width="836"/>
+    <char name="a193" width="836"/>
+    <char name="a180" width="867"/>
+    <char name="a199" width="867"/>
+    <char name="a181" width="696"/>
+    <char name="a200" width="696"/>
+    <char name="a182" width="874"/>
+    <char name="a201" width="874"/>
+    <char name="a183" width="760"/>
+    <char name="a184" width="946"/>
+    <char name="a197" width="771"/>
+    <char name="a185" width="865"/>
+    <char name="a194" width="771"/>
+    <char name="a198" width="888"/>
+    <char name="a186" width="967"/>
+    <char name="a195" width="888"/>
+    <char name="a187" width="831"/>
+    <char name="a188" width="873"/>
+    <char name="a189" width="927"/>
+    <char name="a190" width="970"/>
+    <char name="a191" width="918"/>
+    <char name="a86" width="410"/>
+    <char name="a85" width="509"/>
+    <char name="a95" width="334"/>
+    <char name="a205" width="509"/>
+    <char name="a89" width="390"/>
+    <char name="a87" width="234"/>
+    <char name="a91" width="276"/>
+    <char name="a90" width="390"/>
+    <char name="a206" width="410"/>
+    <char name="a94" width="317"/>
+    <char name="a93" width="317"/>
+    <char name="a92" width="276"/>
+    <char name="a96" width="334"/>
+    <char name="a88" width="234"/>
+  </widths>
+</font-metrics>
