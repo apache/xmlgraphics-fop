@@ -1,0 +1,111 @@
+<?xml version="1.0"?>
+<!DOCTYPE Document SYSTEM "Document.dtd">
+<Document>
+	<Title>Unit Tests for SVG in FO</Title>
+	<Description>
+	    Some unit tests to check out the rendering of svg.
+	</Description>
+	<Chapter>
+		<Title>Examples</Title>
+		<Section>
+			<Title>Introduction</Title>
+			<Body>
+				<p>
+					These examples show the areas of SVG currently implemented.
+				</p>
+				<p>
+					This is provided so that others can see how to write the svg elements
+					and the result to expect.
+				</p>
+			</Body>
+		</Section>
+		<Section>
+			<Title>Graphic Elements</Title>
+			<SubSection>
+				<Title>Miscellaneous</Title>
+				<Body>
+					<p>
+						<ExternalSVG file="test/initialCoords.svg"/>
+						unit test
+					</p>
+					<p>
+						<ExternalSVG file="test/nested.svg"/>
+						unit test
+					</p>
+					<p>
+						<ExternalSVG file="test/origCoordSys.svg"/>
+						unit test
+					</p>
+<!--					<p>
+						<ExternalSVG file="test/preserveAspectRatio.svg"/>
+						unit test
+					</p>-->
+					<p>
+						<ExternalSVG file="test/rotateScale.svg"/>
+						unit test
+					</p>
+					<p>
+						<ExternalSVG file="test/skew.svg"/>
+						unit test
+					</p>
+					<p>
+						<ExternalSVG file="test/transformTest.svg"/>
+						unit test
+					</p>
+					<p>
+						<ExternalSVG file="test/units.svg"/>
+						unit test
+					</p>
+					<p>
+						<ExternalSVG file="test/viewBox1.svg"/>
+						unit test
+					</p>
+					<p>
+						<ExternalSVG file="test/viewBox2.svg"/>
+						unit test
+					</p>
+					<p>
+						<ExternalSVG file="test/newCoordSys.svg"/>
+						unit test
+					</p>
+<!--					<p>
+						<ExternalSVG file="test/newCSSUnits.svg"/>
+						unit test
+					</p>-->
+					<p>
+						<ExternalSVG file="test/newViewport.svg"/>
+						unit test
+					</p>
+					<p>
+						<ExternalSVG file="test/molecule.svg"/>
+						unit test
+					</p>
+					<p>
+						<ExternalSVG file="test/junk.svg"/>
+						unit test
+					</p>
+					<p>
+						<ExternalSVG file="test/use01.svg"/>
+						unit test
+					</p>
+					<p>
+						<ExternalSVG file="test/use02.svg"/>
+						unit test
+					</p>
+					<p>
+						<ExternalSVG file="test/use03.svg"/>
+						unit test
+					</p>
+					<p>
+						<ExternalSVG file="test/shapes.svg"/>
+						unit test
+					</p>
+					<p>
+						<ExternalSVG file="test/arcs.svg"/>
+						Arcs using the arc command in the path data.
+					</p>
+				</Body>
+			</SubSection>
+		</Section>
+	</Chapter>
+</Document>

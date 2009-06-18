@@ -1,0 +1,10 @@
+<?xml version="1.0" standalone="yes"?>
+
+<svg:svg width="10cm" height="3cm" xmlns:svg="http://www.w3.org/TR/2000/WD-SVG-20000629/DTD/svg-20000629.dtd">
+  <svg:title>Use01</svg:title>
+  <svg:desc>Example Use01 - Simple case of 'use' on a 'rect'</svg:desc>
+  <svg:defs>
+    <svg:rect id="MyRect" width="6cm" height="1cm" style="fill:black"/>
+  </svg:defs>
+  <svg:use x="2cm" y="1cm" xlink:href="#MyRect" />
+</svg:svg>

@@ -1,0 +1,102 @@
+<?xml version="1.0" standalone="no"?>
+
+
+<!-- Running FOP -->
+
+<s1 title="Running FOP">
+  <s2 title="Prerequisites">
+    <p>Following software must be installed:</p>
+    <p>a) Java 1.1.x or later (If you want to use AWTCommandLine, you need Swing)</p>
+    <p>b) An XML parser which supports SAX and DOM like 
+          <jump href="http://xml.apache.org/xerces-j/index.html">Xerces-J</jump>. 
+          (Xerces is the default xml parser)
+    </p>
+    <p>c) Fop supports SVG (see <jump href="implemented.html">Features</jump> for further information) and
+          needs the w3c.jar library. This library comes with Fop (xml-fop/lib) and must
+          be included in your classpath
+    </p>
+    <p>d) Optional: Fop supports the jimi library for image processing, if it is in your classpath
+          when you build Fop. 
+    </p>
+  </s2>
+  <s2 title="Starting FOP as an standalone application">
+    <p>There are two ways to run FOP from the command line.</p>
+    <p>a) Batch processing formatting objects (fo) files: </p>
+    <p><code>java org.apache.fop.apps.CommandLine fo-file pdf-file</code></p>
+    <p>b) Batch processing xml files (includes production of the fo-files):</p>
+    <p><code>java org.apache.fop.apps.XalanCommandLine xml-file xsl-file pdf-file</code></p> 
+    <p>c) Previewing the fo-file:</p>
+    <p><code>java org.apache.fop.apps.AWTCommandLine fo-file</code></p>
+    <p>Each method uses next to the fop classes other packages. The following describes 
+       each method in detail.</p>
+    <s3 title="Method One">
+      <p>One is to first use an XSLT engine to produce the formatting object tree as an 
+         XML document and then running the class org.apache.fop.apps.CommandLine with the
+         formatting object file name and PDF filename as arguments. You need to set classpath 
+         and set the used sax parser according to your enviroment
+      </p>
+      <p>Classpath settings: You will need to include FOP and your XML Parser 
+         in your classpath and so you might invoke FOP, if Xerces-J is your xml parser: 
+      </p>
+      <p><code>java -cp fop.jar;xerces.jar;w3c.jar </code></p>
+      <p><code>org.apache.fop.apps.CommandLine fo-file pdf-file</code></p>
+      <p>If you want to use another sax parser, you will need to set the property 
+         org.xml.sax.parser to any other SAX Parser class to use. The following example shows 
+         the command line, if you use XP from James Clark: 
+      </p>
+      <p><code>java -Dorg.xml.sax.parser=com.jclark.xml.sax.Driver</code></p>
+      <p><code>-cp fop.jar;xerces.jar;xp.jar;w3c.jar</code></p>
+      <p><code>org.apache.fop.apps.CommandLine fo-file pdf-file</code></p>
+      <p>Note: The xerces jar file must be included, because xp has no dom support.</p>
+    </s3>
+-    <s3 title="Method Two">
+      <p>Rather than performing transformation with an XSLT before invoking FOP, it is 
+         possible, if you use Xalan as your XSLT engine, to just call FOP and have it call 
+         Xalan for you. To do this, run the class org.apache.fop.apps.XalanCommandLine with the 
+         source XML file name, XSL file name and PDF file name as arguments. You will 
+         need to include Xalan in your classpath and so you might invoke 
+      </p>
+      <p><code>java -cp fop.jar;xalan.jar;xerces.jar;w3c.jar</code></p>
+      <p><code>org.apache.fop.apps.XalanCommandLine xml-file xsl-file pdf-file</code></p>
+      <p>Again, if your SAX Parser is other than Xerces, you will need to set the property
+         org.xml.sax.parser to the SAX Parser class to use.
+      </p> 
+    </s3>
+    <s3 title="Method Three">
+      <p>If you already produced the FO file, you can preview the results of your 
+         transformation without using any pdf viewer by invoking FOP with the viewer 
+         application. You will need to include FOP and your XML Parser in your classpath 
+      </p>
+      <p><code>java -cp fop.jar;xerces.jar;w3c.jar</code></p>
+      <p><code>org.apache.fop.apps.AWTCommandLine fo-file </code></p>
+      <p>The viewer uses the swing classes.</p> 
+    </s3>
+  </s2>
+  <s2 title="Running FOP on MacOS">  
+    <!-- Contributed by Arved Sandstrom -->
+    <p>Ensure that you have a recent MRJ, and that you have downloaded and
+       unpacked the XP and SAX distributions. The xp.jar and sax.jar files work
+       as is on MacOS.
+    </p>
+    <p>Drag the FOP jarfile onto the JBindery icon. When the first dialog
+       appears, type "org.apache.fop.apps.CommandLine" in the "Class name" field.
+       Using UNIX syntax, type the names of the input formatting-object file and
+       the output PDF in the "Optional parameters" field.
+    </p>
+    <p>Click on the Classpath icon. To add the xp.jar and sax.jar files, click
+       the "Add .zip file" button, navigate to the file in question, and click
+       Open.
+    </p>
+    <p>Once both are added (the FOP jarfile will already be in the list), click
+       Run. A "stdout" window will appear and display FOP runtime messages.
+    </p>  
+  </s2>
+  <s2 title="Problems">
+    <p>If you have problems running FOP, please have a look at the 
+       <jump href="faq-running.html">FOP FAQ</jump>. If you don't find a solution there,
+       you can ask for help on the list fop-dev@xml.apache.org. Maybe it is a bug and 
+       maybe somebody is already working on it. 
+    </p>
+  </s2>
+</s1>
+

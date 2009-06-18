@@ -1,0 +1,165 @@
+$Id$
+
+STATUS 
+
+**** COMMITTERS **** 
+
+Arved Sandstrom (release coordinator) 
+James Tauber (started it all and wrote most of the code) 
+
+Steven Coffman 
+Fotis Jannidis 
+Keiron Liddle
+Jordan Naftolin
+Eric Schaeffer 
+Jon Smirl 
+
+**** THINGS WORKED ON ***** 
+
+rewrite of the org.apache.fop.layout in a new package (implements xsl 2000) [James Tauber] 
+image support [Eric Schaeffer, Pankaj Narula, Andreas Rueckert] 
+SVG support [Keiron Liddle][Torsten Friebe] 
+more borders, padding and absolute positioning [Jon Smirl] 
+smooth shading in PDF [Steven Coffman] 
+tables: fo: table-header, table-and-caption, 
+        properties: 
+             column-number, 
+             number-columns-repeated 
+             number-columns-spanned 
+             number-rows-spanned 
+         general properties wrt tables 
+            [Karen Lease] 
+docs [Fotis Jannidis] 
+
+**** THINGS TO DO **** 
+
+Support XSL Working Draft 27 March 2000 
+
+1.One category of tasks will be to implement missing formatting objects. 
+  There are 6  such objects: 
+
+  fo:character 
+  fo:leader 
+  fo:table-and-caption 
+  fo:table-header 
+  fo:multi-case 
+  fo:wrapper 
+
+2.A second category of tasks will be to update existing objects. 
+  This typically entails renaming modifications. There are at least 3 of these: 
+
+  fo:page-sequence-master 
+  fo:single-page-master-reference 
+  fo:repeatable-page-master-reference 
+
+3.A third category of tasks is to retire obsolescent objects. The primary issue 
+  here seems to be the migration of FOP from officially supporting 
+  DisplayGraphic and InlineGraphic FO's to officially supporting at least an 
+  ExternalGraphic FO, and ideally also the InstreamForeignObject FO, the latter 
+  aimed at SVG support. 
+
+4.A fourth, and not insignificant, category of tasks is to decide upon and 
+  implement all reasonable properties required by the specification. This 
+  also means that at this point, until further review, no FO can be considered 
+  to be compliant. 
+
+  a) CHANGED 
+   21.space-after.optimum (Incomplete) 
+   22.space-before.optimum (Incomplete) 
+   25.white-space-treatment (Dropped/Changed) 
+
+  b) NEW 
+    1.alignment-adjust                                       26.min-width 
+    2.baseline-identifier                                    27.number-columns-repeated 
+    3.baseline-shift                                         28.number-columns-spanned 
+    4.block-progression-dimension                            29.number-rows-spanned 
+    5.character                                              30.orphans 
+    6.clip                                                   31.overflow 
+    7.column-number                                          32.page-break-after 
+    8.content-type                                           33.page-break-before 
+    9.direction                                              34.precedence 
+   10.display-align                                          35.ref-id 
+   11.dominant-baseline                                      36.reference-orientation 
+   12.font-variant                                           37.region-name 
+   13.format                                                 38.relative-align 
+   14.grouping-separator                                     39.role 
+   15.grouping-size                                          40.rule-style 
+   16.inline-progression-dimension                           41.source-document 
+   17.keep-with-previous                                     42.space-after 
+   18.leader-length                                          43.space-before 
+   19.leader-pattern                                         44.space-end 
+   20.letter-value                                           45.space-start 
+   21.line-stacking-strategy                                 
+   22.master-name                                            47.visibility 
+   23.max-height                                             48.widows 
+   24.max-width                                              49.writing-mode 
+   25.min-height                                             50.z-index 
+
+5.A fifth category of tasks is the ongoing effort to promote maintainability, 
+write 
+  more and better documentation, and to refine the build process. 
+  a) Don't use 'make' any longer and make sure that build.sh and build.bat work 
+  b) Add the property files to the source code (how is the vote on this?) 
+  c) update the examples to the new spec 
+  d) add examples so that all the FOs supported are used in some example 
+
+**** Bugs ****
+
+- SVG linearGradients don't appear the same as in other SVG Viewers
+- colour not continued onto subsequent pages if coloured block goes over page 
+- no SVG support in AWTCommandLine 
+- keep-next doesn't work and doubles the text lines which should be moved to the next page
+- pdf files created with Fop don't print correctly on postscript printers
+- lists containing list do not keep their indentation correctly over a page boundary
+
+with AWT Previewer: 
+
+- currently the layout process uses PDF fonts. This gives sometimes 
+  trouble with java.awt.Font 
+- we need some progress messages even if the process itself is fast 
+- GIF format is supported by the viewer, but disabled in FOP. BMP is 
+  not done, because there are no standard libraries. 
+- more comments/english comments 
+- first preview is painted twice (flashing screen) 
+- should "preview" be an option when calling FOP instead of having 
+  it's own main method? 
+
+**** HISTORY **** 
+
+Done since 0.13 release
+- pagination updated to 03/27/2000 XSL WD [Arved Sandstrom]
+- added support for fo page-number-citation [Mike Crowe, Jordan Naftolin]
+- added support for 06/29/2000 SVG WD + W3C Java DOM bindings [Keiron Liddle]
+- added image support using Jimi [Eric Schaeffer]
+- added support for external and internal simple-links [Jordan Naftolin]
+- added support for the fonts Symbol and ZapfDingbats [Fotis Jannidis]
+- added a MessageHandler  [Fotis Jannidis]
+- fixed table overflow bug [Jordan Naftolin]
+- finally fixed postscript printing of generated PDF [Domagoj Cosic]
+- removed XTCommandLine from build.xml 
+- removed PDFOutputHandler from build.xml 
+- added XalanCommandLine  [Fotis Jannidis]
+- added: fo:instream-foreign-object [Keiron Liddle]
+- added: goto button in AWT viewer [Stanislav Gorkhover]
+- updated: AWT viewer now works again and support - with some restrictions - the new SVG support [Stanislav Gorkhover]
+
+Done since 0.12.1 release 
+- using Ant to build Fop instead of make [Giacomo Pati] 
+- borders, padding and absolute positioning [Jon Smirl] 
+
+0.12.1 release 
+to make the bug fix on XTCommandLine available to non developers 
+basic support for padding-{top,left,bottom,right} on blocks. 
+implemented simple-link (don't think it works, though) 
+XTCommandLine now works again 
+background color works on list-block 
+list-blocks can now be in table-cell 
+
+Done for 0.12.0 release: 
+
+Make sure Makefiles work 
+Switch to using Status object as return from layout() 
+Incorporate Eric Schaeffer's fix to tables in static-content 
+Incorporate Kelly Campell's fixes to GifJpegImage 
+Incorporate Eric Schaeffer's background colour implementation 
+  (actually used different approach with background colour as trait) 

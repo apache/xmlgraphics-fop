@@ -1,0 +1,17 @@
+<?xml version="1.0" standalone="no"?>
+
+
+<!-- Download FOP -->
+
+<s1 title="Downloading FOP">
+  <s2 title="">
+    <p>You can download the latest release version from the <jump 
+       href="http://xml.apache.org/dist/fop/">distribution directory</jump>. </p>
+    <p>The file contains also the documentation (including some example fo files) and the source.  </p>
+    <p>To run FOP from the command line, see <jump href="running.html">Running FOP</jump>. If you are 
+       interested in embedding FOP in a Java application of your own, see 
+       <jump href="embedding.html">Embedding FOP</jump>.
+    </p>
+  </s2>
+</s1>
+

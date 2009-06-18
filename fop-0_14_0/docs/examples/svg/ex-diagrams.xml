@@ -1,0 +1,203 @@
+<?xml version="1.0"?>
+<!DOCTYPE Diagrams SYSTEM "diagrams.dtd">
+<Diagrams xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/TR/2000/WD-SVG-20000629/DTD/svg-20000629.dtd">
+	<Diagram entry="examples">
+		<svg:svg width="400pt" height="150pt">
+			<svg:desc>Examples for demonstrating SVG elements in FOP</svg:desc>
+			<svg:title>SVG Examples</svg:title>
+
+			<svg:defs>
+				<svg:path id="Test" d="M100200L200250z"/>
+			</svg:defs>
+
+			<svg:g style="stroke:red" transform="translate(10,20) scale(2) rotate(45) translate(5,10)">
+				<svg:circle cx="90pt" cy="80pt" r="20pt"/>
+			</svg:g>
+
+			<svg:circle cx="80pt" cy="40pt" r="20pt"/>
+
+			<svg:circle cx="140pt" cy="80pt" r="71pt"/>
+
+			<svg:ellipse cx="200pt" cy="120pt" rx="71pt" ry="30pt"/>
+
+			<svg:ellipse cx="240pt" cy="60pt" style="fill:yellow; stroke:navy; stroke-width:0.1cm" rx="140pt" ry="50pt"/>
+
+			<svg:path style="fill:blue; stroke:navy" d="M 100 100 L 140 100 L 120 140 z"/>
+
+			<svg:text x="135pt" y="30pt">
+				SVG
+				<svg:tspan style="font-weight:bold; fill:red">is</svg:tspan>
+				<svg:tspan dx="2em" dy="-.5cm" style="font-weight:bold; fill:red">
+					very
+				</svg:tspan>
+				<svg:tspan dy="1cm">
+					flexible!
+				</svg:tspan>
+			</svg:text>
+
+		</svg:svg>
+	</Diagram>
+
+	<Diagram entry="ex-lines">
+		<svg:svg width="300pt" height="100pt">
+			<svg:line x1="40pt" y1="14pt" x2="120pt" y2="74pt"/>
+			<svg:line style="stroke-width:6mm; stroke:blue" x1="150pt" y1="14pt" x2="150pt" y2="74pt"/>
+			<svg:line style="stroke-width:12mm; stroke:green" x1="250pt" y1="4pt" x2="190pt" y2="74pt"/>
+		</svg:svg>
+	</Diagram>
+
+	<Diagram entry="ex-rect">
+		<svg:svg width="300pt" height="70pt">
+			<svg:rect x="80pt" y="10pt" width="60pt" height="40pt"/>
+			<svg:circle cx="160pt" cy="30pt" r="20pt"/>
+			<svg:ellipse cx="300pt" cy="35pt" rx="71pt" ry="30pt"/>
+		</svg:svg>
+	</Diagram>
+
+	<Diagram entry="ex-paths">
+		<svg:svg width="300pt" height="150pt">
+			<svg:path style="fill:blue; stroke:navy" d="M 10 10 L 140 100 L 120 140 z"/>
+			<svg:path style="stroke:navy" d="M 150 100 L 170 80 L 250 120"/>
+			<svg:path style="stroke:yellow" d="M 100 100 C 120 60 140 70 160 30 L 150 140"/>
+		</svg:svg>
+	</Diagram>
+
+	<Diagram entry="ex-poly">
+		<svg:svg width="300pt" height="100pt">
+<svg:polyline style="fill:none; stroke:blue; stroke-width:1mm"
+points="10,75
+30,75 30,65 50,65 50,75
+70,75 70,50 90,50 90,75
+110,75 110,35 130,35 130,75
+150,75 150,20 170,20 170,75
+190,75 190,5 210,5 210,75
+230,75" />
+
+<svg:polygon style="fill:red; stroke:blue; stroke-width:1"
+points="70,15 75.8,32.2 93.8,32.2 79.4,43
+84.6,60.2 70,50 55.4,60.2 60.6,43
+46.2,32.2 64.2,32.2" />
+		</svg:svg>
+	</Diagram>
+
+	<Diagram entry="ex-style">
+		<svg:svg width="300pt" height="100pt">
+			<svg:g style="stroke:green; fill:navy">
+				<svg:rect x="20pt" y="60pt" width="70pt" height="40pt"/>
+				<svg:g style="fill:yellow; stroke-width:0.2cm; stroke-dasharray:10 10">
+					<svg:rect x="60pt" y="60pt" width="70pt" height="40pt"/>
+					<svg:ellipse style="fill:red" cx="300pt" cy="30pt" rx="71pt" ry="30pt"/>
+				</svg:g>
+			</svg:g>
+			<svg:text style="font-size:18" x="135pt" y="30pt">SVG</svg:text>
+		</svg:svg>
+	</Diagram>
+
+	<Diagram entry="ex-text">
+		<svg:svg width="450pt" height="100pt">
+			<svg:defs>
+				<svg:text id="ReferencedText">
+					Referenced character data
+				</svg:text>
+			</svg:defs>
+			<svg:text x="95pt" y="60pt">Text with area style</svg:text>
+			<svg:text style="font-size:18" x="135pt" y="30pt">SVG</svg:text>
+			<svg:text style="font-size:18; fill:blue; stroke:yellow" x="35pt" y="30pt">SVG</svg:text>
+			<svg:text style="font-size:16; fill:green; stroke:yellow" x="85pt" y="40pt">
+				text
+				<svg:tspan style="font-style:italic; fill:blue">and tspan</svg:tspan>
+				<svg:tspan style="font-weight:bold; stroke-dasharray:1 1">does</svg:tspan>
+				<svg:tspan dx="2em" dy="-.5cm" style="font-weight:bold; fill:red">
+					lots of
+				</svg:tspan>
+				<svg:tspan dy="1cm">
+					things
+				</svg:tspan>
+			</svg:text>
+			<svg:text style="font-size:18; fill:green; stroke:yellow" x="85pt" y="80pt">
+				text
+				<svg:tspan dx="10 6 15 20" style="font-style:italic; fill:blue">can be spaced</svg:tspan>
+				<svg:tspan y="95pt" x="90pt">
+					and positioned
+				</svg:tspan>
+			</svg:text>
+
+			<svg:text x="1cm" y="1cm" style="font-size:12pt; fill:blue">
+				Inline character data
+			</svg:text>
+			<svg:text x="1cm" y="2cm" style="font-size:12pt; fill:red">
+				<svg:tref xlink:href="#ReferencedText"/>
+			</svg:text>
+		</svg:svg>
+	</Diagram>
+
+	<Diagram entry="ex-g">
+		<svg:svg width="300pt" height="100pt">
+			<svg:g style="stroke:green; fill:navy" transform="translate(10,20) scale(1.2)">
+				<svg:rect x="20pt" y="60pt" width="70pt" height="40pt"/>
+				<svg:g style="fill:yellow; stroke-width:0.2cm" transform="translate(5,10)">
+					<svg:rect x="220pt" y="40pt" width="70pt" height="40pt"/>
+					<svg:ellipse style="fill:red" cx="300pt" cy="30pt" rx="71pt" ry="30pt"/>
+				</svg:g>
+			</svg:g>
+			<svg:g style="fill:purple; stroke-width:0.2cm">
+				<svg:ellipse style="stroke:red" cx="250pt" cy="60pt" rx="71pt" ry="30pt"/>
+			</svg:g>
+		</svg:svg>
+	</Diagram>
+
+	<Diagram entry="ex-textpath">
+		<svg:svg width="10cm" height="3cm" viewBox="0 0 1000 300">
+			<svg:defs>
+				<svg:path id="MyPath"
+				d="M 20 40
+				C 40 20 60 0 80 20
+				C 100 40 120 60 140 40
+				C 160 20 180 20 180 20" />
+			</svg:defs>
+			<svg:desc>Example, simple text on a path</svg:desc>
+			<svg:use xlink:href="#MyPath" style="stroke:red" />
+			<svg:text style="font-family:Verdana; font-size:42.3333; fill:blue">
+				<svg:textPath xlink:href="#MyPath">
+					We go up, then we go down, then up again
+				</svg:textPath>
+			</svg:text>
+		</svg:svg>
+	</Diagram>
+
+	<Diagram entry="ex-image">
+		<svg:svg width="10cm" height="6cm" viewBox="0 0 1000 300">
+			<svg:image x="50" y="30" width="100px" height="120px" xlink:href="file:image.jpg"/>
+			<svg:g transform="rotate(0.1)">
+				<svg:image x="200" y="100" width="120px" height="100px" xlink:href="file:image.jpg"/>
+			</svg:g>
+		</svg:svg>
+	</Diagram>
+
+	<Diagram entry="ex-misc">
+		<svg:svg width="10cm" height="3cm" viewBox="0 0 1000 300">
+			<svg:svg width="10cm" height="3cm" viewBox="0 0 1000 300">
+				<svg:rect x="80pt" y="10pt" width="60pt" height="40pt"/>
+				<svg:g style="fill:purple; stroke-width:0.2cm">
+					<svg:ellipse style="stroke:red" cx="250pt" cy="60pt" rx="71pt" ry="30pt"/>
+					<svg:svg style="stroke:green" width="10cm" height="3cm" viewBox="0 0 1000 300">
+						<svg:rect x="110pt" y="10pt" width="60pt" height="40pt"/>
+					</svg:svg>
+				</svg:g>
+			</svg:svg>
+		</svg:svg>
+	</Diagram>
+
+	<Diagram entry="ex-transform">
+		<svg:svg width="10cm" height="3cm" viewBox="0 0 1000 300">
+			<svg:defs>
+				<svg:circle id="circ" cx="40pt" cy="40pt" r="35pt"/>
+				<svg:rect id="rect" x="40pt" y="40pt" width="35pt" height="30pt"/>
+			</svg:defs>
+			<svg:use xlink:href="#circ" style="stroke:red" />
+			<svg:use xlink:href="#circ" style="stroke:blue" transform="translate(100,30)"/>
+			<svg:use xlink:href="#circ" style="stroke:purple" transform="translate(120,30) scale(0.95)"/>
+			<svg:use xlink:href="#rect" style="stroke:green; stroke-width:2" transform="translate(100,30) rotate(0.1)"/>
+		</svg:svg>
+	</Diagram>
+</Diagrams>

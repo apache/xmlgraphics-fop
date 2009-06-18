@@ -1,0 +1,939 @@
+<?xml version="1.0" ?>
+<property-list>
+  <property>
+    <name>font-size</name>
+    <class-name>FontSize</class-name>
+    <inherited>true</inherited>
+    <datatype>Length</datatype>
+    <default>12pt</default>
+  </property>
+  <property>
+    <name>start-indent</name>
+    <class-name>StartIndent</class-name>
+    <inherited>true</inherited>
+    <datatype>Length</datatype>
+    <default>0pt</default>
+  </property>
+  <property>
+    <name>font-style</name>
+    <class-name>FontStyle</class-name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>normal</default>
+  </property>
+  <property>
+    <name>flow-name</name>
+    <class-name>FlowName</class-name>
+    <inherited>false</inherited>
+    <datatype>String</datatype>
+    <default></default>
+  </property>
+  <property>
+    <name>page-master-first</name>
+    <class-name>PageMasterFirst</class-name>
+    <inherited>false</inherited>
+    <datatype>String</datatype>
+    <default></default>
+  </property>
+  <property>
+    <name>page-master-odd</name>
+    <class-name>PageMasterOdd</class-name>
+    <inherited>false</inherited>
+    <datatype>String</datatype>
+    <default></default>
+  </property>
+  <property>
+    <name>extent</name>
+    <class-name>Extent</class-name>
+    <inherited>true</inherited>
+    <datatype>Length</datatype>
+    <default>0pt</default>
+  </property>
+  <property>
+    <name>font-weight</name>
+    <class-name>FontWeight</class-name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>normal</default>
+  </property>
+  <property>
+    <name>margin-left</name>
+    <class-name>MarginLeft</class-name>
+    <inherited>false</inherited>
+    <datatype>Length</datatype>
+    <default>0pt</default>
+  </property>
+  <property>
+    <name>font-family</name>
+    <class-name>FontFamily</class-name>
+    <inherited>true</inherited>
+    <datatype>String</datatype>
+    <default>sans-serif</default>
+  </property>
+  <property>
+    <name>page-master-even</name>
+    <class-name>PageMasterEven</class-name>
+    <inherited>false</inherited>
+    <datatype>String</datatype>
+    <default></default>
+  </property>
+  <property>
+    <name>margin-top</name>
+    <class-name>MarginTop</class-name>
+    <inherited>false</inherited>
+    <datatype>Length</datatype>
+    <default>0pt</default>
+  </property>
+  <property>
+    <name>master-name</name>
+    <class-name>MasterName</class-name>
+    <inherited>false</inherited>
+    <datatype>String</datatype>
+    <default></default>
+  </property>
+  <property>
+    <name>end-indent</name>
+    <class-name>EndIndent</class-name>
+    <inherited>true</inherited>
+    <datatype>Length</datatype>
+    <default>0pt</default>
+  </property>
+  <property>
+    <name>color</name>
+    <class-name>Color</class-name>
+    <inherited>true</inherited>
+    <datatype>ColorType</datatype>
+    <default>black</default>
+  </property>
+  <property>
+    <name>margin-bottom</name>
+    <class-name>MarginBottom</class-name>
+    <inherited>false</inherited>
+    <datatype>Length</datatype>
+    <default>0pt</default>
+  </property>
+  <property>
+    <name>page-height</name>
+    <class-name>PageHeight</class-name>
+    <inherited>false</inherited>
+    <datatype>Length</datatype>
+    <default>11in</default>
+  </property>
+  <property>
+    <name>space-before.optimum</name>
+    <class-name>SpaceBeforeOptimum</class-name>
+    <inherited>false</inherited>
+    <datatype>Length</datatype>
+    <default>0pt</default>
+  </property>
+  <property>
+    <name>provisional-label-separation</name>
+    <class-name>ProvisionalLabelSeparation</class-name>
+    <inherited>true</inherited>
+    <datatype>Length</datatype>
+    <default>6pt</default>
+  </property>
+  <property>
+    <name>margin-right</name>
+    <class-name>MarginRight</class-name>
+    <inherited>false</inherited>
+    <datatype>Length</datatype>
+    <default>0pt</default>
+  </property>
+  <property>
+    <name>rule-thickness</name>
+    <class-name>RuleThickness</class-name>
+    <inherited>true</inherited>
+    <datatype>Length</datatype>
+    <default>1.0pt</default>
+  </property>
+  <property>
+    <name>page-width</name>
+    <class-name>PageWidth</class-name>
+    <inherited>false</inherited>
+    <datatype>Length</datatype>
+    <default>8in</default>
+  </property>
+  <property>
+    <name>content-width</name>
+    <class-name>ContentWidth</class-name>
+    <inherited>false</inherited>
+    <datatype>Length</datatype>
+    <default>auto</default>
+  </property>
+  <property>
+    <name>content-height</name>
+    <class-name>ContentHeight</class-name>
+    <inherited>false</inherited>
+    <datatype>Length</datatype>
+    <default>auto</default>
+  </property>
+  <property>
+    <name>page-master-repeating</name>
+    <class-name>PageMasterRepeating</class-name>
+    <inherited>false</inherited>
+    <datatype>String</datatype>
+    <default></default>
+  </property>
+  <property>
+    <name>provisional-distance-between-starts</name>
+    <class-name>ProvisionalDistanceBetweenStarts</class-name>
+    <inherited>true</inherited>
+    <datatype>Length</datatype>
+    <default>24pt</default>
+  </property>
+  <property>
+    <name>line-height</name>
+    <class-name>LineHeight</class-name>
+    <inherited>true</inherited>
+    <datatype>Length</datatype>
+    <default>12pt</default>
+  </property>
+  <property>
+    <name>space-after.optimum</name>
+    <class-name>SpaceAfterOptimum</class-name>
+    <inherited>false</inherited>
+    <datatype>Length</datatype>
+    <default>0pt</default>
+  </property>
+  <property>
+    <name>text-align</name>
+    <class-name>TextAlign</class-name>
+    <inherited>true</inherited>
+    <datatype>
+      <enumeration>
+        <value const="CENTER">center</value>
+        <value const="END">end</value>
+        <value const="START">start</value>
+        <value const="JUSTIFY">justify</value>
+      </enumeration>
+    </datatype>
+    <default>start</default>
+  </property>
+  <property>
+    <name>white-space-treatment</name>
+    <class-name>WhiteSpaceTreatment</class-name>
+    <inherited>true</inherited>
+    <datatype>
+      <enumeration>
+        <value const="PRESERVE">preserve</value>
+        <value const="COLLAPSE">collapse</value>
+        <value const="IGNORE">ignore</value>
+      </enumeration>
+    </datatype>
+    <default>collapse</default>
+  </property>
+  <property>
+    <name>break-after</name>
+    <class-name>BreakAfter</class-name>
+    <inherited>false</inherited>
+    <datatype>
+      <enumeration>
+        <value const="AUTO">auto</value>
+        <value const="COLUMN">column</value>
+        <value const="PAGE">page</value>
+        <value const="EVEN_PAGE">even-page</value>
+        <value const="ODD_PAGE">odd-page</value>
+      </enumeration>
+    </datatype>
+    <default>auto</default>
+  </property>
+  <property>
+    <name>break-before</name>
+    <class-name>BreakBefore</class-name>
+    <inherited>false</inherited>
+    <datatype>
+      <enumeration>
+        <value const="AUTO">auto</value>
+        <value const="COLUMN">column</value>
+        <value const="PAGE">page</value>
+        <value const="EVEN_PAGE">even-page</value>
+        <value const="ODD_PAGE">odd-page</value>
+      </enumeration>
+    </datatype>
+    <default>auto</default>
+  </property>
+  <property>
+    <name>wrap-option</name>
+    <class-name>WrapOption</class-name>
+    <inherited>true</inherited>
+    <datatype>
+      <enumeration>
+        <value const="WRAP">wrap</value>
+        <value const="NO_WRAP">no-wrap</value>
+      </enumeration>
+    </datatype>
+    <default>wrap</default>
+  </property>
+  <property>
+    <name>text-align-last</name>
+    <class-name>TextAlignLast</class-name>
+    <inherited>true</inherited>
+    <datatype>
+      <enumeration>
+        <value const="CENTER">center</value>
+        <value const="END">end</value>
+        <value const="START">start</value>
+        <value const="JUSTIFY">justify</value>
+      </enumeration>
+    </datatype>
+    <default>start</default>
+    <derive from="text-align">
+      <if match="TextAlign.JUSTIFY">START</if>
+      <if match="TextAlign.END">END</if>
+      <if match="TextAlign.START">START</if>
+      <if match="TextAlign.CENTER">CENTER</if>
+    </derive>
+  </property>
+  <property>
+    <name>line-height</name>
+    <class-name>LineHeight</class-name>
+    <inherited>true</inherited>
+    <datatype>Length</datatype>
+    <default>normal</default>
+    <make>
+      <to-double/> 
+      <if match="normal">1.2,propertyList.get("font-size")</if>
+      <else-if-number>d,propertyList.get("font-size")</else-if-number>
+      <else>value</else>
+    </make>
+  </property>
+  <property>
+    <name>text-indent</name>
+    <class-name>TextIndent</class-name>
+    <inherited>false</inherited>
+    <datatype>Length</datatype>
+    <default>0pt</default>
+  </property>
+  <property>
+    <name>href</name>
+    <class-name>HRef</class-name>
+    <inherited>false</inherited>
+    <datatype>String</datatype>
+    <default></default> 
+  </property>
+  <property>
+    <name>src</name>
+    <class-name>Src</class-name>
+    <inherited>false</inherited>
+    <datatype>String</datatype>
+    <default></default> 
+  </property>
+  <property>
+    <name>column-width</name>
+    <class-name>ColumnWidth</class-name>
+    <inherited>false</inherited>
+    <datatype>Length</datatype>
+    <default>0pt</default>
+  </property>
+  <property>
+    <name>keep-with-next</name>
+    <class-name>KeepWithNext</class-name>
+    <inherited>false</inherited>
+    <datatype>
+      <enumeration>
+        <value const="TRUE">true</value>
+        <value const="FALSE">false</value>
+      </enumeration>
+    </datatype>
+    <default>false</default>
+  </property>
+  <property>
+    <name>background-color</name>
+    <class-name>BackgroundColor</class-name>
+    <inherited>false</inherited>
+    <datatype>ColorType</datatype>
+    <default>transparent</default>
+  </property>
+  <property>
+    <name>padding</name>
+    <class-name>Padding</class-name>
+    <inherited>false</inherited>
+    <datatype>Length</datatype>
+    <default>0pt</default>
+  </property>
+  <property>
+    <name>padding-before</name>
+    <class-name>PaddingBefore</class-name>
+    <inherited>false</inherited>
+    <datatype>Length</datatype>
+    <default>0pt</default>
+  </property>
+  <property>
+    <name>padding-after</name>
+    <class-name>PaddingAfter</class-name>
+    <inherited>false</inherited>
+    <datatype>Length</datatype>
+    <default>0pt</default>
+  </property>
+  <property>
+    <name>padding-start</name>
+    <class-name>PaddingStart</class-name>
+    <inherited>false</inherited>
+    <datatype>Length</datatype>
+    <default>0pt</default>
+  </property>
+  <property>
+    <name>padding-end</name>
+    <class-name>PaddingEnd</class-name>
+    <inherited>false</inherited>
+    <datatype>Length</datatype>
+    <default>0pt</default>
+  </property>
+  <property>
+    <name>padding-top</name>
+    <class-name>PaddingTop</class-name>
+    <inherited>false</inherited>
+    <datatype>Length</datatype>
+    <default>0pt</default>
+  </property>
+  <property>
+    <name>padding-left</name>
+    <class-name>PaddingLeft</class-name>
+    <inherited>false</inherited>
+    <datatype>Length</datatype>
+    <default>0pt</default>
+  </property>
+  <property>
+    <name>padding-bottom</name>
+    <class-name>PaddingBottom</class-name>
+    <inherited>false</inherited>
+    <datatype>Length</datatype>
+    <default>0pt</default>
+  </property>
+  <property>
+    <name>padding-right</name>
+    <class-name>PaddingRight</class-name>
+    <inherited>false</inherited>
+    <datatype>Length</datatype>
+    <default>0pt</default>
+  </property>
+  <property>
+    <name>external-destination</name>
+    <class-name>ExternalDestination</class-name>
+    <inherited>false</inherited>
+    <datatype>String</datatype>
+    <default></default>
+  </property>
+  <property>
+    <name>internal-destination</name>
+    <class-name>InternalDestination</class-name>
+    <inherited>false</inherited>
+    <datatype>String</datatype>
+    <default></default>
+  </property>
+  <property>
+    <name>border-before-color</name>
+    <class-name>BorderBeforeColor</class-name>
+    <inherited>false</inherited>
+    <datatype>ColorType</datatype>
+    <default>black</default>
+  </property>
+  <property>
+    <name>border-before-style</name>
+    <class-name>BorderBeforeStyle</class-name>
+    <inherited>false</inherited>
+    <datatype>
+      <enumeration>
+        <value const="NONE">none</value>
+        <value const="HIDDEN">hidden</value>
+        <value const="DOTTED">dotted</value>
+        <value const="DASHED">dashed</value>
+        <value const="SOLID">solid</value>
+        <value const="DOUBLE">double</value>
+        <value const="GROOVE">groove</value>
+        <value const="RIDGE">ridge</value>
+        <value const="INSET">inset</value>
+        <value const="OUTSET">outset</value>
+      </enumeration>
+    </datatype>
+    <default>none</default>
+  </property>
+  <property>
+    <name>border-before-width</name>
+    <class-name>BorderBeforeWidth</class-name>
+    <inherited>false</inherited>
+    <datatype>Length</datatype>
+    <default>0pt</default>
+  </property>
+  <property>
+    <name>border-after-color</name>
+    <class-name>BorderAfterColor</class-name>
+    <inherited>false</inherited>
+    <datatype>ColorType</datatype>
+    <default>black</default>
+  </property>
+  <property>
+    <name>border-after-style</name>
+    <class-name>BorderAfterStyle</class-name>
+    <inherited>false</inherited>
+    <datatype>
+      <enumeration>
+        <value const="NONE">none</value>
+        <value const="HIDDEN">hidden</value>
+        <value const="DOTTED">dotted</value>
+        <value const="DASHED">dashed</value>
+        <value const="SOLID">solid</value>
+        <value const="DOUBLE">double</value>
+        <value const="GROOVE">groove</value>
+        <value const="RIDGE">ridge</value>
+        <value const="INSET">inset</value>
+        <value const="OUTSET">outset</value>
+      </enumeration>
+    </datatype>
+    <default>none</default>
+  </property>
+  <property>
+    <name>border-after-width</name>
+    <class-name>BorderAfterWidth</class-name>
+    <inherited>false</inherited>
+    <datatype>Length</datatype>
+    <default>0pt</default>
+  </property>
+  <property>
+    <name>border-start-color</name>
+    <class-name>BorderStartColor</class-name>
+    <inherited>false</inherited>
+    <datatype>ColorType</datatype>
+    <default>black</default>
+  </property>
+  <property>
+    <name>border-start-style</name>
+    <class-name>BorderStartStyle</class-name>
+    <inherited>false</inherited>
+    <datatype>
+      <enumeration>
+        <value const="NONE">none</value>
+        <value const="HIDDEN">hidden</value>
+        <value const="DOTTED">dotted</value>
+        <value const="DASHED">dashed</value>
+        <value const="SOLID">solid</value>
+        <value const="DOUBLE">double</value>
+        <value const="GROOVE">groove</value>
+        <value const="RIDGE">ridge</value>
+        <value const="INSET">inset</value>
+        <value const="OUTSET">outset</value>
+      </enumeration>
+    </datatype>
+    <default>none</default>
+  </property>
+  <property>
+    <name>border-start-width</name>
+    <class-name>BorderStartWidth</class-name>
+    <inherited>false</inherited>
+    <datatype>Length</datatype>
+    <default>0pt</default>
+  </property>
+  <property>
+    <name>border-end-color</name>
+    <class-name>BorderEndColor</class-name>
+    <inherited>false</inherited>
+    <datatype>ColorType</datatype>
+    <default>black</default>
+  </property>
+  <property>
+    <name>border-end-style</name>
+    <class-name>BorderEndStyle</class-name>
+    <inherited>false</inherited>
+    <datatype>
+      <enumeration>
+        <value const="NONE">none</value>
+        <value const="HIDDEN">hidden</value>
+        <value const="DOTTED">dotted</value>
+        <value const="DASHED">dashed</value>
+        <value const="SOLID">solid</value>
+        <value const="DOUBLE">double</value>
+        <value const="GROOVE">groove</value>
+        <value const="RIDGE">ridge</value>
+        <value const="INSET">inset</value>
+        <value const="OUTSET">outset</value>
+      </enumeration>
+    </datatype>
+    <default>none</default>
+  </property>
+  <property>
+    <name>border-end-width</name>
+    <class-name>BorderEndWidth</class-name>
+    <inherited>false</inherited>
+    <datatype>Length</datatype>
+    <default>0pt</default>
+  </property>
+  <property>
+    <name>border-top-color</name>
+    <class-name>BorderTopColor</class-name>
+    <inherited>false</inherited>
+    <datatype>ColorType</datatype>
+    <default>black</default>
+  </property>
+  <property>
+    <name>border-top-style</name>
+    <class-name>BorderTopStyle</class-name>
+    <inherited>false</inherited>
+    <datatype>
+      <enumeration>
+        <value const="NONE">none</value>
+        <value const="HIDDEN">hidden</value>
+        <value const="DOTTED">dotted</value>
+        <value const="DASHED">dashed</value>
+        <value const="SOLID">solid</value>
+        <value const="DOUBLE">double</value>
+        <value const="GROOVE">groove</value>
+        <value const="RIDGE">ridge</value>
+        <value const="INSET">inset</value>
+        <value const="OUTSET">outset</value>
+      </enumeration>
+    </datatype>
+    <default>none</default>
+  </property>
+  <property>
+    <name>border-top-width</name>
+    <class-name>BorderTopWidth</class-name>
+    <inherited>false</inherited>
+    <datatype>Length</datatype>
+    <default>0pt</default>
+  </property>
+  <property>
+    <name>border-bottom-color</name>
+    <class-name>BorderBottomColor</class-name>
+    <inherited>false</inherited>
+    <datatype>ColorType</datatype>
+    <default>black</default>
+  </property>
+  <property>
+    <name>border-bottom-style</name>
+    <class-name>BorderBottomStyle</class-name>
+    <inherited>false</inherited>
+    <datatype>
+      <enumeration>
+        <value const="NONE">none</value>
+        <value const="HIDDEN">hidden</value>
+        <value const="DOTTED">dotted</value>
+        <value const="DASHED">dashed</value>
+        <value const="SOLID">solid</value>
+        <value const="DOUBLE">double</value>
+        <value const="GROOVE">groove</value>
+        <value const="RIDGE">ridge</value>
+        <value const="INSET">inset</value>
+        <value const="OUTSET">outset</value>
+      </enumeration>
+    </datatype>
+    <default>none</default>
+  </property>
+  <property>
+    <name>border-bottom-width</name>
+    <class-name>BorderBottomWidth</class-name>
+    <inherited>false</inherited>
+    <datatype>Length</datatype>
+    <default>0pt</default>
+  </property>
+  <property>
+    <name>border-left-color</name>
+    <class-name>BorderLeftColor</class-name>
+    <inherited>false</inherited>
+    <datatype>ColorType</datatype>
+    <default>black</default>
+  </property>
+  <property>
+    <name>border-left-style</name>
+    <class-name>BorderLeftStyle</class-name>
+    <inherited>false</inherited>
+    <datatype>
+      <enumeration>
+        <value const="NONE">none</value>
+        <value const="HIDDEN">hidden</value>
+        <value const="DOTTED">dotted</value>
+        <value const="DASHED">dashed</value>
+        <value const="SOLID">solid</value>
+        <value const="DOUBLE">double</value>
+        <value const="GROOVE">groove</value>
+        <value const="RIDGE">ridge</value>
+        <value const="INSET">inset</value>
+        <value const="OUTSET">outset</value>
+      </enumeration>
+    </datatype>
+    <default>none</default>
+  </property>
+  <property>
+    <name>border-left-width</name>
+    <class-name>BorderLeftWidth</class-name>
+    <inherited>false</inherited>
+    <datatype>Length</datatype>
+    <default>0pt</default>
+  </property>
+  <property>
+    <name>border-right-color</name>
+    <class-name>BorderRightColor</class-name>
+    <inherited>false</inherited>
+    <datatype>ColorType</datatype>
+    <default>black</default>
+  </property>
+  <property>
+    <name>border-right-style</name>
+    <class-name>BorderRightStyle</class-name>
+    <inherited>false</inherited>
+    <datatype>
+      <enumeration>
+        <value const="NONE">none</value>
+        <value const="HIDDEN">hidden</value>
+        <value const="DOTTED">dotted</value>
+        <value const="DASHED">dashed</value>
+        <value const="SOLID">solid</value>
+        <value const="DOUBLE">double</value>
+        <value const="GROOVE">groove</value>
+        <value const="RIDGE">ridge</value>
+        <value const="INSET">inset</value>
+        <value const="OUTSET">outset</value>
+      </enumeration>
+    </datatype>
+    <default>none</default>
+  </property>
+  <property>
+    <name>border-right-width</name>
+    <class-name>BorderRightWidth</class-name>
+    <inherited>false</inherited>
+    <datatype>Length</datatype>
+    <default>0pt</default>
+  </property>
+  <property>
+    <name>border-color</name>
+    <class-name>BorderColor</class-name>
+    <inherited>false</inherited>
+    <datatype>ColorType</datatype>
+    <default>black</default>
+  </property>
+  <property>
+    <name>border-style</name>
+    <class-name>BorderStyle</class-name>
+    <inherited>false</inherited>
+    <datatype>
+      <enumeration>
+        <value const="NONE">none</value>
+        <value const="HIDDEN">hidden</value>
+        <value const="DOTTED">dotted</value>
+        <value const="DASHED">dashed</value>
+        <value const="SOLID">solid</value>
+        <value const="DOUBLE">double</value>
+        <value const="GROOVE">groove</value>
+        <value const="RIDGE">ridge</value>
+        <value const="INSET">inset</value>
+        <value const="OUTSET">outset</value>
+        <value const="TRANSPARENT">transparent</value>
+      </enumeration>
+    </datatype>
+    <default>none</default>
+  </property>
+  <property>
+    <name>border-width</name>
+    <class-name>BorderWidth</class-name>
+    <inherited>false</inherited>
+    <datatype>Length</datatype>
+    <default>0pt</default>
+  </property>
+  <property>
+    <name>border-top</name>
+    <class-name>BorderTop</class-name>
+    <inherited>false</inherited>
+    <datatype>String</datatype>
+    <default>normal</default>
+  </property>
+  <property>
+    <name>border-bottom</name>
+    <class-name>BorderBottom</class-name>
+    <inherited>false</inherited>
+    <datatype>String</datatype>
+    <default>normal</default>
+  </property>
+  <property>
+    <name>border-left</name>
+    <class-name>BorderLeft</class-name>
+    <inherited>false</inherited>
+    <datatype>String</datatype>
+    <default>normal</default>
+  </property>
+  <property>
+    <name>border-right</name>
+    <class-name>BorderRight</class-name>
+    <inherited>false</inherited>
+    <datatype>String</datatype>
+    <default>normal</default>
+  </property>
+  <property>
+    <name>position</name>
+    <class-name>Position</class-name>
+    <inherited>false</inherited>
+    <datatype>
+      <enumeration>
+        <value const="STATIC">static</value>
+        <value const="RELATIVE">relative</value>
+        <value const="ABSOLUTE">absolute</value>
+        <value const="FIXED">fixed</value>
+      </enumeration>
+    </datatype>
+    <default>static</default>
+  </property>
+  <property>
+    <name>top</name>
+    <class-name>Top</class-name>
+    <inherited>false</inherited>
+    <datatype>Length</datatype>
+    <default>auto</default>
+  </property>
+  <property>
+    <name>right</name>
+    <class-name>Right</class-name>
+    <inherited>false</inherited>
+    <datatype>Length</datatype>
+    <default>auto</default>
+  </property>
+  <property>
+    <name>bottom</name>
+    <class-name>Bottom</class-name>
+    <inherited>false</inherited>
+    <datatype>Length</datatype>
+    <default>auto</default>
+  </property>
+  <property>
+    <name>left</name>
+    <class-name>Left</class-name>
+    <inherited>false</inherited>
+    <datatype>Length</datatype>
+    <default>auto</default>
+  </property>
+  <property>
+    <name>width</name>
+    <class-name>Width</class-name>
+    <inherited>false</inherited>
+    <datatype>Length</datatype>
+    <default>auto</default>
+  </property>
+  <property>
+    <name>height</name>
+    <class-name>Height</class-name>
+    <inherited>false</inherited>
+    <datatype>Length</datatype>
+    <default>auto</default>
+  </property>
+  <property>
+    <name>initial-page-number</name>
+    <class-name>InitialPageNumber</class-name>
+    <inherited>false</inherited>
+    <datatype>String</datatype>
+    <default>auto</default>
+  </property>
+  <property>
+   <name>ref-id</name>
+	<class-name>RefId</class-name>
+	<inherited>false</inherited>
+	<datatype>String</datatype>
+	<default></default> 
+  </property>
+  <property>
+	<name>id</name>
+	<class-name>Id</class-name>
+	<inherited>false</inherited>
+	<datatype>String</datatype>
+	<default></default> 
+   </property>
+  <property>
+	<name>maximum-repeats</name>
+	<class-name>MaximumRepeats</class-name>
+	<inherited>false</inherited>
+	<datatype>String</datatype>
+	<default>no-limit</default> 
+   </property>
+  <property>
+	<name>page-position</name>
+	<class-name>PagePosition</class-name>
+	<inherited>false</inherited>
+	<datatype>
+      <enumeration>
+        <value const="FIRST">first</value>
+        <value const="LAST">last</value>
+        <value const="REST">rest</value>
+        <value const="ANY">any</value>
+      </enumeration>
+	</datatype>
+	<default>any</default> 
+   </property>
+  <property>
+	<name>odd-or-even</name>
+	<class-name>OddOrEven</class-name>
+	<inherited>false</inherited>
+	<datatype>
+      <enumeration>
+        <value const="ODD">odd</value>
+        <value const="EVEN">even</value>
+        <value const="ANY">any</value>
+      </enumeration>
+	</datatype>
+	<default>any</default> 
+   </property>
+  <property>
+	<name>blank-or-not-blank</name>
+	<class-name>BlankOrNotBlank</class-name>
+	<inherited>false</inherited>
+	<datatype>
+      <enumeration>
+        <value const="BLANK">blank</value>
+        <value const="NOT_BLANK">not-blank</value>
+        <value const="ANY">any</value>
+      </enumeration>
+	</datatype>
+	<default>any</default> 
+   </property>
+  <property>
+	<name>rule-style</name>
+	<class-name>RuleStyle</class-name>
+	<inherited>true</inherited>
+	<datatype>
+      <enumeration>
+        <value const="NONE">none</value>
+        <value const="DOTTED">dotted</value>
+        <value const="DASHED">dashed</value>
+        <value const="SOLID">solid</value>
+        <value const="DOUBLE">double</value>
+        <value const="GROOVE">groove</value>
+        <value const="RIDGE">ridge</value>
+      </enumeration>
+  </datatype>
+	<default>solid</default> 
+  </property>
+  <property>
+	<name>leader-pattern</name>
+	<class-name>LeaderPattern</class-name>
+	<inherited>true</inherited>
+	<datatype>
+      <enumeration>
+        <value const="SPACE">space</value>
+        <value const="RULE">rule</value>
+        <value const="DOTS">dots</value>
+        <value const="USECONTENT">use-content</value>
+      </enumeration>
+  </datatype>
+	<default>space</default> 
+  </property>
+
+  <!-- leader-length should have as datatype Length-Range, but it is not used anyway -->
+  <property>
+	<name>leader-length.optimum</name>
+	<class-name>LeaderLength</class-name>
+	<inherited>true</inherited>
+	<datatype>Length</datatype>
+	<default>12.0pt</default> 
+   </property>
+
+  <property>
+    <name>scaling</name>
+    <class-name>Scaling</class-name>
+    <inherited>true</inherited>
+    <datatype>
+      <enumeration>
+        <value const="UNIFORM">uniform</value>
+        <value const="NON_UNIFORM">non-uniform</value>
+      </enumeration>
+    </datatype>
+    <default>uniform</default>
+  </property>
+
+</property-list>
+

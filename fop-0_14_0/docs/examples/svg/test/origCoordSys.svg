@@ -1,0 +1,16 @@
+<?xml version="1.0" standalone="yes"?>
+
+<svg:svg width="400px" height="150px" xmlns:svg="http://www.w3.org/TR/2000/WD-SVG-20000629/DTD/svg-20000629.dtd">
+  <svg:title>OrigCoordSys</svg:title>
+  <svg:desc>Example OrigCoordSys - Simple transformations: original picture</svg:desc>
+  <svg:g style="fill:none; stroke:black; stroke-width:3">
+    <!-- Draw the axes of the original coordinate system -->
+    <svg:line x1="0" y1="1.5" x2="400" y2="1.5" />
+    <svg:line x1="1.5" y1="0" x2="1.5" y2="150" />
+  </svg:g>
+  <svg:g>
+    <svg:text x="30" y="30" style="font-size:20; font-family:Verdana">
+      ABC (orig coord system)
+    </svg:text>
+  </svg:g>
+</svg:svg>

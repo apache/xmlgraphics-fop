@@ -1,0 +1,68 @@
+<?xml version="1.0" standalone="no"?>
+
+
+<!-- Compiling FOP -->
+
+<s1 title="Compiling FOP">
+  <s2 title="Prerequisites">
+    <s3 title="Java 1.1.x or later">
+      <p>If you use Java 1.1.x you must also seperately include the swing classes, which can
+         be found at the <jump href="http://java.sun.com/products/jfc/#download-swing">
+         Sun website</jump>. From Java 1.2 on (aka Java 2) they are part of the standard 
+         distribution. 
+      </p>
+    </s3>
+    <s3 title="An XML parser">
+      <p>An XML parser which supports Sax and DOM like 
+         <jump href="http://xml.apache.org/xerces-j/index.html">Xerces-J</jump>.
+         The parser must be in your classpath</p>
+    </s3>
+    <s3 title="The xslt processor Xalan ">
+      <p>Some of the Java source code in FOP is generated from XML using
+         XSLT. Xalan must be used to generate this code.</p>
+      <p>Xalan is an XSL stylesheet processor written in java. At the moment you
+         can't use any other processor, because the make process makes use of some
+         proprietary features of Xalan which allow to write output in more
+         then one document. You can find Xalan also at <jump href="http://xml.apache.org/xalan/overview.html">
+        xml.apache.org</jump>. You have to use Xalan version 0.19.5 or later.
+         Xalan.jar must be in your classpath and also the file bsf.jar, which comes with Xalan.</p>
+    </s3>
+    <s3 title="Setting of JAVA_HOME">
+      <p>You have to set the enviroment variable JAVA_HOME. It must point to your local JDK 
+      root directory. This is true, even if you use JDK 1.2 or above, which don't need this 
+      setting. It is used by the compilation software.</p>
+    </s3>
+    <s3 title="Settings in your classpath">
+      <p>If you want Fop to use the image library jimi, it should be in your classpath during 
+         compilation. 
+      </p>
+      <p>A CLASSPATH for a complete compilation of Fop could look like this, if all these jar files are in 
+         a directory called jars (example uses windows syntax):
+      </p>
+      <p><code>set CLASSPATH=\jars\xalan.jar;\jars\xerces.jar;\jars\bsf.jar;\jars\jimi.jar;
+      </code></p>
+    </s3>
+    </s2>
+  <s2 title="Compiling">
+    <p>Compilation is started by executing build, either as a batch file on win32 (build.bat) or as a shell script on unix. The compilation uses Ant, 
+       a replacement of make (you can find more information about Ant at 
+       <jump href="http://jakarta.apache.org/ant/">jakarte.apache.org</jump>).
+        build.xml is the replacement of makefile. Look there for further information. </p>
+       <p>A help screen is shown by calling "build usage".
+    </p>
+  </s2>
+  <s2 title="Problems">
+    <p>If you have problems compiling Fop, please try this first: delete the build directory completely and
+       try a new build from scratch. Check, whether you have all necessary libraries in your classpath:
+       xerces.jar, xalan.jar, bsf.jar, jimi.jar (optional). If you still have problems, please look at the
+       page <jump href="bugs.html">bugs</jump>, for further help.
+    </p>
+  </s2>
+
+  <s2 title="Compiling FOP on MacOS">
+    <!-- contributed by Arved Sandstrom who also manages the webpage the jump points to -->
+    <p>We strongly recommend the use of Codewarrior Java. You will find 
+       a link to more information in the near future.
+    </p>
+  </s2>
+</s1>

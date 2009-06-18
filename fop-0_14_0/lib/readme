@@ -1,0 +1,11 @@
+This directory contains some libraries or class files necessary 
+for compiling, running or testing Fop.
+
+ant.jar                  Ant is the scripting tool which is used to build Fop or to run 
+                         the test scripts. see build.xml in root for more information
+w3c.jar                  the svg library from the w3 consortium
+
+
+Compare.java             a ant task which compares files
+Fop.java                 a ant task which allows calling Fop from Ant 
+Xslt.java                a ant task which allows calling Xalan from Ant

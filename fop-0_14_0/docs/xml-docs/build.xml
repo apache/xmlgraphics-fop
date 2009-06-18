@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+
+<!-- ===========================================================================
+
+
+Build targets
+=============
+
+These are the meaningful targets for this build file:
+
+ - pdf [default] -> creates ./fop.pdf
+ - clean         -> deletes all files produced by this script
+
+-->
+
+
+<project default="pdf" basedir=".">
+
+  <!-- =================================================================== -->
+  <!-- Initialization target                                               -->
+  <!-- =================================================================== -->
+  <target name="init">
+    <tstamp/>
+
+    <property name="src.dir" value="./fop"/>
+    <property name="allfiles.xml" value="fop-doc.xml"/>
+    <property name="outfile.fo" value="fop.fo"/>
+    <property name="outfile.pdf" value="fop.pdf"/>
+
+    <taskdef name="fop" classname="Fop"/>
+    <taskdef name="xslt" classname="Xslt"/>
+
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- copies all xml files into one. the infile is a dummy, because the   -->
+  <!-- source files are defined in the stylesheet                          -->
+  <!-- =================================================================== -->
+  <target name="prepare-files" depends="init">
+    <xslt infile="fop.xml" xsltfile="xml2xml.xsl"
+        outfile="${allfiles.xml}" smart="yes"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Generates the fo file                                               -->
+  <!-- =================================================================== -->
+  <target name="fo" depends="prepare-files">
+    <xslt infile="${allfiles.xml}" xsltfile="xml2pdf.xsl"
+        outfile="${outfile.fo}" smart="yes"/>
+  </target>
+
+
+  <!-- =================================================================== -->
+  <!-- Generates the pdf file                                              -->
+  <!-- =================================================================== -->
+  <target name="pdf" depends="fo">
+    <fop fofile="${outfile.fo}"   pdffile="${outfile.pdf}"/> 
+  </target>
+
+
+
+  <!-- =================================================================== -->
+  <!-- Clean targets                                                       -->
+  <!-- =================================================================== -->
+  <target name="clean">
+    <delete file="${allfiles.xml}"/>
+    <delete file="${outfile.fo}"/>
+    <delete file="${outfile.pdf}"/>
+  </target>
+
+</project>
+
+<!-- End of file -->

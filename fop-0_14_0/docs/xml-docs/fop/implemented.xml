@@ -1,0 +1,225 @@
+<?xml version="1.0" standalone="no"?>
+
+
+<!-- What's Implemented? -->
+
+<s1 title="Features">
+  <s2 title="What's Implemented?">
+      <p>The following formatting objects and properties of the xsl-fo 
+         working draft (27 March 2000) are implemented. Please have also a look at the 
+         section on <jump href="limitations.html">limitations</jump>
+      </p>
+  </s2>
+  <s2 title="1) Formatting Objects">
+    <ul>
+      <li>block </li>
+      <li>conditional-page-master-reference</li>
+      <li>display-sequence </li>
+      <li>external-graphic</li>
+      <li>flow</li>
+      <li>inline-sequence </li>
+      <li>instream-foreign-object</li>
+      <li>layout-master-set </li>
+      <li>leader, but see <jump href="limitations.html">limitations</jump></li>
+      <li>list-block </li>
+      <li>list-item </li>
+      <li>list-item-body </li>
+      <li>list-item-label </li>
+      <li>page-number </li>
+      <li>page-number-citation, see <jump href="limitations.html">limitations</jump></li>
+      <li>page-sequence </li>
+      <li>page-sequence-master</li>
+      <li>region-after </li>
+      <li>region-before </li>
+      <li>region-body </li>
+      <li>repeatable-page-master-alternatives</li>
+      <li>repeatable-page-master-reference</li>
+      <li>root</li>
+      <li>simple-page-master </li>
+      <li>simple-link (internal and external)</li>
+      <li>single-page-master-reference</li>
+      <li>static-content </li>
+      <li>table (minimal support)</li>
+      <li>table-body (minimal support)</li>
+      <li>table-cell (minimal support)</li>
+      <li>table-column (minimal support)</li>
+      <li>table-row (minimal support)</li>
+    </ul>
+  </s2>
+
+  <s2 title="2) Properties">
+    <ul>
+      <li>background-color </li>
+      <li>blank-or-not-blank</li>
+      <li>border-after-color</li>
+      <li>border-after-style</li>
+      <li>border-after-width</li>
+      <li>border-before-color</li>
+      <li>border-before-style</li>
+      <li>border-before-width</li>
+      <li>border-bottom</li>
+      <li>border-bottom-color</li>
+      <li>border-bottom-style</li>
+      <li>border-bottom-width</li>
+      <li>border-color (only one value allowed) </li>
+      <li>border-end-color</li>
+      <li>border-end-style</li>
+      <li>border-end-width</li>
+      <li>border-left</li>
+      <li>border-left-color</li>
+      <li>border-left-style</li>
+      <li>border-left-width</li>
+      <li>border-right</li>
+      <li>border-right-color</li>
+      <li>border-right-style</li>
+      <li>border-right-width</li>
+      <li>border-start-color</li>
+      <li>border-start-style</li>
+      <li>border-start-width</li>
+      <li>border-style</li>
+      <li>border-top</li>
+      <li>border-top-color</li>
+      <li>border-top-style</li>
+      <li>border-top-width</li>
+      <li>border-width</li>
+      <li>bottom</li>
+      <li>break-after </li>
+      <li>break-before </li>
+      <li>color </li>
+      <li>column-width </li>
+      <li>end-indent </li>
+      <li>extent </li>
+      <li>external-destination</li>
+      <li>flow-name </li>
+      <li>font-family </li>
+      <li>font-size </li>
+      <li>font-style </li>
+      <li>font-weight </li>
+      <li>height</li>
+      <li>id</li>
+      <li>initial-page-number</li>
+      <li>internal-destination</li>
+      <li>keep-with-next</li>
+      <li>left</li>
+      <li>line-height </li>
+      <li>margin-bottom (only on pages and regions) </li>
+      <li>margin-left (only on pages and regions) </li>
+      <li>margin-right (only on pages and regions) </li>
+      <li>margin-top (only on pages and regions) </li>
+      <li>master-name </li>
+      <li>maximum-repeats</li>
+      <li>odd-or-even</li>
+      <li>padding (only one value allowed) </li>
+      <li>padding-after</li>
+      <li>padding-before</li>
+      <li>padding-bottom (only in conjunction with background color) </li>
+      <li>padding-end</li>
+      <li>padding-left (only in conjunction with background color) </li>
+      <li>padding-right (only in conjunction with background color) </li>
+      <li>padding-start</li>
+      <li>padding-top (only in conjunction with background color) </li>
+      <li>page-height </li>
+      <li>page-position</li>
+      <li>page-width </li>
+      <li>position (allowed values: "static" (default),"relative", "absolute", fixed ) </li>
+      <li>provisional-distance-between-starts </li>
+      <li>provisional-label-separation </li>
+      <li>ref-id </li>
+      <li>right</li>
+      <li>rule-thickness </li>
+      <li>space-after.optimum </li>
+      <li>space-before.optimum </li>
+      <li>src </li>
+      <li>start-indent </li>
+      <li>text-align </li>
+      <li>text-align-last </li>
+      <li>text-indent </li>
+      <li>top</li>
+      <li>white-space-treatment </li>
+      <li>width</li>
+      <li>wrap-option</li>
+    </ul>
+  </s2>
+
+  <s2 title="3) SVG elements supported">
+    <ul>
+      <li>rect</li>
+      <li>circle</li>
+      <li>line</li>
+      <li>text - tref, tspan</li>
+      <li>path</li>
+      <li>polygon</li>
+      <li>ellipse</li>
+      <li>g</li>
+      <li>svg (inside)</li>
+      <li>image</li>
+      <li>use</li>
+      <li>defs (including referenced items not in defs element)</li>
+      <li>linearGradient</li>
+      <li>radialGradient</li>
+      <li>stop</li>
+    </ul>
+  </s2>
+  <s2 title="4) SVG properties supported">
+    <ul>
+      <li>style</li>
+      <li>fill (style)</li>
+      <li>stroke (style)</li>
+      <li>stroke-width (style)</li>
+      <li>stroke-dasharray (style)</li>
+      <li>stroke-offset (style)</li>
+      <li>stroke-linecap (style)</li>
+      <li>stroke-linejoin (style)</li>
+      <li>stroke-miterlimit (style)</li>
+      <li>stop-color (style)</li>
+      <li>color (style)</li>
+      <li>font (style)</li>
+      <li>font-size (style)</li>
+      <li>font-family (style)</li>
+      <li>font-weight (style)</li>
+      <li>font-style (style)</li>
+      <li>x</li>
+      <li>y</li>
+      <li>x1</li>
+      <li>y1</li>
+      <li>x2</li>
+      <li>y2</li>
+      <li>r</li>
+      <li>cx</li>
+      <li>cy</li>
+      <li>x (list)</li>
+      <li>y (list)</li>
+      <li>dx</li>
+      <li>dy</li>
+      <li>transform</li>
+      <li>rotate (transform)</li>
+      <li>translate (transform)</li>
+      <li>scale (transform)</li>
+      <li>matrix (transform)</li>
+      <li>skewX (transform)</li>
+      <li>skewY (transform)</li>
+      <li>d</li>
+      <li>id</li>
+      <li>width</li>
+      <li>height</li>
+      <li>xlink:href</li>
+      <li>refX</li>
+      <li>refY</li>
+      <li>offset</li>
+      <li>points</li>
+      <li>fx</li>
+      <li>fy</li>
+    </ul>
+  </s2>
+</s1>
+
+
+
+
+
+
+
+
+
+
+

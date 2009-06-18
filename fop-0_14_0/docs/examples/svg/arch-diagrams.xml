@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<!DOCTYPE Diagrams SYSTEM "diagrams.dtd">
+<Diagrams xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/TR/2000/WD-SVG-20000629/DTD/svg-20000629.dtd">
+
+	<Diagram entry="overall">
+		<svg:svg width="400pt" height="200pt">
+			<svg:desc>Overall design diagram of SVG elements in FOP</svg:desc>
+			<svg:title>SVG Elements Overall Design</svg:title>
+
+			<svg:polygon style="stroke:blue; stroke-width:2"
+				points="10,10 100,10 100,140 75,137 70,135 55,130 30,128 25,124 10,120"/>
+			<svg:text x="15pt" y="25pt">FOP</svg:text>
+			<svg:rect style="stroke:gray; stroke-dasharray:5 3" x="30pt" y="55pt" width="50pt" height="40pt"/>
+
+			<svg:rect x="140pt" y="35pt" width="60pt" height="80pt"/>
+			<svg:text x="145pt" y="50pt">SVG</svg:text>
+
+			<svg:rect x="260pt" y="20pt" width="60pt" height="30pt"/>
+			<svg:text x="265pt" y="35pt">G</svg:text>
+
+			<svg:path style="stroke:green; stroke-dasharray:7 5" d="M 70 60 C 90 35 100 30 138 40"/>
+			<svg:text x="105pt" y="28pt">layout</svg:text>
+
+		</svg:svg>
+	</Diagram>
+
+	<Diagram entry="fop">
+		<svg:svg width="500pt" height="150pt">
+			<svg:desc>The FOP parsing flow.</svg:desc>
+			<svg:title>SVG Elements Overall Design</svg:title>
+
+			<svg:polygon style="stroke:blue; stroke-width:2"
+				points="10,10 100,10 100,140 75,137 70,135 55,130 30,128 25,124 10,120"/>
+			<svg:text x="15pt" y="25pt">FOP</svg:text>
+			<svg:rect style="stroke:gray; stroke-dasharray:5 3" x="30pt" y="55pt" width="50pt" height="40pt"/>
+
+			<svg:rect x="140pt" y="35pt" width="60pt" height="80pt"/>
+			<svg:text x="145pt" y="50pt">SVG</svg:text>
+
+			<svg:rect x="260pt" y="20pt" width="60pt" height="30pt"/>
+			<svg:text x="265pt" y="35pt">G</svg:text>
+
+			<svg:path style="stroke:green; stroke-dasharray:7 5" d="M 70 60 C 90 35 100 30 138 40"/>
+			<svg:text x="105pt" y="28pt">layout</svg:text>
+
+		</svg:svg>
+	</Diagram>
+
+	<Diagram entry="fop-flow">
+		<svg:svg width="400pt" height="200pt">
+			<svg:desc>Overall design diagram of SVG elements in FOP</svg:desc>
+			<svg:title>SVG Elements Overall Design</svg:title>
+
+			<svg:polygon style="stroke:blue; stroke-width:2"
+				points="10,10 100,10 100,140 75,137 70,135 55,130 30,128 25,124 10,120"/>
+			<svg:text x="15pt" y="25pt">FOP</svg:text>
+			<svg:rect style="stroke:gray; stroke-dasharray:5 3" x="30pt" y="55pt" width="50pt" height="40pt"/>
+
+			<svg:rect x="140pt" y="35pt" width="60pt" height="80pt"/>
+			<svg:text x="145pt" y="50pt">SVG</svg:text>
+
+			<svg:rect x="260pt" y="20pt" width="60pt" height="30pt"/>
+			<svg:text x="265pt" y="35pt">G</svg:text>
+
+			<svg:path style="stroke:green; stroke-dasharray:7 5" d="M 70 60 C 90 35 100 30 138 40"/>
+			<svg:text x="105pt" y="28pt">layout</svg:text>
+
+		</svg:svg>
+	</Diagram>
+</Diagrams>

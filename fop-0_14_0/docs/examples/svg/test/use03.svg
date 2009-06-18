@@ -1,0 +1,9 @@
+<?xml version="1.0" standalone="yes"?>
+
+<svg:svg width="10cm" height="3cm" xmlns:svg="http://www.w3.org/TR/2000/WD-SVG-20000629/DTD/svg-20000629.dtd">
+  <svg:desc>Example Use03 - 'use' with a 'transform' attribute</svg:desc>
+  <svg:defs>
+    <svg:rect id="MyRect" x="0" y="0" width="6cm" height="1cm"/>
+  </svg:defs>
+  <svg:use xlink:href="#MyRect" transform="translate(2cm,.25cm) rotate(10)" style="fill:black"/>
+</svg:svg>

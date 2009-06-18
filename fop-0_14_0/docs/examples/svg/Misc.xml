@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!DOCTYPE Document SYSTEM "Document.dtd">
+<Document>
+	<Title>Miscellaneous SVG Examples</Title>
+	<Description>
+	    Some general svg examples.
+	</Description>
+	<Chapter>
+		<Title>Examples</Title>
+		<Section>
+			<Title>Introduction</Title>
+			<Body>
+				<p>
+					These examples show the areas of SVG currently implemented.
+				</p>
+				<p>
+					This is provided so that others can see how to write the svg elements
+					and the result to expect.
+				</p>
+			</Body>
+		</Section>
+		<Section>
+			<Title>Graphic Elements</Title>
+			<SubSection>
+				<Title>Miscellaneous</Title>
+				<Body>
+					<p>
+						Various styles and other drawing things.
+					</p>
+				</Body>
+			</SubSection>
+		</Section>
+	</Chapter>
+</Document>

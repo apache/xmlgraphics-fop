@@ -1,0 +1,22 @@
+FOP readme
+
+    What is FOP?
+    FOP is the world's first print formatter driven by XSL formatting
+    objects. It is a Java 1.1 application that reads a formatting object
+    tree and then turns it into a PDF document. The formatting object
+    tree, can be in the form of an XML document (output by an XSLT engine
+    like XT or Xalan) or can be passed in memory as a DOM Document or (in
+    the case of XT) SAX events.
+    
+    FOP is part of Apache's XML project. The homepage of FOP is 
+    http:/xml.apache.org/fop 
+
+    HTML-Documentation can be found in the subdirectory /docs. 
+
+    Compilation of Fop is started by executing build. It requires
+    Xerces-J, Xalan and bsf.jar (comes with Xalan) in your classpath. 
+    Fop builds successfully with Xerces 1.1.2 and Xalan 1.1, earlier versions
+    may prove problematic, if they don't support the final version of SAX 2. 
+    You can find more details in build.xml or in the documentation under the 
+    heading 'compiling'.
+

@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+
+
+<faqs title="FAQ Running FOP">
+
+  <faq title="Source files for the formatting properties are missing">
+    <q>Q: I can't find the source files for the formatting properties. The directories 
+       where they should be are empty. Where can I find them?</q>
+    <a><p>A: They are generated during the build process. So you should use the build script coming 
+          with Fop at least once to generate these files.
+       </p>
+    </a>
+  </faq>
+
+
+  <faq title="Formatting object xxx doesn't work as expected">
+    <q>Q: Feature xxx of the XSL Working Draft 27 March 2000 does not work as it should. Why?</q>
+    <a><p>A: First: Only a small subset of formatting objects and properties is 
+          implemented at the moment. Please have a look at the section "Features", 
+          which lists the supported fo and properties. Second: At the moment only 
+          Working Draft 21 Apr 1999 is supported. 
+       </p>
+    </a>
+  </faq>
+
+  <faq title="Supporting the latest XSL working draft">
+    <q>Q: When will the latest version of the XSL working draft be supported?</q>
+    <a><p>Basic conformance to the latest XSL working draft is scheduled for fall 2000. 
+       </p>
+    </a>
+  </faq>
+
+  <faq title="Fatal error: Root element must be root">
+     <q>Q: Running FOP I get the following messages or something similar: 
+        "WARNING: Unknown formatting object http://www.w3.org/XSL/Format/1.0^root"
+        and then a FATAL Error "Root element must be root, not default FO".</q>
+     <a>
+        <p>A: Make sure that you have specified as the namespace for fo the
+           following string: "http://www.w3.org/1999/XSL/Format". It is analogous 
+           to the xslt namespace "http://www.w3.org/1999/XSL/Transform"
+        </p>
+     </a>
+  </faq>
+
+  <faq title="Char '>' inserted into page number">
+     <q>Q: The char ">" is inserted into the page number display like this 
+        "formatting FOs into areas [1] [2] [3>>>>]". Is this a bug?</q>
+     <a><p>A: No, a feature. It simply means that on that page an area 
+           overflowed (ie there was not enough room to fit the text in).</p></a>
+  </faq>
+
+  <faq title="Are font properties allowed here">
+     <q>Q: It looks like FOP must be honoring font properties when it shouldn't be? 
+        Example: According to the dtd coming with the xsl-fo spec inline-sequence 
+        shouldn't have any attributes, but FOP doesn't reject them.
+     </q>
+     <a>
+      <p>A: Font properties are inherited down to individual characters. You can
+         specify font properties on any formatting object you like and any textual content
+         will inherit those properties (unless overriden by a closer ancestor).
+      </p>
+      <p>The dtd coming with the xsl-fo spec isn't correct in this respect.
+      </p>
+     </a>
+  </faq>
+
+  <faq title="Supported fonts">
+     <q>Q: I need some additional fonts in FOP. How I can set embedding fonts?
+     </q>
+     <a>
+      <p>A: At present, FOP does not support any fonts other than the built-in fonts
+        Times, Helvetica, Courier, Symbol and ZapfDingbats. 
+       </p>
+     </a>
+  </faq>
+
+</faqs>

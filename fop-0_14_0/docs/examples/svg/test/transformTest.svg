@@ -1,0 +1,31 @@
+<?xml version="1.0" standalone="yes"?>
+
+<svg:svg width="200" height="200" viewBox="-100, -100, 200, 200" xmlns:svg="http://www.w3.org/TR/2000/WD-SVG-20000629/DTD/svg-20000629.dtd">
+  <svg:title>Nested verses Transform list test</svg:title>
+  <svg:desc>This is to test that the transformations are being applied in
+        the correct order. Both squares should be first filled and
+        then outlined in the same position. If the outlines are in
+        the wrong position then something is wrong.
+  </svg:desc>
+
+  <svg:g transform="translate(-10,-20) scale(2) rotate(45) translate(5,10)">
+     <svg:rect width="30" height="30" style="fill:red"/>
+  </svg:g>
+   
+  <svg:g transform="translate(-10,-20)">
+    <svg:g transform="scale(2)">
+      <svg:g transform="rotate(45)">
+        <svg:g transform="translate(5,10)">
+          <svg:rect width="30" height="30" style="stroke:black;stroke-width:2"/>
+        </svg:g>
+      </svg:g>
+    </svg:g>
+  </svg:g>
+
+  <svg:rect x="20" y="20" width="20" height="20" transform="scale(2)" style="fill:blue"/>
+
+  <svg:g transform="scale(2)">
+    <svg:rect x="20" y="20" width="20" height="20" style="stroke:black;stroke-width:2"/>
+  </svg:g>
+
+</svg:svg>

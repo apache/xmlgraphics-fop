@@ -1,0 +1,156 @@
+<?xml version="1.0" standalone="yes"?>
+
+<svg:svg width="480px" height="270px" style="font-family:Verdana; font-size:8" xmlns:svg="http://www.w3.org/TR/2000/WD-SVG-20000629/DTD/svg-20000629.dtd">
+  <svg:title>PreserveAspectRatio</svg:title>
+  <svg:desc>Example PreserveAspectRatio - demonstrate available options</svg:desc>
+  
+  <svg:text x="10" y="30">SVG to fit</svg:text>
+  <svg:g transform="translate(20,40)">
+    <svg:rect x='.5' y='.5' width='29' height='39' style='fill:yellow; stroke:red'/>
+  <svg:g transform='translate(10,10)rotate(90)'>
+    <svg:text style='font-family:Verdana; font-weight:bold; font-size:14'>:)</svg:text>
+  </svg:g>
+  </svg:g>
+  <svg:text x="10" y="110">Viewport 1</svg:text>
+  <svg:g transform="translate(10,120)">
+    <svg:rect x='.5' y='.5' width='49' height='29' style='fill:none; stroke:blue'/>
+  </svg:g>
+  <svg:text x="10" y="180">Viewport 2</svg:text>
+  <svg:g transform="translate(20,190)">
+    <svg:rect x='.5' y='.5' width='29' height='59' style='fill:none; stroke:blue'/>
+  </svg:g>
+
+  <svg:text x="100" y="30">--------------- meet ---------------</svg:text>
+  <svg:g transform="translate(100,60)">
+    <svg:text y="-10">xMin*</svg:text>
+    <svg:rect x='.5' y='.5' width='49' height='29' style='fill:none; stroke:blue'/>
+    <svg:svg preserveAspectRatio="xMinYMin meet" viewBox="0 0 30 40"
+       width="50" height="30">
+      <svg:rect x='.5' y='.5' width='29' height='39' style='fill:yellow; stroke:red'/>
+  <svg:g transform='translate(10,10)rotate(90)'>
+    <svg:text style='font-family:Verdana; font-weight:bold; font-size:14'>:)</svg:text>
+  </svg:g>
+    </svg:svg>
+  </svg:g>
+  <svg:g transform="translate(170,60)">
+    <svg:text y="-10">xMid*</svg:text>
+    <svg:rect x='.5' y='.5' width='49' height='29' style='fill:none; stroke:blue'/>
+    <svg:svg preserveAspectRatio="xMidYMid meet" viewBox="0 0 30 40"
+         width="50" height="30">
+      <svg:rect x='.5' y='.5' width='29' height='39' style='fill:yellow; stroke:red'/>
+  <svg:g transform='translate(10,10)rotate(90)'>
+    <svg:text style='font-family:Verdana; font-weight:bold; font-size:14'>:)</svg:text>
+  </svg:g>
+    </svg:svg>
+  </svg:g>
+  <svg:g transform="translate(240,60)">
+    <svg:text y="-10">xMax*</svg:text>
+    <svg:rect x='.5' y='.5' width='49' height='29' style='fill:none; stroke:blue'/>
+    <svg:svg preserveAspectRatio="xMaxYMax meet" viewBox="0 0 30 40"
+         width="50" height="30"><svg:rect x='.5' y='.5' width='29' height='39' style='fill:yellow; stroke:red'/>
+  <svg:g transform='translate(10,10)rotate(90)'>
+    <svg:text style='font-family:Verdana; font-weight:bold; font-size:14'>:)</svg:text>
+  </svg:g>
+    </svg:svg>
+  </svg:g>
+
+  <svg:text x="330" y="30">---------- meet ----------</svg:text>
+  <svg:g transform="translate(330,60)">
+    <svg:text y="-10">*YMin</svg:text>
+    <svg:rect x='.5' y='.5' width='29' height='59' style='fill:none; stroke:blue'/>
+    <svg:svg preserveAspectRatio="xMinYMin meet" viewBox="0 0 30 40"
+         width="30" height="60"><svg:rect x='.5' y='.5' width='29' height='39' style='fill:yellow; stroke:red'/>
+  <svg:g transform='translate(10,10)rotate(90)'>
+    <svg:text style='font-family:Verdana; font-weight:bold; font-size:14'>:)</svg:text>
+  </svg:g>
+    </svg:svg>
+  </svg:g>
+  <svg:g transform="translate(380,60)">
+    <svg:text y="-10">*YMid</svg:text>
+    <svg:rect x='.5' y='.5' width='29' height='59' style='fill:none; stroke:blue'/>
+    <svg:svg preserveAspectRatio="xMidYMid meet" viewBox="0 0 30 40"
+         width="30" height="60">
+      <svg:rect x='.5' y='.5' width='29' height='39' style='fill:yellow; stroke:red'/>
+  <svg:g transform='translate(10,10)rotate(90)'>
+    <svg:text style='font-family:Verdana; font-weight:bold; font-size:14'>:)</svg:text>
+  </svg:g>
+    </svg:svg>
+  </svg:g>
+  <svg:g transform="translate(430,60)">
+    <svg:text y="-10">*YMax</svg:text>
+    <svg:rect x='.5' y='.5' width='29' height='59' style='fill:none; stroke:blue'/>
+    <svg:svg preserveAspectRatio="xMaxYMax meet" viewBox="0 0 30 40"
+         width="30" height="60">
+      <svg:rect x='.5' y='.5' width='29' height='39' style='fill:yellow; stroke:red'/>
+  <svg:g transform='translate(10,10)rotate(90)'>
+    <svg:text style='font-family:Verdana; font-weight:bold; font-size:14'>:)</svg:text>
+  </svg:g>
+    </svg:svg>
+  </svg:g>
+
+  <svg:text x="100" y="160">---------- slice ----------</svg:text>
+  <svg:g transform="translate(100,190)">
+    <svg:text y="-10">xMin*</svg:text>
+    <svg:rect x='.5' y='.5' width='29' height='59' style='fill:none; stroke:blue'/>
+    <svg:svg preserveAspectRatio="xMinYMin slice" viewBox="0 0 30 40"
+         width="30" height="60">
+      <svg:rect x='.5' y='.5' width='29' height='39' style='fill:yellow; stroke:red'/>
+  <svg:g transform='translate(10,10)rotate(90)'>
+    <svg:text style='font-family:Verdana; font-weight:bold; font-size:14'>:)</svg:text>
+  </svg:g>
+    </svg:svg>
+  </svg:g>
+  <svg:g transform="translate(150,190)">
+    <svg:text y="-10">xMid*</svg:text>
+    <svg:rect x='.5' y='.5' width='29' height='59' style='fill:none; stroke:blue'/>
+    <svg:svg preserveAspectRatio="xMidYMid slice" viewBox="0 0 30 40"
+         width="30" height="60">
+      <svg:rect x='.5' y='.5' width='29' height='39' style='fill:yellow; stroke:red'/>
+  <svg:g transform='translate(10,10)rotate(90)'>
+    <svg:text style='font-family:Verdana; font-weight:bold; font-size:14'>:)</svg:text>
+  </svg:g>
+    </svg:svg>
+  </svg:g>
+  <svg:g transform="translate(200,190)">
+    <svg:text y="-10">xMax*</svg:text>
+    <svg:rect x='.5' y='.5' width='29' height='59' style='fill:none; stroke:blue'/>
+    <svg:svg preserveAspectRatio="xMaxYMax slice" viewBox="0 0 30 40"
+         width="30" height="60">
+      <svg:rect x='.5' y='.5' width='29' height='39' style='fill:yellow; stroke:red'/>
+  <svg:g transform='translate(10,10)rotate(90)'>
+    <svg:text style='font-family:Verdana; font-weight:bold; font-size:14'>:)</svg:text>
+  </svg:g>
+    </svg:svg>
+  </svg:g>
+
+  <svg:text x="270" y="160">--------------- slice ---------------</svg:text>
+  <svg:g transform="translate(270,190)">
+    <svg:text y="-10">*YMin</svg:text>
+    <svg:rect x='.5' y='.5' width='49' height='29' style='fill:none; stroke:blue'/>
+    <svg:svg preserveAspectRatio="xMinYMin slice" viewBox="0 0 30 40"
+         width="50" height="30">
+     <svg:rect x='.5' y='.5' width='29' height='39' style='fill:yellow; stroke:red'/>
+  <svg:g transform='translate(10,10)rotate(90)'>
+    <svg:text style='font-family:Verdana; font-weight:bold; font-size:14'>:)</svg:text>
+  </svg:g>
+    </svg:svg>
+  </svg:g>
+  <svg:g transform="translate(340,190)"><svg:text y="-10">*YMid</svg:text><svg:rect x='.5' y='.5' width='49' height='29' style='fill:none; stroke:blue'/>
+    <svg:svg preserveAspectRatio="xMidYMid slice" viewBox="0 0 30 40"
+         width="50" height="30">
+      <svg:rect x='.5' y='.5' width='29' height='39' style='fill:yellow; stroke:red'/>
+  <svg:g transform='translate(10,10)rotate(90)'>
+    <svg:text style='font-family:Verdana; font-weight:bold; font-size:14'>:)</svg:text>
+  </svg:g>
+    </svg:svg>
+  </svg:g>
+  <svg:g transform="translate(410,190)"><svg:text y="-10">*YMax</svg:text><svg:rect x='.5' y='.5' width='49' height='29' style='fill:none; stroke:blue'/>
+    <svg:svg preserveAspectRatio="xMaxYMax slice" viewBox="0 0 30 40"
+         width="50" height="30">
+      <svg:rect x='.5' y='.5' width='29' height='39' style='fill:yellow; stroke:red'/>
+  <svg:g transform='translate(10,10)rotate(90)'>
+    <svg:text style='font-family:Verdana; font-weight:bold; font-size:14'>:)</svg:text>
+  </svg:g>
+    </svg:svg>
+  </svg:g>
+</svg:svg>

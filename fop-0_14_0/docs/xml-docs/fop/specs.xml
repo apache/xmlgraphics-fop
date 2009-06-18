@@ -1,0 +1,23 @@
+<?xml version="1.0" standalone="no"?>
+
+
+<!-- FOP Relevant Specifications and links -->
+
+<s1 title="FOP Relevant Specifications and Links">
+  <ul>
+    <li><jump href="http://www.w3.org/TR/WD-xsl/">Latest XSL-FO Working Draft (27 March 2000)</jump></li>
+    <li><jump href="http://www.renderx.com/Tests/validator/fo2000.dtd.html">A dtd for the XSL-FO Working Draft (27 March 2000) provided by N. Grigoriev from RenderX</jump></li>
+    <li><jump href="http://www.w3.org/TR/1999/WD-xsl-19990421/">XSL-FO Working Draft 21 Apr 1999 </jump></li>
+    <li><jump href="http://www.w3.org/TR/SVG">Latest SVG Working draft</jump></li>
+    <li><jump href="http://www.w3.org/TR/2000/WD-SVG-20000629/index.html">Supported SVG Working Draf</jump></li>
+    <li><jump href="http://www.w3.org/TR/REC-xml">XML Recommendation</jump></li>
+    <li><jump href="http://www.w3.org/TR/xslt">XSLT Recommendation</jump></li>
+    <li><jump href="http://partners.adobe.com/asn/developer/acrosdk/DOCS/pdfspec.pdf">Portable Document Format (PDF) 1.3 Reference Manual </jump></li>
+    <li><jump href="http://www.megginson.com/SAX/">Simple API for XML (SAX)</jump></li>
+    <li><jump href="http://www.w3.org/TR/REC-DOM-Level-1">Document Object Model (DOM)</jump></li>
+    <li><jump href="http://www.w3.org/TR/REC-xml-names/">Namespaces in XML Recommendation</jump></li>
+    <li><jump href="http://java.sun.com/products/jdk/1.1/docs/index.html">Java JDK 1.1 Documentation</jump></li>
+  </ul>
+</s1>
+
+
