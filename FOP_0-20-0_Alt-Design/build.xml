@@ -1,0 +1,716 @@
+<?xml version="1.0"?>
+<!--
+
+   Copyright 1999-2003 The Apache Software Foundation.
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+                           * ================== *
+                           |  FOP build system  |
+                           * ================== *
+
+Building instructions
+=====================
+
+First, change directory to where this file is located. Then type
+
+  ./build.sh (on unixes)
+  build (on Windows)
+
+If everything is right and all the required packages are visible, this action
+will generate a file called "fop.jar" in the "./build" directory.
+
+If you experience any problems with the build please visit the FOP website for
+more information: http://xml.apache.org/fop
+
+
+Build targets
+=============
+
+The build system is not only responsible for compiling Fop into a jar file,
+but also for creating the HTML documentation, javadocs,
+distributions and web site. In fact, the file you have here is _exactly_ what
+is used by fop maintainers to take care of everything in the Fop
+project.
+
+Call the build script (see above) with the parameter "-projecthelp" to get a
+list of possible build targets.
+
+============================================================================ -->
+<project default="all" basedir=".">
+
+  <!-- used to set values for testing etc. -->
+  <!-- build-local.properties is not stored in CVS
+                  and overrides values from build.properties -->
+  <property file="build-local.properties"/>
+  <property file="build.properties"/>
+
+<!--
+  <fileset dir="${basedir}" id="dist.bin">
+    <include name="conf/**"/>
+    <include name="docs/**"/>
+    <include name="CHANGES"/>
+    <include name="LICENSE"/>
+    <include name="README"/>
+    <include name="STATUS"/>
+    <include name="fop.bat"/>
+    <include name="fop.sh"/>
+    <exclude name="src/**"/>
+    <exclude name="dist/**"/>
+    <exclude name="build/**"/>
+    <exclude name="lib/**"/>
+    <exclude name="**/userconfig.xml>
+  </fileset>
+
+  <fileset dir="${basedir}" id="dist.bin.lib">
+    <include name="lib/xercesImpl-2.2.1.jar"/>
+    <include name="lib/xalan-2.4.1.jar"/>
+    <include name="lib/xml-apis.jar"/>
+  </fileset>
+
+  <fileset dir="${basedir}" id="dist.src">
+    <exclude name="lib/classes/**"/>
+    <exclude name="lib/org/**"/>
+    <exclude name="lib/src/**"/>
+    <exclude name="build/**"/>
+    <include name="src/**"/>
+    <include name="conf/**"/>
+    <exclude name="**/userconfig.xml"/>
+    <include name="docs/**"/>
+    <include name="lib/**"/>
+    <include name="CHANGES"/>
+    <include name="LICENSE"/>
+    <include name="README"/>
+    <include name="STATUS"/>
+    <include name="build*"/>
+    <include name="fop.bat"/>
+    <include name="fop.sh"/>
+  </fileset>
+-->
+
+  <path id="libs-build-classpath">
+    <fileset dir="${basedir}/lib">
+      <include name="*.jar"/>
+    </fileset>
+  </path>
+
+  <path id="libs-run-classpath">
+    <fileset dir="${basedir}/lib">
+      <include name="*.jar"/>
+      <exclude name="ant.jar"/>
+    </fileset>
+    <fileset dir="${basedir}/build">
+      <include name="fop.jar"/>
+    </fileset>
+  </path>
+
+  <path id="checkstylepath">
+    <fileset dir="${basedir}/lib">
+      <include name="checkstyle-all-*.jar"/>
+    </fileset>
+  </path>
+
+  <patternset id="base-sources">
+    <include name="**/*.java"/>
+  </patternset>
+
+  <!-- =================================================================== -->
+  <!-- Pre-initialization target                                           -->
+  <!-- =================================================================== -->
+  <target name="pre-init">
+    <tstamp/>
+
+    <!-- Set up initial required properties -->
+    <property name="Name" value="Fop"/>
+    <property name="name" value="fop"/>
+    <property name="NAME" value="FOP"/>
+    <property name="year" value="1999-2003"/>
+
+    <property name="fop.dir" value="org/apache/fop"/>
+    <property name="packages" value="org.apache.fop.*"/>
+    <property name="fop.prefix" value="org.apache.fop"/>
+
+    <!-- Compilation parameters -->
+    <property name="debug" value="on"/>
+    <property name="optimize" value="off"/>
+    <property name="deprecation" value="on"/>
+
+    <!-- Source and library directories -->
+    <property name="src.dir" value="${basedir}/src"/>
+    <property name="src.java" value="${src.dir}/java"/>
+    <property name="src.codegen" value="${src.dir}/codegen"/>
+    <property name="lib.dir" value="${basedir}/lib"/>
+    <property name="hyph.dir" value="${src.dir}/hyph"/>
+    <property name="conf.dir" value="${basedir}/conf"/>
+    <property name="resources.dir" value="${basedir}/resources"/>
+    
+    <!-- Font generation properties -->
+    <property name="fonts.dir" value="${fop.dir}/fonts"/>
+    <property name="base14.dir" value="${fonts.dir}/base14"/>
+    <property name="genfonts.dir" value="${src.codegen}/${fonts.dir}"/>
+    <property name="genbase14.dir" value="${genfonts.dir}/base14"/>
+
+    <!-- CountryLanguageScript.java generation -->
+    <property name="datatypes.dir" value="${fop.dir}/datatypes"/>
+    <property name="gendatatypes.dir"
+                        value="${src.codegen}/${datatypes.dir}"/>
+
+    <!-- Examples directory properties -->
+    <property name="fo.examples" value="examples/fo"/>
+    <property name="fo.basic.examples" value="${fo.examples}/basic"/>
+    <property name="examples.dir" value="${basedir}/examples"/>
+    <property name="fo.examples.dir" value="${basedir}/${fo.examples}"/>
+    <property name="fo.basic.examples.dir"
+                              value="${basedir}/${fo.basic.examples}"/>
+
+    <!-- Build directories -->
+    <property name="build.dir" value="${basedir}/build"/>
+    <property name="build.dest" value="${build.dir}/classes"/>
+    <property name="build.conf" value="${build.dest}/conf"/>
+    <property name="build.resources" value="${build.dest}/resources"/>
+    <property name="build.tmp" value="${build.dir}/tmp"/>
+    <property name="build.javadocs" value="${build.dir}/javadocs"/>
+    <property name="build.examples.dir" value="${build.dir}/examples"/>
+    <property name="build.fo.examples.dir"
+                                  value="${build.dir}/${fo.examples}"/>
+    <property name="build.basic.examples.dir"
+                              value="${build.dir}/${fo.basic.examples}"/>
+    <property name="build.examples.test.dir"
+                                  value="${build.fo.examples.dir}"/>
+
+    <!-- Properties for derivation of Version information -->
+    <property name="version.dir" value="${fop.dir}/version"/>
+    <property name="version.src.dir" value="${src.java}/${version.dir}"/>
+    <property name="version.src.name" value="Version.java"/>
+    <property name="version.src.file" value="${version.src.dir}/${version.src.name}"/>
+    <property name="version.class.dir" value="${build.dest}/${version.dir}"/>
+    <property name="version.class.name" value="Version.class"/>
+    <property name="version.class" value="${version.class.dir}/${version.class.name}"/>
+    <property name="version.prefix" value="${fop.prefix}.version"/>
+    <property name="tmp.version.dir" value="${build.tmp}"/>
+    <property name="tmp.version.filename" value="version.properties"/>
+    <property name="tmp.version.file" value="${build.tmp}/${tmp.version.filename}"/>
+
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Create necessary directories                                        -->
+  <!-- =================================================================== -->
+  <target name="makedirs" depends="pre-init">
+    <echo message="Preparing the build directories"/>
+    <!-- N.B. Whenever a directory is created here, adjust the clean target as
+     necessary.  build.dir is never deleted, only subdirectories.   -->
+    <mkdir dir="${build.dir}"/>
+    <mkdir dir="${build.dest}"/>
+    <mkdir dir="${build.conf}"/>
+    <mkdir dir="${build.resources}"/>
+    <mkdir dir="${build.examples.dir}"/>
+    <mkdir dir="${build.javadocs}"/>
+    <mkdir dir="${build.tmp}"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Generate the build version properties                               -->
+  <!-- =================================================================== -->
+  <target name="version-properties" depends="makedirs">
+    <dependset>
+      <srcfilelist dir="${version.class.dir}" files="${version.class.name}"/>
+      <srcfilelist dir="${version.src.dir}" files="${version.src.name}"/>
+      <targetfilelist
+          dir="${tmp.version.dir}" files="${tmp.version.filename}"/>
+    </dependset>
+    <condition property="tmp.version.available">
+      <available file="${tmp.version.file}"/>
+    </condition>
+  </target>
+
+
+  <!-- =================================================================== -->
+  <!-- Generate the build version properties                               -->
+  <!-- =================================================================== -->
+  <target name="version"
+      depends="version-properties" unless="tmp.version.available">
+
+    <!-- Compile Version.java if necessary -->
+    <echo message="Check for current Version class file."/>
+    <javac srcdir="${version.src.dir}" destdir="${build.dest}"
+            debug="${debug}" deprecation="${deprecation}"
+            optimize="${optimize}"/>
+
+    <!-- Run Version.class and capture output, which defines properties
+            "build.description" and "build.tag"
+            or "build.default.description" and "build.default.tag". -->
+    <echo message="Generate version properties file."/>
+    <java classname="org.apache.fop.version.Version"
+            failonerror="true" output="${tmp.version.file}">
+      <classpath location="${build.dest}"/>
+    </java>
+
+    <!-- Set the properties from the temporary output file -->
+    <property file="${tmp.version.file}"/>
+    <!-- Test the setting of the properties -->
+    <!-- For full distributions, this test could be used to trigger a
+          CVS checkout of a tag defined in build-local.properties
+          Final propertes are:
+            build.display.name - the formatted Tag value
+            build.tag.name     - the unformatted Tag value
+      -->
+    <condition property="build.display.name" value="${build.description}">
+      <isset property="build.description"/>
+    </condition>
+    <condition property="build.tag.name" value="${build.tag}">
+      <isset property="build.tag"/>
+    </condition>
+    
+    <condition property="build.display.name"
+                        value="${build.default.description}">
+      <isset property="build.default.description"/>
+    </condition>
+    <condition property="build.tag.name" value="${build.default.tag}">
+      <isset property="build.default.tag"/>
+    </condition>
+    
+    <property name="hyphens" value="-------------------"/>
+    <property name="build.props.files"
+                        value="build.properties and build-local.properties"/>
+    <echo message="${hyphens} ${build.display.name} [${year}] ${hyphens}"/>
+    <echo message="See ${build.props.files} for additional build settings."/>
+
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Post-initialization target                                          -->
+  <!-- =================================================================== -->
+  <target name="post-version" depends="version">
+    
+    <property name="textfontencoding" value="WinAnsiEncoding"/>
+
+<!--
+    <property name="dist.bin.dir" value="${basedir}/dist-bin"/>
+    <property name="dist.src.dir" value="${basedir}/dist-src"/>
+    <property name="dist.bin.result.dir"
+                                  value="${dist.bin.dir}/${build.tag.name}"/>
+    <property name="dist.src.result.dir"
+                                  value="${dist.src.dir}/${build.tag.name}"/>
+
+    <property name="xslt" value="org.apache.xalan.xslt.Process"/>
+-->
+
+    <!-- Font generation properties -->
+    <property name="encodings.xml" value="${src.codegen}/encodings.xml"/>
+    <property name="charlist.xsl"
+                        value="${src.codegen}/code-point-mapping.xsl"/>
+    <property name="fontfile.xsl" value="${src.codegen}/font-file.xsl"/>
+    <property name="t1fontfile.xsl" value="${src.codegen}/t1font-file.xsl"/>
+    <property name="ttffontfile.xsl"
+                        value="${src.codegen}/ttffontfile.xsl"/>
+
+    <property name="Courier.xml" value="${src.codegen}/Courier.xml"/>
+    <property name="Courier-Oblique.xml"
+                        value="${src.codegen}/CourierOblique.xml"/>
+    <property name="Courier-Bold.xml"
+                        value="${src.codegen}/CourierBold.xml"/>
+    <property name="Courier-BoldOblique.xml"
+                        value="${src.codegen}/CourierBoldOblique.xml"/>
+    <property name="Helvetica.xml" value="${src.codegen}/Helvetica.xml"/>
+    <property name="Helvetica-Oblique.xml"
+                        value="${src.codegen}/HelveticaOblique.xml"/>
+    <property name="Helvetica-Bold.xml"
+                        value="${src.codegen}/HelveticaBold.xml"/>
+    <property name="Helvetica-BoldOblique.xml"
+                        value="${src.codegen}/HelveticaBoldOblique.xml"/>
+    <property name="Times-Roman.xml"
+                        value="${src.codegen}/TimesRoman.xml"/>
+    <property name="Times-Italic.xml"
+                        value="${src.codegen}/TimesItalic.xml"/>
+    <property name="Times-Bold.xml" value="${src.codegen}/TimesBold.xml"/>
+    <property name="Times-BoldItalic.xml"
+                        value="${src.codegen}/TimesBoldItalic.xml"/>
+    <property name="ZapfDingbats.xml"
+                        value="${src.codegen}/ZapfDingbats.xml"/>
+    <property name="Symbol.xml" value="${src.codegen}/Symbol.xml"/>
+
+    <fileset id="font.java.files" dir="${genbase14.dir}">
+      <include name="Courier*.java"/>
+      <include name="Helvetica*.java"/>
+      <include name="Times*.java"/>
+      <include name="Symbol*.java"/>
+      <include name="Zapf*.java"/>
+    </fileset>
+
+    <!-- CountryLanguageScript.java generation properties -->
+    <property name="xml-lang.xml" value="${src.codegen}/xml-lang.xml"/>
+    <property name="xml-lang.xsl" value="${src.codegen}/xml-lang.xsl"/>
+
+    <property name="main.class" value="org.apache.fop.apps.Fop"/>
+
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Initialization target                                               -->
+  <!-- =================================================================== -->
+  <target name="init" depends="post-version" description=
+              "All initialization components, including Version generation.">
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Help on usage                                                       -->
+  <!-- =================================================================== -->
+  <target name="usage">
+    <echo message="Use the -projecthelp option instead"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Generate the source code                                            -->
+  <!-- =================================================================== -->
+  <target name="codegen" depends="init"
+              description="Generates the java files from the xml resources">
+    <!-- resetting /codegen directory -->
+    <echo message="Resetting codegen directory"/>
+
+    <!-- generate the java files from xml resources -->
+    <echo message="Generating the java files from xml resources"/>
+
+    <dependset>
+      <srcfilelist dir="${src.codegen}" files="glyphlist.xml"/>
+      <targetfilelist dir="${genfonts.dir}" files="CodePointMapping.java"/>
+    </dependset>
+
+    <dependset>
+      <srcfilelist dir="${src.codegen}" files="encodings.xml"/>
+      <targetfileset refid="font.java.files"/>
+    </dependset>
+
+    <!-- generate CodePointMapping.java -->
+    <style in="${encodings.xml}" style="${charlist.xsl}"
+        out="${genfonts.dir}/CodePointMapping.java"/>
+
+    <!--                                  -->
+    <!-- generate individual font classes -->
+    <!--                                  -->
+    <style in="${Courier.xml}" style="${fontfile.xsl}"
+        out="${genbase14.dir}/Courier.java">
+      <param name="encoding" expression="${textfontencoding}"/>
+    </style>
+
+    <style in="${Courier-Oblique.xml}" style="${fontfile.xsl}"
+        out="${genbase14.dir}/CourierOblique.java">
+      <param name="encoding" expression="${textfontencoding}"/>
+    </style>
+
+    <style in="${Courier-Bold.xml}" style="${fontfile.xsl}"
+        out="${genbase14.dir}/CourierBold.java">
+      <param name="encoding" expression="${textfontencoding}"/>
+    </style>
+
+    <style in="${Courier-BoldOblique.xml}" style="${fontfile.xsl}"
+        out="${genbase14.dir}/CourierBoldOblique.java">
+      <param name="encoding" expression="${textfontencoding}"/>
+    </style>
+
+    <style in="${Helvetica.xml}" style="${fontfile.xsl}"
+        out="${genbase14.dir}/Helvetica.java">
+      <param name="encoding" expression="${textfontencoding}"/>
+    </style>
+
+    <style in="${Helvetica-Bold.xml}" style="${fontfile.xsl}"
+        out="${genbase14.dir}/HelveticaBold.java">
+      <param name="encoding" expression="${textfontencoding}"/>
+    </style>
+
+    <style in="${Helvetica-Oblique.xml}" style="${fontfile.xsl}"
+        out="${genbase14.dir}/HelveticaOblique.java">
+      <param name="encoding" expression="${textfontencoding}"/>
+    </style>
+
+    <style in="${Helvetica-BoldOblique.xml}" style="${fontfile.xsl}"
+        out="${genbase14.dir}/HelveticaBoldOblique.java">
+      <param name="encoding" expression="${textfontencoding}"/>
+    </style>
+
+    <style in="${Times-Roman.xml}" style="${fontfile.xsl}"
+        out="${genbase14.dir}/TimesRoman.java">
+      <param name="encoding" expression="${textfontencoding}"/>
+    </style>
+
+    <style in="${Times-Italic.xml}" style="${fontfile.xsl}"
+        out="${genbase14.dir}/TimesItalic.java">
+      <param name="encoding" expression="${textfontencoding}"/>
+    </style>
+
+    <style in="${Times-Bold.xml}" style="${fontfile.xsl}"
+        out="${genbase14.dir}/TimesBold.java">
+      <param name="encoding" expression="${textfontencoding}"/>
+    </style>
+
+    <style in="${Times-BoldItalic.xml}" style="${fontfile.xsl}"
+        out="${genbase14.dir}/TimesBoldItalic.java">
+      <param name="encoding" expression="${textfontencoding}"/>
+    </style>
+
+    <style in="${Symbol.xml}" style="${fontfile.xsl}"
+        out="${genbase14.dir}/Symbol.java"/>
+
+    <style in="${ZapfDingbats.xml}" style="${fontfile.xsl}"
+        out="${genbase14.dir}/ZapfDingbats.java"/>
+
+    <!-- generate CountryLanguageScript.java -->
+    <style in="${xml-lang.xml}" style="${xml-lang.xsl}"
+        out="${gendatatypes.dir}/CountryLanguageScript.java"/>
+
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Compiles the source directory                                       -->
+  <!-- =================================================================== -->
+  <target name="compile" depends="init"
+      description=
+        "Compiles Java sources and copies conf, resources and examples directories.">
+    <echo message="Compiling the sources "/>
+    <!-- Copy the conf directory files into build -->
+    <copy todir="${build.conf}">
+      <fileset dir="${conf.dir}"/>
+    </copy>
+    <move todir="${build.conf}">
+      <fileset dir="${build.conf}">
+        <include name="cvsignore"/>
+      </fileset>
+      <mapper type="glob" from="*" to=".*"/>
+    </move>
+    <!-- Copy the resources directory files into build -->
+    <copy todir="${build.resources}">
+      <fileset dir="${resources.dir}"/>
+    </copy>
+    <move todir="${build.resources}">
+      <fileset dir="${build.resources}">
+        <include name="cvsignore"/>
+      </fileset>
+      <mapper type="glob" from="*" to=".*"/>
+    </move>
+    
+        <!-- Copy the examples directory files into build -->
+
+    <!-- Set up the examples properties -->
+    <property name="examples.cvsignore" value="${examples.dir}/cvsignore"/>
+    <property name="build.examples.cvsignore"
+                                  value="${build.examples.dir}/.cvsignore"/>
+    <property name="test.fo.filename" value="test.fo"/>
+    <property name="test.fo.file"
+                      value="${build.examples.test.dir}/${test.fo.filename}"/>
+
+    <!-- Examples test file
+          For the purposes of basic testing, a .fo file from examples/fo/basic
+          is specified, and copies as examples/fo/test.fo.  The name of this
+          file may be overridden in build-local.properties.  The purpose of
+          this file is to provide a test of the most basic level of alt.design
+          funtionality.
+    -->
+    <property name="example.fo.file"
+                            value="${fo.basic.examples.dir}/corresprop.fo"/>
+    <condition property="example.fo.present" value="${example.fo.file}">
+      <available file="${example.fo.file}"/>
+    </condition>
+
+    <copy todir="${build.fo.examples.dir}">
+      <fileset dir="${fo.examples.dir}"/>
+    </copy>
+    <copy file="${examples.cvsignore}" tofile="${build.examples.cvsignore}"/>
+
+    <antcall target="copy-test-file"/>
+
+    <javac destdir="${build.dest}" debug="${debug}"
+                          deprecation="${deprecation}" optimize="${optimize}">
+      <src path="${src.java}"/>
+      <src path="${src.codegen}"/>
+      <classpath refid="libs-build-classpath"/>
+      <patternset refid="base-sources"/>
+    </javac>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Conditional copy of single test file to examples/fo/test.fo         -->
+  <!-- =================================================================== -->
+  <target name="copy-test-file" if="example.fo.present"
+    description=
+      "Conditionally copies a single examples .fo file to build directory.">
+    <copy file="${example.fo.file}" tofile="${test.fo.file}"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Creates the class package                                           -->
+  <!-- =================================================================== -->
+  <target name="package" depends="compile"
+                                  description="Generates the jar files">
+    <echo message="Creating the jar file ${build.dir}/${name}.jar"/>
+
+    <tstamp>
+      <format property="ts" pattern="yyyyMMdd-HHmmss-z"/>
+    </tstamp>
+    <pathconvert property="manifest-classpath" dirsep="/" pathsep=" "
+                        refid="libs-run-classpath">
+      <map from="${basedir}${file.separator}lib${file.separator}" to=""/>
+      <map from="${basedir}${file.separator}build${file.separator}fop.jar"
+                        to=""/>
+    </pathconvert>
+
+    <property name="osdetails" value=
+      "[${os.name} ${os.version} ${os.arch}, Java ${java.runtime.version}]"/>
+
+    <jar jarfile="${build.dir}/${name}.jar" basedir="${build.dest}"
+                        includes="org/**,conf/**,resources/**">
+      <manifest>
+        <attribute name="Main-Class" value="${main.class}"/>
+        <attribute name="Class-Path" value="${manifest-classpath}"/>
+        <attribute name="Implementation-Title" value="${Name}"/>
+        <attribute name="Implementation-Version"
+                        value="${build.display.name}"/>
+        <attribute name="Implementation-Vendor"
+                        value="Apache Software Foundation (http://xml.apache.org/fop/)"/>
+        <attribute name="Build-Id" value="${ts} (${user.name} ${osdetails})"/>
+      </manifest>
+    </jar>
+  </target>
+
+  <!-- "all" target for us Makefile converts ;-) -->
+  <target name="all" depends="package"
+                                  description="Builds the package target."/>
+
+  <!-- =================================================================== -->
+  <!-- Creates the API documentation                                       -->
+  <!-- =================================================================== -->
+  <target name="javadocs" depends="init" description="Generates javadocs">
+    <echo message="Producing the javadoc files "/>
+    <mkdir dir="${build.javadocs}"/>
+
+    <javadoc
+        packagenames="${packages}"
+        destdir="${build.javadocs}"
+        classpathref="libs-build-classpath"
+        author="true"
+        version="true"
+        windowtitle="${NAME} API"
+        doctitle="Formatting Objects Processor (FOP)"
+        bottom=
+    "Copyright &#169; ${year} Apache Software Foundation. All Rights Reserved."
+        overview="${src.dir}/java/org/apache/fop/overview.html"
+        use="true"
+        failonerror="true">
+      <sourcepath>
+        <pathelement path="${src.java}"/>
+        <pathelement path="${src.codegen}"/>
+      </sourcepath>
+      <group title="Control and Startup">
+        <package name="org.apache.fop.apps"/>
+        <package name="org.apache.fop.configuration"/>
+        <package name="org.apache.fop.messaging"/>
+        <package name="org.apache.fop.servlet"/>
+      </group>
+      <group title="XSL-FO Tree">
+        <package name="org.apache.fop.fo"/>
+        <package name="org.apache.fop.fo.*"/>
+        <package name="org.apache.fop.datatypes"/>
+        <package name="org.apache.fop.extensions"/>
+      </group>
+      <group title="Layout">
+        <package name="org.apache.fop.layoutmgr"/>
+        <package name="org.apache.fop.layoutmgr.*"/>
+        <package name="org.apache.fop.layout"/>
+        <package name="org.apache.fop.layout.*"/>
+      </group>
+      <group title="Area Tree">
+        <package name="org.apache.fop.area"/>
+        <package name="org.apache.fop.area.*"/>
+      </group>
+      <group title="Paginated Rendering">
+        <package name="org.apache.fop.render"/>
+        <package name="org.apache.fop.render.*"/>
+        <package name="org.apache.fop.viewer"/>
+      </group>
+      <group title="Structural Rendering">
+        <package name="org.apache.fop.rtf.renderer"/>
+      </group>
+      <group title="Utility">
+        <package name="org.apache.fop.pdf"/>
+        <package name="org.apache.fop.mif"/>
+        <package name="org.apache.fop.tools"/>
+        <package name="org.apache.fop.tools.*"/>
+        <package name="org.apache.fop.svg"/>
+        <package name="org.apache.fop.image"/>
+        <package name="org.apache.fop.image.*"/>
+        <package name="org.apache.fop.fonts"/>
+        <package name="org.apache.fop.fonts.*"/>
+        <package name="org.apache.fop.util"/>
+      </group>
+    </javadoc>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Checkstyle                                                          -->
+  <!-- =================================================================== -->
+  <target name="checkstyle" depends="init"
+                      description="Runs Checkstyle for a code quality report">
+    <available property="checkstyle.available"
+                    classname="com.puppycrawl.tools.checkstyle.CheckStyleTask"
+                    classpathref="checkstylepath"/>
+    <fail unless=
+    "checkstyle.available">Please put checkstyle-all-*.jar in the lib directory.
+Get it from http://checkstyle.sourceforge.net</fail>
+                      
+    <taskdef name="checkstyle"
+                    classname="com.puppycrawl.tools.checkstyle.CheckStyleTask"
+                    classpathref="checkstylepath"/>
+
+    <checkstyle properties="checkstyle.cfg" failonviolation="false">
+      <fileset dir="${src.java}" includes="org/apache/fop/**/*.java"/>
+      <formatter type="plain" toFile="${build.dir}/checkstyle_report.txt"/>
+      <formatter type="xml" toFile="${build.dir}/checkstyle_report.xml"/>
+    </checkstyle>
+    <available property="checkstyle.stylesheet.available"
+                        file="checkstyle-noframes.xsl"/>
+    <antcall target="checkstyle-html"/>
+  </target>
+
+  <target name="checkstyle-html" if="checkstyle.stylesheet.available">
+    <style in="${build.dir}/checkstyle_report.xml"
+                        out="${build.dir}/checkstyle_report.html"
+                        style="checkstyle-noframes.xsl"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Clean targets                                                       -->
+  <!-- =================================================================== -->
+  <target name="clean" depends="pre-init"
+                        description="Cleans the build directory">
+    <!--
+    <delete dir="${build.conf}"/>
+    <delete dir="${build.examples.dir}"/>
+    -->
+    <delete dir="${build.javadocs}"/>
+    <delete>
+      <fileset dir="${build.dir}">
+      </fileset>
+    </delete>
+  </target>
+
+<!--
+  <target name="distclean" depends="clean"
+                    description="Cleans the distribution target directories">
+    <delete dir="${dist.src.dir}"/>
+    <delete dir="${dist.bin.dir}"/>
+    <delete>
+      <fileset dir="${basedir}" includes="${Name}-*.tar.gz"/>
+      <fileset dir="${basedir}" includes="${Name}-*.zip"/>
+    </delete>
+  </target>
+-->
+
+</project>

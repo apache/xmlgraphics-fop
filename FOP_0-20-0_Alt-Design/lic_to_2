@@ -1,0 +1,37 @@
+#!/usr/bin/perl
+
+use Getopt::Long;
+
+sub usage {
+    print STDERR  "Usage:\n";
+    print STDERR "\t$0 --lic2 <license 2.0 file>\n";
+    exit 1;
+}
+
+&usage unless GetOptions("lic2=s" => \$lic2);
+&usage unless defined($lic2);
+
+die "Can't open $lic2\n" unless open LIC2, "<$lic2";
+
+# Read files without an input record separator
+undef $/;
+
+# Slurp the license file
+$lic2text = <LIC2>;
+($lic2begin = $lic2text) =~ s/^(.*)\{YEARS\}(.*)/$1/s;
+$lic2rem = $2;
+
+# Slurp the input file
+$_ = <>;
+s|[^\n]*=+\s+           # Non-newlines followed by multiple '='
+                        # ...followed by whitespace (incl. newline)
+  [^\n]*                # Non-newlines (incl spaces)
+  The\ Apache\ Software\ License,\ Version\ 1\.1
+  [^C]*                 # Anything not a capital C
+  Copyright\ \(C\)\ (\d+(-\d+)?)\ The\ Apache\ Software\ Foundation
+  .*                    # Anything
+  Foundation,\ please\ see\ \<http://www.apache.org/\>\.
+  \s*\n                 # Any whitespace ending in a newline
+|$lic2begin$1$lic2rem|xs;
+
+print;

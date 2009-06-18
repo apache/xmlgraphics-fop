@@ -1,0 +1,1866 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE xml-lang>
+<!--
+
+   Copyright 1999-2003 The Apache Software Foundation.
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+<xml-lang>
+  <countrycodes>
+    <!-- ISO 3166-1
+      http://www.iso.ch/iso/en/prods-services/iso3166ma/02iso-3166-code-lists/index.html
+      A French list is also available throught he above site.  This data
+      should probably be updated to reflect that.
+     -->
+    <country name="AFGHANISTAN" code="AF"/>
+    <country name="ALBANIA" code="AL"/>
+    <country name="ALGERIA" code="DZ"/>
+    <country name="AMERICAN SAMOA" code="AS"/>
+    <country name="ANDORRA" code="AD"/>
+    <country name="ANGOLA" code="AO"/>
+    <country name="ANGUILLA" code="AI"/>
+    <country name="ANTARCTICA" code="AQ"/>
+    <country name="ANTIGUA AND BARBUDA" code="AG"/>
+    <country name="ARGENTINA" code="AR"/>
+    <country name="ARMENIA" code="AM"/>
+    <country name="ARUBA" code="AW"/>
+    <country name="AUSTRALIA" code="AU"/>
+    <country name="AUSTRIA" code="AT"/>
+    <country name="AZERBAIJAN" code="AZ"/>
+    <country name="BAHAMAS" code="BS"/>
+    <country name="BAHRAIN" code="BH"/>
+    <country name="BANGLADESH" code="BD"/>
+    <country name="BARBADOS" code="BB"/>
+    <country name="BELARUS" code="BY"/>
+    <country name="BELGIUM" code="BE"/>
+    <country name="BELIZE" code="BZ"/>
+    <country name="BENIN" code="BJ"/>
+    <country name="BERMUDA" code="BM"/>
+    <country name="BHUTAN" code="BT"/>
+    <country name="BOLIVIA" code="BO"/>
+    <country name="BOSNIA AND HERZEGOVINA" code="BA"/>
+    <country name="BOTSWANA" code="BW"/>
+    <country name="BOUVET ISLAND" code="BV"/>
+    <country name="BRAZIL" code="BR"/>
+    <country name="BRITISH INDIAN OCEAN TERRITORY" code="IO"/>
+    <country name="BRUNEI DARUSSALAM" code="BN"/>
+    <country name="BULGARIA" code="BG"/>
+    <country name="BURKINA FASO" code="BF"/>
+    <country name="BURUNDI" code="BI"/>
+    <country name="CAMBODIA" code="KH"/>
+    <country name="CAMEROON" code="CM"/>
+    <country name="CANADA" code="CA"/>
+    <country name="CAPE VERDE" code="CV"/>
+    <country name="CAYMAN ISLANDS" code="KY"/>
+    <country name="CENTRAL AFRICAN REPUBLIC" code="CF"/>
+    <country name="CHAD" code="TD"/>
+    <country name="CHILE" code="CL"/>
+    <country name="CHINA" code="CN"/>
+    <country name="CHRISTMAS ISLAND" code="CX"/>
+    <country name="COCOS (KEELING) ISLANDS" code="CC"/>
+    <country name="COLOMBIA" code="CO"/>
+    <country name="COMOROS" code="KM"/>
+    <country name="CONGO" code="CG"/>
+    <country name="CONGO, THE DEMOCRATIC REPUBLIC OF THE" code="CD"/>
+    <country name="COOK ISLANDS" code="CK"/>
+    <country name="COSTA RICA" code="CR"/>
+    <country name="COTE D'IVOIRE" code="CI"/>
+    <country name="CROATIA" code="HR"/>
+    <country name="CUBA" code="CU"/>
+    <country name="CYPRUS" code="CY"/>
+    <country name="CZECH REPUBLIC" code="CZ"/>
+    <country name="DENMARK" code="DK"/>
+    <country name="DJIBOUTI" code="DJ"/>
+    <country name="DOMINICA" code="DM"/>
+    <country name="DOMINICAN REPUBLIC" code="DO"/>
+    <country name="EAST TIMOR" code="TP"/>
+    <country name="ECUADOR" code="EC"/>
+    <country name="EGYPT" code="EG"/>
+    <country name="EL SALVADOR" code="SV"/>
+    <country name="EQUATORIAL GUINEA" code="GQ"/>
+    <country name="ERITREA" code="ER"/>
+    <country name="ESTONIA" code="EE"/>
+    <country name="ETHIOPIA" code="ET"/>
+    <country name="FALKLAND ISLANDS (MALVINAS)" code="FK"/>
+    <country name="FAROE ISLANDS" code="FO"/>
+    <country name="FIJI" code="FJ"/>
+    <country name="FINLAND" code="FI"/>
+    <country name="FRANCE" code="FR"/>
+    <country name="FRENCH GUIANA" code="GF"/>
+    <country name="FRENCH POLYNESIA" code="PF"/>
+    <country name="FRENCH SOUTHERN TERRITORIES" code="TF"/>
+    <country name="GABON" code="GA"/>
+    <country name="GAMBIA" code="GM"/>
+    <country name="GEORGIA" code="GE"/>
+    <country name="GERMANY" code="DE"/>
+    <country name="GHANA" code="GH"/>
+    <country name="GIBRALTAR" code="GI"/>
+    <country name="GREECE" code="GR"/>
+    <country name="GREENLAND" code="GL"/>
+    <country name="GRENADA" code="GD"/>
+    <country name="GUADELOUPE" code="GP"/>
+    <country name="GUAM" code="GU"/>
+    <country name="GUATEMALA" code="GT"/>
+    <country name="GUINEA" code="GN"/>
+    <country name="GUINEA-BISSAU" code="GW"/>
+    <country name="GUYANA" code="GY"/>
+    <country name="HAITI" code="HT"/>
+    <country name="HEARD ISLAND AND MCDONALD ISLANDS" code="HM"/>
+    <country name="HOLY SEE (VATICAN CITY STATE)" code="VA"/>
+    <country name="HONDURAS" code="HN"/>
+    <country name="HONG KONG" code="HK"/>
+    <country name="HUNGARY" code="HU"/>
+    <country name="ICELAND" code="IS"/>
+    <country name="INDIA" code="IN"/>
+    <country name="INDONESIA" code="ID"/>
+    <country name="IRAN, ISLAMIC REPUBLIC OF" code="IR"/>
+    <country name="IRAQ" code="IQ"/>
+    <country name="IRELAND" code="IE"/>
+    <country name="ISRAEL" code="IL"/>
+    <country name="ITALY" code="IT"/>
+    <country name="JAMAICA" code="JM"/>
+    <country name="JAPAN" code="JP"/>
+    <country name="JORDAN" code="JO"/>
+    <country name="KAZAKSTAN" code="KZ"/>
+    <country name="KENYA" code="KE"/>
+    <country name="KIRIBATI" code="KI"/>
+    <country name="KOREA, DEMOCRATIC PEOPLE'S REPUBLIC OF" code="KP"/>
+    <country name="KOREA, REPUBLIC OF" code="KR"/>
+    <country name="KUWAIT" code="KW"/>
+    <country name="KYRGYZSTAN" code="KG"/>
+    <country name="LAO PEOPLE'S DEMOCRATIC REPUBLIC" code="LA"/>
+    <country name="LATVIA" code="LV"/>
+    <country name="LEBANON" code="LB"/>
+    <country name="LESOTHO" code="LS"/>
+    <country name="LIBERIA" code="LR"/>
+    <country name="LIBYAN ARAB JAMAHIRIYA" code="LY"/>
+    <country name="LIECHTENSTEIN" code="LI"/>
+    <country name="LITHUANIA" code="LT"/>
+    <country name="LUXEMBOURG" code="LU"/>
+    <country name="MACAU" code="MO"/>
+    <country name="MACEDONIA, THE FORMER YUGOSLAV REPUBLIC OF" code="MK"/>
+    <country name="MADAGASCAR" code="MG"/>
+    <country name="MALAWI" code="MW"/>
+    <country name="MALAYSIA" code="MY"/>
+    <country name="MALDIVES" code="MV"/>
+    <country name="MALI" code="ML"/>
+    <country name="MALTA" code="MT"/>
+    <country name="MARSHALL ISLANDS" code="MH"/>
+    <country name="MARTINIQUE" code="MQ"/>
+    <country name="MAURITANIA" code="MR"/>
+    <country name="MAURITIUS" code="MU"/>
+    <country name="MAYOTTE" code="YT"/>
+    <country name="MEXICO" code="MX"/>
+    <country name="MICRONESIA, FEDERATED STATES OF" code="FM"/>
+    <country name="MOLDOVA, REPUBLIC OF" code="MD"/>
+    <country name="MONACO" code="MC"/>
+    <country name="MONGOLIA" code="MN"/>
+    <country name="MONTSERRAT" code="MS"/>
+    <country name="MOROCCO" code="MA"/>
+    <country name="MOZAMBIQUE" code="MZ"/>
+    <country name="MYANMAR" code="MM"/>
+    <country name="NAMIBIA" code="NA"/>
+    <country name="NAURU" code="NR"/>
+    <country name="NEPAL" code="NP"/>
+    <country name="NETHERLANDS" code="NL"/>
+    <country name="NETHERLANDS ANTILLES" code="AN"/>
+    <country name="NEW CALEDONIA" code="NC"/>
+    <country name="NEW ZEALAND" code="NZ"/>
+    <country name="NICARAGUA" code="NI"/>
+    <country name="NIGER" code="NE"/>
+    <country name="NIGERIA" code="NG"/>
+    <country name="NIUE" code="NU"/>
+    <country name="NORFOLK ISLAND" code="NF"/>
+    <country name="NORTHERN MARIANA ISLANDS" code="MP"/>
+    <country name="NORWAY" code="NO"/>
+    <country name="OMAN" code="OM"/>
+    <country name="PAKISTAN" code="PK"/>
+    <country name="PALAU" code="PW"/>
+    <country name="PALESTINIAN TERRITORY, OCCUPIED" code="PS"/>
+    <country name="PANAMA" code="PA"/>
+    <country name="PAPUA NEW GUINEA" code="PG"/>
+    <country name="PARAGUAY" code="PY"/>
+    <country name="PERU" code="PE"/>
+    <country name="PHILIPPINES" code="PH"/>
+    <country name="PITCAIRN" code="PN"/>
+    <country name="POLAND" code="PL"/>
+    <country name="PORTUGAL" code="PT"/>
+    <country name="PUERTO RICO" code="PR"/>
+    <country name="QATAR" code="QA"/>
+    <country name="REUNION" code="RE"/>
+    <country name="ROMANIA" code="RO"/>
+    <country name="RUSSIAN FEDERATION" code="RU"/>
+    <country name="RWANDA" code="RW"/>
+    <country name="SAINT HELENA" code="SH"/>
+    <country name="SAINT KITTS AND NEVIS" code="KN"/>
+    <country name="SAINT LUCIA" code="LC"/>
+    <country name="SAINT PIERRE AND MIQUELON" code="PM"/>
+    <country name="SAINT VINCENT AND THE GRENADINES" code="VC"/>
+    <country name="SAMOA" code="WS"/>
+    <country name="SAN MARINO" code="SM"/>
+    <country name="SAO TOME AND PRINCIPE" code="ST"/>
+    <country name="SAUDI ARABIA" code="SA"/>
+    <country name="SENEGAL" code="SN"/>
+    <country name="SEYCHELLES" code="SC"/>
+    <country name="SIERRA LEONE" code="SL"/>
+    <country name="SINGAPORE" code="SG"/>
+    <country name="SLOVAKIA" code="SK"/>
+    <country name="SLOVENIA" code="SI"/>
+    <country name="SOLOMON ISLANDS" code="SB"/>
+    <country name="SOMALIA" code="SO"/>
+    <country name="SOUTH AFRICA" code="ZA"/>
+    <country name="SOUTH GEORGIA AND THE SOUTH SANDWICH ISLANDS" code="GS"/>
+    <country name="SPAIN" code="ES"/>
+    <country name="SRI LANKA" code="LK"/>
+    <country name="SUDAN" code="SD"/>
+    <country name="SURINAME" code="SR"/>
+    <country name="SVALBARD AND JAN MAYEN" code="SJ"/>
+    <country name="SWAZILAND" code="SZ"/>
+    <country name="SWEDEN" code="SE"/>
+    <country name="SWITZERLAND" code="CH"/>
+    <country name="SYRIAN ARAB REPUBLIC" code="SY"/>
+    <country name="TAIWAN, PROVINCE OF CHINA" code="TW"/>
+    <country name="TAJIKISTAN" code="TJ"/>
+    <country name="TANZANIA, UNITED REPUBLIC OF" code="TZ"/>
+    <country name="THAILAND" code="TH"/>
+    <country name="TOGO" code="TG"/>
+    <country name="TOKELAU" code="TK"/>
+    <country name="TONGA" code="TO"/>
+    <country name="TRINIDAD AND TOBAGO" code="TT"/>
+    <country name="TUNISIA" code="TN"/>
+    <country name="TURKEY" code="TR"/>
+    <country name="TURKMENISTAN" code="TM"/>
+    <country name="TURKS AND CAICOS ISLANDS" code="TC"/>
+    <country name="TUVALU" code="TV"/>
+    <country name="UGANDA" code="UG"/>
+    <country name="UKRAINE" code="UA"/>
+    <country name="UNITED ARAB EMIRATES" code="AE"/>
+    <country name="UNITED KINGDOM" code="GB"/>
+    <country name="UNITED STATES" code="US"/>
+    <country name="UNITED STATES MINOR OUTLYING ISLANDS" code="UM"/>
+    <country name="URUGUAY" code="UY"/>
+    <country name="UZBEKISTAN" code="UZ"/>
+    <country name="VANUATU" code="VU"/>
+    <country name="VENEZUELA" code="VE"/>
+    <country name="VIET NAM" code="VN"/>
+    <country name="VIRGIN ISLANDS, BRITISH" code="VG"/>
+    <country name="VIRGIN ISLANDS, U.S." code="VI"/>
+    <country name="WALLIS AND FUTUNA" code="WF"/>
+    <country name="WESTERN SAHARA" code="EH"/>
+    <country name="YEMEN" code="YE"/>
+    <country name="YUGOSLAVIA" code="YU"/>
+    <country name="ZAMBIA" code="ZM"/>
+    <country name="ZIMBABWE" code="ZW"/>
+  </countrycodes>
+  <languagecodes>
+    <!--
+      ISO 639-2T, ISO 639-2B, ISO 639-1
+      http://www.loc.gov/standards/iso639-2/
+     -->
+    <language terminology="aar" iso639-1="aa"
+      EnglishName="Afar"
+      FrenchName="afar"/>
+    <language terminology="abk" iso639-1="ab"
+      EnglishName="Abkhazian"
+      FrenchName="abkhaze"/>
+    <language terminology="ace" 
+      EnglishName="Achinese"
+      FrenchName="aceh"/>
+    <language terminology="ach" 
+      EnglishName="Acoli"
+      FrenchName="acoli"/>
+    <language terminology="ada" 
+      EnglishName="Adangme"
+      FrenchName="adangme"/>
+    <language terminology="afa" 
+      EnglishName="Afro-Asiatic (Other)"
+      FrenchName="afro-asiatiques, autres langues"/>
+    <language terminology="afh" 
+      EnglishName="Afrihili"
+      FrenchName="afrihili"/>
+    <language terminology="afr" iso639-1="af"
+      EnglishName="Afrikaans"
+      FrenchName="afrikaans"/>
+    <language terminology="aka" 
+      EnglishName="Akan"
+      FrenchName="akan"/>
+    <language terminology="akk" 
+      EnglishName="Akkadian"
+      FrenchName="akkadien"/>
+    <language terminology="sqi" bibliographic="alb" iso639-1="sq" 
+      EnglishName="Albanian"
+      FrenchName="albanais"/>
+    <language terminology="ale" 
+      EnglishName="Aleut"
+      FrenchName="aléoute"/>
+    <language terminology="alg" 
+      EnglishName="Algonquian languages"
+      FrenchName="algonquines, langues"/>
+    <language terminology="amh" iso639-1="am"
+      EnglishName="Amharic"
+      FrenchName="amharique"/>
+    <language terminology="ang" 
+      EnglishName="English, Old (ca.450-1100)"
+      FrenchName="anglo-saxon (ca.450-1100)"/>
+    <language terminology="apa" 
+      EnglishName="Apache languages"
+      FrenchName="apache"/>
+    <language terminology="ara" iso639-1="ar"
+      EnglishName="Arabic"
+      FrenchName="arabe"/>
+    <language terminology="arc" 
+      EnglishName="Aramaic"
+      FrenchName="araméen"/>
+    <language terminology="hye" bibliographic="arm" iso639-1="hy" 
+      EnglishName="Armenian"
+      FrenchName="arménien"/>
+    <language terminology="arn" 
+      EnglishName="Araucanian"
+      FrenchName="araucan"/>
+    <language terminology="arp" 
+      EnglishName="Arapaho"
+      FrenchName="arapaho"/>
+    <language terminology="art" 
+      EnglishName="Artificial (Other)"
+      FrenchName="artificielles, autres langues"/>
+    <language terminology="arw" 
+      EnglishName="Arawak"
+      FrenchName="arawak"/>
+    <language terminology="asm" iso639-1="as"
+      EnglishName="Assamese"
+      FrenchName="assamais"/>
+    <language terminology="ast" 
+      EnglishName="Asturian; Bable"
+      FrenchName="asturien; bable"/>
+    <language terminology="ath" 
+      EnglishName="Athapascan languages"
+      FrenchName="athapascanes, langues"/>
+    <language terminology="aus" 
+      EnglishName="Australian languages"
+      FrenchName="australiennes, langues"/>
+    <language terminology="ava" 
+      EnglishName="Avaric"
+      FrenchName="avar"/>
+    <language terminology="ave" iso639-1="ae"
+      EnglishName="Avestan"
+      FrenchName="avestique"/>
+    <language terminology="awa" 
+      EnglishName="Awadhi"
+      FrenchName="awadhi"/>
+    <language terminology="aym" iso639-1="ay"
+      EnglishName="Aymara"
+      FrenchName="aymara"/>
+    <language terminology="aze" iso639-1="az"
+      EnglishName="Azerbaijani"
+      FrenchName="azéri"/>
+    <language terminology="bad" 
+      EnglishName="Banda"
+      FrenchName="banda"/>
+    <language terminology="bai" 
+      EnglishName="Bamileke languages"
+      FrenchName="bamilékés, langues"/>
+    <language terminology="bak" iso639-1="ba"
+      EnglishName="Bashkir"
+      FrenchName="bachkir"/>
+    <language terminology="bal" 
+      EnglishName="Baluchi"
+      FrenchName="baloutchi"/>
+    <language terminology="bam" 
+      EnglishName="Bambara"
+      FrenchName="bambara"/>
+    <language terminology="ban" 
+      EnglishName="Balinese"
+      FrenchName="balinais"/>
+    <language terminology="eus" bibliographic="baq" iso639-1="eu" 
+      EnglishName="Basque"
+      FrenchName="basque"/>
+    <language terminology="bas" 
+      EnglishName="Basa"
+      FrenchName="basa"/>
+    <language terminology="bat" 
+      EnglishName="Baltic (Other)"
+      FrenchName="baltiques, autres langues"/>
+    <language terminology="bej" 
+      EnglishName="Beja"
+      FrenchName="bedja"/>
+    <language terminology="bel" iso639-1="be"
+      EnglishName="Belarusian"
+      FrenchName="biélorusse"/>
+    <language terminology="bem" 
+      EnglishName="Bemba"
+      FrenchName="bemba"/>
+    <language terminology="ben" iso639-1="bn"
+      EnglishName="Bengali"
+      FrenchName="bengali"/>
+    <language terminology="ber" 
+      EnglishName="Berber (Other)"
+      FrenchName="berbères, autres langues"/>
+    <language terminology="bho" 
+      EnglishName="Bhojpuri"
+      FrenchName="bhojpuri"/>
+    <language terminology="bih" iso639-1="bh"
+      EnglishName="Bihari"
+      FrenchName="bihari"/>
+    <language terminology="bik" 
+      EnglishName="Bikol"
+      FrenchName="bikol"/>
+    <language terminology="bin" 
+      EnglishName="Bini"
+      FrenchName="bini"/>
+    <language terminology="bis" iso639-1="bi"
+      EnglishName="Bislama"
+      FrenchName="bichlamar"/>
+    <language terminology="bla" 
+      EnglishName="Siksika"
+      FrenchName="blackfoot"/>
+    <language terminology="bnt" 
+      EnglishName="Bantu (Other)"
+      FrenchName="bantoues, autres langues"/>
+    <language terminology="bod" bibliographic="tib" iso639-1="bo" 
+      EnglishName="Tibetan"
+      FrenchName="tibétain"/>
+    <language terminology="bos" iso639-1="bs"
+      EnglishName="Bosnian"
+      FrenchName="bosniaque"/>
+    <language terminology="bra" 
+      EnglishName="Braj"
+      FrenchName="braj"/>
+    <language terminology="bre" iso639-1="br"
+      EnglishName="Breton"
+      FrenchName="breton"/>
+    <language terminology="btk" 
+      EnglishName="Batak (Indonesia)"
+      FrenchName="batak (Indonésie)"/>
+    <language terminology="bua" 
+      EnglishName="Buriat"
+      FrenchName="bouriate"/>
+    <language terminology="bug" 
+      EnglishName="Buginese"
+      FrenchName="bugi"/>
+    <language terminology="bul" iso639-1="bg"
+      EnglishName="Bulgarian"
+      FrenchName="bulgare"/>
+    <language terminology="mya" bibliographic="bur" iso639-1="my" 
+      EnglishName="Burmese"
+      FrenchName="birman"/>
+    <language terminology="cad" 
+      EnglishName="Caddo"
+      FrenchName="caddo"/>
+    <language terminology="cai" 
+      EnglishName="Central American Indian (Other)"
+      FrenchName="indiennes d'Amérique centrale, autres langues"/>
+    <language terminology="car" 
+      EnglishName="Carib"
+      FrenchName="caribe"/>
+    <language terminology="cat" iso639-1="ca"
+      EnglishName="Catalan"
+      FrenchName="catalan"/>
+    <language terminology="cau" 
+      EnglishName="Caucasian (Other)"
+      FrenchName="caucasiennes, autres langues"/>
+    <language terminology="ceb" 
+      EnglishName="Cebuano"
+      FrenchName="cebuano"/>
+    <language terminology="cel" 
+      EnglishName="Celtic (Other)"
+      FrenchName="celtiques, autres langues"/>
+    <language terminology="ces" bibliographic="cze" iso639-1="cs" 
+      EnglishName="Czech"
+      FrenchName="tchèque"/>
+    <language terminology="cha" iso639-1="ch"
+      EnglishName="Chamorro"
+      FrenchName="chamorro"/>
+    <language terminology="chb" 
+      EnglishName="Chibcha"
+      FrenchName="chibcha"/>
+    <language terminology="che" iso639-1="ce"
+      EnglishName="Chechen "
+      FrenchName="tchétchène"/>
+    <language terminology="chg" 
+      EnglishName="Chagatai"
+      FrenchName="djaghataï"/>
+    <language terminology="zho" bibliographic="chi" iso639-1="zh" 
+      EnglishName="Chinese"
+      FrenchName="chinois"/>
+    <language terminology="chk" 
+      EnglishName="Chuukese"
+      FrenchName="chuuk"/>
+    <language terminology="chm" 
+      EnglishName="Mari"
+      FrenchName="mari"/>
+    <language terminology="chn" 
+      EnglishName="Chinook jargon"
+      FrenchName="chinook, jargon"/>
+    <language terminology="cho" 
+      EnglishName="Choctaw"
+      FrenchName="choctaw"/>
+    <language terminology="chp" 
+      EnglishName="Chipewyan"
+      FrenchName="chipewyan"/>
+    <language terminology="chr" 
+      EnglishName="Cherokee"
+      FrenchName="cherokee"/>
+    <language terminology="chu" iso639-1="cu"
+      EnglishName="Church Slavic; Old Slavonic; Church Slavonic; Old Bulgarian; Old Church Slavonic"
+      FrenchName="slavon d'église; vieux slave; slavon liturgique; vieux bulgare"/>
+    <language terminology="chv" iso639-1="cv"
+      EnglishName="Chuvash"
+      FrenchName="tchouvache"/>
+    <language terminology="chy" 
+      EnglishName="Cheyenne"
+      FrenchName="cheyenne"/>
+    <language terminology="cmc" 
+      EnglishName="Chamic languages"
+      FrenchName="chames, langues"/>
+    <language terminology="cop" 
+      EnglishName="Coptic"
+      FrenchName="copte"/>
+    <language terminology="cor" iso639-1="kw"
+      EnglishName="Cornish"
+      FrenchName="cornique"/>
+    <language terminology="cos" iso639-1="co"
+      EnglishName="Corsican"
+      FrenchName="corse"/>
+    <language terminology="cpe"
+      EnglishName="Creoles and pidgins, English based (Other)"
+      FrenchName="créoles et pidgins anglais, autres"/>
+    <language terminology="cpf"
+      EnglishName="Creoles and pidgins, French-based (Other)"
+      FrenchName="créoles et pidgins français, autres"/>
+    <language terminology="cpp" 
+      EnglishName="Creoles and pidgins, Portuguese-based (Other)"
+      FrenchName="créoles et pidgins portugais, autres"/>
+    <language terminology="cre" 
+      EnglishName="Cree"
+      FrenchName="cree"/>
+    <language terminology="crp" 
+      EnglishName="Creoles and pidgins (Other)"
+      FrenchName="créoles et pidgins divers"/>
+    <language terminology="cus" 
+      EnglishName="Cushitic (Other)"
+      FrenchName="couchitiques, autres langues"/>
+    <language terminology="cym" bibliographic="wel" iso639-1="cy" 
+      EnglishName="Welsh"
+      FrenchName="gallois"/>
+    <language terminology="ces" bibliographic="cze" iso639-1="cs" 
+      EnglishName="Czech"
+      FrenchName="tchèque"/>
+    <language terminology="dak" 
+      EnglishName="Dakota"
+      FrenchName="dakota"/>
+    <language terminology="dan" iso639-1="da"
+      EnglishName="Danish"
+      FrenchName="danois"/>
+    <language terminology="day" 
+      EnglishName="Dayak"
+      FrenchName="dayak"/>
+    <language terminology="del" 
+      EnglishName="Delaware"
+      FrenchName="delaware"/>
+    <language terminology="den" 
+      EnglishName="Slave (Athapascan)"
+      FrenchName="esclave (athapascan)"/>
+    <language terminology="deu" bibliographic="ger" iso639-1="de" 
+      EnglishName="German"
+      FrenchName="allemand"/>
+    <language terminology="dgr" 
+      EnglishName="Dogrib"
+      FrenchName="dogrib"/>
+    <language terminology="din" 
+      EnglishName="Dinka"
+      FrenchName="dinka"/>
+    <language terminology="div" 
+      EnglishName="Divehi"
+      FrenchName="maldivien"/>
+    <language terminology="doi" 
+      EnglishName="Dogri"
+      FrenchName="dogri"/>
+    <language terminology="dra" 
+      EnglishName="Dravidian (Other)"
+      FrenchName="dravidiennes, autres langues"/>
+    <language terminology="dua" 
+      EnglishName="Duala"
+      FrenchName="douala"/>
+    <language terminology="dum" 
+      EnglishName="Dutch, Middle (ca.1050-1350)"
+      FrenchName="néerlandais moyen (ca. 1050-1350)"/>
+    <language terminology="nld" bibliographic="dut" iso639-1="nl" 
+      EnglishName="Dutch"
+      FrenchName="néerlandais"/>
+    <language terminology="dyu" 
+      EnglishName="Dyula"
+      FrenchName="dioula"/>
+    <language terminology="dzo" iso639-1="dz"
+      EnglishName="Dzongkha"
+      FrenchName="dzongkha"/>
+    <language terminology="efi" 
+      EnglishName="Efik"
+      FrenchName="efik"/>
+    <language terminology="egy" 
+      EnglishName="Egyptian (Ancient)"
+      FrenchName="égyptien"/>
+    <language terminology="eka" 
+      EnglishName="Ekajuk"
+      FrenchName="ekajuk"/>
+    <language terminology="ell" bibliographic="gre" iso639-1="el" 
+      EnglishName="Greek, Modern (1453-)"
+      FrenchName="grec moderne (après 1453)"/>
+    <language terminology="elx" 
+      EnglishName="Elamite"
+      FrenchName="élamite"/>
+    <language terminology="eng" iso639-1="en"
+      EnglishName="English"
+      FrenchName="anglais"/>
+    <language terminology="enm" 
+      EnglishName="English, Middle (1100-1500)"
+      FrenchName="anglais moyen (1100-1500)"/>
+    <language terminology="epo" iso639-1="eo"
+      EnglishName="Esperanto"
+      FrenchName="espéranto"/>
+    <language terminology="est" iso639-1="et"
+      EnglishName="Estonian"
+      FrenchName="estonien"/>
+    <language terminology="eus" bibliographic="baq" iso639-1="eu" 
+      EnglishName="Basque"
+      FrenchName="basque"/>
+    <language terminology="ewe" 
+      EnglishName="Ewe"
+      FrenchName="éwé"/>
+    <language terminology="ewo" 
+      EnglishName="Ewondo"
+      FrenchName="éwondo"/>
+    <language terminology="fan" 
+      EnglishName="Fang"
+      FrenchName="fang"/>
+    <language terminology="fao" iso639-1="fo"
+      EnglishName="Faroese"
+      FrenchName="féroïen"/>
+    <language terminology="fas" bibliographic="per" iso639-1="fa" 
+      EnglishName="Persian"
+      FrenchName="persan"/>
+    <language terminology="fat" 
+      EnglishName="Fanti"
+      FrenchName="fanti"/>
+    <language terminology="fij" iso639-1="fj"
+      EnglishName="Fijian"
+      FrenchName="fidjien"/>
+    <language terminology="fin" iso639-1="fi"
+      EnglishName="Finnish"
+      FrenchName="finnois"/>
+    <language terminology="fiu" 
+      EnglishName="Finno-Ugrian (Other)"
+      FrenchName="finno-ougriennes, autres langues"/>
+    <language terminology="fon" 
+      EnglishName="Fon"
+      FrenchName="fon"/>
+    <language terminology="fra" bibliographic="fre" iso639-1="fr" 
+      EnglishName="French"
+      FrenchName="français"/>
+    <language terminology="frm" 
+      EnglishName="French, Middle (ca.1400-1800)"
+      FrenchName="français moyen (1400-1800)"/>
+    <language terminology="fro" 
+      EnglishName="French, Old (842-ca.1400)"
+      FrenchName="français ancien (842-ca.1400)"/>
+    <language terminology="fry" iso639-1="fy"
+      EnglishName="Frisian"
+      FrenchName="frison"/>
+    <language terminology="ful" 
+      EnglishName="Fulah"
+      FrenchName="peul"/>
+    <language terminology="fur"
+      EnglishName="Friulian"
+      FrenchName="frioulan"/>
+    <language terminology="gaa"
+      EnglishName="Ga"
+      FrenchName="ga"/>
+    <language terminology="gay"
+      EnglishName="Gayo"
+      FrenchName="gayo"/>
+    <language terminology="gba"
+      EnglishName="Gbaya"
+      FrenchName="gbaya"/>
+    <language terminology="gem"
+      EnglishName="Germanic (Other)"
+      FrenchName="germaniques, autres langues"/>
+    <language terminology="kat" bibliographic="geo" iso639-1="ka"
+      EnglishName="Georgian"
+      FrenchName="géorgien"/>
+    <language terminology="deu" bibliographic="ger" iso639-1="de"
+      EnglishName="German"
+      FrenchName="allemand"/>
+    <language terminology="gez"
+      EnglishName="Geez"
+      FrenchName="guèze"/>
+    <language terminology="gil"
+      EnglishName="Gilbertese"
+      FrenchName="kiribati"/>
+    <language terminology="gla" iso639-1="gd"
+      EnglishName="Gaelic; Scottish Gaelic"
+      FrenchName="gaélique; gaélique écossais"/>
+    <language terminology="gle" iso639-1="ga"
+      EnglishName="Irish"
+      FrenchName="irlandais"/>
+    <language terminology="glg" iso639-1="gl"
+      EnglishName="Gallegan"
+      FrenchName="galicien"/>
+    <language terminology="glv" iso639-1="gv"
+      EnglishName="Manx"
+      FrenchName=" manx; mannois"/>
+    <language terminology="gmh"
+      EnglishName="German, Middle High (ca.1050-1500)"
+      FrenchName="allemand, moyen haut (ca. 1050-1500)"/>
+    <language terminology="goh"
+      EnglishName="German, Old High (ca.750-1050)"
+      FrenchName="allemand, vieux haut (ca. 750-1050)"/>
+    <language terminology="gon"
+      EnglishName="Gondi"
+      FrenchName="gond"/>
+    <language terminology="gor"
+      EnglishName="Gorontalo"
+      FrenchName="gorontalo"/>
+    <language terminology="got"
+      EnglishName="Gothic"
+      FrenchName="gothique"/>
+    <language terminology="grb"
+      EnglishName="Grebo"
+      FrenchName="grebo"/>
+    <language terminology="grc"
+      EnglishName="Greek, Ancient (to 1453)"
+      FrenchName="grec ancien (jusqu'à 1453)"/>
+    <language terminology="ell" bibliographic="gre" iso639-1="el"
+      EnglishName="Greek, Modern (1453-)"
+      FrenchName="grec moderne (après 1453)"/>
+    <language terminology="grn" iso639-1="gn"
+      EnglishName="Guarani"
+      FrenchName="guarani"/>
+    <language terminology="guj" iso639-1="gu"
+      EnglishName="Gujarati"
+      FrenchName="goudjrati"/>
+    <language terminology="gwi"
+      EnglishName="Gwich&#180;in"
+      FrenchName="gwich&#180;in"/>
+    <language terminology="hai"
+      EnglishName="Haida"
+      FrenchName="haida"/>
+    <language terminology="hau" iso639-1="ha"
+      EnglishName="Hausa"
+      FrenchName="haoussa"/>
+    <language terminology="haw"
+      EnglishName="Hawaiian"
+      FrenchName="hawaïen"/>
+    <language terminology="heb" iso639-1="he"
+      EnglishName="Hebrew"
+      FrenchName="hébreu"/>
+    <language terminology="her" iso639-1="hz"
+      EnglishName="Herero"
+      FrenchName="herero"/>
+    <language terminology="hil"
+      EnglishName="Hiligaynon"
+      FrenchName="hiligaynon"/>
+    <language terminology="him"
+      EnglishName="Himachali"
+      FrenchName="himachali"/>
+    <language terminology="hin" iso639-1="hi"
+      EnglishName="Hindi "
+      FrenchName="hindi"/>
+    <language terminology="hit"
+      EnglishName="Hittite"
+      FrenchName="hittite"/>
+    <language terminology="hmn"
+      EnglishName="Hmong"
+      FrenchName="hmong"/>
+    <language terminology="hmo" iso639-1="ho"
+      EnglishName="Hiri Motu"
+      FrenchName="hiri motu"/>
+    <language terminology="hrv" bibliographic="scr" iso639-1="hr"
+      EnglishName="Croatian"
+      FrenchName="croate"/>
+    <language terminology="hun" iso639-1="hu"
+      EnglishName="Hungarian"
+      FrenchName="hongrois"/>
+    <language terminology="hup"
+      EnglishName="Hupa"
+      FrenchName="hupa"/>
+    <language terminology="hye" bibliographic="arm" iso639-1="hy"
+      EnglishName="Armenian"
+      FrenchName="arménien"/>
+    <language terminology="iba" 
+      EnglishName="Iban"
+      FrenchName="iban"/>
+    <language terminology="ibo" 
+      EnglishName="Igbo"
+      FrenchName="igbo"/>
+    <language terminology="isl" bibliographic="ice" iso639-1="is" 
+      EnglishName="Icelandic"
+      FrenchName="islandais"/>
+    <language terminology="ido" iso639-1="io"
+      EnglishName="Ido"
+      FrenchName="ido"/>
+    <language terminology="ijo" 
+      EnglishName="Ijo"
+      FrenchName="ijo"/>
+    <language terminology="iku" iso639-1="iu"
+      EnglishName="Inuktitut"
+      FrenchName="inuktitut"/>
+    <language terminology="ile" iso639-1="ie"
+      EnglishName="Interlingue"
+      FrenchName="interlingue"/>
+    <language terminology="ilo" 
+      EnglishName="Iloko"
+      FrenchName="ilocano"/>
+    <language terminology="ina" iso639-1="ia"
+      EnglishName="Interlingua (International Auxiliary Language Association)"
+      FrenchName="interlingua (langue auxiliaire internationale)"/>
+    <language terminology="inc" 
+      EnglishName="Indic (Other)"
+      FrenchName="indo-aryennes, autres langues"/>
+    <language terminology="ind" iso639-1="id"
+      EnglishName="Indonesian"
+      FrenchName="indonésien"/>
+    <language terminology="ine" 
+      EnglishName="Indo-European (Other)"
+      FrenchName="indo-européennes, autres langues"/>
+    <language terminology="ipk" iso639-1="ik"
+      EnglishName="Inupiaq"
+      FrenchName="inupiaq"/>
+    <language terminology="ira" 
+      EnglishName="Iranian (Other)"
+      FrenchName="iraniennes, autres langues"/>
+    <language terminology="iro" 
+      EnglishName="Iroquoian languages"
+      FrenchName="iroquoises, langues (famille)"/>
+    <language terminology="isl" bibliographic="ice" iso639-1="is" 
+      EnglishName="Icelandic"
+      FrenchName="islandais"/>
+    <language terminology="ita" iso639-1="it"
+      EnglishName="Italian"
+      FrenchName="italien"/>
+    <language terminology="jav" iso639-1="jv"
+      EnglishName="Javanese"
+      FrenchName="javanais"/>
+    <language terminology="jpn" iso639-1="ja"
+      EnglishName="Japanese"
+      FrenchName="japonais"/>
+    <language terminology="jpr" 
+      EnglishName="Judeo-Persian"
+      FrenchName="judéo-persan"/>
+    <language terminology="jrb" 
+      EnglishName="Judeo-Arabic"
+      FrenchName="judéo-arabe"/>
+    <language terminology="kaa" 
+      EnglishName="Kara-Kalpak"
+      FrenchName="karakalpak"/>
+    <language terminology="kab" 
+      EnglishName="Kabyle"
+      FrenchName="kabyle"/>
+    <language terminology="kac" 
+      EnglishName="Kachin"
+      FrenchName="kachin"/>
+    <language terminology="kal" iso639-1="kl"
+      EnglishName="Kalaallisut"
+      FrenchName="groenlandais"/>
+    <language terminology="kam" 
+      EnglishName="Kamba"
+      FrenchName="kamba"/>
+    <language terminology="kan" iso639-1="kn"
+      EnglishName="Kannada"
+      FrenchName="kannada"/>
+    <language terminology="kar" 
+      EnglishName="Karen"
+      FrenchName="karen"/>
+    <language terminology="kas" iso639-1="ks"
+      EnglishName="Kashmiri"
+      FrenchName="kashmiri"/>
+    <language terminology="kat" bibliographic="geo" iso639-1="ka" 
+      EnglishName="Georgian"
+      FrenchName="géorgien"/>
+    <language terminology="kau" 
+      EnglishName="Kanuri"
+      FrenchName="kanouri"/>
+    <language terminology="kaw" 
+      EnglishName="Kawi"
+      FrenchName="kawi"/>
+    <language terminology="kaz" iso639-1="kk"
+      EnglishName="Kazakh"
+      FrenchName="kazakh"/>
+    <language terminology="kha" 
+      EnglishName="Khasi"
+      FrenchName="khasi"/>
+    <language terminology="khi" 
+      EnglishName="Khoisan (Other)"
+      FrenchName="khoisan, autres langues"/>
+    <language terminology="khm" iso639-1="km"
+      EnglishName="Khmer"
+      FrenchName="khmer"/>
+    <language terminology="kho" 
+      EnglishName="Khotanese"
+      FrenchName="khotanais"/>
+    <language terminology="kik" iso639-1="ki"
+      EnglishName="Kikuyu; Gikuyu"
+      FrenchName="kikuyu"/>
+    <language terminology="kin" iso639-1="rw"
+      EnglishName="Kinyarwanda"
+      FrenchName="rwanda"/>
+    <language terminology="kir" iso639-1="ky"
+      EnglishName="Kirghiz"
+      FrenchName="kirghize"/>
+    <language terminology="kmb" 
+      EnglishName="Kimbundu"
+      FrenchName="kimbundu"/>
+    <language terminology="kok" 
+      EnglishName="Konkani"
+      FrenchName="konkani"/>
+    <language terminology="kom" iso639-1="kv"
+      EnglishName="Komi"
+      FrenchName="kom"/>
+    <language terminology="kon" 
+      EnglishName="Kongo"
+      FrenchName="kongo"/>
+    <language terminology="kor" iso639-1="ko"
+      EnglishName="Korean"
+      FrenchName="coréen"/>
+    <language terminology="kos" 
+      EnglishName="Kosraean"
+      FrenchName="kosrae"/>
+    <language terminology="kpe" 
+      EnglishName="Kpelle"
+      FrenchName="kpellé"/>
+    <language terminology="kro" 
+      EnglishName="Kru"
+      FrenchName="krou"/>
+    <language terminology="kru" 
+      EnglishName="Kurukh"
+      FrenchName="kurukh"/>
+    <language terminology="kua" iso639-1="kj"
+      EnglishName="Kuanyama; Kwanyama"
+      FrenchName="kuanyama; kwanyama"/>
+    <language terminology="kum" 
+      EnglishName="Kumyk"
+      FrenchName="koumyk"/>
+    <language terminology="kur" iso639-1="ku"
+      EnglishName="Kurdish"
+      FrenchName="kurde"/>
+    <language terminology="kut" 
+      EnglishName="Kutenai"
+      FrenchName="kutenai"/>
+    <language terminology="lad" 
+      EnglishName="Ladino"
+      FrenchName="judéo-espagnol"/>
+    <language terminology="lah" 
+      EnglishName="Lahnda"
+      FrenchName="lahnda"/>
+    <language terminology="lam" 
+      EnglishName="Lamba"
+      FrenchName="lamba"/>
+    <language terminology="lao" iso639-1="lo"
+      EnglishName="Lao"
+      FrenchName="lao"/>
+    <language terminology="lat" iso639-1="la"
+      EnglishName="Latin"
+      FrenchName="latin"/>
+    <language terminology="lav" iso639-1="lv"
+      EnglishName="Latvian"
+      FrenchName="letton"/>
+    <language terminology="lez" 
+      EnglishName="Lezghian"
+      FrenchName="lezghien"/>
+    <language terminology="lim" iso639-1="li"
+      EnglishName="Limburgan; Limburger; Limburgish"
+      FrenchName="limbourgeois"/>
+    <language terminology="lin" iso639-1="ln"
+      EnglishName="Lingala"
+      FrenchName="lingala"/>
+    <language terminology="lit" iso639-1="lt"
+      EnglishName="Lithuanian"
+      FrenchName="lituanien"/>
+    <language terminology="lol" 
+      EnglishName="Mongo"
+      FrenchName="mongo"/>
+    <language terminology="loz" 
+      EnglishName="Lozi"
+      FrenchName="lozi"/>
+    <language terminology="ltz" iso639-1="lb"
+      EnglishName="Luxembourgish; Letzeburgesch"
+      FrenchName="luxembourgeois"/>
+    <language terminology="lua" 
+      EnglishName="Luba-Lulua"
+      FrenchName="luba-lulua"/>
+    <language terminology="lub" 
+      EnglishName="Luba-Katanga"
+      FrenchName="luba-katanga"/>
+    <language terminology="lug" 
+      EnglishName="Ganda"
+      FrenchName="ganda"/>
+    <language terminology="lui" 
+      EnglishName="Luiseno"
+      FrenchName="luiseno"/>
+    <language terminology="lun" 
+      EnglishName="Lunda"
+      FrenchName="lunda"/>
+    <language terminology="luo" 
+      EnglishName="Luo (Kenya and Tanzania)"
+      FrenchName="luo (Kenya et Tanzanie)"/>
+    <language terminology="lus" 
+      EnglishName="lushai"
+      FrenchName="Lushai"/>
+    <language terminology="mkd" bibliographic="mac" iso639-1="mk" 
+      EnglishName="Macedonian"
+      FrenchName="macédonien"/>
+    <language terminology="mad" 
+      EnglishName="Madurese"
+      FrenchName="madourais"/>
+    <language terminology="mag" 
+      EnglishName="Magahi"
+      FrenchName="magahi"/>
+    <language terminology="mah" iso639-1="mh"
+      EnglishName="Marshallese"
+      FrenchName="marshall"/>
+    <language terminology="mai" 
+      EnglishName="Maithili"
+      FrenchName="maithili"/>
+    <language terminology="mak" 
+      EnglishName="Makasar"
+      FrenchName="makassar"/>
+    <language terminology="mal" iso639-1="ml"
+      EnglishName="Malayalam"
+      FrenchName="malayalam"/>
+    <language terminology="man" 
+      EnglishName="Mandingo"
+      FrenchName="mandingue"/>
+    <language terminology="mri" bibliographic="mao" iso639-1="mi" 
+      EnglishName="Maori"
+      FrenchName="maori"/>
+    <language terminology="map" 
+      EnglishName="Austronesian (Other)"
+      FrenchName="malayo-polynésiennes,autres langues"/>
+    <language terminology="mar" iso639-1="mr"
+      EnglishName="Marathi"
+      FrenchName="marathe"/>
+    <language terminology="mas" 
+      EnglishName="Masai"
+      FrenchName="massaï"/>
+    <language terminology="msa" bibliographic="may" iso639-1="ms" 
+      EnglishName="Malay"
+      FrenchName="malais"/>
+    <language terminology="mdr" 
+      EnglishName="Mandar"
+      FrenchName="mandar"/>
+    <language terminology="men" 
+      EnglishName="Mende"
+      FrenchName="mendé"/>
+    <language terminology="mga" 
+      EnglishName="Irish, Middle (900-1200)"
+      FrenchName="irlandais moyen (900-1200)"/>
+    <language terminology="mic" 
+      EnglishName="Micmac"
+      FrenchName="micmac"/>
+    <language terminology="min" 
+      EnglishName="Minangkabau"
+      FrenchName="minangkabau"/>
+    <language terminology="mis" 
+      EnglishName="Miscellaneous languages"
+      FrenchName="diverses, langues"/>
+    <language terminology="mkd" bibliographic="mac" iso639-1="mk" 
+      EnglishName="Macedonian"
+      FrenchName="macédonien"/>
+    <language terminology="mkh" 
+      EnglishName="Mon-Khmer (Other)"
+      FrenchName="môn-khmer, autres langues"/>
+    <language terminology="mlg" iso639-1="mg"
+      EnglishName="Malagasy"
+      FrenchName="malgache"/>
+    <language terminology="mlt" iso639-1="mt"
+      EnglishName="Maltese"
+      FrenchName="maltais"/>
+    <language terminology="mnc" 
+      EnglishName="Manchu"
+      FrenchName="mandchou"/>
+    <language terminology="mni" 
+      EnglishName="Manipuri"
+      FrenchName="manipuri"/>
+    <language terminology="mno" 
+      EnglishName="Manobo languages "
+      FrenchName="manobo, langues"/>
+    <language terminology="moh" 
+      EnglishName="Mohawk"
+      FrenchName="mohawk"/>
+    <language terminology="mol" iso639-1="mo"
+      EnglishName="Moldavian"
+      FrenchName="moldave"/>
+    <language terminology="mon" iso639-1="mn"
+      EnglishName="Mongolian"
+      FrenchName="mongol"/>
+    <language terminology="mos" 
+      EnglishName="Mossi"
+      FrenchName="moré"/>
+    <language terminology="mri" bibliographic="mao" iso639-1="mi" 
+      EnglishName="Maori"
+      FrenchName="maori"/>
+    <language terminology="msa" bibliographic="may" iso639-1="ms" 
+      EnglishName="Malay"
+      FrenchName="malais"/>
+    <language terminology="mul" 
+      EnglishName="Multiple languages"
+      FrenchName="multilingue"/>
+    <language terminology="mun" 
+      EnglishName="Munda languages"
+      FrenchName="mounda, langues"/>
+    <language terminology="mus" 
+      EnglishName="Creek"
+      FrenchName="muskogee"/>
+    <language terminology="mwr" 
+      EnglishName="Marwari"
+      FrenchName="marvari"/>
+    <language terminology="mya" bibliographic="bur" iso639-1="my" 
+      EnglishName="Burmese"
+      FrenchName="birman"/>
+    <language terminology="myn" 
+      EnglishName="Mayan languages"
+      FrenchName="maya, langues"/>
+    <language terminology="nah" 
+      EnglishName="Nahuatl"
+      FrenchName="nahuatl"/>
+    <language terminology="nai" 
+      EnglishName="North American Indian"
+      FrenchName="indiennes d'Amérique du Nord, autres langues"/>
+    <language terminology="nap" 
+      EnglishName="Neapolitan"
+      FrenchName="napolitain"/>
+    <language terminology="nau" iso639-1="na"
+      EnglishName="Nauru"
+      FrenchName="nauruan"/>
+    <language terminology="nav" iso639-1="nv"
+      EnglishName="Navajo; Navaho"
+      FrenchName="navaho"/>
+    <language terminology="nbl" iso639-1="nr"
+      EnglishName="Ndebele, South; South Ndebele"
+      FrenchName="ndébélé du Sud"/>
+    <language terminology="nde" iso639-1="nd"
+      EnglishName="Ndebele, North; North Ndebele"
+      FrenchName="ndébélé du Nord"/>
+    <language terminology="ndo" iso639-1="ng"
+      EnglishName="Ndonga"
+      FrenchName="ndonga"/>
+    <language terminology="nds" 
+      EnglishName="Low German; Low Saxon; German, Low; Saxon, Low"
+      FrenchName="bas allemand; bas saxon; allemand, bas; saxon, bas"/>
+    <language terminology="nep" iso639-1="ne"
+      EnglishName="Nepali"
+      FrenchName="népalais"/>
+    <language terminology="new" 
+      EnglishName="Newari"
+      FrenchName="newari"/>
+    <language terminology="nia" 
+      EnglishName="Nias"
+      FrenchName="nias"/>
+    <language terminology="nic" 
+      EnglishName="Niger-Kordofanian (Other)"
+      FrenchName="nigéro-congolaises, autres langues"/>
+    <language terminology="niu" 
+      EnglishName="Niuean"
+      FrenchName="niué"/>
+    <language terminology="nld" bibliographic="dut" iso639-1="nl" 
+      EnglishName="Dutch"
+      FrenchName="néerlandais"/>
+    <language terminology="non" 
+      EnglishName="Norse, Old"
+      FrenchName="norrois, vieux"/>
+    <language terminology="nor" iso639-1="no"
+      EnglishName="Norwegian"
+      FrenchName="norvégien"/>
+    <language terminology="nno" iso639-1="nn"
+      EnglishName="Norwegian Nynorsk; Nynorsk, Norwegian"
+      FrenchName="norvégien nynorsk; nynorsk, norvégien "/>
+    <language terminology="nob" iso639-1="nb"
+      EnglishName="Norwegian Bokmål; Bokmål, Norwegian"
+      FrenchName="norvégien bokmål; bokmål, norvégien"/>
+    <language terminology="nso" 
+      EnglishName="Sotho, Northern"
+      FrenchName="sotho du Nord"/>
+    <language terminology="nub" 
+      EnglishName="Nubian languages"
+      FrenchName="nubiennes, langues"/>
+    <language terminology="nya" iso639-1="ny"
+      EnglishName=" Chichewa; Chewa; Nyanja"
+      FrenchName="chichewa; chewa; nyanja"/>
+    <language terminology="nym" 
+      EnglishName="Nyamwezi"
+      FrenchName="nyamwezi"/>
+    <language terminology="nyn" 
+      EnglishName="Nyankole"
+      FrenchName="nyankolé"/>
+    <language terminology="nyo" 
+      EnglishName="Nyoro"
+      FrenchName="nyoro"/>
+    <language terminology="nzi" 
+      EnglishName="Nzima"
+      FrenchName="nzema"/>
+    <language terminology="oci" iso639-1="oc"
+      EnglishName="Occitan (post 1500); Provençal"
+      FrenchName="occitan (après 1500); provençal"/>
+    <language terminology="oji" 
+      EnglishName="Ojibwa"
+      FrenchName="ojibwa"/>
+    <language terminology="ori" iso639-1="or"
+      EnglishName="Oriya"
+      FrenchName="oriya"/>
+    <language terminology="orm" iso639-1="om"
+      EnglishName="Oromo"
+      FrenchName="galla"/>
+    <language terminology="osa" 
+      EnglishName="Osage"
+      FrenchName="osage"/>
+    <language terminology="oss" iso639-1="os"
+      EnglishName="Ossetian; Ossetic"
+      FrenchName="ossète"/>
+    <language terminology="ota" 
+      EnglishName="Turkish, Ottoman (1500-1928)"
+      FrenchName="turc ottoman (1500-1928)"/>
+    <language terminology="oto" 
+      EnglishName="Otomian languages"
+      FrenchName="otomangue, langues"/>
+    <language terminology="paa" 
+      EnglishName="Papuan (Other)"
+      FrenchName="papoues, autres langues"/>
+    <language terminology="pag" 
+      EnglishName="Pangasinan"
+      FrenchName="pangasinan"/>
+    <language terminology="pal" 
+      EnglishName="Pahlavi"
+      FrenchName="pahlavi"/>
+    <language terminology="pam" 
+      EnglishName="Pampanga"
+      FrenchName="pampangan"/>
+    <language terminology="pan" iso639-1="pa"
+      EnglishName="Panjabi"
+      FrenchName="pendjabi"/>
+    <language terminology="pap" 
+      EnglishName="Papiamento"
+      FrenchName="papiamento"/>
+    <language terminology="pau" 
+      EnglishName="Palauan"
+      FrenchName="palau"/>
+    <language terminology="peo" 
+      EnglishName="Persian, Old (ca.600-400 B.C.)"
+      FrenchName="perse, vieux (ca. 600-400 av. J.-C.)"/>
+    <language terminology="fas" bibliographic="per" iso639-1="fa" 
+      EnglishName="Persian"
+      FrenchName="persan"/>
+    <language terminology="phi" 
+      EnglishName="Philippine (Other)"
+      FrenchName="philippines, autres langues"/>
+    <language terminology="phn" 
+      EnglishName="Phoenician"
+      FrenchName="phénicien"/>
+    <language terminology="pli" iso639-1="pi"
+      EnglishName="Pali"
+      FrenchName="pali"/>
+    <language terminology="pol" iso639-1="pl"
+      EnglishName="Polish"
+      FrenchName="polonais"/>
+    <language terminology="pon" 
+      EnglishName="Pohnpeian"
+      FrenchName="pohnpei"/>
+    <language terminology="por" iso639-1="pt"
+      EnglishName="Portuguese"
+      FrenchName="portugais"/>
+    <language terminology="pra" 
+      EnglishName="Prakrit languages"
+      FrenchName="prâkrit"/>
+    <language terminology="pro" 
+      EnglishName="Provençal, Old (to 1500)"
+      FrenchName="provençal ancien (jusqu'à 1500)"/>
+    <language terminology="pus" iso639-1="ps"
+      EnglishName="Pushto"
+      FrenchName="pachto"/>
+    <language terminology="que" iso639-1="qu"
+      EnglishName="Quechua"
+      FrenchName="quechua"/>
+    <language terminology="raj" 
+      EnglishName="Rajasthani"
+      FrenchName="rajasthani"/>
+    <language terminology="rap" 
+      EnglishName="Rapanui"
+      FrenchName="rapanui"/>
+    <language terminology="rar" 
+      EnglishName="Rarotongan"
+      FrenchName="rarotonga"/>
+    <language terminology="roa"
+      EnglishName="Romance (Other)"
+      FrenchName="romanes, autres langues"/>
+    <language terminology="roh" iso639-1="rm"
+      EnglishName="Raeto-Romance"
+      FrenchName="rhéto-roman"/>
+    <language terminology="rom" 
+      EnglishName="Romany"
+      FrenchName="tsigane"/>
+    <language terminology="ron" bibliographic="rum" iso639-1="ro" 
+      EnglishName="Romanian"
+      FrenchName="roumain"/>
+    <language terminology="run" iso639-1="rn"
+      EnglishName="Rundi"
+      FrenchName="rundi"/>
+    <language terminology="rus" iso639-1="ru"
+      EnglishName="Russian"
+      FrenchName="russe"/>
+    <language terminology="sad" 
+      EnglishName="Sandawe"
+      FrenchName="sandawe"/>
+    <language terminology="sag" iso639-1="sg"
+      EnglishName="Sango"
+      FrenchName="sango"/>
+    <language terminology="sah" 
+      EnglishName="Yakut"
+      FrenchName="iakoute"/>
+    <language terminology="sai" 
+      EnglishName="South American Indian (Other)"
+      FrenchName="indiennes d'Amérique du Sud,autres langues"/>
+    <language terminology="sal" 
+      EnglishName="Salishan languages "
+      FrenchName="salish, langues"/>
+    <language terminology="sam" 
+      EnglishName="Samaritan Aramaic"
+      FrenchName="samaritain"/>
+    <language terminology="san" iso639-1="sa"
+      EnglishName="Sanskrit"
+      FrenchName="sanskrit"/>
+    <language terminology="sas" 
+      EnglishName="Sasak"
+      FrenchName="sasak"/>
+    <language terminology="sat" 
+      EnglishName="Santali"
+      FrenchName="santal"/>
+    <language terminology="srp" bibliographic="scc" iso639-1="sr" 
+      EnglishName="Serbian"
+      FrenchName="serbe"/>
+    <language terminology="sco" 
+      EnglishName="Scots"
+      FrenchName="écossais"/>
+    <language terminology="hrv" bibliographic="scr" iso639-1="hr" 
+      EnglishName="Croatian"
+      FrenchName="croate"/>
+    <language terminology="sel" 
+      EnglishName="Selkup"
+      FrenchName="selkoupe"/>
+    <language terminology="sem" 
+      EnglishName="Semitic (Other) "
+      FrenchName="sémitiques, autres langues"/>
+    <language terminology="sga" 
+      EnglishName="Irish, Old (to 900) "
+      FrenchName="irlandais ancien (jusqu'à 900)"/>
+    <language terminology="sgn" 
+      EnglishName="Sign Languages"
+      FrenchName="langues des signes"/>
+    <language terminology="shn" 
+      EnglishName="Shan"
+      FrenchName="chan"/>
+    <language terminology="sid" 
+      EnglishName="Sidamo"
+      FrenchName="sidamo"/>
+    <language terminology="sin" iso639-1="si"
+      EnglishName="Sinhalese"
+      FrenchName="singhalais"/>
+    <language terminology="sio" 
+      EnglishName="Siouan languages "
+      FrenchName="sioux, langues"/>
+    <language terminology="sit" 
+      EnglishName="Sino-Tibetan (Other)"
+      FrenchName="sino-tibétaines, autres langues"/>
+    <language terminology="sla" 
+      EnglishName="Slavic (Other)"
+      FrenchName="slaves, autres langues"/>
+    <language terminology="slk" bibliographic="slo" iso639-1="sk" 
+      EnglishName="Slovak"
+      FrenchName="slovaque"/>
+    <language terminology="slv" iso639-1="sl"
+      EnglishName="Slovenian"
+      FrenchName="slovène"/>
+    <language terminology="sma" 
+      EnglishName="Southern Sami"
+      FrenchName="sami du Sud"/>
+    <language terminology="sme" iso639-1="se"
+      EnglishName="Northern Sami"
+      FrenchName="sami du Nord"/>
+    <language terminology="smi" 
+      EnglishName="Sami languages (Other) "
+      FrenchName="sami, autres langues"/>
+    <language terminology="smj" 
+      EnglishName="Lule Sami"
+      FrenchName="sami de Lule"/>
+    <language terminology="smn" 
+      EnglishName="Inari Sami"
+      FrenchName="sami d'Inari"/>
+    <language terminology="smo" iso639-1="sm"
+      EnglishName="Samoan"
+      FrenchName="samoan"/>
+    <language terminology="sms" 
+      EnglishName="Skolt Sami"
+      FrenchName="sami skolt"/>
+    <language terminology="sna" iso639-1="sn"
+      EnglishName="Shona"
+      FrenchName="shona"/>
+    <language terminology="snd" iso639-1="sd"
+      EnglishName="Sindhi"
+      FrenchName="sindhi"/>
+    <language terminology="snk" 
+      EnglishName="Soninke "
+      FrenchName="soninké"/>
+    <language terminology="sog" 
+      EnglishName="Sogdian"
+      FrenchName="sogdien"/>
+    <language terminology="som" iso639-1="so"
+      EnglishName="Somali"
+      FrenchName="somali"/>
+    <language terminology="son" 
+      EnglishName="Songhai"
+      FrenchName="songhai"/>
+    <language terminology="sot" iso639-1="st"
+      EnglishName="Sotho, Southern "
+      FrenchName="sotho du Sud"/>
+    <language terminology="spa" iso639-1="es"
+      EnglishName="Spanish; Castilian"
+      FrenchName="espagnol; castillan"/>
+    <language terminology="sqi" bibliographic="alb" iso639-1="sq"
+      EnglishName="Albanian"
+      FrenchName="albanais"/>
+    <language terminology="srd" iso639-1="sc"
+      EnglishName="Sardinian"
+      FrenchName="sarde"/>
+    <language terminology="srp" bibliographic="scc" iso639-1="sr" 
+      EnglishName="Serbian"
+      FrenchName="serbe"/>
+    <language terminology="srr" 
+      EnglishName="Serer"
+      FrenchName="sérère"/>
+    <language terminology="ssa" 
+      EnglishName="Nilo-Saharan (Other)"
+      FrenchName="nilo-sahariennes, autres langues"/>
+    <language terminology="ssw" iso639-1="ss"
+      EnglishName="Swati"
+      FrenchName="swati"/>
+    <language terminology="suk" 
+      EnglishName="Sukuma"
+      FrenchName="sukuma"/>
+    <language terminology="sun" iso639-1="su"
+      EnglishName="Sundanese"
+      FrenchName="soundanais"/>
+    <language terminology="sus" 
+      EnglishName="Susu"
+      FrenchName="soussou"/>
+    <language terminology="sux" 
+      EnglishName="Sumerian"
+      FrenchName="sumérien"/>
+    <language terminology="swa" iso639-1="sw"
+      EnglishName="Swahili"
+      FrenchName="swahili"/>
+    <language terminology="swe" iso639-1="sv"
+      EnglishName="Swedish"
+      FrenchName="suédois"/>
+    <language terminology="syr" 
+      EnglishName="Syriac"
+      FrenchName="syriaque"/>
+    <language terminology="tah" iso639-1="ty"
+      EnglishName="Tahitian"
+      FrenchName="tahitien"/>
+    <language terminology="tai" 
+      EnglishName="Tai (Other)"
+      FrenchName="thaïes, autres langues"/>
+    <language terminology="tam" iso639-1="ta"
+      EnglishName="Tamil"
+      FrenchName="tamoul"/>
+    <language terminology="tat" iso639-1="tt"
+      EnglishName="Tatar"
+      FrenchName="tatar"/>
+    <language terminology="tel" iso639-1="te"
+      EnglishName="Telugu"
+      FrenchName="télougou"/>
+    <language terminology="tem" 
+      EnglishName="Timne"
+      FrenchName="temne"/>
+    <language terminology="ter" 
+      EnglishName="Tereno"
+      FrenchName="tereno"/>
+    <language terminology="tet" 
+      EnglishName="Tetum"
+      FrenchName="tetum"/>
+    <language terminology="tgk" iso639-1="tg"
+      EnglishName="Tajik"
+      FrenchName="tadjik"/>
+    <language terminology="tgl" iso639-1="tl"
+      EnglishName="Tagalog"
+      FrenchName="tagalog"/>
+    <language terminology="tha" iso639-1="th"
+      EnglishName="Thai"
+      FrenchName="thaï"/>
+    <language terminology="bod" bibliographic="tib" iso639-1="bo" 
+      EnglishName="Tibetan"
+      FrenchName="tibétain"/>
+    <language terminology="tig" 
+      EnglishName="Tigre"
+      FrenchName="tigré"/>
+    <language terminology="tir" iso639-1="ti"
+      EnglishName="Tigrinya"
+      FrenchName="tigrigna"/>
+    <language terminology="tiv" 
+      EnglishName="Tiv"
+      FrenchName="tiv"/>
+    <language terminology="tkl" 
+      EnglishName="Tokelau"
+      FrenchName="tokelau"/>
+    <language terminology="tli" 
+      EnglishName="Tlingit"
+      FrenchName="tlingit"/>
+    <language terminology="tmh" 
+      EnglishName="Tamashek"
+      FrenchName="tamacheq"/>
+    <language terminology="tog" 
+      EnglishName="Tonga (Nyasa) "
+      FrenchName="tonga (Nyasa)"/>
+    <language terminology="ton" iso639-1="to"
+      EnglishName="Tonga (Tonga Islands)"
+      FrenchName="tongan (Îles Tonga)"/>
+    <language terminology="tpi" 
+      EnglishName="Tok Pisin"
+      FrenchName="tok pisin"/>
+    <language terminology="tsi" 
+      EnglishName="Tsimshian"
+      FrenchName="tsimshian"/>
+    <language terminology="tsn" iso639-1="tn"
+      EnglishName="Tswana"
+      FrenchName="tswana"/>
+    <language terminology="tso" iso639-1="ts"
+      EnglishName="Tsonga"
+      FrenchName="tsonga"/>
+    <language terminology="tuk" iso639-1="tk"
+      EnglishName="Turkmen"
+      FrenchName="turkmène"/>
+    <language terminology="tum" 
+      EnglishName="Tumbuka"
+      FrenchName="tumbuka"/>
+    <language terminology="tup" 
+      EnglishName="Tupi languages"
+      FrenchName="tupi, langues"/>
+    <language terminology="tur" iso639-1="tr"
+      EnglishName="Turkish"
+      FrenchName="turc"/>
+    <language terminology="tut" 
+      EnglishName="Altaic (Other)"
+      FrenchName="altaïques, autres langues"/>
+    <language terminology="tvl" 
+      EnglishName="Tuvalu"
+      FrenchName="tuvalu"/>
+    <language terminology="twi" iso639-1="tw"
+      EnglishName="Twi"
+      FrenchName="twi"/>
+    <language terminology="tyv" 
+      EnglishName="Tuvinian"
+      FrenchName="touva"/>
+    <language terminology="uga" 
+      EnglishName="Ugaritic"
+      FrenchName="ougaritique"/>
+    <language terminology="uig" iso639-1="ug"
+      EnglishName="Uighur"
+      FrenchName="ouïgour"/>
+    <language terminology="ukr" iso639-1="uk"
+      EnglishName="Ukrainian"
+      FrenchName="ukrainien"/>
+    <language terminology="umb" 
+      EnglishName="Umbundu"
+      FrenchName="umbundu"/>
+    <language terminology="und" 
+      EnglishName="Undetermined "
+      FrenchName="indéterminée"/>
+    <language terminology="urd" iso639-1="ur"
+      EnglishName="Urdu"
+      FrenchName="ourdou"/>
+    <language terminology="uzb" iso639-1="uz"
+      EnglishName="Uzbek"
+      FrenchName="ouszbek"/>
+    <language terminology="vai" 
+      EnglishName="Vai"
+      FrenchName="vaï"/>
+    <language terminology="ven" 
+      EnglishName="Venda"
+      FrenchName="venda"/>
+    <language terminology="vie" iso639-1="vi"
+      EnglishName="Vietnamese"
+      FrenchName="vietnamien"/>
+    <language terminology="vol" iso639-1="vo"
+      EnglishName="Volapük"
+      FrenchName="volapük"/>
+    <language terminology="vot" 
+      EnglishName="Votic"
+      FrenchName="vote"/>
+    <language terminology="wak" 
+      EnglishName="Wakashan languages"
+      FrenchName="wakashennes, langues"/>
+    <language terminology="wal" 
+      EnglishName="Walamo"
+      FrenchName="walamo"/>
+    <language terminology="war" 
+      EnglishName="Waray"
+      FrenchName="waray"/>
+    <language terminology="was" 
+      EnglishName="Washo"
+      FrenchName="washo"/>
+    <language terminology="cym" bibliographic="wel" iso639-1="cy" 
+      EnglishName="Welsh"
+      FrenchName="gallois"/>
+    <language terminology="wen" 
+      EnglishName="Sorbian languages"
+      FrenchName="sorabes, langues"/>
+    <language terminology="wln" iso639-1="wa"
+      EnglishName="Walloon"
+      FrenchName="wallon"/>
+    <language terminology="wol" iso639-1="wo"
+      EnglishName="Wolof"
+      FrenchName="wolof"/>
+    <language terminology="xho" iso639-1="xh"
+      EnglishName="Xhosa"
+      FrenchName="xhosa"/>
+    <language terminology="yao" 
+      EnglishName="Yao"
+      FrenchName="yao"/>
+    <language terminology="yap" 
+      EnglishName="Yapese"
+      FrenchName="yapois"/>
+    <language terminology="yid" iso639-1="yi"
+      EnglishName="Yiddish"
+      FrenchName="yiddish"/>
+    <language terminology="yor" iso639-1="yo"
+      EnglishName="Yoruba"
+      FrenchName="yoruba"/>
+    <language terminology="ypk" 
+      EnglishName="Yupik languages"
+      FrenchName="yupik, langues"/>
+    <language terminology="zap" 
+      EnglishName="Zapotec"
+      FrenchName="zapotèque"/>
+    <language terminology="zen" 
+      EnglishName="Zenaga"
+      FrenchName="zenaga"/>
+    <language terminology="zha" iso639-1="za"
+      EnglishName="Zhuang; Chuang"
+      FrenchName="zhuang; chuang"/>
+    <language terminology="zho" bibliographic="chi" iso639-1="zh" 
+      EnglishName="Chinese"
+      FrenchName="chinois"/>
+    <language terminology="znd" 
+      EnglishName="Zande"
+      FrenchName="zandé"/>
+    <language terminology="zul" iso639-1="zu"
+      EnglishName="Zulu"
+      FrenchName="zoulou"/>
+    <language terminology="zun" 
+      EnglishName="Zuni"
+      FrenchName="zuni"/>
+  </languagecodes>
+  <scriptcodes>
+    <!--
+      See:
+      http://www.evertype.com/standards/iso15924/document/index.html
+      and
+      http://www.evertype.com/standards/iso15924/document/dis15924.pdf
+      Script codes probably should be updated to include the script number
+      and the French name.
+     -->
+    <script name="Abur" code="Ab"/>
+    <script name="Ahom" code="Ah"/>
+    <script name="Aiha (Kesh)" code="Ai"/>
+    <script name="Albanian" code="Sq"/>
+    <script name="Arabic" code="Ar"/>
+    <script name="Arabic (Kufi variant)" code="Ak"/>
+    <script name="Aramaic" code="Aw"/>
+    <script name="Armenian" code="Hy"/>
+    <script name="Assyrian cuneiform (Babylonian &amp; Akkadian)" code="Xa"/>
+    <script name="Aymara pictograms" code="Ay"/>
+    <script name="Aztec pictograms" code="Az"/>
+    <script name="Balinese" code="Bl"/>
+    <script name="Balti" code="Bt"/>
+    <script name="Bamum (Cameroon)" code="Bm"/>
+    <script name="Batak" code="Bk"/>
+    <script name="Bengali" code="Bn"/>
+    <script name="Bisaya" code="Bs"/>
+    <script name="Blissymbols" code="By"/>
+    <script name="Bopomofo" code="Bp"/>
+    <script name="Box-headed script" code="Bx"/>
+    <script name="Brahmi (Ashoka)" code="Br"/>
+    <script name="Braille" code="Ba"/>
+    <script name="Buginese (Makassar)" code="Bg"/>
+    <script name="Burmese" code="My"/>
+    <script name="Buthakukye (Albanian)" code="Bu"/>
+    <script name="Canadian Syllabic (Unified)" code="Sl"/>
+    <script name="Carian" code="Cr"/>
+    <script name="Chakma" code="Ck"/>
+    <script name="Cham" code="Ch"/>
+    <script name="Cherokee syllabary" code="Jl"/>
+    <script name="Chinook shorthand" code="Cn"/>
+    <script name="Chola" code="Cl"/>
+    <script name="Chu Nom" code="Cu"/>
+    <script name="Cirth" code="Ci"/>
+    <script name="Code for undetermined script" code="Zy"/>
+    <script name="Code for unwritten languages" code="Zx"/>
+    <script name="Coptic" code="Qb"/>
+    <script name="Cypriote syllabary" code="Cp"/>
+    <script name="Cypro-Minoan" code="Cm"/>
+    <script name="Cyrillic" code="Cy"/>
+    <script name="Dai" code="Da"/>
+    <script name="Deseret (Mormon)" code="Ds"/>
+    <script name="Devanagari" code="Dn"/>
+    <script name="Egyptian demotic" code="Ed"/>
+    <script name="Egyptian hieroglyphic alphabet" code="Ea"/>
+    <script name="Egyptian hieroglyphs" code="Eh"/>
+    <script name="Elbassen (Albanian)" code="Es"/>
+    <script name="Engsvanyali" code="En"/>
+    <script name="Ethiopic" code="Et"/>
+    <script name="Etruscan &amp; Oscan" code="Eo"/>
+    <script name="Gargoyle" code="Gr"/>
+    <script name="Gaudiya" code="Gd"/>
+    <script name="Georgian (Mxedruli)" code="Ka"/>
+    <script name="Georgian (Xucuri)" code="Kx"/>
+    <script name="Glagolitic" code="Gl"/>
+    <script name="Gothic" code="Gt"/>
+    <script name="Greek" code="El"/>
+    <script name="Gujarati" code="Gu"/>
+    <script name="Gurmukhi" code="Pa"/>
+    <script name="Han ideographs" code="Hn"/>
+    <script name="Hangul" code="Hg"/>
+    <script name="Hebrew" code="He"/>
+    <script name="Hiragana" code="Hr"/>
+    <script name="Hittite cuneiform" code="Xh"/>
+    <script name="Hittite syllabic &amp; hieroglyphic" code="Hh"/>
+    <script name="Hmong" code="Hm"/>
+    <script name="Iberian" code="Ib"/>
+    <script name="Ilianore" code="Il"/>
+    <script name="Indus Valley" code="Iv"/>
+    <script name="Javanese" code="Jw"/>
+    <script name="Jindai" code="Jn"/>
+    <script name="Kadamba" code="Kb"/>
+    <script name="Kaithi" code="Ki"/>
+    <script name="Kannada" code="Kn"/>
+    <script name="Karenni (Kayah Li)" code="Kr"/>
+    <script name="Katakana" code="Kk"/>
+    <script name="Kauder (Micmac)" code="Kd"/>
+    <script name="Kawi" code="Kw"/>
+    <script name="Khamti (Kham)" code="Kh"/>
+    <script name="Kharoshthi" code="Ks"/>
+    <script name="Khitan (Ch'i-tan, Liao)" code="Kt"/>
+    <script name="Khmer" code="Km"/>
+    <script name="Khotanese" code="Kq"/>
+    <script name="Kinya" code="Ky"/>
+    <script name="Kirat (Limbu)" code="Lb"/>
+    <script name="Klingon pIQaD" code="Pq"/>
+    <script name="Kök Turki runes" code="Hu"/>
+    <script name="Koleruttu" code="Kl"/>
+    <script name="Kuoyu" code="Ku"/>
+    <script name="Kutila" code="Kf"/>
+    <script name="Lahnda (Khudawadi)" code="Lk"/>
+    <script name="Lahnda (Sindhi)" code="Ln"/>
+    <script name="Lampong" code="Lm"/>
+    <script name="Lao" code="Lo"/>
+    <script name="Latin" code="La"/>
+    <script name="Latin (Fraktur variant)" code="Lf"/>
+    <script name="Latin (Gaelic variant)" code="Lg"/>
+    <script name="Lepcha (Róng)" code="Lp"/>
+    <script name="Linear A" code="Na"/>
+    <script name="Linear B" code="Nb"/>
+    <script name="Lisu" code="Ls"/>
+    <script name="Lolo" code="Ll"/>
+    <script name="Lycian" code="Lc"/>
+    <script name="Lydian" code="Ld"/>
+    <script name="Maghreb" code="Mg"/>
+    <script name="Maithli" code="Mj"/>
+    <script name="Malayalam" code="Ml"/>
+    <script name="Manchu" code="Mc"/>
+    <script name="Mandaean" code="Md"/>
+    <script name="Mangyan" code="Ma"/>
+    <script name="Manichaean" code="Mi"/>
+    <script name="Mayan hieroglyphs" code="Mh"/>
+    <script name="Meitei (Manipuri)" code="Mp"/>
+    <script name="Meroitic" code="Me"/>
+    <script name="Modi" code="Mo"/>
+    <script name="Mongolian" code="Mn"/>
+    <script name="Multani" code="Mu"/>
+    <script name="Nabataean" code="Nt"/>
+    <script name="Naxi (Moso) phonetic" code="Mt"/>
+    <script name="Naxi (Nahsi, Nasi, Moso) ideograms" code="Ms"/>
+    <script name="Newari" code="Nw"/>
+    <script name="Nuchen (Yu-Chen)" code="Nu"/>
+    <script name="Numidian" code="Nm"/>
+    <script name="Ogham" code="Og"/>
+    <script name="Old Church Slavonic" code="Cv"/>
+    <script name="Old Hungarian runes" code="Hv"/>
+    <script name="Old Peguan" code="Pg"/>
+    <script name="Old Persian cuneiform" code="Xp"/>
+    <script name="Oriya" code="Or"/>
+    <script name="Osmanya" code="Os"/>
+    <script name="Pahlavi (Avestan)" code="Av"/>
+    <script name="Pali (Kyoktsa &amp; Painted)" code="Pk"/>
+    <script name="Palmyrene" code="Pm"/>
+    <script name="Pancartambo" code="Pc"/>
+    <script name="Parthian" code="Pr"/>
+    <script name="'Phags-pa" code="Pp"/>
+    <script name="Phaistos Disk" code="Ps"/>
+    <script name="Phoenician" code="Ph"/>
+    <script name="Pollard Phonetic" code="Pl"/>
+    <script name="Proto-Byblic" code="Pb"/>
+    <script name="Proto-Elamic" code="Pe"/>
+    <script name="Pyu (Tircul)" code="Py"/>
+    <script name="Rejang" code="Rj"/>
+    <script name="Rongo-rongo" code="Rr"/>
+    <script name="Runic (Germanic)" code="Rn"/>
+    <script name="Saki" code="Sk"/>
+    <script name="Samaritan" code="Sm"/>
+    <script name="Sarada" code="Sr"/>
+    <script name="Satavahana" code="Sv"/>
+    <script name="Seuss" code="Su"/>
+    <script name="Shavian (Shaw)" code="Sw"/>
+    <script name="Siddham" code="Sd"/>
+    <script name="Siddhamatrka" code="St"/>
+    <script name="Sidetic" code="Se"/>
+    <script name="Sinhalese" code="Si"/>
+    <script name="Sogdian" code="Sg"/>
+    <script name="Solresol" code="Ss"/>
+    <script name="South Arabian" code="Sa"/>
+    <script name="Sumerian pictograms" code="Xs"/>
+    <script name="Syriac" code="Sy"/>
+    <script name="Tagalog" code="Tg"/>
+    <script name="Tai Lue (Chiang Mai)" code="Tl"/>
+    <script name="Tai Nua (Tai Mau)" code="Tn"/>
+    <script name="Takri (Chameali)" code="Tc"/>
+    <script name="Takri (Jaunsari)" code="Tj"/>
+    <script name="Tamil" code="Ta"/>
+    <script name="Tamil Granta" code="Tr"/>
+    <script name="Tankri" code="Tk"/>
+    <script name="Telugu" code="Te"/>
+    <script name="Tengwar" code="Tw"/>
+    <script name="Thaana" code="Dv"/>
+    <script name="Thai" code="Th"/>
+    <script name="Tibetan" code="Bo"/>
+    <script name="Tifinagh" code="Tf"/>
+    <script name="Tocharian" code="To"/>
+    <script name="Tungut (Xixia) ideograms" code="Tu"/>
+    <script name="Ugaritic cuneiform" code="Xu"/>
+    <script name="Uighur" code="Ui"/>
+    <script name="Unifon" code="Un"/>
+    <script name="Vai" code="Va"/>
+    <script name="Vattelluttu" code="Vt"/>
+    <script name="Verdurian" code="Vd"/>
+    <script name="Veso Bei" code="Vb"/>
+    <script name="Visible Speech" code="Vs"/>
+    <script name="Woleai" code="Wo"/>
+    <script name="Yi" code="Yy"/>
+  </scriptcodes>
+</xml-lang>
