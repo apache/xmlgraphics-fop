@@ -1,0 +1,1309 @@
+<?xml version="1.0"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- ===========================================================================
+
+                           * ================== *
+                           |  FOP build system  |
+                           * ================== *
+
+Building instructions
+=====================
+
+First, install Ant (http://ant.apache.org). Check that ant or ant.bat
+is in your search path and that JAVA_HOME and ANT_HOME are properly set.
+Next make sure your current working directory is where this very file is
+located. Then type
+
+  ant
+
+If everything is right and all the required packages are visible, this action
+will generate a file called "fop.jar" in the "./build" directory.
+
+If you experience any problems with the build please visit the FOP website for
+more information: http://xmlgraphics.apache.org/fop
+
+
+Build targets
+=============
+
+The build system is not only responsible for compiling Fop into a jar file,
+but is also responsible for creating the javadocs, distributions, examples
+and a miscellaneous stuff. In fact, the file you have here is _exactly_ what
+is used by fop maintainers to take care of nearly everything in the Fop
+project, no less and no more.
+
+Call the Ant (see above) with the parameter "-projecthelp" to get a
+list of possible build targets.
+
+============================================================================ -->
+<project default="all" basedir="." name="fop">
+
+  <!-- See build.properties and build-local.properties for overriding build settings. -->
+  <!-- build-local.properties is not stored in SVN and overrides values from build.properties -->
+  <property file="${basedir}/build-local.properties"/>
+  <property file="${basedir}/build.properties"/>
+  <property environment="env"/>
+
+  <property name="optional.lib.dir" value="${basedir}/lib"/>
+
+  <fileset dir="${basedir}" id="dist.bin">
+    <include name="conf/**"/>
+    <include name="examples/**"/>
+    <include name="LICENSE"/>
+    <include name="NOTICE"/>
+    <include name="README"/>
+    <include name="KEYS"/>
+    <include name="status.xml"/>
+    <include name="fop.bat"/>
+    <include name="fop"/>
+  </fileset>
+
+  <fileset dir="${basedir}" id="dist.bin.lib">
+    <patternset id="dist.lib">
+      <include name="lib/avalon-framework*"/>
+      <include name="lib/xmlgraphics-commons*"/>
+      <include name="lib/batik*"/>
+      <include name="lib/commons-io*"/>
+      <include name="lib/commons-logging*"/>
+      <include name="lib/README*"/>
+      <include name="lib/serializer*"/>
+      <include name="lib/xalan*"/>
+      <include name="lib/xerces*"/>
+      <include name="lib/xml-apis*"/>
+    </patternset>
+  </fileset>
+
+  <fileset dir="${basedir}" id="dist.src">
+    <include name="src/**"/>
+    <include name="conf/**"/>
+    <include name="hyph/hyphenation.dtd"/>
+    <include name="hyph/readme"/>
+    <patternset refid="dist.lib"/>
+    <include name="lib/servlet*"/>
+    <include name="test/**"/>
+    <include name="examples/**"/>
+    <include name="LICENSE"/>
+    <include name="NOTICE"/>
+    <include name="README"/>
+    <include name="KEYS"/>
+    <include name="status.xml"/>
+    <include name="build.*"/>
+    <include name="fop.bat"/>
+    <include name="fop"/>
+  </fileset>
+
+  <path id="libs-build-classpath">
+    <fileset dir="${basedir}/lib">
+      <include name="*.jar"/>
+    </fileset>
+    <fileset dir="${optional.lib.dir}">
+      <include name="*.jar"/>
+    </fileset>
+  </path>
+
+  <path id="libs-run-classpath">
+    <fileset dir="${basedir}/lib">
+      <include name="*.jar"/>
+    </fileset>
+    <fileset dir="${optional.lib.dir}">
+      <include name="*.jar"/>
+    </fileset>
+    <fileset dir="${basedir}/build">
+      <include name="fop.jar"/>
+      <include name="fop-hyph.jar" />
+    </fileset>
+  </path>
+
+  <patternset id="exclude-jimi">
+    <exclude name="org/apache/fop/image/JimiImage.java" unless="jimi.present"/>
+  </patternset>
+
+  <patternset id="exclude-jai">
+    <exclude name="org/apache/fop/image/JAIImage.java" unless="jai.present"/>
+    <exclude name="org/apache/fop/render/pcl/JAIMonochromeBitmapConverter.java" unless="jai.present"/>
+  </patternset>
+
+  <patternset id="exclude-jce-dependencies">
+    <exclude name="org/apache/fop/pdf/PDFEncryptionJCE.java" unless="jce.present"/>
+  </patternset>
+
+  <property name="Name" value="Apache FOP"/>
+  <property name="name" value="fop"/>
+  <property name="NAME" value="FOP"/>
+  <property name="version" value="svn-trunk"/>
+  <property name="year" value="1999-2006"/>
+
+  <property name="javac.debug" value="on"/>
+  <property name="javac.optimize" value="off"/>
+  <property name="javac.deprecation" value="on"/>
+  <property name="javac.source" value="1.3"/>
+  <property name="javac.target" value="1.3"/>
+  <property name="javac.fork" value="no"/>
+
+  <property name="junit.fork" value="on"/>
+  <property name="junit.haltonfailure" value="off"/>
+
+  <property name="javadoc.packages" value="org.apache.fop.*"/>
+  
+  <property name="src.dir" value="${basedir}/src"/>
+  <property name="src.codegen.dir" value="${src.dir}/codegen"/>
+  <property name="src.java.dir" value="${src.dir}/java"/>
+  <property name="src.sandbox.dir" value="${src.dir}/sandbox"/>
+  <property name="src.viewer.resources.dir" value="${src.java.dir}/org/apache/fop/render/awt/viewer/resources"/>
+  <property name="src.viewer.images.dir" value="${src.java.dir}/org/apache/fop/render/awt/viewer/images"/>
+  <property name="xdocs.dir" value="${src.dir}/documentation/content/xdocs"/>
+  <property name="fo.examples.dir" value="${basedir}/examples/fo/basic"/>
+  <property name="fo.examples.userconfig" value="conf/fop.xconf"/>
+  <property name="fo.examples.include" value="**/*.fo"/>
+  <property name="fo.examples.force" value="false"/>
+  <property name="lib.dir" value="${basedir}/lib"/>
+  <property name="user.hyph.dir" value="${basedir}/hyph"/>
+
+  <property name="build.dir" value="${basedir}/build"/>
+  <property name="build.gensrc.dir" value="${build.dir}/gensrc"/>
+  <property name="build.classes.dir" value="${build.dir}/classes"/>
+  <property name="build.sandbox-classes.dir" value="${build.dir}/sandbox-classes"/>
+  <property name="build.javadocs.dir" value="${build.dir}/javadocs"/>
+  <property name="build.examples.dir" value="${build.dir}/examples"/>
+
+  <property name="build.viewer.resources.dir" value="${build.classes.dir}/org/apache/fop/render/awt/viewer/resources"/>
+  <property name="build.viewer.images.dir" value="${build.classes.dir}/org/apache/fop/render/awt/viewer/images"/>
+
+  <property name="build.property.examples.mime.type" value="application/pdf"/>
+
+  <!--property name="layoutengine.disabled" value="test/layoutengine/disabled-testcases.txt"/-->
+  <!--property name="fotree.disabled" value="test/fotree/disabled-testcases.txt"/-->
+  <property name="layoutengine.disabled" value="test/layoutengine/disabled-testcases.xml"/>
+  <property name="fotree.disabled" value="test/fotree/disabled-testcases.xml"/>
+
+  <property name="dist.bin.dir" value="${basedir}/dist-bin"/>
+  <property name="dist.src.dir" value="${basedir}/dist-src"/>
+  <property name="dist.bin.result.dir" value="${dist.bin.dir}/${name}-${version}"/>
+  <property name="dist.src.result.dir" value="${dist.src.dir}/${name}-${version}"/>
+  <property name="samedir" value="${basedir}"/>
+  
+  <property name="junit.reports.dir" value="${build.dir}/test-reports"/>
+  <property name="junit.html.reports.dir" value="${build.dir}/test-reports/html"/>
+
+  <!-- Importing Apache Forrest for building the docs -->
+  <!--
+  <property environment="env"/>
+  <property name="forrest.home" value="${env.FORREST_HOME}"/>
+  <import file="${env.FORREST_HOME}/main/forrest.build.xml" optional="true"/>
+  -->
+
+  <!-- =================================================================== -->
+  <!-- Initialization target                                               -->
+  <!-- =================================================================== -->
+  <target name="init" depends="init-avail, init-filters-jdk14, init-filters-jdk13">
+  </target>
+
+  <target name="init-avail">
+    <echo message="------------------- ${Name} ${version} [${year}] ----------------"/>
+    <echo message="See build.properties and build-local.properties for additional build settings"/>
+    <echo message="${ant.version}"/>
+    <echo message="VM: ${java.vm.version}, ${java.vm.vendor}"/>
+    <echo message="JAVA_HOME: ${env.JAVA_HOME}"/>
+
+    <available property="jimi.present" classname="com.sun.jimi.core.Jimi"
+        classpathref="libs-build-classpath"/>
+    <condition property="jimi.message" value="Jimi Support PRESENT">
+      <equals arg1="${jimi.present}" arg2="true"/>
+    </condition>
+    <condition property="jimi.message" value="Jimi Support NOT Present">
+      <not>
+        <equals arg1="${jimi.present}" arg2="true"/>
+      </not>
+    </condition>
+    <echo message="${jimi.message}"/>
+
+    <available property="jai.present" classname="javax.media.jai.JAI"
+        classpathref="libs-build-classpath"/>
+    <condition property="jai.message" value="JAI Support PRESENT">
+      <equals arg1="${jai.present}" arg2="true"/>
+    </condition>
+    <condition property="jai.message" value="JAI Support NOT Present">
+      <not>
+        <equals arg1="${jai.present}" arg2="true"/>
+      </not>
+    </condition>
+    <echo message="${jai.message}"/>
+
+    <available property="jce.present" classname="javax.crypto.Cipher"
+        classpathref="libs-build-classpath"/>
+    <condition property="jce.message" value="JCE Support PRESENT">
+      <equals arg1="${jce.present}" arg2="true"/>
+    </condition>
+    <condition property="jce.message" value="JCE Support NOT Present">
+      <not>
+        <equals arg1="${jce.present}" arg2="true"/>
+      </not>
+    </condition>
+    <echo message="${jce.message}"/>
+
+    <available property="jdk14.present" classname="java.lang.CharSequence"/>
+
+    <available property="junit.present" classname="junit.framework.TestCase"
+        classpathref="libs-build-classpath"/>
+    <condition property="junit.message" value="JUnit Support PRESENT">
+      <equals arg1="${junit.present}" arg2="true"/>
+    </condition>
+    <condition property="junit.message" value="JUnit Support NOT Present - Committers are required to have JUnit working">
+      <not>
+        <equals arg1="${junit.present}" arg2="true"/>
+      </not>
+    </condition>
+    <echo message="${junit.message}"/>
+
+    <condition property="xmlunit.present">
+      <and>
+        <available classname="org.custommonkey.xmlunit.XMLTestCase" classpathref="libs-build-classpath"/>
+        <isset property="junit.present"/>
+      </and>
+    </condition>
+    <condition property="xmlunit.message" value="XMLUnit Support PRESENT">
+      <equals arg1="${xmlunit.present}" arg2="true"/>
+    </condition>
+    <condition property="xmlunit.message" value="XMLUnit Support NOT Present - you can get it from http://xmlunit.sourceforge.net">
+      <not>
+        <equals arg1="${xmlunit.present}" arg2="true"/>
+      </not>
+    </condition>
+    <echo message="${xmlunit.message}"/>
+   
+  </target>
+
+  <target name="init-filters-jdk13" depends="init-avail" unless="jdk14.present">
+    <echo message="Use GraphicsConfiguration adapter for JDK 1.3 or earlier."/>
+    <path id="graphics-configuration-adapter">
+      <pathelement location="src/java-1.3"/>
+    </path>
+  </target>
+
+  <target name="init-filters-jdk14" depends="init-avail" if="jdk14.present">
+    <echo message="Use GraphicsConfiguration adapter for JDK 1.4."/>
+    <path id="graphics-configuration-adapter">
+      <pathelement location="src/java-1.4"/>
+    </path>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Help on usage                                                       -->
+  <!-- =================================================================== -->
+  <target name="usage">
+    <echo message="Use the -projecthelp option instead"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Generate the source code                                            -->
+  <!-- =================================================================== -->
+  <target name="codegen" depends="init" description="Generates the java files from the xml resources">
+    <echo message="Generating the java files from xml resources"/>
+    <mkdir dir="${build.gensrc.dir}"/>
+    <mkdir dir="${build.gensrc.dir}/org/apache/fop/fonts/base14"/>
+
+    <style in="${src.codegen.dir}/encodings.xml"
+           style="${src.codegen.dir}/code-point-mapping.xsl"
+        out="${build.gensrc.dir}/org/apache/fop/fonts/CodePointMapping.java"/>
+    <!-- Task unrolled because of a bug in Xalan included in some
+         JDK 1.4 releases
+    <style basedir="src/codegen" includes="Helvetica*.xml,Times*.xml,Courier*.xml"
+        style="${src.codegen.dir}/font-file.xsl"
+        destdir="${build.gensrc.dir}/org/apache/fop/fonts/base14" extension=".java">
+        <param name="encoding" expression="WinAnsiEncoding"/>
+    </style>
+    -->
+    <style in="${src.codegen.dir}/Courier.xml" style="${src.codegen.dir}/font-file.xsl"
+        out="${build.gensrc.dir}/org/apache/fop/fonts/base14/Courier.java">
+      <param name="encoding" expression="WinAnsiEncoding"/>
+    </style>
+    <style in="${src.codegen.dir}/CourierOblique.xml" style="${src.codegen.dir}/font-file.xsl"
+        out="${build.gensrc.dir}/org/apache/fop/fonts/base14/CourierOblique.java">
+      <param name="encoding" expression="WinAnsiEncoding"/>
+    </style>
+    <style in="${src.codegen.dir}/CourierBold.xml" style="${src.codegen.dir}/font-file.xsl"
+        out="${build.gensrc.dir}/org/apache/fop/fonts/base14/CourierBold.java">
+      <param name="encoding" expression="WinAnsiEncoding"/>
+    </style>
+    <style in="${src.codegen.dir}/CourierBoldOblique.xml" style="${src.codegen.dir}/font-file.xsl"
+        out="${build.gensrc.dir}/org/apache/fop/fonts/base14/CourierBoldOblique.java">
+      <param name="encoding" expression="WinAnsiEncoding"/>
+    </style>
+    <style in="${src.codegen.dir}/Helvetica.xml" style="${src.codegen.dir}/font-file.xsl"
+        destdir="${build.gensrc.dir}/org/apache/fop/fonts/base14"
+        out="${build.gensrc.dir}/org/apache/fop/fonts/base14/Helvetica.java">
+      <param name="encoding" expression="WinAnsiEncoding"/>
+    </style>
+    <style in="${src.codegen.dir}/HelveticaBold.xml" style="${src.codegen.dir}/font-file.xsl"
+        out="${build.gensrc.dir}/org/apache/fop/fonts/base14/HelveticaBold.java">
+      <param name="encoding" expression="WinAnsiEncoding"/>
+    </style>
+    <style in="${src.codegen.dir}/HelveticaOblique.xml" style="${src.codegen.dir}/font-file.xsl"
+        out="${build.gensrc.dir}/org/apache/fop/fonts/base14/HelveticaOblique.java">
+      <param name="encoding" expression="WinAnsiEncoding"/>
+    </style>
+    <style in="${src.codegen.dir}/HelveticaBoldOblique.xml" style="${src.codegen.dir}/font-file.xsl"
+        out="${build.gensrc.dir}/org/apache/fop/fonts/base14/HelveticaBoldOblique.java">
+      <param name="encoding" expression="WinAnsiEncoding"/>
+    </style>
+    <style in="${src.codegen.dir}/TimesRoman.xml" style="${src.codegen.dir}/font-file.xsl"
+        out="${build.gensrc.dir}/org/apache/fop/fonts/base14/TimesRoman.java">
+      <param name="encoding" expression="WinAnsiEncoding"/>
+    </style>
+    <style in="${src.codegen.dir}/TimesItalic.xml" style="${src.codegen.dir}/font-file.xsl"
+        out="${build.gensrc.dir}/org/apache/fop/fonts/base14/TimesItalic.java">
+      <param name="encoding" expression="WinAnsiEncoding"/>
+    </style>
+    <style in="${src.codegen.dir}/TimesBold.xml" style="${src.codegen.dir}/font-file.xsl"
+        out="${build.gensrc.dir}/org/apache/fop/fonts/base14/TimesBold.java">
+      <param name="encoding" expression="WinAnsiEncoding"/>
+    </style>
+    <style in="${src.codegen.dir}/TimesBoldItalic.xml" style="${src.codegen.dir}/font-file.xsl"
+        out="${build.gensrc.dir}/org/apache/fop/fonts/base14/TimesBoldItalic.java">
+      <param name="encoding" expression="WinAnsiEncoding"/>
+    </style>
+    <style in="${src.codegen.dir}/Symbol.xml" style="${src.codegen.dir}/font-file.xsl"
+        out="${build.gensrc.dir}/org/apache/fop/fonts/base14/Symbol.java"/>
+    <style in="${src.codegen.dir}/ZapfDingbats.xml" style="${src.codegen.dir}/font-file.xsl"
+        out="${build.gensrc.dir}/org/apache/fop/fonts/base14/ZapfDingbats.java"/>
+
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Compiles the source directory                                       -->
+  <!-- =================================================================== -->
+  <target name="compile-java" depends="init, codegen" description="Compiles the source code">
+    <!-- create directories -->
+    <mkdir dir="${build.classes.dir}"/>
+    <javac destdir="${build.classes.dir}" fork="${javac.fork}" debug="${javac.debug}"
+           deprecation="${javac.deprecation}" optimize="${javac.optimize}"
+           source="${javac.source}" target="${javac.target}">
+      <src path="${build.gensrc.dir}"/>
+      <src path="${src.java.dir}"/>
+      <src refid="graphics-configuration-adapter"/>
+      <patternset includes="**/*.java"/>
+      <!--patternset includes="org/apache/fop/svg/GraphicsConfiguration.java"/-->
+      <patternset refid="exclude-jce-dependencies"/>
+      <patternset refid="exclude-jai"/>
+      <patternset refid="exclude-jimi"/>
+      <classpath refid="libs-build-classpath"/>
+    </javac>
+    <copy todir="${build.classes.dir}">
+      <fileset dir="${src.java.dir}">
+        <include name="META-INF/**"/>
+        <include name="**/*.icm"/>
+        <include name="**/*.LICENSE.txt"/>
+      </fileset>
+    </copy>
+    <mkdir dir="${build.viewer.resources.dir}"/>
+    <copy todir="${build.viewer.resources.dir}">
+      <fileset dir="${src.viewer.resources.dir}"/>
+    </copy>
+    <mkdir dir="${build.viewer.images.dir}"/>
+    <copy todir="${build.viewer.images.dir}">
+      <fileset dir="${src.viewer.images.dir}"/>
+    </copy>
+
+    <mkdir dir="${build.sandbox-classes.dir}"/>
+    <javac destdir="${build.sandbox-classes.dir}" fork="${javac.fork}" debug="${javac.debug}"
+           deprecation="${javac.deprecation}" optimize="${javac.optimize}"
+           source="${javac.source}" target="${javac.target}">
+      <src path="${src.sandbox.dir}"/>
+      <patternset includes="**/*.java"/>
+      <patternset refid="exclude-jai"/>
+      <classpath>
+        <path refid="libs-build-classpath"/>
+        <pathelement location="${build.classes.dir}"/>
+      </classpath>
+    </javac>
+    <copy todir="${build.sandbox-classes.dir}">
+      <fileset dir="${src.sandbox.dir}">
+        <include name="META-INF/**"/>
+      </fileset>
+    </copy>
+  </target>
+
+
+  <!-- =================================================================== -->
+  <!-- compiles hyphenation patterns                                       -->
+  <!-- =================================================================== -->
+  <target name="compile-hyphenation" depends="compile-java">
+    <path id="hyph-classpath">
+      <path refid="libs-build-classpath"/>
+      <pathelement location="${build.classes.dir}"/>
+    </path>
+    <taskdef name="serHyph" classname="org.apache.fop.tools.anttasks.SerializeHyphPattern" classpathref="hyph-classpath"/>
+    <mkdir dir="${build.classes.dir}/hyph"/>
+    <serHyph targetDir="${build.classes.dir}/hyph">
+      <fileset dir="${user.hyph.dir}">
+        <include name="*.xml"/>
+      </fileset>
+    </serHyph>
+  </target>
+
+  <target name="uptodate-jar-hyphenation" depends="compile-hyphenation">
+    <uptodate property="jar.hyphenation.uptodate" targetfile="${build.dir}/fop-hyph.jar">
+      <srcfiles dir="${build.classes.dir}/hyph"/>
+    </uptodate>
+  </target>
+
+  <target name="jar-hyphenation" depends="compile-hyphenation,uptodate-jar-hyphenation" description="Generates the hyphenation jar file" unless="jar.hyphenation.uptodate">
+    <tstamp>
+      <format property="ts" pattern="yyyyMMdd-HHmmss-z"/>
+    </tstamp>
+    <jar jarfile="${build.dir}/fop-hyph.jar" basedir="${build.classes.dir}" includes="hyph/*.hyp">
+      <manifest>
+        <attribute name="Implementation-Title" value="${Name}"/>
+        <attribute name="Implementation-Version" value="${version}"/>
+        <attribute name="Implementation-Vendor" value="The Apache Software Foundation (http://xmlgraphics.apache.org/fop/)"/>
+        <attribute name="Build-Id" value="${ts} (${user.name} [${os.name} ${os.version} ${os.arch}, Java ${java.runtime.version}])"/>
+      </manifest>
+    </jar>
+  </target>
+
+  <target name="uptodate-jar-main" depends="compile-java">
+    <uptodate property="jar.main.uptodate" targetfile="${build.dir}/fop.jar">
+      <srcfiles dir= "${build.classes.dir}"/>
+    </uptodate>
+  </target>
+
+  <target name="jar-main" depends="compile-java,uptodate-jar-main" description="Generates the main jar file" unless="jar.main.uptodate">
+    <tstamp>
+      <format property="ts" pattern="yyyyMMdd-HHmmss-z"/>
+    </tstamp>
+    
+    <pathconvert property="manifest.classpath" dirsep="/" pathsep=" " refid="libs-build-classpath">
+      <map from="${basedir}${file.separator}lib${file.separator}" to=""/>
+      <map from="${optional.lib.dir}${file.separator}" to=""/>
+    </pathconvert>
+
+    <jar jarfile="${build.dir}/fop.jar" basedir="${build.classes.dir}">
+      <manifest>
+        <attribute name="Main-Class" value="org.apache.fop.cli.Main"/>
+        <attribute name="Class-Path" value="${manifest.classpath}"/>
+        <attribute name="Build-Id" value="${ts} (${user.name} [${os.name} ${os.version} ${os.arch}, Java ${java.runtime.version}])"/>
+        <section name="org/apache/fop/">
+          <attribute name="Specification-Title" value="XSL-FO - Extensible Stylesheet Language"/>
+          <attribute name="Specification-Version" value="1.0"/>
+          <attribute name="Specification-Vendor" value="World Wide Web Consortium"/>
+          <attribute name="Specification-URL" value="http://www.w3.org/TR/xsl"/>
+          <attribute name="Implementation-Title" value="${Name}"/>
+          <attribute name="Implementation-Version" value="${version}"/>
+          <attribute name="Implementation-Vendor" value="The Apache Software Foundation (http://xmlgraphics.apache.org/fop/)"/>
+          <attribute name="Implementation-URL" value="http://xmlgraphics.apache.org/fop/"/>
+        </section>
+      </manifest>
+    </jar>
+  </target>
+
+  <target name="uptodate-jar-sandbox" depends="compile-java">
+    <uptodate property="jar.sandbox.uptodate" targetfile="${build.dir}/fop-sandbox.jar">
+      <srcfiles dir= "${build.sandbox-classes.dir}"/>
+    </uptodate>
+  </target>
+
+  <target name="jar-sandbox" depends="compile-java,uptodate-jar-sandbox" description="Generates the sandbox jar file" unless="jar.sandbox.uptodate">
+    <tstamp>
+      <format property="ts" pattern="yyyyMMdd-HHmmss-z"/>
+    </tstamp>
+    <jar jarfile="${build.dir}/fop-sandbox.jar" basedir="${build.sandbox-classes.dir}">
+      <manifest>
+        <attribute name="Build-Id" value="${ts} (${user.name} [${os.name} ${os.version} ${os.arch}, Java ${java.runtime.version}])"/>
+      </manifest>
+    </jar>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Creates the class package                                           -->
+  <!-- =================================================================== -->
+  <target name="package" depends="jar-main,jar-hyphenation,jar-sandbox" description="Generates the jar files"/>
+  
+  <target name="servlet" depends="package" description="Generates the WAR with the sample FOP servlet">
+    <echo message="Creating the WAR file"/>
+    <war warfile="${build.dir}/fop.war" webxml="${src.dir}/conf/web.xml">
+      <lib dir="${lib.dir}">
+        <include name="avalon-framework*.jar"/>
+        <include name="commons-logging*.jar"/>
+        <include name="batik*.jar"/>
+        <include name="commons-io*.jar"/>
+        <include name="xmlgraphics*.jar"/>
+      </lib>
+      <lib dir="${build.dir}">
+        <include name="fop.jar"/>
+      </lib>
+    </war>
+  </target>
+
+  <patternset id="transcoder-classes">
+    <!-- General classes -->
+    <patternset>
+      <include name="org/apache/fop/Version.class"/>
+      <include name="org/apache/fop/apps/Fop.class"/>
+      <include name="org/apache/fop/apps/FOPException.class"/>
+      <include name="org/apache/fop/fo/Constants.class"/>
+      <include name="org/apache/fop/fo/FOTreeBuilder.class"/>
+      <include name="org/apache/fop/area/AreaTreeControl*"/>
+      <include name="org/apache/fop/svg/**"/>
+      <include name="org/apache/fop/fonts/**"/>
+      <include name="org/apache/fop/image/FopImag*.class"/>
+      <include name="org/apache/fop/image/Jpeg*"/>
+      <include name="org/apache/fop/image/EPS*"/>
+      <include name="org/apache/fop/image/Abstract*"/>
+      <include name="org/apache/fop/image/analyser/*.class"/>
+      <include name="org/apache/fop/util/CMYKColorSpace*.class"/>
+      <include name="org/apache/fop/util/ASCII*.class"/>
+      <include name="org/apache/fop/util/*OutputStream.class"/>
+      <include name="org/apache/fop/util/SubInputStream.class"/>
+      <include name="org/apache/fop/util/Finalizable.class"/>
+    </patternset>
+    <!-- PDF transcoder -->
+    <patternset>
+      <include name="org/apache/fop/render/pdf/**"/>
+      <exclude name="org/apache/fop/render/pdf/PDFRenderer.class"/>
+      <exclude name="org/apache/fop/render/pdf/PDFXMLHandler*"/>
+      <include name="org/apache/fop/pdf/**"/>
+    </patternset>
+    <!-- PS transcoder -->
+    <patternset>
+      <include name="org/apache/fop/render/ps/**"/>
+      <exclude name="org/apache/fop/render/pdf/PSRenderer.class"/>
+      <exclude name="org/apache/fop/render/pdf/PSXMLHandler*"/>
+    </patternset>
+  </patternset>
+
+  <fileset dir="${build.classes.dir}" id="transcoder-classes-files">
+    <patternset refid="transcoder-classes"/>
+  </fileset>
+  
+  <fileset dir="${lib.dir}" id="transcoder-lib-files">
+    <include name="commons-io*.jar"/>
+    <include name="avalon-framework*.jar"/>
+    <include name="commons-logging*.jar"/>
+    <include name="xmlgraphics-commons*.jar"/>
+  </fileset>
+  
+  <target name="uptodate-transcoder-pkg" depends="compile-java">
+    <uptodate property="transcoder.pkg.uptodate" targetfile="${build.dir}/fop-transcoder.jar">
+      <srcfiles refid="transcoder-classes-files"/>
+      <srcfiles refid="transcoder-lib-files"/>
+    </uptodate>
+  </target>
+
+  <target name="transcoder-pkg" depends="uptodate-transcoder-pkg, compile-java" description="Generates the jar for the transcoder package for Batik" unless="transcoder.pkg.uptodate">
+    <echo message="Creating the jar file ${build.dir}/fop-transcoder.jar"/>
+
+    <property name="fop-transcoder.name" value="FOP Transcoder Package"/>
+    <property name="fop-transcoder.version" value="1.0beta2"/>
+    <tstamp>
+      <format property="ts" pattern="yyyyMMdd-HHmmss-z"/>
+    </tstamp>
+
+    <!-- lean transcoder jar -->
+    <jar jarfile="${build.dir}/fop-transcoder.jar">
+      <fileset refid="transcoder-classes-files"/>
+      <manifest>
+        <attribute name="Implementation-Title" value="${fop-transcoder.name}"/>
+        <attribute name="Implementation-Version" value="${fop-transcoder.version}"/>
+        <attribute name="Implementation-Vendor" value="The Apache Software Foundation (http://xmlgraphics.apache.org/fop/)"/>
+        <attribute name="Build-Id" value="${ts} (${user.name} [${os.name} ${os.version} ${os.arch}, Java ${java.runtime.version}])"/>
+      </manifest>
+    </jar>
+
+    <!-- all-in-one transcoder jar -->
+    <property name="transcoder-deps" value="${build.dir}/transcoder-dependencies"/>
+    <mkdir dir="${transcoder-deps}"/>
+    <unjar dest="${transcoder-deps}">
+      <patternset>
+        <include name="org/apache/avalon/framework/*"/>
+        <include name="org/apache/avalon/framework/activity/*"/>
+        <include name="org/apache/avalon/framework/configuration/*"/>
+        <include name="org/apache/avalon/framework/container/*"/>
+        <include name="org/apache/commons/logging/**"/>
+        <include name="org/apache/commons/io/CopyUtils.class"/>
+        <include name="org/apache/commons/io/IOUtils.class"/>
+        <include name="org/apache/commons/io/output/ProxyOutputStream.class"/>
+        <include name="org/apache/commons/io/output/ByteArrayOutputStream.class"/>
+        <include name="org/apache/commons/io/output/CountingOutputStream.class"/>
+        <!-- TODO Remove the following lines once Batik switches over to using XML Graphics Commons -->
+        <include name="org/apache/xmlgraphics/java2d/**"/>
+        <include name="org/apache/xmlgraphics/ps/**"/>
+        <include name="org/apache/xmlgraphics/fonts/**"/>
+        <include name="org/apache/xmlgraphics/util/io/**"/>
+      </patternset>
+      <fileset refid="transcoder-lib-files"/>
+    </unjar>
+    <mkdir dir="${transcoder-deps}/legal"/>
+    <copy todir="${transcoder-deps}/legal">
+      <fileset dir="${lib.dir}">
+        <include name="avalon.LICENSE.txt"/>
+        <include name="commons-io.LICENSE.txt"/>
+        <include name="commons-logging.LICENSE.txt"/>
+      </fileset>
+    </copy>
+    <jar jarfile="${build.dir}/fop-transcoder-allinone.jar">
+      <fileset refid="transcoder-classes-files"/>
+      <fileset dir="${transcoder-deps}"/>
+      <manifest>
+        <attribute name="Implementation-Title" value="${fop-transcoder.name}"/>
+        <attribute name="Implementation-Version" value="${fop-transcoder.version}"/>
+        <attribute name="Implementation-Vendor" value="The Apache Software Foundation (http://xmlgraphics.apache.org/fop/)"/>
+        <attribute name="Build-Id" value="${ts} (${user.name} [${os.name} ${os.version} ${os.arch}, Java ${java.runtime.version}])"/>
+      </manifest>
+    </jar>
+  </target>
+
+  <target name="all" depends="package, servlet, transcoder-pkg, junit"/> <!-- "all" target for us Makefile converts ;-) -->
+
+  <!-- =================================================================== -->
+  <!-- Testing                                                             -->
+  <!-- =================================================================== -->
+  <target name="junit-with-xmlunit" depends="init-avail" if="xmlunit.present">
+    <patternset id="test-sources"/>
+  </target>
+  <target name="junit-without-xmlunit" depends="init-avail" unless="xmlunit.present">
+    <patternset id="test-sources">
+      <exclude name="**/intermediate/*"/>
+    </patternset>
+  </target>
+  <target name="junit-compile" depends="package, transcoder-pkg, junit-with-xmlunit, junit-without-xmlunit" description="Runs FOP's JUnit tests" if="junit.present">
+    <mkdir dir="${build.dir}/test-classes"/>
+    <mkdir dir="${junit.reports.dir}"/>
+    <javac destdir="${build.dir}/test-classes" fork="${javac.fork}"
+           debug="${javac.debug}" deprecation="${javac.deprecation}"
+           optimize="${javac.optimize}" source="${javac.source}"
+           target="${javac.target}">
+      <src path="${basedir}/test/java"/>
+      <patternset refid="test-sources"/>
+      <classpath>
+        <path refid="libs-build-classpath"/>
+        <fileset dir="${build.dir}">
+          <include name="fop.jar"/>
+        </fileset>
+      </classpath>
+    </javac>
+  </target>
+
+  <target name="junit-transcoder" depends="junit-compile" description="Runs FOP's JUnit transcoder tests" if="junit.present">
+    <echo message="Running basic functionality tests for fop-transcoder.jar"/>
+    <junit haltonfailure="${junit.haltonfailure}" fork="${junit.fork}">
+      <sysproperty key="basedir" value="${basedir}"/>
+      <sysproperty key="jawa.awt.headless" value="true"/>
+      <formatter type="brief" usefile="false"/>
+      <formatter type="plain" usefile="true"/>
+      <formatter type="xml" usefile="true"/>
+      <classpath>
+        <pathelement location="${build.dir}/test-classes"/>
+        <path refid="libs-build-classpath"/>
+        <fileset dir="${build.dir}">
+          <include name="fop-transcoder.jar"/>
+        </fileset>
+      </classpath>
+      <test name="org.apache.fop.BasicTranscoderTestSuite" todir="${junit.reports.dir}" outfile="TEST-transcoder"/>
+    </junit>
+    <echo message="Running basic functionality tests for fop-transcoder-allinone.jar"/>
+    <!-- These are the same tests as in the block above but testing the "allinone" JAR
+         instead. Please don't add any additional paths other than the test classes, the
+         allinone JAR and the any Batik JARs to the classpath. If this fails, but the
+         previous test block succeeded it indicates that the packaging of the allinone
+         JAR needs to be updated.
+    -->
+    <junit haltonfailure="${junit.haltonfailure}" fork="${junit.fork}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure">
+      <sysproperty key="basedir" value="${basedir}"/>
+      <sysproperty key="jawa.awt.headless" value="true"/>
+      <formatter type="brief" usefile="false"/>
+      <formatter type="plain" usefile="true"/>
+      <formatter type="xml" usefile="true"/>
+      <classpath>
+        <pathelement location="${build.dir}/test-classes"/>
+        <fileset dir="build">
+          <include name="fop-transcoder-allinone.jar"/>
+        </fileset>
+        <fileset dir="${lib.dir}">
+          <include name="xml-apis*.jar"/>
+          <include name="xerces*.jar"/>
+          <include name="batik*.jar"/>
+        </fileset>
+      </classpath>
+      <test name="org.apache.fop.BasicTranscoderTestSuite" todir="${junit.reports.dir}" outfile="TEST-transcoder-allinone"/>
+    </junit>
+  </target>
+
+  <target name="junit-basic" depends="junit-compile" description="Runs FOP's JUnit basic tests" if="junit.present">
+    <echo message="Running basic functionality tests for fop.jar"/>
+    <junit haltonfailure="${junit.haltonfailure}" fork="${junit.fork}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure">
+      <sysproperty key="basedir" value="${basedir}"/>
+      <sysproperty key="jawa.awt.headless" value="true"/>
+      <formatter type="brief" usefile="false"/>
+      <formatter type="plain" usefile="true"/>
+      <formatter type="xml" usefile="true"/>
+      <classpath>
+        <pathelement location="${build.dir}/test-classes"/>
+        <path refid="libs-build-classpath"/>
+        <fileset dir="build">
+          <include name="fop.jar"/>
+        </fileset>
+      </classpath>
+      <test name="org.apache.fop.StandardTestSuite" todir="${junit.reports.dir}"/>
+    </junit>
+  </target>
+
+  <target name="hyphenation-present" depends="junit-compile" if="junit.present">
+    <condition property="hyphenation.present">
+      <and><!-- All the hyphenation files required by the layout test cases to be listed here -->
+        <available resource="hyph/en.hyp" classpathref="libs-run-classpath"/>
+        <available resource="hyph/de.hyp" classpathref="libs-run-classpath"/>
+      </and>
+    </condition>
+    <condition property="hyphenation.message" value="Hyphenation Support PRESENT">
+      <equals arg1="${hyphenation.present}" arg2="true"/>
+    </condition>
+    <condition property="hyphenation.message" value="Hyphenation Support NOT Present - Layout tests which require hyphenation are NOT being run!">
+      <not>
+        <equals arg1="${hyphenation.present}" arg2="true"/>
+      </not>
+    </condition>
+    <echo message="${hyphenation.message}"/>
+  </target>
+
+  <target name="junit-layout-standard" depends="junit-compile" if="junit.present" description="Runs FOP's standard JUnit layout tests">
+    <echo message="Running standard layout engine tests"/>
+    <junit haltonfailure="${junit.haltonfailure}" fork="${junit.fork}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure">
+      <sysproperty key="basedir" value="${basedir}"/>
+      <sysproperty key="jawa.awt.headless" value="true"/>
+      <sysproperty key="fop.layoutengine.disabled" value="${layoutengine.disabled}"/>
+      <sysproperty key="fop.layoutengine.testset" value="standard"/>
+      <formatter type="brief" usefile="false"/>
+      <formatter type="plain" usefile="true"/>
+      <formatter type="xml" usefile="true"/>
+      <classpath>
+        <pathelement location="${build.dir}/test-classes"/>
+        <path refid="libs-run-classpath"/>
+      </classpath>
+      <test name="org.apache.fop.layoutengine.LayoutEngineTestSuite" todir="${junit.reports.dir}" outfile="TEST-layoutengine-standard"/>
+    </junit>
+  </target>
+
+  <target name="junit-layout-hyphenation" depends="hyphenation-present, junit-compile" if="hyphenation.present" description="Runs FOP's JUnit hyphenation layout tests">
+    <echo message="Running hyphenation layout engine tests"/>
+    <junit haltonfailure="${junit.haltonfailure}" fork="${junit.fork}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure">
+      <sysproperty key="basedir" value="${basedir}"/>
+      <sysproperty key="jawa.awt.headless" value="true"/>
+      <sysproperty key="fop.layoutengine.disabled" value="${layoutengine.disabled}"/>
+      <sysproperty key="fop.layoutengine.testset" value="hyphenation"/>
+      <formatter type="brief" usefile="false"/>
+      <formatter type="plain" usefile="true"/>
+      <formatter type="xml" usefile="true"/>
+      <classpath>
+        <pathelement location="${build.dir}/test-classes"/>
+        <path refid="libs-run-classpath"/>
+      </classpath>
+      <test name="org.apache.fop.layoutengine.LayoutEngineTestSuite" todir="${junit.reports.dir}" outfile="TEST-layoutengine-hyphenation"/>
+    </junit>
+  </target>
+
+  <target name="junit-layout" depends="junit-layout-standard, junit-layout-hyphenation" description="Runs all FOP's JUnit layout tests" />
+  
+  <target name="junit-fotree" depends="junit-compile" description="Runs FOP's FO tree JUnit tests" if="junit.present">
+    <echo message="Running fo tree tests"/>
+    <junit haltonfailure="${junit.haltonfailure}" fork="${junit.fork}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure">
+      <sysproperty key="basedir" value="${basedir}"/>
+      <sysproperty key="jawa.awt.headless" value="true"/>
+      <sysproperty key="fop.layoutengine.disabled" value="${fotree.disabled}"/>
+      <formatter type="brief" usefile="false"/>
+      <formatter type="plain" usefile="true"/>
+      <formatter type="xml" usefile="true"/>
+      <classpath>
+        <pathelement location="${build.dir}/test-classes"/>
+        <path refid="libs-build-classpath"/>
+        <fileset dir="build">
+          <include name="fop.jar"/>
+        </fileset>
+      </classpath>
+      <test name="org.apache.fop.fotreetest.FOTreeTestSuite" todir="${junit.reports.dir}" outfile="TEST-FO-tree"/>
+    </junit>
+  </target>
+
+  <target name="junit-intermediate-format" depends="junit-compile" description="Runs FOP's intermediate format JUnit tests" if="xmlunit.present">
+    <echo message="Running intermediate format tests"/>
+    <junit haltonfailure="${junit.haltonfailure}" fork="${junit.fork}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure">
+      <sysproperty key="basedir" value="${basedir}"/>
+      <sysproperty key="jawa.awt.headless" value="true"/>
+      <sysproperty key="fop.layoutengine.disabled" value="${layoutengine.disabled}"/>
+      <sysproperty key="fop.layoutengine.testset" value="standard"/>
+      <formatter type="brief" usefile="false"/>
+      <formatter type="plain" usefile="true"/>
+      <formatter type="xml" usefile="true"/>
+      <classpath>
+        <pathelement location="${build.dir}/test-classes"/>
+        <path refid="libs-build-classpath"/>
+        <fileset dir="build">
+          <include name="fop.jar"/>
+        </fileset>
+      </classpath>
+      <test name="org.apache.fop.intermediate.IntermediateFormatTestSuite" todir="${junit.reports.dir}" outfile="TEST-intermediate-format"/>
+    </junit>
+  </target>
+
+  <target name="junit" depends="junit-basic, junit-transcoder, junit-layout, junit-fotree, junit-intermediate-format" description="Runs all of FOP's JUnit tests" if="junit.present">
+    <fail>
+      <condition>
+        <or>
+          <isset property="fop.junit.error"/>
+          <isset property="fop.junit.failure"/>
+          <not>
+            <isset property="hyphenation.present"/>
+          </not>
+        </or>
+      </condition>
+NOTE:
+**************************************************************************
+* One or more of the Junit tests had Failures or Errors or were skipped! *
+*         Please check the output above for relevant messages.           *
+*    Or use the "junit-reports" target to generate HTML test reports.    *
+**************************************************************************
+    </fail>
+    <echo>All Junit tests passed!</echo>
+    <echo>Use the "junit-reports" target to generate HTML test reports</echo>
+  </target>
+
+  <!-- haven't made this dependent on "junit" as that would rerun all tests -->
+  <target name="junit-reports" description="Generates HTML test reports">
+    <mkdir dir="${junit.html.reports.dir}"/>
+    <junitreport todir="${junit.reports.dir}">
+      <fileset dir="${junit.reports.dir}">
+        <include name="TEST-*.xml"/>
+      </fileset>
+      <report format="frames" todir="${junit.html.reports.dir}"/>
+    </junitreport>
+    <echo>JUnit HTML test reports should be available in ${junit.html.reports.dir}</echo>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Creates the API documentation                                       -->
+  <!-- =================================================================== -->
+  <target name="javadocs" depends="codegen" description="Generates javadocs">
+    <!--condition property="javadoc.version.ok">
+      <not>
+        <or>
+          <equals arg1="${ant.java.version}" arg2="1.1"/>
+          <equals arg1="${ant.java.version}" arg2="1.2"/>
+          <equals arg1="${ant.java.version}" arg2="1.3"/>
+        </or>
+      </not>
+    </condition>
+    <fail message="Building FOP javadocs requires at least Java 1.4" unless="javadoc.version.ok"/-->
+    <property name="javadoc.public"  value="false"/>
+    <property name="javadoc.package" value="false"/>
+    <property name="javadoc.private" value="false"/>
+    <condition property="javadoc.level" value=" (level: private)">
+      <equals arg1="${javadoc.private}" arg2="true"/>
+    </condition>
+    <condition property="javadoc.level" value=" (level: package)">
+      <equals arg1="${javadoc.package}" arg2="true"/>
+    </condition>
+    <condition property="javadoc.level" value=" (level: public)">
+      <equals arg1="${javadoc.public}" arg2="true"/>
+    </condition>
+    <property name="javadoc.level" value=""/>
+    <echo message="Producing the javadoc files${javadoc.level}"/>
+    <mkdir dir="${build.javadocs.dir}"/>
+
+    <javadoc
+        packagenames="${javadoc.packages}"
+        destdir="${build.javadocs.dir}"
+        author="true"
+        version="true"
+        windowtitle="${Name} ${version} API"
+        doctitle="Apache Formatting Objects Processor (FOP)"
+        bottom="Copyright ${year} The Apache Software Foundation. All Rights Reserved."
+        overview="${src.dir}/java/org/apache/fop/overview.html"
+        use="true"
+        failonerror="true"
+        public="${javadoc.public}"
+        package="${javadoc.package}"
+        private="${javadoc.private}">
+      <header><![CDATA[${name} ${version}]]></header>
+      <footer><![CDATA[${name} ${version}]]></footer>
+      <classpath>
+        <path refid="libs-build-classpath"/>
+        <pathelement path="${java.class.path}"/>
+      </classpath>
+      <sourcepath>
+        <pathelement path="${src.java.dir}"/>
+        <pathelement path="${src.sandbox.dir}"/>
+        <pathelement path="${build.gensrc.dir}"/>
+        <path refid="graphics-configuration-adapter"/>
+      </sourcepath>
+      <tag name="todo" scope="all" description="To do:"/>
+      <group title="Control and Startup">
+        <package name="org.apache.fop"/>
+        <package name="org.apache.fop.apps"/>
+        <package name="org.apache.fop.cli"/>
+        <package name="org.apache.fop.configuration"/>
+        <package name="org.apache.fop.messaging"/>
+        <package name="org.apache.fop.servlet"/>
+      </group>
+      <group title="XSL-FO Tree">
+        <package name="org.apache.fop.fo"/>
+        <package name="org.apache.fop.fo.*"/>
+        <package name="org.apache.fop.datatypes"/>
+        <package name="org.apache.fop.extensions"/>
+      </group>
+      <group title="Layout">
+        <package name="org.apache.fop.layoutmgr"/>
+        <package name="org.apache.fop.layoutmgr.*"/>
+      </group>
+      <group title="Area Tree">
+        <package name="org.apache.fop.area"/>
+        <package name="org.apache.fop.area.*"/>
+        <package name="org.apache.fop.traits"/>
+      </group>
+      <group title="Paginated Rendering">
+        <package name="org.apache.fop.render"/>
+        <package name="org.apache.fop.render.*"/>
+      </group>
+      <group title="Structural Rendering">
+        <package name="org.apache.fop.render.rtf"/>
+        <package name="org.apache.fop.render.mif"/>
+      </group>
+      <group title="Utility">
+        <package name="org.apache.fop.hyphenation"/>
+        <package name="org.apache.fop.pdf"/>
+        <package name="org.apache.fop.tools"/>
+        <package name="org.apache.fop.tools.*"/>
+        <package name="org.apache.fop.svg"/>
+        <package name="org.apache.fop.image"/>
+        <package name="org.apache.fop.image.*"/>
+        <package name="org.apache.fop.fonts"/>
+        <package name="org.apache.fop.fonts.*"/>
+        <package name="org.apache.fop.util"/>
+      </group>
+      <group title="RTFLib (formerly JFor) Subpackage Candidate">
+        <package name="org.apache.fop.render.rtf.rtflib"/>
+        <package name="org.apache.fop.render.rtf.rtflib.*"/>
+      </group>
+    </javadoc>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Checkstyle                                                          -->
+  <!-- =================================================================== -->
+  <property name="checkstyle.home.dir" value="${optional.lib.dir}"/>
+  <property name="checkstyle.noframes.xslt" value="${checkstyle.home.dir}/contrib/checkstyle-noframes.xsl"/>
+
+  <path id="checkstyle-path">
+    <fileset dir="${basedir}/lib">
+      <include name="checkstyle-all-*.jar"/>
+      <include name="checkstyle-*.jar"/>
+      <include name="antlr*.jar"/>
+      <include name="commons-beanutils*.jar"/>
+      <include name="commons-collections*.jar"/>
+      <include name="commons-logging*.jar"/>
+      <include name="jakarta-regexp*.jar"/>      
+    </fileset>
+    <fileset dir="${checkstyle.home.dir}">
+      <include name="checkstyle-all-*.jar"/>
+      <include name="checkstyle-*.jar"/>
+      <include name="antlr*.jar"/>
+      <include name="commons-beanutils*.jar"/>
+      <include name="commons-collections*.jar"/>
+      <include name="commons-logging*.jar"/>
+      <include name="jakarta-regexp*.jar"/>      
+    </fileset>
+    <!--fileset dir="${optional.lib.dir}">
+      <include name="checkstyle-all-*.jar"/>
+      <include name="checkstyle-*.jar"/>
+      <include name="antlr*.jar"/>
+      <include name="commons-beanutils*.jar"/>
+      <include name="commons-collections*.jar"/>
+      <include name="commons-logging*.jar"/>
+      <include name="jakarta-regexp*.jar"/>      
+    </fileset-->
+  </path>
+
+  <path id="checkstyle-runpath">
+    <path refid="checkstyle-path"/>
+    <fileset dir="${basedir}/build">
+      <include name="fop.jar"/>
+      <include name="fop-hyph.jar" />
+    </fileset>
+  </path>
+
+  <target name="checkstyle-avail" depends="init">
+    <available property="checkstyle.available" classname="com.puppycrawl.tools.checkstyle.CheckStyleTask" classpathref="checkstyle-path"/>
+    <available property="checkstyle.4.x" classname="com.puppycrawl.tools.checkstyle.checks.coding.ModifiedControlVariableCheck" classpathref="checkstyle-path"/>
+    <available property="checkstyle.noframes.xslt.available" file="${checkstyle.noframes.xslt}"/>
+    <condition property="checkstyle.message" value="Checkstyle 4.x Support PRESENT">
+      <and>
+        <equals arg1="${checkstyle.available}" arg2="true"/>
+        <equals arg1="${checkstyle.4.x}" arg2="true"/>
+      </and>
+    </condition>
+    <condition property="checkstyle.message" value="Checkstyle 3.x Support PRESENT">
+      <equals arg1="${checkstyle.available}" arg2="true"/>
+    </condition>
+    <condition property="checkstyle.message" value="Checkstyle Support NOT Present">
+      <not>
+        <equals arg1="${checkstyle.available}" arg2="true"/>
+      </not>
+    </condition>
+    <echo message="${checkstyle.message}"/>
+    <condition property="checkstyle.config" value="checkstyle-4.0.xml">
+      <equals arg1="${checkstyle.4.x}" arg2="true"/>
+    </condition>
+    <condition property="checkstyle.config" value="checkstyle-3.5-fop-head.xml">
+      <not>
+        <equals arg1="${checkstyle.4.x}" arg2="true"/>
+      </not>
+    </condition>
+    <condition property="checkstyle.noframes.xslt.message" value="Checkstyle HTML style sheet support PRESENT">
+      <equals arg1="${checkstyle.noframes.xslt.available}" arg2="true"/>
+    </condition>
+    <condition property="checkstyle.noframes.xslt.message" value="Checkstyle HTML style sheet support NOT Present">
+      <not>
+        <equals arg1="${checkstyle.noframes.xslt.available}" arg2="true"/>
+      </not>
+    </condition>
+    <echo message="${checkstyle.noframes.xslt.message}"/>
+  </target>
+
+  <target name="checkstyle-check" depends="checkstyle-avail, codegen" if="checkstyle.available">
+    
+    <taskdef name="checkstyle" classname="com.puppycrawl.tools.checkstyle.CheckStyleTask" classpathref="checkstyle-runpath"/>
+    <checkstyle config="${checkstyle.config}" failonviolation="false"
+                classpathref="checkstyle-runpath">
+      <fileset dir="${src.java.dir}" includes="**/*.java"/>
+      <formatter type="plain" toFile="${build.dir}/checkstyle_report.txt"/>
+      <formatter type="xml" toFile="${build.dir}/checkstyle_report.xml"/>
+    </checkstyle>
+  </target>
+
+  <target name="checkstyle-html" depends="checkstyle-avail, checkstyle-check" if="checkstyle.noframes.xslt.available">
+    <style in="${build.dir}/checkstyle_report.xml" out="${build.dir}/checkstyle_report.html" style="${checkstyle.noframes.xslt}"/>
+  </target>
+
+  <target name="checkstyle" depends="checkstyle-avail, checkstyle-check, checkstyle-html" description="Runs Checkstyle for a code quality report"/>
+
+  <!-- =================================================================== -->
+  <!-- Creates the documentation                                           -->
+  <!-- =================================================================== -->
+  <target name="docs" description="Generates documentation">
+    <echo message="Building documentation with Forrest..."/>
+    <!--
+    <echo message="Make sure that you have installed Apache Forrest and"/>
+    <echo message="the FORREST_HOME environment variable is set (see http://forrest.apache.org/)"/>
+    <echo message="FORREST_HOME = ${forrest.home}"/>
+    -->
+    <echo message="Make sure you have a proper Forrest installation (see http://forrest.apache.org/)"/>
+
+    <!--<antcall target="site"/>-->
+    
+    <!-- You can provide a JDK 1.4 for a JDK 1.3 build by adding "javahome.jdk14" to build-local.properties -->
+    <condition property="javahome.jdk14.override" value="${javahome.jdk14}">
+      <isset property="javahome.jdk14"/>
+    </condition>
+    <echo message="java home: ${javahome.jdk14.override}"/>
+    <condition property="javahome.jdk14.override" value="${env.JAVA_HOME}">
+      <not>
+        <isset property="javahome.jdk14.override"/>
+      </not>
+    </condition>
+    <echo message="java home: ${javahome.jdk14.override}"/>
+    <condition property="forrest.call" value="forrest.bat" else="forrest">
+      <os family="windows"/>
+    </condition>
+    <exec executable="${forrest.call}">
+      <env key="JAVA_HOME" value="${javahome.jdk14.override}"/>
+    </exec>
+  </target>
+  
+  <!-- =================================================================== -->
+  <!-- Creates the distribution                                            -->
+  <!-- =================================================================== -->
+  <target name="dist" depends="dist-src,dist-bin" description="Generates the distribution package"/>
+
+  <target name="dist-bin" depends="all,javadocs,docs">
+    <echo message="Building the binary distribution files (zip,tar)"/>
+    <fail message="A complete binary build requires Jimi" unless="jimi.present"/>
+    <fail message="A complete binary build requires JAI" unless="jai.present"/>
+    <fail message="A complete binary build requires JCE" unless="jce.present"/>
+    <mkdir dir="${dist.bin.result.dir}"/>
+    <copy todir="${dist.bin.result.dir}">
+      <fileset refid="dist.bin"/>
+      <fileset refid="dist.bin.lib"/>
+    </copy>
+    <copy todir="${dist.bin.result.dir}/docs">
+      <fileset dir="${build.dir}/site"/>
+    </copy>
+    <copy todir="${dist.bin.result.dir}/javadocs">
+      <fileset dir="${build.javadocs.dir}"/>
+    </copy>
+    <mkdir dir="${dist.bin.result.dir}/build"/>
+    <copy todir="${dist.bin.result.dir}/build" file="build/fop.jar"/>
+    <chmod file="${dist.bin.result.dir}/fop" perm="ugo+rx"/>
+
+    <property name="bin.suffix" value="bin-jdk${java.specification.version}"/>
+    <zip zipfile="${name}-${version}-${bin.suffix}.zip" basedir="${dist.bin.dir}" includes="**"/>
+    <tar longfile="gnu"
+         destfile="${name}-${version}-${bin.suffix}.tar">
+      <tarfileset dir="${dist.bin.dir}" mode="755">
+        <include name="${name}-${version}/fop"/>
+      </tarfileset>
+      <tarfileset dir="${dist.bin.dir}">
+        <include name="**"/>
+        <exclude name="${name}-${version}/fop"/>
+      </tarfileset>
+    </tar>
+    <gzip zipfile="${name}-${version}-${bin.suffix}.tar.gz" src="${name}-${version}-${bin.suffix}.tar"/>
+    <delete file="${name}-${version}-${bin.suffix}.tar"/>
+  </target>
+
+  <target name="dist-src" depends="all">
+    <echo message="Building the source distribution files (zip,tar)"/>
+    <mkdir dir="${dist.src.result.dir}"/>
+    <copy todir="${dist.src.result.dir}">
+      <fileset refid="dist.src"/>
+    </copy>
+    <chmod file="${dist.src.result.dir}/fop" perm="ugo+rx"/>
+
+    <zip zipfile="${name}-${version}-src.zip" basedir="${dist.src.dir}" includes="**"/>
+    <tar longfile="gnu"
+         destfile="${name}-${version}-src.tar" >
+      <tarfileset dir="${dist.src.dir}" mode="755">
+        <include name="${name}-${version}/fop"/>
+      </tarfileset>
+      <tarfileset dir="${dist.src.dir}">
+        <include name="**"/>
+        <exclude name="${name}-${version}/fop"/>
+      </tarfileset>
+    </tar>
+    <gzip zipfile="${name}-${version}-src.tar.gz" src="${name}-${version}-src.tar"/>
+    <delete file="${name}-${version}-src.tar"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Generate example PDFs                                               -->
+  <!-- =================================================================== -->
+  <target name="examples" depends="package" description="Generates example PDF files">
+    <taskdef name="fop" classname="org.apache.fop.tools.anttasks.Fop"
+             classpathref="libs-run-classpath"/>
+    <mkdir dir="${build.examples.dir}"/>
+    <fop format="${build.property.examples.mime.type}" outdir="${build.examples.dir}"
+         messagelevel="debug" basedir="${fo.examples.dir}" userconfig="${fo.examples.userconfig}"
+         force="${fo.examples.force}">
+      <fileset dir="${fo.examples.dir}">
+        <include name="${fo.examples.include}"/>
+      </fileset>
+    </fop>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Helper task to generate source files that have already been         -->
+  <!-- checked into CVS.  For these files, CVS version is the official one -->
+  <!-- and may have updates that will *not* be generated by below.  This   -->
+  <!-- target should never be part of the normal build process.            -->
+  <!-- =================================================================== -->
+  <target name="xsltToJava" >
+    <style in="src\codegen\constants.xml" style="src\codegen\constants.xsl"
+        out="Constants.java"/>
+    <style in="src/codegen/foelements.xml" style="src/codegen/property-sets.xsl"
+        out="PropertySets.java"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Special target for Gump                                             -->
+  <!-- =================================================================== -->
+  <target name="gump" depends="all, javadocs"/>
+  <!-- =================================================================== -->
+  <!-- Clean targets                                                       -->
+  <!-- =================================================================== -->
+  <target name="clean" description="Cleans the build directory">
+    <delete dir="${build.dir}"/>
+  </target>
+
+  <target name="distclean" depends="clean" description="Cleans the distribution target directories">
+    <delete dir="${dist.src.dir}"/>
+    <delete dir="${dist.bin.dir}"/>
+    <delete>
+      <fileset dir="${basedir}" includes="${name}-*.tar.gz"/>
+      <fileset dir="${basedir}" includes="${name}-*.zip"/>
+    </delete>
+  </target>
+
+  <target name="validate-xdocs" description="Validate the
+xdocs. Point schemas.dir to Forrest's 'schemas' directory.">
+    <property name="schemas.dir" value="../xml-forrest/src/resources/schema"/>
+    <xmlvalidate failonerror="no">
+      <fileset dir="${xdocs.dir}" includes="**.xml"/>
+      <xmlcatalog>
+        <entity publicId="-//APACHE//DTD Compliance V1.0//EN"
+          location="src/documentation/resources/schema/dtd/compliance-v10.dtd"/>
+        <entity publicId="-//APACHE//DTD Documentation V1.1//EN"
+          location="${schemas.dir}/dtd/document-v11.dtd"/>
+        <entity publicId="-//APACHE//DTD Specification V1.1//EN"
+          location="${schemas.dir}/dtd/specification-v11.dtd"/>
+        <entity publicId="-//APACHE//DTD FAQ V1.1//EN"
+          location="${schemas.dir}/dtd/faq-v11.dtd"/>
+        <entity publicId="-//APACHE//DTD Changes V1.1//EN"
+          location="${schemas.dir}/dtd/changes-v11.dtd"/>
+        <entity publicId="-//APACHE//DTD Todo V1.1//EN"
+          location="${schemas.dir}/dtd/todo-v11.dtd"/>
+        <entity publicId="-//APACHE//DTD Cocoon Documentation Book V1.0//EN"
+          location="${schemas.dir}/dtd/book-cocoon-v10.dtd"/>
+        <entity publicId="-//APACHE//DTD Cocoon Documentation Tab V1.0//EN"
+          location="${schemas.dir}/dtd/tab-cocoon-v10.dtd"/>
+        <entity publicId="-//APACHE//DTD How-to V1.0//EN"
+          location="${schemas.dir}/dtd/howto-v10.dtd"/>
+        <entity publicId="-//APACHE//DTD Gump Descriptor V1.0//EN"
+          location="${schemas.dir}/dtd/xgump-draft.dtd"/>
+        <entity publicId="-//APACHE//DTD JavaDoc V1.0//EN"
+          location="${schemas.dir}/dtd/javadoc-v04draft.dtd"/>
+        <entity publicId="-//APACHE//DTD Contributors V1.0//EN"
+          location="${schemas.dir}/dtd/contributors-v10.dtd"/>
+        <entity publicId="-//Outerthought//DTD Libre Configuration V0.1//EN"
+          location="${schemas.dir}/dtd/libre-v01.dtd"/>
+        <entity publicId="-//APACHE//ENTITIES Documentation V1.1//EN"
+          location="${schemas.dir}/dtd/document-v11.mod"/>
+        <entity publicId="-//APACHE//ENTITIES FAQ V1.1//EN"
+          location="${schemas.dir}/dtd/faq-v11.mod"/>
+        <entity publicId="-//APACHE//ENTITIES Todo V1.1//EN"
+          location="${schemas.dir}/dtd/todo-v11.mod"/>
+        <entity publicId="-//APACHE//ENTITIES Common Elements V1.0//EN"
+          location="${schemas.dir}/dtd/common-elems-v10.mod"/>
+        <entity publicId="-//APACHE//ENTITIES Common Character Entity Sets V1.0//EN"
+          location="${schemas.dir}/dtd/common-charents-v10.mod"/>
+
+        <entity publicId="ISO 8879-1986//ENTITIES Added Latin 1//EN//XML"
+          location="${schemas.dir}/entity/ISOlat1.pen"/>
+        <entity publicId="ISO 9573-15:1993//ENTITIES Greek Letters//EN//XML"
+          location="${schemas.dir}/entity/ISOgrk1.pen"/>
+        <entity publicId="ISO 8879:1986//ENTITIES Publishing//EN//XML"
+          location="${schemas.dir}/entity/ISOpub.pen"/>
+        <entity publicId="ISO 8879:1986//ENTITIES General Technical//EN//XML"
+          location="${schemas.dir}/entity/ISOtech.pen"/>
+        <entity publicId="ISO 8879:1986//ENTITIES Numeric and Special Graphic//EN//XML"
+          location="${schemas.dir}/entity/ISOnum.pen"/>
+        <entity publicId="ISO 8879:1986//ENTITIES Diacritical Marks//EN//XML"
+          location="${schemas.dir}/entity/ISOdia.pen"/>
+        <entity publicId="ISO 8879:1986//ENTITIES Added Latin 1//EN//XML"
+          location="${schemas.dir}/entity/ISOlat1.pen"/>
+      </xmlcatalog>
+    </xmlvalidate>
+  </target>
+  
+</project>

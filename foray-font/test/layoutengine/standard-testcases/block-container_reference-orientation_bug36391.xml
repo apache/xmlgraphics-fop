@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks in-flow block-containers with reference orientation.
+      Special case with nested block-containers from Bugzilla #36391.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+          <fo:region-body column-count="2"/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal" white-space-collapse="true">
+        <fo:flow flow-name="xsl-region-body">
+            <fo:block>Reference orientation : 0</fo:block>
+            <fo:block-container border="dotted 1pt" width="90pt" height="60pt">
+                <fo:block-container  border="solid 1pt" width="30pt" reference-orientation="0">
+                    <fo:block>ABC</fo:block>
+                </fo:block-container>
+            </fo:block-container>
+            <fo:block>Reference orientation : 90</fo:block>
+            <fo:block-container border="dotted 1pt" width="90pt" height="60pt">
+                <fo:block-container  border="solid 1pt" width="30pt" reference-orientation="90">
+                    <fo:block>ABC</fo:block>
+                </fo:block-container>
+            </fo:block-container>
+            <fo:block>Reference orientation : -270</fo:block>
+            <fo:block-container border="dotted 1pt" width="90pt" height="60pt">
+                <fo:block-container width="30pt" border="solid 1pt" reference-orientation="-270">
+                    <fo:block>ABC</fo:block>
+                </fo:block-container>
+            </fo:block-container>
+            <fo:block break-before="column">Reference orientation : 180</fo:block>
+            <fo:block-container border="dotted 1pt" width="90pt" height="60pt">
+                <fo:block-container width="30pt" border="solid 1pt" reference-orientation="180">
+                    <fo:block>ABC</fo:block>
+                </fo:block-container>
+            </fo:block-container>
+            <fo:block>Reference orientation : -180</fo:block>
+            <fo:block-container border="dotted 1pt" width="90pt" height="60pt">
+                <fo:block-container width="30pt" border="solid 1pt" reference-orientation="-180">
+                    <fo:block>ABC</fo:block>
+                </fo:block-container>
+            </fo:block-container>
+            <fo:block>Reference orientation : 270</fo:block>
+            <fo:block-container border="dotted 1pt" width="90pt" height="60pt">
+                <fo:block-container width="30pt" border="solid 1pt" reference-orientation="270">
+                    <fo:block>ABC</fo:block>
+                </fo:block-container>
+            </fo:block-container>
+            <fo:block>Reference orientation : -90</fo:block>
+            <fo:block-container border="dotted 1pt" width="90pt" height="60pt">
+                <fo:block-container width="30pt" border="solid 1pt" reference-orientation="-90">
+                    <fo:block>ABC</fo:block>
+                </fo:block-container>
+            </fo:block-container>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <!-- 0 -->
+    <eval expected="[1.0 0.0 0.0 1.0 0.0 1000.0]" xpath="//mainReference/span/flow[1]/block[2]/@ctm"/>
+    <eval expected="[1.0 0.0 0.0 1.0 0.0 1000.0]" xpath="//mainReference/span/flow[1]/block[2]/block[1]/block[1]/@ctm"/>
+    <!-- 90 -->
+    <eval expected="[1.0 0.0 0.0 1.0 0.0 1000.0]" xpath="//mainReference/span/flow[1]/block[4]/@ctm"/>
+    <eval expected="[0.0 -1.0 1.0 0.0 0.0 31000.0]" xpath="//mainReference/span/flow[1]/block[4]/block[1]/block[1]/@ctm"/>
+    <!-- -270 -->
+    <eval expected="[1.0 0.0 0.0 1.0 0.0 1000.0]" xpath="//mainReference/span/flow[1]/block[6]/@ctm"/>
+    <eval expected="[0.0 -1.0 1.0 0.0 0.0 31000.0]" xpath="//mainReference/span/flow[1]/block[6]/block[1]/block[1]/@ctm"/>
+    <!-- 180 -->
+    <eval expected="[1.0 0.0 0.0 1.0 0.0 1000.0]" xpath="//mainReference/span/flow[2]/block[2]/@ctm"/>
+    <!-- The following currently fails since the BCLM doesn't check the effective content BPD.
+         Another problem could probably arise if a BC with this ref-orientation is broken at the page end.
+         I'm pretty sure the element list is wrong in this case. It would need to be reversed I think. -->
+    <eval expected="[-1.0 -0.0 0.0 -1.0 30000.0 14400.0]" xpath="//mainReference/span/flow[2]/block[2]/block[1]/block[1]/@ctm"/>
+    <!-- -180 -->
+    <eval expected="[1.0 0.0 0.0 1.0 0.0 1000.0]" xpath="//mainReference/span/flow[2]/block[4]/@ctm"/>
+    <eval expected="[-1.0 -0.0 0.0 -1.0 30000.0 14400.0]" xpath="//mainReference/span/flow[2]/block[4]/block[1]/block[1]/@ctm"/>
+    <!-- 270 -->
+    <eval expected="[1.0 0.0 0.0 1.0 0.0 1000.0]" xpath="//mainReference/span/flow[2]/block[6]/@ctm"/>
+    <eval expected="[0.0 1.0 -1.0 0.0 90000.0 1000.0]" xpath="//mainReference/span/flow[2]/block[6]/block[1]/block[1]/@ctm"/>
+    <!-- -90 -->
+    <eval expected="[1.0 0.0 0.0 1.0 0.0 1000.0]" xpath="//mainReference/span/flow[2]/block[6]/@ctm"/>
+    <eval expected="[0.0 1.0 -1.0 0.0 90000.0 1000.0]" xpath="//mainReference/span/flow[2]/block[6]/block[1]/block[1]/@ctm"/>
+  </checks>
+</testcase>

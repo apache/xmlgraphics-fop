@@ -1,0 +1,413 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks element generation for various spaces.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal">
+        <fo:flow flow-name="xsl-region-body">
+          <!-- for nbsp see block_white-space_2 and block_white-space_3 -->
+          <fo:block>
+            <fo:block background-color="yellow" id="l-sp">« text text »<fo:inline font-style="italic"> (normal space)</fo:inline></fo:block>
+            <fo:block background-color="orange" id="l-thin-space">«&#x2009;text text&#x2009;»<fo:inline font-style="italic"> (thin space, &amp;#x2009;)</fo:inline></fo:block>
+            <fo:block background-color="yellow" id="l-hair-space">«&#x200A;text text&#x200A;»<fo:inline font-style="italic"> (hair space, &amp;#x200A;)</fo:inline></fo:block>
+            <fo:block background-color="orange" id="l-zwsp">«&#x200B;text text&#x200B;»<fo:inline font-style="italic"> (zero width space, &amp;#x200B;)</fo:inline></fo:block>
+            <fo:block background-color="yellow" id="l-nosp">«text text»<fo:inline font-style="italic"> (no spaces)</fo:inline></fo:block>
+          </fo:block>
+          <fo:block space-before="2mm" text-align="center">
+            <fo:block background-color="yellow" id="c-sp">« text text »<fo:inline font-style="italic"> (normal space)</fo:inline></fo:block>
+            <fo:block background-color="orange" id="c-thin-space">«&#x2009;text text&#x2009;»<fo:inline font-style="italic"> (thin space, &amp;#x2009;)</fo:inline></fo:block>
+            <fo:block background-color="yellow" id="c-hair-space">«&#x200A;text text&#x200A;»<fo:inline font-style="italic"> (hair space, &amp;#x200A;)</fo:inline></fo:block>
+            <fo:block background-color="orange" id="c-zwsp">«&#x200B;text text&#x200B;»<fo:inline font-style="italic"> (zero width space, &amp;#x200B;)</fo:inline></fo:block>
+            <fo:block background-color="yellow" id="c-nosp">«text text»<fo:inline font-style="italic"> (no spaces)</fo:inline></fo:block>
+          </fo:block>
+          <fo:block space-before="2mm" text-align="justify" text-align-last="justify">
+            <fo:block background-color="yellow" id="j-sp">« text text »<fo:inline font-style="italic"> (normal space)</fo:inline></fo:block>
+            <fo:block background-color="orange" id="j-thin-space">«&#x2009;text text&#x2009;»<fo:inline font-style="italic"> (thin space, &amp;#x2009;)</fo:inline></fo:block>
+            <fo:block background-color="yellow" id="j-hair-space">«&#x200A;text text&#x200A;»<fo:inline font-style="italic"> (hair space, &amp;#x200A;)</fo:inline></fo:block>
+            <fo:block background-color="orange" id="j-zwsp">«&#x200B;text text&#x200B;»<fo:inline font-style="italic"> (zero width space, &amp;#x200B;)</fo:inline></fo:block>
+            <fo:block background-color="yellow" id="j-nosp">«text text»<fo:inline font-style="italic"> (no spaces)</fo:inline></fo:block>
+          </fo:block>
+          <fo:block space-before="2mm" text-align="justify" text-align-last="justify" letter-spacing="2pt">
+            <fo:block background-color="yellow" id="lsj-sp">« text text »<fo:inline font-style="italic"> (normal space)</fo:inline></fo:block>
+            <fo:block background-color="orange" id="lsj-thin-space">«&#x2009;text text&#x2009;»<fo:inline font-style="italic"> (thin space, &amp;#x2009;)</fo:inline></fo:block>
+            <fo:block background-color="yellow" id="lsj-hair-space">«&#x200A;text text&#x200A;»<fo:inline font-style="italic"> (hair space, &amp;#x200A;)</fo:inline></fo:block>
+            <fo:block background-color="orange" id="lsj-zwsp">«&#x200B;text text&#x200B;»<fo:inline font-style="italic"> (zero width space, &amp;#x200B;)</fo:inline></fo:block>
+            <fo:block background-color="yellow" id="lsj-nosp">«text text»<fo:inline font-style="italic"> (no spaces)</fo:inline></fo:block>
+          </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <element-list category="line" id="l-sp">
+      <box w="6672"/>
+
+      <!-- first space -->
+      <glue w="0" y="10008" z="0"/>
+      <penalty w="0" p="0"/>
+      <glue w="3336" y="-10008" z="0"/>
+      
+      <box w="19344"/>
+      
+      <!-- second space -->
+      <glue w="0" y="10008" z="0"/>
+      <penalty w="0" p="0"/>
+      <glue w="3336" y="-10008" z="0"/>
+      
+      <box w="19344"/>
+      
+      <!-- third space -->
+      <glue w="0" y="10008" z="0"/>
+      <penalty w="0" p="0"/>
+      <glue w="3336" y="-10008" z="0"/>
+      
+      <box w="6672"/>
+
+      <skip>12</skip>
+    </element-list>
+    <eval expected="62040" xpath="//block[@prod-id='l-sp']/lineArea/text/@ipd"/>
+    <eval expected="word" xpath="local-name(//block[@prod-id='l-sp']/lineArea/text/*[1])"/>
+    <eval expected="space" xpath="local-name(//block[@prod-id='l-sp']/lineArea/text/*[2])"/>
+    <eval expected="word" xpath="local-name(//block[@prod-id='l-sp']/lineArea/text/*[3])"/>
+    <eval expected="space" xpath="local-name(//block[@prod-id='l-sp']/lineArea/text/*[4])"/>
+    <eval expected="word" xpath="local-name(//block[@prod-id='l-sp']/lineArea/text/*[5])"/>
+    <eval expected="space" xpath="local-name(//block[@prod-id='l-sp']/lineArea/text/*[6])"/>
+    <eval expected="word" xpath="local-name(//block[@prod-id='l-sp']/lineArea/text/*[7])"/>
+    <true xpath="not(//block[@prod-id='l-sp']/lineArea/text/*[2]/@adj = 'false')"/>
+    <true xpath="not(//block[@prod-id='l-sp']/lineArea/text/*[6]/@adj = 'false')"/>
+
+    <element-list category="line" id="l-thin-space">
+      <box w="6672"/>
+
+      <!-- first space -->
+      <glue w="0" y="10008" z="0"/>
+      <penalty w="0" p="0"/>
+      <glue w="2400" y="-10008" z="0"/>
+      
+      <box w="19344"/>
+      
+      <!-- second space -->
+      <glue w="0" y="10008" z="0"/>
+      <penalty w="0" p="0"/>
+      <glue w="3336" y="-10008" z="0"/>
+      
+      <box w="19344"/>
+      
+      <!-- third space -->
+      <glue w="0" y="10008" z="0"/>
+      <penalty w="0" p="0"/>
+      <glue w="2400" y="-10008" z="0"/>
+      
+      <box w="6672"/>
+
+      <skip>16</skip>
+    </element-list>
+    <eval expected="60168" xpath="//block[@prod-id='l-thin-space']/lineArea/text/@ipd"/>
+    <eval expected="word" xpath="local-name(//block[@prod-id='l-thin-space']/lineArea/text/*[1])"/>
+    <eval expected="space" xpath="local-name(//block[@prod-id='l-thin-space']/lineArea/text/*[2])"/>
+    <eval expected="word" xpath="local-name(//block[@prod-id='l-thin-space']/lineArea/text/*[3])"/>
+    <eval expected="space" xpath="local-name(//block[@prod-id='l-thin-space']/lineArea/text/*[4])"/>
+    <eval expected="word" xpath="local-name(//block[@prod-id='l-thin-space']/lineArea/text/*[5])"/>
+    <eval expected="space" xpath="local-name(//block[@prod-id='l-thin-space']/lineArea/text/*[6])"/>
+    <eval expected="word" xpath="local-name(//block[@prod-id='l-thin-space']/lineArea/text/*[7])"/>
+    <true xpath="//block[@prod-id='l-thin-space']/lineArea/text/*[2]/@adj = 'false'"/>
+    <true xpath="//block[@prod-id='l-thin-space']/lineArea/text/*[6]/@adj = 'false'"/>
+
+    <element-list category="line" id="l-hair-space">
+      <box w="6672"/>
+
+      <!-- first space -->
+      <glue w="0" y="10008" z="0"/>
+      <penalty w="0" p="0"/>
+      <glue w="1200" y="-10008" z="0"/>
+      
+      <box w="19344"/>
+      
+      <!-- second space -->
+      <glue w="0" y="10008" z="0"/>
+      <penalty w="0" p="0"/>
+      <glue w="3336" y="-10008" z="0"/>
+      
+      <box w="19344"/>
+      
+      <!-- third space -->
+      <glue w="0" y="10008" z="0"/>
+      <penalty w="0" p="0"/>
+      <glue w="1200" y="-10008" z="0"/>
+      
+      <box w="6672"/>
+
+      <skip>16</skip>
+    </element-list>
+    <eval expected="57768" xpath="//block[@prod-id='l-hair-space']/lineArea/text/@ipd"/>
+    <true xpath="//block[@prod-id='l-hair-space']/lineArea/text/*[2]/@adj = 'false'"/>
+    <true xpath="//block[@prod-id='l-hair-space']/lineArea/text/*[6]/@adj = 'false'"/>
+
+    <element-list category="line" id="l-zwsp">
+      <box w="6672"/>
+
+      <!-- first space -->
+      <glue w="0" y="10008" z="0"/>
+      <penalty w="0" p="0"/>
+      <glue w="0" y="-10008" z="0"/>
+      
+      <box w="19344"/>
+      
+      <!-- second space -->
+      <glue w="0" y="10008" z="0"/>
+      <penalty w="0" p="0"/>
+      <glue w="3336" y="-10008" z="0"/>
+      
+      <box w="19344"/>
+      
+      <!-- third space -->
+      <glue w="0" y="10008" z="0"/>
+      <penalty w="0" p="0"/>
+      <glue w="0" y="-10008" z="0"/>
+      
+      <box w="6672"/>
+
+      <skip>20</skip>
+    </element-list>
+    <eval expected="55368" xpath="//block[@prod-id='l-zwsp']/lineArea/text/@ipd"/>
+    <true xpath="//block[@prod-id='l-zwsp']/lineArea/text/*[2]/@adj = 'false'"/>
+    <true xpath="//block[@prod-id='l-zwsp']/lineArea/text/*[6]/@adj = 'false'"/>
+
+    <element-list category="line" id="l-nosp">
+      <box w="26016"/>
+      
+      <glue w="0" y="10008" z="0"/>
+      <penalty w="0" p="0"/>
+      <glue w="3336" y="-10008" z="0"/>
+      
+      <box w="26016"/>
+
+      <skip>12</skip>
+    </element-list>
+    <eval expected="55368" xpath="//block[@prod-id='l-nosp']/lineArea/text/@ipd"/>
+
+    <element-list category="line" id="c-thin-space">
+      <glue w="0" y="10008" z="0"/>
+
+      <box w="6672"/>
+
+      <!-- first space -->
+      <glue w="0" y="10008" z="0"/>
+      <penalty w="0" p="0"/>
+      <glue w="2400" y="-20016" z="0"/>
+      <box w="0"/>
+      <penalty w="0" p="INF"/>
+      <glue w="0" y="10008" z="0"/>
+      
+      <box w="19344"/>
+      
+      <!-- second space -->
+      <glue w="0" y="10008" z="0"/>
+      <penalty w="0" p="0"/>
+      <glue w="3336" y="-20016" z="0"/>
+      <box w="0"/>
+      <penalty w="0" p="INF"/>
+      <glue w="0" y="10008" z="0"/>
+      
+      <box w="19344"/>
+      
+      <!-- third space -->
+      <glue w="0" y="10008" z="0"/>
+      <penalty w="0" p="0"/>
+      <glue w="2400" y="-20016" z="0"/>
+      <box w="0"/>
+      <penalty w="0" p="INF"/>
+      <glue w="0" y="10008" z="0"/>
+      
+      <box w="6672"/>
+
+      <skip>24</skip>
+    </element-list>
+    <eval expected="60168" xpath="//block[@prod-id='c-thin-space']/lineArea/text/@ipd"/>
+    <eval expected="word" xpath="local-name(//block[@prod-id='c-thin-space']/lineArea/text/*[1])"/>
+    <eval expected="space" xpath="local-name(//block[@prod-id='c-thin-space']/lineArea/text/*[2])"/>
+    <eval expected="word" xpath="local-name(//block[@prod-id='c-thin-space']/lineArea/text/*[3])"/>
+    <eval expected="space" xpath="local-name(//block[@prod-id='c-thin-space']/lineArea/text/*[4])"/>
+    <eval expected="word" xpath="local-name(//block[@prod-id='c-thin-space']/lineArea/text/*[5])"/>
+    <eval expected="space" xpath="local-name(//block[@prod-id='c-thin-space']/lineArea/text/*[6])"/>
+    <eval expected="word" xpath="local-name(//block[@prod-id='c-thin-space']/lineArea/text/*[7])"/>
+    <true xpath="//block[@prod-id='c-thin-space']/lineArea/text/*[2]/@adj = 'false'"/>
+    <true xpath="//block[@prod-id='c-thin-space']/lineArea/text/*[6]/@adj = 'false'"/>
+
+    <element-list category="line" id="j-sp">
+      <box w="6672"/>
+
+      <!-- first space -->
+      <glue w="3336" y="1668" z="1112"/>
+      
+      <box w="19344"/>
+      
+      <!-- second space -->
+      <glue w="3336" y="1668" z="1112"/>
+      
+      <box w="19344"/>
+      
+      <!-- third space -->
+      <glue w="3336" y="1668" z="1112"/>
+      
+      <box w="6672"/>
+
+      <skip>6</skip>
+    </element-list>
+    <eval expected="190804" xpath="//block[@prod-id='j-sp']/lineArea/text/@ipd"/>
+    <eval expected="42921" xpath="//block[@prod-id='j-sp']/lineArea/text/@twsadjust"/>
+
+    <element-list category="line" id="j-thin-space">
+      <box w="6672"/>
+
+      <!-- first space -->
+      <glue w="2400" y="0" z="0"/>
+      
+      <box w="19344"/>
+      
+      <!-- second space -->
+      <glue w="3336" y="1668" z="1112"/>
+      
+      <box w="19344"/>
+      
+      <!-- third space -->
+      <glue w="2400" y="0" z="0"/>
+      
+      <box w="6672"/>
+
+      <skip>8</skip>
+    </element-list>
+    <eval expected="104277" xpath="//block[@prod-id='j-thin-space']/lineArea/text/@ipd"/>
+    <eval expected="44109" xpath="//block[@prod-id='j-thin-space']/lineArea/text/@twsadjust"/>
+    <true xpath="//block[@prod-id='j-thin-space']/lineArea/text/*[2]/@adj = 'false'"/>
+    <true xpath="//block[@prod-id='j-thin-space']/lineArea/text/*[6]/@adj = 'false'"/>
+
+    <element-list category="line" id="j-zwsp">
+      <box w="6672"/>
+
+      <!-- first space -->
+      <glue w="0" y="0" z="0"/>
+      
+      <box w="19344"/>
+      
+      <!-- second space -->
+      <glue w="3336" y="1668" z="1112"/>
+      
+      <box w="19344"/>
+      
+      <!-- third space -->
+      <glue w="0" y="0" z="0"/>
+      
+      <box w="6672"/>
+
+      <skip>10</skip>
+    </element-list>
+    <eval expected="84280" xpath="//block[@prod-id='j-zwsp']/lineArea/text/@ipd"/>
+    <eval expected="28912" xpath="//block[@prod-id='j-zwsp']/lineArea/text/@twsadjust"/>
+    <true xpath="//block[@prod-id='j-zwsp']/lineArea/text/*[2]/@adj = 'false'"/>
+    <true xpath="//block[@prod-id='j-zwsp']/lineArea/text/*[6]/@adj = 'false'"/>
+
+    <element-list category="line" id="lsj-sp">
+      <box w="6672"/>
+
+      <!-- first space -->
+      <glue w="7336" y="1668" z="1112"/>
+      
+      <box w="25344"/>
+      
+      <!-- second space -->
+      <glue w="7336" y="1668" z="1112"/>
+      
+      <box w="25344"/>
+      
+      <!-- third space -->
+      <glue w="7336" y="1668" z="1112"/>
+      
+      <box w="6672"/>
+
+      <skip>6</skip>
+    </element-list>
+    <eval expected="182404" xpath="//block[@prod-id='lsj-sp']/lineArea/text/@ipd"/>
+    <eval expected="32121" xpath="//block[@prod-id='lsj-sp']/lineArea/text/@twsadjust"/>
+    <eval expected="2000" xpath="//block[@prod-id='lsj-sp']/lineArea/text/@tlsadjust"/>
+
+    <element-list category="line" id="lsj-thin-space">
+      <box w="6672"/>
+
+      <!-- first space -->
+      <glue w="2400" y="0" z="0"/>
+      
+      <box w="25344"/>
+      
+      <!-- second space -->
+      <glue w="7336" y="1668" z="1112"/>
+      
+      <box w="25344"/>
+      
+      <!-- third space -->
+      <glue w="2400" y="0" z="0"/>
+      
+      <box w="6672"/>
+
+      <skip>8</skip>
+    </element-list>
+    <eval expected="104777" xpath="//block[@prod-id='lsj-thin-space']/lineArea/text/@ipd"/>
+    <eval expected="28609" xpath="//block[@prod-id='lsj-thin-space']/lineArea/text/@twsadjust"/>
+    <eval expected="2000" xpath="//block[@prod-id='lsj-thin-space']/lineArea/text/@tlsadjust"/>
+    <true xpath="//block[@prod-id='lsj-thin-space']/lineArea/text/*[2]/@adj = 'false'"/>
+    <true xpath="//block[@prod-id='lsj-thin-space']/lineArea/text/*[6]/@adj = 'false'"/>
+
+    <element-list category="line" id="lsj-zwsp">
+      <box w="6672"/>
+
+      <!-- first space -->
+      <glue w="0" y="0" z="0"/>
+      
+      <box w="25344"/>
+      
+      <!-- second space -->
+      <glue w="7336" y="1668" z="1112"/>
+      
+      <box w="25344"/>
+      
+      <!-- third space -->
+      <glue w="0" y="0" z="0"/>
+      
+      <box w="6672"/>
+
+      <skip>10</skip>
+    </element-list>
+    <eval expected="85480" xpath="//block[@prod-id='lsj-zwsp']/lineArea/text/@ipd"/>
+    <eval expected="14112" xpath="//block[@prod-id='lsj-zwsp']/lineArea/text/@twsadjust"/>
+    <eval expected="2000" xpath="//block[@prod-id='lsj-zwsp']/lineArea/text/@tlsadjust"/>
+    <true xpath="//block[@prod-id='lsj-zwsp']/lineArea/text/*[2]/@adj = 'false'"/>
+    <true xpath="//block[@prod-id='lsj-zwsp']/lineArea/text/*[6]/@adj = 'false'"/>
+
+  </checks>
+</testcase>

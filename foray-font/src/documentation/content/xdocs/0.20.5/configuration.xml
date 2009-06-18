@@ -1,0 +1,105 @@
+<?xml version="1.0" standalone="no"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
+    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/core/context/resources/schema/dtd/document-v12.dtd">
+
+<document>
+  <header>
+    <title>FOP: Configuration</title>
+    <version>$Revision$</version>
+  </header>
+
+  <body>
+  <section id="general">
+    <title>Configuration File Basics</title>
+    <p>The FOP configuration file is an XML file containing a variety of settings that are useful for controlling FOP's behavior, and for helping it find resources that you wish it to use.</p>
+    <p>The easiest way to get started using a FOP configuration file is to copy the sample found at <code>{fop-dir}/conf/userconfig.xml</code> to a location of your choice, and then to edit it according to your needs.
+It contains templates for the various configuration options, most of which are commented out. Remove the comments and change the settings for entries that you wish to use.
+Be sure to follow any instructions, including comments which specify the value range.
+Also, since the configuration file is XML, be sure to keep it well-formed.</p>
+    <note>Do <strong>not</strong> change <code>{fop-dir}/conf/config.xml</code> or use it as the basis for your configuration file. It has an entirely different purpose.</note>
+    <section id="general-entries">
+      <title>Creating Entries</title>
+      <p>The general structure of the configuration file is a series of &lt;entry> tags, each containing a &lt;key> and a &lt;value>. (Fonts use a different format). Here is an example:</p>
+      <source><![CDATA[<entry>
+  <key>strokeSVGText</key>
+  <value>false</value>
+</entry>]]></source>
+    </section>
+    <section id="general-available">
+      <title>Making Configuration Available to FOP</title>
+      <p>After creating your configuration file, you must tell FOP how to find it:</p>
+      <ul>
+        <li>If running FOP from the command-line, see the "-c" command-line option in <link href="running.html">Running FOP</link>.</li>
+        <li>If running FOP as an embedded application, see <link href="embedding.html#config-external">FOP: Embedding, Using a Configuration File</link>.</li>
+      </ul>
+      <p>See <link href="embedding.html#config-internal">Setting the Configuration Programmatically</link> for instructions on how to do so in an embedded environment.</p>
+    </section>
+  </section>
+  <section id="summary-key-value">
+    <title>Summary of Key-Value Configuration Options</title>
+    <table>
+      <tr>
+        <th>Option (key)</th>
+        <th>Data Type (for the value)</th>
+        <th>Default Value</th>
+      </tr>
+      <tr>
+        <td>baseDir</td>
+        <td>URL</td>
+        <td>For command-line, the directory containing the input FO or XML file. For embedded, the current working directory.</td>
+      </tr>
+      <tr>
+        <td>fontBaseDir</td>
+        <td>URL</td>
+        <td>value of baseDir</td>
+      </tr>
+      <tr>
+        <td><link href="#hyphenation-dir">hyphenation-dir</link></td>
+        <td>URL</td>
+        <td>None. This is for custom hyphenation patterns.</td>
+      </tr>
+      <tr>
+        <td><link href="#svg-strokeSVGText">strokeSVGText</link></td>
+        <td>Boolean</td>
+        <td>True</td>
+      </tr>
+    </table>
+  </section>
+  <section id="detail-key-value">
+    <title>Detail for Key-Value Configuration Options</title>
+    <p>The sections below provide detailed information for configuration options that are not self-explanatory. The parenthetical information after each key name indicates (Data Type, Default).</p>
+    <section id="hyphenation-dir">
+      <title>hyphenation-dir (URL, none)</title>
+      <p>Use this entry to indicate a directory containing custom hyphenation files (if any).
+See <link href="hyphenation.html">FOP: Hyphenation</link> for more information on creating and modifying hyphenation within FOP.</p>
+    </section>
+    <section id="strokeSVGText">
+      <title>strokeSVGText (boolean, True)</title>
+      <p>In some cases, some text in SVG documents is converted to graphical shapes instead of retaining its character as text. To force all text to be rendered as text, set strokeSVGText = false. For a discussion of this issue, see <link href="graphics.html#svg-pdf-text">FOP: Graphics, Placing SVG Text into PDF</link>.</p>
+      <note>strokeSVGText is currently only effective in the PDF renderer.</note>
+    </section>
+  </section>
+  <section id="fonts">
+    <title>Fonts</title>
+    <p>Font configuration information is included in the FOP configuration file, but is documented at <link href="fonts.html">FOP: Fonts</link>. Note especially the section entitled <link href="fonts.html#register">Register Fonts with FOP</link>.</p>
+  </section>
+  </body>
+</document>
+

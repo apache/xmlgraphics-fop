@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<!DOCTYPE tabs PUBLIC "-//APACHE//DTD Cocoon Documentation Tab V1.0//EN"
+    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/core/context/resources/schema/dtd/tab-cocoon-v10.dtd">
+    
+<tabs software="FOP" title="FOP" copyright="@year@ The Apache Software Foundation" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <tab label="Home" dir=""/>
+  <tab label="Version 0.20.5" dir="0.20.5/"/>
+  <tab label="Version 0.92 beta" dir="0.92/"/>
+  <tab label="FOP Trunk" dir="trunk/"/>
+  <tab label="Development" dir="dev/"/>
+  <!--
+  <tab label="Design" dir="design/"/>
+  -->
+  <!--
+  <tab label="Alt Design" dir="design/alt.design/"/>
+  -->
+</tabs>

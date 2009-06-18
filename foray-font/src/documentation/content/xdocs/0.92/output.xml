@@ -1,0 +1,401 @@
+<?xml version="1.0" standalone="no"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
+<!-- Output Formats: Renderers -->
+<document>
+  <header>
+    <title>Apache FOP Output Formats</title>
+    <version>$Revision$</version>
+    <authors>
+      <person name="Keiron Liddle" email="keiron@aftexsw.com"/>
+      <person name="Art Welch" email=""/>
+    </authors>
+  </header>
+
+  <body>
+    <p>
+      FOP supports multiple output formats by using a different renderer for each format.
+      The renderers do not all have the same set of capabilities, sometimes because of 
+      the output format itself, sometimes because some renderers get more development 
+      attention than others.
+    </p>
+    <section id="general">
+      <title>General Information</title>
+      <section id="general-fonts">
+        <title>Fonts</title>
+        <p>
+          Most FOP renderers use a FOP-specific system for font registration.
+          However, the Java2D/AWT and print renderers use the Java AWT package, which gets its 
+          font information from the operating system registration.
+          This can result in several differences, including actually using different fonts, 
+          and having different font metrics for the same font.
+          The net effect is that the layout of a given FO document can be quite different between 
+          renderers that do not use the same font information.
+        </p>
+      </section>
+      <section id="general-direct-output">
+        <title>Output to a Printer or Other Device</title>
+        <p>
+          The most obvious way to print your document is to use the FOP 
+          <a href="#print">print renderer</a>, which uses the Java2D API (AWT).
+          However, you can also send output from the Postscript renderer directly to a Postscript 
+          device, or output from the PCL renderer directly to a PCL device.
+        </p>
+        <p>
+          Here are Windows command-line examples for Postscript and PCL:
+        </p>
+        <source><![CDATA[fop ... -ps \\computername\printer]]></source>
+        <source><![CDATA[fop ... -pcl \\computername\printer]]></source>
+        <p>
+          Here is some Java code to accomplish the task in UNIX:
+        </p>
+        <source><![CDATA[proc = Runtime.getRuntime().exec("lp -d" + print_queue + " -o -dp -");
+out = proc.getOutputStream();]]></source>
+        <p>
+          Set the output MIME type to "application/x-pcl" (MimeConstants.MIME_PCL) and 
+          it happily sends the PCL to the UNIX printer queue.
+        </p>
+      </section>
+    </section>
+    <section id="pdf">
+      <title>PDF</title>
+      <p>
+        PDF is the best supported output format. It is also the most accurate
+        with text and layout. This creates a PDF document that is streamed out
+        as each page is rendered. This means that the internal page index
+        information is stored near the end of the document.
+        The PDF version supported is 1.4. PDF versions are forwards/backwards
+        compatible.
+      </p>
+      <p>
+        Note that FOP does not currently support "tagged PDF", PDF/X or PDF/A-1a. 
+        <a href="pdfa.html">Support for PDF/A-1b</a> has recently been added, however.
+      </p>
+      <section id="pdf-fonts">
+        <title>Fonts</title>
+        <p>
+          PDF has a set of fonts that are always available to all PDF viewers;
+          to quote from the PDF Specification:
+
+          <em>"PDF prescribes a set of 14 standard fonts that can be used without prior
+          definition.
+          These include four faces each of three Latin text typefaces (Courier,
+          Helvetica, and Times), as well as two symbolic fonts (Symbol and ITC Zapf
+          Dingbats). These fonts, or suitable substitute fonts with the same metrics, are
+          guaranteed to be available in all PDF viewer applications."</em>
+        </p>
+      </section>
+      <section id="pdf-postprocess">
+        <title>Post-processing</title>
+        <p>
+          FOP does not currently support several desirable PDF features: XMP metadata and watermarks. 
+          One workaround is to use Adobe Acrobat (the full version, not the Reader) to process 
+          the file manually or with scripting that it supports.
+        </p>
+        <p>
+          Another popular post-processing tool is <a href="http://www.lowagie.com/iText">iText</a>, 
+          which has tools for adding security features, document properties, watermarks, and many 
+          other features to PDF files.
+        </p>
+        <warning>
+          Caveat: iText may swallow PDF bookmarks. But 
+          <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=37589">Jens Stavnstrup tells us</a>
+          that this doesn't happen if you use iText's PDFStamper.
+        </warning>
+        <p>
+          Here is some sample code that uses iText to encrypt a FOP-generated PDF. (Note that FOP now 
+          supports <a href="pdfencryption.html">PDF encryption</a>. However the principles for using 
+          iText for other PDF features are similar.)
+        </p>
+        <source><![CDATA[public static void main(String args[]) {
+  try {
+    ByteArrayOutputStream fopout = new ByteArrayOutputStream();
+    FileOutputStream outfile = new FileOutputStream(args[2]);
+    FopFactory fopFactory = FopFactory.newInstance();
+    Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, fopout);
+    
+    Transformer transformer = TransformerFactory.newInstance().newTransformer(
+        new StreamSource(new File(args[1])));
+    transformer.transform(new StreamSource(new File(args[0])),
+        new SAXResult(fop.getDefaultHandler()));
+    PdfReader reader = new PdfReader(fopout.toByteArray());
+    int n = reader.getNumberOfPages();
+    Document document = new Document(reader.getPageSizeWithRotation(1));
+    PdfWriter writer = PdfWriter.getInstance(document, outfile);
+    writer.setEncryption(PdfWriter.STRENGTH40BITS, "pdf", null,
+      PdfWriter.AllowCopy);
+    document.open();
+    PdfContentByte cb = writer.getDirectContent();
+    PdfImportedPage page;
+    int rotation;
+    int i = 0;
+    while (i < n) {
+      i++;
+      document.setPageSize(reader.getPageSizeWithRotation(i));
+      document.newPage();
+      page = writer.getImportedPage(reader, i);
+      rotation = reader.getPageRotation(i);
+      if (rotation == 90 || rotation == 270) {
+        cb.addTemplate(page, 0, -1f, 1f, 0, 0,
+        reader.getPageSizeWithRotation(i).height());
+      } else {
+        cb.addTemplate(page, 1f, 0, 0, 1f, 0, 0);
+      }
+      System.out.println("Processed page " + i);
+    }
+    document.close();
+  } catch( Exception e) {
+    e.printStackTrace();
+  }
+}]]></source>
+    <p>
+      Check the iText tutorial and documentation for setting access flags, password, 
+      encryption strength and other parameters.
+    </p>
+  </section>
+  <section id="pdf-watermark">
+    <title>Watermarks</title>
+    <p>
+      In addition to the <a href="#pdf-postprocess">PDF Post-processing</a> options, consider the following workarounds:
+    </p>
+    <ul>
+      <li>
+        Use a background image for the body region.
+      </li>
+      <li>
+        (submitted by Trevor Campbell) Place an image in a
+        region that overlaps the flowing text. For example, make
+        region-before large enough to contain your image. Then include a
+        block (if necessary, use an absolutely positioned block-container)
+        containing the watermark image in the static-content for the
+        region-before. Note that the image will be drawn on top of the
+        normal content.
+      </li>
+    </ul>
+  </section>
+</section>
+<section id="ps">
+  <title>PostScript</title>
+  <p>
+    The PostScript renderer has been brought up to a similar quality as the 
+    PDF renderer, but may still be missing certain features. It provides good 
+    support for most text and layout.
+    Images and SVG are not fully supported, yet. Currently, the PostScript
+    renderer generates PostScript Level 3 with most DSC comments. Actually,
+    the only Level 3 feature used is FlateDecode, everything else is Level 2.
+  </p>
+  <section id="ps-limitations">
+    <title>Limitations</title>
+    <ul>
+      <li>Images and SVG may not be displayed correctly. SVG support is far from being complete. No image transparency is available.</li>
+      <li>Only Type 1 fonts are supported.</li>
+      <li>Multibyte characters are not supported.</li>
+      <li>PPD support is still missing.</li>
+    </ul>
+  </section>
+</section>
+<section id="rtf">
+  <title>RTF</title>
+  <p>
+    JFOR, an open source XSL-FO to RTF converter has been integrated into Apache FOP.
+    This will create an RTF (rich text format) document that will
+    attempt to contain as much information from the fo document as
+    possible. The RTF output follows Microsoft's RTF specifications
+    and produces best results on Microsoft Word.
+  </p>
+</section>
+<section id="xml">
+  <title>XML (Area Tree XML)</title>
+  <p>
+    This is primarily for testing and verification. The XML created is simply
+    a representation of the internal area tree put into XML. We use that to verify
+    the functionality of FOP's layout engine.
+  </p>
+  <p>
+    The other use case of the Area Tree XML is as FOP's "intermediate format". More information
+    on that can be found on the page dedicated to the <a href="intermediate.html">Intermediate Format</a>.
+  </p>
+</section>
+<section id="awt">
+  <title>Java2D/AWT</title>
+    <warning>The Java2D/AWT, Print and Bitmap renderers may not yet fully work as expected. There are some known bugs and missing features.</warning>
+    <p>
+      The AWT viewer shows a window with the pages displayed inside a
+      Java graphic. It displays one page at a time.
+      The fonts used for the formatting and viewing depend on the fonts
+      available to your JRE.
+    </p>
+</section>
+<section id="print">
+  <title>Print</title>
+  <p>
+    It is possible to directly print the document from the command line.
+    This is done with the same code that renders to the Java2D/AWT renderer.
+  </p>
+</section>
+<section id="bitmap">
+  <title>Bitmap (TIFF/PNG)</title>
+  <p>
+    It is possible to directly create bitmap images from the individual 
+    pages generated by the layout engine.
+    This is done with the same code that renders to the Java2D/AWT renderer.
+  </p>
+  <p>
+    Currently, two output formats are supported: PNG and TIFF. TIFF produces
+    one file with multiple pages, while PNG output produces one file per
+    page. The quality of the bitmap depends on the resolution setting on the
+    FOUserAgent.
+  </p>
+</section>
+<section id="txt">
+  <title>TXT</title>
+  <p>
+    The text renderer produces plain ASCII text output
+    that attempts to match the output of the PDFRenderer as closely as
+    possible. This was originally developed to accommodate an archive system
+    that could only accept plain text files, and is primarily useful for getting
+    a quick-and-dirty view of the document text. The renderer is very limited,
+    so do not be surprised if it gives unsatisfactory results.
+  </p>
+  <p>
+    The Text renderer works with a fixed size page buffer. The size of this
+    buffer is controlled with the textCPI and textLPI public variables.
+    The textCPI is the effective horizontal characters per inch to use.
+    The textLPI is the vertical lines per inch to use. From these values
+    and the page width and height the size of the buffer is calculated.
+    The formatting objects to be rendered are then mapped to this grid.
+    Graphic elements (lines, borders, etc) are assigned a lower priority
+    than text, so text will overwrite any graphic element representations.
+  </p>
+  <p>
+    Because FOP lays the text onto a grid during layout, there are frequently 
+    extra or missing spaces between characters and lines, which is generally 
+    unsatisfactory.
+    Users have reported that the optimal settings to avoid such spacing problems are:
+  </p>
+  <ul>
+    <li>font-family="Courier"</li>
+    <li>font-size="7.3pt"</li>
+    <li>line-height="10.5pt"</li>
+  </ul>
+</section>
+<section id="sandbox">
+  <title>Output Formats in the Sandbox</title>
+  <p>
+    Due to the state of certain renderers we moved some of them to a "sandbox" area until 
+    they are ready for more serious use. The renderers and FOEventHandlers in the sandbox
+    can be found under src/sandbox and are compiled into build/fop-sandbox.jar during the
+    main build. The output formats in the sandbox are marked as such below.
+  </p>
+  <section id="pcl">
+    <title>PCL</title>
+    <warning>The PCL Renderer is in the sandbox and not yet functional in FOP Trunk!!! Please help us ressurrect this feature.</warning>
+    <p>
+      This format is for the Hewlett-Packard PCL printers.
+      It should produce output as close to identical as possible to the
+      printed output of the PDFRenderer within the limitations of the
+      renderer, and output device.
+    </p>
+    <!--p>
+      The output created by the PCLRenderer is generic PCL 5 as documented
+      in the "HP PCL 5 Printer Language Technical Reference Manual" (copyright 1990).
+      This should allow any device fully supporting PCL 5 to be able to
+      print the output generated by the PCLRenderer.
+    </p>
+    <section id="pcl-limitations">
+      <title>Limitations</title>
+      <ul>
+        <li>Text or graphics outside the left or top of the printable area are not rendered properly. In general things that should print to the left of the printable area are shifted to the right so that they start at the left edge of the printable area and an error message is generated.</li>
+        <li>The Helvetica and Times fonts are not well supported among PCL printers so Helvetica is mapped to Arial and Times is mapped to Times New. This is done in the PCLRenderer, no changes are required in the FO's. The metrics and appearance for Helvetica/Arial and Times/Times New are nearly identical, so this has not been a problem so far.</li>
+        <li>Only the original fonts built into FOP are supported.</li>
+        <li>For the non-symbol fonts, the ISO 8859/1 symbol set is used (PCL set "0N").</li>
+        <li>Multibyte characters are not supported.</li>
+        <li>SVG is not supported.</li>
+        <li>Images print black and white only (not dithered). When the renderer prints a color image it uses a threshold value, colors above the threshold are printed as white and below are black. If you need to print a non-monochrome image you should dither it first.</li>
+        <li>Image scaling is accomplished by modifying the effective resolution of the image data. The available resolutions are 75, 100, 150, 300, and 600 DPI.</li>
+        <li>Color printing is not supported. Colors are rendered by mapping the color intensity to one of the PCL fill shades (from white to black in 9 steps).</li>
+      </ul>
+    </section>
+
+    <section id="pcl-additional">
+      <title>Additional Features</title>
+      <p>There are some special features that are controlled by some public variables on the PCLRenderer class.</p>
+
+      <dl>
+        <dt>orientation</dt>
+        <dd>The logical page orientation is controlled by the public orientation variable. Legal values are:-->
+          <!--ul>
+            <li>0 Portrait</li>
+            <li>1 Landscape</li>
+            <li>2 Reverse Portrait</li>
+            <li>3 Reverse Landscape</li>
+          </ul-->
+        <!--/dd>
+        <dt>curdiv, paperheight</dt>
+        <dd>The curdiv and paperheight variables allow multiple virtual pages to be printed on a piece of paper. This allows a standard laser printer to use perforated paper where every perforation will represent an individual page. The paperheight sets the height of a piece of paper in decipoints. This will be divided by the page.getHeight() to determine the number of equal sized divisions (pages) that will fit on the paper. The curdiv variable may be read/written to get/set the current division on the page (to set the starting division and read the ending division for multiple invocations).</dd>
+        <dt>topmargin, leftmargin</dt>
+        <dd>The topmargin and leftmargin may be used to increase the top and left margins for printing.</dd>
+      </dl>
+    </section-->
+  </section>
+  <section id="mif">
+    <title>MIF</title>
+    <warning>The MIF handler is in the sandbox and not yet functional in FOP Trunk!!! Please help us ressurrect this feature.</warning>
+    <p>
+      This format is the Maker Interchange Format which is used by
+      Adobe Framemaker.
+    </p>
+   </section>
+   <section id="svg">
+     <title>SVG</title>
+     <warning>The SVG renderer is in the sandbox and may not work as expected in FOP Trunk!!! Please help us improve this feature.</warning>
+     <p>
+       This format creates an SVG document that has links between the pages.
+       This is primarily for slides and creating svg images of pages.
+       Large documents will create SVG files that are far too large for
+       an SVG viewer to handle. Since FO documents usually have text the
+       SVG document will have a large number of text elements.
+       The font information for the text is obtained from the JVM in the
+       same way as for the AWT viewer. If the SVG is viewed on a
+       system where the fonts are different, such as another platform,
+       then the page may look wrong.
+     </p>
+   </section>
+</section>
+<section id="wishlist">
+  <title>Wish list</title>
+  <p>
+    Apache FOP is easily extensible and allows you to add new output formats to enhance FOP's functionality. There's a number of output formats
+    which are on our wish list. We're looking for volunteers to help us implement them.
+  </p>
+  <ul>
+    <li>
+      <a href="http://en.wikipedia.org/wiki/Advanced_Function_Presentation">AFP (Advanced Function Presentation)</a>: 
+      The renderer has already been built and is in the process of being brought into the Apache FOP codebase.
+    </li>
+    <li>
+      <a href="http://en.wikipedia.org/wiki/OpenDocument">ODF (Open Document Format)</a>: 
+      The standardized successor to OpenOffice's file format.
+    </li>
+  </ul>
+</section>
+
+  </body>
+</document>
+

@@ -1,0 +1,398 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!--
+
+Generated from glb12.ttf by Apache FOP's TTFReader
+
+-->
+<font-metrics type="TYPE0">
+  <font-name>Gladiator,Bold</font-name>
+  <embed/>
+  <cap-height>691</cap-height>
+  <x-height>0</x-height>
+  <ascender>765</ascender>
+  <descender>-234</descender>
+  <bbox>
+    <left>-157</left>
+    <bottom>-250</bottom>
+    <right>1181</right>
+    <top>1071</top>
+  </bbox>
+  <flags>33</flags>
+  <stemv>0</stemv>
+  <italicangle>0</italicangle>
+  <subtype>TYPE0</subtype>
+  <multibyte-extras>
+    <cid-type>CIDFontType2</cid-type>
+    <default-width>0</default-width>
+    <bfranges>
+      <bf gi="33" ue="33" us="32"/>
+      <bf gi="6" ue="34" us="34"/>
+      <bf gi="36" ue="38" us="35"/>
+      <bf gi="5" ue="39" us="39"/>
+      <bf gi="41" ue="91" us="40"/>
+      <bf gi="4" ue="92" us="92"/>
+      <bf gi="94" ue="93" us="93"/>
+      <bf gi="11" ue="94" us="94"/>
+      <bf gi="21" ue="96" us="96"/>
+      <bf gi="98" ue="122" us="97"/>
+      <bf gi="12" ue="124" us="124"/>
+      <bf gi="29" ue="126" us="126"/>
+      <bf gi="9" ue="161" us="161"/>
+      <bf gi="185" ue="163" us="163"/>
+      <bf gi="158" ue="167" us="167"/>
+      <bf gi="128" ue="168" us="168"/>
+      <bf gi="93" ue="171" us="171"/>
+      <bf gi="25" ue="175" us="175"/>
+      <bf gi="22" ue="180" us="180"/>
+      <bf gi="27" ue="184" us="184"/>
+      <bf gi="35" ue="187" us="187"/>
+      <bf gi="10" ue="191" us="191"/>
+      <bf gi="186" ue="197" us="192"/>
+      <bf gi="192" ue="214" us="199"/>
+      <bf gi="209" ue="222" us="216"/>
+      <bf gi="216" ue="229" us="224"/>
+      <bf gi="222" ue="246" us="231"/>
+      <bf gi="239" ue="255" us="248"/>
+      <bf gi="129" ue="258" us="258"/>
+      <bf gi="159" ue="259" us="259"/>
+      <bf gi="130" ue="260" us="260"/>
+      <bf gi="160" ue="261" us="261"/>
+      <bf gi="131" ue="262" us="262"/>
+      <bf gi="161" ue="263" us="263"/>
+      <bf gi="132" ue="268" us="268"/>
+      <bf gi="162" ue="269" us="269"/>
+      <bf gi="133" ue="270" us="270"/>
+      <bf gi="163" ue="271" us="271"/>
+      <bf gi="157" ue="273" us="273"/>
+      <bf gi="135" ue="280" us="280"/>
+      <bf gi="165" ue="281" us="281"/>
+      <bf gi="134" ue="282" us="282"/>
+      <bf gi="164" ue="283" us="283"/>
+      <bf gi="136" ue="286" us="286"/>
+      <bf gi="166" ue="287" us="287"/>
+      <bf gi="156" ue="304" us="304"/>
+      <bf gi="19" ue="305" us="305"/>
+      <bf gi="32" ue="307" us="307"/>
+      <bf gi="137" ue="313" us="313"/>
+      <bf gi="167" ue="314" us="314"/>
+      <bf gi="138" ue="317" us="317"/>
+      <bf gi="168" ue="318" us="318"/>
+      <bf gi="139" ue="321" us="321"/>
+      <bf gi="169" ue="322" us="322"/>
+      <bf gi="140" ue="323" us="323"/>
+      <bf gi="170" ue="324" us="324"/>
+      <bf gi="141" ue="327" us="327"/>
+      <bf gi="171" ue="328" us="328"/>
+      <bf gi="142" ue="336" us="336"/>
+      <bf gi="172" ue="337" us="337"/>
+      <bf gi="208" ue="338" us="338"/>
+      <bf gi="238" ue="339" us="339"/>
+      <bf gi="143" ue="340" us="340"/>
+      <bf gi="173" ue="341" us="341"/>
+      <bf gi="144" ue="344" us="344"/>
+      <bf gi="174" ue="345" us="345"/>
+      <bf gi="145" ue="346" us="346"/>
+      <bf gi="175" ue="347" us="347"/>
+      <bf gi="147" ue="350" us="350"/>
+      <bf gi="177" ue="351" us="351"/>
+      <bf gi="146" ue="352" us="352"/>
+      <bf gi="176" ue="353" us="353"/>
+      <bf gi="149" ue="354" us="354"/>
+      <bf gi="179" ue="355" us="355"/>
+      <bf gi="148" ue="356" us="356"/>
+      <bf gi="151" ue="366" us="366"/>
+      <bf gi="181" ue="367" us="367"/>
+      <bf gi="150" ue="368" us="368"/>
+      <bf gi="180" ue="369" us="369"/>
+      <bf gi="152" ue="377" us="376"/>
+      <bf gi="182" ue="378" us="378"/>
+      <bf gi="155" ue="379" us="379"/>
+      <bf gi="184" ue="380" us="380"/>
+      <bf gi="154" ue="381" us="381"/>
+      <bf gi="183" ue="382" us="382"/>
+      <bf gi="95" ue="710" us="710"/>
+      <bf gi="23" ue="711" us="711"/>
+      <bf gi="24" ue="728" us="728"/>
+      <bf gi="96" ue="729" us="729"/>
+      <bf gi="26" ue="730" us="730"/>
+      <bf gi="30" ue="731" us="731"/>
+      <bf gi="127" ue="732" us="732"/>
+      <bf gi="126" ue="733" us="733"/>
+      <bf gi="28" ue="823" us="823"/>
+      <bf gi="3" ue="915" us="915"/>
+      <bf gi="124" ue="8212" us="8211"/>
+      <bf gi="97" ue="8216" us="8216"/>
+      <bf gi="40" ue="8217" us="8217"/>
+      <bf gi="8" ue="8220" us="8220"/>
+      <bf gi="7" ue="8221" us="8221"/>
+      <bf gi="20" ue="63166" us="63166"/>
+      <bf gi="14" ue="64260" us="64256"/>
+      <bf gi="0" ue="65535" us="65535"/>
+    </bfranges>
+    <cid-widths start-index="0">
+      <wx w="432"/>
+      <wx w="0"/>
+      <wx w="333"/>
+      <wx w="665"/>
+      <wx w="500"/>
+      <wx w="311"/>
+      <wx w="525"/>
+      <wx w="525"/>
+      <wx w="525"/>
+      <wx w="376"/>
+      <wx w="569"/>
+      <wx w="253"/>
+      <wx w="311"/>
+      <wx w="0"/>
+      <wx w="623"/>
+      <wx w="623"/>
+      <wx w="623"/>
+      <wx w="934"/>
+      <wx w="934"/>
+      <wx w="311"/>
+      <wx w="311"/>
+      <wx w="304"/>
+      <wx w="304"/>
+      <wx w="253"/>
+      <wx w="253"/>
+      <wx w="253"/>
+      <wx w="151"/>
+      <wx w="151"/>
+      <wx w="235"/>
+      <wx w="253"/>
+      <wx w="151"/>
+      <wx w="623"/>
+      <wx w="575"/>
+      <wx w="332"/>
+      <wx w="376"/>
+      <wx w="657"/>
+      <wx w="980"/>
+      <wx w="625"/>
+      <wx w="754"/>
+      <wx w="886"/>
+      <wx w="311"/>
+      <wx w="398"/>
+      <wx w="398"/>
+      <wx w="601"/>
+      <wx w="652"/>
+      <wx w="311"/>
+      <wx w="331"/>
+      <wx w="311"/>
+      <wx w="500"/>
+      <wx w="541"/>
+      <wx w="541"/>
+      <wx w="541"/>
+      <wx w="541"/>
+      <wx w="541"/>
+      <wx w="541"/>
+      <wx w="541"/>
+      <wx w="541"/>
+      <wx w="541"/>
+      <wx w="541"/>
+      <wx w="311"/>
+      <wx w="311"/>
+      <wx w="500"/>
+      <wx w="805"/>
+      <wx w="500"/>
+      <wx w="569"/>
+      <wx w="805"/>
+      <wx w="729"/>
+      <wx w="708"/>
+      <wx w="725"/>
+      <wx w="748"/>
+      <wx w="683"/>
+      <wx w="665"/>
+      <wx w="769"/>
+      <wx w="808"/>
+      <wx w="347"/>
+      <wx w="347"/>
+      <wx w="769"/>
+      <wx w="644"/>
+      <wx w="1109"/>
+      <wx w="767"/>
+      <wx w="821"/>
+      <wx w="689"/>
+      <wx w="821"/>
+      <wx w="708"/>
+      <wx w="689"/>
+      <wx w="685"/>
+      <wx w="767"/>
+      <wx w="689"/>
+      <wx w="1181"/>
+      <wx w="729"/>
+      <wx w="729"/>
+      <wx w="644"/>
+      <wx w="542"/>
+      <wx w="657"/>
+      <wx w="542"/>
+      <wx w="253"/>
+      <wx w="115"/>
+      <wx w="311"/>
+      <wx w="515"/>
+      <wx w="556"/>
+      <wx w="492"/>
+      <wx w="556"/>
+      <wx w="517"/>
+      <wx w="311"/>
+      <wx w="556"/>
+      <wx w="575"/>
+      <wx w="311"/>
+      <wx w="311"/>
+      <wx w="556"/>
+      <wx w="311"/>
+      <wx w="839"/>
+      <wx w="575"/>
+      <wx w="547"/>
+      <wx w="556"/>
+      <wx w="556"/>
+      <wx w="440"/>
+      <wx w="492"/>
+      <wx w="359"/>
+      <wx w="575"/>
+      <wx w="476"/>
+      <wx w="711"/>
+      <wx w="496"/>
+      <wx w="476"/>
+      <wx w="496"/>
+      <wx w="855"/>
+      <wx w="1109"/>
+      <wx w="253"/>
+      <wx w="253"/>
+      <wx w="395"/>
+      <wx w="729"/>
+      <wx w="729"/>
+      <wx w="725"/>
+      <wx w="725"/>
+      <wx w="748"/>
+      <wx w="683"/>
+      <wx w="683"/>
+      <wx w="769"/>
+      <wx w="644"/>
+      <wx w="644"/>
+      <wx w="644"/>
+      <wx w="767"/>
+      <wx w="767"/>
+      <wx w="821"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="347"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="515"/>
+      <wx w="515"/>
+      <wx w="492"/>
+      <wx w="492"/>
+      <wx w="556"/>
+      <wx w="517"/>
+      <wx w="517"/>
+      <wx w="556"/>
+      <wx w="311"/>
+      <wx w="311"/>
+      <wx w="311"/>
+      <wx w="575"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="547"/>
+      <wx w="729"/>
+      <wx w="729"/>
+      <wx w="729"/>
+      <wx w="729"/>
+      <wx w="729"/>
+      <wx w="725"/>
+      <wx w="683"/>
+      <wx w="683"/>
+      <wx w="683"/>
+      <wx w="683"/>
+      <wx w="347"/>
+      <wx w="347"/>
+      <wx w="347"/>
+      <wx w="347"/>
+      <wx w="0"/>
+      <wx w="767"/>
+      <wx w="821"/>
+      <wx w="821"/>
+      <wx w="821"/>
+      <wx w="821"/>
+      <wx w="821"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="767"/>
+      <wx w="767"/>
+      <wx w="767"/>
+      <wx w="767"/>
+      <wx w="729"/>
+      <wx w="0"/>
+      <wx w="515"/>
+      <wx w="515"/>
+      <wx w="515"/>
+      <wx w="515"/>
+      <wx w="515"/>
+      <wx w="515"/>
+      <wx w="492"/>
+      <wx w="517"/>
+      <wx w="517"/>
+      <wx w="517"/>
+      <wx w="517"/>
+      <wx w="311"/>
+      <wx w="311"/>
+      <wx w="311"/>
+      <wx w="311"/>
+      <wx w="0"/>
+      <wx w="575"/>
+      <wx w="547"/>
+      <wx w="547"/>
+      <wx w="547"/>
+      <wx w="547"/>
+      <wx w="547"/>
+      <wx w="0"/>
+      <wx w="0"/>
+      <wx w="575"/>
+      <wx w="575"/>
+      <wx w="575"/>
+      <wx w="575"/>
+      <wx w="476"/>
+      <wx w="0"/>
+      <wx w="476"/>
+    </cid-widths>
+  </multibyte-extras>
+</font-metrics>
