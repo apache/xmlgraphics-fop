@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2005 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks font stretches.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="210mm" page-height="297mm">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal" white-space-collapse="true">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block font-family="serif">font-family="serif" font-stretch not given</fo:block>
+          <fo:block font-family="serif" font-stretch="ultra-condensed">font-family="serif" font-stretch="ultra-condensed"
+            <fo:block font-family="serif" font-stretch="narrower">font-family="serif" font-stretch="narrower"</fo:block>
+          </fo:block>  
+          <fo:block font-family="serif" font-stretch="extra-condensed">font-family="serif" font-stretch="extra-condensed"</fo:block>
+          <fo:block font-family="serif" font-stretch="condensed">font-family="serif" font-stretch="condensed"</fo:block>
+          <fo:block font-family="serif" font-stretch="semi-condensed">font-family="serif" font-stretch="semi-condensed"</fo:block>
+          <fo:block font-family="serif" font-stretch="normal">font-family="serif" font-stretch="normal"</fo:block>
+          <fo:block font-family="serif" font-stretch="semi-expanded">font-family="serif" font-stretch="semi-expanded"</fo:block>
+          <fo:block font-family="serif" font-stretch="expanded">font-family="serif" font-stretch="expanded"</fo:block>
+          <fo:block font-family="serif" font-stretch="extra-expanded">font-family="serif" font-stretch="extra-expanded"</fo:block>
+          <fo:block font-family="serif" font-stretch="ultra-expanded">font-family="serif" font-stretch="ultra-expanded"
+            <fo:block font-family="serif" font-stretch="wider">font-family="serif" font-stretch="wider"</fo:block>
+          </fo:block>
+          <fo:block font-family="serif" font-stretch="narrower">font-family="serif" font-stretch="narrower"</fo:block>
+          <fo:block font-family="serif" font-stretch="wider">font-family="serif" font-stretch="wider"</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+  </checks>
+</testcase>

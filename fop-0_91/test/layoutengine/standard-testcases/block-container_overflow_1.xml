@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2005 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks overflowing content on block-containers.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in" margin="20pt">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal" text-align="justify">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block-container id="auto" background-color="lightgray" space-after="5pt">
+             <fo:block start-indent="-5pt" end-indent="-5pt">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Pellentesque hendrerit euismod velit. Nulla facilisi. Etiam et risus at neque ultrices facilisis. Donec lectus est, nonummy quis, rhoncus bibendum, porta at, nisl.</fo:block>
+          </fo:block-container>
+          <fo:block-container id="visible" background-color="lightgray" space-after="5pt" overflow="visible">
+             <fo:block start-indent="-5pt" end-indent="-5pt">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Pellentesque hendrerit euismod velit. Nulla facilisi. Etiam et risus at neque ultrices facilisis. Donec lectus est, nonummy quis, rhoncus bibendum, porta at, nisl.</fo:block>
+          </fo:block-container>
+          <fo:block-container id="hidden" background-color="lightgray" space-after="5pt" overflow="hidden">
+             <fo:block start-indent="-5pt" end-indent="-5pt">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Pellentesque hendrerit euismod velit. Nulla facilisi. Etiam et risus at neque ultrices facilisis. Donec lectus est, nonummy quis, rhoncus bibendum, porta at, nisl.</fo:block>
+          </fo:block-container>
+          <fo:block-container id="scroll" background-color="lightgray" space-after="5pt" overflow="scroll">
+             <fo:block start-indent="-5pt" end-indent="-5pt">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Pellentesque hendrerit euismod velit. Nulla facilisi. Etiam et risus at neque ultrices facilisis. Donec lectus est, nonummy quis, rhoncus bibendum, porta at, nisl.</fo:block>
+          </fo:block-container>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <true xpath="not(//block[@prod-id='auto' and @is-viewport-area='true']/@clipped)"/>
+    <true xpath="not(//block[@prod-id='visible' and @is-viewport-area='true']/@clipped)"/>
+    <true xpath="//block[@prod-id='hidden' and @is-viewport-area='true']/@clipped"/>
+    <true xpath="not(//block[@prod-id='scroll' and @is-viewport-area='true']/@clipped)"/>
+  </checks>
+</testcase>

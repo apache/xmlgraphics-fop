@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2005 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks inline level alignment-baseline for nested inlines.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal" white-space-collapse="true" font-family="sans-serif">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block background-color="silver" margin="1pt 0pt 1pt 0pt" font-size="24pt">Big
+            <fo:inline font-size="50%" 
+                background-color="yellow">alphabetic
+              <fo:inline font-size="150%" background-color="red">alphabetic</fo:inline>
+            </fo:inline>
+             Big <fo:inline font-size="8pt">Baseline table unchanged</fo:inline>
+          </fo:block>
+          <fo:block background-color="silver" margin="1pt 0pt 1pt 0pt" font-size="24pt">Big
+            <fo:inline font-size="50%" 
+                dominant-baseline="reset-size"
+                background-color="yellow">alphabetic
+              <fo:inline font-size="150%" background-color="red">alphabetic</fo:inline>
+            </fo:inline>
+            Big <fo:inline font-size="8pt">Baseline table changed</fo:inline>
+          </fo:block>
+          <fo:block background-color="silver" margin="1pt 0pt 1pt 0pt" font-size="24pt">Big
+            <fo:inline font-size="50%"
+                alignment-baseline="hanging" 
+                background-color="yellow">hanging
+              <fo:inline font-size="50%" background-color="red" alignment-baseline="middle">middle</fo:inline>
+            </fo:inline>
+            Big <fo:inline font-size="8pt">Baseline table unchanged</fo:inline>
+          </fo:block>
+          <fo:block background-color="silver" margin="1pt 0pt 1pt 0pt" font-size="24pt">Big
+            <fo:inline font-size="50%"
+               dominant-baseline="reset-size"
+               alignment-baseline="hanging"
+               background-color="yellow">hanging
+              <fo:inline font-size="50%" background-color="red" alignment-baseline="middle">middle</fo:inline>
+            </fo:inline>
+            Big <fo:inline font-size="8pt">Baseline table changed</fo:inline>
+          </fo:block>
+          <fo:block background-color="silver" margin="1pt 0pt 1pt 0pt" font-size="24pt">Big
+            <fo:inline font-size="50%" 
+                alignment-baseline="text-before-edge"
+                background-color="yellow">text-before-edge
+              <fo:inline font-size="150%" background-color="red" alignment-baseline="after-edge">after-edge</fo:inline>
+            </fo:inline>
+             Big <fo:inline font-size="8pt">Baseline table unchanged</fo:inline>
+          </fo:block>
+          <fo:block background-color="silver" margin="1pt 0pt 1pt 0pt" font-size="24pt">Big
+            <fo:inline font-size="50%" 
+                dominant-baseline="reset-size"
+                alignment-baseline="text-before-edge" 
+                background-color="yellow">text-before-edge
+              <fo:inline font-size="150%" background-color="red" alignment-baseline="after-edge">after-edge</fo:inline>
+            </fo:inline>
+            Big <fo:inline font-size="8pt">Baseline table changed</fo:inline>
+          </fo:block>
+          <fo:block background-color="silver" margin="1pt 0pt 1pt 0pt" font-size="24pt">Big
+            <fo:inline font-size="25%" 
+                alignment-baseline="central"
+                background-color="yellow">central
+              <fo:inline font-size="150%"
+                  alignment-baseline="text-before-edge"
+                  background-color="red">text-before-edge
+                <fo:inline font-size="200%" background-color="green">alphabetic</fo:inline>
+              </fo:inline>
+            </fo:inline>
+            Big <fo:inline font-size="8pt">Baseline table unchanged</fo:inline>
+          </fo:block>
+          <fo:block background-color="silver" margin="1pt 0pt 1pt 0pt" font-size="24pt">Big
+            <fo:inline font-size="25%" 
+                dominant-baseline="reset-size"
+                alignment-baseline="central"
+                background-color="yellow">central
+              <fo:inline font-size="150%"
+                  alignment-baseline="text-before-edge"
+                  background-color="red">text-before-edge
+                <fo:inline font-size="200%" background-color="green">alphabetic</fo:inline>
+              </fo:inline>
+            </fo:inline>
+            Big <fo:inline font-size="8pt">Baseline table changed</fo:inline>
+          </fo:block>
+          <fo:block background-color="silver" margin="1pt 0pt 1pt 0pt" font-size="24pt">Big
+            <fo:inline font-size="25%" 
+                dominant-baseline="reset-size"
+                alignment-baseline="central"
+                background-color="yellow">central
+              <fo:inline font-size="150%"
+                  dominant-baseline="reset-size"
+                  alignment-baseline="text-before-edge"
+                  background-color="red">text-before-edge
+                <fo:inline font-size="200%" background-color="green">alphabetic</fo:inline>
+              </fo:inline>
+            </fo:inline>
+            Big <fo:inline font-size="8pt">Baseline table changed twice</fo:inline>
+          </fo:block>
+          <fo:block background-color="silver" margin="1pt 0pt 1pt 0pt" font-size="24pt">Big
+            <fo:inline font-size="50%" 
+                dominant-baseline="reset-size"
+                alignment-baseline="before-edge" 
+                background-color="yellow">before-edge
+              <fo:inline font-size="150%" background-color="red" alignment-baseline="after-edge">after-edge</fo:inline>
+            </fo:inline>
+            Big <fo:inline font-size="8pt">This is over constraint</fo:inline>
+          </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="22200" xpath="//flow/block[1]/lineArea[1]/@bpd"/>
+    <eval expected="0" xpath="//flow/block[1]/lineArea[1]/text[1]/@offset"/>
+    <eval expected="8616" xpath="//flow/block[1]/lineArea[1]/inlineparent/@offset"/>
+    <eval expected="0" xpath="//flow/block[1]/lineArea[1]/inlineparent/text[1]/@offset"/>
+    <eval expected="-4308" xpath="//flow/block[1]/lineArea[1]/inlineparent/inlineparent/@offset"/>
+    <eval expected="0" xpath="//flow/block[1]/lineArea[1]/inlineparent/inlineparent/text/@offset"/>
+    <eval expected="0" xpath="//flow/block[1]/lineArea[1]/inlineparent/text[2]/@offset"/>
+    <eval expected="0" xpath="//flow/block[1]/lineArea[1]/text[2]/@offset"/>
+
+    <eval expected="22200" xpath="//flow/block[2]/lineArea[1]/@bpd"/>
+    <eval expected="0" xpath="//flow/block[2]/lineArea[1]/text[1]/@offset"/>
+    <eval expected="8616" xpath="//flow/block[2]/lineArea[1]/inlineparent/@offset"/>
+    <eval expected="0" xpath="//flow/block[2]/lineArea[1]/inlineparent/text[1]/@offset"/>
+    <eval expected="-4308" xpath="//flow/block[2]/lineArea[1]/inlineparent/inlineparent/@offset"/>
+    <eval expected="0" xpath="//flow/block[2]/lineArea[1]/inlineparent/inlineparent/text/@offset"/>
+    <eval expected="0" xpath="//flow/block[2]/lineArea[1]/inlineparent/text[2]/@offset"/>
+    <eval expected="0" xpath="//flow/block[2]/lineArea[1]/text[2]/@offset"/>
+
+    <eval expected="22200" xpath="//flow/block[3]/lineArea[1]/@bpd"/>
+    <eval expected="0" xpath="//flow/block[3]/lineArea[1]/text[1]/@offset"/>
+    <eval expected="1723" xpath="//flow/block[3]/lineArea[1]/inlineparent/@offset"/>
+    <eval expected="0" xpath="//flow/block[3]/lineArea[1]/inlineparent/text[1]/@offset"/>
+    <eval expected="6494" xpath="//flow/block[3]/lineArea[1]/inlineparent/inlineparent/@offset"/>
+    <eval expected="0" xpath="//flow/block[3]/lineArea[1]/inlineparent/inlineparent/text/@offset"/>
+    <eval expected="0" xpath="//flow/block[3]/lineArea[1]/inlineparent/text[2]/@offset"/>
+    <eval expected="0" xpath="//flow/block[3]/lineArea[1]/text[2]/@offset"/>
+
+    <eval expected="22200" xpath="//flow/block[4]/lineArea[1]/@bpd"/>
+    <eval expected="0" xpath="//flow/block[4]/lineArea[1]/text[1]/@offset"/>
+    <eval expected="1723" xpath="//flow/block[4]/lineArea[1]/inlineparent/@offset"/>
+    <eval expected="0" xpath="//flow/block[4]/lineArea[1]/inlineparent/text[1]/@offset"/>
+    <eval expected="2739" xpath="//flow/block[4]/lineArea[1]/inlineparent/inlineparent/@offset"/>
+    <eval expected="0" xpath="//flow/block[4]/lineArea[1]/inlineparent/inlineparent/text/@offset"/>
+    <eval expected="0" xpath="//flow/block[4]/lineArea[1]/inlineparent/text[2]/@offset"/>
+    <eval expected="0" xpath="//flow/block[4]/lineArea[1]/text[2]/@offset"/>
+
+    <eval expected="22200" xpath="//flow/block[5]/lineArea[1]/@bpd"/>
+    <eval expected="0" xpath="//flow/block[5]/lineArea[1]/text[1]/@offset"/>
+    <eval expected="0" xpath="//flow/block[5]/lineArea[1]/inlineparent/@offset"/>
+    <eval expected="0" xpath="//flow/block[5]/lineArea[1]/inlineparent/text[1]/@offset"/>
+    <eval expected="5550" xpath="//flow/block[5]/lineArea[1]/inlineparent/inlineparent/@offset"/>
+    <eval expected="0" xpath="//flow/block[5]/lineArea[1]/inlineparent/inlineparent/text/@offset"/>
+    <eval expected="0" xpath="//flow/block[5]/lineArea[1]/inlineparent/text[2]/@offset"/>
+    <eval expected="0" xpath="//flow/block[5]/lineArea[1]/text[2]/@offset"/>
+
+    <eval expected="27750" xpath="//flow/block[6]/lineArea[1]/@bpd"/>
+    <eval expected="5550" xpath="//flow/block[6]/lineArea[1]/text[1]/@offset"/>
+    <eval expected="5550" xpath="//flow/block[6]/lineArea[1]/inlineparent/@offset"/>
+    <eval expected="0" xpath="//flow/block[6]/lineArea[1]/inlineparent/text[1]/@offset"/>
+    <eval expected="-5550" xpath="//flow/block[6]/lineArea[1]/inlineparent/inlineparent/@offset"/>
+    <eval expected="0" xpath="//flow/block[6]/lineArea[1]/inlineparent/inlineparent/text/@offset"/>
+    <eval expected="0" xpath="//flow/block[6]/lineArea[1]/inlineparent/text[2]/@offset"/>
+    <eval expected="5550" xpath="//flow/block[6]/lineArea[1]/text[2]/@offset"/>
+
+    <eval expected="22200" xpath="//flow/block[7]/lineArea[1]/@bpd"/>
+    <eval expected="0" xpath="//flow/block[7]/lineArea[1]/text[1]/@offset"/>
+    <eval expected="8325" xpath="//flow/block[7]/lineArea[1]/inlineparent/@offset"/>
+    <eval expected="0" xpath="//flow/block[7]/lineArea[1]/inlineparent/text[1]/@offset"/>
+    <eval expected="-8325" xpath="//flow/block[7]/lineArea[1]/inlineparent/inlineparent/@offset"/>
+    <eval expected="0" xpath="//flow/block[7]/lineArea[1]/inlineparent/inlineparent/text[1]/@offset"/>
+    <eval expected="4308" xpath="//flow/block[7]/lineArea[1]/inlineparent/inlineparent/inlineparent/@offset"/>
+    <eval expected="0" xpath="//flow/block[7]/lineArea[1]/inlineparent/inlineparent/inlineparent/text/@offset"/>
+    <eval expected="0" xpath="//flow/block[7]/lineArea[1]/inlineparent/inlineparent/text[2]/@offset"/>
+    <eval expected="0" xpath="//flow/block[7]/lineArea[1]/text[2]/@offset"/>
+
+    <eval expected="22491" xpath="//flow/block[8]/lineArea[1]/@bpd"/>
+    <eval expected="291" xpath="//flow/block[8]/lineArea[1]/text[1]/@offset"/>
+    <eval expected="8616" xpath="//flow/block[8]/lineArea[1]/inlineparent/@offset"/>
+    <eval expected="0" xpath="//flow/block[8]/lineArea[1]/inlineparent/text[1]/@offset"/>
+    <eval expected="0" xpath="//flow/block[8]/lineArea[1]/inlineparent/inlineparent/@offset"/>
+    <eval expected="0" xpath="//flow/block[8]/lineArea[1]/inlineparent/inlineparent/text[1]/@offset"/>
+    <eval expected="-8616" xpath="//flow/block[8]/lineArea[1]/inlineparent/inlineparent/inlineparent/@offset"/>
+    <eval expected="0" xpath="//flow/block[8]/lineArea[1]/inlineparent/inlineparent/inlineparent/text/@offset"/>
+    <eval expected="0" xpath="//flow/block[8]/lineArea[1]/inlineparent/inlineparent/text[2]/@offset"/>
+    <eval expected="291" xpath="//flow/block[8]/lineArea[1]/text[2]/@offset"/>
+
+    <eval expected="22200" xpath="//flow/block[9]/lineArea[1]/@bpd"/>
+    <eval expected="0" xpath="//flow/block[9]/lineArea[1]/text[1]/@offset"/>
+    <eval expected="8325" xpath="//flow/block[9]/lineArea[1]/inlineparent/@offset"/>
+    <eval expected="0" xpath="//flow/block[9]/lineArea[1]/inlineparent/text[1]/@offset"/>
+    <eval expected="0" xpath="//flow/block[9]/lineArea[1]/inlineparent/inlineparent/@offset"/>
+    <eval expected="0" xpath="//flow/block[9]/lineArea[1]/inlineparent/inlineparent/text[1]/@offset"/>
+    <eval expected="-6462" xpath="//flow/block[9]/lineArea[1]/inlineparent/inlineparent/inlineparent/@offset"/>
+    <eval expected="0" xpath="//flow/block[9]/lineArea[1]/inlineparent/inlineparent/inlineparent/text/@offset"/>
+    <eval expected="0" xpath="//flow/block[9]/lineArea[1]/inlineparent/inlineparent/text[2]/@offset"/>
+    <eval expected="0" xpath="//flow/block[9]/lineArea[1]/text[2]/@offset"/>
+
+    <eval expected="27750" xpath="//flow/block[10]/lineArea[1]/@bpd"/>
+    <eval expected="5550" xpath="//flow/block[10]/lineArea[1]/text[1]/@offset"/>
+    <eval expected="0" xpath="//flow/block[10]/lineArea[1]/inlineparent/@offset"/>
+    <eval expected="0" xpath="//flow/block[10]/lineArea[1]/inlineparent/text[1]/@offset"/>
+    <eval expected="-5550" xpath="//flow/block[10]/lineArea[1]/inlineparent/inlineparent/@offset"/>
+    <eval expected="0" xpath="//flow/block[10]/lineArea[1]/inlineparent/inlineparent/text/@offset"/>
+    <eval expected="0" xpath="//flow/block[10]/lineArea[1]/inlineparent/text[2]/@offset"/>
+    <eval expected="5550" xpath="//flow/block[10]/lineArea[1]/text[2]/@offset"/>
+  </checks>
+</testcase>
