@@ -1,0 +1,39 @@
+<!--
+	XML Document DTD, version 1.00
+
+	document dtd
+	should allow for all standard writing of a document, title, author, summary,
+	main topics, sub topics, lists, figures, index
+-->
+
+<!ELEMENT Document				(Title, Description, Summary?, (Chapter | ExternalChapter)*, Appendix*)>
+<!ATTLIST Document				version CDATA #FIXED "1.0">
+<!ELEMENT Summary				(Title, ExternalDiagram?, Body)>
+<!ELEMENT Appendix				(Title, ExternalDiagram?, Body?, Section*)>
+<!ELEMENT Chapter				(Title, ExternalDiagram?, Body?, Section*)>
+<!ELEMENT Section				(Title, ExternalDiagram?, Body?, SubSection*)>
+<!ELEMENT SubSection			(Title, ExternalDiagram?, Body)>
+<!ELEMENT Title					(#PCDATA)>
+<!ELEMENT Description			(#PCDATA)>
+<!ELEMENT Body					(ExternalDiagram | p)*>
+<!ELEMENT p						ANY>
+<!ELEMENT ExternalDiagram		(#PCDATA)>
+<!ATTLIST ExternalDiagram		file CDATA #REQUIRED
+								showcode CDATA #IMPLIED>
+<!ELEMENT ExternalSVG			(#PCDATA)>
+<!ATTLIST ExternalSVG			file CDATA #REQUIRED>
+<!ELEMENT ExternalChapter		(#PCDATA)>
+<!ATTLIST ExternalChapter		file CDATA #REQUIRED>
+<!ELEMENT index					(#PCDATA)>
+<!ELEMENT br					(#PCDATA)>
+<!ELEMENT i						(#PCDATA)>
+<!ELEMENT image					(#PCDATA)>
+<!ELEMENT a						(#PCDATA)>
+<!ELEMENT b						(#PCDATA)>
+<!ELEMENT ol					(li*)>
+<!ELEMENT ul					(li*)>
+<!ELEMENT li					(#PCDATA)>
+<!ELEMENT blockquote			(#PCDATA)>
+<!ELEMENT code					(#PCDATA)>
+<!ELEMENT Version				(#PCDATA)>
+

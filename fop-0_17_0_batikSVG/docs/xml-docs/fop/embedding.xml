@@ -1,0 +1,53 @@
+<?xml version="1.0" standalone="no"?>
+
+
+
+<!-- Embedding FOP -->
+
+<s1 title="Embedding FOP ">
+  <s2 title="Overview">
+  <p>Instantiate org.apache.fop.apps.Driver. Once this class is 
+     instantiated, methods are called to set the
+     Renderer to use, the (possibly multiple) ElementMapping(s) to
+     use and the OutputStream to use to output the results of the
+     rendering (where applicable). In the case of the Renderer and
+     ElementMapping(s), the Driver may be supplied either with the
+     object itself, or the name of the class, in which case Driver will
+     instantiate the class itself. The advantage of the latter is it
+     enables runtime determination of Renderer and ElementMapping(s).
+  </p>
+  <p>Once the Driver is set up, the buildFOTree method
+     is called. Depending on whether DOM or SAX is being used, the
+     invocation of the method is either buildFOTree(Document) or
+     buildFOTree(Parser, InputSource) respectively.
+  </p>
+  <p>A third possibility may be used to build the FO Tree, namely
+     calling getContentHandler() and firing the SAX events yourself.
+  </p>
+  <p>Once the FO Tree is built, the format() and render() methods may be
+     called in that order.
+  </p>
+  <p>Here is an example use of Driver:</p>
+  <p><code>Driver driver = new Driver();</code></p>
+  <p><code>driver.setRenderer("org.apache.fop.render.pdf.PDFRenderer", version);</code></p>
+  <p><code>driver.addElementMapping("org.apache.fop.fo.StandardElementMapping");</code></p>
+  <p><code>driver.addElementMapping("org.apache.fop.svg.SVGElementMapping");</code></p>
+  <p><code>driver.addPropertyList("org.apache.fop.fo.StandardPropertyListMapping");</code></p>
+  <p><code>driver.addPropertyList("org.apache.fop.svg.SVGPropertyListMapping");</code></p>
+  <p><code>driver.setOutputStream(new FileOutputStream(args[1]));</code></p>
+  <p><code>driver.buildFOTree(parser, fileInputSource(args[0]));</code></p>
+  <p><code>driver.format();</code></p>
+  <p><code>driver.render();</code></p>
+  <p>Have a look at the classes CommandLine or XalanCommandLine for complete examples.</p>
+  </s2>
+  <s2 title="Using Fop in a servlet">  
+     <p>In the directory xml-fop/docs/examples/embedding you can find a working example how to use
+        Fop in a servlet. You can drop the fop.war into the webapps directory of Tomcat, then 
+        go to a URL like this:
+     </p>
+     <p>http://localhost:8080/fop/fop?fo=/home/path/to/fofile.fo</p>
+     <p>You can also find the source code there in the file FopServlet.java</p>
+  </s2>
+</s1>
+
+

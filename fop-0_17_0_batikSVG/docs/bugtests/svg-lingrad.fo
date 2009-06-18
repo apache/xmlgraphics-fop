@@ -1,0 +1,30 @@
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+<fo:layout-master-set>
+  <fo:simple-page-master master-name="one">
+    <fo:region-body margin-top="25pt" margin-bottom="25pt" margin-left="50pt" margin-right="50pt" />
+  </fo:simple-page-master>
+</fo:layout-master-set>
+<fo:page-sequence master-name="one">
+<fo:flow flow-name="xsl-region-body">
+<fo:block>
+<fo:instream-foreign-object>
+<svg:svg width="500" height="400">
+  <svg:defs>
+    <svg:linearGradient id="myGradient" x1="0" y1="200" x2="500" y2="350">
+      <svg:stop offset="0%" style="color:blue; opacity:100%"/>
+      <svg:stop offset="100%" style="color:red; opacity:100%"/>
+    </svg:linearGradient>
+  </svg:defs>
+  <svg:text x="30" y="150" style="font-size:140; font-weight:bold; fill:url(#myGradient); stroke:#000000;stroke-width:3">SVG</svg:text>
+  <svg:g style="fill:url(#myGradient); stroke:#000000">
+     <svg:rect x="0" y="180" width="400" height="10"/>
+  </svg:g>
+</svg:svg>
+</fo:instream-foreign-object>
+</fo:block>
+      <fo:block>The above is an example of an SVG graphic</fo:block>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>
+
+

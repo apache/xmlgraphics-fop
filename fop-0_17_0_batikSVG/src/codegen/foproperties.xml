@@ -1,0 +1,1252 @@
+<?xml version="1.0" ?>
+<property-list family="FO">
+ <generic-property-list>
+	<property type="generic">
+		<name>generic-color</name>
+		<class-name>GenericColor</class-name>
+		<datatype>ColorType</datatype>
+		<datatype-conversion from-type="String" varname="strval">
+			 new ColorType(strval)</datatype-conversion>
+	</property>
+	<property type="generic">
+		<name>generic-boolean</name>
+		<class-name>GenericBoolean</class-name>
+		<datatype>Enum</datatype>
+			<enumeration>
+				<value const="TRUE">true</value>
+				<value const="FALSE">false</value>
+			</enumeration>
+	</property>
+	<property type="generic">
+		<name>generic-keep</name>
+		<class-name>GenericKeep</class-name>
+		<datatype>Keep</datatype> <!-- CompoundDatatype -->
+		<compound>
+			<subproperty set-by-shorthand="true">
+				<name>within-page</name>
+		<datatype>Number</datatype>
+		<default>auto</default>
+			<enumeration>
+				<value const="AUTO">auto</value>
+				<value const="ALWAYS">always</value>
+			</enumeration>
+			</subproperty>
+			<subproperty set-by-shorthand="true">
+				<name>within-line</name>
+		<datatype>Number</datatype>
+		<default>auto</default>
+			<enumeration>
+				<value const="AUTO">auto</value>
+				<value const="ALWAYS">always</value>
+			</enumeration>
+			</subproperty>
+			<subproperty set-by-shorthand="true">
+				<name>within-column</name>
+		<datatype>Number</datatype>
+		<default>auto</default>
+			<enumeration>
+				<value const="AUTO">auto</value>
+				<value const="ALWAYS">always</value>
+			</enumeration>
+			</subproperty>
+		</compound>
+	</property>
+	<property type="generic">
+		<name>conditional-length-template</name>
+		<class-name>GenericCondLength</class-name>
+		<datatype>CondLength</datatype>
+		<compound>
+			<subproperty set-by-shorthand="true">
+				<name>length</name>
+				<datatype>Length</datatype>
+			</subproperty>
+			<subproperty>
+				<name>conditionality</name>
+				<datatype>Enum</datatype>
+				<enumeration>
+					<value const="DISCARD">discard</value>
+					<value const="RETAIN">retain</value>
+				</enumeration>
+			</subproperty>
+		</compound>
+	</property>
+	<property type="generic">
+		<name>padding-template</name>
+		<class-name>GenericCondPadding</class-name>
+		<use-generic>GenericCondLength</use-generic>
+		<inherited>false</inherited>
+		<default subproperty="length">0pt</default>
+	</property>
+	<property type="generic">
+		<name>padding-template</name>
+		<class-name>GenericPadding</class-name>
+		<datatype>Length</datatype>
+		<inherited>false</inherited>
+		<default>0pt</default>
+	</property>
+
+<!-- Before, After, Start, End border width props -->
+<!-- CondLength, but adds keyword values both to the "shorthand" setting
+		 and to the length component. So we redefine the components here,
+		 rather than doing a "use-generic" on GenericCondLength.
+-->
+	<property type="generic">
+		<name>border-cond-width-template</name>
+		<class-name>GenericCondBorderWidth</class-name>
+		<keyword-equiv match="thin" eval="true">0.5pt</keyword-equiv>
+		<keyword-equiv match="medium" eval="true">1pt</keyword-equiv>
+		<keyword-equiv match="thick" eval="true">2pt</keyword-equiv>
+		<inherited>false</inherited>
+		<datatype>CondLength</datatype>
+		<compound>
+			<subproperty set-by-shorthand="true">
+				<name>length</name>
+				<datatype>Length</datatype>
+				<keyword-equiv match="thin" eval="true">0.5pt</keyword-equiv>
+				<keyword-equiv match="medium" eval="true">1pt</keyword-equiv>
+				<keyword-equiv match="thick" eval="true">2pt</keyword-equiv>
+				<default>medium</default>
+			</subproperty>
+			<subproperty>
+				<datatype>Enum</datatype>
+				<name>conditionality</name>
+				<enumeration>
+					<value const="DISCARD">discard</value>
+					<value const="RETAIN">retain</value>
+				</enumeration>
+			</subproperty>
+		</compound>
+	</property>
+<!-- Left, Right, Top, Bottom borderwidth props -->
+	<property type="generic">
+		<name>border-width-template</name>
+		<class-name>GenericBorderWidth</class-name>
+		<datatype>Length</datatype>
+		<keyword-equiv match="thin" eval="true">0.5pt</keyword-equiv>
+		<keyword-equiv match="medium" eval="true">1pt</keyword-equiv>
+		<keyword-equiv match="thick" eval="true">2pt</keyword-equiv>
+		<inherited>false</inherited>
+		<default>0pt</default>
+	</property>
+	<property type="generic">
+		<name>border-style-template</name>
+		<class-name>GenericBorderStyle</class-name>
+		<inherited>false</inherited>
+		<datatype>Enum</datatype>
+			<enumeration>
+				<value const="NONE">none</value>
+				<value const="HIDDEN">hidden</value>
+				<value const="DOTTED">dotted</value>
+				<value const="DASHED">dashed</value>
+				<value const="SOLID">solid</value>
+				<value const="DOUBLE">double</value>
+				<value const="GROOVE">groove</value>
+				<value const="RIDGE">ridge</value>
+				<value const="INSET">inset</value>
+				<value const="OUTSET">outset</value>
+			</enumeration>
+		<default>none</default>
+	</property>
+	<property type="generic">
+		<name>break-template</name>
+		<class-name>GenericBreak</class-name>
+		<inherited>false</inherited>
+		<datatype>Enum</datatype>
+			<enumeration>
+				<value const="AUTO">auto</value>
+				<value const="COLUMN">column</value>
+				<value const="PAGE">page</value>
+				<value const="EVEN_PAGE">even-page</value>
+				<value const="ODD_PAGE">odd-page</value>
+			</enumeration>
+		<default>auto</default>
+	</property>
+	<property type="generic">
+		<name>generic-space</name>
+		<class-name>GenericSpace</class-name>
+		<inherited>false</inherited>
+		<datatype>Space</datatype>
+		<compound>
+			<subproperty set-by-shorthand="true">
+				<name>minimum</name>
+				<datatype>Length</datatype>
+				<default>0pt</default>
+			</subproperty>
+			<subproperty set-by-shorthand="true">
+				<name>optimum</name>
+				<datatype>Length</datatype>
+				<default>0pt</default>
+			</subproperty>
+			<subproperty set-by-shorthand="true">
+				<name>maximum</name>
+				<datatype>Length</datatype>
+				<default>0pt</default>
+			</subproperty>
+			<subproperty>
+				<name>precedence</name>
+				<datatype>Number</datatype>
+				<enumeration>
+					<value const="FORCE">force</value>
+				</enumeration>
+				<default>0</default>
+			</subproperty>
+			<subproperty>
+				<name>conditionality</name>
+				<datatype>Enum</datatype>
+				<enumeration>
+					<value const="DISCARD">discard</value>
+					<value const="RETAIN">retain</value>
+				</enumeration>
+				<default>discard</default>
+			</subproperty>
+		</compound>
+	</property>
+	<property>
+		<name>font-size</name>
+		<inherited>true</inherited>
+		<datatype>Length</datatype>
+		<default>12pt</default>
+		<!-- percent refers to inherited font size -->
+		<percent-ok base="INH_FONTSIZE"/>
+	</property>
+	<property>
+		<name>start-indent</name>
+		<inherited>true</inherited>
+		<datatype>Length</datatype>
+		<default>0pt</default>
+		<corresponding use-if-specified="true">
+			<propval>margin-<wmrel2abs dir="START"/></propval>
+			<propexpr>
+			<propval>margin-<wmrel2abs dir="START"/></propval>+
+			<propval>padding-<wmrel2abs dir="START"/></propval>+
+			<propval>border-<wmrel2abs dir="START"/>-width</propval>
+			</propexpr>
+		</corresponding>
+	</property>
+	<property>
+		<name>font-style</name>
+		<inherited>true</inherited>
+		<datatype>String</datatype>
+		<default>normal</default>
+	</property>
+	<property>
+		<name>flow-name</name>
+		<inherited>false</inherited>
+		<datatype>String</datatype>
+		<default></default>
+	</property>
+	<property>
+		<name>page-master-first</name>
+		<inherited>false</inherited>
+		<datatype>String</datatype>
+		<default></default>
+	</property>
+	<property>
+		<name>page-master-odd</name>
+		<inherited>false</inherited>
+		<datatype>String</datatype>
+		<default></default>
+	</property>
+	<property>
+		<name>extent</name>
+		<inherited>true</inherited>
+		<datatype>Length</datatype>
+		<default>0pt</default>
+	</property>
+	<property>
+		<name>font-weight</name>
+		<inherited>true</inherited>
+		<datatype>String</datatype>
+		<default>normal</default>
+	</property>
+	<property>
+		<name>font-variant</name>
+		<inherited>true</inherited>
+		<datatype>Enum</datatype>
+				<enumeration>
+					<value const="NORMAL">normal</value>
+					<value const="SMALL_CAPS">small-caps</value>
+				</enumeration>
+		<default>normal</default>
+	</property>
+	<property>
+		<name>margin-left</name>
+		<inherited>false</inherited>
+		<datatype>Length</datatype>
+		<default>0pt</default>
+	</property>
+	<property>
+		<name>font-family</name>
+		<inherited>true</inherited>
+		<datatype>String</datatype>
+		<default>sans-serif</default>
+	</property>
+	<property>
+		<name>page-master-even</name>
+		<inherited>false</inherited>
+		<datatype>String</datatype>
+		<default></default>
+	</property>
+	<property>
+		<name>margin-top</name>
+		<inherited>false</inherited>
+		<datatype>Length</datatype>
+		<default>0pt</default>
+	</property>
+	<property>
+		<name>master-name</name>
+		<inherited>false</inherited>
+		<datatype>String</datatype>
+		<default></default>
+	</property>
+	<property>
+		<name>end-indent</name>
+		<inherited>true</inherited>
+		<datatype>Length</datatype>
+		<default>0pt</default>
+		<corresponding use-if-specified="true">
+			<propval>margin-<wmrel2abs dir="END"/></propval>
+			<propexpr>
+			<propval>margin-<wmrel2abs dir="END"/></propval>+
+			<propval>padding-<wmrel2abs dir="END"/></propval>+
+			<propval>border-<wmrel2abs dir="END"/>-width</propval>
+			</propexpr>
+		</corresponding>
+	</property>
+	<property>
+		<name>color</name>
+		<inherited>true</inherited>
+		<use-generic>GenericColor</use-generic>
+		<default>black</default>
+	</property>
+	<property>
+		<name>margin-bottom</name>
+		<inherited>false</inherited>
+		<datatype>Length</datatype>
+		<default>0pt</default>
+	</property>
+	<property>
+		<name>page-height</name>
+		<inherited>false</inherited>
+		<datatype>Length</datatype>
+		<auto-ok/>
+		<default>11in</default>
+	</property>
+	<property>
+		<name>space-before</name>
+		<use-generic>GenericSpace</use-generic>
+	</property>
+	<property>
+		<name>space-after</name>
+		<use-generic>GenericSpace</use-generic>
+	</property>
+	<property>
+		<name>provisional-label-separation</name>
+		<inherited>true</inherited>
+		<datatype>Length</datatype>
+		<default>6pt</default>
+	</property>
+	<property>
+		<name>margin-right</name>
+		<inherited>false</inherited>
+		<datatype>Length</datatype>
+		<default>0pt</default>
+	</property>
+	<property>
+		<name>rule-thickness</name>
+		<inherited>true</inherited>
+		<datatype>Length</datatype>
+		<default>1.0pt</default>
+	</property>
+	<property>
+		<name>page-width</name>
+		<inherited>false</inherited>
+		<datatype>Length</datatype>
+		<auto-ok/>
+		<default>8in</default>
+	</property>
+	<property>
+		<name>content-width</name>
+		<inherited>false</inherited>
+		<datatype>Length</datatype>
+		<auto-ok/>
+		<default>auto</default>
+	</property>
+	<property>
+		<name>content-height</name>
+		<inherited>false</inherited>
+		<datatype>Length</datatype>
+		<auto-ok/>
+		<default>auto</default>
+	</property>
+	<property>
+		<name>page-master-repeating</name>
+		<inherited>false</inherited>
+		<datatype>String</datatype>
+		<default></default>
+	</property>
+	<property>
+		<name>provisional-distance-between-starts</name>
+		<inherited>true</inherited>
+		<datatype>Length</datatype>
+		<default>24pt</default>
+	</property>
+	<property>
+		<name>text-align</name>
+		<inherited>true</inherited>
+		<datatype>Enum</datatype>
+			<enumeration>
+				<value const="CENTER">center</value>
+				<value const="END">end</value>
+				<value const="START">start</value>
+				<value const="JUSTIFY">justify</value>
+			</enumeration>
+		<default>start</default>
+	</property>
+	<property>
+		<name>white-space-collapse</name>
+		<inherited>true</inherited>
+		<use-generic>GenericBoolean</use-generic>
+		<default>true</default>
+	</property>
+	<property>
+		<name>break-after</name>
+		<use-generic>GenericBreak</use-generic>
+	</property>
+	<property>
+		<name>break-before</name>
+		<use-generic>GenericBreak</use-generic>
+	</property>
+	<property>
+		<name>wrap-option</name>
+		<inherited>true</inherited>
+		<datatype>Enum</datatype>
+			<enumeration>
+				<value const="WRAP">wrap</value>
+				<value const="NO_WRAP">no-wrap</value>
+			</enumeration>
+		<default>wrap</default>
+	</property>
+	<property>
+		<name>text-align-last</name>
+		<inherited>true</inherited>
+		<datatype>Enum</datatype>
+			<enumeration>
+				<value const="CENTER">center</value>
+				<value const="END">end</value>
+				<value const="START">start</value>
+				<value const="JUSTIFY">justify</value>
+			</enumeration>
+		<default>start</default>
+		<derive from="text-align">
+			<if match="TextAlign.JUSTIFY">START</if>
+			<if match="TextAlign.END">END</if>
+			<if match="TextAlign.START">START</if>
+			<if match="TextAlign.CENTER">CENTER</if>
+		</derive>
+	</property>
+	<property>
+		<name>line-height</name>
+		<inherited type="specified">true</inherited>
+		<datatype>Length</datatype>
+		<default contextdep="true">normal</default>
+		<keyword-equiv match="normal" eval="true">1.2em</keyword-equiv>
+		<datatype-conversion from-type="Number" varname="numval">
+		new PercentLength(numval.doubleValue(),
+				 getPercentBase(fo,propertyList))</datatype-conversion>
+		<!-- percent refers to font size -->
+		<percent-ok base="FONTSIZE"/>
+	</property>
+	<property>
+		<name>text-indent</name>
+		<inherited>false</inherited>
+		<datatype>Length</datatype>
+		<default>0pt</default>
+	</property>
+	<property>
+		<name>src</name>
+		<inherited>false</inherited>
+		<datatype>String</datatype>
+		<default></default>
+	</property>
+	<property>
+		<name>column-width</name>
+		<inherited>false</inherited>
+		<datatype>Length</datatype>
+		<default>proportional-column-width(1)</default>
+	</property>
+	<property>
+		<name>keep-with-next</name>
+		<inherited>false</inherited>
+		<use-generic>GenericKeep</use-generic>
+		<default>auto</default>
+	</property>
+	<property>
+		<name>keep-with-previous</name>
+		<inherited>false</inherited>
+		<use-generic>GenericKeep</use-generic>
+		<default>auto</default>
+	</property>
+	<property>
+		<name>keep-together</name>
+		<inherited>false</inherited>
+		<use-generic>GenericKeep</use-generic>
+		<default>auto</default>
+	</property>
+	<property>
+		<name>background-color</name>
+		<inherited>false</inherited>
+		<use-generic>GenericColor</use-generic>
+		<default>transparent</default>
+	</property>
+<!-- shorthand class for all padding.... -->
+	<property>
+		<name>padding</name>
+		<inherited>false</inherited>
+		<datatype>Length</datatype>
+		<default>0pt</default>
+	</property>
+	<property>
+		<name>padding-before</name>
+		<use-generic>GenericCondPadding</use-generic>
+		<default subproperty="conditionality">retain</default>
+		<corresponding use-if-specified="true">
+			<propval>padding-<wmrel2abs dir="BEFORE"/></propval>
+		</corresponding>
+	</property>
+	<property>
+		<name>padding-after</name>
+		<use-generic>GenericCondPadding</use-generic>
+		<default subproperty="conditionality">retain</default>
+		<corresponding use-if-specified="true">
+			<propval>padding-<wmrel2abs dir="AFTER"/></propval>
+		</corresponding>
+	</property>
+	<property>
+		<name>padding-start</name>
+		<use-generic>GenericCondPadding</use-generic>
+		<default subproperty="conditionality">discard</default>
+		<corresponding use-if-specified="true">
+			<propval>padding-<wmrel2abs dir="START"/></propval>
+		</corresponding>
+	</property>
+	<property>
+		<name>padding-end</name>
+		<use-generic>GenericCondPadding</use-generic>
+		<default subproperty="conditionality">discard</default>
+		<corresponding use-if-specified="true">
+			<propval>padding-<wmrel2abs dir="END"/></propval>
+		</corresponding>
+	</property>
+	<property>
+		<name>padding-top</name>
+		<use-generic>GenericPadding</use-generic>
+		<corresponding>
+			<propval>padding-<wmabs2rel dir="TOP"/></propval>
+		</corresponding>
+	</property>
+	<property>
+		<name>padding-left</name>
+		<use-generic>GenericPadding</use-generic>
+		<corresponding>
+			<propval>padding-<wmabs2rel dir="LEFT"/></propval>
+		</corresponding>
+	</property>
+	<property>
+		<name>padding-bottom</name>
+		<use-generic>GenericPadding</use-generic>
+		<corresponding>
+			<propval>padding-<wmabs2rel dir="BOTTOM"/></propval>
+		</corresponding>
+	</property>
+	<property>
+		<name>padding-right</name>
+		<use-generic>GenericPadding</use-generic>
+		<corresponding>
+			<propval>padding-<wmabs2rel dir="RIGHT"/></propval>
+		</corresponding>
+	</property>
+	<property>
+		<name>external-destination</name>
+		<inherited>false</inherited>
+		<datatype>String</datatype>
+		<default></default>
+	</property>
+	<property>
+		<name>internal-destination</name>
+		<inherited>false</inherited>
+		<datatype>String</datatype>
+		<default></default>
+	</property>
+	<property>
+		<name>border-before-color</name>
+		<inherited>false</inherited>
+		<use-generic>GenericColor</use-generic>
+		<default>black</default>
+		<corresponding use-if-specified="true">
+			<propval>border-<wmrel2abs dir="BEFORE"/>-color</propval>
+		</corresponding>
+	</property>
+	<property>
+		<name>border-before-style</name>
+		<use-generic>GenericBorderStyle</use-generic>
+		<corresponding use-if-specified="true">
+			<propval>border-<wmrel2abs dir="BEFORE"/>-style</propval>
+		</corresponding>
+	</property>
+	<property>
+		<name>border-before-width</name>
+		<use-generic>GenericCondBorderWidth</use-generic>
+		<default subproperty="conditionality">retain</default>
+		<corresponding use-if-specified="true">
+			<propval>border-<wmrel2abs dir="BEFORE"/>-width</propval>
+		</corresponding>
+	</property>
+	<property>
+		<name>border-after-color</name>
+		<inherited>false</inherited>
+		<use-generic>GenericColor</use-generic>
+		<default>black</default>
+		<corresponding use-if-specified="true">
+			<propval>border-<wmrel2abs dir="AFTER"/>-color</propval>
+		</corresponding>
+	</property>
+	<property>
+		<name>border-after-style</name>
+		<use-generic>GenericBorderStyle</use-generic>
+		<corresponding use-if-specified="true">
+			<propval>border-<wmrel2abs dir="AFTER"/>-style</propval>
+		</corresponding>
+	</property>
+	<property>
+		<name>border-after-width</name>
+		<use-generic>GenericCondBorderWidth</use-generic>
+		<default subproperty="conditionality">retain</default>
+		<corresponding use-if-specified="true">
+			<propval>border-<wmrel2abs dir="AFTER"/>-width</propval>
+		</corresponding>
+	</property>
+	<property>
+		<name>border-start-color</name>
+		<inherited>false</inherited>
+		<use-generic>GenericColor</use-generic>
+		<default>black</default>
+		<corresponding use-if-specified="true">
+			<propval>border-<wmrel2abs dir="START"/>-color</propval>
+		</corresponding>
+	</property>
+	<property>
+		<name>border-start-style</name>
+		<use-generic>GenericBorderStyle</use-generic>
+		<corresponding use-if-specified="true">
+			<propval>border-<wmrel2abs dir="START"/>-style</propval>
+		</corresponding>
+	</property>
+	<property>
+		<name>border-start-width</name>
+		<use-generic>GenericCondBorderWidth</use-generic>
+		<default subproperty="conditionality">discard</default>
+		<corresponding use-if-specified="true">
+			<propval>border-<wmrel2abs dir="START"/>-width</propval>
+		</corresponding>
+	</property>
+	<property>
+		<name>border-end-color</name>
+		<inherited>false</inherited>
+		<use-generic>GenericColor</use-generic>
+		<default>black</default>
+		<corresponding use-if-specified="true">
+			<propval>border-<wmrel2abs dir="END"/>-color</propval>
+		</corresponding>
+	</property>
+	<property>
+		<name>border-end-style</name>
+		<use-generic>GenericBorderStyle</use-generic>
+		<corresponding use-if-specified="true">
+			<propval>border-<wmrel2abs dir="END"/>-style</propval>
+		</corresponding>
+	</property>
+	<property>
+		<name>border-end-width</name>
+		<use-generic>GenericCondBorderWidth</use-generic>
+		<default subproperty="conditionality">discard</default>
+		<corresponding use-if-specified="true">
+			<propval>border-<wmrel2abs dir="END"/>-width</propval>
+		</corresponding>
+	</property>
+	<property>
+		<name>border-top-color</name>
+		<inherited>false</inherited>
+		<use-generic>GenericColor</use-generic>
+		<default>black</default>
+		<corresponding>
+			<propval>border-<wmabs2rel dir="TOP"/>-color</propval>
+		</corresponding>
+	</property>
+	<property>
+		<name>border-top-style</name>
+		<use-generic>GenericBorderStyle</use-generic>
+		<corresponding>
+			<propval>border-<wmabs2rel dir="TOP"/>-style</propval>
+		</corresponding>
+	</property>
+	<property>
+		<name>border-top-width</name>
+		<use-generic>GenericBorderWidth</use-generic>
+		<corresponding>
+			<propval>border-<wmabs2rel dir="TOP"/>-width</propval>
+		</corresponding>
+	</property>
+	<property>
+		<name>border-bottom-color</name>
+		<inherited>false</inherited>
+		<use-generic>GenericColor</use-generic>
+		<corresponding>
+			<propval>border-<wmabs2rel dir="BOTTOM"/>-color</propval>
+		</corresponding>
+		<default>black</default>
+	</property>
+	<property>
+		<name>border-bottom-style</name>
+		<use-generic>GenericBorderStyle</use-generic>
+		<corresponding>
+			<propval>border-<wmabs2rel dir="BOTTOM"/>-style</propval>
+		</corresponding>
+	</property>
+	<property>
+		<name>border-bottom-width</name>
+		<use-generic>GenericBorderWidth</use-generic>
+		<corresponding>
+			<propval>border-<wmabs2rel dir="BOTTOM"/>-width</propval>
+		</corresponding>
+	</property>
+	<property>
+		<name>border-left-color</name>
+		<inherited>false</inherited>
+		<use-generic>GenericColor</use-generic>
+		<default>black</default>
+		<corresponding>
+			<propval>border-<wmabs2rel dir="LEFT"/>-color</propval>
+		</corresponding>
+	</property>
+	<property>
+		<name>border-left-style</name>
+		<use-generic>GenericBorderStyle</use-generic>
+		<corresponding>
+			<propval>border-<wmabs2rel dir="LEFT"/>-style</propval>
+		</corresponding>
+	</property>
+	<property>
+		<name>border-left-width</name>
+		<use-generic>GenericBorderWidth</use-generic>
+		<corresponding>
+			<propval>border-<wmabs2rel dir="LEFT"/>-width</propval>
+		</corresponding>
+	</property>
+	<property>
+		<name>border-right-color</name>
+		<inherited>false</inherited>
+		<use-generic>GenericColor</use-generic>
+		<default>black</default>
+		<corresponding>
+			<propval>border-<wmabs2rel dir="RIGHT"/>-color</propval>
+		</corresponding>
+	</property>
+	<property>
+		<name>border-right-style</name>
+		<use-generic>GenericBorderStyle</use-generic>
+		<corresponding>
+			<propval>border-<wmabs2rel dir="RIGHT"/>-style</propval>
+		</corresponding>
+	</property>
+	<property>
+		<name>border-right-width</name>
+		<use-generic>GenericBorderWidth</use-generic>
+		<corresponding>
+			<propval>border-<wmabs2rel dir="RIGHT"/>-width</propval>
+		</corresponding>
+	</property>
+	<property>
+		<name>border-color</name>
+		<inherited>false</inherited>
+		<use-generic>GenericColor</use-generic>
+		<default>black</default>
+	</property>
+	<property>
+		<name>border-style</name>
+		<use-generic>GenericBorderStyle</use-generic>
+	</property>
+	<property>
+		<name>border-width</name>
+		<inherited>false</inherited>
+		<datatype>Length</datatype>
+		<default>0pt</default>
+	</property>
+	<property>
+		<name>border-top</name>
+		<inherited>false</inherited>
+		<datatype>String</datatype>
+		<default>normal</default>
+	</property>
+	<property>
+		<name>border-bottom</name>
+		<inherited>false</inherited>
+		<datatype>String</datatype>
+		<default>normal</default>
+	</property>
+	<property>
+		<name>border-left</name>
+		<inherited>false</inherited>
+		<datatype>String</datatype>
+		<default>normal</default>
+	</property>
+	<property>
+		<name>border-right</name>
+		<inherited>false</inherited>
+		<datatype>String</datatype>
+		<default>normal</default>
+	</property>
+	<property>
+		<name>position</name>
+		<inherited>false</inherited>
+		<datatype>Enum</datatype>
+			<enumeration>
+				<value const="STATIC">static</value>
+				<value const="RELATIVE">relative</value>
+				<value const="ABSOLUTE">absolute</value>
+				<value const="FIXED">fixed</value>
+			</enumeration>
+		<default>static</default>
+	</property>
+	<property>
+		<name>top</name>
+		<inherited>false</inherited>
+		<datatype>Length</datatype>
+		<auto-ok/>
+		<default>auto</default>
+	</property>
+	<property>
+		<name>right</name>
+		<inherited>false</inherited>
+		<datatype>Length</datatype>
+		<auto-ok/>
+		<default>auto</default>
+	</property>
+	<property>
+		<name>bottom</name>
+		<inherited>false</inherited>
+		<datatype>Length</datatype>
+		<auto-ok/>
+		<default>auto</default>
+	</property>
+	<property>
+		<name>left</name>
+		<inherited>false</inherited>
+		<datatype>Length</datatype>
+		<auto-ok/>
+		<default>auto</default>
+	</property>
+	<property>
+		<name>width</name>
+		<inherited>false</inherited>
+		<datatype>Length</datatype>
+		<auto-ok/>
+		<percent-ok base="CONTAINING_BOX"/>
+		<default>auto</default>
+	</property>
+	<property>
+		<name>height</name>
+		<inherited>false</inherited>
+		<datatype>Length</datatype>
+		<auto-ok/>
+		<default>auto</default>
+	</property>
+	<property>
+		<name>initial-page-number</name>
+		<inherited>false</inherited>
+		<datatype>String</datatype>
+		<default>auto</default>
+	</property>
+	<property>
+	 <name>ref-id</name>
+	<inherited>false</inherited>
+	<datatype>String</datatype>
+	<default></default>
+	</property>
+	<property>
+	<name>id</name>
+	<inherited>false</inherited>
+	<datatype>String</datatype>
+	<default></default>
+	 </property>
+	<property>
+	<name>maximum-repeats</name>
+	<inherited>false</inherited>
+	<datatype>String</datatype>
+	<default>no-limit</default>
+	 </property>
+	<property>
+	<name>page-position</name>
+	<inherited>false</inherited>
+	<datatype>Enum</datatype>
+			<enumeration>
+				<value const="FIRST">first</value>
+				<value const="LAST">last</value>
+				<value const="REST">rest</value>
+				<value const="ANY">any</value>
+			</enumeration>
+	<default>any</default>
+	 </property>
+	<property>
+	<name>odd-or-even</name>
+	<inherited>false</inherited>
+	<datatype>Enum</datatype>
+			<enumeration>
+				<value const="ODD">odd</value>
+				<value const="EVEN">even</value>
+				<value const="ANY">any</value>
+			</enumeration>
+	<default>any</default>
+	 </property>
+	<property>
+	<name>blank-or-not-blank</name>
+	<inherited>false</inherited>
+	<datatype>Enum</datatype>
+			<enumeration>
+				<value const="BLANK">blank</value>
+				<value const="NOT_BLANK">not-blank</value>
+				<value const="ANY">any</value>
+			</enumeration>
+	<default>any</default>
+	 </property>
+	<property>
+	<name>rule-style</name>
+	<inherited>true</inherited>
+	<datatype>Enum</datatype>
+			<enumeration>
+				<value const="NONE">none</value>
+				<value const="DOTTED">dotted</value>
+				<value const="DASHED">dashed</value>
+				<value const="SOLID">solid</value>
+				<value const="DOUBLE">double</value>
+				<value const="GROOVE">groove</value>
+				<value const="RIDGE">ridge</value>
+			</enumeration>
+	<default>solid</default>
+	</property>
+	<property>
+	<name>leader-pattern</name>
+	<inherited>true</inherited>
+	<datatype>Enum</datatype>
+			<enumeration>
+				<value const="SPACE">space</value>
+				<value const="RULE">rule</value>
+				<value const="DOTS">dots</value>
+				<value const="USECONTENT">use-content</value>
+			</enumeration>
+	<default>space</default>
+	</property>
+
+	<property>
+	<name>leader-length</name>
+	<inherited>true</inherited>
+	<datatype>LengthRange</datatype>
+	<percent-ok base="CONTAINING_BOX"/>
+		<compound>
+			<subproperty set-by-shorthand="true">
+				<name>minimum</name>
+				<datatype>Length</datatype>
+	<default>0pt</default>
+	<percent-ok base="CONTAINING_BOX"/>
+			</subproperty>
+			<subproperty set-by-shorthand="true">
+				<name>optimum</name>
+				<datatype>Length</datatype>
+	<default>12.0pt</default>
+	<percent-ok base="CONTAINING_BOX"/>
+			</subproperty>
+			<subproperty set-by-shorthand="true">
+				<name>maximum</name>
+				<datatype>Length</datatype>
+	<default contextdep="true">100%</default>
+	<percent-ok base="CONTAINING_BOX"/>
+			</subproperty>
+		</compound>
+	 </property>
+
+	<property>
+		<name>leader-pattern-width</name>
+		<class-name>LeaderPatternWidth</class-name>
+		<inherited>true</inherited>
+		<datatype>Length</datatype>
+		<default contextdep="true">use-font-metrics</default>
+		<keyword-equiv match="use-font-metrics" eval="true">0pt</keyword-equiv>
+		<percent-ok base="CONTAINING_BOX"/>
+
+	 </property>
+
+	<property>
+		<name>leader-alignment</name>
+		<inherited>true</inherited>
+		<datatype>Enum</datatype>
+			<enumeration>
+				<value const="NONE">none</value>
+				<value const="REFERENCE_AREA">reference-area</value>
+				<value const="PAGE">page</value>
+			</enumeration>
+		<default>none</default>
+	</property>
+
+	<property>
+		<name>scaling</name>
+		<inherited>true</inherited>
+		<datatype>Enum</datatype>
+			<enumeration>
+				<value const="UNIFORM">uniform</value>
+				<value const="NON_UNIFORM">non-uniform</value>
+			</enumeration>
+		<default>uniform</default>
+	</property>
+	<property>
+		<name>vertical-align</name>
+		<inherited>false</inherited>
+		<datatype>Enum</datatype>
+			<enumeration>
+				<value const="BASELINE">baseline</value>
+				<value const="MIDDLE">middle</value>
+				<value const="SUB">sub</value>
+				<value const="SUPER">super</value>
+				<value const="TEXT_TOP">text-top</value>
+				<value const="TEXT_BOTTOM">text-bottom</value>
+				<value const="TOP">top</value>
+				<value const="BOTTOM">bottom</value>
+			</enumeration>
+		<default>baseline</default>
+	</property>
+	<property>
+		<name>overflow</name>
+		<inherited>false</inherited>
+		<datatype>Enum</datatype>
+			<enumeration>
+				<value const="VISIBLE">visible</value>
+				<value const="HIDDEN">hidden</value>
+				<value const="SCROLL">scroll</value>
+				<value const="AUTO">auto</value>
+			</enumeration>
+		<default>auto</default>
+	</property>
+
+	<property>
+	<name>column-count</name>
+	<inherited>false</inherited>
+	<datatype>String</datatype>
+	<default>1</default>
+	 </property>
+	<property>
+	<name>column-gap</name>
+	<inherited>false</inherited>
+	<datatype>Length</datatype>
+	<auto-ok/>
+	<default>0.25in</default>
+	 </property>
+	<property>
+	<name>span</name>
+	<inherited>false</inherited>
+		<datatype>Enum</datatype>
+		<enumeration>
+				<value const="NONE">none</value>
+				<value const="ALL">all</value>
+			</enumeration>
+	<default>none</default>
+	 </property>
+
+	 <property>
+		<name>text-decoration</name>
+		<inherited>false</inherited>
+		<datatype>Enum</datatype>
+			<enumeration>
+				<value const="NONE">none</value>
+				<value const="UNDERLINE">underline</value>
+				<value const="OVERLINE">overline</value>
+				<value const="LINE_THROUGH">line-through</value>
+				<value const="BLINK">blink</value>
+				<value const="NO_UNDERLINE">no-underline</value>
+				<value const="NO_OVERLINE">no-overline</value>
+				<value const="NO_LINE_THROUGH">no-line-through</value>
+				<value const="NO_BLINK">no-blink</value>
+			</enumeration>
+		<default>none</default>
+	</property>
+
+	<!-- new table related properties -->
+	<property>
+		<name>column-number</name>
+		<inherited>false</inherited>
+		<datatype>Number</datatype>
+		<default>0</default>
+	</property>
+	<property>
+		<name>number-columns-repeated</name>
+		<inherited>false</inherited>
+		<datatype>Number</datatype>
+		<default>1</default>
+	</property>
+	<property>
+		<name>number-columns-spanned</name>
+		<inherited>false</inherited>
+		<datatype>Number</datatype>
+		<default>1</default>
+	</property>
+	<property>
+		<name>number-rows-spanned</name>
+		<inherited>false</inherited>
+		<datatype>Number</datatype>
+		<default>1</default>
+	</property>
+	<property>
+		<name>table-omit-header-at-break</name>
+		<inherited>false</inherited>
+		<use-generic>GenericBoolean</use-generic>
+		<default>false</default>
+	</property>
+	<property>
+		<name>table-omit-footer-at-break</name>
+		<inherited>false</inherited>
+		<use-generic>GenericBoolean</use-generic>
+		<default>false</default>
+	</property>
+
+	<property>
+		<name>region-name</name>
+		<class-name>RegionName</class-name>
+		<inherited>false</inherited>
+		<datatype>String</datatype>
+		<default></default>
+	</property>
+
+	<property>
+		<name>hyphenate</name>
+		<class-name>Hyphenate</class-name>
+		<inherited>true</inherited>
+		<datatype>Enum</datatype>
+			<enumeration>
+				<value const="TRUE">true</value>
+				<value const="FALSE">false</value>
+			</enumeration>
+		<default>false</default>
+	</property>
+
+	<property>
+		<name>hyphenation-character</name>
+		<class-name>HyphenationCharacter</class-name>
+		<inherited>true</inherited>
+		<datatype>Character</datatype>
+		<default>-</default>
+	</property>
+
+	<property>
+		<name>hyphenation-push-character-count</name>
+		<class-name>HyphenationPushCharacterCount</class-name>
+		<inherited>true</inherited>
+		<datatype>Number</datatype>
+		<default>2</default>
+	</property>
+
+	<property>
+		<name>hyphenation-remain-character-count</name>
+		<class-name>HyphenationRemainCharacterCount</class-name>
+		<inherited>true</inherited>
+		<datatype>Number</datatype>
+		<default>2</default>
+	</property>
+
+	<property>
+		<name>language</name>
+		<class-name>Language</class-name>
+		<inherited>true</inherited>
+		<datatype>String</datatype>
+		<default>none</default>
+	</property>
+
+	<property>
+		<name>widows</name>
+		<inherited>true</inherited>
+		<datatype>Number</datatype>
+		<default>2</default>
+	</property>
+	<property>
+		<name>orphans</name>
+		<inherited>true</inherited>
+		<datatype>Number</datatype>
+		<default>2</default>
+	</property>
+
+	<property>
+		<name>country</name>
+		<class-name>Country</class-name>
+		<inherited>true</inherited>
+		<datatype>String</datatype>
+		<default>none</default>
+	</property>
+
+	<property>
+		<name>character</name>
+		<class-name>Character</class-name>
+		<inherited>false</inherited>
+		<datatype>Character</datatype>
+		<default>none</default>
+	</property>
+
+	<property>
+		<name>writing-mode</name>
+		<inherited>true</inherited>
+		<datatype>Enum</datatype>
+		<default>lr-tb</default>
+		<enumeration>
+			<value const="LR_TB">lr-tb</value>
+			<value const="RL_TB">rl-tb</value>
+			<value const="TB_RL">tb-rl</value>
+		</enumeration>
+	</property>
+
+	<property>
+		<name>block-progression-dimension</name>
+		<inherited>false</inherited>
+		<datatype>LengthRange</datatype>
+		<corresponding use-if-specified="true">
+			<propval><wmrel2abs dir="BLOCKPROGDIM"/></propval>
+		</corresponding>>
+		<compound>
+			<subproperty set-by-shorthand="true">
+				<name>minimum</name>
+				<datatype>Length</datatype>
+	<default>auto</default>
+	<auto-ok/>
+	<percent-ok base="CONTAINING_BOX"/>
+				<corresponding>
+					<propval>min-<wmrel2abs dir="BLOCKPROGDIM"/></propval>
+				</corresponding>>
+			</subproperty>
+			<subproperty set-by-shorthand="true">
+				<name>optimum</name>
+				<datatype>Length</datatype>
+	<default>auto</default>
+	<auto-ok/>
+	<percent-ok base="CONTAINING_BOX"/>
+			</subproperty>
+			<subproperty set-by-shorthand="true">
+				<name>maximum</name>
+				<datatype>Length</datatype>
+	<auto-ok/>
+	<default>auto</default>
+	<percent-ok base="CONTAINING_BOX"/>
+				<corresponding>
+					<propval>max-<wmrel2abs dir="BLOCKPROGDIM"/></propval>
+				</corresponding>>
+			</subproperty>
+		</compound>
+	</property>
+
+ </generic-property-list>
+</property-list>
+

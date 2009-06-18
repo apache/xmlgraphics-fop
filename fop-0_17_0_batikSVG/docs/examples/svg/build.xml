@@ -1,0 +1,156 @@
+<?xml version="1.0"?>
+
+<!-- ===========================================================================
+
+
+Build targets
+=============
+
+These are the meaningful targets for this build file:
+
+ - svg-all [default] -> creates ./svg-all.pdf
+ - svg-design -> creates ./svg-design.pdf
+ - svg-examples -> creates ./svg-examples.pdf
+ - svg-basicexamples -> creates ./svg-basicexamples.pdf
+ - svg-largeexamples -> creates ./svg-largeexamples.pdf
+ - svg-tests -> creates ./svg-tests.pdf
+ - svg-unittests -> creates ./svg-unittests.pdf
+ - svg-moretests -> creates ./svg-moretests.pdf
+ - svg-misc -> creates ./svg-misc.pdf
+ - clean         -> deletes all files produced by this script
+
+-->
+
+
+<project default="svg-all" basedir=".">
+
+  <!-- =================================================================== -->
+  <!-- Help on usage                                                       -->
+  <!-- =================================================================== -->
+  <target name="usage">
+    <echo message=""/>
+    <echo message=""/>
+    <echo message="SVG Documentation Build file"/>
+    <echo message="-------------------------------------------------------------"/>
+    <echo message=""/>
+    <echo message=" available targets are:"/>
+    <echo message=""/>
+    <echo message="   svg-all [default] -> creates ./svg-all.pdf"/>
+    <echo message="   svg-design -> creates ./svg-design.pdf"/>
+    <echo message="   svg-examples -> creates ./svg-examples.pdf"/>
+    <echo message="   svg-basicexamples -> creates ./svg-basicexamples.pdf"/>
+    <echo message="   svg-largeexamples -> creates ./svg-largeexamples.pdf"/>
+    <echo message="   svg-tests -> creates ./svg-tests.pdf"/>
+    <echo message="   svg-unittests -> creates ./svg-unittests.pdf"/>
+    <echo message="   svg-moretests -> creates ./svg-moretests.pdf"/>
+    <echo message="   svg-misc -> creates ./svg-misc.pdf"/>
+    <echo message="   clean         -> deletes all files produced by this script"/>
+    <echo message=""/>
+    <echo message=" See the comments inside the build.xml file for more details."/>
+    <echo message="-------------------------------------------------------------"/>
+    <echo message=""/>
+    <echo message=""/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Initialization target                                               -->
+  <!-- =================================================================== -->
+  <target name="init">
+    <tstamp/>
+
+    <property name="src.dir" value="."/>
+    <property name="stylesheet.xsl" value="Document.xsl"/>
+    <property name="outfile.fo" value="svgdoc.fo"/>
+    <property name="all.pdf" value="svg-all.pdf"/>
+    <property name="design.pdf" value="svg-design.pdf"/>
+    <property name="examples.pdf" value="svg-examples.pdf"/>
+    <property name="basicexamples.pdf" value="svg-basicexamples.pdf"/>
+    <property name="largeexamples.pdf" value="svg-largeexamples.pdf"/>
+    <property name="misc.pdf" value="svg-misc.pdf"/>
+    <property name="tests.pdf" value="svg-tests.pdf"/>
+    <property name="unittests.pdf" value="svg-unittests.pdf"/>
+    <property name="moretests.pdf" value="svg-moretests.pdf"/>
+
+    <property name="xslt" value="org.apache.xalan.xslt.Process"/>
+
+    <taskdef name="fop" classname="org.apache.fop.tools.anttasks.Fop"/>
+    <taskdef name="xslt" classname="org.apache.fop.tools.anttasks.Xslt"/>
+
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Generates the pdf file        -->
+  <!-- =================================================================== -->
+  <target name="svg-all" depends="init">
+    <xslt infile="All.xml" xsltfile="${stylesheet.xsl}"
+        outfile="${outfile.fo}" smart="yes"/>
+    <fop fofile="${outfile.fo}"   pdffile="${all.pdf}"/> 
+  </target>
+
+  <target name="svg-design" depends="init">
+    <xslt infile="Design.xml" xsltfile="${stylesheet.xsl}"
+        outfile="${outfile.fo}" smart="yes"/>
+    <fop fofile="${outfile.fo}"   pdffile="${design.pdf}"/> 
+  </target>
+
+  <target name="svg-examples" depends="init">
+    <xslt infile="Examples.xml" xsltfile="${stylesheet.xsl}"
+        outfile="${outfile.fo}" smart="yes"/>
+    <fop fofile="${outfile.fo}"   pdffile="${examples.pdf}"/> 
+  </target>
+
+  <target name="svg-basicexamples" depends="init">
+    <xslt infile="BasicExamples.xml" xsltfile="${stylesheet.xsl}"
+        outfile="${outfile.fo}" smart="yes"/>
+    <fop fofile="${outfile.fo}"   pdffile="${basicexamples.pdf}"/> 
+  </target>
+
+  <target name="svg-largeexamples" depends="init">
+    <xslt infile="LargeExamples.xml" xsltfile="${stylesheet.xsl}"
+        outfile="${outfile.fo}" smart="yes"/>
+    <fop fofile="${outfile.fo}"   pdffile="${largeexamples.pdf}"/> 
+  </target>
+
+  <target name="svg-misc" depends="init">
+    <xslt infile="Misc.xml" xsltfile="${stylesheet.xsl}"
+        outfile="${outfile.fo}" smart="yes"/>
+    <fop fofile="${outfile.fo}"   pdffile="${misc.pdf}"/> 
+  </target>
+
+  <target name="svg-tests" depends="init">
+    <xslt infile="Tests.xml" xsltfile="${stylesheet.xsl}"
+        outfile="${outfile.fo}" smart="yes"/>
+    <fop fofile="${outfile.fo}"   pdffile="${tests.pdf}"/> 
+  </target>
+
+  <target name="svg-unittests" depends="init">
+    <xslt infile="UnitTests.xml" xsltfile="${stylesheet.xsl}"
+        outfile="${outfile.fo}" smart="yes"/>
+    <fop fofile="${outfile.fo}"   pdffile="${unittests.pdf}"/> 
+  </target>
+
+  <target name="svg-moretests" depends="init">
+    <xslt infile="MoreTests.xml" xsltfile="${stylesheet.xsl}"
+        outfile="${outfile.fo}" smart="yes"/>
+    <fop fofile="${outfile.fo}"   pdffile="${moretests.pdf}"/> 
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Clean targets                                                       -->
+  <!-- =================================================================== -->
+  <target name="clean">
+    <delete file="${outfile.fo}"/>
+    <delete file="${all.pdf}"/>
+    <delete file="${design.pdf}"/>
+    <delete file="${examples.pdf}"/>
+    <delete file="${basicexamples.pdf}"/>
+    <delete file="${largeexamples.pdf}"/>
+    <delete file="${misc.pdf}"/>
+    <delete file="${tests.pdf}"/>
+    <delete file="${unittests.pdf}"/>
+    <delete file="${moretests.pdf}"/>
+  </target>
+
+</project>
+
+<!-- End of file -->

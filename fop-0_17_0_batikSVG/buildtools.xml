@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+
+<!-- ======================================================================= 
+
+    Instructions for building the buildtools.jar:
+
+ Classpath should contain the following:
+   Xerces 1.2.x
+   Xalan  1.2.x
+   Xalan  2.x
+   xml-fop/lib/ant.jar
+
+  Run "ant -f buildtools.xml" to build a new version of the buildtools jar
+
+======================================================================= -->
+   
+
+<project default="buildtools" basedir=".">
+  <target name="init">
+   <property name="src.dir" value="./src"/>
+   <property name="build.src" value="./lib/src"/>
+   <property name="build.dest" value="./lib/classes"/>
+
+   <property name="tools" value="org/apache/fop/tools"/>
+   <property name="hyph"  value="org/apache/fop/layout/hyphenation"/>
+   <property name="buildtools.jar" value="./lib/buildtools.jar"/>
+
+   <property name="xalan1" value="Xalan1Transform.java"/>
+   <property name="trax" value="TraxTransform.java"/>
+
+   <available property="trax.present" classname="javax.xml.transform.Transformer"/>
+   <available property="xalan1.present" classname="org.apache.xalan.xslt.XSLTProcessor"/>
+   </target>
+
+   <target name="compile" depends="init,prepare.src">
+     <mkdir dir="${build.dest}"/>
+     <javac srcdir="${build.src}"
+	    destdir="${build.dest}"/>
+     
+   </target>
+
+   <target name="buildtools" depends="clean,init,compile">
+     <echo message="Creating the jar file ${buildtools.jar}"/>
+     <jar jarfile="${buildtools.jar}"
+	  basedir="${build.dest}"
+	  includes="${tools}/**,${hyph}/**"/>
+   </target>
+
+   <target name="prepare.src" depends="prepare.xalan1,prepare.trax">
+     <copydir src="${src.dir}"
+	      dest="${build.src}"
+	      includes="${tools}/**,${hyph}/**"
+	      excludes="${tools}/anttasks/Fop.java,${hyph}/Hyphenator.java,**/${xalan1},**/${trax}"/>
+   </target>
+
+   <target name="prepare.xalan1" if="xalan1.present">
+     <echo message="Xalan1 is present. Installing Xalan1 support"/>
+     <copydir src="${src.dir}"
+	      dest="${build.src}"
+	      includes="**/${xalan1}"/>
+   </target>
+
+   <target name="prepare.trax" if="trax.present">
+     <echo message="JAXP1.1 transforms is present. Installing TRaX support"/>
+     <copydir src="${src.dir}"
+	      dest="${build.src}"
+	      includes="**/${trax}"/>
+   </target>
+
+   <target name="clean" depends="init">
+     <deltree dir="${build.src}"/>
+     <deltree dir="${build.dest}"/>
+   </target>
+
+</project>

@@ -1,0 +1,32 @@
+<?xml version="1.0" standalone="yes"?>
+
+<svg:svg width="400px" height="150px" xmlns:svg="http://www.w3.org/2000/svg">
+  <svg:title>NewCoordSys</svg:title>
+  <svg:desc>Example NewCoordSys - New user coordinate system</svg:desc>
+  
+  <svg:g style="fill:none; stroke:black; stroke-width:3">
+    <!-- Draw the axes of the original coordinate system -->
+    <svg:line x1="0" y1="1.5" x2="400" y2="1.5" />
+    <svg:line x1="1.5" y1="0" x2="1.5" y2="150" />
+  </svg:g>
+  <svg:g>
+    <svg:text x="30" y="30" style="font-size:20; font-family:Verdana">
+      ABC (orig coord system)
+    </svg:text>
+  </svg:g>
+  
+  <!-- Establish a new coordinate system, which is
+       shifted (i.e., translated) from the initial coordinate
+       system by 50 user units along each axis. -->
+  <svg:g transform="translate(50,50)">
+    <svg:g style="fill:none; stroke:red; stroke-width:3">
+      <!-- Draw lines of length 50 user units along
+           the axes of the new coordinate system -->
+      <svg:line x1="0" y1="0" x2="50" y2="0" style="stroke:red"/>
+      <svg:line x1="0" y1="0" x2="0" y2="50" />
+    </svg:g>
+    <svg:text x="30" y="30" style="font-size:20; font-family:Verdana; fill:blue">
+      ABC (translated coord system)
+    </svg:text>
+  </svg:g>
+</svg:svg>

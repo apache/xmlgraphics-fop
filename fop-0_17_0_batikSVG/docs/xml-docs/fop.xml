@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+
+
+<book title="FOP XSL-FO documentation" copyright="1999 The Apache Software Foundation">
+  <external href="../index.html"  label="Home"/>
+  <separator/>
+  <document id="index"          label="Readme"      source="fop/readme.xml"/>
+  <document id="download"       label="Download"    source="fop/download.xml"    />
+  <document id="running"        label="Running FOP"     source="fop/running.xml"    />
+  <document id="implemented"    label="Features" source="fop/implemented.xml"    />
+  <document id="limitations"    label="Limitations" source="fop/limitations.xml"    />
+  <document id="examples"       label="Examples" source="fop/examples.xml"    />
+  <document id="config"         label="Configuration" source="fop/configuration.xml"    />
+  <document id="fonts"          label="Fonts" source="fop/fonts.xml"    />
+  <document id="extensions"     label="Extensions" source="fop/extensions.xml"    />
+  <separator/>
+  <document id="compiling"      label="Compiling" source="fop/compiling.xml"    />
+  <document id="embedding"      label="Embedding" source="fop/embedding.xml"    />
+  <document id="involved"       label="Getting involved" source="fop/involved.xml"    />
+  <document id="architecture"   label="Architecture" source="fop/architecture.xml"/>
+  <separator/>
+  <document id="bugs"           label="Bugs" source="fop/bugs.xml"    />
+  <document id="faq"            label="FAQ" source="fop/faq.xml"    />
+  <document id="resources"      label="Resources" source="fop/resources.xml"    />
+  <document id="license"        label="License"     source="fop/license.xml"   />
+
+</book>

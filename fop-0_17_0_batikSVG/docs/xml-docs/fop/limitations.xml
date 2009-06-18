@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+
+
+
+<!-- Limitations --> 
+
+<s1 title="Limitations">
+  <p>FOP implements the fo objects and properties listed 
+     in <jump href="implemented.html">features</jump>, sometimes it does so only in a limited way. 
+  </p>
+
+  <s2 title="fo:leader">
+    <p>leader-length.minimum is not used at all</p>
+  </s2>
+
+  <s2 title="page-number-citation">
+    <p>Only works for table of contents without any problems. The case where the page number doesn't 
+    fit on a line isn't handled, and any text on the same line and after the page-number might not 
+    appear exactly where you want it to.
+    </p>
+  </s2>
+
+  <s2 title="Padding">
+    <p>Padding works in conjunction with indents and spaces. It is only implemented 
+       for blocks. At the moment padding can't be used to make extra space (indents+spaces
+       must be used), but only to control how much the background-color extends beyond
+       the content rectangle.
+    </p>  
+  </s2>
+  <s2 title="Tables">
+    <p>There two limitations for tables: 1) FOP needs you to explicitly specify column widths 
+       2) Cells have to contain block-level FOs. They can't contain straight character data.
+    </p>
+    <p>A working basic example of a table looks like this: </p>  
+    <p><code>&lt;fo:table></code></p>
+    <p><code>&#160;&lt;fo:table-column column-width="150pt"/></code></p>
+    <p><code>&#160;&lt;fo:table-column column-width="150pt"/></code></p>
+    <p><code>&#160;&lt;fo:table-body font-size="10pt" font-family="sans-serif"></code></p>
+    <p><code>&#160;&#160;&lt;fo:table-row></code></p>
+    <p><code>&#160;&#160;&#160;&lt;fo:table-cell></code></p>
+    <p><code>&#160;&#160;&#160;&#160;&lt;fo:block>text&lt;/fo:block></code></p>
+    <p><code>&#160;&#160;&#160;&lt;/fo:table-cell></code></p>
+    <p><code>&#160;&#160;&#160;&lt;fo:table-cell></code></p>
+    <p><code>&#160;&#160;&#160;&#160;&lt;fo:block>text&lt;/fo:block></code></p>
+    <p><code>&#160;&#160;&#160;&lt;/fo:table-cell></code></p>
+    <p><code>&#160;&#160;&lt;/fo:table-row></code></p>
+    <p><code>&#160;&#160;&lt;fo:table-row></code></p>
+    <p><code>&#160;&#160;&#160;&lt;fo:table-cell></code></p>
+    <p><code>&#160;&#160;&#160;&#160;&lt;fo:block>text&lt;/fo:block></code></p>
+    <p><code>&#160;&#160;&#160;&lt;/fo:table-cell></code></p>
+    <p><code>&#160;&#160;&#160;&lt;fo:table-cell></code></p>
+    <p><code>&#160;&#160;&#160;&#160;&lt;fo:block>text&lt;/fo:block></code></p>
+    <p><code>&#160;&#160;&#160;&lt;/fo:table-cell></code></p>
+    <p><code>&#160;&#160;&lt;/fo:table-row></code></p>
+    <p><code>&#160;&#160;&lt;fo:table-row></code></p>
+    <p><code>&#160;&#160;&#160;&lt;fo:table-cell></code></p>
+    <p><code>&#160;&#160;&#160;&#160;&lt;fo:block>text&lt;/fo:block></code></p>
+    <p><code>&#160;&#160;&#160;&lt;/fo:table-cell></code></p>
+    <p><code>&#160;&#160;&#160;&lt;fo:table-cell></code></p>
+    <p><code>&#160;&#160;&#160;&#160;&lt;fo:block>text&lt;/fo:block></code></p>
+    <p><code>&#160;&#160;&#160;&lt;/fo:table-cell></code></p>
+    <p><code>&#160;&#160;&lt;/fo:table-row></code></p>
+    <p><code>&#160;&lt;/fo:table-body></code></p>
+    <p><code>&lt;/fo:table></code></p>
+  </s2>
+
+
+</s1>

@@ -1,0 +1,52 @@
+<?xml version="1.0" standalone="no"?>
+
+
+<!-- Compiling FOP -->
+
+<s1 title="Compiling FOP">
+    <p>Compilation is started by executing build, either as a batch file on win32 (build.bat) or as a shell script on unix. Before you
+       can start one of these scripts, you have to setup your classpath and the environment variable JAVA_HOME (see below).</p>
+     <p> The compilation uses Ant, 
+       a replacement of make (you can find more information about Ant at 
+       <jump href="http://jakarta.apache.org/ant/">jakarte.apache.org</jump>).
+        build.xml is the replacement of makefile. Look there for detailed information on the build
+        process and different targets. </p>
+       <p>A help screen is shown by calling "build usage".</p>
+       <p>If you only want to use Fop, you don't need to build it. A fop.jar comes with the distribution.</p>
+   <s2 title="Setting up your classpath">
+     <p>The build process relies on finding following libraries in your classpath (the version numbers indicate that building with them has been successfully tested, other, later versions may work too:</p>
+     <ul>
+        <li><jump href="http://xml.apache.org/xerces-j/index.html">Xerces-J</jump> version 1.2.1 (xml parser). Xerces-J version 1.3.0 does not work, because of a bug in Xerces!</li>
+        <li><jump href="http://xml.apache.org/xalan/index.html">Xalan</jump> version 1.2 (xslt processor). Xalan 2.0 is also supported.</li>
+        <li>bsf.jar (comes with Xalan)</li>
+        <li>jimi.jar (image processing library) this file is optional </li>
+     </ul>
+     <p>Other needed libraries and classes come with Fop (in xml-fop/lib), but the build script sets the path to
+        them, so you only need to care about them, if you build Fop in any other way. See build.bat/build.sh for 
+        details.
+    </p>
+      <p>A classpath for a complete compilation of Fop could look like this, if all these jar files are in 
+         a directory called jars (example uses windows syntax):
+      </p>
+      <p><code>set CLASSPATH=\jars\xalan.jar; \jars\xerces.jar; \jars\bsf.jar; \jars\jimi.jar;
+      </code></p>
+    </s2>
+    <s2 title="Setting of JAVA_HOME">
+      <p>You have to set the enviroment variable JAVA_HOME. It must point to your local JDK 
+      root directory. This is true, even if you use JDK 1.2 or above, which normally don't need this 
+      setting. It is used by Ant, the compilation software.</p>
+    </s2>
+  <s2 title="Problems">
+    <p>If you have problems compiling Fop, please try this first: </p>
+    <ul>
+      <li>delete the build directory completely and try a new build from scratch</li>
+      <li>check, whether you have all necessary libraries in your classpath: 
+          xerces.jar, xalan.jar, bsf.jar, jimi.jar (optional)</li> 
+      <li>check, whether you have the required versions of Xerces (>= 1.2.1) and Xalan (>=1.2) </li>
+      <li>check, whether you have an older version of xerces.jar, xalan.jar, w3c.jar somewhere in 
+          you classpath.</li>
+      </ul>
+      <p>If you still have problems, please look at the
+         page <jump href="bugs.html">bugs</jump>, for further help.</p>
+  </s2>
+</s1>

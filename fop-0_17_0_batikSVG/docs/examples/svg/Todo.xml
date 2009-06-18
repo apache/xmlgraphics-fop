@@ -1,0 +1,337 @@
+<?xml version="1.0"?>
+<!DOCTYPE Document SYSTEM "Document.dtd">
+<Document>
+	<Title>SVG To do List</Title>
+	<Description>
+	    List of things To do for SVG rendering in FOP.
+	</Description>
+	<Chapter>
+		<Title>To do</Title>
+		<Body>
+			<p>
+				SVG in FOP is currently in the early stages. As FOP is aiming to
+				be the reference implementation for an FO parser, this is aiming to
+				be the reference implmenetation for an "instream-foreign-object"
+				in the fo document. Namely an implementation of SVG as a foreign
+				xml document embedded in the fo document.
+			</p>
+			<p>
+			    The aim for SVG itself is to implement as much of the svg as is
+			    meaningful for the output of the FOP.
+			</p>
+			<p>
+			    This generally means that things such as animation are out of
+			    scope.
+			</p>
+		</Body>
+		<Section>
+			<Title>Bugs</Title>
+			<Body>
+				<p>
+					This list is for things that have been done but do not
+					work properly.
+				</p>
+				<p>
+					<ol>
+						<li>
+							gradients - the coordinates need to be altered
+							to the bounds of the object being drawn
+						</li>
+						<li>
+							text - dy is not fully functional, alignments are
+							not correct.
+						</li>
+						<li>
+							the transform angles are wrong (degree - radians) when
+							using the java functions
+						</li>
+					</ol>
+				</p>
+			</Body>
+		</Section>
+		<Section>
+			<Title>Not yet Implemented</Title>
+			<Body>
+				<p>
+					These are all the features that are currently not handled
+					in any useful way.
+				</p>
+				<p>
+					<ol>
+						<li>
+							
+						</li>
+					</ol>
+				</p>
+			</Body>
+		</Section>
+	</Chapter>
+	<Chapter>
+		<Title>Implemented</Title>
+		<Body>
+			<p>
+			    The currently implemented things.
+			</p>
+		</Body>
+		<Section>
+			<Title>SVG</Title>
+			<Body>
+				<p>
+					This list is for things that have been done but do not
+					work properly.
+				</p>
+				<p>
+					<b>Elements</b>
+					<ol>
+						<li>
+							rect
+						</li>
+						<li>
+							circle
+						</li>
+						<li>
+							line
+						</li>
+						<li>
+							text - tref, tspan
+						</li>
+						<li>
+							path
+						</li>
+						<li>
+							polygon
+						</li>
+						<li>
+							polyline
+						</li>
+						<li>
+							ellipse
+						</li>
+						<li>
+							g
+						</li>
+						<li>
+							svg (inside)
+						</li>
+						<li>
+							image
+						</li>
+						<li>
+							use
+						</li>
+						<li>
+							defs (including referenced items not in defs element)
+						</li>
+						<li>
+							linearGradient
+						</li>
+						<li>
+							radialGradient
+						</li>
+						<li>
+							stop
+						</li>
+					</ol>
+				</p>
+				<p>
+					<b>Properties</b>
+					<ol>
+						<li>
+							x
+						</li>
+						<li>
+							y
+						</li>
+						<li>
+							x1
+						</li>
+						<li>
+							y1
+						</li>
+						<li>
+							x2
+						</li>
+						<li>
+							y2
+						</li>
+						<li>
+							r
+						</li>
+						<li>
+							cx
+						</li>
+						<li>
+							cy
+						</li>
+						<li>
+							x (list)
+						</li>
+						<li>
+							y (list)
+						</li>
+						<li>
+							dx
+						</li>
+						<li>
+							dy
+						</li>
+						<li>
+							d
+						</li>
+						<li>
+							id
+						</li>
+						<li>
+							width
+						</li>
+						<li>
+							height
+						</li>
+						<li>
+							xlink:href (what about the XMLLink namespace)
+						</li>
+						<li>
+							refX
+						</li>
+						<li>
+							refY
+						</li>
+						<li>
+							offset
+						</li>
+						<li>
+							points
+						</li>
+						<li>
+							fx
+						</li>
+						<li>
+							fy
+						</li>
+					</ol>
+				</p>
+			</Body>
+			<SubSection>
+				<Title>Style</Title>
+				<Body>
+					<p>
+						<ol>
+							<li>
+								fill
+							</li>
+							<li>
+								stroke
+							</li>
+							<li>
+								stroke-width
+							</li>
+							<li>
+								stroke-dasharray
+							</li>
+							<li>
+								stroke-offset
+							</li>
+							<li>
+								stroke-linecap
+							</li>
+							<li>
+								stroke-linejoin
+							</li>
+							<li>
+								stroke-miterlimit
+							</li>
+							<li>
+								stop-color
+							</li>
+							<li>
+								color
+							</li>
+							<li>
+								font
+							</li>
+							<li>
+								font-size
+							</li>
+							<li>
+								font-family
+							</li>
+							<li>
+								font-weight
+							</li>
+							<li>
+								font-style
+							</li>
+						</ol>
+					</p>
+					<p>
+						These are currently only supported in the style attribute.
+					</p>
+				</Body>
+			</SubSection>
+			<SubSection>
+				<Title>Transform</Title>
+				<Body>
+					<p>
+						<ol>
+							<li>
+								translate
+							</li>
+							<li>
+								rotate
+							</li>
+							<li>
+								scale
+							</li>
+							<li>
+								skew X
+							</li>
+							<li>
+								skew Y
+							</li>
+							<li>
+								matrix
+							</li>
+						</ol>
+					</p>
+					<p>
+					</p>
+				</Body>
+			</SubSection>
+		</Section>
+		<Section>
+			<Title>FO interaction</Title>
+			<Body>
+				<p>
+					<ol>
+						<li>
+							Implement the fo:instream-foreign-object formatting object
+						</li>
+						<li>
+							Separate the property lists by namespace.
+						</li>
+					</ol>
+				</p>
+				<p>
+				</p>
+			</Body>
+		</Section>
+		<Section>
+			<Title>Miscellaneous</Title>
+			<Body>
+				<p>
+					<ol>
+						<li>
+							Fix the dtd (or use xml schema) for the docs so there are no
+							validation errors
+						</li>
+						<li>
+							Update the docs.
+						</li>
+					</ol>
+				</p>
+				<p>
+				</p>
+			</Body>
+		</Section>
+	</Chapter>
+</Document>

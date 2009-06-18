@@ -1,0 +1,291 @@
+<?xml version="1.0" ?>
+<property-list family="SVG">
+  <generic-property-list>
+  <!-- SVG Properties. All use generic maker and have no overrides! -->
+  <property>
+    <name>width</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>height</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>x</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>y</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>x1</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>y1</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>x2</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>y2</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>rx</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>ry</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>dx</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>dy</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>cx</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>cy</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>r</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>fx</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>fy</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>refX</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>refY</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>markerWidth</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>markerHeight</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>offset</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>style</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>transform</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>gradientTransform</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>d</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>points</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>fill</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>fill-opacity</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>fill-rule</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>stroke</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>stroke-dasharray</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>stroke-dashoffset</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>stroke-linecap</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>stroke-linejoin</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>stroke-miterlimit</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>stroke-opacity</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>stroke-width</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>clip-path</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>clip-rule</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>color</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>color-interpolation</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>color-rendering</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>cursor</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>display</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>filter</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>image-rendering</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>opacity</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>mask</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>space-rendering</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>text-rendering</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>pointer-events</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>visibility</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+
+  <property type="ref" family="fo">
+    <name>font-family</name>
+  </property>
+  <property type="ref" family="fo">
+    <name>font-style</name>
+  </property>
+  <property type="ref" family="fo">
+    <name>font-weight</name>
+  </property>
+  <property type="ref" family="fo">
+    <name>font-size</name>
+  </property>
+  <property type="ref" family="fo">
+    <name>id</name>
+  </property>
+
+  <property>
+    <name>xlink:href</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>requiredFeatures</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>requiredExtensions</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>systemLanguage</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>class</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+	<name>xml:space</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+	<name>spreadMethod</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>gradientUnits</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>patternUnits</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>patternContentUnits</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>clipPathUnits</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+    <name>viewBox</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+	<name>text-anchor</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+  <property>
+	<name>xml:space</name>
+    <use-generic ispropclass="true">SVGStringProperty</use-generic>
+  </property>
+ </generic-property-list>
+</property-list>

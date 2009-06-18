@@ -1,0 +1,45 @@
+<?xml version="1.0" standalone="no"?>
+
+
+<s1 title="Configuration">
+  <s2 title="How to configure Fop">
+    <p>In the directory xml-fop/conf you will find two configuration files. One of them,
+       config.xml, is only intended for Fop developers, who want to add new default values 
+       to some Fop feature. Don't change this file. For user configuration there is a file called
+       userconfig.xml. It contains templates for all settings a user can change. Most of them are 
+       commented out. Uncomment the entry you want to set and change the value according to 
+       your wishes. Please regard any comments which specify the value range. And, well, the 
+       configuration files are xml files, so keep them at least well-formed ;-)
+    </p>
+    <p>The file userconfig.xml is not read automatically, but the user must specify its use on 
+       the command line. See <jump href="running.html">Running Fop</jump> for details. 
+    </p>
+  </s2>
+  <s2 title="setting up hyphenation">
+    <p>Fop comes already with some hyphenation pattern. If you need a hyphenation pattern
+       which isn't included in the distribution, do the following: 
+    </p>
+    <p>1. get the TeX hyphenation pattern file and turn it into an xml file which conforms
+       to the hyphenation.dtd in the sub directory /hyph
+    </p>
+    <p>2. name this new file following this schema: languageCode_countryCode.xml. If you don't need 
+       a country code, leave it away, p.e. the file name for an American english hyphenation pattern
+       would look like this: en_US.xml. For an Italian file: it.xml. Language and country codes must be
+       the same as in xsl:fo, that is follow 
+       <jump href="http://www.ics.uci.edu/pub/ietf/http/related/iso639.txt">ISO 639</jump> 
+       and <jump href="http://www.ics.uci.edu/pub/ietf/http/related/iso3166.txt">ISO 3166</jump> 
+       respectively. NOTE: The ISO 639/ISO 3166 convention is that language names are
+       written in lower case, while country codes are written in upper case.
+    </p>
+    <p>3. If you have build your new hyphenation pattern file successfully there are
+       two ways to make it accessible to Fop. 
+    </p>
+    <p>   a) Put this new file into the directory /hyph and rebuild Fop. The file will 
+      be picked up and added to the fop.jar.
+    </p>
+    <p>   b) Put the file into a directory of your choice and specify this directory
+      in the userconfig.xml in the entry &lt;hyphenation-dir>. 
+    </p>
+  </s2>
+</s1>
+

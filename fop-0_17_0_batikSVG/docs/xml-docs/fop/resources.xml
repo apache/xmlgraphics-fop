@@ -1,0 +1,39 @@
+<?xml version="1.0" standalone="no"?>
+
+
+<!-- FOP Relevant Specifications and links -->
+
+<s1 title="FOP Relevant Specifications and Links">
+  <s2 title="Specifications">
+  <ul>
+    <li><jump href="http://www.w3.org/TR/2000/CR-xsl-20001121/">XSL-FO Candidate Recommendation (21 November 2000)</jump></li>
+    <li><jump href="http://www.renderx.com/Tests/validator/fo2000.dtd.html">A dtd for the XSL-FO CR from November provided by N. Grigoriev from RenderX</jump></li>
+    <li><jump href="http://www.w3.org/TR/2000/CR-SVG-20001102/">Supported SVG Candidate Recommendation (02 November 2000)</jump></li>
+    <li><jump href="http://www.w3.org/TR/REC-xml">XML Recommendation</jump></li>
+    <li><jump href="http://www.w3.org/TR/xslt">XSLT Recommendation</jump></li>
+    <li><jump href="http://partners.adobe.com/asn/developer/acrosdk/DOCS/pdfspec.pdf">Portable Document Format (PDF) 1.3 Reference Manual </jump></li>
+    <li><jump href="http://www.megginson.com/SAX/">Simple API for XML (SAX)</jump></li>
+    <li><jump href="http://www.w3.org/TR/REC-DOM-Level-1">Document Object Model (DOM)</jump></li>
+    <li><jump href="http://www.w3.org/TR/REC-xml-names/">Namespaces in XML Recommendation</jump></li>
+    <li><jump href="http://java.sun.com/products/jdk/1.1/docs/index.html">Java JDK 1.1 Documentation</jump></li>
+  </ul>
+  </s2>
+  <s2 title="Tutorials/Articles">
+    <ul>
+      <li><jump href="http://www.ibiblio.org/xml/books/bible/updates/15.html">Elliotte Rusty Harold: Chapter 15 on xsl:fo from his excellent xml book</jump></li>
+      <li><jump href="http://www.sun.com/software/xml/developers/slides-dtd/">Paul Sandoz: Using formatting objects with the slides dtd</jump></li>
+      <li><jump href="http://www.xml.com/pub/a/2001/01/17/xsl-fo/index.html">J. David Eisenberg: Using XSL Formatting Objects</jump></li>
+    </ul>
+  </s2>
+  <s2 title="Other resources">
+    <ul>
+      <li><jump href="http://xml.apache.org/mail/fop-dev/">Apache archive of fop-dev@apache.org</jump></li>
+      <li><jump href="http://marc.theaimsgroup.com/">External, but easier to browse archive fop-dev@apache.org</jump></li>
+      <li>There is an xsl:fo mailing list: www-xsl-fo@w3.org. Subscription info can be found here: <jump href="http://www.w3.org/Mail/Request">
+          http://www.w3.org/Mail/Request</jump>. And the archive can be found here: 
+          <jump href="http://lists.w3.org/Archives/Public/www-xsl-fo/">http://lists.w3.org/Archives/Public/www-xsl-fo/</jump></li>
+    </ul>
+  </s2>
+</s1>
+
+

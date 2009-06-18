@@ -1,0 +1,149 @@
+<?xml version="1.0" standalone="no"?>
+<!-- Font Support -->
+<!-- Authors: Jeremias Maerki, Tore Engvig-->
+<s1 title="Font Support ">
+	<s2 title="Status">
+		<p>FOP (building PDF files) normally supports only the base 14 font package defined in the Adobe PDF specification.
+		That includes the following fonts: Helvetica, Times, Courier, Symbol and ZapfDingbats.
+		</p>
+		<p>Font support in FOP can be extended by the addition of font metric files (written in XML) created from Adobe
+		Type 1 fonts and Truetype fonts. No other font types (Type 0, Type 3, etc.) are supported at this time. The current method
+		of adding fonts to FOP requires the package to be recompiled. You can also embed fonts into pdf files; see below.
+		</p>
+	</s2>
+	<s2 title="Adding additional Type 1 fonts">
+		<p>As mentioned above you need an XML file containing font metrics to be able to use an additional font. FOP
+		contains a tool that can generate such a font metrics file from a PFM file, which normally comes with the font file. 
+		</p>
+		<s3 title="Generating a font metrics file">
+			<p>	Run the class org.apache.fop.fonts.apps.PFMReader to generate the XML file. Important: The tool does two
+			XSL transformations, one of which uses charlist.xml. At the moment in order for the tool to work correctly you
+			have to copy charlist.xml temporarily to the local directory from where you intend to start the tool.
+			(If anyone has an improvement on this...)
+			</p>
+			<p>
+				<code>java -cp fop.jar;xerces.jar;xalan.jar;w3c.jar</code>
+			</p>
+			<p>
+				<code>org.apache.fop.fonts.apps.PFMReader pfm-file xml-file</code>
+			</p>
+			<p>Put the resulting XML file into the src/codegen directory.
+			</p>
+			<p>Note: The tool will construct some values (FontBBox, StemV and ItalicAngle) based on assumptions and
+			calculations which are only an approximation to the real values. FontBBox and Italic Angle can be found in
+			the human-readable part of the PFB file. The PFMReader tool does not yet interpret PFB files, so if you want
+			to be correct, you may have to adjust the values in the XML file manually. The constructed values however
+			appear to have no visible influence.
+			</p>
+		</s3>
+		<s3 title="Register the fonts within FOP">
+			<p>Open the class org.apache.fop.render.pdf.FontSetup and add entries to the ones present according to
+			the following example:
+			</p>
+			<p>
+				<code>fontInfo.addMetrics("F14", new ZapfDingbats());</code>
+			</p>
+			<p>
+				<code>fontInfo.addMetrics("F15", new BauerBodoniRoman()); //This is the new entry.</code>
+			</p>
+			<p>
+				<code>...</code>
+			</p>
+			<p>
+				<code>fontInfo.addFontProperties("F14", "ZapfDingbats", "normal", "normal");</code>
+			</p>
+			<p>
+				<code>fontInfo.addFontProperties("F15", "BauerBodoni", "normal", "normal"); //This is the new entry.</code>
+			</p>
+			<p>Note: The class name to use is visible in the &lt;class-name&gt; element of the font metrics file.
+			</p>
+		</s3>
+		<s3 title="Adjusting build.xml">
+			<p>In the src/codegen directory you find the font metrics files for the base 14 fonts. The are being transformed
+			during build into Java classes and then compiled. The newly generated font metrics file must be included in this 
+			process. To do that open build.xml and add entries according to the following example:
+			</p>
+			<p>
+				<code>&lt;property name="ZapfDingbats.xml" value="${build.codegen}/ZapfDingbats.xml"/&gt;</code>
+			</p>
+			<p>
+				<code>&lt;property name="BauerBodoni.xml" value="${build.codegen}/BauerBodoni.xml"/&gt;</code>
+			</p>
+			<p>
+				<code>...</code>
+			</p>
+			<p>
+				<code>&lt;xslt infile="${ZapfDingbats.xml}" xsltfile="${fontfile.xsl}"</code>
+			</p>
+			<p>
+				<code>outfile="${build.src}/${replacestring}/render/pdf/fonts/ZapfDingbats.java" smart="yes"/&gt;</code>
+			</p>
+			<p>
+				<code>&lt;xslt infile="${BauerBodoni.xml}" xsltfile="${t1fontfile.xsl}"</code>
+			</p>
+			<p>
+				<code>outfile="${build.src}/${replacestring}/render/pdf/fonts/BauerBodoniRoman.java" smart="yes"/&gt;</code>
+			</p>
+			<p>Rebuild FOP!
+			</p>
+			<p>Note: Be sure to use ${t1fontfile.xsl} instead of ${fontfile.xsl}. This is neccessary because of the additional metrics
+			information needed for non base 14 fonts.
+			</p>
+		</s3>
+	</s2>
+	<s2 title="Adding additional TrueType">
+        <p>Adding Truetype fonts is almost identical to the process of adding type 1 fonts. The main difference is in the first step.</p>
+		<s3 title="Generating a font metrics file">
+            <p>As mentioned above you need an XML file containing font metrics to be able to use an additional font. FOP
+               contains a tool that can generate such a font metrics file from your truetype font file
+            </p>
+            <p>Create metrics for the fontfile (we assume the file has the name cmr10.ttf und to be in c:\myfonts\):            </p>
+            <p><code>java org.apache.fop.fonts.apps.TTFReader -fn TCM -cn TCM -ef C:\myfonts\cmr10.ttf C:\myfonts\cmr10.ttf ttfcm.xml</code></p>
+            <p>the -fn option sets the font name (in the example to TCM )</p>
+            <p>the -cn option set the classname (in the example to CM)</p>
+            <p>the -ef option will try to embed to font at the given path when fop is running (you can 
+               change that in the generated xml file). </p>
+		</s3>
+		<s3 title="Register the fonts within FOP">
+			<p>Open the class org.apache.fop.render.pdf.FontSetup and add entries to the ones present according to
+			the following example:
+			</p>
+			<p>
+				<code>fontInfo.addMetrics("F14", new ZapfDingbats());</code>
+			</p>
+			<p>
+				<code>fontInfo.addMetrics("F19", new TCM()); //This is the new entry.</code>
+			</p>
+			<p>
+				<code>...</code>
+			</p>
+			<p>
+				<code>fontInfo.addFontProperties("F14", "ZapfDingbats", "normal", "normal");</code>
+			</p>
+			<p>
+				<code>fontInfo.addFontProperties("F19", "TCM", "normal", "normal"); //This is the new entry.</code>
+			</p>
+			<p>Note: The class name to use is visible in the &lt;class-name&gt; element of the font metrics file.
+			</p>
+		</s3>
+		<s3 title="Adjusting build.xml">
+			<p>In the src/codegen directory you find the font metrics files for the base 14 fonts. The are being transformed
+			during build into Java classes and then compiled. The newly generated font metrics file must be included in this 
+			process. To do that open build.xml and add entries according to the following example:
+			</p>
+			<p>Look for the section "Initialization target" and add the following line at the end of it</p>
+    		<p><code>&lt;property name="tcm.xml" value="${build.codegen}/tcm.xml"&gt;</code></p>
+            <p>then search for the section "Generate the source code". At the end of this section you can find 
+               templates for type 1 and truetype fonts. use them with your font name:</p>
+    		<p><code>&lt;xslt infile="${tcm.xml}" xsltfile="${ttffontfile.xsl}" 
+                    outfile="${build.src}/${replacestring}/render/pdf/fonts/TCM.java" smart="yes"/&gt;</code></p>
+        </s3>
+        <s3 title="embedding fonts">
+            <p>edit conf\userconfig.xml and add TCM to the list of embedded fonts</p>
+            <p>Don't forget: If you have embedded fonts, you must run Fop with the flag -cuserconfig.xml,  
+               otherwise the settings in userconfig.xml will not be read.</p>
+        </s3>
+        <p>Rebuild FOP!</p>
+
+	</s2>
+</s1>

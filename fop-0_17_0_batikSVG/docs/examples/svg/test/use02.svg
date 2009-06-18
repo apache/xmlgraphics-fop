@@ -1,0 +1,17 @@
+<?xml version="1.0" standalone="yes"?>
+
+<svg:svg width="10cm" height="3cm" xmlns:svg="http://www.w3.org/2000/svg">
+  <svg:title>Use02</svg:title>
+  <svg:desc>Example Use02 - 'use' on a 'symbol'</svg:desc>
+  <svg:defs>
+    <svg:symbol id="MySymbol" viewBox="0 0 20 20">
+      <svg:desc>MySymbol - four rectangles in a grid</svg:desc>
+      <svg:rect x="1" y="1" width="8" height="8"/>
+      <svg:rect x="11" y="1" width="8" height="8"/>
+      <svg:rect x="1" y="11" width="8" height="8"/>
+      <svg:rect x="11" y="11" width="8" height="8"/>
+    </svg:symbol>
+  </svg:defs>
+  <svg:use x="4.5cm" y="1cm" width="1cm" height="1cm"
+       xlink:href="#MySymbol" style="fill:black" />
+</svg:svg>

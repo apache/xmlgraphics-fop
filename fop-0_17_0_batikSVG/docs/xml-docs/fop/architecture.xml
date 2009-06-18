@@ -1,0 +1,297 @@
+<?xml version="1.0" standalone="no"?>
+
+<!-- by Arved Sandstrom -->
+
+<s1 title="FOP Mechanics">
+
+<s2 title="Introduction">
+
+<p>
+The overall process is controlled by <em>org.apache.fop.apps.Driver</em>. In
+this class, a typical sequence is:</p>
+
+<p><code>Driver driver = new Driver();</code></p>
+<p><code>driver.setRenderer("org.apache.fop.render.pdf.PDFRenderer", version);</code></p>
+<p><code>driver.addElementMapping("org.apache.fop.fo.StandardElementMapping");</code></p>
+<p><code>driver.addElementMapping("org.apache.fop.svg.SVGElementMapping");</code></p>
+<p><code>driver.addPropertyList("org.apache.fop.fo.StandardPropertyListMapping");</code></p>
+<p><code>driver.addPropertyList("org.apache.fop.svg.SVGPropertyListMapping");</code></p>
+  <p><code>driver.setOutputStream(new FileOutputStream(args[1]));</code></p>
+<p></p>
+<p><code>driver.buildFOTree(parser, fileInputSource(args[0]));</code></p>
+<p></p>
+<p><code>driver.format();</code></p>
+<p></p>
+<p><code>driver.render();</code></p>
+</s2>
+
+<s2 title="Formatting Object Tree">
+<p>The class <em>org.apache.fop.fo.FOTreeBuilder</em> is responsible for actually
+constructing the FO tree. The key SAX events used are </p>
+<p><code>startElement()</code>,</p>
+<p><code>endElement()</code> and <code>characters()</code>.</p>
+
+<p>All formatting objects derive from abstract class
+<em>org.apache.fop.fo.FONode</em>. The other FO classes inherit from 
+<em>FONode</em> as follows:</p>
+
+<p><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;FONode</code></p>
+<p><code>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;|</code></p>
+<p><code>&#160;&#160;&#160;&#160;&#160;__________|________</code></p>
+<p><code>&#160;&#160;&#160;&#160;|&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;|</code></p>
+<p><code>&#160;&#160;&#160;FObj&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;FOText</code></p>
+<p><code>&#160;&#160;&#160;&#160;|</code></p>
+<p><code>&#160;&#160;&#160;&#160;|___________________</code></p>
+<p><code>&#160;&#160;&#160;&#160;|&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;|</code></p>
+<p><code>&#160;&#160;FObjMixed&#160;&#160;&#160;&#160;&#160;&#160;SequenceSpecifier
+</code></p>
+
+<p>FO's extending FObj:</p>
+
+<p>Package org.apache.fop.fo.pagination:</p>
+
+
+<p><code>       LayoutMasterSet</code></p>
+<p><code>       PageSequence</code></p>
+<p><code>       RegionAfter</code></p>
+<p><code>       RegionBefore</code></p>
+<p><code>       RegionBody</code></p>
+<p><code>       Root</code></p>
+<p><code>       SequenceSpecification</code></p>
+<p><code>       SimplePageMaster</code></p>
+
+
+   <p>Package org.apache.fop.fo.flow:</p>
+
+
+<p><code>BlockContainer</code></p>
+<p><code>DisplayGraphic</code></p>
+<p><code>DisplayRule</code></p>
+<p><code>DisplaySequence</code></p>
+<p><code>Flow</code></p>
+<p><code>InlineGraphic</code></p>
+<p><code>ListBlock</code></p>
+<p><code>ListItem</code></p>
+<p><code>ListItemBody</code></p>
+<p><code>ListItemLabel</code></p>
+<p><code>PageNumber</code></p>
+<p><code>StaticContent</code></p>
+<p><code>Table</code></p>
+<p><code>TableBody</code></p>
+<p><code>TableCell</code></p>
+<p><code>TableColumn</code></p>
+<p><code>TableRow</code></p>
+
+<p>FO's extending SequenceSpecifier:</p>
+
+   <p>Package org.apache.fop.fo.pagination:</p>
+
+
+<p><code>SequenceSpecifierAlternating</code></p>
+<p><code>SequenceSpecifierRepeating</code></p>
+<p><code>SequenceSpecifierSingle</code></p>
+
+<p>FO's extending FObjMixed:</p>
+
+   <p>Package org.apache.fop.fo.flow:</p>
+
+
+<p><code>Block</code></p>
+<p><code>Inline</code></p>
+<p><code>BasicLink</code></p>
+
+</s2>
+
+<s2 title="FONode">
+<p>
+The class inheritance described above only describes the nature of the
+content. Every FO in FOP also has a parent, and a Vector of children. The
+parent attribute (in the Java sense), in particular, is used to enforce
+constraints required by the FO hierarchy.
+</p>
+
+<p>
+FONode, among other things, ensures that FO's have a parent, that they
+have children, that they maintain a marker of where the layout was up to
+(for FObj's it is the child number, and for FOText's it is the character
+number), and that they have a <code>layout()</code> method.
+</p>
+</s2>
+
+<s2 title="Making FO's">
+
+<p>
+Every FO class has code that looks something like this:
+</p>
+
+<p><code>public static class Maker extends FObj.Maker {</code></p>
+<p><code>&#160;&#160;  public FObj make(FObj parent, PropertyList propertyList)</code></p>
+<p><code>&#160;&#160;&#160;&#160;    throws FOPException</code></p>
+<p><code>&#160;&#160;  {</code></p>
+<p><code>&#160;&#160;&#160;&#160;    return new SimplePageMaster(parent, propertyList);</code></p>
+<p><code>&#160;&#160;  }</code></p>
+<p><code>}</code></p>
+
+
+<p>
+The class also has a static method that resembles
+</p>
+
+<p><code>public static FObj.Maker maker()</code></p>
+<p><code>&#160;&#160; {</code></p>
+<p><code>&#160;&#160;&#160;&#160;     return new PageSequence.Maker();</code></p>
+<p><code>&#160;&#160;   }</code></p>
+
+<p>
+A hash 'fobjTable' exists in <em>FOTreeBuilder</em>, and maps the FO names (such as
+'fo:table') to object references to the appropriate factories
+(such as <em>Table.Maker</em>).
+</p>
+
+<p>
+Properties (recall that FO's have properties, areas have traits, and XML
+nodes have attributes) are also a concern of <em>FOTreeBuilder</em>. It
+accomplishes this by using a <em>PropertyListBuilder</em>. There is a
+separate <em>PropertyListBuilder</em> for each namespace encountered
+while building the FO tree. Each Builder object contains a hash of
+property names and <ref>their</ref> respective makers. It may also
+contain element-specific property maker hashes; these are based on the
+<em>local name</em> of the flow object, ie. <em>table-row</em>, not
+<em>fo:table-row</em>. If an element-specific property mapping exists,
+it is preferred to the generic mapping.</p>
+<p>The base class for all
+properties is <em>Property</em>, and all the property makers extend
+<em>Property.Maker</em>. A more complete discussion of the property
+architecture may be found in <jump href="properties.html">Properties</jump>.
+</p>
+</s2>
+<s2 title="FO Formatting">
+
+<p>
+<em>FOTreeBuilder</em> calls <code>format()</code> on the root FO, passing 
+it the <em>AreaTree</em>
+reference. In turn, <em>Root</em> calls <code>format()</code> on each 
+<em>PageSequence</em>, passing <ref>it</ref>
+the <em>AreaTree</em> reference.
+</p>
+
+<p>
+The <em>PageSequence</em> <code>format()</code> method does the following things:
+</p>
+
+<ol>
+<li>Makes a <em>Page</em>, using <em>PageMasterFactory</em> to produce a 
+<em>PageMaster</em>, and
+using <code>makePage()</code> in the latter class. In the simplest picture, 
+a <em>Page</em> has
+5 areas represented by <em>AreaContainers</em>;</li>
+
+<li>Handles layout for <em>StaticContent</em> objects in the 'before' and 'after'
+regions, if set. This uses the <code>layout()</code> method in 
+<em>StaticContent</em>;</li>
+
+<li>If a page break is not forced, it will continue to layout the flow into
+the body area (<em>AreaContainer</em>) of the current page;</li>
+
+<li>It continues with (1) when layout into the current page is done, but
+the flow is not empty.</li>
+</ol>
+</s2>
+
+<s2 title="Area Layout">
+
+<p>
+FO's that represent actual areas, starting with <em>Flow</em> and 
+<em>StaticContent</em>, have
+a <code>layout()</code> method, with the following signature:
+</p>
+
+<p>
+<code>
+   public Status layout(Area area)
+</code>
+</p>
+
+<p>
+The fundamental role of the <code>layout()</code> method is to manage the layout of
+children and/or to generate new areas.
+</p>
+
+<p>
+<em>Example</em>: the <code>layout()</code> method for <em>Flow</em> generates no new areas - it manages the
+layout of the flow children.
+</p>
+
+<p>
+<em>Example</em>: the <code>layout()</code> method for <em>Block</em> 
+generates a new <em>BlockArea</em> in and of
+itself, and also manages the layout of the block children, which are added
+to the <em>BlockArea</em> before that is itself added to its parent 
+<em>Area</em>.
+</p>
+
+<p>
+<code>Layout()</code> methods are subject to the general constraint that possibly not
+all of their children can be accommodated, and they report back accordingly
+with an appropriate <em>Status</em>.
+</p>
+</s2>
+
+<s2 title="Rendering">
+
+<p>
+This is a separate process. The <code>render()</code> method in 
+<em>Driver</em> is invoked (say,
+by <em>CommandLine</em>) with the laid-out <em>AreaTree</em> and a 
+<em>PrintWriter</em> as arguments.
+This actually calls the <code>render()</code> method in a specific implementation of
+the <em>Renderer</em> interface, typically <em>PDFRenderer</em> or 
+<em>AWTRenderer</em>.
+</p>
+
+<p>
+At the highest level <em>PDFRenderer</em>, for example, begins by rendering each
+<em>Page</em>. The <code>render()</code> method in <em>Page</em> (as is the case for other areas),
+invokes a particular method in the renderer of choice, e.g. 
+<code>renderPage()</code>.
+<em>NOTE</em>: this system is bypassed for <em>Page</em>, incidentally.
+</p>
+
+<p>
+Rendering will not be discussed further in this document, as most of our
+current effort must concentrate on layout. Section 4.12 in the XSL WD
+discusses some issues applicable to rendering.
+</p>
+
+<p>
+You can find UML diagramms for all Fop packages (latest release version) 
+<jump href="http://xml.apache.org/dist/fop/fop-uml.zip">here</jump>.</p>
+
+</s2>
+
+<s2 title="SVG">
+
+<p>
+FOP supports some svg rendering. SVG is supported as an instream-foreign-object
+embedded in an FO document. FOP also supports rendering of an external SVG image.
+</p>
+
+<p>
+Since the intream object that contains the SVG returns a single fo area then
+the construction of the SVG document is handled differently. The SVG is created
+by calling the <code>createGraphic()</code> on each SVG element. The element is then
+responsible for loading the necessary information and child elements and creating
+the corresponding SVG DOM element. When the FO tree is being layed out the
+SVG tree is turned into the SVG DOM document which is stored for later rendering.
+</p>
+
+<p>
+The SVG document is then held as a DOM tree which is then rendered by going through
+the elements of the tree and rendering then in turn.
+</p>
+
+<p>
+For more information see the SVG documentation.
+</p>
+</s2>
+</s1>

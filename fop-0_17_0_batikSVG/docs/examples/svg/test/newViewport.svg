@@ -1,0 +1,16 @@
+<?xml version="1.0" standalone="yes"?>
+
+<svg:svg width="4in" height="3in" xmlns:svg="http://www.w3.org/2000/svg">
+  <svg:title>New Viewport</svg:title>
+  <svg:desc>This SVG drawing embeds another one,
+        thus establishing a new viewport
+  </svg:desc>
+  <svg:rect width="100%" height="100%" style="fill:yellow"/>
+  <!-- The following statement establishing a new viewport
+       and renders SVG drawing B into that viewport -->
+  <svg:svg x="25%" y="25%" width="50%" height="50%">
+    <!-- drawing B goes here -->
+    <svg:rect width="100%" height="100%" style="fill:blue"/>
+  </svg:svg>
+  <svg:rect x="25%" y="25%" width="50%" height="50%" style="stroke:black; stroke-width:3"/>
+</svg:svg>

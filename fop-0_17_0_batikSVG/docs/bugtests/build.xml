@@ -1,0 +1,149 @@
+<?xml version="1.0"?>
+
+<!-- =========================================================================== -->
+
+<project default="creating new test pdf files" basedir=".">
+
+  <!-- =================================================================== -->
+  <!-- Initialization target                                               -->
+  <!-- =================================================================== -->
+  <target name="init">
+    <tstamp/>
+    <mkdir dir="tests"/>
+    <property name="referenceDir" value="reference"/>
+    <property name="testDir" value="tests"/>
+    <property name="foDir" value="fo"/>
+    <taskdef name="fop" classname="org.apache.fop.tools.anttasks.Fop"/>
+    <taskdef name="compare" classname="org.apache.fop.tools.anttasks.Compare"/>
+
+
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Help on usage                                                       -->
+  <!-- =================================================================== -->
+  <target name="usage">
+    <echo message=""/>
+    <echo message=""/>
+    <echo message="USAGE of runtests"/>
+    <echo message="-------------------------------------------------------------"/>
+    <echo message=""/>
+    <echo message=" available targets are:"/>
+    <echo message=""/>
+    <echo message="   compare  --> generates new pdf test files and compares them to reference files (default)"/>
+    <echo message="   reference --> generates new reference pdf files"/>
+    <echo message=" See the comments inside the build.xml file for more details."/>
+    <echo message="-------------------------------------------------------------"/>
+    <echo message=""/>
+    <echo message=""/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Produces new test pdf files                                         -->
+  <!-- =================================================================== -->
+  <target name="creating new test pdf files" depends="init">
+    <fop fofile="${foDir}/background_color.fo" pdffile="${testDir}/background_color.pdf"/>
+    <fop fofile="${foDir}/background_transparent.fo" pdffile="${testDir}/background_transparent.pdf"/>
+    <fop fofile="${foDir}/block-container.fo" pdffile="${testDir}/block-container.pdf"/>
+    <fop fofile="${foDir}/block.fo" pdffile="${testDir}/block.pdf"/>
+    <fop fofile="${foDir}/border.fo" pdffile="${testDir}/border.pdf"/>
+    <fop fofile="${foDir}/break-before.fo" pdffile="${testDir}/break-before.pdf"/>
+    <fop fofile="${foDir}/color.fo" pdffile="${testDir}/color.pdf"/>
+    <fop fofile="${foDir}/external-graphic.fo" pdffile="${testDir}/external-graphic.pdf"/>
+    <fop fofile="${foDir}/font-family.fo" pdffile="${testDir}/font-family.pdf"/>
+    <fop fofile="${foDir}/font-size.fo" pdffile="${testDir}/font-size.pdf"/>
+    <fop fofile="${foDir}/font.fo" pdffile="${testDir}/font.pdf"/>
+    <fop fofile="${foDir}/header_footer.fo" pdffile="${testDir}/header_footer.pdf"/>
+    <fop fofile="${foDir}/indent.fo" pdffile="${testDir}/indent.pdf"/>
+    <fop fofile="${foDir}/inline.fo" pdffile="${testDir}/inline.pdf"/>
+    <fop fofile="${foDir}/keep-with-next.fo" pdffile="${testDir}/keep-with-next.pdf"/>
+    <fop fofile="${foDir}/leader.fo" pdffile="${testDir}/leader.pdf"/>
+    <fop fofile="${foDir}/letter-spacing.fo" pdffile="${testDir}/letter-spacing.pdf"/>
+    <fop fofile="${foDir}/line-height.fo" pdffile="${testDir}/line-height.pdf"/>
+    <fop fofile="${foDir}/padding.fo" pdffile="${testDir}/padding.pdf"/>
+    <fop fofile="${foDir}/page-number.fo" pdffile="${testDir}/page-number.pdf"/>
+    <fop fofile="${foDir}/rule.fo" pdffile="${testDir}/rule.pdf"/>
+    <fop fofile="${foDir}/simple-link.fo" pdffile="${testDir}/simple-link.pdf"/>
+    <fop fofile="${foDir}/space-treatment.fo" pdffile="${testDir}/space-treatment.pdf"/>
+    <fop fofile="${foDir}/space.fo" pdffile="${testDir}/space.pdf"/>
+    <fop fofile="${foDir}/text-align.fo" pdffile="${testDir}/text-align.pdf"/>
+    <fop fofile="${foDir}/text-decoration.fo" pdffile="${testDir}/text-decoration.pdf"/>
+    <fop fofile="${foDir}/text-indent.fo" pdffile="${testDir}/text-indent.pdf"/>
+    <fop fofile="${foDir}/word-spacing.fo" pdffile="${testDir}/word-spacing.pdf"/>
+    <fop fofile="${foDir}/wrap.fo" pdffile="${testDir}/wrap.pdf"/>
+    <fop fofile="${foDir}/image.fo" pdffile="${testDir}/image.pdf"/>
+    <fop fofile="${foDir}/space-before.fo" pdffile="${testDir}/space-before.pdf"/>
+  </target>
+
+
+  <target name="image" depends="init">
+    <fop fofile="${foDir}/image.fo"   pdffile="${testDir}/image.pdf"/> 
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Compares new test pdf files to reference pdf files                  -->
+  <!-- =================================================================== -->
+  <target name="compare" depends ="creating new test pdf files">
+    <compare referenceDirectory  = "${referenceDir}" 
+             testDirectory       = "${testDir}" 
+             filenames           = "normal.pdf,table.pdf,list.pdf,link.pdf,border.pdf,images.pdf,extensive.pdf,readme.pdf,fonts.pdf,list2.pdf"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Produces new reference pdf files                                         -->
+  <!-- =================================================================== -->
+  <target name="reference">
+    <fop fofile="${foDir}/background_color.fo" pdffile="${referenceDir}/background_color.pdf"/>
+    <fop fofile="${foDir}/background_transparent.fo" pdffile="${referenceDir}/background_transparent.pdf"/>
+    <fop fofile="${foDir}/block-container.fo" pdffile="${referenceDir}/block-container.pdf"/>
+    <fop fofile="${foDir}/block.fo" pdffile="${referenceDir}/block.pdf"/>
+    <fop fofile="${foDir}/border.fo" pdffile="${referenceDir}/border.pdf"/>
+    <fop fofile="${foDir}/break-before.fo" pdffile="${referenceDir}/break-before.pdf"/>
+    <fop fofile="${foDir}/color.fo" pdffile="${referenceDir}/color.pdf"/>
+    <fop fofile="${foDir}/external-graphic.fo" pdffile="${referenceDir}/external-graphic.pdf"/>
+    <fop fofile="${foDir}/font-family.fo" pdffile="${referenceDir}/font-family.pdf"/>
+    <fop fofile="${foDir}/font-size.fo" pdffile="${referenceDir}/font-size.pdf"/>
+    <fop fofile="${foDir}/font.fo" pdffile="${referenceDir}/font.pdf"/>
+    <fop fofile="${foDir}/header_foorter.fo" pdffile="${referenceDir}/header_footer.pdf"/>
+    <fop fofile="${foDir}/indent.fo" pdffile="${referenceDir}/indent.pdf"/>
+    <fop fofile="${foDir}/inline.fo" pdffile="${referenceDir}/inline.pdf"/>
+    <fop fofile="${foDir}/keep-with-next.fo" pdffile="${referenceDir}/keep-with-next.pdf"/>
+    <fop fofile="${foDir}/leader.fo" pdffile="${referenceDir}/leader.pdf"/>
+    <fop fofile="${foDir}/letter-spacing.fo" pdffile="${referenceDir}/letter-spacing.pdf"/>
+    <fop fofile="${foDir}/line-height.fo" pdffile="${referenceDir}/line-height.pdf"/>
+    <fop fofile="${foDir}/padding.fo" pdffile="${referenceDir}/padding.pdf"/>
+    <fop fofile="${foDir}/page-number.fo" pdffile="${referenceDir}/page-number.pdf"/>
+    <fop fofile="${foDir}/rule.fo" pdffile="${referenceDir}/rule.pdf"/>
+    <fop fofile="${foDir}/simple-link.fo" pdffile="${referenceDir}/simple-link.pdf"/>
+    <fop fofile="${foDir}/space-treatment.fo" pdffile="${referenceDir}/space-treatment.pdf"/>
+    <fop fofile="${foDir}/space.fo" pdffile="${referenceDir}/space.pdf"/>
+    <fop fofile="${foDir}/text-align.fo" pdffile="${referenceDir}/text-align.pdf"/>
+    <fop fofile="${foDir}/text-decoration.fo" pdffile="${referenceDir}/text-decoration.pdf"/>
+    <fop fofile="${foDir}/text-indent.fo" pdffile="${referenceDir}/text-indent.pdf"/>
+    <fop fofile="${foDir}/word-spacing.fo" pdffile="${referenceDir}/word-spacing.pdf"/>
+    <fop fofile="${foDir}/wrap.fo" pdffile="${referenceDir}/wrap.pdf"/>
+    <fop fofile="${foDir}/image.fo" pdffile="${referenceDir}/image.pdf"/>
+  </target>
+
+
+
+
+  <!-- =================================================================== -->
+  <!-- Starts the test                                                     -->
+  <!-- =================================================================== -->
+  <target name="runtest" depends="compare">
+    <echo message="Running Fop tests"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Clean targets                                                       -->
+  <!-- =================================================================== -->
+  <target name="clean" depends="init">
+    <deltree dir="${build.dir}"/>
+    
+  </target>
+
+
+</project>
+
+<!-- End of file -->

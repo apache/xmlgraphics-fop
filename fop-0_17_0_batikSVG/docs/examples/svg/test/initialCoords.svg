@@ -1,0 +1,19 @@
+<?xml version="1.0" standalone="yes"?>
+<svg:svg width="300px" height="100px" xmlns:svg="http://www.w3.org/2000/svg">
+  <svg:title>Initial Coords</svg:title>
+  <svg:desc>Example InitialCoords - SVG's initial coordinate system</svg:desc>
+  <svg:g style="fill:none; stroke:black; stroke-width:3">
+    <svg:line x1="0" y1="1.5" x2="300" y2="1.5" />
+    <svg:line x1="1.5" y1="0" x2="1.5" y2="100" />
+  </svg:g>
+  <svg:g style="fill:red; stroke:none">
+    <svg:rect x="0" y="0" width="3" height="3" />
+    <svg:rect x="297" y="0" width="3" height="3" />
+    <svg:rect x="0" y="97" width="3" height="3" />
+  </svg:g>
+  <svg:g style="font-size:14; font-family:Verdana">
+    <svg:text x="10" y="20">(0,0)</svg:text>
+    <svg:text x="240" y="20">(300,0)</svg:text>
+    <svg:text x="10" y="90">(0,100)</svg:text>
+  </svg:g>
+</svg:svg>

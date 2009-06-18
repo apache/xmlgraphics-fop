@@ -1,0 +1,72 @@
+<svg:svg width="300pt" height="300"
+    xmlns:svg="http://www.w3.org/2000/svg">
+  <svg:g transform="matrix(1 0 0 1 100 100)">
+    <svg:line x1="2.5354700cm" y1="0.1193636cm" x2="1.4331060cm" y2="0.5915131cm"/>
+    <svg:line style="fill:#0d0; stroke-width:0.1cm" x1="3.2414132cm" y1="-0.9916716cm" x2="2.5354700cm" y2="0.1193636cm"/>
+    <svg:line style="fill:#0d0; stroke-width:0.1cm" x1="2.8827426cm" y1="-1.5486901cm" x2="3.2414132cm" y2="-0.9916716cm"/>
+    <svg:line style="fill:#0d0; stroke-width:0.1cm" x1="2.0212900cm" y1="-2.9782032cm" x2="2.2255300cm" y2="-2.6159172cm"/>
+    <svg:line style="fill:#0d0; stroke-width:0.1cm" x1="1.0768171cm" y1="-2.3059047cm" x2="2.0212900cm" y2="-2.9782032cm"/>
+    <svg:line style="fill:#0d0; stroke-width:0.1cm" x1="-1.4887895cm" y1="0.3573212cm" x2="-0.6915053cm" y2="-0.5951540cm"/>
+    <svg:line style="fill:#0d0; stroke-width:0.1cm" x1="-3.3512152cm" y1="2.8265076cm" x2="-3.2567669cm" y2="2.6759454cm"/>
+    <svg:line style="fill:#0d0; stroke-width:0.1cm" x1="-2.4728939cm" y1="2.0987512cm" x2="-3.3512152cm" y2="2.8265076cm"/>
+    <svg:line style="fill:#0d0; stroke-width:0.1cm" x1="-1.4770549cm" y1="1.3047090cm" x2="-2.4728939cm" y2="2.0987512cm"/>
+    <svg:line style="fill:#0d0; stroke-width:0.1cm" x1="0.9686765cm" y1="-0.0350586cm" x2="1.4331060cm" y2="0.5915131cm"/>
+    <svg:line style="fill:#0d0; stroke-width:0.1cm" x1="1.7723030cm" y1="-1.0778668cm" x2="2.8827426cm" y2="-1.5486901cm"/>
+    <svg:line style="fill:#0d0; stroke-width:0.1cm" x1="1.7723030cm" y1="-1.0778668cm" x2="0.9686765cm" y2="-0.0350586cm"/>
+    <svg:line style="fill:#0d0; stroke-width:0.1cm" x1="1.4913299cm" y1="-1.5717302cm" x2="2.2255300cm" y2="-2.6159172cm"/>
+    <svg:line style="fill:#0d0; stroke-width:0.1cm" x1="1.4913299cm" y1="-1.5717302cm" x2="1.7723030cm" y2="-1.0778668cm"/>
+    <svg:line style="fill:#0d0; stroke-width:0.1cm" x1="0.4902425cm" y1="-0.9128550cm" x2="1.4913299cm" y2="-1.5717302cm"/>
+    <svg:line style="fill:#0d0; stroke-width:0.1cm" x1="0.3002717cm" y1="-1.2784456cm" x2="1.0768171cm" y2="-2.3059047cm"/>
+    <svg:line style="fill:#0d0; stroke-width:0.1cm" x1="0.3002717cm" y1="-1.2784456cm" x2="-0.6915053cm" y2="-0.5951540cm"/>
+    <svg:line style="fill:#0d0; stroke-width:0.1cm" x1="0.3002717cm" y1="-1.2784456cm" x2="0.4902425cm" y2="-0.9128550cm"/>
+    <svg:line style="fill:#0d0; stroke-width:0.1cm" x1="-0.3627427cm" y1="0.0773395cm" x2="0.4902425cm" y2="-0.9128550cm"/>
+    <svg:line style="fill:#0d0; stroke-width:0.1cm" x1="-1.3806443cm" y1="0.6989197cm" x2="-1.4887895cm" y2="0.3573212cm"/>
+    <svg:line style="fill:#0d0; stroke-width:0.1cm" x1="-1.3806443cm" y1="0.6989197cm" x2="-2.2508585cm" y2="1.6143180cm"/>
+    <svg:line style="fill:#0d0; stroke-width:0.1cm" x1="-1.3806443cm" y1="0.6989197cm" x2="-0.3627427cm" y2="0.0773395cm"/>
+    <svg:line style="fill:#0d0; stroke-width:0.1cm" x1="-2.2540112cm" y1="1.8497993cm" x2="-2.2508585cm" y2="1.6143180cm"/>
+    <svg:line style="fill:#0d0; stroke-width:0.1cm" x1="-2.2540112cm" y1="1.8497993cm" x2="-3.2567669cm" y2="2.6759454cm"/>
+    <svg:line style="fill:#0d0; stroke-width:0.1cm" x1="-1.2765471cm" y1="1.2003010cm" x2="-1.4770549cm" y2="1.3047090cm"/>
+    <svg:line style="fill:#0d0; stroke-width:0.1cm" x1="-1.2765471cm" y1="1.2003010cm" x2="-2.2540112cm" y2="1.8497993cm"/>
+    <svg:line style="fill:#0d0; stroke-width:0.1cm" x1="-0.2303385cm" y1="0.4198839cm" x2="0.9686765cm" y2="-0.0350586cm"/>
+    <svg:line style="fill:#0d0; stroke-width:0.1cm" x1="-0.2303385cm" y1="0.4198839cm" x2="-0.3627427cm" y2="0.0773395cm"/>
+    <svg:line style="fill:#0d0; stroke-width:0.1cm" x1="-0.2303385cm" y1="0.4198839cm" x2="-1.2765471cm" y2="1.2003010cm"/>
+    <svg:line style="fill:#0d0; stroke-width:0.1cm" x1="0.9413937cm" y1="1.4944229cm" x2="1.4331060cm" y2="0.5915131cm"/>
+    <svg:line style="fill:#0d0; stroke-width:0.1cm" x1="2.8624408cm" y1="0.6235524cm" x2="2.5354700cm" y2="0.1193636cm"/>
+    <svg:line style="fill:#0d0; stroke-width:0.1cm" x1="4.1008862cm" y1="-1.3820401cm" x2="3.2414132cm" y2="-0.9916716cm"/>
+    <svg:line style="fill:#0d0; stroke-width:0.1cm" x1="3.4976545cm" y1="-2.3471875cm" x2="2.8827426cm" y2="-1.5486901cm"/>
+    <svg:line style="fill:#0d0; stroke-width:0.1cm" x1="2.9775068cm" y1="-3.1539264cm" x2="2.2255300cm" y2="-2.6159172cm"/>
+    <svg:line style="fill:#0d0; stroke-width:0.1cm" x1="2.6102544cm" y1="-3.7835390cm" x2="2.0212900cm" y2="-2.9782032cm"/>
+    <svg:line style="fill:#0d0; stroke-width:0.1cm" x1="0.9192373cm" y1="-2.5776523cm" x2="1.0768171cm" y2="-2.3059047cm"/>
+    <svg:line style="fill:#0d0; stroke-width:0.1cm" x1="-0.7967302cm" y1="-0.8687944cm" x2="-0.6915053cm" y2="-0.5951540cm"/>
+    <svg:line style="fill:#0d0; stroke-width:0.1cm" x1="-2.2482110cm" y1="0.8655833cm" x2="-1.4887895cm" y2="0.3573212cm"/>
+    <svg:line style="fill:#0d0; stroke-width:0.1cm" x1="-2.9921992cm" y1="2.1136419cm" x2="-2.2508585cm" y2="1.6143180cm"/>
+    <svg:line style="fill:#0d0; stroke-width:0.1cm" x1="-3.9695317cm" y1="3.1648210cm" x2="-3.2567669cm" y2="2.6759454cm"/>
+    <svg:line style="fill:#0d0; stroke-width:0.1cm" x1="-4.1231291cm" y1="3.4610411cm" x2="-3.3512152cm" y2="2.8265076cm"/>
+    <svg:line style="fill:#0d0; stroke-width:0.1cm" x1="-2.5996453cm" y1="2.1420992cm" x2="-2.4728939cm" y2="2.0987512cm"/>
+    <svg:line style="fill:#0d0; stroke-width:0.1cm" x1="-0.8730528cm" y1="0.7022906cm" x2="-1.4770549cm" y2="1.3047090cm"/>
+    <svg:text style="fill:red; stroke: red; stroke-width: 0.01cm; font-size:0.7" y="0.5915131cm" x="1.4331060cm">C</svg:text>
+    <svg:text style="fill:red; stroke: red; stroke-width: 0.01cm; font-size:0.7" y="0.1193636cm" x="2.5354700cm">C</svg:text>
+    <svg:text style="fill:red; stroke: red; stroke-width: 0.01cm; font-size:0.7" y="-0.9916716cm" x="3.2414132cm">C</svg:text>
+    <svg:text style="fill:red; stroke: red; stroke-width: 0.01cm; font-size:0.7" y="-1.5486901cm" x="2.8827426cm">C</svg:text>
+    <svg:text style="fill:red; stroke: red; stroke-width: 0.01cm; font-size:0.7" y="-2.6159172cm" x="2.2255300cm">C</svg:text>
+    <svg:text style="fill:red; stroke: red; stroke-width: 0.01cm; font-size:0.7" y="-2.9782032cm" x="2.0212900cm">C</svg:text>
+    <svg:text style="fill:red; stroke: red; stroke-width: 0.01cm; font-size:0.7" y="-2.3059047cm" x="1.0768171cm">C</svg:text>
+    <svg:text style="fill:red; stroke: red; stroke-width: 0.01cm; font-size:0.7" y="-0.5951540cm" x="-0.6915053cm">C</svg:text>
+    <svg:text style="fill:red; stroke: red; stroke-width: 0.01cm; font-size:0.7" y="0.3573212cm" x="-1.4887895cm">C</svg:text>
+    <svg:text style="fill:red; stroke: red; stroke-width: 0.01cm; font-size:0.7" y="1.6143180cm" x="-2.2508585cm">C</svg:text>
+    <svg:text style="fill:red; stroke: red; stroke-width: 0.01cm; font-size:0.7" y="2.6759454cm" x="-3.2567669cm">C</svg:text>
+    <svg:text style="fill:red; stroke: red; stroke-width: 0.01cm; font-size:0.7" y="2.8265076cm" x="-3.3512152cm">C</svg:text>
+    <svg:text style="fill:red; stroke: red; stroke-width: 0.01cm; font-size:0.7" y="2.0987512cm" x="-2.4728939cm">C</svg:text>
+    <svg:text style="fill:red; stroke: red; stroke-width: 0.01cm; font-size:0.7" y="1.3047090cm" x="-1.4770549cm">C</svg:text>
+    <svg:text style="fill:red; stroke: red; stroke-width: 0.01cm; font-size:0.7" y="-0.0350586cm" x="0.9686765cm">C</svg:text>
+    <svg:text style="fill:red; stroke: red; stroke-width: 0.01cm; font-size:0.7" y="-1.0778668cm" x="1.7723030cm">C</svg:text>
+    <svg:text style="fill:red; stroke: red; stroke-width: 0.01cm; font-size:0.7" y="-1.5717302cm" x="1.4913299cm">C</svg:text>
+    <svg:text style="fill:red; stroke: red; stroke-width: 0.01cm; font-size:0.7" y="-0.9128550cm" x="0.4902425cm">C</svg:text>
+    <svg:text style="fill:red; stroke: red; stroke-width: 0.01cm; font-size:0.7" y="-1.2784456cm" x="0.3002717cm">C</svg:text>
+    <svg:text style="fill:red; stroke: red; stroke-width: 0.01cm; font-size:0.7" y="0.0773395cm" x="-0.3627427cm">C</svg:text>
+    <svg:text style="fill:red; stroke: red; stroke-width: 0.01cm; font-size:0.7" y="0.6989197cm" x="-1.3806443cm">C</svg:text>
+    <svg:text style="fill:red; stroke: red; stroke-width: 0.01cm; font-size:0.7" y="1.8497993cm" x="-2.2540112cm">C</svg:text>
+    <svg:text style="fill:red; stroke: red; stroke-width: 0.01cm; font-size:0.7" y="1.2003010cm" x="-1.2765471cm">C</svg:text>
+    <svg:text style="fill:red; stroke: red; stroke-width: 0.01cm; font-size:0.7" y="0.4198839cm" x="-0.2303385cm">C</svg:text>
+  </svg:g>
+</svg:svg>

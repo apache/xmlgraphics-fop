@@ -1,0 +1,16 @@
+This directory contains some libraries or class files necessary 
+for compiling, running or testing Fop.
+
+ant.jar         Ant is the scripting tool which is used to build Fop or to run 
+                the test scripts. see build.xml in root for more information
+
+w3c.jar         the svg library from the w3 consortium
+
+
+buildtools.jar  Ant tasks required for building FOP. Rebuild with 
+                build.sh -f buildtools.xml in the top level directory.
+		(Note: if you are going to check in a new version of 
+		buildtools.jar, make sure you have both Xalan 1 and
+		Xalan 2 in the classpath when building it.)
+
+stylebook.jar	Jar used for creating the FOP website

@@ -1,0 +1,23 @@
+<?xml version="1.0" standalone="no"?>
+
+
+<!-- Download FOP -->
+
+<s1 title="Downloading FOP">
+  <s2 title="">
+    <p>You can download the latest release version from the <jump 
+       href="http://xml.apache.org/dist/fop/">distribution directory</jump>. </p>
+    <p>The file contains also the documentation (including some example fo files) and the source.  </p>
+    <p>If you want to work with the latest and nicest code, you can use the cvs version. See the section 
+       on AnonCVS in the <jump href="http://xml.apache.org/cvs.html">xml.apache.org documentation</jump> for details. 
+       Sometimes people have difficulties to access the cvs server; in this case you can download 
+       a snapshot from the cvs files <jump href="http://xml.apache.org/from-cvs/xml-fop/">here</jump>. 
+       In both cases you have to build Fop yourself - see <jump href="compiling.html">Compiling Fop</jump> for details. 
+    </p>
+    <p>To run FOP from the command line, see <jump href="running.html">Running FOP</jump>. If you are 
+       interested in embedding FOP in a Java application of your own, see 
+       <jump href="embedding.html">Embedding FOP</jump>.
+    </p>
+  </s2>
+</s1>
+
