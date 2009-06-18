@@ -1,0 +1,9 @@
+This Gladiator Bold font has been copied from Apache Batik. Origin:
+http://svn.apache.org/repos/asf/xmlgraphics/batik/trunk/samples/tests/resources/ttf/glb12.ttf
+
+It was added to that repository in July 2003:
+http://mail-archives.apache.org/mod_mbox/xmlgraphics-batik-dev/200307.mbox/%3c20030715155519.37236.qmail@icarus.apache.org%3e
+
+More information on that contribution can be found here:
+http://svn.apache.org/repos/asf/xmlgraphics/batik/trunk/contrib/fonts/gladiator/
+http://mail-archives.apache.org/mod_mbox/xmlgraphics-batik-dev/200306.mbox/ajax/%3c3EE07AA6.5080507@sun.com%3e

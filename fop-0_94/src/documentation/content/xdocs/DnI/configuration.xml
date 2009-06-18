@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  * Licensed to the Apache Software Foundation (ASF) under one or more
+  * contributor license agreements.  See the NOTICE file distributed with
+  * this work for additional information regarding copyright ownership.
+  * The ASF licenses this file to You under the Apache License, Version 2.0
+  * (the "License"); you may not use this file except in compliance with
+  * the License.  You may obtain a copy of the License at
+  * 
+  *      http://www.apache.org/licenses/LICENSE-2.0
+  * 
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  -->
+
+<!-- $Id$ -->
+
+<!--
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+                         "docbookx.dtd">
+  -->
+
+<chapter>
+  <title>Configuration</title>
+
+  <para>Configuration is based on the <literal>Configurable</literal>
+and <literal>Configuration</literal> interfaces of
+<literal>avalon</literal>:
+
+<screen>
+org.apache.avalon.framework.configuration.Configurable
+org.apache.avalon.framework.configuration.Configuration
+</screen>
+
+A type that implements <literal>Configurable</literal> can be
+configured by calling its method <literal>configure(Configuration
+configuration)</literal>, where the argument is the
+<literal>Configuration</literal> object that holds the user
+configuration settings. It can also be configured by calling the
+static method <literal>ContainerUtil.configure(object, cfg)</literal>
+of the class
+
+<screen>
+ContainerUtil = org.apache.avalon.framework.container.ContainerUtil
+</screen>
+
+This method checks if <literal>object</literal> implements
+<literal>Configurable</literal>. If not, no configuration is
+attempted.</para>
+
+<para>The following classes implement <literal>Configurable</literal>:
+<itemizedlist spacing="compact">
+	  <listitem>
+		<para><literal>render.AbstractRenderer</literal> and its
+subclasses (all renderers).  Only
+<literal>render.pdf.PDFRenderer</literal> and
+<literal>render.ps.PSRenderer</literal> have meaningful
+implementations of the <literal>configure</literal> method.  The
+command line module configures each renderer from the user
+configuration file with the subconfiguration
+<literal>renderers/renderer[@mime=$mimetype]</literal>.</para>
+	  </listitem>
+	  <listitem>
+		<para><literal>svg.PDFTranscoder</literal></para>
+	  </listitem>
+	  <listitem>
+		<para><literal>svg.PDFDocumentGraphics2D</literal>. This class
+is configured by <literal>svg.PDFTranscoder</literal> via
+<literal>ContainerUtil.configure(graphics, this.cfg)</literal>.
+</para>
+	  </listitem>
+	</itemizedlist></para>
+
+<para>In addition <literal>render.ps.AbstractPSTranscoder</literal>
+has a member <literal>Configuration cfg</literal>. It configures
+graphics via <literal>ContainerUtil.configure(graphics,
+this.cfg)</literal>. The graphics are of type
+<literal>render.ps.AbstractPSDocumentGraphics2D</literal>, which does
+not implement <literal>Configurable</literal>, so that no
+configuration takes place.</para>
+
+<para><literal>render.pdf.PDFRenderer</literal> and
+<literal>svg.PDFDocumentGraphics2D</literal> both call
+<literal>fonts.FontSetup.buildFontListFromConfiguration(cfg)</literal>
+and
+<literal>pdf.PDFFilterList.buildFilterMapFromConfiguration(cfg)</literal>.</para>
+
+<para>Configuration info is used by: <itemizedlist spacing="compact">
+	<listitem>
+	  <para><literal>fonts.FontSetup.buildFontListFromConfiguration(cfg)</literal>. It
+uses <literal>fonts/font/font-triplet</literal> from the renderer
+subconfiguration.</para>
+	</listitem>
+	<listitem>
+	  <para><literal>pdf.PDFFilterList.buildFilterMapFromConfiguration(cfg)</literal>. It
+uses <literal>filterList/value</literal> from the renderer
+subconfiguration</para>
+	</listitem>
+	<listitem>
+	  <para><literal>render.ps.PSRenderer.configure(cfg)</literal>. It
+uses <literal>auto-rotate-landscape</literal> as a Boolean.
+</para>
+	</listitem>
+  </itemizedlist></para>
+
+</chapter>

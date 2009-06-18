@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=36403">Bugzilla issue 36403</a>.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:table table-layout="fixed" width="100%" border-collapse="separate">
+            <fo:table-column/>
+            <fo:table-column/>
+            <fo:table-column/>
+            <fo:table-column/>
+            <fo:table-body>
+              <fo:table-row>
+                <!-- Note: the padding-top caused a NullPointerException -->
+                <fo:table-cell padding-top="40pt" number-rows-spanned="3" background-color="yellow" id="left">
+                  <fo:block>row 1 col 1</fo:block>
+                </fo:table-cell>
+                <!-- absent table-cells in first row -->
+                <!--fo:table-cell column-number="4">
+                  <fo:block>xxxxx</fo:block>
+                </fo:table-cell-->
+              </fo:table-row>
+              <fo:table-row background-color="orange">
+                <fo:table-cell number-columns-spanned="2" id="r2c2">
+                  <fo:block>row 2 col 2</fo:block>
+                </fo:table-cell>
+                <fo:table-cell id="r2c4">
+                  <fo:block>Row 2 col 4</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell number-columns-spanned="2" id="r3c2">
+                  <fo:block>row 3 col 2</fo:block>
+                </fo:table-cell>
+                <fo:table-cell id="r3c4">
+                  <fo:block>Row 3 col 4</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <!-- Simply check that FOP doesn't fail with an IndexOutOfBoundsException or an NPE -->
+    <element-list category="breaker">
+      <box w="0"/>
+      <penalty w="14400"/> <!-- p > 0 && p <= INF -->
+      <box w="14400"/>
+      <penalty w="14400"/> <!-- p > 0 && p <= INF -->
+      <box w="40000"/>
+      <skip>3</skip>
+    </element-list>
+    
+    <!-- Checking vertical position here. I had trouble with this while debugging. -->
+    <true xpath="not(boolean(//block[@prod-id='left']/@top-offset))"/>
+    <true xpath="not(boolean(//block[@prod-id='r2c2']/@top-offset))"/>
+    <true xpath="not(boolean(//block[@prod-id='r2c4']/@top-offset))"/>
+    <eval expected="14400" xpath="//block[@prod-id='r3c2']/@top-offset"/>
+    <eval expected="14400" xpath="//block[@prod-id='r3c4']/@top-offset"/>
+  </checks>
+</testcase>

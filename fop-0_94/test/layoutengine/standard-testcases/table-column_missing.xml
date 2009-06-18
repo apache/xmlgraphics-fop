@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks if FOP can handle the case where more columns are actually used than
+      specified.
+    </p>
+    <p>
+      Note: This test case is technically wrong since in fixed table layout all
+      column-widths must be specified. But we don't want to have FOP crash
+      with an IndexOutOfBoundsException either.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:table table-layout="fixed" width="100%" border-collapse="separate">
+            <fo:table-column width="2cm"/>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>cell 1/1</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>cell 2/1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>cell 2/2</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>cell 2/3</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="14400" xpath="//flow/block/block[2]/@top-offset"/>
+    <eval expected="14400" xpath="//flow/block/block[3]/@top-offset"/>
+    <eval expected="14400" xpath="//flow/block/block[4]/@top-offset"/>
+
+    <eval expected="360000" xpath="//flow/block/block[3]/@left-offset"/>
+    <eval expected="720000" xpath="//flow/block/block[4]/@left-offset"/>
+    <eval expected="360000" xpath="//flow/block/block[3]/@ipd"/>
+    <eval expected="360000" xpath="//flow/block/block[4]/@ipd"/>
+  </checks>
+</testcase>
