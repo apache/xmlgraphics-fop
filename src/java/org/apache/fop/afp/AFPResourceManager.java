@@ -165,39 +165,38 @@ public class AFPResourceManager {
 
         AFPResourceLevel resourceLevel = resourceInfo.getLevel();
         ResourceGroup resourceGroup = streamer.getResourceGroup(resourceLevel);
+
         useInclude &= resourceGroup != null;
         if (useInclude) {
-
-        boolean usePageSegment = dataObjectInfo.isCreatePageSegment();
-
-        // if it is to reside within a resource group at print-file or external level
-        if (resourceLevel.isPrintFile() || resourceLevel.isExternal()) {
-            if (usePageSegment) {
-                String pageSegmentName = "S10" + namedObj.getName().substring(3);
-                namedObj.setName(pageSegmentName);
-                PageSegment seg = new PageSegment(pageSegmentName);
-                seg.addObject(namedObj);
-                namedObj = seg;
+            boolean usePageSegment = dataObjectInfo.isCreatePageSegment();
+    
+            // if it is to reside within a resource group at print-file or external level
+            if (resourceLevel.isPrintFile() || resourceLevel.isExternal()) {
+                if (usePageSegment) {
+                    String pageSegmentName = "S10" + namedObj.getName().substring(3);
+                    namedObj.setName(pageSegmentName);
+                    PageSegment seg = new PageSegment(pageSegmentName);
+                    seg.addObject(namedObj);
+                    namedObj = seg;
+                }
+    
+                // wrap newly created data object in a resource object
+                namedObj = dataObjectFactory.createResource(namedObj, resourceInfo, objectType);
             }
-
-            // wrap newly created data object in a resource object
-            namedObj = dataObjectFactory.createResource(namedObj, resourceInfo, objectType);
-        }
-
-        // add data object into its resource group destination
-        resourceGroup.addObject(namedObj);
-
-        // create the include object
-        objectName = namedObj.getName();
-        if (usePageSegment) {
-            includePageSegment(dataObjectInfo, objectName);
-            pageSegmentMap.put(resourceInfo, objectName);
-        } else {
-            includeObject(dataObjectInfo, objectName);
-            // record mapping of resource info to data object resource name
-            includeNameMap.put(resourceInfo, objectName);
-        }
-
+    
+            // add data object into its resource group destination
+            resourceGroup.addObject(namedObj);
+    
+            // create the include object
+            objectName = namedObj.getName();
+            if (usePageSegment) {
+                includePageSegment(dataObjectInfo, objectName);
+                pageSegmentMap.put(resourceInfo, objectName);
+            } else {
+                includeObject(dataObjectInfo, objectName);
+                // record mapping of resource info to data object resource name
+                includeNameMap.put(resourceInfo, objectName);
+            }
         } else {
             // not to be included so inline data object directly into the current page
             dataStream.getCurrentPage().addObject(namedObj);
