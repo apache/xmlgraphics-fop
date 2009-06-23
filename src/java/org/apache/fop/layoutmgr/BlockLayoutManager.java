@@ -67,9 +67,6 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
     private MinOptMax effSpaceBefore;
     private MinOptMax effSpaceAfter;
 
-    /** The list of child BreakPoss instances. */
-    protected List childBreaks = new java.util.ArrayList();
-
     /**
      * Creates a new BlockLayoutManager.
      * @param inBlock the block FO object to create the layout manager for.

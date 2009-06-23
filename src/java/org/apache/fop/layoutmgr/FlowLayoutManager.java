@@ -25,11 +25,10 @@ import java.util.ListIterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.area.Area;
 import org.apache.fop.area.BlockParent;
 import org.apache.fop.fo.pagination.Flow;
-import org.apache.fop.layoutmgr.inline.InlineLevelLayoutManager;
-import org.apache.fop.layoutmgr.inline.WrapperLayoutManager;
 
 /**
  * LayoutManager for an fo:flow object.
@@ -63,23 +62,11 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
     /** {@inheritDoc} */
     public List getNextKnuthElements(LayoutContext context, int alignment) {
 
-        // set layout dimensions
-        int flowIPD = getCurrentPV().getCurrentSpan().getColumnWidth();
-        int flowBPD = getCurrentPV().getBodyRegion().getBPD();
-
         // currently active LM
         LayoutManager curLM;
-        List returnedList;
-        List returnList = new LinkedList();
+        List elements = new LinkedList();
 
         while ((curLM = getChildLM()) != null) {
-            if (!(curLM instanceof WrapperLayoutManager)
-                && curLM instanceof InlineLevelLayoutManager) {
-                log.error("inline area not allowed under flow - ignoring");
-                curLM.setFinished(true);
-                continue;
-            }
-
             int span = EN_NONE;
             int disableColumnBalancing = EN_FALSE;
             if (curLM instanceof BlockLayoutManager) {
@@ -99,12 +86,9 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
                 }
                 log.debug("span change from " + currentSpan + " to " + span);
                 context.signalSpanChange(span);
-                SpaceResolver.resolveElementList(returnList);
-                return returnList;
+                SpaceResolver.resolveElementList(elements);
+                return elements;
             }
-
-            // Set up a LayoutContext
-            //MinOptMax bpd = context.getStackLimit();
 
             LayoutContext childLC = new LayoutContext(0);
             childLC.setStackLimitBP(context.getStackLimitBP());
@@ -112,31 +96,31 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
             childLC.setWritingMode(getCurrentPage().getSimplePageMaster().getWritingMode());
 
             // get elements from curLM
-            returnedList = curLM.getNextKnuthElements(childLC, alignment);
+            List childrenElements = curLM.getNextKnuthElements(childLC, alignment);
             //log.debug("FLM.getNextKnuthElements> returnedList.size() = " + returnedList.size());
-            if (returnList.size() == 0 && childLC.isKeepWithPreviousPending()) {
+            if (elements.size() == 0 && childLC.isKeepWithPreviousPending()) {
                 context.updateKeepWithPreviousPending(childLC.getKeepWithPreviousPending());
                 childLC.clearKeepWithPreviousPending();
             }
 
             // "wrap" the Position inside each element
-            List tempList = returnedList;
-            returnedList = new LinkedList();
-            wrapPositionElements(tempList, returnedList);
+            List tempList = childrenElements;
+            childrenElements = new LinkedList();
+            wrapPositionElements(tempList, childrenElements);
 
-            if (returnedList.size() == 1
-                && ElementListUtils.endsWithForcedBreak(returnedList)) {
+            if (childrenElements.size() == 1
+                    && ElementListUtils.endsWithForcedBreak(childrenElements)) {
                 // a descendant of this flow has break-before
-                returnList.addAll(returnedList);
-                SpaceResolver.resolveElementList(returnList);
-                return returnList;
-            } else if (returnedList.size() > 0) {
-                if (returnList.size() > 0
-                        && !ElementListUtils.startsWithForcedBreak(returnedList)) {
-                    addInBetweenBreak(returnList, context, childLC);
+                elements.addAll(childrenElements);
+                SpaceResolver.resolveElementList(elements);
+                return elements;
+            } else if (childrenElements.size() > 0) {
+                if (elements.size() > 0
+                        && !ElementListUtils.startsWithForcedBreak(childrenElements)) {
+                    addInBetweenBreak(elements, context, childLC);
                 }
-                returnList.addAll(returnedList);
-                if (ElementListUtils.endsWithForcedBreak(returnList)) {
+                elements.addAll(childrenElements);
+                if (ElementListUtils.endsWithForcedBreak(elements)) {
                     if (curLM.isFinished() && !hasNextChildLM()) {
                         //If the layout manager is finished at this point, the pending
                         //marks become irrelevant.
@@ -145,8 +129,8 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
                         break;
                     }
                     // a descendant of this flow has break-after
-                    SpaceResolver.resolveElementList(returnList);
-                    return returnList;
+                    SpaceResolver.resolveElementList(elements);
+                    return elements;
                 }
             }
 
@@ -157,11 +141,11 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
             context.updateKeepWithNextPending(getKeepWithNextStrength());
         }
 
-        SpaceResolver.resolveElementList(returnList);
+        SpaceResolver.resolveElementList(elements);
         setFinished(true);
 
-        if (returnList.size() > 0) {
-            return returnList;
+        if (elements.size() > 0) {
+            return elements;
         } else {
             return null;
         }

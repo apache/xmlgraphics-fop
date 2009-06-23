@@ -600,22 +600,20 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     private void collectInlineKnuthElements(LayoutContext context) {
         LayoutContext inlineLC = new LayoutContext(context);
 
-        InlineLevelLayoutManager curLM;
-        List returnedList = null;
         ipd = context.getStackLimitIP().opt;
 
         // convert all the text in a sequence of paragraphs made
         // of KnuthBox, KnuthGlue and KnuthPenalty objects
-        boolean bPrevWasKnuthBox = false;
+        boolean previousIsBox = false;
 
         StringBuffer trace = new StringBuffer("LineLM:");
 
         Paragraph lastPar = null;
 
+        InlineLevelLayoutManager curLM;
         while ((curLM = (InlineLevelLayoutManager) getChildLM()) != null) {
-            returnedList = curLM.getNextKnuthElements(inlineLC, effectiveAlignment);
-            if (returnedList == null
-                    || returnedList.size() == 0) {
+            List inlineElements = curLM.getNextKnuthElements(inlineLC, effectiveAlignment);
+            if (inlineElements == null || inlineElements.size() == 0) {
                 /* curLM.getNextKnuthElements() returned null or an empty list;
                  * this can happen if there is nothing more to layout,
                  * so just iterate once more to see if there are other children */
@@ -623,7 +621,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             }
 
             if (lastPar != null) {
-                KnuthSequence firstSeq = (KnuthSequence) returnedList.get(0);
+                KnuthSequence firstSeq = (KnuthSequence) inlineElements.get(0);
 
                 // finish last paragraph before a new block sequence
                 if (!firstSeq.isInlineSequence()) {
@@ -633,7 +631,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                     if (log.isTraceEnabled()) {
                         trace.append(" ]");
                     }
-                    bPrevWasKnuthBox = false;
+                    previousIsBox = false;
                 }
 
                 // does the first element of the first paragraph add to an existing word?
@@ -641,14 +639,14 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                     KnuthElement thisElement;
                     thisElement = (KnuthElement) firstSeq.get(0);
                     if (thisElement.isBox() && !thisElement.isAuxiliary()
-                            && bPrevWasKnuthBox) {
+                            && previousIsBox) {
                         lastPar.addALetterSpace();
                     }
                 }
             }
 
             // loop over the KnuthSequences (and single KnuthElements) in returnedList
-            ListIterator iter = returnedList.listIterator();
+            ListIterator iter = inlineElements.listIterator();
             while (iter.hasNext()) {
                 KnuthSequence sequence = (KnuthSequence) iter.next();
                 // the sequence contains inline Knuth elements
@@ -656,9 +654,9 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                     // look at the last element
                     ListElement lastElement = sequence.getLast();
                     assert lastElement != null;
-                    bPrevWasKnuthBox = lastElement.isBox()
-                                        && !((KnuthElement) lastElement).isAuxiliary()
-                                        && ((KnuthElement) lastElement).getW() != 0;
+                    previousIsBox = lastElement.isBox()
+                            && !((KnuthElement) lastElement).isAuxiliary()
+                            && ((KnuthElement) lastElement).getW() != 0;
 
                     // if last paragraph is open, add the new elements to the paragraph
                     // else this is the last paragraph
@@ -683,8 +681,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
 
                     // finish last paragraph if it was closed with a linefeed
                     if (lastElement.isPenalty()
-                            && ((KnuthPenalty) lastElement).getP()
-                            == -KnuthPenalty.INFINITE) {
+                            && ((KnuthPenalty) lastElement).getP() == -KnuthPenalty.INFINITE) {
                         // a penalty item whose value is -inf
                         // represents a preserved linefeed,
                         // which forces a line break
@@ -700,7 +697,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                         if (log.isTraceEnabled()) {
                             trace.append(" ]");
                         }
-                        bPrevWasKnuthBox = false;
+                        previousIsBox = false;
                     }
                 } else { // the sequence is a block sequence
                     // the positions will be wrapped with this LM in postProcessLineBreaks
@@ -939,15 +936,14 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                     while (elementIterator.nextIndex() <= endIndex) {
                         KnuthElement element = (KnuthElement) elementIterator.next();
                         if (element instanceof KnuthInlineBox
-                            && ((KnuthInlineBox) element).isAnchor()) {
+                                && ((KnuthInlineBox) element).isAnchor()) {
                             footnoteList.add(((KnuthInlineBox) element).getFootnoteBodyLM());
                         } else if (element instanceof KnuthBlockBox) {
                             footnoteList.addAll(((KnuthBlockBox) element).getFootnoteBodyLMs());
                         }
                     }
                     startIndex = endIndex + 1;
-                    LineBreakPosition lbp
-                      = (LineBreakPosition) llPoss.getChosenPosition(i);
+                    LineBreakPosition lbp = (LineBreakPosition) llPoss.getChosenPosition(i);
                     returnList.add(new KnuthBlockBox
                                    (lbp.lineHeight + lbp.spaceBefore + lbp.spaceAfter,
                                     footnoteList, lbp, false));
