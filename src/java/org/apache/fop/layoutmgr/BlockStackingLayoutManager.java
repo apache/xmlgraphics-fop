@@ -293,7 +293,6 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                 // curLM is a LineLayoutManager
                 // set stackLimit for lines (stack limit is now i-p-direction, not b-p-direction!)
                 childLC.setStackLimitBP(context.getStackLimitBP());
-                childLC.setStackLimitIP(new MinOptMax(getContentAreaIPD()));
                 childLC.setRefIPD(getContentAreaIPD());
             } else {
                 // curLM is a ?
