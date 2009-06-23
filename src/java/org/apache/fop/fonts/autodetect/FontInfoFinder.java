@@ -212,7 +212,8 @@ public class FontInfoFinder {
                 IOUtils.closeQuietly(in);
             }
 
-            List embedFontInfoList = new java.util.ArrayList(); //List<EmbedFontInfo>
+            List/*<EmbedFontInfo>*/ embedFontInfoList
+                = new java.util.ArrayList/*<EmbedFontInfo>*/();
 
             // For each font name ...
             //for (String fontName : ttcNames) {
