@@ -62,93 +62,87 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
     /** {@inheritDoc} */
     public List getNextKnuthElements(LayoutContext context, int alignment) {
 
-        // currently active LM
-        LayoutManager curLM;
         List elements = new LinkedList();
 
-        while ((curLM = getChildLM()) != null) {
-            int span = EN_NONE;
-            int disableColumnBalancing = EN_FALSE;
-            if (curLM instanceof BlockLayoutManager) {
-                span = ((BlockLayoutManager)curLM).getBlockFO().getSpan();
-                disableColumnBalancing = ((BlockLayoutManager) curLM).getBlockFO()
-                        .getDisableColumnBalancing();
-            } else if (curLM instanceof BlockContainerLayoutManager) {
-                span = ((BlockContainerLayoutManager)curLM).getBlockContainerFO().getSpan();
-                disableColumnBalancing = ((BlockContainerLayoutManager) curLM).getBlockContainerFO()
-                        .getDisableColumnBalancing();
-            }
-
-            int currentSpan = context.getCurrentSpan();
-            if (currentSpan != span) {
-                if (span == EN_ALL) {
-                    context.setDisableColumnBalancing(disableColumnBalancing);
-                }
-                log.debug("span change from " + currentSpan + " to " + span);
-                context.signalSpanChange(span);
+        LayoutManager currentChildLM;
+        while ((currentChildLM = getChildLM()) != null) {
+            if (handleSpanChange(currentChildLM, elements, context)) {
                 SpaceResolver.resolveElementList(elements);
                 return elements;
             }
 
             LayoutContext childLC = new LayoutContext(0);
-            childLC.setStackLimitBP(context.getStackLimitBP());
-            childLC.setRefIPD(context.getRefIPD());
-            childLC.setWritingMode(getCurrentPage().getSimplePageMaster().getWritingMode());
-
-            // get elements from curLM
-            List childrenElements = curLM.getNextKnuthElements(childLC, alignment);
-            //log.debug("FLM.getNextKnuthElements> returnedList.size() = " + returnedList.size());
-            if (elements.size() == 0 && childLC.isKeepWithPreviousPending()) {
+            List childrenElements = getNextChildElements(currentChildLM, context, childLC,
+                    alignment);
+            if (elements.isEmpty()) {
                 context.updateKeepWithPreviousPending(childLC.getKeepWithPreviousPending());
-                childLC.clearKeepWithPreviousPending();
             }
+            if (!elements.isEmpty()
+                    && !ElementListUtils.startsWithForcedBreak(childrenElements)) {
+                addInBetweenBreak(elements, context, childLC);
+            }
+            context.updateKeepWithNextPending(childLC.getKeepWithNextPending());
 
-            // "wrap" the Position inside each element
-            List tempList = childrenElements;
-            childrenElements = new LinkedList();
-            wrapPositionElements(tempList, childrenElements);
+            elements.addAll(childrenElements);
 
-            if (childrenElements.size() == 1
-                    && ElementListUtils.endsWithForcedBreak(childrenElements)) {
-                // a descendant of this flow has break-before
-                elements.addAll(childrenElements);
+            if (ElementListUtils.endsWithForcedBreak(elements)) {
+                // a descendant of this flow has break-before or break-after
+                if (currentChildLM.isFinished() && !hasNextChildLM()) {
+                    setFinished(true);
+                }
                 SpaceResolver.resolveElementList(elements);
                 return elements;
-            } else if (childrenElements.size() > 0) {
-                if (elements.size() > 0
-                        && !ElementListUtils.startsWithForcedBreak(childrenElements)) {
-                    addInBetweenBreak(elements, context, childLC);
-                }
-                elements.addAll(childrenElements);
-                if (ElementListUtils.endsWithForcedBreak(elements)) {
-                    if (curLM.isFinished() && !hasNextChildLM()) {
-                        //If the layout manager is finished at this point, the pending
-                        //marks become irrelevant.
-                        childLC.clearPendingMarks();
-                        //setFinished(true);
-                        break;
-                    }
-                    // a descendant of this flow has break-after
-                    SpaceResolver.resolveElementList(elements);
-                    return elements;
-                }
             }
-
-            //Propagate and clear
-            context.updateKeepWithNextPending(childLC.getKeepWithNextPending());
-            childLC.clearKeepWithNextPending();
-
-            context.updateKeepWithNextPending(getKeepWithNextStrength());
         }
 
         SpaceResolver.resolveElementList(elements);
         setFinished(true);
 
-        if (elements.size() > 0) {
-            return elements;
-        } else {
-            return null;
+        assert !elements.isEmpty();
+        return elements;
+    }
+
+    private boolean handleSpanChange(LayoutManager childLM, List elements, LayoutContext context) {
+        int span = EN_NONE;
+        int disableColumnBalancing = EN_FALSE;
+        if (childLM instanceof BlockLayoutManager) {
+            span = ((BlockLayoutManager)childLM).getBlockFO().getSpan();
+            disableColumnBalancing = ((BlockLayoutManager) childLM).getBlockFO()
+                    .getDisableColumnBalancing();
+        } else if (childLM instanceof BlockContainerLayoutManager) {
+            span = ((BlockContainerLayoutManager)childLM).getBlockContainerFO().getSpan();
+            disableColumnBalancing = ((BlockContainerLayoutManager) childLM).getBlockContainerFO()
+                    .getDisableColumnBalancing();
         }
+
+        int currentSpan = context.getCurrentSpan();
+        if (currentSpan != span) {
+            if (span == EN_ALL) {
+                context.setDisableColumnBalancing(disableColumnBalancing);
+            }
+            log.debug("span change from " + currentSpan + " to " + span);
+            context.signalSpanChange(span);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private List getNextChildElements(LayoutManager childLM, LayoutContext context,
+            LayoutContext childLC, int alignment) {
+        childLC.setStackLimitBP(context.getStackLimitBP());
+        childLC.setRefIPD(context.getRefIPD());
+        childLC.setWritingMode(getCurrentPage().getSimplePageMaster().getWritingMode());
+
+        // get elements from curLM
+        List childrenElements = childLM.getNextKnuthElements(childLC, alignment);
+        assert !childrenElements.isEmpty();
+
+        // "wrap" the Position inside each element
+        List tempList = childrenElements;
+        childrenElements = new LinkedList();
+        wrapPositionElements(tempList, childrenElements);
+        return childrenElements;
     }
 
     /**
