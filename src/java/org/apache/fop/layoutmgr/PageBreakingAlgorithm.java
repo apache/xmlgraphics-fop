@@ -26,6 +26,7 @@ import java.util.ListIterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.layoutmgr.AbstractBreaker.PageBreakPosition;
@@ -91,6 +92,9 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
 
     //Controls whether a single part should be forced if possible (ex. block-container)
     private boolean favorSinglePart = false;
+
+    private boolean ipdChange;
+    private KnuthNode bestNodeForIPDChange;
 
     public PageBreakingAlgorithm(LayoutManager topLevelLM,
                                  PageProvider pageProvider,
@@ -887,6 +891,51 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
          */
         void notifyOverflow(int part, int amount, FObj obj);
 
+    }
+
+    /** {@inheritDoc} */
+    protected boolean ipdChanged() {
+        return ipdChange;
+    }
+
+    /** {@inheritDoc} */
+    protected int handleIpdChange() {
+        log.trace("Best node for ipd change:" + bestNodeForIPDChange);
+        // TODO finish()
+        calculateBreakPoints(bestNodeForIPDChange, par, bestNodeForIPDChange.line);
+        activeLines = null;
+        return bestNodeForIPDChange.line;
+    }
+
+    /**
+     * Add a node at the end of the given line's existing active nodes.
+     * If this is the first node in the line, adjust endLine accordingly.
+     * @param line number of the line ending at the node's corresponding breakpoint
+     * @param node the active node to add
+     */
+    protected void addNode(int line, KnuthNode node) {
+        if (node.position < par.size() - 1 && line > 0 && ipdChange(line - 1)) {
+            log.trace("IPD changes at page " + line);
+            ipdChange = true;
+            if (bestNodeForIPDChange == null
+                    || node.totalDemerits < bestNodeForIPDChange.totalDemerits) {
+                bestNodeForIPDChange = node;
+            }
+        } else {
+            super.addNode(line, node);
+        }
+    }
+
+    KnuthNode getBestNodeBeforeIPDChange() {
+        return bestNodeForIPDChange;
+    }
+
+    /** {@inheritDoc} */
+    protected boolean ipdChange(int line) {
+        if (pageProvider == null) {
+            return false;
+        }
+        return pageProvider.ipdChange(line);
     }
 
 }

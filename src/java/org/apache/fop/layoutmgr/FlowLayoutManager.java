@@ -22,6 +22,7 @@ package org.apache.fop.layoutmgr;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Stack;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -66,31 +67,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
 
         LayoutManager currentChildLM;
         while ((currentChildLM = getChildLM()) != null) {
-            if (handleSpanChange(currentChildLM, elements, context)) {
-                SpaceResolver.resolveElementList(elements);
-                return elements;
-            }
-
-            LayoutContext childLC = new LayoutContext(0);
-            List childrenElements = getNextChildElements(currentChildLM, context, childLC,
-                    alignment);
-            if (elements.isEmpty()) {
-                context.updateKeepWithPreviousPending(childLC.getKeepWithPreviousPending());
-            }
-            if (!elements.isEmpty()
-                    && !ElementListUtils.startsWithForcedBreak(childrenElements)) {
-                addInBetweenBreak(elements, context, childLC);
-            }
-            context.updateKeepWithNextPending(childLC.getKeepWithNextPending());
-
-            elements.addAll(childrenElements);
-
-            if (ElementListUtils.endsWithForcedBreak(elements)) {
-                // a descendant of this flow has break-before or break-after
-                if (currentChildLM.isFinished() && !hasNextChildLM()) {
-                    setFinished(true);
-                }
-                SpaceResolver.resolveElementList(elements);
+            if (addChildElements(elements, currentChildLM, context, alignment) != null) {
                 return elements;
             }
         }
@@ -100,6 +77,88 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
 
         assert !elements.isEmpty();
         return elements;
+    }
+
+    /** {@inheritDoc} */
+    public List getNextKnuthElements(LayoutContext context, int alignment,
+            KnuthElement elementAtIPDChange) {
+
+        List elements = new LinkedList();
+
+        LayoutManager currentChildLM = null;
+
+        Position position = elementAtIPDChange.getPosition();
+        while (position != null && (currentChildLM = position.getLM()) == null) {
+            position = position.getPosition();
+        }
+        if (currentChildLM == null) {
+            throw new IllegalStateException(
+                    "Cannot find layout manager from where to re-start layout after IPD change");
+        }
+        Stack lmStack = new Stack();
+        while (currentChildLM.getParent() != this) {
+            lmStack.push(currentChildLM);
+            currentChildLM = currentChildLM.getParent();
+        }
+        setCurrentChildLM(currentChildLM);
+        if (!(currentChildLM instanceof BlockLayoutManager)) {
+            throw new UnsupportedOperationException("TODO: layout manager not restartable");
+        } else {
+            if (addChildElements(elements, currentChildLM, context, alignment, lmStack,
+                    (LeafPosition) position) != null) {
+                return elements;
+            }
+        }
+
+        while ((currentChildLM = getChildLM()) != null) {
+            ((AbstractLayoutManager) currentChildLM).resetChildLMs(); // TODO won't work with forced breaks
+            if (addChildElements(elements, currentChildLM, context, alignment) != null) {
+                return elements;
+            }
+        }
+
+        SpaceResolver.resolveElementList(elements);
+        setFinished(true);
+
+        assert !elements.isEmpty();
+        return elements;
+    }
+
+    private List addChildElements(List elements, LayoutManager childLM, LayoutContext context,
+            int alignment) {
+        return addChildElements(elements, childLM, context, alignment, null, null);
+    }
+
+    private List addChildElements(List elements, LayoutManager childLM, LayoutContext context,
+            int alignment, Stack lmStack, LeafPosition position) {
+        if (handleSpanChange(childLM, elements, context)) {
+            SpaceResolver.resolveElementList(elements);
+            return elements;
+        }
+
+        LayoutContext childLC = new LayoutContext(0);
+        List childrenElements = getNextChildElements(childLM, context, childLC,
+                alignment, lmStack, position);
+        if (elements.isEmpty()) {
+            context.updateKeepWithPreviousPending(childLC.getKeepWithPreviousPending());
+        }
+        if (!elements.isEmpty()
+                && !ElementListUtils.startsWithForcedBreak(childrenElements)) {
+            addInBetweenBreak(elements, context, childLC);
+        }
+        context.updateKeepWithNextPending(childLC.getKeepWithNextPending());
+
+        elements.addAll(childrenElements);
+
+        if (ElementListUtils.endsWithForcedBreak(elements)) {
+            // a descendant of this flow has break-before or break-after
+            if (childLM.isFinished() && !hasNextChildLM()) {
+                setFinished(true);
+            }
+            SpaceResolver.resolveElementList(elements);
+            return elements;
+        }
+        return null;
     }
 
     private boolean handleSpanChange(LayoutManager childLM, List elements, LayoutContext context) {
@@ -129,13 +188,18 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
     }
 
     private List getNextChildElements(LayoutManager childLM, LayoutContext context,
-            LayoutContext childLC, int alignment) {
+            LayoutContext childLC, int alignment, Stack lmStack, LeafPosition restartPosition) {
         childLC.setStackLimitBP(context.getStackLimitBP());
         childLC.setRefIPD(context.getRefIPD());
         childLC.setWritingMode(getCurrentPage().getSimplePageMaster().getWritingMode());
 
-        // get elements from curLM
-        List childrenElements = childLM.getNextKnuthElements(childLC, alignment);
+        List childrenElements;
+        if (lmStack == null) {
+            childrenElements = childLM.getNextKnuthElements(childLC, alignment);
+        } else {
+            childrenElements = ((BlockLayoutManager) childLM).getNextKnuthElements(childLC,
+                    alignment, lmStack, restartPosition);
+        }
         assert !childrenElements.isEmpty();
 
         // "wrap" the Position inside each element

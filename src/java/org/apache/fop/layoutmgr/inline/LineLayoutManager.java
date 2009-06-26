@@ -20,6 +20,7 @@
 package org.apache.fop.layoutmgr.inline;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -486,13 +487,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             }
         }
 
-        public int findBreakingPoints(Paragraph par, /*int lineWidth,*/
-                                      double threshold, boolean force,
-                                      int allowedBreaks) {
-            return super.findBreakingPoints(par, /*lineWidth,*/
-                    threshold, force, allowedBreaks);
-        }
-
         protected int filterActiveNodes() {
             KnuthNode bestActiveNode = null;
 
@@ -568,8 +562,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         alignmentContext = new AlignmentContext(fs, lineHeight.getValue(this),
                 context.getWritingMode());
         context.setAlignmentContext(alignmentContext);
-        // Get a break from currently active child LM
-        // Set up constraints for inline level managers
+        ipd = context.getRefIPD();
 
         //PHASE 1: Create Knuth elements
         if (knuthParagraphs == null) {
@@ -593,14 +586,39 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         return createLineBreaks(context.getBPAlignment(), context);
     }
 
+    public List getNextKnuthElements(LayoutContext context, int alignment,
+            LeafPosition restartPosition) {
+        log.trace("Restarting line breaking from index " + restartPosition.getIndex());
+        int parIndex = restartPosition.getLeafPos();
+        Paragraph paragraph = (Paragraph) knuthParagraphs.get(parIndex);
+        for (int i = 0; i <= restartPosition.getIndex(); i++) {
+            paragraph.remove(0);
+        }
+        Iterator iter = paragraph.iterator();
+        while (iter.hasNext() && !((KnuthElement) iter.next()).isBox()) {
+            iter.remove();
+        }
+        if (!iter.hasNext()) {
+            knuthParagraphs.remove(parIndex);
+        }
+
+        // return finished when there's no content
+        if (knuthParagraphs.size() == 0) {
+            setFinished(true);
+            return null;
+        }
+
+        ipd = context.getRefIPD();
+        //PHASE 2: Create line breaks
+        return createLineBreaks(context.getBPAlignment(), context);
+    }
+
     /**
      * Phase 1 of Knuth algorithm: Collect all inline Knuth elements before determining line breaks.
      * @param context the LayoutContext
      */
     private void collectInlineKnuthElements(LayoutContext context) {
         LayoutContext inlineLC = new LayoutContext(context);
-
-        ipd = context.getRefIPD();
 
         // convert all the text in a sequence of paragraphs made
         // of KnuthBox, KnuthGlue and KnuthPenalty objects
@@ -873,6 +891,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
 
         List returnList = new LinkedList();
 
+        int endIndex = -1;
         for (int p = 0; p < knuthParagraphs.size(); p++) {
             // penalty between paragraphs
             if (p > 0) {
@@ -924,11 +943,10 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                         int penalty = KeepUtil.getPenaltyForKeep(strength);
                         if (penalty < KnuthElement.INFINITE) {
                             returnList.add(new BreakElement(
-                                    returnPosition, penalty, context));
+                                    new LeafPosition(this, p, endIndex), penalty, context));
                         }
                     }
-                    int endIndex
-                      = ((LineBreakPosition) llPoss.getChosenPosition(i)).getLeafPos();
+                    endIndex = ((LineBreakPosition) llPoss.getChosenPosition(i)).getLeafPos();
                     // create a list of the FootnoteBodyLM handling footnotes
                     // whose citations are in this line
                     List footnoteList = new LinkedList();

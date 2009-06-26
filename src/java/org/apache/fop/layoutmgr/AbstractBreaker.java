@@ -27,6 +27,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.fo.Constants;
+import org.apache.fop.layoutmgr.BreakingAlgorithm.KnuthNode;
 import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.util.ListUtil;
 
@@ -214,6 +215,11 @@ public abstract class AbstractBreaker {
      */
     protected abstract List getNextKnuthElements(LayoutContext context, int alignment);
 
+    protected List getNextKnuthElements(LayoutContext context, int alignment,
+            KnuthElement elementAtIPDChange) {
+        throw new UnsupportedOperationException("TODO: implement acceptable fallback");
+    }
+
     /** @return true if there's no content that could be handled. */
     public boolean isEmpty() {
         return (this.blockLists.isEmpty());
@@ -316,7 +322,6 @@ public abstract class AbstractBreaker {
                         getPageProvider(), createLayoutListener(),
                         alignment, alignmentLast, footnoteSeparatorLength,
                         isPartOverflowRecoveryActivated(), autoHeight, isSinglePartFavored());
-                int iOptPageCount;
 
                 BlockSequence effectiveList;
                 if (getCurrentDisplayAlign() == Constants.EN_X_FILL) {
@@ -327,16 +332,28 @@ public abstract class AbstractBreaker {
                     effectiveList = blockList;
                 }
 
-                //iOptPageCount = alg.firstFit(effectiveList, flowBPD, 1, true);
                 alg.setConstantLineWidth(flowBPD);
-                iOptPageCount = alg.findBreakingPoints(effectiveList, /*flowBPD,*/
-                            1, true, BreakingAlgorithm.ALL_BREAKS);
-                log.debug("PLM> iOptPageCount= " + iOptPageCount
-                        + " pageBreaks.size()= " + alg.getPageBreaks().size());
+                int optimalPageCount = alg.findBreakingPoints(effectiveList, 1, true,
+                        BreakingAlgorithm.ALL_BREAKS);
+                if (alg.ipdChanged()) {
+                    KnuthNode optimalBreak = alg.getBestNodeBeforeIPDChange();
+                    KnuthElement elementAtBreak = alg.getElement(optimalBreak.position);
+                    log.trace("IPD changes after page " + optimalPageCount + " at index "
+                            + optimalBreak.position);
+                    doPhase3(alg, optimalPageCount, blockList, effectiveList);
+
+                    blockLists.clear();
+                    blockListIndex = -1;
+                    nextSequenceStartsOn = getNextBlockList(childLC, Constants.EN_COLUMN,
+                            elementAtBreak);
+                } else {
+                    log.debug("PLM> iOptPageCount= " + optimalPageCount
+                            + " pageBreaks.size()= " + alg.getPageBreaks().size());
 
 
-                //*** Phase 3: Add areas ***
-                doPhase3(alg, iOptPageCount, blockList, effectiveList);
+                    //*** Phase 3: Add areas ***
+                    doPhase3(alg, optimalPageCount, blockList, effectiveList);
+                }
             }
         }
 
@@ -529,6 +546,7 @@ public abstract class AbstractBreaker {
     protected int handleSpanChange(LayoutContext childLC, int nextSequenceStartsOn) {
         return nextSequenceStartsOn;
     }
+
     /**
      * Gets the next block list (sequence) and adds it to a list of block lists if it's not empty.
      * @param childLC LayoutContext to use
@@ -537,12 +555,29 @@ public abstract class AbstractBreaker {
      */
     protected int getNextBlockList(LayoutContext childLC,
             int nextSequenceStartsOn) {
+        return getNextBlockList(childLC, nextSequenceStartsOn, null);
+    }
+
+    /**
+     * Gets the next block list (sequence) and adds it to a list of block lists if it's not empty.
+     * @param childLC LayoutContext to use
+     * @param nextSequenceStartsOn indicates on what page the next sequence should start
+     * @param elementAtIPDChange last element on the part before an IPD change
+     * @return the page on which the next content should appear after a hard break
+     */
+    protected int getNextBlockList(LayoutContext childLC,
+            int nextSequenceStartsOn, KnuthElement elementAtIPDChange) {
         updateLayoutContext(childLC);
         //Make sure the span change signal is reset
         childLC.signalSpanChange(Constants.NOT_SET);
 
         BlockSequence blockList;
-        List returnedList = getNextKnuthElements(childLC, alignment);
+        List returnedList;
+        if (elementAtIPDChange == null) {
+            returnedList = getNextKnuthElements(childLC, alignment);
+        } else {
+            returnedList = getNextKnuthElements(childLC, alignment, elementAtIPDChange);
+        }
         if (returnedList != null) {
             if (returnedList.isEmpty()) {
                 nextSequenceStartsOn = handleSpanChange(childLC, nextSequenceStartsOn);

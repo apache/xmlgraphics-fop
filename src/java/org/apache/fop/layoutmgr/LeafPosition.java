@@ -28,6 +28,11 @@ public class LeafPosition extends Position {
         leafPos = pos;
     }
 
+    public LeafPosition(LayoutManager layoutManager, int pos, int index) {
+        super(layoutManager, index);
+        leafPos = pos;
+    }
+
     public int getLeafPos() {
         return leafPos;
     }

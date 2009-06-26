@@ -122,6 +122,21 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
         return null;
     }
 
+    protected void setCurrentChildLM(LayoutManager childLM) {
+        curChildLM = childLM;
+        childLMiter = new LMiter(this);
+        do {
+            curChildLM = (LayoutManager) childLMiter.next();
+        } while (curChildLM != childLM);
+    }
+
+    protected void resetChildLMs() {
+        curChildLM = null;
+        while (childLMiter.hasPrevious()) {
+            childLMiter.previous();
+        }
+    }
+
     /**
      * Return indication if getChildLM will return another LM.
      * @return true if another child LM is still available

@@ -22,6 +22,7 @@ package org.apache.fop.layoutmgr;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Stack;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -111,8 +112,17 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
 
     /** {@inheritDoc} */
     public List getNextKnuthElements(LayoutContext context, int alignment) {
+        return getNextKnuthElements(context, alignment, null, null);
+    }
+
+    List getNextKnuthElements(LayoutContext context, int alignment, Stack lmStack,
+            LeafPosition restartPosition) {
         resetSpaces();
-        return super.getNextKnuthElements(context, alignment);
+        if (lmStack == null) {
+            return super.getNextKnuthElements(context, alignment);
+        } else {
+            return super.getNextKnuthElements(context, alignment, lmStack, restartPosition);
+        }
     }
 
     private void resetSpaces() {

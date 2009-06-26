@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Stack;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -361,8 +362,188 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         return elements;
     }
 
+    /** {@inheritDoc} */
+    List getNextKnuthElements(LayoutContext context, int alignment, Stack lmStack, LeafPosition position) {
+        referenceIPD = context.getRefIPD();
+        updateContentAreaIPDwithOverconstrainedAdjust();
+
+        List contentList = new LinkedList();
+        List elements = new LinkedList();
+
+        if (!breakBeforeServed) {
+            breakBeforeServed = true;
+            if (!context.suppressBreakBefore()) {
+                if (addKnuthElementsForBreakBefore(elements, context)) {
+                    return elements;
+                }
+            }
+        }
+
+        if (!firstVisibleMarkServed) {
+            addKnuthElementsForSpaceBefore(elements, alignment);
+            context.updateKeepWithPreviousPending(getKeepWithPreviousStrength());
+        }
+
+        addKnuthElementsForBorderPaddingBefore(elements, !firstVisibleMarkServed);
+        firstVisibleMarkServed = true;
+
+        //Spaces, border and padding to be repeated at each break
+        addPendingMarks(context);
+
+        //Used to indicate a special break-after case when all content has already been generated.
+        BreakElement forcedBreakAfterLast = null;
+
+        LayoutManager currentChildLM = (BlockLevelLayoutManager) lmStack.pop();
+        setCurrentChildLM(currentChildLM);
+        LayoutContext childLC = new LayoutContext(0);
+        List childrenElements = getNextChildElements(currentChildLM, context, childLC, alignment,
+                lmStack, position);
+
+        if (contentList.isEmpty()) {
+            //Propagate keep-with-previous up from the first child
+            context.updateKeepWithPreviousPending(childLC.getKeepWithPreviousPending());
+        }
+        if (childrenElements != null && !childrenElements.isEmpty()) {
+            if (!contentList.isEmpty()
+                    && !ElementListUtils.startsWithForcedBreak(childrenElements)) {
+                // there is a block handled by prevLM before the one
+                // handled by curLM, and the one handled
+                // by the current LM does not begin with a break
+                addInBetweenBreak(contentList, context, childLC);
+            }
+            if (childrenElements.size() == 1
+                    && ElementListUtils.startsWithForcedBreak(childrenElements)) {
+
+                if (currentChildLM.isFinished() && !hasNextChildLM()) {
+                    // a descendant of this block has break-before
+                    forcedBreakAfterLast = (BreakElement) childrenElements.get(0);
+                    context.clearPendingMarks();
+//                    break; TODO
+                }
+
+                if (contentList.isEmpty()) {
+                    // Empty fo:block, zero-length box makes sure the IDs and/or markers
+                    // are registered and borders/padding are painted.
+                    elements.add(new KnuthBox(0, notifyPos(new Position(this)), false));
+                }
+                // a descendant of this block has break-before
+                contentList.addAll(childrenElements);
+
+                wrapPositionElements(contentList, elements);
+
+                return elements;
+            } else {
+                contentList.addAll(childrenElements);
+                if (ElementListUtils.endsWithForcedBreak(childrenElements)) {
+                    // a descendant of this block has break-after
+                    if (currentChildLM.isFinished() && !hasNextChildLM()) {
+                        forcedBreakAfterLast = (BreakElement) ListUtil.removeLast(contentList);
+                        context.clearPendingMarks();
+//                        break; TODO
+                    }
+
+                    wrapPositionElements(contentList, elements);
+
+                    return elements;
+                }
+            }
+            context.updateKeepWithNextPending(childLC.getKeepWithNextPending());
+        }
+
+        while ((currentChildLM = (LayoutManager) getChildLM()) != null) {
+            ((AbstractLayoutManager) currentChildLM).resetChildLMs(); // TODO won't work with forced breaks
+
+            childLC = new LayoutContext(0);
+
+            childrenElements = getNextChildElements(currentChildLM, context, childLC,
+                    alignment);
+
+            if (contentList.isEmpty()) {
+                //Propagate keep-with-previous up from the first child
+                context.updateKeepWithPreviousPending(childLC.getKeepWithPreviousPending());
+            }
+            if (childrenElements != null && !childrenElements.isEmpty()) {
+                if (!contentList.isEmpty()
+                        && !ElementListUtils.startsWithForcedBreak(childrenElements)) {
+                    // there is a block handled by prevLM before the one
+                    // handled by curLM, and the one handled
+                    // by the current LM does not begin with a break
+                    addInBetweenBreak(contentList, context, childLC);
+                }
+                if (childrenElements.size() == 1
+                        && ElementListUtils.startsWithForcedBreak(childrenElements)) {
+
+                    if (currentChildLM.isFinished() && !hasNextChildLM()) {
+                        // a descendant of this block has break-before
+                        forcedBreakAfterLast = (BreakElement) childrenElements.get(0);
+                        context.clearPendingMarks();
+                        break;
+                    }
+
+                    if (contentList.isEmpty()) {
+                        // Empty fo:block, zero-length box makes sure the IDs and/or markers
+                        // are registered and borders/padding are painted.
+                        elements.add(new KnuthBox(0, notifyPos(new Position(this)), false));
+                    }
+                    // a descendant of this block has break-before
+                    contentList.addAll(childrenElements);
+
+                    wrapPositionElements(contentList, elements);
+
+                    return elements;
+                } else {
+                    contentList.addAll(childrenElements);
+                    if (ElementListUtils.endsWithForcedBreak(childrenElements)) {
+                        // a descendant of this block has break-after
+                        if (currentChildLM.isFinished() && !hasNextChildLM()) {
+                            forcedBreakAfterLast = (BreakElement) ListUtil.removeLast(contentList);
+                            context.clearPendingMarks();
+                            break;
+                        }
+
+                        wrapPositionElements(contentList, elements);
+
+                        return elements;
+                    }
+                }
+                context.updateKeepWithNextPending(childLC.getKeepWithNextPending());
+            }
+        }
+
+        if (!contentList.isEmpty()) {
+            wrapPositionElements(contentList, elements);
+        } else if (forcedBreakAfterLast == null) {
+            // Empty fo:block, zero-length box makes sure the IDs and/or markers
+            // are registered.
+            elements.add(new KnuthBox(0, notifyPos(new Position(this)), true));
+        }
+
+        addKnuthElementsForBorderPaddingAfter(elements, true);
+        addKnuthElementsForSpaceAfter(elements, alignment);
+
+        //All child content is processed. Only break-after can occur now, so...
+        context.clearPendingMarks();
+        if (forcedBreakAfterLast == null) {
+            addKnuthElementsForBreakAfter(elements, context);
+        } else {
+            forcedBreakAfterLast.clearPendingMarks();
+            elements.add(forcedBreakAfterLast);
+        }
+
+        context.updateKeepWithNextPending(getKeepWithNextStrength());
+
+        setFinished(true);
+
+        return elements;
+    }
+
     private List getNextChildElements(LayoutManager childLM, LayoutContext context,
             LayoutContext childLC, int alignment) {
+        return getNextChildElements(childLM, context, childLC, alignment, null, null);
+    }
+
+    private List getNextChildElements(LayoutManager childLM, LayoutContext context,
+            LayoutContext childLC, int alignment, Stack lmStack, LeafPosition restartPosition) {
         childLC.copyPendingMarksFrom(context);
         childLC.setStackLimitBP(context.getStackLimitBP());
         if (childLM instanceof LineLayoutManager) {
@@ -375,7 +556,19 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
             //Handled already by the parent (break collapsing, see above)
         }
 
-        return childLM.getNextKnuthElements(childLC, alignment);
+        if (lmStack == null) {
+            return childLM.getNextKnuthElements(childLC, alignment);
+        } else {
+            if (childLM instanceof LineLayoutManager) {
+                return ((LineLayoutManager) childLM).getNextKnuthElements(childLC, alignment,
+                        restartPosition);
+            } else if (childLM instanceof BlockLayoutManager) {
+                return ((BlockLayoutManager) childLM).getNextKnuthElements(childLC, alignment,
+                        lmStack, restartPosition);
+            } else {
+                throw new UnsupportedOperationException("TODO: layout manager not restartable");
+            }
+        }
     }
 
     /**

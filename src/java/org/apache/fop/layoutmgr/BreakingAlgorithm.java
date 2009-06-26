@@ -487,6 +487,9 @@ public abstract class BreakingAlgorithm {
                 previousIsBox = false;
             }
             if (activeNodeCount == 0) {
+                if (ipdChanged()) {
+                    return handleIpdChange();
+                }
                 if (!force) {
                     log.debug("Could not find a set of breaking points " + threshold);
                     return 0;
@@ -569,6 +572,14 @@ public abstract class BreakingAlgorithm {
 
         activeLines = null;
         return line;
+    }
+
+    protected boolean ipdChanged() {
+        return false;
+    }
+
+    protected int handleIpdChange() {
+        throw new IllegalStateException();
     }
 
     /**
@@ -1117,7 +1128,7 @@ public abstract class BreakingAlgorithm {
      * @param par the corresponding paragraph
      * @param total the number of lines into which the paragraph will be broken
      */
-    private void calculateBreakPoints(KnuthNode node, KnuthSequence par,
+    protected void calculateBreakPoints(KnuthNode node, KnuthSequence par,
                                       int total) {
         KnuthNode bestActiveNode = node;
         // use bestActiveNode to determine the optimum breakpoints

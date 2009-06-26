@@ -129,6 +129,12 @@ public class PageBreaker extends AbstractBreaker {
     /** {@inheritDoc} */
     protected int getNextBlockList(LayoutContext childLC,
             int nextSequenceStartsOn) {
+        return getNextBlockList(childLC, nextSequenceStartsOn, null);
+    }
+
+    /** {@inheritDoc} */
+    protected int getNextBlockList(LayoutContext childLC, int nextSequenceStartsOn,
+            KnuthElement elementAtIPDChange) {
         if (!firstPart) {
             // if this is the first page that will be created by
             // the current BlockSequence, it could have a break
@@ -140,7 +146,7 @@ public class PageBreaker extends AbstractBreaker {
         pageBreakHandled = true;
         pageProvider.setStartOfNextElementList(pslm.getCurrentPageNum(),
                 pslm.getCurrentPV().getCurrentSpan().getCurrentFlowIndex());
-        return super.getNextBlockList(childLC, nextSequenceStartsOn);
+        return super.getNextBlockList(childLC, nextSequenceStartsOn, elementAtIPDChange);
     }
 
     private boolean containsFootnotes(List contentList, LayoutContext context) {
@@ -208,6 +214,22 @@ public class PageBreaker extends AbstractBreaker {
         while (!childFLM.isFinished() && contentList == null) {
             contentList = childFLM.getNextKnuthElements(context, alignment);
         }
+
+        // scan contentList, searching for footnotes
+        if (containsFootnotes(contentList, context)) {
+            // handle the footnote separator
+            handleFootnoteSeparator();
+        }
+        return contentList;
+    }
+
+    protected List getNextKnuthElements(LayoutContext context, int alignment,
+            KnuthElement elementAtIPDChange) {
+        List contentList = null;
+
+        do {
+            contentList = childFLM.getNextKnuthElements(context, alignment, elementAtIPDChange);
+        } while (!childFLM.isFinished() && contentList == null);
 
         // scan contentList, searching for footnotes
         if (containsFootnotes(contentList, context)) {
