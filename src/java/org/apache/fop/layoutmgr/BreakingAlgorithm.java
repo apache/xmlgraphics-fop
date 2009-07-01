@@ -22,12 +22,12 @@ package org.apache.fop.layoutmgr;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.Constants;
 
 /**
  * The set of nodes is sorted into lines indexed into activeLines.
  * The nodes in each line are linked together in a single linked list by the
- * KnuthNode.next field. The activeLines array contains a link to the head of
+ * {@link KnuthNode#next} field. The activeLines array contains a link to the head of
  * the linked list in index 'line*2' and a link to the tail at index 'line*2+1'.
  * <p>
  * The set of active nodes can be traversed by
@@ -57,13 +57,42 @@ public abstract class BreakingAlgorithm {
     /** wrap-option = "no-wrap". */
     public static final int ONLY_FORCED_BREAKS = 2;
 
+    /** Holder for symbolic literals for the fitness classes */
+    static final class FitnessClasses {
+        static final int VERY_TIGHT = 0;
+        static final int TIGHT = 1;
+        static final int LOOSE = 2;
+        static final int VERY_LOOSE = 3;
+
+        static final String[] NAMES = { "VERY TIGHT", "TIGHT", "LOOSE", "VERY LOOSE" };
+
+        /**
+         * Figure out the fitness class of this line (tight, loose,
+         * very tight or very loose).
+         * See the section on "More Bells and Whistles" in Knuth's
+         * "Breaking Paragraphs Into Lines".
+         *
+         * @param adjustRatio the adjustment ratio
+         * @return the fitness class
+         */
+        static int computeFitness(double adjustRatio) {
+            if (adjustRatio < -0.5) {
+                return FitnessClasses.VERY_TIGHT;
+            } else if (adjustRatio <= 0.5) {
+                return FitnessClasses.TIGHT;
+            } else if (adjustRatio <= 1.0) {
+                return FitnessClasses.LOOSE;
+            } else {
+                return FitnessClasses.VERY_LOOSE;
+            }
+        }
+    }
+
     // parameters of Knuth's algorithm:
-    /** Penalty value for flagged penalties. */
-    private int flaggedPenalty = 50;
     /** Demerit for consecutive lines ending at flagged penalties. */
-    protected int repeatedFlaggedDemerit = 50;
+    protected int repeatedFlaggedDemerit = KnuthPenalty.FLAGGED_PENALTY;
     /** Demerit for consecutive lines belonging to incompatible fitness classes . */
-    protected int incompatibleFitnessDemerit = 50;
+    protected int incompatibleFitnessDemerit = KnuthPenalty.FLAGGED_PENALTY;
     /** Maximum number of consecutive lines ending with a flagged penalty.
      * Only a value >= 1 is a significant limit.
      */
@@ -110,7 +139,7 @@ public abstract class BreakingAlgorithm {
     /** Alignment of the paragraph's last line. */
     protected int alignmentLast;
     /** Used to handle the text-indent property (indent the first line of a paragraph). */
-    protected boolean bFirst;
+    protected boolean indentFirstPart;
 
     /**
      * The set of active nodes in ascending line order. For each line l, activeLines[2l] contains a
@@ -151,30 +180,35 @@ public abstract class BreakingAlgorithm {
 
     protected BestRecords best;
 
-    /** {@inheritDoc} */
     private boolean partOverflowRecoveryActivated = true;
     private KnuthNode lastRecovered;
 
     /**
      * Create a new instance.
-     * @param align alignment of the paragraph/page. One of EN_START, EN_JUSTIFY, etc. For
-     * pages EN_BEFORE, EN_AFTER are mapped to the corresponding inline properties
-     * (EN_START, EN_END)
+     *
+     * @param align     alignment of the paragraph/page. One of {@link Constants#EN_START},
+     *                  {@link Constants#EN_JUSTIFY}, {@link Constants#EN_CENTER},
+     *                  {@link Constants#EN_END}.
+     *                  For pages, {@link Constants#EN_BEFORE} and {@link Constants#EN_AFTER}
+     *                  are mapped to the corresponding inline properties,
+     *                  {@link Constants#EN_START} and {@link Constants#EN_END}.
      * @param alignLast alignment of the paragraph's last line
-     * @param first for the text-indent property (indent the first line of a paragraph)
-     * @param partOverflowRecovery true if too long elements should be moved to the next line/part
-     * @param maxFlagCount maximum allowed number of consecutive lines ending at a flagged penalty
-     * item
+     * @param first     for the text-indent property ({@code true} if the first line
+     *                  of a paragraph should be indented)
+     * @param partOverflowRecovery  {@code true} if too long elements should be moved to
+     *                              the next line/part
+     * @param maxFlagCount  maximum allowed number of consecutive lines ending at a flagged penalty
+     *                      item
      */
     public BreakingAlgorithm(int align, int alignLast,
                              boolean first, boolean partOverflowRecovery,
                              int maxFlagCount) {
-        alignment = align;
-        alignmentLast = alignLast;
-        bFirst = first;
+        this.alignment = align;
+        this.alignmentLast = alignLast;
+        this.indentFirstPart = first;
         this.partOverflowRecoveryActivated = partOverflowRecovery;
         this.best = new BestRecords();
-        maxFlaggedPenaltiesCount = maxFlagCount;
+        this.maxFlaggedPenaltiesCount = maxFlagCount;
     }
 
 
@@ -183,34 +217,34 @@ public abstract class BreakingAlgorithm {
      */
     public class KnuthNode {
         /** index of the breakpoint represented by this node */
-        public int position;
+        public final int position;
 
         /** number of the line ending at this breakpoint */
-        public int line;
+        public final int line;
 
         /** fitness class of the line ending at this breakpoint. One of 0, 1, 2, 3. */
-        public int fitness;
+        public final int fitness;
 
         /** accumulated width of the KnuthElements up to after this breakpoint. */
-        public int totalWidth;
+        public final int totalWidth;
 
         /** accumulated stretchability of the KnuthElements up to after this breakpoint. */
-        public int totalStretch;
+        public final int totalStretch;
 
         /** accumulated shrinkability of the KnuthElements up to after this breakpoint. */
-        public int totalShrink;
+        public final int totalShrink;
 
         /** adjustment ratio if the line ends at this breakpoint */
-        public double adjustRatio;
+        public final double adjustRatio;
 
         /** available stretch of the line ending at this breakpoint */
-        public int availableShrink;
+        public final int availableShrink;
 
         /** available shrink of the line ending at this breakpoint */
-        public int availableStretch;
+        public final int availableStretch;
 
         /** difference between target and actual line width */
-        public int difference;
+        public final int difference;
 
         /** minimum total demerits up to this breakpoint */
         public double totalDemerits;
@@ -249,7 +283,8 @@ public abstract class BreakingAlgorithm {
             return "<KnuthNode at " + position + " "
                     + totalWidth + "+" + totalStretch + "-" + totalShrink
                     + " line:" + line + " prev:" + (previous != null ? previous.position : -1)
-                    + " dem:" + totalDemerits + ">";
+                    + " dem:" + totalDemerits
+                    + " fitness:" + FitnessClasses.NAMES[fitness] + ">";
         }
     }
 
@@ -258,7 +293,6 @@ public abstract class BreakingAlgorithm {
      */
     protected class BestRecords {
         private static final double INFINITE_DEMERITS = Double.POSITIVE_INFINITY;
-        //private static final double INFINITE_DEMERITS = 1E11;
 
         private double[] bestDemerits = new double[4];
         private KnuthNode[] bestNode = new KnuthNode[4];
@@ -333,7 +367,7 @@ public abstract class BreakingAlgorithm {
             return bestAvailableStretch[fitness];
         }
 
-       public int getDifference(int fitness) {
+        public int getDifference(int fitness) {
             return bestDifference[fitness];
         }
 
@@ -373,20 +407,21 @@ public abstract class BreakingAlgorithm {
         return this.partOverflowRecoveryActivated;
     }
 
-    /** Empty method, hook for subclasses. Called before determining the optimal
+    /**
+     * Empty method, hook for subclasses. Called before determining the optimal
      * breakpoints corresponding to a given active node.
      * @param total number of lines for the active node
      * @param demerits total demerits of the paragraph for the active node
      */
     public abstract void updateData1(int total, double demerits);
 
-    /** Empty method, hook for subclasses. Called when determining the optimal breakpoints
+    /**
+     * Empty method, hook for subclasses. Called when determining the optimal breakpoints
      * for a given active node.
      * @param bestActiveNode a node in the chain of best active nodes, corresponding to
      * one of the optimal breakpoints
      * @param sequence the corresponding paragraph
      * @param total the number of lines into which the paragraph will be broken
-     * @see #calculateBreakPoints(KnuthNode, KnuthSequence, int)
      */
     public abstract void updateData2(KnuthNode bestActiveNode,
                                      KnuthSequence sequence,
@@ -404,13 +439,18 @@ public abstract class BreakingAlgorithm {
         return findBreakingPoints(par, 0, threshold, force, allowedBreaks);
     }
 
-    /** Finds an optimal set of breakpoints for the given paragraph.
-     * @param par the paragraph to break
-     * @param startIndex index of the Knuth element at which the breaking must start
-     * @param threshold upper bound of the adjustment ratio
-     * @param force true if a set of breakpoints must be found even if there are no
-     * feasible ones
-     * @param allowedBreaks one of ONLY_FORCED_BREAKS, NO_FLAGGED_PENALTIES, ALL_BREAKS
+    /**
+     * Finds an optimal set of breakpoints for the given paragraph.
+     *
+     * @param par           the paragraph to break
+     * @param startIndex    index of the Knuth element at which the breaking must start
+     * @param threshold     upper bound of the adjustment ratio
+     * @param force         {@code true} if a set of breakpoints must be found, even
+     *                      if there are no feasible ones
+     * @param allowedBreaks the type(s) of breaks allowed. One of {@link #ONLY_FORCED_BREAKS},
+     *                      {@link #NO_FLAGGED_PENALTIES} or {@link #ALL_BREAKS}.
+     *
+     * @return  the number of effective breaks
      */
     public int findBreakingPoints(KnuthSequence par, int startIndex,
                                   double threshold, boolean force,
@@ -418,142 +458,66 @@ public abstract class BreakingAlgorithm {
         this.par = par;
         this.threshold = threshold;
         this.force = force;
-        //this.lineWidth = lineWidth;
+
+        // initialize the algorithm
         initialize();
 
-        activeLines = new KnuthNode[20];
-
-        // reset lastTooShort and lastTooLong, as they could be not null
-        // because of previous calls to findBreakingPoints
-        lastTooShort = lastTooLong = null;
-        // reset startLine and endLine
-        startLine = endLine = 0;
-        // current element in the paragraph
-        KnuthElement thisElement = null;
         // previous element in the paragraph is a KnuthBox?
         boolean previousIsBox = false;
 
-        // index of the first KnuthBox in the sequence
+        // index of the first KnuthBox in the sequence, in case of non-centered
+        // alignment. For centered alignment, we need to take into account preceding
+        // penalties+glues used for the filler spaces
         int firstBoxIndex = startIndex;
-        if (alignment != org.apache.fop.fo.Constants.EN_CENTER) {
-            while (par.size() > firstBoxIndex
-                    && !((KnuthElement) par.get(firstBoxIndex)).isBox()) {
-                firstBoxIndex++;
-            }
+        if (alignment != Constants.EN_CENTER) {
+            firstBoxIndex = par.getFirstBoxIndex(startIndex);
         }
+        firstBoxIndex = (firstBoxIndex < 0) ? 0 : firstBoxIndex;
 
         // create an active node representing the starting point
-        activeLines = new KnuthNode[20];
         addNode(0, createNode(firstBoxIndex, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, null));
+        KnuthNode lastForced = getNode(0);
+
 
         if (log.isTraceEnabled()) {
             log.trace("Looping over " + (par.size() - startIndex) + " elements");
+            log.trace(par);
         }
 
-        KnuthNode lastForced = getNode(0);
-
         // main loop
-        for (int i = startIndex; i < par.size(); i++) {
-            thisElement = getElement(i);
-            if (thisElement.isBox()) {
-                // a KnuthBox object is not a legal line break
-                totalWidth += thisElement.getW();
-                previousIsBox = true;
-                handleBox((KnuthBox) thisElement);
-            } else if (thisElement.isGlue()) {
-                // a KnuthGlue object is a legal line break
-                // only if the previous object is a KnuthBox
-                // consider these glues according to the value of allowedBreaks
-                if (previousIsBox
-                    && !(allowedBreaks == ONLY_FORCED_BREAKS)) {
-                    considerLegalBreak(thisElement, i);
-                }
-                totalWidth += thisElement.getW();
-                totalStretch += thisElement.getY();
-                totalShrink += thisElement.getZ();
-                previousIsBox = false;
-            } else {
-                // a KnuthPenalty is a legal line break
-                // only if its penalty is not infinite;
-                // consider all penalties, non-flagged penalties or non-forcing penalties
-                // according to the value of allowedBreaks
-                if (((KnuthPenalty) thisElement).getP() < KnuthElement.INFINITE
-                    && (!(allowedBreaks == NO_FLAGGED_PENALTIES)
-                            || !(((KnuthPenalty) thisElement).isFlagged()))
-                    && (!(allowedBreaks == ONLY_FORCED_BREAKS)
-                            || ((KnuthPenalty) thisElement).getP() == -KnuthElement.INFINITE)) {
-                    considerLegalBreak(thisElement, i);
-                }
-                previousIsBox = false;
-            }
+        for (int elementIndex = startIndex; elementIndex < par.size(); elementIndex++) {
+
+            previousIsBox = handleElementAt(
+                    elementIndex, previousIsBox, allowedBreaks).isBox();
+
             if (activeNodeCount == 0) {
                 if (!force) {
                     log.debug("Could not find a set of breaking points " + threshold);
                     return 0;
                 }
+
                 // lastDeactivated was a "good" break, while lastTooShort and lastTooLong
                 // were "bad" breaks since the beginning;
                 // if it is not the node we just restarted from, lastDeactivated can
                 // replace either lastTooShort or lastTooLong
-                if (lastDeactivated != null && lastDeactivated != lastForced) {
-                    if (lastDeactivated.adjustRatio > 0) {
-                        lastTooShort = lastDeactivated;
-                    } else {
-                        lastTooLong = lastDeactivated;
-                    }
+                if (lastDeactivated != null
+                        && lastDeactivated != lastForced) {
+                    replaceLastDeactivated();
                 }
-                if (lastTooShort == null || lastForced.position == lastTooShort.position) {
-                    if (isPartOverflowRecoveryActivated()) {
-                        if (this.lastRecovered == null) {
-                            this.lastRecovered = lastTooLong;
-                            if (log.isDebugEnabled()) {
-                                log.debug("Recovery point: " + lastRecovered);
-                            }
-                        }
-                        // content would overflow, insert empty line/page and try again
-                        KnuthNode node = createNode(
-                                lastTooLong.previous.position, lastTooLong.previous.line + 1, 1,
-                                0, 0, 0,
-                                0, 0, 0,
-                                0, 0, lastTooLong.previous);
-                        lastForced = node;
-                        node.fitRecoveryCounter = lastTooLong.previous.fitRecoveryCounter + 1;
-                        if (log.isDebugEnabled()) {
-                            log.debug("first part doesn't fit into line, recovering: "
-                                    + node.fitRecoveryCounter);
-                        }
-                        if (node.fitRecoveryCounter > getMaxRecoveryAttempts()) {
-                            while (lastForced.fitRecoveryCounter > 0) {
-                                lastForced = lastForced.previous;
-                                lastDeactivated = lastForced.previous;
-                                startLine--;
-                                endLine--;
-                            }
-                            lastForced = this.lastRecovered;
-                            this.lastRecovered = null;
-                            startLine = lastForced.line;
-                            endLine = lastForced.line;
-                            log.debug("rolled back...");
-                        }
-                    } else {
-                        lastForced = lastTooLong;
-                    }
+
+                if (lastTooShort == null
+                        || lastForced.position == lastTooShort.position) {
+                    lastForced = recoverFromOverflow();
                 } else {
                     lastForced = lastTooShort;
                     this.lastRecovered = null;
                 }
-
-                if (log.isDebugEnabled()) {
-                    log.debug("Restarting at node " + lastForced);
-                }
-                i = restartFrom(lastForced, i);
+                elementIndex = restartFrom(lastForced, elementIndex);
             }
+
         }
+
         finish();
-        if (log.isTraceEnabled()) {
-            log.trace("Main loop completed " + activeNodeCount);
-            log.trace("Active nodes=" + toString(""));
-        }
 
         // there is at least one set of breaking points
         // select one or more active nodes, removing the others from the list
@@ -572,41 +536,40 @@ public abstract class BreakingAlgorithm {
     }
 
     /**
-     * This method tries to find the context FO for a position in a KnuthSequence.
-     * @param seq the KnuthSequence to inspect
-     * @param position the index of the position in the KnuthSequence
-     * @return the requested context FO note or null, if no context node could be determined
+     * Recover from a {@link KnuthNode} leading to a line that is too long.
+     * The default implementation creates a new node corresponding to a break
+     * point after the previous node that led to a line that was too short.
+     *
+     * @param lastTooLong   the node that leads to a "too long" line
+     * @return  node corresponding to a breakpoint after the previous "too short" line
      */
-    private FONode findContextFO(KnuthSequence seq, int position) {
-        ListElement el = seq.getElement(position);
-        while (el.getLayoutManager() == null && position < seq.size() - 1) {
-            position++;
-            el = seq.getElement(position);
+    protected KnuthNode recoverFromTooLong(KnuthNode lastTooLong) {
+        if (log.isDebugEnabled()) {
+            log.debug("Recovering from too long: " + lastTooLong);
         }
-        Position pos = (el != null ? el.getPosition() : null);
-        LayoutManager lm = (pos != null ? pos.getLM() : null);
-        while (pos instanceof NonLeafPosition) {
-            pos = ((NonLeafPosition)pos).getPosition();
-            if (pos != null && pos.getLM() != null) {
-                lm = pos.getLM();
-            }
-        }
-        if (lm != null) {
-            return lm.getFObj();
-        } else {
-            return null;
-        }
+
+        // content would overflow, insert empty line/page and try again
+        return createNode(
+                lastTooLong.previous.position, lastTooLong.previous.line + 1, 1,
+                0, 0, 0,
+                0, 0, 0,
+                0, 0, lastTooLong.previous);
     }
 
-    /** Resets the algorithm's variables. */
+    /** Initializes the algorithm's variables. */
     protected void initialize() {
         this.totalWidth = 0;
         this.totalStretch = 0;
         this.totalShrink = 0;
+        this.lastTooShort = this.lastTooLong = null;
+        this.startLine = this.endLine = 0;
+        this.activeLines = new KnuthNode[20];
     }
 
-    /** Creates a new active node for a feasible breakpoint at the given position. Only
+    /**
+     * Creates a new active node for a feasible breakpoint at the given position. Only
      * called in forced mode.
+     *
      * @param position index of the element in the Knuth sequence
      * @param line number of the line ending at the breakpoint
      * @param fitness fitness class of the line ending at the breakpoint. One of 0, 1, 2, 3.
@@ -621,6 +584,7 @@ public abstract class BreakingAlgorithm {
      * @param difference difference between target and actual line width
      * @param totalDemerits minimum total demerits up to the breakpoint
      * @param previous active node for the preceding breakpoint
+     * @return a new node
      */
     protected KnuthNode createNode(int position, int line, int fitness,
                                    int totalWidth, int totalStretch, int totalShrink,
@@ -646,11 +610,165 @@ public abstract class BreakingAlgorithm {
                              best.getNode(fitness));
     }
 
-    /** Empty method, hook for subclasses. */
-    protected void handleBox(KnuthBox box) {
+    /**
+     * Generic handler for a {@link KnuthElement} at the given {@code position},
+     * taking into account whether the preceding element was a box, and which
+     * type(s) of breaks are allowed.
+     * Non-overridable. This method simply serves to route the call to one of the
+     * more specific handlers ({@link #handleBox(KnuthBox)},
+     * {@link #handleGlueAt(KnuthGlue,int,boolean,int)} or
+     * {@link #handlePenaltyAt(KnuthPenalty,int,int)}. The specialized handlers
+     * can be overridden by subclasses to add to or modify the default behavior
+     * for the different types of elements.
+     *
+     * @param position      the position index of the element in the paragraph
+     * @param previousIsBox {@code true} if the previous element is a box
+     * @param allowedBreaks the type(s) of breaks allowed; should be one
+     *                      of {@link #ALL_BREAKS}, {@link #NO_FLAGGED_PENALTIES}
+     *                      or {@link #ONLY_FORCED_BREAKS}
+     * @return  the handled element
+     */
+    protected final KnuthElement handleElementAt(int position,
+                                                 boolean previousIsBox,
+                                                 int allowedBreaks) {
+        KnuthElement element = getElement(position);
+        if (element.isBox()) {
+            handleBox((KnuthBox) element);
+        } else if (element.isGlue()) {
+            handleGlueAt((KnuthGlue) element, position, previousIsBox, allowedBreaks);
+        } else if (element.isPenalty()){
+            handlePenaltyAt((KnuthPenalty) element, position, allowedBreaks);
+        } else {
+            throw new IllegalArgumentException(
+                    "Unknown KnuthElement type: expecting KnuthBox, KnuthGlue or KnuthPenalty");
+        }
+        return element;
     }
 
+    /**
+     * Handle a {@link KnuthBox}.
+     * <em>Note: default implementation just adds the box's width
+     * to the total content width. Subclasses that do not keep track
+     * of this themselves, but override this method, should remember
+     * to call {@code super.handleBox(box)} to avoid unwanted side-effects.</em>
+     *
+     * @param box   the {@link KnuthBox} to handle
+     */
+    protected void handleBox(KnuthBox box) {
+        // a KnuthBox object is not a legal line break,
+        // just add the width to the total
+        totalWidth += box.getW();
+    }
+
+    /**
+     * Handle a {@link KnuthGlue} at the given position,
+     * taking into account the additional parameters.
+     *
+     * @param glue   the {@link KnuthGlue} to handle
+     * @param position   the position of the glue in the list
+     * @param previousIsBox {@code true} if the preceding element is a box
+     * @param allowedBreaks the type of breaks that are allowed
+     */
+    protected void handleGlueAt(KnuthGlue glue, int position,
+                                boolean previousIsBox, int allowedBreaks) {
+        // a KnuthGlue object is a legal line break
+        // only if the previous object is a KnuthBox
+        // consider these glues according to the value of allowedBreaks
+        if (previousIsBox
+            && !(allowedBreaks == ONLY_FORCED_BREAKS)) {
+            considerLegalBreak(glue, position);
+        }
+        totalWidth += glue.getW();
+        totalStretch += glue.getY();
+        totalShrink += glue.getZ();
+    }
+
+    /**
+     * Handle a {@link KnuthPenalty} at the given position,
+     * taking into account the type of breaks allowed.
+     *
+     * @param penalty   the {@link KnuthPenalty} to handle
+     * @param position  the position of the penalty in the list
+     * @param allowedBreaks the type of breaks that are allowed
+     */
+    protected void handlePenaltyAt(KnuthPenalty penalty, int position,
+                                   int allowedBreaks) {
+        // a KnuthPenalty is a legal line break
+        // only if its penalty is not infinite;
+        // consider all penalties, non-flagged penalties or non-forcing penalties
+        // according to the value of allowedBreaks
+        if (((penalty.getP() < KnuthElement.INFINITE)
+                && (!(allowedBreaks == NO_FLAGGED_PENALTIES) || !penalty.isFlagged())
+                && (!(allowedBreaks == ONLY_FORCED_BREAKS)
+                        || penalty.isForcedBreak()))) {
+            considerLegalBreak(penalty, position);
+        }
+    }
+
+    /**
+     * Replace the last too-long or too-short node by the last deactivated
+     * node, if applicable.
+     */
+    protected final void replaceLastDeactivated() {
+        if (lastDeactivated.adjustRatio > 0) {
+            //last deactivated was too short
+            lastTooShort = lastDeactivated;
+        } else {
+            //last deactivated was too long or exactly the right width
+            lastTooLong = lastDeactivated;
+        }
+    }
+
+    /**
+     * Recover from an overflow condition.
+     *
+     * @return  the new {@code lastForced} node
+     */
+    protected KnuthNode recoverFromOverflow() {
+        KnuthNode lastForced;
+        if (isPartOverflowRecoveryActivated()) {
+            if (lastRecovered == null) {
+                lastRecovered = lastTooLong;
+                if (log.isDebugEnabled()) {
+                    log.debug("Recovery point: " + lastRecovered);
+                }
+            }
+            KnuthNode node = recoverFromTooLong(lastTooLong);
+            lastForced = node;
+            node.fitRecoveryCounter = lastTooLong.previous.fitRecoveryCounter + 1;
+            if (log.isDebugEnabled()) {
+                log.debug("first part doesn't fit into line, recovering: "
+                        + node.fitRecoveryCounter);
+            }
+            if (node.fitRecoveryCounter > getMaxRecoveryAttempts()) {
+                while (lastForced.fitRecoveryCounter > 0
+                        && lastForced.previous != null) {
+                    lastForced = lastForced.previous;
+                    lastDeactivated = lastForced.previous;
+                }
+                lastForced = lastRecovered;
+                lastRecovered = null;
+                startLine = lastForced.line;
+                endLine = lastForced.line;
+                log.debug("rolled back...");
+            }
+        } else {
+            lastForced = lastTooLong;
+        }
+        return lastForced;
+    }
+
+    /**
+     * Restart from the given node at the given index.
+     *
+     * @param restartingNode    the {@link KnuthNode} to restart from
+     * @param currentIndex      the current position index
+     * @return  the index of the restart point
+     */
     protected int restartFrom(KnuthNode restartingNode, int currentIndex) {
+        if (log.isDebugEnabled()) {
+            log.debug("Restarting at node " + restartingNode);
+        }
         restartingNode.totalDemerits = 0;
         addNode(restartingNode.line, restartingNode);
         startLine = restartingNode.line;
@@ -672,7 +790,8 @@ public abstract class BreakingAlgorithm {
         return restartingIndex;
     }
 
-    /** Determines if the given breakpoint is a feasible breakpoint. That is, if a decent
+    /**
+     * Determines if the given breakpoint is a feasible breakpoint. That is, if a decent
      * line may be built between one of the currently active nodes and this breakpoint.
      * @param element the paragraph's element to consider
      * @param elementIdx the element's index inside the paragraph
@@ -689,6 +808,9 @@ public abstract class BreakingAlgorithm {
         lastDeactivated = null;
         lastTooLong = null;
         for (int line = startLine; line < endLine; line++) {
+            if (!elementCanEndLine(element, line)) {
+                continue;
+            }
             for (KnuthNode node = getNode(line); node != null; node = node.next) {
                 if (node.position == elementIdx) {
                     continue;
@@ -697,6 +819,7 @@ public abstract class BreakingAlgorithm {
                 double r = computeAdjustmentRatio(node, difference);
                 int availableShrink = totalShrink - node.totalShrink;
                 int availableStretch = totalStretch - node.totalStretch;
+
                 if (log.isTraceEnabled()) {
                     log.trace("\tr=" + r + " difference=" + difference);
                     log.trace("\tline=" + line);
@@ -704,91 +827,164 @@ public abstract class BreakingAlgorithm {
 
                 // The line would be too long.
                 if (r < -1 || element.isForcedBreak()) {
-                    // Deactivate node.
-                    if (log.isTraceEnabled()) {
-                        log.trace("Removing " + node);
-                    }
-                    removeNode(line, node);
-                    lastDeactivated = compareNodes(lastDeactivated, node);
+                    deactivateNode(node, line);
                 }
 
+                int fitnessClass = FitnessClasses.computeFitness(r);
+                double demerits = computeDemerits(node, element, fitnessClass, r);
                 // The line is within the available shrink and the threshold.
                 if (r >= -1 && r <= threshold) {
-                    int fitnessClass = computeFitness(r);
-                    double demerits = computeDemerits(node, element, fitnessClass, r);
-
-                    if (log.isTraceEnabled()) {
-                        log.trace("\tDemerits=" + demerits);
-                        log.trace("\tFitness class=" + fitnessClass);
-                    }
-
-                    if (demerits < best.getDemerits(fitnessClass)) {
-                        // updates best demerits data
-                        best.addRecord(demerits, node, r, availableShrink, availableStretch,
-                                       difference, fitnessClass);
-                        lastTooShort = null;
-                    }
+                    activateNode(node, difference, r,
+                            demerits, fitnessClass, availableShrink, availableStretch);
                 }
 
-                // The line is way too short, but we are in forcing mode, so a node is
+                // The line is way too short/long, but we are in forcing mode, so a node is
                 // calculated and stored in lastValidNode.
                 if (force && (r <= -1 || r > threshold)) {
-                    int fitnessClass = computeFitness(r);
-                    double demerits = computeDemerits(node, element, fitnessClass, r);
-                    int newWidth = totalWidth;
-                    int newStretch = totalStretch;
-                    int newShrink = totalShrink;
-
-                    // add the width, stretch and shrink of glue elements after
-                    // the break
-                    // this does not affect the dimension of the line / page, only
-                    // the values stored in the node; these would be as if the break
-                    // was just before the next box element, thus ignoring glues and
-                    // penalties between the "real" break and the following box
-                    for (int i = elementIdx; i < par.size(); i++) {
-                        KnuthElement tempElement = getElement(i);
-                        if (tempElement.isBox()) {
-                            break;
-                        } else if (tempElement.isGlue()) {
-                            newWidth += tempElement.getW();
-                            newStretch += tempElement.getY();
-                            newShrink += tempElement.getZ();
-                        } else if (tempElement.isForcedBreak() && i != elementIdx) {
-                            break;
-                        }
-                    }
-
-                    if (r <= -1) {
-                        if (lastTooLong == null || demerits < lastTooLong.totalDemerits) {
-                            lastTooLong = createNode(elementIdx, line + 1, fitnessClass,
-                                    newWidth, newStretch, newShrink,
-                                    r, availableShrink, availableStretch,
-                                    difference, demerits, node);
-                            if (log.isTraceEnabled()) {
-                                log.trace("Picking tooLong " + lastTooLong);
-                            }
-                        }
-                    } else {
-                        if (lastTooShort == null || demerits <= lastTooShort.totalDemerits) {
-                            if (considerTooShort) {
-                                //consider possibilities which are too short
-                                best.addRecord(demerits, node, r,
-                                        availableShrink, availableStretch,
-                                        difference, fitnessClass);
-                            }
-                            lastTooShort = createNode(elementIdx, line + 1, fitnessClass,
-                                    newWidth, newStretch, newShrink,
-                                    r, availableShrink, availableStretch,
-                                    difference, demerits, node);
-                            if (log.isTraceEnabled()) {
-                                log.trace("Picking tooShort " + lastTooShort);
-                            }
-                        }
-                    }
+                    forceNode(node, line, elementIdx, difference, r,
+                            demerits, fitnessClass, availableShrink, availableStretch);
                 }
             }
             addBreaks(line, elementIdx);
         }
+    }
+
+    /**
+     * Check if the given {@link KnuthElement} can end the line with the given
+     * number.
+     * @param element   the element
+     * @param line      the line number
+     * @return  {@code true} if the element can end the line
+     */
+    protected boolean elementCanEndLine(KnuthElement element, int line) {
+        return (!element.isPenalty()
+                || element.getP() < KnuthElement.INFINITE);
+    }
+
+    /**
+     * Force the given {@link KnuthNode}, and register it.
+     *
+     * @param node  the node
+     * @param line  the line number
+     * @param elementIdx    the position index of the element
+     * @param difference    the difference between content-length and avaialable width
+     * @param r     the adjustment ratio
+     * @param demerits  demerits produced by the node
+     * @param fitnessClass  the fitness class
+     * @param availableShrink   the available amount of shrink
+     * @param availableStretch  tha available amount of stretch
+     */
+    protected void forceNode(KnuthNode node,
+                             int line,
+                             int elementIdx,
+                             int difference,
+                             double r,
+                             double demerits,
+                             int fitnessClass,
+                             int availableShrink,
+                             int availableStretch) {
+
+        int newWidth = totalWidth;
+        int newStretch = totalStretch;
+        int newShrink = totalShrink;
+
+        // add the width, stretch and shrink of glue elements after
+        // the break
+        // this does not affect the dimension of the line / page, only
+        // the values stored in the node; these would be as if the break
+        // was just before the next box element, thus ignoring glues and
+        // penalties between the "real" break and the following box
+        for (int i = elementIdx; i < par.size(); i++) {
+            KnuthElement tempElement = getElement(i);
+            if (tempElement.isBox()) {
+                break;
+            } else if (tempElement.isGlue()) {
+                newWidth += tempElement.getW();
+                newStretch += tempElement.getY();
+                newShrink += tempElement.getZ();
+            } else if (tempElement.isForcedBreak() && i != elementIdx) {
+                break;
+            }
+        }
+
+        if (r <= -1) {
+            log.debug("Considering tooLong, demerits=" + demerits);
+            if (lastTooLong == null || demerits < lastTooLong.totalDemerits) {
+                lastTooLong = createNode(elementIdx, line + 1, fitnessClass,
+                        newWidth, newStretch, newShrink,
+                        r, availableShrink, availableStretch,
+                        difference, demerits, node);
+                if (log.isTraceEnabled()) {
+                    log.trace("Picking tooLong " + lastTooLong);
+                }
+            }
+        } else {
+            if (lastTooShort == null || demerits <= lastTooShort.totalDemerits) {
+                if (considerTooShort) {
+                    //consider possibilities which are too short
+                    best.addRecord(demerits, node, r,
+                            availableShrink, availableStretch,
+                            difference, fitnessClass);
+                }
+                lastTooShort = createNode(elementIdx, line + 1, fitnessClass,
+                        newWidth, newStretch, newShrink,
+                        r, availableShrink, availableStretch,
+                        difference, demerits, node);
+                if (log.isTraceEnabled()) {
+                    log.trace("Picking tooShort " + lastTooShort);
+                }
+            }
+        }
+    }
+
+    /**
+     * Activate the given node. Will result in the given {@link KnuthNode}
+     * being registered as a feasible breakpoint, if the {@code demerits} are better
+     * than that of the best node registered for the given {@code fitnessClass}.
+     *
+     * @param node  the node
+     * @param difference    the difference between content-length and available width
+     * @param r     the adjustment ratio
+     * @param demerits  demerits produced by the node
+     * @param fitnessClass  the fitness class
+     * @param availableShrink   the available amount of shrink
+     * @param availableStretch  the available amount of stretch
+     */
+    protected void activateNode(KnuthNode node,
+                                int difference,
+                                double r,
+                                double demerits,
+                                int fitnessClass,
+                                int availableShrink,
+                                int availableStretch) {
+
+        if (log.isTraceEnabled()) {
+            log.trace("\tDemerits=" + demerits);
+            log.trace("\tFitness class=" + FitnessClasses.NAMES[fitnessClass]);
+        }
+
+        if (demerits < best.getDemerits(fitnessClass)) {
+            // updates best demerits data
+            best.addRecord(demerits, node, r, availableShrink, availableStretch,
+                           difference, fitnessClass);
+            lastTooShort = null;
+        }
+    }
+
+    /**
+     * Deactivate the given node
+     *
+     * @param node  the node
+     * @param line  the line number
+     */
+    protected void deactivateNode(KnuthNode node, int line) {
+        // Deactivate node...
+        if (log.isTraceEnabled()) {
+            log.trace("Removing " + node);
+        }
+        removeNode(line, node);
+        // ... and remember it, if it was a good candidate
+        lastDeactivated = compareNodes(lastDeactivated, node);
     }
 
     /**
@@ -832,7 +1028,7 @@ public abstract class BreakingAlgorithm {
                 // by line number and position;
                 if (log.isTraceEnabled()) {
                     log.trace("\tInsert new break in list of " + activeNodeCount
-                            + " from fitness class " + i);
+                            + " from fitness class " + FitnessClasses.NAMES[i]);
                 }
                 KnuthNode newNode = createNode(elementIdx, line + 1, i,
                                                newWidth, newStretch, newShrink);
@@ -846,8 +1042,9 @@ public abstract class BreakingAlgorithm {
      * Return the difference between the natural width of a line that would be made
      * between the given active node and the given element, and the available width of the
      * real line.
-     * @param activeNode node for the previous breakpoint
-     * @param element currently considered breakpoint
+     * @param activeNode    node for the previous breakpoint
+     * @param element       currently considered breakpoint
+     * @param elementIndex  index of the element that is considered as a breakpoint
      * @return The difference in width. Positive numbers mean extra space in the line,
      * negative number that the line overflows.
      */
@@ -862,7 +1059,7 @@ public abstract class BreakingAlgorithm {
     }
 
     /**
-     * Return the adjust ration needed to make up for the difference. A ration of
+     * Return the adjustment ratio needed to make up for the difference. A ratio of
      * <ul>
      *    <li>0 means that the break has the exact right width</li>
      *    <li>&gt;= -1 &amp;&amp; &lt; 0  means that the break is wider than the line,
@@ -871,9 +1068,9 @@ public abstract class BreakingAlgorithm {
      *        but within the maximum values of the glues.</li>
      *    <li>&gt; 1 means that the break is too small to make up for the glues.</li>
      * </ul>
-     * @param activeNode
-     * @param difference
-     * @return The ration.
+     * @param activeNode    the currently active node
+     * @param difference    the difference between content-length and available width
+     * @return The adjustment ratio.
      */
     protected double computeAdjustmentRatio(KnuthNode activeNode, int difference) {
         // compute the adjustment ratio
@@ -897,26 +1094,6 @@ public abstract class BreakingAlgorithm {
     }
 
     /**
-     * Figure out the fitness class of this line (tight, loose,
-     * very tight or very loose).
-     * See the section on "More Bells and Whistles" in Knuth's
-     * "Breaking Paragraphs Into Lines".
-     * @param r
-     * @return the fitness class
-     */
-    private int computeFitness(double r) {
-        if (r < -0.5) {
-            return 0;
-        } else if (r <= 0.5) {
-            return 1;
-        } else if (r <= 1) {
-            return 2;
-        } else {
-            return 3;
-        }
-    }
-
-    /**
      * Computes the demerits of the current breaking (that is, up to the given element),
      * if the next-to-last chosen breakpoint is the given active node. This adds to the
      * total demerits of the given active node, the demerits of a line starting at this
@@ -933,12 +1110,16 @@ public abstract class BreakingAlgorithm {
         // compute demerits
         double f = Math.abs(r);
         f = 1 + 100 * f * f * f;
-        if (element.isPenalty() && element.getP() >= 0) {
-            f += element.getP();
-            demerits = f * f;
-        } else if (element.isPenalty() && !element.isForcedBreak()) {
+        if (element.isPenalty()) {
             double penalty = element.getP();
-            demerits = f * f - penalty * penalty;
+            if (penalty >= 0) {
+                f += penalty;
+                demerits = f * f;
+            } else if (!element.isForcedBreak()) {
+                demerits = f * f - penalty * penalty;
+            } else {
+                demerits = f * f;
+            }
         } else {
             demerits = f * f;
         }
@@ -982,7 +1163,15 @@ public abstract class BreakingAlgorithm {
         return demerits;
     }
 
+    /**
+     * Hook for subclasses to trigger special behavior after ending the
+     * main loop in {@link #findBreakingPoints(KnuthSequence,int,double,boolean,int)}
+     */
     protected void finish() {
+        if (log.isTraceEnabled()) {
+            log.trace("Main loop completed " + activeNodeCount);
+            log.trace("Active nodes=" + toString(""));
+        }
     }
 
     /**
@@ -1106,10 +1295,10 @@ public abstract class BreakingAlgorithm {
         sb.append("[\n");
         for (int i = startLine; i < endLine; i++) {
             for (KnuthNode node = getNode(i); node != null; node = node.next) {
-                sb.append(prepend + "\t" + node + ",\n");
+                sb.append(prepend).append('\t').append(node).append(",\n");
             }
         }
-        sb.append(prepend + "]");
+        sb.append(prepend).append("]");
         return sb.toString();
     }
 

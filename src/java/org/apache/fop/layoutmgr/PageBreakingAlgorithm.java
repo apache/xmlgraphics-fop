@@ -214,6 +214,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
      * @param box a block-level element possibly containing foonotes citations
      */
     protected void handleBox(KnuthBox box) {
+        super.handleBox(box);
         if (box instanceof KnuthBlockBox
             && ((KnuthBlockBox) box).hasAnchors()) {
             handleFootnotes(((KnuthBlockBox) box).getElementLists());

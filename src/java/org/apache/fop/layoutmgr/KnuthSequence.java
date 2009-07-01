@@ -19,15 +19,14 @@
 
 package org.apache.fop.layoutmgr;
 
+import org.apache.fop.util.ListUtil;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
 /**
  * Represents a list of Knuth elements.
- */
-/**
- *
  */
 public abstract class KnuthSequence extends ArrayList {
     /**
@@ -132,11 +131,9 @@ public abstract class KnuthSequence extends ArrayList {
      * @return the last element of this sequence.
      */
     public ListElement getLast() {
-        int idx = size();
-        if (idx == 0) {
-            return null;
-        }
-        return (ListElement) get(idx - 1);
+        return (isEmpty()
+                ? null
+                : (ListElement) ListUtil.getLast(this));
     }
 
     /**
@@ -144,11 +141,9 @@ public abstract class KnuthSequence extends ArrayList {
      * @return the removed element.
      */
     public ListElement removeLast() {
-        int idx = size();
-        if (idx == 0) {
-            return null;
-        }
-        return (ListElement) remove(idx - 1);
+        return (isEmpty()
+                ? null
+                : (ListElement) ListUtil.removeLast(this));
     }
 
     /**
@@ -156,7 +151,45 @@ public abstract class KnuthSequence extends ArrayList {
      * @return the element at index index.
      */
     public ListElement getElement(int index) {
-        return (ListElement) get(index);
+        return (index >= size() || index < 0)
+                ? null
+                : (ListElement) get(index);
+    }
+
+    /** @return the position index of the first box in this sequence */
+    protected int getFirstBoxIndex() {
+        if (isEmpty()) {
+            return -1;
+        } else {
+            return getFirstBoxIndex(0);
+        }
+    }
+
+    /**
+     * Get the position index of the first box in this sequence,
+     * starting at the given index. If there is no box after the
+     * passed {@code startIndex}, the starting index itself is returned.
+     * @param startIndex    the starting index for the lookup
+     * @return  the absolute position index of the next box element
+     */
+    protected int getFirstBoxIndex(int startIndex) {
+        if (isEmpty() || startIndex < 0 || startIndex >= size()) {
+            return -1;
+        } else {
+            ListElement element = null;
+            int posIndex = startIndex;
+            int lastIndex = size();
+            while (posIndex < lastIndex
+                    && !(element = getElement(posIndex)).isBox()) {
+                posIndex++;
+            }
+            if (posIndex != startIndex
+                    && element.isBox()) {
+                return posIndex - 1;
+            } else {
+                return startIndex;
+            }
+        }
     }
 
     /**
@@ -164,5 +197,10 @@ public abstract class KnuthSequence extends ArrayList {
      * @return true if this is an inline sequence
      */
     public abstract boolean isInlineSequence();
+
+    /** {@inheritDoc} */
+    public String toString() {
+        return "<KnuthSequence " + super.toString() + ">";
+    }
 
 }
