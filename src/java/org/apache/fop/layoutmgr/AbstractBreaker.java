@@ -562,7 +562,7 @@ public abstract class AbstractBreaker {
             nextSequenceStartsOn = handleSpanChange(childLC, nextSequenceStartsOn);
 
             Position breakPosition = null;
-            if (((KnuthElement) ListUtil.getLast(returnedList)).isForcedBreak()) {
+            if (ElementListUtils.endsWithForcedBreak(returnedList)) {
                 KnuthPenalty breakPenalty = (KnuthPenalty) ListUtil
                         .removeLast(returnedList);
                 breakPosition = breakPenalty.getPosition();
