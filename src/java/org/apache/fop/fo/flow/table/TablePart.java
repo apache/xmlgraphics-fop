@@ -110,13 +110,13 @@ public abstract class TablePart extends TableCellContainer {
             pendingSpans = null;
             columnNumberManager = null;
         }
-
         if (!(tableRowsFound || tableCellsFound)) {
             missingChildElementError("marker* (table-row+|table-cell+)", true);
             getParent().removeChild(this);
         } else {
             finishLastRowGroup();
         }
+
     }
 
     /** {@inheritDoc} */
@@ -204,6 +204,9 @@ public abstract class TablePart extends TableCellContainer {
                 //nop
             }
         }
+        //TODO: possible performance problems in case of large tables...
+        //If the number of children grows significantly large, the default
+        //implementation in FObj will get slower and slower...
         super.addChildNode(child);
     }
 
