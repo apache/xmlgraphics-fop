@@ -46,10 +46,10 @@ public abstract class AbstractBreaker {
         int footnoteLastListIndex;
         int footnoteLastElementIndex;
 
-        PageBreakPosition(LayoutManager lm, int iBreakIndex,
+        PageBreakPosition(LayoutManager lm, int breakIndex,
                           int ffli, int ffei, int flli, int flei,
                           double bpdA, int diff) {
-            super(lm, iBreakIndex);
+            super(lm, breakIndex);
             bpdAdjust = bpdA;
             difference = diff;
             footnoteFirstListIndex = ffli;
@@ -59,6 +59,30 @@ public abstract class AbstractBreaker {
         }
     }
 
+    /**
+     * Helper method, mainly used to improve debug/trace output
+     * @param breakClassId  the {@link Constants} enum value.
+     * @return the break class name
+     */
+    static String getBreakClassName(int breakClassId) {
+        switch (breakClassId) {
+        case Constants.EN_ALL: return "ALL";
+        case Constants.EN_ANY: return "ANY";
+        case Constants.EN_AUTO: return "AUTO";
+        case Constants.EN_COLUMN: return "COLUMN";
+        case Constants.EN_EVEN_PAGE: return "EVEN PAGE";
+        case Constants.EN_LINE: return "LINE";
+        case Constants.EN_NONE: return "NONE";
+        case Constants.EN_ODD_PAGE: return "ODD PAGE";
+        case Constants.EN_PAGE: return "PAGE";
+        default: return "??? (" + String.valueOf(breakClassId) + ")";
+        }
+    }
+
+    /**
+     * Helper class, extending the functionality of the
+     * basic {@link BlockKnuthSequence}.
+     */
     public class BlockSequence extends BlockKnuthSequence {
 
         /** Number of elements to ignore at the beginning of the list. */
@@ -79,19 +103,21 @@ public abstract class AbstractBreaker {
 
         /**
          * Creates a new BlockSequence.
-         * @param iStartOn the kind of page the sequence should start on. One of EN_ANY, EN_COLUMN,
-         *                 EN_ODD_PAGE, EN_EVEN_PAGE.
+         * @param  startOn  the kind of page the sequence should start on.
+         *                  One of {@link Constants#EN_ANY}, {@link Constants#EN_COLUMN},
+         *                  {@link Constants#EN_ODD_PAGE}, or {@link Constants#EN_EVEN_PAGE}.
          * @param displayAlign the value for the display-align property
          */
-        public BlockSequence(int iStartOn, int displayAlign) {
+        public BlockSequence(int startOn, int displayAlign) {
             super();
-            startOn = iStartOn;
+            this.startOn =  startOn;
             this.displayAlign = displayAlign;
         }
 
         /**
-         * @return the kind of page the sequence should start on. One of EN_ANY, EN_COLUMN,
-         *         EN_ODD_PAGE, EN_EVEN_PAGE.
+         * @return the kind of page the sequence should start on.
+         *         One of {@link Constants#EN_ANY}, {@link Constants#EN_COLUMN},
+         *         {@link Constants#EN_ODD_PAGE}, or {@link Constants#EN_EVEN_PAGE}.
          */
         public int getStartOn() {
             return this.startOn;
@@ -101,6 +127,7 @@ public abstract class AbstractBreaker {
         public int getDisplayAlign() {
             return this.displayAlign;
         }
+
         /**
          * Finalizes a Knuth sequence.
          * @return a finalized sequence.
@@ -142,6 +169,12 @@ public abstract class AbstractBreaker {
             }
         }
 
+        /**
+         * Finalizes a this {@link BlockSequence}, adding a terminating
+         * penalty-glue-penalty sequence
+         * @param breakPosition a Position instance pointing to the last penalty
+         * @return the finalized {@link BlockSequence}
+         */
         public BlockSequence endBlockSequence(Position breakPosition) {
             KnuthSequence temp = endSequence(breakPosition);
             if (temp != null) {
@@ -310,10 +343,7 @@ public abstract class AbstractBreaker {
                 //debug code start
                 if (log.isDebugEnabled()) {
                     log.debug("  blockListIndex = " + blockListIndex);
-                    String pagina = (blockList.startOn == Constants.EN_ANY) ? "any page"
-                            : (blockList.startOn == Constants.EN_ODD_PAGE) ? "odd page"
-                                    : "even page";
-                    log.debug("  sequence starts on " + pagina);
+                    log.debug("  sequence starts on " + getBreakClassName(blockList.startOn));
                 }
                 observeElementList(blockList);
                 //debug code end
@@ -399,7 +429,13 @@ public abstract class AbstractBreaker {
                 ListElement lastBreakElement = effectiveList.getElement(endElementIndex);
                 if (lastBreakElement.isPenalty()) {
                     KnuthPenalty pen = (KnuthPenalty)lastBreakElement;
-                    lastBreakClass = pen.getBreakClass();
+                    // TODO Handle keep.within-column differently so that break class is
+                    // automatically set to the right value
+                    if (pen.getP() >= KnuthPenalty.INFINITE - 1) {
+                        lastBreakClass = Constants.EN_COLUMN;
+                    } else {
+                        lastBreakClass = pen.getBreakClass();
+                    }
                 } else {
                     lastBreakClass = Constants.EN_COLUMN;
                 }
@@ -417,7 +453,7 @@ public abstract class AbstractBreaker {
             log.debug("PLM> part: " + (p + 1)
                     + ", start at pos " + startElementIndex
                     + ", break at pos " + endElementIndex
-                    + ", break class = " + lastBreakClass);
+                    + ", break class = " + getBreakClassName(lastBreakClass));
 
             startPart(effectiveList, lastBreakClass);
 
@@ -444,17 +480,9 @@ public abstract class AbstractBreaker {
             // at the beginning of the line
             effectiveListIterator = effectiveList
                     .listIterator(startElementIndex);
-            KnuthElement firstElement;
             while (effectiveListIterator.hasNext()
-                    && !(firstElement = (KnuthElement) effectiveListIterator.next())
+                    && !((KnuthElement) effectiveListIterator.next())
                             .isBox()) {
-                /*
-                if (firstElement.isGlue() && firstElement.getLayoutManager() != null) {
-                    // discard the space representd by the glue element
-                    ((BlockLevelLayoutManager) firstElement
-                            .getLayoutManager())
-                            .discardSpace((KnuthGlue) firstElement);
-                }*/
                 startElementIndex++;
             }
 
@@ -566,22 +594,19 @@ public abstract class AbstractBreaker {
                 KnuthPenalty breakPenalty = (KnuthPenalty) ListUtil
                         .removeLast(returnedList);
                 breakPosition = breakPenalty.getPosition();
+                log.debug("PLM> break - " + getBreakClassName(breakPenalty.getBreakClass()));
                 switch (breakPenalty.getBreakClass()) {
                 case Constants.EN_PAGE:
-                    log.debug("PLM> break - PAGE");
                     nextSequenceStartsOn = Constants.EN_ANY;
                     break;
                 case Constants.EN_COLUMN:
-                    log.debug("PLM> break - COLUMN");
                     //TODO Fix this when implementing multi-column layout
                     nextSequenceStartsOn = Constants.EN_COLUMN;
                     break;
                 case Constants.EN_ODD_PAGE:
-                    log.debug("PLM> break - ODD PAGE");
                     nextSequenceStartsOn = Constants.EN_ODD_PAGE;
                     break;
                 case Constants.EN_EVEN_PAGE:
-                    log.debug("PLM> break - EVEN PAGE");
                     nextSequenceStartsOn = Constants.EN_EVEN_PAGE;
                     break;
                 default:
@@ -590,7 +615,7 @@ public abstract class AbstractBreaker {
                 }
             }
             blockList.addAll(returnedList);
-            BlockSequence seq = null;
+            BlockSequence seq;
             seq = blockList.endBlockSequence(breakPosition);
             if (seq != null) {
                 this.blockLists.add(seq);
@@ -602,8 +627,8 @@ public abstract class AbstractBreaker {
     /**
      * Returns the average width of all the lines in the given range.
      * @param effectiveList effective block list to work on
-     * @param startElementIndex
-     * @param endElementIndex
+     * @param startElementIndex index of the element starting the range
+     * @param endElementIndex   index of the element ending the range
      * @return the average line length, 0 if there's no content
      */
     private int optimizeLineLength(KnuthSequence effectiveList, int startElementIndex, int endElementIndex) {
@@ -853,29 +878,6 @@ public abstract class AbstractBreaker {
         if (log.isDebugEnabled()) {
             log.debug("AdjustLineNumbers: difference " + difference + " / " + total + " on " + lineList.size() + " elements");
         }
-
-//            int adjustedDiff = 0;
-//            int partial = 0;
-//            KnuthGlue prevLine = null;
-//            KnuthGlue currLine = null;
-//            ListIterator lineListIterator = lineList.listIterator();
-//            while (lineListIterator.hasNext()) {
-//                currLine = (KnuthGlue)lineListIterator.next();
-//                if (prevLine != null
-//                    && prevLine.getLayoutManager() != currLine.getLayoutManager()) {
-//                    int newAdjust = ((BlockLevelLayoutManager) prevLine.getLayoutManager())
-//                                    .negotiateBPDAdjustment(((int) ((float) partial * difference / total)) - adjustedDiff, prevLine);
-//                    adjustedDiff += newAdjust;
-//                }
-//                partial += (difference > 0 ? currLine.getY() : currLine.getZ());
-//                prevLine = currLine;
-//            }
-//            if (currLine != null) {
-//                int newAdjust = ((BlockLevelLayoutManager) currLine.getLayoutManager())
-//                                .negotiateBPDAdjustment(((int) ((float) partial * difference / total)) - adjustedDiff, currLine);
-//                adjustedDiff += newAdjust;
-//            }
-//            return adjustedDiff;
 
         ListIterator lineListIterator = lineList.listIterator();
         int adjustedDiff = 0;

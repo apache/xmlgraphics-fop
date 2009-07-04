@@ -382,7 +382,7 @@ public class PageBreaker extends AbstractBreaker {
     }
 
     protected void startPart(BlockSequence list, int breakClass) {
-        AbstractBreaker.log.debug("startPart() breakClass=" + breakClass);
+        AbstractBreaker.log.debug("startPart() breakClass=" + getBreakClassName(breakClass));
         if (pslm.getCurrentPage() == null) {
             throw new IllegalStateException("curPage must not be null");
         }
@@ -480,8 +480,7 @@ public class PageBreaker extends AbstractBreaker {
             boolean forceNewPageWithSpan = false;
             RegionBody rb = (RegionBody)curPage.getSimplePageMaster().getRegion(
                     Constants.FO_REGION_BODY);
-            if (breakVal < 0
-                    && rb.getColumnCount() > 1
+            if (rb.getColumnCount() > 1
                     && pv.getCurrentSpan().getColumnCount() == 1) {
                 forceNewPageWithSpan = true;
             }
@@ -497,7 +496,7 @@ public class PageBreaker extends AbstractBreaker {
             return;
         }
         log.debug("handling break-before after page " + pslm.getCurrentPageNum()
-            + " breakVal=" + breakVal);
+            + " breakVal=" + getBreakClassName(breakVal));
         if (needBlankPageBeforeNew(breakVal)) {
             curPage = pslm.makeNewPage(true, false);
         }
