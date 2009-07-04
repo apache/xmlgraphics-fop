@@ -429,13 +429,7 @@ public abstract class AbstractBreaker {
                 ListElement lastBreakElement = effectiveList.getElement(endElementIndex);
                 if (lastBreakElement.isPenalty()) {
                     KnuthPenalty pen = (KnuthPenalty)lastBreakElement;
-                    // TODO Handle keep.within-column differently so that break class is
-                    // automatically set to the right value
-                    if (pen.getP() >= KnuthPenalty.INFINITE - 1) {
-                        lastBreakClass = Constants.EN_COLUMN;
-                    } else {
-                        lastBreakClass = pen.getBreakClass();
-                    }
+                    lastBreakClass = pen.getBreakClass();
                 } else {
                     lastBreakClass = Constants.EN_COLUMN;
                 }
