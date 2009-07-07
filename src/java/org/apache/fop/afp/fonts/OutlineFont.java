@@ -87,8 +87,7 @@ public class OutlineFont extends AFPFont {
      * "x-height" (the height of the letter "x"), such as "d", "t", or "h". Also
      * used to denote the part of the letter extending above the x-height.
      *
-     * @param size
-     *            the point size
+     * @param size the font size (in mpt)
      * @return the ascender for the given size
      */
     public int getAscender(int size) {
@@ -98,8 +97,7 @@ public class OutlineFont extends AFPFont {
     /**
      * Obtains the height of capital letters for the specified point size.
      *
-     * @param size
-     *            the point size
+     * @param size the font size (in mpt)
      * @return the cap height for the given size
      */
     public int getCapHeight(int size) {
@@ -111,8 +109,7 @@ public class OutlineFont extends AFPFont {
      * base line, such as "g", "j", or "p". Also used to denote the part of the
      * letter extending below the base line.
      *
-     * @param size
-     *            the point size
+     * @param size the font size (in mpt)
      * @return the descender for the given size
      */
     public int getDescender(int size) {
@@ -122,8 +119,7 @@ public class OutlineFont extends AFPFont {
     /**
      * The "x-height" (the height of the letter "x").
      *
-     * @param size
-     *            the point size
+     * @param size the font size (in mpt)
      * @return the x height for the given size
      */
     public int getXHeight(int size) {
@@ -133,7 +129,7 @@ public class OutlineFont extends AFPFont {
     /**
      * Obtain the width of the character for the specified point size.
      * @param character the character
-     * @param size point size
+     * @param size the font size (in mpt)
      * @return the width of the character for the specified point size
      */
     public int getWidth(int character, int size) {
@@ -144,8 +140,7 @@ public class OutlineFont extends AFPFont {
      * Get the getWidth (in 1/1000ths of a point size) of all characters in this
      * character set.
      *
-     * @param size
-     *            the point size
+     * @param size the font size (in mpt)
      * @return the widths of all characters
      */
     public int[] getWidths(int size) {
