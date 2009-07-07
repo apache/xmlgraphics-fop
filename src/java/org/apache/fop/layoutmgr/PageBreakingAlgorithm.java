@@ -289,7 +289,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
             for (int j = currentIndex; j >= restartingNode.position; j--) {
                 final KnuthElement resetElement = getElement(j);
                 if (resetElement instanceof KnuthBlockBox
-                    && ((KnuthBlockBox) resetElement).hasAnchors()) {
+                        && ((KnuthBlockBox) resetElement).hasAnchors()) {
                     resetFootnotes(((KnuthBlockBox) resetElement).getElementLists());
                 }
             }
@@ -516,9 +516,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
             // try adding whole notes
             if (footnotesList.size() - 1 > listIndex) {
                 // add the previous footnotes: these cannot be broken or deferred
-                if (!canDeferOldFootnotes
-                    && newFootnotes
-                    && firstNewFootnoteIndex > 0) {
+                if (!canDeferOldFootnotes && newFootnotes && firstNewFootnoteIndex > 0) {
                     splitLength = ((Integer) lengthList.get(firstNewFootnoteIndex - 1)).intValue()
                                   - prevLength;
                     listIndex = firstNewFootnoteIndex;
@@ -721,8 +719,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                 footnoteElementIndex
                     = getFootnoteList(footnoteListIndex).size() - 1;
             } else if ((split = getFootnoteSplit(footnoteListIndex, footnoteElementIndex,
-                                     insertedFootnotesLength, availableBPD, true))
-                    > 0) {
+                    insertedFootnotesLength, availableBPD, true)) > 0) {
                 // add a piece of a footnote
                 availableBPD -= split;
                 insertedFootnotesLength += split;
@@ -838,7 +835,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         int firstListIndex = ((KnuthPageNode) bestActiveNode.previous).footnoteListIndex;
         int firstElementIndex = ((KnuthPageNode) bestActiveNode.previous).footnoteElementIndex;
         if (footnotesList != null
-            && firstElementIndex == getFootnoteList(firstListIndex).size() - 1) {
+                && firstElementIndex == getFootnoteList(firstListIndex).size() - 1) {
             // advance to the next list
             firstListIndex++;
             firstElementIndex = 0;
