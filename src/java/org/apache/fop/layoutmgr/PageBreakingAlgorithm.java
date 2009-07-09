@@ -877,7 +877,8 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                 }
             }
         }
-        return (bestActiveNode == null) ? -1 : bestActiveNode.line;
+        assert (bestActiveNode != null);
+        return bestActiveNode.line;
     }
 
     /**
