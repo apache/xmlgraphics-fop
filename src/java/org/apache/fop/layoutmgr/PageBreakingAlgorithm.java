@@ -573,11 +573,11 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                         splitLength += element.getW();
                     } else {
                         // element is a penalty
-                        //if (element.getP() < KnuthElement.INFINITE) {
+                        if (element.getP() < KnuthElement.INFINITE) {
                             // end of the sub-sequence
                             index = noteListIterator.previousIndex();
                             break;
-                        //}
+                        }
                     }
                 }
             }
