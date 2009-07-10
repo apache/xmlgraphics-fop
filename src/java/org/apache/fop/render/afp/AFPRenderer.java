@@ -75,6 +75,7 @@ import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.datatypes.URISpecification;
 import org.apache.fop.events.ResourceEventProducer;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
+import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontCollection;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontManager;
@@ -563,6 +564,8 @@ public class AFPRenderer extends AbstractPathOrientedRenderer implements AFPCust
         AFPFont font = (AFPFont)fontMetricMap.get(internalFontName);
         AFPPageFonts pageFonts = paintingState.getPageFonts();
         AFPFontAttributes fontAttributes = pageFonts.registerFont(internalFontName, font, fontSize);
+        Font fnt = getFontFromArea(text);
+
 
         // create text data info
         AFPTextDataInfo textDataInfo = new AFPTextDataInfo();
@@ -603,7 +606,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer implements AFPCust
         textDataInfo.setString(textString);
 
         try {
-            dataStream.createText(textDataInfo);
+            dataStream.createText(textDataInfo, textLetterSpaceAdjust, textWordSpaceAdjust, fnt, charSet);
         } catch (UnsupportedEncodingException e) {
             AFPEventProducer eventProducer
                 = AFPEventProducer.Provider.get(userAgent.getEventBroadcaster());

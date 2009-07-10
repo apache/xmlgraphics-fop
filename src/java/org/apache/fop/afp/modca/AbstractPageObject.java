@@ -25,9 +25,9 @@ import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import org.apache.fop.afp.AFPLineDataInfo;
-import org.apache.fop.afp.AFPTextDataInfo;
 import org.apache.fop.afp.Completable;
 import org.apache.fop.afp.Factory;
+import org.apache.fop.afp.ptoca.PtocaProducer;
 import org.apache.fop.afp.fonts.AFPFont;
 
 /**
@@ -170,8 +170,10 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject implemen
      *            the afp text data
      * @throws UnsupportedEncodingException thrown if character encoding is not supported
      */
-    public void createText(AFPTextDataInfo textDataInfo) throws UnsupportedEncodingException {
-        getPresentationTextObject().createTextData(textDataInfo);
+    public void createText(PtocaProducer producer) throws UnsupportedEncodingException {
+        //getPresentationTextObject().createTextData(textDataInfo);
+        getPresentationTextObject().createControlSequences(producer);
+
     }
 
     /**
