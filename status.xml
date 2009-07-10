@@ -58,6 +58,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="AD" type="fix" fixes-bug="47508" due-to="Bharat Attaluri">
+        Bugfix: Error while writing TLE's attribute qualifier in the output.
+      </action>
       <action context="Renderers" dev="CB" type="fix">
         Bugfix: support justified text in AFP Renderer (already working in AFP Painter)
       </action>
