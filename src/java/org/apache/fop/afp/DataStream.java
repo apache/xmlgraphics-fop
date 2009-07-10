@@ -30,8 +30,9 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.apache.fop.afp.fonts.AFPFont;
 import org.apache.fop.afp.fonts.AFPFontAttributes;
+import org.apache.fop.afp.fonts.AFPFont;
+import org.apache.fop.afp.fonts.CharacterSet;
 import org.apache.fop.afp.modca.AbstractPageObject;
 import org.apache.fop.afp.modca.Document;
 import org.apache.fop.afp.modca.InterchangeSet;
@@ -41,6 +42,10 @@ import org.apache.fop.afp.modca.PageObject;
 import org.apache.fop.afp.modca.ResourceGroup;
 import org.apache.fop.afp.modca.TagLogicalElementBean;
 import org.apache.fop.afp.modca.triplets.FullyQualifiedNameTriplet;
+import org.apache.fop.afp.ptoca.PtocaProducer;
+import org.apache.fop.afp.ptoca.PtocaBuilder;
+import org.apache.fop.util.CharUtilities;
+import org.apache.fop.fonts.Font;
 
 /**
  * A data stream is a continuous ordered stream of data elements and objects
@@ -347,11 +352,15 @@ public class DataStream {
      * Helper method to create text on the current page, this method delegates
      * to the current presentation text object in order to construct the text.
      *
-     * @param textDataInfo
-     *            the afp text data
+     * @param textDataInfo the afp text data
+     * @param letterSpacing letter spacing to draw text with
+     * @param wordSpacing word Spacing to draw text with
+     * @param font is the font to draw text with
+     * @param charSet is the AFP Character Set to use with the text 
      * @throws UnsupportedEncodingException thrown if character encoding is not supported
      */
-    public void createText(AFPTextDataInfo textDataInfo) throws UnsupportedEncodingException {
+    public void createText(final AFPTextDataInfo textDataInfo, final int letterSpacing, final int wordSpacing,
+                           final Font font, final CharacterSet charSet) throws UnsupportedEncodingException {
         int rotation = paintingState.getRotation();
         if (rotation != 0) {
             textDataInfo.setRotation(rotation);
@@ -359,7 +368,86 @@ public class DataStream {
             textDataInfo.setX(p.x);
             textDataInfo.setY(p.y);
         }
-        currentPage.createText(textDataInfo);
+        // use PtocaProducer to create PTX records
+        PtocaProducer producer = new PtocaProducer() {
+
+            public void produce(PtocaBuilder builder) throws IOException {
+                builder.setTextOrientation(textDataInfo.getRotation());
+                builder.absoluteMoveBaseline(textDataInfo.getY());
+                builder.absoluteMoveInline(textDataInfo.getX());
+
+                builder.setExtendedTextColor(textDataInfo.getColor());
+                builder.setCodedFont((byte)textDataInfo.getFontReference());
+
+                int l = textDataInfo.getString().length();
+                StringBuffer sb = new StringBuffer();
+
+                int interCharacterAdjustment = 0;
+                AFPUnitConverter unitConv = paintingState.getUnitConverter();
+                if (letterSpacing != 0) {
+                    interCharacterAdjustment = Math.round(unitConv.mpt2units(letterSpacing));
+                }
+                builder.setInterCharacterAdjustment(interCharacterAdjustment);
+
+                int spaceWidth = font.getCharWidth(CharUtilities.SPACE);
+                int spacing = spaceWidth + letterSpacing;
+                int fixedSpaceCharacterIncrement = Math.round(unitConv.mpt2units(spacing));
+                int varSpaceCharacterIncrement = fixedSpaceCharacterIncrement;
+                if (wordSpacing != 0) {
+                    varSpaceCharacterIncrement = Math.round(unitConv.mpt2units(
+                            spaceWidth + wordSpacing + letterSpacing));
+                }
+                builder.setVariableSpaceCharacterIncrement(varSpaceCharacterIncrement);
+
+                boolean fixedSpaceMode = false;
+
+                for (int i = 0; i < l; i++) {
+                    char orgChar = textDataInfo.getString().charAt(i);
+                    float glyphAdjust = 0;
+                    if (CharUtilities.isFixedWidthSpace(orgChar)) {
+                        flushText(builder, sb, charSet);
+                        builder.setVariableSpaceCharacterIncrement(
+                                fixedSpaceCharacterIncrement);
+                        fixedSpaceMode = true;
+                        sb.append(CharUtilities.SPACE);
+                        int charWidth = font.getCharWidth(orgChar);
+                        glyphAdjust += (charWidth - spaceWidth);
+                    } else {
+                        if (fixedSpaceMode) {
+                            flushText(builder, sb, charSet);
+                            builder.setVariableSpaceCharacterIncrement(
+                                    varSpaceCharacterIncrement);
+                            fixedSpaceMode = false;
+                        }
+                        char ch;
+                        if (orgChar == CharUtilities.NBSPACE) {
+                            ch = ' '; //converted to normal space to allow word spacing
+                        } else {
+                            ch = orgChar;
+                        }
+                        sb.append(ch);
+                    }
+
+                    if (glyphAdjust != 0) {
+                        flushText(builder, sb, charSet);
+                        int increment = Math.round(unitConv.mpt2units(glyphAdjust));
+                        builder.relativeMoveInline(increment);
+                    }
+                }
+                flushText(builder, sb, charSet);
+            }
+
+            private void flushText(PtocaBuilder builder, StringBuffer sb,
+                    final CharacterSet charSet) throws IOException {
+                if (sb.length() > 0) {
+                    builder.addTransparentData(charSet.encodeChars(sb));
+                    sb.setLength(0);
+                }
+            }
+
+        };
+
+        currentPage.createText(producer);
     }
 
     /**

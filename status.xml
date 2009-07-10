@@ -58,6 +58,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="CB" type="fix">
+        Bugfix: support justified text in AFP Renderer (already working in AFP Painter)
+      </action>
       <action context="Renderers" dev="AD" type="add">
         AFP Renderer Raster Fonts:
         <ul>
