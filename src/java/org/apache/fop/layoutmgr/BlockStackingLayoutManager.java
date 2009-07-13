@@ -53,31 +53,26 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
      */
     private static Log log = LogFactory.getLog(BlockStackingLayoutManager.class);
 
-    /**
-     * Reference to FO whose areas it's managing or to the traits
-     * of the FO.
-     */
-    //protected LayoutManager curChildLM = null; AbstractLayoutManager also defines this!
-    protected BlockParent parentArea = null;
+    protected BlockParent parentArea;
 
     /** Value of the block-progression-unit (non-standard property) */
-    protected int bpUnit = 0;
+    protected int bpUnit;
     /** space-before value adjusted for block-progression-unit handling */
-    protected int adjustedSpaceBefore = 0;
+    protected int adjustedSpaceBefore;
     /** space-after value adjusted for block-progression-unit handling */
-    protected int adjustedSpaceAfter = 0;
+    protected int adjustedSpaceAfter;
     /** Only used to store the original list when createUnitElements is called */
-    protected List storedList = null;
+    protected List storedList;
     /** Indicates whether break before has been served or not */
-    protected boolean breakBeforeServed = false;
+    protected boolean breakBeforeServed;
     /** Indicates whether the first visible mark has been returned by this LM, yet */
-    protected boolean firstVisibleMarkServed = false;
+    protected boolean firstVisibleMarkServed;
     /** Reference IPD available */
-    protected int referenceIPD = 0;
+    protected int referenceIPD;
     /** the effective start-indent value */
-    protected int startIndent = 0;
+    protected int startIndent;
     /** the effective end-indent value */
-    protected int endIndent = 0;
+    protected int endIndent;
     /**
      * Holds the (one-time use) fo:block space-before
      * and -after properties.  Large fo:blocks are split
@@ -87,13 +82,13 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
      * Block and space-after at the end of the last Block
      * used in rendering the fo:block.
      */
-    protected MinOptMax foSpaceBefore = null;
+    protected MinOptMax foSpaceBefore;
     /** see foSpaceBefore */
-    protected MinOptMax foSpaceAfter = null;
+    protected MinOptMax foSpaceAfter;
 
     private Position auxiliaryPosition;
 
-    private int contentAreaIPD = 0;
+    private int contentAreaIPD;
 
     /**
      * @param node the fo this LM deals with
