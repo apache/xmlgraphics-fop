@@ -219,4 +219,10 @@ public interface LayoutManager extends PercentBaseContext {
      * @return the same Position but with a position index
      */
     Position notifyPos(Position pos);
+
+    /**
+     * Re-initializes this layout manager in order to re-generate its Knuth
+     * elements according to a new IPD value.
+     */
+    void reset();
 }

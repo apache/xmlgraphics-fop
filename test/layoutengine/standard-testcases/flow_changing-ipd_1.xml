@@ -52,17 +52,18 @@
               there lived a king whose daughters were all beautiful, but the youngest was so 
               beautiful that the sun itself, which has seen so much, was astonished whenever it 
               shone in her face.</fo:block>
-            <fo:block space-before="inherit" id="b3">In olden times when wishing still helped one, 
-              there lived a king whose daughters were all beautiful, but the youngest was so 
+            <fo:block space-before="inherit" id="b3" border-top="1pt solid black" 
+              border-before-width.conditionality="retain">In olden times when wishing still helped 
+              one, there lived a king whose daughters were all beautiful, but the youngest was so 
               beautiful that the sun itself, which has seen so much, was astonished whenever it 
               shone in her face. In olden times when wishing still helped one, there lived a king 
               whose daughters were all beautiful, but the youngest was so beautiful that the sun 
               itself, which has seen so much, was astonished whenever it shone in her 
               face.</fo:block>
-            <fo:block space-before="inherit" id="b4">In olden times when wishing still helped one, 
-              there lived a king whose daughters were all beautiful, but the youngest was so 
-              beautiful that the sun itself, which has seen so much, was astonished whenever it 
-              shone in her face.</fo:block>
+            <fo:block space-before="inherit" id="b4" border-top="1pt solid black">In olden times 
+              when wishing still helped one, there lived a king whose daughters were all beautiful, 
+              but the youngest was so beautiful that the sun itself, which has seen so much, was 
+              astonished whenever it shone in her face.</fo:block>
             <fo:block space-before="inherit" id="b5">In olden times when wishing still helped one, 
               there lived a king whose daughters were all beautiful, but the youngest was so 
               beautiful that the sun itself, which has seen so much, was astonished whenever it 
@@ -73,14 +74,24 @@
     </fo:root>
   </fo>
   <checks>
+    <eval expected="13100"  xpath="//pageViewport[1]//flow/block/block[2]/@space-before"/>
+    <eval expected="13100"  xpath="//pageViewport[1]//flow/block/block[3]/@space-before"/>
+    <eval expected="(solid,#000000,1000)"
+                            xpath="//pageViewport[1]//flow/block/block[3]/@border-before"/>
     <eval expected="In"     xpath="//pageViewport[1]//flow/block/block[3]/lineArea[4]/text/word[position()=last()]"/>
     <eval expected="500000" xpath="//pageViewport[2]//flow/block/@ipd"/>
+    <eval expected="(solid,#000000,1000)"
+                            xpath="//pageViewport[2]//flow/block/block[1]/@border-before"/>
     <eval expected="500000" xpath="//pageViewport[2]//flow/block/block[1]/@ipd"/>
     <eval expected="500000" xpath="//pageViewport[2]//flow/block/block[1]/lineArea[1]/@ipd"/>
     <eval expected="olden"  xpath="//pageViewport[2]//flow/block/block[1]/lineArea[1]/text/word[1]"/>
     <eval expected="500000" xpath="//pageViewport[2]//flow/block/block[2]/@ipd"/>
+    <eval expected="12000"  xpath="//pageViewport[2]//flow/block/block[2]/@space-before"/>
+    <eval expected="(solid,#000000,1000)"
+                            xpath="//pageViewport[2]//flow/block/block[2]/@border-before"/>
     <eval expected="500000" xpath="//pageViewport[2]//flow/block/block[2]/lineArea[1]/@ipd"/>
     <eval expected="500000" xpath="//pageViewport[2]//flow/block/block[3]/@ipd"/>
+    <eval expected="12000"  xpath="//pageViewport[2]//flow/block/block[3]/@space-before"/>
     <eval expected="500000" xpath="//pageViewport[2]//flow/block/block[3]/lineArea[1]/@ipd"/>
   </checks>
 </testcase>

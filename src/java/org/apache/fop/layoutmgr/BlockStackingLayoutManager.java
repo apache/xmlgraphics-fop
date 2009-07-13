@@ -446,7 +446,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         }
 
         while ((currentChildLM = (LayoutManager) getChildLM()) != null) {
-            ((AbstractLayoutManager) currentChildLM).resetChildLMs(); // TODO won't work with forced breaks
+            currentChildLM.reset(); // TODO won't work with forced breaks
 
             childLC = new LayoutContext(0);
 
@@ -1748,6 +1748,14 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
      */
     public int getContentAreaBPD() {
         return -1;
+    }
+
+    /** {@inheritDoc} */
+    public void reset() {
+        super.reset();
+        breakBeforeServed = false;
+        firstVisibleMarkServed = false;
+        // TODO startIndent, endIndent
     }
 
 }

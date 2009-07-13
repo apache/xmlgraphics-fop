@@ -902,7 +902,14 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     protected int handleIpdChange() {
         log.trace("Best node for ipd change:" + bestNodeForIPDChange);
         // TODO finish()
-        calculateBreakPoints(bestNodeForIPDChange, par, bestNodeForIPDChange.line);
+        /*
+         * The third parameter is used to determine if this is the last page, so
+         * if the content must be vertically justified or not. If we are here
+         * this means that there is further content and the next page has a
+         * different ipd. So tweak the parameter to fall into the non-last-page
+         * case.
+         */
+        calculateBreakPoints(bestNodeForIPDChange, par, bestNodeForIPDChange.line + 1);
         activeLines = null;
         return bestNodeForIPDChange.line;
     }

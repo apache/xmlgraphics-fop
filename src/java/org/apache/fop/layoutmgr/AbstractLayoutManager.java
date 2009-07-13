@@ -130,13 +130,6 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
         } while (curChildLM != childLM);
     }
 
-    protected void resetChildLMs() {
-        curChildLM = null;
-        while (childLMiter.hasPrevious()) {
-            childLMiter.previous();
-        }
-    }
-
     /**
      * Return indication if getChildLM will return another LM.
      * @return true if another child LM is still available
@@ -463,6 +456,24 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
     /** {@inheritDoc} */
     public String toString() {
         return (super.toString() + (fobj != null ? "[fobj=" + fobj.toString() + "]" : ""));
+    }
+
+    /** {@inheritDoc} */
+    public void reset() {
+        isFinished = false;
+        curChildLM = null;
+        childLMiter = new LMiter(this);
+        /*
+         * Reset the children LM. Can't rely on childLMiter since it may have
+         * been set to null in checkEndOfLayout.
+         */
+        for (LMiter iter = new LMiter(this); iter.hasNext();) {
+            ((LayoutManager) iter.next()).reset();
+        }
+        if (fobj != null) {
+            markers = fobj.getMarkers();
+        }
+        lastGeneratedPosition = -1;
     }
 
 }

@@ -111,7 +111,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
         }
 
         while ((currentChildLM = getChildLM()) != null) {
-            ((AbstractLayoutManager) currentChildLM).resetChildLMs(); // TODO won't work with forced breaks
+            currentChildLM.reset(); // TODO won't work with forced breaks
             if (addChildElements(elements, currentChildLM, context, alignment) != null) {
                 return elements;
             }
