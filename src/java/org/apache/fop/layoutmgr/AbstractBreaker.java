@@ -19,6 +19,7 @@
 
 package org.apache.fop.layoutmgr;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -216,7 +217,7 @@ public abstract class AbstractBreaker {
     protected abstract List getNextKnuthElements(LayoutContext context, int alignment);
 
     protected List getNextKnuthElements(LayoutContext context, int alignment,
-            KnuthElement elementAtIPDChange) {
+            Position positionAtIPDChange, LayoutManager restartAtLM) {
         throw new UnsupportedOperationException("TODO: implement acceptable fallback");
     }
 
@@ -338,6 +339,35 @@ public abstract class AbstractBreaker {
                 if (alg.ipdChanged()) {
                     KnuthNode optimalBreak = alg.getBestNodeBeforeIPDChange();
                     KnuthElement elementAtBreak = alg.getElement(optimalBreak.position);
+                    Position positionAtBreak = elementAtBreak.getPosition();
+                    if (!(positionAtBreak instanceof SpaceResolver.SpaceHandlingBreakPosition)) {
+                        throw new UnsupportedOperationException(
+                                "Don't know how to restart at position" + positionAtBreak);
+                    }
+                    /* Retrieve the original position wrapped into this space position */
+                    positionAtBreak = positionAtBreak.getPosition();
+                    LayoutManager restartAtLM = null;
+                    if (positionAtBreak.getIndex() == -1) {
+                        /*
+                         * This is an indication that we are between two blocks
+                         * (possibly surrounded by another block), not inside a
+                         * paragraph.
+                         */
+                        Position position;
+                        Iterator iter = alg.par.listIterator(optimalBreak.position + 1);
+                        do {
+                            KnuthElement nextElement = (KnuthElement) iter.next();
+                            position = nextElement.getPosition();
+                        } while (position == null
+                                || position instanceof SpaceResolver.SpaceHandlingPosition
+                                || position instanceof SpaceResolver.SpaceHandlingBreakPosition
+                                    && position.getPosition().getIndex() == -1);
+                        LayoutManager surroundingLM = positionAtBreak.getLM();
+                        while (position.getLM() != surroundingLM) {
+                            position = position.getPosition();
+                        }
+                        restartAtLM = position.getPosition().getLM();
+                    }
                     log.trace("IPD changes after page " + optimalPageCount + " at index "
                             + optimalBreak.position);
                     doPhase3(alg, optimalPageCount, blockList, effectiveList);
@@ -345,7 +375,7 @@ public abstract class AbstractBreaker {
                     blockLists.clear();
                     blockListIndex = -1;
                     nextSequenceStartsOn = getNextBlockList(childLC, Constants.EN_COLUMN,
-                            elementAtBreak);
+                            positionAtBreak, restartAtLM);
                 } else {
                     log.debug("PLM> iOptPageCount= " + optimalPageCount
                             + " pageBreaks.size()= " + alg.getPageBreaks().size());
@@ -555,28 +585,35 @@ public abstract class AbstractBreaker {
      */
     protected int getNextBlockList(LayoutContext childLC,
             int nextSequenceStartsOn) {
-        return getNextBlockList(childLC, nextSequenceStartsOn, null);
+        return getNextBlockList(childLC, nextSequenceStartsOn, null, null);
     }
 
     /**
-     * Gets the next block list (sequence) and adds it to a list of block lists if it's not empty.
+     * Gets the next block list (sequence) and adds it to a list of block lists
+     * if it's not empty.
+     *
      * @param childLC LayoutContext to use
-     * @param nextSequenceStartsOn indicates on what page the next sequence should start
-     * @param elementAtIPDChange last element on the part before an IPD change
-     * @return the page on which the next content should appear after a hard break
+     * @param nextSequenceStartsOn indicates on what page the next sequence
+     * should start
+     * @param positionAtIPDChange last element on the part before an IPD change
+     * @param restartAtLM the layout manager from which to restart, if IPD
+     * change occurs between two LMs
+     * @return the page on which the next content should appear after a hard
+     * break
      */
-    protected int getNextBlockList(LayoutContext childLC,
-            int nextSequenceStartsOn, KnuthElement elementAtIPDChange) {
+    protected int getNextBlockList(LayoutContext childLC, int nextSequenceStartsOn,
+            Position positionAtIPDChange, LayoutManager restartAtLM) {
         updateLayoutContext(childLC);
         //Make sure the span change signal is reset
         childLC.signalSpanChange(Constants.NOT_SET);
 
         BlockSequence blockList;
         List returnedList;
-        if (elementAtIPDChange == null) {
+        if (positionAtIPDChange == null) {
             returnedList = getNextKnuthElements(childLC, alignment);
         } else {
-            returnedList = getNextKnuthElements(childLC, alignment, elementAtIPDChange);
+            returnedList = getNextKnuthElements(childLC, alignment, positionAtIPDChange,
+                    restartAtLM);
         }
         if (returnedList != null) {
             if (returnedList.isEmpty()) {

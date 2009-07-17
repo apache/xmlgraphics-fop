@@ -112,16 +112,18 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
 
     /** {@inheritDoc} */
     public List getNextKnuthElements(LayoutContext context, int alignment) {
-        return getNextKnuthElements(context, alignment, null, null);
+        return getNextKnuthElements(context, alignment, null, null, null);
     }
 
+    /** {@inheritDoc} */
     List getNextKnuthElements(LayoutContext context, int alignment, Stack lmStack,
-            LeafPosition restartPosition) {
+            Position restartPosition, LayoutManager restartAtLM) {
         resetSpaces();
         if (lmStack == null) {
             return super.getNextKnuthElements(context, alignment);
         } else {
-            return super.getNextKnuthElements(context, alignment, lmStack, restartPosition);
+            return super.getNextKnuthElements(context, alignment, lmStack, restartPosition,
+                    restartAtLM);
         }
     }
 

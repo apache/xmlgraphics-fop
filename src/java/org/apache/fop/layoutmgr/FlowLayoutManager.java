@@ -81,32 +81,36 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
 
     /** {@inheritDoc} */
     public List getNextKnuthElements(LayoutContext context, int alignment,
-            KnuthElement elementAtIPDChange) {
+            Position positionAtIPDChange, LayoutManager restartAtLM) {
 
         List elements = new LinkedList();
 
-        LayoutManager currentChildLM = null;
-
-        Position position = elementAtIPDChange.getPosition();
-        while (position != null && (currentChildLM = position.getLM()) == null) {
-            position = position.getPosition();
-        }
+        LayoutManager currentChildLM = positionAtIPDChange.getLM();
         if (currentChildLM == null) {
             throw new IllegalStateException(
                     "Cannot find layout manager from where to re-start layout after IPD change");
         }
-        Stack lmStack = new Stack();
-        while (currentChildLM.getParent() != this) {
-            lmStack.push(currentChildLM);
-            currentChildLM = currentChildLM.getParent();
-        }
-        setCurrentChildLM(currentChildLM);
-        if (!(currentChildLM instanceof BlockLayoutManager)) {
-            throw new UnsupportedOperationException("TODO: layout manager not restartable");
-        } else {
-            if (addChildElements(elements, currentChildLM, context, alignment, lmStack,
-                    (LeafPosition) position) != null) {
+        if (restartAtLM != null && restartAtLM.getParent() == this) {
+            currentChildLM = restartAtLM;
+            setCurrentChildLM(currentChildLM);
+            currentChildLM.reset();
+            if (addChildElements(elements, currentChildLM, context, alignment) != null) {
                 return elements;
+            }
+        } else {
+            Stack lmStack = new Stack();
+            while (currentChildLM.getParent() != this) {
+                lmStack.push(currentChildLM);
+                currentChildLM = currentChildLM.getParent();
+            }
+            setCurrentChildLM(currentChildLM);
+            if (!(currentChildLM instanceof BlockLayoutManager)) {
+                throw new UnsupportedOperationException("TODO: layout manager not restartable");
+            } else {
+                if (addChildElements(elements, currentChildLM, context, alignment, lmStack,
+                        positionAtIPDChange, restartAtLM) != null) {
+                    return elements;
+                }
             }
         }
 
@@ -126,19 +130,19 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
 
     private List addChildElements(List elements, LayoutManager childLM, LayoutContext context,
             int alignment) {
-        return addChildElements(elements, childLM, context, alignment, null, null);
+        return addChildElements(elements, childLM, context, alignment, null, null, null);
     }
 
     private List addChildElements(List elements, LayoutManager childLM, LayoutContext context,
-            int alignment, Stack lmStack, LeafPosition position) {
+            int alignment, Stack lmStack, Position position, LayoutManager restartAtLM) {
         if (handleSpanChange(childLM, elements, context)) {
             SpaceResolver.resolveElementList(elements);
             return elements;
         }
 
         LayoutContext childLC = new LayoutContext(0);
-        List childrenElements = getNextChildElements(childLM, context, childLC,
-                alignment, lmStack, position);
+        List childrenElements = getNextChildElements(childLM, context, childLC, alignment, lmStack,
+                position, restartAtLM);
         if (elements.isEmpty()) {
             context.updateKeepWithPreviousPending(childLC.getKeepWithPreviousPending());
         }
@@ -188,7 +192,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
     }
 
     private List getNextChildElements(LayoutManager childLM, LayoutContext context,
-            LayoutContext childLC, int alignment, Stack lmStack, LeafPosition restartPosition) {
+            LayoutContext childLC, int alignment, Stack lmStack, Position restartPosition, LayoutManager restartLM) {
         childLC.setStackLimitBP(context.getStackLimitBP());
         childLC.setRefIPD(context.getRefIPD());
         childLC.setWritingMode(getCurrentPage().getSimplePageMaster().getWritingMode());
@@ -198,7 +202,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
             childrenElements = childLM.getNextKnuthElements(childLC, alignment);
         } else {
             childrenElements = ((BlockLayoutManager) childLM).getNextKnuthElements(childLC,
-                    alignment, lmStack, restartPosition);
+                    alignment, lmStack, restartPosition, restartLM);
         }
         assert !childrenElements.isEmpty();
 

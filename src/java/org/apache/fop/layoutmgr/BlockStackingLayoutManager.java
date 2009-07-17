@@ -358,7 +358,8 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     }
 
     /** {@inheritDoc} */
-    List getNextKnuthElements(LayoutContext context, int alignment, Stack lmStack, LeafPosition position) {
+    List getNextKnuthElements(LayoutContext context, int alignment, Stack lmStack,
+            Position restartPosition, LayoutManager restartAtLM) {
         referenceIPD = context.getRefIPD();
         updateContentAreaIPDwithOverconstrainedAdjust();
 
@@ -388,11 +389,22 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         //Used to indicate a special break-after case when all content has already been generated.
         BreakElement forcedBreakAfterLast = null;
 
-        LayoutManager currentChildLM = (BlockLevelLayoutManager) lmStack.pop();
-        setCurrentChildLM(currentChildLM);
         LayoutContext childLC = new LayoutContext(0);
-        List childrenElements = getNextChildElements(currentChildLM, context, childLC, alignment,
-                lmStack, position);
+        List childrenElements;
+        LayoutManager currentChildLM;
+        if (lmStack.isEmpty()) {
+            assert restartAtLM != null && restartAtLM.getParent() == this;
+            currentChildLM = restartAtLM;
+            currentChildLM.reset();
+
+            childrenElements = getNextChildElements(currentChildLM, context, childLC,
+                    alignment);
+        } else {
+            currentChildLM = (BlockLevelLayoutManager) lmStack.pop();
+            setCurrentChildLM(currentChildLM);
+            childrenElements = getNextChildElements(currentChildLM, context, childLC, alignment,
+                    lmStack, restartPosition, restartAtLM);
+        }
 
         if (contentList.isEmpty()) {
             //Propagate keep-with-previous up from the first child
@@ -534,11 +546,12 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
 
     private List getNextChildElements(LayoutManager childLM, LayoutContext context,
             LayoutContext childLC, int alignment) {
-        return getNextChildElements(childLM, context, childLC, alignment, null, null);
+        return getNextChildElements(childLM, context, childLC, alignment, null, null, null);
     }
 
     private List getNextChildElements(LayoutManager childLM, LayoutContext context,
-            LayoutContext childLC, int alignment, Stack lmStack, LeafPosition restartPosition) {
+            LayoutContext childLC, int alignment, Stack lmStack, Position restartPosition,
+            LayoutManager restartAtLM) {
         childLC.copyPendingMarksFrom(context);
         childLC.setStackLimitBP(context.getStackLimitBP());
         if (childLM instanceof LineLayoutManager) {
@@ -556,10 +569,10 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         } else {
             if (childLM instanceof LineLayoutManager) {
                 return ((LineLayoutManager) childLM).getNextKnuthElements(childLC, alignment,
-                        restartPosition);
+                        (LeafPosition) restartPosition);
             } else if (childLM instanceof BlockLayoutManager) {
                 return ((BlockLayoutManager) childLM).getNextKnuthElements(childLC, alignment,
-                        lmStack, restartPosition);
+                        lmStack, restartPosition, restartAtLM);
             } else {
                 throw new UnsupportedOperationException("TODO: layout manager not restartable");
             }
