@@ -19,7 +19,8 @@
 <testcase>
   <info>
     <p>
-      This test checks that blocks of texts are re-laid out after a change of the flow ipd.
+      This test checks that non-restartable elements still show up at IPD change, even if not 
+      re-laid out.
     </p>
   </info>
   <fo>
