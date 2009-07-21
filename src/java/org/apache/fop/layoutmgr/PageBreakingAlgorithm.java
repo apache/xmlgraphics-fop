@@ -929,6 +929,13 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                 bestNodeForIPDChange = node;
             }
         } else {
+            if (node.position == par.size() - 1) {
+                /*
+                 * The whole sequence could actually fit on the last page before
+                 * the IPD change. No need to do any special handling.
+                 */
+                ipdChange = false;
+            }
             super.addNode(line, node);
         }
     }
