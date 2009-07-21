@@ -19,6 +19,9 @@
 
 package org.apache.fop.layoutmgr;
 
+import java.util.List;
+import java.util.Stack;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -262,6 +265,12 @@ public abstract class AbstractBaseLayoutManager
     /** {@inheritDoc} */
     public boolean isRestartable() {
         return false;
+    }
+
+    /** {@inheritDoc} */
+    public List getNextKnuthElements(LayoutContext context, int alignment, Stack lmStack,
+            Position positionAtIPDChange, LayoutManager restartAtLM) {
+        throw new UnsupportedOperationException("Not implemented");
     }
 
 }

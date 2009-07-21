@@ -116,7 +116,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
     }
 
     /** {@inheritDoc} */
-    List getNextKnuthElements(LayoutContext context, int alignment, Stack lmStack,
+    public List getNextKnuthElements(LayoutContext context, int alignment, Stack lmStack,
             Position restartPosition, LayoutManager restartAtLM) {
         resetSpaces();
         if (lmStack == null) {

@@ -358,7 +358,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     }
 
     /** {@inheritDoc} */
-    List getNextKnuthElements(LayoutContext context, int alignment, Stack lmStack,
+    public List getNextKnuthElements(LayoutContext context, int alignment, Stack lmStack,
             Position restartPosition, LayoutManager restartAtLM) {
         referenceIPD = context.getRefIPD();
         updateContentAreaIPDwithOverconstrainedAdjust();

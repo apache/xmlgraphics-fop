@@ -104,13 +104,9 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
                 currentChildLM = currentChildLM.getParent();
             }
             setCurrentChildLM(currentChildLM);
-            if (!(currentChildLM instanceof BlockLayoutManager)) {
-                throw new UnsupportedOperationException("TODO: layout manager not restartable");
-            } else {
-                if (addChildElements(elements, currentChildLM, context, alignment, lmStack,
-                        positionAtIPDChange, restartAtLM) != null) {
-                    return elements;
-                }
+            if (addChildElements(elements, currentChildLM, context, alignment, lmStack,
+                    positionAtIPDChange, restartAtLM) != null) {
+                return elements;
             }
         }
 
@@ -192,7 +188,8 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
     }
 
     private List getNextChildElements(LayoutManager childLM, LayoutContext context,
-            LayoutContext childLC, int alignment, Stack lmStack, Position restartPosition, LayoutManager restartLM) {
+            LayoutContext childLC, int alignment, Stack lmStack, Position restartPosition,
+            LayoutManager restartLM) {
         childLC.setStackLimitBP(context.getStackLimitBP());
         childLC.setRefIPD(context.getRefIPD());
         childLC.setWritingMode(getCurrentPage().getSimplePageMaster().getWritingMode());
@@ -201,7 +198,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
         if (lmStack == null) {
             childrenElements = childLM.getNextKnuthElements(childLC, alignment);
         } else {
-            childrenElements = ((BlockLayoutManager) childLM).getNextKnuthElements(childLC,
+            childrenElements = childLM.getNextKnuthElements(childLC,
                     alignment, lmStack, restartPosition, restartLM);
         }
         assert !childrenElements.isEmpty();

@@ -20,6 +20,7 @@
 package org.apache.fop.layoutmgr;
 
 import java.util.List;
+import java.util.Stack;
 
 import org.apache.fop.area.Area;
 import org.apache.fop.datatypes.PercentBaseContext;
@@ -234,4 +235,21 @@ public interface LayoutManager extends PercentBaseContext {
      * change
      */
     boolean isRestartable();
+
+    /**
+     * Returns an updated list of Knuth elements corresponding to this layout
+     * manager, after a change of IPD has been detected.
+     *
+     * @param context the layout context
+     * @param alignment the alignment
+     * @param lmStack the stack of LMs that are active at the IPD change
+     * @param positionAtIPDChange the position corresponding to the element
+     * finishing the page before the IPD change
+     * @param restartAtLM if not null, the layout manager from which to restart.
+     * That is, the IPD change occurs between two block elements and not inside
+     * a paragraph
+     * @return an updated list of elements, taking the new IPD into account
+     */
+    List getNextKnuthElements(LayoutContext context, int alignment, Stack lmStack,
+            Position positionAtIPDChange, LayoutManager restartAtLM);
 }
