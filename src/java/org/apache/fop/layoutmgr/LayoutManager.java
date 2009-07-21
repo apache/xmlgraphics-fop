@@ -225,4 +225,13 @@ public interface LayoutManager extends PercentBaseContext {
      * elements according to a new IPD value.
      */
     void reset();
+
+    /**
+     * Returns {@code true} if this layout manager is able to re-generate its
+     * Knuth elements after an IPD change.
+     *
+     * @return {@code true} if this layout manager can be restarted after an IPD
+     * change
+     */
+    boolean isRestartable();
 }

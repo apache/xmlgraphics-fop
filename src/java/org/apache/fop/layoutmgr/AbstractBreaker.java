@@ -19,6 +19,7 @@
 
 package org.apache.fop.layoutmgr;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -338,7 +339,8 @@ public abstract class AbstractBreaker {
                         BreakingAlgorithm.ALL_BREAKS);
                 if (alg.ipdChanged()) {
                     KnuthNode optimalBreak = alg.getBestNodeBeforeIPDChange();
-                    KnuthElement elementAtBreak = alg.getElement(optimalBreak.position);
+                    int positionIndex = optimalBreak.position;
+                    KnuthElement elementAtBreak = alg.getElement(positionIndex);
                     Position positionAtBreak = elementAtBreak.getPosition();
                     if (!(positionAtBreak instanceof SpaceResolver.SpaceHandlingBreakPosition)) {
                         throw new UnsupportedOperationException(
@@ -347,6 +349,29 @@ public abstract class AbstractBreaker {
                     /* Retrieve the original position wrapped into this space position */
                     positionAtBreak = positionAtBreak.getPosition();
                     LayoutManager restartAtLM = null;
+                    List firstElements = Collections.EMPTY_LIST;
+                    if (containsNonRestartableLM(positionAtBreak)) {
+                        firstElements = new LinkedList();
+                        boolean boxFound = false;
+                        Iterator iter = effectiveList.listIterator(++positionIndex);
+                        Position position = null;
+                        while (iter.hasNext()
+                                && (position == null || containsNonRestartableLM(position))) {
+                            KnuthElement element = (KnuthElement) iter.next();
+                            positionIndex++;
+                            position = element.getPosition();
+                            if (element.isBox()) {
+                                boxFound = true;
+                                firstElements.add(element);
+                            } else if (boxFound) {
+                                firstElements.add(element);
+                            }
+                        }
+                        if (position instanceof SpaceResolver.SpaceHandlingBreakPosition) {
+                            /* Retrieve the original position wrapped into this space position */
+                            positionAtBreak = position.getPosition();
+                        }
+                    }
                     if (positionAtBreak.getIndex() == -1) {
                         /*
                          * This is an indication that we are between two blocks
@@ -354,7 +379,7 @@ public abstract class AbstractBreaker {
                          * paragraph.
                          */
                         Position position;
-                        Iterator iter = alg.par.listIterator(optimalBreak.position + 1);
+                        Iterator iter = effectiveList.listIterator(positionIndex + 1);
                         do {
                             KnuthElement nextElement = (KnuthElement) iter.next();
                             position = nextElement.getPosition();
@@ -375,7 +400,7 @@ public abstract class AbstractBreaker {
                     blockLists.clear();
                     blockListIndex = -1;
                     nextSequenceStartsOn = getNextBlockList(childLC, Constants.EN_COLUMN,
-                            positionAtBreak, restartAtLM);
+                            positionAtBreak, restartAtLM, firstElements);
                 } else {
                     log.debug("PLM> iOptPageCount= " + optimalPageCount
                             + " pageBreaks.size()= " + alg.getPageBreaks().size());
@@ -387,6 +412,27 @@ public abstract class AbstractBreaker {
             }
         }
 
+    }
+
+    /**
+     * Returns {@code true} if the given position or one of its descendants
+     * corresponds to a non-restartable LM.
+     *
+     * @param position a position
+     * @return {@code true} if there is a non-restartable LM in the hierarchy
+     */
+    private boolean containsNonRestartableLM(Position position) {
+        LayoutManager lm = position.getLM();
+        if (lm != null && !lm.isRestartable()) {
+            return true;
+        } else {
+            Position subPosition = position.getPosition();
+            if (subPosition == null) {
+                return false;
+            } else {
+                return containsNonRestartableLM(subPosition);
+            }
+        }
     }
 
     /**
@@ -585,7 +631,7 @@ public abstract class AbstractBreaker {
      */
     protected int getNextBlockList(LayoutContext childLC,
             int nextSequenceStartsOn) {
-        return getNextBlockList(childLC, nextSequenceStartsOn, null, null);
+        return getNextBlockList(childLC, nextSequenceStartsOn, null, null, null);
     }
 
     /**
@@ -598,11 +644,12 @@ public abstract class AbstractBreaker {
      * @param positionAtIPDChange last element on the part before an IPD change
      * @param restartAtLM the layout manager from which to restart, if IPD
      * change occurs between two LMs
+     * @param firstElements elements from non-restartable LMs on the new page
      * @return the page on which the next content should appear after a hard
      * break
      */
     protected int getNextBlockList(LayoutContext childLC, int nextSequenceStartsOn,
-            Position positionAtIPDChange, LayoutManager restartAtLM) {
+            Position positionAtIPDChange, LayoutManager restartAtLM, List firstElements) {
         updateLayoutContext(childLC);
         //Make sure the span change signal is reset
         childLC.signalSpanChange(Constants.NOT_SET);
@@ -614,6 +661,7 @@ public abstract class AbstractBreaker {
         } else {
             returnedList = getNextKnuthElements(childLC, alignment, positionAtIPDChange,
                     restartAtLM);
+            returnedList.addAll(0, firstElements);
         }
         if (returnedList != null) {
             if (returnedList.isEmpty()) {

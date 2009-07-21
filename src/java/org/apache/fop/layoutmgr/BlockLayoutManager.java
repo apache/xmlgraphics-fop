@@ -559,5 +559,10 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
         }
     }
 
+    /** {@inheritDoc} */
+    public boolean isRestartable() {
+        return true;
+    }
+
 }
 

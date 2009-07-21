@@ -398,5 +398,10 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
         return getCurrentPV().getBodyRegion().getBPD();
     }
 
+    /** {@inheritDoc} */
+    public boolean isRestartable() {
+        return true;
+    }
+
 }
 

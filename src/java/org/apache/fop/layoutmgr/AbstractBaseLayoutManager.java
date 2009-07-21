@@ -259,4 +259,9 @@ public abstract class AbstractBaseLayoutManager
         throw new UnsupportedOperationException("Not implemented");
     }
 
+    /** {@inheritDoc} */
+    public boolean isRestartable() {
+        return false;
+    }
+
 }

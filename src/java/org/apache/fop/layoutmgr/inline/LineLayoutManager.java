@@ -1645,5 +1645,11 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     public boolean getGeneratesLineArea() {
         return true;
     }
+
+    /** {@inheritDoc} */
+    public boolean isRestartable() {
+        return true;
+    }
+
 }
 

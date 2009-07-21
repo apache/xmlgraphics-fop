@@ -129,12 +129,12 @@ public class PageBreaker extends AbstractBreaker {
     /** {@inheritDoc} */
     protected int getNextBlockList(LayoutContext childLC,
             int nextSequenceStartsOn) {
-        return getNextBlockList(childLC, nextSequenceStartsOn, null, null);
+        return getNextBlockList(childLC, nextSequenceStartsOn, null, null, null);
     }
 
     /** {@inheritDoc} */
     protected int getNextBlockList(LayoutContext childLC, int nextSequenceStartsOn,
-            Position positionAtIPDChange, LayoutManager restartLM) {
+            Position positionAtIPDChange, LayoutManager restartLM, List firstElements) {
         if (!firstPart) {
             // if this is the first page that will be created by
             // the current BlockSequence, it could have a break
@@ -146,7 +146,8 @@ public class PageBreaker extends AbstractBreaker {
         pageBreakHandled = true;
         pageProvider.setStartOfNextElementList(pslm.getCurrentPageNum(),
                 pslm.getCurrentPV().getCurrentSpan().getCurrentFlowIndex());
-        return super.getNextBlockList(childLC, nextSequenceStartsOn, positionAtIPDChange, restartLM);
+        return super.getNextBlockList(childLC, nextSequenceStartsOn, positionAtIPDChange,
+                restartLM, firstElements);
     }
 
     private boolean containsFootnotes(List contentList, LayoutContext context) {
