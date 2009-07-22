@@ -74,9 +74,13 @@
   <checks>
     <eval expected="face."  xpath="//pageViewport[1]//flow/block/block[3]/lineArea[4]/text/word[position()=last()]"/>
     <eval expected="12000"  xpath="//pageViewport[2]//flow/block/block[1]/@space-before"/>
+    <eval expected="500000" xpath="//pageViewport[2]//flow/block/block[1]/@ipd"/>
+    <eval expected="500000" xpath="//pageViewport[2]//flow/block/block[1]/lineArea[1]/@ipd"/>
     <eval expected="(solid,#000000,1000)"
                             xpath="//pageViewport[2]//flow/block/block[1]/@border-before"/>
-    <eval expected="In"     xpath="//pageViewport[1]//flow/block/block[1]/lineArea[1]/text/word[1]"/>
-    <eval expected="olden"  xpath="//pageViewport[1]//flow/block/block[1]/lineArea[1]/text/word[2]"/>
+    <eval expected="In"     xpath="//pageViewport[2]//flow/block/block[1]/lineArea[1]/text/word[1]"/>
+    <eval expected="olden"  xpath="//pageViewport[2]//flow/block/block[1]/lineArea[1]/text/word[2]"/>
+    <eval expected="500000" xpath="//pageViewport[2]//flow/block/block[2]/@ipd"/>
+    <eval expected="500000" xpath="//pageViewport[2]//flow/block/block[2]/lineArea[1]/@ipd"/>
   </checks>
 </testcase>

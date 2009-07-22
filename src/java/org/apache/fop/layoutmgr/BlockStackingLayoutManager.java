@@ -396,6 +396,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
             assert restartAtLM != null && restartAtLM.getParent() == this;
             currentChildLM = restartAtLM;
             currentChildLM.reset();
+            setCurrentChildLM(currentChildLM);
 
             childrenElements = getNextChildElements(currentChildLM, context, childLC,
                     alignment);
@@ -570,11 +571,9 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
             if (childLM instanceof LineLayoutManager) {
                 return ((LineLayoutManager) childLM).getNextKnuthElements(childLC, alignment,
                         (LeafPosition) restartPosition);
-            } else if (childLM instanceof BlockLayoutManager) {
-                return ((BlockLayoutManager) childLM).getNextKnuthElements(childLC, alignment,
-                        lmStack, restartPosition, restartAtLM);
             } else {
-                throw new UnsupportedOperationException("TODO: layout manager not restartable");
+                return childLM.getNextKnuthElements(childLC, alignment,
+                        lmStack, restartPosition, restartAtLM);
             }
         }
     }
