@@ -351,7 +351,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             int textAlign = (bestActiveNode.line < total) ? alignment : alignmentLast;
             indent += (textAlign == Constants.EN_CENTER)
                       ? difference / 2 : (textAlign == Constants.EN_END) ? difference : 0;
-            indent += (bestActiveNode.line == 1 && bFirst && isFirstInBlock) ? textIndent : 0;
+            indent += (bestActiveNode.line == 1 && indentFirstPart && isFirstInBlock) ? textIndent : 0;
             double ratio = (textAlign == Constants.EN_JUSTIFY
                 || difference < 0 && -difference <= bestActiveNode.availableShrink)
                         ? bestActiveNode.adjustRatio : 0;

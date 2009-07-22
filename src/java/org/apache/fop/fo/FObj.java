@@ -53,7 +53,7 @@ public abstract class FObj extends FONode implements Constants {
     protected FONode firstChild;
 
     /** The list of extension attachments, null if none */
-    private List extensionAttachments = null;
+    private List/*<ExtensionAttachment>*/ extensionAttachments = null;
 
     /** The map of foreign attributes, null if none */
     private Map foreignAttributes = null;
@@ -554,7 +554,7 @@ public abstract class FObj extends FONode implements Constants {
                     "Parameter attachment must not be null");
         }
         if (extensionAttachments == null) {
-            extensionAttachments = new java.util.ArrayList();
+            extensionAttachments = new java.util.ArrayList/*<ExtensionAttachment>*/();
         }
         if (log.isDebugEnabled()) {
             log.debug("ExtensionAttachment of category "
@@ -565,7 +565,7 @@ public abstract class FObj extends FONode implements Constants {
     }
 
     /** @return the extension attachments of this FObj. */
-    public List getExtensionAttachments() {
+    public List/*<ExtensionAttachment>*/ getExtensionAttachments() {
         if (extensionAttachments == null) {
             return Collections.EMPTY_LIST;
         } else {

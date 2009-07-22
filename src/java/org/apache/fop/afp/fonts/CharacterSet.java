@@ -95,6 +95,9 @@ public class CharacterSet {
     /** The collection of objects for each orientation */
     private Map characterSetOrientations = null;
 
+    /** The nominal vertical size (in millipoints) for bitmap fonts. 0 for outline fonts. */
+    private int nominalVerticalSize = 0;
+
     /**
      * Constructor for the CharacterSetMetric object, the character set is used
      * to load the font information from the actual AFP font.
@@ -156,6 +159,23 @@ public class CharacterSet {
         characterSetOrientations.put(
             String.valueOf(cso.getOrientation()),
             cso);
+    }
+
+    /**
+     * Sets the nominal vertical size of the font in the case of bitmap fonts.
+     * @param nominalVerticalSize the nominal vertical size (in millipoints)
+     */
+    public void setNominalVerticalSize(int nominalVerticalSize) {
+        this.nominalVerticalSize = nominalVerticalSize;
+    }
+
+    /**
+     * Returns the nominal vertical size of the font in the case of bitmap fonts. For outline fonts,
+     * zero is returned, because these are scalable fonts.
+     * @return the nominal vertical size (in millipoints) for bitmap fonts, or 0 for outline fonts.
+     */
+    public int getNominalVerticalSize() {
+        return this.nominalVerticalSize;
     }
 
     /**

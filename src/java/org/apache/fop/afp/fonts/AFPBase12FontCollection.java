@@ -49,7 +49,7 @@ public class AFPBase12FontCollection implements FontCollection {
 
     private void addCharacterSet(RasterFont font, String charsetName, Base14Font base14) {
         for (int i = 0; i < RASTER_SIZES.length; i++) {
-            int size = RASTER_SIZES[i];
+            int size = RASTER_SIZES[i] * 1000;
             FopCharacterSet characterSet = new FopCharacterSet(
                     CharacterSet.DEFAULT_CODEPAGE, CharacterSet.DEFAULT_ENCODING,
                     charsetName + CHARSET_REF[i], base14);
