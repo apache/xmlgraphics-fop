@@ -77,6 +77,14 @@ public class PageBreaker extends AbstractBreaker {
         return pslm.getPageProvider();
     }
 
+    /**
+     * Starts the page breaking process.
+     * @param flowBPD the constant available block-progression-dimension (used for every part)
+     */
+    void doLayout(int flowBPD) {
+        doLayout(flowBPD, false);
+    }
+
     /** {@inheritDoc} */
     protected PageBreakingLayoutListener createLayoutListener() {
         return new PageBreakingLayoutListener() {
