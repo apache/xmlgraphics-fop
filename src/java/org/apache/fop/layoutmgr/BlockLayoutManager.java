@@ -67,9 +67,6 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
     private MinOptMax effSpaceBefore;
     private MinOptMax effSpaceAfter;
 
-    /** The list of child BreakPoss instances. */
-    protected List childBreaks = new java.util.ArrayList();
-
     /**
      * Creates a new BlockLayoutManager.
      * @param inBlock the block FO object to create the layout manager for.
@@ -252,8 +249,8 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
         // and put them in a new list;
         LinkedList positionList = new LinkedList();
         Position pos;
-        boolean bSpaceBefore = false;
-        boolean bSpaceAfter = false;
+        boolean spaceBefore = false;
+        boolean spaceAfter = false;
         Position firstPos = null;
         Position lastPos = null;
         while (parentIter.hasNext()) {
@@ -276,11 +273,11 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
                 // this means the space was not discarded
                 if (positionList.size() == 0) {
                     // pos was in the element representing space-before
-                    bSpaceBefore = true;
+                    spaceBefore = true;
                     //log.trace(" space before");
                 } else {
                     // pos was in the element representing space-after
-                    bSpaceAfter = true;
+                    spaceAfter = true;
                     //log.trace(" space-after");
                 }
             } else if (innerPosition.getLM() == this
@@ -305,7 +302,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
             // the Positions in positionList were inside the elements
             // created by the LineLM
             childPosIter = new StackingIter(positionList.listIterator());
-            } else {
+        } else {
             // the Positions in positionList were inside the elements
             // created by the BlockLM in the createUnitElements() method
             //if (((Position) positionList.getLast()) instanceof
@@ -344,7 +341,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
             //                   + " spacing");
             // add space before and / or after the paragraph
             // to reach a multiple of bpUnit
-            if (bSpaceBefore && bSpaceAfter) {
+            if (spaceBefore && spaceAfter) {
                 foSpaceBefore = new SpaceVal(getBlockFO()
                                     .getCommonMarginBlock().spaceBefore, this).getSpace();
                 foSpaceAfter = new SpaceVal(getBlockFO()
@@ -357,7 +354,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
                         + foSpaceBefore.min
                         + foSpaceAfter.min)
                         * bpUnit - splitLength - adjustedSpaceBefore;
-                } else if (bSpaceBefore) {
+                } else if (spaceBefore) {
                 adjustedSpaceBefore = neededUnits(splitLength
                         + foSpaceBefore.min)
                         * bpUnit - splitLength;

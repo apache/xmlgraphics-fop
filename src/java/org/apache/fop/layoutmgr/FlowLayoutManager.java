@@ -25,11 +25,10 @@ import java.util.ListIterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.area.Area;
 import org.apache.fop.area.BlockParent;
 import org.apache.fop.fo.pagination.Flow;
-import org.apache.fop.layoutmgr.inline.InlineLevelLayoutManager;
-import org.apache.fop.layoutmgr.inline.WrapperLayoutManager;
 
 /**
  * LayoutManager for an fo:flow object.
@@ -63,108 +62,87 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
     /** {@inheritDoc} */
     public List getNextKnuthElements(LayoutContext context, int alignment) {
 
-        // set layout dimensions
-        int flowIPD = getCurrentPV().getCurrentSpan().getColumnWidth();
-        int flowBPD = getCurrentPV().getBodyRegion().getBPD();
+        List elements = new LinkedList();
 
-        // currently active LM
-        LayoutManager curLM;
-        List returnedList;
-        List returnList = new LinkedList();
-
-        while ((curLM = getChildLM()) != null) {
-            if (!(curLM instanceof WrapperLayoutManager)
-                && curLM instanceof InlineLevelLayoutManager) {
-                log.error("inline area not allowed under flow - ignoring");
-                curLM.setFinished(true);
-                continue;
+        LayoutManager currentChildLM;
+        while ((currentChildLM = getChildLM()) != null) {
+            if (handleSpanChange(currentChildLM, elements, context)) {
+                SpaceResolver.resolveElementList(elements);
+                return elements;
             }
-
-            int span = EN_NONE;
-            int disableColumnBalancing = EN_FALSE;
-            if (curLM instanceof BlockLayoutManager) {
-                span = ((BlockLayoutManager)curLM).getBlockFO().getSpan();
-                disableColumnBalancing = ((BlockLayoutManager) curLM).getBlockFO()
-                        .getDisableColumnBalancing();
-            } else if (curLM instanceof BlockContainerLayoutManager) {
-                span = ((BlockContainerLayoutManager)curLM).getBlockContainerFO().getSpan();
-                disableColumnBalancing = ((BlockContainerLayoutManager) curLM).getBlockContainerFO()
-                        .getDisableColumnBalancing();
-            }
-
-            int currentSpan = context.getCurrentSpan();
-            if (currentSpan != span) {
-                if (span == EN_ALL) {
-                    context.setDisableColumnBalancing(disableColumnBalancing);
-                }
-                log.debug("span change from " + currentSpan + " to " + span);
-                context.signalSpanChange(span);
-                SpaceResolver.resolveElementList(returnList);
-                return returnList;
-            }
-
-            // Set up a LayoutContext
-            //MinOptMax bpd = context.getStackLimit();
 
             LayoutContext childLC = new LayoutContext(0);
-            childLC.setStackLimitBP(context.getStackLimitBP());
-            childLC.setRefIPD(context.getRefIPD());
-            childLC.setWritingMode(getCurrentPage().getSimplePageMaster().getWritingMode());
-
-            // get elements from curLM
-            returnedList = curLM.getNextKnuthElements(childLC, alignment);
-            //log.debug("FLM.getNextKnuthElements> returnedList.size() = " + returnedList.size());
-            if (returnList.size() == 0 && childLC.isKeepWithPreviousPending()) {
+            List childrenElements = getNextChildElements(currentChildLM, context, childLC,
+                    alignment);
+            if (elements.isEmpty()) {
                 context.updateKeepWithPreviousPending(childLC.getKeepWithPreviousPending());
-                childLC.clearKeepWithPreviousPending();
             }
-
-            // "wrap" the Position inside each element
-            List tempList = returnedList;
-            returnedList = new LinkedList();
-            wrapPositionElements(tempList, returnedList);
-
-            if (returnedList.size() == 1
-                && ElementListUtils.endsWithForcedBreak(returnedList)) {
-                // a descendant of this flow has break-before
-                returnList.addAll(returnedList);
-                SpaceResolver.resolveElementList(returnList);
-                return returnList;
-            } else if (returnedList.size() > 0) {
-                if (returnList.size() > 0
-                        && !ElementListUtils.startsWithForcedBreak(returnedList)) {
-                    addInBetweenBreak(returnList, context, childLC);
-                }
-                returnList.addAll(returnedList);
-                if (ElementListUtils.endsWithForcedBreak(returnList)) {
-                    if (curLM.isFinished() && !hasNextChildLM()) {
-                        //If the layout manager is finished at this point, the pending
-                        //marks become irrelevant.
-                        childLC.clearPendingMarks();
-                        //setFinished(true);
-                        break;
-                    }
-                    // a descendant of this flow has break-after
-                    SpaceResolver.resolveElementList(returnList);
-                    return returnList;
-                }
+            if (!elements.isEmpty()
+                    && !ElementListUtils.startsWithForcedBreak(childrenElements)) {
+                addInBetweenBreak(elements, context, childLC);
             }
-
-            //Propagate and clear
             context.updateKeepWithNextPending(childLC.getKeepWithNextPending());
-            childLC.clearKeepWithNextPending();
 
-            context.updateKeepWithNextPending(getKeepWithNextStrength());
+            elements.addAll(childrenElements);
+
+            if (ElementListUtils.endsWithForcedBreak(elements)) {
+                // a descendant of this flow has break-before or break-after
+                if (currentChildLM.isFinished() && !hasNextChildLM()) {
+                    setFinished(true);
+                }
+                SpaceResolver.resolveElementList(elements);
+                return elements;
+            }
         }
 
-        SpaceResolver.resolveElementList(returnList);
+        SpaceResolver.resolveElementList(elements);
         setFinished(true);
 
-        if (returnList.size() > 0) {
-            return returnList;
-        } else {
-            return null;
+        assert !elements.isEmpty();
+        return elements;
+    }
+
+    private boolean handleSpanChange(LayoutManager childLM, List elements, LayoutContext context) {
+        int span = EN_NONE;
+        int disableColumnBalancing = EN_FALSE;
+        if (childLM instanceof BlockLayoutManager) {
+            span = ((BlockLayoutManager)childLM).getBlockFO().getSpan();
+            disableColumnBalancing = ((BlockLayoutManager) childLM).getBlockFO()
+                    .getDisableColumnBalancing();
+        } else if (childLM instanceof BlockContainerLayoutManager) {
+            span = ((BlockContainerLayoutManager)childLM).getBlockContainerFO().getSpan();
+            disableColumnBalancing = ((BlockContainerLayoutManager) childLM).getBlockContainerFO()
+                    .getDisableColumnBalancing();
         }
+
+        int currentSpan = context.getCurrentSpan();
+        if (currentSpan != span) {
+            if (span == EN_ALL) {
+                context.setDisableColumnBalancing(disableColumnBalancing);
+            }
+            log.debug("span change from " + currentSpan + " to " + span);
+            context.signalSpanChange(span);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private List getNextChildElements(LayoutManager childLM, LayoutContext context,
+            LayoutContext childLC, int alignment) {
+        childLC.setStackLimitBP(context.getStackLimitBP());
+        childLC.setRefIPD(context.getRefIPD());
+        childLC.setWritingMode(getCurrentPage().getSimplePageMaster().getWritingMode());
+
+        // get elements from curLM
+        List childrenElements = childLM.getNextKnuthElements(childLC, alignment);
+        assert !childrenElements.isEmpty();
+
+        // "wrap" the Position inside each element
+        List tempList = childrenElements;
+        childrenElements = new LinkedList();
+        wrapPositionElements(tempList, childrenElements);
+        return childrenElements;
     }
 
     /**
