@@ -548,7 +548,7 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
         ImageSize size = new ImageSize(img.getWidth(), img.getHeight(), 72);
         imageInfo.setSize(size);
 
-        ImageRendered imageRendered = new ImageRendered(imageInfo, img, null);
+        ImageRendered imageRendered = new ImageRendered(imageInfo, img, null, null);
         RenderedImage renderedImage = imageRendered.getRenderedImage();
 
         // create image object info
