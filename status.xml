@@ -58,6 +58,15 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="JM" type="add">
+        AFP Output: Added support for embedding external AFP form maps (form defs) using the
+        afp:include-form-map extension.
+      </action>
+      <action context="Renderers" dev="JM" type="add">
+        AFP Output: Added support for AFP font embedding. Note: this changes the default behaviour.
+        Like with PDF and PS, all fonts are embedded by default unless matched in the
+        "referenced-fonts" section in the configuration.
+      </action>
       <action context="Renderers" dev="AD" type="fix" fixes-bug="47508" due-to="Bharat Attaluri">
         Bugfix: Error while writing TLE's attribute qualifier in the output.
       </action>

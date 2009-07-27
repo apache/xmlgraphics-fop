@@ -42,6 +42,9 @@ public class AFPElementMapping extends ElementMapping {
     /** include page segment element */
     public static final String INCLUDE_PAGE_SEGMENT = "include-page-segment";
 
+    /** include form map element */
+    public static final String INCLUDE_FORM_MAP = "include-form-map";
+
     /** NOP */
     public static final String NO_OPERATION = "no-operation";
 
@@ -81,6 +84,9 @@ public class AFPElementMapping extends ElementMapping {
                 INCLUDE_PAGE_OVERLAY,
                 new AFPIncludePageOverlayMaker());
             foObjs.put(
+                INCLUDE_FORM_MAP,
+                new AFPIncludeFormMapMaker());
+            foObjs.put(
                 NO_OPERATION,
                 new AFPNoOperationMaker());
             foObjs.put(
@@ -98,6 +104,12 @@ public class AFPElementMapping extends ElementMapping {
     static class AFPIncludePageSegmentMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
             return new AFPPageSetupElement(parent, INCLUDE_PAGE_SEGMENT);
+        }
+    }
+
+    static class AFPIncludeFormMapMaker extends ElementMapping.Maker {
+        public FONode make(FONode parent) {
+            return new AFPIncludeFormMapElement(parent, INCLUDE_FORM_MAP);
         }
     }
 

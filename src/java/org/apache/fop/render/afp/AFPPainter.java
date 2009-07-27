@@ -46,10 +46,8 @@ import org.apache.fop.afp.fonts.AFPPageFonts;
 import org.apache.fop.afp.fonts.CharacterSet;
 import org.apache.fop.afp.modca.AbstractPageObject;
 import org.apache.fop.afp.modca.PresentationTextObject;
-import org.apache.fop.afp.modca.ResourceObject;
 import org.apache.fop.afp.ptoca.PtocaBuilder;
 import org.apache.fop.afp.ptoca.PtocaProducer;
-import org.apache.fop.afp.util.ResourceAccessor;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
@@ -345,17 +343,7 @@ public class AFPPainter extends AbstractIFPainter {
 
         if (afpFont.isEmbeddable()) {
             try {
-                //Embed fonts (char sets and code pages)
-                //TODO This should be moved to a place where it has less performance impact
-                if (charSet.getResourceAccessor() != null) {
-                    ResourceAccessor accessor = charSet.getResourceAccessor();
-                    documentHandler.getResourceManager().createIncludedResource(
-                            charSet.getName(), accessor,
-                            ResourceObject.TYPE_FONT_CHARACTER_SET);
-                    documentHandler.getResourceManager().createIncludedResource(
-                            charSet.getCodePage(), accessor,
-                            ResourceObject.TYPE_CODE_PAGE);
-                }
+                documentHandler.getResourceManager().embedFont(afpFont, charSet);
             } catch (IOException ioe) {
                 throw new IFException("Error while embedding font resources", ioe);
             }

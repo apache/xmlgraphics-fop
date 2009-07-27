@@ -36,8 +36,13 @@
           <fo:region-body/>
         </fo:simple-page-master>
       </fo:layout-master-set>
+      
+      <fo:declarations>
+        <afp:include-form-map name="FORMMAP1" src="file:../../resources/afp/F1SAMPLE.afp"/>
+      </fo:declarations>
+      
       <fo:page-sequence master-reference="normal" fox:test-ignore="this">
-        <afp:invoke-medium-map name="MYMAP"/>
+        <afp:invoke-medium-map name="NOPAR"/>
         <afp:tag-logical-element name="foo" value="bar"/>
         <fo:flow flow-name="xsl-region-body">
           <fo:block>Text on page <fo:page-number/>.</fo:block>
@@ -47,6 +52,9 @@
     </fo:root>
   </fo>
   <checks xmlns:afp="apache:fop:extensions:afp">
+    <eval expected="FORMMAP1" xpath="/areaTree/extension-attachments/afp:include-form-map/@name"/>
+    <eval expected="file:../../resources/afp/F1SAMPLE.afp" xpath="/areaTree/extension-attachments/afp:include-form-map/@src"/>
+    
     <eval expected="4" xpath="count(/areaTree/pageSequence/pageViewport[@nr=1]/page/extension-attachments/child::*)"/>
     <eval expected="O1SAMP1 " xpath="/areaTree/pageSequence/pageViewport[@nr=1]/page/extension-attachments/child::*[1]/@name"/>
     <eval expected="S1ISLOGO" xpath="/areaTree/pageSequence/pageViewport[@nr=1]/page/extension-attachments/child::*[2]/@name"/>
@@ -57,7 +65,7 @@
     <eval expected="4" xpath="count(/areaTree/pageSequence/pageViewport[@nr=2]/page/extension-attachments/child::*)"/>
     
     <eval expected="2" xpath="count(/areaTree/pageSequence/extension-attachments/child::*)"/>
-    <eval expected="MYMAP" xpath="/areaTree/pageSequence/extension-attachments/child::*[1]/@name"/>
+    <eval expected="NOPAR" xpath="/areaTree/pageSequence/extension-attachments/child::*[1]/@name"/>
     <eval expected="bar" xpath="/areaTree/pageSequence/extension-attachments/afp:tag-logical-element[@name = 'foo']/@value"/>
     
     <!-- This just tests if extension attributes make it through to the PageSequence object. -->
@@ -65,6 +73,9 @@
   </checks>
   <if-checks xmlns:if="http://xmlgraphics.apache.org/fop/intermediate"
         xmlns:afp="apache:fop:extensions:afp">
+    <eval expected="FORMMAP1" xpath="/if:document/if:header/afp:include-form-map/@name"/>
+    <eval expected="file:../../resources/afp/F1SAMPLE.afp" xpath="/if:document/if:header/afp:include-form-map/@src"/>
+    
     <eval expected="4" xpath="count(//if:page[@name = '1']/if:page-header/child::*)"/>
     <eval expected="O1SAMP1 " xpath="//if:page[@name = '1']/if:page-header/afp:include-page-overlay[1]/@name"/>
     <eval expected="S1ISLOGO" xpath="//if:page[@name = '1']/if:page-header/afp:include-page-segment[1]/@name"/>
@@ -74,7 +85,7 @@
     
     <eval expected="4" xpath="count(//if:page[@name = '2']/if:page-header/child::*)"/>
         
-    <eval expected="MYMAP" xpath="//if:page-sequence/afp:invoke-medium-map/@name"/>
+    <eval expected="NOPAR" xpath="//if:page-sequence/afp:invoke-medium-map/@name"/>
     <eval expected="bar" xpath="//if:page-sequence/afp:tag-logical-element[@name = 'foo']/@value"/>
 
     <!-- This just tests if extension attributes make it through to the PageSequence object. -->

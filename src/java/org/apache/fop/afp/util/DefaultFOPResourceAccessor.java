@@ -63,8 +63,10 @@ public class DefaultFOPResourceAccessor extends SimpleResourceAccessor {
         URI resolved = resolveAgainstBase(uri);
 
         //Step 2: resolve against the user agent --> stream
-        Source src;
-        src = userAgent.resolveURI(resolved.toASCIIString(), this.categoryBaseURI);
+        String base = (this.categoryBaseURI != null
+                ? this.categoryBaseURI
+                : this.userAgent.getBaseURL());
+        Source src = userAgent.resolveURI(resolved.toASCIIString(), base);
 
         if (src == null) {
             throw new FileNotFoundException("Resource not found: " + uri.toASCIIString());
