@@ -706,6 +706,13 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
         }
     }
 
+    /** {@inheritDoc} */
+    public void reset() {
+        super.reset();
+        label.reset();
+        body.reset();
+    }
+
 
 }
 
