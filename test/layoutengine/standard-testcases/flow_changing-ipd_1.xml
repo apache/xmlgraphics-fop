@@ -39,7 +39,7 @@
         </fo:page-sequence-master>
       </fo:layout-master-set>
       <fo:page-sequence master-reference="pages">
-        <fo:flow flow-name="xsl-region-body">
+        <fo:flow flow-name="xsl-region-body" language="en" hyphenate="true">
           <fo:block text-align="justify" id="surrounding"
             space-before.minimum="10pt"
             space-before.optimum="12pt"

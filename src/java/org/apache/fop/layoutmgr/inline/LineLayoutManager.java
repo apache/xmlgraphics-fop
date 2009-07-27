@@ -174,6 +174,11 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     private LineLayoutPossibilities lineLayouts;
     private List lineLayoutsList;
     private int ipd = 0;
+    /**
+     * When layout must be re-started due to a change of IPD, there is no need
+     * to perform hyphenation on the remaining Knuth sequence once again.
+     */
+    private boolean hyphenationPerformed;
 
     /**
      * this constant is used to create elements when text-align is center:
@@ -786,7 +791,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                                         this);
 
         if (hyphenationProperties.hyphenate.getEnum() == EN_TRUE
-                && fobj.getWrapOption() != EN_NO_WRAP) {
+                && fobj.getWrapOption() != EN_NO_WRAP && !hyphenationPerformed) {
+            hyphenationPerformed = true;
             findHyphenationPoints(currPar);
         }
 
