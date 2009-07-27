@@ -35,12 +35,16 @@ import org.apache.fop.afp.AbstractAFPPainter;
 import org.apache.fop.afp.DataStream;
 import org.apache.fop.afp.fonts.AFPFontCollection;
 import org.apache.fop.afp.fonts.AFPPageFonts;
+import org.apache.fop.afp.modca.ResourceObject;
+import org.apache.fop.afp.util.DefaultFOPResourceAccessor;
+import org.apache.fop.afp.util.ResourceAccessor;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.fonts.FontCollection;
 import org.apache.fop.fonts.FontEventAdapter;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontManager;
 import org.apache.fop.render.afp.extensions.AFPElementMapping;
+import org.apache.fop.render.afp.extensions.AFPIncludeFormMap;
 import org.apache.fop.render.afp.extensions.AFPInvokeMediumMap;
 import org.apache.fop.render.afp.extensions.AFPPageSetup;
 import org.apache.fop.render.intermediate.AbstractBinaryWritingIFDocumentHandler;
@@ -275,7 +279,8 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
             } else {
                 if (this.location != LOC_IN_PAGE_HEADER) {
                     throw new IFException(
-                        "AFP page setup extension encountered outside the page header: " + aps, null);
+                        "AFP page setup extension encountered outside the page header: " + aps,
+                        null);
                 }
                 if (AFPElementMapping.INCLUDE_PAGE_OVERLAY.equals(element)) {
                     String overlay = aps.getName();
@@ -303,6 +308,18 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
             String mediumMap = imm.getName();
             if (mediumMap != null) {
                 dataStream.createInvokeMediumMap(mediumMap);
+            }
+        } else if (extension instanceof AFPIncludeFormMap) {
+            AFPIncludeFormMap formMap = (AFPIncludeFormMap)extension;
+            ResourceAccessor accessor = new DefaultFOPResourceAccessor(
+                    getUserAgent(), null, null);
+            try {
+                getResourceManager().createIncludedResource(formMap.getName(),
+                        formMap.getSrc(), accessor,
+                        ResourceObject.TYPE_FORMDEF);
+            } catch (IOException ioe) {
+                throw new IFException(
+                        "I/O error while embedding form map resource: " + formMap.getName(), ioe);
             }
         }
     }

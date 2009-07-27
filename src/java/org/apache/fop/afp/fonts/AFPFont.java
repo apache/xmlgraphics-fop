@@ -36,6 +36,8 @@ public abstract class AFPFont extends Typeface {
     /** The font name */
     protected String name;
 
+    private boolean embeddable = true;
+
     /**
      * Constructor for the base font requires the name.
      * @param name the name of the font
@@ -98,11 +100,19 @@ public abstract class AFPFont extends Typeface {
     public abstract CharacterSet getCharacterSet(int size);
 
     /**
+     * Controls whether this font is embeddable or not.
+     * @param value true to enable embedding, false otherwise.
+     */
+    public void setEmbeddable(boolean value) {
+        this.embeddable = value;
+    }
+
+    /**
      * Indicates if this font may be embedded.
      * @return True, if embedding is possible/permitted
      */
     public boolean isEmbeddable() {
-        return false; //TODO Complete AFP font embedding
+        return this.embeddable;
     }
 
     /** {@inheritDoc} */

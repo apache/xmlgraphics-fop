@@ -80,4 +80,14 @@ public interface AFPEventProducer extends EventProducer {
      * @event.severity ERROR
      */
     void characterSetEncodingError(Object source, String charSetName, String encoding);
+
+    /**
+     * Triggered when an external resource fails to be embedded.
+     *
+     * @param source the event source
+     * @param resourceName the name of the resource where the error occurred
+     * @param e the original exception
+     * @event.severity ERROR
+     */
+    void resourceEmbeddingError(Object source, String resourceName, Exception e);
 }
