@@ -177,6 +177,9 @@ public class PCLPageDefinition {
         pageDefinitions.add(new PCLPageDefinition("Ledger", 6,
                 createPhysicalPageSizeInch(11, 17),
                 createLogicalPageRect(75, 0, 3150, 5100), false));
+        pageDefinitions.add(new PCLPageDefinition("A5", 25,
+                createPhysicalPageSizeMm(148, 210),
+                createLogicalPageRect(71, 0, 1745, 2480), false));
         pageDefinitions.add(new PCLPageDefinition("A4", 26,
                 createPhysicalPageSizeMm(210, 297),
                 createLogicalPageRect(71, 0, 2338, 3507), false));
@@ -198,6 +201,9 @@ public class PCLPageDefinition {
         pageDefinitions.add(new PCLPageDefinition("LedgerL", 6,
                 createPhysicalPageSizeInch(17, 11),
                 createLogicalPageRect(60, 0, 4980, 3300), true));
+        pageDefinitions.add(new PCLPageDefinition("A5L", 25,
+                createPhysicalPageSizeMm(210, 148),
+                createLogicalPageRect(59, 0, 2362, 1747), true));
         pageDefinitions.add(new PCLPageDefinition("A4L", 26,
                 createPhysicalPageSizeMm(297, 210),
                 createLogicalPageRect(59, 0, 3389, 2480), true));
