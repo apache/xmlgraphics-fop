@@ -457,9 +457,8 @@ public class PDFRenderer extends AbstractPathOrientedRenderer implements PDFConf
         }
         currentPageRef = currentPage.referencePDF();
 
-        Rectangle2D bounds = page.getViewArea();
-        double h = bounds.getHeight();
-        pageHeight = (int) h;
+        Rectangle bounds = page.getViewArea();
+        pageHeight = bounds.height;
 
         this.generator = new PDFContentGenerator(this.pdfDoc, this.ostream, this.currentPage);
         this.borderPainter = new PDFBorderPainter(this.generator);
