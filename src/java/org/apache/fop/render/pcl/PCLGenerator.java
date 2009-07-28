@@ -240,6 +240,18 @@ public class PCLGenerator {
     }
 
     /**
+     * Selects the output bin. The parameter is usually printer-specific. Usually, "1" is the
+     * default output bin (upper bin) and "2" is the lower (rear) output bin. Some printers
+     * may support additional output bins. Consult the technical reference for your printer
+     * for all available values.
+     * @param selector the integer representing the output bin
+     * @throws IOException In case of an I/O error
+     */
+    public void selectOutputBin(int selector) throws IOException {
+        writeCommand("&l" + selector + "G");
+    }
+
+    /**
      * Selects the duplexing mode for the page.
      * The parameter is usually printer-specific.
      * "0" means Simplex,

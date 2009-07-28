@@ -59,6 +59,9 @@
     -->
     <release version="FOP Trunk" date="TBD">
       <action context="Renderers" dev="JM" type="add">
+        PCL Output: Added support for specifying the output bin.
+      </action>
+      <action context="Renderers" dev="JM" type="add">
         AFP Output: Added support for embedding external AFP form maps (form defs) using the
         afp:include-form-map extension.
       </action>
