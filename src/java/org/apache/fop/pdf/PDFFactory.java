@@ -20,6 +20,7 @@
 package org.apache.fop.pdf;
 
 // Java
+import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.FileNotFoundException;
@@ -183,8 +184,8 @@ public class PDFFactory {
      * @return the created /Page object
      */
     public PDFPage makePage(PDFResources resources, int pageIndex,
-                            Rectangle2D mediaBox, Rectangle2D cropBox,
-                            Rectangle2D bleedBox, Rectangle2D trimBox) {
+                            Rectangle mediaBox, Rectangle cropBox,
+                            Rectangle bleedBox, Rectangle trimBox) {
         PDFPage page = new PDFPage(resources, pageIndex, mediaBox, cropBox, bleedBox, trimBox);
 
         getDocument().assignObjectNumber(page);
@@ -206,7 +207,7 @@ public class PDFFactory {
      */
     public PDFPage makePage(PDFResources resources,
                             int pageWidth, int pageHeight, int pageIndex) {
-        Rectangle2D mediaBox = new Rectangle2D.Double(0, 0, pageWidth, pageHeight);
+        Rectangle mediaBox = new Rectangle(0, 0, pageWidth, pageHeight);
         return makePage(resources, pageIndex, mediaBox, mediaBox, mediaBox, mediaBox);
     }
 
