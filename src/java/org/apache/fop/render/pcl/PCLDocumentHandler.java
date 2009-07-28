@@ -186,6 +186,13 @@ public class PCLDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
                 gen.selectPaperSource(Integer.parseInt(paperSource.toString()));
             }
 
+            //Output bin
+            Object outputBin = getContext().getForeignAttribute(
+                    PCLElementMapping.PCL_OUTPUT_BIN);
+            if (outputBin != null) {
+                gen.selectOutputBin(Integer.parseInt(outputBin.toString()));
+            }
+
             // Is Page duplex?
             Object pageDuplex = getContext().getForeignAttribute(
                     PCLElementMapping.PCL_DUPLEX_MODE);

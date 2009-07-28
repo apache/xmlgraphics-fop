@@ -422,6 +422,28 @@ out = proc.getOutputStream();]]></source>
           Consult the technical reference for your printer for all available values.
         </p>
       </section>
+      <section id="pcl-output-bin">
+        <title>Output Bin</title>
+        <p>
+          The <code>output-bin</code> extension attribute on fo:simple-page-master allows to 
+          select the output bin into which the printed output should be fed. Example:
+        </p>
+      <source><![CDATA[
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="simple" pcl:output-bin="2">
+          ...
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+]]></source>
+        <p>
+          Note: the output bin number is a positive integer and the value depends on
+          the target printer. Not all PCL printers support the same output bins.
+          Usually, 
+          "1" is the upper output bin,
+          "2" is the lower (rear) output bin. 
+          Consult the technical reference for your printer for all available values.
+        </p>
+      </section>
       <section id="pcl-duplex-mode">
         <title>Page Duplex Mode</title>
         <p>
