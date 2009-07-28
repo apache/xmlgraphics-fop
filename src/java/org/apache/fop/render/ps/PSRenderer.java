@@ -815,8 +815,8 @@ public class PSRenderer extends AbstractPathOrientedRenderer
                 {page.getPageNumberString(),
                  new Integer(this.currentPageNumber)});
 
-        double pageWidth = Math.round(page.getViewArea().getWidth()) / 1000f;
-        double pageHeight = Math.round(page.getViewArea().getHeight()) / 1000f;
+        double pageWidth = page.getViewArea().width / 1000f;
+        double pageHeight = page.getViewArea().height / 1000f;
         boolean rotate = false;
         List pageSizes = new java.util.ArrayList();
         if (getPSUtil().isAutoRotateLandscape() && (pageHeight < pageWidth)) {
