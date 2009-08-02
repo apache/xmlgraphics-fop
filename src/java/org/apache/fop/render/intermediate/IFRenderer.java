@@ -549,10 +549,8 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         }
         try {
             pageIndices.put(page.getKey(), new Integer(page.getPageIndex()));
-            Rectangle2D viewArea = page.getViewArea();
-            Dimension dim = new Dimension(
-                    (int)Math.ceil(viewArea.getWidth()),
-                    (int)Math.ceil(viewArea.getHeight()));
+            Rectangle viewArea = page.getViewArea();
+            Dimension dim = new Dimension(viewArea.width, viewArea.height);
 
             establishForeignAttributes(page.getForeignAttributes());
             documentHandler.startPage(page.getPageIndex(), page.getPageNumberString(),
