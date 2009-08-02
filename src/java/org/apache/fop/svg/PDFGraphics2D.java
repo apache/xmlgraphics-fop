@@ -1259,7 +1259,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
         ImageInfo info = new ImageInfo(null, "image/unknown");
         ImageSize size = new ImageSize(img.getWidth(), img.getHeight(), 72);
         info.setSize(size);
-        ImageRendered imgRend = new ImageRendered(info, img, null, null);
+        ImageRendered imgRend = new ImageRendered(info, img, null);
         ImageRenderedAdapter adapter = new ImageRenderedAdapter(imgRend, key);
         PDFXObject xObject = pdfDoc.addImage(resourceContext, adapter);
         flushPDFDocument();
