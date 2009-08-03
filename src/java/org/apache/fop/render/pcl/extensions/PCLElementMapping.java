@@ -40,6 +40,10 @@ public class PCLElementMapping extends ElementMapping {
     public static final QName PCL_PAPER_SOURCE
         = new QName(PCLElementMapping.NAMESPACE, null, "paper-source");
 
+    /** The extension attribute for the PCL output bin */
+    public static final QName PCL_OUTPUT_BIN
+        = new QName(PCLElementMapping.NAMESPACE, null, "output-bin");
+
     /** The extension attribute for the PCL duplex mode */
     public static final QName PCL_DUPLEX_MODE
         = new QName(PCLElementMapping.NAMESPACE, null, "duplex-mode");

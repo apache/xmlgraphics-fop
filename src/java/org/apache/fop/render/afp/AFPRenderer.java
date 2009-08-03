@@ -61,10 +61,14 @@ import org.apache.fop.afp.fonts.AFPFontCollection;
 import org.apache.fop.afp.fonts.AFPPageFonts;
 import org.apache.fop.afp.fonts.CharacterSet;
 import org.apache.fop.afp.modca.PageObject;
+import org.apache.fop.afp.modca.ResourceObject;
+import org.apache.fop.afp.util.DefaultFOPResourceAccessor;
+import org.apache.fop.afp.util.ResourceAccessor;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.area.CTM;
+import org.apache.fop.area.OffDocumentExtensionAttachment;
 import org.apache.fop.area.OffDocumentItem;
 import org.apache.fop.area.PageSequence;
 import org.apache.fop.area.PageViewport;
@@ -83,6 +87,8 @@ import org.apache.fop.render.AbstractPathOrientedRenderer;
 import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.afp.extensions.AFPElementMapping;
+import org.apache.fop.render.afp.extensions.AFPExtensionAttachment;
+import org.apache.fop.render.afp.extensions.AFPIncludeFormMap;
 import org.apache.fop.render.afp.extensions.AFPInvokeMediumMap;
 import org.apache.fop.render.afp.extensions.AFPPageSetup;
 
@@ -279,8 +285,30 @@ public class AFPRenderer extends AbstractPathOrientedRenderer implements AFPCust
 
     /** {@inheritDoc} */
     public void processOffDocumentItem(OffDocumentItem odi) {
-        // TODO
-        log.debug("NYI processOffDocumentItem(" + odi + ")");
+        if (odi instanceof OffDocumentExtensionAttachment) {
+            ExtensionAttachment attachment = ((OffDocumentExtensionAttachment)odi).getAttachment();
+            if (attachment != null) {
+                if (AFPExtensionAttachment.CATEGORY.equals(attachment.getCategory())) {
+                    if (attachment instanceof AFPIncludeFormMap) {
+                        handleIncludeFormMap((AFPIncludeFormMap)attachment);
+                    }
+                }
+            }
+        }
+    }
+
+    private void handleIncludeFormMap(AFPIncludeFormMap formMap) {
+        ResourceAccessor accessor = new DefaultFOPResourceAccessor(
+                getUserAgent(), null, null);
+        try {
+            this.resourceManager.createIncludedResource(formMap.getName(),
+                    formMap.getSrc(), accessor,
+                    ResourceObject.TYPE_FORMDEF);
+        } catch (IOException ioe) {
+            AFPEventProducer eventProducer
+                = AFPEventProducer.Provider.get(userAgent.getEventBroadcaster());
+            eventProducer.resourceEmbeddingError(this, formMap.getName(), ioe);
+        }
     }
 
     /** {@inheritDoc} */
@@ -566,6 +594,16 @@ public class AFPRenderer extends AbstractPathOrientedRenderer implements AFPCust
         AFPFontAttributes fontAttributes = pageFonts.registerFont(internalFontName, font, fontSize);
         Font fnt = getFontFromArea(text);
 
+        if (font.isEmbeddable()) {
+            CharacterSet charSet = font.getCharacterSet(fontSize);
+            try {
+                this.resourceManager.embedFont(font, charSet);
+            } catch (IOException ioe) {
+                AFPEventProducer eventProducer
+                    = AFPEventProducer.Provider.get(userAgent.getEventBroadcaster());
+                eventProducer.resourceEmbeddingError(this, charSet.getName(), ioe);
+            }
+        }
 
         // create text data info
         AFPTextDataInfo textDataInfo = new AFPTextDataInfo();

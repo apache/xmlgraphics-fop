@@ -422,6 +422,28 @@ out = proc.getOutputStream();]]></source>
           Consult the technical reference for your printer for all available values.
         </p>
       </section>
+      <section id="pcl-output-bin">
+        <title>Output Bin</title>
+        <p>
+          The <code>output-bin</code> extension attribute on fo:simple-page-master allows to 
+          select the output bin into which the printed output should be fed. Example:
+        </p>
+      <source><![CDATA[
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="simple" pcl:output-bin="2">
+          ...
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+]]></source>
+        <p>
+          Note: the output bin number is a positive integer and the value depends on
+          the target printer. Not all PCL printers support the same output bins.
+          Usually, 
+          "1" is the upper output bin,
+          "2" is the lower (rear) output bin. 
+          Consult the technical reference for your printer for all available values.
+        </p>
+      </section>
       <section id="pcl-duplex-mode">
         <title>Page Duplex Mode</title>
         <p>
@@ -651,6 +673,11 @@ out = proc.getOutputStream();]]></source>
         <font-triplet name="monospace" style="normal" weight="bold"/>
         <font-triplet name="Courier" style="normal" weight="bold"/>
       </font>]]></source>
+        <p>
+          By default, all manually configured fonts are embedded, unless they are matched in the
+          <a href="fonts.html#embedding"><code>referenced-fonts</code> section of the configuration file</a>.
+          However, the default fonts shown above will not be embedded.
+        </p>
       </section>
       <section id="afp-renderer-resolution-config">
         <title>Output Resolution</title>
@@ -835,6 +862,35 @@ out = proc.getOutputStream();]]></source>
           medium map by name. The medium map has to be constructed through different means and
           available on the target platform.
         </p>
+      </section>
+      <section id="afp-form-maps">
+        <title>Form Maps/Defs</title>
+        <p>
+          Apache FOP supports embedding an external form map resource in the
+          generated AFP output. This is done using the <code>afp:include-form-map</code>
+          extension. An example: 
+        </p>
+      <source><![CDATA[
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
+     xmlns:afp="http://xmlgraphics.apache.org/fop/extensions/afp">
+  [..]
+  <fo:declarations>
+    <afp:include-form-map name="F1SAMP1" src="file:f1samp1.fde"/>
+  </fo:declarations>
+]]></source>
+        <p>
+          The <code>afp:include-form-map</code> is to be placed as a direct child of
+          <code>fo:declarations</code>. The <code>name</code> is an AFP resource name
+          (max. 8 characters) and the <code>src</code> attribute is the URI identifying the
+          external form map resource. When such a form map is embedded, you can use the
+          <code>afp:invoke-medium-map</code> extension (described above) to invoke any medium
+          map included in the form map. 
+        </p>
+        <note>
+          Apache FOP doesn't support a way to define a form map or medium map using XML means
+          inside an XSL-FO document. You will have to build the form map with some third-party
+          tool.
+        </note>
       </section>
     </section>
     <section id="afp-foreign-attributes">

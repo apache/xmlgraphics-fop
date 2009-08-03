@@ -227,7 +227,90 @@ to following pages. Here is an example of FO code creating such a table-header:<
           </p>
         </section>
       </section>
-      
+      <section id="prepress">
+        <title>Prepress Support</title>
+        
+        <p>
+          This section defines a number of extensions related to
+          <a href="http://en.wikipedia.org/wiki/Prepress">prepress</a> support.
+          <code>fox:scale</code> defines a general scale factor for the generated pages.
+          <code>fox:bleed</code> defines the
+          <a href="http://en.wikipedia.org/wiki/Bleed_%28printing%29">bleed area</a> for a page.
+          <code>fox:crop-offset</code> defines the outer edges of the area in which crop marks,
+          registration marks, color bars and page information are placed.
+          For details, please read on below.
+        </p>
+        
+        <section id="scale">
+          <title>fox:scale</title>
+          <p>Default: 1</p>
+          <p>
+            <code>fox:scale="sx [sy]"</code> attribute is used in <code>fo:simple-page-master</code> element and specifies
+            the a scale operation by sx and sy. If sy is not provided, it is assumed to be equal to sx.
+            sx and sy should be a positive number. A scale factor smaller than 1 shrinks the page.
+            A scale factor greater than 1 enlarges the page.
+          </p>
+          <note>
+            It is implemented for PDF and Java2D renderers.
+          </note>
+        </section>
+        <section id="bleed">
+          <title>fox:bleed</title>
+          <p>
+              Value: &lt;length&gt;{1,4}
+          </p>
+          <p>
+              Default: 0pt
+          </p>
+          <p>
+              If there is only one value, it applies to all sides. If there are two values, the top and bottom
+              bleed widths are set to the first value and the right and left bleed widths are set to the second.
+              If there are three values, the top is set to the first value, the left and right are set to the second,
+              and the bottom is set to the third. If there are four values, they apply to the top, right, bottom, and
+              left, respectively.
+              (Corresponds to <a href="http://www.w3.org/TR/xsl11/#padding">http://www.w3.org/TR/xsl11/#padding</a>).
+          </p>
+          <p>
+              This extension indirectly defines the BleedBox and is calculated by expanding the TrimBox by
+              the bleed widths. The lengths must be non-negative.
+          </p>
+        </section>
+        <section id="cropOffset">
+          <title>fox:crop-offset</title>
+          <p>
+            Value: &lt;length&gt;{1,4}
+          </p>
+          <p>
+            Default: 0pt
+          </p>
+          <p>
+            Same behaviour as with fox:bleed.
+          </p>
+          <p>
+            This extension indirectly defines the MediaBox and is calculated by expanding
+            the TrimBox by the crop offsets. The lengths must be non-negative. 
+          </p>
+        </section>
+        <section id="cropBox">
+          <title>fox:crop-box</title>
+          <p>
+            Value: (trim-box|bleed-box|media-box)
+          </p>
+          <p>
+            Default: media-box
+          </p>
+          <p>
+            The crop box controls how Acrobat displays the page (CropBox in PDF) or how the Java2DRenderer sizes
+            the output media. The PDF specification defines that the CropBox defaults to the MediaBox. This extension
+            follows that definition. To simplify usage and cover most use cases, the three supported enumeration
+            values "trim-box", "bleed-box" and "media-box" set the CropBox to one of those three other boxes. 
+          </p>
+          <p>
+            If requested in the future, we could offer to specify the CropBox in absolute coordinates rather
+            than just be referencing another box.
+          </p>
+        </section>
+      </section>
     </section>
   </body>
 </document>

@@ -355,12 +355,13 @@ list of possible build targets.
       <fileset dir="${src.java.dir}">
         <include name="**/*.java"/>
         <exclude name="org/apache/fop/render/*/**/*.java"/>
+        <exclude name="org/apache/fop/afp/**/*.java"/>
       </fileset>
     </eventResourceGenerator>
     <fixcrlf file="${src.java.dir}/org/apache/fop/events/EventFormatter.xml" tab="remove" tablength="2"/>
     <eventResourceGenerator modelfile="${build.gensrc.dir}/org/apache/fop/afp/event-model.xml" translationfile="${src.java.dir}/org/apache/fop/afp/AFPEventProducer.xml">
       <fileset dir="${src.java.dir}">
-        <include name="org/apache/fop/render/afp/**/*.java"/>
+        <include name="org/apache/fop/afp/**/*.java"/>
       </fileset>
     </eventResourceGenerator>
     <fixcrlf file="${src.java.dir}/org/apache/fop/afp/AFPEventProducer.xml" tab="remove" tablength="2"/>
@@ -1006,7 +1007,15 @@ NOTE:
     <property name="javadoc.level" value=""/>
     <echo message="Producing the javadoc files${javadoc.level}"/>
     <mkdir dir="${build.javadocs.dir}"/>
-    <javadoc packagenames="${javadoc.packages}" destdir="${build.javadocs.dir}" author="true" version="true" windowtitle="${Name} ${version} API" doctitle="Apache Formatting Objects Processor (FOP)" bottom="Copyright ${year} The Apache Software Foundation. All Rights Reserved." overview="${src.dir}/java/org/apache/fop/overview.html" use="true" failonerror="true" source="${javac.source}" public="${javadoc.public}" package="${javadoc.package}" private="${javadoc.private}" maxmemory="128M">
+    <javadoc failonerror="true" source="${javac.source}" destdir="${build.javadocs.dir}"
+      packagenames="${javadoc.packages}"
+      public="${javadoc.public}" package="${javadoc.package}" private="${javadoc.private}"
+      author="true" version="true" use="true"
+      windowtitle="${Name} ${version} API"
+      doctitle="Apache Formatting Objects Processor (FOP)"
+      bottom="Copyright ${year} The Apache Software Foundation. All Rights Reserved."
+      overview="${src.dir}/java/org/apache/fop/overview.html"
+      maxmemory="256M">
       <header><![CDATA[${name} ${version}]]></header>
       <footer><![CDATA[${name} ${version}]]></footer>
       <classpath>

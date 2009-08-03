@@ -36,6 +36,9 @@ import org.apache.fop.fo.extensions.ExtensionAttachment;
  */
 public class AFPPageSetupElement extends AbstractAFPExtensionObject {
 
+    private static final String ATT_VALUE = "value";
+    private static final String ATT_SRC = "src";
+
     /**
      * Constructs an AFP object (called by Maker).
      *
@@ -86,18 +89,18 @@ public class AFPPageSetupElement extends AbstractAFPExtensionObject {
         super.processNode(elementName, locator, attlist, propertyList);
         AFPPageSetup pageSetup = getPageSetupAttachment();
         if (AFPElementMapping.INCLUDE_PAGE_SEGMENT.equals(elementName)) {
-            String attr = attlist.getValue("src");
+            String attr = attlist.getValue(ATT_SRC);
             if (attr != null && attr.length() > 0) {
                 pageSetup.setValue(attr);
             } else {
-                throw new FOPException(elementName + " must have a src attribute.");
+                missingPropertyError(ATT_SRC);
             }
         } else if (AFPElementMapping.TAG_LOGICAL_ELEMENT.equals(elementName)) {
-            String attr = attlist.getValue("value");
+            String attr = attlist.getValue(ATT_VALUE);
             if (attr != null && attr.length() > 0) {
                 pageSetup.setValue(attr);
             } else {
-                throw new FOPException(elementName + " must have a value attribute.");
+                missingPropertyError(ATT_VALUE);
             }
         }
     }

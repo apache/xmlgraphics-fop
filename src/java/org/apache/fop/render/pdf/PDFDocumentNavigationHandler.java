@@ -144,15 +144,20 @@ public class PDFDocumentNavigationHandler implements IFDocumentNavigationHandler
         if (pdfAction != null) {
             return pdfAction;
         } else if (action instanceof GoToXYAction) {
-            GoToXYAction a = (GoToXYAction)action;
-            PDFGoTo pdfGoTo = new PDFGoTo(null);
-            getPDFDoc().assignObjectNumber(pdfGoTo);
-            if (action.isComplete()) {
-                updateTargetLocation(pdfGoTo, a);
+            pdfAction = (PDFAction) incompleteActions.get(action.getID());
+            if (pdfAction != null) {
+                return pdfAction;
             } else {
-                this.incompleteActions.put(action.getID(), pdfGoTo);
+                GoToXYAction a = (GoToXYAction)action;
+                PDFGoTo pdfGoTo = new PDFGoTo(null);
+                getPDFDoc().assignObjectNumber(pdfGoTo);
+                if (action.isComplete()) {
+                    updateTargetLocation(pdfGoTo, a);
+                } else {
+                    this.incompleteActions.put(action.getID(), pdfGoTo);
+                }
+                return pdfGoTo;
             }
-            return pdfGoTo;
         } else if (action instanceof URIAction) {
             URIAction u = (URIAction)action;
             assert u.isComplete();

@@ -68,8 +68,12 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
     }
 
     private AFPFontInfo buildFont(Configuration fontCfg, String fontPath)
-        throws ConfigurationException {
+            throws ConfigurationException {
 
+        FontManager fontManager = this.userAgent.getFactory().getFontManager();
+        FontTriplet.Matcher referencedFontsMatcher = fontManager.getReferencedFontsMatcher();
+
+        boolean embeddable = true;
         Configuration[] triple = fontCfg.getChildren("font-triplet");
         List/*<FontTriplet>*/ tripletList = new java.util.ArrayList/*<FontTriplet>*/();
         if (triple.length == 0) {
@@ -81,6 +85,9 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
             FontTriplet triplet = new FontTriplet(triple[j].getAttribute("name"),
                     triple[j].getAttribute("style"),
                     weight);
+            if (referencedFontsMatcher != null && referencedFontsMatcher.matches(triplet)) {
+                embeddable = false;
+            }
             tripletList.add(triplet);
         }
 
@@ -110,7 +117,7 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
         }
         ResourceAccessor accessor = new DefaultFOPResourceAccessor(
                 this.userAgent,
-                this.userAgent.getFactory().getFontManager().getFontBaseURL(),
+                fontManager.getFontBaseURL(),
                 baseURI);
 
         String type = afpFontCfg.getAttribute("type");
@@ -135,11 +142,12 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
 
             // Create a new font object
             RasterFont font = new RasterFont(name);
+            font.setEmbeddable(embeddable);
 
             Configuration[] rasters = afpFontCfg.getChildren("afp-raster-font");
             if (rasters.length == 0) {
-                log.error(
-                        "Mandatory font configuration elements '<afp-raster-font...' are missing");
+                log.error("Mandatory font configuration elements '<afp-raster-font...'"
+                        + " are missing at " + afpFontCfg.getLocation());
                 return null;
             }
             for (int j = 0; j < rasters.length; j++) {
@@ -212,6 +220,7 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
             }
             // Create a new font object
             OutlineFont font = new OutlineFont(name, characterSet);
+            font.setEmbeddable(embeddable);
             return new AFPFontInfo(font, tripletList);
         } else {
             log.error("No or incorrect type attribute");

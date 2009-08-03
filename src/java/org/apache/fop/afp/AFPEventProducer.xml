@@ -3,4 +3,5 @@
   <message key="org.apache.fop.afp.AFPEventProducer.warnDefaultFontSetup">No AFP fonts configured. Using default setup.</message>
   <message key="org.apache.fop.afp.AFPEventProducer.warnMissingDefaultFont">No AFP default "any", {style}, {weight} font configured.</message>
   <message key="org.apache.fop.afp.AFPEventProducer.characterSetEncodingError">An error occurred when attempting to encode character set {charSetName} with encoding scheme {encoding}.</message>
+  <message key="org.apache.fop.afp.AFPEventProducer.resourceEmbeddingError">An error occurs while embedding the resource named "{resourceName}".[ Reason: {e}]</message>
 </catalogue>

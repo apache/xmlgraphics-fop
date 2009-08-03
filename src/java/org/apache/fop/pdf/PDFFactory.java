@@ -174,6 +174,30 @@ public class PDFFactory {
      * PDFDocument later using addObject().
      *
      * @param resources resources object to use
+     * @param pageIndex index of the page (zero-based)
+     * @param mediaBox the MediaBox area
+     * @param cropBox the CropBox area
+     * @param bleedBox the BleedBox area
+     * @param trimBox the TrimBox area
+     *
+     * @return the created /Page object
+     */
+    public PDFPage makePage(PDFResources resources, int pageIndex,
+                            Rectangle2D mediaBox, Rectangle2D cropBox,
+                            Rectangle2D bleedBox, Rectangle2D trimBox) {
+        PDFPage page = new PDFPage(resources, pageIndex, mediaBox, cropBox, bleedBox, trimBox);
+
+        getDocument().assignObjectNumber(page);
+        getDocument().getPages().addPage(page);
+        return page;
+    }
+
+    /**
+     * Make a /Page object. The page is assigned an object number immediately
+     * so references can already be made. The page must be added to the
+     * PDFDocument later using addObject().
+     *
+     * @param resources resources object to use
      * @param pageWidth width of the page in points
      * @param pageHeight height of the page in points
      * @param pageIndex index of the page (zero-based)
@@ -182,17 +206,8 @@ public class PDFFactory {
      */
     public PDFPage makePage(PDFResources resources,
                             int pageWidth, int pageHeight, int pageIndex) {
-
-        /*
-         * create a PDFPage with the next object number, the given
-         * resources, contents and dimensions
-         */
-        PDFPage page = new PDFPage(resources,
-                                   pageWidth, pageHeight, pageIndex);
-
-        getDocument().assignObjectNumber(page);
-        getDocument().getPages().addPage(page);
-        return page;
+        Rectangle2D mediaBox = new Rectangle2D.Double(0, 0, pageWidth, pageHeight);
+        return makePage(resources, pageIndex, mediaBox, mediaBox, mediaBox, mediaBox);
     }
 
     /**
