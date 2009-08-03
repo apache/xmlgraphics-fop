@@ -99,9 +99,13 @@ public class RasterFont extends AFPFont {
             int largerSize = largerSizes.isEmpty() ? Integer.MAX_VALUE
                     : ((Integer)largerSizes.firstKey()).intValue();
 
-            Integer fontSize
-                    = (size - smallerSize) <= (largerSize - size)
-                        ? new Integer(smallerSize) : new Integer(largerSize);
+            Integer fontSize;
+            if (!smallerSizes.isEmpty()
+                            && (size - smallerSize) <= (largerSize - size)) {
+                fontSize = new Integer(smallerSize);
+            } else {
+                fontSize = new Integer(largerSize);
+            }
             csm = (CharacterSet) charSets.get(fontSize);
 
             if (csm != null) {
