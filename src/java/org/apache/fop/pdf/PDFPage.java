@@ -19,7 +19,7 @@
 
 package org.apache.fop.pdf;
 
-import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 
 /**
  * Class representing a /Page object.
@@ -45,8 +45,8 @@ public class PDFPage extends PDFResourceContext {
      * @param trimBox the TrimBox. If null, bleedBox is used.
      */
     public PDFPage(PDFResources resources, int pageIndex,
-                   Rectangle mediaBox, Rectangle cropBox,
-                   Rectangle bleedBox, Rectangle trimBox) {
+                   Rectangle2D mediaBox, Rectangle2D cropBox,
+                   Rectangle2D bleedBox, Rectangle2D trimBox) {
       /* generic creation of object */
       super(resources);
 
@@ -56,8 +56,8 @@ public class PDFPage extends PDFResourceContext {
       this.pageIndex = pageIndex;
     }
 
-    private void setSimplePageSize(Rectangle mediaBox, Rectangle cropBox,
-                                   Rectangle bleedBox, Rectangle trimBox) {
+    private void setSimplePageSize(Rectangle2D mediaBox, Rectangle2D cropBox,
+                                   Rectangle2D bleedBox, Rectangle2D trimBox) {
         setMediaBox(mediaBox);
 
         if (cropBox == null) {
@@ -76,16 +76,16 @@ public class PDFPage extends PDFResourceContext {
         setTrimBox(trimBox); //Needed for PDF/X
     }
 
-    private PDFArray toPDFArray(Rectangle box) {
-        return new PDFArray(this, new int[] {
-                box.x, box.y, box.x + box.width, box.y + box.height});
+    private PDFArray toPDFArray(Rectangle2D box) {
+        return new PDFArray(this, new double[] {
+                box.getX(), box.getY(), box.getMaxX(), box.getMaxY()});
     }
 
     /**
      * Sets the "MediaBox" entry
      * @param box the media rectangle
      */
-    public void setMediaBox(Rectangle box) {
+    public void setMediaBox(Rectangle2D box) {
         put("MediaBox", toPDFArray(box));
     }
 
@@ -93,7 +93,7 @@ public class PDFPage extends PDFResourceContext {
      * Sets the "CropBox" entry
      * @param box the bleed rectangle
      */
-    public void setCropBox(Rectangle box) {
+    public void setCropBox(Rectangle2D box) {
         put("CropBox", toPDFArray(box));
     }
 
@@ -101,7 +101,7 @@ public class PDFPage extends PDFResourceContext {
      * Sets the "BleedBox" entry
      * @param box the bleed rectangle
      */
-    public void setBleedBox(Rectangle box) {
+    public void setBleedBox(Rectangle2D box) {
         put("BleedBox", toPDFArray(box));
     }
 
@@ -109,7 +109,7 @@ public class PDFPage extends PDFResourceContext {
      * Sets the "TrimBox" entry
      * @param box the trim rectangle
      */
-    public void setTrimBox(Rectangle box) {
+    public void setTrimBox(Rectangle2D box) {
         put("TrimBox", toPDFArray(box));
     }
 
