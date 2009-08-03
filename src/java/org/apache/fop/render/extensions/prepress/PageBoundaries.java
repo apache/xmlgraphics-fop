@@ -19,8 +19,10 @@
 
 package org.apache.fop.render.extensions.prepress;
 
+import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.text.MessageFormat;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,29 +31,27 @@ import org.apache.xmlgraphics.util.QName;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fo.properties.FixedLength;
 
-
 /**
- * This class contains definition of page boundaries FOF's extension attributes for XSL-FO.
- * That is: bleedBox, trimBox and cropBox.
- * Also this class provides method to parse the possible values of these attributes
- * and to generate original size of bounded area.
+ * This class is used to calculate the effective boundaries of a page including special-purpose
+ * boxes used in prepress. These are specified using extension attributes:
+ * bleedBox, trimBox and cropBox. The semantics are further described on the website.
  */
-public final class PageBoundariesAttributes {
+public class PageBoundaries {
 
     /**
-     * The extension attribute for calculating the PDF BleedBox area - specifies the bleed width
+     * The extension attribute for calculating the PDF BleedBox area - specifies the bleed width.
      */
     public static final QName EXT_BLEED
             = new QName(ExtensionElementMapping.URI, null, "bleed");
 
     /**
-     * The extension attribute for the PDF CropBox area
+     * The extension attribute for the PDF CropBox area.
      */
     public static final QName EXT_CROP_OFFSET
             = new QName(ExtensionElementMapping.URI, null, "crop-offset");
 
     /**
-     * The extension attribute for the PDF CropBox area
+     * The extension attribute for the PDF CropBox area.
      */
     public static final QName EXT_CROP_BOX
             = new QName(ExtensionElementMapping.URI, null, "crop-box");
@@ -60,10 +60,98 @@ public final class PageBoundariesAttributes {
     private static final Pattern SIZE_UNIT_PATTERN
             = Pattern.compile("^(-?\\d*\\.?\\d*)(px|in|cm|mm|pt|pc|mpt)$");
 
+    private Rectangle trimBox;
+    private Rectangle bleedBox;
+    private Rectangle mediaBox;
+    private Rectangle cropBox;
+
     /**
-     * Utility classes should not have a public or default constructor.
+     * Creates a new instance.
+     * @param pageSize the page size (in mpt) defined by the simple-page-master.
+     * @param bleed the bleed value (raw value as given in the property value)
+     * @param cropOffset the crop-offset value (raw value as given in the property value)
+     * @param cropBoxSelector the crop-box, valid values: (trim-box|bleed-box|media-box)
      */
-    private PageBoundariesAttributes() {
+    public PageBoundaries(Dimension pageSize, String bleed, String cropOffset,
+            String cropBoxSelector) {
+        calculate(pageSize, bleed, cropOffset, cropBoxSelector);
+    }
+
+    /**
+     * Creates a new instance.
+     * @param pageSize the page size (in mpt) defined by the simple-page-master.
+     * @param foreignAttributes the foreign attributes for the page
+     *                  (used to extract the extension attribute values)
+     */
+    public PageBoundaries(Dimension pageSize, Map foreignAttributes) {
+        String bleed = (String)foreignAttributes.get(EXT_BLEED);
+        String cropOffset = (String)foreignAttributes.get(EXT_CROP_OFFSET);
+        String cropBoxSelector = (String)foreignAttributes.get(EXT_CROP_BOX);
+        calculate(pageSize, bleed, cropOffset, cropBoxSelector);
+    }
+
+    private void calculate(Dimension pageSize, String bleed, String cropOffset,
+            String cropBoxSelector) {
+        this.trimBox = new Rectangle(pageSize);
+        this.bleedBox = getBleedBoxRectangle(this.trimBox, bleed);
+        Rectangle cropMarksBox = getCropMarksAreaRectangle(trimBox, cropOffset);
+
+        //MediaBox includes all of the following three rectangles
+        this.mediaBox = new Rectangle();
+        this.mediaBox.add(this.trimBox);
+        this.mediaBox.add(this.bleedBox);
+        this.mediaBox.add(cropMarksBox);
+
+        if ("trim-box".equals(cropBoxSelector)) {
+            this.cropBox = this.trimBox;
+        } else if ("bleed-box".equals(cropBoxSelector)) {
+            this.cropBox = this.bleedBox;
+        } else if ("media-box".equals(cropBoxSelector)
+                || cropBoxSelector == null
+                || "".equals(cropBoxSelector)) {
+            this.cropBox = this.mediaBox;
+        } else {
+            final String err = "The crop-box has invalid value: {0}, "
+                + "possible values of crop-box: (trim-box|bleed-box|media-box)";
+            throw new IllegalArgumentException(MessageFormat.format(err,
+                    new Object[]{cropBoxSelector}));
+        }
+    }
+
+    /**
+     * Returns the trim box for the page. This is equal to the page size given in XSL-FO.
+     * After production the printed media is trimmed to this rectangle.
+     * @return the trim box
+     */
+    public Rectangle getTrimBox() {
+        return this.trimBox;
+    }
+
+    /**
+     * Returns the bleed box for the page.
+     * @return the bleed box
+     */
+    public Rectangle getBleedBox() {
+        return this.bleedBox;
+    }
+
+    /**
+     * Returns the media box for the page.
+     * @return the media box
+     */
+    public Rectangle getMediaBox() {
+        return this.mediaBox;
+    }
+
+    /**
+     * Returns the crop box for the page. The crop box is used by Adobe Acrobat to select which
+     * parts of the document shall be displayed and it also defines the rectangle to which a
+     * RIP will clip the document. For bitmap output, this defines the size of the size of
+     * the bitmap.
+     * @return the crop box
+     */
+    public Rectangle getCropBox() {
+        return this.cropBox;
     }
 
     /**
@@ -84,58 +172,8 @@ public final class PageBoundariesAttributes {
      * @param cropOffsets the given crop offsets
      * @return the calculated MediaBox rectangle
      */
-    public static Rectangle getMediaBoxRectangle(Rectangle trimBox, String cropOffsets) {
+    public static Rectangle getCropMarksAreaRectangle(Rectangle trimBox, String cropOffsets) {
         return getRectagleUsingOffset(trimBox, cropOffsets);
-    }
-
-    /**
-     * The crop box controls how Acrobat display the page or how the Java2DRenderer
-     * sizes the output media. The PDF spec defines that the CropBox defaults to the MediaBox.
-     * <p/>
-     * The possible values of crop-box: (trim-box|bleed-box|media-box)
-     * Default value: media-box
-     *
-     * @param trimBox  the TrimBox rectangle
-     * @param bleedBox the BleedBox rectangle
-     * @param mediaBox the MediaBox rectangle
-     * @param value    the crop-box value
-     * @return the calculated CropBox rectangle
-     */
-    public static Rectangle getCropBoxRectangle(final Rectangle trimBox, final Rectangle bleedBox,
-                                                final Rectangle mediaBox, final String value) {
-        final String err = "The crop-box has invalid value: {0}, "
-                + "possible values of crop-box: (trim-box|bleed-box|media-box)";
-
-        if ("trim-box".equals(value)) {
-            return trimBox;
-        } else if ("bleed-box".equals(value)) {
-            return bleedBox;
-        } else if ("media-box".equals(value) || value == null || "".equals(value)) {
-            return mediaBox;
-        } else {
-            throw new IllegalArgumentException(MessageFormat.format(err, new Object[]{value}));
-        }
-    }
-
-    /**
-     * The crop box controls how Acrobat display the page or how the Java2DRenderer
-     * sizes the output media. The PDF spec defines that the CropBox defaults to the  MediaBox
-     * <p/>
-     * The possible values of crop-box: (trim-box|bleed-box|media-box)
-     * Default value: media-box
-     *
-     * @param trimBox    the TrimBox rectangle
-     * @param bleed      the given bleed widths
-     * @param cropOffset the given crop offsets
-     * @param value      the crop-box value
-     * @return the calculated CropBox rectangle
-     */
-    public static Rectangle getCropBoxRectangle(final Rectangle trimBox, final String bleed,
-                                                final String cropOffset, final String value) {
-        Rectangle bleedBox = getBleedBoxRectangle(trimBox, bleed);
-        Rectangle mediaBox = getMediaBoxRectangle(trimBox, cropOffset);
-
-        return getCropBoxRectangle(trimBox, bleedBox, mediaBox, value);
     }
 
     private static Rectangle getRectagleUsingOffset(Rectangle originalRect, String offset) {
@@ -144,7 +182,7 @@ public final class PageBoundariesAttributes {
         }
 
         String[] bleeds = offset.split(" ");
-        int[] coords = new int[4]; // top, rigth, bottom, left
+        int[] coords = new int[4]; // top, right, bottom, left
         if (bleeds.length == 1) {
             coords[0] = getLengthIntValue(bleeds[0]);
             coords[1] = coords[0];
@@ -183,4 +221,5 @@ public final class PageBoundariesAttributes {
             throw new IllegalArgumentException(MessageFormat.format(err, new Object[]{length}));
         }
     }
+
 }
