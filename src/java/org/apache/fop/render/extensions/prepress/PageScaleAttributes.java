@@ -26,15 +26,13 @@ import org.apache.xmlgraphics.util.QName;
 
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 
-
 /**
- * This class contains definition of 'scale' FOF's extension attribute for XSL-FO, and provides
- * utility method to parse the possible values of this attibute
+ * This class provides utility methods to parse the 'fox:scale' extension attribute.
  */
 public final class PageScaleAttributes {
 
     /**
-     * The extension 'scale' attribute for simple-page-master element
+     * The extension 'scale' attribute for the simple-page-master element.
      */
     public static final QName EXT_PAGE_SCALE
             = new QName(ExtensionElementMapping.URI, null, "scale");
@@ -47,8 +45,8 @@ public final class PageScaleAttributes {
     }
 
     /**
-     * Compute scale parameters from given fox:scale attribute which has format: scaleX [scaleY]
-     * If scaleY is not defined, it equals scaleX
+     * Compute scale parameters from given fox:scale attribute which has the format: scaleX [scaleY]
+     * If scaleY is not defined, it equals scaleX.
      * @param scale scale attribute, input format: scaleX [scaleY]
      * @return the pair of (sx, sy) values
      */

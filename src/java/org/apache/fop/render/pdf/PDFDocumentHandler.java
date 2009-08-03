@@ -24,6 +24,7 @@ import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.geom.Rectangle2D.Double;
 import java.io.IOException;
 import java.util.Map;
 
@@ -40,7 +41,7 @@ import org.apache.fop.pdf.PDFPage;
 import org.apache.fop.pdf.PDFReference;
 import org.apache.fop.pdf.PDFResourceContext;
 import org.apache.fop.pdf.PDFResources;
-import org.apache.fop.render.extensions.prepress.PageBoundariesAttributes;
+import org.apache.fop.render.extensions.prepress.PageBoundaries;
 import org.apache.fop.render.extensions.prepress.PageScaleAttributes;
 import org.apache.fop.render.intermediate.AbstractBinaryWritingIFDocumentHandler;
 import org.apache.fop.render.intermediate.IFContext;
@@ -171,22 +172,12 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
                 throws IFException {
         this.pdfResources = this.pdfDoc.getResources();
 
-        String bleedWidth = (String) getContext().getForeignAttribute(
-                PageBoundariesAttributes.EXT_BLEED);
-        String cropOffset = (String) getContext().getForeignAttribute(
-                PageBoundariesAttributes.EXT_CROP_OFFSET);
-        String cropBoxValue = (String) getContext().getForeignAttribute(
-                PageBoundariesAttributes.EXT_CROP_BOX);
+        PageBoundaries boundaries = new PageBoundaries(size, getContext().getForeignAttributes());
 
-        Rectangle trimBox = new Rectangle(0, 0,
-                (int) size.getWidth(), (int) size.getHeight());
-        Rectangle bleedBox
-                = PageBoundariesAttributes.getBleedBoxRectangle(trimBox, bleedWidth);
-        Rectangle mediaBox
-                = PageBoundariesAttributes.getMediaBoxRectangle(trimBox, cropOffset);
-
-        Rectangle cropBox = PageBoundariesAttributes.getCropBoxRectangle(
-                trimBox, bleedBox, mediaBox, cropBoxValue);
+        Rectangle trimBox = boundaries.getTrimBox();
+        Rectangle bleedBox = boundaries.getBleedBox();
+        Rectangle mediaBox = boundaries.getMediaBox();
+        Rectangle cropBox = boundaries.getCropBox();
 
         // set scale attributes
         double scaleX = 1;
@@ -202,22 +193,10 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
         this.currentPage = this.pdfDoc.getFactory().makePage(
                 this.pdfResources,
                 index,
-                new Rectangle2D.Double(mediaBox.getX() * scaleX / 1000,
-                        mediaBox.getY() * scaleY / 1000,
-                        mediaBox.getWidth() * scaleX / 1000,
-                        mediaBox.getHeight() * scaleY / 1000),
-                new Rectangle2D.Double(cropBox.getX() * scaleX / 1000,
-                        cropBox.getY() * scaleY / 1000,
-                        cropBox.getWidth() * scaleX / 1000,
-                        cropBox.getHeight() * scaleY / 1000),
-                new Rectangle2D.Double(bleedBox.getX() * scaleX / 1000,
-                        bleedBox.getY() * scaleY / 1000,
-                        bleedBox.getWidth() * scaleX / 1000,
-                        bleedBox.getHeight() * scaleY / 1000),
-                new Rectangle2D.Double(trimBox.getX() * scaleX / 1000,
-                        trimBox.getY() * scaleY / 1000,
-                        trimBox.getWidth() * scaleX / 1000,
-                        trimBox.getHeight() * scaleY / 1000));
+                toPointAndScale(mediaBox, scaleX, scaleY),
+                toPointAndScale(cropBox, scaleX, scaleY),
+                toPointAndScale(bleedBox, scaleX, scaleY),
+                toPointAndScale(trimBox, scaleX, scaleY));
 
         pdfUtil.generatePageLabel(index, name);
 
@@ -230,6 +209,13 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
                 (scaleY * size.height) / 1000f);
         basicPageTransform.scale(scaleX, scaleY);
         generator.concatenate(basicPageTransform);
+    }
+
+    private Double toPointAndScale(Rectangle box, double scaleX, double scaleY) {
+        return new Rectangle2D.Double(box.getX() * scaleX / 1000,
+                box.getY() * scaleY / 1000,
+                box.getWidth() * scaleX / 1000,
+                box.getHeight() * scaleY / 1000);
     }
 
     /** {@inheritDoc} */

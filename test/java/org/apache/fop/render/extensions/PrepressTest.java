@@ -24,7 +24,7 @@ import java.awt.geom.Point2D;
 
 import junit.framework.TestCase;
 
-import org.apache.fop.render.extensions.prepress.PageBoundariesAttributes;
+import org.apache.fop.render.extensions.prepress.PageBoundaries;
 import org.apache.fop.render.extensions.prepress.PageScaleAttributes;
 
 /**
@@ -80,47 +80,59 @@ public class PrepressTest extends TestCase {
      * Tests for page boundaries
      */
     public void testBoxOk1() throws Exception {
-        Rectangle res = PageBoundariesAttributes.getBleedBoxRectangle(TEST_AREA, null);
+        Rectangle res = PageBoundaries.getBleedBoxRectangle(TEST_AREA, null);
         assertSame("Result should be the same as TEST_AREA object", res, TEST_AREA);
 
-        res = PageBoundariesAttributes.getBleedBoxRectangle(null, BLEED1);
+        res = PageBoundaries.getBleedBoxRectangle(null, BLEED1);
         assertNull(res);
     }
 
     public void testBoxOk2() throws Exception {
-        Rectangle res1 = PageBoundariesAttributes.getBleedBoxRectangle(TEST_AREA, BLEED1);
-        assertNotNull("Expected not null object", res1);
-        assertEquals(-5000, res1.getX(), 1);
-        assertEquals(-5000, res1.getY(), 1);
-        assertEquals(30000, res1.getWidth(), 1);
-        assertEquals(25000, res1.getHeight(), 1);
+        PageBoundaries boundaries = new PageBoundaries(
+                TEST_AREA.getSize(), BLEED1, CROP_OFFSET1, null);
+        assertNotNull("Expected not null object", boundaries.getBleedBox());
+        assertEquals(-5000, boundaries.getBleedBox().getX(), 1);
+        assertEquals(-5000, boundaries.getBleedBox().getY(), 1);
+        assertEquals(30000, boundaries.getBleedBox().getWidth(), 1);
+        assertEquals(25000, boundaries.getBleedBox().getHeight(), 1);
 
-        Rectangle res2 = PageBoundariesAttributes.getMediaBoxRectangle(TEST_AREA, CROP_OFFSET1);
-        assertNotNull("Expected not null object", res2);
-        assertEquals(-8000, res2.getX(), 1);
-        assertEquals(-8000, res2.getY(), 1);
-        assertEquals(36000, res2.getWidth(), 1);
-        assertEquals(31000, res2.getHeight(), 1);
+        assertNotNull("Expected not null object", boundaries.getMediaBox());
+        assertEquals(-8000, boundaries.getMediaBox().getX(), 1);
+        assertEquals(-8000, boundaries.getMediaBox().getY(), 1);
+        assertEquals(36000, boundaries.getMediaBox().getWidth(), 1);
+        assertEquals(31000, boundaries.getMediaBox().getHeight(), 1);
 
-        Rectangle res3 = PageBoundariesAttributes.getCropBoxRectangle(
-                TEST_AREA, res1, res2, "media-box");
-        assertNotNull("Expected not null object", res3);
-        assertEquals(res3, res2);
+        assertEquals(TEST_AREA, boundaries.getTrimBox());
+        assertEquals(boundaries.getMediaBox(), boundaries.getCropBox());
 
-        res3 = PageBoundariesAttributes.getCropBoxRectangle(
-                TEST_AREA, res1, res2, "bleed-box");
-        assertNotNull("Expected not null object", res3);
-        assertEquals(res3, res1);
+        boundaries = new PageBoundaries(
+                TEST_AREA.getSize(), BLEED1, CROP_OFFSET1, "media-box");
+        assertEquals(boundaries.getMediaBox(), boundaries.getCropBox());
 
-        res3 = PageBoundariesAttributes.getCropBoxRectangle(
-                TEST_AREA, res1, res2, "trim-box");
-        assertNotNull("Expected not null object", res3);
-        assertEquals(res3, TEST_AREA);
+        boundaries = new PageBoundaries(
+                TEST_AREA.getSize(), BLEED1, CROP_OFFSET1, "bleed-box");
+        assertEquals(boundaries.getBleedBox(), boundaries.getCropBox());
+
+        boundaries = new PageBoundaries(
+                TEST_AREA.getSize(), BLEED1, CROP_OFFSET1, "trim-box");
+        assertEquals(boundaries.getTrimBox(), boundaries.getCropBox());
+        assertEquals(TEST_AREA, boundaries.getCropBox());
+
+        boundaries = new PageBoundaries(
+                TEST_AREA.getSize(), BLEED1, null, null);
+        assertNotNull("Expected not null object", boundaries.getBleedBox());
+        assertEquals(-5000, boundaries.getBleedBox().getX(), 1);
+        assertEquals(-5000, boundaries.getBleedBox().getY(), 1);
+        assertEquals(30000, boundaries.getBleedBox().getWidth(), 1);
+        assertEquals(25000, boundaries.getBleedBox().getHeight(), 1);
+        assertEquals(boundaries.getBleedBox(), boundaries.getCropBox());
+        assertEquals(boundaries.getBleedBox(), boundaries.getMediaBox());
     }
 
     public void testBoxIllArgExc() throws Exception {
         try {
-            Rectangle res = PageBoundariesAttributes.getBleedBoxRectangle(TEST_AREA, "0");
+            PageBoundaries boundaries = new PageBoundaries(
+                    TEST_AREA.getSize(), "0", null, null);
             fail("Expected IllegalArgumentException. Box should have units");
         } catch (IllegalArgumentException iae) {
             // Good!
