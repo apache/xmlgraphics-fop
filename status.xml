@@ -58,6 +58,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="CB" type="add">
+        AFP Output: Added support for IMM Extension on fo:simple-page-master.
+      </action>
       <action context="Renderers" dev="JM" type="add" fixes-bug="47311" due-to="Peter Coppens">
         Added an initial set of extensions for prepress support (fox:bleed, fox:crop-offset,
         fox:crop-box and fox:scale). This is currently supported only by PDF and Java2D renderers.

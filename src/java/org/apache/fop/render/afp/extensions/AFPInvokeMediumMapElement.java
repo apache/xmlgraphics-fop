@@ -26,8 +26,8 @@ import org.apache.fop.fo.extensions.ExtensionAttachment;
 
 /**
  * This class represents an AFP-specific extension element to embed Invoke Medium Map (IMM)
- * fields at the beginning of a page group. The element is optional and expected as a direct child
- * of an fo:page-sequence.
+ * fields at the beginning of a page group or just prior to a Page. The element is optional
+ * and expected as a direct child of an fo:page-sequence or fo:simple-page-master
  */
 public class AFPInvokeMediumMapElement extends AbstractAFPExtensionObject {
 
@@ -42,7 +42,9 @@ public class AFPInvokeMediumMapElement extends AbstractAFPExtensionObject {
     /** {@inheritDoc} */
     protected void startOfNode() throws FOPException {
         super.startOfNode();
-        if (parent.getNameId() != Constants.FO_PAGE_SEQUENCE) {
+        if (parent.getNameId() != Constants.FO_PAGE_SEQUENCE
+                && parent.getNameId() != Constants.FO_SIMPLE_PAGE_MASTER) {
+            
             invalidChildError(getLocator(), parent.getName(), getNamespaceURI(), getName(),
                 "rule.childOfPageSequence");
         }

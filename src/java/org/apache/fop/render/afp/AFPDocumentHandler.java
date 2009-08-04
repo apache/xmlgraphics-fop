@@ -77,6 +77,9 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     private Map/*<String,String>*/pageSegmentMap
         = new java.util.HashMap/*<String,String>*/();
 
+    /** Medium Map referenced on previous page **/
+    private String lastMediumMap;
+
     private static final int LOC_ELSEWHERE = 0;
     private static final int LOC_FOLLOWING_PAGE_SEQUENCE = 1;
     private static final int LOC_IN_PAGE_HEADER = 2;
@@ -299,15 +302,19 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
                 }
             }
         } else if (extension instanceof AFPInvokeMediumMap) {
-            if (this.location != LOC_FOLLOWING_PAGE_SEQUENCE) {
+            if (this.location != LOC_FOLLOWING_PAGE_SEQUENCE
+                    && this.location != LOC_IN_PAGE_HEADER) {
+
                 throw new IFException(
-                    "AFP IMM extension must be between page-sequence and the first page: "
-                        + extension, null);
+                    "AFP IMM extension must be between page-sequence"
+                    + " and the first page or child of page-header: "
+                    + extension, null);
             }
             AFPInvokeMediumMap imm = (AFPInvokeMediumMap)extension;
             String mediumMap = imm.getName();
-            if (mediumMap != null) {
+            if (mediumMap != null && !mediumMap.equals(lastMediumMap)) {
                 dataStream.createInvokeMediumMap(mediumMap);
+                lastMediumMap = mediumMap;
             }
         } else if (extension instanceof AFPIncludeFormMap) {
             AFPIncludeFormMap formMap = (AFPIncludeFormMap)extension;
