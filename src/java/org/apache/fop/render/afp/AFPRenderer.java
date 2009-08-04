@@ -181,6 +181,9 @@ public class AFPRenderer extends AbstractPathOrientedRenderer implements AFPCust
     /** the shading mode for filled rectangles */
     private AFPShadingMode shadingMode = AFPShadingMode.COLOR;
 
+    /** medium map referenced used on previous page **/
+    private String lastMediumMap;
+
     /**
      * Constructor for AFPRenderer.
      */
@@ -379,6 +382,9 @@ public class AFPRenderer extends AbstractPathOrientedRenderer implements AFPCust
             int pageRotation = paintingState.getPageRotation();
 
             int resolution = paintingState.getResolution();
+
+            // IMM should occur before BPG
+            renderInvokeMediumMap(pageViewport);
 
             dataStream.startPage(pageWidth, pageHeight, pageRotation,
                     resolution, resolution);
@@ -704,6 +710,35 @@ public class AFPRenderer extends AbstractPathOrientedRenderer implements AFPCust
     }
 
     /**
+     * checks for IMM Extension and renders if found and different
+     * from previous page
+     *
+     * @param pageViewport the page object
+     */
+    private void renderInvokeMediumMap(PageViewport pageViewport) {
+         if (pageViewport.getExtensionAttachments() != null
+                && pageViewport.getExtensionAttachments().size() > 0) {
+             Iterator it = pageViewport.getExtensionAttachments().iterator();
+             while (it.hasNext()) {
+                 ExtensionAttachment attachment = (ExtensionAttachment) it.next();
+                 if (AFPExtensionAttachment.CATEGORY.equals(attachment.getCategory())) {
+                     AFPExtensionAttachment aea = (AFPExtensionAttachment)attachment;
+                     if (AFPElementMapping.INVOKE_MEDIUM_MAP.equals(aea.getElementName())) {
+                         AFPInvokeMediumMap imm = (AFPInvokeMediumMap)attachment;
+                         String mediumMap = imm.getName();
+                         if (mediumMap != null) {
+                             if (!mediumMap.equals(lastMediumMap)) {
+                                dataStream.createInvokeMediumMap(mediumMap);
+                                 lastMediumMap = mediumMap;
+                             }
+                         }
+                     }
+                 }
+             }
+         }
+    }
+
+    /**
      * Method to render the page extension.
      * <p>
      *
@@ -720,27 +755,29 @@ public class AFPRenderer extends AbstractPathOrientedRenderer implements AFPCust
             while (it.hasNext()) {
                 ExtensionAttachment attachment = (ExtensionAttachment) it.next();
                 if (AFPPageSetup.CATEGORY.equals(attachment.getCategory())) {
-                    AFPPageSetup aps = (AFPPageSetup) attachment;
-                    String element = aps.getElementName();
-                    if (AFPElementMapping.INCLUDE_PAGE_OVERLAY.equals(element)) {
-                        String overlay = aps.getName();
-                        if (overlay != null) {
-                            dataStream.createIncludePageOverlay(overlay);
-                        }
-                    } else if (AFPElementMapping.INCLUDE_PAGE_SEGMENT
-                            .equals(element)) {
-                        String name = aps.getName();
-                        String source = aps.getValue();
-                        pageSegmentMap.put(source, name);
-                    } else if (AFPElementMapping.TAG_LOGICAL_ELEMENT
-                            .equals(element)) {
-                        String name = aps.getName();
-                        String value = aps.getValue();
-                        dataStream.createTagLogicalElement(name, value);
-                    } else if (AFPElementMapping.NO_OPERATION.equals(element)) {
-                        String content = aps.getContent();
-                        if (content != null) {
-                            dataStream.createNoOperation(content);
+                    if (attachment instanceof AFPPageSetup) {
+                        AFPPageSetup aps = (AFPPageSetup) attachment;
+                        String element = aps.getElementName();
+                        if (AFPElementMapping.INCLUDE_PAGE_OVERLAY.equals(element)) {
+                            String overlay = aps.getName();
+                            if (overlay != null) {
+                                dataStream.createIncludePageOverlay(overlay);
+                            }
+                        } else if (AFPElementMapping.INCLUDE_PAGE_SEGMENT
+                                .equals(element)) {
+                            String name = aps.getName();
+                            String source = aps.getValue();
+                            pageSegmentMap.put(source, name);
+                        } else if (AFPElementMapping.TAG_LOGICAL_ELEMENT
+                                .equals(element)) {
+                            String name = aps.getName();
+                            String value = aps.getValue();
+                            dataStream.createTagLogicalElement(name, value);
+                        } else if (AFPElementMapping.NO_OPERATION.equals(element)) {
+                            String content = aps.getContent();
+                            if (content != null) {
+                                dataStream.createNoOperation(content);
+                            }
                         }
                     }
                 }
