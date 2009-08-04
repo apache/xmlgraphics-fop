@@ -22,9 +22,6 @@ package org.apache.fop.render.svg;
 import java.awt.Dimension;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -66,6 +63,9 @@ public class SVGDocumentHandler extends AbstractSVGDocumentHandler {
     private StreamResult firstStream;
     private StreamResult currentStream;
 
+    /** Used for single-page documents rendered to a DOM or SAX. */
+    private Result simpleResult;
+
     private Document reusedParts;
 
     /**
@@ -92,7 +92,7 @@ public class SVGDocumentHandler extends AbstractSVGDocumentHandler {
                     getUserAgent().getOutputFile());
             this.firstStream = (StreamResult)result;
         } else {
-            throw new UnsupportedOperationException("Result is not supported: " + result);
+            this.simpleResult = result;
         }
     }
 
@@ -152,46 +152,19 @@ public class SVGDocumentHandler extends AbstractSVGDocumentHandler {
     /** {@inheritDoc} */
     public void startPage(int index, String name, String pageMasterName, Dimension size)
                 throws IFException {
-        OutputStream out;
-        try {
-            if (index == 0) {
-                out = null;
-            } else {
-                out = this.multiFileUtil.createOutputStream(index);
-                if (out == null) {
-                    //TODO Convert to event
-                    throw new IFException(
-                            "No filename information available. Stopping after first page.", null);
-                }
-            }
-        } catch (IOException ioe) {
-            throw new IFException("I/O exception while setting up output file", ioe);
-        }
-        if (out == null) {
-            this.handler = decorate(createContentHandler(this.firstStream));
+        if (this.multiFileUtil != null) {
+            prepareHandlerWithOutputStream(index);
         } else {
-            this.currentStream = new StreamResult(out);
-            this.handler = decorate(createContentHandler(this.currentStream));
+            if (this.simpleResult == null) {
+                //Only one page is supported with this approach at the moment
+                throw new IFException(
+                        "Only one page is supported for output with the given Result instance!",
+                        null);
+            }
+            super.setResult(this.simpleResult);
+            this.simpleResult = null;
         }
-        if (false) {
-            final ContentHandler originalHandler = this.handler;
-            this.handler = decorate((ContentHandler)Proxy.newProxyInstance(
-                    ContentHandler.class.getClassLoader(),
-                    new Class[] {ContentHandler.class},
-                    new InvocationHandler() {
-                        public Object invoke(Object proxy, Method method, Object[] args)
-                                throws Throwable {
-                            String methodName = method.getName();
-                            System.out.println(methodName + ":");
-                            if (args != null) {
-                                for (int i = 0; i < args.length; i++) {
-                                    System.out.println("  " + args[i]);
-                                }
-                            }
-                            return method.invoke(originalHandler, args);
-                        }
-                    }));
-        }
+
         try {
             handler.startDocument();
             handler.startPrefixMapping("", NAMESPACE);
@@ -224,6 +197,30 @@ public class SVGDocumentHandler extends AbstractSVGDocumentHandler {
             }
         } catch (SAXException e) {
             throw new IFException("SAX error in startPage()", e);
+        }
+    }
+
+    private void prepareHandlerWithOutputStream(int index) throws IFException {
+        OutputStream out;
+        try {
+            if (index == 0) {
+                out = null;
+            } else {
+                out = this.multiFileUtil.createOutputStream(index);
+                if (out == null) {
+                    //TODO Convert to event
+                    throw new IFException(
+                            "No filename information available. Stopping after first page.", null);
+                }
+            }
+        } catch (IOException ioe) {
+            throw new IFException("I/O exception while setting up output file", ioe);
+        }
+        if (out == null) {
+            this.handler = decorate(createContentHandler(this.firstStream));
+        } else {
+            this.currentStream = new StreamResult(out);
+            this.handler = decorate(createContentHandler(this.currentStream));
         }
     }
 
