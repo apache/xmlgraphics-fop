@@ -26,12 +26,13 @@ import org.apache.fop.fonts.TrueTypeAnsiTestCase;
 import org.apache.fop.image.loader.batik.ImageLoaderTestCase;
 import org.apache.fop.image.loader.batik.ImagePreloaderTestCase;
 import org.apache.fop.intermediate.IFMimickingTestCase;
+import org.apache.fop.render.extensions.prepress.PageBoundariesTest;
+import org.apache.fop.render.extensions.prepress.PageScaleTest;
 import org.apache.fop.render.pdf.PDFAConformanceTestCase;
 import org.apache.fop.render.pdf.PDFCMapTestCase;
 import org.apache.fop.render.pdf.PDFEncodingTestCase;
 import org.apache.fop.render.pdf.PDFsRGBSettingsTestCase;
 import org.apache.fop.render.rtf.RichTextFormatTestSuite;
-import org.apache.fop.render.extensions.PrepressTest;
 
 /**
  * Test suite for basic functionality of FOP.
@@ -57,7 +58,8 @@ public class StandardTestSuite {
         suite.addTest(new TestSuite(ImageLoaderTestCase.class));
         suite.addTest(new TestSuite(ImagePreloaderTestCase.class));
         suite.addTest(new TestSuite(IFMimickingTestCase.class));
-        suite.addTest(new TestSuite(PrepressTest.class));
+        suite.addTest(new TestSuite(PageBoundariesTest.class));
+        suite.addTest(new TestSuite(PageScaleTest.class));
         //$JUnit-END$
         return suite;
     }
