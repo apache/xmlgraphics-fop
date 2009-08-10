@@ -60,6 +60,8 @@ public class PageBoundaries {
     private static final Pattern SIZE_UNIT_PATTERN
             = Pattern.compile("^(-?\\d*\\.?\\d*)(px|in|cm|mm|pt|pc|mpt)$");
 
+    private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s+");
+
     private Rectangle trimBox;
     private Rectangle bleedBox;
     private Rectangle mediaBox;
@@ -146,8 +148,7 @@ public class PageBoundaries {
     /**
      * Returns the crop box for the page. The crop box is used by Adobe Acrobat to select which
      * parts of the document shall be displayed and it also defines the rectangle to which a
-     * RIP will clip the document. For bitmap output, this defines the size of the size of
-     * the bitmap.
+     * RIP will clip the document. For bitmap output, this defines the size of the bitmap.
      * @return the crop box
      */
     public Rectangle getCropBox() {
@@ -161,8 +162,8 @@ public class PageBoundaries {
      * @param bleed   the given bleed widths
      * @return the calculated BleedBox rectangle
      */
-    public static Rectangle getBleedBoxRectangle(Rectangle trimBox, String bleed) {
-        return getRectagleUsingOffset(trimBox, bleed);
+    private static Rectangle getBleedBoxRectangle(Rectangle trimBox, String bleed) {
+        return getRectangleUsingOffset(trimBox, bleed);
     }
 
     /**
@@ -172,42 +173,51 @@ public class PageBoundaries {
      * @param cropOffsets the given crop offsets
      * @return the calculated MediaBox rectangle
      */
-    public static Rectangle getCropMarksAreaRectangle(Rectangle trimBox, String cropOffsets) {
-        return getRectagleUsingOffset(trimBox, cropOffsets);
+    private static Rectangle getCropMarksAreaRectangle(Rectangle trimBox, String cropOffsets) {
+        return getRectangleUsingOffset(trimBox, cropOffsets);
     }
 
-    private static Rectangle getRectagleUsingOffset(Rectangle originalRect, String offset) {
+    private static Rectangle getRectangleUsingOffset(Rectangle originalRect, String offset) {
         if (offset == null || "".equals(offset) || originalRect == null) {
             return originalRect;
         }
 
-        String[] bleeds = offset.split(" ");
+        String[] offsets = WHITESPACE_PATTERN.split(offset);
         int[] coords = new int[4]; // top, right, bottom, left
-        if (bleeds.length == 1) {
-            coords[0] = getLengthIntValue(bleeds[0]);
+        switch (offsets.length) {
+        case 1:
+            coords[0] = getLengthIntValue(offsets[0]);
             coords[1] = coords[0];
             coords[2] = coords[0];
             coords[3] = coords[0];
-        } else if (bleeds.length == 2) {
-            coords[0] = getLengthIntValue(bleeds[0]);
+            break;
+        case 2:
+            coords[0] = getLengthIntValue(offsets[0]);
+            coords[1] = getLengthIntValue(offsets[1]);
             coords[2] = coords[0];
-            coords[1] = getLengthIntValue(bleeds[1]);
             coords[3] = coords[1];
-        } else if (bleeds.length == 3) {
-            coords[0] = getLengthIntValue(bleeds[0]);
-            coords[1] = getLengthIntValue(bleeds[1]);
+            break;
+        case 3:
+            coords[0] = getLengthIntValue(offsets[0]);
+            coords[1] = getLengthIntValue(offsets[1]);
+            coords[2] = getLengthIntValue(offsets[2]);
             coords[3] = coords[1];
-            coords[2] = getLengthIntValue(bleeds[2]);
-        } else if (bleeds.length == 4) {
-            coords[0] = getLengthIntValue(bleeds[0]);
-            coords[1] = getLengthIntValue(bleeds[1]);
-            coords[2] = getLengthIntValue(bleeds[2]);
-            coords[3] = getLengthIntValue(bleeds[3]);
+            break;
+        case 4:
+            coords[0] = getLengthIntValue(offsets[0]);
+            coords[1] = getLengthIntValue(offsets[1]);
+            coords[2] = getLengthIntValue(offsets[2]);
+            coords[3] = getLengthIntValue(offsets[3]);
+            break;
+        default:
+            // TODO throw appropriate exception that can be caught by the event
+            // notification mechanism
+            throw new IllegalArgumentException("Too many arguments");
         }
-        return new Rectangle((int) (originalRect.getX() - coords[3]),
-                (int) (originalRect.getY() - coords[0]),
-                (int) (originalRect.getWidth() + coords[3] + coords[1]),
-                (int) (originalRect.getHeight() + coords[0] + coords[2]));
+        return new Rectangle(originalRect.x - coords[3],
+                originalRect.y - coords[0],
+                originalRect.width + coords[3] + coords[1],
+                originalRect.height + coords[0] + coords[2]);
     }
 
     private static int getLengthIntValue(final String length) {
