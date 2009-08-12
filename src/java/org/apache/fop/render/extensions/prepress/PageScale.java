@@ -21,6 +21,7 @@ package org.apache.fop.render.extensions.prepress;
 
 import java.awt.geom.Point2D;
 import java.text.MessageFormat;
+import java.util.regex.Pattern;
 
 import org.apache.xmlgraphics.util.QName;
 
@@ -29,7 +30,7 @@ import org.apache.fop.fo.extensions.ExtensionElementMapping;
 /**
  * This class provides utility methods to parse the 'fox:scale' extension attribute.
  */
-public final class PageScaleAttributes {
+public final class PageScale {
 
     /**
      * The extension 'scale' attribute for the simple-page-master element.
@@ -37,11 +38,12 @@ public final class PageScaleAttributes {
     public static final QName EXT_PAGE_SCALE
             = new QName(ExtensionElementMapping.URI, null, "scale");
 
+    private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s+");
 
     /**
      * Utility classes should not have a public or default constructor
      */
-    private PageScaleAttributes() {
+    private PageScale() {
     }
 
     /**
@@ -50,31 +52,41 @@ public final class PageScaleAttributes {
      * @param scale scale attribute, input format: scaleX [scaleY]
      * @return the pair of (sx, sy) values
      */
-    public static Point2D.Double getScaleAttributes(String scale) {
+    public static Point2D getScale(String scale) {
+        // TODO throw appropriate exceptions that can be caught by the event
+        // notification mechanism
         final String err = "Extension 'scale' attribute has incorrect value(s): {0}";
 
-        if (scale == null) {
+        if (scale == null || scale.equals("")) {
             return null;
         }
 
-        Point2D.Double result = null;
-
+        String[] scales = WHITESPACE_PATTERN.split(scale);
+        double scaleX;
         try {
-            String[] scales = scale.split(" ");
-            if (scales.length > 0) {
-                result = new Point2D.Double(Double.parseDouble(scales[0]),
-                        Double.parseDouble(scales[0]));
-            }
-            if (scales.length > 1) {
-                result.y = Double.parseDouble(scales[1]);
-            }
-            if (result.x <= 0 || result.y <= 0) {
-                throw new IllegalArgumentException(MessageFormat.format(err, new Object[]{scale}));
-            }
+            scaleX = Double.parseDouble(scales[0]);
         } catch (NumberFormatException nfe) {
             throw new IllegalArgumentException(MessageFormat.format(err, new Object[]{scale}));
         }
+        double scaleY;
+        switch (scales.length) {
+        case 1:
+            scaleY = scaleX;
+            break;
+        case 2:
+            try {
+                scaleY = Double.parseDouble(scales[1]);
+            } catch (NumberFormatException nfe) {
+                throw new IllegalArgumentException(MessageFormat.format(err, new Object[]{scale}));
+            }
+            break;
+        default:
+            throw new IllegalArgumentException("Too many arguments");
+        }
+        if (scaleX <= 0 || scaleY <= 0) {
+            throw new IllegalArgumentException(MessageFormat.format(err, new Object[]{scale}));
+        }
 
-        return result;
+        return new Point2D.Double(scaleX, scaleY);
     }
 }

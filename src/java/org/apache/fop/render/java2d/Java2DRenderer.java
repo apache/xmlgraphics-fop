@@ -77,7 +77,7 @@ import org.apache.fop.render.AbstractPathOrientedRenderer;
 import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.extensions.prepress.PageBoundaries;
-import org.apache.fop.render.extensions.prepress.PageScaleAttributes;
+import org.apache.fop.render.extensions.prepress.PageScale;
 import org.apache.fop.render.pdf.CTMHelper;
 import org.apache.fop.util.CharUtilities;
 import org.apache.fop.util.ColorUtil;
@@ -309,8 +309,8 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
             double scaleX = scaleFactor;
             double scaleY = scaleFactor;
             String scale = (String) currentPageViewport.getForeignAttributes().get(
-                    PageScaleAttributes.EXT_PAGE_SCALE);
-            Point2D scales = PageScaleAttributes.getScaleAttributes(scale);
+                    PageScale.EXT_PAGE_SCALE);
+            Point2D scales = PageScale.getScale(scale);
             if (scales != null) {
                 scaleX *= scales.getX();
                 scaleY *= scales.getY();

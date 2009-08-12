@@ -46,14 +46,14 @@ public class PageScaleTest extends TestCase {
 
     /** 1 value is used for both x and y. */
     public void testScale1() {
-        Point2D res = PageScaleAttributes.getScaleAttributes(".5");
+        Point2D res = PageScale.getScale(".5");
         assertEquals(0.5, res.getX(), 0.0);
         assertEquals(0.5, res.getY(), 0.0);
     }
 
     /** Two values, used resp. for x and y. */
     public void testScale2() {
-        Point2D res = PageScaleAttributes.getScaleAttributes("1. 1.2");
+        Point2D res = PageScale.getScale("1. \t \n 1.2");
         assertEquals(1.0, res.getX(), 0.0);
         assertEquals(1.2, res.getY(), 0.0);
     }
@@ -61,7 +61,7 @@ public class PageScaleTest extends TestCase {
     /** Scale must not contain units. */
     public void testScaleFail() {
         try {
-            PageScaleAttributes.getScaleAttributes("0.5mm 0.5cm");
+            PageScale.getScale("0.5mm 0.5cm");
             fail("Expected IllegalArgumentException. Scale shouldn't contain units");
         } catch (IllegalArgumentException iae) {
             // Good!
@@ -70,7 +70,9 @@ public class PageScaleTest extends TestCase {
 
     /** @{code null} is returned when scale is unspecified. */
     public void testScaleNull() {
-        Point2D res = PageScaleAttributes.getScaleAttributes(null);
+        Point2D res = PageScale.getScale(null);
+        assertNull("Result should be null", res);
+        res = PageScale.getScale("");
         assertNull("Result should be null", res);
     }
 
