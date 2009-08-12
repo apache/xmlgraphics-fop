@@ -42,7 +42,7 @@ import org.apache.fop.pdf.PDFReference;
 import org.apache.fop.pdf.PDFResourceContext;
 import org.apache.fop.pdf.PDFResources;
 import org.apache.fop.render.extensions.prepress.PageBoundaries;
-import org.apache.fop.render.extensions.prepress.PageScaleAttributes;
+import org.apache.fop.render.extensions.prepress.PageScale;
 import org.apache.fop.render.intermediate.AbstractBinaryWritingIFDocumentHandler;
 import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
@@ -183,8 +183,8 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
         double scaleX = 1;
         double scaleY = 1;
         String scale = (String) getContext().getForeignAttribute(
-                PageScaleAttributes.EXT_PAGE_SCALE);
-        Point2D scales = PageScaleAttributes.getScaleAttributes(scale);
+                PageScale.EXT_PAGE_SCALE);
+        Point2D scales = PageScale.getScale(scale);
         if (scales != null) {
             scaleX = scales.getX();
             scaleY = scales.getY();
