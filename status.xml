@@ -58,6 +58,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="CB" type="fix" fixes-bug="47694">
+        Dithered Background Shading can produce illegal AFP if objects are very small 
+      </action>
       <action context="Renderers" dev="CB" type="add">
         AFP Output: Added support for IMM Extension on fo:simple-page-master.
       </action>

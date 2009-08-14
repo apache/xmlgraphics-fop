@@ -55,6 +55,9 @@ public class AFPDitheredRectanglePainter extends AbstractAFPPainter {
     /** {@inheritDoc} */
     public void paint(PaintingInfo paintInfo) throws IOException {
         RectanglePaintingInfo rectanglePaintInfo = (RectanglePaintingInfo)paintInfo;
+        if (rectanglePaintInfo.getWidth() <= 0 || rectanglePaintInfo.getHeight() <= 0) {
+            return;
+        }
 
         int ditherMatrix = DitherUtil.DITHER_MATRIX_8X8;
         Dimension ditherSize = new Dimension(ditherMatrix, ditherMatrix);
