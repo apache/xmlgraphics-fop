@@ -41,7 +41,6 @@ public class PageBoundariesTest extends TestCase {
      * Default constructor.
      */
     public PageBoundariesTest() {
-        throw new UnsupportedOperationException("Not implemented"); // TODO
     }
 
     /**
@@ -84,6 +83,57 @@ public class PageBoundariesTest extends TestCase {
         assertEquals(30000, bleedBox.width);
         assertEquals(25000, bleedBox.height);
         assertEquals(bleedBox, boundaries.getMediaBox());
+    }
+
+    /** Two values for the properties. */
+    public void testBoundaries2Values() {
+        PageBoundaries boundaries = new PageBoundaries(
+                TEST_AREA_SIZE, "5pt  10pt", "6pt \t 12pt", null);
+        Rectangle bleedBox = boundaries.getBleedBox();
+        assertEquals(-10000, bleedBox.x);
+        assertEquals(-5000,  bleedBox.y);
+        assertEquals(40000,  bleedBox.width);
+        assertEquals(25000,  bleedBox.height);
+
+        Rectangle mediaBox = boundaries.getMediaBox();
+        assertEquals(-12000, mediaBox.x);
+        assertEquals(-6000,  mediaBox.y);
+        assertEquals(44000,  mediaBox.width);
+        assertEquals(27000,  mediaBox.height);
+    }
+
+    /** Three values for the properties. */
+    public void testBoundaries3Values() {
+        PageBoundaries boundaries = new PageBoundaries(
+                TEST_AREA_SIZE, "5pt  10pt 7pt", "6pt \t 12pt 14pt", null);
+        Rectangle bleedBox = boundaries.getBleedBox();
+        assertEquals(-10000, bleedBox.x);
+        assertEquals(-5000,  bleedBox.y);
+        assertEquals(40000,  bleedBox.width);
+        assertEquals(27000,  bleedBox.height);
+
+        Rectangle mediaBox = boundaries.getMediaBox();
+        assertEquals(-12000, mediaBox.x);
+        assertEquals(-6000,  mediaBox.y);
+        assertEquals(44000,  mediaBox.width);
+        assertEquals(35000,  mediaBox.height);
+    }
+
+    /** Four values for the properties. */
+    public void testBoundaries4Values() {
+        PageBoundaries boundaries = new PageBoundaries(
+                TEST_AREA_SIZE, "5pt  6pt 7pt   8pt", "9pt 10pt  11pt 12pt", null);
+        Rectangle bleedBox = boundaries.getBleedBox();
+        assertEquals(-8000,  bleedBox.x);
+        assertEquals(-5000,  bleedBox.y);
+        assertEquals(34000,  bleedBox.width);
+        assertEquals(27000,  bleedBox.height);
+
+        Rectangle mediaBox = boundaries.getMediaBox();
+        assertEquals(-12000, mediaBox.x);
+        assertEquals(-9000,  mediaBox.y);
+        assertEquals(42000,  mediaBox.width);
+        assertEquals(35000,  mediaBox.height);
     }
 
     /** Test for the different values of crop-box. */
