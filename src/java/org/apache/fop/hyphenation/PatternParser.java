@@ -30,7 +30,10 @@ import org.xml.sax.Attributes;
 // Java
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 
@@ -51,6 +54,7 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
     ArrayList exception;
     char hyphenChar;
     String errMsg;
+    boolean hasClasses = false;
 
     static final int ELEM_CLASSES = 1;
     static final int ELEM_EXCEPTIONS = 2;
@@ -58,21 +62,16 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
     static final int ELEM_HYPHEN = 4;
 
     public PatternParser() throws HyphenationException {
+        this.consumer = this;
         token = new StringBuffer();
         parser = createParser();
         parser.setContentHandler(this);
         parser.setErrorHandler(this);
         hyphenChar = '-';    // default
-
     }
 
-    public PatternParser(PatternConsumer consumer)
-            throws HyphenationException {
+    public PatternParser(PatternConsumer consumer) throws HyphenationException {
         this();
-        this.consumer = consumer;
-    }
-
-    public void setConsumer(PatternConsumer consumer) {
         this.consumer = consumer;
     }
 
@@ -249,15 +248,32 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
         return il.toString();
     }
 
+    protected void getExternalClasses() throws SAXException {
+        XMLReader mainParser = parser;
+        parser = createParser();
+        parser.setContentHandler(this);
+        parser.setErrorHandler(this);
+        InputStream stream = this.getClass().getResourceAsStream("classes.xml");
+        InputSource source = new InputSource(stream);
+        try {
+            parser.parse(source);
+        } catch (IOException ioe) {
+            throw new SAXException(ioe.getMessage());
+        } finally {
+            parser = mainParser;
+        }
+    }
+    
     //
     // ContentHandler methods
     //
 
     /**
      * {@inheritDoc}
+     * @throws SAXException 
      */
     public void startElement(String uri, String local, String raw,
-                             Attributes attrs) {
+                             Attributes attrs) throws SAXException {
         if (local.equals("hyphen-char")) {
             String h = attrs.getValue("value");
             if (h != null && h.length() == 1) {
@@ -266,8 +282,14 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
         } else if (local.equals("classes")) {
             currElement = ELEM_CLASSES;
         } else if (local.equals("patterns")) {
+            if (!hasClasses) {
+                getExternalClasses();
+            }
             currElement = ELEM_PATTERNS;
         } else if (local.equals("exceptions")) {
+            if (!hasClasses) {
+                getExternalClasses();
+            }
             currElement = ELEM_EXCEPTIONS;
             exception = new ArrayList();
         } else if (local.equals("hyphen")) {
@@ -310,6 +332,9 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
             if (currElement != ELEM_HYPHEN) {
                 token.setLength(0);
             }
+        }
+        if (currElement == ELEM_CLASSES) {
+            hasClasses = true;
         }
         if (currElement == ELEM_HYPHEN) {
             currElement = ELEM_EXCEPTIONS;
@@ -403,23 +428,46 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
 
     // PatternConsumer implementation for testing purposes
     public void addClass(String c) {
-        System.out.println("class: " + c);
+        testOut.println("class: " + c);
     }
 
     public void addException(String w, ArrayList e) {
-        System.out.println("exception: " + w + " : " + e.toString());
+        testOut.println("exception: " + w + " : " + e.toString());
     }
 
     public void addPattern(String p, String v) {
-        System.out.println("pattern: " + p + " : " + v);
+        testOut.println("pattern: " + p + " : " + v);
+    }
+    
+    private PrintStream testOut = System.out;
+    
+    /**
+     * @param testOut the testOut to set
+     */
+    public void setTestOut(PrintStream testOut) {
+        this.testOut = testOut;
+    }
+    
+    public void closeTestOut() {
+        testOut.flush();
+        testOut.close();
     }
 
     public static void main(String[] args) throws Exception {
         if (args.length > 0) {
             PatternParser pp = new PatternParser();
-            pp.setConsumer(pp);
+            PrintStream p = null;
+            if (args.length > 1) {
+                FileOutputStream f = new FileOutputStream(args[1]);
+                p = new PrintStream(f, false, "utf-8");
+                pp.setTestOut(p);
+            }
             pp.parse(args[0]);
+            if (pp != null) {
+                pp.closeTestOut();
+            }
         }
     }
 
+ 
 }
