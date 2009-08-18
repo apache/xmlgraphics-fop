@@ -157,6 +157,8 @@ list of possible build targets.
   <property name="fo.examples.force" value="false"/>
   <property name="lib.dir" value="${basedir}/lib"/>
   <property name="user.hyph.dir" value="${basedir}/hyph"/>
+  <property name="unidata.dir" value="${basedir}/UNIDATA"/>
+  <property name="hyph.stacksize" value="512k"/>
   <property name="build.dir" value="${basedir}/build"/>
   <property name="build.gensrc.dir" value="${build.dir}/gensrc"/>
   <property name="build.classes.dir" value="${build.dir}/classes"/>
@@ -425,21 +427,51 @@ list of possible build targets.
     </copy>
   </target>
   <target name="compile" depends="compile-java, compile-copy-resources" description="Compiles the source code"/>
-<!-- =================================================================== -->
-<!-- compiles hyphenation patterns                                       -->
-<!-- =================================================================== -->
-  <target name="compile-hyphenation" depends="compile">
+  <!-- =================================================================== -->
+  <!-- Helper task to generate source files that have already been checked -->
+  <!-- into the repository. This task uses Unicode Character Database      -->
+  <!-- files. This task need only be run when the latter files have been   -->
+  <!-- updated. This target should never be part of the normal build       -->
+  <!-- process. Output is UnicodeClasses.CLASSES_XML                       -->
+  <!-- (src/java/org/apache/fop/hyphenation/classes.xml). -->
+  <!-- =================================================================== -->
+  <target name="codegen-hyphenation-classes">
+	<java classname="org.apache.fop.hyphenation.UnicodeClasses" resultproperty="classes.result" classpath="${build.classes.dir}">
+	  <arg value="${unidata.dir}"/>
+	</java>
+	<condition property="classes.result.message" value="Generation of classes successful">
+	  <not>
+	  <isfailure code="${classes.result}"/>
+	  </not>
+	</condition>
+	<condition property="classes.result.message" value="Generation of classes failed">
+	  <isfailure code="${classes.result}"/>
+	</condition>
+	<echo message="${classes.result.message}"/>
+  </target>
+  <!-- =================================================================== -->
+  <!-- compiles hyphenation patterns                                       -->
+  <!-- =================================================================== -->
+  <target name="compile-hyphenation" depends="compile" description="Compiles the hyphenation pattern files">
     <path id="hyph-classpath">
       <path refid="libs-build-classpath"/>
       <pathelement location="${build.classes.dir}"/>
     </path>
-    <taskdef name="serHyph" classname="org.apache.fop.tools.anttasks.SerializeHyphPattern" classpathref="hyph-classpath"/>
     <mkdir dir="${build.classes.dir}/hyph"/>
-    <serHyph targetDir="${build.classes.dir}/hyph">
-      <fileset dir="${user.hyph.dir}">
-        <include name="*.xml"/>
-      </fileset>
-    </serHyph>
+	<java classname="org.apache.fop.hyphenation.SerializeHyphPattern" fork="true" resultproperty="hyph.result" classpathref="hyph-classpath">
+	  <arg value="${user.hyph.dir}"/>
+	  <arg value="${build.classes.dir}/hyph"/>
+	  <jvmarg value="-Xss${hyph.stacksize}"/>
+	</java>
+	<condition property="hyph.result.message" value="Hyphenation successful">
+	  <not>
+	  <isfailure code="${hyph.result}"/>
+	  </not>
+	</condition>
+	<condition property="hyph.result.message" value="Hyphenation failed">
+	  <isfailure code="${hyph.result}"/>
+	</condition>
+	<echo message="${hyph.result.message}"/>
   </target>
   <target name="uptodate-jar-hyphenation" depends="compile-hyphenation">
     <uptodate property="jar.hyphenation.uptodate" targetfile="${build.dir}/fop-hyph.jar">
