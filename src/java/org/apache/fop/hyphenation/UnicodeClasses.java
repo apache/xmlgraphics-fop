@@ -32,7 +32,14 @@ import java.util.Map;
 /**
  * Create the default classes file classes.xml,
  * for use in building hyphenation patterns
- * from pattern files which do not contain their own classes  
+ * from pattern files which do not contain their own classes.
+ * The class contains three methods to do that.
+ * The method fromJava gets its infirmation from Java's compiled-in Unicode Character Database,
+ * the method fromUCD gets its information from the UCD files,
+ * the method fromTeX gets its information from the file unicode-letters-XeTeX.tex,
+ * which is the basis of XeTeX's unicode support.
+ * In the build file only the method from UCD is used; the other two methods are there for demonstration.
+ * The methods fromJava and fromTeX are commented out because they are not Java 1.4 compliant.
  */
 public class UnicodeClasses {
     
@@ -45,7 +52,7 @@ public class UnicodeClasses {
      * @param outfilePath output file
      * @throws IOException
      */
-    public static void fromJava(boolean hexcode, String outfilePath) throws IOException {
+/*    public static void fromJava(boolean hexcode, String outfilePath) throws IOException {
         File f = new File(outfilePath);
         if (f.exists()) {
             f.delete();
@@ -105,7 +112,7 @@ public class UnicodeClasses {
         ow.flush();
         ow.close();
     }
-    
+*/    
     static public int UNICODE = 0, GENERAL_CATEGORY = 2, SIMPLE_UPPERCASE_MAPPING = 12,
     SIMPLE_LOWERCASE_MAPPING = 13, SIMPLE_TITLECASE_MAPPING = 14, NUM_FIELDS = 15;
     
@@ -190,12 +197,16 @@ public class UnicodeClasses {
                 if (hexcode) {
                     s.append("0x" + fields[UNICODE].replaceFirst("^0+", "").toLowerCase() + " ");
                 }
-                s.append(Character.toChars(code));
+                // s.append(Character.toChars(code));
+                /* This cast only works correctly when we do not exceed Character.MAX_VALUE */
+                s.append((char) code);
                 if (uppercode != -1 && uppercode != code) {
-                    s.append(Character.toChars(uppercode));
+                    // s.append(Character.toChars(uppercode));
+                    s.append((char) uppercode);
                 }
                 if (titlecode != -1 && titlecode != code && titlecode != uppercode) {
-                    s.append(Character.toChars(titlecode));
+                    // s.append(Character.toChars(titlecode));
+                    s.append((char) titlecode);
                 }
                 ow.write(s.toString() + "\n");
             }
@@ -213,7 +224,7 @@ public class UnicodeClasses {
      * @param outfilePath output file
      * @throws IOException
      */
-    public static void fromTeX(boolean hexcode, String lettersPath, String outfilePath) throws IOException {
+/*    public static void fromTeX(boolean hexcode, String lettersPath, String outfilePath) throws IOException {
         File in = new File(lettersPath);
 
         File f = new File(outfilePath);
@@ -252,9 +263,9 @@ public class UnicodeClasses {
                 if (hexcode) {
                     s.append("0x" + codes[1].replaceFirst("^0+", "").toLowerCase() + " ");
                 }
-                s.append(Character.toChars(Integer.parseInt(codes[1], 16)));
+                s.append((char) Integer.parseInt(codes[1], 16));
                 if (codes[0].equals("\\L")) {
-                    s.append(Character.toChars(Integer.parseInt(codes[2], 16)));
+                    s.append((char) Integer.parseInt(codes[2], 16));
                 }
                 ow.write(s.toString() + "\n");
             }
@@ -264,7 +275,7 @@ public class UnicodeClasses {
         ow.close();
         inbr.close();
     }
-
+*/
     
     public static void main(String[] args) throws IOException {
         String type = "ucd", prefix = "--", infile = null, outfile = CLASSES_XML;
@@ -302,13 +313,16 @@ public class UnicodeClasses {
                 System.exit(1);
             }
         }
-        if (type.equals("java")) {
+/*        if (type.equals("java")) {
             fromJava(hexcode, outfile);
-        } else if (type.equals("ucd")) {
+        } else
+ */     
+        if (type.equals("ucd")) {
             fromUCD(hexcode, infile, outfile);
-        } else if (type.equals("tex")) {
+/*        } else if (type.equals("tex")) {
             fromTeX(hexcode, infile, outfile);
-        } else {
+*/        
+            } else {
             System.err.println("Unknown type: " + type + ", nothing done");
             System.exit(1);
         }
