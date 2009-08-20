@@ -234,6 +234,18 @@ public class XMLWhiteSpaceHandler {
     }
 
     /**
+     * Reset the handler, release all references
+     */
+    protected final void reset() {
+        if (pendingInlines != null) {
+            pendingInlines.clear();
+        }
+        nestedBlockStack.clear();
+        charIter = null;
+        firstWhiteSpaceInSeq = null;
+    }
+
+    /**
      * Handle white-space for the fo that is passed in, starting at
      * firstTextNode (when a nested FO is encountered)
      * @param fo    the FO for which to handle white-space
