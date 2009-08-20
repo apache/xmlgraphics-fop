@@ -39,6 +39,7 @@ import org.apache.fop.apps.FormattingResults;
 import org.apache.fop.area.AreaTreeHandler;
 import org.apache.fop.fo.ElementMapping.Maker;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
+import org.apache.fop.fo.extensions.pdf.PDFExtensionElementMapping;
 import org.apache.fop.fo.pagination.Root;
 import org.apache.fop.util.ContentHandlerFactory;
 import org.apache.fop.util.ContentHandlerFactory.ObjectBuiltListener;
@@ -263,7 +264,8 @@ public class FOTreeBuilder extends DefaultHandler {
                 }
             } else { // check that incoming node is valid for currentFObj
                 if (currentFObj.getNamespaceURI().equals(FOElementMapping.URI)
-                    || currentFObj.getNamespaceURI().equals(ExtensionElementMapping.URI)) {
+                    || currentFObj.getNamespaceURI().equals(ExtensionElementMapping.URI)
+                    || currentFObj.getNamespaceURI().equals(PDFExtensionElementMapping.URI)) {
                     currentFObj.validateChildNode(locator, namespaceURI, localName);
                 }
             }
@@ -277,6 +279,7 @@ public class FOTreeBuilder extends DefaultHandler {
                     rootFObj.setBuilderContext(builderContext);
                     rootFObj.setFOEventHandler(foEventHandler);
                 }
+                builderContext.foIndex++;
                 propertyList = foNode.createPropertyList(
                                     currentPropertyList, foEventHandler);
                 foNode.processNode(localName, getEffectiveLocator(),
@@ -287,6 +290,9 @@ public class FOTreeBuilder extends DefaultHandler {
                     } else {
                         builderContext.switchMarkerContext(true);
                     }
+                }
+                if (foNode.getNameId() == Constants.FO_PAGE_SEQUENCE) {
+                    builderContext.getXMLWhiteSpaceHandler().reset();
                 }
             } catch (IllegalArgumentException e) {
                 throw new SAXException(e);

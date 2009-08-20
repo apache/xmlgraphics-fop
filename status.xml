@@ -58,8 +58,12 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Code" dev="AD" type="fix" fixes-bug="47710">
+        White-space handling in markers with inline-content throws a NullPointerException
+        in some cases.
+      </action>
       <action context="Renderers" dev="CB" type="fix" fixes-bug="47694">
-        Dithered Background Shading can produce illegal AFP if objects are very small 
+        Dithered Background Shading can produce illegal AFP if objects are very small
       </action>
       <action context="Renderers" dev="CB" type="add">
         AFP Output: Added support for IMM Extension on fo:simple-page-master.
