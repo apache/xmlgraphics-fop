@@ -38,13 +38,21 @@ import java.util.Map;
  * the method fromUCD gets its information from the UCD files,
  * the method fromTeX gets its information from the file unicode-letters-XeTeX.tex,
  * which is the basis of XeTeX's unicode support.
- * In the build file only the method from UCD is used; the other two methods are there for demonstration.
+ * In the build file only the method from UCD is used;
+ * the other two methods are there for demonstration.
  * The methods fromJava and fromTeX are commented out because they are not Java 1.4 compliant.
  */
-public class UnicodeClasses {
+public final class UnicodeClasses {
     
-    // default path relative to the FOP base directory
-    static String CLASSES_XML = "src/java/org/apache/fop/hyphenation/classes.xml";
+    /**
+     * default path relative to the FOP base directory
+     */
+    public static final String CLASSES_XML = "src/java/org/apache/fop/hyphenation/classes.xml";
+    
+    /**
+     * Disallow constructor for this utility class
+     */
+    private UnicodeClasses() { }
 
     /**
      * Generate classes.xml from Java's compiled-in Unicode Character Database
@@ -74,8 +82,10 @@ public class UnicodeClasses {
                 continue;
             }
 
-            // we are only interested in LC, UC and TC letters which are their own LC, and in 'other letters'
-            if (!(((Character.isLowerCase(code) || Character.isUpperCase(code) || Character.isTitleCase(code))
+            // we are only interested in LC, UC and TC letters which are their own LC,
+            // and in 'other letters'
+            if (!(((Character.isLowerCase(code) || Character.isUpperCase(code)
+                    || Character.isTitleCase(code))
                     && code == Character.toLowerCase(code))
                     || Character.getType(code) == Character.OTHER_LETTER)) {
                 continue;
@@ -113,7 +123,11 @@ public class UnicodeClasses {
         ow.close();
     }
 */    
-    static public int UNICODE = 0, GENERAL_CATEGORY = 2, SIMPLE_UPPERCASE_MAPPING = 12,
+    
+    /**
+     * The column numbers in the UCD file
+     */
+    public static final int UNICODE = 0, GENERAL_CATEGORY = 2, SIMPLE_UPPERCASE_MAPPING = 12,
     SIMPLE_LOWERCASE_MAPPING = 13, SIMPLE_TITLECASE_MAPPING = 14, NUM_FIELDS = 15;
     
     /**
@@ -121,9 +135,10 @@ public class UnicodeClasses {
      * @param hexcode whether to prefix each class with the hexcode (only for debugging purposes)
      * @param unidataPath path to the directory with UCD files  
      * @param outfilePath output file
-     * @throws IOException
+     * @throws IOException if the input files are not found
      */
-    public static void fromUCD(boolean hexcode, String unidataPath, String outfilePath) throws IOException {
+    public static void fromUCD(boolean hexcode, String unidataPath, String outfilePath)
+    throws IOException {
         File unidata = new File(unidataPath);
         
         File f = new File(outfilePath);
@@ -158,8 +173,8 @@ public class UnicodeClasses {
         int maxChar;
         maxChar = Character.MAX_VALUE;
 
-        ow.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" + 
-        "<classes>\n");
+        ow.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
+                 + "<classes>\n");
         for (String line = inbr.readLine(); line != null; line = inbr.readLine()) {
             String[] fields = line.split(";", NUM_FIELDS);
             int code = Integer.parseInt(fields[UNICODE], 16);
@@ -171,9 +186,12 @@ public class UnicodeClasses {
                         && ("".equals(fields[SIMPLE_LOWERCASE_MAPPING])
                                 || fields[UNICODE].equals(fields[SIMPLE_LOWERCASE_MAPPING])))
                     || fields[GENERAL_CATEGORY].equals("Lo")) {
-                String[] blockNames = {"Superscripts and Subscripts", "Letterlike Symbols",
-                                       "Alphabetic Presentation Forms", "Halfwidth and Fullwidth Forms",
-                                       "CJK Unified Ideographs", "CJK Unified Ideographs Extension A",
+                String[] blockNames = {"Superscripts and Subscripts",
+                                       "Letterlike Symbols",
+                                       "Alphabetic Presentation Forms",
+                                       "Halfwidth and Fullwidth Forms",
+                                       "CJK Unified Ideographs",
+                                       "CJK Unified Ideographs Extension A",
                                        "Hangul Syllables"};
                 int j;
                 for (j = 0; j < blockNames.length; ++j) {
@@ -224,7 +242,8 @@ public class UnicodeClasses {
      * @param outfilePath output file
      * @throws IOException
      */
-/*    public static void fromTeX(boolean hexcode, String lettersPath, String outfilePath) throws IOException {
+/*    public static void fromTeX(boolean hexcode, String lettersPath, String outfilePath)
+      throws IOException {
         File in = new File(lettersPath);
 
         File f = new File(outfilePath);
@@ -277,6 +296,10 @@ public class UnicodeClasses {
     }
 */
     
+    /**
+     * @param args [--hexcode] [--java|--ucd|--tex] [--out outfile] infile
+     * @throws IOException if the input file cannot be found
+     */
     public static void main(String[] args) throws IOException {
         String type = "ucd", prefix = "--", infile = null, outfile = CLASSES_XML;
         boolean hexcode = false;
