@@ -58,6 +58,10 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="AD" type="fix" fixes-bug="46883">
+        Hotspot in AbstractGraphicsDrawingOrderContainer. Reduced time spent in the method
+        by introducing a member variable to hold the data-length.
+      </action>
       <action context="Code" dev="AD" type="fix" fixes-bug="47710">
         White-space handling in markers with inline-content throws a NullPointerException
         in some cases.
