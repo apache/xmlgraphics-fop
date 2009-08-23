@@ -19,14 +19,13 @@
 
 package org.apache.fop.fo.flow.table;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
-import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
 import org.apache.fop.layoutmgr.ElementListUtils;
+import org.apache.fop.layoutmgr.Keep;
 import org.apache.fop.layoutmgr.table.TableCellLayoutManager;
 
 /**
@@ -54,8 +53,8 @@ public class PrimaryGridUnit extends GridUnit {
     private boolean isSeparateBorderModel;
     private int halfBorderSeparationBPD;
 
-    private int keepWithPrevious = BlockLevelLayoutManager.KEEP_AUTO;
-    private int keepWithNext = BlockLevelLayoutManager.KEEP_AUTO;
+    private Keep keepWithPrevious = Keep.KEEP_AUTO;
+    private Keep keepWithNext = Keep.KEEP_AUTO;
     private int breakBefore = Constants.EN_AUTO;
     private int breakAfter = Constants.EN_AUTO;
 
@@ -334,16 +333,16 @@ public class PrimaryGridUnit extends GridUnit {
      *
      * @return the keep-with-previous strength
      */
-    public int getKeepWithPreviousStrength() {
+    public Keep getKeepWithPrevious() {
         return keepWithPrevious;
     }
 
     /**
      * Don't use, reserved for TableCellLM. TODO
-     * @param strength the keep strength
+     * @param keep the keep strength
      */
-    public void setKeepWithPreviousStrength(int strength) {
-        this.keepWithPrevious = strength;
+    public void setKeepWithPrevious(Keep keep) {
+        this.keepWithPrevious = keep;
     }
 
     /**
@@ -352,16 +351,16 @@ public class PrimaryGridUnit extends GridUnit {
      *
      * @return the keep-with-next strength
      */
-    public int getKeepWithNextStrength() {
+    public Keep getKeepWithNext() {
         return keepWithNext;
     }
 
     /**
      * Don't use, reserved for TableCellLM. TODO
-     * @param strength the keep strength
+     * @param keep the keep strength
      */
-    public void setKeepWithNextStrength(int strength) {
-        this.keepWithNext = strength;
+    public void setKeepWithNext(Keep keep) {
+        this.keepWithNext = keep;
     }
 
     /**

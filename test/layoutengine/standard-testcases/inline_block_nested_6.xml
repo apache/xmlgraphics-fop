@@ -52,16 +52,15 @@
       <skip>5</skip>
       <!-- penalty between blocks b11 and b12, set by InlineLM in b1 -->
       <penalty w="0" p="0"/>
-      <skip>6</skip>
+      <skip>5</skip>
       <!-- penalty between blocks b21 and b22, set by InlineLM in b2 -->
       <!-- keep-together.within-page="always" -->
       <penalty w="0" p="1000"/>
-      <skip>6</skip>
+      <skip>3</skip>
       <!-- penalty between blocks b31 and b32, set by InlineLM in b3 -->
       <!-- keep-with-next.within-page="always" -->
       <penalty w="0" p="1000"/>
-      <skip>5</skip>
-      <skip>3</skip>
+      <skip>14</skip>
     </element-list>
   </checks>
 </testcase>			          

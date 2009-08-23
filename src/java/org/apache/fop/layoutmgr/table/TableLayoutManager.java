@@ -35,11 +35,11 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.flow.table.Table;
 import org.apache.fop.fo.flow.table.TableColumn;
+import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.layoutmgr.BlockLevelEventProducer;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.BreakElement;
 import org.apache.fop.layoutmgr.ConditionalElementListener;
-import org.apache.fop.layoutmgr.KeepUtil;
 import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthGlue;
 import org.apache.fop.layoutmgr.LayoutContext;
@@ -256,10 +256,10 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         log.debug(contentKnuthElements);
         wrapPositionElements(contentKnuthElements, returnList);
 
-        context.updateKeepWithPreviousPending(getKeepWithPreviousStrength());
+        context.updateKeepWithPreviousPending(getKeepWithPrevious());
         context.updateKeepWithPreviousPending(childLC.getKeepWithPreviousPending());
 
-        context.updateKeepWithNextPending(getKeepWithNextStrength());
+        context.updateKeepWithNextPending(getKeepWithNext());
         context.updateKeepWithNextPending(childLC.getKeepWithNextPending());
 
         if (getTable().isSeparateBorderModel()) {
@@ -448,20 +448,18 @@ public class TableLayoutManager extends BlockStackingLayoutManager
     }
 
     /** {@inheritDoc} */
-    public int getKeepTogetherStrength() {
-        int strength = KeepUtil.getCombinedBlockLevelKeepStrength(getTable().getKeepTogether());
-        strength = Math.max(strength, getParentKeepTogetherStrength());
-        return strength;
+    public KeepProperty getKeepTogetherProperty() {
+        return getTable().getKeepTogether();
     }
 
     /** {@inheritDoc} */
-    public int getKeepWithNextStrength() {
-        return KeepUtil.getCombinedBlockLevelKeepStrength(getTable().getKeepWithNext());
+    public KeepProperty getKeepWithPreviousProperty() {
+        return getTable().getKeepWithPrevious();
     }
 
     /** {@inheritDoc} */
-    public int getKeepWithPreviousStrength() {
-        return KeepUtil.getCombinedBlockLevelKeepStrength(getTable().getKeepWithPrevious());
+    public KeepProperty getKeepWithNextProperty() {
+        return getTable().getKeepWithNext();
     }
 
     // --------- Property Resolution related functions --------- //

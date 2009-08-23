@@ -32,8 +32,8 @@ import org.apache.fop.fo.flow.table.ConditionalBorder;
 import org.apache.fop.fo.flow.table.EffRow;
 import org.apache.fop.fo.flow.table.PrimaryGridUnit;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
-import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
 import org.apache.fop.layoutmgr.ElementListUtils;
+import org.apache.fop.layoutmgr.Keep;
 import org.apache.fop.layoutmgr.KnuthBlockBox;
 import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthElement;
@@ -75,7 +75,7 @@ class ActiveCell {
     /** True if the next CellPart that will be created will be the last one for this cell. */
     private boolean lastCellPart;
 
-    private int keepWithNextStrength;
+    private Keep keepWithNext;
 
     private int spanIndex = 0;
 
@@ -218,7 +218,7 @@ class ActiveCell {
         includedLength = -1;  // Avoid troubles with cells having content of zero length
         totalLength = previousRowsLength + ElementListUtils.calcContentLength(elementList);
         endRowIndex = rowIndex + pgu.getCell().getNumberRowsSpanned() - 1;
-        keepWithNextStrength = BlockLevelLayoutManager.KEEP_AUTO;
+        keepWithNext = Keep.KEEP_AUTO;
         remainingLength = totalLength - previousRowsLength;
 
         afterNextStep = new Step(previousRowsLength);
@@ -314,7 +314,11 @@ class ActiveCell {
             KnuthElement el = (KnuthElement) knuthIter.next();
             if (el.isPenalty()) {
                 prevIsBox = false;
-                if (el.getP() < KnuthElement.INFINITE) {
+                if (el.getP() < KnuthElement.INFINITE
+                        || ((KnuthPenalty) el).getBreakClass() == Constants.EN_PAGE) {
+                    // TODO too much is being done in that test, only to handle
+                    // keep.within-column properly.
+
                     // First legal break point
                     breakFound = true;
                     KnuthPenalty p = (KnuthPenalty) el;
@@ -533,7 +537,7 @@ class ActiveCell {
      */
     CellPart createCellPart() {
         if (nextStep.end + 1 == elementList.size()) {
-            keepWithNextStrength = pgu.getKeepWithNextStrength();
+            keepWithNext = pgu.getKeepWithNext();
             // TODO if keep-with-next is set on the row, must every cell of the row
             // contribute some content from children blocks?
             // see http://mail-archives.apache.org/mod_mbox/xmlgraphics-fop-dev/200802.mbox/
@@ -576,8 +580,8 @@ class ActiveCell {
         }
     }
 
-    int getKeepWithNextStrength() {
-        return keepWithNextStrength;
+    Keep getKeepWithNext() {
+        return keepWithNext;
     }
 
     int getPenaltyValue() {

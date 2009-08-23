@@ -45,7 +45,7 @@ public class KnuthPenalty extends KnuthElement {
     public static final int FLAGGED_PENALTY = 50;
 
     private int penalty;
-    private boolean bFlagged;
+    private boolean isFlagged;
     private int breakClass = -1;
 
     /**
@@ -55,12 +55,12 @@ public class KnuthPenalty extends KnuthElement {
      * @param p the penalty value of this penalty
      * @param f is this penalty flagged?
      * @param pos the Position stored in this penalty
-     * @param bAux is this penalty auxiliary?
+     * @param isAuxiliary is this penalty auxiliary?
      */
-    public KnuthPenalty(int w, int p, boolean f, Position pos, boolean bAux) {
-        super(w, pos, bAux);
+    public KnuthPenalty(int w, int p, boolean f, Position pos, boolean isAuxiliary) {
+        super(w, pos, isAuxiliary);
         penalty = p;
-        bFlagged = f;
+        isFlagged = f;
     }
 
     /**
@@ -69,18 +69,37 @@ public class KnuthPenalty extends KnuthElement {
      * @param w the width of this penalty
      * @param p the penalty value of this penalty
      * @param f is this penalty flagged?
-     * @param iBreakClass the break class of this penalty (one of
+     * @param breakClass the break class of this penalty (one of
      * {@link Constants#EN_AUTO}, {@link Constants#EN_COLUMN}, {@link Constants#EN_PAGE},
      * {@link Constants#EN_EVEN_PAGE}, {@link Constants#EN_ODD_PAGE})
      * @param pos the Position stored in this penalty
-     * @param bAux is this penalty auxiliary?
+     * @param isAuxiliary is this penalty auxiliary?
      */
     public KnuthPenalty(int w, int p, boolean f,
-            int iBreakClass, Position pos, boolean bAux) {
-        super(w, pos, bAux);
-        penalty = p;
-        bFlagged = f;
-        breakClass = iBreakClass;
+            int breakClass, Position pos, boolean isAuxiliary) {
+        this(w, p, f, pos, isAuxiliary);
+        this.breakClass = breakClass;
+    }
+
+    private static String getBreakClassName(int breakClass) {
+        return AbstractBreaker.getBreakClassName(breakClass);
+    }
+
+    /**
+     * Get the penalty's value as a {@code java.lang.String}.
+     * (Mainly used in {@code toString()} methods, to improve readability
+     * of the trace logs.)
+     *
+     * @param penaltyValue  the penalty value
+     * @return  the penalty value as a {@code java.lang.String}
+     */
+    protected static String valueOf(int penaltyValue) {
+        String result = (penaltyValue < 0) ? "-" : "";
+        int tmpValue = Math.abs(penaltyValue);
+        result += (tmpValue == KnuthElement.INFINITE)
+                ? "INFINITE"
+                : String.valueOf(tmpValue);
+        return result;
     }
 
     /** {@inheritDoc} */
@@ -105,7 +124,7 @@ public class KnuthPenalty extends KnuthElement {
 
     /** @return true is this penalty is a flagged one. */
     public boolean isFlagged() {
-        return bFlagged;
+        return isFlagged;
     }
 
     /** {@inheritDoc} */
@@ -121,14 +140,6 @@ public class KnuthPenalty extends KnuthElement {
         return breakClass;
     }
 
-    /**
-     * Sets the break class for this penalty.
-     * @param cl the break class (EN_AUTO, EN_COLUMN, EN_PAGE, EN_EVEN_PAGE, EN_ODD_PAGE)
-     */
-    public void setBreakClass(int cl) {
-        this.breakClass = cl;
-    }
-
     /** {@inheritDoc} */
     public String toString() {
         StringBuffer sb = new StringBuffer(64);
@@ -137,39 +148,22 @@ public class KnuthPenalty extends KnuthElement {
         }
         sb.append("penalty");
         sb.append(" p=");
-        if (getP() < 0) {
-            sb.append("-");
-        }
-        if (Math.abs(getP()) == INFINITE) {
-            sb.append("INFINITE");
-        } else {
-            sb.append(getP());
-        }
-        if (isFlagged()) {
+        sb.append(valueOf(this.penalty));
+        if (this.isFlagged) {
             sb.append(" [flagged]");
         }
         sb.append(" w=");
         sb.append(getW());
         if (isForcedBreak()) {
-            sb.append(" (forced break");
-            switch (getBreakClass()) {
-            case Constants.EN_PAGE:
-                sb.append(", page");
-                break;
-            case Constants.EN_COLUMN:
-                sb.append(", column");
-                break;
-            case Constants.EN_EVEN_PAGE:
-                sb.append(", even page");
-                break;
-            case Constants.EN_ODD_PAGE:
-                sb.append(", odd page");
-                break;
-            default:
-            }
-            sb.append(")");
+            sb.append(" (forced break, ")
+                    .append(getBreakClassName(this.breakClass))
+                    .append(")");
+        } else if (this.penalty >= 0 && this.breakClass != -1) {
+            //penalty corresponding to a keep constraint
+            sb.append(" (keep constraint, ")
+                    .append(getBreakClassName(this.breakClass))
+                    .append(")");
         }
         return sb.toString();
     }
-
 }

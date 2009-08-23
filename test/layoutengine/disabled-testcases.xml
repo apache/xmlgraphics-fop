@@ -216,4 +216,10 @@
     <description>A soft hyphen should be a preferred as break compared to a
     normal hyphenation point but is not.</description>
   </testcase>
+  <testcase>
+    <name>Page-keep not respected in multi-column layout</name>
+    <file>keep_within-page_multi-column_overflow.xml</file>
+    <description>The block should cause overflow in the
+    last column on the page, rather than be broken.</description>
+  </testcase>
 </disabled-testcases>

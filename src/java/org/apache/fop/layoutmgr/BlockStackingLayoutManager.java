@@ -31,9 +31,11 @@ import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.BlockParent;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.properties.BreakPropertySet;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.SpaceProperty;
+import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.layoutmgr.inline.InlineLayoutManager;
 import org.apache.fop.layoutmgr.inline.LineLayoutManager;
 import org.apache.fop.traits.MinOptMax;
@@ -258,7 +260,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
 
         if (!firstVisibleMarkServed) {
             addKnuthElementsForSpaceBefore(elements, alignment);
-            context.updateKeepWithPreviousPending(getKeepWithPreviousStrength());
+            context.updateKeepWithPreviousPending(getKeepWithPrevious());
         }
 
         addKnuthElementsForBorderPaddingBefore(elements, !firstVisibleMarkServed);
@@ -349,7 +351,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
             elements.add(forcedBreakAfterLast);
         }
 
-        context.updateKeepWithNextPending(getKeepWithNextStrength());
+        context.updateKeepWithNextPending(getKeepWithNext());
 
         setFinished(true);
 
@@ -375,31 +377,31 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
 
     /**
      * Adds a break element to the content list between individual child elements.
-     * @param contentList the content list to populate
-     * @param context the current layout context
+     * @param contentList
+     * @param parentLC
      * @param childLC the currently active child layout context
      */
-    protected void addInBetweenBreak(List contentList, LayoutContext context,
-            LayoutContext childLC) {
+    protected void addInBetweenBreak(List contentList, LayoutContext parentLC,
+                                     LayoutContext childLC) {
+
         if (mustKeepTogether()
-                || context.isKeepWithNextPending()
+                || parentLC.isKeepWithNextPending()
                 || childLC.isKeepWithPreviousPending()) {
 
-            int strength = getKeepTogetherStrength();
+            Keep keep = getKeepTogether();
 
             //Handle pending keep-with-next
-            strength = Math.max(strength, context.getKeepWithNextPending());
-            context.clearKeepWithNextPending();
+            keep = keep.compare(parentLC.getKeepWithNextPending());
+            parentLC.clearKeepWithNextPending();
 
             //Handle pending keep-with-previous from child LM
-            strength = Math.max(strength, childLC.getKeepWithPreviousPending());
+            keep = keep.compare(childLC.getKeepWithPreviousPending());
             childLC.clearKeepWithPreviousPending();
-
-            int penalty = KeepUtil.getPenaltyForKeep(strength);
 
             // add a penalty to forbid or discourage a break between blocks
             contentList.add(new BreakElement(
-                    new Position(this), penalty, context));
+                    new Position(this), keep.getPenalty(),
+                    keep.getContext(), parentLC));
             return;
         }
 
@@ -430,7 +432,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
 
             // add a null penalty to allow a break between blocks
             contentList.add(new BreakElement(
-                    new Position(this), 0, context));
+                    new Position(this), 0, Constants.EN_AUTO, parentLC));
         }
     }
 
@@ -766,33 +768,77 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
      * Retrieves and returns the keep-together strength from the parent element.
      * @return the keep-together strength
      */
-    protected int getParentKeepTogetherStrength() {
-        int strength = KEEP_AUTO;
+    protected Keep getParentKeepTogether() {
+        Keep keep = Keep.KEEP_AUTO;
         if (getParent() instanceof BlockLevelLayoutManager) {
-            strength = ((BlockLevelLayoutManager)getParent()).getKeepTogetherStrength();
+            keep = ((BlockLevelLayoutManager)getParent()).getKeepTogether();
         } else if (getParent() instanceof InlineLayoutManager) {
             if (((InlineLayoutManager) getParent()).mustKeepTogether()) {
-                strength = KEEP_ALWAYS;
+                keep = Keep.KEEP_ALWAYS;
             }
             //TODO Fix me
             //strength = ((InlineLayoutManager) getParent()).getKeepTogetherStrength();
         }
-        return strength;
+        return keep;
     }
 
     /** {@inheritDoc} */
     public boolean mustKeepTogether() {
-        return getKeepTogetherStrength() > KEEP_AUTO;
+        return !getKeepTogether().isAuto();
     }
 
     /** {@inheritDoc} */
     public boolean mustKeepWithPrevious() {
-        return getKeepWithPreviousStrength() > KEEP_AUTO;
+        return !getKeepWithPrevious().isAuto();
     }
 
     /** {@inheritDoc} */
     public boolean mustKeepWithNext() {
-        return getKeepWithNextStrength() > KEEP_AUTO;
+        return !getKeepWithNext().isAuto();
+    }
+
+    /** {@inheritDoc} */
+    public Keep getKeepTogether() {
+        Keep keep = Keep.getKeep(getKeepTogetherProperty());
+        keep = keep.compare(getParentKeepTogether());
+        return keep;
+    }
+
+    /** {@inheritDoc} */
+    public Keep getKeepWithPrevious() {
+        return Keep.getKeep(getKeepWithPreviousProperty());
+    }
+
+    /** {@inheritDoc} */
+    public Keep getKeepWithNext() {
+        return Keep.getKeep(getKeepWithNextProperty());
+    }
+
+    /**
+     * {@inheritDoc}
+     * Default implementation throws {@code IllegalStateException}
+     * Must be implemented by the subclass, if applicable.
+     */
+    public KeepProperty getKeepTogetherProperty() {
+        throw new IllegalStateException();
+    }
+
+    /**
+     * {@inheritDoc}
+     * Default implementation throws {@code IllegalStateException}
+     * Must be implemented by the subclass, if applicable.
+     */
+    public KeepProperty getKeepWithPreviousProperty() {
+        throw new IllegalStateException();
+    }
+
+    /**
+     * {@inheritDoc}
+     * Default implementation throws {@code IllegalStateException}
+     * Must be implemented by the subclass, if applicable.
+     */
+    public KeepProperty getKeepWithNextProperty() {
+        throw new IllegalStateException();
     }
 
     /**

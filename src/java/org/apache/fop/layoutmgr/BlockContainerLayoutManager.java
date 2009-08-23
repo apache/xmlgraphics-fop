@@ -37,6 +37,7 @@ import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.flow.BlockContainer;
 import org.apache.fop.fo.properties.CommonAbsolutePosition;
+import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.traits.SpaceVal;
 import org.apache.fop.util.ListUtil;
@@ -261,7 +262,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
 
         if (!firstVisibleMarkServed) {
             addKnuthElementsForSpaceBefore(returnList, alignment);
-            context.updateKeepWithPreviousPending(getKeepWithPreviousStrength());
+            context.updateKeepWithPreviousPending(getKeepWithPrevious());
         }
 
         addKnuthElementsForBorderPaddingBefore(returnList, !firstVisibleMarkServed);
@@ -271,9 +272,9 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
             //Spaces, border and padding to be repeated at each break
             addPendingMarks(context);
 
-            BlockLevelLayoutManager curLM; // currently active LM
-            BlockLevelLayoutManager prevLM = null; // previously active LM
-            while ((curLM = (BlockLevelLayoutManager) getChildLM()) != null) {
+            LayoutManager curLM; // currently active LM
+            LayoutManager prevLM = null; // previously active LM
+            while ((curLM = getChildLM()) != null) {
                 LayoutContext childLC = new LayoutContext(0);
                 childLC.copyPendingMarksFrom(context);
                 // curLM is a ?
@@ -323,8 +324,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
                         //Avoid NoSuchElementException below (happens with empty blocks)
                         continue;
                     }
-                    if (((ListElement) ListUtil.getLast(returnedList))
-                            .isForcedBreak()) {
+                    if (ElementListUtils.endsWithForcedBreak(returnedList)) {
                         // a descendant of this block has break-after
                         if (curLM.isFinished()) {
                             // there is no other content in this block;
@@ -391,7 +391,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         context.clearPendingMarks();
         addKnuthElementsForBreakAfter(returnList, context);
 
-        context.updateKeepWithNextPending(getKeepWithNextStrength());
+        context.updateKeepWithNextPending(getKeepWithNext());
 
         setFinished(true);
         return returnList;
@@ -1011,23 +1011,18 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
     }
 
     /** {@inheritDoc} */
-    public int getKeepTogetherStrength() {
-        int strength = KeepUtil.getCombinedBlockLevelKeepStrength(
-                getBlockContainerFO().getKeepTogether());
-        strength = Math.max(strength, getParentKeepTogetherStrength());
-        return strength;
+    public KeepProperty getKeepTogetherProperty() {
+        return getBlockContainerFO().getKeepTogether();
     }
 
     /** {@inheritDoc} */
-    public int getKeepWithNextStrength() {
-        return KeepUtil.getCombinedBlockLevelKeepStrength(
-                getBlockContainerFO().getKeepWithNext());
+    public KeepProperty getKeepWithPreviousProperty() {
+        return getBlockContainerFO().getKeepWithPrevious();
     }
 
     /** {@inheritDoc} */
-    public int getKeepWithPreviousStrength() {
-        return KeepUtil.getCombinedBlockLevelKeepStrength(
-                getBlockContainerFO().getKeepWithPrevious());
+    public KeepProperty getKeepWithNextProperty() {
+        return getBlockContainerFO().getKeepWithNext();
     }
 
     /**

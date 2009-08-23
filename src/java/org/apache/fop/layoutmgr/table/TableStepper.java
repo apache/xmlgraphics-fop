@@ -30,12 +30,10 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.flow.table.EffRow;
 import org.apache.fop.fo.flow.table.GridUnit;
 import org.apache.fop.fo.flow.table.PrimaryGridUnit;
-import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
 import org.apache.fop.layoutmgr.BreakElement;
-import org.apache.fop.layoutmgr.KeepUtil;
+import org.apache.fop.layoutmgr.Keep;
 import org.apache.fop.layoutmgr.KnuthBlockBox;
 import org.apache.fop.layoutmgr.KnuthBox;
-import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthGlue;
 import org.apache.fop.layoutmgr.KnuthPenalty;
 import org.apache.fop.layoutmgr.LayoutContext;
@@ -241,40 +239,38 @@ public class TableStepper {
                 }
             }
 
-            int strength = BlockLevelLayoutManager.KEEP_AUTO;
+            Keep keep = Keep.KEEP_AUTO;
             int stepPenalty = 0;
             for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
                 ActiveCell activeCell = (ActiveCell) iter.next();
-                strength = Math.max(strength, activeCell.getKeepWithNextStrength());
+                keep = keep.compare(activeCell.getKeepWithNext());
                 stepPenalty = Math.max(stepPenalty, activeCell.getPenaltyValue());
             }
             if (!rowFinished) {
-                strength = Math.max(strength, rowGroup[activeRowIndex].getKeepTogetherStrength());
+                keep = keep.compare(rowGroup[activeRowIndex].getKeepTogether());
                 //The above call doesn't take the penalty from the table into account, so...
-                strength = Math.max(strength, getTableLM().getKeepTogetherStrength());
+                keep = keep.compare(getTableLM().getKeepTogether());
             } else if (activeRowIndex < rowGroup.length - 1) {
-                strength = Math.max(strength,
-                        rowGroup[activeRowIndex].getKeepWithNextStrength());
-                strength = Math.max(strength,
-                        rowGroup[activeRowIndex + 1].getKeepWithPreviousStrength());
+                keep = keep.compare(rowGroup[activeRowIndex].getKeepWithNext());
+                keep = keep.compare(rowGroup[activeRowIndex + 1].getKeepWithPrevious());
                 nextBreakClass = BreakUtil.compareBreakClasses(nextBreakClass,
                         rowGroup[activeRowIndex].getBreakAfter());
                 nextBreakClass = BreakUtil.compareBreakClasses(nextBreakClass,
                         rowGroup[activeRowIndex + 1].getBreakBefore());
             }
-            int p = KeepUtil.getPenaltyForKeep(strength);
+            int p = keep.getPenalty();
             if (rowHeightSmallerThanFirstStep) {
                 rowHeightSmallerThanFirstStep = false;
                 p = KnuthPenalty.INFINITE;
             }
-            if (p > -KnuthElement.INFINITE) {
-                p = Math.max(p, stepPenalty);
-            }
+            p = Math.max(p, stepPenalty);
+            int breakClass = keep.getContext();
             if (nextBreakClass != Constants.EN_AUTO) {
                 log.trace("Forced break encountered");
                 p = -KnuthPenalty.INFINITE; //Overrides any keeps (see 4.8 in XSL 1.0)
+                breakClass = nextBreakClass;
             }
-            returnList.add(new BreakElement(penaltyPos, effPenaltyLen, p, nextBreakClass, context));
+            returnList.add(new BreakElement(penaltyPos, effPenaltyLen, p, breakClass, context));
             if (penaltyOrGlueLen < 0) {
                 returnList.add(new KnuthGlue(-penaltyOrGlueLen, 0, 0, new Position(null), true));
             }
