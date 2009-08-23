@@ -58,6 +58,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="AD" type="add" fixes-bug="46905">
+        Added basic implementation for column-keeps.
+      </action>
       <action context="Renderers" dev="AD" type="fix" fixes-bug="46883">
         Hotspot in AbstractGraphicsDrawingOrderContainer. Reduced time spent in the method
         by introducing a member variable to hold the data-length.

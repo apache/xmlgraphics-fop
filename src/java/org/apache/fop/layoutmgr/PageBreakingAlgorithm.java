@@ -96,6 +96,11 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     //Controls whether a single part should be forced if possible (ex. block-container)
     private boolean favorSinglePart = false;
 
+    //Used to keep track of switches in keep-context
+    private int currentKeepContext = Constants.EN_AUTO;
+    private KnuthNode lastBeforeKeepContextSwitch;
+
+
     public PageBreakingAlgorithm(LayoutManager topLevelLM,
                                  PageProvider pageProvider,
                                  PageBreakingLayoutListener layoutListener,
@@ -190,6 +195,72 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         footnoteElementIndex = -1;
     }
 
+    /**
+     * {@inheritDoc}
+     * Overridden to defer a part to the next page, if it
+     * must be kept within one page, but is too large to fit in
+     * the last column.
+     */
+    protected KnuthNode recoverFromTooLong(KnuthNode lastTooLong) {
+
+        if (log.isDebugEnabled()) {
+            log.debug("Recovering from too long: " + lastTooLong);
+            log.debug("\tlastTooShort = " + getLastTooShort());
+            log.debug("\tlastBeforeKeepContextSwitch = " + lastBeforeKeepContextSwitch);
+            log.debug("\tcurrentKeepContext = " + AbstractBreaker.getBreakClassName(currentKeepContext));
+        }
+
+        if (lastBeforeKeepContextSwitch == null
+                || currentKeepContext == Constants.EN_AUTO) {
+            return super.recoverFromTooLong(lastTooLong);
+        }
+
+        KnuthNode node = lastBeforeKeepContextSwitch;
+        lastBeforeKeepContextSwitch = null;
+        // content would overflow, insert empty page/column(s) and try again
+        while (!pageProvider.endPage(node.line - 1)) {
+            log.trace("Adding node for empty column");
+            node = createNode(
+                    node.position,
+                    node.line + 1, 1,
+                    0, 0, 0,
+                    0, 0, 0,
+                    0, 0, node);
+        }
+        return node;
+    }
+
+    /**
+     * Compare two KnuthNodes and return the node with the least demerit.
+     *
+     * @param node1 The first knuth node.
+     * @param node2 The other knuth node.
+     * @return the node with the least demerit.
+     */
+    protected KnuthNode compareNodes(KnuthNode node1, KnuthNode node2) {
+
+        /* if either node is null, return the other one */
+        if (node1 == null || node2 == null) {
+            return (node1 == null) ? node2 : node1;
+        }
+
+        /* if either one of the nodes corresponds to a mere column-break,
+         * and the other one corresponds to a page-break, return the page-break node
+         */
+        if (pageProvider != null) {
+            if (pageProvider.endPage(node1.line - 1)
+                    && !pageProvider.endPage(node2.line - 1)) {
+                return node1;
+            } else if (pageProvider.endPage(node2.line - 1)
+                    && !pageProvider.endPage(node1.line - 1)) {
+                return node2;
+            }
+        }
+
+        /* all other cases: use superclass implementation */
+        return super.compareNodes(node1, node2);
+    }
+
     /** {@inheritDoc} */
     protected KnuthNode createNode(int position, int line, int fitness,
                                    int totalWidth, int totalStretch, int totalShrink,
@@ -229,6 +300,28 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
             if (!newFootnotes) {
                 newFootnotes = true;
                 firstNewFootnoteIndex = footnotesList.size() - 1;
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     * Overridden to consider penalties with value {@link KnuthElement#INFINITE}
+     * as legal break-points, if the current keep-context allows this
+     * (a keep-*.within-page="always" constraint still permits column-breaks)
+     */
+    protected void handlePenaltyAt(KnuthPenalty penalty, int position,
+                                   int allowedBreaks) {
+        super.handlePenaltyAt(penalty, position, allowedBreaks);
+        /* if the penalty had value INFINITE, default implementation
+         * will not have considered it a legal break, but it could still
+         * be one.
+         */
+        if (penalty.getP() == KnuthPenalty.INFINITE) {
+            int breakClass = penalty.getBreakClass();
+            if (breakClass == Constants.EN_PAGE
+                    || breakClass == Constants.EN_COLUMN) {
+                considerLegalBreak(penalty, position);
             }
         }
     }
@@ -317,10 +410,66 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
 
     /** {@inheritDoc} */
     protected void considerLegalBreak(KnuthElement element, int elementIdx) {
+        if (element.isPenalty()) {
+            int breakClass = ((KnuthPenalty) element).getBreakClass();
+            switch (breakClass) {
+            case Constants.EN_PAGE:
+                if (this.currentKeepContext != breakClass) {
+                    this.lastBeforeKeepContextSwitch = getLastTooShort();
+                }
+                this.currentKeepContext = breakClass;
+                break;
+            case Constants.EN_COLUMN:
+                if (this.currentKeepContext != breakClass) {
+                    this.lastBeforeKeepContextSwitch = getLastTooShort();
+                }
+                this.currentKeepContext = breakClass;
+                break;
+            case Constants.EN_AUTO:
+                this.currentKeepContext = breakClass;
+                break;
+            default:
+                //nop
+            }
+        }
         super.considerLegalBreak(element, elementIdx);
         newFootnotes = false;
     }
 
+    /** {@inheritDoc} */
+    protected boolean elementCanEndLine(KnuthElement element, int line, int difference) {
+        if (!(element.isPenalty()) || pageProvider == null) {
+            return true;
+        } else {
+            KnuthPenalty p = (KnuthPenalty) element;
+            if (p.getP() <= 0) {
+                return true;
+            } else {
+                int context = p.getBreakClass();
+                switch (context) {
+                case Constants.EN_LINE:
+                case Constants.EN_COLUMN:
+                    return p.getP() < KnuthPenalty.INFINITE;
+                case Constants.EN_PAGE:
+                    return p.getP() < KnuthPenalty.INFINITE
+                            || !pageProvider.endPage(line - 1);
+                            //|| (deferPart && difference < 0);
+                case Constants.EN_AUTO:
+                    log.warn("keep is not auto but context is");
+                    return true;
+                default:
+                    if (p.getP() < KnuthPenalty.INFINITE) {
+                        log.warn("Non recognized keep context:" + context);
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+            }
+        }
+    }
+
+    /** {@inheritDoc} */
     protected int computeDifference(KnuthNode activeNode, KnuthElement element,
                                     int elementIndex) {
         KnuthPageNode pageNode = (KnuthPageNode) activeNode;
