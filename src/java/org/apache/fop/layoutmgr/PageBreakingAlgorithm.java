@@ -455,11 +455,11 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                             || !pageProvider.endPage(line - 1);
                             //|| (deferPart && difference < 0);
                 case Constants.EN_AUTO:
-                    log.warn("keep is not auto but context is");
+                    log.debug("keep is not auto but context is");
                     return true;
                 default:
                     if (p.getP() < KnuthPenalty.INFINITE) {
-                        log.warn("Non recognized keep context:" + context);
+                        log.debug("Non recognized keep context:" + context);
                         return true;
                     } else {
                         return false;
