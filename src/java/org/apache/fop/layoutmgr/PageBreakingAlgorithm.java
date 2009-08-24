@@ -453,7 +453,6 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                 case Constants.EN_PAGE:
                     return p.getP() < KnuthPenalty.INFINITE
                             || !pageProvider.endPage(line - 1);
-                            //|| (deferPart && difference < 0);
                 case Constants.EN_AUTO:
                     log.debug("keep is not auto but context is");
                     return true;
