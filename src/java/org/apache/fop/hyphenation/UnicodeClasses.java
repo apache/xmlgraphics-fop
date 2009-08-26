@@ -211,7 +211,7 @@ public final class UnicodeClasses {
                 if (!"".equals(fields[SIMPLE_TITLECASE_MAPPING])) {
                     titlecode = Integer.parseInt(fields[SIMPLE_TITLECASE_MAPPING], 16);
                 }
-                StringBuilder s = new StringBuilder();
+                StringBuffer s = new StringBuffer();
                 if (hexcode) {
                     s.append("0x" + fields[UNICODE].replaceFirst("^0+", "").toLowerCase() + " ");
                 }

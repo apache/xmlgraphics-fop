@@ -47,14 +47,14 @@ import javax.xml.parsers.SAXParserFactory;
  */
 public class PatternParser extends DefaultHandler implements PatternConsumer {
 
-    XMLReader parser;
-    int currElement;
-    PatternConsumer consumer;
-    StringBuffer token;
-    ArrayList exception;
-    char hyphenChar;
-    String errMsg;
-    boolean hasClasses = false;
+    private XMLReader parser;
+    private int currElement;
+    private PatternConsumer consumer;
+    private StringBuffer token;
+    private ArrayList exception;
+    private char hyphenChar;
+    private String errMsg;
+    private boolean hasClasses = false;
 
     static final int ELEM_CLASSES = 1;
     static final int ELEM_EXCEPTIONS = 2;
