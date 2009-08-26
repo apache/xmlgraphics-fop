@@ -476,9 +476,7 @@ public class PageBreaker extends AbstractBreaker {
         pslm.getCurrentPV().getCurrentSpan().notifyFlowsFinished();
     }
 
-    /**
-     * @return the current child flow layout manager
-     */
+    /** @return the current child flow layout manager */
     protected LayoutManager getCurrentChildLM() {
         return childFLM;
     }
@@ -497,44 +495,51 @@ public class PageBreaker extends AbstractBreaker {
      */
     private void handleBreakTrait(int breakVal) {
         Page curPage = pslm.getCurrentPage();
-        if (breakVal == Constants.EN_ALL) {
+        switch (breakVal) {
+        case Constants.EN_ALL:
             //break due to span change in multi-column layout
             curPage.getPageViewport().createSpan(true);
             return;
-        } else if (breakVal == Constants.EN_NONE) {
+        case Constants.EN_NONE:
             curPage.getPageViewport().createSpan(false);
             return;
-        } else if (breakVal == Constants.EN_COLUMN
-                || breakVal <= 0
-                || breakVal == Constants.EN_AUTO) {
+        case Constants.EN_COLUMN:
+        case Constants.EN_AUTO:
+        case Constants.EN_PAGE:
+        case -1:
             PageViewport pv = curPage.getPageViewport();
 
             //Check if previous page was spanned
             boolean forceNewPageWithSpan = false;
             RegionBody rb = (RegionBody)curPage.getSimplePageMaster().getRegion(
                     Constants.FO_REGION_BODY);
-            if (rb.getColumnCount() > 1
-                    && pv.getCurrentSpan().getColumnCount() == 1) {
-                forceNewPageWithSpan = true;
-            }
+            forceNewPageWithSpan
+                    = (rb.getColumnCount() > 1
+                        && pv.getCurrentSpan().getColumnCount() == 1);
 
             if (forceNewPageWithSpan) {
+                log.trace("Forcing new page with span");
                 curPage = pslm.makeNewPage(false, false);
                 curPage.getPageViewport().createSpan(true);
             } else if (pv.getCurrentSpan().hasMoreFlows()) {
+                log.trace("Moving to next flow");
                 pv.getCurrentSpan().moveToNextFlow();
             } else {
-                curPage = pslm.makeNewPage(false, false);
+                log.trace("Making new page");
+                /*curPage = */pslm.makeNewPage(false, false);
             }
             return;
-        }
-        log.debug("handling break-before after page " + pslm.getCurrentPageNum()
-            + " breakVal=" + getBreakClassName(breakVal));
-        if (needBlankPageBeforeNew(breakVal)) {
-            curPage = pslm.makeNewPage(true, false);
-        }
-        if (needNewPage(breakVal)) {
-            curPage = pslm.makeNewPage(false, false);
+        default:
+            log.debug("handling break-before after page " + pslm.getCurrentPageNum()
+                + " breakVal=" + getBreakClassName(breakVal));
+            if (needBlankPageBeforeNew(breakVal)) {
+                log.trace("Inserting blank page");
+                /*curPage = */pslm.makeNewPage(true, false);
+            }
+            if (needNewPage(breakVal)) {
+                log.trace("Making new page");
+                /*curPage = */pslm.makeNewPage(false, false);
+            }
         }
     }
 

@@ -29,10 +29,10 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.fo.flow.ListBlock;
+import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.ConditionalElementListener;
 import org.apache.fop.layoutmgr.ElementListUtils;
-import org.apache.fop.layoutmgr.KeepUtil;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.NonLeafPosition;
@@ -279,21 +279,18 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager
     }
 
     /** {@inheritDoc} */
-    public int getKeepTogetherStrength() {
-        int strength = KeepUtil.getCombinedBlockLevelKeepStrength(
-                getListBlockFO().getKeepTogether());
-        strength = Math.max(strength, getParentKeepTogetherStrength());
-        return strength;
+    public KeepProperty getKeepTogetherProperty() {
+        return getListBlockFO().getKeepTogether();
     }
 
     /** {@inheritDoc} */
-    public int getKeepWithNextStrength() {
-        return KeepUtil.getCombinedBlockLevelKeepStrength(getListBlockFO().getKeepWithNext());
+    public KeepProperty getKeepWithPreviousProperty() {
+        return getListBlockFO().getKeepWithPrevious();
     }
 
     /** {@inheritDoc} */
-    public int getKeepWithPreviousStrength() {
-        return KeepUtil.getCombinedBlockLevelKeepStrength(getListBlockFO().getKeepWithPrevious());
+    public KeepProperty getKeepWithNextProperty() {
+        return getListBlockFO().getKeepWithNext();
     }
 
     /** {@inheritDoc} */

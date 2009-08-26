@@ -219,21 +219,18 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
     }
 
     /** {@inheritDoc} */
-    public int getKeepTogetherStrength() {
-        KeepProperty keep = getBlockFO().getKeepTogether();
-        int strength = KeepUtil.getCombinedBlockLevelKeepStrength(keep);
-        strength = Math.max(strength, getParentKeepTogetherStrength());
-        return strength;
+    public KeepProperty getKeepTogetherProperty() {
+        return getBlockFO().getKeepTogether();
     }
 
     /** {@inheritDoc} */
-    public int getKeepWithNextStrength() {
-        return KeepUtil.getCombinedBlockLevelKeepStrength(getBlockFO().getKeepWithNext());
+    public KeepProperty getKeepWithPreviousProperty() {
+        return getBlockFO().getKeepWithPrevious();
     }
 
     /** {@inheritDoc} */
-    public int getKeepWithPreviousStrength() {
-        return KeepUtil.getCombinedBlockLevelKeepStrength(getBlockFO().getKeepWithPrevious());
+    public KeepProperty getKeepWithNextProperty() {
+        return getBlockFO().getKeepWithNext();
     }
 
     /** {@inheritDoc} */

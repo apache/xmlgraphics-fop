@@ -60,8 +60,8 @@ class RowGroupLayoutManager {
         LinkedList returnList = new LinkedList();
         createElementsForRowGroup(context, alignment, bodyType, returnList);
 
-        context.updateKeepWithPreviousPending(rowGroup[0].getKeepWithPreviousStrength());
-        context.updateKeepWithNextPending(rowGroup[rowGroup.length - 1].getKeepWithNextStrength());
+        context.updateKeepWithPreviousPending(rowGroup[0].getKeepWithPrevious());
+        context.updateKeepWithNextPending(rowGroup[rowGroup.length - 1].getKeepWithNext());
 
         int breakBefore = Constants.EN_AUTO;
         TableRow firstRow = rowGroup[0].getTableRow();

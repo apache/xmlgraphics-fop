@@ -136,8 +136,8 @@ public class LayoutContext {
     private int breakBefore;
     private int breakAfter;
 
-    private int pendingKeepWithNext = BlockLevelLayoutManager.KEEP_AUTO;
-    private int pendingKeepWithPrevious = BlockLevelLayoutManager.KEEP_AUTO;
+    private Keep pendingKeepWithNext = Keep.KEEP_AUTO;
+    private Keep pendingKeepWithPrevious = Keep.KEEP_AUTO;
 
     private int disableColumnBalancing;
 
@@ -227,7 +227,7 @@ public class LayoutContext {
      * Returns the strength of a keep-with-next currently pending.
      * @return the keep-with-next strength
      */
-    public int getKeepWithNextPending() {
+    public Keep getKeepWithNextPending() {
         return this.pendingKeepWithNext;
     }
 
@@ -235,7 +235,7 @@ public class LayoutContext {
      * Returns the strength of a keep-with-previous currently pending.
      * @return the keep-with-previous strength
      */
-    public int getKeepWithPreviousPending() {
+    public Keep getKeepWithPreviousPending() {
         return this.pendingKeepWithPrevious;
     }
 
@@ -243,14 +243,14 @@ public class LayoutContext {
      * Clears any pending keep-with-next strength.
      */
     public void clearKeepWithNextPending() {
-        this.pendingKeepWithNext = BlockLevelLayoutManager.KEEP_AUTO;
+        this.pendingKeepWithNext = Keep.KEEP_AUTO;
     }
 
     /**
      * Clears any pending keep-with-previous strength.
      */
     public void clearKeepWithPreviousPending() {
-        this.pendingKeepWithPrevious = BlockLevelLayoutManager.KEEP_AUTO;
+        this.pendingKeepWithPrevious = Keep.KEEP_AUTO;
     }
 
     /**
@@ -263,18 +263,18 @@ public class LayoutContext {
 
     /**
      * Updates the currently pending keep-with-next strength.
-     * @param strength the new strength to consider
+     * @param keep the new strength to consider
      */
-    public void updateKeepWithNextPending(int strength) {
-        this.pendingKeepWithNext = Math.max(this.pendingKeepWithNext, strength);
+    public void updateKeepWithNextPending(Keep keep) {
+        this.pendingKeepWithNext = this.pendingKeepWithNext.compare(keep);
     }
 
     /**
      * Updates the currently pending keep-with-previous strength.
-     * @param strength the new strength to consider
+     * @param keep the new strength to consider
      */
-    public void updateKeepWithPreviousPending(int strength) {
-        this.pendingKeepWithPrevious = Math.max(this.pendingKeepWithPrevious, strength);
+    public void updateKeepWithPreviousPending(Keep keep) {
+        this.pendingKeepWithPrevious = this.pendingKeepWithPrevious.compare(keep);
     }
 
     /**
@@ -282,7 +282,7 @@ public class LayoutContext {
      * @return true if a keep-with-next constraint is pending
      */
     public boolean isKeepWithNextPending() {
-        return getKeepWithNextPending() != BlockLevelLayoutManager.KEEP_AUTO;
+        return !getKeepWithNextPending().isAuto();
     }
 
     /**
@@ -290,7 +290,7 @@ public class LayoutContext {
      * @return true if a keep-with-previous constraint is pending
      */
     public boolean isKeepWithPreviousPending() {
-        return getKeepWithPreviousPending() != BlockLevelLayoutManager.KEEP_AUTO;
+        return !getKeepWithPreviousPending().isAuto();
     }
 
     public void setLeadingSpace(SpaceSpecifier space) {
@@ -640,9 +640,8 @@ public class LayoutContext {
         + "\nStarts New Area: \t" + startsNewArea()
         + "\nIs Last Area: \t" + isLastArea()
         + "\nTry Hyphenate: \t" + tryHyphenate()
-        + "\nKeeps: \t[keep-with-next=" + KeepUtil.keepStrengthToString(getKeepWithNextPending())
-                + "][keep-with-previous="
-                + KeepUtil.keepStrengthToString(getKeepWithPreviousPending()) + "] pending"
+        + "\nKeeps: \t[keep-with-next=" + getKeepWithNextPending()
+                + "][keep-with-previous=" + getKeepWithPreviousPending() + "] pending"
         + "\nBreaks: \tforced [" + (breakBefore != Constants.EN_AUTO ? "break-before" : "") + "]["
         + (breakAfter != Constants.EN_AUTO ? "break-after" : "") + "]";
     }

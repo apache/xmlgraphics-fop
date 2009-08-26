@@ -24,6 +24,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
@@ -75,8 +76,8 @@ import org.apache.fop.fonts.Typeface;
 import org.apache.fop.render.AbstractPathOrientedRenderer;
 import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.RendererContext;
-import org.apache.fop.render.extensions.prepress.PageBoundariesAttributes;
-import org.apache.fop.render.extensions.prepress.PageScaleAttributes;
+import org.apache.fop.render.extensions.prepress.PageBoundaries;
+import org.apache.fop.render.extensions.prepress.PageScale;
 import org.apache.fop.render.pdf.CTMHelper;
 import org.apache.fop.util.CharUtilities;
 import org.apache.fop.util.ColorUtil;
@@ -292,20 +293,10 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
 
         this.currentPageViewport = pageViewport;
         try {
-            String bleed = (String) currentPageViewport.getForeignAttributes().get(
-                    PageBoundariesAttributes.EXT_BLEED);
-            String cropOffset = (String) currentPageViewport.getForeignAttributes().get(
-                    PageBoundariesAttributes.EXT_CROP_OFFSET);
-            String cropBoxValue = (String) currentPageViewport.getForeignAttributes().get(
-                    PageBoundariesAttributes.EXT_CROP_BOX);
-            Rectangle2D bounds = PageBoundariesAttributes.getCropBoxRectangle(
-                    pageViewport.getViewArea(),
-                    bleed,
-                    cropOffset,
-                    cropBoxValue
-            );
-            Rectangle2D bleedBox = PageBoundariesAttributes.getBleedBoxRectangle(
-                    pageViewport.getViewArea(), bleed);
+            PageBoundaries boundaries = new PageBoundaries(
+                    pageViewport.getViewArea().getSize(), pageViewport.getForeignAttributes());
+            Rectangle bounds = boundaries.getCropBox();
+            Rectangle bleedBox = boundaries.getBleedBox();
             this.pageWidth = (int) Math.round(bounds.getWidth() / 1000f);
             this.pageHeight = (int) Math.round(bounds.getHeight() / 1000f);
 
@@ -318,13 +309,12 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
             double scaleX = scaleFactor;
             double scaleY = scaleFactor;
             String scale = (String) currentPageViewport.getForeignAttributes().get(
-                    PageScaleAttributes.EXT_PAGE_SCALE);
-            Point2D scales = PageScaleAttributes.getScaleAttributes(scale);
+                    PageScale.EXT_PAGE_SCALE);
+            Point2D scales = PageScale.getScale(scale);
             if (scales != null) {
                 scaleX *= scales.getX();
                 scaleY *= scales.getY();
             }
-
 
             scaleX = scaleX
                 * (25.4f / FopFactoryConfigurator.DEFAULT_TARGET_RESOLUTION)

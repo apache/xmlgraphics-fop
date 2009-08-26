@@ -41,7 +41,22 @@ public class BreakElement extends UnresolvedListElement {
      * @param context the layout context which contains the pending conditional elements
      */
     public BreakElement(Position position, int penaltyValue, LayoutContext context) {
-        this(position, 0, penaltyValue, -1, context);
+        this(position, penaltyValue, -1, context);
+    }
+
+    /**
+     * Create a new BreakElement for the given {@code position}, {@code penaltyValue}
+     * and {@code breakClass}. (Used principally to generate break-possibilities in
+     * ranges of content that must be kept together within the context corresponding
+     * to the {@code breakClass}; expected to be one of {@link Constants#EN_AUTO},
+     * {@link Constants#EN_LINE}, {@link Constants#EN_COLUMN} or {@link Constants#EN_PAGE})
+     * @param position  the corresponding {@link Position}
+     * @param penaltyValue  the penalty value
+     * @param breakClass    the break class
+     * @param context       the {@link LayoutContext}
+     */
+    public BreakElement(Position position, int penaltyValue, int breakClass, LayoutContext context) {
+        this(position, 0, penaltyValue, breakClass, context);
     }
 
     /**
@@ -63,6 +78,10 @@ public class BreakElement extends UnresolvedListElement {
         this.breakClass = breakClass;
         this.pendingBeforeMarks = context.getPendingBeforeMarks();
         this.pendingAfterMarks = context.getPendingAfterMarks();
+    }
+
+    private static String getBreakClassName(int breakClass) {
+        return AbstractBreaker.getBreakClassName(breakClass);
     }
 
     /** {@inheritDoc} */
@@ -143,27 +162,17 @@ public class BreakElement extends UnresolvedListElement {
 
     /** {@inheritDoc} */
     public String toString() {
-        StringBuffer sb = new StringBuffer();
+        StringBuffer sb = new StringBuffer(64);
         sb.append("BreakPossibility[p:");
-        sb.append(this.penaltyValue);
+        sb.append(KnuthPenalty.valueOf(this.penaltyValue));
         if (isForcedBreak()) {
-            sb.append(" (forced break");
-            switch (getBreakClass()) {
-            case Constants.EN_PAGE:
-                sb.append(", page");
-                break;
-            case Constants.EN_COLUMN:
-                sb.append(", column");
-                break;
-            case Constants.EN_EVEN_PAGE:
-                sb.append(", even page");
-                break;
-            case Constants.EN_ODD_PAGE:
-                sb.append(", odd page");
-                break;
-            default:
-            }
-            sb.append(")");
+            sb.append(" (forced break, ")
+                    .append(getBreakClassName(this.breakClass))
+                    .append(")");
+        } else if (this.penaltyValue >= 0 && this.breakClass != -1) {
+            sb.append(" (keep constraint, ")
+                    .append(getBreakClassName(this.breakClass))
+                    .append(")");
         }
         sb.append("; w:");
         sb.append(penaltyWidth);

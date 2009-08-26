@@ -622,6 +622,14 @@ public abstract class BreakingAlgorithm {
     }
 
     /**
+     * Return the last node that yielded a too short line.
+     * @return  the node corresponding to the last too short line
+     */
+    protected final KnuthNode getLastTooShort() {
+        return this.lastTooShort;
+    }
+
+    /**
      * Generic handler for a {@link KnuthElement} at the given {@code position},
      * taking into account whether the preceding element was a box, and which
      * type(s) of breaks are allowed.
@@ -658,7 +666,7 @@ public abstract class BreakingAlgorithm {
 
     /**
      * Handle a {@link KnuthBox}.
-     * <em>Note: default implementation just adds the box's width
+     * <br/><em>Note: default implementation just adds the box's width
      * to the total content width. Subclasses that do not keep track
      * of this themselves, but override this method, should remember
      * to call {@code super.handleBox(box)} to avoid unwanted side-effects.</em>
@@ -819,14 +827,16 @@ public abstract class BreakingAlgorithm {
         lastDeactivated = null;
         lastTooLong = null;
         for (int line = startLine; line < endLine; line++) {
-            if (!elementCanEndLine(element, line)) {
-                continue;
-            }
             for (KnuthNode node = getNode(line); node != null; node = node.next) {
                 if (node.position == elementIdx) {
                     continue;
                 }
                 int difference = computeDifference(node, element, elementIdx);
+                if (!elementCanEndLine(element, endLine, difference)) {
+                    log.trace("Skipping legal break");
+                    break;
+                }
+
                 double r = computeAdjustmentRatio(node, difference);
                 int availableShrink = totalShrink - node.totalShrink;
                 int availableStretch = totalStretch - node.totalStretch;
@@ -865,9 +875,10 @@ public abstract class BreakingAlgorithm {
      * number.
      * @param element   the element
      * @param line      the line number
+     * @param difference
      * @return  {@code true} if the element can end the line
      */
-    protected boolean elementCanEndLine(KnuthElement element, int line) {
+    protected boolean elementCanEndLine(KnuthElement element, int line, int difference) {
         return (!element.isPenalty()
                 || element.getP() < KnuthElement.INFINITE);
     }

@@ -857,10 +857,10 @@ out = proc.getOutputStream();]]></source>
 ]]></source>
         <p>
           The invoke-medium-map element is allowed as child of fo:page-sequence (page group
-          level). It is NOT supported on document level (fo:root), yet. FOP also doesn't support
-          specifying medium maps inside XML (using BMM/EMM). It can only reference an existing
-          medium map by name. The medium map has to be constructed through different means and
-          available on the target platform.
+          level) or fo:simple-page-master. It is NOT supported on document level (fo:root), yet. 
+          FOP also doesn't support specifying medium maps inside XML (using BMM/EMM). It can 
+          only reference an existing medium map by name. The medium map has to be constructed 
+          through different means and available on the target platform.
         </p>
       </section>
       <section id="afp-form-maps">

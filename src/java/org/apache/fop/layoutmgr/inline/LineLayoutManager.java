@@ -37,6 +37,7 @@ import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.properties.CommonHyphenation;
+import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
@@ -47,7 +48,7 @@ import org.apache.fop.layoutmgr.BreakElement;
 import org.apache.fop.layoutmgr.BreakingAlgorithm;
 import org.apache.fop.layoutmgr.ElementListObserver;
 import org.apache.fop.layoutmgr.InlineKnuthSequence;
-import org.apache.fop.layoutmgr.KeepUtil;
+import org.apache.fop.layoutmgr.Keep;
 import org.apache.fop.layoutmgr.KnuthBlockBox;
 import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthElement;
@@ -901,12 +902,12 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         for (int p = 0; p < knuthParagraphs.size(); p++) {
             // penalty between paragraphs
             if (p > 0) {
-                int strength = getKeepTogetherStrength();
-                int penalty = KeepUtil.getPenaltyForKeep(strength);
-                if (penalty < KnuthElement.INFINITE) {
-                    returnList.add(new BreakElement(
-                            new Position(this), penalty, context));
-                }
+                Keep keep = getKeepTogether();
+                returnList.add(new BreakElement(
+                            new Position(this),
+                            keep.getPenalty(),
+                            keep.getContext(),
+                            context));
             }
 
             LineLayoutPossibilities llPoss;
@@ -935,7 +936,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             } else {
                 /* "normal" vertical alignment: create a sequence whose boxes
                    represent effective lines, and contain LineBreakPositions */
-                Position returnPosition = new LeafPosition(this, p);
                 int startIndex = 0;
                 for (int i = 0;
                         i < llPoss.getChosenLineCount();
@@ -945,12 +945,12 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                             && i >= fobj.getOrphans()
                             && i <= llPoss.getChosenLineCount() - fobj.getWidows()) {
                         // penalty allowing a page break between lines
-                        int strength = getKeepTogetherStrength();
-                        int penalty = KeepUtil.getPenaltyForKeep(strength);
-                        if (penalty < KnuthElement.INFINITE) {
-                            returnList.add(new BreakElement(
-                                    new LeafPosition(this, p, endIndex), penalty, context));
-                        }
+                        Keep keep = getKeepTogether();
+                        returnList.add(new BreakElement(
+                                new LeafPosition(this, p, endIndex),
+                                    keep.getPenalty(),
+                                    keep.getContext(),
+                                    context));
                     }
                     endIndex = ((LineBreakPosition) llPoss.getChosenPosition(i)).getLeafPos();
                     // create a list of the FootnoteBodyLM handling footnotes
@@ -1128,28 +1128,43 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     }
 
     /** {@inheritDoc} */
-    public int getKeepTogetherStrength() {
-        return ((BlockLevelLayoutManager) getParent()).getKeepTogetherStrength();
+    public KeepProperty getKeepTogetherProperty() {
+        return ((BlockLevelLayoutManager) getParent()).getKeepTogetherProperty();
+    }
+
+    /** {@inheritDoc} */
+    public KeepProperty getKeepWithPreviousProperty() {
+        return ((BlockLevelLayoutManager) getParent()).getKeepWithPreviousProperty();
+    }
+
+    /** {@inheritDoc} */
+    public KeepProperty getKeepWithNextProperty() {
+        return ((BlockLevelLayoutManager) getParent()).getKeepWithNextProperty();
+    }
+
+    /** {@inheritDoc} */
+    public Keep getKeepTogether() {
+        return ((BlockLevelLayoutManager) getParent()).getKeepTogether();
     }
 
     /** {@inheritDoc} */
     public boolean mustKeepWithPrevious() {
-        return getKeepWithPreviousStrength() > KEEP_AUTO;
+        return !getKeepWithPrevious().isAuto();
     }
 
     /** {@inheritDoc} */
     public boolean mustKeepWithNext() {
-        return getKeepWithNextStrength() > KEEP_AUTO;
+        return !getKeepWithNext().isAuto();
     }
 
     /** {@inheritDoc} */
-    public int getKeepWithNextStrength() {
-        return KEEP_AUTO;
+    public Keep getKeepWithNext() {
+        return Keep.KEEP_AUTO;
     }
 
     /** {@inheritDoc} */
-    public int getKeepWithPreviousStrength() {
-        return KEEP_AUTO;
+    public Keep getKeepWithPrevious() {
+        return Keep.KEEP_AUTO;
     }
 
     /** {@inheritDoc} */
@@ -1254,6 +1269,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 break;
             }
             //TODO Something's not right here. See block_hyphenation_linefeed_preserve.xml
+            //for more info: see also https://issues.apache.org/bugzilla/show_bug.cgi?id=38264
 
             // collect word fragments, ignoring auxiliary elements;
             // each word fragment was created by a different TextLM

@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.Trait;
@@ -31,21 +32,23 @@ import org.apache.fop.fo.flow.table.ConditionalBorder;
 import org.apache.fop.fo.flow.table.GridUnit;
 import org.apache.fop.fo.flow.table.PrimaryGridUnit;
 import org.apache.fop.fo.flow.table.Table;
-import org.apache.fop.fo.flow.table.TablePart;
 import org.apache.fop.fo.flow.table.TableCell;
 import org.apache.fop.fo.flow.table.TableColumn;
+import org.apache.fop.fo.flow.table.TablePart;
 import org.apache.fop.fo.flow.table.TableRow;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground.BorderInfo;
 import org.apache.fop.layoutmgr.AreaAdditionUtil;
 import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
-import org.apache.fop.layoutmgr.KeepUtil;
+import org.apache.fop.layoutmgr.ElementListUtils;
+import org.apache.fop.layoutmgr.Keep;
 import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthGlue;
 import org.apache.fop.layoutmgr.KnuthPenalty;
 import org.apache.fop.layoutmgr.LayoutContext;
+import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.SpaceResolver;
@@ -138,9 +141,9 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
         List contentList = new LinkedList();
         List returnList = new LinkedList();
 
-        BlockLevelLayoutManager curLM; // currently active LM
-        BlockLevelLayoutManager prevLM = null; // previously active LM
-        while ((curLM = (BlockLevelLayoutManager) getChildLM()) != null) {
+        LayoutManager curLM; // currently active LM
+        LayoutManager prevLM = null; // previously active LM
+        while ((curLM = getChildLM()) != null) {
             LayoutContext childLC = new LayoutContext(0);
             // curLM is a ?
             childLC.setStackLimitBP(MinOptMax.subtract(context
@@ -153,11 +156,12 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
                 log.debug("child LM signals pending keep with next");
             }
             if (contentList.isEmpty() && childLC.isKeepWithPreviousPending()) {
-                primaryGridUnit.setKeepWithPreviousStrength(childLC.getKeepWithPreviousPending());
+                primaryGridUnit.setKeepWithPrevious(childLC.getKeepWithPreviousPending());
                 childLC.clearKeepWithPreviousPending();
             }
 
-            if (prevLM != null) {
+            if (prevLM != null
+                    && !ElementListUtils.endsWithForcedBreak(contentList)) {
                 // there is a block handled by prevLM
                 // before the one handled by curLM
                 addInBetweenBreak(contentList, context, childLC);
@@ -174,7 +178,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
             }
             prevLM = curLM;
         }
-        primaryGridUnit.setKeepWithNextStrength(context.getKeepWithNextPending());
+        primaryGridUnit.setKeepWithNext(context.getKeepWithNextPending());
 
         returnedList = new LinkedList();
         if (!contentList.isEmpty()) {
@@ -195,7 +199,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
         }
         final KnuthElement lastItem = (KnuthElement) ListUtil
                 .getLast(returnList);
-        if (((KnuthElement) lastItem).isForcedBreak()) {
+        if (lastItem.isForcedBreak()) {
             KnuthPenalty p = (KnuthPenalty) lastItem;
             primaryGridUnit.setBreakAfter(p.getBreakClass());
             p.setP(0);
@@ -556,26 +560,23 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
     }
 
     /** {@inheritDoc} */
-    public int getKeepTogetherStrength() {
-        int strength = KEEP_AUTO;
+    public Keep getKeepTogether() {
+        Keep keep = Keep.KEEP_AUTO;
         if (primaryGridUnit.getRow() != null) {
-            strength = Math.max(strength, KeepUtil.getKeepStrength(
-                    primaryGridUnit.getRow().getKeepTogether().getWithinPage()));
-            strength = Math.max(strength, KeepUtil.getKeepStrength(
-                    primaryGridUnit.getRow().getKeepTogether().getWithinColumn()));
+            keep = Keep.getKeep(primaryGridUnit.getRow().getKeepTogether());
         }
-        strength = Math.max(strength, getParentKeepTogetherStrength());
-        return strength;
+        keep = keep.compare(getParentKeepTogether());
+        return keep;
     }
 
     /** {@inheritDoc} */
-    public int getKeepWithNextStrength() {
-        return KEEP_AUTO; //TODO FIX ME (table-cell has no keep-with-next!)
+    public Keep getKeepWithNext() {
+        return Keep.KEEP_AUTO; //TODO FIX ME (table-cell has no keep-with-next!)
     }
 
     /** {@inheritDoc} */
-    public int getKeepWithPreviousStrength() {
-        return KEEP_AUTO; //TODO FIX ME (table-cell has no keep-with-previous!)
+    public Keep getKeepWithPrevious() {
+        return Keep.KEEP_AUTO; //TODO FIX ME (table-cell has no keep-with-previous!)
     }
 
     // --------- Property Resolution related functions --------- //

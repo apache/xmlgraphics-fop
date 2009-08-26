@@ -58,6 +58,23 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="AD" type="add" fixes-bug="46905">
+        Added basic implementation for column-keeps.
+      </action>
+      <action context="Renderers" dev="AD" type="fix" fixes-bug="46883">
+        Hotspot in AbstractGraphicsDrawingOrderContainer. Reduced time spent in the method
+        by introducing a member variable to hold the data-length.
+      </action>
+      <action context="Code" dev="AD" type="fix" fixes-bug="47710">
+        White-space handling in markers with inline-content throws a NullPointerException
+        in some cases.
+      </action>
+      <action context="Renderers" dev="CB" type="fix" fixes-bug="47694">
+        Dithered Background Shading can produce illegal AFP if objects are very small
+      </action>
+      <action context="Renderers" dev="CB" type="add">
+        AFP Output: Added support for IMM Extension on fo:simple-page-master.
+      </action>
       <action context="Renderers" dev="JM" type="add" fixes-bug="47311" due-to="Peter Coppens">
         Added an initial set of extensions for prepress support (fox:bleed, fox:crop-offset,
         fox:crop-box and fox:scale). This is currently supported only by PDF and Java2D renderers.

@@ -62,6 +62,7 @@ import org.apache.xmlgraphics.util.UnitConv;
 import org.apache.fop.afp.goca.GraphicsSetLineType;
 import org.apache.fop.afp.modca.GraphicsObject;
 import org.apache.fop.afp.svg.AFPGraphicsConfiguration;
+import org.apache.fop.afp.util.CubicBezierApproximator;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.svg.NativeImageHandler;
 
@@ -437,6 +438,7 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
      */
     private void processPathIterator(PathIterator iter) {
         double[] dstPts = new double[6];
+        double[] currentPosition = new double[2];
         for (int[] openingCoords = new int[2]; !iter.isDone(); iter.next()) {
             switch (iter.currentSegment(dstPts)) {
             case PathIterator.SEG_LINETO:
@@ -444,6 +446,7 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
                         (int)Math.round(dstPts[X]),
                         (int)Math.round(dstPts[Y])
                      }, true);
+                currentPosition = new double[]{dstPts[X], dstPts[Y]};
                 break;
             case PathIterator.SEG_QUADTO:
                 graphicsObj.addFillet(new int[] {
@@ -452,26 +455,39 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
                         (int)Math.round(dstPts[X2]),
                         (int)Math.round(dstPts[Y2])
                      }, true);
+                currentPosition = new double[]{dstPts[X2], dstPts[Y2]};
                 break;
             case PathIterator.SEG_CUBICTO:
-                graphicsObj.addFillet(new int[] {
-                        (int)Math.round(dstPts[X1]),
-                        (int)Math.round(dstPts[Y1]),
-                        (int)Math.round(dstPts[X2]),
-                        (int)Math.round(dstPts[Y2]),
-                        (int)Math.round(dstPts[X3]),
-                        (int)Math.round(dstPts[Y3])
-                     }, true);
+                double[] cubicCoords = new double[] {currentPosition[0], currentPosition[1],
+                    dstPts[X1], dstPts[Y1], dstPts[X2], dstPts[Y2], dstPts[X3], dstPts[Y3]};
+                double[][] quadParts = CubicBezierApproximator.fixedMidPointApproximation(
+                        cubicCoords);
+                if (quadParts.length >= 4) {
+                    for (int segIndex = 0; segIndex < quadParts.length; segIndex++) {
+                        double[] quadPts = quadParts[segIndex];
+                        if (quadPts != null && quadPts.length == 4) {
+                            graphicsObj.addFillet(new int[]{
+                                    (int) Math.round(quadPts[X1]),
+                                    (int) Math.round(quadPts[Y1]),
+                                    (int) Math.round(quadPts[X2]),
+                                    (int) Math.round(quadPts[Y2])
+                            }, true);
+                            currentPosition = new double[]{quadPts[X2], quadPts[Y2]};
+                        }
+                    }
+                }
                 break;
             case PathIterator.SEG_MOVETO:
                 openingCoords = new int[] {
                         (int)Math.round(dstPts[X]),
                         (int)Math.round(dstPts[Y])
                 };
+                currentPosition = new double[]{dstPts[X], dstPts[Y]};
                 graphicsObj.setCurrentPosition(openingCoords);
                 break;
             case PathIterator.SEG_CLOSE:
                 graphicsObj.addLine(openingCoords, true);
+                currentPosition = new double[]{openingCoords[0], openingCoords[1]};
                 break;
             default:
                 log.debug("Unrecognised path iterator type");

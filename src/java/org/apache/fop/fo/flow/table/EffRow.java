@@ -23,8 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.fop.fo.Constants;
-import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
-import org.apache.fop.layoutmgr.KeepUtil;
+import org.apache.fop.layoutmgr.Keep;
 import org.apache.fop.layoutmgr.table.TableRowIterator;
 import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.util.BreakUtil;
@@ -170,20 +169,19 @@ public class EffRow {
      *
      * @return the strength of the keep-with-previous constraint
      */
-    public int getKeepWithPreviousStrength() {
-        int strength = BlockLevelLayoutManager.KEEP_AUTO;
+    public Keep getKeepWithPrevious() {
+        Keep keep = Keep.KEEP_AUTO;
         TableRow row = getTableRow();
         if (row != null) {
-            strength = Math.max(strength,
-                    KeepUtil.getCombinedBlockLevelKeepStrength(row.getKeepWithPrevious()));
+            keep = Keep.getKeep(row.getKeepWithPrevious());
         }
         for (Iterator iter = gridUnits.iterator(); iter.hasNext();) {
             GridUnit gu = (GridUnit) iter.next();
             if (gu.isPrimary()) {
-                strength = Math.max(strength, gu.getPrimary().getKeepWithPreviousStrength());
+                keep = keep.compare(gu.getPrimary().getKeepWithPrevious());
             }
         }
-        return strength;
+        return keep;
     }
 
     /**
@@ -192,20 +190,19 @@ public class EffRow {
      *
      * @return the strength of the keep-with-next constraint
      */
-    public int getKeepWithNextStrength() {
-        int strength = BlockLevelLayoutManager.KEEP_AUTO;
+    public Keep getKeepWithNext() {
+        Keep keep = Keep.KEEP_AUTO;
         TableRow row = getTableRow();
         if (row != null) {
-            strength = Math.max(strength,
-                    KeepUtil.getCombinedBlockLevelKeepStrength(row.getKeepWithNext()));
+            keep = Keep.getKeep(row.getKeepWithNext());
         }
         for (Iterator iter = gridUnits.iterator(); iter.hasNext();) {
             GridUnit gu = (GridUnit) iter.next();
             if (!gu.isEmpty() && gu.getColSpanIndex() == 0 && gu.isLastGridUnitRowSpan()) {
-                strength = Math.max(strength, gu.getPrimary().getKeepWithNextStrength());
+                keep = keep.compare(gu.getPrimary().getKeepWithNext());
             }
         }
-        return strength;
+        return keep;
     }
 
     /**
@@ -213,16 +210,13 @@ public class EffRow {
      * not take the parent table's keeps into account!
      * @return the keep-together strength
      */
-    public int getKeepTogetherStrength() {
+    public Keep getKeepTogether() {
         TableRow row = getTableRow();
-        int strength = BlockLevelLayoutManager.KEEP_AUTO;
+        Keep keep = Keep.KEEP_AUTO;
         if (row != null) {
-            strength = Math.max(strength, KeepUtil.getKeepStrength(
-                    row.getKeepTogether().getWithinPage()));
-            strength = Math.max(strength, KeepUtil.getKeepStrength(
-                    row.getKeepTogether().getWithinColumn()));
+            keep = Keep.getKeep(row.getKeepTogether());
         }
-        return strength;
+        return keep;
     }
 
     /**
