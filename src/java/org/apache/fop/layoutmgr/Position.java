@@ -28,6 +28,11 @@ public class Position {
         layoutManager = lm;
     }
 
+   public Position(LayoutManager lm, int index) {
+        this(lm);
+        setIndex(index);
+    }
+
     public LayoutManager getLM() {
         return layoutManager;
     }

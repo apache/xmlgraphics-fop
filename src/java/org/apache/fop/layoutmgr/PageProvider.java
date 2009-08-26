@@ -161,6 +161,33 @@ public class PageProvider implements Constants {
     }
 
     /**
+     * Returns true if the part following the given one has a different IPD.
+     *
+     * @param index index of the current part
+     * @return true if the following part has a different IPD, false otherwise
+     */
+    public boolean ipdChange(int index) {
+        int columnCount = 0;
+        int colIndex = startColumnOfCurrentElementList + index;
+        int pageIndex = -1;
+        Page page;
+        do {
+            colIndex -= columnCount;
+            pageIndex++;
+            page = getPage(false, pageIndex, RELTO_CURRENT_ELEMENT_LIST);
+            columnCount = page.getPageViewport().getCurrentSpan().getColumnCount();
+        } while (colIndex >= columnCount);
+        if (colIndex + 1 < columnCount) {
+            // Next part is a column on same page => same IPD
+            return false;
+        } else {
+            Page nextPage = getPage(false, pageIndex + 1, RELTO_CURRENT_ELEMENT_LIST);
+            return page.getPageViewport().getBodyRegion().getIPD()
+                    != nextPage.getPageViewport().getBodyRegion().getIPD();
+        }
+    }
+
+    /**
      * Checks if a break at the passed index would start a new page
      * @param index the index of the element before the break
      * @return  {@code true} if the break starts a new page

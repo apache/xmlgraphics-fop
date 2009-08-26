@@ -77,6 +77,14 @@ public class PageBreaker extends AbstractBreaker {
         return pslm.getPageProvider();
     }
 
+    /**
+     * Starts the page breaking process.
+     * @param flowBPD the constant available block-progression-dimension (used for every part)
+     */
+    void doLayout(int flowBPD) {
+        doLayout(flowBPD, false);
+    }
+
     /** {@inheritDoc} */
     protected PageBreakingLayoutListener createLayoutListener() {
         return new PageBreakingLayoutListener() {
@@ -121,6 +129,12 @@ public class PageBreaker extends AbstractBreaker {
     /** {@inheritDoc} */
     protected int getNextBlockList(LayoutContext childLC,
             int nextSequenceStartsOn) {
+        return getNextBlockList(childLC, nextSequenceStartsOn, null, null, null);
+    }
+
+    /** {@inheritDoc} */
+    protected int getNextBlockList(LayoutContext childLC, int nextSequenceStartsOn,
+            Position positionAtIPDChange, LayoutManager restartLM, List firstElements) {
         if (!firstPart) {
             // if this is the first page that will be created by
             // the current BlockSequence, it could have a break
@@ -132,7 +146,8 @@ public class PageBreaker extends AbstractBreaker {
         pageBreakHandled = true;
         pageProvider.setStartOfNextElementList(pslm.getCurrentPageNum(),
                 pslm.getCurrentPV().getCurrentSpan().getCurrentFlowIndex());
-        return super.getNextBlockList(childLC, nextSequenceStartsOn);
+        return super.getNextBlockList(childLC, nextSequenceStartsOn, positionAtIPDChange,
+                restartLM, firstElements);
     }
 
     private boolean containsFootnotes(List contentList, LayoutContext context) {
@@ -200,6 +215,24 @@ public class PageBreaker extends AbstractBreaker {
         while (!childFLM.isFinished() && contentList == null) {
             contentList = childFLM.getNextKnuthElements(context, alignment);
         }
+
+        // scan contentList, searching for footnotes
+        if (containsFootnotes(contentList, context)) {
+            // handle the footnote separator
+            handleFootnoteSeparator();
+        }
+        return contentList;
+    }
+
+    /** {@inheritDoc} */
+    protected List getNextKnuthElements(LayoutContext context, int alignment,
+            Position positionAtIPDChange, LayoutManager restartAtLM) {
+        List contentList = null;
+
+        do {
+            contentList = childFLM.getNextKnuthElements(context, alignment, positionAtIPDChange,
+                    restartAtLM);
+        } while (!childFLM.isFinished() && contentList == null);
 
         // scan contentList, searching for footnotes
         if (containsFootnotes(contentList, context)) {
