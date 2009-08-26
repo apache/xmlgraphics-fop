@@ -21,15 +21,15 @@ package org.apache.fop.layoutmgr;
 
 public class LeafPosition extends Position {
 
-    private int leafPos;
+    private int iLeafPos;
 
     public LeafPosition(LayoutManager lm, int pos) {
         super(lm);
-        leafPos = pos;
+        iLeafPos = pos;
     }
 
     public int getLeafPos() {
-        return leafPos;
+        return iLeafPos;
     }
 
     public boolean generatesAreas() {

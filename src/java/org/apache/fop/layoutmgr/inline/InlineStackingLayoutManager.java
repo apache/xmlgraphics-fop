@@ -19,13 +19,12 @@
 
 package org.apache.fop.layoutmgr.inline;
 
-import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.HashMap;
 
-import org.apache.fop.area.Area;
-import org.apache.fop.area.inline.Space;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.properties.SpaceProperty;
 import org.apache.fop.layoutmgr.AbstractLayoutManager;
@@ -35,6 +34,8 @@ import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.NonLeafPosition;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.PositionIterator;
+import org.apache.fop.area.Area;
+import org.apache.fop.area.inline.Space;
 import org.apache.fop.traits.MinOptMax;
 
 /**
@@ -61,6 +62,12 @@ public abstract class InlineStackingLayoutManager extends AbstractLayoutManager
         }
     }
 
+
+    /**
+     * Size of any start or end borders and padding.
+     */
+    private MinOptMax allocIPD = new MinOptMax(0);
+
     /**
      * Size of border and padding in BPD (ie, before and after).
      */
@@ -70,6 +77,9 @@ public abstract class InlineStackingLayoutManager extends AbstractLayoutManager
 
     /** The child layout context */
     protected LayoutContext childLC;
+
+    /** Used to store previous content IPD for each child LM. */
+    private HashMap hmPrevIPD = new HashMap();
 
     /**
      * Create an inline stacking layout manager.
@@ -136,6 +146,22 @@ public abstract class InlineStackingLayoutManager extends AbstractLayoutManager
      */
     protected SpaceProperty getSpaceEnd() {
         return null;
+    }
+
+    /**
+     * TODO: Explain this method
+     * @param lm ???
+     * @return ???
+     */
+    protected MinOptMax getPrevIPD(LayoutManager lm) {
+        return (MinOptMax) hmPrevIPD.get(lm);
+    }
+
+    /**
+     * Clear the previous IPD calculation.
+     */
+    protected void clearPrevIPD() {
+        hmPrevIPD.clear();
     }
 
     /**

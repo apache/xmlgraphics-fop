@@ -47,22 +47,22 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
     private static Log log = LogFactory.getLog(AbstractLayoutManager.class);
 
     /** Parent LayoutManager for this LayoutManager */
-    protected LayoutManager parentLM;
+    protected LayoutManager parentLM = null;
     /** List of child LayoutManagers */
-    protected List childLMs;
+    protected List childLMs = null;
     /** Iterator for child LayoutManagers */
-    protected ListIterator fobjIter;
+    protected ListIterator fobjIter = null;
     /** Marker map for markers related to this LayoutManager */
-    private Map markers;
+    private Map markers = null;
 
     /** True if this LayoutManager has handled all of its content. */
-    private boolean isFinished;
+    private boolean isFinished = false;
 
     /** child LM during getNextKnuthElement phase */
-    protected LayoutManager curChildLM;
+    protected LayoutManager curChildLM = null;
 
     /** child LM iterator during getNextKnuthElement phase */
-    protected ListIterator childLMiter;
+    protected ListIterator childLMiter = null;
 
     private int lastGeneratedPosition = -1;
     private int smallestPosNumberChecked = Integer.MAX_VALUE;

@@ -117,7 +117,7 @@ public class AreaAdditionUtil {
             // set space after for each LM, in order to implement
             // display-align = distribute
             lc.setSpaceAfter(layoutContext.getSpaceAfter());
-            lc.setStackLimitBP(layoutContext.getStackLimitBP());
+            lc.setStackLimitsFrom(layoutContext);
             childLM.addAreas(childPosIter, lc);
         }
 
