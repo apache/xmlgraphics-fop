@@ -1283,8 +1283,12 @@ public abstract class BreakingAlgorithm {
      * @return the width/length in millipoints
      */
     protected int getLineWidth(int line) {
-        assert lineWidth >= 0;
-        return this.lineWidth;
+        if (this.lineWidth < 0) {
+            throw new IllegalStateException("lineWidth must be set"
+                    + (this.lineWidth != 0 ? " and positive, but it is: " + this.lineWidth : ""));
+        } else {
+            return this.lineWidth;
+        }
     }
 
     /** @return the constant line/part width or -1 if there is no such value */

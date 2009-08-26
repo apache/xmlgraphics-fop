@@ -57,12 +57,16 @@ public class InlineKnuthSequence extends KnuthSequence  {
         return true;
     }
 
-    /** {@inheritDoc} */
+    /* (non-Javadoc)
+     * {@inheritDoc}
+     */
     public boolean canAppendSequence(KnuthSequence sequence) {
         return sequence.isInlineSequence() && !isClosed;
     }
 
-    /** {@inheritDoc} */
+    /* (non-Javadoc)
+     * {@inheritDoc}
+     */
     public boolean appendSequence(KnuthSequence sequence) {
         if (!canAppendSequence(sequence)) {
             return false;
@@ -79,14 +83,18 @@ public class InlineKnuthSequence extends KnuthSequence  {
         return true;
     }
 
-    /** {@inheritDoc} */
+    /* (non-Javadoc)
+     * {@inheritDoc}
+     */
     public boolean appendSequence(KnuthSequence sequence, boolean keepTogether,
                                   BreakElement breakElement) {
         return appendSequence(sequence);
     }
 
 
-    /** {@inheritDoc} */
+    /* (non-Javadoc)
+     * {@inheritDoc}
+     */
     public KnuthSequence endSequence() {
         if (!isClosed) {
             add(new KnuthPenalty(0, -KnuthElement.INFINITE, false, null, false));
