@@ -47,22 +47,22 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
     private static Log log = LogFactory.getLog(AbstractLayoutManager.class);
 
     /** Parent LayoutManager for this LayoutManager */
-    protected LayoutManager parentLM = null;
+    protected LayoutManager parentLM;
     /** List of child LayoutManagers */
-    protected List childLMs = null;
+    protected List childLMs;
     /** Iterator for child LayoutManagers */
-    protected ListIterator fobjIter = null;
+    protected ListIterator fobjIter;
     /** Marker map for markers related to this LayoutManager */
-    private Map markers = null;
+    private Map markers;
 
     /** True if this LayoutManager has handled all of its content. */
-    private boolean isFinished = false;
+    private boolean isFinished;
 
     /** child LM during getNextKnuthElement phase */
-    protected LayoutManager curChildLM = null;
+    protected LayoutManager curChildLM;
 
     /** child LM iterator during getNextKnuthElement phase */
-    protected ListIterator childLMiter = null;
+    protected ListIterator childLMiter;
 
     private int lastGeneratedPosition = -1;
     private int smallestPosNumberChecked = Integer.MAX_VALUE;
@@ -120,6 +120,14 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
             return curChildLM;
         }
         return null;
+    }
+
+    protected void setCurrentChildLM(LayoutManager childLM) {
+        curChildLM = childLM;
+        childLMiter = new LMiter(this);
+        do {
+            curChildLM = (LayoutManager) childLMiter.next();
+        } while (curChildLM != childLM);
     }
 
     /**
@@ -448,6 +456,24 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
     /** {@inheritDoc} */
     public String toString() {
         return (super.toString() + (fobj != null ? "[fobj=" + fobj.toString() + "]" : ""));
+    }
+
+    /** {@inheritDoc} */
+    public void reset() {
+        isFinished = false;
+        curChildLM = null;
+        childLMiter = new LMiter(this);
+        /*
+         * Reset the children LM. Can't rely on childLMiter since it may have
+         * been set to null in checkEndOfLayout.
+         */
+        for (LMiter iter = new LMiter(this); iter.hasNext();) {
+            ((LayoutManager) iter.next()).reset();
+        }
+        if (fobj != null) {
+            markers = fobj.getMarkers();
+        }
+        lastGeneratedPosition = -1;
     }
 
 }

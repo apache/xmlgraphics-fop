@@ -19,7 +19,6 @@
 
 package org.apache.fop.layoutmgr;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -565,6 +564,11 @@ public class SpaceResolver {
         public Position getOriginalBreakPosition() {
             return this.originalPosition;
         }
+
+        public Position getPosition() {
+            return originalPosition;
+        }
+
     }
 
     /**

@@ -96,6 +96,9 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     //Controls whether a single part should be forced if possible (ex. block-container)
     private boolean favorSinglePart = false;
 
+    private boolean ipdChange;
+    private KnuthNode bestNodeForIPDChange;
+
     //Used to keep track of switches in keep-context
     private int currentKeepContext = Constants.EN_AUTO;
     private KnuthNode lastBeforeKeepContextSwitch;
@@ -1071,6 +1074,65 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
          */
         void notifyOverflow(int part, int amount, FObj obj);
 
+    }
+
+    /** {@inheritDoc} */
+    protected boolean ipdChanged() {
+        return ipdChange;
+    }
+
+    /** {@inheritDoc} */
+    protected int handleIpdChange() {
+        log.trace("Best node for ipd change:" + bestNodeForIPDChange);
+        // TODO finish()
+        /*
+         * The third parameter is used to determine if this is the last page, so
+         * if the content must be vertically justified or not. If we are here
+         * this means that there is further content and the next page has a
+         * different ipd. So tweak the parameter to fall into the non-last-page
+         * case.
+         */
+        calculateBreakPoints(bestNodeForIPDChange, par, bestNodeForIPDChange.line + 1);
+        activeLines = null;
+        return bestNodeForIPDChange.line;
+    }
+
+    /**
+     * Add a node at the end of the given line's existing active nodes.
+     * If this is the first node in the line, adjust endLine accordingly.
+     * @param line number of the line ending at the node's corresponding breakpoint
+     * @param node the active node to add
+     */
+    protected void addNode(int line, KnuthNode node) {
+        if (node.position < par.size() - 1 && line > 0 && ipdChange(line - 1)) {
+            log.trace("IPD changes at page " + line);
+            ipdChange = true;
+            if (bestNodeForIPDChange == null
+                    || node.totalDemerits < bestNodeForIPDChange.totalDemerits) {
+                bestNodeForIPDChange = node;
+            }
+        } else {
+            if (node.position == par.size() - 1) {
+                /*
+                 * The whole sequence could actually fit on the last page before
+                 * the IPD change. No need to do any special handling.
+                 */
+                ipdChange = false;
+            }
+            super.addNode(line, node);
+        }
+    }
+
+    KnuthNode getBestNodeBeforeIPDChange() {
+        return bestNodeForIPDChange;
+    }
+
+    /** {@inheritDoc} */
+    protected boolean ipdChange(int line) {
+        if (pageProvider == null) {
+            return false;
+        }
+        return pageProvider.ipdChange(line);
     }
 
 }
