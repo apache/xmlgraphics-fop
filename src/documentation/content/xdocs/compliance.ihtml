@@ -870,11 +870,11 @@
 
       <td class="no">no</td>
 
-      <td class="no">no</td>
+      <td class="yes">yes</td>
 
-      <td class="no">no</td>
+      <td class="yes">yes</td>
 
-      <td class="no">no</td>
+      <td class="yes">yes</td>
 
       <td align="center">&nbsp;</td>
     </tr>
@@ -1714,11 +1714,11 @@
 
       <td class="partial">partial</td>
 
-      <td class="partial">partial</td>
+      <td class="yes">yes</td>
 
       <td align="left">
         <ul>
-          <li>[0.94 and later] Only works as expected with inline-level content.</li>
+          <li>[0.95] Only works as expected with inline-level content.</li>
         </ul>
       </td>
     </tr>
@@ -4827,7 +4827,7 @@
           <li>[0.95] works on all implemented FOs, except list- and inline-level
           FOs.</li>
           <li>[Trunk] does not work on inline-level FOs.</li>
-          
+
           <li>[0.95 and earlier] &lt;integer&gt; values are not supported.</li>
           <li>[Trunk] minimal support for &lt;integer&gt; value.</li>
         </ul>
