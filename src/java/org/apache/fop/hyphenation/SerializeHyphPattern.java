@@ -42,19 +42,21 @@ public class SerializeHyphPattern {
     }
 
     /**
-     * {@inheritDoc}
+     * Compile all xml files in sourceDir, and write output hyp files in targetDir
+     * @param sourceDir Directory with pattern xml files
+     * @param targetDir Directory to which compiled pattern hyp files should be written
      */
     public void serializeDir(File sourceDir, File targetDir) {
         final String extension = ".xml";
         String[] sourceFiles = sourceDir.list(new FilenameFilter() {
             public boolean accept(File dir, String name) {
-                return(name.endsWith(extension));
+                return name.endsWith(extension);
             }
         });
         for (int j = 0; j < sourceFiles.length; j++) {
             File infile = new File(sourceDir, sourceFiles[j]);
-            String outfilename =
-                sourceFiles[j].substring(0, sourceFiles[j].length() - extension.length()) + ".hyp";
+            String outfilename = sourceFiles[j].substring(0, sourceFiles[j].length()
+                                                          - extension.length()) + ".hyp";
             File outfile = new File(targetDir, outfilename);
             serializeFile(infile, outfile);
         }
@@ -124,7 +126,11 @@ public class SerializeHyphPattern {
     }    // end rebuild
 
 
-    public static void main (String args[]) {
+    /**
+     * Entry point for ant java task
+     * @param args sourceDir, targetDir
+     */
+    public static void main (String[] args) {
         SerializeHyphPattern ser = new SerializeHyphPattern();
         ser.serializeDir(new File(args[0]), new File(args[1]));
     }
