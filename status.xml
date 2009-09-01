@@ -58,6 +58,10 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Layout" dev="VH" type="add" importance="high">
+        Added limited support for pages of different inline-progression-dimensions within a 
+        page-sequence.
+      </action>
       <action context="Renderers" dev="AD" type="add" fixes-bug="46905">
         Added basic implementation for column-keeps.
       </action>
