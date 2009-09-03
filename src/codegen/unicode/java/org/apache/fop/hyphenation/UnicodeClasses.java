@@ -22,12 +22,19 @@ package org.apache.fop.hyphenation;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.fop.util.License;
 
 /**
  * Create the default classes file classes.xml,
@@ -44,23 +51,35 @@ import java.util.Map;
  */
 public final class UnicodeClasses {
     
-    /**
-     * default path relative to the FOP base directory
-     */
-    public static final String CLASSES_XML = "src/java/org/apache/fop/hyphenation/classes.xml";
-    
+    public static String UNICODE_DIR = "http://www.unicode.org/Public/UNIDATA/";
+
     /**
      * Disallow constructor for this utility class
      */
     private UnicodeClasses() { }
 
     /**
+     * Write a comment that this is a generated file,
+     * and instructions on how to generate it
+     * @param w the writer which writes the comment
+     * @throws IOException if the write operation fails
+     */
+    public static void writeGenerated(Writer w) throws IOException {
+        w.write("<!-- !!! THIS IS A GENERATED FILE !!!             -->\n");
+        w.write("<!-- If updates are needed, then:                 -->\n");
+        w.write("<!-- * run 'ant codegen-hyphenation-classes',     -->\n");
+        w.write("<!--   which will generate a new file classes.xml -->\n");
+        w.write("<!--   in 'src/java/org/apache/fop/hyphenation'   -->\n");
+        w.write("<!-- * commit the changed file                    -->\n");
+    }
+    
+    /**
      * Generate classes.xml from Java's compiled-in Unicode Character Database
      * @param hexcode whether to prefix each class with the hexcode (only for debugging purposes)
      * @param outfilePath output file
      * @throws IOException
      */
-/*    public static void fromJava(boolean hexcode, String outfilePath) throws IOException {
+    public static void fromJava(boolean hexcode, String outfilePath) throws IOException {
         File f = new File(outfilePath);
         if (f.exists()) {
             f.delete();
@@ -71,8 +90,12 @@ public final class UnicodeClasses {
         int maxChar;
         maxChar = Character.MAX_VALUE;
 
-        ow.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" + 
-        "<classes>\n");
+        ow.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
+        License.writeXMLLicenseId(ow);
+        ow.write("\n");
+        writeGenerated(ow);
+        ow.write("\n");
+        ow.write("<classes>\n");
         // loop over the first Unicode plane
         for (int code = Character.MIN_VALUE; code <= maxChar; ++code) {
             
@@ -122,7 +145,7 @@ public final class UnicodeClasses {
         ow.flush();
         ow.close();
     }
-*/    
+    
     
     /**
      * The column numbers in the UCD file
@@ -136,10 +159,22 @@ public final class UnicodeClasses {
      * @param unidataPath path to the directory with UCD files  
      * @param outfilePath output file
      * @throws IOException if the input files are not found
+     * @throws URISyntaxException 
+     * @throws FOPException 
      */
     public static void fromUCD(boolean hexcode, String unidataPath, String outfilePath)
-    throws IOException {
-        File unidata = new File(unidataPath);
+    throws IOException, URISyntaxException {
+        URI unidata;
+        if (unidataPath.endsWith("/")) {
+            unidata = new URI(unidataPath);
+        } else {
+            unidata = new URI(unidataPath + "/");
+        }
+        String scheme = unidata.getScheme();
+        if (scheme == null || !(scheme.equals("file") || scheme.equals("http"))) {
+            throw new FileNotFoundException
+            ("URI with file or http scheme required for UNIDATA input directory");
+        }
         
         File f = new File(outfilePath);
         if (f.exists()) {
@@ -149,8 +184,14 @@ public final class UnicodeClasses {
         FileOutputStream fw = new FileOutputStream(f);
         OutputStreamWriter ow = new OutputStreamWriter(fw, "utf-8");
         
-        File in = new File(unidata, "Blocks.txt");
-        FileInputStream inis = new FileInputStream(in);
+        URI inuri = unidata.resolve("Blocks.txt");
+        InputStream inis = null;
+        if (scheme.equals("file")) {
+            File in = new File(inuri);
+            inis = new FileInputStream(in);
+        } else if (scheme.equals("http")) {
+            inis = inuri.toURL().openStream();
+        }
         InputStreamReader insr = new InputStreamReader(inis, "utf-8");
         BufferedReader inbr = new BufferedReader(insr);
         Map blocks = new HashMap();
@@ -166,15 +207,24 @@ public final class UnicodeClasses {
         }
         inbr.close();
 
-        in = new File(unidata, "UnicodeData.txt");
-        inis = new FileInputStream(in);
+        inuri = unidata.resolve("UnicodeData.txt");
+        if (scheme.equals("file")) {
+            File in = new File(inuri);
+            inis = new FileInputStream(in);
+        } else if (scheme.equals("http")) {
+            inis = inuri.toURL().openStream();
+        }
         insr = new InputStreamReader(inis, "utf-8");
         inbr = new BufferedReader(insr);
         int maxChar;
         maxChar = Character.MAX_VALUE;
 
-        ow.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
-                 + "<classes>\n");
+        ow.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
+        License.writeXMLLicenseId(ow);
+        ow.write("\n");
+        writeGenerated(ow);
+        ow.write("\n");
+        ow.write("<classes>\n");
         for (String line = inbr.readLine(); line != null; line = inbr.readLine()) {
             String[] fields = line.split(";", NUM_FIELDS);
             int code = Integer.parseInt(fields[UNICODE], 16);
@@ -211,20 +261,16 @@ public final class UnicodeClasses {
                 if (!"".equals(fields[SIMPLE_TITLECASE_MAPPING])) {
                     titlecode = Integer.parseInt(fields[SIMPLE_TITLECASE_MAPPING], 16);
                 }
-                StringBuffer s = new StringBuffer();
+                StringBuilder s = new StringBuilder();
                 if (hexcode) {
                     s.append("0x" + fields[UNICODE].replaceFirst("^0+", "").toLowerCase() + " ");
                 }
-                // s.append(Character.toChars(code));
-                /* This cast only works correctly when we do not exceed Character.MAX_VALUE */
-                s.append((char) code);
+                s.append(Character.toChars(code));
                 if (uppercode != -1 && uppercode != code) {
-                    // s.append(Character.toChars(uppercode));
-                    s.append((char) uppercode);
+                    s.append(Character.toChars(uppercode));
                 }
                 if (titlecode != -1 && titlecode != code && titlecode != uppercode) {
-                    // s.append(Character.toChars(titlecode));
-                    s.append((char) titlecode);
+                    s.append(Character.toChars(titlecode));
                 }
                 ow.write(s.toString() + "\n");
             }
@@ -242,7 +288,7 @@ public final class UnicodeClasses {
      * @param outfilePath output file
      * @throws IOException
      */
-/*    public static void fromTeX(boolean hexcode, String lettersPath, String outfilePath)
+    public static void fromTeX(boolean hexcode, String lettersPath, String outfilePath)
       throws IOException {
         File in = new File(lettersPath);
 
@@ -258,8 +304,12 @@ public final class UnicodeClasses {
         InputStreamReader insr = new InputStreamReader(inis, "utf-8");
         BufferedReader inbr = new BufferedReader(insr);
 
-        ow.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" + 
-        "<classes>\n");
+        ow.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
+        License.writeXMLLicenseId(ow);
+        ow.write("\n");
+        writeGenerated(ow);
+        ow.write("\n");
+        ow.write("<classes>\n");
         for (String line = inbr.readLine(); line != null; line = inbr.readLine()) {
             String[] codes = line.split("\\s+");
             if (!(codes[0].equals("\\L") || codes[0].equals("\\l"))) {
@@ -282,9 +332,9 @@ public final class UnicodeClasses {
                 if (hexcode) {
                     s.append("0x" + codes[1].replaceFirst("^0+", "").toLowerCase() + " ");
                 }
-                s.append((char) Integer.parseInt(codes[1], 16));
+                s.append(Character.toChars(Integer.parseInt(codes[1], 16)));
                 if (codes[0].equals("\\L")) {
-                    s.append((char) Integer.parseInt(codes[2], 16));
+                    s.append(Character.toChars(Integer.parseInt(codes[2], 16)));
                 }
                 ow.write(s.toString() + "\n");
             }
@@ -294,58 +344,54 @@ public final class UnicodeClasses {
         ow.close();
         inbr.close();
     }
-*/
+
     
     /**
-     * @param args [--hexcode] [--java|--ucd|--tex] [--out outfile] infile
+     * @param args [--hexcode] [--java|--ucd|--tex] outfile [infile]
      * @throws IOException if the input file cannot be found
+     * @throws URISyntaxException if the input URI is incorrect
      */
-    public static void main(String[] args) throws IOException {
-        String type = "ucd", prefix = "--", infile = null, outfile = CLASSES_XML;
+    public static void main(String[] args) throws IOException, URISyntaxException {
+        String type = "ucd", prefix = "--", infile = null, outfile = null;
         boolean hexcode = false;
-        for (int i = 0; i < args.length; ++i) {
-            if (args[i].startsWith(prefix)) {
-                String option = args[i].substring(prefix.length());
-                if (option.equals("java") || option.equals("ucd") || option.equals("tex")) {
-                    type = option;
-                } else if (option.equals("hexcode")) {
-                    hexcode = true;
-                } else if (option.equals("out")) {
-                    outfile = args[++i];
-                } else {
-                    System.err.println("Unknown option: " + option);
-                    System.exit(1);
-                }
+        int i;
+        for (i = 0; i < args.length && args[i].startsWith(prefix); ++i) {
+            String option = args[i].substring(prefix.length());
+            if (option.equals("java") || option.equals("ucd") || option.equals("tex")) {
+                type = option;
+            } else if (option.equals("hexcode")) {
+                hexcode = true;
             } else {
-                if (infile != null) {
-                    System.err.println("Only one non-option argument can be given, for infile");
-                    System.exit(1);
-                }
-                infile = args[i];
+                System.err.println("Unknown option: " + option);
+                System.exit(1);
             }
+        }
+        if (i < args.length) {
+            outfile = args[i];
+        } else {
+            System.err.println("Output file is required; aborting");
+            System.exit(1);
+        }
+        if (++i < args.length) {
+            infile = args[i];
         }
         
-        if (type.equals("java")) {
-            if (infile != null) {
+        if (type.equals("java") && infile != null) {
                 System.err.println("Type java does not allow an infile");
                 System.exit(1);
-            }
-        } else {
-            if (infile == null) {
-                System.err.println("Types ucd and tex require an infile");
+        } else if (type.equals("ucd") && infile == null) {
+                infile = UNICODE_DIR;
+        } else if (type.equals("tex") && infile == null) {
+                System.err.println("Type tex requires an input file");
                 System.exit(1);
-            }
         }
-/*        if (type.equals("java")) {
+        if (type.equals("java")) {
             fromJava(hexcode, outfile);
-        } else
- */     
-        if (type.equals("ucd")) {
+        } else if (type.equals("ucd")) {
             fromUCD(hexcode, infile, outfile);
-/*        } else if (type.equals("tex")) {
+        } else if (type.equals("tex")) {
             fromTeX(hexcode, infile, outfile);
-*/        
-            } else {
+        } else {
             System.err.println("Unknown type: " + type + ", nothing done");
             System.exit(1);
         }

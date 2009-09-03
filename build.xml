@@ -436,8 +436,11 @@ list of possible build targets.
   <!-- (src/java/org/apache/fop/hyphenation/classes.xml). -->
   <!-- =================================================================== -->
   <target name="codegen-hyphenation-classes">
-	<java classname="org.apache.fop.hyphenation.UnicodeClasses" resultproperty="classes.result" classpath="${build.classes.dir}">
-	  <arg value="${unidata.dir}"/>
+    <javac destdir="${build.codegen-classes.dir}" fork="${javac.fork}" debug="${javac.debug}" deprecation="${javac.deprecation}" optimize="${javac.optimize}" source="${javac.source}" target="${javac.target}">
+      <src path="${src.codegen.dir}/unicode/java"/>
+    </javac>
+	<java classname="org.apache.fop.hyphenation.UnicodeClasses" resultproperty="classes.result" classpath="${build.codegen-classes.dir}">
+      <arg value="${src.dir}/java/org/apache/fop/hyphenation/classes.xml"/>
 	</java>
 	<condition property="classes.result.message" value="Generation of classes successful">
 	  <not>
