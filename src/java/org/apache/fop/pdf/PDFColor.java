@@ -541,13 +541,8 @@ public class PDFColor extends PDFPathPaint {
         return (new byte[0]);
     }
 
-    /**
-     * Check for equality of color with another object.
-     *
-     * @param obj the object to compare
-     * @return true if colors are equal
-     */
-    public boolean equals(Object obj) {
+    /** {@inheritDoc} */
+    protected boolean contentEquals(PDFObject obj) {
         if (!(obj instanceof PDFColor)) {
             return false;
         }

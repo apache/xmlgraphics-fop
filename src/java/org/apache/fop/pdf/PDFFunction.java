@@ -696,15 +696,8 @@ public class PDFFunction extends PDFObject {
 
     }
 
-    /**
-     * Check if this function is equal to another object.
-     * This is used to find if a particular function already exists
-     * in a document.
-     *
-     * @param obj the obj to compare
-     * @return true if the functions are equal
-     */
-    public boolean equals(Object obj) {
+    /** {@inheritDoc} */
+    protected boolean contentEquals(PDFObject obj) {
         if (obj == null) {
             return false;
         }

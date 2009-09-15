@@ -42,13 +42,8 @@ public class PDFLaunch extends PDFAction {
         return sb.toString();
     }
 
-    /**
-     * Check if this equals another object.
-     *
-     * @param obj the object to compare
-     * @return true if this equals other object
-     */
-    public boolean equals(Object obj) {
+    /** {@inheritDoc} */
+    protected boolean contentEquals(PDFObject obj) {
         if (this == obj) {
             return true;
         }

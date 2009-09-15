@@ -175,10 +175,8 @@ public class PDFGState extends PDFObject {
      * endobj
      */
 
-    /**
-     * {@inheritDoc}
-     */
-    public boolean equals(Object obj) {
+    /** {@inheritDoc} */
+    protected boolean contentEquals(PDFObject obj) {
         if (obj == this) {
             return true;
         }

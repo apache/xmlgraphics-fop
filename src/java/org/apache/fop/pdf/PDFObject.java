@@ -393,4 +393,20 @@ public abstract class PDFObject implements PDFWritable {
         return formatDateTime(time, TimeZone.getDefault());
     }
 
+    /**
+     * Check if the other PDFObject has the same content as the current object.
+     * <p>
+     * Note: This function has a contract which is less binding than
+     * {@link #equals(Object)}. Whereas equals would require all values to be
+     * identical, this method is not required to check everything. In the case
+     * of PDFObjects, this means that the overriding function does not have to
+     * check for {@link #getObjectID()}.
+     * 
+     * @param o
+     *            object to compare to.
+     * @return true if the other object has the same content.
+     */
+    protected boolean contentEquals(PDFObject o) {
+        return this.equals(o);
+    }
 }
