@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-/* $Id: TableBody.java 655614 2008-05-12 19:37:39Z vhennebert $ */
+/* $Id$ */
 
 package org.apache.fop.fo.flow.table;
 
