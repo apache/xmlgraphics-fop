@@ -71,18 +71,34 @@ public class GoToXYAction extends AbstractAction implements DocumentNavigationEx
 
     /**
      * Returns the page index of the target page.
+     * <p>
+     * This function will always return a valid value for safety. Use
+     * {@link #isComplete()} to check if the link is actually complete.
+     * 
      * @return the page index (0-based)
      */
     public int getPageIndex() {
-        return this.pageIndex;
+        if (this.pageIndex >= 0) {
+            return this.pageIndex;
+        } else {
+            return 0;
+        }
     }
 
     /**
      * Returns the absolute coordinates of the target location on the page.
+     * <p>
+     * This function will always return a valid value for safety. Use
+     * {@link #isComplete()} to check if the link is actually complete.
+     * 
      * @return the target location (coordinates in millipoints)
      */
     public Point getTargetLocation() {
-        return this.targetLocation;
+        if (this.targetLocation == null) {
+            return new Point(0, 0);
+        } else {
+            return this.targetLocation;
+        }
     }
 
     /**
@@ -93,9 +109,13 @@ public class GoToXYAction extends AbstractAction implements DocumentNavigationEx
         this.targetLocation = location;
     }
 
+    private boolean isCompleteExceptTargetLocation() {
+        return (getPageIndex() >= 0);
+    }
+    
     /** {@inheritDoc} */
     public boolean isComplete() {
-        return (getPageIndex() >= 0) && (getTargetLocation() != null);
+        return this.isCompleteExceptTargetLocation() && (this.targetLocation != null);
     }
 
     /** {@inheritDoc} */
@@ -107,10 +127,10 @@ public class GoToXYAction extends AbstractAction implements DocumentNavigationEx
             return false;
         }
         GoToXYAction otherAction = (GoToXYAction)other;
-        if (getPageIndex() != otherAction.getPageIndex()) {
+        if (this.pageIndex != otherAction.pageIndex) {
             return false;
         }
-        if (getTargetLocation() == null || otherAction.getTargetLocation() == null) {
+        if (this.targetLocation == null || otherAction.targetLocation == null) {
             return false;
         }
         if (!getTargetLocation().equals(otherAction.getTargetLocation())) {
@@ -121,16 +141,16 @@ public class GoToXYAction extends AbstractAction implements DocumentNavigationEx
 
     /** {@inheritDoc} */
     public void toSAX(ContentHandler handler) throws SAXException {
-        if (getTargetLocation() == null) {
-            setTargetLocation(new Point(0, 0));
-        }
         AttributesImpl atts = new AttributesImpl();
-        if (isComplete()) {
+        if (this.isCompleteExceptTargetLocation()) {
+            final Point reportedTargetLocation = this.getTargetLocation();
             atts.addAttribute(null, "id", "id", XMLUtil.CDATA, getID());
             atts.addAttribute(null, "page-index", "page-index",
                     XMLUtil.CDATA, Integer.toString(pageIndex));
-            atts.addAttribute(null, "x", "x", XMLUtil.CDATA, Integer.toString(targetLocation.x));
-            atts.addAttribute(null, "y", "y", XMLUtil.CDATA, Integer.toString(targetLocation.y));
+            atts.addAttribute(null, "x", "x", XMLUtil.CDATA, 
+                    Integer.toString(reportedTargetLocation.x));
+            atts.addAttribute(null, "y", "y", XMLUtil.CDATA, 
+                    Integer.toString(reportedTargetLocation.y));
         } else {
             atts.addAttribute(null, "idref", "idref", XMLUtil.CDATA, getID());
         }
