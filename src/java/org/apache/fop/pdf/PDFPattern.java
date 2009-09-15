@@ -336,13 +336,8 @@ public class PDFPattern extends PDFPathPaint {
      */
     public byte[] toPDF() { return null; }
 
-    /**
-     * Check if this pattern is equal to another.
-     *
-     * @param obj the object to compare against
-     * @return true if the patterns are equal
-     */
-    public boolean equals(Object obj) {
+    /** {@inheritDoc} */
+    protected boolean contentEquals(PDFObject obj) {
         if (obj == null) {
             return false;
         }
