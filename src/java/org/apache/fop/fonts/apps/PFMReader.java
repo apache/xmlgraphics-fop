@@ -171,7 +171,7 @@ public class PFMReader extends AbstractFontReader {
      * @param   pfm The PFM file to preview.
      */
     public void preview(PFMFile pfm) {
-        if (log != null & log.isInfoEnabled()) {
+        if (log != null && log.isInfoEnabled()) {
             log.info("Font: " + pfm.getWindowsName());
             log.info("Name: " + pfm.getPostscriptName());
             log.info("CharSet: " + pfm.getCharSetName());
@@ -219,14 +219,15 @@ public class PFMReader extends AbstractFontReader {
         root.appendChild(el);
         el.appendChild(doc.createTextNode(pfm.getPostscriptName()));
 
-        String s = pfm.getPostscriptName();
-        int pos = s.indexOf("-");
-        if (pos >= 0) {
-            char[] sb = new char[s.length() - 1];
-            s.getChars(0, pos, sb, 0);
-            s.getChars(pos + 1, s.length(), sb, pos);
-            s = new String(sb);
-        }
+        // Currently unused.
+        // String s = pfm.getPostscriptName();
+        // int pos = s.indexOf("-");
+        // if (pos >= 0) {
+        // char[] sb = new char[s.length() - 1];
+        // s.getChars(0, pos, sb, 0);
+        // s.getChars(pos + 1, s.length(), sb, pos);
+        // s = new String(sb);
+        // }
 
         el = doc.createElement("embed");
         root.appendChild(el);
@@ -304,8 +305,7 @@ public class PFMReader extends AbstractFontReader {
             el = doc.createElement("char");
             widths.appendChild(el);
             el.setAttribute("idx", Integer.toString(i));
-            el.setAttribute("wdt",
-                            new Integer(pfm.getCharWidth(i)).toString());
+            el.setAttribute("wdt", Integer.toString(pfm.getCharWidth(i)));
         }
 
 
@@ -318,13 +318,14 @@ public class PFMReader extends AbstractFontReader {
             root.appendChild(el);
             Element el2 = null;
 
-            Map h2 = (Map)pfm.getKerning().get(kpx1);
-            Iterator enum2 = h2.keySet().iterator();
+            Map h2 = (Map) pfm.getKerning().get(kpx1);
+            Iterator enum2 = h2.entrySet().iterator();
             while (enum2.hasNext()) {
-                Integer kpx2 = (Integer)enum2.next();
+                Map.Entry entry = (Map.Entry) enum2.next();
+                Integer kpx2 = (Integer) entry.getKey();
                 el2 = doc.createElement("pair");
                 el2.setAttribute("kpx2", kpx2.toString());
-                Integer val = (Integer)h2.get(kpx2);
+                Integer val = (Integer) entry.getValue();
                 el2.setAttribute("kern", val.toString());
                 el.appendChild(el2);
             }
