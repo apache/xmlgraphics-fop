@@ -226,6 +226,23 @@ to following pages. Here is an example of FO code creating such a table-header:<
             color space the CMYK value is converted to an sRGB value.
           </p>
         </section>
+        <section id="pseudo-color-profiles">
+          <title>#CMYK pseudo-profile</title>
+          <p><code>color rgb-icc(numeric, numeric, numeric, #CMYK, numeric, numeric, numeric, numeric)</code></p>
+          <p>
+            The <code>rgb-icc</code> function will respond to a pseudo-profile called "#CMYK"
+            which indicates a device-specific CMYK color space. The "#CMYK" profile is implicitely
+            available and doesn't have to be (and cannot be) defined through an
+            <code>fo:color-profile</code> element. It is provided for compatibility with certain
+            commercial XSL-FO implementations. Please note that this is not part of the official
+            specification but rather a convention. The following two color specifications are
+            equivalent:
+          </p>
+          <ul>
+            <li><code>cmyk(0%,0%,20%,40%)</code></li>
+            <li><code>rgb-icc(153, 153, 102, #CMYK, 0, 0, 0.2, 0.4)</code></li>
+          </ul>
+        </section>
       </section>
       <section id="prepress">
         <title>Prepress Support</title>

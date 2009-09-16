@@ -176,7 +176,9 @@ public final class ColorExt extends Color {
         sb.append(this.rgbReplacementGreen + ",");
         sb.append(this.rgbReplacementBlue + ",");
         sb.append(this.iccProfileName + ",");
-        sb.append("\"" + this.iccProfileSrc + "\"");
+        if (this.iccProfileSrc != null) {
+            sb.append("\"" + this.iccProfileSrc + "\"");
+        }
         float[] colorComponents = this.getColorComponents(null);
         for (int ix = 0; ix < colorComponents.length; ix++) {
             sb.append(",");

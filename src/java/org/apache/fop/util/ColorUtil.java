@@ -38,6 +38,9 @@ import org.apache.fop.fo.expr.PropertyException;
  */
 public final class ColorUtil {
 
+    /** The name for the uncalibrated CMYK pseudo-profile */
+    public static final String CMYK_PSEUDO_PROFILE = "#CMYK";
+
     /**
      *
      * keeps all the predefined and parsed colors.
@@ -319,26 +322,32 @@ public final class ColorUtil {
                 if (iccProfileName == null || "".equals(iccProfileName)) {
                     throw new PropertyException("ICC profile name missing");
                 }
-                /* Get and verify ICC profile source */
-                String iccProfileSrc = args[4].trim();
-                if (iccProfileSrc == null || "".equals(iccProfileSrc)) {
-                    throw new PropertyException("ICC profile source missing");
-                }
-                if (iccProfileSrc.startsWith("\"") || iccProfileSrc.startsWith("'")) {
-                    iccProfileSrc = iccProfileSrc.substring(1);
-                }
-                if (iccProfileSrc.endsWith("\"") || iccProfileSrc.endsWith("'")) {
-                    iccProfileSrc = iccProfileSrc.substring(0, iccProfileSrc.length() - 1);
+                ColorSpace colorSpace = null;
+                String iccProfileSrc = null;
+                if (isPseudoProfile(iccProfileName)) {
+                    if (CMYK_PSEUDO_PROFILE.equalsIgnoreCase(iccProfileName)) {
+                        colorSpace = CMYKColorSpace.getInstance();
+                    } else {
+                        assert false : "Incomplete implementation";
+                    }
+                } else {
+                    /* Get and verify ICC profile source */
+                    iccProfileSrc = args[4].trim();
+                    if (iccProfileSrc == null || "".equals(iccProfileSrc)) {
+                        throw new PropertyException("ICC profile source missing");
+                    }
+                    if (iccProfileSrc.startsWith("\"") || iccProfileSrc.startsWith("'")) {
+                        iccProfileSrc = iccProfileSrc.substring(1);
+                    }
+                    if (iccProfileSrc.endsWith("\"") || iccProfileSrc.endsWith("'")) {
+                        iccProfileSrc = iccProfileSrc.substring(0, iccProfileSrc.length() - 1);
+                    }
                 }
                 /* ICC profile arguments */
                 float[] iccComponents = new float[args.length - 5];
                 for (int ix = 4; ++ix < args.length;) {
                     iccComponents[ix - 5] = Float.parseFloat(args[ix].trim());
                 }
-                /* Ask FOP factory to get ColorSpace for the specified ICC profile source */
-                ColorSpace colorSpace = (foUserAgent != null
-                        ? foUserAgent.getFactory().getColorSpace(
-                                foUserAgent.getBaseURL(), iccProfileSrc) : null);
 
                 float red = 0, green = 0, blue = 0;
                 red = Float.parseFloat(args[0].trim());
@@ -352,6 +361,11 @@ public final class ColorUtil {
                             + "Fallback RGB arguments to fop-rgb-icc() must be [0..1]");
                 }
 
+                /* Ask FOP factory to get ColorSpace for the specified ICC profile source */
+                if (foUserAgent != null && iccProfileSrc != null) {
+                    colorSpace = foUserAgent.getFactory().getColorSpace(
+                            foUserAgent.getBaseURL(), iccProfileSrc);
+                }
                 if (colorSpace != null) {
                     // ColorSpace available - create ColorExt (keeps track of replacement rgb
                     // values for possible later colorTOsRGBString call
@@ -440,7 +454,7 @@ public final class ColorUtil {
                 CMYKColorSpace cmykCs = CMYKColorSpace.getInstance();
                 float[] rgb = cmykCs.toRGB(cmyk);
                 parsedColor = ColorExt.createFromFoRgbIcc(rgb[0], rgb[1], rgb[2],
-                        null, "#CMYK", cmykCs, cmyk);
+                        CMYK_PSEUDO_PROFILE, null, cmykCs, cmyk);
             } catch (PropertyException pe) {
                 throw pe;
             } catch (Exception e) {
@@ -465,13 +479,13 @@ public final class ColorUtil {
      */
     public static String colorToString(Color color) {
         ColorSpace cs = color.getColorSpace();
-        if (cs != null && cs.getType() == ColorSpace.TYPE_CMYK) {
+        if (color instanceof ColorExt) {
+            return ((ColorExt)color).toFunctionCall();
+        } else if (cs != null && cs.getType() == ColorSpace.TYPE_CMYK) {
             StringBuffer sbuf = new StringBuffer(24);
             float[] cmyk = color.getColorComponents(null);
             sbuf.append("cmyk(" + cmyk[0] + "," + cmyk[1] + "," + cmyk[2] + "," +  cmyk[3] + ")");
             return sbuf.toString();
-        } else if (color instanceof ColorExt) {
-            return ((ColorExt)color).toFunctionCall();
         } else {
             StringBuffer sbuf = new StringBuffer();
             sbuf.append('#');
@@ -681,4 +695,35 @@ public final class ColorUtil {
         return new Color(cols[0], cols[1], cols[2], cols[3]);
     }
 
+    /**
+     * Indicates whether the given color profile name is one of the pseudo-profiles supported
+     * by FOP (ex. #CMYK).
+     * @param colorProfileName the color profile name to check
+     * @return true if the color profile name is of a built-in pseudo-profile
+     */
+    public static boolean isPseudoProfile(String colorProfileName) {
+        return CMYK_PSEUDO_PROFILE.equalsIgnoreCase(colorProfileName);
+    }
+
+    /**
+     * Indicates whether the color is a gray value.
+     * @param col the color
+     * @return true if it is a gray value
+     */
+    public static boolean isGray(Color col) {
+        return (col.getRed() == col.getBlue() && col.getRed() == col.getGreen());
+    }
+
+    /**
+     * Creates an uncalibrary CMYK color with the given gray value.
+     * @param black the gray component (0 - 1)
+     * @return the CMYK color
+     */
+    public static Color toCMYKGrayColor(float black) {
+        float[] cmyk = new float[] {0f, 0f, 0f, 1.0f - black};
+        CMYKColorSpace cmykCs = CMYKColorSpace.getInstance();
+        float[] rgb = cmykCs.toRGB(cmyk);
+        return ColorExt.createFromFoRgbIcc(rgb[0], rgb[1], rgb[2],
+                CMYK_PSEUDO_PROFILE, null, cmykCs, cmyk);
+    }
 }
