@@ -58,6 +58,10 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Extensions" dev="JM" type="add">
+        Added support for the #CMYK pseudo-profile supported by some commercial XSL implementations
+        on the rgb-icc() function.
+      </action>
       <action context="Layout" dev="VH" type="add" importance="high">
         Added limited support for pages of different inline-progression-dimensions within a 
         page-sequence.

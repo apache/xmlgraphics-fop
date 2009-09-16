@@ -24,6 +24,7 @@ import org.apache.fop.fo.pagination.ColorProfile;
 import org.apache.fop.fo.pagination.Declarations;
 import org.apache.fop.fo.properties.ColorProperty;
 import org.apache.fop.fo.properties.Property;
+import org.apache.fop.util.ColorUtil;
 
 /**
  * Implements the rgb-icc() function.
@@ -63,13 +64,15 @@ class ICCColorFunction extends FunctionBase {
         } else {
             cp = decls.getColorProfile(colorProfileName);
             if (cp == null) {
-                PropertyException pe = new PropertyException("The " + colorProfileName
-                        + " color profile was not declared");
-                pe.setPropertyInfo(pInfo);
-                throw pe;
+                if (!ColorUtil.isPseudoProfile(colorProfileName)) {
+                    PropertyException pe = new PropertyException("The " + colorProfileName
+                            + " color profile was not declared");
+                    pe.setPropertyInfo(pInfo);
+                    throw pe;
+                }
             }
         }
-        String src = cp.getSrc();
+        String src = (cp != null ? cp.getSrc() : "");
 
         float red = 0, green = 0, blue = 0;
         red = args[0].getNumber().floatValue();
