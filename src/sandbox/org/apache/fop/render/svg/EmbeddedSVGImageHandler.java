@@ -90,12 +90,11 @@ public class EmbeddedSVGImageHandler implements ImageHandler, SVGConstants {
         ImageXMLDOM svg = (ImageXMLDOM)image;
         ContentHandler handler = svgContext.getContentHandler();
         AttributesImpl atts = new AttributesImpl();
-        atts.addAttribute("", "x", "x", CDATA, Integer.toString(pos.x));
-        atts.addAttribute("", "y", "y", CDATA, Integer.toString(pos.y));
-        atts.addAttribute("", "width", "width", CDATA, Integer.toString(pos.width));
-        atts.addAttribute("", "height", "height", CDATA, Integer.toString(pos.height));
+        atts.addAttribute("", "x", "x", CDATA, SVGUtil.formatMptToPt(pos.x));
+        atts.addAttribute("", "y", "y", CDATA, SVGUtil.formatMptToPt(pos.y));
+        atts.addAttribute("", "width", "width", CDATA, SVGUtil.formatMptToPt(pos.width));
+        atts.addAttribute("", "height", "height", CDATA, SVGUtil.formatMptToPt(pos.height));
         try {
-            //handler.startElement(NAMESPACE, "svg", "svg", atts);
 
             Document doc = (Document)svg.getDocument();
             Element svgEl = (Element)doc.getDocumentElement();
@@ -127,10 +126,10 @@ public class EmbeddedSVGImageHandler implements ImageHandler, SVGConstants {
                             && SVG_ELEMENT.getLocalName().equals(localName)) {
                         topLevelSVGFound = true;
                         AttributesImpl modAtts = new AttributesImpl(atts);
-                        setAttribute(modAtts, "x", Integer.toString(pos.x));
-                        setAttribute(modAtts, "y", Integer.toString(pos.y));
-                        setAttribute(modAtts, "width", Integer.toString(pos.width));
-                        setAttribute(modAtts, "height", Integer.toString(pos.height));
+                        setAttribute(modAtts, "x", SVGUtil.formatMptToPt(pos.x));
+                        setAttribute(modAtts, "y", SVGUtil.formatMptToPt(pos.y));
+                        setAttribute(modAtts, "width", SVGUtil.formatMptToPt(pos.width));
+                        setAttribute(modAtts, "height", SVGUtil.formatMptToPt(pos.height));
                         super.startElement(uri, localName, name, modAtts);
                     } else {
                         super.startElement(uri, localName, name, atts);
@@ -139,9 +138,6 @@ public class EmbeddedSVGImageHandler implements ImageHandler, SVGConstants {
 
             });
             transformer.transform(src, res);
-            //handler.endElement(NAMESPACE, "svg", "svg");
-        //} catch (SAXException e) {
-            //throw new IOException(e.getMessage());
         } catch (TransformerException te) {
             throw new IOException(te.getMessage());
         }
