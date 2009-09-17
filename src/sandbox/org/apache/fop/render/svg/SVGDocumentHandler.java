@@ -175,10 +175,11 @@ public class SVGDocumentHandler extends AbstractSVGDocumentHandler {
             XMLUtil.addAttribute(atts, "index", Integer.toString(index));
             XMLUtil.addAttribute(atts, "name", name);
             */
-            XMLUtil.addAttribute(atts, "width", Float.toString(size.width / 1000f) + "pt");
-            XMLUtil.addAttribute(atts, "height", Float.toString(size.height / 1000f) + "pt");
+            XMLUtil.addAttribute(atts, "width", SVGUtil.formatMptToPt(size.width) + "pt");
+            XMLUtil.addAttribute(atts, "height", SVGUtil.formatMptToPt(size.height) + "pt");
             XMLUtil.addAttribute(atts, "viewBox",
-                    "0 0 " + Integer.toString(size.width) + " " + Integer.toString(size.height));
+                    "0 0 " + SVGUtil.formatMptToPt(size.width)
+                    + " " + SVGUtil.formatMptToPt(size.height));
             handler.startElement("svg", atts);
 
             try {

@@ -52,7 +52,6 @@ import org.apache.fop.render.intermediate.IFConstants;
 import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFState;
-import org.apache.fop.render.intermediate.IFUtil;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.traits.RuleStyle;
 import org.apache.fop.util.ColorUtil;
@@ -99,13 +98,13 @@ public class SVGPainter extends AbstractIFPainter implements SVGConstants {
     /** {@inheritDoc} */
     public void startViewport(AffineTransform transform, Dimension size, Rectangle clipRect)
             throws IFException {
-        startViewport(IFUtil.toString(transform), size, clipRect);
+        startViewport(SVGUtil.formatAffineTransformMptToPt(transform), size, clipRect);
     }
 
     /** {@inheritDoc} */
     public void startViewport(AffineTransform[] transforms, Dimension size, Rectangle clipRect)
             throws IFException {
-        startViewport(IFUtil.toString(transforms), size, clipRect);
+        startViewport(SVGUtil.formatAffineTransformsMptToPt(transforms), size, clipRect);
     }
 
     private void startViewport(String transform, Dimension size, Rectangle clipRect)
@@ -119,8 +118,8 @@ public class SVGPainter extends AbstractIFPainter implements SVGConstants {
             handler.startElement("g", atts);
 
             atts.clear();
-            XMLUtil.addAttribute(atts, "width", Integer.toString(size.width));
-            XMLUtil.addAttribute(atts, "height", Integer.toString(size.height));
+            XMLUtil.addAttribute(atts, "width", SVGUtil.formatMptToPt(size.width));
+            XMLUtil.addAttribute(atts, "height", SVGUtil.formatMptToPt(size.height));
             if (clipRect != null) {
                 int[] v = new int[] {
                         clipRect.y,
@@ -133,10 +132,10 @@ public class SVGPainter extends AbstractIFPainter implements SVGConstants {
                 }
                 if (sum != 0) {
                     StringBuffer sb = new StringBuffer("rect(");
-                    sb.append(v[0]).append(',');
-                    sb.append(v[1]).append(',');
-                    sb.append(v[2]).append(',');
-                    sb.append(v[3]).append(')');
+                    sb.append(SVGUtil.formatMptToPt(v[0])).append(',');
+                    sb.append(SVGUtil.formatMptToPt(v[1])).append(',');
+                    sb.append(SVGUtil.formatMptToPt(v[2])).append(',');
+                    sb.append(SVGUtil.formatMptToPt(v[3])).append(')');
                     XMLUtil.addAttribute(atts, "clip", sb.toString());
                 }
                 XMLUtil.addAttribute(atts, "overflow", "hidden");
@@ -162,12 +161,12 @@ public class SVGPainter extends AbstractIFPainter implements SVGConstants {
 
     /** {@inheritDoc} */
     public void startGroup(AffineTransform[] transforms) throws IFException {
-        startGroup(IFUtil.toString(transforms));
+        startGroup(SVGUtil.formatAffineTransformsMptToPt(transforms));
     }
 
     /** {@inheritDoc} */
     public void startGroup(AffineTransform transform) throws IFException {
-        startGroup(IFUtil.toString(transform));
+        startGroup(SVGUtil.formatAffineTransformMptToPt(transform));
     }
 
     private void startGroup(String transform) throws IFException {
@@ -216,10 +215,10 @@ public class SVGPainter extends AbstractIFPainter implements SVGConstants {
                     //TODO Some additional URI rewriting might be necessary
                     AttributesImpl atts = new AttributesImpl();
                     XMLUtil.addAttribute(atts, IFConstants.XLINK_HREF, uri);
-                    XMLUtil.addAttribute(atts, "x", Integer.toString(rect.x));
-                    XMLUtil.addAttribute(atts, "y", Integer.toString(rect.y));
-                    XMLUtil.addAttribute(atts, "width", Integer.toString(rect.width));
-                    XMLUtil.addAttribute(atts, "height", Integer.toString(rect.height));
+                    XMLUtil.addAttribute(atts, "x", SVGUtil.formatMptToPt(rect.x));
+                    XMLUtil.addAttribute(atts, "y", SVGUtil.formatMptToPt(rect.y));
+                    XMLUtil.addAttribute(atts, "width", SVGUtil.formatMptToPt(rect.width));
+                    XMLUtil.addAttribute(atts, "height", SVGUtil.formatMptToPt(rect.height));
                     handler.element("image", atts);
                 } else {
                     drawImageUsingImageHandler(info, rect);
@@ -282,10 +281,10 @@ public class SVGPainter extends AbstractIFPainter implements SVGConstants {
         try {
             establish(MODE_NORMAL);
             AttributesImpl atts = new AttributesImpl();
-            XMLUtil.addAttribute(atts, "x", Integer.toString(rect.x));
-            XMLUtil.addAttribute(atts, "y", Integer.toString(rect.y));
-            XMLUtil.addAttribute(atts, "width", Integer.toString(rect.width));
-            XMLUtil.addAttribute(atts, "height", Integer.toString(rect.height));
+            XMLUtil.addAttribute(atts, "x", SVGUtil.formatMptToPt(rect.x));
+            XMLUtil.addAttribute(atts, "y", SVGUtil.formatMptToPt(rect.y));
+            XMLUtil.addAttribute(atts, "width", SVGUtil.formatMptToPt(rect.width));
+            XMLUtil.addAttribute(atts, "height", SVGUtil.formatMptToPt(rect.height));
             if (fill != null) {
                 XMLUtil.addAttribute(atts, "fill", toString(fill));
             }
@@ -311,10 +310,10 @@ public class SVGPainter extends AbstractIFPainter implements SVGConstants {
         try {
             establish(MODE_NORMAL);
             AttributesImpl atts = new AttributesImpl();
-            XMLUtil.addAttribute(atts, "x1", Integer.toString(start.x));
-            XMLUtil.addAttribute(atts, "y1", Integer.toString(start.y));
-            XMLUtil.addAttribute(atts, "x2", Integer.toString(end.x));
-            XMLUtil.addAttribute(atts, "y2", Integer.toString(end.y));
+            XMLUtil.addAttribute(atts, "x1", SVGUtil.formatMptToPt(start.x));
+            XMLUtil.addAttribute(atts, "y1", SVGUtil.formatMptToPt(start.y));
+            XMLUtil.addAttribute(atts, "x2", SVGUtil.formatMptToPt(end.x));
+            XMLUtil.addAttribute(atts, "y2", SVGUtil.formatMptToPt(end.y));
             XMLUtil.addAttribute(atts, "stroke-width", toString(color));
             XMLUtil.addAttribute(atts, "fill", toString(color));
             //TODO Handle style parameter
@@ -331,16 +330,16 @@ public class SVGPainter extends AbstractIFPainter implements SVGConstants {
             establish(MODE_TEXT);
             AttributesImpl atts = new AttributesImpl();
             XMLUtil.addAttribute(atts, XMLConstants.XML_SPACE, "preserve");
-            XMLUtil.addAttribute(atts, "x", Integer.toString(x));
-            XMLUtil.addAttribute(atts, "y", Integer.toString(y));
+            XMLUtil.addAttribute(atts, "x", SVGUtil.formatMptToPt(x));
+            XMLUtil.addAttribute(atts, "y", SVGUtil.formatMptToPt(y));
             if (letterSpacing != 0) {
-                XMLUtil.addAttribute(atts, "letter-spacing", Integer.toString(letterSpacing));
+                XMLUtil.addAttribute(atts, "letter-spacing", SVGUtil.formatMptToPt(letterSpacing));
             }
             if (wordSpacing != 0) {
-                XMLUtil.addAttribute(atts, "word-spacing", Integer.toString(wordSpacing));
+                XMLUtil.addAttribute(atts, "word-spacing", SVGUtil.formatMptToPt(wordSpacing));
             }
             if (dx != null) {
-                XMLUtil.addAttribute(atts, "dx", IFUtil.toString(dx));
+                XMLUtil.addAttribute(atts, "dx", SVGUtil.formatMptArrayToPt(dx));
             }
             handler.startElement("text", atts);
             char[] chars = text.toCharArray();
@@ -385,7 +384,7 @@ public class SVGPainter extends AbstractIFPainter implements SVGConstants {
         XMLUtil.addAttribute(atts, "font-style", state.getFontStyle());
         XMLUtil.addAttribute(atts, "font-weight", Integer.toString(state.getFontWeight()));
         XMLUtil.addAttribute(atts, "font-variant", state.getFontVariant());
-        XMLUtil.addAttribute(atts, "font-size", Integer.toString(state.getFontSize()));
+        XMLUtil.addAttribute(atts, "font-size", SVGUtil.formatMptToPt(state.getFontSize()));
         XMLUtil.addAttribute(atts, "fill", toString(state.getTextColor()));
         handler.startElement("g", atts);
         state.resetFontChanged();
