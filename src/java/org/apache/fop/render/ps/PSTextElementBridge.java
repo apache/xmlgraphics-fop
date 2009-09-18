@@ -19,13 +19,13 @@
 
 package org.apache.fop.render.ps;
 
-import org.apache.batik.bridge.SVGTextElementBridge;
+import org.w3c.dom.Element;
+
 import org.apache.batik.bridge.BridgeContext;
+import org.apache.batik.bridge.SVGTextElementBridge;
 import org.apache.batik.gvt.GraphicsNode;
 import org.apache.batik.gvt.TextNode;
-
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
+import org.apache.batik.gvt.TextPainter;
 
 /**
  * Bridge class for the &lt;text> element.
@@ -37,13 +37,13 @@ import org.w3c.dom.Node;
  */
 public class PSTextElementBridge extends SVGTextElementBridge {
 
-    private PSTextPainter textPainter;
+    private TextPainter textPainter;
 
     /**
      * Constructs a new bridge for the &lt;text> element.
      * @param textPainter the text painter to use
      */
-    public PSTextElementBridge(PSTextPainter textPainter) {
+    public PSTextElementBridge(TextPainter textPainter) {
         this.textPainter = textPainter;
     }
 
@@ -56,60 +56,13 @@ public class PSTextElementBridge extends SVGTextElementBridge {
      */
     public GraphicsNode createGraphicsNode(BridgeContext ctx, Element e) {
         GraphicsNode node = super.createGraphicsNode(ctx, e);
-        /* this code is worthless I think. PSTextPainter does a much better job
-         * at determining whether to stroke or not. */
-        if (true/*node != null && isSimple(ctx, e, node)*/) {
-            ((TextNode)node).setTextPainter(getTextPainter());
-        }
+        ((TextNode)node).setTextPainter(getTextPainter());
         return node;
     }
 
-    private PSTextPainter getTextPainter() {
+    private TextPainter getTextPainter() {
         return this.textPainter;
     }
 
-    /**
-     * Check if text element contains simple text.
-     * This checks the children of the text element to determine
-     * if the text is simple. The text is simple if it can be rendered
-     * with basic text drawing algorithms. This means there are no
-     * alternate characters, the font is known and there are no effects
-     * applied to the text.
-     *
-     * @param ctx the bridge context
-     * @param element the svg text element
-     * @param node the graphics node
-     * @return true if this text is simple of false if it cannot be
-     *         easily rendered using normal drawString on the PDFGraphics2D
-     */
-    private boolean isSimple(BridgeContext ctx, Element element, GraphicsNode node) {
-        for (Node n = element.getFirstChild();
-                n != null;
-                n = n.getNextSibling()) {
-
-            switch (n.getNodeType()) {
-            case Node.ELEMENT_NODE:
-
-                if (n.getLocalName().equals(SVG_TSPAN_TAG)
-                        || n.getLocalName().equals(SVG_ALT_GLYPH_TAG)) {
-                    return false;
-                } else if (n.getLocalName().equals(SVG_TEXT_PATH_TAG)) {
-                    return false;
-                } else if (n.getLocalName().equals(SVG_TREF_TAG)) {
-                    return false;
-                }
-                break;
-            case Node.TEXT_NODE:
-            case Node.CDATA_SECTION_NODE:
-            default:
-            }
-        }
-
-        /*if (CSSUtilities.convertFilter(element, node, ctx) != null) {
-            return false;
-        }*/
-
-        return true;
-    }
 }
 

@@ -25,9 +25,9 @@ import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import org.apache.fop.afp.AFPLineDataInfo;
-import org.apache.fop.afp.AFPTextDataInfo;
 import org.apache.fop.afp.Completable;
 import org.apache.fop.afp.Factory;
+import org.apache.fop.afp.ptoca.PtocaProducer;
 import org.apache.fop.afp.fonts.AFPFont;
 
 /**
@@ -170,8 +170,10 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject implemen
      *            the afp text data
      * @throws UnsupportedEncodingException thrown if character encoding is not supported
      */
-    public void createText(AFPTextDataInfo textDataInfo) throws UnsupportedEncodingException {
-        getPresentationTextObject().createTextData(textDataInfo);
+    public void createText(PtocaProducer producer) throws UnsupportedEncodingException {
+        //getPresentationTextObject().createTextData(textDataInfo);
+        getPresentationTextObject().createControlSequences(producer);
+
     }
 
     /**
@@ -212,6 +214,17 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject implemen
     }
 
     /**
+     * Returns the list of {@link TagLogicalElement}s.
+     * @return the TLEs
+     */
+    protected List getTagLogicalElements() {
+        if (tagLogicalElements == null) {
+            this.tagLogicalElements = new java.util.ArrayList/*<TagLogicalElement>*/();
+        }
+        return this.tagLogicalElements;
+    }
+
+    /**
      * Creates a TagLogicalElement on the page.
      *
      * @param name
@@ -223,10 +236,8 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject implemen
      */
     public void createTagLogicalElement(String name, String value, int tleID) {
         TagLogicalElement tle = new TagLogicalElement(name, value, tleID);
-        if (tagLogicalElements == null) {
-            tagLogicalElements = new java.util.ArrayList/*<TagLogicalElement>*/();
-        }
-        tagLogicalElements.add(tle);
+        List list = getTagLogicalElements();
+        list.add(tle);
     }
 
     /**

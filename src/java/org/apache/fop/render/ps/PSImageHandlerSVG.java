@@ -65,16 +65,10 @@ public class PSImageHandlerSVG implements ImageHandler {
         PSGraphics2D graphics = new PSGraphics2D(strokeText, gen);
         graphics.setGraphicContext(new org.apache.xmlgraphics.java2d.GraphicContext());
 
-        NativeTextHandler nativeTextHandler = null;
-        BridgeContext ctx = new BridgeContext(ua);
-        if (!strokeText) {
-            nativeTextHandler = new NativeTextHandler(graphics, psContext.getFontInfo());
-            graphics.setCustomTextHandler(nativeTextHandler);
-            PSTextPainter textPainter = new PSTextPainter(nativeTextHandler);
-            ctx.setTextPainter(textPainter);
-            PSTextElementBridge tBridge = new PSTextElementBridge(textPainter);
-            ctx.putBridge(tBridge);
-        }
+        BridgeContext ctx = new PSBridgeContext(ua,
+                (strokeText ? null : psContext.getFontInfo()),
+                context.getUserAgent().getFactory().getImageManager(),
+                context.getUserAgent().getImageSessionContext());
 
         GraphicsNode root;
         try {

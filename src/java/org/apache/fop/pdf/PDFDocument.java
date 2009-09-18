@@ -526,8 +526,8 @@ public class PDFDocument {
 
     private Object findPDFObject(List list, PDFObject compare) {
         for (Iterator iter = list.iterator(); iter.hasNext();) {
-            Object obj = iter.next();
-            if (compare.equals(obj)) {
+            PDFObject obj = (PDFObject) iter.next();
+            if (compare.contentEquals(obj)) {
                 return obj;
             }
         }

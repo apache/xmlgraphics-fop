@@ -24,6 +24,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Stack;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -37,6 +38,7 @@ import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.flow.BlockContainer;
 import org.apache.fop.fo.properties.CommonAbsolutePosition;
+import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.traits.SpaceVal;
 import org.apache.fop.util.ListUtil;
@@ -261,7 +263,215 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
 
         if (!firstVisibleMarkServed) {
             addKnuthElementsForSpaceBefore(returnList, alignment);
-            context.updateKeepWithPreviousPending(getKeepWithPreviousStrength());
+            context.updateKeepWithPreviousPending(getKeepWithPrevious());
+        }
+
+        addKnuthElementsForBorderPaddingBefore(returnList, !firstVisibleMarkServed);
+        firstVisibleMarkServed = true;
+
+        if (autoHeight && inlineElementList) {
+            //Spaces, border and padding to be repeated at each break
+            addPendingMarks(context);
+
+            LayoutManager curLM; // currently active LM
+            LayoutManager prevLM = null; // previously active LM
+            while ((curLM = getChildLM()) != null) {
+                LayoutContext childLC = new LayoutContext(0);
+                childLC.copyPendingMarksFrom(context);
+                // curLM is a ?
+                childLC.setStackLimitBP(MinOptMax.subtract(context.getStackLimitBP(), stackLimit));
+                childLC.setRefIPD(relDims.ipd);
+                childLC.setWritingMode(getBlockContainerFO().getWritingMode());
+                if (curLM == this.childLMs.get(0)) {
+                    childLC.setFlags(LayoutContext.SUPPRESS_BREAK_BEFORE);
+                    //Handled already by the parent (break collapsing, see above)
+                }
+
+                // get elements from curLM
+                returnedList = curLM.getNextKnuthElements(childLC, alignment);
+                if (contentList.isEmpty() && childLC.isKeepWithPreviousPending()) {
+                    //Propagate keep-with-previous up from the first child
+                    context.updateKeepWithPreviousPending(childLC.getKeepWithPreviousPending());
+                    childLC.clearKeepWithPreviousPending();
+                }
+                if (returnedList.size() == 1
+                        && ((ListElement)returnedList.get(0)).isForcedBreak()) {
+                    // a descendant of this block has break-before
+                    /*
+                    if (returnList.size() == 0) {
+                        // the first child (or its first child ...) has
+                        // break-before;
+                        // all this block, including space before, will be put in
+                        // the
+                        // following page
+                        bSpaceBeforeServed = false;
+                    }*/
+                    contentList.addAll(returnedList);
+
+                    // "wrap" the Position inside each element
+                    // moving the elements from contentList to returnList
+                    returnedList = new LinkedList();
+                    wrapPositionElements(contentList, returnList);
+
+                    return returnList;
+                } else {
+                    if (prevLM != null) {
+                        // there is a block handled by prevLM
+                        // before the one handled by curLM
+                        addInBetweenBreak(contentList, context, childLC);
+                    }
+                    contentList.addAll(returnedList);
+                    if (returnedList.isEmpty()) {
+                        //Avoid NoSuchElementException below (happens with empty blocks)
+                        continue;
+                    }
+                    if (ElementListUtils.endsWithForcedBreak(returnedList)) {
+                        // a descendant of this block has break-after
+                        if (curLM.isFinished()) {
+                            // there is no other content in this block;
+                            // it's useless to add space after before a page break
+                            setFinished(true);
+                        }
+
+                        returnedList = new LinkedList();
+                        wrapPositionElements(contentList, returnList);
+
+                        return returnList;
+                    }
+                }
+                // propagate and clear
+                context.updateKeepWithNextPending(childLC.getKeepWithNextPending());
+                childLC.clearKeepsPending();
+                prevLM = curLM;
+            }
+
+            returnedList = new LinkedList();
+            wrapPositionElements(contentList, returnList);
+
+        } else {
+            MinOptMax range = new MinOptMax(relDims.ipd);
+            BlockContainerBreaker breaker = new BlockContainerBreaker(this, range);
+            breaker.doLayout(relDims.bpd, autoHeight);
+            boolean contentOverflows = breaker.isOverflow();
+            if (autoHeight) {
+                //Update content BPD now that it is known
+                int newHeight = breaker.deferredAlg.totalWidth;
+                boolean switchedProgressionDirection
+                    = (getBlockContainerFO().getReferenceOrientation() % 180 != 0);
+                if (switchedProgressionDirection) {
+                    setContentAreaIPD(newHeight);
+                } else {
+                    vpContentBPD = newHeight;
+                }
+                updateRelDims(contentRectOffsetX, contentRectOffsetY, false);
+            }
+
+            Position bcPosition = new BlockContainerPosition(this, breaker);
+            returnList.add(new KnuthBox(vpContentBPD, notifyPos(bcPosition), false));
+            //TODO Handle min/opt/max for block-progression-dimension
+            /* These two elements will be used to add stretchability to the above box
+            returnList.add(new KnuthPenalty(0, KnuthElement.INFINITE,
+                                   false, returnPosition, false));
+            returnList.add(new KnuthGlue(0, 1 * constantLineHeight, 0,
+                                   LINE_NUMBER_ADJUSTMENT, returnPosition, false));
+            */
+
+            if (contentOverflows) {
+                BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Provider.get(
+                        getBlockContainerFO().getUserAgent().getEventBroadcaster());
+                boolean canRecover = (getBlockContainerFO().getOverflow() != EN_ERROR_IF_OVERFLOW);
+                eventProducer.viewportOverflow(this, getBlockContainerFO().getName(),
+                        breaker.getOverflowAmount(), needClip(), canRecover,
+                        getBlockContainerFO().getLocator());
+            }
+        }
+        addKnuthElementsForBorderPaddingAfter(returnList, true);
+        addKnuthElementsForSpaceAfter(returnList, alignment);
+
+        //All child content is processed. Only break-after can occur now, so...
+        context.clearPendingMarks();
+        addKnuthElementsForBreakAfter(returnList, context);
+
+        context.updateKeepWithNextPending(getKeepWithNext());
+
+        setFinished(true);
+        return returnList;
+    }
+
+    /** {@inheritDoc} */
+    public List getNextKnuthElements(LayoutContext context, int alignment, Stack lmStack,
+            Position restartPosition, LayoutManager restartAtLM) {
+        resetSpaces();
+        if (isAbsoluteOrFixed()) {
+            return getNextKnuthElementsAbsolute(context, alignment);
+        }
+
+        autoHeight = false;
+        //boolean rotated = (getBlockContainerFO().getReferenceOrientation() % 180 != 0);
+        int maxbpd = context.getStackLimitBP().opt;
+        int allocBPD;
+        if (height.getEnum() == EN_AUTO
+                || (!height.isAbsolute() && getAncestorBlockAreaBPD() <= 0)) {
+            //auto height when height="auto" or "if that dimension is not specified explicitly
+            //(i.e., it depends on content's block-progression-dimension)" (XSL 1.0, 7.14.1)
+            allocBPD = maxbpd;
+            autoHeight = true;
+            if (getBlockContainerFO().getReferenceOrientation() == 0) {
+                //Cannot easily inline element list when ref-or="180"
+                inlineElementList = true;
+            }
+        } else {
+            allocBPD = height.getValue(this); //this is the content-height
+            allocBPD += getBPIndents();
+        }
+        vpContentBPD = allocBPD - getBPIndents();
+
+        referenceIPD = context.getRefIPD();
+        if (width.getEnum() == EN_AUTO) {
+            updateContentAreaIPDwithOverconstrainedAdjust();
+        } else {
+            int contentWidth = width.getValue(this);
+            updateContentAreaIPDwithOverconstrainedAdjust(contentWidth);
+        }
+
+        double contentRectOffsetX = 0;
+        contentRectOffsetX += getBlockContainerFO()
+                .getCommonMarginBlock().startIndent.getValue(this);
+        double contentRectOffsetY = 0;
+        contentRectOffsetY += getBlockContainerFO()
+                .getCommonBorderPaddingBackground().getBorderBeforeWidth(false);
+        contentRectOffsetY += getBlockContainerFO()
+                .getCommonBorderPaddingBackground().getPaddingBefore(false, this);
+
+        updateRelDims(contentRectOffsetX, contentRectOffsetY, autoHeight);
+
+        int availableIPD = referenceIPD - getIPIndents();
+        if (getContentAreaIPD() > availableIPD) {
+            BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Provider.get(
+                    getBlockContainerFO().getUserAgent().getEventBroadcaster());
+            eventProducer.objectTooWide(this, getBlockContainerFO().getName(),
+                    getContentAreaIPD(), context.getRefIPD(),
+                    getBlockContainerFO().getLocator());
+        }
+
+        MinOptMax stackLimit = new MinOptMax(relDims.bpd);
+
+        List returnedList;
+        List contentList = new LinkedList();
+        List returnList = new LinkedList();
+
+        if (!breakBeforeServed) {
+            breakBeforeServed = true;
+            if (!context.suppressBreakBefore()) {
+                if (addKnuthElementsForBreakBefore(returnList, context)) {
+                    return returnList;
+                }
+            }
+        }
+
+        if (!firstVisibleMarkServed) {
+            addKnuthElementsForSpaceBefore(returnList, alignment);
+            context.updateKeepWithPreviousPending(getKeepWithPrevious());
         }
 
         addKnuthElementsForBorderPaddingBefore(returnList, !firstVisibleMarkServed);
@@ -273,8 +483,99 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
 
             BlockLevelLayoutManager curLM; // currently active LM
             BlockLevelLayoutManager prevLM = null; // previously active LM
+
+            LayoutContext childLC = new LayoutContext(0);
+            if (lmStack.isEmpty()) {
+                assert restartAtLM != null && restartAtLM.getParent() == this;
+                curLM = (BlockLevelLayoutManager) restartAtLM;
+                curLM.reset();
+                setCurrentChildLM(curLM);
+
+                childLC.copyPendingMarksFrom(context);
+                childLC.setStackLimitBP(MinOptMax.subtract(context.getStackLimitBP(), stackLimit));
+                childLC.setRefIPD(relDims.ipd);
+                childLC.setWritingMode(getBlockContainerFO().getWritingMode());
+                if (curLM == this.childLMs.get(0)) {
+                    childLC.setFlags(LayoutContext.SUPPRESS_BREAK_BEFORE);
+                    //Handled already by the parent (break collapsing, see above)
+                }
+
+                // get elements from curLM
+                returnedList = curLM.getNextKnuthElements(childLC, alignment);
+            } else {
+                curLM = (BlockLevelLayoutManager) lmStack.pop();
+                setCurrentChildLM(curLM);
+
+                childLC.copyPendingMarksFrom(context);
+                childLC.setStackLimitBP(MinOptMax.subtract(context.getStackLimitBP(), stackLimit));
+                childLC.setRefIPD(relDims.ipd);
+                childLC.setWritingMode(getBlockContainerFO().getWritingMode());
+                if (curLM == this.childLMs.get(0)) {
+                    childLC.setFlags(LayoutContext.SUPPRESS_BREAK_BEFORE);
+                    //Handled already by the parent (break collapsing, see above)
+                }
+
+                // get elements from curLM
+                returnedList = curLM.getNextKnuthElements(childLC, alignment, lmStack,
+                        restartPosition, restartAtLM);
+            }
+            if (contentList.isEmpty() && childLC.isKeepWithPreviousPending()) {
+                //Propagate keep-with-previous up from the first child
+                context.updateKeepWithPreviousPending(childLC.getKeepWithPreviousPending());
+                childLC.clearKeepWithPreviousPending();
+            }
+            if (returnedList.size() == 1
+                    && ((ListElement)returnedList.get(0)).isForcedBreak()) {
+                // a descendant of this block has break-before
+                /*
+                if (returnList.size() == 0) {
+                    // the first child (or its first child ...) has
+                    // break-before;
+                    // all this block, including space before, will be put in
+                    // the
+                    // following page
+                    bSpaceBeforeServed = false;
+                }*/
+                contentList.addAll(returnedList);
+
+                // "wrap" the Position inside each element
+                // moving the elements from contentList to returnList
+                returnedList = new LinkedList();
+                wrapPositionElements(contentList, returnList);
+
+                return returnList;
+            } else {
+                if (prevLM != null) {
+                    // there is a block handled by prevLM
+                    // before the one handled by curLM
+                    addInBetweenBreak(contentList, context, childLC);
+                }
+                contentList.addAll(returnedList);
+                if (!returnedList.isEmpty()) {
+                    if (((ListElement) ListUtil.getLast(returnedList))
+                            .isForcedBreak()) {
+                        // a descendant of this block has break-after
+                        if (curLM.isFinished()) {
+                            // there is no other content in this block;
+                            // it's useless to add space after before a page break
+                            setFinished(true);
+                        }
+
+                        returnedList = new LinkedList();
+                        wrapPositionElements(contentList, returnList);
+
+                        return returnList;
+                    }
+                }
+            }
+            // propagate and clear
+            context.updateKeepWithNextPending(childLC.getKeepWithNextPending());
+            childLC.clearKeepsPending();
+            prevLM = curLM;
+
             while ((curLM = (BlockLevelLayoutManager) getChildLM()) != null) {
-                LayoutContext childLC = new LayoutContext(0);
+                curLM.reset();
+                childLC = new LayoutContext(0);
                 childLC.copyPendingMarksFrom(context);
                 // curLM is a ?
                 childLC.setStackLimitBP(MinOptMax.subtract(context.getStackLimitBP(), stackLimit));
@@ -391,10 +692,15 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         context.clearPendingMarks();
         addKnuthElementsForBreakAfter(returnList, context);
 
-        context.updateKeepWithNextPending(getKeepWithNextStrength());
+        context.updateKeepWithNextPending(getKeepWithNext());
 
         setFinished(true);
         return returnList;
+    }
+
+    /** {@inheritDoc} */
+    public boolean isRestartable() {
+        return true;
     }
 
     private List getNextKnuthElementsAbsolute(LayoutContext context, int alignment) {
@@ -1011,23 +1317,18 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
     }
 
     /** {@inheritDoc} */
-    public int getKeepTogetherStrength() {
-        int strength = KeepUtil.getCombinedBlockLevelKeepStrength(
-                getBlockContainerFO().getKeepTogether());
-        strength = Math.max(strength, getParentKeepTogetherStrength());
-        return strength;
+    public KeepProperty getKeepTogetherProperty() {
+        return getBlockContainerFO().getKeepTogether();
     }
 
     /** {@inheritDoc} */
-    public int getKeepWithNextStrength() {
-        return KeepUtil.getCombinedBlockLevelKeepStrength(
-                getBlockContainerFO().getKeepWithNext());
+    public KeepProperty getKeepWithPreviousProperty() {
+        return getBlockContainerFO().getKeepWithPrevious();
     }
 
     /** {@inheritDoc} */
-    public int getKeepWithPreviousStrength() {
-        return KeepUtil.getCombinedBlockLevelKeepStrength(
-                getBlockContainerFO().getKeepWithPrevious());
+    public KeepProperty getKeepWithNextProperty() {
+        return getBlockContainerFO().getKeepWithNext();
     }
 
     /**

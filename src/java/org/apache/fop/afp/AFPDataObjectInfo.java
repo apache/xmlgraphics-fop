@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-/* $Id: $ */
+/* $Id$ */
 
 package org.apache.fop.afp;
 
@@ -23,6 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.afp.modca.Registry;
+import org.apache.fop.afp.modca.triplets.MappingOptionTriplet;
 
 /**
  * A list of parameters associated with an AFP data objects
@@ -56,6 +57,9 @@ public class AFPDataObjectInfo {
 
     /** controls whether to create a page segment or a simple object */
     private boolean createPageSegment;
+
+    /** controls the mapping of the image data into the image area */
+    private byte mappingOption = MappingOptionTriplet.SCALE_TO_FILL;
 
     /**
      * Default constructor
@@ -253,6 +257,23 @@ public class AFPDataObjectInfo {
         return this.createPageSegment;
     }
 
+    /**
+     * Sets the way an image is mapped into its target area.
+     * @param mappingOption the mapping option (Valid values: see Mapping Option Triplet)
+     */
+    public void setMappingOption(byte mappingOption) {
+        this.mappingOption = mappingOption;
+    }
+
+    /**
+     * Returns the way an image is mapped into its target area. By default, this is "scale to fill"
+     * behavior.
+     * @return the mapping option value from the Mapping Option Triplet
+     */
+    public byte getMappingOption() {
+        return mappingOption;
+    }
+
     /** {@inheritDoc} */
     public String toString() {
         return "AFPDataObjectInfo{"
@@ -264,4 +285,5 @@ public class AFPDataObjectInfo {
             + (objectAreaInfo != null ? ", objectAreaInfo=" + objectAreaInfo : "")
             + (resourceInfo != null ? ", resourceInfo=" + resourceInfo : "");
     }
+
 }

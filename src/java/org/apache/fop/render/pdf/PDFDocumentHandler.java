@@ -20,7 +20,11 @@
 package org.apache.fop.render.pdf;
 
 import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.awt.geom.Rectangle2D.Double;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.HashMap;
@@ -37,14 +41,12 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
 import org.xml.sax.SAXException;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import org.apache.xmlgraphics.xmp.Metadata;
 
@@ -64,6 +66,8 @@ import org.apache.fop.pdf.PDFResourceContext;
 import org.apache.fop.pdf.PDFResources;
 import org.apache.fop.pdf.PDFStructElem;
 import org.apache.fop.pdf.PDFStructTreeRoot;
+import org.apache.fop.render.extensions.prepress.PageBoundaries;
+import org.apache.fop.render.extensions.prepress.PageScale;
 import org.apache.fop.render.intermediate.AbstractBinaryWritingIFDocumentHandler;
 import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
@@ -382,11 +386,33 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
         //
         this.pdfResources = this.pdfDoc.getResources();
 
+        PageBoundaries boundaries = new PageBoundaries(size, getContext().getForeignAttributes());
+
+        Rectangle trimBox = boundaries.getTrimBox();
+        Rectangle bleedBox = boundaries.getBleedBox();
+        Rectangle mediaBox = boundaries.getMediaBox();
+        Rectangle cropBox = boundaries.getCropBox();
+
+        // set scale attributes
+        double scaleX = 1;
+        double scaleY = 1;
+        String scale = (String) getContext().getForeignAttribute(
+                PageScale.EXT_PAGE_SCALE);
+        Point2D scales = PageScale.getScale(scale);
+        if (scales != null) {
+            scaleX = scales.getX();
+            scaleY = scales.getY();
+        }
+
         this.currentPage = this.pdfDoc.getFactory().makePage(
-            this.pdfResources,
-            (int)Math.round(size.getWidth() / 1000),
-            (int)Math.round(size.getHeight() / 1000), index,
-            parentTreeKey);   // used for accessibility
+                this.pdfResources,
+                index,
+                toPointAndScale(mediaBox, scaleX, scaleY),
+                toPointAndScale(cropBox, scaleX, scaleY),
+                toPointAndScale(bleedBox, scaleX, scaleY),
+                toPointAndScale(trimBox, scaleX, scaleY),
+                parentTreeKey);
+
         pdfUtil.generatePageLabel(index, name);
 
         currentPageRef = new PageReference(currentPage, size);
@@ -396,8 +422,16 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
                 this.currentPage);
         // Transform the PDF's default coordinate system (0,0 at lower left) to the PDFPainter's
         AffineTransform basicPageTransform = new AffineTransform(1, 0, 0, -1, 0,
-                size.height / 1000f);
+                (scaleY * size.height) / 1000f);
+        basicPageTransform.scale(scaleX, scaleY);
         generator.concatenate(basicPageTransform);
+    }
+
+    private Double toPointAndScale(Rectangle box, double scaleX, double scaleY) {
+        return new Rectangle2D.Double(box.getX() * scaleX / 1000,
+                box.getY() * scaleY / 1000,
+                box.getWidth() * scaleX / 1000,
+                box.getHeight() * scaleY / 1000);
     }
 
     /** {@inheritDoc} */

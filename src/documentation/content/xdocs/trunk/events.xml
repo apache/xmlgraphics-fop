@@ -20,7 +20,7 @@
 <document>
   <header>
     <title>Events/Processing Feedback</title>
-    <version>$Revision: 634267 $</version>
+    <version>$Revision$</version>
   </header>
   <body>
     <section id="introduction">
@@ -152,7 +152,28 @@ foUserAgent.getEventBroadcaster().addEventListener(new SysOutEventListener());]]
         <p>
           By default, FOP continues processing even if an image wasn't found. If you have
           more strict requirements and want FOP to stop if an image is not available, you can
-          do something like the following:
+          do something like the following in the simplest case:
+        </p>
+        <source><![CDATA[public class MyEventListener implements EventListener {
+
+    public void processEvent(Event event) {
+        if ("org.apache.fop.events.ResourceEventProducer".equals(
+                event.getEventGroupID())) {
+            event.setSeverity(EventSeverity.FATAL);
+        } else {
+            //ignore all other events (or do something of your choice)
+        }
+    }
+    
+}]]></source>
+        <p>
+          Increasing the event severity to FATAL will signal the event broadcaster to throw
+          an exception and stop further processing. In the above case, all resource-related
+          events will cause FOP to stop processing.
+        </p>
+        <p>
+          You can also customize the exception to throw (you can may throw a RuntimeException
+          or subclass yourself) and/or which event to respond to:
         </p>
         <source><![CDATA[public class MyEventListener implements EventListener {
 

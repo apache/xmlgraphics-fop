@@ -30,7 +30,10 @@ import org.apache.fop.render.intermediate.IFDocumentHandler;
  */
 public class PCLDocumentHandlerMaker extends AbstractIFDocumentHandlerMaker {
 
-    private static final String[] MIMES = new String[] {MimeConstants.MIME_PCL};
+    private static final String[] MIMES = new String[] {
+            MimeConstants.MIME_PCL,
+            MimeConstants.MIME_PCL_ALT
+    };
 
     /** {@inheritDoc} */
     public IFDocumentHandler makeIFDocumentHandler(FOUserAgent ua) {

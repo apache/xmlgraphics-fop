@@ -30,8 +30,10 @@ import org.apache.fop.render.intermediate.IFDocumentHandler;
  */
 public class AFPDocumentHandlerMaker extends AbstractIFDocumentHandlerMaker {
 
-    private static final String[] MIMES = new String[]
-                              {MimeConstants.MIME_AFP};
+    private static final String[] MIMES = new String[] {
+            MimeConstants.MIME_AFP,
+            MimeConstants.MIME_AFP_ALT
+    };
 
     /** {@inheritDoc} */
     public IFDocumentHandler makeIFDocumentHandler(FOUserAgent ua) {

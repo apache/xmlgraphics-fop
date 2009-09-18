@@ -289,6 +289,12 @@ public class PCLRenderer extends PrintRenderer implements PCLConstants {
             gen.selectPaperSource(Integer.parseInt(paperSource));
         }
 
+        //Output bin
+        String outputBin = page.getForeignAttributeValue(PCLElementMapping.PCL_OUTPUT_BIN);
+        if (outputBin != null) {
+            gen.selectOutputBin(Integer.parseInt(outputBin));
+        }
+
         // Is Page duplex?
         String pageDuplex = page.getForeignAttributeValue(PCLElementMapping.PCL_DUPLEX_MODE);
         if (pageDuplex != null) {

@@ -32,6 +32,7 @@ import org.xml.sax.helpers.XMLFilterImpl;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
+import org.apache.fop.apps.FopFactoryConfigurator;
 import org.apache.fop.fotreetest.ext.TestElementMapping;
 import org.apache.fop.util.ConsoleEventListenerForTests;
 
@@ -64,8 +65,13 @@ public class FOTreeTester {
         SAXParser parser = spf.newSAXParser();
         XMLReader reader = parser.getXMLReader();
 
+        //Resetting values modified by processing instructions
+        fopFactory.setBreakIndentInheritanceOnReferenceAreaBoundary(
+                FopFactoryConfigurator.DEFAULT_BREAK_INDENT_INHERITANCE);
+        fopFactory.setSourceResolution(FopFactoryConfigurator.DEFAULT_SOURCE_RESOLUTION);
+
         FOUserAgent ua = fopFactory.newFOUserAgent();
-        ua.setBaseURL(testFile.getParentFile().toURL().toString());
+        ua.setBaseURL(testFile.getParentFile().toURI().toURL().toString());
         ua.setFOEventHandlerOverride(new DummyFOEventHandler(ua));
         ua.getEventBroadcaster().addEventListener(
                 new ConsoleEventListenerForTests(testFile.getName()));
@@ -79,14 +85,19 @@ public class FOTreeTester {
         reader.setDTDHandler(fop.getDefaultHandler());
         reader.setErrorHandler(fop.getDefaultHandler());
         reader.setEntityResolver(fop.getDefaultHandler());
-        reader.parse(testFile.toURL().toExternalForm());
+        try {
+            reader.parse(testFile.toURI().toURL().toExternalForm());
+        } catch (Exception e) {
+            collector.notifyError(e.getLocalizedMessage());
+            throw e;
+        }
 
         List results = collector.getResults();
         if (results.size() > 0) {
             for (int i = 0; i < results.size(); i++) {
-                System.out.println(((Exception)results.get(i)).getMessage());
+                System.out.println((String)results.get(i));
             }
-            throw (Exception)results.get(0);
+            throw new IllegalStateException((String)results.get(0));
         }
     }
 
@@ -104,6 +115,8 @@ public class FOTreeTester {
             if ("fop-useragent-break-indent-inheritance".equals(target)) {
                 userAgent.getFactory().setBreakIndentInheritanceOnReferenceAreaBoundary(
                         Boolean.valueOf(data).booleanValue());
+            } else if ("fop-source-resolution".equals(target)) {
+                userAgent.getFactory().setSourceResolution(Float.parseFloat(data));
             }
             super.processingInstruction(target, data);
         }

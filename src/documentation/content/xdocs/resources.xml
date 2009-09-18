@@ -247,6 +247,7 @@
             [software] <jump href="http://www.ahmadsoft.org/fopbridge.html">FOP Bridge</jump> is an Eclipse plug-in
             that allows to convert FO documents using Apache FOP directly inside the Eclipse workbench (LGPL).
           </li>
+          <li>[software] <jump href="http://maven.apache.org/doxia/doxia/doxia-modules/doxia-module-fo/">Maven Doxia FO Module</jump>.  Doxia is a content generation framework which aims to provide its users with powerful techniques for generating static and dynamic content: Doxia can be used in web-based publishing context to generate static sites, in addition to being incorporated into dynamic content generation systems like blogs, wikis and content management systems.  Doxia provides a module providing XSL Formatting Objects.</li>
         </ul>
       </section>
     </section>

@@ -19,8 +19,10 @@
 
 package org.apache.fop.afp.fonts;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.SortedMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -37,8 +39,9 @@ public class RasterFont extends AFPFont {
     /** Static logging instance */
     protected static final Log log = LogFactory.getLog("org.apache.fop.afp.fonts");
 
-    private final Map/*<String,CharacterSet>*/ charSets
-        = new java.util.HashMap/*<String,CharacterSet>*/();
+    private final SortedMap/*<Integer,CharacterSet>*/ charSets
+            = new java.util.TreeMap/*<Integer,CharacterSet>*/();
+    private Map/*<Integer,CharacterSet>*/ substitutionCharSets;
 
     private CharacterSet charSet = null;
 
@@ -55,58 +58,77 @@ public class RasterFont extends AFPFont {
 
     /**
      * Adds the character set for the given point size
-     * @param size point size
+     * @param size point size (in mpt)
      * @param characterSet character set
      */
     public void addCharacterSet(int size, CharacterSet characterSet) {
-        this.charSets.put(String.valueOf(size), characterSet);
+        //TODO: replace with Integer.valueOf() once we switch to Java 5
+        this.charSets.put(new Integer(size), characterSet);
         this.charSet = characterSet;
     }
-
-    /** Describes the unit millipoint. */
-    public static final String MPT = "mpt";
 
     /**
      * Get the character set metrics for the specified point size.
      *
-     * @param size the point size
+     * @param size the point size (in mpt)
      * @return the character set metrics
      */
     public CharacterSet getCharacterSet(int size) {
 
-        String pointsize = String.valueOf(size / 1000);
-        CharacterSet csm = (CharacterSet) charSets.get(pointsize);
-        if (csm == null) {
-            csm = (CharacterSet) charSets.get(size + MPT);
+        //TODO: replace with Integer.valueOf() once we switch to Java 5
+        Integer requestedSize = new Integer(size);
+        CharacterSet csm = (CharacterSet) charSets.get(requestedSize);
+
+        if (csm != null) {
+            return csm;
         }
-        if (csm == null) {
-            // Get char set with nearest font size
-            int distance = Integer.MAX_VALUE;
-            for (Iterator it = charSets.entrySet().iterator(); it.hasNext();) {
-                Map.Entry me = (Map.Entry)it.next();
-                String key = (String)me.getKey();
-                if (!key.endsWith(MPT)) {
-                    int mpt = Integer.parseInt(key) * 1000;
-                    if (Math.abs(size - mpt) < distance) {
-                        distance = Math.abs(size - mpt);
-                        pointsize = (String)me.getKey();
-                        csm = (CharacterSet)me.getValue();
-                    }
-                }
+
+        if (substitutionCharSets != null) {
+            //Check first if a substitution has already been added
+            csm = (CharacterSet) substitutionCharSets.get(requestedSize);
+        }
+
+        if (csm == null && !charSets.isEmpty()) {
+            // No match or substitution found, but there exist entries
+            // for other sizes
+            // Get char set with nearest, smallest font size
+            SortedMap smallerSizes = charSets.headMap(requestedSize);
+            SortedMap largerSizes = charSets.tailMap(requestedSize);
+            int smallerSize = smallerSizes.isEmpty() ? 0
+                    : ((Integer)smallerSizes.lastKey()).intValue();
+            int largerSize = largerSizes.isEmpty() ? Integer.MAX_VALUE
+                    : ((Integer)largerSizes.firstKey()).intValue();
+
+            Integer fontSize;
+            if (!smallerSizes.isEmpty()
+                            && (size - smallerSize) <= (largerSize - size)) {
+                fontSize = new Integer(smallerSize);
+            } else {
+                fontSize = new Integer(largerSize);
             }
+            csm = (CharacterSet) charSets.get(fontSize);
+
             if (csm != null) {
-                charSets.put(size + MPT, csm);
-                String msg = "No " + (size / 1000) + "pt font " + getFontName()
-                    + " found, substituted with " + pointsize + "pt font";
+                // Add the substitute mapping, so subsequent calls will
+                // find it immediately
+                if (substitutionCharSets == null) {
+                    substitutionCharSets = new HashMap();
+                }
+                substitutionCharSets.put(requestedSize, csm);
+                String msg = "No " + (size / 1000f) + "pt font " + getFontName()
+                    + " found, substituted with " + fontSize.intValue() / 1000f + "pt font";
                 log.warn(msg);
             }
         }
+
         if (csm == null) {
+            // Still no match -> error
             String msg = "No font found for font " + getFontName()
-                + " with point size " + pointsize;
+                + " with point size " + size / 1000f;
             log.error(msg);
             throw new FontRuntimeException(msg);
         }
+
         return csm;
 
     }
@@ -145,26 +167,37 @@ public class RasterFont extends AFPFont {
 
     }
 
+    private int metricsToAbsoluteSize(CharacterSet cs, int value, int givenSize) {
+        int nominalVerticalSize = cs.getNominalVerticalSize();
+        if (nominalVerticalSize != 0) {
+            return value * nominalVerticalSize;
+        } else {
+            return value * givenSize;
+        }
+    }
+
     /**
      * The ascender is the part of a lowercase letter that extends above the
      * "x-height" (the height of the letter "x"), such as "d", "t", or "h". Also
      * used to denote the part of the letter extending above the x-height.
      *
-     * @param size the point size
+     * @param size the font size (in mpt)
      * @return the ascender for the given point size
      */
     public int getAscender(int size) {
-        return getCharacterSet(size).getAscender() * size;
+        CharacterSet cs = getCharacterSet(size);
+        return metricsToAbsoluteSize(cs, cs.getAscender(), size);
     }
 
     /**
      * Obtains the height of capital letters for the specified point size.
      *
-     * @param size the point size
+     * @param size the font size (in mpt)
      * @return the cap height for the specified point size
      */
     public int getCapHeight(int size) {
-        return getCharacterSet(size).getCapHeight() * size;
+        CharacterSet cs = getCharacterSet(size);
+        return metricsToAbsoluteSize(cs, cs.getCapHeight(), size);
     }
 
     /**
@@ -172,43 +205,50 @@ public class RasterFont extends AFPFont {
      * base line, such as "g", "j", or "p". Also used to denote the part of the
      * letter extending below the base line.
      *
-     * @param size the point size
+     * @param size the font size (in mpt)
      * @return the descender for the specified point size
      */
     public int getDescender(int size) {
-        return getCharacterSet(size).getDescender() * size;
+        CharacterSet cs = getCharacterSet(size);
+        return metricsToAbsoluteSize(cs, cs.getDescender(), size);
     }
 
     /**
      * The "x-height" (the height of the letter "x").
      *
-     * @param size the point size
+     * @param size the font size (in mpt)
      * @return the x height for the given point size
      */
     public int getXHeight(int size) {
-        return getCharacterSet(size).getXHeight() * size;
+        CharacterSet cs = getCharacterSet(size);
+        return metricsToAbsoluteSize(cs, cs.getXHeight(), size);
     }
 
     /**
      * Obtain the width of the character for the specified point size.
      * @param character the character
-     * @param size the point size
+     * @param size the font size (in mpt)
      * @return the width for the given point size
      */
     public int getWidth(int character, int size) {
-        return getCharacterSet(size).getWidth(character) * size;
+        CharacterSet cs = getCharacterSet(size);
+        return metricsToAbsoluteSize(cs, cs.getWidth(character), size);
     }
 
     /**
      * Get the getWidth (in 1/1000ths of a point size) of all characters in this
      * character set.
      *
-     * @param size
-     *            the point size
+     * @param size the font size (in mpt)
      * @return the widths of all characters
      */
     public int[] getWidths(int size) {
-        return getCharacterSet(size).getWidths();
+        CharacterSet cs = getCharacterSet(size);
+        int[] widths = cs.getWidths();
+        for (int i = 0, c = widths.length; i < c; i++) {
+            widths[i] = metricsToAbsoluteSize(cs, widths[i], size);
+        }
+        return widths;
     }
 
     /**
@@ -239,5 +279,4 @@ public class RasterFont extends AFPFont {
     public String getEncodingName() {
         return charSet.getEncoding();
     }
-
 }

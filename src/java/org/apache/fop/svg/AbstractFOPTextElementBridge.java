@@ -19,13 +19,13 @@
 
 package org.apache.fop.svg;
 
+import org.w3c.dom.Element;
+
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.SVGTextElementBridge;
 import org.apache.batik.gvt.GraphicsNode;
 import org.apache.batik.gvt.TextNode;
 import org.apache.batik.gvt.TextPainter;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 /**
  * Bridge class for the &lt;text> element.
@@ -63,50 +63,6 @@ public abstract class AbstractFOPTextElementBridge extends SVGTextElementBridge 
             ((TextNode)node).setTextPainter(textPainter);
         }
         return node;
-    }
-
-    /**
-     * Check if text element contains simple text.
-     * This checks the children of the text element to determine
-     * if the text is simple. The text is simple if it can be rendered
-     * with basic text drawing algorithms. This means there are no
-     * alternate characters, the font is known and there are no effects
-     * applied to the text.
-     *
-     * @param ctx the bridge context
-     * @param element the svg text element
-     * @param node the graphics node
-     * @return true if this text is simple of false if it cannot be
-     *         easily rendered using normal drawString on the Graphics2D
-     */
-    protected boolean isSimple(BridgeContext ctx, Element element, GraphicsNode node) {
-        for (Node n = element.getFirstChild();
-                n != null;
-                n = n.getNextSibling()) {
-
-            switch (n.getNodeType()) {
-            case Node.ELEMENT_NODE:
-
-                if (n.getLocalName().equals(SVG_TSPAN_TAG)
-                        || n.getLocalName().equals(SVG_ALT_GLYPH_TAG)) {
-                    return false;
-                } else if (n.getLocalName().equals(SVG_TEXT_PATH_TAG)) {
-                    return false;
-                } else if (n.getLocalName().equals(SVG_TREF_TAG)) {
-                    return false;
-                }
-                break;
-            case Node.TEXT_NODE:
-            case Node.CDATA_SECTION_NODE:
-            default:
-            }
-        }
-
-        /*if (CSSUtilities.convertFilter(element, node, ctx) != null) {
-            return false;
-        }*/
-
-        return true;
     }
 
 }

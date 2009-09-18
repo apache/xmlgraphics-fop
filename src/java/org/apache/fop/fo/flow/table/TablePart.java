@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-/* $Id: TableBody.java 655614 2008-05-12 19:37:39Z vhennebert $ */
+/* $Id$ */
 
 package org.apache.fop.fo.flow.table;
 
@@ -70,6 +70,13 @@ public abstract class TablePart extends TableCellContainer {
     }
 
     /** {@inheritDoc} */
+    protected Object clone() {
+        TablePart clone = (TablePart) super.clone();
+        clone.rowGroups = new LinkedList(rowGroups);
+        return clone;
+    }
+
+    /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
         super.bind(pList);
@@ -103,13 +110,13 @@ public abstract class TablePart extends TableCellContainer {
             pendingSpans = null;
             columnNumberManager = null;
         }
-
         if (!(tableRowsFound || tableCellsFound)) {
             missingChildElementError("marker* (table-row+|table-cell+)", true);
             getParent().removeChild(this);
         } else {
             finishLastRowGroup();
         }
+
     }
 
     /** {@inheritDoc} */
@@ -197,6 +204,9 @@ public abstract class TablePart extends TableCellContainer {
                 //nop
             }
         }
+        //TODO: possible performance problems in case of large tables...
+        //If the number of children grows significantly large, the default
+        //implementation in FObj will get slower and slower...
         super.addChildNode(child);
     }
 

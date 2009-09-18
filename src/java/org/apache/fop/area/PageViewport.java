@@ -20,7 +20,6 @@
 package org.apache.fop.area;
 
 import java.awt.Rectangle;
-import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -48,7 +47,7 @@ import org.apache.fop.fo.pagination.SimplePageMaster;
 public class PageViewport extends AreaTreeObject implements Resolvable, Cloneable {
 
     private Page page;
-    private Rectangle2D viewArea;
+    private Rectangle viewArea;
     private String simplePageMasterName;
 
     /**
@@ -100,6 +99,7 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
     public PageViewport(SimplePageMaster spm, int pageNumber, String pageStr, boolean blank) {
         this.simplePageMasterName = spm.getMasterName();
         setExtensionAttachments(spm.getExtensionAttachments());
+        setForeignAttributes(spm.getForeignAttributes());
         this.blank = blank;
         int pageWidth = spm.getPageWidth().getValue();
         int pageHeight = spm.getPageHeight().getValue();
@@ -118,11 +118,14 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
         if (original.extensionAttachments != null) {
             setExtensionAttachments(original.extensionAttachments);
         }
+        if (original.foreignAttributes != null) {
+            setForeignAttributes(original.foreignAttributes);
+        }
         this.pageIndex = original.pageIndex;
         this.pageNumber = original.pageNumber;
         this.pageNumberString = original.pageNumberString;
         this.page = (Page)original.page.clone();
-        this.viewArea = (Rectangle2D)original.viewArea.clone();
+        this.viewArea = new Rectangle(original.viewArea);
         this.simplePageMasterName = original.simplePageMasterName;
         this.blank = original.blank;
     }
@@ -135,7 +138,7 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
      * @param simplePageMasterName name of the original simple-page-master that generated this page
      * @param blank true if this is a blank page
      */
-    public PageViewport(Rectangle2D viewArea, int pageNumber, String pageStr,
+    public PageViewport(Rectangle viewArea, int pageNumber, String pageStr,
             String simplePageMasterName, boolean blank) {
         this.viewArea = viewArea;
         this.pageNumber = pageNumber;
@@ -161,7 +164,7 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
      * Get the view area rectangle of this viewport.
      * @return the rectangle for this viewport
      */
-    public Rectangle2D getViewArea() {
+    public Rectangle getViewArea() {
         return viewArea;
     }
 

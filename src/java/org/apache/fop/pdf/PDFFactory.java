@@ -174,22 +174,24 @@ public class PDFFactory {
      * PDFDocument later using addObject().
      *
      * @param resources resources object to use
-     * @param pageWidth width of the page in points
-     * @param pageHeight height of the page in points
      * @param pageIndex index of the page (zero-based)
+     * @param mediaBox the MediaBox area
+     * @param cropBox the CropBox area
+     * @param bleedBox the BleedBox area
+     * @param trimBox the TrimBox area
      * @param currentPageParentKey the integer key in the structural parent tree
      *
      * @return the created /Page object
      */
-    public PDFPage makePage(PDFResources resources,
-                            int pageWidth, int pageHeight, int pageIndex,
+    public PDFPage makePage(PDFResources resources, int pageIndex,
+                            Rectangle2D mediaBox, Rectangle2D cropBox,
+                            Rectangle2D bleedBox, Rectangle2D trimBox,
                             int currentPageParentKey) {
         /*
          * create a PDFPage with the next object number, the given
          * resources, contents and dimensions
          */
-        PDFPage page = new PDFPage(resources,                       // old numPages
-                                   pageWidth, pageHeight, pageIndex);
+        PDFPage page = new PDFPage(resources, pageIndex, mediaBox, cropBox, bleedBox, trimBox);
         if (currentPageParentKey > -1) {
             //Accessibility is enabled
             page.setStructParents(currentPageParentKey);
@@ -217,7 +219,8 @@ public class PDFFactory {
      */
     public PDFPage makePage(PDFResources resources,
                             int pageWidth, int pageHeight, int pageIndex) {
-        return makePage(resources, pageWidth, pageHeight, pageIndex, -1);
+        Rectangle2D mediaBox = new Rectangle2D.Double(0, 0, pageWidth, pageHeight);
+        return makePage(resources, pageIndex, mediaBox, mediaBox, mediaBox, mediaBox, -1);
     }
 
     /**

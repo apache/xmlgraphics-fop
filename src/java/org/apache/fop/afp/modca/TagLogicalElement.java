@@ -64,7 +64,7 @@ public class TagLogicalElement extends AbstractAFPObject {
 
     /**
      * Construct a tag logical element with the name and value specified.
-     * 
+     *
      * @param name the name of the tag logical element
      * @param value the value of the tag logical element
      * @param tleID unique identifier for TLE within AFP stream
@@ -135,7 +135,7 @@ public class TagLogicalElement extends AbstractAFPObject {
             data[pos++] = tleByteValue[i];
         }
         // attribute qualifier
-        data[pos++] = 0x10;
+        data[pos++] = 0x0A;
         data[pos++] = (byte)0x80;
         byte[] id = BinaryUtils.convert(tleID, 4);
         for (int i = 0; i < id.length; i++) {

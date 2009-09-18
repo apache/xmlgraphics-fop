@@ -32,13 +32,13 @@ import org.apache.fop.area.Block;
 import org.apache.fop.fo.flow.ListItem;
 import org.apache.fop.fo.flow.ListItemBody;
 import org.apache.fop.fo.flow.ListItemLabel;
-import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
+import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
 import org.apache.fop.layoutmgr.BreakElement;
 import org.apache.fop.layoutmgr.ConditionalElementListener;
 import org.apache.fop.layoutmgr.ElementListObserver;
 import org.apache.fop.layoutmgr.ElementListUtils;
-import org.apache.fop.layoutmgr.KeepUtil;
+import org.apache.fop.layoutmgr.Keep;
 import org.apache.fop.layoutmgr.KnuthBlockBox;
 import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthElement;
@@ -83,8 +83,8 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
     private MinOptMax effSpaceBefore;
     private MinOptMax effSpaceAfter;
 
-    private int keepWithNextPendingOnLabel;
-    private int keepWithNextPendingOnBody;
+    private Keep keepWithNextPendingOnLabel;
+    private Keep keepWithNextPendingOnBody;
 
     private int listItemHeight;
 
@@ -254,8 +254,8 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
 
         context.updateKeepWithNextPending(this.keepWithNextPendingOnLabel);
         context.updateKeepWithNextPending(this.keepWithNextPendingOnBody);
-        context.updateKeepWithNextPending(getKeepWithNextStrength());
-        context.updateKeepWithPreviousPending(getKeepWithPreviousStrength());
+        context.updateKeepWithNextPending(getKeepWithNext());
+        context.updateKeepWithPreviousPending(getKeepWithPrevious());
 
         setFinished(true);
         resetSpaces();
@@ -276,16 +276,16 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
         int totalHeight = Math.max(fullHeights[0], fullHeights[1]);
         int step;
         int addedBoxHeight = 0;
-        int keepWithNextActive = BlockLevelLayoutManager.KEEP_AUTO;
+        Keep keepWithNextActive = Keep.KEEP_AUTO;
 
         LinkedList returnList = new LinkedList();
         while ((step = getNextStep(elementLists, start, end, partialHeights)) > 0) {
 
             if (end[0] + 1 == elementLists[0].size()) {
-                keepWithNextActive = Math.max(keepWithNextActive, keepWithNextPendingOnLabel);
+                keepWithNextActive = keepWithNextActive.compare(keepWithNextPendingOnLabel);
             }
             if (end[1] + 1 == elementLists[1].size()) {
-                keepWithNextActive = Math.max(keepWithNextActive, keepWithNextPendingOnBody);
+                keepWithNextActive = keepWithNextActive.compare(keepWithNextPendingOnBody);
             }
 
             // compute penalty height and box height
@@ -339,14 +339,13 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
             }
 
             if (addedBoxHeight < totalHeight) {
-                int strength = BlockLevelLayoutManager.KEEP_AUTO;
-                strength = Math.max(strength, keepWithNextActive);
-                strength = Math.max(strength, getKeepTogetherStrength());
+                Keep keep = keepWithNextActive.compare(getKeepTogether());
                 int p = stepPenalty;
                 if (p > -KnuthElement.INFINITE) {
-                    p = Math.max(p, KeepUtil.getPenaltyForKeep(strength));
+                    p = Math.max(p, keep.getPenalty());
                 }
-                returnList.add(new BreakElement(stepPosition, penaltyHeight, p, -1, context));
+                returnList.add(new BreakElement(stepPosition, penaltyHeight, p, keep.getContext(),
+                        context));
             }
         }
 
@@ -644,21 +643,18 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
     }
 
     /** {@inheritDoc} */
-    public int getKeepTogetherStrength() {
-        int strength = KeepUtil.getCombinedBlockLevelKeepStrength(
-                getListItemFO().getKeepTogether());
-        strength = Math.max(strength, getParentKeepTogetherStrength());
-        return strength;
+    public KeepProperty getKeepTogetherProperty() {
+        return getListItemFO().getKeepTogether();
     }
 
     /** {@inheritDoc} */
-    public int getKeepWithNextStrength() {
-        return KeepUtil.getCombinedBlockLevelKeepStrength(getListItemFO().getKeepWithNext());
+    public KeepProperty getKeepWithPreviousProperty() {
+        return getListItemFO().getKeepWithPrevious();
     }
 
     /** {@inheritDoc} */
-    public int getKeepWithPreviousStrength() {
-        return KeepUtil.getCombinedBlockLevelKeepStrength(getListItemFO().getKeepWithPrevious());
+    public KeepProperty getKeepWithNextProperty() {
+        return getListItemFO().getKeepWithNext();
     }
 
     /** {@inheritDoc} */
@@ -704,6 +700,13 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
         if (log.isDebugEnabled()) {
             log.debug(this + ": Padding " + side + " -> " + effectiveLength);
         }
+    }
+
+    /** {@inheritDoc} */
+    public void reset() {
+        super.reset();
+        label.reset();
+        body.reset();
     }
 
 

@@ -155,11 +155,6 @@ public abstract class AbstractRetrieveMarker extends FObjMixed {
 
     private void cloneFromMarker(Marker marker)
         throws FOPException {
-        // clean up remnants from a possible earlier layout
-        if (firstChild != null) {
-            currentTextNode = null;
-            firstChild = null;
-        }
         cloneSubtree(marker.getChildNodes(), this,
                         marker, propertyList);
         handleWhiteSpaceFor(this, null);
@@ -171,6 +166,11 @@ public abstract class AbstractRetrieveMarker extends FObjMixed {
      * @param marker the marker that is to be cloned
      */
     public void bindMarker(Marker marker) {
+        // clean up remnants from a possible earlier layout
+        if (firstChild != null) {
+            currentTextNode = null;
+            firstChild = null;
+        }
         if (marker.getChildNodes() != null) {
             try {
                 cloneFromMarker(marker);

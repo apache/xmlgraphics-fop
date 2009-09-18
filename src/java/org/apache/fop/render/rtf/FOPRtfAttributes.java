@@ -21,8 +21,7 @@ package org.apache.fop.render.rtf;
 
 import java.awt.Color;
 import org.apache.fop.datatypes.Length;
-import org.apache.fop.datatypes.PercentBaseContext;
-import org.apache.fop.fo.FObj;
+import org.apache.fop.render.DummyPercentBaseContext;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAttributes;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfColorTable;
 
@@ -62,7 +61,7 @@ public class FOPRtfAttributes extends RtfAttributes {
      */
     public RtfAttributes setHalfPoints(String name, Length value) {
         //Convert millipoints to half-points
-        set(name, value.getValue(DummyPercentBaseContext.singleton) / (1000 / 2));
+        set(name, value.getValue(DummyPercentBaseContext.getInstance()) / (1000 / 2));
         return this;
     }
 
@@ -80,19 +79,6 @@ public class FOPRtfAttributes extends RtfAttributes {
         set(name, RtfColorTable.getInstance().getColorNumber(
                 redComponent, greenComponent, blueComponent).intValue());
         return this;
-    }
-
-    private static class DummyPercentBaseContext implements PercentBaseContext {
-
-        static DummyPercentBaseContext singleton = new DummyPercentBaseContext();
-
-        private DummyPercentBaseContext() {
-            // noop
-        }
-
-        public int getBaseLength(int lengthBase, FObj fo) {
-            return 0;
-        }
     }
 
 }

@@ -28,6 +28,8 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.fop.afp.fonts.AFPFont;
+import org.apache.fop.afp.fonts.CharacterSet;
 import org.apache.fop.afp.modca.AbstractNamedAFPObject;
 import org.apache.fop.afp.modca.AbstractPageObject;
 import org.apache.fop.afp.modca.IncludeObject;
@@ -165,39 +167,38 @@ public class AFPResourceManager {
 
         AFPResourceLevel resourceLevel = resourceInfo.getLevel();
         ResourceGroup resourceGroup = streamer.getResourceGroup(resourceLevel);
+
         useInclude &= resourceGroup != null;
         if (useInclude) {
+            boolean usePageSegment = dataObjectInfo.isCreatePageSegment();
 
-        boolean usePageSegment = dataObjectInfo.isCreatePageSegment();
+            // if it is to reside within a resource group at print-file or external level
+            if (resourceLevel.isPrintFile() || resourceLevel.isExternal()) {
+                if (usePageSegment) {
+                    String pageSegmentName = "S10" + namedObj.getName().substring(3);
+                    namedObj.setName(pageSegmentName);
+                    PageSegment seg = new PageSegment(pageSegmentName);
+                    seg.addObject(namedObj);
+                    namedObj = seg;
+                }
 
-        // if it is to reside within a resource group at print-file or external level
-        if (resourceLevel.isPrintFile() || resourceLevel.isExternal()) {
-            if (usePageSegment) {
-                String pageSegmentName = "S10" + namedObj.getName().substring(3);
-                namedObj.setName(pageSegmentName);
-                PageSegment seg = new PageSegment(pageSegmentName);
-                seg.addObject(namedObj);
-                namedObj = seg;
+                // wrap newly created data object in a resource object
+                namedObj = dataObjectFactory.createResource(namedObj, resourceInfo, objectType);
             }
 
-            // wrap newly created data object in a resource object
-            namedObj = dataObjectFactory.createResource(namedObj, resourceInfo, objectType);
-        }
+            // add data object into its resource group destination
+            resourceGroup.addObject(namedObj);
 
-        // add data object into its resource group destination
-        resourceGroup.addObject(namedObj);
-
-        // create the include object
-        objectName = namedObj.getName();
-        if (usePageSegment) {
-            includePageSegment(dataObjectInfo, objectName);
-            pageSegmentMap.put(resourceInfo, objectName);
-        } else {
-            includeObject(dataObjectInfo, objectName);
-            // record mapping of resource info to data object resource name
-            includeNameMap.put(resourceInfo, objectName);
-        }
-
+            // create the include object
+            objectName = namedObj.getName();
+            if (usePageSegment) {
+                includePageSegment(dataObjectInfo, objectName);
+                pageSegmentMap.put(resourceInfo, objectName);
+            } else {
+                includeObject(dataObjectInfo, objectName);
+                // record mapping of resource info to data object resource name
+                includeNameMap.put(resourceInfo, objectName);
+            }
         } else {
             // not to be included so inline data object directly into the current page
             dataStream.getCurrentPage().addObject(namedObj);
@@ -218,10 +219,32 @@ public class AFPResourceManager {
 
     private void includeObject(AFPDataObjectInfo dataObjectInfo,
             String objectName) {
-            IncludeObject includeObject
-                = dataObjectFactory.createInclude(objectName, dataObjectInfo);
-            dataStream.getCurrentPage().addObject(includeObject);
+        IncludeObject includeObject
+            = dataObjectFactory.createInclude(objectName, dataObjectInfo);
+        dataStream.getCurrentPage().addObject(includeObject);
+    }
+
+    /**
+     * Handles font embedding. If a font is embeddable and has not already been embedded it will be.
+     * @param afpFont the AFP font to be checked for embedding
+     * @param charSet the associated character set
+     * @throws IOException if there's a problem while embedding the external resources
+     */
+    public void embedFont(AFPFont afpFont, CharacterSet charSet)
+            throws IOException {
+        if (afpFont.isEmbeddable()) {
+            //Embed fonts (char sets and code pages)
+            if (charSet.getResourceAccessor() != null) {
+                ResourceAccessor accessor = charSet.getResourceAccessor();
+                createIncludedResource(
+                        charSet.getName(), accessor,
+                        ResourceObject.TYPE_FONT_CHARACTER_SET);
+                createIncludedResource(
+                        charSet.getCodePage(), accessor,
+                        ResourceObject.TYPE_CODE_PAGE);
+            }
         }
+    }
 
     private void includePageSegment(AFPDataObjectInfo dataObjectInfo,
             String pageSegmentName) {
@@ -241,7 +264,6 @@ public class AFPResourceManager {
      */
     public void createIncludedResource(String resourceName, ResourceAccessor accessor,
                 byte resourceObjectType) throws IOException {
-        AFPResourceLevel resourceLevel = new AFPResourceLevel(AFPResourceLevel.PRINT_FILE);
         URI uri;
         try {
             uri = new URI(resourceName.trim());
@@ -249,6 +271,21 @@ public class AFPResourceManager {
             throw new IOException("Could not create URI from resource name: " + resourceName
                     + " (" + e.getMessage() + ")");
         }
+
+        createIncludedResource(resourceName, uri, accessor, resourceObjectType);
+    }
+
+    /**
+     * Creates an included resource object by loading the contained object from a file.
+     * @param resourceName the name of the resource
+     * @param uri the URI for the resource
+     * @param accessor resource accessor to access the resource with
+     * @param resourceObjectType the resource object type ({@link ResourceObject}.*)
+     * @throws IOException if an I/O error occurs while loading the resource
+     */
+    public void createIncludedResource(String resourceName, URI uri, ResourceAccessor accessor,
+                byte resourceObjectType) throws IOException {
+        AFPResourceLevel resourceLevel = new AFPResourceLevel(AFPResourceLevel.PRINT_FILE);
 
         AFPResourceInfo resourceInfo = new AFPResourceInfo();
         resourceInfo.setLevel(resourceLevel);

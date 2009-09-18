@@ -19,6 +19,8 @@
 
 package org.apache.fop.fo.properties;
 
+import org.apache.xmlgraphics.util.UnitConv;
+
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.FObj;
@@ -57,9 +59,10 @@ public abstract class LengthProperty extends Property
             }
             if (p instanceof NumberProperty) {
                 //Assume pixels (like in HTML) when there's no unit
+                float resolution = propertyList.getFObj().getUserAgent().getSourceResolution();
                 return FixedLength.getInstance(
                         p.getNumeric().getNumericValue(), "px",
-                        propertyList.getFObj().getUserAgent().getSourceResolution() / 72.0f);
+                        UnitConv.IN2PT / resolution);
             }
             Length val = p.getLength();
             if (val != null) {

@@ -106,9 +106,17 @@ public class DocumentNavigationHandler extends DefaultHandler
                 } else {
                     String id = attributes.getValue("id");
                     int pageIndex = XMLUtil.getAttributeAsInt(attributes, "page-index");
-                    int x = XMLUtil.getAttributeAsInt(attributes, "x");
-                    int y = XMLUtil.getAttributeAsInt(attributes, "y");
-                    action = new GoToXYAction(id, pageIndex, new Point(x, y));
+                    final Point location;
+                    if (pageIndex < 0) {
+                        location = null;
+                    } else {
+                        final int x = XMLUtil
+                                .getAttributeAsInt(attributes, "x");
+                        final int y = XMLUtil
+                                .getAttributeAsInt(attributes, "y");
+                        location = new Point(x, y);
+                    }
+                    action = new GoToXYAction(id, pageIndex, location);
                 }
                 objectStack.push(action);
             } else if (GOTO_URI.getLocalName().equals(localName)) {

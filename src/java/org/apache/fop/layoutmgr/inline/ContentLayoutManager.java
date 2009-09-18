@@ -27,6 +27,7 @@ import java.util.ListIterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.LineArea;
@@ -43,7 +44,6 @@ import org.apache.fop.layoutmgr.PageSequenceLayoutManager;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.SpaceSpecifier;
-import org.apache.fop.traits.MinOptMax;
 
 /**
  * Content Layout Manager.
@@ -111,8 +111,6 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
         LayoutContext childLC = new LayoutContext(LayoutContext.NEW_AREA);
         childLC.setLeadingSpace(new SpaceSpecifier(false));
         childLC.setTrailingSpace(new SpaceSpecifier(false));
-        // set stackLimit for lines
-        childLC.setStackLimitIP(new MinOptMax(ipd));
         childLC.setRefIPD(ipd);
 
         int lineHeight = 14000;
@@ -129,8 +127,7 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
 
         stackSize = 0;
 
-        List contentList =
-            getNextKnuthElements(childLC, Constants.EN_START);
+        List contentList = getNextKnuthElements(childLC, Constants.EN_START);
         ListIterator contentIter = contentList.listIterator();
         while (contentIter.hasNext()) {
             KnuthElement element = (KnuthElement) contentIter.next();
@@ -149,8 +146,7 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
         lc.setFlags(LayoutContext.RESOLVE_LEADING_SPACE, true);
         lc.setLeadingSpace(new SpaceSpecifier(false));
         lc.setTrailingSpace(new SpaceSpecifier(false));
-        KnuthPossPosIter contentPosIter =
-            new KnuthPossPosIter(contentList, 0, contentList.size());
+        KnuthPossPosIter contentPosIter = new KnuthPossPosIter(contentList, 0, contentList.size());
         curLM.addAreas(contentPosIter, lc);
     }
 

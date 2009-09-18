@@ -21,7 +21,6 @@ package org.apache.fop.afp.modca;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.List;
 
 import org.apache.fop.afp.Factory;
 
@@ -35,9 +34,6 @@ import org.apache.fop.afp.Factory;
  * document.
  */
 public class PageGroup extends AbstractResourceEnvironmentGroupContainer {
-
-    /** The tag logical elements contained within this group */
-    private List tagLogicalElements = null;
 
     /**
      * Sequence number for TLE's.
@@ -54,13 +50,6 @@ public class PageGroup extends AbstractResourceEnvironmentGroupContainer {
     public PageGroup(Factory factory, String name, int tleSequence) {
         super(factory, name);
         this.tleSequence = tleSequence;
-    }
-
-    private List getTagLogicalElements() {
-        if (tagLogicalElements == null) {
-            this.tagLogicalElements = new java.util.ArrayList();
-        }
-        return this.tagLogicalElements;
     }
 
     /**
@@ -88,7 +77,7 @@ public class PageGroup extends AbstractResourceEnvironmentGroupContainer {
 
     /** {@inheritDoc} */
     protected void writeContent(OutputStream os) throws IOException {
-        writeObjects(tagLogicalElements, os);
+        writeObjects(tagLogicalElements, os, true);
         super.writeContent(os);
     }
 

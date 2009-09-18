@@ -23,7 +23,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * This class collects the results from assertions injected into the FO stream.
+ * This class collects failures for assertions injected into the FO stream.
  */
 public class ResultCollector {
 
@@ -31,7 +31,7 @@ public class ResultCollector {
 
     private List results = new java.util.ArrayList();
 
-    /** @return the ResultColletor singleton */
+    /** @return the ResultCollector singleton */
     public static ResultCollector getInstance() {
         if (instance == null) {
             instance = new ResultCollector();
@@ -45,12 +45,23 @@ public class ResultCollector {
     }
 
     /**
-     * This notifies the ResultCollector about an Exception.
-     * @param e the exception
+     * This notifies the ResultCollector about an assertion failure.
+     *
+     * @param message   the message containing the details
      */
-    public void notifyException(Exception e) {
-        System.out.println(e.getMessage());
-        results.add(e);
+    public void notifyAssertionFailure(String message) {
+        System.out.println(message);
+        results.add(message);
+    }
+
+    /**
+     * This notifies the ResultCollector about a testcase that ended
+     * with a fatal error
+     *
+     * @param message   the message containing the details
+     */
+    public void notifyError(String message) {
+        results.add(message);
     }
 
     /** Resets the result list. */

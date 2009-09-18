@@ -31,6 +31,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.fop.util.License;
+
 /**
  * <p>Utility for generating a Java class representing line break properties
  * from the Unicode property files.</p>
@@ -226,31 +228,14 @@ public class GenerateLineBreakUtils {
         int idx = 0;
         StringBuffer doStaticLinkCode = new StringBuffer();
         PrintWriter out = new PrintWriter(new FileWriter(outFileName));
-        out.println("/*");
-        out.println(" * Licensed to the Apache Software Foundation (ASF) under one or more");
-        out.println(" * contributor license agreements.  See the NOTICE file distributed with");
-        out.println(" * this work for additional information regarding copyright ownership.");
-        out.println(" * The ASF licenses this file to You under the Apache License, Version 2.0");
-        out.println(" * (the \"License\"); you may not use this file except in compliance with");
-        out.println(" * the License.  You may obtain a copy of the License at");
-        out.println(" * ");
-        out.println(" *      http://www.apache.org/licenses/LICENSE-2.0");
-        out.println(" * ");
-        out.println(" * Unless required by applicable law or agreed to in writing, software");
-        out.println(" * distributed under the License is distributed on an \"AS IS\" BASIS,");
-        out.println(" * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.");
-        out.println(" * See the License for the specific language governing permissions and");
-        out.println(" * limitations under the License.");
-        out.println(" */");
-        out.println();
-        out.println("/* $Id$ */");
+        License.writeJavaLicenseId(out);
         out.println();
         out.println("package org.apache.fop.text.linebreak;");
         out.println();
-        out.println("/* ");
-        out.println(" * !!! THIS IS A GENERATED FILE !!! ");
+        out.println("/*");
+        out.println(" * !!! THIS IS A GENERATED FILE !!!");
         out.println(" * If updates to the source are needed, then:");
-        out.println(" * - apply the necessary modifications to ");
+        out.println(" * - apply the necessary modifications to");
         out.println(" *   'src/codegen/unicode/java/org/apache/fop/text/linebreak/GenerateLineBreakUtils.java'");
         out.println(" * - run 'ant codegen-unicode', which will generate a new LineBreakUtils.java");
         out.println(" *   in 'src/java/org/apache/fop/text/linebreak'");
@@ -276,7 +261,7 @@ public class GenerateLineBreakUtils {
         boolean printComma = false;
         for (int i = 1; i <= lineBreakPropertyValueCount; i++) {
             if (printComma) {
-                out.println(", ");
+                out.println(",");
             } else {
                 printComma = true;
             }
@@ -376,8 +361,13 @@ public class GenerateLineBreakUtils {
         for (int i = 0; i < lineBreakPropertyShortNames.size(); i++) {
             name = (String)lineBreakPropertyShortNames.get(i);
             if (printComma) {
-                out.print(", ");
-                lineLength++;
+                if (lineLength <= MAX_LINE_LENGTH - 2) {
+                    out.print(", ");
+                } else {
+                    out.print(",");
+                }
+                // count the space anyway to force a linebreak if the comma causes lineLength == MAX_LINE_LENGTH
+                lineLength += 2;
             } else {
                 printComma = true;
             }
@@ -418,7 +408,7 @@ public class GenerateLineBreakUtils {
         out.println("};");
         out.println();
         out.println("    /**");
-        out.println("     * Return the short name for the linebreak property corresponding ");
+        out.println("     * Return the short name for the linebreak property corresponding");
         out.println("     * to the given symbolic constant.");
         out.println("     *");
         out.println("     * @param i the numeric value of the linebreak property");
@@ -433,7 +423,7 @@ public class GenerateLineBreakUtils {
         out.println("    }");
         out.println();
         out.println("    /**");
-        out.println("     * Return the long name for the linebreak property corresponding ");
+        out.println("     * Return the long name for the linebreak property corresponding");
         out.println("     * to the given symbolic constant.");
         out.println("     *");
         out.println("     * @param i the numeric value of the linebreak property");
@@ -458,7 +448,7 @@ public class GenerateLineBreakUtils {
         out.println("    }");
         out.println();
         out.println("    /**");
-        out.println("     * Return the break class constant for the given pair of linebreak ");
+        out.println("     * Return the break class constant for the given pair of linebreak");
         out.println("     * property constants.");
         out.println("     *");
         out.println("     * @param lineBreakPropertyBefore the linebreak property for the first character");

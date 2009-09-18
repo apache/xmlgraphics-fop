@@ -382,4 +382,9 @@ public abstract class AbstractPageSequenceLayoutManager extends AbstractLayoutMa
         }
     }
 
+    /** {@inheritDoc} */
+    public void reset() {
+        throw new IllegalStateException();
+    }
+
 }

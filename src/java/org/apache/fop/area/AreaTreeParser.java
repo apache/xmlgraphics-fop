@@ -20,6 +20,7 @@
 package org.apache.fop.area;
 
 import java.awt.Color;
+import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -38,18 +39,16 @@ import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
-
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 import org.xml.sax.helpers.DefaultHandler;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import org.apache.xmlgraphics.image.loader.ImageException;
 import org.apache.xmlgraphics.image.loader.ImageInfo;
@@ -404,7 +403,7 @@ public class AreaTreeParser {
                 if (currentPageViewport != null) {
                     throw new IllegalStateException("currentPageViewport must be null");
                 }
-                Rectangle2D viewArea = XMLUtil.getAttributeAsRectangle2D(attributes, "bounds");
+                Rectangle viewArea = XMLUtil.getAttributeAsRectangle(attributes, "bounds");
                 int pageNumber = XMLUtil.getAttributeAsInt(attributes, "nr", -1);
                 String key = attributes.getValue("key");
                 String pageNumberString = attributes.getValue("formatted-nr");

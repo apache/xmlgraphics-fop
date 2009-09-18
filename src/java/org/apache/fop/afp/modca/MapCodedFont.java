@@ -206,7 +206,7 @@ public class MapCodedFont extends AbstractStructuredObject {
 
                 // There are approximately 72 points to 1 inch or 20 1440ths per point.
 
-                fontDefinition.scale = ((size / 1000) * 20);
+                fontDefinition.scale = 20 * size / 1000;
 
                 fontDefinition.codePage = cs.getCodePage().getBytes(
                     AFPConstants.EBCIDIC_ENCODING);

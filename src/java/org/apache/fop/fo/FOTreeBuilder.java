@@ -288,6 +288,9 @@ public class FOTreeBuilder extends DefaultHandler {
                         builderContext.switchMarkerContext(true);
                     }
                 }
+                if (foNode.getNameId() == Constants.FO_PAGE_SEQUENCE) {
+                    builderContext.getXMLWhiteSpaceHandler().reset();
+                }
             } catch (IllegalArgumentException e) {
                 throw new SAXException(e);
             }

@@ -19,6 +19,8 @@
 
 package org.apache.fop.layoutmgr;
 
+import org.apache.fop.fo.properties.KeepProperty;
+
 /**
  * The interface for LayoutManagers which generate block areas
  */
@@ -35,11 +37,6 @@ public interface BlockLevelLayoutManager extends LayoutManager {
     /** Adjustment class: adjustment for line height */
     int LINE_HEIGHT_ADJUSTMENT = 3;
 
-    /** The integer value for "auto" keep strength */
-    int KEEP_AUTO = Integer.MIN_VALUE;
-    /** The integer value for "always" keep strength */
-    int KEEP_ALWAYS = Integer.MAX_VALUE;
-
     int negotiateBPDAdjustment(int adj, KnuthElement lastElement);
 
     void discardSpace(KnuthGlue spaceGlue);
@@ -48,7 +45,7 @@ public interface BlockLevelLayoutManager extends LayoutManager {
      * Returns the keep-together strength for this element.
      * @return the keep-together strength
      */
-    int getKeepTogetherStrength();
+    Keep getKeepTogether();
 
     /**
      * @return true if this element must be kept together
@@ -59,7 +56,7 @@ public interface BlockLevelLayoutManager extends LayoutManager {
      * Returns the keep-with-previous strength for this element.
      * @return the keep-with-previous strength
      */
-    int getKeepWithPreviousStrength();
+    Keep getKeepWithPrevious();
 
     /**
      * @return true if this element must be kept with the previous element.
@@ -70,11 +67,28 @@ public interface BlockLevelLayoutManager extends LayoutManager {
      * Returns the keep-with-next strength for this element.
      * @return the keep-with-next strength
      */
-    int getKeepWithNextStrength();
+    Keep getKeepWithNext();
 
     /**
      * @return true if this element must be kept with the next element.
      */
     boolean mustKeepWithNext();
 
+    /**
+     * Returns the keep-together property specified on the FObj.
+     * @return the keep-together property
+     */
+    KeepProperty getKeepTogetherProperty();
+
+    /**
+     * Returns the keep-with-previous property specified on the FObj.
+     * @return the keep-together property
+     */
+    KeepProperty getKeepWithPreviousProperty();
+
+    /**
+     * Returns the keep-with-next property specified on the FObj.
+     * @return the keep-together property
+     */
+    KeepProperty getKeepWithNextProperty();
 }

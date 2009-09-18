@@ -259,17 +259,10 @@ public class PSSVGHandler extends AbstractGenericSVGHandler
         PSGraphics2D graphics = new PSGraphics2D(strokeText, gen);
         graphics.setGraphicContext(new org.apache.xmlgraphics.java2d.GraphicContext());
 
-        NativeTextHandler nativeTextHandler = null;
-        BridgeContext ctx = new BridgeContext(ua);
-        if (!strokeText) {
-            FontInfo fontInfo = psInfo.getFontInfo();
-            nativeTextHandler = new NativeTextHandler(graphics, fontInfo);
-            graphics.setCustomTextHandler(nativeTextHandler);
-            PSTextPainter textPainter = new PSTextPainter(nativeTextHandler);
-            ctx.setTextPainter(textPainter);
-            PSTextElementBridge tBridge = new PSTextElementBridge(textPainter);
-            ctx.putBridge(tBridge);
-        }
+        BridgeContext ctx = new PSBridgeContext(ua,
+                (strokeText ? null : psInfo.fontInfo),
+                context.getUserAgent().getFactory().getImageManager(),
+                context.getUserAgent().getImageSessionContext());
 
         //Cloning SVG DOM as Batik attaches non-thread-safe facilities (like the CSS engine)
         //to it.

@@ -529,14 +529,8 @@ public class PDFShading extends PDFObject {
         return (p.toString());
     }
 
-    /**
-     * Check if this shading is equal to another shading.
-     * This is used to check if a shading already exists.
-     *
-     * @param obj the object to compare against
-     * @return true if the shadings are equal
-     */
-    public boolean equals(Object obj) {
+    /** {@inheritDoc} */
+    protected boolean contentEquals(PDFObject obj) {
         if (obj == null) {
             return false;
         }

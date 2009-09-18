@@ -50,8 +50,6 @@ import org.apache.xmlgraphics.ps.dsc.events.DSCCommentBoundingBox;
 import org.apache.xmlgraphics.ps.dsc.events.DSCCommentHiResBoundingBox;
 
 import org.apache.fop.apps.MimeConstants;
-import org.apache.fop.fonts.LazyFont;
-import org.apache.fop.fonts.Typeface;
 import org.apache.fop.render.intermediate.AbstractBinaryWritingIFDocumentHandler;
 import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
@@ -91,8 +89,8 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
     /** Used to temporarily store PSSetupCode instance until they can be written. */
     private List setupCodeList;
 
-    /** This is a map of PSResource instances of all fonts defined (key: font key) */
-    private Map fontResources;
+    /** This is a cache of PSResource instances of all fonts defined */
+    private FontResourceCache fontResources;
     /** This is a map of PSResource instances of all forms (key: uri) */
     private Map formResources;
 
@@ -139,6 +137,7 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
     /** {@inheritDoc} */
     public void startDocument() throws IFException {
         super.startDocument();
+        this.fontResources = new FontResourceCache(getFontInfo());
         try {
             OutputStream out;
             if (psUtil.isOptimizeResources()) {
@@ -200,7 +199,7 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
         gen.writeDSCComment(DSCConstants.BEGIN_SETUP);
         PSRenderingUtil.writeSetupCodeList(gen, setupCodeList, "SetupCode");
         if (!psUtil.isOptimizeResources()) {
-            this.fontResources = PSFontUtils.writeFontDict(gen, fontInfo);
+            this.fontResources.addAll(PSFontUtils.writeFontDict(gen, fontInfo));
         } else {
             gen.commentln("%FOPFontSetup"); //Place-holder, will be replaced in the second pass
         }
@@ -436,8 +435,7 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
     /** {@inheritDoc} */
     public void endPageContent() throws IFException {
         try {
-            //Show page
-            gen.writeln("showpage");
+            gen.showPage();
         } catch (IOException ioe) {
             throw new IFException("I/O error in endPageContent()", ioe);
         }
@@ -534,45 +532,13 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
         }
     }
 
-    private String getPostScriptNameForFontKey(String key) {
-        int pos = key.indexOf('_');
-        String postFix = null;
-        if (pos > 0) {
-            postFix = key.substring(pos);
-            key = key.substring(0, pos);
-        }
-        Map fonts = fontInfo.getFonts();
-        Typeface tf = (Typeface)fonts.get(key);
-        if (tf instanceof LazyFont) {
-            tf = ((LazyFont)tf).getRealFont();
-        }
-        if (tf == null) {
-            throw new IllegalStateException("Font not available: " + key);
-        }
-        if (postFix == null) {
-            return tf.getFontName();
-        } else {
-            return tf.getFontName() + postFix;
-        }
-    }
-
     /**
      * Returns the PSResource for the given font key.
      * @param key the font key ("F*")
      * @return the matching PSResource
      */
     protected PSResource getPSResourceForFontKey(String key) {
-        PSResource res = null;
-        if (this.fontResources != null) {
-            res = (PSResource)this.fontResources.get(key);
-        } else {
-            this.fontResources = new java.util.HashMap();
-        }
-        if (res == null) {
-            res = new PSResource(PSResource.TYPE_FONT, getPostScriptNameForFontKey(key));
-            this.fontResources.put(key, res);
-        }
-        return res;
+        return this.fontResources.getPSResourceForFontKey(key);
     }
 
     /**

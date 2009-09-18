@@ -172,15 +172,15 @@ public class ImageLayout implements Constants {
         }
 
         this.clip = false;
-        if (cwidth > ipd || cheight > bpd) {
-            int overflow = props.getOverflow();
-            if (overflow == EN_HIDDEN) {
-                this.clip = true;
-            } else if (overflow == EN_ERROR_IF_OVERFLOW) {
+        int overflow = props.getOverflow();
+        if (overflow == EN_HIDDEN) {
+            this.clip = true;
+        } else if (overflow == EN_ERROR_IF_OVERFLOW) {
+            if (cwidth > ipd || cheight > bpd) {
                 //TODO Don't use logging to report error!
                 log.error("Object overflows the viewport: clipping");
-                this.clip = true;
             }
+            this.clip = true;
         }
 
         int xoffset = computeXOffset(ipd, cwidth);

@@ -22,9 +22,6 @@ package org.apache.fop.render.svg;
 import java.awt.Dimension;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -66,6 +63,9 @@ public class SVGDocumentHandler extends AbstractSVGDocumentHandler {
     private StreamResult firstStream;
     private StreamResult currentStream;
 
+    /** Used for single-page documents rendered to a DOM or SAX. */
+    private Result simpleResult;
+
     private Document reusedParts;
 
     /**
@@ -92,7 +92,7 @@ public class SVGDocumentHandler extends AbstractSVGDocumentHandler {
                     getUserAgent().getOutputFile());
             this.firstStream = (StreamResult)result;
         } else {
-            throw new UnsupportedOperationException("Result is not supported: " + result);
+            this.simpleResult = result;
         }
     }
 
@@ -152,6 +152,56 @@ public class SVGDocumentHandler extends AbstractSVGDocumentHandler {
     /** {@inheritDoc} */
     public void startPage(int index, String name, String pageMasterName, Dimension size)
                 throws IFException {
+        if (this.multiFileUtil != null) {
+            prepareHandlerWithOutputStream(index);
+        } else {
+            if (this.simpleResult == null) {
+                //Only one page is supported with this approach at the moment
+                throw new IFException(
+                        "Only one page is supported for output with the given Result instance!",
+                        null);
+            }
+            super.setResult(this.simpleResult);
+            this.simpleResult = null;
+        }
+
+        try {
+            handler.startDocument();
+            handler.startPrefixMapping("", NAMESPACE);
+            handler.startPrefixMapping(XLINK_PREFIX, XLINK_NAMESPACE);
+            AttributesImpl atts = new AttributesImpl();
+            XMLUtil.addAttribute(atts, "version", "1.1"); //SVG 1.1
+            /*
+            XMLUtil.addAttribute(atts, "index", Integer.toString(index));
+            XMLUtil.addAttribute(atts, "name", name);
+            */
+            XMLUtil.addAttribute(atts, "width", SVGUtil.formatMptToPt(size.width) + "pt");
+            XMLUtil.addAttribute(atts, "height", SVGUtil.formatMptToPt(size.height) + "pt");
+            XMLUtil.addAttribute(atts, "viewBox",
+                    "0 0 " + SVGUtil.formatMptToPt(size.width)
+                    + " " + SVGUtil.formatMptToPt(size.height));
+            handler.startElement("svg", atts);
+
+            try {
+                Transformer transformer = tFactory.newTransformer();
+                Source src = new DOMSource(this.reusedParts.getDocumentElement());
+                Result res = new SAXResult(new DelegatingFragmentContentHandler(this.handler));
+                transformer.transform(src, res);
+            } catch (TransformerConfigurationException tce) {
+                throw new IFException("Error setting up a Transformer", tce);
+            } catch (TransformerException te) {
+                if (te.getCause() instanceof SAXException) {
+                    throw (SAXException)te.getCause();
+                } else {
+                    throw new IFException("Error while serializing reused parts", te);
+                }
+            }
+        } catch (SAXException e) {
+            throw new IFException("SAX error in startPage()", e);
+        }
+    }
+
+    private void prepareHandlerWithOutputStream(int index) throws IFException {
         OutputStream out;
         try {
             if (index == 0) {
@@ -172,58 +222,6 @@ public class SVGDocumentHandler extends AbstractSVGDocumentHandler {
         } else {
             this.currentStream = new StreamResult(out);
             this.handler = decorate(createContentHandler(this.currentStream));
-        }
-        if (false) {
-            final ContentHandler originalHandler = this.handler;
-            this.handler = decorate((ContentHandler)Proxy.newProxyInstance(
-                    ContentHandler.class.getClassLoader(),
-                    new Class[] {ContentHandler.class},
-                    new InvocationHandler() {
-                        public Object invoke(Object proxy, Method method, Object[] args)
-                                throws Throwable {
-                            String methodName = method.getName();
-                            System.out.println(methodName + ":");
-                            if (args != null) {
-                                for (int i = 0; i < args.length; i++) {
-                                    System.out.println("  " + args[i]);
-                                }
-                            }
-                            return method.invoke(originalHandler, args);
-                        }
-                    }));
-        }
-        try {
-            handler.startDocument();
-            handler.startPrefixMapping("", NAMESPACE);
-            handler.startPrefixMapping(XLINK_PREFIX, XLINK_NAMESPACE);
-            AttributesImpl atts = new AttributesImpl();
-            XMLUtil.addAttribute(atts, "version", "1.1"); //SVG 1.1
-            /*
-            XMLUtil.addAttribute(atts, "index", Integer.toString(index));
-            XMLUtil.addAttribute(atts, "name", name);
-            */
-            XMLUtil.addAttribute(atts, "width", Float.toString(size.width / 1000f) + "pt");
-            XMLUtil.addAttribute(atts, "height", Float.toString(size.height / 1000f) + "pt");
-            XMLUtil.addAttribute(atts, "viewBox",
-                    "0 0 " + Integer.toString(size.width) + " " + Integer.toString(size.height));
-            handler.startElement("svg", atts);
-
-            try {
-                Transformer transformer = tFactory.newTransformer();
-                Source src = new DOMSource(this.reusedParts.getDocumentElement());
-                Result res = new SAXResult(new DelegatingFragmentContentHandler(this.handler));
-                transformer.transform(src, res);
-            } catch (TransformerConfigurationException tce) {
-                throw new IFException("Error setting up a Transformer", tce);
-            } catch (TransformerException te) {
-                if (te.getCause() instanceof SAXException) {
-                    throw (SAXException)te.getCause();
-                } else {
-                    throw new IFException("Error while serializing reused parts", te);
-                }
-            }
-        } catch (SAXException e) {
-            throw new IFException("SAX error in startPage()", e);
         }
     }
 

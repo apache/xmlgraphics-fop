@@ -94,7 +94,7 @@ public class SingleByteFont extends CustomFont {
     /** {@inheritDoc} */
     public int[] getWidths() {
         int[] arr = new int[width.length];
-        System.arraycopy(width, 0, arr, 0, width.length - 1);
+        System.arraycopy(width, 0, arr, 0, width.length);
         return arr;
     }
 

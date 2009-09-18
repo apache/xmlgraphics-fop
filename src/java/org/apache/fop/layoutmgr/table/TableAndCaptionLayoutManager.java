@@ -23,6 +23,7 @@ import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.fo.flow.table.TableAndCaption;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
+import org.apache.fop.layoutmgr.Keep;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.PositionIterator;
 
@@ -201,19 +202,8 @@ public class TableAndCaptionLayoutManager extends BlockStackingLayoutManager {
     }
 
     /** {@inheritDoc} */
-    public int getKeepTogetherStrength() {
-        int strength = KEEP_AUTO;
-        /* TODO Complete me!
-        int strength = KeepUtil.getCombinedBlockLevelKeepStrength(
-                getTableAndCaptionFO().getKeepTogether());
-        */
-        strength = Math.max(strength, getParentKeepTogetherStrength());
-        return strength;
-    }
-
-    /** {@inheritDoc} */
-    public int getKeepWithNextStrength() {
-        return KEEP_AUTO;
+    public Keep getKeepWithNext() {
+        return Keep.KEEP_AUTO;
         /* TODO Complete me!
         return KeepUtil.getCombinedBlockLevelKeepStrength(
                 getTableAndCaptionFO().getKeepWithNext());
@@ -221,8 +211,8 @@ public class TableAndCaptionLayoutManager extends BlockStackingLayoutManager {
     }
 
     /** {@inheritDoc} */
-    public int getKeepWithPreviousStrength() {
-        return KEEP_AUTO;
+    public Keep getKeepWithPrevious() {
+        return Keep.KEEP_AUTO;
         /* TODO Complete me!
         return KeepUtil.getCombinedBlockLevelKeepStrength(
                 getTableAndCaptionFO().getKeepWithPrevious());

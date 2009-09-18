@@ -55,6 +55,22 @@ public class PDFDocumentGraphics2DConfigurator {
 
         //Fonts
         try {
+            FontInfo fontInfo = createFontInfo(cfg);
+            graphics.setFontInfo(fontInfo);
+        } catch (FOPException e) {
+            throw new ConfigurationException("Error while setting up fonts", e);
+        }
+    }
+
+    /**
+     * Creates the {@link FontInfo} instance for the given configuration.
+     * @param cfg the configuration
+     * @return the font collection
+     * @throws FOPException if an error occurs while setting up the fonts
+     */
+    public static FontInfo createFontInfo(Configuration cfg) throws FOPException {
+        FontInfo fontInfo = new FontInfo();
+        if (cfg != null) {
             FontResolver fontResolver = FontManager.createMinimalFontResolver();
             //TODO The following could be optimized by retaining the FontManager somewhere
             FontManager fontManager = new FontManager();
@@ -73,12 +89,11 @@ public class PDFDocumentGraphics2DConfigurator {
             if (fontManager.useCache()) {
                 fontManager.getFontCache().save();
             }
-            FontInfo fontInfo = new FontInfo();
             FontSetup.setup(fontInfo, fontInfoList, fontResolver);
-            graphics.setFontInfo(fontInfo);
-        } catch (FOPException e) {
-            throw new ConfigurationException("Error while setting up fonts", e);
+        } else {
+            FontSetup.setup(fontInfo);
         }
+        return fontInfo;
     }
 
 }

@@ -61,9 +61,102 @@
       <action context="Renderers" dev="JM" type="add" fixes-bug="46705" due-to="Jost Klopfstein">
         Added basic accessibility and Tagged PDF support. 
       </action>
+      <action context="Extensions" dev="JM" type="add">
+        Added support for the #CMYK pseudo-profile supported by some commercial XSL implementations
+        on the rgb-icc() function.
+      </action>
+      <action context="Layout" dev="VH" type="add" importance="high">
+        Added limited support for pages of different inline-progression-dimensions within a 
+        page-sequence.
+      </action>
+      <action context="Renderers" dev="AD" type="add" fixes-bug="46905">
+        Added basic implementation for column-keeps.
+      </action>
+      <action context="Renderers" dev="AD" type="fix" fixes-bug="46883">
+        Hotspot in AbstractGraphicsDrawingOrderContainer. Reduced time spent in the method
+        by introducing a member variable to hold the data-length.
+      </action>
+      <action context="Code" dev="AD" type="fix" fixes-bug="47710">
+        White-space handling in markers with inline-content throws a NullPointerException
+        in some cases.
+      </action>
+      <action context="Renderers" dev="CB" type="fix" fixes-bug="47694">
+        Dithered Background Shading can produce illegal AFP if objects are very small
+      </action>
+      <action context="Renderers" dev="CB" type="add">
+        AFP Output: Added support for IMM Extension on fo:simple-page-master.
+      </action>
+      <action context="Renderers" dev="JM" type="add" fixes-bug="47311" due-to="Peter Coppens">
+        Added an initial set of extensions for prepress support (fox:bleed, fox:crop-offset,
+        fox:crop-box and fox:scale). This is currently supported only by PDF and Java2D renderers.
+      </action>
+      <action context="Renderers" dev="JM" type="add">
+        PCL Output: Added support for specifying the output bin.
+      </action>
+      <action context="Renderers" dev="JM" type="add">
+        AFP Output: Added support for embedding external AFP form maps (form defs) using the
+        afp:include-form-map extension.
+      </action>
+      <action context="Renderers" dev="JM" type="add">
+        AFP Output: Added support for AFP font embedding. Note: this changes the default behaviour.
+        Like with PDF and PS, all fonts are embedded by default unless matched in the
+        "referenced-fonts" section in the configuration.
+      </action>
+      <action context="Renderers" dev="AD" type="fix" fixes-bug="47508" due-to="Bharat Attaluri">
+        Bugfix: Error while writing TLE's attribute qualifier in the output.
+      </action>
+      <action context="Renderers" dev="CB" type="fix">
+        Bugfix: support justified text in AFP Renderer (already working in AFP Painter)
+      </action>
+      <action context="Renderers" dev="AD" type="add">
+        AFP Renderer Raster Fonts:
+        <ul>
+          <li>added support for fractional font-sizes in the configuration.</li>
+          <li>selection of the smaller font-size, in case two possible fallbacks have the
+              same difference to a requested size.</li>
+        </ul>
+      </action>
+      <action context="Fonts" dev="CB" type="fix">
+        Bugfix: support PFM Files with no extent table.
+      </action>
+      <action context="Code" dev="AD" type="fix" fixes-bug="46960">
+        Bugfix: previously retrieved markers were not cleared if the new marker was empty.
+      </action>
+      <action context="Fonts" dev="VH" type="fix" fixes-bug="47232" due-to="Maxim Wirt">
+        Bugfix: for the last character of a Type1 font, always a width of 0 was returned.
+      </action>
+      <action context="Code" dev="VH" type="fix">
+        Changed meaning of ‘-v’ option to ‘verbose’, which will print FOP’s version and proceed.
+        Added a ‘-version’ option to simply print the version then exit, following Java practices.
+      </action>
+      <action context="Layout" dev="VH" type="fix" fixes-bug="47101">
+        Bugfix: The cells of a table inside a marker were duplicated at every marker retrieval.
+      </action>
+      <action context="Images" dev="JM" type="fix">
+        Bugfix: use the effective color profile supplied by the ImageEncodingHelper, instead of the
+        original one.
+      </action>
+      <action context="Renderers" dev="JM" type="fix">
+        Bugfix: reset graphic state when a page is finished in PostScript.
+      </action>
+      <action context="Renderers" dev="JM" type="add">
+        Added setting to enable dithered painting of filled rectangles in AFP and PCL.
+      </action>
+      <action context="Layout" dev="VH" type="fix">
+        Bugfix: footnotes occurring within the forced height of a table row did not appear on the
+        output
+      </action>
+      <action context="Renderers" dev="JM" type="update" fixes-bug="47031" due-to="Francois Fernandes">
+        PDFGraphics2D.writeClip doesn't generate a clip command anymore when the clip path
+        is empty.
+      </action>
+      <action context="Renderers" dev="JM" type="add" fixes-bug="47000">
+        Added a custom text painter for rendering SVG text using text operators when rendering
+        to PostScript or EPS. Text is no longer painted as shapes, thus creating much smaller files.
+      </action>
       <action context="Renderers" dev="JM" type="fix">
         Fixed a bug that left the PrintRenderer unconfigured even if a configuration was
-        specified for "application/X-fop-print". 
+        specified for "application/X-fop-print".
       </action>
       <action context="Renderers" dev="JM" type="fix" fixes-bug="46882" due-to="Yegor Kozlov">
         Fixed the handling of CMYK colors in PDFGraphics2D.
@@ -360,7 +453,7 @@
           <p>
             Besides the important changes listed below, the most important areas with
             improvements in this release are:
-          </p>
+         </p>
           <ul>
             <li>
               Many bugfixes in tables, plus some new features (full support for keeps and

@@ -28,8 +28,9 @@ import org.apache.fop.area.Block;
 import org.apache.fop.fo.flow.AbstractListItemPart;
 import org.apache.fop.fo.flow.ListItemBody;
 import org.apache.fop.fo.flow.ListItemLabel;
+import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
-import org.apache.fop.layoutmgr.KeepUtil;
+import org.apache.fop.layoutmgr.Keep;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.NonLeafPosition;
@@ -221,20 +222,18 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager {
     }
 
     /** {@inheritDoc} */
-    public int getKeepTogetherStrength() {
-        int strength = KeepUtil.getCombinedBlockLevelKeepStrength(getPartFO().getKeepTogether());
-        strength = Math.max(strength, getParentKeepTogetherStrength());
-        return strength;
+    public KeepProperty getKeepTogetherProperty() {
+        return getPartFO().getKeepTogether();
     }
 
     /** {@inheritDoc} */
-    public int getKeepWithNextStrength() {
-        return KEEP_AUTO;
+    public Keep getKeepWithNext() {
+        return Keep.KEEP_AUTO;
     }
 
     /** {@inheritDoc} */
-    public int getKeepWithPreviousStrength() {
-        return KEEP_AUTO;
+    public Keep getKeepWithPrevious() {
+        return Keep.KEEP_AUTO;
     }
 
 }

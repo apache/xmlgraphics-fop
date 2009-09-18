@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><!--
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
     Licensed to the Apache Software Foundation (ASF) under one or more
     contributor license agreements.  See the NOTICE file distributed with
     this work for additional information regarding copyright ownership.
@@ -13,7 +14,9 @@
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
---><!-- $Id$ --><catalogue xml:lang="en">
+-->
+<!-- $Id$ -->
+<catalogue xml:lang="en">
   <message key="locator">[ (See position {loc})| (See {#gatherContextInfo})| (No context info available)]</message>
   <message key="rule.markerDescendantOfFlow">An fo:marker is permitted only as the descendant of an fo:flow.</message>
   <message key="rule.retrieveMarkerDescendantOfStaticContent">An fo:retrieve-marker is permitted only as the descendant of an fo:static-content.</message>
@@ -102,7 +105,4 @@ Any reference to it will be considered a reference to the first occurrence in th
   <message key="org.apache.fop.fonts.FontEventAdapter.fontSubstituted">Font "{requested}" not found. Substituting with "{effective}".</message>
   <message key="org.apache.fop.fonts.FontEventAdapter.fontLoadingErrorAtAutoDetection">Unable to load font file: {fontURL}.[ Reason: {e}]</message>
   <message key="org.apache.fop.fonts.FontEventAdapter.glyphNotAvailable">Glyph "{ch}" (0x{ch,hex}[, {ch,glyph-name}]) not available in font "{fontName}".</message>
-<message key="org.apache.fop.afp.AFPEventProducer.warnDefaultFontSetup"/>
-<message key="org.apache.fop.afp.AFPEventProducer.warnMissingDefaultFont"/>
-<message key="org.apache.fop.afp.AFPEventProducer.characterSetEncodingError"/>
 </catalogue>

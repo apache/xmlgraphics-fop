@@ -23,34 +23,19 @@ import java.awt.Color;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.InputStream;
-
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.svg.SVGLength;
 
 import org.apache.avalon.framework.configuration.Configurable;
 import org.apache.avalon.framework.configuration.Configuration;
-import org.apache.avalon.framework.configuration.ConfigurationException;
-import org.apache.avalon.framework.configuration.DefaultConfiguration;
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.UnitProcessor;
 import org.apache.batik.bridge.UserAgent;
 import org.apache.batik.ext.awt.RenderingHintsKeyExt;
 import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderOutput;
-import org.apache.batik.transcoder.TranscodingHints;
 import org.apache.batik.transcoder.image.ImageTranscoder;
-import org.apache.batik.transcoder.keys.BooleanKey;
-import org.apache.batik.transcoder.keys.FloatKey;
-import org.apache.batik.util.ParsedURL;
-
-import org.apache.xmlgraphics.image.loader.ImageContext;
-import org.apache.xmlgraphics.image.loader.ImageManager;
-import org.apache.xmlgraphics.image.loader.ImageSessionContext;
-import org.apache.xmlgraphics.image.loader.impl.AbstractImageSessionContext;
 
 import org.apache.fop.Version;
 import org.apache.fop.fonts.FontInfo;
@@ -91,26 +76,8 @@ import org.apache.fop.fonts.FontInfo;
 public class PDFTranscoder extends AbstractFOPTranscoder
         implements Configurable {
 
-    /**
-     * The key is used to specify the resolution for on-the-fly images generated
-     * due to complex effects like gradients and filters.
-     */
-    public static final TranscodingHints.Key KEY_DEVICE_RESOLUTION = new FloatKey();
-
-    /**
-     * The key is used to specify whether the available fonts should be automatically
-     * detected. The alternative is to configure the transcoder manually using a configuration
-     * file.
-     */
-    public static final TranscodingHints.Key KEY_AUTO_FONTS = new BooleanKey();
-
-    private Configuration cfg = null;
-
     /** Graphics2D instance that is used to paint to */
     protected PDFDocumentGraphics2D graphics = null;
-
-    private ImageManager imageManager;
-    private ImageSessionContext imageSessionContext;
 
     /**
      * Constructs a new <tt>PDFTranscoder</tt>.
@@ -133,11 +100,6 @@ public class PDFTranscoder extends AbstractFOPTranscoder
         };
     }
 
-    /** {@inheritDoc} */
-    public void configure(Configuration cfg) throws ConfigurationException {
-        this.cfg = cfg;
-    }
-
     /**
      * Transcodes the specified Document as an image in the specified output.
      *
@@ -155,28 +117,13 @@ public class PDFTranscoder extends AbstractFOPTranscoder
                 + Version.getVersion()
                 + ": PDF Transcoder for Batik");
         if (hints.containsKey(KEY_DEVICE_RESOLUTION)) {
-            graphics.setDeviceDPI(((Float)hints.get(KEY_DEVICE_RESOLUTION)).floatValue());
+            graphics.setDeviceDPI(getDeviceResolution());
         }
 
         setupImageInfrastructure(uri);
 
         try {
-            Configuration effCfg = this.cfg;
-            if (effCfg == null) {
-                //By default, enable font auto-detection if no cfg is given
-                boolean autoFonts = true;
-                if (hints.containsKey(KEY_AUTO_FONTS)) {
-                    autoFonts = ((Boolean)hints.get(KEY_AUTO_FONTS)).booleanValue();
-                }
-                if (autoFonts) {
-                    DefaultConfiguration c = new DefaultConfiguration("pdf-transcoder");
-                    DefaultConfiguration fonts = new DefaultConfiguration("fonts");
-                    c.addChild(fonts);
-                    DefaultConfiguration autodetect = new DefaultConfiguration("auto-detect");
-                    fonts.addChild(autodetect);
-                    effCfg = c;
-                }
-            }
+            Configuration effCfg = getEffectiveConfiguration();
 
             if (effCfg != null) {
                 PDFDocumentGraphics2DConfigurator configurator
@@ -242,39 +189,6 @@ public class PDFTranscoder extends AbstractFOPTranscoder
         }
     }
 
-    private void setupImageInfrastructure(final String baseURI) {
-        final ImageContext imageContext = new ImageContext() {
-            public float getSourceResolution() {
-                return 25.4f / userAgent.getPixelUnitToMillimeter();
-            }
-        };
-        this.imageManager = new ImageManager(imageContext);
-        this.imageSessionContext = new AbstractImageSessionContext() {
-
-            public ImageContext getParentContext() {
-                return imageContext;
-            }
-
-            public float getTargetResolution() {
-                return graphics.getDeviceDPI();
-            }
-
-            public Source resolveURI(String uri) {
-                System.out.println("resolve " + uri);
-                try {
-                    ParsedURL url = new ParsedURL(baseURI, uri);
-                    InputStream in = url.openStream();
-                    StreamSource source = new StreamSource(in, url.toString());
-                    return source;
-                } catch (IOException ioe) {
-                    userAgent.displayError(ioe);
-                    return null;
-                }
-            }
-
-        };
-    }
-
     /** {@inheritDoc} */
     protected BridgeContext createBridgeContext() {
         //For compatibility with Batik 1.6
@@ -288,7 +202,7 @@ public class PDFTranscoder extends AbstractFOPTranscoder
             fontInfo = null;
         }
         BridgeContext ctx = new PDFBridgeContext(userAgent, fontInfo,
-                this.imageManager, this.imageSessionContext);
+                getImageManager(), getImageSessionContext());
         return ctx;
     }
 

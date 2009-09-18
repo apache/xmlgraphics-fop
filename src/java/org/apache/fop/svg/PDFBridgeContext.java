@@ -26,9 +26,11 @@ import org.apache.batik.bridge.DocumentLoader;
 import org.apache.batik.bridge.SVGTextElementBridge;
 import org.apache.batik.bridge.UserAgent;
 import org.apache.batik.gvt.TextPainter;
-import org.apache.fop.fonts.FontInfo;
+
 import org.apache.xmlgraphics.image.loader.ImageManager;
 import org.apache.xmlgraphics.image.loader.ImageSessionContext;
+
+import org.apache.fop.fonts.FontInfo;
 
 /**
  * BridgeContext which registers the custom bridges for PDF output.
@@ -38,11 +40,9 @@ public class PDFBridgeContext extends AbstractFOPBridgeContext {
     /**
      * Constructs a new bridge context.
      * @param userAgent the user agent
-     * @param loader the Document Loader to use for referenced documents.
+     * @param documentLoader the Document Loader to use for referenced documents.
      * @param fontInfo the font list for the text painter, may be null
      *                 in which case text is painted as shapes
-     * @param linkTransform AffineTransform to properly place links,
-     *                      may be null
      * @param imageManager an image manager
      * @param imageSessionContext an image session context
      * @param linkTransform AffineTransform to properly place links,
@@ -52,7 +52,8 @@ public class PDFBridgeContext extends AbstractFOPBridgeContext {
             FontInfo fontInfo, ImageManager imageManager,
             ImageSessionContext imageSessionContext,
             AffineTransform linkTransform) {
-        super(userAgent, documentLoader, fontInfo, imageManager, imageSessionContext, linkTransform);
+        super(userAgent, documentLoader, fontInfo,
+                imageManager, imageSessionContext, linkTransform);
     }
 
     /**

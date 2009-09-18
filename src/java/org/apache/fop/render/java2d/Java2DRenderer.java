@@ -24,6 +24,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
@@ -75,6 +76,8 @@ import org.apache.fop.fonts.Typeface;
 import org.apache.fop.render.AbstractPathOrientedRenderer;
 import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.RendererContext;
+import org.apache.fop.render.extensions.prepress.PageBoundaries;
+import org.apache.fop.render.extensions.prepress.PageScale;
 import org.apache.fop.render.pdf.CTMHelper;
 import org.apache.fop.util.CharUtilities;
 import org.apache.fop.util.ColorUtil;
@@ -290,7 +293,10 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
 
         this.currentPageViewport = pageViewport;
         try {
-            Rectangle2D bounds = pageViewport.getViewArea();
+            PageBoundaries boundaries = new PageBoundaries(
+                    pageViewport.getViewArea().getSize(), pageViewport.getForeignAttributes());
+            Rectangle bounds = boundaries.getCropBox();
+            Rectangle bleedBox = boundaries.getBleedBox();
             this.pageWidth = (int) Math.round(bounds.getWidth() / 1000f);
             this.pageHeight = (int) Math.round(bounds.getHeight() / 1000f);
 
@@ -299,11 +305,25 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
                             + " (pageWidth " + pageWidth + ", pageHeight "
                             + pageHeight + ")");
 
-            double scale = scaleFactor
+            // set scale factor
+            double scaleX = scaleFactor;
+            double scaleY = scaleFactor;
+            String scale = (String) currentPageViewport.getForeignAttributes().get(
+                    PageScale.EXT_PAGE_SCALE);
+            Point2D scales = PageScale.getScale(scale);
+            if (scales != null) {
+                scaleX *= scales.getX();
+                scaleY *= scales.getY();
+            }
+
+            scaleX = scaleX
                 * (25.4f / FopFactoryConfigurator.DEFAULT_TARGET_RESOLUTION)
                 / userAgent.getTargetPixelUnitToMillimeter();
-            int bitmapWidth = (int) ((pageWidth * scale) + 0.5);
-            int bitmapHeight = (int) ((pageHeight * scale) + 0.5);
+            scaleY = scaleY
+                * (25.4f / FopFactoryConfigurator.DEFAULT_TARGET_RESOLUTION)
+                / userAgent.getTargetPixelUnitToMillimeter();
+            int bitmapWidth = (int) ((pageWidth * scaleX) + 0.5);
+            int bitmapHeight = (int) ((pageHeight * scaleY) + 0.5);
 
 
             BufferedImage currentPageImage = getBufferedImage(bitmapWidth, bitmapHeight);
@@ -326,20 +346,27 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
 
             // transform page based on scale factor supplied
             AffineTransform at = graphics.getTransform();
-            at.scale(scale, scale);
+            at.scale(scaleX, scaleY);
+            at.translate(bounds.getMinX() / -1000f, bounds.getMinY() / -1000f);
             graphics.setTransform(at);
 
             // draw page frame
             if (!transparentPageBackground) {
                 graphics.setColor(Color.white);
-                graphics.fillRect(0, 0, pageWidth, pageHeight);
+                graphics.fillRect(
+                        (int)Math.round(bleedBox.getMinX() / 1000f),
+                        (int)Math.round(bleedBox.getMinY() / 1000f),
+                        (int)Math.round(bleedBox.getWidth() / 1000f),
+                        (int)Math.round(bleedBox.getHeight() / 1000f));
             }
+            /* why did we have this???
             graphics.setColor(Color.black);
             graphics.drawRect(-1, -1, pageWidth + 2, pageHeight + 2);
             graphics.drawLine(pageWidth + 2, 0, pageWidth + 2, pageHeight + 2);
             graphics.drawLine(pageWidth + 3, 1, pageWidth + 3, pageHeight + 3);
             graphics.drawLine(0, pageHeight + 2, pageWidth + 2, pageHeight + 2);
             graphics.drawLine(1, pageHeight + 3, pageWidth + 3, pageHeight + 3);
+            */
 
             state = new Java2DGraphicsState(graphics, this.fontInfo, at);
             try {

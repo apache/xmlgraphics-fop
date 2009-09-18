@@ -25,19 +25,26 @@ import java.awt.geom.AffineTransform;
 import java.io.IOException;
 import java.util.Map;
 
+import org.apache.fop.afp.AFPDitheredRectanglePainter;
 import org.apache.fop.afp.AFPPaintingState;
+import org.apache.fop.afp.AFPRectanglePainter;
 import org.apache.fop.afp.AFPResourceLevelDefaults;
 import org.apache.fop.afp.AFPResourceManager;
 import org.apache.fop.afp.AFPUnitConverter;
+import org.apache.fop.afp.AbstractAFPPainter;
 import org.apache.fop.afp.DataStream;
 import org.apache.fop.afp.fonts.AFPFontCollection;
 import org.apache.fop.afp.fonts.AFPPageFonts;
+import org.apache.fop.afp.modca.ResourceObject;
+import org.apache.fop.afp.util.DefaultFOPResourceAccessor;
+import org.apache.fop.afp.util.ResourceAccessor;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.fonts.FontCollection;
 import org.apache.fop.fonts.FontEventAdapter;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontManager;
 import org.apache.fop.render.afp.extensions.AFPElementMapping;
+import org.apache.fop.render.afp.extensions.AFPIncludeFormMap;
 import org.apache.fop.render.afp.extensions.AFPInvokeMediumMap;
 import org.apache.fop.render.afp.extensions.AFPPageSetup;
 import org.apache.fop.render.intermediate.AbstractBinaryWritingIFDocumentHandler;
@@ -70,11 +77,17 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     private Map/*<String,String>*/pageSegmentMap
         = new java.util.HashMap/*<String,String>*/();
 
+    /** Medium Map referenced on previous page **/
+    private String lastMediumMap;
+
     private static final int LOC_ELSEWHERE = 0;
     private static final int LOC_FOLLOWING_PAGE_SEQUENCE = 1;
     private static final int LOC_IN_PAGE_HEADER = 2;
 
     private int location = LOC_ELSEWHERE;
+
+    /** the shading mode for filled rectangles */
+    private AFPShadingMode shadingMode = AFPShadingMode.COLOR;
 
     /**
      * Default constructor.
@@ -123,6 +136,16 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
 
     AFPResourceManager getResourceManager() {
         return this.resourceManager;
+    }
+
+    AbstractAFPPainter createRectanglePainter() {
+        if (AFPShadingMode.DITHERED.equals(this.shadingMode)) {
+            return new AFPDitheredRectanglePainter(
+                    getPaintingState(), getDataStream(), getResourceManager());
+        } else {
+            return new AFPRectanglePainter(
+                    getPaintingState(), getDataStream());
+        }
     }
 
     /** {@inheritDoc} */
@@ -259,7 +282,8 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
             } else {
                 if (this.location != LOC_IN_PAGE_HEADER) {
                     throw new IFException(
-                        "AFP page setup extension encountered outside the page header: " + aps, null);
+                        "AFP page setup extension encountered outside the page header: " + aps,
+                        null);
                 }
                 if (AFPElementMapping.INCLUDE_PAGE_OVERLAY.equals(element)) {
                     String overlay = aps.getName();
@@ -278,15 +302,31 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
                 }
             }
         } else if (extension instanceof AFPInvokeMediumMap) {
-            if (this.location != LOC_FOLLOWING_PAGE_SEQUENCE) {
+            if (this.location != LOC_FOLLOWING_PAGE_SEQUENCE
+                    && this.location != LOC_IN_PAGE_HEADER) {
+
                 throw new IFException(
-                    "AFP IMM extension must be between page-sequence and the first page: "
-                        + extension, null);
+                    "AFP IMM extension must be between page-sequence"
+                    + " and the first page or child of page-header: "
+                    + extension, null);
             }
             AFPInvokeMediumMap imm = (AFPInvokeMediumMap)extension;
             String mediumMap = imm.getName();
-            if (mediumMap != null) {
+            if (mediumMap != null && !mediumMap.equals(lastMediumMap)) {
                 dataStream.createInvokeMediumMap(mediumMap);
+                lastMediumMap = mediumMap;
+            }
+        } else if (extension instanceof AFPIncludeFormMap) {
+            AFPIncludeFormMap formMap = (AFPIncludeFormMap)extension;
+            ResourceAccessor accessor = new DefaultFOPResourceAccessor(
+                    getUserAgent(), null, null);
+            try {
+                getResourceManager().createIncludedResource(formMap.getName(),
+                        formMap.getSrc(), accessor,
+                        ResourceObject.TYPE_FORMDEF);
+            } catch (IOException ioe) {
+                throw new IFException(
+                        "I/O error while embedding form map resource: " + formMap.getName(), ioe);
             }
         }
     }
@@ -306,6 +346,11 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     /** {@inheritDoc} */
     public void setNativeImagesSupported(boolean nativeImages) {
         paintingState.setNativeImagesSupported(nativeImages);
+    }
+
+    /** {@inheritDoc} */
+    public void setShadingMode(AFPShadingMode shadingMode) {
+        this.shadingMode = shadingMode;
     }
 
     /** {@inheritDoc} */

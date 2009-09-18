@@ -28,7 +28,6 @@ import org.apache.fop.area.Footnote;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FObj;
-import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.Region;
 import org.apache.fop.fo.pagination.RegionBody;
 import org.apache.fop.fo.pagination.StaticContent;
@@ -78,6 +77,14 @@ public class PageBreaker extends AbstractBreaker {
         return pslm.getPageProvider();
     }
 
+    /**
+     * Starts the page breaking process.
+     * @param flowBPD the constant available block-progression-dimension (used for every part)
+     */
+    void doLayout(int flowBPD) {
+        doLayout(flowBPD, false);
+    }
+
     /** {@inheritDoc} */
     protected PageBreakingLayoutListener createLayoutListener() {
         return new PageBreakingLayoutListener() {
@@ -122,6 +129,12 @@ public class PageBreaker extends AbstractBreaker {
     /** {@inheritDoc} */
     protected int getNextBlockList(LayoutContext childLC,
             int nextSequenceStartsOn) {
+        return getNextBlockList(childLC, nextSequenceStartsOn, null, null, null);
+    }
+
+    /** {@inheritDoc} */
+    protected int getNextBlockList(LayoutContext childLC, int nextSequenceStartsOn,
+            Position positionAtIPDChange, LayoutManager restartLM, List firstElements) {
         if (!firstPart) {
             // if this is the first page that will be created by
             // the current BlockSequence, it could have a break
@@ -133,19 +146,13 @@ public class PageBreaker extends AbstractBreaker {
         pageBreakHandled = true;
         pageProvider.setStartOfNextElementList(pslm.getCurrentPageNum(),
                 pslm.getCurrentPV().getCurrentSpan().getCurrentFlowIndex());
-        return super.getNextBlockList(childLC, nextSequenceStartsOn);
+        return super.getNextBlockList(childLC, nextSequenceStartsOn, positionAtIPDChange,
+                restartLM, firstElements);
     }
 
-    /** {@inheritDoc} */
-    protected List getNextKnuthElements(LayoutContext context, int alignment) {
-        List contentList = null;
+    private boolean containsFootnotes(List contentList, LayoutContext context) {
 
-        while (!childFLM.isFinished() && contentList == null) {
-            contentList = childFLM.getNextKnuthElements(context, alignment);
-        }
-
-        // scan contentList, searching for footnotes
-        boolean bFootnotesPresent = false;
+        boolean containsFootnotes = false;
         if (contentList != null) {
             ListIterator contentListIterator = contentList.listIterator();
             while (contentListIterator.hasNext()) {
@@ -153,7 +160,7 @@ public class PageBreaker extends AbstractBreaker {
                 if (element instanceof KnuthBlockBox
                     && ((KnuthBlockBox) element).hasAnchors()) {
                     // element represents a line with footnote citations
-                    bFootnotesPresent = true;
+                    containsFootnotes = true;
                     LayoutContext footnoteContext = new LayoutContext(context);
                     footnoteContext.setStackLimitBP(context.getStackLimitBP());
                     footnoteContext.setRefIPD(pslm.getCurrentPV()
@@ -173,31 +180,64 @@ public class PageBreaker extends AbstractBreaker {
                 }
             }
         }
+        return containsFootnotes;
+    }
 
-        if (bFootnotesPresent) {
+    private void handleFootnoteSeparator() {
+        StaticContent footnoteSeparator;
+        footnoteSeparator = pslm.getPageSequence().getStaticContent("xsl-footnote-separator");
+        if (footnoteSeparator != null) {
+            // the footnote separator can contain page-dependent content such as
+            // page numbers or retrieve markers, so its areas cannot simply be
+            // obtained now and repeated in each page;
+            // we need to know in advance the separator bpd: the actual separator
+            // could be different from page to page, but its bpd would likely be
+            // always the same
+
+            // create a Block area that will contain the separator areas
+            separatorArea = new Block();
+            separatorArea.setIPD(pslm.getCurrentPV()
+                        .getRegionReference(Constants.FO_REGION_BODY).getIPD());
+            // create a StaticContentLM for the footnote separator
+            footnoteSeparatorLM
+                    = pslm.getLayoutManagerMaker().makeStaticContentLayoutManager(
+                        pslm, footnoteSeparator, separatorArea);
+            footnoteSeparatorLM.doLayout();
+
+            footnoteSeparatorLength = new MinOptMax(separatorArea.getBPD());
+        }
+    }
+
+    /** {@inheritDoc} */
+    protected List getNextKnuthElements(LayoutContext context, int alignment) {
+        List contentList = null;
+
+        while (!childFLM.isFinished() && contentList == null) {
+            contentList = childFLM.getNextKnuthElements(context, alignment);
+        }
+
+        // scan contentList, searching for footnotes
+        if (containsFootnotes(contentList, context)) {
             // handle the footnote separator
-            StaticContent footnoteSeparator;
-            footnoteSeparator = pslm.getPageSequence().getStaticContent("xsl-footnote-separator");
-            if (footnoteSeparator != null) {
-                // the footnote separator can contain page-dependent content such as
-                // page numbers or retrieve markers, so its areas cannot simply be
-                // obtained now and repeated in each page;
-                // we need to know in advance the separator bpd: the actual separator
-                // could be different from page to page, but its bpd would likely be
-                // always the same
+            handleFootnoteSeparator();
+        }
+        return contentList;
+    }
 
-                // create a Block area that will contain the separator areas
-                separatorArea = new Block();
-                separatorArea.setIPD(pslm.getCurrentPV()
-                            .getRegionReference(Constants.FO_REGION_BODY).getIPD());
-                // create a StaticContentLM for the footnote separator
-                footnoteSeparatorLM = (StaticContentLayoutManager)
-                    pslm.getLayoutManagerMaker().makeStaticContentLayoutManager(
-                    pslm, footnoteSeparator, separatorArea);
-                footnoteSeparatorLM.doLayout();
+    /** {@inheritDoc} */
+    protected List getNextKnuthElements(LayoutContext context, int alignment,
+            Position positionAtIPDChange, LayoutManager restartAtLM) {
+        List contentList = null;
 
-                footnoteSeparatorLength = new MinOptMax(separatorArea.getBPD());
-            }
+        do {
+            contentList = childFLM.getNextKnuthElements(context, alignment, positionAtIPDChange,
+                    restartAtLM);
+        } while (!childFLM.isFinished() && contentList == null);
+
+        // scan contentList, searching for footnotes
+        if (containsFootnotes(contentList, context)) {
+            // handle the footnote separator
+            handleFootnoteSeparator();
         }
         return contentList;
     }
@@ -241,49 +281,61 @@ public class PageBreaker extends AbstractBreaker {
     }
 
     /**
-     * Performs phase 3 operation
-     *
-     * @param alg page breaking algorithm
-     * @param partCount part count
-     * @param originalList the block sequence original list
-     * @param effectiveList the block sequence effective list
+     * {@inheritDoc}
+     * This implementation checks whether to trigger column-balancing,
+     * or whether to take into account a 'last-page' condition.
      */
     protected void doPhase3(PageBreakingAlgorithm alg, int partCount,
             BlockSequence originalList, BlockSequence effectiveList) {
+
         if (needColumnBalancing) {
-            doPhase3WithColumnBalancing(alg, partCount, originalList, effectiveList);
-        } else {
-            if (!hasMoreContent() && pslm.getPageSequence().hasPagePositionLast()) {
-                //last part is reached and we have a "last page" condition
-                doPhase3WithLastPage(alg, partCount, originalList, effectiveList);
-            } else {
-                //Directly add areas after finding the breaks
-                addAreas(alg, partCount, originalList, effectiveList);
+            //column balancing for the last part
+            doPhase3(alg, partCount, originalList, effectiveList, false);
+            return;
+        }
+
+        boolean lastPageMasterDefined = pslm.getPageSequence().hasPagePositionLast();
+        if (!hasMoreContent()) {
+            //last part is reached
+            if (lastPageMasterDefined) {
+                //last-page condition
+                doPhase3(alg, partCount, originalList, effectiveList, true);
+                return;
             }
         }
+
+        //nothing special: just add the areas now
+        addAreas(alg, partCount, originalList, effectiveList);
     }
 
-    private void doPhase3WithLastPage(PageBreakingAlgorithm alg, int partCount,
-            BlockSequence originalList, BlockSequence effectiveList) {
-        int newStartPos;
+    /**
+     * Restart the algorithm at the break corresponding
+     * to the given partCount
+     * (currently only used to redo the part after the
+     *  last break in case of column-balancing
+     *  and/or a last page-master)
+     */
+    private void doPhase3(PageBreakingAlgorithm alg, int partCount,
+            BlockSequence originalList, BlockSequence effectiveList,
+            boolean isLastPart) {
+
+
+        int newStartPos = 0;
         int restartPoint = pageProvider.getStartingPartIndexForLastPage(partCount);
         if (restartPoint > 0) {
-            //Add definitive areas before last page
+            //Add definitive areas for the parts before the
+            //restarting point
             addAreas(alg, restartPoint, originalList, effectiveList);
             //Get page break from which we restart
             PageBreakPosition pbp = (PageBreakPosition)
                     alg.getPageBreaks().get(restartPoint - 1);
-            //Set starting position to the first element *after* the page-break
             newStartPos = pbp.getLeafPos() + 1;
             //Handle page break right here to avoid any side-effects
             if (newStartPos > 0) {
                 handleBreakTrait(Constants.EN_PAGE);
             }
-        } else {
-            newStartPos = 0;
         }
-        AbstractBreaker.log.debug("Last page handling now!!!");
-        AbstractBreaker.log.debug("===================================================");
+
         AbstractBreaker.log.debug("Restarting at " + restartPoint
                 + ", new start position: " + newStartPos);
 
@@ -292,95 +344,78 @@ public class PageBreaker extends AbstractBreaker {
         int currentPageNum = pslm.getCurrentPageNum();
         pageProvider.setStartOfNextElementList(currentPageNum,
                 pslm.getCurrentPV().getCurrentSpan().getCurrentFlowIndex());
-        pageProvider.setLastPageIndex(currentPageNum);
 
-        //Restart last page
-        PageBreakingAlgorithm algRestart = new PageBreakingAlgorithm(
-                getTopLevelLM(),
-                getPageProvider(), createLayoutListener(),
-                alg.getAlignment(), alg.getAlignmentLast(),
-                footnoteSeparatorLength,
-                isPartOverflowRecoveryActivated(), false, false);
-        //alg.setConstantLineWidth(flowBPD);
-        int iOptPageCount = algRestart.findBreakingPoints(effectiveList,
-                    newStartPos,
-                    1, true, BreakingAlgorithm.ALL_BREAKS);
-        AbstractBreaker.log.debug("restart: iOptPageCount= " + iOptPageCount
-                + " pageBreaks.size()= " + algRestart.getPageBreaks().size());
+        PageBreakingAlgorithm algRestart = null;
+        int optimalPageCount;
         //Make sure we only add the areas we haven't added already
         effectiveList.ignoreAtStart = newStartPos;
-        boolean replaceLastPage
-                = iOptPageCount <= pslm.getCurrentPV().getBodyRegion().getColumnCount();
-        if (replaceLastPage) {
-            //Replace last page
-            pslm.setCurrentPage(pageProvider.getPage(false, currentPageNum));
-            addAreas(algRestart, iOptPageCount, originalList, effectiveList);
-        } else {
-            addAreas(alg, restartPoint, partCount - restartPoint, originalList, effectiveList);
-            //Add blank last page
-            pageProvider.setLastPageIndex(currentPageNum + 1);
-            pslm.setCurrentPage(pslm.makeNewPage(true, true));
-        }
-        AbstractBreaker.log.debug("===================================================");
-    }
 
-    private void doPhase3WithColumnBalancing(PageBreakingAlgorithm alg, int partCount,
-            BlockSequence originalList, BlockSequence effectiveList) {
-        AbstractBreaker.log.debug("Column balancing now!!!");
-        AbstractBreaker.log.debug("===================================================");
-        int newStartPos;
-        int restartPoint = pageProvider.getStartingPartIndexForLastPage(partCount);
-        if (restartPoint > 0) {
-            //Add definitive areas
-            addAreas(alg, restartPoint, originalList, effectiveList);
-            //Get page break from which we restart
-            PageBreakPosition pbp = (PageBreakPosition)
-                    alg.getPageBreaks().get(restartPoint - 1);
-            newStartPos = pbp.getLeafPos();
-            //Handle page break right here to avoid any side-effects
-            if (newStartPos > 0) {
-                handleBreakTrait(Constants.EN_PAGE);
+        if (isLastPart) {
+            pageProvider.setLastPageIndex(currentPageNum);
+        }
+
+        if (needColumnBalancing) {
+            AbstractBreaker.log.debug("Column balancing now!!!");
+            AbstractBreaker.log.debug("===================================================");
+
+            //Restart last page
+            algRestart = new BalancingColumnBreakingAlgorithm(
+                    getTopLevelLM(), getPageProvider(), createLayoutListener(),
+                    alignment, Constants.EN_START, footnoteSeparatorLength,
+                    isPartOverflowRecoveryActivated(),
+                    pslm.getCurrentPV().getBodyRegion().getColumnCount());
+            AbstractBreaker.log.debug("===================================================");
+        } else  {
+            //plain last page, no column balancing
+            AbstractBreaker.log.debug("Last page handling now!!!");
+            AbstractBreaker.log.debug("===================================================");
+            //Restart last page
+            algRestart = new PageBreakingAlgorithm(
+                    getTopLevelLM(), getPageProvider(), createLayoutListener(),
+                    alg.getAlignment(), alg.getAlignmentLast(),
+                    footnoteSeparatorLength,
+                    isPartOverflowRecoveryActivated(), false, false);
+            AbstractBreaker.log.debug("===================================================");
+        }
+
+        optimalPageCount = algRestart.findBreakingPoints(effectiveList,
+                    newStartPos,
+                    1, true, BreakingAlgorithm.ALL_BREAKS);
+        AbstractBreaker.log.debug("restart: optimalPageCount= " + optimalPageCount
+                + " pageBreaks.size()= " + algRestart.getPageBreaks().size());
+
+        boolean fitsOnePage
+                = optimalPageCount <= pslm.getCurrentPV().getBodyRegion().getColumnCount();
+
+        if (isLastPart) {
+            if (fitsOnePage) {
+                //Replace last page
+                pslm.setCurrentPage(pageProvider.getPage(false, currentPageNum));
+            } else {
+                //Last page-master cannot hold the content.
+                //Add areas now...
+                addAreas(alg, restartPoint, partCount - restartPoint, originalList, effectiveList);
+                //...and add a blank last page
+                pageProvider.setLastPageIndex(currentPageNum + 1);
+                pslm.setCurrentPage(pslm.makeNewPage(true, true));
+                return;
             }
         } else {
-            newStartPos = 0;
+            if (!fitsOnePage) {
+                AbstractBreaker.log.warn(
+                        "Breaking algorithm produced more columns than are available.");
+                /* reenable when everything works
+                throw new IllegalStateException(
+                        "Breaking algorithm must not produce more columns than available.");
+                */
+            }
         }
-        AbstractBreaker.log.debug("Restarting at " + restartPoint
-                + ", new start position: " + newStartPos);
 
-        pageBreakHandled = true;
-        //Update so the available BPD is reported correctly
-        pageProvider.setStartOfNextElementList(pslm.getCurrentPageNum(),
-                pslm.getCurrentPV().getCurrentSpan().getCurrentFlowIndex());
-
-        //Restart last page
-        PageBreakingAlgorithm algRestart = new BalancingColumnBreakingAlgorithm(
-                getTopLevelLM(),
-                getPageProvider(), createLayoutListener(),
-                alignment, Constants.EN_START, footnoteSeparatorLength,
-                isPartOverflowRecoveryActivated(),
-                pslm.getCurrentPV().getBodyRegion().getColumnCount());
-        //alg.setConstantLineWidth(flowBPD);
-        int iOptPageCount = algRestart.findBreakingPoints(effectiveList,
-                    newStartPos,
-                    1, true, BreakingAlgorithm.ALL_BREAKS);
-        AbstractBreaker.log.debug("restart: iOptPageCount= " + iOptPageCount
-                + " pageBreaks.size()= " + algRestart.getPageBreaks().size());
-        if (iOptPageCount > pslm.getCurrentPV().getBodyRegion().getColumnCount()) {
-            AbstractBreaker.log.warn(
-                    "Breaking algorithm produced more columns than are available.");
-            /* reenable when everything works
-            throw new IllegalStateException(
-                    "Breaking algorithm must not produce more columns than available.");
-            */
-        }
-        //Make sure we only add the areas we haven't added already
-        effectiveList.ignoreAtStart = newStartPos;
-        addAreas(algRestart, iOptPageCount, originalList, effectiveList);
-        AbstractBreaker.log.debug("===================================================");
+        addAreas(algRestart, optimalPageCount, originalList, effectiveList);
     }
 
     protected void startPart(BlockSequence list, int breakClass) {
-        AbstractBreaker.log.debug("startPart() breakClass=" + breakClass);
+        AbstractBreaker.log.debug("startPart() breakClass=" + getBreakClassName(breakClass));
         if (pslm.getCurrentPage() == null) {
             throw new IllegalStateException("curPage must not be null");
         }
@@ -416,7 +451,7 @@ public class PageBreaker extends AbstractBreaker {
             || pbp.footnoteFirstElementIndex <= pbp.footnoteLastElementIndex) {
             // call addAreas() for each FootnoteBodyLM
             for (int i = pbp.footnoteFirstListIndex; i <= pbp.footnoteLastListIndex; i++) {
-                LinkedList elementList = alg.getFootnoteList(i);
+                List elementList = alg.getFootnoteList(i);
                 int firstIndex = (i == pbp.footnoteFirstListIndex
                         ? pbp.footnoteFirstElementIndex : 0);
                 int lastIndex = (i == pbp.footnoteLastListIndex
@@ -441,9 +476,7 @@ public class PageBreaker extends AbstractBreaker {
         pslm.getCurrentPV().getCurrentSpan().notifyFlowsFinished();
     }
 
-    /**
-     * @return the current child flow layout manager
-     */
+    /** @return the current child flow layout manager */
     protected LayoutManager getCurrentChildLM() {
         return childFLM;
     }
@@ -462,45 +495,51 @@ public class PageBreaker extends AbstractBreaker {
      */
     private void handleBreakTrait(int breakVal) {
         Page curPage = pslm.getCurrentPage();
-        if (breakVal == Constants.EN_ALL) {
+        switch (breakVal) {
+        case Constants.EN_ALL:
             //break due to span change in multi-column layout
             curPage.getPageViewport().createSpan(true);
             return;
-        } else if (breakVal == Constants.EN_NONE) {
+        case Constants.EN_NONE:
             curPage.getPageViewport().createSpan(false);
             return;
-        } else if (breakVal == Constants.EN_COLUMN
-                || breakVal <= 0
-                || breakVal == Constants.EN_AUTO) {
+        case Constants.EN_COLUMN:
+        case Constants.EN_AUTO:
+        case Constants.EN_PAGE:
+        case -1:
             PageViewport pv = curPage.getPageViewport();
 
             //Check if previous page was spanned
             boolean forceNewPageWithSpan = false;
             RegionBody rb = (RegionBody)curPage.getSimplePageMaster().getRegion(
                     Constants.FO_REGION_BODY);
-            if (breakVal < 0
-                    && rb.getColumnCount() > 1
-                    && pv.getCurrentSpan().getColumnCount() == 1) {
-                forceNewPageWithSpan = true;
-            }
+            forceNewPageWithSpan
+                    = (rb.getColumnCount() > 1
+                        && pv.getCurrentSpan().getColumnCount() == 1);
 
             if (forceNewPageWithSpan) {
+                log.trace("Forcing new page with span");
                 curPage = pslm.makeNewPage(false, false);
                 curPage.getPageViewport().createSpan(true);
             } else if (pv.getCurrentSpan().hasMoreFlows()) {
+                log.trace("Moving to next flow");
                 pv.getCurrentSpan().moveToNextFlow();
             } else {
-                curPage = pslm.makeNewPage(false, false);
+                log.trace("Making new page");
+                /*curPage = */pslm.makeNewPage(false, false);
             }
             return;
-        }
-        log.debug("handling break-before after page " + pslm.getCurrentPageNum()
-            + " breakVal=" + breakVal);
-        if (needBlankPageBeforeNew(breakVal)) {
-            curPage = pslm.makeNewPage(true, false);
-        }
-        if (needNewPage(breakVal)) {
-            curPage = pslm.makeNewPage(false, false);
+        default:
+            log.debug("handling break-before after page " + pslm.getCurrentPageNum()
+                + " breakVal=" + getBreakClassName(breakVal));
+            if (needBlankPageBeforeNew(breakVal)) {
+                log.trace("Inserting blank page");
+                /*curPage = */pslm.makeNewPage(true, false);
+            }
+            if (needNewPage(breakVal)) {
+                log.trace("Making new page");
+                /*curPage = */pslm.makeNewPage(false, false);
+            }
         }
     }
 

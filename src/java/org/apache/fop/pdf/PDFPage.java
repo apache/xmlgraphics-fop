@@ -38,42 +38,42 @@ public class PDFPage extends PDFResourceContext {
      * Create a /Page object
      *
      * @param resources the /Resources object
-     * @param contents the content stream
-     * @param pageWidth the page's width in points
-     * @param pageHeight the page's height in points
      * @param pageIndex the page's zero-based index (or -1 if the page number is auto-determined)
+     * @param mediaBox the MediaBox
+     * @param cropBox the CropBox. If null, mediaBox is used.
+     * @param bleedBox the BleedBox. If null, cropBox is used.
+     * @param trimBox the TrimBox. If null, bleedBox is used.
      */
-    public PDFPage(PDFResources resources, PDFStream contents,
-                   int pageWidth, int pageHeight, int pageIndex) {
+    public PDFPage(PDFResources resources, int pageIndex,
+                   Rectangle2D mediaBox, Rectangle2D cropBox,
+                   Rectangle2D bleedBox, Rectangle2D trimBox) {
+      /* generic creation of object */
+      super(resources);
 
-        /* generic creation of object */
-        super(resources);
-
-        put("Type", new PDFName("Page"));
-        /* set fields using parameters */
-        setContents(contents);
-        setSimplePageSize(pageWidth, pageHeight);
-        this.pageIndex = pageIndex;
+      put("Type", new PDFName("Page"));
+      /* set fields using parameters */
+      setSimplePageSize(mediaBox, cropBox, bleedBox, trimBox);
+      this.pageIndex = pageIndex;
     }
 
-    /**
-     * Create a /Page object
-     *
-     * @param resources the /Resources object
-     * @param pageWidth the page's width in points
-     * @param pageHeight the page's height in points
-     * @param pageIndex the page's zero-based index (or -1 if the page number is auto-determined)
-     */
-    public PDFPage(PDFResources resources,
-                   int pageWidth, int pageHeight, int pageIndex) {
-        this(resources, null, pageWidth, pageHeight, pageIndex);
-    }
+    private void setSimplePageSize(Rectangle2D mediaBox, Rectangle2D cropBox,
+                                   Rectangle2D bleedBox, Rectangle2D trimBox) {
+        setMediaBox(mediaBox);
 
-    private void setSimplePageSize(int width, int height) {
-        Rectangle2D box = new Rectangle2D.Double(0, 0, width, height);
-        setMediaBox(box);
-        setBleedBox(box); //Recommended by PDF/X
-        setTrimBox(box); //Needed for PDF/X
+        if (cropBox == null) {
+            cropBox = mediaBox;
+        }
+        setCropBox(cropBox);
+
+        if (bleedBox == null) {
+            bleedBox = cropBox;
+        }
+        setBleedBox(bleedBox); //Recommended by PDF/X
+
+        if (trimBox == null) {
+            trimBox = bleedBox;
+        }
+        setTrimBox(trimBox); //Needed for PDF/X
     }
 
     private PDFArray toPDFArray(Rectangle2D box) {
@@ -90,11 +90,11 @@ public class PDFPage extends PDFResourceContext {
     }
 
     /**
-     * Sets the "TrimBox" entry
-     * @param box the trim rectangle
+     * Sets the "CropBox" entry
+     * @param box the bleed rectangle
      */
-    public void setTrimBox(Rectangle2D box) {
-        put("TrimBox", toPDFArray(box));
+    public void setCropBox(Rectangle2D box) {
+        put("CropBox", toPDFArray(box));
     }
 
     /**
@@ -103,6 +103,14 @@ public class PDFPage extends PDFResourceContext {
      */
     public void setBleedBox(Rectangle2D box) {
         put("BleedBox", toPDFArray(box));
+    }
+
+    /**
+     * Sets the "TrimBox" entry
+     * @param box the trim rectangle
+     */
+    public void setTrimBox(Rectangle2D box) {
+        put("TrimBox", toPDFArray(box));
     }
 
     /**

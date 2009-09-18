@@ -226,8 +226,114 @@ to following pages. Here is an example of FO code creating such a table-header:<
             color space the CMYK value is converted to an sRGB value.
           </p>
         </section>
+        <section id="pseudo-color-profiles">
+          <title>#CMYK pseudo-profile</title>
+          <p><code>color rgb-icc(numeric, numeric, numeric, #CMYK, numeric, numeric, numeric, numeric)</code></p>
+          <p>
+            The <code>rgb-icc</code> function will respond to a pseudo-profile called "#CMYK"
+            which indicates a device-specific CMYK color space. The "#CMYK" profile is implicitely
+            available and doesn't have to be (and cannot be) defined through an
+            <code>fo:color-profile</code> element. It is provided for compatibility with certain
+            commercial XSL-FO implementations. Please note that this is not part of the official
+            specification but rather a convention. The following two color specifications are
+            equivalent:
+          </p>
+          <ul>
+            <li><code>cmyk(0%,0%,20%,40%)</code></li>
+            <li><code>rgb-icc(153, 153, 102, #CMYK, 0, 0, 0.2, 0.4)</code></li>
+          </ul>
+        </section>
       </section>
-      
+      <section id="prepress">
+        <title>Prepress Support</title>
+        
+        <p>
+          This section defines a number of extensions related to
+          <a href="http://en.wikipedia.org/wiki/Prepress">prepress</a> support.
+          <code>fox:scale</code> defines a general scale factor for the generated pages.
+          <code>fox:bleed</code> defines the
+          <a href="http://en.wikipedia.org/wiki/Bleed_%28printing%29">bleed area</a> for a page.
+          <code>fox:crop-offset</code> defines the outer edges of the area in which crop marks,
+          registration marks, color bars and page information are placed.
+          For details, please read on below.
+        </p>
+        <note>
+          Those extensions have been implemented in the PDF and Java2D renderers only.
+        </note>
+        
+        <section id="scale">
+          <title>fox:scale</title>
+          <p>Value: &lt;number&gt;{1,2}</p>
+          <p>Initial: 1</p>
+          <p>Applies to: fo:simple-page-master</p>
+          <p>
+            This property specifies a scale factor along resp. the x and y axes. If only one number 
+            is provided it is used for both the x and y scales. A scale factor smaller than 1 
+            shrinks the page. A scale factor greater than 1 enlarges the page.
+          </p>
+        </section>
+        <section id="bleed">
+          <title>fox:bleed</title>
+          <p>
+              Value: &lt;length&gt;{1,4}
+          </p>
+          <p>
+              Initial: 0pt
+          </p>
+          <p>Applies to: fo:simple-page-master</p>
+          <p>
+              If there is only one value, it applies to all sides. If there are two values, the top and bottom
+              bleed widths are set to the first value and the right and left bleed widths are set to the second.
+              If there are three values, the top is set to the first value, the left and right are set to the second,
+              and the bottom is set to the third. If there are four values, they apply to the top, right, bottom, and
+              left, respectively.
+              (Corresponds to <a href="http://www.w3.org/TR/xsl11/#padding">the definition of 
+                padding</a>).
+          </p>
+          <p>
+              This extension indirectly defines the BleedBox and is calculated by expanding the TrimBox by
+              the bleed widths. The lengths must be non-negative.
+          </p>
+        </section>
+        <section id="cropOffset">
+          <title>fox:crop-offset</title>
+          <p>
+            Value: &lt;length&gt;{1,4}
+          </p>
+          <p>
+            Initial: bleed (see below)
+          </p>
+          <p>Applies to: fo:simple-page-master</p>
+          <p>
+            Same behaviour as with fox:bleed. The initial value is set to the same values as the 
+            fox:bleed property.
+          </p>
+          <p>
+            This extension indirectly defines the MediaBox and is calculated by expanding
+            the TrimBox by the crop offsets. The lengths must be non-negative. 
+          </p>
+        </section>
+        <section id="cropBox">
+          <title>fox:crop-box</title>
+          <p>
+            Value: [trim-box | bleed-box | media-box]
+          </p>
+          <p>
+            Initial: media-box
+          </p>
+          <p>Applies to: fo:simple-page-master</p>
+          <p>
+            The crop box controls how Acrobat displays the page (CropBox in PDF) or how the Java2DRenderer sizes
+            the output media. The PDF specification defines that the CropBox defaults to the MediaBox. This extension
+            follows that definition. To simplify usage and cover most use cases, the three supported enumeration
+            values "trim-box", "bleed-box" and "media-box" set the CropBox to one of those three other boxes. 
+          </p>
+          <p>
+            If requested in the future, we could offer to specify the CropBox in absolute coordinates rather
+            than just by referencing another box.
+          </p>
+        </section>
+      </section>
     </section>
   </body>
 </document>

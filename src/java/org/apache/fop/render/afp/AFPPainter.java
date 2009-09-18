@@ -35,8 +35,8 @@ import org.apache.xmlgraphics.image.loader.ImageSessionContext;
 
 import org.apache.fop.afp.AFPBorderPainter;
 import org.apache.fop.afp.AFPPaintingState;
-import org.apache.fop.afp.AFPRectanglePainter;
 import org.apache.fop.afp.AFPUnitConverter;
+import org.apache.fop.afp.AbstractAFPPainter;
 import org.apache.fop.afp.BorderPaintingInfo;
 import org.apache.fop.afp.DataStream;
 import org.apache.fop.afp.RectanglePaintingInfo;
@@ -46,10 +46,8 @@ import org.apache.fop.afp.fonts.AFPPageFonts;
 import org.apache.fop.afp.fonts.CharacterSet;
 import org.apache.fop.afp.modca.AbstractPageObject;
 import org.apache.fop.afp.modca.PresentationTextObject;
-import org.apache.fop.afp.modca.ResourceObject;
 import org.apache.fop.afp.ptoca.PtocaBuilder;
 import org.apache.fop.afp.ptoca.PtocaProducer;
-import org.apache.fop.afp.util.ResourceAccessor;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
@@ -79,7 +77,7 @@ public class AFPPainter extends AbstractIFPainter {
     /** the border painter */
     private AFPBorderPainterAdapter borderPainter;
     /** the rectangle painter */
-    private AFPRectanglePainter rectanglePainter;
+    private AbstractAFPPainter rectanglePainter;
 
     /** unit converter */
     private final AFPUnitConverter unitConv;
@@ -94,7 +92,7 @@ public class AFPPainter extends AbstractIFPainter {
         this.state = IFState.create();
         this.borderPainter = new AFPBorderPainterAdapter(
                 new AFPBorderPainter(getPaintingState(), getDataStream()));
-        this.rectanglePainter = new AFPRectanglePainter(getPaintingState(), getDataStream());
+        this.rectanglePainter = documentHandler.createRectanglePainter();
         this.unitConv = getPaintingState().getUnitConverter();
     }
 
@@ -222,7 +220,11 @@ public class AFPPainter extends AbstractIFPainter {
             }
             RectanglePaintingInfo rectanglePaintInfo = new RectanglePaintingInfo(
                     toPoint(rect.x), toPoint(rect.y), toPoint(rect.width), toPoint(rect.height));
-            rectanglePainter.paint(rectanglePaintInfo);
+            try {
+                rectanglePainter.paint(rectanglePaintInfo);
+            } catch (IOException ioe) {
+                throw new IFException("IO error while painting rectangle", ioe);
+            }
         }
     }
 
@@ -341,17 +343,7 @@ public class AFPPainter extends AbstractIFPainter {
 
         if (afpFont.isEmbeddable()) {
             try {
-                //Embed fonts (char sets and code pages)
-                //TODO This should be moved to a place where it has less performance impact
-                if (charSet.getResourceAccessor() != null) {
-                    ResourceAccessor accessor = charSet.getResourceAccessor();
-                    documentHandler.getResourceManager().createIncludedResource(
-                            charSet.getName(), accessor,
-                            ResourceObject.TYPE_FONT_CHARACTER_SET);
-                    documentHandler.getResourceManager().createIncludedResource(
-                            charSet.getCodePage(), accessor,
-                            ResourceObject.TYPE_CODE_PAGE);
-                }
+                documentHandler.getResourceManager().embedFont(afpFont, charSet);
             } catch (IOException ioe) {
                 throw new IFException("Error while embedding font resources", ioe);
             }

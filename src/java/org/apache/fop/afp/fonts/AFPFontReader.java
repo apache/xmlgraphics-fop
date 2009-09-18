@@ -177,7 +177,8 @@ public final class AFPFontReader {
             StructuredFieldReader structuredFieldReader = new StructuredFieldReader(inputStream);
 
             // Process D3A689 Font Descriptor
-            int pointSize = processFontDescriptor(structuredFieldReader);
+            FontDescriptor fontDescriptor = processFontDescriptor(structuredFieldReader);
+            characterSet.setNominalVerticalSize(fontDescriptor.getNominalFontSizeInMillipoints());
 
             // Process D3A789 Font Control
             FontControl fontControl = processFontControl(structuredFieldReader);
@@ -187,12 +188,13 @@ public final class AFPFontReader {
                 CharacterSetOrientation[] characterSetOrientations
                     = processFontOrientation(structuredFieldReader);
 
-                int dpi = fontControl.getDpi();
-                int metricNormalizationFactor = 0;
+                int metricNormalizationFactor;
                 if (fontControl.isRelative()) {
                     metricNormalizationFactor = 1;
                 } else {
-                    metricNormalizationFactor = 72000 / dpi / pointSize;
+                    int dpi = fontControl.getDpi();
+                    metricNormalizationFactor = 1000 * 72000
+                        / fontDescriptor.getNominalFontSizeInMillipoints() / dpi;
                 }
 
                 //process D3AC89 Font Position
@@ -274,15 +276,13 @@ public final class AFPFontReader {
      * Process the font descriptor details using the structured field reader.
      *
      * @param structuredFieldReader the structured field reader
-     * @return the nominal size of the font (in points)
+     * @return a class representing the font descriptor
      */
-    private static int processFontDescriptor(StructuredFieldReader structuredFieldReader)
+    private static FontDescriptor processFontDescriptor(StructuredFieldReader structuredFieldReader)
     throws IOException {
 
         byte[] fndData = structuredFieldReader.getNext(FONT_DESCRIPTOR_SF);
-
-        int nominalPointSize = (((fndData[39] & 0xFF) << 8) + (fndData[40] & 0xFF)) / 10;
-        return nominalPointSize;
+        return new FontDescriptor(fndData);
     }
 
     /**
@@ -303,8 +303,13 @@ public final class AFPFontReader {
             if (fncData[7] == (byte) 0x02) {
                 fontControl.setRelative(true);
             }
-            int metricResolution = (((fncData[9] & 0xFF) << 8) + (fncData[10] & 0xFF)) / 10;
-            fontControl.setDpi(metricResolution);
+            int metricResolution = getUBIN(fncData, 9);
+            if (metricResolution == 1000) {
+                //Special case: 1000 units per em (rather than dpi)
+                fontControl.setUnitsPerEm(1000);
+            } else {
+                fontControl.setDpi(metricResolution / 10);
+            }
         }
         return fontControl;
     }
@@ -378,7 +383,7 @@ public final class AFPFontReader {
      *                  font metric values
      */
     private void processFontPosition(StructuredFieldReader structuredFieldReader,
-        CharacterSetOrientation[] characterSetOrientations, int metricNormalizationFactor)
+        CharacterSetOrientation[] characterSetOrientations, double metricNormalizationFactor)
             throws IOException {
 
         byte[] data = structuredFieldReader.getNext(FONT_POSITION_SF);
@@ -397,17 +402,21 @@ public final class AFPFontReader {
                     CharacterSetOrientation characterSetOrientation
                             = characterSetOrientations[characterSetOrientationIndex];
 
-                    int xHeight = ((fpData[2] & 0xFF) << 8) + (fpData[3] & 0xFF);
-                    int capHeight = ((fpData[4] & 0xFF) << 8) + (fpData[5] & 0xFF);
-                    int ascHeight = ((fpData[6] & 0xFF) << 8) + (fpData[7] & 0xFF);
-                    int dscHeight = ((fpData[8] & 0xFF) << 8) + (fpData[9] & 0xFF);
+                    int xHeight = getSBIN(fpData, 2);
+                    int capHeight = getSBIN(fpData, 4);
+                    int ascHeight = getSBIN(fpData, 6);
+                    int dscHeight = getSBIN(fpData, 8);
 
                     dscHeight = dscHeight * -1;
 
-                    characterSetOrientation.setXHeight(xHeight * metricNormalizationFactor);
-                    characterSetOrientation.setCapHeight(capHeight * metricNormalizationFactor);
-                    characterSetOrientation.setAscender(ascHeight * metricNormalizationFactor);
-                    characterSetOrientation.setDescender(dscHeight * metricNormalizationFactor);
+                    characterSetOrientation.setXHeight(
+                            (int)Math.round(xHeight * metricNormalizationFactor));
+                    characterSetOrientation.setCapHeight(
+                            (int)Math.round(capHeight * metricNormalizationFactor));
+                    characterSetOrientation.setAscender(
+                            (int)Math.round(ascHeight * metricNormalizationFactor));
+                    characterSetOrientation.setDescender(
+                            (int)Math.round(dscHeight * metricNormalizationFactor));
                 }
             } else if (position == 22) {
                 position = 0;
@@ -430,7 +439,8 @@ public final class AFPFontReader {
      *                  font metric values
      */
     private void processFontIndex(StructuredFieldReader structuredFieldReader,
-        CharacterSetOrientation cso, Map/*<String,String>*/ codepage, int metricNormalizationFactor)
+        CharacterSetOrientation cso, Map/*<String,String>*/ codepage,
+        double metricNormalizationFactor)
         throws IOException {
 
         byte[] data = structuredFieldReader.getNext(FONT_INDEX_SF);
@@ -442,6 +452,7 @@ public final class AFPFontReader {
 
         int lowest = 255;
         int highest = 0;
+        String firstABCMismatch = null;
 
         // Read data, ignoring bytes 0 - 2
         for (int index = 3; index < data.length; index++) {
@@ -464,7 +475,26 @@ public final class AFPFontReader {
                 if (idx != null) {
 
                     int cidx = idx.charAt(0);
-                    int width = ((fiData[0] & 0xFF) << 8) + (fiData[1] & 0xFF);
+                    int width = getUBIN(fiData, 0);
+                    int a = getSBIN(fiData, 10);
+                    int b = getUBIN(fiData, 12);
+                    int c = getSBIN(fiData, 14);
+                    int abc = a + b + c;
+                    int diff = Math.abs(abc - width);
+                    if (diff != 0 && width != 0) {
+                        double diffPercent = 100 * diff / (double)width;
+                        //if difference > 2%
+                        if (diffPercent > 2) {
+                            if (log.isTraceEnabled()) {
+                                log.trace(gcgiString + ": "
+                                        + a + " + " + b + " + " + c + " = " + (a + b + c)
+                                        + " but found: " + width);
+                            }
+                            if (firstABCMismatch == null) {
+                                firstABCMismatch = gcgiString;
+                            }
+                        }
+                    }
 
                     if (cidx < lowest) {
                         lowest = cidx;
@@ -474,9 +504,9 @@ public final class AFPFontReader {
                         highest = cidx;
                     }
 
-                    int a = (width * metricNormalizationFactor);
+                    int normalizedWidth = (int)Math.round(width * metricNormalizationFactor);
 
-                    cso.setWidth(cidx, a);
+                    cso.setWidth(cidx, normalizedWidth);
 
                 }
 
@@ -486,11 +516,32 @@ public final class AFPFontReader {
         cso.setFirstChar(lowest);
         cso.setLastChar(highest);
 
+        if (log.isDebugEnabled() && firstABCMismatch != null) {
+            //Debug level because it usually is no problem.
+            log.debug("Font has metrics inconsitencies where A+B+C doesn't equal the"
+                    + " character increment. The first such character found: "
+                    + firstABCMismatch);
+        }
+    }
+
+    private static int getUBIN(byte[] data, int start) {
+        return ((data[start] & 0xFF) << 8) + (data[start + 1] & 0xFF);
+    }
+
+    private static int getSBIN(byte[] data, int start) {
+        int ubin = ((data[start] & 0xFF) << 8) + (data[start + 1] & 0xFF);
+        if ((ubin & 0x8000) != 0) {
+            //extend sign
+            return ubin | 0xFFFF0000;
+        } else {
+            return ubin;
+        }
     }
 
     private class FontControl {
 
         private int dpi;
+        private int unitsPerEm;
 
         private boolean isRelative = false;
 
@@ -502,12 +553,34 @@ public final class AFPFontReader {
             dpi = i;
         }
 
+        public int getUnitsPerEm() {
+            return this.unitsPerEm;
+        }
+
+        public void setUnitsPerEm(int value) {
+            this.unitsPerEm = value;
+        }
+
         public boolean isRelative() {
             return isRelative;
         }
 
         public void setRelative(boolean b) {
             isRelative = b;
+        }
+    }
+
+    private static class FontDescriptor {
+
+        private byte[] data;
+
+        public FontDescriptor(byte[] data) {
+            this.data = data;
+        }
+
+        public int getNominalFontSizeInMillipoints() {
+            int nominalFontSize = 100 * getUBIN(data, 39);
+            return nominalFontSize;
         }
     }
 

@@ -19,6 +19,9 @@
 
 package org.apache.fop.render.afp.extensions;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -48,13 +51,14 @@ public class AFPExtensionHandler extends DefaultHandler
     public void startElement(String uri, String localName, String qName, Attributes attributes)
                 throws SAXException {
         boolean handled = false;
-        if (AFPPageSetup.CATEGORY.equals(uri)) {
+        if (AFPExtensionAttachment.CATEGORY.equals(uri)) {
             lastAttributes = attributes;
             handled = true;
             if (localName.equals(AFPElementMapping.NO_OPERATION)
                     || localName.equals(AFPElementMapping.TAG_LOGICAL_ELEMENT)
                     || localName.equals(AFPElementMapping.INCLUDE_PAGE_OVERLAY)
                     || localName.equals(AFPElementMapping.INCLUDE_PAGE_SEGMENT)
+                    || localName.equals(AFPElementMapping.INCLUDE_FORM_MAP)
                     || localName.equals(AFPElementMapping.INVOKE_MEDIUM_MAP)) {
                 //handled in endElement
             } else {
@@ -62,7 +66,7 @@ public class AFPExtensionHandler extends DefaultHandler
             }
         }
         if (!handled) {
-            if (AFPPageSetup.CATEGORY.equals(uri)) {
+            if (AFPExtensionAttachment.CATEGORY.equals(uri)) {
                 throw new SAXException("Unhandled element " + localName
                         + " in namespace: " + uri);
             } else {
@@ -74,26 +78,38 @@ public class AFPExtensionHandler extends DefaultHandler
 
     /** {@inheritDoc} */
     public void endElement(String uri, String localName, String qName) throws SAXException {
-        if (AFPPageSetup.CATEGORY.equals(uri)) {
-            AFPPageSetup pageSetupExtn = null;
-            if (localName.equals(AFPElementMapping.INVOKE_MEDIUM_MAP)) {
-                this.returnedObject = new AFPInvokeMediumMap();
-            }
-            else {
-                pageSetupExtn = new AFPPageSetup(localName);
-                this.returnedObject = pageSetupExtn; 
-            }
-            String name = lastAttributes.getValue("name");
-            if (name != null) {
-                returnedObject.setName(name);
-            }
-            String value = lastAttributes.getValue("value");
-            if (value != null && pageSetupExtn != null) {
-                pageSetupExtn.setValue(value);
-            }
-            if (content.length() > 0 && pageSetupExtn != null) {
-                pageSetupExtn.setContent(content.toString());
-                content.setLength(0); //Reset text buffer (see characters())
+        if (AFPExtensionAttachment.CATEGORY.equals(uri)) {
+            if (AFPElementMapping.INCLUDE_FORM_MAP.equals(localName)) {
+                AFPIncludeFormMap formMap = new AFPIncludeFormMap();
+                String name = lastAttributes.getValue("name");
+                formMap.setName(name);
+                String src = lastAttributes.getValue("src");
+                try {
+                    formMap.setSrc(new URI(src));
+                } catch (URISyntaxException e) {
+                    throw new SAXException("Invalid URI: " + src, e);
+                }
+                this.returnedObject = formMap;
+            } else {
+                AFPPageSetup pageSetupExtn = null;
+                if (AFPElementMapping.INVOKE_MEDIUM_MAP.equals(localName)) {
+                    this.returnedObject = new AFPInvokeMediumMap();
+                } else {
+                    pageSetupExtn = new AFPPageSetup(localName);
+                    this.returnedObject = pageSetupExtn;
+                }
+                String name = lastAttributes.getValue("name");
+                if (name != null) {
+                    returnedObject.setName(name);
+                }
+                String value = lastAttributes.getValue("value");
+                if (value != null && pageSetupExtn != null) {
+                    pageSetupExtn.setValue(value);
+                }
+                if (content.length() > 0 && pageSetupExtn != null) {
+                    pageSetupExtn.setContent(content.toString());
+                    content.setLength(0); //Reset text buffer (see characters())
+                }
             }
         }
     }

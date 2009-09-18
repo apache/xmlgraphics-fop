@@ -43,6 +43,7 @@ import org.apache.xmlgraphics.ps.ImageEncodingHelper;
 
 import org.apache.fop.afp.AFPBorderPainter;
 import org.apache.fop.afp.AFPDataObjectInfo;
+import org.apache.fop.afp.AFPDitheredRectanglePainter;
 import org.apache.fop.afp.AFPEventProducer;
 import org.apache.fop.afp.AFPPaintingState;
 import org.apache.fop.afp.AFPRectanglePainter;
@@ -50,6 +51,7 @@ import org.apache.fop.afp.AFPResourceLevelDefaults;
 import org.apache.fop.afp.AFPResourceManager;
 import org.apache.fop.afp.AFPTextDataInfo;
 import org.apache.fop.afp.AFPUnitConverter;
+import org.apache.fop.afp.AbstractAFPPainter;
 import org.apache.fop.afp.BorderPaintingInfo;
 import org.apache.fop.afp.DataStream;
 import org.apache.fop.afp.RectanglePaintingInfo;
@@ -59,10 +61,14 @@ import org.apache.fop.afp.fonts.AFPFontCollection;
 import org.apache.fop.afp.fonts.AFPPageFonts;
 import org.apache.fop.afp.fonts.CharacterSet;
 import org.apache.fop.afp.modca.PageObject;
+import org.apache.fop.afp.modca.ResourceObject;
+import org.apache.fop.afp.util.DefaultFOPResourceAccessor;
+import org.apache.fop.afp.util.ResourceAccessor;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.area.CTM;
+import org.apache.fop.area.OffDocumentExtensionAttachment;
 import org.apache.fop.area.OffDocumentItem;
 import org.apache.fop.area.PageSequence;
 import org.apache.fop.area.PageViewport;
@@ -73,6 +79,7 @@ import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.datatypes.URISpecification;
 import org.apache.fop.events.ResourceEventProducer;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
+import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontCollection;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontManager;
@@ -80,6 +87,8 @@ import org.apache.fop.render.AbstractPathOrientedRenderer;
 import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.afp.extensions.AFPElementMapping;
+import org.apache.fop.render.afp.extensions.AFPExtensionAttachment;
+import org.apache.fop.render.afp.extensions.AFPIncludeFormMap;
 import org.apache.fop.render.afp.extensions.AFPInvokeMediumMap;
 import org.apache.fop.render.afp.extensions.AFPPageSetup;
 
@@ -167,7 +176,13 @@ public class AFPRenderer extends AbstractPathOrientedRenderer implements AFPCust
     /** the image handler registry */
     private final AFPImageHandlerRegistry imageHandlerRegistry;
 
-    private AFPRectanglePainter rectanglePainter;
+    private AbstractAFPPainter rectanglePainter;
+
+    /** the shading mode for filled rectangles */
+    private AFPShadingMode shadingMode = AFPShadingMode.COLOR;
+
+    /** medium map referenced used on previous page **/
+    private String lastMediumMap;
 
     /**
      * Constructor for AFPRenderer.
@@ -201,9 +216,19 @@ public class AFPRenderer extends AbstractPathOrientedRenderer implements AFPCust
 
         this.dataStream = resourceManager.createDataStream(paintingState, outputStream);
         this.borderPainter = new AFPBorderPainter(paintingState, dataStream);
-        this.rectanglePainter = new AFPRectanglePainter(paintingState, dataStream);
+        this.rectanglePainter = createRectanglePainter();
 
         dataStream.startDocument();
+    }
+
+    AbstractAFPPainter createRectanglePainter() {
+        if (AFPShadingMode.DITHERED.equals(this.shadingMode)) {
+            return new AFPDitheredRectanglePainter(
+                    this.paintingState, this.dataStream, this.resourceManager);
+        } else {
+            return new AFPRectanglePainter(
+                    this.paintingState, this.dataStream);
+        }
     }
 
     /** {@inheritDoc} */
@@ -263,8 +288,30 @@ public class AFPRenderer extends AbstractPathOrientedRenderer implements AFPCust
 
     /** {@inheritDoc} */
     public void processOffDocumentItem(OffDocumentItem odi) {
-        // TODO
-        log.debug("NYI processOffDocumentItem(" + odi + ")");
+        if (odi instanceof OffDocumentExtensionAttachment) {
+            ExtensionAttachment attachment = ((OffDocumentExtensionAttachment)odi).getAttachment();
+            if (attachment != null) {
+                if (AFPExtensionAttachment.CATEGORY.equals(attachment.getCategory())) {
+                    if (attachment instanceof AFPIncludeFormMap) {
+                        handleIncludeFormMap((AFPIncludeFormMap)attachment);
+                    }
+                }
+            }
+        }
+    }
+
+    private void handleIncludeFormMap(AFPIncludeFormMap formMap) {
+        ResourceAccessor accessor = new DefaultFOPResourceAccessor(
+                getUserAgent(), null, null);
+        try {
+            this.resourceManager.createIncludedResource(formMap.getName(),
+                    formMap.getSrc(), accessor,
+                    ResourceObject.TYPE_FORMDEF);
+        } catch (IOException ioe) {
+            AFPEventProducer eventProducer
+                = AFPEventProducer.Provider.get(userAgent.getEventBroadcaster());
+            eventProducer.resourceEmbeddingError(this, formMap.getName(), ioe);
+        }
     }
 
     /** {@inheritDoc} */
@@ -336,6 +383,9 @@ public class AFPRenderer extends AbstractPathOrientedRenderer implements AFPCust
 
             int resolution = paintingState.getResolution();
 
+            // IMM should occur before BPG
+            renderInvokeMediumMap(pageViewport);
+
             dataStream.startPage(pageWidth, pageHeight, pageRotation,
                     resolution, resolution);
 
@@ -362,7 +412,12 @@ public class AFPRenderer extends AbstractPathOrientedRenderer implements AFPCust
     /** {@inheritDoc} */
     public void fillRect(float x, float y, float width, float height) {
         RectanglePaintingInfo rectanglePaintInfo = new RectanglePaintingInfo(x, y, width, height);
-        rectanglePainter.paint(rectanglePaintInfo);
+        try {
+            rectanglePainter.paint(rectanglePaintInfo);
+        } catch (IOException ioe) {
+            //TODO not ideal, but the AFPRenderer is legacy
+            throw new RuntimeException("I/O error while painting a filled rectangle", ioe);
+        }
     }
 
     /** {@inheritDoc} */
@@ -543,6 +598,18 @@ public class AFPRenderer extends AbstractPathOrientedRenderer implements AFPCust
         AFPFont font = (AFPFont)fontMetricMap.get(internalFontName);
         AFPPageFonts pageFonts = paintingState.getPageFonts();
         AFPFontAttributes fontAttributes = pageFonts.registerFont(internalFontName, font, fontSize);
+        Font fnt = getFontFromArea(text);
+
+        if (font.isEmbeddable()) {
+            CharacterSet charSet = font.getCharacterSet(fontSize);
+            try {
+                this.resourceManager.embedFont(font, charSet);
+            } catch (IOException ioe) {
+                AFPEventProducer eventProducer
+                    = AFPEventProducer.Provider.get(userAgent.getEventBroadcaster());
+                eventProducer.resourceEmbeddingError(this, charSet.getName(), ioe);
+            }
+        }
 
         // create text data info
         AFPTextDataInfo textDataInfo = new AFPTextDataInfo();
@@ -583,7 +650,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer implements AFPCust
         textDataInfo.setString(textString);
 
         try {
-            dataStream.createText(textDataInfo);
+            dataStream.createText(textDataInfo, textLetterSpaceAdjust, textWordSpaceAdjust, fnt, charSet);
         } catch (UnsupportedEncodingException e) {
             AFPEventProducer eventProducer
                 = AFPEventProducer.Provider.get(userAgent.getEventBroadcaster());
@@ -643,6 +710,35 @@ public class AFPRenderer extends AbstractPathOrientedRenderer implements AFPCust
     }
 
     /**
+     * checks for IMM Extension and renders if found and different
+     * from previous page
+     *
+     * @param pageViewport the page object
+     */
+    private void renderInvokeMediumMap(PageViewport pageViewport) {
+         if (pageViewport.getExtensionAttachments() != null
+                && pageViewport.getExtensionAttachments().size() > 0) {
+             Iterator it = pageViewport.getExtensionAttachments().iterator();
+             while (it.hasNext()) {
+                 ExtensionAttachment attachment = (ExtensionAttachment) it.next();
+                 if (AFPExtensionAttachment.CATEGORY.equals(attachment.getCategory())) {
+                     AFPExtensionAttachment aea = (AFPExtensionAttachment)attachment;
+                     if (AFPElementMapping.INVOKE_MEDIUM_MAP.equals(aea.getElementName())) {
+                         AFPInvokeMediumMap imm = (AFPInvokeMediumMap)attachment;
+                         String mediumMap = imm.getName();
+                         if (mediumMap != null) {
+                             if (!mediumMap.equals(lastMediumMap)) {
+                                dataStream.createInvokeMediumMap(mediumMap);
+                                 lastMediumMap = mediumMap;
+                             }
+                         }
+                     }
+                 }
+             }
+         }
+    }
+
+    /**
      * Method to render the page extension.
      * <p>
      *
@@ -659,27 +755,29 @@ public class AFPRenderer extends AbstractPathOrientedRenderer implements AFPCust
             while (it.hasNext()) {
                 ExtensionAttachment attachment = (ExtensionAttachment) it.next();
                 if (AFPPageSetup.CATEGORY.equals(attachment.getCategory())) {
-                    AFPPageSetup aps = (AFPPageSetup) attachment;
-                    String element = aps.getElementName();
-                    if (AFPElementMapping.INCLUDE_PAGE_OVERLAY.equals(element)) {
-                        String overlay = aps.getName();
-                        if (overlay != null) {
-                            dataStream.createIncludePageOverlay(overlay);
-                        }
-                    } else if (AFPElementMapping.INCLUDE_PAGE_SEGMENT
-                            .equals(element)) {
-                        String name = aps.getName();
-                        String source = aps.getValue();
-                        pageSegmentMap.put(source, name);
-                    } else if (AFPElementMapping.TAG_LOGICAL_ELEMENT
-                            .equals(element)) {
-                        String name = aps.getName();
-                        String value = aps.getValue();
-                        dataStream.createTagLogicalElement(name, value);
-                    } else if (AFPElementMapping.NO_OPERATION.equals(element)) {
-                        String content = aps.getContent();
-                        if (content != null) {
-                            dataStream.createNoOperation(content);
+                    if (attachment instanceof AFPPageSetup) {
+                        AFPPageSetup aps = (AFPPageSetup) attachment;
+                        String element = aps.getElementName();
+                        if (AFPElementMapping.INCLUDE_PAGE_OVERLAY.equals(element)) {
+                            String overlay = aps.getName();
+                            if (overlay != null) {
+                                dataStream.createIncludePageOverlay(overlay);
+                            }
+                        } else if (AFPElementMapping.INCLUDE_PAGE_SEGMENT
+                                .equals(element)) {
+                            String name = aps.getName();
+                            String source = aps.getValue();
+                            pageSegmentMap.put(source, name);
+                        } else if (AFPElementMapping.TAG_LOGICAL_ELEMENT
+                                .equals(element)) {
+                            String name = aps.getName();
+                            String value = aps.getValue();
+                            dataStream.createTagLogicalElement(name, value);
+                        } else if (AFPElementMapping.NO_OPERATION.equals(element)) {
+                            String content = aps.getContent();
+                            if (content != null) {
+                                dataStream.createNoOperation(content);
+                            }
                         }
                     }
                 }
@@ -725,6 +823,11 @@ public class AFPRenderer extends AbstractPathOrientedRenderer implements AFPCust
     /** {@inheritDoc} */
     public void setNativeImagesSupported(boolean nativeImages) {
         paintingState.setNativeImagesSupported(nativeImages);
+    }
+
+    /** {@inheritDoc} */
+    public void setShadingMode(AFPShadingMode shadingMode) {
+        this.shadingMode = shadingMode;
     }
 
     /** {@inheritDoc} */

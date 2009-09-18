@@ -243,15 +243,20 @@ class PropertyTokenizer {
     }
 
 
-    private void nextColor () throws PropertyException {
+    private void nextColor() throws PropertyException {
         if (exprIndex < exprLength
                 && isHexDigit(expr.charAt(exprIndex))) {
             ++exprIndex;
             scanHexDigits();
-            currentToken = TOK_COLORSPEC;
+            int len = exprIndex - currentTokenStartIndex - 1;
+            if (len % 3 == 0) {
+                currentToken = TOK_COLORSPEC;
+            } else {
+                scanRestOfName();
+                currentToken = TOK_NCNAME;
+            }
             currentTokenValue = expr.substring(currentTokenStartIndex,
                     exprIndex);
-            // Probably should have some multiple of 3 for length!
             return;
         } else {
             throw new PropertyException("illegal character '#'");
@@ -263,9 +268,13 @@ class PropertyTokenizer {
      */
     private void scanName() {
         if (exprIndex < exprLength && isNameStartChar(expr.charAt(exprIndex))) {
-            while (++exprIndex < exprLength
-                   && isNameChar(expr.charAt(exprIndex))) { }
+            scanRestOfName();
         }
+    }
+
+    private void scanRestOfName() {
+        while (++exprIndex < exprLength
+               && isNameChar(expr.charAt(exprIndex))) { }
     }
 
     /**

@@ -78,15 +78,6 @@ public class LayoutContext {
      * level LM to allow them to optimize returned break possibilities.
      */
     private MinOptMax stackLimitBP;
-    /**
-     * Total available stacking dimension for a "galley-level" layout
-     * manager in inline-progression-direction. It is passed by the
-     * parent LM. For LineLM, the block LM determines this based on
-     * indent properties.
-     * These LM <b>may</b> wish to pass this information down to lower
-     * level LM to allow them to optimize returned break possibilities.
-     */
-    private MinOptMax stackLimitIP;
 
     /** to keep track of spanning in multi-column layout */
     private int currentSpan = Constants.NOT_SET;
@@ -145,8 +136,8 @@ public class LayoutContext {
     private int breakBefore;
     private int breakAfter;
 
-    private int pendingKeepWithNext = BlockLevelLayoutManager.KEEP_AUTO;
-    private int pendingKeepWithPrevious = BlockLevelLayoutManager.KEEP_AUTO;
+    private Keep pendingKeepWithNext = Keep.KEEP_AUTO;
+    private Keep pendingKeepWithPrevious = Keep.KEEP_AUTO;
 
     private int disableColumnBalancing;
 
@@ -158,7 +149,7 @@ public class LayoutContext {
         this.flags = parentLC.flags;
         this.refIPD = parentLC.refIPD;
         this.writingMode = parentLC.writingMode;
-        setStackLimitsFrom(parentLC);
+        setStackLimitBP(parentLC.getStackLimitBP());
         this.leadingSpace = parentLC.leadingSpace; //???
         this.trailingSpace = parentLC.trailingSpace; //???
         this.hyphContext = parentLC.hyphContext;
@@ -183,7 +174,6 @@ public class LayoutContext {
         this.flags = flags;
         this.refIPD = 0;
         stackLimitBP = new MinOptMax(0);
-        stackLimitIP = new MinOptMax(0);
         leadingSpace = null;
         trailingSpace = null;
     }
@@ -237,7 +227,7 @@ public class LayoutContext {
      * Returns the strength of a keep-with-next currently pending.
      * @return the keep-with-next strength
      */
-    public int getKeepWithNextPending() {
+    public Keep getKeepWithNextPending() {
         return this.pendingKeepWithNext;
     }
 
@@ -245,7 +235,7 @@ public class LayoutContext {
      * Returns the strength of a keep-with-previous currently pending.
      * @return the keep-with-previous strength
      */
-    public int getKeepWithPreviousPending() {
+    public Keep getKeepWithPreviousPending() {
         return this.pendingKeepWithPrevious;
     }
 
@@ -253,14 +243,14 @@ public class LayoutContext {
      * Clears any pending keep-with-next strength.
      */
     public void clearKeepWithNextPending() {
-        this.pendingKeepWithNext = BlockLevelLayoutManager.KEEP_AUTO;
+        this.pendingKeepWithNext = Keep.KEEP_AUTO;
     }
 
     /**
      * Clears any pending keep-with-previous strength.
      */
     public void clearKeepWithPreviousPending() {
-        this.pendingKeepWithPrevious = BlockLevelLayoutManager.KEEP_AUTO;
+        this.pendingKeepWithPrevious = Keep.KEEP_AUTO;
     }
 
     /**
@@ -273,18 +263,18 @@ public class LayoutContext {
 
     /**
      * Updates the currently pending keep-with-next strength.
-     * @param strength the new strength to consider
+     * @param keep the new strength to consider
      */
-    public void updateKeepWithNextPending(int strength) {
-        this.pendingKeepWithNext = Math.max(this.pendingKeepWithNext, strength);
+    public void updateKeepWithNextPending(Keep keep) {
+        this.pendingKeepWithNext = this.pendingKeepWithNext.compare(keep);
     }
 
     /**
      * Updates the currently pending keep-with-previous strength.
-     * @param strength the new strength to consider
+     * @param keep the new strength to consider
      */
-    public void updateKeepWithPreviousPending(int strength) {
-        this.pendingKeepWithPrevious = Math.max(this.pendingKeepWithPrevious, strength);
+    public void updateKeepWithPreviousPending(Keep keep) {
+        this.pendingKeepWithPrevious = this.pendingKeepWithPrevious.compare(keep);
     }
 
     /**
@@ -292,7 +282,7 @@ public class LayoutContext {
      * @return true if a keep-with-next constraint is pending
      */
     public boolean isKeepWithNextPending() {
-        return getKeepWithNextPending() != BlockLevelLayoutManager.KEEP_AUTO;
+        return !getKeepWithNextPending().isAuto();
     }
 
     /**
@@ -300,7 +290,7 @@ public class LayoutContext {
      * @return true if a keep-with-previous constraint is pending
      */
     public boolean isKeepWithPreviousPending() {
-        return getKeepWithPreviousPending() != BlockLevelLayoutManager.KEEP_AUTO;
+        return !getKeepWithPreviousPending().isAuto();
     }
 
     public void setLeadingSpace(SpaceSpecifier space) {
@@ -395,31 +385,6 @@ public class LayoutContext {
      */
     public MinOptMax getStackLimitBP() {
         return stackLimitBP;
-    }
-
-    /**
-     * Sets the stack limit in inline-progression-dimension.
-     * @param limit the stack limit
-     */
-    public void setStackLimitIP(MinOptMax limit) {
-        stackLimitIP = limit;
-    }
-
-    /**
-     * Returns the stack limit in inline-progression-dimension.
-     * @return the stack limit
-     */
-    public MinOptMax getStackLimitIP() {
-        return stackLimitIP;
-    }
-
-    /**
-     * Sets (Copies) the stack limits in both directions from another layout context.
-     * @param context the layout context to take the values from
-     */
-    public void setStackLimitsFrom(LayoutContext context) {
-        setStackLimitBP(context.getStackLimitBP());
-        setStackLimitIP(context.getStackLimitIP());
     }
 
     /**
@@ -662,8 +627,6 @@ public class LayoutContext {
         return "Layout Context:"
         + "\nStack Limit BPD: \t"
             + (getStackLimitBP() == null ? "null" : getStackLimitBP().toString())
-        + "\nStack Limit IPD: \t"
-            + (getStackLimitIP() == null ? "null" : getStackLimitIP().toString())
         + "\nTrailing Space: \t"
             + (getTrailingSpace() == null ? "null" : getTrailingSpace().toString())
         + "\nLeading Space: \t"
@@ -677,9 +640,8 @@ public class LayoutContext {
         + "\nStarts New Area: \t" + startsNewArea()
         + "\nIs Last Area: \t" + isLastArea()
         + "\nTry Hyphenate: \t" + tryHyphenate()
-        + "\nKeeps: \t[keep-with-next=" + KeepUtil.keepStrengthToString(getKeepWithNextPending())
-                + "][keep-with-previous="
-                + KeepUtil.keepStrengthToString(getKeepWithPreviousPending()) + "] pending"
+        + "\nKeeps: \t[keep-with-next=" + getKeepWithNextPending()
+                + "][keep-with-previous=" + getKeepWithPreviousPending() + "] pending"
         + "\nBreaks: \tforced [" + (breakBefore != Constants.EN_AUTO ? "break-before" : "") + "]["
         + (breakAfter != Constants.EN_AUTO ? "break-after" : "") + "]";
     }
