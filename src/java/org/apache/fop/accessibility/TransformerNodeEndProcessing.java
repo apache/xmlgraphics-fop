@@ -28,13 +28,13 @@ import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-
-import org.apache.commons.io.output.ByteArrayOutputStream;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
@@ -76,10 +76,9 @@ class TransformerNodeEndProcessing extends TransformerNode {
             byte[] enrichedFO = enrichedFOBuffer.toByteArray();
             Transformer transformer = AccessibilityUtil.getReduceFOTreeTemplates().newTransformer();
             Source src = new StreamSource(new ByteArrayInputStream(enrichedFO));
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            Result res = new StreamResult(out);
+            DOMResult res = new DOMResult();
             transformer.transform(src, res);
-            userAgent.setReducedFOTree(out.toByteArray());
+            userAgent.setStructureTree(new StructureTree(res.getNode()));
 
             SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
             saxParserFactory.setNamespaceAware(true);

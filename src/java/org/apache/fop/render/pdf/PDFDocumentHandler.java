@@ -25,31 +25,19 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.Rectangle2D.Double;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.namespace.NamespaceContext;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import org.apache.xmlgraphics.xmp.Metadata;
 
+import org.apache.fop.accessibility.StructureTree;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.fo.extensions.xmp.XMPMetadata;
 import org.apache.fop.pdf.PDFAnnotList;
@@ -86,8 +74,6 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
 
     /** the following variables are used for accessibility */
     private int pageSequenceCounter;
-    private DocumentBuilder parser = null;
-    private Document reducedFOTree = null;
     private Map structElemType = new HashMap();
     private boolean accessEnabled = false;
     private int parentTreeKey = -1;
@@ -96,41 +82,6 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
     private PDFParentTree parentTree = null;
     private Map structTreeMap = new HashMap();
     private List parentTreeList = new java.util.ArrayList();
-
-    private static class NamespaceContextImpl implements NamespaceContext {
-
-        private String uri;
-        private String prefix;
-
-        public NamespaceContextImpl() {
-        }
-
-        public NamespaceContextImpl(String prefix, String uri) {
-            this.uri = uri;
-            this.prefix = prefix;
-        }
-
-        public String getNamespaceURI(String prefix) {
-            return uri;
-        }
-
-        public void setNamespaceURI(String uri) {
-            this.uri = uri;
-        }
-
-        public String getPrefix(String uri) {
-            return prefix;
-        }
-
-        public void setPrefix(String prefix) {
-            this.prefix = prefix;
-        }
-
-        public Iterator getPrefixes(String uri) {
-            return null;
-        }
-
-    }
 
     private static final class ParentTreeEntry {
         private final int position;
@@ -233,14 +184,9 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
 
                 parentTree = new PDFParentTree();
                 pageSequenceCounter = 0;
-                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-                factory.setNamespaceAware(true);
-                parser = factory.newDocumentBuilder();
             }
         } catch (IOException e) {
             throw new IFException("I/O error in startDocument()", e);
-        } catch (ParserConfigurationException pce) {
-            throw new IFException("Error creating new DocumentBuilder", pce);
         }
     }
 
@@ -271,8 +217,6 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
                 parentTree.setNums(nums);
                 getStructTreeRoot().addParentTree(parentTree);
                 pdfDoc.outputTrailer(this.outputStream);
-                parser = null;
-                reducedFOTree = null;
                 structElemType = null;
                 parentTree = null;
                 structTreeMap = null;
@@ -308,65 +252,46 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
         }
 
         if (getUserAgent().isAccessibilityEnabled()) {
-            try {
-                if (this.pdfDoc.getRoot().getLanguage() == null) {
-                    String fallbackLanguage;
-                    if (this.pdfDoc.getProfile().getPDFAMode().isPDFA1LevelA()) {
-                        //According to Annex B of ISO-19005-1:2005(E), section B.2
-                        fallbackLanguage = "x-unknown";
-                    } else {
-                        //No language has been set on the first page-sequence, so fall back to "en".
-                        fallbackLanguage = "en";
-                    }
-                    this.pdfDoc.getRoot().setLanguage(fallbackLanguage);
+            if (this.pdfDoc.getRoot().getLanguage() == null) {
+                String fallbackLanguage;
+                if (this.pdfDoc.getProfile().getPDFAMode().isPDFA1LevelA()) {
+                    //According to Annex B of ISO-19005-1:2005(E), section B.2
+                    fallbackLanguage = "x-unknown";
+                } else {
+                    //No language has been set on the first page-sequence, so fall back to "en".
+                    fallbackLanguage = "en";
                 }
+                this.pdfDoc.getRoot().setLanguage(fallbackLanguage);
+            }
 
-                if (reducedFOTree == null) {
-                    reducedFOTree = parser.parse(
-                            new ByteArrayInputStream(this.getUserAgent().getReducedFOTree()));
-                }
-                PDFStructElem parent = (PDFStructElem)getStructTreeRoot().getFirstChild();
-                PDFStructElem structElemPart = new PDFStructElem(parent,
-                        FOToPDFRoleMap.mapFormattingObject("page-sequence", parent));
-                if (getContext().getLanguage() != null) {
-                    structElemPart.setLanguage(getContext().getLanguage());
-                }
-                this.pdfDoc.assignObjectNumber(structElemPart);
-                this.pdfDoc.addTrailerObject(structElemPart);
-                parent.addKid(structElemPart);
+            StructureTree structureTree = getUserAgent().getStructureTree();
+            PDFStructElem parent = (PDFStructElem)getStructTreeRoot().getFirstChild();
+            PDFStructElem structElemPart = new PDFStructElem(parent,
+                    FOToPDFRoleMap.mapFormattingObject("page-sequence", parent));
+            if (getContext().getLanguage() != null) {
+                structElemPart.setLanguage(getContext().getLanguage());
+            }
+            this.pdfDoc.assignObjectNumber(structElemPart);
+            this.pdfDoc.addTrailerObject(structElemPart);
+            parent.addKid(structElemPart);
 
-                String xpathExpr = "/fo:root/fo:page-sequence["
-                        + Integer.toString(++pageSequenceCounter) + "]/*";
-                XPath xpath = XPathFactory.newInstance().newXPath();
-                NamespaceContext namespaceContext = new NamespaceContextImpl("fo",
-                        "http://www.w3.org/1999/XSL/Format");
-                xpath.setNamespaceContext(namespaceContext);
+            NodeList nodes = structureTree.getPageSequence(++pageSequenceCounter);
 
-                NodeList nodes = (NodeList) xpath.evaluate(xpathExpr, reducedFOTree,
-                        XPathConstants.NODESET);
-
-                for (int i = 0, n = nodes.getLength(); i < n; i++) {
-                    Node node = nodes.item(i);
-                    if (node.getNodeName().equals("fo:flow")
-                            || node.getNodeName().equals("fo:static-content")) {
-                        PDFStructElem structElemSect = new PDFStructElem(structElemPart,
-                                FOToPDFRoleMap.mapFormattingObject(node.getLocalName(),
-                                        structElemPart));
-                        this.pdfDoc.assignObjectNumber(structElemSect);
-                        this.pdfDoc.addTrailerObject(structElemSect);
-                        structElemPart.addKid(structElemSect);
-                        NodeList iNodes = node.getChildNodes();
-                        for (int j = 0, m = iNodes.getLength(); j < m; j++) {
-                            processContent(iNodes.item(j), structElemSect, 1);
-                        }
+            for (int i = 0, n = nodes.getLength(); i < n; i++) {
+                Node node = nodes.item(i);
+                if (node.getNodeName().equals("fo:flow")
+                        || node.getNodeName().equals("fo:static-content")) {
+                    PDFStructElem structElemSect = new PDFStructElem(structElemPart,
+                            FOToPDFRoleMap.mapFormattingObject(node.getLocalName(),
+                                    structElemPart));
+                    this.pdfDoc.assignObjectNumber(structElemSect);
+                    this.pdfDoc.addTrailerObject(structElemSect);
+                    structElemPart.addKid(structElemSect);
+                    NodeList iNodes = node.getChildNodes();
+                    for (int j = 0, m = iNodes.getLength(); j < m; j++) {
+                        processContent(iNodes.item(j), structElemSect, 1);
                     }
                 }
-            } catch (SAXException e) {
-                throw new IFException("SAX error in startPageSequence()", e);
-            } catch (XPathExpressionException e) {
-                throw new IFException("Error while evaluating XPath expression", e);
-            } catch (IOException ioe) {
-                throw new IFException("I/O error while parsing structure tree", ioe);
             }
         }
     }

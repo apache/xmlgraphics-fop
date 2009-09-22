@@ -25,33 +25,22 @@ import java.awt.Paint;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Stack;
 
-import javax.xml.namespace.NamespaceContext;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
 import org.apache.xmlgraphics.util.QName;
 import org.apache.xmlgraphics.util.XMLizable;
 
+import org.apache.fop.accessibility.StructureTree;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.render.PrintRendererConfigurator;
 import org.apache.fop.render.RenderingContext;
@@ -76,44 +65,9 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
 
     private IFDocumentHandler mimicHandler;
     private int pageSequenceCounter; // used for accessibility
-    private DocumentBuilder parser = null; // used for accessibility
-    private Document doc = null;  // used for accessibility
 
     /** Holds the intermediate format state */
     private IFState state;
-
-    private static class NamespaceContextImpl implements NamespaceContext {
-
-         public String uri;
-         public String prefix;
-
-         public NamespaceContextImpl() {
-         }
-
-         public NamespaceContextImpl(String prefix, String uri) {
-             this.uri = uri;
-             this.prefix = prefix;
-            }
-
-         public String getNamespaceURI(String prefix) {
-           return uri;
-         }
-         public void setNamespaceURI(String uri) {
-           this.uri = uri;
-         }
-
-         public String getPrefix(String uri) {
-           return prefix;
-         }
-
-         public void setPrefix(String prefix) {
-           this.prefix = prefix;
-         }
-         public Iterator getPrefixes(String uri) {
-             return null;
-         }
-
-    }
 
     /**
      * Default constructor.
@@ -202,16 +156,8 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
             handler.startPrefixMapping(DocumentNavigationExtensionConstants.PREFIX,
                     DocumentNavigationExtensionConstants.NAMESPACE);
             handler.startElement(EL_DOCUMENT);
-            if (this.getUserAgent().isAccessibilityEnabled()) {
-                pageSequenceCounter = 0;
-                DocumentBuilderFactory  factory = DocumentBuilderFactory.newInstance();
-                factory.setNamespaceAware(true);
-                parser = factory.newDocumentBuilder();
-            }
         } catch (SAXException e) {
             throw new IFException("SAX error in startDocument()", e);
-        } catch (ParserConfigurationException pce) {
-            throw new IFException("Error creating new DocumentBuilder", pce);
         }
     }
 
@@ -273,18 +219,9 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
             addForeignAttributes(atts);
             handler.startElement(EL_PAGE_SEQUENCE, atts);
             if (this.getUserAgent().isAccessibilityEnabled()) {
-                if (doc == null) {
-                    doc = parser.parse(
-                            new ByteArrayInputStream(this.getUserAgent().getReducedFOTree()));
-                }
+                StructureTree structureTree = getUserAgent().getStructureTree();
                 handler.startElement(EL_STRUCTURE_TREE); // add structure tree
-                String xpathExpr
-                   = "/fo:root/fo:page-sequence[" + Integer.toString(++pageSequenceCounter) + "]/*";
-                XPath xpath = XPathFactory.newInstance().newXPath();
-                NamespaceContext namespaceContext
-                    = new NamespaceContextImpl("fo", "http://www.w3.org/1999/XSL/Format");
-                xpath.setNamespaceContext(namespaceContext);
-                NodeList nodes = (NodeList)xpath.evaluate(xpathExpr, doc, XPathConstants.NODESET);
+                NodeList nodes = structureTree.getPageSequence(++pageSequenceCounter);
                 for (int i = 0, n = nodes.getLength(); i < n; i++) {
                     Node node = nodes.item(i);
                     new DOM2SAX(handler).writeFragment(node);
@@ -293,10 +230,6 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
             }
         } catch (SAXException e) {
             throw new IFException("SAX error in startPageSequence()", e);
-        } catch (XPathExpressionException e) {
-            throw new IFException("Error while evaluating XPath expression", e);
-        } catch (IOException ioe) {
-            throw new IFException("I/O error while parsing structure tree", ioe);
         }
     }
 

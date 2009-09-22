@@ -38,6 +38,7 @@ import org.apache.xmlgraphics.image.loader.impl.AbstractImageSessionContext;
 
 import org.apache.fop.Version;
 import org.apache.fop.accessibility.AccessibilityUtil;
+import org.apache.fop.accessibility.StructureTree;
 import org.apache.fop.events.DefaultEventBroadcaster;
 import org.apache.fop.events.Event;
 import org.apache.fop.events.EventBroadcaster;
@@ -100,8 +101,7 @@ public class FOUserAgent {
     private boolean conserveMemoryPolicy = false;
     private EventBroadcaster eventBroadcaster = new FOPEventBroadcaster();
 
-    //TODO Verify that a byte array is the best solution here
-    private byte[] reducedFOTree;  // accessibility: reduced FO
+    private StructureTree structureTree;
 
     /** Producer:  Metadata element for the system/software that produces
      * the document. (Some renderers can store this in the document.)
@@ -664,20 +664,24 @@ public class FOUserAgent {
     }
 
     /**
-     * Used for accessibility. Stores the reduced FO tree (the result from the second transform)
-     * for later use.
-     * @param reducedFOTree the result from 2nd transform
+     * Sets the document's structure tree, for use by accessible output formats.
+     *
+     * @param structureTree a simplified version of the FO tree, retaining only
+     * its logical structure
      */
-    public void setReducedFOTree(byte[] reducedFOTree) {
-        this.reducedFOTree = reducedFOTree;
+    public void setStructureTree(StructureTree structureTree) {
+        this.structureTree = structureTree;
     }
 
     /**
-     * Used for accessibility. Returns the reduced FO tree.
-     * @return result from 2nd transform as byte array
+     * Returns the document's structure tree, for use by accessible output
+     * formats.
+     *
+     * @return a simplified version of the FO tree, retaining only its logical
+     * structure
      */
-    public byte[] getReducedFOTree() {
-        return this.reducedFOTree;
+    public StructureTree getStructureTree() {
+        return this.structureTree;
     }
 }
 
