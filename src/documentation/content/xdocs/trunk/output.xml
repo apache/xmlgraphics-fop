@@ -796,6 +796,17 @@ out = proc.getOutputStream();]]></source>
         fo:external-graphic elements and if it is identical (string matching is used) in the generated
         AFP the external graphic is replaced by a reference to the given resource.
         </p>
+        <p>
+          The effect here is that whenever FOP encounters the URI specified in the extension,
+          it will effectively generate code to include the page segment with the given name
+          instead of embedding the image referenced by the URI. The URI is still required as
+          the underlying image serves as a provider for the intrinsic size of the image
+          (At the moment, FOP is unable to extract the intrinsic size of the page segment from
+          an AFP resource file). For the image to appear in an AFP viewer or to be printed, the
+          AFP resource must be available on the target device. FOP does not embed the page
+          segment in the generated file. Please also note that page segments cannot be scaled.
+          They are always rendered in their intrinsic size.
+        </p>
       </section>
       <section id="afp-tag-logical-element">
         <title>Tag Logical Element (TLE) Extension</title>
