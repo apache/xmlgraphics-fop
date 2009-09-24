@@ -47,6 +47,6 @@ public class DejaVuLGCSerifTest extends TestCase {
      * Simple test to see if font name was detected correctly.
      */
     public void testFontName() {
-        assertEquals("DejaVu", font.getFontName());
+        assertEquals("DejaVuLGCSerif", font.getFontName());
     }
 }
