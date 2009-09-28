@@ -252,45 +252,50 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
         }
 
         if (getUserAgent().isAccessibilityEnabled()) {
-            if (this.pdfDoc.getRoot().getLanguage() == null) {
-                String fallbackLanguage;
-                if (this.pdfDoc.getProfile().getPDFAMode().isPDFA1LevelA()) {
-                    //According to Annex B of ISO-19005-1:2005(E), section B.2
-                    fallbackLanguage = "x-unknown";
-                } else {
-                    //No language has been set on the first page-sequence, so fall back to "en".
-                    fallbackLanguage = "en";
-                }
-                this.pdfDoc.getRoot().setLanguage(fallbackLanguage);
+            processStructureTree();
+        }
+    }
+
+    private void processStructureTree() {
+        if (this.pdfDoc.getRoot().getLanguage() == null) {
+            String fallbackLanguage;
+            if (this.pdfDoc.getProfile().getPDFAMode().isPDFA1LevelA()) {
+                //According to Annex B of ISO-19005-1:2005(E), section B.2
+                fallbackLanguage = "x-unknown";
+            } else {
+                //No language has been set on the first page-sequence, so fall back to "en".
+                fallbackLanguage = "en";
             }
+            this.pdfDoc.getRoot().setLanguage(fallbackLanguage);
+        }
 
-            StructureTree structureTree = getUserAgent().getStructureTree();
-            PDFStructElem parent = (PDFStructElem)getStructTreeRoot().getFirstChild();
-            PDFStructElem structElemPart = new PDFStructElem(parent,
-                    FOToPDFRoleMap.mapFormattingObject("page-sequence", parent));
-            if (getContext().getLanguage() != null) {
-                structElemPart.setLanguage(getContext().getLanguage());
-            }
-            this.pdfDoc.assignObjectNumber(structElemPart);
-            this.pdfDoc.addTrailerObject(structElemPart);
-            parent.addKid(structElemPart);
+        /* Retrieve the structure element of type "Document" */
+        PDFStructElem parent = (PDFStructElem)getStructTreeRoot().getFirstChild();
+        PDFStructElem structElemPart = new PDFStructElem(parent,
+                FOToPDFRoleMap.mapFormattingObject("page-sequence", parent));
+        if (getContext().getLanguage() != null) {
+            structElemPart.setLanguage(getContext().getLanguage());
+        }
+        this.pdfDoc.assignObjectNumber(structElemPart);
+        this.pdfDoc.addTrailerObject(structElemPart);
+        parent.addKid(structElemPart);
 
-            NodeList nodes = structureTree.getPageSequence(++pageSequenceCounter);
+        StructureTree structureTree = getUserAgent().getStructureTree();
+        NodeList nodes = structureTree.getPageSequence(++pageSequenceCounter);
 
-            for (int i = 0, n = nodes.getLength(); i < n; i++) {
-                Node node = nodes.item(i);
-                if (node.getNodeName().equals("fo:flow")
-                        || node.getNodeName().equals("fo:static-content")) {
-                    PDFStructElem structElemSect = new PDFStructElem(structElemPart,
-                            FOToPDFRoleMap.mapFormattingObject(node.getLocalName(),
-                                    structElemPart));
-                    this.pdfDoc.assignObjectNumber(structElemSect);
-                    this.pdfDoc.addTrailerObject(structElemSect);
-                    structElemPart.addKid(structElemSect);
-                    NodeList iNodes = node.getChildNodes();
-                    for (int j = 0, m = iNodes.getLength(); j < m; j++) {
-                        processContent(iNodes.item(j), structElemSect, 1);
-                    }
+        for (int i = 0, n = nodes.getLength(); i < n; i++) {
+            Node node = nodes.item(i);
+            if (node.getNodeName().equals("fo:flow")
+                    || node.getNodeName().equals("fo:static-content")) {
+                PDFStructElem structElemSect = new PDFStructElem(structElemPart,
+                        FOToPDFRoleMap.mapFormattingObject(node.getLocalName(),
+                                structElemPart));
+                this.pdfDoc.assignObjectNumber(structElemSect);
+                this.pdfDoc.addTrailerObject(structElemSect);
+                structElemPart.addKid(structElemSect);
+                NodeList iNodes = node.getChildNodes();
+                for (int j = 0, m = iNodes.getLength(); j < m; j++) {
+                    processContent(iNodes.item(j), structElemSect, 1);
                 }
             }
         }
