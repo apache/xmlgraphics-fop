@@ -46,8 +46,6 @@ implements StructuredData, Completable, Startable {
     /** object has started */
     private boolean started = false;
 
-    private int dataLength = 0;
-
     /**
      * Default constructor
      */
@@ -80,7 +78,6 @@ implements StructuredData, Completable, Startable {
      */
     public void addObject(StructuredData object) {
         objects.add(object);
-        dataLength += object.getDataLength();
     }
 
     /**
@@ -91,7 +88,6 @@ implements StructuredData, Completable, Startable {
     public void addAll(AbstractGraphicsDrawingOrderContainer graphicsContainer) {
         Collection/*<StructuredDataObject>*/ objects = graphicsContainer.getObjects();
         objects.addAll(objects);
-        dataLength += graphicsContainer.getDataLength();
     }
 
     /**
@@ -111,11 +107,9 @@ implements StructuredData, Completable, Startable {
     public StructuredData removeLast() {
         int lastIndex = objects.size() - 1;
         StructuredData object = null;
-        if (lastIndex >= 0) {
-            object = (StructuredData)objects.remove(lastIndex);
-        }
-        if (object != null) {
-            dataLength -= object.getDataLength();
+        if (lastIndex > -1) {
+            object = (StructuredData)objects.get(lastIndex);
+            objects.remove(lastIndex);
         }
         return object;
     }
@@ -127,7 +121,12 @@ implements StructuredData, Completable, Startable {
      * all enclosed objects (and their containers)
      */
     public int getDataLength() {
-        return this.dataLength;
+        int dataLen = 0;
+        Iterator it = objects.iterator();
+        while (it.hasNext()) {
+            dataLen += ((StructuredData)it.next()).getDataLength();
+        }
+        return dataLen;
     }
 
     /** {@inheritDoc} */
