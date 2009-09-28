@@ -33,20 +33,19 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.sax.SAXTransformerFactory;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
-
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 import org.xml.sax.helpers.DefaultHandler;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import org.apache.xmlgraphics.util.QName;
 
+import org.apache.fop.accessibility.ParsedStructureTree;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.ElementMappingRegistry;
@@ -60,6 +59,7 @@ import org.apache.fop.util.ContentHandlerFactory;
 import org.apache.fop.util.ContentHandlerFactoryRegistry;
 import org.apache.fop.util.DOMBuilderContentHandlerFactory;
 import org.apache.fop.util.DefaultErrorListener;
+import org.apache.fop.util.DelegatingContentHandler;
 import org.apache.fop.util.XMLUtil;
 
 /**
@@ -150,6 +150,26 @@ public class IFParser implements IFConstants {
 
         private ContentHandler navParser;
 
+        private ParsedStructureTree structureTree;
+
+        private ContentHandler structureTreeBuilder;
+
+        private final class StructureTreeBuilder extends DelegatingContentHandler {
+
+            private Attributes pageSequenceAttributes;
+
+            private StructureTreeBuilder(Attributes pageSequenceAttributes,
+                    ParsedStructureTree structureTree) throws SAXException {
+                super(structureTree.getHandlerForNextPageSequence());
+                this.pageSequenceAttributes = new AttributesImpl(pageSequenceAttributes);
+            }
+
+            public void endDocument() throws SAXException {
+                super.endDocument();
+                startIFElement(EL_PAGE_SEQUENCE, pageSequenceAttributes);
+            }
+        }
+
         public Handler(IFDocumentHandler documentHandler, FOUserAgent userAgent,
                 ElementMappingRegistry elementMappingRegistry) {
             this.documentHandler = documentHandler;
@@ -173,6 +193,11 @@ public class IFParser implements IFConstants {
             elementHandlers.put(EL_LINE, new LineHandler());
             elementHandlers.put(EL_BORDER_RECT, new BorderRectHandler());
             elementHandlers.put(EL_IMAGE, new ImageHandler());
+
+            if (userAgent.isAccessibilityEnabled()) {
+                structureTree = new ParsedStructureTree(tFactory);
+                userAgent.setStructureTree(structureTree);
+            }
         }
 
         private void establishForeignAttributes(Map foreignAttributes) {
@@ -200,19 +225,20 @@ public class IFParser implements IFConstants {
             } else {
                 boolean handled = true;
                 if (NAMESPACE.equals(uri)) {
-                    lastAttributes = new AttributesImpl(attributes);
-                    ElementHandler elementHandler = (ElementHandler)elementHandlers.get(localName);
-                    content.setLength(0);
-                    ignoreCharacters = true;
-                    if (elementHandler != null) {
-                        ignoreCharacters = elementHandler.ignoreCharacters();
-                        try {
-                            elementHandler.startElement(attributes);
-                        } catch (IFException ife) {
-                            handleIFException(ife);
+                    if (localName.equals(EL_PAGE_SEQUENCE) && userAgent.isAccessibilityEnabled()) {
+                        structureTreeBuilder = new StructureTreeBuilder(attributes, structureTree);
+                    } else if (localName.equals(EL_STRUCTURE_TREE)) {
+                        if (userAgent.isAccessibilityEnabled()) {
+                            delegate = structureTreeBuilder;
+                        } else {
+                            /* Delegate to a handler that does nothing */
+                            delegate = new DefaultHandler();
                         }
+                        delegateDepth++;
+                        delegate.startDocument();
+                        delegate.startElement(uri, localName, qName, attributes);
                     } else {
-                        handled = false;
+                        handled = startIFElement(localName, attributes);
                     }
                 } else if (DocumentNavigationExtensionConstants.NAMESPACE.equals(uri)) {
                     if (this.navParser == null) {
@@ -253,6 +279,25 @@ public class IFParser implements IFConstants {
                                 + " in namespace: " + uri);
                     }
                 }
+            }
+        }
+
+        private boolean startIFElement(String localName, Attributes attributes)
+                throws SAXException {
+            lastAttributes = new AttributesImpl(attributes);
+            ElementHandler elementHandler = (ElementHandler)elementHandlers.get(localName);
+            content.setLength(0);
+            ignoreCharacters = true;
+            if (elementHandler != null) {
+                ignoreCharacters = elementHandler.ignoreCharacters();
+                try {
+                    elementHandler.startElement(attributes);
+                } catch (IFException ife) {
+                    handleIFException(ife);
+                }
+                return true;
+            } else {
+                return false;
             }
         }
 

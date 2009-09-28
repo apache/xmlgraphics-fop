@@ -78,7 +78,7 @@ class TransformerNodeEndProcessing extends TransformerNode {
             Source src = new StreamSource(new ByteArrayInputStream(enrichedFO));
             DOMResult res = new DOMResult();
             transformer.transform(src, res);
-            userAgent.setStructureTree(new StructureTree(res.getNode()));
+            userAgent.setStructureTree(new SimpleStructureTree(res.getNode()));
 
             SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
             saxParserFactory.setNamespaceAware(true);
