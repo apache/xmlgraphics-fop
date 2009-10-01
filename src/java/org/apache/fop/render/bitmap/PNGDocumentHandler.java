@@ -23,23 +23,23 @@ import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
 
 /**
- * {@code IFDocumentHandler} implementation that produces TIFF files.
+ * {@code IFDocumentHandler} implementation that produces PNG files.
  */
-public class TIFFDocumentHandler extends AbstractBitmapDocumentHandler {
+public class PNGDocumentHandler extends AbstractBitmapDocumentHandler {
 
     /** {@inheritDoc} */
     public String getMimeType() {
-        return MimeConstants.MIME_TIFF;
+        return MimeConstants.MIME_PNG;
     }
 
     /** {@inheritDoc} */
     public String getDefaultExtension() {
-        return "tif";
+        return "png";
     }
 
     /** {@inheritDoc} */
     public IFDocumentHandlerConfigurator getConfigurator() {
-        return new TIFFRendererConfigurator(getUserAgent());
+        return new BitmapRendererConfigurator(getUserAgent());
     }
 
 }
