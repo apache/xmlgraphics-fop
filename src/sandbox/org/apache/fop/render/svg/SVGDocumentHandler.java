@@ -45,6 +45,7 @@ import org.xml.sax.helpers.AttributesImpl;
 
 import org.apache.commons.io.IOUtils;
 
+import org.apache.fop.render.bitmap.BitmapRendererEventProducer;
 import org.apache.fop.render.bitmap.MultiFileRenderingUtil;
 import org.apache.fop.render.intermediate.DelegatingFragmentContentHandler;
 import org.apache.fop.render.intermediate.IFException;
@@ -209,9 +210,10 @@ public class SVGDocumentHandler extends AbstractSVGDocumentHandler {
             } else {
                 out = this.multiFileUtil.createOutputStream(index);
                 if (out == null) {
-                    //TODO Convert to event
-                    throw new IFException(
-                            "No filename information available. Stopping after first page.", null);
+                    BitmapRendererEventProducer eventProducer
+                        = BitmapRendererEventProducer.Provider.get(
+                                getUserAgent().getEventBroadcaster());
+                    eventProducer.stoppingAfterFirstPageNoFilename(this);
                 }
             }
         } catch (IOException ioe) {

@@ -19,27 +19,34 @@
 
 package org.apache.fop.render.bitmap;
 
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
-import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
+import org.apache.fop.render.intermediate.AbstractIFDocumentHandlerMaker;
+import org.apache.fop.render.intermediate.IFContext;
+import org.apache.fop.render.intermediate.IFDocumentHandler;
 
 /**
- * {@code IFDocumentHandler} implementation that produces TIFF files.
+ * Document handler factory for PNG output.
  */
-public class TIFFDocumentHandler extends AbstractBitmapDocumentHandler {
+public class PNGDocumentHandlerMaker extends AbstractIFDocumentHandlerMaker {
+
+    private static final String[] MIMES = new String[] {MimeConstants.MIME_PNG};
 
     /** {@inheritDoc} */
-    public String getMimeType() {
-        return MimeConstants.MIME_TIFF;
+    public IFDocumentHandler makeIFDocumentHandler(FOUserAgent ua) {
+        PNGDocumentHandler handler = new PNGDocumentHandler();
+        handler.setContext(new IFContext(ua));
+        return handler;
     }
 
     /** {@inheritDoc} */
-    public String getDefaultExtension() {
-        return "tif";
+    public boolean needsOutputStream() {
+        return true;
     }
 
     /** {@inheritDoc} */
-    public IFDocumentHandlerConfigurator getConfigurator() {
-        return new TIFFRendererConfigurator(getUserAgent());
+    public String[] getSupportedMimeTypes() {
+        return MIMES;
     }
 
 }
