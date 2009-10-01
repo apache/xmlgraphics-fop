@@ -43,13 +43,14 @@ import org.apache.fop.render.RenderingContext;
 import org.apache.fop.render.intermediate.AbstractIFPainter;
 import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFException;
+import org.apache.fop.render.intermediate.IFPainter;
 import org.apache.fop.render.intermediate.IFState;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.traits.RuleStyle;
 import org.apache.fop.util.CharUtilities;
 
 /**
- * {@code IFPainter} implementation that paints on a Graphics2D instance.
+ * {@link IFPainter} implementation that paints on a Graphics2D instance.
  */
 public class Java2DPainter extends AbstractIFPainter {
 
@@ -105,7 +106,7 @@ public class Java2DPainter extends AbstractIFPainter {
     }
 
     /**
-     * Returns the associated {@code FontInfo} object.
+     * Returns the associated {@link FontInfo} object.
      * @return the font info
      */
     protected FontInfo getFontInfo() {

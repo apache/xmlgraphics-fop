@@ -27,12 +27,13 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
 import org.apache.fop.render.intermediate.IFConstants;
+import org.apache.fop.render.intermediate.IFDocumentHandler;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFPainter;
 import org.apache.fop.util.XMLUtil;
 
 /**
- * {@code IFDocumentHandler} implementation that writes SVG Print.
+ * {@link IFDocumentHandler} implementation that writes SVG Print.
  */
 public class SVGPrintDocumentHandler extends AbstractSVGDocumentHandler {
 

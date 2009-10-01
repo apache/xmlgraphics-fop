@@ -37,6 +37,7 @@ import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.render.intermediate.AbstractBinaryWritingIFDocumentHandler;
 import org.apache.fop.render.intermediate.IFContext;
+import org.apache.fop.render.intermediate.IFDocumentHandler;
 import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFPainter;
@@ -45,7 +46,7 @@ import org.apache.fop.render.java2d.Java2DUtil;
 import org.apache.fop.render.pcl.extensions.PCLElementMapping;
 
 /**
- * {@code IFDocumentHandler} implementation that produces PCL 5.
+ * {@link IFDocumentHandler} implementation that produces PCL 5.
  */
 public class PCLDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
             implements PCLConstants {

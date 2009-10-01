@@ -34,7 +34,7 @@ import org.apache.fop.traits.RuleStyle;
 import org.apache.fop.util.ColorUtil;
 
 /**
- * PostScript-specific implementation of the {@code BorderPainter}.
+ * PostScript-specific implementation of the {@link BorderPainter}.
  */
 public class PSBorderPainter extends BorderPainter {
 

@@ -29,6 +29,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.fonts.CustomFontCollection;
+import org.apache.fop.fonts.EmbedFontInfo;
 import org.apache.fop.fonts.FontCollection;
 import org.apache.fop.fonts.FontEventAdapter;
 import org.apache.fop.fonts.FontEventListener;
@@ -84,7 +85,7 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
      * @param cfg the configuration object
      * @param fontResolver a font resolver
      * @param listener the font event listener
-     * @return the list of {@code EmbedFontInfo} objects
+     * @return the list of {@link EmbedFontInfo} objects
      * @throws FOPException if an error occurs while processing the configuration
      */
     protected List/*<EmbedFontInfo>*/ buildFontList(Configuration cfg, FontResolver fontResolver,

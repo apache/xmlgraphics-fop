@@ -84,7 +84,7 @@ public class PCLRenderingUtil {
     /**
      * Configures the renderer to trade speed for quality if desired. One example here is the way
      * that borders are rendered.
-     * @param mode one of the {@code PCLRenderingMode}.* constants
+     * @param mode one of the {@link PCLRenderingMode}.* constants
      */
     public void setRenderingMode(PCLRenderingMode mode) {
         this.renderingMode = mode;

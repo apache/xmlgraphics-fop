@@ -37,7 +37,7 @@ import org.apache.fop.fonts.FontManager;
 import org.apache.fop.fonts.base14.Base14FontCollection;
 
 /**
- * Abstract base class for binary-writing {@code IFDocumentHandler} implementations.
+ * Abstract base class for binary-writing {@link IFDocumentHandler} implementations.
  */
 public abstract class AbstractBinaryWritingIFDocumentHandler extends AbstractIFDocumentHandler {
 
