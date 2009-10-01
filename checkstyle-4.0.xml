@@ -52,22 +52,11 @@
     <module name="EqualsHashCodeCheck">
       <property name="severity" value="warning"/>
     </module>
-    <module name="HiddenFieldCheck">
-      <property name="severity" value="warning"/>
-      <property name="tokens" value="PARAMETER_DEF, VARIABLE_DEF"/>
-      <property name="ignoreConstructorParameter" value="true"/>
-      <property name="ignoreSetter" value="true"/>
-    </module>
     <module name="InnerAssignmentCheck">
       <property name="severity" value="warning"/>
       <property name="tokens" value="ASSIGN, BAND_ASSIGN, BOR_ASSIGN, BSR_ASSIGN, BXOR_ASSIGN, DIV_ASSIGN, MINUS_ASSIGN, MOD_ASSIGN, PLUS_ASSIGN, SL_ASSIGN, SR_ASSIGN, STAR_ASSIGN"/>
     </module>
     <module name="MissingSwitchDefaultCheck">
-      <property name="severity" value="warning"/>
-    </module>
-    <module name="RedundantThrowsCheck">
-      <property name="allowSubclasses" value="false"/>
-      <property name="allowUnchecked" value="false"/>
       <property name="severity" value="warning"/>
     </module>
     <module name="SimplifyBooleanExpressionCheck">
