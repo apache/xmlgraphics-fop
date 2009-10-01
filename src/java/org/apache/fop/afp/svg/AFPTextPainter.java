@@ -25,9 +25,8 @@ import org.apache.fop.afp.AFPGraphics2D;
 import org.apache.fop.svg.AbstractFOPTextPainter;
 import org.apache.fop.svg.FOPTextHandler;
 
-
 /**
- * Renders the attributed character iterator of a <tt>TextNode</tt>.
+ * Renders the attributed character iterator of a {@link TextNode}.
  * This class draws the text directly into the AFPGraphics2D so that
  * the text is not drawn using shapes.
  * If the text is simple enough to draw then it sets the font and calls

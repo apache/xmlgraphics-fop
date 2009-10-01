@@ -35,8 +35,8 @@ import org.apache.fop.fonts.Typeface;
 
 /**
  * FontMetricsMapper that delegates most methods to an underlying
- * <tt>FontMetrics</tt> instance. This class was designed to allow
- * the underlying <tt>java.awt.Font</tt> to be loaded from a
+ * {@link FontMetrics} instance. This class was designed to allow
+ * the underlying {@link java.awt.Font} to be loaded from a
  * user-configured file not registered in the current graphics environment.
  */
 public class CustomFontMetricsMapper extends Typeface implements FontMetricsMapper {
@@ -57,11 +57,11 @@ public class CustomFontMetricsMapper extends Typeface implements FontMetricsMapp
     private float size = 1;
 
     /**
-     * Construction of this class results in the immediate construction.
-     * of the underlying <tt>java.awt.Font</tt>
-     * @param fontMetrics
-     * @throws FontFormatException
-     * @throws IOException
+     * Construction of this class results in the immediate construction
+     * of the underlying {@link java.awt.Font}.
+     * @param fontMetrics the metrics of the custom font
+     * @throws FontFormatException if a bad font is loaded
+     * @throws IOException if an I/O error occurs
      */
     public CustomFontMetricsMapper(final CustomFont fontMetrics)
             throws FontFormatException, IOException {
@@ -71,10 +71,11 @@ public class CustomFontMetricsMapper extends Typeface implements FontMetricsMapp
 
     /**
      * Construction of this class results in the immediate construction
-     * of the underlying <tt>java.awt.Font</tt>
-     * @param fontMetrics
-     * @throws FontFormatException
-     * @throws IOException
+     * of the underlying {@link java.awt.Font}.
+     * @param fontMetrics the font
+     * @param fontSource the font source to access the font
+     * @throws FontFormatException if a bad font is loaded
+     * @throws IOException if an I/O error occurs
      */
     public CustomFontMetricsMapper(final LazyFont fontMetrics, final Source fontSource)
             throws FontFormatException, IOException {
