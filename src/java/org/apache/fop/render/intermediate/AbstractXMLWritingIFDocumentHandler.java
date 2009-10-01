@@ -32,7 +32,7 @@ import org.xml.sax.ContentHandler;
 import org.apache.fop.util.GenerationHelperContentHandler;
 
 /**
- * Abstract base class for XML-writing {@code IFDocumentHandler} implementations.
+ * Abstract base class for XML-writing {@link IFDocumentHandler} implementations.
  */
 public abstract class AbstractXMLWritingIFDocumentHandler extends AbstractIFDocumentHandler {
 

@@ -42,7 +42,7 @@ public class IFUtil {
     }
 
     /**
-     * Converts an {@code AffineTransform} instance to an SVG style transform method.
+     * Converts an {@link AffineTransform} instance to an SVG style transform method.
      * @param transform the transformation matrix
      * @param sb the StringBuffer to write the transform method to
      * @return the StringBuffer passed to this method
@@ -73,7 +73,7 @@ public class IFUtil {
     }
 
     /**
-     * Converts an {@code AffineTransform} array to an SVG style transform method sequence.
+     * Converts an {@link AffineTransform} array to an SVG style transform method sequence.
      * @param transforms the transformation matrix array
      * @param sb the StringBuffer to write the transform method sequence to
      * @return the StringBuffer passed to this method
@@ -89,7 +89,7 @@ public class IFUtil {
     }
 
     /**
-     * Converts an {@code AffineTransform} array to an SVG style transform method sequence.
+     * Converts an {@link AffineTransform} array to an SVG style transform method sequence.
      * @param transforms the transformation matrix array
      * @return the formatted array
      */
@@ -98,7 +98,7 @@ public class IFUtil {
     }
 
     /**
-     * Converts an {@code AffineTransform} instance to an SVG style transform method.
+     * Converts an {@link AffineTransform} instance to an SVG style transform method.
      * @param transform the transformation matrix
      * @return the formatted array
      */

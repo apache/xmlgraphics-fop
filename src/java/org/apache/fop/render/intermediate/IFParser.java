@@ -63,7 +63,7 @@ import org.apache.fop.util.XMLUtil;
 
 /**
  * This is a parser for the intermediate format XML which converts the intermediate file into
- * {@code IFPainter} events.
+ * {@link IFPainter} events.
  */
 public class IFParser implements IFConstants {
 

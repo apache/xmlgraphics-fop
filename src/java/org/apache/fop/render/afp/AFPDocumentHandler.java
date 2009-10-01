@@ -48,12 +48,13 @@ import org.apache.fop.render.afp.extensions.AFPIncludeFormMap;
 import org.apache.fop.render.afp.extensions.AFPInvokeMediumMap;
 import org.apache.fop.render.afp.extensions.AFPPageSetup;
 import org.apache.fop.render.intermediate.AbstractBinaryWritingIFDocumentHandler;
+import org.apache.fop.render.intermediate.IFDocumentHandler;
 import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFPainter;
 
 /**
- * {@code IFDocumentHandler} implementation that produces AFP (MO:DCA).
+ * {@link IFDocumentHandler} implementation that produces AFP (MO:DCA).
  */
 public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
             implements AFPCustomizable {

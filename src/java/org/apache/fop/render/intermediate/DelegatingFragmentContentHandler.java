@@ -29,8 +29,8 @@ import org.xml.sax.ext.LexicalHandler;
 import org.apache.fop.util.DelegatingContentHandler;
 
 /**
- * This class is a {@code DelegatingContentHandler} subclass which swallows the
- * {@code #startDocument()} and {@code #endDocument()} methods. This is useful for handling
+ * This class is a {@link DelegatingContentHandler} subclass which swallows the
+ * {@link #startDocument()} and {@link #endDocument()} methods. This is useful for handling
  * XML fragments.
  */
 public class DelegatingFragmentContentHandler extends DelegatingContentHandler {

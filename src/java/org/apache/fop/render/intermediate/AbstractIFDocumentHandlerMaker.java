@@ -22,13 +22,13 @@ package org.apache.fop.render.intermediate;
 import org.apache.fop.apps.FOUserAgent;
 
 /**
- * Base class for factory classes which instantiate {@code IFDocumentHandler}s and provide
+ * Base class for factory classes which instantiate {@link IFDocumentHandler}s and provide
  * information about them.
  */
 public abstract class AbstractIFDocumentHandlerMaker {
 
     /**
-     * Instantiates a new {@code IFDocumentHandler}.
+     * Instantiates a new {@link IFDocumentHandler}.
      * @param userAgent the user agent
      * @return the newly instantiated document handler
      */

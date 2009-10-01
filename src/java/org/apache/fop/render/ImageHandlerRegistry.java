@@ -50,7 +50,7 @@ public class ImageHandlerRegistry {
         }
     };
 
-    /** Map containing image handlers for various {@code Image} subclasses. */
+    /** Map containing image handlers for various {@link Image} subclasses. */
     private Map handlers = new java.util.HashMap();
     /** List containing the same handlers as above but ordered by priority */
     private List handlerList = new java.util.LinkedList();
@@ -112,7 +112,7 @@ public class ImageHandlerRegistry {
     }
 
     /**
-     * Returns an {@code ImageHandler} which handles an specific image type given the MIME type
+     * Returns an {@link ImageHandler} which handles an specific image type given the MIME type
      * of the image.
      * @param targetContext the target rendering context that is used for identifying compatibility
      * @param image the Image to be handled

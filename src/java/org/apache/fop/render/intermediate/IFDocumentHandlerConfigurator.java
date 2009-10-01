@@ -23,7 +23,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.fonts.FontInfo;
 
 /**
- * This interface is implemented by classes that configure an {@code IFDocumentHandler} instance.
+ * This interface is implemented by classes that configure an {@link IFDocumentHandler} instance.
  */
 public interface IFDocumentHandlerConfigurator {
 
@@ -35,7 +35,7 @@ public interface IFDocumentHandlerConfigurator {
     void configure(IFDocumentHandler documentHandler) throws FOPException;
 
     /**
-     * Sets up the {@code FontInfo} object for the IFDocumentHandler.
+     * Sets up the {@link FontInfo} object for the IFDocumentHandler.
      * @param documentHandler the document handler instance
      * @param fontInfo the font info object to set up
      * @throws FOPException if an error occurs while configuring the object

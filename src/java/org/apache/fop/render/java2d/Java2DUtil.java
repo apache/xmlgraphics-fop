@@ -33,7 +33,7 @@ import org.apache.fop.fonts.FontManager;
 public class Java2DUtil {
 
     /**
-     * Builds a default {@code FontInfo} object for use with output formats using the Java2D
+     * Builds a default {@link FontInfo} object for use with output formats using the Java2D
      * font setup.
      * @param fontInfo the font info object to populate
      * @param userAgent the user agent

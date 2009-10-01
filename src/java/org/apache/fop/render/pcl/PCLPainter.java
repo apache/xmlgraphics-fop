@@ -52,6 +52,7 @@ import org.apache.fop.render.RenderingContext;
 import org.apache.fop.render.intermediate.AbstractIFPainter;
 import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFException;
+import org.apache.fop.render.intermediate.IFPainter;
 import org.apache.fop.render.intermediate.IFState;
 import org.apache.fop.render.java2d.FontMetricsMapper;
 import org.apache.fop.render.java2d.Java2DPainter;
@@ -60,7 +61,7 @@ import org.apache.fop.traits.RuleStyle;
 import org.apache.fop.util.CharUtilities;
 
 /**
- * {@code IFPainter} implementation that produces PCL 5.
+ * {@link IFPainter} implementation that produces PCL 5.
  */
 public class PCLPainter extends AbstractIFPainter implements PCLConstants {
 

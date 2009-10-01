@@ -95,7 +95,7 @@ public abstract class PCLRenderingContext extends AbstractRenderingContext {
     public abstract Point2D transformedPoint(int x, int y);
 
     /**
-     * Returns the current {@code GraphicContext} instance.
+     * Returns the current {@link GraphicContext} instance.
      * @return the graphic context
      */
     public abstract GraphicContext getGraphicContext();

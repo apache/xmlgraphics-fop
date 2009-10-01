@@ -24,9 +24,9 @@ import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
 /**
- * This class provides a cache for {@code DecimalFormat} instance. {@code DecimalFormat} itself
+ * This class provides a cache for {@link DecimalFormat} instance. {@link DecimalFormat} itself
  * is not thread-safe but since FOP needs to format a lot of numbers the same way, it shall
- * be cached in a {@code ThreadLocal}.
+ * be cached in a {@link ThreadLocal}.
  */
 public class DecimalFormatCache {
 
@@ -59,7 +59,7 @@ public class DecimalFormatCache {
     }
 
     /**
-     * Returns a cached {@code DecimalFormat} instance for the given number of decimal digits.
+     * Returns a cached {@link DecimalFormat} instance for the given number of decimal digits.
      * @param dec the number of decimal digits.
      * @return the DecimalFormat instance
      */

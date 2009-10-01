@@ -20,10 +20,11 @@
 package org.apache.fop.render.bitmap;
 
 import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.render.intermediate.IFDocumentHandler;
 import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
 
 /**
- * {@code IFDocumentHandler} implementation that produces PNG files.
+ * {@link IFDocumentHandler} implementation that produces PNG files.
  */
 public class PNGDocumentHandler extends AbstractBitmapDocumentHandler {
 
