@@ -180,7 +180,7 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder {
     }
 
     /**
-     * Creates a <tt>DocumentFactory</tt> that is used to create an SVG DOM
+     * Creates a {@link DocumentFactory} that is used to create an SVG DOM
      * tree. The specified DOM Implementation is ignored and the Batik
      * SVG DOM Implementation is automatically used.
      *
@@ -326,7 +326,7 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder {
     protected class FOPTranscoderUserAgent extends SVGAbstractTranscoderUserAgent {
 
         /**
-         * Displays the specified error message using the <tt>ErrorHandler</tt>.
+         * Displays the specified error message using the {@link ErrorHandler}.
          * @param message the message to display
          */
         public void displayError(String message) {
@@ -338,7 +338,7 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder {
         }
 
         /**
-         * Displays the specified error using the <tt>ErrorHandler</tt>.
+         * Displays the specified error using the {@link ErrorHandler}.
          * @param e the exception to display
          */
         public void displayError(Exception e) {
@@ -350,7 +350,7 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder {
         }
 
         /**
-         * Displays the specified message using the <tt>ErrorHandler</tt>.
+         * Displays the specified message using the {@link ErrorHandler}.
          * @param message the message to display
          */
         public void displayMessage(String message) {
@@ -359,7 +359,7 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder {
 
         /**
          * Returns the pixel to millimeter conversion factor specified in the
-         * <tt>TranscodingHints</tt> or 0.3528 if any.
+         * {@link TranscodingHints} or 0.3528 if any.
          * @return the pixel unit to millimeter factor
          */
         public float getPixelUnitToMillimeter() {

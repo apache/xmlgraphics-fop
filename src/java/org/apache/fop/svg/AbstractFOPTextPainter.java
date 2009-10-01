@@ -49,9 +49,8 @@ import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
 
-
 /**
- * Renders the attributed character iterator of a <tt>TextNode</tt>.
+ * Renders the attributed character iterator of a {@link TextNode}.
  * This class draws the text directly into the Graphics2D so that
  * the text is not drawn using shapes.
  * If the text is simple enough to draw then it sets the font and calls
