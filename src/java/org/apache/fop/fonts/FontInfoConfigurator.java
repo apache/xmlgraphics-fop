@@ -33,6 +33,7 @@ import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fonts.autodetect.FontFileFinder;
 import org.apache.fop.fonts.autodetect.FontInfoFinder;
@@ -83,7 +84,7 @@ public class FontInfoConfigurator {
             }
 
             FontAdder fontAdder = new FontAdder(fontManager, fontResolver, listener);
-            
+
             // native o/s search (autodetect) configuration
             boolean autodetectFonts = (fonts.getChild("auto-detect", false) != null);
             if (autodetectFonts) {
@@ -93,13 +94,21 @@ public class FontInfoConfigurator {
 
             // Add configured directories to FontInfo
             addDirectories(fonts, fontAdder, fontInfoList);
-            
+
             // Add configured fonts to FontInfo
             FontCache fontCache = fontManager.getFontCache();
             addFonts(fonts, fontCache, fontInfoList);
 
             // Update referenced fonts (fonts which are not to be embedded)
             fontManager.updateReferencedFonts(fontInfoList);
+
+            // Renderer-specific referenced fonts
+            Configuration referencedFontsCfg = fonts.getChild("referenced-fonts", false);
+            if (referencedFontsCfg != null) {
+                FontTriplet.Matcher matcher = FontManagerConfigurator.createFontsMatcher(
+                        referencedFontsCfg, strict);
+                fontManager.updateReferencedFonts(fontInfoList, matcher);
+            }
 
             // Update font cache if it has changed
             if (fontCache != null && fontCache.hasChanged()) {
@@ -112,7 +121,7 @@ public class FontInfoConfigurator {
             }
         }
     }
-    
+
     private void addDirectories(Configuration fontsCfg,
             FontAdder fontAdder, List/*<URL>*/ fontInfoList) throws FOPException {
         // directory (multiple font) configuration
@@ -131,7 +140,7 @@ public class FontInfoConfigurator {
                         new FOPException("directory defined without value"), strict);
                 continue;
             }
-            
+
             // add fonts found in directory
             FontFileFinder fontFileFinder = new FontFileFinder(recursive ? -1 : 1);
             List/*<URL>*/ fontURLList;
@@ -145,7 +154,7 @@ public class FontInfoConfigurator {
     }
 
     /**
-     * Populates the font info list from the fonts configuration 
+     * Populates the font info list from the fonts configuration
      * @param fontsCfg a fonts configuration
      * @param fontCache a font cache
      * @param fontInfoList a font info list
@@ -163,7 +172,7 @@ public class FontInfoConfigurator {
             }
         }
     }
-    
+
     private static void closeSource(Source src) {
         if (src instanceof StreamSource) {
             StreamSource streamSource = (StreamSource)src;
