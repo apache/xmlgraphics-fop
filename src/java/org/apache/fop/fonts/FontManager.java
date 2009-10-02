@@ -190,11 +190,21 @@ public class FontManager {
     }
 
     /**
-     * Updates the referenced font list
+     * Updates the referenced font list using the FontManager's referenced fonts matcher
+     * ({@link #getReferencedFontsMatcher()}).
      * @param fontInfoList a font info list
      */
     public void updateReferencedFonts(List fontInfoList) {
         Matcher matcher = getReferencedFontsMatcher();
+        updateReferencedFonts(fontInfoList, matcher);
+    }
+
+    /**
+     * Updates the referenced font list.
+     * @param fontInfoList a font info list
+     * @param matcher the font triplet matcher to use
+     */
+    public void updateReferencedFonts(List fontInfoList, Matcher matcher) {
         if (matcher == null) {
             return; //No referenced fonts
         }

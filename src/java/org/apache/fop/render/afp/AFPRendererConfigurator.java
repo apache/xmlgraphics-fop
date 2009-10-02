@@ -43,6 +43,7 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fonts.FontCollection;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontManager;
+import org.apache.fop.fonts.FontManagerConfigurator;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.FontUtil;
 import org.apache.fop.fonts.Typeface;
@@ -71,9 +72,7 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
             throws ConfigurationException {
 
         FontManager fontManager = this.userAgent.getFactory().getFontManager();
-        FontTriplet.Matcher referencedFontsMatcher = fontManager.getReferencedFontsMatcher();
 
-        boolean embeddable = true;
         Configuration[] triple = fontCfg.getChildren("font-triplet");
         List/*<FontTriplet>*/ tripletList = new java.util.ArrayList/*<FontTriplet>*/();
         if (triple.length == 0) {
@@ -85,9 +84,6 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
             FontTriplet triplet = new FontTriplet(triple[j].getAttribute("name"),
                     triple[j].getAttribute("style"),
                     weight);
-            if (referencedFontsMatcher != null && referencedFontsMatcher.matches(triplet)) {
-                embeddable = false;
-            }
             tripletList.add(triplet);
         }
 
@@ -142,7 +138,6 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
 
             // Create a new font object
             RasterFont font = new RasterFont(name);
-            font.setEmbeddable(embeddable);
 
             Configuration[] rasters = afpFontCfg.getChildren("afp-raster-font");
             if (rasters.length == 0) {
@@ -220,7 +215,6 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
             }
             // Create a new font object
             OutlineFont font = new OutlineFont(name, characterSet);
-            font.setEmbeddable(embeddable);
             return new AFPFontInfo(font, tripletList);
         } else {
             log.error("No or incorrect type attribute");
@@ -236,24 +230,49 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
      * @throws ConfigurationException if something's wrong with the config data
      */
     private List/*<AFPFontInfo>*/ buildFontListFromConfiguration(Configuration cfg)
-            throws ConfigurationException {
+            throws FOPException, ConfigurationException {
+
+        Configuration fonts = cfg.getChild("fonts");
+        FontManager fontManager = this.userAgent.getFactory().getFontManager();
+
+        // General matcher
+        FontTriplet.Matcher referencedFontsMatcher = fontManager.getReferencedFontsMatcher();
+        // Renderer-specific matcher
+        FontTriplet.Matcher localMatcher = null;
+
+        // Renderer-specific referenced fonts
+        Configuration referencedFontsCfg = fonts.getChild("referenced-fonts", false);
+        if (referencedFontsCfg != null) {
+            localMatcher = FontManagerConfigurator.createFontsMatcher(
+                    referencedFontsCfg, this.userAgent.getFactory().validateUserConfigStrictly());
+        }
+
         List/*<AFPFontInfo>*/ fontList = new java.util.ArrayList();
-        Configuration[] font = cfg.getChild("fonts").getChildren("font");
+        Configuration[] font = fonts.getChildren("font");
         final String fontPath = null;
         for (int i = 0; i < font.length; i++) {
             AFPFontInfo afi = buildFont(font[i], fontPath);
             if (afi != null) {
                 if (log.isDebugEnabled()) {
                     log.debug("Adding font " + afi.getAFPFont().getFontName());
-                    List/*<FontTriplet>*/ fontTriplets = afi.getFontTriplets();
-                    for (int j = 0; j < fontTriplets.size(); ++j) {
-                        FontTriplet triplet = (FontTriplet) fontTriplets.get(j);
+                }
+                List/*<FontTriplet>*/ fontTriplets = afi.getFontTriplets();
+                for (int j = 0; j < fontTriplets.size(); ++j) {
+                    FontTriplet triplet = (FontTriplet) fontTriplets.get(j);
+                    if (log.isDebugEnabled()) {
                         log.debug("  Font triplet "
                                   + triplet.getName() + ", "
                                   + triplet.getStyle() + ", "
                                   + triplet.getWeight());
                     }
+
+                    if (referencedFontsMatcher.matches(triplet)
+                            || (localMatcher != null && localMatcher.matches(triplet))) {
+                        afi.getAFPFont().setEmbeddable(false);
+                        break;
+                    }
                 }
+
                 fontList.add(afi);
             }
         }
