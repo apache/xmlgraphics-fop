@@ -19,7 +19,6 @@
 
 package org.apache.fop.render.bitmap;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.List;
@@ -80,8 +79,6 @@ public class BitmapRendererConfigurator extends Java2DRendererConfigurator
                 if (background != null) {
                     settings.setPageBackgroundColor(
                             ColorUtil.parseColorString(this.userAgent, background));
-                } else {
-                    settings.setPageBackgroundColor(Color.WHITE);
                 }
             }
 
@@ -105,6 +102,8 @@ public class BitmapRendererConfigurator extends Java2DRendererConfigurator
                 } else if ("gray".equalsIgnoreCase(color)) {
                     settings.setBufferedImageType(BufferedImage.TYPE_BYTE_GRAY);
                 } else if ("binary".equalsIgnoreCase(color)) {
+                    settings.setBufferedImageType(BufferedImage.TYPE_BYTE_BINARY);
+                } else if ("bi-level".equalsIgnoreCase(color)) {
                     settings.setBufferedImageType(BufferedImage.TYPE_BYTE_BINARY);
                 } else {
                     throw new FOPException("Invalid value for color-mode: " + color);

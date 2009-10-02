@@ -58,6 +58,10 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="JM" type="add">
+        Added support for creating thumbnails or preview bitmaps of fixed size for PNG and TIFF
+        output.
+      </action>
       <action context="Extensions" dev="JM" type="add">
         Added support for the #CMYK pseudo-profile supported by some commercial XSL implementations
         on the rgb-icc() function.
