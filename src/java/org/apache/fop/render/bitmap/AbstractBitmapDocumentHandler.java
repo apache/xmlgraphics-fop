@@ -307,13 +307,14 @@ public abstract class AbstractBitmapDocumentHandler extends AbstractBinaryWritin
                             = BitmapRendererEventProducer.Provider.get(
                                     getUserAgent().getEventBroadcaster());
                         eventProducer.stoppingAfterFirstPageNoFilename(this);
-                    }
-                    try {
-                        this.imageWriter.writeImage(
-                                this.currentImage, out,
-                                getSettings().getWriterParams());
-                    } finally {
-                        IOUtils.closeQuietly(out);
+                    } else {
+                        try {
+                            this.imageWriter.writeImage(
+                                    this.currentImage, out,
+                                    getSettings().getWriterParams());
+                        } finally {
+                            IOUtils.closeQuietly(out);
+                        }
                     }
                 }
             } else {
