@@ -29,7 +29,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Stack;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -215,7 +214,11 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
             if (id != null) {
                 atts.addAttribute(XML_NAMESPACE, "id", "xml:id", XMLUtil.CDATA, id);
             }
-            applyLanguage(atts);
+            Locale lang = getContext().getLanguage();
+            if (lang != null) {
+                atts.addAttribute(XML_NAMESPACE, "lang", "xml:lang", XMLUtil.CDATA,
+                        XMLUtil.toRFC3066(lang));
+            }
             addForeignAttributes(atts);
             handler.startElement(EL_PAGE_SEQUENCE, atts);
             if (this.getUserAgent().isAccessibilityEnabled()) {
@@ -237,7 +240,6 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     public void endPageSequence() throws IFException {
         try {
             handler.endElement(EL_PAGE_SEQUENCE);
-            popLanguage();
         } catch (SAXException e) {
             throw new IFException("SAX error in endPageSequence()", e);
         }
@@ -769,27 +771,6 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
             object.toSAX(handler);
         } catch (SAXException e) {
             throw new IFException("SAX error serializing object", e);
-        }
-    }
-
-    private Stack languageStack = new Stack();
-
-    private void applyLanguage(AttributesImpl atts) {
-        Locale lang = getContext().getLanguage();
-        if (lang != null) {
-            if (languageStack.isEmpty() || !languageStack.peek().equals(lang)) {
-                atts.addAttribute(XML_NAMESPACE, "lang", "xml:lang", XMLUtil.CDATA,
-                        XMLUtil.toRFC3066(lang));
-            }
-            languageStack.push(lang);
-        } else {
-            assert languageStack.isEmpty();
-        }
-    }
-
-    private void popLanguage() {
-        if (!languageStack.isEmpty()) {
-            languageStack.pop();
         }
     }
 
