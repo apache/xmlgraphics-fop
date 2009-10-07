@@ -419,7 +419,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
         }
     }
 
-    private void addForeignAttributes(AttributesImpl atts) {
+    private void addForeignAttributes(AttributesImpl atts) throws SAXException {
         Map foreignAttributes = getContext().getForeignAttributes();
         if (!foreignAttributes.isEmpty()) {
             Iterator iter = foreignAttributes.entrySet().iterator();
@@ -646,7 +646,8 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     }
 
     private void addAttribute(AttributesImpl atts,
-            org.apache.xmlgraphics.util.QName attribute, String value) {
+            org.apache.xmlgraphics.util.QName attribute, String value) throws SAXException {
+        handler.startPrefixMapping(attribute.getPrefix(), attribute.getNamespaceURI());
         XMLUtil.addAttribute(atts, attribute, value);
     }
 
@@ -725,6 +726,9 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
         AttributesImpl atts = new AttributesImpl();
         atts.addAttribute(null, "rect", "rect",
                 XMLConstants.CDATA, IFUtil.toString(link.getTargetRect()));
+        if (getUserAgent().isAccessibilityEnabled()) {
+            addAttribute(atts, "ptr", link.getAction().getPtr());
+        }
         try {
             handler.startElement(DocumentNavigationExtensionConstants.LINK, atts);
             serializeXMLizable(link.getAction());

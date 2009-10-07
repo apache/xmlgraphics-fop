@@ -33,8 +33,6 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.sax.SAXTransformerFactory;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.xml.sax.Attributes;
@@ -42,6 +40,9 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 import org.xml.sax.helpers.DefaultHandler;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import org.apache.xmlgraphics.util.QName;
 
@@ -550,8 +551,7 @@ public class IFParser implements IFConstants {
                 s = lastAttributes.getValue("word-spacing");
                 int wordSpacing = (s != null ? Integer.parseInt(s) : 0);
                 int[] dx = XMLUtil.getAttributeAsIntArray(lastAttributes, "dx");
-                String ptr = lastAttributes.getValue("ptr"); // used for accessibility
-                establishStructurePointer(ptr);
+                setAccessibilityPointer(lastAttributes);
                 painter.drawText(x, y, letterSpacing, wordSpacing, dx, content.toString());
                 resetStructurePointer();
             }
@@ -648,8 +648,7 @@ public class IFParser implements IFConstants {
                 int height = Integer.parseInt(lastAttributes.getValue("height"));
                 Map foreignAttributes = getForeignAttributes(lastAttributes);
                 establishForeignAttributes(foreignAttributes);
-                String ptr = lastAttributes.getValue("ptr"); // used for accessibility
-                establishStructurePointer(ptr);
+                setAccessibilityPointer(lastAttributes);
                 if (foreignObject != null) {
                     painter.drawImage(foreignObject,
                             new Rectangle(x, y, width, height));
@@ -715,6 +714,13 @@ public class IFParser implements IFConstants {
                 }
             }
             return foreignAttributes;
+        }
+
+        private void setAccessibilityPointer(Attributes attributes) {
+            String ptr = attributes.getValue("ptr");
+            if (ptr != null && ptr.length() > 0) {
+                establishStructurePointer(ptr);
+            }
         }
 
         /** {@inheritDoc} */
