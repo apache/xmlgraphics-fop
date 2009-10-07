@@ -266,7 +266,7 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
                                   + triplet.getWeight());
                     }
 
-                    if (referencedFontsMatcher.matches(triplet)
+                    if ((referencedFontsMatcher != null && referencedFontsMatcher.matches(triplet))
                             || (localMatcher != null && localMatcher.matches(triplet))) {
                         afi.getAFPFont().setEmbeddable(false);
                         break;
