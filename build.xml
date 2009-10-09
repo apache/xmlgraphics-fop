@@ -1234,9 +1234,23 @@ NOTE:
 <!-- Creates the distribution                                            -->
 <!-- =================================================================== -->
   <target name="dist" depends="dist-prereq,dist-src,dist-bin" description="Generates the distribution package"/>
-  <target name="dist-prereq" depends="init">
+  <target name="dist-prereq" depends="init,dist-get-jai">
     <fail message="A complete binary build requires JAI" unless="jai.present"/>
     <fail message="A complete binary build requires JCE" unless="jce.present"/>
+  </target>
+  <target name="dist-get-jai" description="Attempts to download the JAI library dependency" unless="jai.present">
+    <echo message="JAI Support NOT present - attempting to download... "/>
+    <get src="http://download.java.net/media/jai/builds/release/1_1_3/jai-1_1_3-lib.zip" dest="${java.io.tmpdir}/jai-1_1_3-lib.zip" verbose="true" />
+    <unzip src="${java.io.tmpdir}/jai-1_1_3-lib.zip" dest="${java.io.tmpdir}">
+      <patternset>
+        <include name="jai-1_1_3/lib/*"/>
+      </patternset>
+    </unzip>
+    <copy todir="${basedir}/lib" file="${java.io.tmpdir}/jai-1_1_3/lib/jai_core.jar" />
+    <copy todir="${basedir}/lib" file="${java.io.tmpdir}/jai-1_1_3/lib/jai_codec.jar" />
+    <delete dir="${java.io.tmpdir}/jai-1_1_3" />
+    <delete file="${java.io.tmpdir}/jai-1_1_3-lib.zip" />
+    <property name="jai.present" value="true"/>
   </target>
   <target name="dist-bin" depends="all,javadocs,docs">
     <echo message="Building the binary distribution files (zip,tar)"/>
