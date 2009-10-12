@@ -29,9 +29,6 @@ import java.io.IOException;
 
 import org.w3c.dom.Document;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
@@ -47,6 +44,7 @@ import org.apache.fop.render.intermediate.AbstractIFPainter;
 import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFState;
+import org.apache.fop.render.pdf.PDFLogicalStructureHandler.MarkedContentInfo;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.traits.RuleStyle;
 import org.apache.fop.util.CharUtilities;
@@ -56,9 +54,6 @@ import org.apache.fop.util.CharUtilities;
  */
 public class PDFPainter extends AbstractIFPainter {
 
-    /** logging instance */
-    private static Log log = LogFactory.getLog(PDFPainter.class);
-
     private final PDFDocumentHandler documentHandler;
 
     /** The current content generator */
@@ -66,19 +61,22 @@ public class PDFPainter extends AbstractIFPainter {
 
     private final PDFBorderPainter borderPainter;
 
-    private boolean accessEnabled = false;
+    private boolean accessEnabled;
 
-    private int mcid; // used for accessibility
+    private MarkedContentInfo imageMCI;
 
-    private String structElemType; // used for accessibility
+    private PDFLogicalStructureHandler logicalStructureHandler;
 
     /**
      * Default constructor.
      * @param documentHandler the parent document handler
+     * @param logicalStructureHandler the logical structure handler
      */
-    public PDFPainter(PDFDocumentHandler documentHandler) {
+    public PDFPainter(PDFDocumentHandler documentHandler,
+            PDFLogicalStructureHandler logicalStructureHandler) {
         super();
         this.documentHandler = documentHandler;
+        this.logicalStructureHandler = logicalStructureHandler;
         this.generator = documentHandler.generator;
         this.borderPainter = new PDFBorderPainter(this.generator);
         this.state = IFState.create();
@@ -137,52 +135,29 @@ public class PDFPainter extends AbstractIFPainter {
                 String ptr = getContext().getStructurePointer();
                 prepareImageMCID(ptr);
                 placeImageAccess(rect, xobject);
-                addImageMCID(ptr);
             } else {
                 placeImage(rect, xobject);
             }
-            return;
-        }
-        if (accessEnabled && getContext().hasStructurePointer()) {
-            String ptr = getContext().getStructurePointer();
-            prepareImageMCID(ptr);
-            drawImageUsingURI(uri, rect);
-            addImageMCID(ptr);
         } else {
+            if (accessEnabled && getContext().hasStructurePointer()) {
+                String ptr = getContext().getStructurePointer();
+                prepareImageMCID(ptr);
+            }
             drawImageUsingURI(uri, rect);
+            flushPDFDoc();
         }
-        flushPDFDoc();
     }
 
     private void prepareImageMCID(String ptr) {
-        mcid = this.documentHandler.getMCID();
-        mcid++;                          // fix for Acro Checker
-        this.documentHandler.incMCID();  // simulating a parent text element
-        structElemType = this.documentHandler.getStructElemType(ptr);
-        if (structElemType != null) {
-            this.documentHandler.addToTempList(
-                    this.documentHandler.getCurrentParentTreeKey(),
-                    this.documentHandler.getParentTrailerObject(ptr));
-            this.documentHandler.addToTempList(
-                    this.documentHandler.getCurrentParentTreeKey(),
-                    this.documentHandler.getTrailerObject(ptr));
-        }
-    }
-
-    private void addImageMCID(String ptr) {
-        if (this.structElemType != null) {
-            this.documentHandler.addChildToStructElemImage(ptr, mcid);
-            this.documentHandler.incMCID();
-        }
-        //If structElemType is null, it means "Artifact" mode (ex. leader with use-content).
+        imageMCI = logicalStructureHandler.addImageContentItem(ptr);
     }
 
     /** {@inheritDoc} */
     protected RenderingContext createRenderingContext() {
         PDFRenderingContext pdfContext = new PDFRenderingContext(
                 getUserAgent(), generator, this.documentHandler.currentPage, getFontInfo());
-        pdfContext.setMCID(mcid);
-        pdfContext.setStructElemType(structElemType);
+        pdfContext.setMCID(imageMCI.mcid);
+        pdfContext.setStructElemType(imageMCI.tag);
         return pdfContext;
     }
 
@@ -212,7 +187,7 @@ public class PDFPainter extends AbstractIFPainter {
      * @param xobj the image XObject
      */
     private void placeImageAccess(Rectangle rect, PDFXObject xobj) {
-        generator.saveGraphicsState(structElemType, mcid);
+        generator.saveGraphicsState(imageMCI.tag, imageMCI.mcid);
         generator.add(format(rect.width) + " 0 0 "
                           + format(-rect.height) + " "
                           + format(rect.x) + " "
@@ -226,11 +201,8 @@ public class PDFPainter extends AbstractIFPainter {
         if (accessEnabled && getContext().hasStructurePointer()) {
             String ptr = getContext().getStructurePointer();
             prepareImageMCID(ptr);
-            drawImageUsingDocument(doc, rect);
-            addImageMCID(ptr);
-        } else {
-            drawImageUsingDocument(doc, rect);
         }
+        drawImageUsingDocument(doc, rect);
         flushPDFDoc();
     }
 
@@ -326,21 +298,13 @@ public class PDFPainter extends AbstractIFPainter {
             throws IFException {
         if (accessEnabled) {
             String ptr = getContext().getStructurePointer();
-            int mcId;
-            String structElType = null;
             if (ptr != null && ptr.length() > 0) {
-                mcId = this.documentHandler.getMCID();
-                structElType = this.documentHandler.getStructElemType(ptr);
-                this.documentHandler.addToTempList(
-                        this.documentHandler.getCurrentParentTreeKey(),
-                        this.documentHandler.getTrailerObject(ptr));
+                MarkedContentInfo mci = logicalStructureHandler.addTextContentItem(ptr);
                 if (generator.getTextUtil().isInTextObject()) {
-                    generator.separateTextElements(mcId, structElType);
+                    generator.separateTextElements(mci.mcid, mci.tag);
                 }
                 generator.updateColor(state.getTextColor(), true, null);
-                generator.beginTextObjectAccess(mcId, structElType);
-                this.documentHandler.addChildToStructElemText(ptr, mcId);
-                this.documentHandler.incMCID();
+                generator.beginTextObjectAccess(mci.mcid, mci.tag);
             } else {
                 // <fo:leader leader-pattern="use-content">
                 // Leader content is marked as "/Artifact"

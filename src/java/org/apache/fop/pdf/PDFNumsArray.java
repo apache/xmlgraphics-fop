@@ -57,8 +57,26 @@ public class PDFNumsArray extends PDFObject {
      * @param key the key of the value to set
      * @param obj the new value
      */
+    public void put(Integer key, Object obj) {
+        this.map.put(key, obj);
+    }
+
+    /**
+     * Sets an entry.
+     * @param key the key of the value to set
+     * @param obj the new value
+     */
     public void put(int key, Object obj) {
-        this.map.put(new Integer(key), obj);
+        put(new Integer(key), obj);
+    }
+
+    /**
+     * Gets an entry.
+     * @param key the key of requested value
+     * @return the requested value
+     */
+    public Object get(Integer key) {
+        return this.map.get(key);
     }
 
     /**
@@ -67,7 +85,7 @@ public class PDFNumsArray extends PDFObject {
      * @return the requested value
      */
     public Object get(int key) {
-        return this.map.get(new Integer(key));
+        return get(new Integer(key));
     }
 
     /** {@inheritDoc} */

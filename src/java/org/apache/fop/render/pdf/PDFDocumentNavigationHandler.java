@@ -117,10 +117,7 @@ public class PDFDocumentNavigationHandler implements IFDocumentNavigationHandler
           //accessibility: ptr has a value
             String ptr = link.getAction().getPtr();
             if (ptr != null && ptr.length() > 0) {
-                this.documentHandler.addLinkToStructElem(ptr, pdfLink);
-                int id = this.documentHandler.getPageLinkCountPlusPageParentKey();
-                pdfLink.setStructParent(id);
-                this.documentHandler.addToParentTree(id, pdfLink );
+                documentHandler.getLogicalStructureHandler().addLinkContentItem(pdfLink, ptr);
             }
             documentHandler.currentPage.addAnnotation(pdfLink);
         }

@@ -185,20 +185,12 @@ public class PDFFactory {
      */
     public PDFPage makePage(PDFResources resources, int pageIndex,
                             Rectangle2D mediaBox, Rectangle2D cropBox,
-                            Rectangle2D bleedBox, Rectangle2D trimBox,
-                            int currentPageParentKey) {
+                            Rectangle2D bleedBox, Rectangle2D trimBox) {
         /*
          * create a PDFPage with the next object number, the given
          * resources, contents and dimensions
          */
         PDFPage page = new PDFPage(resources, pageIndex, mediaBox, cropBox, bleedBox, trimBox);
-        if (currentPageParentKey > -1) {
-            //Accessibility is enabled
-            page.setStructParents(currentPageParentKey);
-            //This is a PDF 1.5 feature. It is set as a work-around for a bug in Adobe Acrobat
-            //which reports this missing even if the PDF file is PDF 1.4.
-            page.setTabs(new PDFName("S"));
-        }
 
         getDocument().assignObjectNumber(page);
         getDocument().getPages().addPage(page);
@@ -220,7 +212,7 @@ public class PDFFactory {
     public PDFPage makePage(PDFResources resources,
                             int pageWidth, int pageHeight, int pageIndex) {
         Rectangle2D mediaBox = new Rectangle2D.Double(0, 0, pageWidth, pageHeight);
-        return makePage(resources, pageIndex, mediaBox, mediaBox, mediaBox, mediaBox, -1);
+        return makePage(resources, pageIndex, mediaBox, mediaBox, mediaBox, mediaBox);
     }
 
     /**
@@ -897,13 +889,31 @@ public class PDFFactory {
 
     /**
      * Creates and returns a StructTreeRoot object. Used for accessibility.
+     * @param parentTree the value of the ParenTree entry
      * @return structure Tree Root element
      */
-    public PDFStructTreeRoot makeStructTreeRoot() {
-        PDFStructTreeRoot structTreeRoot = new PDFStructTreeRoot();
+    public PDFStructTreeRoot makeStructTreeRoot(PDFParentTree parentTree) {
+        PDFStructTreeRoot structTreeRoot = new PDFStructTreeRoot(parentTree);
         getDocument().assignObjectNumber(structTreeRoot);
         getDocument().addTrailerObject(structTreeRoot);
+        getDocument().getRoot().setStructTreeRoot(structTreeRoot);
         return structTreeRoot;
+    }
+
+    /**
+     * Creates and returns a StructElem object.
+     *
+     * @param structureType the structure type of the new element (value for the
+     * S entry)
+     * @param parent the parent of the new structure element in the structure
+     * hierarchy
+     * @return the newly created element
+     */
+    public PDFStructElem makeStructureElement(PDFName structureType, PDFObject parent) {
+        PDFStructElem structElem = new PDFStructElem(parent, structureType);
+        getDocument().assignObjectNumber(structElem);
+        getDocument().addTrailerObject(structElem);
+        return structElem;
     }
 
     /**

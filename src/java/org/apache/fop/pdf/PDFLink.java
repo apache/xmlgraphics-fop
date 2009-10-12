@@ -71,11 +71,12 @@ public class PDFLink extends PDFObject {
 
 
     /**
-     * Used for accessibility
-     * @param mcid of this structParent
+     * Sets the value of the StructParent entry for this link.
+     *
+     * @param structParent key in the structure parent tree
      */
-    public void setStructParent(int mcid) {
-        this.structParent = new Integer(mcid);
+    public void setStructParent(int structParent) {
+        this.structParent = new Integer(structParent);
     }
 
     /**

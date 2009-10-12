@@ -160,6 +160,18 @@ public class PDFPage extends PDFResourceContext {
      */
     public void setStructParents(int structParents) {
         put("StructParents", structParents);
+        //This is a PDF 1.5 feature. It is set as a work-around for a bug in Adobe Acrobat
+        //which reports this missing even if the PDF file is PDF 1.4.
+        setTabs(new PDFName("S"));
+    }
+
+    /**
+     * Returns the value of the StructParents entry.
+     *
+     * @return the StructParents value, <code>null</code> if the entry has not been set
+     */
+    public Integer getStructParents() {
+        return (Integer) get("StructParents");
     }
 
     /**

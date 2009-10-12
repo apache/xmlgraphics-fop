@@ -28,7 +28,7 @@ import org.apache.fop.pdf.PDFStructElem;
 /**
  * This class provides the standard mappings from Formatting Objects to PDF structure types.
  */
-public class FOToPDFRoleMap {
+public final class FOToPDFRoleMap {
 
     private static final Map STANDARD_MAPPINGS = new java.util.HashMap();
 
@@ -138,4 +138,5 @@ public class FOToPDFRoleMap {
 
     }
 
+    private FOToPDFRoleMap() { }
 }
