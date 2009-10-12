@@ -951,6 +951,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer implements PDFConf
     public void renderViewport(Viewport viewport) {
         imageReference = (String) viewport.getTrait(Trait.PTR);
         super.renderViewport(viewport);
+        imageReference = null;
     }
 
     private Typeface getTypeface(String fontName) {
