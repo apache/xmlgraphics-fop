@@ -219,10 +219,10 @@ public class PDFContentGenerator {
 
     /**
      * used for accessibility, separates 2 text elements
-     * @param mcid of new text element
      * @param structElemType of parent of new text element
+     * @param mcid of new text element
      */
-    protected void separateTextElements(int mcid, String structElemType) {
+    protected void separateTextElements(String structElemType, int mcid) {
         textutil.endTextObject();
         endMarkedContentSequence();
         beginMarkedContentSequence(structElemType, mcid);
@@ -235,7 +235,7 @@ public class PDFContentGenerator {
      */
     public void separateTextElementFromLeader() {
         if (!inArtifactMode) {
-            separateTextElements(0, null);
+            separateTextElements(null, 0);
         }
     }
 
@@ -248,10 +248,10 @@ public class PDFContentGenerator {
 
     /**
      * Accessibility beginTextObject
-     * @param mcid of text element
      * @param structElemType of parent
+     * @param mcid of text element
      */
-    protected void beginTextObjectAccess(int mcid, String structElemType) {
+    protected void beginTextObjectAccess(String structElemType, int mcid) {
         if (!textutil.isInTextObject()) {
             beginMarkedContentSequence(structElemType, mcid);
             textutil.beginTextObject();
@@ -262,7 +262,7 @@ public class PDFContentGenerator {
      * Accessibility begin of LeaderTextObject
      */
     public void beginLeaderTextObject() {
-        beginTextObjectAccess(0, null);
+        beginTextObjectAccess(null, 0);
     }
 
     /** Indicates the end of a text object. */

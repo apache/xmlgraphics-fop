@@ -301,10 +301,10 @@ public class PDFPainter extends AbstractIFPainter {
             if (ptr != null && ptr.length() > 0) {
                 MarkedContentInfo mci = logicalStructureHandler.addTextContentItem(ptr);
                 if (generator.getTextUtil().isInTextObject()) {
-                    generator.separateTextElements(mci.mcid, mci.tag);
+                    generator.separateTextElements(mci.tag, mci.mcid);
                 }
                 generator.updateColor(state.getTextColor(), true, null);
-                generator.beginTextObjectAccess(mci.mcid, mci.tag);
+                generator.beginTextObjectAccess(mci.tag, mci.mcid);
             } else {
                 // <fo:leader leader-pattern="use-content">
                 // Leader content is marked as "/Artifact"
