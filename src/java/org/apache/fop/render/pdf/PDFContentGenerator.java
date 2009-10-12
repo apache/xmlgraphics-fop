@@ -183,7 +183,7 @@ public class PDFContentGenerator {
         this.inMarkedContentSequence = true;
     }
 
-    private void endMarkedContentSequence() {
+    void endMarkedContentSequence() {
         currentStream.add("EMC\n");
         this.inMarkedContentSequence = false;
         this.inArtifactMode = false;
