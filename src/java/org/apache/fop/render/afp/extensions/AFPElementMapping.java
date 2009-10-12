@@ -97,7 +97,7 @@ public class AFPElementMapping extends ElementMapping {
 
     static class AFPIncludePageOverlayMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new AFPPageSetupElement(parent, INCLUDE_PAGE_OVERLAY);
+            return new AFPPageOverlayElement(parent, INCLUDE_PAGE_OVERLAY);
         }
     }
 

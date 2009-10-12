@@ -485,9 +485,11 @@ public class DataStream {
      *
      * @param name
      *            the name of the static overlay
+     * @param x x-coordinate
+     * @param y y-coordinate
      */
-    public void createIncludePageOverlay(String name) {
-        currentPageObject.createIncludePageOverlay(name, 0, 0, paintingState.getRotation());
+    public void createIncludePageOverlay(String name, int x, int y) {
+        currentPageObject.createIncludePageOverlay(name, x, y, paintingState.getRotation());
         currentPageObject.getActiveEnvironmentGroup().createOverlay(name);
     }
 

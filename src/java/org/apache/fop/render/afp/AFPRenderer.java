@@ -91,6 +91,7 @@ import org.apache.fop.render.afp.extensions.AFPExtensionAttachment;
 import org.apache.fop.render.afp.extensions.AFPIncludeFormMap;
 import org.apache.fop.render.afp.extensions.AFPInvokeMediumMap;
 import org.apache.fop.render.afp.extensions.AFPPageSetup;
+import org.apache.fop.render.afp.extensions.AFPPageOverlay;
 
 /**
  * This is an implementation of a FOP Renderer that renders areas to AFP.
@@ -758,12 +759,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer implements AFPCust
                     if (attachment instanceof AFPPageSetup) {
                         AFPPageSetup aps = (AFPPageSetup) attachment;
                         String element = aps.getElementName();
-                        if (AFPElementMapping.INCLUDE_PAGE_OVERLAY.equals(element)) {
-                            String overlay = aps.getName();
-                            if (overlay != null) {
-                                dataStream.createIncludePageOverlay(overlay);
-                            }
-                        } else if (AFPElementMapping.INCLUDE_PAGE_SEGMENT
+                        if (AFPElementMapping.INCLUDE_PAGE_SEGMENT
                                 .equals(element)) {
                             String name = aps.getName();
                             String source = aps.getValue();
@@ -777,6 +773,15 @@ public class AFPRenderer extends AbstractPathOrientedRenderer implements AFPCust
                             String content = aps.getContent();
                             if (content != null) {
                                 dataStream.createNoOperation(content);
+                            }
+                        }
+                    } else if (attachment instanceof AFPPageOverlay) {
+                        AFPPageOverlay ipo = (AFPPageOverlay) attachment;
+                        String element = ipo.getElementName();
+                        if (AFPElementMapping.INCLUDE_PAGE_OVERLAY.equals(element)) {
+                            String overlay = ipo.getName();
+                            if (overlay != null) {
+                                dataStream.createIncludePageOverlay(overlay, ipo.getX(), ipo.getY());
                             }
                         }
                     }
