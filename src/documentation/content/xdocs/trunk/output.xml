@@ -766,13 +766,14 @@ out = proc.getOutputStream();]]></source>
       <source><![CDATA[
       <fo:layout-master-set>
         <fo:simple-page-master master-name="simple">
-          <afp:include-page-overlay name="O1SAMP1 " />
+          <afp:include-page-overlay name="O1SAMP1 " x="20mm" y="30mm" />
           ...
         </fo:simple-page-master>
       </fo:layout-master-set>
 ]]></source>
         <p>The mandatory name attribute must refer to an 8 character (space padded) resource name that
-        must be known in the AFP processing environment.</p>
+        must be known in the AFP processing environment. Optional x and y attributes can be specified
+		to place the Overlay at an offset from the top left of the page.</p>
       </section>
       <section id="afp-page-segment">
         <title>Page Segment (IPS) Extension</title>
