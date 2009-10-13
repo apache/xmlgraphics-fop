@@ -131,7 +131,7 @@ public class PDFPainter extends AbstractIFPainter {
             throws IFException {
         PDFXObject xobject = getPDFDoc().getXObject(uri);
         if (xobject != null) {
-            if (accessEnabled && getContext().hasStructurePointer()) {
+            if (accessEnabled) {
                 String ptr = getContext().getStructurePointer();
                 prepareImageMCID(ptr);
                 placeImageAccess(rect, xobject);
@@ -139,7 +139,7 @@ public class PDFPainter extends AbstractIFPainter {
                 placeImage(rect, xobject);
             }
         } else {
-            if (accessEnabled && getContext().hasStructurePointer()) {
+            if (accessEnabled) {
                 String ptr = getContext().getStructurePointer();
                 prepareImageMCID(ptr);
             }
@@ -156,8 +156,7 @@ public class PDFPainter extends AbstractIFPainter {
     protected RenderingContext createRenderingContext() {
         PDFRenderingContext pdfContext = new PDFRenderingContext(
                 getUserAgent(), generator, this.documentHandler.currentPage, getFontInfo());
-        pdfContext.setMCID(imageMCI.mcid);
-        pdfContext.setStructElemType(imageMCI.tag);
+        pdfContext.setMarkedContentInfo(imageMCI);
         return pdfContext;
     }
 
@@ -198,7 +197,7 @@ public class PDFPainter extends AbstractIFPainter {
 
     /** {@inheritDoc} */
     public void drawImage(Document doc, Rectangle rect) throws IFException {
-        if (accessEnabled && getContext().hasStructurePointer()) {
+        if (accessEnabled) {
             String ptr = getContext().getStructurePointer();
             prepareImageMCID(ptr);
         }
@@ -298,22 +297,12 @@ public class PDFPainter extends AbstractIFPainter {
             throws IFException {
         if (accessEnabled) {
             String ptr = getContext().getStructurePointer();
-            if (ptr != null && ptr.length() > 0) {
-                MarkedContentInfo mci = logicalStructureHandler.addTextContentItem(ptr);
-                if (generator.getTextUtil().isInTextObject()) {
-                    generator.separateTextElements(mci.tag, mci.mcid);
-                }
-                generator.updateColor(state.getTextColor(), true, null);
-                generator.beginTextObjectAccess(mci.tag, mci.mcid);
-            } else {
-                // <fo:leader leader-pattern="use-content">
-                // Leader content is marked as "/Artifact"
-                if (generator.getTextUtil().isInTextObject()) {
-                    generator.separateTextElementFromLeader();
-                }
-                generator.updateColor(state.getTextColor(), true, null);
-                generator.beginLeaderTextObject();
+            MarkedContentInfo mci = logicalStructureHandler.addTextContentItem(ptr);
+            if (generator.getTextUtil().isInTextObject()) {
+                generator.separateTextElements(mci.tag, mci.mcid);
             }
+            generator.updateColor(state.getTextColor(), true, null);
+            generator.beginTextObjectAccess(mci.tag, mci.mcid);
         } else {
             generator.updateColor(state.getTextColor(), true, null);
             generator.beginTextObject();

@@ -229,16 +229,6 @@ public class PDFContentGenerator {
         textutil.beginTextObject();
     }
 
-    /**
-     * used for accessibility
-     * separates a text element from fo:leader text element
-     */
-    public void separateTextElementFromLeader() {
-        if (!inArtifactMode) {
-            separateTextElements(null, 0);
-        }
-    }
-
     /** Indicates the beginning of a text object. */
     protected void beginTextObject() {
         if (!textutil.isInTextObject()) {

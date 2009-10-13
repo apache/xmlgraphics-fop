@@ -40,6 +40,7 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.image.loader.batik.BatikImageFlavors;
 import org.apache.fop.render.ImageHandler;
 import org.apache.fop.render.RenderingContext;
+import org.apache.fop.render.pdf.PDFLogicalStructureHandler.MarkedContentInfo;
 import org.apache.fop.svg.PDFAElementBridge;
 import org.apache.fop.svg.PDFBridgeContext;
 import org.apache.fop.svg.PDFGraphics2D;
@@ -122,9 +123,8 @@ public class PDFImageHandlerSVG implements ImageHandler {
         generator.comment("SVG setup");
         generator.saveGraphicsState();
         if (context.getUserAgent().isAccessibilityEnabled()) {
-            String structElemType = pdfContext.getStructElemType();
-            int sequenceNum = pdfContext.getSequenceNum();
-            generator.beginMarkedContentSequence(structElemType, sequenceNum);
+            MarkedContentInfo mci = pdfContext.getMarkedContentInfo();
+            generator.beginMarkedContentSequence(mci.tag, mci.mcid);
         }
         generator.setColor(Color.black, false);
         generator.setColor(Color.black, true);

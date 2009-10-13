@@ -34,6 +34,7 @@ import org.apache.fop.pdf.PDFXObject;
 import org.apache.fop.render.ImageHandler;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.RenderingContext;
+import org.apache.fop.render.pdf.PDFLogicalStructureHandler.MarkedContentInfo;
 
 /**
  * Image handler implementation which handles RenderedImage instances for PDF output.
@@ -84,9 +85,8 @@ public class PDFImageHandlerRenderedImage implements PDFImageHandler, ImageHandl
         float w = (float)pos.getWidth() / 1000f;
         float h = (float)pos.getHeight() / 1000f;
         if (context.getUserAgent().isAccessibilityEnabled()) {
-            String structElemType = pdfContext.getStructElemType();
-            int sequenceNum = pdfContext.getSequenceNum();
-            generator.placeImage(x, y, w, h, xobj, structElemType, sequenceNum);
+            MarkedContentInfo mci = pdfContext.getMarkedContentInfo();
+            generator.placeImage(x, y, w, h, xobj, mci.tag, mci.mcid);
         } else {
             generator.placeImage(x, y, w, h, xobj);
         }

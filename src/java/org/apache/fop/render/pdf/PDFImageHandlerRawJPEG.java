@@ -34,6 +34,7 @@ import org.apache.fop.pdf.PDFXObject;
 import org.apache.fop.render.ImageHandler;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.RenderingContext;
+import org.apache.fop.render.pdf.PDFLogicalStructureHandler.MarkedContentInfo;
 
 /**
  * Image handler implementation which handles raw JPEG images for PDF output.
@@ -83,13 +84,8 @@ public class PDFImageHandlerRawJPEG implements PDFImageHandler, ImageHandler {
         float w = (float)pos.getWidth() / 1000f;
         float h = (float)pos.getHeight() / 1000f;
         if (context.getUserAgent().isAccessibilityEnabled()) {
-            String structElemType = pdfContext.getStructElemType();
-            if (structElemType != null && structElemType.length() > 0) {
-                int sequenceNum = pdfContext.getSequenceNum();
-                generator.placeImage(x, y, w, h, xobj, structElemType, sequenceNum);
-            } else {
-                generator.placeImage(x, y, w, h, xobj);
-            }
+            MarkedContentInfo mci = pdfContext.getMarkedContentInfo();
+            generator.placeImage(x, y, w, h, xobj, mci.tag, mci.mcid);
         } else {
             generator.placeImage(x, y, w, h, xobj);
         }

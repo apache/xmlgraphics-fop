@@ -25,6 +25,7 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.pdf.PDFPage;
 import org.apache.fop.render.AbstractRenderingContext;
+import org.apache.fop.render.pdf.PDFLogicalStructureHandler.MarkedContentInfo;
 
 /**
  * Rendering context for PDF production.
@@ -34,11 +35,7 @@ public class PDFRenderingContext extends AbstractRenderingContext {
     private PDFContentGenerator generator;
     private FontInfo fontInfo;
     private PDFPage page;
-    /** Temp. val. for accessibility, used in PDFImageHandlerRenderedImage */
-    private String structElemType = "";
-
-    /** Temp. val. for accessibility, used in PDFImageHandlerRenderedImage */
-    private int mcid = -1;
+    private MarkedContentInfo mci;
 
     /**
      * Main constructor.
@@ -84,35 +81,11 @@ public class PDFRenderingContext extends AbstractRenderingContext {
         return this.fontInfo;
     }
 
-    /**
-     * Used for accessibility, used in PDFPainter.drawImage
-     * @param value to be stored
-     */
-    public void setMCID(int value) {
-        mcid = value;
+    void setMarkedContentInfo(MarkedContentInfo mci) {
+        this.mci = mci;
     }
 
-    /**
-     * Used for accessibility
-     * @return mcid
-     */
-    public int getSequenceNum() {
-        return mcid;
-    }
-
-    /**
-     * Used for accessibility
-     * @param s the type of the structure element
-     */
-    public void setStructElemType(String s) {
-        structElemType = s;
-    }
-
-    /**
-     * Used for accessibility
-     * @return the type of the structure element
-     */
-    public String getStructElemType() {
-        return structElemType;
+    MarkedContentInfo getMarkedContentInfo() {
+        return mci;
     }
 }

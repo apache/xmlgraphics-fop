@@ -155,13 +155,4 @@ public class IFContext {
         return this.structurePointer;
     }
 
-    /**
-     * Indicates whether a structure pointer is available.
-     * @return true if there's a structure pointer
-     * @see #setStructurePointer(String)
-     */
-    public boolean hasStructurePointer() {
-        return (this.structurePointer != null) && (structurePointer.length() > 0);
-    }
-
 }
