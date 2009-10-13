@@ -58,6 +58,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Layout" dev="VH" type="fix" fixes-bug="47835" due-to="Jonathan Levinson">
+        Fixed handling of percentage values for provisional-distance-between-starts.
+      </action>
       <action context="Renderers" dev="CB" type="add">
         Added support for positioning Page Overlays in AFP Output
       </action>
