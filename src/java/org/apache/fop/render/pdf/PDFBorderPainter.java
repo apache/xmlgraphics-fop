@@ -32,7 +32,7 @@ import org.apache.fop.traits.RuleStyle;
 import org.apache.fop.util.ColorUtil;
 
 /**
- * PDF-specific implementation of the {@code BorderPainter}.
+ * PDF-specific implementation of the {@link BorderPainter}.
  */
 public class PDFBorderPainter extends BorderPainter {
 

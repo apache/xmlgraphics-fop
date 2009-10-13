@@ -21,13 +21,13 @@ package org.apache.fop.svg;
 
 import java.awt.geom.AffineTransform;
 
-import org.apache.batik.bridge.AbstractGraphicsNodeBridge;
-import org.apache.batik.bridge.BridgeContext;
-
-import org.apache.batik.gvt.GraphicsNode;
-
 import org.w3c.dom.Element;
 import org.w3c.dom.svg.SVGAElement;
+
+import org.apache.batik.bridge.AbstractGraphicsNodeBridge;
+import org.apache.batik.bridge.BridgeContext;
+import org.apache.batik.gvt.CompositeGraphicsNode;
+import org.apache.batik.gvt.GraphicsNode;
 
 /**
  * Bridge class for the &lt;a> element.
@@ -65,7 +65,7 @@ public class PDFAElementBridge extends AbstractGraphicsNodeBridge {
     }
 
     /**
-     * Creates a <tt>CompositeGraphicsNode</tt>.
+     * Creates a {@link CompositeGraphicsNode}.
      * @return a new PDFANode
      */
     protected GraphicsNode instantiateGraphicsNode() {

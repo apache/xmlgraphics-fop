@@ -99,7 +99,7 @@ import org.apache.fop.traits.BorderProps;
 import org.apache.fop.traits.RuleStyle;
 
 /**
- * This renderer implementation is an adapter to the {@code IFPainter} interface. It is used
+ * This renderer implementation is an adapter to the {@link IFPainter} interface. It is used
  * to generate content using FOP's intermediate format.
  */
 public class IFRenderer extends AbstractPathOrientedRenderer {
@@ -166,8 +166,8 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
-     * Sets the {@code IFDocumentHandler} to be used by the {@code IFRenderer}.
-     * @param documentHandler the {@code IFDocumentHandler}
+     * Sets the {@link IFDocumentHandler} to be used by the {@link IFRenderer}.
+     * @param documentHandler the {@link IFDocumentHandler}
      */
     public void setDocumentHandler(IFDocumentHandler documentHandler) {
         this.documentHandler = documentHandler;
@@ -221,7 +221,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     }
 
     /**
-     * Creates a default {@code IFDocumentHandler} when none has been set.
+     * Creates a default {@link IFDocumentHandler} when none has been set.
      * @return the default IFDocumentHandler
      */
     protected IFDocumentHandler createDefaultDocumentHandler() {

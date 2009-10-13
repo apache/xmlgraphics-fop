@@ -43,28 +43,28 @@ import org.apache.fop.fonts.FontInfo;
 /**
  * This class enables to transcode an input to a pdf document.
  *
- * <p>Two transcoding hints (<tt>KEY_WIDTH</tt> and
- * <tt>KEY_HEIGHT</tt>) can be used to respectively specify the image
+ * <p>Two transcoding hints (<code>KEY_WIDTH</code> and
+ * <code>KEY_HEIGHT</code>) can be used to respectively specify the image
  * width and the image height. If only one of these keys is specified,
  * the transcoder preserves the aspect ratio of the original image.
  *
- * <p>The <tt>KEY_BACKGROUND_COLOR</tt> defines the background color
+ * <p>The <code>KEY_BACKGROUND_COLOR</code> defines the background color
  * to use for opaque image formats, or the background color that may
  * be used for image formats that support alpha channel.
  *
- * <p>The <tt>KEY_AOI</tt> represents the area of interest to paint
+ * <p>The <code>KEY_AOI</code> represents the area of interest to paint
  * in device space.
  *
  * <p>Three additional transcoding hints that act on the SVG
  * processor can be specified:
  *
- * <p><tt>KEY_LANGUAGE</tt> to set the default language to use (may be
+ * <p><code>KEY_LANGUAGE</code> to set the default language to use (may be
  * used by a &lt;switch> SVG element for example),
- * <tt>KEY_USER_STYLESHEET_URI</tt> to fix the URI of a user
- * stylesheet, and <tt>KEY_PIXEL_TO_MM</tt> to specify the pixel to
+ * <code>KEY_USER_STYLESHEET_URI</code> to fix the URI of a user
+ * stylesheet, and <code>KEY_PIXEL_TO_MM</code> to specify the pixel to
  * millimeter conversion factor.
  *
- * <p><tt>KEY_AUTO_FONTS</tt> to disable the auto-detection of fonts installed in the system.
+ * <p><code>KEY_AUTO_FONTS</code> to disable the auto-detection of fonts installed in the system.
  * The PDF Transcoder cannot use AWT's font subsystem and that's why the fonts have to be
  * configured differently. By default, font auto-detection is enabled to match the behaviour
  * of the other transcoders, but this may be associated with a price in the form of a small
@@ -80,7 +80,7 @@ public class PDFTranscoder extends AbstractFOPTranscoder
     protected PDFDocumentGraphics2D graphics = null;
 
     /**
-     * Constructs a new <tt>PDFTranscoder</tt>.
+     * Constructs a new {@link PDFTranscoder}.
      */
     public PDFTranscoder() {
         super();

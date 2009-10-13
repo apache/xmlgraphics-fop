@@ -47,7 +47,6 @@ public class BitmapRenderingSettings extends Java2DRenderingSettings implements 
      */
     public BitmapRenderingSettings() {
         writerParams = new ImageWriterParams();
-        writerParams.setCompressionMethod(COMPRESSION_PACKBITS);
     }
 
     /**

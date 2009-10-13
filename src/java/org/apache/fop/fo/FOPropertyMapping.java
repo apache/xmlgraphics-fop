@@ -2531,12 +2531,14 @@ public final class FOPropertyMapping implements Constants {
         m  = new LengthProperty.Maker(PR_PROVISIONAL_LABEL_SEPARATION);
         m.setInherited(true);
         m.setDefault("6pt");
+        m.setPercentBase(LengthBase.CONTAINING_BLOCK_WIDTH);
         addPropertyMaker("provisional-label-separation", m);
 
         // provisional-distance-between-starts
         m  = new LengthProperty.Maker(PR_PROVISIONAL_DISTANCE_BETWEEN_STARTS);
         m.setInherited(true);
         m.setDefault("24pt");
+        m.setPercentBase(LengthBase.CONTAINING_BLOCK_WIDTH);
         addPropertyMaker("provisional-distance-between-starts", m);
 
         // ref-id

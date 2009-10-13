@@ -22,14 +22,14 @@ package org.apache.fop.render.java2d;
 import org.apache.fop.fonts.FontMetrics;
 
 /**
- * Adds method to retrieve the actual <tt>java.awt.Font</tt>
- * for use by <tt>Java2DRenderer</tt>s.
+ * Adds method to retrieve the actual {@link java.awt.Font}
+ * for use by {@link Java2DRenderer}s.
  */
 public interface FontMetricsMapper extends FontMetrics {
 
     /**
-     * Gets a Font instance  of the Font that this
-     * FontMetrics describes in the desired size.
+     * Gets a {@link Font} instance of the font that this
+     * {@link FontMetrics} describes in the desired size.
      * @param size font size
      * @return font with the desired characteristics.
      */

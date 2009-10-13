@@ -107,7 +107,7 @@ public class PDFContentGenerator {
     }
 
     /**
-     * Returns the {@code PDFStream} associated with this instance.
+     * Returns the {@link PDFStream} associated with this instance.
      * @return the PDF stream
      */
     public PDFStream getStream() {
@@ -115,7 +115,7 @@ public class PDFContentGenerator {
     }
 
     /**
-     * Returns the {@code PDFState} associated with this instance.
+     * Returns the {@link PDFState} associated with this instance.
      * @return the PDF state
      */
     public PDFPaintingState getState() {
@@ -123,7 +123,7 @@ public class PDFContentGenerator {
     }
 
     /**
-     * Returns the {@code PDFTextUtil} associated with this instance.
+     * Returns the {@link PDFTextUtil} associated with this instance.
      * @return the text utility
      */
     public PDFTextUtil getTextUtil() {
@@ -190,7 +190,7 @@ public class PDFContentGenerator {
     }
 
     /**
-     * Restored the graphics state valid before the previous {@code #saveGraphicsState()}.
+     * Restored the graphics state valid before the previous {@link #saveGraphicsState()}.
      * @param popState true if the state should also be popped, false if only the PDF command
      *           should be issued
      */

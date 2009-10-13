@@ -1021,7 +1021,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
 
     /**
      * {@inheritDoc}
-     * Default implementation throws {@code IllegalStateException}
+     * Default implementation throws a {@link IllegalStateException}.
      * Must be implemented by the subclass, if applicable.
      */
     public KeepProperty getKeepTogetherProperty() {
@@ -1030,7 +1030,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
 
     /**
      * {@inheritDoc}
-     * Default implementation throws {@code IllegalStateException}
+     * Default implementation throws a {@link IllegalStateException}.
      * Must be implemented by the subclass, if applicable.
      */
     public KeepProperty getKeepWithPreviousProperty() {
@@ -1039,7 +1039,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
 
     /**
      * {@inheritDoc}
-     * Default implementation throws {@code IllegalStateException}
+     * Default implementation throws a {@link IllegalStateException}.
      * Must be implemented by the subclass, if applicable.
      */
     public KeepProperty getKeepWithNextProperty() {

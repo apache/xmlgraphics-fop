@@ -19,14 +19,13 @@
 
 package org.apache.fop.svg;
 
-import org.apache.batik.gvt.CompositeGraphicsNode;
-
 import java.awt.Graphics2D;
 import java.awt.Shape;
-import java.awt.geom.Rectangle2D;
 import java.awt.geom.AffineTransform;
-
+import java.awt.geom.Rectangle2D;
 import java.util.StringTokenizer;
+
+import org.apache.batik.gvt.CompositeGraphicsNode;
 
 /**
  * A graphics node that represents an image described as a graphics node.
@@ -38,7 +37,7 @@ public class PDFANode extends CompositeGraphicsNode {
     private AffineTransform transform;
 
     /**
-     * Constructs a new empty <tt>PDFANode</tt>.
+     * Constructs a new empty {@link PDFANode}.
      */
     public PDFANode() {
     }

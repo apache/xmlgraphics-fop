@@ -19,12 +19,12 @@
 
 package org.apache.fop.svg;
 
-import java.awt.Rectangle;
 import java.awt.GraphicsDevice;
+import java.awt.Rectangle;
 import java.awt.Transparency;
-import java.awt.image.ColorModel;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
 
 
 /**
@@ -92,7 +92,7 @@ class PDFGraphicsConfiguration extends GraphicsConfiguration {
     }
 
     /**
-     * Return a good color model given <tt>transparency</tt>
+     * Return a good color model given <code>transparency</code>
      *
      * @param transparency the alpha value for the colour model
      * @return the colour model for the configuration

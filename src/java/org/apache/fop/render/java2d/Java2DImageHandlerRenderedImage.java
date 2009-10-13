@@ -36,7 +36,7 @@ import org.apache.fop.render.ImageHandler;
 import org.apache.fop.render.RenderingContext;
 
 /**
- * Image handler implementation that paints {@code RenderedImage} instances on a {@code Graphics2D}
+ * Image handler implementation that paints {@link RenderedImage} instances on a {@link Graphics2D}
  * object.
  */
 public class Java2DImageHandlerRenderedImage implements ImageHandler {

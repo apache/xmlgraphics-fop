@@ -175,7 +175,7 @@ public interface IFPainter {
     void fillRect(Rectangle rect, Paint fill) throws IFException;
 
     /**
-     * Draws a border rectangle. The border segments are specified through {@code BorderProps}
+     * Draws a border rectangle. The border segments are specified through {@link BorderProps}
      * instances.
      * @param rect the rectangle's coordinates and extent
      * @param before the border segment on the before-side (top)

@@ -47,6 +47,7 @@ import org.apache.fop.render.extensions.prepress.PageBoundaries;
 import org.apache.fop.render.extensions.prepress.PageScale;
 import org.apache.fop.render.intermediate.AbstractBinaryWritingIFDocumentHandler;
 import org.apache.fop.render.intermediate.IFContext;
+import org.apache.fop.render.intermediate.IFDocumentHandler;
 import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
 import org.apache.fop.render.intermediate.IFDocumentNavigationHandler;
 import org.apache.fop.render.intermediate.IFException;
@@ -54,7 +55,7 @@ import org.apache.fop.render.intermediate.IFPainter;
 import org.apache.fop.util.XMLUtil;
 
 /**
- * {@code IFDocumentHandler} implementation that produces PDF.
+ * {@link IFDocumentHandler} implementation that produces PDF.
  */
 public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
 

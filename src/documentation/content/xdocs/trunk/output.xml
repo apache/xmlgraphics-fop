@@ -766,13 +766,14 @@ out = proc.getOutputStream();]]></source>
       <source><![CDATA[
       <fo:layout-master-set>
         <fo:simple-page-master master-name="simple">
-          <afp:include-page-overlay name="O1SAMP1 " />
+          <afp:include-page-overlay name="O1SAMP1 " x="20mm" y="30mm" />
           ...
         </fo:simple-page-master>
       </fo:layout-master-set>
 ]]></source>
         <p>The mandatory name attribute must refer to an 8 character (space padded) resource name that
-        must be known in the AFP processing environment.</p>
+        must be known in the AFP processing environment. Optional x and y attributes can be specified
+		to place the Overlay at an offset from the top left of the page.</p>
       </section>
       <section id="afp-page-segment">
         <title>Page Segment (IPS) Extension</title>
@@ -795,6 +796,17 @@ out = proc.getOutputStream();]]></source>
         The value of the mandatory src attribute is compared against the value of the src attribute in
         fo:external-graphic elements and if it is identical (string matching is used) in the generated
         AFP the external graphic is replaced by a reference to the given resource.
+        </p>
+        <p>
+          The effect here is that whenever FOP encounters the URI specified in the extension,
+          it will effectively generate code to include the page segment with the given name
+          instead of embedding the image referenced by the URI. The URI is still required as
+          the underlying image serves as a provider for the intrinsic size of the image
+          (At the moment, FOP is unable to extract the intrinsic size of the page segment from
+          an AFP resource file). For the image to appear in an AFP viewer or to be printed, the
+          AFP resource must be available on the target device. FOP does not embed the page
+          segment in the generated file. Please also note that page segments cannot be scaled.
+          They are always rendered in their intrinsic size.
         </p>
       </section>
       <section id="afp-tag-logical-element">
@@ -1022,8 +1034,13 @@ out = proc.getOutputStream();]]></source>
   <p>
     Currently, two output formats are supported: PNG and TIFF. TIFF produces
     one file with multiple pages, while PNG output produces one file per
-    page. The quality of the bitmap depends on the target resolution setting 
-    on the FOUserAgent.
+    page. Note: FOP can only produce multiple files (with PNG output) if
+    you can set a <code>java.io.File</code> indicating the primary PNG file
+    using the <code>FOUserAgent.setOutputFile(File)</code> method.
+  </p>
+  <p>
+    The quality of the bitmap depends on the target resolution setting 
+    on the FOUserAgent and on further settings described below.
   </p>
     <section id="bitmap-configuration">
       <title>Configuration</title>
@@ -1031,14 +1048,51 @@ out = proc.getOutputStream();]]></source>
         The TIFF and PNG renderer configuration currently allows the following settings:
       </p>
 <source><![CDATA[<renderer mime="image/png">
+  <color-mode>rgba</color-mode>
   <transparent-page-background>true</transparent-page-background>
+  <background-color>white</background-color>
+  <anti-aliasing>true</anti-aliasing>
+  <rendering>quality</rendering>
   <fonts><!-- described elsewhere --></fonts>
 </renderer>]]></source>
       <p>
-        The default value for the "transparent-page-background" setting is "false" which 
-        paints an opaque, white background for the whole image. If you set this to true,
+        The default value for the <code>"color-mode"</code> setting is <code>"rgba"</code> which
+        is equivalent to a 24bit RGB image with an 8bit alpha channel for transparency.
+        Valid values are:
+      </p>
+      <ul>
+        <li><code>rgba</code>: RGB with alpha channel (24bit + 8bit = 32bit)</li>
+        <li><code>rgb</code>: RGB (24bit)</li>
+        <li><code>gray</code>: gray (8bit)</li>
+        <li><code>bi-level</code> (or <code>binary</code>): bi-level (1bit)</li>
+      </ul>
+      <p>
+        Please note that there is currently no dithering or error diffusion available for bi-level
+        bitmap output.
+      </p>
+      <p>
+        The default value for the <code>"transparent-page-background"</code> setting is
+        <code>"false"</code> which paints an opaque, white background for the whole image.
+        If you set this to <code>"true"</code>,
         no such background will be painted and you will get a transparent image if
         an alpha channel is available in the output format.
+      </p>
+      <p>
+        The default value for the <code>"background-color"</code> setting is <code>"white"</code>.
+        The color specifies in which color the page background is painted. It will only be
+        painted if <code>"transparent-page-background"</code> is not set to <code>"true"</code>.
+        All XSL-FO colors (including color functions) can be used.
+      </p>
+      <p>
+        The default value for the <code>"anti-aliasing"</code> setting is <code>"true"</code>.
+        You can set this value to <code>"false"</code> to disable anti-aliasing and
+        thus improve rendering speeds a bit at the loss of some image quality.
+      </p>
+      <p>
+        The default value for the <code>"rendering"</code> setting is <code>"true"</code>.
+        You can set this value to <code>"false"</code> to improve rendering speeds a bit
+        at the loss of some image quality. If this setting has an actual effect depends
+        on the JVM's Java2D backend.
       </p>
     </section>
     <section id="tiff-configuration">
@@ -1060,17 +1114,22 @@ out = proc.getOutputStream();]]></source>
         actual codecs being available. Here is a list of possible values:
       </p>
       <ul>
-        <li>NONE (no compression)</li>
-        <li>PackBits (RLE, run-length encoding)</li>
-        <li>JPEG</li>
-        <li>Deflate</li>
-        <li>LZW</li>
-        <li>ZLib</li>
-        <li>CCITT T.4 (Fax Group 3)</li>
-        <li>CCITT T.6 (Fax Group 4)</li>
+        <li><code>NONE</code> (no compression)</li>
+        <li><code>PackBits</code> (RLE, run-length encoding)</li>
+        <li><code>JPEG</code></li>
+        <li><code>Deflate</code></li>
+        <li><code>LZW</code></li>
+        <li><code>ZLib</code></li>
+        <li><code>CCITT T.4</code> (Fax Group 3)</li>
+        <li><code>CCITT T.6</code> (Fax Group 4)</li>
       </ul>
+      <p>
+        This setting may override any setting made using the <code>"color-mode"</code>. For example, if
+        <code>"CCITT T.6"</code> is selected, the color mode is automatically forced to <code>"bi-level"</code> because
+        this compression format only supports bi-level images.
+      </p>
       <note>
-        If you want to use CCITT compression, please make sure you've got a J2SE 1.4 or later and
+        If you want to use CCITT compression, please make sure you've got
         <a href="http://java.sun.com/products/java-media/jai/current.html">
           Java Advanced Imaging Image I/O Tools
         </a>
@@ -1078,6 +1137,17 @@ out = proc.getOutputStream();]]></source>
         added separately. The internal TIFF codec from XML Graphics Commons only supports PackBits,
         Deflate and JPEG compression for writing.
       </note>
+    </section>
+    <section id="bitmap-rendering-options">
+      <title>Runtime Rendering Options</title>
+      <p>
+        The IF-based bitmap output implementations support a rendering option with the key
+        "target-bitmap-size" (value: java.awt.Dimension) that allows to force the pages to
+        be proportionally fit into a bitmap of a given size. This can be used to produce
+        thumbnails or little preview images of the individual pages. An example:
+      </p>
+      <source><![CDATA[userAgent.getRenderingOptions().put(
+    "target-bitmap-size", new Dimension(320, 200));]]></source>
     </section>
 </section>
 <section id="txt">

@@ -93,16 +93,25 @@ public class FontManagerConfigurator {
             // referenced fonts (fonts which are not to be embedded)
             Configuration referencedFontsCfg = fontsCfg.getChild("referenced-fonts", false);
             if (referencedFontsCfg != null) {
-                createReferencedFontsMatcher(referencedFontsCfg, strict, fontManager);
+                FontTriplet.Matcher matcher = createFontsMatcher(
+                        referencedFontsCfg, strict);
+                fontManager.setReferencedFontsMatcher(matcher);
             }
 
         }
     }
 
-    private static void createReferencedFontsMatcher(Configuration referencedFontsCfg,
-            boolean strict, FontManager fontManager) throws FOPException {
+    /**
+     * Creates a font triplet matcher from a configuration object.
+     * @param cfg the configuration object
+     * @param strict true for strict configuraton error handling
+     * @return the font matcher
+     * @throws FOPException if an error occurs while building the matcher
+     */
+    public static FontTriplet.Matcher createFontsMatcher(
+            Configuration cfg, boolean strict) throws FOPException {
         List matcherList = new java.util.ArrayList();
-        Configuration[] matches = referencedFontsCfg.getChildren("match");
+        Configuration[] matches = cfg.getChildren("match");
         for (int i = 0; i < matches.length; i++) {
             try {
                 matcherList.add(new FontFamilyRegExFontTripletMatcher(
@@ -115,7 +124,7 @@ public class FontManagerConfigurator {
         FontTriplet.Matcher orMatcher = new OrFontTripletMatcher(
                 (FontTriplet.Matcher[])matcherList.toArray(
                         new FontTriplet.Matcher[matcherList.size()]));
-        fontManager.setReferencedFontsMatcher(orMatcher);
+        return orMatcher;
     }
 
     private static class OrFontTripletMatcher implements FontTriplet.Matcher {

@@ -28,6 +28,7 @@ import java.awt.image.ColorModel;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.svg.GraphicsConfiguration;
 
 /**
@@ -95,7 +96,7 @@ public class AFPGraphicsConfiguration extends GraphicsConfiguration {
     }
 
     /**
-     * Return a good color model given <tt>transparency</tt>
+     * Return a good color model given <code>transparency</code>
      *
      * @param transparency the alpha value for the colour model
      * @return the colour model for the configuration

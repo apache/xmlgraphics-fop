@@ -28,7 +28,7 @@ import org.apache.batik.parser.TransformListHandler;
 import org.apache.batik.parser.TransformListParser;
 
 /**
- * This class parses a sequence of transformations into an array of {@code AffineTransform}
+ * This class parses a sequence of transformations into an array of {@link AffineTransform}
  * instances.
  */
 public class AffineTransformArrayParser implements TransformListHandler {

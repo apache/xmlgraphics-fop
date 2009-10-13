@@ -26,6 +26,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.Image;
 import java.awt.Paint;
@@ -67,8 +68,8 @@ import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.svg.NativeImageHandler;
 
 /**
- * This is a concrete implementation of <tt>AbstractGraphics2D</tt> (and
- * therefore of <tt>Graphics2D</tt>) which is able to generate GOCA byte
+ * This is a concrete implementation of {@link AbstractGraphics2D} (and
+ * therefore of {@link Graphics2D}) which is able to generate GOCA byte
  * codes.
  *
  * @see org.apache.xmlgraphics.java2d.AbstractGraphics2D

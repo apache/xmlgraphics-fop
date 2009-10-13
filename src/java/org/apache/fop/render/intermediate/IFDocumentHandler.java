@@ -153,8 +153,8 @@ public interface IFDocumentHandler {
 
     /**
      * Indicates the start of the document header. This method is called right after the
-     * {@code #startDocument()} method. Extensions sent to this painter between
-     * {@code #startDocumentHeader()} and {@code #endDocumentHeader()} apply to the document as
+     * {@link #startDocument()} method. Extensions sent to this painter between
+     * {@link #startDocumentHeader()} and {@link #endDocumentHeader()} apply to the document as
      * a whole (like document metadata).
      * @throws IFException if an error occurs while handling this event
      */
@@ -170,7 +170,7 @@ public interface IFDocumentHandler {
     /**
      * Indicates the start of the document trailer. This method is called after the last
      * page sequence. Extensions sent to the painter between
-     * {@code #startDocumentTrailer()} and {@code #endDocumentTrailer()} apply to the document as
+     * {@link #startDocumentTrailer()} and {@link #endDocumentTrailer()} apply to the document as
      * a whole and is used for document-level content that is only known after all pages have
      * been rendered (like named destinations or the bookmark tree).
      * @throws IFException if an error occurs while handling this event
@@ -179,7 +179,7 @@ public interface IFDocumentHandler {
 
     /**
      * Indicates the end of the document trailer. This method is called right before the
-     * {@code #endDocument()} method.
+     * {@link #endDocument()} method.
      * @throws IFException if an error occurs while handling this event
      */
     void endDocumentTrailer() throws IFException;
@@ -226,7 +226,7 @@ public interface IFDocumentHandler {
     void endPageHeader() throws IFException;
 
     /**
-     * Indicates the start of the page content. The method returns an {@code IFPainter} interface
+     * Indicates the start of the page content. The method returns an {@link IFPainter} interface
      * which is used to paint the page contents.
      * @throws IFException if an error occurs while handling this event
      * @return the IFPainter for the page content
@@ -234,8 +234,8 @@ public interface IFDocumentHandler {
     IFPainter startPageContent() throws IFException;
 
     /**
-     * Indicates the end of the page content. Calls to the {@code IFPainter} returned by the
-     * respective {@code #startPageContent()} method are illegal.
+     * Indicates the end of the page content. Calls to the {@link IFPainter} returned by the
+     * respective {@link #startPageContent()} method are illegal.
      * @throws IFException if an error occurs while handling this event
      */
     void endPageContent() throws IFException;

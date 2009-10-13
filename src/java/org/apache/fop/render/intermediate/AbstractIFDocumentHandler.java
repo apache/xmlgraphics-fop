@@ -25,7 +25,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fop.apps.FOUserAgent;
 
 /**
- * Abstract base class for {@code IFDocumentHandler} implementations.
+ * Abstract base class for {@link IFDocumentHandler} implementations.
  */
 public abstract class AbstractIFDocumentHandler implements IFDocumentHandler {
 

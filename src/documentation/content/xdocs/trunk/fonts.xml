@@ -468,6 +468,13 @@
           referenced. If you want to reference all fonts, just specify <code>font-family=".*"</code>.
         </p>
         <p>
+          The <code>referenced-fonts</code> element can be placed either inside the general
+          <code>fonts</code> element (right under the root) or in the <code>fonts</code> element
+          under the renderer configuration. In the first case, matches apply to all renderers.
+          In the second case, matches only apply to the renderer where the element was specified.
+          Both cases can be used at the same time.
+        </p>
+        <p>
           Various notes related to embedded fonts:
         </p>
         <ul>

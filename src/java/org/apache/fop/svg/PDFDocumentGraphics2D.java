@@ -44,9 +44,9 @@ import org.apache.fop.pdf.PDFResources;
 import org.apache.fop.pdf.PDFStream;
 
 /**
- * This class is a wrapper for the <tt>PDFGraphics2D</tt> that
- * is used to create a full document around the pdf rendering from
- * <tt>PDFGraphics2D</tt>.
+ * This class is a wrapper for the {@link PDFGraphics2D} that
+ * is used to create a full document around the PDF rendering from
+ * {@link PDFGraphics2D}.
  *
  * @see org.apache.fop.svg.PDFGraphics2D
  */

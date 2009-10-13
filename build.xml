@@ -110,9 +110,10 @@ list of possible build targets.
       <include name="*.jar"/>
     </fileset>
   </path>
+  <property name="lib-build-tools" value="${basedir}/lib/build"/>
   <path id="libs-build-tools-classpath">
     <path refid="libs-build-classpath"/>
-    <fileset dir="${basedir}/lib/build">
+    <fileset dir="${lib-build-tools}">
       <include name="*.jar"/>
     </fileset>
   </path>
@@ -1139,19 +1140,25 @@ NOTE:
 <!-- =================================================================== -->
 <!-- Checkstyle                                                          -->
 <!-- =================================================================== -->
-  <property name="checkstyle.lib" value="${checkstyle.home.dir}"/>
-  <property name="checkstyle.noframes.xslt" value="${checkstyle.home.dir}/contrib/checkstyle-noframes.xsl"/>
-  <path id="libs-checkstyle">
-    <fileset dir="${checkstyle.lib}">
-      <include name="*.jar"/>
-    </fileset>
-  </path>
-  <target name="checkstyle-avail" unless="checkstyle.home.dir">
-    <echo message="Checkstyle Support NOT Present. Please download it from http://checkstyle.sf.net/ and set checkstyle.home.dir in build-local.properties"/>
+  <property name="checkstyle.noframes.xslt" value="${basedir}/checkstyle-noframes.xsl" />
+  <condition property="checkstyle.avail">
+  	<and>
+      <available classname="com.puppycrawl.tools.checkstyle.CheckStyleTask">
+        <classpath>
+          <path refid="libs-build-tools-classpath"/>
+        </classpath>
+      </available>
+      <available file="${checkstyle.noframes.xslt}"/>
+    </and>
+  </condition>
+  <target name="checkstyle-avail" unless="checkstyle.avail">
+    <echo message="Checkstyle support NOT present. Please download it from http://checkstyle.sf.net/ and"/>
+    <echo message="..copy or link checkstyle-all-5.0.jar to ${lib-build-tools}"/>
+    <echo message="..copy or link checkstyle-noframes.xsl to ${checkstyle.noframes.xslt}"/>
   </target>
-  <target name="checkstyle" depends="init, checkstyle-avail" if="checkstyle.home.dir" description="Runs Checkstyle for a code quality report">
-    <taskdef name="checkstyle" classname="com.puppycrawl.tools.checkstyle.CheckStyleTask" classpathref="libs-checkstyle"/>
-    <checkstyle config="checkstyle-4.0.xml" failonviolation="false">
+  <target name="checkstyle" depends="init, checkstyle-avail" if="checkstyle.avail" description="Runs Checkstyle for a code quality report">
+    <taskdef name="checkstyle" classname="com.puppycrawl.tools.checkstyle.CheckStyleTask" classpathref="libs-build-tools-classpath"/>
+    <checkstyle config="checkstyle-5.0.xml" failonviolation="false">
       <fileset dir="${src.java.dir}" includes="**/*.java"/>
       <formatter type="xml" toFile="${build.dir}/report_checkstyle.xml"/>
     </checkstyle>
@@ -1234,9 +1241,23 @@ NOTE:
 <!-- Creates the distribution                                            -->
 <!-- =================================================================== -->
   <target name="dist" depends="dist-prereq,dist-src,dist-bin" description="Generates the distribution package"/>
-  <target name="dist-prereq" depends="init">
+  <target name="dist-prereq" depends="init,dist-get-jai">
     <fail message="A complete binary build requires JAI" unless="jai.present"/>
     <fail message="A complete binary build requires JCE" unless="jce.present"/>
+  </target>
+  <target name="dist-get-jai" description="Attempts to download the JAI library dependency" unless="jai.present">
+    <echo message="JAI Support NOT present - attempting to download... "/>
+    <get src="http://download.java.net/media/jai/builds/release/1_1_3/jai-1_1_3-lib.zip" dest="${java.io.tmpdir}/jai-1_1_3-lib.zip" verbose="true" />
+    <unzip src="${java.io.tmpdir}/jai-1_1_3-lib.zip" dest="${java.io.tmpdir}">
+      <patternset>
+        <include name="jai-1_1_3/lib/*"/>
+      </patternset>
+    </unzip>
+    <copy todir="${basedir}/lib" file="${java.io.tmpdir}/jai-1_1_3/lib/jai_core.jar" />
+    <copy todir="${basedir}/lib" file="${java.io.tmpdir}/jai-1_1_3/lib/jai_codec.jar" />
+    <delete dir="${java.io.tmpdir}/jai-1_1_3" />
+    <delete file="${java.io.tmpdir}/jai-1_1_3-lib.zip" />
+    <property name="jai.present" value="true"/>
   </target>
   <target name="dist-bin" depends="all,javadocs,docs">
     <echo message="Building the binary distribution files (zip,tar)"/>

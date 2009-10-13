@@ -86,12 +86,12 @@ public class KnuthPenalty extends KnuthElement {
     }
 
     /**
-     * Get the penalty's value as a {@code java.lang.String}.
-     * (Mainly used in {@code toString()} methods, to improve readability
+     * Get the penalty's value as a {@link java.lang.String}.
+     * (Mainly used in {@link #toString()} methods, to improve readability
      * of the trace logs.)
      *
      * @param penaltyValue  the penalty value
-     * @return  the penalty value as a {@code java.lang.String}
+     * @return  the penalty value as a {@link java.lang.String}
      */
     protected static String valueOf(int penaltyValue) {
         String result = (penaltyValue < 0) ? "-" : "";

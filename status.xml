@@ -61,6 +61,23 @@
       <action context="Renderers" dev="JM" type="add" fixes-bug="46705" due-to="Jost Klopfstein">
         Added basic accessibility and Tagged PDF support. 
       </action>
+      <action context="Layout" dev="VH" type="fix">
+        Fixed handling of percentage values for provisional-label-separation.
+      </action>
+      <action context="Layout" dev="VH" type="fix" fixes-bug="47835" due-to="Jonathan Levinson">
+        Fixed handling of percentage values for provisional-distance-between-starts.
+      </action>
+      <action context="Renderers" dev="CB" type="add">
+        Added support for positioning Page Overlays in AFP Output
+      </action>
+      <action context="Fonts" dev="JM" type="add">
+        Added support for specifying referenced fonts per renderer in addition to the general
+        match list.
+      </action>
+      <action context="Renderers" dev="JM" type="add">
+        Added support for creating thumbnails or preview bitmaps of fixed size for PNG and TIFF
+        output.
+      </action>
       <action context="Extensions" dev="JM" type="add">
         Added support for the #CMYK pseudo-profile supported by some commercial XSL implementations
         on the rgb-icc() function.
@@ -71,10 +88,6 @@
       </action>
       <action context="Renderers" dev="AD" type="add" fixes-bug="46905">
         Added basic implementation for column-keeps.
-      </action>
-      <action context="Renderers" dev="AD" type="fix" fixes-bug="46883">
-        Hotspot in AbstractGraphicsDrawingOrderContainer. Reduced time spent in the method
-        by introducing a member variable to hold the data-length.
       </action>
       <action context="Code" dev="AD" type="fix" fixes-bug="47710">
         White-space handling in markers with inline-content throws a NullPointerException

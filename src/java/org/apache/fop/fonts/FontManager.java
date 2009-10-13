@@ -145,7 +145,7 @@ public class FontManager {
 
     /**
      * Sets up the fonts on a given FontInfo object. The fonts to setup are defined by an
-     * array of {@code FontCollection} objects.
+     * array of {@link FontCollection} objects.
      * @param fontInfo the FontInfo object to set up
      * @param fontCollections the array of font collections/sources
      */
@@ -190,11 +190,21 @@ public class FontManager {
     }
 
     /**
-     * Updates the referenced font list
+     * Updates the referenced font list using the FontManager's referenced fonts matcher
+     * ({@link #getReferencedFontsMatcher()}).
      * @param fontInfoList a font info list
      */
     public void updateReferencedFonts(List fontInfoList) {
         Matcher matcher = getReferencedFontsMatcher();
+        updateReferencedFonts(fontInfoList, matcher);
+    }
+
+    /**
+     * Updates the referenced font list.
+     * @param fontInfoList a font info list
+     * @param matcher the font triplet matcher to use
+     */
+    public void updateReferencedFonts(List fontInfoList, Matcher matcher) {
         if (matcher == null) {
             return; //No referenced fonts
         }

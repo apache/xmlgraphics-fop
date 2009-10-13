@@ -149,7 +149,7 @@ public class XMLUtil implements XMLConstants {
     }
 
     /**
-     * Adds an attribute to a given {@code AttributesImpl} instance.
+     * Adds an attribute to a given {@link AttributesImpl} instance.
      * @param atts the attributes collection
      * @param attribute the attribute to add
      * @param value the attribute's CDATA value
@@ -161,7 +161,7 @@ public class XMLUtil implements XMLConstants {
     }
 
     /**
-     * Adds an attribute to a given {@code AttributesImpl} instance. The attribute will be
+     * Adds an attribute to a given {@link AttributesImpl} instance. The attribute will be
      * added in the default namespace.
      * @param atts the attributes collection
      * @param localName the local name of the attribute

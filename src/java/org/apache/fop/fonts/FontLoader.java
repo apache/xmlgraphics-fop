@@ -87,8 +87,8 @@ public abstract class FontLoader {
      */
     public static CustomFont loadFont(File fontFile, String subFontName,
             boolean embedded, EncodingMode encodingMode, FontResolver resolver) throws IOException {
-        return loadFont(fontFile.getAbsolutePath(), subFontName,
-                embedded, encodingMode, true, resolver);
+        return loadFont(fontFile.toURI().toURL(), subFontName,
+                embedded, encodingMode, resolver);
     }
 
     /**

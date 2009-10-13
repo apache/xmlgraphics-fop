@@ -1,6 +1,7 @@
 org.apache.fop.render.pdf.PDFDocumentHandlerMaker
 org.apache.fop.render.pcl.PCLDocumentHandlerMaker
 org.apache.fop.render.bitmap.TIFFDocumentHandlerMaker
+org.apache.fop.render.bitmap.PNGDocumentHandlerMaker
 org.apache.fop.render.ps.PSDocumentHandlerMaker
 org.apache.fop.render.afp.AFPDocumentHandlerMaker
 org.apache.fop.render.intermediate.IFSerializerMaker

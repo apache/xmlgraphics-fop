@@ -30,9 +30,10 @@ import java.util.Vector;
 
 import javax.swing.UIManager;
 
+import org.xml.sax.SAXException;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.xml.sax.SAXException;
 
 import org.apache.fop.Version;
 import org.apache.fop.accessibility.AccessibilityUtil;
@@ -46,7 +47,9 @@ import org.apache.fop.pdf.PDFEncryptionParams;
 import org.apache.fop.pdf.PDFXMode;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.awt.AWTRenderer;
-import org.apache.fop.render.intermediate.IFRenderer;
+import org.apache.fop.render.intermediate.IFContext;
+import org.apache.fop.render.intermediate.IFDocumentHandler;
+import org.apache.fop.render.intermediate.IFSerializer;
 import org.apache.fop.render.pdf.PDFRenderer;
 import org.apache.fop.render.print.PagesMode;
 import org.apache.fop.render.print.PrintRenderer;
@@ -210,13 +213,19 @@ public class CommandLineOptions {
 
             //Make sure the prepared XMLRenderer is used
             foUserAgent.setRendererOverride(xmlRenderer);
-        } else if (MimeConstants.MIME_FOP_IF.equals(outputmode)) {
+        } else if (MimeConstants.MIME_FOP_IF.equals(outputmode)
+                && mimicRenderer != null) {
             // render from FO to Intermediate Format
-            IFRenderer xml2Renderer = new IFRenderer();
-            xml2Renderer.setUserAgent(foUserAgent);
+            IFSerializer serializer = new IFSerializer();
+            serializer.setContext(new IFContext(foUserAgent));
 
-            //Make sure the prepared IFRenderer is used
-            foUserAgent.setRendererOverride(xml2Renderer);
+            IFDocumentHandler targetHandler
+                = foUserAgent.getRendererFactory().createDocumentHandler(
+                        foUserAgent, mimicRenderer);
+            serializer.mimicDocumentHandler(targetHandler);
+
+            //Make sure the prepared serializer is used
+            foUserAgent.setDocumentHandlerOverride(serializer);
         }
         return true;
     }
@@ -712,11 +721,12 @@ public class CommandLineOptions {
         } else if ((i + 2 == args.length)
                 || (args[i + 2].charAt(0) == '-')) {
             // only output file is specified
-            outfile = new File(args[i + 1]);
+            setOutputFile(args[i + 1]);
             return 1;
         } else {
             // mimic format and output file have been specified
-            outfile = new File(args[i + 2]);
+            mimicRenderer = args[i + 1];
+            setOutputFile(args[i + 2]);
             return 2;
         }
     }
@@ -1171,16 +1181,18 @@ public class CommandLineOptions {
             + "  -png outfile      input will be rendered as PNG (outfile req'd)\n"
             + "  -txt outfile      input will be rendered as plain text (outfile req'd) \n"
             + "  -at [mime] out    representation of area tree as XML (outfile req'd) \n"
-            + "                    specify optional mime output to allow AT to be converted\n"
+            + "                    specify optional mime output to allow the AT to be converted\n"
             + "                    to final format later\n"
-            + "  -if out           representation of area tree as intermediate format XML (outfile req'd)\n"
+            + "  -if [mime] out    representation of document in intermediate format XML (outfile req'd)\n"
+            + "                    specify optional mime output to allow the IF to be converted\n"
+            + "                    to final format later\n"
             + "  -print            input file will be rendered and sent to the printer \n"
             + "                    see options with \"-print help\" \n"
             + "  -out mime outfile input will be rendered using the given MIME type\n"
             + "                    (outfile req'd) Example: \"-out application/pdf D:\\out.pdf\"\n"
             + "                    (Tip: \"-out list\" prints the list of supported MIME types)\n"
-            + "  -mif outfile      input will be rendered as MIF (FrameMaker) (outfile req'd)\n"
-            + "                    Experimental feature - requires additional fop-sandbox.jar.\n"
+            //+ "  -mif outfile      input will be rendered as MIF (FrameMaker) (outfile req'd)\n"
+            //+ "                    Experimental feature - requires additional fop-sandbox.jar.\n"
             + "  -svg outfile      input will be rendered as an SVG slides file (outfile req'd) \n"
             + "                    Experimental feature - requires additional fop-sandbox.jar.\n"
             + "\n"
@@ -1223,7 +1235,7 @@ public class CommandLineOptions {
             break;
         case FO_INPUT:
             log.info("FO ");
-            if (this.useStdIn) {
+            if (isInputFromStdIn()) {
                 log.info("fo input file: from stdin");
             } else {
                 log.info("fo input file: " + fofile.toString());
@@ -1231,7 +1243,7 @@ public class CommandLineOptions {
             break;
         case XSLT_INPUT:
             log.info("xslt transformation");
-            if (this.useStdIn) {
+            if (isInputFromStdIn()) {
                 log.info("xml input file: from stdin");
             } else {
                 log.info("xml input file: " + xmlfile.toString());
@@ -1240,7 +1252,7 @@ public class CommandLineOptions {
             break;
         case AREATREE_INPUT:
             log.info("AT ");
-            if (this.useStdIn) {
+            if (isInputFromStdIn()) {
                 log.info("area tree input file: from stdin");
             } else {
                 log.info("area tree input file: " + areatreefile.toString());
@@ -1248,7 +1260,7 @@ public class CommandLineOptions {
             break;
         case IF_INPUT:
             log.info("IF ");
-            if (this.useStdIn) {
+            if (isInputFromStdIn()) {
                 log.info("intermediate input file: from stdin");
             } else {
                 log.info("intermediate input file: " + iffile.toString());
@@ -1256,7 +1268,7 @@ public class CommandLineOptions {
             break;
         case IMAGE_INPUT:
             log.info("Image ");
-            if (this.useStdIn) {
+            if (isInputFromStdIn()) {
                 log.info("image input file: from stdin");
             } else {
                 log.info("image input file: " + imagefile.toString());
@@ -1285,7 +1297,7 @@ public class CommandLineOptions {
             if (mimicRenderer != null) {
               log.info("mimic renderer: " + mimicRenderer);
             }
-            if (this.useStdOut) {
+            if (isOutputToStdOut()) {
                 log.info("output file: to stdout");
             } else {
                 log.info("output file: " + outfile.toString());
@@ -1295,7 +1307,7 @@ public class CommandLineOptions {
             log.info("output file: " + outfile.toString());
         } else {
             log.info(outputmode);
-            if (this.useStdOut) {
+            if (isOutputToStdOut()) {
                 log.info("output file: to stdout");
             } else {
                 log.info("output file: " + outfile.toString());

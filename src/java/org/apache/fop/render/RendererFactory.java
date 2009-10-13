@@ -368,10 +368,10 @@ public class RendererFactory {
     }
 
     /**
-     * Creates a {@code IFDocumentHandler} object based on the desired output format.
+     * Creates a {@link IFDocumentHandler} object based on the desired output format.
      * @param userAgent the user agent for access to configuration
      * @param outputFormat the MIME type of the output format to use (ex. "application/pdf").
-     * @return the new {@code IFDocumentHandler} instance
+     * @return the new {@link IFDocumentHandler} instance
      * @throws FOPException if the document handler cannot be properly constructed
      */
     public IFDocumentHandler createDocumentHandler(FOUserAgent userAgent, String outputFormat)
@@ -464,7 +464,7 @@ public class RendererFactory {
     }
 
     /**
-     * Discovers {@code IFDocumentHandler} implementations through the classpath and dynamically
+     * Discovers {@link IFDocumentHandler} implementations through the classpath and dynamically
      * registers them.
      */
     private void discoverDocumentHandlers() {

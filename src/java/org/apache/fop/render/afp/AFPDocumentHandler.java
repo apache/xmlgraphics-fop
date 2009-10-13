@@ -47,13 +47,15 @@ import org.apache.fop.render.afp.extensions.AFPElementMapping;
 import org.apache.fop.render.afp.extensions.AFPIncludeFormMap;
 import org.apache.fop.render.afp.extensions.AFPInvokeMediumMap;
 import org.apache.fop.render.afp.extensions.AFPPageSetup;
+import org.apache.fop.render.afp.extensions.AFPPageOverlay;
 import org.apache.fop.render.intermediate.AbstractBinaryWritingIFDocumentHandler;
+import org.apache.fop.render.intermediate.IFDocumentHandler;
 import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFPainter;
 
 /**
- * {@code IFDocumentHandler} implementation that produces AFP (MO:DCA).
+ * {@link IFDocumentHandler} implementation that produces AFP (MO:DCA).
  */
 public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
             implements AFPCustomizable {
@@ -285,12 +287,7 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
                         "AFP page setup extension encountered outside the page header: " + aps,
                         null);
                 }
-                if (AFPElementMapping.INCLUDE_PAGE_OVERLAY.equals(element)) {
-                    String overlay = aps.getName();
-                    if (overlay != null) {
-                        dataStream.createIncludePageOverlay(overlay);
-                    }
-                } else if (AFPElementMapping.INCLUDE_PAGE_SEGMENT.equals(element)) {
+                if (AFPElementMapping.INCLUDE_PAGE_SEGMENT.equals(element)) {
                     String name = aps.getName();
                     String source = aps.getValue();
                     pageSegmentMap.put(source, name);
@@ -300,6 +297,17 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
                         dataStream.createNoOperation(content);
                     }
                 }
+            }
+        } else if (extension instanceof AFPPageOverlay) {
+            AFPPageOverlay ipo = (AFPPageOverlay)extension;
+            if (this.location != LOC_IN_PAGE_HEADER) {
+                    throw new IFException(
+                        "AFP page overlay extension encountered outside the page header: " + ipo,
+                        null);
+            }
+            String overlay = ipo.getName();
+            if (overlay != null) {
+                dataStream.createIncludePageOverlay(overlay, ipo.getX(), ipo.getY());
             }
         } else if (extension instanceof AFPInvokeMediumMap) {
             if (this.location != LOC_FOLLOWING_PAGE_SEQUENCE

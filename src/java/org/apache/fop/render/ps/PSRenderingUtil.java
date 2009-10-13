@@ -206,7 +206,7 @@ public class PSRenderingUtil implements PSConfigurationConstants {
 
     /**
      * Indicates whether the "safe setpagedevice" mode is active.
-     * See {@code #setSafeSetPageDevice(boolean)} for more information.
+     * See {@link #setSafeSetPageDevice(boolean)} for more information.
      * @return true if active
      */
     public boolean isSafeSetPageDevice() {

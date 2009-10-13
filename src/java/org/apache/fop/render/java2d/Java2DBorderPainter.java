@@ -36,7 +36,7 @@ import org.apache.fop.traits.RuleStyle;
 import org.apache.fop.util.ColorUtil;
 
 /**
- * Java2D-specific implementation of the {@code BorderPainter}.
+ * Java2D-specific implementation of the {@link BorderPainter}.
  */
 public class Java2DBorderPainter extends BorderPainter {
 

@@ -23,11 +23,12 @@ package org.apache.fop.fo;
 import java.util.ListIterator;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.helpers.LocatorImpl;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import org.apache.xmlgraphics.util.QName;
 
@@ -274,7 +275,7 @@ public abstract class FONode implements Cloneable {
      * @param pList currently applicable PropertyList
      * @param locator location in the XSL-FO source file.
      * @throws FOPException if there's a problem during processing
-     * @deprecated Please override {@code #characters(char[], int, int, PropertyList, Locator)}
+     * @deprecated Please override {@link #characters(char[], int, int, PropertyList, Locator)}
      *          instead!
      */
     protected void addCharacters(char[] data, int start, int end,

@@ -33,7 +33,7 @@ import org.apache.fop.render.ImageHandler;
 import org.apache.fop.render.RenderingContext;
 
 /**
- * Image handler implementation that paints {@code RenderedImage} instances in PCL.
+ * Image handler implementation that paints {@link RenderedImage} instances in PCL.
  */
 public class PCLImageHandlerRenderedImage implements ImageHandler {
 
