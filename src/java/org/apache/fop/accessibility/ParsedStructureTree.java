@@ -19,13 +19,20 @@
 
 package org.apache.fop.accessibility;
 
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
+import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMResult;
+import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
+import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.NodeList;
 import org.xml.sax.ContentHandler;
@@ -90,6 +97,30 @@ public class ParsedStructureTree implements StructureTree {
     /** {@inheritDoc} */
     public NodeList getPageSequence(int number) {
         return (NodeList) pageSequenceStructures.get(number - 1);
+    }
+
+    /**
+     * Returns an XML-like representation of the structure trees.
+     * <p>
+     * <strong>Note:</strong> use only for debugging purpose, as this method
+     * performs non-trivial operations.
+     * </p>
+     * @return a string representation of this object
+     */
+    public String toString() {
+        try {
+            Transformer t = TransformerFactory.newInstance().newTransformer();
+            Writer str = new StringWriter();
+            for (Iterator iter = pageSequenceStructures.iterator(); iter.hasNext();) {
+                NodeList nodes = (NodeList) iter.next();
+                for (int i = 0, c = nodes.getLength(); i < c; i++) {
+                    t.transform(new DOMSource(nodes.item(i)), new StreamResult(str));
+                }
+            }
+            return str.toString();
+        } catch (Exception e) {
+            return e.toString();
+        }
     }
 
 }

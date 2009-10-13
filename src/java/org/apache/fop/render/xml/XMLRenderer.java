@@ -34,12 +34,14 @@ import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
-
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import org.apache.xmlgraphics.util.QName;
 import org.apache.xmlgraphics.util.XMLizable;
 
+import org.apache.fop.accessibility.StructureTree;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
@@ -86,6 +88,7 @@ import org.apache.fop.render.Renderer;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.XMLHandler;
 import org.apache.fop.util.ColorUtil;
+import org.apache.fop.util.DOM2SAX;
 
 /**
  * Renderer that renders areas to XML for debugging purposes.
@@ -104,6 +107,8 @@ public class XMLRenderer extends AbstractXMLRenderer {
 
     /** If not null, the XMLRenderer will mimic another renderer by using its font setup. */
     protected Renderer mimic;
+
+    private int pageSequenceNumber;
 
     /**
      * Creates a new XML renderer.
@@ -440,6 +445,21 @@ public class XMLRenderer extends AbstractXMLRenderer {
         }
         transferForeignObjects(pageSequence);
         startElement("pageSequence", atts);
+        if (this.getUserAgent().isAccessibilityEnabled()) {
+            StructureTree structureTree = getUserAgent().getStructureTree();
+            String structureTreeElement = "structureTree";
+            startElement(structureTreeElement);
+            NodeList nodes = structureTree.getPageSequence(++pageSequenceNumber);
+            for (int i = 0, n = nodes.getLength(); i < n; i++) {
+                Node node = nodes.item(i);
+                try {
+                    new DOM2SAX(handler).writeFragment(node);
+                } catch (SAXException e) {
+                    handleSAXException(e);
+                }
+            }
+            endElement(structureTreeElement);
+        }
         handleExtensionAttachments(pageSequence.getExtensionAttachments());
         LineArea seqTitle = pageSequence.getTitle();
         if (seqTitle != null) {
