@@ -54,6 +54,8 @@ import org.apache.fop.util.ListUtil;
  */
 public class TextLayoutManager extends LeafNodeLayoutManager {
 
+    //TODO: remove all final modifiers at local variables
+
     /**
      * Store information about each potential text area.
      * Index of character which ends the area, IPD of area, including
@@ -686,39 +688,39 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
     }
 
     private AreaInfo processWord(final int alignment, final KnuthSequence sequence,
-            AreaInfo prevAi, final char ch, final boolean breakOpportunity,
+            AreaInfo prevAreaInfo, final char ch, final boolean breakOpportunity,
             final boolean checkEndsWithHyphen) {
-        AreaInfo ai;
+
         //Word boundary found, process widths and kerning
         int lastIndex = this.nextStart;
         while (lastIndex > 0
-                && this.foText.charAt(lastIndex - 1) == CharUtilities.SOFT_HYPHEN) {
+                && foText.charAt(lastIndex - 1) == CharUtilities.SOFT_HYPHEN) {
             lastIndex--;
         }
         final boolean endsWithHyphen = checkEndsWithHyphen
-                && this.foText.charAt(lastIndex) == CharUtilities.SOFT_HYPHEN;
+                && foText.charAt(lastIndex) == CharUtilities.SOFT_HYPHEN;
         final Font font = FontSelector
-                .selectFontForCharactersInText(this.foText,
-                        this.thisStart, lastIndex, this.foText, this);
+                .selectFontForCharactersInText(foText,
+                        this.thisStart, lastIndex, foText, this);
         final int wordLength = lastIndex - this.thisStart;
         final boolean kerning = font.hasKerning();
         final MinOptMax wordIPD = new MinOptMax(0);
         for (int i = this.thisStart; i < lastIndex; i++) {
-            final char c = this.foText.charAt(i);
+            final char currentChar = foText.charAt(i);
 
             //character width
-            final int charWidth = font.getCharWidth(c);
+            final int charWidth = font.getCharWidth(currentChar);
             wordIPD.add(charWidth);
 
             //kerning
             if (kerning) {
                 int kern = 0;
                 if (i > this.thisStart) {
-                    final char previous = this.foText.charAt(i - 1);
-                    kern = font.getKernValue(previous, c) * font.getFontSize() / 1000;
-                } else if (prevAi != null && !prevAi.isSpace && prevAi.breakIndex > 0) {
-                    final char previous = this.foText.charAt(prevAi.breakIndex - 1);
-                    kern = font.getKernValue(previous, c) * font.getFontSize() / 1000;
+                    final char previousChar = foText.charAt(i - 1);
+                    kern = font.getKernValue(previousChar, currentChar);
+                } else if (prevAreaInfo != null && !prevAreaInfo.isSpace && prevAreaInfo.breakIndex > 0) {
+                    final char previousChar = foText.charAt(prevAreaInfo.breakIndex - 1);
+                    kern = font.getKernValue(previousChar, currentChar);
                 }
                 if (kern != 0) {
                     this.addToLetterAdjust(i, kern);
@@ -731,11 +733,10 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                 && !TextLayoutManager.isSpace(ch)
                 && lastIndex > 0
                 && endsWithHyphen) {
-            final int kern = font.getKernValue(
-                    this.foText.charAt(lastIndex - 1), ch)
-                    * font.getFontSize() / 1000;
+            final int kern = font.getKernValue(foText.charAt(lastIndex - 1), ch);
             if (kern != 0) {
                 this.addToLetterAdjust(lastIndex, kern);
+                //TODO: add kern to wordIPD?
             }
         }
         int iLetterSpaces = wordLength - 1;
@@ -748,20 +749,20 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         wordIPD.add(MinOptMax.multiply(this.letterSpaceIPD, iLetterSpaces));
 
         // create the AreaInfo object
-        ai = new AreaInfo(this.thisStart, lastIndex, 0,
+        AreaInfo areaInfo = new AreaInfo(this.thisStart, lastIndex, 0,
                 iLetterSpaces, wordIPD,
                 endsWithHyphen,
                 false, breakOpportunity, font);
-        prevAi = ai;
-        this.vecAreaInfo.add(ai);
+        prevAreaInfo = areaInfo;
+        this.vecAreaInfo.add(areaInfo);
         this.tempStart = this.nextStart;
 
         //add the elements
-        this.addElementsForAWordFragment(sequence, alignment, ai,
+        this.addElementsForAWordFragment(sequence, alignment, areaInfo,
                 this.vecAreaInfo.size() - 1, this.letterSpaceIPD);
-        ai = null;
         this.thisStart = this.nextStart;
-        return prevAi;
+
+        return prevAreaInfo;
     }
 
     /** {@inheritDoc} */

@@ -26,9 +26,12 @@ import java.util.List;
 import java.util.ListIterator;
 
 /**
- * Represents a list of Knuth elements.
+ * Represents a list of {@link KnuthElement Knuth elements}.
  */
 public abstract class KnuthSequence extends ArrayList {
+
+    //TODO: do not extend ArrayList
+
     /**
      * Creates a new and empty list.
      */

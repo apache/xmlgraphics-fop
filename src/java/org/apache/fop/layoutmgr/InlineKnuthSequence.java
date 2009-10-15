@@ -72,7 +72,7 @@ public class InlineKnuthSequence extends KnuthSequence  {
         lastOldElement = getLast();
         firstNewElement = sequence.getElement(0);
         if (firstNewElement.isBox() && !((KnuthElement) firstNewElement).isAuxiliary()
-                && lastOldElement.isBox() && ((KnuthElement) lastOldElement).getW() != 0) {
+                && lastOldElement.isBox() && ((KnuthElement) lastOldElement).getWidth() != 0) {
             addALetterSpace();
         }
         addAll(sequence);

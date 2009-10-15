@@ -55,9 +55,9 @@ public class ElementListUtilsTestCase extends TestCase {
 
         assertFalse(res);
 
-        assertEquals(KnuthElement.INFINITE, ((KnuthPenalty)lst.get(1)).getP());
-        assertEquals(KnuthElement.INFINITE, ((KnuthPenalty)lst.get(3)).getP());
-        assertEquals(0, ((KnuthPenalty)lst.get(5)).getP());
+        assertEquals(KnuthElement.INFINITE, ((KnuthPenalty)lst.get(1)).getPenalty());
+        assertEquals(KnuthElement.INFINITE, ((KnuthPenalty)lst.get(3)).getPenalty());
+        assertEquals(0, ((KnuthPenalty)lst.get(5)).getPenalty());
     }
 
     /**
@@ -82,11 +82,11 @@ public class ElementListUtilsTestCase extends TestCase {
         assertFalse(res);
 
         //Must insert an INFINITE penalty
-        assertEquals(KnuthElement.INFINITE, ((KnuthPenalty)lst.get(1)).getP());
-        assertEquals(0, ((KnuthGlue)lst.get(2)).getW());
-        assertEquals(KnuthElement.INFINITE, ((KnuthPenalty)lst.get(4)).getP());
-        assertEquals(0, ((KnuthGlue)lst.get(5)).getW());
-        assertEquals(0, ((KnuthGlue)lst.get(7)).getW());
+        assertEquals(KnuthElement.INFINITE, ((KnuthPenalty)lst.get(1)).getPenalty());
+        assertEquals(0, ((KnuthGlue)lst.get(2)).getWidth());
+        assertEquals(KnuthElement.INFINITE, ((KnuthPenalty)lst.get(4)).getPenalty());
+        assertEquals(0, ((KnuthGlue)lst.get(5)).getWidth());
+        assertEquals(0, ((KnuthGlue)lst.get(7)).getWidth());
     }
 
     /**
@@ -110,9 +110,9 @@ public class ElementListUtilsTestCase extends TestCase {
 
         assertFalse(res);
 
-        assertEquals(0, ((KnuthPenalty)lst.get(1)).getP());
-        assertEquals(KnuthElement.INFINITE, ((KnuthPenalty)lst.get(3)).getP());
-        assertEquals(KnuthElement.INFINITE, ((KnuthPenalty)lst.get(5)).getP());
+        assertEquals(0, ((KnuthPenalty)lst.get(1)).getPenalty());
+        assertEquals(KnuthElement.INFINITE, ((KnuthPenalty)lst.get(3)).getPenalty());
+        assertEquals(KnuthElement.INFINITE, ((KnuthPenalty)lst.get(5)).getPenalty());
     }
 
     /**
@@ -137,10 +137,10 @@ public class ElementListUtilsTestCase extends TestCase {
         assertFalse(res);
 
         //Must insert an INFINITE penalty
-        assertEquals(0, ((KnuthPenalty)lst.get(1)).getP());
-        assertEquals(KnuthElement.INFINITE, ((KnuthPenalty)lst.get(3)).getP());
-        assertEquals(KnuthElement.INFINITE, ((KnuthPenalty)lst.get(5)).getP());
-        assertEquals(0, ((KnuthGlue)lst.get(6)).getW());
+        assertEquals(0, ((KnuthPenalty)lst.get(1)).getPenalty());
+        assertEquals(KnuthElement.INFINITE, ((KnuthPenalty)lst.get(3)).getPenalty());
+        assertEquals(KnuthElement.INFINITE, ((KnuthPenalty)lst.get(5)).getPenalty());
+        assertEquals(0, ((KnuthGlue)lst.get(6)).getWidth());
     }
 
 

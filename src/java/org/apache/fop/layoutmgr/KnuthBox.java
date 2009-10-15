@@ -37,12 +37,12 @@ public class KnuthBox extends KnuthElement {
     /**
      * Create a new KnuthBox.
      *
-     * @param w    the width of this box
+     * @param width    the width of this box
      * @param pos  the Position stored in this box
-     * @param bAux is this box auxiliary?
+     * @param auxiliary is this box auxiliary?
      */
-    public KnuthBox(int w, Position pos, boolean bAux) {
-        super(w, pos, bAux);
+    public KnuthBox(int width, Position pos, boolean auxiliary) {
+        super(width, pos, auxiliary);
     }
 
     /** {@inheritDoc} */
@@ -52,14 +52,14 @@ public class KnuthBox extends KnuthElement {
 
     /** {@inheritDoc} */
     public String toString() {
-        StringBuffer sb = new StringBuffer(64);
+        StringBuffer buffer = new StringBuffer(64);
         if (isAuxiliary()) {
-            sb.append("aux. ");
+            buffer.append("aux. ");
         }
-        sb.append("box");
-        sb.append(" w=");
-        sb.append(getW());
-        return sb.toString();
+        buffer.append("box");
+        buffer.append(" w=");
+        buffer.append(getWidth());
+        return buffer.toString();
     }
 
 }

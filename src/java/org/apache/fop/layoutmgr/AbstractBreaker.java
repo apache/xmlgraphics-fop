@@ -588,7 +588,7 @@ public abstract class AbstractBreaker {
                             .listIterator(startElementIndex);
                     while (effectiveListIterator.nextIndex() <= endElementIndex) {
                         KnuthElement tempEl = (KnuthElement)effectiveListIterator.next();
-                        if (tempEl.isBox() && tempEl.getW() > 0) {
+                        if (tempEl.isBox() && tempEl.getWidth() > 0) {
                             boxCount++;
                         }
                     }
@@ -861,9 +861,9 @@ public abstract class AbstractBreaker {
                     case BlockLevelLayoutManager.LINE_NUMBER_ADJUSTMENT:
                         // potential line number adjustment
                         lineNumberMaxAdjustment.max += ((KnuthGlue) thisElement)
-                                .getY();
+                                .getStretch();
                         lineNumberMaxAdjustment.min -= ((KnuthGlue) thisElement)
-                                .getZ();
+                                .getShrink();
                         adjustableLinesList.add(thisElement);
                         break;
                     case BlockLevelLayoutManager.LINE_HEIGHT_ADJUSTMENT:
@@ -885,9 +885,9 @@ public abstract class AbstractBreaker {
                             KnuthGlue blockSpace = (KnuthGlue) unconfirmedList
                                     .removeFirst();
                             spaceMaxAdjustment.max += ((KnuthGlue) blockSpace)
-                                    .getY();
+                                    .getStretch();
                             spaceMaxAdjustment.min -= ((KnuthGlue) blockSpace)
-                                    .getZ();
+                                    .getShrink();
                             blockSpacesList.add(blockSpace);
                         }
                     }
@@ -898,11 +898,11 @@ public abstract class AbstractBreaker {
             log.debug("| space adj      = "
                     + spaceMaxAdjustment);
 
-            if (thisElement.isPenalty() && thisElement.getW() > 0) {
+            if (thisElement.isPenalty() && thisElement.getWidth() > 0) {
                 log.debug("  mandatory variation to the number of lines!");
                 ((BlockLevelLayoutManager) thisElement
                         .getLayoutManager()).negotiateBPDAdjustment(
-                        thisElement.getW(), thisElement);
+                        thisElement.getWidth(), thisElement);
             }
 
             if (thisBreak.bpdAdjust != 0
@@ -967,7 +967,7 @@ public abstract class AbstractBreaker {
         int partial = 0;
         while (spaceListIterator.hasNext()) {
             KnuthGlue blockSpace = (KnuthGlue)spaceListIterator.next();
-            partial += (difference > 0 ? blockSpace.getY() : blockSpace.getZ());
+            partial += (difference > 0 ? blockSpace.getStretch() : blockSpace.getShrink());
             if (log.isDebugEnabled()) {
                 log.debug("available = " + partial +  " / " + total);
                 log.debug("competenza  = "
@@ -990,7 +990,7 @@ public abstract class AbstractBreaker {
         int partial = 0;
         while (lineListIterator.hasNext()) {
             KnuthGlue line = (KnuthGlue)lineListIterator.next();
-            partial += (difference > 0 ? line.getY() : line.getZ());
+            partial += (difference > 0 ? line.getStretch() : line.getShrink());
             int newAdjust = ((BlockLevelLayoutManager) line.getLayoutManager()).negotiateBPDAdjustment(((int) ((float) partial * difference / total)) - adjustedDiff, line);
             adjustedDiff += newAdjust;
         }
