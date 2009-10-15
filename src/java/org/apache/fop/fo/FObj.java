@@ -56,7 +56,7 @@ public abstract class FObj extends FONode implements Constants {
     private List/*<ExtensionAttachment>*/ extensionAttachments = null;
 
     /** The map of foreign attributes, null if none */
-    private Map foreignAttributes = null;
+    private Map/*<QName,String>*/ foreignAttributes = null;
 
     /** Used to indicate if this FO is either an Out Of Line FO (see rec)
      *  or a descendant of one. Used during FO validation.
@@ -591,7 +591,7 @@ public abstract class FObj extends FONode implements Constants {
             throw new NullPointerException("Parameter attributeName must not be null");
         }
         if (foreignAttributes == null) {
-            foreignAttributes = new java.util.HashMap();
+            foreignAttributes = new java.util.HashMap/*<QName,String>*/();
         }
         foreignAttributes.put(attributeName, value);
     }
