@@ -82,7 +82,7 @@ public class ParsedStructureTree implements StructureTree {
 
             public void characters(char[] ch, int start, int length) throws SAXException {
                 /*
-                 * There's not text node in the structure tree. This is just
+                 * There's no text node in the structure tree. This is just
                  * whitespace => ignore
                  */
             }

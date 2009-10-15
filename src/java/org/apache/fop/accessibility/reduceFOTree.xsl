@@ -16,71 +16,85 @@
   limitations under the License.
 -->
 <!-- $Id$ -->
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:fo="http://www.w3.org/1999/XSL/Format"
-  xmlns:fox="http://xmlgraphics.apache.org/fop/extensions" 
-  xmlns:svg="http://www.w3.org/2000/svg"
-  xmlns:foi="http://xmlgraphics.apache.org/fop/internal" 
-  version="1.0">
-    <xsl:output method="xml" indent="no"/>
-    
-    <xsl:template match="*">
-        <xsl:element name="{name()}">
-            <xsl:copy-of select="@foi:ptr"/>
-            <xsl:apply-templates/>
-        </xsl:element>
-    </xsl:template>
-    
-    <xsl:template match="@master-reference|@flow-name"></xsl:template>
-    
-    <xsl:template match="fo:block">
-        <xsl:element name="{name()}">
-            <xsl:copy-of select="@foi:ptr"/>
-            <xsl:apply-templates/>
-        </xsl:element>
-    </xsl:template>
-    
-    <xsl:template match="fo:inline|fo:wrapper|fo:page-number|fo:page-number-citation|fo:page-number-citation-last">
-        <xsl:element name="{name()}">
-            <xsl:copy-of select="@foi:ptr"/>
-            <xsl:apply-templates/>
-        </xsl:element>
-    </xsl:template>
-    
-    <xsl:template match="fo:table-cell|fo:table|fo:table-body|fo:table-footer|fo:table-row|fo:table-header">
-        <xsl:element name="{name()}">
-            <xsl:copy-of select="@foi:ptr"/>
-            <xsl:apply-templates/>
-        </xsl:element>
-    </xsl:template>
-    
-    <xsl:template match="fo:list-block|fo:list-item|fo:list-item-label|fo:list-item-body">
-        <xsl:element name="{name()}">
-            <xsl:copy-of select="@foi:ptr"/>
-            <xsl:apply-templates/>
-        </xsl:element>
-    </xsl:template>
-    
-    <xsl:template match="fo:basic-link|fo:block-container|fo:character|fo:instream-foreign-object|fo:marker">
-        <xsl:element name="{name()}">
-            <xsl:copy-of select="@foi:ptr"/>
-            <xsl:apply-templates/>
-        </xsl:element>
-    </xsl:template>
-    
-    <xsl:template match="fo:external-graphic|fo:instream-foreign-object">
-        <xsl:element name="{name()}">
-            <xsl:copy-of select="@fox:alt-text|@foi:ptr"/>
-            <xsl:apply-templates/>
-        </xsl:element>
-    </xsl:template>
-    
-    <!-- the following nodes are being ignored/filtered -->
-    
-    <xsl:template match="text()"/>
-    
-    <xsl:template match="fo:layout-master-set | comment() | processing-instruction() | fo:simple-page-master | fo:table-column | fo:leader | fo:retrieve-marker "/>
+  xmlns:fox="http://xmlgraphics.apache.org/fop/extensions"
+  xmlns:foi="http://xmlgraphics.apache.org/fop/internal">
 
-    <xsl:template match="svg:svg | svg | fo:inline-container | fo:float | fo:bidi-override"/>
-    
+  <xsl:output method="xml" indent="no"/>
+
+  <xsl:template name="copy">
+    <xsl:copy>
+      <xsl:apply-templates select="@*|node()"/>
+    </xsl:copy>
+  </xsl:template>
+
+  <!-- Declarations and Pagination and Layout Formatting Objects -->
+  <xsl:template match="fo:root|fo:page-sequence|fo:static-content|fo:flow">
+    <xsl:call-template name="copy"/>
+  </xsl:template>
+
+  <!-- Block-level Formatting Objects -->
+  <xsl:template match="fo:block|fo:block-container">
+    <xsl:call-template name="copy"/>
+  </xsl:template>
+
+  <!-- Inline-level Formatting Objects -->
+  <xsl:template match="fo:character|fo:inline|fo:inline-container">
+    <xsl:call-template name="copy"/>
+  </xsl:template>
+
+  <xsl:template match="fo:external-graphic|fo:instream-foreign-object">
+    <xsl:call-template name="copy"/>
+  </xsl:template>
+
+  <xsl:template match="fo:page-number|fo:page-number-citation|fo:page-number-citation-last">
+    <xsl:call-template name="copy"/>
+  </xsl:template>
+
+  <!-- Formatting Objects for Tables -->
+  <xsl:template match="fo:table-and-caption|fo:table-caption|fo:table">
+    <xsl:call-template name="copy"/>
+  </xsl:template>
+
+  <xsl:template match="fo:table-header|fo:table-footer|fo:table-body|fo:table-row|fo:table-cell">
+    <xsl:call-template name="copy"/>
+  </xsl:template>
+
+  <!-- Formatting Objects for Lists -->
+  <xsl:template match="fo:list-block|fo:list-item|fo:list-item-label|fo:list-item-body">
+    <xsl:call-template name="copy"/>
+  </xsl:template>
+
+  <!-- Dynamic Effects: Link and Multi Formatting Objects -->
+  <xsl:template match="fo:basic-link">
+    <xsl:call-template name="copy"/>
+  </xsl:template>
+
+  <!-- Out-of-Line Formatting Objects -->
+  <xsl:template match="fo:float|fo:footnote|fo:footnote-body">
+    <xsl:call-template name="copy"/>
+  </xsl:template>
+
+  <!-- Other Formatting Objects -->
+  <xsl:template match="fo:wrapper|fo:marker">
+    <xsl:call-template name="copy"/>
+  </xsl:template>
+
+
+  <!-- Discard descendants of fo:leader -->
+  <xsl:template match="fo:leader"/>
+      
+
+  <!-- Keep foi:ptr and fox:alt-text attributes, discard everything else -->
+  <xsl:template match="@foi:ptr|@fox:alt-text">
+    <xsl:copy-of select="."/>
+  </xsl:template>
+
+  <xsl:template match="@*"/>
+
+
+  <!-- Discard text -->
+  <xsl:template match="text()"/>
+
 </xsl:stylesheet>

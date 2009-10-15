@@ -20,42 +20,69 @@
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:fo="http://www.w3.org/1999/XSL/Format"
   xmlns:foi="http://xmlgraphics.apache.org/fop/internal">
-  <xsl:template match="fo:block|fo:block-container">
-    <xsl:call-template name="addPtr"/>
-  </xsl:template>
-  <xsl:template match="fo:list-block|fo:list-item|fo:list-item-label|fo:list-item-body">
-    <xsl:call-template name="addPtr"/>
-  </xsl:template>
-  <xsl:template match="fo:table-and-caption|fo:table-caption|fo:table|fo:table-body|fo:table-header|fo:table-footer|fo:table-row|fo:table-cell">
-    <xsl:call-template name="addPtr"/>
-  </xsl:template>
-  <xsl:template match="fo:inline|fo:wrapper|fo:basic-link|fo:character">
-    <xsl:call-template name="addPtr"/>
-  </xsl:template>
-  <xsl:template match="fo:instream-foreign-object|fo:external-graphic">
-    <xsl:call-template name="addPtr"/>
-  </xsl:template>
-  <xsl:template match="fo:page-number|fo:page-number-citation|fo:page-number-citation-last">
-    <xsl:call-template name="addPtr"/>
-  </xsl:template>
-  <xsl:template match="fo:footnote|fo:footnote-body">
-    <xsl:call-template name="addPtr"/>
-  </xsl:template>
-  <xsl:template match="fo:marker">
-    <xsl:call-template name="addPtr"/>
-  </xsl:template>
+
   <xsl:template name="addPtr">
-    <xsl:element name="{name()}" namespace="{namespace-uri()}">
+    <xsl:copy>
       <xsl:apply-templates select="@*"/>
       <xsl:attribute name="foi:ptr">
         <xsl:value-of select="generate-id()"/>
       </xsl:attribute>
       <xsl:apply-templates/>
-    </xsl:element>
+    </xsl:copy>
   </xsl:template>
+
+  <!-- Block-level Formatting Objects -->
+  <xsl:template match="fo:block|fo:block-container">
+    <xsl:call-template name="addPtr"/>
+  </xsl:template>
+
+  <!-- Inline-level Formatting Objects -->
+  <xsl:template match="fo:character|fo:inline|fo:inline-container">
+    <xsl:call-template name="addPtr"/>
+  </xsl:template>
+
+  <xsl:template match="fo:external-graphic|fo:instream-foreign-object">
+    <xsl:call-template name="addPtr"/>
+  </xsl:template>
+
+  <xsl:template match="fo:page-number|fo:page-number-citation|fo:page-number-citation-last">
+    <xsl:call-template name="addPtr"/>
+  </xsl:template>
+
+  <!-- Formatting Objects for Tables -->
+  <xsl:template match="fo:table-and-caption|fo:table-caption|fo:table">
+    <xsl:call-template name="addPtr"/>
+  </xsl:template>
+
+  <xsl:template match="fo:table-header|fo:table-footer|fo:table-body|fo:table-row|fo:table-cell">
+    <xsl:call-template name="addPtr"/>
+  </xsl:template>
+
+  <!-- Formatting Objects for Lists -->
+  <xsl:template match="fo:list-block|fo:list-item|fo:list-item-label|fo:list-item-body">
+    <xsl:call-template name="addPtr"/>
+  </xsl:template>
+
+  <!-- Dynamic Effects: Link and Multi Formatting Objects -->
+  <xsl:template match="fo:basic-link">
+    <xsl:call-template name="addPtr"/>
+  </xsl:template>
+
+  <!-- Out-of-Line Formatting Objects -->
+  <xsl:template match="fo:float|fo:footnote|fo:footnote-body">
+    <xsl:call-template name="addPtr"/>
+  </xsl:template>
+
+  <!-- Other Formatting Objects -->
+  <xsl:template match="fo:wrapper|fo:marker">
+    <xsl:call-template name="addPtr"/>
+  </xsl:template>
+
+
   <xsl:template match="@*|node()">
     <xsl:copy>
       <xsl:apply-templates select="@*|node()"/>
     </xsl:copy>
   </xsl:template>
+
 </xsl:stylesheet>

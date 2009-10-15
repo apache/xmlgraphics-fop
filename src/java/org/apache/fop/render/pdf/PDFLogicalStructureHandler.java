@@ -26,6 +26,8 @@ import java.util.Map;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import org.apache.fop.fo.extensions.ExtensionElementMapping;
+import org.apache.fop.fo.extensions.InternalElementMapping;
 import org.apache.fop.pdf.PDFArray;
 import org.apache.fop.pdf.PDFDictionary;
 import org.apache.fop.pdf.PDFDocument;
@@ -129,22 +131,21 @@ class PDFLogicalStructureHandler {
 
         for (int i = 0, n = structureTree.getLength(); i < n; i++) {
             Node node = structureTree.item(i);
-            if (node.getNodeName().equals("fo:flow")
-                    || node.getNodeName().equals("fo:static-content")) {
-                PDFStructElem structElemSect = pdfDoc.getFactory().makeStructureElement(
-                        FOToPDFRoleMap.mapFormattingObject(node.getLocalName(), structElemPart),
-                        structElemPart);
-                structElemPart.addKid(structElemSect);
-                NodeList childNodes = node.getChildNodes();
-                for (int j = 0, m = childNodes.getLength(); j < m; j++) {
-                    processNode(childNodes.item(j), structElemSect, true);
-                }
+            assert node.getLocalName().equals("flow")
+                    || node.getLocalName().equals("static-content");
+            PDFStructElem structElemSect = pdfDoc.getFactory().makeStructureElement(
+                    FOToPDFRoleMap.mapFormattingObject(node.getLocalName(), structElemPart),
+                    structElemPart);
+            structElemPart.addKid(structElemSect);
+            NodeList childNodes = node.getChildNodes();
+            for (int j = 0, m = childNodes.getLength(); j < m; j++) {
+                processNode(childNodes.item(j), structElemSect, true);
             }
         }
     }
 
     private void processNode(Node node, PDFStructElem parent, boolean addKid) {
-        Node attr = node.getAttributes().getNamedItem("foi:ptr");
+        Node attr = node.getAttributes().getNamedItemNS(InternalElementMapping.URI, "ptr");
         assert attr != null;
         String ptr = attr.getNodeValue();
         String nodeName = node.getLocalName();
@@ -157,7 +158,8 @@ class PDFLogicalStructureHandler {
             parent.addKid(structElem);
         }
         if (nodeName.equals("external-graphic") || nodeName.equals("instream-foreign-object")) {
-            Node altTextNode = node.getAttributes().getNamedItem("fox:alt-text");
+            Node altTextNode = node.getAttributes().getNamedItemNS(
+                    ExtensionElementMapping.URI, "alt-text");
             if (altTextNode != null) {
                 structElem.put("Alt", altTextNode.getNodeValue());
             } else {
