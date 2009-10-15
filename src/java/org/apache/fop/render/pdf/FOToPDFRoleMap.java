@@ -28,18 +28,24 @@ import org.apache.fop.pdf.PDFStructElem;
 /**
  * This class provides the standard mappings from Formatting Objects to PDF structure types.
  */
-public final class FOToPDFRoleMap {
+final class FOToPDFRoleMap {
 
     private static final Map STANDARD_MAPPINGS = new java.util.HashMap();
 
     private static final PDFName TFOOT = new PDFName("TFoot");
     private static final PDFName THEAD = new PDFName("THead");
+    private static final PDFName NON_STRUCT = new PDFName("NonStruct");
 
     static {
         addMapping("block",                     "P");
-        addMapping("block-container",           "Div");
 
-        PDFName st = new PDFName("Span");
+        PDFName st = new PDFName("Div");
+        addMapping("block-container",           st);
+        addMapping("inline-container",          st);
+        addMapping("table-and-caption",         st);
+        addMapping("float",                     st);
+
+        st = new PDFName("Span");
         addMapping("inline",                    st);
         addMapping("wrapper",                   st);
         addMapping("character",                 st);
@@ -58,6 +64,7 @@ public final class FOToPDFRoleMap {
         addMapping("external-graphic",          st);
         addMapping("instream-foreign-object",   st);
 
+        addMapping("table-caption",             "Caption");
         addMapping("table",                     "Table");
         addMapping("table-body",                "TBody");
         addMapping("table-header",              THEAD);
@@ -98,8 +105,9 @@ public final class FOToPDFRoleMap {
         Mapper mapper = (Mapper)STANDARD_MAPPINGS.get(fo);
         if (mapper != null) {
             return mapper.getStructureType(parent);
+        } else {
+            return NON_STRUCT;
         }
-        return null;
     }
 
     private interface Mapper {
