@@ -45,39 +45,40 @@ public class KnuthPenalty extends KnuthElement {
     public static final int FLAGGED_PENALTY = 50;
 
     private int penalty;
-    private boolean isFlagged;
+    private boolean penaltyFlagged;
     private int breakClass = -1;
 
     /**
      * Create a new KnuthPenalty.
      *
-     * @param w the width of this penalty
-     * @param p the penalty value of this penalty
-     * @param f is this penalty flagged?
+     * @param width the width of this penalty
+     * @param penalty the penalty value of this penalty
+     * @param penaltyFlagged is this penalty flagged?
      * @param pos the Position stored in this penalty
-     * @param isAuxiliary is this penalty auxiliary?
+     * @param auxiliary is this penalty auxiliary?
      */
-    public KnuthPenalty(int w, int p, boolean f, Position pos, boolean isAuxiliary) {
-        super(w, pos, isAuxiliary);
-        penalty = p;
-        isFlagged = f;
+    public KnuthPenalty(int width, int penalty, boolean penaltyFlagged, Position pos,
+                        boolean auxiliary) {
+        super(width, pos, auxiliary);
+        this.penalty = penalty;
+        this.penaltyFlagged = penaltyFlagged;
     }
 
     /**
      * Create a new KnuthPenalty.
      *
-     * @param w the width of this penalty
-     * @param p the penalty value of this penalty
-     * @param f is this penalty flagged?
+     * @param width the width of this penalty
+     * @param penalty the penalty value of this penalty
+     * @param penaltyFlagged is this penalty flagged?
      * @param breakClass the break class of this penalty (one of
      * {@link Constants#EN_AUTO}, {@link Constants#EN_COLUMN}, {@link Constants#EN_PAGE},
      * {@link Constants#EN_EVEN_PAGE}, {@link Constants#EN_ODD_PAGE})
      * @param pos the Position stored in this penalty
      * @param isAuxiliary is this penalty auxiliary?
      */
-    public KnuthPenalty(int w, int p, boolean f,
-            int breakClass, Position pos, boolean isAuxiliary) {
-        this(w, p, f, pos, isAuxiliary);
+    public KnuthPenalty(int width, int penalty, boolean penaltyFlagged, int breakClass,
+                        Position pos, boolean isAuxiliary) {
+        this(width, penalty, penaltyFlagged, pos, isAuxiliary);
         this.breakClass = breakClass;
     }
 
@@ -89,6 +90,8 @@ public class KnuthPenalty extends KnuthElement {
      * Get the penalty's value as a {@link java.lang.String}.
      * (Mainly used in {@link #toString()} methods, to improve readability
      * of the trace logs.)
+     *
+     * TODO: shouldn't be penalty a class of its own?
      *
      * @param penaltyValue  the penalty value
      * @return  the penalty value as a {@link java.lang.String}
@@ -110,21 +113,21 @@ public class KnuthPenalty extends KnuthElement {
     /**
      * @return the penalty value of this penalty.
      */
-    public int getP() {
+    public int getPenalty() {
         return penalty;
     }
 
     /**
      * Sets a new penalty value.
-     * @param p the new penalty value
+     * @param penalty the new penalty value
      */
-    public void setP(int p) {
-        this.penalty = p;
+    public void setPenalty(int penalty) {
+        this.penalty = penalty;
     }
 
     /** @return true is this penalty is a flagged one. */
-    public boolean isFlagged() {
-        return isFlagged;
+    public boolean isPenaltyFlagged() {
+        return penaltyFlagged;
     }
 
     /** {@inheritDoc} */
@@ -142,28 +145,28 @@ public class KnuthPenalty extends KnuthElement {
 
     /** {@inheritDoc} */
     public String toString() {
-        StringBuffer sb = new StringBuffer(64);
+        StringBuffer buffer = new StringBuffer(64);
         if (isAuxiliary()) {
-            sb.append("aux. ");
+            buffer.append("aux. ");
         }
-        sb.append("penalty");
-        sb.append(" p=");
-        sb.append(valueOf(this.penalty));
-        if (this.isFlagged) {
-            sb.append(" [flagged]");
+        buffer.append("penalty");
+        buffer.append(" p=");
+        buffer.append(valueOf(this.penalty));
+        if (this.penaltyFlagged) {
+            buffer.append(" [flagged]");
         }
-        sb.append(" w=");
-        sb.append(getW());
+        buffer.append(" w=");
+        buffer.append(getWidth());
         if (isForcedBreak()) {
-            sb.append(" (forced break, ")
+            buffer.append(" (forced break, ")
                     .append(getBreakClassName(this.breakClass))
                     .append(")");
         } else if (this.penalty >= 0 && this.breakClass != -1) {
             //penalty corresponding to a keep constraint
-            sb.append(" (keep constraint, ")
+            buffer.append(" (keep constraint, ")
                     .append(getBreakClassName(this.breakClass))
                     .append(")");
         }
-        return sb.toString();
+        return buffer.toString();
     }
 }

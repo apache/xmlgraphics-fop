@@ -266,12 +266,12 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
                         KnuthSequence ks = (KnuthSequence)obj;
                         for (Iterator it = ks.iterator(); it.hasNext(); ) {
                             contentElement = (KnuthElement)it.next();
-                            stackSize += contentElement.getW();
+                            stackSize += contentElement.getWidth();
                             contentList.add(contentElement);
                         }
                     } else {
                         contentElement = (KnuthElement)obj;
-                        stackSize += contentElement.getW();
+                        stackSize += contentElement.getWidth();
                         contentList.add(contentElement);
                     }
                 }

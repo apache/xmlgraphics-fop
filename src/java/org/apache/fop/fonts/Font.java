@@ -170,6 +170,9 @@ public class Font {
 
     /**
      * Returns the amount of kerning between two characters.
+     *
+     * The value returned measures in pt. So it is already adjusted for font size.
+     *
      * @param ch1 first character
      * @param ch2 second character
      * @return the distance to adjust for kerning, 0 if there's no kerning
@@ -179,7 +182,7 @@ public class Font {
         if (kernPair != null) {
             Integer width = (Integer)kernPair.get(new Integer(ch2));
             if (width != null) {
-                return width.intValue();
+                return width.intValue() * getFontSize() / 1000;
             }
         }
         return 0;

@@ -298,14 +298,14 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
             int stepPenalty = 0;
             KnuthElement endEl = (KnuthElement)elementLists[0].get(end[0]);
             if (endEl instanceof KnuthPenalty) {
-                additionalPenaltyHeight = endEl.getW();
-                stepPenalty = Math.max(stepPenalty, endEl.getP());
+                additionalPenaltyHeight = endEl.getWidth();
+                stepPenalty = Math.max(stepPenalty, endEl.getPenalty());
             }
             endEl = (KnuthElement)elementLists[1].get(end[1]);
             if (endEl instanceof KnuthPenalty) {
                 additionalPenaltyHeight = Math.max(
-                        additionalPenaltyHeight, endEl.getW());
-                stepPenalty = Math.max(stepPenalty, endEl.getP());
+                        additionalPenaltyHeight, endEl.getWidth());
+                stepPenalty = Math.max(stepPenalty, endEl.getPenalty());
             }
 
             int boxHeight = step - addedBoxHeight - penaltyHeight;
@@ -367,7 +367,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
                 end[i]++;
                 KnuthElement el = (KnuthElement)elementLists[i].get(end[i]);
                 if (el.isPenalty()) {
-                    if (el.getP() < KnuthElement.INFINITE) {
+                    if (el.getPenalty() < KnuthElement.INFINITE) {
                         //First legal break point
                         break;
                     }
@@ -379,9 +379,9 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
                             break;
                         }
                     }
-                    partialHeights[i] += el.getW();
+                    partialHeights[i] += el.getWidth();
                 } else {
-                    partialHeights[i] += el.getW();
+                    partialHeights[i] += el.getWidth();
                 }
             }
             if (end[i] < start[i]) {

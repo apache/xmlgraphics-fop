@@ -158,9 +158,9 @@ class ActiveCell {
         private int contentLength;
 
         FillerPenalty(KnuthPenalty p, int length) {
-            super(length, p.getP(), p.isFlagged(), p.getBreakClass(),
+            super(length, p.getPenalty(), p.isPenaltyFlagged(), p.getBreakClass(),
                     p.getPosition(), p.isAuxiliary());
-            contentLength = p.getW();
+            contentLength = p.getWidth();
         }
 
         FillerPenalty(int length) {
@@ -190,7 +190,7 @@ class ActiveCell {
         } else if (el instanceof FillerBox) {
             return 0;
         } else {
-            return el.getW();
+            return el.getWidth();
         }
     }
 
@@ -248,17 +248,17 @@ class ActiveCell {
                 KnuthElement el = (KnuthElement) iter.next();
                 if (el.isBox()) {
                     prevIsBox = true;
-                    cumulateLength += el.getW();
+                    cumulateLength += el.getWidth();
                 } else if (el.isGlue()) {
                     if (prevIsBox) {
                         elementList.add(iter.nextIndex() - 1,
                                 new FillerPenalty(minBPD - cumulateLength));
                     }
                     prevIsBox = false;
-                    cumulateLength += el.getW();
+                    cumulateLength += el.getWidth();
                 } else {
                     prevIsBox = false;
-                    if (cumulateLength + el.getW() < minBPD) {
+                    if (cumulateLength + el.getWidth() < minBPD) {
                         iter.set(new FillerPenalty((KnuthPenalty) el, minBPD - cumulateLength));
                     }
                 }
@@ -314,7 +314,7 @@ class ActiveCell {
             KnuthElement el = (KnuthElement) knuthIter.next();
             if (el.isPenalty()) {
                 prevIsBox = false;
-                if (el.getP() < KnuthElement.INFINITE
+                if (el.getPenalty() < KnuthElement.INFINITE
                         || ((KnuthPenalty) el).getBreakClass() == Constants.EN_PAGE) {
                     // TODO too much is being done in that test, only to handle
                     // keep.within-column properly.
@@ -322,8 +322,8 @@ class ActiveCell {
                     // First legal break point
                     breakFound = true;
                     KnuthPenalty p = (KnuthPenalty) el;
-                    afterNextStep.penaltyLength = p.getW();
-                    afterNextStep.penaltyValue = p.getP();
+                    afterNextStep.penaltyLength = p.getWidth();
+                    afterNextStep.penaltyValue = p.getPenalty();
                     if (p.isForcedBreak()) {
                         afterNextStep.breakClass = p.getBreakClass();
                     }
@@ -333,9 +333,9 @@ class ActiveCell {
                     // Second legal break point
                     breakFound = true;
                 } else {
-                    afterNextStep.contentLength += el.getW();
+                    afterNextStep.contentLength += el.getWidth();
                     if (!boxFound) {
-                        afterNextStep.condBeforeContentLength += el.getW();
+                        afterNextStep.condBeforeContentLength += el.getWidth();
                     }
                 }
                 prevIsBox = false;
@@ -348,7 +348,7 @@ class ActiveCell {
                 }
                 prevIsBox = true;
                 boxFound = true;
-                afterNextStep.contentLength += el.getW();
+                afterNextStep.contentLength += el.getWidth();
             }
         }
         afterNextStep.end = knuthIter.nextIndex() - 1;

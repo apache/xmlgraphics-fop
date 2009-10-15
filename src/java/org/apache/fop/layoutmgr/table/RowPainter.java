@@ -361,7 +361,7 @@ class RowPainter {
                 while (iter.nextIndex() < endIndex) {
                     KnuthElement el = (KnuthElement) iter.next();
                     if (el.isBox() || el.isGlue()) {
-                        len += el.getW();
+                        len += el.getWidth();
                     }
                 }
                 len += ActiveCell.getElementContentLength((KnuthElement) iter.next());
