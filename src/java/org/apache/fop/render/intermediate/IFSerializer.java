@@ -63,7 +63,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
         implements IFConstants, IFPainter, IFDocumentNavigationHandler {
 
     private IFDocumentHandler mimicHandler;
-    private int pageSequenceCounter; // used for accessibility
+    private int pageSequenceIndex; // used for accessibility
 
     /** Holds the intermediate format state */
     private IFState state;
@@ -224,7 +224,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
             if (this.getUserAgent().isAccessibilityEnabled()) {
                 StructureTree structureTree = getUserAgent().getStructureTree();
                 handler.startElement(EL_STRUCTURE_TREE); // add structure tree
-                NodeList nodes = structureTree.getPageSequence(++pageSequenceCounter);
+                NodeList nodes = structureTree.getPageSequence(pageSequenceIndex++);
                 for (int i = 0, n = nodes.getLength(); i < n; i++) {
                     Node node = nodes.item(i);
                     new DOM2SAX(handler).writeFragment(node);

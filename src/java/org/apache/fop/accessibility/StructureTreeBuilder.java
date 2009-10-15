@@ -19,36 +19,25 @@
 
 package org.apache.fop.accessibility;
 
-import java.io.StringWriter;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMResult;
-import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
-import javax.xml.transform.stream.StreamResult;
 
-import org.w3c.dom.NodeList;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
 import org.apache.fop.util.DelegatingContentHandler;
 
 /**
- * A StructureTree implementation re-created from the structure stored in an IF
- * XML document.
+ * Helper class that re-builds a structure tree from what is stored in an
+ * intermediate XML file (IF XML or Area Tree XML).
  */
-public class ParsedStructureTree implements StructureTree {
+public final class StructureTreeBuilder {
 
-    private SAXTransformerFactory factory;
+    private final SAXTransformerFactory factory;
 
-    private List pageSequenceStructures = new ArrayList();
+    private final StructureTree structureTree = new StructureTree();
 
     /**
      * Creates a new instance.
@@ -56,17 +45,25 @@ public class ParsedStructureTree implements StructureTree {
      * @param factory a factory internally used to build the structures of page
      * sequences
      */
-    public ParsedStructureTree(SAXTransformerFactory factory) {
+    public StructureTreeBuilder(SAXTransformerFactory factory) {
         this.factory = factory;
+    }
+
+    /**
+     * Returns the structure tree that will result from the parsing.
+     *
+     * @return the structure tree built by this object
+     */
+    public StructureTree getStructureTree() {
+        return structureTree;
     }
 
     /**
      * Returns a ContenHandler for parsing the structure of a new page sequence.
      * It is assumed that page sequences are being parsed in the document order.
-     * This class will automatically number the structure trees.
      *
-     * @return a handler for parsing the &lt;structure-tree&gt; element and its
-     * descendants
+     * @return a handler for parsing the &lt;structure-tree&gt; or
+     * &lt;structureTree&gt; element and its descendants
      * @throws SAXException if there is an error when creating the handler
      */
     public ContentHandler getHandlerForNextPageSequence() throws SAXException {
@@ -89,38 +86,10 @@ public class ParsedStructureTree implements StructureTree {
 
             public void endDocument() throws SAXException {
                 super.endDocument();
-                pageSequenceStructures.add(domResult.getNode().getFirstChild().getChildNodes());
+                structureTree.addPageSequenceStructure(domResult.getNode().getFirstChild()
+                        .getChildNodes());
             }
         };
-    }
-
-    /** {@inheritDoc} */
-    public NodeList getPageSequence(int number) {
-        return (NodeList) pageSequenceStructures.get(number - 1);
-    }
-
-    /**
-     * Returns an XML-like representation of the structure trees.
-     * <p>
-     * <strong>Note:</strong> use only for debugging purpose, as this method
-     * performs non-trivial operations.
-     * </p>
-     * @return a string representation of this object
-     */
-    public String toString() {
-        try {
-            Transformer t = TransformerFactory.newInstance().newTransformer();
-            Writer str = new StringWriter();
-            for (Iterator iter = pageSequenceStructures.iterator(); iter.hasNext();) {
-                NodeList nodes = (NodeList) iter.next();
-                for (int i = 0, c = nodes.getLength(); i < c; i++) {
-                    t.transform(new DOMSource(nodes.item(i)), new StreamResult(str));
-                }
-            }
-            return str.toString();
-        } catch (Exception e) {
-            return e.toString();
-        }
     }
 
 }

@@ -57,7 +57,7 @@ import org.apache.xmlgraphics.image.loader.ImageManager;
 import org.apache.xmlgraphics.image.loader.ImageSessionContext;
 import org.apache.xmlgraphics.util.QName;
 
-import org.apache.fop.accessibility.ParsedStructureTree;
+import org.apache.fop.accessibility.StructureTreeBuilder;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.area.Trait.Background;
 import org.apache.fop.area.Trait.InternalLink;
@@ -160,17 +160,17 @@ public class AreaTreeParser {
         private Locator locator;
 
 
-        private ParsedStructureTree structureTree;
+        private StructureTreeBuilder structureTreeBuilder;
 
-        private ContentHandler structureTreeBuilder;
+        private ContentHandler structureTreeBuilderWrapper;
 
-        private final class StructureTreeBuilder extends DelegatingContentHandler {
+        private final class StructureTreeBuilderWrapper extends DelegatingContentHandler {
 
             private Attributes pageSequenceAttributes;
 
-            private StructureTreeBuilder(Attributes pageSequenceAttributes,
-                    ParsedStructureTree structureTree) throws SAXException {
-                super(structureTree.getHandlerForNextPageSequence());
+            private StructureTreeBuilderWrapper(Attributes pageSequenceAttributes)
+                    throws SAXException {
+                super(structureTreeBuilder.getHandlerForNextPageSequence());
                 this.pageSequenceAttributes = new AttributesImpl(pageSequenceAttributes);
             }
 
@@ -216,9 +216,10 @@ public class AreaTreeParser {
             makers.put("bookmarkTree", new BookmarkTreeMaker());
             makers.put("bookmark", new BookmarkMaker());
             makers.put("destination", new DestinationMaker());
+
             if (userAgent.isAccessibilityEnabled()) {
-                structureTree = new ParsedStructureTree(tFactory);
-                userAgent.setStructureTree(structureTree);
+                structureTreeBuilder = new StructureTreeBuilder(tFactory);
+                userAgent.setStructureTree(structureTreeBuilder.getStructureTree());
             }
         }
 
@@ -296,10 +297,10 @@ public class AreaTreeParser {
                 boolean handled = true;
                 if ("".equals(uri)) {
                     if (localName.equals("pageSequence") && userAgent.isAccessibilityEnabled()) {
-                        structureTreeBuilder = new StructureTreeBuilder(attributes, structureTree);
+                        structureTreeBuilderWrapper = new StructureTreeBuilderWrapper(attributes);
                     } else if (localName.equals("structureTree")) {
                         if (userAgent.isAccessibilityEnabled()) {
-                            delegate = structureTreeBuilder;
+                            delegate = structureTreeBuilderWrapper;
                         } else {
                             /* Delegate to a handler that does nothing */
                             delegate = new DefaultHandler();

@@ -41,7 +41,6 @@ import org.xml.sax.SAXException;
 import org.apache.xmlgraphics.util.QName;
 import org.apache.xmlgraphics.util.XMLizable;
 
-import org.apache.fop.accessibility.StructureTree;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
@@ -108,7 +107,7 @@ public class XMLRenderer extends AbstractXMLRenderer {
     /** If not null, the XMLRenderer will mimic another renderer by using its font setup. */
     protected Renderer mimic;
 
-    private int pageSequenceNumber;
+    private int pageSequenceIndex;
 
     /**
      * Creates a new XML renderer.
@@ -446,10 +445,9 @@ public class XMLRenderer extends AbstractXMLRenderer {
         transferForeignObjects(pageSequence);
         startElement("pageSequence", atts);
         if (this.getUserAgent().isAccessibilityEnabled()) {
-            StructureTree structureTree = getUserAgent().getStructureTree();
             String structureTreeElement = "structureTree";
             startElement(structureTreeElement);
-            NodeList nodes = structureTree.getPageSequence(++pageSequenceNumber);
+            NodeList nodes = getUserAgent().getStructureTree().getPageSequence(pageSequenceIndex++);
             for (int i = 0, n = nodes.getLength(); i < n; i++) {
                 Node node = nodes.item(i);
                 try {

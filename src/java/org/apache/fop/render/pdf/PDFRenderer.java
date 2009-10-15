@@ -204,7 +204,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer implements PDFConf
 
     private PDFLogicalStructureHandler logicalStructureHandler;
 
-    private int pageSequenceNumber;
+    private int pageSequenceIndex;
 
     /** Reference in the structure tree to the image being rendered. */
     private String imageReference;
@@ -428,8 +428,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer implements PDFConf
         }
         pdfUtil.generateDefaultXMPMetadata();
         if (accessEnabled) {
-            NodeList nodes = getUserAgent().getStructureTree().getPageSequence(
-                    ++pageSequenceNumber);
+            NodeList nodes = getUserAgent().getStructureTree().getPageSequence(pageSequenceIndex++);
             logicalStructureHandler.processStructureTree(nodes, language);
         }
     }

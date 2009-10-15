@@ -46,7 +46,7 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.xmlgraphics.util.QName;
 
-import org.apache.fop.accessibility.ParsedStructureTree;
+import org.apache.fop.accessibility.StructureTreeBuilder;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.ElementMappingRegistry;
@@ -151,17 +151,17 @@ public class IFParser implements IFConstants {
 
         private ContentHandler navParser;
 
-        private ParsedStructureTree structureTree;
+        private StructureTreeBuilder structureTreeBuilder;
 
-        private ContentHandler structureTreeBuilder;
+        private ContentHandler structureTreeBuilderWrapper;
 
-        private final class StructureTreeBuilder extends DelegatingContentHandler {
+        private final class StructureTreeBuilderWrapper extends DelegatingContentHandler {
 
             private Attributes pageSequenceAttributes;
 
-            private StructureTreeBuilder(Attributes pageSequenceAttributes,
-                    ParsedStructureTree structureTree) throws SAXException {
-                super(structureTree.getHandlerForNextPageSequence());
+            private StructureTreeBuilderWrapper(Attributes pageSequenceAttributes)
+                    throws SAXException {
+                super(structureTreeBuilder.getHandlerForNextPageSequence());
                 this.pageSequenceAttributes = new AttributesImpl(pageSequenceAttributes);
             }
 
@@ -196,8 +196,8 @@ public class IFParser implements IFConstants {
             elementHandlers.put(EL_IMAGE, new ImageHandler());
 
             if (userAgent.isAccessibilityEnabled()) {
-                structureTree = new ParsedStructureTree(tFactory);
-                userAgent.setStructureTree(structureTree);
+                structureTreeBuilder = new StructureTreeBuilder(tFactory);
+                userAgent.setStructureTree(structureTreeBuilder.getStructureTree());
             }
         }
 
@@ -227,10 +227,10 @@ public class IFParser implements IFConstants {
                 boolean handled = true;
                 if (NAMESPACE.equals(uri)) {
                     if (localName.equals(EL_PAGE_SEQUENCE) && userAgent.isAccessibilityEnabled()) {
-                        structureTreeBuilder = new StructureTreeBuilder(attributes, structureTree);
+                        structureTreeBuilderWrapper = new StructureTreeBuilderWrapper(attributes);
                     } else if (localName.equals(EL_STRUCTURE_TREE)) {
                         if (userAgent.isAccessibilityEnabled()) {
-                            delegate = structureTreeBuilder;
+                            delegate = structureTreeBuilderWrapper;
                         } else {
                             /* Delegate to a handler that does nothing */
                             delegate = new DefaultHandler();

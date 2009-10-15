@@ -32,9 +32,11 @@ import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+
+import org.apache.commons.io.output.ByteArrayOutputStream;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
@@ -78,7 +80,12 @@ class TransformerNodeEndProcessing extends TransformerNode {
             Source src = new StreamSource(new ByteArrayInputStream(enrichedFO));
             DOMResult res = new DOMResult();
             transformer.transform(src, res);
-            userAgent.setStructureTree(new SimpleStructureTree(res.getNode()));
+            StructureTree structureTree = new StructureTree();
+            NodeList pageSequences = res.getNode().getFirstChild().getChildNodes();
+            for (int i = 0; i < pageSequences.getLength(); i++) {
+                structureTree.addPageSequenceStructure(pageSequences.item(i).getChildNodes());
+            }
+            userAgent.setStructureTree(structureTree);
 
             SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
             saxParserFactory.setNamespaceAware(true);

@@ -62,7 +62,7 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
     /** logging instance */
     private static Log log = LogFactory.getLog(PDFDocumentHandler.class);
 
-    private int pageSequenceNumber;
+    private int pageSequenceIndex;
 
     private boolean accessEnabled;
 
@@ -186,8 +186,7 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
         }
 
         if (accessEnabled) {
-            NodeList nodes = getUserAgent().getStructureTree().getPageSequence(
-                    ++pageSequenceNumber);
+            NodeList nodes = getUserAgent().getStructureTree().getPageSequence(pageSequenceIndex++);
             logicalStructureHandler.processStructureTree(nodes, getContext().getLanguage());
         }
     }
