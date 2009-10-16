@@ -1347,5 +1347,9 @@ public class PDFRenderer extends AbstractPathOrientedRenderer implements PDFConf
     public void setEncryptionParams(PDFEncryptionParams encryptionParams) {
         this.pdfUtil.setEncryptionParams(encryptionParams);
     }
+
+    MarkedContentInfo addCurrentImageToStructureTree() {
+        return logicalStructureHandler.addImageContentItem(imageReference);
+    }
 }
 
