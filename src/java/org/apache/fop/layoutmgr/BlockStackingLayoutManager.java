@@ -1413,7 +1413,8 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                 totalLength.max += element.getStretch();
                 //leafValue = ((LeafPosition) element.getPosition()).getLeafPos();
                 //log.debug("glue " + element.getWidth() + " + "
-                //    + ((KnuthGlue) element).getStretch() + " - " + ((KnuthGlue) element).getShrink());
+                //    + ((KnuthGlue) element).getStretch() + " - "
+                //    + ((KnuthGlue) element).getShrink());
             } else {
                 //log.debug((((KnuthPenalty)element).getPenalty() == KnuthElement.INFINITE
                 //    ? "PENALTY " : "penalty ") + element.getWidth());

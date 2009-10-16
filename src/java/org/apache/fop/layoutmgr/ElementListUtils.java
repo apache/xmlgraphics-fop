@@ -64,7 +64,8 @@ public final class ElementListUtils {
                 //Convert all penalties to break inhibitors
                 if (penalty.getPenalty() < KnuthPenalty.INFINITE) {
                     iter.set(new KnuthPenalty(penalty.getWidth(), KnuthPenalty.INFINITE,
-                            penalty.isPenaltyFlagged(), penalty.getPosition(), penalty.isAuxiliary()));
+                            penalty.isPenaltyFlagged(), penalty.getPosition(),
+                            penalty.isAuxiliary()));
                 }
             } else if (el.isGlue()) {
                 KnuthGlue glue = (KnuthGlue)el;
@@ -111,7 +112,8 @@ public final class ElementListUtils {
                 //Convert all penalties to break inhibitors
                 if (penalty.getPenalty() < KnuthPenalty.INFINITE) {
                     i.set(new KnuthPenalty(penalty.getWidth(), KnuthPenalty.INFINITE,
-                            penalty.isPenaltyFlagged(), penalty.getPosition(), penalty.isAuxiliary()));
+                            penalty.isPenaltyFlagged(), penalty.getPosition(),
+                            penalty.isAuxiliary()));
                 }
             } else if (el.isGlue()) {
                 KnuthGlue glue = (KnuthGlue)el;
