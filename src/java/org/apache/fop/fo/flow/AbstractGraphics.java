@@ -106,6 +106,12 @@ public abstract class AbstractGraphics extends FObj
         scaling = pList.get(PR_SCALING).getEnum();
         textAlign = pList.get(PR_TEXT_ALIGN).getEnum();
         width = pList.get(PR_WIDTH).getLength();
+        if (getUserAgent().isAccessibilityEnabled()) {
+            String altText = pList.get(PR_X_ALT_TEXT).getString();
+            if (altText.equals("")) {
+                getFOValidationEventProducer().altTextMissing(this, getLocalName(), getLocator());
+            }
+        }
     }
 
     /**

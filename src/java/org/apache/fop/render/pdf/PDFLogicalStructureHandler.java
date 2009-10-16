@@ -163,9 +163,6 @@ class PDFLogicalStructureHandler {
             if (altTextNode != null) {
                 structElem.put("Alt", altTextNode.getNodeValue());
             } else {
-                // TODO route that to event notification system
-//                log.warn("fo:" + s
-//                 + " requires an alternative text attribute fox:alt-text for accessibility");
                 structElem.put("Alt", "No alternate text specified");
             }
         }

@@ -36,7 +36,9 @@ public interface FOValidationEventProducer extends EventProducer {
     /**
      * Provider class for the event producer.
      */
-    class Provider {
+    final class Provider {
+
+        private Provider() { }
 
         /**
          * Returns an event producer.
@@ -354,4 +356,13 @@ public interface FOValidationEventProducer extends EventProducer {
     void unknownFormattingObject(Object source, String elementName,
             QName offendingNode, Locator loc);
 
+    /**
+     * Alternate text is missing for a graphic element.
+     *
+     * @param source the event source
+     * @param foElement name of the element (external-graphic or instream-foreign-object)
+     * @param loc the location of the error or null
+     * @event.severity WARN
+     */
+    void altTextMissing(Object source, String foElement, Locator loc);
 }

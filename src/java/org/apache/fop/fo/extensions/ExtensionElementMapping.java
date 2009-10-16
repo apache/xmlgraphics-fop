@@ -47,7 +47,7 @@ public class ExtensionElementMapping extends ElementMapping {
         propertyAttributes.add("internal-destination");
         propertyAttributes.add("disable-column-balancing");
         //These are FOP's extension properties for accessibility
-        propertyAttributes.add("alt");
+        propertyAttributes.add("alt-text");
     }
 
     /**
