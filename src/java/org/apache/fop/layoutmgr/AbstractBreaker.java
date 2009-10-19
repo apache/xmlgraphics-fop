@@ -383,12 +383,12 @@ public abstract class AbstractBreaker {
                     if (containsNonRestartableLM(positionAtBreak)) {
                         firstElements = new LinkedList();
                         boolean boxFound = false;
-                        Iterator iter = effectiveList.listIterator(++positionIndex);
+                        Iterator iter = effectiveList.listIterator(positionIndex + 1);
                         Position position = null;
                         while (iter.hasNext()
                                 && (position == null || containsNonRestartableLM(position))) {
-                            KnuthElement element = (KnuthElement) iter.next();
                             positionIndex++;
+                            KnuthElement element = (KnuthElement) iter.next();
                             position = element.getPosition();
                             if (element.isBox()) {
                                 boxFound = true;
