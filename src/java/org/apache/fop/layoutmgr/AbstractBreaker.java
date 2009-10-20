@@ -400,9 +400,11 @@ public abstract class AbstractBreaker {
                         if (position instanceof SpaceResolver.SpaceHandlingBreakPosition) {
                             /* Retrieve the original position wrapped into this space position */
                             positionAtBreak = position.getPosition();
+                        } else {
+                            positionAtBreak = null;
                         }
                     }
-                    if (positionAtBreak.getIndex() == -1) {
+                    if (positionAtBreak != null && positionAtBreak.getIndex() == -1) {
                         /*
                          * This is an indication that we are between two blocks
                          * (possibly surrounded by another block), not inside a
@@ -678,8 +680,23 @@ public abstract class AbstractBreaker {
 
         BlockSequence blockList;
         List returnedList;
-        if (positionAtIPDChange == null) {
+        if (firstElements == null) {
             returnedList = getNextKnuthElements(childLC, alignment);
+        } else if (positionAtIPDChange == null) {
+            /*
+             * No restartable element found after changing IPD break. Simply add the
+             * non-restartable elements found after the break.
+             */
+            returnedList = firstElements;
+            /*
+             * Remove the last 3 penalty-filler-forced break elements that were added by
+             * the Knuth algorithm. They will be re-added later on.
+             */
+            ListIterator iter = returnedList.listIterator(returnedList.size());
+            for (int i = 0; i < 3; i++) {
+                iter.previous();
+                iter.remove();
+            }
         } else {
             returnedList = getNextKnuthElements(childLC, alignment, positionAtIPDChange,
                     restartAtLM);
