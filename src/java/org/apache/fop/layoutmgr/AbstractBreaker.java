@@ -367,7 +367,7 @@ public abstract class AbstractBreaker {
                 alg.setConstantLineWidth(flowBPD);
                 int optimalPageCount = alg.findBreakingPoints(effectiveList, 1, true,
                         BreakingAlgorithm.ALL_BREAKS);
-                if (alg.ipdChanged()) {
+                if (alg.getIPDdifference() != 0) {
                     KnuthNode optimalBreak = alg.getBestNodeBeforeIPDChange();
                     int positionIndex = optimalBreak.position;
                     KnuthElement elementAtBreak = alg.getElement(positionIndex);
@@ -381,6 +381,11 @@ public abstract class AbstractBreaker {
                     LayoutManager restartAtLM = null;
                     List firstElements = Collections.EMPTY_LIST;
                     if (containsNonRestartableLM(positionAtBreak)) {
+                        if (alg.getIPDdifference() > 0) {
+                            log.warn("Content that cannot handle IPD changes is flowing to a"
+                                    + " narrower page. Part of it may be clipped"
+                                    + " by the page border.");
+                        }
                         firstElements = new LinkedList();
                         boolean boxFound = false;
                         Iterator iter = effectiveList.listIterator(positionIndex + 1);
