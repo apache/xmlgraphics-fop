@@ -96,7 +96,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     //Controls whether a single part should be forced if possible (ex. block-container)
     private boolean favorSinglePart = false;
 
-    private boolean ipdChange;
+    private int ipdDifference;
     private KnuthNode bestNodeForIPDChange;
 
     //Used to keep track of switches in keep-context
@@ -1077,8 +1077,8 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     }
 
     /** {@inheritDoc} */
-    protected boolean ipdChanged() {
-        return ipdChange;
+    protected int getIPDdifference() {
+        return ipdDifference;
     }
 
     /** {@inheritDoc} */
@@ -1104,9 +1104,9 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
      * @param node the active node to add
      */
     protected void addNode(int line, KnuthNode node) {
-        if (node.position < par.size() - 1 && line > 0 && ipdChange(line - 1)) {
+        if (node.position < par.size() - 1 && line > 0
+                && (ipdDifference = compareIPDs(line - 1)) != 0) {
             log.trace("IPD changes at page " + line);
-            ipdChange = true;
             if (bestNodeForIPDChange == null
                     || node.totalDemerits < bestNodeForIPDChange.totalDemerits) {
                 bestNodeForIPDChange = node;
@@ -1117,7 +1117,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                  * The whole sequence could actually fit on the last page before
                  * the IPD change. No need to do any special handling.
                  */
-                ipdChange = false;
+                ipdDifference = 0;
             }
             super.addNode(line, node);
         }
@@ -1127,12 +1127,11 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         return bestNodeForIPDChange;
     }
 
-    /** {@inheritDoc} */
-    protected boolean ipdChange(int line) {
+    private int compareIPDs(int line) {
         if (pageProvider == null) {
-            return false;
+            return 0;
         }
-        return pageProvider.ipdChange(line);
+        return pageProvider.compareIPDs(line);
     }
 
 }

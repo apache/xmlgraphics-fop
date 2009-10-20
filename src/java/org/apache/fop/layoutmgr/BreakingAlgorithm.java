@@ -491,7 +491,7 @@ public abstract class BreakingAlgorithm {
                     elementIndex, previousIsBox, allowedBreaks).isBox();
 
             if (activeNodeCount == 0) {
-                if (ipdChanged()) {
+                if (getIPDdifference() != 0) {
                     return handleIpdChange();
                 }
                 if (!force) {
@@ -538,8 +538,8 @@ public abstract class BreakingAlgorithm {
         return line;
     }
 
-    protected boolean ipdChanged() {
-        return false;
+    protected int getIPDdifference() {
+        return 0;
     }
 
     protected int handleIpdChange() {
