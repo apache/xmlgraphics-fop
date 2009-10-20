@@ -19,7 +19,6 @@
 
 package org.apache.fop.cli;
 
-// Imported java.io classes
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -40,38 +39,40 @@ import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.fop.apps.FOPException;
-import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.apps.Fop;
-import org.apache.fop.apps.FopFactory;
-import org.apache.fop.render.awt.viewer.Renderable;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.FopFactory;
+import org.apache.fop.render.awt.viewer.Renderable;
+
 /**
  * Class for handling files input from command line
  * either with XML and XSLT files (and optionally xsl
- * parameters) or FO File input alone
+ * parameters) or FO File input alone.
  */
 public class InputHandler implements ErrorListener, Renderable {
 
     /** original source file */
-    protected File sourcefile = null;
-    private File stylesheet = null;  // for XML/XSLT usage
-    private Vector xsltParams = null; // for XML/XSLT usage
-    private EntityResolver entityResolver = null;
-    private URIResolver uriResolver = null;
+    protected File sourcefile;
+    private File stylesheet;  // for XML/XSLT usage
+    private Vector xsltParams; // for XML/XSLT usage
+    private EntityResolver entityResolver;
+    private URIResolver uriResolver;
 
     /** the logger */
     protected Log log = LogFactory.getLog(InputHandler.class);
 
     /**
      * Constructor for XML->XSLT->FO input
-     * 
+     *
      * @param xmlfile XML file
      * @param xsltfile XSLT file
      * @param params Vector of command-line parameters (name, value,
@@ -85,7 +86,7 @@ public class InputHandler implements ErrorListener, Renderable {
 
     /**
      * Constructor for XML->XSLT->FO input
-     * 
+     *
      * @param xmlfile XML file
      * @param xsltfile XSLT file
      * @param params Vector of command-line parameters (name, value,
@@ -186,10 +187,7 @@ public class InputHandler implements ErrorListener, Renderable {
         try {
             InputSource is = new InputSource(in);
             is.setSystemId(uri);
-            SAXParserFactory spf = SAXParserFactory.newInstance();
-            spf.setFeature("http://xml.org/sax/features/namespaces", true);
-            spf.setFeature("http://apache.org/xml/features/xinclude", true);
-            XMLReader xr = spf.newSAXParser().getXMLReader();
+            XMLReader xr = getXMLReader();
             if (entityResolver != null) {
                 xr.setEntityResolver(entityResolver);
             }
@@ -209,21 +207,23 @@ public class InputHandler implements ErrorListener, Renderable {
         }
         return source;
     }
-    
+
     /**
-     * Create a catalog resolver and use it for XML parsing and XSLT URI resolution
+     * Creates a catalog resolver and use it for XML parsing and XSLT URI resolution.
      * Try the Apache Commons Resolver, and if unsuccessful,
      * try the same built into Java 6
      */
-    protected void createCatalogResolver() {
-        String[] classNames =
-            new String[] {"org.apache.xml.resolver.tools.CatalogResolver",
-                          "com.sun.org.apache.xml.internal.resolver.tools.CatalogResolver"};
+    private void createCatalogResolver() {
+        String[] classNames = new String[] {
+                "org.apache.xml.resolver.tools.CatalogResolver",
+                "com.sun.org.apache.xml.internal.resolver.tools.CatalogResolver"};
         Class resolverClass = null;
         for (int i = 0; i < classNames.length && resolverClass == null; ++i) {
             try {
                 resolverClass = Class.forName(classNames[i]);
-            } catch (ClassNotFoundException e) { }
+            } catch (ClassNotFoundException e) {
+                // No worries
+            }
         }
         if (resolverClass == null) {
             log.error("Could not find catalog resolver in class path");
@@ -241,7 +241,7 @@ public class InputHandler implements ErrorListener, Renderable {
 
     /**
      * Creates a Source for the selected stylesheet.
-     * 
+     *
      * @return the Source for the selected stylesheet or null if there's no stylesheet
      */
     protected Source createXSLTSource() {
@@ -250,10 +250,7 @@ public class InputHandler implements ErrorListener, Renderable {
             if (entityResolver != null) {
                 try {
                     InputSource is = new InputSource(this.stylesheet.getPath());
-                    SAXParserFactory spf = SAXParserFactory.newInstance();
-                    spf.setFeature("http://xml.org/sax/features/namespaces", true);
-                    spf.setFeature("http://apache.org/xml/features/xinclude", true);
-                    XMLReader xr = spf.newSAXParser().getXMLReader();
+                    XMLReader xr = getXMLReader();
                     xr.setEntityResolver(entityResolver);
                     xslt = new SAXSource(xr, is);
                 } catch (SAXException e) {
@@ -262,10 +259,19 @@ public class InputHandler implements ErrorListener, Renderable {
                     // return StreamSource
                 }
             }
-            if (xslt == null)
+            if (xslt == null) {
                 xslt = new StreamSource(this.stylesheet);
+            }
         }
         return xslt;
+    }
+
+    private XMLReader getXMLReader() throws ParserConfigurationException, SAXException {
+        SAXParserFactory spf = SAXParserFactory.newInstance();
+        spf.setFeature("http://xml.org/sax/features/namespaces", true);
+        spf.setFeature("http://apache.org/xml/features/xinclude", true);
+        XMLReader xr = spf.newSAXParser().getXMLReader();
+        return xr;
     }
 
     /**
