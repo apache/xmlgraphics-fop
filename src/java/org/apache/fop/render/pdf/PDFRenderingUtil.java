@@ -37,7 +37,7 @@ import org.apache.xmlgraphics.xmp.Metadata;
 import org.apache.xmlgraphics.xmp.schemas.XMPBasicAdapter;
 import org.apache.xmlgraphics.xmp.schemas.XMPBasicSchema;
 
-import org.apache.fop.accessibility.AccessibilityUtil;
+import org.apache.fop.accessibility.Accessibility;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.extensions.xmp.XMPMetadata;
 import org.apache.fop.pdf.PDFAMode;
@@ -164,7 +164,7 @@ class PDFRenderingUtil implements PDFConfigurationConstants {
         }
         if (this.pdfAMode.isPDFA1LevelA()) {
             //Enable accessibility if PDF/A-1a is enabled because it requires tagged PDF.
-            userAgent.getRendererOptions().put(AccessibilityUtil.ACCESSIBILITY, Boolean.TRUE);
+            userAgent.getRendererOptions().put(Accessibility.ACCESSIBILITY, Boolean.TRUE);
         }
         s = (String)userAgent.getRendererOptions().get(PDF_X_MODE);
         if (s != null) {

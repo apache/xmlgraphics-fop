@@ -37,7 +37,7 @@ import org.apache.xmlgraphics.image.loader.ImageSessionContext;
 import org.apache.xmlgraphics.image.loader.impl.AbstractImageSessionContext;
 
 import org.apache.fop.Version;
-import org.apache.fop.accessibility.AccessibilityUtil;
+import org.apache.fop.accessibility.Accessibility;
 import org.apache.fop.accessibility.StructureTree;
 import org.apache.fop.events.DefaultEventBroadcaster;
 import org.apache.fop.events.Event;
@@ -655,7 +655,7 @@ public class FOUserAgent {
      */
     public void setAccessibility(boolean accessibility) {
         if (accessibility) {
-            getRendererOptions().put(AccessibilityUtil.ACCESSIBILITY, Boolean.TRUE);
+            getRendererOptions().put(Accessibility.ACCESSIBILITY, Boolean.TRUE);
         }
     }
 
@@ -664,7 +664,7 @@ public class FOUserAgent {
      * @return true if accessibility is enabled
      */
     public boolean isAccessibilityEnabled() {
-        Boolean enabled = (Boolean)this.getRendererOptions().get(AccessibilityUtil.ACCESSIBILITY);
+        Boolean enabled = (Boolean)this.getRendererOptions().get(Accessibility.ACCESSIBILITY);
         if (enabled != null) {
             return enabled.booleanValue();
         } else {

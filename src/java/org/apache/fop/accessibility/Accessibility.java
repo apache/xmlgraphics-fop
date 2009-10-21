@@ -21,8 +21,10 @@ package org.apache.fop.accessibility;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
+import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.sax.SAXTransformerFactory;
+import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamSource;
 
 import org.xml.sax.helpers.DefaultHandler;
@@ -31,22 +33,25 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 
 /**
- * Utility class for FOP's accessibility features. It provides the stylesheets used for processing
- * the incoming XSL-FO stream and for setting up the transformation.
+ * Helper class for FOP's accessibility features.
  */
-public class AccessibilityUtil {
+public final class Accessibility {
 
     /** Constant string for the rendering options key to enable accessibility features. */
     public static final String ACCESSIBILITY = "accessibility";
 
+    // TODO what if the default factory is not a SAXTransformerFactory?
     private static SAXTransformerFactory tfactory
-        = (SAXTransformerFactory)SAXTransformerFactory.newInstance();
+            = (SAXTransformerFactory)SAXTransformerFactory.newInstance();
 
     private static Templates addPtrTemplates;
-    private static Templates reduceFOTemplates;
+
+    private static Templates reduceFOTreeTemplates;
+
+    private Accessibility() { }
 
     /**
-     * Decorates the given {@link DefaultHandler} so the structure tree used for accessibility
+     * Decorates the given handler so the structure tree used for accessibility
      * features can be branched off the main content stream.
      * @param handler the handler to decorate
      * @param userAgent the user agent
@@ -55,46 +60,28 @@ public class AccessibilityUtil {
      */
     public static DefaultHandler decorateDefaultHandler(DefaultHandler handler,
             FOUserAgent userAgent) throws FOPException {
-        DefaultHandler transformNode = new TransformerNodeEndProcessing(
-                getAddPtrTemplates(), handler, userAgent);
-        return transformNode;
+        try {
+            setupTemplates();
+            TransformerHandler addPtr = tfactory.newTransformerHandler(addPtrTemplates);
+            Transformer reduceFOTree = reduceFOTreeTemplates.newTransformer();
+            return new AccessibilityPreprocessor(addPtr, reduceFOTree, userAgent, handler);
+        } catch (TransformerConfigurationException e) {
+            throw new FOPException(e);
+        }
     }
 
-    /**
-     * Returns the addPtr.xsl stylesheet.
-     * @return the addPtr.xsl stylesheet
-     * @throws FOPException if transform fails
-     */
-    public static synchronized Templates getAddPtrTemplates() throws FOPException {
+    private static synchronized void setupTemplates() throws TransformerConfigurationException {
         if (addPtrTemplates == null) {
-            //Load and cache stylesheet
-            Source src = new StreamSource(
-                    AccessibilityUtil.class.getResource("addPtr.xsl").toExternalForm());
-            try {
-                addPtrTemplates = tfactory.newTemplates(src);
-            } catch (TransformerConfigurationException e) {
-                throw new FOPException(e);
-            }
+            addPtrTemplates = loadTemplates("addPtr.xsl");
         }
-        return addPtrTemplates;
+        if (reduceFOTreeTemplates == null) {
+            reduceFOTreeTemplates = loadTemplates("reduceFOTree.xsl");
+        }
     }
 
-    /**
-     * Returns the reduceFOTree.xsl stylesheet
-     * @return the reduceFOTree.xsl stylesheet
-     * @throws FOPException if an error occurs loading the stylesheet
-     */
-    public static synchronized Templates getReduceFOTreeTemplates() throws FOPException  {
-        if (reduceFOTemplates == null) {
-            //Load and cache stylesheet
-            Source src = new StreamSource(
-                    AccessibilityUtil.class.getResource("reduceFOTree.xsl").toExternalForm());
-            try {
-                reduceFOTemplates = tfactory.newTemplates(src);
-            } catch (TransformerConfigurationException e) {
-                throw new FOPException(e);
-            }
-        }
-        return reduceFOTemplates;
+    private static Templates loadTemplates(String source) throws TransformerConfigurationException {
+        Source src = new StreamSource(Accessibility.class.getResource(source).toExternalForm());
+        return tfactory.newTemplates(src);
     }
- }
+
+}

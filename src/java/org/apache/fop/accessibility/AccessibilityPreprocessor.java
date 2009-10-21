@@ -24,11 +24,10 @@ import java.io.InputStream;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import javax.xml.transform.Result;
 import javax.xml.transform.Source;
-import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.dom.DOMResult;
+import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
@@ -38,35 +37,31 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 
-import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.util.TransformerDefaultHandler;
 
 /**
- * An extension of TransformerNode used to run 2nd transform after completion of first
+ * This class prepares an XSL-FO document for accessibility. It adds a unique
+ * identifier to every applicable FO, then creates the structure tree, before
+ * handing the document over to the regular handler.
  */
-class TransformerNodeEndProcessing extends TransformerNode {
+class AccessibilityPreprocessor extends TransformerDefaultHandler {
 
     private final ByteArrayOutputStream enrichedFOBuffer = new ByteArrayOutputStream();
-    private DefaultHandler delegateHandler = null;
+
+    private final Transformer reduceFOTree;
+
     private final FOUserAgent userAgent;
 
-    /**
-     * Do a transform, but perform special processing at the end for the access
-     * stuff.
-     *
-     * @param xsltTemplates Transform to do.
-     * @param fopHandler Used in the end processing
-     * @param userAgent the userAgent
-     * @throws FOPException
-     *                      if transform fails
-     */
-    public TransformerNodeEndProcessing(Templates xsltTemplates, DefaultHandler fopHandler,
-            FOUserAgent userAgent) throws FOPException {
-        super(xsltTemplates);
-        delegateHandler = fopHandler;
+    private final DefaultHandler fopHandler;
+
+    public AccessibilityPreprocessor(TransformerHandler addPtr, Transformer reduceFOTree,
+            FOUserAgent userAgent, DefaultHandler fopHandler) {
+        super(addPtr);
+        this.reduceFOTree = reduceFOTree;
         this.userAgent = userAgent;
-        Result res1 = new StreamResult(enrichedFOBuffer);
-        super.initResult(res1);
+        this.fopHandler = fopHandler;
+        getTransformerHandler().setResult(new StreamResult(enrichedFOBuffer));
     }
 
     /** {@inheritDoc} */
@@ -76,10 +71,9 @@ class TransformerNodeEndProcessing extends TransformerNode {
         try {
             //TODO this must be optimized, no buffering (ex. SAX-based tee-proxy)
             byte[] enrichedFO = enrichedFOBuffer.toByteArray();
-            Transformer transformer = AccessibilityUtil.getReduceFOTreeTemplates().newTransformer();
             Source src = new StreamSource(new ByteArrayInputStream(enrichedFO));
             DOMResult res = new DOMResult();
-            transformer.transform(src, res);
+            reduceFOTree.transform(src, res);
             StructureTree structureTree = new StructureTree();
             NodeList pageSequences = res.getNode().getFirstChild().getChildNodes();
             for (int i = 0; i < pageSequences.getLength(); i++) {
@@ -92,12 +86,10 @@ class TransformerNodeEndProcessing extends TransformerNode {
             saxParserFactory.setValidating(false);
             SAXParser saxParser = saxParserFactory.newSAXParser();
             InputStream in = new ByteArrayInputStream(enrichedFO);
-            saxParser.parse(in, delegateHandler);
+            saxParser.parse(in, fopHandler);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             throw new SAXException(e);
         }
-
     }
 
 }
