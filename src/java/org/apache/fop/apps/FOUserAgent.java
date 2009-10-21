@@ -156,9 +156,7 @@ public class FOUserAgent {
         this.factory = factory;
         setBaseURL(factory.getBaseURL());
         setTargetResolution(factory.getTargetResolution());
-        if (this.getRendererOptions().get(AccessibilityUtil.ACCESSIBILITY) == null) {
-            this.rendererOptions.put(AccessibilityUtil.ACCESSIBILITY, Boolean.FALSE);
-        }
+        setAccessibility(factory.isAccessibilityEnabled());
     }
 
     /** @return the associated FopFactory instance */
@@ -360,7 +358,7 @@ public class FOUserAgent {
             getFactory().getFontManager().setFontBaseURL(fontBaseUrl);
         } catch (MalformedURLException e) {
             throw new IllegalArgumentException(e.getMessage());
-    }
+        }
     }
 
     /**
@@ -648,6 +646,17 @@ public class FOUserAgent {
      */
     public void setConserveMemoryPolicy(boolean conserveMemoryPolicy) {
         this.conserveMemoryPolicy = conserveMemoryPolicy;
+    }
+
+    /**
+     * Activates accessibility (for output formats that support it).
+     *
+     * @param accessibility <code>true</code> to enable accessibility support
+     */
+    public void setAccessibility(boolean accessibility) {
+        if (accessibility) {
+            getRendererOptions().put(AccessibilityUtil.ACCESSIBILITY, Boolean.TRUE);
+        }
     }
 
     /**

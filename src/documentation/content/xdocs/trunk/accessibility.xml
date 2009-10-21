@@ -47,7 +47,7 @@
           <code>fop -a -fo mydocument.fo -pdf mydocument.pdf</code>            
         </li>
         <li>
-          <strong>Embedding:</strong> <code>userAgent.getRendererOptions().put("accessibility", Boolean.TRUE);</code>
+          <strong>Embedding:</strong> <code>userAgent.setAccessibility(true);</code>
         </li>
         <li>
           <strong>Optional setting in fop.xconf file:</strong>

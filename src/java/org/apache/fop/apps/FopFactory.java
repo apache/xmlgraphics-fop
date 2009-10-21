@@ -41,7 +41,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.xmlgraphics.image.loader.ImageContext;
 import org.apache.xmlgraphics.image.loader.ImageManager;
 
-import org.apache.fop.accessibility.AccessibilityUtil;
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.ElementMappingRegistry;
 import org.apache.fop.fonts.FontCache;
@@ -187,17 +186,20 @@ public class FopFactory implements ImageContext {
      */
     public FOUserAgent newFOUserAgent() {
         FOUserAgent userAgent = new FOUserAgent(this);
-        userAgent.getRendererOptions().put(AccessibilityUtil.ACCESSIBILITY,
-                Boolean.valueOf(this.accessibility));
         return userAgent;
     }
 
     /**
-     * Used for accessibility to pass value to newFOUserAgent
-     * @param value set through xconf file
+     * Sets accessibility support.
+     *
+     * @param value <code>true</code> to enable accessibility, <code>false</code> otherwise
      */
     void setAccessibility(boolean value) {
         this.accessibility = value;
+    }
+
+    boolean isAccessibilityEnabled() {
+        return accessibility;
     }
 
     /**
