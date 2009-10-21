@@ -209,9 +209,9 @@ public class InputHandler implements ErrorListener, Renderable {
     }
 
     /**
-     * Creates a catalog resolver and use it for XML parsing and XSLT URI resolution.
-     * Try the Apache Commons Resolver, and if unsuccessful,
-     * try the same built into Java 6
+     * Creates a catalog resolver and uses it for XML parsing and XSLT URI resolution.
+     * Tries the Apache Commons Resolver, and if unsuccessful,
+     * tries the same built into Java 6.
      */
     private void createCatalogResolver() {
         String[] classNames = new String[] {
