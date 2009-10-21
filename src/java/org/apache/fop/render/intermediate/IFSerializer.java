@@ -411,10 +411,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
             addAttribute(atts, "width", Integer.toString(rect.width));
             addAttribute(atts, "height", Integer.toString(rect.height));
             addForeignAttributes(atts);
-            String ptr = getContext().getStructurePointer();
-            if (ptr != null) {
-                addAttribute(atts, "ptr", ptr);  // used for accessibility
-            }
+            addStructurePointerAttribute(atts);
             handler.element(EL_IMAGE, atts);
         } catch (SAXException e) {
             throw new IFException("SAX error in startGroup()", e);
@@ -441,10 +438,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
             addAttribute(atts, "width", Integer.toString(rect.width));
             addAttribute(atts, "height", Integer.toString(rect.height));
             addForeignAttributes(atts);
-            String ptr = getContext().getStructurePointer();
-            if (ptr != null) {
-                addAttribute(atts, "ptr", ptr);  // used for accessibility
-            }
+            addStructurePointerAttribute(atts);
             handler.startElement(EL_IMAGE, atts);
             new DOM2SAX(handler).writeDocument(doc, true);
             handler.endElement(EL_IMAGE);
@@ -558,10 +552,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
             if (dx != null) {
                 addAttribute(atts, "dx", IFUtil.toString(dx));
             }
-            String ptr = getContext().getStructurePointer();
-            if (ptr != null) {
-                addAttribute(atts, "ptr", ptr);  // used for accessibility
-            }
+            addStructurePointerAttribute(atts);
             handler.startElement(EL_TEXT, atts);
             char[] chars = text.toCharArray();
             handler.characters(chars, 0, chars.length);
@@ -657,6 +648,13 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
         XMLUtil.addAttribute(atts, localName, value);
     }
 
+    private void addStructurePointerAttribute(AttributesImpl atts) {
+        String ptr = getContext().getStructurePointer();
+        if (ptr != null) {
+            addAttribute(atts, "ptr", ptr);
+        }
+    }
+
     // ---=== IFDocumentNavigationHandler ===---
 
     private Map incompleteActions = new java.util.HashMap();
@@ -729,7 +727,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
         atts.addAttribute(null, "rect", "rect",
                 XMLConstants.CDATA, IFUtil.toString(link.getTargetRect()));
         if (getUserAgent().isAccessibilityEnabled()) {
-            addAttribute(atts, "ptr", link.getAction().getPtr());
+            addAttribute(atts, "ptr", link.getAction().getStructurePointer());
         }
         try {
             handler.startElement(DocumentNavigationExtensionConstants.LINK, atts);

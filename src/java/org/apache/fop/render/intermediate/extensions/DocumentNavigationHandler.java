@@ -48,7 +48,7 @@ public class DocumentNavigationHandler extends DefaultHandler
 
     private IFDocumentNavigationHandler navHandler;
 
-    private String accessibilityPointer;
+    private String structurePointer;
 
     /**
      * Main constructor.
@@ -98,7 +98,7 @@ public class DocumentNavigationHandler extends DefaultHandler
                     throw new SAXException(localName + " must be the root element!");
                 }
                 Rectangle targetRect = XMLUtil.getAttributeAsRectangle(attributes, "rect");
-                accessibilityPointer = attributes.getValue("ptr");
+                structurePointer = attributes.getValue("ptr");
                 Link link = new Link(null, targetRect);
                 objectStack.push(link);
             } else if (GOTO_XY.getLocalName().equals(localName)) {
@@ -121,8 +121,8 @@ public class DocumentNavigationHandler extends DefaultHandler
                     }
                     action = new GoToXYAction(id, pageIndex, location);
                 }
-                if (accessibilityPointer != null) {
-                    action.setPtr(accessibilityPointer);
+                if (structurePointer != null) {
+                    action.setStructurePointer(structurePointer);
                 }
                 objectStack.push(action);
             } else if (GOTO_URI.getLocalName().equals(localName)) {
@@ -134,8 +134,8 @@ public class DocumentNavigationHandler extends DefaultHandler
                 if (id != null) {
                     action.setID(id);
                 }
-                if (accessibilityPointer != null) {
-                    action.setPtr(accessibilityPointer);
+                if (structurePointer != null) {
+                    action.setStructurePointer(structurePointer);
                 }
                 objectStack.push(action);
             } else {

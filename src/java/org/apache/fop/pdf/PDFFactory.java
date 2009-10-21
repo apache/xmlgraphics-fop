@@ -179,7 +179,6 @@ public class PDFFactory {
      * @param cropBox the CropBox area
      * @param bleedBox the BleedBox area
      * @param trimBox the TrimBox area
-     * @param currentPageParentKey the integer key in the structural parent tree
      *
      * @return the created /Page object
      */

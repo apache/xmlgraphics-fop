@@ -551,7 +551,7 @@ public class IFParser implements IFConstants {
                 s = lastAttributes.getValue("word-spacing");
                 int wordSpacing = (s != null ? Integer.parseInt(s) : 0);
                 int[] dx = XMLUtil.getAttributeAsIntArray(lastAttributes, "dx");
-                setAccessibilityPointer(lastAttributes);
+                setStructurePointer(lastAttributes);
                 painter.drawText(x, y, letterSpacing, wordSpacing, dx, content.toString());
                 resetStructurePointer();
             }
@@ -648,7 +648,7 @@ public class IFParser implements IFConstants {
                 int height = Integer.parseInt(lastAttributes.getValue("height"));
                 Map foreignAttributes = getForeignAttributes(lastAttributes);
                 establishForeignAttributes(foreignAttributes);
-                setAccessibilityPointer(lastAttributes);
+                setStructurePointer(lastAttributes);
                 if (foreignObject != null) {
                     painter.drawImage(foreignObject,
                             new Rectangle(x, y, width, height));
@@ -716,7 +716,7 @@ public class IFParser implements IFConstants {
             return foreignAttributes;
         }
 
-        private void setAccessibilityPointer(Attributes attributes) {
+        private void setStructurePointer(Attributes attributes) {
             String ptr = attributes.getValue("ptr");
             if (ptr != null && ptr.length() > 0) {
                 establishStructurePointer(ptr);

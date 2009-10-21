@@ -961,7 +961,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
 
         // warn if link trait found but not allowed, else create link
         if (linkTraitFound) {
-            action.setPtr(ptr);  // used for accessibility
+            action.setStructurePointer(ptr);  // used for accessibility
             Link link = new Link(action, ipRect);
             this.deferredLinks.add(link);
         }

@@ -27,7 +27,7 @@ import org.apache.xmlgraphics.util.XMLizable;
 public abstract class AbstractAction implements XMLizable {
 
     private String id;
-    private String ptr; // used for accessibility
+    private String structurePointer;
 
     /**
      * Sets an ID to make the action referencable.
@@ -44,23 +44,23 @@ public abstract class AbstractAction implements XMLizable {
     public String getID() {
         return this.id;
     }
-    
+
     /**
-     * Used for accessibility   
-     * @param s representing the ptr
+     * Sets the structure element corresponding to this action.
+     * @param structurePointer a reference to the structure element
      */
-    public void setPtr(String s) {
-        this.ptr = s;
+    public void setStructurePointer(String structurePointer) {
+        this.structurePointer = structurePointer;
     }
-    
+
     /**
-     * Used for accessibility
-     * @return the ptr
+     * Returns the structure element corresponding to this action.
+     * @return the reference to the structure element
      */
-    public String getPtr() {
-        return this.ptr;
+    public String getStructurePointer() {
+        return structurePointer;
     }
-    
+
     /**
      * Indicates whether the action has an ID and is therefore referencable.
      * @return true if the action has an ID

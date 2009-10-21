@@ -302,7 +302,7 @@ public class PDFPainter extends AbstractIFPainter {
                 generator.separateTextElements(mci.tag, mci.mcid);
             }
             generator.updateColor(state.getTextColor(), true, null);
-            generator.beginTextObjectAccess(mci.tag, mci.mcid);
+            generator.beginTextObject(mci.tag, mci.mcid);
         } else {
             generator.updateColor(state.getTextColor(), true, null);
             generator.beginTextObject();

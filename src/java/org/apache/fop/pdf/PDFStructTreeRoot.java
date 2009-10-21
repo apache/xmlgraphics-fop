@@ -25,7 +25,8 @@ package org.apache.fop.pdf;
 public class PDFStructTreeRoot extends PDFDictionary {
 
     /**
-     * Create the /StructTreeRoot dictionary.
+     * Creates a new /StructTreeRoot dictionary.
+     *
      * @param parentTree the value of the ParenTree entry
      */
     PDFStructTreeRoot(PDFParentTree parentTree) {
@@ -35,16 +36,18 @@ public class PDFStructTreeRoot extends PDFDictionary {
     }
 
     /**
-     * Get the kids.
-     * @return the kids
+     * Returns the children element of this StructTreeRoot.
+     *
+     * @return the value of the K entry
      */
     public PDFArray getKids() {
         return (PDFArray)get("K");
     }
 
     /**
-     * Adds a kid.
-     * @param kid to be added
+     * Adds the given object to the array of kids.
+     *
+     * @param kid an object to be added to the K entry
      */
     public void addKid(PDFObject kid) {
         getKids().add(kid);

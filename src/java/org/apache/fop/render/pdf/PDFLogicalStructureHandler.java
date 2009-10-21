@@ -204,8 +204,8 @@ class PDFLogicalStructureHandler {
         parentTree.getNums().put(currentPage.getStructParents(), pageParentTreeArray);
     }
 
-    private MarkedContentInfo addToParentTree(String reference) {
-        PDFStructElem parent = (PDFStructElem) structTreeMap.get(reference);
+    private MarkedContentInfo addToParentTree(String structurePointer) {
+        PDFStructElem parent = (PDFStructElem) structTreeMap.get(structurePointer);
         if (parent == null) {
             return ARTIFACT;
         } else {
@@ -220,7 +220,7 @@ class PDFLogicalStructureHandler {
      * Adds a content item corresponding to text into the structure tree, if
      * there is a structure element associated to it.
      *
-     * @param parentReference reference to the parent structure element of the
+     * @param structurePointer reference to the parent structure element of the
      * piece of text
      * @return the necessary information for bracketing the content as a
      * marked-content sequence. If there is no element in the structure tree
@@ -228,8 +228,8 @@ class PDFLogicalStructureHandler {
      * {@link MarkedContentInfo#tag} value is <code>null</code>. The content
      * must then be treated as an artifact.
      */
-    MarkedContentInfo addTextContentItem(String parentReference) {
-        MarkedContentInfo mci = addToParentTree(parentReference);
+    MarkedContentInfo addTextContentItem(String structurePointer) {
+        MarkedContentInfo mci = addToParentTree(structurePointer);
         if (mci != ARTIFACT) {
             PDFDictionary contentItem = new PDFDictionary();
             contentItem.put("Type", MCR);
@@ -244,7 +244,7 @@ class PDFLogicalStructureHandler {
      * Adds a content item corresponding to an image into the structure tree, if
      * there is a structure element associated to it.
      *
-     * @param parentReference reference to the parent structure element of the
+     * @param structurePointer reference to the parent structure element of the
      * image
      * @return the necessary information for bracketing the content as a
      * marked-content sequence. If there is no element in the structure tree
@@ -252,8 +252,8 @@ class PDFLogicalStructureHandler {
      * {@link MarkedContentInfo#tag} value is <code>null</code>. The image
      * must then be treated as an artifact.
      */
-    MarkedContentInfo addImageContentItem(String parentReference) {
-        MarkedContentInfo mci = addToParentTree(parentReference);
+    MarkedContentInfo addImageContentItem(String structurePointer) {
+        MarkedContentInfo mci = addToParentTree(structurePointer);
         if (mci != ARTIFACT) {
             mci.parent.setMCIDKid(mci.mcid);
             mci.parent.setPage(this.currentPage);
@@ -282,9 +282,9 @@ class PDFLogicalStructureHandler {
      * tree.
      *
      * @param link a link
-     * @param reference reference to the corresponding parent structure element
+     * @param structurePointer reference to the corresponding parent structure element
      */
-    void addLinkContentItem(PDFLink link, String reference) {
+    void addLinkContentItem(PDFLink link, String structurePointer) {
         int structParent = getNextParentTreeKey();
         link.setStructParent(structParent);
         parentTree.getNums().put(structParent, link);
@@ -292,7 +292,7 @@ class PDFLogicalStructureHandler {
         contentItem.put("Type", OBJR);
         contentItem.put("Pg", this.currentPage);
         contentItem.put("Obj", link);
-        PDFStructElem parent = (PDFStructElem) structTreeMap.get(reference);
+        PDFStructElem parent = (PDFStructElem) structTreeMap.get(structurePointer);
         parent.addKid(contentItem);
     }
 

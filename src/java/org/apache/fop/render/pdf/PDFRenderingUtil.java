@@ -110,7 +110,7 @@ class PDFRenderingUtil implements PDFConfigurationConstants {
 
     private void initialize() {
         PDFEncryptionParams params
-            = (PDFEncryptionParams)userAgent.getRendererOptions().get(ENCRYPTION_PARAMS);
+                = (PDFEncryptionParams)userAgent.getRendererOptions().get(ENCRYPTION_PARAMS);
         if (params != null) {
             this.encryptionParams = params; //overwrite if available
         }

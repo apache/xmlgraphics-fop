@@ -168,13 +168,13 @@ public class PDFContentGenerator {
      * the sequenceNum is ignored and instead of a BDC with the MCID as parameter, an "Artifact"
      * and a BMC command is generated.
      * @param structElemType Structure Element Type
-     * @param sequenceNum    Sequence number
+     * @param mcid    Sequence number
      */
-    protected void beginMarkedContentSequence(String structElemType, int sequenceNum) {
+    protected void beginMarkedContentSequence(String structElemType, int mcid) {
         assert !this.inMarkedContentSequence;
         assert !this.inArtifactMode;
         if (structElemType != null) {
-            currentStream.add(structElemType + " <</MCID " + String.valueOf(sequenceNum) + ">>\n"
+            currentStream.add(structElemType + " <</MCID " + String.valueOf(mcid) + ">>\n"
                     + "BDC\n");
         } else {
             currentStream.add("/Artifact\nBMC\n");
@@ -202,12 +202,18 @@ public class PDFContentGenerator {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Same as {@link #restoreGraphicsState(boolean)}, with <code>true</code> as
+     * a parameter.
+     */
     protected void restoreGraphicsState() {
         restoreGraphicsState(true);
     }
 
-    /** used for accessibility */
+    /**
+     * Same as {@link #restoreGraphicsState()}, additionally ending the current
+     * marked content sequence if any.
+     */
     protected void restoreGraphicsStateAccess() {
         endTextObject();
         currentStream.add("Q\n");
@@ -218,9 +224,12 @@ public class PDFContentGenerator {
     }
 
     /**
-     * used for accessibility, separates 2 text elements
-     * @param structElemType of parent of new text element
-     * @param mcid of new text element
+     * Separates 2 text elements, ending the current marked content sequence and
+     * starting a new one.
+     *
+     * @param structElemType structure element type
+     * @param mcid sequence number
+     * @see #beginMarkedContentSequence(String, int)
      */
     protected void separateTextElements(String structElemType, int mcid) {
         textutil.endTextObject();
@@ -237,22 +246,18 @@ public class PDFContentGenerator {
     }
 
     /**
-     * Accessibility beginTextObject
-     * @param structElemType of parent
-     * @param mcid of text element
+     * Indicates the beginning of a marked-content text object.
+     *
+     * @param structElemType structure element type
+     * @param mcid sequence number
+     * @see #beginTextObject()
+     * @see #beginMarkedContentSequence(String, int)
      */
-    protected void beginTextObjectAccess(String structElemType, int mcid) {
+    protected void beginTextObject(String structElemType, int mcid) {
         if (!textutil.isInTextObject()) {
             beginMarkedContentSequence(structElemType, mcid);
             textutil.beginTextObject();
         }
-    }
-
-    /**
-     * Accessibility begin of LeaderTextObject
-     */
-    public void beginLeaderTextObject() {
-        beginTextObjectAccess(null, 0);
     }
 
     /** Indicates the end of a text object. */
@@ -407,15 +412,17 @@ public class PDFContentGenerator {
     }
 
     /**
-     * Places a previously registered image at a certain place on the page.
-     * Accessibility version
+     * Places a previously registered image at a certain place on the page,
+     * bracketing it as a marked-content sequence.
+     *
      * @param x X coordinate
      * @param y Y coordinate
      * @param w width for image
      * @param h height for image
      * @param xobj the image XObject
-     * @param structElemType of this image
-     * @param mcid of this image
+     * @param structElemType structure element type
+     * @param mcid sequence number
+     * @see #beginMarkedContentSequence(String, int)
      */
     public void placeImage(float x, float y, float w, float h, PDFXObject xobj,
             String structElemType, int mcid) {

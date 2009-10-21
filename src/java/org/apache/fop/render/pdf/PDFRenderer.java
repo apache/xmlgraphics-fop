@@ -973,7 +973,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer implements PDFConf
             if (generator.getTextUtil().isInTextObject()) {
                 generator.separateTextElements(mci.tag, mci.mcid);
             }
-            generator.beginTextObjectAccess(mci.tag, mci.mcid);
+            generator.beginTextObject(mci.tag, mci.mcid);
         } else {
             beginTextObject();
         }

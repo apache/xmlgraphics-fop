@@ -66,7 +66,7 @@ public class PDFRoot extends PDFDictionary {
      */
     public PDFRoot(int objnum, PDFPages pages) {
         super();
-         setObjectNumber(objnum);
+        setObjectNumber(objnum);
         put("Type", new PDFName("Catalog"));
         setRootPages(pages);
     }

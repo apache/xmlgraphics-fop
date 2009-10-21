@@ -25,9 +25,6 @@ import java.util.Set;
 import org.apache.xmlgraphics.util.QName;
 
 import org.apache.fop.fo.ElementMapping;
-import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.UnknownXMLObj;
-import org.apache.fop.fo.extensions.destination.Destination;
 
 /**
  * Element mapping for FOP's internal extension to XSL-FO.
@@ -37,11 +34,11 @@ public class InternalElementMapping extends ElementMapping {
     /** The FOP extension namespace URI */
     public static final String URI = "http://xmlgraphics.apache.org/fop/internal";
 
-   private static final Set propertyAttributes = new java.util.HashSet();
+    private static final Set PROPERTY_ATTRIBUTES = new java.util.HashSet();
 
-   static {
+    static {
         //These are FOP's extension properties for accessibility
-        propertyAttributes.add("ptr");
+        PROPERTY_ATTRIBUTES.add("ptr");
     }
 
     /**
@@ -60,16 +57,7 @@ public class InternalElementMapping extends ElementMapping {
         }
     }
 
-    /* static class DestinationMaker extends ElementMapping.Maker {
-        public FONode make(FONode parent) {
-            return new Destination(parent);
-        }
-    } */
-
-    
-    /**
-     * used internally for accessibility
-     */
+    /** {@inheritDoc} */
     public String getStandardPrefix() {
         return "foi";
     }
@@ -79,7 +67,7 @@ public class InternalElementMapping extends ElementMapping {
         if (!URI.equals(attributeName.getNamespaceURI())) {
             throw new IllegalArgumentException("The namespace URIs don't match");
         }
-        return propertyAttributes.contains(attributeName.getLocalName());
+        return PROPERTY_ATTRIBUTES.contains(attributeName.getLocalName());
     }
 
 }

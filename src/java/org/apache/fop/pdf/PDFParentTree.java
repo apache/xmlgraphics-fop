@@ -20,20 +20,14 @@
 package org.apache.fop.pdf;
 
 /**
- * Class representing a PDF /ParentTree
+ * Class representing a PDF /ParentTree.
  */
 public class PDFParentTree extends PDFNumberTreeNode {
 
     /**
-     * Create the /ParentTree NumberTreeNode
-     */
-    public PDFParentTree() {
-        super();
-    }
-
-    /**
-     * Get the parentTree.
-     * @return parentTree as PDFNumsArray
+     * Returns the number tree corresponding to this parent tree.
+     *
+     * @return the number tree
      */
     public PDFNumsArray getNums() {
         PDFNumsArray nums = super.getNums();

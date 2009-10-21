@@ -30,7 +30,7 @@ import org.apache.fop.apps.FOUserAgent;
 public abstract class AbstractRendererConfigurator extends AbstractConfigurator {
 
     private static final String TYPE = "renderer";
-    
+
     /**
      * Default constructor
      * @param userAgent user agent
@@ -46,7 +46,7 @@ public abstract class AbstractRendererConfigurator extends AbstractConfigurator 
      */
     protected Configuration getRendererConfig(Renderer renderer) {
         return super.getConfig(renderer.getMimeType());
-            }
+    }
 
     /**
      * Returns the configuration subtree for a specific renderer.
@@ -55,13 +55,13 @@ public abstract class AbstractRendererConfigurator extends AbstractConfigurator 
      */
     protected Configuration getRendererConfig(String mimeType) {
         return super.getConfig(mimeType);
-            }
-    
+    }
+
     /**
      * {@inheritDoc}
      */
     public String getType() {
         return TYPE;
-        }
+    }
 
 }
