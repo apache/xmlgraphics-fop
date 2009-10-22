@@ -57,6 +57,7 @@ import org.apache.xmlgraphics.image.loader.ImageManager;
 import org.apache.xmlgraphics.image.loader.ImageSessionContext;
 import org.apache.xmlgraphics.util.QName;
 
+import org.apache.fop.accessibility.AccessibilityEventProducer;
 import org.apache.fop.accessibility.StructureTreeBuilder;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.area.Trait.Background;
@@ -164,19 +165,19 @@ public class AreaTreeParser {
 
         private ContentHandler structureTreeBuilderWrapper;
 
+        private Attributes pageSequenceAttributes;
+
         private final class StructureTreeBuilderWrapper extends DelegatingContentHandler {
 
-            private Attributes pageSequenceAttributes;
-
-            private StructureTreeBuilderWrapper(Attributes pageSequenceAttributes)
+            private StructureTreeBuilderWrapper()
                     throws SAXException {
                 super(structureTreeBuilder.getHandlerForNextPageSequence());
-                this.pageSequenceAttributes = new AttributesImpl(pageSequenceAttributes);
             }
 
             public void endDocument() throws SAXException {
                 super.endDocument();
                 startAreaTreeElement("pageSequence", pageSequenceAttributes);
+                pageSequenceAttributes = null;
             }
         }
 
@@ -297,7 +298,8 @@ public class AreaTreeParser {
                 boolean handled = true;
                 if ("".equals(uri)) {
                     if (localName.equals("pageSequence") && userAgent.isAccessibilityEnabled()) {
-                        structureTreeBuilderWrapper = new StructureTreeBuilderWrapper(attributes);
+                        structureTreeBuilderWrapper = new StructureTreeBuilderWrapper();
+                        pageSequenceAttributes = new AttributesImpl(attributes);
                     } else if (localName.equals("structureTree")) {
                         if (userAgent.isAccessibilityEnabled()) {
                             delegate = structureTreeBuilderWrapper;
@@ -309,6 +311,18 @@ public class AreaTreeParser {
                         delegate.startDocument();
                         delegate.startElement(uri, localName, qName, attributes);
                     } else {
+                        if (pageSequenceAttributes != null) {
+                            /*
+                             * This means that no structure-element tag was
+                             * found in the XML, otherwise a
+                             * StructureTreeBuilderWrapper object would have
+                             * been created, which would have reset the
+                             * pageSequenceAttributes field.
+                             */
+                            AccessibilityEventProducer.Provider
+                                    .get(userAgent.getEventBroadcaster())
+                                    .noStructureTreeInXML(this);
+                        }
                         handled = startAreaTreeElement(localName, attributes);
                     }
                 } else {

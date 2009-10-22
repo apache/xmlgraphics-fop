@@ -46,6 +46,7 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.xmlgraphics.util.QName;
 
+import org.apache.fop.accessibility.AccessibilityEventProducer;
 import org.apache.fop.accessibility.StructureTreeBuilder;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.ElementMapping;
@@ -155,19 +156,19 @@ public class IFParser implements IFConstants {
 
         private ContentHandler structureTreeBuilderWrapper;
 
+        private Attributes pageSequenceAttributes;
+
         private final class StructureTreeBuilderWrapper extends DelegatingContentHandler {
 
-            private Attributes pageSequenceAttributes;
-
-            private StructureTreeBuilderWrapper(Attributes pageSequenceAttributes)
+            private StructureTreeBuilderWrapper()
                     throws SAXException {
                 super(structureTreeBuilder.getHandlerForNextPageSequence());
-                this.pageSequenceAttributes = new AttributesImpl(pageSequenceAttributes);
             }
 
             public void endDocument() throws SAXException {
                 super.endDocument();
                 startIFElement(EL_PAGE_SEQUENCE, pageSequenceAttributes);
+                pageSequenceAttributes = null;
             }
         }
 
@@ -227,7 +228,8 @@ public class IFParser implements IFConstants {
                 boolean handled = true;
                 if (NAMESPACE.equals(uri)) {
                     if (localName.equals(EL_PAGE_SEQUENCE) && userAgent.isAccessibilityEnabled()) {
-                        structureTreeBuilderWrapper = new StructureTreeBuilderWrapper(attributes);
+                        pageSequenceAttributes = new AttributesImpl(attributes);
+                        structureTreeBuilderWrapper = new StructureTreeBuilderWrapper();
                     } else if (localName.equals(EL_STRUCTURE_TREE)) {
                         if (userAgent.isAccessibilityEnabled()) {
                             delegate = structureTreeBuilderWrapper;
@@ -239,6 +241,18 @@ public class IFParser implements IFConstants {
                         delegate.startDocument();
                         delegate.startElement(uri, localName, qName, attributes);
                     } else {
+                        if (pageSequenceAttributes != null) {
+                            /*
+                             * This means that no structure-element tag was
+                             * found in the XML, otherwise a
+                             * StructureTreeBuilderWrapper object would have
+                             * been created, which would have reset the
+                             * pageSequenceAttributes field.
+                             */
+                            AccessibilityEventProducer.Provider
+                                    .get(userAgent.getEventBroadcaster())
+                                    .noStructureTreeInXML(this);
+                        }
                         handled = startIFElement(localName, attributes);
                     }
                 } else if (DocumentNavigationExtensionConstants.NAMESPACE.equals(uri)) {
