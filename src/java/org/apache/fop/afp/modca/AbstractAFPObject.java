@@ -43,7 +43,7 @@ public abstract class AbstractAFPObject implements Streamable {
     /** the structured field class id */
     protected static final byte SF_CLASS = (byte)0xD3;
 
-    private static final byte[] SF_HEADER = new byte[] {
+    protected static final byte[] SF_HEADER = new byte[] {
         0x5A, // Structured field identifier
         0x00, // Length byte 1
         0x10, // Length byte 2
@@ -175,6 +175,21 @@ public abstract class AbstractAFPObject implements Streamable {
             os.write(dataHeader);
             os.write(data, off, lastChunkLength);
         }
+    }
+
+    /**
+     * Truncates the string as necessary
+     *
+     * @param str a character string
+     * @param maxLength the maximum length allowed for the string
+     * @return a possibly truncated string
+     */
+    protected String truncate(String str, int maxLength) {
+        if (str.length() > maxLength) {
+            str = str.substring(0, maxLength);
+            log.warn("truncated character string '" + str + "', longer than " + maxLength + " chars");
+        }
+        return str;
     }
 
     /** structured field type codes */

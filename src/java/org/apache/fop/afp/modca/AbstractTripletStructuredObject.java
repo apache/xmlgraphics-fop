@@ -27,9 +27,12 @@ import java.util.List;
 
 import org.apache.fop.afp.modca.Registry.ObjectType;
 import org.apache.fop.afp.modca.triplets.AbstractTriplet;
+import org.apache.fop.afp.modca.triplets.AttributeQualifierTriplet;
+import org.apache.fop.afp.modca.triplets.AttributeValueTriplet;
 import org.apache.fop.afp.modca.triplets.CommentTriplet;
 import org.apache.fop.afp.modca.triplets.FullyQualifiedNameTriplet;
 import org.apache.fop.afp.modca.triplets.ObjectClassificationTriplet;
+import org.apache.fop.afp.modca.triplets.Triplet;
 
 /**
  * A MODCA structured object base class providing support for Triplets
@@ -37,7 +40,7 @@ import org.apache.fop.afp.modca.triplets.ObjectClassificationTriplet;
 public class AbstractTripletStructuredObject extends AbstractStructuredObject {
 
     /** list of object triplets */
-    protected List/*<AbstractTriplet>*/ triplets = new java.util.ArrayList/*<AbstractTriplet>*/();
+    protected List/*<Triplet>*/ triplets = new java.util.ArrayList/*<Triplet>*/();
 
     /**
      * Returns the triplet data length
@@ -109,7 +112,7 @@ public class AbstractTripletStructuredObject extends AbstractStructuredObject {
      *
      * @param triplet the triplet to add
      */
-    protected void addTriplet(AbstractTriplet triplet) {
+    protected void addTriplet(Triplet triplet) {
         triplets.add(triplet);
     }
 
@@ -130,7 +133,7 @@ public class AbstractTripletStructuredObject extends AbstractStructuredObject {
     }
 
     /**
-     * Sets the fully qualified name of this resource
+     * Sets the fully qualified name of this structured field
      *
      * @param fqnType the fully qualified name type of this resource
      * @param fqnFormat the fully qualified name format of this resource
