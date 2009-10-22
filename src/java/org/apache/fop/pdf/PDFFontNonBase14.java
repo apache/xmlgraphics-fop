@@ -76,7 +76,7 @@ public abstract class PDFFontNonBase14 extends PDFFont {
         if (getDocumentSafely().getProfile().isFontEmbeddingRequired()) {
             if (this.getDescriptor().getFontFile() == null) {
                 throw new PDFConformanceException("For " + getDocumentSafely().getProfile()
-                    + ", all fonts have to be embedded!");
+                    + ", all fonts have to be embedded! Offending font: " + getBaseFont());
             }
         }
     }
