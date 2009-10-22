@@ -58,6 +58,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="AC" type="fix" fixes-bug="47941">
+        Maintain valid AFP by providing TLE truncation on Attribute Value Triplet values that are greater than 250 chars in length.
+      </action>
       <action context="Fonts" dev="JM" type="fix" fixes-bug="47711" due-to="Nicolas Peninguy">
         Fixed generation of CIDSet object in PDF output.
       </action>
