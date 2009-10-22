@@ -112,7 +112,8 @@ public class PDFDocumentNavigationHandler implements IFDocumentNavigationHandler
                 targetRect2D, pdfAction);
         if (pdfLink != null) {
             String ptr = link.getAction().getStructurePointer();
-            if (ptr != null && ptr.length() > 0) {
+            if (documentHandler.getUserAgent().isAccessibilityEnabled()
+                    && ptr != null && ptr.length() > 0) {
                 documentHandler.getLogicalStructureHandler().addLinkContentItem(pdfLink, ptr);
             }
             documentHandler.currentPage.addAnnotation(pdfLink);
