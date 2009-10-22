@@ -45,7 +45,7 @@ public class GraphicsCharacterString extends AbstractGraphicsCoord {
      */
     public GraphicsCharacterString(String str, int x, int y) {
         super(x, y);
-        this.str = truncate(str);
+        this.str = truncate(str, MAX_STR_LEN);
     }
 
     /**
@@ -57,7 +57,7 @@ public class GraphicsCharacterString extends AbstractGraphicsCoord {
      */
     public GraphicsCharacterString(String str) {
         super(null);
-        this.str = truncate(str);
+        this.str = truncate(str, MAX_STR_LEN);
     }
 
     /** {@inheritDoc} */
@@ -80,20 +80,6 @@ public class GraphicsCharacterString extends AbstractGraphicsCoord {
         byte[] strData = getStringAsBytes();
         System.arraycopy(strData, 0, data, 6, strData.length);
         os.write(data);
-    }
-
-    /**
-     * Truncates the string as necessary
-     *
-     * @param str a character string
-     * @return a possibly truncated string
-     */
-    private String truncate(String str) {
-        if (str.length() > MAX_STR_LEN) {
-            str = str.substring(0, MAX_STR_LEN);
-            log.warn("truncated character string, longer than " + MAX_STR_LEN + " chars");
-        }
-        return str;
     }
 
     /**

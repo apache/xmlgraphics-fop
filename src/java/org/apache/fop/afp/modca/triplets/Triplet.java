@@ -1,0 +1,66 @@
+package org.apache.fop.afp.modca.triplets;
+
+import org.apache.fop.afp.Streamable;
+import org.apache.fop.afp.StructuredData;
+
+public interface Triplet extends Streamable, StructuredData {
+    int MAX_LENGTH = 254;
+    
+    byte CODED_GRAPHIC_CHARACTER_SET_GLOBAL_IDENTIFIER = 0x01;
+
+    /** Triplet identifiers */
+    byte FULLY_QUALIFIED_NAME = 0x02;
+    byte MAPPING_OPTION = 0x04;
+    byte OBJECT_CLASSIFICATION = 0x10;
+    byte MODCA_INTERCHANGE_SET = 0x18;
+    byte FONT_DESCRIPTOR_SPECIFICATION = 0x1F;
+    byte OBJECT_FUNCTION_SET_SPECIFICATION = 0x21;
+    byte EXTENDED_RESOURCE_LOCAL_IDENTIFIER = 0x22;
+    byte RESOURCE_LOCAL_IDENTIFIER = 0x24;
+    byte RESOURCE_SECTION_NUMBER = 0x25;
+    byte CHARACTER_ROTATION = 0x26;
+    byte OBJECT_BYTE_OFFSET = 0x2D;
+    byte ATTRIBUTE_VALUE = 0x36;
+    byte DESCRIPTOR_POSITION = 0x43;
+    byte MEDIA_EJECT_CONTROL = 0x45;
+    byte PAGE_OVERLAY_CONDITIONAL_PROCESSING = 0x46;
+    byte RESOURCE_USAGE_ATTRIBUTE = 0x47;
+    byte MEASUREMENT_UNITS = 0x4B;
+    byte OBJECT_AREA_SIZE = 0x4C;
+    byte AREA_DEFINITION = 0x4D;
+    byte COLOR_SPECIFICATION = 0x4E;
+    byte ENCODING_SCHEME_ID = 0x50;
+    byte MEDIUM_MAP_PAGE_NUMBER = 0x56;
+    byte OBJECT_BYTE_EXTENT = 0x57;
+    byte OBJECT_STRUCTURED_FIELD_OFFSET = 0x58;
+    byte OBJECT_STRUCTURED_FIELD_EXTENT = 0x59;
+    byte OBJECT_OFFSET = 0x5A;
+    byte FONT_HORIZONTAL_SCALE_FACTOR = 0x5D;
+    byte OBJECT_COUNT = 0x5E;
+    byte OBJECT_DATE_AND_TIMESTAMP = 0x62;
+    byte COMMENT = 0x65;
+    byte MEDIUM_ORIENTATION = 0x68;
+    byte RESOURCE_OBJECT_INCLUDE = 0x6C;
+    byte PRESENTATION_SPACE_RESET_MIXING = 0x70;
+    byte PRESENTATION_SPACE_MIXING_RULE = 0x71;
+    byte UNIVERSAL_DATE_AND_TIMESTAMP = 0x72;
+    byte TONER_SAVER = 0x74;
+    byte COLOR_FIDELITY = 0x75;
+    byte FONT_FIDELITY = 0x78;
+    byte ATTRIBUTE_QUALIFIER = (byte)0x80;
+    byte PAGE_POSITION_INFORMATION = (byte)0x81;
+    byte PARAMETER_VALUE = (byte)0x82;
+    byte PRESENTATION_CONTROL = (byte)0x83;
+    byte FONT_RESOLUTION_AND_METRIC_TECHNOLOGY = (byte)0x84;
+    byte FINISHING_OPERATION = (byte)0x85;
+    byte TEXT_FIDELITY = (byte)0x86;
+    byte MEDIA_FIDELITY = (byte)0x87;
+    byte FINISHING_FIDELITY = (byte)0x88;
+    byte DATA_OBJECT_FONT_DESCRIPTOR = (byte)0x8B;
+    byte LOCALE_SELECTOR = (byte)0x8C;
+    byte UP3I_FINISHING_OPERATION = (byte)0x8E;
+    byte COLOR_MANAGEMENT_RESOURCE_DESCRIPTOR = (byte)0x91;
+    byte RENDERING_INTENT = (byte)0x95;
+    byte CMR_TAG_FIDELITY = (byte)0x96;
+    byte DEVICE_APPEARANCE = (byte)0x97;
+}
