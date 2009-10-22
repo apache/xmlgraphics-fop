@@ -359,9 +359,16 @@ list of possible build targets.
         <include name="**/*.java"/>
         <exclude name="org/apache/fop/render/*/**/*.java"/>
         <exclude name="org/apache/fop/afp/**/*.java"/>
+        <exclude name="org/apache/fop/accessibility/**/*.java"/>
       </fileset>
     </eventResourceGenerator>
     <fixcrlf file="${src.java.dir}/org/apache/fop/events/EventFormatter.xml" tab="remove" tablength="2"/>
+    <eventResourceGenerator modelfile="${build.gensrc.dir}/org/apache/fop/accessibility/event-model.xml" translationfile="${src.java.dir}/org/apache/fop/accessibility/AccessibilityEventProducer.xml">
+      <fileset dir="${src.java.dir}">
+        <include name="org/apache/fop/accessibility/**/*.java"/>
+      </fileset>
+    </eventResourceGenerator>
+    <fixcrlf file="${src.java.dir}/org/apache/fop/afp/AFPEventProducer.xml" tab="remove" tablength="2"/>
     <eventResourceGenerator modelfile="${build.gensrc.dir}/org/apache/fop/afp/event-model.xml" translationfile="${src.java.dir}/org/apache/fop/afp/AFPEventProducer.xml">
       <fileset dir="${src.java.dir}">
         <include name="org/apache/fop/afp/**/*.java"/>
