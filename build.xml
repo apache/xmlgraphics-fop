@@ -156,10 +156,14 @@ list of possible build targets.
   <property name="fo.examples.userconfig" value="conf/fop.xconf"/>
   <property name="fo.examples.include" value="**/*.fo"/>
   <property name="fo.examples.force" value="false"/>
+  <property name="xml.tests.include" value="**/*.xml"/>
+  <property name="xml.tests.force" value="false"/>
+  <property name="xml.tests.userconfig" value="conf/fop.xconf"/>
   <property name="lib.dir" value="${basedir}/lib"/>
   <property name="user.hyph.dir" value="${basedir}/hyph"/>
   <property name="unidata.dir" value="${basedir}/UNIDATA"/>
   <property name="hyph.stacksize" value="512k"/>
+  <property name="test.dir" value="${basedir}/test"/>
   <property name="build.dir" value="${basedir}/build"/>
   <property name="build.gensrc.dir" value="${build.dir}/gensrc"/>
   <property name="build.classes.dir" value="${build.dir}/classes"/>
@@ -167,9 +171,11 @@ list of possible build targets.
   <property name="build.codegen-classes.dir" value="${build.dir}/codegen-classes"/>
   <property name="build.javadocs.dir" value="${build.dir}/javadocs"/>
   <property name="build.examples.dir" value="${build.dir}/examples"/>
+  <property name="build.tests.dir" value="${build.dir}/tests"/>
   <property name="build.viewer.resources.dir" value="${build.classes.dir}/org/apache/fop/render/awt/viewer/resources"/>
   <property name="build.viewer.images.dir" value="${build.classes.dir}/org/apache/fop/render/awt/viewer/images"/>
   <property name="build.property.examples.mime.type" value="application/pdf"/>
+  <property name="build.property.tests.mime.type" value="application/pdf"/>
 <!--property name="layoutengine.disabled" value="test/layoutengine/disabled-testcases.txt"/-->
 <!--property name="fotree.disabled" value="test/fotree/disabled-testcases.txt"/-->
   <property name="layoutengine.disabled" value="test/layoutengine/disabled-testcases.xml"/>
@@ -748,7 +754,7 @@ list of possible build targets.
     <mkdir dir="${build.dir}/test-gensrc"/>
     <mkdir dir="${junit.reports.dir}"/>
     <javac destdir="${build.dir}/test-classes" fork="${javac.fork}" debug="${javac.debug}" deprecation="${javac.deprecation}" optimize="${javac.optimize}" source="${javac.source}" target="${javac.target}">
-      <src path="${basedir}/test/java"/>
+      <src path="${test.dir}/java"/>
       <patternset refid="test-sources"/>
       <classpath>
         <path refid="libs-build-tools-classpath"/>
@@ -758,19 +764,19 @@ list of possible build targets.
       </classpath>
     </javac>
     <copy todir="${build.dir}/test-classes">
-      <fileset dir="${basedir}/test/java">
+      <fileset dir="${test.dir}/java">
         <include name="**/*.xsl"/>
       </fileset>
     </copy>
   </target>
   <target name="junit-compile-copy-resources" if="junit.present">
     <eventResourceGenerator modelfile="${build.dir}/test-gensrc/org/apache/fop/events/test-event-model.xml">
-      <fileset dir="${basedir}/test/java">
+      <fileset dir="${test.dir}/java">
         <include name="**/*.java"/>
       </fileset>
     </eventResourceGenerator>
     <copy todir="${build.dir}/test-classes">
-      <fileset dir="${basedir}/test/java">
+      <fileset dir="${test.dir}/java">
         <include name="META-INF/**"/>
         <include name="**/*.xml"/>
       </fileset>
@@ -1329,9 +1335,9 @@ NOTE:
     </jar>
   </target>
 <!-- =================================================================== -->
-<!-- Generate example PDFs                                               -->
+<!-- Generate examples                                                   -->
 <!-- =================================================================== -->
-  <target name="examples" depends="package" description="Generates example PDF files">
+  <target name="examples" depends="package" description="Generates the example files">
     <taskdef name="fop" classname="org.apache.fop.tools.anttasks.Fop" classpathref="libs-run-classpath"/>
     <mkdir dir="${build.examples.dir}"/>
     <fop format="${build.property.examples.mime.type}" outdir="${build.examples.dir}" messagelevel="debug" basedir="${fo.examples.dir}" userconfig="${fo.examples.userconfig}" force="${fo.examples.force}">
@@ -1340,6 +1346,20 @@ NOTE:
       </fileset>
     </fop>
   </target>
+
+<!-- =================================================================== -->
+<!-- Generate unit tests                                                 -->
+<!-- =================================================================== -->
+  <target name="tests" depends="package" description="Generates the test files">
+    <taskdef name="fop" classname="org.apache.fop.tools.anttasks.Fop" classpathref="libs-run-classpath"/>
+    <mkdir dir="${build.tests.dir}"/>
+    <fop format="${build.property.tests.mime.type}" xsltfile="${test.dir}/layoutengine/testcase2fo.xsl" outdir="${build.tests.dir}" messagelevel="debug" basedir="${test.dir}" userconfig="${fo.examples.userconfig}" force="${xml.tests.force}">
+      <fileset dir="${test.dir}">
+        <include name="${xml.tests.include}"/>
+      </fileset>
+    </fop>
+  </target>
+
 <!-- =================================================================== -->
 <!-- Helper task to generate source files that have already been         -->
 <!-- checked into CVS.  For these files, CVS version is the official one -->
