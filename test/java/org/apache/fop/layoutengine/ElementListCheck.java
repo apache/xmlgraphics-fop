@@ -83,10 +83,10 @@ public class ElementListCheck implements LayoutEngineCheck {
                     }
                     if (domEl.getAttribute("w").length() > 0) {
                         int w = Integer.parseInt(domEl.getAttribute("w"));
-                        if (w != knuthEl.getW()) {
+                        if (w != knuthEl.getWidth()) {
                             fail("Expected w=" + w
                                     + " at position " + pos
-                                    + " but got: " + knuthEl.getW());
+                                    + " but got: " + knuthEl.getWidth());
                         }
                     }
                     if ("true".equals(domEl.getAttribute("aux"))) {
@@ -110,24 +110,24 @@ public class ElementListCheck implements LayoutEngineCheck {
                     KnuthPenalty pen = (KnuthPenalty)knuthEl;
                     if (domEl.getAttribute("w").length() > 0) {
                         int w = Integer.parseInt(domEl.getAttribute("w"));
-                        if (w != knuthEl.getW()) {
+                        if (w != knuthEl.getWidth()) {
                             fail("Expected w=" + w
                                     + " at position " + pos
-                                    + " but got: " + knuthEl.getW());
+                                    + " but got: " + knuthEl.getWidth());
                         }
                     }
                     if (domEl.getAttribute("p").length() > 0) {
                         if ("<0".equals(domEl.getAttribute("p"))) {
-                            if (knuthEl.getP() >= 0) {
+                            if (knuthEl.getPenalty() >= 0) {
                                 fail("Expected p<0"
                                         + " at position " + pos
-                                        + " but got: " + knuthEl.getP());
+                                        + " but got: " + knuthEl.getPenalty());
                             }
                         } else if (">0".equals(domEl.getAttribute("p"))) {
-                            if (knuthEl.getP() <= 0) {
+                            if (knuthEl.getPenalty() <= 0) {
                                 fail("Expected p>0"
                                         + " at position " + pos
-                                        + " but got: " + knuthEl.getP());
+                                        + " but got: " + knuthEl.getPenalty());
                             }
                         } else {
                             int p;
@@ -142,20 +142,20 @@ public class ElementListCheck implements LayoutEngineCheck {
                             } else {
                                 p = Integer.parseInt(domEl.getAttribute("p"));
                             }
-                            if (p != knuthEl.getP()) {
+                            if (p != knuthEl.getPenalty()) {
                                 fail("Expected p=" + p
                                         + " at position " + pos
-                                        + " but got: " + knuthEl.getP());
+                                        + " but got: " + knuthEl.getPenalty());
                             }
                         }
                     }
                     if ("true".equals(domEl.getAttribute("flagged"))) {
-                        if (!pen.isFlagged()) {
+                        if (!pen.isPenaltyFlagged()) {
                             fail("Expected flagged penalty"
                                     + " at position " + pos);
                         }
                     } else if ("false".equals(domEl.getAttribute("flagged"))) {
-                        if (pen.isFlagged()) {
+                        if (pen.isPenaltyFlagged()) {
                             fail("Expected non-flagged penalty"
                                     + " at position " + pos);
                         }
@@ -180,26 +180,26 @@ public class ElementListCheck implements LayoutEngineCheck {
                     KnuthGlue glue = (KnuthGlue)knuthEl;
                     if (domEl.getAttribute("w").length() > 0) {
                         int w = Integer.parseInt(domEl.getAttribute("w"));
-                        if (w != knuthEl.getW()) {
+                        if (w != knuthEl.getWidth()) {
                             fail("Expected w=" + w
                                     + " at position " + pos
-                                    + " but got: " + knuthEl.getW());
+                                    + " but got: " + knuthEl.getWidth());
                         }
                     }
                     if (domEl.getAttribute("y").length() > 0) {
                         int stretch = Integer.parseInt(domEl.getAttribute("y"));
-                        if (stretch != knuthEl.getY()) {
+                        if (stretch != knuthEl.getStretch()) {
                             fail("Expected y=" + stretch
                                     + " (stretch) at position " + pos
-                                    + " but got: " + knuthEl.getY());
+                                    + " but got: " + knuthEl.getStretch());
                         }
                     }
                     if (domEl.getAttribute("z").length() > 0) {
                         int shrink = Integer.parseInt(domEl.getAttribute("z"));
-                        if (shrink != knuthEl.getZ()) {
+                        if (shrink != knuthEl.getShrink()) {
                             fail("Expected z=" + shrink
                                     + " (shrink) at position " + pos
-                                    + " but got: " + knuthEl.getZ());
+                                    + " but got: " + knuthEl.getShrink());
                         }
                     }
                 } else {

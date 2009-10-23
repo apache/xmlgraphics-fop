@@ -367,7 +367,7 @@ public abstract class AbstractBreaker {
                 alg.setConstantLineWidth(flowBPD);
                 int optimalPageCount = alg.findBreakingPoints(effectiveList, 1, true,
                         BreakingAlgorithm.ALL_BREAKS);
-                if (alg.ipdChanged()) {
+                if (alg.getIPDdifference() != 0) {
                     KnuthNode optimalBreak = alg.getBestNodeBeforeIPDChange();
                     int positionIndex = optimalBreak.position;
                     KnuthElement elementAtBreak = alg.getElement(positionIndex);
@@ -381,14 +381,19 @@ public abstract class AbstractBreaker {
                     LayoutManager restartAtLM = null;
                     List firstElements = Collections.EMPTY_LIST;
                     if (containsNonRestartableLM(positionAtBreak)) {
+                        if (alg.getIPDdifference() > 0) {
+                            log.warn("Content that cannot handle IPD changes is flowing to a"
+                                    + " narrower page. Part of it may be clipped"
+                                    + " by the page border.");
+                        }
                         firstElements = new LinkedList();
                         boolean boxFound = false;
-                        Iterator iter = effectiveList.listIterator(++positionIndex);
+                        Iterator iter = effectiveList.listIterator(positionIndex + 1);
                         Position position = null;
                         while (iter.hasNext()
                                 && (position == null || containsNonRestartableLM(position))) {
-                            KnuthElement element = (KnuthElement) iter.next();
                             positionIndex++;
+                            KnuthElement element = (KnuthElement) iter.next();
                             position = element.getPosition();
                             if (element.isBox()) {
                                 boxFound = true;
@@ -400,9 +405,11 @@ public abstract class AbstractBreaker {
                         if (position instanceof SpaceResolver.SpaceHandlingBreakPosition) {
                             /* Retrieve the original position wrapped into this space position */
                             positionAtBreak = position.getPosition();
+                        } else {
+                            positionAtBreak = null;
                         }
                     }
-                    if (positionAtBreak.getIndex() == -1) {
+                    if (positionAtBreak != null && positionAtBreak.getIndex() == -1) {
                         /*
                          * This is an indication that we are between two blocks
                          * (possibly surrounded by another block), not inside a
@@ -588,7 +595,7 @@ public abstract class AbstractBreaker {
                             .listIterator(startElementIndex);
                     while (effectiveListIterator.nextIndex() <= endElementIndex) {
                         KnuthElement tempEl = (KnuthElement)effectiveListIterator.next();
-                        if (tempEl.isBox() && tempEl.getW() > 0) {
+                        if (tempEl.isBox() && tempEl.getWidth() > 0) {
                             boxCount++;
                         }
                     }
@@ -678,8 +685,23 @@ public abstract class AbstractBreaker {
 
         BlockSequence blockList;
         List returnedList;
-        if (positionAtIPDChange == null) {
+        if (firstElements == null) {
             returnedList = getNextKnuthElements(childLC, alignment);
+        } else if (positionAtIPDChange == null) {
+            /*
+             * No restartable element found after changing IPD break. Simply add the
+             * non-restartable elements found after the break.
+             */
+            returnedList = firstElements;
+            /*
+             * Remove the last 3 penalty-filler-forced break elements that were added by
+             * the Knuth algorithm. They will be re-added later on.
+             */
+            ListIterator iter = returnedList.listIterator(returnedList.size());
+            for (int i = 0; i < 3; i++) {
+                iter.previous();
+                iter.remove();
+            }
         } else {
             returnedList = getNextKnuthElements(childLC, alignment, positionAtIPDChange,
                     restartAtLM);
@@ -861,9 +883,9 @@ public abstract class AbstractBreaker {
                     case BlockLevelLayoutManager.LINE_NUMBER_ADJUSTMENT:
                         // potential line number adjustment
                         lineNumberMaxAdjustment.max += ((KnuthGlue) thisElement)
-                                .getY();
+                                .getStretch();
                         lineNumberMaxAdjustment.min -= ((KnuthGlue) thisElement)
-                                .getZ();
+                                .getShrink();
                         adjustableLinesList.add(thisElement);
                         break;
                     case BlockLevelLayoutManager.LINE_HEIGHT_ADJUSTMENT:
@@ -885,9 +907,9 @@ public abstract class AbstractBreaker {
                             KnuthGlue blockSpace = (KnuthGlue) unconfirmedList
                                     .removeFirst();
                             spaceMaxAdjustment.max += ((KnuthGlue) blockSpace)
-                                    .getY();
+                                    .getStretch();
                             spaceMaxAdjustment.min -= ((KnuthGlue) blockSpace)
-                                    .getZ();
+                                    .getShrink();
                             blockSpacesList.add(blockSpace);
                         }
                     }
@@ -898,11 +920,11 @@ public abstract class AbstractBreaker {
             log.debug("| space adj      = "
                     + spaceMaxAdjustment);
 
-            if (thisElement.isPenalty() && thisElement.getW() > 0) {
+            if (thisElement.isPenalty() && thisElement.getWidth() > 0) {
                 log.debug("  mandatory variation to the number of lines!");
                 ((BlockLevelLayoutManager) thisElement
                         .getLayoutManager()).negotiateBPDAdjustment(
-                        thisElement.getW(), thisElement);
+                        thisElement.getWidth(), thisElement);
             }
 
             if (thisBreak.bpdAdjust != 0
@@ -967,7 +989,7 @@ public abstract class AbstractBreaker {
         int partial = 0;
         while (spaceListIterator.hasNext()) {
             KnuthGlue blockSpace = (KnuthGlue)spaceListIterator.next();
-            partial += (difference > 0 ? blockSpace.getY() : blockSpace.getZ());
+            partial += (difference > 0 ? blockSpace.getStretch() : blockSpace.getShrink());
             if (log.isDebugEnabled()) {
                 log.debug("available = " + partial +  " / " + total);
                 log.debug("competenza  = "
@@ -990,7 +1012,7 @@ public abstract class AbstractBreaker {
         int partial = 0;
         while (lineListIterator.hasNext()) {
             KnuthGlue line = (KnuthGlue)lineListIterator.next();
-            partial += (difference > 0 ? line.getY() : line.getZ());
+            partial += (difference > 0 ? line.getStretch() : line.getShrink());
             int newAdjust = ((BlockLevelLayoutManager) line.getLayoutManager()).negotiateBPDAdjustment(((int) ((float) partial * difference / total)) - adjustedDiff, line);
             adjustedDiff += newAdjust;
         }

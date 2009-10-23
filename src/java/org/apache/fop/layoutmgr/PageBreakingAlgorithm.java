@@ -96,7 +96,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     //Controls whether a single part should be forced if possible (ex. block-container)
     private boolean favorSinglePart = false;
 
-    private boolean ipdChange;
+    private int ipdDifference;
     private KnuthNode bestNodeForIPDChange;
 
     //Used to keep track of switches in keep-context
@@ -320,7 +320,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
          * will not have considered it a legal break, but it could still
          * be one.
          */
-        if (penalty.getP() == KnuthPenalty.INFINITE) {
+        if (penalty.getPenalty() == KnuthPenalty.INFINITE) {
             int breakClass = penalty.getBreakClass();
             if (breakClass == Constants.EN_PAGE
                     || breakClass == Constants.EN_COLUMN) {
@@ -363,7 +363,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                     noteListIterator.hasNext();) {
                 final KnuthElement element = (KnuthElement) noteListIterator.next();
                 if (element.isBox() || element.isGlue()) {
-                    noteLength += element.getW();
+                    noteLength += element.getWidth();
                 }
             }
             int prevLength = (lengthList == null || lengthList.isEmpty())
@@ -445,22 +445,22 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
             return true;
         } else {
             KnuthPenalty p = (KnuthPenalty) element;
-            if (p.getP() <= 0) {
+            if (p.getPenalty() <= 0) {
                 return true;
             } else {
                 int context = p.getBreakClass();
                 switch (context) {
                 case Constants.EN_LINE:
                 case Constants.EN_COLUMN:
-                    return p.getP() < KnuthPenalty.INFINITE;
+                    return p.getPenalty() < KnuthPenalty.INFINITE;
                 case Constants.EN_PAGE:
-                    return p.getP() < KnuthPenalty.INFINITE
+                    return p.getPenalty() < KnuthPenalty.INFINITE
                             || !pageProvider.endPage(line - 1);
                 case Constants.EN_AUTO:
                     log.debug("keep is not auto but context is");
                     return true;
                 default:
-                    if (p.getP() < KnuthPenalty.INFINITE) {
+                    if (p.getPenalty() < KnuthPenalty.INFINITE) {
                         log.debug("Non recognized keep context:" + context);
                         return true;
                     } else {
@@ -479,7 +479,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         int footnoteSplit = 0;
         boolean canDeferOldFootnotes;
         if (element.isPenalty()) {
-            actualWidth += element.getW();
+            actualWidth += element.getWidth();
         }
         if (footnotesPending) {
             // compute the total length of the footnotes not yet inserted
@@ -588,7 +588,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                  index++) {
                 if (par.getElement(index).isGlue() && par.getElement(index - 1).isBox()
                     || par.getElement(index).isPenalty()
-                       && ((KnuthElement) par.getElement(index)).getP() < KnuthElement.INFINITE) {
+                       && ((KnuthElement) par.getElement(index)).getPenalty() < KnuthElement.INFINITE) {
                     // break found
                     break;
                 }
@@ -711,7 +711,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                     element = (KnuthElement) noteListIterator.next();
                     if (element.isBox()) {
                         // element is a box
-                        splitLength += element.getW();
+                        splitLength += element.getWidth();
                         boxPreceding = true;
                     } else if (element.isGlue()) {
                         // element is a glue
@@ -721,10 +721,10 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                             break;
                         }
                         boxPreceding = false;
-                        splitLength += element.getW();
+                        splitLength += element.getWidth();
                     } else {
                         // element is a penalty
-                        if (element.getP() < KnuthElement.INFINITE) {
+                        if (element.getPenalty() < KnuthElement.INFINITE) {
                             // end of the sub-sequence
                             index = noteListIterator.previousIndex();
                             break;
@@ -792,7 +792,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         double f = Math.abs(r);
         f = 1 + 100 * f * f * f;
         if (element.isPenalty()) {
-            double penalty = element.getP();
+            double penalty = element.getPenalty();
             if (penalty >= 0) {
                 f += penalty;
                 demerits = f * f;
@@ -805,9 +805,9 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
             demerits = f * f;
         }
 
-        if (element.isPenalty() && ((KnuthPenalty) element).isFlagged()
+        if (element.isPenalty() && ((KnuthPenalty) element).isPenaltyFlagged()
             && getElement(activeNode.position).isPenalty()
-            && ((KnuthPenalty) getElement(activeNode.position)).isFlagged()) {
+            && ((KnuthPenalty) getElement(activeNode.position)).isPenaltyFlagged()) {
             // add demerit for consecutive breaks at flagged penalties
             demerits += repeatedFlaggedDemerit;
         }
@@ -1077,8 +1077,8 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     }
 
     /** {@inheritDoc} */
-    protected boolean ipdChanged() {
-        return ipdChange;
+    protected int getIPDdifference() {
+        return ipdDifference;
     }
 
     /** {@inheritDoc} */
@@ -1104,9 +1104,9 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
      * @param node the active node to add
      */
     protected void addNode(int line, KnuthNode node) {
-        if (node.position < par.size() - 1 && line > 0 && ipdChange(line - 1)) {
+        if (node.position < par.size() - 1 && line > 0
+                && (ipdDifference = compareIPDs(line - 1)) != 0) {
             log.trace("IPD changes at page " + line);
-            ipdChange = true;
             if (bestNodeForIPDChange == null
                     || node.totalDemerits < bestNodeForIPDChange.totalDemerits) {
                 bestNodeForIPDChange = node;
@@ -1117,7 +1117,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                  * The whole sequence could actually fit on the last page before
                  * the IPD change. No need to do any special handling.
                  */
-                ipdChange = false;
+                ipdDifference = 0;
             }
             super.addNode(line, node);
         }
@@ -1127,12 +1127,11 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         return bestNodeForIPDChange;
     }
 
-    /** {@inheritDoc} */
-    protected boolean ipdChange(int line) {
+    private int compareIPDs(int line) {
         if (pageProvider == null) {
-            return false;
+            return 0;
         }
-        return pageProvider.ipdChange(line);
+        return pageProvider.compareIPDs(line);
     }
 
 }

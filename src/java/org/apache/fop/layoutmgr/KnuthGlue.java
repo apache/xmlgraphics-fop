@@ -54,24 +54,25 @@ public class KnuthGlue extends KnuthElement {
     /**
      * Create a new KnuthGlue.
      *
-     * @param w the width of this glue
-     * @param y the stretchability of this glue
-     * @param z the shrinkability of this glue
+     * @param width the width of this glue
+     * @param stretchability the stretchability of this glue
+     * @param shrinkability the shrinkability of this glue
      * @param pos the Position stored in this glue
-     * @param bAux is this glue auxiliary?
+     * @param auxiliary is this glue auxiliary?
      */
-    public KnuthGlue(int w, int y, int z, Position pos, boolean bAux) {
-        super(w, pos, bAux);
-        stretchability = y;
-        shrinkability = z;
+    public KnuthGlue(int width, int stretchability, int shrinkability, Position pos,
+                     boolean auxiliary) {
+        super(width, pos, auxiliary);
+        this.stretchability = stretchability;
+        this.shrinkability = shrinkability;
     }
 
-    public KnuthGlue(int w, int y, int z,
-            int iAdjClass, Position pos, boolean bAux) {
-        super(w, pos, bAux);
-        stretchability = y;
-        shrinkability = z;
-        adjustmentClass = iAdjClass;
+    public KnuthGlue(int width, int stretchability, int shrinkability, int adjustmentClass,
+                     Position pos, boolean auxiliary) {
+        super(width, pos, auxiliary);
+        this.stretchability = stretchability;
+        this.shrinkability = shrinkability;
+        this.adjustmentClass = adjustmentClass;
     }
 
     /** {@inheritDoc} */
@@ -80,12 +81,12 @@ public class KnuthGlue extends KnuthElement {
     }
 
     /** @return the stretchability of this glue. */
-    public int getY() {
+    public int getStretch() {
         return stretchability;
     }
 
     /** @return the shrinkability of this glue. */
-    public int getZ() {
+    public int getShrink() {
         return shrinkability;
     }
 
@@ -96,18 +97,18 @@ public class KnuthGlue extends KnuthElement {
 
     /** {@inheritDoc} */
     public String toString() {
-        StringBuffer sb = new StringBuffer(64);
+        StringBuffer buffer = new StringBuffer(64);
         if (isAuxiliary()) {
-            sb.append("aux. ");
+            buffer.append("aux. ");
         }
-        sb.append("glue");
-        sb.append(" w=").append(getW());
-        sb.append(" stretch=").append(getY());
-        sb.append(" shrink=").append(getZ());
+        buffer.append("glue");
+        buffer.append(" w=").append(getWidth());
+        buffer.append(" stretch=").append(getStretch());
+        buffer.append(" shrink=").append(getShrink());
         if (getAdjustmentClass() >= 0) {
-            sb.append(" adj-class=").append(getAdjustmentClass());
+            buffer.append(" adj-class=").append(getAdjustmentClass());
         }
-        return sb.toString();
+        return buffer.toString();
     }
 
 }

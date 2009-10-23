@@ -339,7 +339,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
                 // by this BlockLM, and must be ignored
                 if (element.getLayoutManager() != this) {
                     splitList.add(element);
-                    splitLength += element.getW();
+                    splitLength += element.getWidth();
                     lastLM = element.getLayoutManager();
                 }
             }

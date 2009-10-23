@@ -161,12 +161,13 @@ public class PageProvider implements Constants {
     }
 
     /**
-     * Returns true if the part following the given one has a different IPD.
+     * Compares the IPD of the given part with the following one.
      *
      * @param index index of the current part
-     * @return true if the following part has a different IPD, false otherwise
+     * @return a negative integer, zero or a positive integer as the current IPD is less
+     * than, equal to or greater than the IPD of the following part
      */
-    public boolean ipdChange(int index) {
+    public int compareIPDs(int index) {
         int columnCount = 0;
         int colIndex = startColumnOfCurrentElementList + index;
         int pageIndex = -1;
@@ -179,11 +180,11 @@ public class PageProvider implements Constants {
         } while (colIndex >= columnCount);
         if (colIndex + 1 < columnCount) {
             // Next part is a column on same page => same IPD
-            return false;
+            return 0;
         } else {
             Page nextPage = getPage(false, pageIndex + 1, RELTO_CURRENT_ELEMENT_LIST);
             return page.getPageViewport().getBodyRegion().getIPD()
-                    != nextPage.getPageViewport().getBodyRegion().getIPD();
+                    - nextPage.getPageViewport().getBodyRegion().getIPD();
         }
     }
 

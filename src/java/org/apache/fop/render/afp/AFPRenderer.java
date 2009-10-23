@@ -90,8 +90,8 @@ import org.apache.fop.render.afp.extensions.AFPElementMapping;
 import org.apache.fop.render.afp.extensions.AFPExtensionAttachment;
 import org.apache.fop.render.afp.extensions.AFPIncludeFormMap;
 import org.apache.fop.render.afp.extensions.AFPInvokeMediumMap;
-import org.apache.fop.render.afp.extensions.AFPPageSetup;
 import org.apache.fop.render.afp.extensions.AFPPageOverlay;
+import org.apache.fop.render.afp.extensions.AFPPageSetup;
 
 /**
  * This is an implementation of a FOP Renderer that renders areas to AFP.
@@ -444,6 +444,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer implements AFPCust
         ImageFlavor.XML_DOM,
         /*ImageFlavor.RAW_PNG, */ // PNG not natively supported in AFP
         ImageFlavor.RAW_JPEG, ImageFlavor.RAW_CCITTFAX, ImageFlavor.RAW_EPS,
+        ImageFlavor.RAW_TIFF,
         ImageFlavor.GRAPHICS2D, ImageFlavor.BUFFERED_IMAGE, ImageFlavor.RENDERED_IMAGE };
 
     private static final ImageFlavor[] FLAVORS = new ImageFlavor[] {
@@ -828,6 +829,11 @@ public class AFPRenderer extends AbstractPathOrientedRenderer implements AFPCust
     /** {@inheritDoc} */
     public void setNativeImagesSupported(boolean nativeImages) {
         paintingState.setNativeImagesSupported(nativeImages);
+    }
+
+    /** {@inheritDoc} */
+    public void setCMYKImagesSupported(boolean value) {
+        paintingState.setCMYKImagesSupported(value);
     }
 
     /** {@inheritDoc} */

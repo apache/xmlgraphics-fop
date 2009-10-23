@@ -62,13 +62,14 @@ public final class ElementListUtils {
             if (el.isPenalty()) {
                 KnuthPenalty penalty = (KnuthPenalty)el;
                 //Convert all penalties to break inhibitors
-                if (penalty.getP() < KnuthPenalty.INFINITE) {
-                    iter.set(new KnuthPenalty(penalty.getW(), KnuthPenalty.INFINITE,
-                            penalty.isFlagged(), penalty.getPosition(), penalty.isAuxiliary()));
+                if (penalty.getPenalty() < KnuthPenalty.INFINITE) {
+                    iter.set(new KnuthPenalty(penalty.getWidth(), KnuthPenalty.INFINITE,
+                            penalty.isPenaltyFlagged(), penalty.getPosition(),
+                            penalty.isAuxiliary()));
                 }
             } else if (el.isGlue()) {
                 KnuthGlue glue = (KnuthGlue)el;
-                len += glue.getW();
+                len += glue.getWidth();
                 iter.previous();
                 el = (ListElement)iter.previous();
                 iter.next();
@@ -84,7 +85,7 @@ public final class ElementListUtils {
                 }
             } else {
                 KnuthElement kel = (KnuthElement)el;
-                len += kel.getW();
+                len += kel.getWidth();
             }
             if (len >= constraint) {
                 return false;
@@ -109,13 +110,14 @@ public final class ElementListUtils {
             if (el.isPenalty()) {
                 KnuthPenalty penalty = (KnuthPenalty)el;
                 //Convert all penalties to break inhibitors
-                if (penalty.getP() < KnuthPenalty.INFINITE) {
-                    i.set(new KnuthPenalty(penalty.getW(), KnuthPenalty.INFINITE,
-                            penalty.isFlagged(), penalty.getPosition(), penalty.isAuxiliary()));
+                if (penalty.getPenalty() < KnuthPenalty.INFINITE) {
+                    i.set(new KnuthPenalty(penalty.getWidth(), KnuthPenalty.INFINITE,
+                            penalty.isPenaltyFlagged(), penalty.getPosition(),
+                            penalty.isAuxiliary()));
                 }
             } else if (el.isGlue()) {
                 KnuthGlue glue = (KnuthGlue)el;
-                len += glue.getW();
+                len += glue.getWidth();
                 el = (ListElement)i.previous();
                 i.next();
                 if (el.isBox()) {
@@ -134,7 +136,7 @@ public final class ElementListUtils {
                 }
             } else {
                 KnuthElement kel = (KnuthElement)el;
-                len += kel.getW();
+                len += kel.getWidth();
             }
             if (len >= constraint) {
                 return false;
@@ -158,9 +160,9 @@ public final class ElementListUtils {
         while (iter.hasNext()) {
             ListElement el = (ListElement)iter.next();
             if (el.isBox()) {
-                len += ((KnuthElement)el).getW();
+                len += ((KnuthElement)el).getWidth();
             } else if (el.isGlue()) {
-                len += ((KnuthElement)el).getW();
+                len += ((KnuthElement)el).getWidth();
             } else {
                 //log.debug("Ignoring penalty: " + el);
                 //ignore penalties
@@ -210,7 +212,7 @@ public final class ElementListUtils {
      */
     public static boolean endsWithNonInfinitePenalty(List elems) {
         ListElement last = (ListElement) ListUtil.getLast(elems);
-        if (last.isPenalty() && ((KnuthPenalty)last).getP() < KnuthElement.INFINITE) {
+        if (last.isPenalty() && ((KnuthPenalty)last).getPenalty() < KnuthElement.INFINITE) {
             return true;
         } else if (last instanceof BreakElement
                         && ((BreakElement)last).getPenaltyValue() < KnuthElement.INFINITE) {
@@ -230,7 +232,7 @@ public final class ElementListUtils {
         int prevBreak = startIndex - 1;
         while (prevBreak >= 0) {
             KnuthElement el = (KnuthElement)elems.get(prevBreak);
-            if (el.isPenalty() && el.getP() < KnuthElement.INFINITE) {
+            if (el.isPenalty() && el.getPenalty() < KnuthElement.INFINITE) {
                 break;
             }
             prevBreak--;

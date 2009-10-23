@@ -33,44 +33,44 @@ public abstract class KnuthElement extends ListElement {
     public static final int INFINITE = 1000;
 
     private int width;
-    private boolean bIsAuxiliary;
+    private boolean auxiliary;
 
     /**
      * Create a new KnuthElement.
      * This class being abstract, this can be called only by subclasses.
      *
-     * @param w    the width of this element
+     * @param width    the width of this element
      * @param pos  the Position stored in this element
-     * @param bAux is this an auxiliary element?
+     * @param auxiliary is this an auxiliary element?
      */
-    protected KnuthElement(int w, Position pos, boolean bAux) {
+    protected KnuthElement(int width, Position pos, boolean auxiliary) {
         super(pos);
-        width = w;
-        bIsAuxiliary = bAux;
+        this.width = width;
+        this.auxiliary = auxiliary;
     }
 
     /** @return true if this element is an auxiliary one. */
     public boolean isAuxiliary() {
-        return bIsAuxiliary;
+        return auxiliary;
     }
 
     /** @return the width of this element. */
-    public int getW() {
+    public int getWidth() {
         return width;
     }
 
     /** @return the penalty value of this element, if applicable. */
-    public int getP() {
+    public int getPenalty() {
         throw new RuntimeException("Element is not a penalty");
     }
 
     /** @return the stretch value of this element, if applicable. */
-    public int getY() {
+    public int getStretch() {
         throw new RuntimeException("Element is not a glue");
     }
 
     /** @return the shrink value of this element, if applicable. */
-    public int getZ() {
+    public int getShrink() {
         throw new RuntimeException("Element is not a glue");
     }
 

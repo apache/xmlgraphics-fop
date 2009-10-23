@@ -202,7 +202,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
         if (lastItem.isForcedBreak()) {
             KnuthPenalty p = (KnuthPenalty) lastItem;
             primaryGridUnit.setBreakAfter(p.getBreakClass());
-            p.setP(0);
+            p.setPenalty(0);
         }
 
         setFinished(true);

@@ -161,12 +161,12 @@ public class CIDSubset {
     }
 
     /**
-     * Returns a BitSet with bits set for each available glyph index.
+     * Returns a BitSet with bits set for each available glyph index in the subset.
      * @return a BitSet indicating available glyph indices
      */
     public BitSet getGlyphIndexBitSet() {
         BitSet bitset = new BitSet();
-        Iterator iter = usedGlyphs.keySet().iterator();
+        Iterator iter = usedGlyphsIndex.keySet().iterator();
         while (iter.hasNext()) {
             Integer cid = (Integer)iter.next();
             bitset.set(cid.intValue());

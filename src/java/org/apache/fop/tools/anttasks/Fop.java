@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.util.List;
+import java.util.Vector;
 
 // FOP
 import org.apache.fop.apps.FOPException;
@@ -67,7 +68,10 @@ import org.xml.sax.SAXException;
 public class Fop extends Task {
 
     private File foFile;
-    private List filesets = new java.util.ArrayList();
+    private File xmlFile;
+    private File xsltFile;
+    private String xsltParams;
+    private List/*<FileSet>*/ filesets = new java.util.ArrayList/*<FileSet>*/();
     private File outFile;
     private File outDir;
     private String format; //MIME type
@@ -109,6 +113,54 @@ public class Fop extends Task {
      */
     public File getFofile() {
         return foFile;
+    }
+
+    /**
+     * Gets the input XML file.
+     * @return the input XML file.
+     */
+    public File getXmlFile() {
+        return xmlFile;
+    }
+
+    /**
+     * Sets the input XML file.
+     * @param xmlFile the input XML file.
+     */
+    public void setXmlFile(File xmlFile) {
+        this.xmlFile = xmlFile;
+    }
+
+    /**
+     * Gets the input XSLT file.
+     * @return the input XSLT file.
+     */
+    public File getXsltFile() {
+        return xsltFile;
+    }
+
+    /**
+     * Sets the input XSLT file.
+     * @param xsltFile the input XSLT file.
+     */
+    public void setXsltFile(File xsltFile) {
+        this.xsltFile = xsltFile;
+    }
+
+    /**
+     * Gets the XSLT parameters
+     * @return the XSLT parameters
+     */
+    public String getXsltParams() {
+        return xsltParams;
+    }
+
+    /**
+     * Sets the XSLT parameters 
+     * @param xsltParams the XSLT parameters
+     */
+    public void setXsltParams(String xsltParams) {
+        this.xsltParams = xsltParams;
     }
 
     /**
@@ -491,10 +543,39 @@ class FOPTaskStarter {
                     skippedcount++;
                 }
             }
+        } else if (task.getXmlFile() != null && task.getXsltFile() != null) {
+            if (task.getXmlFile().exists() && task.getXsltFile().exists()) {
+                File outf = task.getOutfile();
+                if (outf == null) {
+                    throw new BuildException("outfile is required when fofile is used");
+                }
+                if (task.getOutdir() != null) {
+                    outf = new File(task.getOutdir(), outf.getName());
+                }
+                // Render if "force" flag is set OR
+                // OR output file doesn't exist OR
+                // output file is older than input file
+                if (task.getForce() || !outf.exists()
+                    || (task.getXmlFile().lastModified() > outf.lastModified() ||
+                            task.getXsltFile().lastModified() > outf.lastModified())) {
+                    render(task.getXmlFile(), task.getXsltFile(), outf, outputFormat);
+                    actioncount++;
+                } else if (outf.exists()
+                        && (task.getXmlFile().lastModified() <= outf.lastModified() ||
+                                task.getXsltFile().lastModified() <= outf.lastModified())) {
+                    skippedcount++;
+                }
+            }
         }
 
         GlobPatternMapper mapper = new GlobPatternMapper();
-        mapper.setFrom("*.fo");
+
+        String inputExtension = ".fo";
+        File xsltFile = task.getXsltFile();
+        if (xsltFile != null) {
+            inputExtension = ".xml";
+        }
+        mapper.setFrom("*" + inputExtension);
         mapper.setTo("*" + newExtension);
 
         // deal with the filesets
@@ -507,16 +588,19 @@ class FOPTaskStarter {
                 File f = new File(fs.getDir(task.getProject()), files[j]);
 
                 File outf = null;
-                if (task.getOutdir() != null && files[j].endsWith(".fo")) {
+                if (task.getOutdir() != null && files[j].endsWith(inputExtension)) {
                   String[] sa = mapper.mapFileName(files[j]);
                   outf = new File(task.getOutdir(), sa[0]);
                 } else {
-                  outf = replaceExtension(f, ".fo", newExtension);
+                  outf = replaceExtension(f, inputExtension, newExtension);
                   if (task.getOutdir() != null) {
                       outf = new File(task.getOutdir(), outf.getName());
                   }
                 }
-
+                File dir = outf.getParentFile();
+                if (!dir.exists()) {
+                    dir.mkdirs();
+                }
                 try {
                     if (task.getRelativebase()) {
                         this.baseURL = f.getParentFile().toURI().toURL().
@@ -536,7 +620,11 @@ class FOPTaskStarter {
                 // output file is older than input file
                 if (task.getForce() || !outf.exists()
                     || (f.lastModified() > outf.lastModified() )) {
-                    render(f, outf, outputFormat);
+                    if (xsltFile != null) {
+                        render(f, xsltFile, outf, outputFormat);
+                    } else {
+                        render(f, outf, outputFormat);
+                    }
                     actioncount++;
                 } else if (outf.exists() && (f.lastModified() <= outf.lastModified() )) {
                     skippedcount++;
@@ -554,10 +642,7 @@ class FOPTaskStarter {
         }
     }
 
-    private void render(File foFile, File outFile,
-                        String outputFormat) throws FOPException {
-        InputHandler inputHandler = new InputHandler(foFile);
-
+    private void renderInputHandler(InputHandler inputHandler, File outFile, String outputFormat) throws Exception {
         OutputStream out = null;
         try {
             out = new java.io.FileOutputStream(outFile);
@@ -565,11 +650,6 @@ class FOPTaskStarter {
         } catch (Exception ex) {
             throw new BuildException("Failed to open " + outFile, ex);
         }
-
-        if (task.getLogFiles()) {
-            task.log(foFile + " -> " + outFile, Project.MSG_INFO);
-        }
-
         boolean success = false;
         try {
             FOUserAgent userAgent = fopFactory.newFOUserAgent();
@@ -580,7 +660,7 @@ class FOPTaskStarter {
             if (task.getThrowexceptions()) {
                 throw new BuildException(ex);
             }
-            logger.error("Error rendering fo file: " + foFile, ex);
+            throw ex;
         } finally {
             try {
                 out.close();
@@ -593,5 +673,31 @@ class FOPTaskStarter {
         }
     }
 
+    private void render(File foFile, File outFile,
+                        String outputFormat) throws FOPException {
+        InputHandler inputHandler = new InputHandler(foFile);
+        try {
+            renderInputHandler(inputHandler, outFile, outputFormat);
+        } catch (Exception ex) {
+            logger.error("Error rendering fo file: " + foFile, ex);
+        }
+        if (task.getLogFiles()) {
+            task.log(foFile + " -> " + outFile, Project.MSG_INFO);
+        }
+    }
+
+    private void render(File xmlFile, File xsltFile, File outFile, String outputFormat) {
+        //TODO: implement support for XSLT params
+        final Vector xsltParams = null;
+        InputHandler inputHandler = new InputHandler(xmlFile, xsltFile, xsltParams);
+        try {
+            renderInputHandler(inputHandler, outFile, outputFormat);
+        } catch (Exception ex) {
+            logger.error("Error rendering xml/xslt files: " + xmlFile + ", " + xsltFile, ex);
+        }
+        if (task.getLogFiles()) {
+            task.log("xml: " + xmlFile + ", xslt: " + xsltFile + " -> " + outFile, Project.MSG_INFO);
+        }
+    }
 }
 

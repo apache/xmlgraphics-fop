@@ -680,7 +680,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                     assert lastElement != null;
                     previousIsBox = lastElement.isBox()
                             && !((KnuthElement) lastElement).isAuxiliary()
-                            && ((KnuthElement) lastElement).getW() != 0;
+                            && ((KnuthElement) lastElement).getWidth() != 0;
 
                     // if last paragraph is open, add the new elements to the paragraph
                     // else this is the last paragraph
@@ -705,7 +705,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
 
                     // finish last paragraph if it was closed with a linefeed
                     if (lastElement.isPenalty()
-                            && ((KnuthPenalty) lastElement).getP() == -KnuthPenalty.INFINITE) {
+                            && ((KnuthPenalty) lastElement).getPenalty() == -KnuthPenalty.INFINITE) {
                         // a penalty item whose value is -inf
                         // represents a preserved linefeed,
                         // which forces a line break
@@ -1172,7 +1172,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         LeafPosition pos = (LeafPosition)lastElement.getPosition();
         int totalAdj = adj;
         //if (lastElement.isPenalty()) {
-        //    totalAdj += lastElement.getW();
+        //    totalAdj += lastElement.getWidth();
         //}
         //int lineNumberDifference = (int)((double) totalAdj / constantLineHeight);
         int lineNumberDifference = (int) Math.round((double) totalAdj / constantLineHeight

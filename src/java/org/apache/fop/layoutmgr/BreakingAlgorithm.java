@@ -491,7 +491,7 @@ public abstract class BreakingAlgorithm {
                     elementIndex, previousIsBox, allowedBreaks).isBox();
 
             if (activeNodeCount == 0) {
-                if (ipdChanged()) {
+                if (getIPDdifference() != 0) {
                     return handleIpdChange();
                 }
                 if (!force) {
@@ -538,8 +538,8 @@ public abstract class BreakingAlgorithm {
         return line;
     }
 
-    protected boolean ipdChanged() {
-        return false;
+    protected int getIPDdifference() {
+        return 0;
     }
 
     protected int handleIpdChange() {
@@ -676,7 +676,7 @@ public abstract class BreakingAlgorithm {
     protected void handleBox(KnuthBox box) {
         // a KnuthBox object is not a legal line break,
         // just add the width to the total
-        totalWidth += box.getW();
+        totalWidth += box.getWidth();
     }
 
     /**
@@ -697,9 +697,9 @@ public abstract class BreakingAlgorithm {
             && !(allowedBreaks == ONLY_FORCED_BREAKS)) {
             considerLegalBreak(glue, position);
         }
-        totalWidth += glue.getW();
-        totalStretch += glue.getY();
-        totalShrink += glue.getZ();
+        totalWidth += glue.getWidth();
+        totalStretch += glue.getStretch();
+        totalShrink += glue.getShrink();
     }
 
     /**
@@ -716,8 +716,8 @@ public abstract class BreakingAlgorithm {
         // only if its penalty is not infinite;
         // consider all penalties, non-flagged penalties or non-forcing penalties
         // according to the value of allowedBreaks
-        if (((penalty.getP() < KnuthElement.INFINITE)
-                && (!(allowedBreaks == NO_FLAGGED_PENALTIES) || !penalty.isFlagged())
+        if (((penalty.getPenalty() < KnuthElement.INFINITE)
+                && (!(allowedBreaks == NO_FLAGGED_PENALTIES) || !penalty.isPenaltyFlagged())
                 && (!(allowedBreaks == ONLY_FORCED_BREAKS)
                         || penalty.isForcedBreak()))) {
             considerLegalBreak(penalty, position);
@@ -880,7 +880,7 @@ public abstract class BreakingAlgorithm {
      */
     protected boolean elementCanEndLine(KnuthElement element, int line, int difference) {
         return (!element.isPenalty()
-                || element.getP() < KnuthElement.INFINITE);
+                || element.getPenalty() < KnuthElement.INFINITE);
     }
 
     /**
@@ -921,9 +921,9 @@ public abstract class BreakingAlgorithm {
             if (tempElement.isBox()) {
                 break;
             } else if (tempElement.isGlue()) {
-                newWidth += tempElement.getW();
-                newStretch += tempElement.getY();
-                newShrink += tempElement.getZ();
+                newWidth += tempElement.getWidth();
+                newStretch += tempElement.getStretch();
+                newShrink += tempElement.getShrink();
             } else if (tempElement.isForcedBreak() && i != elementIdx) {
                 break;
             }
@@ -1034,9 +1034,9 @@ public abstract class BreakingAlgorithm {
             if (tempElement.isBox()) {
                 break;
             } else if (tempElement.isGlue()) {
-                newWidth += tempElement.getW();
-                newStretch += tempElement.getY();
-                newShrink += tempElement.getZ();
+                newWidth += tempElement.getWidth();
+                newStretch += tempElement.getStretch();
+                newShrink += tempElement.getShrink();
             } else if (tempElement.isForcedBreak() && i != elementIdx) {
                 break;
             }
@@ -1075,7 +1075,7 @@ public abstract class BreakingAlgorithm {
         // compute the adjustment ratio
         int actualWidth = totalWidth - activeNode.totalWidth;
         if (element.isPenalty()) {
-            actualWidth += element.getW();
+            actualWidth += element.getWidth();
         }
         return getLineWidth() - actualWidth;
     }
@@ -1133,7 +1133,7 @@ public abstract class BreakingAlgorithm {
         double f = Math.abs(r);
         f = 1 + 100 * f * f * f;
         if (element.isPenalty()) {
-            double penalty = element.getP();
+            double penalty = element.getPenalty();
             if (penalty >= 0) {
                 f += penalty;
                 demerits = f * f;
@@ -1146,9 +1146,9 @@ public abstract class BreakingAlgorithm {
             demerits = f * f;
         }
 
-        if (element.isPenalty() && ((KnuthPenalty) element).isFlagged()
+        if (element.isPenalty() && ((KnuthPenalty) element).isPenaltyFlagged()
             && getElement(activeNode.position).isPenalty()
-            && ((KnuthPenalty) getElement(activeNode.position)).isFlagged()) {
+            && ((KnuthPenalty) getElement(activeNode.position)).isPenaltyFlagged()) {
             // add demerit for consecutive breaks at flagged penalties
             demerits += repeatedFlaggedDemerit;
             // there are at least two consecutive lines ending with a flagged penalty;
@@ -1160,7 +1160,7 @@ public abstract class BreakingAlgorithm {
                  prevNode = prevNode.previous) {
                 KnuthElement prevElement = getElement(prevNode.position);
                 if (prevElement.isPenalty()
-                    && ((KnuthPenalty) prevElement).isFlagged()) {
+                    && ((KnuthPenalty) prevElement).isPenaltyFlagged()) {
                     // the previous line ends with a flagged penalty too
                     flaggedPenaltiesCount++;
                 } else {

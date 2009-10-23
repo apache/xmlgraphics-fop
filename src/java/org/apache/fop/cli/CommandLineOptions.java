@@ -109,6 +109,8 @@ public class CommandLineOptions {
     private boolean useStdIn = false;
     /* true if System.out (stdout) should be used for the output file */
     private boolean useStdOut = false;
+    /* true if a catalog resolver should be used for entity and uri resolution */ 
+    private boolean useCatalogResolver = false;
     /* rendering options (for the user agent) */
     private Map renderingOptions = new java.util.HashMap();
     /* target resolution (for the user agent) */
@@ -354,6 +356,8 @@ public class CommandLineOptions {
                   } else {
                       throw new FOPException("invalid param usage: use -param <name> <value>");
                   }
+            } else if (args[i].equals("-catalog")) {
+                useCatalogResolver = true;
             } else if (args[i].equals("-o")) {
                 i = i + parsePDFOwnerPassword(args, i);
             } else if (args[i].equals("-u")) {
@@ -1024,7 +1028,7 @@ public class CommandLineOptions {
             case IF_INPUT:
                 return new IFInputHandler(iffile);
             case XSLT_INPUT:
-                return new InputHandler(xmlfile, xsltfile, xsltParams);
+                return new InputHandler(xmlfile, xsltfile, xsltParams, useCatalogResolver);
             case IMAGE_INPUT:
                 return new ImageInputHandler(imagefile, xsltfile, xsltParams);
             default:
@@ -1166,6 +1170,7 @@ public class CommandLineOptions {
             + "  -xsl stylesheet   xslt stylesheet \n \n"
             + "  -param name value <value> to use for parameter <name> in xslt stylesheet\n"
             + "                    (repeat '-param name value' for each parameter)\n \n"
+            + "  -catalog          use catalog resolver for input XML and XSLT files\n"
             + " [OUTPUT] \n"
             + "  outfile           input will be rendered as PDF into outfile\n"
             + "                    (use '-' for outfile to pipe output to stdout)\n"

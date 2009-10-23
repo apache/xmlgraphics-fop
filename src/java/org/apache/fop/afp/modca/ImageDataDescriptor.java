@@ -31,6 +31,7 @@ public class ImageDataDescriptor extends AbstractDescriptor {
 
     public static final byte FUNCTION_SET_FS10 = 0x0A;
     public static final byte FUNCTION_SET_FS11 = 0x0B;
+    public static final byte FUNCTION_SET_FS45 = 45;
 
     private byte functionSet = FUNCTION_SET_FS11; // FCNSET = IOCA FS 11
 

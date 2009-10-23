@@ -46,8 +46,10 @@ implements Cloneable {
     /** color image support */
     private boolean colorImages = false;
 
-    /** images are supported in this AFP environment */
+    /** true if certain image formats may be embedded unchanged in their native format. */
     private boolean nativeImagesSupported = false;
+    /** true if CMYK images (requires IOCA FS45 suppport on the target platform) may be generated */
+    private boolean cmykImagesSupported;
 
     /** default value for image depth */
     private int bitsPerPixel = 8;
@@ -63,6 +65,7 @@ implements Cloneable {
 
     /** a unit converter */
     private final transient AFPUnitConverter unitConv = new AFPUnitConverter(this);
+
 
     /**
      * Sets the rotation to be used for portrait pages, valid values are 0
@@ -183,6 +186,24 @@ implements Cloneable {
      */
     public boolean isNativeImagesSupported() {
         return this.nativeImagesSupported;
+    }
+
+    /**
+     * Controls whether CMYK images (IOCA FS45) are enabled. By default, support is disabled
+     * for wider compatibility. When disabled, any CMYK image is converted to the selected
+     * color format.
+     * @param value true to enabled CMYK images
+     */
+    public void setCMYKImagesSupported(boolean value) {
+        this.cmykImagesSupported = value;
+    }
+
+    /**
+     * Indicates whether CMYK images (IOCA FS45) are enabled.
+     * @return true if IOCA FS45 is enabled
+     */
+    public boolean isCMYKImagesSupported() {
+        return this.cmykImagesSupported;
     }
 
     /**

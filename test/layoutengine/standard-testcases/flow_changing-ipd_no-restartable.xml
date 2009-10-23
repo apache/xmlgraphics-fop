@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks that the code behaves properly when no restartable element can be found at 
+      all after a changing IPD break.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" font-size="8pt" line-height="10pt" 
+      provisional-distance-between-starts="6pt" provisional-label-separation="0">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="narrow"
+          page-height="70pt" page-width="320pt" margin="10pt">
+          <fo:region-body background-color="#F0F0F0"/>
+        </fo:simple-page-master>
+        <fo:simple-page-master master-name="wide"
+          page-height="70pt" page-width="420pt" margin="10pt">
+          <fo:region-body background-color="#F0F0F0"/>
+        </fo:simple-page-master>
+        <fo:page-sequence-master master-name="start-narrow-rest-wide">
+          <fo:single-page-master-reference master-reference="narrow"/>
+          <fo:repeatable-page-master-reference master-reference="wide"/>
+        </fo:page-sequence-master>
+        <fo:page-sequence-master master-name="alternate">
+          <fo:repeatable-page-master-alternatives>
+            <fo:conditional-page-master-reference master-reference="narrow" odd-or-even="odd"/>
+            <fo:conditional-page-master-reference master-reference="wide" odd-or-even="even"/>
+          </fo:repeatable-page-master-alternatives>
+        </fo:page-sequence-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="start-narrow-rest-wide">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block space-after="30pt">Before the table</fo:block>
+          <fo:table table-layout="fixed" width="100%">
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>
+                    <fo:block>Before page break</fo:block>
+                    <fo:block>After page break</fo:block>
+                  </fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+        </fo:flow>
+      </fo:page-sequence>
+      <fo:page-sequence master-reference="start-narrow-rest-wide">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block space-after="30pt">Before the table</fo:block>
+          <fo:table table-layout="fixed" width="100%">
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>
+                    <fo:block>Before page break</fo:block>
+                    <fo:block>After page break</fo:block>
+                  </fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Fill 1</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Fill 2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Fill 3</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Fill 4</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Fill 5</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Fill 6</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Fill 7</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+        </fo:flow>
+      </fo:page-sequence>
+      <fo:page-sequence master-reference="alternate">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block space-after="30pt">Before the table</fo:block>
+          <fo:table table-layout="fixed" width="100%">
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>
+                    <fo:block>Before page break</fo:block>
+                    <fo:block>After page break</fo:block>
+                  </fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Fill 1</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Fill 2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Fill 3</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Fill 4</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Fill 5</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Fill 6</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>Fill 7</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+        </fo:flow>
+      </fo:page-sequence>
+      <fo:page-sequence master-reference="start-narrow-rest-wide">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block space-after="30pt">Before the list</fo:block>
+          <fo:list-block>
+            <fo:list-item>
+              <fo:list-item-label end-indent="label-end()">
+                <fo:block>•</fo:block>
+              </fo:list-item-label>
+              <fo:list-item-body start-indent="body-start()">
+                <fo:block>Before page break</fo:block>
+              </fo:list-item-body>
+            </fo:list-item>
+            <fo:list-item>
+              <fo:list-item-label end-indent="label-end()">
+                <fo:block>•</fo:block>
+              </fo:list-item-label>
+              <fo:list-item-body start-indent="body-start()">
+                <fo:block>After page break</fo:block>
+              </fo:list-item-body>
+            </fo:list-item>
+          </fo:list-block>
+        </fo:flow>
+      </fo:page-sequence>
+      <fo:page-sequence master-reference="start-narrow-rest-wide">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block space-after="30pt">Before the list</fo:block>
+          <fo:list-block>
+            <fo:list-item>
+              <fo:list-item-label end-indent="label-end()">
+                <fo:block>•</fo:block>
+              </fo:list-item-label>
+              <fo:list-item-body start-indent="body-start()">
+                <fo:block>Before page break</fo:block>
+              </fo:list-item-body>
+            </fo:list-item>
+            <fo:list-item>
+              <fo:list-item-label end-indent="label-end()">
+                <fo:block>•</fo:block>
+              </fo:list-item-label>
+              <fo:list-item-body start-indent="body-start()">
+                <fo:block>After page break</fo:block>
+              </fo:list-item-body>
+            </fo:list-item>
+            <fo:list-item>
+              <fo:list-item-label end-indent="label-end()">
+                <fo:block>•</fo:block>
+              </fo:list-item-label>
+              <fo:list-item-body start-indent="body-start()">
+                <fo:block>Fill 1</fo:block>
+              </fo:list-item-body>
+            </fo:list-item>
+            <fo:list-item>
+              <fo:list-item-label end-indent="label-end()">
+                <fo:block>•</fo:block>
+              </fo:list-item-label>
+              <fo:list-item-body start-indent="body-start()">
+                <fo:block>Fill 2</fo:block>
+              </fo:list-item-body>
+            </fo:list-item>
+            <fo:list-item>
+              <fo:list-item-label end-indent="label-end()">
+                <fo:block>•</fo:block>
+              </fo:list-item-label>
+              <fo:list-item-body start-indent="body-start()">
+                <fo:block>Fill 3</fo:block>
+              </fo:list-item-body>
+            </fo:list-item>
+            <fo:list-item>
+              <fo:list-item-label end-indent="label-end()">
+                <fo:block>•</fo:block>
+              </fo:list-item-label>
+              <fo:list-item-body start-indent="body-start()">
+                <fo:block>Fill 4</fo:block>
+              </fo:list-item-body>
+            </fo:list-item>
+            <fo:list-item>
+              <fo:list-item-label end-indent="label-end()">
+                <fo:block>•</fo:block>
+              </fo:list-item-label>
+              <fo:list-item-body start-indent="body-start()">
+                <fo:block>Fill 5</fo:block>
+              </fo:list-item-body>
+            </fo:list-item>
+            <fo:list-item>
+              <fo:list-item-label end-indent="label-end()">
+                <fo:block>•</fo:block>
+              </fo:list-item-label>
+              <fo:list-item-body start-indent="body-start()">
+                <fo:block>Fill 6</fo:block>
+              </fo:list-item-body>
+            </fo:list-item>
+            <fo:list-item>
+              <fo:list-item-label end-indent="label-end()">
+                <fo:block>•</fo:block>
+              </fo:list-item-label>
+              <fo:list-item-body start-indent="body-start()">
+                <fo:block>Fill 7</fo:block>
+              </fo:list-item-body>
+            </fo:list-item>
+          </fo:list-block>
+        </fo:flow>
+      </fo:page-sequence>
+      <fo:page-sequence master-reference="alternate">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block space-after="30pt">Before the list</fo:block>
+          <fo:list-block>
+            <fo:list-item>
+              <fo:list-item-label end-indent="label-end()">
+                <fo:block>•</fo:block>
+              </fo:list-item-label>
+              <fo:list-item-body start-indent="body-start()">
+                <fo:block>Before page break</fo:block>
+              </fo:list-item-body>
+            </fo:list-item>
+            <fo:list-item>
+              <fo:list-item-label end-indent="label-end()">
+                <fo:block>•</fo:block>
+              </fo:list-item-label>
+              <fo:list-item-body start-indent="body-start()">
+                <fo:block>After page break</fo:block>
+              </fo:list-item-body>
+            </fo:list-item>
+            <fo:list-item>
+              <fo:list-item-label end-indent="label-end()">
+                <fo:block>•</fo:block>
+              </fo:list-item-label>
+              <fo:list-item-body start-indent="body-start()">
+                <fo:block>Fill 1</fo:block>
+              </fo:list-item-body>
+            </fo:list-item>
+            <fo:list-item>
+              <fo:list-item-label end-indent="label-end()">
+                <fo:block>•</fo:block>
+              </fo:list-item-label>
+              <fo:list-item-body start-indent="body-start()">
+                <fo:block>Fill 2</fo:block>
+              </fo:list-item-body>
+            </fo:list-item>
+            <fo:list-item>
+              <fo:list-item-label end-indent="label-end()">
+                <fo:block>•</fo:block>
+              </fo:list-item-label>
+              <fo:list-item-body start-indent="body-start()">
+                <fo:block>Fill 3</fo:block>
+              </fo:list-item-body>
+            </fo:list-item>
+            <fo:list-item>
+              <fo:list-item-label end-indent="label-end()">
+                <fo:block>•</fo:block>
+              </fo:list-item-label>
+              <fo:list-item-body start-indent="body-start()">
+                <fo:block>Fill 4</fo:block>
+              </fo:list-item-body>
+            </fo:list-item>
+            <fo:list-item>
+              <fo:list-item-label end-indent="label-end()">
+                <fo:block>•</fo:block>
+              </fo:list-item-label>
+              <fo:list-item-body start-indent="body-start()">
+                <fo:block>Fill 5</fo:block>
+              </fo:list-item-body>
+            </fo:list-item>
+            <fo:list-item>
+              <fo:list-item-label end-indent="label-end()">
+                <fo:block>•</fo:block>
+              </fo:list-item-label>
+              <fo:list-item-body start-indent="body-start()">
+                <fo:block>Fill 6</fo:block>
+              </fo:list-item-body>
+            </fo:list-item>
+            <fo:list-item>
+              <fo:list-item-label end-indent="label-end()">
+                <fo:block>•</fo:block>
+              </fo:list-item-label>
+              <fo:list-item-body start-indent="body-start()">
+                <fo:block>Fill 7</fo:block>
+              </fo:list-item-body>
+            </fo:list-item>
+          </fo:list-block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+
+    <!-- Tables -->
+    <eval expected="Before page break" xpath="//pageSequence[1]/pageViewport[1]//flow/block[2]//text"/>
+    <eval expected="After page break"  xpath="//pageSequence[1]/pageViewport[2]//flow/block[1]//text"/>
+
+    <eval expected="Before page break" xpath="//pageSequence[2]/pageViewport[1]//flow/block[2]//text"/>
+    <eval expected="After page break"  xpath="//pageSequence[2]/pageViewport[2]//flow/block/block[1]//text"/>
+    <eval expected="Fill 1"            xpath="//pageSequence[2]/pageViewport[2]//flow/block/block[2]//text"/>
+    <eval expected="Fill 2"            xpath="//pageSequence[2]/pageViewport[2]//flow/block/block[3]//text"/>
+    <eval expected="Fill 3"            xpath="//pageSequence[2]/pageViewport[2]//flow/block/block[4]//text"/>
+    <eval expected="Fill 4"            xpath="//pageSequence[2]/pageViewport[2]//flow/block/block[5]//text"/>
+    <eval expected="Fill 5"            xpath="//pageSequence[2]/pageViewport[3]//flow/block/block[1]//text"/>
+    <eval expected="Fill 6"            xpath="//pageSequence[2]/pageViewport[3]//flow/block/block[2]//text"/>
+    <eval expected="Fill 7"            xpath="//pageSequence[2]/pageViewport[3]//flow/block/block[3]//text"/>
+
+    <eval expected="Before page break" xpath="//pageSequence[3]/pageViewport[1]//flow/block[2]//text"/>
+    <eval expected="After page break"  xpath="//pageSequence[3]/pageViewport[2]//flow/block/block[1]//text"/>
+    <eval expected="Fill 1"            xpath="//pageSequence[3]/pageViewport[2]//flow/block/block[2]//text"/>
+    <eval expected="Fill 2"            xpath="//pageSequence[3]/pageViewport[2]//flow/block/block[3]//text"/>
+    <eval expected="Fill 3"            xpath="//pageSequence[3]/pageViewport[2]//flow/block/block[4]//text"/>
+    <eval expected="Fill 4"            xpath="//pageSequence[3]/pageViewport[2]//flow/block/block[5]//text"/>
+    <eval expected="Fill 5"            xpath="//pageSequence[3]/pageViewport[3]//flow/block/block[1]//text"/>
+    <eval expected="Fill 6"            xpath="//pageSequence[3]/pageViewport[3]//flow/block/block[2]//text"/>
+    <eval expected="Fill 7"            xpath="//pageSequence[3]/pageViewport[3]//flow/block/block[3]//text"/>
+
+    <!-- Lists -->
+    <eval expected="Before page break" xpath="//pageSequence[4]/pageViewport[1]//flow/block[2]/block/block[2]//text"/>
+    <eval expected="After page break"  xpath="//pageSequence[4]/pageViewport[2]//flow/block[1]/block/block[2]//text"/>
+
+    <eval expected="Before page break" xpath="//pageSequence[5]/pageViewport[1]//flow/block[2]/block/block[2]//text"/>
+    <eval expected="After page break"  xpath="//pageSequence[5]/pageViewport[2]//flow/block/block[1]/block[2]//text"/>
+    <eval expected="Fill 1"            xpath="//pageSequence[5]/pageViewport[2]//flow/block/block[2]/block[2]//text"/>
+    <eval expected="Fill 2"            xpath="//pageSequence[5]/pageViewport[2]//flow/block/block[3]/block[2]//text"/>
+    <eval expected="Fill 3"            xpath="//pageSequence[5]/pageViewport[2]//flow/block/block[4]/block[2]//text"/>
+    <eval expected="Fill 4"            xpath="//pageSequence[5]/pageViewport[2]//flow/block/block[5]/block[2]//text"/>
+    <eval expected="Fill 5"            xpath="//pageSequence[5]/pageViewport[3]//flow/block/block[1]/block[2]//text"/>
+    <eval expected="Fill 6"            xpath="//pageSequence[5]/pageViewport[3]//flow/block/block[2]/block[2]//text"/>
+    <eval expected="Fill 7"            xpath="//pageSequence[5]/pageViewport[3]//flow/block/block[3]/block[2]//text"/>
+
+    <eval expected="Before page break" xpath="//pageSequence[6]/pageViewport[1]//flow/block[2]/block/block[2]//text"/>
+    <eval expected="After page break"  xpath="//pageSequence[6]/pageViewport[2]//flow/block/block[1]/block[2]//text"/>
+    <eval expected="Fill 1"            xpath="//pageSequence[6]/pageViewport[2]//flow/block/block[2]/block[2]//text"/>
+    <eval expected="Fill 2"            xpath="//pageSequence[6]/pageViewport[2]//flow/block/block[3]/block[2]//text"/>
+    <eval expected="Fill 3"            xpath="//pageSequence[6]/pageViewport[2]//flow/block/block[4]/block[2]//text"/>
+    <eval expected="Fill 4"            xpath="//pageSequence[6]/pageViewport[2]//flow/block/block[5]/block[2]//text"/>
+    <eval expected="Fill 5"            xpath="//pageSequence[6]/pageViewport[3]//flow/block/block[1]/block[2]//text"/>
+    <eval expected="Fill 6"            xpath="//pageSequence[6]/pageViewport[3]//flow/block/block[2]/block[2]//text"/>
+    <eval expected="Fill 7"            xpath="//pageSequence[6]/pageViewport[3]//flow/block/block[3]/block[2]//text"/>
+
+  </checks>
+</testcase>

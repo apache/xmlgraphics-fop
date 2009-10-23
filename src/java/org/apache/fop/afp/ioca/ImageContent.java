@@ -56,20 +56,17 @@ public class ImageContent extends AbstractStructuredObject {
     /** the image size parameter */
     private ImageSizeParameter imageSizeParameter = null;
 
+    /** the IDE Structure parameter */
+    private IDEStructureParameter ideStructureParameter = null;
+
     /** the image encoding */
     private byte encoding = (byte)0x03;
 
-    /** the image ide size */
-    private byte size = 1;
+    /** the image IDE (Image Data Element, Sample) size */
+    private byte ideSize = 1;
 
     /** the image compression */
     private byte compression = (byte)0xC0;
-
-    /** the image color model */
-    private byte colorModel = (byte)0x01;
-
-    /** additive/subtractive setting for ASFLAG */
-    private boolean subtractive = false;
 
     /** the image data */
     private byte[] data;
@@ -87,6 +84,34 @@ public class ImageContent extends AbstractStructuredObject {
      */
     public void setImageSizeParameter(ImageSizeParameter imageSizeParameter) {
         this.imageSizeParameter = imageSizeParameter;
+    }
+
+    /**
+     * Sets the IDE Structure parameter.
+     * @param parameter the IDE Structure parameter
+     */
+    public void setIDEStructureParameter(IDEStructureParameter parameter) {
+        this.ideStructureParameter = parameter;
+    }
+
+    /**
+     * Returns the (optional) IDE Structure parameter
+     * @return the IDE Structure parameter or null if none is set
+     */
+    public IDEStructureParameter getIDEStructureParameter() {
+        return this.ideStructureParameter;
+    }
+
+    /**
+     * Returns the (optional) IDE Structure parameter. If none is set an instance is prepared
+     * with defaults for a bi-level image.
+     * @return the IDE Structure parameter
+     */
+    public IDEStructureParameter needIDEStructureParameter() {
+        if (this.ideStructureParameter == null) {
+            setIDEStructureParameter(new IDEStructureParameter());
+        }
+        return getIDEStructureParameter();
     }
 
     /**
@@ -113,24 +138,26 @@ public class ImageContent extends AbstractStructuredObject {
      * @param s The IDE size.
      */
     public void setImageIDESize(byte s) {
-        this.size = s;
+        this.ideSize = s;
     }
 
     /**
      * Sets the image IDE color model.
      *
      * @param color    the IDE color model.
+     * @deprecated use {@link #setIDEStructureParameter(IDEStructureParameter)} instead
      */
     public void setImageIDEColorModel(byte color) {
-        this.colorModel = color;
+        needIDEStructureParameter().setColorModel(color);
     }
 
     /**
      * Set either additive or subtractive mode (used for ASFLAG).
      * @param subtractive true for subtractive mode, false for additive mode
+     * @deprecated use {@link #setIDEStructureParameter(IDEStructureParameter)} instead
      */
     public void setSubtractive(boolean subtractive) {
-        this.subtractive = subtractive;
+        needIDEStructureParameter().setSubtractive(subtractive);
     }
 
     /**
@@ -155,10 +182,12 @@ public class ImageContent extends AbstractStructuredObject {
 
         os.write(getImageIDESizeParameter());
 
-        boolean useFS10 = (this.size == 1);
-        if (!useFS10) {
-            os.write(getIDEStructureParameter());
+        if (getIDEStructureParameter() != null) {
+            getIDEStructureParameter().writeToStream(os);
+        }
 
+        boolean useFS10 = (this.ideSize == 1);
+        if (!useFS10) {
             os.write(getExternalAlgorithmParameter());
         }
 
@@ -243,58 +272,15 @@ public class ImageContent extends AbstractStructuredObject {
      * @return byte[] The data stream.
      */
     private byte[] getImageIDESizeParameter() {
-        if (size != 1) {
+        if (ideSize != 1) {
             final byte[] ideSizeData = new byte[] {
                     (byte)0x96, // ID
                     0x01, // Length
-                    size};
+                    ideSize};
             return ideSizeData;
         } else {
             return new byte[0];
         }
-    }
-
-    /**
-     * Helper method to return the external algorithm parameter.
-     *
-     * @return byte[] The data stream.
-     */
-    private byte[] getIDEStructureParameter() {
-        byte flags = 0x00;
-        if (subtractive) {
-            flags |= 1 << 7;
-        }
-        if (colorModel != 0 && size == 24) {
-            final byte bits = (byte)(size / 3);
-            final byte[] ideStructData = new byte[] {
-                (byte)0x9B, // ID
-                0x00, // Length
-                flags, // FLAGS
-                colorModel, // COLOR MODEL
-                0x00, // Reserved
-                0x00, // Reserved
-                0x00, // Reserved
-                bits,
-                bits,
-                bits,
-            };
-            ideStructData[1] = (byte)(ideStructData.length - 2);
-            return ideStructData;
-        } else if (size == 1) {
-            final byte[] ideStructData = new byte[] {
-                    (byte)0x9B, // ID
-                    0x00, // Length
-                    flags, // FLAGS
-                    colorModel, // COLOR MODEL
-                    0x00, // Reserved
-                    0x00, // Reserved
-                    0x00, // Reserved
-                    0x01
-                };
-                ideStructData[1] = (byte)(ideStructData.length - 2);
-                return ideStructData;
-        }
-        return new byte[0];
     }
 
 }
