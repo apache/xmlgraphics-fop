@@ -357,6 +357,11 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     }
 
     /** {@inheritDoc} */
+    public void setCMYKImagesSupported(boolean value) {
+        paintingState.setCMYKImagesSupported(value);
+    }
+
+    /** {@inheritDoc} */
     public void setShadingMode(AFPShadingMode shadingMode) {
         this.shadingMode = shadingMode;
     }

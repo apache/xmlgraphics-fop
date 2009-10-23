@@ -58,6 +58,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Code" dev="JM" type="add">
+        Added support for encoding CMYK bitmap images (IOCA FS45) and TIFF images as embedded objects.
+      </action>
       <action context="Code" dev="AC" type="add">
         Added support for xmlfile and xsltfile parameters in FOP's Ant Task.
       </action>

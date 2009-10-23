@@ -79,6 +79,8 @@ public class ContainerDataDescriptor extends AbstractDescriptor {
         data[18] = ysize[0];
         data[19] = ysize[1];
         data[20] = ysize[2];
+
+        os.write(data);
     }
 
 }

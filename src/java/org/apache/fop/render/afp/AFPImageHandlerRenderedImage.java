@@ -89,7 +89,11 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler implements Ima
         int resolution = paintingState.getResolution();
         int maxPixelSize = paintingState.getBitsPerPixel();
         if (paintingState.isColorImages()) {
-            maxPixelSize *= 3; //RGB only at the moment
+            if (paintingState.isCMYKImagesSupported()) {
+                maxPixelSize *= 4; //CMYK is maximum
+            } else {
+                maxPixelSize *= 3; //RGB is maximum
+            }
         }
         RenderedImage renderedImage = imageRendered.getRenderedImage();
 
@@ -97,6 +101,7 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler implements Ima
         ImageSize intrinsicSize = imageInfo.getSize();
 
         boolean useFS10 = (maxPixelSize == 1) || BitmapImageUtil.isMonochromeImage(renderedImage);
+        int functionSet = useFS10 ? 10 : 11;
         boolean usePageSegments = useFS10
                     && !imageObjectInfo.getResourceInfo().getLevel().isInline();
 
@@ -123,11 +128,6 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler implements Ima
                 effIntrinsicSize = new ImageSize(
                         resampledDim.width, resampledDim.height, resolution);
             }
-        }
-        if (useFS10) {
-            imageObjectInfo.setMimeType(MimeConstants.MIME_AFP_IOCA_FS10);
-        } else {
-            imageObjectInfo.setMimeType(MimeConstants.MIME_AFP_IOCA_FS11);
         }
 
         imageObjectInfo.setDataHeightRes((int)Math.round(
@@ -156,9 +156,9 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler implements Ima
         byte[] imageData = null;
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         boolean allowDirectEncoding = true;
-        if (allowDirectEncoding && pixelSize <= maxPixelSize) {
+        if (allowDirectEncoding && (pixelSize <= maxPixelSize)) {
             //Attempt to encode without resampling the image
-            ImageEncodingHelper helper = new ImageEncodingHelper(renderedImage);
+            ImageEncodingHelper helper = new ImageEncodingHelper(renderedImage, pixelSize == 32);
             ColorModel encodedColorModel = helper.getEncodedColorModel();
             boolean directEncode = true;
             if (helper.getEncodedColorModel().getPixelSize() > maxPixelSize) {
@@ -180,6 +180,9 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler implements Ima
                     log.trace("set subtractive mode");
                     imageObjectInfo.setSubtractive(true);
                 }
+                if (pixelSize == 32) {
+                    functionSet = 45; //IOCA FS45 required for CMYK
+                }
 
                 helper.encode(baos);
                 imageData = baos.toByteArray();
@@ -191,6 +194,7 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler implements Ima
             //Convert image to 24bit RGB
             ImageEncodingHelper.encodeRenderedImageAsRGB(renderedImage, baos);
             imageData = baos.toByteArray();
+            imageObjectInfo.setBitsPerPixel(24);
 
             boolean colorImages = paintingState.isColorImages();
             imageObjectInfo.setColor(colorImages);
@@ -210,6 +214,20 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler implements Ima
                     imageObjectInfo.setSubtractive(true);
                 }
             }
+        }
+
+        switch (functionSet) {
+        case 10:
+            imageObjectInfo.setMimeType(MimeConstants.MIME_AFP_IOCA_FS10);
+            break;
+        case 11:
+            imageObjectInfo.setMimeType(MimeConstants.MIME_AFP_IOCA_FS11);
+            break;
+        case 45:
+            imageObjectInfo.setMimeType(MimeConstants.MIME_AFP_IOCA_FS45);
+            break;
+        default:
+            throw new IllegalStateException("Invalid IOCA function set: " + functionSet);
         }
 
         imageObjectInfo.setData(imageData);

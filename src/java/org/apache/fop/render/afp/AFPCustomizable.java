@@ -51,6 +51,14 @@ public interface AFPCustomizable {
     void setNativeImagesSupported(boolean nativeImages);
 
     /**
+     * Controls whether CMYK images (IOCA FS45) are enabled. By default, support is disabled
+     * for wider compatibility. When disabled, any CMYK image is converted to the selected
+     * color format.
+     * @param value true to enabled CMYK images
+     */
+    void setCMYKImagesSupported(boolean value);
+
+    /**
      * Sets the shading mode for painting filled rectangles.
      * @param shadingMode the shading mode
      */

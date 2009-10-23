@@ -318,6 +318,9 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
         String imagesMode = imagesCfg.getAttribute("mode", IMAGES_MODE_GRAYSCALE);
         if (IMAGES_MODE_COLOR.equals(imagesMode)) {
             customizable.setColorImages(true);
+
+            boolean cmyk = imagesCfg.getAttributeAsBoolean("cmyk", false);
+            customizable.setCMYKImagesSupported(cmyk);
         } else {
             customizable.setColorImages(false);
             // default to 8 bits per pixel
