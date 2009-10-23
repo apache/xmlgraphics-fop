@@ -24,6 +24,7 @@ import java.awt.geom.Rectangle2D;
 import org.apache.xmlgraphics.image.codec.tiff.TIFFImage;
 import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
 
+import org.apache.fop.afp.ioca.IDEStructureParameter;
 import org.apache.fop.afp.ioca.ImageContent;
 import org.apache.fop.afp.modca.AbstractDataObject;
 import org.apache.fop.afp.modca.AbstractNamedAFPObject;
@@ -113,12 +114,35 @@ public class AFPDataObjectFactory {
             }
         }
 
-        if (imageObjectInfo.isColor()) {
-            imageObj.setIDESize((byte) 24);
-        } else {
-            imageObj.setIDESize((byte) imageObjectInfo.getBitsPerPixel());
+        ImageContent content = imageObj.getImageSegment().getImageContent();
+        int bitsPerPixel = imageObjectInfo.getBitsPerPixel();
+        imageObj.setIDESize((byte) bitsPerPixel);
+        IDEStructureParameter ideStruct;
+        switch (bitsPerPixel) {
+        case 1:
+            //Skip IDE Structure Parameter
+            break;
+        case 4:
+        case 8:
+            ideStruct = content.needIDEStructureParameter();
+            ideStruct.setBitsPerComponent(new int[] {bitsPerPixel});
+            break;
+        case 24:
+            ideStruct = content.needIDEStructureParameter();
+            ideStruct.setDefaultRGBColorModel();
+            break;
+        case 32:
+            ideStruct = content.needIDEStructureParameter();
+            ideStruct.setDefaultCMYKColorModel();
+            break;
+        default:
+            throw new IllegalArgumentException("Unsupported number of bits per pixel: "
+                    + bitsPerPixel);
         }
-        imageObj.setSubtractive(imageObjectInfo.isSubtractive());
+        if (imageObjectInfo.isSubtractive()) {
+            ideStruct = content.needIDEStructureParameter();
+            ideStruct.setSubtractive(imageObjectInfo.isSubtractive());
+        }
 
         imageObj.setData(imageObjectInfo.getData());
 

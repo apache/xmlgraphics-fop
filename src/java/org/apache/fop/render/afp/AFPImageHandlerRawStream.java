@@ -24,6 +24,7 @@ import org.apache.xmlgraphics.image.loader.ImageFlavor;
 import org.apache.xmlgraphics.image.loader.impl.ImageRawEPS;
 import org.apache.xmlgraphics.image.loader.impl.ImageRawJPEG;
 import org.apache.xmlgraphics.image.loader.impl.ImageRawStream;
+import org.apache.xmlgraphics.util.MimeConstants;
 
 import org.apache.fop.afp.AFPDataObjectInfo;
 import org.apache.fop.render.RenderingContext;
@@ -35,6 +36,7 @@ public class AFPImageHandlerRawStream extends AbstractAFPImageHandlerRawStream {
 
     private static final ImageFlavor[] FLAVORS = new ImageFlavor[] {
         ImageFlavor.RAW_JPEG,
+        ImageFlavor.RAW_TIFF,
         ImageFlavor.RAW_EPS,
     };
 
@@ -63,7 +65,12 @@ public class AFPImageHandlerRawStream extends AbstractAFPImageHandlerRawStream {
         if (targetContext instanceof AFPRenderingContext) {
             AFPRenderingContext afpContext = (AFPRenderingContext)targetContext;
             return (afpContext.getPaintingState().isNativeImagesSupported())
-                && (image == null || image instanceof ImageRawJPEG || image instanceof ImageRawEPS);
+                && (image == null
+                        || image instanceof ImageRawJPEG
+                        || image instanceof ImageRawEPS
+                        || ((image instanceof ImageRawStream)
+                                && (MimeConstants.MIME_TIFF.equals(
+                                        ((ImageRawStream)image).getMimeType()))));
         }
         return false;
     }

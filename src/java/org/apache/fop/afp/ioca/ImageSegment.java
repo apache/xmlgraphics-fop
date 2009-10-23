@@ -56,7 +56,11 @@ public class ImageSegment extends AbstractNamedAFPObject {
         this.factory = factory;
     }
 
-    private ImageContent getImageContent() {
+    /**
+     * Returns the image content object associated with this image segment.
+     * @return the image content
+     */
+    public ImageContent getImageContent() {
         if (imageContent == null) {
             this.imageContent = factory.createImageContent();
         }
@@ -108,6 +112,7 @@ public class ImageSegment extends AbstractNamedAFPObject {
      * Sets the image IDE color model.
      *
      * @param colorModel the IDE color model.
+     * @deprecated Use {@link IDEStructureParameter#setColorModel(byte)} instead.
      */
     public void setIDEColorModel(byte colorModel) {
         getImageContent().setImageIDEColorModel(colorModel);
@@ -116,6 +121,7 @@ public class ImageSegment extends AbstractNamedAFPObject {
     /**
      * Set either additive or subtractive mode (used for ASFLAG).
      * @param subtractive true for subtractive mode, false for additive mode
+     * @deprecated Use {@link IDEStructureParameter#setSubtractive(boolean)} instead.
      */
     public void setSubtractive(boolean subtractive) {
         getImageContent().setSubtractive(subtractive);
@@ -124,7 +130,7 @@ public class ImageSegment extends AbstractNamedAFPObject {
     /**
      * Set the data image data.
      *
-     * @param data the image data
+     * @param imageData the image data
      */
     public void setData(byte[] imageData) {
         getImageContent().setImageData(imageData);
