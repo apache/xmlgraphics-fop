@@ -79,6 +79,8 @@ Any reference to it will be considered a reference to the first occurrence in th
   <message key="org.apache.fop.events.ResourceEventProducer.foreignXMLNoHandler">Some XML content will be ignored. No handler defined for XML with namespace "{namespaceURI}".</message>
   <message key="org.apache.fop.events.ResourceEventProducer.imageWritingError">Error while writing an image to the target file.[ Reason: {e}]</message>
   <message key="org.apache.fop.events.ResourceEventProducer.cannotDeleteTempFile">Temporary file could not be deleted: {tempFile}</message>
+  <message key="org.apache.fop.events.ResourceEventProducer.catalogResolverNotFound">Catalog resolver not found along the classpath</message>
+  <message key="org.apache.fop.events.ResourceEventProducer.catalogResolverNotCreated">Error creating the catalog resolver: {message}</message>
   <message key="org.apache.fop.layoutmgr.inline.InlineLevelEventProducer.leaderWithoutContent">fo:leader is set to "use-content" but has no content.{{locator}}</message>
   <message key="org.apache.fop.layoutmgr.inline.InlineLevelEventProducer.lineOverflows">Line {line} of a paragraph overflows the available area by {overflowLength,choice,50000#{overflowLength} millipoints|50000&lt;more than 50 points}.{{locator}}</message>
   <message key="org.apache.fop.layoutmgr.BlockLevelEventProducer.rowTooTall">The contents of table-row {row} are taller than they should be (there is a block-progression-dimension or height constraint on the indicated row). Due to its contents the row grows to {effCellBPD} millipoints, but the row shouldn't get any taller than {maxCellBPD} millipoints.{{locator}}</message>
