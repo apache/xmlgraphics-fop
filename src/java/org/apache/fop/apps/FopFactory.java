@@ -100,6 +100,11 @@ public class FopFactory implements ImageContext {
      */
     private String base = null;
 
+    /**
+     *  Controls if accessibility is turned on or off
+     */
+    private boolean accessibility = false;
+
     /** The base URL for all hyphen URL resolutions. */
     private String hyphenBase = null;
 
@@ -182,6 +187,19 @@ public class FopFactory implements ImageContext {
     public FOUserAgent newFOUserAgent() {
         FOUserAgent userAgent = new FOUserAgent(this);
         return userAgent;
+    }
+
+    /**
+     * Sets accessibility support.
+     *
+     * @param value <code>true</code> to enable accessibility, <code>false</code> otherwise
+     */
+    void setAccessibility(boolean value) {
+        this.accessibility = value;
+    }
+
+    boolean isAccessibilityEnabled() {
+        return accessibility;
     }
 
     /**

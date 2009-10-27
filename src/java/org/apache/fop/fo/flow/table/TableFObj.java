@@ -19,6 +19,9 @@
 
 package org.apache.fop.fo.flow.table;
 
+import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.datatypes.ValidationPercentBaseContext;
@@ -33,19 +36,19 @@ import org.apache.fop.fo.properties.EnumProperty;
 import org.apache.fop.fo.properties.NumberProperty;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.PropertyMaker;
+import org.apache.fop.fo.properties.StructurePointerPropertySet;
 import org.apache.fop.layoutmgr.table.CollapsingBorderModel;
-import org.xml.sax.Locator;
-import org.xml.sax.Attributes;
 
 /**
  * Common base class for table-related FOs
  */
-public abstract class TableFObj extends FObj {
+public abstract class TableFObj extends FObj implements StructurePointerPropertySet {
 
     private Numeric borderAfterPrecedence;
     private Numeric borderBeforePrecedence;
     private Numeric borderEndPrecedence;
     private Numeric borderStartPrecedence;
+    private String ptr;
 
     ConditionalBorder borderBefore;
     ConditionalBorder borderAfter;
@@ -71,6 +74,7 @@ public abstract class TableFObj extends FObj {
         borderBeforePrecedence = pList.get(PR_BORDER_BEFORE_PRECEDENCE).getNumeric();
         borderEndPrecedence = pList.get(PR_BORDER_END_PRECEDENCE).getNumeric();
         borderStartPrecedence = pList.get(PR_BORDER_START_PRECEDENCE).getNumeric();
+        ptr = pList.get(PR_X_PTR).getString();
         if (getNameId() != FO_TABLE //Separate check for fo:table in Table.java
                 && getNameId() != FO_TABLE_CELL
                 && getCommonBorderPaddingBackground().hasPadding(
@@ -233,6 +237,11 @@ public abstract class TableFObj extends FObj {
                     .getBorderCollapse());
             setCollapsedBorders();
         }
+    }
+
+    /** {@inheritDoc} */
+    public String getPtr() {
+        return ptr;
     }
 
     /**

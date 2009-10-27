@@ -194,9 +194,12 @@ public class Trait implements Serializable {
     public static final Integer OVERLINE_COLOR = new Integer(35);
     /** Trait for color of linethrough decorations when rendering inline parent. */
     public static final Integer LINETHROUGH_COLOR = new Integer(36);
+    
+    /** The ptr trait. Used for accessibility   */
+    public static final Integer PTR = new Integer(37);
 
     /** Maximum value used by trait keys */
-    public static final int MAX_TRAIT_KEY = 36;
+    public static final int MAX_TRAIT_KEY = 37;
 
     private static final TraitInfo[] TRAIT_INFO = new TraitInfo[MAX_TRAIT_KEY + 1];
 
@@ -225,6 +228,7 @@ public class Trait implements Serializable {
     static {
         // Create a hashmap mapping trait code to name for external representation
         //put(ID_LINK, new TraitInfo("id-link", String.class));
+        put(PTR, new TraitInfo("ptr", String.class));
         put(INTERNAL_LINK, new TraitInfo("internal-link", InternalLink.class));
         put(EXTERNAL_LINK, new TraitInfo("external-link", ExternalLink.class));
         put(FONT,         new TraitInfo("font", FontTriplet.class));

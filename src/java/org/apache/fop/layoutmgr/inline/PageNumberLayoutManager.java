@@ -85,7 +85,7 @@ public class PageNumberLayoutManager extends LeafNodeLayoutManager {
         text.setBaselineOffset(font.getAscender());
         TraitSetter.addFontTraits(text, font);
         text.addTrait(Trait.COLOR, fobj.getColor());
-
+        TraitSetter.addPtr(text, fobj.getPtr()); // used for accessibility
         TraitSetter.addTextDecoration(text, fobj.getTextDecoration());
 
         return text;

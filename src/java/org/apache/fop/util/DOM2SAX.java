@@ -26,7 +26,6 @@ import java.util.Stack;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
-
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.ext.LexicalHandler;
@@ -76,6 +75,15 @@ public class DOM2SAX {
         if (!fragment) {
             contentHandler.endDocument();
         }
+    }
+
+    /**
+     * Writes the given fragment using the given ContentHandler.
+     * @param node DOM node
+     * @throws SAXException In case of a problem while writing XML
+     */
+    public void writeFragment(Node node) throws SAXException {
+        writeNode(node);
     }
 
     /**

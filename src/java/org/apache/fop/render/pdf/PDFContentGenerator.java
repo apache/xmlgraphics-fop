@@ -56,6 +56,8 @@ public class PDFContentGenerator {
     /** Text generation utility holding the current font status */
     protected PDFTextUtil textutil;
 
+    private boolean inMarkedContentSequence;
+    private boolean inArtifactMode;
 
     /**
      * Main constructor. Creates a new PDF stream and additional helper classes for text painting
@@ -153,6 +155,40 @@ public class PDFContentGenerator {
         currentStream.add("q\n");
     }
 
+    /** {@inheritDoc} */
+    protected void saveGraphicsState(String structElemType, int sequenceNum) {
+        endTextObject();
+        currentState.save();
+        beginMarkedContentSequence(structElemType, sequenceNum);
+        currentStream.add("q\n");
+    }
+
+    /**
+     * Begins a new marked content sequence (BDC or BMC). If the parameter structElemType is null,
+     * the sequenceNum is ignored and instead of a BDC with the MCID as parameter, an "Artifact"
+     * and a BMC command is generated.
+     * @param structElemType Structure Element Type
+     * @param mcid    Sequence number
+     */
+    protected void beginMarkedContentSequence(String structElemType, int mcid) {
+        assert !this.inMarkedContentSequence;
+        assert !this.inArtifactMode;
+        if (structElemType != null) {
+            currentStream.add(structElemType + " <</MCID " + String.valueOf(mcid) + ">>\n"
+                    + "BDC\n");
+        } else {
+            currentStream.add("/Artifact\nBMC\n");
+            this.inArtifactMode = true;
+        }
+        this.inMarkedContentSequence = true;
+    }
+
+    void endMarkedContentSequence() {
+        currentStream.add("EMC\n");
+        this.inMarkedContentSequence = false;
+        this.inArtifactMode = false;
+    }
+
     /**
      * Restored the graphics state valid before the previous {@link #saveGraphicsState()}.
      * @param popState true if the state should also be popped, false if only the PDF command
@@ -166,9 +202,40 @@ public class PDFContentGenerator {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Same as {@link #restoreGraphicsState(boolean)}, with <code>true</code> as
+     * a parameter.
+     */
     protected void restoreGraphicsState() {
         restoreGraphicsState(true);
+    }
+
+    /**
+     * Same as {@link #restoreGraphicsState()}, additionally ending the current
+     * marked content sequence if any.
+     */
+    protected void restoreGraphicsStateAccess() {
+        endTextObject();
+        currentStream.add("Q\n");
+        if (this.inMarkedContentSequence) {
+            endMarkedContentSequence();
+        }
+        currentState.restore();
+    }
+
+    /**
+     * Separates 2 text elements, ending the current marked content sequence and
+     * starting a new one.
+     *
+     * @param structElemType structure element type
+     * @param mcid sequence number
+     * @see #beginMarkedContentSequence(String, int)
+     */
+    protected void separateTextElements(String structElemType, int mcid) {
+        textutil.endTextObject();
+        endMarkedContentSequence();
+        beginMarkedContentSequence(structElemType, mcid);
+        textutil.beginTextObject();
     }
 
     /** Indicates the beginning of a text object. */
@@ -178,9 +245,27 @@ public class PDFContentGenerator {
         }
     }
 
+    /**
+     * Indicates the beginning of a marked-content text object.
+     *
+     * @param structElemType structure element type
+     * @param mcid sequence number
+     * @see #beginTextObject()
+     * @see #beginMarkedContentSequence(String, int)
+     */
+    protected void beginTextObject(String structElemType, int mcid) {
+        if (!textutil.isInTextObject()) {
+            beginMarkedContentSequence(structElemType, mcid);
+            textutil.beginTextObject();
+        }
+    }
+
     /** Indicates the end of a text object. */
     protected void endTextObject() {
         if (textutil.isInTextObject()) {
+            if (this.inMarkedContentSequence) {
+                endMarkedContentSequence();
+            }
             textutil.endTextObject();
         }
     }
@@ -326,5 +411,28 @@ public class PDFContentGenerator {
         restoreGraphicsState();
     }
 
+    /**
+     * Places a previously registered image at a certain place on the page,
+     * bracketing it as a marked-content sequence.
+     *
+     * @param x X coordinate
+     * @param y Y coordinate
+     * @param w width for image
+     * @param h height for image
+     * @param xobj the image XObject
+     * @param structElemType structure element type
+     * @param mcid sequence number
+     * @see #beginMarkedContentSequence(String, int)
+     */
+    public void placeImage(float x, float y, float w, float h, PDFXObject xobj,
+            String structElemType, int mcid) {
+        saveGraphicsState(structElemType, mcid);
+        add(format(w) + " 0 0 "
+                          + format(-h) + " "
+                          + format(x) + " "
+                          + format(y + h)
+                          + " cm\n" + xobj.getName() + " Do\n");
+        restoreGraphicsStateAccess();
+    }
 
 }

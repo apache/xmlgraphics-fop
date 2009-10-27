@@ -20,6 +20,7 @@
 package org.apache.fop.render;
 
 import org.apache.avalon.framework.configuration.Configuration;
+
 import org.apache.fop.apps.FOUserAgent;
 
 /**
@@ -29,7 +30,7 @@ import org.apache.fop.apps.FOUserAgent;
 public abstract class AbstractRendererConfigurator extends AbstractConfigurator {
 
     private static final String TYPE = "renderer";
-    
+
     /**
      * Default constructor
      * @param userAgent user agent
@@ -55,7 +56,7 @@ public abstract class AbstractRendererConfigurator extends AbstractConfigurator 
     protected Configuration getRendererConfig(String mimeType) {
         return super.getConfig(mimeType);
     }
-    
+
     /**
      * {@inheritDoc}
      */

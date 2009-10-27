@@ -107,4 +107,5 @@ Any reference to it will be considered a reference to the first occurrence in th
   <message key="org.apache.fop.fonts.FontEventAdapter.fontSubstituted">Font "{requested}" not found. Substituting with "{effective}".</message>
   <message key="org.apache.fop.fonts.FontEventAdapter.fontLoadingErrorAtAutoDetection">Unable to load font file: {fontURL}.[ Reason: {e}]</message>
   <message key="org.apache.fop.fonts.FontEventAdapter.glyphNotAvailable">Glyph "{ch}" (0x{ch,hex}[, {ch,glyph-name}]) not available in font "{fontName}".</message>
+  <message key="org.apache.fop.fo.FOValidationEventProducer.altTextMissing">Alternate text is missing on {foElement}.{{locator}}</message>
 </catalogue>

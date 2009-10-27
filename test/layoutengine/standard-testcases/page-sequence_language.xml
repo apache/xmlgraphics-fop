@@ -65,4 +65,10 @@
     <eval expected="de" xpath="/areaTree/pageSequence[4]/@language"/>
     <true xpath="not(boolean(/areaTree/pageSequence[4]/@country))"/>
   </checks>
+  <if-checks xmlns:if="http://xmlgraphics.apache.org/fop/intermediate">
+    <eval expected="en" xpath="//if:page-sequence[1]/@xml:lang"/>
+    <eval expected="en-US" xpath="//if:page-sequence[2]/@xml:lang"/>
+    <eval expected="de-CH" xpath="//if:page-sequence[3]/@xml:lang"/>
+    <eval expected="de" xpath="//if:page-sequence[4]/@xml:lang"/>
+  </if-checks>
 </testcase>

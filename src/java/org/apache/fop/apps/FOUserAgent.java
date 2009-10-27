@@ -37,6 +37,8 @@ import org.apache.xmlgraphics.image.loader.ImageSessionContext;
 import org.apache.xmlgraphics.image.loader.impl.AbstractImageSessionContext;
 
 import org.apache.fop.Version;
+import org.apache.fop.accessibility.Accessibility;
+import org.apache.fop.accessibility.StructureTree;
 import org.apache.fop.events.DefaultEventBroadcaster;
 import org.apache.fop.events.Event;
 import org.apache.fop.events.EventBroadcaster;
@@ -99,6 +101,8 @@ public class FOUserAgent {
     private boolean conserveMemoryPolicy = false;
     private EventBroadcaster eventBroadcaster = new FOPEventBroadcaster();
 
+    private StructureTree structureTree;
+
     /** Producer:  Metadata element for the system/software that produces
      * the document. (Some renderers can store this in the document.)
      */
@@ -152,6 +156,7 @@ public class FOUserAgent {
         this.factory = factory;
         setBaseURL(factory.getBaseURL());
         setTargetResolution(factory.getTargetResolution());
+        setAccessibility(factory.isAccessibilityEnabled());
     }
 
     /** @return the associated FopFactory instance */
@@ -195,6 +200,7 @@ public class FOUserAgent {
     public Renderer getRendererOverride() {
         return rendererOverride;
     }
+
 
     /**
      * Sets an explicit FOEventHandler instance which overrides the one
@@ -642,5 +648,49 @@ public class FOUserAgent {
         this.conserveMemoryPolicy = conserveMemoryPolicy;
     }
 
+    /**
+     * Activates accessibility (for output formats that support it).
+     *
+     * @param accessibility <code>true</code> to enable accessibility support
+     */
+    public void setAccessibility(boolean accessibility) {
+        if (accessibility) {
+            getRendererOptions().put(Accessibility.ACCESSIBILITY, Boolean.TRUE);
+        }
+    }
+
+    /**
+     * Check if accessibility is enabled.
+     * @return true if accessibility is enabled
+     */
+    public boolean isAccessibilityEnabled() {
+        Boolean enabled = (Boolean)this.getRendererOptions().get(Accessibility.ACCESSIBILITY);
+        if (enabled != null) {
+            return enabled.booleanValue();
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Sets the document's structure tree, for use by accessible output formats.
+     *
+     * @param structureTree a simplified version of the FO tree, retaining only
+     * its logical structure
+     */
+    public void setStructureTree(StructureTree structureTree) {
+        this.structureTree = structureTree;
+    }
+
+    /**
+     * Returns the document's structure tree, for use by accessible output
+     * formats.
+     *
+     * @return a simplified version of the FO tree, retaining only its logical
+     * structure
+     */
+    public StructureTree getStructureTree() {
+        return this.structureTree;
+    }
 }
 
