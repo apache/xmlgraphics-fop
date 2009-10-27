@@ -443,10 +443,6 @@ the location of this file.
     </renderer>
     -->
 
-    <renderer mime="text/plain">
-      <pageSize columns="80"/>
-    </renderer>
-
   </renderers>
 
 </fop>

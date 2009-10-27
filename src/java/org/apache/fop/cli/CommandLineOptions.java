@@ -1028,7 +1028,11 @@ public class CommandLineOptions {
             case IF_INPUT:
                 return new IFInputHandler(iffile);
             case XSLT_INPUT:
-                return new InputHandler(xmlfile, xsltfile, xsltParams, useCatalogResolver);
+                InputHandler handler = new InputHandler(xmlfile, xsltfile, xsltParams);
+                if (useCatalogResolver) {
+                    handler.createCatalogResolver(foUserAgent);
+                }
+                return handler;
             case IMAGE_INPUT:
                 return new ImageInputHandler(imagefile, xsltfile, xsltParams);
             default:

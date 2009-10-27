@@ -704,8 +704,15 @@ out = proc.getOutputStream();]]></source>
 ]]></source>
       <p>When the native attribute is specified and set to "true", all image resources will be natively injected
       into the datastream using an object container rather than being converted into an IOCA FS45 image.
-      Support for native image formats (e.g. JPEG, GIF) is not always available on printer implementations
+      Support for native image formats (e.g. JPEG, TIFF, GIF) is not always available on printer implementations
       so by default this configuration option is set to "false".</p>
+      <p>
+        Setting <code>cmyk="true"</code> on the <code>images</code> element will enable CMYK
+        colors. This will only have an effect if the color mode is set to "color". Example:
+      </p>
+      <source><![CDATA[
+      <images mode="color" cmyk="true"/>
+]]></source>
       </section>
       <section id="afp-shading-config">
         <title>Shading</title>

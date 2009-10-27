@@ -51,6 +51,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
+import org.apache.fop.events.ResourceEventProducer;
 import org.apache.fop.render.awt.viewer.Renderable;
 
 /**
@@ -64,8 +65,8 @@ public class InputHandler implements ErrorListener, Renderable {
     protected File sourcefile;
     private File stylesheet;  // for XML/XSLT usage
     private Vector xsltParams; // for XML/XSLT usage
-    private EntityResolver entityResolver;
-    private URIResolver uriResolver;
+    private EntityResolver entityResolver = null;
+    private URIResolver uriResolver = null;
 
     /** the logger */
     protected Log log = LogFactory.getLog(InputHandler.class);
@@ -82,23 +83,6 @@ public class InputHandler implements ErrorListener, Renderable {
         sourcefile  = xmlfile;
         stylesheet = xsltfile;
         xsltParams = params;
-    }
-
-    /**
-     * Constructor for XML->XSLT->FO input
-     *
-     * @param xmlfile XML file
-     * @param xsltfile XSLT file
-     * @param params Vector of command-line parameters (name, value,
-     *      name, value, ...) for XSL stylesheet, null if none
-     * @param useCatalogResolver if true, use a catalog resolver
-     *      for XML parsing and XSLT URI resolution
-     */
-    public InputHandler(File xmlfile, File xsltfile, Vector params, boolean useCatalogResolver) {
-        this(xmlfile, xsltfile, params);
-        if (useCatalogResolver) {
-            createCatalogResolver();
-        }
     }
 
     /**
@@ -213,10 +197,12 @@ public class InputHandler implements ErrorListener, Renderable {
      * Tries the Apache Commons Resolver, and if unsuccessful,
      * tries the same built into Java 6.
      */
-    private void createCatalogResolver() {
+    public void createCatalogResolver(FOUserAgent userAgent) {
         String[] classNames = new String[] {
                 "org.apache.xml.resolver.tools.CatalogResolver",
                 "com.sun.org.apache.xml.internal.resolver.tools.CatalogResolver"};
+        ResourceEventProducer eventProducer =
+            ResourceEventProducer.Provider.get(userAgent.getEventBroadcaster());
         Class resolverClass = null;
         for (int i = 0; i < classNames.length && resolverClass == null; ++i) {
             try {
@@ -226,7 +212,7 @@ public class InputHandler implements ErrorListener, Renderable {
             }
         }
         if (resolverClass == null) {
-            log.error("Could not find catalog resolver in class path");
+            eventProducer.catalogResolverNotFound(this);
             return;
         }
         try {
@@ -234,8 +220,10 @@ public class InputHandler implements ErrorListener, Renderable {
             uriResolver = (URIResolver) resolverClass.newInstance();
         } catch (InstantiationException e) {
             log.error("Error creating the catalog resolver: " + e.getMessage());
+            eventProducer.catalogResolverNotCreated(this, e.getMessage());
         } catch (IllegalAccessException e) {
             log.error("Error creating the catalog resolver: " + e.getMessage());
+            eventProducer.catalogResolverNotCreated(this, e.getMessage());
         }
     }
 

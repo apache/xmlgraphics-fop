@@ -133,4 +133,18 @@ public interface ResourceEventProducer extends EventProducer {
      */
     void cannotDeleteTempFile(Object source, File tempFile);
 
+    /**
+     * Catalog Resolver not found along the class path
+     * @param source the event source
+     * @event.severity ERROR
+     */
+    void catalogResolverNotFound(Object source);
+
+    /**
+     * Catalog Resolver not created, due to InstantiationException or IllegalAccessException
+     * @param source the event source
+     * @param message the exception message
+     * @event.severity ERROR
+     */
+    void catalogResolverNotCreated(Object source, String message);
 }

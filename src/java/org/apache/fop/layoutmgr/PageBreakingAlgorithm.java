@@ -117,10 +117,6 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         this.layoutListener = layoutListener;
         best = new BestPageRecords();
         this.footnoteSeparatorLength = (MinOptMax) footnoteSeparatorLength.clone();
-        // add some stretch, to avoid a restart for every page containing footnotes
-        if (footnoteSeparatorLength.min == footnoteSeparatorLength.max) {
-            footnoteSeparatorLength.max += 10000;
-        }
         this.autoHeight = autoHeight;
         this.favorSinglePart = favorSinglePart;
     }
