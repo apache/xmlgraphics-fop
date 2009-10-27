@@ -19,13 +19,14 @@
 
 package org.apache.fop.layoutmgr.inline;
 
-import org.apache.fop.datatypes.URISpecification;
-import org.apache.fop.fo.flow.BasicLink;
-import org.apache.fop.fo.Constants;
-import org.apache.fop.layoutmgr.PageSequenceLayoutManager;
-import org.apache.fop.area.inline.InlineArea;
-import org.apache.fop.area.Trait;
 import org.apache.fop.area.LinkResolver;
+import org.apache.fop.area.Trait;
+import org.apache.fop.area.inline.InlineArea;
+import org.apache.fop.datatypes.URISpecification;
+import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.flow.BasicLink;
+import org.apache.fop.layoutmgr.PageSequenceLayoutManager;
+import org.apache.fop.layoutmgr.TraitSetter;
 
 /**
  * LayoutManager for the fo:basic-link formatting object
@@ -56,6 +57,7 @@ public class BasicLinkLayoutManager extends InlineLayoutManager {
     private void setupBasicLinkArea(InlineArea area) {
         BasicLink fobj = (BasicLink) this.fobj;
         // internal destinations take precedence:
+        TraitSetter.addPtr(area, fobj.getPtr()); // used for accessibility
         if (fobj.hasInternalDestination()) {
             String idref = fobj.getInternalDestination();
             PageSequenceLayoutManager pslm = getPSLM();

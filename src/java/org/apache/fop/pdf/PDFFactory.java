@@ -185,6 +185,10 @@ public class PDFFactory {
     public PDFPage makePage(PDFResources resources, int pageIndex,
                             Rectangle2D mediaBox, Rectangle2D cropBox,
                             Rectangle2D bleedBox, Rectangle2D trimBox) {
+        /*
+         * create a PDFPage with the next object number, the given
+         * resources, contents and dimensions
+         */
         PDFPage page = new PDFPage(resources, pageIndex, mediaBox, cropBox, bleedBox, trimBox);
 
         getDocument().assignObjectNumber(page);
@@ -880,6 +884,35 @@ public class PDFFactory {
         getDocument().assignObjectNumber(pageLabels);
         getDocument().addTrailerObject(pageLabels);
         return pageLabels;
+    }
+
+    /**
+     * Creates and returns a StructTreeRoot object. Used for accessibility.
+     * @param parentTree the value of the ParenTree entry
+     * @return structure Tree Root element
+     */
+    public PDFStructTreeRoot makeStructTreeRoot(PDFParentTree parentTree) {
+        PDFStructTreeRoot structTreeRoot = new PDFStructTreeRoot(parentTree);
+        getDocument().assignObjectNumber(structTreeRoot);
+        getDocument().addTrailerObject(structTreeRoot);
+        getDocument().getRoot().setStructTreeRoot(structTreeRoot);
+        return structTreeRoot;
+    }
+
+    /**
+     * Creates and returns a StructElem object.
+     *
+     * @param structureType the structure type of the new element (value for the
+     * S entry)
+     * @param parent the parent of the new structure element in the structure
+     * hierarchy
+     * @return the newly created element
+     */
+    public PDFStructElem makeStructureElement(PDFName structureType, PDFObject parent) {
+        PDFStructElem structElem = new PDFStructElem(parent, structureType);
+        getDocument().assignObjectNumber(structElem);
+        getDocument().addTrailerObject(structElem);
+        return structElem;
     }
 
     /**

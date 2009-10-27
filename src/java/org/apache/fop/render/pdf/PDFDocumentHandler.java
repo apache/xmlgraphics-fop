@@ -28,6 +28,8 @@ import java.awt.geom.Rectangle2D.Double;
 import java.io.IOException;
 import java.util.Map;
 
+import org.w3c.dom.NodeList;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -50,6 +52,7 @@ import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
 import org.apache.fop.render.intermediate.IFDocumentNavigationHandler;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFPainter;
+import org.apache.fop.util.XMLUtil;
 
 /**
  * {@link IFDocumentHandler} implementation that produces PDF.
@@ -58,6 +61,12 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
 
     /** logging instance */
     private static Log log = LogFactory.getLog(PDFDocumentHandler.class);
+
+    private int pageSequenceIndex;
+
+    private boolean accessEnabled;
+
+    private PDFLogicalStructureHandler logicalStructureHandler;
 
     /** the PDF Document being created */
     protected PDFDocument pdfDoc;
@@ -86,7 +95,7 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
     /** Used for bookmarks/outlines. */
     protected Map pageReferences = new java.util.HashMap();
 
-    private PDFDocumentNavigationHandler documentNavigationHandler
+    private final PDFDocumentNavigationHandler documentNavigationHandler
             = new PDFDocumentNavigationHandler(this);
 
     /**
@@ -97,7 +106,7 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
 
     /** {@inheritDoc} */
     public boolean supportsPagesOutOfOrder() {
-        return true;
+        return !accessEnabled;
     }
 
     /** {@inheritDoc} */
@@ -125,11 +134,20 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
         return this.pdfUtil;
     }
 
+    PDFLogicalStructureHandler getLogicalStructureHandler() {
+        return logicalStructureHandler;
+    }
+
     /** {@inheritDoc} */
     public void startDocument() throws IFException {
         super.startDocument();
         try {
             this.pdfDoc = pdfUtil.setupPDFDocument(this.outputStream);
+            this.accessEnabled = getUserAgent().isAccessibilityEnabled();
+            if (accessEnabled) {
+                pdfDoc.getRoot().makeTagged();
+                logicalStructureHandler = new PDFLogicalStructureHandler(pdfDoc);
+            }
         } catch (IOException e) {
             throw new IFException("I/O error in startDocument()", e);
         }
@@ -145,7 +163,6 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
         try {
             pdfDoc.getResources().addFonts(pdfDoc, fontInfo);
             pdfDoc.outputTrailer(this.outputStream);
-
             this.pdfDoc = null;
 
             pdfResources = null;
@@ -160,7 +177,18 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
 
     /** {@inheritDoc} */
     public void startPageSequence(String id) throws IFException {
-        //TODO page sequence title, country and language
+        //TODO page sequence title
+
+        if (this.pdfDoc.getRoot().getLanguage() == null
+                && getContext().getLanguage() != null) {
+            //No document-level language set, so we use the first page-sequence's language
+            this.pdfDoc.getRoot().setLanguage(XMLUtil.toRFC3066(getContext().getLanguage()));
+        }
+
+        if (accessEnabled) {
+            NodeList nodes = getUserAgent().getStructureTree().getPageSequence(pageSequenceIndex++);
+            logicalStructureHandler.processStructureTree(nodes, getContext().getLanguage());
+        }
     }
 
     /** {@inheritDoc} */
@@ -198,13 +226,17 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
                 toPointAndScale(cropBox, scaleX, scaleY),
                 toPointAndScale(bleedBox, scaleX, scaleY),
                 toPointAndScale(trimBox, scaleX, scaleY));
+        if (accessEnabled) {
+            logicalStructureHandler.startPage(currentPage);
+        }
 
         pdfUtil.generatePageLabel(index, name);
 
         currentPageRef = new PageReference(currentPage, size);
         this.pageReferences.put(new Integer(index), currentPageRef);
 
-        this.generator = new PDFContentGenerator(this.pdfDoc, this.outputStream, this.currentPage);
+        this.generator = new PDFContentGenerator(this.pdfDoc, this.outputStream,
+                this.currentPage);
         // Transform the PDF's default coordinate system (0,0 at lower left) to the PDFPainter's
         AffineTransform basicPageTransform = new AffineTransform(1, 0, 0, -1, 0,
                 (scaleY * size.height) / 1000f);
@@ -221,7 +253,7 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
 
     /** {@inheritDoc} */
     public IFPainter startPageContent() throws IFException {
-        return new PDFPainter(this);
+        return new PDFPainter(this, logicalStructureHandler);
     }
 
     /** {@inheritDoc} */
@@ -231,6 +263,9 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
 
     /** {@inheritDoc} */
     public void endPage() throws IFException {
+        if (accessEnabled) {
+            logicalStructureHandler.endPage();
+        }
         try {
             this.documentNavigationHandler.commit();
             this.pdfDoc.registerObject(generator.getStream());
@@ -267,8 +302,8 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
 
     static final class PageReference {
 
-        private PDFReference pageRef;
-        private Dimension pageDimension;
+        private final PDFReference pageRef;
+        private final Dimension pageDimension;
 
         private PageReference(PDFPage page, Dimension dim) {
             this.pageRef = page.makeReference();

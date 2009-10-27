@@ -53,8 +53,9 @@
         lack of a full license to get a detailed error protocol.
       </p>
       <p>
-        <strong>PDF/A-1a</strong> is not implemented, yet. This is mostly because of the requirement
-        for tagged PDF which is not available in FOP, yet.
+        <strong>PDF/A-1a</strong> is based on PDF-A-1b and adds accessibility features
+        (such as Tagged PDF). This format is available within the limitation described on
+        the <a href="accessibility.html">Accessibility page</a>.
       </p>
     </section>
     <section id="command-line">
@@ -63,6 +64,9 @@
         To activate PDF/A-1b from the command-line, specify "-pdfprofile PDF/A-1b" 
         as a parameter. If there is a violation of one of the validation rules for 
         PDF/A, an error message is presented and the processing stops.
+      </p>
+      <p>
+        PDF/A-1a is enabled by specifying "-pdfprofile PDF/A-1a".
       </p>
     </section>
     <section id="embedded">
@@ -79,6 +83,9 @@ Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, userAgent);
       <p>
         If one of the validation rules of PDF/A is violated, an PDFConformanceException
         (descendant of RuntimeException) is thrown.
+      </p>
+      <p>
+        For PDF/A-1a, just use the string "PDF/A-1a" instead of "PDF/A-1b".
       </p>
     </section>
     <section id="rules">
@@ -118,12 +125,17 @@ Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, userAgent);
           embedded in clear text so non-PDF-aware applications can extract the XMP metadata.
         </li>
       </ul>
+      <note>
+        There are additional requirements if you want to enabled PDF/A-1a (Tagged PDF). This is
+        particularly the specification of the natural language and alternative descriptions for
+        images. Please refer to the <a href="accessibility.html">Accessibility page</a> for details.
+      </note> 
     </section>
     <section id="profile-compatibility">
       <title>PDF profile compatibility</title>
       <p>
-        The PDF profiles "PDF/X-3:2003" and "PDF/A-1b" are compatible and can both be 
-        activated at the same time.
+        The PDF profiles "PDF/X-3:2003" and "PDF/A-1b" (or "PDF/A-1a") are compatible and can
+        both be activated at the same time.
       </p>
     </section>
     <section id="interoperability">

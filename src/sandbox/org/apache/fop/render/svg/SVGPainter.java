@@ -324,8 +324,9 @@ public class SVGPainter extends AbstractIFPainter implements SVGConstants {
     }
 
     /** {@inheritDoc} */
-    public void drawText(int x, int y, int letterSpacing, int wordSpacing, int[] dx, String text)
-                throws IFException {
+
+    public void drawText(int x, int y, int letterSpacing, int wordSpacing, int[] dx,
+            String text) throws IFException {
         try {
             establish(MODE_TEXT);
             AttributesImpl atts = new AttributesImpl();

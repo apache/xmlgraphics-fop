@@ -58,6 +58,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="JM,VH" type="add" fixes-bug="46705" due-to="Jost Klopfstein">
+        Added basic accessibility and Tagged PDF support. 
+      </action>
       <action context="Code" dev="JM" type="add">
         Added support for encoding CMYK bitmap images (IOCA FS45) and TIFF images as embedded objects.
       </action>

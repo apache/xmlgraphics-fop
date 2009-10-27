@@ -25,6 +25,7 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.pdf.PDFPage;
 import org.apache.fop.render.AbstractRenderingContext;
+import org.apache.fop.render.pdf.PDFLogicalStructureHandler.MarkedContentInfo;
 
 /**
  * Rendering context for PDF production.
@@ -34,6 +35,7 @@ public class PDFRenderingContext extends AbstractRenderingContext {
     private PDFContentGenerator generator;
     private FontInfo fontInfo;
     private PDFPage page;
+    private MarkedContentInfo mci;
 
     /**
      * Main constructor.
@@ -79,4 +81,11 @@ public class PDFRenderingContext extends AbstractRenderingContext {
         return this.fontInfo;
     }
 
+    void setMarkedContentInfo(MarkedContentInfo mci) {
+        this.mci = mci;
+    }
+
+    MarkedContentInfo getMarkedContentInfo() {
+        return mci;
+    }
 }

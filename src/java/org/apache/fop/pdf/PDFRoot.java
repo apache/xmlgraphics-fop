@@ -19,6 +19,9 @@
 
 package org.apache.fop.pdf;
 
+import java.io.IOException;
+import java.io.OutputStream;
+
 /**
  * Class representing a Root (/Catalog) object.
  */
@@ -56,7 +59,7 @@ public class PDFRoot extends PDFDictionary {
      * object must be created before the PDF document is
      * generated, but it is not assigned an object ID until
      * it is about to be written (immediately before the xref
-     * table as part of the trsailer). (mark-fop@inomial.com)
+     * table as part of the trailer). (mark-fop@inomial.com)
      *
      * @param objnum the object's number
      * @param pages the PDFPages object
@@ -66,6 +69,12 @@ public class PDFRoot extends PDFDictionary {
         setObjectNumber(objnum);
         put("Type", new PDFName("Catalog"));
         setRootPages(pages);
+    }
+
+    /** {@inheritDoc} */
+    protected int output(OutputStream stream) throws IOException {
+        getDocument().getProfile().verifyTaggedPDF();
+        return super.output(stream);
     }
 
     /**
@@ -252,4 +261,39 @@ public class PDFRoot extends PDFDictionary {
         put("Lang", lang);
     }
 
+    /**
+     * Sets the StructTreeRoot object. Used for accessibility.
+     * @param structTreeRoot of this document
+     */
+    public void setStructTreeRoot(PDFStructTreeRoot structTreeRoot) {
+        if (structTreeRoot == null) {
+            throw new NullPointerException("structTreeRoot must not be null");
+        }
+        put("StructTreeRoot", structTreeRoot);
+    }
+
+    /**
+     * Returns the StructTreeRoot object.
+     * @return the structure tree root (or null if accessibility is not enabled)
+     */
+    public PDFStructTreeRoot getStructTreeRoot() {
+        return (PDFStructTreeRoot)get("StructTreeRoot");
+    }
+
+    /**
+     * Marks this document as conforming to the Tagged PDF conventions.
+     */
+    public void makeTagged() {
+        PDFDictionary dict = new PDFDictionary();
+        dict.put("Marked", Boolean.TRUE);
+        put("MarkInfo", dict);  //new PDFMarkInfo()
+    }
+
+    /**
+     * Returns the MarkInfo dictionary.
+     * @return the MarkInfo dictionary (or null if it's not present)
+     */
+    public PDFDictionary getMarkInfo() {
+        return (PDFDictionary)get("MarkInfo");
+    }
 }

@@ -107,6 +107,15 @@ public class PDFArray extends PDFObject {
     }
 
     /**
+     * Indicates whether the given object exists in the array.
+     * @param obj the object to look for
+     * @return true if obj is contained
+     */
+    public boolean contains(Object obj) {
+        return this.values.contains(obj);
+    }
+
+    /**
      * Returns the length of the array
      * @return the length of the array
      */

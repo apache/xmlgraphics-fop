@@ -30,6 +30,7 @@ import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Stack;
 
@@ -493,6 +494,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         try {
             if (this.inPageSequence) {
                 documentHandler.endPageSequence();
+                documentHandler.getContext().setLanguage(null);
             } else {
                 if (this.documentMetadata == null) {
                     this.documentMetadata = createDefaultDocumentMetadata();
@@ -502,12 +504,24 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
                 this.inPageSequence = true;
             }
             establishForeignAttributes(pageSequence.getForeignAttributes());
+            documentHandler.getContext().setLanguage(toLocale(pageSequence));
             documentHandler.startPageSequence(null);
             resetForeignAttributes();
             processExtensionAttachments(pageSequence);
         } catch (IFException e) {
             handleIFException(e);
         }
+    }
+
+    private Locale toLocale(PageSequence pageSequence) {
+        if (pageSequence.getLanguage() != null) {
+            if (pageSequence.getCountry() != null) {
+                return new Locale(pageSequence.getLanguage(), pageSequence.getCountry());
+            } else {
+                return new Locale(pageSequence.getLanguage());
+            }
+        }
+        return null;
     }
 
     private Metadata createDefaultDocumentMetadata() {
@@ -602,6 +616,14 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
 
     private void resetForeignAttributes() {
         documentHandler.getContext().resetForeignAttributes();
+    }
+
+    private void establishStructurePointer(String ptr) {
+        documentHandler.getContext().setStructurePointer(ptr);
+    }
+
+    private void resetStructurePointer() {
+        documentHandler.getContext().resetStructurePointer();
     }
 
     /** {@inheritDoc} */
@@ -824,17 +846,20 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
             currentIPPosition = saveIP;
             currentBPPosition = saveBP;
 
-            currentBPPosition += (int)(bv.getAllocBPD());
+            currentBPPosition += bv.getAllocBPD();
         }
         viewportDimensionStack.pop();
     }
 
     /** {@inheritDoc} */
     public void renderViewport(Viewport viewport) {
+        String ptr = (String) viewport.getTrait(Trait.PTR);
+        establishStructurePointer(ptr);
         Dimension dim = new Dimension(viewport.getIPD(), viewport.getBPD());
         viewportDimensionStack.push(dim);
         super.renderViewport(viewport);
         viewportDimensionStack.pop();
+        resetStructurePointer();
     }
 
     /** {@inheritDoc} */
@@ -892,6 +917,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         // stuff we only need if a link must be created:
         Rectangle ipRect = null;
         AbstractAction action = null;
+        String ptr = (String) ip.getTrait(Trait.PTR); // used for accessibility
         // make sure the rect is determined *before* calling super!
         int ipp = currentIPPosition;
         int bpp = currentBPPosition + ip.getOffset();
@@ -935,6 +961,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
 
         // warn if link trait found but not allowed, else create link
         if (linkTraitFound) {
+            action.setStructurePointer(ptr);  // used for accessibility
             Link link = new Link(action, ipRect);
             this.deferredLinks.add(link);
         }
@@ -969,6 +996,8 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
 
         String fontName = getInternalFontNameForArea(text);
         int size = ((Integer) text.getTrait(Trait.FONT_SIZE)).intValue();
+        String ptr = (String)text.getTrait(Trait.PTR); // used for accessibility
+        establishStructurePointer(ptr);
 
         // This assumes that *all* CIDFonts use a /ToUnicode mapping
         Typeface tf = getTypeface(fontName);
@@ -990,6 +1019,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
 
         textUtil.flush();
         renderTextDecoration(tf, size, text, bl, rx);
+        resetStructurePointer();
     }
 
     /** {@inheritDoc} */
@@ -1060,10 +1090,10 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         private static final int INITIAL_BUFFER_SIZE = 16;
         private int[] dx = new int[INITIAL_BUFFER_SIZE];
         private int lastDXPos = 0;
-        private StringBuffer text = new StringBuffer();
+        private final StringBuffer text = new StringBuffer();
         private int startx, starty;
         private int tls, tws;
-        private boolean combined = false;
+        private final boolean combined = false;
 
         void addChar(char ch) {
             text.append(ch);

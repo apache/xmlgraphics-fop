@@ -31,7 +31,7 @@ import org.apache.fop.fo.pagination.AbstractPageSequence;
 import org.apache.fop.fo.properties.LengthRangeProperty;
 
 /**
- * Class for the fox:external-document extenstion element.
+ * Class for the fox:external-document extension element.
  */
 public class ExternalDocument extends AbstractPageSequence implements GraphicsProperties {
 

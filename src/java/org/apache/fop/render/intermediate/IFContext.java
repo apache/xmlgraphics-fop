@@ -20,6 +20,7 @@
 package org.apache.fop.render.intermediate;
 
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.xmlgraphics.util.QName;
@@ -42,6 +43,10 @@ public class IFContext {
 
     /** foreign attributes: Map<QName, Object> */
     private Map foreignAttributes = Collections.EMPTY_MAP;
+
+    private Locale language;
+
+    private String structurePointer;
 
     /**
      * Main constructor.
@@ -106,6 +111,48 @@ public class IFContext {
      */
     public void resetForeignAttributes() {
         setForeignAttributes(null);
+    }
+
+    /**
+     * Sets the currently applicable language.
+     * @param lang the language
+     */
+    public void setLanguage(Locale lang) {
+        this.language = lang;
+    }
+
+    /**
+     * Returns the currently applicable language.
+     * @return the language (or null if the language is undefined)
+     */
+    public Locale getLanguage() {
+        return this.language;
+    }
+
+    /**
+     * Sets the structure pointer for the following painted marks. This method is used when
+     * accessibility features are enabled.
+     * @param ptr the structure pointer
+     */
+    public void setStructurePointer(String ptr) {
+        this.structurePointer = ptr;
+    }
+
+    /**
+     * Resets the current structure pointer.
+     * @see #setStructurePointer(String)
+     */
+    public void resetStructurePointer() {
+        setStructurePointer(null);
+    }
+
+    /**
+     * Returns the current structure pointer.
+     * @return the structure pointer (or null if no pointer is active)
+     * @see #setStructurePointer(String)
+     */
+    public String getStructurePointer() {
+        return this.structurePointer;
     }
 
 }

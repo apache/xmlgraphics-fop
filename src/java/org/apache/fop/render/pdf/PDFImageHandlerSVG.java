@@ -40,6 +40,7 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.image.loader.batik.BatikImageFlavors;
 import org.apache.fop.render.ImageHandler;
 import org.apache.fop.render.RenderingContext;
+import org.apache.fop.render.pdf.PDFLogicalStructureHandler.MarkedContentInfo;
 import org.apache.fop.svg.PDFAElementBridge;
 import org.apache.fop.svg.PDFBridgeContext;
 import org.apache.fop.svg.PDFGraphics2D;
@@ -101,8 +102,8 @@ public class PDFImageHandlerSVG implements ImageHandler {
         float w = (float)ctx.getDocumentSize().getWidth() * 1000f;
         float h = (float)ctx.getDocumentSize().getHeight() * 1000f;
 
-        float sx = pos.width / (float)w;
-        float sy = pos.height / (float)h;
+        float sx = pos.width / w;
+        float sy = pos.height / h;
 
         //Scaling and translation for the bounding box of the image
         AffineTransform scaling = new AffineTransform(
@@ -121,6 +122,10 @@ public class PDFImageHandlerSVG implements ImageHandler {
          */
         generator.comment("SVG setup");
         generator.saveGraphicsState();
+        if (context.getUserAgent().isAccessibilityEnabled()) {
+            MarkedContentInfo mci = pdfContext.getMarkedContentInfo();
+            generator.beginMarkedContentSequence(mci.tag, mci.mcid);
+        }
         generator.setColor(Color.black, false);
         generator.setColor(Color.black, true);
 
@@ -168,7 +173,11 @@ public class PDFImageHandlerSVG implements ImageHandler {
             eventProducer.svgRenderingError(this, e, image.getInfo().getOriginalURI());
         }
         generator.getState().restore();
-        generator.restoreGraphicsState();
+        if (context.getUserAgent().isAccessibilityEnabled()) {
+            generator.restoreGraphicsStateAccess();
+        } else {
+            generator.restoreGraphicsState();
+        }
         generator.comment("SVG end");
     }
 

@@ -99,7 +99,8 @@ public class PDFAConformanceTestCase extends BasePDFTestCase {
         foFile = new File(foBaseDir, "with-cmyk-images.fo");
         try {
             convertFO(foFile, getUserAgent(), dumpPDF);
-            fail("Expected PDFConformanceException. PDF/A-1 does not allow PostScript XObjects.");
+            fail("Expected PDFConformanceException."
+                    + " PDF/A-1 does not allow mixing DeviceRGB and DeviceCMYK.");
         } catch (PDFConformanceException e) {
             //Good!
         }

@@ -26,17 +26,19 @@ import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
+import org.apache.fop.fo.properties.StructurePointerPropertySet;
 
 /**
  * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_inline">
  * <code>fo:inline</code></a> formatting object.
  */
-public class Inline extends InlineLevel {
+public class Inline extends InlineLevel implements StructurePointerPropertySet {
     // The value of properties relevant for fo:inline.
     // See also superclass InlineLevel
     private Length alignmentAdjust;
     private int alignmentBaseline;
     private Length baselineShift;
+    private String ptr;  // used for accessibility
     private int dominantBaseline;
     // Unused but valid items, commented out for performance:
     //     private CommonRelativePosition commonRelativePosition;
@@ -66,6 +68,7 @@ public class Inline extends InlineLevel {
         alignmentBaseline = pList.get(PR_ALIGNMENT_BASELINE).getEnum();
         baselineShift = pList.get(PR_BASELINE_SHIFT).getLength();
         dominantBaseline = pList.get(PR_DOMINANT_BASELINE).getEnum();
+        ptr = pList.get(PR_X_PTR).getString(); // used for accessibility
     }
 
     /** {@inheritDoc} */
@@ -142,6 +145,11 @@ public class Inline extends InlineLevel {
     /** @return the "dominant-baseline" property */
     public int getDominantBaseline() {
         return dominantBaseline;
+    }
+
+    /** {@inheritDoc} */
+    public String getPtr() {
+        return ptr;
     }
 
     /** {@inheritDoc} */

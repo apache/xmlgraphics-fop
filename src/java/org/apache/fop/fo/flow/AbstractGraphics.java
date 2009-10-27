@@ -29,6 +29,7 @@ import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.LengthRangeProperty;
 import org.apache.fop.fo.properties.SpaceProperty;
+import org.apache.fop.fo.properties.StructurePointerPropertySet;
 
 /**
  * Common base class for the <a href="http://www.w3.org/TR/xsl/#fo_instream-foreign-object">
@@ -36,7 +37,8 @@ import org.apache.fop.fo.properties.SpaceProperty;
  * and <a href="http://www.w3.org/TR/xsl/#fo_external-graphic">
  * <code>fo:external-graphic</code></a> flow formatting objects.
  */
-public abstract class AbstractGraphics extends FObj implements GraphicsProperties {
+public abstract class AbstractGraphics extends FObj
+        implements GraphicsProperties, StructurePointerPropertySet {
 
     // The value of properties relevant for fo:instream-foreign-object
     // and external-graphics.
@@ -60,6 +62,7 @@ public abstract class AbstractGraphics extends FObj implements GraphicsPropertie
     private int scaling;
     private int textAlign;
     private Length width;
+    private String ptr;   // used for accessibility
     // Unused but valid items, commented out for performance:
     //     private CommonAccessibility commonAccessibility;
     //     private CommonAural commonAural;
@@ -94,6 +97,7 @@ public abstract class AbstractGraphics extends FObj implements GraphicsPropertie
         dominantBaseline = pList.get(PR_DOMINANT_BASELINE).getEnum();
         height = pList.get(PR_HEIGHT).getLength();
         id = pList.get(PR_ID).getString();
+        ptr = pList.get(PR_X_PTR).getString();   // used for accessibility
         inlineProgressionDimension = pList.get(PR_INLINE_PROGRESSION_DIMENSION).getLengthRange();
         keepWithNext = pList.get(PR_KEEP_WITH_NEXT).getKeep();
         keepWithPrevious = pList.get(PR_KEEP_WITH_PREVIOUS).getKeep();
@@ -102,6 +106,12 @@ public abstract class AbstractGraphics extends FObj implements GraphicsPropertie
         scaling = pList.get(PR_SCALING).getEnum();
         textAlign = pList.get(PR_TEXT_ALIGN).getEnum();
         width = pList.get(PR_WIDTH).getLength();
+        if (getUserAgent().isAccessibilityEnabled()) {
+            String altText = pList.get(PR_X_ALT_TEXT).getString();
+            if (altText.equals("")) {
+                getFOValidationEventProducer().altTextMissing(this, getLocalName(), getLocator());
+            }
+        }
     }
 
     /**
@@ -205,6 +215,11 @@ public abstract class AbstractGraphics extends FObj implements GraphicsPropertie
     /** @return the "keep-with-previous" property */
     public KeepProperty getKeepWithPrevious() {
         return keepWithPrevious;
+    }
+
+    /** {@inheritDoc} */
+    public String getPtr() {
+        return ptr;
     }
 
     /** @return the graphic's intrinsic width in millipoints */

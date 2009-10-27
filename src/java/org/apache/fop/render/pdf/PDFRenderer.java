@@ -31,7 +31,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
 
 import org.apache.xmlgraphics.image.loader.ImageException;
 import org.apache.xmlgraphics.image.loader.ImageFlavor;
@@ -61,6 +65,7 @@ import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.area.inline.TextArea;
+import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.area.inline.WordArea;
 import org.apache.fop.datatypes.URISpecification;
 import org.apache.fop.events.ResourceEventProducer;
@@ -91,9 +96,11 @@ import org.apache.fop.pdf.PDFXObject;
 import org.apache.fop.render.AbstractPathOrientedRenderer;
 import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.RendererContext;
+import org.apache.fop.render.pdf.PDFLogicalStructureHandler.MarkedContentInfo;
 import org.apache.fop.traits.RuleStyle;
 import org.apache.fop.util.AbstractPaintingState;
 import org.apache.fop.util.CharUtilities;
+import org.apache.fop.util.XMLUtil;
 import org.apache.fop.util.AbstractPaintingState.AbstractData;
 
 /**
@@ -127,7 +134,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer implements PDFConf
      * this is used for prepared pages that cannot be immediately
      * rendered
      */
-    protected Map pages = null;
+    private Map pages;
 
     /**
      * Maps unique PageViewport key to PDF page reference
@@ -193,6 +200,14 @@ public class PDFRenderer extends AbstractPathOrientedRenderer implements PDFConf
     /** Image handler registry */
     private final PDFImageHandlerRegistry imageHandlerRegistry = new PDFImageHandlerRegistry();
 
+    private boolean accessEnabled;
+
+    private PDFLogicalStructureHandler logicalStructureHandler;
+
+    private int pageSequenceIndex;
+
+    /** Reference in the structure tree to the image being rendered. */
+    private String imageReference;
 
     /**
      * create the PDF renderer
@@ -204,6 +219,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer implements PDFConf
     public void setUserAgent(FOUserAgent agent) {
         super.setUserAgent(agent);
         this.pdfUtil = new PDFRenderingUtil(getUserAgent());
+        accessEnabled = agent.isAccessibilityEnabled();
     }
 
     PDFRenderingUtil getPDFUtil() {
@@ -225,6 +241,10 @@ public class PDFRenderer extends AbstractPathOrientedRenderer implements PDFConf
         }
         ostream = stream;
         this.pdfDoc = pdfUtil.setupPDFDocument(stream);
+        if (accessEnabled) {
+            pdfDoc.getRoot().makeTagged();
+            logicalStructureHandler = new PDFLogicalStructureHandler(pdfDoc);
+        }
     }
 
     /**
@@ -274,8 +294,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer implements PDFConf
      * {@inheritDoc}
      */
     public boolean supportsOutOfOrder() {
-        //return false;
-        return true;
+        return !accessEnabled;
     }
 
     /**
@@ -394,17 +413,24 @@ public class PDFRenderer extends AbstractPathOrientedRenderer implements PDFConf
                 info.setTitle(str);
             }
         }
+        Locale language = null;
         if (pageSequence.getLanguage() != null) {
             String lang = pageSequence.getLanguage();
             String country = pageSequence.getCountry();
-            String langCode = lang + (country != null ? "-" + country : "");
+            if (lang != null) {
+                language = (country == null) ? new Locale(lang) : new Locale(lang, country);
+            }
             if (pdfDoc.getRoot().getLanguage() == null) {
                 //Only set if not set already (first non-null is used)
                 //Note: No checking is performed whether the values are valid!
-                pdfDoc.getRoot().setLanguage(langCode);
+                pdfDoc.getRoot().setLanguage(XMLUtil.toRFC3066(language));
             }
         }
         pdfUtil.generateDefaultXMPMetadata();
+        if (accessEnabled) {
+            NodeList nodes = getUserAgent().getStructureTree().getPageSequence(pageSequenceIndex++);
+            logicalStructureHandler.processStructureTree(nodes, language);
+        }
     }
 
     /**
@@ -457,6 +483,10 @@ public class PDFRenderer extends AbstractPathOrientedRenderer implements PDFConf
         }
         currentPageRef = currentPage.referencePDF();
 
+        if (accessEnabled) {
+            logicalStructureHandler.startPage(currentPage);
+        }
+
         Rectangle bounds = page.getViewArea();
         pageHeight = bounds.height;
 
@@ -473,6 +503,10 @@ public class PDFRenderer extends AbstractPathOrientedRenderer implements PDFConf
         */
 
         super.renderPage(page);
+
+        if (accessEnabled) {
+            logicalStructureHandler.endPage();
+        }
 
         this.pdfDoc.registerObject(generator.getStream());
         currentPage.setContents(generator.getStream());
@@ -903,9 +937,20 @@ public class PDFRenderer extends AbstractPathOrientedRenderer implements PDFConf
                          + pdfDoc.getProfile());
             } else if (action != null) {
                 PDFLink pdfLink = factory.makeLink(ipRect, action);
+                if (accessEnabled) {
+                    String ptr = (String) ip.getTrait(Trait.PTR);
+                    logicalStructureHandler.addLinkContentItem(pdfLink, ptr);
+                }
                 currentPage.addAnnotation(pdfLink);
             }
         }
+    }
+
+    /** {@inheritDoc} */
+    public void renderViewport(Viewport viewport) {
+        imageReference = (String) viewport.getTrait(Trait.PTR);
+        super.renderViewport(viewport);
+        imageReference = null;
     }
 
     private Typeface getTypeface(String fontName) {
@@ -922,7 +967,16 @@ public class PDFRenderer extends AbstractPathOrientedRenderer implements PDFConf
         Color ct = (Color) text.getTrait(Trait.COLOR);
         updateColor(ct, true);
 
-        beginTextObject();
+        if (accessEnabled) {
+            String ptr = (String) text.getTrait(Trait.PTR);
+            MarkedContentInfo mci = logicalStructureHandler.addTextContentItem(ptr);
+            if (generator.getTextUtil().isInTextObject()) {
+                generator.separateTextElements(mci.tag, mci.mcid);
+            }
+            generator.beginTextObject(mci.tag, mci.mcid);
+        } else {
+            beginTextObject();
+        }
 
         String fontName = getInternalFontNameForArea(text);
         int size = ((Integer) text.getTrait(Trait.FONT_SIZE)).intValue();
@@ -1178,13 +1232,22 @@ public class PDFRenderer extends AbstractPathOrientedRenderer implements PDFConf
      * @param xobj the image XObject
      */
     public void placeImage(float x, float y, float w, float h, PDFXObject xobj) {
-        saveGraphicsState();
+        if (accessEnabled) {
+            MarkedContentInfo mci = logicalStructureHandler.addImageContentItem(imageReference);
+            generator.saveGraphicsState(mci.tag, mci.mcid);
+        } else {
+            saveGraphicsState();
+        }
         generator.add(format(w) + " 0 0 "
                           + format(-h) + " "
                           + format(currentIPPosition / 1000f + x) + " "
                           + format(currentBPPosition / 1000f + h + y)
                           + " cm\n" + xobj.getName() + " Do\n");
-        restoreGraphicsState();
+        if (accessEnabled) {
+            generator.restoreGraphicsStateAccess();
+        } else {
+            restoreGraphicsState();
+        }
     }
 
     /** {@inheritDoc} */
@@ -1203,6 +1266,18 @@ public class PDFRenderer extends AbstractPathOrientedRenderer implements PDFConf
         context.setProperty(PDFRendererContextConstants.PDF_FONT_NAME, "");
         context.setProperty(PDFRendererContextConstants.PDF_FONT_SIZE, new Integer(0));
         return context;
+    }
+
+    /** {@inheritDoc} */
+    public void renderDocument(Document doc, String ns, Rectangle2D pos, Map foreignAttributes) {
+        if (accessEnabled) {
+            MarkedContentInfo mci = logicalStructureHandler.addImageContentItem(imageReference);
+            generator.beginMarkedContentSequence(mci.tag, mci.mcid);
+        }
+        super.renderDocument(doc, ns, pos, foreignAttributes);
+        if (accessEnabled) {
+            generator.endMarkedContentSequence();
+        }
     }
 
     /**
@@ -1271,6 +1346,10 @@ public class PDFRenderer extends AbstractPathOrientedRenderer implements PDFConf
      */
     public void setEncryptionParams(PDFEncryptionParams encryptionParams) {
         this.pdfUtil.setEncryptionParams(encryptionParams);
+    }
+
+    MarkedContentInfo addCurrentImageToStructureTree() {
+        return logicalStructureHandler.addImageContentItem(imageReference);
     }
 }
 

@@ -58,9 +58,6 @@ public class PDFProfile {
      */
     protected void validateProfileCombination() {
         if (pdfAMode != PDFAMode.DISABLED) {
-            if (pdfAMode == PDFAMode.PDFA_1A) {
-                throw new UnsupportedOperationException("PDF/A-1a is not implemented, yet");
-            }
             if (pdfAMode == PDFAMode.PDFA_1B) {
                 if (pdfXMode != PDFXMode.DISABLED && pdfXMode != PDFXMode.PDFX_3_2003) {
                     throw new PDFConformanceException(
@@ -189,6 +186,32 @@ public class PDFProfile {
         if (getPDFXMode() == PDFXMode.PDFX_3_2003
                 && getDocument().getPDFVersion() != PDFDocument.PDF_VERSION_1_4) {
             throw new PDFConformanceException(format(err, getPDFXMode()));
+        }
+    }
+
+    /**
+     * Checks a few things required for tagged PDF.
+     */
+    public void verifyTaggedPDF() {
+        if (getPDFAMode().isPDFA1LevelA()) {
+            final String err = "{0} requires the {1} dictionary entry to be set";
+            PDFDictionary markInfo = getDocument().getRoot().getMarkInfo();
+            if (markInfo == null) {
+                throw new PDFConformanceException(format(
+                        "{0} requires the MarkInfo dictionary to be present", getPDFAMode()));
+            }
+            if (!Boolean.TRUE.equals(markInfo.get("Marked"))) {
+                throw new PDFConformanceException(format(err,
+                        new Object[] {getPDFAMode(), "Marked"}));
+            }
+            if (getDocument().getRoot().getStructTreeRoot() == null) {
+                throw new PDFConformanceException(format(err,
+                        new Object[] {getPDFAMode(), "StructTreeRoot"}));
+            }
+            if (getDocument().getRoot().getLanguage() == null) {
+                throw new PDFConformanceException(format(err,
+                        new Object[] {getPDFAMode(), "Lang"}));
+            }
         }
     }
 

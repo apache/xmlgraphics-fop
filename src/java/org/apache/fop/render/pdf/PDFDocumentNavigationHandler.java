@@ -47,10 +47,10 @@ import org.apache.fop.render.pdf.PDFDocumentHandler.PageReference;
  */
 public class PDFDocumentNavigationHandler implements IFDocumentNavigationHandler {
 
-    private PDFDocumentHandler documentHandler;
+    private final PDFDocumentHandler documentHandler;
 
-    private Map incompleteActions = new java.util.HashMap();
-    private Map completeActions = new java.util.HashMap();
+    private final Map incompleteActions = new java.util.HashMap();
+    private final Map completeActions = new java.util.HashMap();
 
     /**
      * Default constructor.
@@ -111,6 +111,11 @@ public class PDFDocumentNavigationHandler implements IFDocumentNavigationHandler
         PDFLink pdfLink = getPDFDoc().getFactory().makeLink(
                 targetRect2D, pdfAction);
         if (pdfLink != null) {
+            String ptr = link.getAction().getStructurePointer();
+            if (documentHandler.getUserAgent().isAccessibilityEnabled()
+                    && ptr != null && ptr.length() > 0) {
+                documentHandler.getLogicalStructureHandler().addLinkContentItem(pdfLink, ptr);
+            }
             documentHandler.currentPage.addAnnotation(pdfLink);
         }
     }

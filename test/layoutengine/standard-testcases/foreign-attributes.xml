@@ -31,9 +31,6 @@
       </fo:layout-master-set>
       <fo:page-sequence master-reference="normal">
         <fo:flow flow-name="xsl-region-body">
-          <fo:block id="eg">
-            <fo:external-graphic src="../../resources/images/bgimg300dpi.jpg" fox:alt="description"/>
-          </fo:block>
           <fo:block id="bl">
             <fo:basic-link external-destination="url(http://xmlgraphics.apache.org/fop/)" fox:blah="fop">FOP</fo:basic-link>
           </fo:block>
@@ -43,7 +40,6 @@
   </fo>
   <checks xmlns:fox="http://xmlgraphics.apache.org/fop/extensions">
     <eval expected="bar" xpath="//pageViewport[1]/@fox:foo"/>
-    <eval expected="description" xpath="//block[@prod-id='eg']//image/@fox:alt"/>
     <!--eval expected="fop" xpath="//block[@prod-id='bl']/inlineparent/@fox:blah"/> NYI -->
   </checks>
 </testcase>

@@ -50,4 +50,6 @@ public interface IFConstants extends XMLConstants {
     String EL_BORDER_RECT = "border-rect";
     String EL_FONT = "font";
     String EL_TEXT = "text";
+    /** Parent element of the logical structure tree. */
+    String EL_STRUCTURE_TREE = "structure-tree";
 }

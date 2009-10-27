@@ -29,9 +29,6 @@ import java.io.IOException;
 
 import org.w3c.dom.Document;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
@@ -47,6 +44,7 @@ import org.apache.fop.render.intermediate.AbstractIFPainter;
 import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFState;
+import org.apache.fop.render.pdf.PDFLogicalStructureHandler.MarkedContentInfo;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.traits.RuleStyle;
 import org.apache.fop.util.CharUtilities;
@@ -56,26 +54,33 @@ import org.apache.fop.util.CharUtilities;
  */
 public class PDFPainter extends AbstractIFPainter {
 
-    /** logging instance */
-    private static Log log = LogFactory.getLog(PDFPainter.class);
-
-    private PDFDocumentHandler documentHandler;
+    private final PDFDocumentHandler documentHandler;
 
     /** The current content generator */
     protected PDFContentGenerator generator;
 
-    private PDFBorderPainter borderPainter;
+    private final PDFBorderPainter borderPainter;
+
+    private boolean accessEnabled;
+
+    private MarkedContentInfo imageMCI;
+
+    private PDFLogicalStructureHandler logicalStructureHandler;
 
     /**
      * Default constructor.
      * @param documentHandler the parent document handler
+     * @param logicalStructureHandler the logical structure handler
      */
-    public PDFPainter(PDFDocumentHandler documentHandler) {
+    public PDFPainter(PDFDocumentHandler documentHandler,
+            PDFLogicalStructureHandler logicalStructureHandler) {
         super();
         this.documentHandler = documentHandler;
+        this.logicalStructureHandler = logicalStructureHandler;
         this.generator = documentHandler.generator;
         this.borderPainter = new PDFBorderPainter(this.generator);
         this.state = IFState.create();
+        accessEnabled = this.getUserAgent().isAccessibilityEnabled();
     }
 
     /** {@inheritDoc} */
@@ -122,22 +127,36 @@ public class PDFPainter extends AbstractIFPainter {
     }
 
     /** {@inheritDoc} */
-    public void drawImage(String uri, Rectangle rect) throws IFException {
+    public void drawImage(String uri, Rectangle rect)
+            throws IFException {
         PDFXObject xobject = getPDFDoc().getXObject(uri);
         if (xobject != null) {
-            placeImage(rect, xobject);
-            return;
+            if (accessEnabled) {
+                String ptr = getContext().getStructurePointer();
+                prepareImageMCID(ptr);
+                placeImageAccess(rect, xobject);
+            } else {
+                placeImage(rect, xobject);
+            }
+        } else {
+            if (accessEnabled) {
+                String ptr = getContext().getStructurePointer();
+                prepareImageMCID(ptr);
+            }
+            drawImageUsingURI(uri, rect);
+            flushPDFDoc();
         }
+    }
 
-        drawImageUsingURI(uri, rect);
-
-        flushPDFDoc();
+    private void prepareImageMCID(String ptr) {
+        imageMCI = logicalStructureHandler.addImageContentItem(ptr);
     }
 
     /** {@inheritDoc} */
     protected RenderingContext createRenderingContext() {
         PDFRenderingContext pdfContext = new PDFRenderingContext(
                 getUserAgent(), generator, this.documentHandler.currentPage, getFontInfo());
+        pdfContext.setMarkedContentInfo(imageMCI);
         return pdfContext;
     }
 
@@ -158,11 +177,31 @@ public class PDFPainter extends AbstractIFPainter {
                           + " cm " + xobj.getName() + " Do\n");
         generator.restoreGraphicsState();
     }
+    /**
+     * Places a previously registered image at a certain place on the page - Accessibility version
+     * @param x X coordinate
+     * @param y Y coordinate
+     * @param w width for image
+     * @param h height for image
+     * @param xobj the image XObject
+     */
+    private void placeImageAccess(Rectangle rect, PDFXObject xobj) {
+        generator.saveGraphicsState(imageMCI.tag, imageMCI.mcid);
+        generator.add(format(rect.width) + " 0 0 "
+                          + format(-rect.height) + " "
+                          + format(rect.x) + " "
+                          + format(rect.y + rect.height )
+                          + " cm " + xobj.getName() + " Do\n");
+        generator.restoreGraphicsStateAccess();
+    }
 
     /** {@inheritDoc} */
     public void drawImage(Document doc, Rectangle rect) throws IFException {
+        if (accessEnabled) {
+            String ptr = getContext().getStructurePointer();
+            prepareImageMCID(ptr);
+        }
         drawImageUsingDocument(doc, rect);
-
         flushPDFDoc();
     }
 
@@ -253,10 +292,22 @@ public class PDFPainter extends AbstractIFPainter {
     }
 
     /** {@inheritDoc} */
-    public void drawText(int x, int y, int letterSpacing, int wordSpacing, int[] dx, String text)
+    public void drawText(int x, int y, int letterSpacing, int wordSpacing, int[] dx,
+            String text)
             throws IFException {
-        generator.updateColor(state.getTextColor(), true, null);
-        generator.beginTextObject();
+        if (accessEnabled) {
+            String ptr = getContext().getStructurePointer();
+            MarkedContentInfo mci = logicalStructureHandler.addTextContentItem(ptr);
+            if (generator.getTextUtil().isInTextObject()) {
+                generator.separateTextElements(mci.tag, mci.mcid);
+            }
+            generator.updateColor(state.getTextColor(), true, null);
+            generator.beginTextObject(mci.tag, mci.mcid);
+        } else {
+            generator.updateColor(state.getTextColor(), true, null);
+            generator.beginTextObject();
+        }
+
         FontTriplet triplet = new FontTriplet(
                 state.getFontFamily(), state.getFontStyle(), state.getFontWeight());
         //TODO Ignored: state.getFontVariant()
@@ -277,7 +328,7 @@ public class PDFPainter extends AbstractIFPainter {
         PDFTextUtil textutil = generator.getTextUtil();
         textutil.updateTf(fontKey, fontSize, tf.isMultiByte());
 
-        generator.updateCharacterSpacing((float)letterSpacing / 1000f);
+        generator.updateCharacterSpacing(letterSpacing / 1000f);
 
         textutil.writeTextMatrix(new AffineTransform(1, 0, 0, -1, x / 1000f, y / 1000f));
         int l = text.length();

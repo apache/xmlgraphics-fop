@@ -35,6 +35,7 @@ import org.apache.fop.pdf.PDFXObject;
 import org.apache.fop.render.AbstractImageHandlerGraphics2D;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.RenderingContext;
+import org.apache.fop.render.pdf.PDFLogicalStructureHandler.MarkedContentInfo;
 import org.apache.fop.svg.PDFGraphics2D;
 
 /**
@@ -63,6 +64,9 @@ public class PDFImageHandlerGraphics2D extends AbstractImageHandlerGraphics2D
                 renderer.currentPage,
                 renderer.getFontInfo());
         Rectangle effPos = new Rectangle(origin.x + pos.x, origin.y + pos.y, pos.width, pos.height);
+        if (context.getUserAgent().isAccessibilityEnabled()) {
+            pdfContext.setMarkedContentInfo(renderer.addCurrentImageToStructureTree());
+        }
         handleImage(pdfContext, image, effPos);
         return null;
     }
@@ -87,7 +91,13 @@ public class PDFImageHandlerGraphics2D extends AbstractImageHandlerGraphics2D
         float sy = fheight / (float)imh;
 
         generator.comment("G2D start");
-        generator.saveGraphicsState();
+        boolean accessibilityEnabled = context.getUserAgent().isAccessibilityEnabled();
+        if (accessibilityEnabled) {
+            MarkedContentInfo mci = pdfContext.getMarkedContentInfo();
+            generator.saveGraphicsState(mci.tag, mci.mcid);
+        } else {
+            generator.saveGraphicsState();
+        }
         generator.updateColor(Color.black, false, null);
         generator.updateColor(Color.black, true, null);
 
@@ -115,7 +125,11 @@ public class PDFImageHandlerGraphics2D extends AbstractImageHandlerGraphics2D
         imageG2D.getGraphics2DImagePainter().paint(graphics, area);
 
         generator.add(graphics.getString());
-        generator.restoreGraphicsState();
+        if (accessibilityEnabled) {
+            generator.restoreGraphicsStateAccess();
+        } else {
+            generator.restoreGraphicsState();
+        }
         generator.comment("G2D end");
     }
 
