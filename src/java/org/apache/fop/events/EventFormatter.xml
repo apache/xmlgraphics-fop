@@ -93,6 +93,7 @@ Any reference to it will be considered a reference to the first occurrence in th
   <message key="org.apache.fop.layoutmgr.BlockLevelEventProducer.pageSequenceMasterExhausted">Subsequences exhausted in page-sequence-master "{pageSequenceMasterName}", {canRecover,if,using previous subsequence,cannot recover}.{{locator}}</message>
   <message key="org.apache.fop.layoutmgr.BlockLevelEventProducer.missingSubsequencesInPageSequenceMaster">No subsequences in page-sequence-master "{pageSequenceMasterName}".{{locator}}</message>
   <message key="org.apache.fop.layoutmgr.BlockLevelEventProducer.noMatchingPageMaster">No simple-page-master matching "{pageMasterName}" in page-sequence-master "{pageSequenceMasterName}".{{locator}}</message>
+  <message key="org.apache.fop.layoutmgr.BlockLevelEventProducer.nonRestartableContentFlowingToNarrowerPage">Content that cannot handle IPD changes is flowing to a narrower page. Part of it may be clipped by the page border.</message>
   <message key="org.apache.fop.svg.SVGEventProducer.error">SVG error: {message}</message>
   <message key="org.apache.fop.svg.SVGEventProducer.alert">SVG alert: {message}</message>
   <message key="org.apache.fop.svg.SVGEventProducer.info">SVG info: {message}</message>
