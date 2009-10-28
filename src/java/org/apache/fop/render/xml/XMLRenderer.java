@@ -36,6 +36,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
 import org.xml.sax.SAXException;
 
 import org.apache.xmlgraphics.util.QName;
@@ -81,6 +82,8 @@ import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.area.inline.WordArea;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
+import org.apache.fop.fo.extensions.ExtensionElementMapping;
+import org.apache.fop.fo.extensions.InternalElementMapping;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.render.Renderer;
@@ -148,6 +151,10 @@ public class XMLRenderer extends AbstractXMLRenderer {
         }
     }
 
+    /**
+     * Controls whether to create a more compact format which omit certain attributes.
+     * @param compact true to activate the compact format
+     */
     public void setCompactFormat(boolean compact) {
         this.compactFormat = compact;
     }
@@ -447,14 +454,23 @@ public class XMLRenderer extends AbstractXMLRenderer {
         if (this.getUserAgent().isAccessibilityEnabled()) {
             String structureTreeElement = "structureTree";
             startElement(structureTreeElement);
-            NodeList nodes = getUserAgent().getStructureTree().getPageSequence(pageSequenceIndex++);
-            for (int i = 0, n = nodes.getLength(); i < n; i++) {
-                Node node = nodes.item(i);
-                try {
-                    new DOM2SAX(handler).writeFragment(node);
-                } catch (SAXException e) {
-                    handleSAXException(e);
+            try {
+                this.handler.startPrefixMapping("foi", InternalElementMapping.URI);
+                this.handler.startPrefixMapping("fox", ExtensionElementMapping.URI);
+                NodeList nodes = getUserAgent().getStructureTree().getPageSequence(
+                        pageSequenceIndex++);
+                for (int i = 0, n = nodes.getLength(); i < n; i++) {
+                    Node node = nodes.item(i);
+                    try {
+                        new DOM2SAX(handler).writeFragment(node);
+                    } catch (SAXException e) {
+                        handleSAXException(e);
+                    }
                 }
+                this.handler.endPrefixMapping("fox");
+                this.handler.endPrefixMapping("foi");
+            } catch (SAXException se) {
+                handleSAXException(se);
             }
             endElement(structureTreeElement);
         }
