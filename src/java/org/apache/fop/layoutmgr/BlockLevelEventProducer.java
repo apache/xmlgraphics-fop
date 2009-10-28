@@ -33,7 +33,9 @@ public interface BlockLevelEventProducer extends EventProducer {
     /**
      * Provider class for the event producer.
      */
-    class Provider {
+    final class Provider {
+
+        private Provider() { }
 
         /**
          * Returns an event producer.
@@ -165,4 +167,12 @@ public interface BlockLevelEventProducer extends EventProducer {
     void noMatchingPageMaster(Object source, String pageSequenceMasterName,
             String pageMasterName, Locator loc) throws PageProductionException;
 
+    /**
+     * An element that cannot handle changing IPD (list, table) is flowing to a narrower
+     * page. Some content may be lost.
+     *
+     * @param source the event source
+     * @event.severity WARN
+     */
+    void nonRestartableContentFlowingToNarrowerPage(Object source);
 }

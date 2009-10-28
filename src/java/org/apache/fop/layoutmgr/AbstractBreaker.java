@@ -28,6 +28,7 @@ import java.util.ListIterator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.fop.events.EventBroadcaster;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.layoutmgr.BreakingAlgorithm.KnuthNode;
 import org.apache.fop.traits.MinOptMax;
@@ -382,9 +383,11 @@ public abstract class AbstractBreaker {
                     List firstElements = Collections.EMPTY_LIST;
                     if (containsNonRestartableLM(positionAtBreak)) {
                         if (alg.getIPDdifference() > 0) {
-                            log.warn("Content that cannot handle IPD changes is flowing to a"
-                                    + " narrower page. Part of it may be clipped"
-                                    + " by the page border.");
+                            EventBroadcaster eventBroadcaster = getCurrentChildLM().getFObj()
+                                    .getUserAgent().getEventBroadcaster();
+                            BlockLevelEventProducer eventProducer
+                                    = BlockLevelEventProducer.Provider.get(eventBroadcaster);
+                            eventProducer.nonRestartableContentFlowingToNarrowerPage(this);
                         }
                         firstElements = new LinkedList();
                         boolean boxFound = false;
