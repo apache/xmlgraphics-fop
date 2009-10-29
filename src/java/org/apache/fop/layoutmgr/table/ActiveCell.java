@@ -398,7 +398,9 @@ class ActiveCell {
     private void increaseCurrentStep(int limit) {
         if (nextStep.end < elementList.size() - 1) {
             while (afterNextStep.totalLength <= limit && nextStep.breakClass == Constants.EN_AUTO) {
+                int condBeforeContentLength = nextStep.condBeforeContentLength;
                 nextStep.set(afterNextStep);
+                nextStep.condBeforeContentLength = condBeforeContentLength;
                 if (afterNextStep.end >= elementList.size() - 1) {
                     break;
                 }

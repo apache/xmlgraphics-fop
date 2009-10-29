@@ -58,6 +58,10 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Layout" dev="VH" type="fix" fixes-bug="48082">
+        Bugfix: value of conditional space not always taken into account in the calculation of a 
+        table’s height.
+      </action>
       <action context="Renderers" dev="JM,VH" type="add" fixes-bug="46705" due-to="Jost Klopfstein">
         Added basic accessibility and Tagged PDF support. 
       </action>
