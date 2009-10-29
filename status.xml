@@ -98,7 +98,7 @@
         Added limited support for pages of different inline-progression-dimensions within a 
         page-sequence.
       </action>
-      <action context="Renderers" dev="AD" type="add" fixes-bug="46905">
+      <action context="Layout" dev="AD" type="add" fixes-bug="46905">
         Added basic implementation for column-keeps.
       </action>
       <action context="Code" dev="AD" type="fix" fixes-bug="47710">
