@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-/* $Id: AFPPageSetupElement.java 798207 2009-07-27 16:33:01Z jeremias $ */
+/* $Id$ */
 
 package org.apache.fop.render.afp.extensions;
 
