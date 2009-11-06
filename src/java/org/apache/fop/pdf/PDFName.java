@@ -42,7 +42,12 @@ public class PDFName extends PDFObject {
     }
 
 
-    private static String escapeName(String name) {
+    /**
+     * Escapes a PDF name. It adds the leading slash and escapes characters as necessary.
+     * @param name the name
+     * @return the escaped name
+     */
+    static String escapeName(String name) {
         StringBuffer sb = new StringBuffer(Math.min(16, name.length() + 4));
         if (!name.startsWith("/")) {
             sb.append('/');

@@ -133,8 +133,7 @@ public class PDFDictionary extends PDFObject {
             } else {
                 writer.write("\n  ");
             }
-            writer.write('/');
-            writer.write(key);
+            writer.write(PDFName.escapeName(key));
             writer.write(' ');
             Object obj = this.entries.get(key);
             formatObject(obj, out, writer);
