@@ -467,7 +467,7 @@ public class DefaultErrorListener implements ErrorListener {
         <p>
           Earlier versions of FOP used to expand a leader to fill the
           rest of the line unconditionally, anything following it,
-          like page numbers in a TOC, was actually shifted beyong the
+          like page numbers in a TOC, was actually shifted beyond the
           right margin.
         </p>
         <p>
@@ -505,7 +505,7 @@ public class DefaultErrorListener implements ErrorListener {
           odd page number, the processor inserts a blank page to keep odd and
           even page numbers alternating (similar for the case the current page
           sequence ends with an even page number and the next page sequence
-          starts with an even page number.
+          starts with an even page number).
         </p>
         <p>
           If you don't want to have this blank page, use
