@@ -219,6 +219,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
                 atts.addAttribute(XML_NAMESPACE, "lang", "xml:lang", XMLUtil.CDATA,
                         XMLUtil.toRFC3066(lang));
             }
+            XMLUtil.addAttribute(atts, XMLConstants.XML_SPACE, "preserve");
             addForeignAttributes(atts);
             handler.startElement(EL_PAGE_SEQUENCE, atts);
             if (this.getUserAgent().isAccessibilityEnabled()) {
@@ -540,7 +541,6 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
             int[] dx, String text) throws IFException {
         try {
             AttributesImpl atts = new AttributesImpl();
-            XMLUtil.addAttribute(atts, XMLConstants.XML_SPACE, "preserve");
             addAttribute(atts, "x", Integer.toString(x));
             addAttribute(atts, "y", Integer.toString(y));
             if (letterSpacing != 0) {
