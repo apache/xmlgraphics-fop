@@ -35,7 +35,6 @@ import javax.xml.transform.dom.DOMSource;
 
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.w3c.dom.Document;
-
 import org.xml.sax.SAXException;
 
 import org.apache.commons.io.IOUtils;
@@ -95,7 +94,6 @@ public abstract class AbstractIntermediateTestCase extends XMLTestCase {
             env.saveDOM(intermediate, new File(outputDir,
                     getName() + ".1" + getIntermediateFileExtension()));
         }
-        validate(intermediate);
     }
 
     /** {@inheritDoc} */
@@ -172,6 +170,7 @@ public abstract class AbstractIntermediateTestCase extends XMLTestCase {
      * @throws Exception if the test fails
      */
     public void testParserToIntermediateFormat() throws Exception {
+        validate(intermediate);
         Source src = new DOMSource(intermediate);
         Document doc = parseAndRenderToIntermediateFormat(src);
         if (outputDir != null) {

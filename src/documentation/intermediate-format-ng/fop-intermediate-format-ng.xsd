@@ -20,6 +20,8 @@
   targetNamespace="http://xmlgraphics.apache.org/fop/intermediate"
   xmlns:mf="http://xmlgraphics.apache.org/fop/intermediate"
   xmlns:nav="http://xmlgraphics.apache.org/fop/intermediate/document-navigation">
+  <xs:import namespace="http://www.w3.org/XML/1998/namespace"
+    schemaLocation="http://www.w3.org/2001/xml.xsd"/>
   <xs:import namespace="http://xmlgraphics.apache.org/fop/intermediate/document-navigation"
     schemaLocation="fop-intermediate-format-ng-nav.xsd"/>
   <xs:import namespace="adobe:ns:meta/" schemaLocation="xmp-metadata.xsd"/>
@@ -61,6 +63,7 @@
         <xs:element ref="mf:page" minOccurs="1" maxOccurs="unbounded"/>
       </xs:sequence>
       <xs:attribute name="id" type="xs:ID"/>
+      <xs:attribute ref="xml:space"/>
       <xs:attributeGroup ref="mf:foreignAtts"/>
     </xs:complexType>
   </xs:element>
