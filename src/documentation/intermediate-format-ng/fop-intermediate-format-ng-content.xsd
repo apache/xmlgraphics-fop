@@ -20,8 +20,6 @@
   targetNamespace="http://xmlgraphics.apache.org/fop/intermediate"
   xmlns:mf="http://xmlgraphics.apache.org/fop/intermediate">
   <xs:include schemaLocation="fop-intermediate-format-ng-datatypes.xsd"/>
-  <xs:import namespace="http://www.w3.org/XML/1998/namespace"
-    schemaLocation="http://www.w3.org/2001/xml.xsd"/>
   <xs:complexType name="contentType">
     <xs:choice maxOccurs="unbounded" minOccurs="0">
       <xs:element name="viewport">
@@ -68,7 +66,6 @@
                   <xs:list itemType="mf:lengthType"/>
                 </xs:simpleType>
               </xs:attribute>
-              <xs:attribute ref="xml:space"/>
             </xs:extension>
           </xs:simpleContent>
         </xs:complexType>
