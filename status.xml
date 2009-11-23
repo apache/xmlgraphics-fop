@@ -58,6 +58,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="VH" type="fix" fixes-bug="48185" due-to="Harald G. Henne">
+        Bugfix in AFP output: rounding error when computing the CMYK components of a color.
+      </action>
       <action context="Code" dev="VH" type="fix" fixes-bug="48167" due-to="Venkat Reddy">
         Bugfix: when #CMYK pseudo-profile was used in the rgb-icc() function, always the fallback 
         RGB colors were used instead.

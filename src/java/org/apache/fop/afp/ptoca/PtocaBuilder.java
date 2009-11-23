@@ -329,7 +329,7 @@ public abstract class PtocaBuilder implements PtocaConstants {
             float[] comps = col.getColorComponents(null);
             assert comps.length == 4;
             for (int i = 0; i < 4; i++) {
-                int component = Math.round(comps[i] * 256);
+                int component = Math.round(comps[i] * 255);
                 writeByte(component);
             }
         } else {
