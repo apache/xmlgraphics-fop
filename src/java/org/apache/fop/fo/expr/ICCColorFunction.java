@@ -58,9 +58,11 @@ class ICCColorFunction extends FunctionBase {
             //a) before the fo:declarations,
             //b) or in a document without fo:declarations?
             //=> return the sRGB fallback
-            Property[] rgbArgs = new Property[3];
-            System.arraycopy(args, 0, rgbArgs, 0, 3);
-            return new RGBColorFunction().eval(rgbArgs, pInfo);
+            if (!ColorUtil.isPseudoProfile(colorProfileName)) {
+                Property[] rgbArgs = new Property[3];
+                System.arraycopy(args, 0, rgbArgs, 0, 3);
+                return new RGBColorFunction().eval(rgbArgs, pInfo);
+            }
         } else {
             cp = decls.getColorProfile(colorProfileName);
             if (cp == null) {

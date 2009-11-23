@@ -58,6 +58,10 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Code" dev="VH" type="fix" fixes-bug="48167" due-to="Venkat Reddy">
+        Bugfix: when #CMYK pseudo-profile was used in the rgb-icc() function, always the fallback 
+        RGB colors were used instead.
+      </action>
       <action context="Layout" dev="VH" type="fix" fixes-bug="48082">
         Bugfix: value of conditional space not always taken into account in the calculation of a 
         table’s height.
