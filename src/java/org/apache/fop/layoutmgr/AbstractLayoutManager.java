@@ -20,6 +20,7 @@
 package org.apache.fop.layoutmgr;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -463,11 +464,8 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
         isFinished = false;
         curChildLM = null;
         childLMiter = new LMiter(this);
-        /*
-         * Reset the children LM. Can't rely on childLMiter since it may have
-         * been set to null in checkEndOfLayout.
-         */
-        for (LMiter iter = new LMiter(this); iter.hasNext();) {
+        /* Reset all the children LM that have been created so far. */
+        for (Iterator iter = getChildLMs().iterator(); iter.hasNext();) {
             ((LayoutManager) iter.next()).reset();
         }
         if (fobj != null) {
