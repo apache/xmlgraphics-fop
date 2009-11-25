@@ -58,6 +58,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="JM" type="fix" fixes-bug="48048" due-to="D.W. Harks">
+        Bugfix in AFP output: fixed flags in GOCA GBAR order.
+      </action>
       <action context="Renderers" dev="VH" type="fix" fixes-bug="48185" due-to="Harald G. Henne">
         Bugfix in AFP output: rounding error when computing the CMYK components of a color.
       </action>
