@@ -75,6 +75,13 @@ public class ColorUtilTestCase extends TestCase {
         Color col1 = ColorUtil.parseColorString(null, "#ff0000cc");
         Color col2 = ColorUtil.parseColorString(null, "#ff0000cc");
         assertEquals(col1, col2);
+
+        col1 = ColorUtil.parseColorString(null, "fop-rgb-icc(0.5,0.5,0.5,#CMYK,,0.0,0.0,0.0,0.5)");
+        col2 = ColorUtil.parseColorString(null, "cmyk(0.0,0.0,0.0,0.5)");
+        assertEquals(col1, col2);
+
+        col2 = ColorUtil.parseColorString(null, "fop-rgb-icc(0.5,0.5,0.5,#CMYK,,0.5,0.5,0.5,0.0)");
+        assertFalse(col1.equals(col2));
     }
 
     /**
@@ -120,7 +127,7 @@ public class ColorUtilTestCase extends TestCase {
         //TODO Anyone know what's going on here?
         assertEquals(0, colActual.getBlue());
         assertEquals(cs, colActual.getColorSpace());
-        float[] comps = colActual.getOriginalColorComponents();
+        float[] comps = colActual.getColorComponents(null);
         assertEquals(3, comps.length);
         assertEquals(1f, comps[0], 0);
         assertEquals(0f, comps[1], 0);
@@ -148,7 +155,7 @@ public class ColorUtilTestCase extends TestCase {
         assertEquals(255, colActual.getGreen());
         assertEquals(0, colActual.getBlue());
         assertEquals(CMYKColorSpace.getInstance(), colActual.getColorSpace());
-        float[] comps = colActual.getOriginalColorComponents();
+        float[] comps = colActual.getColorComponents(null);
         assertEquals(4, comps.length);
         assertEquals(0f, comps[0], 0);
         assertEquals(0f, comps[1], 0);
@@ -163,7 +170,7 @@ public class ColorUtilTestCase extends TestCase {
         assertEquals(199, colActual.getGreen());
         assertEquals(172, colActual.getBlue());
         assertEquals(CMYKColorSpace.getInstance(), colActual.getColorSpace());
-        comps = colActual.getOriginalColorComponents();
+        comps = colActual.getColorComponents(null);
         assertEquals(0.0274f, comps[0], 0.001);
         assertEquals(0.2196f, comps[1], 0.001);
         assertEquals(0.3216f, comps[2], 0.001);
@@ -177,13 +184,28 @@ public class ColorUtilTestCase extends TestCase {
         assertEquals(255, colActual.getGreen());
         assertEquals(0, colActual.getBlue());
         assertEquals(CMYKColorSpace.getInstance(), colActual.getColorSpace());
-        comps = colActual.getOriginalColorComponents();
+        comps = colActual.getColorComponents(null);
         assertEquals(4, comps.length);
         assertEquals(0f, comps[0], 0);
         assertEquals(0f, comps[1], 0);
         assertEquals(1f, comps[2], 0);
         assertEquals(0f, comps[3], 0);
         assertEquals("fop-rgb-icc(1.0,1.0,0.0,#CMYK,,0.0,0.0,1.0,0.0)",
+                ColorUtil.colorToString(colActual));
+
+        colSpec = "fop-rgb-icc(0.5,0.5,0.5,#CMYK,,0.0,0.0,0.0,0.5)";
+        colActual = (ColorExt)ColorUtil.parseColorString(null, colSpec);
+        assertEquals(127, colActual.getRed());
+        assertEquals(127, colActual.getGreen());
+        assertEquals(127, colActual.getBlue());
+        assertEquals(CMYKColorSpace.getInstance(), colActual.getColorSpace());
+        comps = colActual.getColorComponents(null);
+        assertEquals(4, comps.length);
+        assertEquals(0f, comps[0], 0);
+        assertEquals(0f, comps[1], 0);
+        assertEquals(0f, comps[2], 0);
+        assertEquals(0.5f, comps[3], 0);
+        assertEquals("fop-rgb-icc(0.5,0.5,0.5,#CMYK,,0.0,0.0,0.0,0.5)",
                 ColorUtil.colorToString(colActual));
     }
 

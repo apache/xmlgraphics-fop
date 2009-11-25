@@ -21,6 +21,7 @@ package org.apache.fop.util;
 
 import java.awt.Color;
 import java.awt.color.ColorSpace;
+import java.util.Arrays;
 
 /**
  * Color helper class.
@@ -120,6 +121,7 @@ public final class ColorExt extends Color {
     public static ColorExt createFromSvgIccColor(float red, float green,
             float blue, float opacity, String profileName, String profileHref,
             ColorSpace profileCS, float[] colorValues) {
+        //TODO this method is not referenced by FOP, can it be deleted?
         ColorExt ce = new ColorExt(red, green, blue, opacity);
         ce.rgbReplacementRed = -1;
         ce.rgbReplacementGreen = -1;
@@ -130,6 +132,57 @@ public final class ColorExt extends Color {
         ce.colorValues = colorValues;
         return ce;
 
+    }
+
+    /** {@inheritDoc} */
+    public int hashCode() {
+        //implementation from the superclass should be good enough for our purposes
+        return super.hashCode();
+    }
+
+    /** {@inheritDoc} */
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!super.equals(obj)) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        ColorExt other = (ColorExt)obj;
+        //TODO maybe use super.getColorComponents() instead
+        if (!Arrays.equals(colorValues, other.colorValues)) {
+            return false;
+        }
+        if (iccProfileName == null) {
+            if (other.iccProfileName != null) {
+                return false;
+            }
+        } else if (!iccProfileName.equals(other.iccProfileName)) {
+            return false;
+        }
+        if (iccProfileSrc == null) {
+            if (other.iccProfileSrc != null) {
+                return false;
+            }
+        } else if (!iccProfileSrc.equals(other.iccProfileSrc)) {
+            return false;
+        }
+        if (Float.floatToIntBits(rgbReplacementBlue)
+                != Float.floatToIntBits(other.rgbReplacementBlue)) {
+            return false;
+        }
+        if (Float.floatToIntBits(rgbReplacementGreen)
+                != Float.floatToIntBits(other.rgbReplacementGreen)) {
+            return false;
+        }
+        if (Float.floatToIntBits(rgbReplacementRed)
+                != Float.floatToIntBits(other.rgbReplacementRed)) {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -154,14 +207,19 @@ public final class ColorExt extends Color {
      * @return the original ColorSpace
      */
     public ColorSpace getOrigColorSpace() {
+        //TODO this method is probably unnecessary due to super.cs and getColorSpace()
         return this.colorSpace;
     }
 
     /**
+     * Returns the original color values.
      * @return the original color values
      */
     public float[] getOriginalColorComponents() {
-        return this.colorValues;
+        //TODO this method is probably unnecessary due to super.fvalue and getColorComponents()
+        float[] copy = new float[this.colorValues.length];
+        System.arraycopy(this.colorValues, 0, copy, 0, copy.length);
+        return copy;
     }
 
     /**
