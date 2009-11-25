@@ -1258,8 +1258,6 @@ public class PDFRenderer extends AbstractPathOrientedRenderer implements PDFConf
         context.setProperty(PDFRendererContextConstants.PDF_DOCUMENT, pdfDoc);
         context.setProperty(PDFRendererContextConstants.OUTPUT_STREAM, ostream);
         context.setProperty(PDFRendererContextConstants.PDF_PAGE, currentPage);
-        context.setProperty(PDFRendererContextConstants.PDF_CONTEXT,
-                    currentContext == null ? currentPage : currentContext);
         context.setProperty(PDFRendererContextConstants.PDF_CONTEXT, currentContext);
         context.setProperty(PDFRendererContextConstants.PDF_STREAM, generator.getStream());
         context.setProperty(PDFRendererContextConstants.PDF_FONT_INFO, fontInfo);
