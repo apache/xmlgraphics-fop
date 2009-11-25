@@ -24,7 +24,6 @@ import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.geom.Rectangle2D.Double;
 import java.io.IOException;
 import java.util.Map;
 
@@ -219,13 +218,17 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
             scaleY = scales.getY();
         }
 
+        //PDF uses the lower left as origin, need to transform from FOP's internal coord system
+        AffineTransform boxTransform = new AffineTransform(
+                scaleX / 1000, 0, 0, -scaleY / 1000, 0, scaleY * size.getHeight() / 1000);
+
         this.currentPage = this.pdfDoc.getFactory().makePage(
                 this.pdfResources,
                 index,
-                toPointAndScale(mediaBox, scaleX, scaleY),
-                toPointAndScale(cropBox, scaleX, scaleY),
-                toPointAndScale(bleedBox, scaleX, scaleY),
-                toPointAndScale(trimBox, scaleX, scaleY));
+                toPDFCoordSystem(mediaBox, boxTransform),
+                toPDFCoordSystem(cropBox, boxTransform),
+                toPDFCoordSystem(bleedBox, boxTransform),
+                toPDFCoordSystem(trimBox, boxTransform));
         if (accessEnabled) {
             logicalStructureHandler.startPage(currentPage);
         }
@@ -244,11 +247,8 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
         generator.concatenate(basicPageTransform);
     }
 
-    private Double toPointAndScale(Rectangle box, double scaleX, double scaleY) {
-        return new Rectangle2D.Double(box.getX() * scaleX / 1000,
-                box.getY() * scaleY / 1000,
-                box.getWidth() * scaleX / 1000,
-                box.getHeight() * scaleY / 1000);
+    private Rectangle2D toPDFCoordSystem(Rectangle box, AffineTransform transform) {
+        return transform.createTransformedShape(box).getBounds2D();
     }
 
     /** {@inheritDoc} */
