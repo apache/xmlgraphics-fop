@@ -27,8 +27,8 @@ import java.io.OutputStream;
  */
 public class GraphicsAreaBegin extends AbstractGraphicsDrawingOrder {
 
-    private static final int RES1 = 1;
-    private static final int BOUNDARY = 2;
+    private static final int RES1 = 128;
+    private static final int BOUNDARY = 64;
     private static final int NO_BOUNDARY = 0;
 
     /** draw boundary lines around this area */
