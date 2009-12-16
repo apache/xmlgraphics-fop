@@ -17,6 +17,9 @@
 -->
 <!-- $Id$ -->
 <news>
+  <item date="2009-12-14" title="New committer">
+    <p>Welcome Pascal Sancho!</p>
+  </item>
   <item date="2008-08-05" title="Apache FOP 0.95 Released">
     <p>
       The Apache FOP team is delighted to present you a production grade
