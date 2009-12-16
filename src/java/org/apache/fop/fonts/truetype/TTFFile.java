@@ -20,6 +20,7 @@
 package org.apache.fop.fonts.truetype;
 
 import java.io.IOException;
+import java.util.BitSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -206,12 +207,10 @@ public class TTFFile {
 
         unicodeMapping = new java.util.ArrayList();
 
-        //Read CMAP table and correct mtxTab.index
-        int mtxPtr = 0;
-
         seekTab(in, "cmap", 2);
         int numCMap = in.readTTFUShort();    // Number of cmap subtables
         long cmapUniOffset = 0;
+        long symbolMapOffset = 0;
 
         if (log.isDebugEnabled()) {
             log.debug(numCMap + " cmap tables");
@@ -230,12 +229,26 @@ public class TTFFile {
             if (cmapPID == 3 && cmapEID == 1) {
                 cmapUniOffset = cmapOffset;
             }
+            if (cmapPID == 3 && cmapEID == 0) {
+                symbolMapOffset = cmapOffset;
+            }
         }
 
-        if (cmapUniOffset <= 0) {
-            log.fatal("Unsupported TrueType font: Unicode cmap table not present. Aborting");
+        if (cmapUniOffset > 0) {
+            return readUnicodeCmap(in, cmapUniOffset, 1);
+        } else if (symbolMapOffset > 0) {
+            return readUnicodeCmap(in, symbolMapOffset, 0);
+        } else {
+            log.fatal("Unsupported TrueType font: No Unicode or Symbol cmap table"
+                    + " not present. Aborting");
             return false;
         }
+    }
+
+    private boolean readUnicodeCmap(FontFileReader in, long cmapUniOffset, int encodingID)
+            throws IOException {
+        //Read CMAP table and correct mtxTab.index
+        int mtxPtr = 0;
 
         // Read unicode cmap
         seekTab(in, "cmap", cmapUniOffset);
@@ -288,6 +301,8 @@ public class TTFFile {
 
             int glyphIdArrayOffset = in.getCurrentPos();
 
+            BitSet eightBitGlyphs = new BitSet(256);
+
             // Insert the unicode id for the glyphs in mtxTab
             // and fill in the cmaps ArrayList
 
@@ -297,12 +312,23 @@ public class TTFFile {
                     log.trace(i + ": " + cmapStartCounts[i]
                                                          + " - " + cmapEndCounts[i]);
                 }
+                if (log.isDebugEnabled()) {
+                    if (isInPrivateUseArea(cmapStartCounts[i], cmapEndCounts[i])) {
+                        log.debug("Font contains glyphs in the Unicode private use area: "
+                                + Integer.toHexString(cmapStartCounts[i]) + " - "
+                                + Integer.toHexString(cmapEndCounts[i]));
+                    }
+                }
 
                 for (int j = cmapStartCounts[i]; j <= cmapEndCounts[i]; j++) {
 
                     // Update lastChar
                     if (j < 256 && j > lastChar) {
                         lastChar = (short)j;
+                    }
+
+                    if (j < 256) {
+                        eightBitGlyphs.set(j);
                     }
 
                     if (mtxPtr < mtxTab.length) {
@@ -322,6 +348,17 @@ public class TTFFile {
                             unicodeMapping.add(new UnicodeMapping(glyphIdx, j));
                             mtxTab[glyphIdx].getUnicodeIndex().add(new Integer(j));
 
+                            if (encodingID == 0 && j >= 0xF020 && j <= 0xF0FF) {
+                                //Experimental: Mapping 0xF020-0xF0FF to 0x0020-0x00FF
+                                //Tested with Wingdings and Symbol TTF fonts which map their
+                                //glyphs in the region 0xF020-0xF0FF.
+                                int mapped = j - 0xF000;
+                                if (!eightBitGlyphs.get(mapped)) {
+                                    //Only map if Unicode code point hasn't been mapped before
+                                    unicodeMapping.add(new UnicodeMapping(glyphIdx, mapped));
+                                    mtxTab[glyphIdx].getUnicodeIndex().add(new Integer(mapped));
+                                }
+                            }
 
                             // Also add winAnsiWidth
                             List v = (List)ansiIndex.get(new Integer(j));
@@ -394,8 +431,19 @@ public class TTFFile {
                     }
                 }
             }
+        } else {
+            log.error("Cmap format not supported: " + cmapFormat);
+            return false;
         }
         return true;
+    }
+
+    private boolean isInPrivateUseArea(int start, int end) {
+        return (isInPrivateUseArea(start) || isInPrivateUseArea(end));
+    }
+
+    private boolean isInPrivateUseArea(int unicode) {
+        return (unicode >= 0xE000 && unicode <= 0xF8FF);
     }
 
     /**
@@ -803,9 +851,15 @@ public class TTFFile {
      * @throws IOException in case of an I/O problem
      */
     protected void readFontHeader(FontFileReader in) throws IOException {
-        seekTab(in, "head", 2 * 4 + 2 * 4 + 2);
+        seekTab(in, "head", 2 * 4 + 2 * 4);
+        int flags = in.readTTFUShort();
+        if (log.isDebugEnabled()) {
+            log.debug("flags: " + flags + " - " + Integer.toString(flags, 2));
+        }
         upem = in.readTTFUShort();
-        log.debug("unit per em: " + upem);
+        if (log.isDebugEnabled()) {
+            log.debug("unit per em: " + upem);
+        }
 
         in.skip(16);
 
@@ -813,6 +867,12 @@ public class TTFFile {
         fontBBox2 = in.readTTFShort();
         fontBBox3 = in.readTTFShort();
         fontBBox4 = in.readTTFShort();
+        if (log.isDebugEnabled()) {
+            log.debug("font bbox: xMin=" + fontBBox1
+                    + " yMin=" + fontBBox2
+                    + " xMax=" + fontBBox3
+                    + " yMax=" + fontBBox4);
+        }
 
         in.skip(2 + 2 + 2);
 
@@ -841,15 +901,16 @@ public class TTFFile {
             throws IOException {
         seekTab(in, "hhea", 4);
         hheaAscender = in.readTTFShort();
-        log.debug("hhea.Ascender: " + hheaAscender + " " + convertTTFUnit2PDFUnit(hheaAscender));
         hheaDescender = in.readTTFShort();
-        log.debug("hhea.Descender: " + hheaDescender + " " + convertTTFUnit2PDFUnit(hheaDescender));
 
         in.skip(2 + 2 + 3 * 2 + 8 * 2);
         nhmtx = in.readTTFUShort();
-        log.debug("Number of horizontal metrics: " + nhmtx);
 
-
+        if (log.isDebugEnabled()) {
+            log.debug("hhea.Ascender: " + formatUnitsForDebug(hheaAscender));
+            log.debug("hhea.Descender: " + formatUnitsForDebug(hheaDescender));
+            log.debug("Number of horizontal metrics: " + nhmtx);
+        }
     }
 
     /**
@@ -1013,17 +1074,23 @@ public class TTFFile {
             int v;
             os2Ascender = in.readTTFShort(); //sTypoAscender
             os2Descender = in.readTTFShort(); //sTypoDescender
-            v = in.readTTFShort(); //sTypoLineGap
-            v = in.readTTFUShort(); //usWinAscent
-            v = in.readTTFUShort(); //usWinDescent
             if (log.isDebugEnabled()) {
                 log.debug("sTypoAscender: " + os2Ascender
-                        + " " + convertTTFUnit2PDFUnit(os2Ascender));
+                        + " -> internal " + convertTTFUnit2PDFUnit(os2Ascender));
                 log.debug("sTypoDescender: " + os2Descender
-                        + " " + convertTTFUnit2PDFUnit(os2Descender));
+                        + " -> internal " + convertTTFUnit2PDFUnit(os2Descender));
+            }
+            v = in.readTTFShort(); //sTypoLineGap
+            if (log.isDebugEnabled()) {
                 log.debug("sTypoLineGap: " + v);
-                log.debug("usWinAscent: " + v  + " " + convertTTFUnit2PDFUnit(v));
-                log.debug("usWinDescent: " + v + " " + convertTTFUnit2PDFUnit(v));
+            }
+            v = in.readTTFUShort(); //usWinAscent
+            if (log.isDebugEnabled()) {
+                log.debug("usWinAscent: " + formatUnitsForDebug(v));
+            }
+            v = in.readTTFUShort(); //usWinDescent
+            if (log.isDebugEnabled()) {
+                log.debug("usWinDescent: " + formatUnitsForDebug(v));
             }
 
             //version 1 OS/2 table might end here
@@ -1197,12 +1264,10 @@ public class TTFFile {
         if (dirTab != null) {
             in.seekSet(dirTab.getOffset() + 4 + 4 + 2);
             xHeight = in.readTTFUShort();
-            log.debug("xHeight from PCLT: " + xHeight
-                            + " " + convertTTFUnit2PDFUnit(xHeight));
+            log.debug("xHeight from PCLT: " + formatUnitsForDebug(xHeight));
             in.skip(2 * 2);
             capHeight = in.readTTFUShort();
-            log.debug("capHeight from PCLT: " + capHeight
-                            + " " + convertTTFUnit2PDFUnit(capHeight));
+            log.debug("capHeight from PCLT: " + formatUnitsForDebug(capHeight));
             in.skip(2 + 16 + 8 + 6 + 1 + 1);
 
             int serifStyle = in.readTTFUByte();
@@ -1296,10 +1361,8 @@ public class TTFFile {
             }
         }
         if (log.isDebugEnabled()) {
-            log.debug("Ascender from glyph 'd': " + localAscender
-                    + " " + convertTTFUnit2PDFUnit(localAscender));
-            log.debug("Descender from glyph 'p': " + localDescender
-                    + " " + convertTTFUnit2PDFUnit(localDescender));
+            log.debug("Ascender from glyph 'd': " + formatUnitsForDebug(localAscender));
+            log.debug("Descender from glyph 'p': " + formatUnitsForDebug(localDescender));
         }
         if (ascender - descender > upem) {
             log.debug("Replacing specified ascender/descender with derived values to get values"
@@ -1309,10 +1372,8 @@ public class TTFFile {
         }
 
         if (log.isDebugEnabled()) {
-            log.debug("xHeight from glyph 'x': " + localXHeight
-                    + " " + convertTTFUnit2PDFUnit(localXHeight));
-            log.debug("CapHeight from glyph 'H': " + localCapHeight
-                    + " " + convertTTFUnit2PDFUnit(localCapHeight));
+            log.debug("xHeight from glyph 'x': " + formatUnitsForDebug(localXHeight));
+            log.debug("CapHeight from glyph 'H': " + formatUnitsForDebug(localCapHeight));
         }
         if (capHeight == 0) {
             capHeight = localCapHeight;
@@ -1596,6 +1657,10 @@ public class TTFFile {
                            + " " + (int)convertTTFUnit2PDFUnit(fontBBox2) + " "
                            + (int)convertTTFUnit2PDFUnit(fontBBox3) + " "
                            + (int)convertTTFUnit2PDFUnit(fontBBox4) + "]");
+    }
+
+    private String formatUnitsForDebug(int units) {
+        return units + " -> " + convertTTFUnit2PDFUnit(units) + " internal units";
     }
 
     /**
