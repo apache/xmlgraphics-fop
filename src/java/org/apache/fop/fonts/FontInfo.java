@@ -258,30 +258,13 @@ public class FontInfo {
             internalFontKey = getInternalFontKey(key);
         }
 
-        if (internalFontKey == null && weight != Font.WEIGHT_NORMAL) {
-            int diffWeight = (Font.WEIGHT_NORMAL - weight) / 100;
-            int direction = diffWeight > 0 ? 1 : -1;
-            int tryWeight = weight;
-            while (tryWeight != Font.WEIGHT_NORMAL) {
-                tryWeight += 100 * direction;
-                key = createFontKey(family, style, weight);
+        // fallback 2: try the same font-family with default style and try to adjust weight
+        if (internalFontKey == null && style != Font.STYLE_NORMAL) {
+            key = findAdjustWeight(family, Font.STYLE_NORMAL, weight);
+            if (key != null) {
                 internalFontKey = getInternalFontKey(key);
-                if (internalFontKey == null) {
-                    key = createFontKey(family, Font.STYLE_NORMAL, weight);
-                    internalFontKey = getInternalFontKey(key);
-                }
-                if (internalFontKey != null) {
-                    break;
-                }
             }
         }
-
-        // fallback 2: try the same font-family with default style and weight
-        /* obsolete: replaced by the loop above
-        if (internalFontKey == null) {
-            key = createFontKey(family, Font.STYLE_NORMAL, Font.WEIGHT_NORMAL);
-            internalFontKey = getInternalFontKey(key);
-        }*/
 
         // fallback 3: try any family with original style/weight
         if (internalFontKey == null) {
