@@ -58,6 +58,14 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Fonts" dev="JM" type="add">
+        Added support for TrueType fonts with symbol character maps (like "Wingdings" and "Symbol").
+        Character for these fonts are usually found in the 0xF020 to 0xF0FF range
+        (a Unicode private use area). 
+      </action>
+      <action context="Fonts" dev="JM" type="fix">
+        Bugfix: Font selection fallbacks did not work in some cases (ex. bold+italic to normal)
+      </action>
       <action context="Renderers" dev="CB" type="fix" fixes-bug="48290">
         Bugfix: AFP Renderer: AttributeQualifier Triplet occurs before TLE Value.
       </action>
