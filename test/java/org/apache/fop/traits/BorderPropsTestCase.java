@@ -52,7 +52,7 @@ public class BorderPropsTestCase extends TestCase {
         CMYKColorSpace cmykCs = CMYKColorSpace.getInstance();
         float[] rgb = cmykCs.toRGB(cmyk);
         col = ColorExt.createFromFoRgbIcc(rgb[0], rgb[1], rgb[2],
-                null, "#CMYK", cmykCs, cmyk);
+                "#CMYK", null, cmykCs, cmyk);
         b1 = new BorderProps(Constants.EN_INSET, 9999,
                 col, BorderProps.SEPARATE);
         ser = b1.toString();
