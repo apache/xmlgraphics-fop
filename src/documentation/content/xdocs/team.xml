@@ -78,21 +78,23 @@
             from the TeX/LaTeX world. See his <fork href="http://www.leverkruid.eu">home
             page</fork> for some of his private projects.</li>
         <li id="jp"><link href="mailto:pietsch@apache.org">J&#x00F6;rg Pietschmann</link> (JP)</li>
+        <li id="cl"><link href="mailto:tcho@club-internet.fr">Pascal Sancho</link> (PS)
+          works on software solutions for rendering various
+          kinds of documents on various output targets. He's more specifically
+          taking care of PDF generation with FOP.</li>
       </ul>
     </section>
     <section id="contribute-active">
       <title>Active Contributors</title>
       <ul>
-    <li id="lm">Louis Masters</li>
-    <li id="mn">Manoj Nair, Currently consulting for Sony Pictures Entertainment in Los Angeles, CA USA. Previously he worked with Java &amp; related technologies specializing in developing n-tier Web applications.</li>
+        <li id="ak">Alexander Kiel</li>
+        <li id="lm">Louis Masters</li>
+        <li id="mn">Manoj Nair, Currently consulting for Sony Pictures Entertainment in Los Angeles, CA USA. Previously he worked with Java &amp; related technologies specializing in developing n-tier Web applications.</li>
         <li id="rr"><link href="mailto:renaud.richardet AT gmail DOT com">Renaud Richardet</link> (RR)
             is a Java Programmer interested in XML technologies. See his 
             <fork href="http://www.oslutions.com">home page</fork> for more information about him.</li>
-          <li id="ps"><link href="mailto:pascal DOT sancho AT takoma DOT fr">Pascal
-              Sancho</link> works on software solutions for rendering various
-            kinds of documents on various output targets. He's more specifically
-            taking care of PDF generation with FOP.</li>
-    <li id="ls">Luke Shannon, Java Programmer, Toronto, Canada</li>
+        <li id="vr">Venkat Reddy</li>
+        <li id="ls">Luke Shannon, Java Programmer, Toronto, Canada</li>
       </ul>
     </section>
     <section id="founder">
