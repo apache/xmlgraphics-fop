@@ -79,9 +79,9 @@
             page</fork> for some of his private projects.</li>
         <li id="jp"><link href="mailto:pietsch@apache.org">J&#x00F6;rg Pietschmann</link> (JP)</li>
         <li id="cl"><link href="mailto:tcho@club-internet.fr">Pascal Sancho</link> (PS)
-          works on software solutions for rendering various
-          kinds of documents on various output targets. He's more specifically
-          taking care of PDF generation with FOP.</li>
+          is an XML developper from Aix-en-Provence (France). He works on software solutions for
+          rendering various kind of documents on various supports, more specifically taking care
+          of PDF generation with FOP.</li>
       </ul>
     </section>
     <section id="contribute-active">
@@ -97,9 +97,11 @@
           Angeles, CA USA. Previously he worked with Java &amp; related technologies specializing
           in developing n-tier Web applications.</li>
         <li id="rr"><link href="mailto:renaud.richardet AT gmail DOT com">Renaud Richardet</link> (RR)
-            is a Java Programmer interested in XML technologies. See his 
-            <fork href="http://www.oslutions.com">home page</fork> for more information about him.</li>
-        <li id="vr">Venkat Reddy</li>
+          is a Java Programmer interested in XML technologies. See his 
+          <fork href="http://www.oslutions.com">home page</fork> for more information about him.</li>
+        <li id="vr">Vankukuri Venkat Reddy is a Senior Software Engineer in UK, using XML Graphics
+          Project and FOP for his work, and is commited to contributing more to the Apache to be part
+          a great team.</li>
         <li id="ls">Luke Shannon, Java Programmer, Toronto, Canada</li>
       </ul>
     </section>
