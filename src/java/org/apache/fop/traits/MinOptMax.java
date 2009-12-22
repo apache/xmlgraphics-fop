@@ -19,175 +19,326 @@
 
 package org.apache.fop.traits;
 
+import java.io.Serializable;
+
+import org.apache.fop.fo.properties.LengthRangeProperty;
+import org.apache.fop.fo.properties.SpaceProperty;
+
 /**
- * This class holds the resolved (as mpoints) form of a LengthRange or
- * Space type Property value.
- * MinOptMax values are used during layout calculations. The instance
- * variables are package visible.
+ * This class holds the resolved (as mpoints) form of a {@link LengthRangeProperty LengthRange} or
+ * {@link SpaceProperty Space} type property value.
+ * <p/>
+ * Instances of this class are immutable. All arithmetic methods like {@link #plus(MinOptMax) plus},
+ * {@link #minus(MinOptMax) minus} or {@link #mult(int) mult} return a different instance. So it is
+ * possible to pass around instances without copying.
+ * <p/>
+ * <code>MinOptMax</code> values are used during layout calculations.
  */
-public class MinOptMax implements java.io.Serializable, Cloneable {
+public final class MinOptMax implements Serializable {
 
-    /** Publicly visible min(imum), opt(imum) and max(imum) values.*/
-    public int min;
-    public int opt;
-    public int max;
+    private static final long serialVersionUID = -4791524475122206142L;
 
     /**
-     * New min/opt/max with zero values.
+     * The zero <code>MinOptMax</code> instance with <code>min == opt == max == 0</code>.
      */
-    public MinOptMax() {
-        this(0);
-    }
+    public static final MinOptMax ZERO = getInstance(0);
+
+    private final int min;
+    private final int opt;
+    private final int max;
 
     /**
-     * New min/opt/max with one fixed value.
-     *
-     * @param val the value for min, opt and max
-     */
-    public MinOptMax(int val) {
-        this(val, val, val);
-    }
-
-    /**
-     * New min/opt/max with the three values.
+     * Returns an instance of <code>MinOptMax</code> with the given values.
      *
      * @param min the minimum value
      * @param opt the optimum value
      * @param max the maximum value
+     * @return the corresponding instance
+     * @throws IllegalArgumentException if <code>min > opt || max < opt</code>.
      */
-    public MinOptMax(int min, int opt, int max) {
-        // TODO: assert min<=opt<=max
+    public static MinOptMax getInstance(int min, int opt, int max) {
+        if (min > opt) {
+            throw new IllegalArgumentException("min (" + min + ") > opt (" + opt + ")");
+        }
+        if (max < opt) {
+            throw new IllegalArgumentException("max (" + max + ") < opt (" + opt + ")");
+        }
+        return new MinOptMax(min, opt, max);
+    }
+
+    /**
+     * Returns an instance of <code>MinOptMax</code> with one fixed value for all three
+     * properties (min, opt, max).
+     *
+     * @param value the value for min, opt and max
+     * @return the corresponding instance
+     * @see #isStiff()
+     */
+    public static MinOptMax getInstance(int value) {
+        return new MinOptMax(value, value, value);
+    }
+
+    // Private constructor without consistency checks
+    private MinOptMax(int min, int opt, int max) {
+        assert min <= opt && opt <= max;
         this.min = min;
         this.opt = opt;
         this.max = max;
     }
 
     /**
-     * Copy constructor.
+     * Returns the minimum value of this <code>MinOptMax</code>.
      *
-     * @param op the MinOptMax object to copy
+     * @return the minimum value of this <code>MinOptMax</code>.
      */
-    public MinOptMax(MinOptMax op) {
-        this.min = op.min;
-        this.opt = op.opt;
-        this.max = op.max;
+    public int getMin() {
+        return min;
     }
 
-    // TODO: remove this.
+    /**
+     * Returns the optimum value of this <code>MinOptMax</code>.
+     *
+     * @return the optimum value of this <code>MinOptMax</code>.
+     */
+    public int getOpt() {
+        return opt;
+    }
+
+    /**
+     * Returns the maximum value of this <code>MinOptMax</code>.
+     *
+     * @return the maximum value of this <code>MinOptMax</code>.
+     */
+    public int getMax() {
+        return max;
+    }
+
+    /**
+     * Returns the shrinkability of this <code>MinOptMax</code> which is the absolute difference
+     * between <code>min</code> and <code>opt</code>.
+     *
+     * @return the shrinkability of this <code>MinOptMax</code> which is always non-negative.
+     */
+    public int getShrink() {
+        return opt - min;
+    }
+
+    /**
+     * Returns the stretchability of this <code>MinOptMax</code> which is the absolute difference
+     * between <code>opt</code> and <code>max</code>.
+     *
+     * @return the stretchability of this <code>MinOptMax</code> which is always non-negative.
+     */
+    public int getStretch() {
+        return max - opt;
+    }
+
+    /**
+     * Returns the sum of this <code>MinOptMax</code> and the given <code>MinOptMax</code>.
+     *
+     * @param operand the second operand of the sum (the first is this instance itself),
+     * @return the sum of this <code>MinOptMax</code> and the given <code>MinOptMax</code>.
+     */
+    public MinOptMax plus(MinOptMax operand) {
+        return new MinOptMax(min + operand.min, opt + operand.opt, max + operand.max);
+    }
+
+
+    /**
+     * Adds the given value to all three components of this instance and returns the result.
+     *
+     * @param value value to add to the min, opt, max components
+     * @return the result of the addition
+     */
+    public MinOptMax plus(int value) {
+        return new MinOptMax(min + value, opt + value, max + value);
+    }
+
+    /**
+     * Returns the difference of this <code>MinOptMax</code> and the given
+     * <code>MinOptMax</code>. This instance must be a compound of the operand and another
+     * <code>MinOptMax</code>, that is, there must exist a <code>MinOptMax</code> <i>m</i>
+     * such that <code>this.equals(m.plus(operand))</code>. In other words, the operand
+     * must have less shrink and stretch than this instance.
+     *
+     * @param operand the value to be subtracted
+     * @return the difference of this <code>MinOptMax</code> and the given
+     * <code>MinOptMax</code>.
+     * @throws ArithmeticException if this instance has strictly less shrink or stretch
+     * than the operand
+     */
+    public MinOptMax minus(MinOptMax operand) {
+        checkCompatibility(getShrink(), operand.getShrink(), "shrink");
+        checkCompatibility(getStretch(), operand.getStretch(), "stretch");
+        return new MinOptMax(min - operand.min, opt - operand.opt, max - operand.max);
+    }
+
+    private void checkCompatibility(int thisElasticity, int operandElasticity, String msge) {
+        if (thisElasticity < operandElasticity) {
+            throw new ArithmeticException(
+                    "Cannot subtract a MinOptMax from another MinOptMax that has less " + msge
+                            + " (" + thisElasticity + " < " + operandElasticity + ")");
+        }
+    }
+
+    /**
+     * Subtracts the given value from all three components of this instance and returns the result.
+     *
+     * @param value value to subtract from the min, opt, max components
+     * @return the result of the subtraction
+     */
+    public MinOptMax minus(int value) {
+        return new MinOptMax(min - value, opt - value, max - value);
+    }
+
+    /**
+     * Returns an instance with the given value added to the minimal value.
+     *
+     * @param minOperand the minimal value to be added.
+     * @return an instance with the given value added to the minimal value.
+     * @throws IllegalArgumentException if <code>min + minOperand > opt || max < opt</code>.
+     * @deprecated Do not use! It's only for backwards compatibility.
+     */
+    public MinOptMax plusMin(int minOperand) {
+        return getInstance(min + minOperand, opt, max);
+    }
+
+    /**
+     * Returns an instance with the given value subtracted to the minimal value.
+     *
+     * @param minOperand the minimal value to be subtracted.
+     * @return an instance with the given value subtracted to the minimal value.
+     * @throws IllegalArgumentException if <code>min - minOperand > opt || max < opt</code>.
+     * @deprecated Do not use! It's only for backwards compatibility.
+     */
+    public MinOptMax minusMin(int minOperand) {
+        return getInstance(min - minOperand, opt, max);
+    }
+
+    /**
+     * Returns an instance with the given value added to the maximal value.
+     *
+     * @param maxOperand the maximal value to be added.
+     * @return an instance with the given value added to the maximal value.
+     * @throws IllegalArgumentException if <code>min > opt || max < opt + maxOperand</code>.
+     * @deprecated Do not use! It's only for backwards compatibility.
+     */
+    public MinOptMax plusMax(int maxOperand) {
+        return getInstance(min, opt, max + maxOperand);
+    }
+
+    /**
+     * Returns an instance with the given value subtracted to the maximal value.
+     *
+     * @param maxOperand the maximal value to be subtracted.
+     * @return an instance with the given value subtracted to the maximal value.
+     * @throws IllegalArgumentException if <code>min > opt || max < opt - maxOperand</code>.
+     * @deprecated Do not use! It's only for backwards compatibility.
+     */
+    public MinOptMax minusMax(int maxOperand) {
+        return getInstance(min, opt, max - maxOperand);
+    }
+
+    /**
+     * Returns the product of this <code>MinOptMax</code> and the given factor.
+     *
+     * @param factor the factor
+     * @return the product of this <code>MinOptMax</code> and the given factor
+     * @throws IllegalArgumentException if the factor is negative
+     */
+    public MinOptMax mult(int factor) {
+        if (factor < 0) {
+            throw new IllegalArgumentException("factor < 0; was: " + factor);
+        } else if (factor == 1) {
+            return this;
+        } else {
+            return getInstance(min * factor, opt * factor, max * factor);
+        }
+    }
+
+    /**
+     * Determines whether this <code>MinOptMax</code> represents a non-zero dimension, which means
+     * that not all values (min, opt, max) are zero.
+     *
+     * @return <code>true</code> if this <code>MinOptMax</code> represents a non-zero dimension;
+     *         <code>false</code> otherwise.
+     */
+    public boolean isNonZero() {
+        return min != 0 || max != 0;
+    }
+
+    /**
+     * Determines whether this <code>MinOptMax</code> doesn't allow for shrinking or stretching,
+     * which means that all values (min, opt, max) are the same.
+     *
+     * @return <code>true</code> if whether this <code>MinOptMax</code> doesn't allow for shrinking
+     *         or stretching; <code>false</code> otherwise.
+     * @see #isElastic()
+     */
+    public boolean isStiff() {
+        return min == max;
+    }
+
+    /**
+     * Determines whether this <code>MinOptMax</code> allows for shrinking or stretching, which
+     * means that at least one of the min or max values isn't equal to the opt value.
+     *
+     * @return <code>true</code> if this <code>MinOptMax</code> allows for shrinking or stretching;
+     *         <code>false</code> otherwise.
+     * @see #isStiff()
+     */
+    public boolean isElastic() {
+        return min != opt || opt != max;
+    }
+
+    /**
+     * Extends the minimum length to the given length if necessary, and adjusts opt and max
+     * accordingly.
+     *
+     * @param newMin the new minimum length
+     * @return a <code>MinOptMax</code> instance with the minimum length extended
+     */
+    public MinOptMax extendMinimum(int newMin) {
+        if (min < newMin) {
+            int newOpt = Math.max(newMin, opt);
+            int newMax = Math.max(newOpt, max);
+            return getInstance(newMin, newOpt, newMax);
+        } else {
+            return this;
+        }
+    }
+
     /**
      * {@inheritDoc}
      */
-    public Object clone() {
-        try {
-            return super.clone();
-        } catch (CloneNotSupportedException ex) {
-            // SHOULD NEVER OCCUR - all members are primitive types!
-            return null;
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
         }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+
+        MinOptMax minOptMax = (MinOptMax) obj;
+
+        return opt == minOptMax.opt && max == minOptMax.max && min == minOptMax.min;
     }
 
     /**
-     * Subtracts one MinOptMax instance from another returning a new one.
-     * @param op1 first instance to subtract from
-     * @param op2 second instance
-     * @return MinOptMax new instance
+     * {@inheritDoc}
      */
-    public static MinOptMax subtract(MinOptMax op1, MinOptMax op2) {
-        return new MinOptMax(op1.min - op2.max, op1.opt - op2.opt,
-                             op1.max - op2.min);
+    public int hashCode() {
+        int result = min;
+        result = 31 * result + opt;
+        result = 31 * result + max;
+        return result;
     }
 
     /**
-     * Adds one MinOptMax instance to another returning a new one.
-     * @param op1 first instance
-     * @param op2 second instance
-     * @return MinOptMax new instance
+     * {@inheritDoc}
      */
-    public static MinOptMax add(MinOptMax op1, MinOptMax op2) {
-        return new MinOptMax(op1.min + op2.min, op1.opt + op2.opt,
-                             op1.max + op2.max);
-    }
-
-    /**
-     * Multiplies a MinOptMax instance with a factor returning a new instance.
-     * @param op1 MinOptMax instance
-     * @param mult multiplier
-     * @return MinOptMax new instance
-     */
-    public static MinOptMax multiply(MinOptMax op1, double mult) {
-        // TODO: assert mult>0
-        return new MinOptMax((int)(op1.min * mult),
-                             (int)(op1.opt * mult), (int)(op1.max * mult));
-    }
-
-    /**
-     * Adds another MinOptMax instance to this one.
-     * @param op the other instance
-     */
-    public void add(MinOptMax op) {
-        min += op.min;
-        opt += op.opt;
-        max += op.max;
-    }
-
-    /**
-     * Adds min, opt and max to their counterpart components.
-     * @param min the value to add to the minimum value
-     * @param opt the value to add to the optimum value
-     * @param max the value to add to the maximum value
-     */
-    public void add(int min, int opt, int max) {
-        this.min += min;
-        this.opt += opt;
-        this.max += max;
-        // TODO: assert min<=opt<=max
-    }
-
-    /**
-     * Adds a length to all components.
-     * @param len the length to add
-     */
-    public void add(int len) {
-        this.min += len;
-        this.opt += len;
-        this.max += len;
-    }
-
-
-    /**
-     * Subtracts another MinOptMax instance from this one.
-     * @param op the other instance
-     */
-    public void subtract(MinOptMax op) {
-        min -= op.max;
-        opt -= op.opt;
-        max -= op.min;
-    }
-
-    /** @return true if this instance represents a zero-width length (min=opt=max=0) */
-    public boolean isNonZero() {
-        return (min != 0 || max != 0);
-    }
-
-    /** @return true if this instance allows for shrinking or stretching */
-    public boolean isElastic() {
-        return (min != opt || opt != max);
-    }
-
-    /** {@inheritDoc} */
     public String toString() {
-        StringBuffer sb = new StringBuffer();
-        sb.append("MinOptMax[min=");
-        if (min != opt) {
-            sb.append(min).append("; ");
-        }
-        sb.append("opt=");
-        if (opt != max) {
-            sb.append(opt).append("; ");
-        }
-        sb.append("max=").append(max);
-        sb.append("]");
-        return sb.toString();
+        return "MinOptMax[min = " + min + ", opt = " + opt + ", max = " + max + "]";
     }
 }
 

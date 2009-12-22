@@ -34,6 +34,7 @@ import org.apache.fop.render.pdf.PDFCMapTestCase;
 import org.apache.fop.render.pdf.PDFEncodingTestCase;
 import org.apache.fop.render.pdf.PDFsRGBSettingsTestCase;
 import org.apache.fop.render.rtf.RichTextFormatTestSuite;
+import org.apache.fop.traits.MinOptMaxTest;
 
 /**
  * Test suite for basic functionality of FOP.
@@ -45,8 +46,7 @@ public class StandardTestSuite {
      * @return the test suite
      */
     public static Test suite() {
-        TestSuite suite = new TestSuite(
-            "Basic functionality test suite for FOP");
+        TestSuite suite = new TestSuite("Basic functionality test suite for FOP");
         //$JUnit-BEGIN$
         suite.addTest(BasicDriverTestSuite.suite());
         suite.addTest(UtilityCodeTestSuite.suite());
@@ -62,6 +62,7 @@ public class StandardTestSuite {
         suite.addTest(new TestSuite(IFMimickingTestCase.class));
         suite.addTest(new TestSuite(PageBoundariesTest.class));
         suite.addTest(new TestSuite(PageScaleTest.class));
+        suite.addTest(new TestSuite(MinOptMaxTest.class));
         //$JUnit-END$
         return suite;
     }

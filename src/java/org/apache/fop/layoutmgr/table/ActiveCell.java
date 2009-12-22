@@ -38,7 +38,6 @@ import org.apache.fop.layoutmgr.KnuthBlockBox;
 import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthPenalty;
-import org.apache.fop.layoutmgr.MinOptMaxUtil;
 import org.apache.fop.traits.MinOptMax;
 
 /**
@@ -211,8 +210,7 @@ class ActiveCell {
         bpAfterNormal = paddingAfterNormal + pgu.getAfterBorderWidth(ConditionalBorder.NORMAL);
         bpAfterTrailing = paddingAfterTrailing + pgu.getAfterBorderWidth(0, ConditionalBorder.REST);
         elementList = pgu.getElements();
-        handleExplicitHeight(
-                MinOptMaxUtil.toMinOptMax(pgu.getCell().getBlockProgressionDimension(), tableLM),
+        handleExplicitHeight(pgu.getCell().getBlockProgressionDimension().toMinOptMax(tableLM),
                 row.getExplicitHeight());
         knuthIter = elementList.listIterator();
         includedLength = -1;  // Avoid troubles with cells having content of zero length
@@ -239,7 +237,7 @@ class ActiveCell {
      * occurs. The list of elements needs to be re-adjusted after each break.
      */
     private void handleExplicitHeight(MinOptMax cellBPD, MinOptMax rowBPD) {
-        int minBPD = Math.max(cellBPD.min, rowBPD.min);
+        int minBPD = Math.max(cellBPD.getMin(), rowBPD.getMin());
         if (minBPD > 0) {
             ListIterator iter = elementList.listIterator();
             int cumulateLength = 0;
@@ -264,7 +262,7 @@ class ActiveCell {
                 }
             }
         }
-        int optBPD = Math.max(minBPD, Math.max(cellBPD.opt, rowBPD.opt));
+        int optBPD = Math.max(minBPD, Math.max(cellBPD.getOpt(), rowBPD.getOpt()));
         if (pgu.getContentLength() < optBPD) {
             elementList.add(new FillerBox(optBPD - pgu.getContentLength()));
         }

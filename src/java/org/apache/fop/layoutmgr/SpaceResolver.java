@@ -152,7 +152,7 @@ public class SpaceResolver {
     }
 
     private void removeConditionalBorderAndPadding(
-                UnresolvedListElement[] elems, MinOptMax[] lengths, boolean reverse) {
+            UnresolvedListElement[] elems, MinOptMax[] lengths, boolean reverse) {
         for (int i = 0; i < elems.length; i++) {
             int effIndex;
             if (reverse) {
@@ -176,7 +176,7 @@ public class SpaceResolver {
     }
 
     private void performSpaceResolutionRule1(UnresolvedListElement[] elems, MinOptMax[] lengths,
-                    boolean reverse) {
+            boolean reverse) {
         for (int i = 0; i < elems.length; i++) {
             int effIndex;
             if (reverse) {
@@ -274,7 +274,7 @@ public class SpaceResolver {
                 }
                 lengths[i] = null;
             } else {
-                greatestOptimum = Math.max(greatestOptimum, space.getLength().opt);
+                greatestOptimum = Math.max(greatestOptimum, space.getLength().getOpt());
                 remaining++;
             }
         }
@@ -291,7 +291,7 @@ public class SpaceResolver {
                 continue;
             }
             space = (SpaceElement)elems[i];
-            if (space.getLength().opt < greatestOptimum) {
+            if (space.getLength().getOpt() < greatestOptimum) {
                 if (log.isDebugEnabled()) {
                     log.debug("Nulling space-specifier with smaller optimum length "
                             + "using 4.3.1, rule 3: "
@@ -313,8 +313,8 @@ public class SpaceResolver {
                 continue;
             }
             space = (SpaceElement)elems[i];
-            min = Math.max(min, space.getLength().min);
-            max = Math.min(max, space.getLength().max);
+            min = Math.max(min, space.getLength().getMin());
+            max = Math.min(max, space.getLength().getMax());
             if (remaining > 1) {
                 if (log.isDebugEnabled()) {
                     log.debug("Nulling non-last space-specifier using 4.3.1, rule 3, second part: "
@@ -323,8 +323,7 @@ public class SpaceResolver {
                 lengths[i] = null;
                 remaining--;
             } else {
-                lengths[i].min = min;
-                lengths[i].max = max;
+                lengths[i] = MinOptMax.getInstance(min, lengths[i].getOpt(), max);
             }
         }
 
@@ -409,54 +408,27 @@ public class SpaceResolver {
     }
 
     private MinOptMax sum(MinOptMax[] lengths) {
-        MinOptMax sum = new MinOptMax();
+        MinOptMax sum = MinOptMax.ZERO;
         for (int i = 0; i < lengths.length; i++) {
             if (lengths[i] != null) {
-                sum.add(lengths[i]);
+                sum = sum.plus(lengths[i]);
             }
         }
         return sum;
     }
 
     private void generate(ListIterator iter) {
-        MinOptMax noBreakLength = new MinOptMax();
-        MinOptMax glue1; //space before break possibility if break occurs
-        //MinOptMax glue2; //difference between glue 1 and 3 when no break occurs
-        MinOptMax glue3; //space after break possibility if break occurs
-        glue1 = sum(firstPartLengths);
-        glue3 = sum(secondPartLengths);
-        noBreakLength = sum(noBreakLengths);
-
-        //This doesn't produce the right glue2
-        //glue2 = new MinOptMax(noBreakLength);
-        //glue2.subtract(glue1);
-        //glue2.subtract(glue3);
-
-        int glue2w = noBreakLength.opt - glue1.opt - glue3.opt;
-        int glue2stretch = (noBreakLength.max - noBreakLength.opt);
-        int glue2shrink = (noBreakLength.opt - noBreakLength.min);
-        glue2stretch -= glue1.max - glue1.opt;
-        glue2stretch -= glue3.max - glue3.opt;
-        glue2shrink -= glue1.opt - glue1.min;
-        glue2shrink -= glue3.opt - glue3.min;
+        MinOptMax spaceBeforeBreak = sum(firstPartLengths);
+        MinOptMax spaceAfterBreak = sum(secondPartLengths);
 
         boolean hasPrecedingNonBlock = false;
-        if (log.isDebugEnabled()) {
-            log.debug("noBreakLength=" + noBreakLength
-                    + ", glue1=" + glue1
-                    + ", glue2=" + glue2w + "+" + glue2stretch + "-" + glue2shrink
-                    + ", glue3=" + glue3);
-        }
         if (breakPoss != null) {
-            boolean forcedBreak = breakPoss.isForcedBreak();
-            if (glue1.isNonZero()) {
-                iter.add(new KnuthPenalty(0, KnuthPenalty.INFINITE,
-                        false, (Position)null, true));
-                iter.add(new KnuthGlue(glue1.opt, glue1.max - glue1.opt, glue1.opt - glue1.min,
-                        (Position)null, true));
-                if (forcedBreak) {
+            if (spaceBeforeBreak.isNonZero()) {
+                iter.add(new KnuthPenalty(0, KnuthPenalty.INFINITE, false, null, true));
+                iter.add(new KnuthGlue(spaceBeforeBreak, null, true));
+                if (breakPoss.isForcedBreak()) {
                     //Otherwise, the preceding penalty and glue will be cut off
-                    iter.add(new KnuthBox(0, (Position)null, true));
+                    iter.add(new KnuthBox(0, null, true));
                 }
             }
             iter.add(new KnuthPenalty(breakPoss.getPenaltyWidth(), breakPoss.getPenaltyValue(),
@@ -465,32 +437,38 @@ public class SpaceResolver {
             if (breakPoss.getPenaltyValue() <= -KnuthPenalty.INFINITE) {
                 return; //return early. Not necessary (even wrong) to add additional elements
             }
-            if (glue2w != 0 || glue2stretch != 0 || glue2shrink != 0) {
-                iter.add(new KnuthGlue(glue2w, glue2stretch, glue2shrink,
-                        (Position)null, true));
+
+            // No break
+            // TODO: We can't use a MinOptMax for glue2, because min <= opt <= max is not always true - why?
+            MinOptMax noBreakLength = sum(noBreakLengths);
+            MinOptMax spaceSum = spaceBeforeBreak.plus(spaceAfterBreak);
+            int glue2width = noBreakLength.getOpt() - spaceSum.getOpt();
+            int glue2stretch = noBreakLength.getStretch() - spaceSum.getStretch();
+            int glue2shrink = noBreakLength.getShrink() - spaceSum.getShrink();
+
+            if (glue2width != 0 || glue2stretch != 0 || glue2shrink != 0) {
+                iter.add(new KnuthGlue(glue2width, glue2stretch, glue2shrink, null, true));
             }
         } else {
-            if (glue1.isNonZero()) {
-                throw new IllegalStateException("glue1 should be 0 in this case");
+            if (spaceBeforeBreak.isNonZero()) {
+                throw new IllegalStateException("spaceBeforeBreak should be 0 in this case");
             }
         }
         Position pos = null;
         if (breakPoss == null) {
             pos = new SpaceHandlingPosition(this);
         }
-        if (glue3.isNonZero() || pos != null) {
+        if (spaceAfterBreak.isNonZero() || pos != null) {
             iter.add(new KnuthBox(0, pos, true));
         }
-        if (glue3.isNonZero()) {
-            iter.add(new KnuthPenalty(0, KnuthPenalty.INFINITE,
-                    false, (Position)null, true));
-            iter.add(new KnuthGlue(glue3.opt, glue3.max - glue3.opt, glue3.opt - glue3.min,
-                    (Position)null, true));
+        if (spaceAfterBreak.isNonZero()) {
+            iter.add(new KnuthPenalty(0, KnuthPenalty.INFINITE, false, null, true));
+            iter.add(new KnuthGlue(spaceAfterBreak, null, true));
             hasPrecedingNonBlock = true;
         }
         if (isLast && hasPrecedingNonBlock) {
             //Otherwise, the preceding penalty and glue will be cut off
-            iter.add(new KnuthBox(0, (Position)null, true));
+            iter.add(new KnuthBox(0, null, true));
         }
     }
 
@@ -608,9 +586,7 @@ public class SpaceResolver {
 
         /** {@inheritDoc} */
         public String toString() {
-            StringBuffer sb = new StringBuffer();
-            sb.append("SpaceHandlingPosition");
-            return sb.toString();
+            return "SpaceHandlingPosition";
         }
     }
 
@@ -739,7 +715,6 @@ public class SpaceResolver {
             }
         }
     }
-
 
 
 }

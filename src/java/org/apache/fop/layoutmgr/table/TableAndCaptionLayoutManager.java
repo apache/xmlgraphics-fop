@@ -181,7 +181,7 @@ public class TableAndCaptionLayoutManager extends BlockStackingLayoutManager {
             curBlockArea = new Block();
             // Set up dimensions
             // Must get dimensions from parent area
-            Area parentArea = parentLM.getParentArea(curBlockArea);
+            Area parentArea = parentLayoutManager.getParentArea(curBlockArea);
             int referenceIPD = parentArea.getIPD();
             curBlockArea.setIPD(referenceIPD);
             // Get reference IPD from parentArea

@@ -19,7 +19,6 @@
 
 package org.apache.fop.layoutmgr;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -204,7 +203,7 @@ public class PageBreaker extends AbstractBreaker {
                         pslm, footnoteSeparator, separatorArea);
             footnoteSeparatorLM.doLayout();
 
-            footnoteSeparatorLength = new MinOptMax(separatorArea.getBPD());
+            footnoteSeparatorLength = MinOptMax.getInstance(separatorArea.getBPD());
         }
     }
 

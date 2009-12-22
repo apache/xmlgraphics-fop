@@ -80,7 +80,7 @@ public abstract class InlineStackingLayoutManager extends AbstractLayoutManager
      */
     protected InlineStackingLayoutManager(FObj node) {
         super(node);
-        extraBPD = new MinOptMax(0);
+        extraBPD = MinOptMax.ZERO;
     }
 
     /**
@@ -100,7 +100,7 @@ public abstract class InlineStackingLayoutManager extends AbstractLayoutManager
      * @return the extra IPD as a MinOptMax spec
      */
     protected MinOptMax getExtraIPD(boolean bNotFirst, boolean bNotLast) {
-        return new MinOptMax(0);
+        return MinOptMax.ZERO;
     }
 
 
@@ -179,23 +179,21 @@ public abstract class InlineStackingLayoutManager extends AbstractLayoutManager
     }
 
     /**
-     * Adds a space to the area
+     * Adds a space to the area.
+     *
      * @param parentArea the area to which to add the space
      * @param spaceRange the space range specifier
-     * @param dSpaceAdjust the factor by which to stretch or shrink the space
+     * @param spaceAdjust the factor by which to stretch or shrink the space
      */
-    protected void addSpace(Area parentArea, MinOptMax spaceRange,
-                            double dSpaceAdjust) {
+    protected void addSpace(Area parentArea, MinOptMax spaceRange, double spaceAdjust) {
         if (spaceRange != null) {
-            int iAdjust = spaceRange.opt;
-            if (dSpaceAdjust > 0.0) {
+            int iAdjust = spaceRange.getOpt();
+            if (spaceAdjust > 0.0) {
                 // Stretch by factor
-                iAdjust += (int) ((double) (spaceRange.max
-                                          - spaceRange.opt) * dSpaceAdjust);
-            } else if (dSpaceAdjust < 0.0) {
+                iAdjust += (int) (spaceRange.getStretch() * spaceAdjust);
+            } else if (spaceAdjust < 0.0) {
                 // Shrink by factor
-                iAdjust += (int) ((double) (spaceRange.opt
-                                          - spaceRange.min) * dSpaceAdjust);
+                iAdjust += (int) (spaceRange.getShrink() * spaceAdjust);
             }
             if (iAdjust != 0) {
                 //getLogger().debug("Add leading space: " + iAdjust);
@@ -257,10 +255,9 @@ public abstract class InlineStackingLayoutManager extends AbstractLayoutManager
     }
 
     /** {@inheritDoc} */
-    public void getWordChars(StringBuffer sbChars, Position pos) {
+    public String getWordChars(Position pos) {
         Position newPos = pos.getPosition();
-        ((InlineLevelLayoutManager)
-         newPos.getLM()).getWordChars(sbChars, newPos);
+        return ((InlineLevelLayoutManager) newPos.getLM()).getWordChars(newPos);
     }
 
     /** {@inheritDoc} */

@@ -43,6 +43,7 @@ import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.hyphenation.Hyphenation;
 import org.apache.fop.hyphenation.Hyphenator;
+import org.apache.fop.layoutmgr.Adjustment;
 import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
 import org.apache.fop.layoutmgr.BreakElement;
 import org.apache.fop.layoutmgr.BreakingAlgorithm;
@@ -235,11 +236,10 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             // set the minimum amount of empty space at the end of the
             // last line
             if (textAlignment == EN_CENTER) {
-                lineFiller = new MinOptMax(lastLineEndIndent);
+                lineFiller = MinOptMax.getInstance(lastLineEndIndent);
             } else {
-                lineFiller = new MinOptMax(lastLineEndIndent,
-                                            lastLineEndIndent,
-                                            layoutManager.ipd);
+                lineFiller = MinOptMax.getInstance(lastLineEndIndent, lastLineEndIndent,
+                        layoutManager.ipd);
             }
 
             // add auxiliary elements at the beginning of the paragraph
@@ -272,7 +272,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                     && textAlignmentLast != EN_JUSTIFY) {
                     this.add(new KnuthGlue(0, 3 * DEFAULT_SPACE_WIDTH, 0,
                                            null, false));
-                    this.add(new KnuthPenalty(lineFiller.opt, -KnuthElement.INFINITE,
+                    this.add(new KnuthPenalty(lineFiller.getOpt(), -KnuthElement.INFINITE,
                                               false, null, false));
                     ignoreAtEnd = 2;
                 } else if (textAlignmentLast != EN_JUSTIFY) {
@@ -282,14 +282,14 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                     this.add(new KnuthPenalty(0, KnuthElement.INFINITE,
                                               false, null, false));
                     this.add(new KnuthGlue(0,
-                            lineFiller.max - lineFiller.opt,
-                            lineFiller.opt - lineFiller.min, null, false));
-                    this.add(new KnuthPenalty(lineFiller.opt, -KnuthElement.INFINITE,
+                            lineFiller.getStretch(),
+                            lineFiller.getShrink(), null, false));
+                    this.add(new KnuthPenalty(lineFiller.getOpt(), -KnuthElement.INFINITE,
                                               false, null, false));
                     ignoreAtEnd = 3;
                 } else {
                     // add only the element representing the forced break
-                    this.add(new KnuthPenalty(lineFiller.opt, -KnuthElement.INFINITE,
+                    this.add(new KnuthPenalty(lineFiller.getOpt(), -KnuthElement.INFINITE,
                                               false, null, false));
                     ignoreAtEnd = 1;
                 }
@@ -393,7 +393,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                    (bestActiveNode.line > 1 ? bestActiveNode.previous.position + 1 : 0),
                    bestActiveNode.position,
                    bestActiveNode.availableShrink - (addedPositions > 0
-                       ? 0 : ((Paragraph)par).lineFiller.opt - ((Paragraph)par).lineFiller.min),
+                       ? 0 : ((Paragraph) par).lineFiller.getShrink()),
                    bestActiveNode.availableStretch,
                    difference, ratio, indent), activePossibility);
             addedPositions++;
@@ -784,7 +784,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         int iBPcount = 0;
         LineBreakingAlgorithm alg = new LineBreakingAlgorithm(alignment,
                                         textAlignment, textAlignmentLast,
-                                        textIndent.getValue(this), currPar.lineFiller.opt,
+                                        textIndent.getValue(this), currPar.lineFiller.getOpt(),
                                         lineHeight.getValue(this), lead, follow,
                                         (knuthParagraphs.indexOf(currPar) == 0),
                                         hyphenationLadderCount.getEnum() == EN_NO_LIMIT
@@ -1057,12 +1057,12 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             breaker.add(new KnuthPenalty(0, KnuthElement.INFINITE, false, elementPosition, false));
             breaker.add(new KnuthGlue(0, -nConditionalOptionalLines * constantLineHeight,
                                         -nConditionalEliminableLines * constantLineHeight,
-                                        LINE_NUMBER_ADJUSTMENT, elementPosition, false));
+                                        Adjustment.LINE_NUMBER_ADJUSTMENT, elementPosition, false));
             breaker.add(new KnuthPenalty(nConditionalOptionalLines * constantLineHeight,
                                            0, false, elementPosition, false));
             breaker.add(new KnuthGlue(0, nConditionalOptionalLines * constantLineHeight,
                                         nConditionalEliminableLines * constantLineHeight,
-                                        LINE_NUMBER_ADJUSTMENT, elementPosition, false));
+                                        Adjustment.LINE_NUMBER_ADJUSTMENT, elementPosition, false));
         } else if (nLastLines != 0) {
             breaker.add(new KnuthPenalty(0, 0, false, elementPosition, false));
         }
@@ -1083,7 +1083,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             list.add(new KnuthPenalty(0, KnuthElement.INFINITE, false, elementPosition, false));
             list.add(new KnuthGlue(0, nConditionalOptionalLines * constantLineHeight,
                                    nConditionalEliminableLines * constantLineHeight,
-                                   LINE_NUMBER_ADJUSTMENT, elementPosition, false));
+                                   Adjustment.LINE_NUMBER_ADJUSTMENT, elementPosition, false));
             list.add(new KnuthBox(0, elementPosition,
                                   (nLastLines == 0 ? true : false)));
         }
@@ -1094,7 +1094,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             list.add(new KnuthBox(0, elementPosition, false));
             list.add(new KnuthPenalty(0, KnuthElement.INFINITE, false, elementPosition, false));
             list.add(new KnuthGlue(0, 1 * constantLineHeight, 0,
-                                   LINE_NUMBER_ADJUSTMENT, elementPosition, false));
+                                   Adjustment.LINE_NUMBER_ADJUSTMENT, elementPosition, false));
             list.add(new KnuthBox(0, elementPosition, false));
         }
 
@@ -1104,7 +1104,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             list.add(new KnuthBox(1 * constantLineHeight, elementPosition, false));
             list.add(new KnuthPenalty(0, KnuthElement.INFINITE, false, elementPosition, false));
             list.add(new KnuthGlue(0, 0, 1 * constantLineHeight,
-                                   LINE_NUMBER_ADJUSTMENT, elementPosition, false));
+                                   Adjustment.LINE_NUMBER_ADJUSTMENT, elementPosition, false));
             list.add(new KnuthBox(0, elementPosition, false));
         }
 
@@ -1200,7 +1200,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             llPoss = (LineLayoutPossibilities)lineLayoutsList.get(p);
             //log.debug("demerits of the chosen layout: " + llPoss.getChosenDemerits());
             for (int i = 0; i < llPoss.getChosenLineCount(); i++) {
-                if (!((BlockLevelLayoutManager) parentLM).mustKeepTogether()
+                if (!((BlockLevelLayoutManager) parentLayoutManager).mustKeepTogether()
                     && i >= fobj.getOrphans()
                     && i <= llPoss.getChosenLineCount() - fobj.getWidows()) {
                     // null penalty allowing a page break between lines
@@ -1213,21 +1213,19 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 //log.debug("linewidth= " + lbp.lineWidth + " difference= " + lbp.difference + " indent= " + lbp.startIndent);
                 MinOptMax contentIPD;
                 if (alignment == EN_JUSTIFY) {
-                    contentIPD = new MinOptMax(
+                    contentIPD = MinOptMax.getInstance(
                         lbp.lineWidth - lbp.difference - lbp.availableShrink,
                         lbp.lineWidth - lbp.difference,
                         lbp.lineWidth - lbp.difference + lbp.availableStretch);
                 } else if (alignment == EN_CENTER) {
-                    contentIPD = new MinOptMax(lbp.lineWidth - 2 * lbp.startIndent);
+                    contentIPD = MinOptMax.getInstance(lbp.lineWidth - 2 * lbp.startIndent);
                 } else if (alignment == EN_END) {
-                    contentIPD = new MinOptMax(lbp.lineWidth - lbp.startIndent);
+                    contentIPD = MinOptMax.getInstance(lbp.lineWidth - lbp.startIndent);
                 } else {
-                    contentIPD = new MinOptMax(lbp.lineWidth - lbp.difference + lbp.startIndent);
+                    contentIPD = MinOptMax.getInstance(lbp.lineWidth - lbp.difference + lbp.startIndent);
                 }
-                returnList.add(new KnuthBlockBox(lbp.lineHeight,
-                                                 contentIPD,
-                                                 (lbp.ipdAdjust != 0
-                                                         ? lbp.lineWidth - lbp.difference : 0),
+                returnList.add(new KnuthBlockBox(lbp.lineHeight, contentIPD, (lbp.ipdAdjust != 0
+                        ? lbp.lineWidth - lbp.difference : 0),
                                                  lbp, false));
             }
         }
@@ -1277,7 +1275,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 boxCount = 1;
                 auxCount = 0;
                 sbChars = new StringBuffer();
-                currLM.getWordChars(sbChars, firstElement.getPosition());
+                sbChars.append(currLM.getWordChars(firstElement.getPosition()));
                 // look if next elements are boxes too
                 while (currParIterator.hasNext()) {
                     nextElement = (KnuthElement) currParIterator.next();
@@ -1289,7 +1287,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                         }
                         // append text to recreate the whole word
                         boxCount++;
-                        currLM.getWordChars(sbChars, nextElement.getPosition());
+                        sbChars.append(currLM.getWordChars(nextElement.getPosition()));
                     } else if (!nextElement.isAuxiliary()) {
                         // a non-auxiliary non-box KnuthElement: stop
                         // go back to the last box or auxiliary element
@@ -1583,7 +1581,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             lineArea.setBPD(lineArea.getBPD() + context.getSpaceAfter());
         }
         lineArea.finalise();
-        parentLM.addChildArea(lineArea);
+        parentLayoutManager.addChildArea(lineArea);
     }
 
     /**
@@ -1633,7 +1631,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             blocklc.setTrailingSpace(new SpaceSpecifier(false));
         }
         lineArea.updateExtentsFromChildren();
-        parentLM.addChildArea(lineArea);
+        parentLayoutManager.addChildArea(lineArea);
     }
 
     /**
@@ -1644,9 +1642,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         if (childArea instanceof InlineArea) {
             Area parent = getCurrentArea();
             if (getContext().resolveLeadingSpace()) {
-                addSpace(parent,
-                         getContext().getLeadingSpace().resolve(false),
-                         getContext().getSpaceAdjust());
+                addSpace(parent, getContext().getLeadingSpace().resolve(false),
+                        getContext().getSpaceAdjust());
             }
             parent.addChildArea(childArea);
         }

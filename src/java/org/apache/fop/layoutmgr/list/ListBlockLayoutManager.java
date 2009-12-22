@@ -154,7 +154,7 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager
         // if this will create the first block area in a page
         // and display-align is after or center, add space before
         if (layoutContext.getSpaceBefore() > 0) {
-            addBlockSpacing(0.0, new MinOptMax(layoutContext.getSpaceBefore()));
+            addBlockSpacing(0.0, MinOptMax.getInstance(layoutContext.getSpaceBefore()));
         }
 
         addId();
@@ -241,7 +241,7 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager
 
             // Set up dimensions
             // Must get dimensions from parent area
-            /*Area parentArea =*/ parentLM.getParentArea(curBlockArea);
+            /*Area parentArea =*/ parentLayoutManager.getParentArea(curBlockArea);
 
             // set traits
             TraitSetter.setProducerID(curBlockArea, getListBlockFO().getId());

@@ -173,7 +173,7 @@ public class LayoutContext {
     public LayoutContext(int flags) {
         this.flags = flags;
         this.refIPD = 0;
-        stackLimitBP = new MinOptMax(0);
+        stackLimitBP = MinOptMax.ZERO;
         leadingSpace = null;
         trailingSpace = null;
     }

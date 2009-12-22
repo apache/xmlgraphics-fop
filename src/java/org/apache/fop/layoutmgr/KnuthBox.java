@@ -35,7 +35,7 @@ package org.apache.fop.layoutmgr;
 public class KnuthBox extends KnuthElement {
 
     /**
-     * Create a new KnuthBox.
+     * Creates a new <code>KnuthBox</code>.
      *
      * @param width    the width of this box
      * @param pos  the Position stored in this box

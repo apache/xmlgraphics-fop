@@ -116,7 +116,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         this.pageProvider = pageProvider;
         this.layoutListener = layoutListener;
         best = new BestPageRecords();
-        this.footnoteSeparatorLength = (MinOptMax) footnoteSeparatorLength.clone();
+        this.footnoteSeparatorLength = footnoteSeparatorLength;
         this.autoHeight = autoHeight;
         this.favorSinglePart = favorSinglePart;
     }
@@ -483,7 +483,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
             if (allFootnotes > 0) {
                 // this page contains some footnote citations
                 // add the footnote separator width
-                actualWidth += footnoteSeparatorLength.opt;
+                actualWidth += footnoteSeparatorLength.getOpt();
                 if (actualWidth + allFootnotes <= getLineWidth(activeNode.line)) {
                     // there is enough space to insert all footnotes:
                     // add the whole allFootnotes length
@@ -757,7 +757,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
             int maxAdjustment = totalStretch - activeNode.totalStretch;
             // add the footnote separator stretch if some footnote content will be added
             if (((KnuthPageNode) activeNode).totalFootnotes < totalFootnotesLength) {
-                maxAdjustment += footnoteSeparatorLength.max - footnoteSeparatorLength.opt;
+                maxAdjustment += footnoteSeparatorLength.getStretch();
             }
             if (maxAdjustment > 0) {
                 return (double) difference / maxAdjustment;
@@ -768,7 +768,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
             int maxAdjustment = totalShrink - activeNode.totalShrink;
             // add the footnote separator shrink if some footnote content will be added
             if (((KnuthPageNode) activeNode).totalFootnotes < totalFootnotesLength) {
-                maxAdjustment += footnoteSeparatorLength.opt - footnoteSeparatorLength.min;
+                maxAdjustment += footnoteSeparatorLength.getShrink();
             }
             if (maxAdjustment > 0) {
                 return (double) difference / maxAdjustment;

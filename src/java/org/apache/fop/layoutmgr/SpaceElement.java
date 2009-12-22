@@ -40,13 +40,10 @@ public class SpaceElement extends UnresolvedListElementWithLength {
      * @param isLast true if this is a space-after of the last area generated.
      * @param context the property evaluation context
      */
-    public SpaceElement(Position position, SpaceProperty space, RelSide side,
-            boolean isFirst, boolean isLast,
-            PercentBaseContext context) {
-        super(position,
-                MinOptMaxUtil.toMinOptMax(
-                        space.getSpace().getLengthRange(),
-                context), side, space.isDiscard(), isFirst, isLast);
+    public SpaceElement(Position position, SpaceProperty space, RelSide side, boolean isFirst,
+                        boolean isLast, PercentBaseContext context) {
+        super(position, space.getSpace().getLengthRange().toMinOptMax(context), side,
+                space.isDiscard(), isFirst, isLast);
         int en = space.getSpace().getPrecedence().getEnum();
         if (en == Constants.EN_FORCE) {
             this.precedence = Integer.MAX_VALUE;

@@ -23,6 +23,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.fop.area.Trait;
+import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.fo.flow.Character;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fonts.Font;
@@ -67,14 +68,13 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
         hyphIPD = fobj.getCommonHyphenation().getHyphIPD(font);
         borderProps = fobj.getCommonBorderPaddingBackground();
         setCommonBorderPaddingBackground(borderProps);
-        org.apache.fop.area.inline.TextArea chArea = getCharacterInlineArea(fobj);
+        TextArea chArea = getCharacterInlineArea(fobj);
         chArea.setBaselineOffset(font.getAscender());
         setCurrentArea(chArea);
     }
 
-    private org.apache.fop.area.inline.TextArea getCharacterInlineArea(Character node) {
-        org.apache.fop.area.inline.TextArea text
-            = new org.apache.fop.area.inline.TextArea();
+    private TextArea getCharacterInlineArea(Character node) {
+        TextArea text = new TextArea();
         char ch = node.getCharacter();
         if (CharUtilities.isAnySpace(ch)) {
             // add space unless it's zero-width:
@@ -103,9 +103,9 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
 
         Character fobj = (Character)this.fobj;
 
-        ipd = new MinOptMax(font.getCharWidth(fobj.getCharacter()));
+        ipd = MinOptMax.getInstance(font.getCharWidth(fobj.getCharacter()));
 
-        curArea.setIPD(ipd.opt);
+        curArea.setIPD(ipd.getOpt());
         curArea.setBPD(font.getAscender() - font.getDescender());
 
         TraitSetter.addFontTraits(curArea, font);
@@ -126,16 +126,16 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
         areaInfo = new AreaInfo((short) 0, ipd, false, alignmentContext);
 
         // node is a fo:Character
-        if (letterSpaceIPD.min == letterSpaceIPD.max) {
+        if (letterSpaceIPD.isStiff()) {
             // constant letter space, only return a box
-            seq.add(new KnuthInlineBox(areaInfo.ipdArea.opt, areaInfo.alignmentContext,
+            seq.add(new KnuthInlineBox(areaInfo.ipdArea.getOpt(), areaInfo.alignmentContext,
                                         notifyPos(new LeafPosition(this, 0)), false));
         } else {
             // adjustable letter space, return a sequence of elements;
             // at the moment the character is supposed to have no letter spaces,
             // but returning this sequence allows us to change only one element
             // if addALetterSpaceTo() is called
-            seq.add(new KnuthInlineBox(areaInfo.ipdArea.opt, areaInfo.alignmentContext,
+            seq.add(new KnuthInlineBox(areaInfo.ipdArea.getOpt(), areaInfo.alignmentContext,
                                         notifyPos(new LeafPosition(this, 0)), false));
             seq.add(new KnuthPenalty(0, KnuthElement.INFINITE, false,
                                             new LeafPosition(this, -1), true));
@@ -154,9 +154,8 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
     }
 
     /** {@inheritDoc} */
-    public void getWordChars(StringBuffer sbChars, Position bp) {
-        sbChars.append
-            (((org.apache.fop.area.inline.TextArea) curArea).getText());
+    public String getWordChars(Position pos) {
+        return ((TextArea) curArea).getText();
     }
 
     /** {@inheritDoc} */
@@ -189,10 +188,9 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
 
         addKnuthElementsForBorderPaddingStart(returnList);
 
-        if (letterSpaceIPD.min == letterSpaceIPD.max
-            || areaInfo.iLScount == 0) {
+        if (letterSpaceIPD.isStiff() || areaInfo.iLScount == 0) {
             // constant letter space, or no letter space
-            returnList.add(new KnuthInlineBox(areaInfo.ipdArea.opt,
+            returnList.add(new KnuthInlineBox(areaInfo.ipdArea.getOpt(),
                                         areaInfo.alignmentContext,
                                         notifyPos(new LeafPosition(this, 0)), false));
             if (areaInfo.bHyphenated) {
@@ -202,24 +200,17 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
             }
         } else {
             // adjustable letter space
-            returnList.add
-                (new KnuthInlineBox(areaInfo.ipdArea.opt
-                              - areaInfo.iLScount * letterSpaceIPD.opt,
-                              areaInfo.alignmentContext,
-                              notifyPos(new LeafPosition(this, 0)), false));
+            returnList.add(new KnuthInlineBox(areaInfo.ipdArea.getOpt()
+                    - areaInfo.iLScount * letterSpaceIPD.getOpt(), areaInfo.alignmentContext,
+                    notifyPos(new LeafPosition(this, 0)), false));
             returnList.add(new KnuthPenalty(0, KnuthElement.INFINITE, false,
-                                            new LeafPosition(this, -1), true));
-            returnList.add
-                (new KnuthGlue(areaInfo.iLScount * letterSpaceIPD.opt,
-                               areaInfo.iLScount * letterSpaceIPD.max - letterSpaceIPD.opt,
-                               areaInfo.iLScount * letterSpaceIPD.opt - letterSpaceIPD.min,
-                               new LeafPosition(this, -1), true));
-            returnList.add(new KnuthInlineBox(0, null,
-                                        notifyPos(new LeafPosition(this, -1)), true));
+                    new LeafPosition(this, -1), true));
+            returnList.add(new KnuthGlue(letterSpaceIPD.mult(areaInfo.iLScount),
+                    new LeafPosition(this, -1), true));
+            returnList.add(new KnuthInlineBox(0, null, notifyPos(new LeafPosition(this, -1)), true));
             if (areaInfo.bHyphenated) {
-                returnList.add
-                    (new KnuthPenalty(hyphIPD, KnuthPenalty.FLAGGED_PENALTY, true,
-                                      new LeafPosition(this, -1), false));
+                returnList.add(new KnuthPenalty(hyphIPD, KnuthPenalty.FLAGGED_PENALTY, true,
+                        new LeafPosition(this, -1), false));
             }
         }
 

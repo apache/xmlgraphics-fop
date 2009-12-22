@@ -116,7 +116,7 @@ public class PageNumberLayoutManager extends LeafNodeLayoutManager {
         // update the ipd of the area
         area.handleIPDVariation(getStringWidth(area.getText()) - area.getIPD());
         // update the width stored in the AreaInfo object
-        areaInfo.ipdArea = new MinOptMax(area.getIPD());
+        areaInfo.ipdArea = MinOptMax.getInstance(area.getIPD());
     }
 
     /**

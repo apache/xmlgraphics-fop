@@ -296,7 +296,8 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
         log.warn(this.getClass().getName() + " should not receive a call to removeWordSpace(list)");
     }
 
-    public void getWordChars(StringBuffer sbChars, Position pos) {
+    public String getWordChars(Position pos) {
+        return "";
     }
 
     public void hyphenate(Position pos, HyphContext hc) {

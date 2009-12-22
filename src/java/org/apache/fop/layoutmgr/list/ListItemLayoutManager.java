@@ -604,7 +604,7 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
             curBlockArea = new Block();
 
             // Set up dimensions
-            /*Area parentArea =*/ parentLM.getParentArea(curBlockArea);
+            /*Area parentArea =*/ parentLayoutManager.getParentArea(curBlockArea);
 
             // set traits
             TraitSetter.setProducerID(curBlockArea, getListItemFO().getId());

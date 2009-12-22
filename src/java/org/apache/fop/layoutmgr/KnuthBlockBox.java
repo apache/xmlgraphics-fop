@@ -41,30 +41,32 @@ public class KnuthBlockBox extends KnuthBox {
 
     /**
      * Creates a new box.
-     * @param w block progression dimension of this box
-     * @param range min, opt, max inline progression dimension of this box
-     * @param bpdim natural width of the line represented by this box.
-     * @param pos the Position stored in this box
-     * @param bAux is this box auxiliary?
+     *
+     * @param width     block progression dimension of this box
+     * @param range     min, opt, max inline progression dimension of this box
+     * @param bpdim     natural width of the line represented by this box.
+     * @param pos       the Position stored in this box
+     * @param auxiliary is this box auxiliary?
      */
-    public KnuthBlockBox(int w, MinOptMax range, int bpdim, Position pos, boolean bAux) {
-        super(w, pos, bAux);
-        ipdRange = (MinOptMax) range.clone();
+    public KnuthBlockBox(int width, MinOptMax range, int bpdim, Position pos, boolean auxiliary) {
+        super(width, pos, auxiliary);
+        ipdRange = range;
         bpd = bpdim;
         footnoteList = new LinkedList();
     }
 
     /**
      * Creates a new box.
-     * @param w block progression dimension of this box
-     * @param list footnotes cited by elements in this box. The list contains the
-     * corresponding FootnoteBodyLayoutManagers
-     * @param pos the Position stored in this box
-     * @param bAux is this box auxiliary?
+     *
+     * @param width     block progression dimension of this box
+     * @param list      footnotes cited by elements in this box. The list contains the corresponding
+     *                  FootnoteBodyLayoutManagers
+     * @param pos       the Position stored in this box
+     * @param auxiliary is this box auxiliary?
      */
-    public KnuthBlockBox(int w, List list, Position pos, boolean bAux) {
-        super(w, pos, bAux);
-        ipdRange = new MinOptMax(0);
+    public KnuthBlockBox(int width, List list, Position pos, boolean auxiliary) {
+        super(width, pos, auxiliary);
+        ipdRange = MinOptMax.ZERO;
         bpd = 0;
         footnoteList = new LinkedList(list);
     }
@@ -85,6 +87,7 @@ public class KnuthBlockBox extends KnuthBox {
 
     /**
      * Adds the given list of Knuth elements to this box' list of elements.
+     *
      * @param list elements corresponding to a footnote body
      */
     public void addElementList(List list) {
@@ -96,8 +99,8 @@ public class KnuthBlockBox extends KnuthBox {
 
     /**
      * Returns the list of Knuth sequences registered by this box.
-     * @return a list of KnuthElement sequences corresponding to footnotes cited in this
-     * box
+     *
+     * @return a list of KnuthElement sequences corresponding to footnotes cited in this box
      */
     public List getElementLists() {
         return elementLists;
@@ -107,12 +110,13 @@ public class KnuthBlockBox extends KnuthBox {
      * @return the inline progression dimension of this box.
      */
     public MinOptMax getIPDRange() {
-        return (MinOptMax) ipdRange.clone();
+        return ipdRange;
     }
 
     /**
-     * Returns the natural width (without stretching nor shrinking) of the line
-     * represented by this box.
+     * Returns the natural width (without stretching nor shrinking) of the line represented by this
+     * box.
+     *
      * @return the line width
      */
     public int getBPD() {

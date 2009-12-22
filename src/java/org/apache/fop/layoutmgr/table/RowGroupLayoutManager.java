@@ -35,13 +35,14 @@ import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.LengthRangeProperty;
 import org.apache.fop.layoutmgr.ElementListObserver;
 import org.apache.fop.layoutmgr.LayoutContext;
-import org.apache.fop.layoutmgr.MinOptMaxUtil;
 import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.util.BreakUtil;
 
 class RowGroupLayoutManager {
 
     private static Log log = LogFactory.getLog(RowGroupLayoutManager.class);
+
+    private static final MinOptMax MAX_STRETCH = MinOptMax.getInstance(0, 0, Integer.MAX_VALUE);
 
     private EffRow[] rowGroup;
 
@@ -146,12 +147,12 @@ class RowGroupLayoutManager {
             MinOptMax explicitRowHeight;
             TableRow tableRowFO = rowGroup[rgi].getTableRow();
             if (tableRowFO == null) {
-                rowHeights[rgi] = new MinOptMax(0, 0, Integer.MAX_VALUE);
-                explicitRowHeight = new MinOptMax(0, 0, Integer.MAX_VALUE);
+                rowHeights[rgi] = MAX_STRETCH;
+                explicitRowHeight = MAX_STRETCH;
             } else {
                 LengthRangeProperty rowBPD = tableRowFO.getBlockProgressionDimension();
-                rowHeights[rgi] = MinOptMaxUtil.toMinOptMax(rowBPD, tableLM);
-                explicitRowHeight = MinOptMaxUtil.toMinOptMax(rowBPD, tableLM);
+                rowHeights[rgi] = rowBPD.toMinOptMax(tableLM);
+                explicitRowHeight = rowBPD.toMinOptMax(tableLM);
             }
             for (Iterator iter = row.getGridUnits().iterator(); iter.hasNext();) {
                 GridUnit gu = (GridUnit) iter.next();
@@ -168,7 +169,7 @@ class RowGroupLayoutManager {
                                 .getValue(tableLM);
                     }
                     if (gu.getRowSpanIndex() == 0) {
-                        effectiveCellBPD = Math.max(effectiveCellBPD, explicitRowHeight.opt);
+                        effectiveCellBPD = Math.max(effectiveCellBPD, explicitRowHeight.getOpt());
                     }
                     effectiveCellBPD = Math.max(effectiveCellBPD, primary.getContentLength());
                     int borderWidths = primary.getBeforeAfterBorderWidth();
@@ -179,11 +180,11 @@ class RowGroupLayoutManager {
                     padding += cbpb.getPaddingAfter(false, primary.getCellLM());
                     int effRowHeight = effectiveCellBPD + padding + borderWidths;
                     for (int prev = rgi - 1; prev >= rgi - gu.getRowSpanIndex(); prev--) {
-                        effRowHeight -= rowHeights[prev].opt;
+                        effRowHeight -= rowHeights[prev].getOpt();
                     }
-                    if (effRowHeight > rowHeights[rgi].min) {
+                    if (effRowHeight > rowHeights[rgi].getMin()) {
                         // This is the new height of the (grid) row
-                        MinOptMaxUtil.extendMinimum(rowHeights[rgi], effRowHeight);
+                        rowHeights[rgi] = rowHeights[rgi].extendMinimum(effRowHeight);
                     }
                 }
             }

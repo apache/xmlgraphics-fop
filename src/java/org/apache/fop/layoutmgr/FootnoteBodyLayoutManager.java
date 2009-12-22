@@ -83,7 +83,7 @@ public class FootnoteBodyLayoutManager extends BlockStackingLayoutManager {
     /** {@inheritDoc} */
     public void addChildArea(Area childArea) {
         childArea.setAreaClass(Area.CLASS_FOOTNOTE);
-        parentLM.addChildArea(childArea);
+        parentLayoutManager.addChildArea(childArea);
     }
 
     /** @return the FootnoteBody node */

@@ -48,7 +48,7 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
     private static Log log = LogFactory.getLog(AbstractLayoutManager.class);
 
     /** Parent LayoutManager for this LayoutManager */
-    protected LayoutManager parentLM;
+    protected LayoutManager parentLayoutManager;
     /** List of child LayoutManagers */
     protected List childLMs;
     /** Iterator for child LayoutManagers */
@@ -91,12 +91,12 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
 
     /** {@inheritDoc} */
     public void setParent(LayoutManager lm) {
-        this.parentLM = lm;
+        this.parentLayoutManager = lm;
     }
 
     /** {@inheritDoc} */
     public LayoutManager getParent() {
-        return this.parentLM;
+        return this.parentLayoutManager;
     }
 
     /** {@inheritDoc} */
@@ -230,7 +230,7 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
 
     /** {@inheritDoc} */
     public PageSequenceLayoutManager getPSLM() {
-        return parentLM.getPSLM();
+        return parentLayoutManager.getPSLM();
     }
 
     /**
@@ -442,7 +442,7 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
              * LM is a descendant of the FlowLM. For static-content
              * the FO may still be needed on following pages.
              */
-            LayoutManager lm = this.parentLM;
+            LayoutManager lm = this.parentLayoutManager;
             while (!(lm instanceof FlowLayoutManager
                         || lm instanceof PageSequenceLayoutManager)) {
                 lm = lm.getParent();

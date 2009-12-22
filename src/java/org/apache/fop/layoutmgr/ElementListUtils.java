@@ -43,7 +43,7 @@ public final class ElementListUtils {
      * @return true if the opt constraint is bigger than the list contents
      */
     public static boolean removeLegalBreaks(List elements, MinOptMax constraint) {
-        return removeLegalBreaks(elements, constraint.opt);
+        return removeLegalBreaks(elements, constraint.getOpt());
     }
 
     /**
@@ -132,7 +132,7 @@ public final class ElementListUtils {
                     }
                 } else if (el instanceof UnresolvedListElementWithLength) {
                     UnresolvedListElementWithLength uel = (UnresolvedListElementWithLength)el;
-                    len += uel.getLength().opt;
+                    len += uel.getLength().getOpt();
                 }
             } else {
                 KnuthElement kel = (KnuthElement)el;

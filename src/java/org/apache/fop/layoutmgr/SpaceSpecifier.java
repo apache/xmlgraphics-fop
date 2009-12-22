@@ -31,11 +31,9 @@ import org.apache.fop.traits.MinOptMax;
  */
 public class SpaceSpecifier implements Cloneable {
 
-
     private boolean startsReferenceArea;
     private boolean hasForcing = false;
     private List spaceVals = new ArrayList();
-
 
     /**
      * Creates a new SpaceSpecifier.
@@ -76,7 +74,7 @@ public class SpaceSpecifier implements Cloneable {
      * @return true if any space-specifiers have been added.
      */
     public boolean hasSpaces() {
-        return (spaceVals.size() > 0);
+        return !spaceVals.isEmpty();
     }
 
     /**
@@ -84,24 +82,22 @@ public class SpaceSpecifier implements Cloneable {
      * area, and the added space is conditional, and there are no
      * non-conditional values in the sequence yet, then ignore it. Otherwise
      * add it to the sequence.
+     *
+     * @param space the space to add.
      */
-    public void addSpace(SpaceVal moreSpace) {
-        if (!startsReferenceArea
-                || !moreSpace.isConditional()
-                || !spaceVals.isEmpty()) {
-            if (moreSpace.isForcing()) {
+    public void addSpace(SpaceVal space) {
+        if (!startsReferenceArea || !space.isConditional() || hasSpaces()) {
+            if (space.isForcing()) {
                 if (!hasForcing) {
                     // Remove all other values (must all be non-forcing)
                     spaceVals.clear();
                     hasForcing = true;
                 }
-                spaceVals.add(moreSpace);
+                spaceVals.add(space);
             } else if (!hasForcing) {
                 // Don't bother adding all 0 space-specifier if not forcing
-                if (moreSpace.getSpace().min != 0
-                        || moreSpace.getSpace().opt != 0
-                        || moreSpace.getSpace().max != 0) {
-                    spaceVals.add(moreSpace);
+                if (space.getSpace().isNonZero()) {
+                    spaceVals.add(space);
                 }
             }
         }
@@ -109,11 +105,11 @@ public class SpaceSpecifier implements Cloneable {
 
 
     /**
-     * Resolve the current sequence of space-specifiers, accounting for
-     * forcing values.
-     * @param endsReferenceArea True if the sequence should be resolved
-     * at the trailing edge of reference area.
-     * @return The resolved value as a min/opt/max triple.
+     * Resolve the current sequence of space-specifiers, accounting for forcing values.
+     *
+     * @param endsReferenceArea whether the sequence should be resolved at the trailing edge of
+     *                          reference area.
+     * @return the resolved value as a min/opt/max triple.
      */
     public MinOptMax resolve(boolean endsReferenceArea) {
         int lastIndex = spaceVals.size();
@@ -127,24 +123,30 @@ public class SpaceSpecifier implements Cloneable {
                 }
             }
         }
-        MinOptMax resolvedSpace = new MinOptMax(0);
+        MinOptMax resolvedSpace = MinOptMax.ZERO;
         int maxPrecedence = -1;
         for (int index = 0; index < lastIndex; index++) {
             SpaceVal spaceVal = (SpaceVal) spaceVals.get(index);
+            MinOptMax space = spaceVal.getSpace();
             if (hasForcing) {
-                resolvedSpace.add(spaceVal.getSpace());
-            } else if (spaceVal.getPrecedence() > maxPrecedence) {
-                maxPrecedence = spaceVal.getPrecedence();
-                resolvedSpace = spaceVal.getSpace();
-            } else if (spaceVal.getPrecedence() == maxPrecedence) {
-                if (spaceVal.getSpace().opt > resolvedSpace.opt) {
-                    resolvedSpace = spaceVal.getSpace();
-                } else if (spaceVal.getSpace().opt == resolvedSpace.opt) {
-                    if (resolvedSpace.min < spaceVal.getSpace().min) {
-                        resolvedSpace.min = spaceVal.getSpace().min;
-                    }
-                    if (resolvedSpace.max > spaceVal.getSpace().max) {
-                        resolvedSpace.max = spaceVal.getSpace().max;
+                resolvedSpace = resolvedSpace.plus(space);
+            } else {
+                int precedence = spaceVal.getPrecedence();
+                if (precedence > maxPrecedence) {
+                    maxPrecedence = precedence;
+                    resolvedSpace = space;
+                } else if (precedence == maxPrecedence) {
+                    if (space.getOpt() > resolvedSpace.getOpt()) {
+                        resolvedSpace = space;
+                    } else if (space.getOpt() == resolvedSpace.getOpt()) {
+                        if (resolvedSpace.getMin() < space.getMin()) {
+                            resolvedSpace = MinOptMax.getInstance(space.getMin(),
+                                    resolvedSpace.getOpt(), resolvedSpace.getMax());
+                        }
+                        if (resolvedSpace.getMax() > space.getMax()) {
+                            resolvedSpace = MinOptMax.getInstance(resolvedSpace.getMin(),
+                                    resolvedSpace.getOpt(), space.getMax());
+                        }
                     }
                 }
             }
@@ -154,8 +156,7 @@ public class SpaceSpecifier implements Cloneable {
     }
 
     public String toString() {
-        return "Space Specifier (resolved at begin/end of ref. area:):\n" +
-            resolve(false).toString() + "\n" +
-            resolve(true).toString();
+        return "Space Specifier (resolved at begin/end of ref. area:):\n"
+                + resolve(false) + "\n" + resolve(true);
     }
 }

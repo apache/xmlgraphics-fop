@@ -41,7 +41,7 @@ public abstract class BorderOrPaddingElement extends UnresolvedListElementWithLe
             RelSide side,
             boolean isFirst, boolean isLast, PercentBaseContext context) {
         super(position,
-                new MinOptMax(condLength.getLength().getValue(context)), side,
+                MinOptMax.getInstance(condLength.getLength().getValue(context)), side,
                         condLength.isDiscard(), isFirst, isLast);
     }
 

@@ -122,7 +122,7 @@ public class TableStepper {
     private void calcTotalHeight() {
         totalHeight = 0;
         for (int i = 0; i < rowGroup.length; i++) {
-            totalHeight += rowGroup[i].getHeight().opt;
+            totalHeight += rowGroup[i].getHeight().getOpt();
         }
         if (log.isDebugEnabled()) {
             log.debug("totalHeight=" + totalHeight);
@@ -137,12 +137,12 @@ public class TableStepper {
             PrimaryGridUnit pgu = activeCell.getPrimaryGridUnit();
             for (int i = activeRowIndex + 1; i < pgu.getRowIndex() - rowGroup[0].getIndex()
                     + pgu.getCell().getNumberRowsSpanned(); i++) {
-                remain -= rowGroup[i].getHeight().opt;
+                remain -= rowGroup[i].getHeight().getOpt();
             }
             maxW = Math.max(maxW, remain);
         }
         for (int i = activeRowIndex + 1; i < rowGroup.length; i++) {
-            maxW += rowGroup[i].getHeight().opt;
+            maxW += rowGroup[i].getHeight().getOpt();
         }
         return maxW;
     }
@@ -315,7 +315,7 @@ public class TableStepper {
         if (delayingNextRow) {
             int minStep = computeMinStep();
             if (minStep < 0 || minStep >= rowFirstStep
-                    || minStep > rowGroup[activeRowIndex].getExplicitHeight().max) {
+                    || minStep > rowGroup[activeRowIndex].getExplicitHeight().getMax()) {
                 if (log.isTraceEnabled()) {
                     log.trace("Step = " + minStep);
                 }
@@ -462,7 +462,7 @@ public class TableStepper {
      */
     private void prepareNextRow() {
         if (activeRowIndex < rowGroup.length - 1) {
-            previousRowsLength += rowGroup[activeRowIndex].getHeight().opt;
+            previousRowsLength += rowGroup[activeRowIndex].getHeight().getOpt();
             activateCells(nextActiveCells, activeRowIndex + 1);
             if (log.isTraceEnabled()) {
                 log.trace("Computing first step for row " + (activeRowIndex + 2));
