@@ -131,7 +131,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
      * {@inheritDoc}
      */
     public List getNextKnuthElements(LayoutContext context, int alignment) {
-        MinOptMax stackLimit = new MinOptMax(context.getStackLimitBP());
+        MinOptMax stackLimit = context.getStackLimitBP();
 
         referenceIPD = context.getRefIPD();
         cellIPD = referenceIPD;
@@ -146,8 +146,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
         while ((curLM = getChildLM()) != null) {
             LayoutContext childLC = new LayoutContext(0);
             // curLM is a ?
-            childLC.setStackLimitBP(MinOptMax.subtract(context
-                    .getStackLimitBP(), stackLimit));
+            childLC.setStackLimitBP(context.getStackLimitBP().minus(stackLimit));
             childLC.setRefIPD(cellIPD);
 
             // get elements from curLM
@@ -387,7 +386,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
                             adjustXOffset(block, dx);
                             adjustIPD(block, ipd);
                             adjustBPD(block, bpd);
-                            parentLM.addChildArea(block);
+                            parentLayoutManager.addChildArea(block);
                         }
                         dx += ipd;
                     }
@@ -439,8 +438,8 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
         TableColumn column = getTable().getColumn(primaryGridUnit.getColIndex());
         if (column.getCommonBorderPaddingBackground().hasBackground()) {
             Block colBackgroundArea = getBackgroundArea(paddingRectBPD, borderBeforeWidth);
-            ((TableLayoutManager) parentLM).registerColumnBackgroundArea(column, colBackgroundArea,
-                    -startIndent);
+            ((TableLayoutManager) parentLayoutManager).registerColumnBackgroundArea(column,
+                    colBackgroundArea, -startIndent);
         }
 
         TablePart body = primaryGridUnit.getTablePart();
@@ -452,11 +451,11 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
         TableRow row = primaryGridUnit.getRow();
         if (row != null && row.getCommonBorderPaddingBackground().hasBackground()) {
             Block rowBackgroundArea = getBackgroundArea(paddingRectBPD, borderBeforeWidth);
-            ((TableLayoutManager) parentLM).addBackgroundArea(rowBackgroundArea);
+            ((TableLayoutManager) parentLayoutManager).addBackgroundArea(rowBackgroundArea);
             TraitSetter.addBackground(rowBackgroundArea, row.getCommonBorderPaddingBackground(),
-                    parentLM,
+                    parentLayoutManager,
                     -xoffset - startIndent, -borderBeforeWidth,
-                    parentLM.getContentAreaIPD(), firstRowHeight);
+                    parentLayoutManager.getContentAreaIPD(), firstRowHeight);
         }
     }
 
@@ -526,7 +525,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
             curBlockArea.setYOffset(yoffset);
             curBlockArea.setIPD(cellIPD);
 
-            /*Area parentArea =*/ parentLM.getParentArea(curBlockArea);
+            /*Area parentArea =*/ parentLayoutManager.getParentArea(curBlockArea);
             // Get reference IPD from parentArea
             setCurrentArea(curBlockArea); // ??? for generic operations
         }

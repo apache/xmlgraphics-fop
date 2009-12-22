@@ -19,7 +19,6 @@
 
 package org.apache.fop.layoutmgr.inline;
 
-import org.apache.fop.layoutmgr.inline.AlignmentContext;
 import org.apache.fop.layoutmgr.FootnoteBodyLayoutManager;
 import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.Position;
@@ -32,13 +31,13 @@ public class KnuthInlineBox extends KnuthBox {
     /**
      * Create a new KnuthBox.
      *
-     * @param w    the width of this box
+     * @param width            the width of this box
      * @param alignmentContext the alignmentContext for this box
-     * @param pos  the Position stored in this box
-     * @param bAux is this box auxiliary?
+     * @param pos              the Position stored in this box
+     * @param auxiliary        is this box auxiliary?
      */
-    public KnuthInlineBox(int w, AlignmentContext alignmentContext, Position pos, boolean bAux) {
-        super(w, pos, bAux);
+    public KnuthInlineBox(int width, AlignmentContext alignmentContext, Position pos, boolean auxiliary) {
+        super(width, pos, auxiliary);
         this.alignmentContext = alignmentContext;
     }
 
@@ -68,12 +67,5 @@ public class KnuthInlineBox extends KnuthBox {
      */
     public boolean isAnchor() {
         return (footnoteBodyLM != null);
-    }
-
-
-    /** {@inheritDoc} */
-    public String toString() {
-        StringBuffer sb = new StringBuffer(super.toString());
-        return sb.toString();
     }
 }

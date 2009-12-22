@@ -23,8 +23,8 @@ public class LeafPosition extends Position {
 
     private int leafPos;
 
-    public LeafPosition(LayoutManager lm, int pos) {
-        super(lm);
+    public LeafPosition(LayoutManager layoutManager, int pos) {
+        super(layoutManager);
         leafPos = pos;
     }
 

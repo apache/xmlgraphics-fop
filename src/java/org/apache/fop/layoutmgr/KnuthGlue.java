@@ -19,6 +19,8 @@
 
 package org.apache.fop.layoutmgr;
 
+import org.apache.fop.traits.MinOptMax;
+
 /**
  * An instance of this class represents a piece of content with adjustable
  * width: for example a space between words of justified text.
@@ -47,31 +49,49 @@ package org.apache.fop.layoutmgr;
  */
 public class KnuthGlue extends KnuthElement {
 
-    private int stretchability;
-    private int shrinkability;
-    private int adjustmentClass = -1;
+    private final int stretch;
+    private final int shrink;
+    private final Adjustment adjustmentClass;
 
     /**
-     * Create a new KnuthGlue.
+     * Creates a new <code>KnuthGlue</code>.
      *
-     * @param width the width of this glue
-     * @param stretchability the stretchability of this glue
-     * @param shrinkability the shrinkability of this glue
-     * @param pos the Position stored in this glue
+     * @param minOptMax a <code>MinOptMax</code> where the {@link MinOptMax#getOpt() opt-value} is
+     *                  mapped to the width, the {@link MinOptMax#getStretch()
+     *                  stretchability} is mapped to the stretchability and the the {@link
+     *                  MinOptMax#getShrink() shrinkability} is mapped to the shrinkability
+     * @param pos       the Position stored in this glue
      * @param auxiliary is this glue auxiliary?
      */
-    public KnuthGlue(int width, int stretchability, int shrinkability, Position pos,
-                     boolean auxiliary) {
-        super(width, pos, auxiliary);
-        this.stretchability = stretchability;
-        this.shrinkability = shrinkability;
+    public KnuthGlue(MinOptMax minOptMax, Position pos, boolean auxiliary) {
+        super(minOptMax.getOpt(), pos, auxiliary);
+        this.stretch = minOptMax.getStretch();
+        this.shrink = minOptMax.getShrink();
+        this.adjustmentClass = Adjustment.NO_ADJUSTMENT;
     }
 
-    public KnuthGlue(int width, int stretchability, int shrinkability, int adjustmentClass,
+    /**
+     * Creates a new <code>KnuthGlue</code>.
+     *
+     * @param width     the width of this glue
+     * @param stretch   the stretchability of this glue
+     * @param shrink    the shrinkability of this glue
+     * @param pos       the Position stored in this glue
+     * @param auxiliary is this glue auxiliary?
+     */
+    public KnuthGlue(int width, int stretch, int shrink, Position pos,
+                     boolean auxiliary) {
+        super(width, pos, auxiliary);
+        this.stretch = stretch;
+        this.shrink = shrink;
+        this.adjustmentClass = Adjustment.NO_ADJUSTMENT;
+    }
+
+    public KnuthGlue(int width, int stretch, int shrink, Adjustment adjustmentClass,
                      Position pos, boolean auxiliary) {
         super(width, pos, auxiliary);
-        this.stretchability = stretchability;
-        this.shrinkability = shrinkability;
+        this.stretch = stretch;
+        this.shrink = shrink;
         this.adjustmentClass = adjustmentClass;
     }
 
@@ -82,16 +102,16 @@ public class KnuthGlue extends KnuthElement {
 
     /** @return the stretchability of this glue. */
     public int getStretch() {
-        return stretchability;
+        return stretch;
     }
 
     /** @return the shrinkability of this glue. */
     public int getShrink() {
-        return shrinkability;
+        return shrink;
     }
 
     /** @return the adjustment class (or role) of this glue. */
-    public int getAdjustmentClass() {
+    public Adjustment getAdjustmentClass() {
         return adjustmentClass;
     }
 
@@ -105,7 +125,7 @@ public class KnuthGlue extends KnuthElement {
         buffer.append(" w=").append(getWidth());
         buffer.append(" stretch=").append(getStretch());
         buffer.append(" shrink=").append(getShrink());
-        if (getAdjustmentClass() >= 0) {
+        if (!getAdjustmentClass().equals(Adjustment.NO_ADJUSTMENT)) {
             buffer.append(" adj-class=").append(getAdjustmentClass());
         }
         return buffer.toString();

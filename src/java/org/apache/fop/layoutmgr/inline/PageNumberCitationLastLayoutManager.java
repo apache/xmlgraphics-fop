@@ -46,7 +46,7 @@ public class PageNumberCitationLastLayoutManager extends AbstractPageNumberCitat
 
     /** {@inheritDoc} */
     public InlineArea get(LayoutContext context) {
-        curArea = getPageNumberCitationLastInlineArea(parentLM);
+        curArea = getPageNumberCitationLastInlineArea(parentLayoutManager);
         return curArea;
     }
 

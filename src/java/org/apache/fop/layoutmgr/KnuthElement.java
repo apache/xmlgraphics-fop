@@ -36,8 +36,7 @@ public abstract class KnuthElement extends ListElement {
     private boolean auxiliary;
 
     /**
-     * Create a new KnuthElement.
-     * This class being abstract, this can be called only by subclasses.
+     * Creates a new <code>KnuthElement</code>.
      *
      * @param width    the width of this element
      * @param pos  the Position stored in this element

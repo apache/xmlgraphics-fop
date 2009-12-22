@@ -201,7 +201,7 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager {
             TraitSetter.setProducerID(curBlockArea, getPartFO().getId());
 
             // Set up dimensions
-            Area parentArea = parentLM.getParentArea(curBlockArea);
+            Area parentArea = parentLayoutManager.getParentArea(curBlockArea);
             int referenceIPD = parentArea.getIPD();
             curBlockArea.setIPD(referenceIPD);
             // Get reference IPD from parentArea

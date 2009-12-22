@@ -19,6 +19,7 @@
 
 package org.apache.fop.layoutmgr.inline;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -109,7 +110,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
                     - borderPaddingWidth;
         int max = fobj.getLeaderLength().getMaximum(this).getLength().getValue(this)
                     - borderPaddingWidth;
-        return new MinOptMax(min, opt, max);
+        return MinOptMax.getInstance(min, opt, max);
     }
 
     private InlineArea getLeaderInlineArea(LayoutContext context) {
@@ -226,7 +227,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
             KnuthPossPosIter contentIter = new KnuthPossPosIter(contentList, 0, contentList.size());
             clm.addAreas(contentIter, context);
 
-            parentLM.addChildArea(curArea);
+            parentLayoutManager.addChildArea(curArea);
 
             while (posIter.hasNext()) {
                 posIter.next();
@@ -235,8 +236,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
     }
 
     /** {@inheritDoc} */
-    public List getNextKnuthElements(LayoutContext context,
-                                           int alignment) {
+    public List getNextKnuthElements(LayoutContext context, int alignment) {
         MinOptMax ipd;
         curArea = get(context);
         KnuthSequence seq = new InlineKnuthSequence();
@@ -256,45 +256,34 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
         ipd = getAllocationIPD(context.getRefIPD());
         if (fobj.getLeaderPattern() == EN_USECONTENT && curArea instanceof FilledArea) {
             // If we have user supplied content make it fit if we can
-            int unitWidth = ((FilledArea)curArea).getUnitWidth();
-            if (ipd.opt < unitWidth && ipd.max >= unitWidth) {
-                ipd.opt = unitWidth;
+            int unitWidth = ((FilledArea) curArea).getUnitWidth();
+            if (ipd.getOpt() < unitWidth && unitWidth <= ipd.getMax()) {
+                ipd = MinOptMax.getInstance(ipd.getMin(), unitWidth, ipd.getMax());
             }
         }
 
         // create the AreaInfo object to store the computed values
         areaInfo = new AreaInfo((short) 0, ipd, false, context.getAlignmentContext());
-        curArea.setAdjustingInfo(ipd.max - ipd.opt, ipd.opt - ipd.min, 0);
+        curArea.setAdjustingInfo(ipd.getStretch(), ipd.getShrink(), 0);
 
         addKnuthElementsForBorderPaddingStart(seq);
 
         // node is a fo:Leader
-        seq.add(new KnuthInlineBox(0, alignmentContext,
-                                    new LeafPosition(this, -1), true));
+        seq.add(new KnuthInlineBox(0, alignmentContext, new LeafPosition(this, -1), true));
         seq.add(new KnuthPenalty(0, KnuthElement.INFINITE, false,
-                                        new LeafPosition(this, -1), true));
+                new LeafPosition(this, -1), true));
         if (alignment == EN_JUSTIFY || alignment == 0) {
-            seq.add
-                (new KnuthGlue(areaInfo.ipdArea.opt,
-                               areaInfo.ipdArea.max - areaInfo.ipdArea.opt,
-                               areaInfo.ipdArea.opt - areaInfo.ipdArea.min,
-                               new LeafPosition(this, 0), false));
+            seq.add(new KnuthGlue(areaInfo.ipdArea, new LeafPosition(this, 0), false));
         } else {
-            seq.add
-                (new KnuthGlue(areaInfo.ipdArea.opt,
-                               0,
-                               0,
-                               new LeafPosition(this, 0), false));
+            seq.add(new KnuthGlue(areaInfo.ipdArea.getOpt(), 0, 0,
+                    new LeafPosition(this, 0), false));
         }
-        seq.add(new KnuthInlineBox(0, alignmentContext,
-                                    new LeafPosition(this, -1), true));
+        seq.add(new KnuthInlineBox(0, alignmentContext, new LeafPosition(this, -1), true));
 
         addKnuthElementsForBorderPaddingEnd(seq);
 
-        LinkedList returnList = new LinkedList();
-        returnList.add(seq);
         setFinished(true);
-        return returnList;
+        return Collections.singletonList(seq);
     }
 
     /** {@inheritDoc} */
@@ -310,8 +299,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
     }
 
     /** {@inheritDoc} */
-    public List getChangedKnuthElements(List oldList,
-                                              int alignment) {
+    public List getChangedKnuthElements(List oldList, int alignment) {
         if (isFinished()) {
             return null;
         }
@@ -325,17 +313,10 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
         returnList.add(new KnuthPenalty(0, KnuthElement.INFINITE, false,
                                         new LeafPosition(this, -1), true));
         if (alignment == EN_JUSTIFY || alignment == 0) {
-            returnList.add
-                (new KnuthGlue(areaInfo.ipdArea.opt,
-                               areaInfo.ipdArea.max - areaInfo.ipdArea.opt,
-                               areaInfo.ipdArea.opt - areaInfo.ipdArea.min,
-                               new LeafPosition(this, 0), false));
+            returnList.add(new KnuthGlue(areaInfo.ipdArea, new LeafPosition(this, 0), false));
         } else {
-            returnList.add
-                (new KnuthGlue(areaInfo.ipdArea.opt,
-                               0,
-                               0,
-                               new LeafPosition(this, 0), false));
+            returnList.add(new KnuthGlue(areaInfo.ipdArea.getOpt(), 0, 0,
+                    new LeafPosition(this, 0), false));
         }
         returnList.add(new KnuthInlineBox(0, areaInfo.alignmentContext,
                                     new LeafPosition(this, -1), true));

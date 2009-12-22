@@ -241,7 +241,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
         // if this will create the first block area in a page
         // and display-align is after or center, add space before
         if (layoutContext.getSpaceBefore() > 0) {
-            addBlockSpacing(0.0, new MinOptMax(layoutContext.getSpaceBefore()));
+            addBlockSpacing(0.0, MinOptMax.getInstance(layoutContext.getSpaceBefore()));
         }
 
         LayoutManager childLM;
@@ -356,20 +356,20 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
                 foSpaceAfter = new SpaceVal(getBlockFO()
                                     .getCommonMarginBlock().spaceAfter, this).getSpace();
                 adjustedSpaceBefore = (neededUnits(splitLength
-                        + foSpaceBefore.min
-                        + foSpaceAfter.min)
+                        + foSpaceBefore.getMin()
+                        + foSpaceAfter.getMin())
                         * bpUnit - splitLength) / 2;
                 adjustedSpaceAfter = neededUnits(splitLength
-                        + foSpaceBefore.min
-                        + foSpaceAfter.min)
+                        + foSpaceBefore.getMin()
+                        + foSpaceAfter.getMin())
                         * bpUnit - splitLength - adjustedSpaceBefore;
                 } else if (spaceBefore) {
                 adjustedSpaceBefore = neededUnits(splitLength
-                        + foSpaceBefore.min)
+                        + foSpaceBefore.getMin())
                         * bpUnit - splitLength;
                 } else {
                 adjustedSpaceAfter = neededUnits(splitLength
-                        + foSpaceAfter.min)
+                        + foSpaceAfter.getMin())
                         * bpUnit - splitLength;
                 }
             //log.debug("spazio prima = " + adjustedSpaceBefore
@@ -426,7 +426,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
 
             // Must get dimensions from parent area
             //Don't optimize this line away. It can have ugly side-effects.
-            /*Area parentArea =*/ parentLM.getParentArea(curBlockArea);
+            /*Area parentArea =*/ parentLayoutManager.getParentArea(curBlockArea);
 
             // set traits
             TraitSetter.setProducerID(curBlockArea, getBlockFO().getId());

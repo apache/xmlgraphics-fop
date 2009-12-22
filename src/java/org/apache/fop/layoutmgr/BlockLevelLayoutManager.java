@@ -26,17 +26,6 @@ import org.apache.fop.fo.properties.KeepProperty;
  */
 public interface BlockLevelLayoutManager extends LayoutManager {
 
-    /** Adjustment class: no adjustment */
-    int NO_ADJUSTMENT = -1;
-    /** Adjustment class: adjustment for space-before */
-    int SPACE_BEFORE_ADJUSTMENT = 0;
-    /** Adjustment class: adjustment for space-after */
-    int SPACE_AFTER_ADJUSTMENT = 1;
-    /** Adjustment class: adjustment for number of lines */
-    int LINE_NUMBER_ADJUSTMENT = 2;
-    /** Adjustment class: adjustment for line height */
-    int LINE_HEIGHT_ADJUSTMENT = 3;
-
     int negotiateBPDAdjustment(int adj, KnuthElement lastElement);
 
     void discardSpace(KnuthGlue spaceGlue);

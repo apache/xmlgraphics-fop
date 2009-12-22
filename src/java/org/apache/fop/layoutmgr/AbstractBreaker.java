@@ -201,7 +201,7 @@ public abstract class AbstractBreaker {
     protected int alignment;
     private int alignmentLast;
 
-    protected MinOptMax footnoteSeparatorLength = new MinOptMax(0);
+    protected MinOptMax footnoteSeparatorLength = MinOptMax.ZERO;
 
     protected abstract int getCurrentDisplayAlign();
     protected abstract boolean hasMoreContent();
@@ -307,7 +307,7 @@ public abstract class AbstractBreaker {
      */
     public void doLayout(int flowBPD, boolean autoHeight) {
         LayoutContext childLC = createLayoutContext();
-        childLC.setStackLimitBP(new MinOptMax(flowBPD));
+        childLC.setStackLimitBP(MinOptMax.getInstance(flowBPD));
 
         if (getCurrentDisplayAlign() == Constants.EN_X_FILL) {
             //EN_X_FILL is non-standard (by LF)
@@ -613,7 +613,7 @@ public abstract class AbstractBreaker {
                     int averageLineLength = optimizeLineLength(effectiveList,
                             startElementIndex, endElementIndex);
                     if (averageLineLength != 0) {
-                        childLC.setStackLimitBP(new MinOptMax(averageLineLength));
+                        childLC.setStackLimitBP(MinOptMax.getInstance(averageLineLength));
                     }
                 }
                 /* *** *** non-standard extension *** *** */
@@ -762,7 +762,8 @@ public abstract class AbstractBreaker {
      * @param endElementIndex   index of the element ending the range
      * @return the average line length, 0 if there's no content
      */
-    private int optimizeLineLength(KnuthSequence effectiveList, int startElementIndex, int endElementIndex) {
+    private int optimizeLineLength(KnuthSequence effectiveList, int startElementIndex,
+            int endElementIndex) {
         ListIterator effectiveListIterator;
         // optimize line length
         int boxCount = 0;
@@ -783,9 +784,9 @@ public abstract class AbstractBreaker {
                     accumulatedLineLength += ((KnuthBlockBox) tempEl)
                             .getBPD();
                 }
-                if (blockBox.getIPDRange().min > greatestMinimumLength) {
+                if (blockBox.getIPDRange().getMin() > greatestMinimumLength) {
                     greatestMinimumLength = blockBox
-                            .getIPDRange().min;
+                            .getIPDRange().getMin();
                 }
             }
         }
@@ -808,7 +809,8 @@ public abstract class AbstractBreaker {
      * @param availableBPD the available BPD
      * @return the effective list
      */
-    private BlockSequence justifyBoxes(BlockSequence blockList, PageBreakingAlgorithm alg, int availableBPD) {
+    private BlockSequence justifyBoxes(BlockSequence blockList, PageBreakingAlgorithm alg,
+            int availableBPD) {
         int iOptPageNumber;
         alg.setConstantLineWidth(availableBPD);
         iOptPageNumber = alg.findBreakingPoints(blockList, /*availableBPD,*/
@@ -857,8 +859,8 @@ public abstract class AbstractBreaker {
 
             // scan the sub-sequence representing a page,
             // collecting information about potential adjustments
-            MinOptMax lineNumberMaxAdjustment = new MinOptMax(0);
-            MinOptMax spaceMaxAdjustment = new MinOptMax(0);
+            MinOptMax lineNumberMaxAdjustment = MinOptMax.ZERO;
+            MinOptMax spaceMaxAdjustment = MinOptMax.ZERO;
             double spaceAdjustmentRatio = 0.0;
             LinkedList blockSpacesList = new LinkedList();
             LinkedList unconfirmedList = new LinkedList();
@@ -872,30 +874,23 @@ public abstract class AbstractBreaker {
                     // glue elements are used to represent adjustable
                     // lines
                     // and adjustable spaces between blocks
-                    switch (((KnuthGlue) thisElement)
-                            .getAdjustmentClass()) {
-                    case BlockLevelLayoutManager.SPACE_BEFORE_ADJUSTMENT:
-                    // fall through
-                    case BlockLevelLayoutManager.SPACE_AFTER_ADJUSTMENT:
+                    Adjustment adjustment = ((KnuthGlue) thisElement).getAdjustmentClass();
+                    if (adjustment.equals(Adjustment.SPACE_BEFORE_ADJUSTMENT)
+                            || adjustment.equals(Adjustment.SPACE_AFTER_ADJUSTMENT)) {
                         // potential space adjustment
                         // glue items before the first box or after the
                         // last one
                         // must be ignored
                         unconfirmedList.add(thisElement);
-                        break;
-                    case BlockLevelLayoutManager.LINE_NUMBER_ADJUSTMENT:
+                    } else if (adjustment.equals(Adjustment.LINE_NUMBER_ADJUSTMENT)) {
                         // potential line number adjustment
-                        lineNumberMaxAdjustment.max += ((KnuthGlue) thisElement)
-                                .getStretch();
-                        lineNumberMaxAdjustment.min -= ((KnuthGlue) thisElement)
-                                .getShrink();
+                        lineNumberMaxAdjustment
+                                = lineNumberMaxAdjustment.plusMax(thisElement.getStretch());
+                        lineNumberMaxAdjustment
+                                = lineNumberMaxAdjustment.minusMin(thisElement.getShrink());
                         adjustableLinesList.add(thisElement);
-                        break;
-                    case BlockLevelLayoutManager.LINE_HEIGHT_ADJUSTMENT:
+                    } else if (adjustment.equals(Adjustment.LINE_HEIGHT_ADJUSTMENT)) {
                         // potential line height adjustment
-                        break;
-                    default:
-                    // nothing
                     }
                 } else if (thisElement.isBox()) {
                     if (!bBoxSeen) {
@@ -909,10 +904,8 @@ public abstract class AbstractBreaker {
                             // blockSpaceList
                             KnuthGlue blockSpace = (KnuthGlue) unconfirmedList
                                     .removeFirst();
-                            spaceMaxAdjustment.max += ((KnuthGlue) blockSpace)
-                                    .getStretch();
-                            spaceMaxAdjustment.min -= ((KnuthGlue) blockSpace)
-                                    .getShrink();
+                            spaceMaxAdjustment = spaceMaxAdjustment.plusMax(blockSpace.getStretch());
+                            spaceMaxAdjustment = spaceMaxAdjustment.minusMin(blockSpace.getShrink());
                             blockSpacesList.add(blockSpace);
                         }
                     }
@@ -931,16 +924,19 @@ public abstract class AbstractBreaker {
             }
 
             if (thisBreak.bpdAdjust != 0
-                    && (thisBreak.difference > 0 && thisBreak.difference <= spaceMaxAdjustment.max)
-                    || (thisBreak.difference < 0 && thisBreak.difference >= spaceMaxAdjustment.min)) {
+                    && (thisBreak.difference > 0 && thisBreak.difference <= spaceMaxAdjustment
+                            .getMax())
+                    || (thisBreak.difference < 0 && thisBreak.difference >= spaceMaxAdjustment
+                            .getMin())) {
                 // modify only the spaces between blocks
-                spaceAdjustmentRatio = ((double) thisBreak.difference / (thisBreak.difference > 0 ? spaceMaxAdjustment.max
-                        : spaceMaxAdjustment.min));
+                spaceAdjustmentRatio = ((double) thisBreak.difference / (thisBreak.difference > 0
+                        ? spaceMaxAdjustment.getMax()
+                        : spaceMaxAdjustment.getMin()));
                 adjustedDiff += adjustBlockSpaces(
                         blockSpacesList,
                         thisBreak.difference,
-                        (thisBreak.difference > 0 ? spaceMaxAdjustment.max
-                                : -spaceMaxAdjustment.min));
+                        (thisBreak.difference > 0 ? spaceMaxAdjustment.getMax()
+                                : -spaceMaxAdjustment.getMin()));
                 log.debug("single space: "
                         + (adjustedDiff == thisBreak.difference
                                 || thisBreak.bpdAdjust == 0 ? "ok"
@@ -949,13 +945,13 @@ public abstract class AbstractBreaker {
                 adjustedDiff += adjustLineNumbers(
                         adjustableLinesList,
                         thisBreak.difference,
-                        (thisBreak.difference > 0 ? lineNumberMaxAdjustment.max
-                                : -lineNumberMaxAdjustment.min));
+                        (thisBreak.difference > 0 ? lineNumberMaxAdjustment.getMax()
+                                : -lineNumberMaxAdjustment.getMin()));
                 adjustedDiff += adjustBlockSpaces(
                         blockSpacesList,
                         thisBreak.difference - adjustedDiff,
-                        ((thisBreak.difference - adjustedDiff) > 0 ? spaceMaxAdjustment.max
-                                : -spaceMaxAdjustment.min));
+                        ((thisBreak.difference - adjustedDiff) > 0 ? spaceMaxAdjustment.getMax()
+                                : -spaceMaxAdjustment.getMin()));
                 log.debug("lines and space: "
                         + (adjustedDiff == thisBreak.difference
                                 || thisBreak.bpdAdjust == 0 ? "ok"

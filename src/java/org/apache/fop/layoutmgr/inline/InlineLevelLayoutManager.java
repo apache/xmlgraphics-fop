@@ -48,20 +48,19 @@ public interface InlineLevelLayoutManager extends LayoutManager {
     void removeWordSpace(List oldList);
 
     /**
-     * Get the word chars corresponding to the given position
+     * Get the word chars corresponding to the given position.
      *
-     * @param sbChars the StringBuffer used to append word chars
-     * @param pos     the Position referring to the needed word chars
+     * @param pos     the position referring to the needed word chars.
      */
-    void getWordChars(StringBuffer sbChars, Position pos);
+    String getWordChars(Position pos);
 
     /**
      * Tell the LM to hyphenate a word
      *
      * @param pos the Position referring to the word
-     * @param hc  the HyphContext storing hyphenation information
+     * @param hyphContext  the HyphContext storing hyphenation information
      */
-    void hyphenate(Position pos, HyphContext hc);
+    void hyphenate(Position pos, HyphContext hyphContext);
 
     /**
      * Tell the LM to apply the changes due to hyphenation

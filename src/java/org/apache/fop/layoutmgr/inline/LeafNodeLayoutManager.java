@@ -21,6 +21,7 @@ package org.apache.fop.layoutmgr.inline;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Collections;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -163,7 +164,7 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
      * @return the min/opt/max ipd of the inline area
      */
     protected MinOptMax getAllocationIPD(int refIPD) {
-        return new MinOptMax(curArea.getIPD());
+        return MinOptMax.getInstance(curArea.getIPD());
     }
 
     /**
@@ -186,7 +187,7 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
                                                    false, false, this);
                 TraitSetter.addBackground(area, commonBorderPaddingBackground, this);
             }
-            parentLM.addChildArea(area);
+            parentLayoutManager.addChildArea(area);
         }
 
         while (posIter.hasNext()) {
@@ -236,16 +237,14 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
      */
     protected void widthAdjustArea(InlineArea area, LayoutContext context) {
         double dAdjust = context.getIPDAdjust();
-        int width = areaInfo.ipdArea.opt;
+        int adjustment = 0;
         if (dAdjust < 0) {
-            width = (int) (width + dAdjust * (areaInfo.ipdArea.opt
-                                             - areaInfo.ipdArea.min));
+            adjustment += (int) (dAdjust * areaInfo.ipdArea.getShrink());
         } else if (dAdjust > 0) {
-            width = (int) (width + dAdjust * (areaInfo.ipdArea.max
-                                             - areaInfo.ipdArea.opt));
+            adjustment += (int) (dAdjust * areaInfo.ipdArea.getStretch());
         }
-        area.setIPD(width);
-        area.setAdjustment(width - areaInfo.ipdArea.opt);
+        area.setIPD(areaInfo.ipdArea.getOpt() + adjustment);
+        area.setAdjustment(adjustment);
     }
 
     /** {@inheritDoc} */
@@ -270,16 +269,13 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
 
         addKnuthElementsForBorderPaddingStart(seq);
 
-        seq.add(new KnuthInlineBox(areaInfo.ipdArea.opt, alignmentContext,
+        seq.add(new KnuthInlineBox(areaInfo.ipdArea.getOpt(), alignmentContext,
                                     notifyPos(new LeafPosition(this, 0)), false));
 
         addKnuthElementsForBorderPaddingEnd(seq);
 
-        LinkedList returnList = new LinkedList();
-
-        returnList.add(seq);
         setFinished(true);
-        return returnList;
+        return Collections.singletonList(seq);
     }
 
     /** {@inheritDoc} */
@@ -299,11 +295,12 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
     }
 
     /** {@inheritDoc} */
-    public void getWordChars(StringBuffer sbChars, Position pos) {
+    public String getWordChars(Position pos) {
+        return "";
     }
 
     /** {@inheritDoc} */
-    public void hyphenate(Position pos, HyphContext hc) {
+    public void hyphenate(Position pos, HyphContext hyphContext) {
     }
 
     /** {@inheritDoc} */
@@ -325,7 +322,7 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
 
         // fobj is a fo:ExternalGraphic, fo:InstreamForeignObject,
         // fo:PageNumber or fo:PageNumberCitation
-        returnList.add(new KnuthInlineBox(areaInfo.ipdArea.opt, areaInfo.alignmentContext,
+        returnList.add(new KnuthInlineBox(areaInfo.ipdArea.getOpt(), areaInfo.alignmentContext,
                                           notifyPos(new LeafPosition(this, 0)), true));
 
         addKnuthElementsForBorderPaddingEnd(returnList);

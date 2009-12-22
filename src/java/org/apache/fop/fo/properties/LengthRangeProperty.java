@@ -25,6 +25,7 @@ import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.traits.MinOptMax;
 
 /**
  * Superclass for properties that contain LengthRange values
@@ -38,6 +39,22 @@ public class LengthRangeProperty extends Property implements CompoundDatatype {
     private static final int MAXSET = 4;
     private int bfSet = 0;    // bit field
     private boolean consistent = false;
+
+    /**
+     * Converts this <code>LengthRangeProperty</code> to a <code>MinOptMax</code>.
+     *
+     * @param context Percentage evaluation context
+     * @return the requested MinOptMax instance
+     */
+    public MinOptMax toMinOptMax(PercentBaseContext context) {
+        int min = getMinimum(context).isAuto() ? 0
+                : getMinimum(context).getLength().getValue(context);
+        int opt = getOptimum(context).isAuto() ? min
+                : getOptimum(context).getLength().getValue(context);
+        int max = getMaximum(context).isAuto() ? Integer.MAX_VALUE
+                : getMaximum(context).getLength().getValue(context);
+        return MinOptMax.getInstance(min, opt, max);
+    }
 
     /**
      * Inner class for a Maker for LengthProperty objects

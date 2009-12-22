@@ -327,7 +327,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
 
         // add space before, in order to implement display-align = "center" or "after"
         if (layoutContext.getSpaceBefore() != 0) {
-            addBlockSpacing(0.0, new MinOptMax(layoutContext.getSpaceBefore()));
+            addBlockSpacing(0.0, MinOptMax.getInstance(layoutContext.getSpaceBefore()));
         }
 
         int startXOffset = getTable().getCommonMarginBlock().startIndent.getValue(this);
@@ -404,7 +404,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
             curBlockArea = new Block();
             // Set up dimensions
             // Must get dimensions from parent area
-            /*Area parentArea =*/ parentLM.getParentArea(curBlockArea);
+            /*Area parentArea =*/ parentLayoutManager.getParentArea(curBlockArea);
 
             TraitSetter.setProducerID(curBlockArea, getTable().getId());
 

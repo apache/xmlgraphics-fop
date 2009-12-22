@@ -119,7 +119,7 @@ public class Area extends AreaTreeObject implements Serializable {
     public static final int CLASS_MAX = CLASS_SIDE_FLOAT + 1;
 
     private int areaClass = CLASS_NORMAL;
-    
+
     /** the area's inline-progression-dimension */
     protected int ipd;
 
@@ -174,18 +174,18 @@ public class Area extends AreaTreeObject implements Serializable {
      * @see <a href="http://www.w3.org/TR/xsl/#inline-progression-dimension">ipd</a>
      */
     public int getIPD() {
-        return this.ipd;
+        return ipd;
     }
 
     /**
      * Set the block progression dimension of the content rectangle
      * for this area.
      *
-     * @param b the new block progression dimension
+     * @param bpd the new block progression dimension
      * @see <a href="http://www.w3.org/TR/xsl/#block-progression-dimension">bpd</a>
      */
-    public void setBPD(int b) {
-        bpd = b;
+    public void setBPD(int bpd) {
+        this.bpd = bpd;
     }
 
     /**

@@ -19,6 +19,7 @@
 
 package org.apache.fop.layoutmgr.inline;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -144,7 +145,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
             padding += borderProps.getPadding(CommonBorderPaddingBackground.AFTER, false, this);
             padding += borderProps.getBorderWidth(CommonBorderPaddingBackground.AFTER, false);
         }
-        extraBPD = new MinOptMax(padding);
+        extraBPD = MinOptMax.getInstance(padding);
 
     }
 
@@ -161,7 +162,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
             borderAndPadding
                 += borderProps.getBorderWidth(CommonBorderPaddingBackground.END, isNotLast);
         }
-        return new MinOptMax(borderAndPadding);
+        return MinOptMax.getInstance(borderAndPadding);
     }
 
 
@@ -325,16 +326,20 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
                     KnuthSequence sequence = (KnuthSequence) seqIter.next();
                     sequence.wrapPositions(this);
                 }
+                int insertionStartIndex = 0;
                 if (lastSequence != null && lastSequence.appendSequenceOrClose
                         ((KnuthSequence) returnedList.get(0))) {
-                    returnedList.remove(0);
+                    insertionStartIndex = 1;
                 }
                 // add border and padding to the first complete sequence of this LM
                 if (!borderAdded && !returnedList.isEmpty()) {
                     addKnuthElementsForBorderPaddingStart((KnuthSequence) returnedList.get(0));
                     borderAdded = true;
                 }
-                returnList.addAll(returnedList);
+                for (Iterator iter = returnedList.listIterator(insertionStartIndex);
+                        iter.hasNext();) {
+                    returnList.add(iter.next());
+                }
             } else { // A block LM
                 BlockKnuthSequence sequence = new BlockKnuthSequence(returnedList);
                 sequence.wrapPositions(this);
@@ -488,8 +493,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
         boolean isLast = (getContext().isLastArea() && prevLM == lastChildLM);
 
         if (hasTrailingFence(isLast)) {
-            addSpace(getCurrentArea(),
-                     getContext().getTrailingSpace().resolve(false),
+            addSpace(getCurrentArea(), getContext().getTrailingSpace().resolve(false),
                      getContext().getSpaceAdjust());
             context.setTrailingSpace(new SpaceSpecifier(false));
         } else {
@@ -504,7 +508,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
         // Not sure if lastPos can legally be null or if that masks a different problem.
         // But it seems to fix bug 38053.
         setTraits(areaCreated, lastPos == null || !isLast(lastPos));
-        parentLM.addChildArea(getCurrentArea());
+        parentLayoutManager.addChildArea(getCurrentArea());
 
         addMarkersToPage(
                 false,
@@ -520,8 +524,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
     public void addChildArea(Area childArea) {
         Area parent = getCurrentArea();
         if (getContext().resolveLeadingSpace()) {
-            addSpace(parent,
-                    getContext().getLeadingSpace().resolve(false),
+            addSpace(parent, getContext().getLeadingSpace().resolve(false),
                     getContext().getSpaceAdjust());
         }
         parent.addChildArea(childArea);

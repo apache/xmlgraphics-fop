@@ -28,8 +28,6 @@ import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.TraitSetter;
 
-import java.util.LinkedList;
-
 /**
  * This is the layout manager for the fo:wrapper formatting object.
  */
@@ -67,14 +65,14 @@ public class WrapperLayoutManager extends LeafNodeLayoutManager {
     public void addAreas(PositionIterator posIter, LayoutContext context) {
         if (fobj.hasId()) {
             addId();
-            if (parentLM instanceof BlockStackingLayoutManager
-                    && !(parentLM instanceof BlockLayoutManager)) {
+            if (parentLayoutManager instanceof BlockStackingLayoutManager
+                    && !(parentLayoutManager instanceof BlockLayoutManager)) {
                 Block helperBlock = new Block();
                 TraitSetter.setProducerID(helperBlock, fobj.getId());
-                parentLM.addChildArea(helperBlock);
+                parentLayoutManager.addChildArea(helperBlock);
             } else {
                 InlineArea area = getEffectiveArea();
-                parentLM.addChildArea(area);
+                parentLayoutManager.addChildArea(area);
             }
         }
         while (posIter.hasNext()) {
