@@ -58,6 +58,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="CB" type="fix" fixes-bug="48453">
+        Bugfix: AFP Renderer: Page Segments not positioned correctly when reference-orientation != 0
+      </action>
       <action context="Fonts" dev="JM" type="add">
         Added support for TrueType fonts with symbol character maps (like "Wingdings" and "Symbol").
         Character for these fonts are usually found in the 0xF020 to 0xF0FF range

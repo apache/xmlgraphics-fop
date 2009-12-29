@@ -512,23 +512,27 @@ public class DataStream {
      *            the x coordinate for the overlay
      * @param y
      *            the y coordinate for the overlay
+     * @param width
+     *            the width of the image
+     * @param height
+     *            the height of the image
      */
-    public void createIncludePageSegment(String name, int x, int y) {
+    public void createIncludePageSegment(String name, int x, int y, int width, int height) {
         int xOrigin;
         int yOrigin;
         int orientation = paintingState.getRotation();
         switch (orientation) {
         case 90:
-            xOrigin = currentPage.getWidth() - y;
-            yOrigin = x;
+            xOrigin = x - height;
+            yOrigin = y;
             break;
         case 180:
-            xOrigin = currentPage.getWidth() - x;
-            yOrigin = currentPage.getHeight() - y;
+            xOrigin = x - width;
+            yOrigin = y - height;
             break;
         case 270:
-            xOrigin = y;
-            yOrigin = currentPage.getHeight() - x;
+            xOrigin = x;
+            yOrigin = y - height;
             break;
         default:
             xOrigin = x;

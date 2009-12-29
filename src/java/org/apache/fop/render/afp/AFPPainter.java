@@ -187,7 +187,10 @@ public class AFPPainter extends AbstractIFPainter {
         if (name != null) {
             float[] srcPts = {rect.x, rect.y};
             int[] coords = unitConv.mpts2units(srcPts);
-            getDataStream().createIncludePageSegment(name, coords[X], coords[Y]);
+            int width = Math.round(unitConv.mpt2units(rect.width));
+            int height = Math.round(unitConv.mpt2units(rect.height));
+
+            getDataStream().createIncludePageSegment(name, coords[X], coords[Y], width, height);
         } else {
             drawImageUsingURI(uri, rect);
         }
