@@ -532,7 +532,7 @@ public class DataStream {
             break;
         case 270:
             xOrigin = x;
-            yOrigin = y - height;
+            yOrigin = y - width;
             break;
         default:
             xOrigin = x;
