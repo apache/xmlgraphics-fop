@@ -468,9 +468,11 @@ public class AFPRenderer extends AbstractPathOrientedRenderer implements AFPCust
 
         String name = (String)pageSegmentMap.get(uri);
         if (name != null) {
-            float[] srcPts = {x, y};
+            float[] srcPts = {x, y, posInt.width,  posInt.height};
             int[] coords = unitConv.mpts2units(srcPts);
-            dataStream.createIncludePageSegment(name, coords[X], coords[Y]);
+            int width = Math.round(unitConv.mpt2units(posInt.width));
+            int height = Math.round(unitConv.mpt2units(posInt.height));
+            dataStream.createIncludePageSegment(name, coords[X], coords[Y], width, height);
         } else {
             ImageManager manager = userAgent.getFactory().getImageManager();
             ImageInfo info = null;
