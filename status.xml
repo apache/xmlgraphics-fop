@@ -58,6 +58,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="CB" type="fix" fixes-bug="48456">
+        Bugfix: AFP Renderer: Underline is incorrectly placed when reference-orientation != 0
+      </action>
       <action context="Renderers" dev="CB" type="fix" fixes-bug="48453">
         Bugfix: AFP Renderer: Page Segments not positioned correctly when reference-orientation != 0
       </action>
