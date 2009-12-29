@@ -76,7 +76,7 @@ public class AFPRectanglePainter extends AbstractAFPPainter {
         case 270:
             lineDataInfo.x1 = pageHeight - Math.round((float)at.getTranslateY() - x);
             lineDataInfo.y1 = lineDataInfo.y2 = Math.round((float)at.getTranslateX() + y);
-            lineDataInfo.x2 = lineDataInfo.x1 + Math.round(width - x);
+            lineDataInfo.x2 = pageHeight - Math.round((float)at.getTranslateY() - x - width);
             break;
         }
         dataStream.createLine(lineDataInfo);
