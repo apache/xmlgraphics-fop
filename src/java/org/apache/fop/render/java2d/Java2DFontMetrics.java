@@ -142,7 +142,7 @@ public class Java2DFontMetrics {
      * @param size font size
      * @return ascent in milliponts
      */
-    public int getMaxAscent(String family, int style, int size) {
+    public synchronized int getMaxAscent(String family, int style, int size) {
         setFont(family, style, size);
         return Math.round(lineMetrics.getAscent() * FONT_FACTOR);
     }
@@ -155,7 +155,7 @@ public class Java2DFontMetrics {
      * @param size font size
      * @return ascent in milliponts
      */
-    public int getAscender(String family, int style, int size) {
+    public synchronized int getAscender(String family, int style, int size) {
         setFont(family, style, size);
         return ascender * 1000;
 
@@ -193,7 +193,7 @@ public class Java2DFontMetrics {
      * @param size font size
      * @return capital height in millipoints
      */
-    public int getCapHeight(String family, int style, int size) {
+    public synchronized int getCapHeight(String family, int style, int size) {
         // currently just gets Ascent value but maybe should use
         // getMaxAcent() at some stage
         return getAscender(family, style, size);
@@ -207,7 +207,7 @@ public class Java2DFontMetrics {
      * @param size font size
      * @return descent in milliponts
      */
-    public int getDescender(String family, int style, int size) {
+    public synchronized int getDescender(String family, int style, int size) {
         setFont(family, style, size);
         return descender * 1000;
     }
@@ -220,7 +220,7 @@ public class Java2DFontMetrics {
      * @param size font size
      * @return font height in milliponts
      */
-    public int getXHeight(String family, int style, int size) {
+    public synchronized int getXHeight(String family, int style, int size) {
         setFont(family, style, size);
         return xHeight * 1000;
     }
@@ -234,7 +234,7 @@ public class Java2DFontMetrics {
      * @param size font size
      * @return character width in millipoints
      */
-    public int width(int i, String family, int style, int size) {
+    public synchronized int width(int i, String family, int style, int size) {
         int w;
         setFont(family, style, size);
         w = internalCharWidth(i) * 1000;
@@ -256,7 +256,7 @@ public class Java2DFontMetrics {
      * @param size font size
      * @return array of character widths in millipoints
      */
-    public int[] getWidths(String family, int style, int size) {
+    public synchronized int[] getWidths(String family, int style, int size) {
         int i;
 
         if (width == null) {
@@ -351,7 +351,7 @@ public class Java2DFontMetrics {
      * @param size font size
      * @return font with the desired characeristics.
      */
-    public java.awt.Font getFont(String family, int style, int size) {
+    public synchronized java.awt.Font getFont(String family, int style, int size) {
         setFont(family, style, size);
         return f1;
         /*
@@ -372,7 +372,7 @@ public class Java2DFontMetrics {
      * @param c the glyph to check
      * @return true if the character is supported
      */
-    public boolean hasChar(String family, int style, int size, char c) {
+    public synchronized boolean hasChar(String family, int style, int size, char c) {
         setFont(family, style, size);
         return f1.canDisplay(c);
     }
