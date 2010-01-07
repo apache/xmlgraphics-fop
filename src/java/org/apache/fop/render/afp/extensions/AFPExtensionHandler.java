@@ -90,6 +90,12 @@ public class AFPExtensionHandler extends DefaultHandler
                     throw new SAXException("Invalid URI: " + src, e);
                 }
                 this.returnedObject = formMap;
+            } else if (AFPElementMapping.INCLUDE_PAGE_OVERLAY.equals(localName)) {
+                this.returnedObject = new AFPPageOverlay();
+                String name = lastAttributes.getValue("name");
+                if (name != null) {
+                    returnedObject.setName(name);
+                }
             } else {
                 AFPPageSetup pageSetupExtn = null;
                 if (AFPElementMapping.INVOKE_MEDIUM_MAP.equals(localName)) {
