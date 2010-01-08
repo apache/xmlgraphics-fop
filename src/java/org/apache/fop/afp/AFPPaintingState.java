@@ -24,14 +24,19 @@ import java.awt.Point;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.xmlgraphics.java2d.ColorConverter;
+import org.apache.xmlgraphics.java2d.DefaultColorConverter;
+import org.apache.xmlgraphics.java2d.GrayScaleColorConverter;
+
 import org.apache.fop.afp.fonts.AFPPageFonts;
 import org.apache.fop.util.AbstractPaintingState;
 
 /**
- * This keeps information about the current painting state when writing to an AFP datastream.
+ * This keeps information about the current painting state when writing to an
+ * AFP datastream.
  */
-public class AFPPaintingState extends org.apache.fop.util.AbstractPaintingState
-implements Cloneable {
+public class AFPPaintingState extends org.apache.fop.util.AbstractPaintingState implements
+        Cloneable {
 
     private static final long serialVersionUID = 8206711712452344473L;
 
@@ -46,9 +51,18 @@ implements Cloneable {
     /** color image support */
     private boolean colorImages = false;
 
-    /** true if certain image formats may be embedded unchanged in their native format. */
+    /** color image handler */
+    private ColorConverter colorConverter = GrayScaleColorConverter.getInstance();
+
+    /**
+     * true if certain image formats may be embedded unchanged in their native
+     * format.
+     */
     private boolean nativeImagesSupported = false;
-    /** true if CMYK images (requires IOCA FS45 suppport on the target platform) may be generated */
+    /**
+     * true if CMYK images (requires IOCA FS45 suppport on the target platform)
+     * may be generated
+     */
     private boolean cmykImagesSupported;
 
     /** default value for image depth */
@@ -60,12 +74,11 @@ implements Cloneable {
     /** the current page */
     private transient AFPPagePaintingState pagePaintingState = new AFPPagePaintingState();
 
-//    /** reference orientation */
-//    private int orientation = 0;
+    // /** reference orientation */
+    // private int orientation = 0;
 
     /** a unit converter */
     private final transient AFPUnitConverter unitConv = new AFPUnitConverter(this);
-
 
     /**
      * Sets the rotation to be used for portrait pages, valid values are 0
@@ -75,13 +88,11 @@ implements Cloneable {
      *            The rotation in degrees.
      */
     public void setPortraitRotation(int rotation) {
-        if (rotation == 0 || rotation == 90 || rotation == 180
-                || rotation == 270) {
+        if (rotation == 0 || rotation == 90 || rotation == 180 || rotation == 270) {
             portraitRotation = rotation;
         } else {
-            throw new IllegalArgumentException(
-                    "The portrait rotation must be one"
-                            + " of the values 0, 90, 180, 270");
+            throw new IllegalArgumentException("The portrait rotation must be one"
+                    + " of the values 0, 90, 180, 270");
 
         }
     }
@@ -103,13 +114,11 @@ implements Cloneable {
      *            The rotation in degrees.
      */
     public void setLandscapeRotation(int rotation) {
-        if (rotation == 0 || rotation == 90 || rotation == 180
-                || rotation == 270) {
+        if (rotation == 0 || rotation == 90 || rotation == 180 || rotation == 270) {
             landscapeRotation = rotation;
         } else {
-            throw new IllegalArgumentException(
-                    "The landscape rotation must be one"
-                            + " of the values 0, 90, 180, 270");
+            throw new IllegalArgumentException("The landscape rotation must be one"
+                    + " of the values 0, 90, 180, 270");
         }
     }
 
@@ -152,13 +161,18 @@ implements Cloneable {
     }
 
     /**
-     * Sets whether images are color or not
+     * Sets whether images are color or not and instantiates a ColorHandler
      *
      * @param colorImages
      *            color image output
      */
     public void setColorImages(boolean colorImages) {
         this.colorImages = colorImages;
+
+        if (colorImages) {
+            this.colorConverter = DefaultColorConverter.getInstance();
+        }
+
     }
 
     /**
@@ -171,9 +185,19 @@ implements Cloneable {
     }
 
     /**
+     * Used to convert color in respect of the colorImages flag
+     *
+     * @return the color converter
+     */
+    public ColorConverter getColorConverter() {
+        return this.colorConverter;
+    }
+
+    /**
      * Sets whether images are natively supported or not in the AFP environment
      *
-     * @param nativeImagesSupported true if images are natively supported in this AFP environment
+     * @param nativeImagesSupported
+     *            true if images are natively supported in this AFP environment
      */
     public void setNativeImagesSupported(boolean nativeImagesSupported) {
         this.nativeImagesSupported = nativeImagesSupported;
@@ -189,10 +213,12 @@ implements Cloneable {
     }
 
     /**
-     * Controls whether CMYK images (IOCA FS45) are enabled. By default, support is disabled
-     * for wider compatibility. When disabled, any CMYK image is converted to the selected
-     * color format.
-     * @param value true to enabled CMYK images
+     * Controls whether CMYK images (IOCA FS45) are enabled. By default, support
+     * is disabled for wider compatibility. When disabled, any CMYK image is
+     * converted to the selected color format.
+     *
+     * @param value
+     *            true to enabled CMYK images
      */
     public void setCMYKImagesSupported(boolean value) {
         this.cmykImagesSupported = value;
@@ -200,6 +226,7 @@ implements Cloneable {
 
     /**
      * Indicates whether CMYK images (IOCA FS45) are enabled.
+     *
      * @return true if IOCA FS45 is enabled
      */
     public boolean isCMYKImagesSupported() {
@@ -259,7 +286,8 @@ implements Cloneable {
     /**
      * Sets the page width
      *
-     * @param pageWidth the page width
+     * @param pageWidth
+     *            the page width
      */
     public void setPageWidth(int pageWidth) {
         pagePaintingState.setWidth(pageWidth);
@@ -277,7 +305,8 @@ implements Cloneable {
     /**
      * Sets the page height
      *
-     * @param pageHeight the page height
+     * @param pageHeight
+     *            the page height
      */
     public void setPageHeight(int pageHeight) {
         pagePaintingState.setHeight(pageHeight);
@@ -304,10 +333,11 @@ implements Cloneable {
     /**
      * Sets the uri of the current image
      *
-     * @param uri the uri of the current image
+     * @param uri
+     *            the uri of the current image
      */
     public void setImageUri(String uri) {
-        ((AFPData)getData()).imageUri = uri;
+        ((AFPData) getData()).imageUri = uri;
     }
 
     /**
@@ -316,7 +346,7 @@ implements Cloneable {
      * @return the uri of the current image
      */
     public String getImageUri() {
-        return ((AFPData)getData()).imageUri;
+        return ((AFPData) getData()).imageUri;
     }
 
     /**
@@ -338,10 +368,13 @@ implements Cloneable {
     }
 
     /**
-     * Returns a point on the current page, taking the current painting state into account.
+     * Returns a point on the current page, taking the current painting state
+     * into account.
      *
-     * @param x the X-coordinate
-     * @param y the Y-coordinate
+     * @param x
+     *            the X-coordinate
+     * @param y
+     *            the Y-coordinate
      * @return a point on the current page
      */
     public Point getPoint(int x, int y) {
@@ -370,12 +403,13 @@ implements Cloneable {
 
     /** {@inheritDoc} */
     public Object clone() {
-        AFPPaintingState paintingState = (AFPPaintingState)super.clone();
-        paintingState.pagePaintingState = (AFPPagePaintingState)this.pagePaintingState.clone();
+        AFPPaintingState paintingState = (AFPPaintingState) super.clone();
+        paintingState.pagePaintingState = (AFPPagePaintingState) this.pagePaintingState.clone();
         paintingState.portraitRotation = this.portraitRotation;
         paintingState.landscapeRotation = this.landscapeRotation;
         paintingState.bitsPerPixel = this.bitsPerPixel;
         paintingState.colorImages = this.colorImages;
+        paintingState.colorConverter = this.colorConverter;
         paintingState.resolution = this.resolution;
         return paintingState;
     }
@@ -383,13 +417,9 @@ implements Cloneable {
     /** {@inheritDoc} */
     public String toString() {
         return "AFPPaintingState{" + "portraitRotation=" + portraitRotation
-        + ", landscapeRotation=" + landscapeRotation
-        + ", colorImages=" + colorImages
-        + ", bitsPerPixel=" + bitsPerPixel
-        + ", resolution=" + resolution
-        + ", pageState=" + pagePaintingState
-        + super.toString()
-        + "}";
+                + ", landscapeRotation=" + landscapeRotation + ", colorImages=" + colorImages
+                + ", bitsPerPixel=" + bitsPerPixel + ", resolution=" + resolution + ", pageState="
+                + pagePaintingState + super.toString() + "}";
     }
 
     /**
@@ -423,7 +453,8 @@ implements Cloneable {
         /**
          * Sets the page width
          *
-         * @param width the page width
+         * @param width
+         *            the page width
          */
         protected void setWidth(int width) {
             this.width = width;
@@ -441,7 +472,8 @@ implements Cloneable {
         /**
          * Sets the page height
          *
-         * @param height the page height
+         * @param height
+         *            the page height
          */
         protected void setHeight(int height) {
             this.height = height;
@@ -459,7 +491,8 @@ implements Cloneable {
         /**
          * Sets the current page fonts
          *
-         * @param fonts the current page fonts
+         * @param fonts
+         *            the current page fonts
          */
         protected void setFonts(AFPPageFonts fonts) {
             this.fonts = fonts;
@@ -486,7 +519,8 @@ implements Cloneable {
         /**
          * Sets the current page orientation
          *
-         * @param orientation the current page orientation
+         * @param orientation
+         *            the current page orientation
          */
         protected void setOrientation(int orientation) {
             this.orientation = orientation;
@@ -505,12 +539,8 @@ implements Cloneable {
 
         /** {@inheritDoc} */
         public String toString() {
-            return "AFPPagePaintingState{width=" + width
-            + ", height=" + height
-            + ", orientation=" + orientation
-            + ", fonts=" + fonts
-            + ", fontCount=" + fontCount
-            + "}";
+            return "AFPPagePaintingState{width=" + width + ", height=" + height + ", orientation="
+                    + orientation + ", fonts=" + fonts + ", fontCount=" + fontCount + "}";
         }
     }
 
@@ -527,7 +557,7 @@ implements Cloneable {
 
         /** {@inheritDoc} */
         public Object clone() {
-            AFPData obj = (AFPData)super.clone();
+            AFPData obj = (AFPData) super.clone();
             obj.filled = this.filled;
             obj.imageUri = this.imageUri;
             return obj;
@@ -535,10 +565,8 @@ implements Cloneable {
 
         /** {@inheritDoc} */
         public String toString() {
-            return "AFPData{" + super.toString()
-            + ", filled=" + filled
-            + ", imageUri=" + imageUri
-            + "}";
+            return "AFPData{" + super.toString() + ", filled=" + filled + ", imageUri=" + imageUri
+                    + "}";
         }
 
         /** {@inheritDoc} */

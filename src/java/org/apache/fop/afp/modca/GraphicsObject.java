@@ -25,6 +25,8 @@ import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.xmlgraphics.java2d.ColorConverter;
+
 import org.apache.fop.afp.AFPDataObjectInfo;
 import org.apache.fop.afp.AFPObjectAreaInfo;
 import org.apache.fop.afp.Completable;
@@ -64,6 +66,10 @@ public class GraphicsObject extends AbstractDataObject {
 
     /** the graphics state */
     private final GraphicsState graphicsState = new GraphicsState();
+
+
+    /** color  converter  */
+    private ColorConverter colorConverter = null;
 
     /**
      * Default constructor
@@ -140,10 +146,22 @@ public class GraphicsObject extends AbstractDataObject {
      */
     public void setColor(Color color) {
         if (!color.equals(graphicsState.color)) {
-            addObject(new GraphicsSetProcessColor(color));
+            addObject(new GraphicsSetProcessColor(colorConverter.convert(color)));
             graphicsState.color = color;
         }
     }
+
+
+    /**
+     * Sets the color converter
+     *
+     * @param colorConverter ColorConverter to filter the color
+     *           when creating a GraphicsSetProcessColor.
+     */
+    public void setColorConverter(ColorConverter colorConverter) {
+       this.colorConverter = colorConverter;
+    }
+
 
     /**
      * Sets the current position

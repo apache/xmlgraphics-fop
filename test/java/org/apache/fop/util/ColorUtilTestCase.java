@@ -24,6 +24,9 @@ import java.awt.color.ColorSpace;
 
 import junit.framework.TestCase;
 
+import org.apache.xmlgraphics.java2d.CMYKColorSpace;
+import org.apache.xmlgraphics.java2d.ColorExt;
+
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FopFactory;
 

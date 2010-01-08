@@ -58,7 +58,10 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
-      <action context="Renderers" dev="CB" type="fix" fixes-bug="48376" due-to="Venkat Reddy">
+      <action context="Renderers" dev="CB" type="fix" fixes-bug="48237" due-to="Peter Hancock">
+        Bugfix: AFP Renderer: Respect image color settings for svg 
+      </action>	  
+	  <action context="Renderers" dev="CB" type="fix" fixes-bug="48376" due-to="Venkat Reddy">
         Bugfix: AFP Renderer: Page Overlays not generated when using Intermediate Format
       </action>	  
 	  <action context="Renderers" dev="CB" type="fix" fixes-bug="48456">
