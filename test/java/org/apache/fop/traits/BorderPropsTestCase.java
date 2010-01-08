@@ -23,9 +23,10 @@ import java.awt.Color;
 
 import junit.framework.TestCase;
 
+import org.apache.xmlgraphics.java2d.CMYKColorSpace;
+import org.apache.xmlgraphics.java2d.ColorExt;
+
 import org.apache.fop.fo.Constants;
-import org.apache.fop.util.CMYKColorSpace;
-import org.apache.fop.util.ColorExt;
 import org.apache.fop.util.ColorUtil;
 
 /**

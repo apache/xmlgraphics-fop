@@ -27,6 +27,9 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.xmlgraphics.java2d.CMYKColorSpace;
+import org.apache.xmlgraphics.java2d.ColorExt;
+
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.expr.PropertyException;
 
@@ -679,20 +682,7 @@ public final class ColorUtil {
      * @return the modified color
      */
     public static Color lightenColor(Color col, float factor) {
-        // TODO: This function converts the color into the sRGB namespace.
-        // This should be avoided if possible.
-        float[] cols = new float[4];
-        cols = col.getRGBComponents(cols);
-        if (factor > 0) {
-            cols[0] += (1.0 - cols[0]) * factor;
-            cols[1] += (1.0 - cols[1]) * factor;
-            cols[2] += (1.0 - cols[2]) * factor;
-        } else {
-            cols[0] -= cols[0] * -factor;
-            cols[1] -= cols[1] * -factor;
-            cols[2] -= cols[2] * -factor;
-        }
-        return new Color(cols[0], cols[1], cols[2], cols[3]);
+        return org.apache.xmlgraphics.java2d.ColorUtil.lightenColor(col, factor);
     }
 
     /**
@@ -711,7 +701,7 @@ public final class ColorUtil {
      * @return true if it is a gray value
      */
     public static boolean isGray(Color col) {
-        return (col.getRed() == col.getBlue() && col.getRed() == col.getGreen());
+        return org.apache.xmlgraphics.java2d.ColorUtil.isGray(col);
     }
 
     /**
@@ -720,10 +710,7 @@ public final class ColorUtil {
      * @return the CMYK color
      */
     public static Color toCMYKGrayColor(float black) {
-        float[] cmyk = new float[] {0f, 0f, 0f, 1.0f - black};
-        CMYKColorSpace cmykCs = CMYKColorSpace.getInstance();
-        float[] rgb = cmykCs.toRGB(cmyk);
-        return ColorExt.createFromFoRgbIcc(rgb[0], rgb[1], rgb[2],
-                CMYK_PSEUDO_PROFILE, null, cmykCs, cmyk);
+
+        return org.apache.xmlgraphics.java2d.ColorUtil.toCMYKGrayColor(black);
     }
 }

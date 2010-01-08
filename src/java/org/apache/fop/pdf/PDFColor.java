@@ -23,11 +23,11 @@ import java.awt.Color;
 import java.awt.color.ColorSpace;
 import java.awt.color.ICC_ColorSpace;
 import java.io.IOException;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
-import org.apache.fop.util.CMYKColorSpace;
-import org.apache.fop.util.ColorExt;
+import org.apache.xmlgraphics.java2d.CMYKColorSpace;
+import org.apache.xmlgraphics.java2d.ColorExt;
 
 /**
  * PDF Color object.
