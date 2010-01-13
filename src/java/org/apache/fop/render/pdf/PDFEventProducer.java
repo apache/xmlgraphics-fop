@@ -66,4 +66,15 @@ public interface PDFEventProducer extends EventProducer {
      */
     void nonFullyResolvedLinkTargets(Object source, int count);
 
+
+    /**
+     * Custom structure type is not standard as per the PDF reference.
+     *
+     * @param source the event source
+     * @param fo the local name of the formatting object having the custom type
+     * @param type custom structure type
+     * @param fallback default structure type used as a fallback
+     * @event.severity WARN
+     */
+    void nonStandardStructureType(Object source, String fo, String type, String fallback);
 }

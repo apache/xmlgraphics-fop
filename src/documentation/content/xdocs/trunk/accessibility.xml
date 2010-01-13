@@ -91,6 +91,26 @@
         </li>
       </ul>
     </section>
+    <section id="customTags">
+      <title>Customized Tagging</title>
+      <p>The <a href="#PDFReference">PDF Reference</a> defines a set of standard Structure Types to 
+        tag content. For example, ‘P’  is used for identifying paragraphs, ‘H1’ to ‘H6’ for headers, 
+        ‘L’ for lists, ‘Div’ for block-level groups of elements, etc. This standard set is aimed at 
+        improving interoperability between applications producing or consuming PDF. </p>
+      <p>FOP provides a default mapping of Formatting Objects to elements from that standard set. 
+        For example, <code>fo:page-sequence</code> is mapped to ‘Part’, <code>fo:block</code> is 
+        mapped to ‘P’, <code>fo:list-block</code> to ‘L’, etc.</p>
+      <p>You may want to customize that mapping to improve the accuracy of the tagging or deal with 
+        particular FO constructs. For example, you may want to make use of the ‘H1’ to ‘H6’ tags to 
+        make the hierarchical structure of the document appear in the PDF. This is achieved by using 
+        the <code>role</code> XSL-FO property:</p>
+      <source>...
+&lt;fo:block role="H1" font-weight="bold"&gt;I. A Level 1 Heading&lt;/fo:block&gt;
+&lt;fo:block&gt;This is the first paragraph of the first section...&lt;/fo:block&gt;
+...</source>
+      <p>If a non-standard structure type is specified, FOP will issue a warning and fall back to 
+        the default tag associated to the Formatting Object.</p>
+    </section>
     <section id="testing">
       <title>Testing</title>
       <p>
@@ -120,11 +140,6 @@
           SVGs is not accessible. It's only possible to work with <code>fox:alt-text</code>.
         </li>
         <li>
-          XSL-FO's role property is currently not supported. It could theoretically be used to
-          differentiate between headings and normal text. At the moment, the two are simply
-          identified as paragraphs.
-        </li>
-        <li>
           The side regions (region-before, region-after etc.) are currently not specially
           identified. Screen readers may read their content at page changes.
         </li>
@@ -140,7 +155,7 @@
         <li><a href="http://www.section508.gov/">US Government - Website on Section 508</a></li>
         <li><a href="http://en.wikipedia.org/wiki/Accessibility">Wikipedia on Accessibility in general</a></li>
         <li><a href="http://en.wikipedia.org/wiki/Portable_Document_Format#Accessibility">Wikipedia on Accessibility in PDF</a></li>
-        <li>
+        <li id="PDFReference">
           <a href="http://partners.adobe.com/public/developer/en/pdf/PDFReference.pdf">PDF 
             Reference 1.4</a> (look up chapters 9.7 "Tagged PDF" and 9.8 "Accessibility Support")
         </li>

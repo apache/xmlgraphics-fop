@@ -145,7 +145,8 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
             this.accessEnabled = getUserAgent().isAccessibilityEnabled();
             if (accessEnabled) {
                 pdfDoc.getRoot().makeTagged();
-                logicalStructureHandler = new PDFLogicalStructureHandler(pdfDoc);
+                logicalStructureHandler = new PDFLogicalStructureHandler(pdfDoc,
+                        getUserAgent().getEventBroadcaster());
             }
         } catch (IOException e) {
             throw new IFException("I/O error in startDocument()", e);

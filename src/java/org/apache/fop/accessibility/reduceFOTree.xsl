@@ -86,8 +86,8 @@
   <xsl:template match="fo:leader"/>
       
 
-  <!-- Keep foi:ptr and fox:alt-text attributes, discard everything else -->
-  <xsl:template match="@foi:ptr|@fox:alt-text">
+  <!-- Keep foi:ptr, fox:alt-text and role attributes, discard everything else -->
+  <xsl:template match="@foi:ptr|@fox:alt-text|@role">
     <xsl:copy-of select="."/>
   </xsl:template>
 
