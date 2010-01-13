@@ -26,6 +26,7 @@ import java.util.Map;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import org.apache.fop.events.EventBroadcaster;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fo.extensions.InternalElementMapping;
 import org.apache.fop.pdf.PDFArray;
@@ -51,6 +52,8 @@ class PDFLogicalStructureHandler {
     private static final MarkedContentInfo ARTIFACT = new MarkedContentInfo(null, -1, null);
 
     private final PDFDocument pdfDoc;
+
+    private final EventBroadcaster eventBroadcaster;
 
     /**
      * Map of references to the corresponding structure elements.
@@ -105,8 +108,9 @@ class PDFLogicalStructureHandler {
      *
      * @param pdfDoc a document
      */
-    PDFLogicalStructureHandler(PDFDocument pdfDoc) {
+    PDFLogicalStructureHandler(PDFDocument pdfDoc, EventBroadcaster eventBroadcaster) {
         this.pdfDoc = pdfDoc;
+        this.eventBroadcaster = eventBroadcaster;
         PDFStructTreeRoot structTreeRoot = pdfDoc.getFactory().makeStructTreeRoot(parentTree);
         rootStructureElement = pdfDoc.getFactory().makeStructureElement(
                 FOToPDFRoleMap.mapFormattingObject("root", structTreeRoot), structTreeRoot);
@@ -148,15 +152,15 @@ class PDFLogicalStructureHandler {
         Node attr = node.getAttributes().getNamedItemNS(InternalElementMapping.URI, "ptr");
         assert attr != null;
         String ptr = attr.getNodeValue();
-        String nodeName = node.getLocalName();
         PDFStructElem structElem = pdfDoc.getFactory().makeStructureElement(
-                FOToPDFRoleMap.mapFormattingObject(nodeName, parent), parent);
+                FOToPDFRoleMap.mapFormattingObject(node, parent, eventBroadcaster), parent);
         // TODO necessary? If a page-sequence is empty (e.g., contains a single
         // empty fo:block), should the block still be added to the structure
         // tree? This is not being done for descendant empty elements...
         if (addKid) {
             parent.addKid(structElem);
         }
+        String nodeName = node.getLocalName();
         if (nodeName.equals("external-graphic") || nodeName.equals("instream-foreign-object")) {
             Node altTextNode = node.getAttributes().getNamedItemNS(
                     ExtensionElementMapping.URI, "alt-text");

@@ -243,7 +243,8 @@ public class PDFRenderer extends AbstractPathOrientedRenderer implements PDFConf
         this.pdfDoc = pdfUtil.setupPDFDocument(stream);
         if (accessEnabled) {
             pdfDoc.getRoot().makeTagged();
-            logicalStructureHandler = new PDFLogicalStructureHandler(pdfDoc);
+            logicalStructureHandler = new PDFLogicalStructureHandler(pdfDoc,
+                    userAgent.getEventBroadcaster());
         }
     }
 
