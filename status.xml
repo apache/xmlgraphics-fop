@@ -58,6 +58,10 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Layout" dev="VH" type="fix" fixes-bug="46486">
+        Bugfix: having a special page-master for the last page caused loss of content when normal 
+        blocks were mixed with blocks spanning all columns.
+      </action>
       <action context="Renderers" dev="VH" type="add">
         Added possibility to customize PDF tagging via the ‘role’ property.
       </action>

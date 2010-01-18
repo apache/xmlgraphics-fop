@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 import org.apache.fop.area.Block;
+import org.apache.fop.area.BodyRegion;
 import org.apache.fop.area.Footnote;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.fo.Constants;
@@ -289,7 +290,7 @@ public class PageBreaker extends AbstractBreaker {
 
         if (needColumnBalancing) {
             //column balancing for the last part
-            doPhase3(alg, partCount, originalList, effectiveList, false);
+            redoLayout(alg, partCount, originalList, effectiveList);
             return;
         }
 
@@ -298,7 +299,7 @@ public class PageBreaker extends AbstractBreaker {
             //last part is reached
             if (lastPageMasterDefined) {
                 //last-page condition
-                doPhase3(alg, partCount, originalList, effectiveList, true);
+                redoLayout(alg, partCount, originalList, effectiveList);
                 return;
             }
         }
@@ -308,16 +309,12 @@ public class PageBreaker extends AbstractBreaker {
     }
 
     /**
-     * Restart the algorithm at the break corresponding
-     * to the given partCount
-     * (currently only used to redo the part after the
-     *  last break in case of column-balancing
-     *  and/or a last page-master)
+     * Restart the algorithm at the break corresponding to the given partCount. Used to
+     * re-do the part after the last break in case of either column-balancing or a last
+     * page-master.
      */
-    private void doPhase3(PageBreakingAlgorithm alg, int partCount,
-            BlockSequence originalList, BlockSequence effectiveList,
-            boolean isLastPart) {
-
+    private void redoLayout(PageBreakingAlgorithm alg, int partCount,
+            BlockSequence originalList, BlockSequence effectiveList) {
 
         int newStartPos = 0;
         int restartPoint = pageProvider.getStartingPartIndexForLastPage(partCount);
@@ -344,15 +341,10 @@ public class PageBreaker extends AbstractBreaker {
         pageProvider.setStartOfNextElementList(currentPageNum,
                 pslm.getCurrentPV().getCurrentSpan().getCurrentFlowIndex());
 
-        PageBreakingAlgorithm algRestart = null;
-        int optimalPageCount;
         //Make sure we only add the areas we haven't added already
         effectiveList.ignoreAtStart = newStartPos;
 
-        if (isLastPart) {
-            pageProvider.setLastPageIndex(currentPageNum);
-        }
-
+        PageBreakingAlgorithm algRestart;
         if (needColumnBalancing) {
             AbstractBreaker.log.debug("Column balancing now!!!");
             AbstractBreaker.log.debug("===================================================");
@@ -365,7 +357,13 @@ public class PageBreaker extends AbstractBreaker {
                     pslm.getCurrentPV().getBodyRegion().getColumnCount());
             AbstractBreaker.log.debug("===================================================");
         } else  {
-            //plain last page, no column balancing
+            // Handle special page-master for last page
+            BodyRegion currentBody = pageProvider.getPage(false, currentPageNum)
+                    .getPageViewport().getBodyRegion();
+            pageProvider.setLastPageIndex(currentPageNum);
+            BodyRegion lastBody = pageProvider.getPage(false, currentPageNum)
+                    .getPageViewport().getBodyRegion();
+            lastBody.getMainReference().setSpans(currentBody.getMainReference().getSpans());
             AbstractBreaker.log.debug("Last page handling now!!!");
             AbstractBreaker.log.debug("===================================================");
             //Restart last page
@@ -377,16 +375,25 @@ public class PageBreaker extends AbstractBreaker {
             AbstractBreaker.log.debug("===================================================");
         }
 
-        optimalPageCount = algRestart.findBreakingPoints(effectiveList,
+        int optimalPageCount = algRestart.findBreakingPoints(effectiveList,
                     newStartPos,
                     1, true, BreakingAlgorithm.ALL_BREAKS);
         AbstractBreaker.log.debug("restart: optimalPageCount= " + optimalPageCount
                 + " pageBreaks.size()= " + algRestart.getPageBreaks().size());
 
         boolean fitsOnePage
-                = optimalPageCount <= pslm.getCurrentPV().getBodyRegion().getColumnCount();
+                = optimalPageCount <= pslm.getCurrentPV().getBodyRegion().getMainReference().getCurrentSpan().getColumnCount();
 
-        if (isLastPart) {
+        if (needColumnBalancing) {
+            if (!fitsOnePage) {
+                AbstractBreaker.log.warn(
+                        "Breaking algorithm produced more columns than are available.");
+                /* reenable when everything works
+                throw new IllegalStateException(
+                        "Breaking algorithm must not produce more columns than available.");
+                */
+            }
+        } else {
             if (fitsOnePage) {
                 //Replace last page
                 pslm.setCurrentPage(pageProvider.getPage(false, currentPageNum));
@@ -398,15 +405,6 @@ public class PageBreaker extends AbstractBreaker {
                 pageProvider.setLastPageIndex(currentPageNum + 1);
                 pslm.setCurrentPage(pslm.makeNewPage(true, true));
                 return;
-            }
-        } else {
-            if (!fitsOnePage) {
-                AbstractBreaker.log.warn(
-                        "Breaking algorithm produced more columns than are available.");
-                /* reenable when everything works
-                throw new IllegalStateException(
-                        "Breaking algorithm must not produce more columns than available.");
-                */
             }
         }
 

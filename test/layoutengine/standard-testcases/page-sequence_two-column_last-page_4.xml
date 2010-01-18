@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks that a two-column document with a last page setting is properly rendered.
+    </p>
+    <p>
+      Test case: last content spans all columns and does not fit on last page, normal page master 
+      must be used and empty last page produced.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="page"
+          page-height="250pt" page-width="320pt" margin="10pt">
+          <fo:region-body margin-top="15pt" margin-bottom="15pt" column-count="2" column-gap="12pt"
+            background-color="#F0F0F0"/>
+          <fo:region-before region-name="page-header" extent="10pt" display-align="after"/>
+          <fo:region-after  region-name="page-footer" extent="10pt"/>
+        </fo:simple-page-master>
+        <fo:simple-page-master master-name="last-page"
+          page-height="150pt" page-width="320pt" margin="10pt">
+          <fo:region-body margin-top="15pt" margin-bottom="15pt" column-count="2" column-gap="12pt"
+            background-color="#F0F0FF"/>
+          <fo:region-before region-name="last-page-header" extent="10pt" display-align="after"/>
+          <fo:region-after  region-name="last-page-footer" extent="10pt"/>
+        </fo:simple-page-master>
+        <fo:page-sequence-master master-name="pages">
+          <fo:repeatable-page-master-alternatives>
+            <fo:conditional-page-master-reference page-position="last" master-reference="last-page"/>
+            <fo:conditional-page-master-reference page-position="any"  master-reference="page"/>
+          </fo:repeatable-page-master-alternatives>
+        </fo:page-sequence-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="pages" font-size="7pt" text-align="center">
+        <fo:static-content flow-name="page-header">
+          <fo:block border-bottom="1pt solid black" padding-bottom="0.5pt">Page Header</fo:block>
+        </fo:static-content>
+        <fo:static-content flow-name="page-footer">
+          <fo:block border-top="1pt solid black" padding-top="0.5pt">Page Footer</fo:block>
+        </fo:static-content>
+        <fo:static-content flow-name="last-page-header">
+          <fo:block border-bottom="1pt solid blue" padding-bottom="0.5pt">Last Page Header</fo:block>
+        </fo:static-content>
+        <fo:static-content flow-name="last-page-footer">
+          <fo:block border-top="1pt solid blue" padding-top="0.5pt">Last Page Footer</fo:block>
+        </fo:static-content>
+        <fo:flow flow-name="xsl-region-body" font-size="8pt" line-height="10pt" text-align="justify"
+          space-before.minimum="0.8em"
+          space-before.optimum="1.0em"
+          space-before.maximum="2.5em">
+          <fo:block space-before="inherit">Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+            In in egestas nisi. Etiam at ante eget velit placerat ullamcorper. Suspendisse potenti. 
+            Nulla posuere turpis ac orci placerat vitae lacinia lectus tincidunt. Duis ultricies 
+            diam et lectus tempor aliquam. Mauris ligula arcu, hendrerit imperdiet ultrices laoreet, 
+            gravida sit amet metus. Donec vehicula iaculis condimentum. Sed eget tortor nec libero 
+            venenatis tincidunt.</fo:block>
+          <fo:block space-before="inherit">Curabitur dui tortor, congue in condimentum dapibus, 
+            volutpat non ligula. Proin tincidunt, sem eget luctus iaculis, mi neque posuere dui, non 
+            elementum ante diam quis odio. Nam blandit elit massa, vel tempus tortor. Phasellus et 
+            sem nec ante dignissim pellentesque id sed est. Sed vel magna odio, quis condimentum 
+            nibh. Mauris condimentum turpis vitae mauris mattis pulvinar. Donec tortor dolor, 
+            molestie id pellentesque nec, adipiscing in massa.</fo:block>
+          <fo:block space-before="inherit">Morbi semper sodales nisl, vitae sagittis orci adipiscing 
+            feugiat. Quisque consectetur ullamcorper sapien, eget adipiscing orci imperdiet ac. 
+            Integer leo ipsum, aliquam sagittis consequat consectetur, scelerisque nec diam. 
+            Vestibulum urna mi, hendrerit ac lacinia et, eleifend vitae ligula. In a urna 
+            quam.</fo:block>
+          <fo:block space-before="inherit">Duis iaculis ultrices congue. Sed sodales iaculis 
+            dapibus. Aenean vel felis odio, sed facilisis erat. Nam molestie, quam ac aliquam 
+            cursus, lectus lectus ullamcorper massa, eget porttitor erat lectus a mi. Duis quis elit 
+            at nunc convallis tempor sed nec risus. Nullam sit amet ante lectus, rutrum congue mi. 
+            Curabitur dui risus, malesuada at varius vel, aliquam vel elit.</fo:block>
+          <fo:block space-before="inherit">Integer dictum erat in nulla accumsan in tincidunt mauris 
+            vehicula. Aenean sed enim ligula, sollicitudin porta magna. Suspendisse scelerisque 
+            tincidunt purus, sit amet viverra libero porta eget. Aliquam erat volutpat. Curabitur eu 
+            tempor leo.</fo:block>
+          <fo:block space-before="inherit" span="all" color="purple">Quisque porttitor tellus a leo 
+            adipiscing malesuada. Nunc molestie, erat et ullamcorper vulputate, augue eros lobortis 
+            ligula, non fringilla diam tortor a nunc. Aenean ante sapien, bibendum in gravida 
+            rhoncus, mollis ut arcu. Sed magna massa, feugiat eu adipiscing ac, tincidunt quis mi. 
+            Mauris fermentum ullamcorper magna, eget molestie felis auctor quis.</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="3"   xpath="count(//pageViewport)"/>
+
+    <eval expected="Duis quis elit at nunc convallis tempor sed"
+                               xpath="//pageViewport[1]//flow[2]/block[position()=last()]/lineArea[position()=last()]"/>
+
+    <eval expected="page"      xpath="//pageViewport[2]/@simple-page-master-name"/>
+    <eval expected="2"   xpath="count(//pageViewport[2]//mainReference/span)"/>
+    <eval expected="nec risus. Nullam sit amet ante lectus,"
+                               xpath="//pageViewport[2]//span[1]//lineArea[1]"/>
+    <eval expected="erat volutpat. Curabitur eu tempor leo."
+                               xpath="//pageViewport[2]//span[1]/flow[2]//lineArea[position()=last()]"/>
+    <eval expected="50000"     xpath="//pageViewport[2]//mainReference/span[2]/@bpd"/>
+
+    <eval expected="last-page" xpath="//pageViewport[3]/@simple-page-master-name"/>
+    <eval expected="0"         xpath="//pageViewport[3]//regionBody//span/@bpd"/>
+  </checks>
+</testcase>
