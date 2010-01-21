@@ -20,7 +20,6 @@
 package org.apache.fop.afp.fonts;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.nio.ByteBuffer;
@@ -60,7 +59,7 @@ import org.apache.fop.afp.util.StringUtils;
 public class CharacterSet {
 
     /** Static logging instance */
-    protected static final Log log = LogFactory.getLog(CharacterSet.class.getName());
+    protected static final Log LOG = LogFactory.getLog(CharacterSet.class.getName());
 
     /** default codepage */
     public static final String DEFAULT_CODEPAGE = "T1V10500";
@@ -85,9 +84,6 @@ public class CharacterSet {
 
     /** The path to the installed fonts */
     private ResourceAccessor accessor;
-
-    /** Indicator as to whether to metrics have been loaded */
-    private boolean isMetricsLoaded = false;
 
     /** The current orientation (currently only 0 is supported by FOP) */
     private final String currentOrientation = "0";
@@ -122,11 +118,11 @@ public class CharacterSet {
      * @param name the character set name
      * @param accessor the resource accessor to load resource with
      */
-    public CharacterSet(String codePage, String encoding, String name, ResourceAccessor accessor) {
+     CharacterSet(String codePage, String encoding, String name, ResourceAccessor accessor) {
         if (name.length() > MAX_NAME_LEN) {
             String msg = "Character set name '" + name + "' must be a maximum of "
                 + MAX_NAME_LEN + " characters";
-            log.error("Constructor:: " + msg);
+            LOG.error("Constructor:: " + msg);
             throw new IllegalArgumentException(msg);
         }
 
@@ -192,7 +188,7 @@ public class CharacterSet {
      * @return the ascender value in millipoints
      */
     public int getAscender() {
-        load();
+
         return getCharacterSetOrientation().getAscender();
     }
 
@@ -204,7 +200,7 @@ public class CharacterSet {
      * @return the cap height value in millipoints
      */
     public int getCapHeight() {
-        load();
+
         return getCharacterSetOrientation().getCapHeight();
     }
 
@@ -216,7 +212,7 @@ public class CharacterSet {
      * @return the descender value in millipoints
      */
     public int getDescender() {
-        load();
+
         return getCharacterSetOrientation().getDescender();
     }
 
@@ -226,7 +222,7 @@ public class CharacterSet {
      * @return the first character in the character set
      */
     public int getFirstChar() {
-        load();
+
         return getCharacterSetOrientation().getFirstChar();
     }
 
@@ -236,7 +232,7 @@ public class CharacterSet {
      * @return the last character in the character set
      */
     public int getLastChar() {
-        load();
+
         return getCharacterSetOrientation().getLastChar();
     }
 
@@ -254,7 +250,7 @@ public class CharacterSet {
      * @return the widths of all characters
      */
     public int[] getWidths() {
-        load();
+
         return getCharacterSetOrientation().getWidths();
     }
 
@@ -264,7 +260,7 @@ public class CharacterSet {
      * @return the typical height of characters
      */
     public int getXHeight() {
-        load();
+
         return getCharacterSetOrientation().getXHeight();
     }
 
@@ -276,27 +272,11 @@ public class CharacterSet {
      * @return the width of the character
      */
     public int getWidth(int character) {
-        load();
+
         return getCharacterSetOrientation().getWidth(character);
     }
 
-    /**
-     * Lazy creation of the character metrics, the afp font file will only
-     * be processed on a method call requiring the metric information.
-     */
-    private void load() {
-        if (!isMetricsLoaded) {
-            AFPFontReader afpFontReader = new AFPFontReader();
-            try {
-                afpFontReader.loadCharacterSetMetric(this);
-                isMetricsLoaded = true;
-            } catch (IOException e) {
-                String msg = "Failed to load the character set metrics for code page " + codePage;
-                log.error(msg);
-                throw new RuntimeException(e.getMessage());
-            }
-        }
-    }
+
 
     /**
      * Returns the AFP character set identifier
@@ -318,7 +298,7 @@ public class CharacterSet {
             nameBytes = name.getBytes(AFPConstants.EBCIDIC_ENCODING);
         } catch (UnsupportedEncodingException usee) {
             nameBytes = name.getBytes();
-            log.warn(
+            LOG.warn(
                 "UnsupportedEncodingException translating the name " + name);
         }
         return nameBytes;
@@ -415,6 +395,22 @@ public class CharacterSet {
     public char mapChar(char c) {
         //TODO This is not strictly correct but we'll let it be for the moment
         return c;
+    }
+
+    /**
+     * Returns the increment for an space.
+     * @return the space increment
+     */
+    public int getSpaceIncrement() {
+        return getCharacterSetOrientation().getSpaceIncrement();
+    }
+
+    /**
+     * Returns the increment for an em space.
+     * @return the em space increment
+     */
+    public int getEmSpaceIncrement() {
+        return getCharacterSetOrientation().getEmSpaceIncrement();
     }
 
 }

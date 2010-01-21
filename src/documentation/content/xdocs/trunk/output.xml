@@ -548,10 +548,11 @@ out = proc.getOutputStream();]]></source>
   <!-- AFP Renderer -->
   ...
 </renderer>]]></source>
-      <p>There are 3 font configuration variants supported:</p>
+      <p>There are 4 font configuration variants supported:</p>
       <ol>
         <li>IBM Raster fonts</li>
         <li>IBM Outline fonts</li>
+        <li>IBM CID-keyed (Type 0) fonts</li>
         <li>FOP built-in Base14 fonts</li>
       </ol>
       <p>A typical raster font configuration looks like:</p>
@@ -600,6 +601,18 @@ out = proc.getOutputStream();]]></source>
         supported for the time being, but you should move to using the more flexible "base-uri"
         attribute so you can profit from the power of URI resolvers.
       </note>
+      <p>A CID-keyed font (Type 0, double-byte outline font) configuration is much the same as an outline font.
+      However, the characterset definition is now required within the afp-font element.</p>
+<source><![CDATA[      <font>
+          <afp-font type="CIDKeyed" characterset="CZJHMNU" 
+             codepage="T1120000" encoding="UnicodeBigUnmarked"
+             base-uri="file:/fonts/ibm" />
+          <font-triplet name="J-Heisei Mincho" style="normal" weight="normal" />
+      </font>
+]]></source>
+      <p>
+Note that the value of the encoding attribute in the example is the double-byte encoding 'UnicodeBigUnmarked' (UTF-16BE).
+      </p>
       <p>Experimentation has shown that the font metrics for the FOP built-in Base14 fonts are actually
       very similar to some of the IBM outline and raster fonts. In cases were the IBM font files are not
       available the base-uri attribute in the afp-font element can be replaced by a base14-font attribute 

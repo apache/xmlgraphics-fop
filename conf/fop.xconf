@@ -396,6 +396,20 @@ the location of this file.
           <font-triplet name="Courier" style="italic" weight="bold"/>
           <font-triplet name="monospace" style="italic" weight="bold"/>
         </font>
+        
+         <!-- 
+        Configure double-byte (CID Keyed font (Type 0)) AFP fonts with type="CIDKeyed".  
+        
+        example:
+         <font>
+        	<afp-font type="CIDKeyed" encoding="UnicodeBigUnmarked"  
+        	codepage="T1120000" characterset="CZJHMNU" 
+        	base-uri="fonts" />
+         	<font-triplet name="J-Heisei Mincho" style="normal" weight="normal" />
+     	 </font>
+        -->
+        
+        
       </fonts>
     </renderer>
 

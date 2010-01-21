@@ -58,6 +58,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="JM" type="add" fixes-bug="48567" due-to="Peter Hancock">
+        Initial support for CID-keyed double-byte fonts (Type 0) in AFP output.
+      </action>
       <action context="Layout" dev="VH" type="fix" fixes-bug="46486">
         Bugfix: having a special page-master for the last page caused loss of content when normal 
         blocks were mixed with blocks spanning all columns.
