@@ -29,6 +29,7 @@ import java.util.List;
 import org.apache.fop.afp.AFPConstants;
 import org.apache.fop.afp.fonts.AFPFont;
 import org.apache.fop.afp.fonts.CharacterSet;
+import org.apache.fop.afp.fonts.DoubleByteFont;
 import org.apache.fop.afp.fonts.FontRuntimeException;
 import org.apache.fop.afp.fonts.OutlineFont;
 import org.apache.fop.afp.fonts.RasterFont;
@@ -77,18 +78,21 @@ public class MapCodedFont extends AbstractStructuredObject {
             }
 
             // Font Character Set Name Reference
-            baos.write(0x0C);
+            baos.write(0x0C); //TODO Relax requirement for 8 chars in the name
             baos.write(0x02);
             baos.write((byte) 0x86);
             baos.write(0x00);
             baos.write(fd.characterSet);
 
             // Font Code Page Name Reference
-            baos.write(0x0C);
+            baos.write(0x0C); //TODO Relax requirement for 8 chars in the name
             baos.write(0x02);
             baos.write((byte) 0x85);
             baos.write(0x00);
             baos.write(fd.codePage);
+
+            //TODO idea: for CIDKeyed fonts, maybe hint at Unicode encoding with X'50' triplet
+            //to allow font substitution.
 
             // Character Rotation
             baos.write(0x04);
@@ -211,6 +215,25 @@ public class MapCodedFont extends AbstractStructuredObject {
                 fontDefinition.codePage = cs.getCodePage().getBytes(
                     AFPConstants.EBCIDIC_ENCODING);
 
+                if (fontDefinition.codePage.length != 8) {
+                    throw new IllegalArgumentException("The code page "
+                        + new String(fontDefinition.codePage,
+                        AFPConstants.EBCIDIC_ENCODING)
+                        + " must have a fixed length of 8 characters.");
+                }
+            }  else if (font instanceof DoubleByteFont) {
+                DoubleByteFont outline = (DoubleByteFont) font;
+                CharacterSet cs = outline.getCharacterSet();
+                fontDefinition.characterSet = cs.getNameBytes();
+
+                // There are approximately 72 points to 1 inch or 20 1440ths per point.
+
+                fontDefinition.scale = 20 * size / 1000;
+
+                fontDefinition.codePage = cs.getCodePage().getBytes(
+                    AFPConstants.EBCIDIC_ENCODING);
+
+                //TODO Relax requirement for 8 characters
                 if (fontDefinition.codePage.length != 8) {
                     throw new IllegalArgumentException("The code page "
                         + new String(fontDefinition.codePage,

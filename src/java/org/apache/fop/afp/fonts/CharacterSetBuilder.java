@@ -33,10 +33,15 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fop.afp.AFPConstants;
 import org.apache.fop.afp.util.ResourceAccessor;
 import org.apache.fop.afp.util.StructuredFieldReader;
+import org.apache.fop.fonts.Typeface;
 
 /**
- * The AFPFontReader is responsible for reading the font attributes from binary
- * code page files and the character set metric files. In IBM font structure, a
+ * The CharacterSetBuilder is responsible building the a CharacterSet instance that holds
+ *  the font metric data.  The data is either read from disk and passed to a CharacterSet (*)
+ *  or a FopCharacterSet is instantiated that is composed of a Typeface instance configured
+ *  with this data.<p/>
+ * -*- For referenced fonts CharacterSetBuilder is responsible for reading the font attributes
+ * from binary code page files and the character set metric files. In IBM font structure, a
  * code page maps each character of text to the characters in a character set.
  * Each character is translated into a code point. When the character is
  * printed, each code point is matched to a character ID on the code page
@@ -49,14 +54,13 @@ import org.apache.fop.afp.util.StructuredFieldReader;
  * files in order to determine the correct metrics to use when rendering the
  * formatted object. <p/>
  *
- * @author <a href="mailto:pete@townsend.uk.com">Pete Townsend </a>
  */
-public final class AFPFontReader {
+public class CharacterSetBuilder {
 
     /**
      * Static logging instance
      */
-    protected static final Log log = LogFactory.getLog(AFPFontReader.class);
+    protected static final Log LOG = LogFactory.getLog(CharacterSetBuilder.class);
 
     /**
      * Template used to convert lists to arrays.
@@ -97,16 +101,36 @@ public final class AFPFontReader {
     private final Map/*<String, Map<String, String>>*/ codePagesCache
         = new java.util.HashMap/*<String, Map<String, String>>*/();
 
+
+    private CharacterSetBuilder() { }
+
+    /**
+     * Factory method for the single-byte implementation of AFPFontReader.
+     * @return AFPFontReader
+     */
+    public static CharacterSetBuilder getInstance() {
+        return new CharacterSetBuilder();
+    }
+
+    /**
+     * Factory method for the double-byte (CID Keyed font (Type 0)) implementation of AFPFontReader.
+     * @return AFPFontReader
+     */
+    public static CharacterSetBuilder getDoubleByteInstance() {
+        return new DoubleByteLoader();
+    }
+
+
     /**
      * Returns an InputStream to a given file path and filename
      *
-     * @param path the file path
+     * * @param accessor the resource accessor
      * @param filename the file name
      * @return an inputStream
      *
      * @throws IOException in the event that an I/O exception of some sort has occurred
      */
-    private InputStream openInputStream(ResourceAccessor accessor, String filename)
+    protected InputStream openInputStream(ResourceAccessor accessor, String filename)
             throws IOException {
         URI uri;
         try {
@@ -124,14 +148,14 @@ public final class AFPFontReader {
      *
      * @param inputStream the inputstream to close
      */
-    private void closeInputStream(InputStream inputStream) {
+    protected void closeInputStream(InputStream inputStream) {
         try {
             if (inputStream != null) {
                 inputStream.close();
             }
         } catch (Exception ex) {
             // Lets log at least!
-            log.error(ex.getMessage());
+            LOG.error(ex.getMessage());
         }
     }
 
@@ -139,11 +163,15 @@ public final class AFPFontReader {
      * Load the font details and metrics into the CharacterSetMetric object,
      * this will use the actual afp code page and character set files to load
      * the object with the necessary metrics.
-     *
-     * @param characterSet the CharacterSetMetric object to populate
-     * @throws IOException if an I/O exception of some sort has occurred.
+     * @param codePageName name of the code page file
+     * @param encoding
+     * @throws RuntimeException if an I/O exception of some sort has occurred.
      */
-    public void loadCharacterSetMetric(CharacterSet characterSet) throws IOException {
+    public CharacterSet build(String characterSetName, String codePageName,
+            String encoding, ResourceAccessor accessor) {
+
+        CharacterSet characterSet = new CharacterSet(
+                codePageName, encoding, characterSetName, accessor);
 
         InputStream inputStream = null;
 
@@ -154,23 +182,14 @@ public final class AFPFontReader {
              * information to map the unicode character id to the graphic
              * chracter global identifier.
              */
-            String codePageId = new String(characterSet.getCodePage());
-            ResourceAccessor accessor = characterSet.getResourceAccessor();
 
             Map/*<String,String>*/ codePage
-                = (Map/*<String,String>*/)codePagesCache.get(codePageId);
+                = (Map/*<String,String>*/)codePagesCache.get(codePageName);
 
             if (codePage == null) {
-                codePage = loadCodePage(codePageId, characterSet.getEncoding(), accessor);
-                codePagesCache.put(codePageId, codePage);
+                codePage = loadCodePage(codePageName, encoding, accessor);
+                codePagesCache.put(codePageName, codePage);
             }
-
-            /**
-             * Load the character set metric information, no need to cache this
-             * information as it should be cached by the objects that wish to
-             * load character set metric information.
-             */
-            final String characterSetName = characterSet.getName();
 
             inputStream = openInputStream(accessor, characterSetName);
 
@@ -208,15 +227,40 @@ public final class AFPFontReader {
                     characterSet.addCharacterSetOrientation(characterSetOrientations[i]);
                 }
             } else {
-                throw new IOException(
-                        "Failed to read font control structured field in character set "
-                        + characterSetName);
+
+                    String msg = "Failed to load the character set metrics for code page "
+                        + codePageName;
+                    LOG.error(msg);
+                    throw new RuntimeException("Failed to read font control structured field"
+                            + "in character set " + characterSetName);
+
             }
 
-        } finally {
+        } catch(IOException e){
+            String msg = "Failed to load the character set metrics for code page " + codePageName;
+            LOG.error(msg);
+            throw new RuntimeException("Failed to read font control structured field"
+                    + "in character set " + characterSetName);
+        }
+        finally {
+
             closeInputStream(inputStream);
         }
 
+        return characterSet;
+
+    }
+
+    /**
+     * Load the font details and metrics into the CharacterSetMetric object,
+     * this will use the actual afp code page and character set files to load
+     * the object with the necessary metrics.
+     *
+     * @param characterSet the CharacterSetMetric object to populate
+     */
+    public CharacterSet build(String characterSetName, String codePageName,
+            String encoding, Typeface typeface) {
+       return new FopCharacterSet(codePageName, encoding, characterSetName, typeface);
     }
 
     /**
@@ -229,8 +273,9 @@ public final class AFPFontReader {
      *            the encoding to use for the character decoding
      * @param accessor the resource accessor
      * @returns a code page mapping
+     * @throws IOException if an I/O exception of some sort has occurred.
      */
-    private Map/*<String,String>*/ loadCodePage(String codePage, String encoding,
+    protected Map/*<String,String>*/ loadCodePage(String codePage, String encoding,
         ResourceAccessor accessor) throws IOException {
 
         // Create the HashMap to store code page information
@@ -277,8 +322,10 @@ public final class AFPFontReader {
      *
      * @param structuredFieldReader the structured field reader
      * @return a class representing the font descriptor
+     * @throws IOException if an I/O exception of some sort has occurred.
      */
-    private static FontDescriptor processFontDescriptor(StructuredFieldReader structuredFieldReader)
+    protected static FontDescriptor processFontDescriptor(
+                StructuredFieldReader structuredFieldReader)
     throws IOException {
 
         byte[] fndData = structuredFieldReader.getNext(FONT_DESCRIPTOR_SF);
@@ -290,8 +337,10 @@ public final class AFPFontReader {
      *
      * @param structuredFieldReader
      *            the structured field reader
+     * @return the FontControl
+     * @throws IOException if an I/O exception of some sort has occurred.
      */
-    private FontControl processFontControl(StructuredFieldReader structuredFieldReader)
+    protected FontControl processFontControl(StructuredFieldReader structuredFieldReader)
     throws IOException {
 
         byte[] fncData = structuredFieldReader.getNext(FONT_CONTROL_SF);
@@ -320,8 +369,10 @@ public final class AFPFontReader {
      *
      * @param structuredFieldReader
      *            the structured field reader
+     * @return CharacterSetOrientation array
+     * @throws IOException if an I/O exception of some sort has occurred.
      */
-    private CharacterSetOrientation[] processFontOrientation(
+    protected CharacterSetOrientation[] processFontOrientation(
         StructuredFieldReader structuredFieldReader) throws IOException {
 
         byte[] data = structuredFieldReader.getNext(FONT_ORIENTATION_SF);
@@ -341,27 +392,15 @@ public final class AFPFontReader {
 
                 position = 0;
 
-                int orientation = 0;
+                int orientation = determineOrientation(fnoData[2]);
+                //  Space Increment
+                int space = ((fnoData[8] & 0xFF ) << 8) + (fnoData[9] & 0xFF);
+                //  Em-Space Increment
+                int em = ((fnoData[14] & 0xFF ) << 8) + (fnoData[15] & 0xFF);
 
-                switch (fnoData[2]) {
-                    case 0x00:
-                        orientation = 0;
-                        break;
-                    case 0x2D:
-                        orientation = 90;
-                        break;
-                    case 0x5A:
-                        orientation = 180;
-                        break;
-                    case (byte) 0x87:
-                        orientation = 270;
-                        break;
-                    default:
-                        System.out.println("ERROR: Oriantation");
-                }
-
-                CharacterSetOrientation cso = new CharacterSetOrientation(
-                    orientation);
+                CharacterSetOrientation cso = new CharacterSetOrientation(orientation);
+                cso.setSpaceIncrement(space);
+                cso.setEmSpaceIncrement(em);
                 orientations.add(cso);
 
             }
@@ -381,8 +420,9 @@ public final class AFPFontReader {
      *            the array of CharacterSetOrientation objects
      * @param metricNormalizationFactor factor to apply to the metrics to get normalized
      *                  font metric values
+     * @throws IOException if an I/O exception of some sort has occurred.
      */
-    private void processFontPosition(StructuredFieldReader structuredFieldReader,
+    protected void processFontPosition(StructuredFieldReader structuredFieldReader,
         CharacterSetOrientation[] characterSetOrientations, double metricNormalizationFactor)
             throws IOException {
 
@@ -437,8 +477,9 @@ public final class AFPFontReader {
      * @param codepage the map of code pages
      * @param metricNormalizationFactor factor to apply to the metrics to get normalized
      *                  font metric values
+     * @throws IOException if an I/O exception of some sort has occurred.
      */
-    private void processFontIndex(StructuredFieldReader structuredFieldReader,
+    protected void processFontIndex(StructuredFieldReader structuredFieldReader,
         CharacterSetOrientation cso, Map/*<String,String>*/ codepage,
         double metricNormalizationFactor)
         throws IOException {
@@ -483,10 +524,9 @@ public final class AFPFontReader {
                     int diff = Math.abs(abc - width);
                     if (diff != 0 && width != 0) {
                         double diffPercent = 100 * diff / (double)width;
-                        //if difference > 2%
                         if (diffPercent > 2) {
-                            if (log.isTraceEnabled()) {
-                                log.trace(gcgiString + ": "
+                            if (LOG.isTraceEnabled()) {
+                                LOG.trace(gcgiString + ": "
                                         + a + " + " + b + " + " + c + " = " + (a + b + c)
                                         + " but found: " + width);
                             }
@@ -516,9 +556,9 @@ public final class AFPFontReader {
         cso.setFirstChar(lowest);
         cso.setLastChar(highest);
 
-        if (log.isDebugEnabled() && firstABCMismatch != null) {
+        if (LOG.isDebugEnabled() && firstABCMismatch != null) {
             //Debug level because it usually is no problem.
-            log.debug("Font has metrics inconsitencies where A+B+C doesn't equal the"
+            LOG.debug("Font has metrics inconsitencies where A+B+C doesn't equal the"
                     + " character increment. The first such character found: "
                     + firstABCMismatch);
         }
@@ -584,4 +624,84 @@ public final class AFPFontReader {
         }
     }
 
+    /**
+     * Double-byte (CID Keyed font (Type 0)) implementation of AFPFontReader.
+     */
+    private static class DoubleByteLoader extends CharacterSetBuilder {
+
+        protected Map/*<String,String>*/ loadCodePage(String codePage, String encoding,
+                ResourceAccessor accessor) throws IOException {
+
+            // Create the HashMap to store code page information
+            Map/*<String,String>*/ codePages = new java.util.HashMap/*<String,String>*/();
+
+            InputStream inputStream = null;
+            try {
+                inputStream = openInputStream(accessor, codePage.trim());
+
+                StructuredFieldReader structuredFieldReader
+                    = new StructuredFieldReader(inputStream);
+                byte[] data;
+                while ((data = structuredFieldReader.getNext(CHARACTER_TABLE_SF)) != null) {
+                    int position = 0;
+
+                    byte[] gcgiBytes = new byte[8];
+                    byte[] charBytes = new byte[2];
+                    // Read data, ignoring bytes 0 - 2
+                    for (int index = 3; index < data.length; index++) {
+
+                        if (position < 8) {
+                            // Build the graphic character global identifier key
+                            gcgiBytes[position] = data[index];
+                            position++;
+                        } else if (position == 9) {
+                            // Set the character
+                            charBytes[0] = data[index];
+                            position++;
+                        } else if (position == 10) {
+                            position = 0;
+                            // Set the character
+                            charBytes[1] = data[index];
+
+                            String gcgiString = new String(gcgiBytes,
+                                    AFPConstants.EBCIDIC_ENCODING);
+                            String charString = new String(charBytes, encoding);
+                            codePages.put(gcgiString, charString);
+
+                        }
+                        else {
+                            position++;
+                        }
+                    }
+                }
+            } finally {
+                closeInputStream(inputStream);
+            }
+
+            return codePages;
+        }
+
+    }
+
+    private static int determineOrientation(byte orientation) {
+        int degrees = 0;
+
+        switch (orientation) {
+        case 0x00:
+            degrees = 0;
+            break;
+        case 0x2D:
+            degrees = 90;
+            break;
+        case 0x5A:
+            degrees = 180;
+            break;
+        case (byte) 0x87:
+            degrees = 270;
+            break;
+        default:
+            throw new IllegalStateException("Invalid orientation: " + orientation);
+        }
+        return degrees;
+    }
 }

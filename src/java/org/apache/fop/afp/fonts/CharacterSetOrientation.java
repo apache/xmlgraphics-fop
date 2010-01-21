@@ -19,6 +19,8 @@
 
 package org.apache.fop.afp.fonts;
 
+import java.util.Arrays;
+
 /**
  * The IBM Font Object Content Architecture (FOCA) supports presentation
  * of character shapes by defining their characteristics, which include
@@ -58,7 +60,7 @@ public class CharacterSetOrientation {
     /**
      * The character widths in the character set
      */
-    private int[] charsWidths = new int[256];
+    private int[] charsWidths = null;
 
     /**
      * The height of lowercase letters
@@ -81,6 +83,12 @@ public class CharacterSetOrientation {
      */
     private int orientation = 0;
 
+    /** space increment */
+    private int spaceIncrement;
+    /** em space increment */
+    private int emSpaceIncrement = -1;
+
+
     /**
      * Constructor for the CharacterSetOrientation, the orientation is
      * expressed as the degrees rotation (i.e 0, 90, 180, 270)
@@ -88,6 +96,8 @@ public class CharacterSetOrientation {
      */
     public CharacterSetOrientation(int orientation) {
         this.orientation = orientation;
+        charsWidths = new int[256];
+        Arrays.fill(charsWidths, -1);
     }
 
     /**
@@ -245,8 +255,10 @@ public class CharacterSetOrientation {
     public void setWidth(int character, int width) {
         if (character >= charsWidths.length) {
             // Increase the size of the array if necessary
+            //  TODO Can we remove firstChar? surely firstChar==0 at this stage?
             int[] arr = new int[(character - firstChar) + 1];
             System.arraycopy(charsWidths, 0, arr, 0, charsWidths.length);
+            Arrays.fill(arr, charsWidths.length, character - firstChar, -1);
             charsWidths = arr;
         }
         charsWidths[character] = width;
@@ -261,4 +273,37 @@ public class CharacterSetOrientation {
     public void setXHeight(int xHeight) {
         this.xHeight = xHeight;
     }
+
+    /**
+     * Returns the space increment.
+     * @return the space increment
+     */
+    public int getSpaceIncrement(){
+        return this.spaceIncrement;
+    }
+
+    /**
+     * Sets the space increment.
+     * @param value the space increment
+     */
+    public void setSpaceIncrement(int value) {
+        this.spaceIncrement = value;
+    }
+
+    /**
+     * Returns the em space increment.
+     * @return the em space increment
+     */
+    public int getEmSpaceIncrement(){
+        return this.emSpaceIncrement;
+    }
+
+    /**
+     * Sets the em space increment.
+     * @param value the em space increment
+     */
+    public void setEmSpaceIncrement(int value) {
+        this.emSpaceIncrement = value;
+    }
+
 }
