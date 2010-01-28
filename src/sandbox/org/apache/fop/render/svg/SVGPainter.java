@@ -381,7 +381,7 @@ public class SVGPainter extends AbstractIFPainter implements SVGConstants {
 
     private void startTextGroup() throws SAXException {
         AttributesImpl atts = new AttributesImpl();
-        XMLUtil.addAttribute(atts, "font-family", state.getFontFamily());
+        XMLUtil.addAttribute(atts, "font-family", "'" + state.getFontFamily() + "'");
         XMLUtil.addAttribute(atts, "font-style", state.getFontStyle());
         XMLUtil.addAttribute(atts, "font-weight", Integer.toString(state.getFontWeight()));
         XMLUtil.addAttribute(atts, "font-variant", state.getFontVariant());
