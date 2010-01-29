@@ -134,19 +134,21 @@ public class PDFICCBasedColorSpace extends PDFObject implements PDFColorSpace {
     public static PDFICCStream setupsRGBColorProfile(PDFDocument pdfDoc) {
         ICC_Profile profile;
         PDFICCStream sRGBProfile = pdfDoc.getFactory().makePDFICCStream();
-        InputStream in = PDFDocument.class.getResourceAsStream("sRGB Color Space Profile.icm");
-        if (in != null) {
-            try {
-                profile = ICC_Profile.getInstance(in);
-            } catch (IOException ioe) {
-                throw new RuntimeException(
-                        "Unexpected IOException loading the sRGB profile: " + ioe.getMessage());
-            } finally {
-                IOUtils.closeQuietly(in);
+        synchronized (PDFICCBasedColorSpace.class) {
+            InputStream in = PDFDocument.class.getResourceAsStream("sRGB Color Space Profile.icm");
+            if (in != null) {
+                try {
+                    profile = ICC_Profile.getInstance(in);
+                } catch (IOException ioe) {
+                    throw new RuntimeException(
+                            "Unexpected IOException loading the sRGB profile: " + ioe.getMessage());
+                } finally {
+                    IOUtils.closeQuietly(in);
+                }
+            } else {
+                // Fallback: Use the sRGB profile from the JRE (about 140KB)
+                profile = ICC_Profile.getInstance(ColorSpace.CS_sRGB);
             }
-        } else {
-            // Fallback: Use the sRGB profile from the JRE (about 140KB)
-            profile = ICC_Profile.getInstance(ColorSpace.CS_sRGB);
         }
         sRGBProfile.setColorSpace(profile, null);
         return sRGBProfile;
