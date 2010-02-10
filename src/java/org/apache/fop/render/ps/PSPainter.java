@@ -349,6 +349,9 @@ public class PSPainter extends AbstractIFPainter {
             //TODO Ignored: state.getFontVariant()
             //TODO Opportunity for font caching if font state is more heavily used
             String fontKey = getFontInfo().getInternalFontKey(triplet);
+            if (fontKey == null) {
+                throw new IFException("Font not available: " + triplet, null);
+            }
             int sizeMillipoints = state.getFontSize();
 
             // This assumes that *all* CIDFonts use a /ToUnicode mapping
