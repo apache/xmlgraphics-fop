@@ -29,10 +29,10 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.render.intermediate.IFDocumentHandler;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFParser;
+import org.apache.fop.render.intermediate.IFUtil;
 
 /**
  * InputHandler for the intermediate format XML as input.
@@ -66,7 +66,7 @@ public class IFInputHandler extends InputHandler {
                     userAgent, outputFormat);
         try {
             documentHandler.setResult(new StreamResult(out));
-            documentHandler.setDefaultFontInfo(new FontInfo());
+            IFUtil.setupFonts(documentHandler);
 
             //Create IF parser
             IFParser parser = new IFParser();
