@@ -5209,7 +5209,7 @@
       <td><a name="fo-property-external-destination" id=
       "fo-property-external-destination">external-destination</a></td>
 
-      <td class="basic">Basic</td>
+      <td class="extended">Extended</td>
 
       <td align="center"><a href=
       "http://www.w3.org/TR/2001/REC-xsl-20011015/slice7.html#external-destination">&sect;7.22.6</a></td>
