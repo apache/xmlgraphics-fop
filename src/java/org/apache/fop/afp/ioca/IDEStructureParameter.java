@@ -46,7 +46,7 @@ public class IDEStructureParameter implements Streamable {
     private boolean grayCoding = false;
 
     /** the image color model */
-    private byte colorModel = COLOR_MODEL_RGB;
+    private byte colorModel = COLOR_MODEL_YCRCB;
 
     /** the array with the number of bits/IDE for each component */
     private byte[] bitsPerIDE = new byte[] {(byte)1}; //1-bit by default
