@@ -28,6 +28,9 @@ import java.util.Map;
 
 import org.apache.xmlgraphics.java2d.Dimension2DDouble;
 
+import org.apache.fop.fonts.NamedCharacter;
+import org.apache.fop.fonts.SingleByteEncoding;
+
 /**
  * Represents the contents of a Type 1 AFM font metrics file.
  */
@@ -440,6 +443,30 @@ public class AFMFile {
             }
         }
         return m;
+    }
+
+    /**
+     * The character codes in an AFM cannot always be trusted to be the same values as in the
+     * font's primary encoding. Therefore, we provide a way to override this primary encoding.
+     * @param encoding the encoding to replace the one given in the AFM
+     */
+    public void overridePrimaryEncoding(SingleByteEncoding encoding) {
+        Iterator iter = this.charMetrics.iterator();
+        while (iter.hasNext()) {
+            AFMCharMetrics cm = (AFMCharMetrics)iter.next();
+            NamedCharacter nc = cm.getCharacter();
+            if (nc.hasSingleUnicodeValue()) {
+                int mapped = encoding.mapChar(nc.getSingleUnicodeValue());
+                if (mapped > 0) {
+                    cm.setCharCode(mapped);
+                } else {
+                    cm.setCharCode(-1);
+                }
+            } else {
+                //No Unicode equivalent
+                cm.setCharCode(-1);
+            }
+        }
     }
 
     /** {@inheritDoc} */
