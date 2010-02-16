@@ -32,6 +32,7 @@ import org.apache.fop.fonts.CodePointMapping;
 import org.apache.fop.fonts.FontLoader;
 import org.apache.fop.fonts.FontResolver;
 import org.apache.fop.fonts.FontType;
+import org.apache.fop.fonts.SingleByteEncoding;
 import org.apache.fop.fonts.SingleByteFont;
 
 /**
@@ -141,8 +142,11 @@ public class Type1FontLoader extends FontLoader {
         if (afm != null) {
             String encoding = afm.getEncodingScheme();
             singleFont.setUseNativeEncoding(true);
-            if ("StandardEncoding".equals(encoding)) {
+            if ("AdobeStandardEncoding".equals(encoding)) {
                 singleFont.setEncoding(CodePointMapping.STANDARD_ENCODING);
+                addUnencodedBasedOnEncoding(afm);
+                //char codes in the AFM cannot be relied on in this case, so we override
+                afm.overridePrimaryEncoding(singleFont.getEncoding());
             } else {
                 String effEncodingName;
                 if ("FontSpecific".equals(encoding)) {
@@ -156,14 +160,7 @@ public class Type1FontLoader extends FontLoader {
                 }
                 CodePointMapping mapping = buildCustomEncoding(effEncodingName, afm);
                 singleFont.setEncoding(mapping);
-            }
-            List charMetrics = afm.getCharMetrics();
-            for (int i = 0, c = afm.getCharCount(); i < c; i++) {
-                AFMCharMetrics metrics = (AFMCharMetrics)charMetrics.get(i);
-                if (!metrics.hasCharCode() && metrics.getCharacter() != null) {
-                    singleFont.addUnencodedCharacter(metrics.getCharacter(),
-                            (int)Math.round(metrics.getWidthX()));
-                }
+                addUnencodedBasedOnAFM(afm);
             }
         } else {
             if (pfm.getCharSet() >= 0 && pfm.getCharSet() <= 2) {
@@ -172,6 +169,50 @@ public class Type1FontLoader extends FontLoader {
                 log.warn("The PFM reports an unsupported encoding ("
                         + pfm.getCharSetName() + "). The font may not work as expected.");
                 singleFont.setEncoding("WinAnsiEncoding"); //Try fallback, no guarantees!
+            }
+        }
+    }
+
+    private Set toGlyphSet(String[] glyphNames) {
+        Set glyphSet = new java.util.HashSet();
+        for (int i = 0, c = glyphNames.length; i < c; i++) {
+            glyphSet.add(glyphNames[i]);
+        }
+        return glyphSet;
+    }
+
+    /**
+     * Adds characters not encoded in the font's primary encoding. This method is used when we
+     * don't trust the AFM to expose the same encoding as the primary font.
+     * @param afm the AFM file.
+     */
+    private void addUnencodedBasedOnEncoding(AFMFile afm) {
+        SingleByteEncoding encoding = singleFont.getEncoding();
+        Set glyphNames = toGlyphSet(encoding.getCharNameMap());
+        List charMetrics = afm.getCharMetrics();
+        for (int i = 0, c = afm.getCharCount(); i < c; i++) {
+            AFMCharMetrics metrics = (AFMCharMetrics)charMetrics.get(i);
+            String charName = metrics.getCharName();
+            if (charName != null && !glyphNames.contains(charName)) {
+                singleFont.addUnencodedCharacter(metrics.getCharacter(),
+                        (int)Math.round(metrics.getWidthX()));
+            }
+        }
+    }
+
+    /**
+     * Adds characters not encoded in the font's primary encoding. This method is used when
+     * the primary encoding is built based on the character codes in the AFM rather than
+     * the specified encoding (ex. with symbolic fonts).
+     * @param afm the AFM file
+     */
+    private void addUnencodedBasedOnAFM(AFMFile afm) {
+        List charMetrics = afm.getCharMetrics();
+        for (int i = 0, c = afm.getCharCount(); i < c; i++) {
+            AFMCharMetrics metrics = (AFMCharMetrics)charMetrics.get(i);
+            if (!metrics.hasCharCode() && metrics.getCharacter() != null) {
+                singleFont.addUnencodedCharacter(metrics.getCharacter(),
+                        (int)Math.round(metrics.getWidthX()));
             }
         }
     }
