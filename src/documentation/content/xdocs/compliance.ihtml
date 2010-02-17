@@ -1349,7 +1349,6 @@
     </tr>
 
     <tr>
-      <td class="category" align="center">&nbsp;</td>
       <td class="category" align="center"><a href=
       "http://www.w3.org/TR/xsl11/#d0e13293">&sect;6.10</a></td>
       <td class="category" colspan="7"><a name="fo-object-indexing-section" id=
@@ -1445,7 +1444,6 @@
     </tr>
 
     <tr>
-      <td class="category" align="center">&nbsp;</td>
       <td class="category" align="center"><a href=
       "http://www.w3.org/TR/xsl11/#d0e14206">&sect;6.11</a></td>
       <td class="category" colspan="7"><a name="fo-object-bookmarks-section" id=
