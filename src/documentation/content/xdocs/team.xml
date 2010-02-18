@@ -90,11 +90,10 @@
         <li id="gd">Georg Datterl is a software developer from Austria, currently working for 
           Geneon media solutions gmbh in Nuremberg, Germany. He needs FOP to wrestle gigabytes of 
           electronic data into thousands of printed pages.</li>
-        <li id="ak">Alexander Kiel 
-          Alexander Kiel is a Java developer from Leipzig, Germany. Beside Java he is interested in
-          XML and Web technologies. He used FOP as part of the Docbook/XML toolchain for various
-          documentation projects. He decided to contribute to FOP in order to help making it more
-          feature complete.</li>
+        <li id="ak">Alexander Kiel is a Java developer from Leipzig, Germany. Beside Java he is 
+          interested in XML and Web technologies. He used FOP as part of the Docbook/XML toolchain 
+          for various documentation projects. He decided to contribute to FOP in order to help 
+          making it more feature complete.</li>
         <li id="lm">Louis Masters</li>
         <li id="mn">Manoj Nair, Currently consulting for Sony Pictures Entertainment in Los
           Angeles, CA USA. Previously he worked with Java &amp; related technologies specializing
@@ -102,7 +101,7 @@
         <li id="rr"><link href="mailto:renaud.richardet AT gmail DOT com">Renaud Richardet</link> (RR)
           is a Java Programmer interested in XML technologies. See his 
           <fork href="http://www.oslutions.com">home page</fork> for more information about him.</li>
-        <li id="vr">Vankukuri Venkat Reddy is a Senior Software Engineer in UK, using XML Graphics
+        <li id="vr">Vanukuri Venkat Reddy is a Senior Software Engineer in UK, using XML Graphics
           Project and FOP for his work, and is committed to contributing more to the Apache to be part
           a great team.</li>
         <li id="ls">Luke Shannon, Java Programmer, Toronto, Canada</li>
