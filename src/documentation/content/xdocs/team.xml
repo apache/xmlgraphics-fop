@@ -87,6 +87,9 @@
     <section id="contribute-active">
       <title>Active Contributors</title>
       <ul>
+        <li id="gd">Georg Datterl is a software developer from Austria, currently working for 
+          Geneon media solutions gmbh in Nuremberg, Germany. He needs FOP to wrestle gigabytes of 
+          electronic data into thousands of printed pages.</li>
         <li id="ak">Alexander Kiel 
           Alexander Kiel is a Java developer from Leipzig, Germany. Beside Java he is interested in
           XML and Web technologies. He used FOP as part of the Docbook/XML toolchain for various
