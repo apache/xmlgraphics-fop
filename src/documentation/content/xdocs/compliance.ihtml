@@ -3099,10 +3099,14 @@
       "fo-property-content-height">content-height</a></td>
       <td class="extended">Extended</td>
       <td class="no">no</td>
+      <td class="partial">partial</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
-      <td>&nbsp;</td>
+      <td>
+        <ul>
+          <li>[0.94] values "scale-up-to-fit" and "scale-down-to-fit" not supported</li>
+        </ul>
+      </td>
     </tr>
     <tr>
       <td align="center"><a href=
@@ -3110,13 +3114,12 @@
       <td><a name="fo-property-content-width" id="fo-property-content-width">content-width</a></td>
       <td class="extended">Extended</td>
       <td class="no">no</td>
-      <td class="yes">yes</td>
+      <td class="partial">partial</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td>
         <ul>
-          <li>[0.95 and later] Support for REC 1.1 additional values:
-          "scale-up-to-fit" and "scale-down-to-fit"</li>
+          <li>[0.94] values "scale-up-to-fit" and "scale-down-to-fit" not supported</li>
         </ul>
       </td>
     </tr>
@@ -4415,13 +4418,13 @@
       <td><a name="fo-property-page-position" id="fo-property-page-position">page-position</a></td>
       <td class="extended">Extended</td>
       <td class="partial">partial</td>
-      <td class="yes">yes</td>
-      <td class="yes">yes</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
       <td class="yes">yes</td>
       <td>
         <ul>
           <li>[0.20.5] "last" isn't implemented!</li>
-          <li>[trunk] Support for REC 1.1 additional value "only"</li>
+          <li>[0.95] value "only" not supported</li>
         </ul>
       </td>
     </tr>
