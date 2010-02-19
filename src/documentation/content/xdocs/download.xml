@@ -26,8 +26,8 @@
     <section id="dist-type">
       <title>Binary or Source?</title>
       <p>
-        Most FOP users will want to download the latest binary distribution, 
-        which is ready to run "out of the box." However, a source distribution 
+        Most FOP users will want to download the latest binary distribution,
+        which is ready to run "out of the box." However, a source distribution
         will be preferable if you fall into one of the following categories:
       </p>
       <ul>
@@ -35,10 +35,10 @@
           You wish to modify FOP.
         </li>
         <li>
-          You wish to use a version more recent than the latest release. For 
-          example, if you have read on the user mailing list that a bug has 
-          been fixed or a feature added that you are eager to try, you might 
-          download a source distribution from the CVS repository so that you 
+          You wish to use a version more recent than the latest release. For
+          example, if you have read on the user mailing list that a bug has
+          been fixed or a feature added that you are eager to try, you might
+          download a source distribution from the SVN repository so that you
           don't have to wait for the next release.
         </li>
         <li>
@@ -56,27 +56,27 @@
     <section id="source">
       <title>Source Download</title>
       <p>
-        There are several ways to obtain a source distribution. Please note that they 
+        There are several ways to obtain a source distribution. Please note that they
         are listed from least current to most current:
       </p>
       <ul>
         <li>
-          Download a released version from a 
+          Download a released version from a
           <link href="http://www.apache.org/dyn/closer.cgi/xmlgraphics/fop">FOP Distribution mirror</link>.
           Source distributions include "-src" in their names.
         </li>
         <!--li>
-          Download a CVS snapshot from the cvs files 
-          <link href="http://xml.apache.org/from-cvs/xml-fop/">here</link>. 
-          These snapshots are built approximately every six hours, and have the GMT of 
-          their creation time embedded in their names. Please note that CVS snapshots 
+          Download a CVS snapshot from the cvs files
+          <link href="http://xml.apache.org/from-cvs/xml-fop/">here</link>.
+          These snapshots are built approximately every six hours, and have the GMT of
+          their creation time embedded in their names. Please note that CVS snapshots
           are made only for the "redesign" branch.
         </li-->
         <li>
           Download directly from the SVN repository.
-          Anyone can do this using the 
+          Anyone can do this using the
           <link href="http://xmlgraphics.apache.org/repo.html">Anonymous SVN Server</link>.
-          By default, the code in SVN is up-to-the-minute, the same code that the developers 
+          By default, the code in SVN is up-to-the-minute, the same code that the developers
           are modifying. See the <link href="dev/tools.html#svn">SVN section of Developer Tools</link>
           for more information on using SVN.
         </li>
@@ -136,7 +136,7 @@
             <link href="http://svn.eu.apache.org/repos/asf/xmlgraphics/fop/trunk/">
               <code>http://svn.eu.apache.org/repos/asf/xmlgraphics/fop/trunk/</code>
             </link>
-            
+
           </td>
         </tr>
         <tr>
@@ -155,7 +155,7 @@
         </tr>
       </table>
       <p>
-        With any source distribution, you will need to 
+        With any source distribution, you will need to
         build FOP from the source files. For details please see the "Build" page on the documentation tab
         for the version you've downloaded.
       </p>
@@ -166,9 +166,9 @@
     <section id="archives">
       <title>Archive Download</title>
       <p>
-        FOP Archive distributions are linked from the upper portion of the Apache FOP 
-        Download Mirror Page and can be downloaded from the FOP Archives 
-        <link href="http://archive.apache.org/dist/xmlgraphics/fop/binaries/">binaries</link> &amp; 
+        FOP Archive distributions are linked from the upper portion of the Apache FOP
+        Download Mirror Page and can be downloaded from the FOP Archives
+        <link href="http://archive.apache.org/dist/xmlgraphics/fop/binaries/">binaries</link> &amp;
         <link href="http://archive.apache.org/dist/xmlgraphics/fop/source/">source</link> links.
       </p>
     </section>
