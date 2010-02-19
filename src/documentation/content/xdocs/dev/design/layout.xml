@@ -16,8 +16,7 @@
   limitations under the License.
 -->
 <!-- $Id$ -->
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
-    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/core/context/resources/schema/dtd/document-v12.dtd">
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.3//EN" "http://forrest.apache.org/dtd/document-v13.dtd">
 <document>
   <header>
     <title>FOP Design: Layout</title>
@@ -73,7 +72,7 @@ Other cases are tables and lists, these objects will also have layout managers t
       <p>A layout manager is also able to determine height (min/max/optimum) and keep status.
 This will be used when organising the layout on a page.
 The manager will be able to determine the next place a break can be made and then be able to organise the height.</p>
-      <p>A layout manager is essentially a bridge between the formatting objects and the area tree. 
+      <p>A layout manager is essentially a bridge between the formatting objects and the area tree.
 It will keep a list of line areas inside block areas.
 Each line area will contain a list of inline areas that is able to be adjusted if the need arises.</p>
       <p>The objects in the area tree that are organised by the manager will mostly contain the information about there layout such as spacing and keeps, this information will be thrown away once the layout for a page is finalised.</p>
@@ -164,7 +163,7 @@ The body region should be in the order before float, main then footnote.</p>
       <p>Creating a line areas uses a similair concept.
 Each inline area is placed across the available space until there is no room left.
 The line is then split by considering all keeps and spacing.</p>
-      <p>Each word (group of adjacent character inline areas) will have keeps based on hyphenation. 
+      <p>Each word (group of adjacent character inline areas) will have keeps based on hyphenation.
 The line break is at the lowest keep value starting from the end of the line.</p>
       <p>Once a line has been layed out for a particular width then that line is fixed for the page (except for unresolved page references).</p>
     </section>
@@ -280,7 +279,7 @@ Then the next equally low keep is found to determine if the spacing will be clos
         <title>Before Floats/Footnotes</title>
         <p>After filling the page with the block areas then the new body height is used to find the best position to break.
 Before each line area or block area is remove any associated before floats and footnotes are removed.
-This will then adjust the available space on the page and may allow for a different breaking point. 
+This will then adjust the available space on the page and may allow for a different breaking point.
 Areas are removed towards the new breaking point until the areas fit on the page.
 When finding the optimum spacing the removal of before floats and footnotes must also be  onsidered.</p>
       </section>
@@ -382,12 +381,12 @@ that requires further analysis.</td>
           <tr>
             <td>Border collapsing on tables</td>
             <td>Low</td>
-            <td>RenderX hasnt implemented this (17/03/04)</td> 
+            <td>RenderX hasnt implemented this (17/03/04)</td>
           </tr>
           <tr>
             <td>Fine-tuning all other borders</td>
             <td>Low</td>
-            <td>Not sure what Joerg means by this, border collapse priorties? 
+            <td>Not sure what Joerg means by this, border collapse priorties?
 Dashed and dotted borders have been implemented in PDF</td>
           </tr>
           <tr>

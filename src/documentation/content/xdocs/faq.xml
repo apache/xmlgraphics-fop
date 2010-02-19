@@ -16,7 +16,7 @@
   limitations under the License.
 -->
 <!-- $Id$ -->
-<!DOCTYPE faqs PUBLIC "-//APACHE//DTD FAQ V1.1//EN" "http://forrest.apache.org/dtd/faq-v12.dtd">
+<!DOCTYPE faqs PUBLIC "-//APACHE//DTD FAQ V1.3//EN" "http://forrest.apache.org/dtd/faq-v13.dtd">
 
 <faqs title="FOP FAQ">
   <part id="part-general">
@@ -136,7 +136,7 @@
       <question>When is the next released planned?</question>
       <answer>
         <p>
-          When it's ready and the committers have enough time to go through 
+          When it's ready and the committers have enough time to go through
           the time-consuming process of creating a release. We
           released version 0.95 on August 6th, 2008, and intend to
           release version 1.0 once we consider it "feature complete", major
@@ -410,7 +410,7 @@ import javax.xml.transform.ErrorListener;
 import javax.xml.transform.TransformerException;
 
 public class DefaultErrorListener implements ErrorListener {
-    
+
     public void warning(TransformerException exc) {
         System.err.println(exc.toString());
     }
@@ -436,8 +436,8 @@ public class DefaultErrorListener implements ErrorListener {
         Discarding font cache file."</question>
       <answer>
         <p>
-          This message is a warning that FOP failed to read from the Font cache. 
-          Which means any Font auto detection or Font directories will be re-scanned. 
+          This message is a warning that FOP failed to read from the Font cache.
+          Which means any Font auto detection or Font directories will be re-scanned.
           So this failure doesn't break anything.
         </p>
         <p>
@@ -651,34 +651,34 @@ Check the following:</p>
     <faq id="table-cell-wrap">
       <question>The contents of table cells don’t wrap</question>
       <answer>
-        <p>You probably have <code>keep-together="always"</code> set on the table cell. See <link 
+        <p>You probably have <code>keep-together="always"</code> set on the table cell. See <link
             href="#keep-together">next question</link>.</p>
       </answer>
     </faq>
     <faq id="keep-together">
-      <question>FOP 0.95 and FOP 0.94 behave differently when <code>keep-together="always"</code> 
+      <question>FOP 0.95 and FOP 0.94 behave differently when <code>keep-together="always"</code>
         is set on table cells</question>
       <answer>
-        <p>Support for inline-level keeps has been added in FOP 0.95, and setting 
-          <code>keep-together="always"</code> also implicitly sets 
+        <p>Support for inline-level keeps has been added in FOP 0.95, and setting
+          <code>keep-together="always"</code> also implicitly sets
           <code>keep-together.within-line="always"</code>, which forbids FOP
-          to break the text into multiple lines. Set 
-          <code>keep-together.within-column="always"</code> on table-cell instead. It’s a good idea 
+          to break the text into multiple lines. Set
+          <code>keep-together.within-column="always"</code> on table-cell instead. It’s a good idea
           not to use the shorthand <code>keep-together="always"</code> at all!</p>
       </answer>
     </faq>
     <faq id="row-height-constraint">
-      <question>FOP tells me: "The contents of row 1 are taller than they should be". 
+      <question>FOP tells me: "The contents of row 1 are taller than they should be".
         What does that mean?</question>
       <answer>
         <p>
           This is usually caused by setting a "height" on a table-row or table-cell and when
-          the content is higher than the specified height. By setting "height" (a so-called 
-          corresponding property) you 
+          the content is higher than the specified height. By setting "height" (a so-called
+          corresponding property) you
           <link href="http://www.w3.org/TR/xsl11/#d0e4413">implicitely set</link>
-          block-progression-dimension.minimum, block-progression-dimension.optimum and 
-          block-progression-dimension.maximum to the same value. You'll get some information 
-          about that in the warning message. Look for something like: 
+          block-progression-dimension.minimum, block-progression-dimension.optimum and
+          block-progression-dimension.maximum to the same value. You'll get some information
+          about that in the warning message. Look for something like:
           "MinOptMax[min=opt=max=14000]".
         </p>
         <p>
@@ -722,16 +722,16 @@ Check the following:</p>
       <answer>
         <p>
           (Applies to version 0.90 and later)
-          No, although you might easily think so. The problem has to do 
-          with property inheritance of the start-indent and end-indent 
-          properties to which the margin properties are mapped. Apache 
-          FOP strictly adheres to the XSL-FO specification here which many 
-          other commercial FO implementations don't do to better meet end-user 
-          expectations. You can make FOP behave like these if you set 
-          <code>setBreakIndentInheritanceOnReferenceAreaBoundary(true)</code> 
+          No, although you might easily think so. The problem has to do
+          with property inheritance of the start-indent and end-indent
+          properties to which the margin properties are mapped. Apache
+          FOP strictly adheres to the XSL-FO specification here which many
+          other commercial FO implementations don't do to better meet end-user
+          expectations. You can make FOP behave like these if you set
+          <code>setBreakIndentInheritanceOnReferenceAreaBoundary(true)</code>
           on the FOUserAgent. The better way is to reset <code>start-indent</code>
-          and <code>end-indent</code> to "0pt" on table-body or block-container. 
-          For further details, please consult the 
+          and <code>end-indent</code> to "0pt" on table-body or block-container.
+          For further details, please consult the
           <link href="http://wiki.apache.org/xmlgraphics-fop/IndentInheritance">Wiki page on Indent Inheritance</link>.
         </p>
       </answer>
@@ -906,19 +906,19 @@ Can I control this?</question>
       <answer>
         <p>
           This phenomenon occurs since FOP 0.92 beta. It surfaced due to a change in the handling of non-FO namespaces. It's not a
-          bug in FOP, but rather in the dependent packages: Apache Batik, Apache Xalan-J and SAXON. The bug in Apache Batik will be 
+          bug in FOP, but rather in the dependent packages: Apache Batik, Apache Xalan-J and SAXON. The bug in Apache Batik will be
           fixed in the next release. In the latest release of Apache Xalan-J, the bug is already fixed. It only occurs in the Xalan
           version bundled with Sun's JVM, because Sun uses a rather old version.
         </p>
         <p>
-          Bug description: In a namespace-enabled Level 3 DOM, an attribute in the default namespace must be set with 
-          <code>"null"</code> as the value for the namespace URI. SAX, on the other side, uses an empty string ("") to designate 
-          the default namespace. Many packages appear to not properly handle this difference in which case they still use the empty 
+          Bug description: In a namespace-enabled Level 3 DOM, an attribute in the default namespace must be set with
+          <code>"null"</code> as the value for the namespace URI. SAX, on the other side, uses an empty string ("") to designate
+          the default namespace. Many packages appear to not properly handle this difference in which case they still use the empty
           string as the namespace URI parameter for <code>org.w3c.dom.Element.setAttributeNS()</code>.
         </p>
         <p>
-          Work-around: Use the latest version of Apache Xalan-J. Note that starting with JDK 1.4 it's not enough to replace Xalan-J 
-          on the normal application classpath and you need to override the Xalan-J version bundled with the Sun JVM using the 
+          Work-around: Use the latest version of Apache Xalan-J. Note that starting with JDK 1.4 it's not enough to replace Xalan-J
+          on the normal application classpath and you need to override the Xalan-J version bundled with the Sun JVM using the
           <link href="http://java.sun.com/j2se/1.4.2/docs/guide/standards/">Endorsed Standards Override Mechanism</link>, i.e.
           you must place Xalan-J in the <code>"lib/endorsed"</code> directory of your JRE.
         </p>
@@ -1020,8 +1020,8 @@ Can I control this?</question>
         <p>
           FOP versions 0.93 and later support the starting-state property of the XSL 1.1
           <link href="http://www.w3.org/TR/xsl11/#fo_bookmark">fo:bookmark</link>
-          element which can be used for this. The color, font-style and 
-          font-weight properties on 
+          element which can be used for this. The color, font-style and
+          font-weight properties on
           <link href="http://www.w3.org/TR/xsl11/#fo_bookmark-title">fo:bookmark-title</link>
           are not yet supported, though.
         </p>
