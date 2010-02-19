@@ -26,7 +26,7 @@
     <section id="important">
       <title>Important!</title>
       <p>
-        If you're planning to upgrade to the latest FOP version there are a few very important things 
+        If you're planning to upgrade to the latest FOP version there are a few very important things
         to consider:
       </p>
       <ul>
@@ -63,21 +63,21 @@
         </li>
         <li>
           <p>
-            The new code is much more strict about the interpretation of the XSL-FO 1.0 specification.
+            The new code is much more strict about the interpretation of the XSL-FO 1.1 specification.
             Things that worked fine in version 0.20.5 might start to produce warnings or even errors
             now. FOP 0.20.5 contains many bugs which have been corrected in the new code.
           </p>
           <note label="An example">
             While FOP 0.20.5 allowed you to have empty <code>fo:table-cell</code> elements, the new code
             will complain about that (unless <a href="/0.94/running.html#fop-script">relaxed validation is enabled</a> via the <code>-r</code> switch via the command line) because the specification
-            demands at least one block-level element (<code>(%block;)+</code>, see 
-            <a href="http://www.w3.org/TR/2001/REC-xsl-20011015/slice6.html#fo_table-cell">XSL-FO 1.0, 6.7.10</a>)
+            demands at least one block-level element (<code>(%block;)+</code>, see
+            <a href="http://www.w3.org/TR/xsl/#fo_table-cell">XSL-FO 1.1, 6.7.10</a>)
             inside an <code>fo:table-cell</code> element.
           </note>
         </li>
         <li>
-          Extensions and Renderers written for version 0.20.5 will not work with the new code! The new FOP 
-          extension for <a href="http://barcode4j.sourceforge.net">Barcode4J</a> is available since 
+          Extensions and Renderers written for version 0.20.5 will not work with the new code! The new FOP
+          extension for <a href="http://barcode4j.sourceforge.net">Barcode4J</a> is available since
           January 2007.
         </li>
         <li>
@@ -108,17 +108,17 @@
           and <code>block-container</code> elements, for example.
         </li>
         <li>
-          0.20.5 is not XSL-FO compliant with respect to sizing images (<code>external-graphic</code>) 
+          0.20.5 is not XSL-FO compliant with respect to sizing images (<code>external-graphic</code>)
           or <code>instream-foreign-object</code>
           objects. If images or SVGs are sized differently in your outputs with the new FOP version
           check <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=37136">Bug 37136</a>
-          as it contains some hints on what to do. The file 
+          as it contains some hints on what to do. The file
           <a href="http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop/trunk/examples/fo/basic/images.fo?view=markup">
           <code>"examples/fo/basic/images.fo"</code></a> has
           a number of good examples that show the new, more correct behaviour.
         </li>
         <li>
-          The <code>fox:outline</code> extension is not implemented in this version anymore. 
+          The <code>fox:outline</code> extension is not implemented in this version anymore.
           It has been superseded by the new bookmark elements from XSL-FO 1.1.
         </li>
         <li>
