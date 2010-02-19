@@ -16,8 +16,7 @@
   limitations under the License.
 -->
 <!-- $Id$ -->
-<!DOCTYPE faqs PUBLIC "-//APACHE//DTD FAQ V1.1//EN"
-    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/core/context/resources/schema/dtd/faq-v12.dtd">
+<!DOCTYPE faqs PUBLIC "-//APACHE//DTD FAQ V1.3//EN" "http://forrest.apache.org/dtd/faq-v13.dtd">
 
 <faqs title="FOP Development: FAQ">
   <part id="part_general">

@@ -16,8 +16,8 @@
   limitations under the License.
 -->
 <!-- $Id$ -->
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
-    "http://svn.apache.org/viewvc/forrest/trunk/main/webapp/resources/schema/dtd/document-v12.dtd?view=co">
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.3//EN" "http://forrest.apache.org/dtd/document-v13.dtd">
+
 <document>
   <header>
     <title>XSL-FO Input</title>
@@ -30,7 +30,7 @@
       <p>
         FOP uses XSL-FO as input.
 It is the responsibility of the user to make sure that the XSL-FO submitted to FOP is correct.
-The tutorial items presented here are not comprehensive, but are of the FAQ variety. Another 
+The tutorial items presented here are not comprehensive, but are of the FAQ variety. Another
 good FAQ is <fork href="http://www.dpawson.co.uk/xsl/">Dave Pawson's XSL FAQ</fork>.
       </p>
     </section>
@@ -192,8 +192,8 @@ Here is a small, self-contained document centering an image on a page:
       <section id="fo-right-align-table-horizon">
         <title>Right-Aligning (Tables)</title>
         <p>
-          To right-align a table, you can use the same approach as above for centering tables. 
-          Just remove the last table-column element which causes all the left-over space not 
+          To right-align a table, you can use the same approach as above for centering tables.
+          Just remove the last table-column element which causes all the left-over space not
           used by the columns with a fixed column-width to be assigned to the first column which
           effectively right-aligns the table.
         </p>

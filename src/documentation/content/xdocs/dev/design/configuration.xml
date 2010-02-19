@@ -16,8 +16,7 @@
   limitations under the License.
 -->
 <!-- $Id$ -->
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
-    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/core/context/resources/schema/dtd/document-v12.dtd" [
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.3//EN" "http://forrest.apache.org/dtd/document-v13.dtd" [
 <!ENTITY lsquo   "&#x2018;">
 <!ENTITY rsquo   "&#x2019;">
 <!ENTITY ldquo   "&#x201C;">
@@ -52,7 +51,7 @@ well-formed.</p>
     <section id="general-available">
       <title>Making Configuration Available to FOP</title>
       <p>After creating your configuration file, you must tell FOP how
-to find it.</p> 
+to find it.</p>
 
       <section id="command-line">
         <title>From the Command Line</title>
@@ -67,7 +66,7 @@ configuration file as the option value.</p>
 <code>org.apache.avalon.framework.configuration</code>. For detailed
 information, see the documentation of the package.</p>
         <p>If you want to use a user configuration file with your
-embedded program, you need to build an Avalon configuration 
+embedded program, you need to build an Avalon configuration
 object from it, and register that with the user agent:</p>
 
         <source>FOUserAgent foUserAgent;
@@ -132,17 +131,17 @@ which are provided by this font file. See the example
 configuration file for details.</dd>
       </dl>
       <p>The example configuration file provides for details about the
-other renderers.</p> 
+other renderers.</p>
     </section>
 
     <section id="hyphenation-dir">
       <title>Hyphenation</title>
       <p>When FOP needs to load a hyphenation file for a certain
-language and country combination, it follows these steps.</p> 
+language and country combination, it follows these steps.</p>
       <ol>
         <li>FOP searches for the compiled hyphenation file (extension
 <code>hyp</code> in the directory <code>hyph</code> in the
-class path.</li> 
+class path.</li>
         <li>FOP searches for the compiled or the XML hyphenation file
 in a user directory. At the time of this writing FOP does not
 read the configuration file for the user directory. It always
@@ -195,7 +194,7 @@ org.apache.commons.logging.simplelog.log.org.apache.fop.pdf=trace
 </source>
       <p>FOP uses several named loggers. When you set the logging level
 for all loggers to &ldquo;info&rdquo;, you get a decent small amount
-of information 
+of information
 about application progress. The debugging and especially the trace
 levels produce a lot of output. If you need these logging levels,
 it is wise to switch them on for one or several specific loggers. The

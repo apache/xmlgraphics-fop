@@ -16,8 +16,7 @@
   limitations under the License.
 -->
 <!-- $Id$ -->
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN"
-    "http://cvs.apache.org/viewcvs.cgi/*checkout*/xml-forrest/src/core/context/resources/schema/dtd/document-v12.dtd">
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.3//EN" "http://forrest.apache.org/dtd/document-v13.dtd">
 
 <document>
   <header>
@@ -58,7 +57,7 @@ The examples for SVG and pdfoutline.fo show how this can be done.
 The pdf documents on the FOP site use this extension.
 See also <link href="../examples.html">Examples</link> for more examples.</li>
           <li>Put your jar file in the classpath</li>
-          <li>Run FOP using your XSL-FO file as input.</li> 
+          <li>Run FOP using your XSL-FO file as input.</li>
         </ol>
     </section>
   </body>

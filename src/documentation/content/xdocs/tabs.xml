@@ -16,9 +16,9 @@
   limitations under the License.
 -->
 <!-- $Id$ -->
-<!DOCTYPE tabs PUBLIC "-//APACHE//DTD Cocoon Documentation Tab V1.0//EN"
-    "http://svn.apache.org/viewvc/forrest/trunk/main/webapp/resources/schema/dtd/tab-cocoon-v10.dtd?view=co">
-    
+<!DOCTYPE tabs PUBLIC "-//APACHE//DTD Cocoon Documentation Tab V1.1//EN"
+    "http://forrest.apache.org/dtd/tab-cocoon-v11.dtd">
+
 <tabs software="FOP" title="FOP" copyright="@year@ The Apache Software Foundation" xmlns:xlink="http://www.w3.org/1999/xlink">
   <tab label="Home" dir=""/>
   <tab label="Version 0.94" dir="0.94/"/>
