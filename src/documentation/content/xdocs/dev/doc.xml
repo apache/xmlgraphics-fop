@@ -29,11 +29,7 @@
 Updates should be committed to the repository, then the repository files are used to generate usable output.
 The remaining discussions on this page assume that the SVN repository is the starting place for processing.
 The path to the documentation is src/documentation/content/xdocs.</p>
-      <note>All documentation is maintained on the trunk.
-Although we are currently maintaining two sets of code (trunk and maintenance), there is only one set of documentation.
-Most of the user and developer doc is common to the two environments, and differences are highlighted where necessary.
-The major exception to this rule is the design doc, which currently exclusively pertains to the trunk (redesign).
-Maintenance branch releases either copy the trunk content to the maintenance branch or use the trunk content directly for doc builds.</note>
+      <note>All documentation is maintained on the trunk.</note>
       <p>Basic documents are stored in XML files, and use DTDs provided by Apache Forrest.</p>
     </section>
     <section id="design">
@@ -89,10 +85,10 @@ Maintenance branch releases either copy the trunk content to the maintenance bra
       <section id="web-forrestbot-publish">
         <title>ForrestBot "publish" Step-by-Step</title>
         <p>
-          We're using ForrestBot for build and deploy the FOP website. ForrestBot comes with Apache Forrest 0.7. 
+          We're using ForrestBot for build and deploy the FOP website. ForrestBot comes with Apache Forrest 0.8.
           The root directory of your FOP checkout contains the file "publish.xml" which is an Ant build file
           that manages the build and the deployment of the FOP website. Please look into this file for
-          further instructions to set up ForrestBot on your machine. Basically, we're simply running ForrestBot 
+          further instructions to set up ForrestBot on your machine. Basically, we're simply running ForrestBot
           manually by typing "ant -f publish.xml" once we're happy with our changes to the site.
           Step-by-step instructions for the deployment process again:
         </p>
@@ -104,16 +100,16 @@ Maintenance branch releases either copy the trunk content to the maintenance bra
         <ul>
           <li>Modify the sources of the website and check locally with Forrest (run "forrest run" or just "forrest").</li>
           <li>
-            Once you're satisfied, run "ant -f publish.xml" to do a clean build of the website. If the build 
-            runs without problems, the website will be uploaded as a whole using SVN to the 
+            Once you're satisfied, run "ant -f publish.xml" to do a clean build of the website. If the build
+            runs without problems, the website will be uploaded as a whole using SVN to the
             <link href="https://svn.apache.org/repos/asf/xmlgraphics/site/deploy/fop/">website staging directory in SVN</link>.
           </li>
           <li>
-            Then log into people.apache.org using SSH, go to the /www/xmlgraphics.apache.org 
+            Then log into people.apache.org using SSH, go to the /www/xmlgraphics.apache.org
             directory and run "svn up".
           </li>
           <li>
-            Wait for the next rsync cycle and check your changes in the live site. 
+            Wait for the next rsync cycle and check your changes in the live site.
             (Sorry, no manual rsync available ATM)
           </li>
         </ul>
@@ -126,8 +122,8 @@ Maintenance branch releases either copy the trunk content to the maintenance bra
         <title>Using a Local Forrest</title>
         <p>To use a local Forrest (during website development, not for deployment):</p>
         <ul>
-          <li><link href="http://forrest.apache.org/mirrors.cgi#closest">download</link> latest the Forrest release (currently Forrest 0.7)</li>
-          <li>set environment variable FORREST_HOME=~/apache-forrest-0.7 where ~ is the directory where Forrest is installed
+          <li><link href="http://forrest.apache.org/mirrors.cgi#closest">download</link> latest the Forrest release (currently Forrest 0.8)</li>
+          <li>set environment variable FORREST_HOME=~/apache-forrest-0.8 where ~ is the directory where Forrest is installed
               (see <link href="http://forrest.apache.org/docs/your-project.html">http://forrest.apache.org/docs/your-project.html</link> for details)</li>
           <li>set environment variable PATH=$PATH:$FORREST_HOME/bin</li>
           <li>cd to your local FOP checkout</li>
@@ -135,7 +131,7 @@ Maintenance branch releases either copy the trunk content to the maintenance bra
           <li>run forrest(.bat), which will build the web-site documents in xml-fop/build/site.</li>
         </ul>
         <note>
-          You can use "forrest run" to start a local web server. That improves development speed as you 
+          You can use "forrest run" to start a local web server. That improves development speed as you
           can simply refresh in the browser after a change.
         </note>
       </section>
@@ -164,7 +160,7 @@ Maintenance branch releases either copy the trunk content to the maintenance bra
           Please make sure you always have <strong>group rw permissions on all files</strong> under the /www directory!
         </note>
       </section>
-      
+
     </section>
   </body>
 </document>
