@@ -435,7 +435,7 @@ public abstract class AbstractBreaker {
                     }
                     log.trace("IPD changes after page " + optimalPageCount + " at index "
                             + optimalBreak.position);
-                    doPhase3(alg, optimalPageCount, blockList, effectiveList);
+                    addAreas(alg, optimalPageCount, blockList, effectiveList);
 
                     blockLists.clear();
                     blockListIndex = -1;
