@@ -51,6 +51,8 @@
       <p>
         Binary distributions include "-bin" in their names, and can be downloaded from a
         <link href="http://www.apache.org/dyn/closer.cgi/xmlgraphics/fop">FOP Distribution mirror</link>.
+        Nightly builds of trunk source code can be downloaded here:
+        <link href="http://vc.apache.org/snapshots/fop/">Snapshot Trunk Builds</link>
       </p>
     </section>
     <section id="source">
