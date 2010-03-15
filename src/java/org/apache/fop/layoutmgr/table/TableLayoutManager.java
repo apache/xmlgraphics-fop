@@ -43,7 +43,9 @@ import org.apache.fop.layoutmgr.ConditionalElementListener;
 import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthGlue;
 import org.apache.fop.layoutmgr.LayoutContext;
+import org.apache.fop.layoutmgr.LeafPosition;
 import org.apache.fop.layoutmgr.ListElement;
+import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.RelSide;
 import org.apache.fop.layoutmgr.TraitSetter;
@@ -87,6 +89,8 @@ public class TableLayoutManager extends BlockStackingLayoutManager
 
     /** See {@link TableLayoutManager#registerColumnBackgroundArea(TableColumn, Block, int)}. */
     private List columnBackgroundAreas;
+
+    private Position auxiliaryPosition;
 
     /**
      * Temporary holder of column background informations for a table-cell's area.
@@ -288,6 +292,20 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         setFinished(true);
         resetSpaces();
         return returnList;
+    }
+
+    /** {@inheritDoc} */
+    public Position getAuxiliaryPosition() {
+        /*
+         * Redefined to return a LeafPosition instead of a NonLeafPosition. The
+         * SpaceResolver.SpaceHandlingBreakPosition constructors unwraps all
+         * NonLeafPositions, which can lead to a NPE when a break in a table occurs at a
+         * page with different ipd.
+         */
+        if (auxiliaryPosition == null) {
+            auxiliaryPosition = new LeafPosition(this, 0);
+        }
+        return auxiliaryPosition;
     }
 
     /**
