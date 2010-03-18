@@ -52,11 +52,6 @@ public class ImageLoaderFactorySVG extends AbstractImageLoaderFactory {
     }
 
     /** {@inheritDoc} */
-    public int getUsagePenalty(String mime, ImageFlavor flavor) {
-        return 0;
-    }
-
-    /** {@inheritDoc} */
     public boolean isAvailable() {
         return BatikUtil.isBatikAvailable();
     }

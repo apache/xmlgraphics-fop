@@ -58,6 +58,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Images" dev="JM" type="add">
+        Added customization ability for the image loading framework from FOP's configuration file.
+      </action>
       <action context="Renderers" dev="JM" type="fix" fixes-bug="48696" due-to="Peter Hancock">
         Bugfix for color model in IOCA IDE structure parameter for 4- and 8-bit grayscale images.
       </action>
