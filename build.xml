@@ -504,7 +504,7 @@ list of possible build targets.
         <attribute name="Implementation-Title" value="${Name}"/>
         <attribute name="Implementation-Version" value="${version}"/>
         <attribute name="Implementation-Vendor" value="The Apache Software Foundation (http://xmlgraphics.apache.org/fop/)"/>
-        <attribute name="Build-Id" value="${ts} (${user.name} [${os.name} ${os.version} ${os.arch}, Java ${java.runtime.version}])"/>
+        <attribute name="Build-Id" value="${ts} (${user.name} [${os.name} ${os.version} ${os.arch}, Java ${java.runtime.version}, Target Java ${javac.target}])"/>
       </manifest>
     </jar>
   </target>
@@ -556,7 +556,7 @@ list of possible build targets.
       <manifest>
         <attribute name="Main-Class" value="org.apache.fop.cli.Main"/>
         <attribute name="Class-Path" value="${manifest.classpath}"/>
-        <attribute name="Build-Id" value="${ts} (${user.name} [${os.name} ${os.version} ${os.arch}, Java ${java.runtime.version}])"/>
+        <attribute name="Build-Id" value="${ts} (${user.name} [${os.name} ${os.version} ${os.arch}, Java ${java.runtime.version}, Target Java ${javac.target}])"/>
         <section name="org/apache/fop/">
           <attribute name="Specification-Title" value="XSL-FO - Extensible Stylesheet Language"/>
           <attribute name="Specification-Version" value="1.0"/>
@@ -581,7 +581,7 @@ list of possible build targets.
     </tstamp>
     <jar jarfile="${build.dir}/fop-sandbox.jar" basedir="${build.sandbox-classes.dir}">
       <manifest>
-        <attribute name="Build-Id" value="${ts} (${user.name} [${os.name} ${os.version} ${os.arch}, Java ${java.runtime.version}])"/>
+        <attribute name="Build-Id" value="${ts} (${user.name} [${os.name} ${os.version} ${os.arch}, Java ${java.runtime.version}, Target Java ${javac.target}])"/>
       </manifest>
       <metainf dir="${basedir}" includes="LICENSE,NOTICE"/>
     </jar>
@@ -698,7 +698,7 @@ list of possible build targets.
         <attribute name="Implementation-Title" value="${fop-transcoder.name}"/>
         <attribute name="Implementation-Version" value="${fop-transcoder.version}"/>
         <attribute name="Implementation-Vendor" value="The Apache Software Foundation (http://xmlgraphics.apache.org/fop/)"/>
-        <attribute name="Build-Id" value="${ts} (${user.name} [${os.name} ${os.version} ${os.arch}, Java ${java.runtime.version}])"/>
+        <attribute name="Build-Id" value="${ts} (${user.name} [${os.name} ${os.version} ${os.arch}, Java ${java.runtime.version}, Target Java ${javac.target}])"/>
       </manifest>
       <metainf dir="${basedir}" includes="LICENSE,NOTICE"/>
     </jar>
@@ -738,7 +738,7 @@ list of possible build targets.
         <attribute name="Implementation-Title" value="${fop-transcoder.name}"/>
         <attribute name="Implementation-Version" value="${fop-transcoder.version}"/>
         <attribute name="Implementation-Vendor" value="The Apache Software Foundation (http://xmlgraphics.apache.org/fop/)"/>
-        <attribute name="Build-Id" value="${ts} (${user.name} [${os.name} ${os.version} ${os.arch}, Java ${java.runtime.version}])"/>
+        <attribute name="Build-Id" value="${ts} (${user.name} [${os.name} ${os.version} ${os.arch}, Java ${java.runtime.version}, Target Java ${javac.target}])"/>
       </manifest>
       <metainf dir="${basedir}" includes="LICENSE,NOTICE"/>
     </jar>
@@ -1144,7 +1144,7 @@ NOTE:
   <target name="jar-javadocs" depends="javadocs" description="Generates a jar file containing the Javadocs">
     <jar jarfile="${build.dir}/${name}-${version}-javadoc.jar">
       <manifest>
-        <attribute name="Build-Id" value="${ts} (${user.name} [${os.name} ${os.version} ${os.arch}, Java ${java.runtime.version}])"/>
+        <attribute name="Build-Id" value="${ts} (${user.name} [${os.name} ${os.version} ${os.arch}, Java ${java.runtime.version}, Target Java ${javac.target}])"/>
       </manifest>
       <fileset dir="${build.javadocs.dir}"/>
       <metainf dir="${basedir}" includes="LICENSE,NOTICE"/>
@@ -1331,7 +1331,7 @@ NOTE:
     <copy file="${build.dir}/${name}.jar" tofile="${build.dir}/maven/${name}-${version}.jar"/>
     <jar jarfile="${build.dir}/${name}-${version}-bundle.jar">
       <manifest>
-        <attribute name="Build-Id" value="${ts} (${user.name} [${os.name} ${os.version} ${os.arch}, Java ${java.runtime.version}])"/>
+        <attribute name="Build-Id" value="${ts} (${user.name} [${os.name} ${os.version} ${os.arch}, Java ${java.runtime.version}, Target Java ${javac.target}])"/>
       </manifest>
       <fileset dir="${build.dir}">
         <include name="${name}-${version}-sources.jar"/>
