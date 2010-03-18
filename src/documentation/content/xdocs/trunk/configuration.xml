@@ -218,6 +218,42 @@
   <!-- etc. etc..... -->
 </fop>]]></source>
   </section>
+  <section id="image-loading">
+    <title>Image Loading Customization</title>
+    <p>
+      Apache FOP uses the image loading framework from
+      <a href="http://xmlgraphics.apache.org/commons/">Apache XML Graphics Commons</a> to load
+      images using various plug-ins. Every image loader plug-in has a hard-coded usage penalty
+      that influences which solution is chosen if there are multiple possibilities to load an image.
+      Sometimes, though, these penalties need to be tweaked and this can be done in the FOP
+      configuration. An example:
+    </p>
+    <source><![CDATA[<fop version="1.0">
+  [..]
+  <image-loading>
+    <penalty value="10000"
+      class="org.apache.xmlgraphics.image.loader.impl.ImageLoaderRawCCITTFax"/>
+    <penalty value="INFINITE"
+      class="org.apache.xmlgraphics.image.loader.impl.ImageLoaderInternalTIFF"/>
+  </image-loading>
+  <renderers....
+</fop>]]></source>
+    <p>
+      The first penalty element increases the penalty for the raw CCITT loader. This practically
+      forces the decoding of CCITT compressed TIFF images except if there are no TIFF codecs
+      available. 
+    </p>
+    <p>
+      The second penalty element sets an "infinite" penalty for the TIFF loader using the internal
+      TIFF codec. This practically disables that plug-in as it will never be chosen as a possible
+      solution.
+    </p>
+    <p>
+      Negative penalties are possible to promote a plug-in but a negative penalty sum will be
+      treated as zero penalty in most cases. For more details on the image loading framework,
+      please consult the documentation there.
+    </p>
+  </section>
   <section id="renderers">
     <title>Renderer configuration</title>
     <p>

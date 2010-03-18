@@ -31,6 +31,9 @@ import org.apache.avalon.framework.configuration.DefaultConfigurationBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.xmlgraphics.image.loader.spi.ImageImplRegistry;
+import org.apache.xmlgraphics.image.loader.util.Penalty;
+
 import org.apache.fop.fonts.FontManager;
 import org.apache.fop.fonts.FontManagerConfigurator;
 import org.apache.fop.util.LogUtil;
@@ -198,6 +201,39 @@ public class FopFactoryConfigurator {
         FontManager fontManager = factory.getFontManager();
         FontManagerConfigurator fontManagerConfigurator = new FontManagerConfigurator(cfg);
         fontManagerConfigurator.configure(fontManager, strict);
+
+        // configure image loader framework
+        configureImageLoading(cfg.getChild("image-loading", false), strict);
+    }
+
+    private void configureImageLoading(Configuration parent, boolean strict) throws FOPException {
+        if (parent == null) {
+            return;
+        }
+        ImageImplRegistry registry = factory.getImageManager().getRegistry();
+        Configuration[] penalties = parent.getChildren("penalty");
+        try {
+            for (int i = 0, c = penalties.length; i < c; i++) {
+                Configuration penaltyCfg = penalties[i];
+                String className = penaltyCfg.getAttribute("class");
+                String value = penaltyCfg.getAttribute("value");
+                Penalty p = null;
+                if (value.toUpperCase().startsWith("INF")) {
+                    p = Penalty.INFINITE_PENALTY;
+                } else {
+                    try {
+                        p = Penalty.toPenalty(Integer.parseInt(value));
+                    } catch (NumberFormatException nfe) {
+                        LogUtil.handleException(log, nfe, strict);
+                    }
+                }
+                if (p != null) {
+                    registry.setAdditionalPenalty(className, p);
+                }
+            }
+        } catch (ConfigurationException e) {
+            LogUtil.handleException(log, e, strict);
+        }
     }
 
     /**
