@@ -21,7 +21,9 @@ package org.apache.fop.tools;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.fop.events.EventProducer;
@@ -61,7 +63,7 @@ class EventProducerCollector {
     }
 
     private DocletTagFactory tagFactory;
-    private EventModel model = new EventModel();
+    private List models = new ArrayList();
 
     /**
      * Creates a new EventProducerCollector.
@@ -128,7 +130,9 @@ class EventProducerCollector {
             EventMethodModel methodMeta = createMethodModel(method);
             prodMeta.addMethod(methodMeta);
         }
-        this.model.addProducer(prodMeta);
+        EventModel model = new EventModel();
+        model.addProducer(prodMeta);
+        models.add(model);
     }
 
     private EventMethodModel createMethodModel(JavaMethod method)
@@ -193,17 +197,8 @@ class EventProducerCollector {
      * Returns the event model that has been accumulated.
      * @return the event model.
      */
-    public EventModel getModel() {
-        return this.model;
-    }
-
-    /**
-     * Saves the accumulated event model to an XML file.
-     * @param modelFile the target model file
-     * @throws IOException if an I/O error occurs
-     */
-    public void saveModelToXML(File modelFile) throws IOException {
-        getModel().saveToXML(modelFile);
+    public List getModels() {
+        return this.models;
     }
 
 }
