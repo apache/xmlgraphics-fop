@@ -98,7 +98,7 @@ public final class EventFormatter {
     }
 
     private static String format(Event event, ResourceBundle bundle) {
-        String template = bundle.getString(event.getEventID());
+        String template = bundle.getString(event.getEventKey());
         return format(event, processIncludes(template, bundle));
     }
 

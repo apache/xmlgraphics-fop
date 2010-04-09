@@ -18,16 +18,16 @@
 <!-- $Id$ -->
 <catalogue xml:lang="en">
   <message key="locator">[ (See position {loc})| (See {#gatherContextInfo})| (No context info available)]</message>
-  <message key="org.apache.fop.fo.flow.table.TableEventProducer.nonAutoBPDOnTable">Only a value of "auto" for block-progression-dimension has a well-specified behavior on fo:table. Falling back to "auto".{{locator}}</message>
-  <message key="org.apache.fop.fo.flow.table.TableEventProducer.noTablePaddingWithCollapsingBorderModel">In collapsing border model a table does not have padding (see http://www.w3.org/TR/REC-CSS2/tables.html#collapsing-borders), but a non-zero value for padding was found. The padding will be ignored.{{locator}}</message>
-  <message key="org.apache.fop.fo.flow.table.TableEventProducer.noMixRowsAndCells">Either fo:table-rows or fo:table-cells may be children of an {elementName} but not both.{{locator}}</message>
-  <message key="org.apache.fop.fo.flow.table.TableEventProducer.footerOrderCannotRecover">This table uses the collapsing border model. In order to resolve borders in an efficient way the table-footer must be known before any table-body is parsed. Either put the footer at the correct place or switch to the separate border model.{{locator}}</message>
-  <message key="org.apache.fop.fo.flow.table.TableEventProducer.startEndRowUnderTableRowWarning">starts-row/ends-row for fo:table-cells non-applicable for children of an fo:table-row.{{locator}}</message>
-  <message key="org.apache.fop.fo.flow.table.TableEventProducer.tooManyCells">The column-number or number of cells in the row overflows the number of fo:table-columns specified for the table.{{locator}}</message>
-  <message key="org.apache.fop.fo.flow.table.TableEventProducer.valueMustBeBiggerGtEqOne">{propName} must be 1 or bigger, but got {actualValue}{{locator}}</message>
-  <message key="org.apache.fop.fo.flow.table.TableEventProducer.warnImplicitColumns">table-layout=\"fixed\" and column-width unspecified =&gt; falling back to proportional-column-width(1){{locator}}</message>
-  <message key="org.apache.fop.fo.flow.table.TableEventProducer.paddingNotApplicable">padding-* properties are not applicable to {elementName}, but a non-zero value for padding was found.{{locator}}</message>
-  <message key="org.apache.fop.fo.flow.table.TableEventProducer.cellOverlap">{elementName} overlaps in column {column}.<!-- no locator here, exception will be wrapped --></message>
-  <message key="org.apache.fop.fo.flow.table.TableEventProducer.forceNextColumnNumber">Negative value {propValue} of property column-number of element {elementName} forced into the next available column number {columnNumber}.{{locator}}</message>
-  <message key="org.apache.fop.fo.flow.table.TableEventProducer.breakIgnoredDueToRowSpanning">{breakBefore,if,break-before,break-after} ignored on {elementName} because of row spanning in progress (See XSL 1.1, {breakBefore,if,7.20.2,7.20.1}){{locator}}</message>
+  <message key="nonAutoBPDOnTable">Only a value of "auto" for block-progression-dimension has a well-specified behavior on fo:table. Falling back to "auto".{{locator}}</message>
+  <message key="noTablePaddingWithCollapsingBorderModel">In collapsing border model a table does not have padding (see http://www.w3.org/TR/REC-CSS2/tables.html#collapsing-borders), but a non-zero value for padding was found. The padding will be ignored.{{locator}}</message>
+  <message key="noMixRowsAndCells">Either fo:table-rows or fo:table-cells may be children of an {elementName} but not both.{{locator}}</message>
+  <message key="footerOrderCannotRecover">This table uses the collapsing border model. In order to resolve borders in an efficient way the table-footer must be known before any table-body is parsed. Either put the footer at the correct place or switch to the separate border model.{{locator}}</message>
+  <message key="startEndRowUnderTableRowWarning">starts-row/ends-row for fo:table-cells non-applicable for children of an fo:table-row.{{locator}}</message>
+  <message key="tooManyCells">The column-number or number of cells in the row overflows the number of fo:table-columns specified for the table.{{locator}}</message>
+  <message key="valueMustBeBiggerGtEqOne">{propName} must be 1 or bigger, but got {actualValue}{{locator}}</message>
+  <message key="warnImplicitColumns">table-layout=\"fixed\" and column-width unspecified =&gt; falling back to proportional-column-width(1){{locator}}</message>
+  <message key="paddingNotApplicable">padding-* properties are not applicable to {elementName}, but a non-zero value for padding was found.{{locator}}</message>
+  <message key="cellOverlap">{elementName} overlaps in column {column}.<!-- no locator here, exception will be wrapped --></message>
+  <message key="forceNextColumnNumber">Negative value {propValue} of property column-number of element {elementName} forced into the next available column number {columnNumber}.{{locator}}</message>
+  <message key="breakIgnoredDueToRowSpanning">{breakBefore,if,break-before,break-after} ignored on {elementName} because of row spanning in progress (See XSL 1.1, {breakBefore,if,7.20.2,7.20.1}){{locator}}</message>
 </catalogue>

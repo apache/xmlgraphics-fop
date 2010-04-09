@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <catalogue xml:lang="en">
-  <message key="org.apache.fop.render.pcl.PCLEventProducer.paperTypeUnavailable">Paper type ({pageWidth} x {pageHeight} mpt) could not be determined. Falling back to: {fallbackPaper}</message>
+  <message key="paperTypeUnavailable">Paper type ({pageWidth} x {pageHeight} mpt) could not be determined. Falling back to: {fallbackPaper}</message>
 </catalogue>

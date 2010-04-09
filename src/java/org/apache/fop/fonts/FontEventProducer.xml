@@ -17,7 +17,7 @@
 -->
 <!-- $Id$ -->
 <catalogue xml:lang="en">
-  <message key="org.apache.fop.fonts.FontEventProducer.fontSubstituted">Font "{requested}" not found. Substituting with "{effective}".</message>
-  <message key="org.apache.fop.fonts.FontEventProducer.fontLoadingErrorAtAutoDetection">Unable to load font file: {fontURL}.[ Reason: {e}]</message>
-  <message key="org.apache.fop.fonts.FontEventProducer.glyphNotAvailable">Glyph "{ch}" (0x{ch,hex}[, {ch,glyph-name}]) not available in font "{fontName}".</message>
+  <message key="fontSubstituted">Font "{requested}" not found. Substituting with "{effective}".</message>
+  <message key="fontLoadingErrorAtAutoDetection">Unable to load font file: {fontURL}.[ Reason: {e}]</message>
+  <message key="glyphNotAvailable">Glyph "{ch}" (0x{ch,hex}[, {ch,glyph-name}]) not available in font "{fontName}".</message>
 </catalogue>

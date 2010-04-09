@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <catalogue xml:lang="en">
-  <message key="org.apache.fop.accessibility.AccessibilityEventProducer.noStructureTreeInXML">Accessibility is enabled but structure tree is missing in XML file. Please disable accessibility, or re-generate XML file in accessibility mode.</message>
+  <message key="noStructureTreeInXML">Accessibility is enabled but structure tree is missing in XML file. Please disable accessibility, or re-generate XML file in accessibility mode.</message>
 </catalogue>
