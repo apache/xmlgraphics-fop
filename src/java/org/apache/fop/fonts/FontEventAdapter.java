@@ -19,11 +19,7 @@
 
 package org.apache.fop.fonts;
 
-import java.util.Map;
-
-import org.apache.fop.events.Event;
 import org.apache.fop.events.EventBroadcaster;
-import org.apache.fop.events.model.EventSeverity;
 
 /**
  * Event listener interface for font-related events. This interface extends FontEventListener
@@ -31,7 +27,9 @@ import org.apache.fop.events.model.EventSeverity;
  */
 public class FontEventAdapter implements FontEventListener {
 
-    private EventBroadcaster eventBroadcaster;
+    private final EventBroadcaster eventBroadcaster;
+
+    private FontEventProducer eventProducer;
 
     /**
      * Creates a new FontEventAdapter.
@@ -41,42 +39,26 @@ public class FontEventAdapter implements FontEventListener {
         this.eventBroadcaster = broadcaster;
     }
 
-    /**
-     * Returns the event group ID.
-     * @return the event group ID
-     */
-    protected String getEventGroupID() {
-        return getClass().getName();
+    private FontEventProducer getEventProducer() {
+        if (eventProducer == null) {
+            eventProducer = FontEventProducer.Provider.get(eventBroadcaster);
+        }
+        return eventProducer;
     }
 
     /** {@inheritDoc} */
     public void fontSubstituted(Object source, FontTriplet requested, FontTriplet effective) {
-        Map params = new java.util.HashMap();
-        params.put("requested", requested);
-        params.put("effective", effective);
-        Event ev = new Event(source, getEventGroupID() + ".fontSubstituted",
-                EventSeverity.WARN, params);
-        this.eventBroadcaster.broadcastEvent(ev);
+        getEventProducer().fontSubstituted(source, requested, effective);
     }
 
     /** {@inheritDoc} */
     public void fontLoadingErrorAtAutoDetection(Object source, String fontURL, Exception e) {
-        Map params = new java.util.HashMap();
-        params.put("fontURL", fontURL);
-        params.put("e", e);
-        Event ev = new Event(source, getEventGroupID() + ".fontLoadingErrorAtAutoDetection",
-                EventSeverity.WARN, params);
-        this.eventBroadcaster.broadcastEvent(ev);
+        getEventProducer().fontLoadingErrorAtAutoDetection(source, fontURL, e);
     }
 
     /** {@inheritDoc} */
     public void glyphNotAvailable(Object source, char ch, String fontName) {
-        Map params = new java.util.HashMap();
-        params.put("ch", new Character(ch));
-        params.put("fontName", fontName);
-        Event ev = new Event(source, getEventGroupID() + ".glyphNotAvailable",
-                EventSeverity.WARN, params);
-        this.eventBroadcaster.broadcastEvent(ev);
+        getEventProducer().glyphNotAvailable(source, ch, fontName);
     }
 
 }

@@ -23,6 +23,8 @@ import org.xml.sax.Locator;
 
 import org.apache.fop.events.EventBroadcaster;
 import org.apache.fop.events.EventProducer;
+import org.apache.fop.events.model.AbstractEventModelFactory;
+import org.apache.fop.events.model.EventModel;
 
 /**
  * Event producer interface for inline-level layout managers.
@@ -43,6 +45,16 @@ public interface InlineLevelEventProducer extends EventProducer {
             return (InlineLevelEventProducer)broadcaster.getEventProducerFor(
                     InlineLevelEventProducer.class);
         }
+    }
+
+    /** Event model factory for Accessibility. */
+    public static class EventModelFactory extends AbstractEventModelFactory {
+
+        /** {@inheritDoc} */
+        public EventModel createEventModel() {
+            return loadModel(getClass(), "event-model.xml");
+        }
+
     }
 
     /**

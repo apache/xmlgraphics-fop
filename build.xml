@@ -360,16 +360,63 @@ list of possible build targets.
         <pathelement location="${build.codegen-classes.dir}"/>
       </classpath>
     </taskdef>
-    <eventResourceGenerator modelfile="${build.gensrc.dir}/org/apache/fop/events/event-model.xml" 
-      translationfile="${src.java.dir}/org/apache/fop/events/EventFormatter.xml">
+    <eventResourceGenerator modelfile="${build.gensrc.dir}/org/apache/fop/area/event-model.xml" 
+      translationfile="${src.java.dir}/org/apache/fop/area/AreaEventProducer.xml">
       <fileset dir="${src.java.dir}">
-        <include name="**/*.java"/>
-        <exclude name="org/apache/fop/render/*/**/*.java"/>
-        <exclude name="org/apache/fop/afp/**/*.java"/>
-        <exclude name="org/apache/fop/accessibility/**/*.java"/>
+        <include name="org/apache/fop/area/AreaEventProducer.java"/>
       </fileset>
     </eventResourceGenerator>
-    <fixcrlf file="${src.java.dir}/org/apache/fop/events/EventFormatter.xml" tab="remove" tablength="2"/>
+    <eventResourceGenerator modelfile="${build.gensrc.dir}/org/apache/fop/events/event-model.xml" 
+      translationfile="${src.java.dir}/org/apache/fop/events/ResourceEventProducer.xml">
+      <fileset dir="${src.java.dir}">
+        <include name="org/apache/fop/events/ResourceEventProducer.java"/>
+      </fileset>
+    </eventResourceGenerator>
+    <eventResourceGenerator 
+      modelfile="${build.gensrc.dir}/org/apache/fop/fo/flow/table/event-model.xml" 
+      translationfile="${src.java.dir}/org/apache/fop/fo/flow/table/TableEventProducer.xml">
+      <fileset dir="${src.java.dir}">
+        <include name="org/apache/fop/fo/flow/table/TableEventProducer.java"/>
+      </fileset>
+    </eventResourceGenerator>
+    <eventResourceGenerator modelfile="${build.gensrc.dir}/org/apache/fop/fo/event-model.xml" 
+      translationfile="${src.java.dir}/org/apache/fop/fo/FOValidationEventProducer.xml">
+      <fileset dir="${src.java.dir}">
+        <include name="org/apache/fop/fo/FOValidationEventProducer.java"/>
+      </fileset>
+    </eventResourceGenerator>
+    <eventResourceGenerator modelfile="${build.gensrc.dir}/org/apache/fop/layoutmgr/event-model.xml" 
+      translationfile="${src.java.dir}/org/apache/fop/layoutmgr/BlockLevelEventProducer.xml">
+      <fileset dir="${src.java.dir}">
+        <include name="org/apache/fop/layoutmgr/BlockLevelEventProducer.java"/>
+      </fileset>
+    </eventResourceGenerator>
+    <eventResourceGenerator 
+      modelfile="${build.gensrc.dir}/org/apache/fop/layoutmgr/inline/event-model.xml" 
+      translationfile="${src.java.dir}/org/apache/fop/layoutmgr/inline/InlineLevelEventProducer.xml">
+      <fileset dir="${src.java.dir}">
+        <include name="org/apache/fop/layoutmgr/inline/InlineLevelEventProducer.java"/>
+      </fileset>
+    </eventResourceGenerator>
+    <eventResourceGenerator modelfile="${build.gensrc.dir}/org/apache/fop/render/event-model.xml" 
+      translationfile="${src.java.dir}/org/apache/fop/render/RendererEventProducer.xml">
+      <fileset dir="${src.java.dir}">
+        <include name="org/apache/fop/render/RendererEventProducer.java"/>
+      </fileset>
+    </eventResourceGenerator>
+    <eventResourceGenerator modelfile="${build.gensrc.dir}/org/apache/fop/svg/event-model.xml" 
+      translationfile="${src.java.dir}/org/apache/fop/svg/SVGEventProducer.xml">
+      <fileset dir="${src.java.dir}">
+        <include name="org/apache/fop/svg/SVGEventProducer.java"/>
+      </fileset>
+    </eventResourceGenerator>
+    <eventResourceGenerator modelfile="${build.gensrc.dir}/org/apache/fop/fonts/event-model.xml" 
+      translationfile="${src.java.dir}/org/apache/fop/fonts/FontEventProducer.xml">
+      <fileset dir="${src.java.dir}">
+        <include name="org/apache/fop/fonts/FontEventProducer.java"/>
+      </fileset>
+    </eventResourceGenerator>
+
     <eventResourceGenerator 
       modelfile="${build.gensrc.dir}/org/apache/fop/accessibility/event-model.xml" 
       translationfile="${src.java.dir}/org/apache/fop/accessibility/AccessibilityEventProducer.xml">

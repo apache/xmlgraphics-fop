@@ -1,4 +1,3 @@
-org.apache.fop.events.FOPEventModelFactory
 org.apache.fop.afp.AFPEventProducer$EventModelFactory
 org.apache.fop.render.bitmap.BitmapRendererEventProducer$EventModelFactory
 org.apache.fop.render.pcl.PCLEventProducer$EventModelFactory
@@ -6,3 +5,12 @@ org.apache.fop.render.pdf.PDFEventProducer$EventModelFactory
 org.apache.fop.render.ps.PSEventProducer$EventModelFactory
 org.apache.fop.render.rtf.RTFEventProducer$EventModelFactory
 org.apache.fop.accessibility.AccessibilityEventProducer$EventModelFactory
+org.apache.fop.area.AreaEventProducer$EventModelFactory
+org.apache.fop.events.ResourceEventProducer$EventModelFactory
+org.apache.fop.fo.FOValidationEventProducer$EventModelFactory
+org.apache.fop.fo.flow.table.TableEventProducer$EventModelFactory
+org.apache.fop.layoutmgr.BlockLevelEventProducer$EventModelFactory
+org.apache.fop.layoutmgr.inline.InlineLevelEventProducer$EventModelFactory
+org.apache.fop.render.RendererEventProducer$EventModelFactory
+org.apache.fop.svg.SVGEventProducer$EventModelFactory
+org.apache.fop.fonts.FontEventProducer$EventModelFactory
