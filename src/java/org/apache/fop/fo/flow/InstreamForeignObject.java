@@ -25,9 +25,9 @@ import org.xml.sax.Locator;
 
 import org.apache.xmlgraphics.util.QName;
 
+import org.apache.fop.ResourceEventProducer;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
-import org.apache.fop.events.ResourceEventProducer;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.XMLObj;

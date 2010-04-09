@@ -17,7 +17,7 @@
 
 /* $Id$ */
 
-package org.apache.fop.events;
+package org.apache.fop;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -28,6 +28,8 @@ import org.xml.sax.Locator;
 
 import org.apache.xmlgraphics.image.loader.ImageException;
 
+import org.apache.fop.events.EventBroadcaster;
+import org.apache.fop.events.EventProducer;
 import org.apache.fop.events.model.AbstractEventModelFactory;
 import org.apache.fop.events.model.EventModel;
 

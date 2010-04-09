@@ -41,6 +41,7 @@ import org.apache.xmlgraphics.image.loader.ImageSessionContext;
 import org.apache.xmlgraphics.image.loader.util.ImageUtil;
 import org.apache.xmlgraphics.ps.ImageEncodingHelper;
 
+import org.apache.fop.ResourceEventProducer;
 import org.apache.fop.afp.AFPBorderPainter;
 import org.apache.fop.afp.AFPDataObjectInfo;
 import org.apache.fop.afp.AFPDitheredRectanglePainter;
@@ -77,7 +78,6 @@ import org.apache.fop.area.inline.Image;
 import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.datatypes.URISpecification;
-import org.apache.fop.events.ResourceEventProducer;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontCollection;

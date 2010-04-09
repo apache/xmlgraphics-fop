@@ -37,6 +37,7 @@ import org.apache.commons.io.output.NullOutputStream;
 
 import org.apache.xmlgraphics.util.MimeConstants;
 
+import org.apache.fop.ResourceEventProducer;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;

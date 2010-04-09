@@ -63,8 +63,8 @@ import org.apache.xmlgraphics.ps.dsc.events.PostScriptComment;
 import org.apache.xmlgraphics.ps.dsc.events.PostScriptLine;
 import org.apache.xmlgraphics.ps.dsc.tools.DSCTools;
 
+import org.apache.fop.ResourceEventProducer;
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.events.ResourceEventProducer;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.render.ImageHandler;
 import org.apache.fop.render.ImageHandlerRegistry;

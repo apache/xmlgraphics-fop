@@ -47,11 +47,11 @@ import org.xml.sax.XMLReader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.fop.ResourceEventProducer;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
-import org.apache.fop.events.ResourceEventProducer;
 import org.apache.fop.render.awt.viewer.Renderable;
 
 /**
