@@ -34,6 +34,7 @@ import org.apache.xmlgraphics.image.loader.ImageInfo;
 import org.apache.xmlgraphics.image.loader.ImageManager;
 import org.apache.xmlgraphics.image.loader.util.ImageUtil;
 
+import org.apache.fop.ResourceEventProducer;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.area.AreaTreeHandler;
 import org.apache.fop.area.Block;
@@ -47,7 +48,6 @@ import org.apache.fop.area.inline.Image;
 import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.datatypes.URISpecification;
-import org.apache.fop.events.ResourceEventProducer;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.extensions.ExternalDocument;
 import org.apache.fop.layoutmgr.inline.ImageLayout;

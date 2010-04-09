@@ -57,6 +57,7 @@ import org.apache.xmlgraphics.image.loader.ImageManager;
 import org.apache.xmlgraphics.image.loader.ImageSessionContext;
 import org.apache.xmlgraphics.util.QName;
 
+import org.apache.fop.ResourceEventProducer;
 import org.apache.fop.accessibility.AccessibilityEventProducer;
 import org.apache.fop.accessibility.StructureTreeBuilder;
 import org.apache.fop.apps.FOUserAgent;
@@ -74,7 +75,6 @@ import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.area.inline.WordArea;
-import org.apache.fop.events.ResourceEventProducer;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.ElementMappingRegistry;
 import org.apache.fop.fo.expr.PropertyException;

@@ -366,10 +366,10 @@ list of possible build targets.
         <include name="org/apache/fop/area/AreaEventProducer.java"/>
       </fileset>
     </eventResourceGenerator>
-    <eventResourceGenerator modelfile="${build.gensrc.dir}/org/apache/fop/events/event-model.xml" 
-      translationfile="${src.java.dir}/org/apache/fop/events/ResourceEventProducer.xml">
+    <eventResourceGenerator modelfile="${build.gensrc.dir}/org/apache/fop/event-model.xml" 
+      translationfile="${src.java.dir}/org/apache/fop/ResourceEventProducer.xml">
       <fileset dir="${src.java.dir}">
-        <include name="org/apache/fop/events/ResourceEventProducer.java"/>
+        <include name="org/apache/fop/ResourceEventProducer.java"/>
       </fileset>
     </eventResourceGenerator>
     <eventResourceGenerator 
@@ -837,7 +837,8 @@ list of possible build targets.
     </copy>
   </target>
   <target name="junit-compile-copy-resources" if="junit.present">
-    <eventResourceGenerator modelfile="${build.dir}/test-gensrc/org/apache/fop/events/test-event-model.xml">
+    <eventResourceGenerator 
+      modelfile="${build.dir}/test-gensrc/org/apache/fop/events/event-model.xml">
       <fileset dir="${test.dir}/java">
         <include name="**/*.java"/>
       </fileset>

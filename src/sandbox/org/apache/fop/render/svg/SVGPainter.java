@@ -44,7 +44,7 @@ import org.apache.xmlgraphics.image.loader.ImageSessionContext;
 import org.apache.xmlgraphics.xmp.Metadata;
 
 import org.apache.fop.apps.MimeConstants;
-import org.apache.fop.events.ResourceEventProducer;
+import org.apache.fop.ResourceEventProducer;
 import org.apache.fop.render.ImageHandlerUtil;
 import org.apache.fop.render.RenderingContext;
 import org.apache.fop.render.intermediate.AbstractIFPainter;

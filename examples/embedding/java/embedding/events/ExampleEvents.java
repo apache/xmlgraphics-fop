@@ -112,7 +112,7 @@ public class ExampleEvents {
     private static class MyEventListener implements EventListener {
 
         public void processEvent(Event event) {
-            if ("org.apache.fop.events.ResourceEventProducer.imageNotFound"
+            if ("org.apache.fop.ResourceEventProducer.imageNotFound"
                     .equals(event.getEventID())) {
 
                 //Get the FileNotFoundException that's part of the event's parameters

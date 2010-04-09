@@ -27,7 +27,7 @@ import org.apache.fop.events.model.EventModel;
  */
 public class FOPTestEventModelFactory extends AbstractEventModelFactory {
 
-    private static final String EVENT_MODEL_FILENAME = "test-event-model.xml";
+    private static final String EVENT_MODEL_FILENAME = "event-model.xml";
 
     /** {@inheritDoc} */
     public EventModel createEventModel() {
