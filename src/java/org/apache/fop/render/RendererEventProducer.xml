@@ -17,5 +17,5 @@
 -->
 <!-- $Id$ -->
 <catalogue xml:lang="en">
-  <message key="org.apache.fop.render.RendererEventProducer.ioError">I/O error while writing to target file.[ Reason: {ioe}]</message>
+  <message key="ioError">I/O error while writing to target file.[ Reason: {ioe}]</message>
 </catalogue>

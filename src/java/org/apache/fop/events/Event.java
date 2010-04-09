@@ -33,7 +33,10 @@ public class Event extends EventObject {
 
     private static final long serialVersionUID = -1310594422868258083L;
 
-    private String eventID;
+    private String eventGroupID;
+
+    private String eventKey;
+
     private EventSeverity severity;
     private Map params;
 
@@ -46,7 +49,13 @@ public class Event extends EventObject {
      */
     public Event(Object source, String eventID, EventSeverity severity, Map params) {
         super(source);
-        this.eventID = eventID;
+        int pos = eventID.lastIndexOf('.');
+        if (pos < 0 || pos == eventID.length() - 1) {
+            eventKey = eventID;
+        } else {
+            eventGroupID = eventID.substring(0, pos);
+            eventKey = eventID.substring(pos + 1);
+        }
         setSeverity(severity);
         this.params = params;
     }
@@ -56,7 +65,11 @@ public class Event extends EventObject {
      * @return the event identifier
      */
     public String getEventID() {
-        return this.eventID;
+        if (eventGroupID == null) {
+            return eventKey;
+        } else {
+            return eventGroupID + '.' + eventKey;
+        }
     }
 
     /**
@@ -64,12 +77,15 @@ public class Event extends EventObject {
      * @return the event group identifier (or null if there is no group identifier)
      */
     public String getEventGroupID() {
-        int pos = this.eventID.lastIndexOf('.');
-        if (pos > 0) {
-            return this.eventID.substring(0, pos);
-        } else {
-            return null;
-        }
+        return eventGroupID;
+    }
+
+    /**
+     * Returns the event key.
+     * @return the event key
+     */
+    public String getEventKey() {
+        return eventKey;
     }
 
     /**

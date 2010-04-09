@@ -18,6 +18,6 @@
 <!-- $Id$ -->
 <catalogue xml:lang="en">
   <message key="locator">[ (See position {loc})| (See {#gatherContextInfo})| (No context info available)]</message>
-  <message key="org.apache.fop.layoutmgr.inline.InlineLevelEventProducer.leaderWithoutContent">fo:leader is set to "use-content" but has no content.{{locator}}</message>
-  <message key="org.apache.fop.layoutmgr.inline.InlineLevelEventProducer.lineOverflows">Line {line} of a paragraph overflows the available area by {overflowLength,choice,50000#{overflowLength} millipoints|50000&lt;more than 50 points}.{{locator}}</message>
+  <message key="leaderWithoutContent">fo:leader is set to "use-content" but has no content.{{locator}}</message>
+  <message key="lineOverflows">Line {line} of a paragraph overflows the available area by {overflowLength,choice,50000#{overflowLength} millipoints|50000&lt;more than 50 points}.{{locator}}</message>
 </catalogue>

@@ -17,9 +17,9 @@
 -->
 <!-- $Id$ -->
 <catalogue xml:lang="en">
-  <message key="org.apache.fop.area.AreaEventProducer.unresolvedIDReference">{type}: Unresolved ID reference "{id}" found.</message>
-  <message key="org.apache.fop.area.AreaEventProducer.unresolvedIDReferenceOnPage">Page {page}: Unresolved ID reference "{id}" found.</message>
-  <message key="org.apache.fop.area.AreaEventProducer.pageLoadError">Error while deserializing page {page}.[ Reason: {e}]</message>
-  <message key="org.apache.fop.area.AreaEventProducer.pageSaveError">Error while serializing page {page}.[ Reason: {e}]</message>
-  <message key="org.apache.fop.area.AreaEventProducer.pageRenderingError">Error while rendering page {page}.[ Reason: {e}]</message>
+  <message key="unresolvedIDReference">{type}: Unresolved ID reference "{id}" found.</message>
+  <message key="unresolvedIDReferenceOnPage">Page {page}: Unresolved ID reference "{id}" found.</message>
+  <message key="pageLoadError">Error while deserializing page {page}.[ Reason: {e}]</message>
+  <message key="pageSaveError">Error while serializing page {page}.[ Reason: {e}]</message>
+  <message key="pageRenderingError">Error while rendering page {page}.[ Reason: {e}]</message>
 </catalogue>

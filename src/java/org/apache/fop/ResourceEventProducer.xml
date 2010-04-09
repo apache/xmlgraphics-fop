@@ -18,15 +18,15 @@
 <!-- $Id$ -->
 <catalogue xml:lang="en">
   <message key="locator">[ (See position {loc})| (See {#gatherContextInfo})| (No context info available)]</message>
-  <message key="org.apache.fop.ResourceEventProducer.imageNotFound">Image not found.[ URI: {uri}.]{{locator}}</message>
-  <message key="org.apache.fop.ResourceEventProducer.imageError">Image not available.[ URI: {uri}.] Reason:[ {reason}][ {e}]{{locator}}</message>
-  <message key="org.apache.fop.ResourceEventProducer.imageIOError">I/O error while loading image.[ URI: {uri}.][ Reason: {ioe}]{{locator}}</message>
-  <message key="org.apache.fop.ResourceEventProducer.ifoNoIntrinsicSize">The intrinsic dimensions of an instream-foreign-object could not be determined.{{locator}}</message>
-  <message key="org.apache.fop.ResourceEventProducer.uriError">Error while handling URI: {uri}. Reason: {e}{{locator}}</message>
-  <message key="org.apache.fop.ResourceEventProducer.foreignXMLProcessingError">Some XML content will be ignored. Could not render XML in namespace "{namespaceURI}".[ Reason: {e}]</message>
-  <message key="org.apache.fop.ResourceEventProducer.foreignXMLNoHandler">Some XML content will be ignored. No handler defined for XML with namespace "{namespaceURI}".</message>
-  <message key="org.apache.fop.ResourceEventProducer.imageWritingError">Error while writing an image to the target file.[ Reason: {e}]</message>
-  <message key="org.apache.fop.ResourceEventProducer.cannotDeleteTempFile">Temporary file could not be deleted: {tempFile}</message>
-  <message key="org.apache.fop.ResourceEventProducer.catalogResolverNotFound">Catalog resolver not found along the classpath</message>
-  <message key="org.apache.fop.ResourceEventProducer.catalogResolverNotCreated">Error creating the catalog resolver: {message}</message>
+  <message key="imageNotFound">Image not found.[ URI: {uri}.]{{locator}}</message>
+  <message key="imageError">Image not available.[ URI: {uri}.] Reason:[ {reason}][ {e}]{{locator}}</message>
+  <message key="imageIOError">I/O error while loading image.[ URI: {uri}.][ Reason: {ioe}]{{locator}}</message>
+  <message key="ifoNoIntrinsicSize">The intrinsic dimensions of an instream-foreign-object could not be determined.{{locator}}</message>
+  <message key="uriError">Error while handling URI: {uri}. Reason: {e}{{locator}}</message>
+  <message key="foreignXMLProcessingError">Some XML content will be ignored. Could not render XML in namespace "{namespaceURI}".[ Reason: {e}]</message>
+  <message key="foreignXMLNoHandler">Some XML content will be ignored. No handler defined for XML with namespace "{namespaceURI}".</message>
+  <message key="imageWritingError">Error while writing an image to the target file.[ Reason: {e}]</message>
+  <message key="cannotDeleteTempFile">Temporary file could not be deleted: {tempFile}</message>
+  <message key="catalogResolverNotFound">Catalog resolver not found along the classpath</message>
+  <message key="catalogResolverNotCreated">Error creating the catalog resolver: {message}</message>
 </catalogue>

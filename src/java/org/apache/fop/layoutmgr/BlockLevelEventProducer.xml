@@ -18,15 +18,15 @@
 <!-- $Id$ -->
 <catalogue xml:lang="en">
   <message key="locator">[ (See position {loc})| (See {#gatherContextInfo})| (No context info available)]</message>
-  <message key="org.apache.fop.layoutmgr.BlockLevelEventProducer.rowTooTall">The contents of table-row {row} are taller than they should be (there is a block-progression-dimension or height constraint on the indicated row). Due to its contents the row grows to {effCellBPD} millipoints, but the row shouldn't get any taller than {maxCellBPD} millipoints.{{locator}}</message>
-  <message key="org.apache.fop.layoutmgr.BlockLevelEventProducer.tableFixedAutoWidthNotSupported">table-layout="fixed" and width="auto", but auto-layout not supported =&gt; assuming width="100%".{{locator}}</message>
-  <message key="org.apache.fop.layoutmgr.BlockLevelEventProducer.objectTooWide">The extent in inline-progression-direction (width) of a {elementName} is bigger than the available space ({effIPD}mpt &gt; {maxIPD}mpt).{{locator}}</message>
-  <message key="org.apache.fop.layoutmgr.BlockLevelEventProducer.overconstrainedAdjustEndIndent">An {elementName} {{locator}} is wider than the available room in inline-progression-dimension. Adjusting end-indent based on overconstrained geometry rules (XSL 1.1, ch. 5.3.4)</message>
-  <message key="org.apache.fop.layoutmgr.BlockLevelEventProducer.viewportOverflow">Content overflows the viewport of an {elementName} in block-progression direction by {amount} millipoints.{clip,if, Content will be clipped.}{{locator}}</message>
-  <message key="org.apache.fop.layoutmgr.BlockLevelEventProducer.regionOverflow">Content overflows the viewport of the {elementName} on page {page} in block-progression direction by {amount} millipoints.{clip,if, Content will be clipped.}{{locator}}</message>
-  <message key="org.apache.fop.layoutmgr.BlockLevelEventProducer.flowNotMappingToRegionBody">Flow "{flowName}" does not map to the region-body in page-master "{masterName}". FOP presently does not support this.{{locator}}</message>
-  <message key="org.apache.fop.layoutmgr.BlockLevelEventProducer.pageSequenceMasterExhausted">Subsequences exhausted in page-sequence-master "{pageSequenceMasterName}", {canRecover,if,using previous subsequence,cannot recover}.{{locator}}</message>
-  <message key="org.apache.fop.layoutmgr.BlockLevelEventProducer.missingSubsequencesInPageSequenceMaster">No subsequences in page-sequence-master "{pageSequenceMasterName}".{{locator}}</message>
-  <message key="org.apache.fop.layoutmgr.BlockLevelEventProducer.noMatchingPageMaster">No simple-page-master matching "{pageMasterName}" in page-sequence-master "{pageSequenceMasterName}".{{locator}}</message>
-  <message key="org.apache.fop.layoutmgr.BlockLevelEventProducer.nonRestartableContentFlowingToNarrowerPage">Content that cannot handle IPD changes is flowing to a narrower page. Part of it may be clipped by the page border.</message>
+  <message key="rowTooTall">The contents of table-row {row} are taller than they should be (there is a block-progression-dimension or height constraint on the indicated row). Due to its contents the row grows to {effCellBPD} millipoints, but the row shouldn't get any taller than {maxCellBPD} millipoints.{{locator}}</message>
+  <message key="tableFixedAutoWidthNotSupported">table-layout="fixed" and width="auto", but auto-layout not supported =&gt; assuming width="100%".{{locator}}</message>
+  <message key="objectTooWide">The extent in inline-progression-direction (width) of a {elementName} is bigger than the available space ({effIPD}mpt &gt; {maxIPD}mpt).{{locator}}</message>
+  <message key="overconstrainedAdjustEndIndent">An {elementName} {{locator}} is wider than the available room in inline-progression-dimension. Adjusting end-indent based on overconstrained geometry rules (XSL 1.1, ch. 5.3.4)</message>
+  <message key="viewportOverflow">Content overflows the viewport of an {elementName} in block-progression direction by {amount} millipoints.{clip,if, Content will be clipped.}{{locator}}</message>
+  <message key="regionOverflow">Content overflows the viewport of the {elementName} on page {page} in block-progression direction by {amount} millipoints.{clip,if, Content will be clipped.}{{locator}}</message>
+  <message key="flowNotMappingToRegionBody">Flow "{flowName}" does not map to the region-body in page-master "{masterName}". FOP presently does not support this.{{locator}}</message>
+  <message key="pageSequenceMasterExhausted">Subsequences exhausted in page-sequence-master "{pageSequenceMasterName}", {canRecover,if,using previous subsequence,cannot recover}.{{locator}}</message>
+  <message key="missingSubsequencesInPageSequenceMaster">No subsequences in page-sequence-master "{pageSequenceMasterName}".{{locator}}</message>
+  <message key="noMatchingPageMaster">No simple-page-master matching "{pageMasterName}" in page-sequence-master "{pageSequenceMasterName}".{{locator}}</message>
+  <message key="nonRestartableContentFlowingToNarrowerPage">Content that cannot handle IPD changes is flowing to a narrower page. Part of it may be clipped by the page border.</message>
 </catalogue>
