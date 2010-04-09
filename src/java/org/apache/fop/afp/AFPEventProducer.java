@@ -21,8 +21,6 @@ package org.apache.fop.afp;
 
 import org.apache.fop.events.EventBroadcaster;
 import org.apache.fop.events.EventProducer;
-import org.apache.fop.events.model.AbstractEventModelFactory;
-import org.apache.fop.events.model.EventModel;
 
 /**
  * Event producer interface for AFP-specific events.
@@ -41,16 +39,6 @@ public interface AFPEventProducer extends EventProducer {
             return (AFPEventProducer)broadcaster.getEventProducerFor(
                     AFPEventProducer.class);
         }
-    }
-
-    /** Event model factory for AFP. */
-    public static class EventModelFactory extends AbstractEventModelFactory {
-
-        /** {@inheritDoc} */
-        public EventModel createEventModel() {
-            return loadModel(getClass(), "event-model.xml");
-        }
-
     }
 
     /**

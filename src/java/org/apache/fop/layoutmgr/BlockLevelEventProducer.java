@@ -23,8 +23,6 @@ import org.xml.sax.Locator;
 
 import org.apache.fop.events.EventBroadcaster;
 import org.apache.fop.events.EventProducer;
-import org.apache.fop.events.model.AbstractEventModelFactory;
-import org.apache.fop.events.model.EventModel;
 import org.apache.fop.fo.pagination.PageProductionException;
 
 /**
@@ -48,16 +46,6 @@ public interface BlockLevelEventProducer extends EventProducer {
             return (BlockLevelEventProducer)broadcaster.getEventProducerFor(
                     BlockLevelEventProducer.class);
         }
-    }
-
-    /** Event model factory for Accessibility. */
-    public static class EventModelFactory extends AbstractEventModelFactory {
-
-        /** {@inheritDoc} */
-        public EventModel createEventModel() {
-            return loadModel(getClass(), "event-model.xml");
-        }
-
     }
 
     /**

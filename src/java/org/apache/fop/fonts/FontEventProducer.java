@@ -21,8 +21,6 @@ package org.apache.fop.fonts;
 
 import org.apache.fop.events.EventBroadcaster;
 import org.apache.fop.events.EventProducer;
-import org.apache.fop.events.model.AbstractEventModelFactory;
-import org.apache.fop.events.model.EventModel;
 
 /**
  * Event producer for fonts-related events.
@@ -44,16 +42,6 @@ public interface FontEventProducer extends EventProducer {
         public static FontEventProducer get(EventBroadcaster broadcaster) {
             return (FontEventProducer) broadcaster.getEventProducerFor(FontEventProducer.class);
         }
-    }
-
-    /** Event model factory for Accessibility. */
-    public static class EventModelFactory extends AbstractEventModelFactory {
-
-        /** {@inheritDoc} */
-        public EventModel createEventModel() {
-            return loadModel(getClass(), "event-model.xml");
-        }
-
     }
 
     /**
