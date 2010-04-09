@@ -21,8 +21,6 @@ package org.apache.fop.area;
 
 import org.apache.fop.events.EventBroadcaster;
 import org.apache.fop.events.EventProducer;
-import org.apache.fop.events.model.AbstractEventModelFactory;
-import org.apache.fop.events.model.EventModel;
 
 /**
  * Event producer interface for events related to the area tree.
@@ -43,16 +41,6 @@ public interface AreaEventProducer extends EventProducer {
             return (AreaEventProducer)broadcaster.getEventProducerFor(
                     AreaEventProducer.class);
         }
-    }
-
-    /** Event model factory for Accessibility. */
-    public static class EventModelFactory extends AbstractEventModelFactory {
-
-        /** {@inheritDoc} */
-        public EventModel createEventModel() {
-            return loadModel(getClass(), "event-model.xml");
-        }
-
     }
 
     /**

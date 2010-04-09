@@ -23,8 +23,6 @@ import java.io.IOException;
 
 import org.apache.fop.events.EventBroadcaster;
 import org.apache.fop.events.EventProducer;
-import org.apache.fop.events.model.AbstractEventModelFactory;
-import org.apache.fop.events.model.EventModel;
 
 /**
  * Event producer interface for rendering-specific events.
@@ -43,16 +41,6 @@ public interface RendererEventProducer extends EventProducer {
             return (RendererEventProducer)broadcaster.getEventProducerFor(
                     RendererEventProducer.class);
         }
-    }
-
-    /** Event model factory for Accessibility. */
-    public static class EventModelFactory extends AbstractEventModelFactory {
-
-        /** {@inheritDoc} */
-        public EventModel createEventModel() {
-            return loadModel(getClass(), "event-model.xml");
-        }
-
     }
 
     /**

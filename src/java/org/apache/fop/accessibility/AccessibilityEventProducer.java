@@ -21,8 +21,6 @@ package org.apache.fop.accessibility;
 
 import org.apache.fop.events.EventBroadcaster;
 import org.apache.fop.events.EventProducer;
-import org.apache.fop.events.model.AbstractEventModelFactory;
-import org.apache.fop.events.model.EventModel;
 
 /**
  * Event producer for accessibility-related events.
@@ -44,16 +42,6 @@ public interface AccessibilityEventProducer extends EventProducer {
             return (AccessibilityEventProducer) broadcaster.getEventProducerFor(
                     AccessibilityEventProducer.class);
         }
-    }
-
-    /** Event model factory for Accessibility. */
-    public static class EventModelFactory extends AbstractEventModelFactory {
-
-        /** {@inheritDoc} */
-        public EventModel createEventModel() {
-            return loadModel(getClass(), "event-model.xml");
-        }
-
     }
 
     /**

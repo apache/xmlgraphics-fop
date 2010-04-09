@@ -19,18 +19,23 @@
 
 package org.apache.fop.events;
 
+import java.io.InputStream;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.MissingResourceException;
 
-import org.apache.xmlgraphics.util.Service;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.stream.StreamSource;
+
+import org.apache.commons.io.IOUtils;
 
 import org.apache.fop.events.model.EventMethodModel;
 import org.apache.fop.events.model.EventModel;
-import org.apache.fop.events.model.EventModelFactory;
+import org.apache.fop.events.model.EventModelParser;
 import org.apache.fop.events.model.EventProducerModel;
 import org.apache.fop.events.model.EventSeverity;
 
@@ -66,11 +71,27 @@ public class DefaultEventBroadcaster implements EventBroadcaster {
     private static List/*<EventModel>*/ eventModels = new java.util.ArrayList();
     private Map proxies = new java.util.HashMap();
 
-    static {
-        Iterator iter = Service.providers(EventModelFactory.class, true);
-        while (iter.hasNext()) {
-            EventModelFactory factory = (EventModelFactory)iter.next();
-            addEventModel(factory.createEventModel());
+    /**
+     * Loads an event model and returns its instance.
+     * @param resourceBaseClass base class to use for loading resources
+     * @return the newly loaded event model.
+     */
+    private static EventModel loadModel(Class resourceBaseClass) {
+        String resourceName = "event-model.xml";
+        InputStream in = resourceBaseClass.getResourceAsStream(resourceName);
+        if (in == null) {
+            throw new MissingResourceException(
+                    "File " + resourceName + " not found",
+                    DefaultEventBroadcaster.class.getName(), "");
+        }
+        try {
+            return EventModelParser.parse(new StreamSource(in));
+        } catch (TransformerException e) {
+            throw new MissingResourceException(
+                    "Error reading " + resourceName + ": " + e.getMessage(),
+                    DefaultEventBroadcaster.class.getName(), "");
+        } finally {
+            IOUtils.closeQuietly(in);
         }
     }
 
@@ -78,8 +99,21 @@ public class DefaultEventBroadcaster implements EventBroadcaster {
      * Adds a new {@link EventModel} to the list of registered event models.
      * @param eventModel the event model instance
      */
-    public static void addEventModel(EventModel eventModel) {
+    public static synchronized void addEventModel(EventModel eventModel) {
         eventModels.add(eventModel);
+    }
+
+    private static synchronized EventProducerModel getEventProducerModel(Class clazz) {
+        for (int i = 0, c = eventModels.size(); i < c; i++) {
+            EventModel eventModel = (EventModel)eventModels.get(i);
+            EventProducerModel producerModel = eventModel.getProducer(clazz);
+            if (producerModel != null) {
+                return producerModel;
+            }
+        }
+        EventModel model = loadModel(clazz);
+        addEventModel(model);
+        return model.getProducer(clazz);
     }
 
     /** {@inheritDoc} */
@@ -96,17 +130,6 @@ public class DefaultEventBroadcaster implements EventBroadcaster {
             this.proxies.put(clazz, producer);
         }
         return producer;
-    }
-
-    private EventProducerModel getEventProducerModel(Class clazz) {
-        for (int i = 0, c = eventModels.size(); i < c; i++) {
-            EventModel eventModel = (EventModel)eventModels.get(i);
-            EventProducerModel producerModel = eventModel.getProducer(clazz);
-            if (producerModel != null) {
-                return producerModel;
-            }
-        }
-        return null;
     }
 
     /**
