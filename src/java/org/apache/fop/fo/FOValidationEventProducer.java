@@ -26,6 +26,8 @@ import org.apache.xmlgraphics.util.QName;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.events.EventBroadcaster;
 import org.apache.fop.events.EventProducer;
+import org.apache.fop.events.model.AbstractEventModelFactory;
+import org.apache.fop.events.model.EventModel;
 import org.apache.fop.fo.expr.PropertyException;
 
 /**
@@ -49,6 +51,16 @@ public interface FOValidationEventProducer extends EventProducer {
             return (FOValidationEventProducer)broadcaster.getEventProducerFor(
                     FOValidationEventProducer.class);
         }
+    }
+
+    /** Event model factory for Accessibility. */
+    public static class EventModelFactory extends AbstractEventModelFactory {
+
+        /** {@inheritDoc} */
+        public EventModel createEventModel() {
+            return loadModel(getClass(), "event-model.xml");
+        }
+
     }
 
     /**

@@ -17,9 +17,7 @@
 
 /* $Id$ */
 
-package org.apache.fop.render;
-
-import java.io.IOException;
+package org.apache.fop.fonts;
 
 import org.apache.fop.events.EventBroadcaster;
 import org.apache.fop.events.EventProducer;
@@ -27,21 +25,24 @@ import org.apache.fop.events.model.AbstractEventModelFactory;
 import org.apache.fop.events.model.EventModel;
 
 /**
- * Event producer interface for rendering-specific events.
+ * Event producer for fonts-related events.
  */
-public interface RendererEventProducer extends EventProducer {
+public interface FontEventProducer extends EventProducer {
 
-    /** Provider class for the event producer. */
-    class Provider {
+    /**
+     * Provider class for the event producer.
+     */
+    final class Provider {
+
+        private Provider() { }
 
         /**
          * Returns an event producer.
          * @param broadcaster the event broadcaster to use
          * @return the event producer
          */
-        public static RendererEventProducer get(EventBroadcaster broadcaster) {
-            return (RendererEventProducer)broadcaster.getEventProducerFor(
-                    RendererEventProducer.class);
+        public static FontEventProducer get(EventBroadcaster broadcaster) {
+            return (FontEventProducer) broadcaster.getEventProducerFor(FontEventProducer.class);
         }
     }
 
@@ -56,10 +57,30 @@ public interface RendererEventProducer extends EventProducer {
     }
 
     /**
-     * I/O error while writing target file.
+     * Notifies about a font being substituted as the requested one isn't available.
      * @param source the event source
-     * @param ioe the original I/O error
-     * @event.severity ERROR
+     * @param requested the requested font triplet
+     * @param effective the effective font triplet
+     * @event.severity WARN
      */
-    void ioError(Object source, IOException ioe);
+    void fontSubstituted(Object source, FontTriplet requested, FontTriplet effective);
+
+    /**
+     * An error occurred while loading a font for auto-detection.
+     * @param source the event source
+     * @param fontURL the font URL
+     * @param e the original exception
+     * @event.severity WARN
+     */
+    void fontLoadingErrorAtAutoDetection(Object source, String fontURL, Exception e);
+
+    /**
+     * A glyph has been requested that is not available in the font.
+     * @param source the event source
+     * @param ch the character for which the glyph isn't available
+     * @param fontName the name of the font
+     * @event.severity WARN
+     */
+    void glyphNotAvailable(Object source, char ch, String fontName);
+
 }

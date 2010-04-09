@@ -43,6 +43,7 @@ import org.apache.fop.apps.FopFactory;
 import org.apache.fop.area.AreaEventProducer;
 import org.apache.fop.fo.FOValidationEventProducer;
 import org.apache.fop.fo.flow.table.TableEventProducer;
+import org.apache.fop.fonts.FontEventProducer;
 import org.apache.fop.layoutmgr.BlockLevelEventProducer;
 import org.apache.fop.layoutmgr.inline.InlineLevelEventProducer;
 
@@ -108,6 +109,12 @@ public class EventProcessingTestCase extends TestCase {
         doTest("inline-level.fo",
                 InlineLevelEventProducer.class.getName() + ".lineOverflows");
     }
+
+    public void testFont() throws FOPException, TransformerException {
+        doTest("font.fo",
+                FontEventProducer.class.getName() + ".fontSubstituted");
+    }
+
 
     public static Test suite() {
         TestSuite suite = new TestSuite();

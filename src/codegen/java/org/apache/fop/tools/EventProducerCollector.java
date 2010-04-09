@@ -42,7 +42,7 @@ import com.thoughtworks.qdox.model.Type;
 /**
  * Finds EventProducer interfaces and builds the event model for them.
  */
-public class EventProducerCollector {
+class EventProducerCollector {
 
     private static final String CLASSNAME_EVENT_PRODUCER = EventProducer.class.getName();
     private static final Map PRIMITIVE_MAP;
@@ -66,7 +66,7 @@ public class EventProducerCollector {
     /**
      * Creates a new EventProducerCollector.
      */
-    public EventProducerCollector() {
+    EventProducerCollector() {
         this.tagFactory = createDocletTagFactory();
     }
 

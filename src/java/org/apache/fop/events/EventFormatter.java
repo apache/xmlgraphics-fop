@@ -41,9 +41,6 @@ public final class EventFormatter {
 
     private static final Pattern INCLUDES_PATTERN = Pattern.compile("\\{\\{.+\\}\\}");
 
-    private static ResourceBundle defaultBundle = XMLResourceBundle.getXMLBundle(
-            EventFormatter.class.getName(), EventFormatter.class.getClassLoader());
-
     private static Log log = LogFactory.getLog(EventFormatter.class);
 
     private EventFormatter() {
@@ -64,13 +61,9 @@ public final class EventFormatter {
                         groupID,
                         EventFormatter.class.getClassLoader());
             } catch (MissingResourceException mre) {
-                if (log.isTraceEnabled()) {
-                    log.trace("No XMLResourceBundle for " + groupID + " available.");
-                }
+                throw new IllegalStateException("No XMLResourceBundle for " + groupID
+                        + " available.");
             }
-        }
-        if (bundle == null) {
-            bundle = defaultBundle;
         }
         return format(event, bundle);
     }
@@ -164,7 +157,8 @@ public final class EventFormatter {
         }
 
         public void write(StringBuffer sb, Map params) {
-            sb.append(defaultBundle.getString(getKey(params)));
+            // TODO there's no defaultBundle anymore
+//            sb.append(defaultBundle.getString(getKey(params)));
         }
 
         private String getKey(Map params) {
