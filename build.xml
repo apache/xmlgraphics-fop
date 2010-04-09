@@ -360,117 +360,11 @@ list of possible build targets.
         <pathelement location="${build.codegen-classes.dir}"/>
       </classpath>
     </taskdef>
-    <eventResourceGenerator destdir="${build.gensrc.dir}" 
-      translationfile="${src.java.dir}/org/apache/fop/area/AreaEventProducer.xml">
+    <eventResourceGenerator destdir="${build.gensrc.dir}">
       <fileset dir="${src.java.dir}">
-        <include name="org/apache/fop/area/AreaEventProducer.java"/>
+        <include name="**/*.java"/>
       </fileset>
     </eventResourceGenerator>
-    <eventResourceGenerator destdir="${build.gensrc.dir}" 
-      translationfile="${src.java.dir}/org/apache/fop/ResourceEventProducer.xml">
-      <fileset dir="${src.java.dir}">
-        <include name="org/apache/fop/ResourceEventProducer.java"/>
-      </fileset>
-    </eventResourceGenerator>
-    <eventResourceGenerator 
-      destdir="${build.gensrc.dir}" 
-      translationfile="${src.java.dir}/org/apache/fop/fo/flow/table/TableEventProducer.xml">
-      <fileset dir="${src.java.dir}">
-        <include name="org/apache/fop/fo/flow/table/TableEventProducer.java"/>
-      </fileset>
-    </eventResourceGenerator>
-    <eventResourceGenerator destdir="${build.gensrc.dir}" 
-      translationfile="${src.java.dir}/org/apache/fop/fo/FOValidationEventProducer.xml">
-      <fileset dir="${src.java.dir}">
-        <include name="org/apache/fop/fo/FOValidationEventProducer.java"/>
-      </fileset>
-    </eventResourceGenerator>
-    <eventResourceGenerator destdir="${build.gensrc.dir}" 
-      translationfile="${src.java.dir}/org/apache/fop/layoutmgr/BlockLevelEventProducer.xml">
-      <fileset dir="${src.java.dir}">
-        <include name="org/apache/fop/layoutmgr/BlockLevelEventProducer.java"/>
-      </fileset>
-    </eventResourceGenerator>
-    <eventResourceGenerator 
-      destdir="${build.gensrc.dir}" 
-      translationfile="${src.java.dir}/org/apache/fop/layoutmgr/inline/InlineLevelEventProducer.xml">
-      <fileset dir="${src.java.dir}">
-        <include name="org/apache/fop/layoutmgr/inline/InlineLevelEventProducer.java"/>
-      </fileset>
-    </eventResourceGenerator>
-    <eventResourceGenerator destdir="${build.gensrc.dir}" 
-      translationfile="${src.java.dir}/org/apache/fop/render/RendererEventProducer.xml">
-      <fileset dir="${src.java.dir}">
-        <include name="org/apache/fop/render/RendererEventProducer.java"/>
-      </fileset>
-    </eventResourceGenerator>
-    <eventResourceGenerator destdir="${build.gensrc.dir}" 
-      translationfile="${src.java.dir}/org/apache/fop/svg/SVGEventProducer.xml">
-      <fileset dir="${src.java.dir}">
-        <include name="org/apache/fop/svg/SVGEventProducer.java"/>
-      </fileset>
-    </eventResourceGenerator>
-    <eventResourceGenerator destdir="${build.gensrc.dir}" 
-      translationfile="${src.java.dir}/org/apache/fop/fonts/FontEventProducer.xml">
-      <fileset dir="${src.java.dir}">
-        <include name="org/apache/fop/fonts/FontEventProducer.java"/>
-      </fileset>
-    </eventResourceGenerator>
-
-    <eventResourceGenerator 
-      destdir="${build.gensrc.dir}" 
-      translationfile="${src.java.dir}/org/apache/fop/accessibility/AccessibilityEventProducer.xml">
-      <fileset dir="${src.java.dir}">
-        <include name="org/apache/fop/accessibility/**/*.java"/>
-      </fileset>
-    </eventResourceGenerator>
-    <fixcrlf file="${src.java.dir}/org/apache/fop/afp/AFPEventProducer.xml" tab="remove" tablength="2"/>
-    <eventResourceGenerator destdir="${build.gensrc.dir}" 
-      translationfile="${src.java.dir}/org/apache/fop/afp/AFPEventProducer.xml">
-      <fileset dir="${src.java.dir}">
-        <include name="org/apache/fop/afp/**/*.java"/>
-      </fileset>
-    </eventResourceGenerator>
-    <fixcrlf file="${src.java.dir}/org/apache/fop/afp/AFPEventProducer.xml" tab="remove" tablength="2"/>
-    <eventResourceGenerator 
-      destdir="${build.gensrc.dir}" 
-      translationfile="${src.java.dir}/org/apache/fop/render/bitmap/BitmapRendererEventProducer.xml">
-      <fileset dir="${src.java.dir}">
-        <include name="org/apache/fop/render/bitmap/**/*.java"/>
-      </fileset>
-    </eventResourceGenerator>
-    <fixcrlf file="${src.java.dir}/org/apache/fop/render/bitmap/BitmapRendererEventProducer.xml" tab="remove" tablength="2"/>
-    <eventResourceGenerator 
-      destdir="${build.gensrc.dir}" 
-      translationfile="${src.java.dir}/org/apache/fop/render/pcl/PCLEventProducer.xml">
-      <fileset dir="${src.java.dir}">
-        <include name="org/apache/fop/render/pcl/**/*.java"/>
-      </fileset>
-    </eventResourceGenerator>
-    <fixcrlf file="${src.java.dir}/org/apache/fop/render/pcl/PCLEventProducer.xml" tab="remove" tablength="2"/>
-    <eventResourceGenerator 
-      destdir="${build.gensrc.dir}" 
-      translationfile="${src.java.dir}/org/apache/fop/render/pdf/PDFEventProducer.xml">
-      <fileset dir="${src.java.dir}">
-        <include name="org/apache/fop/render/pdf/**/*.java"/>
-      </fileset>
-    </eventResourceGenerator>
-    <fixcrlf file="${src.java.dir}/org/apache/fop/render/pdf/PDFEventProducer.xml" tab="remove" tablength="2"/>
-    <eventResourceGenerator destdir="${build.gensrc.dir}" 
-      translationfile="${src.java.dir}/org/apache/fop/render/ps/PSEventProducer.xml">
-      <fileset dir="${src.java.dir}">
-        <include name="org/apache/fop/render/ps/**/*.java"/>
-      </fileset>
-    </eventResourceGenerator>
-    <fixcrlf file="${src.java.dir}/org/apache/fop/render/ps/PSEventProducer.xml" tab="remove" tablength="2"/>
-    <eventResourceGenerator 
-      destdir="${build.gensrc.dir}" 
-      translationfile="${src.java.dir}/org/apache/fop/render/rtf/RTFEventProducer.xml">
-      <fileset dir="${src.java.dir}">
-        <include name="org/apache/fop/render/rtf/**/*.java"/>
-      </fileset>
-    </eventResourceGenerator>
-    <fixcrlf file="${src.java.dir}/org/apache/fop/render/rtf/RTFEventProducer.xml" tab="remove" tablength="2"/>
   </target>
   <target name="compile-copy-resources" depends="resourcegen">
     <copy todir="${build.classes.dir}">

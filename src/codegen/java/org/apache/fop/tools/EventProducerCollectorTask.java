@@ -80,6 +80,7 @@ public class EventProducerCollectorTask extends Task {
                     log("Event model written to " + modelFile);
                 }
                 if (getTranslationFile() != null) {
+                    // TODO Remove translation file creation facility?
                     if (!getTranslationFile().exists()
                             || lastModified > getTranslationFile().lastModified()) {
                         updateTranslationFile(modelFile);
