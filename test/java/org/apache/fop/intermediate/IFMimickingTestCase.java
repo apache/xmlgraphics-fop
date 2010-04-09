@@ -39,6 +39,7 @@ import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.events.Event;
 import org.apache.fop.events.EventFormatter;
 import org.apache.fop.events.EventListener;
+import org.apache.fop.fonts.FontEventProducer;
 import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFDocumentHandler;
 import org.apache.fop.render.intermediate.IFException;
@@ -92,7 +93,7 @@ public class IFMimickingTestCase extends TestCase {
         userAgent.getEventBroadcaster().addEventListener(new EventListener() {
 
             public void processEvent(Event event) {
-                if (event.getEventGroupID().equals("org.apache.fop.fonts.FontEventAdapter")) {
+                if (event.getEventGroupID().equals(FontEventProducer.class.getName())) {
                     fail("There must be no font-related event! Got: "
                             + EventFormatter.format(event));
                 }
