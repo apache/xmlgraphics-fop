@@ -47,6 +47,9 @@ import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.selectors.FilenameSelector;
 
+import org.apache.fop.events.model.EventModel;
+import org.apache.fop.events.model.EventProducerModel;
+
 /**
  * Ant task which inspects a file set for Java interfaces which extend the
  * {@link org.apache.fop.events.EventProducer} interface. For all such interfaces an event model
@@ -56,7 +59,7 @@ import org.apache.tools.ant.types.selectors.FilenameSelector;
 public class EventProducerCollectorTask extends Task {
 
     private List filesets = new java.util.ArrayList();
-    private File modelFile;
+    private File destDir;
     private File translationFile;
 
     /** {@inheritDoc} */
@@ -64,19 +67,23 @@ public class EventProducerCollectorTask extends Task {
         try {
             EventProducerCollector collector = new EventProducerCollector();
             long lastModified = processFileSets(collector);
-            File parentDir = getModelFile().getParentFile();
-            if (!parentDir.exists() && !parentDir.mkdirs()) {
-                throw new BuildException(
-                        "Could not create target directory for event model file: " + parentDir);
-            }
-            if (!getModelFile().exists() || lastModified > getModelFile().lastModified()) {
-                collector.saveModelToXML(getModelFile());
-                log("Event model written to " + getModelFile());
-            }
-            if (getTranslationFile() != null) {
-                if (!getTranslationFile().exists()
-                        || lastModified > getTranslationFile().lastModified()) {
-                    updateTranslationFile();
+            for (Iterator iter = collector.getModels().iterator(); iter.hasNext();) {
+                EventModel model = (EventModel) iter.next();
+                File parentDir = getParentDir(model);
+                if (!parentDir.exists() && !parentDir.mkdirs()) {
+                    throw new BuildException(
+                            "Could not create target directory for event model file: " + parentDir);
+                }
+                File modelFile = new File(parentDir, "event-model.xml");
+                if (!modelFile.exists() || lastModified > modelFile.lastModified()) {
+                    model.saveToXML(modelFile);
+                    log("Event model written to " + modelFile);
+                }
+                if (getTranslationFile() != null) {
+                    if (!getTranslationFile().exists()
+                            || lastModified > getTranslationFile().lastModified()) {
+                        updateTranslationFile(modelFile);
+                    }
                 }
             }
         } catch (ClassNotFoundException e) {
@@ -91,18 +98,34 @@ public class EventProducerCollectorTask extends Task {
     private static final String MODEL2TRANSLATION = "model2translation.xsl";
     private static final String MERGETRANSLATION = "merge-translation.xsl";
 
+    private File getParentDir(EventModel model) {
+        Iterator iter = model.getProducers();
+        assert iter.hasNext();
+        EventProducerModel producer = (EventProducerModel) iter.next();
+        assert !iter.hasNext();
+        String interfaceName = producer.getInterfaceName();
+        int startLocalName = interfaceName.lastIndexOf(".");
+        if (startLocalName < 0) {
+            return destDir;
+        } else {
+            String dirname = interfaceName.substring(0, startLocalName);
+            dirname = dirname.replace('.', File.separatorChar);
+            return new File(destDir, dirname);
+        }
+    }
+
     /**
      * Updates the translation file with new entries for newly found event producer methods.
      * @throws IOException if an I/O error occurs
      */
-    protected void updateTranslationFile() throws IOException {
+    protected void updateTranslationFile(File modelFile) throws IOException {
         try {
             boolean resultExists = getTranslationFile().exists();
             SAXTransformerFactory tFactory
                 = (SAXTransformerFactory)SAXTransformerFactory.newInstance();
 
             //Generate fresh generated translation file as template
-            Source src = new StreamSource(getModelFile().toURI().toURL().toExternalForm());
+            Source src = new StreamSource(modelFile.toURI().toURL().toExternalForm());
             StreamSource xslt1 = new StreamSource(
                     getClass().getResourceAsStream(MODEL2TRANSLATION));
             if (xslt1.getInputStream() == null) {
@@ -204,19 +227,15 @@ public class EventProducerCollectorTask extends Task {
     }
 
     /**
-     * Sets the model file to be written.
-     * @param f the model file
+     * Sets the destination directory for the event models.
+     *
+     * @param destDir the destination directory
      */
-    public void setModelFile(File f) {
-        this.modelFile = f;
-    }
-
-    /**
-     * Returns the model file to be written.
-     * @return the model file
-     */
-    public File getModelFile() {
-        return this.modelFile;
+    public void setDestDir(File destDir) {
+        if (!destDir.isDirectory()) {
+            throw new IllegalArgumentException("destDir must be a directory");
+        }
+        this.destDir = destDir;
     }
 
     /**
@@ -257,7 +276,6 @@ public class EventProducerCollectorTask extends Task {
             File targetDir = new File("build/codegen1");
             targetDir.mkdirs();
 
-            generator.setModelFile(new File("D:/out.xml"));
             generator.setTranslationFile(new File("D:/out1.xml"));
             generator.execute();
         } catch (Exception e) {
