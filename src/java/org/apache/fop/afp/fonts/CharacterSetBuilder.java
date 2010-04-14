@@ -24,9 +24,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
 import java.util.Map;
+import java.util.List;
+import java.util.WeakHashMap;
 
+import org.apache.xmlgraphics.image.loader.util.SoftMapCache;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -61,6 +63,11 @@ public class CharacterSetBuilder {
      * Static logging instance
      */
     protected static final Log LOG = LogFactory.getLog(CharacterSetBuilder.class);
+
+    /**
+     * Singleton reference
+     */
+    private static CharacterSetBuilder instance;
 
     /**
      * Template used to convert lists to arrays.
@@ -99,7 +106,12 @@ public class CharacterSetBuilder {
      * The collection of code pages
      */
     private final Map/*<String, Map<String, String>>*/ codePagesCache
-        = new java.util.HashMap/*<String, Map<String, String>>*/();
+            = new WeakHashMap/*<String, Map<String, String>>*/();
+
+    /**
+     * Cache of charactersets
+     */
+    private final SoftMapCache characterSetsCache = new SoftMapCache(true);
 
 
     private CharacterSetBuilder() { }
@@ -109,7 +121,10 @@ public class CharacterSetBuilder {
      * @return AFPFontReader
      */
     public static CharacterSetBuilder getInstance() {
-        return new CharacterSetBuilder();
+        if (instance == null) {
+            instance = new CharacterSetBuilder();
+        }
+        return instance;
     }
 
     /**
@@ -163,14 +178,25 @@ public class CharacterSetBuilder {
      * Load the font details and metrics into the CharacterSetMetric object,
      * this will use the actual afp code page and character set files to load
      * the object with the necessary metrics.
+     * @param characterSetName name of the characterset
      * @param codePageName name of the code page file
-     * @param encoding
-     * @throws RuntimeException if an I/O exception of some sort has occurred.
+     * @param encoding encoding name
+     * @param accessor used to load codepage and characterset
+     * @return CharacterSet object
      */
     public CharacterSet build(String characterSetName, String codePageName,
             String encoding, ResourceAccessor accessor) {
 
-        CharacterSet characterSet = new CharacterSet(
+        // check for cached version of the characterset
+        String descriptor = characterSetName + "_" + encoding + "_" + codePageName;
+        CharacterSet characterSet = (CharacterSet)characterSetsCache.get(descriptor);
+
+        if (characterSet != null) {
+            return characterSet;
+        }
+
+        // characterset not in the cache, so recreating
+        characterSet = new CharacterSet(
                 codePageName, encoding, characterSetName, accessor);
 
         InputStream inputStream = null;
@@ -236,17 +262,16 @@ public class CharacterSetBuilder {
 
             }
 
-        } catch(IOException e){
+        } catch (IOException e) {
             String msg = "Failed to load the character set metrics for code page " + codePageName;
             LOG.error(msg);
             throw new RuntimeException("Failed to read font control structured field"
                     + "in character set " + characterSetName);
-        }
-        finally {
+        } finally {
 
             closeInputStream(inputStream);
         }
-
+        characterSetsCache.put(descriptor, characterSet);
         return characterSet;
 
     }
@@ -256,7 +281,11 @@ public class CharacterSetBuilder {
      * this will use the actual afp code page and character set files to load
      * the object with the necessary metrics.
      *
-     * @param characterSet the CharacterSetMetric object to populate
+     * @param characterSetName the CharacterSetMetric object to populate
+     * @param codePageName the name of the code page to use
+     * @param encoding name of the encoding in use
+     * @param typeface base14 font name
+     * @return CharacterSet object
      */
     public CharacterSet build(String characterSetName, String codePageName,
             String encoding, Typeface typeface) {
@@ -272,7 +301,7 @@ public class CharacterSetBuilder {
      * @param encoding
      *            the encoding to use for the character decoding
      * @param accessor the resource accessor
-     * @returns a code page mapping
+     * @return a code page mapping
      * @throws IOException if an I/O exception of some sort has occurred.
      */
     protected Map/*<String,String>*/ loadCodePage(String codePage, String encoding,
@@ -623,7 +652,7 @@ public class CharacterSetBuilder {
             return nominalFontSize;
         }
     }
-
+    
     /**
      * Double-byte (CID Keyed font (Type 0)) implementation of AFPFontReader.
      */
