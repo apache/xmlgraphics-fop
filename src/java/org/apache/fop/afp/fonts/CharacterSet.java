@@ -362,7 +362,11 @@ public class CharacterSet {
      */
     public byte[] encodeChars(CharSequence chars) throws CharacterCodingException {
         if (encoder != null) {
-            ByteBuffer bb = encoder.encode(CharBuffer.wrap(chars));
+            ByteBuffer bb;
+            // encode method is not thread safe
+            synchronized (encoder) {
+                bb = encoder.encode(CharBuffer.wrap(chars));
+            }
             if (bb.hasArray()) {
                 return bb.array();
             } else {
