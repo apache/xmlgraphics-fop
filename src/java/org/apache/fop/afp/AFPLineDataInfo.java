@@ -52,6 +52,20 @@ public class AFPLineDataInfo {
     }
 
     /**
+     * Copy constructor.
+     * @param template the object to copy
+     */
+    public AFPLineDataInfo(AFPLineDataInfo template) {
+        this.x1 = template.x1;
+        this.y1 = template.y1;
+        this.x2 = template.x2;
+        this.y2 = template.y2;
+        this.thickness = template.thickness;
+        this.color = template.color;
+        this.rotation = template.rotation;
+    }
+
+    /**
      * Returns the X1 coordinate
      *
      * @return the X1 coordinate

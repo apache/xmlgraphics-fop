@@ -91,26 +91,36 @@ public class AFPBorderPainter extends AbstractAFPPainter {
         lineDataInfo.setRotation(paintingState.getRotation());
         lineDataInfo.x1 = Math.round(x1);
         lineDataInfo.y1 = Math.round(y1);
+        float thickness;
         if (borderPaintInfo.isHorizontal()) {
-            lineDataInfo.setThickness(Math.round(y2 - y1));
+            thickness = y2 - y1;
         } else {
-            lineDataInfo.setThickness(Math.round(x2 - x1));
+            thickness = x2 - x1;
         }
+        lineDataInfo.setThickness(Math.round(thickness));
 
         // handle border-*-style
         switch (borderPaintInfo.getStyle()) {
         case Constants.EN_DOUBLE:
+            int thickness3 = (int)Math.floor(thickness / 3f);
+            lineDataInfo.setThickness(thickness3);
             if (borderPaintInfo.isHorizontal()) {
                 lineDataInfo.x2 = Math.round(x2);
                 lineDataInfo.y2 = lineDataInfo.y1;
                 dataStream.createLine(lineDataInfo);
-                lineDataInfo.y1 += Math.round((lineDataInfo.thickness / 3) * 2);
+                int distance = thickness3 * 2;
+                lineDataInfo = new AFPLineDataInfo(lineDataInfo);
+                lineDataInfo.y1 += distance;
+                lineDataInfo.y2 += distance;
                 dataStream.createLine(lineDataInfo);
             } else {
                 lineDataInfo.x2 = lineDataInfo.x1;
                 lineDataInfo.y2 = Math.round(y2);
                 dataStream.createLine(lineDataInfo);
-                lineDataInfo.x1 += Math.round((lineDataInfo.thickness / 3) * 2);
+                int distance = thickness3 * 2;
+                lineDataInfo = new AFPLineDataInfo(lineDataInfo);
+                lineDataInfo.x1 += distance;
+                lineDataInfo.x2 += distance;
                 dataStream.createLine(lineDataInfo);
             }
             break;
