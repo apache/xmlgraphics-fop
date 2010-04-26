@@ -495,16 +495,14 @@ public class PDFRenderer extends AbstractPathOrientedRenderer implements PDFConf
         this.borderPainter = new PDFBorderPainter(this.generator);
 
         // Transform the PDF's default coordinate system (0,0 at lower left) to the PDFRenderer's
+        saveGraphicsState();
         AffineTransform basicPageTransform = new AffineTransform(1, 0, 0, -1, 0,
                 pageHeight / 1000f);
         generator.concatenate(basicPageTransform);
-        /*
-        currentState.concatenate(basicPageTransform);
-        currentStream.add(CTMHelper.toPDFString(basicPageTransform, false) + " cm\n");
-        */
 
         super.renderPage(page);
 
+        restoreGraphicsState();
         if (accessEnabled) {
             logicalStructureHandler.endPage();
         }

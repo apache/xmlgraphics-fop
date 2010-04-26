@@ -513,6 +513,9 @@ public abstract class AbstractPaintingState implements Cloneable, Serializable {
             data.fontSize = this.fontSize;
             data.lineWidth = this.lineWidth;
             data.dashArray = this.dashArray;
+            if (this.transform == null) {
+                this.transform = new AffineTransform();
+            }
             data.transform = new AffineTransform(this.transform);
             return data;
         }

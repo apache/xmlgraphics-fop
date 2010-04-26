@@ -245,6 +245,7 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
         AffineTransform basicPageTransform = new AffineTransform(1, 0, 0, -1, 0,
                 (scaleY * size.height) / 1000f);
         basicPageTransform.scale(scaleX, scaleY);
+        generator.saveGraphicsState();
         generator.concatenate(basicPageTransform);
     }
 
@@ -259,7 +260,8 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
 
     /** {@inheritDoc} */
     public void endPageContent() throws IFException {
-        //nop
+        generator.restoreGraphicsState();
+        //for top-level transform to change the default coordinate system
     }
 
     /** {@inheritDoc} */
