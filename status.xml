@@ -58,6 +58,10 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="JM" type="fix">
+        Added a save/restoreGraphicsState pair for the initial coordinate system in PDF output
+        for easier post-processing.
+      </action>
       <action context="Images" dev="JM" type="add">
         Added customization ability for the image loading framework from FOP's configuration file.
       </action>
