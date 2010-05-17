@@ -30,6 +30,8 @@ import java.util.Map;
 import java.util.Stack;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.fonts.NamedCharacter;
 
@@ -37,6 +39,8 @@ import org.apache.fop.fonts.NamedCharacter;
  * Parses the contents of a Type 1 AFM font metrics file into an object structure ({@link AFMFile}).
  */
 public class AFMParser {
+
+    private static Log log = LogFactory.getLog(AFMParser.class);
 
     private static final String START_FONT_METRICS = "StartFontMetrics";
     //private static final String END_FONT_METRICS = "EndFontMetrics";
@@ -82,6 +86,9 @@ public class AFMParser {
     //private static final String START_KERN_PAIRS0 = "StartKernPairs0";
     private static final String START_KERN_PAIRS1 = "StartKernPairs1";
     //private static final String END_KERN_PAIRS = "EndKernPairs";
+    private static final String START_COMPOSITES = "StartComposites";
+    private static final String START_COMP_FONT_METRICS = "StartCompFontMetrics";
+
     private static final String KP = "KP";
     private static final String KPH = "KPH";
     private static final String KPX = "KPX";
@@ -131,8 +138,9 @@ public class AFMParser {
         VALUE_PARSERS.put(N, new NamedCharacterSetter("Character"));
         VALUE_PARSERS.put(B, new CharBBox());
         VALUE_PARSERS.put(START_TRACK_KERN, new NotImplementedYet(START_TRACK_KERN));
-        VALUE_PARSERS.put(END_TRACK_KERN, new NotImplementedYet(END_TRACK_KERN));
         VALUE_PARSERS.put(START_KERN_PAIRS1, new NotImplementedYet(START_KERN_PAIRS1));
+        VALUE_PARSERS.put(START_COMPOSITES, new NotImplementedYet(START_COMPOSITES));
+        VALUE_PARSERS.put(START_COMP_FONT_METRICS, new NotImplementedYet(START_COMP_FONT_METRICS));
         VALUE_PARSERS.put(KP, new NotImplementedYet(KP));
         VALUE_PARSERS.put(KPH, new NotImplementedYet(KPH));
         VALUE_PARSERS.put(KPX, new KPXHandler());
@@ -578,8 +586,8 @@ public class AFMParser {
         }
 
         public void parse(String line, int startpos, Stack stack) throws IOException {
-            throw new IOException("Support for '" + key
-                    + "' has not been implemented, yet! Font is not supported.");
+            log.warn("Support for '" + key + "' has not been implemented, yet!"
+                    + " Some font data in the AFM file will be ignored.");
         }
     }
 
