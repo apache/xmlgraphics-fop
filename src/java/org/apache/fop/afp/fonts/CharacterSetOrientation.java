@@ -58,7 +58,7 @@ public class CharacterSetOrientation {
     private int capHeight;
 
     /**
-     * The character widths in the character set
+     * The character widths in the character set (indexed using Unicode codepoints)
      */
     private int[] charsWidths = null;
 
@@ -68,14 +68,14 @@ public class CharacterSetOrientation {
     private int xHeight;
 
     /**
-     * The first character
+     * The first character (Unicode codepoint)
      */
-    private int firstChar;
+    private char firstChar;
 
     /**
-     * The last character
+     * The last character (Unicode codepoint)
      */
-    private int lastChar;
+    private char lastChar;
 
 
     /**
@@ -138,17 +138,17 @@ public class CharacterSetOrientation {
 
     /**
      * The first character in the character set
-     * @return the first character
+     * @return the first character (Unicode codepoint)
      */
-    public int getFirstChar() {
+    public char getFirstChar() {
         return firstChar;
     }
 
     /**
      * The last character in the character set
-     * @return the last character
+     * @return the last character (Unicode codepoint)
      */
-    public int getLastChar() {
+    public char getLastChar() {
         return lastChar;
     }
 
@@ -183,15 +183,16 @@ public class CharacterSetOrientation {
     /**
      * Get the width (in 1/1000ths of a point size) of the character
      * identified by the parameter passed.
-     * @param characterIndex the character to evaluate
+     * @param character the Unicode character to evaluate
      * @return the widths of the character
      */
-    public int getWidth(int characterIndex) {
-        if (characterIndex >= charsWidths.length) {
-            throw new IllegalArgumentException("Invalid character index: "
-                    + characterIndex + ", maximum is " + (charsWidths.length - 1));
+    public int getWidth(char character) {
+        if (character >= charsWidths.length) {
+            throw new IllegalArgumentException("Invalid character: "
+                    + character + " (" + Integer.toString(character)
+                    + "), maximum is " + (charsWidths.length - 1));
         }
-        return charsWidths[characterIndex];
+        return charsWidths[character];
     }
 
     /**
@@ -234,7 +235,7 @@ public class CharacterSetOrientation {
      * The first character in the character set
      * @param firstChar the first character
      */
-    public void setFirstChar(int firstChar) {
+    public void setFirstChar(char firstChar) {
         this.firstChar = firstChar;
     }
 
@@ -242,17 +243,17 @@ public class CharacterSetOrientation {
      * The last character in the character set
      * @param lastChar the last character
      */
-    public void setLastChar(int lastChar) {
+    public void setLastChar(char lastChar) {
         this.lastChar = lastChar;
     }
 
     /**
      * Set the width (in 1/1000ths of a point size) of the character
      * identified by the parameter passed.
-     * @param character the character for which the width is being set
+     * @param character the Unicode character for which the width is being set
      * @param width the widths of the character
      */
-    public void setWidth(int character, int width) {
+    public void setWidth(char character, int width) {
         if (character >= charsWidths.length) {
             // Increase the size of the array if necessary
             //  TODO Can we remove firstChar? surely firstChar==0 at this stage?

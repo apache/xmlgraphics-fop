@@ -232,7 +232,7 @@ public class RasterFont extends AFPFont {
      */
     public int getWidth(int character, int size) {
         CharacterSet cs = getCharacterSet(size);
-        return metricsToAbsoluteSize(cs, cs.getWidth(character), size);
+        return metricsToAbsoluteSize(cs, cs.getWidth(toUnicodeCodepoint(character)), size);
     }
 
     /**

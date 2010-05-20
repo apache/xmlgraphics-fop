@@ -155,6 +155,10 @@ public class CharacterSetBuilder {
             throw new FileNotFoundException("Invalid filename: "
                     + filename + " (" + e.getMessage() + ")");
         }
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Opening " + uri);
+        }
         InputStream inputStream = accessor.createInputStream(uri);
         return inputStream;
     }
@@ -291,7 +295,7 @@ public class CharacterSetBuilder {
      * @param encoding
      *            the encoding to use for the character decoding
      * @param accessor the resource accessor
-     * @return a code page mapping
+     * @return a code page mapping (key: GCGID, value: Unicode character)
      * @throws IOException if an I/O exception of some sort has occurred.
      */
     protected Map/*<String,String>*/ loadCodePage(String codePage, String encoding,
@@ -323,6 +327,10 @@ public class CharacterSetBuilder {
                     charBytes[0] = data[index];
                     String gcgiString = new String(gcgiBytes,
                             AFPConstants.EBCIDIC_ENCODING);
+                    //Use the 8-bit char index to find the Unicode character using the Java encoding
+                    //given in the configuration. If the code page and the Java encoding don't
+                    //match, a wrong Unicode character will be associated with the AFP GCGID.
+                    //Idea: we could use IBM's GCGID to Unicode map and build code pages ourselves.
                     String charString = new String(charBytes, encoding);
                     codePages.put(gcgiString, charString);
                 } else {
@@ -510,8 +518,8 @@ public class CharacterSetBuilder {
         byte[] gcgid = new byte[8];
         byte[] fiData = new byte[20];
 
-        int lowest = 255;
-        int highest = 0;
+        char lowest = 255;
+        char highest = 0;
         String firstABCMismatch = null;
 
         // Read data, ignoring bytes 0 - 2
@@ -534,7 +542,7 @@ public class CharacterSetBuilder {
 
                 if (idx != null) {
 
-                    int cidx = idx.charAt(0);
+                    char cidx = idx.charAt(0);
                     int width = getUBIN(fiData, 0);
                     int a = getSBIN(fiData, 10);
                     int b = getUBIN(fiData, 12);

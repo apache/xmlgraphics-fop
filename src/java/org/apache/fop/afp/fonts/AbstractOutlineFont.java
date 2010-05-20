@@ -127,7 +127,7 @@ public abstract class AbstractOutlineFont extends AFPFont {
      * @return the width of the character for the specified point size
      */
     public int getWidth(int character, int size) {
-        return charSet.getWidth(character) * size;
+        return charSet.getWidth(toUnicodeCodepoint(character)) * size;
     }
 
     /**

@@ -88,7 +88,7 @@ public class FopCharacterSet extends CharacterSet {
      * The first character in the character set
      * @return the first character
      */
-    public int getFirstChar() {
+    public char getFirstChar() {
         return 0;
     }
 
@@ -96,7 +96,7 @@ public class FopCharacterSet extends CharacterSet {
      * The last character in the character set
      * @return the last character
      */
-    public int getLastChar() {
+    public char getLastChar() {
         return 0;
     }
 
