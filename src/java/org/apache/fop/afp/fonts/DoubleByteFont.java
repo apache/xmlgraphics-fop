@@ -55,7 +55,7 @@ public class DoubleByteFont extends AbstractOutlineFont {
     public int getWidth(int character, int size) {
         int charWidth;
         try {
-            charWidth = charSet.getWidth(character);
+            charWidth = charSet.getWidth(toUnicodeCodepoint(character));
         } catch (IllegalArgumentException e) {
             //  We shall try and handle characters that have no mapped width metric in font resource
             charWidth = -1;

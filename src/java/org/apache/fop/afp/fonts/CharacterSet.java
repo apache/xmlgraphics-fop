@@ -219,20 +219,18 @@ public class CharacterSet {
     /**
      * Returns the first character in the character set
      *
-     * @return the first character in the character set
+     * @return the first character in the character set (Unicode codepoint)
      */
-    public int getFirstChar() {
-
+    public char getFirstChar() {
         return getCharacterSetOrientation().getFirstChar();
     }
 
     /**
      * Returns the last character in the character set
      *
-     * @return the last character in the character set
+     * @return the last character in the character set (Unicode codepoint)
      */
-    public int getLastChar() {
-
+    public char getLastChar() {
         return getCharacterSetOrientation().getLastChar();
     }
 
@@ -268,11 +266,10 @@ public class CharacterSet {
      * Get the width (in 1/1000ths of a point size) of the character
      * identified by the parameter passed.
      *
-     * @param character the character from which the width will be calculated
+     * @param character the Unicode character from which the width will be calculated
      * @return the width of the character
      */
-    public int getWidth(int character) {
-
+    public int getWidth(char character) {
         return getCharacterSetOrientation().getWidth(character);
     }
 
@@ -393,7 +390,7 @@ public class CharacterSet {
      * The code tables are already converted to Unicode therefore
      * we can use the identity mapping.
      *
-     * @param c character to map
+     * @param c the Unicode character to map
      * @return the mapped character
      */
     public char mapChar(char c) {

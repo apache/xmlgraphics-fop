@@ -115,6 +115,16 @@ public abstract class AFPFont extends Typeface {
         return this.embeddable;
     }
 
+    /**
+     * Maps mapped code points to Unicode code points.
+     * @param character the mapped code point
+     * @return the corresponding Unicode code point
+     */
+    protected static final char toUnicodeCodepoint(int character) {
+        //AFP fonts use Unicode directly as their mapped code points, so we can simply cast to char
+        return (char)character;
+    }
+
     /** {@inheritDoc} */
     public String toString() {
         return "name=" + name;
