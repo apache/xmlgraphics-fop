@@ -24,13 +24,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 import java.util.WeakHashMap;
 
-import org.apache.xmlgraphics.image.loader.util.SoftMapCache;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import org.apache.xmlgraphics.image.loader.util.SoftMapCache;
 
 import org.apache.fop.afp.AFPConstants;
 import org.apache.fop.afp.util.ResourceAccessor;
@@ -183,9 +184,10 @@ public class CharacterSetBuilder {
      * @param encoding encoding name
      * @param accessor used to load codepage and characterset
      * @return CharacterSet object
+     * @throws IOException if an I/O error occurs
      */
     public CharacterSet build(String characterSetName, String codePageName,
-            String encoding, ResourceAccessor accessor) {
+            String encoding, ResourceAccessor accessor) throws IOException {
 
         // check for cached version of the characterset
         String descriptor = characterSetName + "_" + encoding + "_" + codePageName;
@@ -253,22 +255,10 @@ public class CharacterSetBuilder {
                     characterSet.addCharacterSetOrientation(characterSetOrientations[i]);
                 }
             } else {
-
-                    String msg = "Failed to load the character set metrics for code page "
-                        + codePageName;
-                    LOG.error(msg);
-                    throw new RuntimeException("Failed to read font control structured field"
-                            + "in character set " + characterSetName);
-
+                throw new IOException("Missing D3AE89 Font Control structured field.");
             }
 
-        } catch (IOException e) {
-            String msg = "Failed to load the character set metrics for code page " + codePageName;
-            LOG.error(msg);
-            throw new RuntimeException("Failed to read font control structured field"
-                    + "in character set " + characterSetName);
         } finally {
-
             closeInputStream(inputStream);
         }
         characterSetsCache.put(descriptor, characterSet);
@@ -652,7 +642,7 @@ public class CharacterSetBuilder {
             return nominalFontSize;
         }
     }
-    
+
     /**
      * Double-byte (CID Keyed font (Type 0)) implementation of AFPFontReader.
      */

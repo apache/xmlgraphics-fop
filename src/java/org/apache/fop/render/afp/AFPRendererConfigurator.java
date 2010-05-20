@@ -202,8 +202,12 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
                         log.error(msg);
                     }
                 } else {
-                    font.addCharacterSet(sizeMpt, CharacterSetBuilder.getInstance()
-                            .build(characterset, codepage, encoding, accessor));
+                    try {
+                        font.addCharacterSet(sizeMpt, CharacterSetBuilder.getInstance()
+                                .build(characterset, codepage, encoding, accessor));
+                    } catch (IOException ioe) {
+                        toConfigurationException(codepage, characterset, ioe);
+                    }
                 }
             }
             return font;
@@ -227,17 +231,21 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
                                         .build(characterset, codepage, encoding, tf);
                     } catch (Exception ie) {
                         String msg = "The base 14 font class " + clazz.getName()
-                        + " could not be instantiated";
+                                + " could not be instantiated";
                         log.error(msg);
                     }
                 } catch (ClassNotFoundException cnfe) {
                     String msg = "The base 14 font class for " + characterset
-                    + " could not be found";
+                            + " could not be found";
                     log.error(msg);
                 }
             } else {
-                characterSet = CharacterSetBuilder.getInstance().build(
-                        characterset, codepage, encoding, accessor);
+                try {
+                    characterSet = CharacterSetBuilder.getInstance().build(
+                            characterset, codepage, encoding, accessor);
+                } catch (IOException ioe) {
+                    toConfigurationException(codepage, characterset, ioe);
+                }
             }
             // Return new font object
             return new OutlineFont(name, characterSet);
@@ -250,8 +258,12 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
             }
             String name = afpFontCfg.getAttribute("name", characterset);
             CharacterSet characterSet = null;
-            characterSet = CharacterSetBuilder.getDoubleByteInstance()
-                            .build(characterset, codepage, encoding, accessor);
+            try {
+                characterSet = CharacterSetBuilder.getDoubleByteInstance()
+                                .build(characterset, codepage, encoding, accessor);
+            } catch (IOException ioe) {
+                toConfigurationException(codepage, characterset, ioe);
+            }
 
             // Create a new font object
             DoubleByteFont font = new DoubleByteFont(name, characterSet);
@@ -262,6 +274,14 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
         }
 
         return null;
+    }
+
+    private void toConfigurationException(String codepage, String characterset, IOException ioe)
+            throws ConfigurationException {
+        String msg = "Failed to load the character set metrics " + characterset
+            + " with code page " + codepage
+            + ". I/O error: " + ioe.getMessage();
+        throw new ConfigurationException(msg, ioe);
     }
 
     /**
