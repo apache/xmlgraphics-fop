@@ -122,7 +122,7 @@ public class FopCharacterSet extends CharacterSet {
      * @param character the character from which the width will be calculated
      * @return the width of the character
      */
-    public int getWidth(int character) {
+    public int getWidth(char character) {
         return charSet.getWidth(character, 1);
     }
 
