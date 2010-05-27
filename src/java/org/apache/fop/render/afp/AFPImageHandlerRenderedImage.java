@@ -22,8 +22,12 @@ package org.apache.fop.render.afp;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.image.ColorModel;
+import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferByte;
+import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.logging.Log;
@@ -85,6 +89,8 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler implements Ima
     private AFPDataObjectInfo updateDataObjectInfo(AFPImageObjectInfo imageObjectInfo,
             AFPPaintingState paintingState, ImageRendered imageRendered, Dimension targetSize)
             throws IOException {
+
+        long start = System.currentTimeMillis();
 
         int resolution = paintingState.getResolution();
         int maxPixelSize = paintingState.getBitsPerPixel();
@@ -171,15 +177,15 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler implements Ima
                     && BitmapImageUtil.isMonochromeImage(renderedImage)
                     && BitmapImageUtil.isZeroBlack(renderedImage)) {
                 directEncode = false;
+                //need a special method to invert the bit-stream since setting the subtractive mode
+                //in AFP alone doesn't seem to do the trick.
+                if (encodeInvertedBilevel(helper, imageObjectInfo, baos)) {
+                    imageData = baos.toByteArray();
+                }
             }
             if (directEncode) {
                 log.debug("Encoding image directly...");
                 imageObjectInfo.setBitsPerPixel(encodedColorModel.getPixelSize());
-                if (BitmapImageUtil.isMonochromeImage(renderedImage)
-                        && BitmapImageUtil.isZeroBlack(renderedImage)) {
-                    log.trace("set subtractive mode");
-                    imageObjectInfo.setSubtractive(true);
-                }
                 if (pixelSize == 32) {
                     functionSet = 45; //IOCA FS45 required for CMYK
                 }
@@ -237,7 +243,56 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler implements Ima
         objectAreaInfo.setWidthRes(resolution);
         objectAreaInfo.setHeightRes(resolution);
 
+        if (log.isDebugEnabled()) {
+            long duration = System.currentTimeMillis() - start;
+            log.debug("Image encoding took " + duration + "ms.");
+        }
+
         return imageObjectInfo;
+    }
+
+    /**
+     * Efficiently encodes a bi-level image in inverted form as a plain bit-stream.
+     * @param helper the image encoding helper used to analyze the image
+     * @param imageObjectInfo the AFP image object
+     * @param out the output stream
+     * @return true if the image was encoded, false if there was something prohibiting that
+     * @throws IOException if an I/O error occurs
+     */
+    private boolean encodeInvertedBilevel(ImageEncodingHelper helper,
+            AFPImageObjectInfo imageObjectInfo, OutputStream out) throws IOException {
+        RenderedImage renderedImage = helper.getImage();
+        if (!BitmapImageUtil.isMonochromeImage(renderedImage)) {
+            throw new IllegalStateException("This method only supports binary images!");
+        }
+        int tiles = renderedImage.getNumXTiles() * renderedImage.getNumYTiles();
+        if (tiles > 1) {
+            return false;
+        }
+
+        imageObjectInfo.setBitsPerPixel(1);
+
+        Raster raster = renderedImage.getTile(0, 0);
+        DataBuffer buffer = raster.getDataBuffer();
+        if (buffer instanceof DataBufferByte) {
+            DataBufferByte byteBuffer = (DataBufferByte)buffer;
+            log.debug("Encoding image as inverted bi-level...");
+            byte[] rawData = byteBuffer.getData();
+            int remaining = rawData.length;
+            int pos = 0;
+            byte[] data = new byte[4096];
+            while (remaining > 0) {
+                int size = Math.min(remaining, data.length);
+                for (int i = 0; i < size; i++) {
+                    data[i] = (byte)~rawData[pos]; //invert bits
+                    pos++;
+                }
+                out.write(data, 0, size);
+                remaining -= size;
+            }
+            return true;
+        }
+        return false;
     }
 
     private void setDefaultResourceLevel(AFPImageObjectInfo imageObjectInfo,
