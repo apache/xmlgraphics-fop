@@ -44,6 +44,7 @@ public class SingleByteFont extends CustomFont {
     //Map<Character, UnencodedCharacter>
     private List additionalEncodings;
 
+    private List cmaps;
 
     /**
      * Main constructor.
@@ -332,6 +333,16 @@ public class SingleByteFont extends CustomFont {
         public String toString() {
             return getCharacter().toString();
         }
+    }
+
+    /** TODO remove */
+    public void setCMaps(List cmaps) {
+        this.cmaps = cmaps;
+    }
+
+    /** TODO remove */
+    public List getCMaps() {
+        return cmaps;
     }
 
 }

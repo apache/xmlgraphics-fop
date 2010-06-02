@@ -163,6 +163,7 @@ public class TTFFontLoader extends FontLoader {
             singleFont.setEncoding(ttf.getCharSetName());
             returnFont.setFirstChar(ttf.getFirstChar());
             returnFont.setLastChar(ttf.getLastChar());
+            singleFont.setCMaps(ttf.getCMaps());
             copyWidthsSingleByte(ttf);
         }
 
