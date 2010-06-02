@@ -23,8 +23,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
@@ -37,6 +40,7 @@ import org.apache.xmlgraphics.ps.DSCConstants;
 import org.apache.xmlgraphics.ps.PSGenerator;
 import org.apache.xmlgraphics.ps.PSResource;
 import org.apache.xmlgraphics.ps.dsc.ResourceTracker;
+import org.apache.xmlgraphics.util.io.ASCIIHexOutputStream;
 
 import org.apache.fop.fonts.Base14Font;
 import org.apache.fop.fonts.CustomFont;
@@ -47,6 +51,7 @@ import org.apache.fop.fonts.LazyFont;
 import org.apache.fop.fonts.SingleByteEncoding;
 import org.apache.fop.fonts.SingleByteFont;
 import org.apache.fop.fonts.Typeface;
+import org.apache.fop.fonts.truetype.TTFCmapEntry;
 
 /**
  * Utility code for font handling in PostScript.
@@ -196,7 +201,8 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
     public static void embedFont(PSGenerator gen, Typeface tf, PSResource fontRes)
                 throws IOException {
         boolean embeddedFont = false;
-        if (FontType.TYPE1 == tf.getFontType()) {
+        FontType fontType = tf.getFontType();
+        if (fontType == FontType.TYPE1 || fontType == FontType.TRUETYPE) {
             if (tf instanceof CustomFont) {
                 CustomFont cf = (CustomFont)tf;
                 if (isEmbeddable(cf)) {
@@ -204,7 +210,11 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
                     if (in != null) {
                         gen.writeDSCComment(DSCConstants.BEGIN_RESOURCE,
                                 fontRes);
-                        embedType1Font(gen, in);
+                        if (fontType == FontType.TYPE1) {
+                            embedType1Font(gen, in);
+                        } else {
+                            embedTrueTypeFont(gen, (SingleByteFont) tf, in);
+                        }
                         gen.writeDSCComment(DSCConstants.END_RESOURCE);
                         gen.getResourceTracker().registerSuppliedResource(fontRes);
                         embeddedFont = true;
@@ -219,6 +229,94 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
         if (!embeddedFont) {
             gen.writeDSCComment(DSCConstants.INCLUDE_RESOURCE, fontRes);
         }
+    }
+
+    private static void embedTrueTypeFont(PSGenerator gen,
+            SingleByteFont font, InputStream fontStream) throws IOException {
+        /* See Adobe Technical Note #5012, "The Type 42 Font Format Specification" */
+        gen.commentln("%!PS-TrueTypeFont-65536-65536-1"); // TODO TrueType & font versions
+        gen.writeln("11 dict begin");
+        gen.write("/FontName /");
+        gen.write(font.getFontName());
+        gen.writeln(" def");
+        gen.writeln("/Encoding 256 array");
+        gen.writeln("0 1 255{1 index exch/.notdef put}for");
+        Set glyphs = new HashSet();
+        for (int i = 0; i < Glyphs.WINANSI_ENCODING.length; i++) {
+            gen.write("dup ");
+            gen.write(Integer.toString(i));
+            gen.write(" /");
+            String glyphName = Glyphs.charToGlyphName(Glyphs.WINANSI_ENCODING[i]);
+            if (glyphName.equals("")) {
+                gen.write(Glyphs.NOTDEF);
+            } else {
+                glyphs.add(glyphName);
+                gen.write(glyphName);
+            }
+            gen.writeln(" put");
+        }
+        gen.writeln("readonly def");
+        gen.writeln("/PaintType 0 def");
+        gen.writeln("/FontMatrix [1 0 0 1 0 0] def");
+        int[] bbox = font.getFontBBox();
+        gen.write("/FontBBox[");
+        for (int i = 0; i < 4; i++) {
+            gen.write(" ");
+            gen.write(Integer.toString(bbox[i]));
+        }
+        gen.writeln(" ] def");
+        gen.writeln("/FontType 42 def");
+        gen.write("/sfnts[");
+        /*
+         * Store the font file in an array of hex-encoded strings. Strings are limited to
+         * 65535 characters, string will start with a newline, 2 characters are needed to
+         * hex-encode each byte, one newline character will be added every 40 bytes, each
+         * string should start at a 4-byte boundary
+         * => buffer size = floor((65535 - 1) * 40 / 81 / 4) * 4
+         * TODO this is not robust: depends on how often ASCIIHexOutputStream adds a newline
+         */
+        // TODO does not follow Technical Note #5012's requirements:
+        // "strings must begin at TrueType table boundaries, or at individual glyph
+        // boundaries within the glyf table."
+        // There may be compatibility issues with older PostScript interpreters
+        byte[] buffer = new byte[32360];
+        int readCount;
+        while ((readCount = fontStream.read(buffer)) > 0) {
+            ASCIIHexOutputStream hexOut = new ASCIIHexOutputStream(gen.getOutputStream());
+            gen.writeln("<");
+            hexOut.write(buffer, 0, readCount);
+            gen.write("> ");
+        }
+        gen.writeln("]def");
+        gen.write("/CharStrings ");
+        gen.write(Integer.toString(glyphs.size() + 1));
+        gen.writeln(" dict dup begin");
+        gen.write("/");
+        gen.write(Glyphs.NOTDEF);
+        gen.writeln(" 0 def"); // TODO always glyph index 0?
+        // TODO ugly and temporary, until CID is implemented
+        List cmaps = font.getCMaps();
+        for (Iterator iter = glyphs.iterator(); iter.hasNext();) {
+            String glyphName = (String) iter.next();
+            gen.write("/");
+            gen.write(glyphName);
+            gen.write(" ");
+            gen.write(Integer.toString(getGlyphIndex(glyphName, cmaps)));
+            gen.writeln(" def");
+        }
+        gen.writeln("end readonly def");
+        gen.writeln("FontName currentdict end definefont pop");
+    }
+
+    private static int getGlyphIndex(String glyphName, List cmaps) {
+        char c = Glyphs.getUnicodeSequenceForGlyphName(glyphName).charAt(0);
+        for (Iterator iter = cmaps.iterator(); iter.hasNext();) {
+            TTFCmapEntry cmap = (TTFCmapEntry) iter.next();
+            if (cmap.getUnicodeStart() <= c && c <= cmap.getUnicodeEnd()) {
+                return cmap.getGlyphStartIndex() + c - cmap.getUnicodeStart();
+            }
+        }
+        return 0;
     }
 
     private static boolean isEmbeddable(CustomFont font) {
