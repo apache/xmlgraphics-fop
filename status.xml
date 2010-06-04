@@ -59,6 +59,9 @@
     -->
     <release version="FOP Trunk" date="TBD">
       <action context="Renderers" dev="JM" type="fix">
+        Bugfix for formatting of floating point numbers which could lead to invalid PDFs.
+      </action>
+      <action context="Renderers" dev="JM" type="fix">
         Added a save/restoreGraphicsState pair for the initial coordinate system in PDF output
         for easier post-processing.
       </action>
