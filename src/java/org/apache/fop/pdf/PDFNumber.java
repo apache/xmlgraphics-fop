@@ -88,7 +88,7 @@ public class PDFNumber extends PDFObject {
         if (hasObjectNumber()) {
             sb.append(getObjectID());
         }
-        sb.append(getNumber().toString());
+        sb.append(doubleOut(getNumber().doubleValue(), 10));
         if (hasObjectNumber()) {
             sb.append("\nendobj\n");
         }
