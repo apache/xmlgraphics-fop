@@ -58,6 +58,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="JM" type="fix" fixes-bug="42306" due-to="Richard Wheeldon">
+        Fix for AWT viewer to correctly track page numbers in continuous display mode.
+      </action>
       <action context="Renderers" dev="JM" type="fix">
         Bugfix for formatting of floating point numbers which could lead to invalid PDFs.
       </action>
