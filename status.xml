@@ -58,6 +58,10 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="JM" type="fix">
+        AFP Output: Fix for bitmap images inside an SVG or G2D graphic (printer errors) and
+        positioning fix for bitmaps from G2D graphics.
+      </action>
       <action context="Renderers" dev="JM" type="fix" fixes-bug="42306" due-to="Richard Wheeldon">
         Fix for AWT viewer to correctly track page numbers in continuous display mode.
       </action>
