@@ -584,6 +584,10 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
         int dataWidth = renderedImage.getWidth();
         imageObjectInfo.setDataWidth(dataWidth);
 
+        int resolution = paintingState.getResolution();
+        imageObjectInfo.setDataWidthRes(resolution);
+        imageObjectInfo.setDataHeightRes(resolution);
+
         boolean colorImages = paintingState.isColorImages();
         imageObjectInfo.setColor(colorImages);
 
@@ -598,6 +602,10 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
             ImageEncodingHelper.encodeRGBAsGrayScale(
                   imageData, dataWidth, dataHeight, bitsPerPixel, boas);
             imageData = boas.toByteArray();
+            if (bitsPerPixel == 1) {
+                //FS10 should generate a page seqment to avoid problems
+                imageObjectInfo.setCreatePageSegment(true);
+            }
         }
         imageObjectInfo.setData(imageData);
 
@@ -612,7 +620,6 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
         objectAreaInfo.setWidth(width);
         objectAreaInfo.setHeight(height);
 
-        int resolution = paintingState.getResolution();
         objectAreaInfo.setWidthRes(resolution);
         objectAreaInfo.setHeightRes(resolution);
 
@@ -667,23 +674,7 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
 
         boolean drawn = drawBufferedImage(img, bufferedImage, width, height, observer);
         if (drawn) {
-            AffineTransform at = gc.getTransform();
-            float[] srcPts = new float[] {x, y};
-            float[] dstPts = new float[srcPts.length];
-            at.transform(srcPts, 0, dstPts, 0, 1);
-            x = Math.round(dstPts[X]);
-            y = Math.round(dstPts[Y]);
-            try {
-                // get image object info
-                AFPImageObjectInfo imageObjectInfo
-                    = createImageObjectInfo(bufferedImage, x, y, width, height);
-
-                // create image resource
-                resourceManager.createObject(imageObjectInfo);
-                return true;
-            } catch (IOException ioe) {
-                handleIOException(ioe);
-            }
+            drawRenderedImage(bufferedImage, new AffineTransform());
         }
         return false;
     }
