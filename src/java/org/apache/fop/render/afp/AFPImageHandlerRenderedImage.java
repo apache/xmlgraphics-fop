@@ -101,6 +101,7 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler implements Ima
                 maxPixelSize *= 3; //RGB is maximum
             }
         }
+        float ditheringQuality = paintingState.getDitheringQuality();
         RenderedImage renderedImage = imageRendered.getRenderedImage();
 
         ImageInfo imageInfo = imageRendered.getInfo();
@@ -130,9 +131,13 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler implements Ima
                     log.debug("Resample from " + intrinsicSize.getDimensionPx()
                             + " to " + resampledDim);
                 }
-                renderedImage = BitmapImageUtil.convertToMonochrome(renderedImage, resampledDim);
+                renderedImage = BitmapImageUtil.convertToMonochrome(renderedImage,
+                        resampledDim, ditheringQuality);
                 effIntrinsicSize = new ImageSize(
                         resampledDim.width, resampledDim.height, resolution);
+            } else if (ditheringQuality >= 0.5f) {
+                renderedImage = BitmapImageUtil.convertToMonochrome(renderedImage,
+                        intrinsicSize.getDimensionPx(), ditheringQuality);
             }
         }
 
@@ -157,7 +162,6 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler implements Ima
         if (cm.hasAlpha()) {
             pixelSize -= 8;
         }
-        //TODO Add support for CMYK images
 
         byte[] imageData = null;
         ByteArrayOutputStream baos = new ByteArrayOutputStream();

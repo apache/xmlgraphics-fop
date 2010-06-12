@@ -135,6 +135,53 @@ public class BitmapImageUtil {
      */
     public static final BufferedImage convertToMonochrome(RenderedImage img,
             Dimension targetDimension) {
+        return toBufferedImage(convertToMonochrome(img, targetDimension, 0.0f));
+    }
+
+    /**
+     * Converts an image to a monochrome 1-bit image. Optionally, the image can be scaled.
+     * @param img the image to be converted
+     * @param targetDimension the new target dimensions or null if no scaling is necessary
+     * @param quality Defines the desired quality level for the conversion.
+     *                  Valid values: a value between 0.0f (fastest) and 1.0f (best)
+     * @return the monochrome image
+     */
+    public static final RenderedImage convertToMonochrome(RenderedImage img,
+            Dimension targetDimension, float quality) {
+        if (!isMonochromeImage(img)) {
+            if (quality >= 0.5f) {
+                BufferedImage bi;
+                Dimension orgDim = new Dimension(img.getWidth(), img.getHeight());
+                if (targetDimension != null && !orgDim.equals(targetDimension)) {
+                    //Scale only before dithering
+                    ColorModel cm = img.getColorModel();
+                    BufferedImage tgt = new BufferedImage(cm,
+                            cm.createCompatibleWritableRaster(
+                                    targetDimension.width, targetDimension.height),
+                            cm.isAlphaPremultiplied(), null);
+                    transferImage(img, tgt);
+                    bi = tgt;
+                } else {
+                    bi = toBufferedImage(img);
+                }
+                //Now convert to monochrome (dithering if available)
+                MonochromeBitmapConverter converter = createDefaultMonochromeBitmapConverter();
+                if (quality >= 0.8f) {
+                    //Activates error diffusion if JAI is available
+                    converter.setHint("quality", Boolean.TRUE.toString());
+                    //Need to convert to grayscale first since otherwise, there may be encoding
+                    //problems later with the images JAI can generate.
+                    bi = convertToGrayscale(bi, targetDimension);
+                }
+                try {
+                    return converter.convertToMonochrome(bi);
+                } catch (Exception e) {
+                    //Provide a fallback if exotic formats are encountered
+                    bi = convertToGrayscale(bi, targetDimension);
+                    return converter.convertToMonochrome(bi);
+                }
+            }
+        }
         return convertAndScaleImage(img, targetDimension, BufferedImage.TYPE_BYTE_BINARY);
     }
 

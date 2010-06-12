@@ -65,6 +65,13 @@ public interface AFPCustomizable {
     void setShadingMode(AFPShadingMode shadingMode);
 
     /**
+     * Sets the dithering quality setting to use when converting images to monochrome images.
+     * @param quality Defines the desired quality level for the conversion.
+     *                  Valid values: a value between 0.0f (fastest) and 1.0f (best)
+     */
+    void setDitheringQuality(float quality);
+
+    /**
      * Sets the output/device resolution
      *
      * @param resolution

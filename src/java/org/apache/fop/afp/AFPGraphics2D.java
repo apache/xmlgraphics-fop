@@ -45,7 +45,6 @@ import java.awt.image.RenderedImage;
 import java.awt.image.renderable.RenderableImage;
 import java.io.IOException;
 
-import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -56,8 +55,6 @@ import org.apache.xmlgraphics.java2d.AbstractGraphics2D;
 import org.apache.xmlgraphics.java2d.GraphicContext;
 import org.apache.xmlgraphics.java2d.StrokingTextHandler;
 import org.apache.xmlgraphics.java2d.TextHandler;
-import org.apache.xmlgraphics.ps.ImageEncodingHelper;
-import org.apache.xmlgraphics.util.MimeConstants;
 import org.apache.xmlgraphics.util.UnitConv;
 
 import org.apache.fop.afp.goca.GraphicsSetLineType;
@@ -65,6 +62,8 @@ import org.apache.fop.afp.modca.GraphicsObject;
 import org.apache.fop.afp.svg.AFPGraphicsConfiguration;
 import org.apache.fop.afp.util.CubicBezierApproximator;
 import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.render.afp.AFPImageHandlerRenderedImage;
+import org.apache.fop.render.afp.AFPRenderingContext;
 import org.apache.fop.svg.NativeImageHandler;
 
 /**
@@ -559,75 +558,6 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
                                  BufferedImage.TYPE_INT_ARGB);
     }
 
-    private AFPImageObjectInfo createImageObjectInfo(
-            RenderedImage img, int x, int y, int width, int height) throws IOException {
-        ImageInfo imageInfo = new ImageInfo(null, "image/unknown");
-        ImageSize size = new ImageSize(img.getWidth(), img.getHeight(), 72);
-        imageInfo.setSize(size);
-
-        ImageRendered imageRendered = new ImageRendered(imageInfo, img, null);
-        RenderedImage renderedImage = imageRendered.getRenderedImage();
-
-        // create image object info
-        AFPImageObjectInfo imageObjectInfo = new AFPImageObjectInfo();
-
-        imageObjectInfo.setMimeType(MimeConstants.MIME_AFP_IOCA_FS45);
-
-        int bitsPerPixel = paintingState.getBitsPerPixel();
-        imageObjectInfo.setBitsPerPixel(bitsPerPixel);
-
-        imageObjectInfo.setResourceInfo(resourceInfo);
-
-        int dataHeight = renderedImage.getHeight();
-        imageObjectInfo.setDataHeight(dataHeight);
-
-        int dataWidth = renderedImage.getWidth();
-        imageObjectInfo.setDataWidth(dataWidth);
-
-        int resolution = paintingState.getResolution();
-        imageObjectInfo.setDataWidthRes(resolution);
-        imageObjectInfo.setDataHeightRes(resolution);
-
-        boolean colorImages = paintingState.isColorImages();
-        imageObjectInfo.setColor(colorImages);
-
-        ByteArrayOutputStream boas = new ByteArrayOutputStream();
-        ImageEncodingHelper.encodeRenderedImageAsRGB(renderedImage, boas);
-        byte[] imageData = boas.toByteArray();
-
-        // convert to grayscale
-        if (!colorImages) {
-            boas.reset();
-            imageObjectInfo.setBitsPerPixel(bitsPerPixel);
-            ImageEncodingHelper.encodeRGBAsGrayScale(
-                  imageData, dataWidth, dataHeight, bitsPerPixel, boas);
-            imageData = boas.toByteArray();
-            if (bitsPerPixel == 1) {
-                //FS10 should generate a page seqment to avoid problems
-                imageObjectInfo.setCreatePageSegment(true);
-            }
-        }
-        imageObjectInfo.setData(imageData);
-
-        if (imageInfo != null) {
-            imageObjectInfo.setUri(imageInfo.getOriginalURI());
-        }
-
-        // create object area info
-        AFPObjectAreaInfo objectAreaInfo = new AFPObjectAreaInfo();
-        objectAreaInfo.setX(x);
-        objectAreaInfo.setY(y);
-        objectAreaInfo.setWidth(width);
-        objectAreaInfo.setHeight(height);
-
-        objectAreaInfo.setWidthRes(resolution);
-        objectAreaInfo.setHeightRes(resolution);
-
-        imageObjectInfo.setObjectAreaInfo(objectAreaInfo);
-
-        return imageObjectInfo;
-    }
-
     /**
      * Draws an AWT image into a BufferedImage using an AWT Graphics2D implementation
      *
@@ -667,7 +597,6 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
     /** {@inheritDoc} */
     public boolean drawImage(Image img, int x, int y, int width, int height,
             ImageObserver observer) {
-
         // draw with AWT Graphics2D
         Dimension imageSize = new Dimension(width, height);
         BufferedImage bufferedImage = buildBufferedImage(imageSize);
@@ -684,20 +613,33 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
         int imgWidth = img.getWidth();
         int imgHeight = img.getHeight();
 
-        AffineTransform at = paintingState.getData().getTransform();
         AffineTransform gat = gc.getTransform();
         int graphicsObjectHeight
             = graphicsObj.getObjectEnvironmentGroup().getObjectAreaDescriptor().getHeight();
-        int x = (int)Math.round(at.getTranslateX() + gat.getTranslateX());
-        int y = (int)Math.round(at.getTranslateY() - (gat.getTranslateY() - graphicsObjectHeight));
-        int width = (int)Math.round(imgWidth * gat.getScaleX());
-        int height = (int)Math.round(imgHeight * -gat.getScaleY());
+
+        double toMillipointFactor = UnitConv.IN2PT * 1000 / (double)paintingState.getResolution();
+        double x = gat.getTranslateX();
+        double y = -(gat.getTranslateY() - graphicsObjectHeight);
+        x = toMillipointFactor * x;
+        y = toMillipointFactor * y;
+        double w = toMillipointFactor * imgWidth * gat.getScaleX();
+        double h = toMillipointFactor * imgHeight * -gat.getScaleY();
+
+        AFPImageHandlerRenderedImage handler = new AFPImageHandlerRenderedImage();
+        ImageInfo imageInfo = new ImageInfo(null, null);
+        imageInfo.setSize(new ImageSize(
+                img.getWidth(), img.getHeight(), paintingState.getResolution()));
+        imageInfo.getSize().calcSizeFromPixels();
+        ImageRendered red = new ImageRendered(imageInfo, img, null);
+        Rectangle targetPos = new Rectangle(
+                (int)Math.round(x),
+                (int)Math.round(y),
+                (int)Math.round(w),
+                (int)Math.round(h));
+        AFPRenderingContext context = new AFPRenderingContext(null,
+                resourceManager, paintingState, fontInfo, null);
         try {
-            // get image object info
-            AFPImageObjectInfo imageObjectInfo
-                = createImageObjectInfo(img, x, y, width, height);
-            // create image resource
-            resourceManager.createObject(imageObjectInfo);
+            handler.handleImage(context, red, targetPos);
         } catch (IOException ioe) {
             handleIOException(ioe);
         }
