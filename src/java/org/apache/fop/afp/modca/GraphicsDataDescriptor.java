@@ -104,8 +104,8 @@ public class GraphicsDataDescriptor extends AbstractDescriptor {
         return data;
     }
 
-    private static final int ABS = 2;
-    private static final int IMGRES = 8;
+    private static final int ABS = 64;
+    private static final int IMGRES = 16;
 
     /**
      * Returns the window specification data
