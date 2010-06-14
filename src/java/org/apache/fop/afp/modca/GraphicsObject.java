@@ -25,7 +25,7 @@ import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.xmlgraphics.java2d.ColorConverter;
+import org.apache.xmlgraphics.java2d.color.ColorConverter;
 
 import org.apache.fop.afp.AFPDataObjectInfo;
 import org.apache.fop.afp.AFPObjectAreaInfo;
