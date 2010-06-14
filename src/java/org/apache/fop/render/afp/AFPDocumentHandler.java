@@ -46,8 +46,8 @@ import org.apache.fop.fonts.FontManager;
 import org.apache.fop.render.afp.extensions.AFPElementMapping;
 import org.apache.fop.render.afp.extensions.AFPIncludeFormMap;
 import org.apache.fop.render.afp.extensions.AFPInvokeMediumMap;
-import org.apache.fop.render.afp.extensions.AFPPageSetup;
 import org.apache.fop.render.afp.extensions.AFPPageOverlay;
+import org.apache.fop.render.afp.extensions.AFPPageSetup;
 import org.apache.fop.render.intermediate.AbstractBinaryWritingIFDocumentHandler;
 import org.apache.fop.render.intermediate.IFDocumentHandler;
 import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
@@ -359,6 +359,11 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     /** {@inheritDoc} */
     public void setCMYKImagesSupported(boolean value) {
         paintingState.setCMYKImagesSupported(value);
+    }
+
+    /** {@inheritDoc} */
+    public void setDitheringQuality(float quality) {
+        this.paintingState.setDitheringQuality(quality);
     }
 
     /** {@inheritDoc} */

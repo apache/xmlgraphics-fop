@@ -27,8 +27,8 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.apache.xmlgraphics.java2d.CMYKColorSpace;
-import org.apache.xmlgraphics.java2d.ColorExt;
+import org.apache.xmlgraphics.java2d.color.CMYKColorSpace;
+import org.apache.xmlgraphics.java2d.color.ColorExt;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.expr.PropertyException;
@@ -682,7 +682,7 @@ public final class ColorUtil {
      * @return the modified color
      */
     public static Color lightenColor(Color col, float factor) {
-        return org.apache.xmlgraphics.java2d.ColorUtil.lightenColor(col, factor);
+        return org.apache.xmlgraphics.java2d.color.ColorUtil.lightenColor(col, factor);
     }
 
     /**
@@ -701,7 +701,7 @@ public final class ColorUtil {
      * @return true if it is a gray value
      */
     public static boolean isGray(Color col) {
-        return org.apache.xmlgraphics.java2d.ColorUtil.isGray(col);
+        return org.apache.xmlgraphics.java2d.color.ColorUtil.isGray(col);
     }
 
     /**
@@ -711,6 +711,6 @@ public final class ColorUtil {
      */
     public static Color toCMYKGrayColor(float black) {
 
-        return org.apache.xmlgraphics.java2d.ColorUtil.toCMYKGrayColor(black);
+        return org.apache.xmlgraphics.java2d.color.ColorUtil.toCMYKGrayColor(black);
     }
 }

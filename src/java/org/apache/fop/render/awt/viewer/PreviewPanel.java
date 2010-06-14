@@ -19,11 +19,14 @@
 
 package org.apache.fop.render.awt.viewer;
 
+import java.awt.Adjustable;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -166,6 +169,8 @@ public class PreviewPanel extends JPanel {
         previewArea = new JScrollPane(gridPanel);
         previewArea.getViewport().setBackground(Color.gray);
 
+        previewArea.getVerticalScrollBar().addAdjustmentListener(new PageNumberListener());
+
         // FIXME should add scroll wheel support here at some point.
         scroller = new ViewportScroller(previewArea.getViewport());
         previewArea.addMouseListener(scroller);
@@ -188,6 +193,7 @@ public class PreviewPanel extends JPanel {
      * @param number the page number
      */
     public void setPage(int number) {
+        int oldPage = currentPage;
         if (displayMode == CONTINUOUS || displayMode == CONT_FACING) {
             currentPage = number;
             gridPanel.scrollRectToVisible(pagePanels[currentPage].getBounds());
@@ -196,6 +202,7 @@ public class PreviewPanel extends JPanel {
             firstPage = currentPage;
         }
         showPage();
+        firePageChange(oldPage, currentPage);
     }
 
     /**
@@ -234,6 +241,42 @@ public class PreviewPanel extends JPanel {
     void debug() {
         renderer.debug = !renderer.debug;
         reload();
+    }
+
+    /**
+     * Add a listener to receive notification of page change events. Events will
+     * be fired whenever the currentPage value is changed. The values recorded
+     * are 0-based.
+     * @param l the page change listener to add
+     */
+    public void addPageChangeListener(PageChangeListener l) {
+        listenerList.add(PageChangeListener.class, l);
+    }
+
+    /**
+     * Removes a page change listener.
+     * @param l the page change listener to remove
+     */
+    public void removePageChangeListener(PageChangeListener l)  {
+        listenerList.remove(PageChangeListener.class, l);
+    }
+
+    /**
+     * Notify all registered listeners of a page change event.
+     * @param oldPage the old page
+     * @param newPage the new page
+     */
+    protected void firePageChange(int oldPage, int newPage) {
+        Object[] listeners = listenerList.getListenerList();
+        PageChangeEvent e = null;
+        for (int i = listeners.length - 2; i >= 0; i -= 2) {
+            if (listeners[i] == PageChangeListener.class) {
+                if (e == null) {
+                    e = new PageChangeEvent(this, newPage, oldPage);
+                }
+                ((PageChangeListener)listeners[i + 1]).pageChanged(e);
+            }
+        }
     }
 
     /**
@@ -349,6 +392,23 @@ public class PreviewPanel extends JPanel {
             }
 
             setPage(savedCurrentPage);
+        }
+    }
+
+    private class PageNumberListener implements AdjustmentListener {
+        public void adjustmentValueChanged(AdjustmentEvent e) {
+            if (displayMode == PreviewPanel.CONTINUOUS || displayMode == PreviewPanel.CONT_FACING) {
+                Adjustable a = e.getAdjustable();
+                int value = +e.getValue();
+                int min = a.getMinimum();
+                int max = a.getMaximum();
+                int page = ( (renderer.getNumberOfPages() * value) / (max - min) );
+                if (page != currentPage) {
+                    int oldPage = currentPage;
+                    currentPage = page;
+                    firePageChange(oldPage, currentPage);
+                }
+            }
         }
     }
 

@@ -390,6 +390,21 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
             customizable.setBitsPerPixel(bitsPerPixel);
         }
 
+        String dithering = imagesCfg.getAttribute("dithering-quality", "medium");
+        float dq = 0.5f;
+        if (dithering.startsWith("min")) {
+            dq = 0.0f;
+        } else if (dithering.startsWith("max")) {
+            dq = 1.0f;
+        } else {
+            try {
+                dq = Float.parseFloat(dithering);
+            } catch (NumberFormatException nfe) {
+                //ignore and leave the default above
+            }
+        }
+        customizable.setDitheringQuality(dq);
+
         // native image support
         boolean nativeImageSupport = imagesCfg.getAttributeAsBoolean("native", false);
         customizable.setNativeImagesSupported(nativeImageSupport);

@@ -59,6 +59,23 @@
     -->
     <release version="FOP Trunk" date="TBD">
       <action context="Renderers" dev="JM" type="fix">
+        AFP Output: Fixed positioning of Java2D-based images (when GOCA is enabled).
+      </action>
+      <action context="Renderers" dev="JM" type="add">
+        AFP Output: Added enhanced dithering functionality for images that are converted to
+        bi-level images.
+      </action>
+      <action context="Renderers" dev="JM" type="fix">
+        AFP Output: Fix for bitmap images inside an SVG or G2D graphic (printer errors) and
+        positioning fix for bitmaps from G2D graphics.
+      </action>
+      <action context="Renderers" dev="JM" type="fix" fixes-bug="42306" due-to="Richard Wheeldon">
+        Fix for AWT viewer to correctly track page numbers in continuous display mode.
+      </action>
+      <action context="Renderers" dev="JM" type="fix">
+        Bugfix for formatting of floating point numbers which could lead to invalid PDFs.
+      </action>
+      <action context="Renderers" dev="JM" type="fix">
         Added a save/restoreGraphicsState pair for the initial coordinate system in PDF output
         for easier post-processing.
       </action>
