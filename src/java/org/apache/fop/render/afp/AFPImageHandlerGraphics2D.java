@@ -20,6 +20,7 @@
 package org.apache.fop.render.afp;
 
 import java.awt.Rectangle;
+import java.awt.geom.AffineTransform;
 import java.io.IOException;
 
 import org.apache.xmlgraphics.image.loader.Image;
@@ -136,6 +137,12 @@ public class AFPImageHandlerGraphics2D extends AFPImageHandler implements ImageH
 
         setDefaultResourceLevel(graphicsObjectInfo, afpContext.getResourceManager());
 
+        AFPPaintingState paintingState = afpContext.getPaintingState();
+        paintingState.save(); // save
+        AffineTransform placement = new AffineTransform();
+        placement.translate(pos.x, pos.y);
+        paintingState.concatenate(placement);
+
         // Image content
         ImageGraphics2D imageG2D = (ImageGraphics2D)image;
         boolean textAsShapes = false; //TODO Make configurable
@@ -152,6 +159,8 @@ public class AFPImageHandlerGraphics2D extends AFPImageHandler implements ImageH
 
         // Create image
         afpContext.getResourceManager().createObject(graphicsObjectInfo);
+
+        paintingState.restore(); // resume
     }
 
     /** {@inheritDoc} */

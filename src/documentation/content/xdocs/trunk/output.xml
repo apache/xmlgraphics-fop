@@ -531,9 +531,10 @@ out = proc.getOutputStream();]]></source>
         latest features. We're trying to make AFP output work in as many environments as possible.
         However, to make AFP output work on older environments it is recommended to set to
         configuration to 1 bit per pixel (see below on how to do this). In this case, all images
-        are converted to bi-level images using IOCA function set 10 (FS10). If a higher number of
-        bits per pixel is configured, FOP has to switch to at least FS11 which may not work
-        everywhere.
+        are converted to bi-level images using IOCA function set 10 (FS10) and are enclosed in
+        page-segments since some implementation cannot deal with IOCA objects directly.
+        If a higher number of bits per pixel is configured, FOP has to switch to at least FS11
+        which may not work everywhere.
       </p>
     </section>
     <section id="afp-configuration">
@@ -724,8 +725,20 @@ Note that the value of the encoding attribute in the example is the double-byte 
         colors. This will only have an effect if the color mode is set to "color". Example:
       </p>
       <source><![CDATA[
-      <images mode="color" cmyk="true"/>
-]]></source>
+      <images mode="color" cmyk="true"/>]]></source>
+        <p>
+          When the color mode is set to 1 bit (bi-level), the "dithering-quality" attribute can
+          be used to select the level of quality to use when converting images to bi-level images.
+          Valid values for this attribute are floating point numbers from 0.0 (fastest) to
+          1.0 (best), or special values: "minimum" (=0.0), "maximum" (1.0),
+          "medium" (0.5, the default). For the higher settings to work as expected, JAI needs to
+          be present in the classpath. If JAI is present, 0.0 results in a minimal darkness-level
+          switching between white and black. 0.5 does bayer-based dithering and 1.0 will use
+          error-diffusion dithering. The higher the value, the higher the quality and the slower
+          the processing of the images.
+        </p>
+        <source><![CDATA[
+      <images mode="b+w" bits-per-pixel="1" dithering-quality="maximum"/>]]></source>
       </section>
       <section id="afp-shading-config">
         <title>Shading</title>

@@ -171,6 +171,11 @@ public class PreviewDialog extends JFrame implements StatusListener {
         //Page view stuff
         previewPanel = new PreviewPanel(foUserAgent, renderable, renderer);
         getContentPane().add(previewPanel, BorderLayout.CENTER);
+        previewPanel.addPageChangeListener(new PageChangeListener() {
+            public void pageChanged(PageChangeEvent pce) {
+              new ShowInfo().run();
+            }
+        });
 
         // Keyboard shortcuts - pgup/pgdn
         InputMap im = previewPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
@@ -260,6 +265,7 @@ public class PreviewDialog extends JFrame implements StatusListener {
      * Creates and initialize the AWT Viewer main window.
      * @param foUserAgent the FO user agent
      * @param renderable the target for the rendering
+     * @param asMainWindow true if the window shall act as the main application window.
      * @return the newly initialized preview dialog
      */
     public static PreviewDialog createPreviewDialog(FOUserAgent foUserAgent,
@@ -530,12 +536,18 @@ public class PreviewDialog extends JFrame implements StatusListener {
         goToPage(currentPage);
     }
 
-    /** Scales page image */
+    /**
+     * Scales page image.
+     * @param scaleFactor the scale factor
+     */
     public void setScale(double scaleFactor) {
         scale.setSelectedItem(percentFormat.format(scaleFactor) + "%");
         previewPanel.setScaleFactor(scaleFactor / 100d);
     }
 
+    /**
+     * Sets the scaling so the contents fit into the window.
+     */
     public void setScaleToFitWindow() {
         try {
             setScale(previewPanel.getScaleToFitWindow() * 100);
@@ -544,6 +556,9 @@ public class PreviewDialog extends JFrame implements StatusListener {
         }
     }
 
+    /**
+     * Sets the scaling so the contents are spread over the whole width available.
+     */
     public void setScaleToFitWidth() {
         try {
             setScale(previewPanel.getScaleToFitWidth() * 100);
@@ -569,7 +584,7 @@ public class PreviewDialog extends JFrame implements StatusListener {
         //Restore originally configured target resolution
         float saveResolution = foUserAgent.getTargetResolution();
         foUserAgent.setTargetResolution(this.configuredTargetResolution);
-        
+
         PrinterJob pj = PrinterJob.getPrinterJob();
         pj.setPageable(renderer);
         if (!showDialog || pj.printDialog()) {
@@ -579,7 +594,7 @@ public class PreviewDialog extends JFrame implements StatusListener {
                 e.printStackTrace();
             }
         }
-        
+
         foUserAgent.setTargetResolution(saveResolution);
     }
 

@@ -24,9 +24,9 @@ import java.awt.Point;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.apache.xmlgraphics.java2d.ColorConverter;
-import org.apache.xmlgraphics.java2d.DefaultColorConverter;
-import org.apache.xmlgraphics.java2d.GrayScaleColorConverter;
+import org.apache.xmlgraphics.java2d.color.ColorConverter;
+import org.apache.xmlgraphics.java2d.color.DefaultColorConverter;
+import org.apache.xmlgraphics.java2d.color.GrayScaleColorConverter;
 
 import org.apache.fop.afp.fonts.AFPPageFonts;
 import org.apache.fop.util.AbstractPaintingState;
@@ -50,6 +50,9 @@ public class AFPPaintingState extends org.apache.fop.util.AbstractPaintingState 
 
     /** color image support */
     private boolean colorImages = false;
+
+    /** dithering quality setting (0.0f..1.0f) */
+    private float ditheringQuality;
 
     /** color image handler */
     private ColorConverter colorConverter = GrayScaleColorConverter.getInstance();
@@ -231,6 +234,25 @@ public class AFPPaintingState extends org.apache.fop.util.AbstractPaintingState 
      */
     public boolean isCMYKImagesSupported() {
         return this.cmykImagesSupported;
+    }
+
+    /**
+     * Gets the dithering quality setting to use when converting images to monochrome images.
+     * @return the dithering quality (a value between 0.0f and 1.0f)
+     */
+    public float getDitheringQuality() {
+        return this.ditheringQuality;
+    }
+
+    /**
+     * Sets the dithering quality setting to use when converting images to monochrome images.
+     * @param quality Defines the desired quality level for the conversion.
+     *                  Valid values: a value between 0.0f (fastest) and 1.0f (best)
+     */
+    public void setDitheringQuality(float quality) {
+        quality = Math.max(quality, 0.0f);
+        quality = Math.min(quality, 1.0f);
+        this.ditheringQuality = quality;
     }
 
     /**

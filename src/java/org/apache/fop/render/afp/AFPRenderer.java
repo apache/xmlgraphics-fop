@@ -839,6 +839,11 @@ public class AFPRenderer extends AbstractPathOrientedRenderer implements AFPCust
     }
 
     /** {@inheritDoc} */
+    public void setDitheringQuality(float quality) {
+        this.paintingState.setDitheringQuality(quality);
+    }
+
+    /** {@inheritDoc} */
     public void setShadingMode(AFPShadingMode shadingMode) {
         this.shadingMode = shadingMode;
     }

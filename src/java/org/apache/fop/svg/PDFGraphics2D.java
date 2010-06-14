@@ -66,8 +66,8 @@ import org.apache.xmlgraphics.image.loader.impl.ImageRawCCITTFax;
 import org.apache.xmlgraphics.image.loader.impl.ImageRawJPEG;
 import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
 import org.apache.xmlgraphics.java2d.AbstractGraphics2D;
-import org.apache.xmlgraphics.java2d.ColorExt;
 import org.apache.xmlgraphics.java2d.GraphicContext;
+import org.apache.xmlgraphics.java2d.color.ColorExt;
 
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
@@ -762,7 +762,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
             //currentStream.write(currentColour.getColorSpaceOut(fill));
         } else {
             throw new UnsupportedOperationException(
-                    "Color Space not supported by PDFGraphics2D");
+                    "Color Space not supported by PDFGraphics2D: " + c.getColorSpace());
         }
     }
 
