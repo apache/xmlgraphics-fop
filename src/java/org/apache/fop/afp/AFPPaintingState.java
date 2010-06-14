@@ -24,9 +24,9 @@ import java.awt.Point;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.apache.xmlgraphics.java2d.ColorConverter;
-import org.apache.xmlgraphics.java2d.DefaultColorConverter;
-import org.apache.xmlgraphics.java2d.GrayScaleColorConverter;
+import org.apache.xmlgraphics.java2d.color.ColorConverter;
+import org.apache.xmlgraphics.java2d.color.DefaultColorConverter;
+import org.apache.xmlgraphics.java2d.color.GrayScaleColorConverter;
 
 import org.apache.fop.afp.fonts.AFPPageFonts;
 import org.apache.fop.util.AbstractPaintingState;

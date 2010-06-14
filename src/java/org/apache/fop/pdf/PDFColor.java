@@ -26,8 +26,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.xmlgraphics.java2d.CMYKColorSpace;
-import org.apache.xmlgraphics.java2d.ColorExt;
+import org.apache.xmlgraphics.java2d.color.CMYKColorSpace;
+import org.apache.xmlgraphics.java2d.color.ColorExt;
 
 /**
  * PDF Color object.
