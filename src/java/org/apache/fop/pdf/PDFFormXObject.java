@@ -34,7 +34,6 @@ import java.io.OutputStream;
 public class PDFFormXObject extends PDFXObject {
 
     private PDFStream contents;
-    private PDFReference resRef;
 
     /**
      * create a FormXObject with the given number and name and load the
@@ -47,13 +46,15 @@ public class PDFFormXObject extends PDFXObject {
     public PDFFormXObject(int xnumber, PDFStream contents, PDFReference resources) {
         super();
         put("Name", new PDFName("Form" + xnumber));
-        this.resRef = resources;
         this.contents = contents;
 
         put("Type", new PDFName("XObject"));
         put("Subtype", new PDFName("Form"));
         put("FormType", new Integer(1));
         setMatrix(new AffineTransform());
+        if (resources != null) {
+            put("Resources", resources);
+        }
     }
 
     /**
@@ -172,7 +173,6 @@ public class PDFFormXObject extends PDFXObject {
         if (get("Matrix") == null) {
             put("Matrix", new PDFArray(this, new int[] {1, 0, 0, 1, 0, 0}));
         }
-        put("Resources", resRef);
         super.populateStreamDict(lengthEntry);
     }
 
