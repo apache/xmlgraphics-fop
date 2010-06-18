@@ -993,7 +993,7 @@ Can I control this?</question>
       <question>How do I add document properties (title, author, etc.) to my
       PDF document?</question>
       <answer>
-        <p>See <link href="0.95/output.html#pdf-postprocess">PDF Post-processing</link>.</p>
+        <p>See <link href="0.95/metadata.html">Metadata</link>.</p>
       </answer>
     </faq>
     <faq id="pdf-watermark">
