@@ -1468,12 +1468,13 @@
       <td><a name="fo-object-bookmark" id="fo-object-bookmark">bookmark</a></td>
       <td class="extended">Extended</td>
       <td class="no">no</td>
-      <td class="yes">yes</td>
-      <td class="yes">yes</td>
-      <td class="yes">yes</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
       <td>
         <ul>
           <li>[0.20.5] Uses the proprietary fox:outline extension.</li>
+          <li>[0.94 and later] external-destination is not yet supported.</li>
         </ul>
       </td>
     </tr>
