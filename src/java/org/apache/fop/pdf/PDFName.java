@@ -83,6 +83,21 @@ public class PDFName extends PDFObject {
     }
 
     /** {@inheritDoc} */
+    public boolean equals(Object obj) {
+        if (!(obj instanceof PDFName)) {
+            return false;
+        }
+        PDFName other = (PDFName)obj;
+        return this.name.equals(other.name);
+    }
+
+    /** {@inheritDoc} */
+    public int hashCode() {
+        return name.hashCode();
+    }
+
+
+    /** {@inheritDoc} */
     protected int output(OutputStream stream) throws IOException {
         CountingOutputStream cout = new CountingOutputStream(stream);
         Writer writer = PDFDocument.getWriterFor(cout);

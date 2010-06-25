@@ -34,7 +34,6 @@ import org.apache.fop.Version;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontSetup;
 import org.apache.fop.pdf.PDFAnnotList;
-import org.apache.fop.pdf.PDFColor;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFFilterList;
 import org.apache.fop.pdf.PDFNumber;
@@ -230,15 +229,15 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
      * @param col the background colour to fill
      */
     public void setBackgroundColor(Color col) {
-        Color c = col;
-        PDFColor currentColour = new PDFColor(c.getRed(), c.getGreen(), c.getBlue());
-        currentStream.write("q\n");
-        currentStream.write(currentColour.getColorSpaceOut(true));
+        StringBuffer sb = new StringBuffer();
+        sb.append("q\n");
+        this.colorHandler.establishColor(sb, col, true);
 
-        currentStream.write("0 0 " + width + " " + height + " re\n");
+        sb.append("0 0 ").append(width).append(" ").append(height).append(" re\n");
 
-        currentStream.write("f\n");
-        currentStream.write("Q\n");
+        sb.append("f\n");
+        sb.append("Q\n");
+        currentStream.write(sb.toString());
     }
 
     /**

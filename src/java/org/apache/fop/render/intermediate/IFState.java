@@ -178,7 +178,8 @@ public class IFState {
      * @param color the new text color
      */
     public void setTextColor(Color color) {
-        if (!color.equals(this.textColor)) {
+        //Check in both directions due to limitations of java.awt.Color
+        if (!color.equals(this.textColor) || !this.textColor.equals(color)) {
             this.fontChanged = true;
         }
         this.textColor = color;

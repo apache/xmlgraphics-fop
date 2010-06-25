@@ -80,10 +80,9 @@ class PropertyTokenizer {
     void next() throws PropertyException {
         currentTokenValue = null;
         currentTokenStartIndex = exprIndex;
-        boolean currentMaybeOperator = recognizeOperator;
         boolean bSawDecimal;
         recognizeOperator = true;
-        for (; ;) {
+        for (;;) {
             if (exprIndex >= exprLength) {
                 currentToken = TOK_EOF;
                 return;
@@ -244,14 +243,14 @@ class PropertyTokenizer {
 
 
     private void nextColor() throws PropertyException {
-        if (exprIndex < exprLength
-                && isHexDigit(expr.charAt(exprIndex))) {
+        if (exprIndex < exprLength) {
             ++exprIndex;
             scanHexDigits();
             int len = exprIndex - currentTokenStartIndex - 1;
             if (len % 3 == 0) {
                 currentToken = TOK_COLORSPEC;
             } else {
+                //Actually not a color at all, but an NCNAME starting with "#"
                 scanRestOfName();
                 currentToken = TOK_NCNAME;
             }
@@ -320,8 +319,8 @@ class PropertyTokenizer {
     }
 
 
-    private static final String NAME_START_CHARS =
-        "_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private static final String NAME_START_CHARS
+        = "_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
     private static final String NAME_CHARS = ".-0123456789";
     private static final String DIGITS = "0123456789";
     private static final String HEX_CHARS = DIGITS + "abcdefABCDEF";
