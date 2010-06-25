@@ -58,6 +58,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="JM" type="add" fixes-bug="49403" due-to="Patrick Jaromin">
+        Initial work on spot colors (aka named colors) for PDF output.
+      </action>
       <action context="Renderers" dev="JM" type="fix">
         AFP Output: Fixed positioning of Java2D-based images (when GOCA is enabled).
       </action>

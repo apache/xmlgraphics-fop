@@ -67,7 +67,6 @@ import org.apache.xmlgraphics.image.loader.impl.ImageRawJPEG;
 import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
 import org.apache.xmlgraphics.java2d.AbstractGraphics2D;
 import org.apache.xmlgraphics.java2d.GraphicContext;
-import org.apache.xmlgraphics.java2d.color.ColorExt;
 
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
@@ -75,6 +74,7 @@ import org.apache.fop.fonts.FontSetup;
 import org.apache.fop.pdf.BitmapImage;
 import org.apache.fop.pdf.PDFAnnotList;
 import org.apache.fop.pdf.PDFColor;
+import org.apache.fop.pdf.PDFColorHandler;
 import org.apache.fop.pdf.PDFConformanceException;
 import org.apache.fop.pdf.PDFDeviceColorSpace;
 import org.apache.fop.pdf.PDFDocument;
@@ -130,6 +130,9 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
      * The PDF painting state
      */
     protected PDFPaintingState paintingState;
+
+    /** the PDF color handler */
+    protected PDFColorHandler colorHandler;
 
     /**
      * The PDF graphics state level that this svg is being drawn into.
@@ -193,6 +196,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
                          PDFResourceContext page, String pref, String font, float size) {
         this(textAsShapes);
         pdfDoc = doc;
+        this.colorHandler = new PDFColorHandler(doc.getResources());
         resourceContext = page;
         currentFontName = font;
         currentFontSize = size;
@@ -219,6 +223,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
     public PDFGraphics2D(PDFGraphics2D g) {
         super(g);
         this.pdfDoc = g.pdfDoc;
+        this.colorHandler = g.colorHandler;
         this.resourceContext = g.resourceContext;
         this.currentFontName = g.currentFontName;
         this.currentFontSize = g.currentFontSize;
@@ -731,39 +736,20 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
     protected void applyColor(Color col, boolean fill) {
         preparePainting();
 
-        Color c = col;
-        if (col instanceof ColorExt) {
-            PDFColor currentColour = new PDFColor(this.pdfDoc, col);
-            currentStream.write(currentColour.getColorSpaceOut(fill));
-        } else if (c.getColorSpace().getType()
-                == ColorSpace.TYPE_RGB) {
-            PDFColor currentColour = new PDFColor(c.getRed(), c.getGreen(),
-                                         c.getBlue());
-            currentStream.write(currentColour.getColorSpaceOut(fill));
-        } else if (c.getColorSpace().getType()
-                   == ColorSpace.TYPE_CMYK) {
-            if (pdfDoc.getProfile().getPDFAMode().isPDFA1LevelB()) {
-                //See PDF/A-1, ISO 19005:1:2005(E), 6.2.3.3
-                //FOP is currently restricted to DeviceRGB if PDF/A-1 is active.
-                throw new PDFConformanceException(
-                        "PDF/A-1 does not allow mixing DeviceRGB and DeviceCMYK.");
-            }
-            PDFColor currentColour = new PDFColor(c);
-            currentStream.write(currentColour.getColorSpaceOut(fill));
-        } else if (c.getColorSpace().getType()
-                   == ColorSpace.TYPE_2CLR) {
-            // used for black/magenta
-            float[] cComps = c.getColorComponents(new float[1]);
-            double[] blackMagenta = new double[1];
-            for (int i = 0; i < 1; i++) {
-                blackMagenta[i] = cComps[i];
-            }
-            //PDFColor  currentColour = new PDFColor(blackMagenta[0], blackMagenta[1]);
-            //currentStream.write(currentColour.getColorSpaceOut(fill));
-        } else {
-            throw new UnsupportedOperationException(
-                    "Color Space not supported by PDFGraphics2D: " + c.getColorSpace());
+        //TODO Handle this in PDFColorHandler by automatically converting the color.
+        //This won't work properly anyway after the redesign of ColorExt
+        if (col.getColorSpace().getType() == ColorSpace.TYPE_CMYK) {
+             if (pdfDoc.getProfile().getPDFAMode().isPDFA1LevelB()) {
+                 //See PDF/A-1, ISO 19005:1:2005(E), 6.2.3.3
+                 //FOP is currently restricted to DeviceRGB if PDF/A-1 is active.
+                 throw new PDFConformanceException(
+                         "PDF/A-1 does not allow mixing DeviceRGB and DeviceCMYK.");
+             }
         }
+
+        StringBuffer sb = new StringBuffer();
+        colorHandler.establishColor(sb, col, fill);
+        currentStream.write(sb.toString());
     }
 
     /**
@@ -857,14 +843,15 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
                     return false;  // PDF can't do alpha
                 }
 
-                PDFColor color1 = new PDFColor(c1.getRed(), c1.getGreen(),
-                                               c1.getBlue());
-                someColors.add(color1);
+                //PDFColor color1 = new PDFColor(c1.getRed(), c1.getGreen(),
+                //                               c1.getBlue());
+                someColors.add(c1);
                 if (count > 0 && count < cols.length - 1) {
                     theBounds.add(new Double(fractions[count]));
                 }
             }
 
+            //Gradients are currently restricted to sRGB
             PDFDeviceColorSpace aColorSpace;
             aColorSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
             PDFPattern myPat = pdfDoc.getFactory().makeGradient(
@@ -932,8 +919,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
                     return false;  // PDF can't do alpha
                 }
 
-                someColors.add(new PDFColor(cc.getRed(), cc.getGreen(),
-                                            cc.getBlue()));
+                someColors.add(cc);
             }
 
             float[] fractions = rgp.getFractions();

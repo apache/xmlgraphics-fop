@@ -75,7 +75,9 @@ public abstract class AbstractPaintingState implements Cloneable, Serializable {
      * @return true if the color has changed
      */
     public boolean setColor(Color col) {
-        if (!col.equals(getData().color)) {
+        Color other = getData().color;
+        //Check in both directions due to limitations of java.awt.Color
+        if (!col.equals(other) || !other.equals(col)) {
             getData().color = col;
             return true;
         }
@@ -114,7 +116,9 @@ public abstract class AbstractPaintingState implements Cloneable, Serializable {
      * @return true if the color has changed
      */
     public boolean setBackColor(Color col) {
-        if (!col.equals(getData().backColor)) {
+        Color other = getData().backColor;
+        //Check in both directions due to limitations of java.awt.Color
+        if (!col.equals(other) || !other.equals(col)) {
             getData().backColor = col;
             return true;
         }

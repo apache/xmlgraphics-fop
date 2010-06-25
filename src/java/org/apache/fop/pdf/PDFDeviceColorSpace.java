@@ -19,6 +19,8 @@
 
 package org.apache.fop.pdf;
 
+import java.awt.color.ColorSpace;
+
 /**
  * Represents a device-specific color space. Used for mapping DeviceRGB, DeviceCMYK and DeviceGray.
  */
@@ -135,6 +137,30 @@ public class PDFDeviceColorSpace implements PDFColorSpace {
     /** {@inheritDoc} */
     public boolean isGrayColorSpace() {
         return getColorSpace() == DEVICE_GRAY;
+    }
+
+    /**
+     * Returns a suitable {@link PDFDeviceColorSpace} object given a {@link ColorSpace} object.
+     * @param cs ColorSpace instance
+     * @return a PDF-based color space
+     */
+    public static PDFDeviceColorSpace toPDFColorSpace(ColorSpace cs) {
+        if (cs == null) {
+            return null;
+        }
+
+        PDFDeviceColorSpace pdfCS = new PDFDeviceColorSpace(0);
+        switch (cs.getType()) {
+            case ColorSpace.TYPE_CMYK:
+                pdfCS.setColorSpace(PDFDeviceColorSpace.DEVICE_CMYK);
+            break;
+            case ColorSpace.TYPE_GRAY:
+                pdfCS.setColorSpace(PDFDeviceColorSpace.DEVICE_GRAY);
+                break;
+            default:
+                pdfCS.setColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
+        }
+        return pdfCS;
     }
 
 }

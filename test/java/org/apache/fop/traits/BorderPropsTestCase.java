@@ -23,8 +23,7 @@ import java.awt.Color;
 
 import junit.framework.TestCase;
 
-import org.apache.xmlgraphics.java2d.color.CMYKColorSpace;
-import org.apache.xmlgraphics.java2d.color.ColorExt;
+import org.apache.xmlgraphics.java2d.color.DeviceCMYKColorSpace;
 
 import org.apache.fop.fo.Constants;
 import org.apache.fop.util.ColorUtil;
@@ -50,10 +49,7 @@ public class BorderPropsTestCase extends TestCase {
         assertEquals(b1, b2);
 
         float[] cmyk = new float[] {1.0f, 1.0f, 0.5f, 1.0f};
-        CMYKColorSpace cmykCs = CMYKColorSpace.getInstance();
-        float[] rgb = cmykCs.toRGB(cmyk);
-        col = ColorExt.createFromFoRgbIcc(rgb[0], rgb[1], rgb[2],
-                "#CMYK", null, cmykCs, cmyk);
+        col = DeviceCMYKColorSpace.createColorExt(cmyk);
         b1 = new BorderProps(Constants.EN_INSET, 9999,
                 col, BorderProps.SEPARATE);
         ser = b1.toString();

@@ -20,6 +20,7 @@
 package org.apache.fop.pdf;
 
 // Java
+import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.FileNotFoundException;
@@ -27,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Iterator;
 import java.util.List;
@@ -40,6 +42,7 @@ import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.xmlgraphics.java2d.color.NamedColorSpace;
 import org.apache.xmlgraphics.xmp.Metadata;
 
 import org.apache.fop.fonts.CIDFont;
@@ -770,23 +773,21 @@ public class PDFFactory {
 
         for (currentPosition = 0; currentPosition < lastPosition;
                 currentPosition++) {    // for every consecutive color pair
-            PDFColor currentColor = (PDFColor)theColors.get(currentPosition);
-            PDFColor nextColor = (PDFColor)theColors.get(currentPosition
-                                 + 1);
+            Color currentColor = (Color)theColors.get(currentPosition);
+            Color nextColor = (Color)theColors.get(currentPosition + 1);
+
             // colorspace must be consistant
-            if (getDocument().getColorSpace() != currentColor.getColorSpace()) {
-                currentColor.setColorSpace(
-                    getDocument().getColorSpace());
+            if (!currentColor.getColorSpace().isCS_sRGB()) {
+                //Convert to sRGB
+                theColors.set(currentPosition, new Color(currentColor.getRGB()));
+            }
+            if (!nextColor.getColorSpace().isCS_sRGB()) {
+                //Convert to sRGB
+                theColors.set(currentPosition + 1, new Color(nextColor.getRGB()));
             }
 
-            if (getDocument().getColorSpace()
-                    != nextColor.getColorSpace()) {
-                nextColor.setColorSpace(
-                    getDocument().getColorSpace());
-            }
-
-            theCzero = currentColor.getVector();
-            theCone = nextColor.getVector();
+            theCzero = toColorVector(currentColor);
+            theCone = toColorVector(nextColor);
 
             myfunc = makeFunction(2, null, null, theCzero, theCone,
                                        interpolation);
@@ -832,6 +833,15 @@ public class PDFFactory {
         myPattern = makePattern(res, 2, myShad, null, null, theMatrix);
 
         return (myPattern);
+    }
+
+    private List toColorVector(Color nextColor) {
+        List vector = new java.util.ArrayList();
+        float[] comps = nextColor.getColorComponents(null);
+        for (int i = 0, c = comps.length; i < c; i++) {
+            vector.add(new Double(comps[i]));
+        }
+        return vector;
     }
 
     /* ============= named destinations and the name dictionary ============ */
@@ -1704,6 +1714,38 @@ public class PDFFactory {
 
         getDocument().registerObject(cs);
 
+        if (res != null) {
+            res.getPDFResources().addColorSpace(cs);
+        } else {
+            getDocument().getResources().addColorSpace(cs);
+        }
+
+        return cs;
+    }
+
+    /**
+     * Create a new Separation color space.
+     * @param res the resource context (may be null)
+     * @param ncs the named color space to map to a separation color space
+     * @return the newly created Separation color space
+     */
+    public PDFSeparationColorSpace makeSeparationColorSpace(PDFResourceContext res,
+            NamedColorSpace ncs) {
+        String colorName = ncs.getColorName();
+        final Double zero = new Double(0d);
+        final Double one = new Double(1d);
+        List theDomain = Arrays.asList(new Double[] {zero, one});
+        List theRange = Arrays.asList(new Double[] {zero, one, zero, one, zero, one});
+        List theCZero = Arrays.asList(new Double[] {one, one, one});
+        List theCOne = new ArrayList();
+        float[] comps = ncs.getRGBColor().getColorComponents(null);
+        for (int i = 0, c = comps.length; i < c; i++) {
+            theCOne.add(new Double(comps[i]));
+        }
+        PDFFunction tintFunction = makeFunction(2, theDomain, theRange,
+                theCZero, theCOne, 1.0d);
+        PDFSeparationColorSpace cs = new PDFSeparationColorSpace(colorName, tintFunction);
+        getDocument().registerObject(cs);
         if (res != null) {
             res.getPDFResources().addColorSpace(cs);
         } else {
