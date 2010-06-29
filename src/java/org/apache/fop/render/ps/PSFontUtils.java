@@ -23,6 +23,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -43,11 +44,13 @@ import org.apache.xmlgraphics.ps.dsc.ResourceTracker;
 import org.apache.xmlgraphics.util.io.ASCIIHexOutputStream;
 
 import org.apache.fop.fonts.Base14Font;
+import org.apache.fop.fonts.CIDSubset;
 import org.apache.fop.fonts.CustomFont;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontType;
 import org.apache.fop.fonts.LazyFont;
+import org.apache.fop.fonts.MultiByteFont;
 import org.apache.fop.fonts.SingleByteEncoding;
 import org.apache.fop.fonts.SingleByteFont;
 import org.apache.fop.fonts.Typeface;
@@ -72,7 +75,12 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
      */
     public static Map writeFontDict(PSGenerator gen, FontInfo fontInfo)
                 throws IOException {
-        return writeFontDict(gen, fontInfo, fontInfo.getFonts(), true);
+        return writeFontDict(gen, fontInfo, (PSEventProducer) null);
+    }
+
+    public static Map writeFontDict(PSGenerator gen, FontInfo fontInfo,
+            PSEventProducer eventProducer) throws IOException {
+        return writeFontDict(gen, fontInfo, fontInfo.getFonts(), true, eventProducer);
     }
 
     /**
@@ -87,7 +95,7 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
      */
     public static Map writeFontDict(PSGenerator gen, FontInfo fontInfo, Map fonts)
                 throws IOException {
-        return writeFontDict(gen, fontInfo, fonts, false);
+        return writeFontDict(gen, fontInfo, fonts, false, null);
     }
 
     /**
@@ -101,7 +109,7 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
      * @throws IOException in case of an I/O problem
      */
     private static Map writeFontDict(PSGenerator gen, FontInfo fontInfo, Map fonts,
-            boolean encodeAllCharacters) throws IOException {
+            boolean encodeAllCharacters, PSEventProducer eventProducer) throws IOException {
         gen.commentln("%FOPBeginFontDict");
 
         Map fontResources = new java.util.HashMap();
@@ -110,8 +118,8 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
             String key = (String)iter.next();
             Typeface tf = getTypeFace(fontInfo, fonts, key);
             PSResource fontRes = new PSResource(PSResource.TYPE_FONT, tf.getFontName());
-            fontResources.put(key, fontRes);
-            embedFont(gen, tf, fontRes);
+            PSFontResource fontResource = embedFont(gen, tf, fontRes, eventProducer);
+            fontResources.put(key, fontResource);
 
             if (tf instanceof SingleByteFont) {
                 SingleByteFont sbf = (SingleByteFont)tf;
@@ -191,29 +199,45 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
         return tf;
     }
 
-    /**
-     * Embeds a font in the PostScript file.
-     * @param gen the PostScript generator
-     * @param tf the font
-     * @param fontRes the PSResource associated with the font
-     * @throws IOException In case of an I/O error
-     */
-    public static void embedFont(PSGenerator gen, Typeface tf, PSResource fontRes)
-                throws IOException {
+    private static PSFontResource embedFont(PSGenerator gen, Typeface tf, PSResource fontRes,
+            PSEventProducer eventProducer) throws IOException {
         boolean embeddedFont = false;
         FontType fontType = tf.getFontType();
-        if (fontType == FontType.TYPE1 || fontType == FontType.TRUETYPE) {
+        PSFontResource fontResource = null;
+        if (fontType == FontType.TYPE1 || fontType == FontType.TRUETYPE
+                || fontType == FontType.TYPE0) {
             if (tf instanceof CustomFont) {
                 CustomFont cf = (CustomFont)tf;
                 if (isEmbeddable(cf)) {
                     InputStream in = getInputStreamOnFont(gen, cf);
                     if (in != null) {
+                        if (fontType == FontType.TYPE0) {
+                            if (gen.embedIdentityH()) {
+                                /*
+                                 * First CID-keyed font to be embedded; add
+                                 * %%IncludeResource: comment for ProcSet CIDInit.
+                                 */
+                                gen.includeProcsetCIDInitResource();
+                                if (eventProducer != null) {
+                                    eventProducer.postscriptLevel3Used(gen);
+                                }
+                            }
+                            PSResource cidFontResource = embedCIDFont(gen, (MultiByteFont) tf, in);
+                            fontResource = PSFontResource.createFontResource(fontRes,
+                                    gen.getProcsetCIDInitResource(),
+                                    gen.getIdentityHCMapResource(),
+                                    cidFontResource);
+                        }
                         gen.writeDSCComment(DSCConstants.BEGIN_RESOURCE,
                                 fontRes);
                         if (fontType == FontType.TYPE1) {
                             embedType1Font(gen, in);
-                        } else {
+                            fontResource = PSFontResource.createFontResource(fontRes);
+                        } else if (fontType == FontType.TRUETYPE) {
                             embedTrueTypeFont(gen, (SingleByteFont) tf, in);
+                            fontResource = PSFontResource.createFontResource(fontRes);
+                        } else {
+                            embedType0Font(gen, (MultiByteFont) tf, in);
                         }
                         gen.writeDSCComment(DSCConstants.END_RESOURCE);
                         gen.getResourceTracker().registerSuppliedResource(fontRes);
@@ -229,6 +253,7 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
         if (!embeddedFont) {
             gen.writeDSCComment(DSCConstants.INCLUDE_RESOURCE, fontRes);
         }
+        return fontResource;
     }
 
     private static void embedTrueTypeFont(PSGenerator gen,
@@ -236,15 +261,25 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
         /* See Adobe Technical Note #5012, "The Type 42 Font Format Specification" */
         gen.commentln("%!PS-TrueTypeFont-65536-65536-1"); // TODO TrueType & font versions
         gen.writeln("11 dict begin");
+        createType42DictionaryEntries(gen, font, fontStream, font.getCMaps());
+        gen.writeln("FontName currentdict end definefont pop");
+    }
+
+    private static void createType42DictionaryEntries(PSGenerator gen, CustomFont font,
+            InputStream fontStream, List cmaps) throws IOException {
         gen.write("/FontName /");
         gen.write(font.getFontName());
         gen.writeln(" def");
+        gen.writeln("/PaintType 0 def");
+        gen.writeln("/FontMatrix [1 0 0 1 0 0] def");
+        writeFontBBox(gen, font);
+        gen.writeln("/FontType 42 def");
         gen.writeln("/Encoding 256 array");
         gen.writeln("0 1 255{1 index exch/.notdef put}for");
         Set glyphs = new HashSet();
         for (int i = 0; i < Glyphs.WINANSI_ENCODING.length; i++) {
             gen.write("dup ");
-            gen.write(Integer.toString(i));
+            gen.write(i);
             gen.write(" /");
             String glyphName = Glyphs.charToGlyphName(Glyphs.WINANSI_ENCODING[i]);
             if (glyphName.equals("")) {
@@ -256,16 +291,6 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
             gen.writeln(" put");
         }
         gen.writeln("readonly def");
-        gen.writeln("/PaintType 0 def");
-        gen.writeln("/FontMatrix [1 0 0 1 0 0] def");
-        int[] bbox = font.getFontBBox();
-        gen.write("/FontBBox[");
-        for (int i = 0; i < 4; i++) {
-            gen.write(" ");
-            gen.write(Integer.toString(bbox[i]));
-        }
-        gen.writeln(" ] def");
-        gen.writeln("/FontType 42 def");
         gen.write("/sfnts[");
         /*
          * Store the font file in an array of hex-encoded strings. Strings are limited to
@@ -289,23 +314,21 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
         }
         gen.writeln("]def");
         gen.write("/CharStrings ");
-        gen.write(Integer.toString(glyphs.size() + 1));
+        gen.write(glyphs.size() + 1);
         gen.writeln(" dict dup begin");
         gen.write("/");
         gen.write(Glyphs.NOTDEF);
         gen.writeln(" 0 def"); // TODO always glyph index 0?
         // TODO ugly and temporary, until CID is implemented
-        List cmaps = font.getCMaps();
         for (Iterator iter = glyphs.iterator(); iter.hasNext();) {
             String glyphName = (String) iter.next();
             gen.write("/");
             gen.write(glyphName);
             gen.write(" ");
-            gen.write(Integer.toString(getGlyphIndex(glyphName, cmaps)));
+            gen.write(getGlyphIndex(glyphName, cmaps));
             gen.writeln(" def");
         }
         gen.writeln("end readonly def");
-        gen.writeln("FontName currentdict end definefont pop");
     }
 
     private static int getGlyphIndex(String glyphName, List cmaps) {
@@ -317,6 +340,96 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
             }
         }
         return 0;
+    }
+
+    private static void embedType0Font(PSGenerator gen, MultiByteFont font, InputStream fontStream)
+            throws IOException {
+        String psName = font.getFontName();
+        gen.write("/");
+        gen.write(psName);
+        gen.write(" /Identity-H [/");
+        gen.write(psName);
+        gen.writeln("] composefont pop");
+    }
+
+    private static PSResource embedCIDFont(PSGenerator gen,
+            MultiByteFont font, InputStream fontStream) throws IOException {
+        String psName = font.getFontName();
+        gen.write("%%BeginResource: CIDFont ");
+        gen.writeln(psName);
+
+        gen.write("%%Title: (");
+        gen.write(psName);
+        gen.writeln(" Adobe Identity 0)");
+
+        gen.writeln("%%Version: 1"); // TODO use font revision?
+        gen.writeln("/CIDInit /ProcSet findresource begin");
+        gen.writeln("20 dict begin");
+
+        gen.write("/CIDFontName /");
+        gen.write(psName);
+        gen.writeln(" def");
+
+        gen.writeln("/CIDFontVersion 1 def"); // TODO same as %%Version above
+
+        gen.write("/CIDFontType ");
+        gen.write(font.getCIDType().getValue());
+        gen.writeln(" def");
+
+        gen.writeln("/CIDSystemInfo 3 dict dup begin");
+        gen.writeln("  /Registry (Adobe) def");
+        gen.writeln("  /Ordering (Identity) def");
+        gen.writeln("  /Supplement 0 def");
+        gen.writeln("end def");
+
+        // TODO UIDBase (and UIDOffset in CMap) necessary if PostScript Level 1 & 2
+        // interpreters are to be supported
+        // (Level 1: with composite font extensions; Level 2: those that do not offer
+        // native mode support for CID-keyed fonts)
+
+        // TODO XUID (optional but strongly recommended)
+
+        // TODO /FontInfo
+
+        gen.write("/CIDCount ");
+        CIDSubset cidSubset = font.getCIDSubset();
+        int subsetSize = cidSubset.getSubsetSize();
+        gen.write(subsetSize);
+        gen.writeln(" def");
+        gen.writeln("/GDBytes 2 def"); // TODO always 2?
+        gen.writeln("/CIDMap [<");
+        int colCount = 0;
+        int lineCount = 1;
+        for (int cid = 0; cid < subsetSize; cid++) {
+            if (colCount++ == 20) {
+                gen.newLine();
+                colCount = 1;
+                if (lineCount++ == 800) {
+                    gen.writeln("> <");
+                    lineCount = 1;
+                }
+            }
+            String gid = HexEncoder.encode(cidSubset.getGlyphIndexForSubsetIndex(cid), 4);
+            gen.write(gid);
+        }
+        gen.writeln(">] def");
+        createType42DictionaryEntries(gen, font, fontStream, Collections.EMPTY_LIST);
+        gen.writeln("CIDFontName currentdict end /CIDFont defineresource pop");
+        gen.writeln("end");
+        gen.writeln("%%EndResource");
+        PSResource cidFontResource = new PSResource(PSResource.TYPE_CIDFONT, psName);
+        gen.getResourceTracker().registerSuppliedResource(cidFontResource);
+        return cidFontResource;
+    }
+
+    private static void writeFontBBox(PSGenerator gen, CustomFont font) throws IOException {
+        int[] bbox = font.getFontBBox();
+        gen.write("/FontBBox[");
+        for (int i = 0; i < 4; i++) {
+            gen.write(" ");
+            gen.write(bbox[i]);
+        }
+        gen.writeln(" ] def");
     }
 
     private static boolean isEmbeddable(CustomFont font) {

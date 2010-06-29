@@ -50,4 +50,11 @@ public interface PSEventProducer extends EventProducer {
      */
     void postscriptDictionaryParseError(Object source, String content, Exception e);
 
+    /**
+     * PostScript Level 3 features are being used.
+     *
+     * @param source the event source
+     * @event.severity WARN
+     */
+    void postscriptLevel3Used(Object source);
 }

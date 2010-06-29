@@ -44,6 +44,7 @@ import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.LazyFont;
+import org.apache.fop.fonts.MultiByteFont;
 import org.apache.fop.fonts.SingleByteFont;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.render.RenderingContext;
@@ -379,7 +380,7 @@ public class PSPainter extends AbstractIFPainter {
                     if (currentEncoding != encoding) {
                         if (i > 0) {
                             writeText(text, start, i - start,
-                                    letterSpacing, wordSpacing, dx, font, tf);
+                                    letterSpacing, wordSpacing, dx, font, tf, false);
                         }
                         if (encoding == 0) {
                             useFont(fontKey, sizeMillipoints);
@@ -391,12 +392,11 @@ public class PSPainter extends AbstractIFPainter {
                     }
                 }
                 writeText(text, start, textLen - start,
-                        letterSpacing, wordSpacing, dx, font, tf);
+                        letterSpacing, wordSpacing, dx, font, tf, false);
             } else {
-                //Simple single-font painting
                 useFont(fontKey, sizeMillipoints);
                 writeText(text, 0, textLen,
-                        letterSpacing, wordSpacing, dx, font, tf);
+                        letterSpacing, wordSpacing, dx, font, tf, tf instanceof MultiByteFont);
             }
         } catch (IOException ioe) {
             throw new IFException("I/O error in drawText()", ioe);
@@ -405,7 +405,7 @@ public class PSPainter extends AbstractIFPainter {
 
     private void writeText(String text, int start, int len,
             int letterSpacing, int wordSpacing, int[] dx,
-            Font font, Typeface tf) throws IOException {
+            Font font, Typeface tf, boolean multiByte) throws IOException {
         PSGenerator generator = getGenerator();
         int end = start + len;
         int initialSize = len;
@@ -413,6 +413,16 @@ public class PSPainter extends AbstractIFPainter {
 
         boolean hasLetterSpacing = (letterSpacing != 0);
         boolean needTJ = false;
+
+        char strOpen;
+        char strClose;
+        if (multiByte) {
+            strOpen = '<';
+            strClose = '>';
+        } else {
+            strOpen = '(';
+            strClose = ')';
+        }
 
         int lineStart = 0;
         StringBuffer accText = new StringBuffer(initialSize);
@@ -439,8 +449,12 @@ public class PSPainter extends AbstractIFPainter {
             if (dx != null && i < dxl - 1) {
                 glyphAdjust -= dx[i + 1];
             }
-            char codepoint = (char)(ch % 256);
-            PSGenerator.escapeChar(codepoint, accText); //add character to accumulated text
+            if (multiByte) {
+                accText.append(HexEncoder.encode(ch));
+            } else {
+                char codepoint = (char)(ch % 256);
+                PSGenerator.escapeChar(codepoint, accText); //add character to accumulated text
+            }
             if (glyphAdjust != 0) {
                 needTJ = true;
                 if (sb.length() == 0) {
@@ -451,9 +465,10 @@ public class PSPainter extends AbstractIFPainter {
                         sb.append(PSGenerator.LF);
                         lineStart = sb.length();
                     }
-                    sb.append('(');
+                    sb.append(strOpen);
                     sb.append(accText);
-                    sb.append(") ");
+                    sb.append(strClose);
+                    sb.append(' ');
                     accText.setLength(0); //reset accumulated text
                 }
                 sb.append(Integer.toString(glyphAdjust)).append(' ');
@@ -461,9 +476,9 @@ public class PSPainter extends AbstractIFPainter {
         }
         if (needTJ) {
             if (accText.length() > 0) {
-                sb.append('(');
+                sb.append(strOpen);
                 sb.append(accText);
-                sb.append(')');
+                sb.append(strClose);
             }
             if (hasLetterSpacing) {
                 sb.append("] " + formatMptAsPt(generator, letterSpacing) + " ATJ");
@@ -471,7 +486,7 @@ public class PSPainter extends AbstractIFPainter {
                 sb.append("] TJ");
             }
         } else {
-            sb.append('(').append(accText).append(")");
+            sb.append(strOpen).append(accText).append(strClose);
             if (hasLetterSpacing) {
                 StringBuffer spb = new StringBuffer();
                 spb.append(formatMptAsPt(generator, letterSpacing))
@@ -486,10 +501,10 @@ public class PSPainter extends AbstractIFPainter {
     }
 
     private void useFont(String key, int size) throws IOException {
-        PSResource res = this.documentHandler.getPSResourceForFontKey(key);
+        PSFontResource res = this.documentHandler.getPSResourceForFontKey(key);
         PSGenerator generator = getGenerator();
         generator.useFont("/" + res.getName(), size / 1000f);
-        generator.getResourceTracker().notifyResourceUsageOnPage(res);
+        res.notifyResourceUsageOnPage(generator.getResourceTracker());
     }
 
 
