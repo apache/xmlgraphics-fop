@@ -27,6 +27,7 @@ import junit.framework.TestCase;
 
 import org.apache.xmlgraphics.java2d.color.ColorExt;
 import org.apache.xmlgraphics.java2d.color.ColorSpaces;
+import org.apache.xmlgraphics.java2d.color.NamedColorSpace;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FopFactory;
@@ -124,12 +125,8 @@ public class ColorUtilTestCase extends TestCase {
         String colSpec = "fop-rgb-icc(1.0,0.0,0.0,sRGBAlt,"
             + "\"" + sRGBLoc.toASCIIString() + "\",1.0,0.0,0.0)";
         colActual = (ColorExt)ColorUtil.parseColorString(ua, colSpec);
-        //assertEquals(255, colActual.getRed()); //253 is returned
-        //assertEquals(24, colActual.getGreen()); //24 is returned
-        //I don't understand the difference. Maybe Java's sRGB and HP's sRGB are somehow not
-        //equivalent. This is only going to be a problem if anyone actually makes use of the
-        //RGB fallback in any renderer.
-        //TODO Anyone know what's going on here?
+        assertEquals(255, colActual.getRed());
+        assertEquals(0, colActual.getGreen());
         assertEquals(0, colActual.getBlue());
         assertEquals(ColorSpace.getInstance(ColorSpace.CS_sRGB), colActual.getColorSpace());
         float[] comps = colActual.getColorComponents(null);
@@ -226,4 +223,67 @@ public class ColorUtilTestCase extends TestCase {
                 ColorUtil.colorToString(colActual));
     }
 
+    /**
+     * Tests color for the #Separation pseudo-colorspace.
+     * @throws Exception if an error occurs
+     */
+    public void testSeparationColor() throws Exception {
+        ColorExt colActual;
+        String colSpec;
+
+        colSpec = "fop-rgb-icc(1.0,0.8,0.0,#Separation,,Postgelb)";
+        colActual = (ColorExt)ColorUtil.parseColorString(null, colSpec);
+        assertEquals(255, colActual.getRed());
+        assertEquals(204, colActual.getGreen());
+        assertEquals(0, colActual.getBlue());
+
+        Color alt = colActual.getAlternateColors()[0];
+        assertTrue(alt.getColorSpace() instanceof NamedColorSpace);
+        NamedColorSpace ncs;
+        ncs = (NamedColorSpace)alt.getColorSpace();
+        assertEquals("Postgelb", ncs.getColorName());
+        float[] comps = alt.getColorComponents(null);
+        assertEquals(1, comps.length);
+        assertEquals(1f, comps[0], 0);
+        assertEquals(colSpec, ColorUtil.colorToString(colActual));
+    }
+
+    /**
+     * Tests the fop-rgb-named-color() function.
+     * @throws Exception if an error occurs
+     */
+    public void testNamedColorProfile() throws Exception {
+        FopFactory fopFactory = FopFactory.newInstance();
+        URI ncpLoc = new URI("file:test/resources/color/ncp-example.icc");
+        ColorSpace cs = fopFactory.getColorSpace(null, ncpLoc.toASCIIString());
+        assertNotNull(cs);
+
+        FOUserAgent ua = fopFactory.newFOUserAgent();
+        ColorExt colActual;
+
+        //fop-rgb-named-color() is used instead of rgb-named-color() inside FOP!
+        String colSpec = "fop-rgb-named-color(1.0,0.8,0.0,NCP,"
+            + "\"" + ncpLoc.toASCIIString() + "\",Postgelb)";
+        colActual = (ColorExt)ColorUtil.parseColorString(ua, colSpec);
+        assertEquals(255, colActual.getRed());
+        assertEquals(204, colActual.getGreen());
+        assertEquals(0, colActual.getBlue());
+        assertEquals(ColorSpace.getInstance(ColorSpace.CS_sRGB), colActual.getColorSpace());
+        float[] comps = colActual.getColorComponents(null);
+        assertEquals(3, comps.length);
+        assertEquals(1f, comps[0], 0);
+        assertEquals(0.8f, comps[1], 0);
+        assertEquals(0f, comps[2], 0);
+
+        Color alt = colActual.getAlternateColors()[0];
+        assertTrue(alt.getColorSpace() instanceof NamedColorSpace);
+        NamedColorSpace ncs;
+        ncs = (NamedColorSpace)alt.getColorSpace();
+        assertEquals("Postgelb", ncs.getColorName());
+        comps = alt.getColorComponents(null);
+        assertEquals(1, comps.length);
+        assertEquals(1f, comps[0], 0);
+
+        assertEquals(colSpec, ColorUtil.colorToString(colActual));
+    }
 }
