@@ -660,31 +660,50 @@ public final class ColorUtil {
      */
     public static String toFunctionCall(ColorExt color) {
         Color[] alt = color.getAlternateColors();
-        if (alt.length == 0) {
+        ICCColor icc = null;
+        for (int i = 0, c = alt.length; i < c; i++) {
+            if (alt[i] instanceof ICCColor) {
+                //Find first ICCColor in alternatives
+                icc = (ICCColor)alt[i];
+                break;
+            }
+        }
+        if (icc == null) {
             return toRGBFunctionCall(color);
-        } else if (alt.length != 1) {
-            throw new IllegalStateException(
-                    "Cannot convert to function call: the number of alternate colors is not one.");
         }
         StringBuffer sb = new StringBuffer(40);
-        sb.append("fop-rgb-icc(");
+
+        String functionName;
         float[] rgb = color.getColorComponents(null);
         assert rgb.length == 3;
+        sb.append("(");
         sb.append(rgb[0]).append(",");
         sb.append(rgb[1]).append(",");
         sb.append(rgb[2]).append(",");
-        ICCColor icc = (ICCColor)alt[0];
-        sb.append(icc.getColorProfileName()).append(",");
+        String profileName = icc.getColorProfileName();
+        sb.append(profileName).append(",");
         if (icc.getColorProfileSource() != null) {
             sb.append("\"").append(icc.getColorProfileSource()).append("\"");
         }
-        float[] colorComponents = icc.getColorComponents(null);
-        for (int ix = 0; ix < colorComponents.length; ix++) {
-            sb.append(",");
-            sb.append(colorComponents[ix]);
+
+        if (icc.getColorSpace() instanceof NamedColorSpace) {
+            NamedColorSpace ncs = (NamedColorSpace)icc.getColorSpace();
+            if (SEPARATION_PSEUDO_PROFILE.equalsIgnoreCase(profileName)) {
+                functionName = "fop-rgb-icc";
+            } else {
+                functionName = "fop-rgb-named-color";
+            }
+            sb.append(",").append(ncs.getColorName());
+        } else {
+            functionName = "fop-rgb-icc";
+            float[] colorComponents = icc.getColorComponents(null);
+            for (int ix = 0; ix < colorComponents.length; ix++) {
+                sb.append(",");
+                sb.append(colorComponents[ix]);
+            }
         }
         sb.append(")");
-        return sb.toString();
+        return functionName + sb.toString();
     }
 
     private static Color createColor(int r, int g, int b) {
