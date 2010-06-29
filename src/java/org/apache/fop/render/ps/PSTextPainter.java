@@ -35,13 +35,13 @@ import java.text.AttributedCharacterIterator;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.batik.gvt.TextNode;
 import org.apache.batik.gvt.font.GVTGlyphVector;
 import org.apache.batik.gvt.text.TextPaintInfo;
 import org.apache.batik.gvt.text.TextSpanLayout;
 
 import org.apache.xmlgraphics.java2d.ps.PSGraphics2D;
 import org.apache.xmlgraphics.ps.PSGenerator;
-import org.apache.xmlgraphics.ps.PSResource;
 
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
@@ -240,9 +240,9 @@ public class PSTextPainter extends NativeTextPainter {
         }
     }
 
-    private PSResource getResourceForFont(Font f, String postfix) {
+    private PSFontResource getResourceForFont(Font f, String postfix) {
         String key = (postfix != null ? f.getFontName() + '_' + postfix : f.getFontName());
-        return this.fontResources.getPSResourceForFontKey(key);
+        return this.fontResources.getFontResourceForFontKey(key);
     }
 
     private void clip(PSGraphics2D ps, Shape shape) throws IOException {
@@ -299,9 +299,9 @@ public class PSTextPainter extends NativeTextPainter {
         public void selectFont(Font f, char mapped) throws IOException {
             int encoding = mapped / 256;
             String postfix = (encoding == 0 ? null : Integer.toString(encoding));
-            PSResource res = getResourceForFont(f, postfix);
+            PSFontResource res = getResourceForFont(f, postfix);
             gen.useFont("/" + res.getName(), f.getFontSize() / 1000f);
-            gen.getResourceTracker().notifyResourceUsageOnPage(res);
+            res.notifyResourceUsageOnPage(gen.getResourceTracker());
         }
 
         public Font getCurrentFont() {

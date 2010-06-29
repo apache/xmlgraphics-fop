@@ -200,7 +200,8 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
         gen.writeDSCComment(DSCConstants.BEGIN_SETUP);
         PSRenderingUtil.writeSetupCodeList(gen, setupCodeList, "SetupCode");
         if (!psUtil.isOptimizeResources()) {
-            this.fontResources.addAll(PSFontUtils.writeFontDict(gen, fontInfo));
+            this.fontResources.addAll(PSFontUtils.writeFontDict(gen, fontInfo,
+                    PSEventProducer.Provider.get(getUserAgent().getEventBroadcaster())));
         } else {
             gen.commentln("%FOPFontSetup"); //Place-holder, will be replaced in the second pass
         }
@@ -538,8 +539,8 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
      * @param key the font key ("F*")
      * @return the matching PSResource
      */
-    protected PSResource getPSResourceForFontKey(String key) {
-        return this.fontResources.getPSResourceForFontKey(key);
+    protected PSFontResource getPSResourceForFontKey(String key) {
+        return this.fontResources.getFontResourceForFontKey(key);
     }
 
     /**

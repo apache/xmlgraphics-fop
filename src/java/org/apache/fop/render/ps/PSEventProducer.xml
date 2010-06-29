@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <catalogue xml:lang="en">
   <message key="postscriptDictionaryParseError">Failed to parse dictionary string. Reason: {e}, content = "{content}"</message>
+  <message key="postscriptLevel3Used">PostScript Level 3 features are needed to handle this document. Please make sure that your printer supports PostScript Level 3.</message>
 </catalogue>
