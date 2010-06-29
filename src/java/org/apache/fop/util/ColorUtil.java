@@ -21,6 +21,8 @@ package org.apache.fop.util;
 
 import java.awt.Color;
 import java.awt.color.ColorSpace;
+import java.awt.color.ICC_ColorSpace;
+import java.awt.color.ICC_Profile;
 import java.util.Collections;
 import java.util.Map;
 
@@ -32,6 +34,8 @@ import org.apache.xmlgraphics.java2d.color.ColorSpaces;
 import org.apache.xmlgraphics.java2d.color.DeviceCMYKColorSpace;
 import org.apache.xmlgraphics.java2d.color.ICCColor;
 import org.apache.xmlgraphics.java2d.color.NamedColorSpace;
+import org.apache.xmlgraphics.java2d.color.profile.NamedColorProfile;
+import org.apache.xmlgraphics.java2d.color.profile.NamedColorProfileParser;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.expr.PropertyException;
@@ -124,6 +128,8 @@ public final class ColorUtil {
                 parsedColor = parseAsSystemColor(value);
             } else if (value.startsWith("fop-rgb-icc")) {
                 parsedColor = parseAsFopRgbIcc(foUserAgent, value);
+            } else if (value.startsWith("fop-rgb-named-color")) {
+                parsedColor = parseAsFopRgbNamedColor(foUserAgent, value);
             } else if (value.startsWith("cmyk")) {
                 parsedColor = parseAsCMYK(value);
             }
@@ -366,12 +372,7 @@ public final class ColorUtil {
                     if (iccProfileSrc == null || "".equals(iccProfileSrc)) {
                         throw new PropertyException("ICC profile source missing");
                     }
-                    if (iccProfileSrc.startsWith("\"") || iccProfileSrc.startsWith("'")) {
-                        iccProfileSrc = iccProfileSrc.substring(1);
-                    }
-                    if (iccProfileSrc.endsWith("\"") || iccProfileSrc.endsWith("'")) {
-                        iccProfileSrc = iccProfileSrc.substring(0, iccProfileSrc.length() - 1);
-                    }
+                    iccProfileSrc = unescapeString(iccProfileSrc);
                 }
                 /* ICC profile arguments */
                 int componentStart = 4;
@@ -415,6 +416,116 @@ public final class ColorUtil {
                     + ". Must be fop-rgb-icc(r,g,b,NCNAME,src,....)");
         }
         return parsedColor;
+    }
+
+    /**
+     * Parse a color specified using the fop-rgb-named-color() function.
+     *
+     * @param value the function call
+     * @return a color if possible
+     * @throws PropertyException if the format is wrong.
+     */
+    private static Color parseAsFopRgbNamedColor(FOUserAgent foUserAgent, String value)
+            throws PropertyException {
+        Color parsedColor;
+        int poss = value.indexOf("(");
+        int pose = value.indexOf(")");
+        if (poss != -1 && pose != -1) {
+            String[] args = value.substring(poss + 1, pose).split(",");
+
+            try {
+                if (args.length != 6) {
+                    throw new PropertyException("rgb-named() function must have 6 arguments");
+                }
+
+                //Set up fallback sRGB value
+                float red = Float.parseFloat(args[0].trim());
+                float green = Float.parseFloat(args[1].trim());
+                float blue = Float.parseFloat(args[2].trim());
+                /* Verify rgb replacement arguments */
+                if ((red < 0 || red > 1)
+                        || (green < 0 || green > 1)
+                        || (blue < 0 || blue > 1)) {
+                    throw new PropertyException("Color values out of range. "
+                            + "Fallback RGB arguments to fop-rgb-named-color() must be [0..1]");
+                }
+                Color sRGB = new ColorExt(red, green, blue, null);
+
+                /* Get and verify ICC profile name */
+                String iccProfileName = args[3].trim();
+                if (iccProfileName == null || "".equals(iccProfileName)) {
+                    throw new PropertyException("ICC profile name missing");
+                }
+                ICC_ColorSpace colorSpace = null;
+                String iccProfileSrc = null;
+                if (isPseudoProfile(iccProfileName)) {
+                    throw new IllegalArgumentException(
+                            "Pseudo-profiles are not allowed with fop-rgb-named-color()");
+                } else {
+                    /* Get and verify ICC profile source */
+                    iccProfileSrc = args[4].trim();
+                    if (iccProfileSrc == null || "".equals(iccProfileSrc)) {
+                        throw new PropertyException("ICC profile source missing");
+                    }
+                    iccProfileSrc = unescapeString(iccProfileSrc);
+                }
+
+                // color name
+                String colorName = unescapeString(args[5].trim());
+
+                /* Ask FOP factory to get ColorSpace for the specified ICC profile source */
+                if (foUserAgent != null && iccProfileSrc != null) {
+                    colorSpace = (ICC_ColorSpace)foUserAgent.getFactory().getColorSpace(
+                            foUserAgent.getBaseURL(), iccProfileSrc);
+                }
+                if (colorSpace != null) {
+                    ICC_Profile profile = colorSpace.getProfile();
+                    if (NamedColorProfileParser.isNamedColorProfile(profile)) {
+                        NamedColorProfileParser parser = new NamedColorProfileParser();
+                        NamedColorProfile ncp = parser.parseProfile(profile);
+                        NamedColorSpace ncs = ncp.getNamedColor(colorName);
+                        if (ncs != null) {
+                            ICCColor iccColor = new ICCColor(ncs,
+                                    iccProfileName, iccProfileSrc,
+                                    new float[] {1.0f}, 1.0f);
+                            parsedColor = new ColorExt(red, green, blue, new Color[] {iccColor});
+                        } else {
+                            log.warn("Color '" + colorName
+                                    + "' does not exist in named color profile: " + iccProfileSrc);
+                            parsedColor = sRGB;
+                        }
+                    } else {
+                        log.warn("ICC profile is no named color profile: " + iccProfileSrc);
+                        parsedColor = sRGB;
+                    }
+                } else {
+                    // ICC profile could not be loaded - use rgb replacement values */
+                    log.warn("Color profile '" + iccProfileSrc
+                            + "' not found. Using sRGB replacement values.");
+                    parsedColor = sRGB;
+                }
+            } catch (PropertyException pe) {
+                //simply re-throw
+                throw pe;
+            } catch (Exception e) {
+                //wrap in a PropertyException
+                throw new PropertyException(e);
+            }
+        } else {
+            throw new PropertyException("Unknown color format: " + value
+                    + ". Must be fop-rgb-named-color(r,g,b,NCNAME,src,color-name)");
+        }
+        return parsedColor;
+    }
+
+    private static String unescapeString(String iccProfileSrc) {
+        if (iccProfileSrc.startsWith("\"") || iccProfileSrc.startsWith("'")) {
+            iccProfileSrc = iccProfileSrc.substring(1);
+        }
+        if (iccProfileSrc.endsWith("\"") || iccProfileSrc.endsWith("'")) {
+            iccProfileSrc = iccProfileSrc.substring(0, iccProfileSrc.length() - 1);
+        }
+        return iccProfileSrc;
     }
 
     /**
