@@ -29,6 +29,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.xmlgraphics.java2d.color.CIELabColorSpace;
 import org.apache.xmlgraphics.java2d.color.ColorExt;
 import org.apache.xmlgraphics.java2d.color.ColorSpaces;
 import org.apache.xmlgraphics.java2d.color.DeviceCMYKColorSpace;
@@ -130,6 +131,8 @@ public final class ColorUtil {
                 parsedColor = parseAsFopRgbIcc(foUserAgent, value);
             } else if (value.startsWith("fop-rgb-named-color")) {
                 parsedColor = parseAsFopRgbNamedColor(foUserAgent, value);
+            } else if (value.startsWith("cie-lab-color")) {
+                parsedColor = parseAsCIELabColor(foUserAgent, value);
             } else if (value.startsWith("cmyk")) {
                 parsedColor = parseAsCMYK(value);
             }
@@ -234,33 +237,9 @@ public final class ColorUtil {
                     throw new PropertyException(
                             "Invalid number of arguments: rgb(" + value + ")");
                 }
-                float red = 0.0f, green = 0.0f, blue = 0.0f;
-                String str = args[0].trim();
-                if (str.endsWith("%")) {
-                    red = Float.parseFloat(str.substring(0,
-                            str.length() - 1)) / 100f;
-                } else {
-                    red = Float.parseFloat(str) / 255f;
-                }
-                str = args[1].trim();
-                if (str.endsWith("%")) {
-                    green = Float.parseFloat(str.substring(0,
-                            str.length() - 1)) / 100f;
-                } else {
-                    green = Float.parseFloat(str) / 255f;
-                }
-                str = args[2].trim();
-                if (str.endsWith("%")) {
-                    blue = Float.parseFloat(str.substring(0,
-                            str.length() - 1)) / 100f;
-                } else {
-                    blue = Float.parseFloat(str) / 255f;
-                }
-                if ((red < 0.0 || red > 1.0)
-                        || (green < 0.0 || green > 1.0)
-                        || (blue < 0.0 || blue > 1.0)) {
-                    throw new PropertyException("Color values out of range");
-                }
+                float red = parseComponent255(args[0], value);
+                float green = parseComponent255(args[1], value);
+                float blue = parseComponent255(args[2], value);
                 parsedColor = new ColorExt(red, green, blue, null);
             } catch (PropertyException pe) {
                 //simply re-throw
@@ -274,6 +253,38 @@ public final class ColorUtil {
                     + ". Must be rgb(r,g,b)");
         }
         return parsedColor;
+    }
+
+    private static float parseComponent255(String str, String function)
+            throws PropertyException {
+        float component;
+        str = str.trim();
+        if (str.endsWith("%")) {
+            component = Float.parseFloat(str.substring(0,
+                    str.length() - 1)) / 100f;
+        } else {
+            component = Float.parseFloat(str) / 255f;
+        }
+        if ((component < 0.0 || component > 1.0)) {
+            throw new PropertyException("Color value out of range for " + function + ": "
+                    + str + ". Valid range: [0..255] or [0%..100%]");
+        }
+        return component;
+    }
+
+    private static float parseComponent1(String argument, String function)
+            throws PropertyException {
+        return parseComponent(argument, 0f, 1f, function);
+    }
+
+    private static float parseComponent(String argument, float min, float max, String function)
+            throws PropertyException {
+        float component = Float.parseFloat(argument.trim());
+        if ((component < min || component > max)) {
+            throw new PropertyException("Color value out of range for " + function + ": "
+                    + argument + ". Valid range: [" + min + ".." + max + "]");
+        }
+        return component;
     }
 
     /**
@@ -338,17 +349,9 @@ public final class ColorUtil {
                 }
 
                 //Set up fallback sRGB value
-                float red = 0, green = 0, blue = 0;
-                red = Float.parseFloat(args[0].trim());
-                green = Float.parseFloat(args[1].trim());
-                blue = Float.parseFloat(args[2].trim());
-                /* Verify rgb replacement arguments */
-                if ((red < 0 || red > 1)
-                        || (green < 0 || green > 1)
-                        || (blue < 0 || blue > 1)) {
-                    throw new PropertyException("Color values out of range. "
-                            + "Fallback RGB arguments to fop-rgb-icc() must be [0..1]");
-                }
+                float red = parseComponent1(args[0], value);
+                float green = parseComponent1(args[1], value);
+                float blue = parseComponent1(args[2], value);
                 Color sRGB = new ColorExt(red, green, blue, null);
 
                 /* Get and verify ICC profile name */
@@ -435,20 +438,13 @@ public final class ColorUtil {
 
             try {
                 if (args.length != 6) {
-                    throw new PropertyException("rgb-named() function must have 6 arguments");
+                    throw new PropertyException("rgb-named-color() function must have 6 arguments");
                 }
 
                 //Set up fallback sRGB value
-                float red = Float.parseFloat(args[0].trim());
-                float green = Float.parseFloat(args[1].trim());
-                float blue = Float.parseFloat(args[2].trim());
-                /* Verify rgb replacement arguments */
-                if ((red < 0 || red > 1)
-                        || (green < 0 || green > 1)
-                        || (blue < 0 || blue > 1)) {
-                    throw new PropertyException("Color values out of range. "
-                            + "Fallback RGB arguments to fop-rgb-named-color() must be [0..1]");
-                }
+                float red = parseComponent1(args[0], value);
+                float green = parseComponent1(args[1], value);
+                float blue = parseComponent1(args[2], value);
                 Color sRGB = new ColorExt(red, green, blue, null);
 
                 /* Get and verify ICC profile name */
@@ -518,6 +514,55 @@ public final class ColorUtil {
         return parsedColor;
     }
 
+    /**
+     * Parse a color specified using the cie-lab-color() function.
+     *
+     * @param value the function call
+     * @return a color if possible
+     * @throws PropertyException if the format is wrong.
+     */
+    private static Color parseAsCIELabColor(FOUserAgent foUserAgent, String value)
+            throws PropertyException {
+        Color parsedColor;
+        int poss = value.indexOf("(");
+        int pose = value.indexOf(")");
+        if (poss != -1 && pose != -1) {
+            String[] args = value.substring(poss + 1, pose).split(",");
+
+            try {
+                if (args.length != 6) {
+                    throw new PropertyException("cie-lab-color() function must have 6 arguments");
+                }
+
+                //Set up fallback sRGB value
+                float red = parseComponent255(args[0], value);
+                float green = parseComponent255(args[1], value);
+                float blue = parseComponent255(args[2], value);
+
+                float l = parseComponent(args[3], 0f, 100f, value);
+                float a = parseComponent(args[4], -127f, 127f, value);
+                float b = parseComponent(args[5], -127f, 127f, value);
+
+                //Assuming the XSL-FO spec uses the D50 white point
+                CIELabColorSpace cs = ColorSpaces.getCIELabColorSpaceD50();
+                //use toColor() to have components normalized
+                Color labColor = cs.toColor(l, a, b, 1.0f);
+                parsedColor = new ColorExt(red, green, blue, new Color[] {labColor});
+
+            } catch (PropertyException pe) {
+                //simply re-throw
+                throw pe;
+            } catch (Exception e) {
+                //wrap in a PropertyException
+                throw new PropertyException(e);
+            }
+        } else {
+            throw new PropertyException("Unknown color format: " + value
+                    + ". Must be cie-lab-color(r,g,b,Lightness,a-value,b-value)");
+        }
+        return parsedColor;
+    }
+
     private static String unescapeString(String iccProfileSrc) {
         if (iccProfileSrc.startsWith("\"") || iccProfileSrc.startsWith("'")) {
             iccProfileSrc = iccProfileSrc.substring(1);
@@ -549,43 +594,10 @@ public final class ColorUtil {
                     throw new PropertyException(
                             "Invalid number of arguments: cmyk(" + value + ")");
                 }
-                float cyan = 0.0f, magenta = 0.0f, yellow = 0.0f, black = 0.0f;
-                String str = args[0].trim();
-                if (str.endsWith("%")) {
-                  cyan  = Float.parseFloat(str.substring(0,
-                            str.length() - 1)) / 100.0f;
-                } else {
-                  cyan  = Float.parseFloat(str);
-                }
-                str = args[1].trim();
-                if (str.endsWith("%")) {
-                  magenta = Float.parseFloat(str.substring(0,
-                            str.length() - 1)) / 100.0f;
-                } else {
-                  magenta = Float.parseFloat(str);
-                }
-                str = args[2].trim();
-                if (str.endsWith("%")) {
-                  yellow = Float.parseFloat(str.substring(0,
-                            str.length() - 1)) / 100.0f;
-                } else {
-                  yellow = Float.parseFloat(str);
-                }
-                str = args[3].trim();
-                if (str.endsWith("%")) {
-                  black = Float.parseFloat(str.substring(0,
-                            str.length() - 1)) / 100.0f;
-                } else {
-                  black = Float.parseFloat(str);
-                }
-
-                if ((cyan < 0.0 || cyan > 1.0)
-                        || (magenta < 0.0 || magenta > 1.0)
-                        || (yellow < 0.0 || yellow > 1.0)
-                        || (black < 0.0 || black > 1.0)) {
-                    throw new PropertyException("Color values out of range"
-                            + "Arguments to cmyk() must be in the range [0%-100%] or [0.0-1.0]");
-                }
+                float cyan = parseComponent1(args[0], value);
+                float magenta = parseComponent1(args[1], value);
+                float yellow = parseComponent1(args[2], value);
+                float black = parseComponent1(args[3], value);
                 float[] comps = new float[] {cyan, magenta, yellow, black};
                 parsedColor = DeviceCMYKColorSpace.createColorExt(comps);
             } catch (PropertyException pe) {
@@ -671,6 +683,9 @@ public final class ColorUtil {
         if (icc == null) {
             return toRGBFunctionCall(color);
         }
+        if (icc.getColorSpace() instanceof CIELabColorSpace) {
+            return toCIELabFunctionCall(color, icc);
+        }
         StringBuffer sb = new StringBuffer(40);
 
         String functionName;
@@ -704,6 +719,20 @@ public final class ColorUtil {
         }
         sb.append(")");
         return functionName + sb.toString();
+    }
+
+    private static String toCIELabFunctionCall(ColorExt color, Color cieLab) {
+        StringBuffer sb = new StringBuffer("cie-lab-color(");
+        sb.append(color.getRed()).append(',');
+        sb.append(color.getGreen()).append(',');
+        sb.append(color.getBlue());
+        CIELabColorSpace cs = (CIELabColorSpace)cieLab.getColorSpace();
+        float[] lab = cs.toNativeComponents(cieLab.getColorComponents(null));
+        for (int i = 0; i < 3; i++) {
+            sb.append(',').append(lab[i]);
+        }
+        sb.append(')');
+        return sb.toString();
     }
 
     private static Color createColor(int r, int g, int b) {
