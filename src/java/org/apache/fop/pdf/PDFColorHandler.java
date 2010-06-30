@@ -24,10 +24,12 @@ import java.awt.color.ColorSpace;
 import java.awt.color.ICC_ColorSpace;
 import java.awt.color.ICC_Profile;
 import java.text.DecimalFormat;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.xmlgraphics.java2d.color.CIELabColorSpace;
 import org.apache.xmlgraphics.java2d.color.ColorExt;
 import org.apache.xmlgraphics.java2d.color.ColorUtil;
 import org.apache.xmlgraphics.java2d.color.DeviceCMYKColorSpace;
@@ -45,6 +47,8 @@ public class PDFColorHandler {
     private Log log = LogFactory.getLog(PDFColorHandler.class);
 
     private PDFResources resources;
+
+    private Map cieLabColorSpaces;
 
     public PDFColorHandler(PDFResources resources) {
         this.resources = resources;
@@ -73,10 +77,17 @@ public class PDFColorHandler {
                     return;
                 }
             }
+            if (log.isDebugEnabled() && alt.length > 0) {
+                log.debug("None of the alternative colors are supported. Using fallback: "
+                        + color);
+            }
         }
 
         //Fallback
-        establishColorFromColor(codeBuffer, color, fill);
+        boolean established = establishColorFromColor(codeBuffer, color, fill);
+        if (!established) {
+            establishDeviceRGB(codeBuffer, color, fill);
+        }
     }
 
     private boolean establishColorFromColor(StringBuffer codeBuffer, Color color, boolean fill) {
@@ -93,11 +104,17 @@ public class PDFColorHandler {
                 PDFSeparationColorSpace sepcs = getSeparationColorSpace((NamedColorSpace)cs);
                 establishColor(codeBuffer, sepcs, color, fill);
                 return true;
+            } else if (cs instanceof CIELabColorSpace) {
+                CIELabColorSpace labcs = (CIELabColorSpace)cs;
+                PDFCIELabColorSpace pdflab = getCIELabColorSpace(labcs);
+                selectColorSpace(codeBuffer, pdflab, fill);
+                float[] comps = color.getColorComponents(null);
+                float[] nativeComps = labcs.toNativeComponents(comps);
+                writeColor(codeBuffer, nativeComps, labcs.getNumComponents(), (fill ? "sc" : "SC"));
+                return true;
             }
         }
-        //Fallback (RGB) Color
-        establishDeviceRGB(codeBuffer, color, fill);
-        return true;
+        return false;
     }
 
     private PDFICCBasedColorSpace getICCBasedColorSpace(ICC_ColorSpace cs) {
@@ -130,15 +147,44 @@ public class PDFColorHandler {
         return sepcs;
     }
 
+    private PDFCIELabColorSpace getCIELabColorSpace(CIELabColorSpace labCS) {
+        if (this.cieLabColorSpaces == null) {
+            this.cieLabColorSpaces = new java.util.HashMap();
+        }
+        float[] wp = labCS.getWhitePoint();
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < 3; i++) {
+            if (i > 0) {
+                sb.append(',');
+            }
+            sb.append(wp[i]);
+        }
+        String key = sb.toString();
+        PDFCIELabColorSpace cielab = (PDFCIELabColorSpace)this.cieLabColorSpaces.get(key);
+        if (cielab == null) {
+            //color space is not in the PDF, yet
+            float[] wp1 = new float[] {wp[0] / 100f, wp[1] / 100f, wp[2] / 100f};
+            cielab = new PDFCIELabColorSpace(wp1, null);
+            getDocument().registerObject(cielab);
+            this.resources.addColorSpace(cielab);
+            this.cieLabColorSpaces.put(key, cielab);
+        }
+        return cielab;
+    }
+
     private void establishColor(StringBuffer codeBuffer,
             PDFColorSpace pdfcs, Color color, boolean fill) {
+        selectColorSpace(codeBuffer, pdfcs, fill);
+        writeColor(codeBuffer, color, pdfcs.getNumComponents(), (fill ? "sc" : "SC"));
+    }
+
+    private void selectColorSpace(StringBuffer codeBuffer, PDFColorSpace pdfcs, boolean fill) {
         codeBuffer.append(new PDFName(pdfcs.getName()));
         if (fill)  {
             codeBuffer.append(" cs ");
         } else {
             codeBuffer.append(" CS ");
         }
-        writeColor(codeBuffer, color, pdfcs.getNumComponents(), (fill ? "sc" : "SC"));
     }
 
     private void establishDeviceRGB(StringBuffer codeBuffer, Color color, boolean fill) {
