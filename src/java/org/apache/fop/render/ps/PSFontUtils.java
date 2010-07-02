@@ -134,7 +134,8 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
                     String postFix = "_" + (i + 1);
                     PSResource derivedFontRes = defineDerivedFont(gen, tf.getFontName(),
                             tf.getFontName() + postFix, encoding.getName());
-                    fontResources.put(key + postFix, derivedFontRes);
+                    fontResources.put(key + postFix,
+                            PSFontResource.createFontResource(derivedFontRes));
                 }
             }
         }
@@ -252,6 +253,7 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
         }
         if (!embeddedFont) {
             gen.writeDSCComment(DSCConstants.INCLUDE_RESOURCE, fontRes);
+            fontResource = PSFontResource.createFontResource(fontRes);
         }
         return fontResource;
     }
