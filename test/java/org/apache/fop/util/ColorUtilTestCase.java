@@ -24,8 +24,7 @@ import java.awt.color.ColorSpace;
 
 import junit.framework.TestCase;
 
-import org.apache.xmlgraphics.java2d.color.CMYKColorSpace;
-import org.apache.xmlgraphics.java2d.color.ColorExt;
+import org.apache.xmlgraphics.java2d.color.DeviceCMYKColorSpace;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FopFactory;
@@ -157,7 +156,7 @@ public class ColorUtilTestCase extends TestCase {
         assertEquals(255, colActual.getRed());
         assertEquals(255, colActual.getGreen());
         assertEquals(0, colActual.getBlue());
-        assertEquals(CMYKColorSpace.getInstance(), colActual.getColorSpace());
+        assertEquals(DeviceCMYKColorSpace.getInstance(), colActual.getColorSpace());
         float[] comps = colActual.getColorComponents(null);
         assertEquals(4, comps.length);
         assertEquals(0f, comps[0], 0);
@@ -172,7 +171,7 @@ public class ColorUtilTestCase extends TestCase {
         assertEquals(248, colActual.getRed());
         assertEquals(199, colActual.getGreen());
         assertEquals(172, colActual.getBlue());
-        assertEquals(CMYKColorSpace.getInstance(), colActual.getColorSpace());
+        assertEquals(DeviceCMYKColorSpace.getInstance(), colActual.getColorSpace());
         comps = colActual.getColorComponents(null);
         assertEquals(0.0274f, comps[0], 0.001);
         assertEquals(0.2196f, comps[1], 0.001);
@@ -186,7 +185,7 @@ public class ColorUtilTestCase extends TestCase {
         assertEquals(255, colActual.getRed());
         assertEquals(255, colActual.getGreen());
         assertEquals(0, colActual.getBlue());
-        assertEquals(CMYKColorSpace.getInstance(), colActual.getColorSpace());
+        assertEquals(DeviceCMYKColorSpace.getInstance(), colActual.getColorSpace());
         comps = colActual.getColorComponents(null);
         assertEquals(4, comps.length);
         assertEquals(0f, comps[0], 0);
@@ -201,7 +200,7 @@ public class ColorUtilTestCase extends TestCase {
         assertEquals(127, colActual.getRed());
         assertEquals(127, colActual.getGreen());
         assertEquals(127, colActual.getBlue());
-        assertEquals(CMYKColorSpace.getInstance(), colActual.getColorSpace());
+        assertEquals(DeviceCMYKColorSpace.getInstance(), colActual.getColorSpace());
         comps = colActual.getColorComponents(null);
         assertEquals(4, comps.length);
         assertEquals(0f, comps[0], 0);
