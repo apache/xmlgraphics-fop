@@ -27,8 +27,6 @@ import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 
-import org.apache.xmlgraphics.fonts.Glyphs;
-
 import org.apache.fop.fonts.BFEntry;
 import org.apache.fop.fonts.CIDFontType;
 import org.apache.fop.fonts.EncodingMode;
@@ -187,11 +185,11 @@ public class TTFFontLoader extends FontLoader {
                 for (char u = (char)ce.getUnicodeStart(); u <= ce.getUnicodeEnd(); u++) {
                     int codePoint = singleFont.getEncoding().mapChar(u);
                     if (codePoint <= 0) {
-                        String unicode = Character.toString(u);
-                        String charName = Glyphs.stringToGlyph(unicode);
-                        if (charName.length() > 0) {
-                            NamedCharacter nc = new NamedCharacter(charName, unicode);
-                            int glyphIndex = ce.getGlyphStartIndex() + u - ce.getUnicodeStart();
+                        int glyphIndex = ce.getGlyphStartIndex() + u - ce.getUnicodeStart();
+                        String glyphName = ttf.getGlyphName(glyphIndex);
+                        if (glyphName != "") {
+                            String unicode = Character.toString(u);
+                            NamedCharacter nc = new NamedCharacter(glyphName, unicode);
                             singleFont.addUnencodedCharacter(nc, wx[glyphIndex]);
                         }
                     }

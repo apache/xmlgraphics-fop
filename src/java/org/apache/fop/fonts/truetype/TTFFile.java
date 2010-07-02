@@ -1691,6 +1691,10 @@ public class TTFFile {
         return result;
     }
 
+    String getGlyphName(int glyphIndex) {
+        return mtxTab[glyphIndex].getName();
+    }
+
     /**
      * Static main method to get info about a TrueType font.
      * @param args The command line arguments
