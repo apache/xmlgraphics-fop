@@ -127,4 +127,9 @@ public class FontType {
         return value;
     }
 
+    /** {@inheritDoc} */
+    public String toString() {
+        return name;
+    }
+
 }
