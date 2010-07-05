@@ -69,7 +69,7 @@ The most common method is to convert semantic XML to XSL-FO, using an XSLT trans
       Portable Document Format Specification (Version 1.4) from Adobe Systems.
     </p>
 
-    <p>Conformance to the XML 1.1 Recommendation, XSLT 1.0 and 2.0 Recommendations and the XML Namespaces Recommendation is
+    <p>Conformance to the XML 1.0 and 1.1 Recommendations, XSLT 1.0 and 2.0 Recommendations and the XML Namespaces Recommendation is
        understood. Other relevant documents, such as the XPath and XLink Working Drafts, are referenced as necessary. The FOP
        Project will attempt to use the latest version of evolving specifications.
     </p>
