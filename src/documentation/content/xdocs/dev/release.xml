@@ -38,6 +38,7 @@ The purpose of documenting it here is to facilitate consistency, ensure that the
         <li>Commit any outstanding changes</li>
         <li>Create a branch called <code>branches/fop-v_vv</code></li>
         <li>Edit release notes (<code>README</code> and <code>status.xml</code> in the root).</li>
+		<li>Check and update the copyright year in NOTICE and build.xml.</li>
         <li>Update the <code>index.xml</code>, <code>site.xml</code> and <code>download.xml</code> for the new version.</li>
         <li>Update the version numbers in the release column on the
         compliance page (<code>compliance.xml</code>); update the compliance in the release column

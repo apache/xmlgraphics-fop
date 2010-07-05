@@ -103,6 +103,8 @@ list of possible build targets.
     <include name="build.*"/>
     <include name="forrest.properties"/>
     <include name="fop.bat"/>
+    <include name="fop.cmd"/>
+    <include name="fop.js"/>
     <include name="fop"/>
   </fileset>
   <path id="libs-build-classpath">
@@ -134,7 +136,7 @@ list of possible build targets.
   <property name="name" value="fop"/>
   <property name="NAME" value="FOP"/>
   <property name="version" value="svn-trunk"/>
-  <property name="year" value="1999-2009"/>
+  <property name="year" value="1999-2010"/>
   <property name="javac.debug" value="on"/>
   <property name="javac.optimize" value="off"/>
   <property name="javac.deprecation" value="on"/>
