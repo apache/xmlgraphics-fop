@@ -129,6 +129,8 @@ Major Changes in Version 1.0
 * Added limited support for different page widths within a page-sequence.
 * Added support for TrueType fonts with symbol character maps (like
   "Wingdings" and "Symbol").
+* Added an event handling framework which allows to get better feedback
+  from within FOP with the ability to customize problem management.
 
 The long list of changes in this release is available at
 http://xmlgraphics.apache.org/fop/1.0/changes_1.0.html.
