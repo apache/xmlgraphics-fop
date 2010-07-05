@@ -47,7 +47,10 @@ License version 2.0:
   Info: src/java/org/apache/fop/pdf/sRGB Color Space Profile.icm.LICENSE.txt
 - K3 3 of 9 barcode font (TrueType)
   File: examples/fo/advanced/K3.TTF
-  Info: example/fo/advanced/K3.README
+  Info: examples/fo/advanced/K3.README
+- DejaVu LGC Serif font (TrueType)
+  File: test/resources/fonts/DejaVuLGCSerif.ttf
+  Info: test/resources/fonts/DejaVuLGCSerif.LICENSE
 
     
 Where to get help?
