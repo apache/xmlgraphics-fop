@@ -1300,6 +1300,7 @@ NOTE:
       <fileset dir="${build.dir}/maven"/>
       <metainf dir="${basedir}" includes="LICENSE,NOTICE"/>
     </jar>
+    <move file="${build.dir}/${name}-${version}-bundle.jar" todir="${basedir}"/>
   </target>
 <!-- =================================================================== -->
 <!-- Generate examples                                                   -->
