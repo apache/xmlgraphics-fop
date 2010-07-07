@@ -30,7 +30,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.xmlgraphics.java2d.color.CIELabColorSpace;
-import org.apache.xmlgraphics.java2d.color.ColorExt;
+import org.apache.xmlgraphics.java2d.color.ColorWithAlternatives;
 import org.apache.xmlgraphics.java2d.color.ColorUtil;
 import org.apache.xmlgraphics.java2d.color.DeviceCMYKColorSpace;
 import org.apache.xmlgraphics.java2d.color.NamedColorSpace;
@@ -66,10 +66,10 @@ public class PDFColorHandler {
      * @param fill true for fill color, false for stroke color
      */
     public void establishColor(StringBuffer codeBuffer, Color color, boolean fill) {
-        if (color instanceof ColorExt) {
-            ColorExt colExt = (ColorExt)color;
+        if (color instanceof ColorWithAlternatives) {
+            ColorWithAlternatives colExt = (ColorWithAlternatives)color;
             //Alternate colors have priority
-            Color[] alt = colExt.getAlternateColors();
+            Color[] alt = colExt.getAlternativeColors();
             for (int i = 0, c = alt.length; i < c; i++) {
                 Color col = alt[i];
                 boolean established = establishColorFromColor(codeBuffer, col, fill);

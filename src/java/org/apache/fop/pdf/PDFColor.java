@@ -21,12 +21,10 @@ package org.apache.fop.pdf;
 
 import java.awt.Color;
 import java.awt.color.ColorSpace;
-import java.awt.color.ICC_ColorSpace;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.xmlgraphics.java2d.color.ColorExt;
+import org.apache.xmlgraphics.java2d.color.ColorWithAlternatives;
 import org.apache.xmlgraphics.java2d.color.DeviceCMYKColorSpace;
 
 /**
@@ -49,7 +47,7 @@ public class PDFColor extends PDFPathPaint {
     //        class hierarchy. However, at this early stages of my FOP understanding, I can
     //        not really oversee the consequences of such a switch (nor whether it would be
     //        appropriate).
-    private ColorExt colorExt = null;
+    private ColorWithAlternatives colorExt = null;
 
     /**
      * Create a PDF color with double values ranging from 0 to 1
@@ -83,6 +81,7 @@ public class PDFColor extends PDFPathPaint {
         //        2) In case the same color profile is used with different names it will be
         //           included multiple times in the PDF
         //
+        /*
         if (colorExt != null
                 && pdfDoc.getResources().getColorSpace(colorExt.getIccProfileName()) == null) {
             PDFICCStream pdfIccStream = new PDFICCStream();
@@ -101,7 +100,7 @@ public class PDFColor extends PDFPathPaint {
                 log.info("Adding PDFICCStream " + colorExt.getIccProfileName()
                         + " for " + colorExt.getIccProfileSrc());
             }
-        }
+        }*/
     }
 
     /**
@@ -117,17 +116,17 @@ public class PDFColor extends PDFPathPaint {
      */
     public PDFColor(java.awt.Color col) {
         ColorSpace cs = col.getColorSpace();
-        ColorExt ce = null;
-        if (col instanceof ColorExt) {
-            ce = (ColorExt)col;
-            cs = ce.getOrigColorSpace();
+        ColorWithAlternatives ce = null;
+        if (col instanceof ColorWithAlternatives) {
+            ce = (ColorWithAlternatives)col;
+            //cs = ce.getOrigColorSpace();
         }
         if (cs != null && cs instanceof DeviceCMYKColorSpace) {
             // CMYK case
             this.colorSpace = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_CMYK);
             float[] cmyk = (ce == null
                     ? col.getColorComponents(null)
-                    : ce.getOriginalColorComponents());
+                    : col.getColorComponents(null)/*ce.getOriginalColorComponents()*/);
             this.cyan = cmyk[0];
             this.magenta = cmyk[1];
             this.yellow = cmyk[2];
@@ -350,7 +349,8 @@ public class PDFColor extends PDFPathPaint {
     public String getColorSpaceOut(boolean fillNotStroke) {
         StringBuffer p = new StringBuffer("");
 
-        if (this.colorExt != null) {
+        if (false && this.colorExt != null) {
+            /*
             if (fillNotStroke)  {
                 p.append("/" + this.colorExt.getIccProfileName() + " cs ");
             } else {
@@ -369,6 +369,7 @@ public class PDFColor extends PDFPathPaint {
             } else {
                 p.append("SC\n");
             }
+            */
         } else if (this.colorSpace.getColorSpace()
                 == PDFDeviceColorSpace.DEVICE_RGB) {       // colorspace is RGB
             // according to pdfspec 12.1 p.399

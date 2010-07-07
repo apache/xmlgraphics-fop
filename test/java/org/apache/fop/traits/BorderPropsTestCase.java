@@ -49,7 +49,7 @@ public class BorderPropsTestCase extends TestCase {
         assertEquals(b1, b2);
 
         float[] cmyk = new float[] {1.0f, 1.0f, 0.5f, 1.0f};
-        col = DeviceCMYKColorSpace.createColorExt(cmyk);
+        col = DeviceCMYKColorSpace.createCMYKColor(cmyk);
         b1 = new BorderProps(Constants.EN_INSET, 9999,
                 col, BorderProps.SEPARATE);
         ser = b1.toString();

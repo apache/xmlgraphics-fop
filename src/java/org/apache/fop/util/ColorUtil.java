@@ -30,10 +30,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.xmlgraphics.java2d.color.CIELabColorSpace;
-import org.apache.xmlgraphics.java2d.color.ColorExt;
+import org.apache.xmlgraphics.java2d.color.ColorSpaceOrigin;
 import org.apache.xmlgraphics.java2d.color.ColorSpaces;
+import org.apache.xmlgraphics.java2d.color.ColorWithAlternatives;
 import org.apache.xmlgraphics.java2d.color.DeviceCMYKColorSpace;
-import org.apache.xmlgraphics.java2d.color.ICCColor;
+import org.apache.xmlgraphics.java2d.color.ICCColorSpaceExt;
 import org.apache.xmlgraphics.java2d.color.NamedColorSpace;
 import org.apache.xmlgraphics.java2d.color.profile.NamedColorProfile;
 import org.apache.xmlgraphics.java2d.color.profile.NamedColorProfileParser;
@@ -49,9 +50,11 @@ import org.apache.fop.fo.expr.PropertyException;
  */
 public final class ColorUtil {
 
-    //Implementation note: this class should ALWAYS create ColorExt instances instead of using
-    //java.awt.Color since the latter has an equals() method that can't detect two different
-    //colors using the same sRGB fallback.
+    //Implementation note: this class should ALWAYS create ColorWithAlternatives instances instead
+    //of using java.awt.Color since the latter has an equals() method that can't detect two
+    //different colors using the same sRGB fallback.
+    //ColorWithFallback is used to preserve the sRGB fallback exclusively for the purpose
+    //of regenerating textual color functions as specified in XSL-FO.
 
     /** The name for the uncalibrated CMYK pseudo-profile */
     public static final String CMYK_PSEUDO_PROFILE = "#CMYK";
@@ -213,7 +216,7 @@ public final class ColorUtil {
         } catch (Exception e) {
             throw new PropertyException(e);
         }
-        return new ColorExt(red, green, blue, null);
+        return new ColorWithAlternatives(red, green, blue, null);
     }
 
     /**
@@ -240,7 +243,7 @@ public final class ColorUtil {
                 float red = parseComponent255(args[0], value);
                 float green = parseComponent255(args[1], value);
                 float blue = parseComponent255(args[2], value);
-                parsedColor = new ColorExt(red, green, blue, null);
+                parsedColor = new ColorWithAlternatives(red, green, blue, null);
             } catch (PropertyException pe) {
                 //simply re-throw
                 throw pe;
@@ -287,6 +290,20 @@ public final class ColorUtil {
         return component;
     }
 
+    private static Color parseFallback(String[] args, String value) throws PropertyException {
+        float red = parseComponent1(args[0], value);
+        float green = parseComponent1(args[1], value);
+        float blue = parseComponent1(args[2], value);
+        //Sun's classlib rounds differently with this constructor than when converting to sRGB
+        //via CIE XYZ.
+        Color sRGB = new ColorWithAlternatives(red, green, blue, null);
+        /*
+        Color sRGB = new ColorWithAlternatives(ColorSpace.getInstance(ColorSpace.CS_sRGB),
+                new float[] {red, green, blue}, 1.0f, null);
+        */
+        return sRGB;
+    }
+
     /**
      * parse a color given in the #.... format.
      *
@@ -320,7 +337,7 @@ public final class ColorUtil {
             } else {
                 throw new NumberFormatException();
             }
-            parsedColor = new ColorExt(red, green, blue, alpha, null);
+            parsedColor = new ColorWithAlternatives(red, green, blue, alpha, null);
         } catch (Exception e) {
             throw new PropertyException("Unknown color format: " + value
                     + ". Must be #RGB. #RGBA, #RRGGBB, or #RRGGBBAA");
@@ -349,10 +366,7 @@ public final class ColorUtil {
                 }
 
                 //Set up fallback sRGB value
-                float red = parseComponent1(args[0], value);
-                float green = parseComponent1(args[1], value);
-                float blue = parseComponent1(args[2], value);
-                Color sRGB = new ColorExt(red, green, blue, null);
+                Color sRGB = parseFallback(args, value);
 
                 /* Get and verify ICC profile name */
                 String iccProfileName = args[3].trim();
@@ -365,7 +379,8 @@ public final class ColorUtil {
                     if (CMYK_PSEUDO_PROFILE.equalsIgnoreCase(iccProfileName)) {
                         colorSpace = ColorSpaces.getDeviceCMYKColorSpace();
                     } else if (SEPARATION_PSEUDO_PROFILE.equalsIgnoreCase(iccProfileName)) {
-                        colorSpace = new NamedColorSpace(args[5], sRGB);
+                        colorSpace = new NamedColorSpace(args[5], sRGB,
+                                SEPARATION_PSEUDO_PROFILE, null);
                     } else {
                         assert false : "Incomplete implementation";
                     }
@@ -392,15 +407,28 @@ public final class ColorUtil {
 
                 /* Ask FOP factory to get ColorSpace for the specified ICC profile source */
                 if (foUserAgent != null && iccProfileSrc != null) {
-                    colorSpace = foUserAgent.getFactory().getColorSpace(
-                            foUserAgent.getBaseURL(), iccProfileSrc);
+                    assert colorSpace == null;
+                    int renderingIntent = ICCColorSpaceExt.AUTO; //TODO connect to fo:color-profile
+                    colorSpace = foUserAgent.getFactory().getColorSpace(iccProfileName,
+                            foUserAgent.getBaseURL(), iccProfileSrc,
+                            renderingIntent);
                 }
                 if (colorSpace != null) {
-                    // ColorSpace available - create ColorExt (keeps track of replacement rgb
-                    // values for possible later colorTOsRGBString call
-                    ICCColor iccColor = new ICCColor(colorSpace, iccProfileName, iccProfileSrc,
-                            iccComponents, 1.0f);
-                    parsedColor = new ColorExt(red, green, blue, new Color[] {iccColor});
+                    // ColorSpace is available
+                    if (ColorSpaces.isDeviceColorSpace(colorSpace)) {
+                        //Device-specific colors are handled differently:
+                        //sRGB is the primary color with the CMYK as the alternative
+                        Color deviceColor = new ColorWithAlternatives(
+                                colorSpace, iccComponents, 1.0f, null);
+                        float[] rgbComps = sRGB.getColorComponents(null);
+                        parsedColor = new ColorWithAlternatives(
+                                rgbComps[0], rgbComps[1], rgbComps[2],
+                                new Color[] {deviceColor});
+                    } else {
+                        Color specColor = new ColorWithFallback(
+                                colorSpace, iccComponents, 1.0f, null, sRGB);
+                        parsedColor = specColor;
+                    }
                 } else {
                     // ICC profile could not be loaded - use rgb replacement values */
                     log.warn("Color profile '" + iccProfileSrc
@@ -442,10 +470,7 @@ public final class ColorUtil {
                 }
 
                 //Set up fallback sRGB value
-                float red = parseComponent1(args[0], value);
-                float green = parseComponent1(args[1], value);
-                float blue = parseComponent1(args[2], value);
-                Color sRGB = new ColorExt(red, green, blue, null);
+                Color sRGB = parseFallback(args, value);
 
                 /* Get and verify ICC profile name */
                 String iccProfileName = args[3].trim();
@@ -471,20 +496,23 @@ public final class ColorUtil {
 
                 /* Ask FOP factory to get ColorSpace for the specified ICC profile source */
                 if (foUserAgent != null && iccProfileSrc != null) {
+                    int renderingIntent = ICCColorSpaceExt.AUTO; //TODO connect to fo:color-profile
                     colorSpace = (ICC_ColorSpace)foUserAgent.getFactory().getColorSpace(
-                            foUserAgent.getBaseURL(), iccProfileSrc);
+                            iccProfileName,
+                            foUserAgent.getBaseURL(), iccProfileSrc,
+                            renderingIntent);
                 }
                 if (colorSpace != null) {
                     ICC_Profile profile = colorSpace.getProfile();
                     if (NamedColorProfileParser.isNamedColorProfile(profile)) {
                         NamedColorProfileParser parser = new NamedColorProfileParser();
-                        NamedColorProfile ncp = parser.parseProfile(profile);
+                        NamedColorProfile ncp = parser.parseProfile(profile,
+                                    iccProfileName, iccProfileSrc);
                         NamedColorSpace ncs = ncp.getNamedColor(colorName);
                         if (ncs != null) {
-                            ICCColor iccColor = new ICCColor(ncs,
-                                    iccProfileName, iccProfileSrc,
-                                    new float[] {1.0f}, 1.0f);
-                            parsedColor = new ColorExt(red, green, blue, new Color[] {iccColor});
+                            Color specColor = new ColorWithFallback(ncs,
+                                    new float[] {1.0f}, 1.0f, null, sRGB);
+                            parsedColor = specColor;
                         } else {
                             log.warn("Color '" + colorName
                                     + "' does not exist in named color profile: " + iccProfileSrc);
@@ -538,6 +566,7 @@ public final class ColorUtil {
                 float red = parseComponent255(args[0], value);
                 float green = parseComponent255(args[1], value);
                 float blue = parseComponent255(args[2], value);
+                Color sRGB = new ColorWithAlternatives(red, green, blue, null);
 
                 float l = parseComponent(args[3], 0f, 100f, value);
                 float a = parseComponent(args[4], -127f, 127f, value);
@@ -547,7 +576,8 @@ public final class ColorUtil {
                 CIELabColorSpace cs = ColorSpaces.getCIELabColorSpaceD50();
                 //use toColor() to have components normalized
                 Color labColor = cs.toColor(l, a, b, 1.0f);
-                parsedColor = new ColorExt(red, green, blue, new Color[] {labColor});
+                //Convert to ColorWithFallback
+                parsedColor = new ColorWithFallback(labColor, sRGB);
 
             } catch (PropertyException pe) {
                 //simply re-throw
@@ -599,7 +629,9 @@ public final class ColorUtil {
                 float yellow = parseComponent1(args[2], value);
                 float black = parseComponent1(args[3], value);
                 float[] comps = new float[] {cyan, magenta, yellow, black};
-                parsedColor = DeviceCMYKColorSpace.createColorExt(comps);
+                Color cmykColor = DeviceCMYKColorSpace.createCMYKColor(comps);
+                parsedColor = new ColorWithAlternatives(cmykColor.getRGB(),
+                        new Color[] {cmykColor});
             } catch (PropertyException pe) {
                 throw pe;
             } catch (Exception e) {
@@ -624,8 +656,8 @@ public final class ColorUtil {
      */
     public static String colorToString(Color color) {
         ColorSpace cs = color.getColorSpace();
-        if (color instanceof ColorExt) {
-            return toFunctionCall((ColorExt)color);
+        if (color instanceof ColorWithAlternatives) {
+            return toFunctionCall((ColorWithAlternatives)color);
         } else if (cs != null && cs.getType() == ColorSpace.TYPE_CMYK) {
             StringBuffer sbuf = new StringBuffer(24);
             float[] cmyk = color.getColorComponents(null);
@@ -664,45 +696,73 @@ public final class ColorUtil {
         return sbuf.toString();
     }
 
+    private static Color getsRGBFallback(ColorWithAlternatives color) {
+        Color fallbackColor;
+        if (color instanceof ColorWithFallback) {
+            fallbackColor = ((ColorWithFallback)color).getFallbackColor();
+            if (!fallbackColor.getColorSpace().isCS_sRGB()) {
+                fallbackColor = toSRGBColor(fallbackColor);
+            }
+        } else {
+            fallbackColor = toSRGBColor(color);
+        }
+        return fallbackColor;
+    }
+
+    private static Color toSRGBColor(Color color) {
+        float[] comps;
+        ColorSpace sRGB = ColorSpace.getInstance(ColorSpace.CS_sRGB);
+        if (color.getColorSpace().isCS_sRGB()) {
+            comps = color.getColorComponents(null);
+        } else {
+            comps = color.getColorComponents(sRGB, null);
+        }
+        float[] allComps = color.getComponents(null);
+        float alpha = allComps[comps.length - 1]; //Alpha is on last component
+        return new Color(sRGB, comps, alpha);
+    }
+
     /**
      * Create string representation of fop-rgb-icc function call to map this
      * ColorExt settings.
      * @param color the color to turn into a function call
      * @return the string representing the internal fop-rgb-icc() function call
      */
-    public static String toFunctionCall(ColorExt color) {
-        Color[] alt = color.getAlternateColors();
-        ICCColor icc = null;
-        for (int i = 0, c = alt.length; i < c; i++) {
-            if (alt[i] instanceof ICCColor) {
-                //Find first ICCColor in alternatives
-                icc = (ICCColor)alt[i];
-                break;
-            }
+    public static String toFunctionCall(ColorWithAlternatives color) {
+        ColorSpace cs = color.getColorSpace();
+        Color fallbackColor = getsRGBFallback(color);
+        if (cs instanceof CIELabColorSpace) {
+            return toCIELabFunctionCall(color);
         }
-        if (icc == null) {
+        if (cs.isCS_sRGB() && !color.hasAlternativeColors()) {
             return toRGBFunctionCall(color);
-        }
-        if (icc.getColorSpace() instanceof CIELabColorSpace) {
-            return toCIELabFunctionCall(color, icc);
         }
         StringBuffer sb = new StringBuffer(40);
 
+        Color specColor = color;
+        if (color.hasAlternativeColors()) {
+            Color alt = color.getAlternativeColors()[0];
+            if (ColorSpaces.isDeviceColorSpace(alt.getColorSpace())) {
+                cs = alt.getColorSpace();
+                specColor = alt;
+            }
+        }
+        ColorSpaceOrigin origin = ColorSpaces.getColorSpaceOrigin(cs);
         String functionName;
-        float[] rgb = color.getColorComponents(null);
+        float[] rgb = fallbackColor.getColorComponents(null);
         assert rgb.length == 3;
         sb.append("(");
         sb.append(rgb[0]).append(",");
         sb.append(rgb[1]).append(",");
         sb.append(rgb[2]).append(",");
-        String profileName = icc.getColorProfileName();
+        String profileName = origin.getProfileName();
         sb.append(profileName).append(",");
-        if (icc.getColorProfileSource() != null) {
-            sb.append("\"").append(icc.getColorProfileSource()).append("\"");
+        if (origin.getProfileURI() != null) {
+            sb.append("\"").append(origin.getProfileURI()).append("\"");
         }
 
-        if (icc.getColorSpace() instanceof NamedColorSpace) {
-            NamedColorSpace ncs = (NamedColorSpace)icc.getColorSpace();
+        if (cs instanceof NamedColorSpace) {
+            NamedColorSpace ncs = (NamedColorSpace)cs;
             if (SEPARATION_PSEUDO_PROFILE.equalsIgnoreCase(profileName)) {
                 functionName = "fop-rgb-icc";
             } else {
@@ -711,7 +771,7 @@ public final class ColorUtil {
             sb.append(",").append(ncs.getColorName());
         } else {
             functionName = "fop-rgb-icc";
-            float[] colorComponents = icc.getColorComponents(null);
+            float[] colorComponents = specColor.getColorComponents(null);
             for (int ix = 0; ix < colorComponents.length; ix++) {
                 sb.append(",");
                 sb.append(colorComponents[ix]);
@@ -721,13 +781,14 @@ public final class ColorUtil {
         return functionName + sb.toString();
     }
 
-    private static String toCIELabFunctionCall(ColorExt color, Color cieLab) {
+    private static String toCIELabFunctionCall(ColorWithAlternatives color) {
+        Color fallbackColor = getsRGBFallback(color);
         StringBuffer sb = new StringBuffer("cie-lab-color(");
-        sb.append(color.getRed()).append(',');
-        sb.append(color.getGreen()).append(',');
-        sb.append(color.getBlue());
-        CIELabColorSpace cs = (CIELabColorSpace)cieLab.getColorSpace();
-        float[] lab = cs.toNativeComponents(cieLab.getColorComponents(null));
+        sb.append(fallbackColor.getRed()).append(',');
+        sb.append(fallbackColor.getGreen()).append(',');
+        sb.append(fallbackColor.getBlue());
+        CIELabColorSpace cs = (CIELabColorSpace)color.getColorSpace();
+        float[] lab = cs.toNativeComponents(color.getColorComponents(null));
         for (int i = 0; i < 3; i++) {
             sb.append(',').append(lab[i]);
         }
@@ -736,7 +797,7 @@ public final class ColorUtil {
     }
 
     private static Color createColor(int r, int g, int b) {
-        return new ColorExt(r, g, b, null);
+        return new ColorWithAlternatives(r, g, b, null);
     }
 
     /**
@@ -893,7 +954,7 @@ public final class ColorUtil {
         colorMap.put("whitesmoke", createColor(245, 245, 245));
         colorMap.put("yellow", createColor(255, 255, 0));
         colorMap.put("yellowgreen", createColor(154, 205, 50));
-        colorMap.put("transparent", new ColorExt(0, 0, 0, 0, null));
+        colorMap.put("transparent", new ColorWithAlternatives(0, 0, 0, 0, null));
     }
 
     /**
@@ -927,7 +988,7 @@ public final class ColorUtil {
     }
 
     /**
-     * Creates an uncalibrary CMYK color with the given gray value.
+     * Creates an uncalibrated CMYK color with the given gray value.
      * @param black the gray component (0 - 1)
      * @return the CMYK color
      */

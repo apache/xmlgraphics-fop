@@ -20,7 +20,6 @@
 package org.apache.fop.util;
 
 import java.awt.color.ColorSpace;
-import java.awt.color.ICC_ColorSpace;
 import java.awt.color.ICC_Profile;
 import java.util.Collections;
 import java.util.Map;
@@ -31,6 +30,8 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import org.apache.xmlgraphics.java2d.color.ICCColorSpaceExt;
 
 /**
  * Map with cached ICC based ColorSpace objects.
@@ -59,13 +60,17 @@ public class ColorSpaceCache {
      * The FOP URI resolver is used to try and locate the ICC file.
      * If that fails null is returned.
      *
+     * @param profileName the profile name
      * @param base a base URI to resolve relative URIs
      * @param iccProfileSrc ICC Profile source to return a ColorSpace for
+     * @param renderingIntent overriding rendering intent (see {@link ICCColorSpaceExt}.*)
      * @return ICC ColorSpace object or null if ColorSpace could not be created
      */
-    public ColorSpace get(String base, String iccProfileSrc) {
+    public ColorSpace get(String profileName, String base, String iccProfileSrc,
+            int renderingIntent) {
+        String key = profileName + ":" + base + iccProfileSrc;
         ColorSpace colorSpace = null;
-        if (!colorSpaceMap.containsKey(base + iccProfileSrc)) {
+        if (!colorSpaceMap.containsKey(key)) {
             try {
                 ICC_Profile iccProfile = null;
                 // First attempt to use the FOP URI resolver to locate the ICC
@@ -86,7 +91,8 @@ public class ColorSpaceCache {
                     // iccProfile = ICC_Profile.getInstance(iccProfileSrc);
                 }
                 if (iccProfile != null) {
-                    colorSpace = new ICC_ColorSpace(iccProfile);
+                    colorSpace = new ICCColorSpaceExt(iccProfile, renderingIntent,
+                            profileName, iccProfileSrc);
                 }
             } catch (Exception e) {
                 // Ignore exception - will be logged a bit further down
@@ -95,15 +101,14 @@ public class ColorSpaceCache {
 
             if (colorSpace != null) {
                 // Put in cache (not when VM resolved it as we can't control
-                colorSpaceMap.put(base + iccProfileSrc, colorSpace);
+                colorSpaceMap.put(key, colorSpace);
             } else {
                 // TODO To avoid an excessive amount of warnings perhaps
                 // register a null ColorMap in the colorSpaceMap
                 log.warn("Color profile '" + iccProfileSrc + "' not found.");
             }
         } else {
-            colorSpace = (ColorSpace)colorSpaceMap.get(base
-                    + iccProfileSrc);
+            colorSpace = (ColorSpace)colorSpaceMap.get(key);
         }
         return colorSpace;
     }

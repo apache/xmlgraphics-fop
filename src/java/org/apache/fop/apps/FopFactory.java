@@ -40,6 +40,7 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.xmlgraphics.image.loader.ImageContext;
 import org.apache.xmlgraphics.image.loader.ImageManager;
+import org.apache.xmlgraphics.java2d.color.ICCColorSpaceExt;
 
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.ElementMappingRegistry;
@@ -759,19 +760,23 @@ public class FopFactory implements ImageContext {
 
     /**
      * Create (if needed) and return an ICC ColorSpace instance.
-     *
+     * <p>
      * The ICC profile source is taken from the src attribute of the color-profile FO element.
      * If the ICC ColorSpace is not yet in the cache a new one is created and stored in the cache.
-     *
+     * <p>
      * The FOP URI resolver is used to try and locate the ICC file.
      * If that fails null is returned.
-     *
+     * <p>
+     * Note: this method should not be considered as part of FOP's external API.
+     * @param profileName the profile name
      * @param baseUri a base URI to resolve relative URIs
      * @param iccProfileSrc ICC Profile source to return a ColorSpace for
+     * @param renderingIntent overriding rendering intent (see {@link ICCColorSpaceExt}.*)
      * @return ICC ColorSpace object or null if ColorSpace could not be created
      */
-    public ColorSpace getColorSpace(String baseUri, String iccProfileSrc) {
-        return colorSpaceCache.get(baseUri, iccProfileSrc);
+    public ColorSpace getColorSpace(String profileName, String baseUri, String iccProfileSrc,
+            int renderingIntent) {
+        return colorSpaceCache.get(profileName, baseUri, iccProfileSrc, renderingIntent);
     }
 
 }

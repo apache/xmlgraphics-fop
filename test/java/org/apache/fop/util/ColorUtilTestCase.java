@@ -25,8 +25,9 @@ import java.net.URI;
 
 import junit.framework.TestCase;
 
-import org.apache.xmlgraphics.java2d.color.ColorExt;
 import org.apache.xmlgraphics.java2d.color.ColorSpaces;
+import org.apache.xmlgraphics.java2d.color.ColorWithAlternatives;
+import org.apache.xmlgraphics.java2d.color.ICCColorSpaceExt;
 import org.apache.xmlgraphics.java2d.color.NamedColorSpace;
 
 import org.apache.fop.apps.FOUserAgent;
@@ -82,8 +83,10 @@ public class ColorUtilTestCase extends TestCase {
         assertEquals(col1, col2);
 
         col1 = ColorUtil.parseColorString(null, "fop-rgb-icc(0.5,0.5,0.5,#CMYK,,0.0,0.0,0.0,0.5)");
+        /* The following doesn't work since java.awt.Color from Sun doesn't round consistently
         col2 = ColorUtil.parseColorString(null, "cmyk(0.0,0.0,0.0,0.5)");
         assertEquals(col1, col2);
+        */
 
         col2 = ColorUtil.parseColorString(null, "fop-rgb-icc(0.5,0.5,0.5,#CMYK,,0.5,0.5,0.5,0.0)");
         assertFalse(col1.equals(col2));
@@ -114,34 +117,33 @@ public class ColorUtilTestCase extends TestCase {
         FopFactory fopFactory = FopFactory.newInstance();
         URI sRGBLoc = new URI(
                 "file:src/java/org/apache/fop/pdf/sRGB%20Color%20Space%20Profile.icm");
-        ColorSpace cs = fopFactory.getColorSpace(null, sRGBLoc.toASCIIString());
-        assertNotNull(cs);
-
+        ColorSpace cs = fopFactory.getColorSpace("sRGBAlt", null, sRGBLoc.toASCIIString(),
+                ICCColorSpaceExt.AUTO);
+        assertNotNull("Color profile not found", cs);
 
         FOUserAgent ua = fopFactory.newFOUserAgent();
-        ColorExt colActual;
+        ColorWithFallback colActual;
 
         //fop-rgb-icc() is used instead of rgb-icc() inside FOP!
         String colSpec = "fop-rgb-icc(1.0,0.0,0.0,sRGBAlt,"
             + "\"" + sRGBLoc.toASCIIString() + "\",1.0,0.0,0.0)";
-        colActual = (ColorExt)ColorUtil.parseColorString(ua, colSpec);
+        colActual = (ColorWithFallback)ColorUtil.parseColorString(ua, colSpec);
+        assertEquals(cs, colActual.getColorSpace());
         assertEquals(255, colActual.getRed());
         assertEquals(0, colActual.getGreen());
         assertEquals(0, colActual.getBlue());
-        assertEquals(ColorSpace.getInstance(ColorSpace.CS_sRGB), colActual.getColorSpace());
         float[] comps = colActual.getColorComponents(null);
         assertEquals(3, comps.length);
         assertEquals(1f, comps[0], 0);
         assertEquals(0f, comps[1], 0);
         assertEquals(0f, comps[2], 0);
+        assertEquals(0, colActual.getAlternativeColors().length);
 
-        Color alt = colActual.getAlternateColors()[0];
-        assertEquals(cs, alt.getColorSpace());
-        comps = colActual.getColorComponents(null);
-        assertEquals(3, comps.length);
-        assertEquals(1f, comps[0], 0);
-        assertEquals(0f, comps[1], 0);
-        assertEquals(0f, comps[2], 0);
+        Color fallback = colActual.getFallbackColor();
+        assertTrue(fallback.getColorSpace().isCS_sRGB());
+        assertEquals(255, colActual.getRed());
+        assertEquals(0, colActual.getGreen());
+        assertEquals(0, colActual.getBlue());
 
         assertEquals(colSpec, ColorUtil.colorToString(colActual));
 
@@ -156,15 +158,15 @@ public class ColorUtilTestCase extends TestCase {
      * @throws Exception if an error occurs
      */
     public void testCMYK() throws Exception {
-        ColorExt colActual;
+        ColorWithAlternatives colActual;
         String colSpec;
 
         colSpec = "cmyk(0.0, 0.0, 1.0, 0.0)";
-        colActual = (ColorExt)ColorUtil.parseColorString(null, colSpec);
+        colActual = (ColorWithAlternatives)ColorUtil.parseColorString(null, colSpec);
         assertEquals(255, colActual.getRed());
         assertEquals(255, colActual.getGreen());
         assertEquals(0, colActual.getBlue());
-        Color alt = colActual.getAlternateColors()[0];
+        Color alt = colActual.getAlternativeColors()[0];
         assertEquals(ColorSpaces.getDeviceCMYKColorSpace(), alt.getColorSpace());
         float[] comps = alt.getColorComponents(null);
         assertEquals(4, comps.length);
@@ -176,26 +178,26 @@ public class ColorUtilTestCase extends TestCase {
                 ColorUtil.colorToString(colActual));
 
         colSpec = "cmyk(0.0274, 0.2196, 0.3216, 0.0)";
-        colActual = (ColorExt)ColorUtil.parseColorString(null, colSpec);
+        colActual = (ColorWithAlternatives)ColorUtil.parseColorString(null, colSpec);
         assertEquals(248, colActual.getRed(), 1);
         assertEquals(199, colActual.getGreen(), 1);
         assertEquals(172, colActual.getBlue(), 1);
-        alt = colActual.getAlternateColors()[0];
+        alt = colActual.getAlternativeColors()[0];
         assertEquals(ColorSpaces.getDeviceCMYKColorSpace(), alt.getColorSpace());
         comps = alt.getColorComponents(null);
         assertEquals(0.0274f, comps[0], 0.001);
         assertEquals(0.2196f, comps[1], 0.001);
         assertEquals(0.3216f, comps[2], 0.001);
         assertEquals(0f, comps[3], 0);
-        assertEquals("fop-rgb-icc(0.9726,0.7804,0.67840004,#CMYK,,0.0274,0.2196,0.3216,0.0)",
+        assertEquals("fop-rgb-icc(0.972549,0.78039217,0.6745098,#CMYK,,0.0274,0.2196,0.3216,0.0)",
                 ColorUtil.colorToString(colActual));
 
         colSpec = "fop-rgb-icc(1.0,1.0,0.0,#CMYK,,0.0,0.0,1.0,0.0)";
-        colActual = (ColorExt)ColorUtil.parseColorString(null, colSpec);
+        colActual = (ColorWithAlternatives)ColorUtil.parseColorString(null, colSpec);
         assertEquals(255, colActual.getRed());
         assertEquals(255, colActual.getGreen());
         assertEquals(0, colActual.getBlue());
-        alt = colActual.getAlternateColors()[0];
+        alt = colActual.getAlternativeColors()[0];
         assertEquals(ColorSpaces.getDeviceCMYKColorSpace(), alt.getColorSpace());
         comps = alt.getColorComponents(null);
         assertEquals(4, comps.length);
@@ -207,11 +209,11 @@ public class ColorUtilTestCase extends TestCase {
                 ColorUtil.colorToString(colActual));
 
         colSpec = "fop-rgb-icc(0.5,0.5,0.5,#CMYK,,0.0,0.0,0.0,0.5)";
-        colActual = (ColorExt)ColorUtil.parseColorString(null, colSpec);
+        colActual = (ColorWithAlternatives)ColorUtil.parseColorString(null, colSpec);
         assertEquals(127, colActual.getRed(), 1);
         assertEquals(127, colActual.getGreen(), 1);
         assertEquals(127, colActual.getBlue(), 1);
-        alt = colActual.getAlternateColors()[0];
+        alt = colActual.getAlternativeColors()[0];
         assertEquals(ColorSpaces.getDeviceCMYKColorSpace(), alt.getColorSpace());
         comps = alt.getColorComponents(null);
         assertEquals(4, comps.length);
@@ -228,24 +230,31 @@ public class ColorUtilTestCase extends TestCase {
      * @throws Exception if an error occurs
      */
     public void testSeparationColor() throws Exception {
-        ColorExt colActual;
+        ColorWithFallback colActual;
         String colSpec;
 
         colSpec = "fop-rgb-icc(1.0,0.8,0.0,#Separation,,Postgelb)";
-        colActual = (ColorExt)ColorUtil.parseColorString(null, colSpec);
-        assertEquals(255, colActual.getRed());
-        assertEquals(204, colActual.getGreen());
+        colActual = (ColorWithFallback)ColorUtil.parseColorString(null, colSpec);
+        assertEquals(255, colActual.getRed(), 1);
+        assertEquals(204, colActual.getGreen(), 1);
         assertEquals(0, colActual.getBlue());
 
-        Color alt = colActual.getAlternateColors()[0];
-        assertTrue(alt.getColorSpace() instanceof NamedColorSpace);
+        Color fallback = colActual.getFallbackColor();
+        assertEquals(255, fallback.getRed());
+        assertEquals(204, fallback.getGreen());
+        assertEquals(0, fallback.getBlue());
+
+        assertFalse(colActual.hasAlternativeColors());
+
+        assertTrue(colActual.getColorSpace() instanceof NamedColorSpace);
         NamedColorSpace ncs;
-        ncs = (NamedColorSpace)alt.getColorSpace();
+        ncs = (NamedColorSpace)colActual.getColorSpace();
         assertEquals("Postgelb", ncs.getColorName());
-        float[] comps = alt.getColorComponents(null);
+        float[] comps = colActual.getColorComponents(null);
         assertEquals(1, comps.length);
         assertEquals(1f, comps[0], 0);
         assertEquals(colSpec, ColorUtil.colorToString(colActual));
+
     }
 
     /**
@@ -255,32 +264,38 @@ public class ColorUtilTestCase extends TestCase {
     public void testNamedColorProfile() throws Exception {
         FopFactory fopFactory = FopFactory.newInstance();
         URI ncpLoc = new URI("file:test/resources/color/ncp-example.icc");
-        ColorSpace cs = fopFactory.getColorSpace(null, ncpLoc.toASCIIString());
-        assertNotNull(cs);
+        ColorSpace cs = fopFactory.getColorSpace("NCP", null, ncpLoc.toASCIIString(),
+                ICCColorSpaceExt.AUTO);
+        assertNotNull("Color profile not found", cs);
 
         FOUserAgent ua = fopFactory.newFOUserAgent();
-        ColorExt colActual;
+        ColorWithFallback colActual;
 
         //fop-rgb-named-color() is used instead of rgb-named-color() inside FOP!
         String colSpec = "fop-rgb-named-color(1.0,0.8,0.0,NCP,"
             + "\"" + ncpLoc.toASCIIString() + "\",Postgelb)";
-        colActual = (ColorExt)ColorUtil.parseColorString(ua, colSpec);
+        colActual = (ColorWithFallback)ColorUtil.parseColorString(ua, colSpec);
         assertEquals(255, colActual.getRed());
-        assertEquals(204, colActual.getGreen());
+        assertEquals(193, colActual.getGreen());
         assertEquals(0, colActual.getBlue());
-        assertEquals(ColorSpace.getInstance(ColorSpace.CS_sRGB), colActual.getColorSpace());
-        float[] comps = colActual.getColorComponents(null);
+
+        Color fallback = colActual.getFallbackColor();
+        assertEquals(255, fallback.getRed());
+        assertEquals(204, fallback.getGreen());
+        assertEquals(0, fallback.getBlue());
+        assertEquals(ColorSpace.getInstance(ColorSpace.CS_sRGB), fallback.getColorSpace());
+
+        float[] comps = fallback.getColorComponents(null);
         assertEquals(3, comps.length);
         assertEquals(1f, comps[0], 0);
         assertEquals(0.8f, comps[1], 0);
         assertEquals(0f, comps[2], 0);
 
-        Color alt = colActual.getAlternateColors()[0];
-        assertTrue(alt.getColorSpace() instanceof NamedColorSpace);
+        assertTrue(colActual.getColorSpace() instanceof NamedColorSpace);
         NamedColorSpace ncs;
-        ncs = (NamedColorSpace)alt.getColorSpace();
+        ncs = (NamedColorSpace)colActual.getColorSpace();
         assertEquals("Postgelb", ncs.getColorName());
-        comps = alt.getColorComponents(null);
+        comps = colActual.getColorComponents(null);
         assertEquals(1, comps.length);
         assertEquals(1f, comps[0], 0);
 
