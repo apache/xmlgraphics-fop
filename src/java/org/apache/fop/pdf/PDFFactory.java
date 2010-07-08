@@ -42,6 +42,7 @@ import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.xmlgraphics.java2d.color.ColorUtil;
 import org.apache.xmlgraphics.java2d.color.NamedColorSpace;
 import org.apache.xmlgraphics.xmp.Metadata;
 
@@ -776,14 +777,16 @@ public class PDFFactory {
             Color currentColor = (Color)theColors.get(currentPosition);
             Color nextColor = (Color)theColors.get(currentPosition + 1);
 
-            // colorspace must be consistant
+            // colorspace must be consistent, so we simply convert to sRGB where necessary
             if (!currentColor.getColorSpace().isCS_sRGB()) {
                 //Convert to sRGB
-                theColors.set(currentPosition, new Color(currentColor.getRGB()));
+                currentColor = ColorUtil.toSRGBColor(currentColor);
+                theColors.set(currentPosition, currentColor);
             }
             if (!nextColor.getColorSpace().isCS_sRGB()) {
                 //Convert to sRGB
-                theColors.set(currentPosition + 1, new Color(nextColor.getRGB()));
+                nextColor = ColorUtil.toSRGBColor(nextColor);
+                theColors.set(currentPosition + 1, nextColor);
             }
 
             theCzero = toColorVector(currentColor);
