@@ -25,9 +25,9 @@ import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
 
 /**
- * Represents an FO processor.
+ * Represents a processor.
  */
-public interface FOProcessor {
+public interface Processor {
 
     /**
      * Process a file.
