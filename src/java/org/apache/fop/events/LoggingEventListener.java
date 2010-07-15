@@ -79,10 +79,18 @@ public class LoggingEventListener implements EventListener {
         } else if (severity == EventSeverity.WARN) {
             log.warn(msg);
         } else if (severity == EventSeverity.ERROR) {
-            log.error(msg);
+            if (event.getParam("e") != null) {
+                log.error(msg, (Throwable)event.getParam("e"));
+            } else {
+                log.error(msg);
+            }
         } else if (severity == EventSeverity.FATAL) {
             if (!skipFatal) {
-                log.fatal(msg);
+                if (event.getParam("e") != null) {
+                    log.fatal(msg, (Throwable)event.getParam("e"));
+                } else {
+                    log.fatal(msg);
+                }
             }
         } else {
             assert false;
