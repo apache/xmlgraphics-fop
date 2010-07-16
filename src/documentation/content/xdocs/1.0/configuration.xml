@@ -152,6 +152,18 @@
         <td>"height" 11 inches, "width" 8.26 inches</td>
       </tr>
       <tr>
+        <td>prefer-renderer</td>
+        <td>boolean (true, false)</td>
+        <td>
+          By default, FOP prefers the newer output implementations based on the
+          <code>IFDocumentHandler</code> interface. If no such implementation can be found for
+          a given MIME type, it looks for an implementation of the <code>Renderer</code> interface.
+          If necessary, you can invert the lookup order to prefer the Renderer variant over the
+          IFDocumentHandler variant by setting this value to true. 
+        </td>
+        <td>false</td>
+      </tr>
+      <tr>
         <td>use-cache</td>
         <td>boolean (true, false)</td>
         <td>All fonts information that has been gathered as a result of "directory"
@@ -205,6 +217,42 @@
   
   <!-- etc. etc..... -->
 </fop>]]></source>
+  </section>
+  <section id="image-loading">
+    <title>Image Loading Customization</title>
+    <p>
+      Apache FOP uses the image loading framework from
+      <a href="http://xmlgraphics.apache.org/commons/">Apache XML Graphics Commons</a> to load
+      images using various plug-ins. Every image loader plug-in has a hard-coded usage penalty
+      that influences which solution is chosen if there are multiple possibilities to load an image.
+      Sometimes, though, these penalties need to be tweaked and this can be done in the FOP
+      configuration. An example:
+    </p>
+    <source><![CDATA[<fop version="1.0">
+  [..]
+  <image-loading>
+    <penalty value="10000"
+      class="org.apache.xmlgraphics.image.loader.impl.ImageLoaderRawCCITTFax"/>
+    <penalty value="INFINITE"
+      class="org.apache.xmlgraphics.image.loader.impl.ImageLoaderInternalTIFF"/>
+  </image-loading>
+  <renderers....
+</fop>]]></source>
+    <p>
+      The first penalty element increases the penalty for the raw CCITT loader. This practically
+      forces the decoding of CCITT compressed TIFF images except if there are no TIFF codecs
+      available. 
+    </p>
+    <p>
+      The second penalty element sets an "infinite" penalty for the TIFF loader using the internal
+      TIFF codec. This practically disables that plug-in as it will never be chosen as a possible
+      solution.
+    </p>
+    <p>
+      Negative penalties are possible to promote a plug-in but a negative penalty sum will be
+      treated as zero penalty in most cases. For more details on the image loading framework,
+      please consult the documentation there.
+    </p>
   </section>
   <section id="renderers">
     <title>Renderer configuration</title>
@@ -277,7 +325,44 @@
       <output-profile>C:\FOP\Color\EuropeISOCoatedFOGRA27.icc</output-profile>
       
       <fonts....
+      </renderer>]]></source>
+      <p>
+        Some people don't have high requirements on color fidelity but instead want the smallest
+        PDF file sizes possible. In this case it's possible to disable the default sRGB color space
+        which XSL-FO requires. This will cause RGB colors to be generated as device-specific RGB.
+        Please note that this option is unavailable (and will cause an error) if you enable
+        PDF/A or PDF/X functionality or if you specify an output profile. This setting will make the
+        PDF about 4KB smaller. To disable the sRGB color space add the following setting:
+      </p>
+      <source><![CDATA[
+    <renderer mime="application/pdf">
+      <filterList...
+      
+      <disable-srgb-colorspace>true</disable-srgb-colorspace>
+      
+      <fonts....
+      </renderer>]]></source>
+      
+      <p>FOP supports encryption of PDF output, thanks to Patrick C. Lankswert.
+      This feature is commonly used to prevent unauthorized viewing, printing, editing, copying text
+      from the document and doing annotations. It is also possible to ask the user for a password in
+      order to view the contents. Note that there already exist third party applications which can
+      decrypt an encrypted PDF without effort and allow the aforementioned operations, therefore the
+      degree of protection is limited.  For further information about features and restrictions
+      regarding PDF encryption, look at the documentation coming with Adobe Acrobat or the technical
+      documentation on the Adobe web site.</p>
+      <source><![CDATA[
+    <renderer mime="application/pdf">
+      <encryption-params>
+         <user-password>testuserpass</user-password>
+         <owner-password>testownerpass</owner-password>
+         <noprint/>
+         <nocopy/>
+         <noedit/>
+         <noannotations/>
+      </encryption-params>
     </renderer>]]></source>
+      
     </section>
     <section id="ps-renderer">
       <title>Special Settings for the PostScript Renderer</title>
@@ -331,19 +416,42 @@
         to "bitmap" which causes all text to be rendered as bitmaps.
       </p>
     </section>
-  </section>
-  <section id="fonts">
-    <title>Apache FOP Font Config</title>
-    <p>
-      Apache FOP has special Font configuration considerations, which are explained
-      in detail on the <a href="fonts.html">Fonts</a> page.
-    </p>
+    <section id="afp-renderer">
+      <title>Special Settings for the AFP Renderer</title>
+      <p>
+      </p>
+      <p>
+        Additionally, there are certain settings that control how the renderer handles various elements.
+      </p>
+<source><![CDATA[<renderer mime="application/x-afp">
+  <images mode="b+w" bits-per-pixel="8" native="true"/>
+  <renderer-resolution>240</renderer-resolution>
+  
+  <!-- a default external resource group file -->
+  <resource-group-file>resources.afp</resource-group-file>
+</renderer>]]></source>
+      <p>
+        The default value for the images "mode" setting is "b+w" (black and white).  When the images "mode" setting is "b+w" a "bits-per-pixel" setting can be provided to aid the grayscale conversion process.  With this setting all images referenced in your source document are converted to an IOCA FS45 grayscale bitmap image form. 
+        When the setting is "color" all images are converted to an IOCA FS45 color bitmap image form.  When "native" setting is "true", all images encountered (TIFF, GIF, JPEG and Encapsulated Postscript etc.) will be embedded directly in the datastream in their native form using a MO:DCA Object Container.
+      </p>
+      <p>
+        The default value for the "renderer-resolution" is 240 dpi. 
+      </p>
+ <!--
+      <p>
+        The default value for the MO:DCA "interchange-set" is "MO:DCA-L". Other compliance settings include presentation interchange sets "MO:DCA-P IS/1" and "MO:DCA-P IS/2" (Resource Groups). 
+      </p>
+ -->
+      <p>
+        By default if there is no configuration definition for "resource-group-file", external resources will be placed in a file called resources.afp. 
+      </p>
+    </section>
   </section>
 
-  <section>
-    <title>When it does not work</title>
+        <section>
+          <title>When it does not work</title>
 
-    <p>FOP searches the configuration file for the information it
+          <p>FOP searches the configuration file for the information it
 expects, at the position it expects. When that information is not
 present, FOP will not complain, it will just continue. When there is
 other information in the file, FOP will not complain, it will just
@@ -351,14 +459,14 @@ ignore it. That means that when your configuration information is in
 the file but in a different XML element, or in a different XML path,
 than FOP expects, it will be silently ignored.</p>
 
-      <p>Check the following possibilities:</p>
+          <p>Check the following possibilities:</p>
 
-      <ul>
-        <li>The format of the configuration file has changed
+          <ul>
+            <li>The format of the configuration file has changed
 considerably between FOP 0.20.5 and FOP 1.0 and its beta versions. Did
 you convert your file to the new format?</li>
 
-        <li>The FOP distribution contains a schema for configuration
+            <li>The FOP distribution contains a schema for configuration
 files, at src/foschema/fop-configuration.xsd. Did you validate your
 configuration file against it? Add the following schema location to
 the <code>schema</code> element:
@@ -373,13 +481,13 @@ and run the configuration file through a validating schema
 parser. Note that the schema cannot detect all errors, and that it is
 stricter about the order of some elements than FOP itself is.</li>
 
-        <li>Run FOP in debug mode (command line option
+            <li>Run FOP in debug mode (command line option
 <code>-d</code>). This makes FOP report which configuration
 information it finds. Check if FOP finds what you expect.</li>
 
-      </ul>
+          </ul>
 
-    </section>
+        </section>
   </body>
 </document>
 

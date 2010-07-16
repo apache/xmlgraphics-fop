@@ -47,7 +47,10 @@ License version 2.0:
   Info: src/java/org/apache/fop/pdf/sRGB Color Space Profile.icm.LICENSE.txt
 - K3 3 of 9 barcode font (TrueType)
   File: examples/fo/advanced/K3.TTF
-  Info: example/fo/advanced/K3.README
+  Info: examples/fo/advanced/K3.README
+- DejaVu LGC Serif font (TrueType)
+  File: test/resources/fonts/DejaVuLGCSerif.ttf
+  Info: test/resources/fonts/DejaVuLGCSerif.LICENSE
 
     
 Where to get help?
@@ -89,6 +92,54 @@ http://xmlgraphics.apache.org/fop/stable/running.html
 ==============================================================================
   RELEASE NOTES
 ==============================================================================
+
+Version 1.0
+===========
+
+This is a production grade release of Apache FOP.
+It contains many bug fixes and new features. See below for details.
+
+Compliance
+----------
+
+This release implements the XSL 1.0 and 1.1 recommendations to a high
+degree of compliance. See the compliance page
+http://xmlgraphics.apache.org/fop/compliance.html for a detailed
+overview.
+
+Known issues
+------------
+
+The known issues of this release are listed at
+http://xmlgraphics.apache.org/fop/1.0/knownissues_overview.html.
+
+Major Changes in Version 1.0
+----------------------------
+
+* Added support for addressing all glyphs available in a Type 1 font
+* Added support for auto-configuring TrueType Collections. XML font
+  metrics files for *.ttc fonts are not required anymore.
+* Added support for rendering pages using Java Printing System.
+* Support character-by-character font-selection strategy on
+  fo:character element.
+* Implemented word-by-ford font-selection strategy on text.
+* AFP Output: Various enhancements
+* FOP now creates ToUnicode CMaps for single-byte fonts that don't use
+  built-in encodings
+* Introduced a new, additional intermediate format optimized for
+  performance. See the intermediate format documentation for details.
+* Added an initial set of extensions for prepress support.
+* Added limited support for different page widths within a page-sequence.
+* Added support for TrueType fonts with symbol character maps (like
+  "Wingdings" and "Symbol").
+* Added an event handling framework which allows to get better feedback
+  from within FOP with the ability to customize problem management.
+
+The long list of changes in this release is available at
+http://xmlgraphics.apache.org/fop/1.0/changes_1.0.html.
+
+The long list of changes in this and earlier releases is available at
+http://xmlgraphics.apache.org/fop/changes.html.
 
 Version 0.95
 ============

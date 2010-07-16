@@ -136,14 +136,13 @@
       <question>When is the next released planned?</question>
       <answer>
         <p>
-          When it's ready and the committers have enough time to go through
-          the time-consuming process of creating a release. We
-          released version 0.95 on August 6th, 2008, and intend to
-          release version 1.0 once we consider it "feature complete", major
-          work is still in progress regarding page flows with changing page width
-          (changing IPD, to be precise). If you
-          want to speed up the process, consider
-          <link href="dev/index.html#involved">contributing</link> to FOP.</p>
+          When it's ready and the committers have enough time to go
+          through the time-consuming process of creating a release. We
+          released version 1.0 in July 2010, and will release version
+          1.1 when we accumulated enough additions and bug fixes. If
+          you want to speed up the process, consider <link
+          href="dev/index.html#involved">contributing</link> to
+          FOP.</p>
       </answer>
     </faq>
     <faq id="redesign">
@@ -198,10 +197,8 @@
         <p>If you are running FOP from the command line:</p>
         <ul>
           <li>
-            Use the <code>fop.bat</code>, <code>fop</code> or <code>fop.sh</code> command file from the FOP
-            distribution. If you have a FOP version older than 0.20.5,
-            ensure the directory where FOP and these files have been
-            installed is the current working directory.
+            Use the command file <code>fop.bat</code>, <code>fop.cmd</code> or <code>fop.js</code> on MS Windows, or <code>fop</code> on Unix/Linux from the FOP
+            distribution. 
           </li>
           <li>
             If this doesn't help, check whether still all the jar files
@@ -213,7 +210,7 @@
           If you run FOP embedded in your servlet, web application or
           other Java application, check the classpath of the
           application. Check the also the information pertaining to <link
-          href="0.95/servlets.html#servlet-engine">servlet engines</link>
+          href="1.0/servlets.html#servlet-engine">servlet engines</link>
           for further hints.
         </p>
         <p>
@@ -243,7 +240,7 @@
       <question>I get an OutOfMemoryException.</question>
       <answer>
         <p>
-          See <link href="0.95/running.html#memory">FOP Memory</link>.
+          See <link href="1.0/running.html#memory">FOP Memory</link>.
         </p>
       </answer>
     </faq>
@@ -304,7 +301,7 @@
         <p>
           If you use XSLT, problems in your style sheet and in your
           source XML also can produce a NullPointerException. <link
-          href="0.95/running.html#check-input">Run the transformation
+          href="1.0/running.html#check-input">Run the transformation
           separately</link> to check for this, usually you'll get a
           detailed error message from the XSLT processor.
         </p>
@@ -382,7 +379,7 @@
         </p>
         <p>
           Try also setting the <link
-          href="0.95/configuration.html#general-elements">font-base
+          href="1.0/configuration.html#general-elements">font-base
           configuration</link>.
         </p>
       </answer>
@@ -443,7 +440,7 @@ public class DefaultErrorListener implements ErrorListener {
         <p>
           To avoid the warning you can simply delete the
           old Font Cache file, which lives in ${base}\conf\font.cache (see <link
-          href="0.95/configuration.html#general-elements">font-base
+          href="1.0/configuration.html#general-elements">font-base
           configuration</link>). Or you can disable Font Caching altogether using
           the option "use-cache."
         </p>
@@ -453,7 +450,7 @@ public class DefaultErrorListener implements ErrorListener {
   <part id="part-output">
     <title>Problems with FOP output</title>
     <faq id="leader-expansion">
-      <question>Leaders don't work anymore in 0.94 or later. Instead of
+      <question>Leaders don't work in current FOP. Instead of
       filling the line, only three dots or a short ruler is
       output.</question>
       <answer>
@@ -534,7 +531,7 @@ Check the following:</p>
         <p>Other possibilities:</p>
         <ul>
           <li>The image format is not supported or not supported completely.
-          See <link href="0.95/graphics.html">FOP Graphics Formats</link> for a
+          See <link href="1.0/graphics.html">FOP Graphics Formats</link> for a
           list of supported formats and related issues.</li>
           <li>The graphic may be too large to fit into the intended space.</li>
           <li>There may be something (static content) that is obscuring the
@@ -546,14 +543,14 @@ Check the following:</p>
     <faq id="png-fails">
       <question>My graphical images do not work properly.</question>
       <answer>
-        <p>See <link href="0.95/graphics.html">FOP Graphics Formats</link> for a
+        <p>See <link href="1.0/graphics.html">FOP Graphics Formats</link> for a
         list of supported graphics formats and related issues.</p>
       </answer>
     </faq>
     <faq id="graphic-resolution">
       <question>Why is my graphic rendered at a different resolution than it was created?</question>
       <answer>
-        <p>See <link href="0.95/graphics.html#resolution">Graphics Resolution</link>.</p>
+        <p>See <link href="1.0/graphics.html#resolution">Graphics Resolution</link>.</p>
       </answer>
     </faq>
     <faq id="keep-with">
@@ -561,15 +558,10 @@ Check the following:</p>
       don't work.</question>
       <answer>
         <p>
-          These properties are not implemented on version 0.20.5 and earlier,
-          except on table rows. More recent FOP releases have extensive support for
-          these properties. The current release, FOP 0.95, still supports the
+		  Current FOP releases have extensive support for
+          these properties. The current release, FOP 1.0, still supports the
           values "always" and "never" only, no numerical values. There may be
           a few places where keep-* still don't work, this should be very rare.
-        </p>
-        <p>
-          If you still have to use FOP 0.20.5, you have to nest stuff to be
-          kept together in a table.
         </p>
         <p>
           The concept is called &#8220;blind table&#8221;. The table is used for
@@ -604,9 +596,7 @@ Check the following:</p>
       <question>My tables are missing, or missing their content.</question>
       <answer>
         <p>
-          Check for <code>fo:table-body</code> around the rows. FOP up to 0.20.4 doesn't
-          raise an error if it is omitted, it just drops the content. More
-          recent releases will catch this problem.
+          Check for <code>fo:table-body</code> around the rows. Usually FOP will catch this problem.
         </p>
         <p>
           Also, the <code>fo:table-with-caption</code> element is not implemented, tables
@@ -656,7 +646,7 @@ Check the following:</p>
       </answer>
     </faq>
     <faq id="keep-together">
-      <question>FOP 0.95 and FOP 0.94 behave differently when <code>keep-together="always"</code>
+      <question>FOP behaves differently from earlier versions when <code>keep-together="always"</code>
         is set on table cells</question>
       <answer>
         <p>Support for inline-level keeps has been added in FOP 0.95, and setting
@@ -712,7 +702,7 @@ Check the following:</p>
       <answer>
         <p>Make sure you have set the language and optionally the country attributes for an appropriate XSL-FO element (fo:page-sequence, fo:block or fo:character):</p>
         <source><![CDATA[<fo:page-sequence language="fi">]]></source>
-        <p>See <link href="0.95/hyphenation.html#support">Hyphenation Support</link> for details and instructions on using hyphenation with FOP.</p>
+        <p>See <link href="1.0/hyphenation.html#support">Hyphenation Support</link> for details and instructions on using hyphenation with FOP.</p>
         <p>Explicitly enable hyphenation for an appropriate XSL-FO element (fo:block, fo:character):</p>
         <source><![CDATA[<fo:block hyphenate="true">]]></source>
       </answer>
@@ -721,7 +711,6 @@ Check the following:</p>
       <question>When I use margins, my content in a nested table or block-containers gets indented twice. Is this a bug?</question>
       <answer>
         <p>
-          (Applies to version 0.90 and later)
           No, although you might easily think so. The problem has to do
           with property inheritance of the start-indent and end-indent
           properties to which the margin properties are mapped. Apache
@@ -747,7 +736,7 @@ Check the following:</p>
           than Java2D. These can lead to different layout decisions when the same document is
           rendered with different renderers. An alternative approach to fix this problem might be
           available but it hasn't been tested, yet. See also the
-          <link href="0.95/output.html#general-fonts">notes on fonts in the various output formats</link>.
+          <link href="1.0/output.html#general-fonts">notes on fonts in the various output formats</link>.
         </p>
       </answer>
     </faq>
@@ -758,7 +747,7 @@ Check the following:</p>
       <question>How do I use FOP in a servlet?</question>
       <answer>
         <p>
-          See <link href="0.95/servlets.html">Using FOP in a Servlet</link>.
+          See <link href="1.0/servlets.html">Using FOP in a Servlet</link>.
         </p>
       </answer>
     </faq>
@@ -767,7 +756,7 @@ Check the following:</p>
       transformation?</question>
       <answer>
         <p>
-          See <link href="0.95/servlets.html#xslt">Using FOP in a Servlet with XSLT Transformation</link>.
+          See <link href="1.0/servlets.html#xslt">Using FOP in a Servlet with XSLT Transformation</link>.
         </p>
       </answer>
     </faq>
@@ -775,7 +764,7 @@ Check the following:</p>
       <question>How do I pass parameters to the XSLT transformation?</question>
       <answer>
         <p>
-          See <link href="0.95/servlets.html#xslt">Using FOP in a Servlet with XSLT Transformation</link>.
+          See <link href="1.0/servlets.html#xslt">Using FOP in a Servlet with XSLT Transformation</link>.
         </p>
       </answer>
     </faq>
@@ -793,7 +782,7 @@ Check the following:</p>
       <question>How do I set the baseDir property in a servlet environment?</question>
       <answer>
         <p>
-          See <link href="0.95/embedding.html#config-internal">Setting the Configuration Programmatically</link>.
+          See <link href="1.0/embedding.html#config-internal">Setting the Configuration Programmatically</link>.
         </p>
       </answer>
     </faq>
@@ -801,7 +790,7 @@ Check the following:</p>
       <question>How do I use a user configuration file from a servlet?</question>
       <answer>
         <p>
-          See <link href="0.95/embedding.html#config-external">Using a Configuration File in an Embedded App</link>.
+          See <link href="1.0/embedding.html#config-external">Using a Configuration File in an Embedded App</link>.
         </p>
       </answer>
     </faq>
@@ -810,7 +799,7 @@ Check the following:</p>
         get FOP working for various servlet engines?</question>
       <answer>
         <p>
-          See <link href="0.95/servlets.html#servlet-engine">Servlet Engines</link>.
+          See <link href="1.0/servlets.html#servlet-engine">Servlet Engines</link>.
         </p>
       </answer>
     </faq>
@@ -818,7 +807,7 @@ Check the following:</p>
       <question>Can FOP be used in multithreaded environments?</question>
       <answer>
         <p>
-          See <link href="0.95/embedding.html#multithreading">Multithreading FOP</link>.
+          See <link href="1.0/embedding.html#multithreading">Multithreading FOP</link>.
         </p>
       </answer>
     </faq>
@@ -829,13 +818,13 @@ Check the following:</p>
       <question>The rendering of SVG text in my PDF is of poor quality.
 Can I control this?</question>
       <answer>
-        <p>See <link href="0.95/graphics.html#svg-pdf-text">Placing SVG Text into PDF</link>.</p>
+        <p>See <link href="1.0/graphics.html#svg-pdf-text">Placing SVG Text into PDF</link>.</p>
       </answer>
     </faq>
     <faq id="svg-headless">
       <question>How do I use FOP with SVG on headless servers?</question>
       <answer>
-        <p>See <link href="0.95/graphics.html#batik">FOP: Graphics (Batik)</link>.</p>
+        <p>See <link href="1.0/graphics.html#batik">FOP: Graphics (Batik)</link>.</p>
       </answer>
     </faq>
     <faq id="svghangs">
@@ -898,14 +887,14 @@ Can I control this?</question>
     <faq id="svg-scaling">
       <question>Why is my SVG rendered at a size different from that specified in my fo:external-graphic element?</question>
       <answer>
-        <p>See <link href="0.95/graphics.html#svg-scaling">SVG Scaling</link>.</p>
+        <p>See <link href="1.0/graphics.html#svg-scaling">SVG Scaling</link>.</p>
       </answer>
     </faq>
     <faq id="svg-attribute-required">
       <question>FOP fails with something like "The attribute "width" of the element &lt;rect&gt; is required". What's wrong?</question>
       <answer>
         <p>
-          This phenomenon occurs since FOP 0.92 beta. It surfaced due to a change in the handling of non-FO namespaces. It's not a
+          This phenomenon is not a
           bug in FOP, but rather in the dependent packages: Apache Batik, Apache Xalan-J and SAXON. The bug in Apache Batik will be
           fixed in the next release. In the latest release of Apache Xalan-J, the bug is already fixed. It only occurs in the Xalan
           version bundled with Sun's JVM, because Sun uses a rather old version.
@@ -931,7 +920,7 @@ Can I control this?</question>
       <question>How do I embed fonts in PDF?</question>
       <answer>
         <p>
-          See the <link href="0.95/fonts.html">Fonts</link> page for information
+          See the <link href="1.0/fonts.html">Fonts</link> page for information
           about embedding fonts.
         </p>
       </answer>
@@ -950,7 +939,7 @@ Can I control this?</question>
           set. For a variety of reasons, even those are not completely
           guaranteed to work, for example you can't use the fi
           ligature from the standard serif font. Check the <link
-          href="0.95/output.html#pdf-fonts">overview</link> for the default
+          href="1.0/output.html#pdf-fonts">overview</link> for the default
           PDF fonts.
         </p>
         <p>
@@ -958,7 +947,7 @@ Can I control this?</question>
           the desired character. Furthermore the font must be
           available on the machine where the PDF is viewed or it must
           have been embedded in the PDF file. See <link
-          href="0.95/fonts.html">embedding fonts</link>.
+          href="1.0/fonts.html">embedding fonts</link>.
         </p>
         <p>
           For most symbols, it is better to select the symbol font
@@ -976,7 +965,7 @@ Can I control this?</question>
     <faq id="pdf-postprocess">
       <question>What tools are available for post-processing my PDF document?</question>
       <answer>
-        <p>See <link href="0.95/output.html#pdf-postprocess">PDF Post-processing</link>.</p>
+        <p>See <link href="1.0/output.html#pdf-postprocess">PDF Post-processing</link>.</p>
       </answer>
     </faq>
     <faq id="pdf-security">
@@ -984,8 +973,8 @@ Can I control this?</question>
       to my PDF document?</question>
       <answer>
         <p>
-          See <link href="0.95/pdfencryption.html">PDF Encryption</link>.
-          See also <link href="0.95/output.html#pdf-postprocess">PDF Post-processing</link>.
+          See <link href="1.0/pdfencryption.html">PDF Encryption</link>.
+          See also <link href="1.0/output.html#pdf-postprocess">PDF Post-processing</link>.
         </p>
       </answer>
     </faq>
@@ -993,13 +982,13 @@ Can I control this?</question>
       <question>How do I add document properties (title, author, etc.) to my
       PDF document?</question>
       <answer>
-        <p>See <link href="0.95/metadata.html">Metadata</link>.</p>
+        <p>See <link href="1.0/metadata.html">Metadata</link>.</p>
       </answer>
     </faq>
     <faq id="pdf-watermark">
       <question>How do I add watermarks to my PDF document?</question>
       <answer>
-        <p>See <link href="0.95/output.html#pdf-watermark">PDF Watermarks</link>.</p>
+        <p>See <link href="1.0/output.html#pdf-watermark">PDF Watermarks</link>.</p>
       </answer>
     </faq>
     <faq id="pdf-print-contortion">
@@ -1018,7 +1007,7 @@ Can I control this?</question>
       <question>How do I control the Acrobat bookmark display?</question>
       <answer>
         <p>
-          FOP versions 0.93 and later support the starting-state property of the XSL 1.1
+          FOP supports the starting-state property of the XSL 1.1
           <link href="http://www.w3.org/TR/xsl11/#fo_bookmark">fo:bookmark</link>
           element which can be used for this. The color, font-style and
           font-weight properties on
@@ -1035,7 +1024,7 @@ Can I control this?</question>
       <answer>
         <p>
           This is a problem of Internet Explorer requesting the content several
-          times. Please see the <link href="0.95/servlets.html#ie">notes on Internet Explorer</link>
+          times. Please see the <link href="1.0/servlets.html#ie">notes on Internet Explorer</link>
           for more information.
         </p>
       </answer>
