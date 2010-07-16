@@ -28,8 +28,8 @@
     <section id="overview">
       <title>Overview</title>
       <warning>
-        Support for PDF/X was made available beginning with version 0.93.
-        This feature is new and may not be 100% complete, yet. Feedback is welcome.
+        Support for PDF/X is available beginning with version 0.93. This feature is new and
+        may not be 100% complete, yet. Feedback is welcome.
       </warning>
       <p>
         PDF/X is a standard which faciliates prepress digital data exchange using PDF.

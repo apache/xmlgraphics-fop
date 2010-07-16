@@ -556,13 +556,12 @@
       <th rowspan="2" align="center">Citation</th>
       <th rowspan="2">Object Name</th>
       <th rowspan="2" align="center">XSL-FO Conformance Level</th>
-      <th colspan="4" align="center">Support&nbsp;in&nbsp;FOP</th>
+      <th colspan="3" align="center">Support&nbsp;in&nbsp;FOP</th>
       <th rowspan="2">Comments</th>
     </tr>
     <tr>
-      <th align="center">0.20.5 (ancient)</th>
-      <th align="center">0.94 (stable)</th>
       <th align="center">0.95 (stable)</th>
+      <th align="center">1.0 (stable)</th>
       <th align="center">develop- ment</th>
     </tr>
 
@@ -580,7 +579,6 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -588,7 +586,6 @@
       "http://www.w3.org/TR/xsl/#fo_declarations">&sect;6.4.3</a></td>
       <td><a name="fo-object-declarations" id="fo-object-declarations">declarations</a></td>
       <td class="basic">Basic</td>
-      <td class="no">no</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -599,7 +596,6 @@
       "http://www.w3.org/TR/xsl/#fo_color-profile">&sect;6.4.4</a></td>
       <td><a name="fo-object-color-profile" id="fo-object-color-profile">color-profile</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -610,7 +606,6 @@
       "http://www.w3.org/TR/xsl/#fo_page-sequence">&sect;6.4.5</a></td>
       <td><a name="fo-object-page-sequence" id="fo-object-page-sequence">page-sequence</a></td>
       <td class="basic">Basic</td>
-      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -625,7 +620,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -634,7 +628,6 @@
       <td><a name="fo-object-layout-master-set" id=
       "fo-object-layout-master-set">layout-master-set</a></td>
       <td class="basic">Basic</td>
-      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -649,7 +642,6 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -661,7 +653,6 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -670,7 +661,6 @@
       <td><a name="fo-object-repeatable-page-master-reference" id=
       "fo-object-repeatable-page-master-reference">repeatable-page-master-reference</a></td>
       <td class="basic">Basic</td>
-      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -686,7 +676,6 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -699,7 +688,6 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -708,23 +696,17 @@
       <td><a name="fo-object-simple-page-master" id=
       "fo-object-simple-page-master">simple-page-master</a></td>
       <td class="basic">Basic</td>
-      <td class="yes">yes</td>
       <td class="partial">partial</td>
       <td class="partial">partial</td>
       <td class="partial">partial</td>
-      <td>
-        <ul>
-          <li>[0.94 and later] The page width may not change among pages of the same page-sequence
-          unless a forced break is inserted.</li>
-        </ul>
-      </td>
+      <td>The page width may not change among pages of the same page-sequence
+          unless a forced break is inserted.</td>
     </tr>
     <tr>
       <td align="center"><a href=
       "http://www.w3.org/TR/xsl/#fo_region-body">&sect;6.4.14</a></td>
       <td><a name="fo-object-region-body" id="fo-object-region-body">region-body</a></td>
       <td class="basic">Basic</td>
-      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -738,7 +720,6 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -746,7 +727,6 @@
       "http://www.w3.org/TR/xsl/#fo_region-after">&sect;6.4.16</a></td>
       <td><a name="fo-object-region-after" id="fo-object-region-after">region-after</a></td>
       <td class="extended">Extended</td>
-      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -760,7 +740,6 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -768,7 +747,6 @@
       "http://www.w3.org/TR/xsl/#fo_region-end">&sect;6.4.18</a></td>
       <td><a name="fo-object-region-end" id="fo-object-region-end">region-end</a></td>
       <td class="extended">Extended</td>
-      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -782,7 +760,6 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -793,7 +770,6 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -801,7 +777,6 @@
       "http://www.w3.org/TR/xsl/#fo_title">&sect;6.4.21</a></td>
       <td><a name="fo-object-title" id="fo-object-title">title</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -815,7 +790,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -823,7 +797,6 @@
       "http://www.w3.org/TR/xsl/#fo_flow-assignment">&sect;6.4.23</a></td>
       <td><a name="fo-object-flow-assignment" id="fo-object-flow-assignment">flow-assignment</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
@@ -837,7 +810,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -845,7 +817,6 @@
       "http://www.w3.org/TR/xsl/#fo_flow-name-specifier">&sect;6.4.25</a></td>
       <td><a name="fo-object-flow-name-specifier" id="fo-object-flow-name-specifier">flow-name-specifier</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
@@ -859,7 +830,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -867,7 +837,6 @@
       "http://www.w3.org/TR/xsl/#fo_region-name-specifier">&sect;6.4.27</a></td>
       <td><a name="fo-object-region-name-specifier" id="fo-object-region-name-specifier">region-name-specifier</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
@@ -888,7 +857,6 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -900,16 +868,7 @@
       <td class="partial">partial</td>
       <td class="partial">partial</td>
       <td class="partial">partial</td>
-      <td class="partial">partial</td>
-      <td>
-        <ul>
-          <li>[0.20.5] Only works as direct child of fo:flow.</li>
-          <li>[0.20.5] For absolute positioning, use 'position="absolute"' (as
-          'absolute-position="absolute"' is not implemented), and specify all four of "left",
-          "top", "width" and "height"</li>
-          <li>[0.94 and later] No known restrictions.</li>
-        </ul>
-      </td>
+      <td>&nbsp;</td>
     </tr>
 
     <tr>
@@ -926,7 +885,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -934,7 +892,6 @@
       "http://www.w3.org/TR/xsl/#fo_character">&sect;6.6.3</a></td>
       <td><a name="fo-object-character" id="fo-object-character">character</a></td>
       <td class="basic">Basic</td>
-      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -949,7 +906,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -958,7 +914,6 @@
       <td><a name="fo-object-external-graphic" id=
       "fo-object-external-graphic">external-graphic</a></td>
       <td class="basic">Basic</td>
-      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -973,20 +928,14 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
-      <td>
-        <ul>
-          <li>Built-in support for SVG only, additional namespaces through optional
-          extensions.</li>
-        </ul>
-      </td>
+      <td>Built-in support for SVG only, additional namespaces through optional
+          extensions.</td>
     </tr>
     <tr>
       <td align="center"><a href=
       "http://www.w3.org/TR/xsl/#fo_inline">&sect;6.6.7</a></td>
       <td><a name="fo-object-inline" id="fo-object-inline">inline</a></td>
       <td class="basic">Basic</td>
-      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -1001,7 +950,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -1009,7 +957,6 @@
       "http://www.w3.org/TR/xsl/#fo_leader">&sect;6.6.9</a></td>
       <td><a name="fo-object-leader" id="fo-object-leader">leader</a></td>
       <td class="basic">Basic</td>
-      <td class="partial">partial</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -1020,7 +967,6 @@
       "http://www.w3.org/TR/xsl/#fo_page-number">&sect;6.6.10</a></td>
       <td><a name="fo-object-page-number" id="fo-object-page-number">page-number</a></td>
       <td class="basic">Basic</td>
-      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -1035,16 +981,8 @@
       <td class="partial">partial</td>
       <td class="partial">partial</td>
       <td class="partial">partial</td>
-      <td class="partial">partial</td>
-      <td>
-        <ul>
-          <li>[0.20.5] Only works for table of contents without any problems. The case where the
-          page number doesn't fit on a line isn't handled, and any text on the same line and after
-          the page-number might not appear exactly where you want it to.</li>
-          <li>[0.94 and later] After the page number is known, no relayout is performed. The
-          appearance may be suboptimal depending on the use case.</li>
-        </ul>
-      </td>
+      <td>After the page number is known, no relayout is performed. The
+          appearance may be suboptimal depending on the use case.</td>
     </tr>
     <tr>
       <td align="center"><a href=
@@ -1052,14 +990,13 @@
       <td><a name="fo-object-page-number-citation-last" id=
       "fo-object-page-number-citation-last">page-number-citation-last</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="partial">partial</td>
       <td class="partial">partial</td>
       <td class="partial">partial</td>
       <td>
         <ul>
-          <li>[0.94 and 0.95] Works only for page-sequence so far.</li>
-          <li>[0.94 and later] After the page number is known, no relayout is performed. The
+          <li>Works only for page-sequence so far.</li>
+          <li>After the page number is known, no relayout is performed. The
           appearance may be suboptimal depending on the use case.</li>
         </ul>
       </td>
@@ -1070,7 +1007,6 @@
       <td><a name="fo-object-folio-prefix" id=
       "fo-object-folio-prefix">folio-prefix</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
@@ -1085,7 +1021,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -1094,7 +1029,6 @@
       <td><a name="fo-object-scaling-value-citation" id=
       "fo-object-scaling-value-citation">scaling-value-citation</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
@@ -1116,7 +1050,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -1127,35 +1060,23 @@
       <td class="partial">partial</td>
       <td class="partial">partial</td>
       <td class="partial">partial</td>
-      <td class="partial">partial</td>
-      <td>
-        <ul>
-          <li>[0.20.5] Only border-collapse="separate"</li>
-          <li>[All] No support for auto layout yet</li>
-        </ul>
-      </td>
+      <td>No support for auto layout yet</td>
     </tr>
     <tr>
       <td align="center"><a href=
       "http://www.w3.org/TR/xsl/#fo_table-column">&sect;6.7.4</a></td>
       <td><a name="fo-object-table-column" id="fo-object-table-column">table-column</a></td>
       <td class="basic">Basic</td>
-      <td class="partial">partial</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td>
-        <ul>
-          <li>[0.20.5] You must explicitly specify column widths.</li>
-        </ul>
-      </td>
+      <td>&nbsp;</td>
     </tr>
     <tr>
       <td align="center"><a href=
       "http://www.w3.org/TR/xsl/#fo_table-caption">&sect;6.7.5</a></td>
       <td><a name="fo-object-table-caption" id="fo-object-table-caption">table-caption</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
@@ -1169,7 +1090,6 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -1177,7 +1097,6 @@
       "http://www.w3.org/TR/xsl/#fo_table-footer">&sect;6.7.7</a></td>
       <td><a name="fo-object-table-footer" id="fo-object-table-footer">table-footer</a></td>
       <td class="extended">Extended</td>
-      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -1191,7 +1110,6 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -1202,7 +1120,6 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -1210,7 +1127,6 @@
       "http://www.w3.org/TR/xsl/#fo_table-cell">&sect;6.7.10</a></td>
       <td><a name="fo-object-table-cell" id="fo-object-table-cell">table-cell</a></td>
       <td class="basic">Basic</td>
-      <td class="partial">partial</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -1231,7 +1147,6 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -1239,7 +1154,6 @@
       "http://www.w3.org/TR/xsl/#fo_list-item">&sect;6.8.3</a></td>
       <td><a name="fo-object-list-item" id="fo-object-list-item">list-item</a></td>
       <td class="basic">Basic</td>
-      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -1253,7 +1167,6 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -1262,7 +1175,6 @@
       <td><a name="fo-object-list-item-label" id=
       "fo-object-list-item-label">list-item-label</a></td>
       <td class="extended">Extended</td>
-      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -1283,19 +1195,13 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
-      <td>
-        <ul>
-          <li>both internal and external supported</li>
-        </ul>
-      </td>
+      <td>both internal and external supported</td>
     </tr>
     <tr>
       <td align="center"><a href=
       "http://www.w3.org/TR/xsl/#fo_multi-switch">&sect;6.9.3</a></td>
       <td><a name="fo-object-multi-switch" id="fo-object-multi-switch">multi-switch</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
@@ -1309,7 +1215,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -1317,7 +1222,6 @@
       "http://www.w3.org/TR/xsl/#fo_multi-toggle">&sect;6.9.5</a></td>
       <td><a name="fo-object-multi-toggle" id="fo-object-multi-toggle">multi-toggle</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
@@ -1332,7 +1236,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -1341,7 +1244,6 @@
       <td><a name="fo-object-multi-property-set" id=
       "fo-object-multi-property-set">multi-property-set</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
@@ -1362,7 +1264,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -1370,7 +1271,6 @@
       <td><a name="fo-object-index-page-number-suffix" id=
       "fo-object-index-page-number-suffix">index-page-number-suffix</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
@@ -1384,7 +1284,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -1392,7 +1291,6 @@
       <td><a name="fo-object-index-range-end" id=
       "fo-object-index-range-end">index-range-end</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
@@ -1406,7 +1304,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -1414,7 +1311,6 @@
       <td><a name="fo-object-index-page-citation-list" id=
       "fo-object-index-page-citation-list">index-page-citation-list</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
@@ -1428,7 +1324,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -1436,7 +1331,6 @@
       <td><a name="fo-object-index-page-citation-range-separator" id=
       "fo-object-index-page-citation-range-separator">index-page-citation-range-separator</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
@@ -1453,45 +1347,28 @@
       <td align="center"><a href="http://www.w3.org/TR/xsl11/#fo_bookmark-tree">&sect;6.11.1</a></td>
       <td><a name="fo-object-bookmark-tree" id="fo-object-bookmark-tree">bookmark-tree</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td>
-        <ul>
-          <li>[0.20.5] Uses the proprietary fox:outline extension.</li>
-        </ul>
-      </td>
+      <td>&nbsp;</td>
     </tr>
     <tr>
       <td align="center"><a href="http://www.w3.org/TR/xsl11/#fo_bookmark">&sect;6.11.2</a></td>
       <td><a name="fo-object-bookmark" id="fo-object-bookmark">bookmark</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="partial">partial</td>
       <td class="partial">partial</td>
       <td class="partial">partial</td>
-      <td>
-        <ul>
-          <li>[0.20.5] Uses the proprietary fox:outline extension.</li>
-          <li>[0.94 and later] external-destination is not yet supported.</li>
-        </ul>
-      </td>
+      <td>external-destination is not yet supported.</td>
     </tr>
     <tr>
       <td align="center"><a href="http://www.w3.org/TR/xsl11/#fo_bookmark-title">&sect;6.11.3</a></td>
       <td><a name="fo-object-bookmark-title" id="fo-object-bookmark-title">bookmark-title</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="partial">partial</td>
       <td class="partial">partial</td>
       <td class="partial">partial</td>
-      <td>
-        <ul>
-          <li>[0.20.5] Uses the proprietary fox:outline extension.</li>
-          <li>[0.94 and later] color, font-style and font-weight are not supported, yet.</li>
-        </ul>
-      </td>
+      <td>color, font-style and font-weight are not supported, yet.</td>
     </tr>
 
     <tr>
@@ -1508,7 +1385,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -1516,23 +1392,16 @@
       "http://www.w3.org/TR/xsl/#fo_footnote">&sect;6.12.3</a></td>
       <td><a name="fo-object-footnote" id="fo-object-footnote">footnote</a></td>
       <td class="extended">Extended</td>
-      <td class="yes">yes</td>
       <td class="partial">partial</td>
       <td class="partial">partial</td>
       <td class="partial">partial</td>
-      <td>
-        <ul>
-          <li>[0.20.5] Footnotes sometimes overlap with the main content</li>
-          <li>[0.94 and later] Restrictions with multi-column documents.</li>
-        </ul>
-      </td>
+      <td>Restrictions with multi-column documents.</td>
     </tr>
     <tr>
       <td align="center"><a href=
       "http://www.w3.org/TR/xsl/#fo_footnote-body">&sect;6.12.4</a></td>
       <td><a name="fo-object-footnote-body" id="fo-object-footnote-body">footnote-body</a></td>
       <td class="extended">Extended</td>
-      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -1553,7 +1422,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -1564,7 +1432,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -1572,22 +1439,16 @@
       "http://www.w3.org/TR/xsl/#fo_wrapper">&sect;6.13.4</a></td>
       <td><a name="fo-object-wrapper" id="fo-object-wrapper">wrapper</a></td>
       <td class="basic">Basic</td>
-      <td class="yes">yes</td>
-      <td class="partial">partial</td>
       <td class="partial">partial</td>
       <td class="yes">yes</td>
-      <td>
-        <ul>
-          <li>[0.95] Only works as expected with inline-level content.</li>
-        </ul>
-      </td>
+      <td class="yes">yes</td>
+      <td>Only works as expected with inline-level content.</td>
     </tr>
     <tr>
       <td align="center"><a href=
       "http://www.w3.org/TR/xsl/#fo_marker">&sect;6.13.5</a></td>
       <td><a name="fo-object-marker" id="fo-object-marker">marker</a></td>
       <td class="extended">Extended</td>
-      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -1602,7 +1463,6 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -1613,12 +1473,7 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
-      <td>
-        <ul>
-          <li>[0.20.5] Uses the proprietary fox:outline extension to mimic table continued</li>
-        </ul>
-      </td>
+      <td>&nbsp;</td>
     </tr>
   </table>
 
@@ -1632,13 +1487,12 @@
       <th rowspan="2" align="center">Citation</th>
       <th rowspan="2">Property Name</th>
       <th rowspan="2" align="center">XSL-FO Conformance Level</th>
-      <th colspan="4" align="center">Support&nbsp;in&nbsp;FOP</th>
+      <th colspan="3" align="center">Support&nbsp;in&nbsp;FOP</th>
       <th rowspan="2">Comments</th>
     </tr>
     <tr>
-      <th align="center">0.20.5 (ancient)</th>
-      <th align="center">0.94 (stable)</th>
       <th align="center">0.95 (stable)</th>
+      <th align="center">1.0 (stable)</th>
       <th align="center">develop- ment</th>
     </tr>
 
@@ -1657,7 +1511,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -1665,7 +1518,6 @@
       "http://www.w3.org/TR/xsl/#role">&sect;7.5.2</a></td>
       <td><a name="fo-property-role" id="fo-property-role">role</a></td>
       <td class="basic">Basic</td>
-      <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
@@ -1684,23 +1536,16 @@
       <td><a name="fo-property-absolute-position" id=
       "fo-property-absolute-position">absolute-position</a></td>
       <td class="complete">Complete</td>
-      <td class="no">no</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td>
-        <ul>
-          <li>[0.20.5] Use shorthand position="absolute" as a workaround.</li>
-          <li>[0.94 and later] No restrictions. The 0.20.5 work-around is not supported.</li>
-        </ul>
-      </td>
+      <td>&nbsp;</td>
     </tr>
     <tr>
       <td align="center"><a href=
       "http://www.w3.org/TR/xsl/#top">&sect;7.6.2</a></td>
       <td><a name="fo-property-top" id="fo-property-top">top</a></td>
       <td class="extended">Extended</td>
-      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -1714,7 +1559,6 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -1725,7 +1569,6 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -1733,7 +1576,6 @@
       "http://www.w3.org/TR/xsl/#left">&sect;7.6.5</a></td>
       <td><a name="fo-property-left" id="fo-property-left">left</a></td>
       <td class="extended">Extended</td>
-      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -1961,7 +1803,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -1971,15 +1812,9 @@
       "fo-property-background-color">background-color</a></td>
       <td class="basic">Basic</td>
       <td class="yes">yes</td>
-      <td class="partial">partial</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td>
-        <ul>
-          <li>[0.94] not yet implemented for table-column, table-body, table-header and
-          table-footer.</li>
-        </ul>
-      </td>
+      <td>&nbsp;</td>
     </tr>
     <tr>
       <td align="center"><a href=
@@ -1988,15 +1823,9 @@
       "fo-property-background-image">background-image</a></td>
       <td class="extended">Extended</td>
       <td class="yes">yes</td>
-      <td class="partial">partial</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td>
-        <ul>
-          <li>[0.94] not yet implemented for table-column, table-body, table-header and
-          table-footer.</li>
-        </ul>
-      </td>
+      <td>&nbsp;</td>
     </tr>
     <tr>
       <td align="center"><a href=
@@ -2004,7 +1833,6 @@
       <td><a name="fo-property-background-repeat" id=
       "fo-property-background-repeat">background-repeat</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -2016,11 +1844,10 @@
       <td><a name="fo-property-background-position-horizontal" id=
       "fo-property-background-position-horizontal">background-position-horizontal</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="partial">partial</td>
       <td class="partial">partial</td>
       <td class="partial">partial</td>
-      <td align="center">[0.94 and later] Ignored when background-repeat set to
+      <td align="center">Ignored when background-repeat set to
       "repeat" or "repeat-x"</td>
     </tr>
     <tr>
@@ -2029,11 +1856,10 @@
       <td><a name="fo-property-background-position-vertical" id=
       "fo-property-background-position-vertical">background-position-vertical</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="partial">partial</td>
       <td class="partial">partial</td>
       <td class="partial">partial</td>
-      <td align="center">[0.94 and later] Ignored when background-repeat set to
+      <td align="center">Ignored when background-repeat set to
       "repeat" or "repeat-y"</td>
     </tr>
     <tr>
@@ -2045,7 +1871,6 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -2054,15 +1879,10 @@
       <td><a name="fo-property-border-before-style" id=
       "fo-property-border-before-style">border-before-style</a></td>
       <td class="basic">Basic</td>
-      <td class="partial">partial</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td>
-        <ul>
-          <li>[0.20.5] only "solid" works</li>
-        </ul>
-      </td>
+      <td>&nbsp;</td>
     </tr>
     <tr>
       <td align="center"><a href=
@@ -2071,14 +1891,9 @@
       "fo-property-border-before-width">border-before-width</a></td>
       <td class="basic">Basic</td>
       <td class="yes">yes</td>
-      <td class="partial">partial</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td>
-        <ul>
-          <li>[0.94] .conditionality not supported on fo:table-cell</li>
-        </ul>
-      </td>
+      <td>&nbsp;</td>
     </tr>
     <tr>
       <td align="center"><a href=
@@ -2086,7 +1901,6 @@
       <td><a name="fo-property-border-after-color" id=
       "fo-property-border-after-color">border-after-color</a></td>
       <td class="basic">Basic</td>
-      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -2098,15 +1912,10 @@
       <td><a name="fo-property-border-after-style" id=
       "fo-property-border-after-style">border-after-style</a></td>
       <td class="basic">Basic</td>
-      <td class="partial">partial</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td>
-        <ul>
-          <li>[0.20.5] only "solid" works</li>
-        </ul>
-      </td>
+      <td>&nbsp;</td>
     </tr>
     <tr>
       <td align="center"><a href=
@@ -2115,14 +1924,9 @@
       "fo-property-border-after-width">border-after-width</a></td>
       <td class="basic">Basic</td>
       <td class="yes">yes</td>
-      <td class="partial">partial</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td>
-        <ul>
-          <li>[0.94] .conditionality not supported on fo:table-cell</li>
-        </ul>
-      </td>
+      <td>&nbsp;</td>
     </tr>
     <tr>
       <td align="center"><a href=
@@ -2130,7 +1934,6 @@
       <td><a name="fo-property-border-start-color" id=
       "fo-property-border-start-color">border-start-color</a></td>
       <td class="basic">Basic</td>
-      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -2142,15 +1945,10 @@
       <td><a name="fo-property-border-start-style" id=
       "fo-property-border-start-style">border-start-style</a></td>
       <td class="basic">Basic</td>
-      <td class="partial">partial</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td>
-        <ul>
-          <li>[0.20.5] only "solid" works</li>
-        </ul>
-      </td>
+      <td>&nbsp;</td>
     </tr>
     <tr>
       <td align="center"><a href=
@@ -2158,7 +1956,6 @@
       <td><a name="fo-property-border-start-width" id=
       "fo-property-border-start-width">border-start-width</a></td>
       <td class="basic">Basic</td>
-      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -2173,7 +1970,6 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -2182,15 +1978,10 @@
       <td><a name="fo-property-border-end-style" id=
       "fo-property-border-end-style">border-end-style</a></td>
       <td class="basic">Basic</td>
-      <td class="partial">partial</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td>
-        <ul>
-          <li>[0.20.5] only "solid" works</li>
-        </ul>
-      </td>
+      <td>&nbsp;</td>
     </tr>
     <tr>
       <td align="center"><a href=
@@ -2198,7 +1989,6 @@
       <td><a name="fo-property-border-end-width" id=
       "fo-property-border-end-width">border-end-width</a></td>
       <td class="basic">Basic</td>
-      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -2213,7 +2003,6 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -2222,23 +2011,16 @@
       <td><a name="fo-property-border-top-style" id=
       "fo-property-border-top-style">border-top-style</a></td>
       <td class="basic">Basic</td>
-      <td class="partial">partial</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td>
-        <ul>
-          <li>[0.20.5] only "solid" works</li>
-        </ul>
-      </td>
-    </tr>
+<td>&nbsp;</td>    </tr>
     <tr>
       <td align="center"><a href=
       "http://www.w3.org/TR/xsl/#border-top-width">&sect;7.8.21</a></td>
       <td><a name="fo-property-border-top-width" id=
       "fo-property-border-top-width">border-top-width</a></td>
       <td class="basic">Basic</td>
-      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -2253,7 +2035,6 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -2262,23 +2043,16 @@
       <td><a name="fo-property-border-bottom-style" id=
       "fo-property-border-bottom-style">border-bottom-style</a></td>
       <td class="basic">Basic</td>
-      <td class="partial">partial</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td>
-        <ul>
-          <li>[0.20.5] only "solid" works</li>
-        </ul>
-      </td>
-    </tr>
+<td>&nbsp;</td>    </tr>
     <tr>
       <td align="center"><a href=
       "http://www.w3.org/TR/xsl/#border-bottom-width">&sect;7.8.24</a></td>
       <td><a name="fo-property-border-bottom-width" id=
       "fo-property-border-bottom-width">border-bottom-width</a></td>
       <td class="basic">Basic</td>
-      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -2293,7 +2067,6 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -2302,23 +2075,16 @@
       <td><a name="fo-property-border-left-style" id=
       "fo-property-border-left-style">border-left-style</a></td>
       <td class="basic">Basic</td>
-      <td class="partial">partial</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td>
-        <ul>
-          <li>[0.20.5] only "solid" works</li>
-        </ul>
-      </td>
-    </tr>
+<td>&nbsp;</td>    </tr>
     <tr>
       <td align="center"><a href=
       "http://www.w3.org/TR/xsl/#border-left-width">&sect;7.8.27</a></td>
       <td><a name="fo-property-border-left-width" id=
       "fo-property-border-left-width">border-left-width</a></td>
       <td class="basic">Basic</td>
-      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -2333,7 +2099,6 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -2342,23 +2107,16 @@
       <td><a name="fo-property-border-right-style" id=
       "fo-property-border-right-style">border-right-style</a></td>
       <td class="basic">Basic</td>
-      <td class="partial">partial</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td>
-        <ul>
-          <li>[0.20.5] only "solid" works</li>
-        </ul>
-      </td>
-    </tr>
+<td>&nbsp;</td>    </tr>
     <tr>
       <td align="center"><a href=
       "http://www.w3.org/TR/xsl/#border-right-width">&sect;7.8.30</a></td>
       <td><a name="fo-property-border-right-width" id=
       "fo-property-border-right-width">border-right-width</a></td>
       <td class="basic">Basic</td>
-      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -2370,79 +2128,50 @@
       <td><a name="fo-property-padding-before" id=
       "fo-property-padding-before">padding-before</a></td>
       <td class="basic">Basic</td>
-      <td class="partial">partial</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td>
-        <ul>
-          <li>[0.20.5] only one value allowed</li>
-          <li>[0.20.5] only implemented for blocks</li>
-          <li>[0.20.5] can't be used to make extra space (use indents + spaces instead)</li>
-          <li>[0.20.5] can be used to control how much the background-color extends beyond the
-          content rectangle</li>
-        </ul>
-      </td>
+      <td>&nbsp;</td>
     </tr>
     <tr>
       <td align="center"><a href=
       "http://www.w3.org/TR/xsl/#padding-after">&sect;7.8.32</a></td>
       <td><a name="fo-property-padding-after" id="fo-property-padding-after">padding-after</a></td>
       <td class="basic">Basic</td>
-      <td class="partial">partial</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td>
-        <ul>
-          <li>[0.20.5] same limitations as padding-before</li>
-        </ul>
-      </td>
+      <td>&nbsp;</td>
     </tr>
     <tr>
       <td align="center"><a href=
       "http://www.w3.org/TR/xsl/#padding-start">&sect;7.8.33</a></td>
       <td><a name="fo-property-padding-start" id="fo-property-padding-start">padding-start</a></td>
       <td class="basic">Basic</td>
-      <td class="partial">partial</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td>
-        <ul>
-          <li>[0.20.5] same limitations as padding-before</li>
-        </ul>
-      </td>
+      <td>&nbsp;</td>
     </tr>
     <tr>
       <td align="center"><a href=
       "http://www.w3.org/TR/xsl/#padding-end">&sect;7.8.34</a></td>
       <td><a name="fo-property-padding-end" id="fo-property-padding-end">padding-end</a></td>
       <td class="basic">Basic</td>
-      <td class="partial">partial</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td>
-        <ul>
-          <li>[0.20.5] same limitations as padding-before</li>
-        </ul>
-      </td>
+      <td>&nbsp;</td>
     </tr>
     <tr>
       <td align="center"><a href=
       "http://www.w3.org/TR/xsl/#padding-top">&sect;7.8.35</a></td>
       <td><a name="fo-property-padding-top" id="fo-property-padding-top">padding-top</a></td>
       <td class="basic">Basic</td>
-      <td class="partial">partial</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td>
-        <ul>
-          <li>[0.20.5] same limitations as padding-before</li>
-        </ul>
-      </td>
+      <td>&nbsp;</td>
     </tr>
     <tr>
       <td align="center"><a href=
@@ -2450,45 +2179,30 @@
       <td><a name="fo-property-padding-bottom" id=
       "fo-property-padding-bottom">padding-bottom</a></td>
       <td class="basic">Basic</td>
-      <td class="partial">partial</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td>
-        <ul>
-          <li>[0.20.5] same limitations as padding-before</li>
-        </ul>
-      </td>
+      <td>&nbsp;</td>
     </tr>
     <tr>
       <td align="center"><a href=
       "http://www.w3.org/TR/xsl/#padding-left">&sect;7.8.37</a></td>
       <td><a name="fo-property-padding-left" id="fo-property-padding-left">padding-left</a></td>
       <td class="basic">Basic</td>
-      <td class="partial">partial</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td>
-        <ul>
-          <li>[0.20.5] same limitations as padding-before</li>
-        </ul>
-      </td>
+      <td>&nbsp;</td>
     </tr>
     <tr>
       <td align="center"><a href=
       "http://www.w3.org/TR/xsl/#padding-right">&sect;7.8.38</a></td>
       <td><a name="fo-property-padding-right" id="fo-property-padding-right">padding-right</a></td>
       <td class="basic">Basic</td>
-      <td class="partial">partial</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td>
-        <ul>
-          <li>[0.20.5] same limitations as padding-before</li>
-        </ul>
-      </td>
+      <td>&nbsp;</td>
     </tr>
 
     <tr>
@@ -2505,14 +2219,8 @@
       <td class="partial">partial</td>
       <td class="partial">partial</td>
       <td class="partial">partial</td>
-      <td class="partial">partial</td>
-      <td>
-        <ul>
-          <li>[0.20.5] font-family lists are not supported, use a single font-family name</li>
-          <li>[0.94 and later] font-family lists are allowed but glyph based font selection is not
-          supported</li>
-        </ul>
-      </td>
+      <td>font-family lists are allowed but glyph based font selection is not
+          supported</td>
     </tr>
     <tr>
       <td align="center"><a href=
@@ -2523,7 +2231,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -2531,22 +2238,16 @@
       "http://www.w3.org/TR/xsl/#font-size">&sect;7.9.4</a></td>
       <td><a name="fo-property-font-size" id="fo-property-font-size">font-size</a></td>
       <td class="basic">Basic</td>
-      <td class="partial">partial</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td>
-        <ul>
-          <li>[0.20.5] "smaller" and "larger" not implemented</li>
-        </ul>
-      </td>
+      <td>&nbsp;</td>
     </tr>
     <tr>
       <td align="center"><a href=
       "http://www.w3.org/TR/xsl/#font-stretch">&sect;7.9.5</a></td>
       <td><a name="fo-property-font-stretch" id="fo-property-font-stretch">font-stretch</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
@@ -2561,7 +2262,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -2569,22 +2269,16 @@
       "http://www.w3.org/TR/xsl/#font-style">&sect;7.9.7</a></td>
       <td><a name="fo-property-font-style" id="fo-property-font-style">font-style</a></td>
       <td class="basic">Basic</td>
-      <td class="partial">partial</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td>
-        <ul>
-          <li>[0.20.5] "normal" is not supported</li>
-        </ul>
-      </td>
+      <td>&nbsp;</td>
     </tr>
     <tr>
       <td align="center"><a href=
       "http://www.w3.org/TR/xsl/#font-variant">&sect;7.9.8</a></td>
       <td><a name="fo-property-font-variant" id="fo-property-font-variant">font-variant</a></td>
       <td class="basic">Basic</td>
-      <td class="yes">yes</td>
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
@@ -2598,13 +2292,7 @@
       <td class="partial">partial</td>
       <td class="partial">partial</td>
       <td class="partial">partial</td>
-      <td class="partial">partial</td>
-      <td>
-        <ul>
-          <li>[0.20.5] "normal", "bolder" and "lighter" are not supported</li>
-          <li>[0.94 and later] TODO &lt;relative&gt; font weights</li>
-        </ul>
-      </td>
+      <td>TODO &lt;relative&gt; font weights</td>
     </tr>
 
     <tr>
@@ -2621,14 +2309,8 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
-      <td>
-        <ul>
-          <li>[0.94 and earlier] Only used for controlling hyphenation.</li>
-          <li>[trunk] For PDF output: Only 2-letter codes from ISO 3166 are supported properly to
-          identify the natural language!</li>
-        </ul>
-      </td>
+      <td>For PDF output: Only 2-letter codes from ISO 3166 are supported properly to
+          identify the natural language!</td>
     </tr>
     <tr>
       <td align="center"><a href=
@@ -2638,21 +2320,14 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
-      <td>
-        <ul>
-          <li>[0.94 and earlier] Only used for controlling hyphenation.</li>
-          <li>[trunk] For PDF output: Only 2-letter codes from ISO 639 are supported properly to
-          identify the natural language!</li>
-        </ul>
-      </td>
+      <td>For PDF output: Only 2-letter codes from ISO 639 are supported properly to
+          identify the natural language!</td>
     </tr>
     <tr>
       <td align="center"><a href=
       "http://www.w3.org/TR/xsl/#script">&sect;7.10.3</a></td>
       <td><a name="fo-property-script" id="fo-property-script">script</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
@@ -2663,7 +2338,6 @@
       "http://www.w3.org/TR/xsl/#hyphenate">&sect;7.10.4</a></td>
       <td><a name="fo-property-hyphenate" id="fo-property-hyphenate">hyphenate</a></td>
       <td class="extended">Extended</td>
-      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -2678,7 +2352,6 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -2690,7 +2363,6 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -2699,7 +2371,6 @@
       <td><a name="fo-property-hyphenation-remain-character-count" id=
       "fo-property-hyphenation-remain-character-count">hyphenation-remain-character-count</a></td>
       <td class="extended">Extended</td>
-      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -2717,60 +2388,40 @@
       "http://www.w3.org/TR/xsl/#margin-top">&sect;7.11.1</a></td>
       <td><a name="fo-property-margin-top" id="fo-property-margin-top">margin-top</a></td>
       <td class="basic">Basic</td>
-      <td class="partial">partial</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td>
-        <ul>
-          <li>[0.20.5] only on pages and regions</li>
-        </ul>
-      </td>
+      <td>&nbsp;</td>
     </tr>
     <tr>
       <td align="center"><a href=
       "http://www.w3.org/TR/xsl/#margin-bottom">&sect;7.11.2</a></td>
       <td><a name="fo-property-margin-bottom" id="fo-property-margin-bottom">margin-bottom</a></td>
       <td class="basic">Basic</td>
-      <td class="partial">partial</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td>
-        <ul>
-          <li>[0.20.5] only on pages and regions</li>
-        </ul>
-      </td>
+      <td>&nbsp;</td>
     </tr>
     <tr>
       <td align="center"><a href=
       "http://www.w3.org/TR/xsl/#margin-left">&sect;7.11.3</a></td>
       <td><a name="fo-property-margin-left" id="fo-property-margin-left">margin-left</a></td>
       <td class="basic">Basic</td>
-      <td class="partial">partial</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td>
-        <ul>
-          <li>[0.20.5] only on pages and regions</li>
-        </ul>
-      </td>
+      <td>&nbsp;</td>
     </tr>
     <tr>
       <td align="center"><a href=
       "http://www.w3.org/TR/xsl/#margin-right">&sect;7.11.4</a></td>
       <td><a name="fo-property-margin-right" id="fo-property-margin-right">margin-right</a></td>
       <td class="basic">Basic</td>
-      <td class="partial">partial</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td>
-        <ul>
-          <li>[0.20.5] only on pages and regions</li>
-        </ul>
-      </td>
+      <td>&nbsp;</td>
     </tr>
     <tr>
       <td align="center"><a href=
@@ -2780,13 +2431,7 @@
       <td class="partial">partial</td>
       <td class="partial">partial</td>
       <td class="partial">partial</td>
-      <td class="partial">partial</td>
-      <td>
-        <ul>
-          <li>[0.20.5] space-before.optimum supported</li>
-          <li>[0.94 and later] Space adjustment may not fully work everywhere, yet.</li>
-        </ul>
-      </td>
+      <td>Space adjustment may not fully work everywhere, yet.</td>
     </tr>
     <tr>
       <td align="center"><a href=
@@ -2796,20 +2441,13 @@
       <td class="partial">partial</td>
       <td class="partial">partial</td>
       <td class="partial">partial</td>
-      <td class="partial">partial</td>
-      <td>
-        <ul>
-          <li>[0.20.5] space-after.optimum supported</li>
-          <li>[0.94 and later] Space adjustment may not fully work everywhere, yet.</li>
-        </ul>
-      </td>
+      <td>Space adjustment may not fully work everywhere, yet.</td>
     </tr>
     <tr>
       <td align="center"><a href=
       "http://www.w3.org/TR/xsl/#start-indent">&sect;7.11.7</a></td>
       <td><a name="fo-property-start-indent" id="fo-property-start-indent">start-indent</a></td>
       <td class="basic">Basic</td>
-      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -2820,7 +2458,6 @@
       "http://www.w3.org/TR/xsl/#end-indent">&sect;7.11.8</a></td>
       <td><a name="fo-property-end-indent" id="fo-property-end-indent">end-indent</a></td>
       <td class="basic">Basic</td>
-      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -2841,7 +2478,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -2849,7 +2485,6 @@
       "http://www.w3.org/TR/xsl/#d0e21783">&sect;7.12.2</a></td>
       <td><a name="fo-property-margin-bottom-inline" id="fo-property-margin-bottom-inline">margin-bottom</a></td>
       <td class="basic">Basic</td>
-      <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
@@ -2863,7 +2498,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -2871,7 +2505,6 @@
       "http://www.w3.org/TR/xsl/#d0e21799">&sect;7.12.4</a></td>
       <td><a name="fo-property-margin-right-inline" id="fo-property-margin-right-inline">margin-right</a></td>
       <td class="basic">Basic</td>
-      <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
@@ -2885,7 +2518,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -2893,7 +2525,6 @@
       "http://www.w3.org/TR/xsl/#space-start">&sect;7.12.6</a></td>
       <td><a name="fo-property-space-start" id="fo-property-space-start">space-start</a></td>
       <td class="basic">Basic</td>
-      <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
@@ -2914,7 +2545,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -2922,7 +2552,6 @@
       "http://www.w3.org/TR/xsl/#d0e21942">&sect;7.13.2</a></td>
       <td><a name="fo-property-right-relative" id="fo-property-right-relative">right</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
@@ -2936,7 +2565,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -2944,7 +2572,6 @@
       "http://www.w3.org/TR/xsl/#d0e21958">&sect;7.13.4</a></td>
       <td><a name="fo-property-left-relative" id="fo-property-left-relative">left</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
@@ -2956,7 +2583,6 @@
       <td><a name="fo-property-relative-position" id=
       "fo-property-relative-position">relative-position</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
@@ -2975,7 +2601,6 @@
       <td><a name="fo-property-alignment-adjust" id=
       "fo-property-alignment-adjust">alignment-adjust</a></td>
       <td class="basic">Basic</td>
-      <td class="no">no</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -2987,7 +2612,6 @@
       <td><a name="fo-property-alignment-baseline" id=
       "fo-property-alignment-baseline">alignment-baseline</a></td>
       <td class="basic">Basic</td>
-      <td class="no">no</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -2999,15 +2623,10 @@
       <td><a name="fo-property-baseline-shift" id=
       "fo-property-baseline-shift">baseline-shift</a></td>
       <td class="basic">Basic</td>
-      <td class="partial">partial</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td>
-        <ul>
-          <li>[0.20.5] Only values "super" and "sub" have been implemented.</li>
-        </ul>
-      </td>
+      <td>&nbsp;</td>
     </tr>
     <tr>
       <td align="center"><a href=
@@ -3017,16 +2636,7 @@
       <td class="partial">partial</td>
       <td class="partial">partial</td>
       <td class="partial">partial</td>
-      <td class="partial">partial</td>
-      <td>
-        <ul>
-          <li>[0.20.5] Implemented only for table-cell and block-container.</li>
-          <li>[0.20.5] For table-cell, the "height" attribute must be set for the parent table-row;
-          setting the height of the table or the table-cell results in vertical centering having no
-          effect.</li>
-          <li>[0.94 and later] TODO Check e-g, i-f-o.</li>
-        </ul>
-      </td>
+      <td>TODO Check e-g, i-f-o.</td>
     </tr>
     <tr>
       <td align="center"><a href=
@@ -3034,7 +2644,6 @@
       <td><a name="fo-property-dominant-baseline" id=
       "fo-property-dominant-baseline">dominant-baseline</a></td>
       <td class="basic">Basic</td>
-      <td class="no">no</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -3046,7 +2655,6 @@
       <td><a name="fo-property-relative-align" id=
       "fo-property-relative-align">relative-align</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
@@ -3067,7 +2675,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -3075,7 +2682,6 @@
       "http://www.w3.org/TR/xsl/#allowed-width-scale">&sect;7.15.2</a></td>
       <td><a name="fo-property-allowed-width-scale" id="fo-property-allowed-width-scale">allowed-width-scale</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
@@ -3087,7 +2693,6 @@
       <td><a name="fo-property-block-progression-dimension" id=
       "fo-property-block-progression-dimension">block-progression-dimension</a></td>
       <td class="basic">Basic</td>
-      <td class="no">no</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -3099,37 +2704,26 @@
       <td><a name="fo-property-content-height" id=
       "fo-property-content-height">content-height</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
-      <td class="partial">partial</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td>
-        <ul>
-          <li>[0.94] values "scale-up-to-fit" and "scale-down-to-fit" not supported</li>
-        </ul>
-      </td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
     </tr>
     <tr>
       <td align="center"><a href=
       "http://www.w3.org/TR/xsl/#content-width">&sect;7.15.5</a></td>
       <td><a name="fo-property-content-width" id="fo-property-content-width">content-width</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
-      <td class="partial">partial</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td>
-        <ul>
-          <li>[0.94] values "scale-up-to-fit" and "scale-down-to-fit" not supported</li>
-        </ul>
-      </td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
     </tr>
     <tr>
       <td align="center"><a href=
       "http://www.w3.org/TR/xsl/#height">&sect;7.15.6</a></td>
       <td><a name="fo-property-height" id="fo-property-height">height</a></td>
       <td class="basic">Basic</td>
-      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -3141,7 +2735,6 @@
       <td><a name="fo-property-inline-progression-dimension" id=
       "fo-property-inline-progression-dimension">inline-progression-dimension</a></td>
       <td class="basic">Basic</td>
-      <td class="no">no</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -3153,8 +2746,7 @@
       <td><a name="fo-property-max-height" id="fo-property-max-height">max-height</a></td>
       <td class="complete">Complete</td>
       <td class="no">no</td>
-      <td class="no">no</td>
-      <td class="no">no</td>
+      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
@@ -3164,8 +2756,7 @@
       <td><a name="fo-property-max-width" id="fo-property-max-width">max-width</a></td>
       <td class="complete">Complete</td>
       <td class="no">no</td>
-      <td class="no">no</td>
-      <td class="no">no</td>
+      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
@@ -3175,8 +2766,7 @@
       <td><a name="fo-property-min-height" id="fo-property-min-height">min-height</a></td>
       <td class="complete">Complete</td>
       <td class="no">no</td>
-      <td class="no">no</td>
-      <td class="no">no</td>
+      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
@@ -3186,8 +2776,7 @@
       <td><a name="fo-property-min-width" id="fo-property-min-width">min-width</a></td>
       <td class="complete">Complete</td>
       <td class="no">no</td>
-      <td class="no">no</td>
-      <td class="no">no</td>
+      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
@@ -3196,7 +2785,6 @@
       "http://www.w3.org/TR/xsl/#scaling">&sect;7.15.12</a></td>
       <td><a name="fo-property-scaling" id="fo-property-scaling">scaling</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -3211,7 +2799,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -3219,7 +2806,6 @@
       "http://www.w3.org/TR/xsl/#width">&sect;7.15.14</a></td>
       <td><a name="fo-property-width" id="fo-property-width">width</a></td>
       <td class="basic">Basic</td>
-      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -3241,7 +2827,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -3250,7 +2835,6 @@
       <td><a name="fo-property-hyphenation-ladder-count" id=
       "fo-property-hyphenation-ladder-count">hyphenation-ladder-count</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -3262,7 +2846,6 @@
       <td><a name="fo-property-last-line-end-indent" id=
       "fo-property-last-line-end-indent">last-line-end-indent</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -3276,7 +2859,6 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -3285,7 +2867,6 @@
       <td><a name="fo-property-line-height-shift-adjustment" id=
       "fo-property-line-height-shift-adjustment">line-height-shift-adjustment</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -3297,15 +2878,10 @@
       <td><a name="fo-property-line-stacking-strategy" id=
       "fo-property-line-stacking-strategy">line-stacking-strategy</a></td>
       <td class="basic">Basic</td>
-      <td class="no">no</td>
       <td class="partial">partial</td>
       <td class="partial">partial</td>
       <td class="partial">partial</td>
-      <td>
-        <ul>
-          <li>[0.94 and later] value "line-height" not supported</li>
-        </ul>
-      </td>
+      <td>value "line-height" not supported</td>
     </tr>
     <tr>
       <td align="center"><a href=
@@ -3313,7 +2889,6 @@
       <td><a name="fo-property-linefeed-treatment" id=
       "fo-property-linefeed-treatment">linefeed-treatment</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -3325,16 +2900,11 @@
       <td><a name="fo-property-white-space-treatment" id=
       "fo-property-white-space-treatment">white-space-treatment</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="partial">partial</td>
       <td class="partial">partial</td>
       <td class="partial">partial</td>
-      <td>
-        <ul>
-          <li>[0.94 and later] inline elements may interfere with correct handling of this property
-          in some cases</li>
-        </ul>
-      </td>
+      <td>inline elements may interfere with correct handling of this property
+          in some cases</td>
     </tr>
     <tr>
       <td align="center"><a href=
@@ -3344,12 +2914,7 @@
       <td class="partial">partial</td>
       <td class="partial">partial</td>
       <td class="partial">partial</td>
-      <td class="partial">partial</td>
-      <td>
-        <ul>
-          <li>Only start, end, center and justify are supported</li>
-        </ul>
-      </td>
+      <td>Only start, end, center and justify are supported</td>
     </tr>
     <tr>
       <td align="center"><a href=
@@ -3360,19 +2925,13 @@
       <td class="partial">partial</td>
       <td class="partial">partial</td>
       <td class="partial">partial</td>
-      <td class="partial">partial</td>
-      <td>
-        <ul>
-          <li>Only start, end, center and justify are supported</li>
-        </ul>
-      </td>
+      <td>Only start, end, center and justify are supported</td>
     </tr>
     <tr>
       <td align="center"><a href=
       "http://www.w3.org/TR/xsl/#text-indent">&sect;7.16.11</a></td>
       <td><a name="fo-property-text-indent" id="fo-property-text-indent">text-indent</a></td>
       <td class="basic">Basic</td>
-      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -3387,7 +2946,6 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -3395,15 +2953,10 @@
       "http://www.w3.org/TR/xsl/#wrap-option">&sect;7.16.13</a></td>
       <td><a name="fo-property-wrap-option" id="fo-property-wrap-option">wrap-option</a></td>
       <td class="basic">Basic</td>
-      <td class="yes">yes</td>
       <td class="partial">partial</td>
       <td class="partial">partial</td>
       <td class="partial">partial</td>
-      <td>
-        <ul>
-          <li>[0.94 and later] Only supported on fo:block.</li>
-        </ul>
-      </td>
+      <td>Only supported on fo:block.</td>
     </tr>
 
     <tr>
@@ -3420,7 +2973,6 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -3429,7 +2981,6 @@
       <td><a name="fo-property-letter-spacing" id=
       "fo-property-letter-spacing">letter-spacing</a></td>
       <td class="extended">Extended</td>
-      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -3444,7 +2995,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -3453,7 +3003,6 @@
       <td><a name="fo-property-text-decoration" id=
       "fo-property-text-decoration">text-decoration</a></td>
       <td class="extended">Extended</td>
-      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -3467,7 +3016,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -3476,7 +3024,6 @@
       <td><a name="fo-property-text-transform" id=
       "fo-property-text-transform">text-transform</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -3491,7 +3038,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -3499,7 +3045,6 @@
       "http://www.w3.org/TR/xsl/#word-spacing">&sect;7.17.8</a></td>
       <td><a name="fo-property-word-spacing" id="fo-property-word-spacing">word-spacing</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -3520,7 +3065,6 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -3532,7 +3076,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -3541,7 +3084,6 @@
       <td><a name="fo-property-rendering-intent" id=
       "fo-property-rendering-intent">rendering-intent</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
@@ -3562,7 +3104,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -3570,7 +3111,6 @@
       "http://www.w3.org/TR/xsl/#float">&sect;7.19.2</a></td>
       <td><a name="fo-property-float" id="fo-property-float">float</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
@@ -3582,7 +3122,6 @@
       <td><a name="fo-property-intrusion-displace" id=
       "fo-property-intrusion-displace">intrusion-displace</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
@@ -3601,14 +3140,9 @@
       <td><a name="fo-property-break-after" id="fo-property-break-after">break-after</a></td>
       <td class="basic">Basic</td>
       <td class="yes">yes</td>
-      <td class="partial">partial</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td>
-        <ul>
-          <li>[0.94] Doesn't work on the last row of a table</li>
-        </ul>
-      </td>
+      <td>&nbsp;</td>
     </tr>
     <tr>
       <td align="center"><a href=
@@ -3616,16 +3150,9 @@
       <td><a name="fo-property-break-before" id="fo-property-break-before">break-before</a></td>
       <td class="basic">Basic</td>
       <td class="yes">yes</td>
-      <td class="partial">partial</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td>
-        <ul>
-          <li>[0.94] Doesn't work on the first row of a table</li>
-          <li>[0.94] When set on the first child of an fo:table-cell,
-          the border-before is still painted on the previous page</li>
-        </ul>
-      </td>
+      <td>&nbsp;</td>
     </tr>
     <tr>
       <td align="center"><a href=
@@ -3635,12 +3162,10 @@
       <td class="partial">partial</td>
       <td class="partial">partial</td>
       <td class="partial">partial</td>
-      <td class="partial">partial</td>
       <td>
         <ul>
-          <li>[0.20.5] works only in table rows</li>
-          <li>[0.95 and earlier] &lt;integer&gt; values are not supported.</li>
-          <li>[Trunk] minimal support for &lt;integer&gt; value.</li>
+          <li>[0.95] &lt;integer&gt; values are not supported.</li>
+          <li>[1.0 and later] minimal support for &lt;integer&gt; value.</li>
         </ul>
       </td>
     </tr>
@@ -3653,14 +3178,12 @@
       <td class="partial">partial</td>
       <td class="partial">partial</td>
       <td class="partial">partial</td>
-      <td class="partial">partial</td>
       <td>
         <ul>
-          <li>[0.20.5] works only in table rows</li>
-          <li>[0.94 and later] works on all implemented block-level FOs, but not on inline-level
+          <li>works on all implemented block-level FOs, but not on inline-level
           FOs.</li>
-          <li>[0.95 and earlier] &lt;integer&gt; values are not supported.</li>
-          <li>[Trunk] minimal support for &lt;integer&gt; value.</li>
+          <li>[0.95] &lt;integer&gt; values are not supported.</li>
+          <li>[1.0 and later] minimal support for &lt;integer&gt; value.</li>
         </ul>
       </td>
     </tr>
@@ -3673,17 +3196,14 @@
       <td class="partial">partial</td>
       <td class="partial">partial</td>
       <td class="partial">partial</td>
-      <td class="partial">partial</td>
       <td>
         <ul>
-          <li>[0.20.5] works only in table rows</li>
-          <li>[0.94] works on all implemented FOs, except list- and table-related and
-          inline-level FOs.</li>
           <li>[0.95] works on all implemented FOs, except list- and inline-level
           FOs.</li>
-          <li>[Trunk] does not work on inline-level FOs.</li>
-          <li>[0.95 and earlier] &lt;integer&gt; values are not supported.</li>
-          <li>[Trunk] minimal support for &lt;integer&gt; value.</li>
+          <li>[1.0 and later] works on all implemented block-level
+          FOs, but not on inline-level FOs.</li>
+          <li>[0.95] &lt;integer&gt; values are not supported.</li>
+          <li>[1.0 and later] minimal support for &lt;integer&gt; value.</li>
         </ul>
       </td>
     </tr>
@@ -3692,7 +3212,6 @@
       "http://www.w3.org/TR/xsl/#orphans">&sect;7.20.6</a></td>
       <td><a name="fo-property-orphans" id="fo-property-orphans">orphans</a></td>
       <td class="basic">Basic</td>
-      <td class="no">no</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -3703,7 +3222,6 @@
       "http://www.w3.org/TR/xsl/#widows">&sect;7.20.7</a></td>
       <td><a name="fo-property-widows" id="fo-property-widows">widows</a></td>
       <td class="basic">Basic</td>
-      <td class="no">no</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -3724,7 +3242,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -3732,7 +3249,6 @@
       "http://www.w3.org/TR/xsl/#overflow">&sect;7.21.2</a></td>
       <td><a name="fo-property-overflow" id="fo-property-overflow">overflow</a></td>
       <td class="basic">Basic</td>
-      <td class="no">no</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -3744,24 +3260,16 @@
       <td><a name="fo-property-reference-orientation" id=
       "fo-property-reference-orientation">reference-orientation</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td>
-        <ul>
-          <li>[0.20.5] Workaround for page-orientation (portrait vs. landscape) is to swap the
-          page-width and page-height properties.</li>
-          <li>[0.20.5] Workaround for block-container is to use SVG.</li>
-        </ul>
-      </td>
+      <td>&nbsp;</td>
     </tr>
     <tr>
       <td align="center"><a href=
       "http://www.w3.org/TR/xsl/#span">&sect;7.21.4</a></td>
       <td><a name="fo-property-span" id="fo-property-span">span</a></td>
       <td class="extended">Extended</td>
-      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -3780,16 +3288,10 @@
       <td><a name="fo-property-leader-alignment" id=
       "fo-property-leader-alignment">leader-alignment</a></td>
       <td class="extended">Extended</td>
-      <td class="partial">partial</td>
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td>
-        <ul>
-          <li>[0.20.5] not value "page"</li>
-          <li>[0.94 and later] Not supported</li>
-        </ul>
-      </td>
+      <td>Not supported</td>
     </tr>
     <tr>
       <td align="center"><a href=
@@ -3797,16 +3299,10 @@
       <td><a name="fo-property-leader-pattern" id=
       "fo-property-leader-pattern">leader-pattern</a></td>
       <td class="basic">Basic</td>
-      <td class="partial">partial</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td>
-        <ul>
-          <li>[0.20.5] not value "use-content"</li>
-          <li>[0.94 and later] Value "use-content" does not work in all circumstances.</li>
-        </ul>
-      </td>
+      <td>Value "use-content" does not work in all circumstances.</td>
     </tr>
     <tr>
       <td align="center"><a href=
@@ -3817,7 +3313,6 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -3825,22 +3320,16 @@
       "http://www.w3.org/TR/xsl/#leader-length">&sect;7.22.4</a></td>
       <td><a name="fo-property-leader-length" id="fo-property-leader-length">leader-length</a></td>
       <td class="basic">Basic</td>
-      <td class="partial">partial</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td>
-        <ul>
-          <li>[0.20.5] leader-length.minimum is not used at all</li>
-        </ul>
-      </td>
+      <td>&nbsp;</td>
     </tr>
     <tr>
       <td align="center"><a href=
       "http://www.w3.org/TR/xsl/#rule-style">&sect;7.22.5</a></td>
       <td><a name="fo-property-rule-style" id="fo-property-rule-style">rule-style</a></td>
       <td class="basic">Basic</td>
-      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -3852,7 +3341,6 @@
       <td><a name="fo-property-rule-thickness" id=
       "fo-property-rule-thickness">rule-thickness</a></td>
       <td class="basic">Basic</td>
-      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -3873,7 +3361,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -3881,7 +3368,6 @@
       "http://www.w3.org/TR/xsl/#auto-restore">&sect;7.23.2</a></td>
       <td><a name="fo-property-auto-restore" id="fo-property-auto-restore">auto-restore</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
@@ -3895,7 +3381,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -3903,7 +3388,6 @@
       "http://www.w3.org/TR/xsl/#case-title">&sect;7.23.4</a></td>
       <td><a name="fo-property-case-title" id="fo-property-case-title">case-title</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
@@ -3918,7 +3402,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -3927,7 +3410,6 @@
       <td><a name="fo-property-external-destination" id=
       "fo-property-external-destination">external-destination</a></td>
       <td class="extended">Extended</td>
-      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -3942,7 +3424,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -3951,7 +3432,6 @@
       <td><a name="fo-property-internal-destination" id=
       "fo-property-internal-destination">internal-destination</a></td>
       <td class="extended">Extended</td>
-      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -3964,17 +3444,11 @@
       "fo-property-show-destination">show-destination</a></td>
       <td class="extended">Extended</td>
       <td class="no">no</td>
-      <td class="no">no</td>
-      <td class="no">no</td>
       <td class="partial">partial</td>
-      <td>
-        <ul>
-          <li>[FOP Trunk] only has effect in PDF output, for external PDF destinations (links pointing to destinations
+      <td class="partial">partial</td>
+      <td>[1.0 and later] only has effect in PDF output, for external PDF destinations (links pointing to destinations
           in <i>another</i> PDF), and only works reliably when the PDF is viewed in a standalone PDF viewer.
-          <p>Adobe's browser plugin, for example, ignores the <code>/NewWindow</code> flag.
-          </li>
-        </ul>
-      </td>
+          <p>Adobe's browser plugin, for example, ignores the <code>/NewWindow</code> flag.</td>
     </tr>
     <tr>
       <td align="center"><a href=
@@ -3982,23 +3456,17 @@
       <td><a name="fo-property-starting-state" id=
       "fo-property-starting-state">starting-state</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="partial">partial</td>
       <td class="partial">partial</td>
       <td class="partial">partial</td>
-      <td>
-        <ul>
-          <li>[0.94 and later] support for starting-state on <a href=
-          "#fo-bookmark">fo:bookmark</a></li>
-        </ul>
-      </td>
+      <td>support for starting-state on <a href=
+          "#fo-bookmark">fo:bookmark</a></td>
     </tr>
     <tr>
       <td align="center"><a href=
       "http://www.w3.org/TR/xsl/#switch-to">&sect;7.23.11</a></td>
       <td><a name="fo-property-switch-to" id="fo-property-switch-to">switch-to</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
@@ -4013,7 +3481,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -4025,7 +3492,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -4034,7 +3500,6 @@
       <td><a name="fo-property-target-stylesheet" id=
       "fo-property-target-stylesheet">target-stylesheet</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
@@ -4055,7 +3520,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -4066,7 +3530,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -4074,7 +3537,6 @@
       "http://www.w3.org/TR/xsl/#page-number-treatment">&sect;7.24.3</a></td>
       <td><a name="fo-property-page-number-treatment" id="fo-property-page-number-treatment">page-number-treatment</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
@@ -4089,7 +3551,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -4098,7 +3559,6 @@
       <td><a name="fo-property-merge-sequential-page-numbers" id="fo-property-merge-sequential-page-numbers">
       merge-sequential-page-numbers</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
@@ -4113,7 +3573,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -4121,7 +3580,6 @@
       "http://www.w3.org/TR/xsl/#ref-index-key">&sect;7.24.7</a></td>
       <td><a name="fo-property-ref-index-key" id="fo-property-ref-index-key">ref-index-key</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
@@ -4140,7 +3598,6 @@
       <td><a name="fo-property-marker-class-name" id=
       "fo-property-marker-class-name">marker-class-name</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -4155,7 +3612,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -4164,7 +3620,6 @@
       <td><a name="fo-property-retrieve-class-name" id=
       "fo-property-retrieve-class-name">retrieve-class-name</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -4176,7 +3631,6 @@
       <td><a name="fo-property-retrieve-position" id=
       "fo-property-retrieve-position">retrieve-position</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -4188,7 +3642,6 @@
       <td><a name="fo-property-retrieve-boundary" id=
       "fo-property-retrieve-boundary">retrieve-boundary</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -4200,7 +3653,6 @@
       <td><a name="fo-property-retrieve-position-within-table" id="fo-property-retrieve-position-within-table">
       retrieve-position-within-table</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
@@ -4218,7 +3670,6 @@
       "http://www.w3.org/TR/xsl/#format">&sect;7.26.1</a></td>
       <td><a name="fo-property-format" id="fo-property-format">format</a></td>
       <td class="basic">Basic</td>
-      <td class="no">no</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -4233,7 +3684,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -4244,7 +3694,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -4252,7 +3701,6 @@
       "http://www.w3.org/TR/xsl/#letter-value">&sect;7.26.4</a></td>
       <td><a name="fo-property-letter-value" id="fo-property-letter-value">letter-value</a></td>
       <td class="basic">Basic</td>
-      <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
@@ -4274,7 +3722,6 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -4282,7 +3729,6 @@
       "http://www.w3.org/TR/xsl/#column-count">&sect;7.27.2</a></td>
       <td><a name="fo-property-column-count" id="fo-property-column-count">column-count</a></td>
       <td class="extended">Extended</td>
-      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -4296,7 +3742,6 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -4304,7 +3749,6 @@
       "http://www.w3.org/TR/xsl/#extent">&sect;7.27.4</a></td>
       <td><a name="fo-property-extent" id="fo-property-extent">extent</a></td>
       <td class="extended">Extended</td>
-      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -4318,7 +3762,6 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -4327,7 +3770,6 @@
       <td><a name="fo-property-force-page-count" id=
       "fo-property-force-page-count">force-page-count</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -4342,7 +3784,6 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -4350,7 +3791,6 @@
       "http://www.w3.org/TR/xsl/#master-name">&sect;7.27.8</a></td>
       <td><a name="fo-property-master-name" id="fo-property-master-name">master-name</a></td>
       <td class="basic">Basic</td>
-      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -4365,7 +3805,6 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -4374,7 +3813,6 @@
       <td><a name="fo-property-maximum-repeats" id=
       "fo-property-maximum-repeats">maximum-repeats</a></td>
       <td class="extended">Extended</td>
-      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -4388,7 +3826,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -4396,7 +3833,6 @@
       "http://www.w3.org/TR/xsl/#odd-or-even">&sect;7.27.12</a></td>
       <td><a name="fo-property-odd-or-even" id="fo-property-odd-or-even">odd-or-even</a></td>
       <td class="extended">Extended</td>
-      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -4410,7 +3846,6 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -4419,22 +3854,15 @@
       <td><a name="fo-property-page-position" id="fo-property-page-position">page-position</a></td>
       <td class="extended">Extended</td>
       <td class="partial">partial</td>
-      <td class="partial">partial</td>
-      <td class="partial">partial</td>
       <td class="yes">yes</td>
-      <td>
-        <ul>
-          <li>[0.20.5] "last" isn't implemented!</li>
-          <li>[0.95] value "only" not supported</li>
-        </ul>
-      </td>
+      <td class="yes">yes</td>
+      <td>value "only" not supported</td>
     </tr>
     <tr>
       <td align="center"><a href=
       "http://www.w3.org/TR/xsl/#page-width">&sect;7.27.15</a></td>
       <td><a name="fo-property-page-width" id="fo-property-page-width">page-width</a></td>
       <td class="basic">Basic</td>
-      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -4445,7 +3873,6 @@
       "http://www.w3.org/TR/xsl/#precedence">&sect;7.27.16</a></td>
       <td><a name="fo-property-precedence" id="fo-property-precedence">precedence</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -4459,7 +3886,6 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -4467,7 +3893,6 @@
       "http://www.w3.org/TR/xsl/#flow-map-name">&sect;7.27.18</a></td>
       <td><a name="fo-property-flow-map-name" id="fo-property-flow-map-name">flow-map-name</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
@@ -4481,7 +3906,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -4492,7 +3916,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -4500,7 +3923,6 @@
       "http://www.w3.org/TR/xsl/#region-name-reference">&sect;7.27.21</a></td>
       <td><a name="fo-property-region-name-reference" id="fo-property-region-name-reference">region-name-reference</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
@@ -4522,7 +3944,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -4534,7 +3955,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -4543,15 +3963,10 @@
       <td><a name="fo-property-border-collapse" id=
       "fo-property-border-collapse">border-collapse</a></td>
       <td class="extended">Extended</td>
-      <td class="partial">partial</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td>
-        <ul>
-          <li>[0.94 and later] Some small limitations</li>
-        </ul>
-      </td>
+      <td>Some small limitations</td>
     </tr>
     <tr>
       <td align="center"><a href=
@@ -4559,7 +3974,6 @@
       <td><a name="fo-property-border-end-precedence" id=
       "fo-property-border-end-precedence">border-end-precedence</a></td>
       <td class="basic">Basic</td>
-      <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
@@ -4571,7 +3985,6 @@
       <td><a name="fo-property-border-separation" id=
       "fo-property-border-separation">border-separation</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -4586,7 +3999,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -4597,7 +4009,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -4605,7 +4016,6 @@
       "http://www.w3.org/TR/xsl/#column-number">&sect;7.28.8</a></td>
       <td><a name="fo-property-column-number" id="fo-property-column-number">column-number</a></td>
       <td class="basic">Basic</td>
-      <td class="no">no</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -4616,23 +4026,16 @@
       "http://www.w3.org/TR/xsl/#column-width">&sect;7.28.9</a></td>
       <td><a name="fo-property-column-width" id="fo-property-column-width">column-width</a></td>
       <td class="basic">Basic</td>
-      <td class="partial">partial</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td>
-        <ul>
-          <li>[0.20.5] "percentage" not implemented. Workaround is to use the XSL-FO
-          "proportional-column-width" function.</li>
-        </ul>
-      </td>
+      <td>&nbsp;</td>
     </tr>
     <tr>
       <td align="center"><a href=
       "http://www.w3.org/TR/xsl/#empty-cells">&sect;7.28.10</a></td>
       <td><a name="fo-property-empty-cells" id="fo-property-empty-cells">empty-cells</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
@@ -4643,7 +4046,6 @@
       "http://www.w3.org/TR/xsl/#ends-row">&sect;7.28.11</a></td>
       <td><a name="fo-property-ends-row" id="fo-property-ends-row">ends-row</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -4655,7 +4057,6 @@
       <td><a name="fo-property-number-columns-repeated" id=
       "fo-property-number-columns-repeated">number-columns-repeated</a></td>
       <td class="basic">Basic</td>
-      <td class="no">no</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -4670,7 +4071,6 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -4682,7 +4082,6 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -4690,7 +4089,6 @@
       "http://www.w3.org/TR/xsl/#starts-row">&sect;7.28.15</a></td>
       <td><a name="fo-property-starts-row" id="fo-property-starts-row">starts-row</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -4701,7 +4099,6 @@
       "http://www.w3.org/TR/xsl/#table-layout">&sect;7.28.16</a></td>
       <td><a name="fo-property-table-layout" id="fo-property-table-layout">table-layout</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
@@ -4716,7 +4113,6 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -4725,7 +4121,6 @@
       <td><a name="fo-property-table-omit-header-at-break" id=
       "fo-property-table-omit-header-at-break">table-omit-header-at-break</a></td>
       <td class="extended">Extended</td>
-      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -4746,7 +4141,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -4755,7 +4149,6 @@
       <td><a name="fo-property-glyph-orientation-horizontal" id=
       "fo-property-glyph-orientation-horizontal">glyph-orientation-horizontal</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
@@ -4770,7 +4163,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -4778,7 +4170,6 @@
       "http://www.w3.org/TR/xsl/#text-altitude">&sect;7.29.4</a></td>
       <td><a name="fo-property-text-altitude" id="fo-property-text-altitude">text-altitude</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
@@ -4792,7 +4183,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -4803,7 +4193,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -4811,7 +4200,6 @@
       "http://www.w3.org/TR/xsl/#writing-mode">&sect;7.29.7</a></td>
       <td><a name="fo-property-writing-mode" id="fo-property-writing-mode">writing-mode</a></td>
       <td class="basic">Basic</td>
-      <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
@@ -4832,7 +4220,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -4840,7 +4227,6 @@
       "http://www.w3.org/TR/xsl/#change-bar-color">&sect;7.30.2</a></td>
       <td><a name="fo-property-change-bar-color" id="fo-property-change-bar-color">change-bar-color</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
@@ -4854,7 +4240,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -4862,7 +4247,6 @@
       "http://www.w3.org/TR/xsl/#change-bar-placement">&sect;7.30.4</a></td>
       <td><a name="fo-property-change-bar-placement" id="fo-property-change-bar-placement">change-bar-placement</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
@@ -4876,7 +4260,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -4884,7 +4267,6 @@
       "http://www.w3.org/TR/xsl/#change-bar-width">&sect;7.30.6</a></td>
       <td><a name="fo-property-change-bar-width" id="fo-property-change-bar-width">change-bar-width</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
@@ -4898,7 +4280,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -4906,24 +4287,18 @@
       "http://www.w3.org/TR/xsl/#id">&sect;7.30.8</a></td>
       <td><a name="fo-property-id" id="fo-property-id">id</a></td>
       <td class="basic">Basic</td>
-      <td class="yes">yes</td>
       <td class="partial">partial</td>
       <td class="partial">partial</td>
       <td class="partial">partial</td>
-      <td>
-        <ul>
-          <li>[0.94 and later] IDs on table-header, table-footer, table-body, table-row,
+      <td>IDs on table-header, table-footer, table-body, table-row,
           table-and-caption, table-caption, inline-container and bidi-override are not available,
-          yet.</li>
-        </ul>
-      </td>
+          yet.</td>
     </tr>
     <tr>
       <td align="center"><a href=
       "http://www.w3.org/TR/xsl/#intrinsic-scale-value">&sect;7.30.9</a></td>
       <td><a name="fo-property-intrinsic-scale-value" id="fo-property-intrinsic-scale-value">intrinsic-scale-value</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
@@ -4934,7 +4309,6 @@
       "http://www.w3.org/TR/xsl/#page-citation-strategy">&sect;7.30.10</a></td>
       <td><a name="fo-property-page-citation-strategy" id="fo-property-page-citation-strategy">page-citation-strategy</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
@@ -4949,7 +4323,6 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -4958,7 +4331,6 @@
       <td><a name="fo-property-provisional-distance-between-starts" id=
       "fo-property-provisional-distance-between-starts">provisional-distance-between-starts</a></td>
       <td class="basic">Basic</td>
-      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -4972,7 +4344,6 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -4980,7 +4351,6 @@
       "http://www.w3.org/TR/xsl/#scale-option">&sect;7.30.14</a></td>
       <td><a name="fo-property-scale-option" id="fo-property-scale-option">scale-option</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
@@ -4994,7 +4364,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -5002,7 +4371,6 @@
       "http://www.w3.org/TR/xsl/#src">&sect;7.30.16</a></td>
       <td><a name="fo-property-src" id="fo-property-src">src</a></td>
       <td class="basic">Basic</td>
-      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -5016,7 +4384,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -5024,7 +4391,6 @@
       "http://www.w3.org/TR/xsl/#z-index">&sect;7.30.18</a></td>
       <td><a name="fo-property-z-index" id="fo-property-z-index">z-index</a></td>
       <td class="extended">Extended</td>
-      <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
@@ -5045,7 +4411,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -5054,7 +4419,6 @@
       <td><a name="fo-property-background-position" id=
       "fo-property-background-position">background-position</a></td>
       <td class="complete">Complete</td>
-      <td class="no">no</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -5065,7 +4429,6 @@
       "http://www.w3.org/TR/xsl/#border">&sect;7.31.3</a></td>
       <td><a name="fo-property-border" id="fo-property-border">border</a></td>
       <td class="complete">Complete</td>
-      <td class="no">no</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -5079,7 +4442,6 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -5087,22 +4449,16 @@
       "http://www.w3.org/TR/xsl/#border-color">&sect;7.31.5</a></td>
       <td><a name="fo-property-border-color" id="fo-property-border-color">border-color</a></td>
       <td class="complete">Complete</td>
-      <td class="partial">partial</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td>
-        <ul>
-          <li>[0.20.5] only one value allowed</li>
-        </ul>
-      </td>
+      <td>&nbsp;</td>
     </tr>
     <tr>
       <td align="center"><a href=
       "http://www.w3.org/TR/xsl/#border-left">&sect;7.31.6</a></td>
       <td><a name="fo-property-border-left" id="fo-property-border-left">border-left</a></td>
       <td class="complete">Complete</td>
-      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -5116,7 +4472,6 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -5124,15 +4479,10 @@
       "http://www.w3.org/TR/xsl/#border-style">&sect;7.31.8</a></td>
       <td><a name="fo-property-border-style" id="fo-property-border-style">border-style</a></td>
       <td class="complete">Complete</td>
-      <td class="partial">partial</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td>
-        <ul>
-          <li>[0.20.5] only "solid" works</li>
-        </ul>
-      </td>
+      <td>&nbsp;</td>
     </tr>
     <tr>
       <td align="center"><a href=
@@ -5140,7 +4490,6 @@
       <td><a name="fo-property-border-spacing" id=
       "fo-property-border-spacing">border-spacing</a></td>
       <td class="complete">Complete</td>
-      <td class="no">no</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -5154,7 +4503,6 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -5162,7 +4510,6 @@
       "http://www.w3.org/TR/xsl/#border-width">&sect;7.31.11</a></td>
       <td><a name="fo-property-border-width" id="fo-property-border-width">border-width</a></td>
       <td class="complete">Complete</td>
-      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -5184,49 +4531,30 @@
       "http://www.w3.org/TR/xsl/#font">&sect;7.31.13</a></td>
       <td><a name="fo-property-font" id="fo-property-font">font</a></td>
       <td class="complete">Complete</td>
-      <td class="no">no</td>
       <td class="partial">partial</td>
       <td class="partial">partial</td>
       <td class="partial">partial</td>
-      <td>
-        <ul>
-          <li>[0.94 and later] Enum values other than "inherit" not yet supported.</li>
-        </ul>
-      </td>
+      <td>Enum values other than "inherit" not yet supported.</td>
     </tr>
     <tr>
       <td align="center"><a href=
       "http://www.w3.org/TR/xsl/#margin">&sect;7.31.14</a></td>
       <td><a name="fo-property-margin" id="fo-property-margin">margin</a></td>
       <td class="complete">Complete</td>
-      <td class="partial">partial</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td>
-        <ul>
-          <li>[0.20.5] only on pages and regions</li>
-        </ul>
-      </td>
+      <td>&nbsp;</td>
     </tr>
     <tr>
       <td align="center"><a href=
       "http://www.w3.org/TR/xsl/#padding">&sect;7.31.15</a></td>
       <td><a name="fo-property-padding" id="fo-property-padding">padding</a></td>
       <td class="complete">Complete</td>
-      <td class="partial">partial</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td>
-        <ul>
-          <li>[0.20.5] only one value allowed</li>
-          <li>[0.20.5] only implemented for blocks</li>
-          <li>[0.20.5] can't be used to make extra space (use indents + spaces instead)</li>
-          <li>[0.20.5] can be used to control how much the background-color extends beyond the
-          content rectangle</li>
-        </ul>
-      </td>
+      <td>&nbsp;</td>
     </tr>
     <tr>
       <td align="center"><a href=
@@ -5234,7 +4562,6 @@
       <td><a name="fo-property-page-break-after" id=
       "fo-property-page-break-after">page-break-after</a></td>
       <td class="complete">Complete</td>
-      <td class="no">no</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -5246,7 +4573,6 @@
       <td><a name="fo-property-page-break-before" id=
       "fo-property-page-break-before">page-break-before</a></td>
       <td class="complete">Complete</td>
-      <td class="no">no</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -5258,7 +4584,6 @@
       <td><a name="fo-property-page-break-inside" id=
       "fo-property-page-break-inside">page-break-inside</a></td>
       <td class="complete">Complete</td>
-      <td class="no">no</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -5280,22 +4605,16 @@
       "http://www.w3.org/TR/xsl/#position">&sect;7.31.20</a></td>
       <td><a name="fo-property-position" id="fo-property-position">position</a></td>
       <td class="complete">Complete</td>
-      <td class="partial">partial</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td>
-        <ul>
-          <li>[0.20.5] "inherit" not handled</li>
-        </ul>
-      </td>
+      <td>&nbsp;</td>
     </tr>
     <tr>
       <td align="center"><a href=
       "http://www.w3.org/TR/xsl/#size">&sect;7.31.21</a></td>
       <td><a name="fo-property-size" id="fo-property-size">size</a></td>
       <td class="complete">Complete</td>
-      <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
@@ -5310,20 +4629,13 @@
       <td class="partial">partial</td>
       <td class="partial">partial</td>
       <td class="partial">partial</td>
-      <td class="partial">partial</td>
-      <td>
-        <ul>
-          <li>[0.20.5] Only works as a shorthand for baseline-shift property.</li>
-          <li>[0.94 and later] Percentages are not supported, yet.</li>
-        </ul>
-      </td>
+      <td>Percentages are not supported, yet.</td>
     </tr>
     <tr>
       <td align="center"><a href=
       "http://www.w3.org/TR/xsl/#white-space">&sect;7.31.23</a></td>
       <td><a name="fo-property-white-space" id="fo-property-white-space">white-space</a></td>
       <td class="complete">Complete</td>
-      <td class="no">no</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -5334,15 +4646,10 @@
       "http://www.w3.org/TR/xsl/#xml.lang">&sect;7.31.24</a></td>
       <td><a name="fo-property-xml:lang" id="fo-property-xml:lang">xml:lang</a></td>
       <td class="complete">Complete</td>
-      <td class="no">no</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td>
-        <ul>
-          <li>[0.95] Very basic parsing; no validation of the specified value.</li>
-        </ul>
-      </td>
+      <td>Very basic parsing; no validation of the specified value.</td>
     </tr>
   </table>
 
@@ -5357,13 +4664,12 @@
       <th rowspan="2" align="center">Citation</th>
       <th rowspan="2">Function Name</th>
       <th rowspan="2" align="center">XSL-FO Conformance Level</th>
-      <th colspan="4" align="center">Support&nbsp;in&nbsp;FOP</th>
+      <th colspan="3" align="center">Support&nbsp;in&nbsp;FOP</th>
       <th rowspan="2">Comments</th>
     </tr>
     <tr>
-      <th align="center">0.20.5 (ancient)</th>
-      <th align="center">0.94 (stable)</th>
       <th align="center">0.95 (stable)</th>
+      <th align="center">1.0 (stable)</th>
       <th align="center">develop- ment</th>
     </tr>
 
@@ -5381,7 +4687,6 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -5389,7 +4694,6 @@
       "http://www.w3.org/TR/xsl/#d0e5860">&sect;5.10.1</a></td>
       <td><a name="fo-function-ceiling" id="fo-function-ceiling">ceiling</a></td>
       <td class="basic">Basic</td>
-      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -5403,7 +4707,6 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -5411,7 +4714,6 @@
       "http://www.w3.org/TR/xsl/#d0e5860">&sect;5.10.1</a></td>
       <td><a name="fo-function-min" id="fo-function-min">min</a></td>
       <td class="basic">Basic</td>
-      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -5425,7 +4727,6 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -5433,7 +4734,6 @@
       "http://www.w3.org/TR/xsl/#d0e5860">&sect;5.10.1</a></td>
       <td><a name="fo-function-abs" id="fo-function-abs">abs</a></td>
       <td class="basic">Basic</td>
-      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -5454,7 +4754,6 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -5462,7 +4761,6 @@
       "http://www.w3.org/TR/xsl/#expr-color-functions">&sect;5.10.2</a></td>
       <td><a name="fo-function-rgb-icc" id="fo-function-rgb-icc">rgb-icc</a></td>
       <td class="basic">Basic</td>
-      <td class="no">no</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -5473,7 +4771,6 @@
       "http://www.w3.org/TR/xsl/#expr-color-functions">&sect;5.10.2</a></td>
       <td><a name="fo-function-system-color" id="fo-function-system-color">system-color</a></td>
       <td class="basic">Basic</td>
-      <td class="no">no</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -5491,7 +4788,6 @@
       "http://www.w3.org/TR/xsl/#d0e5948">&sect;5.10.3</a></td>
       <td><a name="fo-function-system-font" id="fo-function-system-font">system-font</a></td>
       <td class="basic">Basic</td>
-      <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
@@ -5513,7 +4809,6 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -5521,7 +4816,6 @@
       "http://www.w3.org/TR/xsl/#d0e5961">&sect;5.10.4</a></td>
       <td><a name="fo-function-label-end" id="fo-function-label-end">label-end</a></td>
       <td class="basic">Basic</td>
-      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -5535,7 +4829,6 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -5543,7 +4836,6 @@
       "http://www.w3.org/TR/xsl/#d0e5961">&sect;5.10.4</a></td>
       <td><a name="fo-function-from-parent" id="fo-function-from-parent">from-parent</a></td>
       <td class="basic">Basic</td>
-      <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -5558,7 +4850,6 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -5570,7 +4861,6 @@
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
-      <td class="no">no</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -5579,7 +4869,6 @@
       <td><a name="fo-function-from-table-column" id=
       "fo-function-from-table-column">from-table-column</a></td>
       <td class="basic">Basic</td>
-      <td class="no">no</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
@@ -5594,7 +4883,6 @@
       <td class="yes">yes</td>
       <td class="yes">yes</td>
       <td class="yes">yes</td>
-      <td class="yes">yes</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -5603,7 +4891,6 @@
       <td><a name="fo-function-merge-property-values" id=
       "fo-function-merge-property-values">merge-property-values</a></td>
       <td class="basic">Basic</td>
-      <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>
       <td class="no">no</td>

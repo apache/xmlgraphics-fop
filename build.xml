@@ -57,7 +57,6 @@ list of possible build targets.
   <property file="${basedir}/build-local.properties"/>
   <property file="${basedir}/build.properties"/>
   <property environment="env"/>
-  <property name="build.lib.dir" value="${basedir}/lib/build"/>
   <fileset dir="${basedir}" id="dist.bin">
     <include name="conf/**"/>
     <include name="examples/**"/>
@@ -85,12 +84,22 @@ list of possible build targets.
       <include name="lib/xml-apis*"/>
     </patternset>
   </fileset>
+  <patternset id="dist.src.lib.tools">
+	<include name="lib/build/asm*"/>
+	<include name="lib/build/backport-util-concurrent*"/>
+	<include name="lib/build/jaxen*"/>
+	<include name="lib/build/pmd*"/>
+	<include name="lib/build/qdox*"/>
+	<include name="lib/build/retroweaver*"/>
+	<include name="lib/build/xmlunit*"/>
+  </patternset>
   <fileset dir="${basedir}" id="dist.src">
     <include name="src/**"/>
     <include name="conf/**"/>
     <include name="hyph/hyphenation.dtd"/>
     <include name="hyph/readme"/>
     <patternset refid="dist.lib"/>
+	<patternset refid="dist.src.lib.tools"/>
     <include name="lib/servlet*"/>
     <include name="test/**"/>
     <include name="examples/**"/>
@@ -103,6 +112,8 @@ list of possible build targets.
     <include name="build.*"/>
     <include name="forrest.properties"/>
     <include name="fop.bat"/>
+    <include name="fop.cmd"/>
+    <include name="fop.js"/>
     <include name="fop"/>
   </fileset>
   <path id="libs-build-classpath">
@@ -110,10 +121,10 @@ list of possible build targets.
       <include name="*.jar"/>
     </fileset>
   </path>
-  <property name="lib-build-tools" value="${basedir}/lib/build"/>
-  <path id="libs-build-tools-classpath">
+  <property name="lib-tools" value="${basedir}/lib/build"/>
+  <path id="libs-tools-build-classpath">
     <path refid="libs-build-classpath"/>
-    <fileset dir="${lib-build-tools}">
+    <fileset dir="${lib-tools}">
       <include name="*.jar"/>
     </fileset>
   </path>
@@ -134,7 +145,7 @@ list of possible build targets.
   <property name="name" value="fop"/>
   <property name="NAME" value="FOP"/>
   <property name="version" value="svn-trunk"/>
-  <property name="year" value="1999-2009"/>
+  <property name="year" value="1999-2010"/>
   <property name="javac.debug" value="on"/>
   <property name="javac.optimize" value="off"/>
   <property name="javac.deprecation" value="on"/>
@@ -226,7 +237,7 @@ list of possible build targets.
     <echo message="${jce.message}"/>
     <available property="jdk14.present" classname="java.lang.CharSequence"/>
     <fail message="${Name} requires at least Java 1.4!" unless="jdk14.present"/>
-    <available property="junit.present" classname="junit.framework.TestCase" classpathref="libs-build-tools-classpath"/>
+    <available property="junit.present" classname="junit.framework.TestCase" classpathref="libs-tools-build-classpath"/>
     <condition property="junit.message" value="JUnit Support PRESENT">
       <equals arg1="${junit.present}" arg2="true"/>
     </condition>
@@ -238,7 +249,7 @@ list of possible build targets.
     <echo message="${junit.message}"/>
     <condition property="xmlunit.present">
       <and>
-        <available classname="org.custommonkey.xmlunit.XMLTestCase" classpathref="libs-build-tools-classpath"/>
+        <available classname="org.custommonkey.xmlunit.XMLTestCase" classpathref="libs-tools-build-classpath"/>
         <isset property="junit.present"/>
       </and>
     </condition>
@@ -344,7 +355,7 @@ list of possible build targets.
       <src path="${src.codegen.dir}/java"/>
       <patternset includes="**/*.java"/>
       <classpath>
-        <path refid="libs-build-tools-classpath"/>
+        <path refid="libs-tools-build-classpath"/>
         <pathelement location="${build.classes.dir}"/>
       </classpath>
     </javac>
@@ -355,7 +366,7 @@ list of possible build targets.
     </copy>
     <taskdef name="eventResourceGenerator" classname="org.apache.fop.tools.EventProducerCollectorTask">
       <classpath>
-        <path refid="libs-build-tools-classpath"/>
+        <path refid="libs-tools-build-classpath"/>
         <pathelement location="${build.classes.dir}"/>
         <pathelement location="${build.codegen-classes.dir}"/>
       </classpath>
@@ -472,7 +483,7 @@ list of possible build targets.
   <target name="retro-avail" depends="compile" if="java14.rt.lib">
     <taskdef name="retroweaver" classname="net.sourceforge.retroweaver.ant.RetroWeaverTask">
       <classpath>
-        <path refid="libs-build-tools-classpath"/>
+        <path refid="libs-tools-build-classpath"/>
       </classpath>
     </taskdef>
     <path id="verify-classpath">
@@ -718,7 +729,7 @@ list of possible build targets.
       <src path="${test.dir}/java"/>
       <patternset refid="test-sources"/>
       <classpath>
-        <path refid="libs-build-tools-classpath"/>
+        <path refid="libs-tools-build-classpath"/>
         <fileset dir="${build.dir}">
           <include name="fop.jar"/>
         </fileset>
@@ -917,7 +928,7 @@ list of possible build targets.
         <formatter type="xml" usefile="true"/>
         <classpath>
           <pathelement location="${build.dir}/test-classes"/>
-          <path refid="libs-build-tools-classpath"/>
+          <path refid="libs-tools-build-classpath"/>
           <pathelement location="${build.dir}/fop.jar"/>
         </classpath>
         <test name="@{testsuite}" todir="${junit.reports.dir}" outfile="@{outfile}"/>
@@ -1116,7 +1127,7 @@ NOTE:
   	<and>
       <available classname="com.puppycrawl.tools.checkstyle.CheckStyleTask">
         <classpath>
-          <path refid="libs-build-tools-classpath"/>
+          <path refid="libs-tools-build-classpath"/>
         </classpath>
       </available>
       <available file="${checkstyle.noframes.xslt}"/>
@@ -1124,11 +1135,11 @@ NOTE:
   </condition>
   <target name="checkstyle-avail" unless="checkstyle.avail">
     <echo message="Checkstyle support NOT present. Please download it from http://checkstyle.sf.net/ and"/>
-    <echo message="..copy or link checkstyle-all-5.0.jar to ${lib-build-tools}"/>
+    <echo message="..copy or link checkstyle-all-5.0.jar to ${lib-tools}"/>
     <echo message="..copy or link checkstyle-noframes.xsl to ${checkstyle.noframes.xslt}"/>
   </target>
   <target name="checkstyle" depends="init, checkstyle-avail" if="checkstyle.avail" description="Runs Checkstyle for a code quality report">
-    <taskdef name="checkstyle" classname="com.puppycrawl.tools.checkstyle.CheckStyleTask" classpathref="libs-build-tools-classpath"/>
+    <taskdef name="checkstyle" classname="com.puppycrawl.tools.checkstyle.CheckStyleTask" classpathref="libs-tools-build-classpath"/>
     <checkstyle config="checkstyle-5.0.xml" failonviolation="false">
       <fileset dir="${src.java.dir}" includes="**/*.java"/>
       <formatter type="xml" toFile="${build.dir}/report_checkstyle.xml"/>
@@ -1142,7 +1153,7 @@ NOTE:
     <taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask">
       <classpath>
         <path refid="libs-build-classpath"/>
-        <path refid="libs-build-tools-classpath"/>
+        <path refid="libs-tools-build-classpath"/>
       </classpath>
     </taskdef>
     <pmd shortFilenames="true" targetjdk="${javac.target}">
@@ -1160,7 +1171,7 @@ NOTE:
     <taskdef name="cpd" classname="net.sourceforge.pmd.cpd.CPDTask">
       <classpath>
         <path refid="libs-build-classpath"/>
-        <path refid="libs-build-tools-classpath"/>
+        <path refid="libs-tools-build-classpath"/>
       </classpath>
     </taskdef>
      <cpd minimumTokenCount="100" outputFile="${build.dir}/report_cpd.txt">
@@ -1298,6 +1309,7 @@ NOTE:
       <fileset dir="${build.dir}/maven"/>
       <metainf dir="${basedir}" includes="LICENSE,NOTICE"/>
     </jar>
+    <move file="${build.dir}/${name}-${version}-bundle.jar" todir="${basedir}"/>
   </target>
 <!-- =================================================================== -->
 <!-- Generate examples                                                   -->
@@ -1368,6 +1380,7 @@ NOTE:
     <delete>
       <fileset dir="${basedir}" includes="${name}-*.tar.gz"/>
       <fileset dir="${basedir}" includes="${name}-*.zip"/>
+	  <fileset dir="${basedir}" includes="${name}-bundle.jar"/>
     </delete>
   </target>
   <target name="validate-xdocs" description="Validate the xdocs. Point schemas.dir to Forrest's 'schemas' directory.">

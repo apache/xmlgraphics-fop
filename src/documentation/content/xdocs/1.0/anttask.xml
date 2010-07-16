@@ -69,6 +69,16 @@
        <td>Yes, if no fileset nested element is used</td> 
       </tr> 
       <tr> 
+       <td>xmlfile</td> 
+       <td>XML input file</td> 
+       <td>Yes, if no fofile is specified</td> 
+      </tr> 
+      <tr> 
+       <td>xsltfile</td> 
+       <td>XSLT input file</td> 
+       <td>Yes, if no fofile is specified</td> 
+      </tr> 
+      <tr> 
        <td>outfile</td> 
        <td>Output filename</td> 
        <td>Yes, when fofile is used.  (This attribute is not valid for filesets.)</td> 
@@ -148,6 +158,11 @@
             (<code>true</code>) or not (<code>false</code>). <strong>Currently doesn't work in FOP Trunk!!!</strong></td> 
        <td>No, default is <code>true</code></td> 
       </tr> 
+      <tr> 
+       <td>throwexceptions</td> 
+       <td>Controls whether or not an exception is thrown if an error occurs during rendering.</td> 
+       <td>Default is <code>true</code></td> 
+      </tr> 
      </table>
      <p/>
      <table><caption>Parameters specified as nested elements</caption>
@@ -187,6 +202,31 @@
         outdir="${build.dir}" messagelevel="debug">
         <fileset dir="${fo.examples.dir}">
            <include name="*.fo"/>
+        </fileset>
+   </fop>
+</target>
+    ]]></source>
+    <p>
+    The following example transforms and converts a single XML and XSLT file to an AFP document:
+    </p>
+    <source><![CDATA[
+<target name="generate-afp-from-transform" description="Generates a single AFP file from an XSLT stylesheet">
+   <fop format="application/x-afp" 
+        xmlfile="c:\working\foDirectory\Document.xml"
+        xsltfile="c:\working\foDirectory\Document.xslt"
+        outfile="c:\working\afpDirectory\Document.afp" />
+</target>
+    ]]></source>
+    <p>
+    This example transforms and converts all XML files within an entire directory to PostScript:
+    </p>
+    <source><![CDATA[
+<target name="generate-multiple-ps-from-transform" description="Generates multiple PostScript files using an XSLT stylesheet">
+   <fop format="application/postscript" 
+        xsltfile="c:\working\foDirectory\Document.xslt"
+        outdir="${build.dir}" messagelevel="debug">
+        <fileset dir="${test.dir}">
+           <include name="*.xml"/>
         </fileset>
    </fop>
 </target>
