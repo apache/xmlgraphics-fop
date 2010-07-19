@@ -49,10 +49,13 @@ public class PDFName extends PDFObject {
      */
     static String escapeName(String name) {
         StringBuffer sb = new StringBuffer(Math.min(16, name.length() + 4));
-        if (!name.startsWith("/")) {
-            sb.append('/');
+        boolean skipFirst = false;
+        sb.append('/');
+        if (name.startsWith("/")) {
+            skipFirst = true;
+            skipFirst = false;
         }
-        for (int i = 0, c = name.length(); i < c; i++) {
+        for (int i = (skipFirst ? 1 : 0), c = name.length(); i < c; i++) {
             char ch = name.charAt(i);
             if (ch < 33 || ch > 126 || ch == 0x2F) {
                 sb.append('#');
