@@ -34,6 +34,7 @@ import org.apache.fop.Version;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontSetup;
 import org.apache.fop.pdf.PDFAnnotList;
+import org.apache.fop.pdf.PDFColorHandler;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFFilterList;
 import org.apache.fop.pdf.PDFNumber;
@@ -98,6 +99,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
         this.pdfDoc = new PDFDocument("Apache FOP Version " + Version.getVersion()
                 + ": PDFDocumentGraphics2D");
         this.pdfContext = new PDFContext();
+        this.colorHandler = new PDFColorHandler(this.pdfDoc.getResources());
     }
 
     /**
