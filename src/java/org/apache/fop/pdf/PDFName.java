@@ -54,11 +54,11 @@ public class PDFName extends PDFObject {
         }
         for (int i = 0, c = name.length(); i < c; i++) {
             char ch = name.charAt(i);
-            if (ch >= 33 && ch <= 126) {
-                sb.append(ch);
-            } else {
+            if (ch < 33 || ch > 126 || ch == 0x2F) {
                 sb.append('#');
                 toHex(ch, sb);
+            } else {
+                sb.append(ch);
             }
         }
         return sb.toString();

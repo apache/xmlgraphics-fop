@@ -519,7 +519,7 @@ This applies similarly to the extent of the after region and the bottom margin o
       <section id="external-resources">
         <title>External Resources</title>
         <p>Resources needed by an XSL-FO file that are external to it (graphics, for example), are defined in the XSL-FO standard as being of type "uri-specification". This is defined in the standard at <jump href="http://www.w3.org/TR/xsl11/#datatype">Section 5.11 Property Datatypes</jump>, which includes a link to the URI standard itself. Refer to the XSL-FO and URI standards themselves for more detailed instructions.</p>
-        <p>URIs may be either absolute or relative to a base URI. (See <link href="0.94/configuration.html">FOP: Configuration</link> for information on setting the base URI for a FOP session). Here is an example referencing an external-graphic that is relative to the base URI:</p>
+        <p>URIs may be either absolute or relative to a base URI. (See <link href="1.0/configuration.html">FOP: Configuration</link> for information on setting the base URI for a FOP session). Here is an example referencing an external-graphic that is relative to the base URI:</p>
         <source><![CDATA[<fo:external-graphic src="url('images/logo.jpg')"/>]]></source>
         <p>Here is an example referencing an external-graphic that is an absolute URI on a local filesystem:</p>
         <source><![CDATA[fo:external-graphic src="url('file:d:///images/logo.jpg')"/>]]></source>

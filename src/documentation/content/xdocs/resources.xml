@@ -37,24 +37,29 @@
       <section id="specs-xslt">
         <title>XSLT</title>
         <ul>
-          <li><jump href="http://www.w3.org/TR/xslt">XSLT Recommendation</jump></li>
+          <li><jump href="http://www.w3.org/TR/xslt">XSLT 1.0 Recommendation</jump></li>
+          <li><jump href="http://www.w3.org/TR/xslt20">XSLT 2.0 Recommendation</jump></li>
         </ul>
       </section>
       <section id="specs-xml">
         <title>XML</title>
         <ul>
-          <li><jump href="http://www.w3.org/TR/REC-xml">XML Recommendation</jump></li>
+          <li><jump href="http://www.w3.org/TR/xml">XML 1.0 </jump></li>
+          <li><jump href="http://www.w3.org/TR/xml11">XML 1.1 </jump></li>
           <li><jump href="http://sax.sourceforge.net/">Simple API for XML (SAX)</jump></li>
           <li><jump href="http://www.w3.org/TR/REC-DOM-Level-1">Document Object Model (DOM)</jump></li>
-          <li><jump href="http://www.w3.org/TR/REC-xml-names/">Namespaces in XML Recommendation</jump></li>
+		  <li><jump href="http://www.w3.org/TR/DOM-Level-2-Core">Document Object Model (DOM) Level 2 Core Specification</jump></li>
+		  <li><jump href="http://www.w3.org/TR/DOM-Level-3-Core">Document Object Model (DOM) Level 3 Core Specification</jump></li>
+          <li><jump href="http://www.w3.org/TR/xml-names/">Namespaces in XML 1.0 </jump></li>
+          <li><jump href="http://www.w3.org/TR/xml-names11/">Namespaces in XML 1.1</jump></li>
         </ul>
       </section>
       <section id="specs-java">
         <title>Java</title>
         <ul>
-          <li><jump href="http://java.sun.com/j2se/1.3/docs/api/index.html">Java JDK 1.3 Documentation</jump></li>
-          <li><jump href="http://java.sun.com/j2se/1.4/docs/api/index.html">Java JDK 1.4 Documentation</jump></li>
-          <li><jump href="http://java.sun.com/j2se/1.5/docs/api/index.html">Java JDK 1.5 Documentation</jump></li>
+          <li><jump href="http://java.sun.com/j2se/1.4/docs/api/index.html">Java 2 Platform, Standard Edition, v 1.4.2 API Specification</jump></li>
+          <li><jump href="http://java.sun.com/j2se/1.5/docs/api/index.html">Java 2 Platform Standard Edition 5.0 API Specification </jump></li>
+          <li><jump href="http://java.sun.com/javase/6/docs/api/index.html">Java Platform, Standard Edition 6 API Specification</jump></li>
         </ul>
       </section>
       <section id="specs-pdf">
@@ -83,13 +88,15 @@
         <title>XSL-FO</title>
         <ul>
           <li>[online book] <jump href="http://www.ibiblio.org/xml/books/bible2/chapters/ch18.html">The XML Bible</jump>, by Elliotte Rusty Harold. Chapter 18 of XSL Formatting Objects</li>
+<!--
           <li>[online article] <jump href="http://www.sun.com/software/xml/developers/slides-dtd/">Using Formatting Objects with the Slides DTD</jump>, by Paul Sandoz.</li>
+-->
           <li>[online article] <jump href="http://www.xml.com/pub/a/2001/01/17/xsl-fo/index.html">Using XSL Formatting Objects</jump>, by J. David Eisenberg.</li>
           <li>[online reference] <jump href="http://zvon.org/xxl/xslfoReference/Output/index.html">XSL FO reference</jump>, by Miloslav Nic.</li>
           <li>[online reference] <jump href="http://www.dpawson.co.uk/xsl/sect3/index.html">Dave Pawson's XSL-FO FAQ</jump>.</li>
           <li>[book] <jump href="http://www.oreilly.com/catalog/xslfo">XSL-FO</jump>, by Dave Pawson, O'Reilly &amp; Associates, 2002, ISBN 0-596-00355-2. See online version above.</li>
-          <li>[book] <jump href="http://www.phptr.com/browse/product.asp?product_id={CEA527AF-412D-49DA-8C1F-46E0A519B8D8}">Definitive XSL-FO</jump>, by G. Ken Holman, Prentice Hall PTR, 2003, ISBN 0-131-40374-5.</li>
-          <li>[book] <jump href="http://www.sams.com/catalog/product.asp?product_id={F7ADFA46-6AF1-497C-9163-0D6337F727B3}">XSL Formatting Objects Developer's Handbook</jump>, by Doug Lovell, Sams, 2002, ISBN 0-672-32281-1.</li>
+          <li>[book] <jump href="http://www.amazon.com/exec/obidos/ASIN/0131403745/ref=ase_cranesoftwrig-20">Definitive XSL-FO</jump>, by G. Ken Holman, Prentice Hall PTR, 2003, ISBN 0-131-40374-5.</li>
+          <li>[book] <jump href="http://www.amazon.com/XSL-Formatting-Objects-Developers-Handbook/dp/0672322811">XSL Formatting Objects Developer's Handbook</jump>, by Doug Lovell, Sams, 2002, ISBN 0-672-32281-1.</li>
           <li>[book] <jump href="http://www.cranesoftwrights.com/training/index.htm#pfux">Practical Formatting Using XSLFO</jump>, Crane Softwrights Ltd., 2003, ISBN 1-894049-11-X.</li>
         </ul>
       </section>
@@ -97,12 +104,13 @@
         <title>XSLT</title>
         <ul>
           <li>[online resource] <jump href="http://www.w3.org/Style/XSL/">Extensible Stylesheet Language Family (XSL)</jump>, W3C XSL Family page.</li>
-          <li>[book] <jump href="http://wrox.com/books/1861005067.htm">XSLT Programmer's Reference</jump>, by Michael H. Kay, Wrox Press, ISBN 1-861-00506-7.</li>
+          <li>[book] <jump href="http://www.amazon.com/XSLT-Programmers-Reference-2nd-Michael/dp/1861005067">XSLT Programmer's Reference</jump>, by Michael H. Kay, Wrox Press, ISBN 1-861-00506-7.</li>
+          <li>[book] <jump href="http://www.wrox.com/WileyCDA/WroxTitle/XSLT-2-0-and-XPath-2-0-Programmer-s-Reference-4th-Edition.productCd-0470192747.html">XSLT2 and XPath2 Programmer's Reference</jump>, by Michael H. Kay, Wrox Press, ISBN: 978-0-470-19274-0.</li>
           <li>[book] <jump href="http://www.oreilly.com/catalog/xslt">XSLT</jump>, by Doug Tidwell, O'Reilly &amp; Associates, 2001, ISBN 0-596-00053-7.</li>
           <li>[book] <jump href="http://www.oreilly.com/catalog/xsltckbk">XSLT Cookbook</jump>, by Sal Mangano, O'Reilly &amp; Associates, 2002, ISBN 0-596-00372-2.</li>
           <li>[article] <jump href="http://www.dpawson.co.uk/xsl/index.html">Dave Pawson's XSL FAQ</jump>.</li>
          <li>[book] <jump href="http://www.oreilly.com/catalog/xpathpointer">XPath and XPointer: Locating Content in XML Documents</jump>, by John E. Simpson, O'Reilly &amp; Associates, 2002, ISBN 0-596-00291-2.</li>
-          <li>[book] <jump href="http://www.wiley.com/cda/product/0,,0471416207,00.html">XSL Essentials</jump>, by Michael Fitzgerald, John Wiley &amp; Sons, 2001, ISBN 0-471-41620-7.</li>
+          <li>[book] <jump href="http://www.amazon.com/XSL-Essentials-Michael-Fitzgerald/dp/0471416207">XSL Essentials</jump>, by Michael Fitzgerald, John Wiley &amp; Sons, 2001, ISBN 0-471-41620-7.</li>
           <li>[book] <jump href="http://www.oreilly.com/catalog/javaxslt">Java and XSLT</jump>, by Eric M. Burke, O'Reilly &amp; Associates, 2001, ISBN 0-596-00143-6.</li>
         </ul>
       </section>
@@ -110,7 +118,7 @@
         <title>XML</title>
         <ul>
           <li>[online book] <jump href="http://www.ibiblio.org/xml/books/bible2">The XML Bible</jump>, by Elliotte Rusty Harold. See hardcopy version below.</li>
-          <li>[book] <jump href="http://www.wiley.com/cda/product/0,,0764547607,00.html">The XML Bible</jump>, by Elliotte Rusty Harold, John Wiley &amp; Sons, ISBN 0-764-54760-7. See online version above.</li>
+          <li>[book] <jump href="http://www.amazon.com/XML-Bible-Elliotte-Rusty-Harold/dp/0764547607">The XML Bible</jump>, by Elliotte Rusty Harold, John Wiley &amp; Sons, ISBN 0-764-54760-7. See online version above.</li>
           <li>[online resource] A great number of additional XML-related books and articles can be found at the <jump href="http://xml.oreilly.com">O'Reilly XML Site</jump>.</li>
         </ul>
       </section>
@@ -204,10 +212,9 @@
       <section id="products-pdf">
         <title>PDF post-processors</title>
         <ul>
-          <li>[software] <jump href="http://incubator.apache.org/pdfbox">Apache PDFBox</jump> (Incubating, Apache License V2.0)</li>
+          <li>[software] <jump href="http://pdfbox.apache.org">Apache PDFBox</jump> (Apache License V2.0)</li>
           <li>[software] <jump href="http://www.lowagie.com/iText">iText</jump> (MPL and LGPL)</li>
-          <li>[software] <jump href="http://www.etymon.com/pjc">PJ Classic</jump> by Etymon (GPL)</li>
-          <li>[software] <jump href="http://www.etymon.com/pjx">PJ Professional</jump> by Etymon (commercial)</li>
+          <li>[software] <jump href="http://www.etymon.com/epub.html">PJX</jump> by Etymon (GPL)</li>
           <li>[software] <jump href="http://www.accesspdf.com/pdftk/">pdftk</jump> the pdf toolkit</li>
         </ul>
       </section>
@@ -227,11 +234,13 @@
         <title>Other products</title>
         <ul>
           <li>[software] <jump href="http://foray.sourceforge.net/">FOray</jump> a renderer for converting XML files to PDF via XSL Formatting Object elements (FOP fork)</li>
+<!--
           <li>[software] <jump href="http://defoe.sourceforge.net/folio">Folio</jump> a renderer for XML files containing Formatting Object elements (aka FOP Alt.Design)</li>
+-->
           <li>[software] <jump href="http://xmlroff.org/">xmlroff</jump> an open source XSL-FO implementation written in C (BSD-style license)</li>
 
           <li>[commercial software developer] <jump href="http://antennahouse.com/product.htm">Antenna House</jump> - XSL Formatter, WordMLToFo, XML Editor...</li>
-          <li>[commercial software developer] <jump href="http://www.renderx.net/">RenderX</jump> XEP, EnMasse, Docbench...</li>
+          <li>[commercial software developer] <jump href="http://www.renderx.com/tools/index.html">RenderX</jump> XEP, EnMasse, Docbench...</li>
 
           <li>[software] <jump href="http://html2fo.sourceforge.net/">html2fo</jump> is a converter from HTML to XSL-FO (GPL).</li>
           <li>[software] <jump href="http://wh2fo.sourceforge.net/">wh2fo</jump> is a converter from Word HTML to XSL-FO (MPL).</li>

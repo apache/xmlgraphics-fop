@@ -19,21 +19,24 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
 <document>
   <header>
-    <title>Apache FOP Version 0.94</title>
+    <title>Apache FOP Trunk (Development code)</title>
     <version>$Revision$</version>
   </header>
   <body>
     <section id="intro">
       <title>Introduction</title>
       <p>
-        The Apache FOP team is proud to present to you this production quality release.
-        We're still in the process of adding new features. We welcome any feedback you
-        might have and even more, any other form of help to get the project forward.
+        <strong>FOP Trunk</strong> is the name for the current
+        development code as found in the <a
+        href="ext:svn-repo/trunk">Subversion repository</a>. This
+        section of the FOP web site provides the documentation for
+        this version.
       </p>
       <p>
-        This fifth release contains many bug fix release and new features compared
-        to 0.93. To see what has changed since the last release, please visit the 
-        <a href="changes_0.94.html">Changes Page</a> and the <a href="releaseNotes_0.94.html">Release Notes</a>.
+        The Apache FOP team is proud to present to you this production quality codebase. It has taken
+        over three years to get this far and over two years without a new release from the FOP
+        project. We're still in the process of adding new features. We welcome any feedback you
+        might have and even more, any other form of help to get the project forward.
       </p>
     </section>
     <section id="upgrading">
@@ -41,12 +44,6 @@
       <p>
         If you're upgrading to this version from an earlier version of FOP, please read the 
         information contained on the <a href="upgrading.html">Upgrading page</a>!
-      </p>
-    </section>
-    <section id="download">
-      <title>Download</title>
-      <p>
-        To download this version, please visit the <a href="../download.html">download page</a>.
       </p>
     </section>
   </body>

@@ -17,31 +17,30 @@
 
 /* $Id$ */
 
-package org.apache.fop.threading;
+package org.apache.fop.image.loader.batik;
 
-import java.io.OutputStream;
+import org.apache.xmlgraphics.image.loader.ImageFlavor;
 
-import javax.xml.transform.Source;
-import javax.xml.transform.Templates;
+import org.apache.fop.svg.AbstractFOPImageElementBridge;
 
 /**
- * Represents an FO processor.
+ * Image Element Bridge class for the SVG to Java2D converter, used to make Batik load images
+ * through FOP and XGC's image loading framework.
  */
-public interface FOProcessor {
+class GenericFOPImageElementBridge extends AbstractFOPImageElementBridge {
 
     /**
-     * Process a file.
-     * @param src the Source for the FO or XML file
-     * @param templates a JAXP Templates object for an XSLT transformation or null
-     * @param out the OutputStream for the target file
-     * @throws Exception if an error occurs
+     * Constructs a new bridge for the &lt;image&gt; element.
      */
-    void process(Source src, Templates templates, OutputStream out)
-            throws Exception;
+    public GenericFOPImageElementBridge() { }
 
-    /**
-     * Returns the target file extension for the configured output format.
-     * @return the target file extension (for example ".pdf")
-     */
-    String getTargetFileExtension();
+    private final ImageFlavor[] supportedFlavors = new ImageFlavor[]
+                                               {ImageFlavor.GRAPHICS2D,
+                                                BatikImageFlavors.SVG_DOM};
+
+    /** {@inheritDoc} */
+    protected ImageFlavor[] getSupportedFlavours() {
+        return supportedFlavors;
+    }
+
 }

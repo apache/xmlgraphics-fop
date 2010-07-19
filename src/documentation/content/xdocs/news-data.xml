@@ -17,6 +17,15 @@
 -->
 <!-- $Id$ -->
 <news>
+  <item date="2010-07-20" title="Apache FOP 1.0 Released">
+    <p>
+      The Apache FOP team is delighted to present you a production grade
+      release of the new FOP codebase. This release
+      contains many bug fixes and new features. See the <a
+        href="1.0/releaseNotes_1.0.html">Release Notes</a> for a list of
+      the most important changes.
+    </p>
+  </item>
   <item date="2009-12-14" title="New committer">
     <p>Welcome Pascal Sancho!</p>
   </item>
@@ -47,8 +56,7 @@
   <item date="2007-08-24" title="Apache FOP 0.94 Released">
     <p>The Apache FOP team is pleased to present you the second production
       grade release of the new FOP codebase. This release contains many bug
-      fixes and new features. See the <a
-        href="0.94/releaseNotes_0.94.html">Release Notes</a> for a list of
+      fixes and new features. See the Release Notes for a list of
       the most important changes.</p>
   </item>
   <item date="2007-01-26" title="New Committer">
