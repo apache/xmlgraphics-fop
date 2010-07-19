@@ -30,6 +30,9 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.stream.StreamResult;
+
+import org.xml.sax.ContentHandler;
 
 import org.apache.avalon.framework.activity.Initializable;
 import org.apache.avalon.framework.configuration.Configurable;
@@ -40,14 +43,17 @@ import org.apache.commons.io.FilenameUtils;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.render.intermediate.IFDocumentHandler;
+import org.apache.fop.render.intermediate.IFException;
+import org.apache.fop.render.intermediate.IFParser;
+import org.apache.fop.render.intermediate.IFUtil;
 
 /**
- * Default implementation of the {@link Processor} interface using FOP.
+ * Implementation of the {@link Processor} interface that renders IF XML to a final output format.
  */
-public class FOProcessorImpl extends AbstractLogEnabled
+public class IFProcessorImpl extends AbstractLogEnabled
             implements Processor, Configurable, Initializable {
 
     private FopFactory fopFactory = FopFactory.newInstance();
@@ -71,9 +77,10 @@ public class FOProcessorImpl extends AbstractLogEnabled
         }
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc}
+     * @throws IFException */
     public void process(Source src, Templates templates, OutputStream out)
-                throws org.apache.fop.apps.FOPException, java.io.IOException {
+                throws org.apache.fop.apps.FOPException, java.io.IOException, IFException {
         FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
         foUserAgent.setBaseURL(src.getSystemId());
         try {
@@ -84,7 +91,14 @@ public class FOProcessorImpl extends AbstractLogEnabled
         } catch (MalformedURLException mfue) {
             throw new RuntimeException(mfue);
         }
-        Fop fop = fopFactory.newFop(this.mime, foUserAgent, out);
+
+        //Setup target handler
+        IFDocumentHandler targetHandler = fopFactory.getRendererFactory().createDocumentHandler(
+                foUserAgent, mime);
+
+        //Setup fonts
+        IFUtil.setupFonts(targetHandler);
+        targetHandler.setResult(new StreamResult(out));
 
         try {
             Transformer transformer;
@@ -93,7 +107,9 @@ public class FOProcessorImpl extends AbstractLogEnabled
             } else {
                 transformer = templates.newTransformer();
             }
-            Result res = new SAXResult(fop.getDefaultHandler());
+            IFParser parser = new IFParser();
+            ContentHandler contentHandler = parser.getContentHandler(targetHandler, foUserAgent);
+            Result res = new SAXResult(contentHandler);
             transformer.transform(src, res);
         } catch (TransformerException e) {
             throw new FOPException(e);
@@ -104,4 +120,5 @@ public class FOProcessorImpl extends AbstractLogEnabled
     public String getTargetFileExtension() {
         return this.fileExtension;
     }
+
 }

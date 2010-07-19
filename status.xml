@@ -61,6 +61,8 @@
       <action context="Renderers" dev="JM" type="add" fixes-bug="49403" due-to="Patrick Jaromin">
         Initial work on spot colors (aka named colors) for PDF output.
       </action>
+	</release>
+    <release version="1.0" date="July 2010">
       <action context="Renderers" dev="JM" type="fix">
         AFP Output: Fixed positioning of Java2D-based images (when GOCA is enabled).
       </action>
@@ -91,6 +93,8 @@
       <action context="Renderers" dev="JM" type="add" fixes-bug="48567" due-to="Peter Hancock">
         Initial support for CID-keyed double-byte fonts (Type 0) in AFP output.
       </action>
+	  <action context="API" dev="SP" type="add">Added a command-line option '-catalog' to use a catalog resolver for the XML and XSLT files</action>
+      <action context="Layout" dev="SP" type="add">Implement internal character classes if the hyphenation pattern file does not contain them</action>
       <action context="Layout" dev="VH" type="fix" fixes-bug="46486">
         Bugfix: having a special page-master for the last page caused loss of content when normal 
         blocks were mixed with blocks spanning all columns.
@@ -138,7 +142,7 @@
       <action context="Renderers" dev="JM,VH" type="add" fixes-bug="46705" due-to="Jost Klopfstein">
         Added basic accessibility and Tagged PDF support. 
       </action>
-      <action context="Code" dev="JM" type="add">
+      <action context="Renderers" dev="JM" type="add">
         Added support for encoding CMYK bitmap images (IOCA FS45) and TIFF images as embedded objects.
       </action>
       <action context="Code" dev="AC" type="add">
@@ -546,6 +550,10 @@
       <action context="Fonts" dev="JM" type="add" importance="high">
         Added support for addressing all glyphs available in a Type 1 font, not just the ones
         in the font's primary encoding.
+      </action>
+      <action context="Code" dev="JM" type="add" importance="high">
+        Added an event handling framework which allows to get better feedback from within FOP
+        with the ability to customize problem management.
       </action>
     </release>
     <release version="0.95" date="05 August 2008">

@@ -56,7 +56,7 @@ public class FOPTestbed extends AbstractLogEnabled
     private int threads;
     private File outputDir;
     private Configuration fopCfg;
-    private FOProcessor foprocessor;
+    private Processor foprocessor;
     private boolean writeToDevNull;
 
     private int counter = 0;
@@ -74,7 +74,7 @@ public class FOPTestbed extends AbstractLogEnabled
         for (int i = 0; i < entries.length; i++) {
             this.taskList.add(new TaskDef(entries[i]));
         }
-        this.fopCfg = configuration.getChild("foprocessor");
+        this.fopCfg = configuration.getChild("processor");
     }
 
     /** {@inheritDoc} */
@@ -177,11 +177,11 @@ public class FOPTestbed extends AbstractLogEnabled
      * Creates a new FOProcessor.
      * @return the newly created instance
      */
-    public FOProcessor createFOProcessor() {
+    public Processor createFOProcessor() {
         try {
             Class clazz = Class.forName(this.fopCfg.getAttribute("class",
                     "org.apache.fop.threading.FOProcessorImpl"));
-            FOProcessor fop = (FOProcessor)clazz.newInstance();
+            Processor fop = (Processor)clazz.newInstance();
             ContainerUtil.enableLogging(fop, getLogger());
             ContainerUtil.configure(fop, this.fopCfg);
             ContainerUtil.initialize(fop);
@@ -206,13 +206,15 @@ public class FOPTestbed extends AbstractLogEnabled
             this.fo = cfg.getAttribute("fo", null);
             if (this.fo == null) {
                 this.xml = cfg.getAttribute("xml");
-                this.xslt = cfg.getAttribute("xslt");
-                TransformerFactory factory = TransformerFactory.newInstance();
-                Source xsltSource = new StreamSource(new File(xslt));
-                try {
-                    this.templates = factory.newTemplates(xsltSource);
-                } catch (TransformerConfigurationException tce) {
-                    throw new ConfigurationException("Invalid XSLT", tce);
+                this.xslt = cfg.getAttribute("xslt", null);
+                if (this.xslt != null) {
+                    TransformerFactory factory = TransformerFactory.newInstance();
+                    Source xsltSource = new StreamSource(new File(xslt));
+                    try {
+                        this.templates = factory.newTemplates(xsltSource);
+                    } catch (TransformerConfigurationException tce) {
+                        throw new ConfigurationException("Invalid XSLT", tce);
+                    }
                 }
             }
         }
@@ -249,9 +251,9 @@ public class FOPTestbed extends AbstractLogEnabled
 
         private TaskDef def;
         private int num;
-        private FOProcessor fop;
+        private Processor fop;
 
-        public Task(TaskDef def, int num, FOProcessor fop) {
+        public Task(TaskDef def, int num, Processor fop) {
             this.def = def;
             this.num = num;
             this.fop = fop;
