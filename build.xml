@@ -1222,7 +1222,8 @@ NOTE:
 <!-- =================================================================== -->
 <!-- Creates the distribution                                            -->
 <!-- =================================================================== -->
-  <target name="dist" depends="dist-prereq,dist-src,dist-bin" description="Generates the distribution package"/>
+<!-- It would be better to make dist depend on distclean. But as long as the forrest projectInfo plugin depends on a higher Java version (1.5) than we use for the compilation (1.4), leaving it out enables a workaround -->
+  <target name="dist" depends="dist-prereq,dist-src,dist-bin,maven-artifacts" description="Generates the distribution package"/>
   <target name="dist-prereq" depends="init,dist-get-jai">
     <fail message="A complete binary build requires JAI" unless="jai.present"/>
     <fail message="A complete binary build requires JCE" unless="jce.present"/>
@@ -1270,7 +1271,7 @@ NOTE:
     <gzip zipfile="${name}-${version}-bin.tar.gz" src="${name}-${version}-bin.tar"/>
     <delete file="${name}-${version}-bin.tar"/>
   </target>
-  <target name="dist-src" depends="all">
+  <target name="dist-src">
     <echo message="Building the source distribution files (zip,tar)"/>
     <mkdir dir="${dist.src.result.dir}"/>
     <copy todir="${dist.src.result.dir}">
