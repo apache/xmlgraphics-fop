@@ -1208,16 +1208,12 @@ NOTE:
 <!-- =================================================================== -->
   <target name="docs" description="Generates documentation">
     <echo message="Building documentation with Forrest..."/>
-<!--
-    <echo message="Make sure that you have installed Apache Forrest and"/>
-    <echo message="the FORREST_HOME environment variable is set (see http://forrest.apache.org/)"/>
-    <echo message="FORREST_HOME = ${forrest.home}"/>
-    -->
+    <echo message="FORREST_HOME = ${env.FORREST_HOME}"/>
     <echo message="Make sure you have a proper Forrest installation (see http://forrest.apache.org/)"/>
     <condition property="forrest.call" value="forrest.bat" else="forrest">
       <os family="windows"/>
     </condition>
-    <exec executable="${forrest.call}"/>
+    <exec executable="${env.FORREST_HOME}/bin/${forrest.call}"/>
   </target>
 <!-- =================================================================== -->
 <!-- Creates the distribution                                            -->
