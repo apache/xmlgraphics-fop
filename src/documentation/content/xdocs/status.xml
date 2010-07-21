@@ -29,14 +29,14 @@
       <title>Status</title>
       <p>[last updated 5 July 2010]</p>
       <p>
-        FOP version 0.95 was released on 5 August 2008. FOP version 1.0 was released in July 2010.
+        FOP version 0.95 was released on 5 August 2008. FOP version 1.0 was released on 21 July 2010.
       </p>
     </section>
     <section>
       <title>Development Status</title>
 
 	  <p>The FOP code base is gradually evolving, from version 0.90
-	  released on 22 November 2005, to version 1.0 released in July
+	  released on 22 November 2005, to version 1.0 released on 21 July
 	  2010. Further releases in the 1.x series may be expected.</p>
       <p>FOP releases before version 0.90 were based on a different
 	  code base. The last release in that series was version 0.20.5,

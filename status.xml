@@ -59,7 +59,7 @@
     -->
     <release version="FOP Trunk" date="TBD">
 	</release>
-    <release version="1.0" date="July 2010">
+    <release version="1.0" date="21 July 2010">
       <action context="Renderers" dev="JM" type="fix">
         AFP Output: Fixed positioning of Java2D-based images (when GOCA is enabled).
       </action>
