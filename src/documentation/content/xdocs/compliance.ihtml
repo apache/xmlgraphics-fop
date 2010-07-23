@@ -568,7 +568,7 @@
     <tr>
       <td class="category" align="center"><a href=
       "http://www.w3.org/TR/xsl/#d0e7057">&sect;6.4</a></td>
-      <td class="category" colspan="7"><a name="fo-object-decl-section" id=
+      <td class="category" colspan="6"><a name="fo-object-decl-section" id=
       "fo-object-decl-section">Declarations and Pagination and Layout Formatting Objects</a></td>
     </tr>
     <tr>
@@ -846,7 +846,7 @@
     <tr>
       <td class="category" align="center"><a href=
       "http://www.w3.org/TR/xsl/#d0e9451">&sect;6.5</a></td>
-      <td class="category" colspan="7"><a name="fo-object-block-section" id=
+      <td class="category" colspan="6"><a name="fo-object-block-section" id=
       "fo-object-block-section">Block Formatting Objects</a></td>
     </tr>
     <tr>
@@ -874,7 +874,7 @@
     <tr>
       <td class="category" align="center"><a href=
       "http://www.w3.org/TR/xsl/#d0e9759">&sect;6.6</a></td>
-      <td class="category" colspan="7"><a name="fo-object-inline-section" id=
+      <td class="category" colspan="6"><a name="fo-object-inline-section" id=
       "fo-object-inline-section">Inline Formatting Objects</a></td>
     </tr>
     <tr>
@@ -1038,7 +1038,7 @@
     <tr>
       <td class="category" align="center"><a href=
       "http://www.w3.org/TR/xsl/#d0e11404">&sect;6.7</a></td>
-      <td class="category" colspan="7"><a name="fo-object-table-section" id=
+      <td class="category" colspan="6"><a name="fo-object-table-section" id=
       "fo-object-table-section">Table Formatting Objects</a></td>
     </tr>
     <tr>
@@ -1136,7 +1136,7 @@
     <tr>
       <td class="category" align="center"><a href=
       "http://www.w3.org/TR/xsl/#d0e12374">&sect;6.8</a></td>
-      <td class="category" colspan="7"><a name="fo-object-list-section" id=
+      <td class="category" colspan="6"><a name="fo-object-list-section" id=
       "fo-object-list-section">List Formatting Objects</a></td>
     </tr>
     <tr>
@@ -1184,7 +1184,7 @@
     <tr>
       <td class="category" align="center"><a href=
       "http://www.w3.org/TR/xsl/#d0e12855">&sect;6.9</a></td>
-      <td class="category" colspan="7"><a name="fo-object-link-section" id=
+      <td class="category" colspan="6"><a name="fo-object-link-section" id=
       "fo-object-link-section">Link and Multi Formatting Objects</a></td>
     </tr>
     <tr>
@@ -1253,7 +1253,7 @@
     <tr>
       <td class="category" align="center"><a href=
       "http://www.w3.org/TR/xsl11/#d0e13293">&sect;6.10</a></td>
-      <td class="category" colspan="7"><a name="fo-object-indexing-section" id=
+      <td class="category" colspan="6"><a name="fo-object-indexing-section" id=
       "fo-object-indexing-section">Formatting Objects for Indexing</a></td>
     </tr>
     <tr>
@@ -1340,7 +1340,7 @@
     <tr>
       <td class="category" align="center"><a href=
       "http://www.w3.org/TR/xsl11/#d0e14206">&sect;6.11</a></td>
-      <td class="category" colspan="7"><a name="fo-object-bookmarks-section" id=
+      <td class="category" colspan="6"><a name="fo-object-bookmarks-section" id=
       "fo-object-bookmarks-section">Formatting Objects for Bookmarks</a></td>
     </tr>
     <tr>
@@ -1374,7 +1374,7 @@
     <tr>
       <td class="category" align="center"><a href=
       "http://www.w3.org/TR/xsl/#d0e14340">&sect;6.12</a></td>
-      <td class="category" colspan="7"><a name="fo-object-outofline-section" id=
+      <td class="category" colspan="6"><a name="fo-object-outofline-section" id=
       "fo-object-outofline-section">Out-of-line Formatting Objects</a></td>
     </tr>
     <tr>
@@ -1411,7 +1411,7 @@
     <tr>
       <td class="category" align="center"><a href=
       "http://www.w3.org/TR/xsl/#d0e14653">&sect;6.13</a></td>
-      <td class="category" colspan="7"><a name="fo-object-other-section" id=
+      <td class="category" colspan="6"><a name="fo-object-other-section" id=
       "fo-object-other-section">Other Formatting Objects</a></td>
     </tr>
     <tr>
@@ -1499,7 +1499,7 @@
     <tr>
       <td class="category" align="center"><a href=
       "http://www.w3.org/TR/xsl/#common-accessibility-properties">&sect;7.5</a></td>
-      <td class="category" colspan="7"><a name="fo-property-commonaccess-section" id=
+      <td class="category" colspan="6"><a name="fo-property-commonaccess-section" id=
       "fo-property-commonaccess-section">Common Accessibility Properties</a></td>
     </tr>
     <tr>
@@ -1527,7 +1527,7 @@
     <tr>
       <td class="category" align="center"><a href=
       "http://www.w3.org/TR/xsl/#common-absolute-position-properties">&sect;7.6</a></td>
-      <td class="category" colspan="7"><a name="fo-property-commonabspos-section" id=
+      <td class="category" colspan="6"><a name="fo-property-commonabspos-section" id=
       "fo-property-commonabspos-section">Common Absolute Position Properties</a></td>
     </tr>
     <tr>
@@ -1585,7 +1585,7 @@
     <tr>
       <td class="category" align="center"><a href=
       "http://www.w3.org/TR/xsl/#common-aural-properties">&sect;7.7</a></td>
-      <td class="category" colspan="7"><a name="fo-property-commonaural-section" id=
+      <td class="category" colspan="6"><a name="fo-property-commonaural-section" id=
       "fo-property-commonaural-section">Common Aural Properties</a></td>
     </tr>
     <tr>
@@ -1791,7 +1791,7 @@
     <tr>
       <td class="category" align="center"><a href=
       "http://www.w3.org/TR/xsl/#common-border-padding-and-background-properties">&sect;7.8</a></td>
-      <td class="category" colspan="7"><a name="fo-property-commonenv-section" id=
+      <td class="category" colspan="6"><a name="fo-property-commonenv-section" id=
       "fo-property-commonenv-section">Common Border, Padding, and Background Properties</a></td>
     </tr>
     <tr>
@@ -2208,7 +2208,7 @@
     <tr>
       <td class="category" align="center"><a href=
       "http://www.w3.org/TR/xsl/#common-font-properties">&sect;7.9</a></td>
-      <td class="category" colspan="7"><a name="fo-property-commonfont-section" id=
+      <td class="category" colspan="6"><a name="fo-property-commonfont-section" id=
       "fo-property-commonfont-section">Common Font Properties</a></td>
     </tr>
     <tr>
@@ -2298,7 +2298,7 @@
     <tr>
       <td class="category" align="center"><a href=
       "http://www.w3.org/TR/xsl/#common-hyphenation-properties">&sect;7.10</a></td>
-      <td class="category" colspan="7"><a name="fo-property-commonhyphen-section" id=
+      <td class="category" colspan="6"><a name="fo-property-commonhyphen-section" id=
       "fo-property-commonhyphen-section">Common Hyphenation Properties</a></td>
     </tr>
     <tr>
@@ -2380,7 +2380,7 @@
     <tr>
       <td class="category" align="center"><a href=
       "http://www.w3.org/TR/xsl/#common-margin-properties-block">&sect;7.11</a></td>
-      <td class="category" colspan="7"><a name="fo-property-commonmarginblock-section" id=
+      <td class="category" colspan="6"><a name="fo-property-commonmarginblock-section" id=
       "fo-property-commonmarginblock-section">Common Margin Properties - Block</a></td>
     </tr>
     <tr>
@@ -2467,7 +2467,7 @@
     <tr>
       <td class="category" align="center"><a href=
       "http://www.w3.org/TR/xsl/#common-margin-properties-inline">&sect;7.12</a></td>
-      <td class="category" colspan="7"><a name="fo-property-commonmargininline-section" id=
+      <td class="category" colspan="6"><a name="fo-property-commonmargininline-section" id=
       "fo-property-commonmargininline-section">Common Margin Properties - Inline</a></td>
     </tr>
     <tr>
@@ -2534,7 +2534,7 @@
     <tr>
       <td class="category" align="center"><a href=
       "http://www.w3.org/TR/xsl/#common-relative-position-properties">&sect;7.13</a></td>
-      <td class="category" colspan="7"><a name="fo-property-commonrelpos-section" id=
+      <td class="category" colspan="6"><a name="fo-property-commonrelpos-section" id=
       "fo-property-commonrelpos-section">Common Relative Position Properties</a></td>
     </tr>
     <tr>
@@ -2592,7 +2592,7 @@
     <tr>
       <td class="category" align="center"><a href=
       "http://www.w3.org/TR/xsl/#area-alignment">&sect;7.14</a></td>
-      <td class="category" colspan="7"><a name="fo-property-areaalign-section" id=
+      <td class="category" colspan="6"><a name="fo-property-areaalign-section" id=
       "fo-property-areaalign-section">Area Alignment Properties</a></td>
     </tr>
     <tr>
@@ -2664,7 +2664,7 @@
     <tr>
       <td class="category" align="center"><a href=
       "http://www.w3.org/TR/xsl/#d0e22982">&sect;7.15</a></td>
-      <td class="category" colspan="7"><a name="fo-property-areadim-section" id=
+      <td class="category" colspan="6"><a name="fo-property-areadim-section" id=
       "fo-property-areadim-section">Area Dimension Properties</a></td>
     </tr>
     <tr>
@@ -2815,7 +2815,7 @@
     <tr>
       <td class="category" align="center"><a href=
       "http://www.w3.org/TR/xsl/#d0e24119">&sect;7.16</a></td>
-      <td class="category" colspan="7"><a name="fo-property-blockandline-section" id=
+      <td class="category" colspan="6"><a name="fo-property-blockandline-section" id=
       "fo-property-blockandline-section">Block and Line-related Properties</a></td>
     </tr>
     <tr>
@@ -2962,7 +2962,7 @@
     <tr>
       <td class="category" align="center"><a href=
       "http://www.w3.org/TR/xsl/#d0e25178">&sect;7.17</a></td>
-      <td class="category" colspan="7"><a name="fo-property-char-section" id=
+      <td class="category" colspan="6"><a name="fo-property-char-section" id=
       "fo-property-char-section">Character Properties</a></td>
     </tr>
     <tr>
@@ -3054,7 +3054,7 @@
     <tr>
       <td class="category" align="center"><a href=
       "http://www.w3.org/TR/xsl/#d0e25895">&sect;7.18</a></td>
-      <td class="category" colspan="7"><a name="fo-property-color-section" id=
+      <td class="category" colspan="6"><a name="fo-property-color-section" id=
       "fo-property-color-section">Color-related Properties</a></td>
     </tr>
     <tr>
@@ -3093,7 +3093,7 @@
     <tr>
       <td class="category" align="center"><a href=
       "http://www.w3.org/TR/xsl/#d0e26080">&sect;7.19</a></td>
-      <td class="category" colspan="7"><a name="fo-property-float-section" id=
+      <td class="category" colspan="6"><a name="fo-property-float-section" id=
       "fo-property-float-section">Float-related Properties</a></td>
     </tr>
     <tr>
@@ -3131,7 +3131,7 @@
     <tr>
       <td class="category" align="center"><a href=
       "http://www.w3.org/TR/xsl/#d0e26492">&sect;7.20</a></td>
-      <td class="category" colspan="7"><a name="fo-property-keepsbreaks-section" id=
+      <td class="category" colspan="6"><a name="fo-property-keepsbreaks-section" id=
       "fo-property-keepsbreaks-section">Keeps and Breaks Properties</a></td>
     </tr>
     <tr>
@@ -3231,7 +3231,7 @@
     <tr>
       <td class="category" align="center"><a href=
       "http://www.w3.org/TR/xsl/#d0e26965">&sect;7.21</a></td>
-      <td class="category" colspan="7"><a name="fo-property-layout-section" id=
+      <td class="category" colspan="6"><a name="fo-property-layout-section" id=
       "fo-property-layout-section">Layout-related Properties</a></td>
     </tr>
     <tr>
@@ -3279,7 +3279,7 @@
     <tr>
       <td class="category" align="center"><a href=
       "http://www.w3.org/TR/xsl/#d0e27308">&sect;7.22</a></td>
-      <td class="category" colspan="7"><a name="fo-property-leader-section" id=
+      <td class="category" colspan="6"><a name="fo-property-leader-section" id=
       "fo-property-leader-section">Leader and Rule Properties</a></td>
     </tr>
     <tr>
@@ -3350,7 +3350,7 @@
     <tr>
       <td class="category" align="center"><a href=
       "http://www.w3.org/TR/xsl/#d0e27719">&sect;7.23</a></td>
-      <td class="category" colspan="7"><a name="fo-property-dynamiceffects-section" id=
+      <td class="category" colspan="6"><a name="fo-property-dynamiceffects-section" id=
       "fo-property-dynamiceffects-section">Properties for Dynamic Effects Formatting Objects</a></td>
     </tr>
     <tr>
@@ -3459,8 +3459,7 @@
       <td class="partial">partial</td>
       <td class="partial">partial</td>
       <td class="partial">partial</td>
-      <td>support for starting-state on <a href=
-          "#fo-bookmark">fo:bookmark</a></td>
+      <td>support for starting-state on fo:bookmark</td>
     </tr>
     <tr>
       <td align="center"><a href=
@@ -3509,7 +3508,7 @@
     <tr>
       <td class="category" align="center"><a href=
       "http://www.w3.org/TR/xsl/#d0e28521">&sect;7.24</a></td>
-      <td class="category" colspan="7"><a name="fo-property-indexing-section" id=
+      <td class="category" colspan="6"><a name="fo-property-indexing-section" id=
       "fo-property-indexing-section">Properties for Indexing</a></td>
     </tr>
     <tr>
@@ -3589,7 +3588,7 @@
     <tr>
       <td class="category" align="center"><a href=
       "http://www.w3.org/TR/xsl/#d0e28896">&sect;7.25</a></td>
-      <td class="category" colspan="7"><a name="fo-property-markers-section" id=
+      <td class="category" colspan="6"><a name="fo-property-markers-section" id=
       "fo-property-markers-section">Properties for Markers</a></td>
     </tr>
     <tr>
@@ -3662,7 +3661,7 @@
     <tr>
       <td class="category" align="center"><a href=
       "http://www.w3.org/TR/xsl/#d0e29313">&sect;7.26</a></td>
-      <td class="category" colspan="7"><a name="fo-property-numberstring-section" id=
+      <td class="category" colspan="6"><a name="fo-property-numberstring-section" id=
       "fo-property-numberstring-section">Properties for Number to String Conversion</a></td>
     </tr>
     <tr>
@@ -3710,7 +3709,7 @@
     <tr>
       <td class="category" align="center"><a href=
       "http://www.w3.org/TR/xsl/#d0e29484">&sect;7.27</a></td>
-      <td class="category" colspan="7"><a name="fo-property-pagination-section" id=
+      <td class="category" colspan="6"><a name="fo-property-pagination-section" id=
       "fo-property-pagination-section">Pagination and Layout Properties</a></td>
     </tr>
     <tr>
@@ -3932,7 +3931,7 @@
     <tr>
       <td class="category" align="center"><a href=
       "http://www.w3.org/TR/xsl/#d0e30798">&sect;7.28</a></td>
-      <td class="category" colspan="7"><a name="fo-property-table-section" id=
+      <td class="category" colspan="6"><a name="fo-property-table-section" id=
       "fo-property-table-section">Table Properties</a></td>
     </tr>
     <tr>
@@ -4130,7 +4129,7 @@
     <tr>
       <td class="category" align="center"><a href=
       "http://www.w3.org/TR/xsl/#writing-mode-related">&sect;7.29</a></td>
-      <td class="category" colspan="7"><a name="fo-property-writingmode-section" id=
+      <td class="category" colspan="6"><a name="fo-property-writingmode-section" id=
       "fo-property-writingmode-section">Writing-mode-related Properties</a></td>
     </tr>
     <tr>
@@ -4209,7 +4208,7 @@
     <tr>
       <td class="category" align="center"><a href=
       "http://www.w3.org/TR/xsl/#d0e32871">&sect;7.30</a></td>
-      <td class="category" colspan="7"><a name="fo-property-misc-section" id=
+      <td class="category" colspan="6"><a name="fo-property-misc-section" id=
       "fo-property-misc-section">Miscellaneous Properties</a></td>
     </tr>
     <tr>
@@ -4400,7 +4399,7 @@
     <tr>
       <td class="category" align="center"><a href=
       "http://www.w3.org/TR/xsl/#d0e33965">&sect;7.31</a></td>
-      <td class="category" colspan="7"><a name="fo-property-shorthand-section" id=
+      <td class="category" colspan="6"><a name="fo-property-shorthand-section" id=
       "fo-property-shorthand-section">Shorthand Properties</a></td>
     </tr>
     <tr>
@@ -4676,7 +4675,7 @@
     <tr>
       <td class="category" align="center"><a href=
       "http://www.w3.org/TR/xsl/#d0e5860">&sect;5.10.1</a></td>
-      <td class="category" colspan="7"><a name="fo-function-number-section" id=
+      <td class="category" colspan="6"><a name="fo-function-number-section" id=
       "fo-function-number-section">Number Functions</a></td>
     </tr>
     <tr>
@@ -4743,7 +4742,7 @@
     <tr>
       <td class="category" align="center"><a href=
       "http://www.w3.org/TR/xsl/#expr-color-functions">&sect;5.10.2</a></td>
-      <td class="category" colspan="7"><a name="fo-function-color-section" id=
+      <td class="category" colspan="6"><a name="fo-function-color-section" id=
       "fo-function-color-section">Color Functions</a></td>
     </tr>
     <tr>
@@ -4780,7 +4779,7 @@
     <tr>
       <td class="category" align="center"><a href=
       "http://www.w3.org/TR/xsl/#d0e5948">&sect;5.10.3</a></td>
-      <td class="category" colspan="7"><a name="fo-function-font-section" id=
+      <td class="category" colspan="6"><a name="fo-function-font-section" id=
       "fo-function-font-section">Font Functions</a></td>
     </tr>
     <tr>
@@ -4797,7 +4796,7 @@
     <tr>
       <td class="category" align="center"><a href=
       "http://www.w3.org/TR/xsl/#d0e5961">&sect;5.10.4</a></td>
-      <td class="category" colspan="7"><a name="fo-function-property-value-section" id=
+      <td class="category" colspan="6"><a name="fo-function-property-value-section" id=
       "fo-function-property-value-section">Property Value Functions</a></td>
     </tr>
     <tr>
