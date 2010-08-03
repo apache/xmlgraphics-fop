@@ -97,6 +97,7 @@ import org.apache.fop.render.AbstractPathOrientedRenderer;
 import org.apache.fop.render.Graphics2DAdapter;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.pdf.PDFLogicalStructureHandler.MarkedContentInfo;
+import org.apache.fop.render.pdf.extensions.PDFEmbeddedFileExtensionAttachment;
 import org.apache.fop.traits.RuleStyle;
 import org.apache.fop.util.AbstractPaintingState;
 import org.apache.fop.util.CharUtilities;
@@ -312,6 +313,13 @@ public class PDFRenderer extends AbstractPathOrientedRenderer implements PDFConf
             ExtensionAttachment attachment = ((OffDocumentExtensionAttachment)odi).getAttachment();
             if (XMPMetadata.CATEGORY.equals(attachment.getCategory())) {
                 pdfUtil.renderXMPMetadata((XMPMetadata)attachment);
+            } else if (PDFEmbeddedFileExtensionAttachment.CATEGORY.equals(
+                    attachment.getCategory())) {
+                try {
+                    pdfUtil.addEmbeddedFile((PDFEmbeddedFileExtensionAttachment)attachment);
+                } catch (IOException ioe) {
+                    throw new RuntimeException("Error embedding file", ioe);
+                }
             }
         }
     }

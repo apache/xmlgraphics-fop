@@ -1044,6 +1044,8 @@ public class PDFFactory {
         return link;
     }
 
+    private static final String EMBEDDED_FILE = "embedded-file:";
+
     /**
      * Create/find and return the appropriate external PDFAction according to the target
      *
@@ -1056,30 +1058,68 @@ public class PDFFactory {
     public PDFAction getExternalAction(String target, boolean newWindow) {
         int index;
         String targetLo = target.toLowerCase();
-        // HTTP URL?
-        if (targetLo.startsWith("http://")) {
+        if (target.startsWith(EMBEDDED_FILE)) {
+            // File Attachments (Embedded Files)
+            String filename = target.substring(EMBEDDED_FILE.length());
+            return getLaunchActionForEmbeddedFile(filename);
+        } else if (targetLo.startsWith("http://")) {
+            // HTTP URL?
             return new PDFUri(target);
-        // Non PDF files. Try to /Launch them.
         } else if (targetLo.startsWith("file://")) {
+            // Non PDF files. Try to /Launch them.
             target = target.substring("file://".length());
             return getLaunchAction(target);
-        // Bare PDF file name?
         } else if (targetLo.endsWith(".pdf")) {
+            // Bare PDF file name?
             return getGoToPDFAction(target, null, -1, newWindow);
-        // PDF file + page?
         } else if ((index = targetLo.indexOf(".pdf#page=")) > 0) {
+            // PDF file + page?
             String filename = target.substring(0, index + 4);
             int page = Integer.parseInt(target.substring(index + 10));
             return getGoToPDFAction(filename, null, page, newWindow);
-        // PDF file + destination?
         } else if ((index = targetLo.indexOf(".pdf#dest=")) > 0) {
+            // PDF file + destination?
             String filename = target.substring(0, index + 4);
             String dest = target.substring(index + 10);
             return getGoToPDFAction(filename, dest, -1, newWindow);
-        // None of the above? Default to URI:
         } else {
+            // None of the above? Default to URI:
             return new PDFUri(target);
         }
+    }
+
+    private PDFAction getLaunchActionForEmbeddedFile(String filename) {
+        PDFNames names = getDocument().getRoot().getNames();
+        if (names == null) {
+            throw new IllegalStateException(
+                    "No Names dictionary present."
+                    + " Cannot create Launch Action for embedded file: " + filename);
+        }
+        PDFNameTreeNode embeddedFiles = names.getEmbeddedFiles();
+        if (embeddedFiles == null) {
+            throw new IllegalStateException(
+                    "No /EmbeddedFiles name tree present."
+                    + " Cannot create Launch Action for embedded file: " + filename);
+        }
+        PDFArray files = embeddedFiles.getNames();
+        PDFReference embeddedFileRef = null;
+        int i = 0;
+        while (i < files.length()) {
+            String name = (String)files.get(i);
+            i++;
+            PDFReference ref = (PDFReference)files.get(i);
+            if (name.equals(filename)) {
+                embeddedFileRef = ref;
+                break;
+            }
+            i++;
+        }
+        if (embeddedFileRef == null) {
+            throw new IllegalStateException(
+                    "No embedded file with name " + filename + " present.");
+        }
+        PDFLaunch launch = new PDFLaunch(embeddedFileRef);
+        return launch;
     }
 
     /**

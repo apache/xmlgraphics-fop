@@ -19,16 +19,12 @@
 
 package org.apache.fop.pdf;
 
+
 /**
  * class representing a /FileSpec object.
  *
  */
-public class PDFFileSpec extends PDFObject {
-
-    /**
-     * the filename
-     */
-    protected String filename;
+public class PDFFileSpec extends PDFDictionary {
 
     /**
      * create a /FileSpec object.
@@ -39,29 +35,30 @@ public class PDFFileSpec extends PDFObject {
 
         /* generic creation of object */
         super();
+        put("Type", new PDFName("Filespec"));
+        put("F", filename);
+    }
 
-        this.filename = filename;
+    private String getFilename() {
+        return (String)get("F");
     }
 
     /**
-     * {@inheritDoc}
+     * Associates an dictionary with pointers to embedded file streams with this file spec.
+     * @param embeddedFile the dictionary with pointers to embedded file streams
      */
-    public String toPDFString() {
-        return getObjectID()
-                + "<<\n/Type /FileSpec\n"
-                + "/F (" + this.filename + ")\n"
-                + ">>\nendobj\n";
+    public void setEmbeddedFile(PDFDictionary embeddedFileDict) {
+        put("EF", embeddedFileDict);
     }
 
-    /*
-     * example
-     * 29 0 obj
-     * <<
-     * /Type /FileSpec
-     * /F (table1.pdf)
-     * >>
-     * endobj
+    /**
+     * Sets a description for the file spec.
+     * @param description the description
+     * @since PDF 1.6
      */
+    public void setDescription(String description) {
+        put("Desc", description);
+    }
 
     /** {@inheritDoc} */
     protected boolean contentEquals(PDFObject obj) {
@@ -75,7 +72,7 @@ public class PDFFileSpec extends PDFObject {
 
         PDFFileSpec spec = (PDFFileSpec)obj;
 
-        if (!spec.filename.equals(filename)) {
+        if (!spec.getFilename().equals(getFilename())) {
             return false;
         }
 
