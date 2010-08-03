@@ -9,3 +9,4 @@ org.apache.fop.fo.extensions.xmp.RDFElementMapping
 org.apache.fop.render.ps.extensions.PSExtensionElementMapping
 org.apache.fop.render.afp.extensions.AFPElementMapping
 org.apache.fop.render.pcl.extensions.PCLElementMapping
+org.apache.fop.render.pdf.extensions.PDFElementMapping

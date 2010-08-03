@@ -24,6 +24,9 @@ package org.apache.fop.pdf;
  */
 public class PDFNames extends PDFDictionary {
 
+    private static final String DESTS = "Dests";
+    private static final String EMBEDDED_FILES = "EmbeddedFiles";
+
     /**
      * Create the Names object
      */
@@ -37,7 +40,7 @@ public class PDFNames extends PDFDictionary {
      * @return the Dests object, or null if it's not used
      */
     public PDFDests getDests() {
-        return (PDFDests)get("Dests");
+        return (PDFDests)get(DESTS);
     }
 
     /**
@@ -45,7 +48,23 @@ public class PDFNames extends PDFDictionary {
      * @param dests the Dests object
      */
     public void setDests(PDFDests dests) {
-        put("Dests", dests);
+        put(DESTS, dests);
+    }
+
+    /**
+     * Returns the EmbeddedFiles object
+     * @return the EmbeddedFiles object, or null if it's not used
+     */
+    public PDFNameTreeNode getEmbeddedFiles() {
+        return (PDFNameTreeNode)get(EMBEDDED_FILES);
+    }
+
+    /**
+     * Set the EmbeddedFiles object
+     * @param dests the EmbeddedFiles object
+     */
+    public void setEmbeddedFiles(PDFNameTreeNode dests) {
+        put(EMBEDDED_FILES, dests);
     }
 
 }

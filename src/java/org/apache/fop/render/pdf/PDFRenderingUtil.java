@@ -20,6 +20,7 @@
 package org.apache.fop.render.pdf;
 
 import java.awt.color.ICC_Profile;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -33,6 +34,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.xmlgraphics.image.loader.util.ImageUtil;
 import org.apache.xmlgraphics.xmp.Metadata;
 import org.apache.xmlgraphics.xmp.schemas.XMPBasicAdapter;
 import org.apache.xmlgraphics.xmp.schemas.XMPBasicSchema;
@@ -41,19 +43,26 @@ import org.apache.fop.accessibility.Accessibility;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.extensions.xmp.XMPMetadata;
 import org.apache.fop.pdf.PDFAMode;
+import org.apache.fop.pdf.PDFArray;
 import org.apache.fop.pdf.PDFConformanceException;
 import org.apache.fop.pdf.PDFDictionary;
 import org.apache.fop.pdf.PDFDocument;
+import org.apache.fop.pdf.PDFEmbeddedFile;
 import org.apache.fop.pdf.PDFEncryptionManager;
 import org.apache.fop.pdf.PDFEncryptionParams;
+import org.apache.fop.pdf.PDFFileSpec;
 import org.apache.fop.pdf.PDFICCBasedColorSpace;
 import org.apache.fop.pdf.PDFICCStream;
 import org.apache.fop.pdf.PDFInfo;
 import org.apache.fop.pdf.PDFMetadata;
+import org.apache.fop.pdf.PDFNameTreeNode;
+import org.apache.fop.pdf.PDFNames;
 import org.apache.fop.pdf.PDFNumsArray;
 import org.apache.fop.pdf.PDFOutputIntent;
 import org.apache.fop.pdf.PDFPageLabels;
+import org.apache.fop.pdf.PDFReference;
 import org.apache.fop.pdf.PDFXMode;
+import org.apache.fop.render.pdf.extensions.PDFEmbeddedFileExtensionAttachment;
 import org.apache.fop.util.ColorProfileUtil;
 
 /**
@@ -411,6 +420,62 @@ class PDFRenderingUtil implements PDFConfigurationConstants {
         //TODO If the sequence of generated page numbers were inspected, this could be
         //expressed in a more space-efficient way
         nums.put(pageIndex, dict);
+    }
+
+    /**
+     * Adds an embedded file to the PDF file.
+     * @param embeddedFile the object representing the embedded file to be added
+     * @throws IOException if an I/O error occurs
+     */
+    public void addEmbeddedFile(PDFEmbeddedFileExtensionAttachment embeddedFile)
+            throws IOException {
+        this.pdfDoc.getProfile().verifyEmbeddedFilesAllowed();
+        PDFNames names = this.pdfDoc.getRoot().getNames();
+        if (names == null) {
+            //Add Names if not already present
+            names = this.pdfDoc.getFactory().makeNames();
+            this.pdfDoc.getRoot().setNames(names);
+        }
+
+        //Create embedded file
+        PDFEmbeddedFile file = new PDFEmbeddedFile();
+        this.pdfDoc.registerObject(file);
+        Source src = getUserAgent().resolveURI(embeddedFile.getSrc());
+        InputStream in = ImageUtil.getInputStream(src);
+        if (in == null) {
+            throw new FileNotFoundException(embeddedFile.getSrc());
+        }
+        try {
+            OutputStream out = file.getBufferOutputStream();
+            IOUtils.copyLarge(in, out);
+        } finally {
+            IOUtils.closeQuietly(in);
+        }
+        PDFDictionary dict = new PDFDictionary();
+        dict.put("F", file);
+        PDFFileSpec fileSpec = new PDFFileSpec(embeddedFile.getFilename());
+        fileSpec.setEmbeddedFile(dict);
+        if (embeddedFile.getDesc() != null) {
+            fileSpec.setDescription(embeddedFile.getDesc());
+        }
+        this.pdfDoc.registerObject(fileSpec);
+
+        //Make sure there is an EmbeddedFiles in the Names dictionary
+        PDFNameTreeNode embeddedFiles = names.getEmbeddedFiles();
+        if (embeddedFiles == null) {
+            embeddedFiles = new PDFNameTreeNode();
+            //this.pdfDoc.registerObject(embeddedFiles);
+            names.setEmbeddedFiles(embeddedFiles);
+        }
+
+        //Add to EmbeddedFiles in the Names dictionary
+        PDFArray nameArray = embeddedFiles.getNames();
+        if (nameArray == null) {
+            nameArray = new PDFArray();
+            embeddedFiles.setNames(nameArray);
+        }
+        nameArray.add(embeddedFile.getFilename());
+        nameArray.add(new PDFReference(fileSpec));
     }
 
 }
