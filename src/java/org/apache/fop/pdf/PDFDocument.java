@@ -67,7 +67,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class PDFDocument {
 
-    private static final Integer LOCATION_PLACEHOLDER = new Integer(0);
+    private static final Long LOCATION_PLACEHOLDER = new Long(0);
 
     /** Integer constant to represent PDF 1.3 */
     public static final int PDF_VERSION_1_3 = 3;
@@ -85,10 +85,10 @@ public class PDFDocument {
     private Log log = LogFactory.getLog("org.apache.fop.pdf");
 
     /** the current character position */
-    private int position = 0;
+    private long position = 0;
 
     /** character position of xref table */
-    private int xref;
+    private long xref;
 
     /** the character position of each object */
     private List location = new ArrayList();
@@ -911,11 +911,11 @@ public class PDFDocument {
      * @param objidx    the object's index
      * @param position  the position
      */
-    private void setLocation(int objidx, int position) {
+    private void setLocation(int objidx, long position) {
         while (this.location.size() <= objidx) {
             this.location.add(LOCATION_PLACEHOLDER);
         }
-        this.location.set(objidx, new Integer(position));
+        this.location.set(objidx, new Long(position));
     }
 
     /**
@@ -1019,7 +1019,7 @@ public class PDFDocument {
             PDFObject o = (PDFObject)this.trailerObjects.get(count);
             this.location.set(
                 o.getObjectNumber() - 1,
-                new Integer(this.position));
+                new Long(this.position));
             this.position += o.output(stream);
         }
         /* output the xref table and increment the character position
@@ -1073,6 +1073,9 @@ public class PDFDocument {
         for (int count = 0; count < this.location.size(); count++) {
             final String padding = "0000000000";
             s = this.location.get(count).toString();
+            if (s.length() > 10) {
+                throw new IOException("PDF file too large. PDF cannot grow beyond approx. 9.3GB.");
+            }
 
             /* contruct xref entry for object */
             loc = padding.substring(s.length()) + s;
