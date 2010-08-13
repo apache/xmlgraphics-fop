@@ -125,7 +125,7 @@ public class PNGRenderer_onthefly extends Java2DRenderer {
 
     /**
      * Builds the OutputStream corresponding to this page
-     * @param 0-based pageNumber
+     * @param pageNumber the 0-based page number
      * @return the corresponding OutputStream
      */
     private OutputStream getCurrentOutputStream(int pageNumber) {

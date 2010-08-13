@@ -80,26 +80,6 @@ public class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
         }
 
         /**
-         * Encode the given data with the filter
-         * @param data The data to be encrypted
-         * @return The encrypted data
-         */
-        public byte[] encode(byte[] data) {
-            return encryption.encryptData(data, number, generation);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public void encode(InputStream in, OutputStream out, int length)
-                                                        throws IOException {
-            byte[] buffer = new byte[length];
-            in.read(buffer);
-            buffer = encode(buffer);
-            out.write(buffer);
-        }
-
-        /**
          * {@inheritDoc}
          */
         public OutputStream applyFilter(OutputStream out) throws IOException {

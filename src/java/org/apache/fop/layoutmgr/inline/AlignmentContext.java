@@ -307,7 +307,6 @@ public class AlignmentContext implements Constants {
      * Calculates the baseline shift value based on the baseline-shift
      * property value.
      * @param baselineShift the baseline shift property value
-     * @return the computed baseline shift value
      */
     private void setBaselineShift(Length baselineShift) {
         baselineShiftValue = 0;

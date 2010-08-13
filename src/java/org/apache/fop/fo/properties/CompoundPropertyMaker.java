@@ -101,7 +101,7 @@ public class CompoundPropertyMaker extends PropertyMaker {
      * Calculate the real value of a subproperty by unmasking and shifting
      * the value into the range [0 - (COMPOUND_COUNT-1)].
      * The value is used as index into the subproperties array.
-     * @param propId the property id of the sub property.
+     * @param subpropertyId the property id of the sub property.
      * @return the array index.
      */
     private int getSubpropIndex(int subpropertyId) {

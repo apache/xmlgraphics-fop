@@ -91,7 +91,9 @@ public class FileCompare {
 
     /**
      * Compare the contents of two files.
-     * @param true if files are same byte-by-byte, false otherwise
+     * @param file1 the first file to compare
+     * @param file2 the second file to compare
+     * @return true if files are same byte-by-byte, false otherwise
      */
     private static boolean compareBytes(File file1, File file2) throws IOException {
         BufferedInputStream file1Input =
@@ -116,7 +118,9 @@ public class FileCompare {
 
     /**
      * Does a file size compare of two files
-     * @param true if files are same length, false otherwise
+     * @param file1 the first file to compare
+     * @param file2 the second file to compare
+     * @return true if files are same length, false otherwise
      */
     private static boolean compareFileSize(File oldFile, File newFile) {
         if (oldFile.length() != newFile.length()) {

@@ -87,8 +87,8 @@ public class RtfExternalGraphic extends RtfElement {
         /**
          * Convert image data if necessary - for example when format is not supported by rtf.
          *
+         * @param format Format type
          * @param data Image
-         * @param type Format type
          */
         public FormatBase convert(FormatBase format, byte[] data) {
             return format;
