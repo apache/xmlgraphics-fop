@@ -489,9 +489,6 @@ class FOPTaskStarter {
         return new File(file.getParentFile(), name);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void run() throws FOPException {
         //Set base directory
         if (task.getBasedir() != null) {

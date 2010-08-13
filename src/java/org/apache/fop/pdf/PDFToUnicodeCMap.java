@@ -79,7 +79,6 @@ public class PDFToUnicodeCMap extends PDFCMap {
 
         /**
          * Writes the CMap to a Writer.
-         * @param writer the writer
          * @throws IOException if an I/O error occurs
          */
         public void writeCMap() throws IOException {
@@ -94,7 +93,6 @@ public class PDFToUnicodeCMap extends PDFCMap {
 
         /**
          * Writes the character mappings for this font.
-         * @param p StingBuffer to write to
          */
         protected void writeBFEntries() throws IOException {
             if (unicodeCharMap != null) {
@@ -106,7 +104,6 @@ public class PDFToUnicodeCMap extends PDFCMap {
         /**
          * Writes the entries for single characters of a base font (only characters which cannot be
          * expressed as part of a character range).
-         * @param p StringBuffer to write to
          * @param charArray all the characters to map
          * @throws IOException
          */
@@ -147,7 +144,6 @@ public class PDFToUnicodeCMap extends PDFCMap {
 
         /**
          * Writes the entries for character ranges for a base font.
-         * @param p StringBuffer to write to
          * @param charArray all the characters to map
          * @throws IOException
          */

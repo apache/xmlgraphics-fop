@@ -73,7 +73,6 @@ public class AFPTextHandler implements FOPTextHandler {
      * Registers a page font
      *
      * @param internalFontName the internal font name
-     * @param internalFontName the internal font name
      * @param fontSize the font size
      * @return a font reference
      */

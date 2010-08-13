@@ -38,13 +38,22 @@ public class RtfFootnote extends RtfContainer
     RtfList list = null;
     boolean bBody = false;
 
-    /** Create an RTF list item as a child of given container with default attributes */
+    /**
+     * Create an RTF list item as a child of given container with default attributes.
+     * @param parent a container
+     * @param w a writer
+     * @throws IOException if not caught
+     */
     RtfFootnote(RtfContainer parent, Writer w) throws IOException {
         super(parent, w);
         textrunInline = new RtfTextrun(this, writer, null);
         body = new RtfContainer(this, writer);
     }
 
+    /**
+     * @return a text run
+     * @throws IOException if not caught
+     */
     public RtfTextrun getTextrun() throws IOException {
         if (bBody) {
             RtfTextrun textrun = RtfTextrun.getTextrun(body, writer, null);

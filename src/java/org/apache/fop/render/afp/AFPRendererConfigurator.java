@@ -149,7 +149,7 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
      * @param encoding character encoding e.g. 'Cp500', 'UnicodeBigUnmarked'
      * @param accessor
      * @param afpFontCfg
-     * @return
+     * @return the created AFPFont
      * @throws ConfigurationException
      */
     private AFPFont fontFromType(String type, String codepage, String encoding,

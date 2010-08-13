@@ -99,10 +99,9 @@ public abstract class AbstractPageNumberCitationLayoutManager extends LeafNodeLa
     }
 
     /**
-     * If id can be resolved then simply return a word, otherwise
+     * If id can be resolved then simply return a text area, otherwise
      * return a resolvable area
      *
-     * @param parentLM  the parent LayoutManager
      * @return a corresponding InlineArea
      */
     private InlineArea getPageNumberCitationInlineArea() {
