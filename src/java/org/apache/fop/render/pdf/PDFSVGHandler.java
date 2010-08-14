@@ -97,33 +97,33 @@ public class PDFSVGHandler extends AbstractGenericSVGHandler
      */
     public static class PDFInfo {
         /** see PDF_DOCUMENT */
-        public PDFDocument pdfDoc;
+        public PDFDocument pdfDoc;                              // CSOK: VisibilityModifier
         /** see OUTPUT_STREAM */
-        public OutputStream outputStream;
+        public OutputStream outputStream;                       // CSOK: VisibilityModifier
         /** see PDF_PAGE */
-        public PDFPage pdfPage;
+        public PDFPage pdfPage;                                 // CSOK: VisibilityModifier
         /** see PDF_CONTEXT */
-        public PDFResourceContext pdfContext;
+        public PDFResourceContext pdfContext;                   // CSOK: VisibilityModifier
         /** see PDF_STREAM */
         //public PDFStream currentStream;
         /** see PDF_WIDTH */
-        public int width;
+        public int width;                                       // CSOK: VisibilityModifier
         /** see PDF_HEIGHT */
-        public int height;
+        public int height;                                      // CSOK: VisibilityModifier
         /** see PDF_FONT_INFO */
-        public FontInfo fi;
+        public FontInfo fi;                                     // CSOK: VisibilityModifier
         /** see PDF_FONT_NAME */
-        public String currentFontName;
+        public String currentFontName;                          // CSOK: VisibilityModifier
         /** see PDF_FONT_SIZE */
-        public int currentFontSize;
+        public int currentFontSize;                             // CSOK: VisibilityModifier
         /** see PDF_XPOS */
-        public int currentXPosition;
+        public int currentXPosition;                            // CSOK: VisibilityModifier
         /** see PDF_YPOS */
-        public int currentYPosition;
+        public int currentYPosition;                            // CSOK: VisibilityModifier
         /** see PDF_HANDLER_CONFIGURATION */
-        public Configuration cfg;
+        public Configuration cfg;                               // CSOK: VisibilityModifier
         /** true if SVG should be rendered as a bitmap instead of natively */
-        public boolean paintAsBitmap;
+        public boolean paintAsBitmap;                           // CSOK: VisibilityModifier
     }
 
     /**

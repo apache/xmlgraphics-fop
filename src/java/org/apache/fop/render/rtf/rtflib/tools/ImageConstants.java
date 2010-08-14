@@ -17,6 +17,7 @@
 
 /* $Id$ */
 
+package org.apache.fop.render.rtf.rtflib.tools;
 
 /*
  * This file is part of the RTF library of the FOP project, which was originally
@@ -25,15 +26,12 @@
  * the FOP project.
  */
 
-package org.apache.fop.render.rtf.rtflib.tools;
-
-
 /** Here will be defined all supported image formats.
  *  This class belongs to the <fo:external-graphic> tag processing.
  *  @author a.putz@skynamics.com (Andreas Putz)
  */
 
-public class ImageConstants {
+public final class ImageConstants {
     //////////////////////////////////////////////////
     // @@ Symbolic constants
     //////////////////////////////////////////////////

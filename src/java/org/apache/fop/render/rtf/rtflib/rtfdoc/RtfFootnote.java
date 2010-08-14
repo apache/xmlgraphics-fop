@@ -17,7 +17,6 @@
 
 /* $Id$ */
 
-
 package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
 //Java
@@ -33,16 +32,17 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTextrun;
  */
 public class RtfFootnote extends RtfContainer
         implements IRtfTextrunContainer, IRtfListContainer {
-    RtfTextrun textrunInline = null;
-    RtfContainer body = null;
-    RtfList list = null;
-    boolean bBody = false;
+    RtfTextrun textrunInline = null;                            // CSOK: VisibilityModifier
+    RtfContainer body = null;                                   // CSOK: VisibilityModifier
+    RtfList list = null;                                        // CSOK: VisibilityModifier
+    boolean bBody = false;                                      // CSOK: VisibilityModifier
 
     /**
      * Create an RTF list item as a child of given container with default attributes.
      * @param parent a container
      * @param w a writer
-     * @throws IOException if not caught
+     * @return a text run
+     * @throw IOException if not caught
      */
     RtfFootnote(RtfContainer parent, Writer w) throws IOException {
         super(parent, w);
@@ -81,6 +81,11 @@ public class RtfFootnote extends RtfContainer
         writeGroupMark(false);
     }
 
+    /**
+     * @param attrs some attributes
+     * @return an rtf list
+     * @throws IOException if not caught
+     */
     public RtfList newList(RtfAttributes attrs) throws IOException {
         if (list != null) {
             list.close();
@@ -91,10 +96,12 @@ public class RtfFootnote extends RtfContainer
         return list;
     }
 
+    /** start body */
     public void startBody() {
         bBody = true;
     }
 
+    /** end body */
     public void endBody() {
         bBody = false;
     }

@@ -47,13 +47,15 @@ public abstract class ExtensionObj extends FObj {
      */
     public void processNode(String elementName, Locator locator,
                             Attributes attlist, PropertyList pList)
-        throws FOPException
-    {
-        // Empty
+        throws FOPException {
     }
 
     /**
      * Create a default property list for this element.
+     * @param parent the parent property list
+     * @param foEventHandler an event handler
+     * @return property list
+     * @throws FOPException in case of exception
      */
     protected PropertyList createPropertyList(PropertyList parent,
                 FOEventHandler foEventHandler) throws FOPException {

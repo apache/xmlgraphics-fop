@@ -49,7 +49,7 @@ import org.apache.fop.svg.NativeTextPainter;
 import org.apache.fop.util.CharUtilities;
 
 /**
- * Renders the attributed character iterator of a {@link TextNode}.
+ * Renders the attributed character iterator of a text node.
  * This class draws the text directly using PostScript text operators so
  * the text is not drawn using shapes which makes the PS files larger.
  * <p>

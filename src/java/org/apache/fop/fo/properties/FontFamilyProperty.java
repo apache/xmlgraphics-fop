@@ -31,7 +31,8 @@ import org.apache.fop.fo.expr.PropertyException;
 public final class FontFamilyProperty extends ListProperty {
 
     /** cache holding all canonical FontFamilyProperty instances */
-    private static final PropertyCache cache = new PropertyCache(FontFamilyProperty.class);
+    private static final PropertyCache cache                    // CSOK: ConstantName
+        = new PropertyCache(FontFamilyProperty.class);
 
     private int hash = 0;
 
@@ -50,7 +51,8 @@ public final class FontFamilyProperty extends ListProperty {
         /**
          * {@inheritDoc}
          */
-        public Property make(PropertyList propertyList, String value, FObj fo) throws PropertyException {
+        public Property make(PropertyList propertyList, String value, FObj fo)
+            throws PropertyException {
             if ("inherit".equals(value)) {
                 return super.make(propertyList, value, fo);
             } else {

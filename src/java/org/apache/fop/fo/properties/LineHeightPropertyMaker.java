@@ -64,6 +64,7 @@ public class LineHeightPropertyMaker extends SpaceProperty.Maker {
     /**
      * Recalculate the line-height value based on the nearest specified
      * value.
+     * {@inheritDoc}
      */
     protected Property compute(PropertyList propertyList) throws PropertyException {
         // recalculate based on last specified value

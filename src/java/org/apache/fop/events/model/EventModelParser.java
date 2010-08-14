@@ -40,10 +40,14 @@ import org.apache.fop.util.DefaultErrorListener;
 /**
  * This is a parser for the event model XML.
  */
-public class EventModelParser {
+public final class EventModelParser {
+
+    private EventModelParser() {
+    }
 
     /** Logger instance */
-    protected static Log log = LogFactory.getLog(EventModelParser.class);
+    private static final Log log // CSOK: ConstantName
+        = LogFactory.getLog(EventModelParser.class);
 
     private static SAXTransformerFactory tFactory
         = (SAXTransformerFactory)SAXTransformerFactory.newInstance();

@@ -164,10 +164,11 @@ public class PDFShading extends PDFObject {
      * It's optional, the default is the identity matrix
      * @param theFunction The PDF Function that maps an (x,y) location to a color
      */
-    public PDFShading(int theShadingType, PDFDeviceColorSpace theColorSpace,
-                      List theBackground, List theBBox,
-                      boolean theAntiAlias, List theDomain,
-                      List theMatrix, PDFFunction theFunction) {
+    public PDFShading                                           // CSOK: ParameterNumber
+        (int theShadingType, PDFDeviceColorSpace theColorSpace,
+         List theBackground, List theBBox,
+         boolean theAntiAlias, List theDomain,
+         List theMatrix, PDFFunction theFunction) {
         super();
         this.shadingType = theShadingType;    // 1
         this.colorSpace = theColorSpace;
@@ -202,11 +203,12 @@ public class PDFShading extends PDFObject {
      *                  and end colors past the start and end points
      * The default is [false, false]
      */
-    public PDFShading(int theShadingType, PDFDeviceColorSpace theColorSpace,
-                      List theBackground, List theBBox,
-                      boolean theAntiAlias, List theCoords,
-                      List theDomain, PDFFunction theFunction,
-                      List theExtend) {
+    public PDFShading                                           // CSOK: ParameterNumber
+        (int theShadingType, PDFDeviceColorSpace theColorSpace,
+         List theBackground, List theBBox,
+         boolean theAntiAlias, List theCoords,
+         List theDomain, PDFFunction theFunction,
+         List theExtend) {
         super();
         this.shadingType = theShadingType;    // 2 or 3
         this.colorSpace = theColorSpace;
@@ -242,11 +244,12 @@ public class PDFShading extends PDFObject {
      * @param theDecode List of Doubles see PDF 1.3 spec pages 303 to 312.
      * @param theFunction the PDFFunction
      */
-    public PDFShading(int theShadingType, PDFDeviceColorSpace theColorSpace,
-                      List theBackground, List theBBox,
-                      boolean theAntiAlias, int theBitsPerCoordinate,
-                      int theBitsPerComponent, int theBitsPerFlag,
-                      List theDecode, PDFFunction theFunction) {
+    public PDFShading                                           // CSOK: ParameterNumber
+        (int theShadingType, PDFDeviceColorSpace theColorSpace,
+         List theBackground, List theBBox,
+         boolean theAntiAlias, int theBitsPerCoordinate,
+         int theBitsPerComponent, int theBitsPerFlag,
+         List theDecode, PDFFunction theFunction) {
         super();
 
         this.shadingType = theShadingType;    // 4,6 or 7
@@ -281,11 +284,12 @@ public class PDFShading extends PDFObject {
      * @param theVerticesPerRow number of vertices in each "row" of the lattice.
      * @param theFunction The PDFFunction that's mapped on to this shape
      */
-    public PDFShading(int theShadingType, PDFDeviceColorSpace theColorSpace,
-                      List theBackground, List theBBox,
-                      boolean theAntiAlias, int theBitsPerCoordinate,
-                      int theBitsPerComponent, List theDecode,
-                      int theVerticesPerRow, PDFFunction theFunction) {
+    public PDFShading                                           // CSOK: ParameterNumber
+        (int theShadingType, PDFDeviceColorSpace theColorSpace,
+         List theBackground, List theBBox,
+         boolean theAntiAlias, int theBitsPerCoordinate,
+         int theBitsPerComponent, List theDecode,
+         int theVerticesPerRow, PDFFunction theFunction) {
         super();
         this.shadingType = theShadingType;    // 5
         this.colorSpace = theColorSpace;
@@ -334,7 +338,7 @@ public class PDFShading extends PDFObject {
      *
      * @return the PDF string.
      */
-    public String toPDFString() {
+    public String toPDFString() {                               // CSOK: MethodLength
         int vectorSize;
         int tempInt;
         StringBuffer p = new StringBuffer(128);

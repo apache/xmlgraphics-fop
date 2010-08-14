@@ -35,7 +35,8 @@ import org.apache.fop.render.afp.extensions.AFPElementMapping;
  * Parses any AFP foreign attributes
  */
 public class AFPForeignAttributeReader {
-    private static final Log log = LogFactory.getLog("org.apache.xmlgraphics.afp");
+    private static final Log log                                // CSOK: ConstantName
+        = LogFactory.getLog("org.apache.xmlgraphics.afp");
 
     /** the resource-name attribute */
     public static final QName RESOURCE_NAME = new QName(

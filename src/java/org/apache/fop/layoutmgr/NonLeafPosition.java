@@ -19,19 +19,27 @@
 
 package org.apache.fop.layoutmgr;
 
+/** A non-leaf position. */
 public class NonLeafPosition extends Position {
 
     private Position subPos;
 
+    /**
+     * Construct a leaf position.
+     * @param lm the associated layout manager
+     * @param sub the position
+     */
     public NonLeafPosition(LayoutManager lm, Position sub) {
         super(lm);
         subPos = sub;
     }
 
+    /** @return the sub position */
     public Position getPosition() {
         return subPos;
     }
 
+    /** {@inheritDoc} */
     public boolean generatesAreas() {
         return (subPos != null ? subPos.generatesAreas() : false);
     }

@@ -39,7 +39,7 @@ import org.apache.fop.afp.modca.StreamedResourceGroup;
  */
 public class AFPStreamer implements Streamable {
     /** Static logging instance */
-    private static final Log log = LogFactory.getLog(AFPStreamer.class);
+    private static final Log log = LogFactory.getLog(AFPStreamer.class); // CSOK: ConstantName
 
     private static final String AFPDATASTREAM_TEMP_FILE_PREFIX = "AFPDataStream_";
 

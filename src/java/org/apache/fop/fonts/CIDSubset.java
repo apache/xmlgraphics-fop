@@ -55,6 +55,9 @@ public class CIDSubset {
      */
     private Map/*<Integer, Character>*/ usedCharsIndex = new java.util.HashMap();
 
+    /**
+     * Default constructor.
+     */
     public CIDSubset() {
     }
 

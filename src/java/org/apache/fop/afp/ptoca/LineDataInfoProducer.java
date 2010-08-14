@@ -32,7 +32,8 @@ import org.apache.fop.afp.AFPLineDataInfo;
 public class LineDataInfoProducer implements PtocaProducer, PtocaConstants {
 
     /** Static logging instance */
-    private static final Log log = LogFactory.getLog(LineDataInfoProducer.class);
+    private static final Log log // CSOK: ConstantName
+        = LogFactory.getLog(LineDataInfoProducer.class);
 
     private AFPLineDataInfo lineDataInfo;
 

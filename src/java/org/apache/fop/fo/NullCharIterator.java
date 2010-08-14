@@ -28,6 +28,10 @@ public class NullCharIterator extends CharIterator {
 
     private static CharIterator instance;
 
+    /**
+     * Obtain the singleton instance of the null character iterator.
+     * @return the char iterator
+     */
     public static CharIterator getInstance() {
         if (instance == null) {
             instance = new NullCharIterator();

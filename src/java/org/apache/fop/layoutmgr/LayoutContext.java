@@ -33,12 +33,12 @@ import org.apache.fop.traits.MinOptMax;
  * method. It is set up by higher level LM and used by lower level LM.
  */
 public class LayoutContext {
-    /**
-     * Values for flags.
-     */
+
+    /**  linebreak at line feed only flag */
     public static final int LINEBREAK_AT_LF_ONLY = 0x01;
     /** Generated break possibility is first in a new area */
     public static final int NEW_AREA = 0x02;
+    /**  ipd unknown flag */
     public static final int IPD_UNKNOWN = 0x04;
     /** Signal to a Line LM that a higher level LM may provoke a change
      *  in the reference area, thus ref area IPD. The LineLM should return
@@ -51,10 +51,13 @@ public class LayoutContext {
      * not cause a mandatory break as this break was already handled by a parent layout manager.
      */
     public static final int SUPPRESS_BREAK_BEFORE = 0x10;
+    /** first area flag */
     public static final int FIRST_AREA = 0x20;
+    /** try hypenate flag */
     public static final int TRY_HYPHENATE = 0x40;
+    /** last area flag */
     public static final int LAST_AREA = 0x80;
-
+    /**  resolve leading space flag */
     public static final int RESOLVE_LEADING_SPACE = 0x100;
 
     /**
@@ -178,6 +181,7 @@ public class LayoutContext {
         trailingSpace = null;
     }
 
+    /** @param source from which pending marks are copied */
     public void copyPendingMarksFrom(LayoutContext source) {
         if (source.pendingAfterMarks != null) {
             this.pendingAfterMarks = new java.util.ArrayList(source.pendingAfterMarks);
@@ -187,10 +191,15 @@ public class LayoutContext {
         }
     }
 
+    /** @param flags to set */
     public void setFlags(int flags) {
         setFlags(flags, true);
     }
 
+    /**
+     * @param flags to set or clear
+     * @param bSet true to set, false to clear
+     */
     public void setFlags(int flags, boolean bSet) {
         if (bSet) {
             this.flags |= flags;
@@ -199,26 +208,32 @@ public class LayoutContext {
         }
     }
 
+    /** @param flags to clear */
     public void unsetFlags(int flags) {
         setFlags(flags, false);
     }
 
+    /** @return true if new area is set */
     public boolean isStart() {
         return ((this.flags & NEW_AREA) != 0);
     }
 
+    /** @return true if new area is set and leading space is non-null */
     public boolean startsNewArea() {
         return ((this.flags & NEW_AREA) != 0 && leadingSpace != null);
     }
 
+    /** @return true if first area is set */
     public boolean isFirstArea() {
         return ((this.flags & FIRST_AREA) != 0);
     }
 
+    /** @return true if last area is set */
     public boolean isLastArea() {
         return ((this.flags & LAST_AREA) != 0);
     }
 
+    /** @return true if suppress break before is set */
     public boolean suppressBreakBefore() {
         return ((this.flags & SUPPRESS_BREAK_BEFORE) != 0);
     }
@@ -293,22 +308,27 @@ public class LayoutContext {
         return !getKeepWithPreviousPending().isAuto();
     }
 
+    /** @param space leading space */
     public void setLeadingSpace(SpaceSpecifier space) {
         leadingSpace = space;
     }
 
+    /** @return leading space */
     public SpaceSpecifier getLeadingSpace() {
         return leadingSpace;
     }
 
+    /** @return true if resolve leading space is set */
     public boolean resolveLeadingSpace() {
         return ((this.flags & RESOLVE_LEADING_SPACE) != 0);
     }
 
+    /** @param space trailing space */
     public void setTrailingSpace(SpaceSpecifier space) {
         trailingSpace = space;
     }
 
+    /** @return trailing space */
     public SpaceSpecifier getTrailingSpace() {
         return trailingSpace;
     }
@@ -389,6 +409,7 @@ public class LayoutContext {
 
     /**
      * Sets the inline-progression-dimension of the nearest ancestor reference area.
+     * @param ipd of nearest ancestor reference area
      */
     public void setRefIPD(int ipd) {
         refIPD = ipd;
@@ -403,14 +424,17 @@ public class LayoutContext {
         return refIPD;
     }
 
+    /** @param hyph a hyphenation context */
     public void setHyphContext(HyphContext hyph) {
         hyphContext = hyph;
     }
 
+    /** @return hyphenation context */
     public HyphContext getHyphContext() {
         return hyphContext;
     }
 
+    /** @return true if try hyphenate is set */
     public boolean tryHyphenate() {
         return ((this.flags & TRY_HYPHENATE) != 0);
     }
@@ -428,30 +452,39 @@ public class LayoutContext {
         return this.bpAlignment;
     }
 
+    /** @param adjust space adjustment */
     public void setSpaceAdjust(double adjust) {
         dSpaceAdjust = adjust;
     }
 
+    /** @return space adjustment */
     public double getSpaceAdjust() {
         return dSpaceAdjust;
     }
 
+    /** @param ipdA ipd adjustment */
     public void setIPDAdjust(double ipdA) {
         ipdAdjust = ipdA;
     }
 
+    /** @return ipd adjustment */
     public double getIPDAdjust() {
         return ipdAdjust;
     }
 
+    /** @param alignmentContext alignment context */
     public void setAlignmentContext(AlignmentContext alignmentContext) {
         this.alignmentContext = alignmentContext;
     }
 
+    /** @return alignment context */
     public AlignmentContext getAlignmentContext() {
         return this.alignmentContext;
     }
 
+    /**
+     * Reset alignment context.
+     */
     public void resetAlignmentContext() {
         if (this.alignmentContext != null) {
             this.alignmentContext = this.alignmentContext.getParentAlignmentContext();

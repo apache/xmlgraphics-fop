@@ -66,7 +66,7 @@ import org.apache.fop.afp.util.StringUtils;
 public class Factory {
 
     /** Static logging instance */
-    private static final Log log = LogFactory.getLog(Factory.class);
+    private static final Log log = LogFactory.getLog(Factory.class); // CSOK: ConstantName
 
     private static final String OBJECT_ENVIRONMENT_GROUP_NAME_PREFIX = "OEG";
 
@@ -541,7 +541,10 @@ public class Factory {
 
     /**
      * Creates a new PTOCA {@link PresentationTextDescriptor}
-     *
+     * @param width presentation width
+     * @param height presentation height
+     * @param widthRes resolution of presentation width
+     * @param heightRes resolution of presentation height
      * @return a new {@link PresentationTextDescriptor}
      */
     public PresentationTextDescriptor createPresentationTextDataDescriptor(

@@ -29,7 +29,8 @@ import org.apache.commons.logging.LogFactory;
  */
 public class PDFEmbeddedFile extends PDFStream {
 
-    protected static Log log = LogFactory.getLog(PDFEmbeddedFile.class.getName());
+    private static final Log log                                // CSOK: ConstantName
+        = LogFactory.getLog(PDFEmbeddedFile.class.getName());
 
     /**
      * Creates a new embedded file stream.

@@ -29,9 +29,12 @@ import java.awt.image.VolatileImage;
  * for JDK 1.3 because there is no VolatileImage there.
  *
  */
-abstract public class GraphicsConfiguration extends java.awt.GraphicsConfiguration {
+public abstract class GraphicsConfiguration extends java.awt.GraphicsConfiguration {
 
     /**
+     * @param width of image
+     * @param height of image
+     * @return new volatile image
      * @see java.awt.GraphicsConfiguration#createCompatibleVolatileImage(int, int)
      * @since JDK 1.4
      */
@@ -40,6 +43,10 @@ abstract public class GraphicsConfiguration extends java.awt.GraphicsConfigurati
     }
 
     /**
+     * @param width of image
+     * @param height of image
+     * @param transparency of image
+     * @return new volatile image
      * @see java.awt.GraphicsConfiguration#createCompatibleVolatileImage(int, int, int)
      * @since JDK 1.5
      */

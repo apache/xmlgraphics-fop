@@ -27,23 +27,38 @@ import org.apache.fop.fo.expr.PropertyException;
 /**
  */
 public class CorrespondingPropertyMaker {
+    /** base property maker */
     protected PropertyMaker baseMaker;
-    protected int lr_tb;
-    protected int rl_tb;
-    protected int tb_rl;
+    /** corresponding property for lr-tb writing mode */
+    protected int lrtb;
+    /** corresponding property for rl-tb writing mode */
+    protected int rltb;
+    /** corresponding property for tb-rl writing mode */
+    protected int tbrl;
+    /** user parent property list */
     protected boolean useParent;
     private boolean relative;
 
+    /**
+     * Construct a corresponding property maker.
+     * @param baseMaker the base property maker
+     */
     public CorrespondingPropertyMaker(PropertyMaker baseMaker) {
         this.baseMaker = baseMaker;
         baseMaker.setCorresponding(this);
     }
 
 
-    public void setCorresponding(int lr_tb, int rl_tb, int tb_rl) {
-        this.lr_tb = lr_tb;
-        this.rl_tb = rl_tb;
-        this.tb_rl = tb_rl;
+    /**
+     * Set corresponding property identifiers.
+     * @param lrtb the property that corresponds with lr-tb writing mode
+     * @param rltb the property that corresponds with rl-tb writing mode
+     * @param tbrl the property that corresponds with tb-lr writing mode
+     */
+    public void setCorresponding(int lrtb, int rltb, int tbrl) {
+        this.lrtb = lrtb;
+        this.rltb = rltb;
+        this.tbrl = tbrl;
     }
 
     /**
@@ -55,6 +70,10 @@ public class CorrespondingPropertyMaker {
         this.useParent = useParent;
     }
 
+    /**
+     * Set relative flag.
+     * @param relative true if relative direction
+     */
     public void setRelative(boolean relative) {
         this.relative = relative;
     }
@@ -83,7 +102,7 @@ public class CorrespondingPropertyMaker {
 
         PropertyList pList = getWMPropertyList(propertyList);
         if (pList != null) {
-            int correspondingId = pList.getWritingMode(lr_tb, rl_tb, tb_rl);
+            int correspondingId = pList.getWritingMode(lrtb, rltb, tbrl);
 
             if (pList.getExplicit(correspondingId) != null) {
                 return true;
@@ -100,14 +119,14 @@ public class CorrespondingPropertyMaker {
      * @param propertyList The PropertyList for the FO.
      * @return Property A computed Property value or null if no rules
      * are specified (in foproperties.xml) to compute the value.
-     * @throws FOPException for invalid or inconsistent FO input
+     * @throws PropertyException if a property exception occurs
      */
     public Property compute(PropertyList propertyList) throws PropertyException {
         PropertyList pList = getWMPropertyList(propertyList);
         if (pList == null) {
             return null;
         }
-        int correspondingId = pList.getWritingMode(lr_tb, rl_tb, tb_rl);
+        int correspondingId = pList.getWritingMode(lrtb, rltb, tbrl);
 
         Property p = propertyList.getExplicitOrShorthand(correspondingId);
         if (p != null) {
@@ -120,6 +139,8 @@ public class CorrespondingPropertyMaker {
     /**
      * Return the property list to use for fetching writing mode depending property
      * ids.
+     * @param pList a property list
+     * @return the property list to use
      */
     protected PropertyList getWMPropertyList(PropertyList pList) {
         if (useParent) {

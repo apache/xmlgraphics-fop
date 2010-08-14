@@ -58,6 +58,7 @@ public class Block extends BlockParent {
     private int stacking = TB;
     private int positioning = STACK;
 
+    /** if true, allow BPD update */
     protected transient boolean allowBPDUpdate = true;
 
     // a block with may contain the dominant styling info in

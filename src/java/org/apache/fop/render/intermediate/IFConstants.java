@@ -33,22 +33,39 @@ public interface IFConstants extends XMLConstants {
     /** XML namespace of the intermediate format. */
     String NAMESPACE = "http://xmlgraphics.apache.org/fop/intermediate";
 
+    /** element name document */
     String EL_DOCUMENT = "document";
+    /** element name header */
     String EL_HEADER = "header";
+    /** element name trailer */
     String EL_TRAILER = "trailer";
+    /** element name page-sequence */
     String EL_PAGE_SEQUENCE = "page-sequence";
+    /** element name page */
     String EL_PAGE = "page";
+    /** element name page-header */
     String EL_PAGE_HEADER = "page-header";
+    /** element name page-trailer */
     String EL_PAGE_TRAILER = "page-trailer";
+    /** element name content */
     String EL_PAGE_CONTENT = "content";
+    /** element name viewport */
     String EL_VIEWPORT = "viewport";
+    /** element name group */
     String EL_GROUP = "g";
+    /** element name image */
     String EL_IMAGE = "image";
+    /** element name clip-rect */
     String EL_CLIP_RECT = "clip-rect";
+    /** element name rect */
     String EL_RECT = "rect";
+    /** element name line */
     String EL_LINE = "line";
+    /** element name border-rect */
     String EL_BORDER_RECT = "border-rect";
+    /** element name font */
     String EL_FONT = "font";
+    /** element name text */
     String EL_TEXT = "text";
     /** Parent element of the logical structure tree. */
     String EL_STRUCTURE_TREE = "structure-tree";

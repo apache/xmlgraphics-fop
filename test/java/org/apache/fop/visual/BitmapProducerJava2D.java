@@ -70,7 +70,7 @@ public class BitmapProducerJava2D extends AbstractBitmapProducer implements Conf
         try {
             FOUserAgent userAgent = fopFactory.newFOUserAgent();
             userAgent.setTargetResolution(context.getTargetResolution());
-            userAgent.setBaseURL(src.getParentFile().toURL().toString());
+            userAgent.setBaseURL(src.getParentFile().toURI().toURL().toString());
 
             File outputFile = new File(context.getTargetDir(),
                     src.getName() + "." + index + ".java2d.png");

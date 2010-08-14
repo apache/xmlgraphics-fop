@@ -39,10 +39,14 @@ import org.apache.fop.traits.MinOptMax;
 /**
  * This is a helper class used for setting common traits on areas.
  */
-public class TraitSetter {
+public final class TraitSetter {
+
+    private TraitSetter() {
+    }
 
     /** logger */
-    protected static Log log = LogFactory.getLog(TraitSetter.class);
+    private static final Log log                                 // CSOK: ConstantName
+        = LogFactory.getLog(TraitSetter.class);
 
     /**
      * Sets border and padding traits on areas.

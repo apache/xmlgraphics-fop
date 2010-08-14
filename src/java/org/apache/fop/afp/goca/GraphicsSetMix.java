@@ -27,7 +27,10 @@ import java.io.OutputStream;
  */
 public class GraphicsSetMix extends AbstractGraphicsDrawingOrder {
 
+    /** default mode */
     public static final byte MODE_DEFAULT = 0x00;
+
+    /** overpaint mode */
     public static final byte MODE_OVERPAINT = 0x02;
 
     /** the mix mode value */

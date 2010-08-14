@@ -34,36 +34,37 @@ public class CommonMarginInline {
     /**
      * The "margin-top" property.
      */
-    public Length marginTop;
+    public Length marginTop;                                    // CSOK: VisibilityModifier
 
     /**
      * The "margin-bottom" property.
      */
-    public Length marginBottom;
+    public Length marginBottom;                                 // CSOK: VisibilityModifier
 
     /**
      * The "margin-left" property.
      */
-    public Length marginLeft;
+    public Length marginLeft;                                   // CSOK: VisibilityModifier
 
     /**
      * The "margin-right" property.
      */
-    public Length marginRight;
+    public Length marginRight;                                  // CSOK: VisibilityModifier
 
     /**
      * The "space-start" property.
      */
-    public SpaceProperty spaceStart;
+    public SpaceProperty spaceStart;                            // CSOK: VisibilityModifier
 
     /**
      * The "space-end" property.
      */
-    public SpaceProperty spaceEnd;
+    public SpaceProperty spaceEnd;                              // CSOK: VisibilityModifier
 
     /**
      * Create a CommonMarginInline object.
      * @param pList The PropertyList with propery values.
+     * @throws PropertyException if a property exception occurs
      */
     public CommonMarginInline(PropertyList pList) throws PropertyException {
         marginTop = pList.get(Constants.PR_MARGIN_TOP).getLength();

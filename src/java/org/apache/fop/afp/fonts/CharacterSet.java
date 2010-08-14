@@ -102,7 +102,8 @@ public class CharacterSet {
      * @param encoding the encoding of the font
      * @param name the character set name
      * @param path the path to the installed afp fonts
-     * @deprecated Please use {@link #CharacterSet(String, String, String, URI)} instead.
+     * @deprecated Please use
+     * {@link #CharacterSet(String, String, String, ResourceAccessor)} instead.
      */
     public CharacterSet(String codePage, String encoding, String name, String path) {
         this(codePage, encoding, name,

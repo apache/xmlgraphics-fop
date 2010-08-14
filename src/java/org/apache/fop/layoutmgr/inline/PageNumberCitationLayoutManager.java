@@ -36,7 +36,7 @@ public class PageNumberCitationLayoutManager extends AbstractPageNumberCitationL
      * Constructor
      *
      * @param node the formatting object that creates this area
-     * @todo better retrieval of font info
+     * @asf.todo better retrieval of font info
      */
     public PageNumberCitationLayoutManager(PageNumberCitation node) {
         super(node);

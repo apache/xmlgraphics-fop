@@ -640,7 +640,7 @@ public class RtfExternalGraphic extends RtfElement {
             tmpUrl = new URL (urlString);
         } catch (MalformedURLException e) {
             try {
-                tmpUrl = new File (urlString).toURL ();
+                tmpUrl = new File (urlString).toURI().toURL ();
             } catch (MalformedURLException ee) {
                 throw new ExternalGraphicException("The attribute 'src' of "
                         + "<fo:external-graphic> has a invalid value: '"

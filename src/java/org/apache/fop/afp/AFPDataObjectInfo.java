@@ -29,7 +29,8 @@ import org.apache.fop.afp.modca.triplets.MappingOptionTriplet;
  * A list of parameters associated with an AFP data objects
  */
 public class AFPDataObjectInfo {
-    private static final Log log = LogFactory.getLog("org.apache.xmlgraphics.afp");
+    private static final Log log  // CSOK: ConstantName
+        = LogFactory.getLog("org.apache.xmlgraphics.afp");
 
     /** the object area info */
     private AFPObjectAreaInfo objectAreaInfo;
@@ -197,9 +198,9 @@ public class AFPDataObjectInfo {
     }
 
     /**
-     * Sets the data width resolution
+     * Sets the data height resolution
      *
-     * @param dataWidthRes the data width resolution
+     * @param dataHeightRes the data height resolution
      */
     public void setDataHeightRes(int dataHeightRes) {
         this.dataHeightRes = dataHeightRes;

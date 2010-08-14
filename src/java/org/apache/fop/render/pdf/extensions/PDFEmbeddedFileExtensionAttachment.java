@@ -129,7 +129,6 @@ public class PDFEmbeddedFileExtensionAttachment extends PDFExtensionAttachment {
 
     /**
      * @return the element name
-     * @see org.apache.fop.render.ps.extensions.PDFExtensionAttachment#getElement()
      */
     protected String getElement() {
         return ELEMENT;

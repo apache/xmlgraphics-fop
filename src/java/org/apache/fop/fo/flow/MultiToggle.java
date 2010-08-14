@@ -39,7 +39,7 @@ public class MultiToggle extends FObj {
     // public ToBeImplementedProperty prSwitchTo;
     // End of property values
 
-    static boolean notImplementedWarningGiven = false;
+    private static boolean notImplementedWarningGiven = false;
 
     /**
      * Base constructor

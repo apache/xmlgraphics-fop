@@ -24,7 +24,7 @@ import java.io.OutputStream;
 import java.io.Writer;
 
 /**
- * @deprecated
+ * @deprecated use org.apache.xmlgraphics.util.WriterOutputStream instead
  * @see org.apache.xmlgraphics.util.WriterOutputStream
  */
 public class WriterOutputStream extends OutputStream {
@@ -32,9 +32,7 @@ public class WriterOutputStream extends OutputStream {
     private final org.apache.xmlgraphics.util.WriterOutputStream writerOutputStream;
 
     /**
-     * @deprecated
-     * @see org.apache.xmlgraphics.util.WriterOutputStream#WriterOutputStream(Writer)
-     *      String)
+     * @param writer a writer
      */
     public WriterOutputStream(Writer writer) {
         writerOutputStream = new org.apache.xmlgraphics.util.WriterOutputStream(
@@ -42,52 +40,35 @@ public class WriterOutputStream extends OutputStream {
     }
 
     /**
-     * @deprecated
-     * @see org.apache.xmlgraphics.util.WriterOutputStream#WriterOutputStream(Writer,
-     *      String) String)
+     * @param writer a writer
+     * @param encoding stream encoding
      */
     public WriterOutputStream(Writer writer, String encoding) {
         writerOutputStream = new org.apache.xmlgraphics.util.WriterOutputStream(
                 writer, encoding);
     }
 
-    /**
-     * @deprecated
-     * @see org.apache.xmlgraphics.util.WriterOutputStream#close()
-     */
+    /** {@inheritDoc} */
     public void close() throws IOException {
         writerOutputStream.close();
     }
 
-    /**
-     * @deprecated
-     * @see org.apache.xmlgraphics.util.WriterOutputStream#flush()
-     */
+    /** {@inheritDoc} */
     public void flush() throws IOException {
         writerOutputStream.flush();
     }
 
-    /**
-     * @deprecated
-     * @see org.apache.xmlgraphics.util.WriterOutputStream#write(byte[], int,
-     *      int)
-     */
+    /** {@inheritDoc} */
     public void write(byte[] buf, int offset, int length) throws IOException {
         writerOutputStream.write(buf, offset, length);
     }
 
-    /**
-     * @deprecated
-     * @see org.apache.xmlgraphics.util.WriterOutputStream#write(byte[])
-     */
+    /** {@inheritDoc} */
     public void write(byte[] buf) throws IOException {
         writerOutputStream.write(buf);
     }
 
-    /**
-     * @deprecated
-     * @see org.apache.xmlgraphics.util.WriterOutputStream#write(int)
-     */
+    /** {@inheritDoc} */
     public void write(int b) throws IOException {
         writerOutputStream.write(b);
     }

@@ -264,7 +264,10 @@ public class MapCodedFont extends AbstractStructuredObject {
     /**
      * Private utility class used as a container for font attributes
      */
-    private class FontDefinition {
+    private static final class FontDefinition {
+
+        private FontDefinition() {
+        }
 
         /**
          * The code page of the font

@@ -79,7 +79,7 @@ public class MemoryEater {
         OutputStream out = new NullOutputStream(); //write to /dev/nul
         try {
             FOUserAgent userAgent = fopFactory.newFOUserAgent();
-            userAgent.setBaseURL(foFile.getParentFile().toURL().toExternalForm());
+            userAgent.setBaseURL(foFile.getParentFile().toURI().toURL().toExternalForm());
             Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, userAgent, out);
             Result res = new SAXResult(fop.getDefaultHandler());
 

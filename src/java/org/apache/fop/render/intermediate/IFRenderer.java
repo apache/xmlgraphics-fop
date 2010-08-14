@@ -1238,7 +1238,8 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     }
 
     /** {@inheritDoc} */
-    protected void drawBorders(float startx, float starty,
+    protected void drawBorders                                  // CSOK: ParameterNumber
+        (float startx, float starty,
             float width, float height,
             BorderProps bpsBefore, BorderProps bpsAfter,
             BorderProps bpsStart, BorderProps bpsEnd) {
@@ -1251,7 +1252,8 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     }
 
     /** {@inheritDoc} */
-    protected void drawBorderLine(float x1, float y1, float x2, float y2, boolean horz,
+    protected void drawBorderLine                               // CSOK: ParameterNumber
+        (float x1, float y1, float x2, float y2, boolean horz,
             boolean startOrBefore, int style, Color col) {
         //Simplified implementation that is only used by renderTextDecoration()
         //drawBorders() is overridden and uses the Painter's high-level method drawBorderRect()

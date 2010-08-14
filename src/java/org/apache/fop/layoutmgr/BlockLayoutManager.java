@@ -234,8 +234,8 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
     }
 
     /** {@inheritDoc} */
-    public void addAreas(PositionIterator parentIter,
-            LayoutContext layoutContext) {
+    public void addAreas                                        // CSOK: MethodLength
+        (PositionIterator parentIter, LayoutContext layoutContext) {
         getParentArea(null);
 
         // if this will create the first block area in a page

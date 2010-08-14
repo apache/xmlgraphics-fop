@@ -205,6 +205,10 @@ public final class ActiveEnvironmentGroup extends AbstractEnvironmentGroup {
         }
     }
 
+    /**
+     * Add map page segment.
+     * @param name of segment to add
+     */
     public void addMapPageSegment(String name) {
         try {
             needMapPageSegment().addPageSegment(name);

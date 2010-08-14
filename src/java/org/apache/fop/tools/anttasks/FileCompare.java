@@ -84,6 +84,7 @@ public class FileCompare {
      * @param f1 first file to compare
      * @param f2 second file to compare
      * @return true if files are same, false otherwise
+     * @throws IOException if not caught
      */
     public static boolean compareFiles(File f1, File f2) throws IOException {
         return (compareFileSize(f1, f2) && compareBytes(f1, f2));
@@ -96,10 +97,10 @@ public class FileCompare {
      * @return true if files are same byte-by-byte, false otherwise
      */
     private static boolean compareBytes(File file1, File file2) throws IOException {
-        BufferedInputStream file1Input =
-            new BufferedInputStream(new java.io.FileInputStream(file1));
-        BufferedInputStream file2Input =
-            new BufferedInputStream(new java.io.FileInputStream(file2));
+        BufferedInputStream file1Input
+            = new BufferedInputStream(new java.io.FileInputStream(file1));
+        BufferedInputStream file2Input
+            = new BufferedInputStream(new java.io.FileInputStream(file2));
 
         int charact1 = 0;
         int charact2 = 0;
@@ -123,11 +124,7 @@ public class FileCompare {
      * @return true if files are same length, false otherwise
      */
     private static boolean compareFileSize(File oldFile, File newFile) {
-        if (oldFile.length() != newFile.length()) {
-            return false;
-        } else {
-            return true;
-        }
+        return oldFile.length() == newFile.length();
     }    // end: compareBytes
 
     private boolean filesExist(File oldFile, File newFile) {
@@ -167,8 +164,8 @@ public class FileCompare {
         File oldFile;
         File newFile;
         try {
-            PrintWriter results =
-                new PrintWriter(new java.io.FileWriter("results.html"), true);
+            PrintWriter results
+                = new PrintWriter(new java.io.FileWriter("results.html"), true);
             this.writeHeader(results);
             for (int i = 0; i < filenameList.length; i++) {
                 oldFile = new File(referenceDirectory + filenameList[i]);

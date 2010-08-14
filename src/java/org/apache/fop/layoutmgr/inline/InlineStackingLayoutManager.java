@@ -46,16 +46,27 @@ public abstract class InlineStackingLayoutManager extends AbstractLayoutManager
                                          implements InlineLevelLayoutManager {
 
 
+    /**
+     * A stacking iterator.
+     */
     protected static class StackingIter extends PositionIterator {
 
         StackingIter(Iterator parentIter) {
             super(parentIter);
         }
 
+        /**
+         * @param nextObj the next object
+         * @return layout manager of next object
+         */
         protected LayoutManager getLM(Object nextObj) {
             return ((Position) nextObj).getLM();
         }
 
+        /**
+         * @param nextObj the next object
+         * @return position of next object
+         */
         protected Position getPos(Object nextObj) {
             return ((Position) nextObj);
         }
@@ -218,10 +229,10 @@ public abstract class InlineStackingLayoutManager extends AbstractLayoutManager
 
         // The last element may not have a layout manager (its position == null);
         // this may happen if it is a padding box; see bug 39571.
-        InlineLevelLayoutManager LM =
-            (InlineLevelLayoutManager) element.getLayoutManager();
-        if (LM != null) {
-            oldList = LM.addALetterSpaceTo(oldList);
+        InlineLevelLayoutManager lm
+            = (InlineLevelLayoutManager) element.getLayoutManager();
+        if (lm != null) {
+            oldList = lm.addALetterSpaceTo(oldList);
         }
         // "wrap" again the Position stored in each element of oldList
         oldListIterator = oldList.listIterator();

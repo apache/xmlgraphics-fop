@@ -28,7 +28,8 @@ import org.apache.fop.fo.expr.PropertyException;
  * border width described in 7.7.20.
  */
 public class BorderWidthPropertyMaker extends LengthProperty.Maker {
-    int borderStyleId = 0;
+
+    private int borderStyleId = 0;
 
     /**
      * Create a length property which check the value of the border-*-style
@@ -41,7 +42,7 @@ public class BorderWidthPropertyMaker extends LengthProperty.Maker {
 
     /**
      * Set the propId of the style property for the same side.
-     * @param borderStyleId
+     * @param borderStyleId the border style id
      */
     public void setBorderStyleId(int borderStyleId) {
         this.borderStyleId = borderStyleId;
@@ -55,8 +56,7 @@ public class BorderWidthPropertyMaker extends LengthProperty.Maker {
 
     public Property get(int subpropId, PropertyList propertyList,
                         boolean bTryInherit, boolean bTryDefault)
-        throws PropertyException
-    {
+        throws PropertyException {
         Property p = super.get(subpropId, propertyList,
                                bTryInherit, bTryDefault);
 

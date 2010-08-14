@@ -24,23 +24,34 @@ import java.io.InputStream;
 import java.io.Writer;
 
 /**
- * @deprecated
+ * @deprecated use org.apache.xmlgraphics.util.uri.DataURLUtil directly
  * @see org.apache.xmlgraphics.util.uri.DataURLUtil
  */
-public class DataURLUtil {
+public final class DataURLUtil {
+
+    private DataURLUtil() {
+    }
 
     /**
+     * @param in an input stream
+     * @param mediatype a MIME media type
+     * @return a data url as a string
+     * @throws IOException if not caught
      * @deprecated
      * @see org.apache.xmlgraphics.util.uri.DataURLUtil#createDataURL(InputStream,
      *      String)
      */
     public static String createDataURL(InputStream in, String mediatype)
-            throws IOException {
+        throws IOException {
         return org.apache.xmlgraphics.util.uri.DataURLUtil.createDataURL(in,
                 mediatype);
     }
 
     /**
+     * @param in an input stream
+     * @param mediatype a MIME media type
+     * @param writer a writer
+     * @throws IOException if not caught
      * @deprecated
      * @see org.apache.xmlgraphics.util.uri.DataURLUtil#writeDataURL(InputStream,
      *      String, Writer)

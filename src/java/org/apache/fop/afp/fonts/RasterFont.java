@@ -37,7 +37,8 @@ import org.apache.commons.logging.LogFactory;
 public class RasterFont extends AFPFont {
 
     /** Static logging instance */
-    protected static final Log log = LogFactory.getLog("org.apache.fop.afp.fonts");
+    protected static final Log log // CSOK: ConstantName
+        = LogFactory.getLog("org.apache.fop.afp.fonts");
 
     private final SortedMap/*<Integer,CharacterSet>*/ charSets
             = new java.util.TreeMap/*<Integer,CharacterSet>*/();

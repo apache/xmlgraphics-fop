@@ -17,11 +17,12 @@
 
 /* $Id$ */
 
+package org.apache.fop.render.awt.viewer;
+
 // Originally contributed by:
 // Juergen Verwohlt: Juergen.Verwohlt@jCatalog.com,
 // Rainer Steinkuhle: Rainer.Steinkuhle@jCatalog.com,
 // Stanislav Gorkhover: Stanislav.Gorkhover@jCatalog.com
-package org.apache.fop.render.awt.viewer;
 
 // Java
 import java.awt.BorderLayout;
@@ -105,7 +106,8 @@ public class PreviewDialog extends JFrame implements StatusListener {
      * @param renderable the Renderable instance that is used to reload/re-render a document
      *                   after modifications.
      */
-    public PreviewDialog(FOUserAgent foUserAgent, Renderable renderable) {
+    public PreviewDialog                                        // CSOK: MethodLength
+        (FOUserAgent foUserAgent, Renderable renderable) {
         renderer = (AWTRenderer) foUserAgent.getRendererOverride();
         this.foUserAgent = foUserAgent;
         this.configuredTargetResolution = this.foUserAgent.getTargetResolution();
@@ -579,7 +581,10 @@ public class PreviewDialog extends JFrame implements StatusListener {
         }
     }
 
-    /** Prints the document */
+    /**
+     * Prints the document.
+     * @param showDialog true if show dialog
+     */
     public void startPrinterJob(boolean showDialog) {
         //Restore originally configured target resolution
         float saveResolution = foUserAgent.getTargetResolution();

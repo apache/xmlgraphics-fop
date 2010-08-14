@@ -26,7 +26,10 @@ package org.apache.fop.afp.ioca;
  * shades of grey (betweeen 0 and 16) the lower the number being the
  * darker the shade. The image data dimensions are 64 x 8.
  */
-public class ImageRasterPattern {
+public final class ImageRasterPattern {
+
+    private ImageRasterPattern() {
+    }
 
     /**
      * The Raster Pattern for Greyscale 16

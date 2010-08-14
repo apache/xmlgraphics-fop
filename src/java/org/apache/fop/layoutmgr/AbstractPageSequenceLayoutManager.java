@@ -275,8 +275,8 @@ public abstract class AbstractPageSequenceLayoutManager extends AbstractLayoutMa
     /**
      * Makes a new page
      *
-     * @param bIsBlank whether this page is blank or not
-     * @param bIsLast whether this page is the last page or not
+     * @param isBlank whether this page is blank or not
+     * @param isLast whether this page is the last page or not
      * @return a new page
      */
     protected Page makeNewPage(boolean isBlank, boolean isLast) {

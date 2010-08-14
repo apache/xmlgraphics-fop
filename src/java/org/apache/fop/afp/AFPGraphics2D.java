@@ -75,7 +75,7 @@ import org.apache.fop.svg.NativeImageHandler;
  */
 public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHandler {
 
-    private static final Log log = LogFactory.getLog(AFPGraphics2D.class);
+    private static final Log log = LogFactory.getLog(AFPGraphics2D.class); // CSOK: ConstantName
 
     private static final int X = 0;
 

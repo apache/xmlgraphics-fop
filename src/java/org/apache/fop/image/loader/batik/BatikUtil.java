@@ -27,7 +27,10 @@ import org.apache.batik.dom.util.DOMUtilities;
 /**
  * Helper utilities for Apache Batik.
  */
-public class BatikUtil {
+public final class BatikUtil {
+
+    private BatikUtil() {
+    }
 
     /**
      * Checks whether Apache Batik is available in the classpath.

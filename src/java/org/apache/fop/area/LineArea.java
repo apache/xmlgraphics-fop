@@ -37,7 +37,7 @@ public class LineArea extends Area {
      * that can be used in order to re-compute adjustement and / or indents when a
      * page-number or a page-number-citation is resolved
      */
-    private class LineAdjustingInfo implements Serializable {
+    private final class LineAdjustingInfo implements Serializable {
         private int lineAlignment;
         private int difference;
         private int availableStretch;

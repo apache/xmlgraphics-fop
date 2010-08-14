@@ -45,7 +45,7 @@ public class PDFFileSpec extends PDFDictionary {
 
     /**
      * Associates an dictionary with pointers to embedded file streams with this file spec.
-     * @param embeddedFile the dictionary with pointers to embedded file streams
+     * @param embeddedFileDict the dictionary with pointers to embedded file streams
      */
     public void setEmbeddedFile(PDFDictionary embeddedFileDict) {
         put("EF", embeddedFileDict);

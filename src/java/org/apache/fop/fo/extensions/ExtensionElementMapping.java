@@ -37,7 +37,8 @@ public class ExtensionElementMapping extends ElementMapping {
     /** The FOP extension namespace URI */
     public static final String URI = "http://xmlgraphics.apache.org/fop/extensions";
 
-    private static final Set propertyAttributes = new java.util.HashSet();
+    private static final Set propertyAttributes // CSOK: ConstantName
+        = new java.util.HashSet();
 
     static {
         //These are FOP's standard extension properties (fox:*)

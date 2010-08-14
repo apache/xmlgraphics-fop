@@ -237,6 +237,8 @@ public class AlignmentContext implements Constants {
             case EN_MATHEMATICAL:
                 this.alignmentBaselineIdentifier = alignmentBaseline;
                 break;
+            default:
+                break;
         }
     }
 
@@ -330,6 +332,9 @@ public class AlignmentContext implements Constants {
                                                 , LengthBase.CUSTOM_BASE
                                                 , parentAlignmentContext.getLineHeight()));
                 break;
+            default:
+                break;
+
         }
     }
 
@@ -353,10 +358,12 @@ public class AlignmentContext implements Constants {
         return parentAlignmentContext.getScaledBaselineTable()
                                     .getBaseline(alignmentBaselineIdentifier)
                 - scaledBaselineTable
-                    .deriveScaledBaselineTable(parentAlignmentContext.getDominantBaselineIdentifier())
+                    .deriveScaledBaselineTable(parentAlignmentContext
+                                               .getDominantBaselineIdentifier())
                     .getBaseline(alignmentBaselineIdentifier)
                 - scaledBaselineTable
-                    .getBaseline(parentAlignmentContext.getDominantBaselineIdentifier())
+                    .getBaseline(parentAlignmentContext
+                                 .getDominantBaselineIdentifier())
                 + baselineShiftValue;
     }
 
