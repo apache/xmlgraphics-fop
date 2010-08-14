@@ -48,7 +48,7 @@ public class CommonBorderPaddingBackground {                    // CSOK: FinalCl
      *  cache holding all canonical instances
      *  (w/ absolute background-position-* and padding-*)
      */
-    private static final PropertyCache cache                    // CSOK: ConstantName
+    private static final PropertyCache CACHE
         = new PropertyCache(CommonBorderPaddingBackground.class);
 
     private int hash = -1;
@@ -102,7 +102,7 @@ public class CommonBorderPaddingBackground {                    // CSOK: FinalCl
     public static final class BorderInfo {
 
         /** cache holding all canonical instances */
-        private static final PropertyCache cache                // CSOK: ConstantName
+        private static final PropertyCache CACHE
             = new PropertyCache(BorderInfo.class);
 
         private int mStyle; // Enum for border style
@@ -129,7 +129,7 @@ public class CommonBorderPaddingBackground {                    // CSOK: FinalCl
          * @return a cached BorderInfo instance
          */
         public static BorderInfo getInstance(int style, CondLengthProperty width, Color color) {
-            return cache.fetch(new BorderInfo(style, width, color));
+            return CACHE.fetch(new BorderInfo(style, width, color));
         }
 
         /**
@@ -214,7 +214,7 @@ public class CommonBorderPaddingBackground {                    // CSOK: FinalCl
      * A border info with style "none". Used as a singleton, in the collapsing-border model,
      * for elements which don't specify any border on some of their sides.
      */
-    private static final BorderInfo defaultBorderInfo           // CSOK: ConstantName        
+    private static final BorderInfo DEFAULT_BORDER_INFO
             = BorderInfo.getInstance(Constants.EN_NONE, new ConditionalNullLength(), null);
 
     /**
@@ -276,7 +276,7 @@ public class CommonBorderPaddingBackground {                    // CSOK: FinalCl
      * @return a BorderInfo instance with style set to {@link Constants#EN_NONE}
      */
     public static BorderInfo getDefaultBorderInfo() {
-        return defaultBorderInfo;
+        return DEFAULT_BORDER_INFO;
     }
 
     private BorderInfo[] borderInfo = new BorderInfo[4];
@@ -366,7 +366,7 @@ public class CommonBorderPaddingBackground {                    // CSOK: FinalCl
                     || newInstance.backgroundPositionHorizontal.isAbsolute())
                 && (newInstance.backgroundPositionVertical == null
                     || newInstance.backgroundPositionVertical.isAbsolute())) {
-            cachedInstance = cache.fetch(newInstance);
+            cachedInstance = CACHE.fetch(newInstance);
         }
 
         /* for non-cached, or not-yet-cached instances, preload the image */

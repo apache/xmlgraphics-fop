@@ -37,7 +37,7 @@ public final class CommonFont {
 
     /** cache holding canonical CommonFont instances (only those with
      *  absolute font-size and font-size-adjust) */
-    private static final PropertyCache cache                    // CSOK: ConstantName
+    private static final PropertyCache CACHE
         = new PropertyCache(CommonFont.class);
 
     /** hashcode of this instance */
@@ -129,7 +129,7 @@ public final class CommonFont {
                                                fontSize,
                                                fontSizeAdjust);
 
-        return cache.fetch(commonFont);
+        return CACHE.fetch(commonFont);
     }
 
     /** @return an array with the font-family names */

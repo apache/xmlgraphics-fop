@@ -21,11 +21,6 @@ package org.apache.fop.fo.properties;
 
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
-import org.apache.fop.fo.FOValidationEventProducer;
-import org.apache.fop.fo.ValidationException;
-import org.apache.fop.fo.expr.PropertyException;
-
-import java.util.Set;
 
 /**
  * Exists primarily as a container for its Maker inner class, which is
@@ -83,7 +78,7 @@ public final class StringProperty extends Property {
     }
 
     /** cache containing all canonical StringProperty instances */
-    private static final PropertyCache cache                    // CSOK: ConstantName
+    private static final PropertyCache CACHE
         = new PropertyCache(StringProperty.class);
 
     /** canonical instance for empty strings */
@@ -109,7 +104,7 @@ public final class StringProperty extends Property {
         if ("".equals(str) || str == null) {
             return EMPTY_STRING_PROPERTY;
         } else {
-            return (StringProperty)cache.fetch(
+            return (StringProperty)CACHE.fetch(
                        new StringProperty(str));
         }
     }

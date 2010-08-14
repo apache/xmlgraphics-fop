@@ -44,7 +44,7 @@ import org.apache.fop.fo.properties.PropertyMaker;
 public abstract class FObj extends FONode implements Constants {
 
     /** the list of property makers */
-    private static final PropertyMaker[] propertyListTable // CSOK: ConstantName
+    private static final PropertyMaker[] PROPERTY_LIST_TABLE
                             = FOPropertyMapping.getGenericMappings();
 
     /**
@@ -108,7 +108,7 @@ public abstract class FObj extends FONode implements Constants {
      * @return the requested Property Maker
      */
     public static PropertyMaker getPropertyMakerFor(int propId) {
-        return propertyListTable[propId];
+        return PROPERTY_LIST_TABLE[propId];
     }
 
     /** {@inheritDoc} */

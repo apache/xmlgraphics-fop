@@ -21,16 +21,10 @@ package org.apache.fop.pdf;
 
 import java.util.Date;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 /**
  * This class represents an embedded file stream.
  */
 public class PDFEmbeddedFile extends PDFStream {
-
-    private static final Log log                                // CSOK: ConstantName
-        = LogFactory.getLog(PDFEmbeddedFile.class.getName());
 
     /**
      * Creates a new embedded file stream.

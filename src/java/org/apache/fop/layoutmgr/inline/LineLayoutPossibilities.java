@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.layoutmgr.Position;
 
 /**
@@ -31,8 +32,7 @@ import org.apache.fop.layoutmgr.Position;
 public class LineLayoutPossibilities {
 
     /** logger instance */
-    private static final Log log                                // CSOK: ConstantName
-        = LogFactory.getLog(LineLayoutPossibilities.class);
+    private static final Log LOG = LogFactory.getLog(LineLayoutPossibilities.class);
 
     private final class Possibility {
         private int lineCount;
@@ -157,7 +157,7 @@ public class LineLayoutPossibilities {
                     possibilitiesList.set(index, restoredPossibility);
                 } else {
                     // this should not happen
-                    log.error("LineLayoutPossibilities restorePossibilities(),"
+                    LOG.error("LineLayoutPossibilities restorePossibilities(),"
                         + " min= " + getMinLineCount()
                         + " max= " + getMaxLineCount()
                         + " restored= " + restoredPossibility.getLineCount());
@@ -258,12 +258,12 @@ public class LineLayoutPossibilities {
             && adj <= (getMaxLineCount() - getChosenLineCount())
             && getLineCount(chosenIndex + adj) == getChosenLineCount() + adj) {
             chosenIndex += adj;
-            log.debug("chosenLineCount= " + (getChosenLineCount() - adj) + " adjustment= " + adj
+            LOG.debug("chosenLineCount= " + (getChosenLineCount() - adj) + " adjustment= " + adj
                                + " => chosenLineCount= " + getLineCount(chosenIndex));
             return adj;
         } else {
             // this should not happen!
-            log.warn("Cannot apply the desired line count adjustment.");
+            LOG.warn("Cannot apply the desired line count adjustment.");
             return 0;
         }
     }

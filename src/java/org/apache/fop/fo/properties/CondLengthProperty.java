@@ -33,7 +33,7 @@ import org.apache.fop.fo.expr.PropertyException;
 public class CondLengthProperty extends Property implements CompoundDatatype {
 
     /** cache holding canonical instances (for absolute conditional lengths) */
-    private static final PropertyCache cache                    // CSOK: ConstantName
+    private static final PropertyCache CACHE
         = new PropertyCache(CondLengthProperty.class);
 
     /** components */
@@ -159,7 +159,7 @@ public class CondLengthProperty extends Property implements CompoundDatatype {
      */
     public CondLengthProperty getCondLength() {
         if (this.length.getLength().isAbsolute()) {
-            CondLengthProperty clp = (CondLengthProperty) cache.fetch(this);
+            CondLengthProperty clp = (CondLengthProperty) CACHE.fetch(this);
             if (clp == this) {
                 isCached = true;
             }

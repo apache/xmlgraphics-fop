@@ -51,7 +51,7 @@ public final class CharacterProperty extends Property {
     }
 
     /** cache containing all canonical CharacterProperty instances */
-    private static final PropertyCache cache // CSOK: ConstantName
+    private static final PropertyCache CACHE
         = new PropertyCache(CharacterProperty.class);
 
     private final char character;
@@ -69,7 +69,7 @@ public final class CharacterProperty extends Property {
      * @return the character property instance
      */
     public static CharacterProperty getInstance(char character) {
-        return (CharacterProperty) cache.fetch(
+        return (CharacterProperty) CACHE.fetch(
                         new CharacterProperty(character));
     }
 

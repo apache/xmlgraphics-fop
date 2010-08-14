@@ -19,9 +19,6 @@
 
 package org.apache.fop.afp;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import org.apache.fop.afp.modca.Registry;
 import org.apache.fop.afp.modca.triplets.MappingOptionTriplet;
 
@@ -29,8 +26,6 @@ import org.apache.fop.afp.modca.triplets.MappingOptionTriplet;
  * A list of parameters associated with an AFP data objects
  */
 public class AFPDataObjectInfo {
-    private static final Log log  // CSOK: ConstantName
-        = LogFactory.getLog("org.apache.xmlgraphics.afp");
 
     /** the object area info */
     private AFPObjectAreaInfo objectAreaInfo;

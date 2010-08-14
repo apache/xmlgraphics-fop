@@ -32,8 +32,7 @@ import org.apache.fop.afp.AFPLineDataInfo;
 public class LineDataInfoProducer implements PtocaProducer, PtocaConstants {
 
     /** Static logging instance */
-    private static final Log log // CSOK: ConstantName
-        = LogFactory.getLog(LineDataInfoProducer.class);
+    private static final Log LOG = LogFactory.getLog(LineDataInfoProducer.class);
 
     private AFPLineDataInfo lineDataInfo;
 
@@ -62,7 +61,7 @@ public class LineDataInfoProducer implements PtocaProducer, PtocaConstants {
         } else if (x1 == x2) {
             builder.drawBaxisRule(y2 - y1, thickness);
         } else {
-            log.error("Invalid axis rule: unable to draw line");
+            LOG.error("Invalid axis rule: unable to draw line");
             return;
         }
     }

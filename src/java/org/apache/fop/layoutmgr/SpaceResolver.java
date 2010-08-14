@@ -35,8 +35,7 @@ import org.apache.fop.traits.MinOptMax;
 public final class SpaceResolver {
 
     /** Logger instance */
-    private static final Log log                                // CSOK: ConstantName
-        = LogFactory.getLog(SpaceResolver.class);
+    private static final Log LOG = LogFactory.getLog(SpaceResolver.class);
 
     private UnresolvedListElementWithLength[] firstPart;
     private BreakElement breakPoss;
@@ -94,25 +93,25 @@ public final class SpaceResolver {
         //Add pending elements from higher level FOs
         if (breakPoss != null) {
             if (breakPoss.getPendingAfterMarks() != null) {
-                if (log.isTraceEnabled()) {
-                    log.trace("    adding pending before break: "
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("    adding pending before break: "
                             + breakPoss.getPendingAfterMarks());
                 }
                 first.addAll(0, breakPoss.getPendingAfterMarks());
             }
             if (breakPoss.getPendingBeforeMarks() != null) {
-                if (log.isTraceEnabled()) {
-                    log.trace("    adding pending after break: "
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("    adding pending after break: "
                             + breakPoss.getPendingBeforeMarks());
                 }
                 second.addAll(0, breakPoss.getPendingBeforeMarks());
             }
         }
-        if (log.isTraceEnabled()) {
-            log.trace("before: " + first);
-            log.trace("  break: " + breakPoss);
-            log.trace("after: " + second);
-            log.trace("NO-BREAK: " + toString(noBreak, noBreakLengths));
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("before: " + first);
+            LOG.trace("  break: " + breakPoss);
+            LOG.trace("after: " + second);
+            LOG.trace("NO-BREAK: " + toString(noBreak, noBreakLengths));
         }
 
         if (first != null) {
@@ -164,15 +163,15 @@ public final class SpaceResolver {
             if (elems[effIndex] instanceof BorderOrPaddingElement) {
                 BorderOrPaddingElement bop = (BorderOrPaddingElement)elems[effIndex];
                 if (bop.isConditional() && !(bop.isFirst() || bop.isLast())) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Nulling conditional element: " + bop);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Nulling conditional element: " + bop);
                     }
                     lengths[effIndex] = null;
                 }
             }
         }
-        if (log.isTraceEnabled() && elems.length > 0) {
-            log.trace("-->Resulting list: " + toString(elems, lengths));
+        if (LOG.isTraceEnabled() && elems.length > 0) {
+            LOG.trace("-->Resulting list: " + toString(elems, lengths));
         }
     }
 
@@ -194,20 +193,20 @@ public final class SpaceResolver {
             } else if (!elems[effIndex].isConditional()) {
                 break;
             }
-            if (log.isDebugEnabled()) {
-                log.debug("Nulling conditional element using 4.3.1, rule 1: " + elems[effIndex]);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Nulling conditional element using 4.3.1, rule 1: " + elems[effIndex]);
             }
             lengths[effIndex] = null;
         }
-        if (log.isTraceEnabled() && elems.length > 0) {
-            log.trace("-->Resulting list: " + toString(elems, lengths));
+        if (LOG.isTraceEnabled() && elems.length > 0) {
+            LOG.trace("-->Resulting list: " + toString(elems, lengths));
         }
     }
 
     private void performSpaceResolutionRules2to3(UnresolvedListElement[] elems,
             MinOptMax[] lengths, int start, int end) {
-        if (log.isTraceEnabled()) {
-            log.trace("rule 2-3: " + start + "-" + end);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("rule 2-3: " + start + "-" + end);
         }
         SpaceElement space;
         int remaining;
@@ -236,8 +235,8 @@ public final class SpaceResolver {
                 }
                 space = (SpaceElement)elems[i];
                 if (!space.isForcing()) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Nulling non-forcing space-specifier using 4.3.1, rule 2: "
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Nulling non-forcing space-specifier using 4.3.1, rule 2: "
                                 + elems[i]);
                     }
                     lengths[i] = null;
@@ -256,8 +255,8 @@ public final class SpaceResolver {
             space = (SpaceElement)elems[i];
             highestPrecedence = Math.max(highestPrecedence, space.getPrecedence());
         }
-        if (highestPrecedence != 0 && log.isDebugEnabled()) {
-            log.debug("Highest precedence is " + highestPrecedence);
+        if (highestPrecedence != 0 && LOG.isDebugEnabled()) {
+            LOG.debug("Highest precedence is " + highestPrecedence);
         }
         //Suppress space-specifiers with lower precedence
         remaining = 0;
@@ -268,8 +267,8 @@ public final class SpaceResolver {
             }
             space = (SpaceElement)elems[i];
             if (space.getPrecedence() != highestPrecedence) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Nulling space-specifier with precedence "
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Nulling space-specifier with precedence "
                             + space.getPrecedence() + " using 4.3.1, rule 3: "
                             + elems[i]);
                 }
@@ -279,8 +278,8 @@ public final class SpaceResolver {
                 remaining++;
             }
         }
-        if (log.isDebugEnabled()) {
-            log.debug("Greatest optimum: " + greatestOptimum);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Greatest optimum: " + greatestOptimum);
         }
         if (remaining <= 1) {
             return;
@@ -293,8 +292,8 @@ public final class SpaceResolver {
             }
             space = (SpaceElement)elems[i];
             if (space.getLength().getOpt() < greatestOptimum) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Nulling space-specifier with smaller optimum length "
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Nulling space-specifier with smaller optimum length "
                             + "using 4.3.1, rule 3: "
                             + elems[i]);
                 }
@@ -317,8 +316,8 @@ public final class SpaceResolver {
             min = Math.max(min, space.getLength().getMin());
             max = Math.min(max, space.getLength().getMax());
             if (remaining > 1) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Nulling non-last space-specifier using 4.3.1, rule 3, second part: "
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Nulling non-last space-specifier using 4.3.1, rule 3, second part: "
                             + elems[i]);
                 }
                 lengths[i] = null;
@@ -328,9 +327,9 @@ public final class SpaceResolver {
             }
         }
 
-        if (log.isTraceEnabled() && elems.length > 0) {
-            log.trace("Remaining spaces: " + remaining);
-            log.trace("-->Resulting list: " + toString(elems, lengths));
+        if (LOG.isTraceEnabled() && elems.length > 0) {
+            LOG.trace("Remaining spaces: " + remaining);
+            LOG.trace("-->Resulting list: " + toString(elems, lengths));
         }
     }
 
@@ -390,7 +389,7 @@ public final class SpaceResolver {
             if (hasFirstPart()) {
                 //Now that we've handled isFirst/isLast conditions, we need to look at the
                 //active part in its normal order so swap it back.
-                log.trace("Swapping first and second parts.");
+                LOG.trace("Swapping first and second parts.");
                 UnresolvedListElementWithLength[] tempList;
                 MinOptMax[] tempLengths;
                 tempList = secondPart;
@@ -598,8 +597,8 @@ public final class SpaceResolver {
      * @param elems the element list
      */
     public static void resolveElementList(List elems) {
-        if (log.isTraceEnabled()) {
-            log.trace(elems);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace(elems);
         }
         boolean first = true;
         boolean last = false;
@@ -611,8 +610,8 @@ public final class SpaceResolver {
         while (iter.hasNext()) {
             ListElement el = (ListElement)iter.next();
             if (el.isUnresolvedElement()) {
-                if (log.isTraceEnabled()) {
-                    log.trace("unresolved found: " + el + " " + first + "/" + last);
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("unresolved found: " + el + " " + first + "/" + last);
                 }
                 BreakElement breakPoss = null;
                 //Clear temp lists
@@ -649,7 +648,7 @@ public final class SpaceResolver {
                 }
                 //last = !iter.hasNext();
                 if (breakPoss == null && unresolvedSecond.size() == 0 && !last) {
-                    log.trace("Swap first and second parts in no-break condition,"
+                    LOG.trace("Swap first and second parts in no-break condition,"
                             + " second part is empty.");
                     //The first list is reversed, so swap if this shouldn't happen
                     List swapList = unresolvedSecond;
@@ -657,7 +656,7 @@ public final class SpaceResolver {
                     unresolvedFirst = swapList;
                 }
 
-                log.debug("----start space resolution (first=" + first + ", last=" + last + ")...");
+                LOG.debug("----start space resolution (first=" + first + ", last=" + last + ")...");
                 SpaceResolver resolver = new SpaceResolver(
                         unresolvedFirst, breakPoss, unresolvedSecond, first, last);
                 if (!last) {
@@ -667,7 +666,7 @@ public final class SpaceResolver {
                 if (!last && skipNextElement) {
                     iter.next();
                 }
-                log.debug("----end space resolution.");
+                LOG.debug("----end space resolution.");
             }
             first = false;
         }

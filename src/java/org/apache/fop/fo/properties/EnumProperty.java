@@ -29,7 +29,7 @@ import org.apache.fop.fo.expr.PropertyException;
 public final class EnumProperty extends Property {
 
     /** cache holding all canonical EnumProperty instances */
-    private static final PropertyCache cache                    // CSOK: ConstantName
+    private static final PropertyCache CACHE
         = new PropertyCache(EnumProperty.class);
 
     /**
@@ -93,7 +93,7 @@ public final class EnumProperty extends Property {
      * @return an enumeration property
      */
     public static EnumProperty getInstance(int explicitValue, String text) {
-        return (EnumProperty) cache.fetch(
+        return (EnumProperty) CACHE.fetch(
                         new EnumProperty(explicitValue, text));
     }
 

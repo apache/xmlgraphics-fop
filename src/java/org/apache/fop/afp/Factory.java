@@ -21,8 +21,6 @@ package org.apache.fop.afp;
 
 import java.io.OutputStream;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.fop.afp.goca.GraphicsData;
 import org.apache.fop.afp.ioca.ImageContent;
 import org.apache.fop.afp.ioca.ImageRasterData;
@@ -64,9 +62,6 @@ import org.apache.fop.afp.util.StringUtils;
  * Creator of MO:DCA structured field objects
  */
 public class Factory {
-
-    /** Static logging instance */
-    private static final Log log = LogFactory.getLog(Factory.class); // CSOK: ConstantName
 
     private static final String OBJECT_ENVIRONMENT_GROUP_NAME_PREFIX = "OEG";
 

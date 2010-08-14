@@ -21,6 +21,7 @@ package org.apache.fop.layoutmgr;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.fo.Constants;
 import org.apache.fop.traits.MinOptMax;
 
@@ -30,8 +31,7 @@ import org.apache.fop.traits.MinOptMax;
  */
 public class BalancingColumnBreakingAlgorithm extends PageBreakingAlgorithm {
 
-    private static final Log log                                // CSOK: ConstantName
-        = LogFactory.getLog(BalancingColumnBreakingAlgorithm.class);
+    private static final Log LOG = LogFactory.getLog(BalancingColumnBreakingAlgorithm.class);
 
     private int columnCount;
     private int fullLen;
@@ -74,8 +74,8 @@ public class BalancingColumnBreakingAlgorithm extends PageBreakingAlgorithm {
     protected double computeDemerits(KnuthNode activeNode,
             KnuthElement element, int fitnessClass, double r) {
         double dem = super.computeDemerits(activeNode, element, fitnessClass, r);
-        if (log.isTraceEnabled()) {
-            log.trace("original demerit=" + dem + " " + totalWidth
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("original demerit=" + dem + " " + totalWidth
                     + " line=" + activeNode.line + "/" + columnCount
                     + " pos=" + activeNode.position + "/" + (par.size() - 1));
         }
@@ -91,13 +91,13 @@ public class BalancingColumnBreakingAlgorithm extends PageBreakingAlgorithm {
         if (remParts > 0) {
             avgRestLen = restLen / remParts;
         }
-        if (log.isTraceEnabled()) {
-            log.trace("remaining parts: " + remParts + " rest len: " + restLen
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("remaining parts: " + remParts + " rest len: " + restLen
                     + " avg=" + avgRestLen);
         }
         double balance = (idealPartLen - partLen) / 1000f;
-        if (log.isTraceEnabled()) {
-            log.trace("balance=" + balance);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("balance=" + balance);
         }
         double absBalance = Math.abs(balance);
         dem = absBalance;
@@ -120,8 +120,8 @@ public class BalancingColumnBreakingAlgorithm extends PageBreakingAlgorithm {
             //We don't want more columns than available
             dem = Double.MAX_VALUE;
         }
-        if (log.isTraceEnabled()) {
-            log.trace("effective dem=" + dem + " " + totalWidth);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("effective dem=" + dem + " " + totalWidth);
         }
         return dem;
     }

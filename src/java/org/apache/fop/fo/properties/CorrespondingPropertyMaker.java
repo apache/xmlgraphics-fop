@@ -19,12 +19,12 @@
 
 package org.apache.fop.fo.properties;
 
-import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
 
 /**
+ * Maker class for handling corresponding properties.
  */
 public class CorrespondingPropertyMaker {
     /** base property maker */

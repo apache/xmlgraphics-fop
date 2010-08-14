@@ -33,7 +33,7 @@ import org.apache.fop.util.ColorUtil;
 public final class ColorProperty extends Property  {
 
     /** cache holding canonical ColorProperty instances */
-    private static final PropertyCache cache // CSOK: ConstantName
+    private static final PropertyCache CACHE
         = new PropertyCache(ColorProperty.class);
 
     /**
@@ -103,7 +103,7 @@ public final class ColorProperty extends Property  {
         ColorProperty instance = new ColorProperty(
                                        ColorUtil.parseColorString(
                                                foUserAgent, value));
-        return (ColorProperty)cache.fetch(instance);
+        return (ColorProperty)CACHE.fetch(instance);
     }
 
     /**

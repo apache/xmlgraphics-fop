@@ -34,8 +34,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class IDTracker {
 
-    private static final Log log // CSOK: ConstantName
-        = LogFactory.getLog(IDTracker.class);
+    private static final Log LOG = LogFactory.getLog(IDTracker.class);
 
     // HashMap of ID's whose area is located on one or more consecutive
     // PageViewports. Each ID has an arraylist of PageViewports that
@@ -59,8 +58,8 @@ public class IDTracker {
      * @param pv a page viewport that contains the area with this ID
      */
     public void associateIDWithPageViewport(String id, PageViewport pv) {
-        if (log.isDebugEnabled()) {
-            log.debug("associateIDWithPageViewport(" + id + ", " + pv + ")");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("associateIDWithPageViewport(" + id + ", " + pv + ")");
         }
         List pvList = (List) idLocations.get(id);
         if (pvList == null) { // first time ID located
@@ -93,8 +92,8 @@ public class IDTracker {
      * @param id the id of the object being processed
      */
     public void signalPendingID(String id) {
-        if (log.isDebugEnabled()) {
-            log.debug("signalPendingID(" + id + ")");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("signalPendingID(" + id + ")");
         }
         unfinishedIDs.add(id);
     }
@@ -107,8 +106,8 @@ public class IDTracker {
      * @param id the id of the formatting object which was just finished
      */
     public void signalIDProcessed(String id) {
-        if (log.isDebugEnabled()) {
-            log.debug("signalIDProcessed(" + id + ")");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("signalIDProcessed(" + id + ")");
         }
 
         alreadyResolvedIDs.add(id);

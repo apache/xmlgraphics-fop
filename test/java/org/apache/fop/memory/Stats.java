@@ -71,7 +71,7 @@ class Stats {
     public void dumpFinalStats() {
         long duration = System.currentTimeMillis() - startTime;
         System.out.println("Final statistics");
-        System.out.println("Pages produced: " +totalPagesProduced);
+        System.out.println("Pages produced: " + totalPagesProduced);
         long ppm = 60000 * totalPagesProduced / duration;
         System.out.println("Average speed: " + ppm + "ppm");
     }
