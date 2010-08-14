@@ -21,7 +21,6 @@ package org.apache.fop.afp.fonts;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
-import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.CharacterCodingException;

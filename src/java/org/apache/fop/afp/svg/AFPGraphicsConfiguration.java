@@ -109,7 +109,7 @@ public class AFPGraphicsConfiguration extends GraphicsConfiguration {
         }
     }
 
-    private static final Log log // CSOK: ConstantName
+    private static final Log LOG
         = LogFactory.getLog(AFPGraphicsConfiguration.class);
 
     private AffineTransform defaultTransform = null;
@@ -122,7 +122,7 @@ public class AFPGraphicsConfiguration extends GraphicsConfiguration {
      * @return the default transform for the configuration
      */
     public AffineTransform getDefaultTransform() {
-        log.debug("getDefaultTransform()");
+        LOG.debug("getDefaultTransform()");
         if (defaultTransform == null) {
             defaultTransform = new AffineTransform();
         }
@@ -137,7 +137,7 @@ public class AFPGraphicsConfiguration extends GraphicsConfiguration {
      * @return the normalizing transform for the configuration
      */
     public AffineTransform getNormalizingTransform() {
-        log.debug("getNormalizingTransform()");
+        LOG.debug("getNormalizingTransform()");
         if (normalizingTransform == null) {
             normalizingTransform = new AffineTransform(2, 0, 0, 2, 0, 0);
         }
@@ -146,7 +146,7 @@ public class AFPGraphicsConfiguration extends GraphicsConfiguration {
 
     /** {@inheritDoc} */
     public GraphicsDevice getDevice() {
-        log.debug("getDevice()");
+        LOG.debug("getDevice()");
         return graphicsDevice;
     }
 }

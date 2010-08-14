@@ -19,7 +19,6 @@
 
 package org.apache.fop.fo.flow;
 
-import java.util.Collections;
 import java.util.Map;
 
 import org.xml.sax.Attributes;

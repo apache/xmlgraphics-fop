@@ -21,9 +21,7 @@ package org.apache.fop.layoutmgr.inline;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.fop.datatypes.Length;
-import org.apache.fop.datatypes.LengthBase;
-import org.apache.fop.datatypes.SimplePercentBaseContext;
+
 import org.apache.fop.fo.Constants;
 
 

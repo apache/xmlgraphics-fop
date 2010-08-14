@@ -21,7 +21,6 @@ package org.apache.fop.pdf;
 
 // Java
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;

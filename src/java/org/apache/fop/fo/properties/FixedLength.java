@@ -45,7 +45,7 @@ public final class FixedLength extends LengthProperty {
     public static final String MPT = "mpt";
 
     /** cache holding all canonical FixedLength instances */
-    private static final PropertyCache cache                    // CSOK: ConstantName
+    private static final PropertyCache CACHE
         = new PropertyCache(FixedLength.class);
 
     /** canonical zero-length instance */
@@ -82,7 +82,7 @@ public final class FixedLength extends LengthProperty {
         if (numUnits == 0.0) {
             return ZERO_FIXED_LENGTH;
         } else {
-            return (FixedLength)cache.fetch(
+            return (FixedLength)CACHE.fetch(
                 new FixedLength(numUnits, units, sourceResolution));
         }
 

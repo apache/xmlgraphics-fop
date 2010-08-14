@@ -73,7 +73,7 @@ public abstract class AbstractEnvironmentGroup extends AbstractNamedAFPObject {
                 mpo.addOverlay(name);
             } catch (MaximumSizeExceededException ex) {
                 // Should never happen (but log just in case)
-                log.error("createOverlay():: resulted in a MaximumSizeExceededException");
+                LOG.error("createOverlay():: resulted in a MaximumSizeExceededException");
             }
         }
     }

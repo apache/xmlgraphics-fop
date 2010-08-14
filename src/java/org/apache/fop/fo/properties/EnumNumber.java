@@ -29,7 +29,7 @@ import org.apache.fop.fo.expr.PropertyException;
 public final class EnumNumber extends Property implements Numeric {
 
     /** cache holding all canonical EnumNumber instances */
-    private static final PropertyCache cache                    // CSOK: ConstantName
+    private static final PropertyCache CACHE
         = new PropertyCache(EnumNumber.class);
 
     private final EnumProperty enumProperty;
@@ -50,7 +50,7 @@ public final class EnumNumber extends Property implements Numeric {
      * @return  the canonical instance
      */
     public static EnumNumber getInstance(Property enumProperty) {
-        return (EnumNumber)cache.fetch(
+        return (EnumNumber)CACHE.fetch(
                 new EnumNumber((EnumProperty) enumProperty));
     }
 

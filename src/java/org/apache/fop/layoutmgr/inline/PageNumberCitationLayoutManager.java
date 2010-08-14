@@ -25,7 +25,6 @@ import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.UnresolvedPageNumber;
 import org.apache.fop.fo.flow.PageNumberCitation;
 import org.apache.fop.layoutmgr.LayoutContext;
-import org.apache.fop.layoutmgr.LayoutManager;
 
 /**
  * LayoutManager for the fo:page-number-citation formatting object

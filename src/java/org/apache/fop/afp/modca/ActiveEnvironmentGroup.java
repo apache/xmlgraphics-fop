@@ -185,7 +185,7 @@ public final class ActiveEnvironmentGroup extends AbstractEnvironmentGroup {
                 mapCodedFont.addFont(fontRef, font, size, orientation);
             } catch (MaximumSizeExceededException ex) {
                 // Should never happen (but log just in case)
-                log.error("createFont():: resulted in a MaximumSizeExceededException");
+                LOG.error("createFont():: resulted in a MaximumSizeExceededException");
             }
         }
     }

@@ -36,11 +36,9 @@ import org.apache.fop.fonts.Typeface;
 public final class CommonHyphenation {
 
     /** Logger */
-    private static final Log log                                // CSOK: ConstantName
-        = LogFactory.getLog(CommonHyphenation.class);
+    private static final Log LOG = LogFactory.getLog(CommonHyphenation.class);
 
-    private static final PropertyCache cache                    // CSOK: ConstantName
-        = new PropertyCache(CommonHyphenation.class);
+    private static final PropertyCache CACHE = new PropertyCache(CommonHyphenation.class);
 
     private int hash = 0;
 
@@ -119,7 +117,7 @@ public final class CommonHyphenation {
                                 hyphenationPushCharacterCount,
                                 hyphenationRemainCharacterCount);
 
-        return cache.fetch(instance);
+        return CACHE.fetch(instance);
 
     }
 
@@ -168,7 +166,7 @@ public final class CommonHyphenation {
             }
         }
         if (warn) {
-            log.warn("Substituted specified hyphenation character (0x"
+            LOG.warn("Substituted specified hyphenation character (0x"
                     + Integer.toHexString(hyphChar)
                     + ") with 0x" + Integer.toHexString(effHyphChar)
                     + " because the font doesn't have the specified hyphenation character: "

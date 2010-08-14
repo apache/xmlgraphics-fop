@@ -31,7 +31,7 @@ import org.apache.fop.fo.expr.PropertyException;
 public final class FontFamilyProperty extends ListProperty {
 
     /** cache holding all canonical FontFamilyProperty instances */
-    private static final PropertyCache cache                    // CSOK: ConstantName
+    private static final PropertyCache CACHE
         = new PropertyCache(FontFamilyProperty.class);
 
     private int hash = 0;
@@ -95,7 +95,7 @@ public final class FontFamilyProperty extends ListProperty {
                         prop.addProperty(StringProperty.getInstance(tmpVal));
                     }
                 }
-                return cache.fetch(prop);
+                return CACHE.fetch(prop);
             }
         }
 

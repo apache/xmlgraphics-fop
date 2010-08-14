@@ -30,8 +30,8 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.apache.fop.afp.fonts.AFPFontAttributes;
 import org.apache.fop.afp.fonts.AFPFont;
+import org.apache.fop.afp.fonts.AFPFontAttributes;
 import org.apache.fop.afp.fonts.CharacterSet;
 import org.apache.fop.afp.modca.AbstractPageObject;
 import org.apache.fop.afp.modca.Document;
@@ -42,10 +42,10 @@ import org.apache.fop.afp.modca.PageObject;
 import org.apache.fop.afp.modca.ResourceGroup;
 import org.apache.fop.afp.modca.TagLogicalElementBean;
 import org.apache.fop.afp.modca.triplets.FullyQualifiedNameTriplet;
-import org.apache.fop.afp.ptoca.PtocaProducer;
 import org.apache.fop.afp.ptoca.PtocaBuilder;
-import org.apache.fop.util.CharUtilities;
+import org.apache.fop.afp.ptoca.PtocaProducer;
 import org.apache.fop.fonts.Font;
+import org.apache.fop.util.CharUtilities;
 
 /**
  * A data stream is a continuous ordered stream of data elements and objects
@@ -65,8 +65,7 @@ import org.apache.fop.fonts.Font;
 public class DataStream {
 
     /** Static logging instance */
-    protected static final Log log // CSOK: ConstantName
-        = LogFactory.getLog("org.apache.xmlgraphics.afp");
+    protected static final Log LOG = LogFactory.getLog("org.apache.xmlgraphics.afp");
 
     /** Boolean completion indicator */
     private boolean complete = false;
@@ -163,7 +162,7 @@ public class DataStream {
     public void endDocument() throws IOException {
         if (complete) {
             String msg = "Invalid state - document already ended.";
-            log.warn("endDocument():: " + msg);
+            LOG.warn("endDocument():: " + msg);
             throw new IllegalStateException(msg);
         }
 
@@ -357,7 +356,7 @@ public class DataStream {
      * @param letterSpacing letter spacing to draw text with
      * @param wordSpacing word Spacing to draw text with
      * @param font is the font to draw text with
-     * @param charSet is the AFP Character Set to use with the text 
+     * @param charSet is the AFP Character Set to use with the text
      * @throws UnsupportedEncodingException thrown if character encoding is not supported
      */
     public void createText

@@ -37,8 +37,7 @@ import org.apache.commons.logging.LogFactory;
 public class RasterFont extends AFPFont {
 
     /** Static logging instance */
-    protected static final Log log // CSOK: ConstantName
-        = LogFactory.getLog("org.apache.fop.afp.fonts");
+    protected static final Log LOG = LogFactory.getLog("org.apache.fop.afp.fonts");
 
     private final SortedMap/*<Integer,CharacterSet>*/ charSets
             = new java.util.TreeMap/*<Integer,CharacterSet>*/();
@@ -118,7 +117,7 @@ public class RasterFont extends AFPFont {
                 substitutionCharSets.put(requestedSize, csm);
                 String msg = "No " + (size / 1000f) + "pt font " + getFontName()
                     + " found, substituted with " + fontSize.intValue() / 1000f + "pt font";
-                log.warn(msg);
+                LOG.warn(msg);
             }
         }
 
@@ -126,7 +125,7 @@ public class RasterFont extends AFPFont {
             // Still no match -> error
             String msg = "No font found for font " + getFontName()
                 + " with point size " + size / 1000f;
-            log.error(msg);
+            LOG.error(msg);
             throw new FontRuntimeException(msg);
         }
 
@@ -145,7 +144,7 @@ public class RasterFont extends AFPFont {
             return csm.getFirstChar();
         } else {
             String msg = "getFirstChar() - No character set found for font:" + getFontName();
-            log.error(msg);
+            LOG.error(msg);
             throw new FontRuntimeException(msg);
         }
     }
@@ -162,7 +161,7 @@ public class RasterFont extends AFPFont {
             return csm.getLastChar();
         } else {
             String msg = "getLastChar() - No character set found for font:" + getFontName();
-            log.error(msg);
+            LOG.error(msg);
             throw new FontRuntimeException(msg);
         }
 

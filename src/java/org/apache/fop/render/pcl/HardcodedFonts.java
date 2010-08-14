@@ -34,8 +34,7 @@ final class HardcodedFonts {
     }
 
     /** logging instance */
-    private static final Log log                                // CSOK: ConstantName
-        = LogFactory.getLog(HardcodedFonts.class);
+    private static final Log LOG = LogFactory.getLog(HardcodedFonts.class);
 
     /**
      * Sets the current font (NOTE: Hard-coded font mappings ATM!)
@@ -62,7 +61,7 @@ final class HardcodedFonts {
             try {
                 fontcode = Integer.parseInt(name.substring(1));
             } catch (Exception e) {
-                log.error(e);
+                LOG.error(e);
             }
         }
         //Note "(ON" selects ISO 8859-1 symbol set as used by PCLGenerator

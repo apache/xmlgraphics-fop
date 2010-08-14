@@ -67,14 +67,12 @@ import org.apache.fop.fo.pagination.SideRegion;
 import org.apache.fop.fo.pagination.StaticContent;
 import org.apache.fop.fo.pagination.Title;
 import org.apache.fop.layoutmgr.inline.BasicLinkLayoutManager;
-import org.apache.fop.layoutmgr.inline.BidiLayoutManager;
 import org.apache.fop.layoutmgr.inline.CharacterLayoutManager;
 import org.apache.fop.layoutmgr.inline.ContentLayoutManager;
 import org.apache.fop.layoutmgr.inline.ExternalGraphicLayoutManager;
 import org.apache.fop.layoutmgr.inline.FootnoteLayoutManager;
 import org.apache.fop.layoutmgr.inline.ICLayoutManager;
 import org.apache.fop.layoutmgr.inline.InlineLayoutManager;
-import org.apache.fop.layoutmgr.inline.InlineLevelLayoutManager;
 import org.apache.fop.layoutmgr.inline.InstreamForeignObjectLM;
 import org.apache.fop.layoutmgr.inline.LeaderLayoutManager;
 import org.apache.fop.layoutmgr.inline.PageNumberCitationLastLayoutManager;
@@ -93,8 +91,7 @@ import org.apache.fop.util.CharUtilities;
 public class LayoutManagerMapping implements LayoutManagerMaker {
 
     /** logging instance */
-    private static final Log log                                // CSOK: ConstantName
-        = LogFactory.getLog(LayoutManagerMapping.class);
+    private static final Log LOG = LogFactory.getLog(LayoutManagerMapping.class);
 
     /** The map of LayoutManagerMakers */
     private Map makers = new HashMap();
@@ -159,10 +156,10 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
         Maker maker = (Maker) makers.get(node.getClass());
         if (maker == null) {
             if (FOElementMapping.URI.equals(node.getNamespaceURI())) {
-                log.error("No LayoutManager maker for class " + node.getClass());
+                LOG.error("No LayoutManager maker for class " + node.getClass());
             } else {
-                if (log.isDebugEnabled()) {
-                    log.debug("Skipping the creation of a layout manager for " + node.getClass());
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Skipping the creation of a layout manager for " + node.getClass());
                 }
             }
         } else {

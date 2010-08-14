@@ -25,8 +25,6 @@ import java.util.List;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.fop.fonts.base14.Courier;
 import org.apache.fop.fonts.base14.CourierBold;
 import org.apache.fop.fonts.base14.CourierBoldOblique;
@@ -55,12 +53,6 @@ public final class FontSetup {
 
     private FontSetup() {
     }
-
-    /**
-     * logging instance
-     */
-    private static Log log                                      // CSOK: ConstantName
-        = LogFactory.getLog(FontSetup.class);
 
     /**
      * Sets up a font info

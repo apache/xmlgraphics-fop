@@ -35,8 +35,7 @@ import org.apache.fop.render.afp.extensions.AFPElementMapping;
  * Parses any AFP foreign attributes
  */
 public class AFPForeignAttributeReader {
-    private static final Log log                                // CSOK: ConstantName
-        = LogFactory.getLog("org.apache.xmlgraphics.afp");
+    private static final Log LOG = LogFactory.getLog("org.apache.xmlgraphics.afp");
 
     /** the resource-name attribute */
     public static final QName RESOURCE_NAME = new QName(
@@ -95,7 +94,7 @@ public class AFPForeignAttributeReader {
                         = (String)foreignAttributes.get(RESOURCE_GROUP_FILE);
                     if (resourceGroupFile == null) {
                         String msg = RESOURCE_GROUP_FILE + " not specified";
-                        log.error(msg);
+                        LOG.error(msg);
                         throw new UnsupportedOperationException(msg);
                     }
                     File resourceExternalGroupFile = new File(resourceGroupFile);
@@ -107,20 +106,20 @@ public class AFPForeignAttributeReader {
                     } catch (SecurityException ex) {
                         String msg = "unable to gain write access to external resource file: "
                         + resourceGroupFile;
-                        log.error(msg);
+                        LOG.error(msg);
                     }
 
                     try {
                         boolean exists = resourceExternalGroupFile.exists();
                         if (exists) {
-                            log.warn("overwriting external resource file: "
+                            LOG.warn("overwriting external resource file: "
                                     + resourceGroupFile);
                         }
                         resourceLevel.setExternalFilePath(resourceGroupFile);
                     } catch (SecurityException ex) {
                         String msg = "unable to gain read access to external resource file: "
                             + resourceGroupFile;
-                        log.error(msg);
+                        LOG.error(msg);
                     }
                 }
             }

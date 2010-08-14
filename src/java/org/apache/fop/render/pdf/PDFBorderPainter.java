@@ -37,8 +37,7 @@ import org.apache.fop.util.ColorUtil;
 public class PDFBorderPainter extends BorderPainter {
 
     /** logging instance */
-    private static final Log log                                // CSOK: ConstantName
-        = LogFactory.getLog(PDFBorderPainter.class);
+    private static final Log LOG = LogFactory.getLog(PDFBorderPainter.class);
 
     private PDFContentGenerator generator;
 
@@ -70,7 +69,7 @@ public class PDFBorderPainter extends BorderPainter {
         float w = x2 - x1;
         float h = y2 - y1;
         if ((w < 0) || (h < 0)) {
-            log.error("Negative extent received (w=" + w + ", h=" + h
+            LOG.error("Negative extent received (w=" + w + ", h=" + h
                     + "). Border won't be painted.");
             return;
         }

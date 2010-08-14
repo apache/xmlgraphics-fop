@@ -46,8 +46,7 @@ public final class EventModelParser {
     }
 
     /** Logger instance */
-    private static final Log log // CSOK: ConstantName
-        = LogFactory.getLog(EventModelParser.class);
+    private static final Log LOG = LogFactory.getLog(EventModelParser.class);
 
     private static SAXTransformerFactory tFactory
         = (SAXTransformerFactory)SAXTransformerFactory.newInstance();
@@ -61,7 +60,7 @@ public final class EventModelParser {
     public static EventModel parse(Source src)
             throws TransformerException {
         Transformer transformer = tFactory.newTransformer();
-        transformer.setErrorListener(new DefaultErrorListener(log));
+        transformer.setErrorListener(new DefaultErrorListener(LOG));
 
         EventModel model = new EventModel();
         SAXResult res = new SAXResult(getContentHandler(model));
