@@ -32,10 +32,11 @@ import org.apache.fop.traits.MinOptMax;
  * UnresolvedListElements descendants by the right combination of KnuthElements on an element
  * list.
  */
-public class SpaceResolver {
+public final class SpaceResolver {
 
     /** Logger instance */
-    protected static Log log = LogFactory.getLog(SpaceResolver.class);
+    private static final Log log                                // CSOK: ConstantName
+        = LogFactory.getLog(SpaceResolver.class);
 
     private UnresolvedListElementWithLength[] firstPart;
     private BreakElement breakPoss;
@@ -439,7 +440,8 @@ public class SpaceResolver {
             }
 
             // No break
-            // TODO: We can't use a MinOptMax for glue2, because min <= opt <= max is not always true - why?
+            // TODO: We can't use a MinOptMax for glue2,
+            // because min <= opt <= max is not always true - why?
             MinOptMax noBreakLength = sum(noBreakLengths);
             MinOptMax spaceSum = spaceBeforeBreak.plus(spaceAfterBreak);
             int glue2width = noBreakLength.getOpt() - spaceSum.getOpt();
@@ -543,6 +545,7 @@ public class SpaceResolver {
             return this.originalPosition;
         }
 
+        /** {@inheritDoc} */
         public Position getPosition() {
             return originalPosition;
         }

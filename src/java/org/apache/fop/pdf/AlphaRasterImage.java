@@ -116,7 +116,7 @@ public class AlphaRasterImage implements PDFImage {
         return null;
     }
 
-    /** {@inheritDoc} */
+    /** @return null (unless overridden) */
     public String getSoftMask() {
         return null;
     }

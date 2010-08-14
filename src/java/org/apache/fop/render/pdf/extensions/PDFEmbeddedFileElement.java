@@ -37,6 +37,7 @@ import org.apache.fop.fo.extensions.ExtensionAttachment;
  */
 public class PDFEmbeddedFileElement extends AbstractPDFExtensionElement {
 
+    /** name of element */
     protected static final String ELEMENT = "embedded-file";
 
     /**

@@ -38,11 +38,13 @@ import org.apache.fop.afp.util.BinaryUtils;
 public abstract class AbstractAFPObject implements Streamable {
 
     /** Static logging instance */
-    protected static final Log log = LogFactory.getLog("org.apache.xmlgraphics.afp.modca");
+    protected static final Log log // CSOK: ConstantName
+        = LogFactory.getLog("org.apache.xmlgraphics.afp.modca");
 
     /** the structured field class id */
     protected static final byte SF_CLASS = (byte)0xD3;
 
+    /** the structure field header */
     protected static final byte[] SF_HEADER = new byte[] {
         0x5A, // Structured field identifier
         0x00, // Length byte 1
@@ -187,7 +189,8 @@ public abstract class AbstractAFPObject implements Streamable {
     protected String truncate(String str, int maxLength) {
         if (str.length() > maxLength) {
             str = str.substring(0, maxLength);
-            log.warn("truncated character string '" + str + "', longer than " + maxLength + " chars");
+            log.warn("truncated character string '"
+                     + str + "', longer than " + maxLength + " chars");
         }
         return str;
     }

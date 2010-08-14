@@ -355,8 +355,8 @@ public class RtfTextrun extends RtfContainer {
          * Maybe this can be done more efficient.
          */
 
-        boolean bHasTableCellParent =
-            this.getParentOfClass(RtfTableCell.class) != null;
+        boolean bHasTableCellParent
+            = this.getParentOfClass(RtfTableCell.class) != null;
         RtfAttributes attrBlockLevel = new RtfAttributes();
 
         //determine, if this RtfTextrun is the last child of its parent

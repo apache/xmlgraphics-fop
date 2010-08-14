@@ -22,6 +22,7 @@ package org.apache.fop.layoutmgr;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+/** A position iterator. */
 public abstract class PositionIterator implements Iterator {
 
     private Iterator parentIter;
@@ -29,12 +30,17 @@ public abstract class PositionIterator implements Iterator {
     private LayoutManager childLM;
     private boolean bHasNext;
 
+    /**
+     * Construct position iterator.
+     * @param pIter an iterator to use as parent
+     */
     protected PositionIterator(Iterator pIter) {
         parentIter = pIter;
         lookAhead();
         //checkNext();
     }
 
+    /** @return layout manager of next child layout manager or null */
     public LayoutManager getNextChildLM() {
         // Move to next "segment" of iterator, ie: new childLM
         if (childLM == null && nextObj != null) {
@@ -44,8 +50,16 @@ public abstract class PositionIterator implements Iterator {
         return childLM;
     }
 
+    /**
+     * @param nextObj next object from which to obtain position
+     * @return layout manager
+     */
     protected abstract LayoutManager getLM(Object nextObj);
 
+    /**
+     * @param nextObj next object from which to obtain position
+     * @return position of next object
+     */
     protected abstract Position getPos(Object nextObj);
 
     private void lookAhead() {
@@ -57,6 +71,7 @@ public abstract class PositionIterator implements Iterator {
         }
     }
 
+    /** @return true if not at end of sub-sequence with same child layout manager */
     protected boolean checkNext() {
         LayoutManager lm = getLM(nextObj);
         if (childLM == null) {
@@ -70,17 +85,20 @@ public abstract class PositionIterator implements Iterator {
         return true;
     }
 
+    /** end (reset) iterator */
     protected void endIter() {
         bHasNext = false;
         nextObj = null;
         childLM = null;
     }
 
+    /** {@inheritDoc} */
     public boolean hasNext() {
         return (bHasNext && checkNext());
     }
 
 
+    /** {@inheritDoc} */
     public Object next() throws NoSuchElementException {
         if (bHasNext) {
             Object retObj = getPos(nextObj);
@@ -91,10 +109,12 @@ public abstract class PositionIterator implements Iterator {
         }
     }
 
+    /** @return peek at next object */
     public Object peekNext() {
         return nextObj;
     }
 
+    /** {@inheritDoc} */
     public void remove() throws UnsupportedOperationException {
         throw new UnsupportedOperationException("PositionIterator doesn't support remove");
     }

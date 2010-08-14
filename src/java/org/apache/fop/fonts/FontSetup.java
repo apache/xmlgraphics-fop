@@ -51,12 +51,16 @@ import org.apache.fop.fonts.base14.ZapfDingbats;
  * Assigns the font (with metrics) to internal names like "F1" and
  * assigns family-style-weight triplets to the fonts
  */
-public class FontSetup {
+public final class FontSetup {
+
+    private FontSetup() {
+    }
 
     /**
      * logging instance
      */
-    protected static Log log = LogFactory.getLog(FontSetup.class);
+    private static Log log                                      // CSOK: ConstantName
+        = LogFactory.getLog(FontSetup.class);
 
     /**
      * Sets up a font info

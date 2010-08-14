@@ -29,10 +29,13 @@ import java.io.Writer;
  */
 public final class License {
     
+    private License() {
+    }
+
     /**
      * The Apache license text as a string array
      */
-    public static final String[] license
+    public static final String[] LICENSE
     = {"Licensed to the Apache Software Foundation (ASF) under one or more",
        "contributor license agreements.  See the NOTICE file distributed with",
        "this work for additional information regarding copyright ownership.",
@@ -52,21 +55,21 @@ public final class License {
     /**
      * The subversion Id keyword line
      */
-    public static final String id = "$Id$";
+    public static final String ID = "$Id$";
     
     /**
      * Calculate the maximum line length in the Apache license text
      * for use in formatting 
      */
-    private static int MAX_LENGTH;
+    private static int maxLength;
     static {
         int j = 0;
-        for (int i = 0; i < license.length; ++i) {
-            if (j < license[i].length()) {
-                j = license[i].length();
+        for (int i = 0; i < LICENSE.length; ++i) {
+            if (j < LICENSE[i].length()) {
+                j = LICENSE[i].length();
             }
         }
-        MAX_LENGTH = j;
+        maxLength = j;
     }
 
     /**
@@ -76,16 +79,16 @@ public final class License {
      */
     public static void writeJavaLicenseId(Writer w) throws IOException {
         w.write("/*\n");
-        for (int i = 0; i < license.length; ++i) {
-            if (license[i].equals("")) {
+        for (int i = 0; i < LICENSE.length; ++i) {
+            if (LICENSE[i].equals("")) {
                 w.write(" *\n");
             } else {
-                w.write(" * " + license[i] + "\n");
+                w.write(" * " + LICENSE[i] + "\n");
             }
         }
         w.write(" */\n");
         w.write("\n");
-        w.write("/* " + id + " */\n");
+        w.write("/* " + ID + " */\n");
     }
 
     /**
@@ -94,11 +97,11 @@ public final class License {
      * @throws IOException if the write operation fails
      */
     public static void writeXMLLicenseId(Writer w) throws IOException {
-        for (int i = 0; i < license.length; ++i) {
-            w.write(String.format("<!-- %-" + MAX_LENGTH + "s -->\n", new Object[] {license[i]}));
+        for (int i = 0; i < LICENSE.length; ++i) {
+            w.write(String.format("<!-- %-" + maxLength + "s -->\n", new Object[] {LICENSE[i]}));
         }
         w.write("\n");
-        w.write("<!-- " + id + " -->\n");
+        w.write("<!-- " + ID + " -->\n");
     }
     
     /**

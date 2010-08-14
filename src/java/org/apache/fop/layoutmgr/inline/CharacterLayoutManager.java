@@ -207,7 +207,8 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
                     new LeafPosition(this, -1), true));
             returnList.add(new KnuthGlue(letterSpaceIPD.mult(areaInfo.iLScount),
                     new LeafPosition(this, -1), true));
-            returnList.add(new KnuthInlineBox(0, null, notifyPos(new LeafPosition(this, -1)), true));
+            returnList.add
+                (new KnuthInlineBox(0, null, notifyPos(new LeafPosition(this, -1)), true));
             if (areaInfo.bHyphenated) {
                 returnList.add(new KnuthPenalty(hyphIPD, KnuthPenalty.FLAGGED_PENALTY, true,
                         new LeafPosition(this, -1), false));

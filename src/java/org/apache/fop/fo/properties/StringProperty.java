@@ -83,7 +83,8 @@ public final class StringProperty extends Property {
     }
 
     /** cache containing all canonical StringProperty instances */
-    private static final PropertyCache cache = new PropertyCache(StringProperty.class);
+    private static final PropertyCache cache                    // CSOK: ConstantName
+        = new PropertyCache(StringProperty.class);
 
     /** canonical instance for empty strings */
     public static final StringProperty EMPTY_STRING_PROPERTY = new StringProperty("");

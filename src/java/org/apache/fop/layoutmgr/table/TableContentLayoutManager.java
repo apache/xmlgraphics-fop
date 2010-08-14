@@ -55,7 +55,8 @@ import org.apache.fop.util.BreakUtil;
 public class TableContentLayoutManager implements PercentBaseContext {
 
     /** Logger **/
-    private static Log log = LogFactory.getLog(TableContentLayoutManager.class);
+    private static final Log log                                // CSOK: ConstantName
+        = LogFactory.getLog(TableContentLayoutManager.class);
 
     private TableLayoutManager tableLM;
     private TableRowIterator bodyIter;
@@ -127,8 +128,16 @@ public class TableContentLayoutManager implements PercentBaseContext {
         return this.footerList;
     }
 
-    /** {@inheritDoc} */
-    public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
+    /**
+     * Get a sequence of KnuthElements representing the content
+     * of the node assigned to the LM.
+     *
+     * @param context   the LayoutContext used to store layout information
+     * @param alignment the desired text alignment
+     * @return          the list of KnuthElements
+     * @see org.apache.fop.layoutmgr.LayoutManager#getNextKnuthElements(LayoutContext, int)
+     */
+    public List getNextKnuthElements(LayoutContext context, int alignment) {
         if (log.isDebugEnabled()) {
             log.debug("==> Columns: " + getTableLM().getColumns());
         }

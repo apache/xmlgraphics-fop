@@ -111,7 +111,7 @@ public class Marker extends FObjMixed {
      * <br><i>Additionally: "An fo:marker may contain any formatting objects that
      * are permitted as a replacement of any fo:retrieve-marker that retrieves
      * the fo:marker's children."</i>
-     * @todo implement "additional" constraint, possibly within fo:retrieve-marker
+     * @asf.todo implement "additional" constraint, possibly within fo:retrieve-marker
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName)
             throws ValidationException {
@@ -199,17 +199,25 @@ public class Marker extends FObjMixed {
                 name = attributes.getLocalName(i);
                 value = attributes.getValue(i);
 
-                this.attribs[i] =
-                    MarkerAttribute.getInstance(namespace, qname, name, value);
+                this.attribs[i]
+                    = MarkerAttribute.getInstance(namespace, qname, name, value);
             }
         }
 
-        /** Null implementation; not used by this type of {@link PropertyList} */
+        /**
+         * Null implementation; not used by this type of {@link PropertyList}.
+         * @param propId the propert id
+         * @param value the property value
+         */
         public void putExplicit(int propId, Property value) {
             //nop
         }
 
-        /** Null implementation; not used by this type of {@link PropertyList} */
+        /**
+         * Null implementation; not used by this type of {@link PropertyList}.
+         * @param propId the propert id
+         * @return the property id
+         */
         public Property getExplicit(int propId) {
             return null;
         }
@@ -259,7 +267,11 @@ public class Marker extends FObjMixed {
             }
         }
 
-        /** Default implementation; not used */
+        /**
+         * Default implementation; not used.
+         * @param index a type index
+         * @return type string
+         */
         public String getType(int index) {
             return "CDATA";
         }
@@ -305,12 +317,21 @@ public class Marker extends FObjMixed {
             return index;
         }
 
-        /** Default implementation; not used */
+        /**
+         * Default implementation; not used
+         * @param name a type name
+         * @param namespace a type namespace
+         * @return type string
+         */
         public String getType(String name, String namespace) {
             return "CDATA";
         }
 
-        /** Default implementation; not used */
+        /**
+         * Default implementation; not used
+         * @param qname a type name
+         * @return type string
+         */
         public String getType(String qname) {
             return "CDATA";
         }
@@ -337,12 +358,16 @@ public class Marker extends FObjMixed {
     /** Convenience inner class */
     public static final class MarkerAttribute {
 
-        private static PropertyCache attributeCache =
-                new PropertyCache(MarkerAttribute.class);
+        private static PropertyCache attributeCache
+                = new PropertyCache(MarkerAttribute.class);
 
+        /** namespace */
         protected String namespace;
+        /** qualfied name */
         protected String qname;
+        /** local name */
         protected String name;
+        /** value */
         protected String value;
 
         /**

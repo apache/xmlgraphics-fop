@@ -43,7 +43,9 @@ import org.xml.sax.SAXException;
 import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.helpers.AttributesImpl;
 
+/** Abstract xml renderer base class. */
 public abstract class AbstractXMLRenderer extends PrintRenderer {
+
     /** Main namespace in use. */
     public static final String NS = "";
 
@@ -62,6 +64,7 @@ public abstract class AbstractXMLRenderer extends PrintRenderer {
     /** The OutputStream to write the generated XML to. */
     protected OutputStream out;
 
+    /** The renderer context. */
     protected RendererContext context;
 
     /** A list of ExtensionAttachements received through processOffDocumentItem() */
@@ -237,7 +240,7 @@ public abstract class AbstractXMLRenderer extends PrintRenderer {
         }
     }
 
-    /** {@inheritDoc} */
+    /** Handle document extension attachments. */
     protected void handleDocumentExtensionAttachments() {
         if (extensionAttachments != null && extensionAttachments.size() > 0) {
             handleExtensionAttachments(extensionAttachments);

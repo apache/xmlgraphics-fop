@@ -21,6 +21,7 @@ package org.apache.fop.layoutmgr;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.fop.fo.Constants;
 import org.apache.fop.traits.MinOptMax;
 
 /**
@@ -29,13 +30,33 @@ import org.apache.fop.traits.MinOptMax;
  */
 public class BalancingColumnBreakingAlgorithm extends PageBreakingAlgorithm {
 
-    private Log log = LogFactory.getLog(BalancingColumnBreakingAlgorithm.class);
+    private static final Log log                                // CSOK: ConstantName
+        = LogFactory.getLog(BalancingColumnBreakingAlgorithm.class);
 
     private int columnCount;
     private int fullLen;
     private int idealPartLen;
 
-    public BalancingColumnBreakingAlgorithm(LayoutManager topLevelLM,
+    /**
+     * Construct a balancing column breaking algorithm.
+     * @param topLevelLM the top level layout manager
+     * @param pageProvider the page provider
+     * @param layoutListener the layout listener
+     * @param alignment     alignment of the paragraph/page. One of {@link Constants#EN_START},
+     *                  {@link Constants#EN_JUSTIFY}, {@link Constants#EN_CENTER},
+     *                  {@link Constants#EN_END}.
+     *                  For pages, {@link Constants#EN_BEFORE} and {@link Constants#EN_AFTER}
+     *                  are mapped to the corresponding inline properties,
+     *                  {@link Constants#EN_START} and {@link Constants#EN_END}.
+     * @param alignmentLast alignment of the paragraph's last line
+     * @param footnoteSeparatorLength length of footnote separator
+     * @param partOverflowRecovery  {@code true} if too long elements should be moved to
+     *                              the next line/part
+     * @param columnCount number of columns
+     * @see PageBreakingAlgorithm
+     */
+    public BalancingColumnBreakingAlgorithm                     // CSOK: ParameterNumber
+        (LayoutManager topLevelLM,
             PageProvider pageProvider,
             PageBreakingLayoutListener layoutListener,
             int alignment, int alignmentLast,

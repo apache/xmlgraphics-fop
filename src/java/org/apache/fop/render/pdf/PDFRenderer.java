@@ -484,7 +484,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer implements PDFConf
     public void renderPage(PageViewport page)
                 throws IOException, FOPException {
         if (pages != null
-                && (currentPage = (PDFPage) pages.get(page)) != null) {
+            && (currentPage = (PDFPage) pages.get(page)) != null) { // CSOK: InnerAssignment
             //Retrieve previously prepared page (out-of-line rendering)
             pages.remove(page);
         } else {
@@ -566,7 +566,8 @@ public class PDFRenderer extends AbstractPathOrientedRenderer implements PDFConf
     }
 
     /** {@inheritDoc} */
-    protected void drawBorderLine(float x1, float y1, float x2, float y2,
+    protected void drawBorderLine                               // CSOK: ParameterNumber
+        (float x1, float y1, float x2, float y2,
             boolean horz, boolean startOrBefore, int style, Color col) {
         PDFBorderPainter.drawBorderLine(generator, x1, y1, x2, y2, horz, startOrBefore, style, col);
     }

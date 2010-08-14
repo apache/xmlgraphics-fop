@@ -240,7 +240,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
 
 
         // Elements for the table-header/footer/body
-        LinkedList contentKnuthElements;
+        List contentKnuthElements;
         contentLM = new TableContentLayoutManager(this);
         LayoutContext childLC = new LayoutContext(0);
         /*

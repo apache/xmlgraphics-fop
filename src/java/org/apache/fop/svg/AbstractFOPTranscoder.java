@@ -129,7 +129,10 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder {
         this.resolver = resolver;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * @param cfg the configuration
+     * @throws ConfigurationException if not caught
+     */
     public void configure(Configuration cfg) throws ConfigurationException {
         this.cfg = cfg;
     }

@@ -86,9 +86,10 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler implements Ima
         return imageObjectInfo;
     }
 
-    private AFPDataObjectInfo updateDataObjectInfo(AFPImageObjectInfo imageObjectInfo,
-            AFPPaintingState paintingState, ImageRendered imageRendered, Dimension targetSize)
-            throws IOException {
+    private AFPDataObjectInfo updateDataObjectInfo              // CSOK: MethodLength
+        (AFPImageObjectInfo imageObjectInfo,
+         AFPPaintingState paintingState, ImageRendered imageRendered, Dimension targetSize)
+        throws IOException {
 
         long start = System.currentTimeMillis();
 

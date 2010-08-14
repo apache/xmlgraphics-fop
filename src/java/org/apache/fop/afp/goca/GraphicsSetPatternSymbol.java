@@ -84,7 +84,7 @@ public class GraphicsSetPatternSymbol extends AbstractGraphicsDrawingOrder {
     /**
      * Main constructor
      *
-     * @param symb the pattern symbol to use
+     * @param pattern the pattern symbol to use
      */
     public GraphicsSetPatternSymbol(byte pattern) {
         this.pattern = pattern;

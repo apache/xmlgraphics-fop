@@ -107,16 +107,22 @@ public class TernaryTree implements Cloneable, Serializable {
      */
     protected CharVector kv;
 
+    /** root */
     protected char root;
+    /** free node */
     protected char freenode;
-    protected int length;    // number of items in tree
+    /** number of items in tree */
+    protected int length;
 
-    protected static final int BLOCK_SIZE = 2048;    // allocation size for arrays
+    /** allocation size for arrays */
+    protected static final int BLOCK_SIZE = 2048;
 
+    /** default constructor */
     TernaryTree() {
         init();
     }
 
+    /** initialize */
     protected void init() {
         root = 0;
         freenode = 1;
@@ -135,6 +141,8 @@ public class TernaryTree implements Cloneable, Serializable {
      * another key with same prefix
      * is inserted. This saves a lot of space,
      * specially for long keys.
+     * @param key the key
+     * @param val a value
      */
     public void insert(String key, char val) {
         // make sure we have enough room in the arrays
@@ -143,12 +151,18 @@ public class TernaryTree implements Cloneable, Serializable {
         if (freenode + len > eq.length) {
             redimNodeArrays(eq.length + BLOCK_SIZE);
         }
-        char strkey[] = new char[len--];
+        char[] strkey = new char[len--];
         key.getChars(0, len, strkey, 0);
         strkey[len] = 0;
         root = insert(root, strkey, 0, val);
     }
 
+    /**
+     * Insert key.
+     * @param key the key
+     * @param start offset into key array
+     * @param val a value
+     */
     public void insert(char[] key, int start, char val) {
         int len = strlen(key) + 1;
         if (freenode + len > eq.length) {
@@ -232,6 +246,11 @@ public class TernaryTree implements Cloneable, Serializable {
 
     /**
      * Compares 2 null terminated char arrays
+     * @param a a character array
+     * @param startA an index into character array
+     * @param b a character array
+     * @param startB an index into character array
+     * @return an integer
      */
     public static int strcmp(char[] a, int startA, char[] b, int startB) {
         for (; a[startA] == b[startB]; startA++, startB++) {
@@ -244,6 +263,10 @@ public class TernaryTree implements Cloneable, Serializable {
 
     /**
      * Compares a string with null terminated char array
+     * @param str a string
+     * @param a a character array
+     * @param start an index into character array
+     * @return an integer
      */
     public static int strcmp(String str, char[] a, int start) {
         int i, d, len = str.length();
@@ -263,6 +286,12 @@ public class TernaryTree implements Cloneable, Serializable {
 
     }
 
+    /**
+     * @param dst a character array
+     * @param di an index into character array
+     * @param src a character array
+     * @param si an index into character array
+     */
     public static void strcpy(char[] dst, int di, char[] src, int si) {
         while (src[si] != 0) {
             dst[di++] = src[si++];
@@ -270,6 +299,11 @@ public class TernaryTree implements Cloneable, Serializable {
         dst[di] = 0;
     }
 
+    /**
+     * @param a a character array
+     * @param start an index into character array
+     * @return an integer
+     */
     public static int strlen(char[] a, int start) {
         int len = 0;
         for (int i = start; i < a.length && a[i] != 0; i++) {
@@ -278,19 +312,34 @@ public class TernaryTree implements Cloneable, Serializable {
         return len;
     }
 
+    /**
+     * @param a a character array
+     * @return an integer
+     */
     public static int strlen(char[] a) {
         return strlen(a, 0);
     }
 
+    /**
+     * Find key.
+     * @param key the key
+     * @return result
+     */
     public int find(String key) {
         int len = key.length();
-        char strkey[] = new char[len + 1];
+        char[] strkey = new char[len + 1];
         key.getChars(0, len, strkey, 0);
         strkey[len] = 0;
 
         return find(strkey, 0);
     }
 
+    /**
+     * Find key.
+     * @param key the key
+     * @param start offset into key array
+     * @return result
+     */
     public int find(char[] key, int start) {
         int d;
         char p = root;
@@ -322,6 +371,10 @@ public class TernaryTree implements Cloneable, Serializable {
         return -1;
     }
 
+    /**
+     * @param key a key
+     * @return trye if key present
+     */
     public boolean knows(String key) {
         return (find(key) >= 0);
     }
@@ -343,10 +396,12 @@ public class TernaryTree implements Cloneable, Serializable {
         sc = na;
     }
 
+    /** @return length */
     public int size() {
         return length;
     }
 
+    /** {@inheritDoc} */
     public Object clone() {
         TernaryTree t = new TernaryTree();
         t.lo = (char[])this.lo.clone();
@@ -366,6 +421,10 @@ public class TernaryTree implements Cloneable, Serializable {
      * lower and upper halves, and so on in order to get a balanced
      * tree. The array of keys is assumed to be sorted in ascending
      * order.
+     * @param k array of keys
+     * @param v array of values
+     * @param offset where to insert
+     * @param n count to insert
      */
     protected void insertBalanced(String[] k, char[] v, int offset, int n) {
         int m;
@@ -453,37 +512,47 @@ public class TernaryTree implements Cloneable, Serializable {
         }
     }
 
-
+    /** @return the keys */
     public Enumeration keys() {
         return new Iterator();
     }
 
+    /** an iterator */
     public class Iterator implements Enumeration {
 
         /**
          * current node index
          */
-        int cur;
+        int cur;                                                // CSOK: VisibilityModifier
 
         /**
          * current key
          */
-        String curkey;
+        String curkey;                                          // CSOK: VisibilityModifier
 
         private class Item implements Cloneable {
-            char parent;
-            char child;
+            /** parent */
+            char parent;                                        // CSOK: VisibilityModifier
+            /** child */
+            char child;                                         // CSOK: VisibilityModifier
 
+            /** default constructor */
             public Item() {
                 parent = 0;
                 child = 0;
             }
 
+            /**
+             * Construct item.
+             * @param p a char
+             * @param c a char
+             */
             public Item(char p, char c) {
                 parent = p;
                 child = c;
             }
 
+            /** {@inheritDoc} */
             public Object clone() {
                 return new Item(parent, child);
             }
@@ -493,13 +562,14 @@ public class TernaryTree implements Cloneable, Serializable {
         /**
          * Node stack
          */
-        Stack ns;
+        Stack ns;                                               // CSOK: VisibilityModifier
 
         /**
          * key stack implemented with a StringBuffer
          */
-        StringBuffer ks;
+        StringBuffer ks;                                        // CSOK: VisibilityModifier
 
+        /** default constructor */
         public Iterator() {
             cur = -1;
             ns = new Stack();
@@ -507,6 +577,7 @@ public class TernaryTree implements Cloneable, Serializable {
             rewind();
         }
 
+        /** rewind iterator */
         public void rewind() {
             ns.removeAllElements();
             ks.setLength(0);
@@ -514,6 +585,7 @@ public class TernaryTree implements Cloneable, Serializable {
             run();
         }
 
+        /** @return next element */
         public Object nextElement() {
             String res = new String(curkey);
             cur = up();
@@ -521,6 +593,7 @@ public class TernaryTree implements Cloneable, Serializable {
             return res;
         }
 
+        /** @return value */
         public char getValue() {
             if (cur >= 0) {
                 return eq[cur];
@@ -528,6 +601,7 @@ public class TernaryTree implements Cloneable, Serializable {
             return 0;
         }
 
+        /** @return true if more elements */
         public boolean hasMoreElements() {
             return (cur != -1);
         }
@@ -633,6 +707,9 @@ public class TernaryTree implements Cloneable, Serializable {
 
     }
 
+    /**
+     * Print stats (for testing).
+     */
     public void printStats() {
         System.out.println("Number of keys = " + Integer.toString(length));
         System.out.println("Node count = " + Integer.toString(freenode));
@@ -653,6 +730,11 @@ public class TernaryTree implements Cloneable, Serializable {
 
     }
 
+    /**
+     * Main entry point for testing.
+     * @param args not used
+     * @throws Exception if not caught
+     */
     public static void main(String[] args) throws Exception {
         TernaryTree tt = new TernaryTree();
         tt.insert("Carlos", 'C');

@@ -49,7 +49,7 @@ public class TableCaption extends FObj {
     /** used for FO validation */
     private boolean blockItemFound = false;
 
-    static boolean notImplementedWarningGiven = false;
+    private static boolean notImplementedWarningGiven = false;
 
     /**
      * Create a TableCaption instance with the given {@link FONode}

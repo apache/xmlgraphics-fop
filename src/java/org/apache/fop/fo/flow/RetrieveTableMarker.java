@@ -16,6 +16,7 @@
  */
 
 /* $Id$ */
+
 package org.apache.fop.fo.flow;
 
 import org.apache.fop.fo.FONode;
@@ -50,7 +51,9 @@ public class RetrieveTableMarker extends AbstractRetrieveMarker {
      * <i>NOTE: An <code>fo:retrieve-table-marker</code> is only permitted as a descendant
      * of an <code>fo:table-header</code> or an <code>fo:table-footer</code>.</i>
      */
-    public void processNode(String elementName, Locator locator, Attributes attlist, PropertyList pList) throws FOPException {
+    public void processNode
+        (String elementName, Locator locator, Attributes attlist, PropertyList pList)
+        throws FOPException {
         if (findAncestor(FO_TABLE_HEADER) < 0
                 && findAncestor(FO_TABLE_FOOTER) < 0) {
             invalidChildError(locator, getParent().getName(), FO_URI, getName(),

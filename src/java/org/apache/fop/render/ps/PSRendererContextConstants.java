@@ -27,10 +27,9 @@ import org.apache.fop.render.RendererContextConstants;
 public interface PSRendererContextConstants extends RendererContextConstants {
 
     /** The PostScript generator that is being used to drawn into. */
-    public static final String PS_GENERATOR = "psGenerator";
+    String PS_GENERATOR = "psGenerator";
 
     /** The font information for the PostScript renderer. */
-    public static final String PS_FONT_INFO = "psFontInfo";
-
+    String PS_FONT_INFO = "psFontInfo";
 
 }

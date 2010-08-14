@@ -61,7 +61,8 @@ class CellPart {
      * @param bpAfterLast width of (possibly optional) border- and padding-after if this
      * part will be the last one on the page
      */
-    protected CellPart(PrimaryGridUnit pgu, int start, int end, boolean last,
+    protected CellPart                                          // CSOK: ParameterNumber
+        (PrimaryGridUnit pgu, int start, int end, boolean last,
             int condBeforeContentLength, int length, int condAfterContentLength,
             int bpBeforeNormal, int bpBeforeFirst,
             int bpAfterNormal, int bpAfterLast) {

@@ -32,10 +32,14 @@ public class HyphContext {
     private int currentOffset = 0;
     private int currentIndex = 0;
 
+    /**
+     * @param hyphPoints number of hyphenation points
+     */
     public HyphContext(int[] hyphPoints) {
         this.hyphPoints = hyphPoints;
     }
 
+    /** @return next hyphenation point */
     public int getNextHyphPoint() {
         for (; currentIndex < hyphPoints.length; currentIndex++) {
             if (hyphPoints[currentIndex] > currentOffset) {
@@ -45,6 +49,7 @@ public class HyphContext {
         return -1; // AT END!
     }
 
+    /** @return true if more hyphenation points */
     public boolean hasMoreHyphPoints() {
         for (; currentIndex < hyphPoints.length; currentIndex++) {
             if (hyphPoints[currentIndex] > currentOffset) {
@@ -54,6 +59,7 @@ public class HyphContext {
         return false;
     }
 
+    /** @param iCharsProcessed amount to extend offset */
     public void updateOffset(int iCharsProcessed) {
         currentOffset += iCharsProcessed;
     }

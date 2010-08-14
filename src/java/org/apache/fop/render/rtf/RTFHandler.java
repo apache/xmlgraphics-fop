@@ -1468,7 +1468,7 @@ public class RTFHandler extends FOEventHandler {
      * @param foNode FO node whose event is to be called
      * @param bStart TRUE calls the start handler, FALSE the end handler
      */
-    private void invokeDeferredEvent(FONode foNode, boolean bStart) {
+    private void invokeDeferredEvent(FONode foNode, boolean bStart) { // CSOK: MethodLength
         if (foNode instanceof PageSequence) {
             if (bStart) {
                 startPageSequence( (PageSequence) foNode);

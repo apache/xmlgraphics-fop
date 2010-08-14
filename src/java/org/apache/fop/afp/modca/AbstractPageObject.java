@@ -166,8 +166,7 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject implemen
      * Helper method to create text on the current page, this method delegates
      * to the presentation text object in order to construct the text.
      *
-     * @param textDataInfo
-     *            the afp text data
+     * @param producer the producer
      * @throws UnsupportedEncodingException thrown if character encoding is not supported
      */
     public void createText(PtocaProducer producer) throws UnsupportedEncodingException {
@@ -258,6 +257,7 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject implemen
      *            the x coordinate of the page segment.
      * @param y
      *            the y coordinate of the page segment.
+     * @param hard true if hard page segment possible
      */
     public void createIncludePageSegment(String name, int x, int y, boolean hard) {
         IncludePageSegment ips = factory.createIncludePageSegment(name, x, y);

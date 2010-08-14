@@ -96,39 +96,44 @@ public class BasicScaledBaselineTable implements ScaledBaselineTable, Constants 
      * @return the baseline offset
      */
     public int getBaseline(int baselineIdentifier) {
-        int offset = 0;
+        int offset;
         if (!isHorizontalWritingMode()) {
             switch (baselineIdentifier) {
+                default:
                 case EN_TOP:
                 case EN_TEXT_TOP:
                 case EN_TEXT_BOTTOM:
                 case EN_BOTTOM:
                     log.warn("The given baseline is only supported for horizontal"
                         + " writing modes");
-                    return 0;
+                    offset = 0;
             }
-        }
-        switch (baselineIdentifier) {
-            case EN_TOP: // fall through
-            case EN_BEFORE_EDGE:
-                offset = beforeEdgeOffset;
-                break;
-            case EN_TEXT_TOP:
-            case EN_TEXT_BEFORE_EDGE:
-            case EN_HANGING:
-            case EN_CENTRAL:
-            case EN_MIDDLE:
-            case EN_MATHEMATICAL:
-            case EN_ALPHABETIC:
-            case EN_IDEOGRAPHIC:
-            case EN_TEXT_BOTTOM:
-            case EN_TEXT_AFTER_EDGE:
-                offset = getBaselineDefaultOffset(baselineIdentifier) - dominantBaselineOffset;
-                break;
-            case EN_BOTTOM: // fall through
-            case EN_AFTER_EDGE:
-                offset = afterEdgeOffset;
-                break;
+        } else {
+            switch (baselineIdentifier) {
+                case EN_TOP: // fall through
+                case EN_BEFORE_EDGE:
+                    offset = beforeEdgeOffset;
+                    break;
+                case EN_TEXT_TOP:
+                case EN_TEXT_BEFORE_EDGE:
+                case EN_HANGING:
+                case EN_CENTRAL:
+                case EN_MIDDLE:
+                case EN_MATHEMATICAL:
+                case EN_ALPHABETIC:
+                case EN_IDEOGRAPHIC:
+                case EN_TEXT_BOTTOM:
+                case EN_TEXT_AFTER_EDGE:
+                    offset = getBaselineDefaultOffset(baselineIdentifier) - dominantBaselineOffset;
+                    break;
+                case EN_BOTTOM: // fall through
+                case EN_AFTER_EDGE:
+                    offset = afterEdgeOffset;
+                    break;
+                default:
+                    offset = 0;
+                    break;
+            }
         }
         return offset;
     }
@@ -167,6 +172,8 @@ public class BasicScaledBaselineTable implements ScaledBaselineTable, Constants 
             case EN_IDEOGRAPHIC: // Fall through
             case EN_TEXT_AFTER_EDGE:
                 offset = depth;
+                break;
+            default:
                 break;
         }
         return offset;

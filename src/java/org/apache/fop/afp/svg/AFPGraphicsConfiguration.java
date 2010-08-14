@@ -109,7 +109,8 @@ public class AFPGraphicsConfiguration extends GraphicsConfiguration {
         }
     }
 
-    private static final Log log = LogFactory.getLog(AFPGraphicsConfiguration.class);
+    private static final Log log // CSOK: ConstantName
+        = LogFactory.getLog(AFPGraphicsConfiguration.class);
 
     private AffineTransform defaultTransform = null;
     private AffineTransform normalizingTransform = null;

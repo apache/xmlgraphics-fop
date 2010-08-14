@@ -17,21 +17,15 @@
 
 /* $Id$ */
 
-package org.apache.fop.pdf;
+package org.apache.fop.svg;
+
+import org.apache.xmlgraphics.java2d.StrokingTextHandler;
 
 /**
- * Transition Dictionary
- * This class is used to build a transition dictionary to
- * specify the transition between pages.
+ * The <code>FOPTextHandlerAdapter</code> class is an adapter class to permit use of
+ * FOPTextHandler without incurring deprecation warnings caused by the underlying
+ * org.apache.xmlgraphics.java2d.TextHandler.drawString(String...) method.
+ * @see org.apache.xmlgraphics.java2d.TextHandler
  */
-public class TransitionDictionary extends PDFDictionary {
-
-    /**
-     * Create a Transition Dictionary
-     */
-    public TransitionDictionary() {
-        put("Type", new PDFName("Trans"));
-    }
-
+public abstract class FOPTextHandlerAdapter extends StrokingTextHandler implements FOPTextHandler {
 }
-

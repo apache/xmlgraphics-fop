@@ -119,7 +119,7 @@ public class ListItem extends FObj implements BreakPropertySet {
 
     /**
      * {@inheritDoc}
-     * @todo see if can/should rely on base class for this
+     * @asf.todo see if can/should rely on base class for this
      *    (i.e., add to childNodes instead)
      */
     public void addChildNode(FONode child) {

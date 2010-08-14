@@ -36,20 +36,23 @@ import org.apache.fop.layoutmgr.table.CollapsingBorderModel;
  */
 public class ConditionalBorder {
 
+    /** normal border */
     public static final int NORMAL = 0;
 
+    /** leading and trailing border */
     public static final int LEADING_TRAILING = 1;
 
+    /** all the rest */
     public static final int REST = 2;
 
     /** Normal case, no break. */
-    BorderSpecification normal;
+    BorderSpecification normal;                  // CSOK: VisibilityModifier
 
     /** Special case: the cell is at the top or the bottom of the page. */
-    BorderSpecification leadingTrailing;
+    BorderSpecification leadingTrailing;         // CSOK: VisibilityModifier
 
     /** Special case: break inside the cell. */
-    BorderSpecification rest;
+    BorderSpecification rest;                    // CSOK: VisibilityModifier
 
     /** The model used to resolve borders. */
     private CollapsingBorderModel collapsingBorderModel;

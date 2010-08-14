@@ -81,15 +81,10 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         private boolean breakOppAfter;
         private final Font font;
 
-        AreaInfo(final int startIndex,
-                 final int breakIndex,
-                 final int wordSpaceCount,
-                 final int letterSpaceCount,
-                 final MinOptMax areaIPD,
-                 final boolean isHyphenated,
-                 final boolean isSpace,
-                 final boolean breakOppAfter,
-                 final Font font) {
+        AreaInfo                                                // CSOK: ParameterNumber
+            (int startIndex, int breakIndex, int wordSpaceCount, int letterSpaceCount,
+             MinOptMax areaIPD, boolean isHyphenated, boolean isSpace, boolean breakOppAfter,
+             Font font) {
             assert startIndex <= breakIndex;
             this.startIndex = startIndex;
             this.breakIndex = breakIndex;
@@ -776,7 +771,8 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         }
         final boolean endsWithHyphen = checkEndsWithHyphen
                 && foText.charAt(lastIndex) == CharUtilities.SOFT_HYPHEN;
-        Font font = FontSelector.selectFontForCharactersInText(foText, thisStart, lastIndex, foText, this);
+        Font font = FontSelector
+            .selectFontForCharactersInText(foText, thisStart, lastIndex, foText, this);
         int wordLength = lastIndex - thisStart;
         boolean kerning = font.hasKerning();
         MinOptMax wordIPD = MinOptMax.ZERO;
@@ -793,7 +789,8 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                 if (i > thisStart) {
                     char previousChar = foText.charAt(i - 1);
                     kern = font.getKernValue(previousChar, currentChar);
-                } else if (prevAreaInfo != null && !prevAreaInfo.isSpace && prevAreaInfo.breakIndex > 0) {
+                } else if (prevAreaInfo != null
+                           && !prevAreaInfo.isSpace && prevAreaInfo.breakIndex > 0) {
                     char previousChar = foText.charAt(prevAreaInfo.breakIndex - 1);
                     kern = font.getKernValue(previousChar, currentChar);
                 }
@@ -953,7 +950,9 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             }
 
             // add letter spaces
-            boolean isWordEnd = stopIndex == areaInfo.breakIndex && areaInfo.letterSpaceCount < areaInfo.getCharLength();
+            boolean isWordEnd
+                = stopIndex == areaInfo.breakIndex
+                && areaInfo.letterSpaceCount < areaInfo.getCharLength();
             int letterSpaceCount = isWordEnd ? stopIndex - startIndex - 1 : stopIndex - startIndex;
 
             assert letterSpaceCount >= 0;
@@ -1065,11 +1064,13 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             if (foText.charAt(areaInfo.startIndex) != CharUtilities.SPACE
                     || foText.getWhitespaceTreatment() == Constants.EN_PRESERVE) {
                 // a breaking space that needs to be preserved
-                baseList.addAll(getElementsForBreakingSpace(alignment, areaInfo, auxiliaryPosition, 0,
+                baseList
+                    .addAll(getElementsForBreakingSpace(alignment, areaInfo, auxiliaryPosition, 0,
                         mainPosition, areaInfo.areaIPD.getOpt(), true));
             } else {
                 // a (possible block) of breaking spaces
-                baseList.addAll(getElementsForBreakingSpace(alignment, areaInfo, mainPosition,
+                baseList
+                    .addAll(getElementsForBreakingSpace(alignment, areaInfo, mainPosition,
                         areaInfo.areaIPD.getOpt(), auxiliaryPosition, 0, false));
             }
         }
@@ -1103,17 +1104,31 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             // if the second element is chosen as a line break these elements
             // add a constant amount of stretch at the end of a line, otherwise
             // they don't add any stretch
+            KnuthGlue g;
             if (skipZeroCheck || lineStartBAP != 0 || lineEndBAP != 0) {
-                elements.add(new KnuthGlue(lineEndBAP, 3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0, auxiliaryPosition, false));
+                g = new KnuthGlue
+                    (lineEndBAP,
+                     3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0, auxiliaryPosition, false);
+                elements.add(g);
                 elements.add(makeZeroWidthPenalty(0));
-                elements.add(new KnuthGlue(p2WidthOffset - (lineStartBAP + lineEndBAP), -3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0, pos2, false));
+                g = new KnuthGlue
+                    (p2WidthOffset - (lineStartBAP + lineEndBAP),
+                     -3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0, pos2, false);
+                elements.add(g);
                 elements.add(makeAuxiliaryZeroWidthBox());
                 elements.add(makeZeroWidthPenalty(KnuthElement.INFINITE));
-                elements.add(new KnuthGlue(lineStartBAP + p3WidthOffset, 0, 0, pos3, false));
+                g = new KnuthGlue(lineStartBAP + p3WidthOffset, 0, 0, pos3, false);
+                elements.add(g);
             } else {
-                elements.add(new KnuthGlue(0, 3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0, auxiliaryPosition, false));
+                g = new KnuthGlue
+                    (0,
+                     3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0, auxiliaryPosition, false);
+                elements.add(g);
                 elements.add(makeZeroWidthPenalty(0));
-                elements.add(new KnuthGlue(areaInfo.areaIPD.getOpt(), -3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0, pos2, false));
+                g = new KnuthGlue
+                    (areaInfo.areaIPD.getOpt(),
+                     -3 * LineLayoutManager.DEFAULT_SPACE_WIDTH, 0, pos2, false);
+                elements.add(g);
             }
             break;
 
@@ -1133,9 +1148,10 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         return elements;
     }
 
-    private List getElementsForJustifiedText(AreaInfo areaInfo, Position pos2, int p2WidthOffset,
-                                             Position pos3, int p3WidthOffset, boolean skipZeroCheck,
-                                             int shrinkability) {
+    private List getElementsForJustifiedText
+        (AreaInfo areaInfo, Position pos2, int p2WidthOffset,
+         Position pos3, int p3WidthOffset, boolean skipZeroCheck,
+         int shrinkability) {
 
         int stretchability = areaInfo.areaIPD.getStretch();
 

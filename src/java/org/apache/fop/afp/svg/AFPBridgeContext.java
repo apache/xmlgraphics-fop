@@ -60,22 +60,21 @@ public class AFPBridgeContext extends AbstractFOPBridgeContext {
     /**
      * Constructs a new bridge context.
      * @param userAgent the user agent
-     * @param loader the Document Loader to use for referenced documents.
+     * @param documentLoader the Document Loader to use for referenced documents.
      * @param fontInfo the font list for the text painter, may be null
      *                 in which case text is painted as shapes
-     * @param linkTransform AffineTransform to properly place links,
-     *                      may be null
      * @param imageManager an image manager
      * @param imageSessionContext an image session context
      * @param linkTransform AffineTransform to properly place links,
      *                      may be null
-     * @param an AFPGraphics 2D implementation
+     * @param g2d an AFPGraphics 2D implementation
      */
     public AFPBridgeContext(UserAgent userAgent, DocumentLoader documentLoader,
             FontInfo fontInfo, ImageManager imageManager,
             ImageSessionContext imageSessionContext,
             AffineTransform linkTransform, AFPGraphics2D g2d) {
-        super(userAgent, documentLoader, fontInfo, imageManager, imageSessionContext, linkTransform);
+        super(userAgent, documentLoader, fontInfo, imageManager,
+              imageSessionContext, linkTransform);
         this.g2d = g2d;
     }
 

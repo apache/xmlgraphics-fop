@@ -33,18 +33,18 @@ public interface TopLevelLayoutManager {
      * page sequence will be created and sent to the AreaTreeModel
      * for rendering.
      */
-    public void activateLayout();
+    void activateLayout();
 
     /**
      * Act upon the force-page-count trait,
      * in relation to the initial-page-number trait of the following page-sequence.
      * @param nextPageSeqInitialPageNumber initial-page-number trait of next page-sequence
      */
-    public void doForcePageCount(Numeric nextPageSeqInitialPageNumber);
+    void doForcePageCount(Numeric nextPageSeqInitialPageNumber);
 
     /**
      * Finished the page-sequence and notifies everyone about it.
      */
-    public void finishPageSequence();
+    void finishPageSequence();
 
 }

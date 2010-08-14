@@ -55,7 +55,8 @@ public class BreakElement extends UnresolvedListElement {
      * @param breakClass    the break class
      * @param context       the {@link LayoutContext}
      */
-    public BreakElement(Position position, int penaltyValue, int breakClass, LayoutContext context) {
+    public BreakElement(Position position, int penaltyValue, int breakClass,
+                        LayoutContext context) {
         this(position, 0, penaltyValue, breakClass, context);
     }
 

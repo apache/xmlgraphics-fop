@@ -30,7 +30,10 @@ import org.xml.sax.helpers.AttributesImpl;
 /**
  * A collection of utility method for XML handling.
  */
-public class XMLUtil implements XMLConstants {
+public final class XMLUtil implements XMLConstants {
+
+    private XMLUtil() {
+    }
 
     /**
      * Returns an attribute value as a boolean value.

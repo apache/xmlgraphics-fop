@@ -85,6 +85,10 @@ public class PrimaryGridUnit extends GridUnit {
         return (TablePart) node;
     }
 
+    /**
+     * Get cell's layout manager.
+     * @return the cell's layout manager
+     */
     public TableCellLayoutManager getCellLM() {
         assert cellLM != null;
         return cellLM;
@@ -109,6 +113,10 @@ public class PrimaryGridUnit extends GridUnit {
         this.elements = elements;
     }
 
+    /**
+     * Obtain the Knuth elements.
+     * @return a list of Knuth elements
+     */
     public List getElements() {
         return this.elements;
     }
@@ -247,6 +255,10 @@ public class PrimaryGridUnit extends GridUnit {
         return this.rows;
     }
 
+    /**
+     * Add a row.
+     * @param row the row to be added
+     */
     public void addRow(GridUnit[] row) {
         if (rows == null) {
             rows = new java.util.ArrayList();

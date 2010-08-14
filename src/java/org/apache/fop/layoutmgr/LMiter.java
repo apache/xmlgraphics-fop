@@ -23,27 +23,36 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
 
+/** An iterator for layout managers. */
 public class LMiter implements ListIterator {
 
-
+    /** list of layout managers */
     protected List listLMs;
+    /** current position in iteration */
     protected int curPos = 0;
     /** The LayoutManager to which this LMiter is attached **/
     private LayoutManager lp;
 
+    /**
+     * Construct a layout manager iterator.
+     * @param lp the associated layout manager (parent)
+     */
     public LMiter(LayoutManager lp) {
         this.lp = lp;
         listLMs = lp.getChildLMs();
     }
 
+    /** {@inheritDoc} */
     public boolean hasNext() {
         return (curPos < listLMs.size()) ? true : lp.createNextChildLMs(curPos);
     }
 
+    /** {@inheritDoc} */
     public boolean hasPrevious() {
         return (curPos > 0);
     }
 
+    /** {@inheritDoc} */
     public Object previous() throws NoSuchElementException {
         if (curPos > 0) {
             return listLMs.get(--curPos);
@@ -52,6 +61,7 @@ public class LMiter implements ListIterator {
         }
     }
 
+    /** {@inheritDoc} */
     public Object next() throws NoSuchElementException {
         if (curPos < listLMs.size()) {
             return listLMs.get(curPos++);
@@ -60,7 +70,8 @@ public class LMiter implements ListIterator {
         }
     }
 
-    public void remove() throws NoSuchElementException {
+    /** {@inheritDoc} */
+     public void remove() throws NoSuchElementException {
         if (curPos > 0) {
             listLMs.remove(--curPos);
             // Note: doesn't actually remove it from the base!
@@ -70,18 +81,22 @@ public class LMiter implements ListIterator {
     }
 
 
-    public void add(Object o) throws UnsupportedOperationException {
+    /** {@inheritDoc} */
+   public void add(Object o) throws UnsupportedOperationException {
         throw new UnsupportedOperationException("LMiter doesn't support add");
     }
 
+    /** {@inheritDoc} */
     public void set(Object o) throws UnsupportedOperationException {
         throw new UnsupportedOperationException("LMiter doesn't support set");
     }
 
+    /** {@inheritDoc} */
     public int nextIndex() {
         return curPos;
     }
 
+    /** {@inheritDoc} */
     public int previousIndex() {
         return curPos - 1;
     }

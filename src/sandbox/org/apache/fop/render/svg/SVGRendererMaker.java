@@ -32,17 +32,17 @@ public class SVGRendererMaker extends AbstractRendererMaker {
     private static final String[] MIMES = new String[] {MimeConstants.MIME_SVG};
 
 
-    /**@see org.apache.fop.render.AbstractRendererMaker */
+    /** {@inheritDoc} */
     public Renderer makeRenderer(FOUserAgent ua) {
         return new SVGRenderer();
     }
 
-    /** @see org.apache.fop.render.AbstractRendererMaker#needsOutputStream() */
+    /** {@inheritDoc} */
     public boolean needsOutputStream() {
         return true;
     }
 
-    /** @see org.apache.fop.render.AbstractRendererMaker#getSupportedMimeTypes() */
+    /** {@inheritDoc} */
     public String[] getSupportedMimeTypes() {
         return MIMES;
     }

@@ -31,10 +31,14 @@ import org.apache.commons.logging.LogFactory;
  * This class acts as a factory for PDF encryption support. It enables the
  * feature to be optional to FOP depending on the availability of JCE.
  */
-public class PDFEncryptionManager {
+public final class PDFEncryptionManager {
+
+    private PDFEncryptionManager() {
+    }
 
     /** logging instance */
-    protected static Log log = LogFactory.getLog(PDFEncryptionManager.class);
+    private static final Log log                                // CSOK: ConstantName
+        = LogFactory.getLog(PDFEncryptionManager.class);
 
     /**
      * Indicates whether JCE is available.

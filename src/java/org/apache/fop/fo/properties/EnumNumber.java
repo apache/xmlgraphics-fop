@@ -29,7 +29,8 @@ import org.apache.fop.fo.expr.PropertyException;
 public final class EnumNumber extends Property implements Numeric {
 
     /** cache holding all canonical EnumNumber instances */
-    private static final PropertyCache cache = new PropertyCache(EnumNumber.class);
+    private static final PropertyCache cache                    // CSOK: ConstantName
+        = new PropertyCache(EnumNumber.class);
 
     private final EnumProperty enumProperty;
 

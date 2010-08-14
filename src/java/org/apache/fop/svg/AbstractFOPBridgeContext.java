@@ -37,12 +37,13 @@ import org.apache.fop.fonts.FontInfo;
  */
 public abstract class AbstractFOPBridgeContext extends BridgeContext {
 
-    /** The font list. */
+    /** the font list */
     protected final FontInfo fontInfo;
-
+    /** image manager */
     protected final ImageManager imageManager;
+    /** image session context */
     protected final ImageSessionContext imageSessionContext;
-
+    /** link transform */
     protected final AffineTransform linkTransform;
 
     /**
@@ -122,6 +123,10 @@ public abstract class AbstractFOPBridgeContext extends BridgeContext {
         return this.imageSessionContext;
     }
 
+    /**
+     * @param className name of bridge class to load and construct
+     * @param testFor class name to test for presence
+     */
     protected void putElementBridgeConditional(String className, String testFor) {
         try {
             Class.forName(testFor);
@@ -137,6 +142,7 @@ public abstract class AbstractFOPBridgeContext extends BridgeContext {
 
     // Make sure any 'sub bridge contexts' also have our bridges.
     //TODO There's no matching method in the super-class here
+    /** @return new bridge context */
     public abstract BridgeContext createBridgeContext();
 
 }

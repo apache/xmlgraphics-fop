@@ -34,17 +34,17 @@ public class MIFFOEventHandlerMaker extends AbstractFOEventHandlerMaker {
     private static final String[] MIMES = new String[] {MimeConstants.MIME_MIF};
 
 
-    /** @see org.apache.fop.render.AbstractFOEventHandlerMaker */
+    /** {@inheritDoc} */
     public FOEventHandler makeFOEventHandler(FOUserAgent ua, OutputStream out) {
         return new MIFHandler(ua, out);
     }
 
-    /** @see org.apache.fop.render.AbstractFOEventHandlerMaker#needsOutputStream() */
+    /** {@inheritDoc} */
     public boolean needsOutputStream() {
         return true;
     }
 
-    /** @see org.apache.fop.render.AbstractFOEventHandlerMaker#getSupportedMimeTypes() */
+    /** {@inheritDoc} */
     public String[] getSupportedMimeTypes() {
         return MIMES;
     }

@@ -403,9 +403,10 @@ public class PSPainter extends AbstractIFPainter {
         }
     }
 
-    private void writeText(String text, int start, int len,
-            int letterSpacing, int wordSpacing, int[] dx,
-            Font font, Typeface tf) throws IOException {
+    private void writeText                                      // CSOK: ParameterNumber
+        (String text, int start, int len,
+         int letterSpacing, int wordSpacing, int[] dx,
+         Font font, Typeface tf) throws IOException {
         PSGenerator generator = getGenerator();
         int end = start + len;
         int initialSize = len;

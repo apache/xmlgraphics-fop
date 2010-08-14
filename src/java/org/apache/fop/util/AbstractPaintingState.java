@@ -340,7 +340,7 @@ public abstract class AbstractPaintingState implements Cloneable, Serializable {
     /**
      * Sets the current state data
      *
-     * @param currentData state data
+     * @param data the state data
      */
     protected void setData(AbstractData data) {
         this.data = data;
@@ -468,6 +468,7 @@ public abstract class AbstractPaintingState implements Cloneable, Serializable {
 
         /**
          * Sets the current AffineTransform.
+         * @param baseTransform the transform
          */
         public void setTransform(AffineTransform baseTransform) {
             this.transform = baseTransform;

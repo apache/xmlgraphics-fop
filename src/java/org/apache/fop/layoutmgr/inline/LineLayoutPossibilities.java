@@ -25,12 +25,16 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.layoutmgr.Position;
 
+/**
+ * Line layout possibilities.
+ */
 public class LineLayoutPossibilities {
 
     /** logger instance */
-    protected static Log log = LogFactory.getLog(LineLayoutPossibilities.class);
+    private static final Log log                                // CSOK: ConstantName
+        = LogFactory.getLog(LineLayoutPossibilities.class);
 
-    private class Possibility {
+    private final class Possibility {
         private int lineCount;
         private double demerits;
         private List breakPositions;
@@ -69,12 +73,18 @@ public class LineLayoutPossibilities {
     private int chosenIndex;
     private int savedOptLineCount;
 
+    /** default constructor */
     public LineLayoutPossibilities() {
         possibilitiesList = new java.util.ArrayList();
         savedPossibilities = new java.util.ArrayList();
         optimumIndex = -1;
     }
 
+    /**
+     * Add possibility.
+     * @param ln line number
+     * @param dem demerits
+     */
     public void addPossibility(int ln, double dem) {
         possibilitiesList.add(new Possibility(ln, dem));
         if (possibilitiesList.size() == 1) {
@@ -97,8 +107,10 @@ public class LineLayoutPossibilities {
         }
     }
 
-    /* save in a different array the computed Possibilities,
-     * so possibilitiesList is ready to store different Possibilities
+    /**
+     * Save in a different array the computed Possibilities,
+     * so possibilitiesList is ready to store different Possibilities.
+     * @param bSaveOptLineCount true if should save optimum line count
      */
     public void savePossibilities(boolean bSaveOptLineCount) {
         if (bSaveOptLineCount) {
@@ -110,8 +122,9 @@ public class LineLayoutPossibilities {
         possibilitiesList = new java.util.ArrayList();
     }
 
-    /* replace the Possibilities stored in possibilitiesList with
-     * the ones stored in savedPossibilities and having the same line number
+    /**
+     * Replace the Possibilities stored in possibilitiesList with
+     * the ones stored in savedPossibilities and having the same line number.
      */
     public void restorePossibilities() {
         int index = 0;
@@ -124,9 +137,9 @@ public class LineLayoutPossibilities {
                 // update minimumIndex
                 minimumIndex = 0;
                 // shift the other indexes;
-                optimumIndex ++;
-                maximumIndex ++;
-                chosenIndex ++;
+                optimumIndex++;
+                maximumIndex++;
+                chosenIndex++;
             } else if (restoredPossibility.getLineCount() > getMaxLineCount()) {
                 // if the line number of restoredPossibility is greater than the maximum one,
                 // add restoredPossibility at the end of the list
@@ -138,7 +151,7 @@ public class LineLayoutPossibilities {
                 // find the index of the Possibility that will be replaced
                 while (index < maximumIndex
                        && getLineCount(index) < restoredPossibility.getLineCount()) {
-                    index ++;
+                    index++;
                 }
                 if (getLineCount(index) == restoredPossibility.getLineCount()) {
                     possibilitiesList.set(index, restoredPossibility);
@@ -152,8 +165,10 @@ public class LineLayoutPossibilities {
                 }
             }
             // update optimumIndex and chosenIndex
-            if (savedOptLineCount == 0 && getDemerits(optimumIndex) > restoredPossibility.getDemerits()
-                || savedOptLineCount != 0 && restoredPossibility.getLineCount() == savedOptLineCount) {
+            if (savedOptLineCount == 0
+                && getDemerits(optimumIndex) > restoredPossibility.getDemerits()
+                || savedOptLineCount != 0
+                && restoredPossibility.getLineCount() == savedOptLineCount) {
                 optimumIndex = index;
                 chosenIndex = optimumIndex;
             }
@@ -162,54 +177,82 @@ public class LineLayoutPossibilities {
         //  + " optLineCount = " + getOptLineCount() + " maxLineCount() = " + getMaxLineCount());
     }
 
+    /**
+     * @param pos a position
+     * @param i an index into posibilities list
+     */
     public void addBreakPosition(Position pos, int i) {
         ((Possibility)possibilitiesList.get(i)).addBreakPosition(pos);
     }
 
+    /** @return true if can use more lines */
     public boolean canUseMoreLines() {
         return (getOptLineCount() < getMaxLineCount());
     }
 
+    /** @return true if can use fewer lines */
     public boolean canUseLessLines() {
         return (getMinLineCount() < getOptLineCount());
     }
 
+    /** @return the line count of the minimum index */
     public int getMinLineCount() {
         return getLineCount(minimumIndex);
     }
 
+    /** @return the line count of the optimum index */
     public int getOptLineCount() {
         return getLineCount(optimumIndex);
     }
 
+    /** @return the line count of the maximum index */
     public int getMaxLineCount() {
         return getLineCount(maximumIndex);
     }
 
+    /** @return the line count of the chosen index */
     public int getChosenLineCount() {
         return getLineCount(chosenIndex);
     }
 
+    /**
+     * @param i the posibilities list index
+     * @return the line count
+     */
     public int getLineCount(int i) {
         return ((Possibility)possibilitiesList.get(i)).getLineCount();
     }
 
+    /** @return the demerits of the chosen index */
     public double getChosenDemerits() {
         return getDemerits(chosenIndex);
     }
 
+    /**
+     * @param i the posibilities list index
+     * @return the demerits
+     */
     public double getDemerits(int i) {
         return ((Possibility)possibilitiesList.get(i)).getDemerits();
     }
 
+    /** @return the possibilities count */
     public int getPossibilitiesNumber() {
         return possibilitiesList.size();
     }
 
+    /**
+     * @param i the break position index
+     * @return the chosen position
+     */
     public Position getChosenPosition(int i) {
         return ((Possibility)possibilitiesList.get(chosenIndex)).getBreakPosition(i);
     }
 
+    /**
+     * @param adj the adjustment
+     * @return the adjustment or zero
+     */
     public int applyLineCountAdjustment(int adj) {
         if (adj >= (getMinLineCount() - getChosenLineCount())
             && adj <= (getMaxLineCount() - getChosenLineCount())
@@ -225,10 +268,11 @@ public class LineLayoutPossibilities {
         }
     }
 
+    /** print all */
     public void printAll() {
         System.out.println("++++++++++");
         System.out.println(" " + possibilitiesList.size() + " possibility':");
-        for (int i = 0; i < possibilitiesList.size(); i ++) {
+        for (int i = 0; i < possibilitiesList.size(); i++) {
             System.out.println("   " + ((Possibility)possibilitiesList.get(i)).getLineCount()
                                + (i == optimumIndex ? " *" : "")
                                + (i == minimumIndex ? " -" : "")

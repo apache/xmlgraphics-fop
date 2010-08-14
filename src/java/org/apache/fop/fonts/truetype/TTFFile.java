@@ -245,7 +245,8 @@ public class TTFFile {
         }
     }
 
-    private boolean readUnicodeCmap(FontFileReader in, long cmapUniOffset, int encodingID)
+    private boolean readUnicodeCmap                             // CSOK: MethodLength
+        (FontFileReader in, long cmapUniOffset, int encodingID)
             throws IOException {
         //Read CMAP table and correct mtxTab.index
         int mtxPtr = 0;
@@ -961,7 +962,7 @@ public class TTFFile {
      * Read the "post" table
      * containing the PostScript names of the glyphs.
      */
-    private final void readPostScript(FontFileReader in) throws IOException {
+    private void readPostScript(FontFileReader in) throws IOException {
         seekTab(in, "post", 0);
         postFormat = in.readTTFLong();
         italicAngle = in.readTTFULong();
@@ -1133,7 +1134,7 @@ public class TTFFile {
      * @param in FontFileReader to read from
      * @throws IOException In case of a I/O problem
      */
-    private final void readGlyf(FontFileReader in) throws IOException {
+    private void readGlyf(FontFileReader in) throws IOException {
         TTFDirTabEntry dirTab = (TTFDirTabEntry)dirTabs.get("glyf");
         if (dirTab == null) {
             throw new IOException("glyf table not found, cannot continue");
@@ -1188,7 +1189,7 @@ public class TTFFile {
      * @param in FontFileReader to read from
      * @throws IOException In case of a I/O problem
      */
-    private final void readName(FontFileReader in) throws IOException {
+    private void readName(FontFileReader in) throws IOException {
         seekTab(in, "name", 2);
         int i = in.getCurrentPos();
         int n = in.readTTFUShort();
@@ -1259,7 +1260,7 @@ public class TTFFile {
      * @param in FontFileReader to read from
      * @throws IOException In case of a I/O problem
      */
-    private final boolean readPCLT(FontFileReader in) throws IOException {
+    private boolean readPCLT(FontFileReader in) throws IOException {
         TTFDirTabEntry dirTab = (TTFDirTabEntry)dirTabs.get("PCLT");
         if (dirTab != null) {
             in.seekSet(dirTab.getOffset() + 4 + 4 + 2);
@@ -1403,7 +1404,7 @@ public class TTFFile {
      * @param in FontFileReader to read from
      * @throws IOException In case of a I/O problem
      */
-    private final void readKerning(FontFileReader in) throws IOException {
+    private void readKerning(FontFileReader in) throws IOException {
         // Read kerning
         kerningTab = new java.util.HashMap();
         ansiKerningTab = new java.util.HashMap();

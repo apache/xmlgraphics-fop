@@ -62,7 +62,7 @@ class PDFGraphicsDevice extends GraphicsDevice {
      * @return an array containing the one graphics configuration
      */
     public GraphicsConfiguration[] getConfigurations() {
-        return new GraphicsConfiguration[]{ gc };
+        return new GraphicsConfiguration[] {gc};
     }
 
     /**

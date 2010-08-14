@@ -16,6 +16,7 @@
  */
 
 /* $Id$ */
+
 package org.apache.fop.area.inline;
 
 /**

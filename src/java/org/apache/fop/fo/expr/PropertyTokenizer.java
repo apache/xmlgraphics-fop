@@ -83,7 +83,7 @@ class PropertyTokenizer {
         boolean currentMaybeOperator = recognizeOperator;
         boolean bSawDecimal;
         recognizeOperator = true;
-        for (; ;) {
+        while ( true ) {
             if (exprIndex >= exprLength) {
                 currentToken = TOK_EOF;
                 return;
@@ -273,8 +273,11 @@ class PropertyTokenizer {
     }
 
     private void scanRestOfName() {
-        while (++exprIndex < exprLength
-               && isNameChar(expr.charAt(exprIndex))) { }
+        while ( ++exprIndex < exprLength ) {
+            if ( !isNameChar ( expr.charAt ( exprIndex ) ) ) {
+                break;
+            }
+        }
     }
 
     /**
@@ -320,8 +323,8 @@ class PropertyTokenizer {
     }
 
 
-    private static final String NAME_START_CHARS =
-        "_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private static final String NAME_START_CHARS
+        = "_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
     private static final String NAME_CHARS = ".-0123456789";
     private static final String DIGITS = "0123456789";
     private static final String HEX_CHARS = DIGITS + "abcdefABCDEF";
@@ -331,7 +334,7 @@ class PropertyTokenizer {
      * decimal digit (0-9).
      * @param c The character to check
      */
-    private static final boolean isDigit(char c) {
+    private static boolean isDigit(char c) {
         return DIGITS.indexOf(c) >= 0;
     }
 
@@ -340,7 +343,7 @@ class PropertyTokenizer {
      * hexadecimal digit (0-9, A-F, a-f).
      * @param c The character to check
      */
-    private static final boolean isHexDigit(char c) {
+    private static boolean isHexDigit(char c) {
         return HEX_CHARS.indexOf(c) >= 0;
     }
 
@@ -349,15 +352,16 @@ class PropertyTokenizer {
      * as defined by XSL (space, newline, CR, tab).
      * @param c The character to check
      */
-    private static final boolean isSpace(char c) {
+    private static boolean isSpace(char c) {
         switch (c) {
         case ' ':
         case '\r':
         case '\n':
         case '\t':
             return true;
+        default:
+            return false;
         }
-        return false;
     }
 
     /**
@@ -365,7 +369,7 @@ class PropertyTokenizer {
      * start character, ie. can start a NAME as defined by XSL.
      * @param c The character to check
      */
-    private static final boolean isNameStartChar(char c) {
+    private static boolean isNameStartChar(char c) {
         return NAME_START_CHARS.indexOf(c) >= 0 || c >= 0x80;
     }
 
@@ -374,7 +378,7 @@ class PropertyTokenizer {
      * character, ie. can occur in a NAME as defined by XSL.
      * @param c The character to check
      */
-    private static final boolean isNameChar(char c) {
+    private static boolean isNameChar(char c) {
         return NAME_START_CHARS.indexOf(c) >= 0 || NAME_CHARS.indexOf(c) >= 0
                || c >= 0x80;
     }

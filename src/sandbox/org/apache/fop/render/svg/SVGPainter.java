@@ -391,7 +391,10 @@ public class SVGPainter extends AbstractIFPainter implements SVGConstants {
         state.resetFontChanged();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * @param extension an extension object
+     * @throws IFException if not caught
+     */
     public void handleExtensionObject(Object extension) throws IFException {
         if (extension instanceof Metadata) {
             Metadata meta = (Metadata)extension;

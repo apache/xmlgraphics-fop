@@ -42,6 +42,8 @@ import org.apache.fop.fo.flow.table.Table;
 import org.apache.fop.fo.flow.table.TableBody;
 import org.apache.fop.fo.flow.table.TableCell;
 import org.apache.fop.fo.flow.table.TableColumn;
+import org.apache.fop.fo.flow.table.TableFooter;
+import org.apache.fop.fo.flow.table.TableHeader;
 import org.apache.fop.fo.flow.table.TableRow;
 import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.pagination.PageSequence;
@@ -85,9 +87,7 @@ public class MIFHandler extends FOEventHandler {
         FontSetup.setup(fontInfo, null, new DefaultFontResolver(ua));
     }
 
-    /**
-     * @see org.apache.fop.fo.FOEventHandler#startDocument()
-     */
+    /** {@inheritDoc} */
     public void startDocument() throws SAXException {
         log.fatal("The MIF Handler is non-functional at this time. Please help resurrect it!");
         mifFile = new MIFFile();
@@ -98,9 +98,7 @@ public class MIFHandler extends FOEventHandler {
         }
     }
 
-    /**
-     * @see org.apache.fop.fo.FOEventHandler#endDocument()
-     */
+    /** {@inheritDoc} */
     public void endDocument() throws SAXException {
         // finish all open elements
         mifFile.finish(true);
@@ -112,19 +110,15 @@ public class MIFHandler extends FOEventHandler {
         }
     }
 
-    /**
-     * Start the page sequence.
-     * This creates the pages in the MIF document that will be used
-     * by the following flows and static areas.
-     * @see org.apache.fop.fo.FOEventHandler
-     */
+    /** {@inheritDoc} */
     public void startPageSequence(PageSequence pageSeq) {
         // get the layout master set
         // setup the pages for this sequence
         String name = pageSeq.getMasterReference();
         SimplePageMaster spm = pageSeq.getRoot().getLayoutMasterSet().getSimplePageMaster(name);
         if (spm == null) {
-            PageSequenceMaster psm = pageSeq.getRoot().getLayoutMasterSet().getPageSequenceMaster(name);
+            PageSequenceMaster psm
+                = pageSeq.getRoot().getLayoutMasterSet().getPageSequenceMaster(name);
         } else {
             // create simple master with regions
             MIFElement prop = new MIFElement("PageType");
@@ -160,284 +154,190 @@ public class MIFHandler extends FOEventHandler {
         }
     }
 
-    /**
-     * @see org.apache.fop.fo.FOEventHandler#endPageSequence(PageSequence)
-     */
+    /** {@inheritDoc} */
     public void endPageSequence(PageSequence pageSeq) {
     }
 
-    /**
-     * @see org.apache.fop.fo.FOEventHandler#startFlow(Flow)
-     */
+    /** {@inheritDoc} */
     public void startFlow(Flow fl) {
         // start text flow in body region
         textFlow = new MIFElement("TextFlow");
     }
 
-    /**
-     * @see org.apache.fop.fo.FOEventHandler#endFlow(Flow)
-     */
+    /** {@inheritDoc} */
     public void endFlow(Flow fl) {
         textFlow.finish(true);
         mifFile.addElement(textFlow);
         textFlow = null;
     }
 
-    /**
-     * @see org.apache.fop.fo.FOEventHandler#startBlock(Block)
-     */
+    /** {@inheritDoc} */
     public void startBlock(Block bl) {
         para = new MIFElement("Para");
         // get font
         textFlow.addElement(para);
     }
 
-    /**
-     * @see org.apache.fop.fo.FOEventHandler#endBlock(Block)
-     */
+    /** {@inheritDoc} */
     public void endBlock(Block bl) {
         para.finish(true);
         para = null;
     }
 
-    /**
-     *
-     * @param inl Inline that is starting.
-     */
-    public void startInline(Inline inl){
+    /** {@inheritDoc} */
+    public void startInline(Inline inl) {
     }
 
-    /**
-     *
-     * @param inl Inline that is ending.
-     */
-    public void endInline(Inline inl){
+    /** {@inheritDoc} */
+    public void endInline(Inline inl) {
     }
 
-    /**
-     * @see org.apache.fop.fo.FOEventHandler#startTable(Table)
-     */
+    /** {@inheritDoc} */
     public void startTable(Table tbl) {
     }
 
-    /**
-     * @see org.apache.fop.fo.FOEventHandler#endTable(Table)
-     */
+    /** {@inheritDoc} */
     public void endTable(Table tbl) {
     }
 
-    /**
-     *
-     * @param tc TableColumn that is starting;
-     */
+    /** {@inheritDoc} */
     public void startColumn(TableColumn tc) {
     }
 
-    /**
-     *
-     * @param tc TableColumn that is ending;
-     */
+    /** {@inheritDoc} */
     public void endColumn(TableColumn tc) {
     }
 
-    /**
-     * @see org.apache.fop.fo.FOEventHandler#startHeader(TableBody)
-     */
-    public void startHeader(TableBody th) {
+    /** {@inheritDoc} */
+    public void startHeader(TableHeader th) {
     }
 
-    /**
-     * @see org.apache.fop.fo.FOEventHandler#endHeader(TableBody)
-     */
-    public void endHeader(TableBody th) {
+    /** {@inheritDoc} */
+    public void endHeader(TableHeader th) {
     }
 
-    /**
-     * @see org.apache.fop.fo.FOEventHandler#startFooter(TableBody)
-     */
-    public void startFooter(TableBody tf) {
+    /** {@inheritDoc} */
+    public void startFooter(TableFooter tf) {
     }
 
-    /**
-     * @see org.apache.fop.fo.FOEventHandler#endFooter(TableBody)
-     */
-    public void endFooter(TableBody tf) {
+    /** {@inheritDoc} */
+    public void endFooter(TableFooter tf) {
     }
 
-    /**
-     * @see org.apache.fop.fo.FOEventHandler#startBody(TableBody)
-     */
+    /** {@inheritDoc} */
     public void startBody(TableBody tb) {
     }
 
-    /**
-     * @see org.apache.fop.fo.FOEventHandler#endBody(TableBody)
-     */
+    /** {@inheritDoc} */
     public void endBody(TableBody tb) {
     }
 
-    /**
-     * @see org.apache.fop.fo.FOEventHandler#startRow(TableRow)
-     */
+    /** {@inheritDoc} */
     public void startRow(TableRow tr) {
     }
 
-    /**
-     * @see org.apache.fop.fo.FOEventHandler#endRow(TableRow)
-     */
+    /** {@inheritDoc} */
     public void endRow(TableRow tr) {
     }
 
-    /**
-     * @see org.apache.fop.fo.FOEventHandler#startCell(TableCell)
-     */
+    /** {@inheritDoc} */
     public void startCell(TableCell tc) {
     }
 
-    /**
-     * @see org.apache.fop.fo.FOEventHandler#endCell(TableCell)
-     */
+    /** {@inheritDoc} */
     public void endCell(TableCell tc) {
     }
 
-    // Lists
-    /**
-     * @see org.apache.fop.fo.FOEventHandler#startList(ListBlock)
-     */
+    /** {@inheritDoc} */
     public void startList(ListBlock lb) {
     }
 
-    /**
-     * @see org.apache.fop.fo.FOEventHandler#endList(ListBlock)
-     */
+    /** {@inheritDoc} */
     public void endList(ListBlock lb) {
     }
 
-    /**
-     * @see org.apache.fop.fo.FOEventHandler#startListItem(ListItem)
-     */
+    /** {@inheritDoc} */
     public void startListItem(ListItem li) {
     }
 
-    /**
-     * @see org.apache.fop.fo.FOEventHandler#endListItem(ListItem)
-     */
+    /** {@inheritDoc} */
     public void endListItem(ListItem li) {
     }
 
-    /**
-     * @see org.apache.fop.fo.FOEventHandler#startListLabel()
-     */
+    /** {@inheritDoc} */
     public void startListLabel() {
     }
 
-    /**
-     * @see org.apache.fop.fo.FOEventHandler#endListLabel()
-     */
+    /** {@inheritDoc} */
     public void endListLabel() {
     }
 
-    /**
-     * @see org.apache.fop.fo.FOEventHandler#startListBody()
-     */
+    /** {@inheritDoc} */
     public void startListBody() {
     }
 
-    /**
-     * @see org.apache.fop.fo.FOEventHandler#endListBody()
-     */
+    /** {@inheritDoc} */
     public void endListBody() {
     }
 
-    // Static Regions
-    /**
-     * @see org.apache.fop.fo.FOEventHandler#startStatic()
-     */
+    /** {@inheritDoc} */
     public void startStatic() {
     }
 
-    /**
-     * @see org.apache.fop.fo.FOEventHandler#endStatic()
-     */
+    /** {@inheritDoc} */
     public void endStatic() {
     }
 
-    /**
-     * @see org.apache.fop.fo.FOEventHandler#startMarkup()
-     */
+    /** {@inheritDoc} */
     public void startMarkup() {
     }
 
-    /**
-     * @see org.apache.fop.fo.FOEventHandler#endMarkup()
-     */
+    /** {@inheritDoc} */
     public void endMarkup() {
     }
 
-    /**
-     * @see org.apache.fop.fo.FOEventHandler#startLink(BasicLink basicLink)
-     */
+    /** {@inheritDoc} */
     public void startLink(BasicLink basicLink) {
     }
 
-    /**
-     * @see org.apache.fop.fo.FOEventHandler#endLink()
-     */
+    /** {@inheritDoc} */
     public void endLink() {
     }
 
-    /**
-     * @see org.apache.fop.fo.FOEventHandler#image(ExternalGraphic)
-     */
+    /** {@inheritDoc} */
     public void image(ExternalGraphic eg) {
     }
 
-    /**
-     * @see org.apache.fop.fo.FOEventHandler#pageRef()
-     */
+    /** {@inheritDoc} */
     public void pageRef() {
     }
 
-    /**
-     * @see org.apache.fop.fo.FOEventHandler#foreignObject(InstreamForeignObject)
-     */
+    /** {@inheritDoc} */
     public void foreignObject(InstreamForeignObject ifo) {
     }
 
-    /**
-     * @see org.apache.fop.fo.FOEventHandler#startFootnote(Footnote)
-     */
+    /** {@inheritDoc} */
     public void startFootnote(Footnote footnote) {
     }
 
-    /**
-     * @see org.apache.fop.fo.FOEventHandler#endFootnote(Footnote)
-     */
+    /** {@inheritDoc} */
     public void endFootnote(Footnote footnote) {
     }
 
-    /**
-     * @see org.apache.fop.fo.FOEventHandler#startFootnoteBody(FootnoteBody)
-     */
+    /** {@inheritDoc} */
     public void startFootnoteBody(FootnoteBody body) {
     }
 
-    /**
-     * @see org.apache.fop.fo.FOEventHandler#endFootnoteBody(FootnoteBody)
-     */
+    /** {@inheritDoc} */
     public void endFootnoteBody(FootnoteBody body) {
     }
 
-    /**
-     * @see org.apache.fop.fo.FOEventHandler#leader(Leader)
-     */
+    /** {@inheritDoc} */
     public void leader(Leader l) {
     }
 
-    /**
-     * @see org.apache.fop.fo.FOEventHandler#characters(char[], int, int)
-     */
-    public void characters(char data[], int start, int length) {
+    /** {@inheritDoc} */
+    public void characters(char[] data, int start, int length) {
         if (para != null) {
             String str = new String(data, start, length);
             str = str.trim();
@@ -458,17 +358,11 @@ public class MIFHandler extends FOEventHandler {
         }
     }
 
-    /**
-     *
-     * @param pagenum PageNumber that is starting.
-     */
+    /** {@inheritDoc} */
     public void startPageNumber(PageNumber pagenum) {
     }
 
-    /**
-     *
-     * @param pagenum PageNumber that is ending.
-     */
+    /** {@inheritDoc} */
     public void endPageNumber(PageNumber pagenum) {
     }
 }

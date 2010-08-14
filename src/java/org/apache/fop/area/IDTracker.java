@@ -34,7 +34,8 @@ import org.apache.commons.logging.LogFactory;
  */
 public class IDTracker {
 
-    private static final Log log = LogFactory.getLog(IDTracker.class);
+    private static final Log log // CSOK: ConstantName
+        = LogFactory.getLog(IDTracker.class);
 
     // HashMap of ID's whose area is located on one or more consecutive
     // PageViewports. Each ID has an arraylist of PageViewports that

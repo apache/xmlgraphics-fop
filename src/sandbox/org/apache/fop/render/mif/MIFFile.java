@@ -33,23 +33,39 @@ import java.util.List;
  */
 public class MIFFile extends MIFElement {
 
+    /** colorCatalog */
     protected MIFElement colorCatalog = null;
+    /** pgfCatalog */
     protected PGFElement pgfCatalog = null;
+    /** fontCatalog */
     protected MIFElement fontCatalog = null;
+    /** rulingCatalog */
     protected RulingElement rulingCatalog = null;
+    /** tblCatalog */
     protected MIFElement tblCatalog = null;
+    /** views */
     protected MIFElement views = null;
+    /** variableFormats */
     protected MIFElement variableFormats = null;
+    /** xRefFormats */
     protected MIFElement xRefFormats = null;
+    /** document */
     protected MIFElement document = null;
+    /** bookComponent */
     protected MIFElement bookComponent = null;
+    /** initialAutoNums */
     protected MIFElement initialAutoNums = null;
+    /** aFrames */
     protected MIFElement aFrames = null;
+    /** tbls */
     protected MIFElement tbls = null;
+    /** pages */
     protected List pages = new java.util.ArrayList();
+    /** textFlows */
     protected List textFlows = null;
 
 
+    /** default constructor */
     public MIFFile() {
         super("");
         valueElements = new java.util.ArrayList();
@@ -104,6 +120,10 @@ public class MIFFile extends MIFElement {
 
     }
 
+    /**
+     * @param os output stream
+     * @throws IOException if not caught
+     */
     public void output(OutputStream os) throws IOException {
         if (finished) {
             return;
@@ -130,6 +150,7 @@ public class MIFFile extends MIFElement {
         }
     }
 
+    /** @param p a page element to add */
     public void addPage(MIFElement p) {
         pages.add(p);
         addElement(p);

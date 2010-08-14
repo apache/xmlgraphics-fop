@@ -42,15 +42,19 @@ public abstract class AbstractBreaker {
     /** logging instance */
     protected static Log log = LogFactory.getLog(AbstractBreaker.class);
 
+    /**
+     * A page break position.
+     */
     public static class PageBreakPosition extends LeafPosition {
-        double bpdAdjust; // Percentage to adjust (stretch or shrink)
-        int difference;
-        int footnoteFirstListIndex;
-        int footnoteFirstElementIndex;
-        int footnoteLastListIndex;
-        int footnoteLastElementIndex;
+        // Percentage to adjust (stretch or shrink)
+        double bpdAdjust;                                       // CSOK: VisibilityModifier
+        int difference;                                         // CSOK: VisibilityModifier
+        int footnoteFirstListIndex;                             // CSOK: VisibilityModifier
+        int footnoteFirstElementIndex;                          // CSOK: VisibilityModifier
+        int footnoteLastListIndex;                              // CSOK: VisibilityModifier
+        int footnoteLastElementIndex;                           // CSOK: VisibilityModifier
 
-        PageBreakPosition(LayoutManager lm, int breakIndex,
+        PageBreakPosition(LayoutManager lm, int breakIndex,     // CSOK: ParameterNumber
                           int ffli, int ffei, int flli, int flei,
                           double bpdA, int diff) {
             super(lm, breakIndex);
@@ -90,9 +94,9 @@ public abstract class AbstractBreaker {
     public class BlockSequence extends BlockKnuthSequence {
 
         /** Number of elements to ignore at the beginning of the list. */
-        public int ignoreAtStart = 0;
+        int ignoreAtStart = 0;                                  // CSOK: VisibilityModifier
         /** Number of elements to ignore at the end of the list. */
-        public int ignoreAtEnd = 0;
+        int ignoreAtEnd = 0;                                    // CSOK: VisibilityModifier
 
         /**
          * startOn represents where on the page/which page layout
@@ -198,15 +202,34 @@ public abstract class AbstractBreaker {
 
     private List blockLists = null;
 
+    /** desired text alignment */
     protected int alignment;
+
     private int alignmentLast;
 
+    /** footnote separator length */
     protected MinOptMax footnoteSeparatorLength = MinOptMax.ZERO;
 
+    /** @return current display alignment */
     protected abstract int getCurrentDisplayAlign();
+
+    /** @return true if content not exhausted */
     protected abstract boolean hasMoreContent();
+
+    /**
+     * Tell the layout manager to add all the child areas implied
+     * by Position objects which will be returned by the
+     * Iterator.
+     *
+     * @param posIter the position iterator
+     * @param context the context
+     */
     protected abstract void addAreas(PositionIterator posIter, LayoutContext context);
+
+    /** @return top level layout manager */
     protected abstract LayoutManager getTopLevelLM();
+
+    /** @return current child layout manager */
     protected abstract LayoutManager getCurrentChildLM();
 
     /**
@@ -244,13 +267,27 @@ public abstract class AbstractBreaker {
         return null;
     }
 
-    /*
-     * This method is to contain the logic to determine the LM's
-     * getNextKnuthElements() implementation(s) that are to be called.
-     * @return LinkedList of Knuth elements.
+    /**
+     * Get a sequence of KnuthElements representing the content
+     * of the node assigned to the LM
+     *
+     * @param context   the LayoutContext used to store layout information
+     * @param alignment the desired text alignment
+     * @return          the list of KnuthElements
      */
     protected abstract List getNextKnuthElements(LayoutContext context, int alignment);
 
+    /**
+     * Get a sequence of KnuthElements representing the content
+     * of the node assigned to the LM
+     *
+     * @param context   the LayoutContext used to store layout information
+     * @param alignment the desired text alignment
+     * @param positionAtIPDChange last element on the part before an IPD change
+     * @param restartAtLM the layout manager from which to restart, if IPD
+     * change occurs between two LMs
+     * @return          the list of KnuthElements
+     */
     protected List getNextKnuthElements(LayoutContext context, int alignment,
             Position positionAtIPDChange, LayoutManager restartAtLM) {
         throw new UnsupportedOperationException("TODO: implement acceptable fallback");
@@ -261,6 +298,11 @@ public abstract class AbstractBreaker {
         return (this.blockLists.isEmpty());
     }
 
+    /**
+     * Start part.
+     * @param list a block sequence
+     * @param breakClass a break class
+     */
     protected void startPart(BlockSequence list, int breakClass) {
         //nop
     }
@@ -272,6 +314,11 @@ public abstract class AbstractBreaker {
         //nop
     }
 
+    /**
+     * Finish part.
+     * @param alg a page breaking algorithm
+     * @param pbp a page break posittion
+     */
     protected abstract void finishPart(PageBreakingAlgorithm alg, PageBreakPosition pbp);
 
     /**
@@ -809,8 +856,8 @@ public abstract class AbstractBreaker {
      * @param availableBPD the available BPD
      * @return the effective list
      */
-    private BlockSequence justifyBoxes(BlockSequence blockList, PageBreakingAlgorithm alg,
-            int availableBPD) {
+    private BlockSequence justifyBoxes                          // CSOK: MethodLength
+        (BlockSequence blockList, PageBreakingAlgorithm alg, int availableBPD) {
         int iOptPageNumber;
         alg.setConstantLineWidth(availableBPD);
         iOptPageNumber = alg.findBreakingPoints(blockList, /*availableBPD,*/
@@ -843,15 +890,18 @@ public abstract class AbstractBreaker {
             // inside the
             // while loop must be a box
             KnuthElement firstElement;
-            while (!(firstElement = (KnuthElement) sequenceIterator
-                    .next()).isBox()) {
-                //
-                log.debug("PLM> ignoring glue or penalty element "
-                        + "at the beginning of the sequence");
-                if (firstElement.isGlue()) {
-                    ((BlockLevelLayoutManager) firstElement
-                            .getLayoutManager())
+            while ( sequenceIterator.hasNext() ) {
+                firstElement = (KnuthElement) sequenceIterator.next();
+                if ( !firstElement.isBox() ) {
+                    log.debug("PLM> ignoring glue or penalty element "
+                              + "at the beginning of the sequence");
+                    if (firstElement.isGlue()) {
+                        ((BlockLevelLayoutManager) firstElement
+                         .getLayoutManager())
                             .discardSpace((KnuthGlue) firstElement);
+                    }
+                } else {
+                    break;
                 }
             }
             firstElementIndex = sequenceIterator.previousIndex();
@@ -904,8 +954,10 @@ public abstract class AbstractBreaker {
                             // blockSpaceList
                             KnuthGlue blockSpace = (KnuthGlue) unconfirmedList
                                     .removeFirst();
-                            spaceMaxAdjustment = spaceMaxAdjustment.plusMax(blockSpace.getStretch());
-                            spaceMaxAdjustment = spaceMaxAdjustment.minusMin(blockSpace.getShrink());
+                            spaceMaxAdjustment
+                                = spaceMaxAdjustment.plusMax(blockSpace.getStretch());
+                            spaceMaxAdjustment
+                                = spaceMaxAdjustment.minusMin(blockSpace.getShrink());
                             blockSpacesList.add(blockSpace);
                         }
                     }
@@ -995,7 +1047,9 @@ public abstract class AbstractBreaker {
                         + (((int)((float) partial * difference / total)) - adjustedDiff)
                         + " / " + difference);
             }
-            int newAdjust = ((BlockLevelLayoutManager) blockSpace.getLayoutManager()).negotiateBPDAdjustment(((int) ((float) partial * difference / total)) - adjustedDiff, blockSpace);
+            int newAdjust = ((BlockLevelLayoutManager) blockSpace.getLayoutManager())
+                .negotiateBPDAdjustment
+                (((int) ((float) partial * difference / total)) - adjustedDiff, blockSpace);
             adjustedDiff += newAdjust;
         }
         return adjustedDiff;
@@ -1003,7 +1057,13 @@ public abstract class AbstractBreaker {
 
     private int adjustLineNumbers(LinkedList lineList, int difference, int total) {
         if (log.isDebugEnabled()) {
-            log.debug("AdjustLineNumbers: difference " + difference + " / " + total + " on " + lineList.size() + " elements");
+            log.debug("AdjustLineNumbers: difference "
+                      + difference
+                      + " / "
+                      + total
+                      + " on "
+                      + lineList.size()
+                      + " elements");
         }
 
         ListIterator lineListIterator = lineList.listIterator();
@@ -1012,7 +1072,9 @@ public abstract class AbstractBreaker {
         while (lineListIterator.hasNext()) {
             KnuthGlue line = (KnuthGlue)lineListIterator.next();
             partial += (difference > 0 ? line.getStretch() : line.getShrink());
-            int newAdjust = ((BlockLevelLayoutManager) line.getLayoutManager()).negotiateBPDAdjustment(((int) ((float) partial * difference / total)) - adjustedDiff, line);
+            int newAdjust = ((BlockLevelLayoutManager) line.getLayoutManager())
+                .negotiateBPDAdjustment
+                (((int) ((float) partial * difference / total)) - adjustedDiff, line);
             adjustedDiff += newAdjust;
         }
         return adjustedDiff;

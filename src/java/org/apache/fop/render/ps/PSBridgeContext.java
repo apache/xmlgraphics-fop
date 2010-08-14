@@ -102,6 +102,7 @@ public class PSBridgeContext extends AbstractFOPBridgeContext {
 
     // Make sure any 'sub bridge contexts' also have our bridges.
     //TODO There's no matching method in the super-class here
+    /** @return a bridge context */
     public BridgeContext createBridgeContext() {
         return new PSBridgeContext(getUserAgent(), getDocumentLoader(),
                                     fontInfo,

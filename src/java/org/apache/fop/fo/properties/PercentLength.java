@@ -118,8 +118,7 @@ public class PercentLength extends LengthProperty {
      * @return the String equivalent of this
      */
     public String toString() {
-        StringBuffer sb =
-            new StringBuffer(PercentLength.class.getName())
+        StringBuffer sb = new StringBuffer(PercentLength.class.getName())
                 .append("[factor=").append(factor)
                 .append(",lbase=").append(lbase).append("]");
         return sb.toString();

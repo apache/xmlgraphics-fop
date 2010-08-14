@@ -19,24 +19,38 @@
 
 package org.apache.fop.layoutmgr;
 
+/** A leaf position. */
 public class LeafPosition extends Position {
 
     private int leafPos;
 
+    /**
+     * Construct a leaf position.
+     * @param layoutManager the associated layout manager
+     * @param pos the leaf position
+     */
     public LeafPosition(LayoutManager layoutManager, int pos) {
         super(layoutManager);
         leafPos = pos;
     }
 
+    /**
+     * Construct a leaf position.
+     * @param layoutManager the associated layout manager
+     * @param pos the leaf position
+     * @param index the index
+     */
     public LeafPosition(LayoutManager layoutManager, int pos, int index) {
         super(layoutManager, index);
         leafPos = pos;
     }
 
+    /** @return leaf position */
     public int getLeafPos() {
         return leafPos;
     }
 
+    /** {@inheritDoc} */
     public boolean generatesAreas() {
         return getLM() != null;
     }

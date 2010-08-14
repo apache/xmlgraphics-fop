@@ -45,10 +45,17 @@ public class ByteVector implements Serializable {
      */
     private int n;
 
+    /**
+     * Construct byte vector instance with default block size.
+     */
     public ByteVector() {
         this(DEFAULT_BLOCK_SIZE);
     }
 
+    /**
+     * Construct byte vector instance.
+     * @param capacity initial block size
+     */
     public ByteVector(int capacity) {
         if (capacity > 0) {
             blockSize = capacity;
@@ -59,12 +66,25 @@ public class ByteVector implements Serializable {
         n = 0;
     }
 
+    /**
+     * Construct byte vector instance.
+     * @param a byte array to use
+     * @asf.todo should n should be initialized to a.length to be consistent with
+     * CharVector behavior? [GA]
+     */
     public ByteVector(byte[] a) {
         blockSize = DEFAULT_BLOCK_SIZE;
         array = a;
         n = 0;
     }
 
+    /**
+     * Construct byte vector instance.
+     * @param a byte array to use
+     * @param capacity initial block size
+     * @asf.todo should n should be initialized to a.length to be consistent with
+     * CharVector behavior? [GA]
+     */
     public ByteVector(byte[] a, int capacity) {
         if (capacity > 0) {
             blockSize = capacity;
@@ -75,34 +95,52 @@ public class ByteVector implements Serializable {
         n = 0;
     }
 
+    /**
+     * Obtain byte vector array.
+     * @return byte array
+     */
     public byte[] getArray() {
         return array;
     }
 
     /**
-     * return number of items in array
+     * Obtain number of items in array.
+     * @return number of items
      */
     public int length() {
         return n;
     }
 
     /**
-     * returns current capacity of array
+     * Obtain capacity of array.
+     * @return current capacity of array
      */
     public int capacity() {
         return array.length;
     }
 
+    /**
+     * Pet byte at index.
+     * @param index the index
+     * @param val a byte
+     */
     public void put(int index, byte val) {
         array[index] = val;
     }
 
+    /**
+     * Get byte at index.
+     * @param index the index
+     * @return a byte
+     */
     public byte get(int index) {
         return array[index];
     }
 
     /**
      * This is to implement memory allocation in the array. Like malloc().
+     * @param size to allocate
+     * @return previous length
      */
     public int alloc(int size) {
         int index = n;
@@ -116,6 +154,9 @@ public class ByteVector implements Serializable {
         return index;
     }
 
+    /**
+     * Trim byte vector to current length.
+     */
     public void trimToSize() {
         if (n < array.length) {
             byte[] aux = new byte[n];
