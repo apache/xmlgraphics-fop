@@ -41,6 +41,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.fonts.FontManager;
 import org.apache.fop.pdf.PDFAMode;
 import org.apache.fop.pdf.PDFEncryptionManager;
 import org.apache.fop.pdf.PDFEncryptionParams;
@@ -284,6 +285,10 @@ public class CommandLineOptions {
                 factory.setStrictValidation(false);
             } else if (args[i].equals("-conserve")) {
                 conserveMemoryPolicy = true;
+            } else if (args[i].equals("-delete-cache")) {
+                parseDeleteCacheOption(args, i);
+            } else if (args[i].equals("-cache")) {
+                parseCacheOption(args, i);
             } else if (args[i].equals("-dpi")) {
                 i = i + parseResolution(args, i);
             } else if (args[i].equals("-q") || args[i].equals("--quiet")) {
@@ -384,6 +389,37 @@ public class CommandLineOptions {
         }
         return true;
     }    // end parseOptions
+
+    private int parseCacheOption(String[] args, int i) throws FOPException {
+        if ((i + 1 == args.length)
+                || (isOption(args[i + 1]))) {
+            throw new FOPException("if you use '-cache', you must specify "
+              + "the name of the font cache file");
+        } else {
+            factory.getFontManager().setCacheFile(new File(args[i + 1]));
+            return 1;
+        }
+    }
+
+    private void parseDeleteCacheOption(String[] args, int i) throws FOPException {
+        FontManager fontManager = factory.getFontManager();
+        try {
+            setUserConfig();
+            File cacheFile = fontManager.getCacheFile();
+            if (fontManager.deleteCache()) {
+                System.out.println("Successfully deleted the font cache file '"
+                        + cacheFile + "'.");
+                System.exit(0);
+            } else {
+                System.err.println("Failed to delete the font cache file '"
+                        + cacheFile + "'.");
+                System.exit(1);
+            }
+        } catch (IOException e) {
+            System.err.println("Failed to delete the font cache file");
+            System.exit(1);
+        }
+    }
 
     private int parseConfigurationOption(String[] args, int i) throws FOPException {
         if ((i + 1 == args.length)
@@ -1164,10 +1200,15 @@ public class CommandLineOptions {
             + "  -a                enables accessibility features (Tagged PDF etc., default off)\n"
             + "  -pdfprofile prof  PDF file will be generated with the specified profile\n"
             + "                    (Examples for prof: PDF/A-1b or PDF/X-3:2003)\n\n"
-            + "  -conserve         Enable memory-conservation policy (trades memory-consumption"
+            + "  -conserve         enable memory-conservation policy (trades memory-consumption"
             + " for disk I/O)\n"
             + "                    (Note: currently only influences whether the area tree is"
             + " serialized.)\n\n"
+
+            + "  -delete-cache     deletes the current font cache file\n"
+            + "  -cache            specifies a file/directory path location"
+            + " for the font cache file\n\n"
+
             + " [INPUT]  \n"
             + "  infile            xsl:fo input file (the same as the next) \n"
             + "                    (use '-' for infile to pipe input from stdin)\n"

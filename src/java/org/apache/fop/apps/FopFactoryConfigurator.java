@@ -34,7 +34,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.xmlgraphics.image.loader.spi.ImageImplRegistry;
 import org.apache.xmlgraphics.image.loader.util.Penalty;
 
-import org.apache.fop.fonts.FontManager;
 import org.apache.fop.fonts.FontManagerConfigurator;
 import org.apache.fop.util.LogUtil;
 
@@ -198,9 +197,7 @@ public class FopFactoryConfigurator {
         }
 
         // configure font manager
-        FontManager fontManager = factory.getFontManager();
-        FontManagerConfigurator fontManagerConfigurator = new FontManagerConfigurator(cfg);
-        fontManagerConfigurator.configure(fontManager, strict);
+        new FontManagerConfigurator(cfg).configure(factory.getFontManager(), strict);
 
         // configure image loader framework
         configureImageLoading(cfg.getChild("image-loading", false), strict);

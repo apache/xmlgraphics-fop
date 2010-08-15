@@ -19,6 +19,7 @@
 
 package org.apache.fop.fonts;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -58,20 +59,20 @@ public class FontManagerConfigurator {
      * @throws FOPException if an exception occurs while processing the configuration
      */
     public void configure(FontManager fontManager, boolean strict) throws FOPException {
-
         // caching (fonts)
         if (cfg.getChild("use-cache", false) != null) {
             try {
-                fontManager.setUseCache(
-                        cfg.getChild("use-cache").getValueAsBoolean());
+                fontManager.setUseCache(cfg.getChild("use-cache").getValueAsBoolean());
+                if (cfg.getChild("cache-file", false) != null) {
+                    fontManager.setCacheFile(new File(cfg.getChild("cache-file").getValue()));
+                }
             } catch (ConfigurationException mfue) {
                 LogUtil.handleException(log, mfue, true);
             }
         }
         if (cfg.getChild("font-base", false) != null) {
             try {
-                fontManager.setFontBaseURL(
-                        cfg.getChild("font-base").getValue(null));
+                fontManager.setFontBaseURL(cfg.getChild("font-base").getValue(null));
             } catch (MalformedURLException mfue) {
                 LogUtil.handleException(log, mfue, true);
             }
@@ -80,13 +81,12 @@ public class FontManagerConfigurator {
         // global font configuration
         Configuration fontsCfg = cfg.getChild("fonts", false);
         if (fontsCfg != null) {
+            
             // font substitution
             Configuration substitutionsCfg = fontsCfg.getChild("substitutions", false);
             if (substitutionsCfg != null) {
-                FontSubstitutionsConfigurator fontSubstitutionsConfigurator
-                        = new FontSubstitutionsConfigurator(substitutionsCfg);
                 FontSubstitutions substitutions = new FontSubstitutions();
-                fontSubstitutionsConfigurator.configure(substitutions);
+                new FontSubstitutionsConfigurator(substitutionsCfg).configure(substitutions);
                 fontManager.setFontSubstitutions(substitutions);
             }
 

@@ -19,6 +19,7 @@
 
 package org.apache.fop.fonts;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.util.Iterator;
 import java.util.List;
@@ -26,12 +27,12 @@ import java.util.List;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.fonts.FontTriplet.Matcher;
 import org.apache.fop.fonts.substitute.FontSubstitutions;
 
 // TODO: Refactor fonts package so major font activities (autodetection etc)
-// are all centrally managed and delegated from this class, also remove dependency on FopFactory
-// and start using POJO config/properties type classes
+// are all centrally managed and delegated from this class
 
 /**
  * The manager of fonts. The class holds a reference to the font cache and information about
@@ -56,11 +57,16 @@ public class FontManager {
     /** FontTriplet matcher for fonts that shall be referenced rather than embedded. */
     private FontTriplet.Matcher referencedFontsMatcher;
 
+    /** Enables/disables the use of font caching */
+    private boolean useCache = DEFAULT_USE_CACHE;
+
+    /** Provides a font cache file path **/
+    private File cacheFile;
+
     /**
      * Main constructor
      */
     public FontManager() {
-        setUseCache(DEFAULT_USE_CACHE);
     }
 
     /**
@@ -113,16 +119,31 @@ public class FontManager {
     }
 
     /**
+     * Sets the font cache file
+     * @param cacheFile the font cache file
+     */
+    public void setCacheFile(File cacheFile) {
+        this.cacheFile = cacheFile;
+    }
+
+    /**
+     * Returns the font cache file
+     * @return the font cache file
+     */
+    public File getCacheFile() {
+        if (cacheFile != null) {
+            return this.cacheFile;
+        }
+        return FontCache.getDefaultCacheFile(false);
+    }
+
+    /**
      * Whether or not to cache results of font triplet detection/auto-config
      * @param useCache use cache or not
      */
     public void setUseCache(boolean useCache) {
-        if (useCache) {
-            this.fontCache = FontCache.load();
-            if (this.fontCache == null) {
-                this.fontCache = new FontCache();
-            }
-        } else {
+        this.useCache = useCache;
+        if (!useCache) {
             this.fontCache = null;
         }
     }
@@ -132,7 +153,7 @@ public class FontManager {
      * @return true if this font manager uses the cache
      */
     public boolean useCache() {
-        return (this.fontCache != null);
+        return useCache;
     }
 
     /**
@@ -140,7 +161,53 @@ public class FontManager {
      * @return the font cache
      */
     public FontCache getFontCache() {
-        return this.fontCache;
+        if (fontCache == null) {
+            if (useCache) {
+                if (cacheFile != null) {
+                    fontCache = FontCache.loadFrom(cacheFile);
+                } else {
+                    fontCache = FontCache.load();
+                }
+                if (fontCache == null) {
+                    fontCache = new FontCache();
+                }
+            }
+        }
+        return fontCache;
+    }
+    
+    /**
+     * Saves the FontCache as necessary
+     * 
+     * @throws FOPException fop exception 
+     */
+    public void saveCache() throws FOPException {
+        if (useCache) {
+            if (fontCache != null && fontCache.hasChanged()) {
+                if (cacheFile != null) {
+                    fontCache.saveTo(cacheFile);
+                } else {
+                    fontCache.save();
+                }
+            }
+        }
+    }
+
+    /**
+     * Deletes the current FontCache file
+     * @return Returns true if the font cache file was successfully deleted.
+     */
+    public boolean deleteCache() {
+        boolean deleted = false;
+        if (useCache) {
+            if (cacheFile != null) {
+                deleted = cacheFile.delete();
+                cacheFile = null;
+            } else {
+                deleted = FontCache.getDefaultCacheFile(true).delete();
+            }
+        }
+        return deleted;
     }
 
     /**

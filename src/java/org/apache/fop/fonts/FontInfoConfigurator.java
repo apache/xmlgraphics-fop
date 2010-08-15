@@ -75,8 +75,8 @@ public class FontInfoConfigurator {
      * @throws FOPException if an exception occurs while processing the configuration
      */
     public void configure(List/*<EmbedFontInfo>*/ fontInfoList) throws FOPException {
-        Configuration fonts = cfg.getChild("fonts", false);
-        if (fonts != null) {
+        Configuration fontsCfg = cfg.getChild("fonts", false);
+        if (fontsCfg != null) {
             long start = 0;
             if (log.isDebugEnabled()) {
                 log.debug("Starting font configuration...");
@@ -86,24 +86,23 @@ public class FontInfoConfigurator {
             FontAdder fontAdder = new FontAdder(fontManager, fontResolver, listener);
 
             // native o/s search (autodetect) configuration
-            boolean autodetectFonts = (fonts.getChild("auto-detect", false) != null);
+            boolean autodetectFonts = (fontsCfg.getChild("auto-detect", false) != null);
             if (autodetectFonts) {
                 FontDetector fontDetector = new FontDetector(fontManager, fontAdder, strict);
                 fontDetector.detect(fontInfoList);
             }
 
-            // Add configured directories to FontInfo
-            addDirectories(fonts, fontAdder, fontInfoList);
+            // Add configured directories to FontInfo list
+            addDirectories(fontsCfg, fontAdder, fontInfoList);
 
-            // Add configured fonts to FontInfo
-            FontCache fontCache = fontManager.getFontCache();
-            addFonts(fonts, fontCache, fontInfoList);
+            // Add fonts from configuration to FontInfo list
+            addFonts(fontsCfg, fontManager.getFontCache(), fontInfoList);
 
             // Update referenced fonts (fonts which are not to be embedded)
             fontManager.updateReferencedFonts(fontInfoList);
 
             // Renderer-specific referenced fonts
-            Configuration referencedFontsCfg = fonts.getChild("referenced-fonts", false);
+            Configuration referencedFontsCfg = fontsCfg.getChild("referenced-fonts", false);
             if (referencedFontsCfg != null) {
                 FontTriplet.Matcher matcher = FontManagerConfigurator.createFontsMatcher(
                         referencedFontsCfg, strict);
@@ -111,9 +110,7 @@ public class FontInfoConfigurator {
             }
 
             // Update font cache if it has changed
-            if (fontCache != null && fontCache.hasChanged()) {
-                fontCache.save();
-            }
+            fontManager.saveCache();
 
             if (log.isDebugEnabled()) {
                 log.debug("Finished font configuration in "
