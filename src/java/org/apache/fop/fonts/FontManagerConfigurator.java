@@ -63,11 +63,15 @@ public class FontManagerConfigurator {
         if (cfg.getChild("use-cache", false) != null) {
             try {
                 fontManager.setUseCache(cfg.getChild("use-cache").getValueAsBoolean());
-                if (cfg.getChild("cache-file", false) != null) {
-                    fontManager.setCacheFile(new File(cfg.getChild("cache-file").getValue()));
-                }
-            } catch (ConfigurationException mfue) {
-                LogUtil.handleException(log, mfue, true);
+            } catch (ConfigurationException e) {
+                LogUtil.handleException(log, e, true);
+            }
+        }
+        if (cfg.getChild("cache-file", false) != null) {
+            try {
+                fontManager.setCacheFile(new File(cfg.getChild("cache-file").getValue()));
+            } catch (ConfigurationException e) {
+                LogUtil.handleException(log, e, true);
             }
         }
         if (cfg.getChild("font-base", false) != null) {
