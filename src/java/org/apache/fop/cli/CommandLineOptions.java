@@ -110,7 +110,7 @@ public class CommandLineOptions {
     private boolean useStdIn = false;
     /* true if System.out (stdout) should be used for the output file */
     private boolean useStdOut = false;
-    /* true if a catalog resolver should be used for entity and uri resolution */ 
+    /* true if a catalog resolver should be used for entity and uri resolution */
     private boolean useCatalogResolver = false;
     /* rendering options (for the user agent) */
     private Map renderingOptions = new java.util.HashMap();
@@ -1247,7 +1247,7 @@ public class CommandLineOptions {
             + "  -out mime outfile input will be rendered using the given MIME type\n"
             + "                    (outfile req'd) Example: \"-out application/pdf D:\\out.pdf\"\n"
             + "                    (Tip: \"-out list\" prints the list of supported MIME types"
-            + "	and exits)\n"
+            + "                    and exits)\n"
             //+ "  -mif outfile      input will be rendered as MIF (FrameMaker) (outfile req'd)\n"
             //+ "                    Experimental feature - requires additional fop-sandbox.jar.\n"
             + "  -svg outfile      input will be rendered as an SVG slides file (outfile req'd) \n"
