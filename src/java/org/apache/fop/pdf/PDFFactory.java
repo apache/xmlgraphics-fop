@@ -877,7 +877,8 @@ public class PDFFactory {
      */
     public PDFNames makeNames() {
         PDFNames names = new PDFNames();
-        getDocument().registerObject(names);
+        getDocument().assignObjectNumber(names);
+        getDocument().addTrailerObject(names);
         return names;
     }
 
@@ -1067,7 +1068,7 @@ public class PDFFactory {
         if (target.startsWith(EMBEDDED_FILE)) {
             // File Attachments (Embedded Files)
             String filename = target.substring(EMBEDDED_FILE.length());
-            return getLaunchActionForEmbeddedFile(filename);
+            return getActionForEmbeddedFile(filename, newWindow);
         } else if (targetLo.startsWith("http://")) {
             // HTTP URL?
             return new PDFUri(target);
@@ -1094,7 +1095,7 @@ public class PDFFactory {
         }
     }
 
-    private PDFAction getLaunchActionForEmbeddedFile(String filename) {
+    private PDFAction getActionForEmbeddedFile(String filename, boolean newWindow) {
         PDFNames names = getDocument().getRoot().getNames();
         if (names == null) {
             throw new IllegalStateException(
@@ -1107,6 +1108,9 @@ public class PDFFactory {
                     "No /EmbeddedFiles name tree present."
                     + " Cannot create Launch Action for embedded file: " + filename);
         }
+
+        //Find filespec reference for the embedded file
+        filename = PDFText.toPDFString(filename, '_');
         PDFArray files = embeddedFiles.getNames();
         PDFReference embeddedFileRef = null;
         int i = 0;
@@ -1124,8 +1128,23 @@ public class PDFFactory {
             throw new IllegalStateException(
                     "No embedded file with name " + filename + " present.");
         }
-        PDFLaunch launch = new PDFLaunch(embeddedFileRef);
-        return launch;
+
+        //Finally create the action
+        //PDFLaunch action = new PDFLaunch(embeddedFileRef);
+        //This works with Acrobat 8 but not with Acrobat 9
+
+        //The following two options didn't seem to have any effect.
+        //PDFGoToEmbedded action = new PDFGoToEmbedded(embeddedFileRef, 0, newWindow);
+        //PDFGoToRemote action = new PDFGoToRemote(embeddedFileRef, 0, newWindow);
+
+        //This finally seems to work:
+        StringBuffer scriptBuffer = new StringBuffer();
+        scriptBuffer.append("this.exportDataObject({cName:\"");
+        scriptBuffer.append(filename);
+        scriptBuffer.append("\", nLaunch:2});)");
+
+        PDFJavaScriptLaunchAction action = new PDFJavaScriptLaunchAction(scriptBuffer.toString());
+        return action;
     }
 
     /**

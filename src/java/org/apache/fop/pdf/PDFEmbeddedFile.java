@@ -19,6 +19,7 @@
 
 package org.apache.fop.pdf;
 
+import java.io.IOException;
 import java.util.Date;
 
 /**
@@ -35,6 +36,24 @@ public class PDFEmbeddedFile extends PDFStream {
         PDFDictionary params = new PDFDictionary();
         params.put("CreationDate", params.formatDateTime(new Date()));
         put("Params", params);
+    }
+
+    /** {@inheritDoc} */
+    protected boolean isEncodingOnTheFly() {
+        //Acrobat doesn't like an indirect /Length object in this case,
+        //but only when the embedded file is a PDF file.
+        return false;
+    }
+
+    /** {@inheritDoc} */
+    protected void populateStreamDict(Object lengthEntry) {
+        super.populateStreamDict(lengthEntry);
+        try {
+            PDFDictionary dict = (PDFDictionary)get("Params");
+            dict.put("Size", new Integer(data.getSize()));
+        } catch (IOException ioe) {
+            //ignore and just skip this entry as it's optional
+        }
     }
 
 }

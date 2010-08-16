@@ -320,5 +320,41 @@ public class PDFText extends PDFObject {
         return bout.toByteArray();
     }
 
+    /**
+     * Converts a text to PDF's "string" data type. Unsupported characters get converted to '?'
+     * characters (similar to what the Java "US-ASCII" encoding does).
+     * @see {@link #toPDFString(CharSequence, char)}
+     * @param text the text to convert
+     * @return the converted string
+     */
+    public static String toPDFString(CharSequence text) {
+        return toPDFString(text, '?');
+    }
+
+    /**
+     * Converts a text to PDF's "string" data type. Unsupported characters get converted to the
+     * given replacement character.
+     * <p>
+     * The PDF library currently doesn't properly distinguish between the PDF
+     * data types "string" and "text string", so we currently restrict "string" to US-ASCII, also
+     * because "string" seems somewhat under-specified concerning the upper 128 bytes.
+     * @param text the text to convert
+     * @param replacement the replacement character used when substituting a character
+     * @return the converted string
+     */
+    public static String toPDFString(CharSequence text, char replacement) {
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0, c = text.length(); i < c; i++) {
+            char ch = text.charAt(i);
+            if (ch > 127) {
+                //TODO Revisit the restriction to US-ASCII once "string" and "text string" are
+                //"disentangled".
+                sb.append(replacement);
+            } else {
+                sb.append(ch);
+            }
+        }
+        return sb.toString();
+    }
 }
 
