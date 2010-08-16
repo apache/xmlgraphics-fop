@@ -61,6 +61,7 @@ import org.apache.fop.pdf.PDFNumsArray;
 import org.apache.fop.pdf.PDFOutputIntent;
 import org.apache.fop.pdf.PDFPageLabels;
 import org.apache.fop.pdf.PDFReference;
+import org.apache.fop.pdf.PDFText;
 import org.apache.fop.pdf.PDFXMode;
 import org.apache.fop.render.pdf.extensions.PDFEmbeddedFileExtensionAttachment;
 import org.apache.fop.util.ColorProfileUtil;
@@ -453,7 +454,8 @@ class PDFRenderingUtil implements PDFConfigurationConstants {
         }
         PDFDictionary dict = new PDFDictionary();
         dict.put("F", file);
-        PDFFileSpec fileSpec = new PDFFileSpec(embeddedFile.getFilename());
+        String filename = PDFText.toPDFString(embeddedFile.getFilename(), '_');
+        PDFFileSpec fileSpec = new PDFFileSpec(filename);
         fileSpec.setEmbeddedFile(dict);
         if (embeddedFile.getDesc() != null) {
             fileSpec.setDescription(embeddedFile.getDesc());
@@ -464,7 +466,8 @@ class PDFRenderingUtil implements PDFConfigurationConstants {
         PDFNameTreeNode embeddedFiles = names.getEmbeddedFiles();
         if (embeddedFiles == null) {
             embeddedFiles = new PDFNameTreeNode();
-            //this.pdfDoc.registerObject(embeddedFiles);
+            this.pdfDoc.assignObjectNumber(embeddedFiles);
+            this.pdfDoc.addTrailerObject(embeddedFiles);
             names.setEmbeddedFiles(embeddedFiles);
         }
 
@@ -474,7 +477,8 @@ class PDFRenderingUtil implements PDFConfigurationConstants {
             nameArray = new PDFArray();
             embeddedFiles.setNames(nameArray);
         }
-        nameArray.add(embeddedFile.getFilename());
+        String name = PDFText.toPDFString(filename);
+        nameArray.add(name);
         nameArray.add(new PDFReference(fileSpec));
     }
 

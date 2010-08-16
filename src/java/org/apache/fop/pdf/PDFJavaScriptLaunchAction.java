@@ -20,42 +20,34 @@
 package org.apache.fop.pdf;
 
 /**
- * Class representing a /FileSpec object.
+ * PDF Action which executes some JavaScript code.
+ * @since PDF 1.3
  */
-public class PDFFileSpec extends PDFDictionary {
+public class PDFJavaScriptLaunchAction extends PDFAction {
+
+    private String script;
 
     /**
-     * create a /FileSpec object.
-     *
-     * @param filename the filename represented by this object
+     * Creates a new /Launch action.
+     * @param script  the script to run when the launch action is triggered
      */
-    public PDFFileSpec(String filename) {
-
-        /* generic creation of object */
-        super();
-        put("Type", new PDFName("Filespec"));
-        put("F", filename);
+    public PDFJavaScriptLaunchAction(String script) {
+        this.script = script;
     }
 
-    private String getFilename() {
-        return (String)get("F");
+    /** {@inheritDoc} */
+    public String getAction() {
+        return this.referencePDF();
     }
 
-    /**
-     * Associates an dictionary with pointers to embedded file streams with this file spec.
-     * @param embeddedFileDict the dictionary with pointers to embedded file streams
-     */
-    public void setEmbeddedFile(PDFDictionary embeddedFileDict) {
-        put("EF", embeddedFileDict);
-    }
-
-    /**
-     * Sets a description for the file spec.
-     * @param description the description
-     * @since PDF 1.6
-     */
-    public void setDescription(String description) {
-        put("Desc", description);
+    /** {@inheritDoc} */
+    public String toPDFString() {
+        StringBuffer sb = new StringBuffer(64);
+        sb.append(getObjectID());
+        sb.append("<<\n/S /JavaScript\n/JS (");
+        sb.append(this.script);
+        sb.append(")\n>>\nendobj\n");
+        return sb.toString();
     }
 
     /** {@inheritDoc} */
@@ -64,17 +56,17 @@ public class PDFFileSpec extends PDFDictionary {
             return true;
         }
 
-        if (obj == null || !(obj instanceof PDFFileSpec)) {
+        if (obj == null || !(obj instanceof PDFJavaScriptLaunchAction)) {
             return false;
         }
 
-        PDFFileSpec spec = (PDFFileSpec)obj;
+        PDFJavaScriptLaunchAction launch = (PDFJavaScriptLaunchAction) obj;
 
-        if (!spec.getFilename().equals(getFilename())) {
+        if (!launch.script.toString().equals(script.toString())) {
             return false;
         }
 
         return true;
     }
-}
 
+}

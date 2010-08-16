@@ -19,6 +19,14 @@
 
 package org.apache.fop.pdf;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Writer;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
+
 /**
  * Class representing a PDF name tree node.
  */
@@ -104,7 +112,6 @@ public class PDFNameTreeNode extends PDFDictionary {
         return (String)limits.get(1);
     }
 
-
     private PDFArray prepareLimitsArray() {
         PDFArray limits = (PDFArray)get(LIMITS);
         if (limits == null) {
@@ -117,5 +124,29 @@ public class PDFNameTreeNode extends PDFDictionary {
         return limits;
     }
 
+    /** {@inheritDoc} */
+    protected void writeDictionary(OutputStream out, Writer writer) throws IOException {
+        sortNames(); //Sort the names before writing them out
+        super.writeDictionary(out, writer);
+    }
+
+    private void sortNames() {
+        PDFArray names = getNames();
+        SortedMap map = new TreeMap();
+        int i = 0;
+        int c = names.length();
+        while (i < c) {
+            String key = (String)names.get(i++); //Key must be a String
+            Object value = names.get(i++);
+            map.put(key, value);
+        }
+        names.clear();
+        Iterator iter = map.entrySet().iterator();
+        while (iter.hasNext()) {
+            Map.Entry entry = (Map.Entry)iter.next();
+            names.add(entry.getKey());
+            names.add(entry.getValue());
+        }
+    }
 }
 
