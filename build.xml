@@ -520,7 +520,6 @@ list of possible build targets.
     <jar jarfile="${build.dir}/fop.jar" basedir="${build.classes.dir}">
       <manifest>
         <attribute name="Main-Class" value="org.apache.fop.cli.Main"/>
-        <attribute name="Class-Path" value="${manifest.classpath}"/>
         <attribute name="Build-Id" value="${ts} (${user.name} [${os.name} ${os.version} ${os.arch}, Java ${java.runtime.version}, Target Java ${javac.target}])"/>
         <section name="org/apache/fop/">
           <attribute name="Specification-Title" value="XSL-FO - Extensible Stylesheet Language"/>
