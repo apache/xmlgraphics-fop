@@ -55,16 +55,16 @@ public class PDFNames extends PDFDictionary {
      * Returns the EmbeddedFiles object
      * @return the EmbeddedFiles object, or null if it's not used
      */
-    public PDFNameTreeNode getEmbeddedFiles() {
-        return (PDFNameTreeNode)get(EMBEDDED_FILES);
+    public PDFEmbeddedFiles getEmbeddedFiles() {
+        return (PDFEmbeddedFiles)get(EMBEDDED_FILES);
     }
 
     /**
      * Set the EmbeddedFiles object
-     * @param dests the EmbeddedFiles object
+     * @param embeddedFiles the EmbeddedFiles object
      */
-    public void setEmbeddedFiles(PDFNameTreeNode dests) {
-        put(EMBEDDED_FILES, dests);
+    public void setEmbeddedFiles(PDFEmbeddedFiles embeddedFiles) {
+        put(EMBEDDED_FILES, embeddedFiles);
     }
 
 }
