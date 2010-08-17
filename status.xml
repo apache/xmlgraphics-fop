@@ -62,7 +62,7 @@
         Reinstated support for being able to specify a font cache filepath in the fop user configuration.
       </action>
       <action context="Fonts" dev="AC" type="add">
-        Added convenience support for the deletion of the Fop font cache file from the command line.
+        Added convenience support for the flushing of the Fop font cache file from the command line.
       </action>
       <action context="Renderers" dev="JM" type="add" fixes-bug="44460" due-to="Andrejus Chaliapinas">
         Added support for PDF File Attachments (Embedded Files).
