@@ -1141,7 +1141,7 @@ public class PDFFactory {
         StringBuffer scriptBuffer = new StringBuffer();
         scriptBuffer.append("this.exportDataObject({cName:\"");
         scriptBuffer.append(filename);
-        scriptBuffer.append("\", nLaunch:2});)");
+        scriptBuffer.append("\", nLaunch:2});");
 
         PDFJavaScriptLaunchAction action = new PDFJavaScriptLaunchAction(scriptBuffer.toString());
         return action;
