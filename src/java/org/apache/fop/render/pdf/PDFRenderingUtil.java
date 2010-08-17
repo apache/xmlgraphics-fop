@@ -48,6 +48,7 @@ import org.apache.fop.pdf.PDFConformanceException;
 import org.apache.fop.pdf.PDFDictionary;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFEmbeddedFile;
+import org.apache.fop.pdf.PDFEmbeddedFiles;
 import org.apache.fop.pdf.PDFEncryptionManager;
 import org.apache.fop.pdf.PDFEncryptionParams;
 import org.apache.fop.pdf.PDFFileSpec;
@@ -55,7 +56,6 @@ import org.apache.fop.pdf.PDFICCBasedColorSpace;
 import org.apache.fop.pdf.PDFICCStream;
 import org.apache.fop.pdf.PDFInfo;
 import org.apache.fop.pdf.PDFMetadata;
-import org.apache.fop.pdf.PDFNameTreeNode;
 import org.apache.fop.pdf.PDFNames;
 import org.apache.fop.pdf.PDFNumsArray;
 import org.apache.fop.pdf.PDFOutputIntent;
@@ -463,9 +463,9 @@ class PDFRenderingUtil implements PDFConfigurationConstants {
         this.pdfDoc.registerObject(fileSpec);
 
         //Make sure there is an EmbeddedFiles in the Names dictionary
-        PDFNameTreeNode embeddedFiles = names.getEmbeddedFiles();
+        PDFEmbeddedFiles embeddedFiles = names.getEmbeddedFiles();
         if (embeddedFiles == null) {
-            embeddedFiles = new PDFNameTreeNode();
+            embeddedFiles = new PDFEmbeddedFiles();
             this.pdfDoc.assignObjectNumber(embeddedFiles);
             this.pdfDoc.addTrailerObject(embeddedFiles);
             names.setEmbeddedFiles(embeddedFiles);
