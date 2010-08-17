@@ -27,7 +27,10 @@ import java.io.UnsupportedEncodingException;
 /**
  * Helper methods for handling color profiles.
  */
-public class ColorProfileUtil {
+public final class ColorProfileUtil {
+
+    private ColorProfileUtil() {
+    }
 
     /**
      * Returns the profile description of an ICC profile

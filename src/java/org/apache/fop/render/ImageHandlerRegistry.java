@@ -133,6 +133,7 @@ public class ImageHandlerRegistry {
     /**
      * Returns the ordered array of supported image flavors. The array needs to be ordered by
      * priority so the image loader framework can return the preferred image type.
+     * @param context the rendering context
      * @return the array of image flavors
      */
     public synchronized ImageFlavor[] getSupportedFlavors(RenderingContext context) {

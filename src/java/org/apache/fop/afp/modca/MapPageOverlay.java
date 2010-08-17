@@ -69,14 +69,14 @@ public class MapPageOverlay extends AbstractAFPObject {
             throw new IllegalArgumentException("The name of overlay " + name
                 + " must be 8 characters");
         }
-        if (log.isDebugEnabled()) {
-            log.debug("addOverlay():: adding overlay " + name);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("addOverlay():: adding overlay " + name);
         }
         try {
             byte[] data = name.getBytes(AFPConstants.EBCIDIC_ENCODING);
             getOverlays().add(data);
         } catch (UnsupportedEncodingException usee) {
-            log.error("addOverlay():: UnsupportedEncodingException translating the name "
+            LOG.error("addOverlay():: UnsupportedEncodingException translating the name "
                 + name);
         }
     }

@@ -27,6 +27,10 @@ import org.apache.fop.datatypes.PercentBaseContext;
 public class EnumLength extends LengthProperty {
     private Property enumProperty;
 
+    /**
+     * Construct an enumerated length from an enum property.
+     * @param enumProperty the enumeration property
+     */
     public EnumLength(Property enumProperty) {
         this.enumProperty = enumProperty;
     }
@@ -38,6 +42,7 @@ public class EnumLength extends LengthProperty {
         return enumProperty.getEnum();
     }
 
+    /** @return true if absolute */
     public boolean isAbsolute() {
         return false;
     }

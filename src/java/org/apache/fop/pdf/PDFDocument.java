@@ -124,8 +124,8 @@ public class PDFDocument {
     private PDFEncryption encryption;
 
     /** the colorspace (0=RGB, 1=CMYK) */
-    private PDFDeviceColorSpace colorspace =
-        new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
+    private PDFDeviceColorSpace colorspace
+        = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
 
     /** the counter for Pattern name numbering (e.g. 'Pattern1') */
     private int patternCount = 0;

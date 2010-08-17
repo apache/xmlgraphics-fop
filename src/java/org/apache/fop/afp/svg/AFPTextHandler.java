@@ -21,7 +21,6 @@ package org.apache.fop.afp.svg;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.io.IOException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -34,13 +33,13 @@ import org.apache.fop.afp.fonts.AFPPageFonts;
 import org.apache.fop.afp.modca.GraphicsObject;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.svg.FOPTextHandler;
+import org.apache.fop.svg.FOPTextHandlerAdapter;
 
 /**
  * Specialized TextHandler implementation that the AFPGraphics2D class delegates to to paint text
  * using AFP GOCA text operations.
  */
-public class AFPTextHandler implements FOPTextHandler {
+public class AFPTextHandler extends FOPTextHandlerAdapter {
 
     /** logging instance */
     private static Log log = LogFactory.getLog(AFPTextHandler.class);
@@ -73,7 +72,6 @@ public class AFPTextHandler implements FOPTextHandler {
      * Registers a page font
      *
      * @param internalFontName the internal font name
-     * @param internalFontName the internal font name
      * @param fontSize the font size
      * @return a font reference
      */
@@ -88,19 +86,13 @@ public class AFPTextHandler implements FOPTextHandler {
         return afpFontAttributes.getFontReference();
     }
 
-    /** {@inheritDoc} */
-    public void drawString(String text, float x, float y) throws IOException {
-        // TODO Remove me after removing the deprecated method in TextHandler.
-        throw new UnsupportedOperationException("Deprecated method!");
-    }
-
     /**
      * Add a text string to the current data object of the AFP datastream.
      * The text is painted using text operations.
      *
      * {@inheritDoc}
      */
-    public void drawString(Graphics2D g, String str, float x, float y) throws IOException {
+    public void drawString(Graphics2D g, String str, float x, float y) {
         if (log.isDebugEnabled()) {
             log.debug("drawString() str=" + str + ", x=" + x + ", y=" + y);
         }

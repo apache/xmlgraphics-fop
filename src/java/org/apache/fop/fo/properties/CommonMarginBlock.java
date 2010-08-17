@@ -33,46 +33,47 @@ public class CommonMarginBlock {
     /**
      * The "margin-top" property.
      */
-    public Length marginTop;
+    public Length marginTop;                                    // CSOK: VisibilityModifier
 
     /**
      * The "margin-bottom" property.
      */
-    public Length marginBottom;
+    public Length marginBottom;                                 // CSOK: VisibilityModifier
 
     /**
      * The "margin-left" property.
      */
-    public Length marginLeft;
+    public Length marginLeft;                                   // CSOK: VisibilityModifier
 
     /**
      * The "margin-right" property.
      */
-    public Length marginRight;
+    public Length marginRight;                                  // CSOK: VisibilityModifier
 
     /**
      * The "space-before" property.
      */
-    public SpaceProperty spaceBefore;
+    public SpaceProperty spaceBefore;                           // CSOK: VisibilityModifier
 
     /**
      * The "space-after" property.
      */
-    public SpaceProperty spaceAfter;
+    public SpaceProperty spaceAfter;                            // CSOK: VisibilityModifier
 
     /**
      * The "start-indent" property.
      */
-    public Length startIndent;
+    public Length startIndent;                                  // CSOK: VisibilityModifier
 
     /**
      * The "end-indent" property.
      */
-    public Length endIndent;
+    public Length endIndent;                                    // CSOK: VisibilityModifier
 
     /**
      * Create a CommonMarginBlock object.
      * @param pList The PropertyList with propery values.
+     * @throws PropertyException if a property exception occurs
      */
     public CommonMarginBlock(PropertyList pList) throws PropertyException {
         marginTop = pList.get(Constants.PR_MARGIN_TOP).getLength();

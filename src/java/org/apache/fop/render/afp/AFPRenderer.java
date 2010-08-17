@@ -404,9 +404,11 @@ public class AFPRenderer extends AbstractPathOrientedRenderer implements AFPCust
     }
 
     /** {@inheritDoc} */
-    public void drawBorderLine(float x1, float y1, float x2, float y2,
-            boolean horz, boolean startOrBefore, int style, Color col) {
-        BorderPaintingInfo borderPaintInfo = new BorderPaintingInfo(x1, y1, x2, y2, horz, style, col);
+    public void drawBorderLine                                  // CSOK: ParameterNumber
+        (float x1, float y1, float x2, float y2,
+         boolean horz, boolean startOrBefore, int style, Color col) {
+        BorderPaintingInfo borderPaintInfo
+            = new BorderPaintingInfo(x1, y1, x2, y2, horz, style, col);
         borderPainter.paint(borderPaintInfo);
     }
 
@@ -654,7 +656,8 @@ public class AFPRenderer extends AbstractPathOrientedRenderer implements AFPCust
         textDataInfo.setString(textString);
 
         try {
-            dataStream.createText(textDataInfo, textLetterSpaceAdjust, textWordSpaceAdjust, fnt, charSet);
+            dataStream.createText
+                (textDataInfo, textLetterSpaceAdjust, textWordSpaceAdjust, fnt, charSet);
         } catch (UnsupportedEncodingException e) {
             AFPEventProducer eventProducer
                 = AFPEventProducer.Provider.get(userAgent.getEventBroadcaster());
@@ -784,7 +787,8 @@ public class AFPRenderer extends AbstractPathOrientedRenderer implements AFPCust
                         if (AFPElementMapping.INCLUDE_PAGE_OVERLAY.equals(element)) {
                             String overlay = ipo.getName();
                             if (overlay != null) {
-                                dataStream.createIncludePageOverlay(overlay, ipo.getX(), ipo.getY());
+                                dataStream.createIncludePageOverlay
+                                    (overlay, ipo.getX(), ipo.getY());
                             }
                         }
                     }

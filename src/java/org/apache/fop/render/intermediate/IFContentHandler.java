@@ -24,62 +24,74 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 
+/** intermediate format content handler */
 public class IFContentHandler implements ContentHandler {
 
+    /** {@inheritDoc} */
     public void characters(char[] arg0, int arg1, int arg2) throws SAXException {
         // TODO Auto-generated method stub
 
     }
 
+    /** {@inheritDoc} */
     public void endDocument() throws SAXException {
         // TODO Auto-generated method stub
 
     }
 
+    /** {@inheritDoc} */
     public void endElement(String arg0, String arg1, String arg2)
             throws SAXException {
         // TODO Auto-generated method stub
 
     }
 
+    /** {@inheritDoc} */
     public void endPrefixMapping(String arg0) throws SAXException {
         // TODO Auto-generated method stub
 
     }
 
+    /** {@inheritDoc} */
     public void ignorableWhitespace(char[] arg0, int arg1, int arg2)
             throws SAXException {
         // TODO Auto-generated method stub
 
     }
 
+    /** {@inheritDoc} */
     public void processingInstruction(String arg0, String arg1)
             throws SAXException {
         // TODO Auto-generated method stub
 
     }
 
+    /** {@inheritDoc} */
     public void setDocumentLocator(Locator arg0) {
         // TODO Auto-generated method stub
 
     }
 
+    /** {@inheritDoc} */
     public void skippedEntity(String arg0) throws SAXException {
         // TODO Auto-generated method stub
 
     }
 
+    /** {@inheritDoc} */
     public void startDocument() throws SAXException {
         // TODO Auto-generated method stub
 
     }
 
+    /** {@inheritDoc} */
     public void startElement(String arg0, String arg1, String arg2,
             Attributes arg3) throws SAXException {
         // TODO Auto-generated method stub
 
     }
 
+    /** {@inheritDoc} */
     public void startPrefixMapping(String arg0, String arg1)
             throws SAXException {
         // TODO Auto-generated method stub

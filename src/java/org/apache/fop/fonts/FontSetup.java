@@ -25,8 +25,6 @@ import java.util.List;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.fop.fonts.base14.Courier;
 import org.apache.fop.fonts.base14.CourierBold;
 import org.apache.fop.fonts.base14.CourierBoldOblique;
@@ -51,12 +49,10 @@ import org.apache.fop.fonts.base14.ZapfDingbats;
  * Assigns the font (with metrics) to internal names like "F1" and
  * assigns family-style-weight triplets to the fonts
  */
-public class FontSetup {
+public final class FontSetup {
 
-    /**
-     * logging instance
-     */
-    protected static Log log = LogFactory.getLog(FontSetup.class);
+    private FontSetup() {
+    }
 
     /**
      * Sets up a font info

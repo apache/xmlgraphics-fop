@@ -151,7 +151,7 @@ public class PageSequence extends AbstractPageSequence {
 
     /**
      * {@inheritDoc}
-     * @todo see if addChildNode() should also be called for fo's other than
+     * @asf.todo see if addChildNode() should also be called for fo's other than
      *  fo:flow.
      */
     public void addChildNode(FONode child) throws FOPException {
@@ -254,10 +254,9 @@ public class PageSequence extends AbstractPageSequence {
      * @return the SimplePageMaster to use for this page
      * @throws PageProductionException if there's a problem determining the page master
      */
-    public SimplePageMaster getNextSimplePageMaster(int page,
-                                                    boolean isFirstPage,
-                                                    boolean isLastPage,
-                                                    boolean isBlank) throws PageProductionException {
+    public SimplePageMaster getNextSimplePageMaster
+        (int page, boolean isFirstPage, boolean isLastPage, boolean isBlank)
+        throws PageProductionException {
 
         if (pageSequenceMaster == null) {
             return simplePageMaster;

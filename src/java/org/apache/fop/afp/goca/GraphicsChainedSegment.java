@@ -73,7 +73,6 @@ public final class GraphicsChainedSegment extends AbstractGraphicsDrawingOrderCo
         return NAME_LENGTH;
     }
 
-    /** {@inheritDoc} */
     byte getOrderCode() {
         return 0x70;
     }

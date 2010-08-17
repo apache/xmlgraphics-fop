@@ -27,38 +27,38 @@ import org.apache.fop.pdf.CMapBuilder;
 
 /** Simple sanity test of the PDFCmap class */
 public class PDFCMapTestCase extends TestCase {
+    private static final String EOL = "\n";
 
     public void testPDFCMapFillInPDF() throws Exception {
-        final String EOL = "\n";
-        final String expected =
-            "%!PS-Adobe-3.0 Resource-CMap" + EOL
-            +"%%DocumentNeededResources: ProcSet (CIDInit)" + EOL
-            +"%%IncludeResource: ProcSet (CIDInit)" + EOL
-            +"%%BeginResource: CMap (test)" + EOL
-            +"%%EndComments" + EOL
-            +"/CIDInit /ProcSet findresource begin" + EOL
-            +"12 dict begin" + EOL
-            +"begincmap" + EOL
-            +"/CIDSystemInfo 3 dict dup begin" + EOL
-            +"  /Registry (Adobe) def" + EOL
-            +"  /Ordering (Identity) def" + EOL
-            +"  /Supplement 0 def" + EOL
-            +"end def" + EOL
-            +"/CMapVersion 1 def" + EOL
-            +"/CMapType 1 def" + EOL
-            +"/CMapName /test def" + EOL
-            +"1 begincodespacerange" + EOL
-            +"<0000> <FFFF>" + EOL
-            +"endcodespacerange" + EOL
-            +"1 begincidrange" + EOL
-            +"<0000> <FFFF> 0" + EOL
-            +"endcidrange" + EOL
-            +"endcmap" + EOL
-            +"CMapName currentdict /CMap defineresource pop" + EOL
-            +"end" + EOL
-            +"end" + EOL
-            +"%%EndResource" + EOL
-            +"%%EOF" + EOL
+        final String expected
+            = "%!PS-Adobe-3.0 Resource-CMap" + EOL
+            + "%%DocumentNeededResources: ProcSet (CIDInit)" + EOL
+            + "%%IncludeResource: ProcSet (CIDInit)" + EOL
+            + "%%BeginResource: CMap (test)" + EOL
+            + "%%EndComments" + EOL
+            + "/CIDInit /ProcSet findresource begin" + EOL
+            + "12 dict begin" + EOL
+            + "begincmap" + EOL
+            + "/CIDSystemInfo 3 dict dup begin" + EOL
+            + "  /Registry (Adobe) def" + EOL
+            + "  /Ordering (Identity) def" + EOL
+            + "  /Supplement 0 def" + EOL
+            + "end def" + EOL
+            + "/CMapVersion 1 def" + EOL
+            + "/CMapType 1 def" + EOL
+            + "/CMapName /test def" + EOL
+            + "1 begincodespacerange" + EOL
+            + "<0000> <FFFF>" + EOL
+            + "endcodespacerange" + EOL
+            + "1 begincidrange" + EOL
+            + "<0000> <FFFF> 0" + EOL
+            + "endcidrange" + EOL
+            + "endcmap" + EOL
+            + "CMapName currentdict /CMap defineresource pop" + EOL
+            + "end" + EOL
+            + "end" + EOL
+            + "%%EndResource" + EOL
+            + "%%EOF" + EOL
         ;
 
         final StringWriter w = new StringWriter();

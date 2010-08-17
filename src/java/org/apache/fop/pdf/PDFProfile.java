@@ -265,4 +265,16 @@ public class PDFProfile {
         }
     }
 
+    /** Checks if embedded files are allowed. */
+    public void verifyEmbeddedFilesAllowed() {
+        final String err = "{0} does not allow embedded files.";
+        if (isPDFAActive()) {
+            throw new PDFConformanceException(format(err, getPDFAMode()));
+        }
+        if (isPDFXActive()) {
+            //Implicit since file specs are forbidden
+            throw new PDFConformanceException(format(err, getPDFXMode()));
+        }
+    }
+
 }

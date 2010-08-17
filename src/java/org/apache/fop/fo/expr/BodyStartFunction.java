@@ -47,8 +47,9 @@ public class BodyStartFunction extends FunctionBase {
      */
     public Property eval(Property[] args,
                          PropertyInfo pInfo) throws PropertyException {
-        Numeric distance =
-            pInfo.getPropertyList().get(Constants.PR_PROVISIONAL_DISTANCE_BETWEEN_STARTS).getNumeric();
+        Numeric distance
+            = pInfo.getPropertyList()
+              .get(Constants.PR_PROVISIONAL_DISTANCE_BETWEEN_STARTS).getNumeric();
 
         PropertyList pList = pInfo.getPropertyList();
         while (pList != null && !(pList.getFObj() instanceof ListItem)) {

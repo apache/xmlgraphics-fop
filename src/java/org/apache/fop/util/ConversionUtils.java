@@ -25,6 +25,9 @@ package org.apache.fop.util;
  */
 public final class ConversionUtils {
 
+    private ConversionUtils() {
+    }
+
     /**
      * Converts the given base <code>String</code> into
      * an array of <code>int</code>, splitting the base along the

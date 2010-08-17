@@ -71,10 +71,11 @@ public class TXTStream {
      * @param encoding the encoding, if null, "UTF-8" is chosen as default
      */
     public void setEncoding(String encoding) {
-        if (encoding != null)
+        if (encoding != null) {
             this.encoding = encoding;
-        else
+        } else {
             this.encoding = DEFAULT_ENCODING;
+        }
     }
 }
 

@@ -215,6 +215,7 @@ public abstract class AbstractRenderer
 
     /** {@inheritDoc} */
     public void startPageSequence(PageSequence pageSequence) {
+        //TODO Discuss removing old deprecated method startPageSequence(LineArea)
         startPageSequence(pageSequence.getTitle());
     }
 

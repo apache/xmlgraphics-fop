@@ -494,8 +494,9 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
     /**
      * {@inheritDoc}
      */
-    protected void drawBorderLine(float x1, float y1, float x2, float y2,
-            boolean horz, boolean startOrBefore, int style, Color col) {
+    protected void drawBorderLine                               // CSOK: ParameterNumber
+        (float x1, float y1, float x2, float y2,
+         boolean horz, boolean startOrBefore, int style, Color col) {
 
         int borderHeight = bm.getHeight();
         int borderWidth = bm.getWidth();

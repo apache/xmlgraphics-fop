@@ -31,10 +31,13 @@ import org.apache.commons.logging.LogFactory;
  * This class acts as a factory for PDF encryption support. It enables the
  * feature to be optional to FOP depending on the availability of JCE.
  */
-public class PDFEncryptionManager {
+public final class PDFEncryptionManager {
+
+    private PDFEncryptionManager() {
+    }
 
     /** logging instance */
-    protected static Log log = LogFactory.getLog(PDFEncryptionManager.class);
+    private static final Log LOG = LogFactory.getLog(PDFEncryptionManager.class);
 
     /**
      * Indicates whether JCE is available.
@@ -60,12 +63,12 @@ public class PDFEncryptionManager {
             Provider[] providers;
             providers = Security.getProviders("Cipher.RC4");
             if (providers == null) {
-                log.warn("Cipher provider for RC4 not available.");
+                LOG.warn("Cipher provider for RC4 not available.");
                 return false;
             }
             providers = Security.getProviders("MessageDigest.MD5");
             if (providers == null) {
-                log.warn("MessageDigest provider for MD5 not available.");
+                LOG.warn("MessageDigest provider for MD5 not available.");
                 return false;
             }
             return true;
@@ -88,13 +91,13 @@ public class PDFEncryptionManager {
         if (params != null) {
             if (!checkAvailableAlgorithms()) {
                 if (isJCEAvailable()) {
-                    log.warn("PDF encryption has been requested, JCE is "
+                    LOG.warn("PDF encryption has been requested, JCE is "
                             + "available but there's no "
                             + "JCE provider available that provides the "
                             + "necessary algorithms. The PDF won't be "
                             + "encrypted.");
                 } else {
-                    log.warn("PDF encryption has been requested but JCE is "
+                    LOG.warn("PDF encryption has been requested but JCE is "
                             + "unavailable! The PDF won't be encrypted.");
                 }
             }
@@ -119,19 +122,19 @@ public class PDFEncryptionManager {
             return (PDFEncryption)obj;
         } catch (ClassNotFoundException e) {
             if (checkAvailableAlgorithms()) {
-                log.warn("JCE and algorithms available, but the "
+                LOG.warn("JCE and algorithms available, but the "
                     + "implementation class unavailable. Please do a full "
                     + "rebuild.");
             }
             return null;
         } catch (NoSuchMethodException e) {
-            log.error(e);
+            LOG.error(e);
             return null;
         } catch (IllegalAccessException e) {
-            log.error(e);
+            LOG.error(e);
             return null;
         } catch (InvocationTargetException e) {
-            log.error(e);
+            LOG.error(e);
             return null;
         }
     }

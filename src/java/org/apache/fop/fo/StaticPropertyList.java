@@ -14,6 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+/* $Id$ */
+
 package org.apache.fop.fo;
 
 import org.apache.fop.fo.expr.PropertyException;
@@ -62,14 +65,14 @@ public class StaticPropertyList extends PropertyList {
     /**
      * Override PropertyList.get() and provides fast caching of previously
      * retrieved property values.
-     * @param propId The property ID
+     * {@inheritDoc}
      */
     public Property get(int propId, boolean bTryInherit, boolean bTryDefault)
-        throws PropertyException
-    {
+        throws PropertyException {
         Property p = values[propId];
         if (p == null) {
-            p = values[propId] = super.get(propId, bTryInherit, bTryDefault);
+            p = super.get(propId, bTryInherit, bTryDefault);
+            values[propId] = p;
         }
         return p;
     }

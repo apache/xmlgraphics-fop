@@ -34,7 +34,9 @@ import org.apache.fop.fo.PropertyList;
 public abstract class AbstractPageSequence extends FObj {
 
     // The value of properties relevant for fo:page-sequence.
+    /** initial page number */
     protected Numeric initialPageNumber;
+    /** forced page count */
     protected int forcePageCount;
     private String format;
     private int letterValue;
@@ -45,6 +47,7 @@ public abstract class AbstractPageSequence extends FObj {
 
     private PageNumberGenerator pageNumberGenerator;
 
+    /** starting page number */
     protected int startingPageNumber = 0;
 
     /**

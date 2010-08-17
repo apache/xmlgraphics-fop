@@ -52,6 +52,7 @@ public class Hyphenation {
     }
 
     /**
+     * @param index an index position
      * @return the pre-break text, not including the hyphen character
      */
     public String getPreHyphenText(int index) {
@@ -59,6 +60,7 @@ public class Hyphenation {
     }
 
     /**
+     * @param index an index position
      * @return the post-break text
      */
     public String getPostHyphenText(int index) {
@@ -72,6 +74,7 @@ public class Hyphenation {
         return hyphenPoints;
     }
 
+    /** {@inheritDoc} */
     public String toString() {
         StringBuffer str = new StringBuffer();
         int start = 0;

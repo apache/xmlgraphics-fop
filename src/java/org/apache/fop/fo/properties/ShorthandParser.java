@@ -30,9 +30,11 @@ public interface ShorthandParser {
 
     /**
      * @param propId the property ID in the Constants interface
+     * @param property from which value is obtained
      * @param maker Maker object for the Property
      * @param propertyList list of properties
      * @return Property object corresponding to propName
+     * @throws PropertyException in case a property exception occurs
      */
     Property getValueForProperty(int propId,
                                  Property property,

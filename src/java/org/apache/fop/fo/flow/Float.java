@@ -38,7 +38,7 @@ public class Float extends FObj {
     //     private int clear;
     // End of property values
 
-    static boolean notImplementedWarningGiven = false;
+    private static boolean notImplementedWarningGiven = false;
 
     /**
      * Base constructor

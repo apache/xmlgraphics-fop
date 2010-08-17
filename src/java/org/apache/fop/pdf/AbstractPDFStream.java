@@ -191,7 +191,7 @@ public abstract class AbstractPDFStream extends PDFDictionary {
         StreamCache encodedStream = null;
         PDFNumber refLength = null;
         final Object lengthEntry;
-        if (getDocument().isEncodingOnTheFly()) {
+        if (isEncodingOnTheFly()) {
             refLength = new PDFNumber();
             getDocumentSafely().registerObject(refLength);
             lengthEntry = refLength;
@@ -215,6 +215,15 @@ public abstract class AbstractPDFStream extends PDFDictionary {
         writer.write("\nendobj\n");
         writer.flush();
         return cout.getCount();
+    }
+
+    /**
+     * Indicates whether encoding may happen without buffering the encoded data. If this method
+     * returns true, the /Length entry will be an indirect object, a direct object otherwise.
+     * @return true if encoding should happen "on the fly"
+     */
+    protected boolean isEncodingOnTheFly() {
+        return getDocument().isEncodingOnTheFly();
     }
 
     /**

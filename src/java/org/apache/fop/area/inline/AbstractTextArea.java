@@ -140,12 +140,14 @@ public abstract class AbstractTextArea extends InlineParent {
                 if (textWordSpaceAdjust < 0) {
                     // from a negative adjustment to a positive one
                     balancingFactor
-                        = ((double) textAdjustingInfo.availableStretch / textAdjustingInfo.availableShrink)
+                        = ((double) textAdjustingInfo.availableStretch
+                           / textAdjustingInfo.availableShrink)
                             * ((double) lineShrink / lineStretch);
                 } else {
                     // from a positive adjustment to a negative one
                     balancingFactor
-                        = ((double) textAdjustingInfo.availableShrink / textAdjustingInfo.availableStretch)
+                        = ((double) textAdjustingInfo.availableShrink
+                           / textAdjustingInfo.availableStretch)
                             * ((double) lineStretch / lineShrink);
                 }
             }

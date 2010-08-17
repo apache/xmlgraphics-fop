@@ -14,6 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+/* $Id$ */
+
 package org.apache.fop.fo.properties;
 
 import java.util.Iterator;
@@ -72,11 +75,11 @@ public class TextDecorationProperty extends ListProperty {
                 if (prop instanceof EnumProperty) {
                     //skip
                 } else if (prop instanceof NCnameProperty) {
-                    Property prop_enum = checkEnumValues(((NCnameProperty)prop).getString());
-                    if (prop_enum == null) {
+                    Property propEnum = checkEnumValues(((NCnameProperty)prop).getString());
+                    if (propEnum == null) {
                         throw new PropertyException("Illegal enum value: " + prop.getString());
                     }
-                    l.set(i, prop_enum);
+                    l.set(i, propEnum);
                 } else {
                     throw new PropertyException("Invalid content for text-decoration "
                             + "property: " + prop);
@@ -113,7 +116,8 @@ public class TextDecorationProperty extends ListProperty {
                 case Constants.EN_UNDERLINE:
                 case Constants.EN_NO_UNDERLINE:
                     if (none) {
-                        throw new PropertyException("'none' specified, no additional values allowed");
+                        throw new PropertyException
+                            ("'none' specified, no additional values allowed");
                     }
                     if (under) {
                         throw new PropertyException("Invalid combination of values");
@@ -123,7 +127,8 @@ public class TextDecorationProperty extends ListProperty {
                 case Constants.EN_OVERLINE:
                 case Constants.EN_NO_OVERLINE:
                     if (none) {
-                        throw new PropertyException("'none' specified, no additional values allowed");
+                        throw new PropertyException
+                            ("'none' specified, no additional values allowed");
                     }
                     if (over) {
                         throw new PropertyException("Invalid combination of values");
@@ -133,7 +138,8 @@ public class TextDecorationProperty extends ListProperty {
                 case Constants.EN_LINE_THROUGH:
                 case Constants.EN_NO_LINE_THROUGH:
                     if (none) {
-                        throw new PropertyException("'none' specified, no additional values allowed");
+                        throw new PropertyException
+                            ("'none' specified, no additional values allowed");
                     }
                     if (through) {
                         throw new PropertyException("Invalid combination of values");
@@ -143,7 +149,8 @@ public class TextDecorationProperty extends ListProperty {
                 case Constants.EN_BLINK:
                 case Constants.EN_NO_BLINK:
                     if (none) {
-                        throw new PropertyException("'none' specified, no additional values allowed");
+                        throw new PropertyException
+                            ("'none' specified, no additional values allowed");
                     }
                     if (blink) {
                         throw new PropertyException("Invalid combination of values");

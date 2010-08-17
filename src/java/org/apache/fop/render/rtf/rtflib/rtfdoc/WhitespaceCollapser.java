@@ -17,6 +17,7 @@
 
 /* $Id$ */
 
+package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
 /*
  * This file is part of the RTF library of the FOP project, which was originally
@@ -25,8 +26,6 @@
  * the FOP project.
  */
 
-package org.apache.fop.render.rtf.rtflib.rtfdoc;
-
 import java.util.Iterator;
 import java.util.StringTokenizer;
 
@@ -34,11 +33,15 @@ import java.util.StringTokenizer;
  *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
  */
 
-class WhitespaceCollapser {
+final class WhitespaceCollapser {
+
     private static final String SPACE = " ";
     private boolean lastEndSpace = true;
 
-    /** remove extra whitespace in RtfText elements that are inside c */
+    /**
+     * Remove extra whitespace in RtfText elements that are inside container.
+     * @param c the container
+     */
     WhitespaceCollapser(RtfContainer c) {
         // process all texts
         for (Iterator it = c.getChildren().iterator(); it.hasNext();) {
@@ -54,6 +57,11 @@ class WhitespaceCollapser {
                 lastEndSpace = true;
             }
         }
+    }
+
+    /** @return last end space */
+    public boolean getLastEndSpace() {
+        return lastEndSpace;
     }
 
     /** process one RtfText from our container */

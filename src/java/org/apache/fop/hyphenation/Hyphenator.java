@@ -259,7 +259,8 @@ public class Hyphenator {
                     if (source.getSystemId() != null) {
                         in = new java.net.URL(source.getSystemId()).openStream();
                     } else {
-                        throw new UnsupportedOperationException("Cannot load hyphenation pattern file"
+                        throw new UnsupportedOperationException
+                            ("Cannot load hyphenation pattern file"
                             + " with the supplied Source object: " + source);
                     }
                 }
@@ -377,7 +378,8 @@ public class Hyphenator {
      * @param rightMin the minimum number of characters after the hyphenation point
      * @return the hyphenation result
      */
-    public static Hyphenation hyphenate(String lang, String country,
+    public static Hyphenation hyphenate(String lang,            // CSOK: ParameterNumber
+                                        String country,    
                                         HyphenationTreeResolver resolver,
                                         char[] word, int offset, int len,
                                         int leftMin, int rightMin) {

@@ -160,10 +160,15 @@ public abstract class AbstractFOPImageElementBridge extends SVGImageElementBridg
      */
     public class LoaderImageNode extends AbstractGraphicsNode {
 
+        /** image */
         protected final Image image;
+        /** bridge context */
         protected final BridgeContext ctx;
+        /** image element */
         protected final Element imageElement;
+        /** parsed url */
         protected final ParsedURL purl;
+        /** original graphics mode */
         protected GraphicsNode origGraphicsNode = null;
 
         /**

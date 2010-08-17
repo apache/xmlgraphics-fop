@@ -27,6 +27,9 @@ import java.io.ByteArrayOutputStream;
  */
 public final class BinaryUtils {
 
+    private BinaryUtils() {
+    }
+
     /**
      * Convert an int into the corresponding byte array by encoding each
      * two hexadecimal digits as a char. This will return a byte array

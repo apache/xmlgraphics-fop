@@ -31,12 +31,13 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.apache.fop.apps.Fop;
+import org.xml.sax.InputSource;
+
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.util.DigestFilter;
-import org.xml.sax.InputSource;
 
 /**
  * Framework for simple regression testing.
@@ -76,8 +77,8 @@ public final class GenericFOPTestCase extends TestCase {
     public void testSimple() throws Exception {
         final String digestIn = "17bf13298796065f7775db8707133aeb";
         final String digestOut = "e2761f51152f6663911e567901596707";
-        final String fo =
-            "<fo:root xmlns:fo='http://www.w3.org/1999/XSL/Format'>"
+        final String fo
+            = "<fo:root xmlns:fo='http://www.w3.org/1999/XSL/Format'>"
                 + "  <fo:layout-master-set>"
                 + "    <fo:simple-page-master master-name='simple'"
                 + "       page-height='25cm' page-width='20cm'>"
@@ -118,8 +119,8 @@ public final class GenericFOPTestCase extends TestCase {
         FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
         foUserAgent.setCreationDate(new Date(10000));
         MessageDigest outDigest = MessageDigest.getInstance("MD5");
-        DigestOutputStream out =
-            new DigestOutputStream(new ByteArrayOutputStream(), outDigest);
+        DigestOutputStream out
+            = new DigestOutputStream(new ByteArrayOutputStream(), outDigest);
         Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, foUserAgent, out);
         InputSource source = new InputSource(new StringReader(fo));
         DigestFilter filter = new DigestFilter("MD5");

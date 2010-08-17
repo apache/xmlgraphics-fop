@@ -218,6 +218,10 @@ public class InlineArea extends Area {
         return false;
     }
 
+    /**
+     * Apply IPD variation.
+     * @param ipdVariation the variation
+     */
     public void handleIPDVariation(int ipdVariation) {
         increaseIPD(ipdVariation);
         notifyIPDVariation(ipdVariation);

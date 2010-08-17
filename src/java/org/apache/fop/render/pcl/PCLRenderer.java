@@ -445,7 +445,7 @@ public class PCLRenderer extends PrintRenderer implements PCLConstants {
 
     /**
      * {@inheritDoc}
-     * @todo Copied from AbstractPathOrientedRenderer
+     * @asf.todo Copied from AbstractPathOrientedRenderer
      */
     protected void handleRegionTraits(RegionViewport region) {
         Rectangle2D viewArea = region.getViewArea();
@@ -723,7 +723,7 @@ public class PCLRenderer extends PrintRenderer implements PCLConstants {
      * Render an inline viewport.
      * This renders an inline viewport by clipping if necessary.
      * @param viewport the viewport to handle
-     * @todo Copied from AbstractPathOrientedRenderer
+     * @asf.todo Copied from AbstractPathOrientedRenderer
      */
     public void renderViewport(Viewport viewport) {
 
@@ -1062,7 +1062,7 @@ public class PCLRenderer extends PrintRenderer implements PCLConstants {
      * The all borders and padding are drawn outside the specified area.
      * @param area the inline area for which the background, border and padding is to be
      * rendered
-     * @todo Copied from AbstractPathOrientedRenderer
+     * @asf.todo Copied from AbstractPathOrientedRenderer
      */
     protected void renderInlineAreaBackAndBorders(InlineArea area) {
         float x = currentIPPosition / 1000f;
@@ -1245,7 +1245,8 @@ public class PCLRenderer extends PrintRenderer implements PCLConstants {
      * @param bpsStart the border specification on the start side
      * @param bpsEnd the border specification on the end side
      */
-    protected void drawQualityBorders(Rectangle2D.Float borderRect,
+    protected void drawQualityBorders                           // CSOK: MethodLength
+        (Rectangle2D.Float borderRect,
             final BorderProps bpsBefore, final BorderProps bpsAfter,
             final BorderProps bpsStart, final BorderProps bpsEnd) {
         Graphics2DAdapter g2a = getGraphics2DAdapter();
@@ -1277,7 +1278,8 @@ public class PCLRenderer extends PrintRenderer implements PCLConstants {
 
         Graphics2DImagePainter painter = new Graphics2DImagePainter() {
 
-            public void paint(Graphics2D g2d, Rectangle2D area) {
+                public void paint                                   // CSOK: MethodLength
+                (Graphics2D g2d, Rectangle2D area) {
                 g2d.translate(xoffset, yoffset);
                 g2d.scale(1000, 1000);
                 float startx = effBorderRect.x;

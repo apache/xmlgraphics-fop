@@ -181,8 +181,8 @@ public class RtfTableCell
     }
 
     /** used by RtfTableRow to write the <celldef> cell definition control words
-     *  @param widthOffset sum of the widths of preceeding cells in same row
-     *  @return widthOffset + width of this cell
+     *  @param offset sum of the widths of preceeding cells in same row
+     *  @return offset + width of this cell
      */
     int writeCellDef(int offset) throws IOException {
         /*

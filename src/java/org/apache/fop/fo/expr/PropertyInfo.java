@@ -58,6 +58,7 @@ public class PropertyInfo {
      * a percent specification.
      * Propagates to the Maker.
      * @return The PercentBase object or null if percentLengthOK()=false.
+     * @throws PropertyException if a property exception occurs
      */
     public PercentBase getPercentBase() throws PropertyException {
         PercentBase pcbase = getFunctionPercentBase();
@@ -66,6 +67,7 @@ public class PropertyInfo {
 
     /**
      * @return the current font-size value as base units (milli-points).
+     * @throws PropertyException if a property exception occurs
      */
     public Length currentFontSize() throws PropertyException {
         return plist.get(Constants.PR_FONT_SIZE).getLength();

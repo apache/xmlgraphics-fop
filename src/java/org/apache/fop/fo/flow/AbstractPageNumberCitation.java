@@ -109,7 +109,9 @@ public abstract class AbstractPageNumberCitation extends FObj
     }
 
     /** {@inheritDoc} */
-    public void processNode(String elementName, Locator locator, Attributes attlist, PropertyList pList) throws FOPException {
+    public void processNode
+        (String elementName, Locator locator, Attributes attlist, PropertyList pList)
+        throws FOPException {
         super.processNode(elementName, locator, attlist, pList);
         if (!inMarker() && (refId == null || "".equals(refId))) {
             missingPropertyError("ref-id");

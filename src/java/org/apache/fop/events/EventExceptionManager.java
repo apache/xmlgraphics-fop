@@ -27,7 +27,10 @@ import org.apache.xmlgraphics.util.Service;
 /**
  * This class is responsible for converting events into exceptions.
  */
-public class EventExceptionManager {
+public final class EventExceptionManager {
+
+    private EventExceptionManager() {
+    }
 
     private static final Map EXCEPTION_FACTORIES = new java.util.HashMap();
 

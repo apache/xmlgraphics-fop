@@ -100,7 +100,7 @@ public abstract class BaseUserConfigTestCase extends BasePDFTestCase {
     /**
      * @return user config File
      */
-    abstract protected String getUserConfigFilename();
+    protected abstract String getUserConfigFilename();
 
     /*
      * @see junit.framework.TestCase#getName()

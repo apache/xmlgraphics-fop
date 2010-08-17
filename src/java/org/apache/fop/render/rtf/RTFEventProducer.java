@@ -31,7 +31,10 @@ import org.apache.fop.fo.FONode;
 public interface RTFEventProducer extends EventProducer {
 
     /** Provider class for the event producer. */
-    class Provider {
+    final class Provider {
+
+        private Provider() {
+        }
 
         /**
          * Returns an event producer.

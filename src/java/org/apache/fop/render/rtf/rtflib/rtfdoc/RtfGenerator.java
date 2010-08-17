@@ -27,7 +27,12 @@ import java.io.Writer;
  */
 public class RtfGenerator extends RtfElement {
 
-    /** Default constructor for the generator element. */
+    /**
+     * Default constructor for the generator element.
+     * @param h a header
+     * @param w a writer
+     * @throws IOException if not caught
+     */
     public RtfGenerator(RtfHeader h, Writer w) throws IOException {
         super(h, w);
     }

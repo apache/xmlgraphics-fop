@@ -33,31 +33,32 @@ public class CommonAbsolutePosition {
     /**
      * The "absolute-position" property.
      */
-    public int absolutePosition;
+    public int absolutePosition;                                // CSOK: VisibilityModifier
 
     /**
      * The "top" property.
      */
-    public Length top;
+    public Length top;                                          // CSOK: VisibilityModifier
 
     /**
      * The "right" property.
      */
-    public Length right;
+    public Length right;                                        // CSOK: VisibilityModifier
 
     /**
      * The "bottom" property.
      */
-    public Length bottom;
+    public Length bottom;                                       // CSOK: VisibilityModifier
 
     /**
      * The "left" property.
      */
-    public Length left;
+    public Length left;                                         // CSOK: VisibilityModifier
 
     /**
      * Create a CommonAbsolutePosition object.
      * @param pList The PropertyList with propery values.
+     * @throws PropertyException if a property exception is raised
      */
     public CommonAbsolutePosition(PropertyList pList) throws PropertyException {
         absolutePosition = pList.get(Constants.PR_ABSOLUTE_POSITION).getEnum();
@@ -67,6 +68,7 @@ public class CommonAbsolutePosition {
         right = pList.get(Constants.PR_RIGHT).getLength();
     }
 
+    /** {@inheritDoc} */
     public String toString() {
         StringBuffer sb = new StringBuffer("CommonAbsolutePosition{");
         sb.append(" absPos=");

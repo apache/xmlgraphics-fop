@@ -31,12 +31,17 @@ package org.apache.fop.render.mif;
 public class RefElement extends MIFElement {
 
     /**
+     * @param name a name
      * @see org.apache.fop.render.mif.MIFElement#MIFElement(String)
      */
-    public RefElement(String n) {
-        super(n);
+    public RefElement(String name) {
+        super(name);
     }
 
+    /** 
+     * @param key a key
+     * @return an mif element
+     */
     public MIFElement lookupElement(Object key) {
         return null;
     }

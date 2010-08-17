@@ -39,7 +39,7 @@ class PDFGraphicsDevice extends GraphicsDevice {
     /**
      * Create a new PDF graphics device.
      *
-     * @param The gc we should reference
+     * @param gc The graphics configuration we should reference
      */
     PDFGraphicsDevice(PDFGraphicsConfiguration gc) {
         this.gc = gc;
@@ -62,7 +62,7 @@ class PDFGraphicsDevice extends GraphicsDevice {
      * @return an array containing the one graphics configuration
      */
     public GraphicsConfiguration[] getConfigurations() {
-        return new GraphicsConfiguration[]{ gc };
+        return new GraphicsConfiguration[] {gc};
     }
 
     /**

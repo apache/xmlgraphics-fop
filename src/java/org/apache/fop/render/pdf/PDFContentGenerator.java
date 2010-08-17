@@ -115,7 +115,7 @@ public class PDFContentGenerator {
     }
 
     /**
-     * Returns the {@link PDFState} associated with this instance.
+     * Returns the {@link PDFPaintingState} associated with this instance.
      * @return the PDF state
      */
     public PDFPaintingState getState() {
@@ -148,14 +148,18 @@ public class PDFContentGenerator {
         }
     }
 
-    /** {@inheritDoc} */
+    /** Save graphics state. */
     protected void saveGraphicsState() {
         endTextObject();
         currentState.save();
         currentStream.add("q\n");
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Save graphics state.
+     * @param structElemType an element type
+     * @param sequenceNum a sequence number
+     */
     protected void saveGraphicsState(String structElemType, int sequenceNum) {
         endTextObject();
         currentState.save();

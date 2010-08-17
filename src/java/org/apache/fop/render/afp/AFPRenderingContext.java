@@ -43,6 +43,7 @@ public class AFPRenderingContext extends AbstractRenderingContext {
      * Main constructor.
      * @param userAgent the user agent
      * @param resourceManager the resource manager
+     * @param paintingState the painting state
      * @param fontInfo the font list
      * @param foreignAttributes a map of foreign attributes
      */
@@ -70,6 +71,7 @@ public class AFPRenderingContext extends AbstractRenderingContext {
         return this.resourceManager;
     }
 
+    /** @return painting state */
     public AFPPaintingState getPaintingState() {
         return this.paintingState;
     }

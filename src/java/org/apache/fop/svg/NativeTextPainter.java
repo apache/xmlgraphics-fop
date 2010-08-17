@@ -190,6 +190,10 @@ public abstract class NativeTextPainter extends StrokingTextPainter {
         return chars;
     }
 
+    /**
+     * @param runaci an attributed character iterator
+     * @param layout a text span layout
+     */
     protected final void logTextRun(AttributedCharacterIterator runaci, TextSpanLayout layout) {
         if (log.isTraceEnabled()) {
             int charCount = runaci.getEndIndex() - runaci.getBeginIndex();
@@ -202,6 +206,12 @@ public abstract class NativeTextPainter extends StrokingTextPainter {
         }
     }
 
+    /**
+     * @param ch a character
+     * @param layout a text span layout
+     * @param index an index
+     * @param visibleChar visible character flag
+     */
     protected final void logCharacter(char ch, TextSpanLayout layout, int index,
             boolean visibleChar) {
         if (log.isTraceEnabled()) {

@@ -116,7 +116,7 @@ public class LayoutEngineTester {
 
             //Setup FOP for area tree rendering
             FOUserAgent ua = effFactory.newFOUserAgent();
-            ua.setBaseURL(testFile.getParentFile().toURL().toString());
+            ua.setBaseURL(testFile.getParentFile().toURI().toURL().toString());
             ua.getEventBroadcaster().addEventListener(
                     new ConsoleEventListenerForTests(testFile.getName(), EventSeverity.WARN));
 

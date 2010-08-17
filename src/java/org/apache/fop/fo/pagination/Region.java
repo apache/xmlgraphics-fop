@@ -31,7 +31,6 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
-import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 
 /**

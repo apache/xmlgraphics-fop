@@ -68,7 +68,7 @@ final class TextAttributesConverter {
 
     /**
      * Converts all known text FO properties to RtfAttributes
-     * @param props list of FO properites, which are to be converted
+     * @param fobj the FO for which the attributes are to be converted
      */
     public static RtfAttributes convertAttributes(Block fobj)
                 throws FOPException {
@@ -86,7 +86,7 @@ final class TextAttributesConverter {
 
     /**
      * Converts all known text FO properties to RtfAttributes
-     * @param props list of FO properites, which are to be converted
+     * @param fobj FObj whose properties are to be converted
      */
     public static RtfAttributes convertBlockContainerAttributes(BlockContainer fobj)
                 throws FOPException {
@@ -442,7 +442,7 @@ final class TextAttributesConverter {
     /**
      * Reads background-color from bl and writes it to rtfAttr.
      *
-     * @param bl the Block object the properties are read from
+     * @param bph the CommonBorderPaddingBackground from which the properties are read
      * @param rtfAttr the RtfAttributes object the attributes are written to
      */
     private static void attrBackgroundColor(CommonBorderPaddingBackground bpb,

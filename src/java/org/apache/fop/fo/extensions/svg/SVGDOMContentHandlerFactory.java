@@ -105,7 +105,7 @@ public class SVGDOMContentHandlerFactory implements ContentHandlerFactory {
                     Class clazz = Class.forName(
                             "org.apache.batik.dom.svg12.SVG12DOMImplementation");
                     return (DOMImplementation)clazz.getMethod(
-                            "getDOMImplementation", null).invoke(null, null);
+                            "getDOMImplementation", (Class[])null).invoke(null, (Object[])null);
                 } catch (Exception e) {
                     return SVGDOMImplementation.getDOMImplementation();
                 }

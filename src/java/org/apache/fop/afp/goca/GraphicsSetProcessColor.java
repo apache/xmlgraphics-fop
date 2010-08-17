@@ -75,7 +75,7 @@ public class GraphicsSetProcessColor extends AbstractGraphicsDrawingOrder {
         } else if (colSpaceType == ColorSpace.TYPE_RGB) {
             colspace = RGB;
         } else {
-            log.error("unsupported colorspace " + colSpaceType);
+            LOG.error("unsupported colorspace " + colSpaceType);
             colspace = RGB;
         }
 
