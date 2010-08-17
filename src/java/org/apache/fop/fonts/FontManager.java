@@ -202,7 +202,6 @@ public class FontManager {
         if (useCache) {
             if (cacheFile != null) {
                 deleted = cacheFile.delete();
-                cacheFile = null;
             } else {
                 deleted = FontCache.getDefaultCacheFile(true).delete();
             }

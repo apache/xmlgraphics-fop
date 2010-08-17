@@ -130,6 +130,8 @@ public class CommandLineOptions {
 
     private String mimicRenderer = null;
 
+    private boolean flushCache = false;
+
     /**
      * Construct a command line option object.
      */
@@ -167,7 +169,9 @@ public class CommandLineOptions {
                 }
                 checkSettings();
                 setUserConfig();
-
+                if (flushCache) {
+                    flushCache();
+                }
                 //Factory config is set up, now we can create the user agent
                 foUserAgent = factory.newFOUserAgent();
                 foUserAgent.getRendererOptions().putAll(renderingOptions);
@@ -285,8 +289,8 @@ public class CommandLineOptions {
                 factory.setStrictValidation(false);
             } else if (args[i].equals("-conserve")) {
                 conserveMemoryPolicy = true;
-            } else if (args[i].equals("-delete-cache")) {
-                parseDeleteCacheOption(args, i);
+            } else if (args[i].equals("-flush")) {
+                flushCache = true;
             } else if (args[i].equals("-cache")) {
                 parseCacheOption(args, i);
             } else if (args[i].equals("-dpi")) {
@@ -398,26 +402,6 @@ public class CommandLineOptions {
         } else {
             factory.getFontManager().setCacheFile(new File(args[i + 1]));
             return 1;
-        }
-    }
-
-    private void parseDeleteCacheOption(String[] args, int i) throws FOPException {
-        FontManager fontManager = factory.getFontManager();
-        try {
-            setUserConfig();
-            File cacheFile = fontManager.getCacheFile();
-            if (fontManager.deleteCache()) {
-                System.out.println("Successfully deleted the font cache file '"
-                        + cacheFile + "'.");
-                System.exit(0);
-            } else {
-                System.err.println("Failed to delete the font cache file '"
-                        + cacheFile + "'.");
-                System.exit(1);
-            }
-        } catch (IOException e) {
-            System.err.println("Failed to delete the font cache file");
-            System.exit(1);
         }
     }
 
@@ -1205,9 +1189,9 @@ public class CommandLineOptions {
             + "                    (Note: currently only influences whether the area tree is"
             + " serialized.)\n\n"
 
-            + "  -delete-cache     delete the current font cache file and exit\n"
             + "  -cache            specifies a file/directory path location"
-            + " for the font cache file\n\n"
+            + " for the font cache file\n"
+            + "  -flush            flushes the current font cache file\n\n"
 
             + " [INPUT]  \n"
             + "  infile            xsl:fo input file (the same as the next) \n"
@@ -1381,5 +1365,14 @@ public class CommandLineOptions {
         }
     }
 
+    private void flushCache() throws FOPException {
+        FontManager fontManager = factory.getFontManager();
+        File cacheFile = fontManager.getCacheFile();
+        if (!fontManager.deleteCache()) {
+            System.err.println("Failed to flush the font cache file '"
+                    + cacheFile + "'.");
+            System.exit(1);
+        }
+    }
 }
 
