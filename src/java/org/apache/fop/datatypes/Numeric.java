@@ -37,7 +37,7 @@ public interface Numeric {
     /**
      * Return the value of this Numeric
      * @return the computed value.
-     * @throws PropertyException
+     * @throws PropertyException if a propert exception occurs
      */
     double getNumericValue() throws PropertyException;
 
@@ -45,7 +45,7 @@ public interface Numeric {
      * Return the value of this Numeric
      * @param context The context for the length calculation (for percentage based lengths)
      * @return the computed value.
-     * @throws PropertyException
+     * @throws PropertyException if a propert exception occurs
      */
     double getNumericValue(PercentBaseContext context) throws PropertyException;
 
@@ -68,14 +68,14 @@ public interface Numeric {
      * Returns the value of this numeric as an int.
      * @return the value as an integer.
      */
-    public int getValue();
+    int getValue();
 
     /**
      * Returns the value of this numeric as an int.
      * @param context the context for the length calculation (for percentage based lengths)
      * @return the value as an integer.
      */
-    public int getValue(PercentBaseContext context);
+    int getValue(PercentBaseContext context);
 
     /**
      * Return the resolved value. This method will becalled during evaluation
@@ -89,6 +89,7 @@ public interface Numeric {
 
     /**
      * Return the enum value that is stored in this numeric.
+     * @return the enum value
      */
-    public int getEnum();
+    int getEnum();
 }

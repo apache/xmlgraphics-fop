@@ -30,14 +30,26 @@ import org.apache.fop.fo.FONode;
  */
 public abstract class TableCellContainer extends TableFObj implements ColumnNumberManagerHolder {
 
+    /** list of pending spans */
     protected List pendingSpans;
 
+    /** column number manager */
     protected ColumnNumberManager columnNumberManager;
 
+    /**
+     * Construct table cell container.
+     * @param parent the parent node of the cell container
+     */
     public TableCellContainer(FONode parent) {
         super(parent);
     }
 
+    /**
+     * Add cell to current row.
+     * @param cell a table cell to add
+     * @param firstRow true is first row
+     * @throws FOPException if exception occurs
+     */
     protected void addTableCellChild(TableCell cell, boolean firstRow) throws FOPException {
         int colNumber = cell.getColumnNumber();
         int colSpan = cell.getNumberColumnsSpanned();

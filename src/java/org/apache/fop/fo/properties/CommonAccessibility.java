@@ -32,16 +32,17 @@ public class CommonAccessibility {
     /**
      * The "source-doc" property.
      */
-    public String sourceDoc = null;
+    public String sourceDoc = null;                             // CSOK: VisibilityModifier
 
     /**
      * The "role" property.
      */
-    public String role = null;
+    public String role = null;                                  // CSOK: VisibilityModifier
 
     /**
      * Create a <code>CommonAccessibility</code> object.
      * @param pList The PropertyList with propery values.
+     * @throws PropertyException if a property exception is raised
      */
     public CommonAccessibility(PropertyList pList) throws PropertyException {
         sourceDoc = pList.get(Constants.PR_SOURCE_DOCUMENT).getString();

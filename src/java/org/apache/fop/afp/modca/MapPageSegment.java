@@ -67,8 +67,8 @@ public class MapPageSegment extends AbstractAFPObject {
             throw new IllegalArgumentException("The name of page segment " + name
                 + " must not be longer than 8 characters");
         }
-        if (log.isDebugEnabled()) {
-            log.debug("addPageSegment():: adding page segment " + name);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("addPageSegment():: adding page segment " + name);
         }
         getPageSegments().add(name);
     }
@@ -124,7 +124,7 @@ public class MapPageSegment extends AbstractAFPObject {
                 byte[] nameBytes = name.getBytes(AFPConstants.EBCIDIC_ENCODING);
                 System.arraycopy(nameBytes, 0, data, pos, nameBytes.length);
             } catch (UnsupportedEncodingException usee) {
-                log.error("UnsupportedEncodingException translating the name "
+                LOG.error("UnsupportedEncodingException translating the name "
                     + name);
             }
             pos += 8;

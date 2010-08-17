@@ -19,6 +19,7 @@
 
 package org.apache.fop.pdf;
 
+
 /**
  * Class representing a PDF name tree node.
  */
@@ -103,7 +104,6 @@ public class PDFNameTreeNode extends PDFDictionary {
         PDFArray limits = prepareLimitsArray();
         return (String)limits.get(1);
     }
-
 
     private PDFArray prepareLimitsArray() {
         PDFArray limits = (PDFArray)get(LIMITS);

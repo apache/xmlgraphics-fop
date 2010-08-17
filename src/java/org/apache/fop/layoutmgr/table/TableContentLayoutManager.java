@@ -55,7 +55,7 @@ import org.apache.fop.util.BreakUtil;
 public class TableContentLayoutManager implements PercentBaseContext {
 
     /** Logger **/
-    private static Log log = LogFactory.getLog(TableContentLayoutManager.class);
+    private static final Log LOG = LogFactory.getLog(TableContentLayoutManager.class);
 
     private TableLayoutManager tableLM;
     private TableRowIterator bodyIter;
@@ -127,10 +127,18 @@ public class TableContentLayoutManager implements PercentBaseContext {
         return this.footerList;
     }
 
-    /** {@inheritDoc} */
-    public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
-        if (log.isDebugEnabled()) {
-            log.debug("==> Columns: " + getTableLM().getColumns());
+    /**
+     * Get a sequence of KnuthElements representing the content
+     * of the node assigned to the LM.
+     *
+     * @param context   the LayoutContext used to store layout information
+     * @param alignment the desired text alignment
+     * @return          the list of KnuthElements
+     * @see org.apache.fop.layoutmgr.LayoutManager#getNextKnuthElements(LayoutContext, int)
+     */
+    public List getNextKnuthElements(LayoutContext context, int alignment) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("==> Columns: " + getTableLM().getColumns());
         }
         KnuthBox headerAsFirst = null;
         KnuthBox headerAsSecondToLast = null;
@@ -140,8 +148,8 @@ public class TableContentLayoutManager implements PercentBaseContext {
                     headerIter, context, alignment, TableRowIterator.HEADER);
             this.headerNetHeight
                     = ElementListUtils.calcContentLength(this.headerList);
-            if (log.isDebugEnabled()) {
-                log.debug("==> Header: "
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("==> Header: "
                         + headerNetHeight + " - " + this.headerList);
             }
             TableHeaderFooterPosition pos = new TableHeaderFooterPosition(
@@ -160,8 +168,8 @@ public class TableContentLayoutManager implements PercentBaseContext {
                     footerIter, context, alignment, TableRowIterator.FOOTER);
             this.footerNetHeight
                     = ElementListUtils.calcContentLength(this.footerList);
-            if (log.isDebugEnabled()) {
-                log.debug("==> Footer: "
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("==> Footer: "
                         + footerNetHeight + " - " + this.footerList);
             }
             //We can simply add the table footer at the end of the whole list
@@ -369,14 +377,14 @@ public class TableContentLayoutManager implements PercentBaseContext {
             } else if (pos instanceof TableContentPosition) {
                 tablePositions.add(pos);
             } else {
-                if (log.isDebugEnabled()) {
-                    log.debug("Ignoring position: " + pos);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Ignoring position: " + pos);
                 }
             }
         }
         if (lastPos instanceof TableHFPenaltyPosition) {
             TableHFPenaltyPosition penaltyPos = (TableHFPenaltyPosition)lastPos;
-            log.debug("Break at penalty!");
+            LOG.debug("Break at penalty!");
             if (penaltyPos.headerElements != null) {
                 //Header positions for the penalty position are in the last element and need to
                 //be handled first before all other TableContentPositions
@@ -402,7 +410,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
 
         if (tablePositions.isEmpty()) {
             // TODO make sure this actually never happens
-            log.error("tablePositions empty."
+            LOG.error("tablePositions empty."
                     + " Please send your FO file to fop-users@xmlgraphics.apache.org");
         } else {
             // Here we are sure that posIter iterates only over TableContentPosition instances

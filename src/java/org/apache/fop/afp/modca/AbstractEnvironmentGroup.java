@@ -73,7 +73,7 @@ public abstract class AbstractEnvironmentGroup extends AbstractNamedAFPObject {
                 mpo.addOverlay(name);
             } catch (MaximumSizeExceededException ex) {
                 // Should never happen (but log just in case)
-                log.error("createOverlay():: resulted in a MaximumSizeExceededException");
+                LOG.error("createOverlay():: resulted in a MaximumSizeExceededException");
             }
         }
     }
@@ -88,6 +88,11 @@ public abstract class AbstractEnvironmentGroup extends AbstractNamedAFPObject {
         return (MapPageOverlay)getLastElement(this.mapPageOverlays);
     }
 
+    /**
+     * Get last element.
+     * @param list of elements
+     * @return last element or null if none
+     */
     protected Object getLastElement(List list) {
         if (list != null && list.size() > 0) {
             return list.get(list.size() - 1);

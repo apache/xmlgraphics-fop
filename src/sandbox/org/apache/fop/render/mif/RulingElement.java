@@ -19,12 +19,15 @@
 
 package org.apache.fop.render.mif;
 
+/** a ruling element */
 public class RulingElement extends RefElement {
 
+    /** default constructor */
     public RulingElement() {
         super("RulingCatalog");
     }
 
+    /** {@inheritDoc} */
     public MIFElement lookupElement(Object key) {
         if (key == null) {
             MIFElement rul = new MIFElement("Ruling");

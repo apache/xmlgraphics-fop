@@ -34,7 +34,11 @@ import org.apache.batik.util.XMLConstants;
 /**
  * Some utilities for creating svg DOM documents and elements.
  */
-public class SVGUtilities {
+public final class SVGUtilities {
+
+    private SVGUtilities() {
+    }
+
     private static final String SVG_NS = SVGDOMImplementation.SVG_NAMESPACE_URI;
 
     /**
@@ -43,7 +47,7 @@ public class SVGUtilities {
      * @param height the height of the root svg element
      * @return a new SVG Document
      */
-    public static final Document createSVGDocument(float width,
+    public static Document createSVGDocument(float width,
             float height) {
         DOMImplementation impl = SVGDOMImplementation.getDOMImplementation();
         Document doc = impl.createDocument(SVG_NS, "svg", null);
@@ -60,9 +64,9 @@ public class SVGUtilities {
      * @param font the font
      * @return the width of the string in the given font
      */
-    public static final float getStringWidth(String str, java.awt.Font font) {
-        Rectangle2D rect =
-            font.getStringBounds(str, 0, str.length(),
+    public static float getStringWidth(String str, java.awt.Font font) {
+        Rectangle2D rect
+            = font.getStringBounds(str, 0, str.length(),
                                  new FontRenderContext(new AffineTransform(),
                                  true, true));
         return (float)rect.getWidth();
@@ -74,10 +78,10 @@ public class SVGUtilities {
      * @param font the font
      * @return the height of the string in the given font
      */
-    public static final float getStringHeight(String str,
+    public static float getStringHeight(String str,
                                               java.awt.Font font) {
-        Rectangle2D rect =
-            font.getStringBounds(str, 0, str.length(),
+        Rectangle2D rect
+            = font.getStringBounds(str, 0, str.length(),
                                  new FontRenderContext(new AffineTransform(),
                                  true, true));
         return (float)rect.getHeight();
@@ -89,7 +93,7 @@ public class SVGUtilities {
      * @param font the font
      * @return the bounds of the string
      */
-    public static final Rectangle2D getStringBounds(String str,
+    public static Rectangle2D getStringBounds(String str,
             java.awt.Font font) {
         return font.getStringBounds(str, 0, str.length(),
                                     new FontRenderContext(new AffineTransform(),
@@ -105,7 +109,7 @@ public class SVGUtilities {
      * @param y2 the end y position
      * @return the new line element
      */
-    public static final Element createLine(Document doc, float x, float y,
+    public static Element createLine(Document doc, float x, float y,
                                            float x2, float y2) {
         Element ellipse = doc.createElementNS(SVG_NS, "line");
         ellipse.setAttributeNS(null, "x1", "" + x);
@@ -124,7 +128,7 @@ public class SVGUtilities {
      * @param ry the y axis radius
      * @return the new ellipse element
      */
-    public static final Element createEllipse(Document doc, float cx,
+    public static Element createEllipse(Document doc, float cx,
                                               float cy, float rx, float ry) {
         Element ellipse = doc.createElementNS(SVG_NS, "ellipse");
         ellipse.setAttributeNS(null, "cx", "" + cx);
@@ -140,7 +144,7 @@ public class SVGUtilities {
      * @param str the string for the d attribute on the path
      * @return the new path element
      */
-    public static final Element createPath(Document doc, String str) {
+    public static Element createPath(Document doc, String str) {
         Element path = doc.createElementNS(SVG_NS, "path");
         path.setAttributeNS(null, "d", str);
         return path;
@@ -154,7 +158,7 @@ public class SVGUtilities {
      * @param str the string
      * @return the new text element
      */
-    public static final Element createText(Document doc, float x, float y,
+    public static Element createText(Document doc, float x, float y,
                                            String str) {
         Element textGraph = doc.createElementNS(SVG_NS, "text");
         textGraph.setAttributeNS(null, "x", "" + x);
@@ -173,7 +177,7 @@ public class SVGUtilities {
      * @param height the height of the rectangle
      * @return the new rectangle element
      */
-    public static final Element createRect(Document doc, float x, float y,
+    public static Element createRect(Document doc, float x, float y,
                                            float width, float height) {
         Element border = doc.createElementNS(SVG_NS, "rect");
         border.setAttributeNS(null, "x", "" + x);
@@ -188,7 +192,7 @@ public class SVGUtilities {
      * @param doc the document to create the element
      * @return the new g element
      */
-    public static final Element createG(Document doc) {
+    public static Element createG(Document doc) {
         Element border = doc.createElementNS(SVG_NS, "g");
         return border;
     }
@@ -200,7 +204,7 @@ public class SVGUtilities {
      * @param id the id of the clipping path
      * @return the new clip element
      */
-    public static final Element createClip(Document doc, Element els,
+    public static Element createClip(Document doc, Element els,
                                            String id) {
         Element border = doc.createElementNS(SVG_NS, "clipPath");
         border.setAttributeNS(null, "id", id);
@@ -216,7 +220,7 @@ public class SVGUtilities {
      * @param height the height to set on the image
      * @return a new image element
      */
-    public static final Element createImage(Document doc, String ref,
+    public static Element createImage(Document doc, String ref,
                                             float width, float height) {
         Element border = doc.createElementNS(SVG_NS, "image");
         border.setAttributeNS(XMLConstants.XLINK_NAMESPACE_URI, "href",
@@ -234,7 +238,7 @@ public class SVGUtilities {
      * @param width the width to wrap
      * @return the new element containing the wrapped text
      */
-    public static final Element wrapText(Document doc, String str,
+    public static Element wrapText(Document doc, String str,
                                          java.awt.Font font, float width) {
         Element g = createG(doc);
         Element text;

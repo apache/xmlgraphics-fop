@@ -28,10 +28,13 @@ import org.apache.commons.logging.LogFactory;
  * This class hold code for selecting a set of hard-coded fonts available in practically all
  * PCL implementations. We hope this can be improved in the future.
  */
-class HardcodedFonts {
+final class HardcodedFonts {
+
+    private HardcodedFonts() {
+    }
 
     /** logging instance */
-    private static Log log = LogFactory.getLog(HardcodedFonts.class);
+    private static final Log LOG = LogFactory.getLog(HardcodedFonts.class);
 
     /**
      * Sets the current font (NOTE: Hard-coded font mappings ATM!)
@@ -58,7 +61,7 @@ class HardcodedFonts {
             try {
                 fontcode = Integer.parseInt(name.substring(1));
             } catch (Exception e) {
-                log.error(e);
+                LOG.error(e);
             }
         }
         //Note "(ON" selects ISO 8859-1 symbol set as used by PCLGenerator

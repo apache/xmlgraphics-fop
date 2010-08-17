@@ -149,7 +149,7 @@ public interface Renderer {
      * Tells the renderer that a new page sequence starts.
      *
      * @param seqTitle  The title of the page sequence
-     * @deprecated Use startPageSequence(PageSequence) instead
+     * @deprecated Use {@link #startPageSequence(PageSequence)} instead
      */
     void startPageSequence(LineArea seqTitle);
 
@@ -162,7 +162,7 @@ public interface Renderer {
 
     /**
      * Tells the renderer to render a particular page. A renderer typically
-     * reponds by packing up the current page and writing it immediately to the
+     * responds by packing up the current page and writing it immediately to the
      * output device.
      *
      * @param page              The page to be rendered

@@ -22,22 +22,33 @@ package org.apache.fop.fo.properties;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 
+/**
+ * A special property for representing an as yet implemented implemented property.
+ */
 public class ToBeImplementedProperty extends Property {
 
+    /**
+     * A to be implemented property maker instance.
+     */
     public static class Maker extends PropertyMaker {
 
+        /**
+         * Instantiate a to be implemented property maker instance.
+         * @param propId a property id
+         */
         public Maker(int propId) {
             super(propId);
         }
 
+        /** {@inheritDoc} */
         public Property convertProperty(Property p,
                                         PropertyList propertyList, FObj fo) {
             if (p instanceof ToBeImplementedProperty) {
                 return p;
             }
 
-            ToBeImplementedProperty val =
-                new ToBeImplementedProperty(getPropId());
+            ToBeImplementedProperty val
+                = new ToBeImplementedProperty(getPropId());
             return val;
         }
     }

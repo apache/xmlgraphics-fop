@@ -30,27 +30,44 @@ import org.apache.fop.fo.expr.PropertyException;
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
 public class DimensionPropertyMaker extends CorrespondingPropertyMaker {
-    int[][] extraCorresponding = null;
+    
+    private int[][] extraCorresponding = null;
 
+    /**
+     * Construct a dimension property maker.
+     * @param baseMaker the base property maker
+     */
     public DimensionPropertyMaker(PropertyMaker baseMaker) {
         super(baseMaker);
     }
 
+    /**
+     * Set extra correspondences.
+     * @param extraCorresponding the extra correspondences
+     */
     public void setExtraCorresponding(int[][] extraCorresponding) {
         this.extraCorresponding = extraCorresponding;
     }
 
+    /**
+     * Determine if corresponding property is forced.
+     * @param propertyList the property list to use
+     * @return true if it is forced
+     */
     public boolean isCorrespondingForced(PropertyList propertyList) {
-        if (super.isCorrespondingForced(propertyList))
+        if (super.isCorrespondingForced(propertyList)) {
             return true;
+        }
         for (int i = 0; i < extraCorresponding.length; i++) {
             int wmcorr = extraCorresponding[i][0]; //propertyList.getWritingMode()];
-            if (propertyList.getExplicit(wmcorr) != null)
+            if (propertyList.getExplicit(wmcorr) != null) {
                 return true;
+            }
         }
         return false;
     }
 
+    /** {@inheritDoc} */
     public Property compute(PropertyList propertyList) throws PropertyException {
         // Based on [width|height]
         Property p = super.compute(propertyList);

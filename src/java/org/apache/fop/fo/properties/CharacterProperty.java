@@ -24,6 +24,8 @@ import org.apache.fop.fo.PropertyList;
 
 /**
  * Superclass for properties that wrap a character value
+ * @asf.todo convert character value to int in order to denote unicode scalar value
+ * instead of a single UTF-16 code element
  */
 public final class CharacterProperty extends Property {
 
@@ -39,6 +41,7 @@ public final class CharacterProperty extends Property {
             super(propId);
         }
 
+        /** {@inheritDoc} */
         public Property make(PropertyList propertyList, String value,
                              FObj fo) {
             char c = value.charAt(0);
@@ -48,7 +51,8 @@ public final class CharacterProperty extends Property {
     }
 
     /** cache containing all canonical CharacterProperty instances */
-    private static final PropertyCache cache = new PropertyCache(CharacterProperty.class);
+    private static final PropertyCache CACHE
+        = new PropertyCache(CharacterProperty.class);
 
     private final char character;
 
@@ -59,8 +63,13 @@ public final class CharacterProperty extends Property {
         this.character = character;
     }
 
+    /**
+     * Get character property instance for character.
+     * @param character the character
+     * @return the character property instance
+     */
     public static CharacterProperty getInstance(char character) {
-        return (CharacterProperty) cache.fetch(
+        return (CharacterProperty) CACHE.fetch(
                         new CharacterProperty(character));
     }
 

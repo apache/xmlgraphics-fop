@@ -174,7 +174,8 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
         return objectAreaInfo;
     }
 
-    private AFPGraphicsObjectInfo createGraphicsObjectInfo(AFPPaintingState paintingState, Graphics2DImagePainter painter,
+    private AFPGraphicsObjectInfo createGraphicsObjectInfo
+        (AFPPaintingState paintingState, Graphics2DImagePainter painter,
             FOUserAgent userAgent, AFPResourceInfo resourceInfo, AFPGraphics2D g2d) {
         AFPGraphicsObjectInfo graphicsObjectInfo = new AFPGraphicsObjectInfo();
 
@@ -193,6 +194,11 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
         return graphicsObjectInfo;
     }
 
+    /**
+     * @param userAgent a user agent instance
+     * @param g2d a graphics context
+     * @return a bridge context
+     */
     public static BridgeContext createBridgeContext(FOUserAgent userAgent, AFPGraphics2D g2d) {
         ImageManager imageManager = userAgent.getFactory().getImageManager();
 

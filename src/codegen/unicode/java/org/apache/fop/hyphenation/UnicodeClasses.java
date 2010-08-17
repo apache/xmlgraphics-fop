@@ -51,7 +51,8 @@ import org.apache.fop.util.License;
  */
 public final class UnicodeClasses {
     
-    public static String UNICODE_DIR = "http://www.unicode.org/Public/UNIDATA/";
+    /** directory containing unicode properties files */
+    public static final String UNICODE_DIR = "http://www.unicode.org/Public/UNIDATA/";
 
     /**
      * Disallow constructor for this utility class
@@ -77,7 +78,7 @@ public final class UnicodeClasses {
      * Generate classes.xml from Java's compiled-in Unicode Character Database
      * @param hexcode whether to prefix each class with the hexcode (only for debugging purposes)
      * @param outfilePath output file
-     * @throws IOException
+     * @throws IOException if an I/O exception occurs
      */
     public static void fromJava(boolean hexcode, String outfilePath) throws IOException {
         File f = new File(outfilePath);
@@ -160,7 +161,6 @@ public final class UnicodeClasses {
      * @param outfilePath output file
      * @throws IOException if the input files are not found
      * @throws URISyntaxException 
-     * @throws FOPException 
      */
     public static void fromUCD(boolean hexcode, String unidataPath, String outfilePath)
     throws IOException, URISyntaxException {
@@ -286,7 +286,7 @@ public final class UnicodeClasses {
      * @param hexcode whether to prefix each class with the hexcode (only for debugging purposes)
      * @param lettersPath path to XeTeX's Unicode letters file unicode-letters-XeTeX.tex  
      * @param outfilePath output file
-     * @throws IOException
+     * @throws IOException in case of an I/O exception
      */
     public static void fromTeX(boolean hexcode, String lettersPath, String outfilePath)
       throws IOException {

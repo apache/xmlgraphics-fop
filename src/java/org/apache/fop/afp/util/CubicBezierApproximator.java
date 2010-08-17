@@ -29,7 +29,10 @@ import java.awt.geom.Point2D.Double;
  * The various techniques are described here:
  * http://www.timotheegroleau.com/Flash/articles/cubic_bezier_in_flash.htm
  */
-public class CubicBezierApproximator {
+public final class CubicBezierApproximator {
+
+    private CubicBezierApproximator() {
+    }
 
     /**
      * This method will take in an array containing the x and y coordinates of the four control

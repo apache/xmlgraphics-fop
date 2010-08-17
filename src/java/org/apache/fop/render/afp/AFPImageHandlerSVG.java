@@ -65,7 +65,7 @@ public class AFPImageHandlerSVG implements ImageHandler {
         BatikImageFlavors.SVG_DOM
     };
 
-    /** {@inheritDoc} */
+    /** @return a new AFP data object info instance */
     protected AFPDataObjectInfo createDataObjectInfo() {
         return new AFPGraphicsObjectInfo();
     }

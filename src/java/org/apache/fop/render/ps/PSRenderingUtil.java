@@ -229,6 +229,7 @@ public class PSRenderingUtil implements PSConfigurationConstants {
         this.dscCompliant = value;
     }
 
+    /** @return true if DSC complicance is enabled */
     public boolean isDSCComplianceEnabled() {
         return this.dscCompliant;
     }

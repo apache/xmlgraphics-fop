@@ -196,13 +196,14 @@ public class InputHandler implements ErrorListener, Renderable {
      * Creates a catalog resolver and uses it for XML parsing and XSLT URI resolution.
      * Tries the Apache Commons Resolver, and if unsuccessful,
      * tries the same built into Java 6.
+     * @param userAgent the user agent instance
      */
     public void createCatalogResolver(FOUserAgent userAgent) {
         String[] classNames = new String[] {
                 "org.apache.xml.resolver.tools.CatalogResolver",
                 "com.sun.org.apache.xml.internal.resolver.tools.CatalogResolver"};
-        ResourceEventProducer eventProducer =
-            ResourceEventProducer.Provider.get(userAgent.getEventBroadcaster());
+        ResourceEventProducer eventProducer
+            = ResourceEventProducer.Provider.get(userAgent.getEventBroadcaster());
         Class resolverClass = null;
         for (int i = 0; i < classNames.length && resolverClass == null; ++i) {
             try {

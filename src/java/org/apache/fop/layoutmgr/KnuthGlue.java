@@ -87,6 +87,16 @@ public class KnuthGlue extends KnuthElement {
         this.adjustmentClass = Adjustment.NO_ADJUSTMENT;
     }
 
+    /**
+     * Creates a new <code>KnuthGlue</code>.
+     *
+     * @param width     the width of this glue
+     * @param stretch   the stretchability of this glue
+     * @param shrink    the shrinkability of this glue
+     * @param adjustmentClass the adjsutment class
+     * @param pos       the Position stored in this glue
+     * @param auxiliary is this glue auxiliary?
+     */
     public KnuthGlue(int width, int stretch, int shrink, Adjustment adjustmentClass,
                      Position pos, boolean auxiliary) {
         super(width, pos, auxiliary);

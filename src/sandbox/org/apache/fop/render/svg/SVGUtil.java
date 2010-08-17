@@ -26,7 +26,10 @@ import org.apache.fop.render.intermediate.IFUtil;
 /**
  * This class provides utility methods for generating SVG.
  */
-public class SVGUtil {
+public final class SVGUtil {
+
+    private SVGUtil() {
+    }
 
     /**
      * Formats a length in millipoints as a point value.

@@ -28,8 +28,6 @@ public class TransitionDictionary extends PDFDictionary {
 
     /**
      * Create a Transition Dictionary
-     *
-     * @param values the dictionary values to output
      */
     public TransitionDictionary() {
         put("Type", new PDFName("Trans"));

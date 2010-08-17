@@ -44,6 +44,8 @@ public interface PatternConsumer {
      * fails or the user wants to provide his own hyphenation.
      * A hyphenatedword is a vector of alternating String's and
      * {@link Hyphen Hyphen} instances
+     * @param word word to add as an exception
+     * @param hyphenatedword pre-hyphenated word
      */
     void addException(String word, ArrayList hyphenatedword);
 

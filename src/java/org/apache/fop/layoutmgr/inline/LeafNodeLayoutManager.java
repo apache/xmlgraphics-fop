@@ -48,6 +48,7 @@ import org.apache.fop.traits.MinOptMax;
  * an exception to this rule.)
  * This class can be extended to handle the creation and adding of the
  * inline area.
+ * @asf.todo [GA] replace use of hungarian notation with normalized java naming
  */
 public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
                                    implements InlineLevelLayoutManager {
@@ -75,11 +76,22 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
      * Store information about the inline area
      */
     protected class AreaInfo {
+        /** letter space count */
         protected short iLScount;
+        /** ipd of area */
         protected MinOptMax ipdArea;
+        /** true if hyphenated */
         protected boolean bHyphenated;
+        /** alignment context */
         protected AlignmentContext alignmentContext;
 
+        /**
+         * Construct an area information item.
+         * @param iLS letter space count
+         * @param ipd inline progression dimension
+         * @param bHyph true if hyphenated
+         * @param alignmentContext an alignment context
+         */         
         public AreaInfo(short iLS, MinOptMax ipd, boolean bHyph,
                         AlignmentContext alignmentContext) {
             iLScount = iLS;

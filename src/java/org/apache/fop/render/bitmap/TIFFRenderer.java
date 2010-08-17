@@ -219,10 +219,12 @@ public class TIFFRenderer extends Java2DRenderer implements TIFFConstants {
         }
     }
 
+    /** @param bufferedImageType an image type */
     public void setBufferedImageType(int bufferedImageType) {
         this.bufferedImageType = bufferedImageType;
     }
 
+    /** @return image writer parameters */
     public ImageWriterParams getWriterParams() {
         return writerParams;
     }

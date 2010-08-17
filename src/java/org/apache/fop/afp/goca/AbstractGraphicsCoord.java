@@ -32,6 +32,7 @@ public abstract class AbstractGraphicsCoord extends AbstractGraphicsDrawingOrder
     /** array of x/y coordinates */
     protected int[] coords = null;
 
+    /** if true, then uses relative drawing order */
     protected boolean relative = false;
 
     /**
@@ -51,7 +52,7 @@ public abstract class AbstractGraphicsCoord extends AbstractGraphicsDrawingOrder
      * Constructor
      *
      * @param coords the x/y coordinates for this object
-     * @param relative
+     * @param relative true if relative drawing order
      */
     public AbstractGraphicsCoord(int[] coords, boolean relative) {
         this(coords);

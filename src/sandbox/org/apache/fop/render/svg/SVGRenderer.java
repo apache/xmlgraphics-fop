@@ -67,16 +67,16 @@ public class SVGRenderer extends Java2DRenderer {
     /** Helper class for generating multiple files */
     private MultiFileRenderingUtil multiFileUtil;
 
-    /** @see org.apache.fop.render.AbstractRenderer */
+    /** Default constructor. */
+    public SVGRenderer() {
+    }
+
+    /** {@inheritDoc} */
     public String getMimeType() {
         return MIME_TYPE;
     }
 
-    /** Creates TIFF renderer. */
-    public SVGRenderer() {
-    }
-
-    /** @see org.apache.fop.render.Renderer#startRenderer(java.io.OutputStream) */
+    /** {@inheritDoc} */
     public void startRenderer(OutputStream outputStream) throws IOException {
         this.firstOutputStream = outputStream;
         this.multiFileUtil = new MultiFileRenderingUtil(SVG_FILE_EXTENSION,
@@ -84,9 +84,7 @@ public class SVGRenderer extends Java2DRenderer {
         super.startRenderer(this.firstOutputStream);
     }
 
-    /**
-     * @see org.apache.fop.render.java2d.Java2DRenderer#renderPage(org.apache.fop.area.PageViewport)
-     */
+    /** {@inheritDoc} */
     public void renderPage(PageViewport pageViewport) throws IOException {
         log.debug("Rendering page: " + pageViewport.getPageNumberString());
         // Get a DOMImplementation
@@ -122,7 +120,7 @@ public class SVGRenderer extends Java2DRenderer {
 
     }
 
-    /** @see org.apache.fop.render.Renderer#stopRenderer() */
+    /** {@inheritDoc} */
     public void stopRenderer() throws IOException {
         super.stopRenderer();
 

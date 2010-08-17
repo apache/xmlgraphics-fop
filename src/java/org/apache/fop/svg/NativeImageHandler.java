@@ -19,6 +19,7 @@
 
 package org.apache.fop.svg;
 
+/** native image handler */
 public interface NativeImageHandler {
 
     /**

@@ -80,9 +80,10 @@ extends RtfContainer {
      * If called, must be called before startDocumentArea
      * @return the new RtfHeader
      * @throws IOException for I/O problems
+     * @throws RtfStructureException for illegal RTF structure
      */
     public RtfHeader startHeader()
-    throws IOException {
+    throws IOException, RtfStructureException {
         if (header != null) {
             throw new RtfStructureException("startHeader called more than once");
         }
@@ -128,7 +129,7 @@ extends RtfContainer {
      * @throws RtfStructureException for illegal RTF structure
      */
     public RtfPageArea startPageArea()
-    throws IOException {
+    throws IOException, RtfStructureException {
         if (pageArea != null) {
             throw new RtfStructureException("startPageArea called more than once");
         }
@@ -149,7 +150,7 @@ extends RtfContainer {
      * @throws RtfStructureException for illegal RTF structure
      */
     public RtfPageArea getPageArea()
-    throws IOException {
+    throws IOException, RtfStructureException {
         if (pageArea == null) {
             return startPageArea();
         }
@@ -164,7 +165,7 @@ extends RtfContainer {
      * @throws RtfStructureException for illegal RTF structure
      */
     public RtfDocumentArea startDocumentArea()
-    throws IOException {
+        throws IOException, RtfStructureException {
         if (docArea != null) {
             throw new RtfStructureException("startDocumentArea called more than once");
         }
@@ -187,7 +188,7 @@ extends RtfContainer {
      * @throws RtfStructureException for illegal RTF structure
      */
     public RtfDocumentArea getDocumentArea()
-    throws IOException {
+    throws IOException, RtfStructureException {
         if (docArea == null) {
             return startDocumentArea();
         }

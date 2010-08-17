@@ -33,7 +33,6 @@ public final class PDFNull implements PDFWritable {
 
     /**
      * Creates a new PDF name object.
-     * @param name the name value
      */
     private PDFNull() {
     }

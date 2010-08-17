@@ -30,7 +30,10 @@ import org.apache.fop.fonts.FontManager;
 /**
  * Rendering-related utilities for Java2D.
  */
-public class Java2DUtil {
+public final class Java2DUtil {
+
+    private Java2DUtil() {
+    }
 
     /**
      * Builds a default {@link FontInfo} object for use with output formats using the Java2D

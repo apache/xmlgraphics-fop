@@ -24,7 +24,10 @@ import java.awt.Color;
 /**
  * Utility methods for dithering.
  */
-public class DitherUtil {
+public final class DitherUtil {
+
+    private DitherUtil() {
+    }
 
     /** Selects a 2x2 Bayer dither matrix (5 grayscales) */
     public static final int DITHER_MATRIX_2X2 = 2;

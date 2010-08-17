@@ -44,6 +44,17 @@ public class TTFCmapEntry {
     /**
      * {@inheritDoc}
      */
+    public int hashCode() {
+        int hc = super.hashCode();
+        hc ^= ( hc * 11 ) + unicodeStart;
+        hc ^= ( hc * 19 ) + unicodeEnd;
+        hc ^= ( hc * 23 ) + glyphStartIndex;
+        return hc;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public boolean equals(Object o) {
         if (o instanceof TTFCmapEntry) {
             TTFCmapEntry ce = (TTFCmapEntry)o;

@@ -51,6 +51,7 @@ public interface InlineLevelLayoutManager extends LayoutManager {
      * Get the word chars corresponding to the given position.
      *
      * @param pos     the position referring to the needed word chars.
+     * @return the word chars
      */
     String getWordChars(Position pos);
 

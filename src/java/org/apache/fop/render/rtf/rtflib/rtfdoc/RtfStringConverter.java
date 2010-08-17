@@ -17,6 +17,7 @@
 
 /* $Id$ */
 
+package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
 /*
  * This file is part of the RTF library of the FOP project, which was originally
@@ -24,8 +25,6 @@
  * contributors to the jfor project (www.jfor.org), who agreed to donate jfor to
  * the FOP project.
  */
-
-package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -36,9 +35,9 @@ import java.io.Writer;
  *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
  */
 
-public class RtfStringConverter {
-    private static final RtfStringConverter INSTANCE = new RtfStringConverter();
+public final class RtfStringConverter {
 
+    private static final RtfStringConverter INSTANCE = new RtfStringConverter();
     private static final Map SPECIAL_CHARS;
     private static final Character DBLQUOTE = new Character('\"');
     private static final Character QUOTE = new Character('\'');

@@ -58,7 +58,16 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
-	</release>
+      <action context="Fonts" dev="AC" type="fix">
+        Reinstated support for being able to specify a font cache filepath in the fop user configuration.
+      </action>
+      <action context="Fonts" dev="AC" type="add">
+        Added convenience support for the flushing of the Fop font cache file from the command line.
+      </action>
+      <action context="Renderers" dev="JM" type="add" fixes-bug="44460" due-to="Andrejus Chaliapinas">
+        Added support for PDF File Attachments (Embedded Files).
+      </action>
+    </release>
     <release version="1.0" date="21 July 2010">
       <action context="Renderers" dev="JM" type="fix">
         AFP Output: Fixed positioning of Java2D-based images (when GOCA is enabled).

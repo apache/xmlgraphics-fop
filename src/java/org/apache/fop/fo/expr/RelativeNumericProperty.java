@@ -33,14 +33,23 @@ import org.apache.fop.fo.properties.TableColLength;
  * or getValue() is called.
  */
 public class RelativeNumericProperty extends Property implements Length {
+    /** ADDITION */
     public static final int ADDITION = 1;
+    /** SUBTRACTION */
     public static final int SUBTRACTION = 2;
+    /** MULTIPLY */
     public static final int MULTIPLY = 3;
+    /** DIVIDE */
     public static final int DIVIDE = 4;
+    /** MODULO */
     public static final int MODULO = 5;
+    /** NEGATE */
     public static final int NEGATE = 6;
+    /** ABS */
     public static final int ABS = 7;
+    /** MAX */
     public static final int MAX = 8;
+    /** MIN */
     public static final int MIN = 9;
 
     // Used in the toString() method, indexed by operation id.
@@ -145,6 +154,7 @@ public class RelativeNumericProperty extends Property implements Length {
 
     /**
      * Return the dimension of the expression
+     * @return numeric value as dimension
      */
     public int getDimension() {
         return dimension;
@@ -153,6 +163,7 @@ public class RelativeNumericProperty extends Property implements Length {
     /**
      * Return false since an expression is only created when there is relative
      * numerics involved.
+     * @return true if expression is absolute
      */
     public boolean isAbsolute() {
         return false;
@@ -160,6 +171,7 @@ public class RelativeNumericProperty extends Property implements Length {
 
     /**
      * Cast this numeric as a Length.
+     * @return numeric value as length
      */
     public Length getLength() {
         if (dimension == 1) {
@@ -169,6 +181,7 @@ public class RelativeNumericProperty extends Property implements Length {
         return null;
     }
 
+    /** @return numeric value */
     public Numeric getNumeric() {
         return this;
     }
@@ -272,7 +285,8 @@ public class RelativeNumericProperty extends Property implements Length {
            return "min(" + op1 + ", " + op2 + ")";
         case ABS:
            return "abs(" + op1 + ")";
+        default:
+            return "unknown operation " + operation;
         }
-        return "unknown operation " + operation;
     }
 }

@@ -41,6 +41,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.fonts.FontManager;
 import org.apache.fop.pdf.PDFAMode;
 import org.apache.fop.pdf.PDFEncryptionManager;
 import org.apache.fop.pdf.PDFEncryptionParams;
@@ -109,7 +110,7 @@ public class CommandLineOptions {
     private boolean useStdIn = false;
     /* true if System.out (stdout) should be used for the output file */
     private boolean useStdOut = false;
-    /* true if a catalog resolver should be used for entity and uri resolution */ 
+    /* true if a catalog resolver should be used for entity and uri resolution */
     private boolean useCatalogResolver = false;
     /* rendering options (for the user agent) */
     private Map renderingOptions = new java.util.HashMap();
@@ -128,6 +129,8 @@ public class CommandLineOptions {
     private Vector xsltParams = null;
 
     private String mimicRenderer = null;
+
+    private boolean flushCache = false;
 
     /**
      * Construct a command line option object.
@@ -166,7 +169,9 @@ public class CommandLineOptions {
                 }
                 checkSettings();
                 setUserConfig();
-
+                if (flushCache) {
+                    flushCache();
+                }
                 //Factory config is set up, now we can create the user agent
                 foUserAgent = factory.newFOUserAgent();
                 foUserAgent.getRendererOptions().putAll(renderingOptions);
@@ -284,6 +289,10 @@ public class CommandLineOptions {
                 factory.setStrictValidation(false);
             } else if (args[i].equals("-conserve")) {
                 conserveMemoryPolicy = true;
+            } else if (args[i].equals("-flush")) {
+                flushCache = true;
+            } else if (args[i].equals("-cache")) {
+                parseCacheOption(args, i);
             } else if (args[i].equals("-dpi")) {
                 i = i + parseResolution(args, i);
             } else if (args[i].equals("-q") || args[i].equals("--quiet")) {
@@ -384,6 +393,17 @@ public class CommandLineOptions {
         }
         return true;
     }    // end parseOptions
+
+    private int parseCacheOption(String[] args, int i) throws FOPException {
+        if ((i + 1 == args.length)
+                || (isOption(args[i + 1]))) {
+            throw new FOPException("if you use '-cache', you must specify "
+              + "the name of the font cache file");
+        } else {
+            factory.getFontManager().setCacheFile(new File(args[i + 1]));
+            return 1;
+        }
+    }
 
     private int parseConfigurationOption(String[] args, int i) throws FOPException {
         if ((i + 1 == args.length)
@@ -961,10 +981,12 @@ public class CommandLineOptions {
                         "FO output mode is only available if you use -xml and -xsl");
             } else if (outputmode.equals(MimeConstants.MIME_FOP_AREA_TREE)) {
                 throw new FOPException(
-                    "Area Tree Output is not available if Intermediate Format is used as input!");
+                    "Area Tree Output is not available if Intermediate Format"
+                    + " is used as input!");
             } else if (outputmode.equals(MimeConstants.MIME_FOP_IF)) {
                 throw new FOPException(
-                    "Intermediate Output is not available if Intermediate Format is used as input!");
+                    "Intermediate Output is not available if Intermediate Format"
+                    + " is used as input!");
             }
             if (iffile != null && !iffile.exists()) {
                 throw new FileNotFoundException("Error: intermediate format file "
@@ -1151,7 +1173,8 @@ public class CommandLineOptions {
             + "  -r                relaxed/less strict validation (where available)\n"
             + "  -dpi xxx          target resolution in dots per inch (dpi) where xxx is a number\n"
             + "  -s                for area tree XML, down to block areas only\n"
-            + "  -v                run in verbose mode (currently simply print FOP version and continue)\n\n"
+            + "  -v                run in verbose mode (currently simply print FOP version"
+            + " and continue)\n\n"
             + "  -o [password]     PDF file will be encrypted with option owner password\n"
             + "  -u [password]     PDF file will be encrypted with option user password\n"
             + "  -noprint          PDF file will be encrypted without printing permission\n"
@@ -1161,8 +1184,15 @@ public class CommandLineOptions {
             + "  -a                enables accessibility features (Tagged PDF etc., default off)\n"
             + "  -pdfprofile prof  PDF file will be generated with the specified profile\n"
             + "                    (Examples for prof: PDF/A-1b or PDF/X-3:2003)\n\n"
-            + "  -conserve         Enable memory-conservation policy (trades memory-consumption for disk I/O)\n"
-            + "                    (Note: currently only influences whether the area tree is serialized.)\n\n"
+            + "  -conserve         enable memory-conservation policy (trades memory-consumption"
+            + " for disk I/O)\n"
+            + "                    (Note: currently only influences whether the area tree is"
+            + " serialized.)\n\n"
+
+            + "  -cache            specifies a file/directory path location"
+            + " for the font cache file\n"
+            + "  -flush            flushes the current font cache file\n\n"
+
             + " [INPUT]  \n"
             + "  infile            xsl:fo input file (the same as the next) \n"
             + "                    (use '-' for infile to pipe input from stdin)\n"
@@ -1192,14 +1222,16 @@ public class CommandLineOptions {
             + "  -at [mime] out    representation of area tree as XML (outfile req'd) \n"
             + "                    specify optional mime output to allow the AT to be converted\n"
             + "                    to final format later\n"
-            + "  -if [mime] out    representation of document in intermediate format XML (outfile req'd)\n"
+            + "  -if [mime] out    representation of document in intermediate format XML"
+            + " (outfile req'd)\n"
             + "                    specify optional mime output to allow the IF to be converted\n"
             + "                    to final format later\n"
             + "  -print            input file will be rendered and sent to the printer \n"
             + "                    see options with \"-print help\" \n"
             + "  -out mime outfile input will be rendered using the given MIME type\n"
             + "                    (outfile req'd) Example: \"-out application/pdf D:\\out.pdf\"\n"
-            + "                    (Tip: \"-out list\" prints the list of supported MIME types)\n"
+            + "                    (Tip: \"-out list\" prints the list of supported MIME types"
+            + "                    and exits)\n"
             //+ "  -mif outfile      input will be rendered as MIF (FrameMaker) (outfile req'd)\n"
             //+ "                    Experimental feature - requires additional fop-sandbox.jar.\n"
             + "  -svg outfile      input will be rendered as an SVG slides file (outfile req'd) \n"
@@ -1333,5 +1365,14 @@ public class CommandLineOptions {
         }
     }
 
+    private void flushCache() throws FOPException {
+        FontManager fontManager = factory.getFontManager();
+        File cacheFile = fontManager.getCacheFile();
+        if (!fontManager.deleteCache()) {
+            System.err.println("Failed to flush the font cache file '"
+                    + cacheFile + "'.");
+            System.exit(1);
+        }
+    }
 }
 

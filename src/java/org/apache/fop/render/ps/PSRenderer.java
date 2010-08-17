@@ -597,8 +597,9 @@ public class PSRenderer extends AbstractPathOrientedRenderer
     }
 
     /** {@inheritDoc} */
-    protected void drawBorderLine(float x1, float y1, float x2, float y2,
-            boolean horz, boolean startOrBefore, int style, Color col) {
+    protected void drawBorderLine                               // CSOK: ParameterNumber
+        (float x1, float y1, float x2, float y2,
+         boolean horz, boolean startOrBefore, int style, Color col) {
         try {
             PSBorderPainter.drawBorderLine(gen, x1, y1, x2, y2, horz, startOrBefore, style, col);
         } catch (IOException ioe) {

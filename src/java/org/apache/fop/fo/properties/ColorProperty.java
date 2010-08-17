@@ -33,7 +33,8 @@ import org.apache.fop.util.ColorUtil;
 public final class ColorProperty extends Property  {
 
     /** cache holding canonical ColorProperty instances */
-    private static final PropertyCache cache = new PropertyCache(ColorProperty.class);
+    private static final PropertyCache CACHE
+        = new PropertyCache(ColorProperty.class);
 
     /**
      * The color represented by this property.
@@ -97,11 +98,12 @@ public final class ColorProperty extends Property  {
      * @throws PropertyException if the value can't be parsed
      * @see ColorUtil#parseColorString(FOUserAgent, String)
      */
-    public static ColorProperty getInstance(FOUserAgent foUserAgent, String value) throws PropertyException {
+    public static ColorProperty getInstance(FOUserAgent foUserAgent, String value)
+        throws PropertyException {
         ColorProperty instance = new ColorProperty(
                                        ColorUtil.parseColorString(
                                                foUserAgent, value));
-        return (ColorProperty)cache.fetch(instance);
+        return (ColorProperty)CACHE.fetch(instance);
     }
 
     /**
