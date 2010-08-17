@@ -135,7 +135,8 @@ Fop [options] [-fo|-xml] infile [-xsl file] [-awt|-pdf|-mif|-rtf|-tiff|-png|-pcl
   -conserve         enable memory-conservation policy (trades memory-consumption for disk I/O)
                     (Note: currently only influences whether the area tree is serialized.)
 
-  -delete-cache     deletes the current font cache file
+  -cache            specifies a file/directory path location
+  -flush            flushes the current font cache file
 
  [INPUT]
   infile            xsl:fo input file (the same as the next)
