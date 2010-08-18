@@ -119,8 +119,8 @@ public class FileCompare {
 
     /**
      * Does a file size compare of two files
-     * @param file1 the first file to compare
-     * @param file2 the second file to compare
+     * @param oldFile the first file to compare
+     * @param newFile the second file to compare
      * @return true if files are same length, false otherwise
      */
     private static boolean compareFileSize(File oldFile, File newFile) {
