@@ -323,7 +323,7 @@ public class PDFText extends PDFObject {
     /**
      * Converts a text to PDF's "string" data type. Unsupported characters get converted to '?'
      * characters (similar to what the Java "US-ASCII" encoding does).
-     * @see {@link #toPDFString(CharSequence, char)}
+     * @see #toPDFString(CharSequence, char)
      * @param text the text to convert
      * @return the converted string
      */
