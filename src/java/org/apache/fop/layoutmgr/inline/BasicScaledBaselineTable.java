@@ -23,6 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.fo.Constants;
+import org.apache.fop.traits.WritingMode;
 
 
 /**
@@ -38,7 +39,7 @@ public class BasicScaledBaselineTable implements ScaledBaselineTable, Constants 
     private int depth;
     private int xHeight;
     private int dominantBaselineIdentifier;
-    private int writingMode;
+    private WritingMode writingMode;
     private int dominantBaselineOffset;
     private int beforeEdgeOffset;
     private int afterEdgeOffset;
@@ -60,7 +61,7 @@ public class BasicScaledBaselineTable implements ScaledBaselineTable, Constants 
                                     , int depth
                                     , int xHeight
                                     , int dominantBaselineIdentifier
-                                    , int writingMode) {
+                                    , WritingMode writingMode) {
         this.altitude = altitude;
         this.depth = depth;
         this.xHeight = xHeight;
@@ -83,7 +84,7 @@ public class BasicScaledBaselineTable implements ScaledBaselineTable, Constants 
      * Return the writing mode for this baseline table.
      * @return the writing mode
      */
-    public int getWritingMode() {
+    public WritingMode getWritingMode() {
         return this.writingMode;
     }
 
@@ -137,7 +138,7 @@ public class BasicScaledBaselineTable implements ScaledBaselineTable, Constants 
     }
 
     private boolean isHorizontalWritingMode() {
-        return writingMode == EN_LR_TB || writingMode == EN_RL_TB;
+        return writingMode == WritingMode.LR_TB || writingMode == WritingMode.RL_TB;
     }
 
     /**

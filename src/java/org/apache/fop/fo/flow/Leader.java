@@ -32,6 +32,7 @@ import org.apache.fop.fo.properties.LengthRangeProperty;
  * The following patterns are treated: rule, space, dots and use-content.
  * @asf.todo implement validateChildNode()
  */
+// [TBD] implement validateChildNode()
 public class Leader extends InlineLevel {
     // The value of properties relevant for fo:leader.
     // See also superclass InlineLevel

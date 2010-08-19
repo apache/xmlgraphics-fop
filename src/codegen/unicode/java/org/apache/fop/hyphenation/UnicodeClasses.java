@@ -160,7 +160,7 @@ public final class UnicodeClasses {
      * @param unidataPath path to the directory with UCD files  
      * @param outfilePath output file
      * @throws IOException if the input files are not found
-     * @throws URISyntaxException 
+     * @throws URISyntaxException if {@code unidataPath} cannot be converted to a URI
      */
     public static void fromUCD(boolean hexcode, String unidataPath, String outfilePath)
     throws IOException, URISyntaxException {

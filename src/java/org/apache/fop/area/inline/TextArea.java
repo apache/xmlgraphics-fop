@@ -19,6 +19,8 @@
 
 package org.apache.fop.area.inline;
 
+import org.apache.fop.util.CharUtilities;
+
 /**
  * A text inline area.
  */
@@ -55,33 +57,46 @@ public class TextArea extends AbstractTextArea {
      * @param offset the offset for the next area
      */
     public void addWord(String word, int offset) {
-        addWord(word, offset, null);
+        addWord(word, 0, null, null, offset);
     }
 
     /**
      * Create and add a WordArea child to this TextArea.
      *
-     * @param word   the word string
-     * @param offset the offset for the next area
+     * @param word the word string
+     * @param ipd the word's ipd
      * @param letterAdjust the letter adjustment array (may be null)
+     * @param levels array of resolved bidirection levels of word characters,
+     * or null if default level
+     * @param blockProgressionOffset the offset for the next area
      */
-    public void addWord(String word, int offset, int[] letterAdjust) {
-        WordArea wordArea = new WordArea(word, offset, letterAdjust);
+    public void addWord
+        ( String word, int ipd, int[] letterAdjust, int[] levels, int blockProgressionOffset ) {
+        int minWordLevel = findMinLevel ( levels );
+        WordArea wordArea = new WordArea
+            ( blockProgressionOffset, minWordLevel, word, letterAdjust, levels );
+        wordArea.setIPD ( ipd );
         addChildArea(wordArea);
         wordArea.setParentArea(this);
+        updateLevel(minWordLevel);
     }
 
     /**
      * Create and add a SpaceArea child to this TextArea
      *
-     * @param space      the space character
-     * @param offset     the offset for the next area
+     * @param space the space character
+     * @param ipd the space's ipd
+     * @param blockProgressionOffset     the offset for the next area
      * @param adjustable is this space adjustable?
+     * @param level resolved bidirection level of space character
      */
-    public void addSpace(char space, int offset, boolean adjustable) {
-        SpaceArea spaceArea = new SpaceArea(space, offset, adjustable);
+    public void addSpace
+        ( char space, int ipd, boolean adjustable, int blockProgressionOffset, int level ) {
+        SpaceArea spaceArea = new SpaceArea(blockProgressionOffset, level, space, adjustable);
+        spaceArea.setIPD ( ipd );
         addChildArea(spaceArea);
         spaceArea.setParentArea(this);
+        updateLevel(level);
     }
 
     /**
@@ -112,7 +127,45 @@ public class TextArea extends AbstractTextArea {
 
     /** {@inheritDoc} */
     public String toString() {
-        return "TextArea{text=" + getText() + "}";
+        StringBuffer sb = new StringBuffer(super.toString());
+        sb.append(" {text=\"");
+        sb.append(CharUtilities.toNCRefs(getText()));
+        sb.append("\"");
+        sb.append("}");
+        return sb.toString();
     }
+
+    private void updateLevel ( int newLevel ) {
+        if ( newLevel >= 0 ) {
+            int curLevel = getBidiLevel();
+            if ( curLevel >= 0 ) {
+                if ( newLevel < curLevel ) {
+                    setBidiLevel ( newLevel );
+                }
+            } else {
+                setBidiLevel ( newLevel );
+            }
+        }
+    }
+
+    private static int findMinLevel ( int[] levels ) {
+        if ( levels != null ) {
+            int lMin = Integer.MAX_VALUE;
+            for ( int i = 0, n = levels.length; i < n; i++ ) {
+                int l = levels [ i ];
+                if ( ( l >= 0 ) && ( l < lMin ) ) {
+                    lMin = l;
+                }
+            }
+            if ( lMin == Integer.MAX_VALUE ) {
+                return -1;
+            } else {
+                return lMin;
+            }
+        } else {
+            return -1;
+        }
+    }
+
 }
 

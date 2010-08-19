@@ -51,6 +51,7 @@ import org.apache.fop.datatypes.URISpecification;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.extensions.ExternalDocument;
 import org.apache.fop.layoutmgr.inline.ImageLayout;
+import org.apache.fop.traits.WritingMode;
 
 /**
  * LayoutManager for an external-document extension element.  This class is instantiated by
@@ -190,7 +191,7 @@ public class ExternalDocumentLayoutManager extends AbstractPageSequenceLayoutMan
         vp.setIPD(imageSize.width);
         vp.setBPD(imageSize.height);
         vp.setContentPosition(imageLayout.getPlacement());
-        vp.setOffset(0);
+        vp.setBlockProgressionOffset(0);
 
         //Link them all together...
         lineArea.addInlineArea(vp);
@@ -231,8 +232,9 @@ public class ExternalDocumentLayoutManager extends AbstractPageSequenceLayoutMan
             referenceRect = new Rectangle(0, 0, imageSize.height, imageSize.width);
         }
         FODimension reldims = new FODimension(0, 0);
+        // [TBD] BIDI ALERT
         CTM pageCTM = CTM.getCTMandRelDims(pageSeq.getReferenceOrientation(),
-            Constants.EN_LR_TB, referenceRect, reldims);
+                                           WritingMode.LR_TB, referenceRect, reldims);
 
         Page page = new Page(referenceRect, pageNumber, pageNumberString, isBlank);
 

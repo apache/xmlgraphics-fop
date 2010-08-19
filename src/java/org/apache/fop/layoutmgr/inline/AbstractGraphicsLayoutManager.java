@@ -91,7 +91,7 @@ public abstract class AbstractGraphicsLayoutManager extends LeafNodeLayoutManage
         vp.setBPD(imageLayout.getViewportSize().height);
         vp.setContentPosition(placement);
         vp.setClip(imageLayout.isClipped());
-        vp.setOffset(0);
+        vp.setBlockProgressionOffset(0);
 
         // Common Border, Padding, and Background Properties
         TraitSetter.addBorders(vp, fobj.getCommonBorderPaddingBackground()

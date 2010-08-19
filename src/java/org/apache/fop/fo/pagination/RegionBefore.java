@@ -23,6 +23,7 @@ package org.apache.fop.fo.pagination;
 import java.awt.Rectangle;
 
 // FOP
+import org.apache.fop.fo.Constants;
 import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.datatypes.LengthBase;
 import org.apache.fop.datatypes.SimplePercentBaseContext;
@@ -73,12 +74,19 @@ public class RegionBefore extends RegionBA {
         }
         SimplePercentBaseContext neighbourContext;
         Rectangle vpRect;
-        if (spm.getWritingMode() == EN_LR_TB || spm.getWritingMode() == EN_RL_TB) {
+        // [TBD] WRITING MODE ALERT
+        switch ( getWritingMode().getEnumValue() ) {
+        default:
+        case Constants.EN_LR_TB:
+        case Constants.EN_RL_TB:
             neighbourContext = pageWidthContext;
             vpRect = new Rectangle(0, 0, reldims.ipd, getExtent().getValue(pageHeightContext));
-        } else {
+            break;
+        case Constants.EN_TB_LR:
+        case Constants.EN_TB_RL:
             neighbourContext = pageHeightContext;
             vpRect = new Rectangle(0, 0, getExtent().getValue(pageWidthContext), reldims.ipd);
+            break;
         }
         if (getPrecedence() == EN_FALSE) {
             adjustIPD(vpRect, spm.getWritingMode(), neighbourContext);

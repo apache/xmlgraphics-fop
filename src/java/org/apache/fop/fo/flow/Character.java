@@ -79,6 +79,9 @@ public class Character extends FObj implements StructurePointerPropertySet {
     //     private int visibility;
     // End of property values
 
+    /* bidi level */
+    private int bidiLevel;
+
     /** constant indicating that the character is OK */
     public static final int OK = 0;
     /** constant indicating that the character does not fit */
@@ -226,6 +229,39 @@ public class Character extends FObj implements StructurePointerPropertySet {
      */
     public int getNameId() {
         return FO_CHARACTER;
+    }
+
+    /**
+     * Set bidirectional level for character FO as a whole.
+     * @param level the resolved level
+     */
+    public void setBidiLevel ( int level ) {
+        this.bidiLevel = level;
+    }
+
+    /**
+     * Obtain bidirectional level of each character
+     * represented by this FO.
+     * @return a non-empty array of bidi levels
+     */
+    public int[] getBidiLevels() {
+        return new int[] {bidiLevel};
+    }
+
+    /**
+     * Obtain bidirectional level of character at
+     * specified position, which must be zero for this
+     * FO.
+     * @param position an offset position into FO's characters
+     * @return a resolved bidi level or -1 if default
+     * @throws IndexOutOfBoundsException if position is not zero
+     */
+    public int bidiLevelAt ( int position ) throws IndexOutOfBoundsException {
+        if ( position != 0 ) {
+            throw new IndexOutOfBoundsException();
+        } else {
+            return bidiLevel;
+        }
     }
 
     private class FOCharIterator extends CharIterator {

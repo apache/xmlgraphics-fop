@@ -52,7 +52,7 @@ public class Type1FontLoader extends FontLoader {
      */
     public Type1FontLoader(String fontFileURI, boolean embedded, boolean useKerning,
             FontResolver resolver) throws IOException {
-        super(fontFileURI, embedded, useKerning, resolver);
+        super(fontFileURI, embedded, useKerning, true, resolver);
     }
 
     private String getPFMURI(String pfbURI) {

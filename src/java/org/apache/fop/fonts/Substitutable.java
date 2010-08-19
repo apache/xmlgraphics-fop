@@ -1,0 +1,50 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/* $Id$ */
+
+package org.apache.fop.fonts;
+
+// CSOFF: LineLengthCheck
+
+/**
+ * Optional interface which indicates that glyph substitution is supported and, if supported,
+ * can perform substitution.
+ * @author Glenn Adams
+ */
+public interface Substitutable {
+
+    /**
+     * Determines if font performs glyph substitution.
+     * @return true if performs substitution.
+     */
+    boolean performsSubstitution();
+
+    /**
+     * Perform substitutions on characters to effect glyph substitution. If some substitution is performed, it
+     * entails mapping from one or more input characters denoting textual character information to one or more
+     * output character codes denoting glyphs in this font, where the output character codes may make use of
+     * private character code values that have significance only for this font.
+     * @param cs character sequence to map to output font encoding character sequence
+     * @param script a script identifier
+     * @param language a language identifier
+     * @return output sequence (represented as a character sequence, where each character in the returned sequence
+     * denotes "font characters", i.e., character codes that map directly (1-1) to their associated glyphs
+     */
+    CharSequence performSubstitution ( CharSequence cs, String script, String language );
+
+}

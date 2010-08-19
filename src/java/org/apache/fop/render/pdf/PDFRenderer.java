@@ -850,7 +850,8 @@ public class PDFRenderer extends AbstractPathOrientedRenderer implements PDFConf
         if (id != null) {
             int extraMarginBefore = 5000; // millipoints
             int ipp = currentIPPosition;
-            int bpp = currentBPPosition + inlineArea.getOffset() - extraMarginBefore;
+            int bpp = currentBPPosition
+                + inlineArea.getBlockProgressionOffset() - extraMarginBefore;
             saveAbsolutePosition(id, ipp, bpp);
         }
     }
@@ -893,7 +894,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer implements PDFConf
         if (annotsAllowed) {
             // make sure the rect is determined *before* calling super!
             int ipp = currentIPPosition;
-            int bpp = currentBPPosition + ip.getOffset();
+            int bpp = currentBPPosition + ip.getBlockProgressionOffset();
             ipRect = new Rectangle2D.Float(ipp / 1000f, bpp / 1000f,
                                            ip.getIPD() / 1000f, ip.getBPD() / 1000f);
             AffineTransform transform = getState().getTransform();
@@ -996,11 +997,11 @@ public class PDFRenderer extends AbstractPathOrientedRenderer implements PDFConf
         textutil.updateTf(fontName, size / 1000f, tf.isMultiByte());
 
 
-        // word.getOffset() = only height of text itself
+        // word.getBlockProgressionOffset() = only height of text itself
         // currentBlockIPPosition: 0 for beginning of line; nonzero
         //  where previous line area failed to take up entire allocated space
         int rx = currentIPPosition + text.getBorderAndPaddingWidthStart();
-        int bl = currentBPPosition + text.getOffset() + text.getBaselineOffset();
+        int bl = currentBPPosition + text.getBlockProgressionOffset() + text.getBaselineOffset();
 
         textutil.writeTextMatrix(new AffineTransform(1, 0, 0, -1, rx / 1000f, bl / 1000f));
 
@@ -1297,7 +1298,7 @@ public class PDFRenderer extends AbstractPathOrientedRenderer implements PDFConf
         int style = area.getRuleStyle();
         int ruleThickness = area.getRuleThickness();
         int startx = currentIPPosition + area.getBorderAndPaddingWidthStart();
-        int starty = currentBPPosition + area.getOffset() + (ruleThickness / 2);
+        int starty = currentBPPosition + area.getBlockProgressionOffset() + (ruleThickness / 2);
         int endx = currentIPPosition
                         + area.getBorderAndPaddingWidthStart()
                         + area.getIPD();

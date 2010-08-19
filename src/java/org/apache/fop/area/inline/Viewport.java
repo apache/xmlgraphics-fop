@@ -111,7 +111,7 @@ public class Viewport extends InlineArea {
             out.writeFloat((float) contentPosition.getHeight());
         }
         out.writeBoolean(clip);
-        out.writeObject(props);
+        out.writeObject(traits);
         out.writeObject(content);
     }
 
@@ -124,7 +124,7 @@ public class Viewport extends InlineArea {
                                                     in.readFloat());
         }
         this.clip = in.readBoolean();
-        this.props = (HashMap) in.readObject();
+        this.traits = (HashMap) in.readObject();
         this.content = (Area) in.readObject();
     }
 

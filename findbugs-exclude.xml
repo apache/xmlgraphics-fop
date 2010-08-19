@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+  <!-- use of null is preferred over zero length array -->
+  <Match>
+    <Class name="org.apache.fop.area.inline.WordArea"/>
+    <Method name="getBidiLevels"/>
+    <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+  </Match>
+  <Match>
+    <Class name="org.apache.fop.fo.FOText"/>
+    <Method name="getBidiLevels"/>
+    <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+  </Match>
+  <Match>
+    <Class name="org.apache.fop.fonts.ArabicScriptProcessor"/>
+    <Method name="position"/>
+    <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+  </Match>
+  <Match>
+    <Class name="org.apache.fop.fonts.DefaultScriptProcessor"/>
+    <Method name="position"/>
+    <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+  </Match>
+  <Match>
+    <Class name="org.apache.fop.fonts.GlyphPositioningSubtable"/>
+    <Method name="position"/>
+    <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+  </Match>
+  <Match>
+    <Class name="org.apache.fop.fonts.GlyphPositioningTable"/>
+    <Method name="position"/>
+    <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+  </Match>
+  <Match>
+    <Class name="org.apache.fop.fonts.LazyFont"/>
+    <Method name="performPositioning"/>
+    <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+  </Match>
+  <Match>
+    <Class name="org.apache.fop.fonts.MultiByteFont"/>
+    <Method name="performPositioning"/>
+    <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+  </Match>
+  <Match>
+    <Class name="org.apache.fop.layoutmgr.BidiUtil$UnicodeBidiAlgorithm"/>
+    <Method name="resolveLevels"/>
+    <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+  </Match>
+  <!-- string not exposed to end user -->
+  <Match>
+    <Class name="org.apache.fop.fonts.GlyphPositioningTable"/>
+    <Method name="getLookupTypeFromName"/>
+    <Bug pattern="DM_CONVERT_CASE"/>
+  </Match>
+  <Match>
+    <Class name="org.apache.fop.fonts.GlyphSubstitutionTable"/>
+    <Method name="getLookupTypeFromName"/>
+    <Bug pattern="DM_CONVERT_CASE"/>
+  </Match>
+  <Match>
+    <Class name="org.apache.fop.fonts.GlyphTable"/>
+    <Method name="getTableTypeFromName"/>
+    <Bug pattern="DM_CONVERT_CASE"/>
+  </Match>
+  <!-- performance optimizations -->
+  <Match>
+    <Class name="org.apache.fop.fonts.GlyphSequence"/>
+    <Method name="getAssociations"/>
+    <Bug pattern="EI_EXPOSE_REP"/>
+  </Match>
+  <Match>
+    <Class name="org.apache.fop.fonts.GlyphSubstitutionTable$Ligature"/>
+    <Or>
+        <Method name="getComponents"/>
+        <Method name="getLigatures"/>
+    </Or>
+    <Bug pattern="EI_EXPOSE_REP"/>
+  </Match>
+  <Match>
+    <Class name="org.apache.fop.fonts.GlyphSubstitutionTable$Ligature"/>
+    <Or>
+        <Method name="&lt;init&gt;" params="int, int[]" returns="void"/>
+    </Or>
+    <Bug pattern="EI_EXPOSE_REP2"/>
+  </Match>
+  <Match>
+    <Class name="org.apache.fop.fonts.GlyphSubstitutionTable$LigatureSet"/>
+    <Method name="getLigatures"/>
+    <Bug pattern="EI_EXPOSE_REP"/>
+  </Match>
+  <Match>
+    <Class name="org.apache.fop.fonts.GlyphSubstitutionTable$LigatureSet"/>
+    <Method name="&lt;init&gt;" params="org.apache.fop.fonts.GlyphSubstitutionTable$Ligature[]" returns="void"/>
+    <Bug pattern="EI_EXPOSE_REP2"/>
+  </Match>
+  <Match>
+    <Class name="org.apache.fop.area.inline.WordArea"/>
+    <Method name="getBidiLevels"/>
+    <Bug pattern="EI_EXPOSE_REP"/>
+  </Match>
+  <Match>
+    <Class name="org.apache.fop.fo.FOText"/>
+    <Method name="getBidiLevels"/>
+    <Bug pattern="EI_EXPOSE_REP"/>
+  </Match>
+</FindBugsFilter>

@@ -989,7 +989,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
 
         //Determine position
         int rx = currentIPPosition + area.getBorderAndPaddingWidthStart();
-        int bl = currentBPPosition + area.getOffset() + area.getBaselineOffset();
+        int bl = currentBPPosition + area.getBlockProgressionOffset() + area.getBaselineOffset();
 
         Color ct = (Color)area.getTrait(Trait.COLOR);
         if (ct != null) {
@@ -1213,7 +1213,7 @@ public class PSRenderer extends AbstractPathOrientedRenderer
         int style = area.getRuleStyle();
         int ruleThickness = area.getRuleThickness();
         int startx = currentIPPosition + area.getBorderAndPaddingWidthStart();
-        int starty = currentBPPosition + area.getOffset() + (ruleThickness / 2);
+        int starty = currentBPPosition + area.getBlockProgressionOffset() + (ruleThickness / 2);
         int endx = currentIPPosition
                         + area.getBorderAndPaddingWidthStart()
                         + area.getIPD();

@@ -77,8 +77,10 @@ public class PageSequenceLayoutManager extends AbstractPageSequenceLayoutManager
     public void activateLayout() {
         initialize();
 
-        LineArea title = null;
+        // perform step 5.8 of refinement process (Unicode BIDI Processing)
+        BidiUtil.resolveInlineDirectionality(getPageSequence());
 
+        LineArea title = null;
         if (getPageSequence().getTitleFO() != null) {
             try {
                 ContentLayoutManager clm = getLayoutManagerMaker().

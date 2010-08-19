@@ -58,6 +58,7 @@ public abstract class CustomFont extends Typeface
     private Map kerning;
 
     private boolean useKerning = true;
+    private boolean useAdvanced = true;
 
     /** {@inheritDoc} */
     public String getFontName() {
@@ -283,6 +284,15 @@ public abstract class CustomFont extends Typeface
         }
     }
 
+    /**
+     * Used to determine if advanced typographic features are enabled.
+     * By default, this is false, but may be overridden by subclasses.
+     * @return true if enabled.
+     */
+    public boolean isAdvancedEnabled() {
+        return useAdvanced;
+    }
+
     /* ---- MutableFont interface ---- */
 
     /** {@inheritDoc} */
@@ -423,6 +433,13 @@ public abstract class CustomFont extends Typeface
      */
     public void setKerningEnabled(boolean enabled) {
         this.useKerning = enabled;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setAdvancedEnabled(boolean enabled) {
+        this.useAdvanced = enabled;
     }
 
     /**

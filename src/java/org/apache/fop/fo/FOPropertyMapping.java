@@ -631,7 +631,7 @@ public final class FOPropertyMapping implements Constants {
         m.setDefault("black");
         corr = new CorrespondingPropertyMaker(m);
         corr.setCorresponding(PR_BORDER_TOP_COLOR, PR_BORDER_TOP_COLOR,
-                PR_BORDER_RIGHT_COLOR);
+                              PR_BORDER_RIGHT_COLOR, PR_BORDER_LEFT_COLOR);
         corr.setRelative(true);
         addPropertyMaker("border-before-color", m);
 
@@ -640,7 +640,7 @@ public final class FOPropertyMapping implements Constants {
         m.useGeneric(genericBorderStyle);
         corr = new CorrespondingPropertyMaker(m);
         corr.setCorresponding(PR_BORDER_TOP_STYLE, PR_BORDER_TOP_STYLE,
-                PR_BORDER_RIGHT_STYLE);
+                              PR_BORDER_RIGHT_STYLE, PR_BORDER_LEFT_STYLE);
         corr.setRelative(true);
         addPropertyMaker("border-before-style", m);
 
@@ -650,7 +650,7 @@ public final class FOPropertyMapping implements Constants {
         m.getSubpropMaker(CP_CONDITIONALITY).setDefault("discard");
         corr = new CorrespondingPropertyMaker(m);
         corr.setCorresponding(PR_BORDER_TOP_WIDTH, PR_BORDER_TOP_WIDTH,
-                PR_BORDER_RIGHT_WIDTH);
+                              PR_BORDER_RIGHT_WIDTH, PR_BORDER_LEFT_WIDTH);
         corr.setRelative(true);
         addPropertyMaker("border-before-width", m);
 
@@ -661,7 +661,7 @@ public final class FOPropertyMapping implements Constants {
         m.setDefault("black");
         corr = new CorrespondingPropertyMaker(m);
         corr.setCorresponding(PR_BORDER_BOTTOM_COLOR, PR_BORDER_BOTTOM_COLOR,
-                PR_BORDER_LEFT_COLOR);
+                              PR_BORDER_LEFT_COLOR, PR_BORDER_RIGHT_COLOR);
         corr.setRelative(true);
         addPropertyMaker("border-after-color", m);
 
@@ -670,7 +670,7 @@ public final class FOPropertyMapping implements Constants {
         m.useGeneric(genericBorderStyle);
         corr = new CorrespondingPropertyMaker(m);
         corr.setCorresponding(PR_BORDER_BOTTOM_STYLE, PR_BORDER_BOTTOM_STYLE,
-                PR_BORDER_LEFT_STYLE);
+                              PR_BORDER_LEFT_STYLE, PR_BORDER_RIGHT_STYLE);
         corr.setRelative(true);
         addPropertyMaker("border-after-style", m);
 
@@ -680,7 +680,7 @@ public final class FOPropertyMapping implements Constants {
         m.getSubpropMaker(CP_CONDITIONALITY).setDefault("discard");
         corr = new CorrespondingPropertyMaker(m);
         corr.setCorresponding(PR_BORDER_BOTTOM_WIDTH, PR_BORDER_BOTTOM_WIDTH,
-                PR_BORDER_LEFT_WIDTH);
+                              PR_BORDER_LEFT_WIDTH, PR_BORDER_LEFT_WIDTH);
         corr.setRelative(true);
         addPropertyMaker("border-after-width", m);
 
@@ -691,7 +691,7 @@ public final class FOPropertyMapping implements Constants {
         m.setDefault("black");
         corr = new CorrespondingPropertyMaker(m);
         corr.setCorresponding(PR_BORDER_LEFT_COLOR, PR_BORDER_RIGHT_COLOR,
-                PR_BORDER_TOP_COLOR);
+                              PR_BORDER_TOP_COLOR, PR_BORDER_TOP_COLOR);
         corr.setRelative(true);
         addPropertyMaker("border-start-color", m);
 
@@ -700,7 +700,7 @@ public final class FOPropertyMapping implements Constants {
         m.useGeneric(genericBorderStyle);
         corr = new CorrespondingPropertyMaker(m);
         corr.setCorresponding(PR_BORDER_LEFT_STYLE, PR_BORDER_RIGHT_STYLE,
-                PR_BORDER_TOP_STYLE);
+                              PR_BORDER_TOP_STYLE, PR_BORDER_TOP_STYLE);
         corr.setRelative(true);
         addPropertyMaker("border-start-style", m);
 
@@ -710,7 +710,7 @@ public final class FOPropertyMapping implements Constants {
         m.getSubpropMaker(CP_CONDITIONALITY).setDefault("discard");
         corr = new CorrespondingPropertyMaker(m);
         corr.setCorresponding(PR_BORDER_LEFT_WIDTH, PR_BORDER_RIGHT_WIDTH,
-                PR_BORDER_TOP_WIDTH);
+                              PR_BORDER_TOP_WIDTH, PR_BORDER_TOP_WIDTH);
         corr.setRelative(true);
         addPropertyMaker("border-start-width", m);
 
@@ -721,7 +721,7 @@ public final class FOPropertyMapping implements Constants {
         m.setDefault("black");
         corr = new CorrespondingPropertyMaker(m);
         corr.setCorresponding(PR_BORDER_RIGHT_COLOR, PR_BORDER_LEFT_COLOR,
-                PR_BORDER_BOTTOM_COLOR);
+                              PR_BORDER_BOTTOM_COLOR, PR_BORDER_BOTTOM_COLOR);
         corr.setRelative(true);
         addPropertyMaker("border-end-color", m);
 
@@ -730,7 +730,7 @@ public final class FOPropertyMapping implements Constants {
         m.useGeneric(genericBorderStyle);
         corr = new CorrespondingPropertyMaker(m);
         corr.setCorresponding(PR_BORDER_RIGHT_STYLE, PR_BORDER_LEFT_STYLE,
-                PR_BORDER_BOTTOM_STYLE);
+                              PR_BORDER_BOTTOM_STYLE, PR_BORDER_BOTTOM_STYLE);
         corr.setRelative(true);
         addPropertyMaker("border-end-style", m);
 
@@ -740,7 +740,7 @@ public final class FOPropertyMapping implements Constants {
         m.getSubpropMaker(CP_CONDITIONALITY).setDefault("discard");
         corr = new CorrespondingPropertyMaker(m);
         corr.setCorresponding(PR_BORDER_RIGHT_WIDTH, PR_BORDER_LEFT_WIDTH,
-                PR_BORDER_BOTTOM_WIDTH);
+                              PR_BORDER_BOTTOM_WIDTH, PR_BORDER_BOTTOM_WIDTH);
         corr.setRelative(true);
         addPropertyMaker("border-end-width", m);
 
@@ -754,7 +754,7 @@ public final class FOPropertyMapping implements Constants {
         m.addShorthand(generics[PR_BORDER]);
         corr = new CorrespondingPropertyMaker(m);
         corr.setCorresponding(PR_BORDER_BEFORE_COLOR, PR_BORDER_BEFORE_COLOR,
-                PR_BORDER_START_COLOR);
+                              PR_BORDER_START_COLOR, PR_BORDER_START_COLOR);
         addPropertyMaker("border-top-color", m);
 
         // border-top-style
@@ -765,7 +765,7 @@ public final class FOPropertyMapping implements Constants {
         m.addShorthand(generics[PR_BORDER]);
         corr = new CorrespondingPropertyMaker(m);
         corr.setCorresponding(PR_BORDER_BEFORE_STYLE, PR_BORDER_BEFORE_STYLE,
-                PR_BORDER_START_STYLE);
+                              PR_BORDER_START_STYLE, PR_BORDER_START_STYLE);
         addPropertyMaker("border-top-style", m);
 
         // border-top-width
@@ -777,7 +777,7 @@ public final class FOPropertyMapping implements Constants {
         bwm.addShorthand(generics[PR_BORDER]);
         corr = new CorrespondingPropertyMaker(bwm);
         corr.setCorresponding(PR_BORDER_BEFORE_WIDTH, PR_BORDER_BEFORE_WIDTH,
-                PR_BORDER_START_WIDTH);
+                              PR_BORDER_START_WIDTH, PR_BORDER_START_WIDTH);
         addPropertyMaker("border-top-width", bwm);
 
         // border-bottom-color
@@ -790,7 +790,7 @@ public final class FOPropertyMapping implements Constants {
         m.addShorthand(generics[PR_BORDER]);
         corr = new CorrespondingPropertyMaker(m);
         corr.setCorresponding(PR_BORDER_AFTER_COLOR, PR_BORDER_AFTER_COLOR,
-                PR_BORDER_END_COLOR);
+                              PR_BORDER_END_COLOR, PR_BORDER_END_COLOR);
         addPropertyMaker("border-bottom-color", m);
 
         // border-bottom-style
@@ -801,7 +801,7 @@ public final class FOPropertyMapping implements Constants {
         m.addShorthand(generics[PR_BORDER]);
         corr = new CorrespondingPropertyMaker(m);
         corr.setCorresponding(PR_BORDER_AFTER_STYLE, PR_BORDER_AFTER_STYLE,
-                PR_BORDER_END_STYLE);
+                              PR_BORDER_END_STYLE, PR_BORDER_END_STYLE);
         addPropertyMaker("border-bottom-style", m);
 
         // border-bottom-width
@@ -813,7 +813,7 @@ public final class FOPropertyMapping implements Constants {
         bwm.addShorthand(generics[PR_BORDER]);
         corr = new CorrespondingPropertyMaker(bwm);
         corr.setCorresponding(PR_BORDER_AFTER_WIDTH, PR_BORDER_AFTER_WIDTH,
-                PR_BORDER_END_WIDTH);
+                              PR_BORDER_END_WIDTH, PR_BORDER_END_WIDTH);
         addPropertyMaker("border-bottom-width", bwm);
 
         // border-left-color
@@ -826,7 +826,7 @@ public final class FOPropertyMapping implements Constants {
         m.addShorthand(generics[PR_BORDER]);
         corr = new CorrespondingPropertyMaker(m);
         corr.setCorresponding(PR_BORDER_START_COLOR, PR_BORDER_END_COLOR,
-                PR_BORDER_AFTER_COLOR);
+                              PR_BORDER_AFTER_COLOR, PR_BORDER_BEFORE_COLOR);
         addPropertyMaker("border-left-color", m);
 
         // border-left-style
@@ -837,7 +837,7 @@ public final class FOPropertyMapping implements Constants {
         m.addShorthand(generics[PR_BORDER]);
         corr = new CorrespondingPropertyMaker(m);
         corr.setCorresponding(PR_BORDER_START_STYLE, PR_BORDER_END_STYLE,
-                PR_BORDER_AFTER_STYLE);
+                              PR_BORDER_AFTER_STYLE, PR_BORDER_BEFORE_STYLE);
         addPropertyMaker("border-left-style", m);
 
         // border-left-width
@@ -849,7 +849,7 @@ public final class FOPropertyMapping implements Constants {
         bwm.addShorthand(generics[PR_BORDER]);
         corr = new CorrespondingPropertyMaker(bwm);
         corr.setCorresponding(PR_BORDER_START_WIDTH, PR_BORDER_END_WIDTH,
-                PR_BORDER_AFTER_WIDTH);
+                              PR_BORDER_AFTER_WIDTH, PR_BORDER_BEFORE_WIDTH);
         addPropertyMaker("border-left-width", bwm);
 
         // border-right-color
@@ -862,7 +862,7 @@ public final class FOPropertyMapping implements Constants {
         m.addShorthand(generics[PR_BORDER]);
         corr = new CorrespondingPropertyMaker(m);
         corr.setCorresponding(PR_BORDER_END_COLOR, PR_BORDER_START_COLOR,
-                PR_BORDER_BEFORE_COLOR);
+                              PR_BORDER_BEFORE_COLOR, PR_BORDER_AFTER_COLOR);
         addPropertyMaker("border-right-color", m);
 
         // border-right-style
@@ -873,7 +873,7 @@ public final class FOPropertyMapping implements Constants {
         m.addShorthand(generics[PR_BORDER]);
         corr = new CorrespondingPropertyMaker(m);
         corr.setCorresponding(PR_BORDER_END_STYLE, PR_BORDER_START_STYLE,
-                PR_BORDER_BEFORE_STYLE);
+                              PR_BORDER_BEFORE_STYLE, PR_BORDER_AFTER_STYLE);
         addPropertyMaker("border-right-style", m);
 
         // border-right-width
@@ -885,7 +885,7 @@ public final class FOPropertyMapping implements Constants {
         bwm.addShorthand(generics[PR_BORDER]);
         corr = new CorrespondingPropertyMaker(bwm);
         corr.setCorresponding(PR_BORDER_END_WIDTH, PR_BORDER_START_WIDTH,
-                PR_BORDER_BEFORE_WIDTH);
+                              PR_BORDER_BEFORE_WIDTH, PR_BORDER_AFTER_WIDTH);
         addPropertyMaker("border-right-width", bwm);
 
         // padding-before
@@ -894,7 +894,7 @@ public final class FOPropertyMapping implements Constants {
         m.getSubpropMaker(CP_CONDITIONALITY).setDefault("discard");
         corr = new CorrespondingPropertyMaker(m);
         corr.setCorresponding(PR_PADDING_TOP, PR_PADDING_TOP,
-                PR_PADDING_RIGHT);
+                              PR_PADDING_RIGHT, PR_PADDING_LEFT);
         corr.setRelative(true);
         addPropertyMaker("padding-before", m);
 
@@ -904,7 +904,7 @@ public final class FOPropertyMapping implements Constants {
         m.getSubpropMaker(CP_CONDITIONALITY).setDefault("discard");
         corr = new CorrespondingPropertyMaker(m);
         corr.setCorresponding(PR_PADDING_BOTTOM, PR_PADDING_BOTTOM,
-                PR_PADDING_LEFT);
+                              PR_PADDING_LEFT, PR_PADDING_RIGHT);
         corr.setRelative(true);
         addPropertyMaker("padding-after", m);
 
@@ -914,7 +914,7 @@ public final class FOPropertyMapping implements Constants {
         m.getSubpropMaker(CP_CONDITIONALITY).setDefault("discard");
         corr = new CorrespondingPropertyMaker(m);
         corr.setCorresponding(PR_PADDING_LEFT, PR_PADDING_RIGHT,
-                PR_PADDING_TOP);
+                              PR_PADDING_TOP, PR_PADDING_TOP);
         corr.setRelative(true);
         addPropertyMaker("padding-start", m);
 
@@ -924,7 +924,7 @@ public final class FOPropertyMapping implements Constants {
         m.getSubpropMaker(CP_CONDITIONALITY).setDefault("discard");
         corr = new CorrespondingPropertyMaker(m);
         corr.setCorresponding(PR_PADDING_RIGHT, PR_PADDING_LEFT,
-                PR_PADDING_BOTTOM);
+                              PR_PADDING_BOTTOM, PR_PADDING_BOTTOM);
         corr.setRelative(true);
         addPropertyMaker("padding-end", m);
 
@@ -933,7 +933,7 @@ public final class FOPropertyMapping implements Constants {
         m.useGeneric(genericPadding);
         corr = new CorrespondingPropertyMaker(m);
         corr.setCorresponding(PR_PADDING_BEFORE, PR_PADDING_BEFORE,
-                PR_PADDING_START);
+                              PR_PADDING_START, PR_PADDING_START);
         addPropertyMaker("padding-top", m);
 
         // padding-bottom
@@ -941,7 +941,7 @@ public final class FOPropertyMapping implements Constants {
         m.useGeneric(genericPadding);
         corr = new CorrespondingPropertyMaker(m);
         corr.setCorresponding(PR_PADDING_AFTER, PR_PADDING_AFTER,
-                PR_PADDING_END);
+                              PR_PADDING_END, PR_PADDING_END);
         addPropertyMaker("padding-bottom", m);
 
         // padding-left
@@ -949,7 +949,7 @@ public final class FOPropertyMapping implements Constants {
         m.useGeneric(genericPadding);
         corr = new CorrespondingPropertyMaker(m);
         corr.setCorresponding(PR_PADDING_START, PR_PADDING_END,
-                PR_PADDING_AFTER);
+                              PR_PADDING_AFTER, PR_PADDING_BEFORE);
         addPropertyMaker("padding-left", m);
 
         // padding-right
@@ -957,7 +957,7 @@ public final class FOPropertyMapping implements Constants {
         m.useGeneric(genericPadding);
         corr = new CorrespondingPropertyMaker(m);
         corr.setCorresponding(PR_PADDING_END, PR_PADDING_START,
-                PR_PADDING_BEFORE);
+                              PR_PADDING_BEFORE, PR_PADDING_AFTER);
         addPropertyMaker("padding-right", m);
     }
 
@@ -1150,7 +1150,7 @@ public final class FOPropertyMapping implements Constants {
         m  = new SpaceProperty.Maker(PR_SPACE_BEFORE);
         m.useGeneric(genericSpace);
         corr = new SpacePropertyMaker(m);
-        corr.setCorresponding(PR_MARGIN_TOP, PR_MARGIN_TOP, PR_MARGIN_RIGHT);
+        corr.setCorresponding(PR_MARGIN_TOP, PR_MARGIN_TOP, PR_MARGIN_RIGHT, PR_MARGIN_LEFT);
         corr.setUseParent(false);
         corr.setRelative(true);
         addPropertyMaker("space-before", m);
@@ -1159,7 +1159,7 @@ public final class FOPropertyMapping implements Constants {
         m  = new SpaceProperty.Maker(PR_SPACE_AFTER);
         m.useGeneric(genericSpace);
         corr = new SpacePropertyMaker(m);
-        corr.setCorresponding(PR_MARGIN_BOTTOM, PR_MARGIN_BOTTOM, PR_MARGIN_LEFT);
+        corr.setCorresponding(PR_MARGIN_BOTTOM, PR_MARGIN_BOTTOM, PR_MARGIN_LEFT, PR_MARGIN_RIGHT);
         corr.setUseParent(false);
         corr.setRelative(true);
         addPropertyMaker("space-after", m);
@@ -1170,14 +1170,14 @@ public final class FOPropertyMapping implements Constants {
         m.setDefault("0pt");
         m.setPercentBase(LengthBase.CONTAINING_REFAREA_WIDTH);
         IndentPropertyMaker sCorr = new IndentPropertyMaker(m);
-        sCorr.setCorresponding(PR_MARGIN_LEFT, PR_MARGIN_RIGHT, PR_MARGIN_TOP);
+        sCorr.setCorresponding(PR_MARGIN_LEFT, PR_MARGIN_RIGHT, PR_MARGIN_TOP, PR_MARGIN_TOP);
         sCorr.setUseParent(false);
         sCorr.setRelative(true);
         sCorr.setPaddingCorresponding(new int[] {
-             PR_PADDING_LEFT, PR_PADDING_RIGHT, PR_PADDING_TOP
+             PR_PADDING_LEFT, PR_PADDING_RIGHT, PR_PADDING_TOP, PR_PADDING_TOP
         });
         sCorr.setBorderWidthCorresponding(new int[] {
-            PR_BORDER_LEFT_WIDTH, PR_BORDER_RIGHT_WIDTH, PR_BORDER_TOP_WIDTH
+            PR_BORDER_LEFT_WIDTH, PR_BORDER_RIGHT_WIDTH, PR_BORDER_TOP_WIDTH, PR_BORDER_TOP_WIDTH
         });
         addPropertyMaker("start-indent", m);
 
@@ -1187,14 +1187,16 @@ public final class FOPropertyMapping implements Constants {
         m.setDefault("0pt");
         m.setPercentBase(LengthBase.CONTAINING_REFAREA_WIDTH);
         IndentPropertyMaker eCorr = new IndentPropertyMaker(m);
-        eCorr.setCorresponding(PR_MARGIN_RIGHT, PR_MARGIN_LEFT, PR_MARGIN_BOTTOM);
+        eCorr.setCorresponding(PR_MARGIN_RIGHT, PR_MARGIN_LEFT,
+                               PR_MARGIN_BOTTOM, PR_MARGIN_BOTTOM);
         eCorr.setUseParent(false);
         eCorr.setRelative(true);
         eCorr.setPaddingCorresponding(new int[] {
-            PR_PADDING_RIGHT, PR_PADDING_LEFT, PR_PADDING_BOTTOM
+            PR_PADDING_RIGHT, PR_PADDING_LEFT, PR_PADDING_BOTTOM, PR_PADDING_BOTTOM
         });
         eCorr.setBorderWidthCorresponding(new int[] {
-            PR_BORDER_RIGHT_WIDTH, PR_BORDER_LEFT_WIDTH, PR_BORDER_BOTTOM_WIDTH
+            PR_BORDER_RIGHT_WIDTH, PR_BORDER_LEFT_WIDTH,
+            PR_BORDER_BOTTOM_WIDTH, PR_BORDER_BOTTOM_WIDTH
         });
         addPropertyMaker("end-indent", m);
     }
@@ -1351,10 +1353,10 @@ public final class FOPropertyMapping implements Constants {
         m.addSubpropMaker(l);
 
         pdim = new DimensionPropertyMaker(m);
-        pdim.setCorresponding(PR_HEIGHT, PR_HEIGHT, PR_WIDTH);
+        pdim.setCorresponding(PR_HEIGHT, PR_HEIGHT, PR_WIDTH, PR_WIDTH);
         pdim.setExtraCorresponding(new int[][] {
-             {PR_MIN_HEIGHT, PR_MIN_HEIGHT, PR_MIN_WIDTH, },
-             {PR_MAX_HEIGHT, PR_MAX_HEIGHT, PR_MAX_WIDTH, }
+             {PR_MIN_HEIGHT, PR_MIN_HEIGHT, PR_MIN_WIDTH, PR_MIN_WIDTH},
+             {PR_MAX_HEIGHT, PR_MAX_HEIGHT, PR_MAX_WIDTH, PR_MAX_WIDTH}
         });
         pdim.setRelative(true);
         m.setCorresponding(pdim);
@@ -1418,10 +1420,10 @@ public final class FOPropertyMapping implements Constants {
 
         pdim = new DimensionPropertyMaker(m);
         pdim.setRelative(true);
-        pdim.setCorresponding(PR_WIDTH, PR_WIDTH, PR_HEIGHT);
+        pdim.setCorresponding(PR_WIDTH, PR_WIDTH, PR_HEIGHT, PR_HEIGHT);
         pdim.setExtraCorresponding(new int[][] {
-            {PR_MIN_WIDTH, PR_MIN_WIDTH, PR_MIN_HEIGHT, },
-            {PR_MAX_WIDTH, PR_MAX_WIDTH, PR_MAX_HEIGHT, }
+            {PR_MIN_WIDTH, PR_MIN_WIDTH, PR_MIN_HEIGHT, PR_MIN_HEIGHT },
+            {PR_MAX_WIDTH, PR_MAX_WIDTH, PR_MAX_HEIGHT, PR_MIN_HEIGHT }
         });
         m.setCorresponding(pdim);
         addPropertyMaker("inline-progression-dimension", m);
@@ -2511,6 +2513,7 @@ public final class FOPropertyMapping implements Constants {
         m.addEnum("lr-tb", getEnumProperty(EN_LR_TB, "LR_TB"));
         m.addEnum("rl-tb", getEnumProperty(EN_RL_TB, "RL_TB"));
         m.addEnum("tb-rl", getEnumProperty(EN_TB_RL, "TB_RL"));
+        m.addEnum("tb-lr", getEnumProperty(EN_TB_LR, "TB_LR"));
         m.addKeyword("lr", "lr-tb");
         m.addKeyword("rl", "rl-tb");
         m.addKeyword("tb", "tb-rl");

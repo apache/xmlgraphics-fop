@@ -20,6 +20,7 @@
 package org.apache.fop.fonts;
 
 //Java
+import java.nio.CharBuffer;
 import java.text.DecimalFormat;
 import java.util.Map;
 
@@ -27,7 +28,7 @@ import java.util.Map;
 /**
  * Generic MultiByte (CID) font
  */
-public class MultiByteFont extends CIDFont {
+public class MultiByteFont extends CIDFont implements Substitutable, Positionable {
 
     private static int uniqueCounter = -1;
 
@@ -43,6 +44,10 @@ public class MultiByteFont extends CIDFont {
 
     /** A map from Unicode indices to glyph indices */
     private BFEntry[] bfentries = null;
+
+    /* advanced typographic support */
+    private GlyphSubstitutionTable gsub;
+    private GlyphPositioningTable gpos;
 
     /**
      * Default constructor
@@ -157,8 +162,9 @@ public class MultiByteFont extends CIDFont {
      * @param c the Unicode character index
      * @return the glyph index (or 0 if the glyph is not available)
      */
-    private int findGlyphIndex(char c) {
-        int idx = (int)c;
+    // [TBD] - needs optimization
+    private int findGlyphIndex(int c) {
+        int idx = c;
         int retIdx = SingleByteEncoding.NOT_FOUND_CODE_POINT;
 
         for (int i = 0; (i < bfentries.length) && retIdx == 0; i++) {
@@ -171,6 +177,29 @@ public class MultiByteFont extends CIDFont {
             }
         }
         return retIdx;
+    }
+
+    /**
+     * Returns the Unicode scalar value that corresponds to the glyph index. If more than
+     * one correspondence exists, then the first one is returned (ordered by bfentries[]).
+     * If the glyph index is Typeface.NOT_FOUND, then returns the Unicode replacement
+     * character (0x00FFFD).
+     * @param gi glyph index
+     * @returns unicode scalar value
+     */
+    // [TBD] - needs optimization
+    private int findCharacterFromGlyphIndex ( int gi ) {
+        int cc = 0;
+        for ( int i = 0, n = bfentries.length; i < n; i++ ) {
+            BFEntry be = bfentries [ i ];
+            int s = be.getGlyphStartIndex();
+            int e = s + ( be.getUnicodeEnd() - be.getUnicodeStart() );
+            if ( ( gi >= s ) && ( gi <= e ) ) {
+                cc = be.getUnicodeStart() + ( gi - s );
+                break;
+            }
+        }
+        return cc;
     }
 
     /** {@inheritDoc} */
@@ -248,5 +277,153 @@ public class MultiByteFont extends CIDFont {
         }
         return subset.getSubsetChars();
     }
+
+    /**
+     * Establishes the glyph substitution table.
+     * @param gsub the glyph substitution table to be used by this font
+     */
+    public void setGSUB ( GlyphSubstitutionTable gsub ) {
+        if ( ( this.gsub == null ) || ( gsub == null ) ) {
+            this.gsub = gsub;
+        } else {
+            throw new IllegalStateException ( "font already associated with GSUB table" );
+        }
+    }
+
+    /**
+     * Obtain glyph substitution table.
+     * @return glyph substitution table or null if none is associated with font
+     */
+    public GlyphSubstitutionTable getGSUB() {
+        return gsub;
+    }
+
+    /**
+     * Establishes the glyph positioning table.
+     * @param gpos the glyph positioning table to be used by this font
+     */
+    public void setGPOS ( GlyphPositioningTable gpos ) {
+        if ( ( this.gpos == null ) || ( gpos == null ) ) {
+            this.gpos = gpos;
+        } else {
+            throw new IllegalStateException ( "font already associated with GPOS table" );
+        }
+    }
+
+    /**
+     * Obtain glyph positioning table.
+     * @return glyph positioning table or null if none is associated with font
+     */
+    public GlyphPositioningTable getGPOS() {
+        return gpos;
+    }
+
+    /** {@inheritDoc} */
+    public boolean performsSubstitution() {
+        return gsub != null;
+    }
+
+    /** {@inheritDoc} */
+    public CharSequence performSubstitution ( CharSequence cs, String script, String language ) {
+        if ( gsub != null ) {
+            GlyphSequence igs = mapCharsToGlyphs ( cs );
+            GlyphSequence ogs = gsub.substitute ( igs, script, language );
+            CharSequence ocs = mapGlyphsToChars ( ogs );
+            return ocs;
+        } else {
+            return cs;
+        }
+    }
+
+    /** {@inheritDoc} */
+    public boolean performsPositioning() {
+        return gpos != null;
+    }
+
+    /** {@inheritDoc} */
+    public int[] performPositioning ( CharSequence cs, String script, String language ) {
+        if ( gpos != null ) {
+            return gpos.position ( mapCharsToGlyphs ( cs ), script, language );
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Map sequence CS, comprising a sequence of UTF-16 encoded Unicode Code Points, to
+     * an output character sequence GS, comprising a sequence of Glyph Indices. N.B. Unlike
+     * mapChar(), this method does not make use of embedded subset encodings.
+     * @param cs a CharSequence containing UTF-16 encoded Unicode characters
+     * @returns a CharSequence containing glyph indices
+     */
+    private GlyphSequence mapCharsToGlyphs ( CharSequence cs ) {
+        CharBuffer cb = CharBuffer.allocate ( cs.length() );
+        int gi, giMissing = findGlyphIndex ( Typeface.NOT_FOUND );
+        for ( int i = 0, n = cs.length(); i < n; i++ ) {
+            int cc = cs.charAt ( i );
+            if ( ( cc >= 0xD800 ) && ( cc < 0xDC00 ) ) {
+                if ( ( i + 1 ) < n ) {
+                    int sh = cc;
+                    int sl = cs.charAt ( ++i );
+                    if ( ( sl >= 0xDC00 ) && ( sl < 0xE000 ) ) {
+                        cc = 0x10000 + ( ( sh - 0xD800 ) << 10 ) + ( ( sl - 0xDC00 ) << 0 );
+                    } else {
+                        throw new IllegalArgumentException
+                            (  "ill-formed UTF-16 sequence, "
+                               + "contains isolated high surrogate at index " + i );
+                    }
+                } else {
+                    throw new IllegalArgumentException
+                        ( "ill-formed UTF-16 sequence, "
+                          + "contains isolated high surrogate at end of sequence" );
+                }
+            } else if ( ( cc >= 0xDC00 ) && ( cc < 0xE000 ) ) {
+                throw new IllegalArgumentException
+                    ( "ill-formed UTF-16 sequence, "
+                      + "contains isolated low surrogate at index " + i );
+            }
+            gi = findGlyphIndex ( cc );
+            if ( gi == SingleByteEncoding.NOT_FOUND_CODE_POINT ) {
+                gi = giMissing;
+            }
+            cb.put ( (char) gi );
+        }
+        cb.rewind();
+        return new GlyphSequence ( cs, (CharSequence) cb, null );
+    }
+
+    /**
+     * Map sequence GS, comprising a sequence of Glyph Indices, to output sequence CS,
+     * comprising a sequence of UTF-16 encoded Unicode Code Points.
+     * @param gs a CharSequence containing glyph indices
+     * @returns a CharSequence containing UTF-16 encoded Unicode characters
+     */
+    private CharSequence mapGlyphsToChars ( GlyphSequence gs ) {
+        CharBuffer cb = CharBuffer.allocate ( gs.length() );
+        int cc, ccMissing = Typeface.NOT_FOUND;
+        for ( int i = 0, n = gs.length(); i < n; i++ ) {
+            int gi = gs.charAt ( i );
+            cc = findCharacterFromGlyphIndex ( gi );
+            if ( cc == 0 ) {
+                cc = ccMissing;
+            }
+            if ( cc > 0x10FFFF ) {
+                cc = ccMissing;
+            }
+            if ( cc > 0x00FFFF ) {
+                int sh, sl;
+                cc -= 0x10000;
+                sh = ( ( cc >> 10 ) & 0x3FF ) + 0xD800;
+                sl = ( ( cc >>  0 ) & 0x3FF ) + 0xDC00;
+                cb.put ( (char) sh );
+                cb.put ( (char) sl );
+            } else {
+                cb.put ( (char) cc );
+            }
+        }
+        cb.rewind();
+        return (CharSequence) cb;
+    }
+
 }
 

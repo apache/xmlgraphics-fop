@@ -60,6 +60,7 @@ import org.apache.fop.area.BlockViewport;
 import org.apache.fop.area.BookmarkData;
 import org.apache.fop.area.CTM;
 import org.apache.fop.area.DestinationData;
+import org.apache.fop.area.LineArea;
 import org.apache.fop.area.OffDocumentExtensionAttachment;
 import org.apache.fop.area.OffDocumentItem;
 import org.apache.fop.area.PageSequence;
@@ -473,7 +474,8 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         if (hasDocumentNavigation() && id != null) {
             int extraMarginBefore = 5000; // millipoints
             int ipp = currentIPPosition;
-            int bpp = currentBPPosition + inlineArea.getOffset() - extraMarginBefore;
+            int bpp = currentBPPosition
+                + inlineArea.getBlockProgressionOffset() - extraMarginBefore;
             saveAbsolutePosition(id, ipp, bpp);
         }
     }
@@ -920,7 +922,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         String ptr = (String) ip.getTrait(Trait.PTR); // used for accessibility
         // make sure the rect is determined *before* calling super!
         int ipp = currentIPPosition;
-        int bpp = currentBPPosition + ip.getOffset();
+        int bpp = currentBPPosition + ip.getBlockProgressionOffset();
         ipRect = new Rectangle(ipp, bpp, ip.getIPD(), ip.getBPD());
         AffineTransform transform = graphicContext.getTransform();
         ipRect = transform.createTransformedShape(ipRect).getBounds();
@@ -1011,7 +1013,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         }
 
         int rx = currentIPPosition + text.getBorderAndPaddingWidthStart();
-        int bl = currentBPPosition + text.getOffset() + text.getBaselineOffset();
+        int bl = currentBPPosition + text.getBlockProgressionOffset() + text.getBaselineOffset();
         textUtil.flush();
         textUtil.setStartPosition(rx, bl);
         textUtil.setSpacing(text.getTextLetterSpaceAdjust(), text.getTextWordSpaceAdjust());
@@ -1027,7 +1029,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         Font font = getFontFromArea(word.getParentArea());
         String s = word.getWord();
 
-        renderText(s, word.getLetterAdjustArray(),
+        renderText(s, word.getLetterAdjustArray(), word.isReversed(),
                 font, (AbstractTextArea)word.getParentArea());
 
         super.renderWord(word);
@@ -1039,7 +1041,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         String s = space.getSpace();
 
         AbstractTextArea textArea = (AbstractTextArea)space.getParentArea();
-        renderText(s, null, font, textArea);
+        renderText(s, null, false, font, textArea);
 
         if (textUtil.combined && space.isAdjustable()) {
             //Used for justified text, for example
@@ -1056,12 +1058,13 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
      * Does low-level rendering of text.
      * @param s text to render
      * @param letterAdjust an array of widths for letter adjustment (may be null)
+     * @param reversed if true then text has been reversed (from logical order)
      * @param font to font in use
      * @param parentArea the parent text area to retrieve certain traits from
      */
     protected void renderText(String s,
-                           int[] letterAdjust,
-                           Font font, AbstractTextArea parentArea) {
+                              int[] letterAdjust, boolean reversed,
+                              Font font, AbstractTextArea parentArea) {
         int l = s.length();
         if (l == 0) {
             return;
@@ -1200,7 +1203,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         int style = area.getRuleStyle();
         int ruleThickness = area.getRuleThickness();
         int startx = currentIPPosition + area.getBorderAndPaddingWidthStart();
-        int starty = currentBPPosition + area.getOffset() + (ruleThickness / 2);
+        int starty = currentBPPosition + area.getBlockProgressionOffset() + (ruleThickness / 2);
         int endx = currentIPPosition
                         + area.getBorderAndPaddingWidthStart()
                         + area.getIPD();

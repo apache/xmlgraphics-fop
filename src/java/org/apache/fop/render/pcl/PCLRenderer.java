@@ -473,7 +473,7 @@ public class PCLRenderer extends PrintRenderer implements PCLConstants {
         //Determine position
         int saveIP = currentIPPosition;
         final int rx = currentIPPosition + text.getBorderAndPaddingWidthStart();
-        int bl = currentBPPosition + text.getOffset() + text.getBaselineOffset();
+        int bl = currentBPPosition + text.getBlockProgressionOffset() + text.getBaselineOffset();
 
         try {
 
@@ -515,7 +515,7 @@ public class PCLRenderer extends PrintRenderer implements PCLConstants {
 
                 Graphics2DAdapter g2a = getGraphics2DAdapter();
                 final Rectangle paintRect = new Rectangle(
-                        rx, currentBPPosition + text.getOffset() - additionalBPD,
+                        rx, currentBPPosition + text.getBlockProgressionOffset() - additionalBPD,
                         text.getIPD() + extraWidth, text.getBPD() + additionalBPD);
                 RendererContext rc = createRendererContext(paintRect.x, paintRect.y,
                         paintRect.width, paintRect.height, null);
@@ -728,7 +728,7 @@ public class PCLRenderer extends PrintRenderer implements PCLConstants {
     public void renderViewport(Viewport viewport) {
 
         float x = currentIPPosition / 1000f;
-        float y = (currentBPPosition + viewport.getOffset()) / 1000f;
+        float y = (currentBPPosition + viewport.getBlockProgressionOffset()) / 1000f;
         float width = viewport.getIPD() / 1000f;
         float height = viewport.getBPD() / 1000f;
         // TODO: Calculate the border rect correctly.
@@ -1066,7 +1066,7 @@ public class PCLRenderer extends PrintRenderer implements PCLConstants {
      */
     protected void renderInlineAreaBackAndBorders(InlineArea area) {
         float x = currentIPPosition / 1000f;
-        float y = (currentBPPosition + area.getOffset()) / 1000f;
+        float y = (currentBPPosition + area.getBlockProgressionOffset()) / 1000f;
         float width = area.getIPD() / 1000f;
         float height = area.getBPD() / 1000f;
         float borderPaddingStart = area.getBorderAndPaddingWidthStart() / 1000f;
@@ -1489,7 +1489,7 @@ public class PCLRenderer extends PrintRenderer implements PCLConstants {
         saveGraphicsState();
         int style = area.getRuleStyle();
         float startx = (currentIPPosition + area.getBorderAndPaddingWidthStart()) / 1000f;
-        float starty = (currentBPPosition + area.getOffset()) / 1000f;
+        float starty = (currentBPPosition + area.getBlockProgressionOffset()) / 1000f;
         float endx = (currentIPPosition + area.getBorderAndPaddingWidthStart()
                         + area.getIPD()) / 1000f;
         float ruleThickness = area.getRuleThickness() / 1000f;

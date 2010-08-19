@@ -38,26 +38,6 @@ import org.apache.fop.traits.BorderProps;
  * Base object for all areas.
  */
 public class Area extends AreaTreeObject implements Serializable {
-    // stacking directions
-    /**
-     * Stacking left to right
-     */
-    public static final int LR = 0;
-
-    /**
-     * Stacking right to left
-     */
-    public static final int RL = 1;
-
-    /**
-     * Stacking top to bottom
-     */
-    public static final int TB = 2;
-
-    /**
-     * Stacking bottom to top
-     */
-    public static final int BT = 3;
 
     // orientations for reference areas
     /**
@@ -127,15 +107,19 @@ public class Area extends AreaTreeObject implements Serializable {
     protected int bpd;
 
     /**
+     * Resolved bidirectional level for area.
+     */
+    protected int bidiLevel = -1;
+
+    /**
      * Traits for this area stored in a HashMap
      */
-    protected Map props = null;
+    protected Map traits = null;
 
     /**
      * logging instance
      */
     protected static Log log = LogFactory.getLog(Area.class);
-
 
     /**
      * Get the area class of this area.
@@ -220,6 +204,32 @@ public class Area extends AreaTreeObject implements Serializable {
     public int getAllocBPD() {
         return getSpaceBefore() + getBorderAndPaddingWidthBefore() + getBPD()
                 + getBorderAndPaddingWidthAfter() + getSpaceAfter();
+    }
+
+    /**
+     * Set the bidirectional embedding level.
+     *
+     * @param bidiLevel the bidirectional embedding level
+     */
+    public void setBidiLevel ( int bidiLevel ) {
+        this.bidiLevel = bidiLevel;
+    }
+
+    /**
+     * Reset the bidirectional embedding level to default
+     * value (-1).
+     */
+    public void resetBidiLevel() {
+        setBidiLevel(-1);
+    }
+
+    /**
+     * Get the bidirectional embedding level.
+     *
+     * @return the bidirectional embedding level
+     */
+    public int getBidiLevel() {
+        return bidiLevel;
     }
 
     /**
@@ -376,10 +386,23 @@ public class Area extends AreaTreeObject implements Serializable {
      * @param prop the value of the trait
      */
     public void addTrait(Object traitCode, Object prop) {
-        if (props == null) {
-            props = new java.util.HashMap(20);
+        if (traits == null) {
+            traits = new java.util.HashMap(20);
         }
-        props.put(traitCode, prop);
+        traits.put(traitCode, prop);
+    }
+
+    /**
+     * Set traits on this area, copying from an existing traits map.
+     *
+     * @param traits the map of traits
+     */
+    public void setTraits ( Map traits ) {
+        if ( traits != null ) {
+            this.traits = new java.util.HashMap ( traits );
+        } else {
+            this.traits = null;
+        }
     }
 
     /**
@@ -388,12 +411,12 @@ public class Area extends AreaTreeObject implements Serializable {
      * @return the map of traits
      */
     public Map getTraits() {
-        return this.props;
+        return this.traits;
     }
 
     /** @return true if the area has traits */
     public boolean hasTraits() {
-        return (this.props != null);
+        return (this.traits != null);
     }
 
     /**
@@ -403,7 +426,7 @@ public class Area extends AreaTreeObject implements Serializable {
      * @return the trait value
      */
     public Object getTrait(Object oTraitCode) {
-        return (props != null ? props.get(oTraitCode) : null);
+        return (traits != null ? traits.get(oTraitCode) : null);
     }
 
     /**
@@ -453,4 +476,3 @@ public class Area extends AreaTreeObject implements Serializable {
         return sb.toString();
     }
 }
-

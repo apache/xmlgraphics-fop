@@ -37,22 +37,23 @@ import org.apache.fop.apps.FOPException;
 /**
  * This class is used to defer the loading of a font until it is really used.
  */
-public class LazyFont extends Typeface implements FontDescriptor {
+public class LazyFont extends Typeface implements FontDescriptor, Substitutable, Positionable {
 
     private static Log log = LogFactory.getLog(LazyFont.class);
 
-    private String metricsFileName = null;
-    private String fontEmbedPath = null;
-    private boolean useKerning = false;
+    private String metricsFileName;
+    private String fontEmbedPath;
+    private boolean useKerning;
+    private boolean useAdvanced;
     private EncodingMode encodingMode = EncodingMode.AUTO;
-    private boolean embedded = true;
-    private String subFontName = null;
+    private boolean embedded;
+    private String subFontName;
 
-    private boolean isMetricsLoaded = false;
-    private Typeface realFont = null;
-    private FontDescriptor realFontDescriptor = null;
+    private boolean isMetricsLoaded;
+    private Typeface realFont;
+    private FontDescriptor realFontDescriptor;
 
-    private FontResolver resolver = null;
+    private FontResolver resolver;
 
     /**
      * Main constructor
@@ -64,6 +65,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
         this.metricsFileName = fontInfo.getMetricsFile();
         this.fontEmbedPath = fontInfo.getEmbedFile();
         this.useKerning = fontInfo.getKerning();
+        this.useAdvanced = fontInfo.getAdvanced();
         this.encodingMode = fontInfo.getEncodingMode();
         this.subFontName = fontInfo.getSubFontName();
         this.embedded = fontInfo.isEmbedded();
@@ -72,9 +74,15 @@ public class LazyFont extends Typeface implements FontDescriptor {
 
     /** {@inheritDoc} */
     public String toString() {
-        return ( "metrics-url=" + metricsFileName + ", embed-url=" + fontEmbedPath
-                + ", kerning=" + useKerning );
-    }
+        StringBuffer sbuf = new StringBuffer(super.toString());
+        sbuf.append('{');
+        sbuf.append("metrics-url=" + metricsFileName);
+        sbuf.append(",embed-url=" + fontEmbedPath);
+        sbuf.append(",kerning=" + useKerning);
+        sbuf.append(",advanced=" + useAdvanced);
+        sbuf.append('}');
+        return sbuf.toString();
+    }   
 
     private void load(boolean fail) {
         if (!isMetricsLoaded) {
@@ -122,6 +130,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
                                     new URL(metricsFileName).openStream()));
                     }
                     reader.setKerningEnabled(useKerning);
+                    reader.setAdvancedEnabled(useAdvanced);
                     if (this.embedded) {
                         reader.setFontEmbedPath(fontEmbedPath);
                     }
@@ -132,7 +141,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
                         throw new RuntimeException("Cannot load font. No font URIs available.");
                     }
                     realFont = FontLoader.loadFont(fontEmbedPath, this.subFontName,
-                            this.embedded, this.encodingMode, useKerning, resolver);
+                            this.embedded, this.encodingMode, useKerning, useAdvanced, resolver);
                 }
                 if (realFont instanceof FontDescriptor) {
                     realFontDescriptor = (FontDescriptor) realFont;
@@ -373,6 +382,54 @@ public class LazyFont extends Typeface implements FontDescriptor {
     public boolean isEmbeddable() {
         load(true);
         return realFontDescriptor.isEmbeddable();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean performsSubstitution() {
+        load(true);
+        if ( realFontDescriptor instanceof Substitutable ) {
+            return ((Substitutable)realFontDescriptor).performsSubstitution();
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public CharSequence performSubstitution ( CharSequence cs, String script, String language ) {
+        load(true);
+        if ( realFontDescriptor instanceof Substitutable ) {
+            return ((Substitutable)realFontDescriptor).performSubstitution(cs, script, language);
+        } else {
+            return cs;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean performsPositioning() {
+        load(true);
+        if ( realFontDescriptor instanceof Substitutable ) {
+            return ((Positionable)realFontDescriptor).performsPositioning();
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int[] performPositioning ( CharSequence cs, String script, String language ) {
+        load(true);
+        if ( realFontDescriptor instanceof Substitutable ) {
+            return ((Positionable)realFontDescriptor).performPositioning(cs, script, language);
+        } else {
+            return null;
+        }
     }
 
 }

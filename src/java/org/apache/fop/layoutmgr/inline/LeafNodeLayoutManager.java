@@ -225,7 +225,7 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
      * @param context the layout context used for adding the area
      */
     protected void offsetArea(InlineArea area, LayoutContext context) {
-        area.setOffset(alignmentContext.getOffset());
+        area.setBlockProgressionOffset(alignmentContext.getOffset());
     }
 
     /**
