@@ -201,7 +201,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
         InlineArea area;
         if (hasInlineParent) {
             area = new InlineParent();
-            area.setOffset(0);
+            area.setBlockProgressionOffset(0);
         } else {
             area = new InlineBlockParent();
         }
@@ -458,12 +458,12 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
                                         || lastLM instanceof InlineLevelLayoutManager);
         parent.setBPD(alignmentContext.getHeight());
         if (parent instanceof InlineParent) {
-            parent.setOffset(alignmentContext.getOffset());
+            parent.setBlockProgressionOffset(alignmentContext.getOffset());
         } else if (parent instanceof InlineBlockParent) {
             // All inline elements are positioned by the renderers relative to
             // the before edge of their content rectangle
             if (borderProps != null) {
-                parent.setOffset(borderProps.getPaddingBefore(false, this)
+                parent.setBlockProgressionOffset(borderProps.getPaddingBefore(false, this)
                                 + borderProps.getBorderBeforeWidth(false));
             }
         }

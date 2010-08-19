@@ -28,9 +28,11 @@ import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.LengthBase;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.datatypes.PercentBaseContext;
+import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.properties.CommonMarginBlock;
+import org.apache.fop.traits.WritingMode;
 
 /**
  * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_region-body">
@@ -113,12 +115,22 @@ public class RegionBody extends Region {
 
         int start;
         int end;
-        if (spm.getWritingMode() == EN_LR_TB) { // Left-to-right
+        // [TBD] WRITING MODE ALERT
+        switch ( getWritingMode().getEnumValue() ) {
+        default:
+        case Constants.EN_LR_TB:
             start = commonMarginBlock.marginLeft.getValue(pageWidthContext);
             end = commonMarginBlock.marginRight.getValue(pageWidthContext);
-        } else { // all other supported modes are right-to-left
+            break;
+        case Constants.EN_RL_TB:
             start = commonMarginBlock.marginRight.getValue(pageWidthContext);
             end = commonMarginBlock.marginLeft.getValue(pageWidthContext);
+            break;
+        case Constants.EN_TB_LR:
+        case Constants.EN_TB_RL:
+            start = commonMarginBlock.marginTop.getValue(pageWidthContext);
+            end = commonMarginBlock.marginBottom.getValue(pageWidthContext);
+            break;
         }
         int before = commonMarginBlock.spaceBefore.getOptimum(pageHeightContext)
                         .getLength().getValue(pageHeightContext);

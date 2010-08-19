@@ -712,7 +712,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         renderInlineAreaBackAndBorders(text);
 
         int rx = currentIPPosition + text.getBorderAndPaddingWidthStart();
-        int bl = currentBPPosition + text.getOffset() + text.getBaselineOffset();
+        int bl = currentBPPosition + text.getBlockProgressionOffset() + text.getBaselineOffset();
         int saveIP = currentIPPosition;
 
         Font font = getFontFromArea(text);
@@ -824,7 +824,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         // TODO Colors do not work on Leaders yet
 
         float startx = (currentIPPosition + area.getBorderAndPaddingWidthStart()) / 1000f;
-        float starty = ((currentBPPosition + area.getOffset()) / 1000f);
+        float starty = ((currentBPPosition + area.getBlockProgressionOffset()) / 1000f);
         float endx = (currentIPPosition + area.getBorderAndPaddingWidthStart()
                 + area.getIPD()) / 1000f;
 

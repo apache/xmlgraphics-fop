@@ -154,6 +154,8 @@ list of possible build targets.
   <property name="javac.fork" value="no"/>
   <property name="junit.fork" value="on"/>
   <property name="junit.haltonfailure" value="off"/>
+  <property name="junit.printsummary" value="off"/>
+  <property name="junit.formatter.brief" value="on"/>
   <property name="javadoc.packages" value="org.apache.fop.*"/>
   <property name="src.dir" value="${basedir}/src"/>
   <property name="src.codegen.dir" value="${src.dir}/codegen"/>
@@ -712,10 +714,15 @@ list of possible build targets.
 <!-- =================================================================== -->
 <!-- Testing                                                             -->
 <!-- =================================================================== -->
-  <target name="junit-with-xmlunit" depends="init-avail" if="xmlunit.present">
+  <target name="junit-init" depends="init-avail" if="xmlunit.present">
+    <condition property="junit.formatter.brief.use">
+      <istrue value="${junit.formatter.brief}"/>
+    </condition>
+  </target>
+  <target name="junit-with-xmlunit" depends="junit-init" if="xmlunit.present">
     <patternset id="test-sources"/>
   </target>
-  <target name="junit-without-xmlunit" depends="init-avail" unless="xmlunit.present">
+  <target name="junit-without-xmlunit" depends="junit-init" unless="xmlunit.present">
     <patternset id="test-sources">
       <exclude name="**/intermediate/*"/>
     </patternset>
@@ -760,10 +767,10 @@ list of possible build targets.
   <target name="junit-compile" depends="junit-compile-java, junit-compile-copy-resources" description="Compiles FOP's JUnit tests" if="junit.present"/>
   <target name="junit-transcoder" depends="junit-compile" description="Runs FOP's JUnit transcoder tests" if="junit.present">
     <echo message="Running basic functionality tests for fop-transcoder.jar"/>
-    <junit dir="${basedir}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}">
+    <junit dir="${basedir}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}" printsummary="${junit.printsummary}">
       <sysproperty key="basedir" value="${basedir}"/>
       <sysproperty key="jawa.awt.headless" value="true"/>
-      <formatter type="brief" usefile="false"/>
+      <formatter type="brief" usefile="false" if="junit.formatter.brief.use"/>
       <formatter type="plain" usefile="true"/>
       <formatter type="xml" usefile="true"/>
       <classpath>
@@ -782,10 +789,10 @@ list of possible build targets.
          previous test block succeeded it indicates that the packaging of the allinone
          JAR needs to be updated.
     -->
-    <junit dir="${basedir}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure">
+    <junit dir="${basedir}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure" printsummary="${junit.printsummary}">
       <sysproperty key="basedir" value="${basedir}"/>
       <sysproperty key="jawa.awt.headless" value="true"/>
-      <formatter type="brief" usefile="false"/>
+      <formatter type="brief" usefile="false" if="junit.formatter.brief.use"/>
       <formatter type="plain" usefile="true"/>
       <formatter type="xml" usefile="true"/>
       <classpath>
@@ -805,13 +812,13 @@ list of possible build targets.
   </target>
   <target name="junit-userconfig" depends="junit-compile" if="junit.present" description="Runs FOP's user config JUnit tests">
     <echo message="Running user config tests"/>
-    <junit dir="${basedir}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure">
+    <junit dir="${basedir}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure" printsummary="${junit.printsummary}">
       <jvmarg value="-Xmx1024m"/>
       <sysproperty key="basedir" value="${basedir}"/>
       <sysproperty key="jawa.awt.headless" value="true"/>
       <sysproperty key="fop.layoutengine.disabled" value="${layoutengine.disabled}"/>
       <sysproperty key="fop.layoutengine.testset" value="standard"/>
-      <formatter type="brief" usefile="false"/>
+      <formatter type="brief" usefile="false" if="junit.formatter.brief.use"/>
       <formatter type="plain" usefile="true"/>
       <formatter type="xml" usefile="true"/>
       <classpath>
@@ -823,10 +830,10 @@ list of possible build targets.
   </target>
   <target name="junit-basic" depends="junit-compile" description="Runs FOP's JUnit basic tests" if="junit.present">
     <echo message="Running basic functionality tests for fop.jar"/>
-    <junit dir="${basedir}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure">
+    <junit dir="${basedir}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure" printsummary="${junit.printsummary}">
       <sysproperty key="basedir" value="${basedir}"/>
       <sysproperty key="jawa.awt.headless" value="true"/>
-      <formatter type="brief" usefile="false"/>
+      <formatter type="brief" usefile="false" if="junit.formatter.brief.use"/>
       <formatter type="plain" usefile="true"/>
       <formatter type="xml" usefile="true"/>
       <classpath>
@@ -859,12 +866,12 @@ list of possible build targets.
   </target>
   <target name="junit-layout-standard" depends="junit-compile, junit-fotree" if="junit.present" description="Runs FOP's standard JUnit layout tests">
     <echo message="Running standard layout engine tests"/>
-    <junit dir="${basedir}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure">
+    <junit dir="${basedir}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure" printsummary="${junit.printsummary}">
       <sysproperty key="basedir" value="${basedir}"/>
       <sysproperty key="jawa.awt.headless" value="true"/>
       <sysproperty key="fop.layoutengine.disabled" value="${layoutengine.disabled}"/>
       <sysproperty key="fop.layoutengine.testset" value="standard"/>
-      <formatter type="brief" usefile="false"/>
+      <formatter type="brief" usefile="false" if="junit.formatter.brief.use"/>
       <formatter type="plain" usefile="true"/>
       <formatter type="xml" usefile="true"/>
       <classpath>
@@ -876,12 +883,12 @@ list of possible build targets.
   </target>
   <target name="junit-layout-hyphenation" depends="hyphenation-present, junit-compile" if="hyphenation.present" description="Runs FOP's JUnit hyphenation layout tests">
     <echo message="Running hyphenation layout engine tests"/>
-    <junit dir="${basedir}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure">
+    <junit dir="${basedir}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure" printsummary="${junit.printsummary}">
       <sysproperty key="basedir" value="${basedir}"/>
       <sysproperty key="jawa.awt.headless" value="true"/>
       <sysproperty key="fop.layoutengine.disabled" value="${layoutengine.disabled}"/>
       <sysproperty key="fop.layoutengine.testset" value="hyphenation"/>
-      <formatter type="brief" usefile="false"/>
+      <formatter type="brief" usefile="false" if="junit.formatter.brief.use"/>
       <formatter type="plain" usefile="true"/>
       <formatter type="xml" usefile="true"/>
       <classpath>
@@ -894,11 +901,11 @@ list of possible build targets.
   <target name="junit-layout" depends="junit-layout-standard, junit-layout-hyphenation" description="Runs all FOP's JUnit layout tests"/>
   <target name="junit-fotree" depends="junit-compile" description="Runs FOP's FO tree JUnit tests" if="junit.present">
     <echo message="Running fo tree tests"/>
-    <junit dir="${basedir}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure">
+    <junit dir="${basedir}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure" printsummary="${junit.printsummary}">
       <sysproperty key="basedir" value="${basedir}"/>
       <sysproperty key="jawa.awt.headless" value="true"/>
       <sysproperty key="fop.layoutengine.disabled" value="${fotree.disabled}"/>
-      <formatter type="brief" usefile="false"/>
+      <formatter type="brief" usefile="false" if="junit.formatter.brief.use"/>
       <formatter type="plain" usefile="true"/>
       <formatter type="xml" usefile="true"/>
       <classpath>
@@ -918,12 +925,12 @@ list of possible build targets.
     <attribute name="outfile"/>
     <sequential>
       <echo message="Running @{title} tests..."/>
-      <junit dir="${basedir}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure">
+      <junit dir="${basedir}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure" printsummary="${junit.printsummary}">
         <sysproperty key="basedir" value="${basedir}/@{basedir}"/>
         <sysproperty key="jawa.awt.headless" value="true"/>
         <sysproperty key="fop.layoutengine.disabled" value="${layoutengine.disabled}"/>
         <sysproperty key="fop.layoutengine.testset" value="standard"/>
-        <formatter type="brief" usefile="false"/>
+        <formatter type="brief" usefile="false" if="junit.formatter.brief.use"/>
         <formatter type="plain" usefile="true"/>
         <formatter type="xml" usefile="true"/>
         <classpath>
@@ -955,10 +962,10 @@ list of possible build targets.
   </target>
   <target name="junit-text-linebreak" depends="junit-compile" description="Runs FOP's JUnit unicode linebreak tests" if="junit.present">
     <echo message="Running tests for Unicode UAX#14 support"/>
-    <junit dir="${basedir}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure">
+    <junit dir="${basedir}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure" printsummary="${junit.printsummary}">
       <sysproperty key="basedir" value="${basedir}"/>
       <sysproperty key="jawa.awt.headless" value="true"/>
-      <formatter type="brief" usefile="false"/>
+      <formatter type="brief" usefile="false" if="junit.formatter.brief.use"/>
       <formatter type="plain" usefile="true"/>
       <formatter type="xml" usefile="true"/>
       <classpath>
@@ -1190,22 +1197,62 @@ NOTE:
 <!-- =================================================================== -->
 <!-- Findbugs                                                            -->
 <!-- =================================================================== -->
-  <property name="findbugs.lib" value="${findbugs.home.dir}/lib"/>
-  <path id="libs-findbugs">
-    <fileset dir="${findbugs.lib}">
-      <include name="*.jar"/>
-    </fileset>
-  </path>
-  <target name="findbugs-avail" unless="findbugs.home.dir">
-    <echo message="Findbugs Support NOT Present. Please download it from http://findbugs.sf.net/ and set findbugs.home.dir in build-local.properties"/>
+  <target name="findbugs-maybe-describe-install" unless="findbugs.present">
+    <echo message="Please download FINDBUGS from http://findbugs.sf.net/ and set property findbugs.home.dir"/>
+    <echo message="in build-local.properties to the top-level directory of the binary distribution."/>
+   </target>
+  <target name="findbugs-avail">
+    <condition property="findbugs.present">
+      <and>
+        <isset property="findbugs.home.dir"/>
+        <available file="${findbugs.home.dir}" type="dir"/>
+      </and>
+    </condition>
+    <condition property="findbugs.message" value="FINDBUGS Support PRESENT">
+      <equals arg1="${findbugs.present}" arg2="true"/>
+    </condition>
+    <condition property="findbugs.message" value="FINDBUGS Support NOT Present">
+      <not>
+        <equals arg1="${findbugs.present}" arg2="true"/>
+      </not>
+    </condition>
+    <echo message="${findbugs.message}"/>
+    <antcall target="findbugs-maybe-describe-install"/>
   </target>
-  <target name="findbugs" depends="init, findbugs-avail, compile-java" if="findbugs.home.dir">
-    <taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpathref="libs-findbugs"/>
-    <findbugs home="${findbugs.home.dir}" output="html" reportLevel="low" effort="max" outputFile="${build.dir}/report_findbugs.html" jvmargs="-Xmx1024m">
+  <target name="findbugs-exec" depends="compile-java" if="findbugs.present">
+    <taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask">
+      <classpath>
+        <fileset dir="${findbugs.home.dir}/lib">
+          <include name="*.jar"/>
+        </fileset>
+      </classpath>
+    </taskdef>
+    <findbugs home="${findbugs.home.dir}" output="${findbugs.output.format}" reportLevel="low" effort="max"
+              outputFile="${build.dir}/report_findbugs.${findbugs.output.extension}" excludeFilter="findbugs-exclude.xml" jvmargs="-Xmx1024m">
       <sourcePath path="${src.java.dir}"/>
       <class location="${build.classes.dir}"/>
+      <auxClasspath>
+        <path refid="libs-build-classpath"/>
+        <path>
+          <fileset dir="${ant.library.dir}">
+            <include name="ant.jar"/>
+            <include name="ant-launcher.jar"/>
+          </fileset>
+        </path>
+      </auxClasspath>
     </findbugs>
   </target>
+  <target name="findbugs-xml" depends="findbugs-avail" if="findbugs.present" description="Runs findbugs for a code quality report in XML">
+    <property name="findbugs.output.format" value="xml"/>
+    <property name="findbugs.output.extension" value="xml"/>
+    <antcall target="findbugs-exec"/> 
+  </target>
+  <target name="findbugs-html" depends="findbugs-avail" if="findbugs.present" description="Runs findbugs for a code quality report in HTML">
+    <property name="findbugs.output.format" value="html"/>
+    <property name="findbugs.output.extension" value="html"/>
+    <antcall target="findbugs-exec"/> 
+  </target>
+  <target name="findbugs" depends="findbugs-html" description="Runs findbugs for a code quality report in HTML"/>
 <!-- =================================================================== -->
 <!-- Creates the reports                                                 -->
 <!-- =================================================================== -->
@@ -1359,13 +1406,21 @@ NOTE:
   <!-- be generated by below. This target should never be part of the      -->
   <!-- normal build process.                                               -->
   <!-- =================================================================== -->
-  <target name="codegen-unicode" >
+  <target name="codegen-unicode" depends="compile-java">
     <mkdir dir="${build.codegen-classes.dir}"/>
     <javac destdir="${build.codegen-classes.dir}" fork="${javac.fork}" debug="${javac.debug}" deprecation="${javac.deprecation}" optimize="${javac.optimize}" source="${javac.source}" target="${javac.target}">
       <src path="${src.codegen.dir}/unicode/java"/>
+      <classpath>
+        <path refid="libs-build-classpath"/>
+        <pathelement location="${build.classes.dir}"/>
+        <pathelement location="${build.codegen-classes.dir}"/>
+      </classpath>
     </javac>
     <java classname="org.apache.fop.text.linebreak.GenerateLineBreakUtils" classpath="${build.codegen-classes.dir}">
       <arg line="-o ${src.dir}/java/org/apache/fop/text/linebreak/LineBreakUtils.java"/>
+    </java>
+    <java classname="org.apache.fop.text.bidi.GenerateBidiClassUtils" classpath="${build.codegen-classes.dir}">
+      <arg line="-o ${src.dir}/java/org/apache/fop/text/bidi/BidiClassUtils.java"/>
     </java>
   </target>
 <!-- =================================================================== -->

@@ -55,7 +55,6 @@ public class Block extends BlockParent {
      */
     public static final int FIXED = 3;
 
-    private int stacking = TB;
     private int positioning = STACK;
 
     /** if true, allow BPD update */

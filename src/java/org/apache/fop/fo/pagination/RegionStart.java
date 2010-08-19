@@ -23,6 +23,7 @@ package org.apache.fop.fo.pagination;
 import java.awt.Rectangle;
 
 // FOP
+import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.datatypes.LengthBase;
@@ -52,12 +53,19 @@ public class RegionStart extends RegionSE {
         PercentBaseContext pageHeightContext = getPageHeightContext(LengthBase.CUSTOM_BASE);
         PercentBaseContext neighbourContext;
         Rectangle vpRect;
-        if (spm.getWritingMode() == EN_LR_TB || spm.getWritingMode() == EN_RL_TB) {
+        // [TBD] WRITING MODE ALERT
+        switch ( getWritingMode().getEnumValue() ) {
+        default:
+        case Constants.EN_LR_TB:
+        case Constants.EN_RL_TB:
             neighbourContext = pageHeightContext;
             vpRect = new Rectangle(0, 0, getExtent().getValue(pageWidthContext), reldims.bpd);
-        } else {
+            break;
+        case Constants.EN_TB_LR:
+        case Constants.EN_TB_RL:
             neighbourContext = pageWidthContext;
             vpRect = new Rectangle(0, 0, reldims.bpd, getExtent().getValue(pageHeightContext));
+            break;
         }
         adjustIPD(vpRect, spm.getWritingMode(), neighbourContext);
         return vpRect;

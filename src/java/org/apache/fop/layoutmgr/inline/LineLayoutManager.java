@@ -44,6 +44,7 @@ import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.hyphenation.Hyphenation;
 import org.apache.fop.hyphenation.Hyphenator;
 import org.apache.fop.layoutmgr.Adjustment;
+import org.apache.fop.layoutmgr.BidiUtil;
 import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
 import org.apache.fop.layoutmgr.BreakElement;
 import org.apache.fop.layoutmgr.BreakingAlgorithm;
@@ -91,6 +92,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
 
     /** {@inheritDoc} */
     public void initialize() {
+        bidiLevel = fobj.getBidiLevel();
         textAlignment = fobj.getTextAlign();
         textAlignmentLast = fobj.getTextAlignLast();
         textIndent = fobj.getTextIndent();
@@ -155,6 +157,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     }
 
 
+    private int bidiLevel = -1;
     private int textAlignment = EN_JUSTIFY;
     private int textAlignmentLast;
     private int effectiveAlignment;
@@ -1487,6 +1490,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         }
         lineArea.setBPD(lbp.lineHeight);
         lineArea.setIPD(lbp.lineWidth);
+        lineArea.setBidiLevel(bidiLevel);
         lineArea.addTrait(Trait.SPACE_BEFORE, new Integer(lbp.spaceBefore));
         lineArea.addTrait(Trait.SPACE_AFTER, new Integer(lbp.spaceAfter));
         alignmentContext.resizeLine(lbp.lineHeight, lbp.baseline);
@@ -1595,7 +1599,10 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 && (!context.isLastArea() || !isLastPosition)) {
             lineArea.setBPD(lineArea.getBPD() + context.getSpaceAfter());
         }
-        lineArea.finalise();
+        lineArea.finish();
+        if ( lineArea.getBidiLevel() >= 0 ) {
+            BidiUtil.reorder ( lineArea );
+        }
         parentLayoutManager.addChildArea(lineArea);
     }
 
@@ -1645,6 +1652,9 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             blocklc.setTrailingSpace(new SpaceSpecifier(false));
         }
         lineArea.updateExtentsFromChildren();
+        if ( lineArea.getBidiLevel() >= 0 ) {
+            BidiUtil.reorder ( lineArea );
+        }
         parentLayoutManager.addChildArea(lineArea);
     }
 
@@ -1679,4 +1689,3 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     }
 
 }
-

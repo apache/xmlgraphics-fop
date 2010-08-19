@@ -21,6 +21,7 @@ package org.apache.fop.fonts.apps;
 
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -29,6 +30,11 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.Version;
 import org.apache.fop.fonts.FontUtil;
+import org.apache.fop.fonts.GlyphCoverageTable;
+import org.apache.fop.fonts.GlyphPositioningTable;
+import org.apache.fop.fonts.GlyphSubstitutionTable;
+import org.apache.fop.fonts.GlyphSubtable;
+import org.apache.fop.fonts.GlyphTable;
 import org.apache.fop.fonts.truetype.FontFileReader;
 import org.apache.fop.fonts.truetype.TTFCmapEntry;
 import org.apache.fop.fonts.truetype.TTFFile;
@@ -37,6 +43,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
+
+// CSOFF: InnerAssignmentCheck
+// CSOFF: LineLengthCheck
 
 /**
  * A tool which reads TTF files and generates
@@ -350,6 +359,8 @@ public class TTFReader extends AbstractFontReader {
 
         generateDOM4Kerning(root, ttf, isCid);
 
+        generateDOM4ScriptExtensions(root, ttf, isCid);
+
         return doc;
     }
 
@@ -463,6 +474,287 @@ public class TTFReader extends AbstractFontReader {
         }
     }
 
+    private void generateDOM4LookupReferences ( Element parent, GlyphSubstitutionTable gsub, GlyphTable.LookupSpec[] lookups ) {
+        boolean usedLookup = false;
+        Document d = parent.getOwnerDocument();
+        for ( int i = 0, m = lookups.length; i < m; i++ ) {
+            GlyphTable.LookupSpec ls = lookups [ i ];
+            GlyphSubtable[] sta = gsub.findSubtables ( ls );
+            for ( int j = 0, n = sta.length; j < n; j++ ) {
+                GlyphSubtable st = sta [ j ];
+                Element e = d.createElement("use-lookup");
+                e.setAttribute ( "ref", st.getID() );
+                parent.appendChild(e);
+            }
+        }
+    }
+
+    private void generateDOM4Features ( Element parent, GlyphSubstitutionTable gsub, GlyphTable.LookupSpec[] lookups, String scriptTag, String languageTag ) {
+        Document d = parent.getOwnerDocument();
+        Set features = new java.util.LinkedHashSet();
+        for ( int i = 0, n = lookups.length; i < n; i++ ) {
+            GlyphTable.LookupSpec ls = lookups [ i ];
+            features.add ( ls.getFeature() );
+        }
+        for ( Iterator it = features.iterator(); it.hasNext();) {
+            String featureTag = (String) it.next();
+            Element e = d.createElement("feature");
+            e.setAttribute ( "tag", featureTag );
+            generateDOM4LookupReferences ( e, gsub, gsub.matchLookupSpecs ( scriptTag, languageTag, featureTag ) );
+            if ( e.hasChildNodes() ) {
+                parent.appendChild(e);
+            }
+        }
+    }
+
+    private void generateDOM4Languages ( Element parent, GlyphSubstitutionTable gsub, GlyphTable.LookupSpec[] lookups, String scriptTag ) {
+        Document d = parent.getOwnerDocument();
+        Set languages = new java.util.LinkedHashSet();
+        for ( int i = 0, n = lookups.length; i < n; i++ ) {
+            GlyphTable.LookupSpec ls = lookups [ i ];
+            languages.add ( ls.getLanguage() );
+        }
+        for ( Iterator it = languages.iterator(); it.hasNext();) {
+            String languageTag = (String) it.next();
+            Element e = d.createElement("lang");
+            e.setAttribute ( "tag", languageTag );
+            generateDOM4Features ( e, gsub, gsub.matchLookupSpecs ( scriptTag, languageTag, "*" ), scriptTag, languageTag );
+            parent.appendChild(e);
+        }
+    }
+
+    private void generateDOM4Scripts ( Element parent, GlyphSubstitutionTable gsub, GlyphTable.LookupSpec[] lookups ) {
+        Document d = parent.getOwnerDocument();
+        Set scripts = new java.util.LinkedHashSet();
+        for ( int i = 0, n = lookups.length; i < n; i++ ) {
+            GlyphTable.LookupSpec ls = lookups [ i ];
+            scripts.add ( ls.getScript() );
+        }
+        for ( Iterator it = scripts.iterator(); it.hasNext();) {
+            String scriptTag = (String) it.next();
+            Element e = d.createElement("script");
+            e.setAttribute ( "tag", scriptTag );
+            generateDOM4Languages ( e, gsub, gsub.matchLookupSpecs ( scriptTag, "*", "*" ), scriptTag );
+            parent.appendChild(e);
+        }
+    }
+
+    private void generateDOM4Coverage ( Element parent, GlyphCoverageTable coverage ) {
+        Document d = parent.getOwnerDocument();
+        Element e = d.createElement("coverage");
+        int type = coverage.getType();
+        e.setAttribute ( "format", Integer.toString ( type ) );
+        List entries = coverage.getEntries();
+        if ( type == GlyphCoverageTable.GLYPH_COVERAGE_TYPE_MAPPED ) {
+            for ( Iterator it = entries.iterator(); it.hasNext();) {
+                Integer gid = (Integer) it.next();
+                if ( gid != null ) {
+                    Element g = d.createElement("gid");
+                    g.appendChild(d.createTextNode(gid.toString()));
+                    e.appendChild(g);
+                }
+            }
+        } else if ( type == GlyphCoverageTable.GLYPH_COVERAGE_TYPE_RANGE ) {
+            for ( Iterator it = entries.iterator(); it.hasNext();) {
+                GlyphCoverageTable.CoverageRange cr = (GlyphCoverageTable.CoverageRange) it.next();
+                if ( cr != null ) {
+                    Element r = d.createElement("range");
+                    r.setAttribute ( "gs", Integer.toString(cr.getStart()) );
+                    r.setAttribute ( "ge", Integer.toString(cr.getEnd()) );
+                    r.setAttribute ( "ci", Integer.toString(cr.getIndex()) );
+                    e.appendChild(r);
+                }
+            }
+        }
+        parent.appendChild(e);
+    }
+
+    private void generateDOM4GSUBSingleEntries ( Element parent, List entries, int type, int format ) {
+        if ( entries.size() > 0 ) {
+            Document d = parent.getOwnerDocument();
+            for ( Iterator it = entries.iterator(); it.hasNext();) {
+                Integer gid = (Integer) it.next();
+                if ( gid != null ) {
+                    Element e = d.createElement("gid");
+                    e.appendChild(d.createTextNode(gid.toString()));
+                    parent.appendChild(e);
+                }
+            }
+        }
+    }
+
+    private void generateDOM4GSUBMultipleEntries ( Element parent, List entries, int type, int format ) {
+        // [TBD] - implement me
+    }
+
+    private void generateDOM4GSUBAlternateEntries ( Element parent, List entries, int type, int format ) {
+        // [TBD] - implement me
+    }
+
+    private void generateDOM4LigatureSet ( Element parent, GlyphSubstitutionTable.LigatureSet lset ) {
+        Document d = parent.getOwnerDocument();
+        Element e = d.createElement("ligs");
+        GlyphSubstitutionTable.Ligature[] la = lset.getLigatures();
+        for ( int i = 0, m = la.length; i < m; i++ ) {
+            GlyphSubstitutionTable.Ligature l = la [ i ];
+            Element le = d.createElement("lig");
+            le.setAttribute ( "gid", Integer.toString( l.getLigature() ) );
+            int[] ca = l.getComponents();
+            StringBuffer sb = new StringBuffer();
+            for ( int j = 0, n = ca.length; j < n; j++ ) {
+                if ( j > 0 ) {
+                    sb.append ( ' ' );
+                }
+                sb.append ( Integer.toString ( ca [ j ] ) );
+            }
+            if ( sb.length() > 0 ) {
+                le.appendChild ( d.createTextNode ( sb.toString() ) );
+                e.appendChild ( le );
+            }
+        }
+        parent.appendChild(e);
+    }
+
+    private void generateDOM4GSUBLigatureEntries ( Element parent, List entries, int type, int format ) {
+        if ( entries.size() > 0 ) {
+            for ( Iterator it = entries.iterator(); it.hasNext();) {
+                GlyphSubstitutionTable.LigatureSet lset = (GlyphSubstitutionTable.LigatureSet) it.next();
+                if ( lset != null ) {
+                    generateDOM4LigatureSet ( parent, lset );
+                }
+            }
+        }
+    }
+
+    private void generateDOM4GSUBContextEntries ( Element parent, List entries, int type, int format ) {
+        // [TBD] - implement me
+    }
+
+    private void generateDOM4GSUBChainingContextEntries ( Element parent, List entries, int type, int format ) {
+        // [TBD] - implement me
+    }
+
+    private void generateDOM4GSUBExtensionEntries ( Element parent, List entries, int type, int format ) {
+        // [TBD] - implement me
+    }
+
+    private void generateDOM4GSUBReverseChainingSingleEntries ( Element parent, List entries, int type, int format ) {
+        // [TBD] - implement me
+    }
+
+    private void generateDOM4GSUBEntries ( Element parent, List entries, int type, int format ) {
+        Document d = parent.getOwnerDocument();
+        Element e = d.createElement("entries");
+        switch ( type ) {
+        case GlyphSubstitutionTable.GSUB_LOOKUP_TYPE_SINGLE:
+            generateDOM4GSUBSingleEntries ( e, entries, type, format );
+            break;
+        case GlyphSubstitutionTable.GSUB_LOOKUP_TYPE_MULTIPLE:
+            generateDOM4GSUBMultipleEntries ( e, entries, type, format );
+            break;
+        case GlyphSubstitutionTable.GSUB_LOOKUP_TYPE_ALTERNATE:
+            generateDOM4GSUBAlternateEntries ( e, entries, type, format );
+            break;
+        case GlyphSubstitutionTable.GSUB_LOOKUP_TYPE_LIGATURE:
+            generateDOM4GSUBLigatureEntries ( e, entries, type, format );
+            break;
+        case GlyphSubstitutionTable.GSUB_LOOKUP_TYPE_CONTEXT:
+            generateDOM4GSUBContextEntries ( e, entries, type, format );
+            break;
+        case GlyphSubstitutionTable.GSUB_LOOKUP_TYPE_CHAINING_CONTEXT:
+            generateDOM4GSUBChainingContextEntries ( e, entries, type, format );
+            break;
+        case GlyphSubstitutionTable.GSUB_LOOKUP_TYPE_EXTENSION_SUBSTITUTION:
+            generateDOM4GSUBExtensionEntries ( e, entries, type, format );
+            break;
+        case GlyphSubstitutionTable.GSUB_LOOKUP_TYPE_REVERSE_CHAINING_CONTEXT_SINGLE:
+            generateDOM4GSUBReverseChainingSingleEntries ( e, entries, type, format );
+            break;
+        default:
+            break;
+        }
+        parent.appendChild(e);
+    }
+
+    private void generateDOM4GSUBSubtable ( Element parent, GlyphSubstitutionTable gsub, GlyphSubtable st ) {
+        Document d = parent.getOwnerDocument();
+        Element e = d.createElement("lst");
+        e.setAttribute ( "format", Integer.toString ( st.getFormat() ) );
+        generateDOM4Coverage ( e, st.getCoverage() );
+        generateDOM4GSUBEntries ( e, st.getEntries(), st.getType(), st.getFormat() );
+        parent.appendChild(e);
+    }
+
+    private void generateDOM4GSUBSubtables ( Element parent, GlyphSubstitutionTable gsub, GlyphSubtable[] subtables ) {
+        if ( subtables.length > 0 ) {
+            Document d = parent.getOwnerDocument();
+            Element e = d.createElement("lookup");
+            GlyphSubtable st0 = subtables[0];
+            int st0Type = st0.getType();
+            e.setAttribute ( "id", st0.getID() );
+            e.setAttribute ( "type", st0.getTypeName() );
+            for ( int i = 0, n = subtables.length; i < n; i++ ) {
+                GlyphSubtable st = subtables[i];
+                if ( st.getType() == st0Type ) {
+                    generateDOM4GSUBSubtable ( e, gsub, st );
+                }
+            }
+            parent.appendChild(e);
+        }
+    }
+
+    private GlyphSubtable[] matchSubtables ( GlyphSubtable[] subtables, String id ) {
+        List matches = new java.util.ArrayList();
+        for ( int i = 0, n = subtables.length; i < n; i++ ) {
+            GlyphSubtable st =  subtables [ i ];
+            if ( st.getID().equals ( id ) ) {
+                matches.add ( st );
+            }
+        }
+        return (GlyphSubtable[]) matches.toArray ( new GlyphSubtable[matches.size()] );
+    }
+
+    private void generateDOM4GSUBLookups ( Element parent, GlyphSubstitutionTable gsub, GlyphSubtable[] subtables ) {
+        Set lus = new java.util.LinkedHashSet();
+        for ( int i = 0, n = subtables.length; i < n; i++ ) {
+            GlyphSubtable st =  subtables [ i ];
+            lus.add ( st.getID() );
+        }
+        for ( Iterator it = lus.iterator(); it.hasNext();) {
+            String id = (String) it.next();
+            generateDOM4GSUBSubtables ( parent, gsub, matchSubtables ( subtables, id ) );
+        }
+    }
+
+    private void generateDOM4GSUB ( Element parent, GlyphSubstitutionTable gsub ) {
+        Document d = parent.getOwnerDocument();
+        Element e = d.createElement("gsub");
+        parent.appendChild(e);
+        generateDOM4Scripts ( e, gsub, gsub.getLookups() );
+        generateDOM4GSUBLookups ( e, gsub, gsub.getSubtables() );
+    }
+
+    private void generateDOM4GPOS ( Element parent, GlyphPositioningTable gpos ) {
+        Document d = parent.getOwnerDocument();
+        Element te = d.createElement("gpos");
+        parent.appendChild(te);
+    }
+
+    private void generateDOM4ScriptExtensions(Element parent, TTFFile ttf, boolean isCid) {
+        if ( ttf.hasScriptExtension() ) {
+            Document d = parent.getOwnerDocument();
+            Element se = d.createElement("script-extras");
+            parent.appendChild(se);
+            GlyphSubstitutionTable st;
+            if ( ( st = ttf.getGSUB() ) != null ) {
+                generateDOM4GSUB ( se, st );
+            }
+            GlyphPositioningTable pt;
+            if ( ( pt = ttf.getGPOS() ) != null ) {
+                generateDOM4GPOS ( se, pt );
+            }
+        }
+    }
 
     /**
      * Bugzilla 40739, check that attr has a metrics-version attribute

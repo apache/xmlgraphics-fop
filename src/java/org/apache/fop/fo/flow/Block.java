@@ -52,7 +52,7 @@ public class Block extends FObjMixed implements BreakPropertySet, StructurePoint
     private boolean blockOrInlineItemFound = false;
     private boolean initialPropertySetFound = false;
 
-    // The value of properties relevant for fo:block.
+    // The value of FO traits (refined properties) that apply to fo:block.
     private CommonBorderPaddingBackground commonBorderPaddingBackground;
     private CommonFont commonFont;
     private CommonHyphenation commonHyphenation;
@@ -89,7 +89,10 @@ public class Block extends FObjMixed implements BreakPropertySet, StructurePoint
     //     private Length textDepth;
     //     private Length textAltitude;
     //     private int visibility;
-    // End of property values
+    // End of FO trait values
+
+    /* default paragraph bidi level */
+    private int bidiLevel = -1;
 
     /**
      * Base constructor
@@ -170,7 +173,7 @@ public class Block extends FObjMixed implements BreakPropertySet, StructurePoint
         return commonHyphenation;
     }
 
-    /** @return the "break-after" property. */
+    /** @return the "break-after" trait. */
     public int getBreakAfter() {
         return breakAfter;
     }
@@ -180,82 +183,82 @@ public class Block extends FObjMixed implements BreakPropertySet, StructurePoint
         return ptr;
     }
 
-    /** @return the "break-before" property. */
+    /** @return the "break-before" trait. */
     public int getBreakBefore() {
         return breakBefore;
     }
 
-    /** @return the "hyphenation-ladder-count" property.  */
+    /** @return the "hyphenation-ladder-count" trait.  */
     public Numeric getHyphenationLadderCount() {
         return hyphenationLadderCount;
     }
 
-    /** @return the "keep-with-next" property.  */
+    /** @return the "keep-with-next" trait.  */
     public KeepProperty getKeepWithNext() {
         return keepWithNext;
     }
 
-    /** @return the "keep-with-previous" property.  */
+    /** @return the "keep-with-previous" trait.  */
     public KeepProperty getKeepWithPrevious() {
         return keepWithPrevious;
     }
 
-    /** @return the "keep-together" property.  */
+    /** @return the "keep-together" trait.  */
     public KeepProperty getKeepTogether() {
         return keepTogether;
     }
 
-    /** @return the "orphans" property.  */
+    /** @return the "orphans" trait.  */
     public int getOrphans() {
         return orphans.getValue();
     }
 
-    /** @return the "widows" property.  */
+    /** @return the "widows" trait.  */
     public int getWidows() {
         return widows.getValue();
     }
 
-    /** @return the "line-stacking-strategy" property.  */
+    /** @return the "line-stacking-strategy" trait.  */
     public int getLineStackingStrategy() {
         return lineStackingStrategy;
     }
 
-    /** @return the "color" property */
+    /** @return the "color" trait */
     public Color getColor() {
         return color;
     }
 
-    /** @return the "line-height" property */
+    /** @return the "line-height" trait */
     public SpaceProperty getLineHeight() {
         return lineHeight;
     }
 
-    /** @return the "span" property */
+    /** @return the "span" trait */
     public int getSpan() {
         return this.span;
     }
 
-    /** @return the "text-align" property */
+    /** @return the "text-align" trait */
     public int getTextAlign() {
         return textAlign;
     }
 
-    /** @return the "text-align-last" property */
+    /** @return the "text-align-last" trait */
     public int getTextAlignLast() {
         return textAlignLast;
     }
 
-    /** @return the "text-indent" property */
+    /** @return the "text-indent" trait */
     public Length getTextIndent() {
         return textIndent;
     }
 
-    /** @return the "last-line-end-indent" property */
+    /** @return the "last-line-end-indent" trait */
     public Length getLastLineEndIndent() {
         return lastLineEndIndent;
     }
 
-    /** @return the "wrap-option" property */
+    /** @return the "wrap-option" trait */
     public int getWrapOption() {
         return wrapOption;
     }
@@ -293,17 +296,17 @@ public class Block extends FObjMixed implements BreakPropertySet, StructurePoint
         }
     }
 
-    /** @return the "linefeed-treatment" property */
+    /** @return the "linefeed-treatment" trait */
     public int getLinefeedTreatment() {
         return linefeedTreatment;
     }
 
-    /** @return the "white-space-treatment" property */
+    /** @return the "white-space-treatment" trait */
     public int getWhitespaceTreatment() {
         return whiteSpaceTreatment;
     }
 
-    /** @return the "white-space-collapse" property */
+    /** @return the "white-space-collapse" trait */
     public int getWhitespaceCollapse() {
         return whiteSpaceCollapse;
     }
@@ -313,17 +316,17 @@ public class Block extends FObjMixed implements BreakPropertySet, StructurePoint
         return this.commonRelativePosition;
     }
 
-    /** @return the "hyphenation-keep" property */
+    /** @return the "hyphenation-keep" trait */
     public int getHyphenationKeep() {
         return this.hyphenationKeep;
     }
 
-    /** @return the "intrusion-displace" property */
+    /** @return the "intrusion-displace" trait */
     public int getIntrusionDisplace() {
         return this.intrusionDisplace;
     }
 
-    /** @return the "line-height-shift-adjustment" property */
+    /** @return the "line-height-shift-adjustment" trait */
     public int getLineHeightShiftAdjustment() {
         return this.lineHeightShiftAdjustment;
     }
@@ -333,9 +336,9 @@ public class Block extends FObjMixed implements BreakPropertySet, StructurePoint
      * {@link org.apache.fop.fo.Constants#EN_TRUE},
      * {@link org.apache.fop.fo.Constants#EN_FALSE}
      */
-     public int getDisableColumnBalancing() {
-         return disableColumnBalancing;
-     }
+    public int getDisableColumnBalancing() {
+        return disableColumnBalancing;
+    }
 
 
     /** {@inheritDoc} */
@@ -343,15 +346,33 @@ public class Block extends FObjMixed implements BreakPropertySet, StructurePoint
         return NullCharIterator.getInstance();
     }
 
+    /**
+     * Get the default paragraph bidirectional embedding level.
+     *
+     * @return the default paragraph bidirectional embedding level
+     */
+    public int getBidiLevel() {
+        return bidiLevel;
+    }
+
+    /**
+     * Set the default paragraph bidirectional embedding level.
+     *
+     * @param bidiLevel the default paragraph bidirectional embedding level
+     */
+    public void setBidiLevel ( int bidiLevel ) {
+        this.bidiLevel = bidiLevel;
+    }
+
     /** {@inheritDoc} */
     public String getLocalName() {
         return "block";
     }
 
-     /**
-      * {@inheritDoc}
-      * @return {@link org.apache.fop.fo.Constants#FO_BLOCK}
-      */
+    /**
+     * {@inheritDoc}
+     * @return {@link org.apache.fop.fo.Constants#FO_BLOCK}
+     */
     public int getNameId() {
         return FO_BLOCK;
     }

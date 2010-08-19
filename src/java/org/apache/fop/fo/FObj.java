@@ -117,9 +117,7 @@ public abstract class FObj extends FONode implements Constants {
                     throws FOPException {
         setLocator(locator);
         pList.addAttributesToList(attlist);
-        if (!inMarker()
-                || "marker".equals(elementName)) {
-            pList.setWritingMode();
+        if (!inMarker() || "marker".equals(elementName)) {
             bind(pList);
         }
     }

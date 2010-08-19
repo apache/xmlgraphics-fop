@@ -55,7 +55,7 @@ public class TTFFontLoader extends FontLoader {
      * @param resolver the FontResolver for font URI resolution
      */
     public TTFFontLoader(String fontFileURI, FontResolver resolver) {
-        this(fontFileURI, null, true, EncodingMode.AUTO, true, resolver);
+        this(fontFileURI, null, true, EncodingMode.AUTO, true, true, resolver);
     }
 
     /**
@@ -66,12 +66,13 @@ public class TTFFontLoader extends FontLoader {
      * @param embedded indicates whether the font is embedded or referenced
      * @param encodingMode the requested encoding mode
      * @param useKerning true to enable loading kerning info if available, false to disable
+     * @param useAdvanced true to enable loading advanced info if available, false to disable
      * @param resolver the FontResolver for font URI resolution
      */
     public TTFFontLoader(String fontFileURI, String subFontName,
                 boolean embedded, EncodingMode encodingMode, boolean useKerning,
-                FontResolver resolver) {
-        super(fontFileURI, embedded, true, resolver);
+                boolean useAdvanced, FontResolver resolver) {
+        super(fontFileURI, embedded, useKerning, useAdvanced, resolver);
         this.subFontName = subFontName;
         this.encodingMode = encodingMode;
         if (this.encodingMode == EncodingMode.AUTO) {
@@ -169,6 +170,9 @@ public class TTFFontLoader extends FontLoader {
         if (useKerning) {
             copyKerning(ttf, isCid);
         }
+        if (useAdvanced) {
+            copyAdvanced(ttf);
+        }
         if (this.embedded && ttf.isEmbeddable()) {
             returnFont.setEmbedFileName(this.fontFileURI);
         }
@@ -224,4 +228,16 @@ public class TTFFontLoader extends FontLoader {
             returnFont.putKerningEntry(kpx1, h2);
         }
     }
+
+    /**
+     * Copy advanced typographic information.
+     */
+    private void copyAdvanced ( TTFFile ttf ) {
+        if ( returnFont instanceof MultiByteFont ) {
+            MultiByteFont mbf = (MultiByteFont) returnFont;
+            mbf.setGSUB ( ttf.getGSUB() );
+            mbf.setGPOS ( ttf.getGPOS() );
+        }
+    }
+
 }

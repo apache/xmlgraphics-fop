@@ -77,7 +77,7 @@ public final class FontCache implements Serializable {
      * mapping of font url -> file modified date (for all fonts that have failed
      * to load)
      */
-    private Map failedFontMap/* <String, Long> */= null;
+    private Map failedFontMap/* <String, Long>*/ = null;
 
     /**
      * Default constructor

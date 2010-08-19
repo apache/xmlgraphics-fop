@@ -76,13 +76,17 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
     private TextArea getCharacterInlineArea(Character node) {
         TextArea text = new TextArea();
         char ch = node.getCharacter();
+        int blockProgressionOffset = 0;
+        int level = node.bidiLevelAt(0);
         if (CharUtilities.isAnySpace(ch)) {
             // add space unless it's zero-width:
             if (!CharUtilities.isZeroWidthSpace(ch)) {
-                text.addSpace(ch, 0, CharUtilities.isAdjustableSpace(ch));
+                text.addSpace(ch, 0, CharUtilities.isAdjustableSpace(ch),
+                              blockProgressionOffset, level);
             }
         } else {
-            text.addWord(String.valueOf(ch), 0);
+            int[] levels = ( level >= 0 ) ? new int[] {level} : null;
+            text.addWord(String.valueOf(ch), 0, null, levels, blockProgressionOffset);
         }
         TraitSetter.setProducerID(text, node.getId());
         TraitSetter.addTextDecoration(text, node.getTextDecoration());
@@ -222,4 +226,3 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
     }
 
 }
-

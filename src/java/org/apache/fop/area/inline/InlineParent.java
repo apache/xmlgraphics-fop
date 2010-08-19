@@ -21,8 +21,9 @@ package org.apache.fop.area.inline;
 
 import org.apache.fop.area.Area;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Inline parent area.
@@ -60,6 +61,7 @@ public class InlineParent extends InlineArea {
             if (autoSize) {
                 increaseIPD(inlineChildArea.getAllocIPD());
             }
+            updateLevel ( childArea.getBidiLevel() );
         }
     }
 
@@ -89,5 +91,28 @@ public class InlineParent extends InlineArea {
         }
         return bUnresolvedAreasPresent;
     }
-}
 
+    /**
+     * Reset bidirectionality level of all children to default (-1),
+     * signalling that they will inherit the level of their parent text area.
+     */
+    public void resetChildrenLevel() {
+        for ( Iterator it = inlines.iterator(); it.hasNext();) {
+            ( (InlineArea) it.next() ) .resetBidiLevel();
+        }
+    }
+    private void updateLevel ( int newLevel ) {
+        if ( newLevel >= 0 ) {
+            int curLevel = getBidiLevel();
+            if ( curLevel >= 0 ) {
+                if ( newLevel < curLevel ) {
+                    setBidiLevel ( newLevel );
+                }
+            } else {
+                setBidiLevel ( newLevel );
+            }
+        }
+    }
+
+
+}

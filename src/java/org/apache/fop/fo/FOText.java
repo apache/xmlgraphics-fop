@@ -21,6 +21,7 @@ package org.apache.fop.fo;
 
 import java.awt.Color;
 import java.nio.CharBuffer;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.xml.sax.Locator;
@@ -44,7 +45,8 @@ public class FOText extends FONode implements CharSequence {
     /** the <code>CharBuffer</code> containing the text */
     private CharBuffer charBuffer;
 
-    /** properties relevant for #PCDATA */
+    // The value of FO traits (refined properties) that apply to #PCDATA
+    // (aka implicit sequence of fo:character)
     private CommonFont commonFont;
     private CommonHyphenation commonHyphenation;
     private Color color;
@@ -57,6 +59,10 @@ public class FOText extends FONode implements CharSequence {
     private Property wordSpacing;
     private int wrapOption;
     private Length baselineShift;
+    private String country;
+    private String language;
+    private String script;
+    // End of trait values
 
     /**
      * Points to the previous FOText object created within the current
@@ -78,6 +84,12 @@ public class FOText extends FONode implements CharSequence {
 
     /** Holds the text decoration values. May be null */
     private CommonTextDecoration textDecoration;
+
+    /* bidi levels */
+    private int[] bidiLevels;
+
+    /* advanced script processing state */
+    private Map/*<MapRange,String>*/ mappings;
 
     private static final int IS_WORD_CHAR_FALSE = 0;
     private static final int IS_WORD_CHAR_TRUE = 1;
@@ -171,6 +183,9 @@ public class FOText extends FONode implements CharSequence {
         this.wrapOption = pList.get(Constants.PR_WRAP_OPTION).getEnum();
         this.textDecoration = pList.getTextDecorationProps();
         this.baselineShift = pList.get(Constants.PR_BASELINE_SHIFT).getLength();
+        this.country = pList.get(Constants.PR_COUNTRY).getString();
+        this.language = pList.get(Constants.PR_LANGUAGE).getString();
+        this.script = pList.get(Constants.PR_SCRIPT).getString();
     }
 
     /** {@inheritDoc} */
@@ -383,25 +398,25 @@ public class FOText extends FONode implements CharSequence {
      * @return The previous FOText node in this Block; null, if this is the
      * first FOText in this Block.
      */
-    public FOText getPrevFOTextThisBlock () {
-        return prevFOTextThisBlock;
-    }
+    //public FOText getPrevFOTextThisBlock () {
+    //    return prevFOTextThisBlock;
+    //}
 
     /**
      * @return The next FOText node in this Block; null if this is the last
      * FOText in this Block; null if subsequent FOText nodes have not yet been
      * processed.
      */
-    public FOText getNextFOTextThisBlock () {
-        return nextFOTextThisBlock;
-    }
+    //public FOText getNextFOTextThisBlock () {
+    //    return nextFOTextThisBlock;
+    //}
 
     /**
      * @return The nearest ancestor block object which contains this FOText.
      */
-    public Block getAncestorBlock () {
-        return ancestorBlock;
-    }
+    //public Block getAncestorBlock () {
+    //    return ancestorBlock;
+    //}
 
     /**
      * Determines whether the input char should be considered part of a
@@ -494,6 +509,9 @@ public class FOText extends FONode implements CharSequence {
         private boolean canRemove = false;
         private boolean canReplace = false;
 
+        public TextCharIterator() {
+        }
+
         /** {@inheritDoc} */
         public boolean hasNext() {
            return (this.currentPosition < charBuffer.limit());
@@ -565,67 +583,88 @@ public class FOText extends FONode implements CharSequence {
     }
 
     /**
-     * @return the "color" property.
+     * @return the "color" trait.
      */
     public Color getColor() {
         return color;
     }
 
     /**
-     * @return the "keep-together" property.
+     * @return the "keep-together" trait.
      */
     public KeepProperty getKeepTogether() {
         return keepTogether;
     }
 
     /**
-     * @return the "letter-spacing" property.
+     * @return the "letter-spacing" trait.
      */
     public Property getLetterSpacing() {
         return letterSpacing;
     }
 
     /**
-     * @return the "line-height" property.
+     * @return the "line-height" trait.
      */
     public SpaceProperty getLineHeight() {
         return lineHeight;
     }
 
     /**
-     * @return the "white-space-treatment" property
+     * @return the "white-space-treatment" trait
      */
     public int getWhitespaceTreatment() {
         return whiteSpaceTreatment;
     }
 
     /**
-     * @return the "word-spacing" property.
+     * @return the "word-spacing" trait.
      */
     public Property getWordSpacing() {
         return wordSpacing;
     }
 
     /**
-     * @return the "wrap-option" property.
+     * @return the "wrap-option" trait.
      */
     public int getWrapOption() {
         return wrapOption;
     }
 
-    /** @return the "text-decoration" property. */
+    /** @return the "text-decoration" trait. */
     public CommonTextDecoration getTextDecoration() {
         return textDecoration;
     }
 
-    /** @return the baseline-shift property */
+    /** @return the baseline-shift trait */
     public Length getBaseLineShift() {
         return baselineShift;
     }
 
+    /** @return the country trait */
+    public String getCountry() {
+        return country;
+    }
+
+    /** @return the language trait */
+    public String getLanguage() {
+        return language;
+    }
+
+    /** @return the script trait */
+    public String getScript() {
+        return script;
+    }
+
     /** {@inheritDoc} */
     public String toString() {
-        return (this.charBuffer == null) ? "" : this.charBuffer.toString();
+        if ( charBuffer == null ) {
+            return "";
+        } else {
+            CharBuffer cb = charBuffer.duplicate();
+            cb.rewind();
+            return cb.toString();
+        }
     }
 
     /** {@inheritDoc} */
@@ -670,4 +709,149 @@ public class FOText extends FONode implements CharSequence {
             this.charBuffer.rewind();
         }
     }
+
+    /**
+     * Set bidirectional level over interval [start,end).
+     * @param level the resolved level
+     * @param start the starting index of interval
+     * @param end the ending index of interval
+     */
+    public void setBidiLevel ( int level, int start, int end ) {
+        if ( start < end ) {
+            if ( bidiLevels == null ) {
+                bidiLevels = new int [ length() ];
+            }
+            for ( int i = start, n = end; i < n; i++ ) {
+                bidiLevels [ i ] = level;
+            }
+        } else {
+            assert start < end;
+        }
+    }
+
+    /**
+     * Obtain bidirectional level of each character
+     * represented by this FOText.
+     * @return a (possibly empty) array of bidi levels or null
+     * in case no bidi levels have been assigned
+     */
+    public int[] getBidiLevels() {
+        return bidiLevels;
+    }
+
+    /**
+     * Obtain bidirectional level of each character over
+     * interval [start,end).
+     * @param start the starting index of interval
+     * @param end the ending index of interval
+     * @return a (possibly empty) array of bidi levels or null
+     * in case no bidi levels have been assigned
+     */
+    public int[] getBidiLevels ( int start, int end ) {
+        if ( this.bidiLevels != null ) {
+            assert start <= end;
+            int n = end - start;
+            int[] bidiLevels = new int [ n ];
+            for ( int i = 0; i < n; i++ ) {
+                bidiLevels[i] = this.bidiLevels [ start + i ];
+            }
+            return bidiLevels;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Obtain bidirectional level of character at
+     * specified position, which must be a non-negative integer
+     * less than the length of this FO.
+     * @param position an offset position into FO's characters
+     * @return a resolved bidi level or -1 if default
+     * @throws IndexOutOfBoundsException if position is not non-negative integer
+     * or is greater than or equal to length
+     */
+    public int bidiLevelAt ( int position ) throws IndexOutOfBoundsException {
+        if ( ( position < 0 ) || ( position >= length() ) ) {
+            throw new IndexOutOfBoundsException();
+        } else if ( bidiLevels != null ) {
+            return bidiLevels [ position ];
+        } else {
+            return -1;
+        }
+    }
+
+    /**
+     * Add characters mapped by script substitution processing.
+     * @param start index in character buffer
+     * @param end index in character buffer
+     * @param mappedChars sequence of character codes denoting substituted characters
+     */
+    public void addMapping ( int start, int end, CharSequence mappedChars ) {
+        if ( mappings == null ) {
+            mappings = new java.util.HashMap();
+        }
+        mappings.put ( new MapRange ( start, end ), mappedChars.toString() );
+    }
+
+    /**
+     * Determine if characters over specific interval  have a mapping.
+     * @param start index in character buffer
+     * @param end index in character buffer
+     * @return true if a mapping exist such that the mapping's interval is coincident to
+     * [start,end)
+     */
+    public boolean hasMapping ( int start, int end ) {
+        return ( mappings != null ) && ( mappings.containsKey ( new MapRange ( start, end ) ) );
+    }
+
+    /**
+     * Obtain mapping of characters over specific interval.
+     * @param start index in character buffer
+     * @param end index in character buffer
+     * @return a string of characters representing the mapping over the interval
+     * [start,end)
+     */
+    public String getMapping ( int start, int end ) {
+        if ( mappings != null ) {
+            return (String) mappings.get ( new MapRange ( start, end ) );
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Obtain bidirectional levels of mapping of characters over specific interval.
+     * @param start index in character buffer
+     * @param end index in character buffer
+     * @return a (possibly empty) array of bidi levels or null
+     * in case no bidi levels have been assigned
+     */
+    public int[] getMappingBidiLevels ( int start, int end ) {
+        if ( mappings != null ) {
+            return getBidiLevels ( start, end ); // [TBD] FIX ME
+        } else {
+            return getBidiLevels ( start, end );
+        }
+    }
+
+    private static class MapRange {
+        private int start;
+        private int end;
+        MapRange(int start, int end) {
+            this.start = start;
+            this.end = end;
+        }
+        public int hashCode() {
+            return ( start * 31 ) + end;
+        }
+        public boolean equals ( Object o ) {
+            if ( o instanceof MapRange ) {
+                MapRange r = (MapRange) o;
+                return ( r.start == start ) && ( r.end == end );
+            } else {
+                return false;
+            }
+        }
+    }
+
 }

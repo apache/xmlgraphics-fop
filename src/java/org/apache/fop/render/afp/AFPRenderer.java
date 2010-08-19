@@ -624,7 +624,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer implements AFPCust
         textDataInfo.setFontReference(fontReference);
 
         int x = (currentIPPosition + text.getBorderAndPaddingWidthStart());
-        int y = (currentBPPosition + text.getOffset() + text.getBaselineOffset());
+        int y = (currentBPPosition + text.getBlockProgressionOffset() + text.getBaselineOffset());
 
         int[] coords = unitConv.mpts2units(new float[] {x, y} );
         textDataInfo.setX(coords[X]);
@@ -663,7 +663,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer implements AFPCust
                 = AFPEventProducer.Provider.get(userAgent.getEventBroadcaster());
             eventProducer.characterSetEncodingError(this, charSet.getName(), encoding);
         }
-        // word.getOffset() = only height of text itself
+        // word.getBlockProgressionOffset() = only height of text itself
         // currentBlockIPPosition: 0 for beginning of line; nonzero
         // where previous line area failed to take up entire allocated space
 
@@ -685,7 +685,7 @@ public class AFPRenderer extends AbstractPathOrientedRenderer implements AFPCust
         int style = area.getRuleStyle();
         float startx = (currentIPPosition + area
                 .getBorderAndPaddingWidthStart()) / 1000f;
-        float starty = (currentBPPosition + area.getOffset()) / 1000f;
+        float starty = (currentBPPosition + area.getBlockProgressionOffset()) / 1000f;
         float endx = (currentIPPosition + area.getBorderAndPaddingWidthStart() + area
                 .getIPD()) / 1000f;
         float ruleThickness = area.getRuleThickness() / 1000f;

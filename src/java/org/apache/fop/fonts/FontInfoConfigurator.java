@@ -254,20 +254,26 @@ public class FontInfoConfigurator {
         }
 
         boolean useKerning = fontCfg.getAttributeAsBoolean("kerning", true);
+        boolean useAdvanced = fontCfg.getAttributeAsBoolean("advanced", true);
         EncodingMode encodingMode = EncodingMode.valueOf(
                 fontCfg.getAttribute("encoding-mode", EncodingMode.AUTO.getName()));
         EmbedFontInfo embedFontInfo
-                = new EmbedFontInfo(metricsUrl, useKerning, tripletList, embedUrl, subFont);
+            = new EmbedFontInfo(metricsUrl, useKerning, useAdvanced, tripletList, embedUrl,
+                                subFont);
         embedFontInfo.setEncodingMode(encodingMode);
+        boolean skipCachedFont = false;
         if (fontCache != null) {
             if (!fontCache.containsFont(embedFontInfo)) {
                 fontCache.addFont(embedFontInfo);
+            } else {
+                skipCachedFont = true;
             }
         }
 
         if (log.isDebugEnabled()) {
             String embedFile = embedFontInfo.getEmbedFile();
-            log.debug("Adding font " + (embedFile != null ? embedFile + ", " : "")
+            log.debug( ( skipCachedFont ? "Skipping (cached) font " : "Adding font " )
+                    + (embedFile != null ? embedFile + ", " : "")
                     + "metric file " + embedFontInfo.getMetricsFile());
             for (int j = 0; j < tripletList.size(); ++j) {
                 FontTriplet triplet = (FontTriplet) tripletList.get(j);

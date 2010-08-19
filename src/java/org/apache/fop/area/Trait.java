@@ -27,6 +27,8 @@ import org.apache.xmlgraphics.image.loader.ImageInfo;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.traits.BorderProps;
+import org.apache.fop.traits.Direction;
+import org.apache.fop.traits.WritingMode;
 import org.apache.fop.util.ColorUtil;
 
 // properties should be serialized by the holder
@@ -201,8 +203,17 @@ public final class Trait implements Serializable {
     /** The ptr trait. Used for accessibility   */
     public static final Integer PTR = new Integer(37);
 
+    /** writing mode trait */
+    public static final Integer WRITING_MODE = new Integer(38);
+    /** inline progression direction trait */
+    public static final Integer INLINE_PROGRESSION_DIRECTION = new Integer(39);
+    /** block progression direction trait */
+    public static final Integer BLOCK_PROGRESSION_DIRECTION = new Integer(40);
+    /** shift direction trait */
+    public static final Integer SHIFT_DIRECTION = new Integer(41);
+
     /** Maximum value used by trait keys */
-    public static final int MAX_TRAIT_KEY = 37;
+    public static final int MAX_TRAIT_KEY = 41;
 
     private static final TraitInfo[] TRAIT_INFO = new TraitInfo[MAX_TRAIT_KEY + 1];
 
@@ -284,6 +295,14 @@ public final class Trait implements Serializable {
                 new TraitInfo("is-reference-area", Boolean.class));
         put(IS_VIEWPORT_AREA,
                 new TraitInfo("is-viewport-area", Boolean.class));
+        put(WRITING_MODE,
+                new TraitInfo("writing-mode", WritingMode.class));
+        put(INLINE_PROGRESSION_DIRECTION,
+                new TraitInfo("inline-progression-direction", Direction.class));
+        put(BLOCK_PROGRESSION_DIRECTION,
+                new TraitInfo("block-progression-direction", Direction.class));
+        put(SHIFT_DIRECTION,
+                new TraitInfo("shift-direction", Direction.class));
 
     }
 

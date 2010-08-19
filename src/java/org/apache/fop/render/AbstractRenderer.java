@@ -535,13 +535,11 @@ public abstract class AbstractRenderer
                 renderBlock((Block) obj);
                 containingBPPosition = contBP;
                 containingIPPosition = contIP;
-            } else {
+            } else if (obj instanceof LineArea) {
                 // a line area is rendered from the top left position
                 // of the line, each inline object is offset from there
                 LineArea line = (LineArea) obj;
-                currentIPPosition = contIP
-                        + parent.getStartIndent()
-                        + line.getStartIndent();
+                currentIPPosition = contIP + parent.getStartIndent();
                 renderLineArea(line);
                 //InlineArea child = (InlineArea) line.getInlineAreas().get(0);
                 currentBPPosition += line.getAllocBPD();
@@ -605,8 +603,9 @@ public abstract class AbstractRenderer
         List children = line.getInlineAreas();
         int saveBP = currentBPPosition;
         currentBPPosition += line.getSpaceBefore();
-        for (int count = 0; count < children.size(); count++) {
-            InlineArea inline = (InlineArea) children.get(count);
+        currentIPPosition += line.getStartIndent(); 
+        for (int i = 0, l = children.size(); i < l; i++) {
+            InlineArea inline = (InlineArea) children.get(i);
             renderInlineArea(inline);
         }
         currentBPPosition = saveBP;
@@ -672,11 +671,12 @@ public abstract class AbstractRenderer
      * @param text the text to render
      */
     protected void renderText(TextArea text) {
+        List children = text.getChildAreas();
         int saveIP = currentIPPosition;
         int saveBP = currentBPPosition;
-        Iterator iter = text.getChildAreas().iterator();
-        while (iter.hasNext()) {
-            renderInlineArea((InlineArea) iter.next());
+        for (int i = 0, l = children.size(); i < l; i++) {
+            InlineArea inline = (InlineArea) children.get(i);
+            renderInlineArea(inline);
         }
         currentIPPosition = saveIP + text.getAllocIPD();
     }
@@ -702,14 +702,15 @@ public abstract class AbstractRenderer
      * @param ip the inline parent to render
      */
     protected void renderInlineParent(InlineParent ip) {
+        List children = ip.getChildAreas();
         renderInlineAreaBackAndBorders(ip);
         int saveIP = currentIPPosition;
         int saveBP = currentBPPosition;
         currentIPPosition += ip.getBorderAndPaddingWidthStart();
-        currentBPPosition += ip.getOffset();
-        Iterator iter = ip.getChildAreas().iterator();
-        while (iter.hasNext()) {
-            renderInlineArea((InlineArea) iter.next());
+        currentBPPosition += ip.getBlockProgressionOffset();
+        for (int i = 0, l = children.size(); i < l; i++) {
+            InlineArea inline = (InlineArea) children.get(i);
+            renderInlineArea(inline);
         }
         currentIPPosition = saveIP + ip.getAllocIPD();
         currentBPPosition = saveBP;
@@ -724,7 +725,7 @@ public abstract class AbstractRenderer
         currentIPPosition += ibp.getBorderAndPaddingWidthStart();
         // For inline content the BP position is updated by the enclosing line area
         int saveBP = currentBPPosition;
-        currentBPPosition += ibp.getOffset();
+        currentBPPosition += ibp.getBlockProgressionOffset();
         renderBlock(ibp.getChildArea());
         currentBPPosition = saveBP;
     }
@@ -736,7 +737,7 @@ public abstract class AbstractRenderer
     protected void renderViewport(Viewport viewport) {
         Area content = viewport.getContent();
         int saveBP = currentBPPosition;
-        currentBPPosition += viewport.getOffset();
+        currentBPPosition += viewport.getBlockProgressionOffset();
         Rectangle2D contpos = viewport.getContentPosition();
         if (content instanceof Image) {
             renderImage((Image) content, contpos);

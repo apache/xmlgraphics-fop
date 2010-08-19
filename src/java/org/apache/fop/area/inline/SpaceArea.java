@@ -36,25 +36,27 @@ public class SpaceArea extends InlineArea {
 
     /**
      * Create a space area
-     * @param s the space character
-     * @param o the offset for the next area
-     * @param a is this space adjustable?
+     * @param space the space character
+     * @param blockProgressionOffset the offset for the next area
+     * @param adjustable is this space adjustable?
+     * @param bidiLevel the bidirectional embedding level (or -1 if not defined)
      */
-    public SpaceArea(char s, int o, boolean a) {
-        space = new String() + s;
-        offset = o;
-        isAdjustable = a;
+    public SpaceArea(int blockProgressionOffset, int bidiLevel, char space, boolean adjustable) {
+        super ( blockProgressionOffset, bidiLevel );
+        this.space = new String ( new char[] {space} );
+        this.isAdjustable = adjustable;
     }
 
     /**
      * @return Returns the space.
      */
     public String getSpace() {
-        return new String(space);
+        return space;
     }
 
     /** @return true if the space is adjustable (WRT word-space processing) */
     public boolean isAdjustable() {
         return this.isAdjustable;
     }
+
 }

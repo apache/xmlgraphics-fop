@@ -442,7 +442,7 @@ final class TextAttributesConverter {
     /**
      * Reads background-color from bl and writes it to rtfAttr.
      *
-     * @param bph the CommonBorderPaddingBackground from which the properties are read
+     * @param bpb the CommonBorderPaddingBackground from which the properties are read
      * @param rtfAttr the RtfAttributes object the attributes are written to
      */
     private static void attrBackgroundColor(CommonBorderPaddingBackground bpb,

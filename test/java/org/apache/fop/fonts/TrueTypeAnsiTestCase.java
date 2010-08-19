@@ -77,7 +77,7 @@ public class TrueTypeAnsiTestCase extends TestCase {
         triplets.add(new FontTriplet(fontFamily, "normal", Font.WEIGHT_NORMAL));
         EmbedFontInfo font = new EmbedFontInfo(
                 metricsFile.toURI().toASCIIString(),
-                true, triplets,
+                true, true, triplets,
                 ttfFile.toURI().toASCIIString(), null);
         fontList.add(font);
         renderer.addFontList(fontList);

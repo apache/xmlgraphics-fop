@@ -133,6 +133,12 @@ public interface MutableFont {
     void setKerningEnabled(boolean enabled);
 
     /**
+     * Enables/disabled advanced typographic features.
+     * @param enabled true if advanced typographic features should be enabled if available
+     */
+    void setAdvancedEnabled(boolean enabled);
+
+    /**
      * Adds an entry to the kerning table.
      * @param key Kerning key
      * @param value Kerning value

@@ -151,7 +151,7 @@ public class FontInfoFinder {
             subFontName = ((MultiByteFont)customFont).getTTCName();
         }
         EmbedFontInfo fontInfo = new EmbedFontInfo(null, customFont.isKerningEnabled(),
-                fontTripletList, embedUrl, subFontName);
+                customFont.isAdvancedEnabled(), fontTripletList, embedUrl, subFontName);
         fontInfo.setPostScriptName(customFont.getFontName());
         if (fontCache != null) {
             fontCache.addFont(fontInfo);
@@ -226,7 +226,7 @@ public class FontInfoFinder {
                 }
                 try {
                     TTFFontLoader ttfLoader = new TTFFontLoader(
-                            fontFileURI, fontName, true, EncodingMode.AUTO, true, resolver);
+                            fontFileURI, fontName, true, EncodingMode.AUTO, true, true, resolver);
                     customFont = ttfLoader.getFont();
                     if (this.eventListener != null) {
                         customFont.setEventListener(this.eventListener);

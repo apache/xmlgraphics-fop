@@ -106,6 +106,15 @@ public class LineArea extends Area {
     }
 
     /**
+     * <p>Set (en masse) the inline child areas of this line area.</p>
+     * <p> Used by bidirectional processing after line area consituent reordering.</p>
+     * @param inlineAreas the list of inline areas
+     */
+    public void setInlineAreas ( List inlineAreas ) {
+        this.inlineAreas = inlineAreas;
+    }
+
+    /**
      * Get the inline child areas of this line area.
      *
      * @return the list of inline areas
@@ -179,7 +188,7 @@ public class LineArea extends Area {
                 // if the LineArea has already been added to the area tree,
                 // call finalize(); otherwise, wait for the LineLM to call it
                 if (adjustingInfo.bAddedToAreaTree) {
-                    finalise();
+                    finish();
                 }
                 break;
             default:
@@ -192,7 +201,7 @@ public class LineArea extends Area {
      * and destroy the AdjustingInfo object if there are
      * no UnresolvedAreas left
      */
-    public void finalise() {
+    public void finish() {
         if (adjustingInfo.lineAlignment == Constants.EN_JUSTIFY) {
             // justified line: apply the variation factor
             boolean bUnresolvedAreasPresent = false;

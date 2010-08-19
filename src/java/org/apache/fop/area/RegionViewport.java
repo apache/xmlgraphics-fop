@@ -93,7 +93,7 @@ public class RegionViewport extends Area implements Cloneable {
         out.writeFloat((float) viewArea.getWidth());
         out.writeFloat((float) viewArea.getHeight());
         out.writeBoolean(clip);
-        out.writeObject(props);
+        out.writeObject(traits);
         out.writeObject(regionReference);
     }
 
@@ -102,7 +102,7 @@ public class RegionViewport extends Area implements Cloneable {
         viewArea = new Rectangle2D.Float(in.readFloat(), in.readFloat(),
                                          in.readFloat(), in.readFloat());
         clip = in.readBoolean();
-        props = (HashMap)in.readObject();
+        traits = (HashMap)in.readObject();
         setRegionReference((RegionReference) in.readObject());
     }
 
@@ -115,8 +115,8 @@ public class RegionViewport extends Area implements Cloneable {
     public Object clone() {
         RegionViewport rv = new RegionViewport((Rectangle2D)viewArea.clone());
         rv.regionReference = (RegionReference)regionReference.clone();
-        if (props != null) {
-            rv.props = new HashMap(props);
+        if (traits != null) {
+            rv.traits = new HashMap(traits);
         }
         if (foreignAttributes != null) {
             rv.foreignAttributes = new HashMap(foreignAttributes);

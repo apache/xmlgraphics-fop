@@ -467,7 +467,7 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
         float height = area.getBPD() / 1000f;
         if (height != 0.0f || bpheight != 0.0f && bpwidth != 0.0f) {
             float x = currentIPPosition / 1000f;
-            float y = (currentBPPosition + area.getOffset()) / 1000f;
+            float y = (currentBPPosition + area.getBlockProgressionOffset()) / 1000f;
             float width = area.getIPD() / 1000f;
             drawBackAndBorders(area, x, y - borderPaddingBefore
                                 , width + bpwidth
@@ -688,7 +688,7 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
     public void renderViewport(Viewport viewport) {
 
         float x = currentIPPosition / 1000f;
-        float y = (currentBPPosition + viewport.getOffset()) / 1000f;
+        float y = (currentBPPosition + viewport.getBlockProgressionOffset()) / 1000f;
         float width = viewport.getIPD() / 1000f;
         float height = viewport.getBPD() / 1000f;
         // TODO: Calculate the border rect correctly.

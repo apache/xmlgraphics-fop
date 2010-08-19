@@ -74,7 +74,7 @@ public class InlineArea extends Area {
     /**
      * offset position from before edge of parent area
      */
-    protected int offset = 0;
+    protected int blockProgressionOffset = 0;
 
     /**
      * parent area
@@ -94,6 +94,23 @@ public class InlineArea extends Area {
      * The adjustment information object
      */
     protected InlineAdjustingInfo adjustingInfo = null;
+
+    /**
+     * Default constructor for inline area.
+     */
+    public InlineArea() {
+        this (  0, -1 );
+    }
+
+    /**
+     * Instantiate inline area.
+     * @param blockProgressionOffset a block progression offset or zero
+     * @param bidiLevel a resolved bidi level or -1
+     */
+    protected InlineArea ( int blockProgressionOffset, int bidiLevel ) {
+        this.blockProgressionOffset = blockProgressionOffset;
+        setBidiLevel(bidiLevel);
+    }
 
     /**
      * @return the adjustment information object
@@ -133,25 +150,25 @@ public class InlineArea extends Area {
     }
 
     /**
-     * Set the offset of this inline area.
+     * Set the block progression offset of this inline area.
      * This is used to set the offset of the inline area
      * which is relative to the before edge of the parent area.
      *
-     * @param offset the offset
+     * @param blockProgressionOffset the offset
      */
-    public void setOffset(int offset) {
-        this.offset = offset;
+    public void setBlockProgressionOffset(int blockProgressionOffset) {
+        this.blockProgressionOffset = blockProgressionOffset;
     }
 
     /**
-     * Get the offset of this inline area.
+     * Get the block progression offset of this inline area.
      * This returns the offset of the inline area
-     * which is relative to the before edge of the parent area.
+     * relative to the before edge of the parent area.
      *
-     * @return the offset
+     * @return the blockProgressionOffset
      */
-    public int getOffset() {
-        return offset;
+    public int getBlockProgressionOffset() {
+        return blockProgressionOffset;
     }
 
     /**
@@ -243,4 +260,3 @@ public class InlineArea extends Area {
         }
     }
 }
-

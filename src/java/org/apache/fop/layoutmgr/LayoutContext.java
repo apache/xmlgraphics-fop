@@ -26,6 +26,7 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.layoutmgr.inline.AlignmentContext;
 import org.apache.fop.layoutmgr.inline.HyphContext;
 import org.apache.fop.traits.MinOptMax;
+import org.apache.fop.traits.WritingMode;
 
 
 /**
@@ -92,7 +93,7 @@ public class LayoutContext {
     //overlap with refIPD. Need to investigate how best to refactor that.
 
     /** the writing mode established by the nearest ancestor reference area */
-    private int writingMode = Constants.EN_LR_TB;
+    private WritingMode writingMode = WritingMode.LR_TB;
 
     /** Current pending space-after or space-end from preceding area */
     private SpaceSpecifier trailingSpace;
@@ -564,7 +565,7 @@ public class LayoutContext {
      * Get the writing mode of the relevant reference area.
      * @return the applicable writing mode
      */
-    public int getWritingMode() {
+    public WritingMode getWritingMode() {
         return writingMode;
     }
 
@@ -572,7 +573,7 @@ public class LayoutContext {
      * Set the writing mode.
      * @param writingMode the writing mode
      */
-    public void setWritingMode(int writingMode) {
+    public void setWritingMode(WritingMode writingMode) {
         this.writingMode = writingMode;
     }
 
