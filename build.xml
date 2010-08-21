@@ -332,7 +332,7 @@ list of possible build targets.
   <target name="compile-java" depends="init, codegen">
 <!-- create directories -->
     <mkdir dir="${build.classes.dir}"/>
-    <javac destdir="${build.classes.dir}" fork="${javac.fork}" debug="${javac.debug}" deprecation="${javac.deprecation}" optimize="${javac.optimize}" source="${javac.source}" target="${javac.target}">
+    <javac destdir="${build.classes.dir}" fork="${javac.fork}" debug="${javac.debug}" deprecation="${javac.deprecation}" optimize="${javac.optimize}" source="${javac.source}" target="${javac.target}" includeAntRuntime="true">
       <src path="${build.gensrc.dir}"/>
       <src path="${src.java.dir}"/>
       <patternset includes="**/*.java"/>
@@ -341,7 +341,7 @@ list of possible build targets.
       <classpath refid="libs-build-classpath"/>
     </javac>
     <mkdir dir="${build.sandbox-classes.dir}"/>
-    <javac destdir="${build.sandbox-classes.dir}" fork="${javac.fork}" debug="${javac.debug}" deprecation="${javac.deprecation}" optimize="${javac.optimize}" source="${javac.source}" target="${javac.target}">
+    <javac destdir="${build.sandbox-classes.dir}" fork="${javac.fork}" debug="${javac.debug}" deprecation="${javac.deprecation}" optimize="${javac.optimize}" source="${javac.source}" target="${javac.target}" includeAntRuntime="true">
       <src path="${src.sandbox.dir}"/>
       <patternset includes="**/*.java"/>
       <patternset refid="exclude-jai"/>
@@ -353,7 +353,7 @@ list of possible build targets.
   </target>
   <target name="resourcegen" depends="compile-java">
     <mkdir dir="${build.codegen-classes.dir}"/>
-    <javac destdir="${build.codegen-classes.dir}" fork="${javac.fork}" debug="${javac.debug}" deprecation="${javac.deprecation}" optimize="${javac.optimize}" source="${javac.source}" target="${javac.target}">
+    <javac destdir="${build.codegen-classes.dir}" fork="${javac.fork}" debug="${javac.debug}" deprecation="${javac.deprecation}" optimize="${javac.optimize}" source="${javac.source}" target="${javac.target}" includeAntRuntime="true">
       <src path="${src.codegen.dir}/java"/>
       <patternset includes="**/*.java"/>
       <classpath>
@@ -731,7 +731,7 @@ list of possible build targets.
     <mkdir dir="${build.dir}/test-classes"/>
     <mkdir dir="${build.dir}/test-gensrc"/>
     <mkdir dir="${junit.reports.dir}"/>
-    <javac destdir="${build.dir}/test-classes" fork="${javac.fork}" debug="${javac.debug}" deprecation="${javac.deprecation}" optimize="${javac.optimize}" source="${javac.source}" target="${javac.target}">
+    <javac destdir="${build.dir}/test-classes" fork="${javac.fork}" debug="${javac.debug}" deprecation="${javac.deprecation}" optimize="${javac.optimize}" source="${javac.source}" target="${javac.target}" includeAntRuntime="true">
       <src path="${test.dir}/java"/>
       <patternset refid="test-sources"/>
       <classpath>
