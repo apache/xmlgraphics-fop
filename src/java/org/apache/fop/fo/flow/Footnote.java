@@ -76,9 +76,9 @@ public class Footnote extends FObj {
     /**
      * {@inheritDoc}
      * <br>XSL Content Model: (inline,footnote-body)
-     * @todo implement additional constraint: A fo:footnote is not permitted
+     * @asf.todo implement additional constraint: A fo:footnote is not permitted
      *      to have a fo:float, fo:footnote, or fo:marker as a descendant.
-     * @todo implement additional constraint: A fo:footnote is not
+     * @asf.todo implement additional constraint: A fo:footnote is not
      *      permitted to have as a descendant a fo:block-container that
      *      generates an absolutely positioned area.
      */

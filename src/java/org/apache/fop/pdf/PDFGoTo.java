@@ -42,10 +42,8 @@ public class PDFGoTo extends PDFAction {
      * @param pageReference the pageReference represented by this object
      */
     public PDFGoTo(String pageReference) {
-        /* generic creation of object */
         super();
-
-        this.pageReference = pageReference;
+        setPageReference(pageReference);
     }
 
     /**
@@ -56,9 +54,7 @@ public class PDFGoTo extends PDFAction {
      */
     public PDFGoTo(String pageReference, Point2D position) {
         /* generic creation of object */
-        super();
-
-        this.pageReference = pageReference;
+        this(pageReference);
         setPosition(position);
     }
 

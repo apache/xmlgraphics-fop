@@ -161,7 +161,7 @@ public class PFBParser {
     }
 
 
-    private static final boolean byteCmp(byte[] src, int srcOffset, byte[] cmp) {
+    private static boolean byteCmp(byte[] src, int srcOffset, byte[] cmp) {
         for (int i = 0; i < cmp.length; i++) {
             // System.out.println("Compare: " + src[srcOffset + i] + " " + cmp[i]);
             if (src[srcOffset + i] != cmp[i]) {

@@ -66,6 +66,7 @@ public class HyphenationTree extends TernaryTree
      */
     private transient TernaryTree ivalues;
 
+    /** Default constructor. */
     public HyphenationTree() {
         stoplist = new HashMap(23);    // usually a small table
         classmap = new TernaryTree();
@@ -100,6 +101,11 @@ public class HyphenationTree extends TernaryTree
         return offset;
     }
 
+    /**
+     * Unpack values.
+     * @param k an integer
+     * @return a string
+     */
     protected String unpackValues(int k) {
         StringBuffer buf = new StringBuffer();
         byte v = vspace.get(k++);
@@ -154,6 +160,11 @@ public class HyphenationTree extends TernaryTree
         ivalues = null;
     }
 
+    /**
+     * Find pattern.
+     * @param pat a pattern
+     * @return a string
+     */
     public String findPattern(String pat) {
         int k = super.find(pat);
         if (k >= 0) {
@@ -164,7 +175,12 @@ public class HyphenationTree extends TernaryTree
 
     /**
      * String compare, returns 0 if equal or
-     * t is a substring of s
+     * t is a substring of s.
+     * @param s first character array
+     * @param si starting index into first array
+     * @param t second character array
+     * @param ti starting index into second array
+     * @return an integer
      */
     protected int hstrcmp(char[] s, int si, char[] t, int ti) {
         for (; s[si] == t[ti]; si++, ti++) {
@@ -178,6 +194,11 @@ public class HyphenationTree extends TernaryTree
         return s[si] - t[ti];
     }
 
+    /**
+     * Get values.
+     * @param k an integer
+     * @return a byte array
+     */
     protected byte[] getValues(int k) {
         StringBuffer buf = new StringBuffer();
         byte v = vspace.get(k++);
@@ -352,12 +373,12 @@ public class HyphenationTree extends TernaryTree
             if (nc < 0) {    // found a non-letter character ...
                 if (i == (1 + iIgnoreAtBeginning)) {
                     // ... before any letter character
-                    iIgnoreAtBeginning ++;
+                    iIgnoreAtBeginning++;
                 } else {
                     // ... after a letter character
                     bEndOfLetters = true;
                 }
-                iLength --;
+                iLength--;
             } else {
                 if (!bEndOfLetters) {
                     word[i - iIgnoreAtBeginning] = (char)nc;
@@ -435,6 +456,7 @@ public class HyphenationTree extends TernaryTree
      * files use only lower case characters, in this case a class
      * for letter 'a', for example, should be defined as "aA", the first
      * character being the normalization char.
+     * @param chargroup a character class (group)
      */
     public void addClass(String chargroup) {
         if (chargroup.length() > 0) {
@@ -479,6 +501,9 @@ public class HyphenationTree extends TernaryTree
         insert(pattern, (char)k);
     }
 
+    /**
+     * Print statistics.
+     */
     public void printStats() {
         System.out.println("Value space size = "
                            + Integer.toString(vspace.length()));
@@ -486,11 +511,16 @@ public class HyphenationTree extends TernaryTree
 
     }
 
+    /**
+     * Main entry point for this hyphenation utility application.
+     * @param argv array of command linee arguments
+     * @throws Exception in case an exception is raised but not caught
+     */
     public static void main(String[] argv) throws Exception {
         HyphenationTree ht = null;
         int minCharCount = 2;
-        BufferedReader in =
-            new BufferedReader(new java.io.InputStreamReader(System.in));
+        BufferedReader in
+            = new BufferedReader(new java.io.InputStreamReader(System.in));
         while (true) {
             System.out.print("l:\tload patterns from XML\n"
                     + "L:\tload patterns from serialized object\n"
@@ -572,8 +602,8 @@ public class HyphenationTree extends TernaryTree
                 long starttime = 0;
                 int counter = 0;
                 try {
-                    BufferedReader reader =
-                        new BufferedReader(new FileReader(token));
+                    BufferedReader reader
+                        = new BufferedReader(new FileReader(token));
                     String line;
 
                     starttime = System.currentTimeMillis();

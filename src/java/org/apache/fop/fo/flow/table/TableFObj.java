@@ -50,12 +50,12 @@ public abstract class TableFObj extends FObj implements StructurePointerProperty
     private Numeric borderStartPrecedence;
     private String ptr;
 
-    ConditionalBorder borderBefore;
-    ConditionalBorder borderAfter;
-    BorderSpecification borderStart;
-    BorderSpecification borderEnd;
+    ConditionalBorder borderBefore;             // CSOK: VisibilityModifier
+    ConditionalBorder borderAfter;              // CSOK: VisibilityModifier
+    BorderSpecification borderStart;            // CSOK: VisibilityModifier
+    BorderSpecification borderEnd;              // CSOK: VisibilityModifier
 
-    CollapsingBorderModel collapsingBorderModel;
+    CollapsingBorderModel collapsingBorderModel; // CSOK: VisibilityModifier
 
     /**
      * Create a TableFObj instance that is a child
@@ -205,9 +205,10 @@ public abstract class TableFObj extends FObj implements StructurePointerProperty
                 int foId = propertyList.getFObj().getNameId();
                 if (i <= 0) {
                     if (foId == FO_TABLE_CELL || foId == FO_TABLE_COLUMN) {
-                        ColumnNumberManagerHolder parent =
-                            (ColumnNumberManagerHolder) propertyList.getParentFObj();
-                        ColumnNumberManager columnIndexManager = parent.getColumnNumberManager();
+                        ColumnNumberManagerHolder parent
+                            = (ColumnNumberManagerHolder) propertyList.getParentFObj();
+                        ColumnNumberManager columnIndexManager
+                            = parent.getColumnNumberManager();
                         i = columnIndexManager.getCurrentColumnNumber();
                     } else {
                         /* very exceptional case:
@@ -216,10 +217,11 @@ public abstract class TableFObj extends FObj implements StructurePointerProperty
                          */
                         i = 1;
                     }
-                    TableEventProducer eventProducer =
-                        TableEventProducer.Provider.get(fo.getUserAgent().getEventBroadcaster());
-                    eventProducer.forceNextColumnNumber(this, propertyList.getFObj().getName(),
-                                                        val, i, propertyList.getFObj().getLocator());
+                    TableEventProducer eventProducer
+                        = TableEventProducer.Provider.get(fo.getUserAgent().getEventBroadcaster());
+                    eventProducer.forceNextColumnNumber
+                        (this, propertyList.getFObj().getName(),
+                         val, i, propertyList.getFObj().getLocator());
                 }
                 return NumberProperty.getInstance(i);
             }
@@ -229,7 +231,9 @@ public abstract class TableFObj extends FObj implements StructurePointerProperty
     }
 
     /** {@inheritDoc} */
-    public void processNode(String elementName, Locator locator, Attributes attlist, PropertyList pList) throws FOPException {
+    public void processNode
+        (String elementName, Locator locator, Attributes attlist, PropertyList pList)
+        throws FOPException {
         super.processNode(elementName, locator, attlist, pList);
         Table table = getTable();
         if (!inMarker() && !table.isSeparateBorderModel()) {

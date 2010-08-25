@@ -151,6 +151,7 @@
           default-page-settings element to specify the two values.</td>
         <td>"height" 11 inches, "width" 8.26 inches</td>
       </tr>
+      <!-- Disabled: no simultaneous Renderer and IF implementations at the moment
       <tr>
         <td>prefer-renderer</td>
         <td>boolean (true, false)</td>
@@ -163,6 +164,7 @@
         </td>
         <td>false</td>
       </tr>
+      -->
       <tr>
         <td>use-cache</td>
         <td>boolean (true, false)</td>
@@ -176,8 +178,7 @@
       <tr>
         <td>cache-file</td>
         <td>String</td>
-        <td>This options specifies the file/directory path of the fop cache file.
-        This option can also be specified on the command-line using the -cache option.
+        <td>This option specifies the file/directory path of the fop cache file.
         This file is currently only used to cache font triplet information for future reference.</td>
         <td>${base}/conf/fop.cache</td>
       </tr>

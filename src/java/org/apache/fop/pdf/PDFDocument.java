@@ -124,8 +124,8 @@ public class PDFDocument {
     private PDFEncryption encryption;
 
     /** the colorspace (0=RGB, 1=CMYK) */
-    private PDFDeviceColorSpace colorspace =
-        new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
+    private PDFDeviceColorSpace colorspace
+        = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
 
     /** the counter for Pattern name numbering (e.g. 'Pattern1') */
     private int patternCount = 0;
@@ -1017,9 +1017,7 @@ public class PDFDocument {
         output(stream);
         for (int count = 0; count < this.trailerObjects.size(); count++) {
             PDFObject o = (PDFObject)this.trailerObjects.get(count);
-            this.location.set(
-                o.getObjectNumber() - 1,
-                new Integer(this.position));
+            setLocation(o.getObjectNumber() - 1, this.position);
             this.position += o.output(stream);
         }
         /* output the xref table and increment the character position

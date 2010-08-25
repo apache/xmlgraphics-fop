@@ -21,7 +21,6 @@ package org.apache.fop.afp.fonts;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
-import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.CharacterCodingException;
@@ -102,7 +101,8 @@ public class CharacterSet {
      * @param encoding the encoding of the font
      * @param name the character set name
      * @param path the path to the installed afp fonts
-     * @deprecated Please use {@link #CharacterSet(String, String, String, URI)} instead.
+     * @deprecated Please use
+     * {@link #CharacterSet(String, String, String, ResourceAccessor)} instead.
      */
     public CharacterSet(String codePage, String encoding, String name, String path) {
         this(codePage, encoding, name,

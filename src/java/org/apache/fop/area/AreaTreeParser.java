@@ -228,8 +228,13 @@ public class AreaTreeParser {
             if (areaStack.size() > 0) {
                 int pos = areaStack.size() - 1;
                 Object obj = null;
-                while (pos >= 0 && !(clazz.isInstance(obj = areaStack.get(pos)))) {
-                    pos--;
+                while ( pos >= 0 ) {
+                    obj = areaStack.get(pos);
+                    if ( clazz.isInstance ( obj ) ) {
+                        break;
+                    } else {
+                        pos--;
+                    }
                 }
                 if (pos >= 0) {
                     return (Area)obj;

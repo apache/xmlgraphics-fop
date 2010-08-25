@@ -43,7 +43,7 @@ import org.xml.sax.helpers.XMLFilterImpl;
 public class DigestFilter extends XMLFilterImpl {
 
     private MessageDigest digest;
-    private byte value[];
+    private byte[] value;
     private boolean isNamespaceAware;
 
     public DigestFilter(String algorithm) throws NoSuchAlgorithmException {
@@ -133,7 +133,7 @@ public class DigestFilter extends XMLFilterImpl {
      */
     public void setFeature(String feature, boolean value)
         throws SAXNotRecognizedException, SAXNotSupportedException {
-        if(feature.equals("http://xml.org/sax/features/namespaces")) {
+        if (feature.equals("http://xml.org/sax/features/namespaces")) {
             isNamespaceAware = value;
         }
         super.setFeature(feature, value);

@@ -100,6 +100,7 @@ public class PageGroup extends AbstractResourceEnvironmentGroupContainer {
         return this.getName();
     }
 
+    /** @return the TLE sequence number */
     public int getTleSequence() {
         return tleSequence;
     }

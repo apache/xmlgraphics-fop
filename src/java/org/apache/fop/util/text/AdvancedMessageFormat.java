@@ -29,7 +29,7 @@ import org.apache.xmlgraphics.util.Service;
 
 /**
  * Formats messages based on a template and with a set of named parameters. This is similar to
- * {@link java.util.MessageFormat} but uses named parameters and supports conditional sub-groups.
+ * {@link java.text.MessageFormat} but uses named parameters and supports conditional sub-groups.
  * <p>
  * Example:
  * </p>

@@ -30,7 +30,10 @@ public interface AreaEventProducer extends EventProducer {
     /**
      * Provider class for the event producer.
      */
-    class Provider {
+    static final class Provider {
+
+        private Provider() {
+        }
 
         /**
          * Returns an event producer.

@@ -36,6 +36,6 @@ public interface PercentBaseContext {
      * @param fobj The FO object against which the percentage should be evaluated
      * @return The base length value of the given kind
      */
-    public int getBaseLength(int lengthBase, FObj fobj);
+    int getBaseLength(int lengthBase, FObj fobj);
 
 }

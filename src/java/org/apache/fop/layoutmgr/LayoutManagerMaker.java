@@ -16,6 +16,7 @@
  */
 
 /* $Id$ */
+
 package org.apache.fop.layoutmgr;
 
 import java.util.List;
@@ -40,7 +41,7 @@ public interface LayoutManagerMaker {
      * @param node the FO node for which the LayoutManagers are made
      * @param lms the list to which the LayoutManagers are added
      */
-    public void makeLayoutManagers(FONode node, List lms);
+    void makeLayoutManagers(FONode node, List lms);
 
     /**
      * Make a specific LayoutManager for the node.
@@ -48,10 +49,8 @@ public interface LayoutManagerMaker {
      * an IllegalStateException is thrown.
      * @param node the FO node for which the LayoutManagers are made
      * @return The created LayoutManager
-     * @throws IllegalStateException if not exactly one
-     *    LayoutManager is available for the requested node
      */
-    public LayoutManager makeLayoutManager(FONode node);
+    LayoutManager makeLayoutManager(FONode node);
 
     /**
      * Make a PageSequenceLayoutManager object.
@@ -59,7 +58,7 @@ public interface LayoutManagerMaker {
      * @param ps the fo:page-sequence object this PSLM will process
      * @return The created PageSequenceLayoutManager object
      */
-    public PageSequenceLayoutManager makePageSequenceLayoutManager(
+    PageSequenceLayoutManager makePageSequenceLayoutManager(
         AreaTreeHandler ath, PageSequence ps);
 
     /**
@@ -68,7 +67,7 @@ public interface LayoutManagerMaker {
      * @param ed the fox:external-document object to be processed
      * @return The created ExternalDocumentLayoutManager object
      */
-    public ExternalDocumentLayoutManager makeExternalDocumentLayoutManager(
+    ExternalDocumentLayoutManager makeExternalDocumentLayoutManager(
         AreaTreeHandler ath, ExternalDocument ed);
 
     /**
@@ -77,7 +76,7 @@ public interface LayoutManagerMaker {
      * @param flow the fo:flow object this FLM will process
      * @return The created FlowLayoutManager object
      */
-    public FlowLayoutManager makeFlowLayoutManager(
+    FlowLayoutManager makeFlowLayoutManager(
         PageSequenceLayoutManager pslm, Flow flow);
 
     /**
@@ -86,7 +85,7 @@ public interface LayoutManagerMaker {
      * @param title the fo:title object this CLM will process
      * @return The created ContentLayoutManager object
      */
-    public ContentLayoutManager makeContentLayoutManager(
+    ContentLayoutManager makeContentLayoutManager(
         PageSequenceLayoutManager pslm, Title title);
 
     /**
@@ -97,7 +96,7 @@ public interface LayoutManagerMaker {
      *     needs to be processed.
      * @return The created StaticContentLayoutManager object
      */
-    public StaticContentLayoutManager makeStaticContentLayoutManager(
+    StaticContentLayoutManager makeStaticContentLayoutManager(
         PageSequenceLayoutManager pslm, StaticContent sc, SideRegion reg);
 
     /**
@@ -107,7 +106,7 @@ public interface LayoutManagerMaker {
      * @param block the Block area this SCLM must add its areas to
      * @return The created StaticContentLayoutManager object
      */
-    public StaticContentLayoutManager makeStaticContentLayoutManager(
+    StaticContentLayoutManager makeStaticContentLayoutManager(
         PageSequenceLayoutManager pslm, StaticContent sc, Block block);
 
 }

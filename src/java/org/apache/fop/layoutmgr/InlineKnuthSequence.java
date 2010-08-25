@@ -95,6 +95,9 @@ public class InlineKnuthSequence extends KnuthSequence  {
         return this;
     }
 
+    /**
+     * Add letter space.
+     */
     public void addALetterSpace() {
         KnuthBox prevBox = (KnuthBox) getLast();
         if (prevBox.isAuxiliary()

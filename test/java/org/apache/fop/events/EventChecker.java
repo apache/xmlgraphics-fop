@@ -40,7 +40,7 @@ class EventChecker extends Assert implements EventListener {
         if (event.getEventID().equals(expectedEventID)) {
             eventReceived = true;
         } else {
-            fail("Unexpected event: id = " + event.getEventID() + ": "+ msg);
+            fail("Unexpected event: id = " + event.getEventID() + ": " + msg);
         }
     }
 

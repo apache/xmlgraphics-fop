@@ -26,10 +26,20 @@ import org.xml.sax.Locator;
  * Exception thrown during FO tree validation.
  */
 public class ValidationException extends FOPException {
+
+    /**
+     * Construct a validation exception instance.
+     * @param message a message
+     */
     public ValidationException(String message) {
         super(message);
     }
 
+    /**
+     * Construct a validation exception instance.
+     * @param message a message
+     * @param locator a locator
+     */
     public ValidationException(String message, Locator locator) {
         super(message, locator);
     }

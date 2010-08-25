@@ -21,7 +21,8 @@ package org.apache.fop.render.intermediate;
 
 import java.awt.Color;
 
-public class IFState {
+/** a state class for intermediate format data */
+public final class IFState {
 
     private IFState parent;
 
@@ -50,22 +51,27 @@ public class IFState {
         this.textColor = parent.textColor;
     }
 
+    /** @return create state */
     public static IFState create() {
         return new IFState();
     }
 
+    /** @return push state */
     public IFState push() {
         return new IFState(this);
     }
 
+    /** @return pop state */
     public IFState pop() {
         return this.parent;
     }
 
+    /** @return true if font changed */
     public boolean isFontChanged() {
         return this.fontChanged;
     }
 
+    /** reset font changed */
     public void resetFontChanged() {
         this.fontChanged = false;
     }

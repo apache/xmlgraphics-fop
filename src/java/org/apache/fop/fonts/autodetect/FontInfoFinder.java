@@ -70,7 +70,7 @@ public class FontInfoFinder {
      * It seems to be fairly accurate but will probably require some tweaking over time
      *
      * @param customFont CustomFont
-     * @param triplet Collection that will take the generated triplets
+     * @param triplets Collection that will take the generated triplets
      */
     private void generateTripletsFromFont(CustomFont customFont, Collection triplets) {
         if (log.isTraceEnabled()) {
@@ -138,7 +138,7 @@ public class FontInfoFinder {
      * @param fontUrl the font URL
      * @param customFont the custom font
      * @param fontCache font cache (may be null)
-     * @return
+     * @return FontInfo from the given custom font
      */
     private EmbedFontInfo getFontInfoFromCustomFont(
             URL fontUrl, CustomFont customFont, FontCache fontCache) {

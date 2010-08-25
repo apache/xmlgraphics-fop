@@ -32,7 +32,10 @@ import org.apache.fop.fo.expr.PropertyException;
 public interface TableEventProducer extends EventProducer {
 
     /** Provider class for the event producer. */
-    class Provider {
+    static final class Provider {
+
+        private Provider() {
+        }
 
         /**
          * Returns an event producer.

@@ -317,6 +317,7 @@ public class FontFileReader {
      * Read an ISO-8859-1 string of len bytes.
      *
      * @param len The length of the string to read
+     * @param encodingID the string encoding id (presently ignored; always uses UTF-16BE)
      * @return A String
      * @throws IOException If EOF is reached
      */

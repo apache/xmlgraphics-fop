@@ -28,7 +28,10 @@ import org.apache.fop.fo.extensions.ExtensionElementMapping;
 /**
  * Utility methods for image handling.
  */
-public class ImageHandlerUtil {
+public final class ImageHandlerUtil {
+
+    private ImageHandlerUtil() {
+    }
 
     /** conversion-mode extension attribute */
     public static final QName CONVERSION_MODE = new QName(

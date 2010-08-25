@@ -30,7 +30,8 @@ import org.apache.fop.fo.expr.PropertyException;
 public final class KeepProperty extends Property implements CompoundDatatype {
 
     /** class holding all canonical KeepProperty instances*/
-    private static final PropertyCache cache = new PropertyCache(KeepProperty.class);
+    private static final PropertyCache CACHE
+        = new PropertyCache(KeepProperty.class);
 
     private boolean isCachedValue = false;
     private Property withinLine;
@@ -61,8 +62,7 @@ public final class KeepProperty extends Property implements CompoundDatatype {
          * {@inheritDoc}
          */
         public Property convertProperty(Property p, PropertyList propertyList, FObj fo)
-            throws PropertyException
-        {
+            throws PropertyException {
             if (p instanceof KeepProperty) {
                 return p;
             }
@@ -154,10 +154,10 @@ public final class KeepProperty extends Property implements CompoundDatatype {
      * @return String representation
      */
     public String toString() {
-        return "Keep[" +
-            "withinLine:" + getWithinLine().getObject() +
-            ", withinColumn:" + getWithinColumn().getObject() +
-            ", withinPage:" + getWithinPage().getObject() + "]";
+        return "Keep["
+            + "withinLine:" + getWithinLine().getObject()
+            + ", withinColumn:" + getWithinColumn().getObject()
+            + ", withinPage:" + getWithinPage().getObject() + "]";
     }
 
     /**
@@ -165,7 +165,7 @@ public final class KeepProperty extends Property implements CompoundDatatype {
      *          this property
      */
     public KeepProperty getKeep() {
-        KeepProperty keep = (KeepProperty) cache.fetch(this);
+        KeepProperty keep = (KeepProperty) CACHE.fetch(this);
         /* make sure setComponent() can never alter cached values */
         keep.isCachedValue = true;
         return keep;

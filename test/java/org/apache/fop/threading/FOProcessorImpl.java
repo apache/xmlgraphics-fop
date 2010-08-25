@@ -43,16 +43,12 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
-import org.apache.fop.events.Event;
-import org.apache.fop.events.EventFormatter;
-import org.apache.fop.events.EventListener;
-import org.apache.fop.events.model.EventSeverity;
 
 /**
- * Default implementation of the FOProcessor interface using FOP.
+ * Default implementation of the {@link Processor} interface using FOP.
  */
 public class FOProcessorImpl extends AbstractLogEnabled
-            implements FOProcessor, Configurable, Initializable {
+            implements Processor, Configurable, Initializable {
 
     private FopFactory fopFactory = FopFactory.newInstance();
     private TransformerFactory factory = TransformerFactory.newInstance();
@@ -83,7 +79,8 @@ public class FOProcessorImpl extends AbstractLogEnabled
         try {
             URL url = new URL(src.getSystemId());
             String filename = FilenameUtils.getName(url.getPath());
-            foUserAgent.getEventBroadcaster().addEventListener(new AvalonAdapter(filename));
+            foUserAgent.getEventBroadcaster().addEventListener(
+                    new AvalonAdapter(getLogger(), filename));
         } catch (MalformedURLException mfue) {
             throw new RuntimeException(mfue);
         }
@@ -106,31 +103,5 @@ public class FOProcessorImpl extends AbstractLogEnabled
     /** {@inheritDoc} */
     public String getTargetFileExtension() {
         return this.fileExtension;
-    }
-
-    private class AvalonAdapter implements EventListener {
-
-        private String filename;
-
-        public AvalonAdapter(String filename) {
-            this.filename = filename;
-        }
-
-        public void processEvent(Event event) {
-            String msg = EventFormatter.format(event);
-            EventSeverity severity = event.getSeverity();
-            if (severity == EventSeverity.INFO) {
-                //getLogger().info(filename + ": " + msg);
-            } else if (severity == EventSeverity.WARN) {
-                //getLogger().warn(filename + ": "  + msg);
-            } else if (severity == EventSeverity.ERROR) {
-                getLogger().error(filename + ": "  + msg);
-            } else if (severity == EventSeverity.FATAL) {
-                getLogger().fatalError(filename + ": "  + msg);
-            } else {
-                assert false;
-            }
-        }
-
     }
 }

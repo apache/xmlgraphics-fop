@@ -33,9 +33,6 @@ import java.util.Stack;
 
 import org.w3c.dom.Document;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
@@ -53,9 +50,6 @@ import org.apache.fop.util.CharUtilities;
  * {@link IFPainter} implementation that paints on a Graphics2D instance.
  */
 public class Java2DPainter extends AbstractIFPainter {
-
-    /** logging instance */
-    private static Log log = LogFactory.getLog(Java2DPainter.class);
 
     /** the IF context */
     protected IFContext ifContext;

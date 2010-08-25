@@ -564,8 +564,9 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
      * @return the PSResource representing the derived font
      * @throws IOException In case of an I/O problem
      */
-    public static PSResource defineDerivedFont(PSGenerator gen, String baseFontName, String fontName,
-            String encoding) throws IOException {
+    public static PSResource defineDerivedFont
+        (PSGenerator gen, String baseFontName, String fontName, String encoding)
+        throws IOException {
         PSResource res = new PSResource(PSResource.TYPE_FONT, fontName);
         gen.writeDSCComment(DSCConstants.BEGIN_RESOURCE, res);
         gen.commentln("%XGCDependencies: font " + baseFontName);

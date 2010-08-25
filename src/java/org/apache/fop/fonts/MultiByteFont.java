@@ -241,7 +241,7 @@ public class MultiByteFont extends CIDFont {
         return subset.getSubsetGlyphs();
     }
 
-    /** {@inheritDoc} */
+    /** @return an array of the chars used */
     public char[] getCharsUsed() {
         if (!isEmbeddable()) {
             return null;

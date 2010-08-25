@@ -57,7 +57,6 @@ list of possible build targets.
   <property file="${basedir}/build-local.properties"/>
   <property file="${basedir}/build.properties"/>
   <property environment="env"/>
-  <property name="build.lib.dir" value="${basedir}/lib/build"/>
   <fileset dir="${basedir}" id="dist.bin">
     <include name="conf/**"/>
     <include name="examples/**"/>
@@ -85,12 +84,22 @@ list of possible build targets.
       <include name="lib/xml-apis*"/>
     </patternset>
   </fileset>
+  <patternset id="dist.src.lib.tools">
+	<include name="lib/build/asm*"/>
+	<include name="lib/build/backport-util-concurrent*"/>
+	<include name="lib/build/jaxen*"/>
+	<include name="lib/build/pmd*"/>
+	<include name="lib/build/qdox*"/>
+	<include name="lib/build/retroweaver*"/>
+	<include name="lib/build/xmlunit*"/>
+  </patternset>
   <fileset dir="${basedir}" id="dist.src">
     <include name="src/**"/>
     <include name="conf/**"/>
     <include name="hyph/hyphenation.dtd"/>
     <include name="hyph/readme"/>
     <patternset refid="dist.lib"/>
+	<patternset refid="dist.src.lib.tools"/>
     <include name="lib/servlet*"/>
     <include name="test/**"/>
     <include name="examples/**"/>
@@ -103,6 +112,8 @@ list of possible build targets.
     <include name="build.*"/>
     <include name="forrest.properties"/>
     <include name="fop.bat"/>
+    <include name="fop.cmd"/>
+    <include name="fop.js"/>
     <include name="fop"/>
   </fileset>
   <path id="libs-build-classpath">
@@ -110,10 +121,10 @@ list of possible build targets.
       <include name="*.jar"/>
     </fileset>
   </path>
-  <property name="lib-build-tools" value="${basedir}/lib/build"/>
-  <path id="libs-build-tools-classpath">
+  <property name="lib-tools" value="${basedir}/lib/build"/>
+  <path id="libs-tools-build-classpath">
     <path refid="libs-build-classpath"/>
-    <fileset dir="${lib-build-tools}">
+    <fileset dir="${lib-tools}">
       <include name="*.jar"/>
     </fileset>
   </path>
@@ -134,7 +145,7 @@ list of possible build targets.
   <property name="name" value="fop"/>
   <property name="NAME" value="FOP"/>
   <property name="version" value="svn-trunk"/>
-  <property name="year" value="1999-2009"/>
+  <property name="year" value="1999-2010"/>
   <property name="javac.debug" value="on"/>
   <property name="javac.optimize" value="off"/>
   <property name="javac.deprecation" value="on"/>
@@ -226,7 +237,7 @@ list of possible build targets.
     <echo message="${jce.message}"/>
     <available property="jdk14.present" classname="java.lang.CharSequence"/>
     <fail message="${Name} requires at least Java 1.4!" unless="jdk14.present"/>
-    <available property="junit.present" classname="junit.framework.TestCase" classpathref="libs-build-tools-classpath"/>
+    <available property="junit.present" classname="junit.framework.TestCase" classpathref="libs-tools-build-classpath"/>
     <condition property="junit.message" value="JUnit Support PRESENT">
       <equals arg1="${junit.present}" arg2="true"/>
     </condition>
@@ -238,7 +249,7 @@ list of possible build targets.
     <echo message="${junit.message}"/>
     <condition property="xmlunit.present">
       <and>
-        <available classname="org.custommonkey.xmlunit.XMLTestCase" classpathref="libs-build-tools-classpath"/>
+        <available classname="org.custommonkey.xmlunit.XMLTestCase" classpathref="libs-tools-build-classpath"/>
         <isset property="junit.present"/>
       </and>
     </condition>
@@ -319,7 +330,7 @@ list of possible build targets.
   <target name="compile-java" depends="init, codegen">
 <!-- create directories -->
     <mkdir dir="${build.classes.dir}"/>
-    <javac destdir="${build.classes.dir}" fork="${javac.fork}" debug="${javac.debug}" deprecation="${javac.deprecation}" optimize="${javac.optimize}" source="${javac.source}" target="${javac.target}">
+    <javac destdir="${build.classes.dir}" fork="${javac.fork}" debug="${javac.debug}" deprecation="${javac.deprecation}" optimize="${javac.optimize}" source="${javac.source}" target="${javac.target}" includeAntRuntime="true">
       <src path="${build.gensrc.dir}"/>
       <src path="${src.java.dir}"/>
       <patternset includes="**/*.java"/>
@@ -328,7 +339,7 @@ list of possible build targets.
       <classpath refid="libs-build-classpath"/>
     </javac>
     <mkdir dir="${build.sandbox-classes.dir}"/>
-    <javac destdir="${build.sandbox-classes.dir}" fork="${javac.fork}" debug="${javac.debug}" deprecation="${javac.deprecation}" optimize="${javac.optimize}" source="${javac.source}" target="${javac.target}">
+    <javac destdir="${build.sandbox-classes.dir}" fork="${javac.fork}" debug="${javac.debug}" deprecation="${javac.deprecation}" optimize="${javac.optimize}" source="${javac.source}" target="${javac.target}" includeAntRuntime="true">
       <src path="${src.sandbox.dir}"/>
       <patternset includes="**/*.java"/>
       <patternset refid="exclude-jai"/>
@@ -340,11 +351,11 @@ list of possible build targets.
   </target>
   <target name="resourcegen" depends="compile-java">
     <mkdir dir="${build.codegen-classes.dir}"/>
-    <javac destdir="${build.codegen-classes.dir}" fork="${javac.fork}" debug="${javac.debug}" deprecation="${javac.deprecation}" optimize="${javac.optimize}" source="${javac.source}" target="${javac.target}">
+    <javac destdir="${build.codegen-classes.dir}" fork="${javac.fork}" debug="${javac.debug}" deprecation="${javac.deprecation}" optimize="${javac.optimize}" source="${javac.source}" target="${javac.target}" includeAntRuntime="true">
       <src path="${src.codegen.dir}/java"/>
       <patternset includes="**/*.java"/>
       <classpath>
-        <path refid="libs-build-tools-classpath"/>
+        <path refid="libs-tools-build-classpath"/>
         <pathelement location="${build.classes.dir}"/>
       </classpath>
     </javac>
@@ -355,7 +366,7 @@ list of possible build targets.
     </copy>
     <taskdef name="eventResourceGenerator" classname="org.apache.fop.tools.EventProducerCollectorTask">
       <classpath>
-        <path refid="libs-build-tools-classpath"/>
+        <path refid="libs-tools-build-classpath"/>
         <pathelement location="${build.classes.dir}"/>
         <pathelement location="${build.codegen-classes.dir}"/>
       </classpath>
@@ -472,7 +483,7 @@ list of possible build targets.
   <target name="retro-avail" depends="compile" if="java14.rt.lib">
     <taskdef name="retroweaver" classname="net.sourceforge.retroweaver.ant.RetroWeaverTask">
       <classpath>
-        <path refid="libs-build-tools-classpath"/>
+        <path refid="libs-tools-build-classpath"/>
       </classpath>
     </taskdef>
     <path id="verify-classpath">
@@ -483,7 +494,7 @@ list of possible build targets.
     </path>
     <!-- If we decide to use retroweaver for the actual weaving, the mkdir and
          destdir= will have to be removed. Also, the weaving task would additionally
-	 need to be defined even if no jdk 14 is available. -->
+         need to be defined even if no jdk 14 is available. -->
     <mkdir dir="${build.dir}/temp"/>
     <retroweaver srcdir="${build.classes.dir}" destdir="${build.dir}/temp"
        classpath="${toString:verify-classpath}" lazy="false"
@@ -509,7 +520,6 @@ list of possible build targets.
     <jar jarfile="${build.dir}/fop.jar" basedir="${build.classes.dir}">
       <manifest>
         <attribute name="Main-Class" value="org.apache.fop.cli.Main"/>
-        <attribute name="Class-Path" value="${manifest.classpath}"/>
         <attribute name="Build-Id" value="${ts} (${user.name} [${os.name} ${os.version} ${os.arch}, Java ${java.runtime.version}, Target Java ${javac.target}])"/>
         <section name="org/apache/fop/">
           <attribute name="Specification-Title" value="XSL-FO - Extensible Stylesheet Language"/>
@@ -714,11 +724,11 @@ list of possible build targets.
     <mkdir dir="${build.dir}/test-classes"/>
     <mkdir dir="${build.dir}/test-gensrc"/>
     <mkdir dir="${junit.reports.dir}"/>
-    <javac destdir="${build.dir}/test-classes" fork="${javac.fork}" debug="${javac.debug}" deprecation="${javac.deprecation}" optimize="${javac.optimize}" source="${javac.source}" target="${javac.target}">
+    <javac destdir="${build.dir}/test-classes" fork="${javac.fork}" debug="${javac.debug}" deprecation="${javac.deprecation}" optimize="${javac.optimize}" source="${javac.source}" target="${javac.target}" includeAntRuntime="true">
       <src path="${test.dir}/java"/>
       <patternset refid="test-sources"/>
       <classpath>
-        <path refid="libs-build-tools-classpath"/>
+        <path refid="libs-tools-build-classpath"/>
         <fileset dir="${build.dir}">
           <include name="fop.jar"/>
         </fileset>
@@ -796,6 +806,7 @@ list of possible build targets.
   <target name="junit-userconfig" depends="junit-compile" if="junit.present" description="Runs FOP's user config JUnit tests">
     <echo message="Running user config tests"/>
     <junit dir="${basedir}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure">
+      <jvmarg value="-Xmx1024m"/>
       <sysproperty key="basedir" value="${basedir}"/>
       <sysproperty key="jawa.awt.headless" value="true"/>
       <sysproperty key="fop.layoutengine.disabled" value="${layoutengine.disabled}"/>
@@ -917,7 +928,7 @@ list of possible build targets.
         <formatter type="xml" usefile="true"/>
         <classpath>
           <pathelement location="${build.dir}/test-classes"/>
-          <path refid="libs-build-tools-classpath"/>
+          <path refid="libs-tools-build-classpath"/>
           <pathelement location="${build.dir}/fop.jar"/>
         </classpath>
         <test name="@{testsuite}" todir="${junit.reports.dir}" outfile="@{outfile}"/>
@@ -1034,7 +1045,7 @@ NOTE:
         <pathelement path="${src.sandbox.dir}"/>
         <pathelement path="${build.gensrc.dir}"/>
       </sourcepath>
-      <tag name="todo" scope="all" description="To do:"/>
+      <tag name="asf.todo" scope="all" description="To do:"/>
       <tag name="event.severity" scope="all" description="Event severity level:"/>
       <group title="Control and Startup">
         <package name="org.apache.fop"/>
@@ -1116,7 +1127,7 @@ NOTE:
   	<and>
       <available classname="com.puppycrawl.tools.checkstyle.CheckStyleTask">
         <classpath>
-          <path refid="libs-build-tools-classpath"/>
+          <path refid="libs-tools-build-classpath"/>
         </classpath>
       </available>
       <available file="${checkstyle.noframes.xslt}"/>
@@ -1124,13 +1135,20 @@ NOTE:
   </condition>
   <target name="checkstyle-avail" unless="checkstyle.avail">
     <echo message="Checkstyle support NOT present. Please download it from http://checkstyle.sf.net/ and"/>
-    <echo message="..copy or link checkstyle-all-5.0.jar to ${lib-build-tools}"/>
+    <echo message="..copy or link checkstyle-all-5.1.jar to ${lib-tools}"/>
     <echo message="..copy or link checkstyle-noframes.xsl to ${checkstyle.noframes.xslt}"/>
   </target>
-  <target name="checkstyle" depends="init, checkstyle-avail" if="checkstyle.avail" description="Runs Checkstyle for a code quality report">
-    <taskdef name="checkstyle" classname="com.puppycrawl.tools.checkstyle.CheckStyleTask" classpathref="libs-build-tools-classpath"/>
-    <checkstyle config="checkstyle-5.0.xml" failonviolation="false">
-      <fileset dir="${src.java.dir}" includes="**/*.java"/>
+  <target name="checkstyle" depends="package, checkstyle-avail" if="checkstyle.avail" description="Runs Checkstyle for a code quality report">
+    <taskdef name="checkstyle" classname="com.puppycrawl.tools.checkstyle.CheckStyleTask" classpathref="libs-tools-build-classpath"/>
+    <mkdir dir="${build.dir}"/>
+    <checkstyle config="checkstyle-5.1.xml" failonviolation="false">
+      <classpath>
+        <path refid="libs-build-classpath"/>
+        <pathelement location="${build.classes.dir}"/>
+        <pathelement location="${build.sandbox-classes.dir}"/>
+        <pathelement location="${build.codegen-classes.dir}"/>
+      </classpath>
+      <fileset dir="${src.dir}" includes="**/*.java"/>
       <formatter type="xml" toFile="${build.dir}/report_checkstyle.xml"/>
     </checkstyle>
     <xslt in="${build.dir}/report_checkstyle.xml" out="${build.dir}/report_checkstyle.html" style="${checkstyle.noframes.xslt}"/>
@@ -1142,7 +1160,7 @@ NOTE:
     <taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask">
       <classpath>
         <path refid="libs-build-classpath"/>
-        <path refid="libs-build-tools-classpath"/>
+        <path refid="libs-tools-build-classpath"/>
       </classpath>
     </taskdef>
     <pmd shortFilenames="true" targetjdk="${javac.target}">
@@ -1160,7 +1178,7 @@ NOTE:
     <taskdef name="cpd" classname="net.sourceforge.pmd.cpd.CPDTask">
       <classpath>
         <path refid="libs-build-classpath"/>
-        <path refid="libs-build-tools-classpath"/>
+        <path refid="libs-tools-build-classpath"/>
       </classpath>
     </taskdef>
      <cpd minimumTokenCount="100" outputFile="${build.dir}/report_cpd.txt">
@@ -1172,22 +1190,62 @@ NOTE:
 <!-- =================================================================== -->
 <!-- Findbugs                                                            -->
 <!-- =================================================================== -->
-  <property name="findbugs.lib" value="${findbugs.home.dir}/lib"/>
-  <path id="libs-findbugs">
-    <fileset dir="${findbugs.lib}">
-      <include name="*.jar"/>
-    </fileset>
-  </path>
-  <target name="findbugs-avail" unless="findbugs.home.dir">
-    <echo message="Findbugs Support NOT Present. Please download it from http://findbugs.sf.net/ and set findbugs.home.dir in build-local.properties"/>
+  <target name="findbugs-maybe-describe-install" unless="findbugs.present">
+    <echo message="Please download FINDBUGS from http://findbugs.sf.net/ and set property findbugs.home.dir"/>
+    <echo message="in build-local.properties to the top-level directory of the binary distribution."/>
+   </target>
+  <target name="findbugs-avail">
+    <condition property="findbugs.present">
+      <and>
+        <isset property="findbugs.home.dir"/>
+        <available file="${findbugs.home.dir}" type="dir"/>
+      </and>
+    </condition>
+    <condition property="findbugs.message" value="FINDBUGS Support PRESENT">
+      <equals arg1="${findbugs.present}" arg2="true"/>
+    </condition>
+    <condition property="findbugs.message" value="FINDBUGS Support NOT Present">
+      <not>
+        <equals arg1="${findbugs.present}" arg2="true"/>
+      </not>
+    </condition>
+    <echo message="${findbugs.message}"/>
+    <antcall target="findbugs-maybe-describe-install"/>
   </target>
-  <target name="findbugs" depends="init, findbugs-avail, compile-java" if="findbugs.home.dir">
-    <taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpathref="libs-findbugs"/>
-    <findbugs home="${findbugs.home.dir}" output="html" reportLevel="low" effort="max" outputFile="${build.dir}/report_findbugs.html" jvmargs="-Xmx1024m">
+  <target name="findbugs-exec" depends="compile-java" if="findbugs.present">
+    <taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask">
+      <classpath>
+        <fileset dir="${findbugs.home.dir}/lib">
+          <include name="*.jar"/>
+        </fileset>
+      </classpath>
+    </taskdef>
+    <findbugs home="${findbugs.home.dir}" output="${findbugs.output.format}" reportLevel="low" effort="max"
+              outputFile="${build.dir}/report_findbugs.${findbugs.output.extension}" excludeFilter="findbugs-exclude.xml" jvmargs="-Xmx1024m">
       <sourcePath path="${src.java.dir}"/>
       <class location="${build.classes.dir}"/>
+      <auxClasspath>
+        <path refid="libs-build-classpath"/>
+        <path>
+          <fileset dir="${ant.library.dir}">
+            <include name="ant.jar"/>
+            <include name="ant-launcher.jar"/>
+          </fileset>
+        </path>
+      </auxClasspath>
     </findbugs>
   </target>
+  <target name="findbugs-xml" depends="findbugs-avail" if="findbugs.present" description="Runs findbugs for a code quality report in XML">
+    <property name="findbugs.output.format" value="xml"/>
+    <property name="findbugs.output.extension" value="xml"/>
+    <antcall target="findbugs-exec"/> 
+  </target>
+  <target name="findbugs-html" depends="findbugs-avail" if="findbugs.present" description="Runs findbugs for a code quality report in HTML">
+    <property name="findbugs.output.format" value="html"/>
+    <property name="findbugs.output.extension" value="html"/>
+    <antcall target="findbugs-exec"/> 
+  </target>
+  <target name="findbugs" depends="findbugs-html" description="Runs findbugs for a code quality report in HTML"/>
 <!-- =================================================================== -->
 <!-- Creates the reports                                                 -->
 <!-- =================================================================== -->
@@ -1197,21 +1255,18 @@ NOTE:
 <!-- =================================================================== -->
   <target name="docs" description="Generates documentation">
     <echo message="Building documentation with Forrest..."/>
-<!--
-    <echo message="Make sure that you have installed Apache Forrest and"/>
-    <echo message="the FORREST_HOME environment variable is set (see http://forrest.apache.org/)"/>
-    <echo message="FORREST_HOME = ${forrest.home}"/>
-    -->
+    <echo message="FORREST_HOME = ${env.FORREST_HOME}"/>
     <echo message="Make sure you have a proper Forrest installation (see http://forrest.apache.org/)"/>
     <condition property="forrest.call" value="forrest.bat" else="forrest">
       <os family="windows"/>
     </condition>
-    <exec executable="${forrest.call}"/>
+    <exec executable="${env.FORREST_HOME}/bin/${forrest.call}"/>
   </target>
 <!-- =================================================================== -->
 <!-- Creates the distribution                                            -->
 <!-- =================================================================== -->
-  <target name="dist" depends="dist-prereq,dist-src,dist-bin" description="Generates the distribution package"/>
+<!-- It would be better to make dist depend on distclean. But as long as the forrest projectInfo plugin depends on a higher Java version (1.5) than we use for the compilation (1.4), leaving it out enables a workaround -->
+  <target name="dist" depends="dist-prereq,dist-src,dist-bin,maven-artifacts" description="Generates the distribution package"/>
   <target name="dist-prereq" depends="init,dist-get-jai">
     <fail message="A complete binary build requires JAI" unless="jai.present"/>
     <fail message="A complete binary build requires JCE" unless="jce.present"/>
@@ -1259,7 +1314,7 @@ NOTE:
     <gzip zipfile="${name}-${version}-bin.tar.gz" src="${name}-${version}-bin.tar"/>
     <delete file="${name}-${version}-bin.tar"/>
   </target>
-  <target name="dist-src" depends="all">
+  <target name="dist-src">
     <echo message="Building the source distribution files (zip,tar)"/>
     <mkdir dir="${dist.src.result.dir}"/>
     <copy todir="${dist.src.result.dir}">
@@ -1298,6 +1353,7 @@ NOTE:
       <fileset dir="${build.dir}/maven"/>
       <metainf dir="${basedir}" includes="LICENSE,NOTICE"/>
     </jar>
+    <move file="${build.dir}/${name}-${version}-bundle.jar" todir="${basedir}"/>
   </target>
 <!-- =================================================================== -->
 <!-- Generate examples                                                   -->
@@ -1368,6 +1424,7 @@ NOTE:
     <delete>
       <fileset dir="${basedir}" includes="${name}-*.tar.gz"/>
       <fileset dir="${basedir}" includes="${name}-*.zip"/>
+	  <fileset dir="${basedir}" includes="${name}-bundle.jar"/>
     </delete>
   </target>
   <target name="validate-xdocs" description="Validate the xdocs. Point schemas.dir to Forrest's 'schemas' directory.">

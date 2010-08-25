@@ -23,7 +23,10 @@ package org.apache.fop.fonts;
 /**
  * Font utilities.
  */
-public class FontUtil {
+public final class FontUtil {
+
+    private FontUtil() {
+    }
 
     /**
      * Parses an CSS2 (SVG and XSL-FO) font weight (normal, bold, 100-900) to

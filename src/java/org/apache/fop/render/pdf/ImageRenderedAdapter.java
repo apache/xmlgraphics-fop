@@ -66,7 +66,7 @@ public class ImageRenderedAdapter extends AbstractImageAdapter {
      */
     public ImageRenderedAdapter(ImageRendered image, String key) {
         super(image, key);
-        this.encodingHelper = new ImageEncodingHelper(image.getRenderedImage());
+        this.encodingHelper = new ImageEncodingHelper(image.getRenderedImage(), true);
     }
 
     /**

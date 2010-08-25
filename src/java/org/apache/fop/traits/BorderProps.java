@@ -42,13 +42,13 @@ public class BorderProps implements Serializable {
     public static final int COLLAPSE_OUTER = 2;
 
     /** Border style (one of EN_*) */
-    public int style; // Enum for border style
+    public int style; // Enum for border style                  // CSOK: VisibilityModifier
     /** Border color */
-    public Color color;
+    public Color color;                                         // CSOK: VisibilityModifier
     /** Border width */
-    public int width;
+    public int width;                                           // CSOK: VisibilityModifier
     /** Border mode (one of SEPARATE, COLLAPSE_INNER and COLLAPSE_OUTER) */
-    public int mode;
+    public int mode;                                            // CSOK: VisibilityModifier
 
     /**
      * Constructs a new BorderProps instance.

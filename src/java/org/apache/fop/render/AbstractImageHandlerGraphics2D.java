@@ -34,7 +34,7 @@ import java.awt.image.DataBuffer;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 
-import org.apache.fop.util.UnitConv;
+import org.apache.xmlgraphics.util.UnitConv;
 
 /**
  * Abstract base class for ImageHandler implementations that process Java2D images through
@@ -45,7 +45,6 @@ public abstract class AbstractImageHandlerGraphics2D implements ImageHandler {
     /**
      * Paints the image to a BufferedImage and returns that.
      * @param painter the painter which will paint the actual image
-     * @param context the renderer context for the current renderer
      * @param targetDimension the target dimensions of the image to be converted to a bitmap
      * @param resolution the requested bitmap resolution
      * @param gray true if the generated image should be in grayscales

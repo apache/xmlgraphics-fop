@@ -30,7 +30,8 @@ import org.apache.fop.render.RenderingContext;
  * Specialized image handler interface for PostScript output. Implementations can optionally
  * support creating PostScript forms. The implementation shall check the rendering context
  * to see if forms functionality is enabled in the
- * {@link #isCompatible(org.apache.fop.render.RenderingContext, org.apache.xmlgraphics.image.loader.Image)}
+ * {@link #isCompatible(org.apache.fop.render.RenderingContext,
+ * org.apache.xmlgraphics.image.loader.Image)}
  * method.
  */
 public interface PSImageHandler extends ImageHandler {

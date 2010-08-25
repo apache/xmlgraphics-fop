@@ -27,7 +27,10 @@ import org.apache.fop.layoutmgr.SpaceResolver.SpaceHandlingBreakPosition;
 /**
  * Utility class which provides common code for the addAreas stage.
  */
-public class AreaAdditionUtil {
+public final class AreaAdditionUtil {
+
+    private AreaAdditionUtil() {
+    }
 
     private static class StackingIter extends PositionIterator {
         StackingIter(Iterator parentIter) {

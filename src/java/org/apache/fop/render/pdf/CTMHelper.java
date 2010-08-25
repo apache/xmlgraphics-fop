@@ -33,6 +33,10 @@ import org.apache.fop.pdf.PDFNumber;
  * @see org.apache.fop.area.CTM
  */
 public final class CTMHelper {
+
+    private CTMHelper() {
+    }
+
     /**
      * <p>Converts the sourceMatrix to a string for use in the PDFRenderer cm operations.</p>
      * <p>For example:

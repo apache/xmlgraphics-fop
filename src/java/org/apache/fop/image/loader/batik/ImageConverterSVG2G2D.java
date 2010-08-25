@@ -37,7 +37,9 @@ import org.apache.xmlgraphics.image.loader.Image;
 import org.apache.xmlgraphics.image.loader.ImageException;
 import org.apache.xmlgraphics.image.loader.ImageFlavor;
 import org.apache.xmlgraphics.image.loader.ImageInfo;
+import org.apache.xmlgraphics.image.loader.ImageManager;
 import org.apache.xmlgraphics.image.loader.ImageProcessingHints;
+import org.apache.xmlgraphics.image.loader.ImageSessionContext;
 import org.apache.xmlgraphics.image.loader.XMLNamespaceEnabledImageFlavor;
 import org.apache.xmlgraphics.image.loader.impl.AbstractImageConverter;
 import org.apache.xmlgraphics.image.loader.impl.ImageGraphics2D;
@@ -77,7 +79,16 @@ public class ImageConverterSVG2G2D extends AbstractImageConverter {
         }
         UserAgent ua = createBatikUserAgent(pxToMillimeter);
         GVTBuilder builder = new GVTBuilder();
-        final BridgeContext ctx = new BridgeContext(ua);
+
+        final ImageManager imageManager = (ImageManager)hints.get(
+                ImageProcessingHints.IMAGE_MANAGER);
+        final ImageSessionContext sessionContext = (ImageSessionContext)hints.get(
+                ImageProcessingHints.IMAGE_SESSION_CONTEXT);
+
+        boolean useEnhancedBridgeContext = (imageManager != null && sessionContext != null);
+        final BridgeContext ctx = (useEnhancedBridgeContext
+                ? new GenericFOPBridgeContext(ua, null, imageManager, sessionContext)
+                : new BridgeContext(ua));
 
         Document doc = svg.getDocument();
         //Cloning SVG DOM as Batik attaches non-thread-safe facilities (like the CSS engine)
@@ -117,8 +128,19 @@ public class ImageConverterSVG2G2D extends AbstractImageConverter {
             /** {@inheritDoc} */
             public void displayMessage(String message) {
                 //TODO Refine and pipe through to caller
-                log.debug(message);
+                log.info(message);
             }
+
+            /** {@inheritDoc} */
+            public void displayError(Exception e) {
+                log.error("Error converting SVG to a Java2D graphic", e);
+            }
+
+            /** {@inheritDoc} */
+            public void displayError(String message) {
+                log.error(message);
+            }
+
 
         };
     }

@@ -60,10 +60,10 @@ public class AWTRenderer extends Java2DRenderer implements Pageable {
     public static final String MIME_TYPE = MimeConstants.MIME_FOP_AWT_PREVIEW;
 
     /** flag for debugging */
-    public boolean debug;
+    public boolean debug;                                       // CSOK: VisibilityModifier
 
     /** If true, preview dialog is shown. */
-    public boolean dialogDisplay = true;
+    public boolean dialogDisplay = true;                        // CSOK: VisibilityModifier
 
     /** true if the preview dialog should be the main window of the application */
     private boolean previewAsMainWindow;

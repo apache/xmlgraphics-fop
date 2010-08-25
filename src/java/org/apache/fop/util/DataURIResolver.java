@@ -32,6 +32,10 @@ public class DataURIResolver implements URIResolver {
     private final URIResolver newResolver = new org.apache.xmlgraphics.util.uri.DataURIResolver();
 
     /**
+     * @param href an href
+     * @param base a base
+     * @return a source
+     * @throws TransformerException if not caught
      * @deprecated
      * @see org.apache.xmlgraphics.util.uri.DataURIResolver#resolve(String,
      *      String)

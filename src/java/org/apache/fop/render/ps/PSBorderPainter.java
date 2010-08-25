@@ -52,8 +52,9 @@ public class PSBorderPainter extends BorderPainter {
     }
 
     /** {@inheritDoc} */
-    protected void drawBorderLine(int x1, int y1, int x2, int y2, boolean horz,
-            boolean startOrBefore, int style, Color col) throws IOException {
+    protected void drawBorderLine                               // CSOK: ParameterNumber
+        (int x1, int y1, int x2, int y2, boolean horz,
+         boolean startOrBefore, int style, Color col) throws IOException {
        drawBorderLine(generator, toPoints(x1), toPoints(y1), toPoints(x2), toPoints(y2),
                horz, startOrBefore, style, col);
     }
@@ -66,10 +67,15 @@ public class PSBorderPainter extends BorderPainter {
                 + gen.formatDouble(endy) + " lineto stroke newpath");
     }
 
-    /** {@inheritDoc} */
-    public static void drawBorderLine(PSGenerator gen,
-            float x1, float y1, float x2, float y2, boolean horz,
-            boolean startOrBefore, int style, Color col) throws IOException {
+    /**
+     * @param gen ps content generator
+     * @see BorderPainter#drawBorderLine
+     */
+    public static void drawBorderLine                           // CSOK: ParameterNumber
+        (PSGenerator gen,
+         float x1, float y1, float x2, float y2, boolean horz,  // CSOK: JavadocMethod
+         boolean startOrBefore, int style, Color col)           // CSOK: JavadocMethod
+        throws IOException {                                    // CSOK: JavadocMethod
         float w = x2 - x1;
         float h = y2 - y1;
         if ((w < 0) || (h < 0)) {

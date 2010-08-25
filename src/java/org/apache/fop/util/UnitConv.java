@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-/* $Id: $ */
+/* $Id$ */
 
 package org.apache.fop.util;
 
@@ -26,6 +26,9 @@ import java.awt.geom.AffineTransform;
  * @deprecated use org.apache.xmlgraphics.util.UnitConv instead.
  */
 public final class UnitConv {
+
+    private UnitConv() {
+    }
 
     /**
      * conversion factory from millimeters to inches.

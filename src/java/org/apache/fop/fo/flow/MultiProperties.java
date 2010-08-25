@@ -37,11 +37,11 @@ public class MultiProperties extends FObj {
     //     private CommonAccessibility commonAccessibility;
     // End of property values
 
-    static boolean notImplementedWarningGiven = false;
+    private static boolean notImplementedWarningGiven = false;
 
     // used for input FO validation
-    boolean hasMultiPropertySet = false;
-    boolean hasWrapper = false;
+    private boolean hasMultiPropertySet = false;
+    private boolean hasWrapper = false;
 
     /**
      * Base constructor

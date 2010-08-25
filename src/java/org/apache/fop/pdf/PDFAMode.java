@@ -49,7 +49,7 @@ public final class PDFAMode {
      * @return true if this mode obeys the restrictions established by PDF/A-1a.
      */
     public boolean isPDFA1LevelA() {
-        return (this != DISABLED);
+        return (this == PDFA_1A);
     }
 
     /**

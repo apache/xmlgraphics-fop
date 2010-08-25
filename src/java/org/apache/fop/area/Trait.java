@@ -34,7 +34,10 @@ import org.apache.fop.util.ColorUtil;
  * Area traits used for rendering.
  * This class represents an area trait that specifies a value for rendering.
  */
-public class Trait implements Serializable {
+public final class Trait implements Serializable {
+
+    private Trait() {
+    }
 
     /**
      * Id reference line, not resolved.

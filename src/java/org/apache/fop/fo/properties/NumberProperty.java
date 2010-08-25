@@ -68,6 +68,9 @@ public final class NumberProperty extends Property implements Numeric {
 
     }
 
+    /**
+     * A positive integer property maker.
+     */
     public static class PositiveIntegerMaker extends PropertyMaker {
 
         /**
@@ -103,7 +106,8 @@ public final class NumberProperty extends Property implements Numeric {
     }
 
     /** cache holding all canonical NumberProperty instances */
-    private static final PropertyCache cache = new PropertyCache(NumberProperty.class);
+    private static final PropertyCache CACHE
+        = new PropertyCache(NumberProperty.class);
 
     private final Number number;
 
@@ -140,7 +144,7 @@ public final class NumberProperty extends Property implements Numeric {
      * @return  the canonical NumberProperty
      */
     public static NumberProperty getInstance(Double num) {
-        return (NumberProperty)cache.fetch(
+        return (NumberProperty)CACHE.fetch(
                     new NumberProperty(num.doubleValue()));
     }
 
@@ -151,7 +155,7 @@ public final class NumberProperty extends Property implements Numeric {
      * @return  the canonical NumberProperty
      */
     public static NumberProperty getInstance(Integer num) {
-        return (NumberProperty)cache.fetch(
+        return (NumberProperty)CACHE.fetch(
                     new NumberProperty(num.intValue()));
     }
 
@@ -162,7 +166,7 @@ public final class NumberProperty extends Property implements Numeric {
      * @return  the canonical NumberProperty
      */
     public static NumberProperty getInstance(double num) {
-        return (NumberProperty)cache.fetch(
+        return (NumberProperty)CACHE.fetch(
                     new NumberProperty(num));
     }
 
@@ -173,7 +177,7 @@ public final class NumberProperty extends Property implements Numeric {
      * @return  the canonical NumberProperty
      */
     public static NumberProperty getInstance(int num) {
-        return (NumberProperty)cache.fetch(
+        return (NumberProperty)CACHE.fetch(
                     new NumberProperty(num));
     }
 

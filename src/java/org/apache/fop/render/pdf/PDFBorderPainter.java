@@ -37,29 +37,39 @@ import org.apache.fop.util.ColorUtil;
 public class PDFBorderPainter extends BorderPainter {
 
     /** logging instance */
-    private static Log log = LogFactory.getLog(PDFBorderPainter.class);
+    private static final Log LOG = LogFactory.getLog(PDFBorderPainter.class);
 
     private PDFContentGenerator generator;
 
+    /**
+     * Construct a border painter.
+     * @param generator a pdf content generator
+     */
     public PDFBorderPainter(PDFContentGenerator generator) {
         this.generator = generator;
     }
 
     /** {@inheritDoc} */
-    protected void drawBorderLine(int x1, int y1, int x2, int y2, boolean horz,
-            boolean startOrBefore, int style, Color col) {
+    protected void drawBorderLine                               // CSOK: ParameterNumber
+        (int x1, int y1, int x2, int y2, boolean horz,
+         boolean startOrBefore, int style, Color col) {
        drawBorderLine(generator, x1 / 1000f, y1 / 1000f, x2 / 1000f, y2 / 1000f,
                horz, startOrBefore, style, col);
     }
 
-    /** {@inheritDoc} */
-    public static void drawBorderLine(PDFContentGenerator generator,
-            float x1, float y1, float x2, float y2, boolean horz,
-            boolean startOrBefore, int style, Color col) {
+    /**
+     * @param generator pdf content generator
+     * @see BorderPainter#drawBorderLine
+     */
+    public static void drawBorderLine       // CSOK: ParameterNumber|MethodLength
+        (PDFContentGenerator generator,
+         float x1, float y1, float x2, float y2, boolean horz,  // CSOK: JavadocMethod
+         boolean startOrBefore, int style, Color col) {         // CSOK: JavadocMethod
+        float colFactor;
         float w = x2 - x1;
         float h = y2 - y1;
         if ((w < 0) || (h < 0)) {
-            log.error("Negative extent received (w=" + w + ", h=" + h
+            LOG.error("Negative extent received (w=" + w + ", h=" + h
                     + "). Border won't be painted.");
             return;
         }
@@ -146,8 +156,7 @@ public class PDFBorderPainter extends BorderPainter {
                 break;
             case Constants.EN_GROOVE:
             case Constants.EN_RIDGE:
-            {
-                float colFactor = (style == Constants.EN_GROOVE ? 0.4f : -0.4f);
+                colFactor = (style == Constants.EN_GROOVE ? 0.4f : -0.4f);
                 generator.add("[] 0 d ");
                 if (horz) {
                     Color uppercol = ColorUtil.lightenColor(col, -colFactor);
@@ -181,11 +190,9 @@ public class PDFBorderPainter extends BorderPainter {
                                         + format(xm1 + w3 + w3) + " " + format(y2) + " l S\n");
                 }
                 break;
-            }
             case Constants.EN_INSET:
             case Constants.EN_OUTSET:
-            {
-                float colFactor = (style == Constants.EN_OUTSET ? 0.4f : -0.4f);
+                colFactor = (style == Constants.EN_OUTSET ? 0.4f : -0.4f);
                 generator.add("[] 0 d ");
                 Color c = col;
                 if (horz) {
@@ -204,7 +211,6 @@ public class PDFBorderPainter extends BorderPainter {
                             + format(xm1) + " " + format(y2) + " l S\n");
                 }
                 break;
-            }
             case Constants.EN_HIDDEN:
                 break;
             default:
