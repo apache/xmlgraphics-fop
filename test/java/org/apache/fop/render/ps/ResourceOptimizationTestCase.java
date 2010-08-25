@@ -54,28 +54,10 @@ import org.apache.fop.render.intermediate.IFContext;
 public class ResourceOptimizationTestCase extends AbstractPostScriptTestCase {
 
     /**
-     * Tests resource optimization with the {@link PSRenderer}.
+     * Tests resource optimization.
      * @throws Exception if an error occurs
      */
-    public void testResourceOptimizationWithRenderer() throws Exception {
-        FOUserAgent ua = fopFactory.newFOUserAgent();
-        PSRenderer renderer = new PSRenderer();
-        renderer.setUserAgent(ua);
-        // This is the important part: we're enabling resource optimization
-        renderer.getPSUtil().setOptimizeResources(true);
-        ua.setRendererOverride(renderer);
-
-        // Prepare output file
-        File outputFile = renderFile(ua, "ps-resources.fo",
-                "-rend-l" + renderer.getPSUtil().getLanguageLevel());
-        verifyPostScriptFile(outputFile);
-    }
-
-    /**
-     * Tests resource optimization with the {@link PSDocumentHandler}.
-     * @throws Exception if an error occurs
-     */
-    public void testResourceOptimizationWithIF() throws Exception {
+    public void testResourceOptimization() throws Exception {
         FOUserAgent ua = fopFactory.newFOUserAgent();
         PSDocumentHandler handler = new PSDocumentHandler();
         handler.setContext(new IFContext(ua));

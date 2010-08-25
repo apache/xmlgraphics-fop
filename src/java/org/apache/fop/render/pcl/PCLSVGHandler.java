@@ -28,13 +28,12 @@ import org.apache.fop.render.RendererContext;
  * PCL XML handler for SVG. Uses Apache Batik for SVG processing.
  * This handler handles XML for foreign objects when rendering to HP GL/2.
  * It renders SVG to HP GL/2 using the PCLGraphics2D.
- * @see PCLGraphics2DAdapter
  */
 public class PCLSVGHandler extends AbstractGenericSVGHandler {
 
     /** {@inheritDoc} */
     public boolean supportsRenderer(Renderer renderer) {
-        return (renderer instanceof PCLRenderer);
+        return false;
     }
 
     /** {@inheritDoc} */
