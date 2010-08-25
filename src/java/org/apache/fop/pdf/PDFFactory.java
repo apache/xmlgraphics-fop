@@ -65,6 +65,9 @@ import org.apache.fop.fonts.type1.PFBParser;
  */
 public class PDFFactory {
 
+    /** Resolution of the User Space coordinate system (72dpi). */
+    public static final int DEFAULT_PDF_RESOLUTION = 72;
+
     private PDFDocument document;
 
     private Log log = LogFactory.getLog(PDFFactory.class);

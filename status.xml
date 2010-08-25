@@ -58,6 +58,10 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="VH" type="remove">
+        Removed old Renderer implementations for those output formats that have a version based on 
+        the new DocumentHandler architecture available (AFP, PCL, PDF, PS).
+      </action>
       <action context="Fonts" dev="AC" type="fix">
         Reinstated support for being able to specify a font cache filepath in the fop user configuration.
       </action>

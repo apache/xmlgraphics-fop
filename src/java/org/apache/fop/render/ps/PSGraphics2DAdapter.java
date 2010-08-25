@@ -30,12 +30,12 @@ import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
 import org.apache.xmlgraphics.java2d.ps.PSGraphics2D;
 import org.apache.xmlgraphics.ps.PSGenerator;
 
+import org.apache.fop.pdf.PDFFactory;
 import org.apache.fop.render.AbstractGraphics2DAdapter;
 import org.apache.fop.render.ImageHandlerUtil;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.RendererContextConstants;
 import org.apache.fop.render.RendererContext.RendererContextWrapper;
-import org.apache.fop.render.pdf.PDFRenderer;
 
 /**
  * Graphics2DAdapter implementation for PostScript.
@@ -46,15 +46,7 @@ public class PSGraphics2DAdapter extends AbstractGraphics2DAdapter {
     private boolean clip = true;
 
     /**
-     * Main constructor
-     * @param renderer the Renderer instance to which this instance belongs
-     */
-    public PSGraphics2DAdapter(PSRenderer renderer) {
-        this(renderer.gen, true);
-    }
-
-    /**
-     * Constructor for use without a PSRenderer instance.
+     * Creates a new instance.
      * @param gen the PostScript generator
      * @param clip true if the image should be clipped
      */
@@ -114,7 +106,7 @@ public class PSGraphics2DAdapter extends AbstractGraphics2DAdapter {
             RendererContextWrapper ctx = RendererContext.wrapRendererContext(context);
             BufferedImage bi = paintToBufferedImage(painter, ctx, resolution, false, false);
 
-            float scale = PDFRenderer.NORMAL_PDF_RESOLUTION
+            float scale = PDFFactory.DEFAULT_PDF_RESOLUTION
                             / context.getUserAgent().getTargetResolution();
             graphics.drawImage(bi, new AffineTransform(scale, 0, 0, scale, 0, 0), null);
         } else {

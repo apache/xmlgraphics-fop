@@ -214,7 +214,7 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
 
     /** {@inheritDoc} */
     public boolean supportsRenderer(Renderer renderer) {
-        return (renderer instanceof AFPRenderer);
+        return false;
     }
 
     /** {@inheritDoc} */

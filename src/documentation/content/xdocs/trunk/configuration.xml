@@ -151,6 +151,7 @@
           default-page-settings element to specify the two values.</td>
         <td>"height" 11 inches, "width" 8.26 inches</td>
       </tr>
+      <!-- Disabled: no simultaneous Renderer and IF implementations at the moment
       <tr>
         <td>prefer-renderer</td>
         <td>boolean (true, false)</td>
@@ -163,6 +164,7 @@
         </td>
         <td>false</td>
       </tr>
+      -->
       <tr>
         <td>use-cache</td>
         <td>boolean (true, false)</td>
