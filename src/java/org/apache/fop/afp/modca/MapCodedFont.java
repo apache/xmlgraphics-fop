@@ -180,7 +180,7 @@ public class MapCodedFont extends AbstractStructuredObject {
                 if (cs == null) {
                     String msg = "Character set not found for font "
                         + font.getFontName() + " with point size " + size;
-                    log.error(msg);
+                    LOG.error(msg);
                     throw new FontRuntimeException(msg);
                 }
 
@@ -243,7 +243,7 @@ public class MapCodedFont extends AbstractStructuredObject {
             } else {
                 String msg = "Font of type " + font.getClass().getName()
                     + " not recognized.";
-                log.error(msg);
+                LOG.error(msg);
                 throw new FontRuntimeException(msg);
             }
 
@@ -264,7 +264,10 @@ public class MapCodedFont extends AbstractStructuredObject {
     /**
      * Private utility class used as a container for font attributes
      */
-    private class FontDefinition {
+    private static final class FontDefinition {
+
+        private FontDefinition() {
+        }
 
         /**
          * The code page of the font

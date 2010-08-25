@@ -55,6 +55,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
      */
     private static Log log = LogFactory.getLog(BlockStackingLayoutManager.class);
 
+    /** parent area */
     protected BlockParent parentArea;
 
     /** Value of the block-progression-unit (non-standard property) */
@@ -360,7 +361,8 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     }
 
     /** {@inheritDoc} */
-    public List getNextKnuthElements(LayoutContext context, int alignment, Stack lmStack,
+    public List getNextKnuthElements                            // CSOK: MethodLength
+        (LayoutContext context, int alignment, Stack lmStack,
             Position restartPosition, LayoutManager restartAtLM) {
         referenceIPD = context.getRefIPD();
         updateContentAreaIPDwithOverconstrainedAdjust();
@@ -582,8 +584,8 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
 
     /**
      * Adds a break element to the content list between individual child elements.
-     * @param contentList
-     * @param parentLC
+     * @param contentList the content list
+     * @param parentLC the parent layout context
      * @param childLC the currently active child layout context
      */
     protected void addInBetweenBreak(List contentList, LayoutContext parentLC,
@@ -758,7 +760,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     /**
      * {@inheritDoc}
      */
-    public List getChangedKnuthElements(List oldList, int alignment) {
+    public List getChangedKnuthElements(List oldList, int alignment) { // CSOK: MethodLength
 /*LF*/  //log.debug("");
 /*LF*/  //log.debug("  BLM.getChangedKnuthElements> inizio: oldList.size() = "
         //  + oldList.size());
@@ -1377,7 +1379,12 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         }*/
     }
 
-    protected List createUnitElements(List oldList) {
+    /**
+     * Create unit elements.
+     * @param oldList the old list
+     * @return the new list
+     */
+    protected List createUnitElements(List oldList) {           // CSOK: MethodLength
         //log.debug("Start conversion: " + oldList.size()
         //  + " elements, space-before.min=" + layoutProps.spaceBefore.getSpace().min
         //  + " space-after.min=" + layoutProps.spaceAfter.getSpace().min);
@@ -1640,7 +1647,8 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
             // insert the correct elements
             newList.addFirst(new KnuthBox(wrongBox.getWidth() - decreasedLength,
                                           wrongBox.getPosition(), false));
-            newList.addFirst(new KnuthGlue(decreasedLength, 0, 0, Adjustment.SPACE_BEFORE_ADJUSTMENT,
+            newList.addFirst(new KnuthGlue(decreasedLength, 0, 0,
+                                           Adjustment.SPACE_BEFORE_ADJUSTMENT,
                                            wrongBox.getPosition(), false));
             //log.debug("        rimosso box " + neededUnits(wrongBox.getWidth()));
             //log.debug("        aggiunto glue " + neededUnits(decreasedLength) + " 0 0");
@@ -1692,34 +1700,58 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         return newList;
     }
 
+    /** A stack iterator. */
     protected static class StackingIter extends PositionIterator {
+
+        /**
+         * Construct a stacking iterator.
+         * @param parentIter the parent iterator
+         */
         StackingIter(Iterator parentIter) {
             super(parentIter);
         }
 
+        /**
+         * @param nextObj the next position
+         * @return the layout manager of the next position
+         */
         protected LayoutManager getLM(Object nextObj) {
             return ((Position) nextObj).getLM();
         }
 
+        /**
+         * @param nextObj the next position
+         * @return the next position
+         */
         protected Position getPos(Object nextObj) {
             return ((Position) nextObj);
         }
     }
 
+    /** A mapping position. */
     protected static class MappingPosition extends Position {
+
         private int iFirstIndex;
         private int iLastIndex;
 
+        /**
+         * Construct mapping position.
+         * @param lm layout manager
+         * @param first position
+         * @param last position
+         */
         public MappingPosition(LayoutManager lm, int first, int last) {
             super(lm);
             iFirstIndex = first;
             iLastIndex = last;
         }
 
+        /** @return first index */
         public int getFirstIndex() {
             return iFirstIndex;
         }
 
+        /** @return last index */
         public int getLastIndex() {
             return iLastIndex;
         }

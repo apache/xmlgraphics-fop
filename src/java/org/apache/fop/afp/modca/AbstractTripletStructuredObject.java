@@ -27,8 +27,6 @@ import java.util.List;
 
 import org.apache.fop.afp.modca.Registry.ObjectType;
 import org.apache.fop.afp.modca.triplets.AbstractTriplet;
-import org.apache.fop.afp.modca.triplets.AttributeQualifierTriplet;
-import org.apache.fop.afp.modca.triplets.AttributeValueTriplet;
 import org.apache.fop.afp.modca.triplets.CommentTriplet;
 import org.apache.fop.afp.modca.triplets.FullyQualifiedNameTriplet;
 import org.apache.fop.afp.modca.triplets.ObjectClassificationTriplet;
@@ -150,7 +148,7 @@ public class AbstractTripletStructuredObject extends AbstractStructuredObject {
         if (fqNameTriplet != null) {
             return fqNameTriplet.getFullyQualifiedName();
         }
-        log.warn(this + " has no fully qualified name");
+        LOG.warn(this + " has no fully qualified name");
         return null;
     }
 

@@ -19,10 +19,7 @@
 
 package org.apache.fop.render.afp;
 
-import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.geom.Rectangle2D;
-import java.io.IOException;
 import java.util.Map;
 
 import org.apache.fop.afp.AFPDataObjectInfo;
@@ -42,44 +39,6 @@ public abstract class AFPImageHandler implements ImageHandlerBase {
     /** foreign attribute reader */
     private final AFPForeignAttributeReader foreignAttributeReader
         = new AFPForeignAttributeReader();
-
-    /**
-     * Generates an intermediate AFPDataObjectInfo that is later used to construct
-     * the appropriate data object in the AFP DataStream.
-     *
-     * @param rendererImageInfo the renderer image info
-     * @return a data object info object
-     * @throws IOException thrown if an I/O exception of some sort has occurred.
-     */
-    public AFPDataObjectInfo generateDataObjectInfo(
-            AFPRendererImageInfo rendererImageInfo) throws IOException {
-        AFPDataObjectInfo dataObjectInfo = createDataObjectInfo();
-
-        // set resource information
-        setResourceInformation(dataObjectInfo,
-                rendererImageInfo.getURI(),
-                rendererImageInfo.getForeignAttributes());
-
-
-        Point origin = rendererImageInfo.getOrigin();
-        Rectangle2D position = rendererImageInfo.getPosition();
-        int srcX = Math.round(origin.x + (float)position.getX());
-        int srcY = Math.round(origin.y + (float)position.getY());
-        Rectangle targetRect = new Rectangle(
-                srcX,
-                srcY,
-                (int)Math.round(position.getWidth()),
-                (int)Math.round(position.getHeight()));
-
-        AFPRendererContext rendererContext
-            = (AFPRendererContext)rendererImageInfo.getRendererContext();
-        AFPInfo afpInfo = rendererContext.getInfo();
-        AFPPaintingState paintingState = afpInfo.getPaintingState();
-
-        dataObjectInfo.setObjectAreaInfo(createObjectAreaInfo(paintingState, targetRect));
-
-        return dataObjectInfo;
-    }
 
     /**
      * Sets resource information on the data object info.

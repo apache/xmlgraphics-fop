@@ -106,8 +106,10 @@ public class RegionBody extends Region {
          * Also the values are resolved relative to the page size
          * and reference orientation.
          */
-        PercentBaseContext pageWidthContext = getPageWidthContext(LengthBase.CONTAINING_BLOCK_WIDTH);
-        PercentBaseContext pageHeightContext = getPageHeightContext(LengthBase.CONTAINING_BLOCK_WIDTH);
+        PercentBaseContext pageWidthContext
+            = getPageWidthContext(LengthBase.CONTAINING_BLOCK_WIDTH);
+        PercentBaseContext pageHeightContext
+            = getPageHeightContext(LengthBase.CONTAINING_BLOCK_WIDTH);
 
         int start;
         int end;

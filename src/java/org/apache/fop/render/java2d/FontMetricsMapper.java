@@ -28,7 +28,7 @@ import org.apache.fop.fonts.FontMetrics;
 public interface FontMetricsMapper extends FontMetrics {
 
     /**
-     * Gets a {@link Font} instance of the font that this
+     * Gets a {@link java.awt.Font} instance of the font that this
      * {@link FontMetrics} describes in the desired size.
      * @param size font size
      * @return font with the desired characteristics.

@@ -120,7 +120,8 @@ public class Inline extends InlineLevel implements StructurePointerPropertySet {
             } else if (!isBlockOrInlineItem(nsURI, localName)) {
                 invalidChildError(loc, nsURI, localName);
             } else if (!canHaveBlockLevelChildren && isBlockItem(nsURI, localName)) {
-                invalidChildError(loc, getParent().getName(), nsURI, getName(), "rule.inlineContent");
+                invalidChildError(loc, getParent().getName(), nsURI, getName(),
+                                  "rule.inlineContent");
             } else {
                 blockOrInlineItemFound = true;
             }

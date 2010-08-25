@@ -196,7 +196,7 @@ public abstract class CollapsingBorderModel {
      * @param border1 a border specification
      * @param border2 another border specification
      * @return the winning border, null if the two borders are equivalent
-     * @see determineWinner
+     * @see #determineWinner(BorderSpecification,BorderSpecification,boolean)
      */
     public abstract BorderSpecification determineWinner(BorderSpecification border1,
             BorderSpecification border2);

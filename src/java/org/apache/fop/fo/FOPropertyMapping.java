@@ -72,16 +72,20 @@ import org.apache.fop.fo.properties.XMLLangShorthandParser;
  * This class creates and returns an array of Property.Maker instances
  * indexed by the PR_* propId from Constants.java.
  *
- * @todo Check multi-threading safety of the statics below
+ * @asf.todo Check multi-threading safety of the statics below
  */
 public final class FOPropertyMapping implements Constants {
-    private static Map s_htPropNames = new HashMap();
-    private static Map s_htSubPropNames = new HashMap();
-    private static Map s_htPropIds = new HashMap();
 
-    private static PropertyMaker[] s_generics = null;
+    private FOPropertyMapping() {
+    }
 
-    // The rest is only used during the building of the s_generics array.
+    private static Map propNames = new HashMap();               // CSOK: VisibilityModifier
+    private static Map subPropNames = new HashMap();            // CSOK: VisibilityModifier
+    private static Map propIds = new HashMap();                 // CSOK: VisibilityModifier
+
+    private static PropertyMaker[] generics = null;             // CSOK: VisibilityModifier
+
+    // The rest is only used during the building of the generics array.
     private Property[] enums = null;
 
     private PropertyMaker genericColor = null;
@@ -154,7 +158,7 @@ public final class FOPropertyMapping implements Constants {
         genericPadding.setInherited(false);
         genericPadding.setDefault("0pt");
         genericPadding.setPercentBase(LengthBase.CONTAINING_BLOCK_WIDTH);
-        genericPadding.addShorthand(s_generics[PR_PADDING]);
+        genericPadding.addShorthand(generics[PR_PADDING]);
 
         // GenericCondBorderWidth
         genericCondBorderWidth = new CondLengthProperty.Maker(0);
@@ -235,15 +239,15 @@ public final class FOPropertyMapping implements Constants {
 
     /**
      * Add a property maker to the generics array.
-     * Also creates the name <-> id mapping in s_htPropNames and s_htPropIds.
+     * Also creates the name <-> id mapping in propNames and propIds.
      *
      * @param name  the name of the property maker.
      * @param maker the maker.
      */
     private static void addPropertyMaker(String name, PropertyMaker maker) {
-        s_generics[maker.getPropId()] = maker;
-        s_htPropNames.put(name, new Integer(maker.getPropId()));
-        s_htPropIds.put(new Integer(maker.getPropId()), name);
+        generics[maker.getPropId()] = maker;
+        propNames.put(name, new Integer(maker.getPropId()));
+        propIds.put(new Integer(maker.getPropId()), name);
     }
 
     /**
@@ -252,8 +256,8 @@ public final class FOPropertyMapping implements Constants {
      * @param id   Id for the subproperty from CP_* in Constants.java.
      */
     private static void addSubpropMakerName(String name, int id) {
-        s_htSubPropNames.put(name, new Integer(id));
-        s_htPropIds.put(new Integer(id), name);
+        subPropNames.put(name, new Integer(id));
+        propIds.put(new Integer(id), name);
     }
 
     /**
@@ -278,9 +282,9 @@ public final class FOPropertyMapping implements Constants {
      */
     public static PropertyMaker[] getGenericMappings() {
 
-        if (s_generics == null) {
+        if (generics == null) {
             /* this method was never called before */
-            s_generics = new PropertyMaker[PROPERTY_COUNT + 1];
+            generics = new PropertyMaker[PROPERTY_COUNT + 1];
             FOPropertyMapping gp = new FOPropertyMapping();
 
             /* Create the shorthand first. They are
@@ -328,7 +332,7 @@ public final class FOPropertyMapping implements Constants {
             addSubpropMakerName("precedence", CP_PRECEDENCE);
         }
 
-        return s_generics;
+        return generics;
     }
 
     /**
@@ -338,7 +342,7 @@ public final class FOPropertyMapping implements Constants {
      */
     public static int getPropertyId(String name) {
         if (name != null) {
-            Integer i = (Integer) s_htPropNames.get(name);
+            Integer i = (Integer) propNames.get(name);
             if (i != null) {
                 return i.intValue();
             }
@@ -353,7 +357,7 @@ public final class FOPropertyMapping implements Constants {
      */
     public static int getSubPropertyId(String name) {
         if (name != null) {
-            Integer i = (Integer) s_htSubPropNames.get(name);
+            Integer i = (Integer) subPropNames.get(name);
             if (i != null) {
                 return i.intValue();
             }
@@ -369,10 +373,10 @@ public final class FOPropertyMapping implements Constants {
     public static String getPropertyName(int id) {
         if (((id & Constants.COMPOUND_MASK) == 0)
                 || ((id & Constants.PROPERTY_MASK) == 0)) {
-            return (String) s_htPropIds.get(new Integer(id));
+            return (String) propIds.get(new Integer(id));
         } else {
-            return s_htPropIds.get(new Integer(id & Constants.PROPERTY_MASK))
-                    + "." + s_htPropIds.get(new Integer(id & Constants.COMPOUND_MASK));
+            return propIds.get(new Integer(id & Constants.PROPERTY_MASK))
+                    + "." + propIds.get(new Integer(id & Constants.COMPOUND_MASK));
         }
     }
 
@@ -403,7 +407,7 @@ public final class FOPropertyMapping implements Constants {
         m.addEnum("fixed", getEnumProperty(EN_FIXED, "FIXED"));
         m.addEnum("absolute", getEnumProperty(EN_ABSOLUTE, "ABSOLUTE"));
         m.setDefault("auto");
-        m.addShorthand(s_generics[PR_POSITION]);
+        m.addShorthand(generics[PR_POSITION]);
         addPropertyMaker("absolute-position", m);
 
         // top
@@ -551,7 +555,7 @@ public final class FOPropertyMapping implements Constants {
         addPropertyMaker("volume", m);
     }
 
-    private void createBorderPaddingBackgroundProperties() {
+    private void createBorderPaddingBackgroundProperties() {    // CSOK: MethodLength
         PropertyMaker m;
         BorderWidthPropertyMaker bwm;
         CorrespondingPropertyMaker corr;
@@ -606,7 +610,7 @@ public final class FOPropertyMapping implements Constants {
         m.addKeyword("center", "50%");
         m.addKeyword("right", "100%");
         m.setPercentBase(LengthBase.IMAGE_BACKGROUND_POSITION_HORIZONTAL);
-        m.addShorthand(s_generics[PR_BACKGROUND_POSITION]);
+        m.addShorthand(generics[PR_BACKGROUND_POSITION]);
         addPropertyMaker("background-position-horizontal", m);
 
         // background-position-vertical
@@ -617,7 +621,7 @@ public final class FOPropertyMapping implements Constants {
         m.addKeyword("center", "50%");
         m.addKeyword("bottom", "100%");
         m.setPercentBase(LengthBase.IMAGE_BACKGROUND_POSITION_VERTICAL);
-        m.addShorthand(s_generics[PR_BACKGROUND_POSITION]);
+        m.addShorthand(generics[PR_BACKGROUND_POSITION]);
         addPropertyMaker("background-position-vertical", m);
 
         // border-before-color
@@ -745,9 +749,9 @@ public final class FOPropertyMapping implements Constants {
         m.useGeneric(genericColor);
         m.setInherited(false);
         m.setDefault("black");
-        m.addShorthand(s_generics[PR_BORDER_TOP]);
-        m.addShorthand(s_generics[PR_BORDER_COLOR]);
-        m.addShorthand(s_generics[PR_BORDER]);
+        m.addShorthand(generics[PR_BORDER_TOP]);
+        m.addShorthand(generics[PR_BORDER_COLOR]);
+        m.addShorthand(generics[PR_BORDER]);
         corr = new CorrespondingPropertyMaker(m);
         corr.setCorresponding(PR_BORDER_BEFORE_COLOR, PR_BORDER_BEFORE_COLOR,
                 PR_BORDER_START_COLOR);
@@ -756,9 +760,9 @@ public final class FOPropertyMapping implements Constants {
         // border-top-style
         m  = new EnumProperty.Maker(PR_BORDER_TOP_STYLE);
         m.useGeneric(genericBorderStyle);
-        m.addShorthand(s_generics[PR_BORDER_TOP]);
-        m.addShorthand(s_generics[PR_BORDER_STYLE]);
-        m.addShorthand(s_generics[PR_BORDER]);
+        m.addShorthand(generics[PR_BORDER_TOP]);
+        m.addShorthand(generics[PR_BORDER_STYLE]);
+        m.addShorthand(generics[PR_BORDER]);
         corr = new CorrespondingPropertyMaker(m);
         corr.setCorresponding(PR_BORDER_BEFORE_STYLE, PR_BORDER_BEFORE_STYLE,
                 PR_BORDER_START_STYLE);
@@ -768,9 +772,9 @@ public final class FOPropertyMapping implements Constants {
         bwm  = new BorderWidthPropertyMaker(PR_BORDER_TOP_WIDTH);
         bwm.useGeneric(genericBorderWidth);
         bwm.setBorderStyleId(PR_BORDER_TOP_STYLE);
-        bwm.addShorthand(s_generics[PR_BORDER_TOP]);
-        bwm.addShorthand(s_generics[PR_BORDER_WIDTH]);
-        bwm.addShorthand(s_generics[PR_BORDER]);
+        bwm.addShorthand(generics[PR_BORDER_TOP]);
+        bwm.addShorthand(generics[PR_BORDER_WIDTH]);
+        bwm.addShorthand(generics[PR_BORDER]);
         corr = new CorrespondingPropertyMaker(bwm);
         corr.setCorresponding(PR_BORDER_BEFORE_WIDTH, PR_BORDER_BEFORE_WIDTH,
                 PR_BORDER_START_WIDTH);
@@ -781,9 +785,9 @@ public final class FOPropertyMapping implements Constants {
         m.useGeneric(genericColor);
         m.setInherited(false);
         m.setDefault("black");
-        m.addShorthand(s_generics[PR_BORDER_BOTTOM]);
-        m.addShorthand(s_generics[PR_BORDER_COLOR]);
-        m.addShorthand(s_generics[PR_BORDER]);
+        m.addShorthand(generics[PR_BORDER_BOTTOM]);
+        m.addShorthand(generics[PR_BORDER_COLOR]);
+        m.addShorthand(generics[PR_BORDER]);
         corr = new CorrespondingPropertyMaker(m);
         corr.setCorresponding(PR_BORDER_AFTER_COLOR, PR_BORDER_AFTER_COLOR,
                 PR_BORDER_END_COLOR);
@@ -792,9 +796,9 @@ public final class FOPropertyMapping implements Constants {
         // border-bottom-style
         m  = new EnumProperty.Maker(PR_BORDER_BOTTOM_STYLE);
         m.useGeneric(genericBorderStyle);
-        m.addShorthand(s_generics[PR_BORDER_BOTTOM]);
-        m.addShorthand(s_generics[PR_BORDER_STYLE]);
-        m.addShorthand(s_generics[PR_BORDER]);
+        m.addShorthand(generics[PR_BORDER_BOTTOM]);
+        m.addShorthand(generics[PR_BORDER_STYLE]);
+        m.addShorthand(generics[PR_BORDER]);
         corr = new CorrespondingPropertyMaker(m);
         corr.setCorresponding(PR_BORDER_AFTER_STYLE, PR_BORDER_AFTER_STYLE,
                 PR_BORDER_END_STYLE);
@@ -804,9 +808,9 @@ public final class FOPropertyMapping implements Constants {
         bwm  = new BorderWidthPropertyMaker(PR_BORDER_BOTTOM_WIDTH);
         bwm.useGeneric(genericBorderWidth);
         bwm.setBorderStyleId(PR_BORDER_BOTTOM_STYLE);
-        bwm.addShorthand(s_generics[PR_BORDER_BOTTOM]);
-        bwm.addShorthand(s_generics[PR_BORDER_WIDTH]);
-        bwm.addShorthand(s_generics[PR_BORDER]);
+        bwm.addShorthand(generics[PR_BORDER_BOTTOM]);
+        bwm.addShorthand(generics[PR_BORDER_WIDTH]);
+        bwm.addShorthand(generics[PR_BORDER]);
         corr = new CorrespondingPropertyMaker(bwm);
         corr.setCorresponding(PR_BORDER_AFTER_WIDTH, PR_BORDER_AFTER_WIDTH,
                 PR_BORDER_END_WIDTH);
@@ -817,9 +821,9 @@ public final class FOPropertyMapping implements Constants {
         m.useGeneric(genericColor);
         m.setInherited(false);
         m.setDefault("black");
-        m.addShorthand(s_generics[PR_BORDER_LEFT]);
-        m.addShorthand(s_generics[PR_BORDER_COLOR]);
-        m.addShorthand(s_generics[PR_BORDER]);
+        m.addShorthand(generics[PR_BORDER_LEFT]);
+        m.addShorthand(generics[PR_BORDER_COLOR]);
+        m.addShorthand(generics[PR_BORDER]);
         corr = new CorrespondingPropertyMaker(m);
         corr.setCorresponding(PR_BORDER_START_COLOR, PR_BORDER_END_COLOR,
                 PR_BORDER_AFTER_COLOR);
@@ -828,9 +832,9 @@ public final class FOPropertyMapping implements Constants {
         // border-left-style
         m  = new EnumProperty.Maker(PR_BORDER_LEFT_STYLE);
         m.useGeneric(genericBorderStyle);
-        m.addShorthand(s_generics[PR_BORDER_LEFT]);
-        m.addShorthand(s_generics[PR_BORDER_STYLE]);
-        m.addShorthand(s_generics[PR_BORDER]);
+        m.addShorthand(generics[PR_BORDER_LEFT]);
+        m.addShorthand(generics[PR_BORDER_STYLE]);
+        m.addShorthand(generics[PR_BORDER]);
         corr = new CorrespondingPropertyMaker(m);
         corr.setCorresponding(PR_BORDER_START_STYLE, PR_BORDER_END_STYLE,
                 PR_BORDER_AFTER_STYLE);
@@ -840,9 +844,9 @@ public final class FOPropertyMapping implements Constants {
         bwm  = new BorderWidthPropertyMaker(PR_BORDER_LEFT_WIDTH);
         bwm.useGeneric(genericBorderWidth);
         bwm.setBorderStyleId(PR_BORDER_LEFT_STYLE);
-        bwm.addShorthand(s_generics[PR_BORDER_LEFT]);
-        bwm.addShorthand(s_generics[PR_BORDER_WIDTH]);
-        bwm.addShorthand(s_generics[PR_BORDER]);
+        bwm.addShorthand(generics[PR_BORDER_LEFT]);
+        bwm.addShorthand(generics[PR_BORDER_WIDTH]);
+        bwm.addShorthand(generics[PR_BORDER]);
         corr = new CorrespondingPropertyMaker(bwm);
         corr.setCorresponding(PR_BORDER_START_WIDTH, PR_BORDER_END_WIDTH,
                 PR_BORDER_AFTER_WIDTH);
@@ -853,9 +857,9 @@ public final class FOPropertyMapping implements Constants {
         m.useGeneric(genericColor);
         m.setInherited(false);
         m.setDefault("black");
-        m.addShorthand(s_generics[PR_BORDER_RIGHT]);
-        m.addShorthand(s_generics[PR_BORDER_COLOR]);
-        m.addShorthand(s_generics[PR_BORDER]);
+        m.addShorthand(generics[PR_BORDER_RIGHT]);
+        m.addShorthand(generics[PR_BORDER_COLOR]);
+        m.addShorthand(generics[PR_BORDER]);
         corr = new CorrespondingPropertyMaker(m);
         corr.setCorresponding(PR_BORDER_END_COLOR, PR_BORDER_START_COLOR,
                 PR_BORDER_BEFORE_COLOR);
@@ -864,9 +868,9 @@ public final class FOPropertyMapping implements Constants {
         // border-right-style
         m  = new EnumProperty.Maker(PR_BORDER_RIGHT_STYLE);
         m.useGeneric(genericBorderStyle);
-        m.addShorthand(s_generics[PR_BORDER_RIGHT]);
-        m.addShorthand(s_generics[PR_BORDER_STYLE]);
-        m.addShorthand(s_generics[PR_BORDER]);
+        m.addShorthand(generics[PR_BORDER_RIGHT]);
+        m.addShorthand(generics[PR_BORDER_STYLE]);
+        m.addShorthand(generics[PR_BORDER]);
         corr = new CorrespondingPropertyMaker(m);
         corr.setCorresponding(PR_BORDER_END_STYLE, PR_BORDER_START_STYLE,
                 PR_BORDER_BEFORE_STYLE);
@@ -876,9 +880,9 @@ public final class FOPropertyMapping implements Constants {
         bwm  = new BorderWidthPropertyMaker(PR_BORDER_RIGHT_WIDTH);
         bwm.useGeneric(genericBorderWidth);
         bwm.setBorderStyleId(PR_BORDER_RIGHT_STYLE);
-        bwm.addShorthand(s_generics[PR_BORDER_RIGHT]);
-        bwm.addShorthand(s_generics[PR_BORDER_WIDTH]);
-        bwm.addShorthand(s_generics[PR_BORDER]);
+        bwm.addShorthand(generics[PR_BORDER_RIGHT]);
+        bwm.addShorthand(generics[PR_BORDER_WIDTH]);
+        bwm.addShorthand(generics[PR_BORDER]);
         corr = new CorrespondingPropertyMaker(bwm);
         corr.setCorresponding(PR_BORDER_END_WIDTH, PR_BORDER_START_WIDTH,
                 PR_BORDER_BEFORE_WIDTH);
@@ -964,7 +968,7 @@ public final class FOPropertyMapping implements Constants {
         m  = new FontFamilyProperty.Maker(PR_FONT_FAMILY);
         m.setInherited(true);
         m.setDefault("sans-serif,Symbol,ZapfDingbats");
-        m.addShorthand(s_generics[PR_FONT]);
+        m.addShorthand(generics[PR_FONT]);
         addPropertyMaker("font-family", m);
 
         // font-selection-strategy
@@ -990,7 +994,7 @@ public final class FOPropertyMapping implements Constants {
         m.addEnum("larger", getEnumProperty(EN_LARGER, "LARGER"));
         m.addEnum("smaller", getEnumProperty(EN_SMALLER, "SMALLER"));
         m.setPercentBase(LengthBase.INH_FONTSIZE);
-        m.addShorthand(s_generics[PR_FONT]);
+        m.addShorthand(generics[PR_FONT]);
         addPropertyMaker("font-size", m);
 
         // font-stretch
@@ -1024,7 +1028,7 @@ public final class FOPropertyMapping implements Constants {
         m.addEnum("oblique", getEnumProperty(EN_OBLIQUE, "OBLIQUE"));
         m.addEnum("backslant", getEnumProperty(EN_BACKSLANT, "BACKSLANT"));
         m.setDefault("normal");
-        m.addShorthand(s_generics[PR_FONT]);
+        m.addShorthand(generics[PR_FONT]);
         addPropertyMaker("font-style", m);
 
         // font-variant
@@ -1033,7 +1037,7 @@ public final class FOPropertyMapping implements Constants {
         m.addEnum("normal", getEnumProperty(EN_NORMAL, "NORMAL"));
         m.addEnum("small-caps", getEnumProperty(EN_SMALL_CAPS, "SMALL_CAPS"));
         m.setDefault("normal");
-        m.addShorthand(s_generics[PR_FONT]);
+        m.addShorthand(generics[PR_FONT]);
         addPropertyMaker("font-variant", m);
 
         // font-weight
@@ -1053,7 +1057,7 @@ public final class FOPropertyMapping implements Constants {
         m.addEnum("800", getEnumProperty(EN_800, "800"));
         m.addEnum("900", getEnumProperty(EN_900, "900"));
         m.setDefault("400");
-        m.addShorthand(s_generics[PR_FONT]);
+        m.addShorthand(generics[PR_FONT]);
         addPropertyMaker("font-weight", m);
     }
 
@@ -1064,14 +1068,14 @@ public final class FOPropertyMapping implements Constants {
         m  = new StringProperty.Maker(PR_COUNTRY);
         m.setInherited(true);
         m.setDefault("none");
-        m.addShorthand(s_generics[PR_XML_LANG]);
+        m.addShorthand(generics[PR_XML_LANG]);
         addPropertyMaker("country", m);
 
         // language
         m  = new StringProperty.Maker(PR_LANGUAGE);
         m.setInherited(true);
         m.setDefault("none");
-        m.addShorthand(s_generics[PR_XML_LANG]);
+        m.addShorthand(generics[PR_XML_LANG]);
         addPropertyMaker("language", m);
 
         // script
@@ -1114,7 +1118,7 @@ public final class FOPropertyMapping implements Constants {
         m  = new LengthProperty.Maker(PR_MARGIN_TOP);
         m.setInherited(false);
         m.setDefault("0pt");
-        m.addShorthand(s_generics[PR_MARGIN]);
+        m.addShorthand(generics[PR_MARGIN]);
         m.setPercentBase(LengthBase.CONTAINING_BLOCK_WIDTH);
         addPropertyMaker("margin-top", m);
 
@@ -1122,7 +1126,7 @@ public final class FOPropertyMapping implements Constants {
         m  = new LengthProperty.Maker(PR_MARGIN_BOTTOM);
         m.setInherited(false);
         m.setDefault("0pt");
-        m.addShorthand(s_generics[PR_MARGIN]);
+        m.addShorthand(generics[PR_MARGIN]);
         m.setPercentBase(LengthBase.CONTAINING_BLOCK_WIDTH);
         addPropertyMaker("margin-bottom", m);
 
@@ -1130,7 +1134,7 @@ public final class FOPropertyMapping implements Constants {
         m  = new LengthProperty.Maker(PR_MARGIN_LEFT);
         m.setInherited(false);
         m.setDefault("0pt");
-        m.addShorthand(s_generics[PR_MARGIN]);
+        m.addShorthand(generics[PR_MARGIN]);
         m.setPercentBase(LengthBase.CONTAINING_BLOCK_WIDTH);
         addPropertyMaker("margin-left", m);
 
@@ -1138,7 +1142,7 @@ public final class FOPropertyMapping implements Constants {
         m  = new LengthProperty.Maker(PR_MARGIN_RIGHT);
         m.setInherited(false);
         m.setDefault("0pt");
-        m.addShorthand(s_generics[PR_MARGIN]);
+        m.addShorthand(generics[PR_MARGIN]);
         m.setPercentBase(LengthBase.CONTAINING_BLOCK_WIDTH);
         addPropertyMaker("margin-right", m);
 
@@ -1218,7 +1222,7 @@ public final class FOPropertyMapping implements Constants {
         m.addEnum("static", getEnumProperty(EN_STATIC, "STATIC"));
         m.addEnum("relative", getEnumProperty(EN_RELATIVE, "RELATIVE"));
         m.setDefault("static");
-        m.addShorthand(s_generics[PR_POSITION]);
+        m.addShorthand(generics[PR_POSITION]);
         addPropertyMaker("relative-position", m);
     }
 
@@ -1242,7 +1246,7 @@ public final class FOPropertyMapping implements Constants {
         m.addEnum("mathematical", getEnumProperty(EN_MATHEMATICAL, "MATHEMATICAL"));
         m.setDefault("auto");
         m.setPercentBase(LengthBase.ALIGNMENT_ADJUST);
-        m.addShorthand(s_generics[PR_VERTICAL_ALIGN]);
+        m.addShorthand(generics[PR_VERTICAL_ALIGN]);
         addPropertyMaker("alignment-adjust", m);
 
         // alignment-baseline
@@ -1261,7 +1265,7 @@ public final class FOPropertyMapping implements Constants {
         m.addEnum("hanging", getEnumProperty(EN_HANGING, "HANGING"));
         m.addEnum("mathematical", getEnumProperty(EN_MATHEMATICAL, "MATHEMATICAL"));
         m.setDefault("auto");
-        m.addShorthand(s_generics[PR_VERTICAL_ALIGN]);
+        m.addShorthand(generics[PR_VERTICAL_ALIGN]);
         addPropertyMaker("alignment-baseline", m);
 
         // baseline-shift
@@ -1271,7 +1275,7 @@ public final class FOPropertyMapping implements Constants {
         m.addEnum("sub", getEnumProperty(EN_SUB, "SUB"));
         m.addEnum("super", getEnumProperty(EN_SUPER, "SUPER"));
         m.setDefault("baseline");
-        m.addShorthand(s_generics[PR_VERTICAL_ALIGN]);
+        m.addShorthand(generics[PR_VERTICAL_ALIGN]);
         m.setPercentBase(LengthBase.CUSTOM_BASE);
         addPropertyMaker("baseline-shift", m);
 
@@ -1303,7 +1307,7 @@ public final class FOPropertyMapping implements Constants {
         m.addEnum("text-after-edge", getEnumProperty(EN_TEXT_AFTER_EDGE, "TEXT_AFTER_EDGE"));
         m.addEnum("text-before-edge", getEnumProperty(EN_TEXT_BEFORE_EDGE, "TEXT_BEFORE_EDGE"));
         m.setDefault("auto");
-        m.addShorthand(s_generics[PR_VERTICAL_ALIGN]);
+        m.addShorthand(generics[PR_VERTICAL_ALIGN]);
         addPropertyMaker("dominant-baseline", m);
 
         // relative-align
@@ -1315,7 +1319,7 @@ public final class FOPropertyMapping implements Constants {
         addPropertyMaker("relative-align", m);
     }
 
-    private void createAreaDimensionProperties() {
+    private void createAreaDimensionProperties() {              // CSOK: MethodLength
         PropertyMaker m;
         LengthProperty.Maker l;
         DimensionPropertyMaker pdim;
@@ -1464,8 +1468,10 @@ public final class FOPropertyMapping implements Constants {
         m  = new EnumProperty.Maker(PR_SCALING_METHOD);
         m.setInherited(false);
         m.addEnum("auto", getEnumProperty(EN_AUTO, "AUTO"));
-        m.addEnum("integer-pixels", getEnumProperty(EN_INTEGER_PIXELS, "INTEGER_PIXELS"));
-        m.addEnum("resample-any-method", getEnumProperty(EN_RESAMPLE_ANY_METHOD, "RESAMPLE_ANY_METHOD"));
+        m.addEnum("integer-pixels",
+                  getEnumProperty(EN_INTEGER_PIXELS, "INTEGER_PIXELS"));
+        m.addEnum("resample-any-method",
+                  getEnumProperty(EN_RESAMPLE_ANY_METHOD, "RESAMPLE_ANY_METHOD"));
         m.setDefault("auto");
         addPropertyMaker("scaling-method", m);
 
@@ -1484,7 +1490,7 @@ public final class FOPropertyMapping implements Constants {
         addPropertyMaker("fox:block-progression-unit", l);
     }
 
-    private void createBlockAndLineProperties() {
+    private void createBlockAndLineProperties() {               // CSOK: MethodLength
         PropertyMaker m;
 
         // hyphenation-keep
@@ -1517,7 +1523,7 @@ public final class FOPropertyMapping implements Constants {
         m.addKeyword("normal", "1.2");
         m.setPercentBase(LengthBase.FONTSIZE);
         m.setDefault("normal", true);
-        m.addShorthand(s_generics[PR_FONT]);
+        m.addShorthand(generics[PR_FONT]);
         addPropertyMaker("line-height", m);
 
         // line-height-shift-adjustment
@@ -1543,9 +1549,11 @@ public final class FOPropertyMapping implements Constants {
         m.addEnum("ignore", getEnumProperty(EN_IGNORE, "IGNORE"));
         m.addEnum("preserve", getEnumProperty(EN_PRESERVE, "PRESERVE"));
         m.addEnum("treat-as-space", getEnumProperty(EN_TREAT_AS_SPACE, "TREAT_AS_SPACE"));
-        m.addEnum("treat-as-zero-width-space", getEnumProperty(EN_TREAT_AS_ZERO_WIDTH_SPACE, "TREAT_AS_ZERO_WIDTH_SPACE"));
+        m.addEnum("treat-as-zero-width-space",
+                  getEnumProperty(EN_TREAT_AS_ZERO_WIDTH_SPACE,
+                                  "TREAT_AS_ZERO_WIDTH_SPACE"));
         m.setDefault("treat-as-space");
-        m.addShorthand(s_generics[PR_WHITE_SPACE]);
+        m.addShorthand(generics[PR_WHITE_SPACE]);
         addPropertyMaker("linefeed-treatment", m);
 
         // white-space-treatment
@@ -1553,11 +1561,17 @@ public final class FOPropertyMapping implements Constants {
         m.setInherited(true);
         m.addEnum("ignore", getEnumProperty(EN_IGNORE, "IGNORE"));
         m.addEnum("preserve", getEnumProperty(EN_PRESERVE, "PRESERVE"));
-        m.addEnum("ignore-if-before-linefeed", getEnumProperty(EN_IGNORE_IF_BEFORE_LINEFEED, "IGNORE_IF_BEFORE_LINEFEED"));
-        m.addEnum("ignore-if-after-linefeed", getEnumProperty(EN_IGNORE_IF_AFTER_LINEFEED, "IGNORE_IF_AFTER_LINEFEED"));
-        m.addEnum("ignore-if-surrounding-linefeed", getEnumProperty(EN_IGNORE_IF_SURROUNDING_LINEFEED, "IGNORE_IF_SURROUNDING_LINEFEED"));
+        m.addEnum("ignore-if-before-linefeed",
+                  getEnumProperty(EN_IGNORE_IF_BEFORE_LINEFEED,
+                                  "IGNORE_IF_BEFORE_LINEFEED"));
+        m.addEnum("ignore-if-after-linefeed",
+                  getEnumProperty(EN_IGNORE_IF_AFTER_LINEFEED,
+                                  "IGNORE_IF_AFTER_LINEFEED"));
+        m.addEnum("ignore-if-surrounding-linefeed",
+                  getEnumProperty(EN_IGNORE_IF_SURROUNDING_LINEFEED,
+                                  "IGNORE_IF_SURROUNDING_LINEFEED"));
         m.setDefault("ignore-if-surrounding-linefeed");
-        m.addShorthand(s_generics[PR_WHITE_SPACE]);
+        m.addShorthand(generics[PR_WHITE_SPACE]);
         addPropertyMaker("white-space-treatment", m);
 
         // text-align TODO: make it a StringProperty with enums.
@@ -1637,7 +1651,7 @@ public final class FOPropertyMapping implements Constants {
         m.useGeneric(genericBoolean);
         m.setInherited(true);
         m.setDefault("true");
-        m.addShorthand(s_generics[PR_WHITE_SPACE]);
+        m.addShorthand(generics[PR_WHITE_SPACE]);
         addPropertyMaker("white-space-collapse", m);
 
         // wrap-option
@@ -1646,7 +1660,7 @@ public final class FOPropertyMapping implements Constants {
         m.addEnum("wrap", getEnumProperty(EN_WRAP, "WRAP"));
         m.addEnum("no-wrap", getEnumProperty(EN_NO_WRAP, "NO_WRAP"));
         m.setDefault("wrap");
-        m.addShorthand(s_generics[PR_WHITE_SPACE]);
+        m.addShorthand(generics[PR_WHITE_SPACE]);
         addPropertyMaker("wrap-option", m);
     }
 
@@ -1750,9 +1764,11 @@ public final class FOPropertyMapping implements Constants {
         m.setInherited(false);
         m.addEnum("auto", getEnumProperty(EN_AUTO, "AUTO"));
         m.addEnum("perceptual", getEnumProperty(EN_PERCEPTUAL, "PERCEPTUAL"));
-        m.addEnum("relative-colorimetric", getEnumProperty(EN_RELATIVE_COLOMETRIC, "RELATIVE_COLOMETRIC"));
+        m.addEnum("relative-colorimetric", getEnumProperty(EN_RELATIVE_COLOMETRIC,
+                                                           "RELATIVE_COLOMETRIC"));
         m.addEnum("saturation", getEnumProperty(EN_SATURATION, "SATURATION"));
-        m.addEnum("absolute-colorimetric", getEnumProperty(EN_ABSOLUTE_COLORMETRIC, "ABSOLUTE_COLORMETRIC"));
+        m.addEnum("absolute-colorimetric", getEnumProperty(EN_ABSOLUTE_COLORMETRIC,
+                                                           "ABSOLUTE_COLORMETRIC"));
         m.setDefault("auto");
         addPropertyMaker("rendering-intent", m);
     }
@@ -1804,13 +1820,13 @@ public final class FOPropertyMapping implements Constants {
         // break-after
         m  = new EnumProperty.Maker(PR_BREAK_AFTER);
         m.useGeneric(genericBreak);
-        m.addShorthand(s_generics[PR_PAGE_BREAK_AFTER]);
+        m.addShorthand(generics[PR_PAGE_BREAK_AFTER]);
         addPropertyMaker("break-after", m);
 
         // break-before
         m  = new EnumProperty.Maker(PR_BREAK_BEFORE);
         m.useGeneric(genericBreak);
-        m.addShorthand(s_generics[PR_PAGE_BREAK_BEFORE]);
+        m.addShorthand(generics[PR_PAGE_BREAK_BEFORE]);
         addPropertyMaker("break-before", m);
 
         // keep-together
@@ -1818,7 +1834,7 @@ public final class FOPropertyMapping implements Constants {
         m.useGeneric(genericKeep);
         m.setInherited(true);
         m.setDefault("auto");
-        m.addShorthand(s_generics[PR_PAGE_BREAK_INSIDE]);
+        m.addShorthand(generics[PR_PAGE_BREAK_INSIDE]);
         addPropertyMaker("keep-together", m);
 
         // keep-with-next
@@ -1826,7 +1842,7 @@ public final class FOPropertyMapping implements Constants {
         m.useGeneric(genericKeep);
         m.setInherited(false);
         m.setDefault("auto");
-        m.addShorthand(s_generics[PR_PAGE_BREAK_AFTER]);
+        m.addShorthand(generics[PR_PAGE_BREAK_AFTER]);
         addPropertyMaker("keep-with-next", m);
 
         // keep-with-previous
@@ -1834,7 +1850,7 @@ public final class FOPropertyMapping implements Constants {
         m.useGeneric(genericKeep);
         m.setInherited(false);
         m.setDefault("auto");
-        m.addShorthand(s_generics[PR_PAGE_BREAK_BEFORE]);
+        m.addShorthand(generics[PR_PAGE_BREAK_BEFORE]);
         addPropertyMaker("keep-with-previous", m);
 
         // orphans
@@ -2240,7 +2256,8 @@ public final class FOPropertyMapping implements Constants {
         m.setInherited(false);
         m.addEnum("auto", getEnumProperty(EN_AUTO, "AUTO"));
         m.addEnum("paginate", getEnumProperty(EN_PAGINATE, "PAGINATE"));
-        m.addEnum("bounded-in-one-dimension", getEnumProperty(EN_BOUNDED_IN_ONE_DIMENSION, "BOUNDED_IN_ONE_DIMENSION"));
+        m.addEnum("bounded-in-one-dimension", getEnumProperty(EN_BOUNDED_IN_ONE_DIMENSION,
+                                                              "BOUNDED_IN_ONE_DIMENSION"));
         m.addEnum("unbounded", getEnumProperty(EN_UNBOUNDED, "UNBOUNDED"));
         m.setDefault("auto");
         addPropertyMaker("media-usage", m);
@@ -2330,7 +2347,7 @@ public final class FOPropertyMapping implements Constants {
         // border-separation
         m  = new LengthPairProperty.Maker(PR_BORDER_SEPARATION);
         m.setInherited(true);
-        m.addShorthand(s_generics[PR_BORDER_SPACING]);
+        m.addShorthand(generics[PR_BORDER_SPACING]);
 
         sub = new LengthProperty.Maker(CP_BLOCK_PROGRESSION_DIRECTION);
         sub.setDefault("0pt");
@@ -2577,7 +2594,7 @@ public final class FOPropertyMapping implements Constants {
         addPropertyMaker("z-index", m);
     }
 
-    private void createShorthandProperties() {
+    private void createShorthandProperties() {                  // CSOK: MethodLength
         PropertyMaker m;
 
         // background

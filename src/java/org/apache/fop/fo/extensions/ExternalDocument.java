@@ -82,13 +82,18 @@ public class ExternalDocument extends AbstractPageSequence implements GraphicsPr
         }
     }
 
+    /**
+     * @throws FOPException in case of processing exception
+     * @see org.apache.fop.fo.FONode#startOfNode()
+     */
     protected void startOfNode() throws FOPException {
         super.startOfNode();
         getFOEventHandler().startExternalDocument(this);
     }
 
     /**
-     * @see org.apache.fop.fo.FONode#endOfNode
+     * @throws FOPException in case of processing exception
+     * @see org.apache.fop.fo.FONode#endOfNode()
      */
     protected void endOfNode() throws FOPException {
         getFOEventHandler().endExternalDocument(this);
@@ -96,8 +101,11 @@ public class ExternalDocument extends AbstractPageSequence implements GraphicsPr
     }
 
     /**
+     * @param loc a locator
+     * @param nsURI a namespace uri or null
+     * @param localName a local name
+     * @throws ValidationException if invalid child
      * @see org.apache.fop.fo.FONode#validateChildNode(Locator, String, String)
-        XSL/FOP: empty
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName)
         throws ValidationException {
@@ -162,17 +170,26 @@ public class ExternalDocument extends AbstractPageSequence implements GraphicsPr
         return textAlign;
     }
 
-    /** @see org.apache.fop.fo.FONode#getNamespaceURI() */
+    /**
+     * @return namespace uri
+     * @see org.apache.fop.fo.FONode#getNamespaceURI()
+     */
     public String getNamespaceURI() {
         return ExtensionElementMapping.URI;
     }
 
-    /** @see org.apache.fop.fo.FONode#getNormalNamespacePrefix() */
+    /**
+     * @return namespace prefix
+     * @see org.apache.fop.fo.FONode#getNormalNamespacePrefix()
+     */
     public String getNormalNamespacePrefix() {
         return "fox";
     }
 
-    /** @see org.apache.fop.fo.FONode#getLocalName() */
+    /**
+     * @return local name
+     * @see org.apache.fop.fo.FONode#getLocalName()
+     */
     public String getLocalName() {
         return "external-document";
     }

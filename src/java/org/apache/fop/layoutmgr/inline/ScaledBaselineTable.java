@@ -19,8 +19,6 @@
 
 package org.apache.fop.layoutmgr.inline;
 
-import org.apache.fop.datatypes.Length;
-
 /**
  * The FOP specific incarnation of the XSL-FO scaled baseline table.
  * All baseline tables are scaled to the font size of the font they

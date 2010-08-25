@@ -19,9 +19,6 @@
 
 package org.apache.fop.render.pcl;
 
-import org.apache.xmlgraphics.util.QName;
-
-import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.render.ImageHandlerUtil;
 import org.apache.fop.render.RendererContext;
 

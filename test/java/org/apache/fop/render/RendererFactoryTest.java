@@ -33,7 +33,6 @@ import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFDocumentHandler;
 import org.apache.fop.render.intermediate.IFRenderer;
 import org.apache.fop.render.pdf.PDFDocumentHandler;
-import org.apache.fop.render.pdf.PDFRenderer;
 import org.apache.fop.render.rtf.RTFHandler;
 
 /**
@@ -73,28 +72,14 @@ public class RendererFactoryTest extends TestCase {
         RendererFactory factory = fopFactory.getRendererFactory();
         FOUserAgent ua;
         Renderer renderer;
-        Renderer overrideRenderer;
 
         ua = fopFactory.newFOUserAgent();
         renderer = factory.createRenderer(ua, MimeConstants.MIME_PDF);
         assertTrue(renderer instanceof IFRenderer);
-
-        factory.setRendererPreferred(true); //Test legacy setting
-        ua = fopFactory.newFOUserAgent();
-        renderer = factory.createRenderer(ua, MimeConstants.MIME_PDF);
-        assertTrue(renderer instanceof PDFRenderer);
 
         ua = fopFactory.newFOUserAgent();
         renderer = factory.createRenderer(ua, MimeConstants.MIME_FOP_IF);
         assertTrue(renderer instanceof IFRenderer);
-
-        factory.setRendererPreferred(false);
-        ua = fopFactory.newFOUserAgent();
-        overrideRenderer = new PDFRenderer();
-        overrideRenderer.setUserAgent(ua);
-        ua.setRendererOverride(overrideRenderer);
-        renderer = factory.createRenderer(ua, null);
-        assertTrue(renderer == overrideRenderer);
 
         ua = fopFactory.newFOUserAgent();
         IFDocumentHandler overrideHandler;

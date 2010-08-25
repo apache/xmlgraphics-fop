@@ -27,7 +27,7 @@ class PendingSpan {
     /**
      * member variable holding the number of rows left
      */
-    int rowsLeft;
+    private int rowsLeft;
 
     /**
      * Constructor
@@ -37,4 +37,22 @@ class PendingSpan {
     public PendingSpan(int rows) {
         rowsLeft = rows;
     }
+
+    /** @return number of rows spanned */
+    public int getRowsLeft() {
+        return rowsLeft;
+    }
+
+    /**
+     * Decrement rows spanned.
+     * @return number of rows spanned after decrementing
+     */
+    public int decrRowsLeft() {
+        if ( rowsLeft > 0 ) {
+            return --rowsLeft;
+        } else {
+            return 0;
+        }
+    }
+
 }

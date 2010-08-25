@@ -57,20 +57,12 @@ public class PCLRendererConfigurator extends PrintRendererConfigurator
     }
 
     /**
-     * Configure the PCL renderer.
+     * Throws an UnsupportedOperationException.
      *
-     * @param renderer PCL renderer
-     * @throws FOPException fop exception
+     * @param renderer not used
      */
-    public void configure(Renderer renderer) throws FOPException {
-        Configuration cfg = super.getRendererConfig(renderer);
-        if (cfg != null) {
-            PCLRenderer pclRenderer = (PCLRenderer)renderer;
-
-            PCLRenderingUtil pclUtil = pclRenderer.getPCLUtil();
-            configure(cfg, pclUtil);
-        }
-        super.configure(renderer);
+    public void configure(Renderer renderer) {
+        throw new UnsupportedOperationException();
     }
 
     private void configure(Configuration cfg, PCLRenderingUtil pclUtil) throws FOPException {

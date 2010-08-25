@@ -36,7 +36,7 @@ public class DoubleByteFont extends AbstractOutlineFont {
     private static final Set IDEOGRAPHIC = new java.util.HashSet();
     static {
         IDEOGRAPHIC.add(Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS);
-        //IDEOGRAPHIC.add(Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS_SUPPLEMENT); //Java 1.5
+        //IDEOGRAPHIC.add(Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS_SUPPLEMENT);//Java 1.5
         IDEOGRAPHIC.add(Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS);
         IDEOGRAPHIC.add(Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A);
         //IDEOGRAPHIC.add(Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_B); //Java 1.1

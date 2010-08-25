@@ -27,7 +27,10 @@ import java.util.List;
  * is mainly used for the purpose of automated testing. This implementation here does nothing.
  * Please see the subclass within the test code.
  */
-public class ElementListObserver {
+public final class ElementListObserver {
+
+    private ElementListObserver() {
+    }
 
     private static List activeObservers = null;
 

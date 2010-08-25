@@ -114,8 +114,9 @@ public class CharacterSetBuilder {
      */
     private final SoftMapCache characterSetsCache = new SoftMapCache(true);
 
-
-    private CharacterSetBuilder() { }
+    /** Default constructor. */
+    protected CharacterSetBuilder() {
+    }
 
     /**
      * Factory method for the single-byte implementation of AFPFontReader.

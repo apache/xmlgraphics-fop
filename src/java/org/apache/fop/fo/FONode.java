@@ -633,8 +633,9 @@ public abstract class FONode implements Cloneable {
      * this method only in exceptional conditions because this method may perform quite extensive
      * information gathering inside the FO tree.
      * @return a String containing context information
-     * @deprecated Not localized! Should rename getContextInfoAlt() to getContextInfo() when done!
      */
+    // [GA] remove deprecation - no alternative specified
+    //  @deprecated Not localized! Should rename getContextInfoAlt() to getContextInfo() when done!
     public String getContextInfo() {
         StringBuffer sb = new StringBuffer();
         if (getLocalName() != null) {
@@ -797,8 +798,9 @@ public abstract class FONode implements Cloneable {
 
     /**
      * This method is overridden by extension elements and allows the extension element to return
-     * a {@link ContentHandlerFactory}. This factory can create ContentHandler implementations that handle
-     * foreign XML content by either building up a specific DOM, a Java object or something else.
+     * a {@link ContentHandlerFactory}. This factory can create ContentHandler implementations that
+     * handle foreign XML content by either building up a specific DOM, a Java object or something
+     * else.
      *
      * @return the <code>ContentHandlerFactory</code> or <code>null</code> if not applicable
      */

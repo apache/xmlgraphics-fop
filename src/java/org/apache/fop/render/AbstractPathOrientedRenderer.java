@@ -172,11 +172,10 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
      * @param bpsStart the border-start traits
      * @param bpsEnd the border-end traits
      */
-    protected void drawBackground(float startx, float starty,
-                    float width, float height,
-                    Trait.Background back,
-                    BorderProps bpsBefore, BorderProps bpsAfter,
-                    BorderProps bpsStart, BorderProps bpsEnd) {
+    protected void drawBackground                               // CSOK: ParameterNumber
+        (float startx, float starty, float width, float height, Trait.Background back,
+         BorderProps bpsBefore, BorderProps bpsAfter,
+         BorderProps bpsStart, BorderProps bpsEnd) {
         if (back != null) {
             endTextObject();
 
@@ -262,10 +261,10 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
      * @param bpsStart the border-start traits
      * @param bpsEnd the border-end traits
      */
-    protected void drawBorders(float startx, float starty,
-                    float width, float height,
-                    BorderProps bpsBefore, BorderProps bpsAfter,
-                    BorderProps bpsStart, BorderProps bpsEnd) {
+    protected void drawBorders                                  // CSOK: ParameterNumber
+        (float startx, float starty, float width, float height,
+         BorderProps bpsBefore, BorderProps bpsAfter,
+         BorderProps bpsStart, BorderProps bpsEnd) {
         Rectangle2D.Float borderRect = new Rectangle2D.Float(startx, starty, width, height);
         drawBorders(borderRect, bpsBefore, bpsAfter, bpsStart, bpsEnd);
     }
@@ -283,7 +282,8 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
      * @param bpsStart the border specification on the start side
      * @param bpsEnd the border specification on the end side
      */
-    protected void drawBorders(Rectangle2D.Float borderRect,
+    protected void drawBorders                                  // CSOK: MethodLength
+        (Rectangle2D.Float borderRect,
             BorderProps bpsBefore, BorderProps bpsAfter, BorderProps bpsStart, BorderProps bpsEnd) {
         //TODO generalize each of the four conditions into using a parameterized drawBorder()
         boolean[] border = new boolean[] {
@@ -858,8 +858,9 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
      * @param style the border style (one of Constants.EN_DASHED etc.)
      * @param col the color for the border segment
      */
-    protected abstract void drawBorderLine(float x1, float y1, float x2, float y2,
-            boolean horz, boolean startOrBefore, int style, Color col);
+    protected abstract void drawBorderLine                      // CSOK: ParameterNumber
+        (float x1, float y1, float x2, float y2, boolean horz,
+         boolean startOrBefore, int style, Color col);
 
     /** {@inheritDoc} */
     public void renderForeignObject(ForeignObject fo, Rectangle2D pos) {
@@ -872,8 +873,6 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
     /**
      * Establishes a new coordinate system with the given transformation matrix.
      * The current graphics state is saved and the new coordinate system is concatenated.
-     * @param block
-     *
      * @param at the transformation matrix
      */
     protected void establishTransformationMatrix(AffineTransform at) {

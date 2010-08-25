@@ -166,10 +166,11 @@ public class PDFDocumentNavigationHandler implements IFDocumentNavigationHandler
         } else if (action instanceof URIAction) {
             URIAction u = (URIAction)action;
             assert u.isComplete();
+            String uri = u.getURI();
             PDFFactory factory = getPDFDoc().getFactory();
-            pdfAction = factory.getExternalAction(u.getURI(), u.isNewWindow());
+            pdfAction = factory.getExternalAction(uri, u.isNewWindow());
             if (!pdfAction.hasObjectNumber()) {
-                //Some PDF actions a pooled
+                //Some PDF actions are pooled
                 getPDFDoc().registerObject(pdfAction);
             }
             this.completeActions.put(action.getID(), pdfAction);

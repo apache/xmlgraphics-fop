@@ -25,25 +25,25 @@ import java.awt.Color;
 public class AFPLineDataInfo {
 
     /** the x1 coordinate */
-    int x1;
+    private int x1;
 
     /** the y1 coordinate */
-    int y1;
+    private int y1;
 
     /** the x2 coordinate */
-    int x2;
+    private int x2;
 
     /** the y2 coordinate */
-    int y2;
+    private int y2;
 
     /** the thickness */
-    int thickness;
+    private int thickness;
 
     /** the painting color */
-    Color color;
+    private Color color;
 
     /** the rotation */
-    int rotation = 0;
+    private int rotation = 0;
 
     /**
      * Default constructor

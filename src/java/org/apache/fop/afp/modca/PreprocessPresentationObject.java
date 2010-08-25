@@ -60,9 +60,13 @@ public class PreprocessPresentationObject extends AbstractTripletStructuredObjec
         }
     }
 
+    /** 0 degrees orientation */
     public static final byte ORIENTATION_ZERO_DEGREES = 1;
+    /** 90 degrees orientation */
     public static final byte ORIENTATION_90_DEGREES = 2;
+    /** 180 degrees orientation */
     public static final byte ORIENTATION_180_DEGREES = 4;
+    /** 270 degrees orientation */
     public static final byte ORIENTATION_270_DEGREES = 8;
 
     /**

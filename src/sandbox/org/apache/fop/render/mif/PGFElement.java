@@ -33,6 +33,10 @@ public class PGFElement extends RefElement {
         super("PgfCatalog");
     }
 
+    /**
+     * @param key an object
+     * @return an MIF element
+     */
     public MIFElement lookupElement(Object key) {
         if (key == null) {
             MIFElement pgf = new MIFElement("Pgf");

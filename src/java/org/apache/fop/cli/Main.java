@@ -35,7 +35,10 @@ import org.apache.fop.apps.MimeConstants;
 /**
  * Main command-line class for Apache FOP.
  */
-public class Main {
+public final class Main {
+
+    private Main() {
+    }
 
     /**
      * @return the list of URLs to all libraries.

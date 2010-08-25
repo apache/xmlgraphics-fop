@@ -29,6 +29,7 @@ public final class GraphicsFillet extends AbstractGraphicsCoord {
      * Constructor
      *
      * @param coords the x/y coordinates for this object
+     * @param relative true if uses relative drawing order
      */
     public GraphicsFillet(int[] coords, boolean relative) {
         super(coords, relative);

@@ -30,8 +30,6 @@ import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.GVTBuilder;
 import org.apache.batik.gvt.GraphicsNode;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import org.apache.xmlgraphics.java2d.ps.PSGraphics2D;
 import org.apache.xmlgraphics.ps.PSGenerator;
@@ -56,9 +54,6 @@ import org.apache.fop.svg.SVGUserAgent;
  */
 public class PSSVGHandler extends AbstractGenericSVGHandler
             implements PSRendererContextConstants {
-
-    /** logging instance */
-    private static Log log = LogFactory.getLog(PSSVGHandler.class);
 
     /**
      * Create a new PostScript XML handler for use by the PostScript renderer.
@@ -338,7 +333,7 @@ public class PSSVGHandler extends AbstractGenericSVGHandler
 
     /** {@inheritDoc} */
     public boolean supportsRenderer(Renderer renderer) {
-        return (renderer instanceof PSRenderer);
+        return false;
     }
 
 }

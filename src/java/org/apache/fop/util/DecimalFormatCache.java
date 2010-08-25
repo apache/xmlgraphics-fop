@@ -28,7 +28,10 @@ import java.util.Locale;
  * is not thread-safe but since FOP needs to format a lot of numbers the same way, it shall
  * be cached in a {@link ThreadLocal}.
  */
-public class DecimalFormatCache {
+public final class DecimalFormatCache {
+
+    private DecimalFormatCache() {
+    }
 
     private static final String BASE_FORMAT = "0.################";
 

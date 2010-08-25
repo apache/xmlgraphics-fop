@@ -122,7 +122,7 @@ public abstract class AbstractPSPDFBitmapProducer extends AbstractBitmapProducer
         try {
             FOUserAgent userAgent = fopFactory.newFOUserAgent();
             userAgent.setTargetResolution(context.getTargetResolution());
-            userAgent.setBaseURL(src.getParentFile().toURL().toString());
+            userAgent.setBaseURL(src.getParentFile().toURI().toURL().toString());
 
             File tempOut = new File(context.getTargetDir(),
                     src.getName() + "." + index + "." + getTargetExtension());

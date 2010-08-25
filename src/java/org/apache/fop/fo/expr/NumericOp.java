@@ -30,7 +30,11 @@ import org.apache.fop.datatypes.Numeric;
  * The evaluation of the operation can then occur when getNumericValue() is
  * called.
  */
-public class NumericOp {
+public final class NumericOp {
+
+    private NumericOp() {
+    }
+
     /**
      * Add the two operands and return a new Numeric representing the result.
      * @param op1 The first operand.
@@ -39,7 +43,8 @@ public class NumericOp {
      * @throws PropertyException If the dimension of the operand is different
      * from the dimension of this Numeric.
      */
-    public static Numeric addition(Numeric op1, Numeric op2) throws PropertyException {
+    public static Numeric addition(Numeric op1, Numeric op2)
+        throws PropertyException {
         if (op1.isAbsolute() && op2.isAbsolute()) {
             return addition2(op1, op2, null);
         } else {
@@ -47,11 +52,23 @@ public class NumericOp {
         }
     }
 
-    public static Numeric addition2(Numeric op1, Numeric op2, PercentBaseContext context) throws PropertyException {
+    /**
+     * Add the two operands with a percentage context
+     * and return a new Numeric representing the result.
+     * @param op1 The first operand.
+     * @param op2 The second operand.
+     * @param context a percent base context
+     * @return A Numeric representing the result.
+     * @throws PropertyException If the dimension of the operand is different
+     * from the dimension of this Numeric.
+     */
+    public static Numeric addition2(Numeric op1, Numeric op2, PercentBaseContext context)
+        throws PropertyException {
         if (op1.getDimension() != op2.getDimension()) {
             throw new PropertyException("Can't subtract Numerics of different dimensions");
         }
-        return numeric(op1.getNumericValue(context) + op2.getNumericValue(context), op1.getDimension());
+        return numeric(op1.getNumericValue(context)
+                       + op2.getNumericValue(context), op1.getDimension());
     }
 
     /**
@@ -63,7 +80,8 @@ public class NumericOp {
      * @throws PropertyException If the dimension of the operand is different
      * from the dimension of this Numeric.
      */
-    public static Numeric subtraction(Numeric op1, Numeric op2) throws PropertyException {
+    public static Numeric subtraction(Numeric op1, Numeric op2)
+        throws PropertyException {
         if (op1.isAbsolute() && op2.isAbsolute()) {
             return subtraction2(op1, op2, null);
         } else {
@@ -71,11 +89,23 @@ public class NumericOp {
         }
     }
 
-    public static Numeric subtraction2(Numeric op1, Numeric op2, PercentBaseContext context) throws PropertyException {
+    /**
+     * Subtract the two operands with a percentage context
+     * and return a new Numeric representing the result.
+     * @param op1 The first operand.
+     * @param op2 The second operand.
+     * @param context a percent base context
+     * @return A Numeric representing the result.
+     * @throws PropertyException If the dimension of the operand is different
+     * from the dimension of this Numeric.
+     */
+    public static Numeric subtraction2(Numeric op1, Numeric op2, PercentBaseContext context)
+        throws PropertyException {
         if (op1.getDimension() != op2.getDimension()) {
             throw new PropertyException("Can't subtract Numerics of different dimensions");
         }
-        return numeric(op1.getNumericValue(context) - op2.getNumericValue(context), op1.getDimension());
+        return numeric(op1.getNumericValue(context)
+                       - op2.getNumericValue(context), op1.getDimension());
     }
 
     /**
@@ -87,7 +117,8 @@ public class NumericOp {
      * @throws PropertyException If the dimension of the operand is different
      * from the dimension of this Numeric.
      */
-    public static Numeric multiply(Numeric op1, Numeric op2) throws PropertyException {
+    public static Numeric multiply(Numeric op1, Numeric op2)
+        throws PropertyException {
         if (op1.isAbsolute() && op2.isAbsolute()) {
             return multiply2(op1, op2, null);
         } else {
@@ -95,7 +126,18 @@ public class NumericOp {
         }
     }
 
-    public static Numeric multiply2(Numeric op1, Numeric op2, PercentBaseContext context) throws PropertyException {
+    /**
+     * Multiply the two operands with a percentage context
+     * and return a new Numeric representing the result.
+     * @param op1 The first operand.
+     * @param op2 The second operand.
+     * @param context a percent base context
+     * @return A Numeric representing the result.
+     * @throws PropertyException If the dimension of the operand is different
+     * from the dimension of this Numeric.
+     */
+    public static Numeric multiply2(Numeric op1, Numeric op2, PercentBaseContext context)
+        throws PropertyException {
         return numeric(op1.getNumericValue(context) * op2.getNumericValue(context),
                        op1.getDimension() + op2.getDimension());
     }
@@ -118,7 +160,18 @@ public class NumericOp {
         }
     }
 
-    public static Numeric divide2(Numeric op1, Numeric op2, PercentBaseContext context) throws PropertyException {
+    /**
+     * Divide the two operands with a percentage context
+     * and return a new Numeric representing the result.
+     * @param op1 The first operand.
+     * @param op2 The second operand.
+     * @param context a percent base context
+     * @return A Numeric representing the result.
+     * @throws PropertyException If the dimension of the operand is different
+     * from the dimension of this Numeric.
+     */
+    public static Numeric divide2(Numeric op1, Numeric op2, PercentBaseContext context)
+        throws PropertyException {
         return numeric(op1.getNumericValue(context) / op2.getNumericValue(context),
                        op1.getDimension() - op2.getDimension());
     }
@@ -128,8 +181,10 @@ public class NumericOp {
      * @param op1 The first operand.
      * @param op2 The second operand.
      * @return A new Numeric object representing the absolute value.
+     * @throws PropertyException if a property exception occurs
      */
-    public static Numeric modulo(Numeric op1, Numeric op2) throws PropertyException {
+    public static Numeric modulo(Numeric op1, Numeric op2)
+        throws PropertyException {
         if (op1.isAbsolute() && op2.isAbsolute()) {
             return modulo2(op1, op2, null);
         } else {
@@ -137,16 +192,29 @@ public class NumericOp {
         }
     }
 
-    public static Numeric modulo2(Numeric op1, Numeric op2, PercentBaseContext context) throws PropertyException {
-        return numeric(op1.getNumericValue(context) % op2.getNumericValue(context), op1.getDimension());
+    /**
+     * Return the remainder of a division of the two operand Numeric.
+     * @param op1 The first operand.
+     * @param op2 The second operand.
+     * @param context a percent base context
+     * @return A Numeric representing the result.
+     * @throws PropertyException If the dimension of the operand is different
+     * from the dimension of this Numeric.
+     */
+    public static Numeric modulo2(Numeric op1, Numeric op2, PercentBaseContext context)
+        throws PropertyException {
+        return numeric(op1.getNumericValue(context)
+                       % op2.getNumericValue(context), op1.getDimension());
     }
 
     /**
      * Return the absolute value of a Numeric.
      * @param op the operand.
      * @return a new Numeric object representing the absolute value of the operand.
+     * @throws PropertyException if a property exception occurs
      */
-    public static Numeric abs(Numeric op) throws PropertyException {
+    public static Numeric abs(Numeric op)
+        throws PropertyException {
         if (op.isAbsolute()) {
             return abs2(op, null);
         } else {
@@ -154,7 +222,16 @@ public class NumericOp {
         }
     }
 
-    public static Numeric abs2(Numeric op, PercentBaseContext context) throws PropertyException {
+    /**
+     * Return the absolute value of a Numeric.
+     * @param op the operand.
+     * @param context a percent base context
+     * @return A Numeric representing the result.
+     * @throws PropertyException If the dimension of the operand is different
+     * from the dimension of this Numeric.
+     */
+    public static Numeric abs2(Numeric op, PercentBaseContext context)
+        throws PropertyException {
         return numeric(Math.abs(op.getNumericValue(context)), op.getDimension());
     }
 
@@ -162,8 +239,10 @@ public class NumericOp {
      * Return the negation of a Numeric.
      * @param op the  operand.
      * @return a new Numeric object representing the negation of the operand.
+     * @throws PropertyException if a property exception occurs
      */
-    public static Numeric negate(Numeric op) throws PropertyException {
+    public static Numeric negate(Numeric op)
+        throws PropertyException {
         if (op.isAbsolute()) {
             return negate2(op, null);
         } else {
@@ -171,8 +250,18 @@ public class NumericOp {
         }
     }
 
-    public static Numeric negate2(Numeric op, PercentBaseContext context) throws PropertyException {
-        return numeric(- op.getNumericValue(context), op.getDimension());
+
+    /**
+     * Return the negation of a Numeric.
+     * @param op the  operand.
+     * @param context a percent base context
+     * @return A Numeric representing the result.
+     * @throws PropertyException If the dimension of the operand is different
+     * from the dimension of this Numeric.
+     */
+    public static Numeric negate2(Numeric op, PercentBaseContext context)
+        throws PropertyException {
+        return numeric(-op.getNumericValue(context), op.getDimension());
     }
 
     /**
@@ -182,7 +271,8 @@ public class NumericOp {
      * @return a Numeric which is the maximum of the two operands.
      * @throws PropertyException if the dimensions or value types of the operands are different.
      */
-    public static Numeric max(Numeric op1, Numeric op2) throws PropertyException {
+    public static Numeric max(Numeric op1, Numeric op2)
+        throws PropertyException {
         if (op1.isAbsolute() && op2.isAbsolute()) {
             return max2(op1, op2, null);
         } else {
@@ -190,7 +280,17 @@ public class NumericOp {
         }
     }
 
-    public static Numeric max2(Numeric op1, Numeric op2, PercentBaseContext context) throws PropertyException {
+    /**
+     * Return the larger of the two Numerics.
+     * @param op1 The first operand.
+     * @param op2 The second operand.
+     * @param context a percent base context
+     * @return A Numeric representing the result.
+     * @throws PropertyException If the dimension of the operand is different
+     * from the dimension of this Numeric.
+     */
+    public static Numeric max2(Numeric op1, Numeric op2, PercentBaseContext context)
+        throws PropertyException {
         if (op1.getDimension() != op2.getDimension()) {
             throw new PropertyException("Arguments to max() must have same dimensions");
         }
@@ -204,7 +304,8 @@ public class NumericOp {
      * @return a Numeric which is the minimum of the two operands.
      * @throws PropertyException if the dimensions or value types of the operands are different.
      */
-    public static Numeric min(Numeric op1, Numeric op2) throws PropertyException {
+    public static Numeric min(Numeric op1, Numeric op2)
+        throws PropertyException {
         if (op1.isAbsolute() && op2.isAbsolute()) {
             return min2(op1, op2, null);
         } else {
@@ -212,7 +313,17 @@ public class NumericOp {
         }
     }
 
-    public static Numeric min2(Numeric op1, Numeric op2, PercentBaseContext context) throws PropertyException {
+    /**
+     * Return the smaller of the two Numerics.
+     * @param op1 The first operand.
+     * @param op2 The second operand.
+     * @param context a percent base context
+     * @return A Numeric representing the result.
+     * @throws PropertyException If the dimension of the operand is different
+     * from the dimension of this Numeric.
+     */
+    public static Numeric min2(Numeric op1, Numeric op2, PercentBaseContext context)
+        throws PropertyException {
         if (op1.getDimension() != op2.getDimension()) {
             throw new PropertyException("Arguments to min() must have same dimensions");
         }
@@ -221,8 +332,8 @@ public class NumericOp {
 
     /**
      * Create a new absolute numeric with the specified value and dimension.
-     * @param value
-     * @param dimension
+     * @param value of numeric
+     * @param dimension of numeric
      * @return a new absolute numeric.
      */
     private static Numeric numeric(double value, int dimension) {

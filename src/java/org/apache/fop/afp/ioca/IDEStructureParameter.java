@@ -85,9 +85,9 @@ public class IDEStructureParameter implements Streamable {
     }
 
     /**
-     * Sets
-     * @param numComponents
-     * @param bitsPerComponent
+     * Sets uniform bits per component.
+     * @param numComponents the number of components
+     * @param bitsPerComponent number of bits per component
      */
     public void setUniformBitsPerComponent(int numComponents, int bitsPerComponent) {
         if (bitsPerComponent < 0 || bitsPerComponent >= 256) {

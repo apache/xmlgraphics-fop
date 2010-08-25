@@ -17,6 +17,7 @@
 
 /* $Id$ */
 
+package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
 /*
  * This file is part of the RTF library of the FOP project, which was originally
@@ -24,8 +25,6 @@
  * contributors to the jfor project (www.jfor.org), who agreed to donate jfor to
  * the FOP project.
  */
-
-package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -59,10 +58,12 @@ public class RtfString extends RtfElement {
         RtfStringConverter.getInstance().writeRtfString(writer, text);
     }
 
+    /** @return the text */
     public String getText() {
         return text;
     }
 
+    /** @param s some text */
     public void setText(String s) {
         text = s;
     }

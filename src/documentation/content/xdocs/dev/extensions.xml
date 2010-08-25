@@ -45,8 +45,8 @@ To add your own extension you need to do the following things.
 </p>
         <ol>
           <li>Write code that implements your extension functionality. The easiest place to
-start is by looking at the code in org.apache.fop.extension, and by looking at the examples in the <code>examples</code> directory.</li>
-          <li>Create a class that implements the org.apache.fop.fo.ElementMapping interface. ElementMapping is a hashmap of all of the elements in a particular namespace, which makes it easier for FOP to create a different object for each element.
+start is by looking at the code in org.apache.fop.fo.extensions, and by looking at the examples in the <code>examples</code> directory.</li>
+          <li>Create a class that extends the abstract org.apache.fop.fo.ElementMapping class. ElementMapping is a hashmap of all of the elements in a particular namespace, which makes it easier for FOP to create a different object for each element.
 ElementMapping objects are static to save on memory.
 They are loaded by FOP when parsing starts to validate input.</li>
           <li>Create the following file: "/META-INF/services/org.apache.fop.fo.ElementMapping", which should contain the fully qualified classname of your ElementMapping implementation class.</li>

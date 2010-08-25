@@ -98,7 +98,7 @@ public class DTDEntityResolver implements EntityResolver {
 
     /**
      * Returns the URL of a resource on the classpath
-     * @param resourceName the path to the resource relative to the root of the
+     * @param resourcePath the path to the resource relative to the root of the
      * classpath.
      * @return the URL of the required resource
      * @throws FontRuntimeException if the resource could not be found.

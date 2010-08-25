@@ -32,9 +32,10 @@ import org.w3c.dom.svg.SVGDocument;
 import org.w3c.dom.svg.SVGElement;
 import org.w3c.dom.svg.SVGSVGElement;
 
+/** The svg:svg element handler. */
 public class SVGSVGHandler implements XMLHandler, SVGRendererContextConstants {
 
-    /** @see org.apache.fop.render.XMLHandler */
+    /** {@inheritDoc} */
     public void handleXML(RendererContext context,
                 org.w3c.dom.Document doc, String ns) throws Exception {
         if (getNamespace().equals(ns)) {
@@ -67,12 +68,12 @@ public class SVGSVGHandler implements XMLHandler, SVGRendererContextConstants {
     }
 
 
-    /** @see org.apache.fop.render.XMLHandler#supportsRenderer(org.apache.fop.render.Renderer) */
+    /** {@inheritDoc} */
     public boolean supportsRenderer(Renderer renderer) {
         return (renderer instanceof SVGRenderer);
     }
 
-    /** @see org.apache.fop.render.XMLHandler#getNamespace() */
+    /** {@inheritDoc} */
     public String getNamespace() {
         return SVGRenderer.MIME_TYPE;
     }

@@ -16,6 +16,7 @@
  */
 
 /* $Id$ */
+
 package org.apache.fop.render.java2d;
 
 import java.awt.Font;
@@ -29,6 +30,7 @@ import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.fop.fonts.CustomFont;
+import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.fonts.FontType;
 import org.apache.fop.fonts.LazyFont;
 import org.apache.fop.fonts.Typeface;
@@ -36,7 +38,7 @@ import org.apache.fop.fonts.Typeface;
 /**
  * FontMetricsMapper that delegates most methods to an underlying
  * {@link FontMetrics} instance. This class was designed to allow
- * the underlying {@link java.awt.Font} to be loaded from a
+ * the underlying {@link Font} to be loaded from a
  * user-configured file not registered in the current graphics environment.
  */
 public class CustomFontMetricsMapper extends Typeface implements FontMetricsMapper {

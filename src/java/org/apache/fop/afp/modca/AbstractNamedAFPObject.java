@@ -73,7 +73,7 @@ public abstract class AbstractNamedAFPObject extends AbstractTripletStructuredOb
             name = (name + "       ").substring(0, afpNameLen);
         } else if (name.length() > afpNameLen) {
             String truncatedName = name.substring(nameLen - afpNameLen, nameLen);
-            log.warn("Constructor:: name '" + name + "'"
+            LOG.warn("Constructor:: name '" + name + "'"
                     + " truncated to " + afpNameLen + " chars"
                     + " ('" + truncatedName + "')");
             name = truncatedName;
@@ -83,7 +83,7 @@ public abstract class AbstractNamedAFPObject extends AbstractTripletStructuredOb
             nameBytes = name.getBytes(AFPConstants.EBCIDIC_ENCODING);
         } catch (UnsupportedEncodingException usee) {
             nameBytes = name.getBytes();
-            log.warn(
+            LOG.warn(
                 "Constructor:: UnsupportedEncodingException translating the name "
                 + name);
         }

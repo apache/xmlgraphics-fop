@@ -489,10 +489,10 @@ public class FOText extends FONode implements CharSequence {
 
     private class TextCharIterator extends CharIterator {
 
-        int currentPosition = 0;
+        private int currentPosition = 0;
 
-        boolean canRemove = false;
-        boolean canReplace = false;
+        private boolean canRemove = false;
+        private boolean canReplace = false;
 
         /** {@inheritDoc} */
         public boolean hasNext() {

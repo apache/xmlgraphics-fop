@@ -46,10 +46,9 @@ public abstract class TablePart extends TableCellContainer {
     //    private int visibility;
     // End of property values
 
-    /**
-     * used for validation
-     */
+    /** table rows found */
     protected boolean tableRowsFound = false;
+    /** table cells found */
     protected boolean tableCellsFound = false;
 
     private boolean firstRow = true;
@@ -124,6 +123,10 @@ public abstract class TablePart extends TableCellContainer {
         return this;
     }
 
+    /**
+     * Finish last row group.
+     * @throws ValidationException if content validation exception
+     */
     protected void finishLastRowGroup() throws ValidationException {
         if (!inMarker()) {
             RowGroupBuilder rowGroupBuilder = getTable().getRowGroupBuilder();
@@ -214,6 +217,7 @@ public abstract class TablePart extends TableCellContainer {
         rowGroups.add(rowGroup);
     }
 
+    /** @return list of row groups */
     public List getRowGroups() {
         return rowGroups;
     }

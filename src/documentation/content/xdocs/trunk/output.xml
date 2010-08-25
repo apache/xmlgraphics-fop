@@ -113,9 +113,9 @@ out = proc.getOutputStream();]]></source>
         compatible.
       </p>
       <p>
-        Note that FOP does not currently support "tagged PDF" or PDF/A-1a. 
-        Support for <a href="pdfa.html">PDF/A-1b</a> and <a
-          href="pdfx.html">PDF/X</a> has recently been added, however.
+        Note that FOP does not currently support PDF/A-1a. 
+        Support for <a href="accessibility.html">Tagged PDF</a>, <a href="pdfa.html">PDF/A-1b</a> 
+		and <a href="pdfx.html">PDF/X</a> has recently been added, however.
       </p>
       <section id="pdf-fonts">
         <title>Fonts</title>
@@ -194,32 +194,76 @@ out = proc.getOutputStream();]]></source>
     e.printStackTrace();
   }
 }]]></source>
-    <p>
-      Check the iText tutorial and documentation for setting access flags, password, 
-      encryption strength and other parameters.
-    </p>
+      <p>
+        Check the iText tutorial and documentation for setting access flags, password, 
+        encryption strength and other parameters.
+      </p>
+    </section>
+    <section id="pdf-watermark">
+      <title>Watermarks</title>
+      <p>
+        In addition to the <a href="#pdf-postprocess">PDF Post-processing</a> options, consider the following workarounds:
+      </p>
+      <ul>
+        <li>
+          Use a background image for the body region.
+        </li>
+        <li>
+          (submitted by Trevor Campbell) Place an image in a
+          region that overlaps the flowing text. For example, make
+          region-before large enough to contain your image. Then include a
+          block (if necessary, use an absolutely positioned block-container)
+          containing the watermark image in the static-content for the
+          region-before. Note that the image will be drawn on top of the
+          normal content.
+        </li>
+      </ul>
+    </section>
+    <section id="pdf-extensions">
+      <title>Extensions</title>
+      <p>The PDF Renderer supports some PDF specific extensions which can be embedded 
+        into the input FO document. To use the extensions the appropriate namespace must 
+        be declared in the fo:root element like this:</p>
+      <source><![CDATA[
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
+         xmlns:pdf="http://xmlgraphics.apache.org/fop/extensions/pdf">
+  ]]></source>
+      <section id="pdf-embedded-file">
+        <title>Embedded Files</title>
+        <p>
+          It is possible to attach/embed arbitrary files into a PDF file. You can give a name and
+          a description of the file. Example:
+        </p>
+        <source><![CDATA[
+  <fo:declarations>
+    <pdf:embedded-file filename="image.jpg" src="url(file:///C:/Temp/myimage.jpg)" description="My image"/>
+    <pdf:embedded-file src="url(file:///C:/Temp/MyTextDoc.odt)"/>
+  </fo:declarations>
+  ]]></source>
+        <p>
+          <code>pdf:embedded-file</code> must be a child of <code>fo:declarations</code>.
+          The "src" property is used to reference the file that is to be embedded. This property
+          uses the "uri-specification" datatype from the XSL-FO specification.
+          The "filename" property is optional. If it is missing the filename is automatically set
+          from the URI/IRI of the "src" property. An optional description can also be added to
+          further describe the file attachment.
+        </p>
+        <p>
+          It is also possible to reference an embedded file from an <code>fo:basic-link</code>.
+          Use the special "embedded-file:" URI scheme with the filename as single argument after
+          the URI scheme. Example:
+        </p>
+        <source><![CDATA[
+<fo:basic-link external-destination="url(embedded-file:image.jpg)">Attached Image</fo:basic-link>
+]]></source>
+        <p>
+          Note: Not all PDF Viewers (including some Acrobat Versions) will open the embedded file
+          when clicking on the link. In that case, the user will have to open he attachment via
+          the separate list of file attachments.
+        </p>
+      </section>
+    </section>
   </section>
-  <section id="pdf-watermark">
-    <title>Watermarks</title>
-    <p>
-      In addition to the <a href="#pdf-postprocess">PDF Post-processing</a> options, consider the following workarounds:
-    </p>
-    <ul>
-      <li>
-        Use a background image for the body region.
-      </li>
-      <li>
-        (submitted by Trevor Campbell) Place an image in a
-        region that overlaps the flowing text. For example, make
-        region-before large enough to contain your image. Then include a
-        block (if necessary, use an absolutely positioned block-container)
-        containing the watermark image in the static-content for the
-        region-before. Note that the image will be drawn on top of the
-        normal content.
-      </li>
-    </ul>
-  </section>
-</section>
 <section id="ps">
   <title>PostScript</title>
   <p>

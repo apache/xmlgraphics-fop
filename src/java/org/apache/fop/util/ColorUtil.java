@@ -27,8 +27,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.apache.xmlgraphics.java2d.color.CMYKColorSpace;
-import org.apache.xmlgraphics.java2d.color.ColorExt;
+import org.apache.xmlgraphics.java2d.color.DeviceCMYKColorSpace;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.expr.PropertyException;
@@ -329,7 +328,7 @@ public final class ColorUtil {
                 String iccProfileSrc = null;
                 if (isPseudoProfile(iccProfileName)) {
                     if (CMYK_PSEUDO_PROFILE.equalsIgnoreCase(iccProfileName)) {
-                        colorSpace = CMYKColorSpace.getInstance();
+                        colorSpace = DeviceCMYKColorSpace.getInstance();
                     } else {
                         assert false : "Incomplete implementation";
                     }
@@ -454,7 +453,7 @@ public final class ColorUtil {
                             + "Arguments to cmyk() must be in the range [0%-100%] or [0.0-1.0]");
                 }
                 float[] cmyk = new float[] {cyan, magenta, yellow, black};
-                CMYKColorSpace cmykCs = CMYKColorSpace.getInstance();
+                DeviceCMYKColorSpace cmykCs = DeviceCMYKColorSpace.getInstance();
                 float[] rgb = cmykCs.toRGB(cmyk);
                 parsedColor = ColorExt.createFromFoRgbIcc(rgb[0], rgb[1], rgb[2],
                         CMYK_PSEUDO_PROFILE, null, cmykCs, cmyk);
@@ -521,7 +520,7 @@ public final class ColorUtil {
     /**
      * Initializes the colorMap with some predefined values.
      */
-    private static void initializeColorMap() {
+    private static void initializeColorMap() {                  // CSOK: MethodLength
         colorMap = Collections.synchronizedMap(new java.util.HashMap());
 
         colorMap.put("aliceblue", new Color(240, 248, 255));
@@ -705,12 +704,16 @@ public final class ColorUtil {
     }
 
     /**
-     * Creates an uncalibrary CMYK color with the given gray value.
+     * Creates an uncalibrated CMYK color with the given gray value.
      * @param black the gray component (0 - 1)
      * @return the CMYK color
      */
     public static Color toCMYKGrayColor(float black) {
-
-        return org.apache.xmlgraphics.java2d.color.ColorUtil.toCMYKGrayColor(black);
+        float[] cmyk = new float[] {0f, 0f, 0f, 1.0f - black};
+        DeviceCMYKColorSpace cmykCs = DeviceCMYKColorSpace.getInstance();
+        float[] rgb = cmykCs.toRGB(cmyk);
+        return ColorExt.createFromFoRgbIcc(rgb[0], rgb[1], rgb[2],
+                CMYK_PSEUDO_PROFILE, null, cmykCs, cmyk);
     }
+
 }

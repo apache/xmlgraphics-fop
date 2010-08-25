@@ -41,6 +41,11 @@ public class SpacingPropertyMaker extends SpaceProperty.Maker {
 
     /**
      * Support for the 'normal' value.
+     * @param p the property to convert
+     * @param propertyList the property list to use in conversion
+     * @param fo the FO to use in conversion
+     * @return the converted property
+     * @throws PropertyException if a property conversion exception occurs
      */
     public Property convertProperty(Property p,
                                        PropertyList propertyList,

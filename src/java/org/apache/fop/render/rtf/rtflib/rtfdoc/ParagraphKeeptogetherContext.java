@@ -33,15 +33,14 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
  *
  */
 
-public class ParagraphKeeptogetherContext {
+public final class ParagraphKeeptogetherContext {
 
     private static int paraKeepTogetherOpen = 0;
     private static boolean paraResetProperties = false;
     private static ParagraphKeeptogetherContext instance = null;
 
-    ParagraphKeeptogetherContext() {
+    private ParagraphKeeptogetherContext() {
     }
-
 
     /**
      * Singelton.

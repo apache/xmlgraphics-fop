@@ -172,6 +172,13 @@ public class PDFArray extends PDFObject {
         this.values.add(new Double(value));
     }
 
+    /**
+     * Clears the PDF array.
+     */
+    public void clear() {
+        this.values.clear();
+    }
+
     /** {@inheritDoc} */
     protected int output(OutputStream stream) throws IOException {
         CountingOutputStream cout = new CountingOutputStream(stream);

@@ -21,6 +21,9 @@ package org.apache.fop.layoutmgr;
 
 import java.util.List;
 
+/**
+ * A Knuth element position iterator.
+ */
 public class KnuthPossPosIter extends PositionIterator {
 
     private int iterCount;
@@ -46,9 +49,7 @@ public class KnuthPossPosIter extends PositionIterator {
 
     // Check position < endPos
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected boolean checkNext() {
         if (iterCount > 0) {
             return super.checkNext();
@@ -58,22 +59,26 @@ public class KnuthPossPosIter extends PositionIterator {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public Object next() {
         --iterCount;
         return super.next();
     }
 
+    /**
+     * Peek at next, returning as ListElement.
+     * @return peek at next as ListElement
+     */
     public ListElement getKE() {
         return (ListElement) peekNext();
     }
 
+    /** {@inheritDoc} */
     protected LayoutManager getLM(Object nextObj) {
         return ((ListElement) nextObj).getLayoutManager();
     }
 
+    /** {@inheritDoc} */
     protected Position getPos(Object nextObj) {
         return ((ListElement) nextObj).getPosition();
     }

@@ -94,6 +94,6 @@ public abstract class FOTreeUnitTester extends TestCase {
         foReader.setErrorHandler(fop.getDefaultHandler());
         foReader.setEntityResolver(fop.getDefaultHandler());
 
-        foReader.parse(new File("test/fotree/unittests/" + filename).toURL().toExternalForm());
+        foReader.parse(new File("test/fotree/unittests/" + filename).toURI().toURL().toExternalForm());
     }
 }

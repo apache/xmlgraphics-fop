@@ -165,7 +165,7 @@ public abstract class AbstractImageAdapter implements PDFImage {
         return null;
     }
 
-    /** {@inheritDoc} */
+    /** @return null (if not overridden) */
     public String getSoftMask() {
         return null;
     }

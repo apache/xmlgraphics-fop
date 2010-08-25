@@ -42,45 +42,46 @@ import org.apache.fop.fo.expr.PropertyException;
  * Stores all common border and padding properties.
  * See Sec. 7.7 of the XSL-FO Standard.
  */
-public class CommonBorderPaddingBackground {
+public class CommonBorderPaddingBackground {                    // CSOK: FinalClassCheck
 
     /**
      *  cache holding all canonical instances
      *  (w/ absolute background-position-* and padding-*)
      */
-    private static final PropertyCache cache = new PropertyCache(CommonBorderPaddingBackground.class);
+    private static final PropertyCache CACHE
+        = new PropertyCache(CommonBorderPaddingBackground.class);
 
     private int hash = -1;
 
     /**
      * The "background-attachment" property.
      */
-    public final int backgroundAttachment;
+    public final int backgroundAttachment;                      // CSOK: VisibilityModifier
 
     /**
      * The "background-color" property.
      */
-    public final Color backgroundColor;
+    public final Color backgroundColor;                         // CSOK: VisibilityModifier
 
     /**
      * The "background-image" property.
      */
-    public final String backgroundImage;
+    public final String backgroundImage;                        // CSOK: VisibilityModifier
 
     /**
      * The "background-repeat" property.
      */
-    public final int backgroundRepeat;
+    public final int backgroundRepeat;                          // CSOK: VisibilityModifier
 
     /**
      * The "background-position-horizontal" property.
      */
-    public final Length backgroundPositionHorizontal;
+    public final Length backgroundPositionHorizontal;           // CSOK: VisibilityModifier
 
     /**
      * The "background-position-vertical" property.
      */
-    public final Length backgroundPositionVertical;
+    public final Length backgroundPositionVertical;             // CSOK: VisibilityModifier
 
 
     private ImageInfo backgroundImageInfo;
@@ -96,12 +97,13 @@ public class CommonBorderPaddingBackground {
     public static final int END = 3;
 
     /**
-     *
+     * Utility class to express border info.
      */
-    public static class BorderInfo {
+    public static final class BorderInfo {
 
         /** cache holding all canonical instances */
-        private static final PropertyCache cache = new PropertyCache(BorderInfo.class);
+        private static final PropertyCache CACHE
+            = new PropertyCache(BorderInfo.class);
 
         private int mStyle; // Enum for border style
         private Color mColor; // Border color
@@ -127,7 +129,7 @@ public class CommonBorderPaddingBackground {
          * @return a cached BorderInfo instance
          */
         public static BorderInfo getInstance(int style, CondLengthProperty width, Color color) {
-            return cache.fetch(new BorderInfo(style, width, color));
+            return CACHE.fetch(new BorderInfo(style, width, color));
         }
 
         /**
@@ -212,7 +214,7 @@ public class CommonBorderPaddingBackground {
      * A border info with style "none". Used as a singleton, in the collapsing-border model,
      * for elements which don't specify any border on some of their sides.
      */
-    private static final BorderInfo defaultBorderInfo
+    private static final BorderInfo DEFAULT_BORDER_INFO
             = BorderInfo.getInstance(Constants.EN_NONE, new ConditionalNullLength(), null);
 
     /**
@@ -274,7 +276,7 @@ public class CommonBorderPaddingBackground {
      * @return a BorderInfo instance with style set to {@link Constants#EN_NONE}
      */
     public static BorderInfo getDefaultBorderInfo() {
-        return defaultBorderInfo;
+        return DEFAULT_BORDER_INFO;
     }
 
     private BorderInfo[] borderInfo = new BorderInfo[4];
@@ -352,13 +354,19 @@ public class CommonBorderPaddingBackground {
         CommonBorderPaddingBackground cachedInstance = null;
         /* if padding-* and background-position-* resolve to absolute lengths
          * the whole instance can be cached */
-        if ((newInstance.padding[BEFORE] == null || newInstance.padding[BEFORE].getLength().isAbsolute())
-                && (newInstance.padding[AFTER] == null || newInstance.padding[AFTER].getLength().isAbsolute())
-                && (newInstance.padding[START] == null || newInstance.padding[START].getLength().isAbsolute())
-                && (newInstance.padding[END] == null || newInstance.padding[END].getLength().isAbsolute())
-                && (newInstance.backgroundPositionHorizontal == null || newInstance.backgroundPositionHorizontal.isAbsolute())
-                && (newInstance.backgroundPositionVertical == null || newInstance.backgroundPositionVertical.isAbsolute())) {
-            cachedInstance = cache.fetch(newInstance);
+        if ((newInstance.padding[BEFORE] == null
+             || newInstance.padding[BEFORE].getLength().isAbsolute())
+                && (newInstance.padding[AFTER] == null
+                    || newInstance.padding[AFTER].getLength().isAbsolute())
+                && (newInstance.padding[START] == null
+                    || newInstance.padding[START].getLength().isAbsolute())
+                && (newInstance.padding[END] == null
+                    || newInstance.padding[END].getLength().isAbsolute())
+                && (newInstance.backgroundPositionHorizontal == null
+                    || newInstance.backgroundPositionHorizontal.isAbsolute())
+                && (newInstance.backgroundPositionVertical == null
+                    || newInstance.backgroundPositionVertical.isAbsolute())) {
+            cachedInstance = CACHE.fetch(newInstance);
         }
 
         /* for non-cached, or not-yet-cached instances, preload the image */
@@ -515,6 +523,7 @@ public class CommonBorderPaddingBackground {
     }
 
     /**
+     * @param side the side to retrieve
      * @param discard indicates whether the .conditionality component should be
      * considered (end of a reference-area)
      * @return the width of the start-border, taking into account the specified conditionality
@@ -755,8 +764,12 @@ public class CommonBorderPaddingBackground {
             hash = 37 * hash + backgroundAttachment;
             hash = 37 * hash + (backgroundColor == null ? 0 : backgroundColor.hashCode());
             hash = 37 * hash + (backgroundImage == null ? 0 : backgroundImage.hashCode());
-            hash = 37 * hash + (backgroundPositionHorizontal == null ? 0 : backgroundPositionHorizontal.hashCode());
-            hash = 37 * hash + (backgroundPositionVertical == null ? 0 : backgroundPositionVertical.hashCode());
+            hash = 37 * hash
+                + (backgroundPositionHorizontal == null
+                   ? 0 : backgroundPositionHorizontal.hashCode());
+            hash = 37 * hash
+                + (backgroundPositionVertical == null
+                   ? 0 : backgroundPositionVertical.hashCode());
             hash = 37 * hash + backgroundRepeat;
             hash = 37 * hash + (borderInfo[BEFORE] == null ? 0 : borderInfo[BEFORE].hashCode());
             hash = 37 * hash + (borderInfo[AFTER] == null ? 0 : borderInfo[AFTER].hashCode());

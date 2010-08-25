@@ -38,6 +38,9 @@ public class CIDFontType extends ValuedEnum {
 
 
     /**
+     * Construct a CID font type.
+     * @param name a type name
+     * @param value a type value
      * @see org.apache.avalon.framework.Enum#Enum(String)
      */
     protected CIDFontType(String name, int value) {
