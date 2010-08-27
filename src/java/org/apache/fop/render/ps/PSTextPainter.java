@@ -45,6 +45,9 @@ import org.apache.xmlgraphics.ps.PSGenerator;
 
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.fonts.FontMetrics;
+import org.apache.fop.fonts.LazyFont;
+import org.apache.fop.fonts.MultiByteFont;
 import org.apache.fop.svg.NativeTextPainter;
 import org.apache.fop.util.CharUtilities;
 
@@ -427,14 +430,22 @@ public class PSTextPainter extends NativeTextPainter {
             textUtil.setCurrentFont(f, mapped);
             applyColor(paint, gen);
 
+            FontMetrics metrics = f.getFontMetrics();
+            boolean multiByte = metrics instanceof MultiByteFont
+                    || metrics instanceof LazyFont
+                            && ((LazyFont) metrics).getRealFont() instanceof MultiByteFont;
             StringBuffer sb = new StringBuffer();
-            sb.append('(');
+            sb.append(multiByte ? '<' : '(');
             for (int i = 0, c = this.currentChars.length(); i < c; i++) {
                 char ch = this.currentChars.charAt(i);
                 mapped = f.mapChar(ch);
-                PSGenerator.escapeChar(mapped, sb);
+                if (multiByte) {
+                    sb.append(HexEncoder.encode(mapped));
+                } else {
+                    PSGenerator.escapeChar(mapped, sb);
+                }
             }
-            sb.append(')');
+            sb.append(multiByte ? '>' : ')');
             if (x || y) {
                 sb.append("\n[");
                 int idx = 0;
@@ -512,10 +523,20 @@ public class PSTextPainter extends NativeTextPainter {
                     textUtil.selectFont(f, mapped);
                     textUtil.setCurrentFont(f, mapped);
                 }
-                mapped = f.mapChar(this.currentChars.charAt(i));
                 //add glyph outlines to current path
-                char codepoint = (char)(mapped % 256);
-                gen.write("(" + codepoint + ")");
+                mapped = f.mapChar(this.currentChars.charAt(i));
+                FontMetrics metrics = f.getFontMetrics();
+                boolean multiByte = metrics instanceof MultiByteFont
+                        || metrics instanceof LazyFont
+                                && ((LazyFont) metrics).getRealFont() instanceof MultiByteFont;
+                if (multiByte) {
+                    gen.write('<');
+                    gen.write(HexEncoder.encode(mapped));
+                    gen.write('>');
+                } else {
+                    char codepoint = (char)(mapped % 256);
+                    gen.write("(" + codepoint + ")");
+                }
                 gen.writeln(" false charpath");
 
                 if (iter.hasNext()) {
