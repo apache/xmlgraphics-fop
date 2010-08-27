@@ -492,10 +492,18 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
             Typeface tf = getTypeFace(fontInfo, fonts, key);
             PSResource fontRes = new PSResource("font", tf.getFontName());
             fontResources.put(key, fontRes);
-            if (FontType.TYPE1 == tf.getFontType()) {
+            FontType fontType = tf.getFontType();
+            if (fontType == FontType.TYPE1 || fontType == FontType.TRUETYPE
+                    || fontType == FontType.TYPE0) {
                 if (tf instanceof CustomFont) {
                     CustomFont cf = (CustomFont)tf;
                     if (isEmbeddable(cf)) {
+                        if (fontType == FontType.TYPE0) {
+                            resTracker.registerSuppliedResource(
+                                    new PSResource(PSResource.TYPE_CIDFONT, tf.getFontName()));
+                            resTracker.registerSuppliedResource(
+                                    new PSResource(PSResource.TYPE_CMAP, "Identity-H"));
+                        }
                         resTracker.registerSuppliedResource(fontRes);
                     }
                     if (tf instanceof SingleByteFont) {
