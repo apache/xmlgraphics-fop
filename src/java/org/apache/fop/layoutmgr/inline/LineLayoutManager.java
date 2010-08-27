@@ -356,7 +356,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             indent += (textAlign == Constants.EN_CENTER)
                       ? difference / 2 : (textAlign == Constants.EN_END) ? difference : 0;
             indent += (bestActiveNode.line == 1 && indentFirstPart && isFirstInBlock)
-                ? textIndent : 0;
+                      ? textIndent : 0;
             double ratio = (textAlign == Constants.EN_JUSTIFY
                 || difference < 0 && -difference <= bestActiveNode.availableShrink)
                         ? bestActiveNode.adjustRatio : 0;
@@ -711,7 +711,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager
 
                     // finish last paragraph if it was closed with a linefeed
                     if (lastElement.isPenalty()
-                        && ((KnuthPenalty) lastElement).getPenalty() == -KnuthPenalty.INFINITE) {
+                            && ((KnuthPenalty) lastElement).getPenalty()
+                                == -KnuthPenalty.INFINITE) {
                         // a penalty item whose value is -inf
                         // represents a preserved linefeed,
                         // which forces a line break

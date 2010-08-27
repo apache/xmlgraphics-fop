@@ -75,7 +75,7 @@ public class PSBorderPainter extends BorderPainter {
             PSGenerator gen,
             float x1, float y1, float x2, float y2, boolean horz,  // CSOK: JavadocMethod
             boolean startOrBefore, int style, Color col)           // CSOK: JavadocMethod
-        throws IOException {                                    // CSOK: JavadocMethod
+            throws IOException {                                   // CSOK: JavadocMethod
         float w = x2 - x1;
         float h = y2 - y1;
         if ((w < 0) || (h < 0)) {
