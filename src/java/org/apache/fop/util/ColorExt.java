@@ -118,10 +118,10 @@ public final class ColorExt extends Color {
      *            ICC color values
      * @return the requested color object
      */
-    public static ColorExt createFromSvgIccColor                // CSOK: ParameterNumber
-        (float red, float green,
-         float blue, float opacity, String profileName, String profileHref,
-         ColorSpace profileCS, float[] colorValues) {
+    public static ColorExt createFromSvgIccColor(                // CSOK: ParameterNumber
+            float red, float green,
+            float blue, float opacity, String profileName, String profileHref,
+            ColorSpace profileCS, float[] colorValues) {
         //TODO this method is not referenced by FOP, can it be deleted?
         ColorExt ce = new ColorExt(red, green, blue, opacity);
         ce.rgbReplacementRed = -1;

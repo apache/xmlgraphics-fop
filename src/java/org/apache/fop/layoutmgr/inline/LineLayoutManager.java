@@ -132,10 +132,10 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         private int spaceAfter;
         private int baseline;
 
-        LineBreakPosition                                       // CSOK: ParameterNumber
-            (LayoutManager lm, int index, int startIndex, int breakIndex,
-             int shrink, int stretch, int diff, double ipdA, double adjust, int ind,
-             int lh, int lw, int sb, int sa, int bl) {
+        LineBreakPosition(                                       // CSOK: ParameterNumber
+                LayoutManager lm, int index, int startIndex, int breakIndex,
+                int shrink, int stretch, int diff, double ipdA, double adjust, int ind,
+                int lh, int lw, int sb, int sa, int bl) {
             super(lm, breakIndex);
             availableShrink = shrink;
             availableStretch = stretch;
@@ -331,9 +331,9 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         private int follow;
         private static final double MAX_DEMERITS = 10e6;
 
-        public LineBreakingAlgorithm                            // CSOK: ParameterNumber
-            (int pageAlign, int textAlign, int textAlignLast, int indent, int fillerWidth,
-             int lh, int ld, int fl, boolean first, int maxFlagCount, LineLayoutManager llm) {
+        public LineBreakingAlgorithm(                            // CSOK: ParameterNumber
+                int pageAlign, int textAlign, int textAlignLast, int indent, int fillerWidth,
+                int lh, int ld, int fl, boolean first, int maxFlagCount, LineLayoutManager llm) {
             super(textAlign, textAlignLast, first, false, maxFlagCount);
             pageAlignment = pageAlign;
             textIndent = indent;
@@ -410,9 +410,9 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             activePossibility = -1;
         }
 
-        private LineBreakPosition makeLineBreakPosition         // CSOK: ParameterNumber
-            (KnuthSequence par, int firstElementIndex, int lastElementIndex, int availableShrink,
-             int availableStretch, int difference, double ratio, int indent) {
+        private LineBreakPosition makeLineBreakPosition(         // CSOK: ParameterNumber
+                KnuthSequence par, int firstElementIndex, int lastElementIndex, int availableShrink,
+                int availableStretch, int difference, double ratio, int indent) {
             // line height calculation - spaceBefore may differ from spaceAfter
             // by 1mpt due to rounding
             int spaceBefore = (lineHeight - lead - follow) / 2;

@@ -285,11 +285,11 @@ public abstract class BreakingAlgorithm {
          * @param totalDemerits a real number
          * @param previous a node
          */
-        public KnuthNode                                        // CSOK: ParameterNumber
-            (int position, int line, int fitness,
-                         int totalWidth, int totalStretch, int totalShrink,
-                         double adjustRatio, int availableShrink, int availableStretch,
-                         int difference, double totalDemerits, KnuthNode previous) {
+        public KnuthNode(                                        // CSOK: ParameterNumber
+                int position, int line, int fitness,
+                int totalWidth, int totalStretch, int totalShrink,
+                double adjustRatio, int availableShrink, int availableStretch,
+                int difference, double totalDemerits, KnuthNode previous) {
             this.position = position;
             this.line = line;
             this.fitness = fitness;
@@ -671,11 +671,11 @@ public abstract class BreakingAlgorithm {
      * @param previous active node for the preceding breakpoint
      * @return a new node
      */
-    protected KnuthNode createNode                              // CSOK: ParameterNumber
-        (int position, int line, int fitness,
-                                   int totalWidth, int totalStretch, int totalShrink,
-                                   double adjustRatio, int availableShrink, int availableStretch,
-                                   int difference, double totalDemerits, KnuthNode previous) {
+    protected KnuthNode createNode(                              // CSOK: ParameterNumber
+            int position, int line, int fitness,
+            int totalWidth, int totalStretch, int totalShrink,
+            double adjustRatio, int availableShrink, int availableStretch,
+            int difference, double totalDemerits, KnuthNode previous) {
         return new KnuthNode(position, line, fitness,
                              totalWidth, totalStretch, totalShrink,
                              adjustRatio, availableShrink, availableStretch,

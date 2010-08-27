@@ -217,9 +217,9 @@ public abstract class BorderPainter {
      * @param color the border color
      * @throws IOException if an I/O error occurs
      */
-    protected abstract void drawBorderLine                      // CSOK: ParameterNumber
-        (int x1, int y1, int x2, int y2,
-         boolean horz, boolean startOrBefore, int style, Color color) throws IOException;
+    protected abstract void drawBorderLine(                      // CSOK: ParameterNumber
+            int x1, int y1, int x2, int y2,
+            boolean horz, boolean startOrBefore, int style, Color color) throws IOException;
 
     /**
      * Draws a line/rule.
