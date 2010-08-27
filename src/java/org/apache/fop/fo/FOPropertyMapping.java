@@ -72,7 +72,7 @@ import org.apache.fop.fo.properties.XMLLangShorthandParser;
  * This class creates and returns an array of Property.Maker instances
  * indexed by the PR_* propId from Constants.java.
  *
- * @asf.todo Check multi-threading safety of the statics below
+ * TODO Check multi-threading safety of the statics below
  */
 public final class FOPropertyMapping implements Constants {
 

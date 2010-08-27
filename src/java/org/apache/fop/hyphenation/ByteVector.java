@@ -69,7 +69,7 @@ public class ByteVector implements Serializable {
     /**
      * Construct byte vector instance.
      * @param a byte array to use
-     * @asf.todo should n should be initialized to a.length to be consistent with
+     * TODO should n should be initialized to a.length to be consistent with
      * CharVector behavior? [GA]
      */
     public ByteVector(byte[] a) {
@@ -82,7 +82,7 @@ public class ByteVector implements Serializable {
      * Construct byte vector instance.
      * @param a byte array to use
      * @param capacity initial block size
-     * @asf.todo should n should be initialized to a.length to be consistent with
+     * TODO should n should be initialized to a.length to be consistent with
      * CharVector behavior? [GA]
      */
     public ByteVector(byte[] a, int capacity) {

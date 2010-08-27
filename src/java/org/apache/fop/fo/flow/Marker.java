@@ -110,7 +110,7 @@ public class Marker extends FObjMixed {
      * <br><i>Additionally: "An fo:marker may contain any formatting objects that
      * are permitted as a replacement of any fo:retrieve-marker that retrieves
      * the fo:marker's children."</i>
-     * @asf.todo implement "additional" constraint, possibly within fo:retrieve-marker
+     * TODO implement "additional" constraint, possibly within fo:retrieve-marker
      */
     protected void validateChildNode(Locator loc, String nsURI, String localName)
             throws ValidationException {
