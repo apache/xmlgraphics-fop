@@ -514,7 +514,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                     footnoteElementIndex
                         = getFootnoteList(footnoteListIndex).size() - 1;
                 } else if (((canDeferOldFN = canDeferOldFootnotes // CSOK: InnerAssignment
-                             (pageNode, elementIndex)) 
+                             (pageNode, elementIndex))
                             || newFootnotes)
                            && (footnoteSplit = getFootnoteSplit // CSOK: InnerAssignment
                                (pageNode, getLineWidth(activeNode.line) - actualWidth,
@@ -1125,7 +1125,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
      */
     protected void addNode(int line, KnuthNode node) {
         if (node.position < par.size() - 1 && line > 0
-            && (ipdDifference = compareIPDs(line - 1)) != 0) {  // CSOK: InnerAssignment
+                && (ipdDifference = compareIPDs(line - 1)) != 0) {  // CSOK: InnerAssignment
             log.trace("IPD changes at page " + line);
             if (bestNodeForIPDChange == null
                     || node.totalDemerits < bestNodeForIPDChange.totalDemerits) {
