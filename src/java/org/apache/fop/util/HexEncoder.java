@@ -17,12 +17,12 @@
 
 /* $Id$ */
 
-package org.apache.fop.render.ps;
+package org.apache.fop.util;
 
 /**
- * A helper class to hex-encoded representations of numbers.
+ * A helper class create to hex-encoded representations of numbers.
  */
-final class HexEncoder {
+public final class HexEncoder {
 
     private HexEncoder() { }
 
@@ -34,7 +34,7 @@ final class HexEncoder {
      * @param width required length of the string
      * @return an hex-encoded representation of the number
      */
-    static String encode(int n, int width) {
+    public static String encode(int n, int width) {
         char[] digits = new char[width];
         for (int i = width - 1; i >= 0; i--) {
             int digit = n & 0xF;
@@ -50,7 +50,7 @@ final class HexEncoder {
      * @param c a character
      * @return an hex-encoded representation of the character
      */
-    static String encode(char c) {
+    public static String encode(char c) {
         return encode(c, 4);
     }
 

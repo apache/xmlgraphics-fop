@@ -55,6 +55,8 @@ import org.apache.fop.fonts.SingleByteEncoding;
 import org.apache.fop.fonts.SingleByteFont;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.fonts.truetype.TTFCmapEntry;
+import org.apache.fop.fonts.truetype.TTFFile.PostScriptVersion;
+import org.apache.fop.util.HexEncoder;
 
 /**
  * Utility code for font handling in PostScript.
@@ -132,8 +134,16 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
                     SingleByteEncoding encoding = sbf.getAdditionalEncoding(i);
                     defineEncoding(gen, encoding);
                     String postFix = "_" + (i + 1);
-                    PSResource derivedFontRes = defineDerivedFont(gen, tf.getFontName(),
-                            tf.getFontName() + postFix, encoding.getName());
+                    PSResource derivedFontRes;
+                    if (tf.getFontType() == FontType.TRUETYPE
+                            && sbf.getTrueTypePostScriptVersion() != PostScriptVersion.V2) {
+                        derivedFontRes = defineDerivedTrueTypeFont(gen, eventProducer,
+                                tf.getFontName(), tf.getFontName() + postFix, encoding,
+                                sbf.getCMaps());
+                    } else {
+                        derivedFontRes = defineDerivedFont(gen, tf.getFontName(),
+                                tf.getFontName() + postFix, encoding.getName());
+                    }
                     fontResources.put(key + postFix,
                             PSFontResource.createFontResource(derivedFontRes));
                 }
@@ -334,7 +344,10 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
     }
 
     private static int getGlyphIndex(String glyphName, List cmaps) {
-        char c = Glyphs.getUnicodeSequenceForGlyphName(glyphName).charAt(0);
+        return getGlyphIndex(Glyphs.getUnicodeSequenceForGlyphName(glyphName).charAt(0), cmaps);
+    }
+
+    private static int getGlyphIndex(char c, List cmaps) {
         for (Iterator iter = cmaps.iterator(); iter.hasNext();) {
             TTFCmapEntry cmap = (TTFCmapEntry) iter.next();
             if (cmap.getUnicodeStart() <= c && c <= cmap.getUnicodeEnd()) {
@@ -583,6 +596,44 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
         gen.writeln("dup length dict begin");
         gen.writeln("  {1 index /FID ne {def} {pop pop} ifelse} forall");
         gen.writeln("  /Encoding " + encoding + " def");
+        gen.writeln("  currentdict");
+        gen.writeln("end");
+        gen.writeln("/" + fontName + " exch definefont pop");
+        gen.writeDSCComment(DSCConstants.END_RESOURCE);
+        gen.getResourceTracker().registerSuppliedResource(res);
+        return res;
+    }
+
+    private static PSResource defineDerivedTrueTypeFont(PSGenerator gen,
+            PSEventProducer eventProducer, String baseFontName, String fontName,
+            SingleByteEncoding encoding, List cmaps) throws IOException {
+        PSResource res = new PSResource(PSResource.TYPE_FONT, fontName);
+        gen.writeDSCComment(DSCConstants.BEGIN_RESOURCE, res);
+        gen.commentln("%XGCDependencies: font " + baseFontName);
+        gen.commentln("%XGC+ encoding " + encoding.getName());
+        gen.writeln("/" + baseFontName + " findfont");
+        gen.writeln("dup length dict begin");
+        gen.writeln("  {1 index /FID ne {def} {pop pop} ifelse} forall");
+        gen.writeln("  /Encoding " + encoding.getName() + " def");
+
+        gen.writeln("  /CharStrings 256 dict dup begin");
+        String[] charNameMap = encoding.getCharNameMap();
+        char[] unicodeCharMap = encoding.getUnicodeCharMap();
+        assert charNameMap.length == unicodeCharMap.length;
+        for (int i = 0; i < charNameMap.length; i++) {
+            String glyphName = charNameMap[i];
+            gen.write("    /");
+            gen.write(glyphName);
+            gen.write(" ");
+            if (glyphName.equals(".notdef")) {
+                gen.write(0);
+            } else {
+                gen.write(getGlyphIndex(unicodeCharMap[i], cmaps));
+            }
+            gen.writeln(" def");
+        }
+        gen.writeln("  end readonly def");
+
         gen.writeln("  currentdict");
         gen.writeln("end");
         gen.writeln("/" + fontName + " exch definefont pop");

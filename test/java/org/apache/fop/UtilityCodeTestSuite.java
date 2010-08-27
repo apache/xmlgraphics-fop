@@ -24,10 +24,10 @@ import junit.framework.TestSuite;
 
 import org.apache.fop.events.BasicEventTestCase;
 import org.apache.fop.pdf.PDFObjectTestCase;
-import org.apache.fop.render.ps.HexEncoderTestCase;
 import org.apache.fop.traits.BorderPropsTestCase;
 import org.apache.fop.util.ColorUtilTestCase;
 import org.apache.fop.util.ElementListUtilsTestCase;
+import org.apache.fop.util.HexEncoderTestCase;
 import org.apache.fop.util.PDFNumberTestCase;
 import org.apache.fop.util.XMLResourceBundleTestCase;
 

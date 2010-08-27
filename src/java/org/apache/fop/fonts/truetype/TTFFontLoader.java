@@ -36,6 +36,8 @@ import org.apache.fop.fonts.FontType;
 import org.apache.fop.fonts.MultiByteFont;
 import org.apache.fop.fonts.NamedCharacter;
 import org.apache.fop.fonts.SingleByteFont;
+import org.apache.fop.fonts.truetype.TTFFile.PostScriptVersion;
+import org.apache.fop.util.HexEncoder;
 
 /**
  * Loads a TrueType font into memory directly from the original font file.
@@ -162,6 +164,7 @@ public class TTFFontLoader extends FontLoader {
             returnFont.setFirstChar(ttf.getFirstChar());
             returnFont.setLastChar(ttf.getLastChar());
             singleFont.setCMaps(ttf.getCMaps());
+            singleFont.setTrueTypePostScriptVersion(ttf.getPostScriptVersion());
             copyWidthsSingleByte(ttf);
         }
 
@@ -187,6 +190,9 @@ public class TTFFontLoader extends FontLoader {
                     if (codePoint <= 0) {
                         int glyphIndex = ce.getGlyphStartIndex() + u - ce.getUnicodeStart();
                         String glyphName = ttf.getGlyphName(glyphIndex);
+                        if (glyphName == "" && ttf.getPostScriptVersion() != PostScriptVersion.V2) {
+                            glyphName = "u" + HexEncoder.encode(u);
+                        }
                         if (glyphName != "") {
                             String unicode = Character.toString(u);
                             NamedCharacter nc = new NamedCharacter(glyphName, unicode);

@@ -41,9 +41,93 @@ import org.apache.fop.fonts.FontUtil;
 public class TTFFile {
 
     static final byte NTABS = 24;
-    static final int NMACGLYPHS = 258;
     static final int MAX_CHAR_CODE = 255;
     static final int ENC_BUF_SIZE = 1024;
+
+    private static final String[] MAC_GLYPH_ORDERING = {
+        /* 0x000 */
+        ".notdef",          ".null",         "nonmarkingreturn", "space",
+        "exclam",           "quotedbl",      "numbersign",       "dollar",
+        "percent",          "ampersand",     "quotesingle",      "parenleft",
+        "parenright",       "asterisk",      "plus",             "comma",
+        /* 0x010 */
+        "hyphen",           "period",        "slash",            "zero",
+        "one",              "two",           "three",            "four",
+        "five",             "six",           "seven",            "eight",
+        "nine",             "colon",         "semicolon",        "less",
+        /* 0x020 */
+        "equal",            "greater",       "question",         "at",
+        "A",                "B",             "C",                "D",
+        "E",                "F",             "G",                "H",
+        "I",                "J",             "K",                "L",
+        /* 0x030 */
+        "M",                "N",             "O",                "P",
+        "Q",                "R",             "S",                "T",
+        "U",                "V",             "W",                "X",
+        "Y",                "Z",             "bracketleft",      "backslash",
+        /* 0x040 */
+        "bracketright",     "asciicircum",   "underscore",       "grave",
+        "a",                "b",             "c",                "d",
+        "e",                "f",             "g",                "h",
+        "i",                "j",             "k",                "l",
+        /* 0x050 */
+        "m",                "n",             "o",                "p",
+        "q",                "r",             "s",                "t",
+        "u",                "v",             "w",                "x",
+        "y",                "z",             "braceleft",        "bar",
+        /* 0x060 */
+        "braceright",       "asciitilde",    "Adieresis",        "Aring",
+        "Ccedilla",         "Eacute",        "Ntilde",           "Odieresis",
+        "Udieresis",        "aacute",        "agrave",           "acircumflex",
+        "adieresis",        "atilde",        "aring",            "ccedilla",
+        /* 0x070 */
+        "eacute",           "egrave",        "ecircumflex",      "edieresis",
+        "iacute",           "igrave",        "icircumflex",      "idieresis",
+        "ntilde",           "oacute",        "ograve",           "ocircumflex",
+        "odieresis",        "otilde",        "uacute",           "ugrave",
+        /* 0x080 */
+        "ucircumflex",      "udieresis",     "dagger",           "degree",
+        "cent",             "sterling",      "section",          "bullet",
+        "paragraph",        "germandbls",    "registered",       "copyright",
+        "trademark",        "acute",         "dieresis",         "notequal",
+        /* 0x090 */
+        "AE",               "Oslash",        "infinity",         "plusminus",
+        "lessequal",        "greaterequal",  "yen",              "mu",
+        "partialdiff",      "summation",     "product",          "pi",
+        "integral",         "ordfeminine",   "ordmasculine",     "Omega",
+        /* 0x0A0 */
+        "ae",               "oslash",        "questiondown",     "exclamdown",
+        "logicalnot",       "radical",       "florin",           "approxequal",
+        "Delta",            "guillemotleft", "guillemotright",   "ellipsis",
+        "nonbreakingspace", "Agrave",        "Atilde",           "Otilde",
+        /* 0x0B0 */
+        "OE",               "oe",            "endash",           "emdash",
+        "quotedblleft",     "quotedblright", "quoteleft",        "quoteright",
+        "divide",           "lozenge",       "ydieresis",        "Ydieresis",
+        "fraction",         "currency",      "guilsinglleft",    "guilsinglright",
+        /* 0x0C0 */
+        "fi",               "fl",            "daggerdbl",        "periodcentered",
+        "quotesinglbase",   "quotedblbase",  "perthousand",      "Acircumflex",
+        "Ecircumflex",      "Aacute",        "Edieresis",        "Egrave",
+        "Iacute",           "Icircumflex",   "Idieresis",        "Igrave",
+        /* 0x0D0 */
+        "Oacute",           "Ocircumflex",   "apple",            "Ograve",
+        "Uacute",           "Ucircumflex",   "Ugrave",           "dotlessi",
+        "circumflex",       "tilde",         "macron",           "breve",
+        "dotaccent",        "ring",          "cedilla",          "hungarumlaut",
+        /* 0x0E0 */
+        "ogonek",           "caron",         "Lslash",           "lslash",
+        "Scaron",           "scaron",        "Zcaron",           "zcaron",
+        "brokenbar",        "Eth",           "eth",              "Yacute",
+        "yacute",           "Thorn",         "thorn",            "minus",
+        /* 0x0F0 */
+        "multiply",         "onesuperior",   "twosuperior",      "threesuperior",
+        "onehalf",          "onequarter",    "threequarters",    "franc",
+        "Gbreve",           "gbreve",        "Idotaccent",       "Scedilla",
+        "scedilla",         "Cacute",        "cacute",           "Ccaron",
+        /* 0x100 */
+        "ccaron",           "dcroat"
+    };
 
     /** Set to true to get even more debug output than with level DEBUG */
     public static final boolean TRACE_ENABLED = false;
@@ -64,7 +148,7 @@ public class TTFFile {
 
     private int upem;                                // unitsPerEm from "head" table
     private int nhmtx;                               // Number of horizontal metrics
-    private int postFormat;
+    private PostScriptVersion postScriptVersion;
     private int locaFormat;
     /**
      * Offset to last loca
@@ -157,6 +241,27 @@ public class TTFFile {
         public int getUnicodeIndex() {
             return unicodeIndex;
         }
+    }
+
+    /**
+     * Version of the PostScript table (<q>post</q>) contained in this font.
+     */
+    public static final class PostScriptVersion {
+
+        /** PostScript table version 1.0. */
+        public static final PostScriptVersion V1 = new PostScriptVersion();
+
+        /** PostScript table version 2.0. */
+        public static final PostScriptVersion V2 = new PostScriptVersion();
+
+        /** PostScript table version 3.0. */
+        public static final PostScriptVersion V3 = new PostScriptVersion();
+
+        /** Unknown version of the PostScript table. */
+        public static final PostScriptVersion UNKNOWN = new PostScriptVersion();
+
+        private PostScriptVersion() { }
+
     }
 
     /**
@@ -604,6 +709,10 @@ public class TTFFile {
         }
     }
 
+    PostScriptVersion getPostScriptVersion() {
+        return postScriptVersion;
+    }
+
     /**
      * Returns the font family names of the font.
      * @return Set The family names (a Set of Strings)
@@ -964,7 +1073,7 @@ public class TTFFile {
      */
     private void readPostScript(FontFileReader in) throws IOException {
         seekTab(in, "post", 0);
-        postFormat = in.readTTFLong();
+        int postFormat = in.readTTFLong();
         italicAngle = in.readTTFULong();
         underlinePosition = in.readTTFShort();
         underlineThickness = in.readTTFShort();
@@ -977,12 +1086,14 @@ public class TTFFile {
         switch (postFormat) {
         case 0x00010000:
             log.debug("PostScript format 1");
-            for (int i = 0; i < Glyphs.MAC_GLYPH_NAMES.length; i++) {
-                mtxTab[i].setName(Glyphs.MAC_GLYPH_NAMES[i]);
+            postScriptVersion = PostScriptVersion.V1;
+            for (int i = 0; i < MAC_GLYPH_ORDERING.length; i++) {
+                mtxTab[i].setName(MAC_GLYPH_ORDERING[i]);
             }
             break;
         case 0x00020000:
             log.debug("PostScript format 2");
+            postScriptVersion = PostScriptVersion.V2;
             int numGlyphStrings = 0;
 
             // Read Number of Glyphs
@@ -1015,11 +1126,11 @@ public class TTFFile {
 
             //Set glyph names
             for (int i = 0; i < l; i++) {
-                if (mtxTab[i].getIndex() < NMACGLYPHS) {
-                    mtxTab[i].setName(Glyphs.MAC_GLYPH_NAMES[mtxTab[i].getIndex()]);
+                if (mtxTab[i].getIndex() < MAC_GLYPH_ORDERING.length) {
+                    mtxTab[i].setName(MAC_GLYPH_ORDERING[mtxTab[i].getIndex()]);
                 } else {
                     if (!mtxTab[i].isIndexReserved()) {
-                        int k = mtxTab[i].getIndex() - NMACGLYPHS;
+                        int k = mtxTab[i].getIndex() - MAC_GLYPH_ORDERING.length;
 
                         if (log.isTraceEnabled()) {
                             log.trace(k + " i=" + i + " mtx=" + mtxTab.length
@@ -1035,9 +1146,11 @@ public class TTFFile {
         case 0x00030000:
             // PostScript format 3 contains no glyph names
             log.debug("PostScript format 3");
+            postScriptVersion = PostScriptVersion.V3;
             break;
         default:
             log.error("Unknown PostScript format: " + postFormat);
+            postScriptVersion = PostScriptVersion.UNKNOWN;
         }
     }
 

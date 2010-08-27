@@ -55,6 +55,7 @@ import org.apache.fop.render.intermediate.IFState;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.traits.RuleStyle;
 import org.apache.fop.util.CharUtilities;
+import org.apache.fop.util.HexEncoder;
 
 /**
  * IFPainter implementation that produces PostScript.
