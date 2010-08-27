@@ -196,19 +196,13 @@ public class LineLayoutManager extends InlineStackingLayoutManager
      * which was the first element in the paragraph
      * returned by each LM.
      */
-    private class Update {
-        private InlineLevelLayoutManager inlineLM;
-        private int firstIndex;
+    private final class Update {
+        private final InlineLevelLayoutManager inlineLM;
+        private final int firstIndex;
 
-        public Update(InlineLevelLayoutManager lm, int index) {
+        private Update(InlineLevelLayoutManager lm, int index) {
             inlineLM = lm;
             firstIndex = index;
-        }
-        InlineLevelLayoutManager getInlineLM() {
-            return inlineLM;
-        }
-        int getFirstIndex() {
-            return firstIndex;
         }
     }
 
