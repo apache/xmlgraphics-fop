@@ -30,7 +30,7 @@ import org.apache.fop.fo.properties.LengthRangeProperty;
  * <code>fo:leader</code></a> object.
  * The main property of <code>fo:leader</code> is leader-pattern.
  * The following patterns are treated: rule, space, dots and use-content.
- * @asf.todo implement validateChildNode()
+ * TODO implement validateChildNode()
  */
 public class Leader extends InlineLevel {
     // The value of properties relevant for fo:leader.

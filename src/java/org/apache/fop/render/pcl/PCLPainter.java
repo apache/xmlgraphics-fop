@@ -390,11 +390,11 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
 
     private static final double SAFETY_MARGIN_FACTOR = 0.05;
 
-    private Rectangle getTextBoundingBox                        // CSOK: ParameterNumber
-        (int x, int y,
-         int letterSpacing, int wordSpacing, int[] dx,
-         String text,
-         Font font, FontMetricsMapper metrics) {
+    private Rectangle getTextBoundingBox(                        // CSOK: ParameterNumber
+            int x, int y,
+            int letterSpacing, int wordSpacing, int[] dx,
+            String text,
+            Font font, FontMetricsMapper metrics) {
         int maxAscent = metrics.getMaxAscent(font.getFontSize()) / 1000;
         int descent = metrics.getDescender(font.getFontSize()) / 1000; //is negative
         int safetyMargin = (int)(SAFETY_MARGIN_FACTOR * font.getFontSize());

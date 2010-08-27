@@ -255,7 +255,7 @@ public abstract class FObj extends FONode implements Constants {
     /**
      * Check if this formatting object generates reference areas.
      * @return true if generates reference areas
-     * @asf.todo see if needed
+     * TODO see if needed
      */
     public boolean generatesReferenceAreas() {
         return false;
