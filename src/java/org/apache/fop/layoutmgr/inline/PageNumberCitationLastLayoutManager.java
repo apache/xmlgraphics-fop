@@ -37,7 +37,7 @@ public class PageNumberCitationLastLayoutManager extends AbstractPageNumberCitat
      * Constructor
      *
      * @param node the formatting object that creates this area
-     * @asf.todo better retrieval of font info
+     * TODO better retrieval of font info
      */
     public PageNumberCitationLastLayoutManager(PageNumberCitationLast node) {
         super(node);
