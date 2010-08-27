@@ -536,8 +536,8 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
     }
 
     /** {@inheritDoc} */
-    protected void drawBorderLine                               // CSOK: ParameterNumber
-        (float x1, float y1, float x2, float y2,
+    protected void drawBorderLine(                               // CSOK: ParameterNumber
+            float x1, float y1, float x2, float y2,
             boolean horz, boolean startOrBefore, int style, Color col) {
         Graphics2D g2d = state.getGraph();
         float width = x2 - x1;
