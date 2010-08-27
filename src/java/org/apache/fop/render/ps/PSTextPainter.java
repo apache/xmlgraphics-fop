@@ -50,6 +50,7 @@ import org.apache.fop.fonts.LazyFont;
 import org.apache.fop.fonts.MultiByteFont;
 import org.apache.fop.svg.NativeTextPainter;
 import org.apache.fop.util.CharUtilities;
+import org.apache.fop.util.HexEncoder;
 
 /**
  * Renders the attributed character iterator of a text node.

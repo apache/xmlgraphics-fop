@@ -17,7 +17,7 @@
 
 /* $Id$ */
 
-package org.apache.fop.render.ps;
+package org.apache.fop.util;
 
 import junit.framework.TestCase;
 
