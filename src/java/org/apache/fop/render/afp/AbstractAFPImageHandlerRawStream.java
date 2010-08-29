@@ -44,21 +44,6 @@ import org.apache.fop.render.RenderingContext;
 public abstract class AbstractAFPImageHandlerRawStream extends AFPImageHandler
         implements ImageHandler {
 
-    /** {@inheritDoc} */
-    public AFPDataObjectInfo generateDataObjectInfo(
-            AFPRendererImageInfo rendererImageInfo) throws IOException {
-        AFPDataObjectInfo dataObjectInfo = super.generateDataObjectInfo(rendererImageInfo);
-        ImageRawStream rawStream = (ImageRawStream) rendererImageInfo.getImage();
-        AFPRendererContext rendererContext
-            = (AFPRendererContext)rendererImageInfo.getRendererContext();
-        AFPInfo afpInfo = rendererContext.getInfo();
-
-        updateDataObjectInfo(dataObjectInfo, rawStream, afpInfo.getResourceManager());
-
-        setAdditionalParameters(dataObjectInfo, rawStream);
-        return dataObjectInfo;
-    }
-
     /**
      * Sets additional parameters on the image object info being built. By default, this
      * method does nothing but it can be overridden to provide additional functionality.

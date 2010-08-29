@@ -333,7 +333,7 @@ public class PSSVGHandler extends AbstractGenericSVGHandler
 
     /** {@inheritDoc} */
     public boolean supportsRenderer(Renderer renderer) {
-        return (renderer instanceof PSRenderer);
+        return false;
     }
 
 }

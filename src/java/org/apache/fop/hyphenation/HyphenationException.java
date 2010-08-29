@@ -22,7 +22,7 @@ package org.apache.fop.hyphenation;
 /**
  * An hyphenation exception.
  * @author Carlos Villegas <cav@uniscope.co.jp>
- * @asf.todo Derive from FOPException
+ * TODO Derive from FOPException
  */
 public class HyphenationException extends Exception {
 

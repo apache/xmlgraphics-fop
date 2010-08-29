@@ -158,7 +158,7 @@ public class PageSequence extends AbstractPageSequence implements WritingModeTra
 
     /**
      * {@inheritDoc}
-     * @asf.todo see if addChildNode() should also be called for fo's other than
+     * TODO see if addChildNode() should also be called for fo's other than
      *  fo:flow.
      */
     public void addChildNode(FONode child) throws FOPException {

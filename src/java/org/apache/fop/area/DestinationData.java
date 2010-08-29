@@ -98,7 +98,7 @@ public class DestinationData extends AbstractOffDocumentItem implements Resolvab
      * object that corresponds to the IDRef
      *
      * {@inheritDoc} List)
-     * @asf.todo check to make sure it works if multiple bookmark-items
+     * TODO check to make sure it works if multiple bookmark-items
      * have the same idref
      */
     public void resolveIDRef(String id, List pages) {

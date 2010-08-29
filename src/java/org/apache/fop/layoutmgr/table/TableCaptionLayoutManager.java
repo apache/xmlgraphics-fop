@@ -31,7 +31,7 @@ import org.apache.fop.layoutmgr.PositionIterator;
  * LayoutManager for a table-caption FO.
  * The table caption contains blocks that are placed beside the
  * table.
- * @asf.todo Implement getNextKnuthElements()
+ * TODO Implement getNextKnuthElements()
  */
 public class TableCaptionLayoutManager extends BlockStackingLayoutManager {
 

@@ -66,26 +66,6 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler implements Ima
         ImageFlavor.RENDERED_IMAGE
     };
 
-    /** {@inheritDoc} */
-    public AFPDataObjectInfo generateDataObjectInfo(
-            AFPRendererImageInfo rendererImageInfo) throws IOException {
-        AFPImageObjectInfo imageObjectInfo
-            = (AFPImageObjectInfo)super.generateDataObjectInfo(rendererImageInfo);
-
-        AFPRendererContext rendererContext
-            = (AFPRendererContext)rendererImageInfo.getRendererContext();
-        AFPInfo afpInfo = rendererContext.getInfo();
-
-        setDefaultResourceLevel(imageObjectInfo, afpInfo.getResourceManager());
-
-        AFPPaintingState paintingState = afpInfo.getPaintingState();
-        ImageRendered imageRendered = (ImageRendered) rendererImageInfo.img;
-        Dimension targetSize = new Dimension(afpInfo.getWidth(), afpInfo.getHeight());
-
-        updateDataObjectInfo(imageObjectInfo, paintingState, imageRendered, targetSize);
-        return imageObjectInfo;
-    }
-
     private AFPDataObjectInfo updateDataObjectInfo              // CSOK: MethodLength
         (AFPImageObjectInfo imageObjectInfo,
          AFPPaintingState paintingState, ImageRendered imageRendered, Dimension targetSize)
