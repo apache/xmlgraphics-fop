@@ -24,7 +24,7 @@ import org.apache.fop.fo.PropertyList;
 
 /**
  * Superclass for properties that wrap a character value
- * @asf.todo convert character value to int in order to denote unicode scalar value
+ * TODO convert character value to int in order to denote unicode scalar value
  * instead of a single UTF-16 code element
  */
 public final class CharacterProperty extends Property {

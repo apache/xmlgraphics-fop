@@ -33,7 +33,7 @@ import org.apache.fop.layoutmgr.PositionIterator;
  * The caption contains blocks that are positioned next to the
  * table on the caption side.
  * The caption blocks have an implicit keep with the table.
- * @asf.todo Implement getNextKnuthElements()
+ * TODO Implement getNextKnuthElements()
  */
 public class TableAndCaptionLayoutManager extends BlockStackingLayoutManager {
 

@@ -281,8 +281,8 @@ public class AFPPainter extends AbstractIFPainter {
             return mpt / 1000f;
         }
 
-        protected void drawBorderLine                           // CSOK: ParameterNumber
-            (int x1, int y1, int x2, int y2, boolean horz,
+        protected void drawBorderLine(                           // CSOK: ParameterNumber
+                int x1, int y1, int x2, int y2, boolean horz,
                 boolean startOrBefore, int style, Color color) throws IOException {
             BorderPaintingInfo borderPaintInfo = new BorderPaintingInfo(
                     toPoints(x1), toPoints(y1), toPoints(x2), toPoints(y2),
@@ -317,9 +317,9 @@ public class AFPPainter extends AbstractIFPainter {
     }
 
     /** {@inheritDoc} */
-    public void drawText                                        // CSOK: MethodLength
-        (int x, int y, final int letterSpacing, final int wordSpacing, final int[] dx,
-         final String text) throws IFException {
+    public void drawText(                                        // CSOK: MethodLength
+            int x, int y, final int letterSpacing, final int wordSpacing, final int[] dx,
+            final String text) throws IFException {
         final int fontSize = this.state.getFontSize();
         getPaintingState().setFontSize(fontSize);
 

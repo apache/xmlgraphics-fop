@@ -48,7 +48,7 @@ import org.apache.fop.traits.MinOptMax;
  * an exception to this rule.)
  * This class can be extended to handle the creation and adding of the
  * inline area.
- * @asf.todo [GA] replace use of hungarian notation with normalized java naming
+ * TODO [GA] replace use of hungarian notation with normalized java naming
  */
 public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
                                    implements InlineLevelLayoutManager {

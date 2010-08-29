@@ -55,8 +55,8 @@ public class BalancingColumnBreakingAlgorithm extends PageBreakingAlgorithm {
      * @param columnCount number of columns
      * @see PageBreakingAlgorithm
      */
-    public BalancingColumnBreakingAlgorithm                     // CSOK: ParameterNumber
-        (LayoutManager topLevelLM,
+    public BalancingColumnBreakingAlgorithm(                     // CSOK: ParameterNumber
+            LayoutManager topLevelLM,
             PageProvider pageProvider,
             PageBreakingLayoutListener layoutListener,
             int alignment, int alignmentLast,

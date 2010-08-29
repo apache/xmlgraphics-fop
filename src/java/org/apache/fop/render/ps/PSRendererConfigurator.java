@@ -45,18 +45,12 @@ public class PSRendererConfigurator extends PrintRendererConfigurator
     }
 
     /**
-     * Configure the PS renderer.
-     * @param renderer postscript renderer
-     * @throws FOPException fop exception
+     * Throws an UnsupportedOperationException.
+     *
+     * @param renderer not used
      */
-    public void configure(Renderer renderer) throws FOPException {
-        Configuration cfg = super.getRendererConfig(renderer);
-        if (cfg != null) {
-            super.configure(renderer);
-
-            PSRenderer psRenderer = (PSRenderer)renderer;
-            configure(psRenderer.getPSUtil(), cfg);
-        }
+    public void configure(Renderer renderer) {
+        throw new UnsupportedOperationException();
     }
 
     private void configure(PSRenderingUtil psUtil, Configuration cfg) {

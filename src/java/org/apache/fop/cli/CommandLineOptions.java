@@ -51,7 +51,7 @@ import org.apache.fop.render.awt.AWTRenderer;
 import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFDocumentHandler;
 import org.apache.fop.render.intermediate.IFSerializer;
-import org.apache.fop.render.pdf.PDFRenderer;
+import org.apache.fop.render.pdf.PDFConfigurationConstants;
 import org.apache.fop.render.print.PagesMode;
 import org.apache.fop.render.print.PrintRenderer;
 import org.apache.fop.render.xml.XMLRenderer;
@@ -805,14 +805,14 @@ public class CommandLineOptions {
 
     private PDFEncryptionParams getPDFEncryptionParams() throws FOPException {
         PDFEncryptionParams params = (PDFEncryptionParams)renderingOptions.get(
-                        PDFRenderer.ENCRYPTION_PARAMS);
+                        PDFConfigurationConstants.ENCRYPTION_PARAMS);
         if (params == null) {
             if (!PDFEncryptionManager.checkAvailableAlgorithms()) {
                 throw new FOPException("PDF encryption requested but it is not available."
                         + " Please make sure MD5 and RC4 algorithms are available.");
             }
             params = new PDFEncryptionParams();
-            renderingOptions.put(PDFRenderer.ENCRYPTION_PARAMS, params);
+            renderingOptions.put(PDFConfigurationConstants.ENCRYPTION_PARAMS, params);
         }
         return params;
     }

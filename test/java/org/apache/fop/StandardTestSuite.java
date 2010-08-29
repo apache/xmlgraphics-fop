@@ -23,7 +23,6 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.apache.fop.fonts.DejaVuLGCSerifTest;
-import org.apache.fop.fonts.TrueTypeAnsiTestCase;
 import org.apache.fop.image.loader.batik.ImageLoaderTestCase;
 import org.apache.fop.image.loader.batik.ImagePreloaderTestCase;
 import org.apache.fop.intermediate.IFMimickingTestCase;
@@ -54,7 +53,6 @@ public class StandardTestSuite {
         suite.addTest(new TestSuite(PDFEncodingTestCase.class));
         suite.addTest(new TestSuite(PDFCMapTestCase.class));
         suite.addTest(new TestSuite(PDFsRGBSettingsTestCase.class));
-        suite.addTest(new TestSuite(TrueTypeAnsiTestCase.class));
         suite.addTest(new TestSuite(DejaVuLGCSerifTest.class));
         suite.addTest(RichTextFormatTestSuite.suite());
         suite.addTest(new TestSuite(ImageLoaderTestCase.class));

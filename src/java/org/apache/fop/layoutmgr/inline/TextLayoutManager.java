@@ -83,10 +83,10 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         private final Font font;
         private final int level;
 
-        AreaInfo                                                // CSOK: ParameterNumber
-            (int startIndex, int breakIndex, int wordSpaceCount, int letterSpaceCount,
-             MinOptMax areaIPD, boolean isHyphenated, boolean isSpace, boolean breakOppAfter,
-             Font font, int level) {
+        AreaInfo(                                                // CSOK: ParameterNumber
+                int startIndex, int breakIndex, int wordSpaceCount, int letterSpaceCount,
+                MinOptMax areaIPD, boolean isHyphenated, boolean isSpace, boolean breakOppAfter,
+                Font font, int level) {
             assert startIndex <= breakIndex;
             this.startIndex = startIndex;
             this.breakIndex = breakIndex;

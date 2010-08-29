@@ -50,9 +50,9 @@ public class PDFBorderPainter extends BorderPainter {
     }
 
     /** {@inheritDoc} */
-    protected void drawBorderLine                               // CSOK: ParameterNumber
-        (int x1, int y1, int x2, int y2, boolean horz,
-         boolean startOrBefore, int style, Color col) {
+    protected void drawBorderLine(                               // CSOK: ParameterNumber
+            int x1, int y1, int x2, int y2, boolean horz,
+            boolean startOrBefore, int style, Color col) {
        drawBorderLine(generator, x1 / 1000f, y1 / 1000f, x2 / 1000f, y2 / 1000f,
                horz, startOrBefore, style, col);
     }
@@ -61,10 +61,10 @@ public class PDFBorderPainter extends BorderPainter {
      * @param generator pdf content generator
      * @see BorderPainter#drawBorderLine
      */
-    public static void drawBorderLine       // CSOK: ParameterNumber|MethodLength
-        (PDFContentGenerator generator,
-         float x1, float y1, float x2, float y2, boolean horz,  // CSOK: JavadocMethod
-         boolean startOrBefore, int style, Color col) {         // CSOK: JavadocMethod
+    public static void drawBorderLine(       // CSOK: ParameterNumber|MethodLength
+            PDFContentGenerator generator,
+            float x1, float y1, float x2, float y2, boolean horz,  // CSOK: JavadocMethod
+            boolean startOrBefore, int style, Color col) {         // CSOK: JavadocMethod
         float colFactor;
         float w = x2 - x1;
         float h = y2 - y1;
