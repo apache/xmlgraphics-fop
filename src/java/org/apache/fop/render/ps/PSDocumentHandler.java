@@ -49,6 +49,7 @@ import org.apache.xmlgraphics.ps.dsc.ResourceTracker;
 import org.apache.xmlgraphics.ps.dsc.events.DSCCommentBoundingBox;
 import org.apache.xmlgraphics.ps.dsc.events.DSCCommentHiResBoundingBox;
 
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.render.intermediate.AbstractBinaryWritingIFDocumentHandler;
 import org.apache.fop.render.intermediate.IFContext;
@@ -104,6 +105,8 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
     private static final int COMMENT_DOCUMENT_TRAILER = 1;
     private static final int COMMENT_PAGE_TRAILER = 2;
 
+    private PSEventProducer eventProducer;
+
     /**
      * Default constructor.
      */
@@ -123,7 +126,9 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
     /** {@inheritDoc} */
     public void setContext(IFContext context) {
         super.setContext(context);
-        this.psUtil = new PSRenderingUtil(context.getUserAgent());
+        FOUserAgent userAgent = context.getUserAgent();
+        this.psUtil = new PSRenderingUtil(userAgent);
+        eventProducer = PSEventProducer.Provider.get(userAgent.getEventBroadcaster());
     }
 
     /** {@inheritDoc} */
@@ -142,7 +147,7 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
         try {
             OutputStream out;
             if (psUtil.isOptimizeResources()) {
-                this.tempFile = File.createTempFile("fop", null);
+                this.tempFile = File.createTempFile("fop", ".ps");
                 out = new java.io.FileOutputStream(this.tempFile);
                 out = new java.io.BufferedOutputStream(out);
             } else {
@@ -200,8 +205,7 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
         gen.writeDSCComment(DSCConstants.BEGIN_SETUP);
         PSRenderingUtil.writeSetupCodeList(gen, setupCodeList, "SetupCode");
         if (!psUtil.isOptimizeResources()) {
-            this.fontResources.addAll(PSFontUtils.writeFontDict(gen, fontInfo,
-                    PSEventProducer.Provider.get(getUserAgent().getEventBroadcaster())));
+            this.fontResources.addAll(PSFontUtils.writeFontDict(gen, fontInfo, eventProducer));
         } else {
             gen.commentln("%FOPFontSetup"); //Place-holder, will be replaced in the second pass
         }
@@ -256,8 +260,8 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
         in = new java.io.BufferedInputStream(in);
         try {
             try {
-                ResourceHandler handler = new ResourceHandler(getUserAgent(), this.fontInfo,
-                        resTracker, this.formResources);
+                ResourceHandler handler = new ResourceHandler(getUserAgent(), eventProducer,
+                        this.fontInfo, resTracker, this.formResources);
                 handler.process(in, this.outputStream,
                         this.currentPageNumber, this.documentBoundingBox);
                 this.outputStream.flush();
