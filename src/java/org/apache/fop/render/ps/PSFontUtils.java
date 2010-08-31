@@ -77,9 +77,19 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
      */
     public static Map writeFontDict(PSGenerator gen, FontInfo fontInfo)
                 throws IOException {
-        return writeFontDict(gen, fontInfo, (PSEventProducer) null);
+        return writeFontDict(gen, fontInfo, null);
     }
 
+    /**
+     * Generates the PostScript code for the font dictionary. This method should only be
+     * used if no "resource optimization" is performed, i.e. when the fonts are not embedded
+     * in a second pass.
+     * @param gen PostScript generator to use for output
+     * @param fontInfo available fonts
+     * @param eventProducer to report events
+     * @return a Map of PSResource instances representing all defined fonts (key: font key)
+     * @throws IOException in case of an I/O problem
+     */
     public static Map writeFontDict(PSGenerator gen, FontInfo fontInfo,
             PSEventProducer eventProducer) throws IOException {
         return writeFontDict(gen, fontInfo, fontInfo.getFonts(), true, eventProducer);
@@ -92,12 +102,13 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
      * @param gen PostScript generator to use for output
      * @param fontInfo available fonts
      * @param fonts the set of fonts to work with
+     * @param eventProducer the event producer
      * @return a Map of PSResource instances representing all defined fonts (key: font key)
      * @throws IOException in case of an I/O problem
      */
-    public static Map writeFontDict(PSGenerator gen, FontInfo fontInfo, Map fonts)
-                throws IOException {
-        return writeFontDict(gen, fontInfo, fonts, false, null);
+    public static Map writeFontDict(PSGenerator gen, FontInfo fontInfo, Map fonts,
+            PSEventProducer eventProducer) throws IOException {
+        return writeFontDict(gen, fontInfo, fonts, false, eventProducer);
     }
 
     /**
@@ -224,14 +235,12 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
                     if (in != null) {
                         if (fontType == FontType.TYPE0) {
                             if (gen.embedIdentityH()) {
+                                checkPostScriptVersion(gen, eventProducer);
                                 /*
                                  * First CID-keyed font to be embedded; add
                                  * %%IncludeResource: comment for ProcSet CIDInit.
                                  */
                                 gen.includeProcsetCIDInitResource();
-                                if (eventProducer != null) {
-                                    eventProducer.postscriptLevel3Used(gen);
-                                }
                             }
                             PSResource cidFontResource = embedCIDFont(gen, (MultiByteFont) tf, in);
                             fontResource = PSFontResource.createFontResource(fontRes,
@@ -266,6 +275,19 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
             fontResource = PSFontResource.createFontResource(fontRes);
         }
         return fontResource;
+    }
+
+    private static void checkPostScriptVersion(PSGenerator gen, PSEventProducer eventProducer) {
+        if (gen.getPSLevel() < 3) {
+            if (eventProducer != null) {
+                eventProducer.postscriptLevel3Needed(gen);
+            } else {
+                throw new IllegalStateException("PostScript Level 3 is"
+                        + " required to use TrueType fonts,"
+                        + " configured level is "
+                        + gen.getPSLevel());
+            }
+        }
     }
 
     private static void embedTrueTypeFont(PSGenerator gen,
@@ -607,6 +629,7 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
     private static PSResource defineDerivedTrueTypeFont(PSGenerator gen,
             PSEventProducer eventProducer, String baseFontName, String fontName,
             SingleByteEncoding encoding, List cmaps) throws IOException {
+        checkPostScriptVersion(gen, eventProducer);
         PSResource res = new PSResource(PSResource.TYPE_FONT, fontName);
         gen.writeDSCComment(DSCConstants.BEGIN_RESOURCE, res);
         gen.commentln("%XGCDependencies: font " + baseFontName);
