@@ -552,4 +552,11 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         }
     }
 
+    /** {@inheritDoc} */
+    public void reset() {
+        super.reset();
+        curBlockArea = null;
+        tableUnit = 0.0;
+    }
+
 }
