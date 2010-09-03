@@ -51,7 +51,7 @@ public class FontSizePropertyMaker
      * it is immediately replaced by the resolved {@link FixedLength}.
      */
     public Property make(PropertyList propertyList, String value, FObj fo)
-        throws PropertyException {
+            throws PropertyException {
         Property p = super.make(propertyList, value, fo);
         if (p instanceof PercentLength) {
             Property pp = propertyList.getFromParent(this.propId);

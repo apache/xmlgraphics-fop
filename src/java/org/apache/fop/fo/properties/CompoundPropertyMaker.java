@@ -139,9 +139,8 @@ public class CompoundPropertyMaker extends PropertyMaker {
      * @return the property
      * @throws PropertyException if a property exception occurs
      */
-    public Property get(int subpropertyId, PropertyList propertyList,
-                        boolean tryInherit, boolean tryDefault)
-        throws PropertyException {
+    public Property get(int subpropertyId, PropertyList propertyList, boolean tryInherit,
+            boolean tryDefault) throws PropertyException {
         Property p = super.get(subpropertyId, propertyList, tryInherit, tryDefault);
         if (subpropertyId != 0 && p != null) {
             p = getSubprop(p, subpropertyId);
@@ -254,7 +253,7 @@ public class CompoundPropertyMaker extends PropertyMaker {
      * @throws PropertyException ...
      */
     protected Property makeCompound(PropertyList propertyList, FObj parentFO)
-        throws PropertyException {
+            throws PropertyException {
         Property p = makeNewProperty();
         CompoundDatatype data = (CompoundDatatype) p.getObject();
         for (int i = 0; i < Constants.COMPOUND_COUNT; i++) {

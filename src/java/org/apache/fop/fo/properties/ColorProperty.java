@@ -99,7 +99,7 @@ public final class ColorProperty extends Property  {
      * @see ColorUtil#parseColorString(FOUserAgent, String)
      */
     public static ColorProperty getInstance(FOUserAgent foUserAgent, String value)
-        throws PropertyException {
+            throws PropertyException {
         ColorProperty instance = new ColorProperty(
                                        ColorUtil.parseColorString(
                                                foUserAgent, value));

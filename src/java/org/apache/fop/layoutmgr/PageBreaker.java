@@ -554,7 +554,7 @@ public class PageBreaker extends AbstractBreaker {
      */
     private boolean needBlankPageBeforeNew(int breakVal) {
         if (breakVal == Constants.EN_PAGE
-            || (pslm.getCurrentPage().getPageViewport().getPage().isEmpty())) {
+                || (pslm.getCurrentPage().getPageViewport().getPage().isEmpty())) {
             // any page is OK or we already have an empty page
             return false;
         } else {

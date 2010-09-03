@@ -212,7 +212,7 @@ public class Root extends FObj {
      * @throws IllegalArgumentException for negative additional page counts
      */
     public void notifyPageSequenceFinished(int lastPageNumber, int additionalPages)
-      throws IllegalArgumentException {
+            throws IllegalArgumentException {
 
         if (additionalPages >= 0) {
             totalPagesGenerated += additionalPages;
