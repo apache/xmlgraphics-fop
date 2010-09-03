@@ -44,7 +44,7 @@ public class PageDimensionMaker extends LengthProperty.Maker {
      * Return the default or user-defined fallback in case the value
      * was specified as "auto"
      * @param subpropId  The subproperty id of the property being retrieved.
-     *        Is 0 when retriving a base property.
+     *        Is 0 when retrieving a base property.
      * @param propertyList The PropertyList object being built for this FO.
      * @param tryInherit true if inherited properties should be examined.
      * @param tryDefault true if the default value should be returned.

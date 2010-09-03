@@ -113,7 +113,7 @@ public class ObjectContainer extends AbstractDataObject {
     }
 
     /**
-     * Sets the data for the the object container
+     * Sets the data for the object container
      *
      * @param data a byte array
      */

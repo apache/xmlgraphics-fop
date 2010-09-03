@@ -20,14 +20,6 @@
 package org.apache.fop.tools.anttasks;
 
 // Ant
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.DirectoryScanner;
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.Task;
-import org.apache.tools.ant.types.FileSet;
-import org.apache.tools.ant.util.GlobPatternMapper;
-
-// Java
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -36,16 +28,22 @@ import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Vector;
 
-// FOP
+import org.xml.sax.SAXException;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.impl.SimpleLog;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.DirectoryScanner;
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.Task;
+import org.apache.tools.ant.types.FileSet;
+import org.apache.tools.ant.util.GlobPatternMapper;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.cli.InputHandler;
-
-import org.apache.commons.logging.impl.SimpleLog;
-import org.apache.commons.logging.Log;
-import org.xml.sax.SAXException;
 
 /**
  * Wrapper for FOP which allows it to be accessed from within an Ant task.
@@ -156,7 +154,7 @@ public class Fop extends Task {
     }
 
     /**
-     * Sets the XSLT parameters 
+     * Sets the XSLT parameters
      * @param xsltParams the XSLT parameters
      */
     public void setXsltParams(String xsltParams) {
@@ -267,7 +265,7 @@ public class Fop extends Task {
     /**
      * Set whether exceptions are thrown.
      * default is false.
-     * @param throwExceptions true if should be thrown
+     * @param throwExceptions true if exceptions should be thrown
      */
     public void setThrowexceptions(boolean throwExceptions) {
         this.throwExceptions = throwExceptions;
@@ -553,7 +551,7 @@ class FOPTaskStarter {
                 // OR output file doesn't exist OR
                 // output file is older than input file
                 if (task.getForce() || !outf.exists()
-                    || (task.getXmlFile().lastModified() > outf.lastModified()
+                        || (task.getXmlFile().lastModified() > outf.lastModified()
                         || task.getXsltFile().lastModified() > outf.lastModified())) {
                     render(task.getXmlFile(), task.getXsltFile(), outf, outputFormat);
                     actioncount++;
@@ -639,8 +637,8 @@ class FOPTaskStarter {
         }
     }
 
-    private void renderInputHandler
-        (InputHandler inputHandler, File outFile, String outputFormat) throws Exception {
+    private void renderInputHandler(InputHandler inputHandler, File outFile, String outputFormat)
+            throws Exception {
         OutputStream out = null;
         try {
             out = new java.io.FileOutputStream(outFile);

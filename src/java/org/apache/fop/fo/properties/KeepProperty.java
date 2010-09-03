@@ -62,7 +62,7 @@ public final class KeepProperty extends Property implements CompoundDatatype {
          * {@inheritDoc}
          */
         public Property convertProperty(Property p, PropertyList propertyList, FObj fo)
-            throws PropertyException {
+                throws PropertyException {
             if (p instanceof KeepProperty) {
                 return p;
             }
