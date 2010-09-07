@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks multi-column documents. Check that spanned section that are broken over
+      to multiple pages still respect the span setting. This particular test makes sure that pages with different region-body
+      height are handled properly.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="odd-page" page-height="3.5cm" page-width="4cm" margin="0.45cm">
+          <fo:region-body margin-top="12pt * 1.2 * 2" column-count="2" background-color="yellow"/>
+        </fo:simple-page-master>
+        <fo:simple-page-master master-name="even-page" page-height="3.5cm" page-width="4cm" margin="0.45cm">
+          <fo:region-body column-count="2" background-color="orange"/>
+        </fo:simple-page-master>
+        <fo:page-sequence-master master-name="master">
+          <fo:repeatable-page-master-alternatives>
+            <fo:conditional-page-master-reference master-reference="odd-page" odd-or-even="odd" blank-or-not-blank="not-blank"/>
+            <fo:conditional-page-master-reference master-reference="even-page" odd-or-even="even" blank-or-not-blank="not-blank"/>
+          </fo:repeatable-page-master-alternatives>
+        </fo:page-sequence-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="master">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block span="all">
+            <fo:block>Line 1</fo:block>
+            <fo:block>Line 2</fo:block>
+            <fo:block>Line 3</fo:block>
+            <fo:block>Line 4</fo:block>
+            <fo:block>Line 5</fo:block>
+            <fo:block>Line 6</fo:block>
+            <fo:block>Line 7</fo:block>
+            <fo:block>Line 8</fo:block>
+            <fo:block>Line 9</fo:block>
+            <fo:block>Line 10</fo:block>
+            <fo:block>Line 11</fo:block>
+            <fo:block>Line 12</fo:block>
+            <fo:block>Line 13</fo:block>
+            <fo:block>Line 14</fo:block>
+            <fo:block>Line 15</fo:block>
+            <fo:block>Line 16</fo:block>
+            <fo:block>Line 17</fo:block>
+            <fo:block>Line 18</fo:block>
+            <fo:block>Line 19</fo:block>
+            <fo:block>Line 20</fo:block>
+            <fo:block>Line 21</fo:block>
+            <fo:block>Line 22</fo:block>
+          </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="6" xpath="count(//pageViewport)"/>
+    
+    <eval expected="3" xpath="count(//pageViewport[@nr=1]//lineArea)"/>
+    <eval expected="5" xpath="count(//pageViewport[@nr=2]//lineArea)"/>
+    <eval expected="3" xpath="count(//pageViewport[@nr=3]//lineArea)"/>
+    <eval expected="5" xpath="count(//pageViewport[@nr=4]//lineArea)"/>
+    <eval expected="3" xpath="count(//pageViewport[@nr=5]//lineArea)"/>
+    <eval expected="3" xpath="count(//pageViewport[@nr=6]//lineArea)"/>
+    
+  </checks>
+</testcase>
