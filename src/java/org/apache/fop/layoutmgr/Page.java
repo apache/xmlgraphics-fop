@@ -41,10 +41,12 @@ public class Page {
      * @param pageNumber the page number (as an int)
      * @param pageNumberStr the page number (as a String)
      * @param blank true if this is a blank page
+     * @param spanAll true if the first span area spans all columns
      */
-    public Page(SimplePageMaster spm, int pageNumber, String pageNumberStr, boolean blank) {
+    public Page(SimplePageMaster spm, int pageNumber, String pageNumberStr,
+            boolean blank, boolean spanAll) {
         this.spm = spm;
-        this.pageViewport = new PageViewport(spm, pageNumber, pageNumberStr, blank);
+        this.pageViewport = new PageViewport(spm, pageNumber, pageNumberStr, blank, spanAll);
     }
 
     /**

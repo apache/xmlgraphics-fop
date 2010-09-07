@@ -51,6 +51,7 @@ public class PageProvider implements Constants {
     private int startPageOfPageSequence;
     private int startPageOfCurrentElementList;
     private int startColumnOfCurrentElementList;
+    private boolean spanAllForCurrentElementList;
     private List cachedPages = new java.util.ArrayList();
 
     private int lastPageIndex = -1;
@@ -88,12 +89,17 @@ public class PageProvider implements Constants {
      * on so it can later retrieve PageViewports relative to this first page.
      * @param startPage the number of the first page for the element list.
      * @param startColumn the starting column number for the element list.
+     * @param spanAll true if the current element list is for a column-spanning section
      */
-    public void setStartOfNextElementList(int startPage, int startColumn) {
-        log.debug("start of the next element list is:"
-                + " page=" + startPage + " col=" + startColumn);
+    public void setStartOfNextElementList(int startPage, int startColumn, boolean spanAll) {
+        if (log.isDebugEnabled()) {
+            log.debug("start of the next element list is:"
+                    + " page=" + startPage + " col=" + startColumn
+                    + (spanAll ? ", column-spanning" : ""));
+        }
         this.startPageOfCurrentElementList = startPage - startPageOfPageSequence + 1;
         this.startColumnOfCurrentElementList = startColumn;
+        this.spanAllForCurrentElementList = spanAll;
         //Reset Cache
         this.lastRequestedIndex = -1;
         this.lastReportedBPD = -1;
@@ -290,7 +296,7 @@ public class PageProvider implements Constants {
             if (log.isTraceEnabled()) {
                 log.trace("Caching " + index);
             }
-            cacheNextPage(index, isBlank, isLastPage);
+            cacheNextPage(index, isBlank, isLastPage, this.spanAllForCurrentElementList);
         }
         Page page = (Page)cachedPages.get(intIndex);
         boolean replace = false;
@@ -306,7 +312,7 @@ public class PageProvider implements Constants {
         }
         if (replace) {
             discardCacheStartingWith(intIndex);
-            page = cacheNextPage(index, isBlank, isLastPage);
+            page = cacheNextPage(index, isBlank, isLastPage, this.spanAllForCurrentElementList);
         }
         return page;
     }
@@ -320,7 +326,7 @@ public class PageProvider implements Constants {
         }
     }
 
-    private Page cacheNextPage(int index, boolean isBlank, boolean isLastPage) {
+    private Page cacheNextPage(int index, boolean isBlank, boolean isLastPage, boolean spanAll) {
         String pageNumberString = pageSeq.makeFormattedPageNumber(index);
         boolean isFirstPage = (startPageOfPageSequence == index);
         SimplePageMaster spm = pageSeq.getNextSimplePageMaster(
@@ -335,7 +341,7 @@ public class PageProvider implements Constants {
             eventProducer.flowNotMappingToRegionBody(this,
                     pageSeq.getMainFlow().getFlowName(), spm.getMasterName(), spm.getLocator());
         }
-        Page page = new Page(spm, index, pageNumberString, isBlank);
+        Page page = new Page(spm, index, pageNumberString, isBlank, spanAll);
         //Set unique key obtained from the AreaTreeHandler
         page.getPageViewport().setKey(areaTreeHandler.generatePageViewportKey());
         page.getPageViewport().setForeignAttributes(spm.getForeignAttributes());
