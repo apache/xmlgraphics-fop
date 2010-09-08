@@ -359,9 +359,9 @@ public class DataStream {
      * @param charSet is the AFP Character Set to use with the text
      * @throws UnsupportedEncodingException thrown if character encoding is not supported
      */
-    public void createText
-        ( final AFPTextDataInfo textDataInfo, final int letterSpacing, final int wordSpacing,
-          final Font font, final CharacterSet charSet) throws UnsupportedEncodingException {
+    public void createText(final AFPTextDataInfo textDataInfo, final int letterSpacing,
+            final int wordSpacing, final Font font, final CharacterSet charSet)
+            throws UnsupportedEncodingException {
         int rotation = paintingState.getRotation();
         if (rotation != 0) {
             textDataInfo.setRotation(rotation);

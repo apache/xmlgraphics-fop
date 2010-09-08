@@ -59,18 +59,23 @@ http://maven.apache.org/maven-v4_0_0.xsd">
   <scm>
     <connection>scm:svn:http://svn.apache.org/repos/asf/xmlgraphics/fop/trunk</connection>
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/xmlgraphics/fop/trunk</developerConnection>
-    <url>http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop/trunk/?root=Apache-SVN</url>
+    <url>http://svn.apache.org/viewvc/xmlgraphics/fop/trunk/?root=Apache-SVN</url>
   </scm>
   <organization>
     <name>Apache Software Foundation</name>
     <url>http://www.apache.org/</url>
   </organization>
+  <parent>
+	<groupId>org.apache</groupId>
+	<artifactId>apache</artifactId>
+	<version>7</version>
+  </parent>
   <dependencies>
     <!-- XML Graphics -->
     <dependency>
       <groupId>org.apache.xmlgraphics</groupId>
       <artifactId>xmlgraphics-commons</artifactId>
-      <version>1.3</version>
+      <version>1.4</version>
     </dependency>
     <dependency>
       <groupId>org.apache.xmlgraphics</groupId>
