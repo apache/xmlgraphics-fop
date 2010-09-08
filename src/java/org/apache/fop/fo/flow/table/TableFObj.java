@@ -217,11 +217,10 @@ public abstract class TableFObj extends FObj implements StructurePointerProperty
                          */
                         i = 1;
                     }
-                    TableEventProducer eventProducer
-                        = TableEventProducer.Provider.get(fo.getUserAgent().getEventBroadcaster());
-                    eventProducer.forceNextColumnNumber
-                        (this, propertyList.getFObj().getName(),
-                         val, i, propertyList.getFObj().getLocator());
+                    TableEventProducer eventProducer = TableEventProducer.Provider.get(
+                            fo.getUserAgent().getEventBroadcaster());
+                    eventProducer.forceNextColumnNumber(this, propertyList.getFObj().getName(),
+                            val, i, propertyList.getFObj().getLocator());
                 }
                 return NumberProperty.getInstance(i);
             }
@@ -231,9 +230,8 @@ public abstract class TableFObj extends FObj implements StructurePointerProperty
     }
 
     /** {@inheritDoc} */
-    public void processNode
-        (String elementName, Locator locator, Attributes attlist, PropertyList pList)
-        throws FOPException {
+    public void processNode(String elementName, Locator locator, Attributes attlist,
+            PropertyList pList) throws FOPException {
         super.processNode(elementName, locator, attlist, pList);
         Table table = getTable();
         if (!inMarker() && !table.isSeparateBorderModel()) {

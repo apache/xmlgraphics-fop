@@ -92,7 +92,7 @@ public final class CommonHyphenation {
      * @throws PropertyException if a a property exception occurs
      */
     public static CommonHyphenation getInstance(PropertyList propertyList)
-        throws PropertyException {
+            throws PropertyException {
         StringProperty language
             = (StringProperty) propertyList.get(Constants.PR_LANGUAGE);
         StringProperty country
