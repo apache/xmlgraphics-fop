@@ -38,6 +38,7 @@ import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.image.loader.batik.BatikImageFlavors;
+import org.apache.fop.image.loader.batik.BatikUtil;
 import org.apache.fop.render.ImageHandler;
 import org.apache.fop.render.RenderingContext;
 import org.apache.fop.render.pdf.PDFLogicalStructureHandler.MarkedContentInfo;
@@ -46,6 +47,7 @@ import org.apache.fop.svg.PDFBridgeContext;
 import org.apache.fop.svg.PDFGraphics2D;
 import org.apache.fop.svg.SVGEventProducer;
 import org.apache.fop.svg.SVGUserAgent;
+import org.w3c.dom.Document;
 
 /**
  * Image Handler implementation which handles SVG images.
@@ -82,10 +84,14 @@ public class PDFImageHandlerSVG implements ImageHandler {
                 userAgent.getFactory().getImageManager(),
                 userAgent.getImageSessionContext(),
                 new AffineTransform());
+        
+        //Cloning SVG DOM as Batik attaches non-thread-safe facilities (like the CSS engine)
+        //to it.
+        Document clonedDoc = BatikUtil.cloneSVGDocument(imageSVG.getDocument());
 
         GraphicsNode root;
         try {
-            root = builder.build(ctx, imageSVG.getDocument());
+            root = builder.build(ctx, clonedDoc);
             builder = null;
         } catch (Exception e) {
             SVGEventProducer eventProducer = SVGEventProducer.Provider.get(
