@@ -58,6 +58,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="JM" type="fix" fixes-bug="46360" due-to="Alexis Giotis">
+        Fixed a multi-threading issue when rendering SVG.
+      </action>
       <action context="Layout" dev="JM" type="fix" fixes-bug="49885">
         Fixed retrieval of available BPD for cases spanning columns and multiple pages with differing page masters.
       </action>
