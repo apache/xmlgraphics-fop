@@ -51,8 +51,8 @@
       <p>
         Binary distributions include "-bin" in their names, and can be downloaded from a
         <link href="http://www.apache.org/dyn/closer.cgi/xmlgraphics/fop">FOP Distribution mirror</link>.
-        Nightly builds of trunk source code can be downloaded here:
-        <link href="http://vc.apache.org/snapshots/fop/">Snapshot Trunk Builds</link>
+        Nightly builds of trunk code can be downloaded here:
+        <link href="http://ci.apache.org/projects/xmlgraphics/fop/snapshots/">Nightly Snapshots</link>.
       </p>
     </section>
     <section id="source">
@@ -67,13 +67,12 @@
           <link href="http://www.apache.org/dyn/closer.cgi/xmlgraphics/fop">FOP Distribution mirror</link>.
           Source distributions include "-src" in their names.
         </li>
-        <!--li>
-          Download a CVS snapshot from the cvs files
-          <link href="http://xml.apache.org/from-cvs/xml-fop/">here</link>.
-          These snapshots are built approximately every six hours, and have the GMT of
-          their creation time embedded in their names. Please note that CVS snapshots
-          are made only for the "redesign" branch.
-        </li-->
+        <li>
+          Download a Subversion snapshot
+          <link href="http://vc.apache.org/snapshots/fop/">here</link>.
+          These snapshots are checked out from Subversion approximately every six hours, and have the GMT of
+          their creation time embedded in their names.
+        </li>
         <li>
           Download directly from the SVN repository.
           Anyone can do this using the
