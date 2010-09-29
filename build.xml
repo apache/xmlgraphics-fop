@@ -1048,7 +1048,6 @@ NOTE:
         <pathelement path="${src.sandbox.dir}"/>
         <pathelement path="${build.gensrc.dir}"/>
       </sourcepath>
-      <tag name="asf.todo" scope="all" description="To do:"/>
       <tag name="event.severity" scope="all" description="Event severity level:"/>
       <group title="Control and Startup">
         <package name="org.apache.fop"/>
