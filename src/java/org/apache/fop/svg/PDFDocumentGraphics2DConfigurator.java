@@ -25,12 +25,15 @@ import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
 
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.fonts.CustomFontCollection;
+import org.apache.fop.fonts.FontCollection;
 import org.apache.fop.fonts.FontEventListener;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontInfoConfigurator;
 import org.apache.fop.fonts.FontManager;
+import org.apache.fop.fonts.FontManagerConfigurator;
 import org.apache.fop.fonts.FontResolver;
-import org.apache.fop.fonts.FontSetup;
+import org.apache.fop.fonts.base14.Base14FontCollection;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.render.pdf.PDFRendererConfigurator;
 
@@ -70,29 +73,30 @@ public class PDFDocumentGraphics2DConfigurator {
      */
     public static FontInfo createFontInfo(Configuration cfg) throws FOPException {
         FontInfo fontInfo = new FontInfo();
+        final boolean strict = false;
+        FontResolver fontResolver = FontManager.createMinimalFontResolver();
+        //TODO The following could be optimized by retaining the FontManager somewhere
+        FontManager fontManager = new FontManager();
         if (cfg != null) {
-            FontResolver fontResolver = FontManager.createMinimalFontResolver();
-            //TODO The following could be optimized by retaining the FontManager somewhere
-            FontManager fontManager = new FontManager();
+            FontManagerConfigurator fmConfigurator = new FontManagerConfigurator(cfg);
+            fmConfigurator.configure(fontManager, strict);
+        }
 
-            //TODO Make use of fontBaseURL, font substitution and referencing configuration
-            //Requires a change to the expected configuration layout
+        List fontCollections = new java.util.ArrayList();
+        fontCollections.add(new Base14FontCollection(fontManager.isBase14KerningEnabled()));
 
+        if (cfg != null) {
             //TODO Wire in the FontEventListener
-            final FontEventListener listener = null;
-            final boolean strict = false;
+            FontEventListener listener = null; //new FontEventAdapter(eventBroadcaster);
             FontInfoConfigurator fontInfoConfigurator
                 = new FontInfoConfigurator(cfg, fontManager, fontResolver, listener, strict);
             List/*<EmbedFontInfo>*/ fontInfoList = new java.util.ArrayList/*<EmbedFontInfo>*/();
             fontInfoConfigurator.configure(fontInfoList);
-
-            if (fontManager.useCache()) {
-                fontManager.getFontCache().save();
-            }
-            FontSetup.setup(fontInfo, fontInfoList, fontResolver);
-        } else {
-            FontSetup.setup(fontInfo);
+            fontCollections.add(new CustomFontCollection(fontResolver, fontInfoList));
         }
+        fontManager.setup(fontInfo,
+                (FontCollection[])fontCollections.toArray(
+                        new FontCollection[fontCollections.size()]));
         return fontInfo;
     }
 

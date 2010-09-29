@@ -29,6 +29,7 @@ import org.w3c.dom.DOMImplementation;
 
 import org.xml.sax.EntityResolver;
 
+import org.apache.avalon.framework.configuration.Configurable;
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.avalon.framework.configuration.DefaultConfiguration;
@@ -55,7 +56,7 @@ import org.apache.xmlgraphics.image.loader.impl.AbstractImageSessionContext;
 /**
  * This is the common base class of all of FOP's transcoders.
  */
-public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder {
+public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder implements Configurable {
 
     /**
      * The key is used to specify the resolution for on-the-fly images generated
