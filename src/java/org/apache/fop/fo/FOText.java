@@ -820,6 +820,20 @@ public class FOText extends FONode implements CharSequence {
     }
 
     /**
+     * Obtain length of mapping of characters over specific interval.
+     * @param start index in character buffer
+     * @param end index in character buffer
+     * @return the length of the mapping (if present) or zero
+     */
+    public int getMappingLength ( int start, int end ) {
+        if ( mappings != null ) {
+            return ( (String) mappings.get ( new MapRange ( start, end ) ) ) .length();
+        } else {
+            return 0;
+        }
+    }
+
+    /**
      * Obtain bidirectional levels of mapping of characters over specific interval.
      * @param start index in character buffer
      * @param end index in character buffer
@@ -827,8 +841,25 @@ public class FOText extends FONode implements CharSequence {
      * in case no bidi levels have been assigned
      */
     public int[] getMappingBidiLevels ( int start, int end ) {
-        if ( mappings != null ) {
-            return getBidiLevels ( start, end ); // [TBD] FIX ME
+        if ( hasMapping ( start, end ) ) {
+            int   nc = end - start;
+            int   nm = getMappingLength ( start, end );
+            int[] la = getBidiLevels ( start, end );
+            if ( nm == nc ) {                   // mapping is same length as mapped range
+                return la;
+            } else if ( nm > nc ) {             // mapping is longer than mapped range
+                int[] ma = new int [ nm ];
+                System.arraycopy ( la, 0, ma, 0, la.length );
+                for ( int i = la.length,
+                          n = ma.length, l = ( i > 0 ) ? la [ i - 1 ] : 0; i < n; i++ ) {
+                    ma [ i ] = l;
+                }
+                return ma;
+            } else {                            // mapping is shorter than mapped range
+                int[] ma = new int [ nm ];
+                System.arraycopy ( la, 0, ma, 0, ma.length );
+                return ma;
+            }
         } else {
             return getBidiLevels ( start, end );
         }

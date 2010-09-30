@@ -28,9 +28,9 @@ public interface GlyphContextTester {
     /**
      * Perform a test on a glyph sequence in a specific (originating) character context.
      * @param gs glyph sequence to test
-     * @param ca character association defining the context of test
+     * @param index index into glyph sequence to test
      * @return true if test is satisfied
      */
-    boolean test ( GlyphSequence gs, GlyphSequence.CharAssociation ca );
+    boolean test ( GlyphSequence gs, int index );
 
 }

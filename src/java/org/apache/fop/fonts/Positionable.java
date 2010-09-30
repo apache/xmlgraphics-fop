@@ -39,8 +39,20 @@ public interface Positionable {
      * @param cs character sequence to map to position offsets (advancement adjustments)
      * @param script a script identifier
      * @param language a language identifier
-     * @return array (sequence) of pairs of position offsets, one pair for each element of character sequence
+     * @param fontSize font size
+     * @return array (sequence) of 4-tuples of placement [PX,PY] and advance [AX,AY] adjustments, in that order,
+     * with one 4-tuple for each element of glyph sequence, or null if no non-zero adjustment applies
      */
-    int[] performPositioning ( CharSequence cs, String script, String language );
+    int[][] performPositioning ( CharSequence cs, String script, String language, int fontSize );
+
+    /**
+     * Perform glyph positioning using an implied font size.
+     * @param cs character sequence to map to position offsets (advancement adjustments)
+     * @param script a script identifier
+     * @param language a language identifier
+     * @return array (sequence) of 4-tuples of placement [PX,PY] and advance [AX,AY] adjustments, in that order,
+     * with one 4-tuple for each element of glyph sequence, or null if no non-zero adjustment applies
+     */
+    int[][] performPositioning ( CharSequence cs, String script, String language );
 
 }

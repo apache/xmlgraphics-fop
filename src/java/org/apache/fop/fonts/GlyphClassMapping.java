@@ -22,20 +22,27 @@ package org.apache.fop.fonts;
 // CSOFF: LineLengthCheck
 
 /**
- * The <code>GlyphSubstitution</code> interface is implemented by a glyph substitution subtable
- * that supports the determination of glyph substitution information based on script and
- * language of the corresponding character content.
+ * The <code>GlyphClassMapping</code> interface provides glyph identifier to class
+ * index mapping support.
  * @author Glenn Adams
  */
-public interface GlyphSubstitution {
+public interface GlyphClassMapping {
 
     /**
-     * Perform glyph substitution at the current index, mutating the substitution state object as required.
-     * Only the context associated with the current index is processed.
-     * @param ss glyph substitution state object
-     * @return true if the glyph subtable was applied, meaning that the current context matches the
-     * associated input context glyph coverage table
+     * Obtain size of class table, i.e., ciMax + 1, where ciMax is the maximum
+     * class index.
+     * @param set for coverage set based class mappings, indicates set index, otherwise ignored
+     * @return size of class table
      */
-    boolean substitute ( GlyphSubstitutionState ss );
+    int getClassSize ( int set );
+
+    /**
+     * Map glyph identifier (code) to coverge index. Returns -1 if glyph identifier is not in the domain of
+     * the class table.
+     * @param gid glyph identifier (code)
+     * @param set for coverage set based class mappings, indicates set index, otherwise ignored
+     * @return non-negative glyph class index or -1 if glyph identifiers is not mapped by table
+     */
+    int getClassIndex ( int gid, int set );
 
 }

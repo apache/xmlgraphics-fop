@@ -57,6 +57,7 @@ import org.apache.fop.render.intermediate.BorderPainter;
 import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFState;
+import org.apache.fop.render.intermediate.IFUtil;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.traits.RuleStyle;
 import org.apache.fop.util.CharUtilities;
@@ -318,8 +319,8 @@ public class AFPPainter extends AbstractIFPainter {
 
     /** {@inheritDoc} */
     public void drawText(                                        // CSOK: MethodLength
-            int x, int y, final int letterSpacing, final int wordSpacing, final int[] dx,
-            final String text) throws IFException {
+            int x, int y, final int letterSpacing, final int wordSpacing,
+            final int[][] dp, final String text) throws IFException {
         final int fontSize = this.state.getFontSize();
         getPaintingState().setFontSize(fontSize);
 
@@ -368,6 +369,7 @@ public class AFPPainter extends AbstractIFPainter {
                     builder.setCodedFont((byte)fontReference);
 
                     int l = text.length();
+                    int[] dx = IFUtil.convertDPToDX ( dp );
                     int dxl = (dx != null ? dx.length : 0);
                     StringBuffer sb = new StringBuffer();
 

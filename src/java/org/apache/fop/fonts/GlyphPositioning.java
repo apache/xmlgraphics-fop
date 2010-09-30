@@ -22,7 +22,7 @@ package org.apache.fop.fonts;
 // CSOFF: LineLengthCheck
 
 /**
- * The <code>GlyphPositioning</code> interface is implemented by a font related object
+ * The <code>GlyphPositioning</code> interface is implemented by a glyph positioning subtable
  * that supports the determination of glyph positioning information based on script and
  * language of the corresponding character content.
  * @author Glenn Adams
@@ -30,13 +30,14 @@ package org.apache.fop.fonts;
 public interface GlyphPositioning {
 
     /**
-     * Perform glyph positioning.
-     * @param gs sequence to map to output glyph sequence
-     * @param script the script associated with the characters corresponding to the glyph sequence
-     * @param language the language associated with the characters corresponding to the glyph sequence
-     * @return array (sequence) of pairs of position [DX,DY] offsets, one pair for each element of
-     * glyph sequence, or null if no non-zero offset applies
+     * Perform glyph positioning at the current index, mutating the positioning state object as required.
+     * Only the context associated with the current index is processed.
+     * @param ps glyph positioning state object
+     * @return true if the glyph subtable applies, meaning that the current context matches the
+     * associated input context glyph coverage table; note that returning true does not mean any position
+     * adjustment occurred; it only means that no further glyph subtables for the current lookup table
+     * should be applied.
      */
-    int[] position ( GlyphSequence gs, String script, String language );
+    boolean position ( GlyphPositioningState ps );
 
 }

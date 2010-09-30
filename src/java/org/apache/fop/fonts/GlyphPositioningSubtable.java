@@ -19,7 +19,11 @@
 
 package org.apache.fop.fonts;
 
+import java.util.List;
+
 // CSOFF: LineLengthCheck
+// CSOFF: NoWhitespaceAfterCheck
+// CSOFF: ParameterNumberCheck
 
 /**
  * The <code>GlyphPositioningSubtable</code> implements an abstract base of a glyph subtable,
@@ -51,12 +55,59 @@ public abstract class GlyphPositioningSubtable extends GlyphSubtable implements 
     }
 
     /** {@inheritDoc} */
-    public int[] position ( GlyphSequence gs, String script, String language ) {
-        if ( gs == null ) {
-            throw new IllegalArgumentException ( "invalid glyph sequence: must not be null" );
-        } else {
-            return null;
+    public boolean isCompatible ( GlyphSubtable subtable ) {
+        return subtable instanceof GlyphPositioningSubtable;
+    }
+
+    /** {@inheritDoc} */
+    public boolean usesReverseScan() {
+        return false;
+    }
+
+    /** {@inheritDoc} */
+    public boolean position ( GlyphPositioningState ps ) {
+        return false;
+    }
+
+    /**
+     * Apply positioning using specified state and subtable array. For each position in input sequence,
+     * apply subtables in order until some subtable applies or none remain. If no subtable applied or no
+     * input was consumed for a given position, then apply default action (no adjustments and advance).
+     * If <code>sequenceIndex</code> is non-negative, then apply subtables only when current position
+     * matches <code>sequenceIndex</code> in relation to the starting position. Furthermore, upon
+     * successful application at <code>sequenceIndex</code>, then discontinue processing the remaining
+     * @param ps positioning state
+     * @param sta array of subtables to apply
+     * @param sequenceIndex if non negative, then apply subtables only at specified sequence index
+     * @return true if a non-zero adjustment occurred
+     */
+    static final boolean position ( GlyphPositioningState ps, GlyphPositioningSubtable[] sta, int sequenceIndex ) {
+        int sequenceStart = ps.getPosition();
+        boolean appliedOneShot = false;
+        while ( ps.hasNext() ) {
+            boolean applied = false;
+            if ( ! appliedOneShot && ps.maybeApplicable() ) {
+                for ( int i = 0, n = sta.length; ! applied && ( i < n ); i++ ) {
+                    if ( sequenceIndex < 0 ) {
+                        applied = ps.apply ( sta [ i ] );
+                    } else if ( ps.getPosition() == ( sequenceStart + sequenceIndex ) ) {
+                        applied = ps.apply ( sta [ i ] );
+                        if ( applied ) {
+                            appliedOneShot = true;
+                        }
+                    }
+                }
+            }
+            if ( ! applied || ! ps.didConsume() ) {
+                ps.applyDefault();
+            }
+            ps.next();
         }
+        return ps.getAdjusted();
+    }
+
+    static final boolean position ( GlyphSequence gs, String script, String language, String feature, int fontSize, GlyphPositioningSubtable[] sta, int[] widths, int[][] adjustments, ScriptContextTester sct ) {
+        return position ( new GlyphPositioningState ( gs, script, language, feature, fontSize, widths, adjustments, sct ), sta, -1 );
     }
 
 }

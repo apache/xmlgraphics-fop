@@ -20,6 +20,7 @@
 package org.apache.fop.fonts;
 
 // CSOFF: LineLengthCheck
+// CSOFF: NoWhitespaceAfterCheck
 
 /**
  * The <code>GlyphSubstitutionSubtable</code> implements an abstract base of a glyph substitution subtable,
@@ -51,12 +52,60 @@ public abstract class GlyphSubstitutionSubtable extends GlyphSubtable implements
     }
 
     /** {@inheritDoc} */
-    public GlyphSequence substitute ( GlyphSequence gs, String script, String language ) {
-        if ( gs == null ) {
-            throw new IllegalArgumentException ( "invalid glyph sequence: must not be null" );
-        } else {
-            return gs;
+    public boolean isCompatible ( GlyphSubtable subtable ) {
+        return subtable instanceof GlyphSubstitutionSubtable;
+    }
+
+    /** {@inheritDoc} */
+    public boolean usesReverseScan() {
+        return false;
+    }
+
+    /** {@inheritDoc} */
+    public boolean substitute ( GlyphSubstitutionState ss ) {
+        return false;
+    }
+
+    /**
+     * Apply substitutions using specified state and subtable array. For each position in input sequence,
+     * apply subtables in order until some subtable applies or none remain. If no subtable applied or no
+     * input was consumed for a given position, then apply default action (copy input glyph and advance).
+     * If <code>sequenceIndex</code> is non-negative, then apply subtables only when current position
+     * matches <code>sequenceIndex</code> in relation to the starting position. Furthermore, upon
+     * successful application at <code>sequenceIndex</code>, then apply default action for all remaining
+     * glyphs in input sequence.
+     * @param ss substitution state
+     * @param sta array of subtables to apply
+     * @param sequenceIndex if non negative, then apply subtables only at specified sequence index
+     * @return output glyph sequence
+     */
+    public static final GlyphSequence substitute ( GlyphSubstitutionState ss, GlyphSubstitutionSubtable[] sta, int sequenceIndex ) {
+        int sequenceStart = ss.getPosition();
+        boolean appliedOneShot = false;
+        while ( ss.hasNext() ) {
+            boolean applied = false;
+            if ( ! appliedOneShot && ss.maybeApplicable() ) {
+                for ( int i = 0, n = sta.length; ! applied && ( i < n ); i++ ) {
+                    if ( sequenceIndex < 0 ) {
+                        applied = ss.apply ( sta [ i ] );
+                    } else if ( ss.getPosition() == ( sequenceStart + sequenceIndex ) ) {
+                        applied = ss.apply ( sta [ i ] );
+                        if ( applied ) {
+                            appliedOneShot = true;
+                        }
+                    }
+                }
+            }
+            if ( ! applied || ! ss.didConsume() ) {
+                ss.applyDefault();
+            }
+            ss.next();
         }
+        return ss.getOutput();
+    }
+
+    static final GlyphSequence substitute ( GlyphSequence gs, String script, String language, String feature, GlyphSubstitutionSubtable[] sta, ScriptContextTester sct ) {
+        return substitute ( new GlyphSubstitutionState ( gs, script, language, feature, sct ), sta, -1 );
     }
 
 }

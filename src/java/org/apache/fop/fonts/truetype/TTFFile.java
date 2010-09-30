@@ -20,6 +20,7 @@
 package org.apache.fop.fonts.truetype;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Iterator;
 import java.util.List;
@@ -33,13 +34,19 @@ import org.apache.xmlgraphics.fonts.Glyphs;
 
 
 import org.apache.fop.fonts.FontUtil;
+import org.apache.fop.fonts.GlyphClassTable;
 import org.apache.fop.fonts.GlyphCoverageTable;
+import org.apache.fop.fonts.GlyphDefinitionSubtable;
+import org.apache.fop.fonts.GlyphDefinitionTable;
+import org.apache.fop.fonts.GlyphMappingTable;
 import org.apache.fop.fonts.GlyphPositioningSubtable;
 import org.apache.fop.fonts.GlyphPositioningTable;
 import org.apache.fop.fonts.GlyphSubstitutionSubtable;
 import org.apache.fop.fonts.GlyphSubstitutionTable;
 import org.apache.fop.fonts.GlyphSubtable;
 import org.apache.fop.fonts.GlyphTable;
+
+import org.apache.fop.util.CharUtilities;
 
 // CSOFF: AvoidNestedBlocksCheck
 // CSOFF: NoWhitespaceAfterCheck
@@ -59,9 +66,6 @@ public class TTFFile {
     static final int MAX_CHAR_CODE = 255;
     static final int ENC_BUF_SIZE = 1024;
 
-    /** Set to true to get even more debug output than with level DEBUG */
-    public static final boolean TRACE_ENABLED = false;
-
     private String encoding = "WinAnsiEncoding";    // Default encoding
 
     private short firstChar = 0;
@@ -74,7 +78,7 @@ public class TTFFile {
     private Map kerningTab;                          // for CIDs
     private Map ansiKerningTab;                      // For winAnsiEncoding
     private List cmaps;
-    private List unicodeMapping;
+    private Set unicodeMappings;
 
     private int upem;                                // unitsPerEm from "head" table
     private int nhmtx;                               // Number of horizontal metrics
@@ -140,9 +144,10 @@ public class TTFFile {
     private Map/*<String,Object[3]>*/ seScripts;
     private Map/*<String,Object[2]>*/ seLanguages;
     private Map/*<String,List<String>>*/ seFeatures;
-    private List seCoverage;
+    private GlyphMappingTable seMapping;
     private List seEntries;
     private List seSubtables;
+    private GlyphDefinitionTable gdef;
     private GlyphSubstitutionTable gsub;
     private GlyphPositioningTable gpos;
 
@@ -154,7 +159,7 @@ public class TTFFile {
     /**
      * Key-value helper class
      */
-    class UnicodeMapping {
+    class UnicodeMapping implements Comparable {
 
         private int unicodeIndex;
         private int glyphIndex;
@@ -180,6 +185,46 @@ public class TTFFile {
          */
         public int getUnicodeIndex() {
             return unicodeIndex;
+        }
+
+
+        /** {@inheritDoc} */
+        public int hashCode() {
+            int hc = unicodeIndex;
+            hc = 19 * hc + ( hc ^ glyphIndex );
+            return hc;
+        }
+
+        /** {@inheritDoc} */
+        public boolean equals ( Object o ) {
+            if ( o instanceof UnicodeMapping ) {
+                UnicodeMapping m = (UnicodeMapping) o;
+                if ( unicodeIndex != m.unicodeIndex ) {
+                    return false;
+                } else if ( glyphIndex != m.glyphIndex ) {
+                    return false;
+                } else {
+                    return true;
+                }
+            } else {
+                return false;
+            }
+        }
+
+        /** {@inheritDoc} */
+        public int compareTo ( Object o ) {
+            if ( o instanceof UnicodeMapping ) {
+                UnicodeMapping m = (UnicodeMapping) o;
+                if ( unicodeIndex > m.unicodeIndex ) {
+                    return 1;
+                } else if ( unicodeIndex < m.unicodeIndex ) {
+                    return -1;
+                } else {
+                    return 0;
+                }
+            } else {
+                return -1;
+            }
         }
     }
 
@@ -229,7 +274,7 @@ public class TTFFile {
      */
     private boolean readCMAP(FontFileReader in) throws IOException {
 
-        unicodeMapping = new java.util.ArrayList();
+        unicodeMappings = new java.util.TreeSet();
 
         seekTab(in, "cmap", 2);
         int numCMap = in.readTTFUShort();    // Number of cmap subtables
@@ -370,7 +415,7 @@ public class TTFFile {
                             glyphIdx = (in.readTTFUShort() + cmapDeltas[i])
                                        & 0xffff;
 
-                            unicodeMapping.add(new UnicodeMapping(glyphIdx, j));
+                            unicodeMappings.add(new UnicodeMapping(glyphIdx, j));
                             mtxTab[glyphIdx].getUnicodeIndex().add(new Integer(j));
 
                             if (encodingID == 0 && j >= 0xF020 && j <= 0xF0FF) {
@@ -380,7 +425,7 @@ public class TTFFile {
                                 int mapped = j - 0xF000;
                                 if (!eightBitGlyphs.get(mapped)) {
                                     //Only map if Unicode code point hasn't been mapped before
-                                    unicodeMapping.add(new UnicodeMapping(glyphIdx, mapped));
+                                    unicodeMappings.add(new UnicodeMapping(glyphIdx, mapped));
                                     mtxTab[glyphIdx].getUnicodeIndex().add(new Integer(mapped));
                                 }
                             }
@@ -421,7 +466,7 @@ public class TTFFile {
                                                    + mtxTab.length);
                             }
 
-                            unicodeMapping.add(new UnicodeMapping(glyphIdx, j));
+                            unicodeMappings.add(new UnicodeMapping(glyphIdx, j));
                             if (glyphIdx < mtxTab.length) {
                                 mtxTab[glyphIdx].getUnicodeIndex().add(new Integer(j));
                             } else {
@@ -579,21 +624,83 @@ public class TTFFile {
             return false;
         }
         // Create cmaps for bfentries
+        augmentCMaps();
         createCMaps();
-        // print_max_min();
 
         readKerning(in);
+        readGDEF(in);
         readGSUB(in);
         readGPOS(in);
         guessVerticalMetricsFromGlyphBBox();
         return true;
     }
 
+    /**
+     * Augment the previously ingested CMAP data with new entries to ensure
+     * that every glyph index has a corresponding Unicode value. This is required
+     * by GSUB/GPOS processing which can emit glyph indices that are not in the
+     * normal CMAP (and, for which, on other platforms, the glyph indices are used
+     * directly for rendering purposes (rather than character codes). However, in
+     * the case of FOP IF representation, character codes are used, and, consequently
+     * every glyph needs some character value. Here, we assign them to the Unicode
+     * private use range, starting at 0xE000 up to 0xF8FF. If there are existing
+     * assignments in this range, we just skip over them. Note that it is possible
+     * to exhaust this range of 6400 code values in the case a font has an
+     * extraordinary number of unmapped glyphs. In that case, we do not make
+     * any further assignments, but print a warning message.
+     */
+    private void augmentCMaps() {
+        int numMapped = 0;
+        int numUnmapped = 0;
+        int nextPrivateUse = 0xE000;
+        int firstPrivate = 0;
+        int lastPrivate = 0;
+        int firstUnmapped = 0;
+        int lastUnmapped = 0;
+        for ( int i = 0, n = numberOfGlyphs; i < n; i++ ) {
+            Integer uc = glyphToUnicode ( i );
+            if ( uc == null ) {
+                while ( ( nextPrivateUse < 0xF900 ) && ( unicodeToGlyphMap.get(new Integer(nextPrivateUse)) != null ) ) {
+                    nextPrivateUse++;
+                }
+                if ( nextPrivateUse < 0xF900 ) {
+                    int pu = nextPrivateUse;
+                    unicodeMappings.add ( new UnicodeMapping ( i, pu ) );
+                    if ( firstPrivate == 0 ) {
+                        firstPrivate = pu;
+                    }
+                    lastPrivate = pu;
+                    numMapped++;
+                } else {
+                    if ( firstUnmapped == 0 ) {
+                        firstUnmapped = i;
+                    }
+                    lastUnmapped = i;
+                    numUnmapped++;
+                }
+            }
+        }
+        if ( numMapped > 0 ) {
+            if (log.isDebugEnabled()) {
+                log.debug ( "augment CMAP for "
+                            + numMapped
+                            + " glyphs, mapped to private use characters in the range ["
+                            + CharUtilities.format ( firstPrivate ) + ","
+                            + CharUtilities.format ( lastPrivate ) + "] (inclusive)" );
+            }
+        }
+        if ( numUnmapped > 0 ) {
+            log.warn ( "Exhausted private use area: unable to map "
+                       + numUnmapped + " glyphs in glyph index range ["
+                       + firstUnmapped + "," + lastUnmapped + "] (inclusive) of font '" + getFullName() + "'" );
+        }
+    }
+
     private void createCMaps() {
         cmaps = new java.util.ArrayList();
         TTFCmapEntry tce = new TTFCmapEntry();
 
-        Iterator e = unicodeMapping.listIterator();
+        Iterator e = unicodeMappings.iterator();
         UnicodeMapping um = (UnicodeMapping)e.next();
         UnicodeMapping lastMapping = um;
 
@@ -955,8 +1062,8 @@ public class TTFFile {
         int mtxSize = Math.max(numberOfGlyphs, nhmtx);
         mtxTab = new TTFMtxEntry[mtxSize];
 
-        if (TRACE_ENABLED) {
-            log.debug("*** Widths array: \n");
+        if (log.isTraceEnabled()) {
+            log.trace("*** Widths array: \n");
         }
         for (int i = 0; i < mtxSize; i++) {
             mtxTab[i] = new TTFMtxEntry();
@@ -965,11 +1072,9 @@ public class TTFFile {
             mtxTab[i].setWx(in.readTTFUShort());
             mtxTab[i].setLsb(in.readTTFUShort());
 
-            if (TRACE_ENABLED) {
-                if (log.isDebugEnabled()) {
-                    log.debug("   width[" + i + "] = "
-                        + convertTTFUnit2PDFUnit(mtxTab[i].getWx()) + ";");
-                }
+            if (log.isTraceEnabled()) {
+                log.trace("   width[" + i + "] = "
+                          + convertTTFUnit2PDFUnit(mtxTab[i].getWx()) + ";");
             }
         }
 
@@ -1517,6 +1622,7 @@ public class TTFFile {
         }
     }
 
+    /** helper method for formatting an integer array for output */
     private String toString ( int[] ia ) {
         StringBuffer sb = new StringBuffer();
         if ( ( ia == null ) || ( ia.length == 0 ) ) {
@@ -1727,6 +1833,14 @@ public class TTFFile {
     }
 
     /**
+     * Returns the GDEF table or null if none present.
+     * @return the GDEF table
+     */
+    public GlyphDefinitionTable getGDEF() {
+        return gdef;
+    }
+
+    /**
      * Returns the GSUB table or null if none present.
      * @return the GSUB table
      */
@@ -1742,13 +1856,64 @@ public class TTFFile {
         return gpos;
     }
 
+    static final class GDEFLookupType {
+        static final int GLYPH_CLASS                    = 1;
+        static final int ATTACHMENT_POINT               = 2;
+        static final int LIGATURE_CARET                 = 3;
+        static final int MARK_ATTACHMENT                = 4;
+        private GDEFLookupType() {
+        }
+        public static int getSubtableType ( int lt ) {
+            int st;
+            switch ( lt ) {
+            case GDEFLookupType.GLYPH_CLASS:
+                st = GlyphDefinitionTable.GDEF_LOOKUP_TYPE_GLYPH_CLASS;
+                break;
+            case GDEFLookupType.ATTACHMENT_POINT:
+                st = GlyphDefinitionTable.GDEF_LOOKUP_TYPE_ATTACHMENT_POINT;
+                break;
+            case GDEFLookupType.LIGATURE_CARET:
+                st = GlyphDefinitionTable.GDEF_LOOKUP_TYPE_LIGATURE_CARET;
+                break;
+            case GDEFLookupType.MARK_ATTACHMENT:
+                st = GlyphDefinitionTable.GDEF_LOOKUP_TYPE_MARK_ATTACHMENT;
+                break;
+            default:
+                st = -1;
+                break;
+            }
+            return st;
+        }
+        public static String toString(int type) {
+            String s;
+            switch ( type ) {
+            case GLYPH_CLASS:
+                s = "GlyphClass";
+                break;
+            case ATTACHMENT_POINT:
+                s = "AttachmentPoint";
+                break;
+            case LIGATURE_CARET:
+                s = "LigatureCaret";
+                break;
+            case MARK_ATTACHMENT:
+                s = "MarkAttachment";
+                break;
+            default:
+                s = "?";
+                break;
+            }
+            return s;
+        }
+    }
+
     static final class GSUBLookupType {
         static final int SINGLE                         = 1;
         static final int MULTIPLE                       = 2;
         static final int ALTERNATE                      = 3;
         static final int LIGATURE                       = 4;
-        static final int CONTEXT                        = 5;
-        static final int CHAINED_CONTEXT                = 6;
+        static final int CONTEXTUAL                     = 5;
+        static final int CHAINED_CONTEXTUAL             = 6;
         static final int EXTENSION                      = 7;
         static final int REVERSE_CHAINED_SINGLE         = 8;
         private GSUBLookupType() {
@@ -1768,17 +1933,17 @@ public class TTFFile {
             case GSUBLookupType.LIGATURE:
                 st = GlyphSubstitutionTable.GSUB_LOOKUP_TYPE_LIGATURE;
                 break;
-            case GSUBLookupType.CONTEXT:
-                st = GlyphSubstitutionTable.GSUB_LOOKUP_TYPE_CONTEXT;
+            case GSUBLookupType.CONTEXTUAL:
+                st = GlyphSubstitutionTable.GSUB_LOOKUP_TYPE_CONTEXTUAL;
                 break;
-            case GSUBLookupType.CHAINED_CONTEXT:
-                st = GlyphSubstitutionTable.GSUB_LOOKUP_TYPE_CHAINING_CONTEXT;
+            case GSUBLookupType.CHAINED_CONTEXTUAL:
+                st = GlyphSubstitutionTable.GSUB_LOOKUP_TYPE_CHAINED_CONTEXTUAL;
                 break;
             case GSUBLookupType.EXTENSION:
                 st = GlyphSubstitutionTable.GSUB_LOOKUP_TYPE_EXTENSION_SUBSTITUTION;
                 break;
             case GSUBLookupType.REVERSE_CHAINED_SINGLE:
-                st = GlyphSubstitutionTable.GSUB_LOOKUP_TYPE_REVERSE_CHAINING_CONTEXT_SINGLE;
+                st = GlyphSubstitutionTable.GSUB_LOOKUP_TYPE_REVERSE_CHAINED_SINGLE;
                 break;
             default:
                 st = -1;
@@ -1801,11 +1966,11 @@ public class TTFFile {
             case LIGATURE:
                 s = "Ligature";
                 break;
-            case CONTEXT:
-                s = "Context";
+            case CONTEXTUAL:
+                s = "Contextual";
                 break;
-            case CHAINED_CONTEXT:
-                s = "ChainedContext";
+            case CHAINED_CONTEXTUAL:
+                s = "ChainedContextual";
                 break;
             case EXTENSION:
                 s = "Extension";
@@ -1828,8 +1993,8 @@ public class TTFFile {
         static final int MARK_TO_BASE                   = 4;
         static final int MARK_TO_LIGATURE               = 5;
         static final int MARK_TO_MARK                   = 6;
-        static final int CONTEXT                        = 7;
-        static final int CHAINED_CONTEXT                = 8;
+        static final int CONTEXTUAL                     = 7;
+        static final int CHAINED_CONTEXTUAL             = 8;
         static final int EXTENSION                      = 9;
         private GPOSLookupType() {
         }
@@ -1854,11 +2019,11 @@ public class TTFFile {
             case MARK_TO_MARK:
                 s = "MarkToMark";
                 break;
-            case CONTEXT:
-                s = "Context";
+            case CONTEXTUAL:
+                s = "Contextual";
                 break;
-            case CHAINED_CONTEXT:
-                s = "ChainedContext";
+            case CHAINED_CONTEXTUAL:
+                s = "ChainedContextual";
                 break;
             case EXTENSION:
                 s = "Extension";
@@ -1930,7 +2095,8 @@ public class TTFFile {
         }
     }
 
-    private void readCoverageTableFormat1(FontFileReader in, String label, long tableOffset, int coverageFormat) throws IOException {
+    private GlyphCoverageTable readCoverageTableFormat1(FontFileReader in, String label, long tableOffset, int coverageFormat) throws IOException {
+        List entries = new java.util.ArrayList();
         in.seekSet(tableOffset);
         // skip over format (already known)
         in.skip ( 2 );
@@ -1940,80 +2106,118 @@ public class TTFFile {
         for ( int i = 0, n = ng; i < n; i++ ) {
             int g = in.readTTFUShort();
             ga[i] = g;
-            seCoverage.add ( Integer.valueOf(g) );
+            entries.add ( Integer.valueOf(g) );
         }
         // dump info if debugging
         if (log.isDebugEnabled()) {
             log.debug(label + " glyphs: " + toString(ga) );
         }
+        return GlyphCoverageTable.createCoverageTable ( entries );
     }
 
-    private void readCoverageTableFormat2(FontFileReader in, String label, long tableOffset, int coverageFormat) throws IOException {
+    private GlyphCoverageTable readCoverageTableFormat2(FontFileReader in, String label, long tableOffset, int coverageFormat) throws IOException {
+        List entries = new java.util.ArrayList();
         in.seekSet(tableOffset);
         // skip over format (already known)
         in.skip ( 2 );
         // read range record count
         int nr = in.readTTFUShort();
-        int[] rsa = new int[nr];
-        int[] rea = new int[nr];
-        int[] rxa = new int[nr];
         for ( int i = 0, n = nr; i < n; i++ ) {
             // read range start
             int s = in.readTTFUShort();
             // read range end
             int e = in.readTTFUShort();
-            // read range coverage index
-            int x = in.readTTFUShort();
+            // read range coverage (mapping) index
+            int m = in.readTTFUShort();
             // dump info if debugging
             if (log.isDebugEnabled()) {
-                log.debug(label + " range[" + i + "]: [" + s + "," + e + "]: " + x );
+                log.debug(label + " range[" + i + "]: [" + s + "," + e + "]: " + m );
             }
-            rsa[i] = s;
-            rea[i] = e;
-            rxa[i] = x;
-            seCoverage.add ( new GlyphCoverageTable.CoverageRange ( s, e, x ) );
+            entries.add ( new GlyphCoverageTable.MappingRange ( s, e, m ) );
         }
+        return GlyphCoverageTable.createCoverageTable ( entries );
     }
 
-    private void readCoverageTable(FontFileReader in, String label, long tableOffset) throws IOException {
+    private GlyphCoverageTable readCoverageTable(FontFileReader in, String label, long tableOffset) throws IOException {
+        GlyphCoverageTable gct;
         long cp = in.getCurrentPos();
         in.seekSet(tableOffset);
         // read coverage table format
         int cf = in.readTTFUShort();
         if ( cf == 1 ) {
-            readCoverageTableFormat1 ( in, label, tableOffset, cf );
+            gct = readCoverageTableFormat1 ( in, label, tableOffset, cf );
         } else if ( cf == 2 ) {
-            readCoverageTableFormat2 ( in, label, tableOffset, cf );
+            gct = readCoverageTableFormat2 ( in, label, tableOffset, cf );
+        } else {
+            throw new UnsupportedOperationException ( "unsupported coverage table format: " + cf );
         }
         in.seekSet ( cp );
+        return gct;
     }
 
-    /* not used yet
-    private void readClassDefTableFormat1(FontFileReader in, long tableOffset, int classFormat) throws IOException {
+    private GlyphClassTable readClassDefTableFormat1(FontFileReader in, String label, long tableOffset, int classFormat) throws IOException {
+        List entries = new java.util.ArrayList();
         in.seekSet(tableOffset);
         // skip over format (already known)
         in.skip ( 2 );
+        // read start glyph
+        int sg = in.readTTFUShort();
+        entries.add ( Integer.valueOf(sg) );
+        // read glyph count
+        int ng = in.readTTFUShort();
+        // read glyph classes
+        int[] ca = new int[ng];
+        for ( int i = 0, n = ng; i < n; i++ ) {
+            int gc = in.readTTFUShort();
+            ca[i] = gc;
+            entries.add ( Integer.valueOf(gc) );
+        }
+        // dump info if debugging
+        if (log.isDebugEnabled()) {
+            log.debug(label + " glyph classes: " + toString(ca) );
+        }
+        return GlyphClassTable.createClassTable ( entries );
     }
 
-    private void readClassDefTableFormat2(FontFileReader in, long tableOffset, int classFormat) throws IOException {
+    private GlyphClassTable readClassDefTableFormat2(FontFileReader in, String label, long tableOffset, int classFormat) throws IOException {
+        List entries = new java.util.ArrayList();
         in.seekSet(tableOffset);
         // skip over format (already known)
         in.skip ( 2 );
+        // read range record count
+        int nr = in.readTTFUShort();
+        for ( int i = 0, n = nr; i < n; i++ ) {
+            // read range start
+            int s = in.readTTFUShort();
+            // read range end
+            int e = in.readTTFUShort();
+            // read range glyph class (mapping) index
+            int m = in.readTTFUShort();
+            // dump info if debugging
+            if (log.isDebugEnabled()) {
+                log.debug(label + " range[" + i + "]: [" + s + "," + e + "]: " + m );
+            }
+            entries.add ( new GlyphClassTable.MappingRange ( s, e, m ) );
+        }
+        return GlyphClassTable.createClassTable ( entries );
     }
 
-    private void readClassDefTable(FontFileReader in, long tableOffset) throws IOException {
+    private GlyphClassTable readClassDefTable(FontFileReader in, String label, long tableOffset) throws IOException {
+        GlyphClassTable gct;
         long cp = in.getCurrentPos();
         in.seekSet(tableOffset);
         // read class table format
         int cf = in.readTTFUShort();
         if ( cf == 1 ) {
-            readClassDefTableFormat1 ( in, tableOffset, cf );
+            gct = readClassDefTableFormat1 ( in, label, tableOffset, cf );
         } else if ( cf == 2 ) {
-            readClassDefTableFormat2 ( in, tableOffset, cf );
+            gct = readClassDefTableFormat2 ( in, label, tableOffset, cf );
+        } else {
+            throw new UnsupportedOperationException ( "unsupported class definition table format: " + cf );
         }
         in.seekSet ( cp );
+        return gct;
     }
-    */
 
     private void readSingleSubTableFormat1(FontFileReader in, int lookupType, int lookupFlags, long subtableOffset, int subtableFormat) throws IOException {
         String tableTag = "GSUB";
@@ -2026,12 +2230,12 @@ public class TTFFile {
         int dg = in.readTTFShort();
         // dump info if debugging
         if (log.isDebugEnabled()) {
-            log.debug(tableTag + " single substitution format: " + subtableFormat + " (delta)" );
+            log.debug(tableTag + " single substitution subtable format: " + subtableFormat + " (delta)" );
             log.debug(tableTag + " single substitution coverage table offset: " + co );
             log.debug(tableTag + " single substitution delta: " + dg );
         }
         // read coverage table
-        readCoverageTable ( in, tableTag + " single substitution coverage", subtableOffset + co );
+        seMapping = readCoverageTable ( in, tableTag + " single substitution coverage", subtableOffset + co );
         seEntries.add ( Integer.valueOf ( dg ) );
     }
 
@@ -2046,12 +2250,12 @@ public class TTFFile {
         int ng = in.readTTFUShort();
         // dump info if debugging
         if (log.isDebugEnabled()) {
-            log.debug(tableTag + " single substitution format: " + subtableFormat + " (mapped)" );
+            log.debug(tableTag + " single substitution subtable format: " + subtableFormat + " (mapped)" );
             log.debug(tableTag + " single substitution coverage table offset: " + co );
             log.debug(tableTag + " single substitution glyph count: " + ng );
         }
         // read coverage table
-        readCoverageTable ( in, tableTag + " single substitution coverage", subtableOffset + co );
+        seMapping = readCoverageTable ( in, tableTag + " single substitution coverage", subtableOffset + co );
         // read glyph substitutions
         int[] gsa = new int[ng];
         for ( int i = 0, n = ng; i < n; i++ ) {
@@ -2066,12 +2270,14 @@ public class TTFFile {
 
     private int readSingleSubTable(FontFileReader in, int lookupType, int lookupFlags, long subtableOffset) throws IOException {
         in.seekSet(subtableOffset);
-        // read substitution format
+        // read substitution subtable format
         int sf = in.readTTFUShort();
         if ( sf == 1 ) {
             readSingleSubTableFormat1 ( in, lookupType, lookupFlags, subtableOffset, sf );
         } else if ( sf == 2 ) {
             readSingleSubTableFormat2 ( in, lookupType, lookupFlags, subtableOffset, sf );
+        } else {
+            throw new UnsupportedOperationException ( "unsupported single substitution subtable format: " + sf );
         }
         return sf;
     }
@@ -2087,40 +2293,49 @@ public class TTFFile {
         int ns = in.readTTFUShort();
         // dump info if debugging
         if (log.isDebugEnabled()) {
-            log.debug(tableTag + " multiple substitution format: " + subtableFormat + " (mapped)" );
+            log.debug(tableTag + " multiple substitution subtable format: " + subtableFormat + " (mapped)" );
             log.debug(tableTag + " multiple substitution coverage table offset: " + co );
             log.debug(tableTag + " multiple substitution sequence count: " + ns );
         }
         // read coverage table
-        readCoverageTable ( in, tableTag + " multiple substitution coverage", subtableOffset + co );
+        seMapping = readCoverageTable ( in, tableTag + " multiple substitution coverage", subtableOffset + co );
         // read sequence table offsets
         int[] soa = new int[ns];
         for ( int i = 0, n = ns; i < n; i++ ) {
             soa[i] = in.readTTFUShort();
         }
         // read sequence tables
+        int[][] gsa = new int [ ns ] [];
         for ( int i = 0, n = ns; i < n; i++ ) {
             int so = soa[i];
-            in.seekSet(subtableOffset + so);
-            // read glyph count
-            int ng = in.readTTFUShort();
-            int[] ga = new int[ng];
-            for ( int j = 0; j < ng; j++ ) {
-                int gs = in.readTTFUShort();
-                ga[j] = gs;
+            int[] ga;
+            if ( so > 0 ) {
+                in.seekSet(subtableOffset + so);
+                // read glyph count
+                int ng = in.readTTFUShort();
+                ga = new int[ng];
+                for ( int j = 0; j < ng; j++ ) {
+                    ga[j] = in.readTTFUShort();
+                }
+            } else {
+                ga = null;
             }
             if (log.isDebugEnabled()) {
                 log.debug(tableTag + " multiple substitution sequence[" + i + "]: " + toString ( ga ) );
             }
+            gsa [ i ] = ga;
         }
+        seEntries.add ( gsa );
     }
 
     private int readMultipleSubTable(FontFileReader in, int lookupType, int lookupFlags, long subtableOffset) throws IOException {
         in.seekSet(subtableOffset);
-        // read substitution format
+        // read substitution subtable format
         int sf = in.readTTFUShort();
         if ( sf == 1 ) {
             readMultipleSubTableFormat1 ( in, lookupType, lookupFlags, subtableOffset, sf );
+        } else {
+            throw new UnsupportedOperationException ( "unsupported multiple substitution subtable format: " + sf );
         }
         return sf;
     }
@@ -2136,12 +2351,12 @@ public class TTFFile {
         int ns = in.readTTFUShort();
         // dump info if debugging
         if (log.isDebugEnabled()) {
-            log.debug(tableTag + " alternate substitution format: " + subtableFormat + " (mapped)" );
+            log.debug(tableTag + " alternate substitution subtable format: " + subtableFormat + " (mapped)" );
             log.debug(tableTag + " alternate substitution coverage table offset: " + co );
             log.debug(tableTag + " alternate substitution alternate set count: " + ns );
         }
         // read coverage table
-        readCoverageTable ( in, tableTag + " alternate substitution coverage", subtableOffset + co );
+        seMapping = readCoverageTable ( in, tableTag + " alternate substitution coverage", subtableOffset + co );
         // read alternate set table offsets
         int[] soa = new int[ns];
         for ( int i = 0, n = ns; i < n; i++ ) {
@@ -2161,15 +2376,18 @@ public class TTFFile {
             if (log.isDebugEnabled()) {
                 log.debug(tableTag + " alternate substitution alternate set[" + i + "]: " + toString ( ga ) );
             }
+            seEntries.add ( ga );
         }
     }
 
     private int readAlternateSubTable(FontFileReader in, int lookupType, int lookupFlags, long subtableOffset) throws IOException {
         in.seekSet(subtableOffset);
-        // read substitution format
+        // read substitution subtable format
         int sf = in.readTTFUShort();
         if ( sf == 1 ) {
             readAlternateSubTableFormat1 ( in, lookupType, lookupFlags, subtableOffset, sf );
+        } else {
+            throw new UnsupportedOperationException ( "unsupported alternate substitution subtable format: " + sf );
         }
         return sf;
     }
@@ -2185,12 +2403,12 @@ public class TTFFile {
         int ns = in.readTTFUShort();
         // dump info if debugging
         if (log.isDebugEnabled()) {
-            log.debug(tableTag + " ligature substitution format: " + subtableFormat + " (mapped)" );
+            log.debug(tableTag + " ligature substitution subtable format: " + subtableFormat + " (mapped)" );
             log.debug(tableTag + " ligature substitution coverage table offset: " + co );
             log.debug(tableTag + " ligature substitution ligature set count: " + ns );
         }
         // read coverage table
-        readCoverageTable ( in, tableTag + " ligature substitution coverage", subtableOffset + co );
+        seMapping = readCoverageTable ( in, tableTag + " ligature substitution coverage", subtableOffset + co );
         // read ligature set table offsets
         int[] soa = new int[ns];
         for ( int i = 0, n = ns; i < n; i++ ) {
@@ -2230,292 +2448,736 @@ public class TTFFile {
 
     private int readLigatureSubTable(FontFileReader in, int lookupType, int lookupFlags, long subtableOffset) throws IOException {
         in.seekSet(subtableOffset);
-        // read substitution format
+        // read substitution subtable format
         int sf = in.readTTFUShort();
         if ( sf == 1 ) {
             readLigatureSubTableFormat1 ( in, lookupType, lookupFlags, subtableOffset, sf );
+        } else {
+            throw new UnsupportedOperationException ( "unsupported ligature substitution subtable format: " + sf );
         }
         return sf;
     }
 
-    private int readContextSubTable(FontFileReader in, int lookupType, int lookupFlags, long subtableOffset) throws IOException {
+    private GlyphTable.RuleLookup[] readRuleLookups(FontFileReader in, int numLookups, String header) throws IOException {
+        GlyphTable.RuleLookup[] la = new GlyphTable.RuleLookup [ numLookups ];
+        for ( int i = 0, n = numLookups; i < n; i++ ) {
+            int sequenceIndex = in.readTTFUShort();
+            int lookupIndex = in.readTTFUShort();
+            la [ i ] = new GlyphTable.RuleLookup ( sequenceIndex, lookupIndex );
+            // dump info if debugging and header is non-null
+            if ( log.isDebugEnabled() && ( header != null ) ) {
+                log.debug(header + "lookup[" + i + "]: " + la[i]);
+            }
+        }
+        return la;
+    }
+
+    private void readContextualSubTableFormat1(FontFileReader in, int lookupType, int lookupFlags, long subtableOffset, int subtableFormat) throws IOException {
+        String tableTag = "GSUB";
         in.seekSet(subtableOffset);
-        // read substitution format
+        // skip over format (already known)
+        in.skip ( 2 );
+        // read coverage offset
+        int co = in.readTTFUShort();
+        // read rule set count
+        int nrs = in.readTTFUShort();
+        // read rule set offsets
+        int[] rsoa = new int [ nrs ];
+        for ( int i = 0; i < nrs; i++ ) {
+            rsoa [ i ] = in.readTTFUShort();
+        }
+        // dump info if debugging
+        if (log.isDebugEnabled()) {
+            log.debug(tableTag + " contextual substitution format: " + subtableFormat + " (glyphs)" );
+            log.debug(tableTag + " contextual substitution coverage table offset: " + co );
+            log.debug(tableTag + " contextual substitution rule set count: " + nrs );
+            for ( int i = 0; i < nrs; i++ ) {
+                log.debug(tableTag + " contextual substitution rule set offset[" + i + "]: " + rsoa[i] );
+            }
+        }
+        // read coverage table
+        GlyphCoverageTable ct;
+        if ( co > 0 ) {
+            ct = readCoverageTable ( in, tableTag + " contextual substitution coverage", subtableOffset + co );
+        } else {
+            ct = null;
+        }
+        // read rule sets
+        GlyphTable.RuleSet[] rsa = new GlyphTable.RuleSet [ nrs ];
+        String header = null;
+        for ( int i = 0; i < nrs; i++ ) {
+            GlyphTable.RuleSet rs;
+            int rso = rsoa [ i ];
+            if ( rso > 0 ) {
+                // seek to rule set [ i ]
+                in.seekSet ( subtableOffset + rso );
+                // read rule count
+                int nr = in.readTTFUShort();
+                // read rule offsets
+                int[] roa = new int [ nr ];
+                GlyphTable.Rule[] ra = new GlyphTable.Rule [ nr ];
+                for ( int j = 0; j < nr; j++ ) {
+                    roa [ j ] = in.readTTFUShort();
+                }
+                // read glyph sequence rules
+                for ( int j = 0; j < nr; j++ ) {
+                    GlyphTable.GlyphSequenceRule r;
+                    int ro = roa [ j ];
+                    if ( ro > 0 ) {
+                        // seek to rule [ j ]
+                        in.seekSet ( subtableOffset + rso + ro );
+                        // read glyph count
+                        int ng = in.readTTFUShort();
+                        // read rule lookup count
+                        int nl = in.readTTFUShort();
+                        // read glyphs
+                        int[] glyphs = new int [ ng - 1 ];
+                        for ( int k = 0, nk = glyphs.length; k < nk; k++ ) {
+                            glyphs [ k ] = in.readTTFUShort();
+                        }
+                        // read rule lookups
+                        if (log.isDebugEnabled()) {
+                            header = tableTag + " contextual substitution lookups @rule[" + i + "][" + j + "]: ";
+                        }
+                        GlyphTable.RuleLookup[] lookups = readRuleLookups ( in, nl, header );
+                        r = new GlyphTable.GlyphSequenceRule ( lookups, ng, glyphs );
+                    } else {
+                        r = null;
+                    }
+                    ra [ j ] = r;
+                }
+                rs = new GlyphTable.HomogeneousRuleSet ( ra );
+            } else {
+                rs = null;
+            }
+            rsa [ i ] = rs;
+        }
+        // store results
+        seMapping = ct;
+        seEntries.add ( rsa );
+    }
+
+    private void readContextualSubTableFormat2(FontFileReader in, int lookupType, int lookupFlags, long subtableOffset, int subtableFormat) throws IOException {
+        String tableTag = "GSUB";
+        in.seekSet(subtableOffset);
+        // skip over format (already known)
+        in.skip ( 2 );
+        // read coverage offset
+        int co = in.readTTFUShort();
+        // read class def table offset
+        int cdo = in.readTTFUShort();
+        // read class rule set count
+        int ngc = in.readTTFUShort();
+        // read class rule set offsets
+        int[] csoa = new int [ ngc ];
+        for ( int i = 0; i < ngc; i++ ) {
+            csoa [ i ] = in.readTTFUShort();
+        }
+        // dump info if debugging
+        if (log.isDebugEnabled()) {
+            log.debug(tableTag + " contextual substitution format: " + subtableFormat + " (glyph classes)" );
+            log.debug(tableTag + " contextual substitution coverage table offset: " + co );
+            log.debug(tableTag + " contextual substitution class set count: " + ngc );
+            for ( int i = 0; i < ngc; i++ ) {
+                log.debug(tableTag + " contextual substitution class set offset[" + i + "]: " + csoa[i] );
+            }
+        }
+        // read coverage table
+        GlyphCoverageTable ct;
+        if ( co > 0 ) {
+            ct = readCoverageTable ( in, tableTag + " contextual substitution coverage", subtableOffset + co );
+        } else {
+            ct = null;
+        }
+        // read class definition table
+        GlyphClassTable cdt;
+        if ( cdo > 0 ) {
+            cdt = readClassDefTable ( in, tableTag + " contextual substitution class definition", subtableOffset + cdo );
+        } else {
+            cdt = null;
+        }
+        // read rule sets
+        GlyphTable.RuleSet[] rsa = new GlyphTable.RuleSet [ ngc ];
+        String header = null;
+        for ( int i = 0; i < ngc; i++ ) {
+            int cso = csoa [ i ];
+            GlyphTable.RuleSet rs;
+            if ( cso > 0 ) {
+                // seek to rule set [ i ]
+                in.seekSet ( subtableOffset + cso );
+                // read rule count
+                int nr = in.readTTFUShort();
+                // read rule offsets
+                int[] roa = new int [ nr ];
+                GlyphTable.Rule[] ra = new GlyphTable.Rule [ nr ];
+                for ( int j = 0; j < nr; j++ ) {
+                    roa [ j ] = in.readTTFUShort();
+                }
+                // read glyph sequence rules
+                for ( int j = 0; j < nr; j++ ) {
+                    int ro = roa [ j ];
+                    GlyphTable.ClassSequenceRule r;
+                    if ( ro > 0 ) {
+                        // seek to rule [ j ]
+                        in.seekSet ( subtableOffset + cso + ro );
+                        // read glyph count
+                        int ng = in.readTTFUShort();
+                        // read rule lookup count
+                        int nl = in.readTTFUShort();
+                        // read classes
+                        int[] classes = new int [ ng - 1 ];
+                        for ( int k = 0, nk = classes.length; k < nk; k++ ) {
+                            classes [ k ] = in.readTTFUShort();
+                        }
+                        // read rule lookups
+                        if (log.isDebugEnabled()) {
+                            header = tableTag + " contextual substitution lookups @rule[" + i + "][" + j + "]: ";
+                        }
+                        GlyphTable.RuleLookup[] lookups = readRuleLookups ( in, nl, header );
+                        r = new GlyphTable.ClassSequenceRule ( lookups, ng, classes );
+                    } else {
+                        assert ro > 0 : "unexpected null subclass rule offset";
+                        r = null;
+                    }
+                    ra [ j ] = r;
+                }
+                rs = new GlyphTable.HomogeneousRuleSet ( ra );
+            } else {
+                rs = null;
+            }
+            rsa [ i ] = rs;
+        }
+        // store results
+        seMapping = ct;
+        seEntries.add ( cdt );
+        seEntries.add ( Integer.valueOf ( ngc ) );
+        seEntries.add ( rsa );
+    }
+
+    private void readContextualSubTableFormat3(FontFileReader in, int lookupType, int lookupFlags, long subtableOffset, int subtableFormat) throws IOException {
+        String tableTag = "GSUB";
+        in.seekSet(subtableOffset);
+        // skip over format (already known)
+        in.skip ( 2 );
+        // read glyph (input sequence length) count
+        int ng = in.readTTFUShort();
+        // read substitution lookup count
+        int nl = in.readTTFUShort();
+        // read glyph coverage offsets, one per glyph input sequence length count
+        int[] gcoa = new int [ ng ];
+        for ( int i = 0; i < ng; i++ ) {
+            gcoa [ i ] = in.readTTFUShort();
+        }
+        // dump info if debugging
+        if (log.isDebugEnabled()) {
+            log.debug(tableTag + " contextual substitution format: " + subtableFormat + " (glyph sets)" );
+            log.debug(tableTag + " contextual substitution glyph input sequence length count: " + ng );
+            log.debug(tableTag + " contextual substitution lookup count: " + nl );
+            for ( int i = 0; i < ng; i++ ) {
+                log.debug(tableTag + " contextual substitution coverage table offset[" + i + "]: " + gcoa[i] );
+            }
+        }
+        // read coverage tables
+        GlyphCoverageTable[] gca = new GlyphCoverageTable [ ng ];
+        for ( int i = 0; i < ng; i++ ) {
+            int gco = gcoa [ i ];
+            GlyphCoverageTable gct;
+            if ( gco > 0 ) {
+                gct = readCoverageTable ( in, tableTag + " contextual substitution coverage[" + i + "]", subtableOffset + gco );
+            } else {
+                gct = null;
+            }
+            gca [ i ] = gct;
+        }
+        // read rule lookups
+        String header = null;
+        if (log.isDebugEnabled()) {
+            header = tableTag + " contextual substitution lookups: ";
+        }
+        GlyphTable.RuleLookup[] lookups = readRuleLookups ( in, nl, header );
+        // construct rule, rule set, and rule set array
+        GlyphTable.Rule r = new GlyphTable.CoverageSequenceRule ( lookups, ng, gca );
+        GlyphTable.RuleSet rs = new GlyphTable.HomogeneousRuleSet ( new GlyphTable.Rule[] {r} );
+        GlyphTable.RuleSet[] rsa = new GlyphTable.RuleSet[] {rs};
+        // store results
+        assert ( gca != null ) && ( gca.length > 0 );
+        seMapping = gca[0];
+        seEntries.add ( rsa );
+    }
+
+    private int readContextualSubTable(FontFileReader in, int lookupType, int lookupFlags, long subtableOffset) throws IOException {
+        in.seekSet(subtableOffset);
+        // read substitution subtable format
         int sf = in.readTTFUShort();
-        // [TBD] - implement me
+        if ( sf == 1 ) {
+            readContextualSubTableFormat1 ( in, lookupType, lookupFlags, subtableOffset, sf );
+        } else if ( sf == 2 ) {
+            readContextualSubTableFormat2 ( in, lookupType, lookupFlags, subtableOffset, sf );
+        } else if ( sf == 3 ) {
+            readContextualSubTableFormat3 ( in, lookupType, lookupFlags, subtableOffset, sf );
+        } else {
+            throw new UnsupportedOperationException ( "unsupported contextual substitution subtable format: " + sf );
+        }
         return sf;
     }
 
-    private void readChainedContextSubTableFormat1(FontFileReader in, int lookupType, int lookupFlags, long subtableOffset, int subtableFormat) throws IOException {
+    private void readChainedContextualSubTableFormat1(FontFileReader in, int lookupType, int lookupFlags, long subtableOffset, int subtableFormat) throws IOException {
         String tableTag = "GSUB";
         in.seekSet(subtableOffset);
         // skip over format (already known)
         in.skip ( 2 );
         // read coverage offset
         int co = in.readTTFUShort();
-        // read subrule set count
-        int ns = in.readTTFUShort();
+        // read rule set count
+        int nrs = in.readTTFUShort();
+        // read rule set offsets
+        int[] rsoa = new int [ nrs ];
+        for ( int i = 0; i < nrs; i++ ) {
+            rsoa [ i ] = in.readTTFUShort();
+        }
         // dump info if debugging
         if (log.isDebugEnabled()) {
-            log.debug(tableTag + " chained context substitution format: " + subtableFormat + " (simple)" );
-            log.debug(tableTag + " chained context substitution coverage table offset: " + co );
-            log.debug(tableTag + " chained context substitution subrule set count: " + ns );
+            log.debug(tableTag + " chained contextual substitution format: " + subtableFormat + " (glyphs)" );
+            log.debug(tableTag + " chained contextual substitution coverage table offset: " + co );
+            log.debug(tableTag + " chained contextual substitution rule set count: " + nrs );
+            for ( int i = 0; i < nrs; i++ ) {
+                log.debug(tableTag + " chained contextual substitution rule set offset[" + i + "]: " + rsoa[i] );
+            }
         }
         // read coverage table
-        readCoverageTable ( in, tableTag + " chained context substitution coverage", subtableOffset + co );
-        // read subrule set table offsets
-        int[] soa = new int[ns];
-        for ( int i = 0, n = ns; i < n; i++ ) {
-            soa[i] = in.readTTFUShort();
+        GlyphCoverageTable ct;
+        if ( co > 0 ) {
+            ct = readCoverageTable ( in, tableTag + " chained contextual substitution coverage", subtableOffset + co );
+        } else {
+            ct = null;
         }
-        // read subrule set tables
-        for ( int i = 0, n = ns; i < n; i++ ) {
-            int so = soa[i];
-            in.seekSet(subtableOffset + so);
-            // read subrule table count
-            int nst = in.readTTFUShort();
-            int[] stoa = new int[nst];
-            for ( int j = 0; j < nst; j++ ) {
-                stoa[j] = in.readTTFUShort();
-            }
-            for ( int j = 0; j < nst; j++ ) {
-                int sto = stoa[j];
-                in.seekSet(subtableOffset + so + sto);
-                // read backtrack glyph count
-                int nbg = in.readTTFUShort();
-                int[] bga = new int[nbg];
-                // read backtrack glyphs
-                for ( int k = 0; k < nbg; k++ ) {
-                    bga[k] = in.readTTFUShort();
+        // read rule sets
+        GlyphTable.RuleSet[] rsa = new GlyphTable.RuleSet [ nrs ];
+        String header = null;
+        for ( int i = 0; i < nrs; i++ ) {
+            GlyphTable.RuleSet rs;
+            int rso = rsoa [ i ];
+            if ( rso > 0 ) {
+                // seek to rule set [ i ]
+                in.seekSet ( subtableOffset + rso );
+                // read rule count
+                int nr = in.readTTFUShort();
+                // read rule offsets
+                int[] roa = new int [ nr ];
+                GlyphTable.Rule[] ra = new GlyphTable.Rule [ nr ];
+                for ( int j = 0; j < nr; j++ ) {
+                    roa [ j ] = in.readTTFUShort();
                 }
-                // read input glyph count
-                int nig = in.readTTFUShort();
-                int[] iga = new int [ nig - 1 ];
-                // read input glyphs
-                for ( int k = 0; k < nig - 1; k++ ) {
-                    iga[k] = in.readTTFUShort();
-                }
-                // read lookahead glyph count
-                int nlg = in.readTTFUShort();
-                int[] lga = new int[nlg];
-                // read lookahead glyphs
-                for ( int k = 0; k < nlg; k++ ) {
-                    lga[k] = in.readTTFUShort();
-                }
-                // read substitution lookup record count
-                int nsl = in.readTTFUShort();
-                int[] sia = new int[nsl];
-                int[] lia = new int[nsl];
-                // read substitution lookup records
-                for ( int k = 0; k < nsl; k++ ) {
-                    // read sequence index
-                    sia[k] = in.readTTFUShort();
-                    // read lookup list index
-                    lia[k] = in.readTTFUShort();
-                }
-                if (log.isDebugEnabled()) {
-                    log.debug(tableTag + " chained context substitution subrule set[" + i + "]: backtrack [" + toString(bga) + "]" );
-                    log.debug(tableTag + " chained context substitution subrule set[" + i + "]: input     [" + toString(iga) + "]" );
-                    log.debug(tableTag + " chained context substitution subrule set[" + i + "]: lookahead [" + toString(lga) + "]" );
-                    log.debug(tableTag + " chained context substitution lookup count: " + nsl );
-                    for ( int k = 0; k < nsl; k++ ) {
-                        log.debug(tableTag + " chained context substitution lookup[" + i + "]: [" + sia[k] + "," + lia[k] + "]" );
+                // read glyph sequence rules
+                for ( int j = 0; j < nr; j++ ) {
+                    GlyphTable.ChainedGlyphSequenceRule r;
+                    int ro = roa [ j ];
+                    if ( ro > 0 ) {
+                        // seek to rule [ j ]
+                        in.seekSet ( subtableOffset + rso + ro );
+                        // read backtrack glyph count
+                        int nbg = in.readTTFUShort();
+                        // read backtrack glyphs
+                        int[] backtrackGlyphs = new int [ nbg ];
+                        for ( int k = 0, nk = backtrackGlyphs.length; k < nk; k++ ) {
+                            backtrackGlyphs [ k ] = in.readTTFUShort();
+                        }
+                        // read input glyph count
+                        int nig = in.readTTFUShort();
+                        // read glyphs
+                        int[] glyphs = new int [ nig - 1 ];
+                        for ( int k = 0, nk = glyphs.length; k < nk; k++ ) {
+                            glyphs [ k ] = in.readTTFUShort();
+                        }
+                        // read lookahead glyph count
+                        int nlg = in.readTTFUShort();
+                        // read lookahead glyphs
+                        int[] lookaheadGlyphs = new int [ nlg ];
+                        for ( int k = 0, nk = lookaheadGlyphs.length; k < nk; k++ ) {
+                            lookaheadGlyphs [ k ] = in.readTTFUShort();
+                        }
+                        // read rule lookup count
+                        int nl = in.readTTFUShort();
+                        // read rule lookups
+                        if (log.isDebugEnabled()) {
+                            header = tableTag + " contextual substitution lookups @rule[" + i + "][" + j + "]: ";
+                        }
+                        GlyphTable.RuleLookup[] lookups = readRuleLookups ( in, nl, header );
+                        r = new GlyphTable.ChainedGlyphSequenceRule ( lookups, nig, glyphs, backtrackGlyphs, lookaheadGlyphs );
+                    } else {
+                        r = null;
                     }
+                    ra [ j ] = r;
                 }
+                rs = new GlyphTable.HomogeneousRuleSet ( ra );
+            } else {
+                rs = null;
             }
+            rsa [ i ] = rs;
         }
+        // store results
+        seMapping = ct;
+        seEntries.add ( rsa );
     }
 
-    private void readChainedContextSubTableFormat2(FontFileReader in, int lookupType, int lookupFlags, long subtableOffset, int subtableFormat) throws IOException {
+    private void readChainedContextualSubTableFormat2(FontFileReader in, int lookupType, int lookupFlags, long subtableOffset, int subtableFormat) throws IOException {
         String tableTag = "GSUB";
         in.seekSet(subtableOffset);
         // skip over format (already known)
         in.skip ( 2 );
         // read coverage offset
         int co = in.readTTFUShort();
-        // read backtrack classdef table offset
-        int bo = in.readTTFUShort();
-        // read input classdef table offset
-        int io = in.readTTFUShort();
-        // read lookahead classdef table offset
-        int lo = in.readTTFUShort();
-        // read subclass set count
-        int ns = in.readTTFUShort();
+        // read backtrack class def table offset
+        int bcdo = in.readTTFUShort();
+        // read input class def table offset
+        int icdo = in.readTTFUShort();
+        // read lookahead class def table offset
+        int lcdo = in.readTTFUShort();
+        // read class set count
+        int ngc = in.readTTFUShort();
+        // read class set offsets
+        int[] csoa = new int [ ngc ];
+        for ( int i = 0; i < ngc; i++ ) {
+            csoa [ i ] = in.readTTFUShort();
+        }
         // dump info if debugging
         if (log.isDebugEnabled()) {
-            log.debug(tableTag + " chained context substitution format: " + subtableFormat + " (class based)" );
-            log.debug(tableTag + " chained context substitution coverage table offset: " + co );
-            log.debug(tableTag + " chained context substitution backtrack classdef table offset: " + bo );
-            log.debug(tableTag + " chained context substitution input classdef table offset: " + io );
-            log.debug(tableTag + " chained context substitution lookahead classdef table offset: " + lo );
-            log.debug(tableTag + " chained context substitution subclass set count: " + ns );
+            log.debug(tableTag + " chained contextual substitution format: " + subtableFormat + " (glyph classes)" );
+            log.debug(tableTag + " chained contextual substitution coverage table offset: " + co );
+            log.debug(tableTag + " chained contextual substitution class set count: " + ngc );
+            for ( int i = 0; i < ngc; i++ ) {
+                log.debug(tableTag + " chained contextual substitution class set offset[" + i + "]: " + csoa[i] );
+            }
         }
         // read coverage table
-        readCoverageTable ( in, tableTag + " chained context substitution coverage", subtableOffset + co );
-        // read subclass set table offsets
-        int[] soa = new int[ns];
-        for ( int i = 0, n = ns; i < n; i++ ) {
-            soa[i] = in.readTTFUShort();
+        GlyphCoverageTable ct;
+        if ( co > 0 ) {
+            ct = readCoverageTable ( in, tableTag + " chained contextual substitution coverage", subtableOffset + co );
+        } else {
+            ct = null;
         }
-        // read subclass set tables
-        for ( int i = 0, n = ns; i < n; i++ ) {
-            int so = soa[i];
-            if ( so == 0 ) {
-                continue;
-            }
-            in.seekSet(subtableOffset + so);
-            // read subclass rule table count
-            int nst = in.readTTFUShort();
-            int[] stoa = new int[nst];
-            for ( int j = 0; j < nst; j++ ) {
-                stoa[j] = in.readTTFUShort();
-            }
-            for ( int j = 0; j < nst; j++ ) {
-                int sto = stoa[j];
-                in.seekSet(subtableOffset + so + sto);
-                // read backtrack class count
-                int nbc = in.readTTFUShort();
-                int[] bca = new int[nbc];
-                // read backtrack classes
-                for ( int k = 0; k < nbc; k++ ) {
-                    bca[k] = in.readTTFUShort();
+        // read backtrack class definition table
+        GlyphClassTable bcdt;
+        if ( bcdo > 0 ) {
+            bcdt = readClassDefTable ( in, tableTag + " contextual substitution backtrack class definition", subtableOffset + bcdo );
+        } else {
+            bcdt = null;
+        }
+        // read input class definition table
+        GlyphClassTable icdt;
+        if ( icdo > 0 ) {
+            icdt = readClassDefTable ( in, tableTag + " contextual substitution input class definition", subtableOffset + icdo );
+        } else {
+            icdt = null;
+        }
+        // read lookahead class definition table
+        GlyphClassTable lcdt;
+        if ( lcdo > 0 ) {
+            lcdt = readClassDefTable ( in, tableTag + " contextual substitution lookahead class definition", subtableOffset + lcdo );
+        } else {
+            lcdt = null;
+        }
+        // read rule sets
+        GlyphTable.RuleSet[] rsa = new GlyphTable.RuleSet [ ngc ];
+        String header = null;
+        for ( int i = 0; i < ngc; i++ ) {
+            int cso = csoa [ i ];
+            GlyphTable.RuleSet rs;
+            if ( cso > 0 ) {
+                // seek to rule set [ i ]
+                in.seekSet ( subtableOffset + cso );
+                // read rule count
+                int nr = in.readTTFUShort();
+                // read rule offsets
+                int[] roa = new int [ nr ];
+                GlyphTable.Rule[] ra = new GlyphTable.Rule [ nr ];
+                for ( int j = 0; j < nr; j++ ) {
+                    roa [ j ] = in.readTTFUShort();
                 }
-                // read input class count
-                int nic = in.readTTFUShort();
-                int[] ica = new int [ nic - 1 ];
-                // read inpput classes
-                for ( int k = 0; k < nic - 1; k++ ) {
-                    ica[k] = in.readTTFUShort();
-                }
-                // read lookahead class count
-                int nlc = in.readTTFUShort();
-                int[] lca = new int[nlc];
-                // read lookahead classes
-                for ( int k = 0; k < nlc; k++ ) {
-                    lca[k] = in.readTTFUShort();
-                }
-                // read substitution lookup record count
-                int nsl = in.readTTFUShort();
-                int[] sia = new int[nsl];
-                int[] lia = new int[nsl];
-                // read substitution lookup records
-                for ( int k = 0; k < nsl; k++ ) {
-                    // read sequence index
-                    sia[k] = in.readTTFUShort();
-                    // read lookup list index
-                    lia[k] = in.readTTFUShort();
-                }
-                if (log.isDebugEnabled()) {
-                    log.debug(tableTag + " chained context substitution subclass set[" + i + "]: backtrack [" + toString(bca) + "]" );
-                    log.debug(tableTag + " chained context substitution subclass set[" + i + "]: input     [" + toString(ica) + "]" );
-                    log.debug(tableTag + " chained context substitution subclass set[" + i + "]: lookahead [" + toString(lca) + "]" );
-                    log.debug(tableTag + " chained context substitution lookup count: " + nsl );
-                    for ( int k = 0; k < nsl; k++ ) {
-                        log.debug(tableTag + " chained context substitution lookup[" + i + "]: [" + sia[k] + "," + lia[k] + "]" );
+                // read glyph sequence rules
+                for ( int j = 0; j < nr; j++ ) {
+                    int ro = roa [ j ];
+                    GlyphTable.ChainedClassSequenceRule r;
+                    if ( ro > 0 ) {
+                        // seek to rule [ j ]
+                        in.seekSet ( subtableOffset + cso + ro );
+                        // read backtrack glyph class count
+                        int nbc = in.readTTFUShort();
+                        // read backtrack glyph classes
+                        int[] backtrackClasses = new int [ nbc ];
+                        for ( int k = 0, nk = backtrackClasses.length; k < nk; k++ ) {
+                            backtrackClasses [ k ] = in.readTTFUShort();
+                        }
+                        // read input glyph class count
+                        int nic = in.readTTFUShort();
+                        // read input glyph classes
+                        int[] classes = new int [ nic - 1 ];
+                        for ( int k = 0, nk = classes.length; k < nk; k++ ) {
+                            classes [ k ] = in.readTTFUShort();
+                        }
+                        // read lookahead glyph class count
+                        int nlc = in.readTTFUShort();
+                        // read lookahead glyph classes
+                        int[] lookaheadClasses = new int [ nlc ];
+                        for ( int k = 0, nk = lookaheadClasses.length; k < nk; k++ ) {
+                            lookaheadClasses [ k ] = in.readTTFUShort();
+                        }
+                        // read rule lookup count
+                        int nl = in.readTTFUShort();
+                        // read rule lookups
+                        if (log.isDebugEnabled()) {
+                            header = tableTag + " contextual substitution lookups @rule[" + i + "][" + j + "]: ";
+                        }
+                        GlyphTable.RuleLookup[] lookups = readRuleLookups ( in, nl, header );
+                        r = new GlyphTable.ChainedClassSequenceRule ( lookups, nic, classes, backtrackClasses, lookaheadClasses );
+                    } else {
+                        r = null;
                     }
+                    ra [ j ] = r;
                 }
+                rs = new GlyphTable.HomogeneousRuleSet ( ra );
+            } else {
+                rs = null;
             }
+            rsa [ i ] = rs;
         }
+        // store results
+        seMapping = ct;
+        seEntries.add ( icdt );
+        seEntries.add ( bcdt );
+        seEntries.add ( lcdt );
+        seEntries.add ( Integer.valueOf ( ngc ) );
+        seEntries.add ( rsa );
     }
 
-    private void readChainedContextSubTableFormat3(FontFileReader in, int lookupType, int lookupFlags, long subtableOffset, int subtableFormat) throws IOException {
+    private void readChainedContextualSubTableFormat3(FontFileReader in, int lookupType, int lookupFlags, long subtableOffset, int subtableFormat) throws IOException {
         String tableTag = "GSUB";
         in.seekSet(subtableOffset);
         // skip over format (already known)
         in.skip ( 2 );
         // read backtrack glyph count
         int nbg = in.readTTFUShort();
-        // read backtrack glyph coverage table offsets
-        int[] boa = new int[nbg];
+        // read backtrack glyph coverage offsets
+        int[] bgcoa = new int [ nbg ];
         for ( int i = 0; i < nbg; i++ ) {
-            boa[i] = in.readTTFUShort();
+            bgcoa [ i ] = in.readTTFUShort();
         }
         // read input glyph count
         int nig = in.readTTFUShort();
-        // read input glyph coverage table offsets
-        int[] ioa = new int[nig];
+        // read backtrack glyph coverage offsets
+        int[] igcoa = new int [ nig ];
         for ( int i = 0; i < nig; i++ ) {
-            ioa[i] = in.readTTFUShort();
+            igcoa [ i ] = in.readTTFUShort();
         }
         // read lookahead glyph count
         int nlg = in.readTTFUShort();
-        // read lookahead glyph coverage table offsets
-        int[] loa = new int[nlg];
+        // read backtrack glyph coverage offsets
+        int[] lgcoa = new int [ nlg ];
         for ( int i = 0; i < nlg; i++ ) {
-            loa[i] = in.readTTFUShort();
+            lgcoa [ i ] = in.readTTFUShort();
         }
-        // read substitution lookup record count
-        int nsl = in.readTTFUShort();
-        int[] sia = new int[nsl];
-        int[] lia = new int[nsl];
-        // read substitution lookup records
-        for ( int i = 0; i < nsl; i++ ) {
-            // read sequence index
-            sia[i] = in.readTTFUShort();
-            // read lookup list index
-            lia[i] = in.readTTFUShort();
+        // read substitution lookup count
+        int nl = in.readTTFUShort();
+        // dump info if debugging
+        if (log.isDebugEnabled()) {
+            log.debug(tableTag + " chained contextual substitution format: " + subtableFormat + " (glyph sets)" );
+            log.debug(tableTag + " chained contextual substitution backtrack glyph count: " + nbg );
+            for ( int i = 0; i < nbg; i++ ) {
+                log.debug(tableTag + " chained contextual substitution backtrack coverage table offset[" + i + "]: " + bgcoa[i] );
+            }
+            log.debug(tableTag + " chained contextual substitution input glyph count: " + nig );
+            for ( int i = 0; i < nig; i++ ) {
+                log.debug(tableTag + " chained contextual substitution input coverage table offset[" + i + "]: " + igcoa[i] );
+            }
+            log.debug(tableTag + " chained contextual substitution lookahead glyph count: " + nlg );
+            for ( int i = 0; i < nlg; i++ ) {
+                log.debug(tableTag + " chained contextual substitution lookahead coverage table offset[" + i + "]: " + lgcoa[i] );
+            }
+            log.debug(tableTag + " chained contextual substitution lookup count: " + nl );
+        }
+        // read backtrack coverage tables
+        GlyphCoverageTable[] bgca = new GlyphCoverageTable[nbg];
+        for ( int i = 0; i < nbg; i++ ) {
+            int bgco = bgcoa [ i ];
+            GlyphCoverageTable bgct;
+            if ( bgco > 0 ) {
+                bgct = readCoverageTable ( in, tableTag + " chained contextual substitution backtrack coverage[" + i + "]", subtableOffset + bgco );
+            } else {
+                bgct = null;
+            }
+            bgca[i] = bgct;
+        }
+        // read input coverage tables
+        GlyphCoverageTable[] igca = new GlyphCoverageTable[nig];
+        for ( int i = 0; i < nig; i++ ) {
+            int igco = igcoa [ i ];
+            GlyphCoverageTable igct;
+            if ( igco > 0 ) {
+                igct = readCoverageTable ( in, tableTag + " chained contextual substitution input coverage[" + i + "]", subtableOffset + igco );
+            } else {
+                igct = null;
+            }
+            igca[i] = igct;
+        }
+        // read lookahead coverage tables
+        GlyphCoverageTable[] lgca = new GlyphCoverageTable[nlg];
+        for ( int i = 0; i < nlg; i++ ) {
+            int lgco = lgcoa [ i ];
+            GlyphCoverageTable lgct;
+            if ( lgco > 0 ) {
+                lgct = readCoverageTable ( in, tableTag + " chained contextual substitution lookahead coverage[" + i + "]", subtableOffset + lgco );
+            } else {
+                lgct = null;
+            }
+            lgca[i] = lgct;
+        }
+        // read rule lookups
+        String header = null;
+        if (log.isDebugEnabled()) {
+            header = tableTag + " chained contextual substitution lookups: ";
+        }
+        GlyphTable.RuleLookup[] lookups = readRuleLookups ( in, nl, header );
+        // construct rule, rule set, and rule set array
+        GlyphTable.Rule r = new GlyphTable.ChainedCoverageSequenceRule ( lookups, nig, igca, bgca, lgca );
+        GlyphTable.RuleSet rs = new GlyphTable.HomogeneousRuleSet ( new GlyphTable.Rule[] {r} );
+        GlyphTable.RuleSet[] rsa = new GlyphTable.RuleSet[] {rs};
+        // store results
+        assert ( igca != null ) && ( igca.length > 0 );
+        seMapping = igca[0];
+        seEntries.add ( rsa );
+    }
+
+    private int readChainedContextualSubTable(FontFileReader in, int lookupType, int lookupFlags, long subtableOffset) throws IOException {
+        in.seekSet(subtableOffset);
+        // read substitution subtable format
+        int sf = in.readTTFUShort();
+        if ( sf == 1 ) {
+            readChainedContextualSubTableFormat1 ( in, lookupType, lookupFlags, subtableOffset, sf );
+        } else if ( sf == 2 ) {
+            readChainedContextualSubTableFormat2 ( in, lookupType, lookupFlags, subtableOffset, sf );
+        } else if ( sf == 3 ) {
+            readChainedContextualSubTableFormat3 ( in, lookupType, lookupFlags, subtableOffset, sf );
+        } else {
+            throw new UnsupportedOperationException ( "unsupported chained contextual substitution subtable format: " + sf );
+        }
+        return sf;
+    }
+
+    private void readExtensionSubTableFormat1(FontFileReader in, int lookupType, int lookupFlags, int lookupSequence, int subtableSequence, long subtableOffset, int subtableFormat) throws IOException {
+        String tableTag = "GSUB";
+        in.seekSet(subtableOffset);
+        // skip over format (already known)
+        in.skip ( 2 );
+        // read extension lookup type
+        int lt = in.readTTFUShort();
+        // read extension offset
+        long eo = in.readTTFULong();
+        // dump info if debugging
+        if (log.isDebugEnabled()) {
+            log.debug(tableTag + " extension substitution subtable format: " + subtableFormat );
+            log.debug(tableTag + " extension substitution lookup type: " + lt );
+            log.debug(tableTag + " extension substitution lookup table offset: " + eo );
+        }
+        // read referenced subtable from extended offset
+        readGSUBSubtable ( in, lt, lookupFlags, lookupSequence, subtableSequence, subtableOffset + eo );
+    }
+
+    private int readExtensionSubTable(FontFileReader in, int lookupType, int lookupFlags, int lookupSequence, int subtableSequence, long subtableOffset) throws IOException {
+        in.seekSet(subtableOffset);
+        // read substitution subtable format
+        int sf = in.readTTFUShort();
+        if ( sf == 1 ) {
+            readExtensionSubTableFormat1 ( in, lookupType, lookupFlags, lookupSequence, subtableSequence, subtableOffset, sf );
+        } else {
+            throw new UnsupportedOperationException ( "unsupported extension substitution subtable format: " + sf );
+        }
+        return sf;
+    }
+
+    private void readReverseChainedSingleSubTableFormat1(FontFileReader in, int lookupType, int lookupFlags, long subtableOffset, int subtableFormat) throws IOException {
+        String tableTag = "GSUB";
+        in.seekSet(subtableOffset);
+        // skip over format (already known)
+        in.skip ( 2 );
+        // read coverage offset
+        int co = in.readTTFUShort();
+        // read backtrack glyph count
+        int nbg = in.readTTFUShort();
+        // read backtrack glyph coverage offsets
+        int[] bgcoa = new int [ nbg ];
+        for ( int i = 0; i < nbg; i++ ) {
+            bgcoa [ i ] = in.readTTFUShort();
+        }
+        // read lookahead glyph count
+        int nlg = in.readTTFUShort();
+        // read backtrack glyph coverage offsets
+        int[] lgcoa = new int [ nlg ];
+        for ( int i = 0; i < nlg; i++ ) {
+            lgcoa [ i ] = in.readTTFUShort();
+        }
+        // read substitution (output) glyph count
+        int ng = in.readTTFUShort();
+        // read substitution (output) glyphs
+        int[] glyphs = new int [ ng ];
+        for ( int i = 0, n = ng; i < n; i++ ) {
+            glyphs [ i ] = in.readTTFUShort();
         }
         // dump info if debugging
         if (log.isDebugEnabled()) {
-            log.debug(tableTag + " chained context substitution format: " + subtableFormat + " (coverage based)" );
-            log.debug(tableTag + " chained context substitution backtrack coverage table offsets: " + toString(boa) );
-            log.debug(tableTag + " chained context substitution input coverage table offsets: " + toString(ioa) );
-            log.debug(tableTag + " chained context substitution lookahead coverage table offsets: " + toString(loa) );
-            log.debug(tableTag + " chained context substitution lookup count: " + nsl );
-            for ( int i = 0; i < nsl; i++ ) {
-                log.debug(tableTag + " chained context substitution lookup[" + i + "]: [" + sia[i] + "," + lia[i] + "]" );
+            log.debug(tableTag + " reverse chained contextual substitution format: " + subtableFormat );
+            log.debug(tableTag + " reverse chained contextual substitution coverage table offset: " + co );
+            log.debug(tableTag + " reverse chained contextual substitution backtrack glyph count: " + nbg );
+            for ( int i = 0; i < nbg; i++ ) {
+                log.debug(tableTag + " reverse chained contextual substitution backtrack coverage table offset[" + i + "]: " + bgcoa[i] );
             }
+            log.debug(tableTag + " reverse chained contextual substitution lookahead glyph count: " + nlg );
+            for ( int i = 0; i < nlg; i++ ) {
+                log.debug(tableTag + " reverse chained contextual substitution lookahead coverage table offset[" + i + "]: " + lgcoa[i] );
+            }
+            log.debug(tableTag + " reverse chained contextual substitution glyphs: " + toString(glyphs) );
         }
+        // read coverage table
+        GlyphCoverageTable ct = readCoverageTable ( in, tableTag + " reverse chained contextual substitution coverage", subtableOffset + co );
         // read backtrack coverage tables
-        for ( int i = 0; i < boa.length; i++ ) {
-            if (log.isDebugEnabled()) {
-                log.debug(tableTag + " chained context substitution backtrack coverage table[" + i + "]" );
+        GlyphCoverageTable[] bgca = new GlyphCoverageTable[nbg];
+        for ( int i = 0; i < nbg; i++ ) {
+            int bgco = bgcoa[i];
+            GlyphCoverageTable bgct;
+            if ( bgco > 0 ) {
+                bgct = readCoverageTable ( in, tableTag + " reverse chained contextual substitution backtrack coverage[" + i + "]", subtableOffset + bgco );
+            } else {
+                bgct = null;
             }
-            readCoverageTable ( in, tableTag + " chained context substitution coverage", subtableOffset + boa [ i ] );
-        }
-        // read input coverage tables
-        for ( int i = 0; i < ioa.length; i++ ) {
-            if (log.isDebugEnabled()) {
-                log.debug(tableTag + " chained context substitution input coverage table[" + i + "]" );
-            }
-            readCoverageTable ( in, tableTag + " chained context substitution coverage", subtableOffset + ioa [ i ] );
+            bgca[i] = bgct;
         }
         // read lookahead coverage tables
-        for ( int i = 0; i < loa.length; i++ ) {
-            if (log.isDebugEnabled()) {
-                log.debug(tableTag + " chained context substitution lookahead coverage table[" + i + "]" );
+        GlyphCoverageTable[] lgca = new GlyphCoverageTable[nlg];
+        for ( int i = 0; i < nlg; i++ ) {
+            int lgco = lgcoa[i];
+            GlyphCoverageTable lgct;
+            if ( lgco > 0 ) {
+                lgct = readCoverageTable ( in, tableTag + " reverse chained contextual substitution lookahead coverage[" + i + "]", subtableOffset + lgco );
+            } else {
+                lgct = null;
             }
-            readCoverageTable ( in, tableTag + " chained context substitution coverage", subtableOffset + loa [ i ] );
+            lgca[i] = lgct;
         }
-    }
-
-    private int readChainedContextSubTable(FontFileReader in, int lookupType, int lookupFlags, long subtableOffset) throws IOException {
-        in.seekSet(subtableOffset);
-        // read substitution format
-        int sf = in.readTTFUShort();
-        if ( sf == 1 ) {
-            readChainedContextSubTableFormat1 ( in, lookupType, lookupFlags, subtableOffset, sf );
-        } else if ( sf == 2 ) {
-            readChainedContextSubTableFormat2 ( in, lookupType, lookupFlags, subtableOffset, sf );
-        } else if ( sf == 3 ) {
-            readChainedContextSubTableFormat3 ( in, lookupType, lookupFlags, subtableOffset, sf );
-        }
-        return sf;
-    }
-
-    private int readExtensionSubTable(FontFileReader in, int lookupType, int lookupFlags, long subtableOffset) throws IOException {
-        in.seekSet(subtableOffset);
-        // read substitution format
-        int sf = in.readTTFUShort();
-        // [TBD] - implement me
-        return sf;
+        // store results
+        seMapping = ct;
+        seEntries.add ( bgca );
+        seEntries.add ( lgca );
+        seEntries.add ( glyphs );
     }
 
     private int readReverseChainedSingleSubTable(FontFileReader in, int lookupType, int lookupFlags, long subtableOffset) throws IOException {
         in.seekSet(subtableOffset);
-        // read substitution format
+        // read substitution subtable format
         int sf = in.readTTFUShort();
-        // [TBD] - implement me
+        if ( sf == 1 ) {
+            readReverseChainedSingleSubTableFormat1 ( in, lookupType, lookupFlags, subtableOffset, sf );
+        } else {
+            throw new UnsupportedOperationException ( "unsupported reverse chained single substitution subtable format: " + sf );
+        }
         return sf;
     }
 
@@ -2535,17 +3197,17 @@ public class TTFFile {
         case GSUBLookupType.LIGATURE:
             subtableFormat = readLigatureSubTable ( in, lookupType, lookupFlags, subtableOffset );
             break;
-        case GSUBLookupType.CONTEXT:
-            subtableFormat = readContextSubTable ( in, lookupType, lookupFlags, subtableOffset );
+        case GSUBLookupType.CONTEXTUAL:
+            subtableFormat = readContextualSubTable ( in, lookupType, lookupFlags, subtableOffset );
             break;
-        case GSUBLookupType.CHAINED_CONTEXT:
-            subtableFormat = readChainedContextSubTable ( in, lookupType, lookupFlags, subtableOffset );
+        case GSUBLookupType.CHAINED_CONTEXTUAL:
+            subtableFormat = readChainedContextualSubTable ( in, lookupType, lookupFlags, subtableOffset );
             break;
         case GSUBLookupType.REVERSE_CHAINED_SINGLE:
             subtableFormat = readReverseChainedSingleSubTable ( in, lookupType, lookupFlags, subtableOffset );
             break;
         case GSUBLookupType.EXTENSION:
-            subtableFormat = readExtensionSubTable ( in, lookupType, lookupFlags, subtableOffset );
+            subtableFormat = readExtensionSubTable ( in, lookupType, lookupFlags, lookupSequence, subtableSequence, subtableOffset );
             break;
         default:
             break;
@@ -2554,75 +3216,1419 @@ public class TTFFile {
         resetSESubState();
     }
 
+    private GlyphPositioningTable.DeviceTable readPosDeviceTable(FontFileReader in, long subtableOffset, long deviceTableOffset) throws IOException {
+        long cp = in.getCurrentPos();
+        in.seekSet(subtableOffset + deviceTableOffset);
+        // read start size
+        int ss = in.readTTFUShort();
+        // read end size
+        int es = in.readTTFUShort();
+        // read delta format
+        int df = in.readTTFUShort();
+        // read deltas
+        int n = ( es - ss ) + 1;
+        int[] da = new int [ n ];
+        int s1, m1, dm, dd, s2;
+        if ( df == 1 ) {
+            s1 = 14; m1 = 0x3; dm = 1; dd = 4; s2 = 2;
+        } else if ( df == 2 ) {
+            s1 = 12; m1 = 0xF; dm = 7; dd = 16; s2 = 4;
+        } else if ( df == 3 ) {
+            s1 = 8; m1 = 0xFF; dm = 127; dd = 256; s2 = 8;
+        } else {
+            throw new UnsupportedOperationException ( "unsupported device table delta format: " + df );
+        }
+        for ( int i = 0; ( i < n ) && ( s2 > 0 );) {
+            int p = in.readTTFUShort();
+            for ( int j = 0, k = 16 / s2; j < k; j++ ) {
+                int d = ( p >> s1 ) & m1;
+                if ( d > dm ) {
+                    d -= dd;
+                }
+                if ( i < n ) {
+                    da [ i++ ] = d;
+                } else {
+                    break;
+                }
+                p <<= s2;
+            }
+        }
+        in.seekSet(cp);
+        return new GlyphPositioningTable.DeviceTable ( ss, es, da );
+    }
+
+    private GlyphPositioningTable.Value readPosValue(FontFileReader in, long subtableOffset, int valueFormat) throws IOException {
+        // XPlacement
+        int xp;
+        if ( ( valueFormat & GlyphPositioningTable.Value.X_PLACEMENT ) != 0 ) {
+            xp = convertTTFUnit2PDFUnit ( in.readTTFShort() );
+        } else {
+            xp = 0;
+        }
+        // YPlacement
+        int yp;
+        if ( ( valueFormat & GlyphPositioningTable.Value.Y_PLACEMENT ) != 0 ) {
+            yp = convertTTFUnit2PDFUnit ( in.readTTFShort() );
+        } else {
+            yp = 0;
+        }
+        // XAdvance
+        int xa;
+        if ( ( valueFormat & GlyphPositioningTable.Value.X_ADVANCE ) != 0 ) {
+            xa = convertTTFUnit2PDFUnit ( in.readTTFShort() );
+        } else {
+            xa = 0;
+        }
+        // YAdvance
+        int ya;
+        if ( ( valueFormat & GlyphPositioningTable.Value.Y_ADVANCE ) != 0 ) {
+            ya = convertTTFUnit2PDFUnit ( in.readTTFShort() );
+        } else {
+            ya = 0;
+        }
+        // XPlaDevice
+        GlyphPositioningTable.DeviceTable xpd;
+        if ( ( valueFormat & GlyphPositioningTable.Value.X_PLACEMENT_DEVICE ) != 0 ) {
+            int xpdo = in.readTTFUShort();
+            xpd = readPosDeviceTable ( in, subtableOffset, xpdo );
+        } else {
+            xpd = null;
+        }
+        // YPlaDevice
+        GlyphPositioningTable.DeviceTable ypd;
+        if ( ( valueFormat & GlyphPositioningTable.Value.Y_PLACEMENT_DEVICE ) != 0 ) {
+            int ypdo = in.readTTFUShort();
+            ypd = readPosDeviceTable ( in, subtableOffset, ypdo );
+        } else {
+            ypd = null;
+        }
+        // XAdvDevice
+        GlyphPositioningTable.DeviceTable xad;
+        if ( ( valueFormat & GlyphPositioningTable.Value.X_ADVANCE_DEVICE ) != 0 ) {
+            int xado = in.readTTFUShort();
+            xad = readPosDeviceTable ( in, subtableOffset, xado );
+        } else {
+            xad = null;
+        }
+        // YAdvDevice
+        GlyphPositioningTable.DeviceTable yad;
+        if ( ( valueFormat & GlyphPositioningTable.Value.Y_ADVANCE_DEVICE ) != 0 ) {
+            int yado = in.readTTFUShort();
+            yad = readPosDeviceTable ( in, subtableOffset, yado );
+        } else {
+            yad = null;
+        }
+        return new GlyphPositioningTable.Value ( xp, yp, xa, ya, xpd, ypd, xad, yad );
+    }
+
+    private void readSinglePosTableFormat1(FontFileReader in, int lookupType, int lookupFlags, long subtableOffset, int subtableFormat) throws IOException {
+        String tableTag = "GPOS";
+        in.seekSet(subtableOffset);
+        // skip over format (already known)
+        in.skip ( 2 );
+        // read coverage offset
+        int co = in.readTTFUShort();
+        // read value format
+        int vf = in.readTTFUShort();
+        // read value
+        GlyphPositioningTable.Value v = readPosValue ( in, subtableOffset, vf );
+        // dump info if debugging
+        if (log.isDebugEnabled()) {
+            log.debug(tableTag + " single positioning subtable format: " + subtableFormat + " (delta)" );
+            log.debug(tableTag + " single positioning coverage table offset: " + co );
+            log.debug(tableTag + " single positioning value: " + v );
+        }
+        // read coverage table
+        GlyphCoverageTable ct = readCoverageTable ( in, tableTag + " single positioning coverage", subtableOffset + co );
+        // store results
+        seMapping = ct;
+        seEntries.add ( v );
+    }
+
+    private void readSinglePosTableFormat2(FontFileReader in, int lookupType, int lookupFlags, long subtableOffset, int subtableFormat) throws IOException {
+        String tableTag = "GPOS";
+        in.seekSet(subtableOffset);
+        // skip over format (already known)
+        in.skip ( 2 );
+        // read coverage offset
+        int co = in.readTTFUShort();
+        // read value format
+        int vf = in.readTTFUShort();
+        // read value count
+        int nv = in.readTTFUShort();
+        // dump info if debugging
+        if (log.isDebugEnabled()) {
+            log.debug(tableTag + " single positioning subtable format: " + subtableFormat + " (mapped)" );
+            log.debug(tableTag + " single positioning coverage table offset: " + co );
+            log.debug(tableTag + " single positioning value count: " + nv );
+        }
+        // read coverage table
+        GlyphCoverageTable ct = readCoverageTable ( in, tableTag + " single positioning coverage", subtableOffset + co );
+        // read positioning values
+        GlyphPositioningTable.Value[] pva = new GlyphPositioningTable.Value[nv];
+        for ( int i = 0, n = nv; i < n; i++ ) {
+            GlyphPositioningTable.Value pv = readPosValue ( in, subtableOffset, vf );
+            if (log.isDebugEnabled()) {
+                log.debug(tableTag + " single positioning value[" + i + "]: " + pv );
+            }
+            pva[i] = pv;
+        }
+        // store results
+        seMapping = ct;
+        seEntries.add ( pva );
+    }
+
     private int readSinglePosTable(FontFileReader in, int lookupType, int lookupFlags, long subtableOffset) throws IOException {
         in.seekSet(subtableOffset);
-        // read substitution format
+        // read positionining subtable format
         int sf = in.readTTFUShort();
-        // [TBD] - implement me
+        if ( sf == 1 ) {
+            readSinglePosTableFormat1 ( in, lookupType, lookupFlags, subtableOffset, sf );
+        } else if ( sf == 2 ) {
+            readSinglePosTableFormat2 ( in, lookupType, lookupFlags, subtableOffset, sf );
+        } else {
+            throw new UnsupportedOperationException ( "unsupported single positioning subtable format: " + sf );
+        }
         return sf;
+    }
+
+    private GlyphPositioningTable.PairValues readPosPairValues(FontFileReader in, long subtableOffset, boolean hasGlyph, int vf1, int vf2) throws IOException {
+        // read glyph (if present)
+        int glyph;
+        if ( hasGlyph ) {
+            glyph = in.readTTFUShort();
+        } else {
+            glyph = 0;
+        }
+        // read first value (if present)
+        GlyphPositioningTable.Value v1;
+        if ( vf1 != 0 ) {
+            v1 = readPosValue ( in, subtableOffset, vf1 );
+        } else {
+            v1 = null;
+        }
+        // read second value (if present)
+        GlyphPositioningTable.Value v2;
+        if ( vf2 != 0 ) {
+            v2 = readPosValue ( in, subtableOffset, vf2 );
+        } else {
+            v2 = null;
+        }
+        return new GlyphPositioningTable.PairValues ( glyph, v1, v2 );
+    }
+
+    private GlyphPositioningTable.PairValues[] readPosPairSetTable(FontFileReader in, long subtableOffset, int pairSetTableOffset, int vf1, int vf2) throws IOException {
+        String tableTag = "GPOS";
+        long cp = in.getCurrentPos();
+        in.seekSet(subtableOffset + pairSetTableOffset);
+        // read pair values count
+        int npv = in.readTTFUShort();
+        // dump info if debugging
+        if (log.isDebugEnabled()) {
+            log.debug(tableTag + " pair set table offset: " + pairSetTableOffset );
+            log.debug(tableTag + " pair set table values count: " + npv );
+        }
+        // read pair values
+        GlyphPositioningTable.PairValues[] pva = new GlyphPositioningTable.PairValues [ npv ];
+        for ( int i = 0, n = npv; i < n; i++ ) {
+            GlyphPositioningTable.PairValues pv = readPosPairValues ( in, subtableOffset, true, vf1, vf2 );
+            pva [ i ] = pv;
+            if (log.isDebugEnabled()) {
+                log.debug(tableTag + " pair set table value[" + i + "]: " + pv);
+            }
+        }
+        in.seekSet(cp);
+        return pva;
+    }
+
+    private void readPairPosTableFormat1(FontFileReader in, int lookupType, int lookupFlags, long subtableOffset, int subtableFormat) throws IOException {
+        String tableTag = "GPOS";
+        in.seekSet(subtableOffset);
+        // skip over format (already known)
+        in.skip ( 2 );
+        // read coverage offset
+        int co = in.readTTFUShort();
+        // read value format for first glyph
+        int vf1 = in.readTTFUShort();
+        // read value format for second glyph
+        int vf2 = in.readTTFUShort();
+        // read number (count) of pair sets
+        int nps = in.readTTFUShort();
+        // dump info if debugging
+        if (log.isDebugEnabled()) {
+            log.debug(tableTag + " pair positioning subtable format: " + subtableFormat + " (glyphs)" );
+            log.debug(tableTag + " pair positioning coverage table offset: " + co );
+            log.debug(tableTag + " pair positioning value format #1: " + vf1 );
+            log.debug(tableTag + " pair positioning value format #2: " + vf2 );
+        }
+        // read coverage table
+        GlyphCoverageTable ct = readCoverageTable ( in, tableTag + " pair positioning coverage", subtableOffset + co );
+        // read pair value matrix
+        GlyphPositioningTable.PairValues[][] pvm = new GlyphPositioningTable.PairValues [ nps ][];
+        for ( int i = 0, n = nps; i < n; i++ ) {
+            // read pair set offset
+            int pso = in.readTTFUShort();
+            // read pair set table at offset
+            pvm [ i ] = readPosPairSetTable ( in, subtableOffset, pso, vf1, vf2 );
+        }
+        // store results
+        seMapping = ct;
+        seEntries.add ( pvm );
+    }
+
+    private void readPairPosTableFormat2(FontFileReader in, int lookupType, int lookupFlags, long subtableOffset, int subtableFormat) throws IOException {
+        String tableTag = "GPOS";
+        in.seekSet(subtableOffset);
+        // skip over format (already known)
+        in.skip ( 2 );
+        // read coverage offset
+        int co = in.readTTFUShort();
+        // read value format for first glyph
+        int vf1 = in.readTTFUShort();
+        // read value format for second glyph
+        int vf2 = in.readTTFUShort();
+        // read class def 1 offset
+        int cd1o = in.readTTFUShort();
+        // read class def 2 offset
+        int cd2o = in.readTTFUShort();
+        // read number (count) of classes in class def 1 table
+        int nc1 = in.readTTFUShort();
+        // read number (count) of classes in class def 2 table
+        int nc2 = in.readTTFUShort();
+        // dump info if debugging
+        if (log.isDebugEnabled()) {
+            log.debug(tableTag + " pair positioning subtable format: " + subtableFormat + " (glyph classes)" );
+            log.debug(tableTag + " pair positioning coverage table offset: " + co );
+            log.debug(tableTag + " pair positioning value format #1: " + vf1 );
+            log.debug(tableTag + " pair positioning value format #2: " + vf2 );
+            log.debug(tableTag + " pair positioning class def table #1 offset: " + cd1o );
+            log.debug(tableTag + " pair positioning class def table #2 offset: " + cd2o );
+            log.debug(tableTag + " pair positioning class #1 count: " + nc1 );
+            log.debug(tableTag + " pair positioning class #2 count: " + nc2 );
+        }
+        // read coverage table
+        GlyphCoverageTable ct = readCoverageTable ( in, tableTag + " pair positioning coverage", subtableOffset + co );
+        // read class definition table #1
+        GlyphClassTable cdt1 = readClassDefTable ( in, tableTag + " pair positioning class definition #1", subtableOffset + cd1o );
+        // read class definition table #2
+        GlyphClassTable cdt2 = readClassDefTable ( in, tableTag + " pair positioning class definition #2", subtableOffset + cd2o );
+        // read pair value matrix
+        GlyphPositioningTable.PairValues[][] pvm = new GlyphPositioningTable.PairValues [ nc1 ] [ nc2 ];
+        for ( int i = 0; i < nc1; i++ ) {
+            for ( int j = 0; j < nc2; j++ ) {
+                GlyphPositioningTable.PairValues pv = readPosPairValues ( in, subtableOffset, false, vf1, vf2 );
+                pvm [ i ] [ j ] = pv;
+                if (log.isDebugEnabled()) {
+                    log.debug(tableTag + " pair set table value[" + i + "][" + j + "]: " + pv);
+                }
+            }            
+        }
+        // store results
+        seMapping = ct;
+        seEntries.add ( cdt1 );
+        seEntries.add ( cdt2 );
+        seEntries.add ( Integer.valueOf ( nc1 ) );
+        seEntries.add ( Integer.valueOf ( nc2 ) );
+        seEntries.add ( pvm );
     }
 
     private int readPairPosTable(FontFileReader in, int lookupType, int lookupFlags, long subtableOffset) throws IOException {
         in.seekSet(subtableOffset);
-        // read substitution format
+        // read positioning subtable format
         int sf = in.readTTFUShort();
-        // [TBD] - implement me
+        if ( sf == 1 ) {
+            readPairPosTableFormat1 ( in, lookupType, lookupFlags, subtableOffset, sf );
+        } else if ( sf == 2 ) {
+            readPairPosTableFormat2 ( in, lookupType, lookupFlags, subtableOffset, sf );
+        } else {
+            throw new UnsupportedOperationException ( "unsupported pair positioning subtable format: " + sf );
+        }
         return sf;
+    }
+
+    private GlyphPositioningTable.Anchor readPosAnchor(FontFileReader in, long anchorTableOffset) throws IOException {
+        GlyphPositioningTable.Anchor a;
+        long cp = in.getCurrentPos();
+        in.seekSet(anchorTableOffset);
+        // read anchor table format
+        int af = in.readTTFUShort();
+        if ( af == 1 ) {
+            // read x coordinate
+            int x = convertTTFUnit2PDFUnit ( in.readTTFShort() );
+            // read y coordinate
+            int y = convertTTFUnit2PDFUnit ( in.readTTFShort() );
+            a = new GlyphPositioningTable.Anchor ( x, y );
+        } else if ( af == 2 ) {
+            // read x coordinate
+            int x = convertTTFUnit2PDFUnit ( in.readTTFShort() );
+            // read y coordinate
+            int y = convertTTFUnit2PDFUnit ( in.readTTFShort() );
+            // read anchor point index
+            int ap = in.readTTFUShort();
+            a = new GlyphPositioningTable.Anchor ( x, y, ap );
+        } else if ( af == 3 ) {
+            // read x coordinate
+            int x = convertTTFUnit2PDFUnit ( in.readTTFShort() );
+            // read y coordinate
+            int y = convertTTFUnit2PDFUnit ( in.readTTFShort() );
+            // read x device table offset
+            int xdo = in.readTTFUShort();
+            // read y device table offset
+            int ydo = in.readTTFUShort();
+            // read x device table (if present)
+            GlyphPositioningTable.DeviceTable xd;
+            if ( xdo != 0 ) {
+                xd = readPosDeviceTable ( in, cp, xdo );
+            } else {
+                xd = null;
+            }
+            // read y device table (if present)
+            GlyphPositioningTable.DeviceTable yd;
+            if ( ydo != 0 ) {
+                yd = readPosDeviceTable ( in, cp, ydo );
+            } else {
+                yd = null;
+            }
+            a = new GlyphPositioningTable.Anchor ( x, y, xd, yd );
+        } else {
+            throw new UnsupportedOperationException ( "unsupported positioning anchor format: " + af );
+        }
+        in.seekSet(cp);
+        return a;
+    }
+
+    private void readCursivePosTableFormat1(FontFileReader in, int lookupType, int lookupFlags, long subtableOffset, int subtableFormat) throws IOException {
+        String tableTag = "GPOS";
+        in.seekSet(subtableOffset);
+        // skip over format (already known)
+        in.skip ( 2 );
+        // read coverage offset
+        int co = in.readTTFUShort();
+        // read entry/exit count
+        int ec = in.readTTFUShort();
+        // dump info if debugging
+        if (log.isDebugEnabled()) {
+            log.debug(tableTag + " cursive positioning subtable format: " + subtableFormat );
+            log.debug(tableTag + " cursive positioning coverage table offset: " + co );
+            log.debug(tableTag + " cursive positioning entry/exit count: " + ec );
+        }
+        // read coverage table
+        GlyphCoverageTable ct = readCoverageTable ( in, tableTag + " cursive positioning coverage", subtableOffset + co );
+        // read entry/exit records
+        GlyphPositioningTable.Anchor[] aa = new GlyphPositioningTable.Anchor [ ec * 2 ];
+        for ( int i = 0, n = ec; i < n; i++ ) {
+            // read entry anchor offset
+            int eno = in.readTTFUShort();
+            // read exit anchor offset
+            int exo = in.readTTFUShort();
+            // read entry anchor
+            GlyphPositioningTable.Anchor ena;
+            if ( eno > 0 ) {
+                ena = readPosAnchor ( in, subtableOffset + eno );
+            } else {
+                ena = null;
+            }
+            // read exit anchor
+            GlyphPositioningTable.Anchor exa;
+            if ( exo > 0 ) {
+                exa = readPosAnchor ( in, subtableOffset + exo );
+            } else {
+                exa = null;
+            }
+            aa [ ( i * 2 ) + 0 ] = ena;
+            aa [ ( i * 2 ) + 1 ] = exa;
+            if (log.isDebugEnabled()) {
+                if ( ena != null ) {
+                    log.debug(tableTag + " cursive entry anchor [" + i + "]: " + ena );
+                }
+                if ( exa != null ) {
+                    log.debug(tableTag + " cursive exit anchor  [" + i + "]: " + exa );
+                }
+            }
+        }
+        // store results
+        seMapping = ct;
+        seEntries.add ( aa );
     }
 
     private int readCursivePosTable(FontFileReader in, int lookupType, int lookupFlags, long subtableOffset) throws IOException {
         in.seekSet(subtableOffset);
-        // read substitution format
+        // read positioning subtable format
         int sf = in.readTTFUShort();
-        // [TBD] - implement me
+        if ( sf == 1 ) {
+            readCursivePosTableFormat1 ( in, lookupType, lookupFlags, subtableOffset, sf );
+        } else {
+            throw new UnsupportedOperationException ( "unsupported cursive positioning subtable format: " + sf );
+        }
         return sf;
+    }
+
+    private void readMarkToBasePosTableFormat1(FontFileReader in, int lookupType, int lookupFlags, long subtableOffset, int subtableFormat) throws IOException {
+        String tableTag = "GPOS";
+        in.seekSet(subtableOffset);
+        // skip over format (already known)
+        in.skip ( 2 );
+        // read mark coverage offset
+        int mco = in.readTTFUShort();
+        // read base coverage offset
+        int bco = in.readTTFUShort();
+        // read mark class count
+        int nmc = in.readTTFUShort();
+        // read mark array offset
+        int mao = in.readTTFUShort();
+        // read base array offset
+        int bao = in.readTTFUShort();
+        // dump info if debugging
+        if (log.isDebugEnabled()) {
+            log.debug(tableTag + " mark-to-base positioning subtable format: " + subtableFormat );
+            log.debug(tableTag + " mark-to-base positioning mark coverage table offset: " + mco );
+            log.debug(tableTag + " mark-to-base positioning base coverage table offset: " + bco );
+            log.debug(tableTag + " mark-to-base positioning mark class count: " + nmc );
+            log.debug(tableTag + " mark-to-base positioning mark array offset: " + mao );
+            log.debug(tableTag + " mark-to-base positioning base array offset: " + bao );
+        }
+        // read mark coverage table
+        GlyphCoverageTable mct = readCoverageTable ( in, tableTag + " mark-to-base positioning mark coverage", subtableOffset + mco );
+        // read base coverage table
+        GlyphCoverageTable bct = readCoverageTable ( in, tableTag + " mark-to-base positioning base coverage", subtableOffset + bco );
+        // read mark anchor array
+        // seek to mark array
+        in.seekSet(subtableOffset + mao);
+        // read mark count
+        int nm = in.readTTFUShort();
+        if (log.isDebugEnabled()) {
+            log.debug(tableTag + " mark-to-base positioning mark count: " + nm );
+        }
+        // read mark anchor array, where i:{0...markCount}
+        GlyphPositioningTable.MarkAnchor[] maa = new GlyphPositioningTable.MarkAnchor [ nm ];
+        for ( int i = 0; i < nm; i++ ) {
+            // read mark class
+            int mc = in.readTTFUShort();
+            // read mark anchor offset
+            int ao = in.readTTFUShort();
+            GlyphPositioningTable.Anchor a;
+            if ( ao > 0 ) {
+                a = readPosAnchor ( in, subtableOffset + mao + ao );
+            } else {
+                a = null;
+            }
+            GlyphPositioningTable.MarkAnchor ma;
+            if ( a != null ) {
+                ma = new GlyphPositioningTable.MarkAnchor ( mc, a );
+            } else {
+                ma = null;
+            }
+            maa [ i ] = ma;
+            if (log.isDebugEnabled()) {
+                log.debug(tableTag + " mark-to-base positioning mark anchor[" + i + "]: " + ma);
+            }
+
+        }
+        // read base anchor matrix
+        // seek to base array
+        in.seekSet(subtableOffset + bao);
+        // read base count
+        int nb = in.readTTFUShort();
+        if (log.isDebugEnabled()) {
+            log.debug(tableTag + " mark-to-base positioning base count: " + nb );
+        }
+        // read anchor matrix, where i:{0...baseCount - 1}, j:{0...markClassCount - 1}
+        GlyphPositioningTable.Anchor[][] bam = new GlyphPositioningTable.Anchor [ nb ] [ nmc ];
+        for ( int i = 0; i < nb; i++ ) {
+            for ( int j = 0; j < nmc; j++ ) {
+                // read base anchor offset
+                int ao = in.readTTFUShort();
+                GlyphPositioningTable.Anchor a;
+                if ( ao > 0 ) {
+                    a = readPosAnchor ( in, subtableOffset + bao + ao );
+                } else {
+                    a = null;
+                }
+                bam [ i ] [ j ] = a;
+                if (log.isDebugEnabled()) {
+                    log.debug(tableTag + " mark-to-base positioning base anchor[" + i + "][" + j + "]: " + a);
+                }
+            }            
+        }
+        // store results
+        seMapping = mct;
+        seEntries.add ( bct );
+        seEntries.add ( Integer.valueOf ( nmc ) );
+        seEntries.add ( maa );
+        seEntries.add ( bam );
     }
 
     private int readMarkToBasePosTable(FontFileReader in, int lookupType, int lookupFlags, long subtableOffset) throws IOException {
         in.seekSet(subtableOffset);
-        // read substitution format
+        // read positioning subtable format
         int sf = in.readTTFUShort();
-        // [TBD] - implement me
+        if ( sf == 1 ) {
+            readMarkToBasePosTableFormat1 ( in, lookupType, lookupFlags, subtableOffset, sf );
+        } else {
+            throw new UnsupportedOperationException ( "unsupported mark-to-base positioning subtable format: " + sf );
+        }
         return sf;
+    }
+
+    private void readMarkToLigaturePosTableFormat1(FontFileReader in, int lookupType, int lookupFlags, long subtableOffset, int subtableFormat) throws IOException {
+        String tableTag = "GPOS";
+        in.seekSet(subtableOffset);
+        // skip over format (already known)
+        in.skip ( 2 );
+        // read mark coverage offset
+        int mco = in.readTTFUShort();
+        // read ligature coverage offset
+        int lco = in.readTTFUShort();
+        // read mark class count
+        int nmc = in.readTTFUShort();
+        // read mark array offset
+        int mao = in.readTTFUShort();
+        // read ligature array offset
+        int lao = in.readTTFUShort();
+        // dump info if debugging
+        if (log.isDebugEnabled()) {
+            log.debug(tableTag + " mark-to-ligature positioning subtable format: " + subtableFormat );
+            log.debug(tableTag + " mark-to-ligature positioning mark coverage table offset: " + mco );
+            log.debug(tableTag + " mark-to-ligature positioning ligature coverage table offset: " + lco );
+            log.debug(tableTag + " mark-to-ligature positioning mark class count: " + nmc );
+            log.debug(tableTag + " mark-to-ligature positioning mark array offset: " + mao );
+            log.debug(tableTag + " mark-to-ligature positioning ligature array offset: " + lao );
+        }
+        // read mark coverage table
+        GlyphCoverageTable mct = readCoverageTable ( in, tableTag + " mark-to-ligature positioning mark coverage", subtableOffset + mco );
+        // read ligature coverage table
+        GlyphCoverageTable lct = readCoverageTable ( in, tableTag + " mark-to-ligature positioning ligature coverage", subtableOffset + lco );
+        // read mark anchor array
+        // seek to mark array
+        in.seekSet(subtableOffset + mao);
+        // read mark count
+        int nm = in.readTTFUShort();
+        if (log.isDebugEnabled()) {
+            log.debug(tableTag + " mark-to-ligature positioning mark count: " + nm );
+        }
+        // read mark anchor array, where i:{0...markCount}
+        GlyphPositioningTable.MarkAnchor[] maa = new GlyphPositioningTable.MarkAnchor [ nm ];
+        for ( int i = 0; i < nm; i++ ) {
+            // read mark class
+            int mc = in.readTTFUShort();
+            // read mark anchor offset
+            int ao = in.readTTFUShort();
+            GlyphPositioningTable.Anchor a;
+            if ( ao > 0 ) {
+                a = readPosAnchor ( in, subtableOffset + mao + ao );
+            } else {
+                a = null;
+            }
+            GlyphPositioningTable.MarkAnchor ma;
+            if ( a != null ) {
+                ma = new GlyphPositioningTable.MarkAnchor ( mc, a );
+            } else {
+                ma = null;
+            }
+            maa [ i ] = ma;
+            if (log.isDebugEnabled()) {
+                log.debug(tableTag + " mark-to-ligature positioning mark anchor[" + i + "]: " + ma);
+            }
+        }
+        // read ligature anchor matrix
+        // seek to ligature array
+        in.seekSet(subtableOffset + lao);
+        // read ligature count
+        int nl = in.readTTFUShort();
+        if (log.isDebugEnabled()) {
+            log.debug(tableTag + " mark-to-ligature positioning ligature count: " + nl );
+        }
+        // read ligature attach table offsets
+        int[] laoa = new int [ nl ];
+        for ( int i = 0; i < nl; i++ ) {
+            laoa [ i ] = in.readTTFUShort();
+        }
+        // iterate over ligature attach tables, recording maximum component count
+        int mxc = 0;
+        for ( int i = 0; i < nl; i++ ) {
+            int lato = laoa [ i ];
+            in.seekSet ( subtableOffset + lao + lato );
+            // read component count
+            int cc = in.readTTFUShort();
+            if ( cc > mxc ) {
+                mxc = cc;
+            }
+        }
+        if (log.isDebugEnabled()) {
+            log.debug(tableTag + " mark-to-ligature positioning maximum component count: " + mxc );
+        }
+        // read anchor matrix, where i:{0...ligatureCount - 1}, j:{0...maxComponentCount - 1}, k:{0...markClassCount - 1}
+        GlyphPositioningTable.Anchor[][][] lam = new GlyphPositioningTable.Anchor [ nl ][][];
+        for ( int i = 0; i < nl; i++ ) {
+            int lato = laoa [ i ];
+            // seek to ligature attach table for ligature[i]
+            in.seekSet ( subtableOffset + lao + lato );
+            // read component count
+            int cc = in.readTTFUShort();
+            GlyphPositioningTable.Anchor[][] lcm = new GlyphPositioningTable.Anchor [ cc ] [ nmc ];
+            for ( int j = 0; j < cc; j++ ) {
+                for ( int k = 0; k < nmc; k++ ) {
+                    // read ligature anchor offset
+                    int ao = in.readTTFUShort();
+                    GlyphPositioningTable.Anchor a;
+                    if ( ao > 0 ) {
+                        a  = readPosAnchor ( in, subtableOffset + lao + lato + ao );
+                    } else {
+                        a = null;
+                    }
+                    lcm [ j ] [ k ] = a;
+                    if (log.isDebugEnabled()) {
+                        log.debug(tableTag + " mark-to-ligature positioning ligature anchor[" + i + "][" + j + "][" + k + "]: " + a);
+                    }
+                }
+            }
+            lam [ i ] = lcm;
+        }
+        // store results
+        seMapping = mct;
+        seEntries.add ( lct );
+        seEntries.add ( Integer.valueOf ( nmc ) );
+        seEntries.add ( Integer.valueOf ( mxc ) );
+        seEntries.add ( maa );
+        seEntries.add ( lam );
     }
 
     private int readMarkToLigaturePosTable(FontFileReader in, int lookupType, int lookupFlags, long subtableOffset) throws IOException {
         in.seekSet(subtableOffset);
-        // read substitution format
+        // read positioning subtable format
         int sf = in.readTTFUShort();
-        // [TBD] - implement me
+        if ( sf == 1 ) {
+            readMarkToLigaturePosTableFormat1 ( in, lookupType, lookupFlags, subtableOffset, sf );
+        } else {
+            throw new UnsupportedOperationException ( "unsupported mark-to-ligature positioning subtable format: " + sf );
+        }
         return sf;
+    }
+
+    private void readMarkToMarkPosTableFormat1(FontFileReader in, int lookupType, int lookupFlags, long subtableOffset, int subtableFormat) throws IOException {
+        String tableTag = "GPOS";
+        in.seekSet(subtableOffset);
+        // skip over format (already known)
+        in.skip ( 2 );
+        // read mark #1 coverage offset
+        int m1co = in.readTTFUShort();
+        // read mark #2 coverage offset
+        int m2co = in.readTTFUShort();
+        // read mark class count
+        int nmc = in.readTTFUShort();
+        // read mark #1 array offset
+        int m1ao = in.readTTFUShort();
+        // read mark #2 array offset
+        int m2ao = in.readTTFUShort();
+        // dump info if debugging
+        if (log.isDebugEnabled()) {
+            log.debug(tableTag + " mark-to-mark positioning subtable format: " + subtableFormat );
+            log.debug(tableTag + " mark-to-mark positioning mark #1 coverage table offset: " + m1co );
+            log.debug(tableTag + " mark-to-mark positioning mark #2 coverage table offset: " + m2co );
+            log.debug(tableTag + " mark-to-mark positioning mark class count: " + nmc );
+            log.debug(tableTag + " mark-to-mark positioning mark #1 array offset: " + m1ao );
+            log.debug(tableTag + " mark-to-mark positioning mark #2 array offset: " + m2ao );
+        }
+        // read mark #1 coverage table
+        GlyphCoverageTable mct1 = readCoverageTable ( in, tableTag + " mark-to-mark positioning mark #1 coverage", subtableOffset + m1co );
+        // read mark #2 coverage table
+        GlyphCoverageTable mct2 = readCoverageTable ( in, tableTag + " mark-to-mark positioning mark #2 coverage", subtableOffset + m2co );
+        // read mark #1 anchor array
+        // seek to mark array
+        in.seekSet(subtableOffset + m1ao);
+        // read mark count
+        int nm1 = in.readTTFUShort();
+        if (log.isDebugEnabled()) {
+            log.debug(tableTag + " mark-to-mark positioning mark #1 count: " + nm1 );
+        }
+        // read mark anchor array, where i:{0...mark1Count}
+        GlyphPositioningTable.MarkAnchor[] maa = new GlyphPositioningTable.MarkAnchor [ nm1 ];
+        for ( int i = 0; i < nm1; i++ ) {
+            // read mark class
+            int mc = in.readTTFUShort();
+            // read mark anchor offset
+            int ao = in.readTTFUShort();
+            GlyphPositioningTable.Anchor a;
+            if ( ao > 0 ) {
+                a = readPosAnchor ( in, subtableOffset + m1ao + ao );
+            } else {
+                a = null;
+            }
+            GlyphPositioningTable.MarkAnchor ma;
+            if ( a != null ) {
+                ma = new GlyphPositioningTable.MarkAnchor ( mc, a );
+            } else {
+                ma = null;
+            }
+            maa [ i ] = ma;
+            if (log.isDebugEnabled()) {
+                log.debug(tableTag + " mark-to-mark positioning mark #1 anchor[" + i + "]: " + ma);
+            }
+        }
+        // read mark #2 anchor matrix
+        // seek to mark #2 array
+        in.seekSet(subtableOffset + m2ao);
+        // read mark #2 count
+        int nm2 = in.readTTFUShort();
+        if (log.isDebugEnabled()) {
+            log.debug(tableTag + " mark-to-mark positioning mark #2 count: " + nm2 );
+        }
+        // read anchor matrix, where i:{0...mark2Count - 1}, j:{0...markClassCount - 1}
+        GlyphPositioningTable.Anchor[][] mam = new GlyphPositioningTable.Anchor [ nm2 ] [ nmc ];
+        for ( int i = 0; i < nm2; i++ ) {
+            for ( int j = 0; j < nmc; j++ ) {
+                // read mark anchor offset
+                int ao = in.readTTFUShort();
+                GlyphPositioningTable.Anchor a;
+                if ( ao > 0 ) {
+                    a = readPosAnchor ( in, subtableOffset + m2ao + ao );
+                } else {
+                    a = null;
+                }
+                mam [ i ] [ j ] = a;
+                if (log.isDebugEnabled()) {
+                    log.debug(tableTag + " mark-to-mark positioning mark #2 anchor[" + i + "][" + j + "]: " + a);
+                }
+            }            
+        }
+        // store results
+        seMapping = mct1;
+        seEntries.add ( mct2 );
+        seEntries.add ( Integer.valueOf ( nmc ) );
+        seEntries.add ( maa );
+        seEntries.add ( mam );
     }
 
     private int readMarkToMarkPosTable(FontFileReader in, int lookupType, int lookupFlags, long subtableOffset) throws IOException {
         in.seekSet(subtableOffset);
-        // read substitution format
+        // read positioning subtable format
         int sf = in.readTTFUShort();
-        // [TBD] - implement me
+        if ( sf == 1 ) {
+            readMarkToMarkPosTableFormat1 ( in, lookupType, lookupFlags, subtableOffset, sf );
+        } else {
+            throw new UnsupportedOperationException ( "unsupported mark-to-mark positioning subtable format: " + sf );
+        }
         return sf;
     }
 
-    private int readContextPosTable(FontFileReader in, int lookupType, int lookupFlags, long subtableOffset) throws IOException {
+    private void readContextualPosTableFormat1(FontFileReader in, int lookupType, int lookupFlags, long subtableOffset, int subtableFormat) throws IOException {
+        String tableTag = "GPOS";
         in.seekSet(subtableOffset);
-        // read substitution format
+        // skip over format (already known)
+        in.skip ( 2 );
+        // read coverage offset
+        int co = in.readTTFUShort();
+        // read rule set count
+        int nrs = in.readTTFUShort();
+        // read rule set offsets
+        int[] rsoa = new int [ nrs ];
+        for ( int i = 0; i < nrs; i++ ) {
+            rsoa [ i ] = in.readTTFUShort();
+        }
+        // dump info if debugging
+        if (log.isDebugEnabled()) {
+            log.debug(tableTag + " contextual positioning subtable format: " + subtableFormat + " (glyphs)" );
+            log.debug(tableTag + " contextual positioning coverage table offset: " + co );
+            log.debug(tableTag + " contextual positioning rule set count: " + nrs );
+            for ( int i = 0; i < nrs; i++ ) {
+                log.debug(tableTag + " contextual positioning rule set offset[" + i + "]: " + rsoa[i] );
+            }
+        }
+        // read coverage table
+        GlyphCoverageTable ct;
+        if ( co > 0 ) {
+            ct = readCoverageTable ( in, tableTag + " contextual positioning coverage", subtableOffset + co );
+        } else {
+            ct = null;
+        }
+        // read rule sets
+        GlyphTable.RuleSet[] rsa = new GlyphTable.RuleSet [ nrs ];
+        String header = null;
+        for ( int i = 0; i < nrs; i++ ) {
+            GlyphTable.RuleSet rs;
+            int rso = rsoa [ i ];
+            if ( rso > 0 ) {
+                // seek to rule set [ i ]
+                in.seekSet ( subtableOffset + rso );
+                // read rule count
+                int nr = in.readTTFUShort();
+                // read rule offsets
+                int[] roa = new int [ nr ];
+                GlyphTable.Rule[] ra = new GlyphTable.Rule [ nr ];
+                for ( int j = 0; j < nr; j++ ) {
+                    roa [ j ] = in.readTTFUShort();
+                }
+                // read glyph sequence rules
+                for ( int j = 0; j < nr; j++ ) {
+                    GlyphTable.GlyphSequenceRule r;
+                    int ro = roa [ j ];
+                    if ( ro > 0 ) {
+                        // seek to rule [ j ]
+                        in.seekSet ( subtableOffset + rso + ro );
+                        // read glyph count
+                        int ng = in.readTTFUShort();
+                        // read rule lookup count
+                        int nl = in.readTTFUShort();
+                        // read glyphs
+                        int[] glyphs = new int [ ng - 1 ];
+                        for ( int k = 0, nk = glyphs.length; k < nk; k++ ) {
+                            glyphs [ k ] = in.readTTFUShort();
+                        }
+                        // read rule lookups
+                        if (log.isDebugEnabled()) {
+                            header = tableTag + " contextual positioning lookups @rule[" + i + "][" + j + "]: ";
+                        }
+                        GlyphTable.RuleLookup[] lookups = readRuleLookups ( in, nl, header );
+                        r = new GlyphTable.GlyphSequenceRule ( lookups, ng, glyphs );
+                    } else {
+                        r = null;
+                    }
+                    ra [ j ] = r;
+                }
+                rs = new GlyphTable.HomogeneousRuleSet ( ra );
+            } else {
+                rs = null;
+            }
+            rsa [ i ] = rs;
+        }
+        // store results
+        seMapping = ct;
+        seEntries.add ( rsa );
+    }
+
+    private void readContextualPosTableFormat2(FontFileReader in, int lookupType, int lookupFlags, long subtableOffset, int subtableFormat) throws IOException {
+        String tableTag = "GPOS";
+        in.seekSet(subtableOffset);
+        // skip over format (already known)
+        in.skip ( 2 );
+        // read coverage offset
+        int co = in.readTTFUShort();
+        // read class def table offset
+        int cdo = in.readTTFUShort();
+        // read class rule set count
+        int ngc = in.readTTFUShort();
+        // read class rule set offsets
+        int[] csoa = new int [ ngc ];
+        for ( int i = 0; i < ngc; i++ ) {
+            csoa [ i ] = in.readTTFUShort();
+        }
+        // dump info if debugging
+        if (log.isDebugEnabled()) {
+            log.debug(tableTag + " contextual positioning subtable format: " + subtableFormat + " (glyph classes)" );
+            log.debug(tableTag + " contextual positioning coverage table offset: " + co );
+            log.debug(tableTag + " contextual positioning class set count: " + ngc );
+            for ( int i = 0; i < ngc; i++ ) {
+                log.debug(tableTag + " contextual positioning class set offset[" + i + "]: " + csoa[i] );
+            }
+        }
+        // read coverage table
+        GlyphCoverageTable ct;
+        if ( co > 0 ) {
+            ct = readCoverageTable ( in, tableTag + " contextual positioning coverage", subtableOffset + co );
+        } else {
+            ct = null;
+        }
+        // read class definition table
+        GlyphClassTable cdt;
+        if ( cdo > 0 ) {
+            cdt = readClassDefTable ( in, tableTag + " contextual positioning class definition", subtableOffset + cdo );
+        } else {
+            cdt = null;
+        }
+        // read rule sets
+        GlyphTable.RuleSet[] rsa = new GlyphTable.RuleSet [ ngc ];
+        String header = null;
+        for ( int i = 0; i < ngc; i++ ) {
+            int cso = csoa [ i ];
+            GlyphTable.RuleSet rs;
+            if ( cso > 0 ) {
+                // seek to rule set [ i ]
+                in.seekSet ( subtableOffset + cso );
+                // read rule count
+                int nr = in.readTTFUShort();
+                // read rule offsets
+                int[] roa = new int [ nr ];
+                GlyphTable.Rule[] ra = new GlyphTable.Rule [ nr ];
+                for ( int j = 0; j < nr; j++ ) {
+                    roa [ j ] = in.readTTFUShort();
+                }
+                // read glyph sequence rules
+                for ( int j = 0; j < nr; j++ ) {
+                    int ro = roa [ j ];
+                    GlyphTable.ClassSequenceRule r;
+                    if ( ro > 0 ) {
+                        // seek to rule [ j ]
+                        in.seekSet ( subtableOffset + cso + ro );
+                        // read glyph count
+                        int ng = in.readTTFUShort();
+                        // read rule lookup count
+                        int nl = in.readTTFUShort();
+                        // read classes
+                        int[] classes = new int [ ng - 1 ];
+                        for ( int k = 0, nk = classes.length; k < nk; k++ ) {
+                            classes [ k ] = in.readTTFUShort();
+                        }
+                        // read rule lookups
+                        if (log.isDebugEnabled()) {
+                            header = tableTag + " contextual positioning lookups @rule[" + i + "][" + j + "]: ";
+                        }
+                        GlyphTable.RuleLookup[] lookups = readRuleLookups ( in, nl, header );
+                        r = new GlyphTable.ClassSequenceRule ( lookups, ng, classes );
+                    } else {
+                        r = null;
+                    }
+                    ra [ j ] = r;
+                }
+                rs = new GlyphTable.HomogeneousRuleSet ( ra );
+            } else {
+                rs = null;
+            }
+            rsa [ i ] = rs;
+        }
+        // store results
+        seMapping = ct;
+        seEntries.add ( cdt );
+        seEntries.add ( Integer.valueOf ( ngc ) );
+        seEntries.add ( rsa );
+    }
+
+    private void readContextualPosTableFormat3(FontFileReader in, int lookupType, int lookupFlags, long subtableOffset, int subtableFormat) throws IOException {
+        String tableTag = "GPOS";
+        in.seekSet(subtableOffset);
+        // skip over format (already known)
+        in.skip ( 2 );
+        // read glyph (input sequence length) count
+        int ng = in.readTTFUShort();
+        // read positioning lookup count
+        int nl = in.readTTFUShort();
+        // read glyph coverage offsets, one per glyph input sequence length count
+        int[] gcoa = new int [ ng ];
+        for ( int i = 0; i < ng; i++ ) {
+            gcoa [ i ] = in.readTTFUShort();
+        }
+        // dump info if debugging
+        if (log.isDebugEnabled()) {
+            log.debug(tableTag + " contextual positioning subtable format: " + subtableFormat + " (glyph sets)" );
+            log.debug(tableTag + " contextual positioning glyph input sequence length count: " + ng );
+            log.debug(tableTag + " contextual positioning lookup count: " + nl );
+            for ( int i = 0; i < ng; i++ ) {
+                log.debug(tableTag + " contextual positioning coverage table offset[" + i + "]: " + gcoa[i] );
+            }
+        }
+        // read coverage tables
+        GlyphCoverageTable[] gca = new GlyphCoverageTable [ ng ];
+        for ( int i = 0; i < ng; i++ ) {
+            int gco = gcoa [ i ];
+            GlyphCoverageTable gct;
+            if ( gco > 0 ) {
+                gct = readCoverageTable ( in, tableTag + " contextual positioning coverage[" + i + "]", subtableOffset + gcoa[i] );
+            } else {
+                gct = null;
+            }
+            gca [ i ] = gct;
+        }
+        // read rule lookups
+        String header = null;
+        if (log.isDebugEnabled()) {
+            header = tableTag + " contextual positioning lookups: ";
+        }
+        GlyphTable.RuleLookup[] lookups = readRuleLookups ( in, nl, header );
+        // construct rule, rule set, and rule set array
+        GlyphTable.Rule r = new GlyphTable.CoverageSequenceRule ( lookups, ng, gca );
+        GlyphTable.RuleSet rs = new GlyphTable.HomogeneousRuleSet ( new GlyphTable.Rule[] {r} );
+        GlyphTable.RuleSet[] rsa = new GlyphTable.RuleSet[] {rs};
+        // store results
+        assert ( gca != null ) && ( gca.length > 0 );
+        seMapping = gca[0];
+        seEntries.add ( rsa );
+    }
+
+    private int readContextualPosTable(FontFileReader in, int lookupType, int lookupFlags, long subtableOffset) throws IOException {
+        in.seekSet(subtableOffset);
+        // read positioning subtable format
         int sf = in.readTTFUShort();
-        // [TBD] - implement me
+        if ( sf == 1 ) {
+            readContextualPosTableFormat1 ( in, lookupType, lookupFlags, subtableOffset, sf );
+        } else if ( sf == 2 ) {
+            readContextualPosTableFormat2 ( in, lookupType, lookupFlags, subtableOffset, sf );
+        } else if ( sf == 3 ) {
+            readContextualPosTableFormat3 ( in, lookupType, lookupFlags, subtableOffset, sf );
+        } else {
+            throw new UnsupportedOperationException ( "unsupported contextual positioning subtable format: " + sf );
+        }
         return sf;
     }
 
-    private int readChainedContextPosTable(FontFileReader in, int lookupType, int lookupFlags, long subtableOffset) throws IOException {
+    private void readChainedContextualPosTableFormat1(FontFileReader in, int lookupType, int lookupFlags, long subtableOffset, int subtableFormat) throws IOException {
+        String tableTag = "GPOS";
         in.seekSet(subtableOffset);
-        // read substitution format
+        // skip over format (already known)
+        in.skip ( 2 );
+        // read coverage offset
+        int co = in.readTTFUShort();
+        // read rule set count
+        int nrs = in.readTTFUShort();
+        // read rule set offsets
+        int[] rsoa = new int [ nrs ];
+        for ( int i = 0; i < nrs; i++ ) {
+            rsoa [ i ] = in.readTTFUShort();
+        }
+        // dump info if debugging
+        if (log.isDebugEnabled()) {
+            log.debug(tableTag + " chained contextual positioning subtable format: " + subtableFormat + " (glyphs)" );
+            log.debug(tableTag + " chained contextual positioning coverage table offset: " + co );
+            log.debug(tableTag + " chained contextual positioning rule set count: " + nrs );
+            for ( int i = 0; i < nrs; i++ ) {
+                log.debug(tableTag + " chained contextual positioning rule set offset[" + i + "]: " + rsoa[i] );
+            }
+        }
+        // read coverage table
+        GlyphCoverageTable ct;
+        if ( co > 0 ) {
+            ct = readCoverageTable ( in, tableTag + " chained contextual positioning coverage", subtableOffset + co );
+        } else {
+            ct = null;
+        }
+        // read rule sets
+        GlyphTable.RuleSet[] rsa = new GlyphTable.RuleSet [ nrs ];
+        String header = null;
+        for ( int i = 0; i < nrs; i++ ) {
+            GlyphTable.RuleSet rs;
+            int rso = rsoa [ i ];
+            if ( rso > 0 ) {
+                // seek to rule set [ i ]
+                in.seekSet ( subtableOffset + rso );
+                // read rule count
+                int nr = in.readTTFUShort();
+                // read rule offsets
+                int[] roa = new int [ nr ];
+                GlyphTable.Rule[] ra = new GlyphTable.Rule [ nr ];
+                for ( int j = 0; j < nr; j++ ) {
+                    roa [ j ] = in.readTTFUShort();
+                }
+                // read glyph sequence rules
+                for ( int j = 0; j < nr; j++ ) {
+                    GlyphTable.ChainedGlyphSequenceRule r;
+                    int ro = roa [ j ];
+                    if ( ro > 0 ) {
+                        // seek to rule [ j ]
+                        in.seekSet ( subtableOffset + rso + ro );
+                        // read backtrack glyph count
+                        int nbg = in.readTTFUShort();
+                        // read backtrack glyphs
+                        int[] backtrackGlyphs = new int [ nbg ];
+                        for ( int k = 0, nk = backtrackGlyphs.length; k < nk; k++ ) {
+                            backtrackGlyphs [ k ] = in.readTTFUShort();
+                        }
+                        // read input glyph count
+                        int nig = in.readTTFUShort();
+                        // read glyphs
+                        int[] glyphs = new int [ nig - 1 ];
+                        for ( int k = 0, nk = glyphs.length; k < nk; k++ ) {
+                            glyphs [ k ] = in.readTTFUShort();
+                        }
+                        // read lookahead glyph count
+                        int nlg = in.readTTFUShort();
+                        // read lookahead glyphs
+                        int[] lookaheadGlyphs = new int [ nlg ];
+                        for ( int k = 0, nk = lookaheadGlyphs.length; k < nk; k++ ) {
+                            lookaheadGlyphs [ k ] = in.readTTFUShort();
+                        }
+                        // read rule lookup count
+                        int nl = in.readTTFUShort();
+                        // read rule lookups
+                        if (log.isDebugEnabled()) {
+                            header = tableTag + " contextual positioning lookups @rule[" + i + "][" + j + "]: ";
+                        }
+                        GlyphTable.RuleLookup[] lookups = readRuleLookups ( in, nl, header );
+                        r = new GlyphTable.ChainedGlyphSequenceRule ( lookups, nig, glyphs, backtrackGlyphs, lookaheadGlyphs );
+                    } else {
+                        r = null;
+                    }
+                    ra [ j ] = r;
+                }
+                rs = new GlyphTable.HomogeneousRuleSet ( ra );
+            } else {
+                rs = null;
+            }
+            rsa [ i ] = rs;
+        }
+        // store results
+        seMapping = ct;
+        seEntries.add ( rsa );
+    }
+
+    private void readChainedContextualPosTableFormat2(FontFileReader in, int lookupType, int lookupFlags, long subtableOffset, int subtableFormat) throws IOException {
+        String tableTag = "GPOS";
+        in.seekSet(subtableOffset);
+        // skip over format (already known)
+        in.skip ( 2 );
+        // read coverage offset
+        int co = in.readTTFUShort();
+        // read backtrack class def table offset
+        int bcdo = in.readTTFUShort();
+        // read input class def table offset
+        int icdo = in.readTTFUShort();
+        // read lookahead class def table offset
+        int lcdo = in.readTTFUShort();
+        // read class set count
+        int ngc = in.readTTFUShort();
+        // read class set offsets
+        int[] csoa = new int [ ngc ];
+        for ( int i = 0; i < ngc; i++ ) {
+            csoa [ i ] = in.readTTFUShort();
+        }
+        // dump info if debugging
+        if (log.isDebugEnabled()) {
+            log.debug(tableTag + " chained contextual positioning subtable format: " + subtableFormat + " (glyph classes)" );
+            log.debug(tableTag + " chained contextual positioning coverage table offset: " + co );
+            log.debug(tableTag + " chained contextual positioning class set count: " + ngc );
+            for ( int i = 0; i < ngc; i++ ) {
+                log.debug(tableTag + " chained contextual positioning class set offset[" + i + "]: " + csoa[i] );
+            }
+        }
+        // read coverage table
+        GlyphCoverageTable ct;
+        if ( co > 0 ) {
+            ct = readCoverageTable ( in, tableTag + " chained contextual positioning coverage", subtableOffset + co );
+        } else {
+            ct = null;
+        }
+        // read backtrack class definition table
+        GlyphClassTable bcdt;
+        if ( bcdo > 0 ) {
+            bcdt = readClassDefTable ( in, tableTag + " contextual positioning backtrack class definition", subtableOffset + bcdo );
+        } else {
+            bcdt = null;
+        }
+        // read input class definition table
+        GlyphClassTable icdt;
+        if ( icdo > 0 ) {
+            icdt = readClassDefTable ( in, tableTag + " contextual positioning input class definition", subtableOffset + icdo );
+        } else {
+            icdt = null;
+        }
+        // read lookahead class definition table
+        GlyphClassTable lcdt;
+        if ( lcdo > 0 ) {
+            lcdt = readClassDefTable ( in, tableTag + " contextual positioning lookahead class definition", subtableOffset + lcdo );
+        } else {
+            lcdt = null;
+        }
+        // read rule sets
+        GlyphTable.RuleSet[] rsa = new GlyphTable.RuleSet [ ngc ];
+        String header = null;
+        for ( int i = 0; i < ngc; i++ ) {
+            int cso = csoa [ i ];
+            GlyphTable.RuleSet rs;
+            if ( cso > 0 ) {
+                // seek to rule set [ i ]
+                in.seekSet ( subtableOffset + cso );
+                // read rule count
+                int nr = in.readTTFUShort();
+                // read rule offsets
+                int[] roa = new int [ nr ];
+                GlyphTable.Rule[] ra = new GlyphTable.Rule [ nr ];
+                for ( int j = 0; j < nr; j++ ) {
+                    roa [ j ] = in.readTTFUShort();
+                }
+                // read glyph sequence rules
+                for ( int j = 0; j < nr; j++ ) {
+                    GlyphTable.ChainedClassSequenceRule r;
+                    int ro = roa [ j ];
+                    if ( ro > 0 ) {
+                        // seek to rule [ j ]
+                        in.seekSet ( subtableOffset + cso + ro );
+                        // read backtrack glyph class count
+                        int nbc = in.readTTFUShort();
+                        // read backtrack glyph classes
+                        int[] backtrackClasses = new int [ nbc ];
+                        for ( int k = 0, nk = backtrackClasses.length; k < nk; k++ ) {
+                            backtrackClasses [ k ] = in.readTTFUShort();
+                        }
+                        // read input glyph class count
+                        int nic = in.readTTFUShort();
+                        // read input glyph classes
+                        int[] classes = new int [ nic - 1 ];
+                        for ( int k = 0, nk = classes.length; k < nk; k++ ) {
+                            classes [ k ] = in.readTTFUShort();
+                        }
+                        // read lookahead glyph class count
+                        int nlc = in.readTTFUShort();
+                        // read lookahead glyph classes
+                        int[] lookaheadClasses = new int [ nlc ];
+                        for ( int k = 0, nk = lookaheadClasses.length; k < nk; k++ ) {
+                            lookaheadClasses [ k ] = in.readTTFUShort();
+                        }
+                        // read rule lookup count
+                        int nl = in.readTTFUShort();
+                        // read rule lookups
+                        if (log.isDebugEnabled()) {
+                            header = tableTag + " contextual positioning lookups @rule[" + i + "][" + j + "]: ";
+                        }
+                        GlyphTable.RuleLookup[] lookups = readRuleLookups ( in, nl, header );
+                        r = new GlyphTable.ChainedClassSequenceRule ( lookups, nic, classes, backtrackClasses, lookaheadClasses );
+                    } else {
+                        r = null;
+                    }
+                    ra [ j ] = r;
+                }
+                rs = new GlyphTable.HomogeneousRuleSet ( ra );
+            } else {
+                rs = null;
+            }
+            rsa [ i ] = rs;
+        }
+        // store results
+        seMapping = ct;
+        seEntries.add ( icdt );
+        seEntries.add ( bcdt );
+        seEntries.add ( lcdt );
+        seEntries.add ( Integer.valueOf ( ngc ) );
+        seEntries.add ( rsa );
+    }
+
+    private void readChainedContextualPosTableFormat3(FontFileReader in, int lookupType, int lookupFlags, long subtableOffset, int subtableFormat) throws IOException {
+        String tableTag = "GPOS";
+        in.seekSet(subtableOffset);
+        // skip over format (already known)
+        in.skip ( 2 );
+        // read backtrack glyph count
+        int nbg = in.readTTFUShort();
+        // read backtrack glyph coverage offsets
+        int[] bgcoa = new int [ nbg ];
+        for ( int i = 0; i < nbg; i++ ) {
+            bgcoa [ i ] = in.readTTFUShort();
+        }
+        // read input glyph count
+        int nig = in.readTTFUShort();
+        // read backtrack glyph coverage offsets
+        int[] igcoa = new int [ nig ];
+        for ( int i = 0; i < nig; i++ ) {
+            igcoa [ i ] = in.readTTFUShort();
+        }
+        // read lookahead glyph count
+        int nlg = in.readTTFUShort();
+        // read backtrack glyph coverage offsets
+        int[] lgcoa = new int [ nlg ];
+        for ( int i = 0; i < nlg; i++ ) {
+            lgcoa [ i ] = in.readTTFUShort();
+        }
+        // read positioning lookup count
+        int nl = in.readTTFUShort();
+        // dump info if debugging
+        if (log.isDebugEnabled()) {
+            log.debug(tableTag + " chained contextual positioning subtable format: " + subtableFormat + " (glyph sets)" );
+            log.debug(tableTag + " chained contextual positioning backtrack glyph count: " + nbg );
+            for ( int i = 0; i < nbg; i++ ) {
+                log.debug(tableTag + " chained contextual positioning backtrack coverage table offset[" + i + "]: " + bgcoa[i] );
+            }
+            log.debug(tableTag + " chained contextual positioning input glyph count: " + nig );
+            for ( int i = 0; i < nig; i++ ) {
+                log.debug(tableTag + " chained contextual positioning input coverage table offset[" + i + "]: " + igcoa[i] );
+            }
+            log.debug(tableTag + " chained contextual positioning lookahead glyph count: " + nlg );
+            for ( int i = 0; i < nlg; i++ ) {
+                log.debug(tableTag + " chained contextual positioning lookahead coverage table offset[" + i + "]: " + lgcoa[i] );
+            }
+            log.debug(tableTag + " chained contextual positioning lookup count: " + nl );
+        }
+        // read backtrack coverage tables
+        GlyphCoverageTable[] bgca = new GlyphCoverageTable[nbg];
+        for ( int i = 0; i < nbg; i++ ) {
+            int bgco = bgcoa [ i ];
+            GlyphCoverageTable bgct;
+            if ( bgco > 0 ) {
+                bgct = readCoverageTable ( in, tableTag + " chained contextual positioning backtrack coverage[" + i + "]", subtableOffset + bgco );
+            } else {
+                bgct = null;
+            }
+            bgca[i] = bgct;
+        }
+        // read input coverage tables
+        GlyphCoverageTable[] igca = new GlyphCoverageTable[nig];
+        for ( int i = 0; i < nig; i++ ) {
+            int igco = igcoa [ i ];
+            GlyphCoverageTable igct;
+            if ( igco > 0 ) {
+                igct = readCoverageTable ( in, tableTag + " chained contextual positioning input coverage[" + i + "]", subtableOffset + igco );
+            } else {
+                igct = null;
+            }
+            igca[i] = igct;
+        }
+        // read lookahead coverage tables
+        GlyphCoverageTable[] lgca = new GlyphCoverageTable[nlg];
+        for ( int i = 0; i < nlg; i++ ) {
+            int lgco = lgcoa [ i ];
+            GlyphCoverageTable lgct;
+            if ( lgco > 0 ) {
+                lgct = readCoverageTable ( in, tableTag + " chained contextual positioning lookahead coverage[" + i + "]", subtableOffset + lgco );
+            } else {
+                lgct = null;
+            }
+            lgca[i] = lgct;
+        }
+        // read rule lookups
+        String header = null;
+        if (log.isDebugEnabled()) {
+            header = tableTag + " chained contextual positioning lookups: ";
+        }
+        GlyphTable.RuleLookup[] lookups = readRuleLookups ( in, nl, header );
+        // construct rule, rule set, and rule set array
+        GlyphTable.Rule r = new GlyphTable.ChainedCoverageSequenceRule ( lookups, nig, igca, bgca, lgca );
+        GlyphTable.RuleSet rs = new GlyphTable.HomogeneousRuleSet ( new GlyphTable.Rule[] {r} );
+        GlyphTable.RuleSet[] rsa = new GlyphTable.RuleSet[] {rs};
+        // store results
+        assert ( igca != null ) && ( igca.length > 0 );
+        seMapping = igca[0];
+        seEntries.add ( rsa );
+    }
+
+    private int readChainedContextualPosTable(FontFileReader in, int lookupType, int lookupFlags, long subtableOffset) throws IOException {
+        in.seekSet(subtableOffset);
+        // read positioning subtable format
         int sf = in.readTTFUShort();
-        // [TBD] - implement me
+        if ( sf == 1 ) {
+            readChainedContextualPosTableFormat1 ( in, lookupType, lookupFlags, subtableOffset, sf );
+        } else if ( sf == 2 ) {
+            readChainedContextualPosTableFormat2 ( in, lookupType, lookupFlags, subtableOffset, sf );
+        } else if ( sf == 3 ) {
+            readChainedContextualPosTableFormat3 ( in, lookupType, lookupFlags, subtableOffset, sf );
+        } else {
+            throw new UnsupportedOperationException ( "unsupported chained contextual positioning subtable format: " + sf );
+        }
         return sf;
     }
 
-    private int readExtensionPosTable(FontFileReader in, int lookupType, int lookupFlags, long subtableOffset) throws IOException {
+    private void readExtensionPosTableFormat1(FontFileReader in, int lookupType, int lookupFlags, int lookupSequence, int subtableSequence, long subtableOffset, int subtableFormat) throws IOException {
+        String tableTag = "GPOS";
         in.seekSet(subtableOffset);
-        // read substitution format
+        // skip over format (already known)
+        in.skip ( 2 );
+        // read extension lookup type
+        int lt = in.readTTFUShort();
+        // read extension offset
+        long eo = in.readTTFULong();
+        // dump info if debugging
+        if (log.isDebugEnabled()) {
+            log.debug(tableTag + " extension positioning subtable format: " + subtableFormat );
+            log.debug(tableTag + " extension positioning lookup type: " + lt );
+            log.debug(tableTag + " extension positioning lookup table offset: " + eo );
+        }
+        // read referenced subtable from extended offset
+        readGPOSSubtable ( in, lt, lookupFlags, lookupSequence, subtableSequence, subtableOffset + eo );
+    }
+
+    private int readExtensionPosTable(FontFileReader in, int lookupType, int lookupFlags, int lookupSequence, int subtableSequence, long subtableOffset) throws IOException {
+        in.seekSet(subtableOffset);
+        // read positioning subtable format
         int sf = in.readTTFUShort();
-        // [TBD] - implement me
+        if ( sf == 1 ) {
+            readExtensionPosTableFormat1 ( in, lookupType, lookupFlags, lookupSequence, subtableSequence, subtableOffset, sf );
+        } else {
+            throw new UnsupportedOperationException ( "unsupported extension positioning subtable format: " + sf );
+        }
         return sf;
     }
 
@@ -2648,14 +4654,14 @@ public class TTFFile {
         case GPOSLookupType.MARK_TO_MARK:
             subtableFormat = readMarkToMarkPosTable ( in, lookupType, lookupFlags, subtableOffset );
             break;
-        case GPOSLookupType.CONTEXT:
-            subtableFormat = readContextPosTable ( in, lookupType, lookupFlags, subtableOffset );
+        case GPOSLookupType.CONTEXTUAL:
+            subtableFormat = readContextualPosTable ( in, lookupType, lookupFlags, subtableOffset );
             break;
-        case GPOSLookupType.CHAINED_CONTEXT:
-            subtableFormat = readChainedContextPosTable ( in, lookupType, lookupFlags, subtableOffset );
+        case GPOSLookupType.CHAINED_CONTEXTUAL:
+            subtableFormat = readChainedContextualPosTable ( in, lookupType, lookupFlags, subtableOffset );
             break;
         case GPOSLookupType.EXTENSION:
-            subtableFormat = readExtensionPosTable ( in, lookupType, lookupFlags, subtableOffset );
+            subtableFormat = readExtensionPosTable ( in, lookupType, lookupFlags, lookupSequence, subtableSequence, subtableOffset );
             break;
         default:
             break;
@@ -2764,6 +4770,197 @@ public class TTFFile {
         }
     }
 
+    private void readGDEFClassDefTable(FontFileReader in, String tableTag, int lookupSequence, long subtableOffset) throws IOException {
+        initSESubState();
+        in.seekSet(subtableOffset);
+        // subtable is a bare class definition table
+        GlyphClassTable ct = readClassDefTable ( in, tableTag + " glyph class definition table", subtableOffset );
+        // store results
+        seMapping = ct;
+        // extract subtable
+        extractSESubState ( GlyphTable.GLYPH_TABLE_TYPE_DEFINITION, GDEFLookupType.GLYPH_CLASS, 0, lookupSequence, 0, 1 );
+        resetSESubState();
+    }
+
+    private void readGDEFAttachmentTable(FontFileReader in, String tableTag, int lookupSequence, long subtableOffset) throws IOException {
+        initSESubState();
+        in.seekSet(subtableOffset);
+        // read coverage offset
+        int co = in.readTTFUShort();
+        // dump info if debugging
+        if (log.isDebugEnabled()) {
+            log.debug(tableTag + " attachment point coverage table offset: " + co );
+        }
+        // read coverage table
+        GlyphCoverageTable ct = readCoverageTable ( in, tableTag + " attachment point coverage", subtableOffset + co );
+        // store results
+        seMapping = ct;
+        // extract subtable
+        extractSESubState ( GlyphTable.GLYPH_TABLE_TYPE_DEFINITION, GDEFLookupType.ATTACHMENT_POINT, 0, lookupSequence, 0, 1 );
+        resetSESubState();
+    }
+
+    private void readGDEFLigatureCaretTable(FontFileReader in, String tableTag, int lookupSequence, long subtableOffset) throws IOException {
+        initSESubState();
+        in.seekSet(subtableOffset);
+        // read coverage offset
+        int co = in.readTTFUShort();
+        // read ligature glyph count
+        int nl = in.readTTFUShort();
+        // read ligature glyph table offsets
+        int[] lgto = new int [ nl ];
+        for ( int i = 0; i < nl; i++ ) {
+            lgto [ i ] = in.readTTFUShort();
+        }
+        
+        // dump info if debugging
+        if (log.isDebugEnabled()) {
+            log.debug(tableTag + " ligature caret coverage table offset: " + co );
+            log.debug(tableTag + " ligature caret ligature glyph count: " + nl );
+            for ( int i = 0; i < nl; i++ ) {
+                log.debug(tableTag + " ligature glyph table offset[" + i + "]: " + lgto[i] );
+            }
+        }
+        // read coverage table
+        GlyphCoverageTable ct = readCoverageTable ( in, tableTag + " ligature caret coverage", subtableOffset + co );
+        // store results
+        seMapping = ct;
+        // extract subtable
+        extractSESubState ( GlyphTable.GLYPH_TABLE_TYPE_DEFINITION, GDEFLookupType.LIGATURE_CARET, 0, lookupSequence, 0, 1 );
+        resetSESubState();
+    }
+
+    private void readGDEFMarkAttachmentTable(FontFileReader in, String tableTag, int lookupSequence, long subtableOffset) throws IOException {
+        initSESubState();
+        in.seekSet(subtableOffset);
+        // subtable is a bare class definition table
+        GlyphClassTable ct = readClassDefTable ( in, tableTag + " glyph class definition table", subtableOffset );
+        // store results
+        seMapping = ct;
+        // extract subtable
+        extractSESubState ( GlyphTable.GLYPH_TABLE_TYPE_DEFINITION, GDEFLookupType.MARK_ATTACHMENT, 0, lookupSequence, 0, 1 );
+        resetSESubState();
+    }
+
+    private void readGDEFMarkGlyphsTableFormat1(FontFileReader in, String tableTag, int lookupSequence, long subtableOffset, int subtableFormat) throws IOException {
+        initSESubState();
+        in.seekSet(subtableOffset);
+        // skip over format (already known)
+        in.skip ( 2 );
+        // read mark set class count
+        int nmc = in.readTTFUShort();
+        long[] mso = new long [ nmc ];
+        // read mark set coverage offsets
+        for ( int i = 0; i < nmc; i++ ) {
+            mso [ i ] = in.readTTFULong();
+        }
+        // dump info if debugging
+        if (log.isDebugEnabled()) {
+            log.debug(tableTag + " mark set subtable format: " + subtableFormat + " (glyph sets)" );
+            log.debug(tableTag + " mark set class count: " + nmc );
+            for ( int i = 0; i < nmc; i++ ) {
+                log.debug(tableTag + " mark set coverage table offset[" + i + "]: " + mso[i] );
+            }
+        }
+        // read mark set coverage tables, one per class
+        GlyphCoverageTable[] msca = new GlyphCoverageTable[nmc];
+        for ( int i = 0; i < nmc; i++ ) {
+            msca[i] = readCoverageTable ( in, tableTag + " mark set coverage[" + i + "]", subtableOffset + mso[i] );
+        }
+        // create combined class table from per-class coverage tables
+        GlyphClassTable ct = GlyphClassTable.createClassTable ( Arrays.asList ( msca ) );
+        // store results
+        seMapping = ct;
+        // extract subtable
+        extractSESubState ( GlyphTable.GLYPH_TABLE_TYPE_DEFINITION, GDEFLookupType.MARK_ATTACHMENT, 0, lookupSequence, 0, 1 );
+        resetSESubState();
+    }
+
+    private void readGDEFMarkGlyphsTable(FontFileReader in, String tableTag, int lookupSequence, long subtableOffset) throws IOException {
+        in.seekSet(subtableOffset);
+        // read mark set subtable format
+        int sf = in.readTTFUShort();
+        if ( sf == 1 ) {
+            readGDEFMarkGlyphsTableFormat1 ( in, tableTag, lookupSequence, subtableOffset, sf );
+        } else {
+            throw new UnsupportedOperationException ( "unsupported mark glyph sets subtable format: " + sf );
+        }
+    }
+
+    /**
+     * Read the GDEF table.
+     * @param in FontFileReader to read from
+     * @throws IOException In case of a I/O problem
+     */
+    private void readGDEF(FontFileReader in) throws IOException {
+        String tableTag = "GDEF";
+        // Initialize temporary state
+        initSEState();
+        // Read glyph definition (GDEF) table
+        TTFDirTabEntry dirTab = (TTFDirTabEntry)dirTabs.get(tableTag);
+        if ( gdef != null ) {
+            if (log.isDebugEnabled()) {
+                log.debug(tableTag + ": ignoring duplicate table");
+            }
+        } else if (dirTab != null) {
+            seekTab(in, tableTag, 0);
+            long version = in.readTTFULong();
+            if (log.isDebugEnabled()) {
+                log.debug(tableTag + " version: " + ( version / 65536 ) + "." + ( version % 65536 ));
+            }
+            // glyph class definition table offset (may be null)
+            int cdo = in.readTTFUShort();
+            // attach point list offset (may be null)
+            int apo = in.readTTFUShort();
+            // ligature caret list offset (may be null)
+            int lco = in.readTTFUShort();
+            // mark attach class definition table offset (may be null)
+            int mao = in.readTTFUShort();
+            // mark glyph sets definition table offset (may be null)
+            int mgo;
+            if ( version >= 0x00010002 ) {
+                mgo = in.readTTFUShort();
+            } else {
+                mgo = 0;
+            }
+            if (log.isDebugEnabled()) {
+                log.debug(tableTag + " glyph class definition table offset: " + cdo );
+                log.debug(tableTag + " attachment point list offset: " + apo );
+                log.debug(tableTag + " ligature caret list offset: " + lco );
+                log.debug(tableTag + " mark attachment class definition table offset: " + mao );
+                log.debug(tableTag + " mark glyph set definitions table offset: " + mgo );
+            }
+            // initialize subtable sequence number
+            int seqno = 0;
+            // obtain offset to start of gdef table
+            long to = dirTab.getOffset();
+            // (optionally) read glyph class definition subtable
+            if ( cdo != 0 ) {
+                readGDEFClassDefTable ( in, tableTag, seqno++, to + cdo );
+            }
+            // (optionally) read glyph attachment point subtable
+            if ( apo != 0 ) {
+                readGDEFAttachmentTable ( in, tableTag, seqno++, to + apo );
+            }
+            // (optionally) read ligature caret subtable
+            if ( lco != 0 ) {
+                readGDEFLigatureCaretTable ( in, tableTag, seqno++, to + lco );
+            }
+            // (optionally) read mark attachment class subtable
+            if ( mao != 0 ) {
+                readGDEFMarkAttachmentTable ( in, tableTag, seqno++, to + mao );
+            }
+            // (optionally) read mark glyph sets subtable
+            if ( mgo != 0 ) {
+                readGDEFMarkGlyphsTable ( in, tableTag, seqno++, to + mgo );
+            }
+            GlyphDefinitionTable gdef;
+            if ( ( gdef = constructGDEF() ) != null ) {
+                this.gdef = gdef;
+            }
+        }
+    }
+
     /**
      * Read the GSUB table.
      * @param in FontFileReader to read from
@@ -2841,6 +5038,23 @@ public class TTFFile {
     }
 
     /**
+     * Construct the (internal representation of the) GDEF table based on previously
+     * parsed state.
+     * @returns glyph definition table or null if insufficient or invalid state
+     */
+    private GlyphDefinitionTable constructGDEF() {
+        GlyphDefinitionTable gdef = null;
+        List subtables;
+        if ( ( subtables = constructGDEFSubtables() ) != null ) {
+            if ( subtables.size() > 0 ) {
+                gdef = new GlyphDefinitionTable ( subtables );
+            }
+        }
+        resetSEState();
+        return gdef;
+    }
+
+    /**
      * Construct the (internal representation of the) GSUB table based on previously
      * parsed state.
      * @returns glyph substitution table or null if insufficient or invalid state
@@ -2852,7 +5066,7 @@ public class TTFFile {
             List subtables;
             if ( ( subtables = constructGSUBSubtables() ) != null ) {
                 if ( ( lookups.size() > 0 ) && ( subtables.size() > 0 ) ) {
-                    gsub = new GlyphSubstitutionTable ( lookups, subtables );
+                    gsub = new GlyphSubstitutionTable ( gdef, lookups, subtables );
                 }
             }
         }
@@ -2872,7 +5086,7 @@ public class TTFFile {
             List subtables;
             if ( ( subtables = constructGPOSSubtables() ) != null ) {
                 if ( ( lookups.size() > 0 ) && ( subtables.size() > 0 ) ) {
-                    gpos = new GlyphPositioningTable ( lookups, subtables );
+                    gpos = new GlyphPositioningTable ( gdef, lookups, subtables );
                 }
             }
         }
@@ -2939,6 +5153,42 @@ public class TTFFile {
         return lookups;
     }
 
+    private List constructGDEFSubtables() {
+        List/*<GlyphDefinitionSubtable>*/ subtables = new java.util.ArrayList();
+        if ( seSubtables != null ) {
+            for ( Iterator it = seSubtables.iterator(); it.hasNext();) {
+                Object[] stp = (Object[]) it.next();
+                GlyphSubtable st;
+                if ( ( st = constructGDEFSubtable ( stp ) ) != null ) {
+                    subtables.add ( st );
+                }
+            }
+        }
+        return subtables;
+    }
+
+    private GlyphSubtable constructGDEFSubtable ( Object[] stp ) {
+        GlyphSubtable st = null;
+        assert ( stp != null ) && ( stp.length == 8 );
+        Integer tt = (Integer) stp[0];
+        Integer lt = (Integer) stp[1];
+        Integer ln = (Integer) stp[2];
+        Integer lf = (Integer) stp[3];
+        Integer sn = (Integer) stp[4];
+        Integer sf = (Integer) stp[5];
+        GlyphMappingTable mapping = (GlyphMappingTable) stp[6];
+        List entries = (List) stp[7];
+        if ( tt.intValue() == GlyphTable.GLYPH_TABLE_TYPE_DEFINITION ) {
+            int type = GDEFLookupType.getSubtableType ( lt.intValue() );
+            String lid = "lu" + ln.intValue();
+            int sequence = sn.intValue();
+            int flags = lf.intValue();
+            int format = sf.intValue();
+            st = GlyphDefinitionTable.createSubtable ( type, lid, sequence, flags, format, mapping, entries );
+        }
+        return st;
+    }
+
     private List constructGSUBSubtables() {
         List/*<GlyphSubtable>*/ subtables = new java.util.ArrayList();
         if ( seSubtables != null ) {
@@ -2960,24 +5210,55 @@ public class TTFFile {
         Integer lt = (Integer) stp[1];
         Integer ln = (Integer) stp[2];
         Integer lf = (Integer) stp[3];
-        // Integer sn = (Integer) stp[4]; // not used yet
+        Integer sn = (Integer) stp[4];
         Integer sf = (Integer) stp[5];
-        List coverage = (List) stp[6];
+        GlyphCoverageTable coverage = (GlyphCoverageTable) stp[6];
         List entries = (List) stp[7];
         if ( tt.intValue() == GlyphTable.GLYPH_TABLE_TYPE_SUBSTITUTION ) {
             int type = GSUBLookupType.getSubtableType ( lt.intValue() );
-            String id = "lu" + ln.intValue();
-            int sequence = ln.intValue();
+            String lid = "lu" + ln.intValue();
+            int sequence = sn.intValue();
             int flags = lf.intValue();
             int format = sf.intValue();
-            st = GlyphSubstitutionTable.createSubtable ( type, id, sequence, flags, format, coverage, entries );
+            st = GlyphSubstitutionTable.createSubtable ( type, lid, sequence, flags, format, coverage, entries );
         }
         return st;
     }
 
     private List constructGPOSSubtables() {
         List/*<GlyphSubtable>*/ subtables = new java.util.ArrayList();
+        if ( seSubtables != null ) {
+            for ( Iterator it = seSubtables.iterator(); it.hasNext();) {
+                Object[] stp = (Object[]) it.next();
+                GlyphSubtable st;
+                if ( ( st = constructGPOSSubtable ( stp ) ) != null ) {
+                    subtables.add ( st );
+                }
+            }
+        }
         return subtables;
+    }
+
+    private GlyphSubtable constructGPOSSubtable ( Object[] stp ) {
+        GlyphSubtable st = null;
+        assert ( stp != null ) && ( stp.length == 8 );
+        Integer tt = (Integer) stp[0];
+        Integer lt = (Integer) stp[1];
+        Integer ln = (Integer) stp[2];
+        Integer lf = (Integer) stp[3];
+        Integer sn = (Integer) stp[4];
+        Integer sf = (Integer) stp[5];
+        GlyphCoverageTable coverage = (GlyphCoverageTable) stp[6];
+        List entries = (List) stp[7];
+        if ( tt.intValue() == GlyphTable.GLYPH_TABLE_TYPE_POSITIONING ) {
+            int type = GSUBLookupType.getSubtableType ( lt.intValue() );
+            String lid = "lu" + ln.intValue();
+            int sequence = sn.intValue();
+            int flags = lf.intValue();
+            int format = sf.intValue();
+            st = GlyphPositioningTable.createSubtable ( type, lid, sequence, flags, format, coverage, entries );
+        }
+        return st;
     }
 
     private void initSEState() {
@@ -2997,13 +5278,13 @@ public class TTFFile {
     }
 
     private void initSESubState() {
-        seCoverage = new java.util.ArrayList();
+        seMapping = null;
         seEntries = new java.util.ArrayList();
     }
 
     private void extractSESubState ( int tableType, int lookupType, int lookupFlags, int lookupSequence, int subtableSequence, int subtableFormat ) {
-        if ( ( seCoverage != null ) && ( seCoverage.size() > 0 ) ) {
-            if ( ( seEntries != null ) && ( seEntries.size() > 0 ) ) {
+        if ( seEntries != null ) {
+            if ( ( tableType == GlyphTable.GLYPH_TABLE_TYPE_DEFINITION ) || ( seEntries.size() > 0 ) ) {
                 if ( seSubtables != null ) {
                     Integer tt = Integer.valueOf ( tableType );
                     Integer lt = Integer.valueOf ( lookupType );
@@ -3011,14 +5292,14 @@ public class TTFFile {
                     Integer lf = Integer.valueOf ( lookupFlags );
                     Integer sn = Integer.valueOf ( subtableSequence );
                     Integer sf = Integer.valueOf ( subtableFormat );
-                    seSubtables.add ( new Object[] { tt, lt, ln, lf, sn, sf, seCoverage, seEntries } );
+                    seSubtables.add ( new Object[] { tt, lt, ln, lf, sn, sf, seMapping, seEntries } );
                 }
             }
         }
     }
 
     private void resetSESubState() {
-        seCoverage = null;
+        seMapping = null;
         seEntries = null;
     }
 
@@ -3200,9 +5481,8 @@ public class TTFFile {
      *
      * @param glyphIndex
      * @return unicode code point
-     * @throws IOException if glyphIndex not found
      */
-    private Integer glyphToUnicode(int glyphIndex) throws IOException {
+    private Integer glyphToUnicode(int glyphIndex) {
         return (Integer) glyphToUnicodeMap.get(new Integer(glyphIndex));
     }
 
@@ -3211,7 +5491,6 @@ public class TTFFile {
      *
      * @param unicodeIndex unicode code point
      * @return glyph index
-     * @throws IOException if unicodeIndex not found
      */
     private Integer unicodeToGlyph(int unicodeIndex) throws IOException {
         final Integer result

@@ -91,6 +91,7 @@ import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.XMLHandler;
 import org.apache.fop.util.ColorUtil;
 import org.apache.fop.util.DOM2SAX;
+import org.apache.fop.util.XMLUtil;
 
 /**
  * Renderer that renders areas to XML for debugging purposes.
@@ -836,6 +837,7 @@ public class XMLRenderer extends AbstractXMLRenderer {
             }
         }
         maybeAddLevelAttribute(word);
+        maybeAddPositionAdjustAttribute(word);
         if ( word.isReversed() ) {
             addAttribute("reversed", "true");
         }
@@ -918,5 +920,13 @@ public class XMLRenderer extends AbstractXMLRenderer {
             addAttribute ( "level", level );
         }
     }
+
+    private void maybeAddPositionAdjustAttribute ( WordArea w ) {
+        int[][] adjustments = w.getGlyphPositionAdjustments();
+        if ( adjustments != null ) {
+            addAttribute ( "position-adjust", XMLUtil.encodePositionAdjustments ( adjustments ) );
+        }
+    }
+
 
 }

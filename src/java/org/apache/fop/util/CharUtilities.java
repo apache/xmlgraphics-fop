@@ -877,13 +877,44 @@ public class CharUtilities {
             for ( int i = 0; i < s.length(); i++ ) {
                 char c = s.charAt(i);
                 if ( ( c >= 32 ) && ( c < 127 ) ) {
-                    sb.append ( c );
+                    if ( c == '<' ) {
+                        sb.append ( "&lt;" );
+                    } else if ( c == '>' ) {
+                        sb.append ( "&gt;" );
+                    } else if ( c == '&' ) {
+                        sb.append ( "&amp;" );
+                    } else {
+                        sb.append ( c );
+                    }
                 } else {
                     sb.append ( charToNCRef ( c ) );
                 }
             }
         }
         return sb.toString();
+    }
+
+    private static String padLeft ( String s, int width, char pad ) {
+        StringBuffer sb = new StringBuffer();
+        for ( int i = s.length(); i < width; i++ ) {
+            sb.append(pad);
+        }
+        sb.append ( s );
+        return sb.toString();
+    }
+
+    /**
+     * Format character for debugging output, which it is prefixed with "0x", padded left with '0'
+     * and either 4 or 6 hex characters in width according to whether it is in the BMP or not.
+     * @param c character code
+     * @return formatted character string
+     */
+    public static String format ( int c ) {
+        if ( c < 1114112 ) {
+            return "0x" + padLeft ( Integer.toString ( c, 16 ), ( c < 65536 ) ? 4 : 6, '0' );
+        } else {
+            return "!NOT A CHARACTER!";
+        }
     }
 
     private static Map scriptTagsMap = null;

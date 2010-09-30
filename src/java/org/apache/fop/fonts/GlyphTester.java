@@ -19,23 +19,17 @@
 
 package org.apache.fop.fonts;
 
-// CSOFF: LineLengthCheck
-
 /**
- * The <code>GlyphSubstitution</code> interface is implemented by a glyph substitution subtable
- * that supports the determination of glyph substitution information based on script and
- * language of the corresponding character content.
+ * Interface for testing glyph properties according to glyph identifier.
  * @author Glenn Adams
  */
-public interface GlyphSubstitution {
+public interface GlyphTester {
 
     /**
-     * Perform glyph substitution at the current index, mutating the substitution state object as required.
-     * Only the context associated with the current index is processed.
-     * @param ss glyph substitution state object
-     * @return true if the glyph subtable was applied, meaning that the current context matches the
-     * associated input context glyph coverage table
+     * Perform a test on a glyph identifier.
+     * @param gi glyph identififer
+     * @return true if test is satisfied
      */
-    boolean substitute ( GlyphSubstitutionState ss );
+    boolean test ( int gi );
 
 }

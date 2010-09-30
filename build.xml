@@ -771,6 +771,7 @@ list of possible build targets.
   <target name="junit-transcoder" depends="junit-compile" description="Runs FOP's JUnit transcoder tests" if="junit.present">
     <echo message="Running basic functionality tests for fop-transcoder.jar"/>
     <junit dir="${basedir}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}" printsummary="${junit.printsummary}">
+      <jvmarg value="-Xmx1024m"/>
       <sysproperty key="basedir" value="${basedir}"/>
       <sysproperty key="jawa.awt.headless" value="true"/>
       <formatter type="brief" usefile="false" if="junit.formatter.brief.use"/>

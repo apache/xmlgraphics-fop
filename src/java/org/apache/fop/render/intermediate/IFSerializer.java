@@ -538,7 +538,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
 
     /** {@inheritDoc} */
     public void drawText(int x, int y, int letterSpacing, int wordSpacing,
-            int[] dx, String text) throws IFException {
+            int[][] dp, String text) throws IFException {
         try {
             AttributesImpl atts = new AttributesImpl();
             addAttribute(atts, "x", Integer.toString(x));
@@ -549,8 +549,17 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
             if (wordSpacing != 0) {
                 addAttribute(atts, "word-spacing", Integer.toString(wordSpacing));
             }
-            if (dx != null) {
-                addAttribute(atts, "dx", IFUtil.toString(dx));
+            if (dp != null) {
+                if ( IFUtil.isDPIdentity(dp) ) {
+                    // don't add dx or dp attribute
+                } else if ( IFUtil.isDPOnlyDX(dp) ) {
+                    // add dx attribute only
+                    int[] dx = IFUtil.convertDPToDX(dp);
+                    addAttribute(atts, "dx", IFUtil.toString(dx));
+                } else {
+                    // add dp attribute only
+                    addAttribute(atts, "dp", XMLUtil.encodePositionAdjustments(dp));
+                }
             }
             addStructurePointerAttribute(atts);
             handler.startElement(EL_TEXT, atts);

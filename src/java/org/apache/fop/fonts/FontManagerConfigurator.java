@@ -82,6 +82,18 @@ public class FontManagerConfigurator {
             }
         }
 
+        // [GA] permit configuration control over base14 kerning; without this,
+        // there is no way for a user to enable base14 kerning other than by
+        // programmatic API;
+        if (cfg.getChild("base14-kerning", false) != null) {
+            try {
+                fontManager
+                    .setBase14KerningEnabled(cfg.getChild("base14-kerning").getValueAsBoolean());
+            } catch (ConfigurationException e) {
+                LogUtil.handleException(log, e, true);
+            }
+        }
+
         // global font configuration
         Configuration fontsCfg = cfg.getChild("fonts", false);
         if (fontsCfg != null) {
