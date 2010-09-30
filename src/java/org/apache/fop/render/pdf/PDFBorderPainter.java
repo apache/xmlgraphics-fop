@@ -22,6 +22,7 @@ package org.apache.fop.render.pdf;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.io.IOException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -53,6 +54,7 @@ public class PDFBorderPainter extends BorderPainter {
     protected void drawBorderLine(                               // CSOK: ParameterNumber
             int x1, int y1, int x2, int y2, boolean horz,
             boolean startOrBefore, int style, Color col) {
+      //TODO lose scale?
        drawBorderLine(generator, x1 / 1000f, y1 / 1000f, x2 / 1000f, y2 / 1000f,
                horz, startOrBefore, style, col);
     }
@@ -68,11 +70,12 @@ public class PDFBorderPainter extends BorderPainter {
         float colFactor;
         float w = x2 - x1;
         float h = y2 - y1;
+        /*
         if ((w < 0) || (h < 0)) {
             LOG.error("Negative extent received (w=" + w + ", h=" + h
                     + "). Border won't be painted.");
             return;
-        }
+        }*/
         switch (style) {
             case Constants.EN_DASHED:
                 generator.setColor(col, false);
@@ -291,6 +294,7 @@ public class PDFBorderPainter extends BorderPainter {
     }
 
     static final String format(int coordinate) {
+      //TODO lose scale?
         return format(coordinate / 1000f);
     }
 
@@ -326,6 +330,40 @@ public class PDFBorderPainter extends BorderPainter {
     /** {@inheritDoc} */
     protected void restoreGraphicsState() {
         generator.add("Q\n");
+    }
+
+    /** {@inheritDoc} */
+    protected void cubicBezierTo(int p1x, int p1y, int p2x, int p2y, int p3x, int p3y) {
+        generator.add(format(p1x) + " " + format(p1y) +  " " + format(p2x) + " " + format(p2y)
+                +  " " + format(p3x) + " " + format(p3y) + " c ");
+    }
+
+
+    private void transformCoordinates(int a, int b, int c, int d, int e, int f) {
+        generator.add( "" + format(a)  + " " + format(b)  + " " + format(c)  + " " + format(d)
+                + " " + format(e)  + " " + format(f)  + " cm ");
+    }
+
+    private void transformCoordinates2(float a, float b, float c, float d, float e, float f) {
+        generator.add( "" + format(a)  + " " + format(b)  + " " + format(c)  + " " + format(d)
+                + " " + format(e)  + " " + format(f)  + " cm ");
+    }
+
+    /** {@inheritDoc} */
+    protected void rotateCoordinates(double angle) throws IOException {
+        float s = (float)Math.sin(angle);
+        float c = (float)Math.cos(angle);
+        transformCoordinates2(c, s, -s, c, 0, 0);
+    }
+
+    /** {@inheritDoc} */
+    protected void translateCoordinates(int xTranslate, int yTranslate) throws IOException {
+        transformCoordinates(1000, 0, 0, 1000, xTranslate, yTranslate);
+    }
+
+    /** {@inheritDoc} */
+    protected void scaleCoordinates(float xScale, float yScale) throws IOException {
+        transformCoordinates2(xScale, 0, 0, yScale, 0, 0);
     }
 
 }

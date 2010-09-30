@@ -642,9 +642,16 @@ public class IFParser implements IFConstants {
                         borders[i] = BorderProps.valueOf(userAgent, b);
                     }
                 }
+                Color backgroundColor;
+
+                try {
+                    backgroundColor = getAttributeAsColor(attributes, "inner-background-color");
+                } catch (PropertyException pe) {
+                    throw new IFException("Error parsing the color attribute", pe);
+                }
 
                 painter.drawBorderRect(new Rectangle(x, y, width, height),
-                        borders[0], borders[1], borders[2], borders[3]);
+                        borders[0], borders[1], borders[2], borders[3], backgroundColor);
             }
 
         }

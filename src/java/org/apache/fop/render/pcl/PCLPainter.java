@@ -99,7 +99,7 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
 
     /** @return the target resolution */
     protected int getResolution() {
-        int resolution = (int)Math.round(getUserAgent().getTargetResolution());
+        int resolution = Math.round(getUserAgent().getTargetResolution());
         if (resolution <= 300) {
             return 300;
         } else {
@@ -182,6 +182,14 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
     }
 
     /** {@inheritDoc} */
+    public void clipBackground(Rectangle rect, BorderProps bpsBefore, BorderProps bpsAfter,
+            BorderProps bpsStart, BorderProps bpsEnd) throws IFException {
+        //PCL cannot clip (only HP GL/2 can)
+        //If you need clipping support, switch to RenderingMode.BITMAP.
+
+    }
+
+    /** {@inheritDoc} */
     public void fillRect(Rectangle rect, Paint fill) throws IFException {
         if (fill == null) {
             return;
@@ -209,7 +217,7 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
             final BorderProps before, final BorderProps after,
             final BorderProps start, final BorderProps end) throws IFException {
         if (isSpeedOptimized()) {
-            super.drawBorderRect(rect, before, after, start, end);
+            super.drawBorderRect(rect, before, after, start, end, null);
             return;
         }
         if (before != null || after != null || start != null || end != null) {
@@ -528,5 +536,7 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
         Point2D transPoint = transformedPoint(x, y);
         gen.setCursorPos(transPoint.getX(), transPoint.getY());
     }
+
+
 
 }

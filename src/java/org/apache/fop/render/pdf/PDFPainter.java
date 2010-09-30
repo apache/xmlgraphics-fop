@@ -224,6 +224,20 @@ public class PDFPainter extends AbstractIFPainter {
     }
 
     /** {@inheritDoc} */
+    public void clipBackground(Rectangle rect,
+            BorderProps bpsBefore, BorderProps bpsAfter,
+            BorderProps bpsStart, BorderProps bpsEnd) throws IFException {
+
+        try {
+            borderPainter.clipBackground(rect,
+                    bpsBefore,  bpsAfter, bpsStart,  bpsEnd);
+        } catch (IOException ioe) {
+            throw new IFException("I/O error while clipping background", ioe);
+        }
+
+    }
+
+    /** {@inheritDoc} */
     public void fillRect(Rectangle rect, Paint fill) throws IFException {
         if (fill == null) {
             return;
@@ -256,16 +270,20 @@ public class PDFPainter extends AbstractIFPainter {
 
     /** {@inheritDoc} */
     public void drawBorderRect(Rectangle rect, BorderProps before, BorderProps after,
-            BorderProps start, BorderProps end) throws IFException {
+            BorderProps start, BorderProps end, Color innerBackgroundColor) throws IFException {
         if (before != null || after != null || start != null || end != null) {
             generator.endTextObject();
             try {
-                this.borderPainter.drawBorders(rect, before, after, start, end);
-            } catch (IOException ioe) {
-                throw new IFException("I/O error while drawing borders", ioe);
+                this.borderPainter.drawBorders(rect, before, after, start, end,
+                        innerBackgroundColor);
+            } catch (IFException ioe) {
+                throw new IFException("IF error while drawing borders", ioe);
             }
         }
     }
+
+
+
 
     /** {@inheritDoc} */
     public void drawLine(Point start, Point end, int width, Color color, RuleStyle style)

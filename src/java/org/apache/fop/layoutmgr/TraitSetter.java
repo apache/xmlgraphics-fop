@@ -79,19 +79,19 @@ public final class TraitSetter {
 
         addBorderTrait(area, bpProps, bNotFirst,
                 CommonBorderPaddingBackground.START,
-                BorderProps.SEPARATE, Trait.BORDER_START);
+                BorderProps.SEPARATE, Trait.BORDER_START, context);
 
         addBorderTrait(area, bpProps, bNotLast,
                 CommonBorderPaddingBackground.END,
-                BorderProps.SEPARATE, Trait.BORDER_END);
+                BorderProps.SEPARATE, Trait.BORDER_END, context);
 
         addBorderTrait(area, bpProps, false,
                 CommonBorderPaddingBackground.BEFORE,
-                BorderProps.SEPARATE, Trait.BORDER_BEFORE);
+                BorderProps.SEPARATE, Trait.BORDER_BEFORE, context);
 
         addBorderTrait(area, bpProps, false,
                 CommonBorderPaddingBackground.AFTER,
-                BorderProps.SEPARATE, Trait.BORDER_AFTER);
+                BorderProps.SEPARATE, Trait.BORDER_AFTER, context);
     }
 
     /**
@@ -104,13 +104,17 @@ public final class TraitSetter {
     private static void addBorderTrait(Area area,
                                        CommonBorderPaddingBackground bpProps,
                                        boolean bDiscard, int iSide, int mode,
-                                       Object oTrait) {
+                                       Object oTrait, PercentBaseContext context) {
         int iBP = bpProps.getBorderWidth(iSide, bDiscard);
-        if (iBP > 0) {
-            area.addTrait(oTrait,
-                    new BorderProps(bpProps.getBorderStyle(iSide),
-                            iBP, bpProps.getBorderColor(iSide),
-                            mode));
+        int radiusStart = bpProps.getBorderRadiusStart(iSide, bDiscard, context);
+        int radiusEnd = bpProps.getBorderRadiusEnd(iSide, bDiscard, context);
+        if (iBP > 0 || radiusStart > 0 || radiusEnd > 0) {
+            BorderProps bps =  new BorderProps(bpProps.getBorderStyle(iSide),
+                    iBP, bpProps.getBorderColor(iSide),
+                    mode);
+            bps.setRadiusStart(radiusStart);
+            bps.setRadiusEnd(radiusEnd);
+            area.addTrait(oTrait, bps);
         }
     }
 
@@ -125,19 +129,19 @@ public final class TraitSetter {
      */
     public static void addBorders(Area area, CommonBorderPaddingBackground bordProps,
                                   PercentBaseContext context) {
-        BorderProps bps = getBorderProps(bordProps, CommonBorderPaddingBackground.BEFORE);
+        BorderProps bps = getBorderProps(bordProps, CommonBorderPaddingBackground.BEFORE, context);
         if (bps != null) {
             area.addTrait(Trait.BORDER_BEFORE, bps);
         }
-        bps = getBorderProps(bordProps, CommonBorderPaddingBackground.AFTER);
+        bps = getBorderProps(bordProps, CommonBorderPaddingBackground.AFTER, context);
         if (bps != null) {
             area.addTrait(Trait.BORDER_AFTER, bps);
         }
-        bps = getBorderProps(bordProps, CommonBorderPaddingBackground.START);
+        bps = getBorderProps(bordProps, CommonBorderPaddingBackground.START, context);
         if (bps != null) {
             area.addTrait(Trait.BORDER_START, bps);
         }
-        bps = getBorderProps(bordProps, CommonBorderPaddingBackground.END);
+        bps = getBorderProps(bordProps, CommonBorderPaddingBackground.END, context);
         if (bps != null) {
             area.addTrait(Trait.BORDER_END, bps);
         }
@@ -161,22 +165,23 @@ public final class TraitSetter {
                 boolean discardBefore, boolean discardAfter,
                 boolean discardStart, boolean discardEnd,
                 PercentBaseContext context) {
-        BorderProps bps = getBorderProps(bordProps, CommonBorderPaddingBackground.BEFORE);
+        BorderProps bps = getBorderProps(bordProps, CommonBorderPaddingBackground.BEFORE, context);
         if (bps != null && !discardBefore) {
             area.addTrait(Trait.BORDER_BEFORE, bps);
         }
-        bps = getBorderProps(bordProps, CommonBorderPaddingBackground.AFTER);
+        bps = getBorderProps(bordProps, CommonBorderPaddingBackground.AFTER, context);
         if (bps != null && !discardAfter) {
             area.addTrait(Trait.BORDER_AFTER, bps);
         }
-        bps = getBorderProps(bordProps, CommonBorderPaddingBackground.START);
+        bps = getBorderProps(bordProps, CommonBorderPaddingBackground.START, context);
         if (bps != null && !discardStart) {
             area.addTrait(Trait.BORDER_START, bps);
         }
-        bps = getBorderProps(bordProps, CommonBorderPaddingBackground.END);
+        bps = getBorderProps(bordProps, CommonBorderPaddingBackground.END, context);
         if (bps != null && !discardEnd) {
             area.addTrait(Trait.BORDER_END, bps);
         }
+
     }
 
     /**
@@ -260,14 +265,19 @@ public final class TraitSetter {
 
     }
 
-    private static BorderProps getBorderProps(CommonBorderPaddingBackground bordProps, int side) {
+    private static BorderProps getBorderProps(CommonBorderPaddingBackground bordProps,
+            int side, PercentBaseContext context) {
         int width = bordProps.getBorderWidth(side, false);
-        if (width != 0) {
+        int radiusStart = bordProps.getBorderRadiusStart(side, false, context);
+        int radiusEnd = bordProps.getBorderRadiusEnd(side, false, context);
+        if (width != 0 || radiusStart != 0 || radiusEnd != 0) {
             BorderProps bps;
             bps = new BorderProps(bordProps.getBorderStyle(side),
                                   width,
                                   bordProps.getBorderColor(side),
                                   BorderProps.SEPARATE);
+            bps.setRadiusStart(radiusStart);
+            bps.setRadiusEnd(radiusEnd);
             return bps;
         } else {
             return null;
@@ -280,11 +290,18 @@ public final class TraitSetter {
         if (width != 0) {
             BorderProps bps = new BorderProps(borderInfo.getStyle(), width, borderInfo.getColor(),
                     (outer ? BorderProps.COLLAPSE_OUTER : BorderProps.COLLAPSE_INNER));
+
+            //TODO Enabling this causes graphic problems. Revisit!
+            /*
+            bps.setRadiusStart(borderInfo.getRadiusStart().getLengthValue());
+            bps.setRadiusEnd(borderInfo.getRadiusEnd().getLengthValue());
+            */
             return bps;
         } else {
             return null;
         }
     }
+
 
     /**
      * Add background to an area. This method is mainly used by table-related layout

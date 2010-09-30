@@ -19,7 +19,10 @@
 
 package org.apache.fop.render.afp;
 
+import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
+import java.io.IOException;
 import java.util.Map;
 
 import org.apache.fop.afp.AFPDataObjectInfo;
@@ -37,21 +40,60 @@ public abstract class AFPImageHandler implements ImageHandlerBase {
     private static final int Y = 1;
 
     /** foreign attribute reader */
-    private final AFPForeignAttributeReader foreignAttributeReader
+    private static final AFPForeignAttributeReader FOREIGN_ATTRIBUTE_READER
         = new AFPForeignAttributeReader();
 
     /**
+     * Generates an intermediate AFPDataObjectInfo that is later used to construct
+     * the appropriate data object in the AFP DataStream.
+     *
+     * @param rendererImageInfo the renderer image info
+     * @return a data object info object
+     * @throws IOException thrown if an I/O exception of some sort has occurred.
+     */
+    public AFPDataObjectInfo generateDataObjectInfo(
+            AFPRendererImageInfo rendererImageInfo) throws IOException {
+        AFPDataObjectInfo dataObjectInfo = createDataObjectInfo();
+
+        // set resource information
+        dataObjectInfo.setResourceInfo(createResourceInformation(
+                rendererImageInfo.getURI(),
+                rendererImageInfo.getForeignAttributes()));
+
+
+        Point origin = rendererImageInfo.getOrigin();
+        Rectangle2D position = rendererImageInfo.getPosition();
+        int srcX = Math.round(origin.x + (float)position.getX());
+        int srcY = Math.round(origin.y + (float)position.getY());
+        Rectangle targetRect = new Rectangle(
+                srcX,
+                srcY,
+                (int)Math.round(position.getWidth()),
+                (int)Math.round(position.getHeight()));
+
+        AFPRendererContext rendererContext
+            = (AFPRendererContext)rendererImageInfo.getRendererContext();
+        AFPInfo afpInfo = rendererContext.getInfo();
+        AFPPaintingState paintingState = afpInfo.getPaintingState();
+
+        dataObjectInfo.setObjectAreaInfo(createObjectAreaInfo(paintingState, targetRect));
+
+        return dataObjectInfo;
+    }
+
+    /**
      * Sets resource information on the data object info.
-     * @param dataObjectInfo the data object info instance
      * @param uri the image's URI (or null if no URI is available)
      * @param foreignAttributes a Map of foreign attributes (or null)
+     * @return the resource information object
      */
-    protected void setResourceInformation(AFPDataObjectInfo dataObjectInfo,
+    public static AFPResourceInfo createResourceInformation(
             String uri, Map foreignAttributes) {
         AFPResourceInfo resourceInfo
-            = foreignAttributeReader.getResourceInfo(foreignAttributes);
+            = FOREIGN_ATTRIBUTE_READER.getResourceInfo(foreignAttributes);
         resourceInfo.setUri(uri);
-        dataObjectInfo.setResourceInfo(resourceInfo);
+
+       return resourceInfo;
     }
 
     /**

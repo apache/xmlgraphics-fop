@@ -209,6 +209,20 @@ public class PSPainter extends AbstractIFPainter {
     }
 
     /** {@inheritDoc} */
+    public void clipBackground(Rectangle rect,
+            BorderProps bpsBefore, BorderProps bpsAfter,
+            BorderProps bpsStart, BorderProps bpsEnd) throws IFException {
+
+        try {
+            borderPainter.clipBackground(rect,
+                    bpsBefore,  bpsAfter, bpsStart,  bpsEnd);
+        } catch (IOException ioe) {
+            throw new IFException("I/O error while clipping background", ioe);
+        }
+
+    }
+
+    /** {@inheritDoc} */
     public void fillRect(Rectangle rect, Paint fill) throws IFException {
         if (fill == null) {
             return;
@@ -235,11 +249,12 @@ public class PSPainter extends AbstractIFPainter {
 
     /** {@inheritDoc} */
     public void drawBorderRect(Rectangle rect, BorderProps before, BorderProps after,
-            BorderProps start, BorderProps end) throws IFException {
+            BorderProps start, BorderProps end, Color innerBackgroundColor) throws IFException {
         if (before != null || after != null || start != null || end != null) {
             try {
                 endTextObject();
-                this.borderPainter.drawBorders(rect, before, after, start, end);
+                this.borderPainter.drawBorders(rect, before, after, start, end,
+                        innerBackgroundColor);
             } catch (IOException ioe) {
                 throw new IFException("I/O error in drawBorderRect()", ioe);
             }

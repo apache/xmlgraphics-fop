@@ -779,8 +779,30 @@ public interface Constants {
      */
     int PR_X_ALT_TEXT = 275;
 
+    /** Property constant FOP proprietary*/
+    int PR_X_BORDER_BEFORE_RADIUS_START = 276;
+
+    /** Property constant FOP proprietary*/
+    int PR_X_BORDER_BEFORE_RADIUS_END = 277;
+
+    /** Property constant FOP proprietary*/
+    int PR_X_BORDER_AFTER_RADIUS_START = 278;
+    /** Property constant FOP proprietary*/
+    int PR_X_BORDER_AFTER_RADIUS_END = 279;
+
+    /** Property constant FOP proprietary*/
+    int PR_X_BORDER_START_RADIUS_START = 280;
+    /** Property constant FOP proprietary*/
+    int PR_X_BORDER_START_RADIUS_END = 281;
+    /** Property constant FOP proprietary*/
+    int PR_X_BORDER_END_RADIUS_START = 282;
+    /** Property constant FOP proprietary*/
+    int PR_X_BORDER_END_RADIUS_END = 283;
+    /** Property constant FOP proprietary*/
+    int PR_X_BORDER_RADIUS = 284;
+
     /** Number of property constants defined */
-    int PROPERTY_COUNT = 275;
+    int PROPERTY_COUNT = 284;
 
     // compound property constants
 

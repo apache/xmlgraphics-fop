@@ -23,6 +23,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.fop.afp.AFPDitheredRectanglePainter;
@@ -78,6 +79,13 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     /** the map of page segments */
     private Map/*<String,String>*/pageSegmentMap
         = new java.util.HashMap/*<String,String>*/();
+
+
+    // Rounded corners are cached at the document level
+    private Map/*<String, String>*/ roundedCornerNameCache
+            = new HashMap()/*<String, String>*/;
+
+    private int roundedCornerCount = 0;
 
     /** Medium Map referenced on previous page **/
     private String lastMediumMap;
@@ -338,6 +346,49 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
             }
         }
     }
+
+    /**
+     * Corner images can be reused by storing at the document level in the AFP
+     * The cache is used to map cahced images to caller generated descriptions of the corner
+     * @param cornerKey caller's identifier for the corner
+     * @return document id of the corner image
+     */
+    public String cacheRoundedCorner(String cornerKey) {
+
+        // Make a unique id
+        StringBuffer idBuilder = new StringBuffer("RC");
+
+        String tmp = Integer.toHexString(roundedCornerCount).toUpperCase();
+        if (tmp.length() > 6) {
+            //Will never happen
+            //log.error("Rounded corners cache capacity exceeded");
+            //We should get a visual clue
+            roundedCornerCount = 0;
+            tmp = "000000";
+        } else if (tmp.length() < 6) {
+            for (int i = 0; i < 6 - tmp.length(); i++) {
+                idBuilder.append("0");
+            }
+            idBuilder.append(tmp);
+        }
+
+       roundedCornerCount++;
+
+       String id =  idBuilder.toString();
+
+       //cache the corner id
+       roundedCornerNameCache.put(cornerKey, id);
+       return id;
+    }
+    /**
+     * This method returns the an id that identifies a cached corner or null if non existent
+     * @param cornerKey caller's identifier for the corner
+     * @return document id of the corner image
+     */
+    public String getCachedRoundedCorner(String cornerKey) {
+        return (String)roundedCornerNameCache.get(cornerKey);
+    }
+
 
     // ---=== AFPCustomizable ===---
 

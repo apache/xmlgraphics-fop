@@ -33,6 +33,7 @@ import java.util.Map;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -471,6 +472,14 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     }
 
     /** {@inheritDoc} */
+    public void clipBackground(Rectangle rect, BorderProps bpsBefore, BorderProps bpsAfter,
+            BorderProps bpsStart, BorderProps bpsEnd) throws IFException {
+        // TODO Auto-generated method stub
+
+    }
+
+
+    /** {@inheritDoc} */
     public void fillRect(Rectangle rect, Paint fill) throws IFException {
         if (fill == null) {
             return;
@@ -490,7 +499,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
 
     /** {@inheritDoc} */
     public void drawBorderRect(Rectangle rect, BorderProps before, BorderProps after,
-            BorderProps start, BorderProps end) throws IFException {
+            BorderProps start, BorderProps end, Color innerBackgroundColor) throws IFException {
         if (before == null && after == null && start == null && end == null) {
             return;
         }
@@ -512,6 +521,12 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
             if (end != null) {
                 addAttribute(atts, "end", end.toString());
             }
+
+            if (innerBackgroundColor != null) {
+                addAttribute(atts, "inner-background-color",
+                        ColorUtil.colorToString(innerBackgroundColor));
+            }
+
             handler.element(EL_BORDER_RECT, atts);
         } catch (SAXException e) {
             throw new IFException("SAX error in drawBorderRect()", e);
@@ -774,5 +789,14 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
             throw new IFException("SAX error serializing object", e);
         }
     }
+
+    /** {@inheritDoc} */
+    public boolean isBackgroundRequired(BorderProps bpsBefore, BorderProps bpsAfter,
+            BorderProps bpsStart, BorderProps bpsEnd) {
+        return true;
+    }
+
+
+
 
 }

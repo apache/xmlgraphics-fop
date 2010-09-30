@@ -327,4 +327,58 @@ public class PSBorderPainter extends BorderPainter {
         generator.restoreGraphicsState();
     }
 
+
+
+
+    /** {@inheritDoc} */
+    protected void cubicBezierTo(int p1x, int p1y, int p2x, int p2y, int p3x, int p3y)
+            throws IOException {
+        StringBuffer sb = new StringBuffer();
+        sb.append(generator.formatDouble(toPoints(p1x)));
+        sb.append(" ");
+        sb.append(generator.formatDouble(toPoints(p1y)));
+        sb.append(" ");
+        sb.append(generator.formatDouble(toPoints(p2x)));
+        sb.append(" ");
+        sb.append(generator.formatDouble(toPoints(p2y)));
+        sb.append(" ");
+        sb.append(generator.formatDouble(toPoints(p3x)));
+        sb.append(" ");
+        sb.append(generator.formatDouble(toPoints(p3y)));
+        sb.append(" curveto ");
+        generator.writeln(sb.toString());
+
+    }
+
+    /** {@inheritDoc} */
+    protected void rotateCoordinates(double angle) throws IOException {
+        StringBuffer sb = new StringBuffer();
+        sb.append(generator.formatDouble(angle * 180d / Math.PI));
+        sb.append(" ");
+        sb.append(" rotate ");
+        generator.writeln(sb.toString());
+    }
+
+    /** {@inheritDoc} */
+    protected void translateCoordinates(int xTranslate, int yTranslate) throws IOException {
+        StringBuffer sb = new StringBuffer();
+        sb.append(generator.formatDouble(toPoints(xTranslate)));
+        sb.append(" ");
+        sb.append(generator.formatDouble(toPoints(yTranslate)));
+        sb.append(" ");
+        sb.append(" translate ");
+        generator.writeln(sb.toString());
+    }
+
+    /** {@inheritDoc} */
+    protected void scaleCoordinates(float xScale, float yScale) throws IOException {
+        StringBuffer sb = new StringBuffer();
+        sb.append(generator.formatDouble(xScale));
+        sb.append(" ");
+        sb.append(generator.formatDouble(yScale));
+        sb.append(" ");
+        sb.append(" scale ");
+        generator.writeln(sb.toString());
+    }
+
 }
