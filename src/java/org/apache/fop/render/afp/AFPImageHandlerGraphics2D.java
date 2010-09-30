@@ -26,8 +26,6 @@ import java.io.IOException;
 import org.apache.xmlgraphics.image.loader.Image;
 import org.apache.xmlgraphics.image.loader.ImageFlavor;
 import org.apache.xmlgraphics.image.loader.impl.ImageGraphics2D;
-import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
-import org.apache.xmlgraphics.util.MimeConstants;
 
 import org.apache.fop.afp.AFPDataObjectInfo;
 import org.apache.fop.afp.AFPGraphics2D;
@@ -86,9 +84,10 @@ public class AFPImageHandlerGraphics2D extends AFPImageHandler implements ImageH
         AFPGraphicsObjectInfo graphicsObjectInfo = (AFPGraphicsObjectInfo)createDataObjectInfo();
 
         // set resource information
-        setResourceInformation(graphicsObjectInfo,
+
+        graphicsObjectInfo.setResourceInfo(createResourceInformation(
                 image.getInfo().getOriginalURI(),
-                afpContext.getForeignAttributes());
+                afpContext.getForeignAttributes()));
 
         // Positioning
         graphicsObjectInfo.setObjectAreaInfo(

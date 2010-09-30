@@ -61,11 +61,9 @@ public class AFPResourceManager {
     /** Maintain a reference count of instream objects for referencing purposes */
     private int instreamObjectCount = 0;
 
-    /** a mapping of resourceInfo --> include name */
-    private final Map/*<AFPResourceInfo,String>*/ includeNameMap
-        = new java.util.HashMap()/*<AFPResourceInfo,String>*/;
-
-    private Map pageSegmentMap = new java.util.HashMap();
+    /** Mapping of resourceInfo to AbstractCachedObject */
+    private final Map/*<AFPResourceInfo, AbstractCachedObject>*/ includeObjectCache
+    = new java.util.HashMap()/*<AFPResourceInfo,String>*/;
 
     private AFPResourceLevelDefaults resourceLevelDefaults = new AFPResourceLevelDefaults();
 
@@ -134,17 +132,7 @@ public class AFPResourceManager {
         AFPResourceInfo resourceInfo = dataObjectInfo.getResourceInfo();
         updateResourceInfoUri(resourceInfo);
 
-        String objectName = (String)includeNameMap.get(resourceInfo);
-        if (objectName != null) {
-            // an existing data resource so reference it by adding an include to the current page
-            includeObject(dataObjectInfo, objectName);
-            return;
-        }
-
-        objectName = (String)pageSegmentMap.get(resourceInfo);
-        if (objectName != null) {
-            // an existing data resource so reference it by adding an include to the current page
-            includePageSegment(dataObjectInfo, objectName);
+        if (includeCachedObject(resourceInfo, null)) {
             return;
         }
 
@@ -170,7 +158,7 @@ public class AFPResourceManager {
 
         useInclude &= resourceGroup != null;
         if (useInclude) {
-            boolean usePageSegment = dataObjectInfo.isCreatePageSegment();
+            final boolean usePageSegment = dataObjectInfo.isCreatePageSegment();
 
             // if it is to reside within a resource group at print-file or external level
             if (resourceLevel.isPrintFile() || resourceLevel.isExternal()) {
@@ -189,21 +177,108 @@ public class AFPResourceManager {
             // add data object into its resource group destination
             resourceGroup.addObject(namedObj);
 
-            // create the include object
-            objectName = namedObj.getName();
-            if (usePageSegment) {
-                includePageSegment(dataObjectInfo, objectName);
-                pageSegmentMap.put(resourceInfo, objectName);
-            } else {
-                includeObject(dataObjectInfo, objectName);
-                // record mapping of resource info to data object resource name
-                includeNameMap.put(resourceInfo, objectName);
-            }
+            includeObject(namedObj, dataObjectInfo);
         } else {
             // not to be included so inline data object directly into the current page
             dataStream.getCurrentPage().addObject(namedObj);
         }
     }
+
+    private abstract class AbstractCachedObject {
+        protected String objectName;
+        protected AFPDataObjectInfo dataObjectInfo;
+
+        public AbstractCachedObject(String objectName, AFPDataObjectInfo dataObjectInfo) {
+            this.objectName = objectName;
+            this.dataObjectInfo = dataObjectInfo;
+
+
+        }
+        protected abstract void includeObject();
+    }
+
+    private class CachedPageSegment extends AbstractCachedObject {
+
+        public CachedPageSegment(String objectName, AFPDataObjectInfo dataObjectInfo) {
+           super(objectName, dataObjectInfo);
+        }
+
+        protected void includeObject() {
+            includePageSegment(dataObjectInfo, objectName);
+        }
+
+    }
+
+    private class CachedObject extends AbstractCachedObject {
+
+        public CachedObject(String objectName, AFPDataObjectInfo dataObjectInfo) {
+           super(objectName, dataObjectInfo);
+        }
+
+        protected void includeObject() {
+            AFPResourceManager.this.includeObject(dataObjectInfo, objectName);
+        }
+
+    }
+
+
+    private void includeObject(AbstractNamedAFPObject namedObj, AFPDataObjectInfo dataObjectInfo) {
+
+        // create the include object
+        AFPResourceInfo resourceInfo = dataObjectInfo.getResourceInfo();
+        String objectName = namedObj.getName();
+
+        AbstractCachedObject cachedObject;
+
+        if (dataObjectInfo.isCreatePageSegment()) {
+            cachedObject = new CachedPageSegment(objectName, dataObjectInfo);
+        } else {
+            cachedObject = new CachedObject(objectName, dataObjectInfo);
+        }
+
+        cachedObject.includeObject();
+
+        includeObjectCache.put(dataObjectInfo.getResourceInfo(), cachedObject);
+
+        //The data field of dataObjectInfo is not further required
+        // therefore we are safe to null the reference, saving memory
+        dataObjectInfo.setData(null);
+
+    }
+
+    /**
+     * TODO
+     * @param resourceInfo
+     * @return
+     */
+    public boolean isObjectCached(AFPResourceInfo resourceInfo) {
+        return includeObjectCache.containsKey(resourceInfo);
+    }
+
+    /**
+     * TODO
+     * @param resourceInfo
+     * @param areaInfo
+     * @return
+     */
+    public boolean includeCachedObject(AFPResourceInfo resourceInfo, AFPObjectAreaInfo areaInfo) {
+
+            String objectName;
+
+            AbstractCachedObject cachedObject = (AbstractCachedObject)includeObjectCache.get(resourceInfo);
+
+            if (cachedObject != null) {
+                if (areaInfo != null) {
+                    cachedObject.dataObjectInfo.setObjectAreaInfo(areaInfo);
+                }
+                cachedObject.includeObject();
+
+                return true;
+            } else {
+                return false;
+            }
+    }
+
 
     private void updateResourceInfoUri(AFPResourceInfo resourceInfo) {
         String uri = resourceInfo.getUri();
@@ -292,8 +367,12 @@ public class AFPResourceManager {
         resourceInfo.setName(resourceName);
         resourceInfo.setUri(uri.toASCIIString());
 
-        String objectName = (String)includeNameMap.get(resourceInfo);
-        if (objectName == null) {
+
+        AbstractCachedObject cachedObject = (AbstractCachedObject)
+                includeObjectCache.get(resourceInfo);
+
+        if (cachedObject == null ) {
+
             if (log.isDebugEnabled()) {
                 log.debug("Adding included resource: " + resourceName);
             }
@@ -306,8 +385,12 @@ public class AFPResourceManager {
 
             ResourceGroup resourceGroup = streamer.getResourceGroup(resourceLevel);
             resourceGroup.addObject(resourceObject);
+
+            //TODO what is the data object?
+            cachedObject = new CachedObject(resourceName, null);
+
             // record mapping of resource info to data object resource name
-            includeNameMap.put(resourceInfo, resourceName);
+            includeObjectCache.put(resourceInfo, cachedObject);
         } else {
             //skip, already created
         }

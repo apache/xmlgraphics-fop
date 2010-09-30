@@ -173,6 +173,13 @@ public class Java2DPainter extends AbstractIFPainter {
     }
 
     /** {@inheritDoc} */
+    public void clipBackground(Rectangle rect, BorderProps bpsBefore, BorderProps bpsAfter,
+            BorderProps bpsStart, BorderProps bpsEnd) throws IFException {
+        // TODO Auto-generated method stub
+
+    }
+
+    /** {@inheritDoc} */
     public void fillRect(Rectangle rect, Paint fill) throws IFException {
         if (fill == null) {
             return;
@@ -188,10 +195,10 @@ public class Java2DPainter extends AbstractIFPainter {
             BorderProps start, BorderProps end) throws IFException {
         if (before != null || after != null || start != null || end != null) {
             try {
-                this.borderPainter.drawBorders(rect, before, after, start, end);
-            } catch (IOException e) {
+                this.borderPainter.drawBorders(rect, before, after, start, end, null);
+            } catch (IFException e) {
                 //Won't happen with Java2D
-                throw new IllegalStateException("Unexpected I/O error");
+                throw new IllegalStateException("Unexpected IF error");
             }
         }
     }
@@ -260,5 +267,7 @@ public class Java2DPainter extends AbstractIFPainter {
     private void concatenateTransformationMatrix(AffineTransform transform) throws IOException {
         g2dState.transform(transform);
     }
+
+
 
 }

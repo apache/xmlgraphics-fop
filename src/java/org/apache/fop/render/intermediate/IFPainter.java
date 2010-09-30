@@ -166,6 +166,32 @@ public interface IFPainter {
     void clipRect(Rectangle rect) throws IFException;
     //TODO clipRect() shall be considered temporary until verified with SVG and PCL
 
+
+    /**
+     * Restricts the current clipping region to the inner border.
+     * @param rect the rectangle's coordinates and extent
+     * @param bpsBefore the border segment on the before-side (top)
+     * @param bpsAfter the border segment on the after-side (bottom)
+     * @param bpsStart the border segment on the start-side (left)
+     * @param bpsEnd the border segment on the end-side (right)
+     * @throws IFException if an error occurs while handling this event
+     */
+    void clipBackground (Rectangle rect,
+            BorderProps bpsBefore, BorderProps bpsAfter,
+            BorderProps bpsStart, BorderProps bpsEnd) throws IFException;
+
+
+    /**
+     *
+     * @param bpsBefore
+     * @param bpsAfter
+     * @param bpsStart
+     * @param bpsEnd
+     * @return true if the background needs to be painted
+     */
+    boolean isBackgroundRequired( BorderProps bpsBefore, BorderProps bpsAfter,
+            BorderProps bpsStart, BorderProps bpsEnd);
+
     /**
      * Fills a rectangular area.
      * @param rect the rectangle's coordinates and extent
@@ -182,11 +208,12 @@ public interface IFPainter {
      * @param after the border segment on the after-side (bottom)
      * @param start the border segment on the start-side (left)
      * @param end the border segment on the end-side (right)
+     * @param innerBackgroundColor the color of the inner background
      * @throws IFException if an error occurs while handling this event
      */
     void drawBorderRect(Rectangle rect,
             BorderProps before, BorderProps after,
-            BorderProps start, BorderProps end) throws IFException;
+            BorderProps start, BorderProps end, Color innerBackgroundColor) throws IFException;
 
     /**
      * Draws a line. NOTE: Currently, only horizontal lines are implemented!

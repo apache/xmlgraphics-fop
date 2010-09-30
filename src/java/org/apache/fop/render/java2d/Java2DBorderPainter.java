@@ -26,6 +26,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
+import java.io.IOException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -313,6 +314,44 @@ public class Java2DBorderPainter extends BorderPainter {
     protected void restoreGraphicsState() {
         this.painter.restoreGraphicsState();
         this.currentPath = null;
+    }
+
+    /** {@inheritDoc} */
+    protected void arcTo(double startAngle, double endAngle, int cx, int cy, int width, int height)
+            throws IOException {
+        // TODO Auto-generated method stub
+
+    }
+
+    /** {@inheritDoc} */
+    protected void changeCoords(double a, double b, double c, double d, double e, double f) {
+        // TODO Auto-generated method stub
+
+    }
+
+    /** {@inheritDoc} */
+    protected void cubicBezierTo(int p1x, int p1y, int p2x, int p2y, int p3x, int p3y)
+            throws IOException {
+        // TODO Auto-generated method stub
+
+    }
+
+    /** {@inheritDoc} */
+    protected void rotateCoordinates(double angle) throws IOException {
+        // TODO Auto-generated method stub
+
+    }
+
+    /** {@inheritDoc} */
+    protected void scaleCoordinates(float xScale, float yScale) throws IOException {
+        // TODO Auto-generated method stub
+
+    }
+
+    /** {@inheritDoc} */
+    protected void translateCoordinates(int xTranslate, int yTranslate) throws IOException {
+        // TODO Auto-generated method stub
+
     }
 
 }

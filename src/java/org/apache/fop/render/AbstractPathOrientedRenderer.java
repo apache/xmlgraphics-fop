@@ -48,6 +48,7 @@ import org.apache.fop.area.inline.Viewport;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fonts.FontMetrics;
+import org.apache.fop.render.intermediate.BorderPainter;
 import org.apache.fop.traits.BorderProps;
 
 /**
@@ -151,11 +152,20 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
         BorderProps bpsStart = (BorderProps)borderArea.getTrait(Trait.BORDER_START);
         BorderProps bpsEnd = (BorderProps)borderArea.getTrait(Trait.BORDER_END);
 
+        Trait.Background backgroundTrait
+            = (Trait.Background)backgroundArea.getTrait(Trait.BACKGROUND);
+
         drawBackground(startx, starty, width, height,
                 (Trait.Background) backgroundArea.getTrait(Trait.BACKGROUND),
                 bpsBefore, bpsAfter, bpsStart, bpsEnd);
+
+        Color bg = null;
+        if (backgroundTrait != null) {
+            bg = backgroundTrait.getColor();
+        }
+
         drawBorders(startx, starty, width, height,
-                bpsBefore, bpsAfter, bpsStart, bpsEnd);
+                bpsBefore, bpsAfter, bpsStart, bpsEnd, bg);
     }
 
     /**
@@ -199,14 +209,23 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
                 paddRectHeight -= bpsAfter.width / 1000f;
             }
 
+            saveGraphicsState();
+
+            //TODO remove this choice
+            if (BorderPainter.isRoundedCornersSupported()) {
+                clipBackground(sx, sy,  paddRectWidth, paddRectHeight,
+                        bpsBefore, bpsAfter, bpsStart,  bpsEnd);
+            } else {
+                clipRect(sx, sy,  paddRectWidth, paddRectHeight);
+            }
+
             if (back.getColor() != null) {
                 updateColor(back.getColor(), true);
                 fillRect(sx, sy, paddRectWidth, paddRectHeight);
             }
             if (back.getImageInfo() != null) {
                 ImageSize imageSize = back.getImageInfo().getSize();
-                saveGraphicsState();
-                clipRect(sx, sy, paddRectWidth, paddRectHeight);
+
                 int horzCount = (int)((paddRectWidth
                         * 1000 / imageSize.getWidthMpt()) + 1.0f);
                 int vertCount = (int)((paddRectHeight
@@ -242,10 +261,31 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
                         drawImage(back.getURL(), pos);
                     }
                 }
-
-                restoreGraphicsState();
             }
+            restoreGraphicsState();
         }
+    }
+
+    /**
+     * Clip the background to the inner border.
+     * This draws the border traits given the position and the traits.
+     *
+     * @param startx the start x position
+     * @param starty the start y position
+     * @param width the width of the area
+     * @param height the height of the area
+     * @param bpsBefore the border-before traits
+     * @param bpsAfter the border-after traits
+     * @param bpsStart the border-start traits
+     * @param bpsEnd the border-end traits
+     */
+    protected void clipBackground (float startx, float starty,
+            float width, float height,
+            BorderProps bpsBefore, BorderProps bpsAfter,
+            BorderProps bpsStart, BorderProps bpsEnd) {
+
+        clipRect(startx, starty, width, height);
+
     }
 
     /**
@@ -264,9 +304,9 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
     protected void drawBorders(                                  // CSOK: ParameterNumber
             float startx, float starty, float width, float height,
             BorderProps bpsBefore, BorderProps bpsAfter,
-            BorderProps bpsStart, BorderProps bpsEnd) {
+            BorderProps bpsStart, BorderProps bpsEnd, Color innerBackgroundColor) {
         Rectangle2D.Float borderRect = new Rectangle2D.Float(startx, starty, width, height);
-        drawBorders(borderRect, bpsBefore, bpsAfter, bpsStart, bpsEnd);
+        drawBorders(borderRect, bpsBefore, bpsAfter, bpsStart, bpsEnd, innerBackgroundColor);
     }
 
     private static final int BEFORE = 0;
@@ -284,7 +324,8 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
      */
     protected void drawBorders(                                  // CSOK: MethodLength
             Rectangle2D.Float borderRect,
-            BorderProps bpsBefore, BorderProps bpsAfter, BorderProps bpsStart, BorderProps bpsEnd) {
+            BorderProps bpsBefore, BorderProps bpsAfter, BorderProps bpsStart, BorderProps bpsEnd,
+            Color innerBackgroundColor) {
         //TODO generalize each of the four conditions into using a parameterized drawBorder()
         boolean[] border = new boolean[] {
                 (bpsBefore != null), (bpsEnd != null),

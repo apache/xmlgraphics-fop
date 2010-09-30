@@ -317,9 +317,9 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler implements Ima
         AFPImageObjectInfo imageObjectInfo = (AFPImageObjectInfo)createDataObjectInfo();
 
         // set resource information
-        setResourceInformation(imageObjectInfo,
+        imageObjectInfo.setResourceInfo(createResourceInformation(
                 image.getInfo().getOriginalURI(),
-                afpContext.getForeignAttributes());
+                afpContext.getForeignAttributes()));
         setDefaultResourceLevel(imageObjectInfo, afpContext.getResourceManager());
 
         // Positioning

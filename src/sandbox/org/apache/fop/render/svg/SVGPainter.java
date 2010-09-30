@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.w3c.dom.Document;
-
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -268,6 +267,13 @@ public class SVGPainter extends AbstractIFPainter implements SVGConstants {
     }
 
     /** {@inheritDoc} */
+    public void clipBackground(Rectangle rect, BorderProps bpsBefore, BorderProps bpsAfter,
+            BorderProps bpsStart, BorderProps bpsEnd) throws IFException {
+        //TODO Implement me!!!
+
+    }
+
+    /** {@inheritDoc} */
     public void fillRect(Rectangle rect, Paint fill) throws IFException {
         if (fill == null) {
             return;
@@ -405,5 +411,7 @@ public class SVGPainter extends AbstractIFPainter implements SVGConstants {
                     "Don't know how to handle extension object: " + extension);
         }
     }
+
+
 
 }

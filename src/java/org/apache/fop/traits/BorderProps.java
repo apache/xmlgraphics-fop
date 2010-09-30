@@ -47,6 +47,12 @@ public class BorderProps implements Serializable {
     public Color color;                                         // CSOK: VisibilityModifier
     /** Border width */
     public int width;                                           // CSOK: VisibilityModifier
+
+    private int radiusStart = 0;
+    private int radiusEnd = 0;
+
+
+
     /** Border mode (one of SEPARATE, COLLAPSE_INNER and COLLAPSE_OUTER) */
     public int mode;                                            // CSOK: VisibilityModifier
 
@@ -73,6 +79,37 @@ public class BorderProps implements Serializable {
      */
     public BorderProps(String style, int width, Color color, int mode) {
         this(getConstantForStyle(style), width, color, mode);
+    }
+
+    /**
+     *
+     * @return the radius of the corner adjacent to the before or start border
+     */
+    public int getRadiusStart() {
+        return radiusStart;
+    }
+
+    /**
+     *
+     * @param radiusStart the radius of the corner adjacent to the before or start border
+     */
+    public void setRadiusStart(int radiusStart) {
+        this.radiusStart = radiusStart;
+    }
+
+    /**
+     * @return the radius of the corner adjacent to the after or end border
+     */
+    public int getRadiusEnd() {
+        return radiusEnd;
+    }
+
+    /**
+     *
+     * @param radiusEnd the radius of the corner adjacent to the  after or end border
+     */
+    public void setRadiusEnd(int radiusEnd) {
+        this.radiusEnd = radiusEnd;
     }
 
     /**
@@ -112,7 +149,9 @@ public class BorderProps implements Serializable {
                 return (style == other.style)
                         && color.equals(other.color)
                         && width == other.width
-                        && mode == other.mode;
+                        && mode == other.mode
+                        && radiusStart == other.radiusStart
+                        && radiusEnd == other.radiusEnd;
             }
         }
         return false;
@@ -154,7 +193,18 @@ public class BorderProps implements Serializable {
                 throw new IllegalArgumentException(e.getMessage());
             }
 
-            return new BorderProps(style, width, c, mode);
+            BorderProps bp = new BorderProps(style, width, c, mode);
+
+            found = m.find();
+            if (found) {
+                int startRadius = Integer.parseInt(m.group());
+                m.find();
+                int endRadius = Integer.parseInt(m.group());
+                bp.setRadiusStart(startRadius);
+                bp.setRadiusEnd(endRadius);
+            }
+
+            return bp;
         } else {
             throw new IllegalArgumentException("BorderProps must be surrounded by parentheses");
         }
@@ -170,12 +220,24 @@ public class BorderProps implements Serializable {
         sbuf.append(',');
         sbuf.append(width);
         if (mode != SEPARATE) {
-            sbuf.append(',');
             if (mode == COLLAPSE_INNER) {
-                sbuf.append("collapse-inner");
+                sbuf.append(",collapse-inner");
             } else {
-                sbuf.append("collapse-outer");
+                sbuf.append(",collapse-outer");
             }
+        }
+
+        if (radiusStart != 0 || radiusEnd != 0) {
+            if (mode == SEPARATE) {
+                // Because of the corner radii properties the mode must be set
+                // so that the parameter index is consistent
+                sbuf.append(",separate");
+            }
+            sbuf.append(',');
+            sbuf.append(radiusStart);
+
+            sbuf.append(',');
+            sbuf.append(radiusEnd);
         }
         sbuf.append(')');
         return sbuf.toString();

@@ -99,6 +99,7 @@
           <xs:attribute name="end" type="mf:borderDef"/>
           <xs:attribute name="before" type="mf:borderDef"/>
           <xs:attribute name="after" type="mf:borderDef"/>
+          <xs:attribute name="inner-background-color" type="mf:colorType"/>
         </xs:complexType>
       </xs:element>
       <xs:element name="image">

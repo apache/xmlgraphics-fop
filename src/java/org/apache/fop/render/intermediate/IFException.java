@@ -43,4 +43,16 @@ public class IFException extends Exception {
         super(message, cause);
     }
 
+    /**
+     * Constructs a new exception with the  cause.
+     *
+     * @param cause the cause (which is saved for later retrieval by the
+     *         {@link #getCause()} method).  (A <code>null</code> value is
+     *         permitted, and indicates that the cause is nonexistent or
+     *         unknown.)
+     */
+    /*public IFException( Exception cause) {
+        super(cause);
+    }*/
+
 }
