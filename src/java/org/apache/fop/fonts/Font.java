@@ -379,13 +379,18 @@ public class Font implements Substitutable, Positionable {
     }
 
     /** {@inheritDoc} */
-    public int[] performPositioning ( CharSequence cs, String script, String language ) {
+    public int[][] performPositioning ( CharSequence cs, String script, String language, int fontSize ) {
         if ( metric instanceof Positionable ) {
             Positionable p = (Positionable) metric;
-            return p.performPositioning ( cs, script, language );
+            return p.performPositioning ( cs, script, language, fontSize );
         } else {
             throw new UnsupportedOperationException();
         }
+    }
+
+    /** {@inheritDoc} */
+    public int[][] performPositioning ( CharSequence cs, String script, String language ) {
+        return performPositioning ( cs, script, language, fontSize );
     }
 
 }

@@ -836,9 +836,12 @@ public class AreaTreeParser {
                         = ConversionUtils.toIntArray(
                             lastAttributes.getValue("letter-adjust"), "\\s");
                 int level = XMLUtil.getAttributeAsInt(lastAttributes, "level", -1);
+                int[][] gposAdjustments
+                    = XMLUtil.getAttributeAsPositionAdjustments(lastAttributes, "position-adjust");
                 content.flip();
                 WordArea word = new WordArea
-                    ( offset, level, content.toString().trim(), letterAdjust, null );
+                    ( offset, level, content.toString().trim(), letterAdjust,
+                      null, gposAdjustments );
                 AbstractTextArea text = getCurrentText();
                 word.setParentArea(text);
                 text.addChildArea(word);

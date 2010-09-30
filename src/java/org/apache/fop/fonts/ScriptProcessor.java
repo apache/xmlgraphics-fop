@@ -19,11 +19,14 @@
 
 package org.apache.fop.fonts;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 // CSOFF: InnerAssignmentCheck
 // CSOFF: LineLengthCheck
+// CSOFF: ParameterNumberCheck
 
 /**
  * Abstract script processor base class for which an implementation of the substitution and positioning methods
@@ -49,29 +52,118 @@ public abstract class ScriptProcessor {
     }
 
     /** @return script identifier */
-    public String getScript() {
+    public final String getScript() {
         return script;
     }
 
     /**
+     * Obtain script specific substitution features.
+     * @return array of suppported substitution features or null
+     */
+    public abstract String[] getSubstitutionFeatures();
+
+    /**
+     * Obtain script specific substitution context tester.
+     * @return substitution context tester or null
+     */
+    public abstract ScriptContextTester getSubstitutionContextTester();
+
+    /**
      * Perform substitution processing using a specific set of lookup tables.
+     * @param gsub the glyph substitution table that applies
      * @param gs an input glyph sequence
      * @param script a script identifier
      * @param language a language identifier
      * @param lookups a mapping from lookup specifications to glyph subtables to use for substitution processing
      * @return the substituted (output) glyph sequence
      */
-    public abstract GlyphSequence substitute ( GlyphSequence gs, String script, String language, Map/*<LookupSpec,GlyphSubtable[]>*/ lookups );
+    public final GlyphSequence substitute ( GlyphSubstitutionTable gsub, GlyphSequence gs, String script, String language, Map/*<LookupSpec,List<LookupTable>>>*/ lookups ) {
+        return substitute ( gs, script, language, assembleLookups ( gsub, getSubstitutionFeatures(), lookups ), getSubstitutionContextTester() );
+    }
 
     /**
-     * Perform positioning processing using a specific set of lookup tables.
+     * Perform substitution processing using a specific set of ordered glyph table use specifications.
      * @param gs an input glyph sequence
      * @param script a script identifier
      * @param language a language identifier
-     * @param lookups a mapping from lookup specifications to glyph subtables to use for positioning processing
+     * @param usa an ordered array of glyph table use specs
+     * @param sct a script specific context tester (or null)
      * @return the substituted (output) glyph sequence
      */
-    public abstract int[] position ( GlyphSequence gs, String script, String language, Map/*<LookupSpec,GlyphSubtable[]>*/ lookups );
+    public final GlyphSequence substitute ( GlyphSequence gs, String script, String language, GlyphTable.UseSpec[] usa, ScriptContextTester sct ) {
+        assert usa != null;
+        for ( int i = 0, n = usa.length; i < n; i++ ) {
+            GlyphTable.UseSpec us = usa [ i ];
+            gs = us.substitute ( gs, script, language, sct );
+        }
+        return gs;
+    }
+
+    /**
+     * Obtain script specific positioning features.
+     * @return array of suppported positioning features or null
+     */
+    public abstract String[] getPositioningFeatures();
+
+    /**
+     * Obtain script specific positioning context tester.
+     * @return positioning context tester or null
+     */
+    public abstract ScriptContextTester getPositioningContextTester();
+
+    /**
+     * Perform positioning processing using a specific set of lookup tables.
+     * @param gpos the glyph positioning table that applies
+     * @param gs an input glyph sequence
+     * @param script a script identifier
+     * @param language a language identifier
+     * @param fontSize size in device units
+     * @param lookups a mapping from lookup specifications to glyph subtables to use for positioning processing
+     * @param widths array of default advancements for each glyph
+     * @param adjustments accumulated adjustments array (sequence) of 4-tuples of placement [PX,PY] and advance [AX,AY] adjustments, in that order,
+     * with one 4-tuple for each element of glyph sequence
+     * @return true if some adjustment is not zero; otherwise, false
+     */
+    public final boolean position ( GlyphPositioningTable gpos, GlyphSequence gs, String script, String language, int fontSize, Map/*<LookupSpec,List<LookupTable>>*/ lookups, int[] widths, int[][] adjustments ) {
+        return position ( gs, script, language, fontSize, assembleLookups ( gpos, getPositioningFeatures(), lookups ), widths, adjustments, getPositioningContextTester() );
+    }
+
+    /**
+     * Perform positioning processing using a specific set of ordered glyph table use specifications.
+     * @param gs an input glyph sequence
+     * @param script a script identifier
+     * @param language a language identifier
+     * @param fontSize size in device units
+     * @param usa an ordered array of glyph table use specs
+     * @param widths array of default advancements for each glyph in font
+     * @param adjustments accumulated adjustments array (sequence) of 4-tuples of placement [PX,PY] and advance [AX,AY] adjustments, in that order,
+     * with one 4-tuple for each element of glyph sequence
+     * @param sct a script specific context tester (or null)
+     * @return true if some adjustment is not zero; otherwise, false
+     */
+    public final boolean position ( GlyphSequence gs, String script, String language, int fontSize, GlyphTable.UseSpec[] usa, int[] widths, int[][] adjustments, ScriptContextTester sct ) {
+        assert usa != null;
+        boolean adjusted = false;
+        for ( int i = 0, n = usa.length; i < n; i++ ) {
+            GlyphTable.UseSpec us = usa [ i ];
+            if ( us.position ( gs, script, language, fontSize, widths, adjustments, sct ) ) {
+                adjusted = true;
+            }
+        }
+        return adjusted;
+    }
+
+    /**
+     * Assemble ordered array of lookup table use specifications according to the specified features and candidate lookups,
+     * where the order of the array is in accordance to the order of the applicable lookup list.
+     * @param table the governing glyph table
+     * @param features array of feature identifiers to apply
+     * @param lookups a mapping from lookup specifications to lists of look tables from which to select lookup tables according to the specified features
+     * @return ordered array of assembled lookup table use specifications
+     */
+    public final GlyphTable.UseSpec[] assembleLookups ( GlyphTable table, String[] features, Map/*<LookupSpec,List<LookupTable>>*/ lookups ) {
+        return table.assembleLookups ( features, lookups );
+    }
 
     /**
      * Obtain script processor instance associated with specified script.

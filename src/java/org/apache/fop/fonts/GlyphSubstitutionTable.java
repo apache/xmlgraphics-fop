@@ -26,15 +26,22 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 // CSOFF: InnerAssignmentCheck
 // CSOFF: LineLengthCheck
+// CSOFF: NoWhitespaceAfterCheck
 
 /**
  * The <code>GlyphSubstitutionTable</code> class is a glyph table that implements
  * <code>GlyphSubstitution</code> functionality.
  * @author Glenn Adams
  */
-public class GlyphSubstitutionTable extends GlyphTable implements GlyphSubstitution {
+public class GlyphSubstitutionTable extends GlyphTable {
+
+    /** logging instance */
+    private static final Log log = LogFactory.getLog(GlyphSubstitutionTable.class);                                     // CSOK: ConstantNameCheck
 
     /** single substitution subtable type */
     public static final int GSUB_LOOKUP_TYPE_SINGLE = 1;
@@ -44,23 +51,24 @@ public class GlyphSubstitutionTable extends GlyphTable implements GlyphSubstitut
     public static final int GSUB_LOOKUP_TYPE_ALTERNATE = 3;
     /** ligature substitution subtable type */
     public static final int GSUB_LOOKUP_TYPE_LIGATURE = 4;
-    /** context substitution subtable type */
-    public static final int GSUB_LOOKUP_TYPE_CONTEXT = 5;
-    /** chaining context substitution subtable type */
-    public static final int GSUB_LOOKUP_TYPE_CHAINING_CONTEXT = 6;
+    /** contextual substitution subtable type */
+    public static final int GSUB_LOOKUP_TYPE_CONTEXTUAL = 5;
+    /** chained contextual substitution subtable type */
+    public static final int GSUB_LOOKUP_TYPE_CHAINED_CONTEXTUAL = 6;
     /** extension substitution substitution subtable type */
     public static final int GSUB_LOOKUP_TYPE_EXTENSION_SUBSTITUTION = 7;
-    /** reverse chaining context single substitution subtable type */
-    public static final int GSUB_LOOKUP_TYPE_REVERSE_CHAINING_CONTEXT_SINGLE = 8;
+    /** reverse chained contextual single substitution subtable type */
+    public static final int GSUB_LOOKUP_TYPE_REVERSE_CHAINED_SINGLE = 8;
 
     /**
      * Instantiate a <code>GlyphSubstitutionTable</code> object using the specified lookups
      * and subtables.
+     * @param gdef glyph definition table that applies
      * @param lookups a map of lookup specifications to subtable identifier strings
      * @param subtables a list of identified subtables
      */
-    public GlyphSubstitutionTable ( Map lookups, List subtables ) {
-        super ( lookups );
+    public GlyphSubstitutionTable ( GlyphDefinitionTable gdef, Map lookups, List subtables ) {
+        super ( gdef, lookups );
         if ( ( subtables == null ) || ( subtables.size() == 0 ) ) {
             throw new IllegalArgumentException ( "subtables must be non-empty" );
         } else {
@@ -72,7 +80,27 @@ public class GlyphSubstitutionTable extends GlyphTable implements GlyphSubstitut
                     throw new IllegalArgumentException ( "subtable must be a glyph substitution subtable" );
                 }
             }
+            freezeSubtables();
         }
+    }
+
+    /**
+     * Perform substitution processing using all matching lookups.
+     * @param gs an input glyph sequence
+     * @param script a script identifier
+     * @param language a language identifier
+     * @return the substituted (output) glyph sequence
+     */
+    public GlyphSequence substitute ( GlyphSequence gs, String script, String language ) {
+        GlyphSequence ogs;
+        Map/*<LookupSpec,List<LookupTable>>*/ lookups = matchLookups ( script, language, "*" );
+        if ( ( lookups != null ) && ( lookups.size() > 0 ) ) {
+            ScriptProcessor sp = ScriptProcessor.getInstance ( script );
+            ogs = sp.substitute ( this, gs, script, language, lookups );
+        } else {
+            ogs = gs;
+        }
+        return ogs;
     }
 
     /**
@@ -91,14 +119,14 @@ public class GlyphSubstitutionTable extends GlyphTable implements GlyphSubstitut
             t = GSUB_LOOKUP_TYPE_ALTERNATE;
         } else if ( "ligature".equals ( s ) ) {
             t = GSUB_LOOKUP_TYPE_LIGATURE;
-        } else if ( "context".equals ( s ) ) {
-            t = GSUB_LOOKUP_TYPE_CONTEXT;
-        } else if ( "chainingcontext".equals ( s ) ) {
-            t = GSUB_LOOKUP_TYPE_CHAINING_CONTEXT;
+        } else if ( "contextual".equals ( s ) ) {
+            t = GSUB_LOOKUP_TYPE_CONTEXTUAL;
+        } else if ( "chainedcontextual".equals ( s ) ) {
+            t = GSUB_LOOKUP_TYPE_CHAINED_CONTEXTUAL;
         } else if ( "extensionsubstitution".equals ( s ) ) {
             t = GSUB_LOOKUP_TYPE_EXTENSION_SUBSTITUTION;
-        } else if ( "reversechainiingcontextsingle".equals ( s ) ) {
-            t = GSUB_LOOKUP_TYPE_REVERSE_CHAINING_CONTEXT_SINGLE;
+        } else if ( "reversechainiingcontextualsingle".equals ( s ) ) {
+            t = GSUB_LOOKUP_TYPE_REVERSE_CHAINED_SINGLE;
         } else {
             t = -1;
         }
@@ -125,17 +153,17 @@ public class GlyphSubstitutionTable extends GlyphTable implements GlyphSubstitut
         case GSUB_LOOKUP_TYPE_LIGATURE:
             tn = "ligature";
             break;
-        case GSUB_LOOKUP_TYPE_CONTEXT:
-            tn = "context";
+        case GSUB_LOOKUP_TYPE_CONTEXTUAL:
+            tn = "contextual";
             break;
-        case GSUB_LOOKUP_TYPE_CHAINING_CONTEXT:
-            tn = "chainingcontext";
+        case GSUB_LOOKUP_TYPE_CHAINED_CONTEXTUAL:
+            tn = "chainedcontextual";
             break;
         case GSUB_LOOKUP_TYPE_EXTENSION_SUBSTITUTION:
             tn = "extensionsubstitution";
             break;
-        case GSUB_LOOKUP_TYPE_REVERSE_CHAINING_CONTEXT_SINGLE:
-            tn = "reversechainiingcontextsingle";
+        case GSUB_LOOKUP_TYPE_REVERSE_CHAINED_SINGLE:
+            tn = "reversechainiingcontextualsingle";
             break;
         default:
             tn = "unknown";
@@ -155,32 +183,29 @@ public class GlyphSubstitutionTable extends GlyphTable implements GlyphSubstitut
      * @param entries subtable entries
      * @return a glyph subtable instance
      */
-    public static GlyphSubtable createSubtable ( int type, String id, int sequence, int flags, int format, List coverage, List entries ) {
+    public static GlyphSubtable createSubtable ( int type, String id, int sequence, int flags, int format, GlyphCoverageTable coverage, List entries ) {
         GlyphSubtable st = null;
         switch ( type ) {
         case GSUB_LOOKUP_TYPE_SINGLE:
-            st = new SimpleSubtable ( id, sequence, flags, format, coverage, entries );
+            st = SingleSubtable.create ( id, sequence, flags, format, coverage, entries );
             break;
         case GSUB_LOOKUP_TYPE_MULTIPLE:
-            st = new MultipleSubtable ( id, sequence, flags, format, coverage, entries );
+            st = MultipleSubtable.create ( id, sequence, flags, format, coverage, entries );
             break;
         case GSUB_LOOKUP_TYPE_ALTERNATE:
-            st = new AlternateSubtable ( id, sequence, flags, format, coverage, entries );
+            st = AlternateSubtable.create ( id, sequence, flags, format, coverage, entries );
             break;
         case GSUB_LOOKUP_TYPE_LIGATURE:
-            st = new LigatureSubtable ( id, sequence, flags, format, coverage, entries );
+            st = LigatureSubtable.create ( id, sequence, flags, format, coverage, entries );
             break;
-        case GSUB_LOOKUP_TYPE_CONTEXT:
-            st = new ContextSubtable ( id, sequence, flags, format, coverage, entries );
+        case GSUB_LOOKUP_TYPE_CONTEXTUAL:
+            st = ContextualSubtable.create ( id, sequence, flags, format, coverage, entries );
             break;
-        case GSUB_LOOKUP_TYPE_CHAINING_CONTEXT:
-            st = new ChainingContextSubtable ( id, sequence, flags, format, coverage, entries );
+        case GSUB_LOOKUP_TYPE_CHAINED_CONTEXTUAL:
+            st = ChainedContextualSubtable.create ( id, sequence, flags, format, coverage, entries );
             break;
-        case GSUB_LOOKUP_TYPE_EXTENSION_SUBSTITUTION:
-            st = new ExtensionSubtable ( id, sequence, flags, format, coverage, entries );
-            break;
-        case GSUB_LOOKUP_TYPE_REVERSE_CHAINING_CONTEXT_SINGLE:
-            st = new ReverseChainingSingleSubtable ( id, sequence, flags, format, coverage, entries );
+        case GSUB_LOOKUP_TYPE_REVERSE_CHAINED_SINGLE:
+            st = ReverseChainedSingleSubtable.create ( id, sequence, flags, format, coverage, entries );
             break;
         default:
             break;
@@ -188,69 +213,138 @@ public class GlyphSubstitutionTable extends GlyphTable implements GlyphSubstitut
         return st;
     }
 
-    /** {@inheritDoc} */
-    public GlyphSequence substitute ( GlyphSequence gs, String script, String language ) {
-        GlyphSequence ogs;
-        Map/*<LookupSpec,GlyphSubtable[]>*/ lookups = matchLookups ( script, language, "*" );
-        if ( ( lookups != null ) && ( lookups.size() > 0 ) ) {
-            ScriptProcessor sp = ScriptProcessor.getInstance ( script );
-            ogs = sp.substitute ( gs, script, language, lookups );
-        } else {
-            ogs = gs;
-        }
-        return ogs;
+    /**
+     * Create a substitution subtable according to the specified arguments.
+     * @param type subtable type
+     * @param id subtable identifier
+     * @param sequence subtable sequence
+     * @param flags subtable flags
+     * @param format subtable format
+     * @param coverage list of coverage table entries
+     * @param entries subtable entries
+     * @return a glyph subtable instance
+     */
+    public static GlyphSubtable createSubtable ( int type, String id, int sequence, int flags, int format, List coverage, List entries ) {
+        return createSubtable ( type, id, sequence, flags, format, GlyphCoverageTable.createCoverageTable ( coverage ), entries );
     }
 
-    static class SimpleSubtable extends GlyphSubstitutionSubtable {
-        private int[] map;
-        public SimpleSubtable ( String id, int sequence, int flags, int format, List coverage, List entries ) {
-            super ( id, sequence, flags, format, GlyphCoverageTable.createCoverageTable ( coverage ) );
-            populate ( entries );
+    private abstract static class SingleSubtable extends GlyphSubstitutionSubtable {
+        SingleSubtable ( String id, int sequence, int flags, int format, GlyphCoverageTable coverage, List entries ) {
+            super ( id, sequence, flags, format, coverage );
         }
         /** {@inheritDoc} */
         public int getType() {
             return GSUB_LOOKUP_TYPE_SINGLE;
         }
         /** {@inheritDoc} */
+        public boolean isCompatible ( GlyphSubtable subtable ) {
+            return subtable instanceof SingleSubtable;
+        }
+        /** {@inheritDoc} */
+        public boolean substitute ( GlyphSubstitutionState ss ) {
+            int gi = ss.getGlyph(), ci;
+            if ( ( ci = getCoverageIndex ( gi ) ) < 0 ) {
+                return false;
+            } else {
+                int go = getGlyphForCoverageIndex ( ci, gi );
+                if ( ( go < 0 ) || ( go > 65535 ) ) {
+                    go = 65535;
+                }
+                ss.putGlyph ( go, ss.getAssociation() );
+                ss.consume(1);
+                return true;
+            }
+        }
+        /**
+         * Obtain glyph for coverage index.
+         * @param ci coverage index
+         * @param gi original glyph index
+         * @return substituted glyph value
+         * @throws IllegalArgumentException if coverage index is not valid
+         */
+        public abstract int getGlyphForCoverageIndex ( int ci, int gi ) throws IllegalArgumentException;
+        static GlyphSubstitutionSubtable create ( String id, int sequence, int flags, int format, GlyphCoverageTable coverage, List entries ) {
+            if ( format == 1 ) {
+                return new SingleSubtableFormat1 ( id, sequence, flags, format, coverage, entries );
+            } else if ( format == 2 ) {
+                return new SingleSubtableFormat2 ( id, sequence, flags, format, coverage, entries );
+            } else {
+                throw new UnsupportedOperationException();
+            }
+        }
+    }
+
+    private static class SingleSubtableFormat1 extends SingleSubtable {
+        private int delta;
+        private int ciMax;
+        SingleSubtableFormat1 ( String id, int sequence, int flags, int format, GlyphCoverageTable coverage, List entries ) {
+            super ( id, sequence, flags, format, coverage, entries );
+            populate ( entries );
+        }
+        /** {@inheritDoc} */
         public List getEntries() {
-            List entries = new ArrayList ( map.length );
-            for ( int i = 0, n = map.length; i < n; i++ ) {
-                entries.add ( Integer.valueOf ( map[i] ) );
+            List entries = new ArrayList ( 1 );
+            entries.add ( Integer.valueOf ( delta ) );
+            return entries;
+        }
+        /** {@inheritDoc} */
+        public int getGlyphForCoverageIndex ( int ci, int gi ) throws IllegalArgumentException {
+            if ( ci <= ciMax ) {
+                return gi + delta;
+            } else {
+                throw new IllegalArgumentException ( "coverage index " + ci + " out of range, maximum coverage index is " + ciMax );
+            }
+        }
+        private void populate ( List entries ) {
+            if ( ( entries == null ) || ( entries.size() != 1 ) ) {
+                throw new IllegalArgumentException ( "illegal entries, must be non-null and contain exactly one entry" );
+            } else {
+                Object o = entries.get(0);
+                int delta = 0;
+                if ( o instanceof Integer ) {
+                    delta = ( (Integer) o ) . intValue();
+                } else {
+                    throw new IllegalArgumentException ( "illegal entries entry, must be Integer, but is: " + o );
+                }
+                this.delta = delta;
+                this.ciMax = getCoverageSize() - 1;
+            }
+        }
+    }
+
+    private static class SingleSubtableFormat2 extends SingleSubtable {
+        private int[] glyphs;
+        SingleSubtableFormat2 ( String id, int sequence, int flags, int format, GlyphCoverageTable coverage, List entries ) {
+            super ( id, sequence, flags, format, coverage, entries );
+            populate ( entries );
+        }
+        /** {@inheritDoc} */
+        public List getEntries() {
+            List entries = new ArrayList ( glyphs.length );
+            for ( int i = 0, n = glyphs.length; i < n; i++ ) {
+                entries.add ( Integer.valueOf ( glyphs[i] ) );
             }
             return entries;
         }
         /** {@inheritDoc} */
-        public GlyphSequence substitute ( GlyphSequence gs, String script, String language ) {
-            CharBuffer cb = CharBuffer.allocate ( gs.length() );
-            int ng = 0;
-            for ( int i = 0; i < gs.length(); i++ ) {
-                int gi = gs.charAt ( i );
-                int ci, go = gi;
-                if ( ( ci = getCoverageIndex ( gi ) ) >= 0 ) {
-                    assert ci < map.length : "coverage index out of range";
-                    if ( ci < map.length ) {
-                        go = map [ ci ];
-                    }
-                }
-                if ( ( go < 0 ) || ( go > 65535 ) ) {
-                    go = 65535;
-                }
-                cb.put ( (char) go );
-                ng++;
+        public int getGlyphForCoverageIndex ( int ci, int gi ) throws IllegalArgumentException {
+            if ( glyphs == null ) {
+                return -1;
+            } else if ( ci >=glyphs.length ) {
+                throw new IllegalArgumentException ( "coverage index " + ci + " out of range, maximum coverage index is " + glyphs.length );
+            } else {
+                return glyphs [ ci ];
             }
-            cb.limit(ng);
-            cb.rewind();
-            return new GlyphSequence ( gs.getCharacters(), (CharSequence) cb, null );
         }
         private void populate ( List entries ) {
             int i = 0, n = entries.size();
-            int[] map = new int [ n ];
+            int[] glyphs = new int [ n ];
             for ( Iterator it = entries.iterator(); it.hasNext();) {
                 Object o = it.next();
                 if ( o instanceof Integer ) {
                     int gid = ( (Integer) o ) .intValue();
                     if ( ( gid >= 0 ) && ( gid < 65536 ) ) {
-                        map [ i++ ] = gid;
+                        glyphs [ i++ ] = gid;
                     } else {
                         throw new IllegalArgumentException ( "illegal glyph index: " + gid );
                     }
@@ -259,127 +353,247 @@ public class GlyphSubstitutionTable extends GlyphTable implements GlyphSubstitut
                 }
             }
             assert i == n;
-            assert this.map == null;
-            this.map = map;
-        }
-        /** {@inheritDoc} */
-        public String toString() {
-            StringBuffer sb = new StringBuffer(super.toString());
-            sb.append('{');
-            sb.append("coverage=");
-            sb.append(getCoverage().toString());
-            sb.append(",entries={");
-            for ( int i = 0, n = map.length; i < n; i++ ) {
-                if ( i > 0 ) {
-                    sb.append(',');
-                }
-                sb.append(Integer.toString(map[i]));
-            }
-            sb.append('}');
-            sb.append('}');
-            return sb.toString();
+            assert this.glyphs == null;
+            this.glyphs = glyphs;
         }
     }
 
-    static class MultipleSubtable extends GlyphSubstitutionSubtable {
-        public MultipleSubtable ( String id, int sequence, int flags, int format, List coverage, List entries ) {
-            super ( id, sequence, flags, format, GlyphCoverageTable.createCoverageTable ( coverage ) );
+    private abstract static class MultipleSubtable extends GlyphSubstitutionSubtable {
+        public MultipleSubtable ( String id, int sequence, int flags, int format, GlyphCoverageTable coverage, List entries ) {
+            super ( id, sequence, flags, format, coverage );
         }
         /** {@inheritDoc} */
         public int getType() {
             return GSUB_LOOKUP_TYPE_MULTIPLE;
         }
         /** {@inheritDoc} */
-        public List getEntries() {
-            return null; // [TBD] - implement me
+        public boolean isCompatible ( GlyphSubtable subtable ) {
+            return subtable instanceof MultipleSubtable;
+        }
+        /** {@inheritDoc} */
+        public boolean substitute ( GlyphSubstitutionState ss ) {
+            int gi = ss.getGlyph(), ci;
+            if ( ( ci = getCoverageIndex ( gi ) ) < 0 ) {
+                return false;
+            } else {
+                int[] ga = getGlyphsForCoverageIndex ( ci, gi );
+                if ( ga != null ) {
+                    ss.putGlyphs ( ga, GlyphSequence.CharAssociation.replicate ( ss.getAssociation(), ga.length ) );
+                    ss.consume(1);
+                }
+                return true;
+            }
+        }
+        /**
+         * Obtain glyph sequence for coverage index.
+         * @param ci coverage index
+         * @param gi original glyph index
+         * @return sequence of glyphs to substitute for input glyph
+         * @throws IllegalArgumentException if coverage index is not valid
+         */
+        public abstract int[] getGlyphsForCoverageIndex ( int ci, int gi ) throws IllegalArgumentException;
+        static GlyphSubstitutionSubtable create ( String id, int sequence, int flags, int format, GlyphCoverageTable coverage, List entries ) {
+            if ( format == 1 ) {
+                return new MultipleSubtableFormat1 ( id, sequence, flags, format, coverage, entries );
+            } else {
+                throw new UnsupportedOperationException();
+            }
         }
     }
 
-    static class AlternateSubtable extends GlyphSubstitutionSubtable {
-        public AlternateSubtable ( String id, int sequence, int flags, int format, List coverage, List entries ) {
-            super ( id, sequence, flags, format, GlyphCoverageTable.createCoverageTable ( coverage ) );
+    private static class MultipleSubtableFormat1 extends MultipleSubtable {
+        private int[][] gsa;                            // glyph sequence array, ordered by coverage index
+        MultipleSubtableFormat1 ( String id, int sequence, int flags, int format, GlyphCoverageTable coverage, List entries ) {
+            super ( id, sequence, flags, format, coverage, entries );
+            populate ( entries );
+        }
+        /** {@inheritDoc} */
+        public List getEntries() {
+            if ( gsa != null ) {
+                List entries = new ArrayList ( 1 );
+                entries.add ( gsa );
+                return entries;
+            } else {
+                return null;
+            }
+        }
+        /** {@inheritDoc} */
+        public int[] getGlyphsForCoverageIndex ( int ci, int gi ) throws IllegalArgumentException {
+            if ( gsa == null ) {
+                return null;
+            } else if ( ci >= gsa.length ) {
+                throw new IllegalArgumentException ( "coverage index " + ci + " out of range, maximum coverage index is " + gsa.length );
+            } else {
+                return gsa [ ci ];
+            }
+        }
+        private void populate ( List entries ) {
+            if ( entries == null ) {
+                throw new IllegalArgumentException ( "illegal entries, must be non-null" );
+            } else if ( entries.size() != 1 ) {
+                throw new IllegalArgumentException ( "illegal entries, " + entries.size() + " entries present, but requires 1 entry" );
+            } else {
+                Object o;
+                if ( ( ( o = entries.get(0) ) == null ) || ! ( o instanceof int[][] ) ) {
+                    throw new IllegalArgumentException ( "illegal entries, first entry must be an int[][], but is: " + ( ( o != null ) ? o.getClass() : null ) );
+                } else {
+                    gsa = (int[][]) o;
+                }
+            }
+        }
+    }
+
+    private abstract static class AlternateSubtable extends GlyphSubstitutionSubtable {
+        public AlternateSubtable ( String id, int sequence, int flags, int format, GlyphCoverageTable coverage, List entries ) {
+            super ( id, sequence, flags, format, coverage );
         }
         /** {@inheritDoc} */
         public int getType() {
             return GSUB_LOOKUP_TYPE_ALTERNATE;
         }
         /** {@inheritDoc} */
-        public List getEntries() {
-            return null; // [TBD] - implement me
+        public boolean isCompatible ( GlyphSubtable subtable ) {
+            return subtable instanceof AlternateSubtable;
+        }
+        /** {@inheritDoc} */
+        public boolean substitute ( GlyphSubstitutionState ss ) {
+            int gi = ss.getGlyph(), ci;
+            if ( ( ci = getCoverageIndex ( gi ) ) < 0 ) {
+                return false;
+            } else {
+                int[] ga = getAlternatesForCoverageIndex ( ci, gi );
+                int ai = ss.getAlternatesIndex ( ci );
+                int go;
+                if ( ( ai < 0 ) || ( ai >= ga.length ) ) {
+                    go = gi;
+                } else {
+                    go = ga [ ai ];
+                }
+                if ( ( go < 0 ) || ( go > 65535 ) ) {
+                    go = 65535;
+                }
+                ss.putGlyph ( go, ss.getAssociation() );
+                ss.consume(1);
+                return true;
+            }
+        }
+        /**
+         * Obtain glyph alternates for coverage index.
+         * @param ci coverage index
+         * @param gi original glyph index
+         * @return sequence of glyphs to substitute for input glyph
+         * @throws IllegalArgumentException if coverage index is not valid
+         */
+        public abstract int[] getAlternatesForCoverageIndex ( int ci, int gi ) throws IllegalArgumentException;
+        static GlyphSubstitutionSubtable create ( String id, int sequence, int flags, int format, GlyphCoverageTable coverage, List entries ) {
+            if ( format == 1 ) {
+                return new AlternateSubtableFormat1 ( id, sequence, flags, format, coverage, entries );
+            } else {
+                throw new UnsupportedOperationException();
+            }
         }
     }
 
-    static class LigatureSubtable extends GlyphSubstitutionSubtable {
-        private LigatureSet[] map;
-        public LigatureSubtable ( String id, int sequence, int flags, int format, List coverage, List entries ) {
-            super ( id, sequence, flags, format, GlyphCoverageTable.createCoverageTable ( coverage ) );
+    private static class AlternateSubtableFormat1 extends AlternateSubtable {
+        private int[][] gaa;                            // glyph alternates array, ordered by coverage index
+        AlternateSubtableFormat1 ( String id, int sequence, int flags, int format, GlyphCoverageTable coverage, List entries ) {
+            super ( id, sequence, flags, format, coverage, entries );
             populate ( entries );
+        }
+        /** {@inheritDoc} */
+        public List getEntries() {
+            List entries = new ArrayList ( gaa.length );
+            for ( int i = 0, n = gaa.length; i < n; i++ ) {
+                entries.add ( gaa[i] );
+            }
+            return entries;
+        }
+        /** {@inheritDoc} */
+        public int[] getAlternatesForCoverageIndex ( int ci, int gi ) throws IllegalArgumentException {
+            if ( gaa == null ) {
+                return null;
+            } else if ( ci >= gaa.length ) {
+                throw new IllegalArgumentException ( "coverage index " + ci + " out of range, maximum coverage index is " + gaa.length );
+            } else {
+                return gaa [ ci ];
+            }
+        }
+        private void populate ( List entries ) {
+            int i = 0, n = entries.size();
+            int[][] gaa = new int [ n ][];
+            for ( Iterator it = entries.iterator(); it.hasNext();) {
+                Object o = it.next();
+                if ( o instanceof int[] ) {
+                    gaa [ i++ ] = (int[]) o;
+                } else {
+                    throw new IllegalArgumentException ( "illegal entries entry, must be int[]: " + o );
+                }
+            }
+            assert i == n;
+            assert this.gaa == null;
+            this.gaa = gaa;
+        }
+    }
+
+    private abstract static class LigatureSubtable extends GlyphSubstitutionSubtable {
+        public LigatureSubtable ( String id, int sequence, int flags, int format, GlyphCoverageTable coverage, List entries ) {
+            super ( id, sequence, flags, format, coverage );
         }
         /** {@inheritDoc} */
         public int getType() {
             return GSUB_LOOKUP_TYPE_LIGATURE;
         }
         /** {@inheritDoc} */
-        public List getEntries() {
-            List entries = new ArrayList ( map.length );
-            for ( int i = 0, n = map.length; i < n; i++ ) {
-                entries.add ( map[i] );
-            }
-            return entries;
+        public boolean isCompatible ( GlyphSubtable subtable ) {
+            return subtable instanceof LigatureSubtable;
         }
         /** {@inheritDoc} */
-        public GlyphSequence substitute ( GlyphSequence gs, String script, String language ) {
-            CharBuffer cb = CharBuffer.allocate ( gs.length() );
-            int ng = 0;
-            for ( int i = 0, n = gs.length(); i < n; i++ ) {
-                int gi = gs.charAt ( i );
-                int ci, go = gi;
-                LigatureSet ls = null;
-                if ( ( ci = getCoverageIndex ( gi ) ) >= 0 ) {
-                    assert ci < map.length : "coverage index out of range";
-                    if ( ci < map.length ) {
-                        ls = map [ ci ];
+        public boolean substitute ( GlyphSubstitutionState ss ) {
+            int gi = ss.getGlyph(), ci;
+            if ( ( ci = getCoverageIndex ( gi ) ) < 0 ) {
+                return false;
+            } else {
+                LigatureSet ls = getLigatureSetForCoverageIndex ( ci, gi );
+                if ( ls != null ) { 
+                    boolean reverse = false;
+                    GlyphTester ignores = ss.getIgnoreDefault();
+                    int[] counts = ss.getGlyphsAvailable ( 0, reverse, ignores );
+                    int nga = counts[0], ngi;
+                    if ( nga > 1 ) {
+                        int[] iga = ss.getGlyphs ( 0, nga, reverse, ignores, null, counts );
+                        Ligature l = findLigature ( ls, iga );
+                        if ( l != null ) {
+                            int go = l.getLigature();
+                            if ( ( go < 0 ) || ( go > 65535 ) ) {
+                                go = 65535;
+                            }
+                            int nmg = 1 + l.getNumComponents();
+                            // fetch matched number of component glyphs to determine matched and ignored count
+                            ss.getGlyphs ( 0, nmg, reverse, ignores, null, counts );
+                            nga = counts[0];
+                            ngi = counts[1];
+                            // fetch associations of matched component glyphs
+                            GlyphSequence.CharAssociation[] laa = ss.getAssociations ( 0, nga );
+                            // output ligature glyph and its association
+                            ss.putGlyph ( go, GlyphSequence.CharAssociation.join ( laa ) );
+                            // fetch and output ignored glyphs (if necessary)
+                            if ( ngi > 0 ) {
+                                ss.putGlyphs ( ss.getIgnoredGlyphs ( 0, ngi ), ss.getIgnoredAssociations ( 0, ngi ) );
+                            }
+                            ss.consume ( nga + ngi );
+                        }
                     }
                 }
-                if ( ls != null ) {
-                    Ligature l;
-                    if ( ( l = findLigature ( ls, gs, i ) ) != null ) {
-                        go = l.getLigature();
-                        i += l.getNumComponents();
-                    }
-                }
-                if ( ( go < 0 ) || ( go > 65535 ) ) {
-                    go = 65535;
-                }
-                cb.put ( (char) go );
-                ng++;
+                return true;
             }
-            cb.limit(ng);
-            cb.rewind();
-            return new GlyphSequence ( gs.getCharacters(), (CharSequence) cb, null );
         }
-        private void populate ( List entries ) {
-            int i = 0, n = entries.size();
-            LigatureSet[] map = new LigatureSet [ n ];
-            for ( Iterator it = entries.iterator(); it.hasNext();) {
-                Object o = it.next();
-                if ( o instanceof LigatureSet ) {
-                    map [ i++ ] = (LigatureSet) o;
-                } else {
-                    throw new IllegalArgumentException ( "illegal ligatures entry, must be LigatureSet: " + o );
-                }
-            }
-            assert i == n;
-            assert this.map == null;
-            this.map = map;
-        }
-        private Ligature findLigature ( LigatureSet ls, CharSequence cs, int offset ) {
+        private Ligature findLigature ( LigatureSet ls, int[] glyphs ) {
             Ligature[] la = ls.getLigatures();
             int k = -1;
             int maxComponents = -1;
             for ( int i = 0, n = la.length; i < n; i++ ) {
                 Ligature l = la [ i ];
-                if ( l.matchesComponents ( cs, offset + 1 ) ) {
+                if ( l.matchesComponents ( glyphs ) ) {
                     int nc = l.getNumComponents();
                     if ( nc > maxComponents ) {
                         maxComponents = nc;
@@ -393,78 +607,710 @@ public class GlyphSubstitutionTable extends GlyphTable implements GlyphSubstitut
                 return null;
             }
         }
-        /** {@inheritDoc} */
-        public String toString() {
-            StringBuffer sb = new StringBuffer(super.toString());
-            sb.append('{');
-            sb.append("coverage=");
-            sb.append(getCoverage().toString());
-            sb.append(",entries={");
-            for ( int i = 0, n = map.length; i < n; i++ ) {
-                if ( i > 0 ) {
-                    sb.append(',');
-                }
-                sb.append(map[i]);
+        /**
+         * Obtain ligature set for coverage index.
+         * @param ci coverage index
+         * @param gi original glyph index
+         * @return ligature set (or null if none defined)
+         * @throws IllegalArgumentException if coverage index is not valid
+         */
+        public abstract LigatureSet getLigatureSetForCoverageIndex ( int ci, int gi ) throws IllegalArgumentException;
+        static GlyphSubstitutionSubtable create ( String id, int sequence, int flags, int format, GlyphCoverageTable coverage, List entries ) {
+            if ( format == 1 ) {
+                return new LigatureSubtableFormat1 ( id, sequence, flags, format, coverage, entries );
+            } else {
+                throw new UnsupportedOperationException();
             }
-            sb.append('}');
-            sb.append('}');
-            return sb.toString();
         }
     }
 
-    static class ContextSubtable extends GlyphSubstitutionSubtable {
-        public ContextSubtable ( String id, int sequence, int flags, int format, List coverage, List entries ) {
-            super ( id, sequence, flags, format, GlyphCoverageTable.createCoverageTable ( coverage ) );
-        }
-        /** {@inheritDoc} */
-        public int getType() {
-            return GSUB_LOOKUP_TYPE_CONTEXT;
+    private static class LigatureSubtableFormat1 extends LigatureSubtable {
+        private LigatureSet[] ligatureSets;
+        public LigatureSubtableFormat1 ( String id, int sequence, int flags, int format, GlyphCoverageTable coverage, List entries ) {
+            super ( id, sequence, flags, format, coverage, entries );
+            populate ( entries );
         }
         /** {@inheritDoc} */
         public List getEntries() {
-            return null; // [TBD] - implement me
+            List entries = new ArrayList ( ligatureSets.length );
+            for ( int i = 0, n = ligatureSets.length; i < n; i++ ) {
+                entries.add ( ligatureSets[i] );
+            }
+            return entries;
+        }
+        /** {@inheritDoc} */
+        public LigatureSet getLigatureSetForCoverageIndex ( int ci, int gi ) throws IllegalArgumentException {
+            if ( ligatureSets == null ) {
+                return null;
+            } else if ( ci >= ligatureSets.length ) {
+                throw new IllegalArgumentException ( "coverage index " + ci + " out of range, maximum coverage index is " + ligatureSets.length );
+            } else {
+                return ligatureSets [ ci ];
+            }
+        }
+        private void populate ( List entries ) {
+            int i = 0, n = entries.size();
+            LigatureSet[] ligatureSets = new LigatureSet [ n ];
+            for ( Iterator it = entries.iterator(); it.hasNext();) {
+                Object o = it.next();
+                if ( o instanceof LigatureSet ) {
+                    ligatureSets [ i++ ] = (LigatureSet) o;
+                } else {
+                    throw new IllegalArgumentException ( "illegal ligatures entry, must be LigatureSet: " + o );
+                }
+            }
+            assert i == n;
+            assert this.ligatureSets == null;
+            this.ligatureSets = ligatureSets;
         }
     }
 
-    static class ChainingContextSubtable extends GlyphSubstitutionSubtable {
-        public ChainingContextSubtable ( String id, int sequence, int flags, int format, List coverage, List entries ) {
-            super ( id, sequence, flags, format, GlyphCoverageTable.createCoverageTable ( coverage ) );
+    private abstract static class ContextualSubtable extends GlyphSubstitutionSubtable {
+        public ContextualSubtable ( String id, int sequence, int flags, int format, GlyphCoverageTable coverage, List entries ) {
+            super ( id, sequence, flags, format, coverage );
         }
         /** {@inheritDoc} */
         public int getType() {
-            return GSUB_LOOKUP_TYPE_CHAINING_CONTEXT;
+            return GSUB_LOOKUP_TYPE_CONTEXTUAL;
         }
         /** {@inheritDoc} */
-        public List getEntries() {
-            return null; // [TBD] - implement me
+        public boolean isCompatible ( GlyphSubtable subtable ) {
+            return subtable instanceof ContextualSubtable;
+        }
+        /** {@inheritDoc} */
+        public boolean substitute ( GlyphSubstitutionState ss ) {
+            int gi = ss.getGlyph(), ci;
+            if ( ( ci = getCoverageIndex ( gi ) ) < 0 ) {
+                return false;
+            } else {
+                int[] rv = new int[1];
+                RuleLookup[] la = getLookups ( ci, gi, ss, rv );
+                if ( la != null ) {
+                    ss.apply ( la, rv[0] );
+                }
+                return true;
+            }
+        }
+        /**
+         * Obtain rule lookups set associated current input glyph context.
+         * @param ci coverage index of glyph at current position
+         * @param gi glyph index of glyph at current position
+         * @param ss glyph substitution state
+         * @param rv array of ints used to receive multiple return values, must be of length 1 or greater,
+         * where the first entry is used to return the input sequence length of the matched rule
+         * @return array of rule lookups or null if none applies
+         */
+        public abstract RuleLookup[] getLookups ( int ci, int gi, GlyphSubstitutionState ss, int[] rv );
+        static GlyphSubstitutionSubtable create ( String id, int sequence, int flags, int format, GlyphCoverageTable coverage, List entries ) {
+            if ( format == 1 ) {
+                return new ContextualSubtableFormat1 ( id, sequence, flags, format, coverage, entries );
+            } else if ( format == 2 ) {
+                return new ContextualSubtableFormat2 ( id, sequence, flags, format, coverage, entries );
+            } else if ( format == 3 ) {
+                return new ContextualSubtableFormat3 ( id, sequence, flags, format, coverage, entries );
+            } else {
+                throw new UnsupportedOperationException();
+            }
         }
     }
 
-    static class ExtensionSubtable extends GlyphSubstitutionSubtable {
-        public ExtensionSubtable ( String id, int sequence, int flags, int format, List coverage, List entries ) {
-            super ( id, sequence, flags, format, GlyphCoverageTable.createCoverageTable ( coverage ) );
-        }
-        /** {@inheritDoc} */
-        public int getType() {
-            return GSUB_LOOKUP_TYPE_EXTENSION_SUBSTITUTION;
+    private static class ContextualSubtableFormat1 extends ContextualSubtable {
+        private RuleSet[] rsa;                          // rule set array, ordered by glyph coverage index
+        ContextualSubtableFormat1 ( String id, int sequence, int flags, int format, GlyphCoverageTable coverage, List entries ) {
+            super ( id, sequence, flags, format, coverage, entries );
+            populate ( entries );
         }
         /** {@inheritDoc} */
         public List getEntries() {
-            return null; // [TBD] - implement me
+            if ( rsa != null ) {
+                List entries = new ArrayList ( 1 );
+                entries.add ( rsa );
+                return entries;
+            } else {
+                return null;
+            }
+        }
+        /** {@inheritDoc} */
+        public void resolveLookupReferences ( Map/*<String,LookupTable>*/ lookupTables ) {
+            GlyphTable.resolveLookupReferences ( rsa, lookupTables );
+        }
+        /** {@inheritDoc} */
+        public RuleLookup[] getLookups ( int ci, int gi, GlyphSubstitutionState ss, int[] rv  ) {
+            assert ss != null;
+            assert ( rv != null ) && ( rv.length > 0 );
+            assert rsa != null;
+            if ( rsa.length > 0 ) {
+                RuleSet rs = rsa [ 0 ];
+                if ( rs != null ) {
+                    Rule[] ra = rs.getRules();
+                    for ( int i = 0, n = ra.length; i < n; i++ ) {
+                        Rule r = ra [ i ];
+                        if ( ( r != null ) && ( r instanceof ChainedGlyphSequenceRule ) ) {
+                            ChainedGlyphSequenceRule cr = (ChainedGlyphSequenceRule) r;
+                            int[] iga = cr.getGlyphs ( gi );
+                            if ( matches ( ss, iga, 0, rv ) ) {
+                                return r.getLookups();
+                            }
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+        static boolean matches ( GlyphSubstitutionState ss, int[] glyphs, int offset, int[] rv ) {
+            if ( ( glyphs == null ) || ( glyphs.length == 0 ) ) {
+                return true;                            // match null or empty glyph sequence
+            } else {
+                boolean reverse = offset < 0;
+                GlyphTester ignores = ss.getIgnoreDefault();
+                int[] counts = ss.getGlyphsAvailable ( offset, reverse, ignores );
+                int nga = counts[0];
+                int ngm = glyphs.length;
+                if ( nga < ngm ) {
+                    return false;                       // insufficient glyphs available to match
+                } else {
+                    int[] ga = ss.getGlyphs ( offset, ngm, reverse, ignores, null, counts );
+                    for ( int k = 0; k < ngm; k++ ) {
+                        if ( ga [ k ] != glyphs [ k ] ) {
+                            return false;               // match fails at ga [ k ]
+                        }
+                    }
+                    if ( rv != null ) {
+                        rv[0] = counts[0] + counts[1];
+                    }
+                    return true;                        // all glyphs match
+                }
+            }
+        }
+        private void populate ( List entries ) {
+            if ( entries == null ) {
+                throw new IllegalArgumentException ( "illegal entries, must be non-null" );
+            } else if ( entries.size() != 1 ) {
+                throw new IllegalArgumentException ( "illegal entries, " + entries.size() + " entries present, but requires 1 entry" );
+            } else {
+                Object o;
+                if ( ( ( o = entries.get(0) ) == null ) || ! ( o instanceof RuleSet[] ) ) {
+                    throw new IllegalArgumentException ( "illegal entries, first entry must be an RuleSet[], but is: " + ( ( o != null ) ? o.getClass() : null ) );
+                } else {
+                    rsa = (RuleSet[]) o;
+                }
+            }
         }
     }
 
-    static class ReverseChainingSingleSubtable extends GlyphSubstitutionSubtable {
-        public ReverseChainingSingleSubtable ( String id, int sequence, int flags, int format, List coverage, List entries ) {
-            super ( id, sequence, flags, format, GlyphCoverageTable.createCoverageTable ( coverage ) );
-        }
-        /** {@inheritDoc} */
-        public int getType() {
-            return GSUB_LOOKUP_TYPE_REVERSE_CHAINING_CONTEXT_SINGLE;
+    private static class ContextualSubtableFormat2 extends ContextualSubtable {
+        private GlyphClassTable cdt;                    // class def table
+        private int ngc;                                // class set count
+        private RuleSet[] rsa;                          // rule set array, ordered by class number [0...ngc - 1]
+        ContextualSubtableFormat2 ( String id, int sequence, int flags, int format, GlyphCoverageTable coverage, List entries ) {
+            super ( id, sequence, flags, format, coverage, entries );
+            populate ( entries );
         }
         /** {@inheritDoc} */
         public List getEntries() {
-            return null; // [TBD] - implement me
+            if ( rsa != null ) {
+                List entries = new ArrayList ( 3 );
+                entries.add ( cdt );
+                entries.add ( Integer.valueOf ( ngc ) );
+                entries.add ( rsa );
+                return entries;
+            } else {
+                return null;
+            }
+        }
+        /** {@inheritDoc} */
+        public void resolveLookupReferences ( Map/*<String,LookupTable>*/ lookupTables ) {
+            GlyphTable.resolveLookupReferences ( rsa, lookupTables );
+        }
+        /** {@inheritDoc} */
+        public RuleLookup[] getLookups ( int ci, int gi, GlyphSubstitutionState ss, int[] rv  ) {
+            assert ss != null;
+            assert ( rv != null ) && ( rv.length > 0 );
+            assert rsa != null;
+            if ( rsa.length > 0 ) {
+                RuleSet rs = rsa [ 0 ];
+                if ( rs != null ) {
+                    Rule[] ra = rs.getRules();
+                    for ( int i = 0, n = ra.length; i < n; i++ ) {
+                        Rule r = ra [ i ];
+                        if ( ( r != null ) && ( r instanceof ChainedClassSequenceRule ) ) {
+                            ChainedClassSequenceRule cr = (ChainedClassSequenceRule) r;
+                            int[] ca = cr.getClasses ( cdt.getClassIndex ( gi, ss.getClassMatchSet ( gi ) ) );
+                            if ( matches ( ss, cdt, ca, 0, rv ) ) {
+                                return r.getLookups();
+                            }
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+        static boolean matches ( GlyphSubstitutionState ss, GlyphClassTable cdt, int[] classes, int offset, int[] rv ) {
+            if ( ( cdt == null ) || ( classes == null ) || ( classes.length == 0 ) ) {
+                return true;                            // match null class definitions, null or empty class sequence
+            } else {
+                boolean reverse = offset < 0;
+                GlyphTester ignores = ss.getIgnoreDefault();
+                int[] counts = ss.getGlyphsAvailable ( offset, reverse, ignores );
+                int nga = counts[0];
+                int ngm = classes.length;
+                if ( nga < ngm ) {
+                    return false;                       // insufficient glyphs available to match
+                } else {
+                    int[] ga = ss.getGlyphs ( offset, ngm, reverse, ignores, null, counts );
+                    for ( int k = 0; k < ngm; k++ ) {
+                        int gi = ga [ k ];
+                        int ms = ss.getClassMatchSet ( gi );
+                        int gc = cdt.getClassIndex ( gi, ms );
+                        if ( ( gc < 0 ) || ( gc >= cdt.getClassSize ( ms ) ) ) {
+                            return false;               // none or invalid class fails mat ch
+                        } else if ( gc != classes [ k ] ) {
+                            return false;               // match fails at ga [ k ]
+                        }
+                    }
+                    if ( rv != null ) {
+                        rv[0] = counts[0] + counts[1];
+                    }
+                    return true;                        // all glyphs match
+                }
+            }
+        }
+        private void populate ( List entries ) {
+            if ( entries == null ) {
+                throw new IllegalArgumentException ( "illegal entries, must be non-null" );
+            } else if ( entries.size() != 3 ) {
+                throw new IllegalArgumentException ( "illegal entries, " + entries.size() + " entries present, but requires 3 entries" );
+            } else {
+                Object o;
+                if ( ( ( o = entries.get(0) ) == null ) || ! ( o instanceof GlyphClassTable ) ) {
+                    throw new IllegalArgumentException ( "illegal entries, first entry must be an GlyphClassTable, but is: " + ( ( o != null ) ? o.getClass() : null ) );
+                } else {
+                    cdt = (GlyphClassTable) o;
+                }
+                if ( ( ( o = entries.get(1) ) == null ) || ! ( o instanceof Integer ) ) {
+                    throw new IllegalArgumentException ( "illegal entries, second entry must be an Integer, but is: " + ( ( o != null ) ? o.getClass() : null ) );
+                } else {
+                    ngc = ((Integer)(o)).intValue();
+                }
+                if ( ( ( o = entries.get(2) ) == null ) || ! ( o instanceof RuleSet[] ) ) {
+                    throw new IllegalArgumentException ( "illegal entries, third entry must be an RuleSet[], but is: " + ( ( o != null ) ? o.getClass() : null ) );
+                } else {
+                    rsa = (RuleSet[]) o;
+                    if ( rsa.length != ngc ) {
+                        throw new IllegalArgumentException ( "illegal entries, RuleSet[] length is " + rsa.length + ", but expected " + ngc + " glyph classes" );
+                    }
+                }
+            }
+        }
+    }
+
+    private static class ContextualSubtableFormat3 extends ContextualSubtable {
+        private RuleSet[] rsa;                          // rule set array, containing a single rule set
+        ContextualSubtableFormat3 ( String id, int sequence, int flags, int format, GlyphCoverageTable coverage, List entries ) {
+            super ( id, sequence, flags, format, coverage, entries );
+            populate ( entries );
+        }
+        /** {@inheritDoc} */
+        public List getEntries() {
+            if ( rsa != null ) {
+                List entries = new ArrayList ( 1 );
+                entries.add ( rsa );
+                return entries;
+            } else {
+                return null;
+            }
+        }
+        /** {@inheritDoc} */
+        public void resolveLookupReferences ( Map/*<String,LookupTable>*/ lookupTables ) {
+            GlyphTable.resolveLookupReferences ( rsa, lookupTables );
+        }
+        /** {@inheritDoc} */
+        public RuleLookup[] getLookups ( int ci, int gi, GlyphSubstitutionState ss, int[] rv  ) {
+            assert ss != null;
+            assert ( rv != null ) && ( rv.length > 0 );
+            assert rsa != null;
+            if ( rsa.length > 0 ) {
+                RuleSet rs = rsa [ 0 ];
+                if ( rs != null ) {
+                    Rule[] ra = rs.getRules();
+                    for ( int i = 0, n = ra.length; i < n; i++ ) {
+                        Rule r = ra [ i ];
+                        if ( ( r != null ) && ( r instanceof ChainedCoverageSequenceRule ) ) {
+                            ChainedCoverageSequenceRule cr = (ChainedCoverageSequenceRule) r;
+                            GlyphCoverageTable[] gca = cr.getCoverages();
+                            if ( matches ( ss, gca, 0, rv ) ) {
+                                return r.getLookups();
+                            }
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+        static boolean matches ( GlyphSubstitutionState ss, GlyphCoverageTable[] gca, int offset, int[] rv ) {
+            if ( ( gca == null ) || ( gca.length == 0 ) ) {
+                return true;                            // match null or empty coverage array
+            } else {
+                boolean reverse = offset < 0;
+                GlyphTester ignores = ss.getIgnoreDefault();
+                int[] counts = ss.getGlyphsAvailable ( offset, reverse, ignores );
+                int nga = counts[0];
+                int ngm = gca.length;
+                if ( nga < ngm ) {
+                    return false;                       // insufficient glyphs available to match
+                } else {
+                    int[] ga = ss.getGlyphs ( offset, ngm, reverse, ignores, null, counts );
+                    for ( int k = 0; k < ngm; k++ ) {
+                        GlyphCoverageTable ct = gca [ k ];
+                        if ( ct != null ) {
+                            if ( ct.getCoverageIndex ( ga [ k ] ) < 0 ) {
+                                return false;           // match fails at ga [ k ]
+                            }
+                        }
+                    }
+                    if ( rv != null ) {
+                        rv[0] = counts[0] + counts[1];
+                    }
+                    return true;                        // all glyphs match
+                }
+            }
+        }
+        private void populate ( List entries ) {
+            if ( entries == null ) {
+                throw new IllegalArgumentException ( "illegal entries, must be non-null" );
+            } else if ( entries.size() != 1 ) {
+                throw new IllegalArgumentException ( "illegal entries, " + entries.size() + " entries present, but requires 1 entry" );
+            } else {
+                Object o;
+                if ( ( ( o = entries.get(0) ) == null ) || ! ( o instanceof RuleSet[] ) ) {
+                    throw new IllegalArgumentException ( "illegal entries, first entry must be an RuleSet[], but is: " + ( ( o != null ) ? o.getClass() : null ) );
+                } else {
+                    rsa = (RuleSet[]) o;
+                }
+            }
+        }
+    }
+
+    private abstract static class ChainedContextualSubtable extends GlyphSubstitutionSubtable {
+        public ChainedContextualSubtable ( String id, int sequence, int flags, int format, GlyphCoverageTable coverage, List entries ) {
+            super ( id, sequence, flags, format, coverage );
+        }
+        /** {@inheritDoc} */
+        public int getType() {
+            return GSUB_LOOKUP_TYPE_CHAINED_CONTEXTUAL;
+        }
+        /** {@inheritDoc} */
+        public boolean isCompatible ( GlyphSubtable subtable ) {
+            return subtable instanceof ChainedContextualSubtable;
+        }
+        /** {@inheritDoc} */
+        public boolean substitute ( GlyphSubstitutionState ss ) {
+            int gi = ss.getGlyph(), ci;
+            if ( ( ci = getCoverageIndex ( gi ) ) < 0 ) {
+                return false;
+            } else {
+                int[] rv = new int[1];
+                RuleLookup[] la = getLookups ( ci, gi, ss, rv );
+                if ( la != null ) {
+                    ss.apply ( la, rv[0] );
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        }
+        /**
+         * Obtain rule lookups set associated current input glyph context.
+         * @param ci coverage index of glyph at current position
+         * @param gi glyph index of glyph at current position
+         * @param ss glyph substitution state
+         * @param rv array of ints used to receive multiple return values, must be of length 1 or greater
+         * @return array of rule lookups or null if none applies
+         */
+        public abstract RuleLookup[] getLookups ( int ci, int gi, GlyphSubstitutionState ss, int[] rv );
+        static GlyphSubstitutionSubtable create ( String id, int sequence, int flags, int format, GlyphCoverageTable coverage, List entries ) {
+            if ( format == 1 ) {
+                return new ChainedContextualSubtableFormat1 ( id, sequence, flags, format, coverage, entries );
+            } else if ( format == 2 ) {
+                return new ChainedContextualSubtableFormat2 ( id, sequence, flags, format, coverage, entries );
+            } else if ( format == 3 ) {
+                return new ChainedContextualSubtableFormat3 ( id, sequence, flags, format, coverage, entries );
+            } else {
+                throw new UnsupportedOperationException();
+            }
+        }
+    }
+
+    private static class ChainedContextualSubtableFormat1 extends ChainedContextualSubtable {
+        private RuleSet[] rsa;                          // rule set array, ordered by glyph coverage index
+        ChainedContextualSubtableFormat1 ( String id, int sequence, int flags, int format, GlyphCoverageTable coverage, List entries ) {
+            super ( id, sequence, flags, format, coverage, entries );
+            populate ( entries );
+        }
+        /** {@inheritDoc} */
+        public List getEntries() {
+            if ( rsa != null ) {
+                List entries = new ArrayList ( 1 );
+                entries.add ( rsa );
+                return entries;
+            } else {
+                return null;
+            }
+        }
+        /** {@inheritDoc} */
+        public void resolveLookupReferences ( Map/*<String,LookupTable>*/ lookupTables ) {
+            GlyphTable.resolveLookupReferences ( rsa, lookupTables );
+        }
+        /** {@inheritDoc} */
+        public RuleLookup[] getLookups ( int ci, int gi, GlyphSubstitutionState ss, int[] rv  ) {
+            assert ss != null;
+            assert ( rv != null ) && ( rv.length > 0 );
+            assert rsa != null;
+            if ( rsa.length > 0 ) {
+                RuleSet rs = rsa [ 0 ];
+                if ( rs != null ) {
+                    Rule[] ra = rs.getRules();
+                    for ( int i = 0, n = ra.length; i < n; i++ ) {
+                        Rule r = ra [ i ];
+                        if ( ( r != null ) && ( r instanceof ChainedGlyphSequenceRule ) ) {
+                            ChainedGlyphSequenceRule cr = (ChainedGlyphSequenceRule) r;
+                            int[] iga = cr.getGlyphs ( gi );
+                            if ( matches ( ss, iga, 0, rv ) ) {
+                                int[] bga = cr.getBacktrackGlyphs();
+                                if ( matches ( ss, bga, -1, null ) ) {
+                                    int[] lga = cr.getLookaheadGlyphs();
+                                    if ( matches ( ss, lga, rv[0], null ) ) {
+                                        return r.getLookups();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+        private boolean matches ( GlyphSubstitutionState ss, int[] glyphs, int offset, int[] rv ) {
+            return ContextualSubtableFormat1.matches ( ss, glyphs, offset, rv );
+        }
+        private void populate ( List entries ) {
+            if ( entries == null ) {
+                throw new IllegalArgumentException ( "illegal entries, must be non-null" );
+            } else if ( entries.size() != 1 ) {
+                throw new IllegalArgumentException ( "illegal entries, " + entries.size() + " entries present, but requires 1 entry" );
+            } else {
+                Object o;
+                if ( ( ( o = entries.get(0) ) == null ) || ! ( o instanceof RuleSet[] ) ) {
+                    throw new IllegalArgumentException ( "illegal entries, first entry must be an RuleSet[], but is: " + ( ( o != null ) ? o.getClass() : null ) );
+                } else {
+                    rsa = (RuleSet[]) o;
+                }
+            }
+        }
+    }
+
+    private static class ChainedContextualSubtableFormat2 extends ChainedContextualSubtable {
+        private GlyphClassTable icdt;                   // input class def table
+        private GlyphClassTable bcdt;                   // backtrack class def table
+        private GlyphClassTable lcdt;                   // lookahead class def table
+        private int ngc;                                // class set count
+        private RuleSet[] rsa;                          // rule set array, ordered by class number [0...ngc - 1]
+        ChainedContextualSubtableFormat2 ( String id, int sequence, int flags, int format, GlyphCoverageTable coverage, List entries ) {
+            super ( id, sequence, flags, format, coverage, entries );
+            populate ( entries );
+        }
+        /** {@inheritDoc} */
+        public List getEntries() {
+            if ( rsa != null ) {
+                List entries = new ArrayList ( 5 );
+                entries.add ( icdt );
+                entries.add ( bcdt );
+                entries.add ( lcdt );
+                entries.add ( Integer.valueOf ( ngc ) );
+                entries.add ( rsa );
+                return entries;
+            } else {
+                return null;
+            }
+        }
+        /** {@inheritDoc} */
+        public RuleLookup[] getLookups ( int ci, int gi, GlyphSubstitutionState ss, int[] rv  ) {
+            assert ss != null;
+            assert ( rv != null ) && ( rv.length > 0 );
+            assert rsa != null;
+            if ( rsa.length > 0 ) {
+                RuleSet rs = rsa [ 0 ];
+                if ( rs != null ) {
+                    Rule[] ra = rs.getRules();
+                    for ( int i = 0, n = ra.length; i < n; i++ ) {
+                        Rule r = ra [ i ];
+                        if ( ( r != null ) && ( r instanceof ChainedClassSequenceRule ) ) {
+                            ChainedClassSequenceRule cr = (ChainedClassSequenceRule) r;
+                            int[] ica = cr.getClasses ( icdt.getClassIndex ( gi, ss.getClassMatchSet ( gi ) ) );
+                            if ( matches ( ss, icdt, ica, 0, rv ) ) {
+                                int[] bca = cr.getBacktrackClasses();
+                                if ( matches ( ss, bcdt, bca, -1, null ) ) {
+                                    int[] lca = cr.getLookaheadClasses();
+                                    if ( matches ( ss, lcdt, lca, rv[0], null ) ) {
+                                        return r.getLookups();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+        private boolean matches ( GlyphSubstitutionState ss, GlyphClassTable cdt, int[] classes, int offset, int[] rv ) {
+            return ContextualSubtableFormat2.matches ( ss, cdt, classes, offset, rv );
+        }
+        /** {@inheritDoc} */
+        public void resolveLookupReferences ( Map/*<String,LookupTable>*/ lookupTables ) {
+            GlyphTable.resolveLookupReferences ( rsa, lookupTables );
+        }
+        private void populate ( List entries ) {
+            if ( entries == null ) {
+                throw new IllegalArgumentException ( "illegal entries, must be non-null" );
+            } else if ( entries.size() != 5 ) {
+                throw new IllegalArgumentException ( "illegal entries, " + entries.size() + " entries present, but requires 5 entries" );
+            } else {
+                Object o;
+                if ( ( ( o = entries.get(0) ) == null ) || ! ( o instanceof GlyphClassTable ) ) {
+                    throw new IllegalArgumentException ( "illegal entries, first entry must be an GlyphClassTable, but is: " + ( ( o != null ) ? o.getClass() : null ) );
+                } else {
+                    icdt = (GlyphClassTable) o;
+                }
+                if ( ( ( o = entries.get(1) ) != null ) && ! ( o instanceof GlyphClassTable ) ) {
+                    throw new IllegalArgumentException ( "illegal entries, second entry must be an GlyphClassTable, but is: " + o.getClass() );
+                } else {
+                    bcdt = (GlyphClassTable) o;
+                }
+                if ( ( ( o = entries.get(2) ) != null ) && ! ( o instanceof GlyphClassTable ) ) {
+                    throw new IllegalArgumentException ( "illegal entries, third entry must be an GlyphClassTable, but is: " + o.getClass() );
+                } else {
+                    lcdt = (GlyphClassTable) o;
+                }
+                if ( ( ( o = entries.get(3) ) == null ) || ! ( o instanceof Integer ) ) {
+                    throw new IllegalArgumentException ( "illegal entries, fourth entry must be an Integer, but is: " + ( ( o != null ) ? o.getClass() : null ) );
+                } else {
+                    ngc = ((Integer)(o)).intValue();
+                }
+                if ( ( ( o = entries.get(4) ) == null ) || ! ( o instanceof RuleSet[] ) ) {
+                    throw new IllegalArgumentException ( "illegal entries, fifth entry must be an RuleSet[], but is: " + ( ( o != null ) ? o.getClass() : null ) );
+                } else {
+                    rsa = (RuleSet[]) o;
+                    if ( rsa.length != ngc ) {
+                        throw new IllegalArgumentException ( "illegal entries, RuleSet[] length is " + rsa.length + ", but expected " + ngc + " glyph classes" );
+                    }
+                }
+            }
+        }
+    }
+
+    private static class ChainedContextualSubtableFormat3 extends ChainedContextualSubtable {
+        private RuleSet[] rsa;                          // rule set array, containing a single rule set
+        ChainedContextualSubtableFormat3 ( String id, int sequence, int flags, int format, GlyphCoverageTable coverage, List entries ) {
+            super ( id, sequence, flags, format, coverage, entries );
+            populate ( entries );
+        }
+        /** {@inheritDoc} */
+        public List getEntries() {
+            if ( rsa != null ) {
+                List entries = new ArrayList ( 1 );
+                entries.add ( rsa );
+                return entries;
+            } else {
+                return null;
+            }
+        }
+        /** {@inheritDoc} */
+        public void resolveLookupReferences ( Map/*<String,LookupTable>*/ lookupTables ) {
+            GlyphTable.resolveLookupReferences ( rsa, lookupTables );
+        }
+        /** {@inheritDoc} */
+        public RuleLookup[] getLookups ( int ci, int gi, GlyphSubstitutionState ss, int[] rv  ) {
+            assert ss != null;
+            assert ( rv != null ) && ( rv.length > 0 );
+            assert rsa != null;
+            if ( rsa.length > 0 ) {
+                RuleSet rs = rsa [ 0 ];
+                if ( rs != null ) {
+                    Rule[] ra = rs.getRules();
+                    for ( int i = 0, n = ra.length; i < n; i++ ) {
+                        Rule r = ra [ i ];
+                        if ( ( r != null ) && ( r instanceof ChainedCoverageSequenceRule ) ) {
+                            ChainedCoverageSequenceRule cr = (ChainedCoverageSequenceRule) r;
+                            GlyphCoverageTable[] igca = cr.getCoverages();
+                            if ( matches ( ss, igca, 0, rv ) ) {
+                                GlyphCoverageTable[] bgca = cr.getBacktrackCoverages();
+                                if ( matches ( ss, bgca, -1, null ) ) {
+                                    GlyphCoverageTable[] lgca = cr.getLookaheadCoverages();
+                                    if ( matches ( ss, lgca, rv[0], null ) ) {
+                                        return r.getLookups();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+        private boolean matches ( GlyphSubstitutionState ss, GlyphCoverageTable[] gca, int offset, int[] rv ) {
+            return ContextualSubtableFormat3.matches ( ss, gca, offset, rv );
+        }
+        private void populate ( List entries ) {
+            if ( entries == null ) {
+                throw new IllegalArgumentException ( "illegal entries, must be non-null" );
+            } else if ( entries.size() != 1 ) {
+                throw new IllegalArgumentException ( "illegal entries, " + entries.size() + " entries present, but requires 1 entry" );
+            } else {
+                Object o;
+                if ( ( ( o = entries.get(0) ) == null ) || ! ( o instanceof RuleSet[] ) ) {
+                    throw new IllegalArgumentException ( "illegal entries, first entry must be an RuleSet[], but is: " + ( ( o != null ) ? o.getClass() : null ) );
+                } else {
+                    rsa = (RuleSet[]) o;
+                }
+            }
+        }
+    }
+
+    private abstract static class ReverseChainedSingleSubtable extends GlyphSubstitutionSubtable {
+        public ReverseChainedSingleSubtable ( String id, int sequence, int flags, int format, GlyphCoverageTable coverage, List entries ) {
+            super ( id, sequence, flags, format, coverage );
+        }
+        /** {@inheritDoc} */
+        public int getType() {
+            return GSUB_LOOKUP_TYPE_REVERSE_CHAINED_SINGLE;
+        }
+        /** {@inheritDoc} */
+        public boolean isCompatible ( GlyphSubtable subtable ) {
+            return subtable instanceof ReverseChainedSingleSubtable;
+        }
+        /** {@inheritDoc} */
+        public boolean usesReverseScan() {
+            return true;
+        }
+        static GlyphSubstitutionSubtable create ( String id, int sequence, int flags, int format, GlyphCoverageTable coverage, List entries ) {
+            if ( format == 1 ) {
+                return new ReverseChainedSingleSubtableFormat1 ( id, sequence, flags, format, coverage, entries );
+            } else {
+                throw new UnsupportedOperationException();
+            }
+        }
+    }
+
+    private static class ReverseChainedSingleSubtableFormat1 extends ReverseChainedSingleSubtable {
+        ReverseChainedSingleSubtableFormat1 ( String id, int sequence, int flags, int format, GlyphCoverageTable coverage, List entries ) {
+            super ( id, sequence, flags, format, coverage, entries );
+            populate ( entries );
+        }
+        /** {@inheritDoc} */
+        public List getEntries() {
+            return null;
+        }
+        private void populate ( List entries ) {
         }
     }
 
@@ -491,9 +1337,9 @@ public class GlyphSubstitutionTable extends GlyphTable implements GlyphSubstitut
                 throw new IllegalArgumentException ( "invalid ligature components, must be non-empty array" );
             } else {
                 for ( int i = 0, n = components.length; i < n; i++ ) {
-                    int c = components [ i ];
-                    if ( ( c < 0 ) || ( c > 65535 ) ) {
-                        throw new IllegalArgumentException ( "invalid component glyph index: " + c );
+                    int gc = components [ i ];
+                    if ( ( gc < 0 ) || ( gc > 65535 ) ) {
+                        throw new IllegalArgumentException ( "invalid component glyph index: " + gc );
                     }
                 }
                 this.ligature = ligature;
@@ -517,17 +1363,16 @@ public class GlyphSubstitutionTable extends GlyphTable implements GlyphSubstitut
         }
 
         /**
-         * Determine of input sequence at offset matches ligature's components.
-         * @param cs glyph (or character) sequence to match this ligature against
-         * @param offset index at which to start matching the components of this ligature
+         * Determine if input sequence at offset matches ligature's components.
+         * @param glyphs array of glyph components to match (including first, implied glyph)
          * @return true if matches
          */
-        public boolean matchesComponents ( CharSequence cs, int offset ) {
-            if ( ( offset + components.length ) > cs.length() ) {
+        public boolean matchesComponents ( int[] glyphs ) {
+            if ( glyphs.length < ( components.length + 1 ) ) {
                 return false;
             } else {
                 for ( int i = 0, n = components.length; i < n; i++ ) {
-                    if ( (int) cs.charAt ( offset + i ) != components [ i ] ) {
+                    if ( glyphs [ i + 1 ] != components [ i ] ) {
                         return false;
                     }
                 }
@@ -559,6 +1404,7 @@ public class GlyphSubstitutionTable extends GlyphTable implements GlyphSubstitut
     public static class LigatureSet {
 
         private final Ligature[] ligatures;                     // set of ligatures all of which share the first (implied) component
+        private final int maxComponents;                        // maximum number of components (including first)
 
         /**
          * Instantiate a set of ligatures.
@@ -577,6 +1423,15 @@ public class GlyphSubstitutionTable extends GlyphTable implements GlyphSubstitut
                 throw new IllegalArgumentException ( "invalid ligatures, must be non-empty array" );
             } else {
                 this.ligatures = ligatures;
+                int ncMax = -1;
+                for ( int i = 0, n = ligatures.length; i < n; i++ ) {
+                    Ligature l = ligatures [ i ];
+                    int nc = l.getNumComponents() + 1;
+                    if ( nc > ncMax ) {
+                        ncMax = nc;
+                    }
+                }
+                maxComponents = ncMax;
             }
         }
 
@@ -588,6 +1443,11 @@ public class GlyphSubstitutionTable extends GlyphTable implements GlyphSubstitut
         /** @return count of ligatures in this ligature set */
         public int getNumLigatures() {
             return ligatures.length;
+        }
+
+        /** @return maximum number of components in one ligature (including first component) */
+        public int getMaxComponents() {
+            return maxComponents;
         }
 
         /** {@inheritDoc} */
@@ -607,3 +1467,4 @@ public class GlyphSubstitutionTable extends GlyphTable implements GlyphSubstitut
     }
 
 }
+

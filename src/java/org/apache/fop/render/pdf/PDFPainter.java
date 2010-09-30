@@ -44,6 +44,7 @@ import org.apache.fop.render.intermediate.AbstractIFPainter;
 import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFState;
+import org.apache.fop.render.intermediate.IFUtil;
 import org.apache.fop.render.pdf.PDFLogicalStructureHandler.MarkedContentInfo;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.traits.RuleStyle;
@@ -286,7 +287,7 @@ public class PDFPainter extends AbstractIFPainter {
     }
 
     /** {@inheritDoc} */
-    public void drawText(int x, int y, int letterSpacing, int wordSpacing, int[] dx,
+    public void drawText(int x, int y, int letterSpacing, int wordSpacing, int[][] dp,
             String text)
             throws IFException {
         if (accessEnabled) {
@@ -304,6 +305,19 @@ public class PDFPainter extends AbstractIFPainter {
 
         FontTriplet triplet = new FontTriplet(
                 state.getFontFamily(), state.getFontStyle(), state.getFontWeight());
+
+        if ( ( dp == null ) || IFUtil.isDPOnlyDX ( dp ) ) {
+            drawTextWithDX ( x, y, text, triplet, letterSpacing,
+                             wordSpacing, IFUtil.convertDPToDX ( dp ) );
+        } else {
+            drawTextWithDP ( x, y, text, triplet, letterSpacing,
+                             wordSpacing, dp );
+        }
+    }
+
+    private void drawTextWithDX ( int x, int y, String text, FontTriplet triplet,
+                                  int letterSpacing, int wordSpacing, int[] dx ) {
+
         //TODO Ignored: state.getFontVariant()
         //TODO Opportunity for font caching if font state is more heavily used
         String fontKey = getFontInfo().getInternalFontKey(triplet);
@@ -375,6 +389,47 @@ public class PDFPainter extends AbstractIFPainter {
 
         }
         textutil.writeTJ();
+    }
+
+    private static int[] paZero = new int[4];
+
+    private void drawTextWithDP ( int x, int y, String text, FontTriplet triplet,
+                                  int letterSpacing, int wordSpacing, int[][] dp ) {
+        assert text != null;
+        assert triplet != null;
+        assert dp != null;
+        assert dp.length == text.length();
+        String          fk              = getFontInfo().getInternalFontKey(triplet);
+        Typeface        tf              = getTypeface(fk);
+        if ( tf.isMultiByte() ) {
+            int         fs              = state.getFontSize();
+            float       fsPoints        = fs / 1000f;
+            Font        f               = getFontInfo().getFontInstance(triplet, fs);
+            // String      fn              = f.getFontName();
+            PDFTextUtil tu              = generator.getTextUtil();
+            double      xc              = 0f;
+            double      yc              = 0f;
+            double      xoLast          = 0f;
+            double      yoLast          = 0f;
+            tu.writeTextMatrix ( new AffineTransform ( 1, 0, 0, -1, x / 1000f, y / 1000f ) );
+            tu.writeTf ( fk, fsPoints );
+            for ( int i = 0, n = text.length(); i < n; i++ ) {
+                char    ch              = text.charAt ( i );
+                int[]   pa              = ( i < dp.length ) ? dp [ i ] : paZero;
+                double  xo              = xc + pa[0];
+                double  yo              = yc + pa[1];
+                double  xa              = f.getCharWidth(ch);
+                double  ya              = 0;
+                double  xd              = ( xo - xoLast ) / 1000f;
+                double  yd              = ( yo - yoLast ) / 1000f;
+                tu.writeTd ( xd, yd );
+                tu.writeTj ( f.mapChar ( ch ) );
+                xc += xa + pa[2];
+                yc += ya + pa[3];
+                xoLast = xo;
+                yoLast = yo;
+            }
+        }
     }
 
 }

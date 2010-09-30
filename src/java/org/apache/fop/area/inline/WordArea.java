@@ -41,6 +41,11 @@ public class WordArea extends InlineArea {
     protected int[] levels;
 
     /**
+     * An array of glyph positioning adjustments to apply to each glyph 'char' in word (optional)
+     */
+    protected int[][] gposAdjustments;
+
+    /**
      * A flag indicating whether the content of word is reversed in relation to
      * its original logical order.
      */
@@ -54,14 +59,17 @@ public class WordArea extends InlineArea {
      * @param letterAdjust the letter adjust array (may be null)
      * @param levels array of per-character (glyph) bidirectional levels,
      * in case word area is heterogenously leveled
+     * @param gposAdjustments array of general position adjustments or null if none apply
      */
     public WordArea
-        ( int blockProgressionOffset, int level, String word, int[] letterAdjust, int[] levels ) {
+        ( int blockProgressionOffset, int level, String word, int[] letterAdjust, int[] levels,
+          int[][] gposAdjustments ) {
         super ( blockProgressionOffset, level );
-        assert word != null;
+        int length = ( word != null ) ? word.length() : 0;
         this.word = word;
-        this.letterAdjust = letterAdjust;
-        this.levels = maybePopulateLevels ( levels, level, word.length() );
+        this.letterAdjust = maybeAdjustLength ( letterAdjust, length );
+        this.levels = maybePopulateLevels ( levels, level, length );
+        this.gposAdjustments = maybeAdjustLength ( gposAdjustments, length );
         this.reversed = false;
     }
 
@@ -125,8 +133,34 @@ public class WordArea extends InlineArea {
     }
 
     /**
-     * <p>Reverse characters and corresponding per-character levels if word's length is greater
-     * than one.</p>
+     * Obtain per-character (glyph) position adjustments.
+     * @return a (possibly empty) array of adjustments, each having four elements, or null
+     * if no adjustments apply
+     */
+    public int[][] getGlyphPositionAdjustments() {
+        return gposAdjustments;
+    }
+
+    /**
+     * <p>Obtain per-character (glyph) position adjustments at a specified index position.</p>
+     * <p>If word has been reversed, then the position is relative to the reversed word.</p>
+     * @param position the index of the (possibly reversed) character from which to obtain the
+     * level
+     * @return an array of adjustments or null if none applies
+     */
+    public int[] glyphPositionAdjustmentsAt ( int position ) {
+        if ( position > word.length() ) {
+            throw new IndexOutOfBoundsException();
+        } else if ( gposAdjustments != null ) {
+            return gposAdjustments [ position ];
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * <p>Reverse characters and corresponding per-character levels and glyph position
+     * adjustments.</p>
      * @param mirror if true, then perform mirroring if mirrorred characters
      */
     public void reverse ( boolean mirror ) {
@@ -134,6 +168,9 @@ public class WordArea extends InlineArea {
             word = ( ( new StringBuffer ( word ) ) .reverse() ) .toString();
             if ( levels != null ) {
                 reverse ( levels );
+            }
+            if ( gposAdjustments != null ) {
+                reverse ( gposAdjustments );
             }
             reversed = !reversed;
             if ( mirror ) {
@@ -163,12 +200,60 @@ public class WordArea extends InlineArea {
         return reversed;
     }
 
+    /*
+     * If int[] array is not of specified length, then create
+     * a new copy of the first length entries.
+     */
+    private static int[] maybeAdjustLength ( int[] ia, int length ) {
+        if ( ia != null ) {
+            if ( ia.length == length ) {
+                return ia;
+            } else {
+                int[] iaNew = new int [ length ];
+                for ( int i = 0, n = ia.length; i < n; i++ ) {
+                    if ( i < length ) {
+                        iaNew [ i ] = ia [ i ];
+                    } else {
+                        break;
+                    }
+                }
+                return iaNew;
+            }
+        } else {
+            return ia;
+        }
+    }
+
+    /*
+     * If int[][] matrix is not of specified length, then create
+     * a new shallow copy of the first length entries.
+     */
+    private static int[][] maybeAdjustLength ( int[][] im, int length ) {
+        if ( im != null ) {
+            if ( im.length == length ) {
+                return im;
+            } else {
+                int[][] imNew = new int [ length ][];
+                for ( int i = 0, n = im.length; i < n; i++ ) {
+                    if ( i < length ) {
+                        imNew [ i ] = im [ i ];
+                    } else {
+                        break;
+                    }
+                }
+                return imNew;
+            }
+        } else {
+            return im;
+        }
+    }
+
     private static int[] maybePopulateLevels ( int[] levels, int level, int count ) {
         if ( ( levels == null ) && ( level >= 0 ) ) {
             levels = new int[count];
             Arrays.fill ( levels, level );
         }
-        return levels;
+        return maybeAdjustLength ( levels, count );
     }
 
     private static void reverse ( int[] a ) {
@@ -177,6 +262,15 @@ public class WordArea extends InlineArea {
             int t = a [ k ];
             a [ k ] = a [ i ];
             a [ i ] = t;
+        }
+    }
+
+    private static void reverse ( int[][] aa ) {
+        for ( int i = 0, n = aa.length, m = n / 2; i < m; i++ ) {
+            int k = n - i - 1;
+            int[] t = aa [ k ];
+            aa [ k ] = aa [ i ];
+            aa [ i ] = t;
         }
     }
 

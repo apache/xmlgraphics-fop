@@ -19,9 +19,8 @@
 
 package org.apache.fop.fonts;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -37,241 +36,190 @@ import org.apache.fop.util.BidiConstants;
 // CSOFF: LineLengthCheck
 
 /**
- * <p>The <code>ArabicScriptProcessor</code> class implements script processor for
- * performing glypph substitution and positioning operations on content associated with the Arabic script.</p>
+ * <p>The <code>ArabicScriptProcessor</code> class implements a script processor for
+ * performing glyph substitution and positioning operations on content associated with the Arabic script.</p>
  * @author Glenn Adams
  */
-public class ArabicScriptProcessor extends ScriptProcessor {
+public class ArabicScriptProcessor extends DefaultScriptProcessor {
 
-    /**
-     * logging instance
-     */
-    protected static final Log log = LogFactory.getLog(ArabicScriptProcessor.class);                                    // CSOK: ConstantNameCheck
+    /** logging instance */
+    private static final Log log = LogFactory.getLog(ArabicScriptProcessor.class);                                      // CSOK: ConstantNameCheck
+
+    /** features to use for substitutions */
+    private static final String[] gsubFeatures =                                                                        // CSOK: ConstantNameCheck
+    {
+        "calt",                                                 // contextual alternates
+        "ccmp",                                                 // glyph composition/decomposition
+        "fina",                                                 // final (terminal) forms
+        "init",                                                 // initial forms
+        "isol",                                                 // isolated formas
+        "liga",                                                 // standard ligatures
+        "medi",                                                 // medial forms
+        "rlig"                                                  // required ligatures
+    };
+
+    /** features to use for positioning */
+    private static final String[] gposFeatures =                                                                        // CSOK: ConstantNameCheck
+    {
+        "curs",                                                 // cursive positioning
+        "kern",                                                 // kerning
+        "mark",                                                 // mark to base or ligature positioning
+        "mkmk"                                                  // mark to mark positioning
+    };
+
+    private static class SubstitutionScriptContextTester implements ScriptContextTester {
+        private static Map/*<String,GlyphContextTester>*/ testerMap = new HashMap/*<String,GlyphContextTester>*/();
+        static {
+            testerMap.put ( "fina", new GlyphContextTester() { public boolean test ( GlyphSequence gs, int index ) { return inFinalContext ( gs, index ); } } );
+            testerMap.put ( "init", new GlyphContextTester() { public boolean test ( GlyphSequence gs, int index ) { return inInitialContext ( gs, index ); } } );
+            testerMap.put ( "isol", new GlyphContextTester() { public boolean test ( GlyphSequence gs, int index ) { return inIsolateContext ( gs, index ); } } );
+            testerMap.put ( "medi", new GlyphContextTester() { public boolean test ( GlyphSequence gs, int index ) { return inMedialContext ( gs, index ); } } );
+            testerMap.put ( "liga", new GlyphContextTester() { public boolean test ( GlyphSequence gs, int index ) { return inLigatureContext ( gs, index ); } } );
+        }
+        public GlyphContextTester getTester ( String feature ) {
+            return (GlyphContextTester) testerMap.get ( feature );
+        }
+    }
+
+    private static class PositioningScriptContextTester implements ScriptContextTester {
+        private static Map/*<String,GlyphContextTester>*/ testerMap = new HashMap/*<String,GlyphContextTester>*/();
+        public GlyphContextTester getTester ( String feature ) {
+            return (GlyphContextTester) testerMap.get ( feature );
+        }
+    }
+
+    private final ScriptContextTester subContextTester;
+    private final ScriptContextTester posContextTester;
 
     ArabicScriptProcessor ( String script ) {
         super ( script );
+        this.subContextTester = new SubstitutionScriptContextTester();
+        this.posContextTester = new PositioningScriptContextTester();
     }
 
     /** {@inheritDoc} */
-    public GlyphSequence substitute ( GlyphSequence gs, String script, String language, Map/*<LookupSpec,GlyphSubtable[]>*/ lookups ) {
-        // finals
-        gs = subFina ( gs, script, language, (GlyphSubtable[]) lookups.get ( new GlyphTable.LookupSpec ( script, language, "fina" ) ) );
-
-        // medials
-        gs = subMedi ( gs, script, language, (GlyphSubtable[]) lookups.get ( new GlyphTable.LookupSpec ( script, language, "medi" ) ) );
-
-        // initials
-        gs = subInit ( gs, script, language, (GlyphSubtable[]) lookups.get ( new GlyphTable.LookupSpec ( script, language, "init" ) ) );
-
-        // isolates
-        gs = subIsol ( gs, script, language, (GlyphSubtable[]) lookups.get ( new GlyphTable.LookupSpec ( script, language, "isol" ) ) );
-
-        // required ligatures
-        gs = subLiga ( gs, script, language, (GlyphSubtable[]) lookups.get ( new GlyphTable.LookupSpec ( script, language, "rlig" ) ) );
-
-        // standard ligatures
-        gs = subLiga ( gs, script, language, (GlyphSubtable[]) lookups.get ( new GlyphTable.LookupSpec ( script, language, "liga" ) ) );
-
-        return gs;
+    public String[] getSubstitutionFeatures() {
+        return gsubFeatures;
     }
 
     /** {@inheritDoc} */
-    public int[] position ( GlyphSequence gs, String script, String language, Map/*<LookupSpec,GlyphSubtable[]>*/ lookups ) {
-        return null;
+    public ScriptContextTester getSubstitutionContextTester() {
+        return subContextTester;
     }
 
-    private static GlyphContextTester finalContextTester
-        = new GlyphContextTester() { public boolean test ( GlyphSequence gs, GlyphSequence.CharAssociation ca ) { return inFinalContext ( gs, ca ); } };
-
-    private GlyphSequence subFina ( GlyphSequence gs, String script, String language, GlyphSubtable[] sta ) {
-        return substituteSingle ( gs, script, language, "fina", sta, finalContextTester, false );
+    /** {@inheritDoc} */
+    public String[] getPositioningFeatures() {
+        return gposFeatures;
     }
 
-    private static GlyphContextTester medialContextTester
-        = new GlyphContextTester() { public boolean test ( GlyphSequence gs, GlyphSequence.CharAssociation ca ) { return inMedialContext ( gs, ca ); } };
-
-    private GlyphSequence subMedi ( GlyphSequence gs, String script, String language, GlyphSubtable[] sta ) {
-        return substituteSingle ( gs, script, language, "medi", sta, medialContextTester, false );
-    }
-    
-    private static GlyphContextTester initialContextTester
-        = new GlyphContextTester() { public boolean test ( GlyphSequence gs, GlyphSequence.CharAssociation ca ) { return inInitialContext ( gs, ca ); } };
-
-    private GlyphSequence subInit ( GlyphSequence gs, String script, String language, GlyphSubtable[] sta ) {
-        return substituteSingle ( gs, script, language, "init", sta, initialContextTester, false );
-    }
-    
-    private static GlyphContextTester isolateContextTester
-        = new GlyphContextTester() { public boolean test ( GlyphSequence gs, GlyphSequence.CharAssociation ca ) { return inIsolateContext ( gs, ca ); } };
-
-    private GlyphSequence subIsol ( GlyphSequence gs, String script, String language, GlyphSubtable[] sta ) {
-        return substituteSingle ( gs, script, language, "isol", sta, isolateContextTester, false );
-    }
-    
-    private static GlyphContextTester ligatureContextTester
-        = new GlyphContextTester() { public boolean test ( GlyphSequence gs, GlyphSequence.CharAssociation ca ) { return inLigatureContext ( gs, ca ); } };
-
-    private GlyphSequence subLiga ( GlyphSequence gs, String script, String language, GlyphSubtable[] sta ) {
-        return substituteMultiple ( gs, script, language, "liga", sta, ligatureContextTester, false );
+    /** {@inheritDoc} */
+    public ScriptContextTester getPositioningContextTester() {
+        return posContextTester;
     }
 
-    private GlyphSequence substituteSingle ( GlyphSequence gs, String script, String language, String feature, GlyphSubtable[] sta, GlyphContextTester tester, boolean reverse ) {
-        if ( ( sta != null ) && ( sta.length > 0 ) ) {
-            // enforce subtable type constraints
-            for ( int i = 0, n = sta.length; i < n; i++ ) {
-                GlyphSubtable st = sta [ i ];
-                if ( ! ( st instanceof GlyphSubstitutionSubtable ) ) {
-                    throw new IncompatibleSubtableException ( "'" + feature + "' feature requires glyph substitution subtable" );
-                }
-            }
-            CharSequence ga = gs.getGlyphs();
-            GlyphSequence.CharAssociation[] aa = gs.getAssociations();
-            List gsl = new ArrayList();
-            List cal = new ArrayList();
-            for ( int i = 0, n = ga.length(); i < n; i++ ) {
-                int k = reverse ? ( n - i - 1 ) : i;
-                GlyphSequence.CharAssociation a = aa [ k ];
-                GlyphSequence iss = gs.getGlyphSubsequence ( k, k + 1 );
-                GlyphSequence oss;
-                if ( tester.test ( iss, a ) ) {
-                    oss = doSubstitutions ( iss, script, language, sta );
-                } else {
-                    oss = iss;
-                }
-                gsl.add ( oss );
-                cal.add ( a );
-            }
-            gs = new GlyphSequence ( gs.getCharacters(), gsl, cal, reverse );
-        }
-        return gs;
-    }
-
-    private GlyphSequence substituteMultiple ( GlyphSequence gs, String script, String language, String feature, GlyphSubtable[] sta, GlyphContextTester tester, boolean reverse ) {
-        if ( ( sta != null ) && ( sta.length > 0 ) ) {
-            gs = doSubstitutions ( gs, script, language, sta );
-        }
-        return gs;
-    }
-
-    private GlyphSequence doSubstitutions ( GlyphSequence gs, String script, String language, GlyphSubtable[] sta ) {
-        for ( int i = 0, n = sta.length; i < n; i++ ) {
-            GlyphSubtable st = sta [ i ];
-            assert st instanceof GlyphSubstitutionSubtable;
-            gs = ( (GlyphSubstitutionSubtable) st ) . substitute ( gs, script, language );
-        }
-        return gs;
-    }
-
-    private static boolean inFinalContext ( GlyphSequence gs, GlyphSequence.CharAssociation a ) {
-        CharSequence cs = gs.getCharacters();
-        if ( cs.length() == 0 ) {
+    private static boolean inFinalContext ( GlyphSequence gs, int index ) {
+        GlyphSequence.CharAssociation a = gs.getAssociation ( index );
+        int[] ca = gs.getCharacterArray ( false );
+        int   nc = gs.getCharacterCount();
+        if ( nc == 0 ) {
             return false;
         } else {
             int s = a.getStart();
             int e = a.getEnd();
-            if ( ! hasFinalPrecedingContext ( cs, s, e ) ) {
+            if ( ! hasFinalPrecedingContext ( ca, nc, s, e ) ) {
                 return false;
-            } else if ( forcesFinalThisContext ( cs, s, e ) ) {
-                if (log.isDebugEnabled()) {
-                    log.debug ( "+FIN: [" + a.getStart() + "," + a.getEnd() + "]: " + GlyphUtils.toString ( (CharSequence) gs ) );
-                }
+            } else if ( forcesFinalThisContext ( ca, nc, s, e ) ) {
                 return true;
-            } else if ( ! hasFinalFollowingContext ( cs, s, e ) ) {
+            } else if ( ! hasFinalFollowingContext ( ca, nc, s, e ) ) {
                 return false;
             } else {
-                if (log.isDebugEnabled()) {
-                    log.debug ( "+FIN: [" + a.getStart() + "," + a.getEnd() + "]: " + GlyphUtils.toString ( (CharSequence) gs ) );
-                }
                 return true;
             }
         }
     }
 
-    private static boolean inMedialContext ( GlyphSequence gs, GlyphSequence.CharAssociation a ) {
-        CharSequence cs = gs.getCharacters();
-        if ( cs.length() == 0 ) {
+    private static boolean inMedialContext ( GlyphSequence gs, int index ) {
+        GlyphSequence.CharAssociation a = gs.getAssociation ( index );
+        int[] ca = gs.getCharacterArray ( false );
+        int   nc = gs.getCharacterCount();
+        if ( nc == 0 ) {
             return false;
         } else {
             int s = a.getStart();
             int e = a.getEnd();
-            if ( ! hasMedialPrecedingContext ( cs, s, e ) ) {
+            if ( ! hasMedialPrecedingContext ( ca, nc, s, e ) ) {
                 return false;
-            } else if ( ! hasMedialThisContext ( cs, s, e ) ) {
+            } else if ( ! hasMedialThisContext ( ca, nc, s, e ) ) {
                 return false;
-            } else if ( ! hasMedialFollowingContext ( cs, s, e ) ) {
+            } else if ( ! hasMedialFollowingContext ( ca, nc, s, e ) ) {
                 return false;
             } else {
-                if (log.isDebugEnabled()) {
-                    log.debug ( "+MED: [" + a.getStart() + "," + a.getEnd() + "]: " + GlyphUtils.toString ( (CharSequence) gs ) );
-                }
                 return true;
             }
         }
     }
 
-    private static boolean inInitialContext ( GlyphSequence gs, GlyphSequence.CharAssociation a ) {
-        CharSequence cs = gs.getCharacters();
-        if ( cs.length() == 0 ) {
+    private static boolean inInitialContext ( GlyphSequence gs, int index ) {
+        GlyphSequence.CharAssociation a = gs.getAssociation ( index );
+        int[] ca = gs.getCharacterArray ( false );
+        int   nc = gs.getCharacterCount();
+        if ( nc == 0 ) {
             return false;
         } else {
             int s = a.getStart();
             int e = a.getEnd();
-            if ( ! hasInitialPrecedingContext ( cs, s, e ) ) {
+            if ( ! hasInitialPrecedingContext ( ca, nc, s, e ) ) {
                 return false;
-            } else if ( ! hasInitialFollowingContext ( cs, s, e ) ) {
+            } else if ( ! hasInitialFollowingContext ( ca, nc, s, e ) ) {
                 return false;
             } else {
-                if (log.isDebugEnabled()) {
-                    log.debug ( "+INI: [" + a.getStart() + "," + a.getEnd() + "]: " + GlyphUtils.toString ( (CharSequence) gs ) );
-                }
                 return true;
             }
         }
     }
 
-    private static boolean inIsolateContext ( GlyphSequence gs, GlyphSequence.CharAssociation a ) {
-        CharSequence cs = gs.getCharacters();
-        int n;
-        if ( ( n = cs.length() ) == 0 ) {
+    private static boolean inIsolateContext ( GlyphSequence gs, int index ) {
+        GlyphSequence.CharAssociation a = gs.getAssociation ( index );
+        int   nc = gs.getCharacterCount();
+        if ( nc == 0 ) {
             return false;
-        } else if ( ( a.getStart() == 0 ) && ( a.getEnd() == n ) ) {
-            if (log.isDebugEnabled()) {
-                log.debug ( "+ISO: [" + a.getStart() + "," + a.getEnd() + "]: " + GlyphUtils.toString ( (CharSequence) gs ) );
-            }
+        } else if ( ( a.getStart() == 0 ) && ( a.getEnd() == nc ) ) {
             return true;
         } else {
             return false;
         }
     }
 
-    private static boolean inLigatureContext ( GlyphSequence gs, GlyphSequence.CharAssociation a ) {
-        CharSequence cs = gs.getCharacters();
-        if ( cs.length() == 0 ) {
+    private static boolean inLigatureContext ( GlyphSequence gs, int index ) {
+        GlyphSequence.CharAssociation a = gs.getAssociation ( index );
+        int[] ca = gs.getCharacterArray ( false );
+        int   nc = gs.getCharacterCount();
+        if ( nc == 0 ) {
             return false;
         } else {
             int s = a.getStart();
             int e = a.getEnd();
-            if ( ! hasLigaturePrecedingContext ( cs, s, e ) ) {
+            if ( ! hasLigaturePrecedingContext ( ca, nc, s, e ) ) {
                 return false;
-            } else if ( ! hasLigatureFollowingContext ( cs, s, e ) ) {
+            } else if ( ! hasLigatureFollowingContext ( ca, nc, s, e ) ) {
                 return false;
             } else {
-                if (log.isDebugEnabled()) {
-                    log.debug ( "+LIG: [" + a.getStart() + "," + a.getEnd() + "]: " + GlyphUtils.toString ( (CharSequence) gs ) );
-                }
                 return true;
             }
         }
     }
 
-    private static boolean hasFinalPrecedingContext ( CharSequence cs, int s, int e ) {
+    private static boolean hasFinalPrecedingContext ( int[] ca, int nc, int s, int e ) {
         int chp = 0;
         int clp = 0;
         for ( int i = s; i > 0; i-- ) {
-            chp = cs.charAt ( i - 1 );
-            clp = BidiClassUtils.getBidiClass ( chp );
-            if ( clp != BidiConstants.NSM ) {
-                break;
+            int k = i - 1;
+            if ( ( k >= 0 ) && ( k < nc ) ) {
+                chp = ca [ k ];
+                clp = BidiClassUtils.getBidiClass ( chp );
+                if ( clp != BidiConstants.NSM ) {
+                    break;
+                }
             }
         }
         if ( clp != BidiConstants.AL ) {
@@ -283,15 +231,18 @@ public class ArabicScriptProcessor extends ScriptProcessor {
         }
     }
 
-    private static boolean forcesFinalThisContext ( CharSequence cs, int s, int e ) {
+    private static boolean forcesFinalThisContext ( int[] ca, int nc, int s, int e ) {
         int chl = 0;
         int cll = 0;
         for ( int i = 0, n = e - s; i < n; i++ ) {
             int k = n - i - 1;
-            chl = cs.charAt ( s + k );
-            cll = BidiClassUtils.getBidiClass ( chl );
-            if ( cll != BidiConstants.NSM ) {
-                break;
+            int j = s + k;
+            if ( ( j >= 0 ) && ( j < nc ) ) {
+                chl = ca [ j ];
+                cll = BidiClassUtils.getBidiClass ( chl );
+                if ( cll != BidiConstants.NSM ) {
+                    break;
+                }
             }
         }
         if ( cll != BidiConstants.AL ) {
@@ -304,11 +255,11 @@ public class ArabicScriptProcessor extends ScriptProcessor {
         }
     }
 
-    private static boolean hasFinalFollowingContext ( CharSequence cs, int s, int e ) {
+    private static boolean hasFinalFollowingContext ( int[] ca, int nc, int s, int e ) {
         int chf = 0;
         int clf = 0;
-        for ( int i = e, n = cs.length(); i < n; i++ ) {
-            chf = cs.charAt ( i );
+        for ( int i = e, n = nc; i < n; i++ ) {
+            chf = ca [ i ];
             clf = BidiClassUtils.getBidiClass ( chf );
             if ( clf != BidiConstants.NSM ) {
                 break;
@@ -323,14 +274,17 @@ public class ArabicScriptProcessor extends ScriptProcessor {
         }
     }
 
-    private static boolean hasInitialPrecedingContext ( CharSequence cs, int s, int e ) {
+    private static boolean hasInitialPrecedingContext ( int[] ca, int nc, int s, int e ) {
         int chp = 0;
         int clp = 0;
         for ( int i = s; i > 0; i-- ) {
-            chp = cs.charAt ( i - 1 );
-            clp = BidiClassUtils.getBidiClass ( chp );
-            if ( clp != BidiConstants.NSM ) {
-                break;
+            int k = i - 1;
+            if ( ( k >= 0 ) && ( k < nc ) ) {
+                chp = ca [ k ];
+                clp = BidiClassUtils.getBidiClass ( chp );
+                if ( clp != BidiConstants.NSM ) {
+                    break;
+                }
             }
         }
         if ( clp != BidiConstants.AL ) {
@@ -342,11 +296,11 @@ public class ArabicScriptProcessor extends ScriptProcessor {
         }
     }
 
-    private static boolean hasInitialFollowingContext ( CharSequence cs, int s, int e ) {
+    private static boolean hasInitialFollowingContext ( int[] ca, int nc, int s, int e ) {
         int chf = 0;
         int clf = 0;
-        for ( int i = e, n = cs.length(); i < n; i++ ) {
-            chf = cs.charAt ( i );
+        for ( int i = e, n = nc; i < n; i++ ) {
+            chf = ca [ i ];
             clf = BidiClassUtils.getBidiClass ( chf );
             if ( clf != BidiConstants.NSM ) {
                 break;
@@ -361,14 +315,17 @@ public class ArabicScriptProcessor extends ScriptProcessor {
         }
     }
 
-    private static boolean hasMedialPrecedingContext ( CharSequence cs, int s, int e ) {
+    private static boolean hasMedialPrecedingContext ( int[] ca, int nc, int s, int e ) {
         int chp = 0;
         int clp = 0;
         for ( int i = s; i > 0; i-- ) {
-            chp = cs.charAt ( i - 1 );
-            clp = BidiClassUtils.getBidiClass ( chp );
-            if ( clp != BidiConstants.NSM ) {
-                break;
+            int k = i - 1;
+            if ( ( k >= 0 ) && ( k < nc ) ) {
+                chp = ca [ k ];
+                clp = BidiClassUtils.getBidiClass ( chp );
+                if ( clp != BidiConstants.NSM ) {
+                    break;
+                }
             }
         }
         if ( clp != BidiConstants.AL ) {
@@ -380,27 +337,33 @@ public class ArabicScriptProcessor extends ScriptProcessor {
         }
     }
 
-    private static boolean hasMedialThisContext ( CharSequence cs, int s, int e ) {
-        int chf = 0;
+    private static boolean hasMedialThisContext ( int[] ca, int nc, int s, int e ) {
+        int chf = 0;    // first non-NSM char in [s,e)
         int clf = 0;
         for ( int i = 0, n = e - s; i < n; i++ ) {
-            chf = cs.charAt ( s + i );
-            clf = BidiClassUtils.getBidiClass ( chf );
-            if ( clf != BidiConstants.NSM ) {
-                break;
+            int k = s + i;
+            if ( ( k >= 0 ) && ( k < nc ) ) {
+                chf = ca [ s + i ];
+                clf = BidiClassUtils.getBidiClass ( chf );
+                if ( clf != BidiConstants.NSM ) {
+                    break;
+                }
             }
         }
         if ( clf != BidiConstants.AL ) {
             return false;
         }
-        int chl = 0;
+        int chl = 0;    // last non-NSM char in [s,e)
         int cll = 0;
         for ( int i = 0, n = e - s; i < n; i++ ) {
             int k = n - i - 1;
-            chl = cs.charAt ( s + k );
-            cll = BidiClassUtils.getBidiClass ( chl );
-            if ( cll != BidiConstants.NSM ) {
-                break;
+            int j = s + k;
+            if ( ( j >= 0 ) && ( j < nc ) ) {
+                chl = ca [ j ];
+                cll = BidiClassUtils.getBidiClass ( chl );
+                if ( cll != BidiConstants.NSM ) {
+                    break;
+                }
             }
         }
         if ( cll != BidiConstants.AL ) {
@@ -415,11 +378,11 @@ public class ArabicScriptProcessor extends ScriptProcessor {
         }
     }
 
-    private static boolean hasMedialFollowingContext ( CharSequence cs, int s, int e ) {
+    private static boolean hasMedialFollowingContext ( int[] ca, int nc, int s, int e ) {
         int chf = 0;
         int clf = 0;
-        for ( int i = e, n = cs.length(); i < n; i++ ) {
-            chf = cs.charAt ( i );
+        for ( int i = e, n = nc; i < n; i++ ) {
+            chf = ca [ i ];
             clf = BidiClassUtils.getBidiClass ( chf );
             if ( clf != BidiConstants.NSM ) {
                 break;
@@ -434,15 +397,15 @@ public class ArabicScriptProcessor extends ScriptProcessor {
         }
     }
 
-    private static boolean hasLigaturePrecedingContext ( CharSequence cs, int s, int e ) {
+    private static boolean hasLigaturePrecedingContext ( int[] ca, int nc, int s, int e ) {
         return true;
     }
 
-    private static boolean hasLigatureFollowingContext ( CharSequence cs, int s, int e ) {
+    private static boolean hasLigatureFollowingContext ( int[] ca, int nc, int s, int e ) {
         int chf = 0;
         int clf = 0;
-        for ( int i = e, n = cs.length(); i < n; i++ ) {
-            chf = cs.charAt ( i );
+        for ( int i = e, n = nc; i < n; i++ ) {
+            chf = ca [ i ];
             clf = BidiClassUtils.getBidiClass ( chf );
             if ( clf != BidiConstants.NSM ) {
                 break;

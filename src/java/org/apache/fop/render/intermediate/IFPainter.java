@@ -151,12 +151,14 @@ public interface IFPainter {
      * @param y Y-coordinate of the starting point of the text
      * @param letterSpacing additional spacing between characters (may be 0)
      * @param wordSpacing additional spacing between words (may be 0)
-     * @param dx an array of adjustment values for each character in X-direction (may be null)
+     * @param dp an array of 4-tuples, expressing [X,Y] placment
+     * adjustments and [X,Y] advancement adjustments, in that order (may be null); if
+     * not null, then adjustments.length must be the same as text.length()
      * @param text the text
      * @throws IFException if an error occurs while handling this event
      */
     void drawText(int x, int y, int letterSpacing, int wordSpacing,
-            int[] dx, String text) throws IFException;
+            int[][] dp, String text) throws IFException;
 
     /**
      * Restricts the current clipping region with the given rectangle.

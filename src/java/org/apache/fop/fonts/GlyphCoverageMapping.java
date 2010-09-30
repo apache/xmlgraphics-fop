@@ -19,33 +19,28 @@
 
 package org.apache.fop.fonts;
 
+// CSOFF: LineLengthCheck
+
 /**
- * A utility class for glyphs and glyph sequences.
+ * The <code>GlyphCoverageMapping</code> interface provides glyph identifier to coverage
+ * index mapping support.
  * @author Glenn Adams
  */
-public final class GlyphUtils {
-
-    private GlyphUtils() {
-    }
+public interface GlyphCoverageMapping {
 
     /**
-     * Map a glyph (or character) code sequence to  a string, used only
-     * for debugging and logging purposes.
-     * @param cs character (glyph) id sequence
-     * @return a string representation of code sequence
+     * Obtain size of coverage table, i.e., ciMax + 1, where ciMax is the maximum
+     * coverage index.
+     * @return size of coverage table
      */
-    public static String toString ( CharSequence cs ) {
-        StringBuffer sb = new StringBuffer();
-        sb.append ( '[' );
-        for ( int i = 0, n = cs.length(); i < n; i++ ) {
-            int c = cs.charAt ( i );
-            if ( i > 0 ) {
-                sb.append ( ',' );
-            }
-            sb.append ( Integer.toString ( c ) );
-        }
-        sb.append ( ']' );
-        return sb.toString();
-    }
+    int getCoverageSize();
+
+    /**
+     * Map glyph identifier (code) to coverge index. Returns -1 if glyph identifier is not in the domain of
+     * the coverage table.
+     * @param gid glyph identifier (code)
+     * @return non-negative glyph coverage index or -1 if glyph identifiers is not mapped by table
+     */
+    int getCoverageIndex ( int gid );
 
 }

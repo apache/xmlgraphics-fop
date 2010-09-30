@@ -64,4 +64,19 @@ public class BFEntry {
         return glyphStartIndex;
     }
 
+    /** {@inheritDoc} */
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        sb.append ( "{ UC[" );
+        sb.append ( unicodeStart );
+        sb.append ( ',' );
+        sb.append ( unicodeEnd );
+        sb.append ( "]: GC[" );
+        sb.append ( glyphStartIndex );
+        sb.append ( ',' );
+        sb.append ( glyphStartIndex + ( unicodeEnd - unicodeStart ) );
+        sb.append ( "] }" );
+        return sb.toString();
+    }
+
 }

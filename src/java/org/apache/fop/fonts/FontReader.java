@@ -38,8 +38,6 @@ import org.xml.sax.helpers.DefaultHandler;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fonts.apps.TTFReader;
 
-// CSOFF: LineLengthCheck
-
 /**
  * Class for reading a metric.xml file and creating a font object.
  * Typical usage:
@@ -52,7 +50,7 @@ import org.apache.fop.fonts.apps.TTFReader;
  */
 public class FontReader extends DefaultHandler {
 
-    private Locator locator = null;
+    // private Locator locator = null; // not used at present
     private boolean isCID = false;
     private CustomFont returnFont = null;
     private MultiByteFont multiFont = null;
@@ -65,31 +63,6 @@ public class FontReader extends DefaultHandler {
     private Map currentKerning = null;
 
     private List bfranges = null;
-
-    /* advanced typographic (script extras) support */
-    private boolean inScriptExtras = false;
-    private int seTable = -1;
-    private Map seLookups = null;
-    private String seScript = null;
-    private String seLanguage = null;
-    private String seFeature = null;
-    private String seUseLookup = null;
-    private List seUseLookups = null;
-    private String luID = null;
-    private int luType = -1;
-    private List ltSubtables = null;
-    private int luSequence = -1;
-    private int luFlags = 0;
-    private int lstSequence = -1;
-    private int lstFormat = -1;
-    private List lstCoverage = null;
-    private List lstGIDs = null;
-    private List lstRanges = null;
-    private List lstEntries = null;
-    private List lstLIGSets = null;
-    private List lstLIGs = null;
-    private int ligGID = -1;
-    /* end of script extras parse state */
 
     private void createFont(InputSource source) throws FOPException {
         XMLReader parser = null;
@@ -186,7 +159,7 @@ public class FontReader extends DefaultHandler {
      * {@inheritDoc}
      */
     public void setDocumentLocator(Locator locator) {
-        this.locator = locator;
+        // this.locator = locator; // not used at present
     }
 
     /**
@@ -194,9 +167,7 @@ public class FontReader extends DefaultHandler {
      */
     public void startElement(String uri, String localName, String qName,
                              Attributes attributes) throws SAXException {
-        if ( inScriptExtras ) {
-            startElementScriptExtras ( uri, localName, qName, attributes );
-        } else if (localName.equals("font-metrics")) {
+        if (localName.equals("font-metrics")) {
             if ("TYPE0".equals(attributes.getValue("type"))) {
                 multiFont = new MultiByteFont();
                 returnFont = multiFont;
@@ -246,8 +217,6 @@ public class FontReader extends DefaultHandler {
         } else if ("pair".equals(localName)) {
             currentKerning.put(new Integer(attributes.getValue("kpx2")),
                                new Integer(attributes.getValue("kern")));
-        } else if ("script-extras".equals(localName)) {
-            inScriptExtras = true;
         }
 
     }
@@ -267,9 +236,7 @@ public class FontReader extends DefaultHandler {
      */
     public void endElement(String uri, String localName, String qName) throws SAXException {
         String content = text.toString().trim();
-        if ( inScriptExtras ) {
-            endElementScriptExtras ( uri, localName, qName, content );
-        } else if ("font-name".equals(localName)) {
+        if ("font-name".equals(localName)) {
             returnFont.setFontName(content);
         } else if ("full-name".equals(localName)) {
             returnFont.setFullName(content);
@@ -347,375 +314,4 @@ public class FontReader extends DefaultHandler {
         text.append(ch, start, length);
     }
 
-    private void validateScriptTag ( String tag )
-        throws SAXException {
-    }
-
-    private void validateLanguageTag ( String tag, String script )
-        throws SAXException {
-    }
-
-    private void validateFeatureTag ( String tag, int tableType, String script, String language )
-        throws SAXException {
-    }
-
-    private int mapLookupType ( String type, int tableType ) {
-        int t = -1;
-        if ( tableType == GlyphTable.GLYPH_TABLE_TYPE_SUBSTITUTION ) {
-            t = GlyphSubstitutionTable.getLookupTypeFromName ( type );
-        } else if ( tableType == GlyphTable.GLYPH_TABLE_TYPE_POSITIONING ) {
-            t = GlyphPositioningTable.getLookupTypeFromName ( type );
-        }
-        return t;
-    }
-
-    private void validateLookupType ( String type, int tableType )
-        throws SAXException {
-        if ( mapLookupType ( type, tableType ) == -1 ) {
-            throw new SAXParseException ( "invalid lookup type \'" + type + "\'", locator );
-        }
-    }
-
-    private void startElementScriptExtras ( String uri, String localName, String qName, Attributes attributes )
-        throws SAXException {
-        if ( "gsub".equals(localName) ) {
-            assert seLookups == null;
-            seLookups = new java.util.HashMap();
-            seTable = GlyphTable.GLYPH_TABLE_TYPE_SUBSTITUTION;
-        } else if ( "gpos".equals(localName) ) {
-            assert seLookups == null;
-            seLookups = new java.util.HashMap();
-            seTable = GlyphTable.GLYPH_TABLE_TYPE_POSITIONING;
-        } else if ( "script".equals(localName) ) {
-            String tag = attributes.getValue("tag");
-            if ( tag != null ) {
-                assert seScript == null;
-                validateScriptTag ( tag );
-                seScript = tag;
-            } else {
-                throw new SAXParseException ( "missing tag attribute on <script/> element", locator );
-            }
-        } else if ( "lang".equals(localName) ) {
-            String tag = attributes.getValue("tag");
-            if ( tag != null ) {
-                assert seLanguage == null;
-                validateLanguageTag ( tag, seScript );
-                seLanguage = tag;
-            } else {
-                throw new SAXParseException ( "missing tag attribute on <lang/> element", locator );
-            }
-        } else if ( "feature".equals(localName) ) {
-            String tag = attributes.getValue("tag");
-            if ( tag != null ) {
-                validateFeatureTag ( tag, seTable, seScript, seLanguage );
-                assert seFeature == null;
-                seFeature = tag;
-            } else {
-                throw new SAXParseException ( "missing tag attribute on <feature/> element", locator );
-            }
-        } else if ( "use-lookup".equals(localName) ) {
-            String ref = attributes.getValue("ref");
-            if ( ref != null ) {
-                assert seUseLookup == null;
-                seUseLookup = ref;
-            } else {
-                throw new SAXParseException ( "missing ref attribute on <use-lookup/> element", locator );
-            }
-        } else if ( "lookup".equals(localName) ) {
-            String id = attributes.getValue("id");
-            if ( id != null ) {
-                assert luID == null;
-                luID = id; luSequence++; lstSequence = -1;
-            } else {
-                throw new SAXParseException ( "missing id attribute on <lookup/> element", locator );
-            }
-            String flags = attributes.getValue("flags");
-            if ( flags != null ) {
-                try {
-                    luFlags = Integer.parseInt ( flags );
-                } catch ( NumberFormatException e ) {
-                    throw new SAXParseException ( "invalid flags attribute on <lookup/> element, must be integer", locator );
-                }
-            }
-            String type = attributes.getValue("type");
-            if ( type != null ) {
-                validateLookupType ( type, seTable );
-                assert luType == -1;
-                luType = mapLookupType ( type, seTable );
-            } else {
-                throw new SAXParseException ( "missing type attribute on <lookup/> element", locator );
-            }
-        } else if ( "lst".equals(localName) ) {
-            String format = attributes.getValue("format");
-            if ( format != null ) {
-                try {
-                    lstSequence++;
-                    lstFormat = Integer.parseInt ( format );
-                } catch ( NumberFormatException e ) {
-                    throw new SAXParseException ( "invalid format attribute on <lst/> element, must be integer", locator );
-                }
-                assert lstCoverage == null;
-                assert lstEntries == null;
-            } else {
-                throw new SAXParseException ( "missing format attribute on <lst/> element", locator );
-            }
-        } else if ( "coverage".equals(localName) ) {
-            assert lstGIDs == null;
-            assert lstRanges == null;
-            lstGIDs = new java.util.ArrayList();
-            lstRanges = new java.util.ArrayList();
-        } else if ( "range".equals(localName) ) {
-            String gs = attributes.getValue("gs");
-            String ge = attributes.getValue("ge");
-            String ci = attributes.getValue("ci");
-            if ( ( gs != null ) && ( ge != null ) && ( ci != null ) ) {
-                try {
-                    int s = Integer.parseInt ( gs );
-                    int e = Integer.parseInt ( ge );
-                    int i = Integer.parseInt ( ci );
-                    lstRanges.add ( new GlyphCoverageTable.CoverageRange ( s, e, i ) );
-                } catch ( NumberFormatException e ) {
-                    throw new SAXParseException ( "invalid format attribute on <lst/> element, must be integer", locator );
-                } catch ( IllegalArgumentException e ) {
-                    throw new SAXParseException ( "bad gs, ge, or ci attribute on <range/> element, must be non-negative integers, with gs <= ge", locator );
-                }
-            } else {
-                throw new SAXParseException ( "missing gs, ge, or ci attribute on <range/> element", locator );
-            }
-        } else if ( "entries".equals(localName) ) {
-            initEntriesState ( seTable, luType, lstFormat );
-        } else if ( "ligs".equals(localName) ) {
-            assert lstLIGs == null;
-            lstLIGs = new java.util.ArrayList();
-        } else if ( "lig".equals(localName) ) {
-            if ( lstLIGs == null ) {
-                throw new SAXParseException ( "missing container <ligs/> element for <lig/> element", locator );
-            } else {
-                String gid = attributes.getValue("gid");
-                if ( gid != null ) {
-                    try {
-                        ligGID = Integer.parseInt ( gid );
-                    } catch ( NumberFormatException e ) {
-                        throw new SAXParseException ( "invalid gid attribute on <lig/> element, must be integer", locator );
-                    }
-                } else {
-                    throw new SAXParseException ( "missing gid attribute on <lig/> element", locator );
-                }
-            }
-        }
-    }
-
-    private void endElementScriptExtras ( String uri, String localName, String qName, String content )
-        throws SAXException {
-        if ( "script-extras".equals(localName) ) {
-            inScriptExtras = false;
-        } else if ( "gsub".equals(localName) ) {
-            if ( ( ltSubtables != null ) && ( ltSubtables.size() > 0 ) ) {
-                if ( multiFont.getGSUB() == null ) {
-                    multiFont.setGSUB ( new GlyphSubstitutionTable ( seLookups, ltSubtables ) );
-                }
-            }
-            ltSubtables = null; seTable = -1; seLookups = null;
-        } else if ( "gpos".equals(localName) ) {
-            if ( ( ltSubtables != null ) && ( ltSubtables.size() > 0 ) ) {
-                if ( multiFont.getGPOS() == null ) {
-                    multiFont.setGPOS ( new GlyphPositioningTable ( seLookups, ltSubtables ) );
-                }
-            }
-            ltSubtables = null; seTable = -1; seLookups = null;
-        } else if ( "script".equals(localName) ) {
-            assert seUseLookups == null;
-            assert seUseLookup == null;
-            assert seFeature == null;
-            assert seLanguage == null;
-            seScript = null;
-        } else if ( "lang".equals(localName) ) {
-            assert seUseLookups == null;
-            assert seUseLookup == null;
-            assert seFeature == null;
-            seLanguage = null;
-        } else if ( "feature".equals(localName) ) {
-            if ( ( seScript != null ) && ( seLanguage != null ) && ( seFeature != null ) ) {
-                if ( ( seUseLookups != null ) && ( seUseLookups.size() > 0 ) ) {
-                    seLookups.put ( new GlyphTable.LookupSpec ( seScript, seLanguage, seFeature ), seUseLookups );
-                }
-            }
-            seUseLookups = null; seFeature = null;
-        } else if ( "use-lookup".equals(localName) ) {
-            if ( seUseLookup != null ) {
-                if ( seUseLookups == null ) {
-                    seUseLookups = new java.util.ArrayList();
-                }
-                seUseLookups.add ( seUseLookup );
-            }
-            seUseLookup = null;
-        } else if ( "lookup".equals(localName) ) {
-            luType = -1;
-            luFlags = 0;
-        } else if ( "lst".equals(localName) ) {
-            assert lstCoverage != null;
-            assert lstEntries != null;
-            addLookupSubtable ( seTable, luType, luID, luSequence, luFlags, lstFormat, lstCoverage, lstEntries );
-            lstFormat = -1;
-            lstCoverage = null;
-            lstEntries = null;
-        } else if ( "coverage".equals(localName) ) {
-            assert lstGIDs != null;
-            assert lstRanges != null;
-            assert lstCoverage == null;
-            if ( lstGIDs.size() > 0 ) {
-                lstCoverage = lstGIDs;
-            } else if ( lstRanges.size() > 0 ) {
-                lstCoverage = lstRanges;
-            }
-            lstGIDs = null; lstRanges = null;
-        } else if ( "gid".equals(localName) ) {
-            if ( lstGIDs != null ) {
-                try {
-                    lstGIDs.add ( Integer.decode ( content ) );
-                } catch ( NumberFormatException e ) {
-                    throw new SAXParseException ( "invalid <gid/> element content, must be integer", locator );
-                }
-            }
-        } else if ( "entries".equals(localName) ) {
-            finishEntriesState ( seTable, luType, lstFormat );
-        } else if ( "ligs".equals(localName) ) {
-            assert lstLIGSets != null;
-            assert lstLIGs != null;
-            lstLIGSets.add ( new GlyphSubstitutionTable.LigatureSet ( lstLIGs ) );
-            lstLIGs = null;
-        } else if ( "lig".equals(localName) ) {
-            assert lstLIGs != null;
-            assert ligGID >= 0;
-            int[] ligComponents = parseLigatureComponents ( content );
-            if ( ligComponents != null ) {
-                lstLIGs.add ( new GlyphSubstitutionTable.Ligature ( ligGID, ligComponents ) );
-            }
-            ligGID = -1;
-        }
-    }
-
-    private void initEntriesState ( int tableType, int lookupType, int subtableFormat ) {
-        if ( tableType == GlyphTable.GLYPH_TABLE_TYPE_SUBSTITUTION ) {
-            switch ( lookupType ) {
-            case GlyphSubstitutionTable.GSUB_LOOKUP_TYPE_SINGLE:
-                assert lstGIDs == null;
-                lstGIDs = new java.util.ArrayList();
-                break;
-            case GlyphSubstitutionTable.GSUB_LOOKUP_TYPE_LIGATURE:
-                assert lstLIGSets == null;
-                lstLIGSets = new java.util.ArrayList();
-                break;
-            case GlyphSubstitutionTable.GSUB_LOOKUP_TYPE_MULTIPLE:
-            case GlyphSubstitutionTable.GSUB_LOOKUP_TYPE_ALTERNATE:
-            case GlyphSubstitutionTable.GSUB_LOOKUP_TYPE_CONTEXT:
-            case GlyphSubstitutionTable.GSUB_LOOKUP_TYPE_CHAINING_CONTEXT:
-            case GlyphSubstitutionTable.GSUB_LOOKUP_TYPE_EXTENSION_SUBSTITUTION:
-            case GlyphSubstitutionTable.GSUB_LOOKUP_TYPE_REVERSE_CHAINING_CONTEXT_SINGLE:
-                throw new UnsupportedOperationException();
-            default:
-                break;
-            }
-        } else if ( tableType == GlyphTable.GLYPH_TABLE_TYPE_POSITIONING ) {
-            switch ( lookupType ) {
-            case GlyphPositioningTable.GPOS_LOOKUP_TYPE_SINGLE:
-            case GlyphPositioningTable.GPOS_LOOKUP_TYPE_PAIR:
-            case GlyphPositioningTable.GPOS_LOOKUP_TYPE_CURSIVE:
-            case GlyphPositioningTable.GPOS_LOOKUP_TYPE_MARK_TO_BASE:
-            case GlyphPositioningTable.GPOS_LOOKUP_TYPE_MARK_TO_LIGATURE:
-            case GlyphPositioningTable.GPOS_LOOKUP_TYPE_MARK_TO_MARK:
-            case GlyphPositioningTable.GPOS_LOOKUP_TYPE_CONTEXT:
-            case GlyphPositioningTable.GPOS_LOOKUP_TYPE_CHAINED_CONTEXT:
-            case GlyphPositioningTable.GPOS_LOOKUP_TYPE_EXTENSION_POSITIONING:
-                throw new UnsupportedOperationException();
-            default:
-                break;
-            }
-        }
-    }
-
-    private void finishEntriesState ( int tableType, int lookupType, int subtableFormat ) {
-        if ( tableType == GlyphTable.GLYPH_TABLE_TYPE_SUBSTITUTION ) {
-            switch ( lookupType ) {
-            case GlyphSubstitutionTable.GSUB_LOOKUP_TYPE_SINGLE:
-                assert lstGIDs != null;
-                lstEntries = lstGIDs; lstGIDs = null;
-                break;
-            case GlyphSubstitutionTable.GSUB_LOOKUP_TYPE_LIGATURE:
-                assert lstLIGSets != null;
-                lstEntries = lstLIGSets; lstLIGSets = null;
-                break;
-            case GlyphSubstitutionTable.GSUB_LOOKUP_TYPE_MULTIPLE:
-            case GlyphSubstitutionTable.GSUB_LOOKUP_TYPE_ALTERNATE:
-            case GlyphSubstitutionTable.GSUB_LOOKUP_TYPE_CONTEXT:
-            case GlyphSubstitutionTable.GSUB_LOOKUP_TYPE_CHAINING_CONTEXT:
-            case GlyphSubstitutionTable.GSUB_LOOKUP_TYPE_EXTENSION_SUBSTITUTION:
-            case GlyphSubstitutionTable.GSUB_LOOKUP_TYPE_REVERSE_CHAINING_CONTEXT_SINGLE:
-                throw new UnsupportedOperationException();
-            default:
-                break;
-            }
-        } else if ( tableType == GlyphTable.GLYPH_TABLE_TYPE_POSITIONING ) {
-            switch ( lookupType ) {
-            case GlyphPositioningTable.GPOS_LOOKUP_TYPE_SINGLE:
-            case GlyphPositioningTable.GPOS_LOOKUP_TYPE_PAIR:
-            case GlyphPositioningTable.GPOS_LOOKUP_TYPE_CURSIVE:
-            case GlyphPositioningTable.GPOS_LOOKUP_TYPE_MARK_TO_BASE:
-            case GlyphPositioningTable.GPOS_LOOKUP_TYPE_MARK_TO_LIGATURE:
-            case GlyphPositioningTable.GPOS_LOOKUP_TYPE_MARK_TO_MARK:
-            case GlyphPositioningTable.GPOS_LOOKUP_TYPE_CONTEXT:
-            case GlyphPositioningTable.GPOS_LOOKUP_TYPE_CHAINED_CONTEXT:
-            case GlyphPositioningTable.GPOS_LOOKUP_TYPE_EXTENSION_POSITIONING:
-                throw new UnsupportedOperationException();
-            default:
-                break;
-            }
-        }
-    }
-
-    private void addLookupSubtable                              // CSOK: ParameterNumber
-        ( int tableType, int lookupType, String lookupID, int lookupSequence, int lookupFlags, int subtableFormat, List coverage, List entries ) {
-        GlyphSubtable st = null;
-        if ( tableType == GlyphTable.GLYPH_TABLE_TYPE_SUBSTITUTION ) {
-            st = GlyphSubstitutionTable.createSubtable ( lookupType, lookupID, lookupSequence, lookupFlags, subtableFormat, coverage, entries );
-        } else if ( tableType == GlyphTable.GLYPH_TABLE_TYPE_POSITIONING ) {
-            st = GlyphPositioningTable.createSubtable ( lookupType, lookupID, lookupSequence, lookupFlags, subtableFormat, coverage, entries );
-        }
-        if ( st != null ) {
-            if ( ltSubtables == null ) {
-                ltSubtables = new java.util.ArrayList();
-            }
-            ltSubtables.add ( st );
-        }
-    }
-
-    private int[] parseLigatureComponents ( String s )
-        throws SAXParseException {
-        String[] csa = s.split ( "\\s" );
-        if ( ( csa == null ) || ( csa.length == 0 ) ) {
-            throw new SAXParseException ( "invalid <lig/> element, must specify at least one component", locator );
-        } else {
-            int nc = csa.length;
-            int[] components = new int [ nc ];
-            for ( int i = 0, n = nc; i < n; i++ ) {
-                String cs = csa [ i ];
-                int c;
-                try {
-                    c = Integer.parseInt ( cs );
-                    if ( ( c < 0 ) || ( c > 65535 ) ) {
-                        throw new SAXParseException ( "invalid component value (" + c + ") in <lig/> element, out of range", locator );
-                    } else {
-                        components [ i ] = c;
-                    }
-                } catch ( NumberFormatException e ) {
-                    throw new SAXParseException ( "invalid component \"" + cs + "\" in <lig/> element, must be integer", locator );
-                }
-                
-            }
-            return components;
-        }
-    }
-
 }
-
-

@@ -565,8 +565,14 @@ public class IFParser implements IFConstants {
                 s = lastAttributes.getValue("word-spacing");
                 int wordSpacing = (s != null ? Integer.parseInt(s) : 0);
                 int[] dx = XMLUtil.getAttributeAsIntArray(lastAttributes, "dx");
+                int[][] dp = XMLUtil.getAttributeAsPositionAdjustments(lastAttributes, "dp");
+                // if only DX present, then convert DX to DP; otherwise use only DP,
+                // effectively ignoring DX
+                if ( ( dp == null ) && ( dx != null ) ) {
+                    dp = IFUtil.convertDXToDP ( dx );
+                }
                 setStructurePointer(lastAttributes);
-                painter.drawText(x, y, letterSpacing, wordSpacing, dx, content.toString());
+                painter.drawText(x, y, letterSpacing, wordSpacing, dp, content.toString());
                 resetStructurePointer();
             }
 

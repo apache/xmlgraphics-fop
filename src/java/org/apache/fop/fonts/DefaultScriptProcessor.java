@@ -29,17 +29,41 @@ import java.util.Map;
  */
 public class DefaultScriptProcessor extends ScriptProcessor {
 
+    /** features to use for substitutions */
+    private static final String[] gsubFeatures =                                                                        // CSOK: ConstantNameCheck
+    {
+        "ccmp",                                                 // glyph composition/decomposition
+        "liga",                                                 // common ligatures
+        "locl"                                                  // localized forms
+    };
+
+    /** features to use for positioning */
+    private static final String[] gposFeatures =                                                                        // CSOK: ConstantNameCheck
+    {
+        "kern"                                                  // kerning
+    };
+
     DefaultScriptProcessor ( String script ) {
         super ( script );
     }
 
     /** {@inheritDoc} */
-    public GlyphSequence substitute ( GlyphSequence gs, String script, String language, Map/*<LookupSpec,GlyphSubtable[]>*/ lookups ) {
-        return gs;
+    public String[] getSubstitutionFeatures() {
+        return gsubFeatures;
     }
 
     /** {@inheritDoc} */
-    public int[] position ( GlyphSequence cs, String script, String language, Map/*<LookupSpec,GlyphSubtable[]>*/ lookups ) {
+    public ScriptContextTester getSubstitutionContextTester() {
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    public String[] getPositioningFeatures() {
+        return gposFeatures;
+    }
+
+    /** {@inheritDoc} */
+    public ScriptContextTester getPositioningContextTester() {
         return null;
     }
 

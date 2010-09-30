@@ -86,7 +86,7 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
             }
         } else {
             int[] levels = ( level >= 0 ) ? new int[] {level} : null;
-            text.addWord(String.valueOf(ch), 0, null, levels, blockProgressionOffset);
+            text.addWord(String.valueOf(ch), 0, null, levels, null, blockProgressionOffset);
         }
         TraitSetter.setProducerID(text, node.getId());
         TraitSetter.addTextDecoration(text, node.getTextDecoration());

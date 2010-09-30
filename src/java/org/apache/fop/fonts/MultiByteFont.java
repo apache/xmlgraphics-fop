@@ -19,16 +19,24 @@
 
 package org.apache.fop.fonts;
 
-//Java
 import java.nio.CharBuffer;
+import java.nio.IntBuffer;
 import java.text.DecimalFormat;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.apache.fop.util.CharUtilities;
 
 /**
  * Generic MultiByte (CID) font
  */
 public class MultiByteFont extends CIDFont implements Substitutable, Positionable {
+
+    /** logging instance */
+    private static final Log log // CSOK: ConstantNameCheck
+        = LogFactory.getLog(MultiByteFont.class);
 
     private static int uniqueCounter = -1;
 
@@ -46,6 +54,7 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
     private BFEntry[] bfentries = null;
 
     /* advanced typographic support */
+    private GlyphDefinitionTable gdef;
     private GlyphSubstitutionTable gsub;
     private GlyphPositioningTable gpos;
 
@@ -279,6 +288,26 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
     }
 
     /**
+     * Establishes the glyph definition table.
+     * @param gdef the glyph definition table to be used by this font
+     */
+    public void setGDEF ( GlyphDefinitionTable gdef ) {
+        if ( ( this.gdef == null ) || ( gdef == null ) ) {
+            this.gdef = gdef;
+        } else {
+            throw new IllegalStateException ( "font already associated with GDEF table" );
+        }
+    }
+
+    /**
+     * Obtain glyph definition table.
+     * @return glyph definition table or null if none is associated with font
+     */
+    public GlyphDefinitionTable getGDEF() {
+        return gdef;
+    }
+
+    /**
      * Establishes the glyph substitution table.
      * @param gsub the glyph substitution table to be used by this font
      */
@@ -341,9 +370,36 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
     }
 
     /** {@inheritDoc} */
-    public int[] performPositioning ( CharSequence cs, String script, String language ) {
+    public int[][]
+        performPositioning ( CharSequence cs, String script, String language, int fontSize ) {
         if ( gpos != null ) {
-            return gpos.position ( mapCharsToGlyphs ( cs ), script, language );
+            GlyphSequence gs = mapCharsToGlyphs ( cs );
+            int[][] adjustments = new int [ gs.getGlyphCount() ] [ 4 ];
+            if ( gpos.position ( gs, script, language, fontSize, this.width, adjustments ) ) {
+                return scaleAdjustments ( adjustments, fontSize );
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+
+    /** {@inheritDoc} */
+    public int[][] performPositioning ( CharSequence cs, String script, String language ) {
+        throw new UnsupportedOperationException();
+    }
+
+
+    private int[][] scaleAdjustments ( int[][] adjustments, int fontSize ) {
+        if ( adjustments != null ) {
+            for ( int i = 0, n = adjustments.length; i < n; i++ ) {
+                int[] gpa = adjustments [ i ];
+                for ( int k = 0; k < 4; k++ ) {
+                    gpa [ k ] = ( gpa [ k ] * fontSize ) / 1000;
+                }
+            }
+            return adjustments;
         } else {
             return null;
         }
@@ -357,7 +413,8 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
      * @returns a CharSequence containing glyph indices
      */
     private GlyphSequence mapCharsToGlyphs ( CharSequence cs ) {
-        CharBuffer cb = CharBuffer.allocate ( cs.length() );
+        IntBuffer cb = IntBuffer.allocate ( cs.length() );
+        IntBuffer gb = IntBuffer.allocate ( cs.length() );
         int gi, giMissing = findGlyphIndex ( Typeface.NOT_FOUND );
         for ( int i = 0, n = cs.length(); i < n; i++ ) {
             int cc = cs.charAt ( i );
@@ -386,29 +443,33 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
             if ( gi == SingleByteEncoding.NOT_FOUND_CODE_POINT ) {
                 gi = giMissing;
             }
-            cb.put ( (char) gi );
+            cb.put ( cc );
+            gb.put ( gi );
         }
-        cb.rewind();
-        return new GlyphSequence ( cs, (CharSequence) cb, null );
+        cb.flip();
+        gb.flip();
+        return new GlyphSequence ( cb, gb, null );
     }
 
     /**
      * Map sequence GS, comprising a sequence of Glyph Indices, to output sequence CS,
      * comprising a sequence of UTF-16 encoded Unicode Code Points.
-     * @param gs a CharSequence containing glyph indices
+     * @param gs a GlyphSequence containing glyph indices
      * @returns a CharSequence containing UTF-16 encoded Unicode characters
      */
     private CharSequence mapGlyphsToChars ( GlyphSequence gs ) {
-        CharBuffer cb = CharBuffer.allocate ( gs.length() );
-        int cc, ccMissing = Typeface.NOT_FOUND;
-        for ( int i = 0, n = gs.length(); i < n; i++ ) {
-            int gi = gs.charAt ( i );
-            cc = findCharacterFromGlyphIndex ( gi );
-            if ( cc == 0 ) {
+        int ng = gs.getGlyphCount();
+        CharBuffer cb = CharBuffer.allocate ( ng );
+        int ccMissing = Typeface.NOT_FOUND;
+        for ( int i = 0, n = ng; i < n; i++ ) {
+            int gi = gs.getGlyph ( i );
+            int cc = findCharacterFromGlyphIndex ( gi );
+            if ( ( cc == 0 ) || ( cc > 0x10FFFF ) ) {
                 cc = ccMissing;
-            }
-            if ( cc > 0x10FFFF ) {
-                cc = ccMissing;
+                log.warn("Unable to map glyph index " + gi
+                         + " to Unicode scalar in font '"
+                         + getFullName() + "', substituting missing character '"
+                         + (char) cc + "'");
             }
             if ( cc > 0x00FFFF ) {
                 int sh, sl;
@@ -421,7 +482,7 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
                 cb.put ( (char) cc );
             }
         }
-        cb.rewind();
+        cb.flip();
         return (CharSequence) cb;
     }
 

@@ -413,7 +413,7 @@ public class LazyFont extends Typeface implements FontDescriptor, Substitutable,
      */
     public boolean performsPositioning() {
         load(true);
-        if ( realFontDescriptor instanceof Substitutable ) {
+        if ( realFontDescriptor instanceof Positionable ) {
             return ((Positionable)realFontDescriptor).performsPositioning();
         } else {
             return false;
@@ -423,10 +423,26 @@ public class LazyFont extends Typeface implements FontDescriptor, Substitutable,
     /**
      * {@inheritDoc}
      */
-    public int[] performPositioning ( CharSequence cs, String script, String language ) {
+    public int[][]
+        performPositioning ( CharSequence cs, String script, String language, int fontSize ) {
         load(true);
-        if ( realFontDescriptor instanceof Substitutable ) {
-            return ((Positionable)realFontDescriptor).performPositioning(cs, script, language);
+        if ( realFontDescriptor instanceof Positionable ) {
+            return ((Positionable)realFontDescriptor)
+                .performPositioning(cs, script, language, fontSize);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int[][]
+        performPositioning ( CharSequence cs, String script, String language ) {
+        load(true);
+        if ( realFontDescriptor instanceof Positionable ) {
+            return ((Positionable)realFontDescriptor)
+                .performPositioning(cs, script, language);
         } else {
             return null;
         }

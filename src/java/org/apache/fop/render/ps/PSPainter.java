@@ -51,6 +51,7 @@ import org.apache.fop.render.intermediate.AbstractIFPainter;
 import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFState;
+import org.apache.fop.render.intermediate.IFUtil;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.traits.RuleStyle;
 import org.apache.fop.util.CharUtilities;
@@ -338,9 +339,8 @@ public class PSPainter extends AbstractIFPainter {
 
     /** {@inheritDoc} */
     public void drawText(int x, int y, int letterSpacing, int wordSpacing,
-            int[] dx, String text) throws IFException {
+            int[][] dp, String text) throws IFException {
         try {
-            //Note: dy is currently ignored
             PSGenerator generator = getGenerator();
             generator.useColor(state.getTextColor());
             beginTextObject();
@@ -379,7 +379,7 @@ public class PSPainter extends AbstractIFPainter {
                     if (currentEncoding != encoding) {
                         if (i > 0) {
                             writeText(text, start, i - start,
-                                    letterSpacing, wordSpacing, dx, font, tf);
+                                    letterSpacing, wordSpacing, dp, font, tf);
                         }
                         if (encoding == 0) {
                             useFont(fontKey, sizeMillipoints);
@@ -391,12 +391,12 @@ public class PSPainter extends AbstractIFPainter {
                     }
                 }
                 writeText(text, start, textLen - start,
-                        letterSpacing, wordSpacing, dx, font, tf);
+                        letterSpacing, wordSpacing, dp, font, tf);
             } else {
                 //Simple single-font painting
                 useFont(fontKey, sizeMillipoints);
                 writeText(text, 0, textLen,
-                        letterSpacing, wordSpacing, dx, font, tf);
+                        letterSpacing, wordSpacing, dp, font, tf);
             }
         } catch (IOException ioe) {
             throw new IFException("I/O error in drawText()", ioe);
@@ -405,7 +405,7 @@ public class PSPainter extends AbstractIFPainter {
 
     private void writeText(                                      // CSOK: ParameterNumber
             String text, int start, int len,
-            int letterSpacing, int wordSpacing, int[] dx,
+            int letterSpacing, int wordSpacing, int[][] dp,
             Font font, Typeface tf) throws IOException {
         PSGenerator generator = getGenerator();
         int end = start + len;
@@ -418,6 +418,7 @@ public class PSPainter extends AbstractIFPainter {
         int lineStart = 0;
         StringBuffer accText = new StringBuffer(initialSize);
         StringBuffer sb = new StringBuffer(initialSize);
+        int[] dx = IFUtil.convertDPToDX ( dp );
         int dxl = (dx != null ? dx.length : 0);
         for (int i = start; i < end; i++) {
             char orgChar = text.charAt(i);

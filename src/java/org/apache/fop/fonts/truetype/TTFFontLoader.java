@@ -235,6 +235,7 @@ public class TTFFontLoader extends FontLoader {
     private void copyAdvanced ( TTFFile ttf ) {
         if ( returnFont instanceof MultiByteFont ) {
             MultiByteFont mbf = (MultiByteFont) returnFont;
+            mbf.setGDEF ( ttf.getGDEF() );
             mbf.setGSUB ( ttf.getGSUB() );
             mbf.setGPOS ( ttf.getGPOS() );
         }
