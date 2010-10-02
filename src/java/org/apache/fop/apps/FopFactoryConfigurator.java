@@ -93,19 +93,6 @@ public class FopFactoryConfigurator {
      * @throws FOPException fop exception
      */
     public void configure(FopFactory factory) throws FOPException {
-        if (log.isDebugEnabled()) {
-            log.debug("Initializing FopFactory Configuration");
-        }
-
-        if (cfg.getChild("accessibility", false) != null) {
-            try {
-                this.factory.setAccessibility(
-                        cfg.getChild("accessibility").getValueAsBoolean());
-            } catch (ConfigurationException e) {
-                throw new FOPException(e);
-            }
-        }
-
         // strict configuration
         if (cfg.getChild("strict-configuration", false) != null) {
             try {
@@ -116,6 +103,19 @@ public class FopFactoryConfigurator {
             }
         }
         boolean strict = factory.validateUserConfigStrictly();
+        if (log.isDebugEnabled()) {
+            log.debug("Initializing FopFactory Configuration"
+                      + "with " + (strict?"strict":"permissive") + " validation");
+        }
+
+        if (cfg.getChild("accessibility", false) != null) {
+            try {
+                this.factory.setAccessibility(
+                        cfg.getChild("accessibility").getValueAsBoolean());
+            } catch (ConfigurationException e) {
+                LogUtil.handleException(log, e, strict);
+            }
+        }
 
         // strict fo validation
         if (cfg.getChild("strict-validation", false) != null) {
