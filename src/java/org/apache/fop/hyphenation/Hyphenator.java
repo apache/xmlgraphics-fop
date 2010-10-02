@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
+import java.util.Map;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
@@ -83,7 +84,7 @@ public class Hyphenator {
      */
     public static HyphenationTree getHyphenationTree(String lang,
             String country) {
-        return getHyphenationTree(lang, country, null);
+        return getHyphenationTree(lang, country, null, null);
     }
 
     /**
@@ -95,12 +96,12 @@ public class Hyphenator {
      * @return the hyphenation tree
      */
     public static HyphenationTree getHyphenationTree(String lang,
-            String country, HyphenationTreeResolver resolver) {
-        String key = HyphenationTreeCache.constructKey(lang, country);
+            String country, HyphenationTreeResolver resolver, Map hyphPatNames) {
+        String llccKey = HyphenationTreeCache.constructLlccKey(lang, country);
         HyphenationTreeCache cache = getHyphenationTreeCache();
 
         // See if there was an error finding this hyphenation tree before
-        if (cache.isMissing(key)) {
+        if (cache.isMissing(llccKey)) {
             return null;
         }
 
@@ -111,6 +112,10 @@ public class Hyphenator {
             return hTree;
         }
 
+        String key = HyphenationTreeCache.constructUserKey(lang, country, hyphPatNames);
+        if (key == null) {
+            key = llccKey;
+        }
         if (resolver != null) {
             hTree = getUserHyphenationTree(key, resolver);
         }
@@ -120,10 +125,10 @@ public class Hyphenator {
 
         // put it into the pattern cache
         if (hTree != null) {
-            cache.cache(key, hTree);
+            cache.cache(llccKey, hTree);
         } else {
-            log.error("Couldn't find hyphenation pattern " + key);
-            cache.noteMissing(key);
+            log.error("Couldn't find hyphenation pattern " + llccKey);
+            cache.noteMissing(llccKey);
         }
         return hTree;
     }
@@ -342,9 +347,10 @@ public class Hyphenator {
      */
     public static Hyphenation hyphenate(String lang, String country,
                                         HyphenationTreeResolver resolver,
+                                        Map hyphPatNames,
                                         String word,
                                         int leftMin, int rightMin) {
-        HyphenationTree hTree = getHyphenationTree(lang, country, resolver);
+        HyphenationTree hTree = getHyphenationTree(lang, country, resolver, hyphPatNames);
         if (hTree == null) {
             return null;
         }
@@ -363,7 +369,7 @@ public class Hyphenator {
     public static Hyphenation hyphenate(String lang, String country,
                                         String word,
                                         int leftMin, int rightMin) {
-        return hyphenate(lang, country, null, word, leftMin, rightMin);
+        return hyphenate(lang, country, null, null, word, leftMin, rightMin);
     }
 
     /**
@@ -381,9 +387,10 @@ public class Hyphenator {
     public static Hyphenation hyphenate(String lang,            // CSOK: ParameterNumber
                                         String country,    
                                         HyphenationTreeResolver resolver,
+                                        Map hyphPatNames,
                                         char[] word, int offset, int len,
                                         int leftMin, int rightMin) {
-        HyphenationTree hTree = getHyphenationTree(lang, country, resolver);
+        HyphenationTree hTree = getHyphenationTree(lang, country, resolver, hyphPatNames);
         if (hTree == null) {
             return null;
         }
@@ -404,7 +411,7 @@ public class Hyphenator {
     public static Hyphenation hyphenate(String lang, String country,
                                         char[] word, int offset, int len,
                                         int leftMin, int rightMin) {
-        return hyphenate(lang, country, null, word, offset, len, leftMin, rightMin);
+        return hyphenate(lang, country, null, null, word, offset, len, leftMin, rightMin);
     }
 
     /**
