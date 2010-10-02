@@ -47,25 +47,13 @@ public class Hyphenator {
 
     private static HyphenationTreeCache hTreeCache = null;
 
-    private HyphenationTree hyphenTree = null;
-    private int remainCharCount = 2;
-    private int pushCharCount = 2;
     /** Enables a dump of statistics. Note: If activated content is sent to System.out! */
     private static boolean statisticsDump = false;
 
     /**
      * Creates a new hyphenator.
-     * @param lang the language
-     * @param country the country (may be null or "none")
-     * @param leftMin the minimum number of characters before the hyphenation point
-     * @param rightMin the minimum number of characters after the hyphenation point
      */
-    public Hyphenator(String lang, String country, int leftMin,
-                      int rightMin) {
-        hyphenTree = getHyphenationTree(lang, country);
-        remainCharCount = leftMin;
-        pushCharCount = rightMin;
-    }
+    private Hyphenator() { }
 
     /** @return the default (static) hyphenation tree cache */
     public static synchronized HyphenationTreeCache getHyphenationTreeCache() {
@@ -412,58 +400,6 @@ public class Hyphenator {
                                         char[] word, int offset, int len,
                                         int leftMin, int rightMin) {
         return hyphenate(lang, country, null, null, word, offset, len, leftMin, rightMin);
-    }
-
-    /**
-     * Sets the minimum number of characters before the hyphenation point
-     * @param min the number of characters
-     */
-    public void setMinRemainCharCount(int min) {
-        remainCharCount = min;
-    }
-
-    /**
-     * Sets the minimum number of characters after the hyphenation point
-     * @param min the number of characters
-     */
-    public void setMinPushCharCount(int min) {
-        pushCharCount = min;
-    }
-
-    /**
-     * Sets the language and country for the hyphenation process.
-     * @param lang the language
-     * @param country the country (may be null or "none")
-     */
-    public void setLanguage(String lang, String country) {
-        hyphenTree = getHyphenationTree(lang, country);
-    }
-
-    /**
-     * Hyphenates a word.
-     * @param word the word to hyphenate
-     * @param offset the offset of the first character in the "word" character array
-     * @param len the length of the word
-     * @return the hyphenation result
-     */
-    public Hyphenation hyphenate(char[] word, int offset, int len) {
-        if (hyphenTree == null) {
-            return null;
-        }
-        return hyphenTree.hyphenate(word, offset, len, remainCharCount,
-                                    pushCharCount);
-    }
-
-    /**
-     * Hyphenates a word.
-     * @param word the word to hyphenate
-     * @return the hyphenation result
-     */
-    public Hyphenation hyphenate(String word) {
-        if (hyphenTree == null) {
-            return null;
-        }
-        return hyphenTree.hyphenate(word, remainCharCount, pushCharCount);
     }
 
 }
