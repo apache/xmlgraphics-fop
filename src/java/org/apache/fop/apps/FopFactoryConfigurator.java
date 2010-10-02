@@ -92,7 +92,7 @@ public class FopFactoryConfigurator {
      * @param factory fop factory
      * @throws FOPException fop exception
      */
-    public void configure(FopFactory factory) throws FOPException {
+    public void configure(FopFactory factory) throws FOPException {         // CSOK: MethodLength
         // strict configuration
         if (cfg.getChild("strict-configuration", false) != null) {
             try {
@@ -105,7 +105,7 @@ public class FopFactoryConfigurator {
         boolean strict = factory.validateUserConfigStrictly();
         if (log.isDebugEnabled()) {
             log.debug("Initializing FopFactory Configuration"
-                      + "with " + (strict?"strict":"permissive") + " validation");
+                      + "with " + (strict ? "strict" : "permissive") + " validation");
         }
 
         if (cfg.getChild("accessibility", false) != null) {
@@ -163,7 +163,8 @@ public class FopFactoryConfigurator {
                              + " element must exist (" + location + ")", error);
                 } else if (!lang.matches("[a-zA-Z]{2}")) {
                     addError("The lang attribute of a hyphenation-pattern configuration"
-                             + " element must consist of exactly two letters (" + location + ")", error);
+                             + " element must consist of exactly two letters ("
+                             + location + ")", error);
                 }
                 lang = lang.toLowerCase();
 
@@ -174,7 +175,8 @@ public class FopFactoryConfigurator {
                 if (country != null) {
                     if (!country.matches("[a-zA-Z]{2}")) {
                         addError("The country attribute of a hyphenation-pattern configuration"
-                                 + " element must consist of exactly two letters (" + location + ")", error);
+                                 + " element must consist of exactly two letters ("
+                                 + location + ")", error);
                     }
                     country = country.toUpperCase();
                 }
@@ -195,7 +197,7 @@ public class FopFactoryConfigurator {
                 if (log.isDebugEnabled()) {
                     log.debug("Using hyphenation pattern filename " + filename
                               + " for lang=\"" + lang + "\""
-                              + (country != null?", country=\"" + country + "\"":""));
+                              + (country != null ? ", country=\"" + country + "\"" : ""));
                 }
             }
             factory.setHyphPatNames(hyphPatNames);
