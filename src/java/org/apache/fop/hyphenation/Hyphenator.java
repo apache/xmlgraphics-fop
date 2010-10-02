@@ -40,7 +40,7 @@ import org.xml.sax.InputSource;
  *
  * @author Carlos Villegas <cav@uniscope.co.jp>
  */
-public class Hyphenator {
+public final class Hyphenator {
 
     /** logging instance */
     protected static Log log = LogFactory.getLog(Hyphenator.class);
@@ -81,6 +81,7 @@ public class Hyphenator {
      * @param lang the language
      * @param country the country (may be null or "none")
      * @param resolver resolver to find the hyphenation files
+     * @param hyphPatNames the map with user-configured hyphenation pattern file names
      * @return the hyphenation tree
      */
     public static HyphenationTree getHyphenationTree(String lang,
@@ -328,6 +329,7 @@ public class Hyphenator {
      * @param lang the language
      * @param country the optional country code (may be null or "none")
      * @param resolver resolver to find the hyphenation files
+     * @param hyphPatNames the map with user-configured hyphenation pattern file names
      * @param word the word to hyphenate
      * @param leftMin the minimum number of characters before the hyphenation point
      * @param rightMin the minimum number of characters after the hyphenation point
@@ -365,6 +367,7 @@ public class Hyphenator {
      * @param lang the language
      * @param country the optional country code (may be null or "none")
      * @param resolver resolver to find the hyphenation files
+     * @param hyphPatNames the map with user-configured hyphenation pattern file names
      * @param word the word to hyphenate
      * @param offset the offset of the first character in the "word" character array
      * @param len the length of the word
