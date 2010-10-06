@@ -1418,6 +1418,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             = Hyphenator.hyphenate(hyphenationProperties.language.getString(),
                                hyphenationProperties.country.getString(),
                                getFObj().getUserAgent().getFactory().getHyphenationTreeResolver(),
+                               getFObj().getUserAgent().getFactory().getHyphPatNames(),
                                sbChars.toString(),
                                hyphenationProperties.hyphenationRemainCharacterCount.getValue(),
                                hyphenationProperties.hyphenationPushCharacterCount.getValue());
