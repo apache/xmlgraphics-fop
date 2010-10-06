@@ -61,9 +61,9 @@ public class AFPFontCollection implements FontCollection {
                 List/*<FontTriplet>*/ tripletList = afpFontInfo.getFontTriplets();
                 for (Iterator it2 = tripletList.iterator(); it2.hasNext();) {
                     FontTriplet triplet = (FontTriplet)it2.next();
+                    fontInfo.addMetrics("F" + num, afpFont);
                     fontInfo.addFontProperties("F" + num,
                             triplet.getName(), triplet.getStyle(), triplet.getWeight());
-                    fontInfo.addMetrics("F" + num, afpFont);
                     num++;
                 }
             }
