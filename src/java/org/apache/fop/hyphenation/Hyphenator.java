@@ -64,18 +64,6 @@ public final class Hyphenator {
     }
 
     /**
-     * Returns a hyphenation tree for a given language and country. The hyphenation trees are
-     * cached.
-     * @param lang the language
-     * @param country the country (may be null or "none")
-     * @return the hyphenation tree
-     */
-    public static HyphenationTree getHyphenationTree(String lang,
-            String country) {
-        return getHyphenationTree(lang, country, null, null);
-    }
-
-    /**
      * Returns a hyphenation tree for a given language and country,
      * with fallback from (lang,country) to (lang).
      * The hyphenation trees are cached.
@@ -376,64 +364,6 @@ public final class Hyphenator {
             return null;
         }
         return hTree.hyphenate(word, leftMin, rightMin);
-    }
-
-    /**
-     * Hyphenates a word.
-     * @param lang the language
-     * @param country the optional country code (may be null or "none")
-     * @param word the word to hyphenate
-     * @param leftMin the minimum number of characters before the hyphenation point
-     * @param rightMin the minimum number of characters after the hyphenation point
-     * @return the hyphenation result
-     */
-    public static Hyphenation hyphenate(String lang, String country,
-                                        String word,
-                                        int leftMin, int rightMin) {
-        return hyphenate(lang, country, null, null, word, leftMin, rightMin);
-    }
-
-    /**
-     * Hyphenates a word.
-     * @param lang the language
-     * @param country the optional country code (may be null or "none")
-     * @param resolver resolver to find the hyphenation files
-     * @param hyphPatNames the map with user-configured hyphenation pattern file names
-     * @param word the word to hyphenate
-     * @param offset the offset of the first character in the "word" character array
-     * @param len the length of the word
-     * @param leftMin the minimum number of characters before the hyphenation point
-     * @param rightMin the minimum number of characters after the hyphenation point
-     * @return the hyphenation result
-     */
-    public static Hyphenation hyphenate(String lang,            // CSOK: ParameterNumber
-                                        String country,    
-                                        HyphenationTreeResolver resolver,
-                                        Map hyphPatNames,
-                                        char[] word, int offset, int len,
-                                        int leftMin, int rightMin) {
-        HyphenationTree hTree = getHyphenationTree(lang, country, resolver, hyphPatNames);
-        if (hTree == null) {
-            return null;
-        }
-        return hTree.hyphenate(word, offset, len, leftMin, rightMin);
-    }
-
-    /**
-     * Hyphenates a word.
-     * @param lang the language
-     * @param country the optional country code (may be null or "none")
-     * @param word the word to hyphenate
-     * @param offset the offset of the first character in the "word" character array
-     * @param len the length of the word
-     * @param leftMin the minimum number of characters before the hyphenation point
-     * @param rightMin the minimum number of characters after the hyphenation point
-     * @return the hyphenation result
-     */
-    public static Hyphenation hyphenate(String lang, String country,
-                                        char[] word, int offset, int len,
-                                        int leftMin, int rightMin) {
-        return hyphenate(lang, country, null, null, word, offset, len, leftMin, rightMin);
     }
 
 }
