@@ -22,15 +22,22 @@ package org.apache.fop.afp.parser;
 import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.text.DecimalFormat;
 
 import org.apache.commons.io.HexDump;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Represents an unparsed (generic) AFP structured field.
  */
 public class UnparsedStructuredField {
+
+    private static final Log LOG = LogFactory.getLog(UnparsedStructuredField.class);
+
+    private static final int INTRODUCER_LENGTH = 8;
 
     private short sfLength;
     private byte sfClassCode;
@@ -40,6 +47,7 @@ public class UnparsedStructuredField {
     private boolean sfiSegmentedData;
     private boolean sfiPaddingPresent;
     private short extLength;
+    private byte[] introducerData;
     private byte[] extData;
     private byte[] data;
 
@@ -59,33 +67,53 @@ public class UnparsedStructuredField {
      */
     public static UnparsedStructuredField readStructuredField(DataInputStream din)
             throws IOException {
+        UnparsedStructuredField sf = new UnparsedStructuredField();
+
+        //Read introducer as byte array to preserve any data not parsed below
+        din.mark(INTRODUCER_LENGTH);
+        sf.introducerData = new byte[INTRODUCER_LENGTH]; //Length of introducer
+        din.readFully(sf.introducerData);
+        din.reset();
+
+        //Parse the introducer
         short len;
         try {
             len = din.readShort();
         } catch (EOFException eof) {
             return null;
         }
-        UnparsedStructuredField sf = new UnparsedStructuredField();
         sf.sfLength = len;
         sf.sfClassCode = din.readByte();
         sf.sfTypeCode = din.readByte();
         sf.sfCategoryCode = din.readByte();
 
+        //Flags
         byte f = din.readByte();
         sf.sfiExtensionPresent = (f & 0x01) != 0;
         sf.sfiSegmentedData = (f & 0x04) != 0;
         sf.sfiPaddingPresent = (f & 0x10) != 0;
         din.skip(2); //Reserved
 
-        int dataLength = sf.sfLength - 8;
+        int dataLength = sf.sfLength - INTRODUCER_LENGTH;
+
+        //Handle optional extension
         if (sf.sfiExtensionPresent) {
             sf.extLength = (short)(((short)din.readByte()) & 0xFF);
-            sf.extData = new byte[sf.extLength - 1];
-            din.readFully(sf.extData);
-            dataLength -= sf.extLength;
+            if (sf.extLength > 0) {
+                sf.extData = new byte[sf.extLength - 1];
+                din.readFully(sf.extData);
+                dataLength -= sf.extLength;
+            }
         }
+
+        //Read payload
         sf.data = new byte[dataLength];
         din.readFully(sf.data);
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace(sf);
+        }
+
         return sf;
     }
 
@@ -163,6 +191,7 @@ public class UnparsedStructuredField {
         case 0x77: return "Color Attribute Table";
         case 0x7B: return "IM Image";
         case 0x88: return "Medium";
+        case 0x89: return "Font";
         case 0x8A: return "Coded Font";
         case 0x90: return "Process Element";
         case 0x92: return "Object Container";
@@ -196,7 +225,7 @@ public class UnparsedStructuredField {
      * @return the field length
      */
     public short getSfLength() {
-        return sfLength;
+        return this.sfLength;
     }
 
     /**
@@ -214,7 +243,7 @@ public class UnparsedStructuredField {
      * @return the field class code
      */
     public byte getSfClassCode() {
-        return sfClassCode;
+        return this.sfClassCode;
     }
 
     /**
@@ -222,7 +251,7 @@ public class UnparsedStructuredField {
      * @return the type code
      */
     public byte getSfTypeCode() {
-        return sfTypeCode;
+        return this.sfTypeCode;
     }
 
     /**
@@ -230,7 +259,7 @@ public class UnparsedStructuredField {
      * @return the sfCategoryCode
      */
     public byte getSfCategoryCode() {
-        return sfCategoryCode;
+        return this.sfCategoryCode;
     }
 
     /**
@@ -238,7 +267,7 @@ public class UnparsedStructuredField {
      * @return true if an field introducer extension is present
      */
     public boolean isSfiExtensionPresent() {
-        return sfiExtensionPresent;
+        return this.sfiExtensionPresent && (this.extData != null);
     }
 
     /**
@@ -246,7 +275,7 @@ public class UnparsedStructuredField {
      * @return true if the data is segmented
      */
     public boolean isSfiSegmentedData() {
-        return sfiSegmentedData;
+        return this.sfiSegmentedData;
     }
 
     /**
@@ -254,7 +283,7 @@ public class UnparsedStructuredField {
      * @return true if the data is padded
      */
     public boolean isSfiPaddingPresent() {
-        return sfiPaddingPresent;
+        return this.sfiPaddingPresent;
     }
 
     /**
@@ -262,7 +291,7 @@ public class UnparsedStructuredField {
      * @return the length of the extension (or 0 if no extension is present)
      */
     public short getExtLength() {
-        return extLength;
+        return this.extLength;
     }
 
     /**
@@ -270,7 +299,7 @@ public class UnparsedStructuredField {
      * @return the extension data (or null if no extension is present)
      */
     public byte[] getExtData() {
-        return extData;
+        return this.extData;
     }
 
     /**
@@ -278,7 +307,49 @@ public class UnparsedStructuredField {
      * @return the field's data
      */
     public byte[] getData() {
-        return data;
+        return this.data;
     }
 
+    /**
+     * Returns the structured field's introducer data.
+     * @return the introducer data
+     */
+    public byte[] getIntroducerData() {
+        return this.introducerData;
+    }
+
+    /**
+     * Returns the complete structured field as a byte array.
+     * @return the complete field data
+     */
+    public byte[] getCompleteFieldAsBytes() {
+        int len = INTRODUCER_LENGTH;
+        if (isSfiExtensionPresent()) {
+            len += getExtLength();
+        }
+        len += getData().length;
+        byte[] bytes = new byte[len];
+        int pos = 0;
+        System.arraycopy(getIntroducerData(), 0, bytes, pos, INTRODUCER_LENGTH);
+        pos += INTRODUCER_LENGTH;
+        if (isSfiExtensionPresent()) {
+            System.arraycopy(getExtData(), 0, bytes, pos, getExtLength());
+            pos += getExtLength();
+        }
+        System.arraycopy(getData(), 0, bytes, pos, getData().length);
+        return bytes;
+    }
+
+    /**
+     * Writes this structured field to the given {@link OutputStream}.
+     * @param out the output stream
+     * @throws IOException if an I/O error occurs
+     */
+    public void writeTo(OutputStream out) throws IOException {
+        out.write(this.introducerData);
+        if (isSfiExtensionPresent()) {
+            out.write(this.extData);
+        }
+        out.write(this.data);
+    }
 }
