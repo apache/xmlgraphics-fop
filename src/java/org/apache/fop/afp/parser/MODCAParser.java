@@ -58,11 +58,14 @@ public class MODCAParser {
      * @throws IOException if an I/O error occurs
      */
     public UnparsedStructuredField readNextStructuredField() throws IOException {
-        din.mark(1);
         try {
-            byte b = din.readByte(); //Skip 0x5A character if necessary (ex. AFP)
-            if (b != 0x5A) {
-                din.reset(); //Not necessary for MO:DCA files
+            while (true) {
+                byte b = din.readByte(); //Skip 0x5A character if necessary (ex. AFP)
+                if (b == 0x0D || b == 0x0A) { //CR and LF may be used as field delimiters
+                    continue;
+                } else if (b == 0x5A) { //Carriage Control Character
+                    break;
+                }
             }
         } catch (EOFException eof) {
             return null;
