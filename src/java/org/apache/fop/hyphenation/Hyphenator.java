@@ -76,8 +76,9 @@ public final class Hyphenator {
     }
 
     /**
-     * Returns a hyphenation tree for a given language and country. The hyphenation trees are
-     * cached.
+     * Returns a hyphenation tree for a given language and country,
+     * with fallback from (lang,country) to (lang).
+     * The hyphenation trees are cached.
      * @param lang the language
      * @param country the country (may be null or "none")
      * @param resolver resolver to find the hyphenation files
@@ -89,10 +90,61 @@ public final class Hyphenator {
         String llccKey = HyphenationTreeCache.constructLlccKey(lang, country);
         HyphenationTreeCache cache = getHyphenationTreeCache();
 
-        // See if there was an error finding this hyphenation tree before
+        // If this hyphenation tree has been registered as missing, return immediately
         if (cache.isMissing(llccKey)) {
             return null;
         }
+
+        HyphenationTree hTree = getHyphenationTree2(lang, country, resolver, hyphPatNames);
+
+        // fallback to lang only
+        if (hTree == null && country != null && !country.equals("none")) {
+            String llKey = HyphenationTreeCache.constructLlccKey(lang, null);
+            if (!cache.isMissing(llKey)) {
+                hTree = getHyphenationTree2(lang, null, resolver, hyphPatNames);
+                if (hTree != null && log.isDebugEnabled()) {
+                    log.debug("Couldn't find hyphenation pattern "
+                              + "for lang=\"" + lang + "\",country=\"" + country + "\"."
+                              + " Using general language pattern "
+                              + "for lang=\"" + lang + "\" instead.");
+                }
+                if (hTree == null) {
+                    // no fallback; register as missing
+                    cache.noteMissing(llKey);
+                } else {
+                    // also register for (lang,country)
+                    cache.cache(llccKey, hTree);
+                }
+            }
+        }
+
+        if (hTree == null) {
+            // (lang,country) and (lang) tried; register as missing
+            cache.noteMissing(llccKey);
+            log.error("Couldn't find hyphenation pattern "
+                      + "for lang=\"" + lang + "\""
+                      + (country != null && !country.equals("none")
+                              ? ",country=\"" + country + "\""
+                              : "")
+                      + ".");
+        }
+
+        return hTree;
+    }
+
+    /**
+     * Returns a hyphenation tree for a given language and country
+     * The hyphenation trees are cached.
+     * @param lang the language
+     * @param country the country (may be null or "none")
+     * @param resolver resolver to find the hyphenation files
+     * @param hyphPatNames the map with user-configured hyphenation pattern file names
+     * @return the hyphenation tree
+     */
+    private static HyphenationTree getHyphenationTree2(String lang,
+            String country, HyphenationTreeResolver resolver, Map hyphPatNames) {
+        String llccKey = HyphenationTreeCache.constructLlccKey(lang, country);
+        HyphenationTreeCache cache = getHyphenationTreeCache();
 
         HyphenationTree hTree;
         // first try to find it in the cache
@@ -105,6 +157,7 @@ public final class Hyphenator {
         if (key == null) {
             key = llccKey;
         }
+
         if (resolver != null) {
             hTree = getUserHyphenationTree(key, resolver);
         }
@@ -115,10 +168,8 @@ public final class Hyphenator {
         // put it into the pattern cache
         if (hTree != null) {
             cache.cache(llccKey, hTree);
-        } else {
-            log.error("Couldn't find hyphenation pattern " + llccKey);
-            cache.noteMissing(llccKey);
         }
+
         return hTree;
     }
 
@@ -173,31 +224,11 @@ public final class Hyphenator {
         try {
             is = getResourceStream(key);
             if (is == null) {
-                if (key.length() == 5) {
-                    String lang = key.substring(0, 2);
-                    is = getResourceStream(lang);
-                    if (is != null) {
-                        if (log.isDebugEnabled()) {
-                            log.debug("Couldn't find hyphenation pattern '"
-                                    + key
-                                    + "'. Using general language pattern '"
-                                    + lang
-                                    + "' instead.");
-                        }
-                    } else {
-                        if (log.isDebugEnabled()) {
-                            log.debug("Couldn't find precompiled hyphenation pattern "
-                                    + lang + " in resources.");
-                        }
-                        return null;
-                    }
-                } else {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Couldn't find precompiled hyphenation pattern "
-                                               + key + " in resources");
-                    }
-                    return null;
+                if (log.isDebugEnabled()) {
+                    log.debug("Couldn't find precompiled hyphenation pattern "
+                              + key + " in resources");
                 }
+                return null;
             }
             hTree = readHyphenationTree(is);
         } finally {
