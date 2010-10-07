@@ -47,6 +47,7 @@ import org.apache.fop.render.afp.extensions.AFPElementMapping;
 import org.apache.fop.render.afp.extensions.AFPIncludeFormMap;
 import org.apache.fop.render.afp.extensions.AFPInvokeMediumMap;
 import org.apache.fop.render.afp.extensions.AFPPageOverlay;
+import org.apache.fop.render.afp.extensions.AFPPageSegmentElement;
 import org.apache.fop.render.afp.extensions.AFPPageSetup;
 import org.apache.fop.render.intermediate.AbstractBinaryWritingIFDocumentHandler;
 import org.apache.fop.render.intermediate.IFDocumentHandler;
@@ -76,8 +77,8 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     private DataStream dataStream;
 
     /** the map of page segments */
-    private Map/*<String,String>*/pageSegmentMap
-        = new java.util.HashMap/*<String,String>*/();
+    private Map/*<String,PageSegmentDescriptor>*/pageSegmentMap
+        = new java.util.HashMap/*<String,PageSegmentDescriptor>*/();
 
     /** Medium Map referenced on previous page **/
     private String lastMediumMap;
@@ -213,7 +214,6 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
                 throws IFException {
         this.location = LOC_ELSEWHERE;
         paintingState.clear();
-        pageSegmentMap.clear();
 
         AffineTransform baseTransform = getBaseTransform();
         paintingState.concatenate(baseTransform);
@@ -288,9 +288,12 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
                         null);
                 }
                 if (AFPElementMapping.INCLUDE_PAGE_SEGMENT.equals(element)) {
-                    String name = aps.getName();
-                    String source = aps.getValue();
-                    pageSegmentMap.put(source, name);
+                    AFPPageSegmentElement.AFPPageSegmentSetup apse
+                        = (AFPPageSegmentElement.AFPPageSegmentSetup)aps;
+                    String name = apse.getName();
+                    String source = apse.getValue();
+                    String uri = apse.getResourceSrc();
+                    pageSegmentMap.put(source, new PageSegmentDescriptor(name, uri));
                 } else if (AFPElementMapping.NO_OPERATION.equals(element)) {
                     String content = aps.getContent();
                     if (content != null) {
@@ -392,13 +395,13 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     }
 
     /**
-     * Returns the page segment name for a given URI if it actually represents a page segment.
+     * Returns the page segment descriptor for a given URI if it actually represents a page segment.
      * Otherwise, it just returns null.
      * @param uri the URI that identifies the page segment
-     * @return the page segment name or null if there's no page segment for the given URI
+     * @return the page segment descriptor or null if there's no page segment for the given URI
      */
-    String getPageSegmentNameFor(String uri) {
-        return (String)pageSegmentMap.get(uri);
+    PageSegmentDescriptor getPageSegmentNameFor(String uri) {
+        return (PageSegmentDescriptor)pageSegmentMap.get(uri);
     }
 
 }

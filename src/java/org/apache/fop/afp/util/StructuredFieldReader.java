@@ -54,80 +54,27 @@ public class StructuredFieldReader {
     }
 
     /**
-     * Get the next structured field as identified by the identifer
-     * parameter (this must be a valid MO:DCA structured field.
+     * Get the next structured field as identified by the identifier
+     * parameter (this must be a valid MO:DCA structured field).
+     * Note: The returned data does not include the field length and identifier!
      * @param identifier the three byte identifier
      * @throws IOException if an I/O exception occurred
      * @return the next structured field or null when there are no more
      */
     public byte[] getNext(byte[] identifier) throws IOException {
 
-        int bufferPointer = 0;
-        byte[] bufferData = new byte[identifier.length + 2];
-        for (int x = 0; x < identifier.length; x++) {
-            bufferData[x] = 0x00;
+        byte[] bytes = AFPResourceUtil.getNext(identifier, this.inputStream);
+
+        if (bytes != null) {
+            //Users of this class expect the field data without length and identifier
+            int srcPos = 2 + identifier.length;
+            byte[] tmp = new byte[bytes.length - srcPos];
+            System.arraycopy(bytes, srcPos, tmp, 0, tmp.length);
+            bytes = tmp;
         }
 
-        int c;
-        while ((c = inputStream.read()) > -1) {
+        return bytes;
 
-            bufferData[bufferPointer] = (byte) c;
-
-            // Check the last characters in the buffer
-            int index = 0;
-            boolean found = true;
-
-            for (int i = identifier.length - 1; i > -1; i--) {
-
-                int p = bufferPointer - index;
-                if (p < 0) {
-                    p = bufferData.length + p;
-                }
-
-                index++;
-
-                if (identifier[i] != bufferData[p]) {
-                    found = false;
-                    break;
-                }
-
-            }
-
-            if (found) {
-
-                byte[] length = new byte[2];
-
-                int a = bufferPointer - identifier.length;
-                if (a < 0) {
-                    a = bufferData.length + a;
-                }
-
-                int b = bufferPointer - identifier.length - 1;
-                if (b < 0) {
-                    b = bufferData.length + b;
-                }
-
-                length[0] = bufferData[b];
-                length[1] = bufferData[a];
-
-                int reclength = ((length[0] & 0xFF) << 8)
-                                + (length[1] & 0xFF) - identifier.length - 2;
-
-                byte[] retval = new byte[reclength];
-
-                inputStream.read(retval, 0, reclength);
-
-                return retval;
-
-            }
-
-            bufferPointer++;
-            if (bufferPointer >= bufferData.length) {
-                bufferPointer = 0;
-            }
-
-        }
-
-        return null;
     }
+
 }

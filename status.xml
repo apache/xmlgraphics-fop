@@ -58,6 +58,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="JM" type="add" fixes-bug="49379" due-to="Peter Hancock">
+        Added ability to embed an external AFP page segment resource file (AFP output only).
+      </action>
       <action context="Renderers" dev="JM" type="fix" fixes-bug="46360" due-to="Alexis Giotis">
         Fixed a multi-threading issue when rendering SVG.
       </action>
