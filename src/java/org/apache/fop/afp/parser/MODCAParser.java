@@ -29,6 +29,9 @@ import java.io.InputStream;
  */
 public class MODCAParser {
 
+    /** The carriage control character (0x5A) used to indicate the start of a structured field. */
+    public static final byte CARRIAGE_CONTROL_CHAR = (byte)(0x5A & 0xFF);
+
     private DataInputStream din;
 
     /**
@@ -61,10 +64,11 @@ public class MODCAParser {
         try {
             while (true) {
                 byte b = din.readByte(); //Skip 0x5A character if necessary (ex. AFP)
-                if (b == 0x0D || b == 0x0A) { //CR and LF may be used as field delimiters
+                if (b == 0x0D || b == 0x0A) {
+                    //CR and LF may be used as field delimiters
                     continue;
-                } else if (b == 0x5A) { //Carriage Control Character
-                    break;
+                } else if (b == CARRIAGE_CONTROL_CHAR) {
+                    break; //Signals the start of a new structured field
                 }
             }
         } catch (EOFException eof) {
