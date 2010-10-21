@@ -21,6 +21,7 @@ package org.apache.fop.render.pdf.extensions;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
 import org.xml.sax.helpers.DefaultHandler;
 
 import org.apache.commons.logging.Log;
@@ -48,7 +49,7 @@ public class PDFExtensionHandler extends DefaultHandler
                 throws SAXException {
         boolean handled = false;
         if (PDFExtensionAttachment.CATEGORY.equals(uri)) {
-            lastAttributes = attributes;
+            lastAttributes = new AttributesImpl(attributes);
             handled = false;
             if (localName.equals(PDFEmbeddedFileExtensionAttachment.ELEMENT)) {
                 //handled in endElement
