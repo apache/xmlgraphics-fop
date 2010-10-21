@@ -19,7 +19,6 @@
 
 package org.apache.fop.render.intermediate.util;
 
-
 import java.awt.Dimension;
 
 import javax.xml.transform.Source;
@@ -39,12 +38,17 @@ import org.apache.fop.render.intermediate.IFParser;
  * <p>
  * Note: This class will filter/ignore any document navigation events. Support for this may be
  * added later.
+ * <p>
+ * Note: document-level extensions will only be transferred from the first document passed in.
+ * If you need to merge extensions from all the concatenated documents, you may have to merge
+ * these manually on the XML level, for example using XSLT.
  */
 public class IFConcatenator {
 
     private IFDocumentHandler targetHandler;
 
     private int nextPageIndex = 0;
+    private boolean inFirstDocument = true;
 
     /**
      * Creates a new IF concatenator.
@@ -163,14 +167,17 @@ public class IFConcatenator {
         /** {@inheritDoc} */
         public void endDocument() throws IFException {
             //ignore
+            inFirstDocument = false;
         }
 
         /** {@inheritDoc} */
         public void handleExtensionObject(Object extension) throws IFException {
-            if (inPageSequence) {
+            if (inPageSequence || inFirstDocument) {
                 //Only pass through when inside page-sequence
+                //or for the first document (for document-level extensions).
                 super.handleExtensionObject(extension);
             }
+            //Note:Extensions from non-first documents are ignored!
         }
 
         /** {@inheritDoc} */
