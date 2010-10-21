@@ -88,7 +88,7 @@ final class TextAttributesConverter {
 
     private static void attrBreak(Block fobj, FOPRtfAttributes attrib) {
         int breakValue = fobj.getBreakBefore();
-        if (breakValue != Constants.EN_NONE) {
+        if (breakValue != Constants.EN_AUTO) {
             //"sect" Creates a new section and a page break,
             //a simple page break with control word "page" caused
             //some problems
