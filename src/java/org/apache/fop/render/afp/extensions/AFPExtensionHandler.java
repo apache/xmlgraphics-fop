@@ -24,6 +24,7 @@ import java.net.URISyntaxException;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
 import org.xml.sax.helpers.DefaultHandler;
 
 import org.apache.commons.logging.Log;
@@ -53,7 +54,7 @@ public class AFPExtensionHandler extends DefaultHandler
                 throws SAXException {
         boolean handled = false;
         if (AFPExtensionAttachment.CATEGORY.equals(uri)) {
-            lastAttributes = attributes;
+            lastAttributes = new AttributesImpl(attributes);
             handled = true;
             if (localName.equals(AFPElementMapping.NO_OPERATION)
                     || localName.equals(AFPElementMapping.TAG_LOGICAL_ELEMENT)
