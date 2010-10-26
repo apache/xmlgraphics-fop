@@ -41,7 +41,7 @@ public class PDFName extends PDFObject {
         this.name = escapeName(name);
     }
 
-    private static final String ESCAPED_NAME_CHARS = "/()<>[]";
+    private static final String ESCAPED_NAME_CHARS = "/()<>[]%#";
 
     /**
      * Escapes a PDF name. It adds the leading slash and escapes characters as necessary.
