@@ -77,9 +77,9 @@ class FontResourceCache {
             throw new IllegalStateException("Font not available: " + key);
         }
         if (postFix == null) {
-            return tf.getFontName();
+            return tf.getEmbedFontName();
         } else {
-            return tf.getFontName() + postFix;
+            return tf.getEmbedFontName() + postFix;
         }
     }
 
