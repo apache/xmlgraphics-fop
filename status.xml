@@ -407,6 +407,9 @@
         Fixed a problem where the BPD or a block area could be wrong if there is a nested,
         absolutely positioned area (for example a block-container).
       </action>
+      <action context="Code" dev="VH" type="fix" fixes-bug="45971" due-to="Tow Browder">
+        Improved the behaviour of the command line interface.
+      </action>
       <action context="Layout" dev="AD" type="fix" fixes-bug="40798">
         Bugzilla 40798: A conditional-page-master-reference with page-position="last" qualifies
         for a first page, if it is also the last. Additionally: also added support for
