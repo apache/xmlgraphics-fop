@@ -43,6 +43,7 @@ import org.apache.xmlgraphics.ps.dsc.ResourceTracker;
 import org.apache.xmlgraphics.util.io.ASCIIHexOutputStream;
 
 import org.apache.fop.fonts.Base14Font;
+import org.apache.fop.fonts.CIDFontType;
 import org.apache.fop.fonts.CIDSubset;
 import org.apache.fop.fonts.CustomFont;
 import org.apache.fop.fonts.Font;
@@ -243,7 +244,8 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
                                  */
                                 gen.includeProcsetCIDInitResource();
                             }
-                            PSResource cidFontResource = embedCIDFont(gen, (MultiByteFont) tf, in);
+                            PSResource cidFontResource = embedType2CIDFont(gen,
+                                    (MultiByteFont) tf, in);
                             fontResource = PSFontResource.createFontResource(fontRes,
                                     gen.getProcsetCIDInitResource(),
                                     gen.getIdentityHCMapResource(),
@@ -311,12 +313,12 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
         gen.writeln("/FontType 42 def");
         gen.writeln("/Encoding 256 array");
         gen.writeln("0 1 255{1 index exch/.notdef put}for");
-        Set glyphs = null;
+        Set<String> glyphs = null;
         if (font.getFontType() == FontType.TYPE0) {
             //"/Encoding" is required but ignored for CID fonts
             //so we keep it minimal to save space
         } else {
-            glyphs = new java.util.HashSet();
+            glyphs = new java.util.HashSet<String>();
             for (int i = 0; i < Glyphs.WINANSI_ENCODING.length; i++) {
                 gen.write("dup ");
                 gen.write(i);
@@ -355,16 +357,14 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
         }
         gen.writeln("]def");
         gen.write("/CharStrings ");
-        gen.write(1);
-        //gen.write(glyphs.size() + 1);
+        gen.write(glyphs != null ? glyphs.size() + 1 : 1);
         gen.writeln(" dict dup begin");
         gen.write("/");
         gen.write(Glyphs.NOTDEF);
-        gen.writeln(" 0 def"); // TODO always glyph index 0?
-        // TODO ugly and temporary, until CID is implemented
+        gen.writeln(" 0 def"); // .notdef always has to be at index 0
         if (glyphs != null) {
-            for (Iterator iter = glyphs.iterator(); iter.hasNext();) {
-                String glyphName = (String) iter.next();
+            //Only performed in singly-byte mode
+            for (String glyphName : glyphs) {
                 gen.write("/");
                 gen.write(glyphName);
                 gen.write(" ");
@@ -389,8 +389,8 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
         return 0;
     }
 
-    private static void composeType0Font(PSGenerator gen, MultiByteFont font, InputStream fontStream)
-            throws IOException {
+    private static void composeType0Font(PSGenerator gen, MultiByteFont font,
+            InputStream fontStream) throws IOException {
         String psName = font.getEmbedFontName();
         gen.write("/");
         gen.write(psName);
@@ -399,14 +399,9 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
         gen.writeln("] composefont pop");
     }
 
-    private static PSResource embedCIDFont(PSGenerator gen,
+    private static PSResource embedType2CIDFont(final PSGenerator gen,
             MultiByteFont font, InputStream fontStream) throws IOException {
-        FontFileReader reader = new FontFileReader(fontStream);
-
-        TTFSubSetFile subset = new TTFSubSetFile();
-        byte[] subsetFont = subset.readFont(reader,
-                             font.getTTCName(), font.getUsedGlyphs());
-        InputStream subsetInput = new java.io.ByteArrayInputStream(subsetFont);
+        assert font.getCIDType() == CIDFontType.CIDTYPE2;
 
         String psName = font.getEmbedFontName();
         gen.write("%%BeginResource: CIDFont ");
@@ -467,6 +462,25 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
             gen.write(gid);
         }
         gen.writeln(">] def");
+
+        //Create tables for subset
+        TTFSubSetFile subset = new TTFSubSetFile();
+        TTFSubSetFile.GlyphHandler glyphHandler = new TTFSubSetFile.GlyphHandler() {
+
+            public void addGlyph(byte[] glyphData) throws IOException {
+                ASCIIHexOutputStream hexOut = new ASCIIHexOutputStream(gen.getOutputStream());
+                gen.writeln("<");
+                hexOut.write(glyphData);
+                gen.writeln(">");
+            }
+        };
+        gen.writeln("/GlyphDirectory [");
+        FontFileReader reader = new FontFileReader(fontStream);
+        byte[] subsetFont = subset.toPostScriptSubset(reader,
+                             font.getTTCName(), font.getUsedGlyphs(), glyphHandler);
+        gen.writeln("] def");
+
+        InputStream subsetInput = new java.io.ByteArrayInputStream(subsetFont);
         createType42DictionaryEntries(gen, font, subsetInput, Collections.EMPTY_LIST);
         gen.writeln("CIDFontName currentdict end /CIDFont defineresource pop");
         gen.writeln("end");
