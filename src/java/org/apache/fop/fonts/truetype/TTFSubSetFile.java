@@ -35,7 +35,7 @@ import java.util.Map;
 public class TTFSubSetFile extends TTFFile {
 
     private static enum OperatingMode {
-        PDF, POSTSCRIPT_GLYPH_DIRECTORY
+        PDF, POSTSCRIPT_GLYPH_DIRECTORY;
     }
 
     private byte[] output = null;
@@ -869,15 +869,15 @@ public class TTFSubSetFile extends TTFFile {
      * Read a unsigned short value at given position
      */
     private int readUShort(int pos) {
-        int ret = (int)output[pos];
+        int ret = output[pos];
         if (ret < 0) {
             ret += 256;
         }
         ret = ret << 8;
-        if ((int)output[pos + 1] < 0) {
-            ret |= (int)output[pos + 1] + 256;
+        if (output[pos + 1] < 0) {
+            ret |= output[pos + 1] + 256;
         } else {
-            ret |= (int)output[pos + 1];
+            ret |= output[pos + 1];
         }
 
         return ret;
@@ -900,7 +900,7 @@ public class TTFSubSetFile extends TTFFile {
      */
     private int maxPow2(int max) {
         int i = 0;
-        while (Math.pow(2, (double)i) < max) {
+        while (Math.pow(2, i) < max) {
             i++;
         }
 
@@ -908,7 +908,7 @@ public class TTFSubSetFile extends TTFFile {
     }
 
     private int log2(int num) {
-        return (int)(Math.log((double)num) / Math.log(2));
+        return (int)(Math.log(num) / Math.log(2));
     }
 
 
@@ -927,10 +927,10 @@ public class TTFSubSetFile extends TTFFile {
         long sum = 0;
 
         for (int i = 0; i < size; i += 4) {
-            int l = (int)(data[start + i] << 24);
-            l += (int)(data[start + i + 1] << 16);
-            l += (int)(data[start + i + 2] << 16);
-            l += (int)(data[start + i + 3] << 16);
+            int l = (data[start + i] << 24);
+            l += (data[start + i + 1] << 16);
+            l += (data[start + i + 2] << 16);
+            l += (data[start + i + 3] << 16);
             sum += l;
             if (sum > 0xffffffff) {
                 sum = sum - 0xffffffff;
