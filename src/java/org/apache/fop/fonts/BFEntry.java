@@ -24,6 +24,9 @@ package org.apache.fop.fonts;
  */
 public class BFEntry {
 
+    //TODO Think about renaming this class to CMapRange or something.
+    //TODO Copy equals() and hashCode() from TTFCmapEntry
+
     private int unicodeStart;
     private int unicodeEnd;
     private int glyphStartIndex;

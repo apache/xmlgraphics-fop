@@ -80,6 +80,7 @@ public class TTFFontLoader extends FontLoader {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void read() throws IOException {
         read(this.subFontName);
     }
@@ -147,26 +148,15 @@ public class TTFFontLoader extends FontLoader {
             multiFont.setCIDType(CIDFontType.CIDTYPE2);
             int[] wx = ttf.getWidths();
             multiFont.setWidthArray(wx);
-            List entries = ttf.getCMaps();
-            BFEntry[] bfentries = new BFEntry[entries.size()];
-            int pos = 0;
-            Iterator iter = ttf.getCMaps().listIterator();
-            while (iter.hasNext()) {
-                TTFCmapEntry ce = (TTFCmapEntry)iter.next();
-                bfentries[pos] = new BFEntry(ce.getUnicodeStart(), ce.getUnicodeEnd(),
-                        ce.getGlyphStartIndex());
-                pos++;
-            }
-            multiFont.setBFEntries(bfentries);
         } else {
             singleFont.setFontType(FontType.TRUETYPE);
             singleFont.setEncoding(ttf.getCharSetName());
             returnFont.setFirstChar(ttf.getFirstChar());
             returnFont.setLastChar(ttf.getLastChar());
-            singleFont.setCMaps(ttf.getCMaps());
             singleFont.setTrueTypePostScriptVersion(ttf.getPostScriptVersion());
             copyWidthsSingleByte(ttf);
         }
+        returnFont.setCMap(getCMap(ttf));
 
         if (useKerning) {
             copyKerning(ttf, isCid);
@@ -174,6 +164,18 @@ public class TTFFontLoader extends FontLoader {
         if (this.embedded && ttf.isEmbeddable()) {
             returnFont.setEmbedFileName(this.fontFileURI);
         }
+    }
+
+    private BFEntry[] getCMap(TTFFile ttf) {
+        List<TTFCmapEntry> entries = ttf.getCMaps();
+        BFEntry[] bfentries = new BFEntry[entries.size()];
+        int pos = 0;
+        for (TTFCmapEntry ce : ttf.getCMaps()) {
+            bfentries[pos] = new BFEntry(ce.getUnicodeStart(), ce.getUnicodeEnd(),
+                    ce.getGlyphStartIndex());
+            pos++;
+        }
+        return bfentries;
     }
 
     private void copyWidthsSingleByte(TTFFile ttf) {

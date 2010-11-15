@@ -46,8 +46,6 @@ public class SingleByteFont extends CustomFont {
     //Map<Character, UnencodedCharacter>
     private List additionalEncodings;
 
-    private List cmaps;
-
     private PostScriptVersion ttPostScriptVersion;
 
     /**
@@ -64,6 +62,7 @@ public class SingleByteFont extends CustomFont {
     }
 
     /** {@inheritDoc} */
+    @Override
     public String getEncodingName() {
         return this.mapping.getName();
     }
@@ -104,6 +103,7 @@ public class SingleByteFont extends CustomFont {
     }
 
     /** {@inheritDoc} */
+    @Override
     public char mapChar(char c) {
         notifyMapOperation();
         char d = mapping.mapChar(c);
@@ -155,6 +155,7 @@ public class SingleByteFont extends CustomFont {
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean hasChar(char c) {
         char d = mapping.mapChar(c);
         if (d != SingleByteEncoding.NOT_FOUND_CODE_POINT) {
@@ -334,6 +335,7 @@ public class SingleByteFont extends CustomFont {
         }
 
         /** {@inheritDoc} */
+        @Override
         public String toString() {
             return getCharacter().toString();
         }
@@ -358,16 +360,6 @@ public class SingleByteFont extends CustomFont {
     public PostScriptVersion getTrueTypePostScriptVersion() {
         assert getFontType() == FontType.TRUETYPE;
         return ttPostScriptVersion;
-    }
-
-    /** TODO remove */
-    public void setCMaps(List cmaps) {
-        this.cmaps = cmaps;
-    }
-
-    /** TODO remove */
-    public List getCMaps() {
-        return cmaps;
     }
 
 }

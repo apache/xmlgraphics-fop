@@ -41,9 +41,6 @@ public class MultiByteFont extends CIDFont {
 
     private CIDSubset subset = new CIDSubset();
 
-    /** A map from Unicode indices to glyph indices */
-    private BFEntry[] bfentries = null;
-
     /**
      * Default constructor
      */
@@ -74,26 +71,31 @@ public class MultiByteFont extends CIDFont {
     }
 
     /** {@inheritDoc} */
+    @Override
     public int getDefaultWidth() {
         return defaultWidth;
     }
 
     /** {@inheritDoc} */
+    @Override
     public String getRegistry() {
         return "Adobe";
     }
 
     /** {@inheritDoc} */
+    @Override
     public String getOrdering() {
         return "UCS";
     }
 
     /** {@inheritDoc} */
+    @Override
     public int getSupplement() {
         return 0;
     }
 
     /** {@inheritDoc} */
+    @Override
     public CIDFontType getCIDType() {
         return cidType;
     }
@@ -111,6 +113,7 @@ public class MultiByteFont extends CIDFont {
     }
 
     /** {@inheritDoc} */
+    @Override
     public String getEmbedFontName() {
         if (isEmbeddable()) {
             return getPrefixedFontName();
@@ -125,11 +128,13 @@ public class MultiByteFont extends CIDFont {
     }
 
     /** {@inheritDoc} */
+    @Override
     public CIDSubset getCIDSubset() {
         return this.subset;
     }
 
     /** {@inheritDoc} */
+    @Override
     public String getEncodingName() {
         return encoding;
     }
@@ -158,22 +163,23 @@ public class MultiByteFont extends CIDFont {
      * @return the glyph index (or 0 if the glyph is not available)
      */
     private int findGlyphIndex(char c) {
-        int idx = (int)c;
+        int idx = c;
         int retIdx = SingleByteEncoding.NOT_FOUND_CODE_POINT;
 
-        for (int i = 0; (i < bfentries.length) && retIdx == 0; i++) {
-            if (bfentries[i].getUnicodeStart() <= idx
-                    && bfentries[i].getUnicodeEnd() >= idx) {
+        for (int i = 0; (i < cmap.length) && retIdx == 0; i++) {
+            if (cmap[i].getUnicodeStart() <= idx
+                    && cmap[i].getUnicodeEnd() >= idx) {
 
-                retIdx = bfentries[i].getGlyphStartIndex()
+                retIdx = cmap[i].getGlyphStartIndex()
                     + idx
-                    - bfentries[i].getUnicodeStart();
+                    - cmap[i].getUnicodeStart();
             }
         }
         return retIdx;
     }
 
     /** {@inheritDoc} */
+    @Override
     public char mapChar(char c) {
         notifyMapOperation();
         int glyphIndex = findGlyphIndex(c);
@@ -188,6 +194,7 @@ public class MultiByteFont extends CIDFont {
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean hasChar(char c) {
         return (findGlyphIndex(c) != SingleByteEncoding.NOT_FOUND_CODE_POINT);
     }
@@ -196,9 +203,11 @@ public class MultiByteFont extends CIDFont {
      * Sets the array of BFEntry instances which constitutes the Unicode to glyph index map for
      * a font. ("BF" means "base font")
      * @param entries the Unicode to glyph index map
+     * @deprecated use {@link #setCMap(BFEntry[])} instead
      */
+    @Deprecated
     public void setBFEntries(BFEntry[] entries) {
-        this.bfentries = entries;
+        setCMap(entries);
     }
 
     /**
