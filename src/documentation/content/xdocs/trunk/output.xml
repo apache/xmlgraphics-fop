@@ -885,6 +885,13 @@ Note that the value of the encoding attribute in the example is the double-byte 
           segment in the generated file. Please also note that page segments cannot be scaled.
           They are always rendered in their intrinsic size.
         </p>
+        <p>
+          The include-page-segment extension element has the optional attribute
+          <i>resource-file</i>. The value of this is a URI to a resource containing a page
+          segment with the declared name. In this case FOP embeds the page segment into the
+          generated document so that the external resource does not have to be supplied in the
+          print job.
+        </p>
       </section>
       <section id="afp-tag-logical-element">
         <title>Tag Logical Element (TLE) Extension</title>

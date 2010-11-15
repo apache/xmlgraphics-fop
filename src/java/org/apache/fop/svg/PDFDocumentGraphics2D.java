@@ -256,6 +256,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
         if (!pdfContext.isPagePending()) {
             return; //ignore
         }
+        currentStream.write("Q\n");
         //Finish page
         PDFStream pdfStream = this.pdfDoc.getFactory().makeStream(
                 PDFFilterList.CONTENT_FILTER, false);
@@ -321,6 +322,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
         pdfContext.setCurrentPage(page);
         pageRef = page.referencePDF();
 
+        currentStream.write("q\n");
         AffineTransform at = new AffineTransform(1.0, 0.0, 0.0, -1.0,
                                                  0.0, height);
         currentStream.write("1 0 0 -1 0 " + height + " cm\n");

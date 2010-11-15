@@ -52,7 +52,7 @@ public final class FontFamilyProperty extends ListProperty {
          * {@inheritDoc}
          */
         public Property make(PropertyList propertyList, String value, FObj fo)
-            throws PropertyException {
+                throws PropertyException {
             if ("inherit".equals(value)) {
                 return super.make(propertyList, value, fo);
             } else {

@@ -254,7 +254,7 @@ public class FontInfoConfigurator {
         }
 
         boolean useKerning = fontCfg.getAttributeAsBoolean("kerning", true);
-        EncodingMode encodingMode = EncodingMode.valueOf(
+        EncodingMode encodingMode = EncodingMode.getEncodingMode(
                 fontCfg.getAttribute("encoding-mode", EncodingMode.AUTO.getName()));
         EmbedFontInfo embedFontInfo
                 = new EmbedFontInfo(metricsUrl, useKerning, tripletList, embedUrl, subFont);

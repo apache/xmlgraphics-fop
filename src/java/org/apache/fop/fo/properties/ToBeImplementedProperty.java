@@ -23,7 +23,7 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 
 /**
- * A special property for representing an as yet implemented implemented property.
+ * A special property for representing an as yet unimplemented property.
  */
 public class ToBeImplementedProperty extends Property {
 

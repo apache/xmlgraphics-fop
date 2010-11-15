@@ -45,6 +45,7 @@ public class PageBreaker extends AbstractBreaker {
     private boolean needColumnBalancing;
     private PageProvider pageProvider;
     private Block separatorArea;
+    private boolean spanAllActive;
 
     /**
      * The FlowLayoutManager object, which processes
@@ -148,8 +149,9 @@ public class PageBreaker extends AbstractBreaker {
         }
         firstPart = false;
         pageBreakHandled = true;
+
         pageProvider.setStartOfNextElementList(pslm.getCurrentPageNum(),
-                pslm.getCurrentPV().getCurrentSpan().getCurrentFlowIndex());
+                pslm.getCurrentPV().getCurrentSpan().getCurrentFlowIndex(), this.spanAllActive);
         return super.getNextBlockList(childLC, nextSequenceStartsOn, positionAtIPDChange,
                 restartLM, firstElements);
     }
@@ -342,8 +344,9 @@ public class PageBreaker extends AbstractBreaker {
         pageBreakHandled = true;
         //Update so the available BPD is reported correctly
         int currentPageNum = pslm.getCurrentPageNum();
+
         pageProvider.setStartOfNextElementList(currentPageNum,
-                pslm.getCurrentPV().getCurrentSpan().getCurrentFlowIndex());
+                pslm.getCurrentPV().getCurrentSpan().getCurrentFlowIndex(), this.spanAllActive);
 
         //Make sure we only add the areas we haven't added already
         effectiveList.ignoreAtStart = newStartPos;
@@ -387,7 +390,7 @@ public class PageBreaker extends AbstractBreaker {
 
         boolean fitsOnePage
             = optimalPageCount <= pslm.getCurrentPV()
-            .getBodyRegion().getMainReference().getCurrentSpan().getColumnCount();
+                .getBodyRegion().getMainReference().getCurrentSpan().getColumnCount();
 
         if (needColumnBalancing) {
             if (!fitsOnePage) {
@@ -435,7 +438,8 @@ public class PageBreaker extends AbstractBreaker {
                 handleBreakTrait(breakClass);
             }
             pageProvider.setStartOfNextElementList(pslm.getCurrentPageNum(),
-                    pslm.getCurrentPV().getCurrentSpan().getCurrentFlowIndex());
+                    pslm.getCurrentPV().getCurrentSpan().getCurrentFlowIndex(),
+                    this.spanAllActive);
         }
         pageBreakHandled = false;
         // add static areas and resolve any new id areas
@@ -503,9 +507,11 @@ public class PageBreaker extends AbstractBreaker {
         case Constants.EN_ALL:
             //break due to span change in multi-column layout
             curPage.getPageViewport().createSpan(true);
+            this.spanAllActive = true;
             return;
         case Constants.EN_NONE:
             curPage.getPageViewport().createSpan(false);
+            this.spanAllActive = false;
             return;
         case Constants.EN_COLUMN:
         case Constants.EN_AUTO:
@@ -554,7 +560,7 @@ public class PageBreaker extends AbstractBreaker {
      */
     private boolean needBlankPageBeforeNew(int breakVal) {
         if (breakVal == Constants.EN_PAGE
-            || (pslm.getCurrentPage().getPageViewport().getPage().isEmpty())) {
+                || (pslm.getCurrentPage().getPageViewport().getPage().isEmpty())) {
             // any page is OK or we already have an empty page
             return false;
         } else {

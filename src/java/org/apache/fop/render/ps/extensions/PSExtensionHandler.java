@@ -21,6 +21,7 @@ package org.apache.fop.render.ps.extensions;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
 import org.xml.sax.helpers.DefaultHandler;
 
 import org.apache.commons.logging.Log;
@@ -49,7 +50,7 @@ public class PSExtensionHandler extends DefaultHandler
                 throws SAXException {
         boolean handled = false;
         if (PSExtensionAttachment.CATEGORY.equals(uri)) {
-            lastAttributes = attributes;
+            lastAttributes = new AttributesImpl(attributes);
             handled = false;
             if (localName.equals(PSSetupCode.ELEMENT)
                     || localName.equals(PSSetPageDevice.ELEMENT)
