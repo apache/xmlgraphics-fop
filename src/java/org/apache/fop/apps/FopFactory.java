@@ -26,6 +26,8 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import javax.xml.transform.Source;
@@ -107,6 +109,11 @@ public class FopFactory implements ImageContext {
 
     /** The base URL for all hyphen URL resolutions. */
     private String hyphenBase = null;
+
+    /**
+     * Map of configured names of hyphenation pattern file names: ll_CC => name
+     */
+    private Map/*<String,String>*/ hyphPatNames = null;
 
     /**
      * FOP has the ability, for some FO's, to continue processing even if the
@@ -404,6 +411,23 @@ public class FopFactory implements ImageContext {
             });
         }
         this.hyphenBase = foURIResolver.checkBaseURL(hyphenBase);
+    }
+
+    /**
+     * @return the hyphPatNames
+     */
+    public Map getHyphPatNames() {
+        return hyphPatNames;
+    }
+
+    /**
+     * @param hyphPatNames the hyphPatNames to set
+     */
+    public void setHyphPatNames(Map hyphPatNames) {
+        if (hyphPatNames == null) {
+            hyphPatNames = new HashMap();
+        }
+        this.hyphPatNames = hyphPatNames;
     }
 
     /**

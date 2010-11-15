@@ -89,6 +89,12 @@
         </td>
         <td>disabled</td>
       </tr>
+	  <tr>
+		<td>hyphenation-pattern</td>
+		<td>String, attribute lang, attribute country (optional)</td>
+		<td>Register a file name for the hyphenation pattern for the mentioned language and country. Language ll and country CC must both consist of two letters.</td>
+		<td>ll_CC</td>
+	  </tr>
       <tr>
         <td>source-resolution</td>
         <td>Integer, dpi</td>
@@ -215,6 +221,9 @@
   <!-- default page-height and page-width, in case
        value is specified as auto -->
   <default-page-settings height="11in" width="8.26in"/>
+
+  <!-- Use file name nl_Bel instead of the default nl_BE -->
+  <hyphenation-pattern lang="nl" country="BE">nl_Bel</hyphenation-pattern>
   
   <!-- etc. etc..... -->
 </fop>]]></source>

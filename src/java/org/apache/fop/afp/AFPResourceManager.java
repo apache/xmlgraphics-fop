@@ -19,12 +19,15 @@
 
 package org.apache.fop.afp;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -38,6 +41,7 @@ import org.apache.fop.afp.modca.PageSegment;
 import org.apache.fop.afp.modca.Registry;
 import org.apache.fop.afp.modca.ResourceGroup;
 import org.apache.fop.afp.modca.ResourceObject;
+import org.apache.fop.afp.util.AFPResourceUtil;
 import org.apache.fop.afp.util.ResourceAccessor;
 
 /**
@@ -312,6 +316,57 @@ public class AFPResourceManager {
             //skip, already created
         }
     }
+
+    /**
+     * Creates an included resource extracting the named resource from an external source.
+     * @param resourceName the name of the resource
+     * @param uri the URI for the resource
+     * @param accessor resource accessor to access the resource with
+     * @throws IOException if an I/O error occurs while loading the resource
+     */
+    public void createIncludedResourceFromExternal(final String resourceName,
+            final URI uri, final ResourceAccessor accessor) throws IOException {
+
+        AFPResourceLevel resourceLevel = new AFPResourceLevel(AFPResourceLevel.PRINT_FILE);
+
+        AFPResourceInfo resourceInfo = new AFPResourceInfo();
+        resourceInfo.setLevel(resourceLevel);
+        resourceInfo.setName(resourceName);
+        resourceInfo.setUri(uri.toASCIIString());
+
+        String resource = (String)includeNameMap.get(resourceInfo);
+        if (resource == null) {
+
+            ResourceGroup resourceGroup = streamer.getResourceGroup(resourceLevel);
+
+            //resourceObject delegates write commands to copyNamedResource()
+            //The included resource may already be wrapped in a resource object
+            AbstractNamedAFPObject resourceObject = new AbstractNamedAFPObject(null) {
+
+                protected void writeContent(OutputStream os) throws IOException {
+                    InputStream inputStream = null;
+                    try {
+                        inputStream = accessor.createInputStream(uri);
+                        BufferedInputStream bin = new BufferedInputStream(inputStream);
+                        AFPResourceUtil.copyNamedResource(resourceName, bin, os);
+                    } finally {
+                        IOUtils.closeQuietly(inputStream);
+                    }
+                }
+
+                //bypass super.writeStart
+                protected void writeStart(OutputStream os) throws IOException { }
+                //bypass super.writeEnd
+                protected void writeEnd(OutputStream os) throws IOException { }
+            };
+
+            resourceGroup.addObject(resourceObject);
+
+            includeNameMap.put(resourceInfo, resourceName);
+
+        }
+    }
+
 
     /**
      * Sets resource level defaults. The existing defaults over merged with the ones passed in

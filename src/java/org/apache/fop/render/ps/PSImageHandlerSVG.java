@@ -23,6 +23,8 @@ import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
 
+import org.w3c.dom.Document;
+
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.GVTBuilder;
 import org.apache.batik.gvt.GraphicsNode;
@@ -34,6 +36,7 @@ import org.apache.xmlgraphics.java2d.ps.PSGraphics2D;
 import org.apache.xmlgraphics.ps.PSGenerator;
 
 import org.apache.fop.image.loader.batik.BatikImageFlavors;
+import org.apache.fop.image.loader.batik.BatikUtil;
 import org.apache.fop.render.ImageHandler;
 import org.apache.fop.render.RenderingContext;
 import org.apache.fop.svg.SVGEventProducer;
@@ -70,10 +73,14 @@ public class PSImageHandlerSVG implements ImageHandler {
                 context.getUserAgent().getFactory().getImageManager(),
                 context.getUserAgent().getImageSessionContext());
 
+        //Cloning SVG DOM as Batik attaches non-thread-safe facilities (like the CSS engine)
+        //to it.
+        Document clonedDoc = BatikUtil.cloneSVGDocument(imageSVG.getDocument());
+
         GraphicsNode root;
         try {
             GVTBuilder builder = new GVTBuilder();
-            root = builder.build(ctx, imageSVG.getDocument());
+            root = builder.build(ctx, clonedDoc);
         } catch (Exception e) {
             SVGEventProducer eventProducer = SVGEventProducer.Provider.get(
                     context.getUserAgent().getEventBroadcaster());

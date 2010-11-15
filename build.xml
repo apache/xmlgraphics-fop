@@ -149,8 +149,8 @@ list of possible build targets.
   <property name="javac.debug" value="on"/>
   <property name="javac.optimize" value="off"/>
   <property name="javac.deprecation" value="on"/>
-  <property name="javac.source" value="1.4"/>
-  <property name="javac.target" value="1.4"/>
+  <property name="javac.source" value="1.5"/>
+  <property name="javac.target" value="1.5"/>
   <property name="javac.fork" value="no"/>
   <property name="junit.fork" value="on"/>
   <property name="junit.haltonfailure" value="off"/>
@@ -193,8 +193,11 @@ list of possible build targets.
   <property name="fotree.disabled" value="test/fotree/disabled-testcases.xml"/>
   <property name="dist.bin.dir" value="${basedir}/dist-bin"/>
   <property name="dist.src.dir" value="${basedir}/dist-src"/>
+  <property name="nightly.dir" value="${basedir}/nightly"/>
   <property name="dist.bin.result.dir" value="${dist.bin.dir}/${name}-${version}"/>
   <property name="dist.src.result.dir" value="${dist.src.dir}/${name}-${version}"/>
+  <tstamp/>
+  <property name="nightly.result.dir" value="${nightly.dir}/${name}-${DSTAMP}"/>
   <property name="samedir" value="${basedir}"/>
   <property name="junit.reports.dir" value="${build.dir}/test-reports"/>
   <property name="junit.html.reports.dir" value="${build.dir}/test-reports/html"/>
@@ -1045,7 +1048,6 @@ NOTE:
         <pathelement path="${src.sandbox.dir}"/>
         <pathelement path="${build.gensrc.dir}"/>
       </sourcepath>
-      <tag name="asf.todo" scope="all" description="To do:"/>
       <tag name="event.severity" scope="all" description="Event severity level:"/>
       <group title="Control and Startup">
         <package name="org.apache.fop"/>
@@ -1354,6 +1356,50 @@ NOTE:
       <metainf dir="${basedir}" includes="LICENSE,NOTICE"/>
     </jar>
     <move file="${build.dir}/${name}-${version}-bundle.jar" todir="${basedir}"/>
+  </target>
+<!-- =================================================================== -->
+<!-- Nightly builds                                                      -->
+<!-- =================================================================== -->
+  <target name="junit-nightly-build" depends="junit-userconfig,junit-text-linebreak,junit-fotree">
+	<fail>
+	  <condition>
+	    <or>
+	      <isset property="fop.junit.error"/>
+	      <isset property="fop.junit.failure"/>
+        </or>
+      </condition>
+NOTE:
+**************************************************************************
+* One or more of the Junit tests had Failures or Errors or were skipped! *
+*         Please check the output above for relevant messages.           *
+*    Or use the "junit-reports" target to generate HTML test reports.    *
+**************************************************************************
+    </fail>
+    <echo>All Junit tests passed!</echo>
+  </target>
+  <target name="nightly-build" depends="clean,jar-main,junit-nightly-build">
+    <echo message="Building the binary distribution files (zip,tar)"/>
+    <delete dir="${nightly.dir}"/>
+    <mkdir dir="${nightly.result.dir}"/>
+    <copy todir="${nightly.result.dir}">
+      <fileset refid="dist.bin"/>
+      <fileset refid="dist.bin.lib"/>
+    </copy>
+    <mkdir dir="${nightly.result.dir}/build"/>
+    <copy todir="${nightly.result.dir}/build" file="build/fop.jar"/>
+    <chmod file="${nightly.result.dir}/fop" perm="ugo+rx"/>
+    <zip zipfile="${name}-${DSTAMP}-bin.zip" basedir="${nightly.dir}" includes="**"/>
+    <tar longfile="gnu" destfile="${name}-${DSTAMP}-bin.tar">
+      <tarfileset dir="${nightly.dir}" mode="755">
+        <include name="${name}-${DSTAMP}/fop"/>
+      </tarfileset>
+      <tarfileset dir="${nightly.dir}">
+        <include name="**"/>
+        <exclude name="${name}-${DSTAMP}/fop"/>
+      </tarfileset>
+    </tar>
+    <gzip zipfile="${name}-${DSTAMP}-bin.tar.gz" src="${name}-${DSTAMP}-bin.tar"/>
+    <delete file="${name}-${DSTAMP}-bin.tar"/>
   </target>
 <!-- =================================================================== -->
 <!-- Generate examples                                                   -->
