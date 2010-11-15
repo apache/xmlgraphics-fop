@@ -59,6 +59,9 @@ public abstract class CustomFont extends Typeface
 
     private boolean useKerning = true;
 
+    /** the character map, mapping Unicode ranges to glyph indices. */
+    protected BFEntry[] cmap;
+
     /** {@inheritDoc} */
     public String getFontName() {
         return fontName;
@@ -452,6 +455,27 @@ public abstract class CustomFont extends Typeface
         } else {
             this.kerning = kerningMap;
         }
+    }
+
+    /**
+     * Sets the identity character map for this font. It maps all available Unicode characters
+     * to their glyph indices inside the font.
+     * @param cmap the identity character map
+     */
+    public void setCMap(BFEntry[] cmap) {
+        this.cmap = new BFEntry[cmap.length];
+        System.arraycopy(cmap, 0, this.cmap, 0, cmap.length);
+    }
+
+    /**
+     * Returns the identity character map for this font. It maps all available Unicode characters
+     * to their glyph indices inside the font.
+     * @return the identity character map
+     */
+    public BFEntry[] getCMap() {
+        BFEntry[] copy = new BFEntry[cmap.length];
+        System.arraycopy(this.cmap, 0, copy, 0, this.cmap.length);
+        return copy;
     }
 
 }

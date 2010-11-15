@@ -25,6 +25,8 @@ package org.apache.fop.fonts.truetype;
  */
 public class TTFCmapEntry {
 
+    //TODO this class is redundant: BFEntry does the same but doesn't have an intuitive name
+
     private int unicodeStart;
     private int unicodeEnd;
     private int glyphStartIndex;
@@ -44,6 +46,7 @@ public class TTFCmapEntry {
     /**
      * {@inheritDoc}
      */
+    @Override
     public int hashCode() {
         int hc = super.hashCode();
         hc ^= ( hc * 11 ) + unicodeStart;
@@ -55,6 +58,7 @@ public class TTFCmapEntry {
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean equals(Object o) {
         if (o instanceof TTFCmapEntry) {
             TTFCmapEntry ce = (TTFCmapEntry)o;

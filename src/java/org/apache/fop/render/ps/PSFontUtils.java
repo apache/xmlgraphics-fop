@@ -23,11 +23,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
@@ -42,6 +39,7 @@ import org.apache.xmlgraphics.ps.PSResource;
 import org.apache.xmlgraphics.ps.dsc.ResourceTracker;
 import org.apache.xmlgraphics.util.io.ASCIIHexOutputStream;
 
+import org.apache.fop.fonts.BFEntry;
 import org.apache.fop.fonts.Base14Font;
 import org.apache.fop.fonts.CIDFontType;
 import org.apache.fop.fonts.CIDSubset;
@@ -55,7 +53,6 @@ import org.apache.fop.fonts.SingleByteEncoding;
 import org.apache.fop.fonts.SingleByteFont;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.fonts.truetype.FontFileReader;
-import org.apache.fop.fonts.truetype.TTFCmapEntry;
 import org.apache.fop.fonts.truetype.TTFSubSetFile;
 import org.apache.fop.fonts.truetype.TTFFile.PostScriptVersion;
 import org.apache.fop.util.HexEncoder;
@@ -152,7 +149,7 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
                             && sbf.getTrueTypePostScriptVersion() != PostScriptVersion.V2) {
                         derivedFontRes = defineDerivedTrueTypeFont(gen, eventProducer,
                                 tf.getEmbedFontName(), tf.getEmbedFontName() + postFix, encoding,
-                                sbf.getCMaps());
+                                sbf.getCMap());
                     } else {
                         derivedFontRes = defineDerivedFont(gen, tf.getEmbedFontName(),
                                 tf.getEmbedFontName() + postFix, encoding.getName());
@@ -298,12 +295,12 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
         /* See Adobe Technical Note #5012, "The Type 42 Font Format Specification" */
         gen.commentln("%!PS-TrueTypeFont-65536-65536-1"); // TODO TrueType & font versions
         gen.writeln("11 dict begin");
-        createType42DictionaryEntries(gen, font, fontStream, font.getCMaps());
+        createType42DictionaryEntries(gen, font, fontStream, font.getCMap());
         gen.writeln("FontName currentdict end definefont pop");
     }
 
     private static void createType42DictionaryEntries(PSGenerator gen, CustomFont font,
-            InputStream fontStream, List cmaps) throws IOException {
+            InputStream fontStream, BFEntry[] cmap) throws IOException {
         gen.write("/FontName /");
         gen.write(font.getEmbedFontName());
         gen.writeln(" def");
@@ -313,12 +310,13 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
         gen.writeln("/FontType 42 def");
         gen.writeln("/Encoding 256 array");
         gen.writeln("0 1 255{1 index exch/.notdef put}for");
-        Set<String> glyphs = null;
+        boolean buildCharStrings;
         if (font.getFontType() == FontType.TYPE0) {
             //"/Encoding" is required but ignored for CID fonts
             //so we keep it minimal to save space
+            buildCharStrings = false;
         } else {
-            glyphs = new java.util.HashSet<String>();
+            buildCharStrings = true;
             for (int i = 0; i < Glyphs.WINANSI_ENCODING.length; i++) {
                 gen.write("dup ");
                 gen.write(i);
@@ -327,7 +325,6 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
                 if (glyphName.equals("")) {
                     gen.write(Glyphs.NOTDEF);
                 } else {
-                    glyphs.add(glyphName); //TODO don't just register the WinAnsi subset!
                     gen.write(glyphName);
                 }
                 gen.writeln(" put");
@@ -357,33 +354,48 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
         }
         gen.writeln("]def");
         gen.write("/CharStrings ");
-        gen.write(glyphs != null ? glyphs.size() + 1 : 1);
+        if (buildCharStrings) {
+            int charCount = 1; //1 for .notdef
+            for (BFEntry entry : cmap) {
+                charCount += entry.getUnicodeEnd() - entry.getUnicodeStart() + 1;
+            }
+            gen.write(charCount);
+        } else {
+            gen.write(1);
+        }
         gen.writeln(" dict dup begin");
         gen.write("/");
         gen.write(Glyphs.NOTDEF);
         gen.writeln(" 0 def"); // .notdef always has to be at index 0
-        if (glyphs != null) {
-            //Only performed in singly-byte mode
-            for (String glyphName : glyphs) {
-                gen.write("/");
-                gen.write(glyphName);
-                gen.write(" ");
-                gen.write(getGlyphIndex(glyphName, cmaps));
-                gen.writeln(" def");
+        if (buildCharStrings) {
+            //Only performed in singly-byte mode, ignored for CID fonts
+
+            for (BFEntry entry : cmap) {
+                int glyphIndex = entry.getGlyphStartIndex();
+                for (int ch = entry.getUnicodeStart(); ch <= entry.getUnicodeEnd(); ch++) {
+                    char ch16 = (char)ch; //TODO Handle Unicode characters beyond 16bit
+                    String glyphName = Glyphs.charToGlyphName(ch16);
+
+                    if ("".equals(glyphName)) {
+                        glyphName = "u" + Integer.toHexString(ch).toUpperCase();
+                    }
+                    gen.write("/");
+                    gen.write(glyphName);
+                    gen.write(" ");
+                    gen.write(glyphIndex);
+                    gen.writeln(" def");
+
+                    glyphIndex++;
+                }
             }
         }
         gen.writeln("end readonly def");
     }
 
-    private static int getGlyphIndex(String glyphName, List cmaps) {
-        return getGlyphIndex(Glyphs.getUnicodeSequenceForGlyphName(glyphName).charAt(0), cmaps);
-    }
-
-    private static int getGlyphIndex(char c, List cmaps) {
-        for (Iterator iter = cmaps.iterator(); iter.hasNext();) {
-            TTFCmapEntry cmap = (TTFCmapEntry) iter.next();
-            if (cmap.getUnicodeStart() <= c && c <= cmap.getUnicodeEnd()) {
-                return cmap.getGlyphStartIndex() + c - cmap.getUnicodeStart();
+    private static int getGlyphIndex(char c, BFEntry[] cmap) {
+        for (BFEntry entry : cmap) {
+            if (entry.getUnicodeStart() <= c && c <= entry.getUnicodeEnd()) {
+                return entry.getGlyphStartIndex() + c - entry.getUnicodeStart();
             }
         }
         return 0;
@@ -481,7 +493,7 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
         gen.writeln("] def");
 
         InputStream subsetInput = new java.io.ByteArrayInputStream(subsetFont);
-        createType42DictionaryEntries(gen, font, subsetInput, Collections.EMPTY_LIST);
+        createType42DictionaryEntries(gen, font, subsetInput, new BFEntry[0]);
         gen.writeln("CIDFontName currentdict end /CIDFont defineresource pop");
         gen.writeln("end");
         gen.writeln("%%EndResource");
@@ -659,7 +671,7 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
 
     private static PSResource defineDerivedTrueTypeFont(PSGenerator gen,
             PSEventProducer eventProducer, String baseFontName, String fontName,
-            SingleByteEncoding encoding, List cmaps) throws IOException {
+            SingleByteEncoding encoding, BFEntry[] cmap) throws IOException {
         checkPostScriptLevel3(gen, eventProducer);
         PSResource res = new PSResource(PSResource.TYPE_FONT, fontName);
         gen.writeDSCComment(DSCConstants.BEGIN_RESOURCE, res);
@@ -682,7 +694,7 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
             if (glyphName.equals(".notdef")) {
                 gen.write(0);
             } else {
-                gen.write(getGlyphIndex(unicodeCharMap[i], cmaps));
+                gen.write(getGlyphIndex(unicodeCharMap[i], cmap));
             }
             gen.writeln(" def");
         }
