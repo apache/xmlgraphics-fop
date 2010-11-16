@@ -559,11 +559,13 @@ public class LineLayoutManager extends InlineStackingLayoutManager
 
     /** {@inheritDoc} */
     public List getNextKnuthElements(LayoutContext context, int alignment) {
-        FontInfo fi = fobj.getFOEventHandler().getFontInfo();
-        FontTriplet[] fontkeys = fobj.getCommonFont().getFontState(fi);
-        Font fs = fi.getFontInstance(fontkeys[0], fobj.getCommonFont().fontSize.getValue(this));
-        alignmentContext = new AlignmentContext(fs, lineHeight.getValue(this),
-                context.getWritingMode());
+        if (alignmentContext == null) {
+            FontInfo fi = fobj.getFOEventHandler().getFontInfo();
+            FontTriplet[] fontkeys = fobj.getCommonFont().getFontState(fi);
+            Font fs = fi.getFontInstance(fontkeys[0], fobj.getCommonFont().fontSize.getValue(this));
+            alignmentContext = new AlignmentContext(fs, lineHeight.getValue(this),
+                    context.getWritingMode());
+        }
         context.setAlignmentContext(alignmentContext);
         ipd = context.getRefIPD();
 
