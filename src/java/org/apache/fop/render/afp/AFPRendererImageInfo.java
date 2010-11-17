@@ -124,7 +124,7 @@ public class AFPRendererImageInfo {
      *
      * @return the uri
      */
-    public String getURI() {
+    public String getUri() {
         return this.uri;
     }
 

@@ -71,7 +71,7 @@ import org.apache.fop.util.XMLUtil;
 public class IFParser implements IFConstants {
 
     /** Logger instance */
-    protected static Log log = LogFactory.getLog(IFParser.class);
+    protected static final Log log = LogFactory.getLog(IFParser.class);
 
     private static SAXTransformerFactory tFactory
         = (SAXTransformerFactory)SAXTransformerFactory.newInstance();

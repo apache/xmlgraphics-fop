@@ -62,7 +62,7 @@ public class LengthBase implements PercentBase {
     /**
      * logging instance
      */
-    protected static Log log = LogFactory.getLog(LengthBase.class);
+    protected static final Log log = LogFactory.getLog(LengthBase.class);
 
     /**
      * The FO for which this property is to be calculated.

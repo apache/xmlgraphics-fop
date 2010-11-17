@@ -33,6 +33,9 @@ import org.apache.fop.area.Area;
  * Link resolving for resolving internal links.
  */
 public class LinkResolver implements Resolvable, Serializable {
+
+    private static final long serialVersionUID = -7102134165192960718L;
+
     private boolean resolved = false;
     private String idRef;
     private Area area;

@@ -32,6 +32,9 @@ import java.util.List;
  */
 public class UnresolvedPageNumber extends TextArea implements Resolvable {
 
+
+    private static final long serialVersionUID = -1758090835371647980L;
+
     private boolean resolved = false;
     private String pageIDRef;
     private String text;

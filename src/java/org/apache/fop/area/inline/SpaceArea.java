@@ -24,6 +24,8 @@ package org.apache.fop.area.inline;
  */
 public class SpaceArea extends InlineArea {
 
+    private static final long serialVersionUID = 2218803009825411416L;
+
     /**
      * The space for this space area
      */

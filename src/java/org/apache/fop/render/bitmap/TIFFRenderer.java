@@ -31,6 +31,7 @@ import java.awt.image.SinglePixelPackedSampleModel;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import org.apache.commons.logging.Log;
 
@@ -133,7 +134,11 @@ public class TIFFRenderer extends Java2DRenderer implements TIFFConstants {
                 multiWriter.close();
             }
         } else {
-            writer.writeImage((RenderedImage) pageImagesItr.next(), outputStream, writerParams);
+            RenderedImage renderedImage = null;
+            if (pageImagesItr.hasNext()) {
+                renderedImage = (RenderedImage) pageImagesItr.next();
+            }
+            writer.writeImage(renderedImage, outputStream, writerParams);
             if (pageImagesItr.hasNext()) {
                 BitmapRendererEventProducer eventProducer
                     = BitmapRendererEventProducer.Provider.get(
@@ -186,8 +191,7 @@ public class TIFFRenderer extends Java2DRenderer implements TIFFConstants {
             try {
                 pageImage = getPageImage(current++);
             } catch (FOPException e) {
-                log.error(e);
-                return null;
+                throw new NoSuchElementException(e.getMessage());
             }
 
             if (COMPRESSION_CCITT_T4.equalsIgnoreCase(writerParams.getCompressionMethod())

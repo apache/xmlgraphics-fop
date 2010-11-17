@@ -54,7 +54,7 @@ public class RtfTextrun extends RtfContainer {
     /**
      * logging instance
      */
-    protected static Log log = LogFactory.getLog(RtfTextrun.class);
+    protected static final Log log = LogFactory.getLog(RtfTextrun.class);
 
     /** Manager for handling space-* property. */
     private RtfSpaceManager rtfSpaceManager = new RtfSpaceManager();
@@ -271,7 +271,6 @@ public class RtfTextrun extends RtfContainer {
         //add RtfSpaceSplitter to inherit accumulated space
         rtfSpaceManager.pushRtfSpaceSplitter(attrs);
         rtfSpaceManager.setCandidate(attrs);
-        RtfString r = new RtfString(this, writer, s);
         rtfSpaceManager.popRtfSpaceSplitter();
     }
 
@@ -301,7 +300,7 @@ public class RtfTextrun extends RtfContainer {
       ListIterator lit = children.listIterator(children.size());
       while (lit.hasPrevious()
               && (lit.previous() instanceof RtfCloseGroupMark)) {
-          tmp.push(new Integer(((RtfCloseGroupMark)lit.next()).getBreakType()));
+          tmp.push(Integer.valueOf(((RtfCloseGroupMark)lit.next()).getBreakType()));
           lit.remove();
           deletedCloseGroupCount++;
       }

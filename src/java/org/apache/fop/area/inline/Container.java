@@ -32,6 +32,9 @@ import java.util.ArrayList;
  * This allows an inline area to have blocks as children.
  */
 public class Container extends Area {
+
+    private static final long serialVersionUID = 5256423939348189260L;
+
     /**
      * The list of block areas stacked inside this container
      */

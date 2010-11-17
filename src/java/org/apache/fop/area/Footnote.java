@@ -27,6 +27,9 @@ package org.apache.fop.area;
  * See fo:region-body definition in the XSL Rec for more information.
  */
 public class Footnote extends BlockParent {
+
+    private static final long serialVersionUID = -7907428219886367161L;
+
     private Block separator = null;
 
     // footnote has an optional separator

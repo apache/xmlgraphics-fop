@@ -30,6 +30,9 @@ import org.apache.fop.fo.pagination.RegionBody;
  * See fo:region-body definition in the XSL Rec for more information.
  */
 public class BodyRegion extends RegionReference {
+
+    private static final long serialVersionUID = -1848872997724078080L;
+
     private BeforeFloat beforeFloat;  // optional
     private MainReference mainReference; // mandatory
     private Footnote footnote; // optional
