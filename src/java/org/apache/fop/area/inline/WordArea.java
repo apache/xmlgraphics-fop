@@ -24,6 +24,8 @@ package org.apache.fop.area.inline;
  */
 public class WordArea extends InlineArea {
 
+    private static final long serialVersionUID = 6444644662158970942L;
+
     /** The text for this word area */
     protected String word;
 

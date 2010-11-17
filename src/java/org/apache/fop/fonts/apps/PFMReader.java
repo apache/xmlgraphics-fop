@@ -173,7 +173,7 @@ public class PFMReader extends AbstractFontReader {
     public void preview(PFMFile pfm) {
         if (log != null && log.isInfoEnabled()) {
             log.info("Font: " + pfm.getWindowsName());
-            log.info("Name: " + pfm.getPostscriptName());
+            log.info("Name: " + pfm.getPostScriptName());
             log.info("CharSet: " + pfm.getCharSetName());
             log.info("CapHeight: " + pfm.getCapHeight());
             log.info("XHeight: " + pfm.getXHeight());
@@ -217,7 +217,7 @@ public class PFMReader extends AbstractFontReader {
 
         Element el = doc.createElement("font-name");
         root.appendChild(el);
-        el.appendChild(doc.createTextNode(pfm.getPostscriptName()));
+        el.appendChild(doc.createTextNode(pfm.getPostScriptName()));
 
         // Currently unused.
         // String s = pfm.getPostscriptName();

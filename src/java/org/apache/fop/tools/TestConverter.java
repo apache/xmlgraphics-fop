@@ -56,7 +56,7 @@ public class TestConverter {
     private String outputFormat = MimeConstants.MIME_FOP_AREA_TREE;
     private File destdir;
     private File compare = null;
-    private String baseDir = "./";
+    private String basedir = "./";
     private Map differ = new java.util.HashMap();
 
     /**
@@ -95,7 +95,7 @@ public class TestConverter {
             } else if (args[count].equals("-d")) {
                 tc.setDebug(true);
             } else if (args[count].equals("-b")) {
-                tc.setBaseDir(args[++count]);
+                tc.setBasedir(args[++count]);
             } else if (args[count].equals("-results")) {
                 results = args[++count];
             } else {
@@ -138,8 +138,8 @@ public class TestConverter {
      * Sets the base directory.
      * @param str base directory
      */
-    public void setBaseDir(String str) {
-        baseDir = str;
+    public void setBasedir(String str) {
+        basedir = str;
     }
 
     /**
@@ -167,11 +167,11 @@ public class TestConverter {
         logger.debug("running tests in file:" + fname);
         try {
             if (compDir != null) {
-                compare = new File(baseDir + "/" + compDir);
+                compare = new File(basedir + "/" + compDir);
             }
-            destdir = new File(baseDir + "/" + dest);
+            destdir = new File(basedir + "/" + dest);
             destdir.mkdirs();
-            File f = new File(baseDir + "/" + fname);
+            File f = new File(basedir + "/" + fname);
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder db = factory.newDocumentBuilder();
             Document doc = db.parse(f);
@@ -271,7 +271,7 @@ public class TestConverter {
             res = resNode.getNodeValue();
         }
         try {
-            File xmlFile = new File(baseDir + "/" + xml);
+            File xmlFile = new File(basedir + "/" + xml);
             String baseURL = null;
             try {
                 baseURL = xmlFile.getParentFile().toURI().toURL().toExternalForm();
@@ -284,7 +284,7 @@ public class TestConverter {
                 inputHandler = new InputHandler(xmlFile);
             } else {
                 inputHandler = new InputHandler(xmlFile,
-                                                new File(baseDir + "/"
+                                                new File(basedir + "/"
                                                          + xsl), null);
             }
 

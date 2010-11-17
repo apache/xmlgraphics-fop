@@ -184,6 +184,9 @@ public class LineLayoutManager extends InlineStackingLayoutManager
 
     // this class represents a paragraph
     private class Paragraph extends InlineKnuthSequence {
+
+        private static final long serialVersionUID = 5862072380375189105L;
+
         /** Number of elements to ignore at the beginning of the list. */
         private int ignoreAtStart = 0;
         /** Number of elements to ignore at the end of the list. */

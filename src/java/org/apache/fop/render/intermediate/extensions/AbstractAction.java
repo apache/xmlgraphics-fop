@@ -33,7 +33,7 @@ public abstract class AbstractAction implements XMLizable {
      * Sets an ID to make the action referencable.
      * @param id the ID
      */
-    public void setID(String id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -41,7 +41,7 @@ public abstract class AbstractAction implements XMLizable {
      * Returns an optional ID for this action.
      * @return the ID or null
      */
-    public String getID() {
+    public String getId() {
         return this.id;
     }
 
@@ -65,7 +65,7 @@ public abstract class AbstractAction implements XMLizable {
      * Indicates whether the action has an ID and is therefore referencable.
      * @return true if the action has an ID
      */
-    public boolean hasID() {
+    public boolean hasId() {
         return this.id != null;
     }
 
@@ -90,7 +90,7 @@ public abstract class AbstractAction implements XMLizable {
      * Returns a string that is used to prefix a generated ID to make it unique.
      * @return the prefix string
      */
-    public String getIDPrefix() {
+    public String getIdPrefix() {
         return null;
     }
 

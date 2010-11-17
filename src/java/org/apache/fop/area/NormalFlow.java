@@ -25,6 +25,9 @@ package org.apache.fop.area;
  * See fo:region-body definition in the XSL Rec for more information.
  */
 public class NormalFlow extends BlockParent {
+
+    private static final long serialVersionUID = -3753538631016929004L;
+
     /**
      * Constructor.
      * @param ipd of Normal flow object

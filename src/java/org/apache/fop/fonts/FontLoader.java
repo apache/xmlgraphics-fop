@@ -40,7 +40,7 @@ import org.apache.fop.fonts.type1.Type1FontLoader;
 public abstract class FontLoader {
 
     /** logging instance */
-    protected static Log log = LogFactory.getLog(FontLoader.class);
+    protected static final Log log = LogFactory.getLog(FontLoader.class);
 
     /** URI representing the font file */
     protected String fontFileURI = null;

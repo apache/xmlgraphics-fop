@@ -36,7 +36,7 @@ import org.apache.fop.fo.Constants;
 public class Property {
 
     /** Logger for all property classes */
-    protected static Log log = LogFactory.getLog(PropertyMaker.class);
+    protected static final Log log = LogFactory.getLog(PropertyMaker.class);
 
     /**
      * The original specified value for properties which inherit
@@ -197,6 +197,6 @@ public class Property {
         if (obj != this) {
             return obj.toString();
         }
-        return null;
+        return "";
     }
 }

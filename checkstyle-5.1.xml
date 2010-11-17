@@ -96,7 +96,7 @@
       <property name="severity" value="warning"/>
     </module>
     <module name="ConstantNameCheck">
-      <property name="format" value="^[A-Z](_?[A-Z0-9]+)*$"/>
+      <property name="format" value="^([A-Z](_?[A-Z0-9]+)*)|(log)$"/>
       <property name="severity" value="warning"/>
     </module>
     <module name="LocalFinalVariableNameCheck">

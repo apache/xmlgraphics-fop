@@ -39,6 +39,8 @@ import java.io.Serializable;
  */
 public class Hyphen implements Serializable {
 
+    private static final long serialVersionUID = 8989909741110279085L;
+
     /** pre break string */
     public String preBreak;                                     // CSOK: VisibilityModifier
 

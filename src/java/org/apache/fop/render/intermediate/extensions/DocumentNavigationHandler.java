@@ -41,7 +41,7 @@ public class DocumentNavigationHandler extends DefaultHandler
         implements DocumentNavigationExtensionConstants {
 
     /** Logger instance */
-    protected static Log log = LogFactory.getLog(DocumentNavigationHandler.class);
+    protected static final Log log = LogFactory.getLog(DocumentNavigationHandler.class);
 
     private StringBuffer content = new StringBuffer();
     private Stack objectStack = new Stack();
@@ -132,7 +132,7 @@ public class DocumentNavigationHandler extends DefaultHandler
                 boolean newWindow = "new".equals(showDestination);
                 URIAction action = new URIAction(gotoURI, newWindow);
                 if (id != null) {
-                    action.setID(id);
+                    action.setId(id);
                 }
                 if (structurePointer != null) {
                     action.setStructurePointer(structurePointer);

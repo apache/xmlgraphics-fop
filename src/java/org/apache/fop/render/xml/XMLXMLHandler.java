@@ -48,7 +48,7 @@ public class XMLXMLHandler implements XMLHandler {
     }
 
     /** {@inheritDoc} */
-    public String getNamespace() {
+    public String getNameSpace() {
         return null; //Handle all XML content
     }
 

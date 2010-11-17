@@ -38,6 +38,9 @@ import org.apache.fop.traits.BorderProps;
  * Base object for all areas.
  */
 public class Area extends AreaTreeObject implements Serializable {
+
+    private static final long serialVersionUID = 6342888466142626492L;
+
     // stacking directions
     /**
      * Stacking left to right
@@ -134,7 +137,7 @@ public class Area extends AreaTreeObject implements Serializable {
     /**
      * logging instance
      */
-    protected static Log log = LogFactory.getLog(Area.class);
+    protected static final Log log = LogFactory.getLog(Area.class);
 
 
     /**

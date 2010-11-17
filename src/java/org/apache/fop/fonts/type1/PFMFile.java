@@ -38,7 +38,7 @@ public class PFMFile {
 
     // Header stuff
     private String windowsName;
-    private String postscriptName;
+    private String postScriptName;
     private short dfItalic;
     private int dfWeight;
     private short dfCharSet;
@@ -164,7 +164,7 @@ public class PFMFile {
 
         inStream.reset();
         inStream.skip(driverInfoOffset);
-        postscriptName = inStream.readString();
+        postScriptName = inStream.readString();
 
         if (extMetricsOffset != 0) {
             inStream.reset();
@@ -279,8 +279,8 @@ public class PFMFile {
      *
      * @return The Postscript name.
      */
-    public String getPostscriptName() {
-        return postscriptName;
+    public String getPostScriptName() {
+        return postScriptName;
     }
 
     /**
@@ -304,7 +304,7 @@ public class PFMFile {
         case 0:
             return "WinAnsi"; // AKA ISOAdobe
         case 2:
-            if ("Symbol".equals(getPostscriptName())) {
+            if ("Symbol".equals(getPostScriptName())) {
                 return "Symbol";
             }
             break;

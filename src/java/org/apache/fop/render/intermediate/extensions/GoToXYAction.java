@@ -52,7 +52,7 @@ public class GoToXYAction extends AbstractAction implements DocumentNavigationEx
      *                  or null, if the position isn't known, yet
      */
     public GoToXYAction(String id, int pageIndex, Point targetLocation) {
-        setID(id);
+        setId(id);
         if (pageIndex < 0 && targetLocation != null) {
             throw new IllegalArgumentException(
                     "Page index may not be null if target location is known!");
@@ -144,7 +144,7 @@ public class GoToXYAction extends AbstractAction implements DocumentNavigationEx
         AttributesImpl atts = new AttributesImpl();
         if (this.isCompleteExceptTargetLocation()) {
             final Point reportedTargetLocation = this.getTargetLocation();
-            atts.addAttribute(null, "id", "id", XMLUtil.CDATA, getID());
+            atts.addAttribute(null, "id", "id", XMLUtil.CDATA, getId());
             atts.addAttribute(null, "page-index", "page-index",
                     XMLUtil.CDATA, Integer.toString(pageIndex));
             atts.addAttribute(null, "x", "x", XMLUtil.CDATA, 
@@ -152,7 +152,7 @@ public class GoToXYAction extends AbstractAction implements DocumentNavigationEx
             atts.addAttribute(null, "y", "y", XMLUtil.CDATA, 
                     Integer.toString(reportedTargetLocation.y));
         } else {
-            atts.addAttribute(null, "idref", "idref", XMLUtil.CDATA, getID());
+            atts.addAttribute(null, "idref", "idref", XMLUtil.CDATA, getId());
         }
         handler.startElement(GOTO_XY.getNamespaceURI(),
                 GOTO_XY.getLocalName(), GOTO_XY.getQName(), atts);
@@ -162,7 +162,7 @@ public class GoToXYAction extends AbstractAction implements DocumentNavigationEx
 
     /** {@inheritDoc} */
     public String toString() {
-        return "GoToXY: ID=" + getID()
+        return "GoToXY: ID=" + getId()
             + ", page=" + getPageIndex()
             + ", loc=" + getTargetLocation() + ", "
             + (isComplete() ? "complete" : "INCOMPLETE");
