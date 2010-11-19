@@ -619,7 +619,7 @@ public class FOText extends FONode implements CharSequence {
     }
 
     /** @return the baseline-shift property */
-    public Length getBaselineShift() {
+    public Length getBaseLineShift() {
         return baselineShift;
     }
 

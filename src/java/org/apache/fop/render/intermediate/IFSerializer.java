@@ -668,8 +668,8 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
             throw new NullPointerException("action must not be null");
         }
         if (!action.isComplete()) {
-            assert action.hasId();
-            incompleteActions.put(action.getId(), action);
+            assert action.hasID();
+            incompleteActions.put(action.getID(), action);
         }
     }
 
@@ -744,8 +744,8 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     /** {@inheritDoc} */
     public void addResolvedAction(AbstractAction action) throws IFException {
         assert action.isComplete();
-        assert action.hasId();
-        AbstractAction noted = (AbstractAction)incompleteActions.remove(action.getId());
+        assert action.hasID();
+        AbstractAction noted = (AbstractAction)incompleteActions.remove(action.getID());
         if (noted != null) {
             completeActions.add(action);
         } else {

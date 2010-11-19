@@ -149,7 +149,7 @@ final class TextAttributesConverter {
         attrFont(fobj.getCommonFont(), attrib);
         attrFontColor(fobj.getColor(), attrib);
         attrTextDecoration(fobj.getTextDecoration(), attrib);
-        attrBaseLineShift(fobj.getBaselineShift(), attrib);
+        attrBaseLineShift(fobj.getBaseLineShift(), attrib);
         return attrib;
     }
 

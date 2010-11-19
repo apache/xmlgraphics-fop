@@ -82,15 +82,15 @@ public class URIAction extends AbstractAction implements DocumentNavigationExten
     }
 
     /** {@inheritDoc} */
-    public String getIdPrefix() {
+    public String getIDPrefix() {
         return "fop-" + GOTO_URI.getLocalName();
     }
 
     /** {@inheritDoc} */
     public void toSAX(ContentHandler handler) throws SAXException {
         AttributesImpl atts = new AttributesImpl();
-        if (hasId()) {
-            atts.addAttribute(null, "id", "id", XMLUtil.CDATA, getId());
+        if (hasID()) {
+            atts.addAttribute(null, "id", "id", XMLUtil.CDATA, getID());
         }
         atts.addAttribute(null, "uri", "uri", XMLUtil.CDATA, getURI());
         if (isNewWindow()) {

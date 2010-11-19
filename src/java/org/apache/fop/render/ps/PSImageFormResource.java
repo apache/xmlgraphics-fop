@@ -53,7 +53,7 @@ public class PSImageFormResource extends PSResource {
      * Returns the image URI.
      * @return the image URI
      */
-    public String getImageUri() {
+    public String getImageURI() {
         return this.uri;
     }
 

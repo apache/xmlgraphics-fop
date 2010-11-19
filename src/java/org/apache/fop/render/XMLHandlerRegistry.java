@@ -85,7 +85,7 @@ public class XMLHandlerRegistry {
      * @param handler the XMLHandler instance
      */
     public void addXMLHandler(XMLHandler handler) {
-        String ns = handler.getNameSpace();
+        String ns = handler.getNamespace();
         if (ns == null) {
             setDefaultXMLHandler(handler);
         } else {

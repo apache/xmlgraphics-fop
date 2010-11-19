@@ -85,7 +85,7 @@ public class Fop extends Task {
      * Sets the filename for the userconfig.xml.
      * @param userConfig Configuration to use
      */
-    public void setUserConfig(File userConfig) {
+    public void setUserconfig(File userConfig) {
         this.userConfig = userConfig;
     }
 
@@ -93,7 +93,7 @@ public class Fop extends Task {
      * Returns the file for the userconfig.xml.
      * @return the userconfig.xml file
      */
-    public File getUserConfig() {
+    public File getUserconfig() {
         return this.userConfig;
     }
 
@@ -101,7 +101,7 @@ public class Fop extends Task {
      * Sets the input XSL-FO file.
      * @param foFile input XSL-FO file
      */
-    public void setFoFile(File foFile) {
+    public void setFofile(File foFile) {
         this.foFile = foFile;
     }
 
@@ -109,7 +109,7 @@ public class Fop extends Task {
      * Gets the input XSL-FO file.
      * @return input XSL-FO file
      */
-    public File getFoFile() {
+    public File getFofile() {
         return foFile;
     }
 
@@ -267,7 +267,7 @@ public class Fop extends Task {
      * default is false.
      * @param throwExceptions true if exceptions should be thrown
      */
-    public void setThrowExceptions(boolean throwExceptions) {
+    public void setThrowexceptions(boolean throwExceptions) {
         this.throwExceptions = throwExceptions;
     }
 
@@ -275,7 +275,7 @@ public class Fop extends Task {
      * Gets the throw exceptions attribute
      * @return the throw exceptions attribute
      */
-    public boolean getThrowExceptions() {
+    public boolean getThrowexceptions() {
         return this.throwExceptions;
     }
 
@@ -408,8 +408,8 @@ class FOPTaskStarter {
 
     FOPTaskStarter(Fop task) throws SAXException, IOException {
         this.task = task;
-        if (task.getUserConfig() != null) {
-            fopFactory.setUserConfig(task.getUserConfig());
+        if (task.getUserconfig() != null) {
+            fopFactory.setUserConfig(task.getUserconfig());
         }
     }
 
@@ -497,8 +497,8 @@ class FOPTaskStarter {
             }
         } else {
             try {
-                if (task.getFoFile() != null) {
-                    this.baseURL =  task.getFoFile().getParentFile().toURI().toURL().
+                if (task.getFofile() != null) {
+                    this.baseURL =  task.getFofile().getParentFile().toURI().toURL().
                                       toExternalForm();
                 }
             } catch (MalformedURLException mfue) {
@@ -517,8 +517,8 @@ class FOPTaskStarter {
         int skippedcount = 0;
 
         // deal with single source file
-        if (task.getFoFile() != null) {
-            if (task.getFoFile().exists()) {
+        if (task.getFofile() != null) {
+            if (task.getFofile().exists()) {
                 File outf = task.getOutfile();
                 if (outf == null) {
                     throw new BuildException("outfile is required when fofile is used");
@@ -530,11 +530,11 @@ class FOPTaskStarter {
                 // OR output file doesn't exist OR
                 // output file is older than input file
                 if (task.getForce() || !outf.exists()
-                    || (task.getFoFile().lastModified() > outf.lastModified() )) {
-                    render(task.getFoFile(), outf, outputFormat);
+                    || (task.getFofile().lastModified() > outf.lastModified() )) {
+                    render(task.getFofile(), outf, outputFormat);
                     actioncount++;
                 } else if (outf.exists()
-                        && (task.getFoFile().lastModified() <= outf.lastModified() )) {
+                        && (task.getFofile().lastModified() <= outf.lastModified() )) {
                     skippedcount++;
                 }
             }
@@ -653,7 +653,7 @@ class FOPTaskStarter {
             inputHandler.renderTo(userAgent, outputFormat, out);
             success = true;
         } catch (Exception ex) {
-            if (task.getThrowExceptions()) {
+            if (task.getThrowexceptions()) {
                 throw new BuildException(ex);
             }
             throw ex;

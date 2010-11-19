@@ -132,7 +132,7 @@ public class DocumentNavigationHandler extends DefaultHandler
                 boolean newWindow = "new".equals(showDestination);
                 URIAction action = new URIAction(gotoURI, newWindow);
                 if (id != null) {
-                    action.setId(id);
+                    action.setID(id);
                 }
                 if (structurePointer != null) {
                     action.setStructurePointer(structurePointer);
