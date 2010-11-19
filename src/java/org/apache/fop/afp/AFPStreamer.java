@@ -158,7 +158,7 @@ public class AFPStreamer implements Streamable {
      */
         // write out any external resource groups
     public void close() throws IOException {
-        Iterator it = pathResourceGroupMap.entrySet().iterator();
+        Iterator it = pathResourceGroupMap.values().iterator();
         while (it.hasNext()) {
             StreamedResourceGroup resourceGroup = (StreamedResourceGroup)it.next();
             resourceGroup.close();

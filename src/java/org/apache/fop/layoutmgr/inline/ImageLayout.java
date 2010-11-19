@@ -37,7 +37,7 @@ import org.apache.fop.fo.properties.LengthRangeProperty;
 public class ImageLayout implements Constants {
 
     /** logging instance */
-    protected static Log log = LogFactory.getLog(ImageLayout.class);
+    protected static final Log log = LogFactory.getLog(ImageLayout.class);
 
     //Input
     private GraphicsProperties props;

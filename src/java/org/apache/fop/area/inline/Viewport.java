@@ -32,6 +32,9 @@ import java.util.HashMap;
  * holds the area and positions it.
  */
 public class Viewport extends InlineArea {
+
+    private static final long serialVersionUID = 813338534627918689L;
+
     // contents could be container, foreign object or image
     private Area content;
     // clipping for the viewport

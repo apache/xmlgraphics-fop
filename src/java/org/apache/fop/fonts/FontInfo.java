@@ -41,7 +41,7 @@ import org.apache.commons.logging.LogFactory;
 public class FontInfo {
 
     /** logging instance */
-    protected static Log log = LogFactory.getLog(FontInfo.class);
+    protected static final Log log = LogFactory.getLog(FontInfo.class);
 
     /** Map containing fonts that have been used */
     private Map/*<String,FontMetrics>*/ usedFonts = null; //(String = font key)

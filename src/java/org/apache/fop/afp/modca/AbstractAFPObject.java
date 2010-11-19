@@ -45,7 +45,7 @@ public abstract class AbstractAFPObject implements Streamable {
     protected static final byte SF_CLASS = (byte)0xD3;
 
     /** the structure field header */
-    protected static final byte[] SF_HEADER = new byte[] {
+    static final byte[] SF_HEADER = new byte[] {
         0x5A, // Structured field identifier
         0x00, // Length byte 1
         0x10, // Length byte 2

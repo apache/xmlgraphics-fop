@@ -34,6 +34,9 @@ import java.util.Iterator;
  * this as a normal inline parent.
  */
 public class FilledArea extends InlineParent {
+
+    private static final long serialVersionUID = 8586584705587017474L;
+
     private int unitWidth;
 
     /**

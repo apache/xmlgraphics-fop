@@ -30,7 +30,7 @@ import org.apache.commons.logging.LogFactory;
 public class FontWeightRange {
 
     /** logging instance */
-    protected static Log log = LogFactory.getLog("org.apache.fop.render.fonts");
+    protected static final Log log = LogFactory.getLog("org.apache.fop.render.fonts");
 
     /**
      * Returns an <code>FontWeightRange</code> object holding the

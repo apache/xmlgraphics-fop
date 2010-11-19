@@ -32,6 +32,9 @@ package org.apache.fop.area;
  * It holds child block areas such as other blocks or lines.
  */
 public class Block extends BlockParent {
+
+    private static final long serialVersionUID = 6843727817993665788L;
+
     /**
      * Normally stacked with other blocks.
      */

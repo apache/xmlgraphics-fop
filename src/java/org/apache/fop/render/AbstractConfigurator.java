@@ -30,7 +30,7 @@ import org.apache.fop.apps.FOUserAgent;
  */
 public abstract class AbstractConfigurator {
     /** logger instance */
-    protected static Log log = LogFactory.getLog(AbstractConfigurator.class);
+    protected static final Log log = LogFactory.getLog(AbstractConfigurator.class);
 
     private static final String MIME = "mime";
     

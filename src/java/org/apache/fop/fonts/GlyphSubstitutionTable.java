@@ -330,7 +330,7 @@ public class GlyphSubstitutionTable extends GlyphTable {
         public int getGlyphForCoverageIndex ( int ci, int gi ) throws IllegalArgumentException {
             if ( glyphs == null ) {
                 return -1;
-            } else if ( ci >=glyphs.length ) {
+            } else if ( ci >= glyphs.length ) {
                 throw new IllegalArgumentException ( "coverage index " + ci + " out of range, maximum coverage index is " + glyphs.length );
             } else {
                 return glyphs [ ci ];

@@ -26,6 +26,8 @@ import org.apache.fop.util.CharUtilities;
  */
 public class TextArea extends AbstractTextArea {
 
+    private static final long serialVersionUID = 7315900267242540809L;
+
     /**
      * Create a text inline area
      */

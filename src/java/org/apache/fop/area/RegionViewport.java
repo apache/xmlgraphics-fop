@@ -30,6 +30,9 @@ import java.util.HashMap;
  * in the fo:region-body description in the XSL Recommendation.
  */
 public class RegionViewport extends Area implements Cloneable {
+
+    private static final long serialVersionUID = 505781815165102572L;
+
     // this rectangle is relative to the page
     private RegionReference regionReference;
     private Rectangle2D viewArea;

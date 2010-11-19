@@ -41,7 +41,7 @@ public class DocumentNavigationHandler extends DefaultHandler
         implements DocumentNavigationExtensionConstants {
 
     /** Logger instance */
-    protected static Log log = LogFactory.getLog(DocumentNavigationHandler.class);
+    protected static final Log log = LogFactory.getLog(DocumentNavigationHandler.class);
 
     private StringBuffer content = new StringBuffer();
     private Stack objectStack = new Stack();

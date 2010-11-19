@@ -83,36 +83,20 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                                implements BlockLevelLayoutManager {
 
     /**
+     * this constant is used to create elements when text-align is center:
+     * every TextLM descendant of LineLM must use the same value,
+     * otherwise the line breaking algorithm does not find the right
+     * break point
+     */
+    public static final int DEFAULT_SPACE_WIDTH = 3336;
+
+    /**
      * logging instance
      */
     private static Log log = LogFactory.getLog(LineLayoutManager.class);
 
     private Block fobj;
     private boolean isFirstInBlock;
-
-    /** {@inheritDoc} */
-    public void initialize() {
-        bidiLevel = fobj.getBidiLevel();
-        textAlignment = fobj.getTextAlign();
-        textAlignmentLast = fobj.getTextAlignLast();
-        textIndent = fobj.getTextIndent();
-        lastLineEndIndent = fobj.getLastLineEndIndent();
-        hyphenationProperties = fobj.getCommonHyphenation();
-        hyphenationLadderCount = fobj.getHyphenationLadderCount();
-        wrapOption = fobj.getWrapOption();
-        whiteSpaceTreament = fobj.getWhitespaceTreatment();
-        //
-        effectiveAlignment = getEffectiveAlignment(textAlignment, textAlignmentLast);
-        isFirstInBlock = (this == getParent().getChildLMs().get(0));
-    }
-
-    private int getEffectiveAlignment(int alignment, int alignmentLast) {
-        if (textAlignment != EN_JUSTIFY && textAlignmentLast == EN_JUSTIFY) {
-            return 0;
-        } else {
-            return textAlignment;
-        }
-    }
 
     /**
      * Private class to store information about inline breaks.
@@ -186,15 +170,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     private boolean hyphenationPerformed;
 
     /**
-     * this constant is used to create elements when text-align is center:
-     * every TextLM descendant of LineLM must use the same value,
-     * otherwise the line breaking algorithm does not find the right
-     * break point
-     */
-    public static final int DEFAULT_SPACE_WIDTH = 3336;
-
-
-    /**
      * This class is used to remember
      * which was the first element in the paragraph
      * returned by each LM.
@@ -211,6 +186,9 @@ public class LineLayoutManager extends InlineStackingLayoutManager
 
     // this class represents a paragraph
     private class Paragraph extends InlineKnuthSequence {
+
+        private static final long serialVersionUID = 5862072380375189105L;
+
         /** Number of elements to ignore at the beginning of the list. */
         private int ignoreAtStart = 0;
         /** Number of elements to ignore at the end of the list. */
@@ -561,12 +539,38 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     }
 
     /** {@inheritDoc} */
+    public void initialize() {
+        bidiLevel = fobj.getBidiLevel();
+        textAlignment = fobj.getTextAlign();
+        textAlignmentLast = fobj.getTextAlignLast();
+        textIndent = fobj.getTextIndent();
+        lastLineEndIndent = fobj.getLastLineEndIndent();
+        hyphenationProperties = fobj.getCommonHyphenation();
+        hyphenationLadderCount = fobj.getHyphenationLadderCount();
+        wrapOption = fobj.getWrapOption();
+        whiteSpaceTreament = fobj.getWhitespaceTreatment();
+        //
+        effectiveAlignment = getEffectiveAlignment(textAlignment, textAlignmentLast);
+        isFirstInBlock = (this == getParent().getChildLMs().get(0));
+    }
+
+    private int getEffectiveAlignment(int alignment, int alignmentLast) {
+        if (textAlignment != EN_JUSTIFY && textAlignmentLast == EN_JUSTIFY) {
+            return 0;
+        } else {
+            return textAlignment;
+        }
+    }
+
+    /** {@inheritDoc} */
     public List getNextKnuthElements(LayoutContext context, int alignment) {
-        FontInfo fi = fobj.getFOEventHandler().getFontInfo();
-        FontTriplet[] fontkeys = fobj.getCommonFont().getFontState(fi);
-        Font fs = fi.getFontInstance(fontkeys[0], fobj.getCommonFont().fontSize.getValue(this));
-        alignmentContext = new AlignmentContext(fs, lineHeight.getValue(this),
-                context.getWritingMode());
+        if (alignmentContext == null) {
+            FontInfo fi = fobj.getFOEventHandler().getFontInfo();
+            FontTriplet[] fontkeys = fobj.getCommonFont().getFontState(fi);
+            Font fs = fi.getFontInstance(fontkeys[0], fobj.getCommonFont().fontSize.getValue(this));
+            alignmentContext = new AlignmentContext(fs, lineHeight.getValue(this),
+                    context.getWritingMode());
+        }
         context.setAlignmentContext(alignmentContext);
         ipd = context.getRefIPD();
 

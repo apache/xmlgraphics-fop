@@ -25,6 +25,9 @@ package org.apache.fop.area;
  * The block-container creates this area.
  */
 public class BlockViewport extends Block {
+
+    private static final long serialVersionUID = -7840580922580735157L;
+
     // clipping for this viewport
     private boolean clip = false;
     // transform if rotated or absolute

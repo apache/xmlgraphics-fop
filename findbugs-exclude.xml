@@ -1,5 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <FindBugsFilter>
+<!-- .working -->
   <!-- use of null is preferred over zero length array -->
   <Match>
     <Class name="org.apache.fop.area.inline.WordArea"/>
@@ -317,4 +318,5025 @@
     <Method name="getBidiLevels"/>
     <Bug pattern="EI_EXPOSE_REP"/>
   </Match>
+<!-- ======= -->
+   <!-- The names of public methods will not be modified -->
+   <Match>
+      <Class name="org.apache.fop.afp.AFPDataObjectInfo"/>
+      <Method name="getUri"/>
+      <Bug pattern="NM_CONFUSING"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.afp.AFPRendererImageInfo"/>
+      <Method name="getURI"/>
+      <Bug pattern="NM_CONFUSING"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.AFPPaintingState"/>
+      <Method name="getImageUri"/>
+      <Bug pattern="NM_CONFUSING"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.PSImageFormResource"/>
+      <Method name="getImageURI"/>
+      <Bug pattern="NM_CONFUSING"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.apps.FOURIResolver"/>
+      <Method name="setThrowExceptions"/>
+      <Bug pattern="NM_CONFUSING"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.tools.anttasks.Fop"/>
+      <Method name="setThrowexceptions"/>
+      <Bug pattern="NM_CONFUSING"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.apps.FopFactory"/>
+      <Method name="setUserConfig"/>
+      <Bug pattern="NM_CONFUSING"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.tools.anttasks.Fop"/>
+      <Method name="setUserconfig"/>
+      <Bug pattern="NM_CONFUSING"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.apps.PageSequenceResults"/>
+      <Method name="getID"/>
+      <Bug pattern="NM_CONFUSING"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.FObj"/>
+      <Method name="getId"/>
+      <Bug pattern="NM_CONFUSING"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.area.inline.ForeignObject"/>
+      <Method name="getNameSpace"/>
+      <Bug pattern="NM_CONFUSING"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.AbstractGenericSVGHandler"/>
+      <Method name="getNamespace"/>
+      <Bug pattern="NM_CONFUSING"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.cli.CommandLineOptions"/>
+      <Method name="getFOFile"/>
+      <Bug pattern="NM_CONFUSING"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.tools.anttasks.Fop"/>
+      <Method name="getFofile"/>
+      <Bug pattern="NM_CONFUSING"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.cli.CommandLineOptions"/>
+      <Method name="getXMLFile"/>
+      <Bug pattern="NM_CONFUSING"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.tools.anttasks.Fop"/>
+      <Method name="getXmlFile"/>
+      <Bug pattern="NM_CONFUSING"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.FOText"/>
+      <Method name="getBaseLineShift"/>
+      <Bug pattern="NM_CONFUSING"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.flow.AbstractGraphics"/>
+      <Method name="getBaselineShift"/>
+      <Bug pattern="NM_CONFUSING"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.FObj"/>
+      <Method name="hasId"/>
+      <Bug pattern="NM_CONFUSING"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.intermediate.extensions.AbstractAction"/>
+      <Method name="hasID"/>
+      <Bug pattern="NM_CONFUSING"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.EmbedFontInfo"/>
+      <Method name="getPostScriptName"/>
+      <Bug pattern="NM_CONFUSING"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.type1.PFMFile"/>
+      <Method name="getPostscriptName"/>
+      <Bug pattern="NM_CONFUSING"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.image.loader.batik.ImageLoaderFactorySVG"/>
+      <Method name="getSupportedMIMETypes"/>
+      <Bug pattern="NM_CONFUSING"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.afp.AFPDocumentHandlerMaker"/>
+      <Method name="getSupportedMimeTypes"/>
+      <Bug pattern="NM_CONFUSING"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.tools.TestConverter"/>
+      <Method name="setBaseDir"/>
+      <Bug pattern="NM_CONFUSING"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.tools.anttasks.RunTest"/>
+      <Method name="setBasedir"/>
+      <Bug pattern="NM_CONFUSING"/>
+   </Match>
+   <!-- /The names of public methods will not be modified -->
+   <!-- Automatically generated list of exclusions -->
+   <Match>
+      <Class name="org.apache.fop.area.BodyRegion"/>
+      <Method name="clone"/>
+      <Bug pattern="CN_IDIOM_NO_SUPER_CALL"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.area.Page"/>
+      <Method name="clone"/>
+      <Bug pattern="CN_IDIOM_NO_SUPER_CALL"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.area.PageViewport"/>
+      <Method name="clone"/>
+      <Bug pattern="CN_IDIOM_NO_SUPER_CALL"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.area.RegionReference"/>
+      <Method name="clone"/>
+      <Bug pattern="CN_IDIOM_NO_SUPER_CALL"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.area.BodyRegion"/>
+      <!--Neither method nor field-->
+      <Bug pattern="CN_IDIOM_NO_SUPER_CALL"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.area.RegionViewport"/>
+      <Method name="clone"/>
+      <Bug pattern="CN_IDIOM_NO_SUPER_CALL"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.hyphenation.CharVector"/>
+      <Method name="clone"/>
+      <Bug pattern="CN_IDIOM_NO_SUPER_CALL"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.hyphenation.TernaryTree"/>
+      <Method name="clone"/>
+      <Bug pattern="CN_IDIOM_NO_SUPER_CALL"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.hyphenation.HyphenationTree"/>
+      <!--Neither method nor field-->
+      <Bug pattern="CN_IDIOM_NO_SUPER_CALL"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.intermediate.IFGraphicContext"/>
+      <Method name="clone"/>
+      <Bug pattern="CN_IDIOM_NO_SUPER_CALL"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAttributes"/>
+      <Method name="clone"/>
+      <Bug pattern="CN_IDIOM_NO_SUPER_CALL"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.FOPRtfAttributes"/>
+      <!--Neither method nor field-->
+      <Bug pattern="CN_IDIOM_NO_SUPER_CALL"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.hyphenation.Hyphenator"/>
+      <Method name="getResourceStream"/>
+      <Bug pattern="DE_MIGHT_IGNORE"/>
+   </Match>
+   <Match>
+      <Class name="java.lang.Exception"/>
+      <!--Neither method nor field-->
+      <Bug pattern="DE_MIGHT_IGNORE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.cli.CommandLineOptions"/>
+      <Method name="flushCache"/>
+      <Bug pattern="DM_EXIT"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.cli.CommandLineOptions"/>
+      <Method name="parseCustomOutputOption"/>
+      <Bug pattern="DM_EXIT"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.cli.CommandLineOptions"/>
+      <Method name="parseOptions"/>
+      <Bug pattern="DM_EXIT"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.cli.Main"/>
+      <Method name="startFOP"/>
+      <Bug pattern="DM_EXIT"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.cli.Main"/>
+      <Method name="startFOPWithDynamicClasspath"/>
+      <Bug pattern="DM_EXIT"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.tools.fontlist.FontListMain"/>
+      <Method name="parseArguments"/>
+      <Bug pattern="DM_EXIT"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.cli.Main"/>
+      <Method name="startFOPWithDynamicClasspath"/>
+      <Bug pattern="DP_CREATE_CLASSLOADER_INSIDE_DO_PRIVILEGED"/>
+   </Match>
+   <Match>
+      <Class name="java.net.URLClassLoader"/>
+      <!--Neither method nor field-->
+      <Bug pattern="DP_CREATE_CLASSLOADER_INSIDE_DO_PRIVILEGED"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.tools.anttasks.RunTest"/>
+      <Method name="runReference"/>
+      <Bug pattern="DP_CREATE_CLASSLOADER_INSIDE_DO_PRIVILEGED"/>
+   </Match>
+   <Match>
+      <Class name="java.net.URLClassLoader"/>
+      <!--Neither method nor field-->
+      <Bug pattern="DP_CREATE_CLASSLOADER_INSIDE_DO_PRIVILEGED"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.tools.fontlist.FontSpec"/>
+      <Method name="compareTo"/>
+      <Bug pattern="EQ_COMPARETO_USE_OBJECT_EQUALS"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.FontInfo"/>
+      <Method name="fuzzyFontLookup"/>
+      <Bug pattern="ES_COMPARING_PARAMETER_STRING_WITH_EQ"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTextrun"/>
+      <Method name="addBookmark"/>
+      <Bug pattern="ES_COMPARING_PARAMETER_STRING_WITH_EQ"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.tools.fontlist.FontListSerializer"/>
+      <Method name="generateSAX"/>
+      <Bug pattern="ES_COMPARING_PARAMETER_STRING_WITH_EQ"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.AFPResourceInfo"/>
+      <Method name="equals"/>
+      <Bug pattern="ES_COMPARING_STRINGS_WITH_EQ"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.AFPResourceLevel"/>
+      <Method name="equals"/>
+      <Bug pattern="ES_COMPARING_STRINGS_WITH_EQ"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.flow.Marker$MarkerAttribute"/>
+      <Method name="equals"/>
+      <Bug pattern="ES_COMPARING_STRINGS_WITH_EQ"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.NativeTextHandler"/>
+      <Method name="establishCurrentFont"/>
+      <Bug pattern="ES_COMPARING_STRINGS_WITH_EQ"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.apps.MimeConstants"/>
+      <!--Neither method nor field-->
+      <Bug pattern="NM_SAME_SIMPLE_NAME_AS_INTERFACE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.xmlgraphics.util.MimeConstants"/>
+      <!--Neither method nor field-->
+      <Bug pattern="NM_SAME_SIMPLE_NAME_AS_INTERFACE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.events.EventListener"/>
+      <!--Neither method nor field-->
+      <Bug pattern="NM_SAME_SIMPLE_NAME_AS_INTERFACE"/>
+   </Match>
+   <Match>
+      <Class name="java.util.EventListener"/>
+      <!--Neither method nor field-->
+      <Bug pattern="NM_SAME_SIMPLE_NAME_AS_INTERFACE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.Graphics2DImagePainter"/>
+      <!--Neither method nor field-->
+      <Bug pattern="NM_SAME_SIMPLE_NAME_AS_INTERFACE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.xmlgraphics.java2d.Graphics2DImagePainter"/>
+      <!--Neither method nor field-->
+      <Bug pattern="NM_SAME_SIMPLE_NAME_AS_INTERFACE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.PSFontUtils"/>
+      <!--Neither method nor field-->
+      <Bug pattern="NM_SAME_SIMPLE_NAME_AS_SUPERCLASS"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.xmlgraphics.ps.PSFontUtils"/>
+      <!--Neither method nor field-->
+      <Bug pattern="NM_SAME_SIMPLE_NAME_AS_SUPERCLASS"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.PSImageUtils"/>
+      <!--Neither method nor field-->
+      <Bug pattern="NM_SAME_SIMPLE_NAME_AS_SUPERCLASS"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.xmlgraphics.ps.PSImageUtils"/>
+      <!--Neither method nor field-->
+      <Bug pattern="NM_SAME_SIMPLE_NAME_AS_SUPERCLASS"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.svg.GraphicsConfiguration"/>
+      <!--Neither method nor field-->
+      <Bug pattern="NM_SAME_SIMPLE_NAME_AS_SUPERCLASS"/>
+   </Match>
+   <Match>
+      <Class name="java.awt.GraphicsConfiguration"/>
+      <!--Neither method nor field-->
+      <Bug pattern="NM_SAME_SIMPLE_NAME_AS_SUPERCLASS"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.svg.PDFTextUtil"/>
+      <!--Neither method nor field-->
+      <Bug pattern="NM_SAME_SIMPLE_NAME_AS_SUPERCLASS"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFTextUtil"/>
+      <!--Neither method nor field-->
+      <Bug pattern="NM_SAME_SIMPLE_NAME_AS_SUPERCLASS"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.util.QName"/>
+      <!--Neither method nor field-->
+      <Bug pattern="NM_SAME_SIMPLE_NAME_AS_SUPERCLASS"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.xmlgraphics.util.QName"/>
+      <!--Neither method nor field-->
+      <Bug pattern="NM_SAME_SIMPLE_NAME_AS_SUPERCLASS"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.apps.FontPatternExtractor"/>
+      <Method name="extract"/>
+      <Bug pattern="OS_OPEN_STREAM"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.autodetect.WindowsFontDirFinder"/>
+      <Method name="getWinDir"/>
+      <Bug pattern="OS_OPEN_STREAM"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFFactory"/>
+      <Method name="buildCIDSet"/>
+      <Bug pattern="OS_OPEN_STREAM"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFOutputIntent"/>
+      <Method name="toPDF"/>
+      <Bug pattern="OS_OPEN_STREAM"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pcl.PCLGenerator"/>
+      <Method name="defineGrayscalePattern"/>
+      <Bug pattern="OS_OPEN_STREAM"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pdf.ImageRenderedAdapter"/>
+      <Method name="populateXObjectDictionary"/>
+      <Bug pattern="OS_OPEN_STREAM"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.tools.anttasks.FileCompare"/>
+      <Method name="compareBytes"/>
+      <Bug pattern="OS_OPEN_STREAM"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.tools.TestConverter"/>
+      <Method name="runTest"/>
+      <Bug pattern="OS_OPEN_STREAM_EXCEPTION_PATH"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.cli.CommandLineOptions"/>
+      <Method name="parse"/>
+      <Bug pattern="RC_REF_COMPARISON_BAD_PRACTICE_BOOLEAN"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.AFPStreamer"/>
+      <Method name="writeToStream"/>
+      <Bug pattern="RR_NOT_CHECKED"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.type1.PFMFile"/>
+      <Method name="load"/>
+      <Bug pattern="RR_NOT_CHECKED"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.AFPStreamer"/>
+      <Method name="close"/>
+      <Bug pattern="RV_RETURN_VALUE_IGNORED_BAD_PRACTICE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.apps.FontPatternExtractor"/>
+      <Method name="main"/>
+      <Bug pattern="RV_RETURN_VALUE_IGNORED_BAD_PRACTICE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.cli.Main"/>
+      <Method name="startFOP"/>
+      <Bug pattern="RV_RETURN_VALUE_IGNORED_BAD_PRACTICE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.FontCache"/>
+      <Method name="getDefaultCacheFile"/>
+      <Bug pattern="RV_RETURN_VALUE_IGNORED_BAD_PRACTICE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.FontCache"/>
+      <Method name="loadFrom"/>
+      <Bug pattern="RV_RETURN_VALUE_IGNORED_BAD_PRACTICE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.TempFileStreamCache"/>
+      <Method name="clear"/>
+      <Bug pattern="RV_RETURN_VALUE_IGNORED_BAD_PRACTICE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.afp.AFPRendererConfigurator"/>
+      <Method name="configure"/>
+      <Bug pattern="RV_RETURN_VALUE_IGNORED_BAD_PRACTICE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.tools.TestConverter"/>
+      <Method name="runTest"/>
+      <Bug pattern="RV_RETURN_VALUE_IGNORED_BAD_PRACTICE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.tools.TestConverter"/>
+      <Method name="runTests"/>
+      <Bug pattern="RV_RETURN_VALUE_IGNORED_BAD_PRACTICE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.tools.anttasks.FOPTaskStarter"/>
+      <Method name="renderInputHandler"/>
+      <Bug pattern="RV_RETURN_VALUE_IGNORED_BAD_PRACTICE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.tools.anttasks.FOPTaskStarter"/>
+      <Method name="run"/>
+      <Bug pattern="RV_RETURN_VALUE_IGNORED_BAD_PRACTICE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.tools.anttasks.RunTest"/>
+      <Method name="runReference"/>
+      <Bug pattern="RV_RETURN_VALUE_IGNORED_BAD_PRACTICE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.AFPPaintingState"/>
+      <Field name="colorConverter"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.area.Area"/>
+      <Field name="props"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.area.BlockParent"/>
+      <Field name="children"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.area.LineArea"/>
+      <Field name="inlineAreas"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.area.MainReference"/>
+      <Field name="spanAreas"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.area.Page"/>
+      <Field name="unresolved"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.area.Span"/>
+      <Field name="flowAreas"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.area.Trait$Background"/>
+      <Field name="imageInfo"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.area.inline.Container"/>
+      <Field name="blocks"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.area.inline.InlineParent"/>
+      <Field name="inlines"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.events.Event"/>
+      <Field name="params"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.events.model.EventMethodModel"/>
+      <Field name="params"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.events.model.EventModel"/>
+      <Field name="producers"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.events.model.EventProducerModel"/>
+      <Field name="methods"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.extensions.xmp.XMPMetadata"/>
+      <Field name="meta"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.pagination.PageProductionException"/>
+      <Field name="locator"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.EmbedFontInfo"/>
+      <Field name="fontTriplets"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.FontCache"/>
+      <Field name="failedFontMap"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.FontCache"/>
+      <Field name="fontfileMap"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.FontCache$CachedFontFile"/>
+      <Field name="filefontsMap"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.LayoutException"/>
+      <Field name="layoutManager"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.inline.LineLayoutManager$Paragraph"/>
+      <Field name="layoutManager"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFPaintingState$PDFData"/>
+      <Field name="gstate"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.awt.viewer.ImageProxyPanel"/>
+      <Field name="renderer"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.awt.viewer.PreviewDialog"/>
+      <Field name="foUserAgent"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.awt.viewer.PreviewDialog"/>
+      <Field name="renderer"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.awt.viewer.PreviewDialog"/>
+      <Field name="translator"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.awt.viewer.PreviewPanel"/>
+      <Field name="foUserAgent"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.awt.viewer.PreviewPanel"/>
+      <Field name="reloader"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.awt.viewer.PreviewPanel"/>
+      <Field name="renderer"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.awt.viewer.PreviewPanel"/>
+      <Field name="scroller"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.servlet.FopServlet"/>
+      <Field name="fopFactory"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.servlet.FopServlet"/>
+      <Field name="transFactory"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.servlet.FopServlet"/>
+      <Field name="uriResolver"/>
+      <Bug pattern="SE_BAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.AbstractBreaker$BlockSequence"/>
+      <!--Neither method nor field-->
+      <Bug pattern="SE_BAD_FIELD_INNER_CLASS"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.inline.LineLayoutManager$Paragraph"/>
+      <!--Neither method nor field-->
+      <Bug pattern="SE_BAD_FIELD_INNER_CLASS"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.AFPPaintingState"/>
+      <Field name="colorConverter"/>
+      <Bug pattern="SE_BAD_FIELD_STORE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.AFPPaintingState"/>
+      <Field name="colorConverter"/>
+      <Bug pattern="SE_BAD_FIELD_STORE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.pagination.PageProductionException"/>
+      <Field name="locator"/>
+      <Bug pattern="SE_BAD_FIELD_STORE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.servlet.FopServlet"/>
+      <Field name="uriResolver"/>
+      <Bug pattern="SE_BAD_FIELD_STORE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.DestinationComparator"/>
+      <!--Neither method nor field-->
+      <Bug pattern="SE_COMPARATOR_SHOULD_BE_SERIALIZABLE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.AFPPaintingState$AFPData"/>
+      <!--Neither method nor field-->
+      <Bug pattern="SE_INNER_CLASS"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.area.LineArea$LineAdjustingInfo"/>
+      <!--Neither method nor field-->
+      <Bug pattern="SE_INNER_CLASS"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.area.inline.AbstractTextArea$TextAdjustingInfo"/>
+      <!--Neither method nor field-->
+      <Bug pattern="SE_INNER_CLASS"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.area.inline.InlineArea$InlineAdjustingInfo"/>
+      <!--Neither method nor field-->
+      <Bug pattern="SE_INNER_CLASS"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFPaintingState$PDFData"/>
+      <!--Neither method nor field-->
+      <Bug pattern="SE_INNER_CLASS"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.util.AbstractPaintingState$StateStack"/>
+      <!--Neither method nor field-->
+      <Bug pattern="SE_INNER_CLASS"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.AFPPaintingState"/>
+      <Field name="pagePaintingState"/>
+      <Bug pattern="SE_TRANSIENT_FIELD_NOT_RESTORED"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.AFPPaintingState"/>
+      <Field name="unitConv"/>
+      <Bug pattern="SE_TRANSIENT_FIELD_NOT_RESTORED"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.area.Block"/>
+      <Field name="allowBPDUpdate"/>
+      <Bug pattern="SE_TRANSIENT_FIELD_NOT_RESTORED"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.area.inline.InlineParent"/>
+      <Field name="autoSize"/>
+      <Bug pattern="SE_TRANSIENT_FIELD_NOT_RESTORED"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.area.inline.UnresolvedPageNumber"/>
+      <Field name="font"/>
+      <Bug pattern="SE_TRANSIENT_FIELD_NOT_RESTORED"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.FontCache"/>
+      <Field name="changed"/>
+      <Bug pattern="SE_TRANSIENT_FIELD_NOT_RESTORED"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.FontTriplet"/>
+      <Field name="key"/>
+      <Bug pattern="SE_TRANSIENT_FIELD_NOT_RESTORED"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.hyphenation.HyphenationTree"/>
+      <Field name="ivalues"/>
+      <Bug pattern="SE_TRANSIENT_FIELD_NOT_RESTORED"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.apps.FontPatternExtractor"/>
+      <Method name="extract"/>
+      <Bug pattern="SR_NOT_CHECKED"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.parser.UnparsedStructuredField"/>
+      <Method name="readStructuredField"/>
+      <Bug pattern="SR_NOT_CHECKED"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.type1.PFMFile"/>
+      <Method name="loadExtMetrics"/>
+      <Bug pattern="SR_NOT_CHECKED"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.type1.PFMFile"/>
+      <Method name="loadExtension"/>
+      <Bug pattern="SR_NOT_CHECKED"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.type1.PFMFile"/>
+      <Method name="loadHeader"/>
+      <Bug pattern="SR_NOT_CHECKED"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pdf.ImageRawJPEGAdapter"/>
+      <Method name="outputContents"/>
+      <Bug pattern="SR_NOT_CHECKED"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.cli.ImageInputHandler"/>
+      <Method name="createXSLTSource"/>
+      <Bug pattern="UI_INHERITANCE_UNSAFE_GETRESOURCE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.hyphenation.PatternParser"/>
+      <Method name="getExternalClasses"/>
+      <Bug pattern="UI_INHERITANCE_UNSAFE_GETRESOURCE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFFactory"/>
+      <Method name="makeFontFile"/>
+      <Bug pattern="UI_INHERITANCE_UNSAFE_GETRESOURCE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.awt.viewer.PreviewDialogAboutBox"/>
+      <Method name="&lt;init&gt;"/>
+      <Bug pattern="UI_INHERITANCE_UNSAFE_GETRESOURCE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.truetype.TTFSubSetFile"/>
+      <Method name="readUShort"/>
+      <Bug pattern="BIT_IOR_OF_SIGNED_BYTE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.truetype.TTFDirTabEntry"/>
+      <Method name="toString"/>
+      <Bug pattern="DMI_INVOKING_TOSTRING_ON_ARRAY"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.util.AbstractPaintingState$AbstractData"/>
+      <Method name="toString"/>
+      <Bug pattern="DMI_INVOKING_TOSTRING_ON_ARRAY"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.area.BookmarkData"/>
+      <Method name="addSubData"/>
+      <Bug pattern="EC_UNRELATED_TYPES"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.inline.AlignmentContext"/>
+      <Method name="setBaselineShift"/>
+      <Bug pattern="ICAST_INT_CAST_TO_FLOAT_PASSED_TO_ROUND"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.area.inline.WordArea"/>
+      <!-- Listing the field does not work; this makes the filter apply to all masked fields -->
+      <Bug pattern="MF_CLASS_MASKS_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.inline.AbstractPageNumberCitationLayoutManager"/>
+      <!-- Listing the field does not work; this makes the filter apply to all masked fields -->
+      <Bug pattern="MF_CLASS_MASKS_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAfterBeforeBase"/>
+      <!-- Listing the field does not work; this makes the filter apply to all masked fields -->
+      <Bug pattern="MF_CLASS_MASKS_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.svg.AbstractFOPTranscoder"/>
+      <!-- Listing the field does not work; this makes the filter apply to all masked fields -->
+      <Bug pattern="MF_CLASS_MASKS_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.PSSVGHandler"/>
+      <Method name="renderSVGDocument"/>
+      <Bug pattern="NP_GUARANTEED_DEREF"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.BlockStackingLayoutManager"/>
+      <Method name="negotiateBPDAdjustment"/>
+      <Bug pattern="NP_NULL_ON_SOME_PATH"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.PageBreakingAlgorithm"/>
+      <Method name="handleFootnotes"/>
+      <Bug pattern="NP_NULL_ON_SOME_PATH"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.bitmap.PNGRenderer"/>
+      <Method name="writeImage"/>
+      <Bug pattern="NP_NULL_ON_SOME_PATH"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.bitmap.TIFFRenderer"/>
+      <Method name="stopRenderer"/>
+      <Bug pattern="NP_NULL_ON_SOME_PATH"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTableRow"/>
+      <Method name="writeRowAndCellsDefintions"/>
+      <Bug pattern="NP_NULL_ON_SOME_PATH"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.svg.AbstractFOPImageElementBridge"/>
+      <Method name="createImageGraphicsNode"/>
+      <Bug pattern="NP_NULL_ON_SOME_PATH"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.tools.TestConverter"/>
+      <Method name="main"/>
+      <Bug pattern="NP_NULL_ON_SOME_PATH"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.apps.FopFactory"/>
+      <Method name="setHyphenBaseURL"/>
+      <Bug pattern="NP_NULL_PARAM_DEREF"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.events.EventFormatter"/>
+      <Method name="format"/>
+      <Bug pattern="NP_NULL_PARAM_DEREF"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.pagination.PageProductionException$PageProductionExceptionFactory"/>
+      <Method name="createException"/>
+      <Bug pattern="NP_NULL_PARAM_DEREF"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.properties.CommonTextDecoration"/>
+      <Method name="calcTextDecoration"/>
+      <Bug pattern="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.FontInfoConfigurator"/>
+      <Method name="getFontInfo"/>
+      <Bug pattern="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.SpaceResolver"/>
+      <Method name="toString"/>
+      <Bug pattern="RV_EXCEPTION_NOT_THROWN"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFFactory"/>
+      <Method name="makeFontFile"/>
+      <Bug pattern="RV_EXCEPTION_NOT_THROWN"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.java2d.Java2DRenderer"/>
+      <Method name="stopRenderer"/>
+      <Bug pattern="RV_EXCEPTION_NOT_THROWN"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.PSFontUtils"/>
+      <Method name="getInputStreamOnFont"/>
+      <Bug pattern="RV_EXCEPTION_NOT_THROWN"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.hyphenation.HyphenationTreeCache"/>
+      <Method name="constructUserKey"/>
+      <Bug pattern="RV_RETURN_VALUE_IGNORED"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.AFPResourceLevel"/>
+      <Method name="equals"/>
+      <Bug pattern="SA_FIELD_SELF_COMPARISON"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.print.PageableRenderer"/>
+      <Method name="processOptions"/>
+      <Bug pattern="SA_FIELD_SELF_COMPARISON"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.extensions.svg.SVGElement$1"/>
+      <Method name="deselectAll"/>
+      <Bug pattern="UMAC_UNCALLABLE_METHOD_OF_ANONYMOUS_CLASS"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.batik.dom.svg.SVGContext"/>
+      <!--Neither method nor field-->
+      <Bug pattern="UMAC_UNCALLABLE_METHOD_OF_ANONYMOUS_CLASS"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.modca.ObjectAreaPosition"/>
+      <Field name="xOffset"/>
+      <Bug pattern="UWF_UNWRITTEN_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.modca.ObjectAreaPosition"/>
+      <Field name="yOffset"/>
+      <Bug pattern="UWF_UNWRITTEN_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.truetype.TTFDirTabEntry"/>
+      <Field name="checksum"/>
+      <Bug pattern="UWF_UNWRITTEN_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.list.ListItemContentLayoutManager"/>
+      <Field name="itemIPD"/>
+      <Bug pattern="UWF_UNWRITTEN_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.AFPResourceLevel"/>
+      <Method name="valueOf"/>
+      <Bug pattern="DM_CONVERT_CASE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.AFPResourceLevelDefaults"/>
+      <Method name="getResourceType"/>
+      <Bug pattern="DM_CONVERT_CASE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.AFPResourceLevelDefaults"/>
+      <Method name="registerResourceTypeName"/>
+      <Bug pattern="DM_CONVERT_CASE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.apps.FontPatternExtractor"/>
+      <Method name="extract"/>
+      <Bug pattern="DM_CONVERT_CASE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.parser.UnparsedStructuredField"/>
+      <Method name="getCategoryCodeAsString"/>
+      <Bug pattern="DM_CONVERT_CASE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.parser.UnparsedStructuredField"/>
+      <Method name="getTypeCodeAsString"/>
+      <Bug pattern="DM_CONVERT_CASE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.parser.UnparsedStructuredField"/>
+      <Method name="toString"/>
+      <Bug pattern="DM_CONVERT_CASE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.apps.FopFactoryConfigurator"/>
+      <Method name="configure"/>
+      <Bug pattern="DM_CONVERT_CASE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.apps.FopFactoryConfigurator"/>
+      <Method name="configureImageLoading"/>
+      <Bug pattern="DM_CONVERT_CASE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.pagination.PageNumberGenerator"/>
+      <Method name="makeFormattedPageNumber"/>
+      <Bug pattern="DM_CONVERT_CASE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.properties.CondLengthProperty"/>
+      <Method name="toString"/>
+      <Bug pattern="DM_CONVERT_CASE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.FontInfo"/>
+      <Method name="getTripletsForName"/>
+      <Bug pattern="DM_CONVERT_CASE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.FontLoader"/>
+      <Method name="isType1"/>
+      <Bug pattern="DM_CONVERT_CASE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.autodetect.FontInfoFinder"/>
+      <Method name="generateTripletsFromFont"/>
+      <Bug pattern="DM_CONVERT_CASE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.substitute.FontQualifier"/>
+      <Method name="match"/>
+      <Bug pattern="DM_CONVERT_CASE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFFactory"/>
+      <Method name="getExternalAction"/>
+      <Bug pattern="DM_CONVERT_CASE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.bitmap.MultiFileRenderingUtil"/>
+      <Method name="&lt;init&gt;"/>
+      <Bug pattern="DM_CONVERT_CASE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.java2d.InstalledFontCollection"/>
+      <Method name="setup"/>
+      <Bug pattern="DM_CONVERT_CASE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.FoUnitsConverter"/>
+      <Method name="numberToTwips"/>
+      <Bug pattern="DM_CONVERT_CASE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfColorTable"/>
+      <Method name="addNamedColor"/>
+      <Bug pattern="DM_CONVERT_CASE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfColorTable"/>
+      <Method name="getColorNumber"/>
+      <Bug pattern="DM_CONVERT_CASE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfFontManager"/>
+      <Method name="getFontKey"/>
+      <Bug pattern="DM_CONVERT_CASE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.tools.anttasks.FOPTaskStarter"/>
+      <Method name="replaceExtension"/>
+      <Bug pattern="DM_CONVERT_CASE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.util.ColorUtil"/>
+      <Method name="parseColorString"/>
+      <Bug pattern="DM_CONVERT_CASE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.AFPDataObjectInfo"/>
+      <Method name="getData"/>
+      <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.modca.Registry$ObjectType"/>
+      <Method name="getOID"/>
+      <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.parser.UnparsedStructuredField"/>
+      <Method name="getData"/>
+      <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.parser.UnparsedStructuredField"/>
+      <Method name="getExtData"/>
+      <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.parser.UnparsedStructuredField"/>
+      <Method name="getIntroducerData"/>
+      <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.apps.FOUserAgent"/>
+      <Method name="getCreationDate"/>
+      <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.area.DestinationData"/>
+      <Method name="getIDRefs"/>
+      <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.area.inline.WordArea"/>
+      <Method name="getLetterAdjustArray"/>
+      <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.extensions.xmp.XMPContentHandlerFactory"/>
+      <Method name="getSupportedNamespaces"/>
+      <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.properties.CommonBorderPaddingBackground"/>
+      <Method name="getBorderInfo"/>
+      <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.properties.CommonBorderPaddingBackground"/>
+      <Method name="getPadding"/>
+      <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.CustomFont"/>
+      <Method name="getFontBBox"/>
+      <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.hyphenation.ByteVector"/>
+      <Method name="getArray"/>
+      <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.hyphenation.CharVector"/>
+      <Method name="getArray"/>
+      <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.hyphenation.Hyphenation"/>
+      <Method name="getHyphenationPoints"/>
+      <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.image.loader.batik.ImageLoaderFactorySVG"/>
+      <Method name="getSupportedFlavors"/>
+      <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.image.loader.batik.ImageLoaderFactorySVG"/>
+      <Method name="getSupportedMIMETypes"/>
+      <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.image.loader.batik.ImageLoaderFactoryWMF"/>
+      <Method name="getSupportedFlavors"/>
+      <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.image.loader.batik.ImageLoaderFactoryWMF"/>
+      <Method name="getSupportedMIMETypes"/>
+      <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFEncryptionJCE"/>
+      <Method name="getFileID"/>
+      <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFInfo"/>
+      <Method name="getCreationDate"/>
+      <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFInfo"/>
+      <Method name="getModDate"/>
+      <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.afp.AFPDocumentHandlerMaker"/>
+      <Method name="getSupportedMimeTypes"/>
+      <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.afp.AFPImageHandlerGraphics2D"/>
+      <Method name="getSupportedImageFlavors"/>
+      <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.afp.AFPImageHandlerRawCCITTFax"/>
+      <Method name="getSupportedImageFlavors"/>
+      <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.afp.AFPImageHandlerRawStream"/>
+      <Method name="getSupportedImageFlavors"/>
+      <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.afp.AFPImageHandlerRenderedImage"/>
+      <Method name="getSupportedImageFlavors"/>
+      <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.afp.AFPImageHandlerSVG"/>
+      <Method name="getSupportedImageFlavors"/>
+      <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.afp.extensions.AFPExtensionHandlerFactory"/>
+      <Method name="getSupportedNamespaces"/>
+      <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.awt.AWTRendererMaker"/>
+      <Method name="getSupportedMimeTypes"/>
+      <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.bitmap.PNGDocumentHandlerMaker"/>
+      <Method name="getSupportedMimeTypes"/>
+      <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.bitmap.PNGRendererMaker"/>
+      <Method name="getSupportedMimeTypes"/>
+      <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.bitmap.TIFFDocumentHandlerMaker"/>
+      <Method name="getSupportedMimeTypes"/>
+      <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.bitmap.TIFFRendererMaker"/>
+      <Method name="getSupportedMimeTypes"/>
+      <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.intermediate.IFGraphicContext$Group"/>
+      <Method name="getTransforms"/>
+      <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.java2d.Java2DFontMetrics"/>
+      <Method name="getWidths"/>
+      <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pcl.PCLDocumentHandlerMaker"/>
+      <Method name="getSupportedMimeTypes"/>
+      <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pdf.PDFDocumentHandlerMaker"/>
+      <Method name="getSupportedMimeTypes"/>
+      <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pdf.PDFImageHandlerGraphics2D"/>
+      <Method name="getSupportedImageFlavors"/>
+      <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pdf.PDFImageHandlerRawCCITTFax"/>
+      <Method name="getSupportedImageFlavors"/>
+      <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pdf.PDFImageHandlerRawJPEG"/>
+      <Method name="getSupportedImageFlavors"/>
+      <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pdf.PDFImageHandlerRenderedImage"/>
+      <Method name="getSupportedImageFlavors"/>
+      <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.print.PrintRendererMaker"/>
+      <Method name="getSupportedMimeTypes"/>
+      <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.PSDocumentHandlerMaker"/>
+      <Method name="getSupportedMimeTypes"/>
+      <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.PSImageHandlerEPS"/>
+      <Method name="getSupportedImageFlavors"/>
+      <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.PSImageHandlerGraphics2D"/>
+      <Method name="getSupportedImageFlavors"/>
+      <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.PSImageHandlerRawCCITTFax"/>
+      <Method name="getSupportedImageFlavors"/>
+      <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.PSImageHandlerRawJPEG"/>
+      <Method name="getSupportedImageFlavors"/>
+      <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.PSImageHandlerRenderedImage"/>
+      <Method name="getSupportedImageFlavors"/>
+      <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.PSImageHandlerSVG"/>
+      <Method name="getSupportedImageFlavors"/>
+      <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.extensions.PSExtensionHandlerFactory"/>
+      <Method name="getSupportedNamespaces"/>
+      <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.RTFFOEventHandlerMaker"/>
+      <Method name="getSupportedMimeTypes"/>
+      <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.txt.TXTRendererMaker"/>
+      <Method name="getSupportedMimeTypes"/>
+      <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.xml.XMLRendererMaker"/>
+      <Method name="getSupportedMimeTypes"/>
+      <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.AFPDataObjectInfo"/>
+      <Method name="setData"/>
+      <Bug pattern="EI_EXPOSE_REP2"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.goca.AbstractGraphicsCoord"/>
+      <Method name="&lt;init&gt;"/>
+      <Bug pattern="EI_EXPOSE_REP2"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.goca.GraphicsChainedSegment"/>
+      <Method name="&lt;init&gt;"/>
+      <Bug pattern="EI_EXPOSE_REP2"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.goca.GraphicsImage"/>
+      <Method name="&lt;init&gt;"/>
+      <Bug pattern="EI_EXPOSE_REP2"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.ioca.ImageContent"/>
+      <Method name="setImageData"/>
+      <Bug pattern="EI_EXPOSE_REP2"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.ioca.ImageRasterData"/>
+      <Method name="&lt;init&gt;"/>
+      <Bug pattern="EI_EXPOSE_REP2"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.modca.ObjectContainer"/>
+      <Method name="setData"/>
+      <Bug pattern="EI_EXPOSE_REP2"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.modca.Registry$ObjectType"/>
+      <Method name="&lt;init&gt;"/>
+      <Bug pattern="EI_EXPOSE_REP2"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.modca.triplets.PresentationSpaceMixingRulesTriplet"/>
+      <Method name="&lt;init&gt;"/>
+      <Bug pattern="EI_EXPOSE_REP2"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.apps.FOUserAgent"/>
+      <Method name="setCreationDate"/>
+      <Bug pattern="EI_EXPOSE_REP2"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.area.inline.WordArea"/>
+      <Method name="&lt;init&gt;"/>
+      <Bug pattern="EI_EXPOSE_REP2"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.properties.DimensionPropertyMaker"/>
+      <Method name="setExtraCorresponding"/>
+      <Bug pattern="EI_EXPOSE_REP2"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.properties.IndentPropertyMaker"/>
+      <Method name="setBorderWidthCorresponding"/>
+      <Bug pattern="EI_EXPOSE_REP2"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.properties.IndentPropertyMaker"/>
+      <Method name="setPaddingCorresponding"/>
+      <Bug pattern="EI_EXPOSE_REP2"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.CustomFont"/>
+      <Method name="setFontBBox"/>
+      <Bug pattern="EI_EXPOSE_REP2"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.MultiByteFont"/>
+      <Method name="setBFEntries"/>
+      <Bug pattern="EI_EXPOSE_REP2"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.MultiByteFont"/>
+      <Method name="setWidthArray"/>
+      <Bug pattern="EI_EXPOSE_REP2"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.type1.PFBData"/>
+      <Method name="setEncryptedSegment"/>
+      <Bug pattern="EI_EXPOSE_REP2"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.type1.PFBData"/>
+      <Method name="setHeaderSegment"/>
+      <Bug pattern="EI_EXPOSE_REP2"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.type1.PFBData"/>
+      <Method name="setTrailerSegment"/>
+      <Bug pattern="EI_EXPOSE_REP2"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.hyphenation.ByteVector"/>
+      <Method name="&lt;init&gt;"/>
+      <Bug pattern="EI_EXPOSE_REP2"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.hyphenation.ByteVector"/>
+      <Method name="&lt;init&gt;"/>
+      <Bug pattern="EI_EXPOSE_REP2"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.hyphenation.CharVector"/>
+      <Method name="&lt;init&gt;"/>
+      <Bug pattern="EI_EXPOSE_REP2"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.hyphenation.CharVector"/>
+      <Method name="&lt;init&gt;"/>
+      <Bug pattern="EI_EXPOSE_REP2"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.inline.HyphContext"/>
+      <Method name="&lt;init&gt;"/>
+      <Bug pattern="EI_EXPOSE_REP2"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.BitmapImage"/>
+      <Method name="&lt;init&gt;"/>
+      <Bug pattern="EI_EXPOSE_REP2"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFCIDFont"/>
+      <Method name="setDW2"/>
+      <Bug pattern="EI_EXPOSE_REP2"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFInfo"/>
+      <Method name="setCreationDate"/>
+      <Bug pattern="EI_EXPOSE_REP2"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFInfo"/>
+      <Method name="setModDate"/>
+      <Bug pattern="EI_EXPOSE_REP2"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFToUnicodeCMap"/>
+      <Method name="&lt;init&gt;"/>
+      <Bug pattern="EI_EXPOSE_REP2"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.intermediate.IFGraphicContext$Group"/>
+      <Method name="&lt;init&gt;"/>
+      <Bug pattern="EI_EXPOSE_REP2"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfExternalGraphic"/>
+      <Method name="setImageData"/>
+      <Bug pattern="EI_EXPOSE_REP2"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.svg.PDFTextUtil"/>
+      <Method name="setFonts"/>
+      <Bug pattern="EI_EXPOSE_REP2"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.FOPropertyMapping"/>
+      <Method name="getGenericMappings"/>
+      <Bug pattern="MS_EXPOSE_REP"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.ptoca.PtocaConstants"/>
+      <Field name="ESCAPE"/>
+      <Bug pattern="MS_OOI_PKGPROTECT"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.PSSupportedFlavors"/>
+      <Field name="LEVEL_2_FLAVORS_FORM"/>
+      <Bug pattern="MS_OOI_PKGPROTECT"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.PSSupportedFlavors"/>
+      <Field name="LEVEL_2_FLAVORS_INLINE"/>
+      <Bug pattern="MS_OOI_PKGPROTECT"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.PSSupportedFlavors"/>
+      <Field name="LEVEL_3_FLAVORS_FORM"/>
+      <Bug pattern="MS_OOI_PKGPROTECT"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.PSSupportedFlavors"/>
+      <Field name="LEVEL_3_FLAVORS_INLINE"/>
+      <Bug pattern="MS_OOI_PKGPROTECT"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.IBorderAttributes"/>
+      <Field name="BORDERS"/>
+      <Bug pattern="MS_OOI_PKGPROTECT"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.ITableAttributes"/>
+      <Field name="ATTRIB_CELL_PADDING"/>
+      <Bug pattern="MS_OOI_PKGPROTECT"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.ITableAttributes"/>
+      <Field name="ATTRIB_ROW_PADDING"/>
+      <Bug pattern="MS_OOI_PKGPROTECT"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.ITableAttributes"/>
+      <Field name="CELL_BORDER"/>
+      <Bug pattern="MS_OOI_PKGPROTECT"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.ITableAttributes"/>
+      <Field name="CELL_COLOR"/>
+      <Bug pattern="MS_OOI_PKGPROTECT"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.ITableAttributes"/>
+      <Field name="CELL_VERT_ALIGN"/>
+      <Bug pattern="MS_OOI_PKGPROTECT"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.ITableAttributes"/>
+      <Field name="ROW_BORDER"/>
+      <Bug pattern="MS_OOI_PKGPROTECT"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.Glyphs"/>
+      <Field name="UNICODE_GLYPHS"/>
+      <Bug pattern="MS_PKGPROTECT"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.Glyphs"/>
+      <Field name="MAC_GLYPH_NAMES"/>
+      <Bug pattern="MS_PKGPROTECT"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.Glyphs"/>
+      <Field name="TEX8R_GLYPH_NAMES"/>
+      <Bug pattern="MS_PKGPROTECT"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.Glyphs"/>
+      <Field name="WINANSI_ENCODING"/>
+      <Bug pattern="MS_PKGPROTECT"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.apps.AbstractFontReader"/>
+      <Field name="log"/>
+      <Bug pattern="MS_PKGPROTECT"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pcl.PCLGenerator"/>
+      <Field name="PCL_RESOLUTIONS"/>
+      <Bug pattern="MS_PKGPROTECT"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAfter"/>
+      <Field name="FOOTER_ATTR"/>
+      <Bug pattern="MS_PKGPROTECT"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfBefore"/>
+      <Field name="HEADER_ATTR"/>
+      <Bug pattern="MS_PKGPROTECT"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfListTable"/>
+      <Field name="LIST_TABLE_ATTR"/>
+      <Bug pattern="MS_PKGPROTECT"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfPage"/>
+      <Field name="PAGE_ATTR"/>
+      <Bug pattern="MS_PKGPROTECT"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfText"/>
+      <Field name="ALIGNMENT"/>
+      <Bug pattern="MS_PKGPROTECT"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfText"/>
+      <Field name="ATTR_NAMES"/>
+      <Bug pattern="MS_PKGPROTECT"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfText"/>
+      <Field name="BORDER"/>
+      <Bug pattern="MS_PKGPROTECT"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfText"/>
+      <Field name="INDENT"/>
+      <Bug pattern="MS_PKGPROTECT"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfText"/>
+      <Field name="TABS"/>
+      <Bug pattern="MS_PKGPROTECT"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.awt.viewer.ImageProxyPanel"/>
+      <Field name="imageRef"/>
+      <Bug pattern="IS2_INCONSISTENT_SYNC"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.awt.viewer.PreviewPanel$ViewportScroller"/>
+      <Field name="startPosX"/>
+      <Bug pattern="IS2_INCONSISTENT_SYNC"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.awt.viewer.PreviewPanel$ViewportScroller"/>
+      <Field name="startPosY"/>
+      <Bug pattern="IS2_INCONSISTENT_SYNC"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.fonts.CharacterSetBuilder"/>
+      <Method name="getInstance"/>
+      <Bug pattern="LI_LAZY_INIT_STATIC"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.datatypes.ValidationPercentBaseContext"/>
+      <Method name="getPseudoContext"/>
+      <Bug pattern="LI_LAZY_INIT_STATIC"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.FOPropertyMapping"/>
+      <Method name="getGenericMappings"/>
+      <Bug pattern="LI_LAZY_INIT_STATIC"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.NullCharIterator"/>
+      <Method name="getInstance"/>
+      <Bug pattern="LI_LAZY_INIT_STATIC"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.apps.AbstractFontReader"/>
+      <Method name="&lt;init&gt;"/>
+      <Bug pattern="LI_LAZY_INIT_STATIC"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.table.CollapsingBorderModel"/>
+      <Method name="getBorderModelFor"/>
+      <Bug pattern="LI_LAZY_INIT_STATIC"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.StreamCacheFactory"/>
+      <Method name="getInstance"/>
+      <Bug pattern="LI_LAZY_INIT_STATIC"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.StreamCacheFactory"/>
+      <Method name="getInstance"/>
+      <Bug pattern="LI_LAZY_INIT_STATIC"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.java2d.SystemFontMetricsMapper"/>
+      <Method name="&lt;init&gt;"/>
+      <Bug pattern="LI_LAZY_INIT_STATIC"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfColorTable"/>
+      <Method name="getInstance"/>
+      <Bug pattern="LI_LAZY_INIT_STATIC"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfFontManager"/>
+      <Method name="getInstance"/>
+      <Bug pattern="LI_LAZY_INIT_STATIC"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfStyleSheetTable"/>
+      <Method name="getInstance"/>
+      <Bug pattern="LI_LAZY_INIT_STATIC"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTemplate"/>
+      <Method name="getInstance"/>
+      <Bug pattern="LI_LAZY_INIT_STATIC"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.PropertyList"/>
+      <Method name="isInherited"/>
+      <Bug pattern="LI_LAZY_INIT_UPDATE_STATIC"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFObject"/>
+      <Method name="formatDateTime"/>
+      <Bug pattern="STCAL_INVOKE_ON_STATIC_DATE_FORMAT_INSTANCE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFObject"/>
+      <Field name="DATE_FORMAT"/>
+      <Bug pattern="STCAL_STATIC_SIMPLE_DATE_FORMAT_INSTANCE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.MultiByteFont"/>
+      <Method name="&lt;init&gt;"/>
+      <Bug pattern="WL_USING_GETCLASS_RATHER_THAN_CLASS_LITERAL"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.tools.TableContext"/>
+      <Method name="decreaseRowSpannings"/>
+      <Bug pattern="DM_BOOLEAN_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.tools.TableContext"/>
+      <Method name="setCurrentFirstSpanningCol"/>
+      <Bug pattern="DM_BOOLEAN_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.tools.TableContext"/>
+      <Method name="setNextFirstSpanningCol"/>
+      <Bug pattern="DM_BOOLEAN_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.svg.PDFGraphics2D"/>
+      <Method name="applyPaint"/>
+      <Bug pattern="DM_BOOLEAN_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.tools.TestConverter"/>
+      <Method name="runTest"/>
+      <Bug pattern="DM_BOOLEAN_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.properties.CharacterProperty"/>
+      <Method name="getString"/>
+      <Bug pattern="DM_BOXED_PRIMITIVE_TOSTRING"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.Glyphs"/>
+      <Method name="charToGlyphName"/>
+      <Bug pattern="DM_BOXED_PRIMITIVE_TOSTRING"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.expr.NumericProperty"/>
+      <Method name="getNumber"/>
+      <Bug pattern="DM_FP_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.properties.NumberProperty"/>
+      <Method name="&lt;init&gt;"/>
+      <Bug pattern="DM_FP_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.type1.AFMParser$AbstractValueHandler"/>
+      <Method name="getNumberValue"/>
+      <Bug pattern="DM_FP_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.type1.AFMParser$DoubleSetter"/>
+      <Method name="parse"/>
+      <Bug pattern="DM_FP_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.type1.AFMParser$WritingDirDoubleSetter"/>
+      <Method name="parse"/>
+      <Bug pattern="DM_FP_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFArray"/>
+      <Method name="&lt;init&gt;"/>
+      <Bug pattern="DM_FP_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFArray"/>
+      <Method name="add"/>
+      <Bug pattern="DM_FP_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFArray"/>
+      <Method name="set"/>
+      <Bug pattern="DM_FP_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFColor"/>
+      <Method name="getVector"/>
+      <Bug pattern="DM_FP_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFFactory"/>
+      <Method name="makeGradient"/>
+      <Bug pattern="DM_FP_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFFunction"/>
+      <Method name="toPDF"/>
+      <Bug pattern="DM_FP_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFGState"/>
+      <Method name="setAlpha"/>
+      <Bug pattern="DM_FP_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFImageXObject"/>
+      <Method name="populateDictionaryFromImage"/>
+      <Bug pattern="DM_FP_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFPattern"/>
+      <Method name="output"/>
+      <Bug pattern="DM_FP_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.java2d.Java2DFontMetrics"/>
+      <Method name="getBaseFont"/>
+      <Bug pattern="DM_FP_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.PSDocumentHandler"/>
+      <Method name="startPage"/>
+      <Bug pattern="DM_FP_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.FoUnitsConverter"/>
+      <Method name="&lt;clinit&gt;"/>
+      <Bug pattern="DM_FP_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.RTFHandler"/>
+      <Method name="startColumn"/>
+      <Bug pattern="DM_FP_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.tools.TableContext"/>
+      <Method name="getColumnWidth"/>
+      <Bug pattern="DM_FP_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.svg.AbstractFOPTextPainter"/>
+      <Method name="getFont"/>
+      <Bug pattern="DM_FP_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.svg.PDFGraphics2D"/>
+      <Method name="applyAlpha"/>
+      <Bug pattern="DM_FP_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.svg.PDFGraphics2D"/>
+      <Method name="applyPaint"/>
+      <Bug pattern="DM_FP_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.svg.PDFGraphics2D"/>
+      <Method name="createPattern"/>
+      <Bug pattern="DM_FP_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.AFPResourceLevelDefaults"/>
+      <Method name="getDefaultResourceLevel"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.AFPResourceLevelDefaults"/>
+      <Method name="registerResourceTypeName"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.AFPResourceLevelDefaults"/>
+      <Method name="setDefaultResourceLevel"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.fonts.RasterFont"/>
+      <Method name="addCharacterSet"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.fonts.RasterFont"/>
+      <Method name="getCharacterSet"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.area.LineArea"/>
+      <Method name="handleIPDVariation"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.area.Trait"/>
+      <Method name="&lt;clinit&gt;"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.CharIterator"/>
+      <Method name="next"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.FOPropertyMapping"/>
+      <Method name="addPropertyMaker"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.FOPropertyMapping"/>
+      <Method name="addSubpropMakerName"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.FOPropertyMapping"/>
+      <Method name="getPropertyName"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.properties.CharacterProperty"/>
+      <Method name="getObject"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.properties.CharacterProperty"/>
+      <Method name="getString"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.properties.NumberProperty"/>
+      <Method name="&lt;init&gt;"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.properties.NumberProperty"/>
+      <Method name="&lt;init&gt;"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.properties.NumberProperty"/>
+      <Method name="&lt;init&gt;"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.AbstractCodePointMapping"/>
+      <Method name="mapChar"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.AbstractCodePointMapping"/>
+      <Method name="putFallbackCharacter"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.CIDSubset"/>
+      <Method name="getGlyphIndexForSubsetIndex"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.CIDSubset"/>
+      <Method name="getUnicodeForSubsetIndex"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.CIDSubset"/>
+      <Method name="mapSubsetChar"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.CIDSubset"/>
+      <Method name="mapSubsetChar"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.CIDSubset"/>
+      <Method name="setupFirstThreeGlyphs"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.Font"/>
+      <Method name="getKernValue"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.FontCache"/>
+      <Method name="registerFailedFont"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.FontInfo"/>
+      <Method name="addFontProperties"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.FontInfo"/>
+      <Method name="getFontInstance"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.Glyphs"/>
+      <Method name="charToGlyphName"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.SimpleSingleByteEncoding"/>
+      <Method name="addCharacter"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.SimpleSingleByteEncoding"/>
+      <Method name="mapChar"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.SingleByteFont"/>
+      <Method name="addUnencodedCharacter"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.SingleByteFont"/>
+      <Method name="getAdditionalWidths"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.SingleByteFont"/>
+      <Method name="getWidth"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.SingleByteFont"/>
+      <Method name="mapUnencodedChar"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.Typeface"/>
+      <Method name="warnMissingGlyph"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.apps.PFMReader"/>
+      <Method name="constructFontXML"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.base14.Helvetica"/>
+      <Method name="&lt;clinit&gt;"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.base14.Helvetica"/>
+      <Method name="&lt;clinit&gt;"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.base14.HelveticaBold"/>
+      <Method name="&lt;clinit&gt;"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.base14.HelveticaBold"/>
+      <Method name="&lt;clinit&gt;"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.base14.HelveticaBoldOblique"/>
+      <Method name="&lt;clinit&gt;"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.base14.HelveticaBoldOblique"/>
+      <Method name="&lt;clinit&gt;"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.base14.HelveticaOblique"/>
+      <Method name="&lt;clinit&gt;"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.base14.HelveticaOblique"/>
+      <Method name="&lt;clinit&gt;"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.base14.TimesBold"/>
+      <Method name="&lt;clinit&gt;"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.base14.TimesBold"/>
+      <Method name="&lt;clinit&gt;"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.base14.TimesBoldItalic"/>
+      <Method name="&lt;clinit&gt;"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.base14.TimesBoldItalic"/>
+      <Method name="&lt;clinit&gt;"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.base14.TimesItalic"/>
+      <Method name="&lt;clinit&gt;"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.base14.TimesItalic"/>
+      <Method name="&lt;clinit&gt;"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.base14.TimesRoman"/>
+      <Method name="&lt;clinit&gt;"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.base14.TimesRoman"/>
+      <Method name="&lt;clinit&gt;"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.truetype.TTFFile"/>
+      <Method name="glyphToUnicode"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.truetype.TTFFile"/>
+      <Method name="initAnsiWidths"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.truetype.TTFFile"/>
+      <Method name="readKerning"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.truetype.TTFFile"/>
+      <Method name="readUnicodeCmap"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.truetype.TTFFile"/>
+      <Method name="unicodeToGlyph"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.truetype.TTFFile"/>
+      <Method name="unicodeToWinAnsi"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.truetype.TTFFile$UnicodeMapping"/>
+      <Method name="&lt;init&gt;"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.truetype.TTFSubSetFile"/>
+      <Method name="getIncludedGlyphs"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.truetype.TTFSubSetFile"/>
+      <Method name="remapComposite"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.truetype.TTFSubSetFile"/>
+      <Method name="scanGlyphs"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.type1.AFMFile"/>
+      <Method name="createXKerningMapEncoded"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.type1.AFMParser"/>
+      <Method name="&lt;clinit&gt;"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.type1.AFMParser$AbstractValueHandler"/>
+      <Method name="getNumberValue"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.type1.AFMParser$IntegerSetter"/>
+      <Method name="parse"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.type1.PFMFile"/>
+      <Method name="loadKernPairs"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.PageBreakingAlgorithm"/>
+      <Method name="handleFootnotes"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.TraitSetter"/>
+      <Method name="addFontTraits"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.TraitSetter"/>
+      <Method name="addMargins"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.TraitSetter"/>
+      <Method name="addPadding"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.TraitSetter"/>
+      <Method name="addSpaceTrait"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.TraitSetter"/>
+      <Method name="setBorderPaddingTraits"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.inline.LineLayoutManager"/>
+      <Method name="addInlineArea"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.table.RowPainter"/>
+      <Method name="recordRowOffset"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.AbstractPDFStream"/>
+      <Method name="encodeAndWriteStream"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.AbstractPDFStream"/>
+      <Method name="output"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFArray"/>
+      <Method name="&lt;init&gt;"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFCIDFont"/>
+      <Method name="&lt;init&gt;"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFCIDFont"/>
+      <Method name="setDW"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFCIDFontDescriptor"/>
+      <Method name="&lt;init&gt;"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFDictionary"/>
+      <Method name="put"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFDocument"/>
+      <Method name="&lt;clinit&gt;"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFDocument"/>
+      <Method name="setLocation"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFEmbeddedFile"/>
+      <Method name="populateStreamDict"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFEncoding$DifferencesBuilder"/>
+      <Method name="addDifference"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFEncryptionManager"/>
+      <Method name="newInstance"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFFontNonBase14"/>
+      <Method name="setWidthMetrics"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFFormXObject"/>
+      <Method name="&lt;init&gt;"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFImageXObject"/>
+      <Method name="populateDictionaryFromImage"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFLink"/>
+      <Method name="setStructParent"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFNumsArray"/>
+      <Method name="get"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFNumsArray"/>
+      <Method name="put"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFPage"/>
+      <Method name="setTransition"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFT1Stream"/>
+      <Method name="populateStreamDict"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.PrintRenderer"/>
+      <Method name="createRendererContext"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.awt.viewer.Command"/>
+      <Method name="&lt;init&gt;"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.intermediate.IFRenderer"/>
+      <Method name="renderPage"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.intermediate.IFRenderer"/>
+      <Method name="renderText"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pdf.ImageRenderedAdapter"/>
+      <Method name="getIndexOfFirstTransparentColorInPalette"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pdf.ImageRenderedAdapter"/>
+      <Method name="populateXObjectDictionary"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pdf.PDFDocumentHandler"/>
+      <Method name="getPageReference"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pdf.PDFDocumentHandler"/>
+      <Method name="startPage"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.ImageEncoderCCITTFax"/>
+      <Method name="getImplicitFilter"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.PSDocumentHandler"/>
+      <Method name="endDocument"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.PSDocumentHandler"/>
+      <Method name="startPage"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.PSDocumentHandler"/>
+      <Method name="startPage"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.PSDocumentHandler"/>
+      <Method name="writeHeader"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.RTFHandler"/>
+      <Method name="startCell"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.RTFHandler"/>
+      <Method name="startColumn"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAttributes"/>
+      <Method name="set"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfColorTable"/>
+      <Method name="addColor"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfColorTable"/>
+      <Method name="addNamedColor"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfColorTable"/>
+      <Method name="getColorNumber"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfExternalGraphic"/>
+      <Method name="writeSizeInfo"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfFile"/>
+      <Method name="startListTable"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfFontManager"/>
+      <Method name="addFont"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfList"/>
+      <Method name="&lt;init&gt;"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfListItem"/>
+      <Method name="writeRtfPrefix"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfListStyleBullet"/>
+      <Method name="writeListPrefix"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfListStyleNumber"/>
+      <Method name="writeLevelGroup"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfListStyleNumber"/>
+      <Method name="writeListPrefix"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfListStyleText"/>
+      <Method name="writeListPrefix"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfListTable"/>
+      <Method name="writeListTableEntry"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfListTable"/>
+      <Method name="writeRtfContent"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfSpaceSplitter"/>
+      <Method name="split"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfStringConverter"/>
+      <Method name="&lt;clinit&gt;"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfStringConverter"/>
+      <Method name="escape"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfStyleSheetTable"/>
+      <Method name="addStyle"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.tools.PercentContext"/>
+      <Method name="findParent"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.tools.PercentContext"/>
+      <Method name="setDimension"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.tools.PercentContext"/>
+      <Method name="setTableUnit"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.tools.TableContext"/>
+      <Method name="decreaseRowSpannings"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.txt.border.BorderManager"/>
+      <Method name="getCharacter"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.svg.PDFGraphics2D"/>
+      <Method name="drawString"/>
+      <Bug pattern="DM_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.area.inline.SpaceArea"/>
+      <Method name="getSpace"/>
+      <Bug pattern="DM_STRING_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.hyphenation.TernaryTree$Iterator"/>
+      <Method name="nextElement"/>
+      <Bug pattern="DM_STRING_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFJavaScriptLaunchAction"/>
+      <Method name="contentEquals"/>
+      <Bug pattern="DM_STRING_TOSTRING"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.awt.viewer.PreviewDialog$ShowStatus"/>
+      <Method name="run"/>
+      <Bug pattern="DM_STRING_TOSTRING"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.util.StringUtils"/>
+      <Method name="lpad"/>
+      <Bug pattern="DM_STRING_VOID_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.util.StringUtils"/>
+      <Method name="rpad"/>
+      <Bug pattern="DM_STRING_VOID_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.area.inline.SpaceArea"/>
+      <Method name="&lt;init&gt;"/>
+      <Bug pattern="DM_STRING_VOID_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.substitute.FontQualifier"/>
+      <Method name="toString"/>
+      <Bug pattern="DM_STRING_VOID_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.tools.ImageUtil"/>
+      <Method name="getInt"/>
+      <Bug pattern="DM_STRING_VOID_CTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.area.BookmarkData"/>
+      <Method name="getIDRefs"/>
+      <Bug pattern="ITA_INEFFICIENT_TO_ARRAY"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.area.PageViewport"/>
+      <Method name="getIDRefs"/>
+      <Bug pattern="ITA_INEFFICIENT_TO_ARRAY"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.FontReader"/>
+      <Method name="endElement"/>
+      <Bug pattern="ITA_INEFFICIENT_TO_ARRAY"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.apps.AbstractFontReader"/>
+      <Method name="parseArguments"/>
+      <Bug pattern="ITA_INEFFICIENT_TO_ARRAY"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.truetype.TTFFile"/>
+      <Method name="unicodeToWinAnsi"/>
+      <Bug pattern="ITA_INEFFICIENT_TO_ARRAY"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.tools.anttasks.FileCompare"/>
+      <Method name="setFilenames"/>
+      <Bug pattern="ITA_INEFFICIENT_TO_ARRAY"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.goca.AbstractGraphicsCoord"/>
+      <Method name="toString"/>
+      <Bug pattern="SBSC_USE_STRINGBUFFER_CONCATENATION"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.fonts.CharacterSetBuilder$FontControl"/>
+      <!--Neither method nor field-->
+      <Bug pattern="SIC_INNER_SHOULD_BE_STATIC"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.modca.Registry$ObjectType"/>
+      <!--Neither method nor field-->
+      <Bug pattern="SIC_INNER_SHOULD_BE_STATIC"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.area.LineArea$LineAdjustingInfo"/>
+      <!--Neither method nor field-->
+      <Bug pattern="SIC_INNER_SHOULD_BE_STATIC"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.FObj$FObjIterator"/>
+      <!--Neither method nor field-->
+      <Bug pattern="SIC_INNER_SHOULD_BE_STATIC"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.XMLWhiteSpaceHandler$PendingInline"/>
+      <!--Neither method nor field-->
+      <Bug pattern="SIC_INNER_SHOULD_BE_STATIC"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.extensions.xmp.XMPContentHandlerFactory$FOPXMPHandler"/>
+      <!--Neither method nor field-->
+      <Bug pattern="SIC_INNER_SHOULD_BE_STATIC"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.flow.Character$FOCharIterator"/>
+      <!--Neither method nor field-->
+      <Bug pattern="SIC_INNER_SHOULD_BE_STATIC"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.flow.Marker$MarkerPropertyList"/>
+      <!--Neither method nor field-->
+      <Bug pattern="SIC_INNER_SHOULD_BE_STATIC"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.BlockContainerLayoutManager$BlockContainerPosition"/>
+      <!--Neither method nor field-->
+      <Bug pattern="SIC_INNER_SHOULD_BE_STATIC"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.inline.LeafNodeLayoutManager$AreaInfo"/>
+      <!--Neither method nor field-->
+      <Bug pattern="SIC_INNER_SHOULD_BE_STATIC"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.inline.LineLayoutManager$Update"/>
+      <!--Neither method nor field-->
+      <Bug pattern="SIC_INNER_SHOULD_BE_STATIC"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.inline.LineLayoutPossibilities$Possibility"/>
+      <!--Neither method nor field-->
+      <Bug pattern="SIC_INNER_SHOULD_BE_STATIC"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.inline.TextLayoutManager$AreaInfo"/>
+      <!--Neither method nor field-->
+      <Bug pattern="SIC_INNER_SHOULD_BE_STATIC"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.inline.TextLayoutManager$PendingChange"/>
+      <!--Neither method nor field-->
+      <Bug pattern="SIC_INNER_SHOULD_BE_STATIC"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.list.ListItemLayoutManager$ListItemPosition"/>
+      <!--Neither method nor field-->
+      <Bug pattern="SIC_INNER_SHOULD_BE_STATIC"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFEncoding$DifferencesBuilder"/>
+      <!--Neither method nor field-->
+      <Bug pattern="SIC_INNER_SHOULD_BE_STATIC"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFEncryptionJCE$EncryptionFilter"/>
+      <!--Neither method nor field-->
+      <Bug pattern="SIC_INNER_SHOULD_BE_STATIC"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.awt.viewer.PreviewPanel$ViewportScroller"/>
+      <!--Neither method nor field-->
+      <Bug pattern="SIC_INNER_SHOULD_BE_STATIC"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.PSBatikFlowTextElementBridge$PSFlowExtTextPainter"/>
+      <!--Neither method nor field-->
+      <Bug pattern="SIC_INNER_SHOULD_BE_STATIC"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.PSSVGFlowRootElementBridge$PSFlowTextPainter"/>
+      <!--Neither method nor field-->
+      <Bug pattern="SIC_INNER_SHOULD_BE_STATIC"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfListItem$RtfListItemLabel"/>
+      <!--Neither method nor field-->
+      <Bug pattern="SIC_INNER_SHOULD_BE_STATIC"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTextrun$RtfCloseGroupMark"/>
+      <!--Neither method nor field-->
+      <Bug pattern="SIC_INNER_SHOULD_BE_STATIC"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTextrun$RtfOpenGroupMark"/>
+      <!--Neither method nor field-->
+      <Bug pattern="SIC_INNER_SHOULD_BE_STATIC"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTextrun$RtfParagraphBreak"/>
+      <!--Neither method nor field-->
+      <Bug pattern="SIC_INNER_SHOULD_BE_STATIC"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.svg.AbstractFOPImageElementBridge$Graphics2DNode"/>
+      <!--Neither method nor field-->
+      <Bug pattern="SIC_INNER_SHOULD_BE_STATIC"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.util.AbstractPaintingState$StateStack"/>
+      <!--Neither method nor field-->
+      <Bug pattern="SIC_INNER_SHOULD_BE_STATIC"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.AFPResourceManager$1"/>
+      <!--Neither method nor field-->
+      <Bug pattern="SIC_INNER_SHOULD_BE_STATIC_ANON"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.FOTreeBuilder$1"/>
+      <!--Neither method nor field-->
+      <Bug pattern="SIC_INNER_SHOULD_BE_STATIC_ANON"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.extensions.svg.SVGElement$1"/>
+      <!--Neither method nor field-->
+      <Bug pattern="SIC_INNER_SHOULD_BE_STATIC_ANON"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.flow.table.VariableColRowGroupBuilder$1"/>
+      <!--Neither method nor field-->
+      <Bug pattern="SIC_INNER_SHOULD_BE_STATIC_ANON"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.flow.table.VariableColRowGroupBuilder$2"/>
+      <!--Neither method nor field-->
+      <Bug pattern="SIC_INNER_SHOULD_BE_STATIC_ANON"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.flow.table.VariableColRowGroupBuilder$3"/>
+      <!--Neither method nor field-->
+      <Bug pattern="SIC_INNER_SHOULD_BE_STATIC_ANON"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.flow.table.VariableColRowGroupBuilder$4"/>
+      <!--Neither method nor field-->
+      <Bug pattern="SIC_INNER_SHOULD_BE_STATIC_ANON"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.flow.table.VariableColRowGroupBuilder$5"/>
+      <!--Neither method nor field-->
+      <Bug pattern="SIC_INNER_SHOULD_BE_STATIC_ANON"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.flow.table.VariableColRowGroupBuilder$6"/>
+      <!--Neither method nor field-->
+      <Bug pattern="SIC_INNER_SHOULD_BE_STATIC_ANON"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.properties.BackgroundPositionShorthand$Maker$1"/>
+      <!--Neither method nor field-->
+      <Bug pattern="SIC_INNER_SHOULD_BE_STATIC_ANON"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.hyphenation.SerializeHyphPattern$1"/>
+      <!--Neither method nor field-->
+      <Bug pattern="SIC_INNER_SHOULD_BE_STATIC_ANON"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.image.loader.batik.ImageConverterSVG2G2D$1"/>
+      <!--Neither method nor field-->
+      <Bug pattern="SIC_INNER_SHOULD_BE_STATIC_ANON"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.PSImageHandlerGraphics2D$1"/>
+      <!--Neither method nor field-->
+      <Bug pattern="SIC_INNER_SHOULD_BE_STATIC_ANON"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.ResourceHandler$1"/>
+      <!--Neither method nor field-->
+      <Bug pattern="SIC_INNER_SHOULD_BE_STATIC_ANON"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.svg.PDFTextPainter$1"/>
+      <!--Neither method nor field-->
+      <Bug pattern="SIC_INNER_SHOULD_BE_STATIC_ANON"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.tools.fontlist.FontListMain$1"/>
+      <!--Neither method nor field-->
+      <Bug pattern="SIC_INNER_SHOULD_BE_STATIC_ANON"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.truetype.TTFFile$UnicodeMapping"/>
+      <!--Neither method nor field-->
+      <Bug pattern="SIC_INNER_SHOULD_BE_STATIC_NEEDS_THIS"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.intermediate.IFRenderer$TextUtil"/>
+      <Field name="combined"/>
+      <Bug pattern="SS_SHOULD_BE_STATIC"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pcl.PCLGenerator"/>
+      <Field name="usePCLShades"/>
+      <Bug pattern="SS_SHOULD_BE_STATIC"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pcl.PCLGraphics2D"/>
+      <Field name="failOnUnsupportedFeature"/>
+      <Bug pattern="SS_SHOULD_BE_STATIC"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfHeader"/>
+      <Field name="charset"/>
+      <Bug pattern="SS_SHOULD_BE_STATIC"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.txt.TXTRenderer"/>
+      <Field name="lineEnding"/>
+      <Bug pattern="SS_SHOULD_BE_STATIC"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.txt.TXTRenderer"/>
+      <Field name="pageEnding"/>
+      <Bug pattern="SS_SHOULD_BE_STATIC"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.modca.ResourceEnvironmentGroup"/>
+      <Method name="getPreprocessPresentationObjects"/>
+      <Bug pattern="UPM_UNCALLED_PRIVATE_METHOD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.datatypes.URISpecification"/>
+      <Method name="isValidURIChar"/>
+      <Bug pattern="UPM_UNCALLED_PRIVATE_METHOD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.expr.PropertyTokenizer"/>
+      <Method name="isSpace"/>
+      <Bug pattern="UPM_UNCALLED_PRIVATE_METHOD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.truetype.TTFFile"/>
+      <Method name="printMaxMin"/>
+      <Bug pattern="UPM_UNCALLED_PRIVATE_METHOD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.truetype.TTFSubSetFile"/>
+      <Method name="writeULong"/>
+      <Bug pattern="UPM_UNCALLED_PRIVATE_METHOD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.truetype.TTFSubSetFile"/>
+      <Method name="init"/>
+      <Bug pattern="UPM_UNCALLED_PRIVATE_METHOD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.truetype.TTFSubSetFile"/>
+      <Method name="log2"/>
+      <Bug pattern="UPM_UNCALLED_PRIVATE_METHOD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.truetype.TTFSubSetFile"/>
+      <Method name="readShort"/>
+      <Bug pattern="UPM_UNCALLED_PRIVATE_METHOD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.inline.AlignmentContext"/>
+      <Method name="isHorizontalWritingMode"/>
+      <Bug pattern="UPM_UNCALLED_PRIVATE_METHOD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pcl.PCLGenerator"/>
+      <Method name="clearBackground"/>
+      <Bug pattern="UPM_UNCALLED_PRIVATE_METHOD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pcl.PCLGenerator"/>
+      <Method name="getAdjustedDimension"/>
+      <Bug pattern="UPM_UNCALLED_PRIVATE_METHOD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pcl.PCLGenerator"/>
+      <Method name="getMask"/>
+      <Bug pattern="UPM_UNCALLED_PRIVATE_METHOD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.ResourceHandler"/>
+      <Method name="createMissingForm"/>
+      <Bug pattern="UPM_UNCALLED_PRIVATE_METHOD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.AFPGraphicsObjectInfo"/>
+      <Field name="area"/>
+      <Bug pattern="URF_UNREAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.pagination.PageNumberGenerator"/>
+      <Field name="format"/>
+      <Bug pattern="URF_UNREAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.pagination.PageNumberGenerator"/>
+      <Field name="groupingSeparator"/>
+      <Bug pattern="URF_UNREAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.pagination.PageNumberGenerator"/>
+      <Field name="groupingSize"/>
+      <Bug pattern="URF_UNREAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.pagination.PageNumberGenerator"/>
+      <Field name="letterValue"/>
+      <Bug pattern="URF_UNREAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.pagination.Root"/>
+      <Field name="mediaUsage"/>
+      <Bug pattern="URF_UNREAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.FontReader"/>
+      <Field name="cidWidthIndex"/>
+      <Bug pattern="URF_UNREAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.FontReader"/>
+      <Field name="locator"/>
+      <Bug pattern="URF_UNREAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.base14.Courier"/>
+      <Field name="enableKerning"/>
+      <Bug pattern="URF_UNREAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.base14.CourierBold"/>
+      <Field name="enableKerning"/>
+      <Bug pattern="URF_UNREAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.base14.CourierBoldOblique"/>
+      <Field name="enableKerning"/>
+      <Bug pattern="URF_UNREAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.base14.CourierOblique"/>
+      <Field name="enableKerning"/>
+      <Bug pattern="URF_UNREAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.base14.Symbol"/>
+      <Field name="enableKerning"/>
+      <Bug pattern="URF_UNREAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.base14.ZapfDingbats"/>
+      <Field name="enableKerning"/>
+      <Bug pattern="URF_UNREAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.inline.ICLayoutManager"/>
+      <Field name="childrenLM"/>
+      <Bug pattern="URF_UNREAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.BitmapImage"/>
+      <Field name="pdfDoc"/>
+      <Bug pattern="URF_UNREAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.java2d.Java2DRenderingContext"/>
+      <Field name="fontInfo"/>
+      <Bug pattern="URF_UNREAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfContainer"/>
+      <Field name="lastChild"/>
+      <Bug pattern="URF_UNREAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.tools.BuilderContext"/>
+      <Field name="options"/>
+      <Bug pattern="URF_UNREAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.tools.BuilderContext"/>
+      <Field name="builders"/>
+      <Bug pattern="URF_UNREAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.tools.TableContext"/>
+      <Field name="context"/>
+      <Bug pattern="URF_UNREAD_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfPageArea"/>
+      <Field name="childAttributes"/>
+      <Bug pattern="UUF_UNUSED_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfPageArea"/>
+      <Field name="nullChild"/>
+      <Bug pattern="UUF_UNUSED_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.tools.anttasks.FileCompare"/>
+      <Field name="filenames"/>
+      <Bug pattern="UUF_UNUSED_FIELD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.area.PageViewport"/>
+      <Method name="addMarkers"/>
+      <Bug pattern="WMI_WRONG_MAP_ITERATOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.apps.TTFReader"/>
+      <Method name="generateDOM4Kerning"/>
+      <Bug pattern="WMI_WRONG_MAP_ITERATOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.truetype.TTFFile"/>
+      <Method name="readKerning"/>
+      <Bug pattern="WMI_WRONG_MAP_ITERATOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.truetype.TTFSubSetFile"/>
+      <Method name="createGlyf"/>
+      <Bug pattern="WMI_WRONG_MAP_ITERATOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.truetype.TTFSubSetFile"/>
+      <Method name="createHmtx"/>
+      <Bug pattern="WMI_WRONG_MAP_ITERATOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.truetype.TTFSubSetFile"/>
+      <Method name="scanGlyphs"/>
+      <Bug pattern="WMI_WRONG_MAP_ITERATOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFGState"/>
+      <Method name="contentEquals"/>
+      <Bug pattern="WMI_WRONG_MAP_ITERATOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFResources"/>
+      <Method name="addFonts"/>
+      <Bug pattern="WMI_WRONG_MAP_ITERATOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.PSFontUtils"/>
+      <Method name="reencodeFonts"/>
+      <Bug pattern="WMI_WRONG_MAP_ITERATOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.tools.anttasks.RunTest"/>
+      <Method name="testNewBuild"/>
+      <Bug pattern="WMI_WRONG_MAP_ITERATOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.inline.TextLayoutManager"/>
+      <Method name="removeWordSpace"/>
+      <Bug pattern="BC_BAD_CAST_TO_CONCRETE_COLLECTION"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.AFPBorderPainter"/>
+      <Method name="paint"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.AFPDitheredRectanglePainter"/>
+      <Method name="paint"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.AFPRectanglePainter"/>
+      <Method name="paint"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.modca.ImageObject"/>
+      <Method name="setViewport"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.XMLWhiteSpaceHandler"/>
+      <Method name="handleWhiteSpace"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.flow.Footnote"/>
+      <Method name="addChildNode"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.flow.Footnote"/>
+      <Method name="addChildNode"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.flow.ListItem"/>
+      <Method name="addChildNode"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.flow.ListItem"/>
+      <Method name="addChildNode"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.flow.ListItem"/>
+      <Method name="addChildNode"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.pagination.Declarations"/>
+      <Method name="&lt;init&gt;"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.pagination.PageSequence"/>
+      <Method name="addChildNode"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.pagination.PageSequence"/>
+      <Method name="addChildNode"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.pagination.PageSequence"/>
+      <Method name="addChildNode"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.properties.CondLengthProperty"/>
+      <Method name="setComponent"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.properties.EnumNumber"/>
+      <Method name="getInstance"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.properties.EnumNumber"/>
+      <Method name="&lt;init&gt;"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.image.loader.batik.ImageConverterG2D2SVG"/>
+      <Method name="convert"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.image.loader.batik.ImageConverterSVG2G2D"/>
+      <Method name="convert"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.image.loader.batik.ImageConverterWMF2G2D"/>
+      <Method name="convert"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.BlockContainerLayoutManager"/>
+      <Method name="addChildArea"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.BlockContainerLayoutManager"/>
+      <Method name="getNextKnuthElements"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.BlockLayoutManager"/>
+      <Method name="addChildArea"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.BlockStackingLayoutManager"/>
+      <Method name="addChildToArea"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.BlockStackingLayoutManager"/>
+      <Method name="getNextChildElements"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.BlockStackingLayoutManager"/>
+      <Method name="negotiateBPDAdjustment"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.LayoutManagerMapping$BasicLinkLayoutManagerMaker"/>
+      <Method name="make"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.LayoutManagerMapping$BlockContainerLayoutManagerMaker"/>
+      <Method name="make"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.LayoutManagerMapping$BlockLayoutManagerMaker"/>
+      <Method name="make"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.LayoutManagerMapping$CharacterLayoutManagerMaker"/>
+      <Method name="make"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.LayoutManagerMapping$ExternalGraphicLayoutManagerMaker"/>
+      <Method name="make"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.LayoutManagerMapping$FOTextLayoutManagerMaker"/>
+      <Method name="make"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.LayoutManagerMapping$FootnodeLayoutManagerMaker"/>
+      <Method name="make"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.LayoutManagerMapping$InlineContainerLayoutManagerMaker"/>
+      <Method name="make"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.LayoutManagerMapping$InlineLayoutManagerMaker"/>
+      <Method name="make"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.LayoutManagerMapping$InstreamForeignObjectLayoutManagerMaker"/>
+      <Method name="make"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.LayoutManagerMapping$LeaderLayoutManagerMaker"/>
+      <Method name="make"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.LayoutManagerMapping$ListBlockLayoutManagerMaker"/>
+      <Method name="make"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.LayoutManagerMapping$ListItemLayoutManagerMaker"/>
+      <Method name="make"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.LayoutManagerMapping$PageNumberCitationLastLayoutManagerMaker"/>
+      <Method name="make"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.LayoutManagerMapping$PageNumberCitationLayoutManagerMaker"/>
+      <Method name="make"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.LayoutManagerMapping$PageNumberLayoutManagerMaker"/>
+      <Method name="make"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.LayoutManagerMapping$TableLayoutManagerMaker"/>
+      <Method name="make"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.LayoutManagerMapping$WrapperLayoutManagerMaker"/>
+      <Method name="make"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.PageBreakingAlgorithm"/>
+      <Method name="updateData2"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.PageBreakingAlgorithm"/>
+      <Method name="computeAdjustmentRatio"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.PageBreakingAlgorithm"/>
+      <Method name="computeDifference"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.StaticContentLayoutManager"/>
+      <Method name="addChildArea"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.inline.AbstractGraphicsLayoutManager"/>
+      <Method name="getBaseLength"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.inline.ContentLayoutManager"/>
+      <Method name="addChildLM"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.inline.LineLayoutManager$LineBreakingAlgorithm"/>
+      <Method name="updateData2"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.inline.TextLayoutManager"/>
+      <Method name="getWordChars"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.inline.TextLayoutManager"/>
+      <Method name="hyphenate"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.list.ListBlockLayoutManager"/>
+      <Method name="addChildArea"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.list.ListItemContentLayoutManager"/>
+      <Method name="addChildArea"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.list.ListItemLayoutManager"/>
+      <Method name="addChildArea"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.table.TableAndCaptionLayoutManager"/>
+      <Method name="addChildArea"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.table.TableCaptionLayoutManager"/>
+      <Method name="addChildArea"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.table.TableCellLayoutManager"/>
+      <Method name="addChildArea"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.table.TableLayoutManager"/>
+      <Method name="addChildArea"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFFactory"/>
+      <Method name="makeFont"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFFactory"/>
+      <Method name="makeFont"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.afp.AFPDocumentHandler"/>
+      <Method name="handleExtensionObject"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.afp.AFPGraphics2DAdapter"/>
+      <Method name="paintImage"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.afp.AFPImageHandlerGraphics2D"/>
+      <Method name="handleImage"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.afp.AFPImageHandlerGraphics2D"/>
+      <Method name="handleImage"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.afp.AFPImageHandlerRawCCITTFax"/>
+      <Method name="setAdditionalParameters"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.afp.AFPImageHandlerRawCCITTFax"/>
+      <Method name="setAdditionalParameters"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.afp.AFPImageHandlerRenderedImage"/>
+      <Method name="handleImage"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.afp.AFPImageHandlerRenderedImage"/>
+      <Method name="handleImage"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.afp.AFPImageHandlerSVG"/>
+      <Method name="handleImage"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.afp.AFPImageHandlerSVG"/>
+      <Method name="handleImage"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.afp.AFPRendererConfigurator"/>
+      <Method name="configure"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.afp.AFPSVGHandler"/>
+      <Method name="renderSVGDocument"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.afp.AbstractAFPImageHandlerRawStream"/>
+      <Method name="handleImage"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.afp.AbstractAFPImageHandlerRawStream"/>
+      <Method name="handleImage"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.bitmap.BitmapRendererConfigurator"/>
+      <Method name="configure"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.bitmap.TIFFRendererConfigurator"/>
+      <Method name="configure"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.bitmap.TIFFRendererConfigurator"/>
+      <Method name="configure"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.java2d.Java2DImageHandlerGraphics2D"/>
+      <Method name="handleImage"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.java2d.Java2DImageHandlerGraphics2D"/>
+      <Method name="handleImage"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.java2d.Java2DImageHandlerRenderedImage"/>
+      <Method name="handleImage"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.java2d.Java2DImageHandlerRenderedImage"/>
+      <Method name="handleImage"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.java2d.Java2DRenderer"/>
+      <Method name="print"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.java2d.Java2DRendererConfigurator"/>
+      <Method name="configure"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pcl.PCLImageHandlerGraphics2D"/>
+      <Method name="handleImage"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pcl.PCLImageHandlerGraphics2D"/>
+      <Method name="handleImage"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pcl.PCLImageHandlerRenderedImage"/>
+      <Method name="handleImage"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pcl.PCLImageHandlerRenderedImage"/>
+      <Method name="handleImage"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pcl.PCLRendererConfigurator"/>
+      <Method name="configure"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pdf.FOToPDFRoleMap$TableCellMapper"/>
+      <Method name="getStructureType"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pdf.PDFDocumentNavigationHandler"/>
+      <Method name="addResolvedAction"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pdf.PDFImageHandlerGraphics2D"/>
+      <Method name="handleImage"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pdf.PDFImageHandlerGraphics2D"/>
+      <Method name="handleImage"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pdf.PDFImageHandlerRawCCITTFax"/>
+      <Method name="handleImage"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pdf.PDFImageHandlerRawCCITTFax"/>
+      <Method name="handleImage"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pdf.PDFImageHandlerRawJPEG"/>
+      <Method name="handleImage"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pdf.PDFImageHandlerRawJPEG"/>
+      <Method name="handleImage"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pdf.PDFImageHandlerRenderedImage"/>
+      <Method name="handleImage"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pdf.PDFImageHandlerRenderedImage"/>
+      <Method name="handleImage"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pdf.PDFImageHandlerSVG"/>
+      <Method name="handleImage"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pdf.PDFImageHandlerSVG"/>
+      <Method name="handleImage"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pdf.PDFRendererConfigurator"/>
+      <Method name="configure"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.NativeTextHandler"/>
+      <Method name="drawString"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.PSImageHandlerEPS"/>
+      <Method name="handleImage"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.PSImageHandlerEPS"/>
+      <Method name="handleImage"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.PSImageHandlerGraphics2D"/>
+      <Method name="generateForm"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.PSImageHandlerGraphics2D"/>
+      <Method name="generateForm"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.PSImageHandlerGraphics2D"/>
+      <Method name="handleImage"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.PSImageHandlerGraphics2D"/>
+      <Method name="handleImage"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.PSImageHandlerRawCCITTFax"/>
+      <Method name="generateForm"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.PSImageHandlerRawCCITTFax"/>
+      <Method name="generateForm"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.PSImageHandlerRawCCITTFax"/>
+      <Method name="handleImage"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.PSImageHandlerRawCCITTFax"/>
+      <Method name="handleImage"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.PSImageHandlerRawJPEG"/>
+      <Method name="generateForm"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.PSImageHandlerRawJPEG"/>
+      <Method name="generateForm"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.PSImageHandlerRawJPEG"/>
+      <Method name="handleImage"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.PSImageHandlerRawJPEG"/>
+      <Method name="handleImage"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.PSImageHandlerRenderedImage"/>
+      <Method name="generateForm"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.PSImageHandlerRenderedImage"/>
+      <Method name="generateForm"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.PSImageHandlerRenderedImage"/>
+      <Method name="handleImage"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.PSImageHandlerRenderedImage"/>
+      <Method name="handleImage"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.PSImageHandlerSVG"/>
+      <Method name="handleImage"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.PSImageHandlerSVG"/>
+      <Method name="handleImage"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.PSRendererConfigurator"/>
+      <Method name="configure"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.txt.TXTRendererConfigurator"/>
+      <Method name="configure"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.svg.AbstractFOPImageElementBridge"/>
+      <Method name="createImageGraphicsNode"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.svg.PDFAElementBridge"/>
+      <Method name="createGraphicsNode"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.goca.GraphicsChainedSegment"/>
+      <Field name="MAX_DATA_LEN"/>
+      <Bug pattern="CI_CONFUSED_INHERITANCE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.flow.Marker$MarkerAttribute"/>
+      <Field name="name"/>
+      <Bug pattern="CI_CONFUSED_INHERITANCE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.flow.Marker$MarkerAttribute"/>
+      <Field name="namespace"/>
+      <Bug pattern="CI_CONFUSED_INHERITANCE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.flow.Marker$MarkerAttribute"/>
+      <Field name="qname"/>
+      <Bug pattern="CI_CONFUSED_INHERITANCE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.flow.Marker$MarkerAttribute"/>
+      <Field name="value"/>
+      <Bug pattern="CI_CONFUSED_INHERITANCE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.properties.ColorProperty"/>
+      <Field name="color"/>
+      <Bug pattern="CI_CONFUSED_INHERITANCE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.hyphenation.Hyphenator"/>
+      <Field name="log"/>
+      <Bug pattern="CI_CONFUSED_INHERITANCE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.util.ColorUtil"/>
+      <Field name="log"/>
+      <Bug pattern="CI_CONFUSED_INHERITANCE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.ioca.ImageOutputControl"/>
+      <Method name="writeToStream"/>
+      <Bug pattern="DB_DUPLICATE_SWITCH_CLAUSES"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.ioca.ImageRasterPattern"/>
+      <Method name="getRasterData"/>
+      <Bug pattern="DB_DUPLICATE_SWITCH_CLAUSES"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.FOText"/>
+      <Method name="isWordChar"/>
+      <Bug pattern="DB_DUPLICATE_SWITCH_CLAUSES"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.FOText"/>
+      <Method name="isWordChar"/>
+      <Bug pattern="DB_DUPLICATE_SWITCH_CLAUSES"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.flow.Leader"/>
+      <Method name="bind"/>
+      <Bug pattern="DB_DUPLICATE_SWITCH_CLAUSES"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.properties.CommonFont"/>
+      <Method name="getFontState"/>
+      <Bug pattern="DB_DUPLICATE_SWITCH_CLAUSES"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.properties.PositionShorthandParser"/>
+      <Method name="getValueForProperty"/>
+      <Bug pattern="DB_DUPLICATE_SWITCH_CLAUSES"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.PageBreakingAlgorithm"/>
+      <Method name="considerLegalBreak"/>
+      <Bug pattern="DB_DUPLICATE_SWITCH_CLAUSES"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.inline.AlignmentContext"/>
+      <Method name="&lt;init&gt;"/>
+      <Bug pattern="DB_DUPLICATE_SWITCH_CLAUSES"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.inline.AlignmentContext"/>
+      <Method name="&lt;init&gt;"/>
+      <Bug pattern="DB_DUPLICATE_SWITCH_CLAUSES"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.inline.TextLayoutManager"/>
+      <Method name="getNextKnuthElements"/>
+      <Bug pattern="DB_DUPLICATE_SWITCH_CLAUSES"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pcl.HardcodedFonts"/>
+      <Method name="selectFont"/>
+      <Bug pattern="DB_DUPLICATE_SWITCH_CLAUSES"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pcl.PCLGraphics2D"/>
+      <Method name="processPathIteratorFill"/>
+      <Bug pattern="DB_DUPLICATE_SWITCH_CLAUSES"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.tools.anttasks.Fop"/>
+      <Method name="execute"/>
+      <Bug pattern="DB_DUPLICATE_SWITCH_CLAUSES"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.tools.anttasks.Fop"/>
+      <Method name="execute"/>
+      <Bug pattern="DB_DUPLICATE_SWITCH_CLAUSES"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.util.BreakUtil"/>
+      <Method name="getBreakClassPriority"/>
+      <Bug pattern="DB_DUPLICATE_SWITCH_CLAUSES"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.modca.triplets.AttributeValueTriplet"/>
+      <Method name="writeToStream"/>
+      <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.XMLWhiteSpaceHandler"/>
+      <Method name="handleWhiteSpace"/>
+      <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.expr.PropertyTokenizer"/>
+      <Method name="next"/>
+      <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.properties.TextDecorationProperty$Maker"/>
+      <Method name="convertProperty"/>
+      <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.truetype.TTFFile"/>
+      <Method name="readFont"/>
+      <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.type1.AFMParser$FontBBox"/>
+      <Method name="parseBBox"/>
+      <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.type1.AFMParser$KPXHandler"/>
+      <Method name="parse"/>
+      <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.type1.PFMFile"/>
+      <Method name="load"/>
+      <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.hyphenation.HyphenationTree"/>
+      <Method name="main"/>
+      <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.hyphenation.TernaryTree$Iterator"/>
+      <Method name="up"/>
+      <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.AbstractBreaker"/>
+      <Method name="addAreas"/>
+      <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.AbstractBreaker"/>
+      <Method name="justifyBoxes"/>
+      <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.AbstractBreaker"/>
+      <Method name="justifyBoxes"/>
+      <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.BlockContainerLayoutManager"/>
+      <Method name="getNextKnuthElements"/>
+      <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.BlockContainerLayoutManager"/>
+      <Method name="getNextKnuthElements"/>
+      <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.BlockStackingLayoutManager"/>
+      <Method name="getNextKnuthElements"/>
+      <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.FootnoteBodyLayoutManager"/>
+      <Method name="addAreas"/>
+      <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.inline.ContentLayoutManager"/>
+      <Method name="fillArea"/>
+      <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.inline.ContentLayoutManager"/>
+      <Method name="fillArea"/>
+      <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.inline.LineLayoutManager"/>
+      <Method name="findOptimalBreakingPoints"/>
+      <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.table.TableCellLayoutManager"/>
+      <Method name="getNextKnuthElements"/>
+      <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.AbstractRenderer"/>
+      <Method name="renderText"/>
+      <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.awt.viewer.PreviewDialog"/>
+      <Method name="&lt;init&gt;"/>
+      <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.awt.viewer.PreviewDialog"/>
+      <Method name="showGoToPageDialog"/>
+      <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pdf.AbstractImageAdapter"/>
+      <Method name="setupColorProfile"/>
+      <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pdf.ImageRawJPEGAdapter"/>
+      <Method name="outputContents"/>
+      <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.PSPainter"/>
+      <Method name="writeText"/>
+      <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfContainer"/>
+      <Method name="addChild"/>
+      <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfContainer"/>
+      <Method name="addChild"/>
+      <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfExtraRowSet"/>
+      <Method name="writeRow"/>
+      <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTableRow"/>
+      <Method name="writePaddingAttributes"/>
+      <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTextrun"/>
+      <Method name="addCloseGroupMark"/>
+      <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTextrun"/>
+      <Method name="addCloseGroupMark"/>
+      <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTextrun"/>
+      <Method name="addOpenGroupMark"/>
+      <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTextrun"/>
+      <Method name="addPageNumber"/>
+      <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTextrun"/>
+      <Method name="addPageNumberCitation"/>
+      <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.svg.PDFANode"/>
+      <Method name="paint"/>
+      <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.svg.PDFGraphics2D"/>
+      <Method name="createPattern"/>
+      <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFFunction"/>
+      <Method name="toPDF"/>
+      <Bug pattern="DLS_DEAD_LOCAL_STORE_OF_NULL"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pdf.PDFImageHandlerSVG"/>
+      <Method name="handleImage"/>
+      <Bug pattern="DLS_DEAD_LOCAL_STORE_OF_NULL"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.PSImageHandlerSVG"/>
+      <Method name="handleImage"/>
+      <Bug pattern="DLS_DEAD_LOCAL_STORE_OF_NULL"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.PSSVGHandler"/>
+      <Method name="renderSVGDocument"/>
+      <Bug pattern="DLS_DEAD_LOCAL_STORE_OF_NULL"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.PSImageFormResource"/>
+      <!-- Listing the method 'equals' does not work -->
+      <Bug pattern="EQ_DOESNT_OVERRIDE_EQUALS"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfExtraRowSet$PositionedCell"/>
+      <Method name="equals"/>
+      <Bug pattern="EQ_UNUSUAL"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.properties.NumberProperty"/>
+      <Method name="&lt;init&gt;"/>
+      <Bug pattern="FE_FLOATING_POINT_EQUALITY"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.image.loader.batik.ImageConverterWMF2G2D$Graphics2DImagePainterWMF"/>
+      <Method name="paint"/>
+      <Bug pattern="FE_FLOATING_POINT_EQUALITY"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFColor"/>
+      <Method name="contentEquals"/>
+      <Bug pattern="FE_FLOATING_POINT_EQUALITY"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFColor"/>
+      <Method name="getColorSpaceOut"/>
+      <Bug pattern="FE_FLOATING_POINT_EQUALITY"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFPaintingState"/>
+      <Method name="setCharacterSpacing"/>
+      <Bug pattern="FE_FLOATING_POINT_EQUALITY"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFTextUtil"/>
+      <Method name="updateTf"/>
+      <Bug pattern="FE_FLOATING_POINT_EQUALITY"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.java2d.CustomFontMetricsMapper"/>
+      <Method name="getFont"/>
+      <Bug pattern="FE_FLOATING_POINT_EQUALITY"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.java2d.Java2DFontMetrics"/>
+      <Method name="setFont"/>
+      <Bug pattern="FE_FLOATING_POINT_EQUALITY"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.java2d.Java2DGraphicsState"/>
+      <Method name="updateStroke"/>
+      <Bug pattern="FE_FLOATING_POINT_EQUALITY"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pcl.PCLGenerator"/>
+      <Method name="getAdjustedDimension"/>
+      <Bug pattern="FE_FLOATING_POINT_EQUALITY"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pcl.PCLGenerator"/>
+      <Method name="paintBitmap"/>
+      <Bug pattern="FE_FLOATING_POINT_EQUALITY"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.svg.PDFGraphics2D"/>
+      <Method name="updateCurrentFont"/>
+      <Bug pattern="FE_FLOATING_POINT_EQUALITY"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.util.AbstractPaintingState"/>
+      <Method name="setLineWidth"/>
+      <Bug pattern="FE_FLOATING_POINT_EQUALITY"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfLeader"/>
+      <Method name="writeRtfContent"/>
+      <Bug pattern="ICAST_IDIV_CAST_TO_DOUBLE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.AbstractCodePointMapping"/>
+      <Method name="mapChar"/>
+      <Bug pattern="IM_AVERAGE_COMPUTATION_COULD_OVERFLOW"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.pagination.AbstractPageSequence"/>
+      <Method name="initPageNumber"/>
+      <Bug pattern="IM_BAD_CHECK_FOR_ODD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.pagination.PageSequence"/>
+      <Method name="getNextSimplePageMaster"/>
+      <Bug pattern="IM_BAD_CHECK_FOR_ODD"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.hyphenation.HyphenationTree"/>
+      <Method name="main"/>
+      <Bug pattern="NP_IMMEDIATE_DEREFERENCE_OF_READLINE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.afp.AFPRendererConfigurator"/>
+      <Method name="buildFontListFromConfiguration"/>
+      <Bug pattern="NP_LOAD_OF_KNOWN_NULL_VALUE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pcl.PCLGenerator"/>
+      <Method name="paintBitmap"/>
+      <Bug pattern="NP_LOAD_OF_KNOWN_NULL_VALUE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.RTFHandler"/>
+      <Method name="image"/>
+      <Bug pattern="NP_LOAD_OF_KNOWN_NULL_VALUE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.svg.PDFDocumentGraphics2DConfigurator"/>
+      <Method name="createFontInfo"/>
+      <Bug pattern="NP_LOAD_OF_KNOWN_NULL_VALUE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.tools.anttasks.FOPTaskStarter"/>
+      <Method name="render"/>
+      <Bug pattern="NP_LOAD_OF_KNOWN_NULL_VALUE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.awt.viewer.ImageProxyPanel"/>
+      <Method name="paintComponent"/>
+      <Bug pattern="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.awt.viewer.ImageProxyPanel"/>
+      <Method name="paintComponent"/>
+      <Bug pattern="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.table.TableStepper"/>
+      <Method name="considerRowLastStep"/>
+      <Bug pattern="NS_DANGEROUS_NON_SHORT_CIRCUIT"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.tools.anttasks.FileCompare"/>
+      <Method name="setReferenceDirectory"/>
+      <Bug pattern="NS_DANGEROUS_NON_SHORT_CIRCUIT"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.tools.anttasks.FileCompare"/>
+      <Method name="setTestDirectory"/>
+      <Bug pattern="NS_DANGEROUS_NON_SHORT_CIRCUIT"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.util.AFPResourceUtil"/>
+      <Method name="getNext"/>
+      <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.FOText"/>
+      <Method name="getCharArray"/>
+      <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.FontCache"/>
+      <Method name="getFontInfos"/>
+      <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.MultiByteFont"/>
+      <Method name="getCharsUsed"/>
+      <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.autodetect.FontInfoFinder"/>
+      <Method name="find"/>
+      <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.table.TableRowIterator"/>
+      <Method name="getNextRowGroup"/>
+      <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFPattern"/>
+      <Method name="toPDF"/>
+      <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.intermediate.AffineTransformArrayParser"/>
+      <Method name="getAffineTransforms"/>
+      <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.svg.AbstractFOPTextPainter"/>
+      <Method name="getSelected"/>
+      <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.svg.NativeTextPainter"/>
+      <Method name="findFonts"/>
+      <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.util.ConversionUtils"/>
+      <Method name="toDoubleArray"/>
+      <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.util.ConversionUtils"/>
+      <Method name="toIntArray"/>
+      <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.util.XMLUtil"/>
+      <Method name="getAttributeAsIntArray"/>
+      <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.modca.MapCodedFont"/>
+      <Method name="addFont"/>
+      <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.FontInfo"/>
+      <Method name="fuzzyFontLookup"/>
+      <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.autodetect.FontInfoFinder"/>
+      <Method name="find"/>
+      <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.substitute.FontQualifier"/>
+      <Method name="setFontFamily"/>
+      <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.substitute.FontSubstitutionsConfigurator"/>
+      <Method name="configure"/>
+      <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFColor"/>
+      <Method name="getColorSpaceOut"/>
+      <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFFactory"/>
+      <Method name="makeFontFile"/>
+      <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pcl.PCLPainter"/>
+      <Method name="fillRect"/>
+      <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pdf.PDFPainter"/>
+      <Method name="fillRect"/>
+      <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.PSPainter"/>
+      <Method name="fillRect"/>
+      <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.PSTextPainter"/>
+      <Method name="paintTextRun"/>
+      <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfElement"/>
+      <Method name="toString"/>
+      <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.svg.PDFTextPainter"/>
+      <Method name="paintTextRun"/>
+      <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.BlockContainerLayoutManager"/>
+      <Method name="getNextKnuthElements"/>
+      <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NULL_VALUE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pcl.PCLGenerator"/>
+      <Method name="paintBitmap"/>
+      <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NULL_VALUE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pcl.PCLGenerator"/>
+      <Method name="paintBitmap"/>
+      <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NULL_VALUE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.RTFHandler"/>
+      <Method name="image"/>
+      <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NULL_VALUE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.accessibility.AccessibilityPreprocessor"/>
+      <Method name="endDocument"/>
+      <Bug pattern="REC_CATCH_EXCEPTION"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.accessibility.StructureTree"/>
+      <Method name="toString"/>
+      <Bug pattern="REC_CATCH_EXCEPTION"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.area.CachedRenderPagesModel"/>
+      <Method name="checkPreparedPages"/>
+      <Bug pattern="REC_CATCH_EXCEPTION"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.cli.CommandLineOptions"/>
+      <Method name="parse"/>
+      <Bug pattern="REC_CATCH_EXCEPTION"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.cli.InputHandler"/>
+      <Method name="transformTo"/>
+      <Bug pattern="REC_CATCH_EXCEPTION"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.cli.Main"/>
+      <Method name="startFOP"/>
+      <Bug pattern="REC_CATCH_EXCEPTION"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.cli.Main"/>
+      <Method name="startFOPWithDynamicClasspath"/>
+      <Bug pattern="REC_CATCH_EXCEPTION"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.extensions.svg.BatikExtensionElementMapping"/>
+      <Method name="getAParserClassName"/>
+      <Bug pattern="REC_CATCH_EXCEPTION"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.extensions.svg.SVGDOMContentHandlerFactory$Handler"/>
+      <Method name="getDOMImplementation"/>
+      <Bug pattern="REC_CATCH_EXCEPTION"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.extensions.svg.SVGElementMapping"/>
+      <Method name="getAParserClassName"/>
+      <Bug pattern="REC_CATCH_EXCEPTION"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.apps.PFMReader"/>
+      <Method name="main"/>
+      <Bug pattern="REC_CATCH_EXCEPTION"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.apps.TTFReader"/>
+      <Method name="main"/>
+      <Bug pattern="REC_CATCH_EXCEPTION"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.autodetect.FontInfoFinder"/>
+      <Method name="find"/>
+      <Bug pattern="REC_CATCH_EXCEPTION"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.hyphenation.HyphenationTree"/>
+      <Method name="main"/>
+      <Bug pattern="REC_CATCH_EXCEPTION"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.hyphenation.Hyphenator"/>
+      <Method name="getResourceStream"/>
+      <Bug pattern="REC_CATCH_EXCEPTION"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.image.loader.batik.PreloaderSVG"/>
+      <Method name="getParserName"/>
+      <Bug pattern="REC_CATCH_EXCEPTION"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.afp.AFPRendererConfigurator"/>
+      <Method name="fontFromType"/>
+      <Bug pattern="REC_CATCH_EXCEPTION"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.java2d.ConfiguredFontCollection"/>
+      <Method name="setup"/>
+      <Bug pattern="REC_CATCH_EXCEPTION"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.PageAttributesConverter"/>
+      <Method name="convertPageAttributes"/>
+      <Bug pattern="REC_CATCH_EXCEPTION"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.RTFHandler"/>
+      <Method name="leader"/>
+      <Bug pattern="REC_CATCH_EXCEPTION"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.RTFHandler"/>
+      <Method name="startPageNumberCitation"/>
+      <Bug pattern="REC_CATCH_EXCEPTION"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfExternalGraphic"/>
+      <Method name="writeRtfContentWithException"/>
+      <Bug pattern="REC_CATCH_EXCEPTION"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.servlet.FopServlet"/>
+      <Method name="doGet"/>
+      <Bug pattern="REC_CATCH_EXCEPTION"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.svg.AbstractFOPImageElementBridge"/>
+      <Method name="createImageGraphicsNode"/>
+      <Bug pattern="REC_CATCH_EXCEPTION"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.svg.NativeTextPainter"/>
+      <Method name="findFonts"/>
+      <Bug pattern="REC_CATCH_EXCEPTION"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.svg.SimpleSVGUserAgent"/>
+      <Method name="getXMLParserClassName"/>
+      <Bug pattern="REC_CATCH_EXCEPTION"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.tools.TestConverter"/>
+      <Method name="runTest"/>
+      <Bug pattern="REC_CATCH_EXCEPTION"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.tools.TestConverter"/>
+      <Method name="runTests"/>
+      <Bug pattern="REC_CATCH_EXCEPTION"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.tools.anttasks.FOPTaskStarter"/>
+      <Method name="run"/>
+      <Bug pattern="REC_CATCH_EXCEPTION"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.tools.anttasks.RunTest"/>
+      <Method name="runConverter"/>
+      <Bug pattern="REC_CATCH_EXCEPTION"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.util.ColorSpaceCache"/>
+      <Method name="get"/>
+      <Bug pattern="REC_CATCH_EXCEPTION"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.util.ColorUtil"/>
+      <Method name="parseAsCMYK"/>
+      <Bug pattern="REC_CATCH_EXCEPTION"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.util.ColorUtil"/>
+      <Method name="parseAsFopRgbIcc"/>
+      <Bug pattern="REC_CATCH_EXCEPTION"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.util.ColorUtil"/>
+      <Method name="parseWithHash"/>
+      <Bug pattern="REC_CATCH_EXCEPTION"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.AFPPaintingState"/>
+      <!--Neither method nor field-->
+      <Bug pattern="RI_REDUNDANT_INTERFACES"/>
+   </Match>
+   <Match>
+      <Class name="java.lang.Cloneable"/>
+      <!--Neither method nor field-->
+      <Bug pattern="RI_REDUNDANT_INTERFACES"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.modca.AbstractResourceGroupContainer"/>
+      <!--Neither method nor field-->
+      <Bug pattern="RI_REDUNDANT_INTERFACES"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.Streamable"/>
+      <!--Neither method nor field-->
+      <Bug pattern="RI_REDUNDANT_INTERFACES"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.hyphenation.HyphenationTree"/>
+      <!--Neither method nor field-->
+      <Bug pattern="RI_REDUNDANT_INTERFACES"/>
+   </Match>
+   <Match>
+      <Class name="java.io.Serializable"/>
+      <!--Neither method nor field-->
+      <Bug pattern="RI_REDUNDANT_INTERFACES"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.FlowLayoutManager"/>
+      <!--Neither method nor field-->
+      <Bug pattern="RI_REDUNDANT_INTERFACES"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.BlockLevelLayoutManager"/>
+      <!--Neither method nor field-->
+      <Bug pattern="RI_REDUNDANT_INTERFACES"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.table.TableCellLayoutManager"/>
+      <!--Neither method nor field-->
+      <Bug pattern="RI_REDUNDANT_INTERFACES"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.BlockLevelLayoutManager"/>
+      <!--Neither method nor field-->
+      <Bug pattern="RI_REDUNDANT_INTERFACES"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.afp.AFPRendererConfigurator"/>
+      <!--Neither method nor field-->
+      <Bug pattern="RI_REDUNDANT_INTERFACES"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator"/>
+      <!--Neither method nor field-->
+      <Bug pattern="RI_REDUNDANT_INTERFACES"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.bitmap.BitmapRendererConfigurator"/>
+      <!--Neither method nor field-->
+      <Bug pattern="RI_REDUNDANT_INTERFACES"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator"/>
+      <!--Neither method nor field-->
+      <Bug pattern="RI_REDUNDANT_INTERFACES"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pcl.PCLRendererConfigurator"/>
+      <!--Neither method nor field-->
+      <Bug pattern="RI_REDUNDANT_INTERFACES"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator"/>
+      <!--Neither method nor field-->
+      <Bug pattern="RI_REDUNDANT_INTERFACES"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.PSRendererConfigurator"/>
+      <!--Neither method nor field-->
+      <Bug pattern="RI_REDUNDANT_INTERFACES"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator"/>
+      <!--Neither method nor field-->
+      <Bug pattern="RI_REDUNDANT_INTERFACES"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.awt.viewer.PreviewPanel$Reloader"/>
+      <Method name="run"/>
+      <Bug pattern="SF_SWITCH_FALLTHROUGH"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.java2d.Java2DBorderPainter"/>
+      <Method name="drawLine"/>
+      <Bug pattern="SF_SWITCH_FALLTHROUGH"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.java2d.Java2DRenderer"/>
+      <Method name="renderLeader"/>
+      <Bug pattern="SF_SWITCH_FALLTHROUGH"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.util.text.AdvancedMessageFormat"/>
+      <Method name="parseInnerPattern"/>
+      <Bug pattern="SF_SWITCH_NO_DEFAULT"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.afp.AFPGraphics2D"/>
+      <Method name="applyPaint"/>
+      <Bug pattern="UCF_USELESS_CONTROL_FLOW"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.properties.PropertyMaker"/>
+      <Method name="convertShorthandProperty"/>
+      <Bug pattern="UCF_USELESS_CONTROL_FLOW"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.AbstractBreaker"/>
+      <Method name="justifyBoxes"/>
+      <Bug pattern="UCF_USELESS_CONTROL_FLOW"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.AbstractPageSequenceLayoutManager"/>
+      <Method name="doForcePageCount"/>
+      <Bug pattern="UCF_USELESS_CONTROL_FLOW"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.BlockStackingLayoutManager"/>
+      <Method name="addChildToArea"/>
+      <Bug pattern="UCF_USELESS_CONTROL_FLOW"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.table.CollapsingBorderModel"/>
+      <Method name="getBorderModelFor"/>
+      <Bug pattern="UCF_USELESS_CONTROL_FLOW"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.intermediate.IFRenderer"/>
+      <Method name="getGoToActionForID"/>
+      <Bug pattern="UCF_USELESS_CONTROL_FLOW"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.PSDocumentHandler"/>
+      <Method name="startPage"/>
+      <Bug pattern="UCF_USELESS_CONTROL_FLOW"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.TextAttributesConverter"/>
+      <Method name="convertLeaderAttributes"/>
+      <Bug pattern="UCF_USELESS_CONTROL_FLOW"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.tools.TestConverter"/>
+      <Method name="runTestCase"/>
+      <Bug pattern="UCF_USELESS_CONTROL_FLOW"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.extensions.xmp.AbstractMetadataElement"/>
+      <Field name="attachment"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.flow.AbstractGraphics"/>
+      <Field name="alignmentAdjust"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.pagination.AbstractPageSequence"/>
+      <Field name="pageNumberGenerator"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.pagination.AbstractPageSequence"/>
+      <Field name="referenceOrientation"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.pagination.LayoutMasterSet"/>
+      <Field name="pageSequenceMasters"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.pagination.LayoutMasterSet"/>
+      <Field name="simplePageMasters"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.pagination.PageSequence"/>
+      <Field name="flowMap"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.pagination.PageSequenceMaster"/>
+      <Field name="layoutMasterSet"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.pagination.PageSequenceMaster"/>
+      <Field name="subSequenceSpecifiers"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.pagination.Region"/>
+      <Field name="referenceOrientation"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.pagination.RegionBody"/>
+      <Field name="columnCount"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.pagination.RegionBody"/>
+      <Field name="columnGap"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.pagination.RegionBody"/>
+      <Field name="commonMarginBlock"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.pagination.RepeatablePageMasterReference"/>
+      <Field name="maximumRepeats"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.pagination.SimplePageMaster"/>
+      <Field name="referenceOrientation"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.pagination.SimplePageMaster"/>
+      <Field name="regions"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.properties.SpaceProperty"/>
+      <Field name="conditionality"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fo.properties.SpaceProperty"/>
+      <Field name="precedence"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.type1.AFMFile"/>
+      <Field name="kerningMap"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.type1.PFBData"/>
+      <Field name="encryptedSegment"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.type1.PFBData"/>
+      <Field name="headerSegment"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.fonts.type1.PFBData"/>
+      <Field name="trailerSegment"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.hyphenation.HyphenationTree"/>
+      <Field name="ivalues"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.BlockContainerLayoutManager$BlockContainerBreaker"/>
+      <Field name="deferredAlg"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.layoutmgr.inline.LineLayoutManager$Paragraph"/>
+      <Field name="lineFiller"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFLink"/>
+      <Field name="action"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFT1Stream"/>
+      <Field name="pfb"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.pdf.PDFTextUtil"/>
+      <Field name="bufTJ"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.AbstractRenderingContext"/>
+      <Field name="hints"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.afp.AFPDocumentHandler"/>
+      <Field name="dataStream"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.bitmap.PNGRenderer"/>
+      <Field name="multiFileUtil"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.bitmap.TIFFRenderer"/>
+      <Field name="outputStream"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.intermediate.AffineTransformArrayParser"/>
+      <Field name="transforms"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.ps.PSTextPainter$TextUtil"/>
+      <Field name="fonts"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfExternalGraphic"/>
+      <Field name="imageformat"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfFile"/>
+      <Field name="listTableContainer"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfListStyle"/>
+      <Field name="rtfListItem"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfParagraph"/>
+      <Field name="text"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.txt.TXTRenderer"/>
+      <Field name="bm"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.txt.TXTRenderer"/>
+      <Field name="charData"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.txt.TXTRenderer"/>
+      <Field name="currentStream"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.txt.TXTRenderer"/>
+      <Field name="decoData"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.txt.TXTRenderer"/>
+      <Field name="outputStream"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.svg.PDFANode"/>
+      <Field name="destination"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.svg.PDFANode"/>
+      <Field name="transform"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.svg.PDFTextUtil"/>
+      <Field name="font"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.svg.PDFTextUtil"/>
+      <Field name="fonts"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.tools.anttasks.FileCompare"/>
+      <Field name="filenameList"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.util.ColorExt"/>
+      <Field name="colorValues"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <!-- /Automatically generated list of exclusions -->
+<!-- .merge-right.r1036883 -->
 </FindBugsFilter>

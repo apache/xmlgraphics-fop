@@ -58,6 +58,12 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="JM" type="add" fixes-bug="42600" due-to="Maximilian Aster">
+        Added some support for break-before/-after for RTF output.
+      </action>
+      <action context="Renderers" dev="JM" type="add" fixes-bug="49379" due-to="Peter Hancock">
+        Added ability to embed an external AFP page segment resource file (AFP output only).
+      </action>
       <action context="Renderers" dev="JM" type="fix" fixes-bug="46360" due-to="Alexis Giotis">
         Fixed a multi-threading issue when rendering SVG.
       </action>
@@ -400,6 +406,9 @@
       <action context="Layout" dev="JM" type="fix">
         Fixed a problem where the BPD or a block area could be wrong if there is a nested,
         absolutely positioned area (for example a block-container).
+      </action>
+      <action context="Code" dev="VH" type="fix" fixes-bug="45971" due-to="Tow Browder">
+        Improved the behaviour of the command line interface.
       </action>
       <action context="Layout" dev="AD" type="fix" fixes-bug="40798">
         Bugzilla 40798: A conditional-page-master-reference with page-position="last" qualifies
