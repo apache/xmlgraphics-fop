@@ -39,7 +39,7 @@ public class ActionSet {
      */
     public synchronized String generateNewID(AbstractAction action) {
         this.lastGeneratedID++;
-        String prefix = action.getIdPrefix();
+        String prefix = action.getIDPrefix();
         if (prefix == null) {
             throw new IllegalArgumentException("Action class is not compatible");
         }
@@ -62,12 +62,12 @@ public class ActionSet {
      * @return the action instance that should be used in place of the given one
      */
     public AbstractAction put(AbstractAction action) {
-        if (!action.hasId()) {
-            action.setId(generateNewID(action));
+        if (!action.hasID()) {
+            action.setID(generateNewID(action));
         }
         AbstractAction effAction = normalize(action);
         if (effAction == action) {
-            this.actionRegistry.put(action.getId(), action);
+            this.actionRegistry.put(action.getID(), action);
         }
         return effAction;
     }

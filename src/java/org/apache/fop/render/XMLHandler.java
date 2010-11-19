@@ -60,6 +60,6 @@ public interface XMLHandler {
      * @return the XML namespace for the XML dialect this XMLHandler supports,
      * null if all XML content is handled by this instance.
      */
-    String getNameSpace();
+    String getNamespace();
 }
 

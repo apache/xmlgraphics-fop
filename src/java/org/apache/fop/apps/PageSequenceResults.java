@@ -44,7 +44,7 @@ public class PageSequenceResults {
      *
      * @return   The ID
      */
-    public String getId() {
+    public String getID() {
         return this.id;
     }
 

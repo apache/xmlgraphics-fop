@@ -38,7 +38,7 @@ public class SVGSVGHandler implements XMLHandler, SVGRendererContextConstants {
     /** {@inheritDoc} */
     public void handleXML(RendererContext context,
                 org.w3c.dom.Document doc, String ns) throws Exception {
-        if (getNameSpace().equals(ns)) {
+        if (getNamespace().equals(ns)) {
             if (!(doc instanceof SVGDocument)) {
                 DOMImplementation impl = SVGDOMImplementation.getDOMImplementation();
                 doc = DOMUtilities.deepCloneDocument(doc, impl);
@@ -46,7 +46,7 @@ public class SVGSVGHandler implements XMLHandler, SVGRendererContextConstants {
             SVGSVGElement svg = ((SVGDocument) doc).getRootElement();
             SVGDocument targetDoc = (SVGDocument)context.getProperty(SVG_DOCUMENT);
             SVGElement currentPageG = (SVGElement)context.getProperty(SVG_PAGE_G);
-            Element view = targetDoc.createElementNS(getNameSpace(), "svg");
+            Element view = targetDoc.createElementNS(getNamespace(), "svg");
             Node newsvg = targetDoc.importNode(svg, true);
             //view.setAttributeNS(null, "viewBox", "0 0 ");
             int xpos = ((Integer)context.getProperty(XPOS)).intValue();
@@ -57,7 +57,7 @@ public class SVGSVGHandler implements XMLHandler, SVGRendererContextConstants {
             // this fixes a problem where the xmlns is repeated sometimes
             Element ele = (Element) newsvg;
             ele.setAttributeNS(XMLSupport.XMLNS_NAMESPACE_URI, "xmlns",
-                               getNameSpace());
+                               getNamespace());
             if (ele.hasAttributeNS(null, "xmlns")) {
                 ele.removeAttributeNS(null, "xmlns");
             }
@@ -74,7 +74,7 @@ public class SVGSVGHandler implements XMLHandler, SVGRendererContextConstants {
     }
 
     /** {@inheritDoc} */
-    public String getNameSpace() {
+    public String getNamespace() {
         return SVGRenderer.MIME_TYPE;
     }
 

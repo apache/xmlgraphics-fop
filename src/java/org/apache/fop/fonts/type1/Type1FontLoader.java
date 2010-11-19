@@ -226,8 +226,8 @@ public class Type1FontLoader extends FontLoader {
             names.add(afm.getFamilyName());
             returnFont.setFamilyNames(names);
         } else {
-            returnFont.setFontName(pfm.getPostScriptName());
-            String fullName = pfm.getPostScriptName();
+            returnFont.setFontName(pfm.getPostscriptName());
+            String fullName = pfm.getPostscriptName();
             fullName = fullName.replace('-', ' '); //Hack! Try to emulate full name
             returnFont.setFullName(fullName); //emulate afm.getFullName()
             Set names = new java.util.HashSet();

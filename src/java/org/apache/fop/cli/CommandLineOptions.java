@@ -89,23 +89,23 @@ public class CommandLineOptions {
     /* user configuration file */
     private File userConfigFile = null;
     /* input fo file */
-    private File foFile = null;
+    private File fofile = null;
     /* xsltfile (xslt transformation as input) */
-    private File xsltFile = null;
+    private File xsltfile = null;
     /* xml file (xslt transformation as input) */
-    private File xmlFile = null;
+    private File xmlfile = null;
     /* area tree input file */
-    private File areatreeFile = null;
+    private File areatreefile = null;
     /* intermediate format input file */
-    private File ifFile = null;
+    private File iffile = null;
     /* area tree input file */
-    private File imageFile = null;
+    private File imagefile = null;
     /* output file */
-    private File outFile = null;
+    private File outfile = null;
     /* input mode */
-    private int inputMode = NOT_SET;
+    private int inputmode = NOT_SET;
     /* output mode */
-    private String outputMode = null;
+    private String outputmode = null;
     /* true if System.in (stdin) should be used for the input file */
     private boolean useStdIn = false;
     /* true if System.out (stdout) should be used for the output file */
@@ -194,7 +194,7 @@ public class CommandLineOptions {
 
         inputHandler = createInputHandler();
 
-        if (MimeConstants.MIME_FOP_AWT_PREVIEW.equals(outputMode)) {
+        if (MimeConstants.MIME_FOP_AWT_PREVIEW.equals(outputmode)) {
             //set the system look&feel for the preview dialog
             try {
                 UIManager.setLookAndFeel(
@@ -207,7 +207,7 @@ public class CommandLineOptions {
             renderer.setRenderable(inputHandler); //set before user agent!
             renderer.setUserAgent(foUserAgent);
             foUserAgent.setRendererOverride(renderer);
-        } else if (MimeConstants.MIME_FOP_AREA_TREE.equals(outputMode)
+        } else if (MimeConstants.MIME_FOP_AREA_TREE.equals(outputmode)
                && mimicRenderer != null) {
             // render from FO to Intermediate Format
             Renderer targetRenderer = foUserAgent.getRendererFactory().createRenderer(
@@ -220,7 +220,7 @@ public class CommandLineOptions {
 
             //Make sure the prepared XMLRenderer is used
             foUserAgent.setRendererOverride(xmlRenderer);
-        } else if (MimeConstants.MIME_FOP_IF.equals(outputMode)
+        } else if (MimeConstants.MIME_FOP_IF.equals(outputmode)
                 && mimicRenderer != null) {
             // render from FO to Intermediate Format
             IFSerializer serializer = new IFSerializer();
@@ -447,7 +447,7 @@ public class CommandLineOptions {
             if (isSystemInOutFile(filename)) {
                 this.useStdIn = true;
             } else {
-                foFile = new File(filename);
+                fofile = new File(filename);
             }
             return 1;
         }
@@ -460,7 +460,7 @@ public class CommandLineOptions {
             throw new FOPException("you must specify the stylesheet "
                             + "file for the '-xsl' option");
         } else {
-            xsltFile = new File(args[i + 1]);
+            xsltfile = new File(args[i + 1]);
             return 1;
         }
     }
@@ -476,7 +476,7 @@ public class CommandLineOptions {
             if (isSystemInOutFile(filename)) {
                 this.useStdIn = true;
             } else {
-                xmlFile = new File(filename);
+                xmlfile = new File(filename);
             }
             return 1;
         }
@@ -508,7 +508,7 @@ public class CommandLineOptions {
         if (isSystemInOutFile(filename)) {
             this.useStdOut = true;
         } else {
-            outFile = new File(filename);
+            outfile = new File(filename);
         }
     }
 
@@ -701,16 +701,16 @@ public class CommandLineOptions {
     }
 
     private int parseUnknownOption(String[] args, int i) throws FOPException {
-        if (inputMode == NOT_SET) {
-            inputMode = FO_INPUT;
+        if (inputmode == NOT_SET) {
+            inputmode = FO_INPUT;
             String filename = args[i];
             if (isSystemInOutFile(filename)) {
                 this.useStdIn = true;
             } else {
-                foFile = new File(filename);
+                fofile = new File(filename);
             }
-        } else if (outputMode == null) {
-            outputMode = MimeConstants.MIME_PDF;
+        } else if (outputmode == null) {
+            outputmode = MimeConstants.MIME_PDF;
             setOutputFile(args[i]);
         } else {
             throw new FOPException("Don't know what to do with "
@@ -765,7 +765,7 @@ public class CommandLineOptions {
             if (isSystemInOutFile(filename)) {
                 this.useStdIn = true;
             } else {
-                areatreeFile = new File(filename);
+                areatreefile = new File(filename);
             }
             return 1;
         }
@@ -781,7 +781,7 @@ public class CommandLineOptions {
             if (isSystemInOutFile(filename)) {
                 this.useStdIn = true;
             } else {
-                ifFile = new File(filename);
+                iffile = new File(filename);
             }
             return 1;
         }
@@ -797,7 +797,7 @@ public class CommandLineOptions {
             if (isSystemInOutFile(filename)) {
                 this.useStdIn = true;
             } else {
-                imageFile = new File(filename);
+                imagefile = new File(filename);
             }
             return 1;
         }
@@ -867,8 +867,8 @@ public class CommandLineOptions {
     }
 
     private void setOutputMode(String mime) throws FOPException {
-        if (outputMode == null) {
-            outputMode = mime;
+        if (outputmode == null) {
+            outputmode = mime;
         } else {
             throw new FOPException("you can only set one output method");
         }
@@ -896,8 +896,8 @@ public class CommandLineOptions {
     }
 
     private void setInputFormat(int format) throws FOPException {
-        if (inputMode == NOT_SET || inputMode == format) {
-            inputMode = format;
+        if (inputmode == NOT_SET || inputmode == format) {
+            inputmode = format;
         } else {
             throw new FOPException("Only one input mode can be specified!");
         }
@@ -907,100 +907,100 @@ public class CommandLineOptions {
      * checks whether all necessary information has been given in a consistent way
      */
     private void checkSettings() throws FOPException, FileNotFoundException {
-        if (inputMode == NOT_SET) {
+        if (inputmode == NOT_SET) {
             throw new FOPException("No input file specified");
         }
 
-        if (outputMode == null) {
+        if (outputmode == null) {
             throw new FOPException("No output file specified");
         }
 
-        if ((outputMode.equals(MimeConstants.MIME_FOP_AWT_PREVIEW)
-                || outputMode.equals(MimeConstants.MIME_FOP_PRINT))
-                    && outFile != null) {
+        if ((outputmode.equals(MimeConstants.MIME_FOP_AWT_PREVIEW)
+                || outputmode.equals(MimeConstants.MIME_FOP_PRINT))
+                    && outfile != null) {
             throw new FOPException("Output file may not be specified "
                     + "for AWT or PRINT output");
         }
 
-        if (inputMode == XSLT_INPUT) {
+        if (inputmode == XSLT_INPUT) {
             // check whether xml *and* xslt file have been set
-            if (xmlFile == null && !this.useStdIn) {
+            if (xmlfile == null && !this.useStdIn) {
                 throw new FOPException("XML file must be specified for the transform mode");
             }
-            if (xsltFile == null) {
+            if (xsltfile == null) {
                 throw new FOPException("XSLT file must be specified for the transform mode");
             }
 
             // warning if fofile has been set in xslt mode
-            if (foFile != null) {
+            if (fofile != null) {
                 log.warn("Can't use fo file with transform mode! Ignoring.\n"
                                        + "Your input is " + "\n xmlfile: "
-                                       + xmlFile.getAbsolutePath()
+                                       + xmlfile.getAbsolutePath()
                                        + "\nxsltfile: "
-                                       + xsltFile.getAbsolutePath()
+                                       + xsltfile.getAbsolutePath()
                                        + "\n  fofile: "
-                                       + foFile.getAbsolutePath());
+                                       + fofile.getAbsolutePath());
             }
-            if (xmlFile != null && !xmlFile.exists()) {
+            if (xmlfile != null && !xmlfile.exists()) {
                 throw new FileNotFoundException("Error: xml file "
-                                                + xmlFile.getAbsolutePath()
+                                                + xmlfile.getAbsolutePath()
                                                 + " not found ");
             }
-            if (!xsltFile.exists()) {
+            if (!xsltfile.exists()) {
                 throw new FileNotFoundException("Error: xsl file "
-                                                + xsltFile.getAbsolutePath()
+                                                + xsltfile.getAbsolutePath()
                                                 + " not found ");
             }
 
-        } else if (inputMode == FO_INPUT) {
-            if (outputMode.equals(MimeConstants.MIME_XSL_FO)) {
+        } else if (inputmode == FO_INPUT) {
+            if (outputmode.equals(MimeConstants.MIME_XSL_FO)) {
                 throw new FOPException(
                         "FO output mode is only available if you use -xml and -xsl");
             }
-            if (foFile != null && !foFile.exists()) {
+            if (fofile != null && !fofile.exists()) {
                 throw new FileNotFoundException("Error: fo file "
-                                                + foFile.getAbsolutePath()
+                                                + fofile.getAbsolutePath()
                                                 + " not found ");
             }
-        } else if (inputMode == AREATREE_INPUT) {
-            if (outputMode.equals(MimeConstants.MIME_XSL_FO)) {
+        } else if (inputmode == AREATREE_INPUT) {
+            if (outputmode.equals(MimeConstants.MIME_XSL_FO)) {
                 throw new FOPException(
                         "FO output mode is only available if you use -xml and -xsl");
-            } else if (outputMode.equals(MimeConstants.MIME_FOP_AREA_TREE)) {
+            } else if (outputmode.equals(MimeConstants.MIME_FOP_AREA_TREE)) {
                 throw new FOPException(
                         "Area Tree Output is not available if Area Tree is used as input!");
             }
-            if (areatreeFile != null && !areatreeFile.exists()) {
+            if (areatreefile != null && !areatreefile.exists()) {
                 throw new FileNotFoundException("Error: area tree file "
-                                              + areatreeFile.getAbsolutePath()
+                                              + areatreefile.getAbsolutePath()
                                               + " not found ");
             }
-        } else if (inputMode == IF_INPUT) {
-            if (outputMode.equals(MimeConstants.MIME_XSL_FO)) {
+        } else if (inputmode == IF_INPUT) {
+            if (outputmode.equals(MimeConstants.MIME_XSL_FO)) {
                 throw new FOPException(
                         "FO output mode is only available if you use -xml and -xsl");
-            } else if (outputMode.equals(MimeConstants.MIME_FOP_AREA_TREE)) {
+            } else if (outputmode.equals(MimeConstants.MIME_FOP_AREA_TREE)) {
                 throw new FOPException(
                     "Area Tree Output is not available if Intermediate Format"
                     + " is used as input!");
-            } else if (outputMode.equals(MimeConstants.MIME_FOP_IF)) {
+            } else if (outputmode.equals(MimeConstants.MIME_FOP_IF)) {
                 throw new FOPException(
                     "Intermediate Output is not available if Intermediate Format"
                     + " is used as input!");
             }
-            if (ifFile != null && !ifFile.exists()) {
+            if (iffile != null && !iffile.exists()) {
                 throw new FileNotFoundException("Error: intermediate format file "
-                                              + ifFile.getAbsolutePath()
+                                              + iffile.getAbsolutePath()
                                               + " not found ");
             }
-        } else if (inputMode == IMAGE_INPUT) {
-            if (outputMode.equals(MimeConstants.MIME_XSL_FO)) {
+        } else if (inputmode == IMAGE_INPUT) {
+            if (outputmode.equals(MimeConstants.MIME_XSL_FO)) {
                 throw new FOPException(
                         "FO output mode is only available if you use -xml and -xsl");
             }
-            if (imageFile != null && !imageFile.exists()) {
+            if (imagefile != null && !imagefile.exists()) {
                 throw new FileNotFoundException("Error: image file "
-                                              + imageFile.getAbsolutePath()
+                                              + imagefile.getAbsolutePath()
                                               + " not found ");
             }
         }
@@ -1027,13 +1027,13 @@ public class CommandLineOptions {
      * @throws FOPException for invalid output formats
      */
     protected String getOutputFormat() throws FOPException {
-        if (outputMode == null) {
+        if (outputmode == null) {
             throw new FOPException("Renderer has not been set!");
         }
-        if (outputMode.equals(MimeConstants.MIME_FOP_AREA_TREE)) {
+        if (outputmode.equals(MimeConstants.MIME_FOP_AREA_TREE)) {
             renderingOptions.put("fineDetail", isCoarseAreaXml());
         }
-        return outputMode;
+        return outputmode;
     }
 
     /**
@@ -1042,21 +1042,21 @@ public class CommandLineOptions {
      * @throws IllegalArgumentException if invalid/missing parameters
      */
     private InputHandler createInputHandler() {
-        switch (inputMode) {
+        switch (inputmode) {
             case FO_INPUT:
-                return new InputHandler(foFile);
+                return new InputHandler(fofile);
             case AREATREE_INPUT:
-                return new AreaTreeInputHandler(areatreeFile);
+                return new AreaTreeInputHandler(areatreefile);
             case IF_INPUT:
-                return new IFInputHandler(ifFile);
+                return new IFInputHandler(iffile);
             case XSLT_INPUT:
-                InputHandler handler = new InputHandler(xmlFile, xsltFile, xsltParams);
+                InputHandler handler = new InputHandler(xmlfile, xsltfile, xsltParams);
                 if (useCatalogResolver) {
                     handler.createCatalogResolver(foUserAgent);
                 }
                 return handler;
             case IMAGE_INPUT:
-                return new ImageInputHandler(imageFile, xsltFile, xsltParams);
+                return new ImageInputHandler(imagefile, xsltfile, xsltParams);
             default:
                 throw new IllegalArgumentException("Error creating InputHandler object.");
         }
@@ -1074,24 +1074,24 @@ public class CommandLineOptions {
      * Returns the XSL-FO file if set.
      * @return the XSL-FO file, null if not set
      */
-    public File getFoFile() {
-        return foFile;
+    public File getFOFile() {
+        return fofile;
     }
 
     /**
      * Returns the input XML file if set.
      * @return the input XML file, null if not set
      */
-    public File getXmlFile() {
-        return xmlFile;
+    public File getXMLFile() {
+        return xmlfile;
     }
 
     /**
      * Returns the stylesheet to be used for transformation to XSL-FO.
      * @return stylesheet
      */
-    public File getXslFile() {
-        return xsltFile;
+    public File getXSLFile() {
+        return xsltfile;
     }
 
     /**
@@ -1099,7 +1099,7 @@ public class CommandLineOptions {
      * @return the output file
      */
     public File getOutputFile() {
-        return outFile;
+        return outfile;
     }
 
     /**
@@ -1139,13 +1139,13 @@ public class CommandLineOptions {
      * @return either the fofile or the xmlfile
      */
     public File getInputFile() {
-        switch (inputMode) {
+        switch (inputmode) {
         case FO_INPUT:
-            return foFile;
+            return fofile;
         case XSLT_INPUT:
-            return xmlFile;
+            return xmlfile;
         default:
-            return foFile;
+            return fofile;
         }
     }
 
@@ -1270,7 +1270,7 @@ public class CommandLineOptions {
      */
     private void dumpConfiguration() {
         log.info("Input mode: ");
-        switch (inputMode) {
+        switch (inputmode) {
         case NOT_SET:
             log.info("not set");
             break;
@@ -1279,7 +1279,7 @@ public class CommandLineOptions {
             if (isInputFromStdIn()) {
                 log.info("fo input file: from stdin");
             } else {
-                log.info("fo input file: " + foFile.toString());
+                log.info("fo input file: " + fofile.toString());
             }
             break;
         case XSLT_INPUT:
@@ -1287,16 +1287,16 @@ public class CommandLineOptions {
             if (isInputFromStdIn()) {
                 log.info("xml input file: from stdin");
             } else {
-                log.info("xml input file: " + xmlFile.toString());
+                log.info("xml input file: " + xmlfile.toString());
             }
-            log.info("xslt stylesheet: " + xsltFile.toString());
+            log.info("xslt stylesheet: " + xsltfile.toString());
             break;
         case AREATREE_INPUT:
             log.info("AT ");
             if (isInputFromStdIn()) {
                 log.info("area tree input file: from stdin");
             } else {
-                log.info("area tree input file: " + areatreeFile.toString());
+                log.info("area tree input file: " + areatreefile.toString());
             }
             break;
         case IF_INPUT:
@@ -1304,7 +1304,7 @@ public class CommandLineOptions {
             if (isInputFromStdIn()) {
                 log.info("intermediate input file: from stdin");
             } else {
-                log.info("intermediate input file: " + ifFile.toString());
+                log.info("intermediate input file: " + iffile.toString());
             }
             break;
         case IMAGE_INPUT:
@@ -1312,28 +1312,28 @@ public class CommandLineOptions {
             if (isInputFromStdIn()) {
                 log.info("image input file: from stdin");
             } else {
-                log.info("image input file: " + imageFile.toString());
+                log.info("image input file: " + imagefile.toString());
             }
             break;
         default:
             log.info("unknown input type");
         }
         log.info("Output mode: ");
-        if (outputMode == null) {
+        if (outputmode == null) {
             log.info("not set");
-        } else if (MimeConstants.MIME_FOP_AWT_PREVIEW.equals(outputMode)) {
+        } else if (MimeConstants.MIME_FOP_AWT_PREVIEW.equals(outputmode)) {
             log.info("awt on screen");
-            if (outFile != null) {
+            if (outfile != null) {
                 log.error("awt mode, but outfile is set:");
-                log.error("out file: " + outFile.toString());
+                log.error("out file: " + outfile.toString());
             }
-        } else if (MimeConstants.MIME_FOP_PRINT.equals(outputMode)) {
+        } else if (MimeConstants.MIME_FOP_PRINT.equals(outputmode)) {
             log.info("print directly");
-            if (outFile != null) {
+            if (outfile != null) {
                 log.error("print mode, but outfile is set:");
-                log.error("out file: " + outFile.toString());
+                log.error("out file: " + outfile.toString());
             }
-        } else if (MimeConstants.MIME_FOP_AREA_TREE.equals(outputMode)) {
+        } else if (MimeConstants.MIME_FOP_AREA_TREE.equals(outputmode)) {
             log.info("area tree");
             if (mimicRenderer != null) {
               log.info("mimic renderer: " + mimicRenderer);
@@ -1341,17 +1341,17 @@ public class CommandLineOptions {
             if (isOutputToStdOut()) {
                 log.info("output file: to stdout");
             } else {
-                log.info("output file: " + outFile.toString());
+                log.info("output file: " + outfile.toString());
             }
-        } else if (MimeConstants.MIME_FOP_IF.equals(outputMode)) {
+        } else if (MimeConstants.MIME_FOP_IF.equals(outputmode)) {
             log.info("intermediate format");
-            log.info("output file: " + outFile.toString());
+            log.info("output file: " + outfile.toString());
         } else {
-            log.info(outputMode);
+            log.info(outputmode);
             if (isOutputToStdOut()) {
                 log.info("output file: to stdout");
             } else {
-                log.info("output file: " + outFile.toString());
+                log.info("output file: " + outfile.toString());
             }
         }
 

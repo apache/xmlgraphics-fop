@@ -129,7 +129,7 @@ public class PDFDocumentNavigationHandler implements IFDocumentNavigationHandler
     /** {@inheritDoc} */
     public void addResolvedAction(AbstractAction action) throws IFException {
         assert action.isComplete();
-        PDFAction pdfAction = (PDFAction)this.incompleteActions.remove(action.getId());
+        PDFAction pdfAction = (PDFAction)this.incompleteActions.remove(action.getID());
         if (pdfAction == null) {
             getAction(action);
         } else if (pdfAction instanceof PDFGoTo) {
@@ -145,11 +145,11 @@ public class PDFDocumentNavigationHandler implements IFDocumentNavigationHandler
         if (action == null) {
             return null;
         }
-        PDFAction pdfAction = (PDFAction)this.completeActions.get(action.getId());
+        PDFAction pdfAction = (PDFAction)this.completeActions.get(action.getID());
         if (pdfAction != null) {
             return pdfAction;
         } else if (action instanceof GoToXYAction) {
-            pdfAction = (PDFAction) incompleteActions.get(action.getId());
+            pdfAction = (PDFAction) incompleteActions.get(action.getID());
             if (pdfAction != null) {
                 return pdfAction;
             } else {
@@ -159,7 +159,7 @@ public class PDFDocumentNavigationHandler implements IFDocumentNavigationHandler
                 if (action.isComplete()) {
                     updateTargetLocation(pdfGoTo, a);
                 } else {
-                    this.incompleteActions.put(action.getId(), pdfGoTo);
+                    this.incompleteActions.put(action.getID(), pdfGoTo);
                 }
                 return pdfGoTo;
             }
@@ -173,7 +173,7 @@ public class PDFDocumentNavigationHandler implements IFDocumentNavigationHandler
                 //Some PDF actions are pooled
                 getPDFDoc().registerObject(pdfAction);
             }
-            this.completeActions.put(action.getId(), pdfAction);
+            this.completeActions.put(action.getID(), pdfAction);
             return pdfAction;
         } else {
             throw new UnsupportedOperationException("Unsupported action type: "
@@ -195,7 +195,7 @@ public class PDFDocumentNavigationHandler implements IFDocumentNavigationHandler
 
         //Queue this object now that it's complete
         getPDFDoc().addObject(pdfGoTo);
-        this.completeActions.put(action.getId(), pdfGoTo);
+        this.completeActions.put(action.getID(), pdfGoTo);
     }
 
 }

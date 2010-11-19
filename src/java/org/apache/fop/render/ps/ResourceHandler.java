@@ -281,7 +281,7 @@ public class ResourceHandler implements DSCParserConstants, PSSupportedFlavors {
 
     private void generateFormForImage(PSGenerator gen, PSImageFormResource form)
                 throws IOException {
-        final String uri = form.getImageUri();
+        final String uri = form.getImageURI();
 
         ImageManager manager = userAgent.getFactory().getImageManager();
         ImageInfo info = null;

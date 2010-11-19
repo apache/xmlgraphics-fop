@@ -178,7 +178,7 @@ public abstract class AbstractGenericSVGHandler implements XMLHandler, RendererC
     }
 
     /** {@inheritDoc} */
-    public String getNameSpace() {
+    public String getNamespace() {
         return SVGDOMImplementation.SVG_NAMESPACE_URI;
     }
 
