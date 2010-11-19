@@ -56,7 +56,7 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
     /**
      * logging instance
      */
-    protected static Log log = LogFactory.getLog(LeafNodeLayoutManager.class);
+    protected static final Log log = LogFactory.getLog(LeafNodeLayoutManager.class);
 
     /**
      * The inline area that this leafnode will add.

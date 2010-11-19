@@ -39,6 +39,8 @@ import org.apache.fop.traits.BorderProps;
  */
 public class Area extends AreaTreeObject implements Serializable {
 
+    private static final long serialVersionUID = 6342888466142626492L;
+
     // orientations for reference areas
     /**
      * Normal orientation
@@ -119,7 +121,7 @@ public class Area extends AreaTreeObject implements Serializable {
     /**
      * logging instance
      */
-    protected static Log log = LogFactory.getLog(Area.class);
+    protected static final Log log = LogFactory.getLog(Area.class);
 
     /**
      * Get the area class of this area.

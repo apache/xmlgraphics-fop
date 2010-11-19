@@ -32,12 +32,17 @@ import org.apache.fop.area.Trait;
  */
 public class InlineArea extends Area {
 
+    private static final long serialVersionUID = -8940066479810170980L;
+
     /**
      * this class stores information about potential adjustments
      * that can be used in order to re-compute adjustments when a
      * page-number or a page-number-citation is resolved
      */
     protected class InlineAdjustingInfo implements Serializable {
+
+        private static final long serialVersionUID = -5601387735459712149L;
+
         /** stretch of the inline area */
         protected int availableStretch;
         /** shrink of the inline area */

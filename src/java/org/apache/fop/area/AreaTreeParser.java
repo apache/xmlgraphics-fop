@@ -98,7 +98,7 @@ import org.apache.fop.util.XMLUtil;
 public class AreaTreeParser {
 
     /** Logger instance */
-    protected static Log log = LogFactory.getLog(AreaTreeParser.class);
+    protected static final Log log = LogFactory.getLog(AreaTreeParser.class);
 
     private static SAXTransformerFactory tFactory
         = (SAXTransformerFactory)SAXTransformerFactory.newInstance();

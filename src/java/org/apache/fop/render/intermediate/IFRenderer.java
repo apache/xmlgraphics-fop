@@ -111,7 +111,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     //if optimizations can be done to avoid int->float->int conversions.
 
     /** logging instance */
-    protected static Log log = LogFactory.getLog(IFRenderer.class);
+    protected static final Log log = LogFactory.getLog(IFRenderer.class);
 
     /** XML MIME type */
     public static final String IF_MIME_TYPE = MimeConstants.MIME_FOP_IF;

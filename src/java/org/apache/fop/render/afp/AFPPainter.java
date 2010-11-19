@@ -26,6 +26,8 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Map;
 
 import org.w3c.dom.Document;
@@ -48,6 +50,8 @@ import org.apache.fop.afp.modca.AbstractPageObject;
 import org.apache.fop.afp.modca.PresentationTextObject;
 import org.apache.fop.afp.ptoca.PtocaBuilder;
 import org.apache.fop.afp.ptoca.PtocaProducer;
+import org.apache.fop.afp.util.DefaultFOPResourceAccessor;
+import org.apache.fop.afp.util.ResourceAccessor;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
@@ -184,14 +188,34 @@ public class AFPPainter extends AbstractIFPainter {
 
     /** {@inheritDoc} */
     public void drawImage(String uri, Rectangle rect) throws IFException {
-        String name = documentHandler.getPageSegmentNameFor(uri);
-        if (name != null) {
+        PageSegmentDescriptor pageSegment = documentHandler.getPageSegmentNameFor(uri);
+
+        if (pageSegment != null) {
             float[] srcPts = {rect.x, rect.y};
             int[] coords = unitConv.mpts2units(srcPts);
             int width = Math.round(unitConv.mpt2units(rect.width));
             int height = Math.round(unitConv.mpt2units(rect.height));
 
-            getDataStream().createIncludePageSegment(name, coords[X], coords[Y], width, height);
+            getDataStream().createIncludePageSegment(pageSegment.getName(),
+                    coords[X], coords[Y], width, height);
+
+            //Do we need to embed an external page segment?
+            if (pageSegment.getURI() != null) {
+                ResourceAccessor accessor = new DefaultFOPResourceAccessor (
+                        documentHandler.getUserAgent(), null, null);
+                try {
+                    URI resourceUri = new URI(pageSegment.getURI());
+                    documentHandler.getResourceManager().createIncludedResourceFromExternal(
+                            pageSegment.getName(), resourceUri, accessor);
+
+                } catch (URISyntaxException urie) {
+                    throw new IFException("Could not handle resource url"
+                            + pageSegment.getURI(), urie);
+                } catch (IOException ioe) {
+                    throw new IFException("Could not handle resource" + pageSegment.getURI(), ioe);
+                }
+            }
+
         } else {
             drawImageUsingURI(uri, rect);
         }

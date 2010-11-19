@@ -79,7 +79,7 @@ public abstract class AbstractRenderer
          implements Renderer, Constants {
 
     /** logging instance */
-    protected static Log log = LogFactory.getLog("org.apache.fop.render");
+    protected static final Log log = LogFactory.getLog("org.apache.fop.render");
 
     /**
      * user agent

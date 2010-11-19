@@ -43,7 +43,7 @@ import org.xml.sax.InputSource;
 public final class Hyphenator {
 
     /** logging instance */
-    protected static Log log = LogFactory.getLog(Hyphenator.class);
+    protected static final Log log = LogFactory.getLog(Hyphenator.class);
 
     private static HyphenationTreeCache hTreeCache = null;
 

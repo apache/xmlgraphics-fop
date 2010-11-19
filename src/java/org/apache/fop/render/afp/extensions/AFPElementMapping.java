@@ -103,7 +103,7 @@ public class AFPElementMapping extends ElementMapping {
 
     static class AFPIncludePageSegmentMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new AFPPageSetupElement(parent, INCLUDE_PAGE_SEGMENT);
+            return new AFPPageSegmentElement(parent, INCLUDE_PAGE_SEGMENT);
         }
     }
 

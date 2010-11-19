@@ -48,7 +48,7 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
             implements RendererConfigurator, IFDocumentHandlerConfigurator {
 
     /** logger instance */
-    protected static Log log = LogFactory.getLog(PrintRendererConfigurator.class);
+    protected static final Log log = LogFactory.getLog(PrintRendererConfigurator.class);
 
     /**
      * Default constructor

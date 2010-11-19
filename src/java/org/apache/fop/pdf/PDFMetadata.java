@@ -151,6 +151,9 @@ public class PDFMetadata extends PDFStream {
         }
         dc.addDate(info.getCreationDate());
 
+        //Somewhat redundant but some PDF/A checkers issue a warning without this.
+        dc.setFormat("application/pdf");
+
         //PDF/A identification
         PDFAMode pdfaMode = pdfDoc.getProfile().getPDFAMode();
         if (pdfaMode.isPDFA1LevelB()) {

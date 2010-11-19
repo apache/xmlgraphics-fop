@@ -44,7 +44,7 @@ import org.apache.fop.util.LogUtil;
  */
 public class FontInfoConfigurator {
     /** logger instance */
-    protected static Log log = LogFactory.getLog(FontInfoConfigurator.class);
+    protected static final Log log = LogFactory.getLog(FontInfoConfigurator.class);
 
     private Configuration cfg;
     private FontManager fontManager;
@@ -255,7 +255,7 @@ public class FontInfoConfigurator {
 
         boolean useKerning = fontCfg.getAttributeAsBoolean("kerning", true);
         boolean useAdvanced = fontCfg.getAttributeAsBoolean("advanced", true);
-        EncodingMode encodingMode = EncodingMode.valueOf(
+        EncodingMode encodingMode = EncodingMode.getEncodingMode(
                 fontCfg.getAttribute("encoding-mode", EncodingMode.AUTO.getName()));
         EmbedFontInfo embedFontInfo
             = new EmbedFontInfo(metricsUrl, useKerning, useAdvanced, tripletList, embedUrl,

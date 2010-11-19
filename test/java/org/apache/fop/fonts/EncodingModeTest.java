@@ -17,32 +17,20 @@
 
 /* $Id$ */
 
-package org.apache.fop.area;
+package org.apache.fop.fonts;
 
-/**
- * The normal-flow-reference-area class.
- * Each span-reference-area contains one or more of these objects
- * See fo:region-body definition in the XSL Rec for more information.
- */
-public class NormalFlow extends BlockParent {
+import junit.framework.TestCase;
 
-    private static final long serialVersionUID = -3753538631016929004L;
-
-    /**
-     * Constructor.
-     * @param ipd of Normal flow object
-     */
-    public NormalFlow(int ipd) {
-        addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
-        setIPD(ipd);
+public class EncodingModeTest extends TestCase {
+    public void testGetName() {
+        assertEquals("auto", EncodingMode.AUTO.getName());
+        assertEquals("single-byte", EncodingMode.SINGLE_BYTE.getName());
+        assertEquals("cid", EncodingMode.CID.getName());
     }
 
-    /** {@inheritDoc} */
-    public void addBlock(Block block) {
-        super.addBlock(block);
-        if (block.isStacked()) {
-            bpd += block.getAllocBPD();
-        }
+    public void testGetValue() {
+        assertEquals(EncodingMode.AUTO, EncodingMode.getEncodingMode("auto"));
+        assertEquals(EncodingMode.SINGLE_BYTE, EncodingMode.getEncodingMode("single-byte"));
+        assertEquals(EncodingMode.CID, EncodingMode.getEncodingMode("cid"));
     }
 }
-

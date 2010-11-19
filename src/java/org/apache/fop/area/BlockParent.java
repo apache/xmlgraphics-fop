@@ -27,6 +27,8 @@ import java.util.List;
  */
 public class BlockParent extends Area {
 
+    private static final long serialVersionUID = 7076916890348533805L;
+
     // this position is used for absolute position
     // or as an indent
     // this has the size in the block progression dimension

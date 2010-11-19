@@ -29,6 +29,9 @@ import org.apache.fop.area.Block;
  */
 public class InlineBlockParent extends InlineArea {
 
+
+    private static final long serialVersionUID = -3661746143321407377L;
+
     /**
      * The list of inline areas added to this inline parent.
      */
