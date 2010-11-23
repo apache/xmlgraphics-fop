@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.properties.FixedLength;
+import org.apache.xmlgraphics.util.UnitConv;
 
 
 /**  Converts XSL-FO units to RTF units
@@ -43,8 +44,8 @@ final class FoUnitsConverter {
     public static final float POINT_TO_TWIPS = 20f;
 
     /** millimeters and centimeters to twips: , one point is 1/72 of an inch, one inch is 25.4 mm */
-    public static final float IN_TO_TWIPS = 72f * POINT_TO_TWIPS;
-    public static final float MM_TO_TWIPS = IN_TO_TWIPS / 25.4f;
+    public static final float IN_TO_TWIPS = UnitConv.IN2PT * POINT_TO_TWIPS;
+    public static final float MM_TO_TWIPS = IN_TO_TWIPS / UnitConv.IN2MM;
     public static final float CM_TO_TWIPS = 10 * MM_TO_TWIPS;
 
 
