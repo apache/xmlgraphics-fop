@@ -53,6 +53,7 @@ import org.apache.xmlgraphics.image.loader.impl.ImageGraphics2D;
 import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
 import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
 import org.apache.xmlgraphics.image.loader.util.ImageUtil;
+import org.apache.xmlgraphics.util.UnitConv;
 
 import org.apache.fop.ResourceEventProducer;
 import org.apache.fop.apps.FOPException;
@@ -317,10 +318,10 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
             }
 
             scaleX = scaleX
-                * (25.4f / FopFactoryConfigurator.DEFAULT_TARGET_RESOLUTION)
+                * (UnitConv.IN2MM / FopFactoryConfigurator.DEFAULT_TARGET_RESOLUTION)
                 / userAgent.getTargetPixelUnitToMillimeter();
             scaleY = scaleY
-                * (25.4f / FopFactoryConfigurator.DEFAULT_TARGET_RESOLUTION)
+                * (UnitConv.IN2MM / FopFactoryConfigurator.DEFAULT_TARGET_RESOLUTION)
                 / userAgent.getTargetPixelUnitToMillimeter();
             int bitmapWidth = (int) ((pageWidth * scaleX) + 0.5);
             int bitmapHeight = (int) ((pageHeight * scaleY) + 0.5);

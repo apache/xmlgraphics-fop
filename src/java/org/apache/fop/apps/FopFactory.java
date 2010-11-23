@@ -42,6 +42,7 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.xmlgraphics.image.loader.ImageContext;
 import org.apache.xmlgraphics.image.loader.ImageManager;
+import org.apache.xmlgraphics.util.UnitConv;
 
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.ElementMappingRegistry;
@@ -539,7 +540,7 @@ public class FopFactory implements ImageContext {
      * @see #getSourceResolution()
      */
     public float getSourcePixelUnitToMillimeter() {
-        return 25.4f / getSourceResolution();
+        return UnitConv.IN2MM / getSourceResolution();
     }
 
     /**
@@ -567,7 +568,7 @@ public class FopFactory implements ImageContext {
      * @see #getTargetResolution()
      */
     public float getTargetPixelUnitToMillimeter() {
-        return 25.4f / this.targetResolution;
+        return UnitConv.IN2MM / this.targetResolution;
     }
 
     /**
