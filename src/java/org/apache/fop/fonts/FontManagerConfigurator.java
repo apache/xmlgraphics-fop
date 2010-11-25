@@ -85,7 +85,7 @@ public class FontManagerConfigurator {
         // global font configuration
         Configuration fontsCfg = cfg.getChild("fonts", false);
         if (fontsCfg != null) {
-            
+
             // font substitution
             Configuration substitutionsCfg = fontsCfg.getChild("substitutions", false);
             if (substitutionsCfg != null) {

@@ -44,7 +44,7 @@ public class AFPInvokeMediumMapElement extends AbstractAFPExtensionObject {
         super.startOfNode();
         if (parent.getNameId() != Constants.FO_PAGE_SEQUENCE
                 && parent.getNameId() != Constants.FO_SIMPLE_PAGE_MASTER) {
-            
+
             invalidChildError(getLocator(), parent.getName(), getNamespaceURI(), getName(),
                 "rule.childOfPageSequence");
         }
