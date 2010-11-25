@@ -70,6 +70,8 @@ import org.apache.fop.apps.MimeConstants;
  */
 public class FopServlet extends HttpServlet {
 
+    private static final long serialVersionUID = -908918093488215264L;
+
     /** Name of the parameter used for the XSL-FO file */
     protected static final String FO_REQUEST_PARAM = "fo";
     /** Name of the parameter used for the XML file */

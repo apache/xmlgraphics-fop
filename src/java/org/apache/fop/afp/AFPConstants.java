@@ -39,13 +39,13 @@ public interface AFPConstants {
      * The encoding to use to convert to US ASCII (7 bit)
      */
     String US_ASCII_ENCODING = "US-ASCII";
-    
+
     /**
      * The scaling of the default transform is set to
      * approximately 72 user space coordinates per square inch
      */
     int DPI_72 = 72;
-    
+
     /**
      * 72dpi in millipoints
      */

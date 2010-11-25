@@ -60,6 +60,7 @@ import org.apache.batik.ext.awt.RenderingHintsKeyExt;
 import org.apache.batik.gvt.GraphicsNode;
 import org.apache.batik.gvt.PatternPaint;
 
+import org.apache.xmlgraphics.image.GraphicsConstants;
 import org.apache.xmlgraphics.image.loader.ImageInfo;
 import org.apache.xmlgraphics.image.loader.ImageSize;
 import org.apache.xmlgraphics.image.loader.impl.ImageRawCCITTFax;
@@ -1270,7 +1271,8 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
 
     private PDFXObject addRenderedImage(String key, RenderedImage img) {
         ImageInfo info = new ImageInfo(null, "image/unknown");
-        ImageSize size = new ImageSize(img.getWidth(), img.getHeight(), 72);
+        ImageSize size = new ImageSize(img.getWidth(), img.getHeight(),
+                GraphicsConstants.DEFAULT_DPI);
         info.setSize(size);
         ImageRendered imgRend = new ImageRendered(info, img, null);
         ImageRenderedAdapter adapter = new ImageRenderedAdapter(imgRend, key);

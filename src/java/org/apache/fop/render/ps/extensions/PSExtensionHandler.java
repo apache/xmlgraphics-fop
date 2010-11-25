@@ -37,7 +37,7 @@ public class PSExtensionHandler extends DefaultHandler
             implements ContentHandlerFactory.ObjectSource {
 
     /** Logger instance */
-    protected static Log log = LogFactory.getLog(PSExtensionHandler.class);
+    protected static final Log log = LogFactory.getLog(PSExtensionHandler.class);
 
     private StringBuffer content = new StringBuffer();
     private Attributes lastAttributes;

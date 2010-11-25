@@ -37,7 +37,7 @@ public class PDFExtensionHandler extends DefaultHandler
             implements ContentHandlerFactory.ObjectSource {
 
     /** Logger instance */
-    protected static Log log = LogFactory.getLog(PDFExtensionHandler.class);
+    protected static final Log log = LogFactory.getLog(PDFExtensionHandler.class);
 
     private Attributes lastAttributes;
 

@@ -84,7 +84,7 @@ public class PDFImageHandlerSVG implements ImageHandler {
                 userAgent.getFactory().getImageManager(),
                 userAgent.getImageSessionContext(),
                 new AffineTransform());
-        
+
         //Cloning SVG DOM as Batik attaches non-thread-safe facilities (like the CSS engine)
         //to it.
         Document clonedDoc = BatikUtil.cloneSVGDocument(imageSVG.getDocument());

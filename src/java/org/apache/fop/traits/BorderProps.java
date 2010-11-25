@@ -34,6 +34,8 @@ import org.apache.fop.util.ColorUtil;
  */
 public class BorderProps implements Serializable {
 
+    private static final long serialVersionUID = -886871454032189183L;
+
     /** Separate border model */
     public static final int SEPARATE = 0;
     /** Collapsing border model, for borders inside a table */

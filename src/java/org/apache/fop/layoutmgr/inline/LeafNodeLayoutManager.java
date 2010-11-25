@@ -56,7 +56,7 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
     /**
      * logging instance
      */
-    protected static Log log = LogFactory.getLog(LeafNodeLayoutManager.class);
+    protected static final Log log = LogFactory.getLog(LeafNodeLayoutManager.class);
 
     /**
      * The inline area that this leafnode will add.
@@ -91,7 +91,7 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
          * @param ipd inline progression dimension
          * @param bHyph true if hyphenated
          * @param alignmentContext an alignment context
-         */         
+         */
         public AreaInfo(short iLS, MinOptMax ipd, boolean bHyph,
                         AlignmentContext alignmentContext) {
             iLScount = iLS;

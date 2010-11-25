@@ -27,6 +27,7 @@ import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
 import java.io.IOException;
 
+import org.apache.xmlgraphics.image.GraphicsConstants;
 import org.apache.xmlgraphics.image.loader.Image;
 import org.apache.xmlgraphics.image.loader.ImageFlavor;
 import org.apache.xmlgraphics.image.loader.ImageInfo;
@@ -76,7 +77,7 @@ public class Java2DImageHandlerRenderedImage implements ImageHandler {
         //scaling because of image resolution
         //float sourceResolution = java2dContext.getUserAgent().getSourceResolution();
         //source resolution seems to be a bad idea, not sure why
-        float sourceResolution = 72;
+        float sourceResolution = GraphicsConstants.DEFAULT_DPI;
         sourceResolution *= 1000; //we're working in the millipoint area
         sx *= sourceResolution / info.getSize().getDpiHorizontal();
         sy *= sourceResolution / info.getSize().getDpiVertical();

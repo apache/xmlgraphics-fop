@@ -30,7 +30,7 @@ import org.apache.fop.fo.expr.PropertyException;
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
 public class DimensionPropertyMaker extends CorrespondingPropertyMaker {
-    
+
     private int[][] extraCorresponding = null;
 
     /**

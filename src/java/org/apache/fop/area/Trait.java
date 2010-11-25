@@ -36,6 +36,8 @@ import org.apache.fop.util.ColorUtil;
  */
 public final class Trait implements Serializable {
 
+    private static final long serialVersionUID = 3234280285391611437L;
+
     private Trait() {
     }
 
@@ -197,7 +199,7 @@ public final class Trait implements Serializable {
     public static final Integer OVERLINE_COLOR = new Integer(35);
     /** Trait for color of linethrough decorations when rendering inline parent. */
     public static final Integer LINETHROUGH_COLOR = new Integer(36);
-    
+
     /** The ptr trait. Used for accessibility   */
     public static final Integer PTR = new Integer(37);
 
@@ -312,6 +314,8 @@ public final class Trait implements Serializable {
      * Stores PageViewport key and producer ID
      */
     public static class InternalLink implements Serializable {
+
+        private static final long serialVersionUID = -8993505060996723039L;
 
         /** The unique key of the PageViewport. */
         private String pvKey;
@@ -447,6 +451,8 @@ public final class Trait implements Serializable {
      */
     public static class ExternalLink implements Serializable {
 
+        private static final long serialVersionUID = -3720707599232620946L;
+
         private String destination;
         private boolean newWindow;
 
@@ -519,6 +525,8 @@ public final class Trait implements Serializable {
      * Used for storing back trait information which are related.
      */
     public static class Background implements Serializable {
+
+        private static final long serialVersionUID = 8452078676273242870L;
 
         /** The background color if any. */
         private Color color = null;

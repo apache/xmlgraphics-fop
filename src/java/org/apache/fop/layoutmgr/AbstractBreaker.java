@@ -40,7 +40,7 @@ import org.apache.fop.util.ListUtil;
 public abstract class AbstractBreaker {
 
     /** logging instance */
-    protected static Log log = LogFactory.getLog(AbstractBreaker.class);
+    protected static final Log log = LogFactory.getLog(AbstractBreaker.class);
 
     /**
      * A page break position.
@@ -92,6 +92,8 @@ public abstract class AbstractBreaker {
      * basic {@link BlockKnuthSequence}.
      */
     public class BlockSequence extends BlockKnuthSequence {
+
+        private static final long serialVersionUID = -5348831120146774118L;
 
         /** Number of elements to ignore at the beginning of the list. */
         int ignoreAtStart = 0;                                  // CSOK: VisibilityModifier

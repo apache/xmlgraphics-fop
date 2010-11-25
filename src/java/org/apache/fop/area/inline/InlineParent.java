@@ -29,6 +29,9 @@ import java.util.ArrayList;
  * This is an inline area that can have other inlines as children.
  */
 public class InlineParent extends InlineArea {
+
+    private static final long serialVersionUID = -3047168298770354813L;
+
     /**
      * The list of inline areas added to this inline parent.
      */

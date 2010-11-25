@@ -90,8 +90,7 @@ list of possible build targets.
 	<include name="lib/build/jaxen*"/>
 	<include name="lib/build/pmd*"/>
 	<include name="lib/build/qdox*"/>
-	<include name="lib/build/retroweaver*"/>
-	<include name="lib/build/xmlunit*"/>
+        <include name="lib/build/xmlunit*"/>
   </patternset>
   <fileset dir="${basedir}" id="dist.src">
     <include name="src/**"/>
@@ -476,44 +475,15 @@ list of possible build targets.
       </manifest>
     </jar>
   </target>
-  <!-- =================================================================== -->
-  <!-- Retroweaver                                                         -->
-  <!-- =================================================================== -->
-  <target name="retro-unavail" unless="java14.rt.lib">
-    <echo message="Please set the path to a JDK 1.4 installation in your build-local.properties" />
-    <echo message="to allow for verification!" />
-  </target>
-  <target name="retro-avail" depends="compile" if="java14.rt.lib">
-    <taskdef name="retroweaver" classname="net.sourceforge.retroweaver.ant.RetroWeaverTask">
-      <classpath>
-        <path refid="libs-tools-build-classpath"/>
-      </classpath>
-    </taskdef>
-    <path id="verify-classpath">
-      <pathelement location="${java14.rt.lib}"/>
-      <pathelement location="${java14.jce.lib}"/>
-      <pathelement location="${ant.home}/lib/ant.jar"/>
-      <path refid="libs-build-classpath"/>
-    </path>
-    <!-- If we decide to use retroweaver for the actual weaving, the mkdir and
-         destdir= will have to be removed. Also, the weaving task would additionally
-         need to be defined even if no jdk 14 is available. -->
-    <mkdir dir="${build.dir}/temp"/>
-    <retroweaver srcdir="${build.classes.dir}" destdir="${build.dir}/temp"
-       classpath="${toString:verify-classpath}" lazy="false"
-       verify="true" target="1.4" />
-  </target>
-  <target name="retro" depends="retro-avail,retro-unavail,compile">
-  </target>
 <!-- =================================================================== -->
 <!-- main FOP JARs                                                       -->
 <!-- =================================================================== -->
-  <target name="uptodate-jar-main" depends="retro">
+  <target name="uptodate-jar-main" depends="compile">
     <uptodate property="jar.main.uptodate" targetfile="${build.dir}/fop.jar">
       <srcfiles dir="${build.classes.dir}"/>
     </uptodate>
   </target>
-  <target name="jar-main" depends="retro,uptodate-jar-main" description="Generates the main jar file" unless="jar.main.uptodate">
+  <target name="jar-main" depends="compile,uptodate-jar-main" description="Generates the main jar file" unless="jar.main.uptodate">
     <tstamp>
       <format property="ts" pattern="yyyyMMdd-HHmmss-z"/>
     </tstamp>
@@ -537,12 +507,12 @@ list of possible build targets.
       <metainf dir="${basedir}" includes="LICENSE,NOTICE"/>
     </jar>
   </target>
-  <target name="uptodate-jar-sandbox" depends="retro">
+  <target name="uptodate-jar-sandbox" depends="compile">
     <uptodate property="jar.sandbox.uptodate" targetfile="${build.dir}/fop-sandbox.jar">
       <srcfiles dir="${build.sandbox-classes.dir}"/>
     </uptodate>
   </target>
-  <target name="jar-sandbox" depends="retro,uptodate-jar-sandbox" description="Generates the sandbox jar file" unless="jar.sandbox.uptodate">
+  <target name="jar-sandbox" depends="compile,uptodate-jar-sandbox" description="Generates the sandbox jar file" unless="jar.sandbox.uptodate">
     <tstamp>
       <format property="ts" pattern="yyyyMMdd-HHmmss-z"/>
     </tstamp>
@@ -645,13 +615,13 @@ list of possible build targets.
     <include name="commons-logging*.jar"/>
     <include name="xmlgraphics-commons*.jar"/>
   </fileset>
-  <target name="uptodate-transcoder-pkg" depends="retro">
+  <target name="uptodate-transcoder-pkg" depends="compile">
     <uptodate property="transcoder.pkg.uptodate" targetfile="${build.dir}/fop-transcoder.jar">
       <srcfiles refid="transcoder-classes-files"/>
       <srcfiles refid="transcoder-lib-files"/>
     </uptodate>
   </target>
-  <target name="transcoder-pkg" depends="uptodate-transcoder-pkg, retro" description="Generates the jar for the transcoder package for Batik" unless="transcoder.pkg.uptodate">
+  <target name="transcoder-pkg" depends="uptodate-transcoder-pkg, compile" description="Generates the jar for the transcoder package for Batik" unless="transcoder.pkg.uptodate">
     <echo message="Creating the jar file ${build.dir}/fop-transcoder.jar"/>
     <property name="fop-transcoder.name" value="FOP Transcoder Package"/>
     <property name="fop-transcoder.version" value="1.0beta2"/>

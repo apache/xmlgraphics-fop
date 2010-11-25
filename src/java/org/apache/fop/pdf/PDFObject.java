@@ -42,7 +42,7 @@ import org.apache.commons.logging.LogFactory;
 public abstract class PDFObject implements PDFWritable {
 
     /** logger for all PDFObjects (and descendants) */
-    protected static Log log = LogFactory.getLog(PDFObject.class.getName());
+    protected static final Log log = LogFactory.getLog(PDFObject.class.getName());
 
     /**
      * the object's number
@@ -401,7 +401,7 @@ public abstract class PDFObject implements PDFWritable {
      * identical, this method is not required to check everything. In the case
      * of PDFObjects, this means that the overriding function does not have to
      * check for {@link #getObjectID()}.
-     * 
+     *
      * @param o
      *            object to compare to.
      * @return true if the other object has the same content.

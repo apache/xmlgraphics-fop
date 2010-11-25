@@ -74,7 +74,7 @@ public class GoToXYAction extends AbstractAction implements DocumentNavigationEx
      * <p>
      * This function will always return a valid value for safety. Use
      * {@link #isComplete()} to check if the link is actually complete.
-     * 
+     *
      * @return the page index (0-based)
      */
     public int getPageIndex() {
@@ -90,7 +90,7 @@ public class GoToXYAction extends AbstractAction implements DocumentNavigationEx
      * <p>
      * This function will always return a valid value for safety. Use
      * {@link #isComplete()} to check if the link is actually complete.
-     * 
+     *
      * @return the target location (coordinates in millipoints)
      */
     public Point getTargetLocation() {
@@ -112,7 +112,7 @@ public class GoToXYAction extends AbstractAction implements DocumentNavigationEx
     private boolean isCompleteExceptTargetLocation() {
         return (getPageIndex() >= 0);
     }
-    
+
     /** {@inheritDoc} */
     public boolean isComplete() {
         return this.isCompleteExceptTargetLocation() && (this.targetLocation != null);
@@ -147,9 +147,9 @@ public class GoToXYAction extends AbstractAction implements DocumentNavigationEx
             atts.addAttribute(null, "id", "id", XMLUtil.CDATA, getID());
             atts.addAttribute(null, "page-index", "page-index",
                     XMLUtil.CDATA, Integer.toString(pageIndex));
-            atts.addAttribute(null, "x", "x", XMLUtil.CDATA, 
+            atts.addAttribute(null, "x", "x", XMLUtil.CDATA,
                     Integer.toString(reportedTargetLocation.x));
-            atts.addAttribute(null, "y", "y", XMLUtil.CDATA, 
+            atts.addAttribute(null, "y", "y", XMLUtil.CDATA,
                     Integer.toString(reportedTargetLocation.y));
         } else {
             atts.addAttribute(null, "idref", "idref", XMLUtil.CDATA, getID());

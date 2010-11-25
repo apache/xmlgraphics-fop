@@ -42,7 +42,7 @@ import org.apache.fop.fo.Constants;
 public abstract class BreakingAlgorithm {
 
     /** the logger for the class */
-    protected static Log log = LogFactory.getLog(BreakingAlgorithm.class);
+    protected static final Log log = LogFactory.getLog(BreakingAlgorithm.class);
 
     /** Maximum adjustment ration */
     protected static final int INFINITE_RATIO = 1000;
@@ -59,7 +59,7 @@ public abstract class BreakingAlgorithm {
 
     /** Holder for symbolic literals for the fitness classes */
     static final class FitnessClasses {
-        
+
         private FitnessClasses() {
         }
 

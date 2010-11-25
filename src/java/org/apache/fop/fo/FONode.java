@@ -69,7 +69,7 @@ public abstract class FONode implements Cloneable {
     protected Locator locator;
 
     /** Logger for fo-tree related messages **/
-    protected static Log log = LogFactory.getLog(FONode.class);
+    protected static final Log log = LogFactory.getLog(FONode.class);
 
     /**
      * Base constructor

@@ -44,7 +44,7 @@ import org.apache.fop.util.LogUtil;
  */
 public class FontInfoConfigurator {
     /** logger instance */
-    protected static Log log = LogFactory.getLog(FontInfoConfigurator.class);
+    protected static final Log log = LogFactory.getLog(FontInfoConfigurator.class);
 
     private Configuration cfg;
     private FontManager fontManager;

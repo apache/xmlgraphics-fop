@@ -27,6 +27,8 @@ import java.util.EventObject;
  */
 public class PageChangeEvent extends EventObject {
 
+    private static final long serialVersionUID = -5969283475959932887L;
+
     private int oldPage;
     private int newPage;
 
