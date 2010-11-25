@@ -792,7 +792,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         // use the member lineLayouts, which is read by LineBreakingAlgorithm.updateData1 and 2
         lineLayouts = new LineLayoutPossibilities();
         double maxAdjustment = 1;
-        int iBPcount = 0;
         LineBreakingAlgorithm alg = new LineBreakingAlgorithm(alignment,
                                         textAlignment, textAlignmentLast,
                                         textIndent.getValue(this), currPar.lineFiller.getOpt(),
@@ -801,26 +800,26 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                                         hyphenationLadderCount.getEnum() == EN_NO_LIMIT
                                         ? 0 : hyphenationLadderCount.getValue(),
                                         this);
+        alg.setConstantLineWidth(ipd);
+        boolean canWrap = (wrapOption != EN_NO_WRAP);
+        boolean canHyphenate = (canWrap && hyphenationProperties.hyphenate.getEnum() == EN_TRUE);
 
-        if (hyphenationProperties.hyphenate.getEnum() == EN_TRUE
-                && fobj.getWrapOption() != EN_NO_WRAP && !hyphenationPerformed) {
+        // find hyphenation points, if allowed and not yet done
+        if (canHyphenate && !hyphenationPerformed) {
+            // make sure findHyphenationPoints() is bypassed if
+            // the method is called twice (e.g. due to changing page-ipd)
             hyphenationPerformed = true;
             findHyphenationPoints(currPar);
         }
 
-        // first try
-        int allowedBreaks;
-        if (wrapOption == EN_NO_WRAP) {
-            allowedBreaks = BreakingAlgorithm.ONLY_FORCED_BREAKS;
-        } else {
-            allowedBreaks = BreakingAlgorithm.NO_FLAGGED_PENALTIES;
-        }
-        alg.setConstantLineWidth(ipd);
-        iBPcount = alg.findBreakingPoints(currPar,
-                                          maxAdjustment, false, allowedBreaks);
-        if (iBPcount == 0 || alignment == EN_JUSTIFY) {
+        // first try: do not consider hyphenation points as legal breaks
+        int allowedBreaks = (canWrap ? BreakingAlgorithm.NO_FLAGGED_PENALTIES
+                : BreakingAlgorithm.ONLY_FORCED_BREAKS);
+        int breakingPoints = alg.findBreakingPoints(currPar, maxAdjustment, false, allowedBreaks);
+
+        if (breakingPoints == 0 || alignment == EN_JUSTIFY) {
             // if the first try found a set of breaking points, save them
-            if (iBPcount > 0) {
+            if (breakingPoints > 0) {
                 alg.resetAlgorithm();
                 lineLayouts.savePossibilities(false);
             } else {
@@ -829,10 +828,10 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             }
 
             // now try something different
-            log.debug("Hyphenation possible? "
-                      + (hyphenationProperties.hyphenate.getEnum() == EN_TRUE));
-            if (hyphenationProperties.hyphenate.getEnum() == EN_TRUE
-                && !(allowedBreaks == BreakingAlgorithm.ONLY_FORCED_BREAKS)) {
+            log.debug("Hyphenation possible? " + canHyphenate);
+            // Note: if allowedBreaks is guaranteed to be unchanged by alg.findBreakingPoints(),
+            // the below check can be simplified to 'if (canHyphenate) ...'
+            if (canHyphenate && allowedBreaks != BreakingAlgorithm.ONLY_FORCED_BREAKS) {
                 // consider every hyphenation point as a legal break
                 allowedBreaks = BreakingAlgorithm.ALL_BREAKS;
             } else {
@@ -840,68 +839,22 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 maxAdjustment = 5;
             }
 
-            iBPcount = alg.findBreakingPoints(currPar, maxAdjustment, false, allowedBreaks);
-            if (iBPcount == 0) {
+            breakingPoints = alg.findBreakingPoints(currPar, maxAdjustment, false, allowedBreaks);
+            if (breakingPoints == 0) {
                 // the second try failed too, try with a huge threshold
-                // and force the algorithm to find
-                // a set of breaking points
+                // and force the algorithm to find a set of breaking points
                 if (log.isDebugEnabled()) {
                     log.debug("No set of breaking points found with maxAdjustment = "
-                              + maxAdjustment
-                              + (hyphenationProperties.hyphenate.getEnum() == EN_TRUE
-                                      ? " and hyphenation" : ""));
+                            + maxAdjustment + (canHyphenate ? " and hyphenation" : ""));
                 }
                 maxAdjustment = 20;
-                iBPcount
-                    = alg.findBreakingPoints(currPar,
-                                             maxAdjustment, true, allowedBreaks);
+                alg.findBreakingPoints(currPar, maxAdjustment, true, allowedBreaks);
             }
 
             // use non-hyphenated breaks, when possible
             lineLayouts.restorePossibilities();
-
-            /* extension (not in the XSL FO recommendation): if vertical alignment
-               is justify and the paragraph has only one layout, try using
-               shorter or longer lines */
-            //TODO This code snippet is disabled. Reenable?
-            /* [GA] remove dead code
-            if (false && alignment == EN_JUSTIFY && textAlignment == EN_JUSTIFY) {
-                //log.debug("LLM.getNextKnuthElements> layouts with more lines? "
-                //+ lineLayouts.canUseMoreLines());
-                //log.debug("                          layouts with fewer lines? "
-                //+ lineLayouts.canUseLessLines());
-                if (!lineLayouts.canUseMoreLines()) {
-                    alg.resetAlgorithm();
-                    lineLayouts.savePossibilities(true);
-                    // try with shorter lines
-                    int savedLineWidth = ipd;
-                    ipd = (int) (ipd * 0.95);
-                    iBPcount = alg.findBreakingPoints(currPar,
-                            maxAdjustment, true, allowedBreaks);
-                    // use normal lines, when possible
-                    lineLayouts.restorePossibilities();
-                    ipd = savedLineWidth;
-                }
-                if (!lineLayouts.canUseLessLines()) {
-                    alg.resetAlgorithm();
-                    lineLayouts.savePossibilities(true);
-                    // try with longer lines
-                    int savedLineWidth = ipd;
-                    ipd = (int) (ipd * 1.05);
-                    alg.setConstantLineWidth(ipd);
-                    iBPcount = alg.findBreakingPoints(currPar,
-                            maxAdjustment, true, allowedBreaks);
-                    // use normal lines, when possible
-                    lineLayouts.restorePossibilities();
-                    ipd = savedLineWidth;
-                }
-                //log.debug("LLM.getNextKnuthElements> now, layouts with more lines? "
-                //+ lineLayouts.canUseMoreLines());
-                //log.debug("                          now, layouts with fewer lines? "
-                //+ lineLayouts.canUseLessLines());
-            }
-            */
         }
+        
         return lineLayouts;
     }
 
@@ -1278,8 +1231,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             } else if (currLM == null) {
                 break;
             }
-            //TODO Something's not right here. See block_hyphenation_linefeed_preserve.xml
-            //for more info: see also https://issues.apache.org/bugzilla/show_bug.cgi?id=38264
 
             // collect word fragments, ignoring auxiliary elements;
             // each word fragment was created by a different TextLM
@@ -1546,40 +1497,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         lc.setTrailingSpace(new SpaceSpecifier(false));
         lc.setFlags(LayoutContext.RESOLVE_LEADING_SPACE, true);
 
-        /*
-         * extension (not in the XSL FO recommendation): if the left and right margins
-         * have been optimized, recompute indents and / or adjust ratio, according
-         * to the paragraph horizontal alignment
-         */
-        /* [GA] remove dead code
-        if (false && textAlignment == EN_JUSTIFY) {
-            // re-compute space adjust ratio
-            int updatedDifference = context.getRefIPD()
-            - lbp.lineWidth + lbp.difference;
-            double updatedRatio = 0.0;
-            if (updatedDifference > 0) {
-                updatedRatio = (float) updatedDifference / lbp.availableStretch;
-            } else if (updatedDifference < 0) {
-                updatedRatio = (float) updatedDifference / lbp.availableShrink;
-            }
-            lc.setIPDAdjust(updatedRatio);
-            //log.debug("LLM.addAreas> old difference = " + lbp.difference
-            //+ " new difference = " + updatedDifference);
-            //log.debug("              old ratio = " + lbp.ipdAdjust
-            //+ " new ratio = " + updatedRatio);
-        } else if (false && textAlignment == EN_CENTER) {
-            // re-compute indent
-            int updatedIndent = lbp.startIndent
-            + (context.getRefIPD() - lbp.lineWidth) / 2;
-            lineArea.addTrait(Trait.START_INDENT, new Integer(updatedIndent));
-        } else if (false && textAlignment == EN_END) {
-            // re-compute indent
-            int updatedIndent = lbp.startIndent
-            + (context.getRefIPD() - lbp.lineWidth);
-            lineArea.addTrait(Trait.START_INDENT, new Integer(updatedIndent));
-        }
-        */
-
         setCurrentArea(lineArea);
         setChildContext(lc);
         LayoutManager childLM;
@@ -1679,4 +1596,3 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     }
 
 }
-
