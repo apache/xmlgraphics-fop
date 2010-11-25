@@ -38,7 +38,7 @@ public class RefElement extends MIFElement {
         super(name);
     }
 
-    /** 
+    /**
      * @param key a key
      * @return an mif element
      */

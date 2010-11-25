@@ -46,22 +46,22 @@ public class IncludePageSegment extends AbstractNamedAFPObject {
      * The x position where we need to put this object on the page
      */
     private int x;
-    
+
     /**
      * The y position where we need to put this object on the page
      */
     private int y;
-    
+
     /**
      * Constructor for the Include Page Segment
-     * 
+     *
      * @param name Name of the page segment
      * @param x The x position
      * @param y The y position
      */
     public IncludePageSegment(String name, int x, int y) {
         super(name);
-        
+
         this.x = x;
         this.y = y;
     }

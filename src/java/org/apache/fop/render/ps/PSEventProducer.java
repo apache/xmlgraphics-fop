@@ -29,7 +29,7 @@ public interface PSEventProducer extends EventProducer {
 
     /** Provider class for the event producer. */
     final class Provider {
-        
+
         private Provider() {
         }
 

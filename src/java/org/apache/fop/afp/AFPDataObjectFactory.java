@@ -167,7 +167,7 @@ public class AFPDataObjectFactory {
 
         //set color converter (i.e. an rgb to grayscale converter)
         graphicsObj.setColorConverter(g2d.getPaintingState().getColorConverter());
-        
+
         // paint to graphics object
         Graphics2DImagePainter painter = graphicsObjectInfo.getPainter();
         Rectangle2D area = graphicsObjectInfo.getArea();

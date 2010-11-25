@@ -33,7 +33,7 @@ public abstract class AbstractConfigurator {
     protected static final Log log = LogFactory.getLog(AbstractConfigurator.class);
 
     private static final String MIME = "mime";
-    
+
     /** fop factory configuration */
     protected FOUserAgent userAgent = null;
 

@@ -31,7 +31,7 @@ public class Image extends Area {
     private static final long serialVersionUID = 4800834714349695386L;
 
     private String url;
-    
+
     /**
      * Create a new image with the given url.
      *
