@@ -26,7 +26,7 @@ import java.util.List;
 import org.apache.fop.fonts.autodetect.FontInfoFinder;
 
 /**
- * Adds a list of fonts to a given font info list 
+ * Adds a list of fonts to a given font info list
  */
 public class FontAdder {
     private FontEventListener listener;
@@ -44,7 +44,7 @@ public class FontAdder {
         this.resolver = resolver;
         this.listener = listener;
     }
-    
+
     /**
      * Iterates over font url list adding to font info list
      * @param fontURLList font file list

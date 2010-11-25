@@ -175,11 +175,11 @@ public class FontManager {
         }
         return fontCache;
     }
-    
+
     /**
      * Saves the FontCache as necessary
-     * 
-     * @throws FOPException fop exception 
+     *
+     * @throws FOPException fop exception
      */
     public void saveCache() throws FOPException {
         if (useCache) {

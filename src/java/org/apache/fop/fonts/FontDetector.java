@@ -41,7 +41,7 @@ public class FontDetector {
     private static final String[] FONT_MIMETYPES = {
         "application/x-font", "application/x-font-truetype"
     };
-    
+
     private FontManager fontManager;
     private FontAdder fontAdder;
     private boolean strict;
@@ -75,7 +75,7 @@ public class FontDetector {
                     List/*<URL>*/ fontURLList = fontFileFinder.find(
                             fontBase.getAbsolutePath());
                     fontAdder.add(fontURLList, fontInfoList);
-                    
+
                     //Can only use the font base URL if it's a file URL
                 }
             } catch (IOException e) {
