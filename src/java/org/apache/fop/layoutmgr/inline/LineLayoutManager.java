@@ -771,7 +771,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 // we only need an entry in lineLayoutsList.
                 llPoss = new LineLayoutPossibilities();
             } else {
-                llPoss = findOptimalBreakingPoints(alignment, (Paragraph) seq);
+                llPoss = findOptimalBreakingPoints(alignment, (Paragraph) seq, !paragraphsIterator.hasNext());
             }
             lineLayoutsList[i] = llPoss;
         }
@@ -783,12 +783,13 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     }
 
     /**
-     * Fint the optimal linebreaks for a paragraph
+     * Find the optimal linebreaks for a paragraph
      * @param alignment alignment of the paragraph
      * @param currPar the Paragraph for which the linebreaks are found
+     * @param isLastPar flag indicating whether currPar is the last paragraph
      * @return the line layout possibilities for the paragraph
      */
-    private LineLayoutPossibilities findOptimalBreakingPoints(int alignment, Paragraph currPar) {
+    private LineLayoutPossibilities findOptimalBreakingPoints(int alignment, Paragraph currPar, boolean isLastPar) {
         // use the member lineLayouts, which is read by LineBreakingAlgorithm.updateData1 and 2
         lineLayouts = new LineLayoutPossibilities();
         double maxAdjustment = 1;
@@ -808,7 +809,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         if (canHyphenate && !hyphenationPerformed) {
             // make sure findHyphenationPoints() is bypassed if
             // the method is called twice (e.g. due to changing page-ipd)
-            hyphenationPerformed = true;
+            hyphenationPerformed = isLastPar;
             findHyphenationPoints(currPar);
         }
 
@@ -1423,8 +1424,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager
      */
     private void addInlineArea(LayoutContext context, LineBreakPosition lbp,
             boolean isLastPosition) {
-        // the TLM which created the last KnuthElement in this line
-        LayoutManager lastLM = null;
 
         KnuthSequence seq = (KnuthSequence) knuthParagraphs.get(lbp.parIndex);
         int startElementIndex = lbp.startIndex;
@@ -1456,15 +1455,16 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             }
         }
 
-        // Remove trailing spaces if allowed so
-        if (whiteSpaceTreament == EN_IGNORE_IF_SURROUNDING_LINEFEED
-                || whiteSpaceTreament == EN_IGNORE
-                || whiteSpaceTreament == EN_IGNORE_IF_BEFORE_LINEFEED) {
-            // ignore the last element in the line if it is a KnuthGlue object
-            ListIterator seqIterator = seq.listIterator(endElementIndex);
-            KnuthElement lastElement = (KnuthElement) seqIterator.next();
-            lastLM = lastElement.getLayoutManager();
-            if (lastElement.isGlue()) {
+        // ignore the last element in the line if it is a KnuthGlue object
+        ListIterator seqIterator = seq.listIterator(endElementIndex);
+        KnuthElement lastElement = (KnuthElement) seqIterator.next();
+        // the TLM which created the last KnuthElement in this line
+        LayoutManager lastLM = lastElement.getLayoutManager();
+        if (lastElement.isGlue()) {
+            // Remove trailing spaces if allowed so
+            if (whiteSpaceTreament == EN_IGNORE_IF_SURROUNDING_LINEFEED
+                    || whiteSpaceTreament == EN_IGNORE
+                    || whiteSpaceTreament == EN_IGNORE_IF_BEFORE_LINEFEED) {
                 endElementIndex--;
                 // this returns the same KnuthElement
                 seqIterator.previous();
@@ -1480,7 +1480,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 || whiteSpaceTreament == EN_IGNORE_IF_AFTER_LINEFEED) {
             // ignore KnuthGlue and KnuthPenalty objects
             // at the beginning of the line
-            ListIterator seqIterator = seq.listIterator(startElementIndex);
+            seqIterator = seq.listIterator(startElementIndex);
             while (seqIterator.hasNext() && !((KnuthElement) seqIterator.next()).isBox()) {
                 startElementIndex++;
             }

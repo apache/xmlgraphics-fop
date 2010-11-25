@@ -19,7 +19,11 @@
 <testcase>
   <info>
     <p>
-      Check for bug: Duplicate content and linefeeds as "#".
+      Check for bug 38264: 
+      <ul>
+        <li>duplication of content with linefeed-treatment="preserve" and hyphenate="true"</li>
+        <li>missing hyphens with white-space-treatment="preserve" and hyphenate="true"</li>
+      </ul>
     </p>
   </info>
   <fo>
@@ -31,21 +35,39 @@
       </fo:layout-master-set>
       <fo:page-sequence master-reference="simple">
         <fo:flow flow-name="xsl-region-body">
-          <fo:block line-height="10pt" background-color="orange"
-            white-space-collapse="false" white-space-treatment="preserve" linefeed-treatment="preserve">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas semper. Proin at.</fo:block>
-          <fo:block line-height="10pt" background-color="orange"
-            white-space-collapse="false" white-space-treatment="preserve" linefeed-treatment="preserve">
+          <fo:block white-space-collapse="false" white-space-treatment="preserve" linefeed-treatment="preserve">
 line1
 line2
 
-Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas semper. Proin at1.
-</fo:block>
+Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas semper. Proin at.
+          </fo:block>
         </fo:flow>
       </fo:page-sequence>
     </fo:root>
   </fo>
   <checks>
-    <!-- Dummy check. We don't want an NPE. -->
-    <eval expected="2" xpath="count(//*[contains(text(), 'adipiscing')])"/>
+    <!-- check number of lines and word fragments -->
+    <eval expected="13" xpath="count(//flow[1]/block/lineArea)" />
+    <eval expected="17" xpath="count(//flow[1]/block/lineArea/text/word)" />
+    <!-- check individual word fragments -->
+    <eval expected="line1" xpath="(//flow[1]/block/lineArea/text/word)[1]" />
+    <eval expected="line2" xpath="(//flow[1]/block/lineArea/text/word)[2]" />
+    <eval expected="Lorem" xpath="(//flow[1]/block/lineArea/text/word)[3]" />
+    <eval expected="ip-" xpath="(//flow[1]/block/lineArea/text/word)[4]" />
+    <eval expected="sum" xpath="(//flow[1]/block/lineArea/text/word)[5]" />
+    <eval expected="dolor" xpath="(//flow[1]/block/lineArea/text/word)[6]" />
+    <eval expected="sit" xpath="(//flow[1]/block/lineArea/text/word)[7]" />
+    <eval expected="amet," xpath="(//flow[1]/block/lineArea/text/word)[8]" />
+    <eval expected="con-" xpath="(//flow[1]/block/lineArea/text/word)[9]" />
+    <eval expected="sectetuer" xpath="(//flow[1]/block/lineArea/text/word)[10]" />
+    <eval expected="adipiscing" xpath="(//flow[1]/block/lineArea/text/word)[11]" />
+    <eval expected="elit." xpath="(//flow[1]/block/lineArea/text/word)[12]" />
+    <eval expected="Maece-" xpath="(//flow[1]/block/lineArea/text/word)[13]" />
+    <eval expected="nas" xpath="(//flow[1]/block/lineArea/text/word)[14]" />
+    <eval expected="semper." xpath="(//flow[1]/block/lineArea/text/word)[15]" />
+    <eval expected="Proin" xpath="(//flow[1]/block/lineArea/text/word)[16]" />
+    <eval expected="at." xpath="(//flow[1]/block/lineArea/text/word)[17]" />
+    <!-- check preservation of spaces on the last line -->
+    <eval expected="10" xpath="count((//flow[1]/block/lineArea)[13]/text/space)" />
   </checks>
 </testcase>
