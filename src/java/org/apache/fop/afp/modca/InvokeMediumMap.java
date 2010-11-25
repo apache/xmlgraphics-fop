@@ -34,7 +34,7 @@ public class InvokeMediumMap extends AbstractNamedAFPObject {
 
     /**
      * Constructor for the Invoke Medium Map
-     * 
+     *
      * @param name the name of the medium map
      */
     public InvokeMediumMap(String name) {

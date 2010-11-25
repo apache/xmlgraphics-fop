@@ -273,14 +273,14 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
             parser = mainParser;
         }
     }
-    
+
     //
     // ContentHandler methods
     //
 
     /**
      * {@inheritDoc}
-     * @throws SAXException 
+     * @throws SAXException
      */
     public void startElement(String uri, String local, String raw,
                              Attributes attrs) throws SAXException {
@@ -463,9 +463,9 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
     public void addPattern(String p, String v) {
         testOut.println("pattern: " + p + " : " + v);
     }
-    
+
     private PrintStream testOut = System.out;
-    
+
     /**
      * Set test out stream.
      * @param testOut the testOut to set
@@ -473,7 +473,7 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
     public void setTestOut(PrintStream testOut) {
         this.testOut = testOut;
     }
-    
+
     /**
      * Close test out file.
      */
@@ -503,5 +503,5 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
         }
     }
 
- 
+
 }

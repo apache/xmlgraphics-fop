@@ -59,7 +59,7 @@ public abstract class BreakingAlgorithm {
 
     /** Holder for symbolic literals for the fitness classes */
     static final class FitnessClasses {
-        
+
         private FitnessClasses() {
         }
 

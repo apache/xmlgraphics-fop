@@ -73,7 +73,7 @@ public class HyphenationTreeCache {
      * @param lang the language
      * @param country the country (may be null or "none")
      * @param hyphPatNames the map of user-configured hyphenation pattern file names
-     * @return the hyphenation pattern file name or null 
+     * @return the hyphenation pattern file name or null
      */
     public static String constructUserKey(String lang, String country, Map hyphPatNames) {
         String userKey = null;
@@ -84,7 +84,7 @@ public class HyphenationTreeCache {
         }
         return userKey;
     }
-    
+
     /**
      * Cache a hyphenation tree under its key.
      * @param key the key (ex. "de_CH" or "en")

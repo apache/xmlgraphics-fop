@@ -201,7 +201,7 @@ public final class Trait implements Serializable {
     public static final Integer OVERLINE_COLOR = new Integer(35);
     /** Trait for color of linethrough decorations when rendering inline parent. */
     public static final Integer LINETHROUGH_COLOR = new Integer(36);
-    
+
     /** The ptr trait. Used for accessibility   */
     public static final Integer PTR = new Integer(37);
 

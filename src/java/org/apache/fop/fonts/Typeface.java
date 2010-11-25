@@ -139,7 +139,7 @@ public abstract class Typeface implements FontMetrics {
             }
         }
     }
-    
+
     /** {@inheritDoc} */
     public String toString() {
         StringBuffer sbuf = new StringBuffer(super.toString());
@@ -147,5 +147,5 @@ public abstract class Typeface implements FontMetrics {
         sbuf.append(getFullName());
         sbuf.append('}');
         return sbuf.toString();
-    }   
+    }
 }
