@@ -58,6 +58,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Code" dev="VH" type="fix" fixes-bug="49695" due-to="Joshua Marquart">
+        Replaced magic numbers with constants from UnitConv and GraphicsConstants.
+      </action>
       <action context="Renderers" dev="JM" type="add" fixes-bug="42600" due-to="Maximilian Aster">
         Added some support for break-before/-after for RTF output.
       </action>

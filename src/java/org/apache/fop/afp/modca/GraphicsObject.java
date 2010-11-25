@@ -386,7 +386,7 @@ public class GraphicsObject extends AbstractDataObject {
 
     /** the internal graphics state */
     private static final class GraphicsState {
-        
+
         private GraphicsState() {
         }
 

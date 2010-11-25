@@ -61,6 +61,8 @@ import org.apache.fop.apps.MimeConstants;
  */
 public class FopPrintServlet extends FopServlet {
 
+    private static final long serialVersionUID = 1645706757391617935L;
+
     /**
      * {@inheritDoc}
      */

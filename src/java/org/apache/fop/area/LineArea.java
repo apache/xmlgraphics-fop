@@ -32,12 +32,17 @@ import java.util.List;
  */
 public class LineArea extends Area {
 
+    private static final long serialVersionUID = 7670235908329290684L;
+
     /**
      * this class stores information about line width and potential adjustments
      * that can be used in order to re-compute adjustement and / or indents when a
      * page-number or a page-number-citation is resolved
      */
     private final class LineAdjustingInfo implements Serializable {
+
+        private static final long serialVersionUID = -6103629976229458273L;
+
         private int lineAlignment;
         private int difference;
         private int availableStretch;

@@ -33,6 +33,8 @@ import org.xml.sax.SAXException;
  */
 public class XMPMetadata implements ExtensionAttachment, Serializable, XMLizable {
 
+    private static final long serialVersionUID = 591347206217931578L;
+
     /** The category URI for this extension attachment. */
     public static final String CATEGORY = XMPConstants.XMP_NAMESPACE;
 

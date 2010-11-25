@@ -41,7 +41,7 @@ public class AFPExtensionHandler extends DefaultHandler
             implements ContentHandlerFactory.ObjectSource {
 
     /** Logger instance */
-    protected static Log log = LogFactory.getLog(AFPExtensionHandler.class);
+    protected static final Log log = LogFactory.getLog(AFPExtensionHandler.class);
 
     private StringBuffer content = new StringBuffer();
     private Attributes lastAttributes;

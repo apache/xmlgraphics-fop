@@ -29,6 +29,8 @@ import java.io.Serializable;
  */
 public class CharVector implements Cloneable, Serializable {
 
+    private static final long serialVersionUID = 4263472982169004048L;
+
     /**
      * Capacity increment size
      */

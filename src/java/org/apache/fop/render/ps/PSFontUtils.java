@@ -63,7 +63,7 @@ import org.apache.fop.util.HexEncoder;
 public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
 
     /** logging instance */
-    protected static Log log = LogFactory.getLog(PSFontUtils.class);
+    protected static final Log log = LogFactory.getLog(PSFontUtils.class);
 
     /**
      * Generates the PostScript code for the font dictionary. This method should only be

@@ -35,7 +35,7 @@ public class FontSubstitutions extends java.util.ArrayList/*<Substitutions>*/ {
     private static final long serialVersionUID = -9173104935431899722L;
 
     /** logging instance */
-    protected static Log log = LogFactory.getLog(FontSubstitutions.class);
+    protected static final Log log = LogFactory.getLog(FontSubstitutions.class);
 
     /**
      * Adjusts a given fontInfo using this font substitution catalog

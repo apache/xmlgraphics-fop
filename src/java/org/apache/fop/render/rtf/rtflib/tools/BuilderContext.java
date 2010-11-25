@@ -111,7 +111,7 @@ public class BuilderContext {
         return result;
     }
 
-    /** 
+    /**
      * Push an RtfContainer on our stack.
      * @param c the container
      */

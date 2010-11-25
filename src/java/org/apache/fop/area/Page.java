@@ -47,6 +47,9 @@ import org.apache.fop.layoutmgr.TraitSetter;
  * the top level page and regions.
  */
 public class Page extends AreaTreeObject implements Serializable, Cloneable {
+
+    private static final long serialVersionUID = 6272157047421543866L;
+
     // contains before, start, body, end and after regions
     private RegionViewport regionBefore = null;
     private RegionViewport regionStart = null;
