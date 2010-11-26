@@ -20,24 +20,25 @@
 package org.apache.fop.fonts;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.xmlgraphics.fonts.Glyphs;
-
 import org.apache.fop.util.CharUtilities;
+import org.apache.xmlgraphics.fonts.Glyphs;
 
 /**
  * Abstract base class for code point mapping classes (1-byte character encodings).
  */
 public class AbstractCodePointMapping implements SingleByteEncoding {
 
-    private String name;
+    private final String name;
     private char[] latin1Map;
     private char[] characters;
     private char[] codepoints;
     private char[] unicodeMap; //code point to Unicode char
     private String[] charNameMap; //all character names in the encoding
-    private Map fallbackMap; //Here we accumulate all mappings we have found through substitution
+    //Here we accumulate all mappings we have found through substitution
+    private Map<Character, Character> fallbackMap;
 
     /**
      * Main constructor.
@@ -144,7 +145,7 @@ public class AbstractCodePointMapping implements SingleByteEncoding {
         //Fallback: using cache
         synchronized (this) {
             if (fallbackMap != null) {
-                Character fallback = (Character)fallbackMap.get(new Character(c));
+                Character fallback = fallbackMap.get(new Character(c));
                 if (fallback != null) {
                     return fallback.charValue();
                 }
@@ -172,7 +173,7 @@ public class AbstractCodePointMapping implements SingleByteEncoding {
     private void putFallbackCharacter(char c, char mapTo) {
         synchronized (this) {
             if (this.fallbackMap == null) {
-                this.fallbackMap = new java.util.HashMap();
+                this.fallbackMap = new HashMap<Character, Character>();
             }
             this.fallbackMap.put(new Character(c), new Character(mapTo));
         }
@@ -239,6 +240,7 @@ public class AbstractCodePointMapping implements SingleByteEncoding {
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
         return getName();
     }
