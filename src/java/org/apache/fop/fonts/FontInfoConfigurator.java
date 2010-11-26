@@ -140,7 +140,7 @@ public class FontInfoConfigurator {
 
             // add fonts found in directory
             FontFileFinder fontFileFinder = new FontFileFinder(recursive ? -1 : 1);
-            List/*<URL>*/ fontURLList;
+            List<URL> fontURLList;
             try {
                 fontURLList = fontFileFinder.find(directory);
                 fontAdder.add(fontURLList, fontInfoList);
@@ -228,25 +228,23 @@ public class FontInfoConfigurator {
             LogUtil.handleError(log, "font without font-triplet", strict);
 
             File fontFile = FontCache.getFileFromUrls(new String[] {embedUrl, metricsUrl});
-            URL fontUrl;
+            URL fontURL = null;
             try {
-                fontUrl = fontFile.toURI().toURL();
+                fontURL = fontFile.toURI().toURL();
             } catch (MalformedURLException e) {
-                // Should never happen
-                log.debug("Malformed Url: " + e.getMessage());
-                return null;
+                LogUtil.handleException(log, e, strict);
             }
             if (fontFile != null) {
                 FontInfoFinder finder = new FontInfoFinder();
                 finder.setEventListener(listener);
-                EmbedFontInfo[] infos = finder.find(fontUrl, fontResolver, fontCache);
+                EmbedFontInfo[] infos = finder.find(fontURL, fontResolver, fontCache);
                 return infos[0]; //When subFont is set, only one font is returned
             } else {
                 return null;
             }
         }
 
-        List/*<FontTriplet>*/ tripletList = new java.util.ArrayList/*<FontTriplet>*/();
+        List<FontTriplet> tripletList = new java.util.ArrayList<FontTriplet>();
         for (int j = 0; j < tripletCfg.length; j++) {
             FontTriplet fontTriplet = getFontTriplet(tripletCfg[j]);
             tripletList.add(fontTriplet);
@@ -269,7 +267,7 @@ public class FontInfoConfigurator {
             log.debug("Adding font " + (embedFile != null ? embedFile + ", " : "")
                     + "metric file " + embedFontInfo.getMetricsFile());
             for (int j = 0; j < tripletList.size(); ++j) {
-                FontTriplet triplet = (FontTriplet) tripletList.get(j);
+                FontTriplet triplet = tripletList.get(j);
                 log.debug("  Font triplet "
                         + triplet.getName() + ", "
                         + triplet.getStyle() + ", "

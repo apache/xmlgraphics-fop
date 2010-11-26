@@ -1568,8 +1568,8 @@ public class TTFFile {
      * @return True if not collection or font name present, false otherwise
      * @throws IOException In case of an I/O problem
      */
-    public final List getTTCnames(FontFileReader in) throws IOException {
-        List fontNames = new java.util.ArrayList();
+    public final List<String> getTTCnames(FontFileReader in) throws IOException {
+        List<String> fontNames = new java.util.ArrayList<String>();
 
         String tag = in.readTTFString(4);
 

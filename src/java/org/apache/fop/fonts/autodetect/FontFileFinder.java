@@ -22,8 +22,8 @@ package org.apache.fop.fonts.autodetect;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.io.DirectoryWalker;
@@ -91,6 +91,7 @@ public class FontFileFinder extends DirectoryWalker implements FontFinder {
      * @return whether directory should be handled
      * {@inheritDoc}
      */
+    @Override
     protected boolean handleDirectory(File directory, int depth, Collection results) {
         return true;
     }
@@ -101,6 +102,7 @@ public class FontFileFinder extends DirectoryWalker implements FontFinder {
      * @param results collection
      * {@inheritDoc}
      */
+    @Override
     protected void handleFile(File file, int depth, Collection results) {
         try {
             // Looks Strange, but is actually recommended over just .URL()
@@ -116,6 +118,7 @@ public class FontFileFinder extends DirectoryWalker implements FontFinder {
      * @param results the collection of results objects
      * {@inheritDoc}
      */
+    @Override
     protected void handleDirectoryEnd(File directory, int depth, Collection results) {
         if (log.isDebugEnabled()) {
             log.debug(directory + ": found " + results.size() + " font"
@@ -130,8 +133,8 @@ public class FontFileFinder extends DirectoryWalker implements FontFinder {
      * @throws IOException io exception
      * {@inheritDoc}
      */
-    public List/*<URL>*/ find() throws IOException {
-        final FontFinder fontDirFinder;
+    public List<URL> find() throws IOException {
+        final FontDirFinder fontDirFinder;
         final String osName = System.getProperty("os.name");
         if (osName.startsWith("Windows")) {
             fontDirFinder = new WindowsFontDirFinder();
@@ -142,10 +145,9 @@ public class FontFileFinder extends DirectoryWalker implements FontFinder {
                 fontDirFinder = new UnixFontDirFinder();
             }
         }
-        List/*<URL>*/ fontDirs = fontDirFinder.find();
-        List/*<URL>*/ results = new java.util.ArrayList/*<URL>*/();
-        for (Iterator iter = fontDirs.iterator(); iter.hasNext();) {
-            final File dir = (File)iter.next();
+        List<File> fontDirs = fontDirFinder.find();
+        List<URL> results = new java.util.ArrayList<URL>();
+        for (File dir : fontDirs) {
             super.walk(dir, results);
         }
         return results;
@@ -158,8 +160,8 @@ public class FontFileFinder extends DirectoryWalker implements FontFinder {
      * @return list of font files
      * @throws IOException thrown if an I/O exception of some sort has occurred
      */
-    public List find(String dir) throws IOException {
-        List results = new java.util.ArrayList();
+    public List<URL> find(String dir) throws IOException {
+        List<URL> results = new java.util.ArrayList<URL>();
         super.walk(new File(dir), results);
         return results;
     }

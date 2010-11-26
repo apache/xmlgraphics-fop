@@ -42,9 +42,9 @@ public class FontDetector {
         "application/x-font", "application/x-font-truetype"
     };
 
-    private FontManager fontManager;
-    private FontAdder fontAdder;
-    private boolean strict;
+    private final FontManager fontManager;
+    private final FontAdder fontAdder;
+    private final boolean strict;
 
     /**
      * Main constructor
@@ -72,8 +72,7 @@ public class FontDetector {
             try {
                 File fontBase = FileUtils.toFile(new URL(fontBaseURL));
                 if (fontBase != null) {
-                    List/*<URL>*/ fontURLList = fontFileFinder.find(
-                            fontBase.getAbsolutePath());
+                    List<URL> fontURLList = fontFileFinder.find(fontBase.getAbsolutePath());
                     fontAdder.add(fontURLList, fontInfoList);
 
                     //Can only use the font base URL if it's a file URL
@@ -84,7 +83,7 @@ public class FontDetector {
         }
 
         // native o/s font directory finding
-        List/*<URL>*/ systemFontList;
+        List<URL> systemFontList;
         try {
             systemFontList = fontFileFinder.find();
             fontAdder.add(systemFontList, fontInfoList);
