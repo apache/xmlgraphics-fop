@@ -161,7 +161,7 @@ public class CustomFontMetricsMapper extends Typeface implements FontMetricsMapp
     }
 
     /** {@inheritDoc} */
-    public final Set getFamilyNames() {
+    public final Set<String> getFamilyNames() {
         return typeface.getFamilyNames();
     }
 

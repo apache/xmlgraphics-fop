@@ -63,7 +63,7 @@ public class FontDetector {
      * @param fontInfoList a list of fontinfo to populate
      * @throws FOPException thrown if a problem occurred during detection
      */
-    public void detect(List/*<EmbedFontInfo>*/ fontInfoList) throws FOPException {
+    public void detect(List<EmbedFontInfo> fontInfoList) throws FOPException {
         // search in font base if it is defined and
         // is a directory but don't recurse
         FontFileFinder fontFileFinder = new FontFileFinder();

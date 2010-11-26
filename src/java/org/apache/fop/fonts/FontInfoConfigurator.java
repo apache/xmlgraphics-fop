@@ -33,7 +33,6 @@ import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fonts.autodetect.FontFileFinder;
 import org.apache.fop.fonts.autodetect.FontInfoFinder;
@@ -46,11 +45,11 @@ public class FontInfoConfigurator {
     /** logger instance */
     protected static final Log log = LogFactory.getLog(FontInfoConfigurator.class);
 
-    private Configuration cfg;
-    private FontManager fontManager;
-    private FontResolver fontResolver;
-    private FontEventListener listener;
-    private boolean strict;
+    private final Configuration cfg;
+    private final FontManager fontManager;
+    private final FontResolver fontResolver;
+    private final FontEventListener listener;
+    private final boolean strict;
 
     /**
      * Main constructor
@@ -74,7 +73,8 @@ public class FontInfoConfigurator {
      * @param fontInfoList a font info list
      * @throws FOPException if an exception occurs while processing the configuration
      */
-    public void configure(List/*<EmbedFontInfo>*/ fontInfoList) throws FOPException {
+    public void configure(List<EmbedFontInfo> fontInfoList)
+            throws FOPException {
         Configuration fontsCfg = cfg.getChild("fonts", false);
         if (fontsCfg != null) {
             long start = 0;
@@ -120,7 +120,7 @@ public class FontInfoConfigurator {
     }
 
     private void addDirectories(Configuration fontsCfg,
-            FontAdder fontAdder, List/*<URL>*/ fontInfoList) throws FOPException {
+            FontAdder fontAdder, List<EmbedFontInfo> fontInfoList) throws FOPException {
         // directory (multiple font) configuration
         Configuration[] directories = fontsCfg.getChildren("directory");
         for (int i = 0; i < directories.length; i++) {
@@ -158,7 +158,7 @@ public class FontInfoConfigurator {
      * @throws FOPException if an exception occurs while processing the configuration
      */
     protected void addFonts(Configuration fontsCfg, FontCache fontCache,
-            List/*<EmbedFontInfo>*/ fontInfoList) throws FOPException {
+            List<EmbedFontInfo> fontInfoList) throws FOPException {
         // font file (singular) configuration
         Configuration[] font = fontsCfg.getChildren("font");
         for (int i = 0; i < font.length; i++) {
@@ -186,9 +186,8 @@ public class FontInfoConfigurator {
      * @return the embedded font info
      * @throws FOPException if something's wrong with the config data
      */
-    protected EmbedFontInfo getFontInfo(
-            Configuration fontCfg, FontCache fontCache)
-                    throws FOPException {
+    protected EmbedFontInfo getFontInfo(Configuration fontCfg, FontCache fontCache)
+            throws FOPException {
         String metricsUrl = fontCfg.getAttribute("metrics-url", null);
         String embedUrl = fontCfg.getAttribute("embed-url", null);
         String subFont = fontCfg.getAttribute("sub-font", null);

@@ -28,7 +28,6 @@ import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fonts.substitute.FontSubstitutions;
 import org.apache.fop.fonts.substitute.FontSubstitutionsConfigurator;
@@ -42,7 +41,7 @@ public class FontManagerConfigurator {
     /** logger instance */
     private static Log log = LogFactory.getLog(FontManagerConfigurator.class);
 
-    private Configuration cfg;
+    private final Configuration cfg;
 
     /**
      * Main constructor
@@ -114,7 +113,7 @@ public class FontManagerConfigurator {
      */
     public static FontTriplet.Matcher createFontsMatcher(
             Configuration cfg, boolean strict) throws FOPException {
-        List matcherList = new java.util.ArrayList();
+        List<FontTriplet.Matcher> matcherList = new java.util.ArrayList<FontTriplet.Matcher>();
         Configuration[] matches = cfg.getChildren("match");
         for (int i = 0; i < matches.length; i++) {
             try {
@@ -126,14 +125,13 @@ public class FontManagerConfigurator {
             }
         }
         FontTriplet.Matcher orMatcher = new OrFontTripletMatcher(
-                (FontTriplet.Matcher[])matcherList.toArray(
-                        new FontTriplet.Matcher[matcherList.size()]));
+                matcherList.toArray(new FontTriplet.Matcher[matcherList.size()]));
         return orMatcher;
     }
 
     private static class OrFontTripletMatcher implements FontTriplet.Matcher {
 
-        private FontTriplet.Matcher[] matchers;
+        private final FontTriplet.Matcher[] matchers;
 
         public OrFontTripletMatcher(FontTriplet.Matcher[] matchers) {
             this.matchers = matchers;
@@ -153,7 +151,7 @@ public class FontManagerConfigurator {
 
     private static class FontFamilyRegExFontTripletMatcher implements FontTriplet.Matcher {
 
-        private Pattern regex;
+        private final Pattern regex;
 
         public FontFamilyRegExFontTripletMatcher(String regex) {
             this.regex = Pattern.compile(regex);
