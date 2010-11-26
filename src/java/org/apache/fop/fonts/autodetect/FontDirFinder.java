@@ -19,15 +19,15 @@
 
 package org.apache.fop.fonts.autodetect;
 
+import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.List;
 
 /**
  * Implementers provide find method for searching native operating system
  * for available fonts.
  */
-public interface FontFinder {
+public interface FontDirFinder {
 
     /**
      * Finds a list of font files.
@@ -36,6 +36,6 @@ public interface FontFinder {
      * @throws IOException
      *             In case of an I/O problem
      */
-    List<URL> find() throws IOException;
+    List<File> find() throws IOException;
 
 }
