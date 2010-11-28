@@ -24,11 +24,9 @@ import java.io.InputStream;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
-
-import org.apache.xmlgraphics.fonts.Glyphs;
-
 import org.apache.fop.fonts.BFEntry;
 import org.apache.fop.fonts.CIDFontType;
 import org.apache.fop.fonts.EncodingMode;
@@ -38,6 +36,7 @@ import org.apache.fop.fonts.FontType;
 import org.apache.fop.fonts.MultiByteFont;
 import org.apache.fop.fonts.NamedCharacter;
 import org.apache.fop.fonts.SingleByteFont;
+import org.apache.xmlgraphics.fonts.Glyphs;
 
 /**
  * Loads a TrueType font into memory directly from the original font file.
@@ -46,7 +45,7 @@ public class TTFFontLoader extends FontLoader {
 
     private MultiByteFont multiFont;
     private SingleByteFont singleFont;
-    private String subFontName;
+    private final String subFontName;
     private EncodingMode encodingMode;
 
     /**
@@ -81,6 +80,7 @@ public class TTFFontLoader extends FontLoader {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void read() throws IOException {
         read(this.subFontName);
     }
@@ -209,21 +209,20 @@ public class TTFFontLoader extends FontLoader {
     private void copyKerning(TTFFile ttf, boolean isCid) {
 
         // Get kerning
-        Iterator iter;
+        Set<Integer> kerningSet;
         if (isCid) {
-            iter = ttf.getKerning().keySet().iterator();
+            kerningSet = ttf.getKerning().keySet();
         } else {
-            iter = ttf.getAnsiKerning().keySet().iterator();
+            kerningSet = ttf.getAnsiKerning().keySet();
         }
 
-        while (iter.hasNext()) {
-            Integer kpx1 = (Integer)iter.next();
+        for (Integer kpx1 : kerningSet) {
 
-            Map h2;
+            Map<Integer, Integer> h2;
             if (isCid) {
-                h2 = (Map)ttf.getKerning().get(kpx1);
+                h2 = ttf.getKerning().get(kpx1);
             } else {
-                h2 = (Map)ttf.getAnsiKerning().get(kpx1);
+                h2 = ttf.getAnsiKerning().get(kpx1);
             }
             returnFont.putKerningEntry(kpx1, h2);
         }

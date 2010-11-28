@@ -275,7 +275,7 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
      * Returns a Map of used Glyphs.
      * @return Map Map of used Glyphs
      */
-    public Map getUsedGlyphs() {
+    public Map<Integer, Integer> getUsedGlyphs() {
         return subset.getSubsetGlyphs();
     }
 

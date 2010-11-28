@@ -21,18 +21,17 @@ package org.apache.fop.render.ps;
 
 import java.util.Map;
 
-import org.apache.xmlgraphics.ps.PSResource;
-
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.LazyFont;
 import org.apache.fop.fonts.Typeface;
+import org.apache.xmlgraphics.ps.PSResource;
 
 /**
  * A cache for font resource objects.
  */
 class FontResourceCache {
 
-    private FontInfo fontInfo;
+    private final FontInfo fontInfo;
 
     /** This is a map of PSResource instances of all fonts defined (key: font key) */
     private Map fontResources = new java.util.HashMap();
@@ -67,8 +66,8 @@ class FontResourceCache {
             postFix = key.substring(pos);
             key = key.substring(0, pos);
         }
-        Map fonts = fontInfo.getFonts();
-        Typeface tf = (Typeface)fonts.get(key);
+        Map<String, Typeface> fonts = fontInfo.getFonts();
+        Typeface tf = fonts.get(key);
         if (tf instanceof LazyFont) {
             tf = ((LazyFont)tf).getRealFont();
         }

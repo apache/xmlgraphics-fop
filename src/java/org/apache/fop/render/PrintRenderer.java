@@ -30,6 +30,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Trait;
 import org.apache.fop.fonts.CustomFontCollection;
+import org.apache.fop.fonts.EmbedFontInfo;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontCollection;
 import org.apache.fop.fonts.FontInfo;
@@ -48,13 +49,13 @@ public abstract class PrintRenderer extends AbstractRenderer {
     protected FontResolver fontResolver = null;
 
     /** list of fonts */
-    protected List/*<EmbedFontInfo>*/ embedFontInfoList = null;
+    protected List<EmbedFontInfo> embedFontInfoList = null;
 
     /**
      * Adds a font list to current list of fonts
      * @param fontList a font info list
      */
-    public void addFontList(List/*<EmbedFontInfo>*/ fontList) {
+    public void addFontList(List<EmbedFontInfo> fontList) {
         if (embedFontInfoList == null) {
             setFontList(fontList);
         } else {
@@ -65,14 +66,14 @@ public abstract class PrintRenderer extends AbstractRenderer {
     /**
      * @param embedFontInfoList list of available fonts
      */
-    public void setFontList(List/*<EmbedFontInfo>*/ embedFontInfoList) {
+    public void setFontList(List<EmbedFontInfo> embedFontInfoList) {
         this.embedFontInfoList = embedFontInfoList;
     }
 
     /**
      * @return list of available embedded fonts
      */
-    public List/*<EmbedFontInfo>*/ getFontList() {
+    public List<EmbedFontInfo> getFontList() {
         return this.embedFontInfoList;
     }
 

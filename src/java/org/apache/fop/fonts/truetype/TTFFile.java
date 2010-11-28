@@ -29,9 +29,7 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.apache.xmlgraphics.fonts.Glyphs;
-
 
 import org.apache.fop.fonts.FontUtil;
 import org.apache.fop.fonts.GlyphClassTable;
@@ -66,17 +64,17 @@ public class TTFFile {
     static final int MAX_CHAR_CODE = 255;
     static final int ENC_BUF_SIZE = 1024;
 
-    private String encoding = "WinAnsiEncoding";    // Default encoding
+    private final String encoding = "WinAnsiEncoding";    // Default encoding
 
-    private short firstChar = 0;
+    private final short firstChar = 0;
     private boolean isEmbeddable = true;
     private boolean hasSerifs = true;
     /**
      * Table directory
      */
     protected Map dirTabs;
-    private Map kerningTab;                          // for CIDs
-    private Map ansiKerningTab;                      // For winAnsiEncoding
+    private Map<Integer, Map<Integer, Integer>> kerningTab;     // for CIDs
+    private Map<Integer, Map<Integer, Integer>> ansiKerningTab; // For winAnsiEncoding
     private List cmaps;
     private Set unicodeMappings;
 
@@ -95,12 +93,12 @@ public class TTFFile {
      * Contains glyph data
      */
     protected TTFMtxEntry[] mtxTab;                  // Contains glyph data
-    private int[] mtxEncoded = null;
+    private final int[] mtxEncoded = null;
 
     private String postScriptName = "";
     private String fullName = "";
     private String notice = "";
-    private Set familyNames = new java.util.HashSet(); //Set<String>
+    private final Set familyNames = new java.util.HashSet(); //Set<String>
     private String subFamilyName = "";
 
     private long italicAngle = 0;
@@ -133,8 +131,8 @@ public class TTFFile {
 
     // internal mapping of glyph indexes to unicode indexes
     // used for quick mappings in this class
-    private Map glyphToUnicodeMap = new java.util.HashMap();
-    private Map unicodeToGlyphMap = new java.util.HashMap();
+    private final Map glyphToUnicodeMap = new java.util.HashMap();
+    private final Map unicodeToGlyphMap = new java.util.HashMap();
 
     private TTFDirTabEntry currentDirTab;
 
@@ -161,8 +159,8 @@ public class TTFFile {
      */
     class UnicodeMapping implements Comparable {
 
-        private int unicodeIndex;
-        private int glyphIndex;
+        private final int unicodeIndex;
+        private final int glyphIndex;
 
         UnicodeMapping(int glyphIndex, int unicodeIndex) {
             this.unicodeIndex = unicodeIndex;
@@ -561,7 +559,7 @@ public class TTFFile {
         ansiIndex = new java.util.HashMap();
         for (int i = 32; i < Glyphs.WINANSI_ENCODING.length; i++) {
             Integer ansi = new Integer(i);
-            Integer uni = new Integer((int)Glyphs.WINANSI_ENCODING[i]);
+            Integer uni = new Integer(Glyphs.WINANSI_ENCODING[i]);
 
             List v = (List)ansiIndex.get(uni);
             if (v == null) {
@@ -774,7 +772,7 @@ public class TTFFile {
      * @return int The CapHeight
      */
     public int getCapHeight() {
-        return (int)convertTTFUnit2PDFUnit(capHeight);
+        return convertTTFUnit2PDFUnit(capHeight);
     }
 
     /**
@@ -782,7 +780,7 @@ public class TTFFile {
      * @return int The XHeight
      */
     public int getXHeight() {
-        return (int)convertTTFUnit2PDFUnit(xHeight);
+        return convertTTFUnit2PDFUnit(xHeight);
     }
 
     /**
@@ -841,10 +839,10 @@ public class TTFFile {
      */
     public int[] getFontBBox() {
         final int[] fbb = new int[4];
-        fbb[0] = (int)convertTTFUnit2PDFUnit(fontBBox1);
-        fbb[1] = (int)convertTTFUnit2PDFUnit(fontBBox2);
-        fbb[2] = (int)convertTTFUnit2PDFUnit(fontBBox3);
-        fbb[3] = (int)convertTTFUnit2PDFUnit(fontBBox4);
+        fbb[0] = convertTTFUnit2PDFUnit(fontBBox1);
+        fbb[1] = convertTTFUnit2PDFUnit(fontBBox2);
+        fbb[2] = convertTTFUnit2PDFUnit(fontBBox3);
+        fbb[3] = convertTTFUnit2PDFUnit(fontBBox4);
 
         return fbb;
     }
@@ -854,7 +852,7 @@ public class TTFFile {
      * @return int The LowerCaseAscent
      */
     public int getLowerCaseAscent() {
-        return (int)convertTTFUnit2PDFUnit(ascender);
+        return convertTTFUnit2PDFUnit(ascender);
     }
 
     /**
@@ -862,7 +860,7 @@ public class TTFFile {
      * @return int The LowerCaseDescent
      */
     public int getLowerCaseDescent() {
-        return (int)convertTTFUnit2PDFUnit(descender);
+        return convertTTFUnit2PDFUnit(descender);
     }
 
     /**
@@ -889,7 +887,7 @@ public class TTFFile {
     public int[] getWidths() {
         int[] wx = new int[mtxTab.length];
         for (int i = 0; i < wx.length; i++) {
-            wx[i] = (int)convertTTFUnit2PDFUnit(mtxTab[i].getWx());
+            wx[i] = convertTTFUnit2PDFUnit(mtxTab[i].getWx());
         }
 
         return wx;
@@ -901,14 +899,14 @@ public class TTFFile {
      * @return int Standard width
      */
     public int getCharWidth(int idx) {
-        return (int)convertTTFUnit2PDFUnit(ansiWidth[idx]);
+        return convertTTFUnit2PDFUnit(ansiWidth[idx]);
     }
 
     /**
      * Returns the kerning table.
      * @return Map The kerning table
      */
-    public Map getKerning() {
+    public Map<Integer, Map<Integer, Integer>> getKerning() {
         return kerningTab;
     }
 
@@ -916,7 +914,7 @@ public class TTFFile {
      * Returns the ANSI kerning table.
      * @return Map The ANSI kerning table
      */
-    public Map getAnsiKerning() {
+    public Map<Integer, Map<Integer, Integer>> getAnsiKerning() {
         return ansiKerningTab;
     }
 
@@ -1571,11 +1569,11 @@ public class TTFFile {
                             log.debug("Ignoring kerning pair because Unicode index was"
                                     + " found for the second glyph " + i);
                         } else {
-                            Map adjTab = (Map)kerningTab.get(iObj);
+                            Map adjTab = kerningTab.get(iObj);
                             if (adjTab == null) {
                                 adjTab = new java.util.HashMap();
                             }
-                            adjTab.put(u2, new Integer((int)convertTTFUnit2PDFUnit(kpx)));
+                            adjTab.put(u2, new Integer(convertTTFUnit2PDFUnit(kpx)));
                             kerningTab.put(iObj, adjTab);
                         }
                     }
@@ -1589,8 +1587,8 @@ public class TTFFile {
             while (ae.hasNext()) {
                 Integer unicodeKey1 = (Integer)ae.next();
                 Integer cidKey1 = unicodeToGlyph(unicodeKey1.intValue());
-                Map akpx = new java.util.HashMap();
-                Map ckpx = (Map)kerningTab.get(unicodeKey1);
+                Map<Integer, Integer> akpx = new java.util.HashMap();
+                Map ckpx = kerningTab.get(unicodeKey1);
 
                 Iterator aee = ckpx.keySet().iterator();
                 while (aee.hasNext()) {
@@ -5382,8 +5380,8 @@ public class TTFFile {
      * @return True if not collection or font name present, false otherwise
      * @throws IOException In case of an I/O problem
      */
-    public final List getTTCnames(FontFileReader in) throws IOException {
-        List fontNames = new java.util.ArrayList();
+    public final List<String> getTTCnames(FontFileReader in) throws IOException {
+        List<String> fontNames = new java.util.ArrayList<String>();
 
         String tag = in.readTTFString(4);
 
@@ -5452,8 +5450,8 @@ public class TTFFile {
         System.out.println("Family name: " + familyNames);
         System.out.println("Subfamily name: " + subFamilyName);
         System.out.println("Notice:      " + notice);
-        System.out.println("xHeight:     " + (int)convertTTFUnit2PDFUnit(xHeight));
-        System.out.println("capheight:   " + (int)convertTTFUnit2PDFUnit(capHeight));
+        System.out.println("xHeight:     " + convertTTFUnit2PDFUnit(xHeight));
+        System.out.println("capheight:   " + convertTTFUnit2PDFUnit(capHeight));
 
         int italic = (int)(italicAngle >> 16);
         System.out.println("Italic:      " + italic);
@@ -5466,10 +5464,10 @@ public class TTFFile {
         System.out.println();
         System.out.println("Ascender:    " + convertTTFUnit2PDFUnit(ascender));
         System.out.println("Descender:   " + convertTTFUnit2PDFUnit(descender));
-        System.out.println("FontBBox:    [" + (int)convertTTFUnit2PDFUnit(fontBBox1)
-                           + " " + (int)convertTTFUnit2PDFUnit(fontBBox2) + " "
-                           + (int)convertTTFUnit2PDFUnit(fontBBox3) + " "
-                           + (int)convertTTFUnit2PDFUnit(fontBBox4) + "]");
+        System.out.println("FontBBox:    [" + convertTTFUnit2PDFUnit(fontBBox1)
+                           + " " + convertTTFUnit2PDFUnit(fontBBox2) + " "
+                           + convertTTFUnit2PDFUnit(fontBBox3) + " "
+                           + convertTTFUnit2PDFUnit(fontBBox4) + "]");
     }
 
     private String formatUnitsForDebug(int units) {

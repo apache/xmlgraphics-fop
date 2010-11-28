@@ -39,12 +39,6 @@
     <description>Font-stretch is not implemented, yet.</description>
   </testcase>
   <testcase>
-    <name>Hyphenation with preserved linefeeds</name>
-    <file>block_hyphenation_linefeed_preserve.xml</file>
-    <description>When hyphenation is enabled and linefeeds are preserved,
-    the text is output multiple times.</description>
-  </testcase>
-  <testcase>
     <name>linefeed-treatment</name>
     <file>block_linefeed-treatment.xml</file>
     <description>Preserved linefeeds in a fo:character are not handled
