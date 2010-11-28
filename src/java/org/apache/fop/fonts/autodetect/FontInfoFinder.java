@@ -22,7 +22,6 @@ package org.apache.fop.fonts.autodetect;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -30,7 +29,6 @@ import java.util.regex.Pattern;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.apache.fop.fonts.CustomFont;
 import org.apache.fop.fonts.EmbedFontInfo;
 import org.apache.fop.fonts.EncodingMode;
@@ -52,7 +50,7 @@ import org.apache.fop.fonts.truetype.TTFFontLoader;
 public class FontInfoFinder {
 
     /** logging instance */
-    private Log log = LogFactory.getLog(FontInfoFinder.class);
+    private final Log log = LogFactory.getLog(FontInfoFinder.class);
 
     private FontEventListener eventListener;
 
@@ -72,7 +70,7 @@ public class FontInfoFinder {
      * @param customFont CustomFont
      * @param triplets Collection that will take the generated triplets
      */
-    private void generateTripletsFromFont(CustomFont customFont, Collection triplets) {
+    private void generateTripletsFromFont(CustomFont customFont, Collection<FontTriplet> triplets) {
         if (log.isTraceEnabled()) {
             log.trace("Font: " + customFont.getFullName()
                     + ", family: " + customFont.getFamilyNames()
@@ -99,10 +97,9 @@ public class FontInfoFinder {
         if (!fullName.equals(strippedName)) {
             triplets.add(new FontTriplet(strippedName, Font.STYLE_NORMAL, Font.WEIGHT_NORMAL));
         }
-        Set familyNames = customFont.getFamilyNames();
-        Iterator iter = familyNames.iterator();
-        while (iter.hasNext()) {
-            String familyName = stripQuotes((String)iter.next());
+        Set<String> familyNames = customFont.getFamilyNames();
+        for (String familyName : familyNames) {
+            familyName = stripQuotes(familyName);
             if (!fullName.equals(familyName)) {
                 /* Heuristic:
                  *   The more similar the family name to the full font name,
@@ -135,17 +132,17 @@ public class FontInfoFinder {
 
     /**
      * Attempts to determine FontInfo from a given custom font
-     * @param fontUrl the font URL
+     * @param fontURL the font URL
      * @param customFont the custom font
      * @param fontCache font cache (may be null)
      * @return FontInfo from the given custom font
      */
     private EmbedFontInfo getFontInfoFromCustomFont(
-            URL fontUrl, CustomFont customFont, FontCache fontCache) {
-        List fontTripletList = new java.util.ArrayList();
+            URL fontURL, CustomFont customFont, FontCache fontCache) {
+        List<FontTriplet> fontTripletList = new java.util.ArrayList<FontTriplet>();
         generateTripletsFromFont(customFont, fontTripletList);
         String embedUrl;
-        embedUrl = fontUrl.toExternalForm();
+        embedUrl = fontURL.toExternalForm();
         String subFontName = null;
         if (customFont instanceof MultiByteFont) {
             subFontName = ((MultiByteFont)customFont).getTTCName();
@@ -162,29 +159,29 @@ public class FontInfoFinder {
     /**
      * Attempts to determine EmbedFontInfo from a given font file.
      *
-     * @param fontUrl font URL. Assumed to be local.
+     * @param fontURL font URL. Assumed to be local.
      * @param resolver font resolver used to resolve font
      * @param fontCache font cache (may be null)
      * @return an array of newly created embed font info. Generally, this array
      *         will have only one entry, unless the fontUrl is a TrueType Collection
      */
-    public EmbedFontInfo[] find(URL fontUrl, FontResolver resolver, FontCache fontCache) {
-        String embedUrl = null;
-        embedUrl = fontUrl.toExternalForm();
+    public EmbedFontInfo[] find(URL fontURL, FontResolver resolver, FontCache fontCache) {
+        String embedURL = null;
+        embedURL = fontURL.toExternalForm();
 
         long fileLastModified = -1;
         if (fontCache != null) {
-            fileLastModified = FontCache.getLastModified(fontUrl);
+            fileLastModified = FontCache.getLastModified(fontURL);
             // firstly try and fetch it from cache before loading/parsing the font file
-            if (fontCache.containsFont(embedUrl)) {
-                EmbedFontInfo[] fontInfos = fontCache.getFontInfos(embedUrl, fileLastModified);
+            if (fontCache.containsFont(embedURL)) {
+                EmbedFontInfo[] fontInfos = fontCache.getFontInfos(embedURL, fileLastModified);
                 if (fontInfos != null) {
                     return fontInfos;
                 }
             // is this a previously failed parsed font?
-            } else if (fontCache.isFailedFont(embedUrl, fileLastModified)) {
+            } else if (fontCache.isFailedFont(embedURL, fileLastModified)) {
                 if (log.isDebugEnabled()) {
-                    log.debug("Skipping font file that failed to load previously: " + embedUrl);
+                    log.debug("Skipping font file that failed to load previously: " + embedURL);
                 }
                 return null;
             }
@@ -193,77 +190,72 @@ public class FontInfoFinder {
 
         // try to determine triplet information from font file
         CustomFont customFont = null;
-        if (fontUrl.toExternalForm().endsWith(".ttc")) {
+        if (fontURL.toExternalForm().endsWith(".ttc")) {
             // Get a list of the TTC Font names
-            List ttcNames = null; //List<String>
-            String fontFileURI = fontUrl.toExternalForm().trim();
+            List<String> ttcNames = null;
+            String fontFileURL = fontURL.toExternalForm().trim();
             InputStream in = null;
             try {
-                in = FontLoader.openFontUri(resolver, fontFileURI);
+                in = FontLoader.openFontUri(resolver, fontFileURL);
                 TTFFile ttf = new TTFFile();
                 FontFileReader reader = new FontFileReader(in);
                 ttcNames = ttf.getTTCnames(reader);
             } catch (Exception e) {
                 if (this.eventListener != null) {
-                    this.eventListener.fontLoadingErrorAtAutoDetection(this, fontFileURI, e);
+                    this.eventListener.fontLoadingErrorAtAutoDetection(this, fontFileURL, e);
                 }
                 return null;
             } finally {
                 IOUtils.closeQuietly(in);
             }
 
-            List/*<EmbedFontInfo>*/ embedFontInfoList
-                = new java.util.ArrayList/*<EmbedFontInfo>*/();
+            List<EmbedFontInfo> embedFontInfoList = new java.util.ArrayList<EmbedFontInfo>();
 
             // For each font name ...
-            //for (String fontName : ttcNames) {
-            Iterator ttcNamesIterator = ttcNames.iterator();
-            while (ttcNamesIterator.hasNext()) {
-                String fontName = (String)ttcNamesIterator.next();
-
+            for (String fontName : ttcNames) {
                 if (log.isDebugEnabled()) {
                     log.debug("Loading " + fontName);
                 }
                 try {
                     TTFFontLoader ttfLoader = new TTFFontLoader(
-                            fontFileURI, fontName, true, EncodingMode.AUTO, true, true, resolver);
+                            fontFileURL, fontName, true, EncodingMode.AUTO, true, true, resolver);
                     customFont = ttfLoader.getFont();
                     if (this.eventListener != null) {
                         customFont.setEventListener(this.eventListener);
                     }
                 } catch (Exception e) {
                     if (fontCache != null) {
-                        fontCache.registerFailedFont(embedUrl, fileLastModified);
+                        fontCache.registerFailedFont(embedURL, fileLastModified);
                     }
                     if (this.eventListener != null) {
-                        this.eventListener.fontLoadingErrorAtAutoDetection(this, embedUrl, e);
+                        this.eventListener.fontLoadingErrorAtAutoDetection(this, embedURL, e);
                     }
                     continue;
                 }
-                EmbedFontInfo fi = getFontInfoFromCustomFont(fontUrl, customFont, fontCache);
+                EmbedFontInfo fi = getFontInfoFromCustomFont(fontURL, customFont, fontCache);
                 if (fi != null) {
                     embedFontInfoList.add(fi);
                 }
             }
-            return (EmbedFontInfo[])embedFontInfoList.toArray(
+            return embedFontInfoList.toArray(
                     new EmbedFontInfo[embedFontInfoList.size()]);
         } else {
             // The normal case
             try {
-                customFont = FontLoader.loadFont(fontUrl, null, true, EncodingMode.AUTO, resolver);
+                customFont = FontLoader.loadFont(fontURL, null, true, EncodingMode.AUTO, resolver);
                 if (this.eventListener != null) {
                     customFont.setEventListener(this.eventListener);
                 }
             } catch (Exception e) {
                 if (fontCache != null) {
-                    fontCache.registerFailedFont(embedUrl, fileLastModified);
+                    fontCache.registerFailedFont(embedURL, fileLastModified);
                 }
                 if (this.eventListener != null) {
-                    this.eventListener.fontLoadingErrorAtAutoDetection(this, embedUrl, e);
+                    this.eventListener.fontLoadingErrorAtAutoDetection(this, embedURL, e);
                 }
                 return null;
             }
-            EmbedFontInfo fi = getFontInfoFromCustomFont(fontUrl, customFont, fontCache);
+            EmbedFontInfo fi = getFontInfoFromCustomFont(fontURL, customFont, fontCache);
             if (fi != null) {
                 return new EmbedFontInfo[] {fi};
             } else {

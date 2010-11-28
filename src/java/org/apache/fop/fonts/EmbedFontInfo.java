@@ -48,7 +48,7 @@ public class EmbedFontInfo implements Serializable {
     protected String subFontName = null;
 
     /** the list of associated font triplets */
-    private List/*<FontTriplet>*/ fontTriplets = null;
+    private List<FontTriplet> fontTriplets = null;
 
     private transient boolean embedded = true;
 
@@ -62,7 +62,7 @@ public class EmbedFontInfo implements Serializable {
      * @param subFontName the sub-fontname used for TrueType Collections (null otherwise)
      */
     public EmbedFontInfo(String metricsFile, boolean kerning, boolean advanced,
-                    List/*<FontTriplet>*/ fontTriplets, String embedFile, String subFontName) {
+                    List<FontTriplet> fontTriplets, String embedFile, String subFontName) {
         this.metricsFile = metricsFile;
         this.embedFile = embedFile;
         this.kerning = kerning;
@@ -132,7 +132,7 @@ public class EmbedFontInfo implements Serializable {
      * Returns the list of font triplets associated with this font.
      * @return List of font triplets
      */
-    public List/*<FontTriplet>*/ getFontTriplets() {
+    public List<FontTriplet> getFontTriplets() {
         return fontTriplets;
     }
 

@@ -27,7 +27,6 @@ import java.util.ListIterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.apache.fop.area.Area;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.area.Trait;
@@ -95,7 +94,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
      */
     private static Log log = LogFactory.getLog(LineLayoutManager.class);
 
-    private Block fobj;
+    private final Block fobj;
     private boolean isFirstInBlock;
 
     /**
@@ -104,19 +103,19 @@ public class LineLayoutManager extends InlineStackingLayoutManager
      * inline break positions.
      */
     private static class LineBreakPosition extends LeafPosition {
-        private int parIndex; // index of the Paragraph this Position refers to
-        private int startIndex; //index of the first element this Position refers to
-        private int availableShrink;
-        private int availableStretch;
-        private int difference;
-        private double dAdjust; // Percentage to adjust (stretch or shrink)
-        private double ipdAdjust; // Percentage to adjust (stretch or shrink)
-        private int startIndent;
-        private int lineHeight;
-        private int lineWidth;
-        private int spaceBefore;
-        private int spaceAfter;
-        private int baseline;
+        private final int parIndex; // index of the Paragraph this Position refers to
+        private final int startIndex; //index of the first element this Position refers to
+        private final int availableShrink;
+        private final int availableStretch;
+        private final int difference;
+        private final double dAdjust; // Percentage to adjust (stretch or shrink)
+        private final double ipdAdjust; // Percentage to adjust (stretch or shrink)
+        private final int startIndent;
+        private final int lineHeight;
+        private final int lineWidth;
+        private final int spaceBefore;
+        private final int spaceAfter;
+        private final int baseline;
 
         LineBreakPosition(                                       // CSOK: ParameterNumber
                 LayoutManager lm, int index, int startIndex, int breakIndex,
@@ -153,9 +152,9 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     private int whiteSpaceTreament;
     //private LayoutProps layoutProps;
 
-    private Length lineHeight;
-    private int lead;
-    private int follow;
+    private final Length lineHeight;
+    private final int lead;
+    private final int follow;
     private AlignmentContext alignmentContext;
 
     private List knuthParagraphs;
@@ -196,12 +195,12 @@ public class LineLayoutManager extends InlineStackingLayoutManager
 
         // space at the end of the last line (in millipoints)
         private MinOptMax lineFiller;
-        private int textAlignment;
-        private int textAlignmentLast;
-        private int textIndent;
-        private int lastLineEndIndent;
+        private final int textAlignment;
+        private final int textAlignmentLast;
+        private final int textIndent;
+        private final int lastLineEndIndent;
         // the LM which created the paragraph
-        private LineLayoutManager layoutManager;
+        private final LineLayoutManager layoutManager;
 
         Paragraph(LineLayoutManager llm, int alignment, int alignmentLast,
                          int indent, int endIndent) {
@@ -213,6 +212,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             lastLineEndIndent = endIndent;
         }
 
+        @Override
         public void startSequence() {
             // set the minimum amount of empty space at the end of the
             // last line
@@ -247,6 +247,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             }
         }
 
+        @Override
         public KnuthSequence endSequence() {
             if (this.size() > ignoreAtStart) {
                 if (textAlignment == EN_CENTER
@@ -296,14 +297,14 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     }
 
     private class LineBreakingAlgorithm extends BreakingAlgorithm {
-        private LineLayoutManager thisLLM;
-        private int pageAlignment;
+        private final LineLayoutManager thisLLM;
+        private final int pageAlignment;
         private int activePossibility;
         private int addedPositions;
-        private int textIndent;
-        private int lineHeight;
-        private int lead;
-        private int follow;
+        private final int textIndent;
+        private final int lineHeight;
+        private final int lead;
+        private final int follow;
         private static final double MAX_DEMERITS = 10e6;
 
         public LineBreakingAlgorithm(                            // CSOK: ParameterNumber
@@ -319,6 +320,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             activePossibility = -1;
         }
 
+        @Override
         public void updateData1(int lineCount, double demerits) {
             lineLayouts.addPossibility(lineCount, demerits);
             if (log.isTraceEnabled()) {
@@ -326,6 +328,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             }
         }
 
+        @Override
         public void updateData2(KnuthNode bestActiveNode,
                                 KnuthSequence par,
                                 int total) {
@@ -468,6 +471,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             }
         }
 
+        @Override
         protected int filterActiveNodes() {
             KnuthNode bestActiveNode = null;
 
@@ -539,6 +543,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     }
 
     /** {@inheritDoc} */
+    @Override
     public void initialize() {
         bidiLevel = fobj.getBidiLevel();
         textAlignment = fobj.getTextAlign();
@@ -563,6 +568,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     }
 
     /** {@inheritDoc} */
+    @Override
     public List getNextKnuthElements(LayoutContext context, int alignment) {
         if (alignmentContext == null) {
             FontInfo fi = fobj.getFOEventHandler().getFontInfo();
@@ -774,7 +780,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 // we only need an entry in lineLayoutsList.
                 llPoss = new LineLayoutPossibilities();
             } else {
-                llPoss = findOptimalBreakingPoints(alignment, (Paragraph) seq);
+                llPoss = findOptimalBreakingPoints(alignment, (Paragraph) seq,
+                                                   !paragraphsIterator.hasNext());
             }
             lineLayoutsList[i] = llPoss;
         }
@@ -786,16 +793,17 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     }
 
     /**
-     * Fint the optimal linebreaks for a paragraph
+     * Find the optimal linebreaks for a paragraph
      * @param alignment alignment of the paragraph
      * @param currPar the Paragraph for which the linebreaks are found
+     * @param isLastPar flag indicating whether currPar is the last paragraph
      * @return the line layout possibilities for the paragraph
      */
-    private LineLayoutPossibilities findOptimalBreakingPoints(int alignment, Paragraph currPar) {
+    private LineLayoutPossibilities findOptimalBreakingPoints(int alignment, Paragraph currPar,
+                                                              boolean isLastPar) {
         // use the member lineLayouts, which is read by LineBreakingAlgorithm.updateData1 and 2
         lineLayouts = new LineLayoutPossibilities();
         double maxAdjustment = 1;
-        int iBPcount = 0;
         LineBreakingAlgorithm alg = new LineBreakingAlgorithm(alignment,
                                         textAlignment, textAlignmentLast,
                                         textIndent.getValue(this), currPar.lineFiller.getOpt(),
@@ -804,26 +812,26 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                                         hyphenationLadderCount.getEnum() == EN_NO_LIMIT
                                         ? 0 : hyphenationLadderCount.getValue(),
                                         this);
+        alg.setConstantLineWidth(ipd);
+        boolean canWrap = (wrapOption != EN_NO_WRAP);
+        boolean canHyphenate = (canWrap && hyphenationProperties.hyphenate.getEnum() == EN_TRUE);
 
-        if (hyphenationProperties.hyphenate.getEnum() == EN_TRUE
-                && fobj.getWrapOption() != EN_NO_WRAP && !hyphenationPerformed) {
-            hyphenationPerformed = true;
+        // find hyphenation points, if allowed and not yet done
+        if (canHyphenate && !hyphenationPerformed) {
+            // make sure findHyphenationPoints() is bypassed if
+            // the method is called twice (e.g. due to changing page-ipd)
+            hyphenationPerformed = isLastPar;
             findHyphenationPoints(currPar);
         }
 
-        // first try
-        int allowedBreaks;
-        if (wrapOption == EN_NO_WRAP) {
-            allowedBreaks = BreakingAlgorithm.ONLY_FORCED_BREAKS;
-        } else {
-            allowedBreaks = BreakingAlgorithm.NO_FLAGGED_PENALTIES;
-        }
-        alg.setConstantLineWidth(ipd);
-        iBPcount = alg.findBreakingPoints(currPar,
-                                          maxAdjustment, false, allowedBreaks);
-        if (iBPcount == 0 || alignment == EN_JUSTIFY) {
+        // first try: do not consider hyphenation points as legal breaks
+        int allowedBreaks = (canWrap ? BreakingAlgorithm.NO_FLAGGED_PENALTIES
+                : BreakingAlgorithm.ONLY_FORCED_BREAKS);
+        int breakingPoints = alg.findBreakingPoints(currPar, maxAdjustment, false, allowedBreaks);
+
+        if (breakingPoints == 0 || alignment == EN_JUSTIFY) {
             // if the first try found a set of breaking points, save them
-            if (iBPcount > 0) {
+            if (breakingPoints > 0) {
                 alg.resetAlgorithm();
                 lineLayouts.savePossibilities(false);
             } else {
@@ -832,10 +840,10 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             }
 
             // now try something different
-            log.debug("Hyphenation possible? "
-                      + (hyphenationProperties.hyphenate.getEnum() == EN_TRUE));
-            if (hyphenationProperties.hyphenate.getEnum() == EN_TRUE
-                && !(allowedBreaks == BreakingAlgorithm.ONLY_FORCED_BREAKS)) {
+            log.debug("Hyphenation possible? " + canHyphenate);
+            // Note: if allowedBreaks is guaranteed to be unchanged by alg.findBreakingPoints(),
+            // the below check can be simplified to 'if (canHyphenate) ...'
+            if (canHyphenate && allowedBreaks != BreakingAlgorithm.ONLY_FORCED_BREAKS) {
                 // consider every hyphenation point as a legal break
                 allowedBreaks = BreakingAlgorithm.ALL_BREAKS;
             } else {
@@ -843,68 +851,22 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 maxAdjustment = 5;
             }
 
-            iBPcount = alg.findBreakingPoints(currPar, maxAdjustment, false, allowedBreaks);
-            if (iBPcount == 0) {
+            breakingPoints = alg.findBreakingPoints(currPar, maxAdjustment, false, allowedBreaks);
+            if (breakingPoints == 0) {
                 // the second try failed too, try with a huge threshold
-                // and force the algorithm to find
-                // a set of breaking points
+                // and force the algorithm to find a set of breaking points
                 if (log.isDebugEnabled()) {
                     log.debug("No set of breaking points found with maxAdjustment = "
-                              + maxAdjustment
-                              + (hyphenationProperties.hyphenate.getEnum() == EN_TRUE
-                                      ? " and hyphenation" : ""));
+                            + maxAdjustment + (canHyphenate ? " and hyphenation" : ""));
                 }
                 maxAdjustment = 20;
-                iBPcount
-                    = alg.findBreakingPoints(currPar,
-                                             maxAdjustment, true, allowedBreaks);
+                alg.findBreakingPoints(currPar, maxAdjustment, true, allowedBreaks);
             }
 
             // use non-hyphenated breaks, when possible
             lineLayouts.restorePossibilities();
-
-            /* extension (not in the XSL FO recommendation): if vertical alignment
-               is justify and the paragraph has only one layout, try using
-               shorter or longer lines */
-            //TODO This code snippet is disabled. Reenable?
-            /* [GA] remove dead code
-            if (false && alignment == EN_JUSTIFY && textAlignment == EN_JUSTIFY) {
-                //log.debug("LLM.getNextKnuthElements> layouts with more lines? "
-                //+ lineLayouts.canUseMoreLines());
-                //log.debug("                          layouts with fewer lines? "
-                //+ lineLayouts.canUseLessLines());
-                if (!lineLayouts.canUseMoreLines()) {
-                    alg.resetAlgorithm();
-                    lineLayouts.savePossibilities(true);
-                    // try with shorter lines
-                    int savedLineWidth = ipd;
-                    ipd = (int) (ipd * 0.95);
-                    iBPcount = alg.findBreakingPoints(currPar,
-                            maxAdjustment, true, allowedBreaks);
-                    // use normal lines, when possible
-                    lineLayouts.restorePossibilities();
-                    ipd = savedLineWidth;
-                }
-                if (!lineLayouts.canUseLessLines()) {
-                    alg.resetAlgorithm();
-                    lineLayouts.savePossibilities(true);
-                    // try with longer lines
-                    int savedLineWidth = ipd;
-                    ipd = (int) (ipd * 1.05);
-                    alg.setConstantLineWidth(ipd);
-                    iBPcount = alg.findBreakingPoints(currPar,
-                            maxAdjustment, true, allowedBreaks);
-                    // use normal lines, when possible
-                    lineLayouts.restorePossibilities();
-                    ipd = savedLineWidth;
-                }
-                //log.debug("LLM.getNextKnuthElements> now, layouts with more lines? "
-                //+ lineLayouts.canUseMoreLines());
-                //log.debug("                          now, layouts with fewer lines? "
-                //+ lineLayouts.canUseLessLines());
-            }
-            */
         }
+
         return lineLayouts;
     }
 
@@ -1207,6 +1169,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     }
 
     /** {@inheritDoc} */
+    @Override
     public List getChangedKnuthElements(List oldList, int alignment) {
         List returnList = new LinkedList();
         for (int p = 0; p < knuthParagraphs.size(); p++) {
@@ -1281,8 +1244,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             } else if (currLM == null) {
                 break;
             }
-            //TODO Something's not right here. See block_hyphenation_linefeed_preserve.xml
-            //for more info: see also https://issues.apache.org/bugzilla/show_bug.cgi?id=38264
 
             // collect word fragments, ignoring auxiliary elements;
             // each word fragment was created by a different TextLM
@@ -1391,6 +1352,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
      * @param isNotFirst ignored
      * @return always true
      */
+    @Override
     protected boolean hasLeadingFence(boolean isNotFirst) {
         return true;
     }
@@ -1400,6 +1362,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
      * @param isNotLast ignored
      * @return always true
      */
+    @Override
     protected boolean hasTrailingFence(boolean isNotLast) {
         return true;
     }
@@ -1447,6 +1410,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
      * @param parentIter the iterator of break positions
      * @param context the context for adding areas
      */
+    @Override
     public void addAreas(PositionIterator parentIter,
                          LayoutContext context) {
         while (parentIter.hasNext()) {
@@ -1475,8 +1439,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager
      */
     private void addInlineArea(LayoutContext context, LineBreakPosition lbp,
             boolean isLastPosition) {
-        // the TLM which created the last KnuthElement in this line
-        LayoutManager lastLM = null;
 
         KnuthSequence seq = (KnuthSequence) knuthParagraphs.get(lbp.parIndex);
         int startElementIndex = lbp.startIndex;
@@ -1509,15 +1471,16 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             }
         }
 
-        // Remove trailing spaces if allowed so
-        if (whiteSpaceTreament == EN_IGNORE_IF_SURROUNDING_LINEFEED
-                || whiteSpaceTreament == EN_IGNORE
-                || whiteSpaceTreament == EN_IGNORE_IF_BEFORE_LINEFEED) {
-            // ignore the last element in the line if it is a KnuthGlue object
-            ListIterator seqIterator = seq.listIterator(endElementIndex);
-            KnuthElement lastElement = (KnuthElement) seqIterator.next();
-            lastLM = lastElement.getLayoutManager();
-            if (lastElement.isGlue()) {
+        // ignore the last element in the line if it is a KnuthGlue object
+        ListIterator seqIterator = seq.listIterator(endElementIndex);
+        KnuthElement lastElement = (KnuthElement) seqIterator.next();
+        // the TLM which created the last KnuthElement in this line
+        LayoutManager lastLM = lastElement.getLayoutManager();
+        if (lastElement.isGlue()) {
+            // Remove trailing spaces if allowed so
+            if (whiteSpaceTreament == EN_IGNORE_IF_SURROUNDING_LINEFEED
+                    || whiteSpaceTreament == EN_IGNORE
+                    || whiteSpaceTreament == EN_IGNORE_IF_BEFORE_LINEFEED) {
                 endElementIndex--;
                 // this returns the same KnuthElement
                 seqIterator.previous();
@@ -1533,7 +1496,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 || whiteSpaceTreament == EN_IGNORE_IF_AFTER_LINEFEED) {
             // ignore KnuthGlue and KnuthPenalty objects
             // at the beginning of the line
-            ListIterator seqIterator = seq.listIterator(startElementIndex);
+            seqIterator = seq.listIterator(startElementIndex);
             while (seqIterator.hasNext() && !((KnuthElement) seqIterator.next()).isBox()) {
                 startElementIndex++;
             }
@@ -1549,40 +1512,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         lc.setLeadingSpace(new SpaceSpecifier(true));
         lc.setTrailingSpace(new SpaceSpecifier(false));
         lc.setFlags(LayoutContext.RESOLVE_LEADING_SPACE, true);
-
-        /*
-         * extension (not in the XSL FO recommendation): if the left and right margins
-         * have been optimized, recompute indents and / or adjust ratio, according
-         * to the paragraph horizontal alignment
-         */
-        /* [GA] remove dead code
-        if (false && textAlignment == EN_JUSTIFY) {
-            // re-compute space adjust ratio
-            int updatedDifference = context.getRefIPD()
-            - lbp.lineWidth + lbp.difference;
-            double updatedRatio = 0.0;
-            if (updatedDifference > 0) {
-                updatedRatio = (float) updatedDifference / lbp.availableStretch;
-            } else if (updatedDifference < 0) {
-                updatedRatio = (float) updatedDifference / lbp.availableShrink;
-            }
-            lc.setIPDAdjust(updatedRatio);
-            //log.debug("LLM.addAreas> old difference = " + lbp.difference
-            //+ " new difference = " + updatedDifference);
-            //log.debug("              old ratio = " + lbp.ipdAdjust
-            //+ " new ratio = " + updatedRatio);
-        } else if (false && textAlignment == EN_CENTER) {
-            // re-compute indent
-            int updatedIndent = lbp.startIndent
-            + (context.getRefIPD() - lbp.lineWidth) / 2;
-            lineArea.addTrait(Trait.START_INDENT, new Integer(updatedIndent));
-        } else if (false && textAlignment == EN_END) {
-            // re-compute indent
-            int updatedIndent = lbp.startIndent
-            + (context.getRefIPD() - lbp.lineWidth);
-            lineArea.addTrait(Trait.START_INDENT, new Integer(updatedIndent));
-        }
-        */
 
         setCurrentArea(lineArea);
         setChildContext(lc);
@@ -1659,6 +1588,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     }
 
     /** {@inheritDoc} */
+    @Override
     public void addChildArea(Area childArea) {
         // Make sure childArea is inline area
         if (childArea instanceof InlineArea) {
@@ -1674,16 +1604,19 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     // --------- Property Resolution related functions --------- //
 
     /** {@inheritDoc} */
+    @Override
     public boolean getGeneratesBlockArea() {
         return true;
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean getGeneratesLineArea() {
         return true;
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean isRestartable() {
         return true;
     }

@@ -23,7 +23,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.util.Iterator;
 import java.util.Map;
 
 import javax.xml.transform.Source;
@@ -31,13 +30,6 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import org.apache.xmlgraphics.fonts.Glyphs;
-import org.apache.xmlgraphics.ps.DSCConstants;
-import org.apache.xmlgraphics.ps.PSGenerator;
-import org.apache.xmlgraphics.ps.PSResource;
-import org.apache.xmlgraphics.ps.dsc.ResourceTracker;
-
 import org.apache.fop.fonts.Base14Font;
 import org.apache.fop.fonts.CustomFont;
 import org.apache.fop.fonts.Font;
@@ -47,6 +39,11 @@ import org.apache.fop.fonts.LazyFont;
 import org.apache.fop.fonts.SingleByteEncoding;
 import org.apache.fop.fonts.SingleByteFont;
 import org.apache.fop.fonts.Typeface;
+import org.apache.xmlgraphics.fonts.Glyphs;
+import org.apache.xmlgraphics.ps.DSCConstants;
+import org.apache.xmlgraphics.ps.PSGenerator;
+import org.apache.xmlgraphics.ps.PSResource;
+import org.apache.xmlgraphics.ps.dsc.ResourceTracker;
 
 /**
  * Utility code for font handling in PostScript.
@@ -80,7 +77,8 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
      * @return a Map of PSResource instances representing all defined fonts (key: font key)
      * @throws IOException in case of an I/O problem
      */
-    public static Map writeFontDict(PSGenerator gen, FontInfo fontInfo, Map fonts)
+    public static Map writeFontDict(PSGenerator gen, FontInfo fontInfo,
+            Map<String, Typeface> fonts)
                 throws IOException {
         return writeFontDict(gen, fontInfo, fonts, false);
     }
@@ -95,14 +93,12 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
      * @return a Map of PSResource instances representing all defined fonts (key: font key)
      * @throws IOException in case of an I/O problem
      */
-    private static Map writeFontDict(PSGenerator gen, FontInfo fontInfo, Map fonts,
-            boolean encodeAllCharacters) throws IOException {
+    private static Map writeFontDict(PSGenerator gen, FontInfo fontInfo,
+            Map<String, Typeface> fonts, boolean encodeAllCharacters) throws IOException {
         gen.commentln("%FOPBeginFontDict");
 
         Map fontResources = new java.util.HashMap();
-        Iterator iter = fonts.keySet().iterator();
-        while (iter.hasNext()) {
-            String key = (String)iter.next();
+        for (String key : fonts.keySet()) {
             Typeface tf = getTypeFace(fontInfo, fonts, key);
             PSResource fontRes = new PSResource(PSResource.TYPE_FONT, tf.getFontName());
             fontResources.put(key, fontRes);
@@ -130,7 +126,8 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
         return fontResources;
     }
 
-    private static void reencodeFonts(PSGenerator gen, Map fonts) throws IOException {
+    private static void reencodeFonts(PSGenerator gen, Map<String, Typeface> fonts)
+            throws IOException {
         ResourceTracker tracker = gen.getResourceTracker();
 
         if (!tracker.isResourceSupplied(WINANSI_ENCODING_RESOURCE)) {
@@ -140,10 +137,8 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
         gen.commentln("%FOPBeginFontReencode");
 
         //Rewrite font encodings
-        Iterator iter = fonts.keySet().iterator();
-        while (iter.hasNext()) {
-            String key = (String)iter.next();
-            Typeface tf = (Typeface)fonts.get(key);
+        for (String key : fonts.keySet()) {
+            Typeface tf = fonts.get(key);
             if (tf instanceof LazyFont) {
                 tf = ((LazyFont)tf).getRealFont();
                 if (tf == null) {
@@ -172,8 +167,9 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
         gen.commentln("%FOPEndFontReencode");
     }
 
-    private static Typeface getTypeFace(FontInfo fontInfo, Map fonts, String key) {
-        Typeface tf = (Typeface)fonts.get(key);
+    private static Typeface getTypeFace(FontInfo fontInfo, Map<String, Typeface> fonts,
+            String key) {
+        Typeface tf = fonts.get(key);
         if (tf instanceof LazyFont) {
             tf = ((LazyFont)tf).getRealFont();
         }
@@ -181,7 +177,7 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
             //This is to avoid an NPE if a malconfigured font is in the configuration but not
             //used in the document. If it were used, we wouldn't get this far.
             String fallbackKey = fontInfo.getInternalFontKey(Font.DEFAULT_FONT);
-            tf = (Typeface)fonts.get(fallbackKey);
+            tf = fonts.get(fallbackKey);
         }
         return tf;
     }
@@ -271,11 +267,9 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
      * @return a Map of PSResource instances representing all defined fonts (key: font key)
      */
     public static Map determineSuppliedFonts(ResourceTracker resTracker,
-            FontInfo fontInfo, Map fonts) {
+            FontInfo fontInfo, Map<String, Typeface> fonts) {
         Map fontResources = new java.util.HashMap();
-        Iterator iter = fonts.keySet().iterator();
-        while (iter.hasNext()) {
-            String key = (String)iter.next();
+        for (String key : fonts.keySet()) {
             Typeface tf = getTypeFace(fontInfo, fonts, key);
             PSResource fontRes = new PSResource("font", tf.getFontName());
             fontResources.put(key, fontRes);

@@ -21,6 +21,8 @@ package org.apache.fop.fonts;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -35,7 +37,7 @@ public abstract class CustomFont extends Typeface
 
     private String fontName = null;
     private String fullName = null;
-    private Set familyNames = null; //Set<String>
+    private Set<String> familyNames = null;
     private String fontSubName = null;
     private String embedFileName = null;
     private String embedResourceName = null;
@@ -55,7 +57,7 @@ public abstract class CustomFont extends Typeface
     private int firstChar = 0;
     private int lastChar = 255;
 
-    private Map kerning;
+    private Map<Integer, Map<Integer, Integer>> kerning;
 
     private boolean useKerning = true;
     private boolean useAdvanced = true;
@@ -79,7 +81,7 @@ public abstract class CustomFont extends Typeface
      * Returns the font family names.
      * @return the font family names (a Set of Strings)
      */
-    public Set getFamilyNames() {
+    public Set<String> getFamilyNames() {
         return Collections.unmodifiableSet(this.familyNames);
     }
 
@@ -276,11 +278,11 @@ public abstract class CustomFont extends Typeface
     /**
      * {@inheritDoc}
      */
-    public final Map getKerningInfo() {
+    public final Map<Integer, Map<Integer, Integer>> getKerningInfo() {
         if (hasKerningInfo()) {
             return kerning;
         } else {
-            return java.util.Collections.EMPTY_MAP;
+            return Collections.emptyMap();
         }
     }
 
@@ -306,8 +308,8 @@ public abstract class CustomFont extends Typeface
     }
 
     /** {@inheritDoc} */
-    public void setFamilyNames(Set names) {
-        this.familyNames = new java.util.HashSet(names);
+    public void setFamilyNames(Set<String> names) {
+        this.familyNames = new HashSet<String>(names);
     }
 
     /**
@@ -451,9 +453,9 @@ public abstract class CustomFont extends Typeface
     }
 
     /** {@inheritDoc} */
-    public void putKerningEntry(Integer key, Map value) {
+    public void putKerningEntry(Integer key, Map<Integer, Integer> value) {
         if (kerning == null) {
-            kerning = new java.util.HashMap();
+            kerning = new HashMap<Integer, Map<Integer, Integer>>();
         }
         this.kerning.put(key, value);
     }
@@ -463,9 +465,9 @@ public abstract class CustomFont extends Typeface
      * @param kerningMap the kerning map (Map<Integer, Map<Integer, Integer>, the integers are
      *                          character codes)
      */
-    public void replaceKerningMap(Map kerningMap) {
+    public void replaceKerningMap(Map<Integer, Map<Integer, Integer>> kerningMap) {
         if (kerningMap == null) {
-            this.kerning = Collections.EMPTY_MAP;
+            this.kerning = Collections.emptyMap();
         } else {
             this.kerning = kerningMap;
         }

@@ -46,7 +46,7 @@ public interface MutableFont {
      * Sets the font's family names (Example: "Helvetica").
      * @param names the font's family names (a Set of Strings)
      */
-    void setFamilyNames(Set names);
+    void setFamilyNames(Set<String> names);
 
     /**
      * Sets the path to the embeddable font file.
@@ -143,6 +143,6 @@ public interface MutableFont {
      * @param key Kerning key
      * @param value Kerning value
      */
-    void putKerningEntry(Integer key, Map value);
+    void putKerningEntry(Integer key, Map<Integer, Integer> value);
 
 }
