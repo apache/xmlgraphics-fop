@@ -98,11 +98,9 @@ public class PDFResources extends PDFObject {
      * @param fontInfo font info object to get font information from
      */
    public void addFonts(PDFDocument doc, FontInfo fontInfo) {
-        Map usedFonts = fontInfo.getUsedFonts();
-        Iterator e = usedFonts.keySet().iterator();
-        while (e.hasNext()) {
-            String f = (String)e.next();
-            Typeface font = (Typeface)usedFonts.get(f);
+        Map<String, Typeface> usedFonts = fontInfo.getUsedFonts();
+        for (String f : usedFonts.keySet()) {
+            Typeface font = usedFonts.get(f);
 
             //Check if the font actually had any mapping operations. If not, it is an indication
             //that it has never actually been used and therefore doesn't have to be embedded.
@@ -196,6 +194,7 @@ public class PDFResources extends PDFObject {
      * @return the PDF
      * {@inheritDoc}
      */
+    @Override
     public String toPDFString() {
         StringBuffer p = new StringBuffer(128);
         p.append(getObjectID() + "<<\n");

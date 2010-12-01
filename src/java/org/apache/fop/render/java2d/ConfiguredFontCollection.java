@@ -95,7 +95,7 @@ public class ConfiguredFontCollection implements FontCollection {
 
                 fontInfo.addMetrics(internalName, font);
 
-                List triplets = configFontInfo.getFontTriplets();
+                List<FontTriplet> triplets = configFontInfo.getFontTriplets();
                 for (int c = 0; c < triplets.size(); c++) {
                     FontTriplet triplet = (FontTriplet) triplets.get(c);
 

@@ -19,13 +19,14 @@
 
 package org.apache.fop.fonts;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.xmlgraphics.fonts.Glyphs;
-
 import org.apache.fop.util.CharUtilities;
+import org.apache.xmlgraphics.fonts.Glyphs;
 
 /**
  * A simple implementation of the OneByteEncoding mostly used for encodings that are constructed
@@ -33,11 +34,9 @@ import org.apache.fop.util.CharUtilities;
  */
 public class SimpleSingleByteEncoding implements SingleByteEncoding {
 
-    private String name;
-    private List mapping = new java.util.ArrayList();
-    //List<NamedCharacter>
-    private Map charMap = new java.util.HashMap();
-    //Map<Character(Unicode), Character(code point)>
+    private final String name;
+    private final List<NamedCharacter> mapping = new ArrayList<NamedCharacter>();
+    private final Map<Character, Character> charMap = new HashMap<Character, Character>();
 
     /**
      * Main constructor.
@@ -54,7 +53,7 @@ public class SimpleSingleByteEncoding implements SingleByteEncoding {
 
     /** {@inheritDoc} */
     public char mapChar(char c) {
-        Character nc = (Character)charMap.get(new Character(c));
+        Character nc = charMap.get(new Character(c));
         if (nc != null) {
             return nc.charValue();
         }
@@ -66,7 +65,7 @@ public class SimpleSingleByteEncoding implements SingleByteEncoding {
         String[] map = new String[getSize()];
         Arrays.fill(map, Glyphs.NOTDEF);
         for (int i = getFirstChar(); i <= getLastChar(); i++) {
-            NamedCharacter ch = (NamedCharacter)this.mapping.get(i - 1);
+            NamedCharacter ch = this.mapping.get(i - 1);
             map[i] = ch.getName();
         }
         return map;
@@ -133,7 +132,7 @@ public class SimpleSingleByteEncoding implements SingleByteEncoding {
             throw new IllegalArgumentException("codePoint must be between 0 and 255");
         }
         if (codePoint <= getLastChar()) {
-            return (NamedCharacter)this.mapping.get(codePoint - 1);
+            return this.mapping.get(codePoint - 1);
         } else {
             return null;
         }
@@ -152,6 +151,7 @@ public class SimpleSingleByteEncoding implements SingleByteEncoding {
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
         return getName() + " (" + getSize() + " chars)";
     }
