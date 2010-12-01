@@ -72,7 +72,8 @@ public final class FontSetup {
      * @param embedFontInfoList a list of EmbedFontInfo objects
      * @param resolver the font resolver
      */
-    public static void setup(FontInfo fontInfo, List embedFontInfoList, FontResolver resolver) {
+    public static void setup(FontInfo fontInfo, List<EmbedFontInfo> embedFontInfoList,
+            FontResolver resolver) {
         final boolean base14Kerning = false;
         fontInfo.addMetrics("F1", new Helvetica(base14Kerning));
         fontInfo.addMetrics("F2", new HelveticaOblique(base14Kerning));
@@ -190,7 +191,7 @@ public final class FontSetup {
      * @param resolver the font resolver
      */
     private static void addConfiguredFonts(FontInfo fontInfo,
-            List/*<EmbedFontInfo>*/ embedFontInfoList, int num, FontResolver resolver) {
+            List<EmbedFontInfo> embedFontInfoList, int num, FontResolver resolver) {
         if (embedFontInfoList == null) {
             return; //No fonts to process
         }
@@ -202,18 +203,16 @@ public final class FontSetup {
 
         String internalName = null;
 
-        for (int i = 0; i < embedFontInfoList.size(); i++) {
-            EmbedFontInfo embedFontInfo = (EmbedFontInfo)embedFontInfoList.get(i);
-
+        for (EmbedFontInfo embedFontInfo : embedFontInfoList) {
             internalName = "F" + num;
             num++;
 
             LazyFont font = new LazyFont(embedFontInfo, resolver);
             fontInfo.addMetrics(internalName, font);
 
-            List triplets = embedFontInfo.getFontTriplets();
+            List<FontTriplet> triplets = embedFontInfo.getFontTriplets();
             for (int tripletIndex = 0; tripletIndex < triplets.size(); tripletIndex++) {
-                FontTriplet triplet = (FontTriplet) triplets.get(tripletIndex);
+                FontTriplet triplet = triplets.get(tripletIndex);
                 fontInfo.addFontProperties(internalName, triplet);
             }
         }

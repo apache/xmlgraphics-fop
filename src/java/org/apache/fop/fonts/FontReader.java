@@ -21,6 +21,9 @@ package org.apache.fop.fonts;
 
 //Java
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -56,12 +59,12 @@ public class FontReader extends DefaultHandler {
     private SingleByteFont singleFont = null;
     private StringBuffer text = new StringBuffer();
 
-    private List cidWidths = null;
+    private List<Integer> cidWidths = null;
     private int cidWidthIndex = 0;
 
-    private Map currentKerning = null;
+    private Map<Integer, Integer> currentKerning = null;
 
-    private List bfranges = null;
+    private List<BFEntry> bfranges = null;
 
     private void createFont(InputSource source) throws FOPException {
         XMLReader parser = null;
@@ -184,13 +187,13 @@ public class FontReader extends DefaultHandler {
             returnFont.setEmbedResourceName(attributes.getValue("class"));
         } else if ("cid-widths".equals(localName)) {
             cidWidthIndex = getInt(attributes.getValue("start-index"));
-            cidWidths = new java.util.ArrayList();
+            cidWidths = new ArrayList<Integer>();
         } else if ("kerning".equals(localName)) {
-            currentKerning = new java.util.HashMap();
+            currentKerning = new HashMap<Integer, Integer>();
             returnFont.putKerningEntry(new Integer(attributes.getValue("kpx1")),
                                         currentKerning);
         } else if ("bfranges".equals(localName)) {
-            bfranges = new java.util.ArrayList();
+            bfranges = new ArrayList<BFEntry>();
         } else if ("bf".equals(localName)) {
             BFEntry entry = new BFEntry(getInt(attributes.getValue("us")),
                                         getInt(attributes.getValue("ue")),
@@ -235,7 +238,7 @@ public class FontReader extends DefaultHandler {
         } else if ("full-name".equals(localName)) {
             returnFont.setFullName(content);
         } else if ("family-name".equals(localName)) {
-            Set s = new java.util.HashSet();
+            Set<String> s = new HashSet<String>();
             s.add(content);
             returnFont.setFamilyNames(s);
         } else if ("ttc-name".equals(localName) && isCID) {
@@ -288,15 +291,14 @@ public class FontReader extends DefaultHandler {
             int[] wds = new int[cidWidths.size()];
             int j = 0;
             for (int count = 0; count < cidWidths.size(); count++) {
-                Integer i = (Integer)cidWidths.get(count);
-                wds[j++] = i.intValue();
+                wds[j++] = cidWidths.get(count).intValue();
             }
 
             //multiFont.addCIDWidthEntry(cidWidthIndex, wds);
             multiFont.setWidthArray(wds);
 
         } else if ("bfranges".equals(localName)) {
-            multiFont.setCMap((BFEntry[])bfranges.toArray(new BFEntry[0]));
+            multiFont.setBFEntries(bfranges.toArray(new BFEntry[0]));
         }
         text.setLength(0); //Reset text buffer (see characters())
     }

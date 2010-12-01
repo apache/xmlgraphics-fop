@@ -23,7 +23,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.util.Iterator;
 import java.util.Map;
 
 import javax.xml.transform.Source;
@@ -105,7 +104,7 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
      * @return a Map of PSResource instances representing all defined fonts (key: font key)
      * @throws IOException in case of an I/O problem
      */
-    public static Map writeFontDict(PSGenerator gen, FontInfo fontInfo, Map fonts,
+    public static Map writeFontDict(PSGenerator gen, FontInfo fontInfo, Map<String, Typeface> fonts,
             PSEventProducer eventProducer) throws IOException {
         return writeFontDict(gen, fontInfo, fonts, false, eventProducer);
     }
@@ -120,14 +119,12 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
      * @return a Map of PSResource instances representing all defined fonts (key: font key)
      * @throws IOException in case of an I/O problem
      */
-    private static Map writeFontDict(PSGenerator gen, FontInfo fontInfo, Map fonts,
+    private static Map writeFontDict(PSGenerator gen, FontInfo fontInfo, Map<String, Typeface> fonts,
             boolean encodeAllCharacters, PSEventProducer eventProducer) throws IOException {
         gen.commentln("%FOPBeginFontDict");
 
         Map fontResources = new java.util.HashMap();
-        Iterator iter = fonts.keySet().iterator();
-        while (iter.hasNext()) {
-            String key = (String)iter.next();
+        for (String key : fonts.keySet()) {
             Typeface tf = getTypeFace(fontInfo, fonts, key);
             PSResource fontRes = new PSResource(PSResource.TYPE_FONT, tf.getEmbedFontName());
             PSFontResource fontResource = embedFont(gen, tf, fontRes, eventProducer);
@@ -164,7 +161,8 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
         return fontResources;
     }
 
-    private static void reencodeFonts(PSGenerator gen, Map fonts) throws IOException {
+    private static void reencodeFonts(PSGenerator gen, Map<String, Typeface> fonts)
+            throws IOException {
         ResourceTracker tracker = gen.getResourceTracker();
 
         if (!tracker.isResourceSupplied(WINANSI_ENCODING_RESOURCE)) {
@@ -174,10 +172,8 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
         gen.commentln("%FOPBeginFontReencode");
 
         //Rewrite font encodings
-        Iterator iter = fonts.keySet().iterator();
-        while (iter.hasNext()) {
-            String key = (String)iter.next();
-            Typeface tf = (Typeface)fonts.get(key);
+        for (String key : fonts.keySet()) {
+            Typeface tf = fonts.get(key);
             if (tf instanceof LazyFont) {
                 tf = ((LazyFont)tf).getRealFont();
                 if (tf == null) {
@@ -206,8 +202,9 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
         gen.commentln("%FOPEndFontReencode");
     }
 
-    private static Typeface getTypeFace(FontInfo fontInfo, Map fonts, String key) {
-        Typeface tf = (Typeface)fonts.get(key);
+    private static Typeface getTypeFace(FontInfo fontInfo, Map<String, Typeface> fonts,
+            String key) {
+        Typeface tf = fonts.get(key);
         if (tf instanceof LazyFont) {
             tf = ((LazyFont)tf).getRealFont();
         }
@@ -215,7 +212,7 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
             //This is to avoid an NPE if a malconfigured font is in the configuration but not
             //used in the document. If it were used, we wouldn't get this far.
             String fallbackKey = fontInfo.getInternalFontKey(Font.DEFAULT_FONT);
-            tf = (Typeface)fonts.get(fallbackKey);
+            tf = fonts.get(fallbackKey);
         }
         return tf;
     }
@@ -562,11 +559,9 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
      * @return a Map of PSResource instances representing all defined fonts (key: font key)
      */
     public static Map determineSuppliedFonts(ResourceTracker resTracker,
-            FontInfo fontInfo, Map fonts) {
+            FontInfo fontInfo, Map<String, Typeface> fonts) {
         Map fontResources = new java.util.HashMap();
-        Iterator iter = fonts.keySet().iterator();
-        while (iter.hasNext()) {
-            String key = (String)iter.next();
+        for (String key : fonts.keySet()) {
             Typeface tf = getTypeFace(fontInfo, fonts, key);
             PSResource fontRes = new PSResource("font", tf.getEmbedFontName());
             fontResources.put(key, fontRes);

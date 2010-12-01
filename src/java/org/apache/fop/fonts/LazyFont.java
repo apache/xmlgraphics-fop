@@ -221,7 +221,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
     }
 
     /** {@inheritDoc} */
-    public Set getFamilyNames() {
+    public Set<String> getFamilyNames() {
         load(true);
         return realFont.getFamilyNames();
     }
@@ -293,7 +293,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
     /**
      * {@inheritDoc}
      */
-    public Map getKerningInfo() {
+    public Map<Integer, Map<Integer, Integer>> getKerningInfo() {
         load(true);
         return realFont.getKerningInfo();
     }

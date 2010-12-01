@@ -604,7 +604,7 @@ public class TTFSubSetFile extends TTFFile {
      * @throws IOException in case of an I/O problem
      */
     public byte[] readFont(FontFileReader in, String name,
-                           Map glyphs) throws IOException {
+                           Map<Integer, Integer> glyphs) throws IOException {
 
         //Check if TrueType collection, and that the name exists in the collection
         if (!checkTTC(in, name)) {

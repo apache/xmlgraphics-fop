@@ -19,10 +19,12 @@
 
 package org.apache.fop.fonts;
 
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -42,9 +44,8 @@ public class SingleByteFont extends CustomFont {
 
     private int[] width = null;
 
-    private Map unencodedCharacters;
-    //Map<Character, UnencodedCharacter>
-    private List additionalEncodings;
+    private Map<Character, UnencodedCharacter> unencodedCharacters;
+    private List<SimpleSingleByteEncoding> additionalEncodings;
 
     private PostScriptVersion ttPostScriptVersion;
 
@@ -88,8 +89,7 @@ public class SingleByteFont extends CustomFont {
             int codePoint = i % 256;
             NamedCharacter nc = encoding.getCharacterForIndex(codePoint);
             UnencodedCharacter uc
-                = (UnencodedCharacter)this.unencodedCharacters.get(
-                        new Character(nc.getSingleUnicodeValue()));
+                = this.unencodedCharacters.get(new Character(nc.getSingleUnicodeValue()));
             return size * uc.getWidth();
         }
         return 0;
@@ -122,11 +122,10 @@ public class SingleByteFont extends CustomFont {
 
     private char mapUnencodedChar(char ch) {
         if (this.unencodedCharacters != null) {
-            UnencodedCharacter unencoded
-                = (UnencodedCharacter)this.unencodedCharacters.get(new Character(ch));
+            UnencodedCharacter unencoded = this.unencodedCharacters.get(new Character(ch));
             if (unencoded != null) {
                 if (this.additionalEncodings == null) {
-                    this.additionalEncodings = new java.util.ArrayList();
+                    this.additionalEncodings = new ArrayList<SimpleSingleByteEncoding>();
                 }
                 SimpleSingleByteEncoding encoding = null;
                 char mappedStart = 0;
@@ -236,7 +235,7 @@ public class SingleByteFont extends CustomFont {
      */
     public void addUnencodedCharacter(NamedCharacter ch, int width) {
         if (this.unencodedCharacters == null) {
-            this.unencodedCharacters = new java.util.HashMap();
+            this.unencodedCharacters = new HashMap<Character, UnencodedCharacter>();
         }
         if (ch.hasSingleUnicodeValue()) {
             UnencodedCharacter uc = new UnencodedCharacter(ch, width);
@@ -254,10 +253,8 @@ public class SingleByteFont extends CustomFont {
      */
     public void encodeAllUnencodedCharacters() {
         if (this.unencodedCharacters != null) {
-            Set sortedKeys = new java.util.TreeSet(this.unencodedCharacters.keySet());
-            Iterator iter = sortedKeys.iterator();
-            while (iter.hasNext()) {
-                Character ch = (Character)iter.next();
+            Set<Character> sortedKeys = new TreeSet<Character>(this.unencodedCharacters.keySet());
+            for (Character ch : sortedKeys) {
                 char mapped = mapChar(ch.charValue());
                 assert mapped != Typeface.NOT_FOUND;
             }
@@ -293,7 +290,7 @@ public class SingleByteFont extends CustomFont {
     public SimpleSingleByteEncoding getAdditionalEncoding(int index)
             throws IndexOutOfBoundsException {
         if (hasAdditionalEncodings()) {
-            return (SimpleSingleByteEncoding)this.additionalEncodings.get(index);
+            return this.additionalEncodings.get(index);
         } else {
             throw new IndexOutOfBoundsException("No additional encodings available");
         }
@@ -309,7 +306,7 @@ public class SingleByteFont extends CustomFont {
         int[] arr = new int[enc.getLastChar() - enc.getFirstChar() + 1];
         for (int i = 0, c = arr.length; i < c; i++) {
             NamedCharacter nc = enc.getCharacterForIndex(enc.getFirstChar() + i);
-            UnencodedCharacter uc = (UnencodedCharacter)this.unencodedCharacters.get(
+            UnencodedCharacter uc = this.unencodedCharacters.get(
                     new Character(nc.getSingleUnicodeValue()));
             arr[i] = uc.getWidth();
         }
@@ -318,8 +315,8 @@ public class SingleByteFont extends CustomFont {
 
     private static final class UnencodedCharacter {
 
-        private NamedCharacter character;
-        private int width;
+        private final NamedCharacter character;
+        private final int width;
 
         public UnencodedCharacter(NamedCharacter character, int width) {
             this.character = character;

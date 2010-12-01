@@ -28,10 +28,8 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import org.apache.xmlgraphics.fonts.Glyphs;
-
 import org.apache.fop.fonts.FontUtil;
+import org.apache.xmlgraphics.fonts.Glyphs;
 
 /**
  * Reads a TrueType file or a TrueType Collection.
@@ -132,17 +130,17 @@ public class TTFFile {
     /** Set to true to get even more debug output than with level DEBUG */
     public static final boolean TRACE_ENABLED = false;
 
-    private String encoding = "WinAnsiEncoding";    // Default encoding
+    private final String encoding = "WinAnsiEncoding";    // Default encoding
 
-    private short firstChar = 0;
+    private final short firstChar = 0;
     private boolean isEmbeddable = true;
     private boolean hasSerifs = true;
     /**
      * Table directory
      */
     protected Map dirTabs;
-    private Map kerningTab;                          // for CIDs
-    private Map ansiKerningTab;                      // For winAnsiEncoding
+    private Map<Integer, Map<Integer, Integer>> kerningTab;     // for CIDs
+    private Map<Integer, Map<Integer, Integer>> ansiKerningTab; // For winAnsiEncoding
     private List<TTFCmapEntry> cmaps;
     private List unicodeMapping;
 
@@ -161,12 +159,12 @@ public class TTFFile {
      * Contains glyph data
      */
     protected TTFMtxEntry[] mtxTab;                  // Contains glyph data
-    private int[] mtxEncoded = null;
+    private final int[] mtxEncoded = null;
 
     private String postScriptName = "";
     private String fullName = "";
     private String notice = "";
-    private Set familyNames = new java.util.HashSet(); //Set<String>
+    private final Set familyNames = new java.util.HashSet(); //Set<String>
     private String subFamilyName = "";
 
     private long italicAngle = 0;
@@ -199,8 +197,8 @@ public class TTFFile {
 
     // internal mapping of glyph indexes to unicode indexes
     // used for quick mappings in this class
-    private Map glyphToUnicodeMap = new java.util.HashMap();
-    private Map unicodeToGlyphMap = new java.util.HashMap();
+    private final Map glyphToUnicodeMap = new java.util.HashMap();
+    private final Map unicodeToGlyphMap = new java.util.HashMap();
 
     private TTFDirTabEntry currentDirTab;
 
@@ -216,8 +214,8 @@ public class TTFFile {
      */
     class UnicodeMapping {
 
-        private int unicodeIndex;
-        private int glyphIndex;
+        private final int unicodeIndex;
+        private final int glyphIndex;
 
         UnicodeMapping(int glyphIndex, int unicodeIndex) {
             this.unicodeIndex = unicodeIndex;
@@ -884,7 +882,7 @@ public class TTFFile {
      * Returns the kerning table.
      * @return Map The kerning table
      */
-    public Map getKerning() {
+    public Map<Integer, Map<Integer, Integer>> getKerning() {
         return kerningTab;
     }
 
@@ -892,7 +890,7 @@ public class TTFFile {
      * Returns the ANSI kerning table.
      * @return Map The ANSI kerning table
      */
-    public Map getAnsiKerning() {
+    public Map<Integer, Map<Integer, Integer>> getAnsiKerning() {
         return ansiKerningTab;
     }
 
@@ -1553,7 +1551,7 @@ public class TTFFile {
                             log.debug("Ignoring kerning pair because Unicode index was"
                                     + " found for the second glyph " + i);
                         } else {
-                            Map adjTab = (Map)kerningTab.get(iObj);
+                            Map adjTab = kerningTab.get(iObj);
                             if (adjTab == null) {
                                 adjTab = new java.util.HashMap();
                             }
@@ -1571,8 +1569,8 @@ public class TTFFile {
             while (ae.hasNext()) {
                 Integer unicodeKey1 = (Integer)ae.next();
                 Integer cidKey1 = unicodeToGlyph(unicodeKey1.intValue());
-                Map akpx = new java.util.HashMap();
-                Map ckpx = (Map)kerningTab.get(unicodeKey1);
+                Map<Integer, Integer> akpx = new java.util.HashMap();
+                Map ckpx = kerningTab.get(unicodeKey1);
 
                 Iterator aee = ckpx.keySet().iterator();
                 while (aee.hasNext()) {
@@ -1683,8 +1681,8 @@ public class TTFFile {
      * @return True if not collection or font name present, false otherwise
      * @throws IOException In case of an I/O problem
      */
-    public final List getTTCnames(FontFileReader in) throws IOException {
-        List fontNames = new java.util.ArrayList();
+    public final List<String> getTTCnames(FontFileReader in) throws IOException {
+        List<String> fontNames = new java.util.ArrayList<String>();
 
         String tag = in.readTTFString(4);
 
