@@ -180,9 +180,9 @@ public class Font implements Substitutable, Positionable {
      * @return the distance to adjust for kerning, 0 if there's no kerning
      */
     public int getKernValue(char ch1, char ch2) {
-        Map<Integer, Integer> kernPair = getKerning().get(new Integer(ch1));
+        Map<Integer, Integer> kernPair = getKerning().get((int) ch1);
         if (kernPair != null) {
-            Integer width = kernPair.get(new Integer(ch2));
+            Integer width = kernPair.get((int) ch2);
             if (width != null) {
                 return width.intValue() * getFontSize() / 1000;
             }
