@@ -770,11 +770,8 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         while (lastIndex > 0 && foText.charAt(lastIndex - 1) == CharUtilities.SOFT_HYPHEN) {
             lastIndex--;
         }
-        final boolean endsWithHyphen = checkEndsWithHyphen
-                && foText.charAt(lastIndex) == CharUtilities.SOFT_HYPHEN;
         Font font = FontSelector
             .selectFontForCharactersInText(foText, thisStart, lastIndex, foText, this);
-        int wordLength = lastIndex - thisStart;
         boolean kerning = font.hasKerning();
         MinOptMax wordIPD = MinOptMax.ZERO;
         for (int i = thisStart; i < lastIndex; i++) {
@@ -801,23 +798,31 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                 }
             }
         }
+        boolean endsWithHyphen = checkEndsWithHyphen
+                                 && foText.charAt(lastIndex) == CharUtilities.SOFT_HYPHEN;
         if (kerning
                 && breakOpportunity
                 && !TextLayoutManager.isSpace(ch)
                 && lastIndex > 0
                 && endsWithHyphen) {
-            final int kern = font.getKernValue(foText.charAt(lastIndex - 1), ch);
+            int kern = font.getKernValue(foText.charAt(lastIndex - 1), ch);
             if (kern != 0) {
                 addToLetterAdjust(lastIndex, kern);
                 //TODO: add kern to wordIPD?
             }
         }
-        int letterSpaces = wordLength - 1;
-        // if there is a break opportunity and the next one
-        // is not a space, it could be used as a line end;
-        // add one more letter space, in case other text follows
-        if (breakOpportunity && !TextLayoutManager.isSpace(ch)) {
-            letterSpaces++;
+        // shy+chars at start of word: wordLength == 0 && breakOpportunity
+        // shy only characters in word: wordLength == 0 && !breakOpportunity
+        int wordLength = lastIndex - thisStart;
+        int letterSpaces = 0;
+        if (wordLength != 0) {
+            letterSpaces = wordLength - 1;
+            // if there is a break opportunity and the next one
+            // is not a space, it could be used as a line end;
+            // add one more letter space, in case other text follows
+            if (breakOpportunity && !TextLayoutManager.isSpace(ch)) {
+                letterSpaces++;
+            }
         }
         assert letterSpaces >= 0;
         wordIPD = wordIPD.plus(letterSpaceIPD.mult(letterSpaces));
