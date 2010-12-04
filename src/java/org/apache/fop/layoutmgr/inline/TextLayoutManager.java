@@ -972,7 +972,6 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
 
     private AreaInfo processWordNoMapping(int lastIndex, final Font font, AreaInfo prevAreaInfo,
             final char breakOpportunityChar, final boolean endsWithHyphen, int level) {
-        int wordLength = lastIndex - thisStart;
         boolean kerning = font.hasKerning();
         MinOptMax wordIPD = MinOptMax.ZERO;
 
@@ -1012,18 +1011,24 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                 && !TextLayoutManager.isSpace(breakOpportunityChar)
                 && lastIndex > 0
                 && endsWithHyphen) {
-            final int kern = font.getKernValue(foText.charAt(lastIndex - 1), breakOpportunityChar);
+            int kern = font.getKernValue(foText.charAt(lastIndex - 1), breakOpportunityChar);
             if (kern != 0) {
                 addToLetterAdjust(lastIndex, kern);
                 //TODO: add kern to wordIPD?
             }
         }
-        int letterSpaces = wordLength - 1;
-        // if there is a break opportunity and the next one (break character)
-        // is not a space, it could be used as a line end;
-        // add one more letter space, in case other text follows
-        if (( breakOpportunityChar != 0 ) && !TextLayoutManager.isSpace(breakOpportunityChar)) {
-            letterSpaces++;
+        // shy+chars at start of word: wordLength == 0 && breakOpportunity
+        // shy only characters in word: wordLength == 0 && !breakOpportunity
+        int wordLength = lastIndex - thisStart;
+        int letterSpaces = 0;
+        if (wordLength != 0) {
+            letterSpaces = wordLength - 1;
+            // if there is a break opportunity and the next one (break character)
+            // is not a space, it could be used as a line end;
+            // add one more letter space, in case other text follows
+            if (( breakOpportunityChar != 0 ) && !TextLayoutManager.isSpace(breakOpportunityChar)) {
+                  letterSpaces++;
+            }
         }
         assert letterSpaces >= 0;
         wordIPD = wordIPD.plus(letterSpaceIPD.mult(letterSpaces));

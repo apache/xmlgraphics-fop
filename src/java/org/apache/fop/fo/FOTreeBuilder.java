@@ -398,7 +398,9 @@ public class FOTreeBuilder extends DefaultHandler {
                 FOValidationEventProducer eventProducer
                     = FOValidationEventProducer.Provider.get(
                         userAgent.getEventBroadcaster());
-                eventProducer.unknownFormattingObject(this, currentFObj.getName(),
+                String name = (currentFObj != null ? currentFObj.getName()
+                                                   : "{" + namespaceURI + "}" + localName);
+                eventProducer.unknownFormattingObject(this, name,
                         new QName(namespaceURI, localName),
                         getEffectiveLocator());
             }
