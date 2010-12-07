@@ -228,6 +228,11 @@ public class InlineArea extends Area {
      * @param ipdVariation the variation
      */
     public void handleIPDVariation(int ipdVariation) {
+        if (log.isTraceEnabled()) {
+            log.trace("Handling IPD variation for " + getClass().getSimpleName()
+                    + ": increase by " + ipdVariation + " mpt.");
+        }
+
         increaseIPD(ipdVariation);
         notifyIPDVariation(ipdVariation);
     }
