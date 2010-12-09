@@ -285,8 +285,9 @@ public abstract class InlineStackingLayoutManager extends AbstractLayoutManager
         KnuthElement oldElement;
         while (oldListIterator.hasNext()) {
             oldElement = (KnuthElement) oldListIterator.next();
-            oldElement.setPosition
-                (oldElement.getPosition().getPosition());
+            if (oldElement.getPosition() != null) {
+                oldElement.setPosition(oldElement.getPosition().getPosition());
+            }
         }
         // reset the iterator
         oldListIterator = oldList.listIterator();
