@@ -27,8 +27,8 @@ import junit.framework.TestCase;
 
 import org.apache.xmlgraphics.java2d.color.ColorSpaces;
 import org.apache.xmlgraphics.java2d.color.ColorWithAlternatives;
-import org.apache.xmlgraphics.java2d.color.ICCColorSpaceExt;
 import org.apache.xmlgraphics.java2d.color.NamedColorSpace;
+import org.apache.xmlgraphics.java2d.color.RenderingIntent;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FopFactory;
@@ -89,7 +89,8 @@ public class ColorUtilTestCase extends TestCase {
         */
 
         col2 = ColorUtil.parseColorString(null, "fop-rgb-icc(0.5,0.5,0.5,#CMYK,,0.5,0.5,0.5,0.0)");
-        assertFalse(col1.equals(col2));
+        assertTrue(col1.equals(col2));
+        assertFalse(org.apache.xmlgraphics.java2d.color.ColorUtil.isSameColor(col1, col2));
     }
 
     /**
@@ -118,7 +119,7 @@ public class ColorUtilTestCase extends TestCase {
         URI sRGBLoc = new URI(
                 "file:src/java/org/apache/fop/pdf/sRGB%20Color%20Space%20Profile.icm");
         ColorSpace cs = fopFactory.getColorSpace("sRGBAlt", null, sRGBLoc.toASCIIString(),
-                ICCColorSpaceExt.AUTO);
+                RenderingIntent.AUTO);
         assertNotNull("Color profile not found", cs);
 
         FOUserAgent ua = fopFactory.newFOUserAgent();
@@ -265,7 +266,7 @@ public class ColorUtilTestCase extends TestCase {
         FopFactory fopFactory = FopFactory.newInstance();
         URI ncpLoc = new URI("file:test/resources/color/ncp-example.icc");
         ColorSpace cs = fopFactory.getColorSpace("NCP", null, ncpLoc.toASCIIString(),
-                ICCColorSpaceExt.AUTO);
+                RenderingIntent.AUTO);
         assertNotNull("Color profile not found", cs);
 
         FOUserAgent ua = fopFactory.newFOUserAgent();

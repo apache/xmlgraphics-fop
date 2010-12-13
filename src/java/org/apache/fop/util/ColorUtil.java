@@ -34,8 +34,8 @@ import org.apache.xmlgraphics.java2d.color.ColorSpaceOrigin;
 import org.apache.xmlgraphics.java2d.color.ColorSpaces;
 import org.apache.xmlgraphics.java2d.color.ColorWithAlternatives;
 import org.apache.xmlgraphics.java2d.color.DeviceCMYKColorSpace;
-import org.apache.xmlgraphics.java2d.color.ICCColorSpaceExt;
 import org.apache.xmlgraphics.java2d.color.NamedColorSpace;
+import org.apache.xmlgraphics.java2d.color.RenderingIntent;
 import org.apache.xmlgraphics.java2d.color.profile.NamedColorProfile;
 import org.apache.xmlgraphics.java2d.color.profile.NamedColorProfileParser;
 
@@ -69,7 +69,7 @@ public final class ColorUtil {
      * This map is used to predefine given colors, as well as speeding up
      * parsing of already parsed colors.
      */
-    private static Map colorMap = null;
+    private static Map<String, Color> colorMap = null;
 
     /** Logger instance */
     protected static Log log = LogFactory.getLog(ColorUtil.class);
@@ -116,7 +116,7 @@ public final class ColorUtil {
             return null;
         }
 
-        Color parsedColor = (Color) colorMap.get(value.toLowerCase());
+        Color parsedColor = colorMap.get(value.toLowerCase());
 
         if (parsedColor == null) {
             if (value.startsWith("#")) {
@@ -172,7 +172,7 @@ public final class ColorUtil {
             throw new PropertyException("Unknown color format: " + value
                     + ". Must be system-color(x)");
         }
-        return (Color) colorMap.get(value);
+        return colorMap.get(value);
     }
 
     /**
@@ -408,7 +408,8 @@ public final class ColorUtil {
                 /* Ask FOP factory to get ColorSpace for the specified ICC profile source */
                 if (foUserAgent != null && iccProfileSrc != null) {
                     assert colorSpace == null;
-                    int renderingIntent = ICCColorSpaceExt.AUTO; //TODO connect to fo:color-profile
+                    RenderingIntent renderingIntent = RenderingIntent.AUTO;
+                    //TODO connect to fo:color-profile/@rendering-intent
                     colorSpace = foUserAgent.getFactory().getColorSpace(iccProfileName,
                             foUserAgent.getBaseURL(), iccProfileSrc,
                             renderingIntent);
@@ -496,7 +497,8 @@ public final class ColorUtil {
 
                 /* Ask FOP factory to get ColorSpace for the specified ICC profile source */
                 if (foUserAgent != null && iccProfileSrc != null) {
-                    int renderingIntent = ICCColorSpaceExt.AUTO; //TODO connect to fo:color-profile
+                    RenderingIntent renderingIntent = RenderingIntent.AUTO;
+                    //TODO connect to fo:color-profile/@rendering-intent
                     colorSpace = (ICC_ColorSpace)foUserAgent.getFactory().getColorSpace(
                             iccProfileName,
                             foUserAgent.getBaseURL(), iccProfileSrc,
@@ -804,7 +806,7 @@ public final class ColorUtil {
      * Initializes the colorMap with some predefined values.
      */
     private static void initializeColorMap() {
-        colorMap = Collections.synchronizedMap(new java.util.HashMap());
+        colorMap = Collections.synchronizedMap(new java.util.HashMap<String, Color>());
 
         colorMap.put("aliceblue", createColor(240, 248, 255));
         colorMap.put("antiquewhite", createColor(250, 235, 215));

@@ -40,7 +40,7 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.xmlgraphics.image.loader.ImageContext;
 import org.apache.xmlgraphics.image.loader.ImageManager;
-import org.apache.xmlgraphics.java2d.color.ICCColorSpaceExt;
+import org.apache.xmlgraphics.java2d.color.RenderingIntent;
 
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.ElementMappingRegistry;
@@ -157,6 +157,7 @@ public class FopFactory implements ImageContext {
         this.fontManager = new FontManager() {
 
             /** {@inheritDoc} */
+            @Override
             public void setFontBaseURL(String fontBase) throws MalformedURLException {
                 super.setFontBaseURL(getFOURIResolver().checkBaseURL(fontBase));
             }
@@ -373,6 +374,7 @@ public class FopFactory implements ImageContext {
      * @throws MalformedURLException if there's a problem with a file URL
      * @deprecated use getFontManager().setFontBaseURL(fontBase) instead
      */
+    @Deprecated
     public void setFontBaseURL(String fontBase) throws MalformedURLException {
         getFontManager().setFontBaseURL(fontBase);
     }
@@ -381,6 +383,7 @@ public class FopFactory implements ImageContext {
      * @return the font base URL
      * @deprecated use getFontManager().setFontBaseURL(fontBase) instead
      */
+    @Deprecated
     public String getFontBaseURL() {
         return getFontManager().getFontBaseURL();
     }
@@ -491,6 +494,7 @@ public class FopFactory implements ImageContext {
      * @return true if kerning on base 14 fonts is enabled
      * @deprecated use getFontManager().isBase14KerningEnabled() instead
      */
+    @Deprecated
     public boolean isBase14KerningEnabled() {
         return getFontManager().isBase14KerningEnabled();
     }
@@ -500,6 +504,7 @@ public class FopFactory implements ImageContext {
      * @param value true if kerning should be activated
      * @deprecated use getFontManager().setBase14KerningEnabled(boolean) instead
      */
+    @Deprecated
     public void setBase14KerningEnabled(boolean value) {
         getFontManager().setBase14KerningEnabled(value);
     }
@@ -708,6 +713,7 @@ public class FopFactory implements ImageContext {
      * @param useCache use cache or not
      * @deprecated use getFontManager().setUseCache(boolean) instead
      */
+    @Deprecated
     public void setUseCache(boolean useCache) {
         getFontManager().setUseCache(useCache);
     }
@@ -717,6 +723,7 @@ public class FopFactory implements ImageContext {
      * @return whether this factory is uses the cache
      * @deprecated use getFontManager().useCache() instead
      */
+    @Deprecated
     public boolean useCache() {
         return getFontManager().useCache();
     }
@@ -726,6 +733,7 @@ public class FopFactory implements ImageContext {
      * @return the font cache
      * @deprecated use getFontManager().getFontCache() instead
      */
+    @Deprecated
     public FontCache getFontCache() {
         return getFontManager().getFontCache();
     }
@@ -771,11 +779,11 @@ public class FopFactory implements ImageContext {
      * @param profileName the profile name
      * @param baseUri a base URI to resolve relative URIs
      * @param iccProfileSrc ICC Profile source to return a ColorSpace for
-     * @param renderingIntent overriding rendering intent (see {@link ICCColorSpaceExt}.*)
+     * @param renderingIntent overriding rendering intent
      * @return ICC ColorSpace object or null if ColorSpace could not be created
      */
     public ColorSpace getColorSpace(String profileName, String baseUri, String iccProfileSrc,
-            int renderingIntent) {
+            RenderingIntent renderingIntent) {
         return colorSpaceCache.get(profileName, baseUri, iccProfileSrc, renderingIntent);
     }
 

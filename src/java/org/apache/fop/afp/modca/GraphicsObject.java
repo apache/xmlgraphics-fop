@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.xmlgraphics.java2d.color.ColorConverter;
+import org.apache.xmlgraphics.java2d.color.ColorUtil;
 
 import org.apache.fop.afp.AFPDataObjectInfo;
 import org.apache.fop.afp.AFPObjectAreaInfo;
@@ -82,6 +83,7 @@ public class GraphicsObject extends AbstractDataObject {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void setViewport(AFPDataObjectInfo dataObjectInfo) {
         super.setViewport(dataObjectInfo);
 
@@ -145,7 +147,7 @@ public class GraphicsObject extends AbstractDataObject {
      * @param color the active color to use
      */
     public void setColor(Color color) {
-        if (!color.equals(graphicsState.color)) {
+        if (!ColorUtil.isSameColor(color, graphicsState.color)) {
             addObject(new GraphicsSetProcessColor(colorConverter.convert(color)));
             graphicsState.color = color;
         }
@@ -341,6 +343,7 @@ public class GraphicsObject extends AbstractDataObject {
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
         return "GraphicsObject: " + getName();
     }
@@ -354,6 +357,7 @@ public class GraphicsObject extends AbstractDataObject {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void setComplete(boolean complete) {
         Iterator it = objects.iterator();
         while (it.hasNext()) {
@@ -364,6 +368,7 @@ public class GraphicsObject extends AbstractDataObject {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void writeStart(OutputStream os) throws IOException {
         super.writeStart(os);
         byte[] data = new byte[17];
@@ -372,12 +377,14 @@ public class GraphicsObject extends AbstractDataObject {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void writeContent(OutputStream os) throws IOException {
         super.writeContent(os);
         writeObjects(objects, os);
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void writeEnd(OutputStream os) throws IOException {
         byte[] data = new byte[17];
         copySF(data, Type.END, Category.GRAPHICS);

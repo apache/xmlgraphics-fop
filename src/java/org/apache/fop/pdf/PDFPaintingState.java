@@ -19,11 +19,14 @@
 
 package org.apache.fop.pdf;
 
+import java.awt.Color;
 import java.awt.Paint;
 import java.awt.Shape;
 import java.awt.geom.Area;
 import java.awt.geom.GeneralPath;
 import java.util.Iterator;
+
+import org.apache.xmlgraphics.java2d.color.ColorUtil;
 
 import org.apache.fop.util.AbstractPaintingState;
 
@@ -63,13 +66,18 @@ public class PDFPaintingState extends org.apache.fop.util.AbstractPaintingState 
      */
     public boolean setPaint(Paint p) {
         PDFData data = getPDFData();
-        Paint paint = data.paint;
-        if (paint == null) {
+        Paint currentPaint = data.paint;
+        if (currentPaint == null) {
             if (p != null) {
                 data.paint = p;
                 return true;
             }
-        } else if (!paint.equals(p)) {
+        } else if (p instanceof Color && currentPaint instanceof Color) {
+            if (!ColorUtil.isSameColor((Color)p, (Color)currentPaint)) {
+                data.paint = p;
+                return true;
+            }
+        } else if (!currentPaint.equals(p)) {
             data.paint = p;
             return true;
         }
@@ -180,11 +188,13 @@ public class PDFPaintingState extends org.apache.fop.util.AbstractPaintingState 
     }
 
     /** {@inheritDoc} */
+    @Override
     protected AbstractData instantiateData() {
         return new PDFData();
     }
 
     /** {@inheritDoc} */
+    @Override
     protected AbstractPaintingState instantiate() {
         return new PDFPaintingState();
     }
@@ -194,6 +204,7 @@ public class PDFPaintingState extends org.apache.fop.util.AbstractPaintingState 
      * This call should be used when the q operator is used
      * so that the state is known when popped.
      */
+    @Override
     public void save() {
         AbstractData data = getData();
         AbstractData copy = (AbstractData)data.clone();
@@ -222,6 +233,7 @@ public class PDFPaintingState extends org.apache.fop.util.AbstractPaintingState 
         private float characterSpacing = 0f;
 
         /** {@inheritDoc} */
+        @Override
         public Object clone() {
             PDFData obj = (PDFData)super.clone();
             obj.paint = this.paint;
@@ -237,6 +249,7 @@ public class PDFPaintingState extends org.apache.fop.util.AbstractPaintingState 
         }
 
         /** {@inheritDoc} */
+        @Override
         public String toString() {
             return super.toString()
                 + ", paint=" + paint
@@ -249,6 +262,7 @@ public class PDFPaintingState extends org.apache.fop.util.AbstractPaintingState 
         }
 
         /** {@inheritDoc} */
+        @Override
         protected AbstractData instantiate() {
             return new PDFData();
         }

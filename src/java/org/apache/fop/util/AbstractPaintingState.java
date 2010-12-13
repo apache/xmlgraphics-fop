@@ -76,8 +76,7 @@ public abstract class AbstractPaintingState implements Cloneable, Serializable {
      */
     public boolean setColor(Color col) {
         Color other = getData().color;
-        //Check in both directions due to limitations of java.awt.Color
-        if (!col.equals(other) || !other.equals(col)) {
+        if (!org.apache.xmlgraphics.java2d.color.ColorUtil.isSameColor(col, other)) {
             getData().color = col;
             return true;
         }
@@ -117,8 +116,7 @@ public abstract class AbstractPaintingState implements Cloneable, Serializable {
      */
     public boolean setBackColor(Color col) {
         Color other = getData().backColor;
-        //Check in both directions due to limitations of java.awt.Color
-        if (!col.equals(other) || !other.equals(col)) {
+        if (!org.apache.xmlgraphics.java2d.color.ColorUtil.isSameColor(col, other)) {
             getData().backColor = col;
             return true;
         }
@@ -368,6 +366,7 @@ public abstract class AbstractPaintingState implements Cloneable, Serializable {
     }
 
     /** {@inheritDoc} */
+    @Override
     public Object clone() {
         AbstractPaintingState state = instantiate();
         state.stateStack = new StateStack(this.stateStack);
@@ -376,6 +375,7 @@ public abstract class AbstractPaintingState implements Cloneable, Serializable {
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
         return ", stateStack=" + stateStack
         + ", currentData=" + data;
@@ -509,6 +509,7 @@ public abstract class AbstractPaintingState implements Cloneable, Serializable {
         }
 
         /** {@inheritDoc} */
+        @Override
         public Object clone() {
             AbstractData data = instantiate();
             data.color = this.color;
@@ -525,6 +526,7 @@ public abstract class AbstractPaintingState implements Cloneable, Serializable {
         }
 
         /** {@inheritDoc} */
+        @Override
         public String toString() {
             return "color=" + color
                 + ", backColor=" + backColor

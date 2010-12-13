@@ -27,6 +27,7 @@ import java.io.OutputStream;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 
 import org.apache.xmlgraphics.java2d.color.CIELabColorSpace;
+import org.apache.xmlgraphics.java2d.color.ColorUtil;
 import org.apache.xmlgraphics.java2d.color.ColorWithAlternatives;
 
 /**
@@ -314,8 +315,7 @@ public abstract class PtocaBuilder implements PtocaConstants {
      * @throws IOException if an I/O error occurs
      */
     public void setExtendedTextColor(Color col) throws IOException {
-        //Check in both directions
-        if (col.equals(currentColor) && currentColor.equals(col)) {
+        if (ColorUtil.isSameColor(col, currentColor)) {
             return;
         }
         if (col instanceof ColorWithAlternatives) {
