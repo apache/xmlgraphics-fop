@@ -31,7 +31,8 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.apache.xmlgraphics.java2d.color.ICCColorSpaceExt;
+import org.apache.xmlgraphics.java2d.color.ICCColorSpaceWithIntent;
+import org.apache.xmlgraphics.java2d.color.RenderingIntent;
 
 /**
  * Map with cached ICC based ColorSpace objects.
@@ -41,7 +42,8 @@ public class ColorSpaceCache {
     private static Log log = LogFactory.getLog(ColorSpaceCache.class);
 
     private URIResolver resolver;
-    private Map colorSpaceMap = Collections.synchronizedMap(new java.util.HashMap());
+    private Map<String, ColorSpace> colorSpaceMap
+            = Collections.synchronizedMap(new java.util.HashMap<String, ColorSpace>());
 
     /**
      * Default constructor
@@ -63,11 +65,11 @@ public class ColorSpaceCache {
      * @param profileName the profile name
      * @param base a base URI to resolve relative URIs
      * @param iccProfileSrc ICC Profile source to return a ColorSpace for
-     * @param renderingIntent overriding rendering intent (see {@link ICCColorSpaceExt}.*)
+     * @param renderingIntent overriding rendering intent
      * @return ICC ColorSpace object or null if ColorSpace could not be created
      */
     public ColorSpace get(String profileName, String base, String iccProfileSrc,
-            int renderingIntent) {
+            RenderingIntent renderingIntent) {
         String key = profileName + ":" + base + iccProfileSrc;
         ColorSpace colorSpace = null;
         if (!colorSpaceMap.containsKey(key)) {
@@ -91,7 +93,7 @@ public class ColorSpaceCache {
                     // iccProfile = ICC_Profile.getInstance(iccProfileSrc);
                 }
                 if (iccProfile != null) {
-                    colorSpace = new ICCColorSpaceExt(iccProfile, renderingIntent,
+                    colorSpace = new ICCColorSpaceWithIntent(iccProfile, renderingIntent,
                             profileName, iccProfileSrc);
                 }
             } catch (Exception e) {
@@ -108,7 +110,7 @@ public class ColorSpaceCache {
                 log.warn("Color profile '" + iccProfileSrc + "' not found.");
             }
         } else {
-            colorSpace = (ColorSpace)colorSpaceMap.get(key);
+            colorSpace = colorSpaceMap.get(key);
         }
         return colorSpace;
     }

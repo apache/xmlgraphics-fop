@@ -21,6 +21,8 @@ package org.apache.fop.render.intermediate;
 
 import java.awt.Color;
 
+import org.apache.xmlgraphics.java2d.color.ColorUtil;
+
 public class IFState {
 
     private IFState parent;
@@ -178,8 +180,7 @@ public class IFState {
      * @param color the new text color
      */
     public void setTextColor(Color color) {
-        //Check in both directions due to limitations of java.awt.Color
-        if (!color.equals(this.textColor) || !this.textColor.equals(color)) {
+        if (!ColorUtil.isSameColor(color, this.textColor)) {
             this.fontChanged = true;
         }
         this.textColor = color;
