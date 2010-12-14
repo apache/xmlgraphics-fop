@@ -323,7 +323,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
                     }
                     if (ElementListUtils.endsWithForcedBreak(returnedList)) {
                         // a descendant of this block has break-after
-                        if (curLM.isFinished()) {
+                        if (curLM.isFinished() && !hasNextChildLM()) {
                             // there is no other content in this block;
                             // it's useless to add space after before a page break
                             setFinished(true);
