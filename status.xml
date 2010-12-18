@@ -58,6 +58,12 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Layout" dev="VH" type="fix" fixes-bug="50089">
+        Bugfix: content after forced break in block-container is not rendered.
+      </action>
+      <action context="Layout" dev="JM" type="fix" fixes-bug="42034">
+        Fixed adjustment of inline parent area for justified text containing a forward page reference.
+      </action>
       <action context="Layout" dev="AD" type="fix" fixes-bug="38264">
         Fixed behavior when combining hyphenation with preserved linefeeds or whitespace.
       </action>
