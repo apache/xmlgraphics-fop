@@ -174,6 +174,14 @@ public class AFPStreamer implements Streamable {
 
         outputStream.close();
 
+
+        if (documentOutputStream != null) {
+            documentOutputStream.close();
+        }
+
+        if (documentFile != null) {
+            documentFile.close();
+        }
         // delete temporary file
         tempFile.delete();
     }

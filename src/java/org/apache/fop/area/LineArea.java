@@ -19,12 +19,12 @@
 
 package org.apache.fop.area;
 
-import org.apache.fop.area.inline.InlineArea;
-import org.apache.fop.fo.Constants;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.fop.area.inline.InlineArea;
+import org.apache.fop.fo.Constants;
 
 /**
  * The line area.
@@ -58,6 +58,15 @@ public class LineArea extends Area {
             availableShrink = shrink;
             variationFactor = 1.0;
             bAddedToAreaTree = false;
+        }
+
+        /** {@inheritDoc} */
+        public String toString() {
+            return getClass().getSimpleName()
+                + ": diff=" + difference
+                + ", variation=" + variationFactor
+                + ", stretch=" + availableStretch
+                + ", shrink=" + availableShrink;
         }
     }
 
@@ -208,6 +217,9 @@ public class LineArea extends Area {
      */
     public void finish() {
         if (adjustingInfo.lineAlignment == Constants.EN_JUSTIFY) {
+            if (log.isTraceEnabled()) {
+                log.trace("Applying variation factor to justified line: " + adjustingInfo);
+            }
             // justified line: apply the variation factor
             boolean bUnresolvedAreasPresent = false;
             // recursively apply variation factor to descendant areas
