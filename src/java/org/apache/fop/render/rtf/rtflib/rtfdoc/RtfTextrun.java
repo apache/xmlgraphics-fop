@@ -271,6 +271,8 @@ public class RtfTextrun extends RtfContainer {
         //add RtfSpaceSplitter to inherit accumulated space
         rtfSpaceManager.pushRtfSpaceSplitter(attrs);
         rtfSpaceManager.setCandidate(attrs);
+        // create a string and add it as a child
+        new RtfString(this, writer, s);
         rtfSpaceManager.popRtfSpaceSplitter();
     }
 
