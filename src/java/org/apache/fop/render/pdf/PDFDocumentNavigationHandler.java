@@ -189,7 +189,7 @@ public class PDFDocumentNavigationHandler implements IFDocumentNavigationHandler
         p2d = new Point2D.Double(
                 action.getTargetLocation().x / 1000.0,
                 (pageRef.getPageDimension().height - action.getTargetLocation().y) / 1000.0);
-        String pdfPageRef = pageRef.getPageRef().toString();
+        String pdfPageRef = pageRef.getPageRef();
         pdfGoTo.setPageReference(pdfPageRef);
         pdfGoTo.setPosition(p2d);
 
