@@ -1167,6 +1167,11 @@ public class LineLayoutManager extends InlineStackingLayoutManager
 
     /** {@inheritDoc} */
     @Override
+    public List getChangedKnuthElements(List oldList, int alignment, int depth) {
+        return getChangedKnuthElements(oldList, alignment);
+    }
+
+    /** {@inheritDoc} */
     public List getChangedKnuthElements(List oldList, int alignment) {
         List returnList = new LinkedList();
         for (int p = 0; p < knuthParagraphs.size(); p++) {
