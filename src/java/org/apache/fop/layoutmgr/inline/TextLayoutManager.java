@@ -844,14 +844,20 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
     }
 
     /** {@inheritDoc} */
-    public List addALetterSpaceTo(final List oldList) {
+    public List addALetterSpaceTo(List oldList) {
+        return addALetterSpaceTo(oldList, 0);
+    }
+
+    /** {@inheritDoc} */
+    public List addALetterSpaceTo(final List oldList, int depth) {
         // old list contains only a box, or the sequence: box penalty glue box;
         // look at the Position stored in the first element in oldList
         // which is always a box
         ListIterator oldListIterator = oldList.listIterator();
         KnuthElement knuthElement = (KnuthElement) oldListIterator.next();
-        LeafPosition pos = (LeafPosition) ((KnuthBox) knuthElement).getPosition();
-        int index = pos.getLeafPos();
+        Position pos = knuthElement.getPosition();
+        LeafPosition leafPos = (LeafPosition) pos.getPosition(depth);
+        int index = leafPos.getLeafPos();
         //element could refer to '-1' position, for non-collapsed spaces (?)
         if (index > -1) {
             AreaInfo areaInfo = getAreaInfo(index);
@@ -866,6 +872,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                 oldListIterator.add(new KnuthGlue(letterSpaceIPD, auxiliaryPosition, false));
             } else if (letterSpaceIPD.isStiff()) {
                 // constant letter space: replace the box
+                // give it the unwrapped position of the replaced element
                 oldListIterator.set(new KnuthInlineBox(areaInfo.areaIPD.getOpt(),
                         alignmentContext, pos, false));
             } else {
@@ -877,36 +884,6 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             }
         }
         return oldList;
-    }
-
-    /**
-     * Removes the <code>AreaInfo</code> object represented by the given elements, so that it won't
-     * generate any element when <code>getChangedKnuthElements</code> is called.
-     *
-     * @param oldList the elements representing the word space
-     */
-    public void removeWordSpace(final List oldList) {
-        // find the element storing the Position whose value
-        // points to the AreaInfo object
-        final ListIterator oldListIterator = oldList.listIterator();
-        if (((KnuthElement) ((LinkedList) oldList).getFirst()).isPenalty()) {
-            // non breaking space: oldList starts with a penalty
-            oldListIterator.next();
-        }
-        if (oldList.size() > 2) {
-            // alignment is either center, start or end:
-            // the first two elements does not store the needed Position
-            oldListIterator.next();
-            oldListIterator.next();
-        }
-        KnuthElement knuthElement = (KnuthElement) oldListIterator.next();
-        int leafValue = ((LeafPosition) knuthElement.getPosition()).getLeafPos();
-        // only the last word space can be a trailing space!
-        if (leafValue == areaInfos.size() - 1) {
-            areaInfos.remove(leafValue);
-        } else {
-            TextLayoutManager.LOG.error("trying to remove a non-trailing word space");
-        }
     }
 
     /** {@inheritDoc} */
@@ -976,6 +953,11 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
 
     /** {@inheritDoc} */
     public boolean applyChanges(final List oldList) {
+        return applyChanges(oldList, 0);
+    }
+
+    /** {@inheritDoc} */
+    public boolean applyChanges(final List oldList, int depth) {
 
         // make sure the LM appears unfinished in between this call
         // and the next call to getChangedKnuthElements()
@@ -990,13 +972,15 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         LeafPosition startPos = null, endPos = null;
         ListIterator oldListIter;
         for (oldListIter = oldList.listIterator(); oldListIter.hasNext();) {
-            startPos = (LeafPosition) ((KnuthElement) oldListIter.next()).getPosition();
+            Position pos = ((KnuthElement) oldListIter.next()).getPosition();
+            startPos = (LeafPosition) pos.getPosition(depth);
             if (startPos != null && startPos.getLeafPos() != -1) {
                 break;
             }
         }
         for (oldListIter = oldList.listIterator(oldList.size()); oldListIter.hasPrevious();) {
-            endPos = (LeafPosition) ((KnuthElement) oldListIter.previous()).getPosition();
+            Position pos = ((KnuthElement) oldListIter.previous()).getPosition();
+            endPos = (LeafPosition) pos.getPosition(depth);
             if (endPos != null && endPos.getLeafPos() != -1) {
                 break;
             }

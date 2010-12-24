@@ -532,10 +532,10 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
     }
 
     /** {@inheritDoc} */
-    public List getChangedKnuthElements(List oldList, int alignment) {
+    public List getChangedKnuthElements(List oldList, int alignment, int depth) {
         List returnedList = new LinkedList();
         addKnuthElementsForBorderPaddingStart(returnedList);
-        returnedList.addAll(super.getChangedKnuthElements(oldList, alignment));
+        returnedList.addAll(super.getChangedKnuthElements(oldList, alignment, depth));
         addKnuthElementsForBorderPaddingEnd(returnedList);
         return returnedList;
     }
