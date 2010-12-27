@@ -122,9 +122,8 @@ public class FootnoteLayoutManager extends InlineStackingLayoutManager {
     /**
      * {@inheritDoc}
      */
-    public List getChangedKnuthElements(List oldList,
-                                              int alignment) {
-        List returnedList = super.getChangedKnuthElements(oldList, alignment);
+    public List getChangedKnuthElements(List oldList, int alignment, int depth) {
+        List returnedList = super.getChangedKnuthElements(oldList, alignment, depth);
         addAnchor(returnedList);
         return returnedList;
     }

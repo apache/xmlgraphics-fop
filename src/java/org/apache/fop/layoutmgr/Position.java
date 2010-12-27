@@ -48,12 +48,37 @@ public class Position {
     }
 
     /**
-     * Overridden by NonLeafPosition to return the Position of its
-     * child LM.
+     * @param depth the depth at which the LM in this position is found
+     * @return associated layout manager
+     */
+    public LayoutManager getLM(int depth) {
+        Position subPos = getPosition(depth);
+        if (subPos == null) {
+            return null;
+        } else {
+            return subPos.getLM();
+        }
+    }
+
+    /**
+     * Overridden by NonLeafPosition to return the Position of its child LM.
      * @return a position or null
      */
     public Position getPosition() {
         return null;
+    }
+
+    /**
+     * Overridden by NonLeafPosition to return the Position of its child LM.
+     * @param depth the depth at which the position in this position is found
+     * @return a position or null
+     */
+    public Position getPosition(int depth) {
+        Position subPos = this;
+        for (int i = 0; i < depth && subPos != null; ++i, subPos = subPos.getPosition()) {
+            // no-op
+        }
+        return subPos;
     }
 
     /** @return true if generates areas */
