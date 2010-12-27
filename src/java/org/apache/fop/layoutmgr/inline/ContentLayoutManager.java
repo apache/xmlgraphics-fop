@@ -292,14 +292,9 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
         return oldList;
     }
 
-    /**
-     * Remove the word space represented by the given elements
-     *
-     * @param oldList the elements representing the word space
-     */
-    public void removeWordSpace(List oldList) {
-        // do nothing
-        log.warn(this.getClass().getName() + " should not receive a call to removeWordSpace(list)");
+    /** {@inheritDoc} */
+    public List addALetterSpaceTo(List oldList, int depth) {
+        return addALetterSpaceTo(oldList);
     }
 
     /** {@inheritDoc} */
@@ -317,10 +312,18 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
     }
 
     /** {@inheritDoc} */
-    public List getChangedKnuthElements(List oldList,
-                                              /*int flaggedPenalty,*/
-                                              int alignment) {
+    public boolean applyChanges(List oldList, int depth) {
+        return applyChanges(oldList);
+    }
+
+    /** {@inheritDoc} */
+    public List getChangedKnuthElements(List oldList, int alignment) {
         return null;
+    }
+
+    /** {@inheritDoc} */
+    public List getChangedKnuthElements(List oldList, int alignment, int depth) {
+        return getChangedKnuthElements(oldList, alignment);
     }
 
     /** {@inheritDoc} */

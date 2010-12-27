@@ -48,7 +48,7 @@
     </fo:root>
   </fo>
   <checks>
-    <eval expected="105384"
+    <eval expected="117384"
 xpath="//flow/block[1]/lineArea[1]/inlineparent[1]/@ipd" desc="IPD of
 containing inline area"/>
     <eval expected="73368"

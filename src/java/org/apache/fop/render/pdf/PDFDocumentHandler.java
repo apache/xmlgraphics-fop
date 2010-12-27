@@ -39,7 +39,6 @@ import org.apache.fop.fo.extensions.xmp.XMPMetadata;
 import org.apache.fop.pdf.PDFAnnotList;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFPage;
-import org.apache.fop.pdf.PDFReference;
 import org.apache.fop.pdf.PDFResourceContext;
 import org.apache.fop.pdf.PDFResources;
 import org.apache.fop.render.extensions.prepress.PageBoundaries;
@@ -93,7 +92,8 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
     protected PageReference currentPageRef;
 
     /** Used for bookmarks/outlines. */
-    protected Map pageReferences = new java.util.HashMap();
+    protected Map<Integer, PageReference> pageReferences
+            = new java.util.HashMap<Integer, PageReference>();
 
     private final PDFDocumentNavigationHandler documentNavigationHandler
             = new PDFDocumentNavigationHandler(this);
@@ -238,7 +238,7 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
         pdfUtil.generatePageLabel(index, name);
 
         currentPageRef = new PageReference(currentPage, size);
-        this.pageReferences.put(new Integer(index), currentPageRef);
+        this.pageReferences.put(Integer.valueOf(index), currentPageRef);
 
         this.generator = new PDFContentGenerator(this.pdfDoc, this.outputStream,
                 this.currentPage);
@@ -308,21 +308,22 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
     }
 
     PageReference getPageReference(int pageIndex) {
-        return (PageReference)this.pageReferences.get(
-                new Integer(pageIndex));
+        return this.pageReferences.get(Integer.valueOf(pageIndex));
     }
 
     static final class PageReference {
 
-        private final PDFReference pageRef;
+        private final String pageRef;
         private final Dimension pageDimension;
 
         private PageReference(PDFPage page, Dimension dim) {
-            this.pageRef = page.makeReference();
+            // Avoid keeping references to PDFPage as memory usage is
+            // considerably increased when handling thousands of pages.
+            this.pageRef = page.makeReference().toString();
             this.pageDimension = new Dimension(dim);
         }
 
-        public PDFReference getPageRef() {
+        public String getPageRef() {
             return this.pageRef;
         }
 
