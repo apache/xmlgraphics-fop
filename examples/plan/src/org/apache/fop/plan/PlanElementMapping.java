@@ -45,7 +45,7 @@ public class PlanElementMapping extends ElementMapping {
     /** {@inheritDoc} */
     protected void initialize() {
         if (foObjs == null) {
-            foObjs = new java.util.HashMap();
+            foObjs = new java.util.HashMap<String, Maker>();
             foObjs.put("plan", new PE());
             foObjs.put(DEFAULT, new PlanMaker());
         }

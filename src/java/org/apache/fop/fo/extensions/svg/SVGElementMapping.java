@@ -80,7 +80,7 @@ public class SVGElementMapping extends ElementMapping {
                 XMLResourceDescriptor.setXMLParserClassName(
                   getAParserClassName());
 
-                foObjs = new HashMap();
+                foObjs = new HashMap<String, Maker>();
                 foObjs.put("svg", new SE());
                 foObjs.put(DEFAULT, new SVGMaker());
             } catch (Throwable t) {
