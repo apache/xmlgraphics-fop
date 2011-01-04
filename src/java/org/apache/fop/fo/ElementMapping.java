@@ -19,7 +19,7 @@
 
 package org.apache.fop.fo;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -30,7 +30,7 @@ import org.apache.xmlgraphics.util.QName;
 
 /**
  * Abstract base class for Element Mappings (including FO Element Mappings)
- * which provide the framework of valid elements and attibutes for a given
+ * which provide the framework of valid elements and attributes for a given
  * namespace.
  */
 public abstract class ElementMapping {
@@ -38,7 +38,7 @@ public abstract class ElementMapping {
     public static final String DEFAULT = "<default>";
 
     /** The HashMap table of formatting objects defined by the ElementMapping */
-    protected HashMap foObjs = null;
+    protected Map<String, Maker> foObjs = null;
     //Please don't change that to java.util.Map as that can break extensions.
 
     /** The namespace for the ElementMapping */
@@ -49,7 +49,7 @@ public abstract class ElementMapping {
      *
      * @return Table of Maker objects for this ElementMapping
      */
-    public HashMap getTable() {
+    public Map<String, Maker> getTable() {
         if (foObjs == null) {
             initialize();
         }
