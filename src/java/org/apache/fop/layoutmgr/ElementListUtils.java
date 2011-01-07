@@ -55,43 +55,7 @@ public final class ElementListUtils {
      * @return true if the constraint is bigger than the list contents
      */
     public static boolean removeLegalBreaks(List elements, int constraint) {
-        int len = 0;
-        ListIterator iter = elements.listIterator();
-        while (iter.hasNext()) {
-            ListElement el = (ListElement)iter.next();
-            if (el.isPenalty()) {
-                KnuthPenalty penalty = (KnuthPenalty)el;
-                //Convert all penalties to break inhibitors
-                if (penalty.getPenalty() < KnuthPenalty.INFINITE) {
-                    iter.set(new KnuthPenalty(penalty.getWidth(), KnuthPenalty.INFINITE,
-                            penalty.isPenaltyFlagged(), penalty.getPosition(),
-                            penalty.isAuxiliary()));
-                }
-            } else if (el.isGlue()) {
-                KnuthGlue glue = (KnuthGlue)el;
-                len += glue.getWidth();
-                iter.previous();
-                el = (ListElement)iter.previous();
-                iter.next();
-                if (el.isBox()) {
-                    iter.add(new KnuthPenalty(0, KnuthPenalty.INFINITE, false,
-                            null, false));
-                }
-                iter.next();
-            } else if (el instanceof BreakElement) {
-                BreakElement breakEl = (BreakElement)el;
-                if (breakEl.getPenaltyValue() < KnuthPenalty.INFINITE) {
-                    breakEl.setPenaltyValue(KnuthPenalty.INFINITE);
-                }
-            } else {
-                KnuthElement kel = (KnuthElement)el;
-                len += kel.getWidth();
-            }
-            if (len >= constraint) {
-                return false;
-            }
-        }
-        return true;
+        return removeLegalBreaks(elements, constraint, false);
     }
 
     /**
@@ -103,26 +67,47 @@ public final class ElementListUtils {
      * @return true if the constraint is bigger than the list contents
      */
     public static boolean removeLegalBreaksFromEnd(List elements, int constraint) {
+        return removeLegalBreaks(elements, constraint, true);
+    }
+
+    private static boolean removeLegalBreaks(List elements, int constraint, boolean fromEnd) {
+
         int len = 0;
-        ListIterator i = elements.listIterator(elements.size());
-        while (i.hasPrevious()) {
-            ListElement el = (ListElement)i.previous();
+        ListElement el;
+
+        for (ListIterator iter = elements.listIterator(fromEnd ? elements.size() : 0);
+                (fromEnd ? iter.hasPrevious() : iter.hasNext());) {
+
+            if (fromEnd) {
+                el = (ListElement) iter.previous();
+            } else {
+                el = (ListElement) iter.next();
+            }
+
             if (el.isPenalty()) {
                 KnuthPenalty penalty = (KnuthPenalty)el;
-                //Convert all penalties to break inhibitors
+                //Convert penalty to break inhibitor
                 if (penalty.getPenalty() < KnuthPenalty.INFINITE) {
-                    i.set(new KnuthPenalty(penalty.getWidth(), KnuthPenalty.INFINITE,
+                    iter.set(new KnuthPenalty(penalty.getWidth(), KnuthPenalty.INFINITE,
                             penalty.isPenaltyFlagged(), penalty.getPosition(),
                             penalty.isAuxiliary()));
                 }
             } else if (el.isGlue()) {
                 KnuthGlue glue = (KnuthGlue)el;
                 len += glue.getWidth();
-                el = (ListElement)i.previous();
-                i.next();
+                //check if previous is a box
+                if (!fromEnd) {
+                    iter.previous();
+                }
+                el = (ListElement)iter.previous();
+                iter.next();
                 if (el.isBox()) {
-                    i.add(new KnuthPenalty(0, KnuthPenalty.INFINITE, false,
+                    //add break inhibitor
+                    iter.add(new KnuthPenalty(0, KnuthPenalty.INFINITE, false,
                             null, false));
+                }
+                if (!fromEnd) {
+                    iter.next();
                 }
             } else if (el.isUnresolvedElement()) {
                 if (el instanceof BreakElement) {
@@ -138,10 +123,12 @@ public final class ElementListUtils {
                 KnuthElement kel = (KnuthElement)el;
                 len += kel.getWidth();
             }
+
             if (len >= constraint) {
                 return false;
             }
         }
+
         return true;
     }
 
@@ -191,8 +178,7 @@ public final class ElementListUtils {
      * @return true if the list ends with a forced break
      */
     public static boolean endsWithForcedBreak(List elems) {
-        ListElement last = (ListElement) ListUtil.getLast(elems);
-        return last.isForcedBreak();
+        return ((ListElement) ListUtil.getLast(elems)).isForcedBreak();
     }
 
     /**
