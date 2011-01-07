@@ -58,6 +58,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Code" dev="AD" type="fix" fixes-bug="50471">
+        Bugfix: avoid ArrayIndexOutOfBoundsException for codepoints without a linebreak class
+      </action>
       <action context="Layout" dev="AD" type="fix" fixes-bug="48380">
         Bugfix: avoid ClassCastException when using fox:widow-content-limit
       </action>
