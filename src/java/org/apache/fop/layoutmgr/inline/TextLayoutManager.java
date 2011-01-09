@@ -705,7 +705,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         if (inWord) {
             processWord(alignment, sequence, prevAreaInfo, ch, false, false);
         } else if (inWhitespace) {
-            processWhitespace(alignment, sequence, true);
+            processWhitespace(alignment, sequence, !keepTogether);
         } else if (areaInfo != null) {
             processLeftoverAreaInfo(alignment, sequence, areaInfo,
                     ch == CharUtilities.ZERO_WIDTH_SPACE);
