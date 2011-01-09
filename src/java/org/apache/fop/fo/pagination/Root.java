@@ -47,8 +47,8 @@ public class Root extends FObj {
     private LayoutMasterSet layoutMasterSet;
     private Declarations declarations;
     private BookmarkTree bookmarkTree = null;
-    private List destinationList;
-    private List pageSequences;
+    private List<Destination> destinationList;
+    private List<PageSequence> pageSequences;
 
     // temporary until above list populated
     private boolean pageSequenceFound = false;
@@ -77,7 +77,7 @@ public class Root extends FObj {
      */
     public Root(FONode parent) {
         super(parent);
-        pageSequences = new java.util.ArrayList();
+        pageSequences = new java.util.ArrayList<PageSequence>();
     }
 
     /** {@inheritDoc} */
@@ -243,7 +243,7 @@ public class Root extends FObj {
             return null;
         }
         if (currentIndex < (pageSequences.size() - 1)) {
-            return (PageSequence)pageSequences.get(currentIndex + 1);
+            return pageSequences.get(currentIndex + 1);
         } else {
             return null;
         }
@@ -295,7 +295,7 @@ public class Root extends FObj {
      */
     public void addDestination(Destination destination) {
         if (destinationList == null) {
-          destinationList = new java.util.ArrayList();
+          destinationList = new java.util.ArrayList<Destination>();
         }
         destinationList.add(destination);
     }
