@@ -47,7 +47,7 @@ public abstract class Region extends FObj {
     private int writingMode;
     // End of property values
 
-    private SimplePageMaster layoutMaster;
+    protected final SimplePageMaster layoutMaster;
 
     /**
      * Base constructor
@@ -102,11 +102,9 @@ public abstract class Region extends FObj {
 
     /**
      * @param pageRefRect reference dimension of the page area.
-     * @param spm the simple page master this region belongs to.
      * @return the rectangle for the viewport area
      */
-    public abstract Rectangle getViewportRectangle(FODimension pageRefRect
-                                                   , SimplePageMaster spm);
+    public abstract Rectangle getViewportRectangle(FODimension pageRefRect);
 
     /**
      * Returns the default region name (xsl-region-before, xsl-region-start,
