@@ -47,6 +47,7 @@ public abstract class Region extends FObj {
     private int writingMode;
     // End of property values
 
+    /** the parent {@link SimplePageMaster} */
     protected final SimplePageMaster layoutMaster;
 
     /**

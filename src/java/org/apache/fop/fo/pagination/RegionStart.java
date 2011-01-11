@@ -52,7 +52,8 @@ public class RegionStart extends RegionSE {
         PercentBaseContext pageHeightContext = getPageHeightContext(LengthBase.CUSTOM_BASE);
         PercentBaseContext neighbourContext;
         Rectangle vpRect;
-        if (layoutMaster.getWritingMode() == EN_LR_TB || layoutMaster.getWritingMode() == EN_RL_TB) {
+        if (layoutMaster.getWritingMode() == EN_LR_TB
+                || layoutMaster.getWritingMode() == EN_RL_TB) {
             neighbourContext = pageHeightContext;
             vpRect = new Rectangle(0, 0, getExtent().getValue(pageWidthContext), reldims.bpd);
         } else {
