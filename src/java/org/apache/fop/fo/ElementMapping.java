@@ -19,7 +19,7 @@
 
 package org.apache.fop.fo;
 
-import java.util.Map;
+import java.util.HashMap;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -38,7 +38,7 @@ public abstract class ElementMapping {
     public static final String DEFAULT = "<default>";
 
     /** The HashMap table of formatting objects defined by the ElementMapping */
-    protected Map<String, Maker> foObjs = null;
+    protected HashMap<String, Maker> foObjs = null;
     //Please don't change that to java.util.Map as that can break extensions.
 
     /** The namespace for the ElementMapping */
@@ -49,7 +49,7 @@ public abstract class ElementMapping {
      *
      * @return Table of Maker objects for this ElementMapping
      */
-    public Map<String, Maker> getTable() {
+    public HashMap<String, Maker> getTable() {
         if (foObjs == null) {
             initialize();
         }
