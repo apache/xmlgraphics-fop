@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -698,6 +699,15 @@ public class FopFactory implements ImageContext {
      */
     public void setUserConfig(Configuration userConfig) throws FOPException {
         config.setUserConfig(userConfig);
+    }
+
+    /**
+     * Set the base URI for the user configuration
+     * Useful for programmatic configurations
+     * @param baseURI the base URI
+     */
+    public void setUserConfigBaseURI(URI baseURI) {
+        config.setBaseURI(baseURI);
     }
 
     /**
