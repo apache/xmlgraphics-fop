@@ -21,6 +21,7 @@ package org.apache.fop.fonts;
 
 import java.io.File;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -43,12 +44,24 @@ public class FontManagerConfigurator {
 
     private final Configuration cfg;
 
+    private URI baseURI = null;
+
     /**
      * Main constructor
      * @param cfg the font manager configuration object
      */
     public FontManagerConfigurator(Configuration cfg) {
         this.cfg = cfg;
+    }
+
+    /**
+     * Main constructor
+     * @param cfg the font manager configuration object
+     * @param baseURI the base URI of the configuration
+     */
+    public FontManagerConfigurator(Configuration cfg, URI baseURI) {
+        this.cfg = cfg;
+        this.baseURI = baseURI;
     }
 
     /**
@@ -74,8 +87,12 @@ public class FontManagerConfigurator {
             }
         }
         if (cfg.getChild("font-base", false) != null) {
+            String path = cfg.getChild("font-base").getValue(null);
+            if (baseURI != null) {
+                path = baseURI.resolve(path).normalize().toString();
+            }
             try {
-                fontManager.setFontBaseURL(cfg.getChild("font-base").getValue(null));
+                fontManager.setFontBaseURL(path);
             } catch (MalformedURLException mfue) {
                 LogUtil.handleException(log, mfue, true);
             }
