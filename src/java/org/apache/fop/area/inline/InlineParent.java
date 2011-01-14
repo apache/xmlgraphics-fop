@@ -85,18 +85,18 @@ public class InlineParent extends InlineArea {
     @Override
     public boolean applyVariationFactor(double variationFactor,
                                         int lineStretch, int lineShrink) {
-        boolean bUnresolvedAreasPresent = false;
+        boolean hasUnresolvedAreas = false;
         int cumulativeIPD = 0;
         // recursively apply variation factor to descendant areas
         for (int i = 0, len = inlines.size(); i < len; i++) {
             InlineArea inline = inlines.get(i);
-            bUnresolvedAreasPresent |= inline.applyVariationFactor(
+            hasUnresolvedAreas |= inline.applyVariationFactor(
                     variationFactor, lineStretch, lineShrink);
             cumulativeIPD += inline.getIPD();  //Update this area's IPD based on changes to children
         }
         setIPD(cumulativeIPD);
 
-        return bUnresolvedAreasPresent;
+        return hasUnresolvedAreas;
     }
 }
 
