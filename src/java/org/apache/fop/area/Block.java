@@ -130,7 +130,7 @@ public class Block extends BlockParent {
      */
     public int getStartIndent() {
         Integer startIndent = (Integer)getTrait(Trait.START_INDENT);
-        return (startIndent != null ? startIndent.intValue() : 0);
+        return (startIndent != null ? startIndent : 0);
     }
 
 }
