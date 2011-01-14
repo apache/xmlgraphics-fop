@@ -97,7 +97,7 @@ public class LayoutException extends RuntimeException {
         }
 
         /** {@inheritDoc} */
-        public Class getExceptionClass() {
+        public Class<LayoutException> getExceptionClass() {
             return LayoutException.class;
         }
 
