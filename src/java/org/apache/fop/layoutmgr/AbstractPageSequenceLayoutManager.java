@@ -293,6 +293,7 @@ public abstract class AbstractPageSequenceLayoutManager extends AbstractLayoutMa
                     + (isBlank ? "*" : "") + "]");
         }
 
+        addIDToPage(pageSeq.getRoot().getId());
         addIDToPage(pageSeq.getId());
         return curPage;
     }
