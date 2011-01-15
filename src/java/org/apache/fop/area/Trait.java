@@ -48,34 +48,34 @@ public final class Trait implements Serializable {
      * Internal link trait.
      * Contains the PageViewport key and the PROD_ID of the target area
      */
-    public static final Integer INTERNAL_LINK = 1;
+    public static final int INTERNAL_LINK = 1;
 
     /** * External link. A URL link to an external resource. */
-    public static final Integer EXTERNAL_LINK = 2;
+    public static final int EXTERNAL_LINK = 2;
 
     /** The font triplet for the current font. */
-    public static final Integer FONT = 3;
+    public static final int FONT = 3;
 
     /** Font size for the current font. */
-    public static final Integer FONT_SIZE = 4;
+    public static final int FONT_SIZE = 4;
 
     /** The current color. */
-    public static final Integer COLOR = 7;
+    public static final int COLOR = 7;
 
     /** The ID of the FO that produced an area. */
-    public static final Integer PROD_ID = 8;
+    public static final int PROD_ID = 8;
 
     /** Background trait for an area. */
-    public static final Integer BACKGROUND = 9;
+    public static final int BACKGROUND = 9;
 
     /** Underline trait used when rendering inline parent. */
-    public static final Integer UNDERLINE = 10;
+    public static final int UNDERLINE = 10;
 
     /** Overline trait used when rendering inline parent. */
-    public static final Integer OVERLINE = 11;
+    public static final int OVERLINE = 11;
 
     /** Linethrough trait used when rendering inline parent. */
-    public static final Integer LINETHROUGH = 12;
+    public static final int LINETHROUGH = 12;
 
     /** Shadow offset. */
     //public static final Integer OFFSET = new Integer(13);
@@ -84,34 +84,34 @@ public final class Trait implements Serializable {
     //public static final Integer SHADOW = new Integer(14);
 
     /** The border start. */
-    public static final Integer BORDER_START = 15;
+    public static final int BORDER_START = 15;
 
     /** The border end. */
-    public static final Integer BORDER_END = 16;
+    public static final int BORDER_END = 16;
 
     /** The border before. */
-    public static final Integer BORDER_BEFORE = 17;
+    public static final int BORDER_BEFORE = 17;
 
     /** The border after. */
-    public static final Integer BORDER_AFTER = 18;
+    public static final int BORDER_AFTER = 18;
 
     /** The padding start. */
-    public static final Integer PADDING_START = 19;
+    public static final int PADDING_START = 19;
 
     /** The padding end. */
-    public static final Integer PADDING_END = 20;
+    public static final int PADDING_END = 20;
 
     /** The padding before. */
-    public static final Integer PADDING_BEFORE = 21;
+    public static final int PADDING_BEFORE = 21;
 
     /** The padding after. */
-    public static final Integer PADDING_AFTER = 22;
+    public static final int PADDING_AFTER = 22;
 
     /** The space start. */
-    public static final Integer SPACE_START = 23;
+    public static final int SPACE_START = 23;
 
     /** The space end. */
-    public static final Integer SPACE_END  = 24;
+    public static final int SPACE_END  = 24;
 
     /** break before */
     //public static final Integer BREAK_BEFORE = new Integer(25);
@@ -120,35 +120,35 @@ public final class Trait implements Serializable {
     //public static final Integer BREAK_AFTER = new Integer(26);
 
     /** The start-indent trait. */
-    public static final Integer START_INDENT = 27;
+    public static final int START_INDENT = 27;
 
     /** The end-indent trait. */
-    public static final Integer END_INDENT  = 28;
+    public static final int END_INDENT  = 28;
 
     /** The space-before trait. */
-    public static final Integer SPACE_BEFORE  = 29;
+    public static final int SPACE_BEFORE  = 29;
 
     /** The space-after trait. */
-    public static final Integer SPACE_AFTER  = 30;
+    public static final int SPACE_AFTER  = 30;
 
     /** The is-reference-area trait. */
-    public static final Integer IS_REFERENCE_AREA = 31;
+    public static final int IS_REFERENCE_AREA = 31;
 
     /** The is-viewport-area trait. */
-    public static final Integer IS_VIEWPORT_AREA = 32;
+    public static final int IS_VIEWPORT_AREA = 32;
 
     /** Blinking trait used when rendering inline parent. */
-    public static final Integer BLINK = 33;
+    public static final int BLINK = 33;
 
     /** Trait for color of underline decorations when rendering inline parent. */
-    public static final Integer UNDERLINE_COLOR = 34;
+    public static final int UNDERLINE_COLOR = 34;
     /** Trait for color of overline decorations when rendering inline parent. */
-    public static final Integer OVERLINE_COLOR = 35;
+    public static final int OVERLINE_COLOR = 35;
     /** Trait for color of linethrough decorations when rendering inline parent. */
-    public static final Integer LINETHROUGH_COLOR = 36;
+    public static final int LINETHROUGH_COLOR = 36;
 
     /** The ptr trait. Used for accessibility   */
-    public static final Integer PTR = 37;
+    public static final int PTR = 37;
 
     /** Maximum value used by trait keys */
     public static final int MAX_TRAIT_KEY = 37;
