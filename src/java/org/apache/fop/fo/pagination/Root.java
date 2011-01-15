@@ -82,6 +82,7 @@ public class Root extends FObj {
 
     /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
+        super.bind(pList);
         mediaUsage = pList.get(PR_MEDIA_USAGE).getEnum();
     }
 
