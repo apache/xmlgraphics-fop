@@ -377,11 +377,17 @@ public class FopFactoryConfigurator {
     }
 
     private void setBaseURI() throws FOPException {
-        String[] locationParts = cfg.getLocation().split(":");
+        String loc = cfg.getLocation();
+        String[] locationParts = (loc != null ? cfg.getLocation().split(":") : null);
         try {
             if (locationParts != null && locationParts.length >= 2
                     && "file".equals(locationParts[0])) {
-                baseURI = new URI(locationParts[0], locationParts[1], null);
+                StringBuilder sb = new StringBuilder(locationParts[1]);
+                for (int idx = 2; idx < locationParts.length; idx++) {
+                    sb.append(":").append(locationParts[idx]);
+                }
+                baseURI = new URI(locationParts[0], sb.toString(), null);
+                baseURI = baseURI.resolve(".").normalize();
             }
             if (baseURI == null) {
                 baseURI = new File(System.getProperty("user.dir")).toURI();
