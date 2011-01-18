@@ -68,6 +68,9 @@ public class IndentPropertyMaker extends CorrespondingPropertyMaker {
 
     /**
      * Calculate the corresponding value for start-indent and end-indent.
+     * @param propertyList the property list to use in the computation
+     * @return the computed indent property
+     * @throws PropertyException if a property exception occurs
      * @see CorrespondingPropertyMaker#compute(PropertyList)
      */
     public Property compute(PropertyList propertyList) throws PropertyException {
@@ -81,6 +84,9 @@ public class IndentPropertyMaker extends CorrespondingPropertyMaker {
 
     /**
      * Calculate the corresponding value for start-indent and end-indent.
+     * @param propertyList the property list to use in the computation
+     * @return the computed indent property
+     * @throws PropertyException if a property exception occurs
      * @see CorrespondingPropertyMaker#compute(PropertyList)
      */
     public Property computeConforming(PropertyList propertyList) throws PropertyException {
@@ -93,7 +99,7 @@ public class IndentPropertyMaker extends CorrespondingPropertyMaker {
         Numeric padding = getCorresponding(paddingCorresponding, propertyList).getNumeric();
         Numeric border = getCorresponding(borderWidthCorresponding, propertyList).getNumeric();
 
-        int marginProp = pList.getWritingMode(lr_tb, rl_tb, tb_rl);
+        int marginProp = pList.getWritingMode(lrtb, rltb, tbrl);
         // Calculate the absolute margin.
         if (propertyList.getExplicitOrShorthand(marginProp) == null) {
             Property indent = propertyList.getExplicit(baseMaker.propId);
@@ -136,6 +142,9 @@ public class IndentPropertyMaker extends CorrespondingPropertyMaker {
      * This method calculates indent following an alternative rule set that
      * tries to mimic many commercial solutions that chose to violate the
      * XSL specification.
+     * @param propertyList the property list to use in the computation
+     * @return the computed indent property
+     * @throws PropertyException if a property exception occurs
      * @see CorrespondingPropertyMaker#compute(PropertyList)
      */
     public Property computeAlternativeRuleset(PropertyList propertyList) throws PropertyException {
@@ -149,7 +158,7 @@ public class IndentPropertyMaker extends CorrespondingPropertyMaker {
         Numeric padding = getCorresponding(paddingCorresponding, propertyList).getNumeric();
         Numeric border = getCorresponding(borderWidthCorresponding, propertyList).getNumeric();
 
-        int marginProp = pList.getWritingMode(lr_tb, rl_tb, tb_rl);
+        int marginProp = pList.getWritingMode(lrtb, rltb, tbrl);
 
         //Determine whether the nearest anscestor indent was specified through
         //start-indent|end-indent or through a margin property.

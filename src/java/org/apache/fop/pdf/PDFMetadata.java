@@ -47,7 +47,11 @@ public class PDFMetadata extends PDFStream {
     private Metadata xmpMetadata;
     private boolean readOnly = true;
 
-    /** @see org.apache.fop.pdf.PDFObject#PDFObject() */
+    /**
+     * @param xmp xmp metadata
+     * @param readOnly true if read only
+     * @see org.apache.fop.pdf.PDFObject#PDFObject()
+     */
     public PDFMetadata(Metadata xmp, boolean readOnly) {
         super();
         if (xmp == null) {
@@ -146,6 +150,9 @@ public class PDFMetadata extends PDFStream {
             dc.addLanguage(root.getLanguage());
         }
         dc.addDate(info.getCreationDate());
+
+        //Somewhat redundant but some PDF/A checkers issue a warning without this.
+        dc.setFormat("application/pdf");
 
         //PDF/A identification
         PDFAMode pdfaMode = pdfDoc.getProfile().getPDFAMode();

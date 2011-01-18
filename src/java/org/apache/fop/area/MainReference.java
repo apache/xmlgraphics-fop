@@ -31,6 +31,8 @@ import java.util.List;
  */
 public class MainReference extends Area {
 
+    private static final long serialVersionUID = 7635126485620012448L;
+
     private BodyRegion parent;
     private List spanAreas = new java.util.ArrayList();
     private boolean isEmpty = true;

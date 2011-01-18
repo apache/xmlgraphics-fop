@@ -17,6 +17,7 @@
 
 /* $Id$ */
 
+package org.apache.fop.render.rtf.rtflib.tools;
 
 /*
  * This file is part of the RTF library of the FOP project, which was originally
@@ -25,13 +26,11 @@
  * the FOP project.
  */
 
-package org.apache.fop.render.rtf.rtflib.tools;
-
 /**  Misc.utilities for images handling
  *  This class belongs to the <fo:external-graphic> tag processing.
  *  @author <a href="mailto:a.putz@skynamics.com">Andreas Putz</a>
  */
-public class ImageUtil {
+public final class ImageUtil {
 
     //////////////////////////////////////////////////
     // @@ Construction

@@ -39,7 +39,7 @@ public final class DummyPercentBaseContext implements PercentBaseContext {
     public static DummyPercentBaseContext getInstance() {
         return singleton;
     }
-    
+
     /** {@inheritDoc} */
     public int getBaseLength(int lengthBase, FObj fo) {
         return 0;

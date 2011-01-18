@@ -38,6 +38,7 @@ import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.image.loader.batik.BatikImageFlavors;
+import org.apache.fop.image.loader.batik.BatikUtil;
 import org.apache.fop.render.ImageHandler;
 import org.apache.fop.render.RenderingContext;
 import org.apache.fop.render.pdf.PDFLogicalStructureHandler.MarkedContentInfo;
@@ -46,6 +47,7 @@ import org.apache.fop.svg.PDFBridgeContext;
 import org.apache.fop.svg.PDFGraphics2D;
 import org.apache.fop.svg.SVGEventProducer;
 import org.apache.fop.svg.SVGUserAgent;
+import org.w3c.dom.Document;
 
 /**
  * Image Handler implementation which handles SVG images.
@@ -71,11 +73,6 @@ public class PDFImageHandlerSVG implements ImageHandler {
         final float uaResolution = userAgent.getSourceResolution();
         SVGUserAgent ua = new SVGUserAgent(userAgent, new AffineTransform());
 
-        //Scale for higher resolution on-the-fly images from Batik
-        double s = uaResolution / deviceResolution;
-        AffineTransform resolutionScaling = new AffineTransform();
-        resolutionScaling.scale(s, s);
-
         GVTBuilder builder = new GVTBuilder();
 
         //Controls whether text painted by Batik is generated using text or path operations
@@ -88,9 +85,13 @@ public class PDFImageHandlerSVG implements ImageHandler {
                 userAgent.getImageSessionContext(),
                 new AffineTransform());
 
+        //Cloning SVG DOM as Batik attaches non-thread-safe facilities (like the CSS engine)
+        //to it.
+        Document clonedDoc = BatikUtil.cloneSVGDocument(imageSVG.getDocument());
+
         GraphicsNode root;
         try {
-            root = builder.build(ctx, imageSVG.getDocument());
+            root = builder.build(ctx, clonedDoc);
             builder = null;
         } catch (Exception e) {
             SVGEventProducer eventProducer = SVGEventProducer.Provider.get(
@@ -99,8 +100,8 @@ public class PDFImageHandlerSVG implements ImageHandler {
             return;
         }
         // get the 'width' and 'height' attributes of the SVG document
-        float w = (float)ctx.getDocumentSize().getWidth() * 1000f;
-        float h = (float)ctx.getDocumentSize().getHeight() * 1000f;
+        float w = image.getSize().getWidthMpt();
+        float h = image.getSize().getHeightMpt();
 
         float sx = pos.width / w;
         float sy = pos.height / h;
@@ -108,6 +109,12 @@ public class PDFImageHandlerSVG implements ImageHandler {
         //Scaling and translation for the bounding box of the image
         AffineTransform scaling = new AffineTransform(
                 sx, 0, 0, sy, pos.x / 1000f, pos.y / 1000f);
+
+        //Scale for higher resolution on-the-fly images from Batik
+        double s = uaResolution / deviceResolution;
+        AffineTransform resolutionScaling = new AffineTransform();
+        resolutionScaling.scale(s, s);
+        resolutionScaling.scale(1.0 / sx, 1.0 / sy);
 
         //Transformation matrix that establishes the local coordinate system for the SVG graphic
         //in relation to the current coordinate system
@@ -147,7 +154,9 @@ public class PDFImageHandlerSVG implements ImageHandler {
                         + " -> " + deviceResolution + "\n");
             generator.add(
                     CTMHelper.toPDFString(resolutionScaling, false) + " cm\n");
-            graphics.scale(1 / s, 1 / s);
+            graphics.scale(
+                    1.0 / resolutionScaling.getScaleX(),
+                    1.0 / resolutionScaling.getScaleY());
         }
 
         generator.comment("SVG start");

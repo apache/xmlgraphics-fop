@@ -45,6 +45,7 @@ public class PageBreaker extends AbstractBreaker {
     private boolean needColumnBalancing;
     private PageProvider pageProvider;
     private Block separatorArea;
+    private boolean spanAllActive;
 
     /**
      * The FlowLayoutManager object, which processes
@@ -54,6 +55,10 @@ public class PageBreaker extends AbstractBreaker {
 
     private StaticContentLayoutManager footnoteSeparatorLM = null;
 
+    /**
+     * Construct page breaker.
+     * @param pslm the page sequence layout manager
+     */
     public PageBreaker(PageSequenceLayoutManager pslm) {
         this.pslm = pslm;
         this.pageProvider = pslm.getPageProvider();
@@ -144,8 +149,9 @@ public class PageBreaker extends AbstractBreaker {
         }
         firstPart = false;
         pageBreakHandled = true;
+
         pageProvider.setStartOfNextElementList(pslm.getCurrentPageNum(),
-                pslm.getCurrentPV().getCurrentSpan().getCurrentFlowIndex());
+                pslm.getCurrentPV().getCurrentSpan().getCurrentFlowIndex(), this.spanAllActive);
         return super.getNextBlockList(childLC, nextSequenceStartsOn, positionAtIPDChange,
                 restartLM, firstElements);
     }
@@ -338,8 +344,9 @@ public class PageBreaker extends AbstractBreaker {
         pageBreakHandled = true;
         //Update so the available BPD is reported correctly
         int currentPageNum = pslm.getCurrentPageNum();
+
         pageProvider.setStartOfNextElementList(currentPageNum,
-                pslm.getCurrentPV().getCurrentSpan().getCurrentFlowIndex());
+                pslm.getCurrentPV().getCurrentSpan().getCurrentFlowIndex(), this.spanAllActive);
 
         //Make sure we only add the areas we haven't added already
         effectiveList.ignoreAtStart = newStartPos;
@@ -382,7 +389,8 @@ public class PageBreaker extends AbstractBreaker {
                 + " pageBreaks.size()= " + algRestart.getPageBreaks().size());
 
         boolean fitsOnePage
-                = optimalPageCount <= pslm.getCurrentPV().getBodyRegion().getMainReference().getCurrentSpan().getColumnCount();
+            = optimalPageCount <= pslm.getCurrentPV()
+                .getBodyRegion().getMainReference().getCurrentSpan().getColumnCount();
 
         if (needColumnBalancing) {
             if (!fitsOnePage) {
@@ -411,6 +419,7 @@ public class PageBreaker extends AbstractBreaker {
         addAreas(algRestart, optimalPageCount, originalList, effectiveList);
     }
 
+    /** {@inheritDoc} */
     protected void startPart(BlockSequence list, int breakClass) {
         AbstractBreaker.log.debug("startPart() breakClass=" + getBreakClassName(breakClass));
         if (pslm.getCurrentPage() == null) {
@@ -429,7 +438,8 @@ public class PageBreaker extends AbstractBreaker {
                 handleBreakTrait(breakClass);
             }
             pageProvider.setStartOfNextElementList(pslm.getCurrentPageNum(),
-                    pslm.getCurrentPV().getCurrentSpan().getCurrentFlowIndex());
+                    pslm.getCurrentPV().getCurrentSpan().getCurrentFlowIndex(),
+                    this.spanAllActive);
         }
         pageBreakHandled = false;
         // add static areas and resolve any new id areas
@@ -442,6 +452,7 @@ public class PageBreaker extends AbstractBreaker {
         pslm.getCurrentPV().getPage().fakeNonEmpty();
     }
 
+    /** {@inheritDoc} */
     protected void finishPart(PageBreakingAlgorithm alg, PageBreakPosition pbp) {
         // add footnote areas
         if (pbp.footnoteFirstListIndex < pbp.footnoteLastListIndex
@@ -473,7 +484,7 @@ public class PageBreaker extends AbstractBreaker {
         pslm.getCurrentPV().getCurrentSpan().notifyFlowsFinished();
     }
 
-    /** @return the current child flow layout manager */
+    /** {@inheritDoc} */
     protected LayoutManager getCurrentChildLM() {
         return childFLM;
     }
@@ -496,9 +507,11 @@ public class PageBreaker extends AbstractBreaker {
         case Constants.EN_ALL:
             //break due to span change in multi-column layout
             curPage.getPageViewport().createSpan(true);
+            this.spanAllActive = true;
             return;
         case Constants.EN_NONE:
             curPage.getPageViewport().createSpan(false);
+            this.spanAllActive = false;
             return;
         case Constants.EN_COLUMN:
         case Constants.EN_AUTO:
@@ -546,7 +559,8 @@ public class PageBreaker extends AbstractBreaker {
      * @param breakVal - value of break-before or break-after trait.
      */
     private boolean needBlankPageBeforeNew(int breakVal) {
-        if (breakVal == Constants.EN_PAGE || (pslm.getCurrentPage().getPageViewport().getPage().isEmpty())) {
+        if (breakVal == Constants.EN_PAGE
+                || (pslm.getCurrentPage().getPageViewport().getPage().isEmpty())) {
             // any page is OK or we already have an empty page
             return false;
         } else {

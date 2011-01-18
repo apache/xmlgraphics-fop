@@ -5,7 +5,7 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
-
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 /* $Id$ */
+
 package org.apache.fop.pdf;
 
 /**
@@ -22,21 +24,39 @@ package org.apache.fop.pdf;
  */
 public class PDFLaunch extends PDFAction {
 
-    private PDFFileSpec externalFileSpec;
+    private PDFReference externalFileSpec;
 
+    /**
+     * Creates a new /Launch action.
+     * @param fileSpec the file specification to launch
+     */
     public PDFLaunch(PDFFileSpec fileSpec) {
+        this(fileSpec.makeReference());
+    }
+
+    /**
+     * Creates a new /Launch action.
+     * @param fileSpec a reference to the file specification
+     */
+    public PDFLaunch(PDFReference fileSpec) {
+        PDFObject fs = fileSpec.getObject();
+        if (fs != null) {
+            assert fs instanceof PDFFileSpec;
+        }
         this.externalFileSpec = fileSpec;
     }
 
+    /** {@inheritDoc} */
     public String getAction() {
         return this.referencePDF();
     }
 
+    /** {@inheritDoc} */
     public String toPDFString() {
         StringBuffer sb = new StringBuffer(64);
         sb.append(getObjectID());
         sb.append("<<\n/S /Launch\n/F ");
-        sb.append(externalFileSpec.referencePDF());
+        sb.append(externalFileSpec.toString());
         sb.append(" \n>>\nendobj\n");
 
         return sb.toString();
@@ -54,7 +74,7 @@ public class PDFLaunch extends PDFAction {
 
         PDFLaunch launch = (PDFLaunch) obj;
 
-        if (!launch.externalFileSpec.referencePDF().equals(externalFileSpec.referencePDF())) {
+        if (!launch.externalFileSpec.toString().equals(externalFileSpec.toString())) {
             return false;
         }
 

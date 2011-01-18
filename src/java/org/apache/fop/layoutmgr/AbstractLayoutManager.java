@@ -123,6 +123,10 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
         return null;
     }
 
+    /**
+     * Set currently active child layout manager.
+     * @param childLM the child layout manager
+     */
     protected void setCurrentChildLM(LayoutManager childLM) {
         curChildLM = childLM;
         childLMiter = new LMiter(this);

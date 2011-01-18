@@ -24,8 +24,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import javax.xml.transform.Source;
@@ -41,6 +44,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.xmlgraphics.image.loader.ImageContext;
 import org.apache.xmlgraphics.image.loader.ImageManager;
 import org.apache.xmlgraphics.java2d.color.RenderingIntent;
+import org.apache.xmlgraphics.util.UnitConv;
 
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.ElementMappingRegistry;
@@ -108,6 +112,11 @@ public class FopFactory implements ImageContext {
 
     /** The base URL for all hyphen URL resolutions. */
     private String hyphenBase = null;
+
+    /**
+     * Map of configured names of hyphenation pattern file names: ll_CC => name
+     */
+    private Map/*<String,String>*/ hyphPatNames = null;
 
     /**
      * FOP has the ability, for some FO's, to continue processing even if the
@@ -411,6 +420,23 @@ public class FopFactory implements ImageContext {
     }
 
     /**
+     * @return the hyphPatNames
+     */
+    public Map getHyphPatNames() {
+        return hyphPatNames;
+    }
+
+    /**
+     * @param hyphPatNames the hyphPatNames to set
+     */
+    public void setHyphPatNames(Map hyphPatNames) {
+        if (hyphPatNames == null) {
+            hyphPatNames = new HashMap();
+        }
+        this.hyphPatNames = hyphPatNames;
+    }
+
+    /**
      * Sets the URI Resolver. It is used for resolving factory-level URIs like hyphenation
      * patterns and as backup for URI resolution performed during a rendering run.
      * @param uriResolver the new URI resolver
@@ -521,7 +547,7 @@ public class FopFactory implements ImageContext {
      * @see #getSourceResolution()
      */
     public float getSourcePixelUnitToMillimeter() {
-        return 25.4f / getSourceResolution();
+        return UnitConv.IN2MM / getSourceResolution();
     }
 
     /**
@@ -549,7 +575,7 @@ public class FopFactory implements ImageContext {
      * @see #getTargetResolution()
      */
     public float getTargetPixelUnitToMillimeter() {
-        return 25.4f / this.targetResolution;
+        return UnitConv.IN2MM / this.targetResolution;
     }
 
     /**
@@ -679,6 +705,15 @@ public class FopFactory implements ImageContext {
      */
     public void setUserConfig(Configuration userConfig) throws FOPException {
         config.setUserConfig(userConfig);
+    }
+
+    /**
+     * Set the base URI for the user configuration
+     * Useful for programmatic configurations
+     * @param baseURI the base URI
+     */
+    public void setUserConfigBaseURI(URI baseURI) {
+        config.setBaseURI(baseURI);
     }
 
     /**

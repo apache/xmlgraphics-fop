@@ -67,6 +67,7 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
      * Constructs a new ContentLayoutManager
      *
      * @param area  The parent area
+     * @param parentLM the parent layout manager
      */
     public ContentLayoutManager(Area area, LayoutManager parentLM) {
         holder = area;
@@ -100,11 +101,12 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
         }
     }
 
+    /** {@inheritDoc} */
     public void initialize() {
         // Empty
     }
 
-    public void fillArea(LayoutManager curLM) {
+    private void fillArea(LayoutManager curLM) {
 
         int ipd = 1000000;
 
@@ -150,6 +152,7 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
         curLM.addAreas(contentPosIter, lc);
     }
 
+    /** {@inheritDoc} */
     public void addAreas(PositionIterator posIter, LayoutContext context) {
         // add the content areas
         // the area width has already been adjusted, and it must remain unchanged
@@ -163,6 +166,7 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
         ((InlineArea)holder).setIPD(savedIPD);
     }
 
+    /** @return stack size */
     public int getStackingSize() {
         return stackSize;
     }
@@ -248,6 +252,7 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
         }
     }
 
+    /** {@inheritDoc} */
     public List getNextKnuthElements(LayoutContext context, int alignment) {
         List contentList = new LinkedList();
         List returnedList;
@@ -264,7 +269,7 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
                     Object obj = returnedList.remove(0);
                     if (obj instanceof KnuthSequence) {
                         KnuthSequence ks = (KnuthSequence)obj;
-                        for (Iterator it = ks.iterator(); it.hasNext(); ) {
+                        for (Iterator it = ks.iterator(); it.hasNext();) {
                             contentElement = (KnuthElement)it.next();
                             stackSize += contentElement.getWidth();
                             contentList.add(contentElement);
@@ -282,37 +287,46 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
         return contentList;
     }
 
+    /** {@inheritDoc} */
     public List addALetterSpaceTo(List oldList) {
         return oldList;
     }
 
-    /**
-     * Remove the word space represented by the given elements
-     *
-     * @param oldList the elements representing the word space
-     */
-    public void removeWordSpace(List oldList) {
-        // do nothing
-        log.warn(this.getClass().getName() + " should not receive a call to removeWordSpace(list)");
+    /** {@inheritDoc} */
+    public List addALetterSpaceTo(List oldList, int depth) {
+        return addALetterSpaceTo(oldList);
     }
 
+    /** {@inheritDoc} */
     public String getWordChars(Position pos) {
         return "";
     }
 
+    /** {@inheritDoc} */
     public void hyphenate(Position pos, HyphContext hc) {
     }
 
+    /** {@inheritDoc} */
     public boolean applyChanges(List oldList) {
         return false;
     }
 
-    public List getChangedKnuthElements(List oldList,
-                                              /*int flaggedPenalty,*/
-                                              int alignment) {
+    /** {@inheritDoc} */
+    public boolean applyChanges(List oldList, int depth) {
+        return applyChanges(oldList);
+    }
+
+    /** {@inheritDoc} */
+    public List getChangedKnuthElements(List oldList, int alignment) {
         return null;
     }
 
+    /** {@inheritDoc} */
+    public List getChangedKnuthElements(List oldList, int alignment, int depth) {
+        return getChangedKnuthElements(oldList, alignment);
+    }
+
+    /** {@inheritDoc} */
     public PageSequenceLayoutManager getPSLM() {
         return parentLM.getPSLM();
     }

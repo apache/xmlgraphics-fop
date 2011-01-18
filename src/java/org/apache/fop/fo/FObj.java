@@ -44,7 +44,7 @@ import org.apache.fop.fo.properties.PropertyMaker;
 public abstract class FObj extends FONode implements Constants {
 
     /** the list of property makers */
-    private static final PropertyMaker[] propertyListTable
+    private static final PropertyMaker[] PROPERTY_LIST_TABLE
                             = FOPropertyMapping.getGenericMappings();
 
     /**
@@ -108,7 +108,7 @@ public abstract class FObj extends FONode implements Constants {
      * @return the requested Property Maker
      */
     public static PropertyMaker getPropertyMakerFor(int propId) {
-        return propertyListTable[propId];
+        return PROPERTY_LIST_TABLE[propId];
     }
 
     /** {@inheritDoc} */
@@ -255,7 +255,7 @@ public abstract class FObj extends FONode implements Constants {
     /**
      * Check if this formatting object generates reference areas.
      * @return true if generates reference areas
-     * @todo see if needed
+     * TODO see if needed
      */
     public boolean generatesReferenceAreas() {
         return false;
@@ -610,7 +610,7 @@ public abstract class FObj extends FONode implements Constants {
         return (super.toString() + "[@id=" + this.id + "]");
     }
 
-    /** Basic {@link FONodeIterator} implementation */
+    /** Basic {@link FONode.FONodeIterator} implementation */
     public class FObjIterator implements FONodeIterator {
 
         private static final int F_NONE_ALLOWED = 0;

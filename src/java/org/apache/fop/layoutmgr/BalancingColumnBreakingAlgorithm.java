@@ -21,6 +21,8 @@ package org.apache.fop.layoutmgr;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import org.apache.fop.fo.Constants;
 import org.apache.fop.traits.MinOptMax;
 
 /**
@@ -29,13 +31,32 @@ import org.apache.fop.traits.MinOptMax;
  */
 public class BalancingColumnBreakingAlgorithm extends PageBreakingAlgorithm {
 
-    private Log log = LogFactory.getLog(BalancingColumnBreakingAlgorithm.class);
+    private static final Log LOG = LogFactory.getLog(BalancingColumnBreakingAlgorithm.class);
 
     private int columnCount;
     private int fullLen;
     private int idealPartLen;
 
-    public BalancingColumnBreakingAlgorithm(LayoutManager topLevelLM,
+    /**
+     * Construct a balancing column breaking algorithm.
+     * @param topLevelLM the top level layout manager
+     * @param pageProvider the page provider
+     * @param layoutListener the layout listener
+     * @param alignment     alignment of the paragraph/page. One of {@link Constants#EN_START},
+     *                  {@link Constants#EN_JUSTIFY}, {@link Constants#EN_CENTER},
+     *                  {@link Constants#EN_END}.
+     *                  For pages, {@link Constants#EN_BEFORE} and {@link Constants#EN_AFTER}
+     *                  are mapped to the corresponding inline properties,
+     *                  {@link Constants#EN_START} and {@link Constants#EN_END}.
+     * @param alignmentLast alignment of the paragraph's last line
+     * @param footnoteSeparatorLength length of footnote separator
+     * @param partOverflowRecovery  {@code true} if too long elements should be moved to
+     *                              the next line/part
+     * @param columnCount number of columns
+     * @see PageBreakingAlgorithm
+     */
+    public BalancingColumnBreakingAlgorithm(                     // CSOK: ParameterNumber
+            LayoutManager topLevelLM,
             PageProvider pageProvider,
             PageBreakingLayoutListener layoutListener,
             int alignment, int alignmentLast,
@@ -53,8 +74,8 @@ public class BalancingColumnBreakingAlgorithm extends PageBreakingAlgorithm {
     protected double computeDemerits(KnuthNode activeNode,
             KnuthElement element, int fitnessClass, double r) {
         double dem = super.computeDemerits(activeNode, element, fitnessClass, r);
-        if (log.isTraceEnabled()) {
-            log.trace("original demerit=" + dem + " " + totalWidth
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("original demerit=" + dem + " " + totalWidth
                     + " line=" + activeNode.line + "/" + columnCount
                     + " pos=" + activeNode.position + "/" + (par.size() - 1));
         }
@@ -70,13 +91,13 @@ public class BalancingColumnBreakingAlgorithm extends PageBreakingAlgorithm {
         if (remParts > 0) {
             avgRestLen = restLen / remParts;
         }
-        if (log.isTraceEnabled()) {
-            log.trace("remaining parts: " + remParts + " rest len: " + restLen
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("remaining parts: " + remParts + " rest len: " + restLen
                     + " avg=" + avgRestLen);
         }
         double balance = (idealPartLen - partLen) / 1000f;
-        if (log.isTraceEnabled()) {
-            log.trace("balance=" + balance);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("balance=" + balance);
         }
         double absBalance = Math.abs(balance);
         dem = absBalance;
@@ -99,8 +120,8 @@ public class BalancingColumnBreakingAlgorithm extends PageBreakingAlgorithm {
             //We don't want more columns than available
             dem = Double.MAX_VALUE;
         }
-        if (log.isTraceEnabled()) {
-            log.trace("effective dem=" + dem + " " + totalWidth);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("effective dem=" + dem + " " + totalWidth);
         }
         return dem;
     }

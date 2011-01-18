@@ -35,6 +35,11 @@ public class BidiLayoutManager extends LeafNodeLayoutManager {
 
     private List children;
 
+    /**
+     * Construct bidi layout manager.
+     * @param node bidi override FO
+     * @param cLM parent layout manager
+     */
     public BidiLayoutManager(BidiOverride node, InlineLayoutManager cLM) {
         super(node);
         setParent(cLM);
@@ -53,10 +58,15 @@ public class BidiLayoutManager extends LeafNodeLayoutManager {
 */
     }
 
+    /** @return number of children */
     public int size() {
         return children.size();
     }
 
+    /**
+     * @param index of child inline area
+     * @return a child inline area
+     */
     public InlineArea get(int index) {
         return (InlineArea) children.get(index);
     }

@@ -32,7 +32,7 @@ public class AFPFontInfo {
 
     /**
      * Main constructor
-     * 
+     *
      * @param afpFont The AFP Font
      * @param tripletList List of font triplets to associate with this font
      */
@@ -43,7 +43,7 @@ public class AFPFontInfo {
 
     /**
      * Returns the afp font
-     * 
+     *
      * @return the afp font
      */
     public AFPFont getAFPFont() {
@@ -52,7 +52,7 @@ public class AFPFontInfo {
 
     /**
      * Returns the list of font triplets associated with this font.
-     * 
+     *
      * @return List of font triplets
      */
     public List/*<FontTriplet>*/ getFontTriplets() {

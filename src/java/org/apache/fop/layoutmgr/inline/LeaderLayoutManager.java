@@ -344,4 +344,10 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
         this.contentAreaIPD = contentAreaIPD;
     }
 
+    /** {@inheritDoc} */
+    public void reset() {
+        childLMs.clear();
+        super.reset();
+    }
+
 }

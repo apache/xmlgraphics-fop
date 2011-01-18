@@ -78,7 +78,11 @@ public class PreloaderWMF extends AbstractImagePreloader {
      * attempt to load Batik related classes when constructing the WMFPreloader
      * class.
      */
-    class Loader {
+    private final class Loader {
+
+        private Loader() {
+        }
+
         private ImageInfo getImage(String uri, Source src,
                 ImageContext context) {
             // parse document and get the size attributes of the svg element

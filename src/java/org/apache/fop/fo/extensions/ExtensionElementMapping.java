@@ -37,17 +37,18 @@ public class ExtensionElementMapping extends ElementMapping {
     /** The FOP extension namespace URI */
     public static final String URI = "http://xmlgraphics.apache.org/fop/extensions";
 
-    private static final Set propertyAttributes = new java.util.HashSet();
+    private static final Set<String> PROPERTY_ATTRIBUTES
+        = new java.util.HashSet<String>();
 
     static {
         //These are FOP's standard extension properties (fox:*)
-        propertyAttributes.add("block-progression-unit");
-        propertyAttributes.add("widow-content-limit");
-        propertyAttributes.add("orphan-content-limit");
-        propertyAttributes.add("internal-destination");
-        propertyAttributes.add("disable-column-balancing");
+        PROPERTY_ATTRIBUTES.add("block-progression-unit");
+        PROPERTY_ATTRIBUTES.add("widow-content-limit");
+        PROPERTY_ATTRIBUTES.add("orphan-content-limit");
+        PROPERTY_ATTRIBUTES.add("internal-destination");
+        PROPERTY_ATTRIBUTES.add("disable-column-balancing");
         //These are FOP's extension properties for accessibility
-        propertyAttributes.add("alt-text");
+        PROPERTY_ATTRIBUTES.add("alt-text");
     }
 
     /**
@@ -62,7 +63,7 @@ public class ExtensionElementMapping extends ElementMapping {
      */
     protected void initialize() {
         if (foObjs == null) {
-            foObjs = new HashMap();
+            foObjs = new HashMap<String, Maker>();
             foObjs.put("outline", new UnknownXMLObj.Maker(URI));
             foObjs.put("label", new UnknownXMLObj.Maker(URI));
             foObjs.put("destination", new DestinationMaker());
@@ -92,7 +93,7 @@ public class ExtensionElementMapping extends ElementMapping {
         if (!URI.equals(attributeName.getNamespaceURI())) {
             throw new IllegalArgumentException("The namespace URIs don't match");
         }
-        return propertyAttributes.contains(attributeName.getLocalName());
+        return PROPERTY_ATTRIBUTES.contains(attributeName.getLocalName());
     }
 
 }

@@ -19,8 +19,6 @@
 
 package org.apache.fop.render.afp.extensions;
 
-import java.net.URI;
-
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;

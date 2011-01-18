@@ -29,8 +29,11 @@ import org.apache.fop.afp.util.BinaryUtils;
  */
 public class ImageDataDescriptor extends AbstractDescriptor {
 
+    /** function set fs10 */
     public static final byte FUNCTION_SET_FS10 = 0x0A;
+    /** function set fs11 */
     public static final byte FUNCTION_SET_FS11 = 0x0B;
+    /** function set fs45 */
     public static final byte FUNCTION_SET_FS45 = 45;
 
     private byte functionSet = FUNCTION_SET_FS11; // FCNSET = IOCA FS 11

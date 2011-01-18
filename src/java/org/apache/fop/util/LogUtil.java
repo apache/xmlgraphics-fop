@@ -25,7 +25,10 @@ import org.apache.fop.apps.FOPException;
 /**
  * Convenience Logging utility methods used in FOP
  */
-public class LogUtil {
+public final class LogUtil {
+
+    private LogUtil() {
+    }
 
     /**
      * Convenience method that handles any error appropriately

@@ -34,6 +34,8 @@ import org.apache.fop.fo.Constants;
  */
 public class CTM implements Serializable {
 
+    private static final long serialVersionUID = -8743287485623778341L;
+
     private double a, b, c, d, e, f;
 
     private static final CTM CTM_LRTB = new CTM(1, 0, 0, 1, 0, 0);

@@ -45,7 +45,7 @@ public interface FontMetrics {
      * Returns the font's family names as a Set of Strings (Example: "Helvetica").
      * @return the font's family names (a Set of Strings)
      */
-    Set getFamilyNames();
+    Set<String> getFamilyNames();
 
     /**
      * Returns the font name for font embedding (may include a prefix, Example: "1E28bcArialMT").
@@ -129,6 +129,6 @@ public interface FontMetrics {
      * Returns the kerning map for the font.
      * @return the kerning map
      */
-    Map getKerningInfo();
+    Map<Integer, Map<Integer, Integer>> getKerningInfo();
 
 }

@@ -57,7 +57,7 @@ implements IRtfTextContainer,
 
 
     /**
-     * Default constructor.
+     * A constructor.
      *
      * @param parent a <code>RtfContainer</code> value
      * @param writer a <code>Writer</code> value
@@ -71,6 +71,14 @@ implements IRtfTextContainer,
         new RtfText (this, writer, str, attr);
     }
 
+    /**
+     * A constructor.
+     *
+     * @param parent a <code>RtfContainer</code> value
+     * @param writer a <code>Writer</code> value
+     * @param attr a <code>RtfAttributes</code> value
+     * @throws IOException for I/O problems
+     */
     public RtfHyperLink (RtfTextrun parent, Writer writer, RtfAttributes attr)
         throws IOException {
         super ((RtfContainer) parent, writer, attr);
@@ -217,8 +225,11 @@ implements IRtfTextContainer,
         return false;
     }
 
-    public RtfTextrun getTextrun()
-    throws IOException {
+    /**
+     * @return a text run
+     * @throws IOException if not caught
+     */
+    public RtfTextrun getTextrun() throws IOException {
         RtfTextrun textrun = RtfTextrun.getTextrun(this, writer, null);
         return textrun;
     }

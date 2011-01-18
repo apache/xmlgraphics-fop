@@ -27,7 +27,7 @@ public class PDFGoToRemote extends PDFAction {
     /**
      * the file specification
      */
-    private PDFFileSpec pdfFileSpec;
+    private PDFReference pdfFileSpec;
     private int pageReference = 0;
     private String destination = null;
     private boolean newWindow = false;
@@ -43,12 +43,12 @@ public class PDFGoToRemote extends PDFAction {
         /* generic creation of object */
         super();
 
-        this.pdfFileSpec = pdfFileSpec;
+        this.pdfFileSpec = pdfFileSpec.makeReference();
         this.newWindow = newWindow;
     }
 
     /**
-     * create an GoToR object.
+     * Create an GoToR object.
      *
      * @param pdfFileSpec the fileSpec associated with the action
      * @param page a page reference within the remote document
@@ -56,7 +56,18 @@ public class PDFGoToRemote extends PDFAction {
      *                  displayed in a new window
      */
     public PDFGoToRemote(PDFFileSpec pdfFileSpec, int page, boolean newWindow) {
-        /* generic creation of object */
+        this(pdfFileSpec.makeReference(), page, newWindow);
+    }
+
+    /**
+     * Create an GoToR object.
+     *
+     * @param pdfFileSpec the fileSpec associated with the action
+     * @param page a page reference within the remote document
+     * @param newWindow boolean indicating whether the target should be
+     *                  displayed in a new window
+     */
+    public PDFGoToRemote(PDFReference pdfFileSpec, int page, boolean newWindow) {
         super();
 
         this.pdfFileSpec = pdfFileSpec;
@@ -76,7 +87,7 @@ public class PDFGoToRemote extends PDFAction {
         /* generic creation of object */
         super();
 
-        this.pdfFileSpec = pdfFileSpec;
+        this.pdfFileSpec = pdfFileSpec.makeReference();
         this.destination = dest;
         this.newWindow = newWindow;
     }
@@ -97,7 +108,7 @@ public class PDFGoToRemote extends PDFAction {
         StringBuffer sb = new StringBuffer(64);
         sb.append(getObjectID());
         sb.append("<<\n/S /GoToR\n/F ");
-        sb.append(pdfFileSpec.referencePDF());
+        sb.append(pdfFileSpec.toString());
         sb.append("\n");
 
         if (destination != null) {
@@ -139,7 +150,7 @@ public class PDFGoToRemote extends PDFAction {
 
         PDFGoToRemote remote = (PDFGoToRemote)obj;
 
-        if (!remote.pdfFileSpec.referencePDF().equals(pdfFileSpec.referencePDF())) {
+        if (!remote.pdfFileSpec.toString().equals(pdfFileSpec.toString())) {
             return false;
         }
 

@@ -65,11 +65,8 @@ public final class TableAttributesConverter {
     /**
      * Converts table-only attributes to rtf attributes.
      *
-     * @param attrs Given attributes
-     * @param defaultAttributes Default rtf attributes
-     *
+     * @param fobj the table for which the attributes are converted
      * @return All valid rtf attributes together
-     *
      * @throws ConverterException On convertion error
      */
     static RtfAttributes convertTableAttributes(Table fobj)
@@ -83,11 +80,8 @@ public final class TableAttributesConverter {
     /**
      * Converts table-only attributes to rtf attributes.
      *
-     * @param attrs Given attributes
-     * @param defaultAttributes Default rtf attributes
-     *
+     * @param part the table part for which the attributes are converted
      * @return All valid rtf attributes together
-     *
      * @throws ConverterException On convertion error
      */
     static RtfAttributes convertTablePartAttributes(TablePart part)
@@ -226,8 +220,6 @@ public final class TableAttributesConverter {
      * Converts table and row attributes to rtf attributes.
      *
      * @param fobj FObj to be converted
-     * @param defaultAttributes Default rtf attributes
-     *
      * @return All valid rtf attributes together
      * @throws ConverterException On converion error
      */

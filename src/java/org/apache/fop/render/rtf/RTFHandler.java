@@ -80,11 +80,11 @@ import org.apache.fop.fo.flow.PageNumber;
 import org.apache.fop.fo.flow.PageNumberCitation;
 import org.apache.fop.fo.flow.table.Table;
 import org.apache.fop.fo.flow.table.TableBody;
-import org.apache.fop.fo.flow.table.TableFooter;
-import org.apache.fop.fo.flow.table.TablePart;
 import org.apache.fop.fo.flow.table.TableCell;
 import org.apache.fop.fo.flow.table.TableColumn;
+import org.apache.fop.fo.flow.table.TableFooter;
 import org.apache.fop.fo.flow.table.TableHeader;
+import org.apache.fop.fo.flow.table.TablePart;
 import org.apache.fop.fo.flow.table.TableRow;
 import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.pagination.PageSequence;
@@ -436,7 +436,8 @@ public class RTFHandler extends FOEventHandler {
             RtfTextrun textrun = container.getTextrun();
 
             textrun.addParagraphBreak();
-            textrun.popBlockAttributes();
+            int breakValue = toRtfBreakValue(bl.getBreakAfter());
+            textrun.popBlockAttributes(breakValue);
 
         } catch (IOException ioe) {
             handleIOTrouble(ioe);
@@ -488,13 +489,29 @@ public class RTFHandler extends FOEventHandler {
             RtfTextrun textrun = container.getTextrun();
 
             textrun.addParagraphBreak();
-            textrun.popBlockAttributes();
+            int breakValue = toRtfBreakValue(bl.getBreakAfter());
+            textrun.popBlockAttributes(breakValue);
 
         } catch (IOException ioe) {
             handleIOTrouble(ioe);
         } catch (Exception e) {
             log.error("startBlock:" + e.getMessage());
             throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    private int toRtfBreakValue(int foBreakValue) {
+        switch (foBreakValue) {
+        case Constants.EN_PAGE:
+            return RtfTextrun.BREAK_PAGE;
+        case Constants.EN_EVEN_PAGE:
+            return RtfTextrun.BREAK_EVEN_PAGE;
+        case Constants.EN_ODD_PAGE:
+            return RtfTextrun.BREAK_ODD_PAGE;
+        case Constants.EN_COLUMN:
+            return RtfTextrun.BREAK_COLUMN;
+        default:
+            return RtfTextrun.BREAK_NONE;
         }
     }
 
@@ -1468,7 +1485,7 @@ public class RTFHandler extends FOEventHandler {
      * @param foNode FO node whose event is to be called
      * @param bStart TRUE calls the start handler, FALSE the end handler
      */
-    private void invokeDeferredEvent(FONode foNode, boolean bStart) {
+    private void invokeDeferredEvent(FONode foNode, boolean bStart) { // CSOK: MethodLength
         if (foNode instanceof PageSequence) {
             if (bStart) {
                 startPageSequence( (PageSequence) foNode);

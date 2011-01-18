@@ -31,17 +31,16 @@ import org.apache.fop.fo.pagination.Region;
  */
 public class RegionReference extends Area implements Cloneable {
 
-    /** Reference to the region FO. */
-    //protected Region regionFO;
+    private static final long serialVersionUID = -298980963268244238L;
+
     private int regionClass;
     private String regionName;
     private CTM ctm;
 
-
     // the list of block areas from the static flow
     private ArrayList blocks = new ArrayList();
 
-    /** the parent RegionViewport for this object */
+    /** the parent {@link RegionViewport} for this object */
     protected RegionViewport regionViewport;
 
     /**

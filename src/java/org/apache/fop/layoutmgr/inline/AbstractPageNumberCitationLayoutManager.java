@@ -30,7 +30,6 @@ import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.layoutmgr.LayoutContext;
-import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.TraitSetter;
 
@@ -99,10 +98,9 @@ public abstract class AbstractPageNumberCitationLayoutManager extends LeafNodeLa
     }
 
     /**
-     * If id can be resolved then simply return a word, otherwise
+     * If id can be resolved then simply return a text area, otherwise
      * return a resolvable area
      *
-     * @param parentLM  the parent LayoutManager
      * @return a corresponding InlineArea
      */
     private InlineArea getPageNumberCitationInlineArea() {

@@ -237,6 +237,8 @@ public class AlignmentContext implements Constants {
             case EN_MATHEMATICAL:
                 this.alignmentBaselineIdentifier = alignmentBaseline;
                 break;
+            default:
+                break;
         }
     }
 
@@ -307,7 +309,6 @@ public class AlignmentContext implements Constants {
      * Calculates the baseline shift value based on the baseline-shift
      * property value.
      * @param baselineShift the baseline shift property value
-     * @return the computed baseline shift value
      */
     private void setBaselineShift(Length baselineShift) {
         baselineShiftValue = 0;
@@ -331,6 +332,9 @@ public class AlignmentContext implements Constants {
                                                 , LengthBase.CUSTOM_BASE
                                                 , parentAlignmentContext.getLineHeight()));
                 break;
+            default:
+                break;
+
         }
     }
 
@@ -354,10 +358,12 @@ public class AlignmentContext implements Constants {
         return parentAlignmentContext.getScaledBaselineTable()
                                     .getBaseline(alignmentBaselineIdentifier)
                 - scaledBaselineTable
-                    .deriveScaledBaselineTable(parentAlignmentContext.getDominantBaselineIdentifier())
+                    .deriveScaledBaselineTable(parentAlignmentContext
+                                               .getDominantBaselineIdentifier())
                     .getBaseline(alignmentBaselineIdentifier)
                 - scaledBaselineTable
-                    .getBaseline(parentAlignmentContext.getDominantBaselineIdentifier())
+                    .getBaseline(parentAlignmentContext
+                                 .getDominantBaselineIdentifier())
                 + baselineShiftValue;
     }
 
@@ -514,11 +520,11 @@ public class AlignmentContext implements Constants {
     /** {@inheritDoc} */
     public String toString() {
         StringBuffer sb = new StringBuffer(64);
-        sb.append("ah=" + areaHeight);
-        sb.append(" lp=" + lineHeight);
-        sb.append(" ap=" + alignmentPoint);
-        sb.append(" ab=" + alignmentBaselineIdentifier);
-        sb.append(" bs=" + baselineShiftValue);
+        sb.append("areaHeight=" + areaHeight);
+        sb.append(" lineHeight=" + lineHeight);
+        sb.append(" alignmentPoint=" + alignmentPoint);
+        sb.append(" alignmentBaselineID=" + alignmentBaselineIdentifier);
+        sb.append(" baselineShift=" + baselineShiftValue);
         return sb.toString();
     }
 

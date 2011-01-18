@@ -37,7 +37,7 @@ public class MultiPropertySet extends FObj {
     // private ToBeImplementedProperty activeState;
     // End of property values
 
-    static boolean notImplementedWarningGiven = false;
+    private static boolean notImplementedWarningGiven = false;
 
     /**
      * Base constructor

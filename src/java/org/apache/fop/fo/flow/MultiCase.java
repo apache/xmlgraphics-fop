@@ -27,7 +27,7 @@ import org.apache.fop.fo.PropertyList;
 /**
  * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_multi-case">
  * <code>fo:multi-case</code></a> object.
- * @todo implement validateChildNode()
+ * TODO implement validateChildNode()
  */
 public class MultiCase extends FObj {
     // The value of properties relevant for fo:multi-case.
@@ -38,7 +38,7 @@ public class MultiCase extends FObj {
     //     private CommonAccessibility commonAccessibility;
     // End of property values
 
-    static boolean notImplementedWarningGiven = false;
+    private static boolean notImplementedWarningGiven = false;
 
     /**
      * Base constructor

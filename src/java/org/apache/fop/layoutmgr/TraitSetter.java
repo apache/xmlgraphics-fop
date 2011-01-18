@@ -39,10 +39,13 @@ import org.apache.fop.traits.MinOptMax;
 /**
  * This is a helper class used for setting common traits on areas.
  */
-public class TraitSetter {
+public final class TraitSetter {
+
+    private TraitSetter() {
+    }
 
     /** logger */
-    protected static Log log = LogFactory.getLog(TraitSetter.class);
+    private static final Log LOG = LogFactory.getLog(TraitSetter.class);
 
     /**
      * Sets border and padding traits on areas.
@@ -339,7 +342,7 @@ public class TraitSetter {
                                 + backProps.backgroundPositionHorizontal.getValue(refContext));
                     } else {
                         // TODO Area IPD has to be set for this to work
-                        log.warn("Horizontal background image positioning ignored"
+                        LOG.warn("Horizontal background image positioning ignored"
                                 + " because the IPD was not set on the area."
                                 + " (Yes, it's a bug in FOP)");
                     }
@@ -356,7 +359,7 @@ public class TraitSetter {
                                 + backProps.backgroundPositionVertical.getValue(refContext));
                     } else {
                         // TODO Area BPD has to be set for this to work
-                        log.warn("Vertical background image positioning ignored"
+                        LOG.warn("Vertical background image positioning ignored"
                                 + " because the BPD was not set on the area."
                                 + " (Yes, it's a bug in FOP)");
                     }
@@ -407,7 +410,7 @@ public class TraitSetter {
                         back.setHoriz(horizontal);
                     } else {
                         //TODO Area IPD has to be set for this to work
-                        log.warn("Horizontal background image positioning ignored"
+                        LOG.warn("Horizontal background image positioning ignored"
                                 + " because the IPD was not set on the area."
                                 + " (Yes, it's a bug in FOP)");
                     }
@@ -431,7 +434,7 @@ public class TraitSetter {
                         back.setVertical(vertical);
                     } else {
                         //TODO Area BPD has to be set for this to work
-                        log.warn("Vertical background image positioning ignored"
+                        LOG.warn("Vertical background image positioning ignored"
                                 + " because the BPD was not set on the area."
                                 + " (Yes, it's a bug in FOP)");
                     }

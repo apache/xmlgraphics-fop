@@ -30,7 +30,10 @@ import org.apache.fop.util.DecimalFormatCache;
 /**
  * Utility functions for the intermediate format.
  */
-public class IFUtil {
+public final class IFUtil {
+
+    private IFUtil() {
+    }
 
     private static String format(double value) {
         if (value == -0.0) {

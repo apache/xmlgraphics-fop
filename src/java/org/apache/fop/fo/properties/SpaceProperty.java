@@ -136,13 +136,14 @@ public class SpaceProperty extends LengthRangeProperty {
         return this.conditionality.getEnum() == Constants.EN_DISCARD;
     }
 
+    /** {@inheritDoc} */
     public String toString() {
-        return "Space[" +
-        "min:" + getMinimum(null).getObject() +
-        ", max:" + getMaximum(null).getObject() +
-        ", opt:" + getOptimum(null).getObject() +
-        ", precedence:" + precedence.getObject() +
-        ", conditionality:" + conditionality.getObject() + "]";
+        return "Space["
+        + "min:" + getMinimum(null).getObject()
+        + ", max:" + getMaximum(null).getObject()
+        + ", opt:" + getOptimum(null).getObject()
+        + ", precedence:" + precedence.getObject()
+        + ", conditionality:" + conditionality.getObject() + "]";
     }
 
     /**

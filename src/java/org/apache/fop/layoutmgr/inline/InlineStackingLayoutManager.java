@@ -46,16 +46,27 @@ public abstract class InlineStackingLayoutManager extends AbstractLayoutManager
                                          implements InlineLevelLayoutManager {
 
 
+    /**
+     * A stacking iterator.
+     */
     protected static class StackingIter extends PositionIterator {
 
         StackingIter(Iterator parentIter) {
             super(parentIter);
         }
 
+        /**
+         * @param nextObj the next object
+         * @return layout manager of next object
+         */
         protected LayoutManager getLM(Object nextObj) {
             return ((Position) nextObj).getLM();
         }
 
+        /**
+         * @param nextObj the next object
+         * @return position of next object
+         */
         protected Position getPos(Object nextObj) {
             return ((Position) nextObj);
         }
@@ -206,52 +217,46 @@ public abstract class InlineStackingLayoutManager extends AbstractLayoutManager
 
     /** {@inheritDoc} */
     public List addALetterSpaceTo(List oldList) {
+        return addALetterSpaceTo(oldList, 0);
+    }
+
+    /** {@inheritDoc} */
+    public List addALetterSpaceTo(List oldList, int thisDepth) {
         // old list contains only a box, or the sequence: box penalty glue box
 
-        ListIterator oldListIterator = oldList.listIterator();
-        KnuthElement element = null;
-        // "unwrap" the Position stored in each element of oldList
-        while (oldListIterator.hasNext()) {
-            element = (KnuthElement) oldListIterator.next();
-            element.setPosition(element.getPosition().getPosition());
-        }
+        ListIterator oldListIterator = oldList.listIterator(oldList.size());
+        KnuthElement element = (KnuthElement) oldListIterator.previous();
+        int depth = thisDepth + 1;
 
         // The last element may not have a layout manager (its position == null);
         // this may happen if it is a padding box; see bug 39571.
-        InlineLevelLayoutManager LM =
-            (InlineLevelLayoutManager) element.getLayoutManager();
-        if (LM != null) {
-            oldList = LM.addALetterSpaceTo(oldList);
+        Position pos = element.getPosition();
+        InlineLevelLayoutManager lm = null;
+        if (pos != null) {
+            lm = (InlineLevelLayoutManager) pos.getLM(depth);
         }
-        // "wrap" again the Position stored in each element of oldList
+        if (lm == null) {
+            return oldList;
+        }
+        oldList = lm.addALetterSpaceTo(oldList, depth);
+        // "wrap" the Position stored in new elements of oldList
         oldListIterator = oldList.listIterator();
         while (oldListIterator.hasNext()) {
             element = (KnuthElement) oldListIterator.next();
-            element.setPosition(notifyPos(new NonLeafPosition(this, element.getPosition())));
+            pos = element.getPosition();
+            lm = null;
+            if (pos != null) {
+                lm = (InlineLevelLayoutManager) pos.getLM(thisDepth);
+            }
+            // in old elements the position at thisDepth is a position for this LM
+            // only wrap new elements
+            if (lm != this) {
+                // new element, wrap position
+                element.setPosition(notifyPos(new NonLeafPosition(this, element.getPosition())));
+            }
         }
 
         return oldList;
-    }
-
-    /**
-     * remove the AreaInfo object represented by the given elements,
-     * so that it won't generate any element when getChangedKnuthElements
-     * will be called
-     *
-     * @param oldList the elements representing the word space
-     */
-    public void removeWordSpace(List oldList) {
-        ListIterator oldListIterator = oldList.listIterator();
-        KnuthElement element = null;
-        // "unwrap" the Position stored in each element of oldList
-        while (oldListIterator.hasNext()) {
-            element = (KnuthElement) oldListIterator.next();
-            element.setPosition(element.getPosition().getPosition());
-        }
-
-        ((InlineLevelLayoutManager)
-                   element.getLayoutManager()).removeWordSpace(oldList);
-
     }
 
     /** {@inheritDoc} */
@@ -269,16 +274,14 @@ public abstract class InlineStackingLayoutManager extends AbstractLayoutManager
 
     /** {@inheritDoc} */
     public boolean applyChanges(List oldList) {
-        // "unwrap" the Positions stored in the elements
+        return applyChanges(oldList, 0);
+    }
+
+    /** {@inheritDoc} */
+    public boolean applyChanges(List oldList, int depth) {
         ListIterator oldListIterator = oldList.listIterator();
         KnuthElement oldElement;
-        while (oldListIterator.hasNext()) {
-            oldElement = (KnuthElement) oldListIterator.next();
-            oldElement.setPosition
-                (oldElement.getPosition().getPosition());
-        }
-        // reset the iterator
-        oldListIterator = oldList.listIterator();
+        depth += 1;
 
         InlineLevelLayoutManager prevLM = null;
         InlineLevelLayoutManager currLM;
@@ -287,7 +290,12 @@ public abstract class InlineStackingLayoutManager extends AbstractLayoutManager
         boolean bSomethingChanged = false;
         while (oldListIterator.hasNext()) {
             oldElement = (KnuthElement) oldListIterator.next();
-            currLM = (InlineLevelLayoutManager) oldElement.getLayoutManager();
+            Position pos = oldElement.getPosition();
+            if (pos == null) {
+                currLM = null;
+            } else {
+                currLM = (InlineLevelLayoutManager) pos.getLM(depth);
+            }
             // initialize prevLM
             if (prevLM == null) {
                 prevLM = currLM;
@@ -298,38 +306,34 @@ public abstract class InlineStackingLayoutManager extends AbstractLayoutManager
                     prevLM = currLM;
                 } else if (oldListIterator.hasNext()) {
                     bSomethingChanged
-                        = prevLM.applyChanges(oldList.subList(fromIndex
-                                                              , oldListIterator.previousIndex()))
+                        = prevLM.applyChanges(oldList.subList(fromIndex,
+                                                              oldListIterator.previousIndex()),
+                                                              depth)
                         || bSomethingChanged;
                     prevLM = currLM;
                     fromIndex = oldListIterator.previousIndex();
                 } else if (currLM == prevLM) {
                     bSomethingChanged
                         = (prevLM != null)
-                            && prevLM.applyChanges(oldList.subList(fromIndex, oldList.size()))
+                            && prevLM.applyChanges(oldList.subList(fromIndex,
+                                                                   oldList.size()), depth)
                             || bSomethingChanged;
                 } else {
                     bSomethingChanged
-                        = prevLM.applyChanges(oldList.subList(fromIndex
-                                                              , oldListIterator.previousIndex()))
+                        = prevLM.applyChanges(oldList.subList(fromIndex,
+                                                              oldListIterator.previousIndex()),
+                                                              depth)
                             || bSomethingChanged;
                     if (currLM != null) {
                         bSomethingChanged
-                            = currLM.applyChanges(oldList.subList(oldListIterator.previousIndex()
-                                                                  , oldList.size()))
+                            = currLM.applyChanges(oldList.subList(oldListIterator.previousIndex(),
+                                                                  oldList.size()), depth)
                             || bSomethingChanged;
                     }
                 }
             }
         }
 
-        // "wrap" again the Positions stored in the elements
-        oldListIterator = oldList.listIterator();
-        while (oldListIterator.hasNext()) {
-            oldElement = (KnuthElement) oldListIterator.next();
-            oldElement.setPosition
-                (notifyPos(new NonLeafPosition(this, oldElement.getPosition())));
-        }
         return bSomethingChanged;
     }
 
@@ -337,16 +341,15 @@ public abstract class InlineStackingLayoutManager extends AbstractLayoutManager
      * {@inheritDoc}
      */
     public List getChangedKnuthElements(List oldList, int alignment) {
+        return getChangedKnuthElements(oldList, alignment, 0);
+    }
+
+    /** {@inheritDoc} */
+    public List getChangedKnuthElements(List oldList, int alignment, int depth) {
         // "unwrap" the Positions stored in the elements
         ListIterator oldListIterator = oldList.listIterator();
         KnuthElement oldElement;
-        while (oldListIterator.hasNext()) {
-            oldElement = (KnuthElement) oldListIterator.next();
-            oldElement.setPosition
-                (oldElement.getPosition().getPosition());
-        }
-        // reset the iterator
-        oldListIterator = oldList.listIterator();
+        depth += 1;
 
         KnuthElement returnedElement;
         LinkedList returnedList = new LinkedList();
@@ -357,7 +360,12 @@ public abstract class InlineStackingLayoutManager extends AbstractLayoutManager
 
         while (oldListIterator.hasNext()) {
             oldElement = (KnuthElement) oldListIterator.next();
-            currLM = (InlineLevelLayoutManager) oldElement.getLayoutManager();
+            Position pos = oldElement.getPosition();
+            if (pos == null) {
+                currLM = null;
+            } else {
+                currLM = (InlineLevelLayoutManager) pos.getLM(depth);
+            }
             if (prevLM == null) {
                 prevLM = currLM;
             }
@@ -366,33 +374,31 @@ public abstract class InlineStackingLayoutManager extends AbstractLayoutManager
                 if (oldListIterator.hasNext()) {
                     returnedList.addAll
                         (prevLM.getChangedKnuthElements
-                         (oldList.subList(fromIndex,
-                                          oldListIterator.previousIndex()),
-                          /*flaggedPenalty,*/ alignment));
+                         (oldList.subList(fromIndex, oldListIterator.previousIndex()),
+                          alignment, depth));
                     prevLM = currLM;
                     fromIndex = oldListIterator.previousIndex();
                 } else if (currLM == prevLM) {
                     returnedList.addAll
                         (prevLM.getChangedKnuthElements
                          (oldList.subList(fromIndex, oldList.size()),
-                          /*flaggedPenalty,*/ alignment));
+                          alignment, depth));
                 } else {
                     returnedList.addAll
                         (prevLM.getChangedKnuthElements
-                         (oldList.subList(fromIndex,
-                                          oldListIterator.previousIndex()),
-                          /*flaggedPenalty,*/ alignment));
+                         (oldList.subList(fromIndex, oldListIterator.previousIndex()),
+                          alignment, depth));
                     if (currLM != null) {
                         returnedList.addAll
                             (currLM.getChangedKnuthElements
-                             (oldList.subList(oldListIterator.previousIndex(),
-                                              oldList.size()),
-                              /*flaggedPenalty,*/ alignment));
+                             (oldList.subList(oldListIterator.previousIndex(), oldList.size()),
+                              alignment, depth));
                     }
                 }
             }
         }
 
+        // this is a new list
         // "wrap" the Position stored in each element of returnedList
         ListIterator listIter = returnedList.listIterator();
         while (listIter.hasNext()) {
@@ -401,6 +407,7 @@ public abstract class InlineStackingLayoutManager extends AbstractLayoutManager
                 (notifyPos(new NonLeafPosition(this, returnedElement.getPosition())));
             returnList.add(returnedElement);
         }
+
         return returnList;
     }
 }

@@ -103,8 +103,26 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     private int currentKeepContext = Constants.EN_AUTO;
     private KnuthNode lastBeforeKeepContextSwitch;
 
-
-    public PageBreakingAlgorithm(LayoutManager topLevelLM,
+    /**
+     * Construct a page breaking algorithm.
+     * @param topLevelLM the top level layout manager
+     * @param pageProvider the page provider
+     * @param layoutListener the layout listener
+     * @param alignment     alignment of the paragraph/page. One of {@link Constants#EN_START},
+     *                  {@link Constants#EN_JUSTIFY}, {@link Constants#EN_CENTER},
+     *                  {@link Constants#EN_END}.
+     *                  For pages, {@link Constants#EN_BEFORE} and {@link Constants#EN_AFTER}
+     *                  are mapped to the corresponding inline properties,
+     *                  {@link Constants#EN_START} and {@link Constants#EN_END}.
+     * @param alignmentLast alignment of the paragraph's last line
+     * @param footnoteSeparatorLength length of footnote separator
+     * @param partOverflowRecovery  {@code true} if too long elements should be moved to
+     *                              the next line/part
+     * @param autoHeight true if auto height
+     * @param favorSinglePart true if favoring single part
+     * @see BreakingAlgorithm
+     */
+    public PageBreakingAlgorithm(LayoutManager topLevelLM,      // CSOK: ParameterNumber
                                  PageProvider pageProvider,
                                  PageBreakingLayoutListener layoutListener,
                                  int alignment, int alignmentLast,
@@ -128,15 +146,16 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     protected class KnuthPageNode extends KnuthNode {
 
         /** Additional length due to footnotes. */
-        public int totalFootnotes;
+        public int totalFootnotes;                              // CSOK: VisibilityModifier
 
         /** Index of the last inserted footnote. */
-        public int footnoteListIndex;
+        public int footnoteListIndex;                           // CSOK: VisibilityModifier
 
         /** Index of the last inserted element of the last inserted footnote. */
-        public int footnoteElementIndex;
+        public int footnoteElementIndex;                        // CSOK: VisibilityModifier
 
-        public KnuthPageNode(int position, int line, int fitness,
+        public KnuthPageNode(int position,                      // CSOK: ParameterNumber
+                             int line, int fitness,
                              int totalWidth, int totalStretch, int totalShrink,
                              int totalFootnotes, int footnoteListIndex, int footnoteElementIndex,
                              double adjustRatio, int availableShrink, int availableStretch,
@@ -206,7 +225,8 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
             log.debug("Recovering from too long: " + lastTooLong);
             log.debug("\tlastTooShort = " + getLastTooShort());
             log.debug("\tlastBeforeKeepContextSwitch = " + lastBeforeKeepContextSwitch);
-            log.debug("\tcurrentKeepContext = " + AbstractBreaker.getBreakClassName(currentKeepContext));
+            log.debug("\tcurrentKeepContext = "
+                      + AbstractBreaker.getBreakClassName(currentKeepContext));
         }
 
         if (lastBeforeKeepContextSwitch == null
@@ -261,7 +281,8 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     }
 
     /** {@inheritDoc} */
-    protected KnuthNode createNode(int position, int line, int fitness,
+    protected KnuthNode createNode(int position,                // CSOK: ParameterNumber
+                                   int line, int fitness,
                                    int totalWidth, int totalStretch, int totalShrink,
                                    double adjustRatio, int availableShrink, int availableStretch,
                                    int difference, double totalDemerits, KnuthNode previous) {
@@ -473,7 +494,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         KnuthPageNode pageNode = (KnuthPageNode) activeNode;
         int actualWidth = totalWidth - pageNode.totalWidth;
         int footnoteSplit = 0;
-        boolean canDeferOldFootnotes;
+        boolean canDeferOldFN;
         if (element.isPenalty()) {
             actualWidth += element.getWidth();
         }
@@ -492,11 +513,12 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                     footnoteListIndex = footnotesList.size() - 1;
                     footnoteElementIndex
                         = getFootnoteList(footnoteListIndex).size() - 1;
-                } else if (((canDeferOldFootnotes
-                                = checkCanDeferOldFootnotes(pageNode, elementIndex))
+                } else if (((canDeferOldFN = canDeferOldFootnotes // CSOK: InnerAssignment
+                             (pageNode, elementIndex))
                             || newFootnotes)
-                           && (footnoteSplit = getFootnoteSplit(pageNode,
-                                   getLineWidth(activeNode.line) - actualWidth, canDeferOldFootnotes)) > 0) {
+                           && (footnoteSplit = getFootnoteSplit // CSOK: InnerAssignment
+                               (pageNode, getLineWidth(activeNode.line) - actualWidth,
+                                canDeferOldFN)) > 0) {
                     // it is allowed to break or even defer footnotes if either:
                     //  - there are new footnotes in the last piece of content, and
                     //    there is space to add at least a piece of the first one
@@ -541,7 +563,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
      * @param contentElementIndex index of the Knuth element considered for the
      * current page break
      */
-    private boolean checkCanDeferOldFootnotes(KnuthPageNode node, int contentElementIndex) {
+    private boolean canDeferOldFootnotes(KnuthPageNode node, int contentElementIndex) {
         return (noBreakBetween(node.position, contentElementIndex)
                 && deferredFootnotes(node.footnoteListIndex,
                         node.footnoteElementIndex, node.totalFootnotes));
@@ -584,7 +606,8 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                  index++) {
                 if (par.getElement(index).isGlue() && par.getElement(index - 1).isBox()
                     || par.getElement(index).isPenalty()
-                       && ((KnuthElement) par.getElement(index)).getPenalty() < KnuthElement.INFINITE) {
+                       && ((KnuthElement) par
+                           .getElement(index)).getPenalty() < KnuthElement.INFINITE) {
                     // break found
                     break;
                 }
@@ -865,8 +888,9 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                 insertedFootnotesLength = tmpLength;
                 footnoteElementIndex
                     = getFootnoteList(footnoteListIndex).size() - 1;
-            } else if ((split = getFootnoteSplit(footnoteListIndex, footnoteElementIndex,
-                    insertedFootnotesLength, availableBPD, true)) > 0) {
+            } else if ((split = getFootnoteSplit                // CSOK: InnerAssignment
+                        (footnoteListIndex, footnoteElementIndex,
+                         insertedFootnotesLength, availableBPD, true)) > 0) {
                 // add a piece of a footnote
                 availableBPD -= split;
                 insertedFootnotesLength += split;
@@ -1101,7 +1125,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
      */
     protected void addNode(int line, KnuthNode node) {
         if (node.position < par.size() - 1 && line > 0
-                && (ipdDifference = compareIPDs(line - 1)) != 0) {
+                && (ipdDifference = compareIPDs(line - 1)) != 0) {  // CSOK: InnerAssignment
             log.trace("IPD changes at page " + line);
             if (bestNodeForIPDChange == null
                     || node.totalDemerits < bestNodeForIPDChange.totalDemerits) {

@@ -48,6 +48,7 @@ import org.apache.fop.traits.MinOptMax;
  * an exception to this rule.)
  * This class can be extended to handle the creation and adding of the
  * inline area.
+ * TODO [GA] replace use of hungarian notation with normalized java naming
  */
 public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
                                    implements InlineLevelLayoutManager {
@@ -55,7 +56,7 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
     /**
      * logging instance
      */
-    protected static Log log = LogFactory.getLog(LeafNodeLayoutManager.class);
+    protected static final Log log = LogFactory.getLog(LeafNodeLayoutManager.class);
 
     /**
      * The inline area that this leafnode will add.
@@ -75,11 +76,22 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
      * Store information about the inline area
      */
     protected class AreaInfo {
+        /** letter space count */
         protected short iLScount;
+        /** ipd of area */
         protected MinOptMax ipdArea;
+        /** true if hyphenated */
         protected boolean bHyphenated;
+        /** alignment context */
         protected AlignmentContext alignmentContext;
 
+        /**
+         * Construct an area information item.
+         * @param iLS letter space count
+         * @param ipd inline progression dimension
+         * @param bHyph true if hyphenated
+         * @param alignmentContext an alignment context
+         */
         public AreaInfo(short iLS, MinOptMax ipd, boolean bHyph,
                         AlignmentContext alignmentContext) {
             iLScount = iLS;
@@ -285,13 +297,11 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
     }
 
     /**
-     * Remove the word space represented by the given elements
-     *
-     * @param oldList the elements representing the word space
+     * {@inheritDoc}
+     * Only TextLM has a meaningful implementation of this method
      */
-    public void removeWordSpace(List oldList) {
-        // do nothing
-        log.warn(this.getClass().getName() + " should not receive a call to removeWordSpace(list)");
+    public List addALetterSpaceTo(List oldList, int depth) {
+        return addALetterSpaceTo(oldList);
     }
 
     /** {@inheritDoc} */
@@ -309,9 +319,24 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     * Only TextLM has a meaningful implementation of this method
+     */
+    public boolean applyChanges(List oldList, int depth) {
+        return applyChanges(oldList);
+    }
+
+    /**
+     * {@inheritDoc}
+     * No subclass has a meaningful implementation of this method
+     */
+    public List getChangedKnuthElements(List oldList, int alignment, int depth) {
+        return getChangedKnuthElements(oldList, alignment);
+    }
+
     /** {@inheritDoc} */
-    public List getChangedKnuthElements(List oldList,
-                                              int alignment) {
+    public List getChangedKnuthElements(List oldList, int alignment) {
         if (isFinished()) {
             return null;
         }

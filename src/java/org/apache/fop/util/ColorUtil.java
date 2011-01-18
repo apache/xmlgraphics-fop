@@ -72,7 +72,7 @@ public final class ColorUtil {
     private static Map<String, Color> colorMap = null;
 
     /** Logger instance */
-    protected static Log log = LogFactory.getLog(ColorUtil.class);
+    protected static final Log log = LogFactory.getLog(ColorUtil.class);
 
     static {
         initializeColorMap();
@@ -805,7 +805,7 @@ public final class ColorUtil {
     /**
      * Initializes the colorMap with some predefined values.
      */
-    private static void initializeColorMap() {
+    private static void initializeColorMap() {                  // CSOK: MethodLength
         colorMap = Collections.synchronizedMap(new java.util.HashMap<String, Color>());
 
         colorMap.put("aliceblue", createColor(240, 248, 255));

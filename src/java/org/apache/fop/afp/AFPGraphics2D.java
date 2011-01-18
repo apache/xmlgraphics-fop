@@ -75,7 +75,7 @@ import org.apache.fop.svg.NativeImageHandler;
  */
 public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHandler {
 
-    private static final Log log = LogFactory.getLog(AFPGraphics2D.class);
+    private static final Log LOG = LogFactory.getLog(AFPGraphics2D.class);
 
     private static final int X = 0;
 
@@ -321,7 +321,7 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
                 graphicsObj.setLineType(type);
             }
         } else {
-            log.warn("Unsupported Stroke: " + stroke.getClass().getName());
+            LOG.warn("Unsupported Stroke: " + stroke.getClass().getName());
         }
     }
 
@@ -339,7 +339,7 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
         if (paint instanceof Color) {
             return true;
         }
-        log.debug("NYI: applyPaint() " + paint + " fill=" + fill);
+        LOG.debug("NYI: applyPaint() " + paint + " fill=" + fill);
         if (paint instanceof TexturePaint) {
 //            TexturePaint texturePaint = (TexturePaint)paint;
 //            BufferedImage bufferedImage = texturePaint.getImage();
@@ -490,7 +490,7 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
                 currentPosition = new double[]{openingCoords[0], openingCoords[1]};
                 break;
             default:
-                log.debug("Unrecognised path iterator type");
+                LOG.debug("Unrecognised path iterator type");
                 break;
             }
         }
@@ -498,13 +498,13 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
 
     /** {@inheritDoc} */
     public void draw(Shape shape) {
-        log.debug("draw() shape=" + shape);
+        LOG.debug("draw() shape=" + shape);
         doDrawing(shape, false);
     }
 
     /** {@inheritDoc} */
     public void fill(Shape shape) {
-        log.debug("fill() shape=" + shape);
+        LOG.debug("fill() shape=" + shape);
         doDrawing(shape, true);
     }
 
@@ -516,7 +516,7 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
      */
     public void handleIOException(IOException ioe) {
         // TODO Surely, there's a better way to do this.
-        log.error(ioe.getMessage());
+        LOG.error(ioe.getMessage());
         ioe.printStackTrace();
     }
 
@@ -659,29 +659,29 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
 
     /** {@inheritDoc} */
     public void drawRenderableImage(RenderableImage img, AffineTransform xform) {
-        log.debug("drawRenderableImage() NYI: img=" + img + ", xform=" + xform);
+        LOG.debug("drawRenderableImage() NYI: img=" + img + ", xform=" + xform);
     }
 
     /** {@inheritDoc} */
     public FontMetrics getFontMetrics(Font f) {
-        log.debug("getFontMetrics() NYI: f=" + f);
+        LOG.debug("getFontMetrics() NYI: f=" + f);
         return null;
     }
 
     /** {@inheritDoc} */
     public void setXORMode(Color col) {
-        log.debug("setXORMode() NYI: col=" + col);
+        LOG.debug("setXORMode() NYI: col=" + col);
     }
 
     /** {@inheritDoc} */
     public void addNativeImage(org.apache.xmlgraphics.image.loader.Image image,
             float x, float y, float width, float height) {
-        log.debug("NYI: addNativeImage() " + "image=" + image
+        LOG.debug("NYI: addNativeImage() " + "image=" + image
                 + ",x=" + x + ",y=" + y + ",width=" + width + ",height=" + height);
     }
 
     /** {@inheritDoc} */
     public void copyArea(int x, int y, int width, int height, int dx, int dy) {
-        log.debug("copyArea() NYI: ");
+        LOG.debug("copyArea() NYI: ");
     }
 }

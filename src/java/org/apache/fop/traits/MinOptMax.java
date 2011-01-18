@@ -56,7 +56,7 @@ public final class MinOptMax implements Serializable {
      * @return the corresponding instance
      * @throws IllegalArgumentException if <code>min > opt || max < opt</code>.
      */
-    public static MinOptMax getInstance(int min, int opt, int max) {
+    public static MinOptMax getInstance(int min, int opt, int max) throws IllegalArgumentException {
         if (min > opt) {
             throw new IllegalArgumentException("min (" + min + ") > opt (" + opt + ")");
         }
@@ -167,7 +167,7 @@ public final class MinOptMax implements Serializable {
      * @throws ArithmeticException if this instance has strictly less shrink or stretch
      * than the operand
      */
-    public MinOptMax minus(MinOptMax operand) {
+    public MinOptMax minus(MinOptMax operand) throws ArithmeticException {
         checkCompatibility(getShrink(), operand.getShrink(), "shrink");
         checkCompatibility(getStretch(), operand.getStretch(), "stretch");
         return new MinOptMax(min - operand.min, opt - operand.opt, max - operand.max);
@@ -192,50 +192,54 @@ public final class MinOptMax implements Serializable {
     }
 
     /**
-     * Returns an instance with the given value added to the minimal value.
+     * Do not use, backwards compatibility only. Returns an instance with the
+     * given value added to the minimal value.
      *
      * @param minOperand the minimal value to be added.
      * @return an instance with the given value added to the minimal value.
-     * @throws IllegalArgumentException if <code>min + minOperand > opt || max < opt</code>.
-     * @deprecated Do not use! It's only for backwards compatibility.
+     * @throws IllegalArgumentException if
+     * <code>min + minOperand > opt || max < opt</code>.
      */
-    public MinOptMax plusMin(int minOperand) {
+    public MinOptMax plusMin(int minOperand) throws IllegalArgumentException {
         return getInstance(min + minOperand, opt, max);
     }
 
     /**
-     * Returns an instance with the given value subtracted to the minimal value.
+     * Do not use, backwards compatibility only. Returns an instance with the
+     * given value subtracted to the minimal value.
      *
      * @param minOperand the minimal value to be subtracted.
      * @return an instance with the given value subtracted to the minimal value.
-     * @throws IllegalArgumentException if <code>min - minOperand > opt || max < opt</code>.
-     * @deprecated Do not use! It's only for backwards compatibility.
+     * @throws IllegalArgumentException if
+     * <code>min - minOperand > opt || max < opt</code>.
      */
-    public MinOptMax minusMin(int minOperand) {
+    public MinOptMax minusMin(int minOperand) throws IllegalArgumentException {
         return getInstance(min - minOperand, opt, max);
     }
 
     /**
-     * Returns an instance with the given value added to the maximal value.
+     * Do not use, backwards compatibility only. Returns an instance with the
+     * given value added to the maximal value.
      *
      * @param maxOperand the maximal value to be added.
      * @return an instance with the given value added to the maximal value.
-     * @throws IllegalArgumentException if <code>min > opt || max < opt + maxOperand</code>.
-     * @deprecated Do not use! It's only for backwards compatibility.
+     * @throws IllegalArgumentException if
+     * <code>min > opt || max < opt + maxOperand</code>.
      */
-    public MinOptMax plusMax(int maxOperand) {
+    public MinOptMax plusMax(int maxOperand) throws IllegalArgumentException {
         return getInstance(min, opt, max + maxOperand);
     }
 
     /**
-     * Returns an instance with the given value subtracted to the maximal value.
+     * Do not use, backwards compatibility only. Returns an instance with the
+     * given value subtracted to the maximal value.
      *
      * @param maxOperand the maximal value to be subtracted.
      * @return an instance with the given value subtracted to the maximal value.
-     * @throws IllegalArgumentException if <code>min > opt || max < opt - maxOperand</code>.
-     * @deprecated Do not use! It's only for backwards compatibility.
+     * @throws IllegalArgumentException if
+     * <code>min > opt || max < opt - maxOperand</code>.
      */
-    public MinOptMax minusMax(int maxOperand) {
+    public MinOptMax minusMax(int maxOperand) throws IllegalArgumentException {
         return getInstance(min, opt, max - maxOperand);
     }
 
@@ -246,7 +250,7 @@ public final class MinOptMax implements Serializable {
      * @return the product of this <code>MinOptMax</code> and the given factor
      * @throws IllegalArgumentException if the factor is negative
      */
-    public MinOptMax mult(int factor) {
+    public MinOptMax mult(int factor) throws IllegalArgumentException {
         if (factor < 0) {
             throw new IllegalArgumentException("factor < 0; was: " + factor);
         } else if (factor == 1) {

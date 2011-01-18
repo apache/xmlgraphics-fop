@@ -27,13 +27,17 @@ import org.apache.xmlgraphics.util.Service;
 /**
  * This class is responsible for converting events into exceptions.
  */
-public class EventExceptionManager {
+public final class EventExceptionManager {
 
-    private static final Map EXCEPTION_FACTORIES = new java.util.HashMap();
+    private EventExceptionManager() {
+    }
+
+    private static final Map<String, ExceptionFactory> EXCEPTION_FACTORIES
+        = new java.util.HashMap<String, ExceptionFactory>();
 
     static {
-        Iterator iter;
-        iter = Service.providers(ExceptionFactory.class, true);
+        Iterator<Object> iter;
+        iter = Service.providers(ExceptionFactory.class);
         while (iter.hasNext()) {
             ExceptionFactory factory = (ExceptionFactory)iter.next();
             EXCEPTION_FACTORIES.put(factory.getExceptionClass().getName(), factory);
@@ -60,7 +64,7 @@ public class EventExceptionManager {
             String msg = EventFormatter.format(event);
             //Get original exception as cause if it is given as one of the parameters
             Throwable t = null;
-            Iterator iter = event.getParams().values().iterator();
+            Iterator<Object> iter = event.getParams().values().iterator();
             while (iter.hasNext()) {
                 Object o = iter.next();
                 if (o instanceof Throwable) {
@@ -93,6 +97,6 @@ public class EventExceptionManager {
          * Returns the {@link Exception} class created by this factory.
          * @return the exception class
          */
-        Class getExceptionClass();
+        Class<? extends Exception> getExceptionClass();
     }
 }

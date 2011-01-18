@@ -29,6 +29,8 @@ import java.io.Serializable;
  */
 public class CharVector implements Cloneable, Serializable {
 
+    private static final long serialVersionUID = 4263472982169004048L;
+
     /**
      * Capacity increment size
      */
@@ -45,10 +47,17 @@ public class CharVector implements Cloneable, Serializable {
      */
     private int n;
 
+    /**
+     * Construct char vector instance with default block size.
+     */
     public CharVector() {
         this(DEFAULT_BLOCK_SIZE);
     }
 
+    /**
+     * Construct char vector instance.
+     * @param capacity initial block size
+     */
     public CharVector(int capacity) {
         if (capacity > 0) {
             blockSize = capacity;
@@ -59,12 +68,21 @@ public class CharVector implements Cloneable, Serializable {
         n = 0;
     }
 
+    /**
+     * Construct char vector instance.
+     * @param a char array to use
+     */
     public CharVector(char[] a) {
         blockSize = DEFAULT_BLOCK_SIZE;
         array = a;
         n = a.length;
     }
 
+    /**
+     * Construct char vector instance.
+     * @param a char array to use
+     * @param capacity initial block size
+     */
     public CharVector(char[] a, int capacity) {
         if (capacity > 0) {
             blockSize = capacity;
@@ -76,44 +94,66 @@ public class CharVector implements Cloneable, Serializable {
     }
 
     /**
-     * Reset Vector but don't resize or clear elements
+     * Reset length of vector, but don't clear contents.
      */
     public void clear() {
         n = 0;
     }
 
+    /** {@inheritDoc} */
     public Object clone() {
         CharVector cv = new CharVector((char[])array.clone(), blockSize);
         cv.n = this.n;
         return cv;
     }
 
+    /**
+     * Obtain char vector array.
+     * @return char array
+     */
     public char[] getArray() {
         return array;
     }
 
     /**
-     * return number of items in array
+     * Obtain number of items in array.
+     * @return number of items
      */
     public int length() {
         return n;
     }
 
     /**
-     * returns current capacity of array
+     * Obtain capacity of array.
+     * @return current capacity of array
      */
     public int capacity() {
         return array.length;
     }
 
+    /**
+     * Pet char at index.
+     * @param index the index
+     * @param val a char
+     */
     public void put(int index, char val) {
         array[index] = val;
     }
 
+    /**
+     * Get char at index.
+     * @param index the index
+     * @return a char
+     */
     public char get(int index) {
         return array[index];
     }
 
+    /**
+     * This is to implement memory allocation in the array. Like malloc().
+     * @param size to allocate
+     * @return previous length
+     */
     public int alloc(int size) {
         int index = n;
         int len = array.length;
@@ -126,6 +166,9 @@ public class CharVector implements Cloneable, Serializable {
         return index;
     }
 
+    /**
+     * Trim char vector to current length.
+     */
     public void trimToSize() {
         if (n < array.length) {
             char[] aux = new char[n];

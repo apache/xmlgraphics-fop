@@ -98,7 +98,7 @@ public class PageProductionException extends RuntimeException {
         }
 
         /** {@inheritDoc} */
-        public Class getExceptionClass() {
+        public Class<PageProductionException> getExceptionClass() {
             return PageProductionException.class;
         }
 

@@ -646,8 +646,11 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
         }
     }
 
-    /** {@inheritDoc} */
-    protected RenderingContext createRenderingContext() {
+    /**
+     * @return a new rendering context
+     * @throws IllegalStateException unless overridden
+     */
+    protected RenderingContext createRenderingContext() throws IllegalStateException {
         throw new IllegalStateException("Should never be called!");
     }
 

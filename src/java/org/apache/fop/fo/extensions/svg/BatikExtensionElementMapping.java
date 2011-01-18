@@ -53,7 +53,7 @@ public class BatikExtensionElementMapping extends ElementMapping {
      * Batik classes that apparently need it (error messages, perhaps)
      * @return an XML parser classname
      */
-    private final String getAParserClassName() {
+    private String getAParserClassName() {
         try {
             //TODO Remove when Batik uses JAXP instead of SAX directly.
             SAXParserFactory factory = SAXParserFactory.newInstance();
@@ -63,6 +63,7 @@ public class BatikExtensionElementMapping extends ElementMapping {
         }
     }
 
+    /** initialize mapping */
     protected void initialize() {
         if (foObjs == null && batikAvail) {
             // this sets the parser that will be used
@@ -72,7 +73,7 @@ public class BatikExtensionElementMapping extends ElementMapping {
                 XMLResourceDescriptor.setXMLParserClassName(
                   getAParserClassName());
 
-                foObjs = new HashMap();
+                foObjs = new HashMap<String, Maker>();
                 foObjs.put("batik", new SE());
                 foObjs.put(DEFAULT, new SVGMaker());
             } catch (Throwable t) {

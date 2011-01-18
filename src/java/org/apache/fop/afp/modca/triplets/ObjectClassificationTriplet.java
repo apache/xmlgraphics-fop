@@ -182,7 +182,8 @@ public class ObjectClassificationTriplet extends AbstractTriplet {
         data[5] = 0x00; // reserved (must be zero)
 
         // StrucFlgs - Information on the structure of the object container
-        byte[] structureFlagsBytes = getStructureFlagsAsBytes(dataInContainer, containerHasOEG, dataInOCD);
+        byte[] structureFlagsBytes
+            = getStructureFlagsAsBytes(dataInContainer, containerHasOEG, dataInOCD);
         data[6] = structureFlagsBytes[0];
         data[7] = structureFlagsBytes[1];
 

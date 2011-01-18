@@ -102,6 +102,13 @@ public class RtfExtraRowSet extends RtfContainer {
             return result;
         }
 
+        public int hashCode() {
+            int hc = super.hashCode();
+            hc ^= ( hc * 11 ) + xOffset;
+            hc ^= ( hc * 19 ) + rowIndex;
+            return hc;
+        }
+
         public boolean equals(Object o) {
             return o != null && this.compareTo(o) == 0;
         }

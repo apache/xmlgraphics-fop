@@ -187,7 +187,8 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
     }
 
     /** {@inheritDoc} */
-    public List getNextKnuthElements(LayoutContext context, int alignment) {
+    public List getNextKnuthElements                            // CSOK: MethodLength
+        (LayoutContext context, int alignment) {
         resetSpaces();
         if (isAbsoluteOrFixed()) {
             return getNextKnuthElementsAbsolute(context, alignment);
@@ -322,7 +323,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
                     }
                     if (ElementListUtils.endsWithForcedBreak(returnedList)) {
                         // a descendant of this block has break-after
-                        if (curLM.isFinished()) {
+                        if (curLM.isFinished() && !hasNextChildLM()) {
                             // there is no other content in this block;
                             // it's useless to add space after before a page break
                             setFinished(true);
@@ -404,8 +405,9 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
     }
 
     /** {@inheritDoc} */
-    public List getNextKnuthElements(LayoutContext context, int alignment, Stack lmStack,
-            Position restartPosition, LayoutManager restartAtLM) {
+    public List getNextKnuthElements                            // CSOK: MethodLength
+        (LayoutContext context, int alignment, Stack lmStack,
+         Position restartPosition, LayoutManager restartAtLM) {
         resetSpaces();
         if (isAbsoluteOrFixed()) {
             return getNextKnuthElementsAbsolute(context, alignment);
@@ -990,8 +992,8 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
     }
 
     /** {@inheritDoc} */
-    public void addAreas(PositionIterator parentIter,
-            LayoutContext layoutContext) {
+    public void addAreas                                        // CSOK: MethodLength
+        (PositionIterator parentIter, LayoutContext layoutContext) {
         getParentArea(null);
 
         // if this will create the first block area in a page

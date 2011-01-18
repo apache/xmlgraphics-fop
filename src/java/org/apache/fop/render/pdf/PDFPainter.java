@@ -162,10 +162,7 @@ public class PDFPainter extends AbstractIFPainter {
 
     /**
      * Places a previously registered image at a certain place on the page.
-     * @param x X coordinate
-     * @param y Y coordinate
-     * @param w width for image
-     * @param h height for image
+     * @param rect the rectangle for the image
      * @param xobj the image XObject
      */
     private void placeImage(Rectangle rect, PDFXObject xobj) {
@@ -179,10 +176,7 @@ public class PDFPainter extends AbstractIFPainter {
     }
     /**
      * Places a previously registered image at a certain place on the page - Accessibility version
-     * @param x X coordinate
-     * @param y Y coordinate
-     * @param w width for image
-     * @param h height for image
+     * @param rect the rectangle for the image
      * @param xobj the image XObject
      */
     private void placeImageAccess(Rectangle rect, PDFXObject xobj) {

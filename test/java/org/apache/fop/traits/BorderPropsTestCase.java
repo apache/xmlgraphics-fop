@@ -23,6 +23,7 @@ import java.awt.Color;
 
 import junit.framework.TestCase;
 
+import org.apache.xmlgraphics.java2d.color.ColorSpaces;
 import org.apache.xmlgraphics.java2d.color.DeviceCMYKColorSpace;
 
 import org.apache.fop.fo.Constants;

@@ -25,16 +25,23 @@
   <body>
     <section id="build-needed">
       <title>Do You Need To Build?</title>
-      <p>
+<!-- text for released versions -->
+<!--      <p>
         FOP distributions are either pre-compiled binary or source.
         If you are using a binary distribution, it is already built and there is no need to build it again. 
         See the <a href="../download.html">Download Instructions</a> for information about whether a 
         binary or source distribution is best for your needs.
-      </p>
+      </p>-->
+<!-- /text for released versions -->
+<!-- text for trunk -->
       <p>
-        If you got the source code from a repository snapshot or via Subversion you will need to build FOP
-        in any case.
+        FOP snapshots are either pre-compiled binary or source.
+        If you are using a binary snapshot, it is already built and there is no need to build it again. 
+        If you got the source code from a repository snapshot or via Subversion you will need to build FOP.
+        See the <a href="../download.html">Download Instructions</a> for information about where to obtain binary or repository snapshots, and whether a 
+        binary or source snapshot is best for your needs.
       </p>
+<!-- /text for trunk -->
     </section>
     <section id="env">
       <title>Set Up Your Environment</title>

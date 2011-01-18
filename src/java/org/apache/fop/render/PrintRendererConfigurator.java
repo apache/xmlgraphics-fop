@@ -19,6 +19,7 @@
 
 package org.apache.fop.render;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.avalon.framework.configuration.Configuration;
@@ -48,7 +49,7 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
             implements RendererConfigurator, IFDocumentHandlerConfigurator {
 
     /** logger instance */
-    protected static Log log = LogFactory.getLog(PrintRendererConfigurator.class);
+    protected static final Log log = LogFactory.getLog(PrintRendererConfigurator.class);
 
     /**
      * Default constructor
@@ -76,7 +77,7 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
 
         FontEventListener listener = new FontEventAdapter(
                 renderer.getUserAgent().getEventBroadcaster());
-        List/*<EmbedFontInfo>*/ embedFontInfoList = buildFontList(cfg, fontResolver, listener);
+        List<EmbedFontInfo> embedFontInfoList = buildFontList(cfg, fontResolver, listener);
         printRenderer.addFontList(embedFontInfoList);
     }
 
@@ -88,7 +89,7 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
      * @return the list of {@link EmbedFontInfo} objects
      * @throws FOPException if an error occurs while processing the configuration
      */
-    protected List/*<EmbedFontInfo>*/ buildFontList(Configuration cfg, FontResolver fontResolver,
+    protected List<EmbedFontInfo> buildFontList(Configuration cfg, FontResolver fontResolver,
                     FontEventListener listener) throws FOPException {
         FopFactory factory = userAgent.getFactory();
         FontManager fontManager = factory.getFontManager();
@@ -102,7 +103,7 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
         //Read font configuration
         FontInfoConfigurator fontInfoConfigurator
             = new FontInfoConfigurator(cfg, fontManager, fontResolver, listener, strict);
-        List/*<EmbedFontInfo>*/ fontInfoList = new java.util.ArrayList/*<EmbedFontInfo>*/();
+        List<EmbedFontInfo> fontInfoList = new ArrayList<EmbedFontInfo>();
         fontInfoConfigurator.configure(fontInfoList);
         return fontInfoList;
     }
@@ -118,7 +119,7 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
     public void setupFontInfo(IFDocumentHandler documentHandler, FontInfo fontInfo)
                 throws FOPException {
         FontManager fontManager = userAgent.getFactory().getFontManager();
-        List fontCollections = new java.util.ArrayList();
+        List<FontCollection> fontCollections = new ArrayList<FontCollection>();
         fontCollections.add(new Base14FontCollection(fontManager.isBase14KerningEnabled()));
 
         Configuration cfg = super.getRendererConfig(documentHandler.getMimeType());
@@ -126,7 +127,7 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
             FontResolver fontResolver = new DefaultFontResolver(userAgent);
             FontEventListener listener = new FontEventAdapter(
                     userAgent.getEventBroadcaster());
-            List fontList = buildFontList(cfg, fontResolver, listener);
+            List<EmbedFontInfo> fontList = buildFontList(cfg, fontResolver, listener);
             fontCollections.add(new CustomFontCollection(fontResolver, fontList));
         }
 

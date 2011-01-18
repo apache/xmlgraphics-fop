@@ -92,7 +92,7 @@ public class URIResolutionTestCase extends AbstractFOPTestCase {
 
         MyURIResolver resolver = new MyURIResolver(withStream);
         ua.setURIResolver(resolver);
-        ua.setBaseURL(foFile.getParentFile().toURL().toString());
+        ua.setBaseURL(foFile.getParentFile().toURI().toURL().toString());
 
         Document doc = createAreaTree(foFile, ua);
 
@@ -119,7 +119,7 @@ public class URIResolutionTestCase extends AbstractFOPTestCase {
         FOUserAgent ua = fopFactory.newFOUserAgent();
         MyURIResolver resolver = new MyURIResolver(false);
         ua.setURIResolver(resolver);
-        ua.setBaseURL(foFile.getParentFile().toURL().toString());
+        ua.setBaseURL(foFile.getParentFile().toURI().toURL().toString());
 
         ByteArrayOutputStream baout = new ByteArrayOutputStream();
 

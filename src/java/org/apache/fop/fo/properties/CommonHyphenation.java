@@ -36,32 +36,32 @@ import org.apache.fop.fonts.Typeface;
 public final class CommonHyphenation {
 
     /** Logger */
-    protected static Log log = LogFactory.getLog(CommonHyphenation.class);
+    private static final Log LOG = LogFactory.getLog(CommonHyphenation.class);
 
-    private static final PropertyCache cache = new PropertyCache(CommonHyphenation.class);
+    private static final PropertyCache CACHE = new PropertyCache(CommonHyphenation.class);
 
     private int hash = 0;
 
     /** The "language" property */
-    public final StringProperty language;
+    public final StringProperty language;                       // CSOK: VisibilityModifier
 
     /** The "country" property */
-    public final StringProperty country;
+    public final StringProperty country;                        // CSOK: VisibilityModifier
 
     /** The "script" property */
-    public final StringProperty script;
+    public final StringProperty script;                         // CSOK: VisibilityModifier
 
     /** The "hyphenate" property */
-    public final EnumProperty hyphenate;
+    public final EnumProperty hyphenate;                        // CSOK: VisibilityModifier
 
     /** The "hyphenation-character" property */
-    public final CharacterProperty hyphenationCharacter;
+    public final CharacterProperty hyphenationCharacter;        // CSOK: VisibilityModifier
 
     /** The "hyphenation-push-character-count" property */
-    public final NumberProperty hyphenationPushCharacterCount;
+    public final NumberProperty hyphenationPushCharacterCount;  // CSOK: VisibilityModifier
 
     /** The "hyphenation-remain-character-count" property*/
-    public final NumberProperty hyphenationRemainCharacterCount;
+    public final NumberProperty hyphenationRemainCharacterCount; // CSOK: VisibilityModifier
 
     /**
      * Construct a CommonHyphenation object holding the given properties
@@ -87,24 +87,26 @@ public final class CommonHyphenation {
      * Gets the canonical <code>CommonHyphenation</code> instance corresponding
      * to the values of the related properties present on the given
      * <code>PropertyList</code>
-     *
      * @param propertyList  the <code>PropertyList</code>
+     * @return a common hyphenation instance
+     * @throws PropertyException if a a property exception occurs
      */
-    public static CommonHyphenation getInstance(PropertyList propertyList) throws PropertyException {
-        StringProperty language =
-            (StringProperty) propertyList.get(Constants.PR_LANGUAGE);
-        StringProperty country =
-            (StringProperty) propertyList.get(Constants.PR_COUNTRY);
-        StringProperty script =
-            (StringProperty) propertyList.get(Constants.PR_SCRIPT);
-        EnumProperty hyphenate =
-            (EnumProperty) propertyList.get(Constants.PR_HYPHENATE);
-        CharacterProperty hyphenationCharacter =
-            (CharacterProperty) propertyList.get(Constants.PR_HYPHENATION_CHARACTER);
-        NumberProperty hyphenationPushCharacterCount =
-            (NumberProperty) propertyList.get(Constants.PR_HYPHENATION_PUSH_CHARACTER_COUNT);
-        NumberProperty hyphenationRemainCharacterCount =
-            (NumberProperty) propertyList.get(Constants.PR_HYPHENATION_REMAIN_CHARACTER_COUNT);
+    public static CommonHyphenation getInstance(PropertyList propertyList)
+            throws PropertyException {
+        StringProperty language
+            = (StringProperty) propertyList.get(Constants.PR_LANGUAGE);
+        StringProperty country
+            = (StringProperty) propertyList.get(Constants.PR_COUNTRY);
+        StringProperty script
+            = (StringProperty) propertyList.get(Constants.PR_SCRIPT);
+        EnumProperty hyphenate
+            = (EnumProperty) propertyList.get(Constants.PR_HYPHENATE);
+        CharacterProperty hyphenationCharacter
+            = (CharacterProperty) propertyList.get(Constants.PR_HYPHENATION_CHARACTER);
+        NumberProperty hyphenationPushCharacterCount
+            = (NumberProperty) propertyList.get(Constants.PR_HYPHENATION_PUSH_CHARACTER_COUNT);
+        NumberProperty hyphenationRemainCharacterCount
+            = (NumberProperty) propertyList.get(Constants.PR_HYPHENATION_REMAIN_CHARACTER_COUNT);
 
         CommonHyphenation instance = new CommonHyphenation(
                                 language,
@@ -115,7 +117,7 @@ public final class CommonHyphenation {
                                 hyphenationPushCharacterCount,
                                 hyphenationRemainCharacterCount);
 
-        return cache.fetch(instance);
+        return CACHE.fetch(instance);
 
     }
 
@@ -164,7 +166,7 @@ public final class CommonHyphenation {
             }
         }
         if (warn) {
-            log.warn("Substituted specified hyphenation character (0x"
+            LOG.warn("Substituted specified hyphenation character (0x"
                     + Integer.toHexString(hyphChar)
                     + ") with 0x" + Integer.toHexString(effHyphChar)
                     + " because the font doesn't have the specified hyphenation character: "
@@ -209,12 +211,15 @@ public final class CommonHyphenation {
             hash = 37 * hash + (script == null ? 0 : script.hashCode());
             hash = 37 * hash + (country == null ? 0 : country.hashCode());
             hash = 37 * hash + (hyphenate == null ? 0 : hyphenate.hashCode());
-            hash = 37 * hash +
-                (hyphenationCharacter == null ? 0 : hyphenationCharacter.hashCode());
-            hash = 37 * hash +
-                (hyphenationPushCharacterCount == null ? 0 : hyphenationPushCharacterCount.hashCode());
-            hash = 37 * hash +
-                (hyphenationRemainCharacterCount == null ? 0 : hyphenationRemainCharacterCount.hashCode());
+            hash = 37 * hash
+                + (hyphenationCharacter == null
+                   ? 0 : hyphenationCharacter.hashCode());
+            hash = 37 * hash
+                + (hyphenationPushCharacterCount == null
+                 ? 0 : hyphenationPushCharacterCount.hashCode());
+            hash = 37 * hash
+                + (hyphenationRemainCharacterCount == null
+                 ? 0 : hyphenationRemainCharacterCount.hashCode());
             this.hash = hash;
         }
         return this.hash;

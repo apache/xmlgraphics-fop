@@ -31,24 +31,32 @@ import java.util.List;
  * to an output stream including sub-elements or a single value.
  */
 public class MIFElement {
+    /** name */
     protected String name;
+    /** value string */
     protected String valueStr = null;
+    /** value elements */
     protected List valueElements = null;
-
+    /** true if started */
     protected boolean started = false;
+    /** true if finishing */
     protected boolean finish = false;
+    /** true if finished */
     protected boolean finished = false;
 
     /**
+     * @param name a name
      */
-    public MIFElement(String n) {
-        name = n;
+    public MIFElement(String name) {
+        this.name = name;
     }
 
+    /** @param str a string value */
     public void setValue(String str) {
         valueStr = str;
     }
 
+    /** @param el an MIF element */
     public void addElement(MIFElement el) {
         if (valueElements == null) {
             valueElements = new java.util.ArrayList();
@@ -62,6 +70,10 @@ public class MIFElement {
      * This method can be called again to continue from the previous point.
      * An element that contains child elements will only be finished when
      * the finish method is called.
+     * @param os output stream
+     * @param indent indentation
+     * @return true if finished
+     * @throws IOException if not caught
      */
     public boolean output(OutputStream os, int indent) throws IOException {
         if (finished) {
@@ -105,6 +117,7 @@ public class MIFElement {
         return true;
     }
 
+    /** @param deep if true, also perform finish over value elements */
     public void finish(boolean deep) {
         finish = true;
         if (deep && valueElements != null) {

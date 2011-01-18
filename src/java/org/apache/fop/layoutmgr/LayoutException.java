@@ -29,7 +29,7 @@ import org.apache.fop.events.EventExceptionManager.ExceptionFactory;
  * Exception thrown by FOP if an unrecoverable layout error occurs. An example: An area overflows
  * a viewport that has overflow="error-if-overflow".
  *
- * @todo Discuss if this should become a checked exception.
+ * TODO Discuss if this should become a checked exception.
  */
 public class LayoutException extends RuntimeException {
 
@@ -97,7 +97,7 @@ public class LayoutException extends RuntimeException {
         }
 
         /** {@inheritDoc} */
-        public Class getExceptionClass() {
+        public Class<LayoutException> getExceptionClass() {
             return LayoutException.class;
         }
 

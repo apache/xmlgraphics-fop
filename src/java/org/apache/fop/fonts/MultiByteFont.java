@@ -237,11 +237,11 @@ public class MultiByteFont extends CIDFont {
      * Returns a Map of used Glyphs.
      * @return Map Map of used Glyphs
      */
-    public Map getUsedGlyphs() {
+    public Map<Integer, Integer> getUsedGlyphs() {
         return subset.getSubsetGlyphs();
     }
 
-    /** {@inheritDoc} */
+    /** @return an array of the chars used */
     public char[] getCharsUsed() {
         if (!isEmbeddable()) {
             return null;

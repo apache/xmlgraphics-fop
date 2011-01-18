@@ -27,7 +27,7 @@ import java.util.List;
 public class CustomFontCollection implements FontCollection {
 
     private FontResolver fontResolver;
-    private List/*<EmbedFontInfo>*/ embedFontInfoList;
+    private final List<EmbedFontInfo> embedFontInfoList;
 
     /**
      * Main constructor.
@@ -35,7 +35,7 @@ public class CustomFontCollection implements FontCollection {
      * @param customFonts the list of custom fonts
      */
     public CustomFontCollection(FontResolver fontResolver,
-            List/*<EmbedFontInfo>*/ customFonts) {
+            List<EmbedFontInfo> customFonts) {
         this.fontResolver = fontResolver;
         if (this.fontResolver == null) {
             //Ensure that we have minimal font resolution capabilities
@@ -54,7 +54,7 @@ public class CustomFontCollection implements FontCollection {
         //FontReader reader = null;
 
         for (int i = 0; i < embedFontInfoList.size(); i++) {
-            EmbedFontInfo embedFontInfo = (EmbedFontInfo)embedFontInfoList.get(i);
+            EmbedFontInfo embedFontInfo = embedFontInfoList.get(i);
 
             //String metricsFile = configFontInfo.getMetricsFile();
             internalName = "F" + num;
@@ -69,7 +69,7 @@ public class CustomFontCollection implements FontCollection {
             LazyFont font = new LazyFont(embedFontInfo, this.fontResolver);
             fontInfo.addMetrics(internalName, font);
 
-            List triplets = embedFontInfo.getFontTriplets();
+            List<FontTriplet> triplets = embedFontInfo.getFontTriplets();
             for (int tripletIndex = 0; tripletIndex < triplets.size(); tripletIndex++) {
                 FontTriplet triplet = (FontTriplet) triplets.get(tripletIndex);
                 fontInfo.addFontProperties(internalName, triplet);

@@ -155,6 +155,7 @@ public class SpaceSpecifier implements Cloneable {
         return resolvedSpace;
     }
 
+    /** {@inheritDoc} */
     public String toString() {
         return "Space Specifier (resolved at begin/end of ref. area:):\n"
                 + resolve(false) + "\n" + resolve(true);

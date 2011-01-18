@@ -32,6 +32,9 @@ package org.apache.fop.area;
  * It holds child block areas such as other blocks or lines.
  */
 public class Block extends BlockParent {
+
+    private static final long serialVersionUID = 6843727817993665788L;
+
     /**
      * Normally stacked with other blocks.
      */
@@ -58,6 +61,7 @@ public class Block extends BlockParent {
     private int stacking = TB;
     private int positioning = STACK;
 
+    /** if true, allow BPD update */
     protected transient boolean allowBPDUpdate = true;
 
     // a block with may contain the dominant styling info in
@@ -126,7 +130,7 @@ public class Block extends BlockParent {
      */
     public int getStartIndent() {
         Integer startIndent = (Integer)getTrait(Trait.START_INDENT);
-        return (startIndent != null ? startIndent.intValue() : 0);
+        return (startIndent != null ? startIndent : 0);
     }
 
 }

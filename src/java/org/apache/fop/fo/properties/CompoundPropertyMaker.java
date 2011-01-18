@@ -32,8 +32,8 @@ public class CompoundPropertyMaker extends PropertyMaker {
     /**
      *  The list of subproperty makers supported by this compound maker.
      */
-    private PropertyMaker[] subproperties =
-                    new PropertyMaker[Constants.COMPOUND_COUNT];
+    private PropertyMaker[] subproperties
+        = new PropertyMaker[Constants.COMPOUND_COUNT];
 
     /**
      *  The first subproperty maker which has a setByShorthand of true.
@@ -66,7 +66,7 @@ public class CompoundPropertyMaker extends PropertyMaker {
 
     /**
      * Add a subproperty to this maker.
-     * @param subproperty
+     * @param subproperty the sub property
      */
     public void addSubpropMaker(PropertyMaker subproperty) {
         // Place the base propId in the propId of the subproperty.
@@ -101,12 +101,11 @@ public class CompoundPropertyMaker extends PropertyMaker {
      * Calculate the real value of a subproperty by unmasking and shifting
      * the value into the range [0 - (COMPOUND_COUNT-1)].
      * The value is used as index into the subproperties array.
-     * @param propId the property id of the sub property.
+     * @param subpropertyId the property id of the sub property.
      * @return the array index.
      */
     private int getSubpropIndex(int subpropertyId) {
-        return ((subpropertyId & Constants.COMPOUND_MASK) >>
-                                    Constants.COMPOUND_SHIFT)-1;
+        return ((subpropertyId & Constants.COMPOUND_MASK) >> Constants.COMPOUND_SHIFT) - 1;
     }
 
     /**
@@ -137,11 +136,11 @@ public class CompoundPropertyMaker extends PropertyMaker {
      * @param propertyList The PropertyList object being built for this FO.
      * @param tryInherit true if inherited properties should be examined.
      * @param tryDefault true if the default value should be returned.
+     * @return the property
+     * @throws PropertyException if a property exception occurs
      */
-    public Property get(int subpropertyId, PropertyList propertyList,
-                        boolean tryInherit, boolean tryDefault)
-        throws PropertyException
-    {
+    public Property get(int subpropertyId, PropertyList propertyList, boolean tryInherit,
+            boolean tryDefault) throws PropertyException {
         Property p = super.get(subpropertyId, propertyList, tryInherit, tryDefault);
         if (subpropertyId != 0 && p != null) {
             p = getSubprop(p, subpropertyId);
@@ -254,14 +253,15 @@ public class CompoundPropertyMaker extends PropertyMaker {
      * @throws PropertyException ...
      */
     protected Property makeCompound(PropertyList propertyList, FObj parentFO)
-        throws PropertyException {
+            throws PropertyException {
         Property p = makeNewProperty();
         CompoundDatatype data = (CompoundDatatype) p.getObject();
         for (int i = 0; i < Constants.COMPOUND_COUNT; i++) {
             PropertyMaker subpropertyMaker = subproperties[i];
             if (subpropertyMaker != null) {
                 Property subproperty = subpropertyMaker.make(propertyList);
-                data.setComponent(subpropertyMaker.getPropId() & Constants.COMPOUND_MASK, subproperty, true);
+                data.setComponent(subpropertyMaker.getPropId()
+                                  & Constants.COMPOUND_MASK, subproperty, true);
             }
         }
         return p;

@@ -166,10 +166,11 @@ public class PDFDocumentNavigationHandler implements IFDocumentNavigationHandler
         } else if (action instanceof URIAction) {
             URIAction u = (URIAction)action;
             assert u.isComplete();
+            String uri = u.getURI();
             PDFFactory factory = getPDFDoc().getFactory();
-            pdfAction = factory.getExternalAction(u.getURI(), u.isNewWindow());
+            pdfAction = factory.getExternalAction(uri, u.isNewWindow());
             if (!pdfAction.hasObjectNumber()) {
-                //Some PDF actions a pooled
+                //Some PDF actions are pooled
                 getPDFDoc().registerObject(pdfAction);
             }
             this.completeActions.put(action.getID(), pdfAction);
@@ -188,7 +189,7 @@ public class PDFDocumentNavigationHandler implements IFDocumentNavigationHandler
         p2d = new Point2D.Double(
                 action.getTargetLocation().x / 1000.0,
                 (pageRef.getPageDimension().height - action.getTargetLocation().y) / 1000.0);
-        String pdfPageRef = pageRef.getPageRef().toString();
+        String pdfPageRef = pageRef.getPageRef();
         pdfGoTo.setPageReference(pdfPageRef);
         pdfGoTo.setPosition(p2d);
 

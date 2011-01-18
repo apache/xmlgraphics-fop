@@ -19,7 +19,9 @@
 
 package org.apache.fop.fonts;
 
+import java.io.File;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -27,7 +29,6 @@ import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fonts.substitute.FontSubstitutions;
 import org.apache.fop.fonts.substitute.FontSubstitutionsConfigurator;
@@ -41,7 +42,9 @@ public class FontManagerConfigurator {
     /** logger instance */
     private static Log log = LogFactory.getLog(FontManagerConfigurator.class);
 
-    private Configuration cfg;
+    private final Configuration cfg;
+
+    private URI baseURI = null;
 
     /**
      * Main constructor
@@ -52,26 +55,44 @@ public class FontManagerConfigurator {
     }
 
     /**
+     * Main constructor
+     * @param cfg the font manager configuration object
+     * @param baseURI the base URI of the configuration
+     */
+    public FontManagerConfigurator(Configuration cfg, URI baseURI) {
+        this.cfg = cfg;
+        this.baseURI = baseURI;
+    }
+
+    /**
      * Initializes font settings from the user configuration
      * @param fontManager a font manager
      * @param strict true if strict checking of the configuration is enabled
      * @throws FOPException if an exception occurs while processing the configuration
      */
     public void configure(FontManager fontManager, boolean strict) throws FOPException {
-
         // caching (fonts)
         if (cfg.getChild("use-cache", false) != null) {
             try {
-                fontManager.setUseCache(
-                        cfg.getChild("use-cache").getValueAsBoolean());
-            } catch (ConfigurationException mfue) {
-                LogUtil.handleException(log, mfue, true);
+                fontManager.setUseCache(cfg.getChild("use-cache").getValueAsBoolean());
+            } catch (ConfigurationException e) {
+                LogUtil.handleException(log, e, true);
+            }
+        }
+        if (cfg.getChild("cache-file", false) != null) {
+            try {
+                fontManager.setCacheFile(new File(cfg.getChild("cache-file").getValue()));
+            } catch (ConfigurationException e) {
+                LogUtil.handleException(log, e, true);
             }
         }
         if (cfg.getChild("font-base", false) != null) {
+            String path = cfg.getChild("font-base").getValue(null);
+            if (baseURI != null) {
+                path = baseURI.resolve(path).normalize().toString();
+            }
             try {
-                fontManager.setFontBaseURL(
-                        cfg.getChild("font-base").getValue(null));
+                fontManager.setFontBaseURL(path);
             } catch (MalformedURLException mfue) {
                 LogUtil.handleException(log, mfue, true);
             }
@@ -80,13 +101,12 @@ public class FontManagerConfigurator {
         // global font configuration
         Configuration fontsCfg = cfg.getChild("fonts", false);
         if (fontsCfg != null) {
+
             // font substitution
             Configuration substitutionsCfg = fontsCfg.getChild("substitutions", false);
             if (substitutionsCfg != null) {
-                FontSubstitutionsConfigurator fontSubstitutionsConfigurator
-                        = new FontSubstitutionsConfigurator(substitutionsCfg);
                 FontSubstitutions substitutions = new FontSubstitutions();
-                fontSubstitutionsConfigurator.configure(substitutions);
+                new FontSubstitutionsConfigurator(substitutionsCfg).configure(substitutions);
                 fontManager.setFontSubstitutions(substitutions);
             }
 
@@ -110,7 +130,7 @@ public class FontManagerConfigurator {
      */
     public static FontTriplet.Matcher createFontsMatcher(
             Configuration cfg, boolean strict) throws FOPException {
-        List matcherList = new java.util.ArrayList();
+        List<FontTriplet.Matcher> matcherList = new java.util.ArrayList<FontTriplet.Matcher>();
         Configuration[] matches = cfg.getChildren("match");
         for (int i = 0; i < matches.length; i++) {
             try {
@@ -122,14 +142,13 @@ public class FontManagerConfigurator {
             }
         }
         FontTriplet.Matcher orMatcher = new OrFontTripletMatcher(
-                (FontTriplet.Matcher[])matcherList.toArray(
-                        new FontTriplet.Matcher[matcherList.size()]));
+                matcherList.toArray(new FontTriplet.Matcher[matcherList.size()]));
         return orMatcher;
     }
 
     private static class OrFontTripletMatcher implements FontTriplet.Matcher {
 
-        private FontTriplet.Matcher[] matchers;
+        private final FontTriplet.Matcher[] matchers;
 
         public OrFontTripletMatcher(FontTriplet.Matcher[] matchers) {
             this.matchers = matchers;
@@ -149,7 +168,7 @@ public class FontManagerConfigurator {
 
     private static class FontFamilyRegExFontTripletMatcher implements FontTriplet.Matcher {
 
-        private Pattern regex;
+        private final Pattern regex;
 
         public FontFamilyRegExFontTripletMatcher(String regex) {
             this.regex = Pattern.compile(regex);

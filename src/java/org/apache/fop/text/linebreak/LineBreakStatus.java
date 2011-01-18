@@ -62,8 +62,9 @@ public class LineBreakStatus {
 
     /**
      * Check whether a line break may happen according to the rules described in
-     * the <a href="http://unicode.org/reports/tr14/#Algorithm">Unicode Line Breaking Algorithm</a>.
-     * The function returns the line breaking status of the point <em>before</em> the given character.
+     * the <a href="http://unicode.org/reports/tr14/#Algorithm">Unicode Line Breaking
+     * Algorithm</a>. The function returns the line breaking status of the point
+     * <em>before</em> the given character.
      * The algorithm is the table-driven algorithm, as described in
      * <a href="http://unicode.org/reports/tr14/#PairBasedImplementation">
      * Unicode Technical Report #14</a>.
@@ -86,6 +87,7 @@ public class LineBreakStatus {
 
         /* Initial conversions */
         switch (currentClass) {
+            case 0: // Unassigned codepoint: same treatment as AI
             case LineBreakUtils.LINE_BREAK_PROPERTY_AI:
             case LineBreakUtils.LINE_BREAK_PROPERTY_SG:
             case LineBreakUtils.LINE_BREAK_PROPERTY_XX:

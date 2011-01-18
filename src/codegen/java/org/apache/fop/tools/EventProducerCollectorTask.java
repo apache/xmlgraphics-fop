@@ -117,6 +117,7 @@ public class EventProducerCollectorTask extends Task {
 
     /**
      * Updates the translation file with new entries for newly found event producer methods.
+     * @param modelFile the model file to use
      * @throws IOException if an I/O error occurs
      */
     protected void updateTranslationFile(File modelFile) throws IOException {

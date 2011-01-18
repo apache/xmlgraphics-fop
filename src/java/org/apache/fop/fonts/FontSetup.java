@@ -25,8 +25,6 @@ import java.util.List;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.fop.fonts.base14.Courier;
 import org.apache.fop.fonts.base14.CourierBold;
 import org.apache.fop.fonts.base14.CourierBoldOblique;
@@ -51,12 +49,10 @@ import org.apache.fop.fonts.base14.ZapfDingbats;
  * Assigns the font (with metrics) to internal names like "F1" and
  * assigns family-style-weight triplets to the fonts
  */
-public class FontSetup {
+public final class FontSetup {
 
-    /**
-     * logging instance
-     */
-    protected static Log log = LogFactory.getLog(FontSetup.class);
+    private FontSetup() {
+    }
 
     /**
      * Sets up a font info
@@ -76,7 +72,8 @@ public class FontSetup {
      * @param embedFontInfoList a list of EmbedFontInfo objects
      * @param resolver the font resolver
      */
-    public static void setup(FontInfo fontInfo, List embedFontInfoList, FontResolver resolver) {
+    public static void setup(FontInfo fontInfo, List<EmbedFontInfo> embedFontInfoList,
+            FontResolver resolver) {
         final boolean base14Kerning = false;
         fontInfo.addMetrics("F1", new Helvetica(base14Kerning));
         fontInfo.addMetrics("F2", new HelveticaOblique(base14Kerning));
@@ -194,7 +191,7 @@ public class FontSetup {
      * @param resolver the font resolver
      */
     private static void addConfiguredFonts(FontInfo fontInfo,
-            List/*<EmbedFontInfo>*/ embedFontInfoList, int num, FontResolver resolver) {
+            List<EmbedFontInfo> embedFontInfoList, int num, FontResolver resolver) {
         if (embedFontInfoList == null) {
             return; //No fonts to process
         }
@@ -206,18 +203,16 @@ public class FontSetup {
 
         String internalName = null;
 
-        for (int i = 0; i < embedFontInfoList.size(); i++) {
-            EmbedFontInfo embedFontInfo = (EmbedFontInfo)embedFontInfoList.get(i);
-
+        for (EmbedFontInfo embedFontInfo : embedFontInfoList) {
             internalName = "F" + num;
             num++;
 
             LazyFont font = new LazyFont(embedFontInfo, resolver);
             fontInfo.addMetrics(internalName, font);
 
-            List triplets = embedFontInfo.getFontTriplets();
+            List<FontTriplet> triplets = embedFontInfo.getFontTriplets();
             for (int tripletIndex = 0; tripletIndex < triplets.size(); tripletIndex++) {
-                FontTriplet triplet = (FontTriplet) triplets.get(tripletIndex);
+                FontTriplet triplet = triplets.get(tripletIndex);
                 fontInfo.addFontProperties(internalName, triplet);
             }
         }

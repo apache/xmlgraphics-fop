@@ -33,11 +33,11 @@ import java.awt.image.ColorModel;
  */
 class PDFGraphicsConfiguration extends GraphicsConfiguration {
     // We use this to get a good colormodel..
-    private static final BufferedImage BI_WITH_ALPHA =
-        new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+    private static final BufferedImage BI_WITH_ALPHA
+        = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
     // We use this to get a good colormodel..
-    private static final BufferedImage BI_WITHOUT_ALPHA =
-        new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
+    private static final BufferedImage BI_WITHOUT_ALPHA
+        = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
 
     /**
      * Construct a buffered image with an alpha channel, unless

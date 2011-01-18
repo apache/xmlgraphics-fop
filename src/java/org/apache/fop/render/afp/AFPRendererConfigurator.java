@@ -149,7 +149,7 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
      * @param encoding character encoding e.g. 'Cp500', 'UnicodeBigUnmarked'
      * @param accessor
      * @param afpFontCfg
-     * @return
+     * @return the created AFPFont
      * @throws ConfigurationException
      */
     private AFPFont fontFromType(String type, String codepage, String encoding,
@@ -348,27 +348,12 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
     private static final String IMAGES_MODE_COLOR = "color";
 
     /**
-     * Configure the AFP renderer.
+     * Throws an UnsupportedOperationException.
      *
-     * @param renderer AFP renderer
-     * @throws FOPException fop exception
-     * @see org.apache.fop.render.PrintRendererConfigurator#configure(Renderer)
+     * @param renderer not used
      */
-    public void configure(Renderer renderer) throws FOPException {
-        Configuration cfg = super.getRendererConfig(renderer);
-        if (cfg != null) {
-            AFPRenderer afpRenderer = (AFPRenderer)renderer;
-
-            try {
-                List/*<AFPFontInfo>*/ fontList = buildFontListFromConfiguration(cfg);
-                afpRenderer.setFontList(fontList);
-            } catch (ConfigurationException e) {
-                LogUtil.handleException(log, e,
-                        userAgent.getFactory().validateUserConfigStrictly());
-            }
-
-            configure(afpRenderer, cfg);
-        }
+    public void configure(Renderer renderer) {
+        throw new UnsupportedOperationException();
     }
 
     private void configure(AFPCustomizable customizable, Configuration cfg) throws FOPException {

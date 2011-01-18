@@ -22,6 +22,10 @@ package org.apache.fop.apps;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.xml.sax.SAXException;
 
@@ -31,11 +35,12 @@ import org.apache.avalon.framework.configuration.DefaultConfigurationBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.xmlgraphics.image.GraphicsConstants;
 import org.apache.xmlgraphics.image.loader.spi.ImageImplRegistry;
 import org.apache.xmlgraphics.image.loader.util.Penalty;
 
-import org.apache.fop.fonts.FontManager;
 import org.apache.fop.fonts.FontManagerConfigurator;
+import org.apache.fop.hyphenation.HyphenationTreeCache;
 import org.apache.fop.util.LogUtil;
 
 /**
@@ -59,10 +64,10 @@ public class FopFactoryConfigurator {
     public static final String DEFAULT_PAGE_HEIGHT = "11in";
 
     /** Defines the default source resolution (72dpi) for FOP */
-    public static final float DEFAULT_SOURCE_RESOLUTION = 72.0f; //dpi
+    public static final float DEFAULT_SOURCE_RESOLUTION = GraphicsConstants.DEFAULT_DPI; //dpi
 
     /** Defines the default target resolution (72dpi) for FOP */
-    public static final float DEFAULT_TARGET_RESOLUTION = 72.0f; //dpi
+    public static final float DEFAULT_TARGET_RESOLUTION = GraphicsConstants.DEFAULT_DPI; //dpi
 
     private static final String PREFER_RENDERER = "prefer-renderer";
 
@@ -74,6 +79,9 @@ public class FopFactoryConfigurator {
 
     /** Fop factory configuration */
     private Configuration cfg = null;
+
+    /** The base URI of the configuration file **/
+    private URI baseURI = null;
 
     /**
      * Default constructor
@@ -90,20 +98,7 @@ public class FopFactoryConfigurator {
      * @param factory fop factory
      * @throws FOPException fop exception
      */
-    public void configure(FopFactory factory) throws FOPException {
-        if (log.isDebugEnabled()) {
-            log.debug("Initializing FopFactory Configuration");
-        }
-
-        if (cfg.getChild("accessibility", false) != null) {
-            try {
-                this.factory.setAccessibility(
-                        cfg.getChild("accessibility").getValueAsBoolean());
-            } catch (ConfigurationException e) {
-                throw new FOPException(e);
-            }
-        }
-
+    public void configure(FopFactory factory) throws FOPException {         // CSOK: MethodLength
         // strict configuration
         if (cfg.getChild("strict-configuration", false) != null) {
             try {
@@ -114,6 +109,19 @@ public class FopFactoryConfigurator {
             }
         }
         boolean strict = factory.validateUserConfigStrictly();
+        if (log.isDebugEnabled()) {
+            log.debug("Initializing FopFactory Configuration"
+                      + "with " + (strict ? "strict" : "permissive") + " validation");
+        }
+
+        if (cfg.getChild("accessibility", false) != null) {
+            try {
+                this.factory.setAccessibility(
+                        cfg.getChild("accessibility").getValueAsBoolean());
+            } catch (ConfigurationException e) {
+                LogUtil.handleException(log, e, strict);
+            }
+        }
 
         // strict fo validation
         if (cfg.getChild("strict-validation", false) != null) {
@@ -127,20 +135,84 @@ public class FopFactoryConfigurator {
 
         // base definitions for relative path resolution
         if (cfg.getChild("base", false) != null) {
+            String path = cfg.getChild("base").getValue(null);
+            if (baseURI != null) {
+                path = baseURI.resolve(path).normalize().toString();
+            }
             try {
-                factory.setBaseURL(
-                        cfg.getChild("base").getValue(null));
+                factory.setBaseURL(path);
             } catch (MalformedURLException mfue) {
                 LogUtil.handleException(log, mfue, strict);
             }
         }
         if (cfg.getChild("hyphenation-base", false) != null) {
+            String path = cfg.getChild("hyphenation-base").getValue(null);
+            if (baseURI != null) {
+                path = baseURI.resolve(path).normalize().toString();
+            }
             try {
-                factory.setHyphenBaseURL(
-                        cfg.getChild("hyphenation-base").getValue(null));
+                factory.setHyphenBaseURL(path);
             } catch (MalformedURLException mfue) {
                 LogUtil.handleException(log, mfue, strict);
             }
+        }
+
+        /**
+         * Read configuration elements hyphenation-pattern,
+         * construct a map ll_CC => filename, and set it on the factory
+         */
+        Configuration[] hyphPatConfig = cfg.getChildren("hyphenation-pattern");
+        if (hyphPatConfig.length != 0) {
+            Map/*<String,String>*/ hyphPatNames = new HashMap/*<String,String>*/();
+            for (int i = 0; i < hyphPatConfig.length; ++i) {
+                String lang, country, filename;
+                StringBuffer error = new StringBuffer();
+                String location = hyphPatConfig[i].getLocation();
+
+                lang = hyphPatConfig[i].getAttribute("lang", null);
+                if (lang == null) {
+                    addError("The lang attribute of a hyphenation-pattern configuration"
+                             + " element must exist (" + location + ")", error);
+                } else if (!lang.matches("[a-zA-Z]{2}")) {
+                    addError("The lang attribute of a hyphenation-pattern configuration"
+                             + " element must consist of exactly two letters ("
+                             + location + ")", error);
+                }
+                lang = lang.toLowerCase();
+
+                country = hyphPatConfig[i].getAttribute("country", null);
+                if ("".equals(country)) {
+                    country = null;
+                }
+                if (country != null) {
+                    if (!country.matches("[a-zA-Z]{2}")) {
+                        addError("The country attribute of a hyphenation-pattern configuration"
+                                 + " element must consist of exactly two letters ("
+                                 + location + ")", error);
+                    }
+                    country = country.toUpperCase();
+                }
+
+                filename = hyphPatConfig[i].getValue(null);
+                if (filename == null) {
+                    addError("The value of a hyphenation-pattern configuration"
+                             + " element may not be empty (" + location + ")", error);
+                }
+
+                if (error.length() != 0) {
+                    LogUtil.handleError(log, error.toString(), strict);
+                    continue;
+                }
+
+                String llccKey = HyphenationTreeCache.constructLlccKey(lang, country);
+                hyphPatNames.put(llccKey, filename);
+                if (log.isDebugEnabled()) {
+                    log.debug("Using hyphenation pattern filename " + filename
+                              + " for lang=\"" + lang + "\""
+                              + (country != null ? ", country=\"" + country + "\"" : ""));
+                }
+            }
+            factory.setHyphPatNames(hyphPatNames);
         }
 
         // renderer options
@@ -198,12 +270,17 @@ public class FopFactoryConfigurator {
         }
 
         // configure font manager
-        FontManager fontManager = factory.getFontManager();
-        FontManagerConfigurator fontManagerConfigurator = new FontManagerConfigurator(cfg);
-        fontManagerConfigurator.configure(fontManager, strict);
+        new FontManagerConfigurator(cfg, baseURI).configure(factory.getFontManager(), strict);
 
         // configure image loader framework
         configureImageLoading(cfg.getChild("image-loading", false), strict);
+    }
+
+    private static void addError(String message, StringBuffer error) {
+        if (error.length() != 0) {
+            error.append(". ");
+        }
+        error.append(message);
     }
 
     private void configureImageLoading(Configuration parent, boolean strict) throws FOPException {
@@ -273,6 +350,7 @@ public class FopFactoryConfigurator {
      */
     public void setUserConfig(Configuration cfg) throws FOPException {
         this.cfg = cfg;
+        setBaseURI();
         configure(this.factory);
     }
 
@@ -283,4 +361,40 @@ public class FopFactoryConfigurator {
     public Configuration getUserConfig() {
         return this.cfg;
     }
+
+    /**
+     * @return the baseURI
+     */
+    public URI getBaseURI() {
+        return baseURI;
+    }
+
+    /**
+     * @param baseURI the baseURI to set
+     */
+    public void setBaseURI(URI baseURI) {
+        this.baseURI = baseURI;
+    }
+
+    private void setBaseURI() throws FOPException {
+        String loc = cfg.getLocation();
+        String[] locationParts = (loc != null ? cfg.getLocation().split(":") : null);
+        try {
+            if (locationParts != null && locationParts.length >= 2
+                    && "file".equals(locationParts[0])) {
+                StringBuilder sb = new StringBuilder(locationParts[1]);
+                for (int idx = 2; idx < locationParts.length; idx++) {
+                    sb.append(":").append(locationParts[idx]);
+                }
+                baseURI = new URI(locationParts[0], sb.toString(), null);
+                baseURI = baseURI.resolve(".").normalize();
+            }
+            if (baseURI == null) {
+                baseURI = new File(System.getProperty("user.dir")).toURI();
+            }
+        } catch (URISyntaxException e) {
+            throw new FOPException(e);
+        }
+    }
+
 }

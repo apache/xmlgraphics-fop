@@ -33,6 +33,8 @@ import java.util.Map;
 
 import org.apache.fop.util.License;
 
+// CSOFF: LineLengthCheck
+
 /**
  * <p>Utility for generating a Java class representing line break properties
  * from the Unicode property files.</p>
@@ -46,7 +48,10 @@ import org.apache.fop.util.License;
  * </ul>
  *
  */
-public class GenerateLineBreakUtils {
+public final class GenerateLineBreakUtils {
+
+    private GenerateLineBreakUtils() {
+    }
 
     private static final int MAX_LINE_LENGTH = 110;
 
@@ -57,12 +62,14 @@ public class GenerateLineBreakUtils {
     private static final byte PROHIBITED_BREAK = 4;             // ^ in table
     private static final byte EXPLICIT_BREAK = 5;               // ! in rules
     private static final String BREAK_CLASS_TOKENS = "_%#@^!";
-    private static final String notInPairTable[] = { "AI", "BK", "CB", "CR", "LF", "NL", "SA", "SG", "SP", "XX" };
+    private static final String[] NOT_IN_PAIR_TABLE = {
+        "AI", "BK", "CB", "CR", "LF", "NL", "SA", "SG", "SP", "XX"
+    };
 
-    private static final byte lineBreakProperties[] = new byte[0x10000];
-    private static final Map lineBreakPropertyValues = new HashMap();
-    private static final List lineBreakPropertyShortNames = new ArrayList();
-    private static final List lineBreakPropertyLongNames = new ArrayList();
+    private static byte[] lineBreakProperties = new byte[0x10000];
+    private static Map lineBreakPropertyValues = new HashMap();
+    private static List lineBreakPropertyShortNames = new ArrayList();
+    private static List lineBreakPropertyLongNames = new ArrayList();
 
     /**
      * Generate a class managing line break properties for Unicode characters and a sample
@@ -76,7 +83,7 @@ public class GenerateLineBreakUtils {
      * @param outFileName Name of the output file.
      * @throws Exception in case anything goes wrong.
      */
-    private static void convertLineBreakProperties(
+    private static void convertLineBreakProperties( // CSOK: MethodLength
         String lineBreakFileName,
         String propertyValueFileName,
         String breakPairFileName,
@@ -86,21 +93,21 @@ public class GenerateLineBreakUtils {
         readLineBreakProperties(lineBreakFileName, propertyValueFileName);
         // read break pair table
         int lineBreakPropertyValueCount = lineBreakPropertyValues.size();
-        int tableSize = lineBreakPropertyValueCount - notInPairTable.length;
-        Map notInPairTableMap = new HashMap(notInPairTable.length);
-        for (int i = 0; i < notInPairTable.length; i++) {
-            Object v = lineBreakPropertyValues.get(notInPairTable[i]);
+        int tableSize = lineBreakPropertyValueCount - NOT_IN_PAIR_TABLE.length;
+        Map notInPairTableMap = new HashMap(NOT_IN_PAIR_TABLE.length);
+        for (int i = 0; i < NOT_IN_PAIR_TABLE.length; i++) {
+            Object v = lineBreakPropertyValues.get(NOT_IN_PAIR_TABLE[i]);
             if (v == null) {
-                throw new Exception("'not in pair table' property not found: " + notInPairTable[i]);
+                throw new Exception("'not in pair table' property not found: " + NOT_IN_PAIR_TABLE[i]);
             }
-            notInPairTableMap.put(notInPairTable[i], v);
+            notInPairTableMap.put(NOT_IN_PAIR_TABLE[i], v);
         }
-        byte pairTable[][] = new byte[tableSize][];
-        byte columnHeader[] = new byte[tableSize];
-        byte rowHeader[] = new byte[tableSize];
-        byte columnMap[] = new byte[lineBreakPropertyValueCount + 1];
+        byte[][] pairTable = new byte[tableSize][];
+        byte[] columnHeader = new byte[tableSize];
+        byte[] rowHeader = new byte[tableSize];
+        byte[] columnMap = new byte[lineBreakPropertyValueCount + 1];
         Arrays.fill(columnMap, (byte)255);
-        byte rowMap[] = new byte[lineBreakPropertyValueCount + 1];
+        byte[] rowMap = new byte[lineBreakPropertyValueCount + 1];
         Arrays.fill(rowMap, (byte)255);
         BufferedReader b = new BufferedReader(new FileReader(breakPairFileName));
         String line = b.readLine();
@@ -224,7 +231,7 @@ public class GenerateLineBreakUtils {
         // generate class
         int rowsize = 512;
         int blocksize = lineBreakProperties.length / rowsize;
-        byte row[][] = new byte[rowsize][];
+        byte[][] row = new byte[rowsize][];
         int idx = 0;
         StringBuffer doStaticLinkCode = new StringBuffer();
         PrintWriter out = new PrintWriter(new FileWriter(outFileName));
@@ -242,7 +249,14 @@ public class GenerateLineBreakUtils {
         out.println(" * - commit BOTH changed files");
         out.println(" */");
         out.println();
+        out.println("// CSOFF: WhitespaceAfterCheck");
+        out.println("// CSOFF: LineLengthCheck");
+        out.println();
+        out.println("/** Line breaking utilities. */");
         out.println("public final class LineBreakUtils {");
+        out.println();
+        out.println("    private LineBreakUtils() {");
+        out.println("    }");
         out.println();
         out.println("    /** Break class constant */");
         out.println("    public static final byte DIRECT_BREAK = " + DIRECT_BREAK + ';');
@@ -257,7 +271,7 @@ public class GenerateLineBreakUtils {
         out.println("    /** Break class constant */");
         out.println("    public static final byte EXPLICIT_BREAK = " + EXPLICIT_BREAK + ';');
         out.println();
-        out.println("    private static final byte PAIR_TABLE[][] = {");
+        out.println("    private static final byte[][] PAIR_TABLE = {");
         boolean printComma = false;
         for (int i = 1; i <= lineBreakPropertyValueCount; i++) {
             if (printComma) {
@@ -283,9 +297,9 @@ public class GenerateLineBreakUtils {
         }
         out.println("};");
         out.println();
-        out.println("    private static byte lineBreakProperties[][] = new byte[" + rowsize + "][];");
+        out.println("    private static byte[][] lineBreakProperties = new byte[" + rowsize + "][];");
         out.println();
-        out.println("    private static void init_0() {");
+        out.println("    private static void init0() {");
         int rowsPrinted = 0;
         int initSections = 0;
         for (int i = 0; i < rowsize; i++) {
@@ -315,7 +329,7 @@ public class GenerateLineBreakUtils {
                     out.println("    }");
                     out.println();
                     initSections++;
-                    out.println("    private static void init_" + initSections + "() {");
+                    out.println("    private static void init" + initSections + "() {");
                     rowsPrinted = 0;
                 }
                 row[i] = new byte[blocksize];
@@ -339,7 +353,7 @@ public class GenerateLineBreakUtils {
         out.println();
         out.println("    static {");
         for (int i = 0; i <= initSections; i++) {
-            out.println("        init_" + i + "();");
+            out.println("        init" + i + "();");
         }
         out.print(doStaticLinkCode);
         out.println("    }");
@@ -354,7 +368,7 @@ public class GenerateLineBreakUtils {
             out.println(';');
         }
         out.println();
-        final String shortNamePrefix = "    private static String lineBreakPropertyShortNames[] = {";
+        final String shortNamePrefix = "    private static String[] lineBreakPropertyShortNames = {";
         out.print(shortNamePrefix);
         int lineLength = shortNamePrefix.length();
         printComma = false;
@@ -383,7 +397,7 @@ public class GenerateLineBreakUtils {
         }
         out.println("};");
         out.println();
-        final String longNamePrefix = "    private static String lineBreakPropertyLongNames[] = {";
+        final String longNamePrefix = "    private static String[] lineBreakPropertyLongNames = {";
         out.print(longNamePrefix);
         lineLength = longNamePrefix.length();
         printComma = false;
@@ -600,11 +614,11 @@ public class GenerateLineBreakUtils {
         for (int i = 0; i < 16; i++) {
             int rowsize = 1 << i;
             int blocksize = lineBreakProperties.length / (rowsize);
-            byte row[][] = new byte[rowsize][];
+            byte[][] row = new byte[rowsize][];
             int idx = 0;
             int nrOfDistinctBlocks = 0;
             for (int j = 0; j < rowsize; j++) {
-                byte block[] = new byte[blocksize];
+                byte[] block = new byte[blocksize];
                 for (int k = 0; k < blocksize; k++) {
                     block[k] = lineBreakProperties[idx];
                     idx++;
@@ -638,6 +652,10 @@ public class GenerateLineBreakUtils {
         }
     }
 
+    /**
+     * Main entry point for running GenerateLineBreakUtils
+     * @param args array of command line arg
+     */
     public static void main(String[] args) {
         String lineBreakFileName = "http://www.unicode.org/Public/UNIDATA/LineBreak.txt";
         String propertyValueFileName = "http://www.unicode.org/Public/UNIDATA/PropertyValueAliases.txt";
@@ -650,13 +668,13 @@ public class GenerateLineBreakUtils {
             } else {
                 String opt = args[i];
                 if ("-l".equals(opt)) {
-                    lineBreakFileName = args[i+1];
+                    lineBreakFileName = args[i + 1];
                 } else if ("-p".equals(opt)) {
-                    propertyValueFileName = args[i+1];
+                    propertyValueFileName = args[i + 1];
                 } else if ("-b".equals(opt)) {
-                    breakPairFileName = args[i+1];
-                } else if("-o".equals(opt)) {
-                    outFileName = args[i+1];
+                    breakPairFileName = args[i + 1];
+                } else if ("-o".equals(opt)) {
+                    outFileName = args[i + 1];
                 } else {
                     ok = false;
                 }

@@ -132,7 +132,7 @@ public interface LayoutManager extends PercentBaseContext {
 
     /**
      * Get a sequence of KnuthElements representing the content
-     * of the node assigned to the LM
+     * of the node assigned to the LM.
      *
      * @param context   the LayoutContext used to store layout information
      * @param alignment the desired text alignment

@@ -26,12 +26,9 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Map;
-
-import org.w3c.dom.Document;
-
-import org.apache.xmlgraphics.image.loader.ImageProcessingHints;
-import org.apache.xmlgraphics.image.loader.ImageSessionContext;
 
 import org.apache.fop.afp.AFPBorderPainter;
 import org.apache.fop.afp.AFPPaintingState;
@@ -48,9 +45,12 @@ import org.apache.fop.afp.modca.AbstractPageObject;
 import org.apache.fop.afp.modca.PresentationTextObject;
 import org.apache.fop.afp.ptoca.PtocaBuilder;
 import org.apache.fop.afp.ptoca.PtocaProducer;
+import org.apache.fop.afp.util.DefaultFOPResourceAccessor;
+import org.apache.fop.afp.util.ResourceAccessor;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
+import org.apache.fop.fonts.Typeface;
 import org.apache.fop.render.RenderingContext;
 import org.apache.fop.render.intermediate.AbstractIFPainter;
 import org.apache.fop.render.intermediate.BorderPainter;
@@ -60,6 +60,9 @@ import org.apache.fop.render.intermediate.IFState;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.traits.RuleStyle;
 import org.apache.fop.util.CharUtilities;
+import org.apache.xmlgraphics.image.loader.ImageProcessingHints;
+import org.apache.xmlgraphics.image.loader.ImageSessionContext;
+import org.w3c.dom.Document;
 
 /**
  * IFPainter implementation that produces AFP (MO:DCA).
@@ -72,12 +75,12 @@ public class AFPPainter extends AbstractIFPainter {
     private static final int X = 0;
     private static final int Y = 1;
 
-    private AFPDocumentHandler documentHandler;
+    private final AFPDocumentHandler documentHandler;
 
     /** the border painter */
-    private AFPBorderPainterAdapter borderPainter;
+    private final AFPBorderPainterAdapter borderPainter;
     /** the rectangle painter */
-    private AbstractAFPPainter rectanglePainter;
+    private final AbstractAFPPainter rectanglePainter;
 
     /** unit converter */
     private final AFPUnitConverter unitConv;
@@ -97,6 +100,7 @@ public class AFPPainter extends AbstractIFPainter {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected IFContext getContext() {
         return this.documentHandler.getContext();
     }
@@ -161,6 +165,7 @@ public class AFPPainter extends AbstractIFPainter {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected Map createDefaultImageProcessingHints(ImageSessionContext sessionContext) {
         Map hints = super.createDefaultImageProcessingHints(sessionContext);
 
@@ -171,6 +176,7 @@ public class AFPPainter extends AbstractIFPainter {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected RenderingContext createRenderingContext() {
         AFPRenderingContext psContext = new AFPRenderingContext(
                 getUserAgent(),
@@ -183,14 +189,34 @@ public class AFPPainter extends AbstractIFPainter {
 
     /** {@inheritDoc} */
     public void drawImage(String uri, Rectangle rect) throws IFException {
-        String name = documentHandler.getPageSegmentNameFor(uri);
-        if (name != null) {
+        PageSegmentDescriptor pageSegment = documentHandler.getPageSegmentNameFor(uri);
+
+        if (pageSegment != null) {
             float[] srcPts = {rect.x, rect.y};
             int[] coords = unitConv.mpts2units(srcPts);
             int width = Math.round(unitConv.mpt2units(rect.width));
             int height = Math.round(unitConv.mpt2units(rect.height));
 
-            getDataStream().createIncludePageSegment(name, coords[X], coords[Y], width, height);
+            getDataStream().createIncludePageSegment(pageSegment.getName(),
+                    coords[X], coords[Y], width, height);
+
+            //Do we need to embed an external page segment?
+            if (pageSegment.getURI() != null) {
+                ResourceAccessor accessor = new DefaultFOPResourceAccessor (
+                        documentHandler.getUserAgent(), null, null);
+                try {
+                    URI resourceUri = new URI(pageSegment.getURI());
+                    documentHandler.getResourceManager().createIncludedResourceFromExternal(
+                            pageSegment.getName(), resourceUri, accessor);
+
+                } catch (URISyntaxException urie) {
+                    throw new IFException("Could not handle resource url"
+                            + pageSegment.getURI(), urie);
+                } catch (IOException ioe) {
+                    throw new IFException("Could not handle resource" + pageSegment.getURI(), ioe);
+                }
+            }
+
         } else {
             drawImageUsingURI(uri, rect);
         }
@@ -232,6 +258,7 @@ public class AFPPainter extends AbstractIFPainter {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void drawBorderRect(Rectangle rect, BorderProps before, BorderProps after,
             BorderProps start, BorderProps end) throws IFException {
         if (before != null || after != null || start != null || end != null) {
@@ -247,32 +274,38 @@ public class AFPPainter extends AbstractIFPainter {
     //and this one. Not done for now to avoid a lot of re-implementation and code duplication.
     private static class AFPBorderPainterAdapter extends BorderPainter {
 
-        private AFPBorderPainter delegate;
+        private final AFPBorderPainter delegate;
 
         public AFPBorderPainterAdapter(AFPBorderPainter borderPainter) {
             this.delegate = borderPainter;
         }
 
+        @Override
         protected void clip() throws IOException {
             //not supported by AFP
         }
 
+        @Override
         protected void closePath() throws IOException {
             //used for clipping only, so not implemented
         }
 
+        @Override
         protected void moveTo(int x, int y) throws IOException {
             //used for clipping only, so not implemented
         }
 
+        @Override
         protected void lineTo(int x, int y) throws IOException {
             //used for clipping only, so not implemented
         }
 
+        @Override
         protected void saveGraphicsState() throws IOException {
             //used for clipping only, so not implemented
         }
 
+        @Override
         protected void restoreGraphicsState() throws IOException {
             //used for clipping only, so not implemented
         }
@@ -281,7 +314,9 @@ public class AFPPainter extends AbstractIFPainter {
             return mpt / 1000f;
         }
 
-        protected void drawBorderLine(int x1, int y1, int x2, int y2, boolean horz,
+        @Override
+        protected void drawBorderLine(                           // CSOK: ParameterNumber
+                int x1, int y1, int x2, int y2, boolean horz,
                 boolean startOrBefore, int style, Color color) throws IOException {
             BorderPaintingInfo borderPaintInfo = new BorderPaintingInfo(
                     toPoints(x1), toPoints(y1), toPoints(x2), toPoints(y2),
@@ -289,6 +324,7 @@ public class AFPPainter extends AbstractIFPainter {
             delegate.paint(borderPaintInfo);
         }
 
+        @Override
         public void drawLine(Point start, Point end, int width, Color color, RuleStyle style)
                 throws IOException {
             if (start.y != end.y) {
@@ -306,6 +342,7 @@ public class AFPPainter extends AbstractIFPainter {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void drawLine(Point start, Point end, int width, Color color, RuleStyle style)
                 throws IFException {
         try {
@@ -316,8 +353,8 @@ public class AFPPainter extends AbstractIFPainter {
     }
 
     /** {@inheritDoc} */
-    public void drawText(int x, int y,
-            final int letterSpacing, final int wordSpacing, final int[] dx,
+    public void drawText(                                        // CSOK: MethodLength
+            int x, int y, final int letterSpacing, final int wordSpacing, final int[] dx,
             final String text) throws IFException {
         final int fontSize = this.state.getFontSize();
         getPaintingState().setFontSize(fontSize);
@@ -332,7 +369,7 @@ public class AFPPainter extends AbstractIFPainter {
         }
 
         // register font as necessary
-        Map/*<String,FontMetrics>*/ fontMetricMap = documentHandler.getFontInfo().getFonts();
+        Map<String, Typeface> fontMetricMap = documentHandler.getFontInfo().getFonts();
         final AFPFont afpFont = (AFPFont)fontMetricMap.get(fontKey);
         final Font font = getFontInfo().getFontInstance(triplet, fontSize);
         AFPPageFonts pageFonts = getPaintingState().getPageFonts();

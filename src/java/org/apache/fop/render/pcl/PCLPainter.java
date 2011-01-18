@@ -34,9 +34,6 @@ import java.util.Stack;
 
 import org.w3c.dom.Document;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import org.apache.xmlgraphics.image.loader.ImageException;
 import org.apache.xmlgraphics.image.loader.ImageInfo;
 import org.apache.xmlgraphics.image.loader.ImageProcessingHints;
@@ -64,9 +61,6 @@ import org.apache.fop.util.CharUtilities;
  * {@link IFPainter} implementation that produces PCL 5.
  */
 public class PCLPainter extends AbstractIFPainter implements PCLConstants {
-
-    /** logging instance */
-    private static Log log = LogFactory.getLog(PCLPainter.class);
 
     private static final boolean DEBUG = false;
 
@@ -396,7 +390,8 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
 
     private static final double SAFETY_MARGIN_FACTOR = 0.05;
 
-    private Rectangle getTextBoundingBox(int x, int y,
+    private Rectangle getTextBoundingBox(                        // CSOK: ParameterNumber
+            int x, int y,
             int letterSpacing, int wordSpacing, int[] dx,
             String text,
             Font font, FontMetricsMapper metrics) {

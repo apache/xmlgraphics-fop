@@ -13,7 +13,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
+ */
+
 /* $Id$ */
 
 package org.apache.fop.fo.properties;
@@ -25,6 +26,9 @@ import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.expr.PropertyInfo;
 import org.apache.fop.fo.expr.PropertyParser;
 
+/**
+ * Font weight property maker.
+ */
 public class FontWeightPropertyMaker extends EnumProperty.Maker {
 
     /**
@@ -45,10 +49,8 @@ public class FontWeightPropertyMaker extends EnumProperty.Maker {
         } else {
             String pValue = checkValueKeywords(value);
             Property newProp = checkEnumValues(pValue);
-            int enumValue = -1;
-            if (newProp != null
-                    && ((enumValue = newProp.getEnum()) == Constants.EN_BOLDER
-                        || enumValue == Constants.EN_LIGHTER)) {
+            int enumValue = ( newProp != null ) ? newProp.getEnum() : -1;
+            if (enumValue == Constants.EN_BOLDER || enumValue == Constants.EN_LIGHTER) {
                 /* check for relative enum values, compute in relation to parent */
                 Property parentProp = pList.getInherited(Constants.PR_FONT_WEIGHT);
                 if (enumValue == Constants.EN_BOLDER) {

@@ -69,6 +69,9 @@ import org.apache.fop.fonts.type1.PFBParser;
  */
 public class PDFFactory {
 
+    /** Resolution of the User Space coordinate system (72dpi). */
+    public static final int DEFAULT_PDF_RESOLUTION = 72;
+
     private PDFDocument document;
 
     private Log log = LogFactory.getLog(PDFFactory.class);
@@ -293,12 +296,13 @@ public class PDFFactory {
      * It should be 0 as this is the constructor for sampled functions.
      * @return the PDF function that was created
      */
-    public PDFFunction makeFunction(int theFunctionType, List theDomain,
-                                    List theRange, List theSize,
-                                    int theBitsPerSample, int theOrder,
-                                    List theEncode, List theDecode,
-                                    StringBuffer theFunctionDataStream,
-                                    List theFilter) {
+    public PDFFunction makeFunction(                             // CSOK: ParameterNumber
+            int theFunctionType, List theDomain,
+            List theRange, List theSize,
+            int theBitsPerSample, int theOrder,
+            List theEncode, List theDecode,
+            StringBuffer theFunctionDataStream,
+            List theFilter) {
         // Type 0 function
         PDFFunction function = new PDFFunction(theFunctionType, theDomain,
                                                theRange, theSize,
@@ -466,12 +470,13 @@ public class PDFFactory {
      * @param theFunction The PDF Function that maps an (x,y) location to a color
      * @return the PDF shading that was created
      */
-    public PDFShading makeShading(PDFResourceContext res, int theShadingType,
-                                  PDFDeviceColorSpace theColorSpace,
-                                  List theBackground, List theBBox,
-                                  boolean theAntiAlias, List theDomain,
-                                  List theMatrix,
-                                  PDFFunction theFunction) {
+    public PDFShading makeShading(                               // CSOK: ParameterNumber
+            PDFResourceContext res, int theShadingType,
+            PDFDeviceColorSpace theColorSpace,
+            List theBackground, List theBBox,
+            boolean theAntiAlias, List theDomain,
+            List theMatrix,
+            PDFFunction theFunction) {
         // make Shading of Type 1
         PDFShading shading = new PDFShading(theShadingType,
                                             theColorSpace, theBackground,
@@ -518,12 +523,13 @@ public class PDFFactory {
      * The default is [false, false]
      * @return the PDF shading that was created
      */
-    public PDFShading makeShading(PDFResourceContext res, int theShadingType,
-                                  PDFDeviceColorSpace theColorSpace,
-                                  List theBackground, List theBBox,
-                                  boolean theAntiAlias, List theCoords,
-                                  List theDomain, PDFFunction theFunction,
-                                  List theExtend) {
+    public PDFShading makeShading(                               // CSOK: ParameterNumber
+            PDFResourceContext res, int theShadingType,
+            PDFDeviceColorSpace theColorSpace,
+            List theBackground, List theBBox,
+            boolean theAntiAlias, List theCoords,
+            List theDomain, PDFFunction theFunction,
+            List theExtend) {
         // make Shading of Type 2 or 3
         PDFShading shading = new PDFShading(theShadingType,
                                             theColorSpace, theBackground,
@@ -571,14 +577,15 @@ public class PDFFactory {
      * @param theFunction the PDFFunction
      * @return the PDF shading that was created
      */
-    public PDFShading makeShading(PDFResourceContext res, int theShadingType,
-                                  PDFDeviceColorSpace theColorSpace,
-                                  List theBackground, List theBBox,
-                                  boolean theAntiAlias,
-                                  int theBitsPerCoordinate,
-                                  int theBitsPerComponent,
-                                  int theBitsPerFlag, List theDecode,
-                                  PDFFunction theFunction) {
+    public PDFShading makeShading(                               // CSOK: ParameterNumber
+            PDFResourceContext res, int theShadingType,
+            PDFDeviceColorSpace theColorSpace,
+            List theBackground, List theBBox,
+            boolean theAntiAlias,
+            int theBitsPerCoordinate,
+            int theBitsPerComponent,
+            int theBitsPerFlag, List theDecode,
+            PDFFunction theFunction) {
         // make Shading of type 4,6 or 7
         PDFShading shading = new PDFShading(theShadingType,
                                             theColorSpace, theBackground,
@@ -626,14 +633,15 @@ public class PDFFactory {
      * @param theFunction The PDFFunction that's mapped on to this shape
      * @return the PDF shading that was created
      */
-    public PDFShading makeShading(PDFResourceContext res, int theShadingType,
-                                  PDFDeviceColorSpace theColorSpace,
-                                  List theBackground, List theBBox,
-                                  boolean theAntiAlias,
-                                  int theBitsPerCoordinate,
-                                  int theBitsPerComponent, List theDecode,
-                                  int theVerticesPerRow,
-                                  PDFFunction theFunction) {
+    public PDFShading makeShading(                               // CSOK: ParameterNumber
+            PDFResourceContext res, int theShadingType,
+            PDFDeviceColorSpace theColorSpace,
+            List theBackground, List theBBox,
+            boolean theAntiAlias,
+            int theBitsPerCoordinate,
+            int theBitsPerComponent, List theDecode,
+            int theVerticesPerRow,
+            PDFFunction theFunction) {
         // make shading of Type 5
         PDFShading shading = new PDFShading(theShadingType,
                                             theColorSpace, theBackground,
@@ -676,11 +684,12 @@ public class PDFFactory {
      * @param thePatternDataStream The stream of pattern data to be tiled.
      * @return the PDF pattern that was created
      */
-    public PDFPattern makePattern(PDFResourceContext res, int thePatternType,    // 1
-                                  PDFResources theResources, int thePaintType, int theTilingType,
-                                  List theBBox, double theXStep,
-                                  double theYStep, List theMatrix,
-                                  List theXUID, StringBuffer thePatternDataStream) {
+    public PDFPattern makePattern(                               // CSOK: ParameterNumber
+            PDFResourceContext res, int thePatternType,    // 1
+            PDFResources theResources, int thePaintType, int theTilingType,
+            List theBBox, double theXStep,
+            double theYStep, List theMatrix,
+            List theXUID, StringBuffer thePatternDataStream) {
         // PDFResources theResources
         PDFPattern pattern = new PDFPattern(theResources, 1,
                                             thePaintType, theTilingType,
@@ -884,7 +893,8 @@ public class PDFFactory {
      */
     public PDFNames makeNames() {
         PDFNames names = new PDFNames();
-        getDocument().registerObject(names);
+        getDocument().assignObjectNumber(names);
+        getDocument().addTrailerObject(names);
         return names;
     }
 
@@ -1057,6 +1067,8 @@ public class PDFFactory {
         return link;
     }
 
+    private static final String EMBEDDED_FILE = "embedded-file:";
+
     /**
      * Create/find and return the appropriate external PDFAction according to the target
      *
@@ -1069,30 +1081,86 @@ public class PDFFactory {
     public PDFAction getExternalAction(String target, boolean newWindow) {
         int index;
         String targetLo = target.toLowerCase();
-        // HTTP URL?
-        if (targetLo.startsWith("http://")) {
+        if (target.startsWith(EMBEDDED_FILE)) {
+            // File Attachments (Embedded Files)
+            String filename = target.substring(EMBEDDED_FILE.length());
+            return getActionForEmbeddedFile(filename, newWindow);
+        } else if (targetLo.startsWith("http://")) {
+            // HTTP URL?
             return new PDFUri(target);
-        // Non PDF files. Try to /Launch them.
         } else if (targetLo.startsWith("file://")) {
+            // Non PDF files. Try to /Launch them.
             target = target.substring("file://".length());
             return getLaunchAction(target);
-        // Bare PDF file name?
         } else if (targetLo.endsWith(".pdf")) {
+            // Bare PDF file name?
             return getGoToPDFAction(target, null, -1, newWindow);
-        // PDF file + page?
-        } else if ((index = targetLo.indexOf(".pdf#page=")) > 0) {
+        } else if ((index = targetLo.indexOf(".pdf#page=")) > 0) { // CSOK: InnerAssignment
+            // PDF file + page?
             String filename = target.substring(0, index + 4);
             int page = Integer.parseInt(target.substring(index + 10));
             return getGoToPDFAction(filename, null, page, newWindow);
-        // PDF file + destination?
-        } else if ((index = targetLo.indexOf(".pdf#dest=")) > 0) {
+        } else if ((index = targetLo.indexOf(".pdf#dest=")) > 0) { // CSOK: InnerAssignment
+            // PDF file + destination?
             String filename = target.substring(0, index + 4);
             String dest = target.substring(index + 10);
             return getGoToPDFAction(filename, dest, -1, newWindow);
-        // None of the above? Default to URI:
         } else {
+            // None of the above? Default to URI:
             return new PDFUri(target);
         }
+    }
+
+    private PDFAction getActionForEmbeddedFile(String filename, boolean newWindow) {
+        PDFNames names = getDocument().getRoot().getNames();
+        if (names == null) {
+            throw new IllegalStateException(
+                    "No Names dictionary present."
+                    + " Cannot create Launch Action for embedded file: " + filename);
+        }
+        PDFNameTreeNode embeddedFiles = names.getEmbeddedFiles();
+        if (embeddedFiles == null) {
+            throw new IllegalStateException(
+                    "No /EmbeddedFiles name tree present."
+                    + " Cannot create Launch Action for embedded file: " + filename);
+        }
+
+        //Find filespec reference for the embedded file
+        filename = PDFText.toPDFString(filename, '_');
+        PDFArray files = embeddedFiles.getNames();
+        PDFReference embeddedFileRef = null;
+        int i = 0;
+        while (i < files.length()) {
+            String name = (String)files.get(i);
+            i++;
+            PDFReference ref = (PDFReference)files.get(i);
+            if (name.equals(filename)) {
+                embeddedFileRef = ref;
+                break;
+            }
+            i++;
+        }
+        if (embeddedFileRef == null) {
+            throw new IllegalStateException(
+                    "No embedded file with name " + filename + " present.");
+        }
+
+        //Finally create the action
+        //PDFLaunch action = new PDFLaunch(embeddedFileRef);
+        //This works with Acrobat 8 but not with Acrobat 9
+
+        //The following two options didn't seem to have any effect.
+        //PDFGoToEmbedded action = new PDFGoToEmbedded(embeddedFileRef, 0, newWindow);
+        //PDFGoToRemote action = new PDFGoToRemote(embeddedFileRef, 0, newWindow);
+
+        //This finally seems to work:
+        StringBuffer scriptBuffer = new StringBuffer();
+        scriptBuffer.append("this.exportDataObject({cName:\"");
+        scriptBuffer.append(filename);
+        scriptBuffer.append("\", nLaunch:2});");
+
+        PDFJavaScriptLaunchAction action = new PDFJavaScriptLaunchAction(scriptBuffer.toString());
+        return action;
     }
 
     /**

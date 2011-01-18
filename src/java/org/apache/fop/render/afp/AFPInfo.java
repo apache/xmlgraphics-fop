@@ -256,7 +256,8 @@ public final class AFPInfo {
     public boolean strokeText() {
         boolean strokeText = false;
         if (handlerConfiguration != null) {
-            strokeText = handlerConfiguration.getChild("stroke-text", true).getValueAsBoolean(strokeText);
+            strokeText
+                = handlerConfiguration.getChild("stroke-text", true).getValueAsBoolean(strokeText);
         }
         return strokeText;
     }
@@ -286,8 +287,9 @@ public final class AFPInfo {
      * @return a newly created AFPGraphics2D
      */
     public AFPGraphics2D createGraphics2D(boolean textAsShapes) {
-        AFPGraphics2D g2d = new AFPGraphics2D(
-                    textAsShapes, paintingState, resourceManager, resourceInfo, fontInfo);
+        AFPGraphics2D g2d
+            = new AFPGraphics2D
+            (textAsShapes, paintingState, resourceManager, resourceInfo, fontInfo);
         g2d.setGraphicContext(new org.apache.xmlgraphics.java2d.GraphicContext());
         return g2d;
     }

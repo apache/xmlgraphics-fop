@@ -106,7 +106,7 @@ public class ImageProxyPanel extends JPanel {
     /**
      * Gets the image data and paints it on screen. Will make
      * calls to getPageImage as required.
-     * @param graphics
+     * @param graphics a graphics context
      * @see javax.swing.JComponent#paintComponent(Graphics)
      * @see org.apache.fop.render.java2d.Java2DRenderer#getPageImage(int)
      */
