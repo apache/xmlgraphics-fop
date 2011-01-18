@@ -130,7 +130,6 @@ public class ColorUtilTestCase extends TestCase {
             + "\"" + sRGBLoc.toASCIIString() + "\",1.0,0.0,0.0)";
         colActual = (ColorWithFallback)ColorUtil.parseColorString(ua, colSpec);
         assertEquals(cs, colActual.getColorSpace());
-        //assertEquals(255, colActual.getRed()); //253 is returned
         assertEquals(255, colActual.getRed(), 2f); //Java 5: 253, Java 6: 255
         assertEquals(0, colActual.getGreen(), 25f); //Java 5: 25, Java 6: 0
         assertEquals(0, colActual.getBlue());
