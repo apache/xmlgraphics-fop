@@ -118,8 +118,8 @@ public class ColorUtilTestCase extends TestCase {
         FopFactory fopFactory = FopFactory.newInstance();
         URI sRGBLoc = new URI(
                 "file:src/java/org/apache/fop/pdf/sRGB%20Color%20Space%20Profile.icm");
-        ColorSpace cs = fopFactory.getColorSpace("sRGBAlt", null, sRGBLoc.toASCIIString(),
-                RenderingIntent.AUTO);
+        ColorSpace cs = fopFactory.getColorSpaceCache().get(
+                "sRGBAlt", null, sRGBLoc.toASCIIString(), RenderingIntent.AUTO);
         assertNotNull("Color profile not found", cs);
 
         FOUserAgent ua = fopFactory.newFOUserAgent();
@@ -194,7 +194,7 @@ public class ColorUtilTestCase extends TestCase {
         assertEquals(0.2196f, comps[1], 0.001);
         assertEquals(0.3216f, comps[2], 0.001);
         assertEquals(0f, comps[3], 0);
-        assertEquals("fop-rgb-icc(0.972549,0.78039217,0.6745098,#CMYK,,0.0274,0.2196,0.3216,0.0)",
+        assertEquals("fop-rgb-icc(0.9726,0.7804,0.67840004,#CMYK,,0.0274,0.2196,0.3216,0.0)",
                 ColorUtil.colorToString(colActual));
 
         colSpec = "fop-rgb-icc(1.0,1.0,0.0,#CMYK,,0.0,0.0,1.0,0.0)";
@@ -228,6 +228,20 @@ public class ColorUtilTestCase extends TestCase {
         assertEquals(0.5f, comps[3], 0);
         assertEquals("fop-rgb-icc(0.5,0.5,0.5,#CMYK,,0.0,0.0,0.0,0.5)",
                 ColorUtil.colorToString(colActual));
+
+        //Verify that the cmyk() and fop-rgb-icc(#CMYK) functions have the same results
+        ColorWithAlternatives colCMYK = (ColorWithAlternatives)ColorUtil.parseColorString(
+                null, "cmyk(0,0,0,0.5)");
+        assertEquals(colCMYK.getAlternativeColors()[0], colActual.getAlternativeColors()[0]);
+        //The following doesn't work:
+        //assertEquals(colCMYK, colActual);
+        //java.awt.Color does not consistenly calculate the int RGB values:
+        //Color(ColorSpace cspace, float components[], float alpha): 0.5 --> 127
+        //Color(float r, float g, float b): 0.5 --> 128
+        if (!colCMYK.equals(colActual)) {
+            System.out.println("Info: java.awt.Color does not consistently calculate"
+                    + " int RGB values from float RGB values.");
+        }
     }
 
     /**
@@ -270,8 +284,8 @@ public class ColorUtilTestCase extends TestCase {
     public void testNamedColorProfile() throws Exception {
         FopFactory fopFactory = FopFactory.newInstance();
         URI ncpLoc = new URI("file:test/resources/color/ncp-example.icc");
-        ColorSpace cs = fopFactory.getColorSpace("NCP", null, ncpLoc.toASCIIString(),
-                RenderingIntent.AUTO);
+        ColorSpace cs = fopFactory.getColorSpaceCache().get(
+                "NCP", null, ncpLoc.toASCIIString(), RenderingIntent.AUTO);
         assertNotNull("Color profile not found", cs);
 
         FOUserAgent ua = fopFactory.newFOUserAgent();

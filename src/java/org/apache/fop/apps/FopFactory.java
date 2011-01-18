@@ -19,7 +19,6 @@
 
 package org.apache.fop.apps;
 
-import java.awt.color.ColorSpace;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -43,7 +42,6 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.xmlgraphics.image.loader.ImageContext;
 import org.apache.xmlgraphics.image.loader.ImageManager;
-import org.apache.xmlgraphics.java2d.color.RenderingIntent;
 import org.apache.xmlgraphics.util.UnitConv;
 
 import org.apache.fop.fo.ElementMapping;
@@ -152,7 +150,7 @@ public class FopFactory implements ImageContext {
     /** Optional overriding LayoutManagerMaker */
     private LayoutManagerMaker lmMakerOverride = null;
 
-    private Set ignoredNamespaces;
+    private Set<String> ignoredNamespaces;
 
     private FOURIResolver foURIResolver;
 
@@ -177,7 +175,7 @@ public class FopFactory implements ImageContext {
         this.rendererFactory = new RendererFactory();
         this.xmlHandlers = new XMLHandlerRegistry();
         this.imageHandlers = new ImageHandlerRegistry();
-        this.ignoredNamespaces = new java.util.HashSet();
+        this.ignoredNamespaces = new java.util.HashSet<String>();
     }
 
     /**
@@ -658,7 +656,7 @@ public class FopFactory implements ImageContext {
      * namespace is in the ignored set.
      * @param namespaceURIs the namespace URIs
      */
-    public void ignoreNamespaces(Collection namespaceURIs) {
+    public void ignoreNamespaces(Collection<String> namespaceURIs) {
         this.ignoredNamespaces.addAll(namespaceURIs);
     }
 
@@ -672,7 +670,7 @@ public class FopFactory implements ImageContext {
     }
 
     /** @return the set of namespaces that are ignored by FOP */
-    public Set getIgnoredNamespace() {
+    public Set<String> getIgnoredNamespace() {
         return Collections.unmodifiableSet(this.ignoredNamespaces);
     }
 
@@ -802,24 +800,13 @@ public class FopFactory implements ImageContext {
     }
 
     /**
-     * Create (if needed) and return an ICC ColorSpace instance.
-     * <p>
-     * The ICC profile source is taken from the src attribute of the color-profile FO element.
-     * If the ICC ColorSpace is not yet in the cache a new one is created and stored in the cache.
-     * <p>
-     * The FOP URI resolver is used to try and locate the ICC file.
-     * If that fails null is returned.
+     * Returns the color space cache for this instance.
      * <p>
      * Note: this method should not be considered as part of FOP's external API.
-     * @param profileName the profile name
-     * @param baseUri a base URI to resolve relative URIs
-     * @param iccProfileSrc ICC Profile source to return a ColorSpace for
-     * @param renderingIntent overriding rendering intent
-     * @return ICC ColorSpace object or null if ColorSpace could not be created
+     * @return the color space cache
      */
-    public ColorSpace getColorSpace(String profileName, String baseUri, String iccProfileSrc,
-            RenderingIntent renderingIntent) {
-        return colorSpaceCache.get(profileName, baseUri, iccProfileSrc, renderingIntent);
+    public ColorSpaceCache getColorSpaceCache() {
+        return this.colorSpaceCache;
     }
 
 }

@@ -410,7 +410,8 @@ public final class ColorUtil {
                     assert colorSpace == null;
                     RenderingIntent renderingIntent = RenderingIntent.AUTO;
                     //TODO connect to fo:color-profile/@rendering-intent
-                    colorSpace = foUserAgent.getFactory().getColorSpace(iccProfileName,
+                    colorSpace = foUserAgent.getFactory().getColorSpaceCache().get(
+                            iccProfileName,
                             foUserAgent.getBaseURL(), iccProfileSrc,
                             renderingIntent);
                 }
@@ -421,7 +422,7 @@ public final class ColorUtil {
                         //sRGB is the primary color with the CMYK as the alternative
                         Color deviceColor = new ColorWithAlternatives(
                                 colorSpace, iccComponents, 1.0f, null);
-                        float[] rgbComps = sRGB.getColorComponents(null);
+                        float[] rgbComps = sRGB.getRGBColorComponents(null);
                         parsedColor = new ColorWithAlternatives(
                                 rgbComps[0], rgbComps[1], rgbComps[2],
                                 new Color[] {deviceColor});
@@ -499,7 +500,7 @@ public final class ColorUtil {
                 if (foUserAgent != null && iccProfileSrc != null) {
                     RenderingIntent renderingIntent = RenderingIntent.AUTO;
                     //TODO connect to fo:color-profile/@rendering-intent
-                    colorSpace = (ICC_ColorSpace)foUserAgent.getFactory().getColorSpace(
+                    colorSpace = (ICC_ColorSpace)foUserAgent.getFactory().getColorSpaceCache().get(
                             iccProfileName,
                             foUserAgent.getBaseURL(), iccProfileSrc,
                             renderingIntent);
@@ -632,7 +633,8 @@ public final class ColorUtil {
                 float black = parseComponent1(args[3], value);
                 float[] comps = new float[] {cyan, magenta, yellow, black};
                 Color cmykColor = DeviceCMYKColorSpace.createCMYKColor(comps);
-                parsedColor = new ColorWithAlternatives(cmykColor.getRGB(),
+                float[] rgbComps = cmykColor.getRGBColorComponents(null);
+                parsedColor = new ColorWithAlternatives(rgbComps[0], rgbComps[1], rgbComps[2],
                         new Color[] {cmykColor});
             } catch (PropertyException pe) {
                 throw pe;
@@ -714,13 +716,9 @@ public final class ColorUtil {
     private static Color toSRGBColor(Color color) {
         float[] comps;
         ColorSpace sRGB = ColorSpace.getInstance(ColorSpace.CS_sRGB);
-        if (color.getColorSpace().isCS_sRGB()) {
-            comps = color.getColorComponents(null);
-        } else {
-            comps = color.getColorComponents(sRGB, null);
-        }
+        comps = color.getRGBColorComponents(null);
         float[] allComps = color.getComponents(null);
-        float alpha = allComps[comps.length - 1]; //Alpha is on last component
+        float alpha = allComps[allComps.length - 1]; //Alpha is on last component
         return new Color(sRGB, comps, alpha);
     }
 
