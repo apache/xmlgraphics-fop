@@ -59,8 +59,8 @@ public class RtfBookmark extends RtfElement {
      * @param writer a <code>Writer</code> value
      * @param bookmark Name of the bookmark
      */
-    RtfBookmark (RtfContainer parent, Writer w, String bookmark) throws IOException {
-        super (parent, w);
+    RtfBookmark (RtfContainer parent, Writer writer, String bookmark) throws IOException {
+        super (parent, writer);
 
         int now = bookmark.length ();
 

@@ -91,7 +91,7 @@ public class PDFDocument {
     private long xref;
 
     /** the character position of each object */
-    private List location = new ArrayList();
+    private List<Long> location = new ArrayList<Long>();
 
     /** List of objects to write in the trailer */
     private List trailerObjects = new ArrayList();
@@ -124,8 +124,8 @@ public class PDFDocument {
     private PDFEncryption encryption;
 
     /** the colorspace (0=RGB, 1=CMYK) */
-    private PDFDeviceColorSpace colorspace =
-        new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
+    private PDFDeviceColorSpace colorspace
+        = new PDFDeviceColorSpace(PDFDeviceColorSpace.DEVICE_RGB);
 
     /** the counter for Pattern name numbering (e.g. 'Pattern1') */
     private int patternCount = 0;
@@ -747,6 +747,7 @@ public class PDFDocument {
      * @return the image or PDFXObject for the key if found
      * @deprecated Use getXObject instead (so forms are treated in the same way)
      */
+    @Deprecated
     public PDFImageXObject getImage(String key) {
         return (PDFImageXObject)this.xObjectsMap.get(key);
     }
@@ -915,7 +916,7 @@ public class PDFDocument {
         while (this.location.size() <= objidx) {
             this.location.add(LOCATION_PLACEHOLDER);
         }
-        this.location.set(objidx, new Long(position));
+        this.location.set(objidx, position);
     }
 
     /**
@@ -1017,9 +1018,7 @@ public class PDFDocument {
         output(stream);
         for (int count = 0; count < this.trailerObjects.size(); count++) {
             PDFObject o = (PDFObject)this.trailerObjects.get(count);
-            this.location.set(
-                o.getObjectNumber() - 1,
-                new Long(this.position));
+            setLocation(o.getObjectNumber() - 1, this.position);
             this.position += o.output(stream);
         }
         /* output the xref table and increment the character position

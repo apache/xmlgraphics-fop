@@ -144,7 +144,6 @@ public class TableRow extends TableCellContainer implements BreakPropertySet {
         return (TablePart) parent;
     }
 
-    /** {@inheritDoc} */
     boolean isTableRow() {
         return true;
     }

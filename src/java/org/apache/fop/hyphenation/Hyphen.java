@@ -34,23 +34,45 @@ import java.io.Serializable;
  * @author Carlos Villegas <cav@uniscope.co.jp>
  */
 
+/**
+ * Represents a hyphen.
+ */
 public class Hyphen implements Serializable {
-    public String preBreak;
-    public String noBreak;
-    public String postBreak;
 
+    private static final long serialVersionUID = 8989909741110279085L;
+
+    /** pre break string */
+    public String preBreak;                                     // CSOK: VisibilityModifier
+
+    /** no break string */
+    public String noBreak;                                      // CSOK: VisibilityModifier
+
+    /** post break string */
+    public String postBreak;                                    // CSOK: VisibilityModifier
+
+    /**
+     * Construct a hyphen.
+     * @param pre break string
+     * @param no break string
+     * @param post break string
+     */
     Hyphen(String pre, String no, String post) {
         preBreak = pre;
         noBreak = no;
         postBreak = post;
     }
 
+    /**
+     * Construct a hyphen.
+     * @param pre break string
+     */
     Hyphen(String pre) {
         preBreak = pre;
         noBreak = null;
         postBreak = null;
     }
 
+    /** {@inheritDoc} */
     public String toString() {
         if (noBreak == null
                 && postBreak == null

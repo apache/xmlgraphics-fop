@@ -21,7 +21,7 @@ package org.apache.fop.fonts;
 
 import java.util.BitSet;
 import java.util.Collections;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.fop.util.CharUtilities;
@@ -42,19 +42,22 @@ public class CIDSubset {
     /**
      * usedGlyphs contains orginal, new glyph index (glyph index -> char selector)
      */
-    private Map/*<Integer, Integer>*/ usedGlyphs = new java.util.HashMap();
+    private Map<Integer, Integer> usedGlyphs = new HashMap<Integer, Integer>();
 
     /**
      * usedGlyphsIndex contains new glyph, original index (char selector -> glyph index)
      */
-    private Map/*<Integer, Integer>*/ usedGlyphsIndex = new java.util.HashMap();
+    private Map<Integer, Integer> usedGlyphsIndex = new HashMap<Integer, Integer>();
     private int usedGlyphsCount = 0;
 
     /**
      * usedCharsIndex contains new glyph, original char (char selector -> Unicode)
      */
-    private Map/*<Integer, Character>*/ usedCharsIndex = new java.util.HashMap();
+    private Map<Integer, Character> usedCharsIndex = new HashMap<Integer, Character>();
 
+    /**
+     * Default constructor.
+     */
     public CIDSubset() {
     }
 
@@ -81,7 +84,7 @@ public class CIDSubset {
      * @return the original index (or -1 if no glyph index is available for the subset index)
      */
     public int getGlyphIndexForSubsetIndex(int subsetIndex) {
-        Integer glyphIndex = (Integer)usedGlyphsIndex.get(new Integer(subsetIndex));
+        Integer glyphIndex = usedGlyphsIndex.get(new Integer(subsetIndex));
         if (glyphIndex != null) {
             return glyphIndex.intValue();
         } else {
@@ -96,7 +99,7 @@ public class CIDSubset {
      * @return the Unicode value or "NOT A CHARACTER" (0xFFFF)
      */
     public char getUnicodeForSubsetIndex(int subsetIndex) {
-        Character mapValue = (Character)usedCharsIndex.get(new Integer(subsetIndex));
+        Character mapValue = usedCharsIndex.get(new Integer(subsetIndex));
         if (mapValue != null) {
             return mapValue.charValue();
         } else {
@@ -115,7 +118,7 @@ public class CIDSubset {
     public int mapSubsetChar(int glyphIndex, char unicode) {
         // Reencode to a new subset font or get the reencoded value
         // IOW, accumulate the accessed characters and build a character map for them
-        Integer subsetCharSelector = (Integer)usedGlyphs.get(new Integer(glyphIndex));
+        Integer subsetCharSelector = usedGlyphs.get(new Integer(glyphIndex));
         if (subsetCharSelector == null) {
             int selector = usedGlyphsCount;
             usedGlyphs.put(new Integer(glyphIndex),
@@ -136,7 +139,7 @@ public class CIDSubset {
      * character selector (i.e. the subset index in this case).
      * @return Map Map&lt;Integer, Integer&gt; of the font subset
      */
-    public Map/*<Integer, Integer>*/ getSubsetGlyphs() {
+    public Map<Integer, Integer> getSubsetGlyphs() {
         return Collections.unmodifiableMap(this.usedGlyphs);
     }
 
@@ -166,9 +169,7 @@ public class CIDSubset {
      */
     public BitSet getGlyphIndexBitSet() {
         BitSet bitset = new BitSet();
-        Iterator iter = usedGlyphsIndex.keySet().iterator();
-        while (iter.hasNext()) {
-            Integer cid = (Integer)iter.next();
+        for (Integer cid : usedGlyphs.keySet()) {
             bitset.set(cid.intValue());
         }
         return bitset;

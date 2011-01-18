@@ -109,8 +109,8 @@ public class PlanRenderer {
         hints.put(PlanHints.FONT_FAMILY, fontFamily);
         hints.put(PlanHints.FONT_SIZE, new Float(fontSize));
         hints.put(PlanHints.LOCALE, locale);
-        Document doc =
-          planDrawer.createDocument(data, width, height, hints);
+        Document doc
+            = planDrawer.createDocument(data, width, height, hints);
         return doc;
     }
 
@@ -152,6 +152,7 @@ public class PlanRenderer {
         } else if (t.equals("grouping")) {
             data.setType(ActionInfo.GROUPING);
         } else {
+            throw new IllegalArgumentException("Unknown action type: " + t);
         }
 
         for (int i = 0; i < childs.getLength(); i++) {

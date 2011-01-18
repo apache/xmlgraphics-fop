@@ -110,7 +110,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     //if optimizations can be done to avoid int->float->int conversions.
 
     /** logging instance */
-    protected static Log log = LogFactory.getLog(IFRenderer.class);
+    protected static final Log log = LogFactory.getLog(IFRenderer.class);
 
     /** XML MIME type */
     public static final String IF_MIME_TYPE = MimeConstants.MIME_FOP_IF;
@@ -1238,7 +1238,8 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     }
 
     /** {@inheritDoc} */
-    protected void drawBorders(float startx, float starty,
+    protected void drawBorders(                                  // CSOK: ParameterNumber
+            float startx, float starty,
             float width, float height,
             BorderProps bpsBefore, BorderProps bpsAfter,
             BorderProps bpsStart, BorderProps bpsEnd) {
@@ -1251,7 +1252,8 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     }
 
     /** {@inheritDoc} */
-    protected void drawBorderLine(float x1, float y1, float x2, float y2, boolean horz,
+    protected void drawBorderLine(                               // CSOK: ParameterNumber
+            float x1, float y1, float x2, float y2, boolean horz,
             boolean startOrBefore, int style, Color col) {
         //Simplified implementation that is only used by renderTextDecoration()
         //drawBorders() is overridden and uses the Painter's high-level method drawBorderRect()

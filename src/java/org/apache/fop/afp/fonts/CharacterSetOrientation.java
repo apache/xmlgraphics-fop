@@ -279,7 +279,7 @@ public class CharacterSetOrientation {
      * Returns the space increment.
      * @return the space increment
      */
-    public int getSpaceIncrement(){
+    public int getSpaceIncrement() {
         return this.spaceIncrement;
     }
 
@@ -295,7 +295,7 @@ public class CharacterSetOrientation {
      * Returns the em space increment.
      * @return the em space increment
      */
-    public int getEmSpaceIncrement(){
+    public int getEmSpaceIncrement() {
         return this.emSpaceIncrement;
     }
 

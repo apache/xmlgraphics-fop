@@ -25,7 +25,7 @@ import java.awt.Rectangle;
 // FOP
 import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.datatypes.LengthBase;
-import org.apache.fop.datatypes.SimplePercentBaseContext;
+import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.FONode;
 
 /**
@@ -49,31 +49,16 @@ public class RegionBefore extends RegionBA {
     }
 
     /** {@inheritDoc} */
-    public Rectangle getViewportRectangle (FODimension reldims, SimplePageMaster spm) {
+    public Rectangle getViewportRectangle (FODimension reldims) {
         /* Special rules apply to resolving extent as values are resolved relative
          * to the page size and reference orientation.
          */
-        SimplePercentBaseContext pageWidthContext;
-        SimplePercentBaseContext pageHeightContext;
-        if (spm.getReferenceOrientation() % 180 == 0) {
-            pageWidthContext = new SimplePercentBaseContext(null,
-                                                            LengthBase.CUSTOM_BASE,
-                                                            spm.getPageWidth().getValue());
-            pageHeightContext = new SimplePercentBaseContext(null,
-                                                             LengthBase.CUSTOM_BASE,
-                                                             spm.getPageHeight().getValue());
-        } else {
-            // invert width and height since top left are rotated by 90 (cl or ccl)
-            pageWidthContext = new SimplePercentBaseContext(null,
-                                                            LengthBase.CUSTOM_BASE,
-                                                            spm.getPageHeight().getValue());
-            pageHeightContext = new SimplePercentBaseContext(null,
-                                                             LengthBase.CUSTOM_BASE,
-                                                             spm.getPageWidth().getValue());
-        }
-        SimplePercentBaseContext neighbourContext;
+        PercentBaseContext pageWidthContext = getPageWidthContext(LengthBase.CUSTOM_BASE);
+        PercentBaseContext pageHeightContext = getPageHeightContext(LengthBase.CUSTOM_BASE);
+        PercentBaseContext neighbourContext;
         Rectangle vpRect;
-        if (spm.getWritingMode() == EN_LR_TB || spm.getWritingMode() == EN_RL_TB) {
+        if (layoutMaster.getWritingMode() == EN_LR_TB
+                || layoutMaster.getWritingMode() == EN_RL_TB) {
             neighbourContext = pageWidthContext;
             vpRect = new Rectangle(0, 0, reldims.ipd, getExtent().getValue(pageHeightContext));
         } else {
@@ -81,7 +66,7 @@ public class RegionBefore extends RegionBA {
             vpRect = new Rectangle(0, 0, getExtent().getValue(pageWidthContext), reldims.ipd);
         }
         if (getPrecedence() == EN_FALSE) {
-            adjustIPD(vpRect, spm.getWritingMode(), neighbourContext);
+            adjustIPD(vpRect, layoutMaster.getWritingMode(), neighbourContext);
         }
         return vpRect;
     }

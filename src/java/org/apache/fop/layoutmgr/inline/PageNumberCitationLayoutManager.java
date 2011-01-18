@@ -25,7 +25,6 @@ import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.UnresolvedPageNumber;
 import org.apache.fop.fo.flow.PageNumberCitation;
 import org.apache.fop.layoutmgr.LayoutContext;
-import org.apache.fop.layoutmgr.LayoutManager;
 
 /**
  * LayoutManager for the fo:page-number-citation formatting object
@@ -36,7 +35,7 @@ public class PageNumberCitationLayoutManager extends AbstractPageNumberCitationL
      * Constructor
      *
      * @param node the formatting object that creates this area
-     * @todo better retrieval of font info
+     * TODO better retrieval of font info
      */
     public PageNumberCitationLayoutManager(PageNumberCitation node) {
         super(node);

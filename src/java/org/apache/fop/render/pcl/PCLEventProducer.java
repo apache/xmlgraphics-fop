@@ -28,7 +28,10 @@ import org.apache.fop.events.EventProducer;
 public interface PCLEventProducer extends EventProducer {
 
     /** Provider class for the event producer. */
-    class Provider {
+    final class Provider {
+
+        private Provider() {
+        }
 
         /**
          * Returns an event producer.

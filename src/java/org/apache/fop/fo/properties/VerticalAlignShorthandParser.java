@@ -18,6 +18,7 @@
 /* $Id$ */
 
 package org.apache.fop.fo.properties;
+
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.PropertyList;
 
@@ -47,6 +48,8 @@ public class VerticalAlignShorthandParser implements ShorthandParser, Constants 
                         return new EnumLength(EnumProperty.getInstance(EN_BASELINE, "BASELINE"));
                     case PR_DOMINANT_BASELINE:
                         return EnumProperty.getInstance(EN_AUTO, "AUTO");
+                    default:
+                        break;
                 }
             case EN_TOP:
                 switch (propId) {
@@ -58,6 +61,8 @@ public class VerticalAlignShorthandParser implements ShorthandParser, Constants 
                         return new EnumLength(EnumProperty.getInstance(EN_BASELINE, "BASELINE"));
                     case PR_DOMINANT_BASELINE:
                         return EnumProperty.getInstance(EN_AUTO, "AUTO");
+                    default:
+                        break;
                 }
             case EN_TEXT_TOP:
                 switch (propId) {
@@ -69,6 +74,8 @@ public class VerticalAlignShorthandParser implements ShorthandParser, Constants 
                         return new EnumLength(EnumProperty.getInstance(EN_BASELINE, "BASELINE"));
                     case PR_DOMINANT_BASELINE:
                         return EnumProperty.getInstance(EN_AUTO, "AUTO");
+                    default:
+                        break;
                 }
             case EN_MIDDLE:
                 switch (propId) {
@@ -80,6 +87,8 @@ public class VerticalAlignShorthandParser implements ShorthandParser, Constants 
                         return new EnumLength(EnumProperty.getInstance(EN_BASELINE, "BASELINE"));
                     case PR_DOMINANT_BASELINE:
                         return EnumProperty.getInstance(EN_AUTO, "AUTO");
+                    default:
+                        break;
                 }
             case EN_BOTTOM:
                 switch (propId) {
@@ -91,6 +100,8 @@ public class VerticalAlignShorthandParser implements ShorthandParser, Constants 
                         return new EnumLength(EnumProperty.getInstance(EN_BASELINE, "BASELINE"));
                     case PR_DOMINANT_BASELINE:
                         return EnumProperty.getInstance(EN_AUTO, "AUTO");
+                    default:
+                        break;
                 }
             case EN_TEXT_BOTTOM:
                 switch (propId) {
@@ -102,6 +113,8 @@ public class VerticalAlignShorthandParser implements ShorthandParser, Constants 
                         return new EnumLength(EnumProperty.getInstance(EN_BASELINE, "BASELINE"));
                     case PR_DOMINANT_BASELINE:
                         return EnumProperty.getInstance(EN_AUTO, "AUTO");
+                    default:
+                        break;
                 }
             case EN_SUB:
                 switch (propId) {
@@ -113,6 +126,8 @@ public class VerticalAlignShorthandParser implements ShorthandParser, Constants 
                         return new EnumLength(EnumProperty.getInstance(EN_SUB, "SUB"));
                     case PR_DOMINANT_BASELINE:
                         return EnumProperty.getInstance(EN_AUTO, "AUTO");
+                    default:
+                        break;
                 }
             case EN_SUPER:
                 switch (propId) {
@@ -124,6 +139,8 @@ public class VerticalAlignShorthandParser implements ShorthandParser, Constants 
                         return new EnumLength(EnumProperty.getInstance(EN_SUPER, "SUPER"));
                     case PR_DOMINANT_BASELINE:
                         return EnumProperty.getInstance(EN_AUTO, "AUTO");
+                    default:
+                        break;
                 }
             default:
                 switch (propId) {
@@ -135,6 +152,8 @@ public class VerticalAlignShorthandParser implements ShorthandParser, Constants 
                         return new EnumLength(EnumProperty.getInstance(EN_BASELINE, "BASELINE"));
                     case PR_DOMINANT_BASELINE:
                         return EnumProperty.getInstance(EN_AUTO, "AUTO");
+                    default:
+                        break;
                 }
         }
         return null;

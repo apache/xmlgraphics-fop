@@ -98,8 +98,13 @@ public final class PropertyCache {
     }
 
     /* Wrapper objects to synchronize on */
-    private static class CacheSegment {
+    private static final class CacheSegment {
+        CacheSegment() {
+        }
         private int count = 0;
+        int getCount() {
+            return count;
+        }
     }
 
     private void cleanSegment(int segmentIndex) {
@@ -209,10 +214,11 @@ public final class PropertyCache {
 
         /* try non-synched first */
         for (CacheEntry e = entry; e != null; e = e.nextEntry) {
-            if (e.hash == hash
-                    && (q = e.get()) != null
-                    &&  eq(q, o)) {
-                return q;
+            if ( e.hash == hash ) {
+                q = e.get();
+                if ( ( q != null ) &&  eq ( q, o ) ) {
+                    return q;
+                }
             }
         }
 
@@ -223,10 +229,11 @@ public final class PropertyCache {
         synchronized (segment) {
             entry = table[index];
             for (CacheEntry e = entry; e != null; e = e.nextEntry) {
-                if (e.hash == hash
-                        && (q = e.get()) != null
-                        &&  eq(q, o)) {
-                    return q;
+                if ( e.hash == hash ) {
+                    q = e.get();
+                    if ( ( q != null ) &&  eq ( q, o ) ) {
+                        return q;
+                    }
                 }
             }
         }
@@ -261,7 +268,8 @@ public final class PropertyCache {
                     newLength--;
                     for (int i = table.length; --i >= 0;) {
                         for (CacheEntry c = table[i]; c != null; c = c.nextEntry) {
-                            if ((o = c.get()) != null) {
+                            o = c.get();
+                            if (o != null) {
                                 hash = c.hash;
                                 idx = hash & newLength;
                                 newTable[idx] = new CacheEntry(o, newTable[idx]);
@@ -384,7 +392,7 @@ public final class PropertyCache {
     }
 
     /**
-     *  Checks if the given {@link Marker.MarkerAttribute} is present
+     *  Checks if the given {@link org.apache.fop.fo.flow.Marker.MarkerAttribute} is present
      *  in the cache - if so, returns a reference to the cached instance.
      *  Otherwise the given object is added to the cache and returned.
      *

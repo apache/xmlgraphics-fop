@@ -35,6 +35,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.xmlgraphics.image.loader.ImageContext;
 import org.apache.xmlgraphics.image.loader.ImageSessionContext;
 import org.apache.xmlgraphics.image.loader.impl.AbstractImageSessionContext;
+import org.apache.xmlgraphics.util.UnitConv;
 
 import org.apache.fop.Version;
 import org.apache.fop.accessibility.Accessibility;
@@ -450,7 +451,7 @@ public class FOUserAgent {
      * @see #getTargetResolution()
      */
     public float getTargetPixelUnitToMillimeter() {
-        return 25.4f / this.targetResolution;
+        return UnitConv.IN2MM / this.targetResolution;
     }
 
     /** @return the resolution for resolution-dependant output */

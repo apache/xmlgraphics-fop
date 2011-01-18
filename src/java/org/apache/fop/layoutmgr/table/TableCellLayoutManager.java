@@ -277,17 +277,10 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
      * this row is placed on a previous page). Used to calculate the placement of the
      * row's background image if any
      */
-    public void addAreas(PositionIterator parentIter,
-                         LayoutContext layoutContext,
-                         int[] spannedGridRowHeights,
-                         int startRow,
-                         int endRow,
-                         int borderBeforeWhich,
-                         int borderAfterWhich,
-                         boolean firstOnPage,
-                         boolean lastOnPage,
-                         RowPainter painter,
-                         int firstRowHeight) {
+    public void addAreas(                                        // CSOK: ParameterNumber
+            PositionIterator parentIter, LayoutContext layoutContext, int[] spannedGridRowHeights,
+            int startRow, int endRow, int borderBeforeWhich, int borderAfterWhich,
+            boolean firstOnPage, boolean lastOnPage, RowPainter painter, int firstRowHeight) {
         getParentArea(null);
 
         addId();

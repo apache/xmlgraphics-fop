@@ -49,6 +49,7 @@
     <context id="API" title="Changes to the End-User API"/>
     <context id="Extensions" title="Changes to the Bundled Extensions"/>
     <context id="Images" title="Changes to the Image Support"/>
+	<context id="Config" title="Changes to the User Configuration"/>
   </contexts>
 
   <changes>
@@ -61,8 +62,57 @@
       <action context="Renderers" dev="JM" type="add" fixes-bug="49403" due-to="Patrick Jaromin">
         Initial work on spot colors (aka named colors) for PDF output.
       </action>
-	</release>
-    <release version="1.0" date="July 2010">
+	  <action context="Config" dev="SP" type="fix">
+		Bugfix: relative URIs in the configuration file (base, font-base, hyphenation-base) are evaluated relative to the base URI of the configuration file.
+	  </action>
+      <action context="Layout" dev="AD" type="fix" fixes-bug="49848">
+        Bugfix: correct behavior of keep-together.within-line in case there are nested inlines
+      </action>
+      <action context="Code" dev="AD" type="fix" fixes-bug="50471">
+        Bugfix: avoid ArrayIndexOutOfBoundsException for codepoints without a linebreak class
+      </action>
+      <action context="Layout" dev="AD" type="fix" fixes-bug="48380">
+        Bugfix: avoid ClassCastException when using fox:widow-content-limit
+      </action>
+      <action context="Layout" dev="VH" type="fix" fixes-bug="50089">
+        Bugfix: content after forced break in block-container is not rendered.
+      </action>
+      <action context="Layout" dev="JM" type="fix" fixes-bug="42034">
+        Fixed adjustment of inline parent area for justified text containing a forward page reference.
+      </action>
+      <action context="Layout" dev="AD" type="fix" fixes-bug="38264">
+        Fixed behavior when combining hyphenation with preserved linefeeds or whitespace.
+      </action>
+      <action context="Code" dev="VH" type="fix" fixes-bug="49695" due-to="Joshua Marquart">
+        Replaced magic numbers with constants from UnitConv and GraphicsConstants.
+      </action>
+      <action context="Renderers" dev="JM" type="add" fixes-bug="42600" due-to="Maximilian Aster">
+        Added some support for break-before/-after for RTF output.
+      </action>
+      <action context="Renderers" dev="JM" type="add" fixes-bug="49379" due-to="Peter Hancock">
+        Added ability to embed an external AFP page segment resource file (AFP output only).
+      </action>
+      <action context="Renderers" dev="JM" type="fix" fixes-bug="46360" due-to="Alexis Giotis">
+        Fixed a multi-threading issue when rendering SVG.
+      </action>
+      <action context="Layout" dev="JM" type="fix" fixes-bug="49885">
+        Fixed retrieval of available BPD for cases spanning columns and multiple pages with differing page masters.
+      </action>
+      <action context="Renderers" dev="VH" type="remove">
+        Removed old Renderer implementations for those output formats that have a version based on 
+        the new DocumentHandler architecture available (AFP, PCL, PDF, PS).
+      </action>
+      <action context="Fonts" dev="AC" type="fix">
+        Reinstated support for being able to specify a font cache filepath in the fop user configuration.
+      </action>
+      <action context="Fonts" dev="AC" type="add">
+        Added convenience support for the flushing of the Fop font cache file from the command line.
+      </action>
+      <action context="Renderers" dev="JM" type="add" fixes-bug="44460" due-to="Andrejus Chaliapinas">
+        Added support for PDF File Attachments (Embedded Files).
+      </action>
+    </release>
+    <release version="1.0" date="21 July 2010">
       <action context="Renderers" dev="JM" type="fix">
         AFP Output: Fixed positioning of Java2D-based images (when GOCA is enabled).
       </action>
@@ -384,6 +434,9 @@
       <action context="Layout" dev="JM" type="fix">
         Fixed a problem where the BPD or a block area could be wrong if there is a nested,
         absolutely positioned area (for example a block-container).
+      </action>
+      <action context="Code" dev="VH" type="fix" fixes-bug="45971" due-to="Tow Browder">
+        Improved the behaviour of the command line interface.
       </action>
       <action context="Layout" dev="AD" type="fix" fixes-bug="40798">
         Bugzilla 40798: A conditional-page-master-reference with page-position="last" qualifies

@@ -60,6 +60,7 @@ import org.apache.batik.ext.awt.RenderingHintsKeyExt;
 import org.apache.batik.gvt.GraphicsNode;
 import org.apache.batik.gvt.PatternPaint;
 
+import org.apache.xmlgraphics.image.GraphicsConstants;
 import org.apache.xmlgraphics.image.loader.ImageInfo;
 import org.apache.xmlgraphics.image.loader.ImageSize;
 import org.apache.xmlgraphics.image.loader.impl.ImageRawCCITTFax;
@@ -762,7 +763,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
      * @param fill true if the paint should be set for filling
      * @return true if the paint is handled natively, false if the paint should be rasterized
      */
-    protected boolean applyPaint(Paint paint, boolean fill) {
+    protected boolean applyPaint(Paint paint, boolean fill) {   // CSOK: MethodLength
         preparePainting();
 
         if (paint instanceof Color) {
@@ -1039,6 +1040,11 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
         return true;
     }
 
+    /**
+     * @param paint some paint
+     * @param shape a shape
+     * @return true (always)
+     */
     protected boolean applyUnknownPaint(Paint paint, Shape shape) {
         preparePainting();
 
@@ -1186,6 +1192,8 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
             case BasicStroke.CAP_SQUARE:
                 currentStream.write(2 + " J\n");
                 break;
+            default:
+                break;
             }
 
             int lj = bs.getLineJoin();
@@ -1198,6 +1206,8 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
                 break;
             case BasicStroke.JOIN_BEVEL:
                 currentStream.write(2 + " j\n");
+                break;
+            default:
                 break;
             }
             float lw = bs.getLineWidth();
@@ -1214,7 +1224,11 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
         drawInnerRenderedImage(key, img, xform);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * @param key a key
+     * @param img an image
+     * @param xform a transform
+     */
     public void drawInnerRenderedImage(String key, RenderedImage img, AffineTransform xform) {
         preparePainting();
         PDFXObject xObject = pdfDoc.getXObject(key);
@@ -1243,7 +1257,8 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
 
     private PDFXObject addRenderedImage(String key, RenderedImage img) {
         ImageInfo info = new ImageInfo(null, "image/unknown");
-        ImageSize size = new ImageSize(img.getWidth(), img.getHeight(), 72);
+        ImageSize size = new ImageSize(img.getWidth(), img.getHeight(),
+                GraphicsConstants.DEFAULT_DPI);
         info.setSize(size);
         ImageRendered imgRend = new ImageRendered(info, img, null);
         ImageRenderedAdapter adapter = new ImageRenderedAdapter(imgRend, key);

@@ -100,7 +100,7 @@ public class GraphicsObject extends AbstractDataObject {
         getObjectEnvironmentGroup().setDataDescriptor(graphicsDataDescriptor);
     }
 
-    /** {@inheritDoc} */
+    /** @param object the structured data */
     public void addObject(StructuredData object) {
         if (currentData == null) {
             newData();
@@ -392,7 +392,11 @@ public class GraphicsObject extends AbstractDataObject {
     }
 
     /** the internal graphics state */
-    private static class GraphicsState {
+    private static final class GraphicsState {
+
+        private GraphicsState() {
+        }
+
         /** the current color */
         private Color color;
 

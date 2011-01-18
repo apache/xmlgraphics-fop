@@ -33,31 +33,32 @@ public class CommonRelativePosition {
     /**
      * The "relative-position" property.
      */
-    public int relativePosition;
+    public int relativePosition;                                // CSOK: VisibilityModifier
 
     /**
      * The "top" property.
      */
-    public Length top;
+    public Length top;                                          // CSOK: VisibilityModifier
 
     /**
      * The "right" property.
      */
-    public Length right;
+    public Length right;                                        // CSOK: VisibilityModifier
 
     /**
      * The "bottom" property.
      */
-    public Length bottom;
+    public Length bottom;                                       // CSOK: VisibilityModifier
 
     /**
      * The "left" property.
      */
-    public Length left;
+    public Length left;                                         // CSOK: VisibilityModifier
 
     /**
      * Create a CommonRelativePosition object.
      * @param pList The PropertyList with propery values.
+     * @throws PropertyException if a property exception occurs
      */
     public CommonRelativePosition(PropertyList pList) throws PropertyException {
         relativePosition = pList.get(Constants.PR_RELATIVE_POSITION).getEnum();

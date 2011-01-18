@@ -30,6 +30,9 @@ import java.util.List;
  * See fo:region-body definition in the XSL Rec for more information.
  */
 public class Span extends Area {
+
+    private static final long serialVersionUID = -5551430053660081549L;
+
     // the list of flow reference areas in this span area
     private List flowAreas;
     private int colCount;

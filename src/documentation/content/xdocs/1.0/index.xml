@@ -19,31 +19,48 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
 <document>
   <header>
-    <title>Apache FOP Trunk (Development code)</title>
+    <title>Apache FOP Version 1.0</title>
     <version>$Revision$</version>
   </header>
   <body>
     <section id="intro">
       <title>Introduction</title>
       <p>
-        <strong>FOP Trunk</strong> is the name for the current
-        development code as found in the <a
-        href="ext:svn-repo/trunk">Subversion repository</a>. This
-        section of the FOP web site provides the documentation for
-        this version.
+        The Apache FOP team is proud to present to you this production
+        quality codebase. FOP 1.0 provides a good subset of the W3C
+        XSL-FO 1.0 and 1.1 Standards. Its stable, 1.0 designation
+        provides added recognition as the productive tool it has been
+        for years.
+	  </p>
+	  <p>
+		We remain committed to improving the tool, and we continue to
+		add new features. We welcome any feedback you might have and
+		even more, any other form of help to get the project forward.
       </p>
       <p>
-        The Apache FOP team is proud to present to you this production quality codebase. It has taken
-        over three years to get this far and over two years without a new release from the FOP
-        project. We're still in the process of adding new features. We welcome any feedback you
-        might have and even more, any other form of help to get the project forward.
+        This release contains many bug fixes and new features compared
+        to the previous version. To see what has changed since the last release, please visit the 
+        <a href="changes_1.0.html">Changes Page</a> and the
+        <a href="releaseNotes_1.0.html">Release Notes</a>.
       </p>
+	  <p>
+		This release implements a good subset of the W3C XSL-FO 1.0
+		and 1.1 Standards. For a detailed overview of FOP's
+		compliance, visit the <a href="../compliance.html">compliance
+		page</a>.
+	  </p>
     </section>
     <section id="upgrading">
       <title>Upgrading from an earlier version</title>
       <p>
         If you're upgrading to this version from an earlier version of FOP, please read the 
         information contained on the <a href="upgrading.html">Upgrading page</a>!
+      </p>
+	</section>
+    <section id="download">
+      <title>Download</title>
+      <p>
+        To download this version, please visit the <a href="../download.html">download page</a>.
       </p>
     </section>
   </body>

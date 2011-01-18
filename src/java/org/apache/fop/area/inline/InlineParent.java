@@ -19,20 +19,22 @@
 
 package org.apache.fop.area.inline;
 
-import org.apache.fop.area.Area;
-
 import java.util.List;
-import java.util.ArrayList;
+
+import org.apache.fop.area.Area;
 
 /**
  * Inline parent area.
  * This is an inline area that can have other inlines as children.
  */
 public class InlineParent extends InlineArea {
+
+    private static final long serialVersionUID = -3047168298770354813L;
+
     /**
      * The list of inline areas added to this inline parent.
      */
-    protected List inlines = new ArrayList();
+    protected List<InlineArea> inlines = new java.util.ArrayList<InlineArea>();
 
     /** Controls whether the IPD is automatically adjusted based on the area's children. */
     protected transient boolean autoSize;
@@ -48,13 +50,14 @@ public class InlineParent extends InlineArea {
      *
      * @param childArea the child area to add
      */
+    @Override
     public void addChildArea(Area childArea) {
         if (inlines.size() == 0) {
             autoSize = (getIPD() == 0);
         }
         if (childArea instanceof InlineArea) {
             InlineArea inlineChildArea = (InlineArea) childArea;
-            inlines.add(childArea);
+            inlines.add(inlineChildArea);
             // set the parent area for the child area
             inlineChildArea.setParentArea(this);
             if (autoSize) {
@@ -68,7 +71,7 @@ public class InlineParent extends InlineArea {
      *
      * @return the list of child areas
      */
-    public List getChildAreas() {
+    public List<InlineArea> getChildAreas() {
         return inlines;
     }
 
@@ -79,15 +82,21 @@ public class InlineParent extends InlineArea {
      * @param lineShrink      the total shrink of the line
      * @return true if there is an UnresolvedArea descendant
      */
+    @Override
     public boolean applyVariationFactor(double variationFactor,
                                         int lineStretch, int lineShrink) {
-        boolean bUnresolvedAreasPresent = false;
+        boolean hasUnresolvedAreas = false;
+        int cumulativeIPD = 0;
         // recursively apply variation factor to descendant areas
         for (int i = 0, len = inlines.size(); i < len; i++) {
-            bUnresolvedAreasPresent |= ((InlineArea)inlines.get(i))
-                .applyVariationFactor(variationFactor, lineStretch, lineShrink);
+            InlineArea inline = inlines.get(i);
+            hasUnresolvedAreas |= inline.applyVariationFactor(
+                    variationFactor, lineStretch, lineShrink);
+            cumulativeIPD += inline.getIPD();  //Update this area's IPD based on changes to children
         }
-        return bUnresolvedAreasPresent;
+        setIPD(cumulativeIPD);
+
+        return hasUnresolvedAreas;
     }
 }
 

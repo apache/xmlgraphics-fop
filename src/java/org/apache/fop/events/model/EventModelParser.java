@@ -40,10 +40,13 @@ import org.apache.fop.util.DefaultErrorListener;
 /**
  * This is a parser for the event model XML.
  */
-public class EventModelParser {
+public final class EventModelParser {
+
+    private EventModelParser() {
+    }
 
     /** Logger instance */
-    protected static Log log = LogFactory.getLog(EventModelParser.class);
+    private static final Log LOG = LogFactory.getLog(EventModelParser.class);
 
     private static SAXTransformerFactory tFactory
         = (SAXTransformerFactory)SAXTransformerFactory.newInstance();
@@ -57,7 +60,7 @@ public class EventModelParser {
     public static EventModel parse(Source src)
             throws TransformerException {
         Transformer transformer = tFactory.newTransformer();
-        transformer.setErrorListener(new DefaultErrorListener(log));
+        transformer.setErrorListener(new DefaultErrorListener(LOG));
 
         EventModel model = new EventModel();
         SAXResult res = new SAXResult(getContentHandler(model));

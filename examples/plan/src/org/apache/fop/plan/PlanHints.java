@@ -25,22 +25,22 @@ package org.apache.fop.plan;
 public interface PlanHints {
 
     /** Border attribute */
-    public static final String PLAN_BORDER = "border";
+    String PLAN_BORDER = "border";
     /** Legend attribute */
-    public static final String PLAN_LEGEND = "legend";
+    String PLAN_LEGEND = "legend";
     /** Font family attribute */
-    public static final String FONT_FAMILY = "font-family";
+    String FONT_FAMILY = "font-family";
     /** Font size attribute */
-    public static final String FONT_SIZE = "font-size";
+    String FONT_SIZE = "font-size";
     /** Legent type attribute */
-    public static final String LEGEND_TYPE = "legendType";
+    String LEGEND_TYPE = "legendType";
     /** Locale attribute */
-    public static final String LOCALE = "locale";
+    String LOCALE = "locale";
     /** Label type attribute */
-    public static final String LABEL_TYPE = "labelType";
+    String LABEL_TYPE = "labelType";
     /** Label font size attribute */
-    public static final String LABEL_FONT_SIZE = "labelFontSize";
+    String LABEL_FONT_SIZE = "labelFontSize";
     /** Label font attribute */
-    public static final String LABEL_FONT = "labelFont";
+    String LABEL_FONT = "labelFont";
 
 }

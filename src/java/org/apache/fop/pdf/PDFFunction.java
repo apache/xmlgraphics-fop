@@ -211,10 +211,11 @@ public class PDFFunction extends PDFObject {
      * @param theFunctionType This is the type of function (0,2,3, or 4).
      * It should be 0 as this is the constructor for sampled functions.
      */
-    public PDFFunction(int theFunctionType, List theDomain,
-                       List theRange, List theSize, int theBitsPerSample,
-                       int theOrder, List theEncode, List theDecode,
-                       StringBuffer theFunctionDataStream, List theFilter) {
+    public PDFFunction(                                          // CSOK: ParameterNumber
+            int theFunctionType, List theDomain,
+            List theRange, List theSize, int theBitsPerSample,
+            int theOrder, List theEncode, List theDecode,
+            StringBuffer theFunctionDataStream, List theFilter) {
         super();
 
         this.functionType = 0;      // dang well better be 0;
@@ -374,7 +375,7 @@ public class PDFFunction extends PDFObject {
      *
      * @return the PDF string.
      */
-    public byte[] toPDF() {
+    public byte[] toPDF() {                                     // CSOK: MethodLength
         int vectorSize = 0;
         int numberOfFunctions = 0;
         int tempInt = 0;

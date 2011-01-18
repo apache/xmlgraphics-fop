@@ -30,7 +30,7 @@ import org.apache.fop.traits.MinOptMax;
 public abstract class UnresolvedListElementWithLength extends UnresolvedListElement {
 
     /** Logger instance */
-    protected static Log log = LogFactory.getLog(UnresolvedListElementWithLength.class);
+    protected static final Log log = LogFactory.getLog(UnresolvedListElementWithLength.class);
 
     private MinOptMax length;
     private boolean conditional;

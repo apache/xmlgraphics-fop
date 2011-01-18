@@ -44,7 +44,7 @@ public class FOElementMapping extends ElementMapping {
      */
     protected void initialize() {
         if (foObjs == null) {
-            foObjs = new HashMap();
+            foObjs = new HashMap<String, Maker>();
 
             // Declarations and Pagination and Layout Formatting Objects
             foObjs.put("root", new RootMaker());

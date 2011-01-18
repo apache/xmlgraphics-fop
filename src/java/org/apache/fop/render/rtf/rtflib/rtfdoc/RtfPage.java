@@ -62,7 +62,7 @@ extends RtfContainer {
     public static final String FOOTERY = "footery";
     /** constant for itap level */
     public static final String ITAP = "itap";
-    
+
     /** String array of RtfPage attributes */
     public static final String[] PAGE_ATTR = new String[]{
         PAGE_WIDTH, PAGE_HEIGHT, LANDSCAPE, MARGIN_TOP, MARGIN_BOTTOM,

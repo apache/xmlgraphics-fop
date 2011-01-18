@@ -25,7 +25,7 @@ import java.io.Serializable;
 /**
  * FontTriplet contains information on name, style and weight of one font
  */
-public class FontTriplet implements Comparable, Serializable {
+public class FontTriplet implements Comparable<FontTriplet>, Serializable {
 
     /** serial version UID */
     private static final long serialVersionUID = 1168991106658033508L;
@@ -99,8 +99,8 @@ public class FontTriplet implements Comparable, Serializable {
     }
 
     /** {@inheritDoc} */
-    public int compareTo(Object o) {
-        return getKey().compareTo(((FontTriplet)o).getKey());
+    public int compareTo(FontTriplet o) {
+        return getKey().compareTo(o.getKey());
     }
 
     /** {@inheritDoc} */

@@ -13,7 +13,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
+ */
+
 /* $Id$ */
 
 package org.apache.fop.fo.properties;
@@ -22,6 +23,9 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
 
+/**
+ * A parser for the xml:lang property.
+ */
 public class XMLLangShorthandParser extends GenericShorthandParser {
 
     private static final char HYPHEN_MINUS = '-';

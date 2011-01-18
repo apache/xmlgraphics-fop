@@ -34,17 +34,14 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import org.apache.xmlgraphics.image.loader.ImageException;
 import org.apache.xmlgraphics.image.loader.ImageInfo;
 import org.apache.xmlgraphics.image.loader.ImageManager;
 import org.apache.xmlgraphics.image.loader.ImageSessionContext;
 import org.apache.xmlgraphics.xmp.Metadata;
 
-import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.ResourceEventProducer;
+import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.render.ImageHandlerUtil;
 import org.apache.fop.render.RenderingContext;
 import org.apache.fop.render.intermediate.AbstractIFPainter;
@@ -63,9 +60,6 @@ import org.apache.fop.util.XMLUtil;
  * IFPainter implementation that writes SVG.
  */
 public class SVGPainter extends AbstractIFPainter implements SVGConstants {
-
-    /** logging instance */
-    private static Log log = LogFactory.getLog(SVGPainter.class);
 
     private AbstractSVGDocumentHandler parent;
 
@@ -391,7 +385,10 @@ public class SVGPainter extends AbstractIFPainter implements SVGConstants {
         state.resetFontChanged();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * @param extension an extension object
+     * @throws IFException if not caught
+     */
     public void handleExtensionObject(Object extension) throws IFException {
         if (extension instanceof Metadata) {
             Metadata meta = (Metadata)extension;

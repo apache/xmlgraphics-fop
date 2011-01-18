@@ -40,7 +40,7 @@ import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.util.CharUtilities;
 
 /**
- * Renders the attributed character iterator of a {@link TextNode}.
+ * Renders the attributed character iterator of a {@link org.apache.batik.gvt.TextNode}.
  * This class draws the text directly into the PDFGraphics2D so that
  * the text is not drawn using shapes which makes the PDF files larger.
  * If the text is simple enough to draw then it sets the font and calls

@@ -49,6 +49,10 @@ public class BuilderContext {
     /** Rtf options */
     private IRtfOptions options;
 
+    /**
+     * Construct a builder context.
+     * @param rtfOptions some options
+     */
     public BuilderContext(IRtfOptions rtfOptions) {
         options = rtfOptions;
     }
@@ -82,9 +86,13 @@ public class BuilderContext {
         return result;
     }*/
 
-    /** find the "nearest" container that implements the given interface on our stack
-     *  @param required if true, ConverterException is thrown if no container found
-     *  @param forWhichBuilder used in error message if container not found
+    /**
+     * Find the "nearest" container that implements the given interface on our stack.
+     * @param containerClass class of container
+     * @param required if true, ConverterException is thrown if no container found
+     * @param forWhichBuilder used in error message if container not found
+     * @return the container
+     * @throws RtfException if not caught
      */
     public RtfContainer getContainer(Class containerClass, boolean required,
                               Object /*IBuilder*/ forWhichBuilder) throws RtfException {
@@ -103,7 +111,10 @@ public class BuilderContext {
         return result;
     }
 
-    /** push an RtfContainer on our stack */
+    /**
+     * Push an RtfContainer on our stack.
+     * @param c the container
+     */
     public void pushContainer(RtfContainer c) {
         containers.push(c);
     }
@@ -115,6 +126,9 @@ public class BuilderContext {
      * paragraph container to handle what follows the nested block.
      * TODO: what happens to elements that are "more on top" than oldC on the
      * stack? shouldn't they be closed or something?
+     * @param oldC old container
+     * @param newC new container
+     * @throws Exception if not caught
      */
     public void replaceContainer(RtfContainer oldC, RtfContainer newC)
     throws Exception {
@@ -150,17 +164,23 @@ public class BuilderContext {
         return result;
     }
     */
-    /** return the current TableContext */
+
+    /** @return the current TableContext */
     public TableContext getTableContext() {
         return (TableContext)tableContexts.peek();
     }
 
-    /** push a TableContext to our stack */
+    /**
+     * Push a TableContext to our stack.
+     * @param tc the table context
+     */
     public void pushTableContext(TableContext tc) {
         tableContexts.push(tc);
     }
 
-    /** pop a TableContext from our stack */
+    /**
+     * Pop a TableContext from our stack.
+     */
     public void popTableContext() {
         tableContexts.pop();
     }

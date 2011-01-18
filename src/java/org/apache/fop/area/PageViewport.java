@@ -87,7 +87,7 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
     /**
      * logging instance
      */
-    protected static Log log = LogFactory.getLog(PageViewport.class);
+    protected static final Log log = LogFactory.getLog(PageViewport.class);
 
     /**
      * Create a page viewport.
@@ -95,8 +95,10 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
      * @param pageNumber the page number
      * @param pageStr String representation of the page number
      * @param blank true if this is a blank page
+     * @param spanAll true if the first span area spans all columns
      */
-    public PageViewport(SimplePageMaster spm, int pageNumber, String pageStr, boolean blank) {
+    public PageViewport(SimplePageMaster spm, int pageNumber, String pageStr,
+            boolean blank, boolean spanAll) {
         this.simplePageMasterName = spm.getMasterName();
         setExtensionAttachments(spm.getExtensionAttachments());
         setForeignAttributes(spm.getForeignAttributes());
@@ -107,7 +109,18 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
         this.pageNumberString = pageStr;
         this.viewArea = new Rectangle(0, 0, pageWidth, pageHeight);
         this.page = new Page(spm);
-        createSpan(false);
+        createSpan(spanAll);
+    }
+
+    /**
+     * Create a page viewport.
+     * @param spm SimplePageMaster indicating the page and region dimensions
+     * @param pageNumber the page number
+     * @param pageStr String representation of the page number
+     * @param blank true if this is a blank page
+     */
+    public PageViewport(SimplePageMaster spm, int pageNumber, String pageStr, boolean blank) {
+        this(spm, pageNumber, pageStr, blank, false);
     }
 
     /**

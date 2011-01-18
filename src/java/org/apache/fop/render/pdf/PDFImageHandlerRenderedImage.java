@@ -19,7 +19,6 @@
 
 package org.apache.fop.render.pdf;
 
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.io.IOException;
 
@@ -27,47 +26,21 @@ import org.apache.xmlgraphics.image.loader.Image;
 import org.apache.xmlgraphics.image.loader.ImageFlavor;
 import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
 
-import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFImage;
-import org.apache.fop.pdf.PDFResourceContext;
 import org.apache.fop.pdf.PDFXObject;
 import org.apache.fop.render.ImageHandler;
-import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.RenderingContext;
 import org.apache.fop.render.pdf.PDFLogicalStructureHandler.MarkedContentInfo;
 
 /**
  * Image handler implementation which handles RenderedImage instances for PDF output.
  */
-public class PDFImageHandlerRenderedImage implements PDFImageHandler, ImageHandler {
+public class PDFImageHandlerRenderedImage implements ImageHandler {
 
     private static final ImageFlavor[] FLAVORS = new ImageFlavor[] {
         ImageFlavor.BUFFERED_IMAGE,
         ImageFlavor.RENDERED_IMAGE
     };
-
-    /** {@inheritDoc} */
-    public PDFXObject generateImage(RendererContext context, Image image,
-            Point origin, Rectangle pos)
-            throws IOException {
-        PDFRenderer renderer = (PDFRenderer)context.getRenderer();
-        ImageRendered imageRend = (ImageRendered)image;
-        PDFDocument pdfDoc = (PDFDocument)context.getProperty(
-                PDFRendererContextConstants.PDF_DOCUMENT);
-        PDFResourceContext resContext = (PDFResourceContext)context.getProperty(
-                PDFRendererContextConstants.PDF_CONTEXT);
-
-        PDFImage pdfimage = new ImageRenderedAdapter(imageRend, image.getInfo().getOriginalURI());
-        PDFXObject xobj = pdfDoc.addImage(resContext, pdfimage);
-
-        float x = (float)pos.getX() / 1000f;
-        float y = (float)pos.getY() / 1000f;
-        float w = (float)pos.getWidth() / 1000f;
-        float h = (float)pos.getHeight() / 1000f;
-        renderer.placeImage(x, y, w, h, xobj);
-
-        return xobj;
-    }
 
     /** {@inheritDoc} */
     public void handleImage(RenderingContext context, Image image, Rectangle pos)

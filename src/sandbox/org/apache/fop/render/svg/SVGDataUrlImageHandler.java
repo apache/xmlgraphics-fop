@@ -33,11 +33,11 @@ import org.apache.xmlgraphics.image.loader.Image;
 import org.apache.xmlgraphics.image.loader.ImageFlavor;
 import org.apache.xmlgraphics.image.loader.impl.ImageRawStream;
 import org.apache.xmlgraphics.util.QName;
+import org.apache.xmlgraphics.util.uri.DataURLUtil;
 
 import org.apache.fop.render.ImageHandler;
 import org.apache.fop.render.RenderingContext;
 import org.apache.fop.render.intermediate.IFConstants;
-import org.apache.fop.util.DataURLUtil;
 
 /**
  * Image handler implementation that embeds JPEG bitmaps as RFC 2397 data URLs in the target SVG

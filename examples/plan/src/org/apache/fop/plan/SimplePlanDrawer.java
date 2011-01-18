@@ -243,8 +243,8 @@ public class SimplePlanDrawer implements PlanDrawer {
                                 - lastWeek.getTime() + 43200000) / 86400000);
                     int days = (int)((end.getTime() - start.getTime()
                                 + 43200000) / 86400000);
-                    int daysFromEnd =
-                        (int)((future.getTime() - end.getTime()
+                    int daysFromEnd
+                        = (int)((future.getTime() - end.getTime()
                             + 43200000) / 86400000);
                     Element taskGraphic;
                     switch (type) {
@@ -299,8 +299,8 @@ public class SimplePlanDrawer implements PlanDrawer {
                 topEdge = lastTop;
             }
         }
-        int currentDays =
-          (int)((currentDate.getTime() - lastWeek.getTime()
+        int currentDays
+            = (int)((currentDate.getTime() - lastWeek.getTime()
                 + 43200000) / 86400000);
 
         text = SVGUtilities.createText(doc,

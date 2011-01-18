@@ -30,6 +30,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringWriter;
 
+import org.apache.xmlgraphics.image.GraphicsConstants;
+
 import org.apache.fop.Version;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontSetup;
@@ -64,7 +66,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
     /** Normal PDF resolution (72dpi) */
     public static final int NORMAL_PDF_RESOLUTION = 72;
     /** Default device resolution (300dpi is a resonable quality for most purposes) */
-    public static final int DEFAULT_NATIVE_DPI = 300;
+    public static final int DEFAULT_NATIVE_DPI = GraphicsConstants.DEFAULT_SAMPLE_DPI;
 
     /**
      * The device resolution may be different from the normal target resolution. See
@@ -257,6 +259,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
         if (!pdfContext.isPagePending()) {
             return; //ignore
         }
+        currentStream.write("Q\n");
         //Finish page
         PDFStream pdfStream = this.pdfDoc.getFactory().makeStream(
                 PDFFilterList.CONTENT_FILTER, false);
@@ -322,6 +325,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
         pdfContext.setCurrentPage(page);
         pageRef = page.referencePDF();
 
+        currentStream.write("q\n");
         AffineTransform at = new AffineTransform(1.0, 0.0, 0.0, -1.0,
                                                  0.0, height);
         currentStream.write("1 0 0 -1 0 " + height + " cm\n");

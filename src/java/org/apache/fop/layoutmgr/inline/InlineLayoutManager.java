@@ -239,7 +239,8 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
     }
 
     /** {@inheritDoc} */
-    public List getNextKnuthElements(LayoutContext context, int alignment) {
+    public List getNextKnuthElements                            // CSOK: MethodLength
+        (LayoutContext context, int alignment) {
         LayoutManager curLM;
 
         // the list returned by child LM
@@ -434,7 +435,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
         // layout context given to the other LMs.
         List positionList = new LinkedList();
         NonLeafPosition pos;
-        LayoutManager lastLM = null;// last child LM in this iterator
+        LayoutManager lastLM = null; // last child LM in this iterator
         Position lastPos = null;
         while (parentIter.hasNext()) {
             pos = (NonLeafPosition) parentIter.next();
@@ -531,10 +532,10 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
     }
 
     /** {@inheritDoc} */
-    public List getChangedKnuthElements(List oldList, int alignment) {
+    public List getChangedKnuthElements(List oldList, int alignment, int depth) {
         List returnedList = new LinkedList();
         addKnuthElementsForBorderPaddingStart(returnedList);
-        returnedList.addAll(super.getChangedKnuthElements(oldList, alignment));
+        returnedList.addAll(super.getChangedKnuthElements(oldList, alignment, depth));
         addKnuthElementsForBorderPaddingEnd(returnedList);
         return returnedList;
     }
@@ -553,13 +554,13 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
         if (returnList instanceof BlockKnuthSequence) {
             return;
         }
-        CommonBorderPaddingBackground borderAndPadding =
-                ((InlineLevel)fobj).getCommonBorderPaddingBackground();
+        CommonBorderPaddingBackground borderAndPadding
+                = ((InlineLevel)fobj).getCommonBorderPaddingBackground();
         if (borderAndPadding != null) {
             int ipStart = borderAndPadding.getBorderStartWidth(false)
                          + borderAndPadding.getPaddingStart(false, this);
             if (ipStart > 0) {
-                returnList.add(0,new KnuthBox(ipStart, getAuxiliaryPosition(), true));
+                returnList.add(0, new KnuthBox(ipStart, getAuxiliaryPosition(), true));
             }
         }
     }
@@ -578,8 +579,8 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
         if (returnList instanceof BlockKnuthSequence) {
             return;
         }
-        CommonBorderPaddingBackground borderAndPadding =
-                ((InlineLevel)fobj).getCommonBorderPaddingBackground();
+        CommonBorderPaddingBackground borderAndPadding
+                = ((InlineLevel)fobj).getCommonBorderPaddingBackground();
         if (borderAndPadding != null) {
             int ipEnd = borderAndPadding.getBorderEndWidth(false)
                         + borderAndPadding.getPaddingEnd(false, this);

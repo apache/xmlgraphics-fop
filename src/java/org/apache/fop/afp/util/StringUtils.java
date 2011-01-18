@@ -23,7 +23,10 @@ package org.apache.fop.afp.util;
  * Library of utility methods useful in dealing with strings.
  *
  */
-public class StringUtils {
+public final class StringUtils {
+
+    private StringUtils() {
+    }
 
     /**
      * Padds the string to the left with the given character for

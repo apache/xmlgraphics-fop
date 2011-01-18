@@ -132,8 +132,11 @@ Fop [options] [-fo|-xml] infile [-xsl file] [-awt|-pdf|-mif|-rtf|-tiff|-png|-pcl
   -pdfprofile prof  PDF file will be generated with the specified profile
                     (Examples for prof: PDF/A-1b or PDF/X-3:2003)
 
-  -conserve         Enable memory-conservation policy (trades memory-consumption for disk I/O)
+  -conserve         enable memory-conservation policy (trades memory-consumption for disk I/O)
                     (Note: currently only influences whether the area tree is serialized.)
+
+  -cache            specifies a file/directory path location
+  -flush            flushes the current font cache file
 
  [INPUT]
   infile            xsl:fo input file (the same as the next)

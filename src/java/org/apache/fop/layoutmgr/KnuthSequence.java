@@ -182,13 +182,20 @@ public abstract class KnuthSequence extends ArrayList {
             ListElement element = null;
             int posIndex = startIndex;
             int lastIndex = size();
-            while (posIndex < lastIndex
-                    && !(element = getElement(posIndex)).isBox()) {
-                posIndex++;
+            while ( posIndex < lastIndex ) {
+                element = getElement(posIndex);
+                if ( !element.isBox() ) {
+                    posIndex++;
+                } else {
+                    break;
+                }
             }
-            if (posIndex != startIndex
-                    && element.isBox()) {
-                return posIndex - 1;
+            if ( posIndex != startIndex ) {
+                if ( ( element != null ) && element.isBox() ) {
+                    return posIndex - 1;
+                } else {
+                    return startIndex;
+                }
             } else {
                 return startIndex;
             }

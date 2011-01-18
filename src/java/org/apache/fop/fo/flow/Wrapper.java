@@ -76,7 +76,8 @@ public class Wrapper extends FObjMixed {
                 try {
                     FONode.validateChildNode(this.parent, loc, nsURI, localName);
                 } catch (ValidationException vex) {
-                    invalidChildError(loc, getName(), FO_URI, localName, "rule.wrapperInvalidChildForParent");
+                    invalidChildError(loc, getName(), FO_URI, localName,
+                                      "rule.wrapperInvalidChildForParent");
                 }
                 blockOrInlineItemFound = true;
             } else {

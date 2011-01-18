@@ -96,7 +96,7 @@ public class RegionBody extends Region {
     }
 
     /** {@inheritDoc} */
-    public Rectangle getViewportRectangle (FODimension reldims, SimplePageMaster spm) {
+    public Rectangle getViewportRectangle (FODimension reldims) {
         /* Special rules apply to resolving margins in the page context.
          * Contrary to normal margins in this case top and bottom margin
          * are resolved relative to the height. In the property subsystem
@@ -106,12 +106,14 @@ public class RegionBody extends Region {
          * Also the values are resolved relative to the page size
          * and reference orientation.
          */
-        PercentBaseContext pageWidthContext = getPageWidthContext(LengthBase.CONTAINING_BLOCK_WIDTH);
-        PercentBaseContext pageHeightContext = getPageHeightContext(LengthBase.CONTAINING_BLOCK_WIDTH);
+        PercentBaseContext pageWidthContext
+            = getPageWidthContext(LengthBase.CONTAINING_BLOCK_WIDTH);
+        PercentBaseContext pageHeightContext
+            = getPageHeightContext(LengthBase.CONTAINING_BLOCK_WIDTH);
 
         int start;
         int end;
-        if (spm.getWritingMode() == EN_LR_TB) { // Left-to-right
+        if (layoutMaster.getWritingMode() == EN_LR_TB) { // Left-to-right
             start = commonMarginBlock.marginLeft.getValue(pageWidthContext);
             end = commonMarginBlock.marginRight.getValue(pageWidthContext);
         } else { // all other supported modes are right-to-left

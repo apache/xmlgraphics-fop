@@ -30,7 +30,7 @@ import org.apache.fop.fo.ValidationException;
 /**
  * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_table-and-caption">
  * <code>fo:table-and-caption</code></a> property.
- * @todo needs implementation
+ * TODO needs implementation
  */
 public class TableAndCaption extends FObj /*implements BreakPropertySet*/ {
     // The value of properties relevant for fo:table-and-caption.
@@ -50,7 +50,7 @@ public class TableAndCaption extends FObj /*implements BreakPropertySet*/ {
     //     private int textAlign;
     // End of property values
 
-    static boolean notImplementedWarningGiven = false;
+    private static boolean notImplementedWarningGiven = false;
 
     /** used for FO validation */
     private boolean tableCaptionFound = false;

@@ -27,9 +27,9 @@ package org.apache.fop.datatypes;
 public class FODimension {
 
     /** distance (in millipoints) on the inline-progression-direction */
-    public int ipd;
+    public int ipd; // CSOK: VisibilityModifier
     /** distance (in millipoints) on the block-progression-direction */
-    public int bpd;
+    public int bpd; // CSOK: VisibilityModifier
 
     /**
      * Constructor
@@ -41,6 +41,17 @@ public class FODimension {
         this.bpd = bpd;
     }
 
+    /** @return ipd */
+    public int getIPD() {
+        return ipd;
+    }
+
+    /** @return bpd */
+    public int getBPD() {
+        return bpd;
+    }
+
+    /** {@inheritDoc} */
     public String toString() {
         StringBuffer sb = new StringBuffer(super.toString());
         sb.append(" {ipd=").append(Integer.toString(ipd));

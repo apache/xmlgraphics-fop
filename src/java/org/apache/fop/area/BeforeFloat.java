@@ -25,6 +25,9 @@ package org.apache.fop.area;
  * See fo:region-body definition in the XSL Rec for more information.
  */
 public class BeforeFloat extends BlockParent {
+
+    private static final long serialVersionUID = 4101415711488333380L;
+
     // this is an optional block area that will be rendered
     // as the separator only if there are float areas
     private Block separator = null;

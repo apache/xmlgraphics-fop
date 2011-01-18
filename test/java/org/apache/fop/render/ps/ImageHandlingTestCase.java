@@ -43,52 +43,22 @@ import org.apache.fop.render.intermediate.IFContext;
 public class ImageHandlingTestCase extends AbstractPostScriptTestCase {
 
     /**
-     * Tests JPEG handling with the {@link PSRenderer}.
+     * Tests JPEG handling.
      * @throws Exception if an error occurs
      */
-    public void testJPEGImageWithRendererLevel3() throws Exception {
-        innerTestJPEGImageWithRenderer(3);
+    public void testJPEGImageLevel3() throws Exception {
+        innerTestJPEGImage(3);
     }
 
     /**
-     * Tests JPEG handling with the {@link PSRenderer}.
+     * Tests JPEG handling.
      * @throws Exception if an error occurs
      */
-    public void testJPEGImageWithRendererLevel2() throws Exception {
-        innerTestJPEGImageWithRenderer(2);
+    public void testJPEGImageLevel2() throws Exception {
+        innerTestJPEGImage(2);
     }
 
-    /**
-     * Tests JPEG handling with the {@link PSDocumentHandler}.
-     * @throws Exception if an error occurs
-     */
-    public void testJPEGImageWithIFLevel3() throws Exception {
-        innerTestJPEGImageWithIF(3);
-    }
-
-    /**
-     * Tests JPEG handling with the {@link PSDocumentHandler}.
-     * @throws Exception if an error occurs
-     */
-    public void testJPEGImageWithIFLevel2() throws Exception {
-        innerTestJPEGImageWithIF(2);
-    }
-
-    private void innerTestJPEGImageWithRenderer(int level) throws Exception {
-        FOUserAgent ua = fopFactory.newFOUserAgent();
-        PSRenderer renderer = new PSRenderer();
-        renderer.setUserAgent(ua);
-        PSRenderingUtil psUtil = renderer.getPSUtil();
-        psUtil.setLanguageLevel(level);
-        psUtil.setOptimizeResources(true);
-        ua.setRendererOverride(renderer);
-
-        // Prepare output file
-        File outputFile = renderFile(ua, "ps-jpeg-image.fo", "-rend-l" + psUtil.getLanguageLevel());
-        verifyPostScriptFile(outputFile, psUtil.getLanguageLevel());
-    }
-
-    private void innerTestJPEGImageWithIF(int level) throws Exception {
+    private void innerTestJPEGImage(int level) throws Exception {
         FOUserAgent ua = fopFactory.newFOUserAgent();
         PSDocumentHandler handler = new PSDocumentHandler();
         handler.setContext(new IFContext(ua));
@@ -157,10 +127,6 @@ public class ImageHandlingTestCase extends AbstractPostScriptTestCase {
         } finally {
             IOUtils.closeQuietly(in);
         }
-    }
-
-    private void assertMatches(String text, String regex) {
-        assertTrue("Text didn't match '" + regex + "'", text.matches(regex));
     }
 
     private void assertContains(String text, String searchString) {

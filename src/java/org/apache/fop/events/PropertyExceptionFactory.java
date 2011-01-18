@@ -40,7 +40,7 @@ public class PropertyExceptionFactory implements ExceptionFactory {
     }
 
     /** {@inheritDoc} */
-    public Class getExceptionClass() {
+    public Class<PropertyException> getExceptionClass() {
         return PropertyException.class;
     }
 

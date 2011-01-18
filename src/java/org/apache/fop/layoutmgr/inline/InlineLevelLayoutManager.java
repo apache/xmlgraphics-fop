@@ -40,17 +40,21 @@ public interface InlineLevelLayoutManager extends LayoutManager {
     List addALetterSpaceTo(List oldList);
 
     /**
-     * Tell the LM to modify its data, removing the word space
-     * represented by the given elements
+     * Tell the LM to modify its data, adding a letter space
+     * to the word fragment represented by the given elements,
+     * and returning the corrected elements
      *
-     * @param oldList the elements representing the word space
+     * @param oldList the elements which must be given one more letter space
+     * @param depth the depth at which the Positions for this LM in oldList are found
+     * @return        the new elements replacing the old ones
      */
-    void removeWordSpace(List oldList);
+List addALetterSpaceTo(List oldList, int depth);
 
     /**
      * Get the word chars corresponding to the given position.
      *
      * @param pos     the position referring to the needed word chars.
+     * @return the word chars
      */
     String getWordChars(Position pos);
 
@@ -69,5 +73,24 @@ public interface InlineLevelLayoutManager extends LayoutManager {
      * @return        true if the LM had to change its data, false otherwise
      */
     boolean applyChanges(List oldList);
+
+    /**
+     * Tell the LM to apply the changes due to hyphenation
+     *
+     * @param oldList the list of the old elements the changes refer to
+     * @param depth the depth at which the Positions for this LM in oldList are found
+     * @return        true if the LM had to change its data, false otherwise
+     */
+    boolean applyChanges(List oldList, int depth);
+
+    /**
+     * Get a sequence of KnuthElements representing the content
+     * of the node assigned to the LM, after changes have been applied
+     * @param oldList        the elements to replace
+     * @param alignment      the desired text alignment
+     * @param depth the depth at which the Positions for this LM in oldList are found
+     * @return               the updated list of KnuthElements
+     **/
+    List getChangedKnuthElements(List oldList, int alignment, int depth);
 
 }

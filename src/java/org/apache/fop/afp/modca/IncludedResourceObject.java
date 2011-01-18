@@ -26,6 +26,7 @@ import java.net.URI;
 
 import org.apache.commons.io.IOUtils;
 
+import org.apache.fop.afp.util.AFPResourceUtil;
 import org.apache.fop.afp.util.ResourceAccessor;
 
 
@@ -54,7 +55,7 @@ public class IncludedResourceObject extends AbstractNamedAFPObject {
     public void writeToStream(OutputStream os) throws IOException {
         InputStream in = resourceAccessor.createInputStream(this.uri);
         try {
-            IOUtils.copy(in, os);
+            AFPResourceUtil.copyResourceFile(in, os);
         } finally {
             IOUtils.closeQuietly(in);
         }

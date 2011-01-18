@@ -47,6 +47,9 @@ import org.apache.fop.layoutmgr.TraitSetter;
  * the top level page and regions.
  */
 public class Page extends AreaTreeObject implements Serializable, Cloneable {
+
+    private static final long serialVersionUID = 6272157047421543866L;
+
     // contains before, start, body, end and after regions
     private RegionViewport regionBefore = null;
     private RegionViewport regionStart = null;
@@ -120,7 +123,7 @@ public class Page extends AreaTreeObject implements Serializable, Cloneable {
         for (Iterator regenum = spm.getRegions().values().iterator();
             regenum.hasNext();) {
             Region r = (Region)regenum.next();
-            RegionViewport rvp = makeRegionViewport(r, reldims, pageCTM, spm);
+            RegionViewport rvp = makeRegionViewport(r, reldims, pageCTM);
             if (r.getNameId() == Constants.FO_REGION_BODY) {
                 rr = new BodyRegion((RegionBody) r, rvp);
             } else {
@@ -135,7 +138,7 @@ public class Page extends AreaTreeObject implements Serializable, Cloneable {
             setRegionReferencePosition(rr, r, rvp.getViewArea());
             rvp.setRegionReference(rr);
             setRegionViewport(r.getNameId(), rvp);
-       }
+        }
     }
 
     /**
@@ -150,12 +153,10 @@ public class Page extends AreaTreeObject implements Serializable, Cloneable {
      * @param r the region the viewport is to be created for
      * @param reldims relative dimensions
      * @param pageCTM page coordinate transformation matrix
-     * @param spm the simple-page-master for this page
      * @return the new region viewport
      */
-    private RegionViewport makeRegionViewport(Region r, FODimension reldims, CTM pageCTM,
-        SimplePageMaster spm) {
-        Rectangle2D relRegionRect = r.getViewportRectangle(reldims, spm);
+    private RegionViewport makeRegionViewport(Region r, FODimension reldims, CTM pageCTM) {
+        Rectangle2D relRegionRect = r.getViewportRectangle(reldims);
         Rectangle2D absRegionRect = pageCTM.transform(relRegionRect);
         // Get the region viewport rectangle in absolute coords by
         // transforming it using the page CTM

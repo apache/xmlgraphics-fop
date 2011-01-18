@@ -65,9 +65,9 @@ public class SpaceVal {
     /**
      * Constructor for SpaceVal objects based on the full set of properties.
      * @param space space to use
-     * @param bConditional Conditionality value
-     * @param bForcing Forcing value
-     * @param iPrecedence Precedence value
+     * @param conditional Conditionality value
+     * @param forcing Forcing value
+     * @param precedence Precedence value
      */
     public SpaceVal(MinOptMax space, boolean conditional, boolean forcing, int precedence) {
         this.space = space;
@@ -76,6 +76,12 @@ public class SpaceVal {
         this.precedence = precedence;
     }
 
+    /**
+     * @param wordSpacing property
+     * @param letterSpacing space value
+     * @param fs font
+     * @return space value
+     */
     public static SpaceVal makeWordSpacing(Property wordSpacing, SpaceVal letterSpacing, Font fs) {
         if (wordSpacing.getEnum() == Constants.EN_NORMAL) {
             // give word spaces the possibility to shrink by a third,
@@ -89,6 +95,10 @@ public class SpaceVal {
         }
     }
 
+    /**
+     * @param letterSpacing property
+     * @return space value
+     */
     public static SpaceVal makeLetterSpacing(Property letterSpacing) {
         if (letterSpacing.getEnum() == Constants.EN_NORMAL) {
             // letter spaces are set to zero (or use different values?)

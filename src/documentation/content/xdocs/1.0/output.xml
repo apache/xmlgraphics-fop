@@ -113,9 +113,9 @@ out = proc.getOutputStream();]]></source>
         compatible.
       </p>
       <p>
-        Note that FOP does not currently support "tagged PDF" or PDF/A-1a. 
-        Support for <a href="pdfa.html">PDF/A-1b</a> and <a
-          href="pdfx.html">PDF/X</a> has recently been added, however.
+        Note that FOP does not currently support PDF/A-1a. 
+        Support for <a href="accessibility.html">Tagged PDF</a>, <a href="pdfa.html">PDF/A-1b</a> 
+        and <a href="pdfx.html">PDF/X</a> has recently been added, however.
       </p>
       <section id="pdf-fonts">
         <title>Fonts</title>

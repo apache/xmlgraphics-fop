@@ -30,9 +30,11 @@ import org.apache.commons.logging.LogFactory;
 public abstract class AbstractAFPPainter {
 
     /** Static logging instance */
-    protected static Log log = LogFactory.getLog("org.apache.xmlgraphics.afp");
+    protected static final Log log = LogFactory.getLog("org.apache.xmlgraphics.afp");
 
+    /** data stream */
     protected final DataStream dataStream;
+    /** painting state */
     protected final AFPPaintingState paintingState;
 
     /**

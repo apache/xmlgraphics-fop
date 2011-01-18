@@ -32,6 +32,8 @@ import org.apache.fop.layoutmgr.inline.KnuthInlineBox;
  */
 public class InlineKnuthSequence extends KnuthSequence  {
 
+    private static final long serialVersionUID = 1354774188859946549L;
+
     private boolean isClosed = false;
 
     /**
@@ -95,6 +97,9 @@ public class InlineKnuthSequence extends KnuthSequence  {
         return this;
     }
 
+    /**
+     * Add letter space.
+     */
     public void addALetterSpace() {
         KnuthBox prevBox = (KnuthBox) getLast();
         if (prevBox.isAuxiliary()

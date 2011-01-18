@@ -89,6 +89,15 @@
         </td>
         <td>disabled</td>
       </tr>
+	  <tr>
+		<td colspan="4">Relative URIs for the above three properties are evaluated relative to the base URI of the configuration file. If the configuration is provided programmatically, the base URI can be set with <code>FopFactory.setUserConfigBaseURI</code>; default is the current working directory.</td>
+	  </tr>
+	  <tr>
+		<td>hyphenation-pattern</td>
+		<td>String, attribute lang, attribute country (optional)</td>
+		<td>Register a file name for the hyphenation pattern for the mentioned language and country. Language ll and country CC must both consist of two letters.</td>
+		<td>ll_CC</td>
+	  </tr>
       <tr>
         <td>source-resolution</td>
         <td>Integer, dpi</td>
@@ -151,6 +160,7 @@
           default-page-settings element to specify the two values.</td>
         <td>"height" 11 inches, "width" 8.26 inches</td>
       </tr>
+      <!-- Disabled: no simultaneous Renderer and IF implementations at the moment
       <tr>
         <td>prefer-renderer</td>
         <td>boolean (true, false)</td>
@@ -163,6 +173,7 @@
         </td>
         <td>false</td>
       </tr>
+      -->
       <tr>
         <td>use-cache</td>
         <td>boolean (true, false)</td>
@@ -176,8 +187,7 @@
       <tr>
         <td>cache-file</td>
         <td>String</td>
-        <td>This options specifies the file/directory path of the fop cache file.
-        This option can also be specified on the command-line using the -cache option.
+        <td>This option specifies the file/directory path of the fop cache file.
         This file is currently only used to cache font triplet information for future reference.</td>
         <td>${base}/conf/fop.cache</td>
       </tr>
@@ -214,6 +224,9 @@
   <!-- default page-height and page-width, in case
        value is specified as auto -->
   <default-page-settings height="11in" width="8.26in"/>
+
+  <!-- Use file name nl_Bel instead of the default nl_BE -->
+  <hyphenation-pattern lang="nl" country="BE">nl_Bel</hyphenation-pattern>
   
   <!-- etc. etc..... -->
 </fop>]]></source>

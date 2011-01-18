@@ -113,9 +113,9 @@ public class ObjectContainer extends AbstractDataObject {
     }
 
     /**
-     * Sets the inputstream for the the object container data
+     * Sets the data for the object container
      *
-     * @param inputStream the inputstream for the object container data
+     * @param data a byte array
      */
     public void setData(byte[] data) {
         this.data = data;

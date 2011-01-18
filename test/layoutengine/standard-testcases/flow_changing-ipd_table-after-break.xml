@@ -56,13 +56,19 @@
           <fo:table table-layout="fixed" width="100%">
             <fo:table-body>
               <fo:table-row>
-                <fo:table-cell>
-                  <fo:block>After the table 1</fo:block>
+                <fo:table-cell border="1pt solid black">
+                  <fo:block>Cell 1.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell border="1pt solid black">
+                  <fo:block>Cell 1.2</fo:block>
                 </fo:table-cell>
               </fo:table-row>
               <fo:table-row>
-                <fo:table-cell>
-                  <fo:block>After the table 2</fo:block>
+                <fo:table-cell border="1pt solid black">
+                  <fo:block>Cell 2.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell border="1pt solid black">
+                  <fo:block>Cell 2.2</fo:block>
                 </fo:table-cell>
               </fo:table-row>
             </fo:table-body>
@@ -74,7 +80,12 @@
   <checks>
     <eval expected="Block before the page break." xpath="//pageViewport[1]//flow/block[2]//text"/>
     <eval expected="Block after the page break."  xpath="//pageViewport[2]//flow/block[1]//text"/>
-    <eval expected="After the table 1"            xpath="//pageViewport[2]//flow/block[2]/block[1]//text"/>
-    <eval expected="After the table 2"            xpath="//pageViewport[2]//flow/block[2]/block[2]//text"/>
+    <eval expected="400000"                       xpath="//pageViewport[2]//flow/block[2]/@ipd"/>
+    <eval expected="199000"                       xpath="//pageViewport[2]//flow/block[2]/block[1]/@ipd"/>
+    <eval expected="Cell 1.1"                     xpath="//pageViewport[2]//flow/block[2]/block[1]//text"/>
+    <eval expected="199000"                       xpath="//pageViewport[2]//flow/block[2]/block[2]/@ipd"/>
+    <eval expected="Cell 1.2"                     xpath="//pageViewport[2]//flow/block[2]/block[2]//text"/>
+    <eval expected="Cell 2.1"                     xpath="//pageViewport[2]//flow/block[2]/block[3]//text"/>
+    <eval expected="Cell 2.2"                     xpath="//pageViewport[2]//flow/block[2]/block[4]//text"/>
   </checks>
 </testcase>

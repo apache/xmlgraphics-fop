@@ -17,6 +17,7 @@
 
 /* $Id$ */
 
+package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
 /*
  * This file is part of the RTF library of the FOP project, which was originally
@@ -25,8 +26,6 @@
  * the FOP project.
  */
 
-package org.apache.fop.render.rtf.rtflib.rtfdoc;
-
 import java.io.IOException;
 
 /**
@@ -34,7 +33,7 @@ import java.io.IOException;
  * This class belongs to the <jfor:style-template> tag processing.
  */
 
-public class RtfTemplate  {
+public final class RtfTemplate  {
 
     /** Singelton instance */
     private static RtfTemplate instance = null;

@@ -42,7 +42,7 @@ import org.apache.fop.fo.Constants;
 public abstract class BreakingAlgorithm {
 
     /** the logger for the class */
-    protected static Log log = LogFactory.getLog(BreakingAlgorithm.class);
+    protected static final Log log = LogFactory.getLog(BreakingAlgorithm.class);
 
     /** Maximum adjustment ration */
     protected static final int INFINITE_RATIO = 1000;
@@ -59,12 +59,18 @@ public abstract class BreakingAlgorithm {
 
     /** Holder for symbolic literals for the fitness classes */
     static final class FitnessClasses {
+
+        private FitnessClasses() {
+        }
+
         static final int VERY_TIGHT = 0;
         static final int TIGHT = 1;
         static final int LOOSE = 2;
         static final int VERY_LOOSE = 3;
 
-        static final String[] NAMES = { "VERY TIGHT", "TIGHT", "LOOSE", "VERY LOOSE" };
+        static final String[] NAMES = {
+            "VERY TIGHT", "TIGHT", "LOOSE", "VERY LOOSE"
+        };
 
         /**
          * Figure out the fitness class of this line (tight, loose,
@@ -178,6 +184,9 @@ public abstract class BreakingAlgorithm {
      */
     protected int totalShrink = 0;
 
+    /**
+     * Best records.
+     */
     protected BestRecords best;
 
     private boolean partOverflowRecoveryActivated = true;
@@ -217,54 +226,70 @@ public abstract class BreakingAlgorithm {
      */
     public class KnuthNode {
         /** index of the breakpoint represented by this node */
-        public final int position;
+        public final int position;                              // CSOK: VisibilityModifier
 
         /** number of the line ending at this breakpoint */
-        public final int line;
+        public final int line;                                  // CSOK: VisibilityModifier
 
         /** fitness class of the line ending at this breakpoint. One of 0, 1, 2, 3. */
-        public final int fitness;
+        public final int fitness;                               // CSOK: VisibilityModifier
 
         /** accumulated width of the KnuthElements up to after this breakpoint. */
-        public final int totalWidth;
+        public final int totalWidth;                            // CSOK: VisibilityModifier
 
         /** accumulated stretchability of the KnuthElements up to after this breakpoint. */
-        public final int totalStretch;
+        public final int totalStretch;                          // CSOK: VisibilityModifier
 
         /** accumulated shrinkability of the KnuthElements up to after this breakpoint. */
-        public final int totalShrink;
+        public final int totalShrink;                           // CSOK: VisibilityModifier
 
         /** adjustment ratio if the line ends at this breakpoint */
-        public final double adjustRatio;
+        public final double adjustRatio;                        // CSOK: VisibilityModifier
 
         /** available stretch of the line ending at this breakpoint */
-        public final int availableShrink;
+        public final int availableShrink;                       // CSOK: VisibilityModifier
 
         /** available shrink of the line ending at this breakpoint */
-        public final int availableStretch;
+        public final int availableStretch;                      // CSOK: VisibilityModifier
 
         /** difference between target and actual line width */
-        public final int difference;
+        public final int difference;                            // CSOK: VisibilityModifier
 
         /** minimum total demerits up to this breakpoint */
-        public double totalDemerits;
+        public double totalDemerits;                            // CSOK: VisibilityModifier
 
         /** best node for the preceding breakpoint */
-        public KnuthNode previous;
+        public KnuthNode previous;                              // CSOK: VisibilityModifier
 
         /** next possible node in the same line */
-        public KnuthNode next;
+        public KnuthNode next;                                  // CSOK: VisibilityModifier
 
         /**
          * Holds the number of subsequent recovery attempty that are made to get content fit
          * into a line.
          */
-        public int fitRecoveryCounter = 0;
+        public int fitRecoveryCounter = 0;                      // CSOK: VisibilityModifier
 
-        public KnuthNode(int position, int line, int fitness,
-                         int totalWidth, int totalStretch, int totalShrink,
-                         double adjustRatio, int availableShrink, int availableStretch,
-                         int difference, double totalDemerits, KnuthNode previous) {
+        /**
+         * Construct node.
+         * @param position an integer
+         * @param line an integer
+         * @param fitness an integer
+         * @param totalWidth an integer
+         * @param totalStretch an integer
+         * @param totalShrink an integer
+         * @param adjustRatio a real number
+         * @param availableShrink an integer
+         * @param availableStretch an integer
+         * @param difference an integer
+         * @param totalDemerits a real number
+         * @param previous a node
+         */
+        public KnuthNode(                                        // CSOK: ParameterNumber
+                int position, int line, int fitness,
+                int totalWidth, int totalStretch, int totalShrink,
+                double adjustRatio, int availableShrink, int availableStretch,
+                int difference, double totalDemerits, KnuthNode previous) {
             this.position = position;
             this.line = line;
             this.fitness = fitness;
@@ -279,6 +304,7 @@ public abstract class BreakingAlgorithm {
             this.previous = previous;
         }
 
+        /** {@inheritDoc} */
         public String toString() {
             return "<KnuthNode at " + position + " "
                     + totalWidth + "+" + totalStretch + "-" + totalShrink
@@ -303,6 +329,7 @@ public abstract class BreakingAlgorithm {
         /** Points to the fitness class which currently leads to the best demerits. */
         private int bestIndex = -1;
 
+        /** default constructor */
         public BestRecords() {
             reset();
         }
@@ -334,6 +361,7 @@ public abstract class BreakingAlgorithm {
             }
         }
 
+        /** @return true if has records (best index not -1) */
         public boolean hasRecords() {
             return (bestIndex != -1);
         }
@@ -347,30 +375,55 @@ public abstract class BreakingAlgorithm {
             return (bestDemerits[fitness] != INFINITE_DEMERITS);
         }
 
+        /**
+         * @param fitness to use
+         * @return best demerits
+         */
         public double getDemerits(int fitness) {
             return bestDemerits[fitness];
         }
 
+        /**
+         * @param fitness to use
+         * @return best node
+         */
         public KnuthNode getNode(int fitness) {
             return bestNode[fitness];
         }
 
+        /**
+         * @param fitness to use
+         * @return adjustment
+         */
         public double getAdjust(int fitness) {
             return bestAdjust[fitness];
         }
 
+        /**
+         * @param fitness to use
+         * @return available shrink
+         */
         public int getAvailableShrink(int fitness) {
             return bestAvailableShrink[fitness];
         }
 
+        /**
+         * @param fitness to use
+         * @return available stretch
+         */
         public int getAvailableStretch(int fitness) {
             return bestAvailableStretch[fitness];
         }
 
+        /**
+         * @param fitness to use
+         * @return difference
+         */
         public int getDifference(int fitness) {
             return bestDifference[fitness];
         }
 
+        /** @return minimum demerits */
         public double getMinDemerits() {
             if (bestIndex != -1) {
                 return getDemerits(bestIndex);
@@ -427,11 +480,22 @@ public abstract class BreakingAlgorithm {
                                      KnuthSequence sequence,
                                      int total);
 
+    /** @param lineWidth the line width */
     public void setConstantLineWidth(int lineWidth) {
         this.lineWidth = lineWidth;
     }
 
-    /** @see #findBreakingPoints(KnuthSequence, int, double, boolean, int) */
+    /**
+     * @param par           the paragraph to break
+     * @param threshold     upper bound of the adjustment ratio
+     * @param force         {@code true} if a set of breakpoints must be found, even
+     *                      if there are no feasible ones
+     * @param allowedBreaks the type(s) of breaks allowed. One of {@link #ONLY_FORCED_BREAKS},
+     *                      {@link #NO_FLAGGED_PENALTIES} or {@link #ALL_BREAKS}.
+     *
+     * @return  the number of effective breaks
+     * @see #findBreakingPoints(KnuthSequence, int, double, boolean, int)
+     */
     public int findBreakingPoints(KnuthSequence par,
                                   double threshold,
                                   boolean force,
@@ -538,10 +602,18 @@ public abstract class BreakingAlgorithm {
         return line;
     }
 
+    /**
+     * obtain ipd difference
+     * @return an integer
+     */
     protected int getIPDdifference() {
         return 0;
     }
 
+    /**
+     * handle ipd change
+     * @return an integer
+     */
     protected int handleIpdChange() {
         throw new IllegalStateException();
     }
@@ -572,8 +644,10 @@ public abstract class BreakingAlgorithm {
         this.totalWidth = 0;
         this.totalStretch = 0;
         this.totalShrink = 0;
-        this.lastTooShort = this.lastTooLong = null;
-        this.startLine = this.endLine = 0;
+        this.lastTooShort = null;
+        this.lastTooLong = null;
+        this.startLine = 0;
+        this.endLine = 0;
         this.activeLines = new KnuthNode[20];
     }
 
@@ -597,10 +671,11 @@ public abstract class BreakingAlgorithm {
      * @param previous active node for the preceding breakpoint
      * @return a new node
      */
-    protected KnuthNode createNode(int position, int line, int fitness,
-                                   int totalWidth, int totalStretch, int totalShrink,
-                                   double adjustRatio, int availableShrink, int availableStretch,
-                                   int difference, double totalDemerits, KnuthNode previous) {
+    protected KnuthNode createNode(                              // CSOK: ParameterNumber
+            int position, int line, int fitness,
+            int totalWidth, int totalStretch, int totalShrink,
+            double adjustRatio, int availableShrink, int availableStretch,
+            int difference, double totalDemerits, KnuthNode previous) {
         return new KnuthNode(position, line, fitness,
                              totalWidth, totalStretch, totalShrink,
                              adjustRatio, availableShrink, availableStretch,
@@ -609,7 +684,17 @@ public abstract class BreakingAlgorithm {
 
     /** Creates a new active node for a break from the best active node of the given
      * fitness class to the element at the given position.
-     * @see #createNode(int, int, int, int, int, int, double, int, int, int, double, org.apache.fop.layoutmgr.BreakingAlgorithm.KnuthNode)
+     * @param position index of the element in the Knuth sequence
+     * @param line number of the line ending at the breakpoint
+     * @param fitness fitness class of the line ending at the breakpoint. One of 0, 1, 2, 3.
+     * @param totalWidth accumulated width of the KnuthElements up to after the breakpoint
+     * @param totalStretch accumulated stretchability of the KnuthElements up to after the
+     * breakpoint
+     * @param totalShrink accumulated shrinkability of the KnuthElements up to after the
+     * breakpoint
+     * @return a new node
+     * @see #createNode(int, int, int, int, int, int, double, int, int, int, double,
+     * org.apache.fop.layoutmgr.BreakingAlgorithm.KnuthNode)
      * @see BreakingAlgorithm.BestRecords
      */
     protected KnuthNode createNode(int position, int line, int fitness,
@@ -655,7 +740,7 @@ public abstract class BreakingAlgorithm {
             handleBox((KnuthBox) element);
         } else if (element.isGlue()) {
             handleGlueAt((KnuthGlue) element, position, previousIsBox, allowedBreaks);
-        } else if (element.isPenalty()){
+        } else if (element.isPenalty()) {
             handlePenaltyAt((KnuthPenalty) element, position, allowedBreaks);
         } else {
             throw new IllegalArgumentException(
@@ -875,7 +960,7 @@ public abstract class BreakingAlgorithm {
      * number.
      * @param element   the element
      * @param line      the line number
-     * @param difference
+     * @param difference an integer
      * @return  {@code true} if the element can end the line
      */
     protected boolean elementCanEndLine(KnuthElement element, int line, int difference) {
@@ -896,7 +981,7 @@ public abstract class BreakingAlgorithm {
      * @param availableShrink   the available amount of shrink
      * @param availableStretch  tha available amount of stretch
      */
-    protected void forceNode(KnuthNode node,
+    protected void forceNode(KnuthNode node,                    // CSOK: ParameterNumber
                              int line,
                              int elementIdx,
                              int difference,
@@ -1320,6 +1405,10 @@ public abstract class BreakingAlgorithm {
         return sb.toString();
     }
 
+    /**
+     * Filter active nodes.
+     * @return an integer
+     */
     protected abstract int filterActiveNodes();
 
     /**

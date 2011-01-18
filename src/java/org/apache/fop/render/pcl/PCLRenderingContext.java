@@ -41,6 +41,7 @@ public abstract class PCLRenderingContext extends AbstractRenderingContext {
      * Main constructor.
      * @param userAgent the user agent
      * @param generator the PCL generator
+     * @param pclUtil rendering utility
      */
     public PCLRenderingContext(FOUserAgent userAgent,
             PCLGenerator generator, PCLRenderingUtil pclUtil) {

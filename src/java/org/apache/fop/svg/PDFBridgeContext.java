@@ -125,6 +125,7 @@ public class PDFBridgeContext extends AbstractFOPBridgeContext {
 
     // Make sure any 'sub bridge contexts' also have our bridges.
     //TODO There's no matching method in the super-class here
+    /** @return the new bridge context */
     public BridgeContext createBridgeContext() {
         return new PDFBridgeContext(getUserAgent(), getDocumentLoader(),
                                     fontInfo,

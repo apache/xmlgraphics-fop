@@ -28,7 +28,10 @@ import org.apache.fop.fonts.Font;
  * Currently supports alignment contexts for basic fonts
  * and graphic inlines.
  */
-public class ScaledBaselineTableFactory implements Constants {
+public final class ScaledBaselineTableFactory implements Constants {
+
+    private ScaledBaselineTableFactory() {
+    }
 
     /**
      * Creates a new instance of BasicScaledBaselineTable for the given

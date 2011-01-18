@@ -26,8 +26,18 @@ import org.apache.fop.fo.properties.KeepProperty;
  */
 public interface BlockLevelLayoutManager extends LayoutManager {
 
+    /**
+     * Negotiate BPD adjustment.
+     * @param adj amount to adjust
+     * @param lastElement the last knuth element
+     * @return the resulting adjusted BPD
+     */
     int negotiateBPDAdjustment(int adj, KnuthElement lastElement);
 
+    /**
+     * Discard space.
+     * @param spaceGlue the space
+     */
     void discardSpace(KnuthGlue spaceGlue);
 
     /**

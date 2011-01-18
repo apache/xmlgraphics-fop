@@ -29,7 +29,8 @@ import org.apache.fop.fo.expr.PropertyException;
 public final class EnumProperty extends Property {
 
     /** cache holding all canonical EnumProperty instances */
-    private static final PropertyCache cache = new PropertyCache(EnumProperty.class);
+    private static final PropertyCache CACHE
+        = new PropertyCache(EnumProperty.class);
 
     /**
      * Inner class for creating EnumProperty instances
@@ -54,6 +55,14 @@ public final class EnumProperty extends Property {
             return super.checkEnumValues(value);
         }
 
+        /**
+         * Convert a property.
+         * @param p the property to convert
+         * @param propertyList the property list to use in conversion
+         * @param fo the FO to use in conversion
+         * @return the converted property
+         * @throws PropertyException if a property conversion exception occurs
+         */
         public Property convertProperty(Property p,
                                         PropertyList propertyList,
                                         FObj fo) throws PropertyException {
@@ -77,8 +86,14 @@ public final class EnumProperty extends Property {
         this.text = text;
     }
 
+    /**
+     * Construct an enumeration property.
+     * @param explicitValue the value
+     * @param text the text
+     * @return an enumeration property
+     */
     public static EnumProperty getInstance(int explicitValue, String text) {
-        return (EnumProperty) cache.fetch(
+        return (EnumProperty) CACHE.fetch(
                         new EnumProperty(explicitValue, text));
     }
 

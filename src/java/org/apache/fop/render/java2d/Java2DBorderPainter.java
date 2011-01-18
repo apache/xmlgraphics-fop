@@ -47,6 +47,10 @@ public class Java2DBorderPainter extends BorderPainter {
 
     private GeneralPath currentPath = null;
 
+    /**
+     * Construct a java2d border painter.
+     * @param painter a painter
+     */
     public Java2DBorderPainter(Java2DPainter painter) {
         this.painter = painter;
     }
@@ -60,7 +64,8 @@ public class Java2DBorderPainter extends BorderPainter {
     }
 
     /** {@inheritDoc} */
-    protected void drawBorderLine(int x1, int y1, int x2, int y2, boolean horz,
+    protected void drawBorderLine(                               // CSOK: ParameterNumber
+            int x1, int y1, int x2, int y2, boolean horz,
             boolean startOrBefore, int style, Color color) {
         float w = x2 - x1;
         float h = y2 - y1;

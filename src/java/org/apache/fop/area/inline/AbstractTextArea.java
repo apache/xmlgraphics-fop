@@ -24,12 +24,16 @@ package org.apache.fop.area.inline;
  */
 public abstract class AbstractTextArea extends InlineParent {
 
+    private static final long serialVersionUID = -1246306443569094371L;
+
     /**
      * this class stores information about spaces and potential adjustments
      * that can be used in order to re-compute adjustments when a
      * page-number or a page-number-citation is resolved
      */
     protected class TextAdjustingInfo extends InlineAdjustingInfo {
+
+        private static final long serialVersionUID = -2412095162983479947L;
 
         /** difference between the optimal width of a space
          * and the default width of a space according to the font
@@ -140,12 +144,14 @@ public abstract class AbstractTextArea extends InlineParent {
                 if (textWordSpaceAdjust < 0) {
                     // from a negative adjustment to a positive one
                     balancingFactor
-                        = ((double) textAdjustingInfo.availableStretch / textAdjustingInfo.availableShrink)
+                        = ((double) textAdjustingInfo.availableStretch
+                           / textAdjustingInfo.availableShrink)
                             * ((double) lineShrink / lineStretch);
                 } else {
                     // from a positive adjustment to a negative one
                     balancingFactor
-                        = ((double) textAdjustingInfo.availableShrink / textAdjustingInfo.availableStretch)
+                        = ((double) textAdjustingInfo.availableShrink
+                           / textAdjustingInfo.availableStretch)
                             * ((double) lineStretch / lineShrink);
                 }
             }

@@ -19,12 +19,12 @@
 
 package org.apache.fop.area;
 
-import org.apache.fop.area.inline.InlineArea;
-import org.apache.fop.fo.Constants;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.fop.area.inline.InlineArea;
+import org.apache.fop.fo.Constants;
 
 /**
  * The line area.
@@ -32,12 +32,17 @@ import java.util.List;
  */
 public class LineArea extends Area {
 
+    private static final long serialVersionUID = 7670235908329290684L;
+
     /**
      * this class stores information about line width and potential adjustments
      * that can be used in order to re-compute adjustement and / or indents when a
      * page-number or a page-number-citation is resolved
      */
-    private class LineAdjustingInfo implements Serializable {
+    private final class LineAdjustingInfo implements Serializable {
+
+        private static final long serialVersionUID = -6103629976229458273L;
+
         private int lineAlignment;
         private int difference;
         private int availableStretch;
@@ -53,6 +58,15 @@ public class LineArea extends Area {
             availableShrink = shrink;
             variationFactor = 1.0;
             bAddedToAreaTree = false;
+        }
+
+        /** {@inheritDoc} */
+        public String toString() {
+            return getClass().getSimpleName()
+                + ": diff=" + difference
+                + ", variation=" + variationFactor
+                + ", stretch=" + availableStretch
+                + ", shrink=" + availableShrink;
         }
     }
 
@@ -194,6 +208,9 @@ public class LineArea extends Area {
      */
     public void finalise() {
         if (adjustingInfo.lineAlignment == Constants.EN_JUSTIFY) {
+            if (log.isTraceEnabled()) {
+                log.trace("Applying variation factor to justified line: " + adjustingInfo);
+            }
             // justified line: apply the variation factor
             boolean bUnresolvedAreasPresent = false;
             // recursively apply variation factor to descendant areas

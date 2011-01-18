@@ -39,7 +39,7 @@ public class MultiSwitch extends FObj {
     //     private CommonAccessibility commonAccessibility;
     // End of property values
 
-    static boolean notImplementedWarningGiven = false;
+    private static boolean notImplementedWarningGiven = false;
 
     /**
      * Base constructor

@@ -33,11 +33,20 @@ import org.apache.fop.fo.flow.InlineContainer;
 public class ICLayoutManager extends LeafNodeLayoutManager {
     private List childrenLM;
 
+    /**
+     * Construct inline container layout manager.
+     * @param node inline container FO node
+     * @param childLM child layout manager
+     */
     public ICLayoutManager(InlineContainer node, List childLM) {
         super(node);
         childrenLM = childLM;
     }
 
+    /**
+     * @param index an integer
+     * @return an inline area or null
+     */
     public InlineArea get(int index) {
         return null;
     }

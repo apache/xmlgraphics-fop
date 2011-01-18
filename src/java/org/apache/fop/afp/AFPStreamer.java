@@ -31,6 +31,7 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.afp.modca.ResourceGroup;
 import org.apache.fop.afp.modca.StreamedResourceGroup;
 
@@ -39,7 +40,7 @@ import org.apache.fop.afp.modca.StreamedResourceGroup;
  */
 public class AFPStreamer implements Streamable {
     /** Static logging instance */
-    private static final Log log = LogFactory.getLog(AFPStreamer.class);
+    private static final Log LOG = LogFactory.getLog(AFPStreamer.class);
 
     private static final String AFPDATASTREAM_TEMP_FILE_PREFIX = "AFPDataStream_";
 
@@ -119,7 +120,7 @@ public class AFPStreamer implements Streamable {
         if (level.isExternal()) {
             String filePath = level.getExternalFilePath();
             if (filePath == null) {
-                log.warn("No file path provided for external resource, using default.");
+                LOG.warn("No file path provided for external resource, using default.");
                 filePath = defaultResourceGroupFilePath;
             }
             resourceGroup = (ResourceGroup)pathResourceGroupMap.get(filePath);
@@ -128,7 +129,7 @@ public class AFPStreamer implements Streamable {
                 try {
                     os = new BufferedOutputStream(new FileOutputStream(filePath));
                 } catch (FileNotFoundException fnfe) {
-                    log.error("Failed to create/open external resource group file '"
+                    LOG.error("Failed to create/open external resource group file '"
                             + filePath + "'");
                 } finally {
                     if (os != null) {
@@ -157,7 +158,7 @@ public class AFPStreamer implements Streamable {
      */
         // write out any external resource groups
     public void close() throws IOException {
-        Iterator it = pathResourceGroupMap.entrySet().iterator();
+        Iterator it = pathResourceGroupMap.values().iterator();
         while (it.hasNext()) {
             StreamedResourceGroup resourceGroup = (StreamedResourceGroup)it.next();
             resourceGroup.close();
@@ -173,6 +174,14 @@ public class AFPStreamer implements Streamable {
 
         outputStream.close();
 
+
+        if (documentOutputStream != null) {
+            documentOutputStream.close();
+        }
+
+        if (documentFile != null) {
+            documentFile.close();
+        }
         // delete temporary file
         tempFile.delete();
     }

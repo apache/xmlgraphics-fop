@@ -32,7 +32,7 @@ import org.apache.fop.apps.FOUserAgent;
 public class XMLHandlerConfigurator extends AbstractRendererConfigurator {
 
     /** logger instance */
-    protected static Log log = LogFactory.getLog(XMLHandlerConfigurator.class);
+    protected static final Log log = LogFactory.getLog(XMLHandlerConfigurator.class);
 
     /**
      * Default constructor

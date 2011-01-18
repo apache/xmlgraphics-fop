@@ -45,8 +45,16 @@ public interface IFDocumentNavigationHandler {
      */
     void renderBookmarkTree(BookmarkTree tree) throws IFException;
 
+    /**
+     * @param link a link
+     * @throws IFException of not caught
+     */
     void renderLink(Link link) throws IFException;
 
+    /**
+     * @param action an action
+     * @throws IFException of not caught
+     */
     void addResolvedAction(AbstractAction action) throws IFException;
 
 }

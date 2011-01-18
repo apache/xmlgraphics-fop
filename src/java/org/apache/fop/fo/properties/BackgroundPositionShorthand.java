@@ -57,7 +57,8 @@ public class BackgroundPositionShorthand extends ListProperty {
          * specified, <code>background-position-vertical</code> is set
          * to "50%".
          */
-        public Property make(PropertyList propertyList, String value, FObj fo) throws PropertyException {
+        public Property make(PropertyList propertyList, String value, FObj fo)
+                throws PropertyException {
             Property p = super.make(propertyList, value, fo);
             if (p.getList().size() == 1) {
                 /* only background-position-horizontal specified

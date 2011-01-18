@@ -56,7 +56,7 @@ public class SimplePageMaster extends FObj {
     /**
      * Page regions (regionClass, Region)
      */
-    private Map regions;
+    private Map<String, Region> regions;
 
      // used for node validation
     private boolean hasRegionBody = false;
@@ -99,7 +99,7 @@ public class SimplePageMaster extends FObj {
         }
 
         //Well, there are only 5 regions so we can save a bit of memory here
-        regions = new HashMap(5);
+        regions = new HashMap<String, Region>(5);
     }
 
     /** {@inheritDoc} */
@@ -135,7 +135,7 @@ public class SimplePageMaster extends FObj {
                 } else if (hasRegionEnd) {
                     nodesOutOfOrderError(loc, "fo:region-before", "fo:region-end");
                 } else {
-                    hasRegionBody = true;
+                    hasRegionBefore = true;
                 }
             } else if (localName.equals("region-after")) {
                 if (!hasRegionBody) {
@@ -192,8 +192,7 @@ public class SimplePageMaster extends FObj {
      * @param region region to add
      */
     protected void addRegion(Region region) {
-        String key = String.valueOf(region.getNameId());
-        regions.put(key, region);
+        regions.put(String.valueOf(region.getNameId()), region);
     }
 
     /**
@@ -240,14 +239,14 @@ public class SimplePageMaster extends FObj {
      * @return the region, null if it doesn't exist
      */
     public Region getRegion(int regionId) {
-        return (Region) regions.get(String.valueOf(regionId));
+        return regions.get(String.valueOf(regionId));
     }
 
     /**
      * Returns a Map of regions associated with this simple-page-master
      * @return the regions
      */
-    public Map getRegions() {
+    public Map<String, Region> getRegions() {
         return regions;
     }
 
@@ -258,9 +257,7 @@ public class SimplePageMaster extends FObj {
      * @return True if a region with this name exists
      */
     protected boolean regionNameExists(String regionName) {
-        for (Iterator regenum = regions.values().iterator();
-                regenum.hasNext();) {
-            Region r = (Region) regenum.next();
+        for (Region r : regions.values()) {
             if (r.getRegionName().equals(regionName)) {
                 return true;
             }

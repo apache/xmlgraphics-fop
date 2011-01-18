@@ -116,8 +116,9 @@ public class IncludeObject extends AbstractNamedAFPObject {
 
     /**
      * Sets the x and y offset of the content area to the object area
-     * used in conjunction with the {@link MappingOptionTriplet.POSITION} and
-     * {@link MappingOptionTriplet.POSITION_AND_TRIM}.
+     * used in conjunction with the
+     * {@link MappingOptionTriplet#POSITION} and
+     * {@link MappingOptionTriplet#POSITION_AND_TRIM}.
      *
      * @param x the X-axis origin defined in the object
      * @param y the Y-axis origin defined in the object

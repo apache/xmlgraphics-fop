@@ -31,6 +31,11 @@ public class CommentTriplet extends AbstractTriplet {
 
     private final String commentString;
 
+    /**
+     * Construct a triplet.
+     * @param id the triplet identification number
+     * @param commentString a comment
+     */
     public CommentTriplet(byte id, String commentString) {
         super(id);
         this.commentString = commentString;

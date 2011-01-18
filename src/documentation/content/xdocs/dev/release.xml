@@ -68,6 +68,8 @@ The purpose of documenting it here is to facilitate consistency, ensure that the
         links in it.</li>
         <li>Update the tab names and directories in tabs.xml</li>
         <li>Delete the previous version directory.</li>
+		<li>Update index.xml in the new version directory.</li>
+		<li>Update compiling.xml in the new version directory: change the intro for trunk to that for a release.</li>
         <li>Build the dist files (<code>build[.sh] dist</code>)
         and upload them to your web directory on
         <code>people.apache.org</code></li>

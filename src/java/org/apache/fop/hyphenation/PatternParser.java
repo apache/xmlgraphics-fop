@@ -61,6 +61,10 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
     static final int ELEM_PATTERNS = 3;
     static final int ELEM_HYPHEN = 4;
 
+    /**
+     * Construct a pattern parser.
+     * @throws HyphenationException if a hyphenation exception is raised
+     */
     public PatternParser() throws HyphenationException {
         this.consumer = this;
         token = new StringBuffer();
@@ -70,6 +74,11 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
         hyphenChar = '-';    // default
     }
 
+    /**
+     * Construct a pattern parser.
+     * @param consumer a pattern consumer
+     * @throws HyphenationException if a hyphenation exception is raised
+     */
     public PatternParser(PatternConsumer consumer) throws HyphenationException {
         this();
         this.consumer = consumer;
@@ -130,7 +139,7 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
         }
     }
 
-    protected String readToken(StringBuffer chars) {
+    private String readToken(StringBuffer chars) {
         String word;
         boolean space = false;
         int i;
@@ -175,7 +184,7 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
         return null;
     }
 
-    protected static String getPattern(String word) {
+    private static String getPattern(String word) {
         StringBuffer pat = new StringBuffer();
         int len = word.length();
         for (int i = 0; i < len; i++) {
@@ -186,7 +195,7 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
         return pat.toString();
     }
 
-    protected ArrayList normalizeException(ArrayList ex) {
+    private ArrayList normalizeException(ArrayList ex) {
         ArrayList res = new ArrayList();
         for (int i = 0; i < ex.size(); i++) {
             Object item = ex.get(i);
@@ -217,7 +226,7 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
         return res;
     }
 
-    protected String getExceptionWord(ArrayList ex) {
+    private String getExceptionWord(ArrayList ex) {
         StringBuffer res = new StringBuffer();
         for (int i = 0; i < ex.size(); i++) {
             Object item = ex.get(i);
@@ -232,7 +241,7 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
         return res.toString();
     }
 
-    protected static String getInterletterValues(String pat) {
+    private static String getInterletterValues(String pat) {
         StringBuffer il = new StringBuffer();
         String word = pat + "a";    // add dummy letter to serve as sentinel
         int len = word.length();
@@ -248,6 +257,7 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
         return il.toString();
     }
 
+    /** @throws SAXException if not caught */
     protected void getExternalClasses() throws SAXException {
         XMLReader mainParser = parser;
         parser = createParser();
@@ -263,14 +273,14 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
             parser = mainParser;
         }
     }
-    
+
     //
     // ContentHandler methods
     //
 
     /**
      * {@inheritDoc}
-     * @throws SAXException 
+     * @throws SAXException
      */
     public void startElement(String uri, String local, String raw,
                              Attributes attrs) throws SAXException {
@@ -328,6 +338,8 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
             case ELEM_HYPHEN:
                 // nothing to do
                 break;
+            default:
+                break;
             }
             if (currElement != ELEM_HYPHEN) {
                 token.setLength(0);
@@ -347,7 +359,7 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
     /**
      * {@inheritDoc}
      */
-    public void characters(char ch[], int start, int length) {
+    public void characters(char[] ch, int start, int length) {
         StringBuffer chars = new StringBuffer(length);
         chars.append(ch, start, length);
         String word = readToken(chars);
@@ -367,6 +379,8 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
             case ELEM_PATTERNS:
                 consumer.addPattern(getPattern(word),
                                     getInterletterValues(word));
+                break;
+            default:
                 break;
             }
             word = readToken(chars);
@@ -426,33 +440,53 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
     }    // getLocationString(SAXParseException):String
 
 
-    // PatternConsumer implementation for testing purposes
+    /**
+     * For testing purposes only.
+     * {@inheritDoc}
+     */
     public void addClass(String c) {
         testOut.println("class: " + c);
     }
 
+    /**
+     * For testing purposes only.
+     * {@inheritDoc}
+     */
     public void addException(String w, ArrayList e) {
         testOut.println("exception: " + w + " : " + e.toString());
     }
 
+    /**
+     * For testing purposes only.
+     * {@inheritDoc}
+     */
     public void addPattern(String p, String v) {
         testOut.println("pattern: " + p + " : " + v);
     }
-    
+
     private PrintStream testOut = System.out;
-    
+
     /**
+     * Set test out stream.
      * @param testOut the testOut to set
      */
     public void setTestOut(PrintStream testOut) {
         this.testOut = testOut;
     }
-    
+
+    /**
+     * Close test out file.
+     */
     public void closeTestOut() {
         testOut.flush();
         testOut.close();
     }
 
+    /**
+     * Main entry point when used as an application.
+     * @param args array of command line arguments
+     * @throws Exception in case of uncaught exception
+     */
     public static void main(String[] args) throws Exception {
         if (args.length > 0) {
             PatternParser pp = new PatternParser();
@@ -469,5 +503,5 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
         }
     }
 
- 
+
 }

@@ -41,6 +41,7 @@ public class PDFName extends PDFObject {
         this.name = escapeName(name);
     }
 
+    private static final String ESCAPED_NAME_CHARS = "/()<>[]%#";
 
     /**
      * Escapes a PDF name. It adds the leading slash and escapes characters as necessary.
@@ -56,7 +57,8 @@ public class PDFName extends PDFObject {
         }
         for (int i = (skipFirst ? 1 : 0), c = name.length(); i < c; i++) {
             char ch = name.charAt(i);
-            if (ch < 33 || ch > 126 || ch == 0x2F) {
+
+            if (ch < 33 || ch > 126 || ESCAPED_NAME_CHARS.indexOf(ch) >= 0) {
                 sb.append('#');
                 toHex(ch, sb);
             } else {

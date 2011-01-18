@@ -52,8 +52,6 @@ public class GraphicsCharacterString extends AbstractGraphicsCoord {
      * Constructor (relative positioning)
      *
      * @param str the character string
-     * @param x the x coordinate
-     * @param y the y coordinate
      */
     public GraphicsCharacterString(String str) {
         super(null);

@@ -79,7 +79,7 @@ public abstract class AbstractRenderer
          implements Renderer, Constants {
 
     /** logging instance */
-    protected static Log log = LogFactory.getLog("org.apache.fop.render");
+    protected static final Log log = LogFactory.getLog("org.apache.fop.render");
 
     /**
      * user agent
@@ -208,14 +208,17 @@ public abstract class AbstractRenderer
         return sb.toString();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * @deprecated
+     */
     public void startPageSequence(LineArea seqTitle) {
         //do nothing
     }
 
     /** {@inheritDoc} */
     public void startPageSequence(PageSequence pageSequence) {
-        startPageSequence(pageSequence.getTitle());
+        // do nothing
     }
 
     // normally this would be overriden to create a page in the

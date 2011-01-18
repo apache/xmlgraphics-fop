@@ -111,9 +111,9 @@ public abstract class NativeTextPainter extends StrokingTextPainter {
 
         String style = ((posture != null) && (posture.floatValue() > 0.0))
                        ? Font.STYLE_ITALIC : Font.STYLE_NORMAL;
-        int weight = ((taWeight != null)
-                       &&  (taWeight.floatValue() > 1.0)) ? Font.WEIGHT_BOLD
-                       : Font.WEIGHT_NORMAL;
+        int weight = toCSSWeight(taWeight != null
+                ? taWeight.floatValue()
+                        : TextAttribute.WEIGHT_REGULAR.floatValue());
 
         String firstFontFamily = null;
 
@@ -176,6 +176,28 @@ public abstract class NativeTextPainter extends StrokingTextPainter {
         return (Font[])fonts.toArray(new Font[fonts.size()]);
     }
 
+    private int toCSSWeight(float weight) {
+        if (weight <= TextAttribute.WEIGHT_EXTRA_LIGHT.floatValue()) {
+            return 100;
+        } else if (weight <= TextAttribute.WEIGHT_LIGHT.floatValue()) {
+            return 200;
+        } else if (weight <= TextAttribute.WEIGHT_DEMILIGHT.floatValue()) {
+            return 300;
+        } else if (weight <= TextAttribute.WEIGHT_REGULAR.floatValue()) {
+            return 400;
+        } else if (weight <= TextAttribute.WEIGHT_SEMIBOLD.floatValue()) {
+            return 500;
+        } else if (weight <= TextAttribute.WEIGHT_BOLD.floatValue()) {
+            return 600;
+        } else if (weight <= TextAttribute.WEIGHT_HEAVY.floatValue()) {
+            return 700;
+        } else if (weight <= TextAttribute.WEIGHT_EXTRABOLD.floatValue()) {
+            return 800;
+        } else {
+            return 900;
+        }
+    }
+
     /**
      * Collects all characters from an {@link AttributedCharacterIterator}.
      * @param runaci the character iterator
@@ -190,6 +212,10 @@ public abstract class NativeTextPainter extends StrokingTextPainter {
         return chars;
     }
 
+    /**
+     * @param runaci an attributed character iterator
+     * @param layout a text span layout
+     */
     protected final void logTextRun(AttributedCharacterIterator runaci, TextSpanLayout layout) {
         if (log.isTraceEnabled()) {
             int charCount = runaci.getEndIndex() - runaci.getBeginIndex();
@@ -202,6 +228,12 @@ public abstract class NativeTextPainter extends StrokingTextPainter {
         }
     }
 
+    /**
+     * @param ch a character
+     * @param layout a text span layout
+     * @param index an index
+     * @param visibleChar visible character flag
+     */
     protected final void logCharacter(char ch, TextSpanLayout layout, int index,
             boolean visibleChar) {
         if (log.isTraceEnabled()) {

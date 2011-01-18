@@ -320,6 +320,12 @@ public class LineBreakStatusTest extends TestCase {
             "^^^^^^" + "^"      + "_^^^^"
             ));
 
+        // Unassigned codepoint: should yield same result as AL
+        assertTrue(testBreak(
+            "No" + "\u1F7E" + "break",
+            "^^" + "^"      + "^^^^^"
+            ));
+
     }
 
     /**

@@ -32,14 +32,17 @@ import java.awt.image.WritableRaster;
 /**
  * Utility method for dealing with bitmap images.
  */
-public class BitmapImageUtil {
+public final class BitmapImageUtil {
+
+    private BitmapImageUtil() {
+    }
 
     /**
      * Indicates whether an image is a monochrome (1 bit black and white) image.
      * @param img the image
      * @return true if it's a monochrome image
      */
-    public static final boolean isMonochromeImage(RenderedImage img) {
+    public static boolean isMonochromeImage(RenderedImage img) {
         return (getColorIndexSize(img) == 2);
     }
 
@@ -48,7 +51,7 @@ public class BitmapImageUtil {
      * @param img the image (must be 1 bit monochrome)
      * @return true if a zero bit indicates a black/dark pixel, false for a white/bright pixel
      */
-    public static final boolean isZeroBlack(RenderedImage img) {
+    public static boolean isZeroBlack(RenderedImage img) {
         if (!isMonochromeImage(img)) {
             throw new IllegalArgumentException("Image is not a monochrome image!");
         }
@@ -65,7 +68,7 @@ public class BitmapImageUtil {
      * @param b the blue component
      * @return the gray value
      */
-    public static final int convertToGray(int r, int g, int b) {
+    public static int convertToGray(int r, int g, int b) {
         return (r * 30 + g * 59 + b * 11) / 100;
     }
 
@@ -74,7 +77,7 @@ public class BitmapImageUtil {
      * @param rgb the RGB value
      * @return the gray value
      */
-    public static final int convertToGray(int rgb) {
+    public static int convertToGray(int rgb) {
         int r = (rgb & 0xFF0000) >> 16;
         int g = (rgb & 0xFF00) >> 8;
         int b = rgb & 0xFF;
@@ -86,7 +89,7 @@ public class BitmapImageUtil {
      * @param img the image
      * @return the size of the color index or 0 if there's no color index
      */
-    public static final int getColorIndexSize(RenderedImage img) {
+    public static int getColorIndexSize(RenderedImage img) {
         ColorModel cm = img.getColorModel();
         if (cm instanceof IndexColorModel) {
             IndexColorModel icm = (IndexColorModel)cm;
@@ -101,7 +104,7 @@ public class BitmapImageUtil {
      * @param img the image
      * @return true if it's a grayscale image
      */
-    public static final boolean isGrayscaleImage(RenderedImage img) {
+    public static boolean isGrayscaleImage(RenderedImage img) {
         return (img.getColorModel().getColorSpace().getNumComponents() == 1);
     }
 
@@ -111,7 +114,7 @@ public class BitmapImageUtil {
      * @param targetDimension the new target dimensions or null if no scaling is necessary
      * @return the sRGB image
      */
-    public static final BufferedImage convertTosRGB(RenderedImage img,
+    public static BufferedImage convertTosRGB(RenderedImage img,
             Dimension targetDimension) {
         return convertAndScaleImage(img, targetDimension, BufferedImage.TYPE_INT_RGB);
     }
@@ -122,7 +125,7 @@ public class BitmapImageUtil {
      * @param targetDimension the new target dimensions or null if no scaling is necessary
      * @return the grayscale image
      */
-    public static final BufferedImage convertToGrayscale(RenderedImage img,
+    public static BufferedImage convertToGrayscale(RenderedImage img,
             Dimension targetDimension) {
         return convertAndScaleImage(img, targetDimension, BufferedImage.TYPE_BYTE_GRAY);
     }
@@ -133,7 +136,7 @@ public class BitmapImageUtil {
      * @param targetDimension the new target dimensions or null if no scaling is necessary
      * @return the monochrome image
      */
-    public static final BufferedImage convertToMonochrome(RenderedImage img,
+    public static BufferedImage convertToMonochrome(RenderedImage img,
             Dimension targetDimension) {
         return toBufferedImage(convertToMonochrome(img, targetDimension, 0.0f));
     }
@@ -146,7 +149,7 @@ public class BitmapImageUtil {
      *                  Valid values: a value between 0.0f (fastest) and 1.0f (best)
      * @return the monochrome image
      */
-    public static final RenderedImage convertToMonochrome(RenderedImage img,
+    public static RenderedImage convertToMonochrome(RenderedImage img,
             Dimension targetDimension, float quality) {
         if (!isMonochromeImage(img)) {
             if (quality >= 0.5f) {
@@ -234,6 +237,7 @@ public class BitmapImageUtil {
         }
     }
 
+    /** @return the bitmap converter */
     public static MonochromeBitmapConverter createDefaultMonochromeBitmapConverter() {
         MonochromeBitmapConverter converter = null;
         try {

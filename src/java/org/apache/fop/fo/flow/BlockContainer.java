@@ -219,7 +219,8 @@ public class BlockContainer extends FObj implements BreakPropertySet {
 
     /**
      * @return the "fox:disable-column-balancing" property, one of
-     * {@link Constants#EN_TRUE}, {@link Constants#EN_FALSE}
+     * {@link org.apache.fop.fo.Constants#EN_TRUE},
+     * {@link org.apache.fop.fo.Constants#EN_FALSE}
      */
     public int getDisableColumnBalancing() {
         return disableColumnBalancing;

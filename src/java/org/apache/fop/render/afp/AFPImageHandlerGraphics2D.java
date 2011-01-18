@@ -49,47 +49,6 @@ public class AFPImageHandlerGraphics2D extends AFPImageHandler implements ImageH
         ImageFlavor.GRAPHICS2D
     };
 
-    /** {@inheritDoc} */
-    public AFPDataObjectInfo generateDataObjectInfo(
-            AFPRendererImageInfo rendererImageInfo) throws IOException {
-
-        AFPRendererContext rendererContext
-            = (AFPRendererContext)rendererImageInfo.getRendererContext();
-        AFPInfo afpInfo = rendererContext.getInfo();
-        ImageGraphics2D imageG2D = (ImageGraphics2D)rendererImageInfo.getImage();
-        Graphics2DImagePainter painter = imageG2D.getGraphics2DImagePainter();
-
-        if (afpInfo.paintAsBitmap()) {
-            int x = afpInfo.getX();
-            int y = afpInfo.getY();
-            int width = afpInfo.getWidth();
-            int height = afpInfo.getHeight();
-            AFPPaintingState paintingState = afpInfo.getPaintingState();
-            AFPGraphics2DAdapter g2dAdapter = new AFPGraphics2DAdapter(paintingState);
-            g2dAdapter.paintImage(painter, rendererContext, x, y, width, height);
-            return null;
-        } else {
-            AFPGraphicsObjectInfo graphicsObjectInfo
-                = (AFPGraphicsObjectInfo)super.generateDataObjectInfo(rendererImageInfo);
-
-            setDefaultResourceLevel(graphicsObjectInfo, afpInfo.getResourceManager());
-
-            // set mime type (unsupported by MOD:CA registry)
-            graphicsObjectInfo.setMimeType(MimeConstants.MIME_AFP_GOCA);
-
-            // set g2d
-            boolean textAsShapes = false;
-            AFPGraphics2D g2d = afpInfo.createGraphics2D(textAsShapes);
-
-            graphicsObjectInfo.setGraphics2D(g2d);
-
-            // set painter
-            graphicsObjectInfo.setPainter(painter);
-
-            return graphicsObjectInfo;
-        }
-    }
-
     private void setDefaultResourceLevel(AFPGraphicsObjectInfo graphicsObjectInfo,
             AFPResourceManager resourceManager) {
         AFPResourceInfo resourceInfo = graphicsObjectInfo.getResourceInfo();

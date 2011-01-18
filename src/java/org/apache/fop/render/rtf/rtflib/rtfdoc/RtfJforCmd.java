@@ -39,14 +39,12 @@ public class RtfJforCmd extends RtfContainer {
     private static final String PARA_KEEP_OFF = "para-keep:off";
 
     private final RtfAttributes attrib;
-    private ParagraphKeeptogetherContext paragraphKeeptogetherContext;
 
 
 
     RtfJforCmd(RtfContainer parent, Writer w, RtfAttributes attrs) throws IOException {
         super((RtfContainer)parent, w);
         attrib = attrs;
-        paragraphKeeptogetherContext = ParagraphKeeptogetherContext.getInstance();
     }
 
 

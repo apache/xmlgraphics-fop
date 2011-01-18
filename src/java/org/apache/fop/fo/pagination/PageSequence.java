@@ -48,7 +48,7 @@ public class PageSequence extends AbstractPageSequence {
     // the set of flows includes StaticContent flows also
 
     /** Map of flows to their flow name (flow-name, Flow) */
-    private Map/*<String, Flow>*/ flowMap;
+    private Map<String, Flow> flowMap;
 
     /**
      * The currentSimplePageMaster is either the page master for the
@@ -96,7 +96,7 @@ public class PageSequence extends AbstractPageSequence {
     /** {@inheritDoc} */
     protected void startOfNode() throws FOPException {
         super.startOfNode();
-        flowMap = new java.util.HashMap/*<String, Flow>*/();
+        flowMap = new java.util.HashMap<String, Flow>();
 
         this.simplePageMaster
             = getRoot().getLayoutMasterSet().getSimplePageMaster(masterReference);
@@ -151,7 +151,7 @@ public class PageSequence extends AbstractPageSequence {
 
     /**
      * {@inheritDoc}
-     * @todo see if addChildNode() should also be called for fo's other than
+     * TODO see if addChildNode() should also be called for fo's other than
      *  fo:flow.
      */
     public void addChildNode(FONode child) throws FOPException {
@@ -167,7 +167,7 @@ public class PageSequence extends AbstractPageSequence {
             break;
         case FO_STATIC_CONTENT:
             addFlow((StaticContent)child);
-            flowMap.put(((StaticContent)child).getFlowName(), child);
+            flowMap.put(((Flow)child).getFlowName(), (Flow)child);
             break;
         default:
             super.addChildNode(child);
@@ -239,7 +239,7 @@ public class PageSequence extends AbstractPageSequence {
     }
 
     /** @return the flow map for this page-sequence */
-    public Map getFlowMap() {
+    public Map<String, Flow> getFlowMap() {
         return this.flowMap;
     }
 
@@ -254,10 +254,9 @@ public class PageSequence extends AbstractPageSequence {
      * @return the SimplePageMaster to use for this page
      * @throws PageProductionException if there's a problem determining the page master
      */
-    public SimplePageMaster getNextSimplePageMaster(int page,
-                                                    boolean isFirstPage,
-                                                    boolean isLastPage,
-                                                    boolean isBlank) throws PageProductionException {
+    public SimplePageMaster getNextSimplePageMaster
+        (int page, boolean isFirstPage, boolean isLastPage, boolean isBlank)
+        throws PageProductionException {
 
         if (pageSequenceMaster == null) {
             return simplePageMaster;

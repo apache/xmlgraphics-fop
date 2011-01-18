@@ -240,7 +240,7 @@ public class TableLayoutManager extends BlockStackingLayoutManager
 
 
         // Elements for the table-header/footer/body
-        LinkedList contentKnuthElements;
+        List contentKnuthElements;
         contentLM = new TableContentLayoutManager(this);
         LayoutContext childLC = new LayoutContext(0);
         /*
@@ -550,6 +550,13 @@ public class TableLayoutManager extends BlockStackingLayoutManager
         if (log.isDebugEnabled()) {
             log.debug(this + ": Padding " + side + " -> " + effectiveLength);
         }
+    }
+
+    /** {@inheritDoc} */
+    public void reset() {
+        super.reset();
+        curBlockArea = null;
+        tableUnit = 0.0;
     }
 
 }

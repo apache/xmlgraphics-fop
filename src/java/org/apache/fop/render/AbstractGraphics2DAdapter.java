@@ -34,8 +34,9 @@ import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 import java.io.IOException;
 
-import org.apache.fop.render.RendererContext.RendererContextWrapper;
 import org.apache.xmlgraphics.util.UnitConv;
+
+import org.apache.fop.render.RendererContext.RendererContextWrapper;
 
 /**
  * Abstract base class for Graphics2DAdapter implementations.
@@ -147,10 +148,14 @@ public abstract class AbstractGraphics2DAdapter implements Graphics2DAdapter {
             RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * @deprecated
+     */
     public void paintImage(Graphics2DImagePainter painter,
             RendererContext context,
             int x, int y, int width, int height) throws IOException {
+        //TODO Deprecated method to be removed once Barcode4J 2.1 is released.
         paintImage((org.apache.xmlgraphics.java2d.Graphics2DImagePainter)painter,
                 context, x, y, width, height);
     }

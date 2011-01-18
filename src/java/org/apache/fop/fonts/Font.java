@@ -19,11 +19,11 @@
 
 package org.apache.fop.fonts;
 
+import java.util.Collections;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.fop.fonts.CodePointMapping;
 
 /**
  * This class holds font state information and provides access to the font
@@ -160,11 +160,11 @@ public class Font {
      * Returns the font's kerning table
      * @return the kerning table
      */
-    public Map getKerning() {
+    public Map<Integer, Map<Integer, Integer>> getKerning() {
         if (metric.hasKerningInfo()) {
             return metric.getKerningInfo();
         } else {
-            return java.util.Collections.EMPTY_MAP;
+            return Collections.emptyMap();
         }
     }
 
@@ -178,9 +178,9 @@ public class Font {
      * @return the distance to adjust for kerning, 0 if there's no kerning
      */
     public int getKernValue(char ch1, char ch2) {
-        Map kernPair = (Map)getKerning().get(new Integer(ch1));
+        Map<Integer, Integer> kernPair = getKerning().get((int) ch1);
         if (kernPair != null) {
-            Integer width = (Integer)kernPair.get(new Integer(ch2));
+            Integer width = kernPair.get((int) ch2);
             if (width != null) {
                 return width.intValue() * getFontSize() / 1000;
             }
@@ -239,6 +239,7 @@ public class Font {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String toString() {
         StringBuffer sbuf = new StringBuffer();
         sbuf.append('(');
