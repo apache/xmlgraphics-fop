@@ -50,9 +50,6 @@ import org.apache.fop.fo.expr.PropertyException;
  */
 public final class ColorUtil {
 
-    //Implementation note: this class should ALWAYS create ColorWithAlternatives instances instead
-    //of using java.awt.Color since the latter has an equals() method that can't detect two
-    //different colors using the same sRGB fallback.
     //ColorWithFallback is used to preserve the sRGB fallback exclusively for the purpose
     //of regenerating textual color functions as specified in XSL-FO.
 
@@ -63,11 +60,12 @@ public final class ColorUtil {
     public static final String SEPARATION_PSEUDO_PROFILE = "#Separation";
 
     /**
-     *
-     * keeps all the predefined and parsed colors.
+     * Keeps all the predefined and parsed colors.
      * <p>
      * This map is used to predefine given colors, as well as speeding up
      * parsing of already parsed colors.
+     * <p>
+     * Important: The use of this color map assumes that all Color instances are immutable!
      */
     private static Map<String, Color> colorMap = null;
 
@@ -147,9 +145,6 @@ public final class ColorUtil {
             colorMap.put(value, parsedColor);
         }
 
-        // TODO - Returned Color object can be one from the static colorMap cache.
-        //        That means it should be treated as read only for the rest of its lifetime.
-        //        Not sure that is the case though.
         return parsedColor;
     }
 
@@ -216,7 +211,7 @@ public final class ColorUtil {
         } catch (Exception e) {
             throw new PropertyException(e);
         }
-        return new ColorWithAlternatives(red, green, blue, null);
+        return new Color(red, green, blue);
     }
 
     /**
@@ -243,7 +238,7 @@ public final class ColorUtil {
                 float red = parseComponent255(args[0], value);
                 float green = parseComponent255(args[1], value);
                 float blue = parseComponent255(args[2], value);
-                parsedColor = new ColorWithAlternatives(red, green, blue, null);
+                parsedColor = new Color(red, green, blue);
             } catch (PropertyException pe) {
                 //simply re-throw
                 throw pe;
@@ -296,16 +291,12 @@ public final class ColorUtil {
         float blue = parseComponent1(args[2], value);
         //Sun's classlib rounds differently with this constructor than when converting to sRGB
         //via CIE XYZ.
-        Color sRGB = new ColorWithAlternatives(red, green, blue, null);
-        /*
-        Color sRGB = new ColorWithAlternatives(ColorSpace.getInstance(ColorSpace.CS_sRGB),
-                new float[] {red, green, blue}, 1.0f, null);
-        */
+        Color sRGB = new Color(red, green, blue);
         return sRGB;
     }
 
     /**
-     * parse a color given in the #.... format.
+     * Parse a color given in the #.... format.
      *
      * @param value
      *            the complete line
@@ -337,7 +328,7 @@ public final class ColorUtil {
             } else {
                 throw new NumberFormatException();
             }
-            parsedColor = new ColorWithAlternatives(red, green, blue, alpha, null);
+            parsedColor = new Color(red, green, blue, alpha);
         } catch (Exception e) {
             throw new PropertyException("Unknown color format: " + value
                     + ". Must be #RGB. #RGBA, #RRGGBB, or #RRGGBBAA");
@@ -420,8 +411,7 @@ public final class ColorUtil {
                     if (ColorSpaces.isDeviceColorSpace(colorSpace)) {
                         //Device-specific colors are handled differently:
                         //sRGB is the primary color with the CMYK as the alternative
-                        Color deviceColor = new ColorWithAlternatives(
-                                colorSpace, iccComponents, 1.0f, null);
+                        Color deviceColor = new Color(colorSpace, iccComponents, 1.0f);
                         float[] rgbComps = sRGB.getRGBColorComponents(null);
                         parsedColor = new ColorWithAlternatives(
                                 rgbComps[0], rgbComps[1], rgbComps[2],
@@ -569,7 +559,7 @@ public final class ColorUtil {
                 float red = parseComponent255(args[0], value);
                 float green = parseComponent255(args[1], value);
                 float blue = parseComponent255(args[2], value);
-                Color sRGB = new ColorWithAlternatives(red, green, blue, null);
+                Color sRGB = new Color(red, green, blue);
 
                 float l = parseComponent(args[3], 0f, 100f, value);
                 float a = parseComponent(args[4], -127f, 127f, value);
@@ -723,21 +713,20 @@ public final class ColorUtil {
     }
 
     /**
-     * Create string representation of fop-rgb-icc function call to map this
-     * ColorExt settings.
+     * Create string representation of a fop-rgb-icc (or fop-rgb-named-color) function call from
+     * the given color.
      * @param color the color to turn into a function call
-     * @return the string representing the internal fop-rgb-icc() function call
+     * @return the string representing the internal fop-rgb-icc() or fop-rgb-named-color()
+     *           function call
      */
-    public static String toFunctionCall(ColorWithAlternatives color) {
+    private static String toFunctionCall(ColorWithAlternatives color) {
         ColorSpace cs = color.getColorSpace();
-        Color fallbackColor = getsRGBFallback(color);
-        if (cs instanceof CIELabColorSpace) {
-            return toCIELabFunctionCall(color);
-        }
         if (cs.isCS_sRGB() && !color.hasAlternativeColors()) {
             return toRGBFunctionCall(color);
         }
-        StringBuffer sb = new StringBuffer(40);
+        if (cs instanceof CIELabColorSpace) {
+            return toCIELabFunctionCall(color);
+        }
 
         Color specColor = color;
         if (color.hasAlternativeColors()) {
@@ -749,8 +738,11 @@ public final class ColorUtil {
         }
         ColorSpaceOrigin origin = ColorSpaces.getColorSpaceOrigin(cs);
         String functionName;
+
+        Color fallbackColor = getsRGBFallback(color);
         float[] rgb = fallbackColor.getColorComponents(null);
         assert rgb.length == 3;
+        StringBuffer sb = new StringBuffer(40);
         sb.append("(");
         sb.append(rgb[0]).append(",");
         sb.append(rgb[1]).append(",");
@@ -797,7 +789,7 @@ public final class ColorUtil {
     }
 
     private static Color createColor(int r, int g, int b) {
-        return new ColorWithAlternatives(r, g, b, null);
+        return new Color(r, g, b);
     }
 
     /**
