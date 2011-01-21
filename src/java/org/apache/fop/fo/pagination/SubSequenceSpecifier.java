@@ -28,6 +28,7 @@ public interface SubSequenceSpecifier {
 
     /**
      * Returns the name of the next page master.
+     *
      * @param isOddPage True if the next page number is odd
      * @param isFirstPage True if the next page is the first
      * @param isLastPage True if the next page is the last

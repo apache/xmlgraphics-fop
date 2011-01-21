@@ -49,6 +49,7 @@
     <context id="API" title="Changes to the End-User API"/>
     <context id="Extensions" title="Changes to the Bundled Extensions"/>
     <context id="Images" title="Changes to the Image Support"/>
+	<context id="Config" title="Changes to the User Configuration"/>
   </contexts>
 
   <changes>
@@ -58,6 +59,18 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+	  <action context="Config" dev="SP" type="fix">
+		Bugfix: relative URIs in the configuration file (base, font-base, hyphenation-base) are evaluated relative to the base URI of the configuration file.
+	  </action>
+      <action context="Layout" dev="AD" type="fix" fixes-bug="49848">
+        Bugfix: correct behavior of keep-together.within-line in case there are nested inlines
+      </action>
+      <action context="Code" dev="AD" type="fix" fixes-bug="50471">
+        Bugfix: avoid ArrayIndexOutOfBoundsException for codepoints without a linebreak class
+      </action>
+      <action context="Layout" dev="AD" type="fix" fixes-bug="48380">
+        Bugfix: avoid ClassCastException when using fox:widow-content-limit
+      </action>
       <action context="Layout" dev="VH" type="fix" fixes-bug="50089">
         Bugfix: content after forced break in block-container is not rendered.
       </action>

@@ -85,11 +85,11 @@ list of possible build targets.
     </patternset>
   </fileset>
   <patternset id="dist.src.lib.tools">
-	<include name="lib/build/asm*"/>
-	<include name="lib/build/backport-util-concurrent*"/>
-	<include name="lib/build/jaxen*"/>
-	<include name="lib/build/pmd*"/>
-	<include name="lib/build/qdox*"/>
+    <include name="lib/build/asm*"/>
+    <include name="lib/build/backport-util-concurrent*"/>
+    <include name="lib/build/jaxen*"/>
+    <include name="lib/build/pmd*"/>
+    <include name="lib/build/qdox*"/>
         <include name="lib/build/xmlunit*"/>
   </patternset>
   <fileset dir="${basedir}" id="dist.src">
@@ -98,7 +98,7 @@ list of possible build targets.
     <include name="hyph/hyphenation.dtd"/>
     <include name="hyph/readme"/>
     <patternset refid="dist.lib"/>
-	<patternset refid="dist.src.lib.tools"/>
+    <patternset refid="dist.src.lib.tools"/>
     <include name="lib/servlet*"/>
     <include name="test/**"/>
     <include name="examples/**"/>
@@ -207,8 +207,24 @@ list of possible build targets.
   <property environment="env"/>
   <property name="forrest.home" value="${env.FORREST_HOME}"/>
   <import file="${env.FORREST_HOME}/main/forrest.build.xml" optional="true"/>
-  -->
-<!-- =================================================================== -->
+-->
+  
+  <presetdef name="javac">
+    <javac fork="${javac.fork}"
+      debug="${javac.debug}"
+      deprecation="${javac.deprecation}"
+      optimize="${javac.optimize}"
+      source="${javac.source}" target="${javac.target}"/>
+  </presetdef>
+  
+  <presetdef name="junit">
+    <junit haltonfailure="${junit.haltonfailure}"
+      fork="${junit.fork}"
+      printsummary="${junit.printsummary}"
+      maxmemory="256m"/>
+  </presetdef>
+  
+  <!-- =================================================================== -->
 <!-- Initialization target                                               -->
 <!-- =================================================================== -->
   <target name="init" depends="init-avail">
@@ -334,7 +350,7 @@ list of possible build targets.
   <target name="compile-java" depends="init, codegen">
 <!-- create directories -->
     <mkdir dir="${build.classes.dir}"/>
-    <javac destdir="${build.classes.dir}" fork="${javac.fork}" debug="${javac.debug}" deprecation="${javac.deprecation}" optimize="${javac.optimize}" source="${javac.source}" target="${javac.target}" includeAntRuntime="true">
+    <javac destdir="${build.classes.dir}" includeAntRuntime="true">
       <src path="${build.gensrc.dir}"/>
       <src path="${src.java.dir}"/>
       <patternset includes="**/*.java"/>
@@ -343,7 +359,7 @@ list of possible build targets.
       <classpath refid="libs-build-classpath"/>
     </javac>
     <mkdir dir="${build.sandbox-classes.dir}"/>
-    <javac destdir="${build.sandbox-classes.dir}" fork="${javac.fork}" debug="${javac.debug}" deprecation="${javac.deprecation}" optimize="${javac.optimize}" source="${javac.source}" target="${javac.target}" includeAntRuntime="true">
+    <javac destdir="${build.sandbox-classes.dir}" includeAntRuntime="true">
       <src path="${src.sandbox.dir}"/>
       <patternset includes="**/*.java"/>
       <patternset refid="exclude-jai"/>
@@ -355,7 +371,7 @@ list of possible build targets.
   </target>
   <target name="resourcegen" depends="compile-java">
     <mkdir dir="${build.codegen-classes.dir}"/>
-    <javac destdir="${build.codegen-classes.dir}" fork="${javac.fork}" debug="${javac.debug}" deprecation="${javac.deprecation}" optimize="${javac.optimize}" source="${javac.source}" target="${javac.target}" includeAntRuntime="true">
+    <javac destdir="${build.codegen-classes.dir}" includeAntRuntime="true">
       <src path="${src.codegen.dir}/java"/>
       <patternset includes="**/*.java"/>
       <classpath>
@@ -419,21 +435,21 @@ list of possible build targets.
   <!-- (src/java/org/apache/fop/hyphenation/classes.xml). -->
   <!-- =================================================================== -->
   <target name="codegen-hyphenation-classes">
-    <javac destdir="${build.codegen-classes.dir}" fork="${javac.fork}" debug="${javac.debug}" deprecation="${javac.deprecation}" optimize="${javac.optimize}" source="${javac.source}" target="${javac.target}">
+    <javac destdir="${build.codegen-classes.dir}">
       <src path="${src.codegen.dir}/unicode/java"/>
     </javac>
-	<java classname="org.apache.fop.hyphenation.UnicodeClasses" resultproperty="classes.result" classpath="${build.codegen-classes.dir}">
+    <java classname="org.apache.fop.hyphenation.UnicodeClasses" resultproperty="classes.result" classpath="${build.codegen-classes.dir}">
       <arg value="${src.dir}/java/org/apache/fop/hyphenation/classes.xml"/>
-	</java>
-	<condition property="classes.result.message" value="Generation of classes successful">
-	  <not>
-	  <isfailure code="${classes.result}"/>
-	  </not>
-	</condition>
-	<condition property="classes.result.message" value="Generation of classes failed">
-	  <isfailure code="${classes.result}"/>
-	</condition>
-	<echo message="${classes.result.message}"/>
+    </java>
+    <condition property="classes.result.message" value="Generation of classes successful">
+      <not>
+      <isfailure code="${classes.result}"/>
+      </not>
+    </condition>
+    <condition property="classes.result.message" value="Generation of classes failed">
+      <isfailure code="${classes.result}"/>
+    </condition>
+    <echo message="${classes.result.message}"/>
   </target>
   <!-- =================================================================== -->
   <!-- compiles hyphenation patterns                                       -->
@@ -444,20 +460,20 @@ list of possible build targets.
       <pathelement location="${build.classes.dir}"/>
     </path>
     <mkdir dir="${build.classes.dir}/hyph"/>
-	<java classname="org.apache.fop.hyphenation.SerializeHyphPattern" fork="true" resultproperty="hyph.result" classpathref="hyph-classpath">
-	  <arg value="${user.hyph.dir}"/>
-	  <arg value="${build.classes.dir}/hyph"/>
-	  <jvmarg value="-Xss${hyph.stacksize}"/>
-	</java>
-	<condition property="hyph.result.message" value="Hyphenation successful">
-	  <not>
-	  <isfailure code="${hyph.result}"/>
-	  </not>
-	</condition>
-	<condition property="hyph.result.message" value="Hyphenation failed">
-	  <isfailure code="${hyph.result}"/>
-	</condition>
-	<echo message="${hyph.result.message}"/>
+    <java classname="org.apache.fop.hyphenation.SerializeHyphPattern" fork="true" resultproperty="hyph.result" classpathref="hyph-classpath">
+      <arg value="${user.hyph.dir}"/>
+      <arg value="${build.classes.dir}/hyph"/>
+      <jvmarg value="-Xss${hyph.stacksize}"/>
+    </java>
+    <condition property="hyph.result.message" value="Hyphenation successful">
+      <not>
+      <isfailure code="${hyph.result}"/>
+      </not>
+    </condition>
+    <condition property="hyph.result.message" value="Hyphenation failed">
+      <isfailure code="${hyph.result}"/>
+    </condition>
+    <echo message="${hyph.result.message}"/>
   </target>
   <target name="uptodate-jar-hyphenation" depends="compile-hyphenation">
     <uptodate property="jar.hyphenation.uptodate" targetfile="${build.dir}/fop-hyph.jar">
@@ -704,7 +720,7 @@ list of possible build targets.
     <mkdir dir="${build.dir}/test-classes"/>
     <mkdir dir="${build.dir}/test-gensrc"/>
     <mkdir dir="${junit.reports.dir}"/>
-    <javac destdir="${build.dir}/test-classes" fork="${javac.fork}" debug="${javac.debug}" deprecation="${javac.deprecation}" optimize="${javac.optimize}" source="${javac.source}" target="${javac.target}" includeAntRuntime="true">
+    <javac destdir="${build.dir}/test-classes" includeAntRuntime="true">
       <src path="${test.dir}/java"/>
       <patternset refid="test-sources"/>
       <classpath>
@@ -740,8 +756,7 @@ list of possible build targets.
   <target name="junit-compile" depends="junit-compile-java, junit-compile-copy-resources" description="Compiles FOP's JUnit tests" if="junit.present"/>
   <target name="junit-transcoder" depends="junit-compile" description="Runs FOP's JUnit transcoder tests" if="junit.present">
     <echo message="Running basic functionality tests for fop-transcoder.jar"/>
-    <junit dir="${basedir}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}" printsummary="${junit.printsummary}">
-      <jvmarg value="-Xmx1024m"/>
+    <junit dir="${basedir}">
       <sysproperty key="basedir" value="${basedir}"/>
       <sysproperty key="jawa.awt.headless" value="true"/>
       <formatter type="brief" usefile="false" if="junit.formatter.brief.use"/>
@@ -763,7 +778,7 @@ list of possible build targets.
          previous test block succeeded it indicates that the packaging of the allinone
          JAR needs to be updated.
     -->
-    <junit dir="${basedir}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure" printsummary="${junit.printsummary}">
+    <junit dir="${basedir}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure">
       <sysproperty key="basedir" value="${basedir}"/>
       <sysproperty key="jawa.awt.headless" value="true"/>
       <formatter type="brief" usefile="false" if="junit.formatter.brief.use"/>
@@ -786,8 +801,7 @@ list of possible build targets.
   </target>
   <target name="junit-userconfig" depends="junit-compile" if="junit.present" description="Runs FOP's user config JUnit tests">
     <echo message="Running user config tests"/>
-    <junit dir="${basedir}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure" printsummary="${junit.printsummary}">
-      <jvmarg value="-Xmx1024m"/>
+    <junit dir="${basedir}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure">
       <sysproperty key="basedir" value="${basedir}"/>
       <sysproperty key="jawa.awt.headless" value="true"/>
       <sysproperty key="fop.layoutengine.disabled" value="${layoutengine.disabled}"/>
@@ -804,7 +818,7 @@ list of possible build targets.
   </target>
   <target name="junit-basic" depends="junit-compile" description="Runs FOP's JUnit basic tests" if="junit.present">
     <echo message="Running basic functionality tests for fop.jar"/>
-    <junit dir="${basedir}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure" printsummary="${junit.printsummary}">
+    <junit dir="${basedir}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure">
       <sysproperty key="basedir" value="${basedir}"/>
       <sysproperty key="jawa.awt.headless" value="true"/>
       <formatter type="brief" usefile="false" if="junit.formatter.brief.use"/>
@@ -840,7 +854,7 @@ list of possible build targets.
   </target>
   <target name="junit-layout-standard" depends="junit-compile, junit-fotree" if="junit.present" description="Runs FOP's standard JUnit layout tests">
     <echo message="Running standard layout engine tests"/>
-    <junit dir="${basedir}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure" printsummary="${junit.printsummary}">
+    <junit dir="${basedir}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure">
       <sysproperty key="basedir" value="${basedir}"/>
       <sysproperty key="jawa.awt.headless" value="true"/>
       <sysproperty key="fop.layoutengine.disabled" value="${layoutengine.disabled}"/>
@@ -857,7 +871,7 @@ list of possible build targets.
   </target>
   <target name="junit-layout-hyphenation" depends="hyphenation-present, junit-compile" if="hyphenation.present" description="Runs FOP's JUnit hyphenation layout tests">
     <echo message="Running hyphenation layout engine tests"/>
-    <junit dir="${basedir}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure" printsummary="${junit.printsummary}">
+    <junit dir="${basedir}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure">
       <sysproperty key="basedir" value="${basedir}"/>
       <sysproperty key="jawa.awt.headless" value="true"/>
       <sysproperty key="fop.layoutengine.disabled" value="${layoutengine.disabled}"/>
@@ -875,7 +889,7 @@ list of possible build targets.
   <target name="junit-layout" depends="junit-layout-standard, junit-layout-hyphenation" description="Runs all FOP's JUnit layout tests"/>
   <target name="junit-fotree" depends="junit-compile" description="Runs FOP's FO tree JUnit tests" if="junit.present">
     <echo message="Running fo tree tests"/>
-    <junit dir="${basedir}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure" printsummary="${junit.printsummary}">
+    <junit dir="${basedir}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure">
       <sysproperty key="basedir" value="${basedir}"/>
       <sysproperty key="jawa.awt.headless" value="true"/>
       <sysproperty key="fop.layoutengine.disabled" value="${fotree.disabled}"/>
@@ -899,7 +913,7 @@ list of possible build targets.
     <attribute name="outfile"/>
     <sequential>
       <echo message="Running @{title} tests..."/>
-      <junit dir="${basedir}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure" printsummary="${junit.printsummary}">
+      <junit dir="${basedir}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure">
         <sysproperty key="basedir" value="${basedir}/@{basedir}"/>
         <sysproperty key="jawa.awt.headless" value="true"/>
         <sysproperty key="fop.layoutengine.disabled" value="${layoutengine.disabled}"/>
@@ -936,7 +950,7 @@ list of possible build targets.
   </target>
   <target name="junit-text-linebreak" depends="junit-compile" description="Runs FOP's JUnit unicode linebreak tests" if="junit.present">
     <echo message="Running tests for Unicode UAX#14 support"/>
-    <junit dir="${basedir}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure" printsummary="${junit.printsummary}">
+    <junit dir="${basedir}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure">
       <sysproperty key="basedir" value="${basedir}"/>
       <sysproperty key="jawa.awt.headless" value="true"/>
       <formatter type="brief" usefile="false" if="junit.formatter.brief.use"/>
@@ -1104,7 +1118,7 @@ NOTE:
 <!-- =================================================================== -->
   <property name="checkstyle.noframes.xslt" value="${basedir}/checkstyle-noframes.xsl" />
   <condition property="checkstyle.avail">
-  	<and>
+    <and>
       <available classname="com.puppycrawl.tools.checkstyle.CheckStyleTask">
         <classpath>
           <path refid="libs-tools-build-classpath"/>
@@ -1339,11 +1353,11 @@ NOTE:
 <!-- Nightly builds                                                      -->
 <!-- =================================================================== -->
   <target name="junit-nightly-build" depends="junit-userconfig,junit-text-linebreak,junit-fotree">
-	<fail>
-	  <condition>
-	    <or>
-	      <isset property="fop.junit.error"/>
-	      <isset property="fop.junit.failure"/>
+    <fail>
+      <condition>
+        <or>
+          <isset property="fop.junit.error"/>
+          <isset property="fop.junit.failure"/>
         </or>
       </condition>
 NOTE:
@@ -1425,7 +1439,7 @@ NOTE:
   <!-- =================================================================== -->
   <target name="codegen-unicode" depends="compile-java">
     <mkdir dir="${build.codegen-classes.dir}"/>
-    <javac destdir="${build.codegen-classes.dir}" fork="${javac.fork}" debug="${javac.debug}" deprecation="${javac.deprecation}" optimize="${javac.optimize}" source="${javac.source}" target="${javac.target}">
+    <javac destdir="${build.codegen-classes.dir}">
       <src path="${src.codegen.dir}/unicode/java"/>
       <classpath>
         <path refid="libs-build-classpath"/>
@@ -1456,7 +1470,7 @@ NOTE:
     <delete>
       <fileset dir="${basedir}" includes="${name}-*.tar.gz"/>
       <fileset dir="${basedir}" includes="${name}-*.zip"/>
-	  <fileset dir="${basedir}" includes="${name}-bundle.jar"/>
+      <fileset dir="${basedir}" includes="${name}-bundle.jar"/>
     </delete>
   </target>
   <target name="validate-xdocs" description="Validate the xdocs. Point schemas.dir to Forrest's 'schemas' directory.">

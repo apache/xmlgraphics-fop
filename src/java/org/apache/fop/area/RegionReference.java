@@ -33,8 +33,6 @@ public class RegionReference extends Area implements Cloneable {
 
     private static final long serialVersionUID = -298980963268244238L;
 
-    /** Reference to the region FO. */
-    //protected Region regionFO;
     private int regionClass;
     private String regionName;
     private CTM ctm;
@@ -42,7 +40,7 @@ public class RegionReference extends Area implements Cloneable {
     // the list of block areas from the static flow
     private ArrayList blocks = new ArrayList();
 
-    /** the parent RegionViewport for this object */
+    /** the parent {@link RegionViewport} for this object */
     protected RegionViewport regionViewport;
 
     /**

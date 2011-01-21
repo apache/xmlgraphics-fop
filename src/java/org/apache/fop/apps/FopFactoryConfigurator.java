@@ -22,6 +22,8 @@ package org.apache.fop.apps;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -78,6 +80,9 @@ public class FopFactoryConfigurator {
     /** Fop factory configuration */
     private Configuration cfg = null;
 
+    /** The base URI of the configuration file **/
+    private URI baseURI = null;
+
     /**
      * Default constructor
      * @param factory fop factory
@@ -130,17 +135,23 @@ public class FopFactoryConfigurator {
 
         // base definitions for relative path resolution
         if (cfg.getChild("base", false) != null) {
+            String path = cfg.getChild("base").getValue(null);
+            if (baseURI != null) {
+                path = baseURI.resolve(path).normalize().toString();
+            }
             try {
-                factory.setBaseURL(
-                        cfg.getChild("base").getValue(null));
+                factory.setBaseURL(path);
             } catch (MalformedURLException mfue) {
                 LogUtil.handleException(log, mfue, strict);
             }
         }
         if (cfg.getChild("hyphenation-base", false) != null) {
+            String path = cfg.getChild("hyphenation-base").getValue(null);
+            if (baseURI != null) {
+                path = baseURI.resolve(path).normalize().toString();
+            }
             try {
-                factory.setHyphenBaseURL(
-                        cfg.getChild("hyphenation-base").getValue(null));
+                factory.setHyphenBaseURL(path);
             } catch (MalformedURLException mfue) {
                 LogUtil.handleException(log, mfue, strict);
             }
@@ -259,7 +270,7 @@ public class FopFactoryConfigurator {
         }
 
         // configure font manager
-        new FontManagerConfigurator(cfg).configure(factory.getFontManager(), strict);
+        new FontManagerConfigurator(cfg, baseURI).configure(factory.getFontManager(), strict);
 
         // configure image loader framework
         configureImageLoading(cfg.getChild("image-loading", false), strict);
@@ -339,6 +350,7 @@ public class FopFactoryConfigurator {
      */
     public void setUserConfig(Configuration cfg) throws FOPException {
         this.cfg = cfg;
+        setBaseURI();
         configure(this.factory);
     }
 
@@ -349,4 +361,34 @@ public class FopFactoryConfigurator {
     public Configuration getUserConfig() {
         return this.cfg;
     }
+
+    /**
+     * @return the baseURI
+     */
+    public URI getBaseURI() {
+        return baseURI;
+    }
+
+    /**
+     * @param baseURI the baseURI to set
+     */
+    public void setBaseURI(URI baseURI) {
+        this.baseURI = baseURI;
+    }
+
+    private void setBaseURI() throws FOPException {
+        String loc = cfg.getLocation();
+        try {
+            if (loc != null && loc.startsWith("file:")) {
+                baseURI = new URI(loc);
+                baseURI = baseURI.resolve(".").normalize();
+            }
+            if (baseURI == null) {
+                baseURI = new File(System.getProperty("user.dir")).toURI();
+            }
+        } catch (URISyntaxException e) {
+            throw new FOPException(e);
+        }
+    }
+
 }

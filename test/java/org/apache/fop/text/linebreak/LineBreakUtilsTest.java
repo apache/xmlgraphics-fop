@@ -41,6 +41,7 @@ public class LineBreakUtilsTest extends TestCase {
         assertEquals(LineBreakUtils.getLineBreakProperty('\n'), LineBreakUtils.LINE_BREAK_PROPERTY_LF);
         assertEquals(LineBreakUtils.getLineBreakProperty('\r'), LineBreakUtils.LINE_BREAK_PROPERTY_CR);
         assertEquals(LineBreakUtils.getLineBreakProperty('('), LineBreakUtils.LINE_BREAK_PROPERTY_OP);
+        assertEquals(LineBreakUtils.getLineBreakProperty('\u1F7E'), 0);
     }
 
     public void testLineBreakPair() {

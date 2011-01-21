@@ -305,6 +305,7 @@ public class AreaTreeHandler extends FOEventHandler {
                     model.handleOffDocumentItem(data);
                 }
             }
+            idTracker.signalIDProcessed(rootFObj.getId());
         }
         model.endDocument();
 

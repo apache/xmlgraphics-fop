@@ -44,7 +44,7 @@ public class PageSequenceMaster extends FObj {
     // End of property values
 
     private LayoutMasterSet layoutMasterSet;
-    private List subSequenceSpecifiers;
+    private List<SubSequenceSpecifier> subSequenceSpecifiers;
     private SubSequenceSpecifier currentSubSequence;
     private int currentSubSequenceNumber = -1;
 
@@ -76,7 +76,7 @@ public class PageSequenceMaster extends FObj {
 
     /** {@inheritDoc} */
     protected void startOfNode() throws FOPException {
-        subSequenceSpecifiers = new java.util.ArrayList();
+        subSequenceSpecifiers = new java.util.ArrayList<SubSequenceSpecifier>();
         layoutMasterSet = parent.getRoot().getLayoutMasterSet();
         layoutMasterSet.addPageSequenceMaster(masterName, this);
     }
@@ -121,8 +121,7 @@ public class PageSequenceMaster extends FObj {
         currentSubSequenceNumber++;
         if (currentSubSequenceNumber >= 0
                 && currentSubSequenceNumber < subSequenceSpecifiers.size()) {
-            return (SubSequenceSpecifier)subSequenceSpecifiers
-              .get(currentSubSequenceNumber);
+            return subSequenceSpecifiers.get(currentSubSequenceNumber);
         }
         return null;
     }
@@ -134,8 +133,8 @@ public class PageSequenceMaster extends FObj {
         currentSubSequenceNumber = -1;
         currentSubSequence = null;
         if (subSequenceSpecifiers != null) {
-            for (int i = 0; i < subSequenceSpecifiers.size(); i++) {
-                ((SubSequenceSpecifier)subSequenceSpecifiers.get(i)).reset();
+            for (SubSequenceSpecifier subSequenceSpecifier : subSequenceSpecifiers) {
+                subSequenceSpecifier.reset();
             }
         }
     }
@@ -150,7 +149,7 @@ public class PageSequenceMaster extends FObj {
             if (!success) {
                 if (currentSubSequenceNumber > 0) {
                     currentSubSequenceNumber--;
-                    currentSubSequence = (SubSequenceSpecifier)subSequenceSpecifiers
+                    currentSubSequence = subSequenceSpecifiers
                         .get(currentSubSequenceNumber);
                 } else {
                     currentSubSequence = null;

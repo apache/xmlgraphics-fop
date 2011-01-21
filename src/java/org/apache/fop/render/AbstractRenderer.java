@@ -208,15 +208,17 @@ public abstract class AbstractRenderer
         return sb.toString();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * @deprecated
+     */
     public void startPageSequence(LineArea seqTitle) {
         //do nothing
     }
 
     /** {@inheritDoc} */
     public void startPageSequence(PageSequence pageSequence) {
-        //TODO Discuss removing old deprecated method startPageSequence(LineArea)
-        startPageSequence(pageSequence.getTitle());
+        // do nothing
     }
 
     // normally this would be overriden to create a page in the

@@ -19,7 +19,7 @@ SETLOCAL ENABLEDELAYEDEXPANSION
 
 rem %~dp0 is the expanded pathname of the current script under NT
 set LOCAL_FOP_HOME=
-if "%OS%"=="Windows_NT" set LOCAL_FOP_HOME=%~dp0
+if "%OS%"=="Windows_NT" set LOCAL_FOP_HOME="%~dp0"
 
 rem Code from Apache Ant project
 rem Slurp the command line arguments. This loop allows for an unlimited number

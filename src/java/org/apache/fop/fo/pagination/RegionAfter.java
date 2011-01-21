@@ -45,7 +45,7 @@ public class RegionAfter extends RegionBA {
     }
 
     /** {@inheritDoc} */
-    public Rectangle getViewportRectangle (FODimension reldims, SimplePageMaster spm) {
+    public Rectangle getViewportRectangle (FODimension reldims) {
         /* Special rules apply to resolving extent as values are resolved relative
          * to the page size and reference orientation.
          */
@@ -71,7 +71,7 @@ public class RegionAfter extends RegionBA {
             break;
         }
         if (getPrecedence() == EN_FALSE) {
-            adjustIPD(vpRect, spm.getWritingMode(), neighbourContext);
+            adjustIPD(vpRect, layoutMaster.getWritingMode(), neighbourContext);
         }
         return vpRect;
     }
