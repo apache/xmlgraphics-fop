@@ -45,7 +45,7 @@ public class RDFElementMapping extends ElementMapping {
     /** {@inheritDoc} */
     protected void initialize() {
         if (foObjs == null) {
-            foObjs = new HashMap();
+            foObjs = new HashMap<String, Maker>();
             foObjs.put("RDF", new RDFElementMaker());
         }
     }

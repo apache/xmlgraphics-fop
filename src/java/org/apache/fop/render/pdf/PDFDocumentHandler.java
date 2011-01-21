@@ -93,7 +93,7 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
 
     /** Used for bookmarks/outlines. */
     protected Map<Integer, PageReference> pageReferences
-            = new java.util.HashMap<Integer, PageReference>();
+        = new java.util.HashMap<Integer, PageReference>();
 
     private final PDFDocumentNavigationHandler documentNavigationHandler
             = new PDFDocumentNavigationHandler(this);

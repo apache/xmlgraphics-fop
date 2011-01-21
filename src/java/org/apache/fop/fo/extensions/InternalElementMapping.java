@@ -34,7 +34,7 @@ public class InternalElementMapping extends ElementMapping {
     /** The FOP extension namespace URI */
     public static final String URI = "http://xmlgraphics.apache.org/fop/internal";
 
-    private static final Set PROPERTY_ATTRIBUTES = new java.util.HashSet();
+    private static final Set<String> PROPERTY_ATTRIBUTES = new java.util.HashSet<String>();
 
     static {
         //These are FOP's extension properties for accessibility
@@ -53,7 +53,7 @@ public class InternalElementMapping extends ElementMapping {
      */
     protected void initialize() {
         if (foObjs == null) {
-            foObjs = new HashMap();
+            foObjs = new HashMap<String, Maker>();
         }
     }
 

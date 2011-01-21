@@ -48,7 +48,7 @@ public class RepeatablePageMasterAlternatives extends FObj
 
     private int numberConsumed = 0;
 
-    private List conditionalPageMasterRefs;
+    private List<ConditionalPageMasterReference> conditionalPageMasterRefs;
     private boolean hasPagePositionLast = false;
     private boolean hasPagePositionOnly = false;
 
@@ -68,7 +68,7 @@ public class RepeatablePageMasterAlternatives extends FObj
 
     /** {@inheritDoc} */
     protected void startOfNode() throws FOPException {
-        conditionalPageMasterRefs = new java.util.ArrayList();
+        conditionalPageMasterRefs = new java.util.ArrayList<ConditionalPageMasterReference>();
 
         assert parent.getName().equals("fo:page-sequence-master"); //Validation by the parent
         PageSequenceMaster pageSequenceMaster = (PageSequenceMaster)parent;
@@ -128,9 +128,7 @@ public class RepeatablePageMasterAlternatives extends FObj
             numberConsumed++;
         }
 
-        for (int i = 0; i < conditionalPageMasterRefs.size(); i++) {
-            ConditionalPageMasterReference cpmr
-                = (ConditionalPageMasterReference)conditionalPageMasterRefs.get(i);
+        for (ConditionalPageMasterReference cpmr : conditionalPageMasterRefs) {
             if (cpmr.isValid(isOddPage, isFirstPage, isLastPage, isBlankPage)) {
                 return cpmr.getMasterReference();
             }

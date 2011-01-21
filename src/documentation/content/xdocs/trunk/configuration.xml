@@ -90,6 +90,9 @@
         <td>disabled</td>
       </tr>
 	  <tr>
+		<td colspan="4">Relative URIs for the above three properties are evaluated relative to the base URI of the configuration file. If the configuration is provided programmatically, the base URI can be set with <code>FopFactory.setUserConfigBaseURI</code>; default is the current working directory.</td>
+	  </tr>
+	  <tr>
 		<td>hyphenation-pattern</td>
 		<td>String, attribute lang, attribute country (optional)</td>
 		<td>Register a file name for the hyphenation pattern for the mentioned language and country. Language ll and country CC must both consist of two letters.</td>

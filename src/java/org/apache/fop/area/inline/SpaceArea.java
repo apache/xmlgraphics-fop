@@ -29,7 +29,7 @@ public class SpaceArea extends InlineArea {
     /**
      * The space for this space area
      */
-    protected String space;
+    protected char space;
 
     /**
      * Is this space adjustable?
@@ -45,7 +45,7 @@ public class SpaceArea extends InlineArea {
      */
     public SpaceArea(int blockProgressionOffset, int bidiLevel, char space, boolean adjustable) {
         super ( blockProgressionOffset, bidiLevel );
-        this.space = new String ( new char[] {space} );
+        this.space = space;
         this.isAdjustable = adjustable;
     }
 
@@ -53,7 +53,7 @@ public class SpaceArea extends InlineArea {
      * @return Returns the space.
      */
     public String getSpace() {
-        return space;
+        return String.valueOf(space);
     }
 
     /** @return true if the space is adjustable (WRT word-space processing) */

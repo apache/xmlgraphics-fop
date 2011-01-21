@@ -45,7 +45,7 @@ public class RegionStart extends RegionSE {
     }
 
     /** {@inheritDoc} */
-    public Rectangle getViewportRectangle (FODimension reldims, SimplePageMaster spm) {
+    public Rectangle getViewportRectangle (FODimension reldims) {
         /* Special rules apply to resolving extent as values are resolved relative
          * to the page size and reference orientation.
          */
@@ -67,7 +67,7 @@ public class RegionStart extends RegionSE {
             vpRect = new Rectangle(0, 0, reldims.bpd, getExtent().getValue(pageHeightContext));
             break;
         }
-        adjustIPD(vpRect, spm.getWritingMode(), neighbourContext);
+        adjustIPD(vpRect, layoutMaster.getWritingMode(), neighbourContext);
         return vpRect;
     }
 

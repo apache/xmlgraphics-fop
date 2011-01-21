@@ -73,7 +73,7 @@ public class BatikExtensionElementMapping extends ElementMapping {
                 XMLResourceDescriptor.setXMLParserClassName(
                   getAParserClassName());
 
-                foObjs = new HashMap();
+                foObjs = new HashMap<String, Maker>();
                 foObjs.put("batik", new SE());
                 foObjs.put(DEFAULT, new SVGMaker());
             } catch (Throwable t) {

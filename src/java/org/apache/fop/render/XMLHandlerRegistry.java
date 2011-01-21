@@ -39,7 +39,8 @@ public class XMLHandlerRegistry {
     private static Log log = LogFactory.getLog(XMLHandlerRegistry.class);
 
     /** Map containing XML handlers for various document types */
-    private Map handlers = new java.util.HashMap();
+    private Map<String, List<XMLHandler>> handlers
+    = new java.util.HashMap<String, List<XMLHandler>>();
 
     /**
      * Default constructor.
@@ -98,11 +99,10 @@ public class XMLHandlerRegistry {
      * @param ns Namespace URI
      * @param handler XMLHandler to use
      */
-    private void addXMLHandler(String ns,
-                              XMLHandler handler) {
-        List lst = (List)handlers.get(ns);
+    private void addXMLHandler(String ns, XMLHandler handler) {
+        List<XMLHandler> lst = handlers.get(ns);
         if (lst == null) {
-            lst = new java.util.ArrayList();
+            lst = new java.util.ArrayList<XMLHandler>();
             handlers.put(ns, lst);
         }
         lst.add(handler);
@@ -118,21 +118,21 @@ public class XMLHandlerRegistry {
     public XMLHandler getXMLHandler(Renderer renderer, String ns) {
         XMLHandler handler;
 
-        List lst = (List)handlers.get(ns);
+        List<XMLHandler> lst = handlers.get(ns);
         handler = getXMLHandler(renderer, lst);
         if (handler == null) {
-            lst = (List)handlers.get(XMLHandler.HANDLE_ALL);
+            lst = handlers.get(XMLHandler.HANDLE_ALL);
             handler = getXMLHandler(renderer, lst);
         }
         return handler;
     }
 
-    private XMLHandler getXMLHandler(Renderer renderer, List lst) {
+    private XMLHandler getXMLHandler(Renderer renderer, List<XMLHandler> lst) {
         XMLHandler handler;
         if (lst != null) {
             for (int i = 0, c = lst.size(); i < c; i++) {
                 //TODO Maybe add priorities later
-                handler = (XMLHandler)lst.get(i);
+                handler = lst.get(i);
                 if (handler.supportsRenderer(renderer)) {
                     return handler;
                 }
@@ -147,7 +147,7 @@ public class XMLHandlerRegistry {
      */
     private void discoverXMLHandlers() {
         // add mappings from available services
-        Iterator providers = Service.providers(XMLHandler.class);
+        Iterator<Object> providers = Service.providers(XMLHandler.class);
         if (providers != null) {
             while (providers.hasNext()) {
                 XMLHandler handler = (XMLHandler)providers.next();
