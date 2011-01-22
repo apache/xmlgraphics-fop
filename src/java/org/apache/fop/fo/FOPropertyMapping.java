@@ -79,9 +79,12 @@ public final class FOPropertyMapping implements Constants {
     private FOPropertyMapping() {
     }
 
-    private static Map propNames = new HashMap();               // CSOK: VisibilityModifier
-    private static Map subPropNames = new HashMap();            // CSOK: VisibilityModifier
-    private static Map propIds = new HashMap();                 // CSOK: VisibilityModifier
+    private static Map<String, Integer> propNames
+            = new HashMap<String, Integer>();     // CSOK: VisibilityModifier
+    private static Map<String, Integer> subPropNames
+            = new HashMap<String, Integer>();  // CSOK: VisibilityModifier
+    private static Map<Integer, String> propIds
+            = new HashMap<Integer, String>();       // CSOK: VisibilityModifier
 
     private static PropertyMaker[] generics = null;             // CSOK: VisibilityModifier
 
@@ -246,8 +249,8 @@ public final class FOPropertyMapping implements Constants {
      */
     private static void addPropertyMaker(String name, PropertyMaker maker) {
         generics[maker.getPropId()] = maker;
-        propNames.put(name, new Integer(maker.getPropId()));
-        propIds.put(new Integer(maker.getPropId()), name);
+        propNames.put(name, maker.getPropId());
+        propIds.put(maker.getPropId(), name);
     }
 
     /**
@@ -256,8 +259,8 @@ public final class FOPropertyMapping implements Constants {
      * @param id   Id for the subproperty from CP_* in Constants.java.
      */
     private static void addSubpropMakerName(String name, int id) {
-        subPropNames.put(name, new Integer(id));
-        propIds.put(new Integer(id), name);
+        subPropNames.put(name, id);
+        propIds.put(id, name);
     }
 
     /**
@@ -342,9 +345,9 @@ public final class FOPropertyMapping implements Constants {
      */
     public static int getPropertyId(String name) {
         if (name != null) {
-            Integer i = (Integer) propNames.get(name);
+            Integer i = propNames.get(name);
             if (i != null) {
-                return i.intValue();
+                return i;
             }
         }
         return -1;
@@ -357,9 +360,9 @@ public final class FOPropertyMapping implements Constants {
      */
     public static int getSubPropertyId(String name) {
         if (name != null) {
-            Integer i = (Integer) subPropNames.get(name);
+            Integer i = subPropNames.get(name);
             if (i != null) {
-                return i.intValue();
+                return i;
             }
         }
         return -1;
@@ -373,10 +376,10 @@ public final class FOPropertyMapping implements Constants {
     public static String getPropertyName(int id) {
         if (((id & Constants.COMPOUND_MASK) == 0)
                 || ((id & Constants.PROPERTY_MASK) == 0)) {
-            return (String) propIds.get(new Integer(id));
+            return propIds.get(id);
         } else {
-            return propIds.get(new Integer(id & Constants.PROPERTY_MASK))
-                    + "." + propIds.get(new Integer(id & Constants.COMPOUND_MASK));
+            return propIds.get(id & Constants.PROPERTY_MASK)
+                    + "." + propIds.get(id & Constants.COMPOUND_MASK);
         }
     }
 
