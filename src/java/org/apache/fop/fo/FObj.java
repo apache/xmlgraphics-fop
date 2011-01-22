@@ -51,12 +51,13 @@ public abstract class FObj extends FONode implements Constants {
      * pointer to the descendant subtree
      */
     protected FONode firstChild;
+    protected FONode lastChild;
 
     /** The list of extension attachments, null if none */
-    private List/*<ExtensionAttachment>*/ extensionAttachments = null;
+    private List<ExtensionAttachment> extensionAttachments = null;
 
     /** The map of foreign attributes, null if none */
-    private Map/*<QName,String>*/ foreignAttributes = null;
+    private Map<QName, String> foreignAttributes = null;
 
     /** Used to indicate if this FO is either an Out Of Line FO (see rec)
      *  or a descendant of one. Used during FO validation.
@@ -197,13 +198,19 @@ public abstract class FObj extends FONode implements Constants {
             } else {
                 if (firstChild == null) {
                     firstChild = child;
+                    lastChild = child;
                 } else {
-                    FONode prevChild = firstChild;
-                    while (prevChild.siblings != null
-                            && prevChild.siblings[1] != null) {
-                        prevChild = prevChild.siblings[1];
+                    if (lastChild == null) {
+                        FONode prevChild = firstChild;
+                        while (prevChild.siblings != null
+                                && prevChild.siblings[1] != null) {
+                            prevChild = prevChild.siblings[1];
+                        }
+                        FONode.attachSiblings(prevChild, child);
+                    } else {
+                        FONode.attachSiblings(lastChild, child);
+                        lastChild = child;
                     }
-                    FONode.attachSiblings(prevChild, child);
                 }
             }
         }
@@ -236,6 +243,13 @@ public abstract class FObj extends FONode implements Constants {
             prevChild.siblings[1] = nextChild;
             if (nextChild != null) {
                 nextChild.siblings[0] = prevChild;
+            }
+        }
+        if (child == lastChild) {
+            if (child.siblings != null) {
+                lastChild = siblings[0];
+            } else {
+                lastChild = null;
             }
         }
     }
@@ -421,6 +435,7 @@ public abstract class FObj extends FONode implements Constants {
      * Convenience method for validity checking.  Checks if the
      * incoming node is a member of the "%block;" parameter entity
      * as defined in Sect. 6.2 of the XSL 1.0 & 1.1 Recommendations
+     *
      * @param nsURI namespace URI of incoming node
      * @param lName local name (i.e., no prefix) of incoming node
      * @return true if a member, false if not
@@ -440,6 +455,7 @@ public abstract class FObj extends FONode implements Constants {
      * Convenience method for validity checking.  Checks if the
      * incoming node is a member of the "%inline;" parameter entity
      * as defined in Sect. 6.2 of the XSL 1.0 & 1.1 Recommendations
+     *
      * @param nsURI namespace URI of incoming node
      * @param lName local name (i.e., no prefix) of incoming node
      * @return true if a member, false if not
@@ -529,7 +545,7 @@ public abstract class FObj extends FONode implements Constants {
 
     /** @return whether this object has an id set */
     public boolean hasId() {
-        return id != null && id.length() > 0;
+        return (id != null && id.length() > 0);
     }
 
     /** {@inheritDoc} */
@@ -554,7 +570,7 @@ public abstract class FObj extends FONode implements Constants {
                     "Parameter attachment must not be null");
         }
         if (extensionAttachments == null) {
-            extensionAttachments = new java.util.ArrayList/*<ExtensionAttachment>*/();
+            extensionAttachments = new java.util.ArrayList<ExtensionAttachment>();
         }
         if (log.isDebugEnabled()) {
             log.debug("ExtensionAttachment of category "
@@ -591,7 +607,7 @@ public abstract class FObj extends FONode implements Constants {
             throw new NullPointerException("Parameter attributeName must not be null");
         }
         if (foreignAttributes == null) {
-            foreignAttributes = new java.util.HashMap/*<QName,String>*/();
+            foreignAttributes = new java.util.HashMap<QName, String>();
         }
         foreignAttributes.put(attributeName, value);
     }
@@ -679,6 +695,9 @@ public abstract class FObj extends FONode implements Constants {
                         && currentNode.siblings[1] != null) {
                     FONode.attachSiblings(newNode, currentNode.siblings[1]);
                 }
+                if (currentNode == parentNode.lastChild) {
+                    parentNode.lastChild = newNode;
+                }
             } else {
                 throw new IllegalStateException();
             }
@@ -694,12 +713,18 @@ public abstract class FObj extends FONode implements Constants {
                 parentNode.firstChild = newNode;
                 currentIndex = 0;
                 currentNode = newNode;
+                if (parentNode.lastChild == null) {
+                    parentNode.lastChild = newNode;
+                }
             } else {
                 if (currentNode.siblings != null
                         && currentNode.siblings[1] != null) {
                     FONode.attachSiblings((FONode) o, currentNode.siblings[1]);
                 }
                 FONode.attachSiblings(currentNode, (FONode) o);
+                if (currentNode == parentNode.lastChild) {
+                    parentNode.lastChild = newNode;
+                }
             }
             flags &= F_NONE_ALLOWED;
         }
