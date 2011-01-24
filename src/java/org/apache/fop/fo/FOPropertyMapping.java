@@ -79,14 +79,11 @@ public final class FOPropertyMapping implements Constants {
     private FOPropertyMapping() {
     }
 
-    private static Map<String, Integer> propNames
-            = new HashMap<String, Integer>();     // CSOK: VisibilityModifier
-    private static Map<String, Integer> subPropNames
-            = new HashMap<String, Integer>();  // CSOK: VisibilityModifier
-    private static Map<Integer, String> propIds
-            = new HashMap<Integer, String>();       // CSOK: VisibilityModifier
+    private static Map<String, Integer> propNames = new HashMap<String, Integer>();
+    private static Map<String, Integer> subPropNames = new HashMap<String, Integer>();
+    private static Map<Integer, String> propIds = new HashMap<Integer, String>();
 
-    private static PropertyMaker[] generics = null;             // CSOK: VisibilityModifier
+    private static PropertyMaker[] generics = null;
 
     // The rest is only used during the building of the generics array.
     private Property[] enums = null;
