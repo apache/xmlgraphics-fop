@@ -59,6 +59,14 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Code" dev="AD" type="fix" fixes-bug="50636">
+        Bugfix: fix performance issue when adding pages, if the total number of pages
+        is significantly large.
+      </action>
+      <action context="Code" dev="AD" type="fix" fixes-bug="50626">
+        Bugfix: fix performance issue when adding nodes, if the number of children
+        is significantly large.
+      </action>
 	  <action context="Config" dev="SP" type="fix">
 		Bugfix: relative URIs in the configuration file (base, font-base, hyphenation-base) are evaluated relative to the base URI of the configuration file.
 	  </action>

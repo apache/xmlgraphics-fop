@@ -37,10 +37,10 @@ import org.apache.commons.logging.LogFactory;
  */
 public class AreaTreeModel {
     private List<PageSequence> pageSequenceList = null;
-    private int currentPageSequenceIndex = -1;
+    private int currentPageIndex = 0;
+
     /** the current page sequence */
     protected PageSequence currentPageSequence;
-//    private List offDocumentItems = new java.util.ArrayList();
     /** logger instance */
     protected static final Log log = LogFactory.getLog(AreaTreeModel.class);
 
@@ -59,9 +59,11 @@ public class AreaTreeModel {
         if (pageSequence == null) {
             throw new NullPointerException("pageSequence must not be null");
         }
+        if (currentPageSequence != null) {
+            currentPageIndex += currentPageSequence.getPageCount();
+        }
         this.currentPageSequence = pageSequence;
         pageSequenceList.add(currentPageSequence);
-        currentPageSequenceIndex = pageSequenceList.size() - 1;
     }
 
     /**
@@ -70,12 +72,8 @@ public class AreaTreeModel {
      */
     public void addPage(PageViewport page) {
         currentPageSequence.addPage(page);
-        int pageIndex = 0;
-        for (int i = 0; i < currentPageSequenceIndex; i++) {
-            pageIndex += pageSequenceList.get(i).getPageCount();
-        }
-        pageIndex += currentPageSequence.getPageCount() - 1;
-        page.setPageIndex(pageIndex);
+        page.setPageIndex(currentPageIndex
+                + currentPageSequence.getPageCount() - 1);
         page.setPageSequence(currentPageSequence);
     }
 
