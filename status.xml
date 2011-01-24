@@ -59,6 +59,10 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Code" dev="AD" type="fix" fixes-bug="50635" due-to="mkoegler.AT.auto.tuwien.ac.at">
+        Bugfix: fix issue in RenderPagesModel.checkPreparedPages() where the same page-sequence
+        is potentially started multiple times.
+      </action>
       <action context="Code" dev="AD" type="fix" fixes-bug="50636" due-to="mkoegler.AT.auto.tuwien.ac.at">
         Bugfix: fix performance issue when adding pages, if the total number of pages
         is significantly large.

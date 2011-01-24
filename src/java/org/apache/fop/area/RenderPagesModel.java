@@ -155,14 +155,15 @@ public class RenderPagesModel extends AreaTreeModel {
      *         false if the renderer doesn't support out of order
      *         rendering and there are pending pages
      */
-    protected boolean checkPreparedPages(PageViewport newPageViewport, boolean
-        renderUnresolved) {
+    protected boolean checkPreparedPages(PageViewport newPageViewport,
+                                         boolean renderUnresolved) {
+
         for (Iterator iter = prepared.iterator(); iter.hasNext();) {
             PageViewport pageViewport = (PageViewport)iter.next();
             if (pageViewport.isResolved() || renderUnresolved) {
                 if (!renderer.supportsOutOfOrder()
                         && pageViewport.getPageSequence().isFirstPage(pageViewport)) {
-                    renderer.startPageSequence(getCurrentPageSequence());
+                    renderer.startPageSequence(pageViewport.getPageSequence());
                 }
                 renderPage(pageViewport);
                 pageViewport.clear();
