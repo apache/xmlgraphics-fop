@@ -34,7 +34,7 @@ public class MainReference extends Area {
     private static final long serialVersionUID = 7635126485620012448L;
 
     private BodyRegion parent;
-    private List spanAreas = new java.util.ArrayList();
+    private List<Span> spanAreas = new java.util.ArrayList<Span>();
     private boolean isEmpty = true;
 
     /**
@@ -59,7 +59,7 @@ public class MainReference extends Area {
             spanAreas.remove(spanAreas.size() - 1);
         }
         RegionViewport rv = parent.getRegionViewport();
-        int ipdWidth = (int) parent.getIPD()
+        int ipdWidth = parent.getIPD()
             - rv.getBorderAndPaddingWidthStart() - rv.getBorderAndPaddingWidthEnd();
 
         Span newSpan = new Span(((spanAll) ? 1 : getColumnCount()),
@@ -84,8 +84,8 @@ public class MainReference extends Area {
      *
      * @param spans content already laid out
      */
-    public void setSpans(List spans) {
-        spanAreas = new ArrayList(spans);
+    public void setSpans(List<Span> spans) {
+        spanAreas = new ArrayList<Span>(spans);
     }
 
     /**
@@ -93,7 +93,7 @@ public class MainReference extends Area {
      * @return the active span.
      */
     public Span getCurrentSpan() {
-        return (Span) spanAreas.get(spanAreas.size() - 1);
+        return spanAreas.get(spanAreas.size() - 1);
     }
 
     /**
@@ -103,16 +103,13 @@ public class MainReference extends Area {
      * @return true if no child areas have been added yet.
      */
     public boolean isEmpty() {
-        if (isEmpty) {
-            boolean nonEmptyFound = false;
-            if (spanAreas != null) {
-                for (Iterator spaniter = spanAreas.iterator(); spaniter.hasNext();) {
-                    Span spanArea = (Span) spaniter.next();
-                    nonEmptyFound |= !spanArea.isEmpty();
+        if (isEmpty && spanAreas != null) {
+            for (Span spanArea : spanAreas) {
+                if (!spanArea.isEmpty()) {
+                    isEmpty = false;
+                    break;
                 }
             }
-
-            isEmpty = !nonEmptyFound;
         }
         return isEmpty;
     }

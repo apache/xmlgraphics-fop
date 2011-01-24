@@ -47,22 +47,18 @@ public class WordArea extends InlineArea {
         this.letterAdjust = la;
     }
 
-    /**
-     * @return Returns the word.
-     */
+    /** @return Returns the word. */
     public String getWord() {
         return word;
     }
 
-    /**
-     * @return Returns the offset.
-     */
+    /** @return Returns the offset. */
+    @Override
     public int getOffset() {
         return offset;
     }
-    /**
-     * @param o The offset to set.
-     */
+    /** @param o The offset to set. */
+    @Override
     public void setOffset(int o) {
         offset = o;
     }

@@ -48,7 +48,8 @@ import org.apache.fop.fonts.FontInfo;
  * the contents are reloaded.
  */
 public class CachedRenderPagesModel extends RenderPagesModel {
-    private Map pageMap = new HashMap();
+
+    private Map<PageViewport, String> pageMap = new HashMap<PageViewport, String>();
 
     /** Base directory to save temporary file in, typically points to the user's temp dir. */
     protected File baseDir;
@@ -64,12 +65,12 @@ public class CachedRenderPagesModel extends RenderPagesModel {
     public CachedRenderPagesModel (FOUserAgent userAgent, String outputFormat,
             FontInfo fontInfo, OutputStream stream) throws FOPException {
         super(userAgent, outputFormat, fontInfo, stream);
+        //TODO: Avoid System.getProperty()?
         this.baseDir = new File(System.getProperty("java.io.tmpdir"));
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
+    @Override
     protected boolean checkPreparedPages(PageViewport newpage, boolean renderUnresolved) {
         for (Iterator iter = prepared.iterator(); iter.hasNext();) {
             PageViewport pageViewport = (PageViewport)iter.next();
@@ -77,7 +78,7 @@ public class CachedRenderPagesModel extends RenderPagesModel {
                 if (pageViewport != newpage) {
                     try {
                         // load page from cache
-                        String name = (String)pageMap.get(pageViewport);
+                        String name = pageMap.get(pageViewport);
                         File tempFile = new File(baseDir, name);
                         log.debug("Loading page from: " + tempFile);
                         ObjectInputStream in = new ObjectInputStream(
@@ -152,6 +153,7 @@ public class CachedRenderPagesModel extends RenderPagesModel {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void endDocument() throws SAXException {
         super.endDocument();
     }

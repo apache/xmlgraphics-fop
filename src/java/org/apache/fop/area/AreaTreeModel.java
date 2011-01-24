@@ -36,7 +36,7 @@ import org.apache.commons.logging.LogFactory;
  * the life of the area tree model.
  */
 public class AreaTreeModel {
-    private List/*<PageSequence>*/ pageSequenceList = null;
+    private List<PageSequence> pageSequenceList = null;
     private int currentPageSequenceIndex = -1;
     /** the current page sequence */
     protected PageSequence currentPageSequence;
@@ -48,7 +48,7 @@ public class AreaTreeModel {
      * Create a new store pages model
      */
     public AreaTreeModel() {
-        pageSequenceList = new java.util.ArrayList/*<PageSequence>*/();
+        pageSequenceList = new java.util.ArrayList<PageSequence>();
     }
 
     /**
@@ -72,7 +72,7 @@ public class AreaTreeModel {
         currentPageSequence.addPage(page);
         int pageIndex = 0;
         for (int i = 0; i < currentPageSequenceIndex; i++) {
-            pageIndex += ((PageSequence)pageSequenceList.get(i)).getPageCount();
+            pageIndex += pageSequenceList.get(i).getPageCount();
         }
         pageIndex += currentPageSequence.getPageCount() - 1;
         page.setPageIndex(pageIndex);
@@ -113,8 +113,7 @@ public class AreaTreeModel {
      * @return returns the number of pages in a page sequence
      */
     public int getPageCount(int seq) {
-        PageSequence sequence = (PageSequence)pageSequenceList.get(seq - 1);
-        return sequence.getPageCount();
+        return pageSequenceList.get(seq - 1).getPageCount();
     }
 
     /**
@@ -124,7 +123,6 @@ public class AreaTreeModel {
      * @return the PageViewport for the particular page
      */
     public PageViewport getPage(int seq, int count) {
-        PageSequence sequence = (PageSequence)pageSequenceList.get(seq - 1);
-        return sequence.getPage(count);
+        return pageSequenceList.get(seq - 1).getPage(count);
     }
 }
