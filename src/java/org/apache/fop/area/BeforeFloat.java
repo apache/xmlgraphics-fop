@@ -57,6 +57,7 @@ public class BeforeFloat extends BlockParent {
      *
      * @return the height of the before float including separator
      */
+    @Override
     public int getBPD() {
         int h = super.getBPD();
         if (separator != null) {
@@ -66,6 +67,7 @@ public class BeforeFloat extends BlockParent {
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean isEmpty() {
         return true; // before floats are not yet implemented
     }

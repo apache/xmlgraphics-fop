@@ -21,7 +21,6 @@ package org.apache.fop.area;
 
 // Java
 import java.io.OutputStream;
-import java.util.Iterator;
 import java.util.List;
 
 import org.xml.sax.SAXException;
@@ -175,6 +174,7 @@ public class AreaTreeHandler extends FOEventHandler {
      * @throws SAXException
      *             if there is an error
      */
+    @Override
     public void startDocument() throws SAXException {
         // Initialize statistics
         if (statistics != null) {
@@ -194,6 +194,7 @@ public class AreaTreeHandler extends FOEventHandler {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void startPageSequence(PageSequence pageSequence) {
         startAbstractPageSequence(pageSequence);
     }
@@ -210,10 +211,8 @@ public class AreaTreeHandler extends FOEventHandler {
         }
     }
 
-    private void wrapAndAddExtensionAttachments(List list) {
-        Iterator it = list.iterator();
-        while (it.hasNext()) {
-            ExtensionAttachment attachment = (ExtensionAttachment) it.next();
+    private void wrapAndAddExtensionAttachments(List<ExtensionAttachment> list) {
+        for (ExtensionAttachment attachment : list) {
             addOffDocumentItem(new OffDocumentExtensionAttachment(attachment));
         }
     }
@@ -224,6 +223,7 @@ public class AreaTreeHandler extends FOEventHandler {
      *
      * @param pageSequence the page sequence ending
      */
+    @Override
     public void endPageSequence(PageSequence pageSequence) {
 
         if (statistics != null) {
@@ -243,11 +243,13 @@ public class AreaTreeHandler extends FOEventHandler {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void startExternalDocument(ExternalDocument document) {
         startAbstractPageSequence(document);
     }
 
     /** {@inheritDoc} */
+    @Override
     public void endExternalDocument(ExternalDocument document) {
         if (statistics != null) {
             statistics.end();
@@ -282,15 +284,16 @@ public class AreaTreeHandler extends FOEventHandler {
      *
      * @throws SAXException if there is some error
      */
+    @Override
     public void endDocument() throws SAXException {
 
         finishPrevPageSequence(null);
         // process fox:destination elements
         if (rootFObj != null) {
-            List destinationList = rootFObj.getDestinationList();
+            List<Destination> destinationList = rootFObj.getDestinationList();
             if (destinationList != null) {
                 while (destinationList.size() > 0) {
-                    Destination destination = (Destination) destinationList.remove(0);
+                    Destination destination = destinationList.remove(0);
                     DestinationData destinationData = new DestinationData(destination);
                     addOffDocumentItem(destinationData);
                 }
@@ -325,15 +328,15 @@ public class AreaTreeHandler extends FOEventHandler {
         if (odi instanceof Resolvable) {
             Resolvable res = (Resolvable) odi;
             String[] ids = res.getIDRefs();
-            for (int count = 0; count < ids.length; count++) {
-                List pageVPList = idTracker.getPageViewportsContainingID(ids[count]);
+            for (String id : ids) {
+                List<PageViewport> pageVPList = idTracker.getPageViewportsContainingID(id);
                 if (pageVPList != null) {
-                    res.resolveIDRef(ids[count], pageVPList);
+                    res.resolveIDRef(id, pageVPList);
                 } else {
                     AreaEventProducer eventProducer = AreaEventProducer.Provider.get(
                             getUserAgent().getEventBroadcaster());
-                    eventProducer.unresolvedIDReference(this, odi.getName(), ids[count]);
-                    idTracker.addUnresolvedIDRef(ids[count], res);
+                    eventProducer.unresolvedIDReference(this, odi.getName(), id);
+                    idTracker.addUnresolvedIDRef(id, res);
                 }
             }
             // check to see if ODI is now fully resolved, if so process it
@@ -414,13 +417,13 @@ public class AreaTreeHandler extends FOEventHandler {
     }
 
     /**
-     * Get the list of page viewports that have an area with a given id.
+     * Get the set of page viewports that have an area with a given id.
      *
      * @param id the id to lookup
      * @return the list of PageViewports
      * @deprecated use getIDTracker().getPageViewportsContainingID(id) instead
      */
-    public List getPageViewportsContainingID(String id) {
+    public List<PageViewport> getPageViewportsContainingID(String id) {
         return idTracker.getPageViewportsContainingID(id);
     }
 

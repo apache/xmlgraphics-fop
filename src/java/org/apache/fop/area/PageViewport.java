@@ -25,7 +25,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -33,8 +32,14 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.fo.pagination.SimplePageMaster;
+
+import static org.apache.fop.fo.Constants.FO_REGION_BODY;
+import static org.apache.fop.fo.Constants.EN_FSWP;
+import static org.apache.fop.fo.Constants.EN_FIC;
+import static org.apache.fop.fo.Constants.EN_LSWP;
+import static org.apache.fop.fo.Constants.EN_LEWP;
 
 /**
  * Page viewport that specifies the viewport area and holds the page contents.
@@ -63,26 +68,24 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
 
     private transient PageSequence pageSequence;
 
-    // list of id references and the rectangle on the page
-    //private Map idReferences = null;
-
     // set of IDs that appear first (or exclusively) on this page:
-    private Set idFirsts = new java.util.HashSet();
+    private Set<String> idFirsts = new java.util.HashSet<String>();
 
     // this keeps a list of currently unresolved areas or extensions
     // once an idref is resolved it is removed
     // when this is empty the page can be rendered
-    private Map unresolvedIDRefs = new java.util.HashMap();
+    private Map<String, List<Resolvable>> unresolvedIDRefs
+            = new java.util.HashMap<String, List<Resolvable>>();
 
-    private Map pendingResolved = null;
+    private Map<String, List<PageViewport>> pendingResolved = null;
 
     // hashmap of markers for this page
     // start and end are added by the fo that contains the markers
-    private Map markerFirstStart = null;
-    private Map markerLastStart = null;
-    private Map markerFirstAny = null;
-    private Map markerLastEnd = null;
-    private Map markerLastAny = null;
+    private Map<String, Marker> markerFirstStart = null;
+    private Map<String, Marker> markerLastStart = null;
+    private Map<String, Marker> markerFirstAny = null;
+    private Map<String, Marker> markerLastEnd = null;
+    private Map<String, Marker> markerLastAny = null;
 
     /**
      * logging instance
@@ -254,8 +257,8 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
 
     /**
      * Add an "ID-first" to this page.
-     * This is typically called by the AreaTreeHandler when associating
-     * an ID with a PageViewport.
+     * This is typically called by the {@link AreaTreeHandler} when associating
+     * an ID with a {@link PageViewport}.
      *
      * @param id the id to be registered as first appearing on this page
      */
@@ -277,9 +280,9 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
 
     /**
      * Add an idref to this page.
-     * All idrefs found for child areas of this PageViewport are added
-     * to unresolvedIDRefs, for subsequent resolution by AreaTreeHandler
-     * calls to this object's resolveIDRef().
+     * All idrefs found for child areas of this {@link PageViewport} are added
+     * to unresolvedIDRefs, for subsequent resolution by {@link AreaTreeHandler}
+     * calls to this object's {@code resolveIDRef()}.
      *
      * @param idref the idref
      * @param res the child element of this page that needs this
@@ -287,14 +290,14 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
      */
     public void addUnresolvedIDRef(String idref, Resolvable res) {
         if (unresolvedIDRefs == null) {
-            unresolvedIDRefs = new HashMap();
+            unresolvedIDRefs = new HashMap<String, List<Resolvable>>();
         }
-        List list = (List)unresolvedIDRefs.get(idref);
-        if (list == null) {
-            list = new ArrayList();
-            unresolvedIDRefs.put(idref, list);
+        List<Resolvable> pageViewports = unresolvedIDRefs.get(idref);
+        if (pageViewports == null) {
+            pageViewports = new ArrayList<Resolvable>();
+            unresolvedIDRefs.put(idref, pageViewports);
         }
-        list.add(res);
+        pageViewports.add(res);
     }
 
     /**
@@ -312,24 +315,22 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
      */
     public String[] getIDRefs() {
         return (unresolvedIDRefs == null) ? null
-            : (String[]) unresolvedIDRefs.keySet().toArray(new String[] {});
+            : unresolvedIDRefs.keySet().toArray(
+                new String[unresolvedIDRefs.keySet().size()]);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public void resolveIDRef(String id, List pages) {
+    /** {@inheritDoc} */
+    public void resolveIDRef(String id, List<PageViewport> pages) {
         if (page == null) {
             if (pendingResolved == null) {
-                pendingResolved = new HashMap();
+                pendingResolved = new HashMap<String, List<PageViewport>>();
             }
             pendingResolved.put(id, pages);
         } else {
             if (unresolvedIDRefs != null) {
-                List todo = (List)unresolvedIDRefs.get(id);
+                List<Resolvable> todo = unresolvedIDRefs.get(id);
                 if (todo != null) {
-                    for (int count = 0; count < todo.size(); count++) {
-                        Resolvable res = (Resolvable)todo.get(count);
+                    for (Resolvable res : todo) {
                         res.resolveIDRef(id, pages);
                     }
                 }
@@ -363,7 +364,7 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
      * @param isfirst if the area being added has is-first trait
      * @param islast if the area being added has is-last trait
      */
-    public void addMarkers(Map marks, boolean starting,
+    public void addMarkers(Map<String, Marker> marks, boolean starting,
             boolean isfirst, boolean islast) {
 
         if (marks == null) {
@@ -380,14 +381,13 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
         if (starting) {
             if (isfirst) {
                 if (markerFirstStart == null) {
-                    markerFirstStart = new HashMap();
+                    markerFirstStart = new HashMap<String, Marker>();
                 }
                 if (markerFirstAny == null) {
-                    markerFirstAny = new HashMap();
+                    markerFirstAny = new HashMap<String, Marker>();
                 }
                 // first on page: only put in new values, leave current
-                for (Iterator iter = marks.keySet().iterator(); iter.hasNext();) {
-                    Object key = iter.next();
+                for (String key : marks.keySet()) {
                     if (!markerFirstStart.containsKey(key)) {
                         markerFirstStart.put(key, marks.get(key));
                         if (log.isTraceEnabled()) {
@@ -404,7 +404,7 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
                     }
                 }
                 if (markerLastStart == null) {
-                    markerLastStart = new HashMap();
+                    markerLastStart = new HashMap<String, Marker>();
                 }
                 // last on page: replace all
                 markerLastStart.putAll(marks);
@@ -414,11 +414,10 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
                 }
             } else {
                 if (markerFirstAny == null) {
-                    markerFirstAny = new HashMap();
+                    markerFirstAny = new HashMap<String, Marker>();
                 }
                 // first on page: only put in new values, leave current
-                for (Iterator iter = marks.keySet().iterator(); iter.hasNext();) {
-                    Object key = iter.next();
+                for (String key : marks.keySet()) {
                     if (!markerFirstAny.containsKey(key)) {
                         markerFirstAny.put(key, marks.get(key));
                         if (log.isTraceEnabled()) {
@@ -432,7 +431,7 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
             // at the end of the area, register is-last and any areas
             if (islast) {
                 if (markerLastEnd == null) {
-                    markerLastEnd = new HashMap();
+                    markerLastEnd = new HashMap<String, Marker>();
                 }
                 // last on page: replace all
                 markerLastEnd.putAll(marks);
@@ -442,7 +441,7 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
                 }
             }
             if (markerLastAny == null) {
-                markerLastAny = new HashMap();
+                markerLastAny = new HashMap<String, Marker>();
             }
             // last on page: replace all
             markerLastAny.putAll(marks);
@@ -462,11 +461,11 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
      * @param pos the position to retrieve
      * @return Object the marker found or null
      */
-    public Object getMarker(String name, int pos) {
-        Object mark = null;
+    public Marker getMarker(String name, int pos) {
+        Marker mark = null;
         String posName = null;
         switch (pos) {
-            case Constants.EN_FSWP:
+            case EN_FSWP:
                 if (markerFirstStart != null) {
                     mark = markerFirstStart.get(name);
                     posName = "FSWP";
@@ -476,13 +475,13 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
                     posName = "FirstAny after " + posName;
                 }
             break;
-            case Constants.EN_FIC:
+            case EN_FIC:
                 if (markerFirstAny != null) {
                     mark = markerFirstAny.get(name);
                     posName = "FIC";
                 }
             break;
-            case Constants.EN_LSWP:
+            case EN_LSWP:
                 if (markerLastStart != null) {
                     mark = markerLastStart.get(name);
                     posName = "LSWP";
@@ -492,7 +491,7 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
                     posName = "LastAny after " + posName;
                 }
             break;
-            case Constants.EN_LEWP:
+            case EN_LEWP:
                 if (markerLastEnd != null) {
                     mark = markerLastEnd.get(name);
                     posName = "LEWP";
@@ -503,7 +502,7 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
                 }
             break;
             default:
-                throw new RuntimeException();
+                assert false;
         }
         if (log.isTraceEnabled()) {
             log.trace("page " + pageNumberString + ": " + "Retrieving marker " + name
@@ -550,10 +549,8 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
         page = (Page) in.readObject();
         unresolvedIDRefs = page.getUnresolvedReferences();
         if (unresolvedIDRefs != null && pendingResolved != null) {
-            for (Iterator iter = pendingResolved.keySet().iterator();
-                         iter.hasNext();) {
-                String id = (String) iter.next();
-                resolveIDRef(id, (List)pendingResolved.get(id));
+            for (String id : pendingResolved.keySet()) {
+                resolveIDRef(id, pendingResolved.get(id));
             }
             pendingResolved = null;
         }
@@ -577,9 +574,8 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
         page = null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
+    @Override
     public String toString() {
         StringBuffer sb = new StringBuffer(64);
         sb.append("PageViewport: page=");
@@ -602,8 +598,7 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
      * @return BodyRegion object
      */
     public BodyRegion getBodyRegion() {
-        return (BodyRegion) getPage().getRegionViewport(
-                Constants.FO_REGION_BODY).getRegionReference();
+        return (BodyRegion) getPage().getRegionViewport(FO_REGION_BODY).getRegionReference();
     }
 
     /**
@@ -659,5 +654,4 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
     public RegionReference getRegionReference(int id) {
         return getPage().getRegionViewport(id).getRegionReference();
     }
-
 }
