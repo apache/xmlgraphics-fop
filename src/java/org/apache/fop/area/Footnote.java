@@ -80,6 +80,7 @@ public class Footnote extends BlockParent {
      *
      * @param child the block area.
      */
+    @Override
     public void addBlock(Block child) {
         addChildArea(child);
         this.setBPD(this.getBPD() + child.getBPD());

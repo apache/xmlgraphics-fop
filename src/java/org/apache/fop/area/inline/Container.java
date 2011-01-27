@@ -38,7 +38,7 @@ public class Container extends Area {
     /**
      * The list of block areas stacked inside this container
      */
-    protected List blocks = new ArrayList();
+    protected List<Block> blocks = new ArrayList<Block>();
 
     /**
      * The width of this container

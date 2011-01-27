@@ -24,12 +24,16 @@ import java.io.Serializable;
 
 import org.apache.xmlgraphics.image.loader.ImageInfo;
 
-import org.apache.fop.fo.Constants;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.traits.Direction;
 import org.apache.fop.traits.WritingMode;
 import org.apache.fop.util.ColorUtil;
+
+import static org.apache.fop.fo.Constants.EN_REPEAT;
+import static org.apache.fop.fo.Constants.EN_REPEATX;
+import static org.apache.fop.fo.Constants.EN_REPEATY;
+import static org.apache.fop.fo.Constants.EN_NOREPEAT;
 
 // properties should be serialized by the holder
 /**
@@ -144,8 +148,10 @@ public final class Trait implements Serializable {
 
     /** Trait for color of underline decorations when rendering inline parent. */
     public static final Integer UNDERLINE_COLOR = 34;
+
     /** Trait for color of overline decorations when rendering inline parent. */
     public static final Integer OVERLINE_COLOR = 35;
+
     /** Trait for color of linethrough decorations when rendering inline parent. */
     public static final Integer LINETHROUGH_COLOR = 36;
 
@@ -386,6 +392,7 @@ public final class Trait implements Serializable {
          * Return the human-friendly string for debugging.
          * {@inheritDoc}
          */
+        @Override
         public String toString() {
             StringBuffer sb = new StringBuffer();
             sb.append("pvKey=").append(pvKey);
@@ -460,6 +467,7 @@ public final class Trait implements Serializable {
          * @return  a <code>String</code> of the form
          *          "org.apache.fop.area.Trait.ExternalLink[dest=someURL,newWindow=false]"
          */
+        @Override
         public String toString() {
             StringBuffer sb = new StringBuffer(64);
             sb.append("newWindow=").append(newWindow);
@@ -600,23 +608,23 @@ public final class Trait implements Serializable {
 
         private String getRepeatString() {
             switch (getRepeat()) {
-            case Constants.EN_REPEAT: return "repeat";
-            case Constants.EN_REPEATX: return "repeat-x";
-            case Constants.EN_REPEATY: return "repeat-y";
-            case Constants.EN_NOREPEAT: return "no-repeat";
+            case EN_REPEAT: return "repeat";
+            case EN_REPEATX: return "repeat-x";
+            case EN_REPEATY: return "repeat-y";
+            case EN_NOREPEAT: return "no-repeat";
             default: throw new IllegalStateException("Illegal repeat style: " + getRepeat());
             }
         }
 
         private static int getConstantForRepeat(String repeat) {
             if ("repeat".equalsIgnoreCase(repeat)) {
-                return Constants.EN_REPEAT;
+                return EN_REPEAT;
             } else if ("repeat-x".equalsIgnoreCase(repeat)) {
-                return Constants.EN_REPEATX;
+                return EN_REPEATX;
             } else if ("repeat-y".equalsIgnoreCase(repeat)) {
-                return Constants.EN_REPEATY;
+                return EN_REPEATY;
             } else if ("no-repeat".equalsIgnoreCase(repeat)) {
-                return Constants.EN_NOREPEAT;
+                return EN_NOREPEAT;
             } else {
                 throw new IllegalStateException("Illegal repeat style: " + repeat);
             }
@@ -626,6 +634,7 @@ public final class Trait implements Serializable {
          * Return the string for debugging.
          * {@inheritDoc}
          */
+        @Override
         public String toString() {
             StringBuffer sb = new StringBuffer();
             if (color != null) {

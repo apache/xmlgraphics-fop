@@ -252,6 +252,15 @@ public abstract class PropertyList {
         return propID;
     }
 
+    private String addAttributeToList(Attributes attributes,
+                                    String attributeName) throws ValidationException {
+        String attributeValue = attributes.getValue(attributeName);
+        if ( attributeValue != null ) {
+            convertAttributeToProperty(attributes, attributeName, attributeValue);
+        }
+        return attributeValue;
+    }
+
     /**
      * <p>Adds the attributes, passed in by the parser to the PropertyList.</p>
      * <p>Note that certain attributes are given priority in terms of order of
@@ -274,50 +283,36 @@ public abstract class PropertyList {
         /*
          * Give writing-mode highest conversion priority.
          */
-        String attributeName = "writing-mode";
-        String attributeValue = attributes.getValue(attributeName);
-        if ( attributeValue != null ) {
-            convertAttributeToProperty(attributes, attributeName, attributeValue);
-        }
+        addAttributeToList(attributes, "writing-mode");
 
         /*
          * If column-number/number-columns-spanned are specified, then we
          * need them before all others (possible from-table-column() on any
          * other property further in the list...
          */
-        attributeName = "column-number";
-        attributeValue = attributes.getValue(attributeName);
-        convertAttributeToProperty(attributes, attributeName,
-            attributeValue);
-        attributeName = "number-columns-spanned";
-        attributeValue = attributes.getValue(attributeName);
-        convertAttributeToProperty(attributes, attributeName,
-            attributeValue);
+        addAttributeToList(attributes, "column-number");
+        addAttributeToList(attributes, "number-columns-spanned");
 
         /*
          * If font-size is set on this FO, must set it first, since
          * other attributes specified in terms of "ems" depend on it.
          */
-        attributeName = "font";
-        attributeValue = attributes.getValue(attributeName);
-        convertAttributeToProperty(attributes, attributeName,
-                attributeValue);
-        if (attributeValue == null) {
+        String checkValue = addAttributeToList(attributes, "font");
+        if (checkValue == null || "".equals(checkValue)) {
             /*
              * font shorthand wasn't specified, so still need to process
              * explicit font-size
              */
-            attributeName = "font-size";
-            attributeValue = attributes.getValue(attributeName);
-            convertAttributeToProperty(attributes, attributeName,
-                    attributeValue);
+            addAttributeToList(attributes, "font-size");
         }
 
+        String attributeName;
+        String attributeValue;
         String attributeNS;
         FopFactory factory = getFObj().getUserAgent().getFactory();
         for (int i = 0; i < attributes.getLength(); i++) {
             /* convert all attributes with the same namespace as the fo element
-             * the "xml:lang" property is a special case */
+             * the "xml:lang" and "xml:base" properties are special cases */
             attributeNS = attributes.getURI(i);
             attributeName = attributes.getQName(i);
             attributeValue = attributes.getValue(i);
@@ -375,15 +370,14 @@ public abstract class PropertyList {
                                             String attributeValue)
                     throws ValidationException {
 
+        if (attributeName.startsWith("xmlns:")
+                || "xmlns".equals(attributeName)) {
+            /* Ignore namespace declarations if the XML parser/XSLT processor
+             * reports them as 'regular' attributes */
+            return;
+        }
+
         if (attributeValue != null) {
-
-            if (attributeName.startsWith("xmlns:")
-                    || "xmlns".equals(attributeName)) {
-                //Ignore namespace declarations if the XML parser/XSLT processor
-                //reports them as 'regular' attributes
-                return;
-            }
-
             /* Handle "compound" properties, ex. space-before.minimum */
             String basePropertyName = findBasePropertyName(attributeName);
             String subPropertyName = findSubPropertyName(attributeName);

@@ -34,7 +34,7 @@ public class Span extends Area {
     private static final long serialVersionUID = -5551430053660081549L;
 
     // the list of flow reference areas in this span area
-    private List flowAreas;
+    private List<NormalFlow> flowAreas;
     private int colCount;
     private int colGap;
     private int colWidth; // width for each normal flow, calculated value
@@ -60,7 +60,7 @@ public class Span extends Area {
      * Create the normal flows for this Span
      */
     private void createNormalFlows() {
-        flowAreas = new java.util.ArrayList(colCount);
+        flowAreas = new java.util.ArrayList<NormalFlow>(colCount);
         colWidth = (ipd - ((colCount - 1) * colGap)) / colCount;
 
         for (int i = 0; i < colCount; i++) {
@@ -105,7 +105,7 @@ public class Span extends Area {
      */
     public NormalFlow getNormalFlow(int colRequested) {
         if (colRequested >= 0 && colRequested < colCount) {
-            return (NormalFlow) flowAreas.get(colRequested);
+            return flowAreas.get(colRequested);
         } else { // internal error
             throw new IllegalArgumentException("Invalid column number "
                     + colRequested + " requested; only 0-" + (colCount - 1)
@@ -184,6 +184,7 @@ public class Span extends Area {
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
         StringBuffer sb = new StringBuffer(super.toString());
         if (colCount > 1) {

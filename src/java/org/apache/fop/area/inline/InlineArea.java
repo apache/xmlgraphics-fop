@@ -195,6 +195,7 @@ public class InlineArea extends Area {
      *
      * {@inheritDoc}
      */
+    @Override
     public void addChildArea(Area childArea) {
         super.addChildArea(childArea);
         if (childArea instanceof InlineArea) {
@@ -202,9 +203,7 @@ public class InlineArea extends Area {
         }
     }
 
-    /**
-     *@return true if the inline area is underlined.
-     */
+    /** @return true if the inline area is underlined. */
     public boolean hasUnderline() {
         return getTraitAsBoolean(Trait.UNDERLINE);
     }
