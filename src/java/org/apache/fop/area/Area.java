@@ -378,11 +378,11 @@ public class Area extends AreaTreeObject implements Serializable {
      * @param traitCode the trait key
      * @param prop the value of the trait
      */
-    public void addTrait(Object traitCode, Object prop) {
+    public void addTrait(Integer traitCode, Object prop) {
         if (props == null) {
             props = new java.util.HashMap<Integer, Object>(20);
         }
-        props.put((Integer)traitCode, prop);
+        props.put(traitCode, prop);
     }
 
     /**
