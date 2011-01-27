@@ -49,9 +49,7 @@ public class SpaceArea extends InlineArea {
         this.isAdjustable = adjustable;
     }
 
-    /**
-     * @return Returns the space.
-     */
+    /** @return Returns the space. */
     public String getSpace() {
         return String.valueOf(space);
     }

@@ -75,9 +75,7 @@ public class WordArea extends InlineArea {
         this.reversed = false;
     }
 
-    /**
-     * @return Returns the word.
-     */
+    /** @return Returns the word. */
     public String getWord() {
         return word;
     }

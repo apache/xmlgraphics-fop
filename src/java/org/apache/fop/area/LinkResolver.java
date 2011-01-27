@@ -23,12 +23,6 @@ package org.apache.fop.area;
 import java.util.List;
 import java.io.Serializable;
 
-// FOP
-import org.apache.fop.area.Trait;
-import org.apache.fop.area.Resolvable;
-import org.apache.fop.area.PageViewport;
-import org.apache.fop.area.Area;
-
 /**
  * Link resolving for resolving internal links.
  */
@@ -72,8 +66,8 @@ public class LinkResolver implements Resolvable, Serializable {
      *
      * {@inheritDoc}
      */
-    public void resolveIDRef(String id, List pages) {
-        resolveIDRef(id, (PageViewport)pages.get(0));
+    public void resolveIDRef(String id, List<PageViewport> pages) {
+        resolveIDRef(id, pages.get(0));
     }
 
     /**

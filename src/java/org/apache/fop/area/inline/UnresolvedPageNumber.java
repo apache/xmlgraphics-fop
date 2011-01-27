@@ -92,18 +92,14 @@ public class UnresolvedPageNumber extends TextArea implements Resolvable {
      * @param id an id whose PageViewports have been determined
      * @param pages the list of PageViewports associated with this ID
      */
-    public void resolveIDRef(String id, List pages) {
+    public void resolveIDRef(String id, List<PageViewport> pages) {
         if (!resolved && pageIDRef.equals(id) && pages != null) {
             if (log.isDebugEnabled()) {
                 log.debug("Resolving pageNumber: " + id);
             }
             resolved = true;
-            PageViewport page;
-            if (pageType == FIRST) {
-                page = (PageViewport)pages.get(0);
-            } else {
-                page = (PageViewport)pages.get(pages.size() - 1);
-            }
+            int pageIndex = pageType ? 0 : pages.size() - 1;
+            PageViewport page = pages.get(pageIndex);
             // replace the text
             removeText();
             text = page.getPageNumberString();
@@ -136,6 +132,7 @@ public class UnresolvedPageNumber extends TextArea implements Resolvable {
      * @param lineShrink      the total shrink of the line
      * @return true if there is an UnresolvedArea descendant
      */
+    @Override
     public boolean applyVariationFactor(double variationFactor,
                                         int lineStretch, int lineShrink) {
         return true;

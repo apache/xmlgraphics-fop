@@ -39,9 +39,7 @@ public class FilledArea extends InlineParent {
 
     private int unitWidth;
 
-    /**
-     * Create a new filled area.
-     */
+    /** Create a new filled area. */
     public FilledArea() {
     }
 
@@ -88,13 +86,11 @@ public class FilledArea extends InlineParent {
         return this.unitWidth;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
+    @Override
     public int getBPD() {
         int bpd = 0;
-        for (Iterator childAreaIt = getChildAreas().iterator(); childAreaIt.hasNext();) {
-            InlineArea area = (InlineArea)childAreaIt.next();
+        for (InlineArea area : getChildAreas()) {
             if (bpd < area.getBPD()) {
                 bpd = area.getBPD();
             }
@@ -110,9 +106,10 @@ public class FilledArea extends InlineParent {
      *
      * @return the list of child areas copied to fill the width
      */
-    public List getChildAreas() {
-        int units = (int)(getIPD() / unitWidth);
-        List newList = new ArrayList();
+    @Override
+    public List<InlineArea> getChildAreas() {
+        int units = getIPD() / unitWidth;
+        List<InlineArea> newList = new ArrayList<InlineArea>();
         for (int count = 0; count < units; count++) {
             newList.addAll(inlines);
         }
@@ -126,6 +123,7 @@ public class FilledArea extends InlineParent {
      * @param lineShrink      the total shrink of the line
      * @return true if there is an UnresolvedArea descendant
      */
+    @Override
     public boolean applyVariationFactor(double variationFactor,
                                         int lineStretch, int lineShrink) {
         setIPD(getIPD() + adjustingInfo.applyVariationFactor(variationFactor));

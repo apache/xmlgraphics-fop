@@ -25,8 +25,12 @@ import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
 
 import org.apache.fop.datatypes.FODimension;
-import org.apache.fop.fo.Constants;
 import org.apache.fop.traits.WritingMode;
+
+import static org.apache.fop.fo.Constants.EN_LR_TB;
+import static org.apache.fop.fo.Constants.EN_RL_TB;
+import static org.apache.fop.fo.Constants.EN_TB_RL;
+import static org.apache.fop.fo.Constants.EN_TB_LR;
 
 /**
  * Describe a PDF or PostScript style coordinate transformation matrix (CTM).
@@ -134,15 +138,15 @@ public class CTM implements Serializable {
     public static CTM getWMctm(WritingMode wm, int ipd, int bpd) {
         CTM wmctm;
         switch (wm.getEnumValue()) {
-            case Constants.EN_LR_TB:
+            case EN_LR_TB:
                 return new CTM(CTM_LRTB);
-            case Constants.EN_RL_TB:
+            case EN_RL_TB:
                 wmctm = new CTM(CTM_RLTB);
                 wmctm.e = ipd;
                 return wmctm;
                 //return  CTM_RLTB.translate(ipd, 0);
-            case Constants.EN_TB_RL:  // CJK
-            case Constants.EN_TB_LR:  // CJK
+            case EN_TB_RL:  // CJK
+            case EN_TB_LR:  // CJK
                 wmctm = new CTM(CTM_TBRL);
                 wmctm.e = bpd;
                 return wmctm;
@@ -159,13 +163,12 @@ public class CTM implements Serializable {
      * @return CTM The result of multiplying premult * this.
      */
     public CTM multiply(CTM premult) {
-        CTM result = new CTM ((premult.a * a) + (premult.b * c),
+        return new CTM ((premult.a * a) + (premult.b * c),
                               (premult.a * b) + (premult.b * d),
                               (premult.c * a) + (premult.d * c),
                               (premult.c * b) + (premult.d * d),
                               (premult.e * a) + (premult.f * c) + e,
                               (premult.e * b) + (premult.f * d) + f);
-        return result;
     }
 
     /**
@@ -251,6 +254,7 @@ public class CTM implements Serializable {
      *
      * @return a string with the transform values
      */
+    @Override
     public String toString() {
         return "[" + a + " " + b + " " + c + " " + d + " " + e + " "
                + f + "]";
@@ -336,13 +340,13 @@ public class CTM implements Serializable {
 
         switch ( writingMode.getEnumValue() ) {
         default:
-        case Constants.EN_LR_TB:
-        case Constants.EN_RL_TB:
+        case EN_LR_TB:
+        case EN_RL_TB:
             reldims.ipd = width;
             reldims.bpd = height;
             break;
-        case Constants.EN_TB_LR:
-        case Constants.EN_TB_RL:
+        case EN_TB_LR:
+        case EN_TB_RL:
             reldims.ipd = height;
             reldims.bpd = width;
             break;

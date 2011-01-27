@@ -59,5 +59,5 @@ public interface Resolvable {
      * @param pages the list of PageViewports with the given ID
      *
      */
-    void resolveIDRef(String id, List pages);
+    void resolveIDRef(String id, List<PageViewport> pages);
 }
