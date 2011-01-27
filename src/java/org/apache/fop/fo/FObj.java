@@ -47,10 +47,10 @@ public abstract class FObj extends FONode implements Constants {
     private static final PropertyMaker[] PROPERTY_LIST_TABLE
                             = FOPropertyMapping.getGenericMappings();
 
-    /**
-     * pointer to the descendant subtree
-     */
+    /** pointer to the descendant subtree */
     protected FONode firstChild;
+
+    /** pointer to the end of the descendant subtree */
     protected FONode lastChild;
 
     /** The list of extension attachments, null if none */

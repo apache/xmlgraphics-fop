@@ -104,10 +104,10 @@ public final class TraitSetter {
     private static void addBorderTrait(Area area,
                                        CommonBorderPaddingBackground bpProps,
                                        boolean bDiscard, int iSide, int mode,
-                                       Object oTrait) {
+                                       Integer trait) {
         int iBP = bpProps.getBorderWidth(iSide, bDiscard);
         if (iBP > 0) {
-            area.addTrait(oTrait,
+            area.addTrait(trait,
                     new BorderProps(bpProps.getBorderStyle(iSide),
                             iBP, bpProps.getBorderColor(iSide),
                             mode));
