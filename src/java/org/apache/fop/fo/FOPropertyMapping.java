@@ -64,6 +64,7 @@ import org.apache.fop.fo.properties.StringProperty;
 import org.apache.fop.fo.properties.TableBorderPrecedence;
 import org.apache.fop.fo.properties.TextDecorationProperty;
 import org.apache.fop.fo.properties.ToBeImplementedProperty;
+import org.apache.fop.fo.properties.URIProperty;
 import org.apache.fop.fo.properties.VerticalAlignShorthandParser;
 import org.apache.fop.fo.properties.WhiteSpaceShorthandParser;
 import org.apache.fop.fo.properties.XMLLangShorthandParser;
@@ -2572,7 +2573,7 @@ public final class FOPropertyMapping implements Constants {
         addPropertyMaker("score-spaces", m);
 
         // src
-        m  = new StringProperty.Maker(PR_SRC);
+        m  = new URIProperty.Maker(PR_SRC);
         m.setInherited(false);
         m.setDefault("");
         addPropertyMaker("src", m);
@@ -2818,6 +2819,12 @@ public final class FOPropertyMapping implements Constants {
         m.setDefault("");
         m.setDatatypeParser(new XMLLangShorthandParser());
         addPropertyMaker("xml:lang", m);
+
+        // xml:base
+        m  = new URIProperty.Maker(PR_X_XML_BASE);
+        m.setInherited(true);
+        m.setDefault("");
+        addPropertyMaker("xml:base", m);
 
        }
 

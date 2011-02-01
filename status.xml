@@ -59,6 +59,10 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Code" dev="AD" type="add" fixes-bug="48334">
+        Added support for resolution of relative URIs against a specified xml:base during
+        property refinement.
+      </action>
       <action context="Renderers" dev="JM" type="add">
         Allow afp:no-operation to also appear under fo:page-sequence and fo:declarations.
       </action>
