@@ -62,7 +62,7 @@ import org.apache.fop.fo.properties.SpacePropertyMaker;
 import org.apache.fop.fo.properties.SpacingPropertyMaker;
 import org.apache.fop.fo.properties.StringProperty;
 import org.apache.fop.fo.properties.TableBorderPrecedence;
-import org.apache.fop.fo.properties.TextDecorationProperty;
+import org.apache.fop.fo.properties.TextDecorationMaker;
 import org.apache.fop.fo.properties.ToBeImplementedProperty;
 import org.apache.fop.fo.properties.URIProperty;
 import org.apache.fop.fo.properties.VerticalAlignShorthandParser;
@@ -1695,7 +1695,7 @@ public final class FOPropertyMapping implements Constants {
 
         // text-decoration
         //m  = new EnumProperty.Maker(PR_TEXT_DECORATION);
-        m  = new TextDecorationProperty.Maker(PR_TEXT_DECORATION);
+        m  = new TextDecorationMaker(PR_TEXT_DECORATION);
         m.setInherited(false);
         m.addEnum("none", getEnumProperty(EN_NONE, "NONE"));
         m.addEnum("underline", getEnumProperty(EN_UNDERLINE, "UNDERLINE"));
