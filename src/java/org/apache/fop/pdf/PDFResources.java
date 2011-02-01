@@ -25,12 +25,12 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.xmlgraphics.java2d.color.profile.ColorProfileUtil;
 import org.apache.fop.fonts.FontDescriptor;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.fonts.base14.Symbol;
 import org.apache.fop.fonts.base14.ZapfDingbats;
-import org.apache.fop.util.ColorProfileUtil;
 
 /**
  * class representing a /Resources object.
