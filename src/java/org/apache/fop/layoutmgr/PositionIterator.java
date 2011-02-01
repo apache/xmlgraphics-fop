@@ -22,20 +22,30 @@ package org.apache.fop.layoutmgr;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-/** A position iterator. */
-public abstract class PositionIterator implements Iterator {
+/**
+ * An iterator over {@link Position} instances, that is wrapped around
+ * another 'parent' {@link Iterator}. The parent can be either another
+ * {@code PositionIterator}, or an iterator over {@link KnuthElement}s,
+ * for example.<br/>
+ * The {@link #next()} method always returns a {@link Position}. The
+ * protected {@link #getLM(Object)} and {@link #getPos(Object)} methods
+ * must be overridden in subclasses to take care of obtaining the
+ * {@link LayoutManager} or {@link Position} from the object returned
+ * by the parent iterator's {@code next()} method.
+ */
+public abstract class PositionIterator implements Iterator<Position> {
 
     private Iterator parentIter;
     private Object nextObj;
     private LayoutManager childLM;
-    private boolean bHasNext;
+    private boolean hasNext;
 
     /**
      * Construct position iterator.
-     * @param pIter an iterator to use as parent
+     * @param parentIter an iterator to use as parent
      */
-    protected PositionIterator(Iterator pIter) {
-        parentIter = pIter;
+    protected PositionIterator(Iterator parentIter) {
+        this.parentIter = parentIter;
         lookAhead();
         //checkNext();
     }
@@ -45,7 +55,7 @@ public abstract class PositionIterator implements Iterator {
         // Move to next "segment" of iterator, ie: new childLM
         if (childLM == null && nextObj != null) {
             childLM = getLM(nextObj);
-            bHasNext = true;
+            hasNext = true;
         }
         return childLM;
     }
@@ -64,7 +74,7 @@ public abstract class PositionIterator implements Iterator {
 
     private void lookAhead() {
         if (parentIter.hasNext()) {
-            bHasNext = true;
+            hasNext = true;
             nextObj = parentIter.next();
         } else {
             endIter();
@@ -78,7 +88,7 @@ public abstract class PositionIterator implements Iterator {
             childLM = lm;
         } else if (childLM != lm && lm != null) {
             // End of this sub-sequence with same child LM
-            bHasNext = false;
+            hasNext = false;
             childLM = null;
             return false;
         }
@@ -87,23 +97,23 @@ public abstract class PositionIterator implements Iterator {
 
     /** end (reset) iterator */
     protected void endIter() {
-        bHasNext = false;
+        hasNext = false;
         nextObj = null;
         childLM = null;
     }
 
     /** {@inheritDoc} */
     public boolean hasNext() {
-        return (bHasNext && checkNext());
+        return (hasNext && checkNext());
     }
 
 
     /** {@inheritDoc} */
-    public Object next() throws NoSuchElementException {
-        if (bHasNext) {
-            Object retObj = getPos(nextObj);
+    public Position next() throws NoSuchElementException {
+        if (hasNext) {
+            Position retPos = getPos(nextObj);
             lookAhead();
-            return retObj;
+            return retPos;
         } else {
             throw new NoSuchElementException("PosIter");
         }
@@ -119,4 +129,3 @@ public abstract class PositionIterator implements Iterator {
         throw new UnsupportedOperationException("PositionIterator doesn't support remove");
     }
 }
-
