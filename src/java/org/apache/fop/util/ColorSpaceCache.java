@@ -31,6 +31,7 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.xmlgraphics.java2d.color.profile.ColorProfileUtil;
 
 /**
  * Map with cached ICC based ColorSpace objects.
@@ -40,7 +41,8 @@ public class ColorSpaceCache {
     private static Log log = LogFactory.getLog(ColorSpaceCache.class);
 
     private URIResolver resolver;
-    private Map colorSpaceMap = Collections.synchronizedMap(new java.util.HashMap());
+    private Map<String, ColorSpace> colorSpaceMap
+            = Collections.synchronizedMap(new java.util.HashMap<String, ColorSpace>());
 
     /**
      * Default constructor
@@ -74,7 +76,7 @@ public class ColorSpaceCache {
                 if (src != null && src instanceof StreamSource) {
                     // FOP URI resolver found ICC profile - create ICC profile
                     // from the Source
-                    iccProfile = ICC_Profile.getInstance(((StreamSource) src)
+                    iccProfile = ColorProfileUtil.getICC_Profile(((StreamSource) src)
                             .getInputStream());
                 } else {
                     // TODO - Would it make sense to fall back on VM ICC
@@ -102,8 +104,7 @@ public class ColorSpaceCache {
                 log.warn("Color profile '" + iccProfileSrc + "' not found.");
             }
         } else {
-            colorSpace = (ColorSpace)colorSpaceMap.get(base
-                    + iccProfileSrc);
+            colorSpace = colorSpaceMap.get(base + iccProfileSrc);
         }
         return colorSpace;
     }
