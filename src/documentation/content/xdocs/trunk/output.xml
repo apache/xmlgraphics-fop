@@ -931,9 +931,15 @@ Note that the value of the encoding attribute in the example is the double-byte 
         </fo:simple-page-master>
       </fo:layout-master-set>
 ]]></source>
-        <p>The no-operation extension element can only occur within a simple-page-master.
-        Multiple no-operation extension elements within a simple-page-master are allowed.
-        The name attribute is mandatory.
+        <p>The no-operation extension element can appear as child of
+        simple-page-master (appears after "Begin Page" BPG),
+        page-sequence (appears after "Begin Named Page Group" BNG
+        and declarations (appears after "Begin Document" BDT).
+        Multiple no-operation extension elements inside the same formatting object are allowed.
+        Each NOP will appear right after the respective "Begin" field indicated above even if it
+        is specified as the last child under its parent. However, the order inside the parent
+        will be maintained.
+        The name attribute is mandatory but will not appear inside the AFP stream.
         </p>
       </section>
       <section id="afp-invoke-medium-map">

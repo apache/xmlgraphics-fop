@@ -77,17 +77,17 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     private DataStream dataStream;
 
     /** the map of page segments */
-    private Map/*<String,PageSegmentDescriptor>*/pageSegmentMap
-        = new java.util.HashMap/*<String,PageSegmentDescriptor>*/();
+    private Map<String, PageSegmentDescriptor> pageSegmentMap
+        = new java.util.HashMap<String, PageSegmentDescriptor>();
 
     /** Medium Map referenced on previous page **/
     private String lastMediumMap;
 
-    private static final int LOC_ELSEWHERE = 0;
-    private static final int LOC_FOLLOWING_PAGE_SEQUENCE = 1;
-    private static final int LOC_IN_PAGE_HEADER = 2;
+    private static enum Location {
+        ELSEWHERE, IN_DOCUMENT_HEADER, FOLLOWING_PAGE_SEQUENCE, IN_PAGE_HEADER
+    }
 
-    private int location = LOC_ELSEWHERE;
+    private Location location = Location.ELSEWHERE;
 
     /** the shading mode for filled rectangles */
     private AFPShadingMode shadingMode = AFPShadingMode.COLOR;
@@ -117,6 +117,7 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     }
 
     /** {@inheritDoc} */
+    @Override
     public void setDefaultFontInfo(FontInfo fontInfo) {
         FontManager fontManager = getUserAgent().getFactory().getFontManager();
         FontCollection[] fontCollections = new FontCollection[] {
@@ -152,6 +153,7 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     }
 
     /** {@inheritDoc} */
+    @Override
     public void startDocument() throws IFException {
         super.startDocument();
         try {
@@ -165,11 +167,23 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
         }
     }
 
+
     /** {@inheritDoc} */
-    public void endDocumentHeader() throws IFException {
+    @Override
+    public void startDocumentHeader() throws IFException {
+        super.startDocumentHeader();
+        this.location = Location.IN_DOCUMENT_HEADER;
     }
 
     /** {@inheritDoc} */
+    @Override
+    public void endDocumentHeader() throws IFException {
+        super.endDocumentHeader();
+        this.location = Location.ELSEWHERE;
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public void endDocument() throws IFException {
         try {
             this.dataStream.endDocument();
@@ -189,7 +203,7 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
         } catch (IOException ioe) {
             throw new IFException("I/O error in startPageSequence()", ioe);
         }
-        this.location = LOC_FOLLOWING_PAGE_SEQUENCE;
+        this.location = Location.FOLLOWING_PAGE_SEQUENCE;
     }
 
     /** {@inheritDoc} */
@@ -212,7 +226,7 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     /** {@inheritDoc} */
     public void startPage(int index, String name, String pageMasterName, Dimension size)
                 throws IFException {
-        this.location = LOC_ELSEWHERE;
+        this.location = Location.ELSEWHERE;
         paintingState.clear();
 
         AffineTransform baseTransform = getBaseTransform();
@@ -232,14 +246,16 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     }
 
     /** {@inheritDoc} */
+    @Override
     public void startPageHeader() throws IFException {
         super.startPageHeader();
-        this.location = LOC_IN_PAGE_HEADER;
+        this.location = Location.IN_PAGE_HEADER;
     }
 
     /** {@inheritDoc} */
+    @Override
     public void endPageHeader() throws IFException {
-        this.location = LOC_ELSEWHERE;
+        this.location = Location.ELSEWHERE;
         super.endPageHeader();
     }
 
@@ -272,17 +288,36 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
             AFPPageSetup aps = (AFPPageSetup)extension;
             String element = aps.getElementName();
             if (AFPElementMapping.TAG_LOGICAL_ELEMENT.equals(element)) {
-                if (this.location != LOC_IN_PAGE_HEADER
-                        && this.location != LOC_FOLLOWING_PAGE_SEQUENCE) {
+                switch (this.location) {
+                case FOLLOWING_PAGE_SEQUENCE:
+                case IN_PAGE_HEADER:
+                    String name = aps.getName();
+                    String value = aps.getValue();
+                    dataStream.createTagLogicalElement(name, value);
+                    break;
+                default:
                     throw new IFException(
                         "TLE extension must be in the page header or between page-sequence"
                             + " and the first page: " + aps, null);
                 }
-                String name = aps.getName();
-                String value = aps.getValue();
-                dataStream.createTagLogicalElement(name, value);
+            } else if (AFPElementMapping.NO_OPERATION.equals(element)) {
+                switch (this.location) {
+                case IN_DOCUMENT_HEADER:
+                case FOLLOWING_PAGE_SEQUENCE:
+                case IN_PAGE_HEADER:
+                    String content = aps.getContent();
+                    if (content != null) {
+                        dataStream.createNoOperation(content);
+                    }
+                    break;
+                default:
+                    throw new IFException(
+                            "NOP extension must be in the document header, the page header"
+                                + " or between page-sequence"
+                                + " and the first page: " + aps, null);
+                }
             } else {
-                if (this.location != LOC_IN_PAGE_HEADER) {
+                if (this.location != Location.IN_PAGE_HEADER) {
                     throw new IFException(
                         "AFP page setup extension encountered outside the page header: " + aps,
                         null);
@@ -294,16 +329,11 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
                     String source = apse.getValue();
                     String uri = apse.getResourceSrc();
                     pageSegmentMap.put(source, new PageSegmentDescriptor(name, uri));
-                } else if (AFPElementMapping.NO_OPERATION.equals(element)) {
-                    String content = aps.getContent();
-                    if (content != null) {
-                        dataStream.createNoOperation(content);
-                    }
                 }
             }
         } else if (extension instanceof AFPPageOverlay) {
             AFPPageOverlay ipo = (AFPPageOverlay)extension;
-            if (this.location != LOC_IN_PAGE_HEADER) {
+            if (this.location != Location.IN_PAGE_HEADER) {
                     throw new IFException(
                         "AFP page overlay extension encountered outside the page header: " + ipo,
                         null);
@@ -313,8 +343,8 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
                 dataStream.createIncludePageOverlay(overlay, ipo.getX(), ipo.getY());
             }
         } else if (extension instanceof AFPInvokeMediumMap) {
-            if (this.location != LOC_FOLLOWING_PAGE_SEQUENCE
-                    && this.location != LOC_IN_PAGE_HEADER) {
+            if (this.location != Location.FOLLOWING_PAGE_SEQUENCE
+                    && this.location != Location.IN_PAGE_HEADER) {
 
                 throw new IFException(
                     "AFP IMM extension must be between page-sequence"
@@ -401,7 +431,7 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
      * @return the page segment descriptor or null if there's no page segment for the given URI
      */
     PageSegmentDescriptor getPageSegmentNameFor(String uri) {
-        return (PageSegmentDescriptor)pageSegmentMap.get(uri);
+        return pageSegmentMap.get(uri);
     }
 
 }
