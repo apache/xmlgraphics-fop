@@ -737,6 +737,7 @@ list of possible build targets.
       <fileset dir="${test.dir}/java">
         <include name="META-INF/**"/>
         <include name="**/*.xml"/>
+        <include name="**/*.fo"/>
       </fileset>
       <fileset dir="${build.dir}/test-gensrc">
         <include name="**/*.xml"/>

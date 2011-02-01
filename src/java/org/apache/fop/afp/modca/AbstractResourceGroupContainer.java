@@ -126,6 +126,7 @@ implements Streamable {
 //    }
 
     /** {@inheritDoc} */
+    @Override
     public void writeToStream(OutputStream os) throws IOException {
         if (!started) {
             writeStart(os);
@@ -140,6 +141,7 @@ implements Streamable {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void writeObjects(Collection/*<AbstractAFPObject>*/ objects, OutputStream os)
             throws IOException {
         writeObjects(objects, os, false);
@@ -176,7 +178,7 @@ implements Streamable {
      * @return true if this object can be written
      */
     protected boolean canWrite(AbstractAFPObject obj) {
-        if (obj instanceof AbstractPageObject) {
+        if (obj instanceof Completable) {
             return ((Completable)obj).isComplete();
         }
         else {
