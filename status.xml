@@ -59,6 +59,10 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Fonts" dev="JM" type="add" fixes-bug="50699" due-to="Alexandros Papadakis">
+        Added support for lookup of alternative glyphs when additional single-byte encodings are
+        used, ex. replacing "Omegagreek" by "Omega" and vice versa.
+      </action>
       <action context="Code" dev="AD" type="add" fixes-bug="48334">
         Added support for resolution of relative URIs against a specified xml:base during
         property refinement.
