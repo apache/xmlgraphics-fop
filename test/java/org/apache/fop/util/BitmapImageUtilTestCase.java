@@ -46,7 +46,7 @@ import org.apache.fop.util.bitmap.MonochromeBitmapConverter;
 public class BitmapImageUtilTestCase extends TestCase {
 
     private static final boolean DEBUG = true;
-    private static final boolean TEST_PIXELS = true;
+    private static final boolean TEST_PIXELS = false;
 
     /**
      * Tests the convertTo* methods.
