@@ -59,6 +59,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="JM" type="fix" fixes-bug="50705" due-to="Mehdi Houshmand">
+        Fix to preserve the order of AFP TLEs and NOPs as given in the XSL-FO document.
+      </action>
       <action context="Fonts" dev="JM" type="add" fixes-bug="50699" due-to="Alexandros Papadakis">
         Added support for lookup of alternative glyphs when additional single-byte encodings are
         used, ex. replacing "Omegagreek" by "Omega" and vice versa.
