@@ -38,7 +38,6 @@ import org.apache.xmlgraphics.util.WriterOutputStream;
 import org.apache.xmlgraphics.util.io.ASCIIHexOutputStream;
 
 import org.apache.fop.util.bitmap.BitmapImageUtil;
-import org.apache.fop.util.bitmap.JAIMonochromeBitmapConverter;
 import org.apache.fop.util.bitmap.MonochromeBitmapConverter;
 
 /**
@@ -110,7 +109,7 @@ public class BitmapImageUtilTestCase extends TestCase {
     private boolean isJAIAvailable() {
         MonochromeBitmapConverter converter
             = BitmapImageUtil.createDefaultMonochromeBitmapConverter();
-        return (converter instanceof JAIMonochromeBitmapConverter);
+        return converter.getClass().getName().contains("JAI");
     }
 
     private void saveAsPNG(RenderedImage img, String name) throws IOException {
