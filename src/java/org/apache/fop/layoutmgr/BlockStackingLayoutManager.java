@@ -50,9 +50,7 @@ import org.apache.fop.util.ListUtil;
 public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                                                  implements BlockLevelLayoutManager {
 
-    /**
-     * logging instance
-     */
+    /** logging instance */
     private static Log log = LogFactory.getLog(BlockStackingLayoutManager.class);
 
     /** parent area */
@@ -65,7 +63,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     /** space-after value adjusted for block-progression-unit handling */
     protected int adjustedSpaceAfter;
     /** Only used to store the original list when createUnitElements is called */
-    protected List storedList;
+    protected List<KnuthElement> storedList;
     /** Indicates whether break before has been served or not */
     protected boolean breakBeforeServed;
     /** Indicates whether the first visible mark has been returned by this LM, yet */
@@ -162,15 +160,9 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
      * If so, add it. Otherwise initiate breaking.
      * @param childArea the area to add: will be some block-stacked Area.
      */
+    @Override
     public void addChildArea(Area childArea) {
         addChildToArea(childArea, getCurrentArea());
-    }
-
-    /** {@inheritDoc} */
-    protected void notifyEndOfLayout() {
-        super.notifyEndOfLayout();
-        // Free memory of the area tree
-        //this.parentArea = null;
     }
 
     /**
@@ -244,12 +236,13 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     }
 
     /** {@inheritDoc} */
+    @Override
     public List getNextKnuthElements(LayoutContext context, int alignment) {
         referenceIPD = context.getRefIPD();
         updateContentAreaIPDwithOverconstrainedAdjust();
 
-        List contentList = new LinkedList();
-        List elements = new LinkedList();
+        List<ListElement> contentList = new LinkedList<ListElement>();
+        List<ListElement> elements = new LinkedList<ListElement>();
 
         if (!breakBeforeServed) {
             breakBeforeServed = true;
@@ -275,11 +268,11 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         BreakElement forcedBreakAfterLast = null;
 
         LayoutManager currentChildLM;
-        while ((currentChildLM = (LayoutManager) getChildLM()) != null) {
+        while ((currentChildLM = getChildLM()) != null) {
             LayoutContext childLC = new LayoutContext(0);
 
-            List childrenElements = getNextChildElements(currentChildLM, context, childLC,
-                    alignment);
+            List<ListElement> childrenElements
+                    = getNextChildElements(currentChildLM, context, childLC, alignment);
 
             if (contentList.isEmpty()) {
                 //Propagate keep-with-previous up from the first child
@@ -306,7 +299,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                     if (contentList.isEmpty()) {
                         // Empty fo:block, zero-length box makes sure the IDs and/or markers
                         // are registered and borders/padding are painted.
-                        elements.add(new KnuthBox(0, notifyPos(new Position(this)), false));
+                        elements.add(makeAuxiliaryZeroWidthBox());
                     }
                     // a descendant of this block has break-before
                     contentList.addAll(childrenElements);
@@ -338,7 +331,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         } else if (forcedBreakAfterLast == null) {
             // Empty fo:block, zero-length box makes sure the IDs and/or markers
             // are registered.
-            elements.add(new KnuthBox(0, notifyPos(new Position(this)), true));
+            elements.add(makeAuxiliaryZeroWidthBox());
         }
 
         addKnuthElementsForBorderPaddingAfter(elements, true);
@@ -361,14 +354,15 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     }
 
     /** {@inheritDoc} */
+    @Override
     public List getNextKnuthElements                            // CSOK: MethodLength
         (LayoutContext context, int alignment, Stack lmStack,
             Position restartPosition, LayoutManager restartAtLM) {
         referenceIPD = context.getRefIPD();
         updateContentAreaIPDwithOverconstrainedAdjust();
 
-        List contentList = new LinkedList();
-        List elements = new LinkedList();
+        List<ListElement> contentList = new LinkedList<ListElement>();
+        List<ListElement> elements = new LinkedList<ListElement>();
 
         if (!breakBeforeServed) {
             breakBeforeServed = true;
@@ -394,7 +388,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         BreakElement forcedBreakAfterLast = null;
 
         LayoutContext childLC = new LayoutContext(0);
-        List childrenElements;
+        List<ListElement> childrenElements;
         LayoutManager currentChildLM;
         if (lmStack.isEmpty()) {
             assert restartAtLM != null && restartAtLM.getParent() == this;
@@ -405,7 +399,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
             childrenElements = getNextChildElements(currentChildLM, context, childLC,
                     alignment);
         } else {
-            currentChildLM = (BlockLevelLayoutManager) lmStack.pop();
+            currentChildLM = (LayoutManager) lmStack.pop();
             setCurrentChildLM(currentChildLM);
             childrenElements = getNextChildElements(currentChildLM, context, childLC, alignment,
                     lmStack, restartPosition, restartAtLM);
@@ -430,13 +424,12 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                     // a descendant of this block has break-before
                     forcedBreakAfterLast = (BreakElement) childrenElements.get(0);
                     context.clearPendingMarks();
-//                    break; TODO
                 }
 
                 if (contentList.isEmpty()) {
                     // Empty fo:block, zero-length box makes sure the IDs and/or markers
                     // are registered and borders/padding are painted.
-                    elements.add(new KnuthBox(0, notifyPos(new Position(this)), false));
+                    elements.add(makeAuxiliaryZeroWidthBox());
                 }
                 // a descendant of this block has break-before
                 contentList.addAll(childrenElements);
@@ -451,7 +444,6 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                     if (currentChildLM.isFinished() && !hasNextChildLM()) {
                         forcedBreakAfterLast = (BreakElement) ListUtil.removeLast(contentList);
                         context.clearPendingMarks();
-//                        break; TODO
                     }
 
                     wrapPositionElements(contentList, elements);
@@ -462,7 +454,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
             context.updateKeepWithNextPending(childLC.getKeepWithNextPending());
         }
 
-        while ((currentChildLM = (LayoutManager) getChildLM()) != null) {
+        while ((currentChildLM = getChildLM()) != null) {
             currentChildLM.reset(); // TODO won't work with forced breaks
 
             childLC = new LayoutContext(0);
@@ -495,7 +487,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                     if (contentList.isEmpty()) {
                         // Empty fo:block, zero-length box makes sure the IDs and/or markers
                         // are registered and borders/padding are painted.
-                        elements.add(new KnuthBox(0, notifyPos(new Position(this)), false));
+                        elements.add(makeAuxiliaryZeroWidthBox());
                     }
                     // a descendant of this block has break-before
                     contentList.addAll(childrenElements);
@@ -527,7 +519,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         } else if (forcedBreakAfterLast == null) {
             // Empty fo:block, zero-length box makes sure the IDs and/or markers
             // are registered.
-            elements.add(new KnuthBox(0, notifyPos(new Position(this)), true));
+            elements.add(makeAuxiliaryZeroWidthBox());
         }
 
         addKnuthElementsForBorderPaddingAfter(elements, true);
@@ -549,12 +541,32 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         return elements;
     }
 
-    private List getNextChildElements(LayoutManager childLM, LayoutContext context,
+    private KnuthBox makeZeroWidthBox() {
+        return new KnuthBox(0, new NonLeafPosition(this, null), false);
+    }
+
+    private KnuthBox makeAuxiliaryZeroWidthBox() {
+        return new KnuthBox(0, notifyPos(new Position(this)), true);
+    }
+
+    private KnuthPenalty makeZeroWidthPenalty(int penaltyValue) {
+        return new KnuthPenalty(0, penaltyValue, false, new NonLeafPosition(this, null), false);
+    }
+
+    private KnuthGlue makeSpaceAdjustmentGlue(int width, Adjustment adjustmentClass,
+                                              boolean isAuxiliary) {
+        return new KnuthGlue(width, 0, 0,
+                             adjustmentClass,
+                             new NonLeafPosition(this, null),
+                             isAuxiliary);
+    }
+
+    private List<ListElement> getNextChildElements(LayoutManager childLM, LayoutContext context,
             LayoutContext childLC, int alignment) {
         return getNextChildElements(childLM, context, childLC, alignment, null, null, null);
     }
 
-    private List getNextChildElements(LayoutManager childLM, LayoutContext context,
+    private List<ListElement> getNextChildElements(LayoutManager childLM, LayoutContext context,
             LayoutContext childLC, int alignment, Stack lmStack, Position restartPosition,
             LayoutManager restartAtLM) {
         childLC.copyPendingMarksFrom(context);
@@ -588,7 +600,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
      * @param parentLC the parent layout context
      * @param childLC the currently active child layout context
      */
-    protected void addInBetweenBreak(List contentList, LayoutContext parentLC,
+    protected void addInBetweenBreak(List<ListElement> contentList, LayoutContext parentLC,
                                      LayoutContext childLC) {
 
         if (mustKeepTogether()
@@ -612,7 +624,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
             return;
         }
 
-        ListElement last = (ListElement) ListUtil.getLast(contentList);
+        ListElement last = ListUtil.getLast(contentList);
         if (last.isGlue()) {
             // the last element in contentList is a glue;
             // it is a feasible breakpoint, there is no need to add
@@ -643,15 +655,9 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int negotiateBPDAdjustment(int adj, KnuthElement lastElement) {
-/*LF*/  //log.debug("  BLM.negotiateBPDAdjustment> " + adj);
-/*LF*/  //log.debug("  lastElement e' " + (lastElement.isPenalty()
-        //      ? "penalty" : (lastElement.isGlue() ? "glue" : "box" )));
-/*LF*/  //log.debug("  position e' " + lastElement.getPosition().getClass().getName());
-/*LF*/  //log.debug("  " + (bpUnit > 0 ? "unit" : ""));
+        assert (lastElement != null && lastElement.getPosition() != null);
         Position innerPosition = lastElement.getPosition().getPosition();
 
         if (innerPosition == null && lastElement.isGlue()) {
@@ -660,11 +666,9 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                     == Adjustment.SPACE_BEFORE_ADJUSTMENT) {
                 // this adjustment applies to space-before
                 adjustedSpaceBefore += adj;
-/*LF*/          //log.debug("  BLM.negotiateBPDAdjustment> spazio prima: " + adj);
             } else {
                 // this adjustment applies to space-after
                 adjustedSpaceAfter += adj;
-/*LF*/          //log.debug("  BLM.negotiateBPDAdjustment> spazio dopo: " + adj);
             }
             return adj;
         } else if (innerPosition instanceof MappingPosition) {
@@ -674,7 +678,6 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
             MappingPosition mappingPos = (MappingPosition)innerPosition;
             if (lastElement.isGlue()) {
                 // lastElement is a glue
-/*LF*/          //log.debug("  BLM.negotiateBPDAdjustment> bpunit con glue");
                 ListIterator storedListIterator = storedList.listIterator(
                         mappingPos.getFirstIndex());
                 int newAdjustment = 0;
@@ -684,8 +687,6 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                         newAdjustment += ((BlockLevelLayoutManager)storedElement
                                 .getLayoutManager()).negotiateBPDAdjustment(
                                         adj - newAdjustment, storedElement);
-/*LF*/                  //log.debug("  BLM.negotiateBPDAdjustment> (progressivo) righe: "
-                        //  + newAdjustment);
                     }
                 }
                 newAdjustment = (newAdjustment > 0 ? bpUnit * neededUnits(newAdjustment)
@@ -695,19 +696,16 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                 // lastElement is a penalty: this means that the paragraph
                 // has been split between consecutive pages:
                 // this may involve a change in the number of lines
-/*LF*/          //log.debug("  BLM.negotiateBPDAdjustment> bpunit con penalty");
                 KnuthPenalty storedPenalty = (KnuthPenalty)
                                              storedList.get(mappingPos.getLastIndex());
                 if (storedPenalty.getWidth() > 0) {
                     // the original penalty has width > 0
-/*LF*/              //log.debug("  BLM.negotiateBPDAdjustment> chiamata passata");
                     return ((BlockLevelLayoutManager)storedPenalty.getLayoutManager())
                            .negotiateBPDAdjustment(storedPenalty.getWidth(),
                                    storedPenalty);
                 } else {
                     // the original penalty has width = 0
                     // the adjustment involves only the spaces before and after
-/*LF*/              //log.debug("  BLM.negotiateBPDAdjustment> chiamata gestita");
                     return adj;
                 }
             }
@@ -718,7 +716,6 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
             int returnValue = ((BlockLevelLayoutManager)lastElement.getLayoutManager())
                     .negotiateBPDAdjustment(adj, lastElement);
             lastElement.setPosition(savedPos);
-/*LF*/      //log.debug("  BLM.negotiateBPDAdjustment> righe: " + returnValue);
             return returnValue;
         } else {
             // this should never happen
@@ -727,12 +724,10 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void discardSpace(KnuthGlue spaceGlue) {
-        //log.debug("  BLM.discardSpace> " + spaceGlue.getPosition().getClass().getName());
-        Position innerPosition = ((NonLeafPosition) spaceGlue.getPosition()).getPosition();
+        assert (spaceGlue != null && spaceGlue.getPosition() != null);
+        Position innerPosition = spaceGlue.getPosition().getPosition();
 
         if (innerPosition == null || innerPosition.getLM() == this) {
             // if this block has block-progression-unit > 0, innerPosition can be
@@ -757,36 +752,27 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public List getChangedKnuthElements(List oldList, int alignment) { // CSOK: MethodLength
-/*LF*/  //log.debug("");
-/*LF*/  //log.debug("  BLM.getChangedKnuthElements> inizio: oldList.size() = "
-        //  + oldList.size());
-        ListIterator oldListIterator = oldList.listIterator();
-        KnuthElement returnedElement;
+    /** {@inheritDoc} */
+    @Override
+    public List getChangedKnuthElements(List oldList, int alignment) {
+        ListIterator<KnuthElement> oldListIterator = oldList.listIterator();
         KnuthElement currElement = null;
         KnuthElement prevElement = null;
-        List returnedList = new LinkedList();
-        List returnList = new LinkedList();
+        List<KnuthElement> returnedList = new LinkedList<KnuthElement>();
+        List<KnuthElement> returnList = new LinkedList<KnuthElement>();
         int fromIndex = 0;
 
         // "unwrap" the Positions stored in the elements
-        KnuthElement oldElement = null;
+        KnuthElement oldElement;
         while (oldListIterator.hasNext()) {
-            oldElement = (KnuthElement)oldListIterator.next();
-            Position innerPosition = ((NonLeafPosition) oldElement.getPosition()).getPosition();
-            //log.debug(" BLM> unwrapping: "
-            //  + (oldElement.isBox() ? "box    " : (oldElement.isGlue() ? "glue   " : "penalty"))
-            //  + " creato da " + oldElement.getLayoutManager().getClass().getName());
-            //log.debug(" BLM> unwrapping:         "
-            //  + oldElement.getPosition().getClass().getName());
+            oldElement = oldListIterator.next();
+            assert oldElement.getPosition() != null;
+            Position innerPosition = oldElement.getPosition().getPosition();
             if (innerPosition != null) {
-                // oldElement was created by a descendant of this BlockLM
+                // oldElement was created by a descendant
                 oldElement.setPosition(innerPosition);
             } else {
-                // thisElement was created by this BlockLM
+                // oldElement was created by this LM:
                 // modify its position in order to recognize it was not created
                 // by a child
                 oldElement.setPosition(new Position(this));
@@ -794,63 +780,24 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         }
 
         // create the iterator
-        List workList;
-        if (bpUnit == 0) {
-            workList = oldList;
-        } else {
-            // the storedList must be used instead of oldList;
-            // find the index of the first element of returnedList
-            // corresponding to the first element of oldList
-            oldListIterator = oldList.listIterator();
-            KnuthElement el = (KnuthElement) oldListIterator.next();
-            while (!(el.getPosition() instanceof MappingPosition)) {
-                el = (KnuthElement) oldListIterator.next();
-            }
-            int iFirst = ((MappingPosition) el.getPosition()).getFirstIndex();
-
-            // find the index of the last element of returnedList
-            // corresponding to the last element of oldList
-            oldListIterator = oldList.listIterator(oldList.size());
-            el = (KnuthElement) oldListIterator.previous();
-            while (!(el.getPosition() instanceof MappingPosition)) {
-                el = (KnuthElement) oldListIterator.previous();
-            }
-            int iLast = ((MappingPosition) el.getPosition()).getLastIndex();
-
-            //log-debug("  si usa storedList da " + iFirst + " a " + iLast
-            //  + " compresi su " + storedList.size() + " elementi totali");
-            workList = storedList.subList(iFirst, iLast + 1);
-        }
-        ListIterator workListIterator = workList.listIterator();
-
-        //log.debug("  BLM.getChangedKnuthElements> workList.size() = "
-        //  + workList.size() + " da 0 a " + (workList.size() - 1));
-
+        List<KnuthElement> workList = oldList;
+        ListIterator<KnuthElement> workListIterator = workList.listIterator();
         while (workListIterator.hasNext()) {
-            currElement = (KnuthElement) workListIterator.next();
-            //log.debug("elemento n. " + workListIterator.previousIndex()
-            //  + " nella workList");
+            currElement = workListIterator.next();
             if (prevElement != null
                 && prevElement.getLayoutManager() != currElement.getLayoutManager()) {
                 // prevElement is the last element generated by the same LM
-                BlockLevelLayoutManager prevLM = (BlockLevelLayoutManager)
-                                                 prevElement.getLayoutManager();
-                BlockLevelLayoutManager currLM = (BlockLevelLayoutManager)
-                                                 currElement.getLayoutManager();
-                boolean bSomethingAdded = false;
+                BlockLevelLayoutManager prevLM
+                        = (BlockLevelLayoutManager)prevElement.getLayoutManager();
+                BlockLevelLayoutManager currLM
+                        = (BlockLevelLayoutManager)currElement.getLayoutManager();
+                boolean somethingAdded = false;
                 if (prevLM != this) {
-                    //log.debug(" BLM.getChangedKnuthElements> chiamata da "
-                    //    + fromIndex + " a " + workListIterator.previousIndex() + " su "
-                    //    + prevLM.getClass().getName());
                     returnedList.addAll(prevLM.getChangedKnuthElements(workList.subList(
                                 fromIndex, workListIterator.previousIndex()), alignment));
-                    bSomethingAdded = true;
+                    somethingAdded = true;
                 } else {
-                    // prevLM == this
                     // do nothing
-                    //log.debug(" BLM.getChangedKnuthElements> elementi propri, "
-                    //  + "ignorati, da " + fromIndex + " a " + workListIterator.previousIndex()
-                    //  + " su " + prevLM.getClass().getName());
                 }
                 fromIndex = workListIterator.previousIndex();
 
@@ -859,116 +806,77 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                  *       while in getNextKE they were changed to BreakElements?
                  */
                 // there is another block after this one
-                if (bSomethingAdded
+                if (somethingAdded
                     && (this.mustKeepTogether()
                         || prevLM.mustKeepWithNext()
                         || currLM.mustKeepWithPrevious())) {
                     // add an infinite penalty to forbid a break between blocks
-                    returnedList.add(new KnuthPenalty(0, KnuthElement.INFINITE, false,
-                            new Position(this), false));
-                } else if (bSomethingAdded
-                        && !((KnuthElement) ListUtil.getLast(returnedList))
-                                .isGlue()) {
+                    returnedList.add(makeZeroWidthPenalty(KnuthPenalty.INFINITE));
+                } else if (somethingAdded
+                        && !ListUtil.getLast(returnedList).isGlue()) {
                     // add a null penalty to allow a break between blocks
-                    returnedList.add(new KnuthPenalty(0, 0, false, new Position(this), false));
+                    returnedList.add(makeZeroWidthPenalty(KnuthPenalty.INFINITE));
                 }
             }
             prevElement = currElement;
         }
         if (currElement != null) {
-            BlockLevelLayoutManager currLM = (BlockLevelLayoutManager)
-                                             currElement.getLayoutManager();
+            LayoutManager currLM = currElement.getLayoutManager();
             if (currLM != this) {
-                //log.debug(" BLM.getChangedKnuthElements> chiamata da " + fromIndex
-                //  + " a " + oldList.size() + " su " + currLM.getClass().getName());
                 returnedList.addAll(currLM.getChangedKnuthElements(
                         workList.subList(fromIndex, workList.size()), alignment));
             } else {
-                // currLM == this
                 // there are no more elements to add
                 // remove the last penalty added to returnedList
                 if (!returnedList.isEmpty()) {
                     ListUtil.removeLast(returnedList);
                 }
-                //log.debug(" BLM.getChangedKnuthElements> elementi propri, ignorati, da "
-                //  + fromIndex + " a " + workList.size());
             }
         }
 
         // append elements representing space-before
         boolean spaceBeforeIsConditional = true;
         if (fobj instanceof org.apache.fop.fo.flow.Block) {
-            spaceBeforeIsConditional = ((org.apache.fop.fo.flow.Block)fobj)
-                    .getCommonMarginBlock().spaceBefore.getSpace().isDiscard();
+            spaceBeforeIsConditional = getSpaceBeforeProperty().isDiscard();
         }
-        if (bpUnit > 0
-            || adjustedSpaceBefore != 0) {
+        if (adjustedSpaceBefore != 0) {
             if (!spaceBeforeIsConditional) {
                 // add elements to prevent the glue to be discarded
-                returnList.add(new KnuthBox(0,
-                                            new NonLeafPosition(this, null), false));
-                returnList.add(new KnuthPenalty(0, KnuthElement.INFINITE, false,
-                                                new NonLeafPosition(this, null), false));
+                returnList.add(makeZeroWidthBox());
+                returnList.add(makeZeroWidthPenalty(KnuthPenalty.INFINITE));
             }
-            if (bpUnit > 0) {
-                returnList.add(new KnuthGlue(0, 0, 0,
-                    Adjustment.SPACE_BEFORE_ADJUSTMENT, new NonLeafPosition(this, null), true));
-            } else {
-                returnList.add(new KnuthGlue(adjustedSpaceBefore, 0, 0,
-                    Adjustment.SPACE_BEFORE_ADJUSTMENT, new NonLeafPosition(this, null), true));
-            }
+
+            returnList.add(makeSpaceAdjustmentGlue(adjustedSpaceBefore,
+                    Adjustment.SPACE_BEFORE_ADJUSTMENT,
+                    false));
         }
-
-        //log.debug("  BLM.getChangedKnuthElements> intermedio: returnedList.size() = "
-        //    + returnedList.size());
-
-/* estensione: conversione complessiva */
-/*LF*/  if (bpUnit > 0) {
-/*LF*/      storedList = returnedList;
-/*LF*/      returnedList = createUnitElements(returnedList);
-/*LF*/  }
-/* estensione */
 
         // "wrap" the Position stored in each element of returnedList
         // and add elements to returnList
-        ListIterator listIter = returnedList.listIterator();
-        while (listIter.hasNext()) {
-            returnedElement = (KnuthElement)listIter.next();
-            returnedElement.setPosition(new NonLeafPosition(this, returnedElement.getPosition()));
-            returnList.add(returnedElement);
+        for (KnuthElement el : returnedList) {
+            el.setPosition(new NonLeafPosition(this, el.getPosition()));
+            returnList.add(el);
         }
 
         // append elements representing space-after
         boolean spaceAfterIsConditional = true;
         if (fobj instanceof org.apache.fop.fo.flow.Block) {
-            spaceAfterIsConditional = ((org.apache.fop.fo.flow.Block)fobj)
-                        .getCommonMarginBlock().spaceAfter.getSpace().isDiscard();
+            spaceAfterIsConditional = getSpaceAfterProperty().isDiscard();
         }
-        if (bpUnit > 0 || adjustedSpaceAfter != 0) {
+        if (adjustedSpaceAfter != 0) {
             if (!spaceAfterIsConditional) {
-                returnList.add(new KnuthPenalty(0,
-                        KnuthElement.INFINITE, false,
-                        new NonLeafPosition(this, null), false));
+                returnList.add(makeZeroWidthPenalty(KnuthPenalty.INFINITE));
             }
-            if (bpUnit > 0) {
-                returnList.add(new KnuthGlue(0, 0, 0,
-                        Adjustment.SPACE_AFTER_ADJUSTMENT,
-                        new NonLeafPosition(this, null),
-                        spaceAfterIsConditional));
-            } else {
-                returnList.add(new KnuthGlue(adjustedSpaceAfter, 0, 0,
-                        Adjustment.SPACE_AFTER_ADJUSTMENT,
-                        new NonLeafPosition(this, null),
-                        spaceAfterIsConditional));
-            }
+
+            returnList.add(makeSpaceAdjustmentGlue(adjustedSpaceAfter,
+                    Adjustment.SPACE_AFTER_ADJUSTMENT,
+                    spaceAfterIsConditional));
+
             if (!spaceAfterIsConditional) {
-                returnList.add(new KnuthBox(0,
-                        new NonLeafPosition(this, null), true));
+                returnList.add(makeZeroWidthBox());
             }
         }
 
-        //log.debug("  BLM.getChangedKnuthElements> finished: returnList.size() = "
-        //  + returnList.size());
         return returnList;
     }
 
@@ -1218,8 +1126,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
      * @param context the layout context
      * @return true if an element has been added due to a break-before.
      */
-    protected boolean addKnuthElementsForBreakBefore(List returnList,
-            LayoutContext context) {
+    protected boolean addKnuthElementsForBreakBefore(List returnList, LayoutContext context) {
         int breakBefore = getBreakBefore();
         if (breakBefore == EN_PAGE
                 || breakBefore == EN_COLUMN
@@ -1261,8 +1168,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
      * @param context the layout context
      * @return true if an element has been added due to a break-after.
      */
-    protected boolean addKnuthElementsForBreakAfter(List returnList,
-            LayoutContext context) {
+    protected boolean addKnuthElementsForBreakAfter(List returnList, LayoutContext context) {
         int breakAfter = -1;
         if (fobj instanceof BreakPropertySet) {
             breakAfter = ((BreakPropertySet)fobj).getBreakAfter();
@@ -1285,8 +1191,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
      * @param returnList return list to add the additional elements to
      * @param alignment vertical alignment
      */
-    protected void addKnuthElementsForSpaceBefore(List returnList/*,
-            Position returnPosition*/, int alignment) {
+    protected void addKnuthElementsForSpaceBefore(List returnList, int alignment) {
         SpaceProperty spaceBefore = getSpaceBeforeProperty();
         // append elements representing space-before
         if (spaceBefore != null
@@ -1296,37 +1201,6 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                     RelSide.BEFORE,
                     true, false, this));
         }
-        /*
-        if (bpUnit > 0
-                || spaceBefore != null
-                   && !(spaceBefore.getMinimum(this).getLength().getValue(this) == 0
-                        && spaceBefore.getMaximum(this).getLength().getValue(this) == 0)) {
-            if (spaceBefore != null && !spaceBefore.getSpace().isDiscard()) {
-                // add elements to prevent the glue to be discarded
-                returnList.add(new KnuthBox(0, getAuxiliaryPosition(), false));
-                returnList.add(new KnuthPenalty(0, KnuthElement.INFINITE,
-                        false, getAuxiliaryPosition(), false));
-            }
-            if (bpUnit > 0) {
-                returnList.add(new KnuthGlue(0, 0, 0,
-                        BlockLevelLayoutManager.SPACE_BEFORE_ADJUSTMENT,
-                        getAuxiliaryPosition(), true));
-            } else { //if (alignment == EN_JUSTIFY) {
-                returnList.add(new KnuthGlue(
-                        spaceBefore.getOptimum(this).getLength().getValue(this),
-                        spaceBefore.getMaximum(this).getLength().getValue(this)
-                                - spaceBefore.getOptimum(this).getLength().getValue(this),
-                        spaceBefore.getOptimum(this).getLength().getValue(this)
-                                - spaceBefore.getMinimum(this).getLength().getValue(this),
-                        BlockLevelLayoutManager.SPACE_BEFORE_ADJUSTMENT,
-                        getAuxiliaryPosition(), true));
-//            } else {
-//                returnList.add(new KnuthGlue(
-//                        spaceBefore.getOptimum().getLength().getValue(this),
-//                        0, 0, BlockLevelLayoutManager.SPACE_BEFORE_ADJUSTMENT,
-//                        returnPosition, true));
-            }
-        }*/
     }
 
     /**
@@ -1334,8 +1208,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
      * @param returnList return list to add the additional elements to
      * @param alignment vertical alignment
      */
-    protected void addKnuthElementsForSpaceAfter(List returnList/*, Position returnPosition*/,
-                int alignment) {
+    protected void addKnuthElementsForSpaceAfter(List returnList, int alignment) {
         SpaceProperty spaceAfter = getSpaceAfterProperty();
         // append elements representing space-after
         if (spaceAfter != null
@@ -1345,359 +1218,6 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                     RelSide.AFTER,
                     false, true, this));
         }
-        /*
-        if (bpUnit > 0
-                || spaceAfter != null
-                   && !(spaceAfter.getMinimum(this).getLength().getValue(this) == 0
-                        && spaceAfter.getMaximum(this).getLength().getValue(this) == 0)) {
-            if (spaceAfter != null && !spaceAfter.getSpace().isDiscard()) {
-                returnList.add(new KnuthPenalty(0, KnuthElement.INFINITE,
-                        false, getAuxiliaryPosition(), false));
-            }
-            if (bpUnit > 0) {
-                returnList.add(new KnuthGlue(0, 0, 0,
-                        BlockLevelLayoutManager.SPACE_AFTER_ADJUSTMENT,
-                        getAuxiliaryPosition(), true));
-            } else { //if (alignment == EN_JUSTIFY) {
-                returnList.add(new KnuthGlue(
-                        spaceAfter.getOptimum(this).getLength().getValue(this),
-                        spaceAfter.getMaximum(this).getLength().getValue(this)
-                                - spaceAfter.getOptimum(this).getLength().getValue(this),
-                        spaceAfter.getOptimum(this).getLength().getValue(this)
-                                - spaceAfter.getMinimum(this).getLength().getValue(this),
-                        BlockLevelLayoutManager.SPACE_AFTER_ADJUSTMENT, getAuxiliaryPosition(),
-                        (!spaceAfter.getSpace().isDiscard()) ? false : true));
-//            } else {
-//                returnList.add(new KnuthGlue(
-//                        spaceAfter.getOptimum().getLength().getValue(this), 0, 0,
-//                        BlockLevelLayoutManager.SPACE_AFTER_ADJUSTMENT, returnPosition,
-//                        (!spaceAfter.getSpace().isDiscard()) ? false : true));
-            }
-            if (spaceAfter != null && !spaceAfter.getSpace().isDiscard()) {
-                returnList.add(new KnuthBox(0, getAuxiliaryPosition(), true));
-            }
-        }*/
-    }
-
-    /**
-     * Create unit elements.
-     * @param oldList the old list
-     * @return the new list
-     */
-    protected List createUnitElements(List oldList) {           // CSOK: MethodLength
-        //log.debug("Start conversion: " + oldList.size()
-        //  + " elements, space-before.min=" + layoutProps.spaceBefore.getSpace().min
-        //  + " space-after.min=" + layoutProps.spaceAfter.getSpace().min);
-        // add elements at the beginning and at the end of oldList
-        // representing minimum spaces
-        LayoutManager lm = ((KnuthElement)oldList.get(0)).getLayoutManager();
-        boolean bAddedBoxBefore = false;
-        boolean bAddedBoxAfter = false;
-        if (adjustedSpaceBefore > 0) {
-            oldList.add(0, new KnuthBox(adjustedSpaceBefore,
-                                          new Position(lm), true));
-            bAddedBoxBefore = true;
-        }
-        if (adjustedSpaceAfter > 0) {
-            oldList.add(new KnuthBox(adjustedSpaceAfter,
-                                         new Position(lm), true));
-            bAddedBoxAfter = true;
-        }
-
-        MinOptMax totalLength = MinOptMax.ZERO;
-        LinkedList newList = new LinkedList();
-
-        //log.debug(" Prima scansione");
-        // scan the list once to compute total min, opt and max length
-        ListIterator oldListIterator = oldList.listIterator();
-        while (oldListIterator.hasNext()) {
-            KnuthElement element = (KnuthElement) oldListIterator.next();
-            if (element.isBox()) {
-                totalLength = totalLength.plus(element.getWidth());
-                //log.debug("box " + element.getWidth());
-            } else if (element.isGlue()) {
-                totalLength = totalLength.minusMin(element.getShrink());
-                totalLength = totalLength.plusMax(element.getStretch());
-                //leafValue = ((LeafPosition) element.getPosition()).getLeafPos();
-                //log.debug("glue " + element.getWidth() + " + "
-                //    + ((KnuthGlue) element).getStretch() + " - "
-                //    + ((KnuthGlue) element).getShrink());
-            } else {
-                //log.debug((((KnuthPenalty)element).getPenalty() == KnuthElement.INFINITE
-                //    ? "PENALTY " : "penalty ") + element.getWidth());
-            }
-        }
-        // compute the total amount of "units"
-        MinOptMax totalUnits = MinOptMax.getInstance(neededUnits(totalLength.getMin()),
-                                   neededUnits(totalLength.getOpt()),
-                                   neededUnits(totalLength.getMax()));
-        //log.debug(" totalLength= " + totalLength);
-        //log.debug(" unita'= " + totalUnits);
-
-        //log.debug(" Seconda scansione");
-        // scan the list once more, stopping at every breaking point
-        // in order to compute partial min, opt and max length
-        // and create the new elements
-        oldListIterator = oldList.listIterator();
-        boolean prevIsBox;
-        MinOptMax lengthBeforeBreak = MinOptMax.ZERO;
-        MinOptMax lengthAfterBreak = totalLength;
-        MinOptMax unitsBeforeBreak;
-        MinOptMax unitsAfterBreak;
-        MinOptMax unsuppressibleUnits = MinOptMax.ZERO;
-        int firstIndex = 0;
-        int lastIndex = -1;
-        while (oldListIterator.hasNext()) {
-            KnuthElement element = (KnuthElement) oldListIterator.next();
-            lastIndex++;
-            if (element.isBox()) {
-                lengthBeforeBreak = lengthBeforeBreak.plus(element.getWidth());
-                lengthAfterBreak = lengthAfterBreak.minus(element.getWidth());
-                prevIsBox = true;
-            } else if (element.isGlue()) {
-                lengthBeforeBreak = lengthBeforeBreak.minusMin(element.getShrink());
-                lengthAfterBreak = lengthAfterBreak.plusMin(element.getShrink());
-                lengthBeforeBreak = lengthBeforeBreak.plusMax(element.getStretch());
-                lengthAfterBreak = lengthAfterBreak.minusMax(element.getStretch());
-                prevIsBox = false;
-            } else {
-                lengthBeforeBreak = lengthBeforeBreak.plus(element.getWidth());
-                prevIsBox = false;
-            }
-
-            // create the new elements
-            if (element.isPenalty() && element.getPenalty() < KnuthElement.INFINITE
-                    || element.isGlue() && prevIsBox
-                    || !oldListIterator.hasNext()) {
-                // suppress elements after the breaking point
-                int iStepsForward = 0;
-                while (oldListIterator.hasNext()) {
-                    KnuthElement el = (KnuthElement) oldListIterator.next();
-                    iStepsForward++;
-                    if (el.isGlue()) {
-                        // suppressed glue
-                        lengthAfterBreak = lengthAfterBreak.plusMin(el.getShrink());
-                        lengthAfterBreak = lengthAfterBreak.minusMax(el.getStretch());
-                    } else if (el.isPenalty()) {
-                        // suppressed penalty, do nothing
-                    } else {
-                        // box, end of suppressions
-                        break;
-                    }
-                }
-                // compute the partial amount of "units" before and after the break
-                unitsBeforeBreak = MinOptMax.getInstance(neededUnits(lengthBeforeBreak.getMin()),
-                                                 neededUnits(lengthBeforeBreak.getOpt()),
-                                                 neededUnits(lengthBeforeBreak.getMax()));
-                unitsAfterBreak = MinOptMax.getInstance(neededUnits(lengthAfterBreak.getMin()),
-                                                neededUnits(lengthAfterBreak.getOpt()),
-                                                neededUnits(lengthAfterBreak.getMax()));
-
-                // rewind the iterator and lengthAfterBreak
-                for (int i = 0; i < iStepsForward; i++) {
-                    KnuthElement el = (KnuthElement) oldListIterator.previous();
-                    if (el.isGlue()) {
-                        lengthAfterBreak = lengthAfterBreak.minusMin(el.getShrink());
-                        lengthAfterBreak = lengthAfterBreak.plusMax(el.getStretch());
-                    }
-                }
-
-                // compute changes in length, stretch and shrink
-                int uLengthChange = unitsBeforeBreak.getOpt() + unitsAfterBreak.getOpt()
-                        - totalUnits.getOpt();
-                int uStretchChange = unitsBeforeBreak.getStretch()
-                        + unitsAfterBreak.getStretch() - totalUnits.getStretch();
-                int uShrinkChange = unitsBeforeBreak.getShrink()
-                        + unitsAfterBreak.getShrink() - totalUnits.getShrink();
-
-                // compute the number of normal, stretch and shrink unit
-                // that must be added to the new sequence
-                int uNewNormal = unitsBeforeBreak.getOpt() - unsuppressibleUnits.getOpt();
-                int uNewStretch = unitsBeforeBreak.getStretch()
-                        - unsuppressibleUnits.getStretch();
-                int uNewShrink = unitsBeforeBreak.getShrink()
-                        - unsuppressibleUnits.getShrink();
-
-                //log.debug("("
-                //    + unsuppressibleUnits.min + "-" + unsuppressibleUnits.opt + "-"
-                //         + unsuppressibleUnits.max + ") "
-                //    + " -> " + unitsBeforeBreak.min + "-" + unitsBeforeBreak.opt + "-"
-                //         + unitsBeforeBreak.max
-                //    + " + " + unitsAfterBreak.min + "-" + unitsAfterBreak.opt + "-"
-                //         + unitsAfterBreak.max
-                //    + (uLengthChange != 0 ? " [length " + uLengthChange + "] " : "")
-                //    + (uStretchChange != 0 ? " [stretch " + uStretchChange + "] " : "")
-                //    + (uShrinkChange != 0 ? " [shrink " + uShrinkChange + "]" : ""));
-
-                // create the MappingPosition which will be stored in the new elements
-                // correct firstIndex and lastIndex
-                int firstIndexCorrection = 0;
-                int lastIndexCorrection = 0;
-                if (bAddedBoxBefore) {
-                    if (firstIndex != 0) {
-                        firstIndexCorrection++;
-                    }
-                    lastIndexCorrection++;
-                }
-                if (bAddedBoxAfter && lastIndex == (oldList.size() - 1)) {
-                    lastIndexCorrection++;
-                }
-                MappingPosition mappingPos = new MappingPosition(this,
-                                                                 firstIndex - firstIndexCorrection,
-                                                                 lastIndex - lastIndexCorrection);
-
-                // new box
-                newList.add(new KnuthBox((uNewNormal - uLengthChange) * bpUnit, mappingPos, false));
-                unsuppressibleUnits = unsuppressibleUnits.plus(uNewNormal - uLengthChange);
-                //log.debug("        box " + (uNewNormal - uLengthChange));
-
-                // new infinite penalty, glue and box, if necessary
-                if (uNewStretch - uStretchChange > 0
-                    || uNewShrink - uShrinkChange > 0) {
-                    int iStretchUnits = (uNewStretch - uStretchChange > 0
-                            ? (uNewStretch - uStretchChange) : 0);
-                    int iShrinkUnits = (uNewShrink - uShrinkChange > 0
-                            ? (uNewShrink - uShrinkChange) : 0);
-                    newList.add(new KnuthPenalty(0, KnuthElement.INFINITE, false,
-                                                 mappingPos,
-                                                 false));
-                    newList.add(new KnuthGlue(0,
-                                              iStretchUnits * bpUnit,
-                                              iShrinkUnits * bpUnit,
-                                              Adjustment.LINE_NUMBER_ADJUSTMENT,
-                                              mappingPos,
-                                              false));
-                    //log.debug("        PENALTY");
-                    //log.debug("        glue 0 " + iStretchUnits + " " + iShrinkUnits);
-                    unsuppressibleUnits = unsuppressibleUnits.plusMax(iStretchUnits);
-                    unsuppressibleUnits = unsuppressibleUnits.minusMin(iShrinkUnits);
-                    if (!oldListIterator.hasNext()) {
-                        newList.add(new KnuthBox(0, mappingPos, false));
-                        //log.debug("        box 0");
-                    }
-                }
-
-                // new breaking sequence
-                if (uStretchChange != 0
-                    || uShrinkChange != 0) {
-                    // new infinite penalty, glue, penalty and glue
-                    newList.add(new KnuthPenalty(0, KnuthElement.INFINITE, false,
-                                                 mappingPos,
-                                                 false));
-                    newList.add(new KnuthGlue(0,
-                                              uStretchChange * bpUnit,
-                                              uShrinkChange * bpUnit,
-                                              Adjustment.LINE_NUMBER_ADJUSTMENT,
-                                              mappingPos,
-                                              false));
-                    newList.add(new KnuthPenalty(uLengthChange * bpUnit,
-                                                 0, false, element.getPosition(), false));
-                    newList.add(new KnuthGlue(0,
-                                              -uStretchChange * bpUnit,
-                                              -uShrinkChange * bpUnit,
-                                              Adjustment.LINE_NUMBER_ADJUSTMENT,
-                                              mappingPos,
-                                              false));
-                    //log.debug("        PENALTY");
-                    //log.debug("        glue 0 " + uStretchChange + " " + uShrinkChange);
-                    //log.debug("        penalty " + uLengthChange + " * unit");
-                    //log.debug("        glue 0 " + (- uStretchChange) + " "
-                    //      + (- uShrinkChange));
-                } else if (oldListIterator.hasNext()) {
-                    // new penalty
-                    newList.add(new KnuthPenalty(uLengthChange * bpUnit,
-                                                 0, false,
-                                                 mappingPos,
-                                                 false));
-                    //log.debug("        penalty " + uLengthChange + " * unit");
-                }
-                // update firstIndex
-                firstIndex = lastIndex + 1;
-            }
-
-            if (element.isPenalty()) {
-                lengthBeforeBreak = lengthBeforeBreak.minus(element.getWidth());
-            }
-
-        }
-
-        // remove elements at the beginning and at the end of oldList
-        // representing minimum spaces
-        if (adjustedSpaceBefore > 0) {
-            oldList.remove(0);
-        }
-        if (adjustedSpaceAfter > 0) {
-            ListUtil.removeLast(oldList);
-        }
-
-        // if space-before.conditionality is "discard", correct newList
-        boolean correctFirstElement = false;
-        if (fobj instanceof org.apache.fop.fo.flow.Block) {
-            correctFirstElement = ((org.apache.fop.fo.flow.Block)fobj)
-                .getCommonMarginBlock().spaceBefore.getSpace().isDiscard();
-        }
-        if (correctFirstElement) {
-            // remove the wrong element
-            KnuthBox wrongBox = (KnuthBox) newList.removeFirst();
-            // if this paragraph is at the top of a page, the space before
-            // must be ignored; compute the length change
-            int decreasedLength = (neededUnits(totalLength.getOpt())
-                                   - neededUnits(totalLength.getOpt() - adjustedSpaceBefore))
-                                  * bpUnit;
-            // insert the correct elements
-            newList.addFirst(new KnuthBox(wrongBox.getWidth() - decreasedLength,
-                                          wrongBox.getPosition(), false));
-            newList.addFirst(new KnuthGlue(decreasedLength, 0, 0,
-                                           Adjustment.SPACE_BEFORE_ADJUSTMENT,
-                                           wrongBox.getPosition(), false));
-            //log.debug("        rimosso box " + neededUnits(wrongBox.getWidth()));
-            //log.debug("        aggiunto glue " + neededUnits(decreasedLength) + " 0 0");
-            //log.debug("        aggiunto box " + neededUnits(
-            //       wrongBox.getWidth() - decreasedLength));
-        }
-
-        // if space-after.conditionality is "discard", correct newList
-        boolean correctLastElement = false;
-        if (fobj instanceof org.apache.fop.fo.flow.Block) {
-            correctLastElement = ((org.apache.fop.fo.flow.Block)fobj)
-                    .getCommonMarginBlock().spaceAfter.getSpace().isDiscard();
-        }
-        if (correctLastElement) {
-            // remove the wrong element
-            KnuthBox wrongBox = (KnuthBox) newList.removeLast();
-            // if the old sequence is box(h) penalty(inf) glue(x,y,z) box(0)
-            // (it cannot be parted and has some stretch or shrink)
-            // the wrong box is the first one, not the last one
-            LinkedList preserveList = new LinkedList();
-            if (wrongBox.getWidth() == 0) {
-                preserveList.add(wrongBox);
-                preserveList.addFirst((KnuthGlue) newList.removeLast());
-                preserveList.addFirst((KnuthPenalty) newList.removeLast());
-                wrongBox = (KnuthBox) newList.removeLast();
-            }
-
-            // if this paragraph is at the bottom of a page, the space after
-            // must be ignored; compute the length change
-            int decreasedLength = (neededUnits(totalLength.getOpt())
-                                   - neededUnits(totalLength.getOpt() - adjustedSpaceAfter))
-                                  * bpUnit;
-            // insert the correct box
-            newList.addLast(new KnuthBox(wrongBox.getWidth() - decreasedLength,
-                                         wrongBox.getPosition(), false));
-            // add preserved elements
-            if (!preserveList.isEmpty()) {
-                newList.addAll(preserveList);
-            }
-            // insert the correct glue
-            newList.addLast(new KnuthGlue(decreasedLength, 0, 0, Adjustment.SPACE_AFTER_ADJUSTMENT,
-                                          wrongBox.getPosition(), false));
-            //log.debug("        rimosso box " + neededUnits(wrongBox.getWidth()));
-            //log.debug("        aggiunto box " + neededUnits(
-            //      wrongBox.getWidth() - decreasedLength));
-            //log.debug("        aggiunto glue " + neededUnits(decreasedLength) + " 0 0");
-        }
-
-        return newList;
     }
 
     /** A stack iterator. */
@@ -1731,8 +1251,8 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     /** A mapping position. */
     protected static class MappingPosition extends Position {
 
-        private int iFirstIndex;
-        private int iLastIndex;
+        private int firstIndex;
+        private int lastIndex;
 
         /**
          * Construct mapping position.
@@ -1742,18 +1262,18 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
          */
         public MappingPosition(LayoutManager lm, int first, int last) {
             super(lm);
-            iFirstIndex = first;
-            iLastIndex = last;
+            firstIndex = first;
+            lastIndex = last;
         }
 
         /** @return first index */
         public int getFirstIndex() {
-            return iFirstIndex;
+            return firstIndex;
         }
 
         /** @return last index */
         public int getLastIndex() {
-            return iLastIndex;
+            return lastIndex;
         }
     }
 
@@ -1817,6 +1337,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
      * Returns the IPD of the content area
      * @return the IPD of the content area
      */
+    @Override
     public int getContentAreaIPD() {
         return contentAreaIPD;
     }
@@ -1833,11 +1354,13 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
      * Returns the BPD of the content area
      * @return the BPD of the content area
      */
+    @Override
     public int getContentAreaBPD() {
         return -1;
     }
 
     /** {@inheritDoc} */
+    @Override
     public void reset() {
         super.reset();
         breakBeforeServed = false;
