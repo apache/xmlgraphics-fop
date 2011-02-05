@@ -19,7 +19,6 @@
 
 package org.apache.fop.layoutmgr.inline;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -31,10 +30,8 @@ import org.apache.fop.fo.properties.SpaceProperty;
 import org.apache.fop.layoutmgr.AbstractLayoutManager;
 import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.LayoutContext;
-import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.NonLeafPosition;
 import org.apache.fop.layoutmgr.Position;
-import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.traits.MinOptMax;
 
 /**
@@ -44,33 +41,6 @@ import org.apache.fop.traits.MinOptMax;
  */
 public abstract class InlineStackingLayoutManager extends AbstractLayoutManager
                                          implements InlineLevelLayoutManager {
-
-
-    /**
-     * A stacking iterator.
-     */
-    protected static class StackingIter extends PositionIterator {
-
-        StackingIter(Iterator parentIter) {
-            super(parentIter);
-        }
-
-        /**
-         * @param nextObj the next object
-         * @return layout manager of next object
-         */
-        protected LayoutManager getLM(Object nextObj) {
-            return ((Position) nextObj).getLM();
-        }
-
-        /**
-         * @param nextObj the next object
-         * @return position of next object
-         */
-        protected Position getPos(Object nextObj) {
-            return ((Position) nextObj);
-        }
-    }
 
     /**
      * Size of border and padding in BPD (ie, before and after).
@@ -296,6 +266,7 @@ public abstract class InlineStackingLayoutManager extends AbstractLayoutManager
             } else {
                 currLM = (InlineLevelLayoutManager) pos.getLM(depth);
             }
+
             // initialize prevLM
             if (prevLM == null) {
                 prevLM = currLM;

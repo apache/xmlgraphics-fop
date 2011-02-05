@@ -1562,7 +1562,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         lc.setAlignmentContext(alignmentContext);
         setChildContext(lc);
 
-        PositionIterator childPosIter = new StackingIter(positionList.listIterator());
+        PositionIterator childPosIter = new PositionIterator(positionList.listIterator());
         LayoutContext blocklc = new LayoutContext(0);
         blocklc.setLeadingSpace(new SpaceSpecifier(true));
         blocklc.setTrailingSpace(new SpaceSpecifier(false));
