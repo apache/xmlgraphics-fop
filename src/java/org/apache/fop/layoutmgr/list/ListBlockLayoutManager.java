@@ -65,20 +65,6 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager
     private MinOptMax effSpaceBefore;
     private MinOptMax effSpaceAfter;
 
-    private static class StackingIter extends PositionIterator {
-        StackingIter(Iterator parentIter) {
-            super(parentIter);
-        }
-
-        protected LayoutManager getLM(Object nextObj) {
-            return ((Position) nextObj).getLM();
-        }
-
-        protected Position getPos(Object nextObj) {
-            return ((Position) nextObj);
-        }
-    }
-
     /**
      * Create a new list block layout manager.
      * @param node list-block to create the layout manager for
@@ -96,6 +82,7 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager
     }
 
     /** {@inheritDoc} */
+    @Override
     public void initialize() {
         foSpaceBefore = new SpaceVal(
                 getListBlockFO().getCommonMarginBlock().spaceBefore, this).getSpace();
@@ -115,6 +102,7 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager
     }
 
     /** {@inheritDoc} */
+    @Override
     public List getNextKnuthElements(LayoutContext context, int alignment) {
         resetSpaces();
         List returnList = super.getNextKnuthElements(context, alignment);
@@ -135,6 +123,7 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager
     }
 
     /** {@inheritDoc} */
+    @Override
     public List getChangedKnuthElements(List oldList, int alignment) {
         //log.debug("LBLM.getChangedKnuthElements>");
         return super.getChangedKnuthElements(oldList, alignment);
@@ -147,6 +136,7 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager
      * @param parentIter the position iterator
      * @param layoutContext the layout context for adding areas
      */
+    @Override
     public void addAreas(PositionIterator parentIter,
                          LayoutContext layoutContext) {
         getParentArea(null);
@@ -170,10 +160,10 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager
 
         // "unwrap" the NonLeafPositions stored in parentIter
         // and put them in a new list;
-        LinkedList positionList = new LinkedList();
+        LinkedList<Position> positionList = new LinkedList<Position>();
         Position pos;
         while (parentIter.hasNext()) {
-            pos = (Position)parentIter.next();
+            pos = parentIter.next();
             if (pos.getIndex() >= 0) {
                 if (firstPos == null) {
                     firstPos = pos;
@@ -194,7 +184,7 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager
 
         addMarkersToPage(true, isFirst(firstPos), isLast(lastPos));
 
-        StackingIter childPosIter = new StackingIter(positionList.listIterator());
+        PositionIterator childPosIter = new PositionIterator(positionList.listIterator());
         while ((childLM = childPosIter.getNextChildLM()) != null) {
             // Add the block areas to Area
             // set the space adjustment ratio
@@ -235,6 +225,7 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager
      * @param childArea the child area
      * @return the parent area of the child
      */
+    @Override
     public Area getParentArea(Area childArea) {
         if (curBlockArea == null) {
             curBlockArea = new Block();
