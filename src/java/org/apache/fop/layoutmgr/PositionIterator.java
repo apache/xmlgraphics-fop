@@ -28,12 +28,11 @@ import java.util.NoSuchElementException;
  * {@code PositionIterator}, or an iterator over {@link KnuthElement}s,
  * for example.<br/>
  * The {@link #next()} method always returns a {@link Position}. The
- * protected {@link #getLM(Object)} and {@link #getPos(Object)} methods
- * must be overridden in subclasses to take care of obtaining the
- * {@link LayoutManager} or {@link Position} from the object returned
- * by the parent iterator's {@code next()} method.
+ * {@link #getPos(Object)} method can be overridden in subclasses
+ * to take care of obtaining the {@link LayoutManager} or {@link Position}
+ * from the object returned by the parent iterator's {@code next()} method.
  */
-public abstract class PositionIterator implements Iterator<Position> {
+public class PositionIterator implements Iterator<Position> {
 
     private Iterator parentIter;
     private Object nextObj;
@@ -44,7 +43,7 @@ public abstract class PositionIterator implements Iterator<Position> {
      * Construct position iterator.
      * @param parentIter an iterator to use as parent
      */
-    protected PositionIterator(Iterator parentIter) {
+    public PositionIterator(Iterator parentIter) {
         this.parentIter = parentIter;
         lookAhead();
         //checkNext();
@@ -64,13 +63,25 @@ public abstract class PositionIterator implements Iterator<Position> {
      * @param nextObj next object from which to obtain position
      * @return layout manager
      */
-    protected abstract LayoutManager getLM(Object nextObj);
+    protected LayoutManager getLM(Object nextObj) {
+        return getPos(nextObj).getLM();
+    }
 
     /**
+     * Default implementation assumes that the passed
+     * {@code nextObj} is itself a {@link Position}, and just returns it.
+     * Subclasses for which this is not the case, <em>must</em> provide a
+     * suitable override this method.
      * @param nextObj next object from which to obtain position
-     * @return position of next object
+     * @return position of next object.
      */
-    protected abstract Position getPos(Object nextObj);
+    protected Position getPos(Object nextObj) {
+        if (nextObj instanceof Position) {
+            return (Position)nextObj;
+        }
+        throw new IllegalArgumentException(
+                "Cannot obtain Position from the given object.");
+    }
 
     private void lookAhead() {
         if (parentIter.hasNext()) {
