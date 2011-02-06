@@ -67,7 +67,7 @@ public class FootnoteBodyLayoutManager extends BlockStackingLayoutManager {
 
         // the Positions in positionList were inside the elements
         // created by the LineLM
-        StackingIter childPosIter = new StackingIter(positionList.listIterator());
+        PositionIterator childPosIter = new PositionIterator(positionList.listIterator());
 
         while ((childLM = childPosIter.getNextChildLM()) != null) {
             // set last area flag
