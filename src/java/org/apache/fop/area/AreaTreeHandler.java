@@ -208,7 +208,8 @@ public class AreaTreeHandler extends FOEventHandler {
             wrapAndAddExtensionAttachments(rootFObj.getExtensionAttachments());
             // extension attachments from fo:declarations
             if (rootFObj.getDeclarations() != null) {
-                wrapAndAddExtensionAttachments(rootFObj.getDeclarations().getExtensionAttachments());
+                wrapAndAddExtensionAttachments(
+                        rootFObj.getDeclarations().getExtensionAttachments());
             }
         }
 
