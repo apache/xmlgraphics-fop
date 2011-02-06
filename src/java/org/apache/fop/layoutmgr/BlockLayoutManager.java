@@ -279,7 +279,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
 
         // the Positions in positionList were inside the elements
         // created by the LineLM
-        childPosIter = new StackingIter(positionList.listIterator());
+        childPosIter = new PositionIterator(positionList.listIterator());
 
         while ((childLM = childPosIter.getNextChildLM()) != null) {
             // set last area flag
