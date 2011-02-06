@@ -24,9 +24,15 @@ import org.apache.fop.area.Block;
 import org.apache.fop.fo.flow.Wrapper;
 import org.apache.fop.layoutmgr.BlockLayoutManager;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
+import org.apache.fop.layoutmgr.KnuthBox;
+import org.apache.fop.layoutmgr.KnuthSequence;
 import org.apache.fop.layoutmgr.LayoutContext;
+import org.apache.fop.layoutmgr.ListElement;
 import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.TraitSetter;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * This is the layout manager for the fo:wrapper formatting object.
@@ -42,6 +48,7 @@ public class WrapperLayoutManager extends LeafNodeLayoutManager {
     }
 
     /** {@inheritDoc} */
+    @Override
     public InlineArea get(LayoutContext context) {
         // Create a zero-width, zero-height dummy area so this node can
         // participate in the ID handling. Otherwise, addId() wouldn't
@@ -55,13 +62,37 @@ public class WrapperLayoutManager extends LeafNodeLayoutManager {
     }
 
     /**
+     * Overridden to generate a proper {@link ListElement}, if the parent
+     * requires it (i.e. is a block-container, list-item-body...)
+     * If the parent is a block, the line LM will take care of properly
+     * wrapping the sequence in a line box.
+     * {@inheritDoc}
+     */
+    @Override
+    public List getNextKnuthElements(LayoutContext context, int alignment) {
+        List returnList = super.getNextKnuthElements(context, alignment);
+        KnuthSequence seq = (KnuthSequence) returnList.get(0);
+        ListElement tempElement = (ListElement) seq.get(0);
+        if (parentLayoutManager instanceof BlockStackingLayoutManager
+                && !(parentLayoutManager instanceof BlockLayoutManager)) {
+            // replace inline box with a block box
+            returnList = new LinkedList();
+            KnuthBox auxiliaryBox = new KnuthBox(0, tempElement.getPosition(), true);
+            returnList.add(auxiliaryBox);
+        } else {
+            // make sure the inline box is an auxiliary one
+            seq.set(0, new KnuthInlineBox(0, null, tempElement.getPosition(), true));
+        }
+        return returnList;
+    }
+
+    /**
      * Add the area for this layout manager.
      * This adds the dummy area to the parent, *if* it has an id
      * - otherwise it serves no purpose.
-     *
-     * @param posIter the position iterator
-     * @param context the layout context for adding the area
+     * {@inheritDoc}
      */
+    @Override
     public void addAreas(PositionIterator posIter, LayoutContext context) {
         if (fobj.hasId()) {
             addId();
