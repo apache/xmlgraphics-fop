@@ -52,36 +52,36 @@ public final class TraitSetter {
      *
      * @param area      area to set the traits on
      * @param bpProps   border and padding properties
-     * @param bNotFirst True if the area is not the first area
-     * @param bNotLast  True if the area is not the last area
+     * @param isNotFirst True if the area is not the first area
+     * @param isNotLast  True if the area is not the last area
      * @param context   Property evaluation context
      */
     public static void setBorderPaddingTraits(Area area,
-            CommonBorderPaddingBackground bpProps, boolean bNotFirst, boolean bNotLast,
+            CommonBorderPaddingBackground bpProps, boolean isNotFirst, boolean isNotLast,
             PercentBaseContext context) {
-        int iBP;
-        iBP = bpProps.getPadding(CommonBorderPaddingBackground.START, bNotFirst, context);
-        if (iBP > 0) {
-            area.addTrait(Trait.PADDING_START, iBP);
+        int padding;
+        padding = bpProps.getPadding(CommonBorderPaddingBackground.START, isNotFirst, context);
+        if (padding > 0) {
+            area.addTrait(Trait.PADDING_START, padding);
         }
-        iBP = bpProps.getPadding(CommonBorderPaddingBackground.END, bNotLast, context);
-        if (iBP > 0) {
-            area.addTrait(Trait.PADDING_END, iBP);
+        padding = bpProps.getPadding(CommonBorderPaddingBackground.END, isNotLast, context);
+        if (padding > 0) {
+            area.addTrait(Trait.PADDING_END, padding);
         }
-        iBP = bpProps.getPadding(CommonBorderPaddingBackground.BEFORE, false, context);
-        if (iBP > 0) {
-            area.addTrait(Trait.PADDING_BEFORE, iBP);
+        padding = bpProps.getPadding(CommonBorderPaddingBackground.BEFORE, false, context);
+        if (padding > 0) {
+            area.addTrait(Trait.PADDING_BEFORE, padding);
         }
-        iBP = bpProps.getPadding(CommonBorderPaddingBackground.AFTER, false, context);
-        if (iBP > 0) {
-            area.addTrait(Trait.PADDING_AFTER, iBP);
+        padding = bpProps.getPadding(CommonBorderPaddingBackground.AFTER, false, context);
+        if (padding > 0) {
+            area.addTrait(Trait.PADDING_AFTER, padding);
         }
 
-        addBorderTrait(area, bpProps, bNotFirst,
+        addBorderTrait(area, bpProps, isNotFirst,
                 CommonBorderPaddingBackground.START,
                 BorderProps.SEPARATE, Trait.BORDER_START);
 
-        addBorderTrait(area, bpProps, bNotLast,
+        addBorderTrait(area, bpProps, isNotLast,
                 CommonBorderPaddingBackground.END,
                 BorderProps.SEPARATE, Trait.BORDER_END);
 
@@ -103,13 +103,13 @@ public final class TraitSetter {
      */
     private static void addBorderTrait(Area area,
                                        CommonBorderPaddingBackground bpProps,
-                                       boolean bDiscard, int iSide, int mode,
+                                       boolean discard, int side, int mode,
                                        Integer trait) {
-        int iBP = bpProps.getBorderWidth(iSide, bDiscard);
-        if (iBP > 0) {
+        int borderWidth = bpProps.getBorderWidth(side, discard);
+        if (borderWidth > 0) {
             area.addTrait(trait,
-                    new BorderProps(bpProps.getBorderStyle(iSide),
-                            iBP, bpProps.getBorderColor(iSide),
+                    new BorderProps(bpProps.getBorderStyle(side),
+                            borderWidth, bpProps.getBorderColor(side),
                             mode));
         }
     }
@@ -119,30 +119,30 @@ public final class TraitSetter {
      * Layout managers that create areas with borders can use this to
      * add the borders to the area.
      * @param area the area to set the traits on.
-     * @param bordProps border properties
+     * @param borderProps border properties
      * @param context Property evaluation context
      * @deprecated Call the other addBorders() method and addPadding separately.
      */
-    public static void addBorders(Area area, CommonBorderPaddingBackground bordProps,
+    public static void addBorders(Area area, CommonBorderPaddingBackground borderProps,
                                   PercentBaseContext context) {
-        BorderProps bps = getBorderProps(bordProps, CommonBorderPaddingBackground.BEFORE);
+        BorderProps bps = getBorderProps(borderProps, CommonBorderPaddingBackground.BEFORE);
         if (bps != null) {
             area.addTrait(Trait.BORDER_BEFORE, bps);
         }
-        bps = getBorderProps(bordProps, CommonBorderPaddingBackground.AFTER);
+        bps = getBorderProps(borderProps, CommonBorderPaddingBackground.AFTER);
         if (bps != null) {
             area.addTrait(Trait.BORDER_AFTER, bps);
         }
-        bps = getBorderProps(bordProps, CommonBorderPaddingBackground.START);
+        bps = getBorderProps(borderProps, CommonBorderPaddingBackground.START);
         if (bps != null) {
             area.addTrait(Trait.BORDER_START, bps);
         }
-        bps = getBorderProps(bordProps, CommonBorderPaddingBackground.END);
+        bps = getBorderProps(borderProps, CommonBorderPaddingBackground.END);
         if (bps != null) {
             area.addTrait(Trait.BORDER_END, bps);
         }
 
-        addPadding(area, bordProps, context);
+        addPadding(area, borderProps, context);
     }
 
     /**
@@ -150,30 +150,31 @@ public final class TraitSetter {
      * Layout managers that create areas with borders can use this to
      * add the borders to the area.
      * @param area the area to set the traits on.
-     * @param bordProps border properties
+     * @param borderProps border properties
      * @param discardBefore true if the before border should be discarded
      * @param discardAfter true if the after border should be discarded
      * @param discardStart true if the start border should be discarded
      * @param discardEnd true if the end border should be discarded
      * @param context Property evaluation context
      */
-    public static void addBorders(Area area, CommonBorderPaddingBackground bordProps,
+    //TODO: remove evaluation context; unused, since border-widths are always absolute lengths
+    public static void addBorders(Area area, CommonBorderPaddingBackground borderProps,
                 boolean discardBefore, boolean discardAfter,
                 boolean discardStart, boolean discardEnd,
                 PercentBaseContext context) {
-        BorderProps bps = getBorderProps(bordProps, CommonBorderPaddingBackground.BEFORE);
+        BorderProps bps = getBorderProps(borderProps, CommonBorderPaddingBackground.BEFORE);
         if (bps != null && !discardBefore) {
             area.addTrait(Trait.BORDER_BEFORE, bps);
         }
-        bps = getBorderProps(bordProps, CommonBorderPaddingBackground.AFTER);
+        bps = getBorderProps(borderProps, CommonBorderPaddingBackground.AFTER);
         if (bps != null && !discardAfter) {
             area.addTrait(Trait.BORDER_AFTER, bps);
         }
-        bps = getBorderProps(bordProps, CommonBorderPaddingBackground.START);
+        bps = getBorderProps(borderProps, CommonBorderPaddingBackground.START);
         if (bps != null && !discardStart) {
             area.addTrait(Trait.BORDER_START, bps);
         }
-        bps = getBorderProps(bordProps, CommonBorderPaddingBackground.END);
+        bps = getBorderProps(borderProps, CommonBorderPaddingBackground.END);
         if (bps != null && !discardEnd) {
             area.addTrait(Trait.BORDER_END, bps);
         }
