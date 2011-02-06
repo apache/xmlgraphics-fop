@@ -249,6 +249,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         referenceIPD = context.getRefIPD();
         updateContentAreaIPDwithOverconstrainedAdjust();
 
+        boolean isRestart = (lmStack != null);
         List<ListElement> contentList = new LinkedList<ListElement>();
         List<ListElement> elements = new LinkedList<ListElement>();
 
@@ -278,7 +279,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         LayoutContext childLC = new LayoutContext(0);
         List<ListElement> childElements;
         LayoutManager currentChildLM;
-        if (lmStack != null) {
+        if (isRestart) {
             if (lmStack.isEmpty()) {
                 assert restartAtLM != null && restartAtLM.getParent() == this;
                 currentChildLM = restartAtLM;
@@ -342,7 +343,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         }
 
         while ((currentChildLM = getChildLM()) != null) {
-            if (lmStack != null) {
+            if (isRestart) {
                 currentChildLM.reset(); // TODO won't work with forced breaks
             }
 
