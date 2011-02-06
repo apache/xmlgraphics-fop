@@ -279,7 +279,7 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
     }
 
     /** {@inheritDoc} */
-    public void addChildLMs(List<LayoutManager> newLMs) {
+    public void addChildLMs(List newLMs) {
         if (newLMs == null || newLMs.size() == 0) {
             return;
         }
