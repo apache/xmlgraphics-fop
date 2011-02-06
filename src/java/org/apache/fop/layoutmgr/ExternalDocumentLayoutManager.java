@@ -92,7 +92,7 @@ public class ExternalDocumentLayoutManager extends AbstractPageSequenceLayoutMan
         FOUserAgent userAgent = pageSeq.getUserAgent();
         ImageManager imageManager = userAgent.getFactory().getImageManager();
 
-        String uri = getExternalDocument().getSrc();
+        String uri = URISpecification.getURL(getExternalDocument().getSrc());
         Integer firstPageIndex = ImageUtil.getPageIndexFromURI(uri);
         boolean hasPageIndex = (firstPageIndex != null);
 
@@ -146,7 +146,6 @@ public class ExternalDocumentLayoutManager extends AbstractPageSequenceLayoutMan
                 } catch (URISyntaxException e) {
                     getResourceEventProducer().uriError(this, uri, e,
                             getExternalDocument().getLocator());
-                    return;
                 }
             }
         } catch (FileNotFoundException fnfe) {
