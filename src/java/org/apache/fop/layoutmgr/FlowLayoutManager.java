@@ -88,7 +88,8 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
             currentChildLM = restartPosition.getLM();
             if (currentChildLM == null) {
                 throw new IllegalStateException(
-                        "Cannot find layout manager from where to re-start layout after IPD change");
+                        "Cannot find layout manager from where to re-start "
+                        + "layout after IPD change");
             }
             if (restartLM != null && restartLM.getParent() == this) {
                 currentChildLM = restartLM;
