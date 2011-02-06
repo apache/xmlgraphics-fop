@@ -980,7 +980,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         /* comment out the next lines in order to test particular situations */
         if (fobj.getOrphans() + fobj.getWidows() <= llPoss.getMinLineCount()) {
             innerLines = llPoss.getMinLineCount() - (fobj.getOrphans() + fobj.getWidows());
-            optionalLines = llPoss.getMaxLineCount()- llPoss.getOptLineCount();
+            optionalLines = llPoss.getMaxLineCount() - llPoss.getOptLineCount();
             eliminableLines = llPoss.getOptLineCount() - llPoss.getMinLineCount();
         } else if (fobj.getOrphans() + fobj.getWidows() <= llPoss.getOptLineCount()) {
             optionalLines = llPoss.getMaxLineCount() - llPoss.getOptLineCount();
