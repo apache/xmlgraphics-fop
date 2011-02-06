@@ -599,7 +599,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                     return adj;
                 }
             }
-        } else if (innerPosition.getLM() != this) {
+        } else if (innerPosition != null && innerPosition.getLM() != this) {
             // this adjustment concerns another LM
             NonLeafPosition savedPos = (NonLeafPosition) lastElement.getPosition();
             lastElement.setPosition(innerPosition);
@@ -1108,34 +1108,6 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
             returnList.add(new SpaceElement(getAuxiliaryPosition(), spaceAfter,
                     RelSide.AFTER,
                     false, true, this));
-        }
-    }
-
-    /** A stack iterator. */
-    protected static class StackingIter extends PositionIterator {
-
-        /**
-         * Construct a stacking iterator.
-         * @param parentIter the parent iterator
-         */
-        StackingIter(Iterator parentIter) {
-            super(parentIter);
-        }
-
-        /**
-         * @param nextObj the next position
-         * @return the layout manager of the next position
-         */
-        protected LayoutManager getLM(Object nextObj) {
-            return ((Position) nextObj).getLM();
-        }
-
-        /**
-         * @param nextObj the next position
-         * @return the next position
-         */
-        protected Position getPos(Object nextObj) {
-            return ((Position) nextObj);
         }
     }
 
