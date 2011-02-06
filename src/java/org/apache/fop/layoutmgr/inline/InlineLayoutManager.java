@@ -244,8 +244,8 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
     }
 
     /** {@inheritDoc} */
-    @Override
-    public List getNextKnuthElements                            // CSOK: MethodLength
+    @Override                                                   // CSOK: MethodLength
+    public List getNextKnuthElements
         (LayoutContext context, int alignment) {
         LayoutManager curLM;
 

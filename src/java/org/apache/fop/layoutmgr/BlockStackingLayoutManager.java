@@ -242,8 +242,8 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     }
 
     /** {@inheritDoc} */
-    @Override
-    public List getNextKnuthElements                            // CSOK: MethodLength
+    @Override                                                   // CSOK: MethodLength
+    public List getNextKnuthElements
         (LayoutContext context, int alignment, Stack lmStack,
             Position restartPosition, LayoutManager restartAtLM) {
         referenceIPD = context.getRefIPD();

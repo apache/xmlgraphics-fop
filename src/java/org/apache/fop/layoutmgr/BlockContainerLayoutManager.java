@@ -184,8 +184,8 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
     }
 
     /** {@inheritDoc} */
-    @Override
-    public List getNextKnuthElements                            // CSOK: MethodLength
+    @Override                                                    // CSOK: MethodLength
+    public List getNextKnuthElements
         (LayoutContext context, int alignment, Stack lmStack,
          Position restartPosition, LayoutManager restartAtLM) {
         boolean isRestart = (lmStack != null);
