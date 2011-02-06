@@ -357,8 +357,8 @@ public class Marker extends FObjMixed {
     /** Convenience inner class */
     public static final class MarkerAttribute {
 
-        private static PropertyCache attributeCache
-                = new PropertyCache(MarkerAttribute.class);
+        private static PropertyCache<MarkerAttribute> attributeCache
+                = new PropertyCache<MarkerAttribute>();
 
         /** namespace */
         protected String namespace;

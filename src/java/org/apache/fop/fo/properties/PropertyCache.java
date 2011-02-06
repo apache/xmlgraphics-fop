@@ -19,21 +19,31 @@
 
 package org.apache.fop.fo.properties;
 
-import org.apache.fop.fo.flow.Marker;
-
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Type;
 
 /**
  *  Dedicated cache, meant for storing canonical instances
  *  of property-related classes.
- *  The public access points are overloaded <code>fetch()</code> methods
- *  that each correspond to a cached type.
+ *  The public access point is a generic <code>fetch()</code> method.
+ *  Internally, the instances are wrapped in a <code>java.lang.ref.WeakReference</code>,
+ *  so that the actual instance only remains in the cache until no reference
+ *  to that instance exists anywhere else (i.e. as long as it is needed).
+ *  Classes that want to use this cache to store canonical instances should
+ *  override {@link Object#hashCode()} and {@link Object#equals(Object)} to
+ *  make sure the cache exhibits the expected behavior.
+ *
  *  It is designed especially to be used concurrently by multiple threads,
- *  drawing heavily upon the principles behind Java 1.5's
- *  <code>ConcurrentHashMap</code>.
+ *  drawing heavily upon the principles behind Java 5's
+ *  <code>ConcurrentHashMap</code>, but then limited to store only keys.
+ *  (a more proper comparison would be a <code>ConcurrentWeakHashSet</code>)
+ *
+ * @param <T> the type of object that will be stored in the cache
+ *
  */
-public final class PropertyCache {
+//TODO: With generics, this actually has the potential of a more general utility class??
+public final class PropertyCache<T> {
 
     private static final int SEGMENT_COUNT = 32; //0x20
     private static final int INITIAL_BUCKET_COUNT = SEGMENT_COUNT;
@@ -49,11 +59,12 @@ public final class PropertyCache {
     private final boolean useCache;
 
     /** the segments array (length = 32) */
-    private CacheSegment[] segments = new CacheSegment[SEGMENT_COUNT];
+    private final CacheSegment[] segments = new CacheSegment[SEGMENT_COUNT];
     /** the table of hash-buckets */
-    private CacheEntry[] table = new CacheEntry[INITIAL_BUCKET_COUNT];
+    @SuppressWarnings(value = "unchecked") //guaranteed by design
+    private CacheEntry<T>[] table = new CacheEntry[INITIAL_BUCKET_COUNT];
 
-    private Class runtimeType;
+    private Type runtimeType;
 
     private final boolean[] votesForRehash = new boolean[SEGMENT_COUNT];
 
@@ -77,19 +88,20 @@ public final class PropertyCache {
     }
 
     /* Class modeling a cached entry */
-    private static class CacheEntry extends WeakReference {
-        private volatile CacheEntry nextEntry;
+    private static class CacheEntry<T> extends WeakReference<T> {
+        private volatile CacheEntry<T> nextEntry;
         private final int hash;
 
         /* main constructor */
-        public CacheEntry(Object p, CacheEntry nextEntry, ReferenceQueue refQueue) {
-            super(p, refQueue);
+        @SuppressWarnings(value = "unchecked") //see below
+        public CacheEntry(T p, CacheEntry<T> nextEntry, ReferenceQueue refQueue) {
+            super(p, refQueue); //unchecked operation, but constructor unused?
             this.nextEntry = nextEntry;
             this.hash = hash(p);
         }
 
         /* main constructor */
-        public CacheEntry(Object p, CacheEntry nextEntry) {
+        public CacheEntry(T p, CacheEntry<T> nextEntry) {
             super(p);
             this.nextEntry = nextEntry;
             this.hash = hash(p);
@@ -116,8 +128,8 @@ public final class PropertyCache {
         for (int bucketIndex = segmentIndex;
                     bucketIndex < table.length;
                     bucketIndex += SEGMENT_COUNT) {
-            CacheEntry prev = null;
-            CacheEntry entry = table[bucketIndex];
+            CacheEntry<T> prev = null;
+            CacheEntry<T> entry = table[bucketIndex];
             if (entry == null) {
                 continue;
             }
@@ -158,7 +170,6 @@ public final class PropertyCache {
                     for (int i = SEGMENT_MASK + 1; --i >= 0;) {
                         votesForRehash[i] = false;
                     }
-
                 }
             }
         }
@@ -171,26 +182,26 @@ public final class PropertyCache {
      * cleanup will be performed to try and remove obsolete
      * entries.
      */
-    private void put(Object o) {
+    private void put(T o) {
 
         int hash = hash(o);
         int segmentIndex = hash & SEGMENT_MASK;
         CacheSegment segment = segments[segmentIndex];
 
-        synchronized (segment) {
+        synchronized (segments[segmentIndex]) {
             int index = hash & (table.length - 1);
-            CacheEntry entry = table[index];
+            CacheEntry<T> entry = table[index];
 
             if (entry == null) {
-                entry = new CacheEntry(o, null);
+                entry = new CacheEntry<T>(o, null);
                 table[index] = entry;
                 segment.count++;
             } else {
-                Object p = entry.get();
+                T p = entry.get();
                 if (eq(p, o)) {
                     return;
                 } else {
-                    CacheEntry newEntry = new CacheEntry(o, entry);
+                    CacheEntry<T> newEntry = new CacheEntry<T>(o, entry);
                     table[index] = newEntry;
                     segment.count++;
                 }
@@ -204,19 +215,19 @@ public final class PropertyCache {
 
 
     /* Gets a cached instance. Returns null if not found */
-    private Object get(Object o) {
+    private T get(T o) {
 
         int hash = hash(o);
         int index = hash & (table.length - 1);
 
-        CacheEntry entry = table[index];
-        Object q;
+        CacheEntry<T> entry = table[index];
+        T q;
 
         /* try non-synched first */
-        for (CacheEntry e = entry; e != null; e = e.nextEntry) {
-            if ( e.hash == hash ) {
+        for (CacheEntry<T> e = entry; e != null; e = e.nextEntry) {
+            if (e.hash == hash) {
                 q = e.get();
-                if ( ( q != null ) &&  eq ( q, o ) ) {
+                if ((q != null) && eq(q, o)) {
                     return q;
                 }
             }
@@ -225,13 +236,12 @@ public final class PropertyCache {
         /* retry synched, only if the above attempt did not succeed,
          * as another thread may, in the meantime, have added a
          * corresponding entry */
-        CacheSegment segment = segments[hash & SEGMENT_MASK];
-        synchronized (segment) {
+        synchronized (segments[hash & SEGMENT_MASK]) {
             entry = table[index];
-            for (CacheEntry e = entry; e != null; e = e.nextEntry) {
-                if ( e.hash == hash ) {
+            for (CacheEntry<T> e = entry; e != null; e = e.nextEntry) {
+                if (e.hash == hash) {
                     q = e.get();
-                    if ( ( q != null ) &&  eq ( q, o ) ) {
+                    if ((q != null) && eq(q, o)) {
                         return q;
                     }
                 }
@@ -247,8 +257,7 @@ public final class PropertyCache {
      */
     private void rehash(int index) {
 
-        CacheSegment seg = segments[index];
-        synchronized (seg) {
+        synchronized (segments[index]) {
             if (index > 0) {
                 /* need to recursively acquire locks on all segments */
                 rehash(index - 1);
@@ -261,18 +270,19 @@ public final class PropertyCache {
                         segments[i].count = 0;
                     }
 
-                    CacheEntry[] newTable = new CacheEntry[newLength];
+                    @SuppressWarnings(value = "unchecked") //guaranteed by design
+                    CacheEntry<T>[] newTable = new CacheEntry[newLength];
 
                     int hash, idx;
-                    Object o;
+                    T o;
                     newLength--;
                     for (int i = table.length; --i >= 0;) {
-                        for (CacheEntry c = table[i]; c != null; c = c.nextEntry) {
+                        for (CacheEntry<T> c = table[i]; c != null; c = c.nextEntry) {
                             o = c.get();
                             if (o != null) {
                                 hash = c.hash;
                                 idx = hash & newLength;
-                                newTable[idx] = new CacheEntry(o, newTable[idx]);
+                                newTable[idx] = new CacheEntry<T>(o, newTable[idx]);
                                 segments[hash & SEGMENT_MASK].count++;
                             }
                         }
@@ -283,15 +293,68 @@ public final class PropertyCache {
         }
     }
 
-    /**
-     *  Default constructor.
-     *
-     *  @param c    Runtime type of the objects that will be stored in the cache
+    /*
+     * Recursively acquires locks on all 32 segments,
+     * counts all the entries, and returns the total number
+     * of elements in the cache
      */
-    public PropertyCache(Class c) {
-        this.useCache = Boolean.valueOf(System.getProperty(
-                            "org.apache.fop.fo.properties.use-cache", "true")
-                        ).booleanValue();
+    private int size(int index) {
+        synchronized (segments[index]) {
+            if (index > 0) {
+                /* need to recursively acquire locks on all segments */
+                return size(index - 1);
+            } else {
+                int size = 0;
+                T o;
+                for (int i = table.length; --i >= 0;) {
+                    for (CacheEntry<T> c = table[i]; c != null; c = c.nextEntry) {
+                        o = c.get();
+                        if (o != null) {
+                            size++;
+                        }
+                    }
+                }
+                return size;
+            }
+        }
+    }
+
+    /**
+     * Return the number of elements stored in this cache (approximation).
+     * <br/><em>Note: only meant for use during debugging or unit/regression testing.
+     * As the cache only keeps weak references, it is not feasible to cache this
+     * number internally. This method will lock the entire cache and trigger
+     * a recount upon every call.
+     * While it is guaranteed that instances to which hard references still exist elsewhere,
+     * will be present in the cache, it is not guaranteed that all the instances in the cache
+     * are actually referenced. Hence, it is possible for this method to return different results
+     * for subsequent calls, even though the {@link #fetch(Object)} method has not been called
+     * in between, depending on the JVM (= implementation of WeakReference and GC)</em>
+     * @return the number of elements stored in this cache (approx.)
+     */
+    protected int size() {
+        return size(SEGMENT_MASK);
+    }
+
+    /**
+     * Default constructor
+     */
+    public PropertyCache() {
+        this(null);
+    }
+
+    /**
+     * Alternate constructor. Can be used to set the runtimeType, in
+     * order to facilitate tracking of specific caches.
+     *
+     * @param c    Runtime type of the objects that will be stored in the cache
+     */
+    protected PropertyCache(Class<T> c) {
+        //TODO Tie this in to the config in FopFactory?
+        // Should really avoid System.getProperty()...
+        // See also Bugzilla #50435
+        this.useCache = Boolean.valueOf(
+                System.getProperty("org.apache.fop.fo.properties.use-cache", "true"));
         if (useCache) {
             for (int i = SEGMENT_MASK + 1; --i >= 0;) {
                 segments[i] = new CacheSegment();
@@ -301,15 +364,16 @@ public final class PropertyCache {
     }
 
     /**
-     *  Generic fetch() method.
-     *  Checks if the given <code>Object</code> is present in the cache -
-     *  if so, returns a reference to the cached instance.
-     *  Otherwise the given object is added to the cache and returned.
+     * Generic fetch() method.
+     * Checks if an equivalent for the given instance is present in the cache.
+     * If so, it returns a reference to the cached instance, and the object
+     * passed in is discarded.
+     * Otherwise the given object is added to the cache and returned.
      *
-     *  @param obj   the Object to check for
-     *  @return  the cached instance
+     * @param obj   the object to check for
+     * @return  the cached instance
      */
-    private Object fetch(Object obj) {
+    public T fetch(T obj) {
         if (!this.useCache) {
             return obj;
         }
@@ -318,7 +382,7 @@ public final class PropertyCache {
             return null;
         }
 
-        Object cacheEntry = get(obj);
+        T cacheEntry = get(obj);
         if (cacheEntry != null) {
             return cacheEntry;
         }
@@ -326,88 +390,10 @@ public final class PropertyCache {
         return obj;
     }
 
-    /**
-     *  Checks if the given {@link Property} is present in the cache -
-     *  if so, returns a reference to the cached instance.
-     *  Otherwise the given object is added to the cache and returned.
-     *
-     *  @param prop the Property instance to check for
-     *  @return the cached instance
-     */
-    public Property fetch(Property prop) {
-
-        return (Property) fetch((Object) prop);
-    }
-
-    /**
-     *  Checks if the given {@link CommonHyphenation} is present in the cache -
-     *  if so, returns a reference to the cached instance.
-     *  Otherwise the given object is added to the cache and returned.
-     *
-     *  @param chy the CommonHyphenation instance to check for
-     *  @return the cached instance
-     */
-    public CommonHyphenation fetch(CommonHyphenation chy) {
-
-        return (CommonHyphenation) fetch((Object) chy);
-    }
-
-    /**
-     *  Checks if the given {@link CommonFont} is present in the cache -
-     *  if so, returns a reference to the cached instance.
-     *  Otherwise the given object is added to the cache and returned.
-     *
-     *  @param cf the CommonFont instance to check for
-     *  @return the cached instance
-     */
-    public CommonFont fetch(CommonFont cf) {
-
-        return (CommonFont) fetch((Object) cf);
-    }
-
-    /**
-     *  Checks if the given {@link CommonBorderPaddingBackground} is present in the cache -
-     *  if so, returns a reference to the cached instance.
-     *  Otherwise the given object is added to the cache and returned.
-     *
-     *  @param cbpb the CommonBorderPaddingBackground instance to check for
-     *  @return the cached instance
-     */
-    public CommonBorderPaddingBackground fetch(CommonBorderPaddingBackground cbpb) {
-
-        return (CommonBorderPaddingBackground) fetch((Object) cbpb);
-    }
-
-    /**
-     *  Checks if the given {@link CommonBorderPaddingBackground.BorderInfo} is present
-     *  in the cache - if so, returns a reference to the cached instance.
-     *  Otherwise the given object is added to the cache and returned.
-     *
-     *  @param bi the BorderInfo instance to check for
-     *  @return the cached instance
-     */
-    public CommonBorderPaddingBackground.BorderInfo fetch(
-            CommonBorderPaddingBackground.BorderInfo bi) {
-        return (CommonBorderPaddingBackground.BorderInfo) fetch((Object) bi);
-    }
-
-    /**
-     *  Checks if the given {@link org.apache.fop.fo.flow.Marker.MarkerAttribute} is present
-     *  in the cache - if so, returns a reference to the cached instance.
-     *  Otherwise the given object is added to the cache and returned.
-     *
-     *  @param ma the MarkerAttribute instance to check for
-     *  @return the cached instance
-     */
-    public Marker.MarkerAttribute fetch(
-            Marker.MarkerAttribute ma) {
-        return (Marker.MarkerAttribute) fetch((Object) ma);
-    }
-
     /** {@inheritDoc} */
+    @Override
     public String toString() {
         return super.toString() + "[runtimeType=" + this.runtimeType + "]";
     }
-
 
 }
