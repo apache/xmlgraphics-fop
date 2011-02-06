@@ -110,12 +110,8 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
     public List getNextKnuthElements(LayoutContext context, int alignment, Stack lmStack,
             Position restartPosition, LayoutManager restartAtLM) {
         resetSpaces();
-        if (lmStack == null) {
-            return super.getNextKnuthElements(context, alignment);
-        } else {
-            return super.getNextKnuthElements(context, alignment, lmStack, restartPosition,
-                    restartAtLM);
-        }
+        return super.getNextKnuthElements(
+                context, alignment, lmStack, restartPosition, restartAtLM);
     }
 
     private void resetSpaces() {

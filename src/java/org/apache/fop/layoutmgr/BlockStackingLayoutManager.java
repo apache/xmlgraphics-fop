@@ -238,119 +238,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     /** {@inheritDoc} */
     @Override
     public List getNextKnuthElements(LayoutContext context, int alignment) {
-        referenceIPD = context.getRefIPD();
-        updateContentAreaIPDwithOverconstrainedAdjust();
-
-        List<ListElement> contentList = new LinkedList<ListElement>();
-        List<ListElement> elements = new LinkedList<ListElement>();
-
-        if (!breakBeforeServed) {
-            breakBeforeServed = true;
-            if (!context.suppressBreakBefore()) {
-                if (addKnuthElementsForBreakBefore(elements, context)) {
-                    return elements;
-                }
-            }
-        }
-
-        if (!firstVisibleMarkServed) {
-            addKnuthElementsForSpaceBefore(elements, alignment);
-            context.updateKeepWithPreviousPending(getKeepWithPrevious());
-        }
-
-        addKnuthElementsForBorderPaddingBefore(elements, !firstVisibleMarkServed);
-        firstVisibleMarkServed = true;
-
-        //Spaces, border and padding to be repeated at each break
-        addPendingMarks(context);
-
-        //Used to indicate a special break-after case when all content has already been generated.
-        BreakElement forcedBreakAfterLast = null;
-
-        LayoutManager currentChildLM;
-        while ((currentChildLM = getChildLM()) != null) {
-            LayoutContext childLC = new LayoutContext(0);
-
-            List<ListElement> childrenElements
-                    = getNextChildElements(currentChildLM, context, childLC, alignment);
-
-            if (contentList.isEmpty()) {
-                //Propagate keep-with-previous up from the first child
-                context.updateKeepWithPreviousPending(childLC.getKeepWithPreviousPending());
-            }
-            if (childrenElements != null && !childrenElements.isEmpty()) {
-                if (!contentList.isEmpty()
-                        && !ElementListUtils.startsWithForcedBreak(childrenElements)) {
-                    // there is a block handled by prevLM before the one
-                    // handled by curLM, and the one handled
-                    // by the current LM does not begin with a break
-                    addInBetweenBreak(contentList, context, childLC);
-                }
-                if (childrenElements.size() == 1
-                        && ElementListUtils.startsWithForcedBreak(childrenElements)) {
-
-                    if (currentChildLM.isFinished() && !hasNextChildLM()) {
-                        // a descendant of this block has break-before
-                        forcedBreakAfterLast = (BreakElement) childrenElements.get(0);
-                        context.clearPendingMarks();
-                        break;
-                    }
-
-                    if (contentList.isEmpty()) {
-                        // Empty fo:block, zero-length box makes sure the IDs and/or markers
-                        // are registered and borders/padding are painted.
-                        elements.add(makeAuxiliaryZeroWidthBox());
-                    }
-                    // a descendant of this block has break-before
-                    contentList.addAll(childrenElements);
-
-                    wrapPositionElements(contentList, elements);
-
-                    return elements;
-                } else {
-                    contentList.addAll(childrenElements);
-                    if (ElementListUtils.endsWithForcedBreak(childrenElements)) {
-                        // a descendant of this block has break-after
-                        if (currentChildLM.isFinished() && !hasNextChildLM()) {
-                            forcedBreakAfterLast = (BreakElement) ListUtil.removeLast(contentList);
-                            context.clearPendingMarks();
-                            break;
-                        }
-
-                        wrapPositionElements(contentList, elements);
-
-                        return elements;
-                    }
-                }
-                context.updateKeepWithNextPending(childLC.getKeepWithNextPending());
-            }
-        }
-
-        if (!contentList.isEmpty()) {
-            wrapPositionElements(contentList, elements);
-        } else if (forcedBreakAfterLast == null) {
-            // Empty fo:block, zero-length box makes sure the IDs and/or markers
-            // are registered.
-            elements.add(makeAuxiliaryZeroWidthBox());
-        }
-
-        addKnuthElementsForBorderPaddingAfter(elements, true);
-        addKnuthElementsForSpaceAfter(elements, alignment);
-
-        //All child content is processed. Only break-after can occur now, so...
-        context.clearPendingMarks();
-        if (forcedBreakAfterLast == null) {
-            addKnuthElementsForBreakAfter(elements, context);
-        } else {
-            forcedBreakAfterLast.clearPendingMarks();
-            elements.add(forcedBreakAfterLast);
-        }
-
-        context.updateKeepWithNextPending(getKeepWithNext());
-
-        setFinished(true);
-
-        return elements;
+        return getNextKnuthElements(context, alignment, null, null, null);
     }
 
     /** {@inheritDoc} */
@@ -388,98 +276,99 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         BreakElement forcedBreakAfterLast = null;
 
         LayoutContext childLC = new LayoutContext(0);
-        List<ListElement> childrenElements;
+        List<ListElement> childElements;
         LayoutManager currentChildLM;
-        if (lmStack.isEmpty()) {
-            assert restartAtLM != null && restartAtLM.getParent() == this;
-            currentChildLM = restartAtLM;
-            currentChildLM.reset();
-            setCurrentChildLM(currentChildLM);
-
-            childrenElements = getNextChildElements(currentChildLM, context, childLC,
-                    alignment);
-        } else {
-            currentChildLM = (LayoutManager) lmStack.pop();
-            setCurrentChildLM(currentChildLM);
-            childrenElements = getNextChildElements(currentChildLM, context, childLC, alignment,
-                    lmStack, restartPosition, restartAtLM);
-        }
-
-        if (contentList.isEmpty()) {
-            //Propagate keep-with-previous up from the first child
-            context.updateKeepWithPreviousPending(childLC.getKeepWithPreviousPending());
-        }
-        if (childrenElements != null && !childrenElements.isEmpty()) {
-            if (!contentList.isEmpty()
-                    && !ElementListUtils.startsWithForcedBreak(childrenElements)) {
-                // there is a block handled by prevLM before the one
-                // handled by curLM, and the one handled
-                // by the current LM does not begin with a break
-                addInBetweenBreak(contentList, context, childLC);
-            }
-            if (childrenElements.size() == 1
-                    && ElementListUtils.startsWithForcedBreak(childrenElements)) {
-
-                if (currentChildLM.isFinished() && !hasNextChildLM()) {
-                    // a descendant of this block has break-before
-                    forcedBreakAfterLast = (BreakElement) childrenElements.get(0);
-                    context.clearPendingMarks();
-                }
-
-                if (contentList.isEmpty()) {
-                    // Empty fo:block, zero-length box makes sure the IDs and/or markers
-                    // are registered and borders/padding are painted.
-                    elements.add(makeAuxiliaryZeroWidthBox());
-                }
-                // a descendant of this block has break-before
-                contentList.addAll(childrenElements);
-
-                wrapPositionElements(contentList, elements);
-
-                return elements;
+        if (lmStack != null) {
+            if (lmStack.isEmpty()) {
+                assert restartAtLM != null && restartAtLM.getParent() == this;
+                currentChildLM = restartAtLM;
+                currentChildLM.reset();
+                setCurrentChildLM(currentChildLM);
+                childElements = getNextChildElements(currentChildLM, context, childLC, alignment);
             } else {
-                contentList.addAll(childrenElements);
-                if (ElementListUtils.endsWithForcedBreak(childrenElements)) {
-                    // a descendant of this block has break-after
+                currentChildLM = (LayoutManager) lmStack.pop();
+                setCurrentChildLM(currentChildLM);
+                childElements = getNextChildElements(currentChildLM, context, childLC, alignment,
+                        lmStack, restartPosition, restartAtLM);
+            }
+            if (contentList.isEmpty()) {
+                //Propagate keep-with-previous up from the first child
+                context.updateKeepWithPreviousPending(childLC.getKeepWithPreviousPending());
+            }
+            if (childElements != null && !childElements.isEmpty()) {
+                if (!contentList.isEmpty()
+                        && !ElementListUtils.startsWithForcedBreak(childElements)) {
+                    // there is a block handled by prevLM before the one
+                    // handled by curLM, and the one handled
+                    // by the current LM does not begin with a break
+                    addInBetweenBreak(contentList, context, childLC);
+                }
+                if (childElements.size() == 1
+                        && ElementListUtils.startsWithForcedBreak(childElements)) {
+
                     if (currentChildLM.isFinished() && !hasNextChildLM()) {
-                        forcedBreakAfterLast = (BreakElement) ListUtil.removeLast(contentList);
+                        // a descendant of this block has break-before
+                        forcedBreakAfterLast = (BreakElement) childElements.get(0);
                         context.clearPendingMarks();
                     }
+
+                    if (contentList.isEmpty()) {
+                        // Empty fo:block, zero-length box makes sure the IDs and/or markers
+                        // are registered and borders/padding are painted.
+                        elements.add(makeAuxiliaryZeroWidthBox());
+                    }
+                    // a descendant of this block has break-before
+                    contentList.addAll(childElements);
 
                     wrapPositionElements(contentList, elements);
 
                     return elements;
+                } else {
+                    contentList.addAll(childElements);
+                    if (ElementListUtils.endsWithForcedBreak(childElements)) {
+                        // a descendant of this block has break-after
+                        if (currentChildLM.isFinished() && !hasNextChildLM()) {
+                            forcedBreakAfterLast = (BreakElement) ListUtil.removeLast(contentList);
+                            context.clearPendingMarks();
+                        }
+
+                        wrapPositionElements(contentList, elements);
+
+                        return elements;
+                    }
                 }
+                context.updateKeepWithNextPending(childLC.getKeepWithNextPending());
             }
-            context.updateKeepWithNextPending(childLC.getKeepWithNextPending());
         }
 
         while ((currentChildLM = getChildLM()) != null) {
-            currentChildLM.reset(); // TODO won't work with forced breaks
+            if (lmStack != null) {
+                currentChildLM.reset(); // TODO won't work with forced breaks
+            }
 
             childLC = new LayoutContext(0);
 
-            childrenElements = getNextChildElements(currentChildLM, context, childLC,
+            childElements = getNextChildElements(currentChildLM, context, childLC,
                     alignment);
 
             if (contentList.isEmpty()) {
                 //Propagate keep-with-previous up from the first child
                 context.updateKeepWithPreviousPending(childLC.getKeepWithPreviousPending());
             }
-            if (childrenElements != null && !childrenElements.isEmpty()) {
+            if (childElements != null && !childElements.isEmpty()) {
                 if (!contentList.isEmpty()
-                        && !ElementListUtils.startsWithForcedBreak(childrenElements)) {
+                        && !ElementListUtils.startsWithForcedBreak(childElements)) {
                     // there is a block handled by prevLM before the one
                     // handled by curLM, and the one handled
                     // by the current LM does not begin with a break
                     addInBetweenBreak(contentList, context, childLC);
                 }
-                if (childrenElements.size() == 1
-                        && ElementListUtils.startsWithForcedBreak(childrenElements)) {
+                if (childElements.size() == 1
+                        && ElementListUtils.startsWithForcedBreak(childElements)) {
 
                     if (currentChildLM.isFinished() && !hasNextChildLM()) {
                         // a descendant of this block has break-before
-                        forcedBreakAfterLast = (BreakElement) childrenElements.get(0);
+                        forcedBreakAfterLast = (BreakElement) childElements.get(0);
                         context.clearPendingMarks();
                         break;
                     }
@@ -490,14 +379,14 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                         elements.add(makeAuxiliaryZeroWidthBox());
                     }
                     // a descendant of this block has break-before
-                    contentList.addAll(childrenElements);
+                    contentList.addAll(childElements);
 
                     wrapPositionElements(contentList, elements);
 
                     return elements;
                 } else {
-                    contentList.addAll(childrenElements);
-                    if (ElementListUtils.endsWithForcedBreak(childrenElements)) {
+                    contentList.addAll(childElements);
+                    if (ElementListUtils.endsWithForcedBreak(childElements)) {
                         // a descendant of this block has break-after
                         if (currentChildLM.isFinished() && !hasNextChildLM()) {
                             forcedBreakAfterLast = (BreakElement) ListUtil.removeLast(contentList);
@@ -780,8 +669,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         }
 
         // create the iterator
-        List<KnuthElement> workList = oldList;
-        ListIterator<KnuthElement> workListIterator = workList.listIterator();
+        ListIterator<KnuthElement> workListIterator = oldList.listIterator();
         while (workListIterator.hasNext()) {
             currElement = workListIterator.next();
             if (prevElement != null
@@ -793,8 +681,10 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                         = (BlockLevelLayoutManager)currElement.getLayoutManager();
                 boolean somethingAdded = false;
                 if (prevLM != this) {
-                    returnedList.addAll(prevLM.getChangedKnuthElements(workList.subList(
-                                fromIndex, workListIterator.previousIndex()), alignment));
+                    returnedList.addAll(
+                            prevLM.getChangedKnuthElements(
+                                    oldList.subList(fromIndex, workListIterator.previousIndex()),
+                                    alignment));
                     somethingAdded = true;
                 } else {
                     // do nothing
@@ -824,7 +714,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
             LayoutManager currLM = currElement.getLayoutManager();
             if (currLM != this) {
                 returnedList.addAll(currLM.getChangedKnuthElements(
-                        workList.subList(fromIndex, workList.size()), alignment));
+                        oldList.subList(fromIndex, oldList.size()), alignment));
             } else {
                 // there are no more elements to add
                 // remove the last penalty added to returnedList
