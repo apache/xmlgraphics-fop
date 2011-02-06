@@ -46,15 +46,13 @@ import org.apache.fop.traits.SpaceVal;
 public class BlockLayoutManager extends BlockStackingLayoutManager
             implements ConditionalElementListener {
 
-    /**
-     * logging instance
-     */
+    /** logging instance */
     private static Log log = LogFactory.getLog(BlockLayoutManager.class);
 
     private Block curBlockArea;
 
     /** Iterator over the child layout managers. */
-    protected ListIterator proxyLMiter;
+    protected ListIterator<LayoutManager> proxyLMiter;
 
     private int lead = 12000;
     private Length lineHeight;
@@ -78,44 +76,37 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
     }
 
     /** {@inheritDoc} */
+    @Override
     public void initialize() {
         super.initialize();
-        FontInfo fi = getBlockFO().getFOEventHandler().getFontInfo();
-        FontTriplet[] fontkeys = getBlockFO().getCommonFont().getFontState(fi);
+        org.apache.fop.fo.flow.Block fo = getBlockFO();
+        FontInfo fi = fo.getFOEventHandler().getFontInfo();
+        FontTriplet[] fontkeys = fo.getCommonFont().getFontState(fi);
         Font initFont = fi.getFontInstance(fontkeys[0],
                 getBlockFO().getCommonFont().fontSize.getValue(this));
         lead = initFont.getAscender();
         follow = -initFont.getDescender();
         //middleShift = -fs.getXHeight() / 2;
-        lineHeight = getBlockFO().getLineHeight().getOptimum(this).getLength();
-        startIndent = getBlockFO().getCommonMarginBlock().startIndent.getValue(this);
-        endIndent = getBlockFO().getCommonMarginBlock().endIndent.getValue(this);
-        foSpaceBefore = new SpaceVal(getBlockFO().getCommonMarginBlock().spaceBefore, this)
-                            .getSpace();
-        foSpaceAfter = new SpaceVal(getBlockFO().getCommonMarginBlock().spaceAfter, this)
-                            .getSpace();
-        bpUnit = 0; // non-standard extension
-        if (bpUnit == 0) {
-            // use optimum space values
-            adjustedSpaceBefore = getBlockFO().getCommonMarginBlock().spaceBefore.getSpace()
-                                        .getOptimum(this).getLength().getValue(this);
-            adjustedSpaceAfter = getBlockFO().getCommonMarginBlock().spaceAfter.getSpace()
-                                        .getOptimum(this).getLength().getValue(this);
-        } else {
-            // use minimum space values
-            adjustedSpaceBefore = getBlockFO().getCommonMarginBlock().spaceBefore.getSpace()
-                                        .getMinimum(this).getLength().getValue(this);
-            adjustedSpaceAfter = getBlockFO().getCommonMarginBlock().spaceAfter.getSpace()
-                                        .getMinimum(this).getLength().getValue(this);
-        }
+        lineHeight = fo.getLineHeight().getOptimum(this).getLength();
+        startIndent = fo.getCommonMarginBlock().startIndent.getValue(this);
+        endIndent = fo.getCommonMarginBlock().endIndent.getValue(this);
+        foSpaceBefore = new SpaceVal(fo.getCommonMarginBlock().spaceBefore, this).getSpace();
+        foSpaceAfter = new SpaceVal(fo.getCommonMarginBlock().spaceAfter, this).getSpace();
+        // use optimum space values
+        adjustedSpaceBefore = fo.getCommonMarginBlock().spaceBefore.getSpace()
+                                    .getOptimum(this).getLength().getValue(this);
+        adjustedSpaceAfter = fo.getCommonMarginBlock().spaceAfter.getSpace()
+                                    .getOptimum(this).getLength().getValue(this);
     }
 
     /** {@inheritDoc} */
+    @Override
     public List getNextKnuthElements(LayoutContext context, int alignment) {
         return getNextKnuthElements(context, alignment, null, null, null);
     }
 
     /** {@inheritDoc} */
+    @Override
     public List getNextKnuthElements(LayoutContext context, int alignment, Stack lmStack,
             Position restartPosition, LayoutManager restartAtLM) {
         resetSpaces();
@@ -151,7 +142,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
          */
         public ProxyLMiter() {
             super(BlockLayoutManager.this);
-            listLMs = new java.util.ArrayList(10);
+            listLMs = new java.util.ArrayList<LayoutManager>(10);
         }
 
         /**
@@ -166,7 +157,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
          * @return true if new child lms were added
          */
         protected boolean createNextChildLMs(int pos) {
-            List newLMs = createChildLMs(pos + 1 - listLMs.size());
+            List<LayoutManager> newLMs = createChildLMs(pos + 1 - listLMs.size());
             if (newLMs != null) {
                 listLMs.addAll(newLMs);
             }
@@ -174,13 +165,12 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
+    @Override
     public boolean createNextChildLMs(int pos) {
 
         while (proxyLMiter.hasNext()) {
-            LayoutManager lm = (LayoutManager) proxyLMiter.next();
+            LayoutManager lm = proxyLMiter.next();
             if (lm instanceof InlineLevelLayoutManager) {
                 LineLayoutManager lineLM = createLineManager(lm);
                 addChildLM(lineLM);
@@ -203,10 +193,10 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
     private LineLayoutManager createLineManager(LayoutManager firstlm) {
         LineLayoutManager llm;
         llm = new LineLayoutManager(getBlockFO(), lineHeight, lead, follow);
-        List inlines = new java.util.ArrayList();
+        List<LayoutManager> inlines = new java.util.ArrayList<LayoutManager>();
         inlines.add(firstlm);
         while (proxyLMiter.hasNext()) {
-            LayoutManager lm = (LayoutManager) proxyLMiter.next();
+            LayoutManager lm = proxyLMiter.next();
             if (lm instanceof InlineLevelLayoutManager) {
                 inlines.add(lm);
             } else {
@@ -219,23 +209,26 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
     }
 
     /** {@inheritDoc} */
+    @Override
     public KeepProperty getKeepTogetherProperty() {
         return getBlockFO().getKeepTogether();
     }
 
     /** {@inheritDoc} */
+    @Override
     public KeepProperty getKeepWithPreviousProperty() {
         return getBlockFO().getKeepWithPrevious();
     }
 
     /** {@inheritDoc} */
+    @Override
     public KeepProperty getKeepWithNextProperty() {
         return getBlockFO().getKeepWithNext();
     }
 
     /** {@inheritDoc} */
-    public void addAreas                                        // CSOK: MethodLength
-        (PositionIterator parentIter, LayoutContext layoutContext) {
+    @Override
+    public void addAreas(PositionIterator parentIter, LayoutContext layoutContext) {
         getParentArea(null);
 
         // if this will create the first block area in a page
@@ -256,14 +249,12 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
 
         // "unwrap" the NonLeafPositions stored in parentIter
         // and put them in a new list;
-        LinkedList positionList = new LinkedList();
+        LinkedList<Position> positionList = new LinkedList<Position>();
         Position pos;
-        boolean spaceBefore = false;
-        boolean spaceAfter = false;
         Position firstPos = null;
         Position lastPos = null;
         while (parentIter.hasNext()) {
-            pos = (Position) parentIter.next();
+            pos = parentIter.next();
             //log.trace("pos = " + pos.getClass().getName() + "; " + pos);
             if (pos.getIndex() >= 0) {
                 if (firstPos == null) {
@@ -276,30 +267,11 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
                 //Not all elements are wrapped
                 innerPosition = pos.getPosition();
             }
-            if (innerPosition == null) {
-                // pos was created by this BlockLM and was inside an element
-                // representing space before or after
-                // this means the space was not discarded
-                if (positionList.size() == 0) {
-                    // pos was in the element representing space-before
-                    spaceBefore = true;
-                    //log.trace(" space before");
-                } else {
-                    // pos was in the element representing space-after
-                    spaceAfter = true;
-                    //log.trace(" space-after");
-                }
-            } else if (innerPosition.getLM() == this
-                    && !(innerPosition instanceof MappingPosition)) {
-                // pos was created by this BlockLM and was inside a penalty
-                // allowing or forbidding a page break
-                // nothing to do
-                //log.trace(" penalty");
-            } else {
+
+            if (innerPosition != null) {
                 // innerPosition was created by another LM
                 positionList.add(innerPosition);
                 lastLM = innerPosition.getLM();
-                //log.trace(" " + innerPosition.getClass().getName());
             }
         }
 
@@ -307,78 +279,9 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
 
         addMarkersToPage(true, isFirst(firstPos), isLast(lastPos));
 
-        if (bpUnit == 0) {
-            // the Positions in positionList were inside the elements
-            // created by the LineLM
-            childPosIter = new StackingIter(positionList.listIterator());
-        } else {
-            // the Positions in positionList were inside the elements
-            // created by the BlockLM in the createUnitElements() method
-            //if (((Position) positionList.getLast()) instanceof
-                  // LeafPosition) {
-            //    // the last item inside positionList is a LeafPosition
-            //    // (a LineBreakPosition, more precisely); this means that
-            //    // the whole paragraph is on the same page
-            //    childPosIter = new KnuthPossPosIter(storedList, 0,
-                  // storedList.size());
-            //} else {
-            //    // the last item inside positionList is a Position;
-            //    // this means that the paragraph has been split
-            //    // between consecutive pages
-            LinkedList splitList = new LinkedList();
-            int splitLength = 0;
-            int iFirst = ((MappingPosition) positionList.getFirst()).getFirstIndex();
-            int iLast = ((MappingPosition) positionList.getLast()).getLastIndex();
-            // copy from storedList to splitList all the elements from
-            // iFirst to iLast
-            ListIterator storedListIterator = storedList.listIterator(iFirst);
-            while (storedListIterator.nextIndex() <= iLast) {
-                KnuthElement element = (KnuthElement) storedListIterator
-                        .next();
-                // some elements in storedList (i.e. penalty items) were created
-                // by this BlockLM, and must be ignored
-                if (element.getLayoutManager() != this) {
-                    splitList.add(element);
-                    splitLength += element.getWidth();
-                    lastLM = element.getLayoutManager();
-                }
-            }
-            //log.debug("Adding areas from " + iFirst + " to " + iLast);
-            //log.debug("splitLength= " + splitLength
-            //                   + " (" + neededUnits(splitLength) + " units') "
-            //                   + (neededUnits(splitLength) * bpUnit - splitLength)
-            //                   + " spacing");
-            // add space before and / or after the paragraph
-            // to reach a multiple of bpUnit
-            if (spaceBefore && spaceAfter) {
-                foSpaceBefore = new SpaceVal(getBlockFO()
-                                    .getCommonMarginBlock().spaceBefore, this).getSpace();
-                foSpaceAfter = new SpaceVal(getBlockFO()
-                                    .getCommonMarginBlock().spaceAfter, this).getSpace();
-                adjustedSpaceBefore = (neededUnits(splitLength
-                        + foSpaceBefore.getMin()
-                        + foSpaceAfter.getMin())
-                        * bpUnit - splitLength) / 2;
-                adjustedSpaceAfter = neededUnits(splitLength
-                        + foSpaceBefore.getMin()
-                        + foSpaceAfter.getMin())
-                        * bpUnit - splitLength - adjustedSpaceBefore;
-                } else if (spaceBefore) {
-                adjustedSpaceBefore = neededUnits(splitLength
-                        + foSpaceBefore.getMin())
-                        * bpUnit - splitLength;
-                } else {
-                adjustedSpaceAfter = neededUnits(splitLength
-                        + foSpaceAfter.getMin())
-                        * bpUnit - splitLength;
-                }
-            //log.debug("spazio prima = " + adjustedSpaceBefore
-                  // + " spazio dopo = " + adjustedSpaceAfter + " totale = " +
-                  // (adjustedSpaceBefore + adjustedSpaceAfter + splitLength));
-            childPosIter = new KnuthPossPosIter(splitList, 0, splitList
-                    .size());
-            //}
-        }
+        // the Positions in positionList were inside the elements
+        // created by the LineLM
+        childPosIter = new StackingIter(positionList.listIterator());
 
         while ((childLM = childPosIter.getNextChildLM()) != null) {
             // set last area flag
@@ -415,6 +318,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
      * @param childArea area to get the parent area for
      * @return the parent area
      */
+    @Override
     public Area getParentArea(Area childArea) {
         if (curBlockArea == null) {
             curBlockArea = new Block();
@@ -446,9 +350,8 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
         return curBlockArea;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
+    @Override
     public void addChildArea(Area childArea) {
         if (curBlockArea != null) {
             if (childArea instanceof LineArea) {
@@ -463,6 +366,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
      * Force current area to be added to parent area.
      * {@inheritDoc}
      */
+    @Override
     protected void flush() {
         if (curBlockArea != null) {
             TraitSetter.addBackground(curBlockArea,
@@ -486,6 +390,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
      * Returns the IPD of the content area
      * @return the IPD of the content area
      */
+    @Override
     public int getContentAreaIPD() {
         if (curBlockArea != null) {
             return curBlockArea.getIPD();
@@ -498,6 +403,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
      * Returns the BPD of the content area
      * @return the BPD of the content area
      */
+    @Override
     public int getContentAreaBPD() {
         if (curBlockArea != null) {
             return curBlockArea.getBPD();
@@ -505,9 +411,8 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
         return -1;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
+    @Override
     public boolean getGeneratesBlockArea() {
         return true;
     }
@@ -558,6 +463,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean isRestartable() {
         return true;
     }
