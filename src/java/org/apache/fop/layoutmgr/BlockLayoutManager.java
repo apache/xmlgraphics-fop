@@ -268,7 +268,9 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
                 innerPosition = pos.getPosition();
             }
 
-            if (innerPosition != null) {
+            if (innerPosition != null
+                    && (innerPosition.getLM() != this
+                        || innerPosition instanceof MappingPosition)) {
                 // innerPosition was created by another LM
                 positionList.add(innerPosition);
                 lastLM = innerPosition.getLM();
