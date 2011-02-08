@@ -253,22 +253,13 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         List<ListElement> contentList = new LinkedList<ListElement>();
         List<ListElement> elements = new LinkedList<ListElement>();
 
-        if (!breakBeforeServed) {
-            breakBeforeServed = true;
-            if (!context.suppressBreakBefore()) {
-                if (addKnuthElementsForBreakBefore(elements, context)) {
-                    return elements;
-                }
-            }
+        if (!breakBeforeServed(context, elements)) {
+            // if this FO has break-before specified, and it
+            // has not yet been processed, return now
+            return elements;
         }
 
-        if (!firstVisibleMarkServed) {
-            addKnuthElementsForSpaceBefore(elements, alignment);
-            context.updateKeepWithPreviousPending(getKeepWithPrevious());
-        }
-
-        addKnuthElementsForBorderPaddingBefore(elements, !firstVisibleMarkServed);
-        firstVisibleMarkServed = true;
+        addFirstVisibleMarks(elements, context, alignment);
 
         //Spaces, border and padding to be repeated at each break
         addPendingMarks(context);
@@ -279,14 +270,15 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         LayoutContext childLC;
         List<ListElement> childElements;
         LayoutManager currentChildLM;
+        // always reset in case of a restart (exception: see below)
         boolean doReset = isRestart;
         if (isRestart) {
             if (emptyStack) {
                 assert restartAtLM != null && restartAtLM.getParent() == this;
                 currentChildLM = restartAtLM;
-                currentChildLM.reset();
             } else {
                 currentChildLM = (LayoutManager) lmStack.pop();
+                // make sure the initial child LM is not reset
                 doReset = false;
             }
             setCurrentChildLM(currentChildLM);
@@ -318,6 +310,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                 // propagate keep-with-previous up from the first child
                 context.updateKeepWithPreviousPending(childLC.getKeepWithPreviousPending());
             }
+
             // handle non-empty child
             if (childElements != null && !childElements.isEmpty()) {
                 if (!contentList.isEmpty()
@@ -370,12 +363,15 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
             currentChildLM = getChildLM();
         }
 
-        if (!contentList.isEmpty()) {
+        if (contentList.isEmpty()) {
+            if (forcedBreakAfterLast == null) {
+                // empty fo:block: zero-length box makes sure the IDs and/or markers
+                // are registered.
+                elements.add(makeAuxiliaryZeroWidthBox());
+            }
+        } else {
+            // wrap child positions
             wrapPositionElements(contentList, elements);
-        } else if (forcedBreakAfterLast == null) {
-            // empty fo:block: zero-length box makes sure the IDs and/or markers
-            // are registered.
-            elements.add(makeAuxiliaryZeroWidthBox());
         }
 
         addKnuthElementsForBorderPaddingAfter(elements, true);
@@ -393,6 +389,45 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         context.updateKeepWithNextPending(getKeepWithNext());
         setFinished(true);
         return elements;
+    }
+
+    /**
+     * Checks if this LM's first "visible marks" (= borders, padding, spaces) have
+     * already been processed, and if necessary, adds corresponding elements to
+     * the specified list.
+     * @param elements  the element list
+     * @param context   the layout context
+     * @param alignment the vertical alignment
+     */
+    protected void addFirstVisibleMarks(List<ListElement> elements,
+                                        LayoutContext context, int alignment) {
+        if (!firstVisibleMarkServed) {
+            addKnuthElementsForSpaceBefore(elements, alignment);
+            context.updateKeepWithPreviousPending(getKeepWithPrevious());
+        }
+        addKnuthElementsForBorderPaddingBefore(elements, !firstVisibleMarkServed);
+        firstVisibleMarkServed = true;
+    }
+
+    /**
+     * Check whether there is a break-before condition. If so, and
+     * the specified {@code context} allows it, add the necessary elements
+     * to the given {@code elements} list.
+     * @param context   the layout context
+     * @param elements  the element list
+     * @return {@code false} if there is a break-before condition, and it has not been served;
+     * {@code true} otherwise
+     */
+    protected boolean breakBeforeServed(LayoutContext context, List<ListElement> elements) {
+        if (!breakBeforeServed) {
+            breakBeforeServed = true;
+            if (!context.suppressBreakBefore()) {
+                if (addKnuthElementsForBreakBefore(elements, context)) {
+                    return false;
+                }
+            }
+        }
+        return breakBeforeServed;
     }
 
     private KnuthBox makeZeroWidthBox() {
