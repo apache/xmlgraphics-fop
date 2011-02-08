@@ -188,11 +188,15 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
     public List getNextKnuthElements
         (LayoutContext context, int alignment, Stack lmStack,
          Position restartPosition, LayoutManager restartAtLM) {
-        boolean isRestart = (lmStack != null);
+
         resetSpaces();
         if (isAbsoluteOrFixed()) {
             return getNextKnuthElementsAbsolute(context);
         }
+
+        boolean isRestart = (lmStack != null);
+        boolean emptyStack = (!isRestart || lmStack.isEmpty());
+        BlockContainer fo = getBlockContainerFO();
 
         autoHeight = false;
         //boolean rotated = (getBlockContainerFO().getReferenceOrientation() % 180 != 0);
@@ -204,7 +208,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
             //(i.e., it depends on content's block-progression-dimension)" (XSL 1.0, 7.14.1)
             allocBPD = maxbpd;
             autoHeight = true;
-            if (getBlockContainerFO().getReferenceOrientation() == 0) {
+            if (fo.getReferenceOrientation() == 0) {
                 //Cannot easily inline element list when ref-or="180"
                 inlineElementList = true;
             }
@@ -223,23 +227,20 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         }
 
         double contentRectOffsetX = 0;
-        contentRectOffsetX += getBlockContainerFO()
-                .getCommonMarginBlock().startIndent.getValue(this);
+        contentRectOffsetX += fo.getCommonMarginBlock().startIndent.getValue(this);
         double contentRectOffsetY = 0;
-        contentRectOffsetY += getBlockContainerFO()
-                .getCommonBorderPaddingBackground().getBorderBeforeWidth(false);
-        contentRectOffsetY += getBlockContainerFO()
-                .getCommonBorderPaddingBackground().getPaddingBefore(false, this);
+        contentRectOffsetY += fo.getCommonBorderPaddingBackground().getBorderBeforeWidth(false);
+        contentRectOffsetY += fo.getCommonBorderPaddingBackground().getPaddingBefore(false, this);
 
         updateRelDims(contentRectOffsetX, contentRectOffsetY, autoHeight);
 
         int availableIPD = referenceIPD - getIPIndents();
         if (getContentAreaIPD() > availableIPD) {
             BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Provider.get(
-                    getBlockContainerFO().getUserAgent().getEventBroadcaster());
-            eventProducer.objectTooWide(this, getBlockContainerFO().getName(),
+                    fo.getUserAgent().getEventBroadcaster());
+            eventProducer.objectTooWide(this, fo.getName(),
                     getContentAreaIPD(), context.getRefIPD(),
-                    getBlockContainerFO().getLocator());
+                    fo.getLocator());
         }
 
         MinOptMax stackLimit = MinOptMax.getInstance(relDims.bpd);
@@ -248,125 +249,60 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         List<ListElement> contentList = new LinkedList<ListElement>();
         List<ListElement> returnList = new LinkedList<ListElement>();
 
-        if (!breakBeforeServed) {
-            breakBeforeServed = true;
-            if (!context.suppressBreakBefore()) {
-                if (addKnuthElementsForBreakBefore(returnList, context)) {
-                    return returnList;
-                }
-            }
+        if (!breakBeforeServed(context, returnList)) {
+            return returnList;
         }
 
-        if (!firstVisibleMarkServed) {
-            addKnuthElementsForSpaceBefore(returnList, alignment);
-            context.updateKeepWithPreviousPending(getKeepWithPrevious());
-        }
-
-        addKnuthElementsForBorderPaddingBefore(returnList, !firstVisibleMarkServed);
-        firstVisibleMarkServed = true;
+        addFirstVisibleMarks(returnList, context, alignment);
 
         if (autoHeight && inlineElementList) {
             //Spaces, border and padding to be repeated at each break
             addPendingMarks(context);
 
-            LayoutManager curLM  = null; // currently active LM
+            LayoutManager curLM; // currently active LM
             LayoutManager prevLM = null; // previously active LM
 
-            LayoutContext childLC = new LayoutContext(0);
+            LayoutContext childLC;
+            boolean doReset = true;
             if (isRestart) {
-                if (lmStack.isEmpty()) {
+                if (emptyStack) {
                     assert restartAtLM != null && restartAtLM.getParent() == this;
                     curLM = restartAtLM;
-                    curLM.reset();
-                    setCurrentChildLM(curLM);
-
-                    childLC.copyPendingMarksFrom(context);
-                    childLC.setStackLimitBP(context.getStackLimitBP().minus(stackLimit));
-                    childLC.setRefIPD(relDims.ipd);
-                    childLC.setWritingMode(getBlockContainerFO().getWritingMode());
-                    if (curLM == this.childLMs.get(0)) {
-                        childLC.setFlags(LayoutContext.SUPPRESS_BREAK_BEFORE);
-                        //Handled already by the parent (break collapsing, see above)
-                    }
-
-                    // get elements from curLM
-                    returnedList = curLM.getNextKnuthElements(childLC, alignment);
                 } else {
                     curLM = (LayoutManager) lmStack.pop();
-                    setCurrentChildLM(curLM);
-
-                    childLC.copyPendingMarksFrom(context);
-                    childLC.setStackLimitBP(context.getStackLimitBP().minus(stackLimit));
-                    childLC.setRefIPD(relDims.ipd);
-                    childLC.setWritingMode(getBlockContainerFO().getWritingMode());
-                    if (curLM == this.childLMs.get(0)) {
-                        childLC.setFlags(LayoutContext.SUPPRESS_BREAK_BEFORE);
-                        //Handled already by the parent (break collapsing, see above)
-                    }
-
-                    // get elements from curLM
-                    returnedList = curLM.getNextKnuthElements(childLC, alignment, lmStack,
-                            restartPosition, restartAtLM);
+                    // make sure the initial LM is not reset
+                    doReset = false;
                 }
-                if (contentList.isEmpty() && childLC.isKeepWithPreviousPending()) {
-                    //Propagate keep-with-previous up from the first child
-                    context.updateKeepWithPreviousPending(childLC.getKeepWithPreviousPending());
-                    childLC.clearKeepWithPreviousPending();
-                }
-                if (returnedList.size() == 1
-                        && ElementListUtils.startsWithForcedBreak(returnedList)) {
-                    // a descendant of this block has break-before
-                    contentList.addAll(returnedList);
-
-                    // "wrap" the Position inside each element
-                    // moving the elements from contentList to returnList
-                    wrapPositionElements(contentList, returnList);
-
-                    return returnList;
-                } else {
-                    if (prevLM != null) {
-                        // there is a block handled by prevLM
-                        // before the one handled by curLM
-                        addInBetweenBreak(contentList, context, childLC);
-                    }
-                    contentList.addAll(returnedList);
-                    if (!returnedList.isEmpty()) {
-                        if (ElementListUtils.endsWithForcedBreak(returnedList)) {
-                            // a descendant of this block has break-after
-                            if (curLM.isFinished() && !hasNextChildLM()) {
-                                // there is no other content in this block;
-                                // it's useless to add space after before a page break
-                                setFinished(true);
-                            }
-
-                            wrapPositionElements(contentList, returnList);
-
-                            return returnList;
-                        }
-                    }
-                }
+                setCurrentChildLM(curLM);
+            } else {
+                curLM = getChildLM();
             }
 
-            // propagate and clear
-            context.updateKeepWithNextPending(childLC.getKeepWithNextPending());
-            childLC.clearKeepsPending();
-            prevLM = curLM;
-
-            while ((curLM = getChildLM()) != null) {
-                curLM.reset();
+            while (curLM != null) {
+                if (doReset) {
+                    curLM.reset();
+                }
                 childLC = new LayoutContext(0);
                 childLC.copyPendingMarksFrom(context);
-                // curLM is a ?
                 childLC.setStackLimitBP(context.getStackLimitBP().minus(stackLimit));
                 childLC.setRefIPD(relDims.ipd);
-                childLC.setWritingMode(getBlockContainerFO().getWritingMode());
+                childLC.setWritingMode(fo.getWritingMode());
                 if (curLM == this.childLMs.get(0)) {
                     childLC.setFlags(LayoutContext.SUPPRESS_BREAK_BEFORE);
                     //Handled already by the parent (break collapsing, see above)
                 }
 
                 // get elements from curLM
-                returnedList = curLM.getNextKnuthElements(childLC, alignment);
+                if (!isRestart || emptyStack) {
+                    returnedList = curLM.getNextKnuthElements(childLC, alignment);
+                } else {
+                    returnedList = curLM.getNextKnuthElements(childLC, alignment,
+                            lmStack, restartPosition, restartAtLM);
+                    // once encountered, irrelevant for following child LMs
+                    emptyStack = true;
+                    // force reset as of the next child
+                    doReset = true;
+                }
                 if (contentList.isEmpty() && childLC.isKeepWithPreviousPending()) {
                     //Propagate keep-with-previous up from the first child
                     context.updateKeepWithPreviousPending(childLC.getKeepWithPreviousPending());
@@ -410,10 +346,9 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
                 context.updateKeepWithNextPending(childLC.getKeepWithNextPending());
                 childLC.clearKeepsPending();
                 prevLM = curLM;
+                curLM = getChildLM();
             }
-
             wrapPositionElements(contentList, returnList);
-
         } else {
             returnList.add(generateNonInlinedBox(contentRectOffsetX, contentRectOffsetY));
         }
