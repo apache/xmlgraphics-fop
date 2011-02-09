@@ -19,7 +19,6 @@
 
 package org.apache.fop.layoutmgr;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -38,7 +37,6 @@ import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.SpaceProperty;
 import org.apache.fop.layoutmgr.inline.InlineLayoutManager;
-import org.apache.fop.layoutmgr.inline.LineLayoutManager;
 import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.util.BreakUtil;
 import org.apache.fop.util.ListUtil;
@@ -261,9 +259,6 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
 
         addFirstVisibleMarks(elements, context, alignment);
 
-        //Spaces, border and padding to be repeated at each break
-        addPendingMarks(context);
-
         //Used to indicate a special break-after case when all content has already been generated.
         BreakElement forcedBreakAfterLast = null;
 
@@ -291,7 +286,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                 currentChildLM.reset(); // TODO won't work with forced breaks
             }
 
-            childLC = new LayoutContext(0);
+            childLC = makeChildLayoutContext(context);
 
             if (!isRestart || emptyStack) {
                 childElements = getNextChildElements(currentChildLM, context, childLC, alignment,
@@ -374,11 +369,8 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
             wrapPositionElements(contentList, elements);
         }
 
-        addKnuthElementsForBorderPaddingAfter(elements, true);
-        addKnuthElementsForSpaceAfter(elements, alignment);
+        addLastVisibleMarks(elements, context, alignment);
 
-        // All child content processed. Only break-after can occur now, so...
-        context.clearPendingMarks();
         if (forcedBreakAfterLast == null) {
             addKnuthElementsForBreakAfter(elements, context);
         } else {
@@ -392,21 +384,53 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     }
 
     /**
+     * Creates and initializes a {@link LayoutContext} to pass to the child LM
+     * @param context   the parent {@link LayoutContext}
+     * @return a new child layout context
+     */
+    protected LayoutContext makeChildLayoutContext(LayoutContext context) {
+        LayoutContext childLC = new LayoutContext(0);
+        childLC.copyPendingMarksFrom(context);
+        childLC.setStackLimitBP(context.getStackLimitBP());
+        childLC.setRefIPD(referenceIPD);
+        return childLC;
+    }
+
+    /**
      * Checks if this LM's first "visible marks" (= borders, padding, spaces) have
      * already been processed, and if necessary, adds corresponding elements to
-     * the specified list.
+     * the specified list, and updates the given layout context accordingly.
      * @param elements  the element list
      * @param context   the layout context
      * @param alignment the vertical alignment
      */
     protected void addFirstVisibleMarks(List<ListElement> elements,
-                                        LayoutContext context, int alignment) {
+            LayoutContext context, int alignment) {
         if (!firstVisibleMarkServed) {
             addKnuthElementsForSpaceBefore(elements, alignment);
             context.updateKeepWithPreviousPending(getKeepWithPrevious());
         }
         addKnuthElementsForBorderPaddingBefore(elements, !firstVisibleMarkServed);
         firstVisibleMarkServed = true;
+
+        //Spaces, border and padding to be repeated at each break
+        addPendingMarks(context);
+    }
+
+    /**
+     * Adds elements the LM's last/closing marks to the specified list, and
+     * updates the layout context accordingly.
+     * @param elements  the element list
+     * @param context   the layout context
+     * @param alignment the vertical alignment
+     */
+    protected void addLastVisibleMarks(List<ListElement> elements,
+            LayoutContext context, int alignment) {
+        addKnuthElementsForBorderPaddingAfter(elements, true);
+        addKnuthElementsForSpaceAfter(elements, alignment);
+
+        // All child content processed. Only break-after can occur now, so...
+        context.clearPendingMarks();
     }
 
     /**
@@ -450,31 +474,36 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                              isAuxiliary);
     }
 
-    private List<ListElement> getNextChildElements(LayoutManager childLM, LayoutContext context,
-            LayoutContext childLC, int alignment, Stack lmStack, Position restartPosition,
-            LayoutManager restartAtLM) {
-        childLC.copyPendingMarksFrom(context);
-        childLC.setStackLimitBP(context.getStackLimitBP());
-        if (childLM instanceof LineLayoutManager) {
-            childLC.setRefIPD(getContentAreaIPD());
-        } else {
-            childLC.setRefIPD(referenceIPD);
-        }
+    /**
+     * Gets the next set of child elements for the given childLM.
+     * The default implementation basically copies the pending marks to the child layout context,
+     * and subsequently calls the appropriate variant of {@code childLM.getNextKnuthElements()},
+     * passing it all relevant parameters.
+     * @param childLM   the current child LM
+     * @param context   the layout context
+     * @param childLC   the child layout context
+     * @param alignment the vertical alignment
+     * @param lmStack   the stack of currently active LMs (if any)
+     * @param restartPosition   the position to restart from (if any)
+     * @param restartAtLM   the LM to restart from (if any)
+     * @return  list of elements corresponding to the content generated by childLM
+     */
+    protected List<ListElement> getNextChildElements(LayoutManager childLM, LayoutContext context,
+            LayoutContext childLC, int alignment, Stack<LayoutManager> lmStack,
+            Position restartPosition, LayoutManager restartAtLM) {
+
         if (childLM == this.childLMs.get(0)) {
             childLC.setFlags(LayoutContext.SUPPRESS_BREAK_BEFORE);
             //Handled already by the parent (break collapsing, see above)
         }
 
         if (lmStack == null) {
+            // route to default implementation, in case childLM does not provide
+            // an override similar to this class
             return childLM.getNextKnuthElements(childLC, alignment);
         } else {
-            if (childLM instanceof LineLayoutManager) {
-                return ((LineLayoutManager) childLM).getNextKnuthElements(childLC, alignment,
-                        (LeafPosition) restartPosition);
-            } else {
-                return childLM.getNextKnuthElements(childLC, alignment,
-                        lmStack, restartPosition, restartAtLM);
-            }
+            return childLM.getNextKnuthElements(childLC, alignment, lmStack,
+                    restartPosition, restartAtLM);
         }
     }
 
@@ -908,7 +937,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     }
 
     /** @return the space-before property */
-    private SpaceProperty getSpaceBeforeProperty() {
+    protected SpaceProperty getSpaceBeforeProperty() {
         if (fobj instanceof org.apache.fop.fo.flow.Block) {
             return ((org.apache.fop.fo.flow.Block)fobj)
                 .getCommonMarginBlock().spaceBefore;
@@ -930,7 +959,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     }
 
     /** @return the space-after property */
-    private SpaceProperty getSpaceAfterProperty() {
+    protected SpaceProperty getSpaceAfterProperty() {
         if (fobj instanceof org.apache.fop.fo.flow.Block) {
             return ((org.apache.fop.fo.flow.Block)fobj)
                 .getCommonMarginBlock().spaceAfter;

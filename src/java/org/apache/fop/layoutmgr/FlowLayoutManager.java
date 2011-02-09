@@ -141,7 +141,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
             return elements;
         }
 
-        LayoutContext childLC = new LayoutContext(0);
+        LayoutContext childLC = makeChildLayoutContext(context);
         List<ListElement> childElements
                 = getNextChildElements(childLM, context, childLC, alignment, lmStack,
                     position, restartAtLM);
@@ -193,13 +193,29 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
         }
     }
 
-    private List<ListElement> getNextChildElements(LayoutManager childLM, LayoutContext context,
-            LayoutContext childLC, int alignment, Stack<LayoutManager> lmStack,
-            Position restartPosition, LayoutManager restartLM) {
+    /**
+     * Overridden to take into account the current page-master's
+     * writing-mode
+     * {@inheritDoc}
+     */
+    @Override
+    protected LayoutContext makeChildLayoutContext(LayoutContext context) {
+        LayoutContext childLC = new LayoutContext(0);
         childLC.setStackLimitBP(context.getStackLimitBP());
         childLC.setRefIPD(context.getRefIPD());
         childLC.setWritingMode(getCurrentPage().getSimplePageMaster().getWritingMode());
+        return childLC;
+    }
 
+    /**
+     * Overridden to wrap the child positions before returning the list
+     * {@inheritDoc}
+     */
+    @Override
+    protected List<ListElement> getNextChildElements(LayoutManager childLM, LayoutContext context,
+            LayoutContext childLC, int alignment, Stack<LayoutManager> lmStack,
+            Position restartPosition, LayoutManager restartLM) {
+        
         List<ListElement> childElements;
         if (lmStack == null) {
             childElements = childLM.getNextKnuthElements(childLC, alignment);

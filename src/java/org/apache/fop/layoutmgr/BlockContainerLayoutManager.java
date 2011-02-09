@@ -86,6 +86,8 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
     private MinOptMax effSpaceBefore;
     private MinOptMax effSpaceAfter;
 
+    private double contentRectOffsetX = 0;
+    private double contentRectOffsetY = 0;
 
     /**
      * Create a new block container layout manager.
@@ -183,67 +185,36 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         return getNextKnuthElements(context, alignment, null, null, null);
     }
 
+    /**
+     * Overridden to handle writing-mode, and different stack limit
+     * setup.
+     * {@inheritDoc}
+     */
+    @Override
+    protected LayoutContext makeChildLayoutContext(LayoutContext context) {
+        LayoutContext childLC = new LayoutContext(0);
+        childLC.setStackLimitBP(
+                context.getStackLimitBP().minus(MinOptMax.getInstance(relDims.bpd)));
+        childLC.setRefIPD(relDims.ipd);
+        childLC.setWritingMode(getBlockContainerFO().getWritingMode());
+        return childLC;
+    }
+
     /** {@inheritDoc} */
-    @Override                                                    // CSOK: MethodLength
-    public List getNextKnuthElements
-        (LayoutContext context, int alignment, Stack lmStack,
-         Position restartPosition, LayoutManager restartAtLM) {
+    @Override
+    public List getNextKnuthElements(LayoutContext context, int alignment, Stack lmStack,
+        Position restartPosition, LayoutManager restartAtLM) {
 
         resetSpaces();
+        // special treatment for position="absolute|fixed"
         if (isAbsoluteOrFixed()) {
             return getNextKnuthElementsAbsolute(context);
         }
 
         boolean isRestart = (lmStack != null);
         boolean emptyStack = (!isRestart || lmStack.isEmpty());
-        BlockContainer fo = getBlockContainerFO();
 
-        autoHeight = false;
-        //boolean rotated = (getBlockContainerFO().getReferenceOrientation() % 180 != 0);
-        int maxbpd = context.getStackLimitBP().getOpt();
-        int allocBPD;
-        if (height.getEnum() == EN_AUTO
-                || (!height.isAbsolute() && getAncestorBlockAreaBPD() <= 0)) {
-            //auto height when height="auto" or "if that dimension is not specified explicitly
-            //(i.e., it depends on content's block-progression-dimension)" (XSL 1.0, 7.14.1)
-            allocBPD = maxbpd;
-            autoHeight = true;
-            if (fo.getReferenceOrientation() == 0) {
-                //Cannot easily inline element list when ref-or="180"
-                inlineElementList = true;
-            }
-        } else {
-            allocBPD = height.getValue(this); //this is the content-height
-            allocBPD += getBPIndents();
-        }
-        vpContentBPD = allocBPD - getBPIndents();
-
-        referenceIPD = context.getRefIPD();
-        if (width.getEnum() == EN_AUTO) {
-            updateContentAreaIPDwithOverconstrainedAdjust();
-        } else {
-            int contentWidth = width.getValue(this);
-            updateContentAreaIPDwithOverconstrainedAdjust(contentWidth);
-        }
-
-        double contentRectOffsetX = 0;
-        contentRectOffsetX += fo.getCommonMarginBlock().startIndent.getValue(this);
-        double contentRectOffsetY = 0;
-        contentRectOffsetY += fo.getCommonBorderPaddingBackground().getBorderBeforeWidth(false);
-        contentRectOffsetY += fo.getCommonBorderPaddingBackground().getPaddingBefore(false, this);
-
-        updateRelDims(contentRectOffsetX, contentRectOffsetY, autoHeight);
-
-        int availableIPD = referenceIPD - getIPIndents();
-        if (getContentAreaIPD() > availableIPD) {
-            BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Provider.get(
-                    fo.getUserAgent().getEventBroadcaster());
-            eventProducer.objectTooWide(this, fo.getName(),
-                    getContentAreaIPD(), context.getRefIPD(),
-                    fo.getLocator());
-        }
-
-        MinOptMax stackLimit = MinOptMax.getInstance(relDims.bpd);
+        setupAreaDimensions(context);
 
         List<ListElement> returnedList;
         List<ListElement> contentList = new LinkedList<ListElement>();
@@ -256,14 +227,12 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         addFirstVisibleMarks(returnList, context, alignment);
 
         if (autoHeight && inlineElementList) {
-            //Spaces, border and padding to be repeated at each break
-            addPendingMarks(context);
 
             LayoutManager curLM; // currently active LM
             LayoutManager prevLM = null; // previously active LM
 
             LayoutContext childLC;
-            boolean doReset = true;
+            boolean doReset = isRestart;
             if (isRestart) {
                 if (emptyStack) {
                     assert restartAtLM != null && restartAtLM.getParent() == this;
@@ -282,21 +251,15 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
                 if (doReset) {
                     curLM.reset();
                 }
-                childLC = new LayoutContext(0);
-                childLC.copyPendingMarksFrom(context);
-                childLC.setStackLimitBP(context.getStackLimitBP().minus(stackLimit));
-                childLC.setRefIPD(relDims.ipd);
-                childLC.setWritingMode(fo.getWritingMode());
-                if (curLM == this.childLMs.get(0)) {
-                    childLC.setFlags(LayoutContext.SUPPRESS_BREAK_BEFORE);
-                    //Handled already by the parent (break collapsing, see above)
-                }
+
+                childLC = makeChildLayoutContext(context);
 
                 // get elements from curLM
                 if (!isRestart || emptyStack) {
-                    returnedList = curLM.getNextKnuthElements(childLC, alignment);
+                    returnedList = getNextChildElements(curLM, context, childLC, alignment,
+                            null, null, null);
                 } else {
-                    returnedList = curLM.getNextKnuthElements(childLC, alignment,
+                    returnedList = getNextChildElements(curLM, context, childLC, alignment,
                             lmStack, restartPosition, restartAtLM);
                     // once encountered, irrelevant for following child LMs
                     emptyStack = true;
@@ -338,7 +301,6 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
                         }
 
                         wrapPositionElements(contentList, returnList);
-
                         return returnList;
                     }
                 }
@@ -350,13 +312,11 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
             }
             wrapPositionElements(contentList, returnList);
         } else {
-            returnList.add(generateNonInlinedBox(contentRectOffsetX, contentRectOffsetY));
+            returnList.add(generateNonInlinedBox());
         }
-        addKnuthElementsForBorderPaddingAfter(returnList, true);
-        addKnuthElementsForSpaceAfter(returnList, alignment);
 
-        //All child content is processed. Only break-after can occur now, so...
-        context.clearPendingMarks();
+        addLastVisibleMarks(returnList, context, alignment);
+
         addKnuthElementsForBreakAfter(returnList, context);
 
         context.updateKeepWithNextPending(getKeepWithNext());
@@ -365,8 +325,50 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         return returnList;
     }
 
-    private KnuthBox generateNonInlinedBox(double contentRectOffsetX,
-                                           double contentRectOffsetY) {
+    private void setupAreaDimensions(LayoutContext context) {
+        autoHeight = false;
+        int maxbpd = context.getStackLimitBP().getOpt();
+        int allocBPD;
+        BlockContainer fo = getBlockContainerFO();
+        if (height.getEnum() == EN_AUTO
+                || (!height.isAbsolute() && getAncestorBlockAreaBPD() <= 0)) {
+            //auto height when height="auto" or "if that dimension is not specified explicitly
+            //(i.e., it depends on content's block-progression-dimension)" (XSL 1.0, 7.14.1)
+            allocBPD = maxbpd;
+            autoHeight = true;
+            //Cannot easily inline element list when ref-or<>"0"
+            inlineElementList = (fo.getReferenceOrientation() == 0);
+        } else {
+            allocBPD = height.getValue(this); //this is the content-height
+            allocBPD += getBPIndents();
+        }
+        vpContentBPD = allocBPD - getBPIndents();
+
+        referenceIPD = context.getRefIPD();
+        if (width.getEnum() == EN_AUTO) {
+            updateContentAreaIPDwithOverconstrainedAdjust();
+        } else {
+            int contentWidth = width.getValue(this);
+            updateContentAreaIPDwithOverconstrainedAdjust(contentWidth);
+        }
+
+        contentRectOffsetX += fo.getCommonMarginBlock().startIndent.getValue(this);
+        contentRectOffsetY += fo.getCommonBorderPaddingBackground().getBorderBeforeWidth(false);
+        contentRectOffsetY += fo.getCommonBorderPaddingBackground().getPaddingBefore(false, this);
+
+        updateRelDims();
+
+        int availableIPD = referenceIPD - getIPIndents();
+        if (getContentAreaIPD() > availableIPD) {
+            BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Provider.get(
+                    fo.getUserAgent().getEventBroadcaster());
+            eventProducer.objectTooWide(this, fo.getName(),
+                    getContentAreaIPD(), context.getRefIPD(),
+                    fo.getLocator());
+        }
+    }
+
+    private KnuthBox generateNonInlinedBox() {
 
         MinOptMax range = MinOptMax.getInstance(relDims.ipd);
         BlockContainerBreaker breaker = new BlockContainerBreaker(this, range);
@@ -380,7 +382,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
             } else {
                 vpContentBPD = newHeight;
             }
-            updateRelDims(contentRectOffsetX, contentRectOffsetY, false);
+            updateRelDims();
         }
 
         Position bcPosition = new BlockContainerPosition(this, breaker);
@@ -414,7 +416,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         return true;
     }
 
-    private List getNextKnuthElementsAbsolute(LayoutContext context) {
+    private List<ListElement> getNextKnuthElementsAbsolute(LayoutContext context) {
         autoHeight = false;
 
         boolean bpDirectionChanges = blockProgressionDirectionChanges();
@@ -520,7 +522,9 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         vpContentBPD = allocBPD - getBPIndents();
         setContentAreaIPD(allocIPD - getIPIndents());
 
-        updateRelDims(0, 0, autoHeight);
+        contentRectOffsetX = 0;
+        contentRectOffsetY = 0;
+        updateRelDims();
 
         MinOptMax range = MinOptMax.getInstance(relDims.ipd);
         BlockContainerBreaker breaker = new BlockContainerBreaker(this, range);
@@ -534,9 +538,9 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
             } else {
                 vpContentBPD = newHeight;
             }
-            updateRelDims(0, 0, false);
+            updateRelDims();
         }
-        List returnList = new LinkedList();
+        List<ListElement> returnList = new LinkedList<ListElement>();
         if (!breaker.isEmpty()) {
             Position bcPosition = new BlockContainerPosition(this, breaker);
             returnList.add(new KnuthBox(0, notifyPos(bcPosition), false));
@@ -556,9 +560,9 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         return returnList;
     }
 
-    private void updateRelDims(double xOffset, double yOffset, boolean skipAutoHeight) {
+    private void updateRelDims() {
         Rectangle2D rect = new Rectangle2D.Double(
-                xOffset, yOffset,
+                contentRectOffsetX, contentRectOffsetY,
                 getContentAreaIPD(),
                 this.vpContentBPD);
         relDims = new FODimension(0, 0);
@@ -616,7 +620,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         }
 
         public int getDifferenceOfFirstPart() {
-            PageBreakPosition pbp = (PageBreakPosition)this.deferredAlg.getPageBreaks().getFirst();
+            PageBreakPosition pbp = this.deferredAlg.getPageBreaks().getFirst();
             return pbp.difference;
         }
 
@@ -645,13 +649,10 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
 
         protected List getNextKnuthElements(LayoutContext context, int alignment) {
             LayoutManager curLM; // currently active LM
-            List returnList = new LinkedList();
+            List<ListElement> returnList = new LinkedList<ListElement>();
 
             while ((curLM = getChildLM()) != null) {
-                LayoutContext childLC = new LayoutContext(0);
-                childLC.setStackLimitBP(context.getStackLimitBP());
-                childLC.setRefIPD(context.getRefIPD());
-                childLC.setWritingMode(getBlockContainerFO().getWritingMode());
+                LayoutContext childLC = makeChildLayoutContext(context);
 
                 List returnedList = null;
                 if (!curLM.isFinished()) {
