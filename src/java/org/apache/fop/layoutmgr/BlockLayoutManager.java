@@ -114,6 +114,42 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
                 context, alignment, lmStack, restartPosition, restartAtLM);
     }
 
+    /**
+     * Overridden to take into account that the childLM may be the block's
+     * {@link LineLayoutManager}.
+     * {@inheritDoc}
+     */
+    @Override
+    protected List<ListElement> getNextChildElements(LayoutManager childLM, LayoutContext context,
+           LayoutContext childLC, int alignment, Stack lmStack, Position restartPosition,
+           LayoutManager restartAtLM) {
+
+        childLC.copyPendingMarksFrom(context);
+
+        if (childLM instanceof LineLayoutManager) {
+            childLC.setRefIPD(getContentAreaIPD());
+        } else {
+            // nop; will have been properly set by makeChildLayoutContext()
+        }
+
+        if (childLM == this.childLMs.get(0)) {
+            childLC.setFlags(LayoutContext.SUPPRESS_BREAK_BEFORE);
+            //Handled already by the parent (break collapsing, see above)
+        }
+
+        if (lmStack == null) {
+            return childLM.getNextKnuthElements(childLC, alignment);
+        } else {
+            if (childLM instanceof LineLayoutManager) {
+                return ((LineLayoutManager) childLM).getNextKnuthElements(childLC, alignment,
+                        (LeafPosition) restartPosition);
+            } else {
+                return childLM.getNextKnuthElements(childLC, alignment,
+                        lmStack, restartPosition, restartAtLM);
+            }
+        }
+    }
+
     private void resetSpaces() {
         this.discardBorderBefore = false;
         this.discardBorderAfter = false;
