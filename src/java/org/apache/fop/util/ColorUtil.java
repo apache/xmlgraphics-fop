@@ -238,7 +238,11 @@ public final class ColorUtil {
                 float red = parseComponent255(args[0], value);
                 float green = parseComponent255(args[1], value);
                 float blue = parseComponent255(args[2], value);
-                parsedColor = new Color(red, green, blue);
+                //Convert to ints to synchronize the behaviour with toRGBFunctionCall()
+                int r = (int)(red * 255 + 0.5);
+                int g = (int)(green * 255 + 0.5);
+                int b = (int)(blue * 255 + 0.5);
+                parsedColor = new Color(r, g, b);
             } catch (PropertyException pe) {
                 //simply re-throw
                 throw pe;
