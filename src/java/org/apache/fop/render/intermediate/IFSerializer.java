@@ -33,6 +33,7 @@ import java.util.Map;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -75,6 +76,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     }
 
     /** {@inheritDoc} */
+    @Override
     protected String getMainNamespace() {
         return NAMESPACE;
     }
@@ -101,6 +103,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     }
 
     /** {@inheritDoc} */
+    @Override
     public IFDocumentNavigationHandler getDocumentNavigationHandler() {
         return this;
     }
@@ -146,6 +149,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     }
 
     /** {@inheritDoc} */
+    @Override
     public void startDocument() throws IFException {
         super.startDocument();
         try {
@@ -161,6 +165,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     }
 
     /** {@inheritDoc} */
+    @Override
     public void startDocumentHeader() throws IFException {
         try {
             handler.startElement(EL_HEADER);
@@ -170,6 +175,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     }
 
     /** {@inheritDoc} */
+    @Override
     public void endDocumentHeader() throws IFException {
         try {
             handler.endElement(EL_HEADER);
@@ -179,6 +185,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     }
 
     /** {@inheritDoc} */
+    @Override
     public void startDocumentTrailer() throws IFException {
         try {
             handler.startElement(EL_TRAILER);
@@ -188,6 +195,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     }
 
     /** {@inheritDoc} */
+    @Override
     public void endDocumentTrailer() throws IFException {
         try {
             handler.endElement(EL_TRAILER);
@@ -264,6 +272,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     }
 
     /** {@inheritDoc} */
+    @Override
     public void startPageHeader() throws IFException {
         try {
             handler.startElement(EL_PAGE_HEADER);
@@ -273,6 +282,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     }
 
     /** {@inheritDoc} */
+    @Override
     public void endPageHeader() throws IFException {
         try {
             handler.endElement(EL_PAGE_HEADER);
@@ -303,6 +313,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     }
 
     /** {@inheritDoc} */
+    @Override
     public void startPageTrailer() throws IFException {
         try {
             handler.startElement(EL_PAGE_TRAILER);
@@ -312,6 +323,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     }
 
     /** {@inheritDoc} */
+    @Override
     public void endPageTrailer() throws IFException {
         try {
             commitNavigation();
@@ -604,7 +616,8 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
                 }
             }
             if (color != null) {
-                changed = !color.equals(state.getTextColor());
+                changed = !org.apache.xmlgraphics.java2d.color.ColorUtil.isSameColor(
+                        color, state.getTextColor());
                 if (changed) {
                     state.setTextColor(color);
                     addAttribute(atts, "color", toString(color));

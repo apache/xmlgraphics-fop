@@ -21,6 +21,8 @@ package org.apache.fop.render.intermediate;
 
 import java.awt.Color;
 
+import org.apache.xmlgraphics.java2d.color.ColorUtil;
+
 /** a state class for intermediate format data */
 public final class IFState {
 
@@ -184,7 +186,7 @@ public final class IFState {
      * @param color the new text color
      */
     public void setTextColor(Color color) {
-        if (!color.equals(this.textColor)) {
+        if (!ColorUtil.isSameColor(color, this.textColor)) {
             this.fontChanged = true;
         }
         this.textColor = color;

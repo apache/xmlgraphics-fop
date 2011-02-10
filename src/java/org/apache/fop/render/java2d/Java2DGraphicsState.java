@@ -28,6 +28,8 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.GeneralPath;
 
+import org.apache.xmlgraphics.java2d.color.ColorUtil;
+
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fonts.FontInfo;
 
@@ -103,7 +105,7 @@ public class Java2DGraphicsState {
      * @return true if the background color has changed
      */
     public boolean updateColor(Color col) {
-        if (!col.equals(getGraph().getColor())) {
+        if (!ColorUtil.isSameColor(col, getGraph().getColor())) {
             getGraph().setColor(col);
             return true;
         } else {
@@ -217,12 +219,18 @@ public class Java2DGraphicsState {
      * @return true if the new paint changes the current paint
      */
     public boolean updatePaint(Paint p) {
-        if (getGraph().getPaint() == null) {
+        Paint currentPaint = getGraph().getPaint();
+        if (currentPaint == null) {
             if (p != null) {
                 getGraph().setPaint(p);
                 return true;
             }
-        } else if (!p.equals(getGraph().getPaint())) {
+        } else if (p instanceof Color && currentPaint instanceof Color) {
+            if (!ColorUtil.isSameColor((Color)p, (Color)currentPaint)) {
+                getGraph().setPaint(p);
+                return true;
+            }
+        } else if (!p.equals(currentPaint)) {
             getGraph().setPaint(p);
             return true;
         }
@@ -271,6 +279,7 @@ public class Java2DGraphicsState {
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
         String s = "Java2DGraphicsState " + currentGraphics.toString()
                 + ", Stroke (width: " + currentStrokeWidth + " style: "

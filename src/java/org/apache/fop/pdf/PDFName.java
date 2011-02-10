@@ -86,6 +86,29 @@ public class PDFName extends PDFObject {
         return this.name;
     }
 
+    /**
+     * Returns the name without the leading slash.
+     * @return the name without the leading slash
+     */
+    public String getName() {
+        return this.name.substring(1);
+    }
+
+    /** {@inheritDoc} */
+    public boolean equals(Object obj) {
+        if (!(obj instanceof PDFName)) {
+            return false;
+        }
+        PDFName other = (PDFName)obj;
+        return this.name.equals(other.name);
+    }
+
+    /** {@inheritDoc} */
+    public int hashCode() {
+        return name.hashCode();
+    }
+
+
     /** {@inheritDoc} */
     protected int output(OutputStream stream) throws IOException {
         CountingOutputStream cout = new CountingOutputStream(stream);
