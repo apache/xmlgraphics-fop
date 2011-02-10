@@ -30,12 +30,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.xmlgraphics.java2d.color.CIELabColorSpace;
-import org.apache.xmlgraphics.java2d.color.ColorWithAlternatives;
 import org.apache.xmlgraphics.java2d.color.ColorUtil;
+import org.apache.xmlgraphics.java2d.color.ColorWithAlternatives;
 import org.apache.xmlgraphics.java2d.color.DeviceCMYKColorSpace;
 import org.apache.xmlgraphics.java2d.color.NamedColorSpace;
+import org.apache.xmlgraphics.java2d.color.profile.ColorProfileUtil;
 
-import org.apache.fop.util.ColorProfileUtil;
 import org.apache.fop.util.DecimalFormatCache;
 
 /**
@@ -48,7 +48,7 @@ public class PDFColorHandler {
 
     private PDFResources resources;
 
-    private Map cieLabColorSpaces;
+    private Map<String, PDFCIELabColorSpace> cieLabColorSpaces;
 
     public PDFColorHandler(PDFResources resources) {
         this.resources = resources;
@@ -149,10 +149,10 @@ public class PDFColorHandler {
 
     private PDFCIELabColorSpace getCIELabColorSpace(CIELabColorSpace labCS) {
         if (this.cieLabColorSpaces == null) {
-            this.cieLabColorSpaces = new java.util.HashMap();
+            this.cieLabColorSpaces = new java.util.HashMap<String, PDFCIELabColorSpace>();
         }
         float[] wp = labCS.getWhitePoint();
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < 3; i++) {
             if (i > 0) {
                 sb.append(',');
@@ -160,7 +160,7 @@ public class PDFColorHandler {
             sb.append(wp[i]);
         }
         String key = sb.toString();
-        PDFCIELabColorSpace cielab = (PDFCIELabColorSpace)this.cieLabColorSpaces.get(key);
+        PDFCIELabColorSpace cielab = this.cieLabColorSpaces.get(key);
         if (cielab == null) {
             //color space is not in the PDF, yet
             float[] wp1 = new float[] {wp[0] / 100f, wp[1] / 100f, wp[2] / 100f};
