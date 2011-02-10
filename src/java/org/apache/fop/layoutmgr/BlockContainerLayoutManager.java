@@ -232,15 +232,12 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
             LayoutManager prevLM = null; // previously active LM
 
             LayoutContext childLC;
-            boolean doReset = isRestart;
             if (isRestart) {
                 if (emptyStack) {
                     assert restartAtLM != null && restartAtLM.getParent() == this;
                     curLM = restartAtLM;
                 } else {
                     curLM = (LayoutManager) lmStack.pop();
-                    // make sure the initial LM is not reset
-                    doReset = false;
                 }
                 setCurrentChildLM(curLM);
             } else {
@@ -248,14 +245,13 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
             }
 
             while (curLM != null) {
-                if (doReset) {
-                    curLM.reset();
-                }
-
                 childLC = makeChildLayoutContext(context);
 
                 // get elements from curLM
                 if (!isRestart || emptyStack) {
+                    if (isRestart) {
+                        curLM.reset();
+                    }
                     returnedList = getNextChildElements(curLM, context, childLC, alignment,
                             null, null, null);
                 } else {
@@ -263,8 +259,6 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
                             lmStack, restartPosition, restartAtLM);
                     // once encountered, irrelevant for following child LMs
                     emptyStack = true;
-                    // force reset as of the next child
-                    doReset = true;
                 }
                 if (contentList.isEmpty() && childLC.isKeepWithPreviousPending()) {
                     //Propagate keep-with-previous up from the first child
