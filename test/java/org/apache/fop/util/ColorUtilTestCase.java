@@ -254,9 +254,9 @@ public class ColorUtilTestCase extends TestCase {
 
         colSpec = "fop-rgb-icc(1.0,0.8,0.0,#Separation,,Postgelb)";
         colActual = (ColorWithFallback)ColorUtil.parseColorString(null, colSpec);
-        assertEquals(255, colActual.getRed(), 2);
+        assertEquals(255, colActual.getRed(), 5);
         assertEquals(204, colActual.getGreen(), 3);
-        assertEquals(0, colActual.getBlue(), 6);
+        assertEquals(0, colActual.getBlue(), 12);
         //sRGB results differ between JDKs
 
         Color fallback = colActual.getFallbackColor();
@@ -295,7 +295,7 @@ public class ColorUtilTestCase extends TestCase {
         String colSpec = "fop-rgb-named-color(1.0,0.8,0.0,NCP,"
             + "\"" + ncpLoc.toASCIIString() + "\",Postgelb)";
         colActual = (ColorWithFallback)ColorUtil.parseColorString(ua, colSpec);
-        assertEquals(255, colActual.getRed(), 1);
+        assertEquals(255, colActual.getRed(), 2);
         assertEquals(193, colActual.getGreen(), 2);
         assertEquals(0, colActual.getBlue());
 
