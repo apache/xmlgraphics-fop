@@ -68,21 +68,19 @@ public class GraphicsSetProcessColor extends AbstractGraphicsDrawingOrder {
         int colSpaceType = cs.getType();
         if (colSpaceType == ColorSpace.TYPE_CMYK) {
             this.color = color;
-            this.componentsSize = 4;
         } else if (cs instanceof CIELabColorSpace) {
             //TODO Convert between illuminants if not D50 according to rendering intents
             //Right now, we're assuming D50 as the GOCA spec requires.
             this.color = color;
             //16bit components didn't work, and 8-bit sadly has reduced accuracy.
-            this.componentsSize = 3;
         } else {
             if (!color.getColorSpace().isCS_sRGB()) {
                 this.color = ColorUtil.toSRGBColor(color);
             } else {
                 this.color = color;
             }
-            this.componentsSize = 3;
         }
+        this.componentsSize = this.color.getColorSpace().getNumComponents();
     }
 
     /** {@inheritDoc} */
@@ -91,6 +89,7 @@ public class GraphicsSetProcessColor extends AbstractGraphicsDrawingOrder {
     }
 
     /** {@inheritDoc} */
+    @Override
     byte getOrderCode() {
         return (byte) 0xB2;
     }
@@ -153,6 +152,7 @@ public class GraphicsSetProcessColor extends AbstractGraphicsDrawingOrder {
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
         return "GraphicsSetProcessColor(col=" + color + ")";
     }
