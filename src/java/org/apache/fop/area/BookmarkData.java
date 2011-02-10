@@ -19,8 +19,6 @@
 
 package org.apache.fop.area;
 
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -34,13 +32,13 @@ import org.apache.fop.fo.pagination.bookmarks.BookmarkTree;
  */
 public class BookmarkData extends AbstractOffDocumentItem implements Resolvable {
 
-    private List subData = new java.util.ArrayList();
+    private List<BookmarkData> subData = new java.util.ArrayList<BookmarkData>();
 
     // bookmark-title for this fo:bookmark
     private String bookmarkTitle = null;
 
     // indicator of whether to initially display/hide child bookmarks of this object
-    private boolean bShow = true;
+    private boolean showChildren = true;
 
     // ID Reference for this bookmark
     private String idRef;
@@ -49,7 +47,8 @@ public class BookmarkData extends AbstractOffDocumentItem implements Resolvable 
     private PageViewport pageRef = null;
 
     // unresolved idrefs by this bookmark and child bookmarks below it
-    private Map unresolvedIDRefs = new java.util.HashMap();
+    private Map<String, List<Resolvable>> unresolvedIDRefs
+            = new java.util.HashMap<String, List<Resolvable>>();
 
     /**
      * Create a new bookmark data object.
@@ -59,10 +58,10 @@ public class BookmarkData extends AbstractOffDocumentItem implements Resolvable 
      * @param bookmarkTree fo:bookmark-tree for this document
      */
     public BookmarkData(BookmarkTree bookmarkTree) {
-        idRef = null;
-        whenToProcess = END_OF_DOC;
+        this.idRef = null;
+        this.whenToProcess = END_OF_DOC;
         // top level defined in Rec to show all child bookmarks
-        bShow = true;
+        this.showChildren = true;
 
         for (int count = 0; count < bookmarkTree.getBookmarks().size(); count++) {
             Bookmark bkmk = (Bookmark)(bookmarkTree.getBookmarks()).get(count);
@@ -79,15 +78,15 @@ public class BookmarkData extends AbstractOffDocumentItem implements Resolvable 
      * @param bookmark the fo:bookmark object
      */
     public BookmarkData(Bookmark bookmark) {
-        bookmarkTitle = bookmark.getBookmarkTitle();
-        bShow = bookmark.showChildItems();
+        this.bookmarkTitle = bookmark.getBookmarkTitle();
+        this.showChildren = bookmark.showChildItems();
         this.idRef = bookmark.getInternalDestination();
     }
 
     private void putUnresolved(String id, BookmarkData bd) {
-        List refs = (List)unresolvedIDRefs.get(id);
+        List<Resolvable> refs = unresolvedIDRefs.get(id);
         if (refs == null) {
-            refs = new java.util.ArrayList();
+            refs = new java.util.ArrayList<Resolvable>();
             unresolvedIDRefs.put(id, refs);
         }
         refs.add(bd);
@@ -101,7 +100,7 @@ public class BookmarkData extends AbstractOffDocumentItem implements Resolvable 
     public BookmarkData() {
         idRef = null;
         whenToProcess = END_OF_DOC;
-        bShow = true;
+        showChildren = true;
     }
 
     /**
@@ -116,7 +115,7 @@ public class BookmarkData extends AbstractOffDocumentItem implements Resolvable 
      */
     public BookmarkData(String title, boolean showChildren, PageViewport pv, String idRef) {
         bookmarkTitle = title;
-        bShow = showChildren;
+        this.showChildren = showChildren;
         pageRef = pv;
         this.idRef = idRef;
     }
@@ -138,11 +137,11 @@ public class BookmarkData extends AbstractOffDocumentItem implements Resolvable 
      */
     public void addSubData(BookmarkData sub) {
         subData.add(sub);
-        if (sub.pageRef == null || sub.pageRef.equals("")) {
+        if (sub.pageRef == null) {
             putUnresolved(sub.getIDRef(), sub);
             String[] ids = sub.getIDRefs();
-            for (int count = 0; count < ids.length; count++) {
-                putUnresolved(ids[count], sub);
+            for (String id : ids) {
+                putUnresolved(id, sub);
             }
         }
     }
@@ -162,7 +161,7 @@ public class BookmarkData extends AbstractOffDocumentItem implements Resolvable 
      * @return true to initially display child bookmarks, false otherwise
      */
     public boolean showChildItems() {
-        return bShow;
+        return showChildren;
     }
 
     /**
@@ -181,7 +180,7 @@ public class BookmarkData extends AbstractOffDocumentItem implements Resolvable 
      * @return the child bookmark data
      */
     public BookmarkData getSubData(int count) {
-        return (BookmarkData) subData.get(count);
+        return subData.get(count);
     }
 
     /**
@@ -208,7 +207,8 @@ public class BookmarkData extends AbstractOffDocumentItem implements Resolvable 
      * {@inheritDoc}
      */
     public String[] getIDRefs() {
-        return (String[])unresolvedIDRefs.keySet().toArray(new String[] {});
+        return unresolvedIDRefs.keySet().toArray(
+                new String[unresolvedIDRefs.keySet().size()]);
     }
 
     /**
@@ -217,22 +217,20 @@ public class BookmarkData extends AbstractOffDocumentItem implements Resolvable 
      * resolves id references of child elements that have the same
      * id reference.
      *
-     * {@inheritDoc} List)
+     * {@inheritDoc}
      */
-    public void resolveIDRef(String id, List pages) {
+    public void resolveIDRef(String id, List<PageViewport> pages) {
         if (id.equals(idRef)) {
             //Own ID has been resolved, so note the page
-            pageRef = (PageViewport) pages.get(0);
+            pageRef = pages.get(0);
             //Note: Determining the placement inside the page is the renderer's job.
         }
 
         //Notify all child bookmarks
-        Collection refs = (Collection)unresolvedIDRefs.get(id);
+        List<Resolvable> refs = unresolvedIDRefs.get(id);
         if (refs != null) {
-            Iterator iter = refs.iterator();
-            while (iter.hasNext()) {
-                BookmarkData bd = (BookmarkData)iter.next();
-                bd.resolveIDRef(id, pages);
+            for (Resolvable res : refs) {
+                res.resolveIDRef(id, pages);
             }
         }
         unresolvedIDRefs.remove(id);

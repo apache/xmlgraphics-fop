@@ -50,15 +50,13 @@ public class BlockParent extends Area {
     /**
      * The children of this block parent area.
      */
-    protected List children = null;
-
-    // orientation if reference area
-//    private int orientation = ORIENT_0;
+    protected List<Area> children = null;
 
     /** {@inheritDoc} */
+    @Override
     public void addChildArea(Area childArea) {
         if (children == null) {
-            children = new ArrayList();
+            children = new ArrayList<Area>();
         }
         children.add(childArea);
     }

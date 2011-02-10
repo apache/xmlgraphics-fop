@@ -49,7 +49,6 @@ import org.apache.xmlgraphics.util.UnitConv;
 
 import org.apache.fop.util.bitmap.BitmapImageUtil;
 import org.apache.fop.util.bitmap.DitherUtil;
-import org.apache.fop.util.bitmap.MonochromeBitmapConverter;
 
 /**
  * This class provides methods for generating PCL print files.
@@ -76,6 +75,7 @@ public class PCLGenerator {
     private boolean currentPatternTransparency = true;
 
     private int maxBitmapResolution = PCL_RESOLUTIONS[PCL_RESOLUTIONS.length - 1];
+    private float ditheringQuality = 0.5f;
 
     /**
      * true: Standard PCL shades are used (poor quality). false: user-defined pattern are used
@@ -541,13 +541,31 @@ public class PCLGenerator {
     }
 
     /**
+     * Sets the dithering quality used when encoding gray or color images. If not explicitely
+     * set a medium setting (0.5f) is used.
+     * @param quality a quality setting between 0.0f (worst/fastest) and 1.0f (best/slowest)
+     */
+    public void setDitheringQuality(float quality) {
+        quality = Math.min(Math.max(0f, quality), 1.0f);
+        this.ditheringQuality = quality;
+    }
+
+    /**
+     * Returns the dithering quality used when encoding gray or color images.
+     * @return the quality setting between 0.0f (worst/fastest) and 1.0f (best/slowest)
+     */
+    public float getDitheringQuality() {
+        return this.ditheringQuality;
+    }
+
+    /**
      * Indicates whether an image is a monochrome (b/w) image.
      * @param img the image
      * @return true if it's a monochrome image
      */
     public static boolean isMonochromeImage(RenderedImage img) {
         return BitmapImageUtil.isMonochromeImage(img);
-        }
+    }
 
     /**
      * Indicates whether an image is a grayscale image.
@@ -616,18 +634,6 @@ public class PCLGenerator {
 
     private boolean isValidPCLResolution(int resolution) {
         return resolution == calculatePCLResolution(resolution);
-    }
-
-    private Dimension getAdjustedDimension(Dimension orgDim, double orgResolution,
-            int pclResolution) {
-        if (orgResolution == pclResolution) {
-            return orgDim;
-        } else {
-            Dimension result = new Dimension();
-            result.width = (int)Math.round((double)orgDim.width * pclResolution / orgResolution);
-            result.height = (int)Math.round((double)orgDim.height * pclResolution / orgResolution);
-            return result;
-        }
     }
 
     //Threshold table to convert an alpha channel (8-bit) into a clip mask (1-bit)
@@ -724,34 +730,8 @@ public class PCLGenerator {
                 popCursorPos();
             }
 
-            BufferedImage src = null;
-            if (img instanceof BufferedImage && !scaled) {
-                if (!isGrayscaleImage(img) || img.getColorModel().hasAlpha()) {
-                    /* Disabled as this doesn't work reliably, use the fallback below
-                    src = new BufferedImage(effDim.width, effDim.height,
-                            BufferedImage.TYPE_BYTE_GRAY);
-                    Graphics2D g2d = src.createGraphics();
-                    try {
-                        clearBackground(g2d, effDim);
-                    } finally {
-                        g2d.dispose();
-                    }
-                    ColorConvertOp op = new ColorConvertOp(
-                            ColorSpace.getInstance(ColorSpace.CS_GRAY), null);
-                    op.filter((BufferedImage)img, src);
-                    */
-                } else {
-                    src = (BufferedImage)img;
-                }
-            }
-            if (src == null) {
-                src = BitmapImageUtil.convertToGrayscale(img, effDim);
-                }
-            MonochromeBitmapConverter converter
-                = BitmapImageUtil.createDefaultMonochromeBitmapConverter();
-            converter.setHint("quality", "false");
-
-            RenderedImage red = converter.convertToMonochrome(src);
+            RenderedImage red = BitmapImageUtil.convertToMonochrome(
+                    img, effDim, this.ditheringQuality);
             selectCurrentPattern(0, 0); //Solid black
             setTransparencyMode(sourceTransparency || mask != null, true);
             paintMonochromeBitmap(red, effResolution);
@@ -764,12 +744,6 @@ public class PCLGenerator {
             selectCurrentPattern(0, 0); //Solid black
             paintMonochromeBitmap(effImg, effResolution);
         }
-    }
-
-    private void clearBackground(Graphics2D g2d, Dimension effDim) {
-        //white background
-        g2d.setBackground(Color.WHITE);
-        g2d.clearRect(0, 0, effDim.width, effDim.height);
     }
 
     private int toGray(int rgb) {

@@ -38,7 +38,7 @@ public class RegionReference extends Area implements Cloneable {
     private CTM ctm;
 
     // the list of block areas from the static flow
-    private ArrayList blocks = new ArrayList();
+    private ArrayList<Area> blocks = new ArrayList<Area>();
 
     /** the parent {@link RegionViewport} for this object */
     protected RegionViewport regionViewport;
@@ -68,6 +68,7 @@ public class RegionReference extends Area implements Cloneable {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void addChildArea(Area child) {
         blocks.add(child);
     }
@@ -106,7 +107,7 @@ public class RegionReference extends Area implements Cloneable {
      *
      * @return the list of blocks in this region
      */
-    public List getBlocks() {
+    public List<Area> getBlocks() {
         return blocks;
     }
 
@@ -143,11 +144,12 @@ public class RegionReference extends Area implements Cloneable {
         RegionReference rr = new RegionReference(regionClass, regionName, regionViewport);
         rr.ctm = ctm;
         rr.setIPD(getIPD());
-        rr.blocks = (ArrayList)blocks.clone();
+        rr.blocks = (ArrayList<Area>)blocks.clone();
         return rr;
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
         StringBuffer sb = new StringBuffer(super.toString());
         sb.append(" {regionName=").append(regionName);

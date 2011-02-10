@@ -19,8 +19,7 @@
 
 package org.apache.fop.area;
 
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -36,18 +35,20 @@ public class IDTracker {
 
     private static final Log LOG = LogFactory.getLog(IDTracker.class);
 
-    // HashMap of ID's whose area is located on one or more consecutive
-    // PageViewports. Each ID has an arraylist of PageViewports that
+    // Map of ID's whose area is located on one or more consecutive
+    // PageViewports. Each ID has a list of PageViewports that
     // form the defined area of this ID
-    private Map idLocations = new java.util.HashMap();
+    private Map<String, List<PageViewport>> idLocations
+            = new java.util.HashMap<String, List<PageViewport>>();
 
     // idref's whose target PageViewports have yet to be identified
     // Each idref has a HashSet of Resolvable objects containing that idref
-    private Map unresolvedIDRefs = new java.util.HashMap();
+    private Map<String, Set<Resolvable>> unresolvedIDRefs
+            = new java.util.HashMap<String, Set<Resolvable>>();
 
-    private Set unfinishedIDs = new java.util.HashSet();
+    private Set<String> unfinishedIDs = new java.util.HashSet<String>();
 
-    private Set alreadyResolvedIDs = new java.util.HashSet();
+    private Set<String> alreadyResolvedIDs = new java.util.HashSet<String>();
 
     /**
      * Tie a PageViewport with an ID found on a child area of the PV. Note that
@@ -61,9 +62,9 @@ public class IDTracker {
         if (LOG.isDebugEnabled()) {
             LOG.debug("associateIDWithPageViewport(" + id + ", " + pv + ")");
         }
-        List pvList = (List) idLocations.get(id);
+        List<PageViewport> pvList = idLocations.get(id);
         if (pvList == null) { // first time ID located
-            pvList = new ArrayList();
+            pvList = new java.util.ArrayList<PageViewport>();
             idLocations.put(id, pvList);
             pvList.add(pv);
             // signal the PageViewport that it is the first PV to contain this id:
@@ -73,7 +74,7 @@ public class IDTracker {
              * Resolvable objects tied to it.
              */
             if (!unfinishedIDs.contains(id)) {
-                tryIDResolution(id, pv, pvList);
+                tryIDResolution(id, pvList);
             }
         } else {
             /* TODO: The check is a quick-fix to avoid a waste
@@ -116,12 +117,11 @@ public class IDTracker {
         }
         unfinishedIDs.remove(id);
 
-        List pvList = (List) idLocations.get(id);
-        Set todo = (Set) unresolvedIDRefs.get(id);
+        List<PageViewport> idLocs = idLocations.get(id);
+        Set<Resolvable> todo = unresolvedIDRefs.get(id);
         if (todo != null) {
-            for (Iterator iter = todo.iterator(); iter.hasNext();) {
-                Resolvable res = (Resolvable) iter.next();
-                res.resolveIDRef(id, pvList);
+            for (Resolvable res : todo) {
+                res.resolveIDRef(id, idLocs);
             }
             unresolvedIDRefs.remove(id);
         }
@@ -138,17 +138,15 @@ public class IDTracker {
     }
 
     /**
-     * Tries to resolve all unresolved ID references on the given page.
+     * Tries to resolve all unresolved ID references on the given set of pages.
      *
      * @param id ID to resolve
-     * @param pv page viewport whose ID refs to resolve
-     * @param pvList of PageViewports
+     * @param pvList list of PageViewports
      */
-    private void tryIDResolution(String id, PageViewport pv, List pvList) {
-        Set todo = (Set) unresolvedIDRefs.get(id);
+    private void tryIDResolution(String id, List<PageViewport> pvList) {
+        Set<Resolvable> todo = unresolvedIDRefs.get(id);
         if (todo != null) {
-            for (Iterator iter = todo.iterator(); iter.hasNext();) {
-                Resolvable res = (Resolvable) iter.next();
+            for (Resolvable res : todo) {
                 if (!unfinishedIDs.contains(id)) {
                     res.resolveIDRef(id, pvList);
                 } else {
@@ -168,10 +166,10 @@ public class IDTracker {
     public void tryIDResolution(PageViewport pv) {
         String[] ids = pv.getIDRefs();
         if (ids != null) {
-            for (int i = 0; i < ids.length; i++) {
-                List pvList = (List) idLocations.get(ids[i]);
-                if (pvList != null) {
-                    tryIDResolution(ids[i], pv, pvList);
+            for (String id : ids) {
+                List<PageViewport> pvList = idLocations.get(id);
+                if (!(pvList == null || pvList.isEmpty())) {
+                    tryIDResolution(id, pvList);
                 }
             }
         }
@@ -183,8 +181,46 @@ public class IDTracker {
      * @param id the id to lookup
      * @return the list of PageViewports
      */
-    public List getPageViewportsContainingID(String id) {
-        return (List) idLocations.get(id);
+    public List<PageViewport> getPageViewportsContainingID(String id) {
+        if (!(idLocations == null || idLocations.isEmpty())) {
+            List<PageViewport> idLocs = idLocations.get(id);
+            if (idLocs != null) {
+                return idLocs;
+            }
+        }
+        return Collections.emptyList();
+    }
+
+    /**
+     * Get the first {@link PageViewport} containing content generated
+     * by the FO with the given {@code id}.
+     *
+     * @param id    the id
+     * @return  the first {@link PageViewport} for the id; {@code null} if
+     *          no matching {@link PageViewport} was found
+     */
+    public PageViewport getFirstPageViewportContaining(String id) {
+        List<PageViewport> list = getPageViewportsContainingID(id);
+        if (!(list == null || list.isEmpty())) {
+            return list.get(0);
+        }
+        return null;
+    }
+
+    /**
+     * Get the last {@link PageViewport} containing content generated
+     * by the FO with the given {@code id}.
+     *
+     * @param id    the id
+     * @return  the last {@link PageViewport} for the id; {@code null} if
+     *          no matching {@link PageViewport} was found
+     */
+    public PageViewport getLastPageViewportContaining(String id) {
+        List<PageViewport> list = getPageViewportsContainingID(id);
+        if (!(list == null || list.isEmpty())) {
+            return list.get(list.size() - 1);
+        }
+        return null;
     }
 
     /**
@@ -194,9 +230,9 @@ public class IDTracker {
      * @param res the Resolvable object needing the idref to be resolved
      */
     public void addUnresolvedIDRef(String idref, Resolvable res) {
-        Set todo = (Set) unresolvedIDRefs.get(idref);
+        Set<Resolvable> todo = unresolvedIDRefs.get(idref);
         if (todo == null) {
-            todo = new java.util.HashSet();
+            todo = new java.util.HashSet<Resolvable>();
             unresolvedIDRefs.put(idref, todo);
         }
         // add Resolvable object to this HashSet

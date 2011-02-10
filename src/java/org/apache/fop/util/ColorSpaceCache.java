@@ -30,6 +30,7 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.xmlgraphics.java2d.color.profile.ColorProfileUtil;
 
 import org.apache.xmlgraphics.java2d.color.ICCColorSpaceWithIntent;
 import org.apache.xmlgraphics.java2d.color.RenderingIntent;
@@ -81,7 +82,7 @@ public class ColorSpaceCache {
                 if (src != null && src instanceof StreamSource) {
                     // FOP URI resolver found ICC profile - create ICC profile
                     // from the Source
-                    iccProfile = ICC_Profile.getInstance(((StreamSource) src)
+                    iccProfile = ColorProfileUtil.getICC_Profile(((StreamSource) src)
                             .getInputStream());
                 } else {
                     // TODO - Would it make sense to fall back on VM ICC

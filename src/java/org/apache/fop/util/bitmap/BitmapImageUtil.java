@@ -213,7 +213,9 @@ public final class BitmapImageUtil {
             WritableRaster wr = img.getColorModel().createCompatibleWritableRaster(
                     img.getWidth(), img.getHeight());
             boolean premult = img.getColorModel().isAlphaPremultiplied();
-            return new BufferedImage(img.getColorModel(), wr, premult, null);
+            BufferedImage buf = new BufferedImage(img.getColorModel(), wr, premult, null);
+            transferImage(img, buf);
+            return buf;
         }
     }
 

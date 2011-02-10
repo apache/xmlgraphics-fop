@@ -21,20 +21,6 @@ package org.apache.fop.render.ps;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.MissingResourceException;
-
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.sax.SAXResult;
-import javax.xml.transform.stream.StreamSource;
-
-import junit.framework.TestCase;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 
 import org.apache.xmlgraphics.ps.PSResource;
 import org.apache.xmlgraphics.ps.dsc.DSCException;
@@ -44,19 +30,13 @@ import org.apache.xmlgraphics.ps.dsc.events.DSCComment;
 import org.apache.xmlgraphics.ps.dsc.events.DSCEvent;
 
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.apps.Fop;
-import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.render.AbstractRenderingTestCase;
 
 /**
  * Abstract base class for PostScript verification tests.
  */
-public abstract class AbstractPostScriptTestCase extends TestCase {
-
-    /** the JAXP TransformerFactory */
-    protected TransformerFactory tFactory = TransformerFactory.newInstance();
-    /** the FopFactory */
-    protected FopFactory fopFactory = FopFactory.newInstance();
+public abstract class AbstractPostScriptTestCase extends AbstractRenderingTestCase {
 
     /**
      * Renders a test file.
@@ -68,35 +48,7 @@ public abstract class AbstractPostScriptTestCase extends TestCase {
      */
     protected File renderFile(FOUserAgent ua, String resourceName, String suffix)
                 throws Exception {
-        File outputFile = new File("build/test-results/" + resourceName + suffix + ".ps");
-        File outputDir = outputFile.getParentFile();
-        FileUtils.forceMkdir(outputDir);
-
-        // Prepare input file
-        InputStream in = getClass().getResourceAsStream(resourceName);
-        if (in == null) {
-            throw new MissingResourceException(resourceName + " not found in resources",
-                    getClass().getName(), null);
-        }
-        try {
-            Source src = new StreamSource(in);
-
-            // Create PostScript
-            OutputStream out = new java.io.FileOutputStream(outputFile);
-            out = new java.io.BufferedOutputStream(out);
-            try {
-                Fop fop = fopFactory.newFop(MimeConstants.MIME_POSTSCRIPT, ua, out);
-                SAXResult res = new SAXResult(fop.getDefaultHandler());
-
-                Transformer transformer = tFactory.newTransformer();
-                transformer.transform(src, res);
-            } finally {
-                IOUtils.closeQuietly(out);
-            }
-        } finally {
-            IOUtils.closeQuietly(in);
-        }
-        return outputFile;
+        return renderFile(ua, resourceName, suffix, MimeConstants.MIME_POSTSCRIPT);
     }
 
     /**

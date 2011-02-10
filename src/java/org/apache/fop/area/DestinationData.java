@@ -66,9 +66,7 @@ public class DestinationData extends AbstractOffDocumentItem implements Resolvab
         return idRef;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public String[] getIDRefs() {
         return idRefs;
     }
@@ -97,12 +95,12 @@ public class DestinationData extends AbstractOffDocumentItem implements Resolvab
      * Resolves the idref of this object by getting the PageViewport
      * object that corresponds to the IDRef
      *
-     * {@inheritDoc} List)
+     * {@inheritDoc}
      * TODO check to make sure it works if multiple bookmark-items
      * have the same idref
      */
-    public void resolveIDRef(String id, List pages) {
-        pageRef = (PageViewport) pages.get(0);
+    public void resolveIDRef(String id, List<PageViewport> pages) {
+        pageRef = pages.get(0);
         // TODO get rect area of id on page
     }
 

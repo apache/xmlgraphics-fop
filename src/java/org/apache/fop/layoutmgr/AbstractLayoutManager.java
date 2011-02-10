@@ -20,7 +20,6 @@
 package org.apache.fop.layoutmgr;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -34,27 +33,27 @@ import org.apache.fop.area.PageViewport;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.fo.flow.RetrieveMarker;
+import org.apache.xmlgraphics.util.QName;
 
 /**
  * The base class for most LayoutManagers.
  */
 public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
-    implements Constants {
+        implements Constants {
 
-    /**
-     * logging instance
-     */
+    /** logging instance */
     private static Log log = LogFactory.getLog(AbstractLayoutManager.class);
 
     /** Parent LayoutManager for this LayoutManager */
     protected LayoutManager parentLayoutManager;
     /** List of child LayoutManagers */
-    protected List childLMs;
+    protected List<LayoutManager> childLMs;
     /** Iterator for child LayoutManagers */
     protected ListIterator fobjIter;
     /** Marker map for markers related to this LayoutManager */
-    private Map markers;
+    private Map<String, Marker> markers;
 
     /** True if this LayoutManager has handled all of its content. */
     private boolean isFinished;
@@ -63,7 +62,7 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
     protected LayoutManager curChildLM;
 
     /** child LM iterator during getNextKnuthElement phase */
-    protected ListIterator childLMiter;
+    protected ListIterator<LayoutManager> childLMiter;
 
     private int lastGeneratedPosition = -1;
     private int smallestPosNumberChecked = Integer.MAX_VALUE;
@@ -116,7 +115,7 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
             return curChildLM;
         }
         if (childLMiter.hasNext()) {
-            curChildLM = (LayoutManager) childLMiter.next();
+            curChildLM = childLMiter.next();
             curChildLM.initialize();
             return curChildLM;
         }
@@ -131,7 +130,7 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
         curChildLM = childLM;
         childLMiter = new LMiter(this);
         do {
-            curChildLM = (LayoutManager) childLMiter.next();
+            curChildLM = childLMiter.next();
         } while (curChildLM != childLM);
     }
 
@@ -165,16 +164,14 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
     }
 
     /** {@inheritDoc} */
-    public List getNextKnuthElements(LayoutContext context,
-                                           int alignment) {
+    public List getNextKnuthElements(LayoutContext context, int alignment) {
         log.warn("null implementation of getNextKnuthElements() called!");
         setFinished(true);
         return null;
     }
 
     /** {@inheritDoc} */
-    public List getChangedKnuthElements(List oldList,
-                                              int alignment) {
+    public List getChangedKnuthElements(List oldList, int alignment) {
         log.warn("null implementation of getChangeKnuthElement() called!");
         return null;
     }
@@ -210,11 +207,11 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
      * @param size the requested number of child LMs
      * @return the list with the preloaded child LMs
      */
-    protected List createChildLMs(int size) {
+    protected List<LayoutManager> createChildLMs(int size) {
         if (fobjIter == null) {
             return null;
         }
-        List newLMs = new ArrayList(size);
+        List<LayoutManager> newLMs = new ArrayList<LayoutManager>(size);
         while (fobjIter.hasNext() && newLMs.size() < size ) {
             Object theobj = fobjIter.next();
             if (theobj instanceof FONode) {
@@ -250,35 +247,29 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
         return getPSLM().getCurrentPage().getPageViewport();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public boolean createNextChildLMs(int pos) {
-        List newLMs = createChildLMs(pos + 1 - childLMs.size());
+        List<LayoutManager> newLMs = createChildLMs(pos + 1 - childLMs.size());
         addChildLMs(newLMs);
         return pos < childLMs.size();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public List getChildLMs() {
+    /** {@inheritDoc} */
+    public List<LayoutManager> getChildLMs() {
         if (childLMs == null) {
-            childLMs = new java.util.ArrayList(10);
+            childLMs = new java.util.ArrayList<LayoutManager>(10);
         }
         return childLMs;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void addChildLM(LayoutManager lm) {
         if (lm == null) {
             return;
         }
         lm.setParent(this);
         if (childLMs == null) {
-            childLMs = new java.util.ArrayList(10);
+            childLMs = new java.util.ArrayList<LayoutManager>(10);
         }
         childLMs.add(lm);
         if (log.isTraceEnabled()) {
@@ -287,17 +278,14 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void addChildLMs(List newLMs) {
         if (newLMs == null || newLMs.size() == 0) {
             return;
         }
-        ListIterator iter = newLMs.listIterator();
+        ListIterator<LayoutManager> iter = newLMs.listIterator();
         while (iter.hasNext()) {
-            LayoutManager lm = (LayoutManager) iter.next();
-            addChildLM(lm);
+            addChildLM(iter.next());
         }
     }
 
@@ -312,8 +300,7 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
             throw new IllegalStateException("Position already got its index");
         }
 
-        lastGeneratedPosition++;
-        pos.setIndex(lastGeneratedPosition);
+        pos.setIndex(++lastGeneratedPosition);
         return pos;
     }
 
@@ -358,7 +345,7 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
      * @param targetArea the area to set the attributes on
      */
     protected void transferForeignAttributes(AreaTreeObject targetArea) {
-        Map atts = fobj.getForeignAttributes();
+        Map<QName, String> atts = fobj.getForeignAttributes();
         targetArea.setForeignAttributes(atts);
     }
 
@@ -459,18 +446,20 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
         return (super.toString() + (fobj != null ? "[fobj=" + fobj.toString() + "]" : ""));
     }
 
     /** {@inheritDoc} */
+    @Override
     public void reset() {
         isFinished = false;
         curChildLM = null;
         childLMiter = new LMiter(this);
         /* Reset all the children LM that have been created so far. */
-        for (Iterator iter = getChildLMs().iterator(); iter.hasNext();) {
-            ((LayoutManager) iter.next()).reset();
+        for (LayoutManager childLM : getChildLMs()) {
+            childLM.reset();
         }
         if (fobj != null) {
             markers = fobj.getMarkers();

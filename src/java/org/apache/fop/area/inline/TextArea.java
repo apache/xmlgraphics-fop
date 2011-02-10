@@ -99,20 +99,19 @@ public class TextArea extends AbstractTextArea {
      */
     public String getText() {
         StringBuffer text = new StringBuffer();
-        InlineArea child;
         // assemble the text
-        for (int i = 0; i < inlines.size(); i++) {
-            child = (InlineArea) inlines.get(i);
-            if (child instanceof WordArea) {
-                text.append(((WordArea) child).getWord());
+        for (InlineArea inline : inlines) {
+            if (inline instanceof WordArea) {
+                text.append(((WordArea) inline).getWord());
             } else {
-                text.append(((SpaceArea) child).getSpace());
+                text.append(((SpaceArea) inline).getSpace());
             }
         }
         return text.toString();
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
         return "TextArea{text=" + getText() + "}";
     }

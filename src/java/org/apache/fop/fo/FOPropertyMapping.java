@@ -62,8 +62,9 @@ import org.apache.fop.fo.properties.SpacePropertyMaker;
 import org.apache.fop.fo.properties.SpacingPropertyMaker;
 import org.apache.fop.fo.properties.StringProperty;
 import org.apache.fop.fo.properties.TableBorderPrecedence;
-import org.apache.fop.fo.properties.TextDecorationProperty;
+import org.apache.fop.fo.properties.TextDecorationMaker;
 import org.apache.fop.fo.properties.ToBeImplementedProperty;
+import org.apache.fop.fo.properties.URIProperty;
 import org.apache.fop.fo.properties.VerticalAlignShorthandParser;
 import org.apache.fop.fo.properties.WhiteSpaceShorthandParser;
 import org.apache.fop.fo.properties.XMLLangShorthandParser;
@@ -79,11 +80,11 @@ public final class FOPropertyMapping implements Constants {
     private FOPropertyMapping() {
     }
 
-    private static Map propNames = new HashMap();               // CSOK: VisibilityModifier
-    private static Map subPropNames = new HashMap();            // CSOK: VisibilityModifier
-    private static Map propIds = new HashMap();                 // CSOK: VisibilityModifier
+    private static Map<String, Integer> propNames = new HashMap<String, Integer>();
+    private static Map<String, Integer> subPropNames = new HashMap<String, Integer>();
+    private static Map<Integer, String> propIds = new HashMap<Integer, String>();
 
-    private static PropertyMaker[] generics = null;             // CSOK: VisibilityModifier
+    private static PropertyMaker[] generics = null;
 
     // The rest is only used during the building of the generics array.
     private Property[] enums = null;
@@ -246,8 +247,8 @@ public final class FOPropertyMapping implements Constants {
      */
     private static void addPropertyMaker(String name, PropertyMaker maker) {
         generics[maker.getPropId()] = maker;
-        propNames.put(name, new Integer(maker.getPropId()));
-        propIds.put(new Integer(maker.getPropId()), name);
+        propNames.put(name, maker.getPropId());
+        propIds.put(maker.getPropId(), name);
     }
 
     /**
@@ -256,8 +257,8 @@ public final class FOPropertyMapping implements Constants {
      * @param id   Id for the subproperty from CP_* in Constants.java.
      */
     private static void addSubpropMakerName(String name, int id) {
-        subPropNames.put(name, new Integer(id));
-        propIds.put(new Integer(id), name);
+        subPropNames.put(name, id);
+        propIds.put(id, name);
     }
 
     /**
@@ -342,9 +343,9 @@ public final class FOPropertyMapping implements Constants {
      */
     public static int getPropertyId(String name) {
         if (name != null) {
-            Integer i = (Integer) propNames.get(name);
+            Integer i = propNames.get(name);
             if (i != null) {
-                return i.intValue();
+                return i;
             }
         }
         return -1;
@@ -357,9 +358,9 @@ public final class FOPropertyMapping implements Constants {
      */
     public static int getSubPropertyId(String name) {
         if (name != null) {
-            Integer i = (Integer) subPropNames.get(name);
+            Integer i = subPropNames.get(name);
             if (i != null) {
-                return i.intValue();
+                return i;
             }
         }
         return -1;
@@ -373,10 +374,10 @@ public final class FOPropertyMapping implements Constants {
     public static String getPropertyName(int id) {
         if (((id & Constants.COMPOUND_MASK) == 0)
                 || ((id & Constants.PROPERTY_MASK) == 0)) {
-            return (String) propIds.get(new Integer(id));
+            return propIds.get(id);
         } else {
-            return propIds.get(new Integer(id & Constants.PROPERTY_MASK))
-                    + "." + propIds.get(new Integer(id & Constants.COMPOUND_MASK));
+            return propIds.get(id & Constants.PROPERTY_MASK)
+                    + "." + propIds.get(id & Constants.COMPOUND_MASK);
         }
     }
 
@@ -1694,7 +1695,7 @@ public final class FOPropertyMapping implements Constants {
 
         // text-decoration
         //m  = new EnumProperty.Maker(PR_TEXT_DECORATION);
-        m  = new TextDecorationProperty.Maker(PR_TEXT_DECORATION);
+        m  = new TextDecorationMaker(PR_TEXT_DECORATION);
         m.setInherited(false);
         m.addEnum("none", getEnumProperty(EN_NONE, "NONE"));
         m.addEnum("underline", getEnumProperty(EN_UNDERLINE, "UNDERLINE"));
@@ -2572,7 +2573,7 @@ public final class FOPropertyMapping implements Constants {
         addPropertyMaker("score-spaces", m);
 
         // src
-        m  = new StringProperty.Maker(PR_SRC);
+        m  = new URIProperty.Maker(PR_SRC);
         m.setInherited(false);
         m.setDefault("");
         addPropertyMaker("src", m);
@@ -2818,6 +2819,12 @@ public final class FOPropertyMapping implements Constants {
         m.setDefault("");
         m.setDatatypeParser(new XMLLangShorthandParser());
         addPropertyMaker("xml:lang", m);
+
+        // xml:base
+        m  = new URIProperty.Maker(PR_X_XML_BASE);
+        m.setInherited(true);
+        m.setDefault("");
+        addPropertyMaker("xml:base", m);
 
        }
 

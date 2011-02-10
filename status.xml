@@ -62,6 +62,32 @@
       <action context="Renderers" dev="JM" type="add" fixes-bug="49403" due-to="Patrick Jaromin">
         Initial work on spot colors (aka named colors) for PDF output.
       </action>
+      <action context="Renderers" dev="JM" type="fix" fixes-bug="50705" due-to="Mehdi Houshmand">
+        Fix to preserve the order of AFP TLEs and NOPs as given in the XSL-FO document.
+      </action>
+      <action context="Fonts" dev="JM" type="add" fixes-bug="50699" due-to="Alexandros Papadakis">
+        Added support for lookup of alternative glyphs when additional single-byte encodings are
+        used, ex. replacing "Omegagreek" by "Omega" and vice versa.
+      </action>
+      <action context="Code" dev="AD" type="add" fixes-bug="48334">
+        Added support for resolution of relative URIs against a specified xml:base during
+        property refinement.
+      </action>
+      <action context="Renderers" dev="JM" type="add">
+        Allow afp:no-operation to also appear under fo:page-sequence and fo:declarations.
+      </action>
+      <action context="Code" dev="AD" type="fix" fixes-bug="50635" due-to="mkoegler.AT.auto.tuwien.ac.at">
+        Bugfix: fix issue in RenderPagesModel.checkPreparedPages() where the same page-sequence
+        is potentially started multiple times.
+      </action>
+      <action context="Code" dev="AD" type="fix" fixes-bug="50636" due-to="mkoegler.AT.auto.tuwien.ac.at">
+        Bugfix: fix performance issue when adding pages, if the total number of pages
+        is significantly large.
+      </action>
+      <action context="Code" dev="AD" type="fix" fixes-bug="50626" due-to="mkoegler.AT.auto.tuwien.ac.at">
+        Bugfix: fix performance issue when adding nodes, if the number of children
+        is significantly large.
+      </action>
 	  <action context="Config" dev="SP" type="fix">
 		Bugfix: relative URIs in the configuration file (base, font-base, hyphenation-base) are evaluated relative to the base URI of the configuration file.
 	  </action>

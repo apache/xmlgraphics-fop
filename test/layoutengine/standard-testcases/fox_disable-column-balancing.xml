@@ -216,6 +216,7 @@
   </fo>
   <checks>
     <eval expected="0" xpath="//pageSequence[1]/pageViewport[2]//span[1]/flow[2]/@bpd"/>
+    <eval expected="0" xpath="//pageSequence[1]/pageViewport[2]//span[1]/flow[2]/@bpd"/>
     <eval expected="12000" xpath="//pageSequence[1]/pageViewport[3]//span[2]/@bpd"/>
     <!-- TODO Replace with the following test once bugs affecting multiple columns have been 
     corrected

@@ -426,6 +426,21 @@
           Name: font/myfont.ttf
           Content-Type: application/x-font</source>
         <p>This feature allows you to create JAR files containing fonts. The JAR files can be added to fop by providem them in the classpath, e.g. copying them into the lib/ directory.</p>
+        <section id="font-cache">
+          <title>The font cache</title>
+          <p>
+            Apache FOP maintains a cache file that is used to speed up auto-detection. This file
+            is usually found in the ".fop" directory under the user's home directory. It's called
+            "fop-fonts.cache". When the user's home directory is not writable, the font cache file
+            is put in the directory for temporary files.
+          </p>
+          <p>
+            If there was a problem loading a particular font, it is flagged in the cache file so
+            it is not loaded anymore. So, if a font is actually around but is still not found
+            by Apache FOP, it's worth a try to delete the font cache file which forces Apache FOP
+            to reparse all fonts.
+          </p>
+        </section>
       </section>
       <section id="embedding">
         <title>Embedding</title>
