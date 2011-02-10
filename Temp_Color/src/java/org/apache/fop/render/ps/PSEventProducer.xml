@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<catalogue xml:lang="en">
+  <message key="postscriptDictionaryParseError">Failed to parse dictionary string. Reason: {e}, content = "{content}"</message>
+</catalogue>

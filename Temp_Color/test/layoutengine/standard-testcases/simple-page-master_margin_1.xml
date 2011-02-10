@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks page-masters (margins part 1).
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="master1" page-width="5in" page-height="5in" margin-left="10pt" margin-top="20pt" margin-right="30pt" margin-bottom="40pt">
+          <fo:region-body background-color="lightgreen"/>
+        </fo:simple-page-master>
+        <fo:simple-page-master master-name="master2" page-width="5in" page-height="5in" margin="20pt">
+          <fo:region-body background-color="lightgreen"/>
+        </fo:simple-page-master>
+        <fo:simple-page-master master-name="master3" page-width="5in" page-height="5in" margin="20pt 10pt">
+          <fo:region-body background-color="lightgreen"/>
+        </fo:simple-page-master>
+        <fo:simple-page-master master-name="master4" page-width="5in" page-height="5in" margin="20pt 10pt 30pt">
+          <fo:region-body background-color="lightgreen"/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="master1" white-space-collapse="true">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>testing margins</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+      <fo:page-sequence master-reference="master2" white-space-collapse="true">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>testing margin shorthands (with 1 value)</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+      <fo:page-sequence master-reference="master3" white-space-collapse="true">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>testing margin shorthands (with 2 values)</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+      <fo:page-sequence master-reference="master4" white-space-collapse="true">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>testing margin shorthands (with 3 values)</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <true xpath="//pageViewport[@nr=1]/page/regionViewport/@is-viewport-area"/>
+    <true xpath="//pageViewport[@nr=1]/page/regionViewport//regionBody/@is-reference-area"/>
+    <true xpath="//pageViewport[@nr=1]/page/regionViewport//regionBody/mainReference/@is-reference-area"/>
+    <true xpath="//pageViewport[@nr=1]/page/regionViewport//regionBody/mainReference/span/@is-reference-area"/>
+    <true xpath="//pageViewport[@nr=1]/page/regionViewport//regionBody/mainReference/span/flow/@is-reference-area"/>
+  
+    <eval expected="0 0 360000 360000" xpath="//pageViewport[@nr=1]/@bounds"/>
+    <eval expected="10000 20000 320000 300000" xpath="//pageViewport[@nr=1]/page/regionViewport/@rect"/>
+    <eval expected="320000" xpath="//pageViewport[@nr=1]/page/regionViewport/@ipda"/>
+    <eval expected="320000" xpath="//pageViewport[@nr=1]/page/regionViewport/@ipd"/>
+    <eval expected="300000" xpath="//pageViewport[@nr=1]/page/regionViewport/@bpda"/>
+    <eval expected="300000" xpath="//pageViewport[@nr=1]/page/regionViewport/@bpd"/>
+    <eval expected="320000" xpath="//pageViewport[@nr=1]/page/regionViewport/regionBody/mainReference/span/flow/block/@ipda"/>
+    <eval expected="320000" xpath="//pageViewport[@nr=1]/page/regionViewport/regionBody/mainReference/span/flow/block/@ipd"/>
+
+    <eval expected="0 0 360000 360000" xpath="//pageViewport[@nr=2]/@bounds"/>
+    <eval expected="20000 20000 320000 320000" xpath="//pageViewport[@nr=2]/page/regionViewport/@rect"/>
+    <eval expected="320000" xpath="//pageViewport[@nr=2]/page/regionViewport/@ipda"/>
+    <eval expected="320000" xpath="//pageViewport[@nr=2]/page/regionViewport/@ipd"/>
+    <eval expected="320000" xpath="//pageViewport[@nr=2]/page/regionViewport/@bpda"/>
+    <eval expected="320000" xpath="//pageViewport[@nr=2]/page/regionViewport/@bpd"/>
+    <eval expected="320000" xpath="//pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block/@ipda"/>
+    <eval expected="320000" xpath="//pageViewport[@nr=2]/page/regionViewport/regionBody/mainReference/span/flow/block/@ipd"/>
+
+    <eval expected="0 0 360000 360000" xpath="//pageViewport[@nr=3]/@bounds"/>
+    <eval expected="10000 20000 340000 320000" xpath="//pageViewport[@nr=3]/page/regionViewport/@rect"/>
+    <eval expected="340000" xpath="//pageViewport[@nr=3]/page/regionViewport/@ipda"/>
+    <eval expected="340000" xpath="//pageViewport[@nr=3]/page/regionViewport/@ipd"/>
+    <eval expected="320000" xpath="//pageViewport[@nr=3]/page/regionViewport/@bpda"/>
+    <eval expected="320000" xpath="//pageViewport[@nr=3]/page/regionViewport/@bpd"/>
+    <eval expected="340000" xpath="//pageViewport[@nr=3]/page/regionViewport/regionBody/mainReference/span/flow/block/@ipda"/>
+    <eval expected="340000" xpath="//pageViewport[@nr=3]/page/regionViewport/regionBody/mainReference/span/flow/block/@ipd"/>
+
+    <eval expected="0 0 360000 360000" xpath="//pageViewport[@nr=4]/@bounds"/>
+    <eval expected="10000 20000 340000 310000" xpath="//pageViewport[@nr=4]/page/regionViewport/@rect"/>
+    <eval expected="340000" xpath="//pageViewport[@nr=4]/page/regionViewport/@ipda"/>
+    <eval expected="340000" xpath="//pageViewport[@nr=4]/page/regionViewport/@ipd"/>
+    <eval expected="310000" xpath="//pageViewport[@nr=4]/page/regionViewport/@bpda"/>
+    <eval expected="310000" xpath="//pageViewport[@nr=4]/page/regionViewport/@bpd"/>
+    <eval expected="340000" xpath="//pageViewport[@nr=4]/page/regionViewport/regionBody/mainReference/span/flow/block/@ipda"/>
+    <eval expected="340000" xpath="//pageViewport[@nr=4]/page/regionViewport/regionBody/mainReference/span/flow/block/@ipd"/>
+
+  </checks>
+</testcase>

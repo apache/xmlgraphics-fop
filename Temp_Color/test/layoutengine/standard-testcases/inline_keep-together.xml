@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks keep-together.within-line.
+    </p>
+    <p>
+      This test builds on the results from page-breaking_6.xml.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="simple" page-height="5in" page-width="5in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="simple">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block-container width="100pt" background-color="yellow">
+            <fo:block keep-together.within-line="always">This is Blah blah blah blah!</fo:block>
+            <fo:block>This is <fo:inline keep-together.within-line="always">Blah blah blah blah!</fo:inline></fo:block>
+            <fo:block>This is <fo:wrapper keep-together.within-line="always">Blah blah blah blah!</fo:wrapper></fo:block>
+            <fo:block>
+              <fo:inline keep-together.within-line="always">
+                This<fo:inline> entire</fo:inline> sentence
+                <fo:inline>should be </fo:inline>kept 
+                <fo:inline>together
+                  <fo:inline>on
+                    <fo:inline>one
+                      <fo:inline>very,
+                        <fo:inline>very,</fo:inline>
+                        <fo:inline>very,</fo:inline>
+                        <fo:inline>very,</fo:inline>
+                        <fo:inline>long</fo:inline>
+                      </fo:inline></fo:inline></fo:inline>line
+                </fo:inline>
+              </fo:inline>
+            </fo:block>
+          </fo:block-container>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <!-- The layout engine should warn the user about the overflow in this case. -->
+    <eval expected="This is Blah blah blah blah!" xpath="//flow/block[1]/block[1]/block[1]/lineArea[1]"/>
+
+    <!-- The layout engine should warn the user about the overflow in this case. -->
+    <eval expected="This is" xpath="//flow/block[1]/block[1]/block[2]/lineArea[1]"/>
+    <eval expected="Blah blah blah blah!" xpath="//flow/block[1]/block[1]/block[2]/lineArea[2]"/>
+
+    <!-- The layout engine should warn the user about the overflow in this case. -->
+    <eval expected="This is" xpath="//flow/block[1]/block[1]/block[3]/lineArea[1]"/>
+    <eval expected="Blah blah blah blah!" xpath="//flow/block[1]/block[1]/block[3]/lineArea[2]"/>
+    
+    <!-- check effect of nested inlines (see Bugzilla #49848) -->
+    <eval expected="1" xpath="count(//flow/block[1]/block[1]/block[4]/lineArea)" />
+
+  </checks>
+</testcase>

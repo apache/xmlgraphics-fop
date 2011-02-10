@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks the positioning of footnotes when the body bpd changes 
+      from page to page.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="first"
+                                page-height="200pt"
+                                page-width="140pt">
+          <fo:region-body background-color="lightgrey"/>
+        </fo:simple-page-master>
+        <fo:simple-page-master master-name="other"
+                                page-height="200pt"
+                                page-width="140pt">
+          <fo:region-body margin-top="20pt"
+                          background-color="lightgrey"/>
+        </fo:simple-page-master>
+        <fo:page-sequence-master master-name="all">
+          <fo:single-page-master-reference master-reference="first"/>
+          <fo:repeatable-page-master-reference master-reference="other"/>
+        </fo:page-sequence-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="all">
+        <fo:flow flow-name="xsl-region-body" font-family="Courier">
+          <fo:block line-height="20pt" line-stacking-strategy="font-height">line 1.</fo:block>
+          <fo:block line-height="20pt" line-stacking-strategy="font-height">line 2.</fo:block>
+          <fo:block line-height="20pt" line-stacking-strategy="font-height">line 3.</fo:block>
+          <fo:block line-height="20pt" line-stacking-strategy="font-height">line 4.</fo:block>
+          <fo:block line-height="20pt" line-stacking-strategy="font-height">line 5.</fo:block>
+          <fo:block line-height="20pt" line-stacking-strategy="font-height">line 6.</fo:block>
+          <fo:block line-height="20pt" line-stacking-strategy="font-height">line 7.</fo:block>
+          <fo:block line-height="20pt" line-stacking-strategy="font-height">line 8.</fo:block>
+          <fo:block line-height="20pt" line-stacking-strategy="font-height">line 9.</fo:block>
+          <fo:block line-height="20pt" line-stacking-strategy="font-height">line 10.</fo:block>
+          <fo:block line-height="20pt" line-stacking-strategy="font-height">line 11.</fo:block>
+          <fo:block line-height="20pt" line-stacking-strategy="font-height">line 12.</fo:block>
+          <fo:block line-height="20pt" line-stacking-strategy="font-height">line 13.</fo:block>
+          <fo:block line-height="20pt" line-stacking-strategy="font-height">line 14.</fo:block>
+          <fo:block line-height="20pt" line-stacking-strategy="font-height">line 15.</fo:block>
+          <fo:block line-height="20pt" line-stacking-strategy="font-height">line 16.</fo:block>
+          <fo:block line-height="20pt" line-stacking-strategy="font-height">line 17.
+            <fo:footnote>
+              <fo:inline font-size="50%" vertical-align="top">1</fo:inline>
+              <fo:footnote-body>
+                <fo:block background-color="pink" line-height="20pt" line-stacking-strategy="font-height"><fo:inline font-size="50%" vertical-align="top">1</fo:inline> ftnt line 1/3.</fo:block>
+                <fo:block background-color="pink" line-height="20pt" line-stacking-strategy="font-height">ftnt line 2/3.</fo:block>
+                <fo:block background-color="pink" line-height="20pt" line-stacking-strategy="font-height">ftnt line 3/3.</fo:block>
+              </fo:footnote-body>
+            </fo:footnote>
+          </fo:block>
+          <fo:block line-height="20pt" line-stacking-strategy="font-height">line 18.</fo:block>
+          <fo:block line-height="20pt" line-stacking-strategy="font-height">line 19.</fo:block>
+          <fo:block line-height="20pt" line-stacking-strategy="font-height">line 20.</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="3" xpath="count(//pageViewport)"/>
+    <!-- body height for page 1 -->
+    <eval expected="200000" xpath="//pageViewport[1]/page/regionViewport/@bpd"/>
+    <!-- body height for page 2 -->
+    <eval expected="180000" xpath="//pageViewport[2]/page/regionViewport/@bpd"/>
+    <!-- last content line in page 2 -->
+    <eval expected="line 17. " xpath="//pageViewport[2]/page/regionViewport/regionBody/mainReference/span/flow/block[last()]/lineArea/text[1]"/>
+    <!-- last footnote line in page 2 -->
+    <eval expected="ftnt line 2/3." xpath="//pageViewport[2]/page/regionViewport/regionBody/footnote//block[last()]/lineArea/text[1]"/>
+    <!-- body height for page 3 -->
+    <eval expected="180000" xpath="//pageViewport[3]/page/regionViewport/@bpd"/>
+    <!-- first content line in page 3 -->
+    <eval expected="line 18." xpath="//pageViewport[3]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/lineArea/text[1]"/>
+    <!-- footnote line in page 3 -->
+    <eval expected="ftnt line 3/3." xpath="//pageViewport[3]/page/regionViewport/regionBody/footnote//block[1]/lineArea/text[1]"/>
+  </checks>
+</testcase>

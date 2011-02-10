@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks that conditional spaces work properly when a table-cell is broken over two
+      pages.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="page" page-height="7cm" page-width="10cm" margin="1cm">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="page" font-family="serif" font-size="14pt">
+        <fo:flow flow-name="xsl-region-body">
+
+          <fo:block>1. Unbroken table:</fo:block>
+          <fo:table width="100%" table-layout="fixed"
+            border-collapse="separate" border="4pt solid black">
+            <fo:table-column column-width="proportional-column-width(1)"/>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block space-after="15pt"
+                    space-after.conditionality="discard">Line 1</fo:block>
+                  <fo:block space-before="25pt"
+                    space-before.conditionality="discard">Line 2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+
+          <fo:block break-before="page" space-after="2cm">2. Same table broken over two pages,
+            spaces discarded at page breaks:</fo:block>
+          <fo:table width="100%" table-layout="fixed"
+            border-collapse="separate" border="4pt solid black">
+            <fo:table-column column-width="proportional-column-width(1)"/>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block space-after="15pt"
+                    space-after.conditionality="discard">Line 1</fo:block>
+                  <fo:block space-before="25pt"
+                    space-before.conditionality="discard">Line 2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+
+          <fo:block break-before="page" space-after="2cm">3. Same broken table, spaces retained at
+            page breaks:</fo:block>
+          <fo:table width="100%" table-layout="fixed"
+            border-collapse="separate" border="4pt solid black">
+            <fo:table-column column-width="proportional-column-width(1)"/>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block space-after="15pt"
+                    space-after.conditionality="retain">Line 1</fo:block>
+                  <fo:block space-before="25pt"
+                    space-before.conditionality="retain">Line 2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+
+          <fo:block break-before="page" space-after="2cm">4. Same broken table, space-after
+            discarded, space-before retained:</fo:block>
+          <fo:table width="100%" table-layout="fixed"
+            border-collapse="separate" border="4pt solid black">
+            <fo:table-column column-width="proportional-column-width(1)"/>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block space-after="15pt">Line 1</fo:block>
+                  <fo:block space-before="25pt"
+                    space-before.conditionality="retain">Line 2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+
+          <fo:block break-before="page" space-after="2cm">5. Same broken table, space-after
+            retained, space-before discarded</fo:block>
+          <fo:table width="100%" table-layout="fixed"
+            border-collapse="separate" border="4pt solid black">
+            <fo:table-column column-width="proportional-column-width(1)"/>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block space-after="15pt"
+                    space-after.conditionality="retain">Line 1</fo:block>
+                  <fo:block space-before="25pt">Line 2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <!-- Nine pages -->
+    <eval expected="9" xpath="count(//pageViewport)"/>
+    <!-- 1. table not broken -->
+    <eval expected="58600" xpath="//pageViewport[1]//flow/block[2]/@bpd"/>
+    <eval expected="58600" xpath="//pageViewport[1]//flow/block[2]/block/@bpd"/>
+    <!-- 2. table broken, discarded spaces -->
+    <eval expected="16800" xpath="//pageViewport[2]//flow/block[2]/@bpd"/>
+    <eval expected="16800" xpath="//pageViewport[2]//flow/block[2]/block/@bpd"/>
+    <eval expected="16800" xpath="//pageViewport[3]//flow/block/@bpd"/>
+    <eval expected="16800" xpath="//pageViewport[3]//flow/block/block/@bpd"/>
+    <!-- 3. table broken, retained spaces -->
+    <eval expected="31800" xpath="//pageViewport[4]//flow/block[2]/@bpd"/>
+    <eval expected="31800" xpath="//pageViewport[4]//flow/block[2]/block/@bpd"/>
+    <eval expected="41800" xpath="//pageViewport[5]//flow/block/@bpd"/>
+    <eval expected="41800" xpath="//pageViewport[5]//flow/block/block/@bpd"/>
+    <!-- 4. table broken, space-after discarded, space-before retained -->
+    <eval expected="16800" xpath="//pageViewport[6]//flow/block[2]/@bpd"/>
+    <eval expected="16800" xpath="//pageViewport[6]//flow/block[2]/block/@bpd"/>
+    <eval expected="41800" xpath="//pageViewport[7]//flow/block/@bpd"/>
+    <eval expected="41800" xpath="//pageViewport[7]//flow/block/block/@bpd"/>
+    <!-- 5. table broken, space-after retained, space-before discarded -->
+    <eval expected="31800" xpath="//pageViewport[8]//flow/block[2]/@bpd"/>
+    <eval expected="31800" xpath="//pageViewport[8]//flow/block[2]/block/@bpd"/>
+    <eval expected="16800" xpath="//pageViewport[9]//flow/block/@bpd"/>
+    <eval expected="16800" xpath="//pageViewport[9]//flow/block/block/@bpd"/>
+
+    <element-list category="breaker">
+      <skip>3</skip>              <!-- The block before the table -->
+      <penalty p="INF" w="0"/>
+      <glue w="4000"/>            <!-- The border before -->
+      <box w="16800"/>            <!-- Line 1 -->
+      <penalty p="0" w="0"/>
+      <glue w="25000"/>           <!-- The space between lines -->
+      <box w="16800"/>            <!-- Line 2 -->
+      <penalty p="INF" w="0"/>
+      <glue w="4000"/>            <!-- The border after -->
+      <box w="0" aux="true"/>     <!-- aux. box to prohibit cutting away the border -->
+      <skip>3</skip>              <!-- glue for end of page -->
+    </element-list>
+  </checks>
+</testcase>

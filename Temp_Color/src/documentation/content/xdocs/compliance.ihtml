@@ -1,0 +1,4900 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<html>
+<head>
+  <title>Apache FOP Compliance Page</title>
+</head>
+
+<body>
+  <h1>W3C XSL-FO 1.1 Standard</h1>
+
+  <p>One of FOP's design goals is conformance to the <a href=
+  "http://www.w3.org/TR/xsl/">W3C XSL-FO 1.1 standard</a>, which specifies three
+  levels of "conformance": basic, extended, and complete. Although FOP does not currently conform
+  to any of these levels, it is nevertheless a useful work-in-progress for many applications. The
+  information presented here demonstrates FOP's progress toward the goal of conformance, which
+  progress consists of implementation of specific objects and properties in the standard. The
+  information presented is useful not only to the developers as a sort of "to do" list, but also
+  for setting proper expectations for users and potential users.</p>
+
+  <p>The following table shows the legend used for the tables below:</p>
+
+  <table border="1">
+    <tr>
+      <td class="yes">yes</td>
+      <td>indicates conformance</td>
+    </tr>
+    <tr>
+      <td class="partial">partial</td>
+      <td>indicates partial conformance</td>
+    </tr>
+    <tr>
+      <td class="no">no</td>
+      <td>indicates a lack of conformance</td>
+    </tr>
+    <tr>
+      <td class="na">na</td>
+      <td>indicates that the item is "not applicable" to FOP usually because FOP supports only
+      visual media</td>
+    </tr>
+  </table>
+
+  <h2><a href="#fo-object-section">XSL-FO Object Support</a></h2>
+
+  <ul class="minitoc">
+    <li><strong><a href="#fo-object-decl-section">Declarations and Pagination and Layout Formatting
+            Objects</a>:</strong>
+    <a href="#fo-object-root">root</a>,
+    <a href="#fo-object-declarations">declarations</a>,
+    <a href="#fo-object-color-profile">color-profile</a>,
+    <a href="#fo-object-page-sequence">page-sequence</a>,
+    <a href="#fo-object-page-sequence-wrapper">page-sequence-wrapper</a>,
+    <a href="#fo-object-layout-master-set">layout-master-set</a>,
+    <a href="#fo-object-page-sequence-master">page-sequence-master</a>,
+    <a href="#fo-object-single-page-master-reference">single-page-master-reference</a>,
+    <a href="#fo-object-repeatable-page-master-reference">repeatable-page-master-reference</a>,
+    <a href="#fo-object-repeatable-page-master-alternatives">repeatable-page-master-alternatives</a>,
+    <a href="#fo-object-conditional-page-master-reference">conditional-page-master-reference</a>,
+    <a href="#fo-object-simple-page-master">simple-page-master</a>,
+    <a href="#fo-object-region-body">region-body</a>,
+    <a href="#fo-object-region-before">region-before</a>,
+    <a href="#fo-object-region-after">region-after</a>,
+    <a href="#fo-object-region-start">region-start</a>,
+    <a href="#fo-object-region-end">region-end</a>,
+    <a href="#fo-object-flow">flow</a>,
+    <a href="#fo-object-static-content">static-content</a>,
+    <a href="#fo-object-title">title</a>,
+    <a href="#fo-object-flow-map">flow-map</a>,
+    <a href="#fo-object-flow-assignment">flow-assignment</a>,
+    <a href="#fo-object-flow-source-list">flow-source-list</a>,
+    <a href="#fo-object-flow-name-specifier">flow-name-specifier</a>,
+    <a href="#fo-object-flow-target-list">flow-target-list</a>,
+    <a href="#fo-object-region-name-specifier">region-name-specifier</a></li>
+
+    <li><strong><a href="#fo-object-block-section">Block Formatting Objects</a>:</strong>
+    <a href="#fo-object-block">block</a>,
+    <a href="#fo-object-block-container">block-container</a></li>
+
+    <li><strong><a href="#fo-object-inline-section">Inline Formatting Objects</a>:</strong>
+    <a href="#fo-object-bidi-override">bidi-override</a>,
+    <a href="#fo-object-character">character</a>,
+    <a href="#fo-object-initial-property-set">initial-property-set</a>,
+    <a href="#fo-object-external-graphic">external-graphic</a>,
+    <a href="#fo-object-instream-foreign-object">instream-foreign-object</a>,
+    <a href="#fo-object-inline">inline</a>,
+    <a href="#fo-object-inline-container">inline-container</a>,
+    <a href="#fo-object-leader">leader</a>,
+    <a href="#fo-object-page-number">page-number</a>,
+    <a href="#fo-object-page-number-citation">page-number-citation</a>,
+    <a href="#fo-object-page-number-citation-last">page-number-citation-last</a>,
+    <a href="#fo-object-folio-prefix">folio-prefix</a>,
+    <a href="#fo-object-folio-suffix">folio-suffix</a>,
+    <a href="#fo-object-scaling-value-citation">scaling-value-citation</a></li>
+
+    <li><strong><a href="#fo-object-table-section">Table Formatting Objects</a>:</strong>
+    <a href="#fo-object-table-and-caption">table-and-caption</a>,
+    <a href="#fo-object-table">table</a>,
+    <a href="#fo-object-table-column">table-column</a>,
+    <a href="#fo-object-table-caption">table-caption</a>,
+    <a href="#fo-object-table-header">table-header</a>,
+    <a href="#fo-object-table-footer">table-footer</a>,
+    <a href="#fo-object-table-body">table-body</a>,
+    <a href="#fo-object-table-row">table-row</a>,
+    <a href="#fo-object-table-cell">table-cell</a></li>
+
+    <li><strong><a href="#fo-object-list-section">List Formatting Objects</a>:</strong>
+    <a href="#fo-object-list-block">list-block</a>,
+    <a href="#fo-object-list-item">list-item</a>,
+    <a href="#fo-object-list-item-body">list-item-body</a>,
+    <a href="#fo-object-list-item-label">list-item-label</a></li>
+
+    <li><strong><a href="#fo-object-link-section">Link and Multi Formatting Objects</a>:</strong>
+    <a href="#fo-object-basic-link">basic-link</a>,
+    <a href="#fo-object-multi-switch">multi-switch</a>,
+    <a href="#fo-object-multi-case">multi-case</a>,
+    <a href="#fo-object-multi-toggle">multi-toggle</a>,
+    <a href="#fo-object-multi-properties">multi-properties</a>,
+    <a href="#fo-object-multi-property-set">multi-property-set</a></li>
+
+    <li><strong><a href="#fo-object-indexing-section">Formatting Objects for
+    Indexing</a>:</strong>
+    <a href="#fo-object-index-page-number-prefix">index-page-number-prefix</a>,
+    <a href="#fo-object-index-page-number-suffix">index-page-number-suffix</a>,
+    <a href="#fo-object-index-range-begin">index-range-begin</a>,
+    <a href="#fo-object-index-range-end">index-range-end</a>,
+    <a href="#fo-object-index-key-reference">index-key-reference</a>,
+    <a href="#fo-object-index-page-citation-list">index-page-citation-list</a>,
+    <a href="#fo-object-index-page-citation-list-separator">index-page-citation-list-separator</a>,
+    <a href="#fo-object-index-page-citation-range-separator">index-page-citation-range-separator</a></li>
+
+    <li><strong><a href="#fo-object-bookmarks-section">Formatting Objects for
+    Bookmarks</a>:</strong>
+    <a href="#fo-object-bookmark-tree">bookmark-tree</a>,
+    <a href="#fo-object-bookmark">bookmark</a>,
+    <a href="#fo-object-bookmark-title">bookmark-title</a></li>
+
+    <li><strong><a href="#fo-object-outofline-section">Out-of-line Formatting Objects</a>:</strong>
+    <a href="#fo-object-float">float</a>,
+    <a href="#fo-object-footnote">footnote</a>,
+    <a href="#fo-object-footnote-body">footnote-body</a></li>
+
+    <li><strong><a href="#fo-object-other-section">Other Formatting Objects</a>:</strong>
+    <a href="#fo-object-change-bar-begin">change-bar-begin</a>,
+    <a href="#fo-object-change-bar-end">change-bar-end</a>,
+    <a href="#fo-object-wrapper">wrapper</a>,
+    <a href="#fo-object-marker">marker</a>,
+    <a href="#fo-object-retrieve-marker">retrieve-marker</a>,
+    <a href="#fo-object-retrieve-table-marker">retrieve-table-marker</a></li>
+  </ul>
+
+  <h2><a href="#fo-property-section">XSL-FO Property Support</a></h2>
+
+  <ul>
+    <li><strong><a href="#fo-property-commonaccess-section">Common Accessibility
+    Properties</a>:</strong>
+    <a href="#fo-property-source-document">source-document</a>,
+    <a href="#fo-property-role">role</a></li>
+
+    <li><strong><a href="#fo-property-commonabspos-section">Common Absolute Position
+    Properties</a>:</strong>
+    <a href="#fo-property-absolute-position">absolute-position</a>,
+    <a href="#fo-property-top">top</a>,
+    <a href="#fo-property-right">right</a>,
+    <a href="#fo-property-bottom">bottom</a>,
+    <a href="#fo-property-left">left</a></li>
+
+    <li><strong><a href="#fo-property-commonaural-section">Common Aural Properties</a>:</strong>
+    <a href="#fo-property-azimuth">azimuth</a>,
+    <a href="#fo-property-cue-after">cue-after</a>,
+    <a href="#fo-property-cue-before">cue-before</a>,
+    <a href="#fo-property-elevation">elevation</a>,
+    <a href="#fo-property-pause-after">pause-after</a>,
+    <a href="#fo-property-pause-before">pause-before</a>,
+    <a href="#fo-property-pitch">pitch</a>,
+    <a href="#fo-property-pitch-range">pitch-range</a>,
+    <a href="#fo-property-play-during">play-during</a>,
+    <a href="#fo-property-richness">richness</a>,
+    <a href="#fo-property-speak">speak</a>,
+    <a href="#fo-property-speak-header">speak-header</a>,
+    <a href="#fo-property-speak-numeral">speak-numeral</a>,
+    <a href="#fo-property-speak-punctuation">speak-punctuation</a>,
+    <a href="#fo-property-speech-rate">speech-rate</a>,
+    <a href="#fo-property-stress">stress</a>,
+    <a href="#fo-property-voice-family">voice-family</a>,
+    <a href="#fo-property-volume">volume</a></li>
+
+    <li><strong><a href="#fo-property-commonenv-section">Common Border, Padding, and Background
+    Properties</a>:</strong>
+    <a href="#fo-property-background-attachment">background-attachment</a>,
+    <a href="#fo-property-background-color">background-color</a>,
+    <a href="#fo-property-background-image">background-image</a>,
+    <a href="#fo-property-background-repeat">background-repeat</a>,
+    <a href="#fo-property-background-position-horizontal">background-position-horizontal</a>,
+    <a href="#fo-property-background-position-vertical">background-position-vertical</a>,
+    <a href="#fo-property-border-before-color">border-before-color</a>,
+    <a href="#fo-property-border-before-style">border-before-style</a>,
+    <a href="#fo-property-border-before-width">border-before-width</a>,
+    <a href="#fo-property-border-after-color">border-after-color</a>,
+    <a href="#fo-property-border-after-style">border-after-style</a>,
+    <a href="#fo-property-border-after-width">border-after-width</a>,
+    <a href="#fo-property-border-start-color">border-start-color</a>,
+    <a href="#fo-property-border-start-style">border-start-style</a>,
+    <a href="#fo-property-border-start-width">border-start-width</a>,
+    <a href="#fo-property-border-end-color">border-end-color</a>,
+    <a href="#fo-property-border-end-style">border-end-style</a>,
+    <a href="#fo-property-border-end-width">border-end-width</a>,
+    <a href="#fo-property-border-top-color">border-top-color</a>,
+    <a href="#fo-property-border-top-style">border-top-style</a>,
+    <a href="#fo-property-border-top-width">border-top-width</a>,
+    <a href="#fo-property-border-bottom-color">border-bottom-color</a>,
+    <a href="#fo-property-border-bottom-style">border-bottom-style</a>,
+    <a href="#fo-property-border-bottom-width">border-bottom-width</a>,
+    <a href="#fo-property-border-left-color">border-left-color</a>,
+    <a href="#fo-property-border-left-style">border-left-style</a>,
+    <a href="#fo-property-border-left-width">border-left-width</a>,
+    <a href="#fo-property-border-right-color">border-right-color</a>,
+    <a href="#fo-property-border-right-style">border-right-style</a>,
+    <a href="#fo-property-border-right-width">border-right-width</a>,
+    <a href="#fo-property-padding-before">padding-before</a>,
+    <a href="#fo-property-padding-after">padding-after</a>,
+    <a href="#fo-property-padding-start">padding-start</a>,
+    <a href="#fo-property-padding-end">padding-end</a>,
+    <a href="#fo-property-padding-top">padding-top</a>,
+    <a href="#fo-property-padding-bottom">padding-bottom</a>,
+    <a href="#fo-property-padding-left">padding-left</a>,
+    <a href="#fo-property-padding-right">padding-right</a></li>
+
+    <li><strong><a href="#fo-property-commonfont-section">Common Font Properties</a>:</strong>
+    <a href="#fo-property-font-family">font-family</a>,
+    <a href="#fo-property-font-selection-strategy">font-selection-strategy</a>,
+    <a href="#fo-property-font-size">font-size</a>,
+    <a href="#fo-property-font-stretch">font-stretch</a>,
+    <a href="#fo-property-font-size-adjust">font-size-adjust</a>,
+    <a href="#fo-property-font-style">font-style</a>,
+    <a href="#fo-property-font-variant">font-variant</a>,
+    <a href="#fo-property-font-weight">font-weight</a></li>
+
+    <li><strong><a href="#fo-property-commonhyphen-section">Common Hyphenation
+    Properties</a>:</strong>
+    <a href="#fo-property-country">country</a>,
+    <a href="#fo-property-language">language</a>,
+    <a href="#fo-property-script">script</a>,
+    <a href="#fo-property-hyphenate">hyphenate</a>,
+    <a href="#fo-property-hyphenation-character">hyphenation-character</a>,
+    <a href="#fo-property-hyphenation-push-character-count">hyphenation-push-character-count</a>,
+    <a href="#fo-property-hyphenation-remain-character-count">hyphenation-remain-character-count</a></li>
+
+    <li><strong><a href="#fo-property-commonmarginblock-section">Common Margin Properties -
+    Block</a>:</strong>
+    <a href="#fo-property-margin-top">margin-top</a>,
+    <a href="#fo-property-margin-bottom">margin-bottom</a>,
+    <a href="#fo-property-margin-left">margin-left</a>,
+    <a href="#fo-property-margin-right">margin-right</a>,
+    <a href="#fo-property-space-before">space-before</a>,
+    <a href="#fo-property-space-after">space-after</a>,
+    <a href="#fo-property-start-indent">start-indent</a>,
+    <a href="#fo-property-end-indent">end-indent</a></li>
+
+    <li><strong><a href="#fo-property-commonmargininline-section">Common Margin Properties -
+    Inline</a>:</strong>
+    <a href="#fo-property-margin-top-inline">margin-top</a>,
+    <a href="#fo-property-margin-bottom-inline">margin-bottom</a>,
+    <a href="#fo-property-margin-left-inline">margin-left</a>,
+    <a href="#fo-property-margin-right-inline">margin-right</a>,
+    <a href="#fo-property-space-end">space-end</a>,
+    <a href="#fo-property-space-start">space-start</a></li>
+
+    <li><strong><a href="#fo-property-commonrelpos-section">Common Relative Position
+    Properties</a>:</strong>
+    <a href="#fo-property-top-relative">top</a>,
+    <a href="#fo-property-right-relative">right</a>,
+    <a href="#fo-property-bottom-relative">bottom</a>,
+    <a href="#fo-property-left-relative">left</a>,
+    <a href="#fo-property-relative-position">relative-position</a></li>
+
+    <li><strong><a href="#fo-property-areaalign-section">Area Alignment Properties</a>:</strong>
+    <a href="#fo-property-alignment-adjust">alignment-adjust</a>,
+    <a href="#fo-property-alignment-baseline">alignment-baseline</a>,
+    <a href="#fo-property-baseline-shift">baseline-shift</a>,
+    <a href="#fo-property-display-align">display-align</a>,
+    <a href="#fo-property-dominant-baseline">dominant-baseline</a>,
+    <a href="#fo-property-relative-align">relative-align</a></li>
+
+    <li><strong><a href="#fo-property-areadim-section">Area Dimension Properties</a>:</strong>
+    <a href="#fo-property-allowed-height-scale">allowed-height-scale</a>,
+    <a href="#fo-property-allowed-width-scale">allowed-width-scale</a>,
+    <a href="#fo-property-block-progression-dimension">block-progression-dimension</a>,
+    <a href="#fo-property-content-height">content-height</a>,
+    <a href="#fo-property-content-width">content-width</a>,
+    <a href="#fo-property-height">height</a>,
+    <a href="#fo-property-inline-progression-dimension">inline-progression-dimension</a>,
+    <a href="#fo-property-max-height">max-height</a>,
+    <a href="#fo-property-max-width">max-width</a>,
+    <a href="#fo-property-min-height">min-height</a>,
+    <a href="#fo-property-min-width">min-width</a>,
+    <a href="#fo-property-scaling">scaling</a>,
+    <a href="#fo-property-scaling-method">scaling-method</a>,
+    <a href="#fo-property-width">width</a></li>
+
+    <li><strong><a href="#fo-property-blockandline-section">Block and Line-related
+    Properties</a>:</strong>
+    <a href="#fo-property-hyphenation-keep">hyphenation-keep</a>,
+    <a href="#fo-property-hyphenation-ladder-count">hyphenation-ladder-count</a>,
+    <a href="#fo-property-last-line-end-indent">last-line-end-indent</a>,
+    <a href="#fo-property-line-height">line-height</a>,
+    <a href="#fo-property-line-height-shift-adjustment">line-height-shift-adjustment</a>,
+    <a href="#fo-property-line-stacking-strategy">line-stacking-strategy</a>,
+    <a href="#fo-property-linefeed-treatment">linefeed-treatment</a>,
+    <a href="#fo-property-white-space-treatment">white-space-treatment</a>,
+    <a href="#fo-property-text-align">text-align</a>,
+    <a href="#fo-property-text-align-last">text-align-last</a>,
+    <a href="#fo-property-text-indent">text-indent</a>,
+    <a href="#fo-property-white-space-collapse">white-space-collapse</a>,
+    <a href="#fo-property-wrap-option">wrap-option</a></li>
+
+    <li><strong><a href="#fo-property-char-section">Character Properties</a>:</strong>
+    <a href="#fo-property-character">character</a>,
+    <a href="#fo-property-letter-spacing">letter-spacing</a>,
+    <a href="#fo-property-suppress-at-line-break">suppress-at-line-break</a>,
+    <a href="#fo-property-text-decoration">text-decoration</a>,
+    <a href="#fo-property-text-shadow">text-shadow</a>,
+    <a href="#fo-property-text-transform">text-transform</a>,
+    <a href="#fo-property-treat-as-word-space">treat-as-word-space</a>,
+    <a href="#fo-property-word-spacing">word-spacing</a></li>
+
+    <li><strong><a href="#fo-property-color-section">Color-related Properties</a>:</strong>
+    <a href="#fo-property-color">color</a>,
+    <a href="#fo-property-color-profile-name">color-profile-name</a>,
+    <a href="#fo-property-rendering-intent">rendering-intent</a></li>
+
+    <li><strong><a href="#fo-property-float-section">Float-related Properties</a>:</strong>
+    <a href="#fo-property-clear">clear</a>,
+    <a href="#fo-property-float">float</a>,
+    <a href="#fo-property-intrusion-displace">intrusion-displace</a></li>
+
+    <li><strong><a href="#fo-property-keepsbreaks-section">Keeps and Breaks
+    Properties</a>:</strong>
+    <a href="#fo-property-break-after">break-after</a>,
+    <a href="#fo-property-break-before">break-before</a>,
+    <a href="#fo-property-keep-together">keep-together</a>,
+    <a href="#fo-property-keep-with-next">keep-with-next</a>,
+    <a href="#fo-property-keep-with-previous">keep-with-previous</a>,
+    <a href="#fo-property-orphans">orphans</a>,
+    <a href="#fo-property-widows">widows</a></li>
+
+    <li><strong><a href="#fo-property-layout-section">Layout-related Properties</a>:</strong>
+    <a href="#fo-property-clip">clip</a>,
+    <a href="#fo-property-overflow">overflow</a>,
+    <a href="#fo-property-reference-orientation">reference-orientation</a>,
+    <a href="#fo-property-span">span</a></li>
+
+    <li><strong><a href="#fo-property-leader-section">Leader and Rule Properties</a>:</strong>
+    <a href="#fo-property-leader-alignment">leader-alignment</a>,
+    <a href="#fo-property-leader-pattern">leader-pattern</a>,
+    <a href="#fo-property-leader-pattern-width">leader-pattern-width</a>,
+    <a href="#fo-property-leader-length">leader-length</a>,
+    <a href="#fo-property-rule-style">rule-style</a>,
+    <a href="#fo-property-rule-thickness">rule-thickness</a></li>
+
+    <li><strong><a href="#fo-property-dynamiceffects-section">Properties for Dynamic Effects
+    Formatting Objects</a>:</strong>
+    <a href="#fo-property-active-state">active-state</a>,
+    <a href="#fo-property-auto-restore">auto-restore</a>,
+    <a href="#fo-property-case-name">case-name</a>,
+    <a href="#fo-property-case-title">case-title</a>,
+    <a href="#fo-property-destination-placement-offset">destination-placement-offset</a>,
+    <a href="#fo-property-external-destination">external-destination</a>,
+    <a href="#fo-property-indicate-destination">indicate-destination</a>,
+    <a href="#fo-property-internal-destination">internal-destination</a>,
+    <a href="#fo-property-show-destination">show-destination</a>,
+    <a href="#fo-property-starting-state">starting-state</a>,
+    <a href="#fo-property-switch-to">switch-to</a>,
+    <a href="#fo-property-target-presentation-context">target-presentation-context</a>,
+    <a href="#fo-property-target-processing-context">target-processing-context</a>,
+    <a href="#fo-property-target-stylesheet">target-stylesheet</a></li>
+
+    <li><strong><a href="#fo-property-indexing-section">Properties for Indexing</a>:</strong>
+    <a href="#fo-property-index-class">index-class</a>,
+    <a href="#fo-property-index-key">index-key</a>,
+    <a href="#fo-property-page-number-treatment">page-number-treatment</a>,
+    <a href="#fo-property-merge-ranges-across-index-key-references">merge-ranges-across-index-key-references</a>,
+    <a href="#fo-property-merge-sequential-page-numbers">merge-sequential-page-numbers</a>,
+    <a href="#fo-property-merge-pages-across-index-key-references">merge-pages-across-index-key-references</a>,
+    <a href="#fo-property-ref-index-key">ref-index-key</a></li>
+
+    <li><strong><a href="#fo-property-markers-section">Properties for Markers</a>:</strong>
+    <a href="#fo-property-marker-class-name">marker-class-name</a>,
+    <a href="#fo-property-retrieve-boundary-within-table">retrieve-boundary-within-table</a>,
+    <a href="#fo-property-retrieve-class-name">retrieve-class-name</a>,
+    <a href="#fo-property-retrieve-position">retrieve-position</a>,
+    <a href="#fo-property-retrieve-boundary">retrieve-boundary</a>,
+    <a href="#fo-property-retrieve-position-within-table">retrieve-position-within-table</a></li>
+
+    <li><strong><a href="#fo-property-numberstring-section">Properties for Number to String
+    Conversion</a>:</strong>
+    <a href="#fo-property-format">format</a>,
+    <a href="#fo-property-grouping-separator">grouping-separator</a>,
+    <a href="#fo-property-grouping-size">grouping-size</a>,
+    <a href="#fo-property-letter-value">letter-value</a></li>
+
+    <li><strong><a href="#fo-property-pagination-section">Pagination and Layout
+    Properties</a>:</strong>
+    <a href="#fo-property-blank-or-not-blank">blank-or-not-blank</a>,
+    <a href="#fo-property-column-count">column-count</a>,
+    <a href="#fo-property-column-gap">column-gap</a>,
+    <a href="#fo-property-extent">extent</a>,
+    <a href="#fo-property-flow-name">flow-name</a>,
+    <a href="#fo-property-force-page-count">force-page-count</a>,
+    <a href="#fo-property-initial-page-number">initial-page-number</a>,
+    <a href="#fo-property-master-name">master-name</a>,
+    <a href="#fo-property-master-reference">master-reference</a>,
+    <a href="#fo-property-maximum-repeats">maximum-repeats</a>,
+    <a href="#fo-property-media-usage">media-usage</a>,
+    <a href="#fo-property-odd-or-even">odd-or-even</a>,
+    <a href="#fo-property-page-height">page-height</a>,
+    <a href="#fo-property-page-position">page-position</a>,
+    <a href="#fo-property-page-width">page-width</a>,
+    <a href="#fo-property-precedence">precedence</a>,
+    <a href="#fo-property-region-name">region-name</a>,
+    <a href="#fo-property-flow-map-name">flow-map-name</a>,
+    <a href="#fo-property-flow-map-reference">flow-map-reference</a>,
+    <a href="#fo-property-flow-name-reference">flow-name-reference</a>,
+    <a href="#fo-property-region-name-reference">region-name-reference</a></li>
+
+    <li><strong><a href="#fo-property-table-section">Table Properties</a>:</strong>
+    <a href="#fo-property-border-after-precedence">border-after-precedence</a>,
+    <a href="#fo-property-border-before-precedence">border-before-precedence</a>,
+    <a href="#fo-property-border-collapse">border-collapse</a>,
+    <a href="#fo-property-border-end-precedence">border-end-precedence</a>,
+    <a href="#fo-property-border-separation">border-separation</a>,
+    <a href="#fo-property-border-start-precedence">border-start-precedence</a>,
+    <a href="#fo-property-caption-side">caption-side</a>,
+    <a href="#fo-property-column-number">column-number</a>,
+    <a href="#fo-property-column-width">column-width</a>,
+    <a href="#fo-property-empty-cells">empty-cells</a>,
+    <a href="#fo-property-ends-row">ends-row</a>,
+    <a href="#fo-property-number-columns-repeated">number-columns-repeated</a>,
+    <a href="#fo-property-number-columns-spanned">number-columns-spanned</a>,
+    <a href="#fo-property-number-rows-spanned">number-rows-spanned</a>,
+    <a href="#fo-property-starts-row">starts-row</a>,
+    <a href="#fo-property-table-layout">table-layout</a>,
+    <a href="#fo-property-table-omit-footer-at-break">table-omit-footer-at-break</a>,
+    <a href="#fo-property-table-omit-header-at-break">table-omit-header-at-break</a></li>
+
+    <li><strong><a href="#fo-property-writingmode-section">Writing-mode-related
+    Properties</a>:</strong>
+    <a href="#fo-property-direction">direction</a>,
+    <a href="#fo-property-glyph-orientation-horizontal">glyph-orientation-horizontal</a>,
+    <a href="#fo-property-glyph-orientation-vertical">glyph-orientation-vertical</a>,
+    <a href="#fo-property-text-altitude">text-altitude</a>,
+    <a href="#fo-property-text-depth">text-depth</a>,
+    <a href="#fo-property-unicode-bidi">unicode-bidi</a>,
+    <a href="#fo-property-writing-mode">writing-mode</a></li>
+
+    <li><strong><a href="#fo-property-misc-section">Miscellaneous Properties</a>:</strong>
+    <a href="#fo-property-change-bar-class">change-bar-class</a>,
+    <a href="#fo-property-change-bar-color">change-bar-color</a>,
+    <a href="#fo-property-change-bar-offset">change-bar-offset</a>,
+    <a href="#fo-property-change-bar-placement">change-bar-placement</a>,
+    <a href="#fo-property-change-bar-style">change-bar-style</a>,
+    <a href="#fo-property-change-bar-width">change-bar-width</a>,
+    <a href="#fo-property-content-type">content-type</a>,
+    <a href="#fo-property-id">id</a>,
+    <a href="#fo-property-intrinsic-scale-value">intrinsic-scale-value</a>,
+    <a href="#fo-property-page-citation-strategy">page-citation-strategy</a>,
+    <a href="#fo-property-provisional-label-separation">provisional-label-separation</a>,
+    <a href="#fo-property-provisional-distance-between-starts">provisional-distance-between-starts</a>,
+    <a href="#fo-property-ref-id">ref-id</a>,
+    <a href="#fo-property-scale-option">scale-option</a>,
+    <a href="#fo-property-score-spaces">score-spaces</a>,
+    <a href="#fo-property-src">src</a>,
+    <a href="#fo-property-visibility">visibility</a>,
+    <a href="#fo-property-z-index">z-index</a></li>
+
+    <li><strong><a href="#fo-property-shorthand-section">Shorthand Properties</a>:</strong>
+    <a href="#fo-property-background">background</a>,
+    <a href="#fo-property-background-position">background-position</a>,
+    <a href="#fo-property-border">border</a>,
+    <a href="#fo-property-border-bottom">border-bottom</a>,
+    <a href="#fo-property-border-color">border-color</a>,
+    <a href="#fo-property-border-left">border-left</a>,
+    <a href="#fo-property-border-right">border-right</a>,
+    <a href="#fo-property-border-style">border-style</a>,
+    <a href="#fo-property-border-spacing">border-spacing</a>,
+    <a href="#fo-property-border-top">border-top</a>,
+    <a href="#fo-property-border-width">border-width</a>,
+    <a href="#fo-property-cue">cue</a>,
+    <a href="#fo-property-font">font</a>,
+    <a href="#fo-property-margin">margin</a>,
+    <a href="#fo-property-padding">padding</a>,
+    <a href="#fo-property-page-break-after">page-break-after</a>,
+    <a href="#fo-property-page-break-before">page-break-before</a>,
+    <a href="#fo-property-page-break-inside">page-break-inside</a>,
+    <a href="#fo-property-pause">pause</a>,
+    <a href="#fo-property-position">position</a>,
+    <a href="#fo-property-size">size</a>,
+    <a href="#fo-property-vertical-align">vertical-align</a>,
+    <a href="#fo-property-white-space">white-space</a>,
+    <a href="#fo-property-xml:lang">xml:lang</a></li>
+  </ul>
+
+  <h2><a href="#fo-function-core-library-section">XSL-FO Core Function Library Support</a></h2>
+
+  <ul class="minitoc">
+    <li><strong><a href="#fo-function-number-section">Number Functions</a>:</strong>
+    <a href="#fo-function-floor">floor</a>,
+    <a href="#fo-function-ceiling">ceiling</a>,
+    <a href="#fo-function-round">round</a>,
+    <a href="#fo-function-min">min</a>,
+    <a href="#fo-function-max">max</a>,
+    <a href="#fo-function-abs">abs</a></li>
+
+    <li><strong><a href="#fo-function-color-section">Color Functions</a>:</strong>
+    <a href="#fo-function-rgb">rgb</a>,
+    <a href="#fo-function-rgb-icc">rgb-icc</a>,
+    <a href="#fo-function-system-color">system-color</a></li>
+
+    <li><strong><a href="#fo-function-font-section">Font Functions</a>:</strong>
+    <a href="#fo-function-system-font">system-font</a></li>
+
+    <li><strong><a href="#fo-function-property-value-section">Property Value
+    Functions</a>:</strong>
+    <a href="#fo-function-inherited-property-value">inherited-property-value</a>,
+    <a href="#fo-function-label-end">label-end</a>,
+    <a href="#fo-function-body-start">body-start</a>,
+    <a href="#fo-function-from-parent">from-parent</a>,
+    <a href="#fo-function-from-nearest-specified-value">from-nearest-specified-value</a>,
+    <a href="#fo-function-from-page-master-region">from-page-master-region</a>,
+    <a href="#fo-function-from-table-column">from-table-column</a>,
+    <a href="#fo-function-proportional-column-width">proportional-column-width</a>,
+    <a href="#fo-function-merge-property-values">merge-property-values</a></li>
+  </ul>
+
+  <h1><a name="fo-object-section" id="fo-object-section">XSL-FO Object Support Table</a> (&sect;6)</h1>
+
+  <p>The following is a summary of FOP's current support for the standard XSL-FO objects.</p>
+
+  <table border="1">
+    <tr>
+      <th rowspan="2" align="center">Citation</th>
+      <th rowspan="2">Object Name</th>
+      <th rowspan="2" align="center">XSL-FO Conformance Level</th>
+      <th colspan="3" align="center">Support&nbsp;in&nbsp;FOP</th>
+      <th rowspan="2">Comments</th>
+    </tr>
+    <tr>
+      <th align="center">0.95 (stable)</th>
+      <th align="center">1.0 (stable)</th>
+      <th align="center">develop- ment</th>
+    </tr>
+
+    <tr>
+      <td class="category" align="center"><a href=
+      "http://www.w3.org/TR/xsl/#d0e7057">&sect;6.4</a></td>
+      <td class="category" colspan="6"><a name="fo-object-decl-section" id=
+      "fo-object-decl-section">Declarations and Pagination and Layout Formatting Objects</a></td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_root">&sect;6.4.2</a></td>
+      <td><a name="fo-object-root" id="fo-object-root">root</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_declarations">&sect;6.4.3</a></td>
+      <td><a name="fo-object-declarations" id="fo-object-declarations">declarations</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_color-profile">&sect;6.4.4</a></td>
+      <td><a name="fo-object-color-profile" id="fo-object-color-profile">color-profile</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_page-sequence">&sect;6.4.5</a></td>
+      <td><a name="fo-object-page-sequence" id="fo-object-page-sequence">page-sequence</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_page-sequence-wrapper">&sect;6.4.6</a></td>
+      <td><a name="fo-object-page-sequence-wrapper" id=
+      "fo-object-page-sequence-wrapper">page-sequence-wrapper</a></td>
+      <td class="basic">Basic</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_layout-master-set">&sect;6.4.7</a></td>
+      <td><a name="fo-object-layout-master-set" id=
+      "fo-object-layout-master-set">layout-master-set</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_page-sequence-master">&sect;6.4.8</a></td>
+      <td><a name="fo-object-page-sequence-master" id=
+      "fo-object-page-sequence-master">page-sequence-master</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_single-page-master-reference">&sect;6.4.9</a></td>
+      <td><a name="fo-object-single-page-master-reference" id=
+      "fo-object-single-page-master-reference">single-page-master-reference</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_repeatable-page-master-reference">&sect;6.4.10</a></td>
+      <td><a name="fo-object-repeatable-page-master-reference" id=
+      "fo-object-repeatable-page-master-reference">repeatable-page-master-reference</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_repeatable-page-master-alternatives">
+      &sect;6.4.11</a></td>
+      <td><a name="fo-object-repeatable-page-master-alternatives" id=
+      "fo-object-repeatable-page-master-alternatives">repeatable-page-master-alternatives</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_conditional-page-master-reference">
+      &sect;6.4.12</a></td>
+      <td><a name="fo-object-conditional-page-master-reference" id=
+      "fo-object-conditional-page-master-reference">conditional-page-master-reference</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_simple-page-master">&sect;6.4.13</a></td>
+      <td><a name="fo-object-simple-page-master" id=
+      "fo-object-simple-page-master">simple-page-master</a></td>
+      <td class="basic">Basic</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td>The page width may not change among pages of the same page-sequence
+          unless a forced break is inserted.</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_region-body">&sect;6.4.14</a></td>
+      <td><a name="fo-object-region-body" id="fo-object-region-body">region-body</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td align="center"></td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_region-before">&sect;6.4.15</a></td>
+      <td><a name="fo-object-region-before" id="fo-object-region-before">region-before</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_region-after">&sect;6.4.16</a></td>
+      <td><a name="fo-object-region-after" id="fo-object-region-after">region-after</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_region-start">&sect;6.4.17</a></td>
+      <td><a name="fo-object-region-start" id="fo-object-region-start">region-start</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_region-end">&sect;6.4.18</a></td>
+      <td><a name="fo-object-region-end" id="fo-object-region-end">region-end</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_flow">&sect;6.4.19</a></td>
+      <td><a name="fo-object-flow" id="fo-object-flow">flow</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_static-content">&sect;6.4.20</a></td>
+      <td><a name="fo-object-static-content" id="fo-object-static-content">static-content</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_title">&sect;6.4.21</a></td>
+      <td><a name="fo-object-title" id="fo-object-title">title</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_flow-map">&sect;6.4.22</a></td>
+      <td><a name="fo-object-flow-map" id="fo-object-flow-map">flow-map</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_flow-assignment">&sect;6.4.23</a></td>
+      <td><a name="fo-object-flow-assignment" id="fo-object-flow-assignment">flow-assignment</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_flow-source-list">&sect;6.4.24</a></td>
+      <td><a name="fo-object-flow-source-list" id="fo-object-flow-source-list">flow-source-list</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_flow-name-specifier">&sect;6.4.25</a></td>
+      <td><a name="fo-object-flow-name-specifier" id="fo-object-flow-name-specifier">flow-name-specifier</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_flow-target-list">&sect;6.4.26</a></td>
+      <td><a name="fo-object-flow-target-list" id="fo-object-flow-target-list">flow-target-list</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_region-name-specifier">&sect;6.4.27</a></td>
+      <td><a name="fo-object-region-name-specifier" id="fo-object-region-name-specifier">region-name-specifier</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+
+    <tr>
+      <td class="category" align="center"><a href=
+      "http://www.w3.org/TR/xsl/#d0e9451">&sect;6.5</a></td>
+      <td class="category" colspan="6"><a name="fo-object-block-section" id=
+      "fo-object-block-section">Block Formatting Objects</a></td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_block">&sect;6.5.2</a></td>
+      <td><a name="fo-object-block" id="fo-object-block">block</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_block-container">&sect;6.5.3</a></td>
+      <td><a name="fo-object-block-container" id=
+      "fo-object-block-container">block-container</a></td>
+      <td class="extended">Extended</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td>&nbsp;</td>
+    </tr>
+
+    <tr>
+      <td class="category" align="center"><a href=
+      "http://www.w3.org/TR/xsl/#d0e9759">&sect;6.6</a></td>
+      <td class="category" colspan="6"><a name="fo-object-inline-section" id=
+      "fo-object-inline-section">Inline Formatting Objects</a></td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_bidi-override">&sect;6.6.2</a></td>
+      <td><a name="fo-object-bidi-override" id="fo-object-bidi-override">bidi-override</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_character">&sect;6.6.3</a></td>
+      <td><a name="fo-object-character" id="fo-object-character">character</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_initial-property-set">&sect;6.6.4</a></td>
+      <td><a name="fo-object-initial-property-set" id=
+      "fo-object-initial-property-set">initial-property-set</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_external-graphic">&sect;6.6.5</a></td>
+      <td><a name="fo-object-external-graphic" id=
+      "fo-object-external-graphic">external-graphic</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_instream-foreign-object">&sect;6.6.6</a></td>
+      <td><a name="fo-object-instream-foreign-object" id=
+      "fo-object-instream-foreign-object">instream-foreign-object</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>Built-in support for SVG only, additional namespaces through optional
+          extensions.</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_inline">&sect;6.6.7</a></td>
+      <td><a name="fo-object-inline" id="fo-object-inline">inline</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_inline-container">&sect;6.6.8</a></td>
+      <td><a name="fo-object-inline-container" id=
+      "fo-object-inline-container">inline-container</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_leader">&sect;6.6.9</a></td>
+      <td><a name="fo-object-leader" id="fo-object-leader">leader</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_page-number">&sect;6.6.10</a></td>
+      <td><a name="fo-object-page-number" id="fo-object-page-number">page-number</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_page-number-citation">&sect;6.6.11</a></td>
+      <td><a name="fo-object-page-number-citation" id=
+      "fo-object-page-number-citation">page-number-citation</a></td>
+      <td class="extended">Extended</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td>After the page number is known, no relayout is performed. The
+          appearance may be suboptimal depending on the use case.</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_page-number-citation-last">&sect;6.6.12</a></td>
+      <td><a name="fo-object-page-number-citation-last" id=
+      "fo-object-page-number-citation-last">page-number-citation-last</a></td>
+      <td class="extended">Extended</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td>
+        <ul>
+          <li>Works only for page-sequence so far.</li>
+          <li>After the page number is known, no relayout is performed. The
+          appearance may be suboptimal depending on the use case.</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_folio-prefix">&sect;6.6.13</a></td>
+      <td><a name="fo-object-folio-prefix" id=
+      "fo-object-folio-prefix">folio-prefix</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_folio-suffix">&sect;6.6.14</a></td>
+      <td><a name="fo-object-folio-suffix" id=
+      "fo-object-folio-suffix">folio-suffix</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_scaling-value-citation">&sect;6.6.15</a></td>
+      <td><a name="fo-object-scaling-value-citation" id=
+      "fo-object-scaling-value-citation">scaling-value-citation</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+
+    <tr>
+      <td class="category" align="center"><a href=
+      "http://www.w3.org/TR/xsl/#d0e11404">&sect;6.7</a></td>
+      <td class="category" colspan="6"><a name="fo-object-table-section" id=
+      "fo-object-table-section">Table Formatting Objects</a></td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_table-and-caption">&sect;6.7.2</a></td>
+      <td><a name="fo-object-table-and-caption" id=
+      "fo-object-table-and-caption">table-and-caption</a></td>
+      <td class="basic">Basic</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_table">&sect;6.7.3</a></td>
+      <td><a name="fo-object-table" id="fo-object-table">table</a></td>
+      <td class="basic">Basic</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td>No support for auto layout yet</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_table-column">&sect;6.7.4</a></td>
+      <td><a name="fo-object-table-column" id="fo-object-table-column">table-column</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_table-caption">&sect;6.7.5</a></td>
+      <td><a name="fo-object-table-caption" id="fo-object-table-caption">table-caption</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_table-header">&sect;6.7.6</a></td>
+      <td><a name="fo-object-table-header" id="fo-object-table-header">table-header</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_table-footer">&sect;6.7.7</a></td>
+      <td><a name="fo-object-table-footer" id="fo-object-table-footer">table-footer</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_table-body">&sect;6.7.8</a></td>
+      <td><a name="fo-object-table-body" id="fo-object-table-body">table-body</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_table-row">&sect;6.7.9</a></td>
+      <td><a name="fo-object-table-row" id="fo-object-table-row">table-row</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_table-cell">&sect;6.7.10</a></td>
+      <td><a name="fo-object-table-cell" id="fo-object-table-cell">table-cell</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+
+    <tr>
+      <td class="category" align="center"><a href=
+      "http://www.w3.org/TR/xsl/#d0e12374">&sect;6.8</a></td>
+      <td class="category" colspan="6"><a name="fo-object-list-section" id=
+      "fo-object-list-section">List Formatting Objects</a></td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_list-block">&sect;6.8.2</a></td>
+      <td><a name="fo-object-list-block" id="fo-object-list-block">list-block</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_list-item">&sect;6.8.3</a></td>
+      <td><a name="fo-object-list-item" id="fo-object-list-item">list-item</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_list-item-body">&sect;6.8.4</a></td>
+      <td><a name="fo-object-list-item-body" id="fo-object-list-item-body">list-item-body</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_list-item-label">&sect;6.8.5</a></td>
+      <td><a name="fo-object-list-item-label" id=
+      "fo-object-list-item-label">list-item-label</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+
+    <tr>
+      <td class="category" align="center"><a href=
+      "http://www.w3.org/TR/xsl/#d0e12855">&sect;6.9</a></td>
+      <td class="category" colspan="6"><a name="fo-object-link-section" id=
+      "fo-object-link-section">Link and Multi Formatting Objects</a></td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_basic-link">&sect;6.9.2</a></td>
+      <td><a name="fo-object-basic-link" id="fo-object-basic-link">basic-link</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>both internal and external supported</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_multi-switch">&sect;6.9.3</a></td>
+      <td><a name="fo-object-multi-switch" id="fo-object-multi-switch">multi-switch</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_multi-case">&sect;6.9.4</a></td>
+      <td><a name="fo-object-multi-case" id="fo-object-multi-case">multi-case</a></td>
+      <td class="basic">Basic</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_multi-toggle">&sect;6.9.5</a></td>
+      <td><a name="fo-object-multi-toggle" id="fo-object-multi-toggle">multi-toggle</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_multi-properties">&sect;6.9.6</a></td>
+      <td><a name="fo-object-multi-properties" id=
+      "fo-object-multi-properties">multi-properties</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_multi-property-set">&sect;6.9.7</a></td>
+      <td><a name="fo-object-multi-property-set" id=
+      "fo-object-multi-property-set">multi-property-set</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+
+    <tr>
+      <td class="category" align="center"><a href=
+      "http://www.w3.org/TR/xsl11/#d0e13293">&sect;6.10</a></td>
+      <td class="category" colspan="6"><a name="fo-object-indexing-section" id=
+      "fo-object-indexing-section">Formatting Objects for Indexing</a></td>
+    </tr>
+    <tr>
+      <td align="center"><a href="http://www.w3.org/TR/xsl11/#fo_index-page-number-prefix">&sect;6.10.2</a></td>
+      <td><a name="fo-object-index-page-number-prefix" id=
+      "fo-object-index-page-number-prefix">index-page-number-prefix</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href="http://www.w3.org/TR/xsl11/#fo_index-page-number-suffix">&sect;6.10.3</a></td>
+      <td><a name="fo-object-index-page-number-suffix" id=
+      "fo-object-index-page-number-suffix">index-page-number-suffix</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href="http://www.w3.org/TR/xsl11/#fo_index-range-begin">&sect;6.10.4</a></td>
+      <td><a name="fo-object-index-range-begin" id=
+      "fo-object-index-range-begin">index-range-begin</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href="http://www.w3.org/TR/xsl11/#fo_index-range-end">&sect;6.10.5</a></td>
+      <td><a name="fo-object-index-range-end" id=
+      "fo-object-index-range-end">index-range-end</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href="http://www.w3.org/TR/xsl11/#fo_index-key-reference">&sect;6.10.6</a></td>
+      <td><a name="fo-object-index-key-reference" id=
+      "fo-object-index-key-reference">index-key-reference</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href="http://www.w3.org/TR/xsl11/#fo_index-page-citation-list">&sect;6.10.7</a></td>
+      <td><a name="fo-object-index-page-citation-list" id=
+      "fo-object-index-page-citation-list">index-page-citation-list</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href="http://www.w3.org/TR/xsl11/#fo_index-page-citation-list-separator">&sect;6.10.8</a></td>
+      <td><a name="fo-object-index-page-citation-list-separator" id=
+      "fo-object-index-page-citation-list-separator">index-page-citation-list-separator</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href="http://www.w3.org/TR/xsl11/#fo_index-page-citation-range-separator">&sect;6.10.9</a></td>
+      <td><a name="fo-object-index-page-citation-range-separator" id=
+      "fo-object-index-page-citation-range-separator">index-page-citation-range-separator</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+
+    <tr>
+      <td class="category" align="center"><a href=
+      "http://www.w3.org/TR/xsl11/#d0e14206">&sect;6.11</a></td>
+      <td class="category" colspan="6"><a name="fo-object-bookmarks-section" id=
+      "fo-object-bookmarks-section">Formatting Objects for Bookmarks</a></td>
+    </tr>
+    <tr>
+      <td align="center"><a href="http://www.w3.org/TR/xsl11/#fo_bookmark-tree">&sect;6.11.1</a></td>
+      <td><a name="fo-object-bookmark-tree" id="fo-object-bookmark-tree">bookmark-tree</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href="http://www.w3.org/TR/xsl11/#fo_bookmark">&sect;6.11.2</a></td>
+      <td><a name="fo-object-bookmark" id="fo-object-bookmark">bookmark</a></td>
+      <td class="extended">Extended</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td>external-destination is not yet supported.</td>
+    </tr>
+    <tr>
+      <td align="center"><a href="http://www.w3.org/TR/xsl11/#fo_bookmark-title">&sect;6.11.3</a></td>
+      <td><a name="fo-object-bookmark-title" id="fo-object-bookmark-title">bookmark-title</a></td>
+      <td class="extended">Extended</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td>color, font-style and font-weight are not supported, yet.</td>
+    </tr>
+
+    <tr>
+      <td class="category" align="center"><a href=
+      "http://www.w3.org/TR/xsl/#d0e14340">&sect;6.12</a></td>
+      <td class="category" colspan="6"><a name="fo-object-outofline-section" id=
+      "fo-object-outofline-section">Out-of-line Formatting Objects</a></td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_float">&sect;6.12.2</a></td>
+      <td><a name="fo-object-float" id="fo-object-float">float</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_footnote">&sect;6.12.3</a></td>
+      <td><a name="fo-object-footnote" id="fo-object-footnote">footnote</a></td>
+      <td class="extended">Extended</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td>Restrictions with multi-column documents.</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_footnote-body">&sect;6.12.4</a></td>
+      <td><a name="fo-object-footnote-body" id="fo-object-footnote-body">footnote-body</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+
+    <tr>
+      <td class="category" align="center"><a href=
+      "http://www.w3.org/TR/xsl/#d0e14653">&sect;6.13</a></td>
+      <td class="category" colspan="6"><a name="fo-object-other-section" id=
+      "fo-object-other-section">Other Formatting Objects</a></td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_change-bar-begin">&sect;6.13.2</a></td>
+      <td><a name="fo-object-change-bar-begin" id="fo-object-change-bar-begin">change-bar-begin</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_change-bar-end">&sect;6.13.3</a></td>
+      <td><a name="fo-object-change-bar-end" id="fo-object-change-bar-end">change-bar-end</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_wrapper">&sect;6.13.4</a></td>
+      <td><a name="fo-object-wrapper" id="fo-object-wrapper">wrapper</a></td>
+      <td class="basic">Basic</td>
+      <td class="partial">partial</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>Only works as expected with inline-level content.</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_marker">&sect;6.13.5</a></td>
+      <td><a name="fo-object-marker" id="fo-object-marker">marker</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_retrieve-marker">&sect;6.13.6</a></td>
+      <td><a name="fo-object-retrieve-marker" id=
+      "fo-object-retrieve-marker">retrieve-marker</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#fo_retrieve-table-marker">&sect;6.13.7</a></td>
+      <td><a name="fo-object-retrieve-table-marker" id="fo-object-retrieve-table-marker">retrieve-table-marker</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+  </table>
+
+  <h1><a name="fo-property-section" id="fo-property-section">XSL-FO Property Support Table</a>
+  (&sect;7)</h1>
+
+  <p>The following is a summary of FOP's current support for the standard XSL-FO properties.</p>
+
+  <table border="1">
+    <tr>
+      <th rowspan="2" align="center">Citation</th>
+      <th rowspan="2">Property Name</th>
+      <th rowspan="2" align="center">XSL-FO Conformance Level</th>
+      <th colspan="3" align="center">Support&nbsp;in&nbsp;FOP</th>
+      <th rowspan="2">Comments</th>
+    </tr>
+    <tr>
+      <th align="center">0.95 (stable)</th>
+      <th align="center">1.0 (stable)</th>
+      <th align="center">develop- ment</th>
+    </tr>
+
+    <tr>
+      <td class="category" align="center"><a href=
+      "http://www.w3.org/TR/xsl/#common-accessibility-properties">&sect;7.5</a></td>
+      <td class="category" colspan="6"><a name="fo-property-commonaccess-section" id=
+      "fo-property-commonaccess-section">Common Accessibility Properties</a></td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#source-document">&sect;7.5.1</a></td>
+      <td><a name="fo-property-source-document" id=
+      "fo-property-source-document">source-document</a></td>
+      <td class="basic">Basic</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#role">&sect;7.5.2</a></td>
+      <td><a name="fo-property-role" id="fo-property-role">role</a></td>
+      <td class="basic">Basic</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+
+    <tr>
+      <td class="category" align="center"><a href=
+      "http://www.w3.org/TR/xsl/#common-absolute-position-properties">&sect;7.6</a></td>
+      <td class="category" colspan="6"><a name="fo-property-commonabspos-section" id=
+      "fo-property-commonabspos-section">Common Absolute Position Properties</a></td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#absolute-position">&sect;7.6.1</a></td>
+      <td><a name="fo-property-absolute-position" id=
+      "fo-property-absolute-position">absolute-position</a></td>
+      <td class="complete">Complete</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#top">&sect;7.6.2</a></td>
+      <td><a name="fo-property-top" id="fo-property-top">top</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#right">&sect;7.6.3</a></td>
+      <td><a name="fo-property-right" id="fo-property-right">right</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#bottom">&sect;7.6.4</a></td>
+      <td><a name="fo-property-bottom" id="fo-property-bottom">bottom</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#left">&sect;7.6.5</a></td>
+      <td><a name="fo-property-left" id="fo-property-left">left</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+
+    <tr>
+      <td class="category" align="center"><a href=
+      "http://www.w3.org/TR/xsl/#common-aural-properties">&sect;7.7</a></td>
+      <td class="category" colspan="6"><a name="fo-property-commonaural-section" id=
+      "fo-property-commonaural-section">Common Aural Properties</a></td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#azimuth">&sect;7.7.1</a></td>
+      <td><a name="fo-property-azimuth" id="fo-property-azimuth">azimuth</a></td>
+      <td class="basic">Basic</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#cue-after">&sect;7.7.2</a></td>
+      <td><a name="fo-property-cue-after" id="fo-property-cue-after">cue-after</a></td>
+      <td class="basic">Basic</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#cue-before">&sect;7.7.3</a></td>
+      <td><a name="fo-property-cue-before" id="fo-property-cue-before">cue-before</a></td>
+      <td class="basic">Basic</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#elevation">&sect;7.7.4</a></td>
+      <td><a name="fo-property-elevation" id="fo-property-elevation">elevation</a></td>
+      <td class="basic">Basic</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#pause-after">&sect;7.7.5</a></td>
+      <td><a name="fo-property-pause-after" id="fo-property-pause-after">pause-after</a></td>
+      <td class="basic">Basic</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#pause-before">&sect;7.7.6</a></td>
+      <td><a name="fo-property-pause-before" id="fo-property-pause-before">pause-before</a></td>
+      <td class="basic">Basic</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#pitch">&sect;7.7.7</a></td>
+      <td><a name="fo-property-pitch" id="fo-property-pitch">pitch</a></td>
+      <td class="basic">Basic</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#pitch-range">&sect;7.7.8</a></td>
+      <td><a name="fo-property-pitch-range" id="fo-property-pitch-range">pitch-range</a></td>
+      <td class="basic">Basic</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#play-during">&sect;7.7.9</a></td>
+      <td><a name="fo-property-play-during" id="fo-property-play-during">play-during</a></td>
+      <td class="basic">Basic</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#richness">&sect;7.7.10</a></td>
+      <td><a name="fo-property-richness" id="fo-property-richness">richness</a></td>
+      <td class="basic">Basic</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#speak">&sect;7.7.11</a></td>
+      <td><a name="fo-property-speak" id="fo-property-speak">speak</a></td>
+      <td class="basic">Basic</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#speak-header">&sect;7.7.12</a></td>
+      <td><a name="fo-property-speak-header" id="fo-property-speak-header">speak-header</a></td>
+      <td class="basic">Basic</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#speak-numeral">&sect;7.7.13</a></td>
+      <td><a name="fo-property-speak-numeral" id="fo-property-speak-numeral">speak-numeral</a></td>
+      <td class="basic">Basic</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#speak-punctuation">&sect;7.7.14</a></td>
+      <td><a name="fo-property-speak-punctuation" id=
+      "fo-property-speak-punctuation">speak-punctuation</a></td>
+      <td class="basic">Basic</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#speech-rate">&sect;7.7.15</a></td>
+      <td><a name="fo-property-speech-rate" id="fo-property-speech-rate">speech-rate</a></td>
+      <td class="basic">Basic</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#stress">&sect;7.7.16</a></td>
+      <td><a name="fo-property-stress" id="fo-property-stress">stress</a></td>
+      <td class="basic">Basic</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#voice-family">&sect;7.7.17</a></td>
+      <td><a name="fo-property-voice-family" id="fo-property-voice-family">voice-family</a></td>
+      <td class="basic">Basic</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#volume">&sect;7.7.18</a></td>
+      <td><a name="fo-property-volume" id="fo-property-volume">volume</a></td>
+      <td class="basic">Basic</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td>&nbsp;</td>
+    </tr>
+
+    <tr>
+      <td class="category" align="center"><a href=
+      "http://www.w3.org/TR/xsl/#common-border-padding-and-background-properties">&sect;7.8</a></td>
+      <td class="category" colspan="6"><a name="fo-property-commonenv-section" id=
+      "fo-property-commonenv-section">Common Border, Padding, and Background Properties</a></td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#background-attachment">&sect;7.8.1</a></td>
+      <td><a name="fo-property-background-attachment" id=
+      "fo-property-background-attachment">background-attachment</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#background-color">&sect;7.8.2</a></td>
+      <td><a name="fo-property-background-color" id=
+      "fo-property-background-color">background-color</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#background-image">&sect;7.8.3</a></td>
+      <td><a name="fo-property-background-image" id=
+      "fo-property-background-image">background-image</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#background-repeat">&sect;7.8.4</a></td>
+      <td><a name="fo-property-background-repeat" id=
+      "fo-property-background-repeat">background-repeat</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#background-position-horizontal">&sect;7.8.5</a></td>
+      <td><a name="fo-property-background-position-horizontal" id=
+      "fo-property-background-position-horizontal">background-position-horizontal</a></td>
+      <td class="extended">Extended</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td align="center">Ignored when background-repeat set to
+      "repeat" or "repeat-x"</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#background-position-vertical">&sect;7.8.6</a></td>
+      <td><a name="fo-property-background-position-vertical" id=
+      "fo-property-background-position-vertical">background-position-vertical</a></td>
+      <td class="extended">Extended</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td align="center">Ignored when background-repeat set to
+      "repeat" or "repeat-y"</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#border-before-color">&sect;7.8.7</a></td>
+      <td><a name="fo-property-border-before-color" id=
+      "fo-property-border-before-color">border-before-color</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#border-before-style">&sect;7.8.8</a></td>
+      <td><a name="fo-property-border-before-style" id=
+      "fo-property-border-before-style">border-before-style</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#border-before-width">&sect;7.8.9</a></td>
+      <td><a name="fo-property-border-before-width" id=
+      "fo-property-border-before-width">border-before-width</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#border-after-color">&sect;7.8.10</a></td>
+      <td><a name="fo-property-border-after-color" id=
+      "fo-property-border-after-color">border-after-color</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#border-after-style">&sect;7.8.11</a></td>
+      <td><a name="fo-property-border-after-style" id=
+      "fo-property-border-after-style">border-after-style</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#border-after-width">&sect;7.8.12</a></td>
+      <td><a name="fo-property-border-after-width" id=
+      "fo-property-border-after-width">border-after-width</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#border-start-color">&sect;7.8.13</a></td>
+      <td><a name="fo-property-border-start-color" id=
+      "fo-property-border-start-color">border-start-color</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#border-start-style">&sect;7.8.14</a></td>
+      <td><a name="fo-property-border-start-style" id=
+      "fo-property-border-start-style">border-start-style</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#border-start-width">&sect;7.8.15</a></td>
+      <td><a name="fo-property-border-start-width" id=
+      "fo-property-border-start-width">border-start-width</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#border-end-color">&sect;7.8.16</a></td>
+      <td><a name="fo-property-border-end-color" id=
+      "fo-property-border-end-color">border-end-color</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#border-end-style">&sect;7.8.17</a></td>
+      <td><a name="fo-property-border-end-style" id=
+      "fo-property-border-end-style">border-end-style</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#border-end-width">&sect;7.8.18</a></td>
+      <td><a name="fo-property-border-end-width" id=
+      "fo-property-border-end-width">border-end-width</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#border-top-color">&sect;7.8.19</a></td>
+      <td><a name="fo-property-border-top-color" id=
+      "fo-property-border-top-color">border-top-color</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#border-top-style">&sect;7.8.20</a></td>
+      <td><a name="fo-property-border-top-style" id=
+      "fo-property-border-top-style">border-top-style</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+<td>&nbsp;</td>    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#border-top-width">&sect;7.8.21</a></td>
+      <td><a name="fo-property-border-top-width" id=
+      "fo-property-border-top-width">border-top-width</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#border-bottom-color">&sect;7.8.22</a></td>
+      <td><a name="fo-property-border-bottom-color" id=
+      "fo-property-border-bottom-color">border-bottom-color</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#border-bottom-style">&sect;7.8.23</a></td>
+      <td><a name="fo-property-border-bottom-style" id=
+      "fo-property-border-bottom-style">border-bottom-style</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+<td>&nbsp;</td>    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#border-bottom-width">&sect;7.8.24</a></td>
+      <td><a name="fo-property-border-bottom-width" id=
+      "fo-property-border-bottom-width">border-bottom-width</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#border-left-color">&sect;7.8.25</a></td>
+      <td><a name="fo-property-border-left-color" id=
+      "fo-property-border-left-color">border-left-color</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#border-left-style">&sect;7.8.26</a></td>
+      <td><a name="fo-property-border-left-style" id=
+      "fo-property-border-left-style">border-left-style</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+<td>&nbsp;</td>    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#border-left-width">&sect;7.8.27</a></td>
+      <td><a name="fo-property-border-left-width" id=
+      "fo-property-border-left-width">border-left-width</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#border-right-color">&sect;7.8.28</a></td>
+      <td><a name="fo-property-border-right-color" id=
+      "fo-property-border-right-color">border-right-color</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#border-right-style">&sect;7.8.29</a></td>
+      <td><a name="fo-property-border-right-style" id=
+      "fo-property-border-right-style">border-right-style</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+<td>&nbsp;</td>    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#border-right-width">&sect;7.8.30</a></td>
+      <td><a name="fo-property-border-right-width" id=
+      "fo-property-border-right-width">border-right-width</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#padding-before">&sect;7.8.31</a></td>
+      <td><a name="fo-property-padding-before" id=
+      "fo-property-padding-before">padding-before</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#padding-after">&sect;7.8.32</a></td>
+      <td><a name="fo-property-padding-after" id="fo-property-padding-after">padding-after</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#padding-start">&sect;7.8.33</a></td>
+      <td><a name="fo-property-padding-start" id="fo-property-padding-start">padding-start</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#padding-end">&sect;7.8.34</a></td>
+      <td><a name="fo-property-padding-end" id="fo-property-padding-end">padding-end</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#padding-top">&sect;7.8.35</a></td>
+      <td><a name="fo-property-padding-top" id="fo-property-padding-top">padding-top</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#padding-bottom">&sect;7.8.36</a></td>
+      <td><a name="fo-property-padding-bottom" id=
+      "fo-property-padding-bottom">padding-bottom</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#padding-left">&sect;7.8.37</a></td>
+      <td><a name="fo-property-padding-left" id="fo-property-padding-left">padding-left</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#padding-right">&sect;7.8.38</a></td>
+      <td><a name="fo-property-padding-right" id="fo-property-padding-right">padding-right</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+
+    <tr>
+      <td class="category" align="center"><a href=
+      "http://www.w3.org/TR/xsl/#common-font-properties">&sect;7.9</a></td>
+      <td class="category" colspan="6"><a name="fo-property-commonfont-section" id=
+      "fo-property-commonfont-section">Common Font Properties</a></td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#font-family">&sect;7.9.2</a></td>
+      <td><a name="fo-property-font-family" id="fo-property-font-family">font-family</a></td>
+      <td class="basic">Basic</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td>font-family lists are allowed but glyph based font selection is not
+          supported</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#font-selection-strategy">&sect;7.9.3</a></td>
+      <td><a name="fo-property-font-selection-strategy" id=
+      "fo-property-font-selection-strategy">font-selection-strategy</a></td>
+      <td class="complete">Complete</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#font-size">&sect;7.9.4</a></td>
+      <td><a name="fo-property-font-size" id="fo-property-font-size">font-size</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#font-stretch">&sect;7.9.5</a></td>
+      <td><a name="fo-property-font-stretch" id="fo-property-font-stretch">font-stretch</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#font-size-adjust">&sect;7.9.6</a></td>
+      <td><a name="fo-property-font-size-adjust" id=
+      "fo-property-font-size-adjust">font-size-adjust</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#font-style">&sect;7.9.7</a></td>
+      <td><a name="fo-property-font-style" id="fo-property-font-style">font-style</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#font-variant">&sect;7.9.8</a></td>
+      <td><a name="fo-property-font-variant" id="fo-property-font-variant">font-variant</a></td>
+      <td class="basic">Basic</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#font-weight">&sect;7.9.9</a></td>
+      <td><a name="fo-property-font-weight" id="fo-property-font-weight">font-weight</a></td>
+      <td class="basic">Basic</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td>TODO &lt;relative&gt; font weights</td>
+    </tr>
+
+    <tr>
+      <td class="category" align="center"><a href=
+      "http://www.w3.org/TR/xsl/#common-hyphenation-properties">&sect;7.10</a></td>
+      <td class="category" colspan="6"><a name="fo-property-commonhyphen-section" id=
+      "fo-property-commonhyphen-section">Common Hyphenation Properties</a></td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#country">&sect;7.10.1</a></td>
+      <td><a name="fo-property-country" id="fo-property-country">country</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>For PDF output: Only 2-letter codes from ISO 3166 are supported properly to
+          identify the natural language!</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#language">&sect;7.10.2</a></td>
+      <td><a name="fo-property-language" id="fo-property-language">language</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>For PDF output: Only 2-letter codes from ISO 639 are supported properly to
+          identify the natural language!</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#script">&sect;7.10.3</a></td>
+      <td><a name="fo-property-script" id="fo-property-script">script</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#hyphenate">&sect;7.10.4</a></td>
+      <td><a name="fo-property-hyphenate" id="fo-property-hyphenate">hyphenate</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#hyphenation-character">&sect;7.10.5</a></td>
+      <td><a name="fo-property-hyphenation-character" id=
+      "fo-property-hyphenation-character">hyphenation-character</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#hyphenation-push-character-count">&sect;7.10.6</a></td>
+      <td><a name="fo-property-hyphenation-push-character-count" id=
+      "fo-property-hyphenation-push-character-count">hyphenation-push-character-count</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#hyphenation-remain-character-count">&sect;7.10.7</a></td>
+      <td><a name="fo-property-hyphenation-remain-character-count" id=
+      "fo-property-hyphenation-remain-character-count">hyphenation-remain-character-count</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+
+    <tr>
+      <td class="category" align="center"><a href=
+      "http://www.w3.org/TR/xsl/#common-margin-properties-block">&sect;7.11</a></td>
+      <td class="category" colspan="6"><a name="fo-property-commonmarginblock-section" id=
+      "fo-property-commonmarginblock-section">Common Margin Properties - Block</a></td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#margin-top">&sect;7.11.1</a></td>
+      <td><a name="fo-property-margin-top" id="fo-property-margin-top">margin-top</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#margin-bottom">&sect;7.11.2</a></td>
+      <td><a name="fo-property-margin-bottom" id="fo-property-margin-bottom">margin-bottom</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#margin-left">&sect;7.11.3</a></td>
+      <td><a name="fo-property-margin-left" id="fo-property-margin-left">margin-left</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#margin-right">&sect;7.11.4</a></td>
+      <td><a name="fo-property-margin-right" id="fo-property-margin-right">margin-right</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#space-before">&sect;7.11.5</a></td>
+      <td><a name="fo-property-space-before" id="fo-property-space-before">space-before</a></td>
+      <td class="basic">Basic</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td>Space adjustment may not fully work everywhere, yet.</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#space-after">&sect;7.11.6</a></td>
+      <td><a name="fo-property-space-after" id="fo-property-space-after">space-after</a></td>
+      <td class="basic">Basic</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td>Space adjustment may not fully work everywhere, yet.</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#start-indent">&sect;7.11.7</a></td>
+      <td><a name="fo-property-start-indent" id="fo-property-start-indent">start-indent</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#end-indent">&sect;7.11.8</a></td>
+      <td><a name="fo-property-end-indent" id="fo-property-end-indent">end-indent</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+
+    <tr>
+      <td class="category" align="center"><a href=
+      "http://www.w3.org/TR/xsl/#common-margin-properties-inline">&sect;7.12</a></td>
+      <td class="category" colspan="6"><a name="fo-property-commonmargininline-section" id=
+      "fo-property-commonmargininline-section">Common Margin Properties - Inline</a></td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#d0e21775">&sect;7.12.1</a></td>
+      <td><a name="fo-property-margin-top-inline" id="fo-property-margin-top-inline">margin-top</a></td>
+      <td class="basic">Basic</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#d0e21783">&sect;7.12.2</a></td>
+      <td><a name="fo-property-margin-bottom-inline" id="fo-property-margin-bottom-inline">margin-bottom</a></td>
+      <td class="basic">Basic</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#d0e21791">&sect;7.12.3</a></td>
+      <td><a name="fo-property-margin-left-inline" id="fo-property-margin-left-inline">margin-left</a></td>
+      <td class="basic">Basic</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#d0e21799">&sect;7.12.4</a></td>
+      <td><a name="fo-property-margin-right-inline" id="fo-property-margin-right-inline">margin-right</a></td>
+      <td class="basic">Basic</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#space-end">&sect;7.12.5</a></td>
+      <td><a name="fo-property-space-end" id="fo-property-space-end">space-end</a></td>
+      <td class="basic">Basic</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#space-start">&sect;7.12.6</a></td>
+      <td><a name="fo-property-space-start" id="fo-property-space-start">space-start</a></td>
+      <td class="basic">Basic</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+
+    <tr>
+      <td class="category" align="center"><a href=
+      "http://www.w3.org/TR/xsl/#common-relative-position-properties">&sect;7.13</a></td>
+      <td class="category" colspan="6"><a name="fo-property-commonrelpos-section" id=
+      "fo-property-commonrelpos-section">Common Relative Position Properties</a></td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#d0e21934">&sect;7.13.1</a></td>
+      <td><a name="fo-property-top-relative" id="fo-property-top-relative">top</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#d0e21942">&sect;7.13.2</a></td>
+      <td><a name="fo-property-right-relative" id="fo-property-right-relative">right</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#d0e21950">&sect;7.13.3</a></td>
+      <td><a name="fo-property-bottom-relative" id="fo-property-bottom-relative">bottom</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#d0e21958">&sect;7.13.4</a></td>
+      <td><a name="fo-property-left-relative" id="fo-property-left-relative">left</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#relative-position">&sect;7.13.5</a></td>
+      <td><a name="fo-property-relative-position" id=
+      "fo-property-relative-position">relative-position</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+
+    <tr>
+      <td class="category" align="center"><a href=
+      "http://www.w3.org/TR/xsl/#area-alignment">&sect;7.14</a></td>
+      <td class="category" colspan="6"><a name="fo-property-areaalign-section" id=
+      "fo-property-areaalign-section">Area Alignment Properties</a></td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#alignment-adjust">&sect;7.14.1</a></td>
+      <td><a name="fo-property-alignment-adjust" id=
+      "fo-property-alignment-adjust">alignment-adjust</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#alignment-baseline">&sect;7.14.2</a></td>
+      <td><a name="fo-property-alignment-baseline" id=
+      "fo-property-alignment-baseline">alignment-baseline</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#baseline-shift">&sect;7.14.3</a></td>
+      <td><a name="fo-property-baseline-shift" id=
+      "fo-property-baseline-shift">baseline-shift</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#display-align">&sect;7.14.4</a></td>
+      <td><a name="fo-property-display-align" id="fo-property-display-align">display-align</a></td>
+      <td class="extended">Extended</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td>TODO Check e-g, i-f-o.</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#dominant-baseline">&sect;7.14.5</a></td>
+      <td><a name="fo-property-dominant-baseline" id=
+      "fo-property-dominant-baseline">dominant-baseline</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#relative-align">&sect;7.14.6</a></td>
+      <td><a name="fo-property-relative-align" id=
+      "fo-property-relative-align">relative-align</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+
+    <tr>
+      <td class="category" align="center"><a href=
+      "http://www.w3.org/TR/xsl/#d0e22982">&sect;7.15</a></td>
+      <td class="category" colspan="6"><a name="fo-property-areadim-section" id=
+      "fo-property-areadim-section">Area Dimension Properties</a></td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#allowed-height-scale">&sect;7.15.1</a></td>
+      <td><a name="fo-property-allowed-height-scale" id="fo-property-allowed-height-scale">allowed-height-scale</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#allowed-width-scale">&sect;7.15.2</a></td>
+      <td><a name="fo-property-allowed-width-scale" id="fo-property-allowed-width-scale">allowed-width-scale</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#block-progression-dimension">&sect;7.15.3</a></td>
+      <td><a name="fo-property-block-progression-dimension" id=
+      "fo-property-block-progression-dimension">block-progression-dimension</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#content-height">&sect;7.15.4</a></td>
+      <td><a name="fo-property-content-height" id=
+      "fo-property-content-height">content-height</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#content-width">&sect;7.15.5</a></td>
+      <td><a name="fo-property-content-width" id="fo-property-content-width">content-width</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#height">&sect;7.15.6</a></td>
+      <td><a name="fo-property-height" id="fo-property-height">height</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#inline-progression-dimension">&sect;7.15.7</a></td>
+      <td><a name="fo-property-inline-progression-dimension" id=
+      "fo-property-inline-progression-dimension">inline-progression-dimension</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#max-height">&sect;7.15.8</a></td>
+      <td><a name="fo-property-max-height" id="fo-property-max-height">max-height</a></td>
+      <td class="complete">Complete</td>
+      <td class="no">no</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#max-width">&sect;7.15.9</a></td>
+      <td><a name="fo-property-max-width" id="fo-property-max-width">max-width</a></td>
+      <td class="complete">Complete</td>
+      <td class="no">no</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#min-height">&sect;7.15.10</a></td>
+      <td><a name="fo-property-min-height" id="fo-property-min-height">min-height</a></td>
+      <td class="complete">Complete</td>
+      <td class="no">no</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#min-width">&sect;7.15.11</a></td>
+      <td><a name="fo-property-min-width" id="fo-property-min-width">min-width</a></td>
+      <td class="complete">Complete</td>
+      <td class="no">no</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#scaling">&sect;7.15.12</a></td>
+      <td><a name="fo-property-scaling" id="fo-property-scaling">scaling</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#scaling-method">&sect;7.15.13</a></td>
+      <td><a name="fo-property-scaling-method" id=
+      "fo-property-scaling-method">scaling-method</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#width">&sect;7.15.14</a></td>
+      <td><a name="fo-property-width" id="fo-property-width">width</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+
+    <tr>
+      <td class="category" align="center"><a href=
+      "http://www.w3.org/TR/xsl/#d0e24119">&sect;7.16</a></td>
+      <td class="category" colspan="6"><a name="fo-property-blockandline-section" id=
+      "fo-property-blockandline-section">Block and Line-related Properties</a></td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#hyphenation-keep">&sect;7.16.1</a></td>
+      <td><a name="fo-property-hyphenation-keep" id=
+      "fo-property-hyphenation-keep">hyphenation-keep</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#hyphenation-ladder-count">&sect;7.16.2</a></td>
+      <td><a name="fo-property-hyphenation-ladder-count" id=
+      "fo-property-hyphenation-ladder-count">hyphenation-ladder-count</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#last-line-end-indent">&sect;7.16.3</a></td>
+      <td><a name="fo-property-last-line-end-indent" id=
+      "fo-property-last-line-end-indent">last-line-end-indent</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#line-height">&sect;7.16.4</a></td>
+      <td><a name="fo-property-line-height" id="fo-property-line-height">line-height</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#line-height-shift-adjustment">&sect;7.16.5</a></td>
+      <td><a name="fo-property-line-height-shift-adjustment" id=
+      "fo-property-line-height-shift-adjustment">line-height-shift-adjustment</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#line-stacking-strategy">&sect;7.16.6</a></td>
+      <td><a name="fo-property-line-stacking-strategy" id=
+      "fo-property-line-stacking-strategy">line-stacking-strategy</a></td>
+      <td class="basic">Basic</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td>value "line-height" not supported</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#linefeed-treatment">&sect;7.16.7</a></td>
+      <td><a name="fo-property-linefeed-treatment" id=
+      "fo-property-linefeed-treatment">linefeed-treatment</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#white-space-treatment">&sect;7.16.8</a></td>
+      <td><a name="fo-property-white-space-treatment" id=
+      "fo-property-white-space-treatment">white-space-treatment</a></td>
+      <td class="extended">Extended</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td>inline elements may interfere with correct handling of this property
+          in some cases</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#text-align">&sect;7.16.9</a></td>
+      <td><a name="fo-property-text-align" id="fo-property-text-align">text-align</a></td>
+      <td class="basic">Basic</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td>Only start, end, center and justify are supported</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#text-align-last">&sect;7.16.10</a></td>
+      <td><a name="fo-property-text-align-last" id=
+      "fo-property-text-align-last">text-align-last</a></td>
+      <td class="extended">Extended</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td>Only start, end, center and justify are supported</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#text-indent">&sect;7.16.11</a></td>
+      <td><a name="fo-property-text-indent" id="fo-property-text-indent">text-indent</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#white-space-collapse">&sect;7.16.12</a></td>
+      <td><a name="fo-property-white-space-collapse" id=
+      "fo-property-white-space-collapse">white-space-collapse</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#wrap-option">&sect;7.16.13</a></td>
+      <td><a name="fo-property-wrap-option" id="fo-property-wrap-option">wrap-option</a></td>
+      <td class="basic">Basic</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td>Only supported on fo:block.</td>
+    </tr>
+
+    <tr>
+      <td class="category" align="center"><a href=
+      "http://www.w3.org/TR/xsl/#d0e25178">&sect;7.17</a></td>
+      <td class="category" colspan="6"><a name="fo-property-char-section" id=
+      "fo-property-char-section">Character Properties</a></td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#character">&sect;7.17.1</a></td>
+      <td><a name="fo-property-character" id="fo-property-character">character</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#letter-spacing">&sect;7.17.2</a></td>
+      <td><a name="fo-property-letter-spacing" id=
+      "fo-property-letter-spacing">letter-spacing</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#suppress-at-line-break">&sect;7.17.3</a></td>
+      <td><a name="fo-property-suppress-at-line-break" id=
+      "fo-property-suppress-at-line-break">suppress-at-line-break</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#text-decoration">&sect;7.17.4</a></td>
+      <td><a name="fo-property-text-decoration" id=
+      "fo-property-text-decoration">text-decoration</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#text-shadow">&sect;7.17.5</a></td>
+      <td><a name="fo-property-text-shadow" id="fo-property-text-shadow">text-shadow</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#text-transform">&sect;7.17.6</a></td>
+      <td><a name="fo-property-text-transform" id=
+      "fo-property-text-transform">text-transform</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#treat-as-word-space">&sect;7.17.7</a></td>
+      <td><a name="fo-property-treat-as-word-space" id=
+      "fo-property-treat-as-word-space">treat-as-word-space</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#word-spacing">&sect;7.17.8</a></td>
+      <td><a name="fo-property-word-spacing" id="fo-property-word-spacing">word-spacing</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+
+    <tr>
+      <td class="category" align="center"><a href=
+      "http://www.w3.org/TR/xsl/#d0e25895">&sect;7.18</a></td>
+      <td class="category" colspan="6"><a name="fo-property-color-section" id=
+      "fo-property-color-section">Color-related Properties</a></td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#color">&sect;7.18.1</a></td>
+      <td><a name="fo-property-color" id="fo-property-color">color</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#color-profile-name">&sect;7.18.2</a></td>
+      <td><a name="fo-property-color-profile-name" id=
+      "fo-property-color-profile-name">color-profile-name</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#rendering-intent">&sect;7.18.3</a></td>
+      <td><a name="fo-property-rendering-intent" id=
+      "fo-property-rendering-intent">rendering-intent</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+
+    <tr>
+      <td class="category" align="center"><a href=
+      "http://www.w3.org/TR/xsl/#d0e26080">&sect;7.19</a></td>
+      <td class="category" colspan="6"><a name="fo-property-float-section" id=
+      "fo-property-float-section">Float-related Properties</a></td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#clear">&sect;7.19.1</a></td>
+      <td><a name="fo-property-clear" id="fo-property-clear">clear</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#float">&sect;7.19.2</a></td>
+      <td><a name="fo-property-float" id="fo-property-float">float</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#intrusion-displace">&sect;7.19.3</a></td>
+      <td><a name="fo-property-intrusion-displace" id=
+      "fo-property-intrusion-displace">intrusion-displace</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+
+    <tr>
+      <td class="category" align="center"><a href=
+      "http://www.w3.org/TR/xsl/#d0e26492">&sect;7.20</a></td>
+      <td class="category" colspan="6"><a name="fo-property-keepsbreaks-section" id=
+      "fo-property-keepsbreaks-section">Keeps and Breaks Properties</a></td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#break-after">&sect;7.20.1</a></td>
+      <td><a name="fo-property-break-after" id="fo-property-break-after">break-after</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#break-before">&sect;7.20.2</a></td>
+      <td><a name="fo-property-break-before" id="fo-property-break-before">break-before</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#keep-together">&sect;7.20.3</a></td>
+      <td><a name="fo-property-keep-together" id="fo-property-keep-together">keep-together</a></td>
+      <td class="extended">Extended</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td>
+        <ul>
+          <li>[0.95] &lt;integer&gt; values are not supported.</li>
+          <li>[1.0 and later] minimal support for &lt;integer&gt; value.</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#keep-with-next">&sect;7.20.4</a></td>
+      <td><a name="fo-property-keep-with-next" id=
+      "fo-property-keep-with-next">keep-with-next</a></td>
+      <td class="basic">Basic</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td>
+        <ul>
+          <li>works on all implemented block-level FOs, but not on inline-level
+          FOs.</li>
+          <li>[0.95] &lt;integer&gt; values are not supported.</li>
+          <li>[1.0 and later] minimal support for &lt;integer&gt; value.</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#keep-with-previous">&sect;7.20.5</a></td>
+      <td><a name="fo-property-keep-with-previous" id=
+      "fo-property-keep-with-previous">keep-with-previous</a></td>
+      <td class="basic">Basic</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td>
+        <ul>
+          <li>[0.95] works on all implemented FOs, except list- and inline-level
+          FOs.</li>
+          <li>[1.0 and later] works on all implemented block-level
+          FOs, but not on inline-level FOs.</li>
+          <li>[0.95] &lt;integer&gt; values are not supported.</li>
+          <li>[1.0 and later] minimal support for &lt;integer&gt; value.</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#orphans">&sect;7.20.6</a></td>
+      <td><a name="fo-property-orphans" id="fo-property-orphans">orphans</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#widows">&sect;7.20.7</a></td>
+      <td><a name="fo-property-widows" id="fo-property-widows">widows</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+
+    <tr>
+      <td class="category" align="center"><a href=
+      "http://www.w3.org/TR/xsl/#d0e26965">&sect;7.21</a></td>
+      <td class="category" colspan="6"><a name="fo-property-layout-section" id=
+      "fo-property-layout-section">Layout-related Properties</a></td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#clip">&sect;7.21.1</a></td>
+      <td><a name="fo-property-clip" id="fo-property-clip">clip</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#overflow">&sect;7.21.2</a></td>
+      <td><a name="fo-property-overflow" id="fo-property-overflow">overflow</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#reference-orientation">&sect;7.21.3</a></td>
+      <td><a name="fo-property-reference-orientation" id=
+      "fo-property-reference-orientation">reference-orientation</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#span">&sect;7.21.4</a></td>
+      <td><a name="fo-property-span" id="fo-property-span">span</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+
+    <tr>
+      <td class="category" align="center"><a href=
+      "http://www.w3.org/TR/xsl/#d0e27308">&sect;7.22</a></td>
+      <td class="category" colspan="6"><a name="fo-property-leader-section" id=
+      "fo-property-leader-section">Leader and Rule Properties</a></td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#leader-alignment">&sect;7.22.1</a></td>
+      <td><a name="fo-property-leader-alignment" id=
+      "fo-property-leader-alignment">leader-alignment</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>Not supported</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#leader-pattern">&sect;7.22.2</a></td>
+      <td><a name="fo-property-leader-pattern" id=
+      "fo-property-leader-pattern">leader-pattern</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>Value "use-content" does not work in all circumstances.</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#leader-pattern-width">&sect;7.22.3</a></td>
+      <td><a name="fo-property-leader-pattern-width" id=
+      "fo-property-leader-pattern-width">leader-pattern-width</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#leader-length">&sect;7.22.4</a></td>
+      <td><a name="fo-property-leader-length" id="fo-property-leader-length">leader-length</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#rule-style">&sect;7.22.5</a></td>
+      <td><a name="fo-property-rule-style" id="fo-property-rule-style">rule-style</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#rule-thickness">&sect;7.22.6</a></td>
+      <td><a name="fo-property-rule-thickness" id=
+      "fo-property-rule-thickness">rule-thickness</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+
+    <tr>
+      <td class="category" align="center"><a href=
+      "http://www.w3.org/TR/xsl/#d0e27719">&sect;7.23</a></td>
+      <td class="category" colspan="6"><a name="fo-property-dynamiceffects-section" id=
+      "fo-property-dynamiceffects-section">Properties for Dynamic Effects Formatting Objects</a></td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#active-state">&sect;7.23.1</a></td>
+      <td><a name="fo-property-active-state" id="fo-property-active-state">active-state</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#auto-restore">&sect;7.23.2</a></td>
+      <td><a name="fo-property-auto-restore" id="fo-property-auto-restore">auto-restore</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#case-name">&sect;7.23.3</a></td>
+      <td><a name="fo-property-case-name" id="fo-property-case-name">case-name</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#case-title">&sect;7.23.4</a></td>
+      <td><a name="fo-property-case-title" id="fo-property-case-title">case-title</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#destination-placement-offset">&sect;7.23.5</a></td>
+      <td><a name="fo-property-destination-placement-offset" id=
+      "fo-property-destination-placement-offset">destination-placement-offset</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#external-destination">&sect;7.23.6</a></td>
+      <td><a name="fo-property-external-destination" id=
+      "fo-property-external-destination">external-destination</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#indicate-destination">&sect;7.23.7</a></td>
+      <td><a name="fo-property-indicate-destination" id=
+      "fo-property-indicate-destination">indicate-destination</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#internal-destination">&sect;7.23.8</a></td>
+      <td><a name="fo-property-internal-destination" id=
+      "fo-property-internal-destination">internal-destination</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#show-destination">&sect;7.23.9</a></td>
+      <td><a name="fo-property-show-destination" id=
+      "fo-property-show-destination">show-destination</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td>[1.0 and later] only has effect in PDF output, for external PDF destinations (links pointing to destinations
+          in <i>another</i> PDF), and only works reliably when the PDF is viewed in a standalone PDF viewer.
+          <p>Adobe's browser plugin, for example, ignores the <code>/NewWindow</code> flag.</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#starting-state">&sect;7.23.10</a></td>
+      <td><a name="fo-property-starting-state" id=
+      "fo-property-starting-state">starting-state</a></td>
+      <td class="extended">Extended</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td>support for starting-state on fo:bookmark</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#switch-to">&sect;7.23.11</a></td>
+      <td><a name="fo-property-switch-to" id="fo-property-switch-to">switch-to</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#target-presentation-context">&sect;7.23.12</a></td>
+      <td><a name="fo-property-target-presentation-context" id=
+      "fo-property-target-presentation-context">target-presentation-context</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#target-processing-context">&sect;7.23.13</a></td>
+      <td><a name="fo-property-target-processing-context" id=
+      "fo-property-target-processing-context">target-processing-context</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#target-stylesheet">&sect;7.23.14</a></td>
+      <td><a name="fo-property-target-stylesheet" id=
+      "fo-property-target-stylesheet">target-stylesheet</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+
+    <tr>
+      <td class="category" align="center"><a href=
+      "http://www.w3.org/TR/xsl/#d0e28521">&sect;7.24</a></td>
+      <td class="category" colspan="6"><a name="fo-property-indexing-section" id=
+      "fo-property-indexing-section">Properties for Indexing</a></td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#index-class">&sect;7.24.1</a></td>
+      <td><a name="fo-property-index-class" id="fo-property-index-class">index-class</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#index-key">&sect;7.24.2</a></td>
+      <td><a name="fo-property-index-key" id="fo-property-index-key">index-key</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#page-number-treatment">&sect;7.24.3</a></td>
+      <td><a name="fo-property-page-number-treatment" id="fo-property-page-number-treatment">page-number-treatment</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#merge-ranges-across-index-key-references">&sect;7.24.4</a></td>
+      <td><a name="fo-property-merge-ranges-across-index-key-references" id="fo-property-merge-ranges-across-index-key-references">
+      merge-ranges-across-index-key-references</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#merge-sequential-page-numbers">&sect;7.24.5</a></td>
+      <td><a name="fo-property-merge-sequential-page-numbers" id="fo-property-merge-sequential-page-numbers">
+      merge-sequential-page-numbers</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#merge-pages-across-index-key-references">&sect;7.24.6</a></td>
+      <td><a name="fo-property-merge-pages-across-index-key-references" id="fo-property-merge-pages-across-index-key-references">
+      merge-pages-across-index-key-references</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#ref-index-key">&sect;7.24.7</a></td>
+      <td><a name="fo-property-ref-index-key" id="fo-property-ref-index-key">ref-index-key</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+
+    <tr>
+      <td class="category" align="center"><a href=
+      "http://www.w3.org/TR/xsl/#d0e28896">&sect;7.25</a></td>
+      <td class="category" colspan="6"><a name="fo-property-markers-section" id=
+      "fo-property-markers-section">Properties for Markers</a></td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#marker-class-name">&sect;7.25.1</a></td>
+      <td><a name="fo-property-marker-class-name" id=
+      "fo-property-marker-class-name">marker-class-name</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#retrieve-boundary-within-table">&sect;7.25.2</a></td>
+      <td><a name="fo-property-retrieve-boundary-within-table" id="fo-property-retrieve-boundary-within-table">
+      retrieve-boundary-within-table</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#retrieve-class-name">&sect;7.25.3</a></td>
+      <td><a name="fo-property-retrieve-class-name" id=
+      "fo-property-retrieve-class-name">retrieve-class-name</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#retrieve-position">&sect;7.53.4</a></td>
+      <td><a name="fo-property-retrieve-position" id=
+      "fo-property-retrieve-position">retrieve-position</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#retrieve-boundary">&sect;7.25.5</a></td>
+      <td><a name="fo-property-retrieve-boundary" id=
+      "fo-property-retrieve-boundary">retrieve-boundary</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#retrieve-position-within-table">&sect;7.25.6</a></td>
+      <td><a name="fo-property-retrieve-position-within-table" id="fo-property-retrieve-position-within-table">
+      retrieve-position-within-table</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+
+    <tr>
+      <td class="category" align="center"><a href=
+      "http://www.w3.org/TR/xsl/#d0e29313">&sect;7.26</a></td>
+      <td class="category" colspan="6"><a name="fo-property-numberstring-section" id=
+      "fo-property-numberstring-section">Properties for Number to String Conversion</a></td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#format">&sect;7.26.1</a></td>
+      <td><a name="fo-property-format" id="fo-property-format">format</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#grouping-separator">&sect;7.26.2</a></td>
+      <td><a name="fo-property-grouping-separator" id=
+      "fo-property-grouping-separator">grouping-separator</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#grouping-size">&sect;7.26.3</a></td>
+      <td><a name="fo-property-grouping-size" id="fo-property-grouping-size">grouping-size</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#letter-value">&sect;7.26.4</a></td>
+      <td><a name="fo-property-letter-value" id="fo-property-letter-value">letter-value</a></td>
+      <td class="basic">Basic</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+
+    <tr>
+      <td class="category" align="center"><a href=
+      "http://www.w3.org/TR/xsl/#d0e29484">&sect;7.27</a></td>
+      <td class="category" colspan="6"><a name="fo-property-pagination-section" id=
+      "fo-property-pagination-section">Pagination and Layout Properties</a></td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#blank-or-not-blank">&sect;7.27.1</a></td>
+      <td><a name="fo-property-blank-or-not-blank" id=
+      "fo-property-blank-or-not-blank">blank-or-not-blank</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#column-count">&sect;7.27.2</a></td>
+      <td><a name="fo-property-column-count" id="fo-property-column-count">column-count</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#column-gap">&sect;7.27.3</a></td>
+      <td><a name="fo-property-column-gap" id="fo-property-column-gap">column-gap</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#extent">&sect;7.27.4</a></td>
+      <td><a name="fo-property-extent" id="fo-property-extent">extent</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#flow-name">&sect;7.27.5</a></td>
+      <td><a name="fo-property-flow-name" id="fo-property-flow-name">flow-name</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#force-page-count">&sect;7.27.6</a></td>
+      <td><a name="fo-property-force-page-count" id=
+      "fo-property-force-page-count">force-page-count</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#initial-page-number">&sect;7.27.7</a></td>
+      <td><a name="fo-property-initial-page-number" id=
+      "fo-property-initial-page-number">initial-page-number</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#master-name">&sect;7.27.8</a></td>
+      <td><a name="fo-property-master-name" id="fo-property-master-name">master-name</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#master-reference">&sect;7.27.9</a></td>
+      <td><a name="fo-property-master-reference" id=
+      "fo-property-master-reference">master-reference</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#maximum-repeats">&sect;7.27.10</a></td>
+      <td><a name="fo-property-maximum-repeats" id=
+      "fo-property-maximum-repeats">maximum-repeats</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#media-usage">&sect;7.27.11</a></td>
+      <td><a name="fo-property-media-usage" id="fo-property-media-usage">media-usage</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#odd-or-even">&sect;7.27.12</a></td>
+      <td><a name="fo-property-odd-or-even" id="fo-property-odd-or-even">odd-or-even</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#page-height">&sect;7.27.13</a></td>
+      <td><a name="fo-property-page-height" id="fo-property-page-height">page-height</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#page-position">&sect;7.27.14</a></td>
+      <td><a name="fo-property-page-position" id="fo-property-page-position">page-position</a></td>
+      <td class="extended">Extended</td>
+      <td class="partial">partial</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>value "only" not supported</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#page-width">&sect;7.27.15</a></td>
+      <td><a name="fo-property-page-width" id="fo-property-page-width">page-width</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#precedence">&sect;7.27.16</a></td>
+      <td><a name="fo-property-precedence" id="fo-property-precedence">precedence</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#region-name">&sect;7.27.17</a></td>
+      <td><a name="fo-property-region-name" id="fo-property-region-name">region-name</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#flow-map-name">&sect;7.27.18</a></td>
+      <td><a name="fo-property-flow-map-name" id="fo-property-flow-map-name">flow-map-name</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#flow-map-reference">&sect;7.27.19</a></td>
+      <td><a name="fo-property-flow-map-reference" id="fo-property-flow-map-reference">flow-map-reference</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#flow-name-reference">&sect;7.27.20</a></td>
+      <td><a name="fo-property-flow-name-reference" id="fo-property-flow-name-reference">flow-name-reference</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#region-name-reference">&sect;7.27.21</a></td>
+      <td><a name="fo-property-region-name-reference" id="fo-property-region-name-reference">region-name-reference</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+
+    <tr>
+      <td class="category" align="center"><a href=
+      "http://www.w3.org/TR/xsl/#d0e30798">&sect;7.28</a></td>
+      <td class="category" colspan="6"><a name="fo-property-table-section" id=
+      "fo-property-table-section">Table Properties</a></td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#border-after-precedence">&sect;7.28.1</a></td>
+      <td><a name="fo-property-border-after-precedence" id=
+      "fo-property-border-after-precedence">border-after-precedence</a></td>
+      <td class="basic">Basic</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#border-before-precedence">&sect;7.28.2</a></td>
+      <td><a name="fo-property-border-before-precedence" id=
+      "fo-property-border-before-precedence">border-before-precedence</a></td>
+      <td class="basic">Basic</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#border-collapse">&sect;7.28.3</a></td>
+      <td><a name="fo-property-border-collapse" id=
+      "fo-property-border-collapse">border-collapse</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>Some small limitations</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#border-end-precedence">&sect;7.28.4</a></td>
+      <td><a name="fo-property-border-end-precedence" id=
+      "fo-property-border-end-precedence">border-end-precedence</a></td>
+      <td class="basic">Basic</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#border-separation">&sect;7.28.5</a></td>
+      <td><a name="fo-property-border-separation" id=
+      "fo-property-border-separation">border-separation</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#border-start-precedence">&sect;7.28.6</a></td>
+      <td><a name="fo-property-border-start-precedence" id=
+      "fo-property-border-start-precedence">border-start-precedence</a></td>
+      <td class="basic">Basic</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#caption-side">&sect;7.28.7</a></td>
+      <td><a name="fo-property-caption-side" id="fo-property-caption-side">caption-side</a></td>
+      <td class="complete">Complete</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#column-number">&sect;7.28.8</a></td>
+      <td><a name="fo-property-column-number" id="fo-property-column-number">column-number</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#column-width">&sect;7.28.9</a></td>
+      <td><a name="fo-property-column-width" id="fo-property-column-width">column-width</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#empty-cells">&sect;7.28.10</a></td>
+      <td><a name="fo-property-empty-cells" id="fo-property-empty-cells">empty-cells</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#ends-row">&sect;7.28.11</a></td>
+      <td><a name="fo-property-ends-row" id="fo-property-ends-row">ends-row</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#number-columns-repeated">&sect;7.28.12</a></td>
+      <td><a name="fo-property-number-columns-repeated" id=
+      "fo-property-number-columns-repeated">number-columns-repeated</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#number-columns-spanned">&sect;7.28.13</a></td>
+      <td><a name="fo-property-number-columns-spanned" id=
+      "fo-property-number-columns-spanned">number-columns-spanned</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#number-rows-spanned">&sect;7.28.14</a></td>
+      <td><a name="fo-property-number-rows-spanned" id=
+      "fo-property-number-rows-spanned">number-rows-spanned</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#starts-row">&sect;7.28.15</a></td>
+      <td><a name="fo-property-starts-row" id="fo-property-starts-row">starts-row</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#table-layout">&sect;7.28.16</a></td>
+      <td><a name="fo-property-table-layout" id="fo-property-table-layout">table-layout</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#table-omit-footer-at-break">&sect;7.28.17</a></td>
+      <td><a name="fo-property-table-omit-footer-at-break" id=
+      "fo-property-table-omit-footer-at-break">table-omit-footer-at-break</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#table-omit-header-at-break">&sect;7.28.18</a></td>
+      <td><a name="fo-property-table-omit-header-at-break" id=
+      "fo-property-table-omit-header-at-break">table-omit-header-at-break</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+
+    <tr>
+      <td class="category" align="center"><a href=
+      "http://www.w3.org/TR/xsl/#writing-mode-related">&sect;7.29</a></td>
+      <td class="category" colspan="6"><a name="fo-property-writingmode-section" id=
+      "fo-property-writingmode-section">Writing-mode-related Properties</a></td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#direction">&sect;7.29.1</a></td>
+      <td><a name="fo-property-direction" id="fo-property-direction">direction</a></td>
+      <td class="basic">Basic</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#glyph-orientation-horizontal">&sect;7.29.2</a></td>
+      <td><a name="fo-property-glyph-orientation-horizontal" id=
+      "fo-property-glyph-orientation-horizontal">glyph-orientation-horizontal</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#glyph-orientation-vertical">&sect;7.29.3</a></td>
+      <td><a name="fo-property-glyph-orientation-vertical" id=
+      "fo-property-glyph-orientation-vertical">glyph-orientation-vertical</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#text-altitude">&sect;7.29.4</a></td>
+      <td><a name="fo-property-text-altitude" id="fo-property-text-altitude">text-altitude</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#text-depth">&sect;7.29.5</a></td>
+      <td><a name="fo-property-text-depth" id="fo-property-text-depth">text-depth</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#unicode-bidi">&sect;7.29.6</a></td>
+      <td><a name="fo-property-unicode-bidi" id="fo-property-unicode-bidi">unicode-bidi</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#writing-mode">&sect;7.29.7</a></td>
+      <td><a name="fo-property-writing-mode" id="fo-property-writing-mode">writing-mode</a></td>
+      <td class="basic">Basic</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+
+    <tr>
+      <td class="category" align="center"><a href=
+      "http://www.w3.org/TR/xsl/#d0e32871">&sect;7.30</a></td>
+      <td class="category" colspan="6"><a name="fo-property-misc-section" id=
+      "fo-property-misc-section">Miscellaneous Properties</a></td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#change-bar-class">&sect;7.30.1</a></td>
+      <td><a name="fo-property-change-bar-class" id="fo-property-change-bar-class">change-bar-class</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#change-bar-color">&sect;7.30.2</a></td>
+      <td><a name="fo-property-change-bar-color" id="fo-property-change-bar-color">change-bar-color</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#change-bar-offset">&sect;7.30.3</a></td>
+      <td><a name="fo-property-change-bar-offset" id="fo-property-change-bar-offset">change-bar-offset</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#change-bar-placement">&sect;7.30.4</a></td>
+      <td><a name="fo-property-change-bar-placement" id="fo-property-change-bar-placement">change-bar-placement</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#change-bar-style">&sect;7.30.5</a></td>
+      <td><a name="fo-property-change-bar-style" id="fo-property-change-bar-style">change-bar-style</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#change-bar-width">&sect;7.30.6</a></td>
+      <td><a name="fo-property-change-bar-width" id="fo-property-change-bar-width">change-bar-width</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#content-type">&sect;7.30.7</a></td>
+      <td><a name="fo-property-content-type" id="fo-property-content-type">content-type</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#id">&sect;7.30.8</a></td>
+      <td><a name="fo-property-id" id="fo-property-id">id</a></td>
+      <td class="basic">Basic</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td>IDs on table-header, table-footer, table-body, table-row,
+          table-and-caption, table-caption, inline-container and bidi-override are not available,
+          yet.</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#intrinsic-scale-value">&sect;7.30.9</a></td>
+      <td><a name="fo-property-intrinsic-scale-value" id="fo-property-intrinsic-scale-value">intrinsic-scale-value</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#page-citation-strategy">&sect;7.30.10</a></td>
+      <td><a name="fo-property-page-citation-strategy" id="fo-property-page-citation-strategy">page-citation-strategy</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#provisional-label-separation">&sect;7.30.11</a></td>
+      <td><a name="fo-property-provisional-label-separation" id=
+      "fo-property-provisional-label-separation">provisional-label-separation</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#provisional-distance-between-starts">&sect;7.30.12</a></td>
+      <td><a name="fo-property-provisional-distance-between-starts" id=
+      "fo-property-provisional-distance-between-starts">provisional-distance-between-starts</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#ref-id">&sect;7.30.13</a></td>
+      <td><a name="fo-property-ref-id" id="fo-property-ref-id">ref-id</a></td>
+      <td class="extended">Extended</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#scale-option">&sect;7.30.14</a></td>
+      <td><a name="fo-property-scale-option" id="fo-property-scale-option">scale-option</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#score-spaces">&sect;7.30.15</a></td>
+      <td><a name="fo-property-score-spaces" id="fo-property-score-spaces">score-spaces</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#src">&sect;7.30.16</a></td>
+      <td><a name="fo-property-src" id="fo-property-src">src</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#visibility">&sect;7.30.17</a></td>
+      <td><a name="fo-property-visibility" id="fo-property-visibility">visibility</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#z-index">&sect;7.30.18</a></td>
+      <td><a name="fo-property-z-index" id="fo-property-z-index">z-index</a></td>
+      <td class="extended">Extended</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+
+    <tr>
+      <td class="category" align="center"><a href=
+      "http://www.w3.org/TR/xsl/#d0e33965">&sect;7.31</a></td>
+      <td class="category" colspan="6"><a name="fo-property-shorthand-section" id=
+      "fo-property-shorthand-section">Shorthand Properties</a></td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#background">&sect;7.31.1</a></td>
+      <td><a name="fo-property-background" id="fo-property-background">background</a></td>
+      <td class="complete">Complete</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#background-position">&sect;7.31.2</a></td>
+      <td><a name="fo-property-background-position" id=
+      "fo-property-background-position">background-position</a></td>
+      <td class="complete">Complete</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#border">&sect;7.31.3</a></td>
+      <td><a name="fo-property-border" id="fo-property-border">border</a></td>
+      <td class="complete">Complete</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#border-bottom">&sect;7.31.4</a></td>
+      <td><a name="fo-property-border-bottom" id="fo-property-border-bottom">border-bottom</a></td>
+      <td class="complete">Complete</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#border-color">&sect;7.31.5</a></td>
+      <td><a name="fo-property-border-color" id="fo-property-border-color">border-color</a></td>
+      <td class="complete">Complete</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#border-left">&sect;7.31.6</a></td>
+      <td><a name="fo-property-border-left" id="fo-property-border-left">border-left</a></td>
+      <td class="complete">Complete</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#border-right">&sect;7.31.7</a></td>
+      <td><a name="fo-property-border-right" id="fo-property-border-right">border-right</a></td>
+      <td class="complete">Complete</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#border-style">&sect;7.31.8</a></td>
+      <td><a name="fo-property-border-style" id="fo-property-border-style">border-style</a></td>
+      <td class="complete">Complete</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#border-spacing">&sect;7.31.9</a></td>
+      <td><a name="fo-property-border-spacing" id=
+      "fo-property-border-spacing">border-spacing</a></td>
+      <td class="complete">Complete</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#border-top">&sect;7.31.10</a></td>
+      <td><a name="fo-property-border-top" id="fo-property-border-top">border-top</a></td>
+      <td class="complete">Complete</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#border-width">&sect;7.31.11</a></td>
+      <td><a name="fo-property-border-width" id="fo-property-border-width">border-width</a></td>
+      <td class="complete">Complete</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#cue">&sect;7.31.12</a></td>
+      <td><a name="fo-property-cue" id="fo-property-cue">cue</a></td>
+      <td class="complete">Complete</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#font">&sect;7.31.13</a></td>
+      <td><a name="fo-property-font" id="fo-property-font">font</a></td>
+      <td class="complete">Complete</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td>Enum values other than "inherit" not yet supported.</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#margin">&sect;7.31.14</a></td>
+      <td><a name="fo-property-margin" id="fo-property-margin">margin</a></td>
+      <td class="complete">Complete</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#padding">&sect;7.31.15</a></td>
+      <td><a name="fo-property-padding" id="fo-property-padding">padding</a></td>
+      <td class="complete">Complete</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#page-break-after">&sect;7.31.16</a></td>
+      <td><a name="fo-property-page-break-after" id=
+      "fo-property-page-break-after">page-break-after</a></td>
+      <td class="complete">Complete</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#page-break-before">&sect;7.31.17</a></td>
+      <td><a name="fo-property-page-break-before" id=
+      "fo-property-page-break-before">page-break-before</a></td>
+      <td class="complete">Complete</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#page-break-inside">&sect;7.31.18</a></td>
+      <td><a name="fo-property-page-break-inside" id=
+      "fo-property-page-break-inside">page-break-inside</a></td>
+      <td class="complete">Complete</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#pause">&sect;7.31.19</a></td>
+      <td><a name="fo-property-pause" id="fo-property-pause">pause</a></td>
+      <td class="complete">Complete</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td class="na">na</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#position">&sect;7.31.20</a></td>
+      <td><a name="fo-property-position" id="fo-property-position">position</a></td>
+      <td class="complete">Complete</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#size">&sect;7.31.21</a></td>
+      <td><a name="fo-property-size" id="fo-property-size">size</a></td>
+      <td class="complete">Complete</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#vertical-align">&sect;7.31.22</a></td>
+      <td><a name="fo-property-vertical-align" id=
+      "fo-property-vertical-align">vertical-align</a></td>
+      <td class="complete">Complete</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td>Percentages are not supported, yet.</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#white-space">&sect;7.31.23</a></td>
+      <td><a name="fo-property-white-space" id="fo-property-white-space">white-space</a></td>
+      <td class="complete">Complete</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#xml.lang">&sect;7.31.24</a></td>
+      <td><a name="fo-property-xml:lang" id="fo-property-xml:lang">xml:lang</a></td>
+      <td class="complete">Complete</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>Very basic parsing; no validation of the specified value.</td>
+    </tr>
+  </table>
+
+  <h1><a name="fo-function-core-library-section" id="fo-function-core-library-section">XSL-FO Core
+  Function Library Support Table</a> (<a href=
+  "http://www.w3.org/TR/2001/REC-xsl-20011015/slice5.html#section-N8434-Core-Function-Library">&sect;5.10</a>)</h1>
+
+  <p>The following is a summary of FOP's current support for the XSL-FO Core Function Library.</p>
+
+  <table border="1">
+    <tr>
+      <th rowspan="2" align="center">Citation</th>
+      <th rowspan="2">Function Name</th>
+      <th rowspan="2" align="center">XSL-FO Conformance Level</th>
+      <th colspan="3" align="center">Support&nbsp;in&nbsp;FOP</th>
+      <th rowspan="2">Comments</th>
+    </tr>
+    <tr>
+      <th align="center">0.95 (stable)</th>
+      <th align="center">1.0 (stable)</th>
+      <th align="center">develop- ment</th>
+    </tr>
+
+    <tr>
+      <td class="category" align="center"><a href=
+      "http://www.w3.org/TR/xsl/#d0e5860">&sect;5.10.1</a></td>
+      <td class="category" colspan="6"><a name="fo-function-number-section" id=
+      "fo-function-number-section">Number Functions</a></td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#d0e5860">&sect;5.10.1</a></td>
+      <td><a name="fo-function-floor" id="fo-function-floor">floor</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#d0e5860">&sect;5.10.1</a></td>
+      <td><a name="fo-function-ceiling" id="fo-function-ceiling">ceiling</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#d0e5860">&sect;5.10.1</a></td>
+      <td><a name="fo-function-round" id="fo-function-round">round</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#d0e5860">&sect;5.10.1</a></td>
+      <td><a name="fo-function-min" id="fo-function-min">min</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#d0e5860">&sect;5.10.1</a></td>
+      <td><a name="fo-function-max" id="fo-function-max">max</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#d0e5860">&sect;5.10.1</a></td>
+      <td><a name="fo-function-abs" id="fo-function-abs">abs</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+
+    <tr>
+      <td class="category" align="center"><a href=
+      "http://www.w3.org/TR/xsl/#expr-color-functions">&sect;5.10.2</a></td>
+      <td class="category" colspan="6"><a name="fo-function-color-section" id=
+      "fo-function-color-section">Color Functions</a></td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#expr-color-functions">&sect;5.10.2</a></td>
+      <td><a name="fo-function-rgb" id="fo-function-rgb">rgb</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#expr-color-functions">&sect;5.10.2</a></td>
+      <td><a name="fo-function-rgb-icc" id="fo-function-rgb-icc">rgb-icc</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#expr-color-functions">&sect;5.10.2</a></td>
+      <td><a name="fo-function-system-color" id="fo-function-system-color">system-color</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+
+    <tr>
+      <td class="category" align="center"><a href=
+      "http://www.w3.org/TR/xsl/#d0e5948">&sect;5.10.3</a></td>
+      <td class="category" colspan="6"><a name="fo-function-font-section" id=
+      "fo-function-font-section">Font Functions</a></td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#d0e5948">&sect;5.10.3</a></td>
+      <td><a name="fo-function-system-font" id="fo-function-system-font">system-font</a></td>
+      <td class="basic">Basic</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+
+    <tr>
+      <td class="category" align="center"><a href=
+      "http://www.w3.org/TR/xsl/#d0e5961">&sect;5.10.4</a></td>
+      <td class="category" colspan="6"><a name="fo-function-property-value-section" id=
+      "fo-function-property-value-section">Property Value Functions</a></td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#d0e5961">&sect;5.10.4</a></td>
+      <td><a name="fo-function-inherited-property-value" id=
+      "fo-function-inherited-property-value">inherited-property-value</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#d0e5961">&sect;5.10.4</a></td>
+      <td><a name="fo-function-label-end" id="fo-function-label-end">label-end</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#d0e5961">&sect;5.10.4</a></td>
+      <td><a name="fo-function-body-start" id="fo-function-body-start">body-start</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#d0e5961">&sect;5.10.4</a></td>
+      <td><a name="fo-function-from-parent" id="fo-function-from-parent">from-parent</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#d0e5961">&sect;5.10.4</a></td>
+      <td><a name="fo-function-from-nearest-specified-value" id=
+      "fo-function-from-nearest-specified-value">from-nearest-specified-value</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#d0e5961">&sect;5.10.4</a></td>
+      <td><a name="fo-function-from-page-master-region" id=
+      "fo-function-from-page-master-region">from-page-master-region</a></td>
+      <td class="basic">Basic</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#d0e5961">&sect;5.10.4</a></td>
+      <td><a name="fo-function-from-table-column" id=
+      "fo-function-from-table-column">from-table-column</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#d0e5961">&sect;5.10.4</a></td>
+      <td><a name="fo-function-proportional-column-width" id=
+      "fo-function-proportional-column-width">proportional-column-width</a></td>
+      <td class="basic">Basic</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td class="yes">yes</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><a href=
+      "http://www.w3.org/TR/xsl/#d0e5961">&sect;5.10.4</a></td>
+      <td><a name="fo-function-merge-property-values" id=
+      "fo-function-merge-property-values">merge-property-values</a></td>
+      <td class="basic">Basic</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td class="no">no</td>
+      <td>&nbsp;</td>
+    </tr>
+  </table>
+</body>
+</html>

@@ -1,0 +1,131 @@
+<?xml version="1.0" standalone="no"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
+<!-- Status -->
+<document>
+  <header>
+    <title>FOP Status</title>
+    <subtitle>Current Status of FOP</subtitle>
+    <version>$Revision$</version>
+  </header>
+  <body>
+    <section>
+      <title>Status</title>
+      <p>[last updated 5 July 2010]</p>
+      <p>
+        FOP version 0.95 was released on 5 August 2008. FOP version 1.0 was released on 21 July 2010.
+      </p>
+    </section>
+    <section>
+      <title>Development Status</title>
+
+	  <p>The FOP code base is gradually evolving, from version 0.90
+	  released on 22 November 2005, to version 1.0 released on 21 July
+	  2010. Further releases in the 1.x series may be expected.</p>
+      <p>FOP releases before version 0.90 were based on a different
+	  code base. The last release in that series was version 0.20.5,
+	  released on 18 July 2003. This series is no longer maintained.</p>
+      <p>
+        If you're looking for a long-term road-map we have to disappoint you. This is Open
+        Source and we're mostly volunteers working in their free time. What we have
+        is an idea where we want to go. How fast we get there depends on the 
+        available time, on how well our ideas work out while developing and on you!
+        There's a <a href="http://wiki.apache.org/xmlgraphics-fop/RoadMap">document in the Wiki</a>
+        where ideas for new developments may be registered and documented.
+      </p>
+      <section id="component-status">
+        <title>Status of the individual components</title>
+        <p>
+          Not all the components of FOP currently have the same quality. The following
+          table tries to give you an overview:
+        </p>
+        <table>
+          <tr>
+            <th>Component</th>
+            <th>Status</th>
+          </tr>
+          <tr>
+            <td>API</td>
+            <td>stable</td>
+          </tr>
+          <tr>
+            <td>FO Tree</td>
+            <td>stable</td>
+          </tr>
+          <tr>
+            <td>Layout Engine</td>
+            <td>stable</td>
+          </tr>
+          <tr>
+            <td>Area Tree</td>
+            <td>stable</td>
+          </tr>
+          <tr>
+            <td>Intermediate Format Support</td>
+            <td>stable (could use a speed upgrade)</td>
+          </tr>
+          <tr>
+            <td>PDF (Library and Renderer)</td>
+            <td>stable (SVG: stable)</td>
+          </tr>
+          <tr>
+            <td>PostScript</td>
+            <td>stable (SVG: stable with restrictions)</td>
+          </tr>
+          <tr>
+            <td>Java2D, AWT, Bitmap Renderers</td>
+            <td>stable</td>
+          </tr>
+          <tr>
+            <td>Text Renderer</td>
+            <td>stable (not much feedback)</td>
+          </tr>
+          <tr>
+            <td>RTF Handler</td>
+            <td>beta, restricted functionality compared to PDF/PS</td>
+          </tr>
+          <tr>
+            <td>PCL Renderer</td>
+            <td>stable (not much feedback)</td>
+          </tr>
+          <tr>
+            <td>AFP Renderer</td>
+            <td>status unknown (not much feedback)</td>
+          </tr>
+          <tr>
+            <td>SVG Renderer</td>
+            <td>non-functional in sandbox, help needed</td>
+          </tr>
+          <tr>
+            <td>Font Support</td>
+            <td>stable</td>
+          </tr>
+          <tr>
+            <td>Image Support</td>
+            <td>beta (recently rewritten)</td>
+          </tr>
+          <tr>
+            <td>Hyphenation Subsystem</td>
+            <td>stable</td>
+          </tr>
+        </table>
+      </section>
+    </section>
+  </body>
+</document>

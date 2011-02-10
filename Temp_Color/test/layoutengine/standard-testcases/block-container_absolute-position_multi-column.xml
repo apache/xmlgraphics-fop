@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks absolutely positioned block-containers in multi-column documents.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in" margin="0.1in">
+          <fo:region-body column-count="2" column-gap="0.2in"/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal">
+        <fo:flow flow-name="xsl-region-body" text-align="justify">
+          <fo:block background-color="yellow">
+            This should not have any line floating over it! This should not have any
+            line floating over it! This should not have any line floating over it! This
+            should not have any line floating over it!
+          </fo:block>
+          <fo:block span="all" background-color="orange">
+            <fo:block padding-top="0.5em" padding-bottom="0.5em">
+              This should not have any line floating over it! This should not have any
+              line floating over it! This should not have any line floating over
+              it!<fo:block />
+            </fo:block> 
+          </fo:block>
+          <fo:block background-color="yellow">
+            This should not have any line floating over it! This should not have any
+            line floating over it! This should not have any line floating over it! This
+            should not have any line floating over it!
+          </fo:block>
+          <fo:block-container absolute-position="absolute"
+            left="2.5in - 0.1in - 0.025in" top="auto" width="0.05in" height="100%" background-color="red">
+            <fo:block/>
+          </fo:block-container>
+          <fo:block-container absolute-position="absolute" left="2.5in - 0.1in" top="auto"
+            reference-orientation="90">
+            <fo:block width="100%" line-height="1pt" background-color="black"
+              height="1pt">&#xA0;</fo:block>
+          </fo:block-container>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <!--
+      This test is only visually interesting! Visually check that the block container begins
+      directly under the spanned block!
+    -->
+    <eval expected="1" xpath="count(//pageViewport)"/>
+  </checks>
+</testcase>

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks tables, especially headers and footers. Now with page breaks and omit-header-at-break.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal" white-space-collapse="true">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:table table-layout="fixed" width="100%" table-omit-header-at-break="true">
+            <fo:table-column number-columns-repeated="2" column-width="proportional-column-width(1)"/>
+            <fo:table-header>
+              <fo:table-row background-color="yellow">
+                <fo:table-cell>
+                  <fo:block>header</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>start of page <fo:page-number/></fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-header>
+            <fo:table-footer>
+              <fo:table-row background-color="orange">
+                <fo:table-cell>
+                  <fo:block>footer</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>end of page <fo:page-number/></fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-footer>
+            <fo:table-body>
+              <fo:table-row height="100pt">
+                <fo:table-cell>
+                  <fo:block>cell1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell background-color="lightgray">
+                  <fo:block>cell2</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row height="100pt">
+                <fo:table-cell background-color="lightgray">
+                  <fo:block>cell3</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>cell4</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row height="100pt">
+                <fo:table-cell>
+                  <fo:block>cell5</fo:block>
+                </fo:table-cell>
+                <fo:table-cell background-color="lightgray">
+                  <fo:block>cell6</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+              <fo:table-row height="100pt">
+                <fo:table-cell background-color="lightgray">
+                  <fo:block>cell7</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>cell8</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <!-- page 1 -->
+    <eval expected="header" xpath="//pageViewport[1]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/block[2]/block[1]/lineArea"/>
+    <eval expected="180000" xpath="//pageViewport[1]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/block[2]/@ipda"/>
+    <!--eval expected="14400" xpath="//pageViewport[1]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/block[2]/@bpda"/-->
+    <true xpath="contains(//pageViewport[1]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/block[4]/block[1]/lineArea, '1')"/>
+    <eval expected="180000" xpath="//pageViewport[1]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/block[4]/@ipda"/>
+    <!--eval expected="14400" xpath="//pageViewport[1]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/block[4]/@bpda"/-->
+
+    <eval expected="cell1" xpath="//pageViewport[1]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/block[5]/block[1]/lineArea"/>
+    <eval expected="cell2" xpath="//pageViewport[1]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/block[6]/block[1]/lineArea"/>
+    <eval expected="cell3" xpath="//pageViewport[1]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/block[7]/block[1]/lineArea"/>
+    <eval expected="cell4" xpath="//pageViewport[1]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/block[8]/block[1]/lineArea"/>
+    <eval expected="cell5" xpath="//pageViewport[1]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/block[9]/block[1]/lineArea"/>
+    <eval expected="cell6" xpath="//pageViewport[1]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/block[10]/block[1]/lineArea"/>
+
+    <eval expected="footer" xpath="//pageViewport[1]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/block[12]/block[1]/lineArea"/>
+    <eval expected="180000" xpath="//pageViewport[1]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/block[12]/@ipda"/>
+    <!--eval expected="14400" xpath="//pageViewport[1]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/block[12]/@bpda"/-->
+    <true xpath="contains(//pageViewport[1]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/block[14]/block[1]/lineArea, '1')"/>
+    <eval expected="180000" xpath="//pageViewport[1]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/block[14]/@ipda"/>
+    <!--eval expected="14400" xpath="//pageViewport[1]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/block[14]/@bpda"/-->
+
+    <!-- page 2 -->
+    <eval expected="cell7" xpath="//pageViewport[2]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/block[1]/block[1]/lineArea"/>
+    <eval expected="cell8" xpath="//pageViewport[2]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/block[2]/block[1]/lineArea"/>
+
+    <eval expected="footer" xpath="//pageViewport[2]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/block[4]/block[1]/lineArea"/>
+    <eval expected="180000" xpath="//pageViewport[2]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/block[4]/@ipda"/>
+    <!--eval expected="14400" xpath="//pageViewport[2]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/block[4]/@bpda"/-->
+    <true xpath="contains(//pageViewport[2]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/block[6]/block[1]/lineArea, '2')"/>
+    <eval expected="180000" xpath="//pageViewport[2]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/block[6]/@ipda"/>
+    <!--eval expected="14400" xpath="//pageViewport[2]/page/regionViewport/regionBody/mainReference/span/flow/block[1]/block[6]/@bpda"/-->
+  </checks>
+</testcase>

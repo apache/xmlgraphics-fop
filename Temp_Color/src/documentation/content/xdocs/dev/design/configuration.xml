@@ -1,0 +1,207 @@
+<?xml version="1.0" standalone="no"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.3//EN" "http://forrest.apache.org/dtd/document-v13.dtd" [
+<!ENTITY lsquo   "&#x2018;">
+<!ENTITY rsquo   "&#x2019;">
+<!ENTITY ldquo   "&#x201C;">
+<!ENTITY rdquo   "&#x201D;">
+]>
+
+<document>
+  <header>
+    <title>FOP: Configuration and Logging</title>
+    <version>$Revision$</version>
+  </header>
+
+  <body>
+
+    <section id="general">
+      <title>Configuration File Basics</title>
+      <p>The FOP configuration file is an XML file containing a
+variety of settings that are useful for controlling FOP's
+behavior, and for helping it find resources that you wish it to
+use.</p>
+      <p>The easiest way to get started using a FOP configuration file
+is to copy the sample found at <code>{fop-dir}/conf/fop.xconf</code>
+to a location of your choice, and then to edit it according to your
+needs.  It contains templates for the various configuration options,
+most of which are commented out. Remove the comments and change the
+settings for entries that you wish to use.  Be sure to follow any
+instructions, including comments which specify the value range.  Also,
+since the configuration file is XML, be sure to keep it
+well-formed.</p>
+    </section>
+
+    <section id="general-available">
+      <title>Making Configuration Available to FOP</title>
+      <p>After creating your configuration file, you must tell FOP how
+to find it.</p>
+
+      <section id="command-line">
+        <title>From the Command Line</title>
+        <p>When you run FOP from the command-line, use the
+&ldquo;<code>-c</code>&rdquo; command-line option with the path to the
+configuration file as the option value.</p>
+      </section>
+
+      <section id="embedded-file">
+        <title>A Configuration File in an Embedded Application</title>
+        <p>FOP uses the Avalon framework configuration package
+<code>org.apache.avalon.framework.configuration</code>. For detailed
+information, see the documentation of the package.</p>
+        <p>If you want to use a user configuration file with your
+embedded program, you need to build an Avalon configuration
+object from it, and register that with the user agent:</p>
+
+        <source>FOUserAgent foUserAgent;
+XMLReader parser;
+DefaultConfigurationBuilder configBuilder;
+File userConfigFile;
+Configuration userConfig;
+
+configBuilder = new DefaultConfigurationBuilder(parser);
+userConfigFile = new File("YourConfigFile.xml");
+userConfig = configBuilder.buildFromFile(userConfigFile);
+foUserAgent.setUserConfig(userConfig);
+</source>
+        <p>You can find example code in FOP's
+<code>apps.CommandLine</code> class, method
+<code>createUserConfig</code>.</p>
+      </section>
+
+      <section id="embedded-build">
+        <title>Programmatically Building the Configuration</title>
+        <p>You can also build the configuration object programmatically,
+instead of building it from an external file. Make sure that the
+configuration object is equivalent to a configuration object that
+would be obtained from a correct configuration file. Register the
+configuration object with the user agent as described above.</p>
+      </section>
+
+    </section>
+
+    <section id="config-overview">
+      <title>The Configuration File</title>
+      <p>The top-level element is arbitrary. You may give it any name
+that is useful for you, e.g. <code>&lt;fop-configuration
+version="2"></code>.</p>
+      <p>Inside the top-level element the configuration may contain
+three sections: <code>userAgent</code>, <code>renderers</code>,
+and <code>hyphenation</code>. At the moment of this writing the
+<code>userAgent</code> and <code>hyphenation</code> sections are
+not used by FOP.</p>
+      <p>The <code>renderers</code> section has subsections called
+<code>renderer</code>. There may be one subsection for each type
+of renderer. The renderers are identified by their MIME type,
+which is given in the <code>mime</code> attribute. For example:
+<code>&lt;renderer mime="application/pdf"></code>. The content
+of each <code>renderer</code> subsection depends on the type of
+renderer.</p>
+      <p>The PDF renderer (MIME type <code>application/pdf</code>) has
+several options:</p>
+      <dl>
+        <dt><code>filterList</code></dt>
+        <dd>Contains a number of <code>value</code> elements, whose
+content specify a filter which should be applied. Possible
+filters are: <code>flate</code>, <code>ascii-85</code>,
+<code>ascii-hex</code>. The <code>flate</code> filter is on by
+default.</dd>
+        <dt><code>fonts</code></dt>
+        <dd>Contains a number of <code>font</code> elements. Each
+<code>font</code> element represents a font file,
+e.g. <code>arial.ttf</code>. It contains a number of
+<code>font-triplet</code> elements, defining the font triplets
+which are provided by this font file. See the example
+configuration file for details.</dd>
+      </dl>
+      <p>The example configuration file provides for details about the
+other renderers.</p>
+    </section>
+
+    <section id="hyphenation-dir">
+      <title>Hyphenation</title>
+      <p>When FOP needs to load a hyphenation file for a certain
+language and country combination, it follows these steps.</p>
+      <ol>
+        <li>FOP searches for the compiled hyphenation file (extension
+<code>hyp</code> in the directory <code>hyph</code> in the
+class path.</li>
+        <li>FOP searches for the compiled or the XML hyphenation file
+in a user directory. At the time of this writing FOP does not
+read the configuration file for the user directory. It always
+uses the directory <code>/hyph</code>.</li>
+      </ol>
+      <p>It is possible to add user hyphenation files to FOP's
+hyphenation directory when FOP is built. The directory
+containing user hyphenation files must be specified in the
+variable <code>user.hyph.dir</code> in the local build
+properties file. All hyphenation files in the directory are
+compiled, and the compiled files are added to the hyphenation
+directory in the build directory.</p>
+      <p>See <link href="../hyphenation.html">FOP: Hyphenation</link> for
+more information on creating and modifying hyphenation within FOP.</p>
+    </section>
+
+    <section id="fonts">
+      <title>Fonts</title>
+      <p>Font configuration information is included in the FOP
+configuration file as describe above. It is documented in more
+detail at <link href="../fonts.html">FOP: Fonts</link>. Note
+especially the section entitled <link
+href="../fonts.html#register">Register Fonts with FOP</link>.</p>
+    </section>
+
+    <section id="logging">
+      <title>Logging</title>
+      <p>FOP uses the Jakarta Commons logging package
+<code>org.apache.commons.logging</code>. For detailed information, see
+the documentation of the package.</p>
+      <p>Commons logging is entirely configured by the user, using
+Java system properties. Configuration happens in two stages.</p>
+        <p>First you configure which logging implementation you want
+to use. For example:</p>
+      <source>org.apache.commons.logging.Log
+    =org.apache.commons.logging.impl.SimpleLog</source>
+      <p><code>SimpleLog is the default logging package on most Java
+systems. On Java 1.4 systems JDK 1.4 is the default.</code></p>
+      <p>Secondly, you configure the selected logging package. How
+this is done depends on the logging package. The most important
+feature is the log level. The default is level &ldquo;info&rdquo;. An
+example configuration file for SimpleLog is:</p>
+      <source>
+# logging level for all loggers, default info
+org.apache.commons.logging.simplelog.defaultlog=info
+
+# logging level for named loggers
+org.apache.commons.logging.simplelog.log.xxxxx=debug
+org.apache.commons.logging.simplelog.log.org.apache.fop.pdf=trace
+</source>
+      <p>FOP uses several named loggers. When you set the logging level
+for all loggers to &ldquo;info&rdquo;, you get a decent small amount
+of information
+about application progress. The debugging and especially the trace
+levels produce a lot of output. If you need these logging levels,
+it is wise to switch them on for one or several specific loggers. The
+names of the loggers can be found in the source files. Many loggers
+bear the name of their package, their class or of a superclass.</p>
+    </section>
+
+  </body>
+</document>
+

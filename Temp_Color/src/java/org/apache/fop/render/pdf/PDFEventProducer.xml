@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<catalogue xml:lang="en">
+  <message key="nonFullyResolvedLinkTargets">{count} link target{count,equals,1,,s} could not be fully resolved and now point{count,equals,1,,s} to the top of the page or {count,equals,1,is,are} dysfunctional.</message>
+  <message key="nonStandardStructureType">‘{type}’ is not a standard structure type defined by the PDF Reference. Falling back to ‘{fallback}’.</message>
+</catalogue>

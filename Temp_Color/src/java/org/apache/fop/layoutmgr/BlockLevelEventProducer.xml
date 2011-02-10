@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+    
+    http://www.apache.org/licenses/LICENSE-2.0
+    
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<!-- $Id$ -->
+<catalogue xml:lang="en">
+  <message key="locator">[ (See position {loc})| (See {#gatherContextInfo})| (No context info available)]</message>
+  <message key="rowTooTall">The contents of table-row {row} are taller than they should be (there is a block-progression-dimension or height constraint on the indicated row). Due to its contents the row grows to {effCellBPD} millipoints, but the row shouldn't get any taller than {maxCellBPD} millipoints.{{locator}}</message>
+  <message key="tableFixedAutoWidthNotSupported">table-layout="fixed" and width="auto", but auto-layout not supported =&gt; assuming width="100%".{{locator}}</message>
+  <message key="objectTooWide">The extent in inline-progression-direction (width) of a {elementName} is bigger than the available space ({effIPD}mpt &gt; {maxIPD}mpt).{{locator}}</message>
+  <message key="overconstrainedAdjustEndIndent">An {elementName} {{locator}} is wider than the available room in inline-progression-dimension. Adjusting end-indent based on overconstrained geometry rules (XSL 1.1, ch. 5.3.4)</message>
+  <message key="viewportOverflow">Content overflows the viewport of an {elementName} in block-progression direction by {amount} millipoints.{clip,if, Content will be clipped.}{{locator}}</message>
+  <message key="regionOverflow">Content overflows the viewport of the {elementName} on page {page} in block-progression direction by {amount} millipoints.{clip,if, Content will be clipped.}{{locator}}</message>
+  <message key="flowNotMappingToRegionBody">Flow "{flowName}" does not map to the region-body in page-master "{masterName}". FOP presently does not support this.{{locator}}</message>
+  <message key="pageSequenceMasterExhausted">Subsequences exhausted in page-sequence-master "{pageSequenceMasterName}", {canRecover,if,using previous subsequence,cannot recover}.{{locator}}</message>
+  <message key="missingSubsequencesInPageSequenceMaster">No subsequences in page-sequence-master "{pageSequenceMasterName}".{{locator}}</message>
+  <message key="noMatchingPageMaster">No simple-page-master matching "{pageMasterName}" in page-sequence-master "{pageSequenceMasterName}".{{locator}}</message>
+  <message key="nonRestartableContentFlowingToNarrowerPage">Content that cannot handle IPD changes is flowing to a narrower page. Part of it may be clipped by the page border.</message>
+</catalogue>

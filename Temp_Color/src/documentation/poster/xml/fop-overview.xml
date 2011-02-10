@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<section>
+  <title tab-width="80">What is Apache FOP?</title>
+  <p>
+    Apache FOP (Formatting Objects Processor) is the most popular XSL-FO implementation. 
+    It is used to create documents in PDF, PostScript and other formats.
+  </p>
+  <p>
+    XSL (eXtensible Stylesheet Language) is a W3C standard which consists of two parts:
+  </p>
+  <ol>
+    <li>XSL Transformations (XSLT)</li>
+    <li>XSL Formatting Objects (XSL-FO)</li>
+  </ol>
+  <p>
+    Apache FOP currently supports a large subset of XSL-FO&#160;1.0 and some of the new features
+    to be introduced with XSL-FO&#160;1.1. Details on the compliance levels can be found on the FOP
+    website.
+  </p>
+  <p>
+    The software is written in Java and published under a liberal license, the 
+    Apache License version&#160;2.0, which allows commercial use and redistribution. 
+    For details, please read the license text and the license FAQ on the ASF website.
+  </p>
+</section>

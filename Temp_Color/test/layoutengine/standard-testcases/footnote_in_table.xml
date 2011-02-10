@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks footnotes in tables.
+    </p>
+    <p>http://issues.apache.org/bugzilla/show_bug.cgi?id=37579</p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="simple" page-height="5in" page-width="5in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="simple">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block font-size="12pt" space-before="3pt" text-indent="0.75cm" text-align="justify">
+            Footnote in normal block<fo:footnote>
+              <fo:inline font-size="60%" baseline-shift="super">1)</fo:inline>
+              <fo:footnote-body>
+                <fo:block start-indent="0.5cm" text-indent="-0.5cm">
+                  <fo:inline font-size="60%" baseline-shift="super">1)</fo:inline> The footnote from the normal block.</fo:block>
+              </fo:footnote-body>
+            </fo:footnote>.
+          </fo:block>
+          <fo:table table-layout="fixed" width="100%" border-collapse="separate">
+            <fo:table-column column-width="proportional-column-width(1)"/>
+            <fo:table-column column-width="proportional-column-width(2)"/>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>table-cell1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>
+                    Footnote in table<fo:footnote>
+                      <fo:inline font-size="60%" baseline-shift="super">2)</fo:inline>
+                      <fo:footnote-body>
+                        <fo:block start-indent="0.5cm" text-indent="-0.5cm">
+                          <fo:inline font-size="60%" baseline-shift="super">2)</fo:inline> The footnote from the table.</fo:block>
+                      </fo:footnote-body>
+                    </fo:footnote>.
+                  </fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="2" xpath="count(//footnote/block)"/>
+    <eval expected="1) The footnote from the normal block." xpath="//footnote/block[1]"/>
+    <eval expected="2) The footnote from the table." xpath="//footnote/block[2]"/>
+  </checks>
+</testcase>

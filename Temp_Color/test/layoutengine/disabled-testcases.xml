@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="disabled-testcases.xsl"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<!--DOCTYPE disabled-testcases SYSTEM "disabled-testcases.dtd"-->
+<disabled-testcases>
+  <testcase>
+    <name>External link around an SVG not properly sized</name>
+    <file>basic-link_external-destination_2.xml</file>
+    <description>The bpd trait of the inlineparent area for the basic-link
+    is not sized correctly if it wraps an image that is higher than the 
+    nominal line.</description>
+  </testcase>
+  <testcase>
+    <name>Auto-height block-containers produce fences</name>
+    <file>block-container_space-before_space-after_3.xml</file>
+    <description>Block-containers with no height currently don't
+    create a fence for spaces as they should (they behave like a
+    normal block).</description>
+  </testcase>
+  <testcase>
+    <name>font-stretch NYI</name>
+    <file>block_font-stretch.xml</file>
+    <description>Font-stretch is not implemented, yet.</description>
+  </testcase>
+  <testcase>
+    <name>linefeed-treatment</name>
+    <file>block_linefeed-treatment.xml</file>
+    <description>Preserved linefeeds in a fo:character are not handled
+    correctly.</description>
+  </testcase>
+  <testcase>
+    <name>white-space-treatment</name>
+    <file>block_white-space-treatment_3.xml</file>
+    <description>White space handling incorrectly stops at fo:inline
+      boundaries when it comes to formatter generated line breaks.</description>
+  </testcase>
+  <testcase>
+    <name>Empty blocks produce fences</name>
+    <file>block_space-before_space-after_8.xml</file>
+    <description>An empty block currently produces a fence for
+    stacking constraints which it shouldn't.</description>
+  </testcase>
+  <testcase>
+    <name>block white-space nbsp 2</name>
+    <file>block_white-space_nbsp_2.xml</file>
+    <description>The nbsp given as an fo:character is not adjustable and therefore
+    the justification does not work in this case.</description>
+  </testcase>
+  <testcase>
+    <name>block word-spacing</name>
+    <file>block_word-spacing.xml</file>
+    <description>Word-spacing may not work as expected.</description>
+  </testcase>
+  <testcase>
+    <name>block word-spacing text-align justify</name>
+    <file>block_word-spacing_text-align_justify.xml</file>
+    <description>Word-spacing may not work as expected.</description>
+  </testcase>
+  <testcase>
+    <name>external-graphic don't shrink</name>
+    <file>external-graphic_oversized.xml</file>
+    <description>Images currently don't shrink so they fit on a page
+    when they are too big and shrinking is allowed to
+    happen (min/opt/max).</description>
+  </testcase>
+  <testcase>
+    <name>Test case with HTTP URL</name>
+    <file>external-graphic_src_uri.xml</file>
+    <description>Doesn't work behind a proxy which requires
+    authorization.</description>
+  </testcase>
+  <testcase>
+    <name>Space Resolution in foot note area</name>
+    <file>footnote_space-resolution.xml</file>
+    <description>Space resolution does not work between footnote
+    regions.</description>
+  </testcase>
+  <testcase>
+    <name>NPE for table inside an inline</name>
+    <file>inline_block_nested_3.xml</file>
+    <description>Placing a table as a child of an fo:inline produces a 
+    NullPointerException.</description>
+  </testcase>
+  <testcase>
+    <name>inline-container is not implemented, yet.</name>
+    <file>inline-container_block_nested.xml</file>
+    <description>inline-container is not implemented, yet. Content of an 
+    inline-container will get swallowed. The test case contains no checks.</description>
+  </testcase>
+  <testcase>
+    <name>inline-container is not implemented, yet.</name>
+    <file>inline-container_border_padding.xml</file>
+    <description>inline-container is not implemented, yet. Content of an 
+    inline-container will get swallowed.</description>
+  </testcase>
+  <testcase>
+    <name>inline letter-spacing</name>
+    <file>inline_letter-spacing.xml</file>
+    <description>Letter-spacing may not work as
+    expected within fo:inline.</description>
+  </testcase>
+  <testcase>
+    <name>inline word-spacing</name>
+    <file>inline_word-spacing.xml</file>
+    <description>Word-spacing may not work as expected within
+    fo:inline.</description>
+  </testcase>
+  <testcase>
+    <name>inline word-spacing text-align justify</name>
+    <file>inline_word-spacing_text-align_justify.xml</file>
+    <description></description>
+  </testcase>
+  <testcase>
+    <name>leader-alignment NYI</name>
+    <file>leader-alignment.xml</file>
+    <description>Leader-alignment is not yet
+    implemented.</description>
+  </testcase>
+  <testcase>
+    <name>leader-pattern="use-content": Problem with line height</name>
+    <file>leader_leader-pattern_use-content_bug.xml</file>
+    <description>Line height is not correctly calculated for
+    use-content leaders whose height is larger than the rest of the
+    line.</description>
+    <reference>http://www.nabble.com/leaders-with-leader-pattern%3D%22use-content%22-t546244.html</reference>
+  </testcase>
+  <testcase>
+    <name>Page breaking doesn't deal with IPD changes</name>
+    <file>page-breaking_4.xml</file>
+    <description>Page breaking currently doesn't support changing available IPD 
+    between pages of a single page-sequence. Element list generation has to be reset to
+    redetermine line breaks in this case.</description>
+  </testcase>
+  <testcase>
+    <name>Overflow handing is incomplete</name>
+    <file>page-breaking_6.xml</file>
+    <description>Line breaking is not 100% correct when there's too little space. 
+    Overflows are not detected and warned.</description>
+  </testcase>
+  <testcase>
+    <name>Indefinite page height handling is imcomplete</name>
+    <file>page-height_indefinite_simple.xml</file>
+    <description>A RuntimeException is thrown for a page of indefinite height. Lots of warnings.</description>
+  </testcase>
+  <testcase>
+    <name>page-number-citation: Problem with background-image</name>
+    <file>page-number-citation_background-image.xml</file>
+    <description>Background-images on page-number-citations are not
+    placed correctly.</description>
+  </testcase>
+  <testcase>
+    <name>IDs are not working on all FO elements</name>
+    <file>page-number-citation_complex_1.xml</file>
+    <description>The "id" attributes are not properly handled for all block-level FO elements.</description>
+  </testcase>
+  <testcase>
+    <name>IDs are not working on all FO elements</name>
+    <file>page-number-citation_complex_2.xml</file>
+    <description>The "id" attributes are not properly handled for all inline-level FO elements.</description>
+  </testcase>
+  <testcase>
+    <name>Footnotes in multi-column documents</name>
+    <file>region-body_column-count_footnote.xml</file>
+    <description>Footnotes may overlap with text of the region-body in
+    multi-column documents.</description>
+  </testcase>
+  <testcase>
+    <name>Column Balancing problems</name>
+    <file>region-body_column-count_balance_4col.xml</file>
+    <description>Situation in a 4-column document where the column balancing doesn't work and even causes some
+    content to disappear.</description>
+  </testcase>
+  <testcase>
+    <name>Column Balancing problems</name>
+    <file>region-body_column-count_bug36356.xml</file>
+    <description>Column balancing doesn't work as expected.</description>
+  </testcase>
+  <testcase>
+    <name>table-cell empty area with marker.xml</name>
+    <file>table-cell_empty_area_with_marker.xml</file>
+    <description>A table-cell producing an empty area does currently not add any markers to a page. 
+      See TODO entry in AreaAdditionUtil.</description>
+  </testcase>
+  <testcase>
+    <name>Border conditionality on table</name>
+    <file>table_border-width_conditionality.xml</file>
+    <description>The code should be ok, but the test case uses shorthands and therefore
+    is probably not expressing the indended outcome according to the spec. The test
+    case should be revisited.</description>
+  </testcase>
+  <testcase>
+    <name>Soft hyphen with normal hyphenation enabled</name>
+    <file>block_shy_linebreaking_hyph.xml</file>
+    <description>A soft hyphen should be a preferred as break compared to a
+    normal hyphenation point but is not.</description>
+  </testcase>
+  <testcase>
+    <name>Page-keep not respected in multi-column layout</name>
+    <file>keep_within-page_multi-column_overflow.xml</file>
+    <description>The block should cause overflow in the
+    last column on the page, rather than be broken.</description>
+  </testcase>
+</disabled-testcases>
