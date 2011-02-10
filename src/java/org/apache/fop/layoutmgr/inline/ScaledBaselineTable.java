@@ -19,34 +19,164 @@
 
 package org.apache.fop.layoutmgr.inline;
 
+import org.apache.fop.fo.Constants;
+
+
 /**
  * The FOP specific incarnation of the XSL-FO scaled baseline table.
  * All baseline tables are scaled to the font size of the font they
- * apply to. This interface uses a coordinate system with its origin
+ * apply to. This class uses a coordinate system with its origin
  * where the dominant baseline intersects the start edge of the box.
  * All measurements are in mpt.
  */
-public interface ScaledBaselineTable {
+final class ScaledBaselineTable {
+
+    private static final float HANGING_BASELINE_FACTOR = 0.8f;
+
+    private static final float MATHEMATICAL_BASELINE_FACTOR = 0.5f;
+
+    private final int altitude;
+
+    private final int depth;
+
+    private final int xHeight;
+
+    private final int dominantBaselineIdentifier;
+
+    private final int writingMode;
+
+    private final int dominantBaselineOffset;
+
+    private int beforeEdgeOffset;
+
+    private int afterEdgeOffset;
+
 
     /**
-     * Return the dominant baseline identifer for this alignment context.
-     * @return the dominant baseline identifier
+     *
+     * Creates a new instance of BasicScaledBaselineTable for the given
+     * altitude, depth, xHeight, baseline and writing mode.
+     * @param altitude the height of the box or the font ascender
+     * @param depth the font descender or 0
+     * @param xHeight the font xHeight
+     * @param dominantBaselineIdentifier the dominant baseline given as an integer constant
+     * @param writingMode the writing mode given as an integer constant
      */
-    int getDominantBaselineIdentifier();
+    ScaledBaselineTable(int altitude,
+            int depth,
+            int xHeight,
+            int dominantBaselineIdentifier,
+            int writingMode) {
+        this.altitude = altitude;
+        this.depth = depth;
+        this.xHeight = xHeight;
+        this.dominantBaselineIdentifier = dominantBaselineIdentifier;
+        this.writingMode = writingMode;
+        this.dominantBaselineOffset = getBaselineDefaultOffset(this.dominantBaselineIdentifier);
+        this.beforeEdgeOffset = altitude - dominantBaselineOffset;
+        this.afterEdgeOffset = depth - dominantBaselineOffset;
+    }
 
     /**
-     * Return the writing mode for this aligment context.
+     * Return the dominant baseline for this baseline table.
+     * @return the dominant baseline
+     */
+    int getDominantBaselineIdentifier() {
+        return this.dominantBaselineIdentifier;
+    }
+
+    /**
+     * Return the writing mode for this baseline table.
      * @return the writing mode
      */
-    int getWritingMode();
+    int getWritingMode() {
+        return this.writingMode;
+    }
 
     /**
-     * Return the offset measured from the dominant
-     * baseline for the given baseline identifier.
+     * Return the offset of the given baseline from the dominant baseline.
+     *
+     * @param baselineIdentifier a baseline identifier
+     * @return the offset from the dominant baseline
+     */
+    int getBaseline(int baselineIdentifier) {
+        int offset = 0;
+        if (!isHorizontalWritingMode()) {
+            switch (baselineIdentifier) {
+                case Constants.EN_TOP:
+                case Constants.EN_TEXT_TOP:
+                case Constants.EN_TEXT_BOTTOM:
+                case Constants.EN_BOTTOM:
+                throw new IllegalArgumentException("Baseline " + baselineIdentifier
+                        + " only supported for horizontal writing modes");
+                default: // TODO
+            }
+        }
+        switch (baselineIdentifier) {
+            case Constants.EN_TOP: // fall through
+            case Constants.EN_BEFORE_EDGE:
+                offset = beforeEdgeOffset;
+                break;
+            case Constants.EN_TEXT_TOP:
+            case Constants.EN_TEXT_BEFORE_EDGE:
+            case Constants.EN_HANGING:
+            case Constants.EN_CENTRAL:
+            case Constants.EN_MIDDLE:
+            case Constants.EN_MATHEMATICAL:
+            case Constants.EN_ALPHABETIC:
+            case Constants.EN_IDEOGRAPHIC:
+            case Constants.EN_TEXT_BOTTOM:
+            case Constants.EN_TEXT_AFTER_EDGE:
+                offset = getBaselineDefaultOffset(baselineIdentifier) - dominantBaselineOffset;
+                break;
+            case Constants.EN_BOTTOM: // fall through
+            case Constants.EN_AFTER_EDGE:
+                offset = afterEdgeOffset;
+                break;
+            default: throw new IllegalArgumentException(String.valueOf(baselineIdentifier));
+        }
+        return offset;
+    }
+
+    private boolean isHorizontalWritingMode() {
+        return writingMode == Constants.EN_LR_TB || writingMode == Constants.EN_RL_TB;
+    }
+
+    /**
+     * Return the baseline offset measured from the font's default
+     * baseline for the given baseline.
      * @param baselineIdentifier the baseline identifier
      * @return the baseline offset
      */
-    int getBaseline(int baselineIdentifier);
+    private int getBaselineDefaultOffset(int baselineIdentifier) {
+        int offset = 0;
+        switch (baselineIdentifier) {
+            case Constants.EN_TEXT_BEFORE_EDGE:
+                offset = altitude;
+                break;
+            case Constants.EN_HANGING:
+                offset = Math.round(altitude * HANGING_BASELINE_FACTOR);
+                break;
+            case Constants.EN_CENTRAL:
+                offset = (altitude - depth) / 2 + depth;
+                break;
+            case Constants.EN_MIDDLE:
+                offset = xHeight / 2;
+                break;
+            case Constants.EN_MATHEMATICAL:
+                offset = Math.round(altitude * MATHEMATICAL_BASELINE_FACTOR);
+                break;
+            case Constants.EN_ALPHABETIC:
+                offset = 0;
+                break;
+            case Constants.EN_IDEOGRAPHIC: // Fall through
+            case Constants.EN_TEXT_AFTER_EDGE:
+                offset = depth;
+                break;
+            default: throw new IllegalArgumentException(String.valueOf(baselineIdentifier));
+        }
+        return offset;
+    }
 
     /**
      * Sets the position of the before and after baselines.
@@ -56,7 +186,10 @@ public interface ScaledBaselineTable {
      * @param beforeBaseline the offset of the before-edge baseline from the dominant baseline
      * @param afterBaseline the offset of the after-edge baseline from the dominant baseline
      */
-    void setBeforeAndAfterBaselines(int beforeBaseline, int afterBaseline);
+    void setBeforeAndAfterBaselines(int beforeBaseline, int afterBaseline) {
+        beforeEdgeOffset = beforeBaseline;
+        afterEdgeOffset = afterBaseline;
+    }
 
     /**
      * Return a new baseline table for the given baseline based
@@ -64,6 +197,10 @@ public interface ScaledBaselineTable {
      * @param baselineIdentifier the baseline identifer
      * @return a new baseline with the new baseline
      */
-    ScaledBaselineTable deriveScaledBaselineTable(int baselineIdentifier);
+    ScaledBaselineTable deriveScaledBaselineTable(int baselineIdentifier) {
+        ScaledBaselineTable bac = new ScaledBaselineTable(altitude, depth, xHeight,
+                baselineIdentifier, this.writingMode);
+        return bac;
+    }
 
 }
