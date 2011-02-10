@@ -30,28 +30,39 @@ public final class PCLRenderingMode implements Serializable {
     private static final long serialVersionUID = 6359884255324755026L;
 
     /** "Quality" rendering (mixed native and bitmap for improved quality) */
-    public static final PCLRenderingMode QUALITY = new PCLRenderingMode("quality");
+    public static final PCLRenderingMode QUALITY = new PCLRenderingMode("quality", 1.0f);
     /** "Speed" rendering (maximum speed with native rendering, reduced visual quality) */
-    public static final PCLRenderingMode SPEED = new PCLRenderingMode("speed");
+    public static final PCLRenderingMode SPEED = new PCLRenderingMode("speed", 0.25f);
     /**
      * "Bitmap" rendering (pages are painted entirely as bitmaps, maximum quality,
      * reduced performance)
      */
-    public static final PCLRenderingMode BITMAP = new PCLRenderingMode("bitmap");
+    public static final PCLRenderingMode BITMAP = new PCLRenderingMode("bitmap", 1.0f);
 
     private String name;
+    private float defaultDitheringQuality;
 
     /**
      * Constructor to add a new named item.
      * @param name Name of the item.
+     * @param defaultDitheringQuality the default dithering quality (0.0f..1.0f)
      */
-    private PCLRenderingMode(String name) {
+    private PCLRenderingMode(String name, float defaultDitheringQuality) {
         this.name = name;
+        this.defaultDitheringQuality = defaultDitheringQuality;
     }
 
     /** @return the name of the enum */
     public String getName() {
         return this.name;
+    }
+
+    /**
+     * Returns the default dithering quality for this rendering mode.
+     * @return the default dithering quality (0.0f..1.0f)
+     */
+    public float getDefaultDitheringQuality() {
+        return this.defaultDitheringQuality;
     }
 
     /**
@@ -76,6 +87,7 @@ public final class PCLRenderingMode implements Serializable {
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
         return "PCLRenderingMode:" + name;
     }

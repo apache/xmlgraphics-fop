@@ -24,8 +24,10 @@ import java.awt.Rectangle;
 import java.awt.image.ColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
+import java.awt.image.MultiPixelPackedSampleModel;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
+import java.awt.image.SampleModel;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -254,6 +256,12 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler implements Ima
         if (tiles > 1) {
             return false;
         }
+        SampleModel sampleModel = renderedImage.getSampleModel();
+        SampleModel expectedSampleModel = new MultiPixelPackedSampleModel(DataBuffer.TYPE_BYTE,
+                renderedImage.getWidth(), renderedImage.getHeight(), 1);
+        if (!expectedSampleModel.equals(sampleModel)) {
+            return false; //Pixels are not packed
+        }
 
         imageObjectInfo.setBitsPerPixel(1);
 
@@ -290,6 +298,7 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler implements Ima
     }
 
     /** {@inheritDoc} */
+    @Override
     protected AFPDataObjectInfo createDataObjectInfo() {
         return new AFPImageObjectInfo();
     }

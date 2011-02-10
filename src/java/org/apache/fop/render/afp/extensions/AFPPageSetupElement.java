@@ -54,6 +54,7 @@ public class AFPPageSetupElement extends AbstractAFPExtensionObject {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void startOfNode() throws FOPException {
         super.startOfNode();
         if (AFPElementMapping.TAG_LOGICAL_ELEMENT.equals(getLocalName())) {
@@ -63,14 +64,17 @@ public class AFPPageSetupElement extends AbstractAFPExtensionObject {
                     "rule.childOfPageSequenceOrSPM");
             }
         } else {
-            if (parent.getNameId() != Constants.FO_SIMPLE_PAGE_MASTER) {
+            if (parent.getNameId() != Constants.FO_SIMPLE_PAGE_MASTER
+                    && parent.getNameId() != Constants.FO_PAGE_SEQUENCE
+                    && parent.getNameId() != Constants.FO_DECLARATIONS) {
                 invalidChildError(getLocator(), parent.getName(), getNamespaceURI(), getName(),
-                    "rule.childOfSPM");
+                    "rule.childOfSPMorPSorDeclarations");
             }
         }
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void characters(char[] data, int start, int length,
                                  PropertyList pList, Locator locator) throws FOPException {
         StringBuffer sb = new StringBuffer();
@@ -83,6 +87,7 @@ public class AFPPageSetupElement extends AbstractAFPExtensionObject {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void processNode(String elementName, Locator locator,
                             Attributes attlist, PropertyList propertyList)
                                 throws FOPException {
@@ -106,6 +111,7 @@ public class AFPPageSetupElement extends AbstractAFPExtensionObject {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected ExtensionAttachment instantiateExtensionAttachment() {
         return new AFPPageSetup(getLocalName());
     }

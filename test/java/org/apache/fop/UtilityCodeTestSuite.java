@@ -25,6 +25,7 @@ import junit.framework.TestSuite;
 import org.apache.fop.events.BasicEventTestCase;
 import org.apache.fop.pdf.PDFObjectTestCase;
 import org.apache.fop.traits.BorderPropsTestCase;
+import org.apache.fop.util.BitmapImageUtilTestCase;
 import org.apache.fop.util.ColorUtilTestCase;
 import org.apache.fop.util.ElementListUtilsTestCase;
 import org.apache.fop.util.PDFNumberTestCase;
@@ -51,6 +52,7 @@ public class UtilityCodeTestSuite {
         suite.addTest(new TestSuite(BasicEventTestCase.class));
         suite.addTest(new TestSuite(XMLResourceBundleTestCase.class));
         suite.addTest(new TestSuite(URIResolutionTestCase.class));
+        suite.addTest(new TestSuite(BitmapImageUtilTestCase.class));
         //$JUnit-END$
         return suite;
     }

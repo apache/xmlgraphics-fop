@@ -38,38 +38,36 @@ public class FootnoteBodyLayoutManager extends BlockStackingLayoutManager {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void addAreas(PositionIterator parentIter, LayoutContext layoutContext) {
-        LayoutManager childLM = null;
+        LayoutManager childLM;
         LayoutManager lastLM = null;
         LayoutContext lc = new LayoutContext(0);
 
         // "unwrap" the NonLeafPositions stored in parentIter
         // and put them in a new list;
-        LinkedList positionList = new LinkedList();
+        LinkedList<Position> positionList = new LinkedList<Position>();
         Position pos;
         while (parentIter.hasNext()) {
-            pos = (Position) parentIter.next();
-            //log.trace("pos = " + pos.getClass().getName() + "; " + pos);
-            Position innerPosition = pos;
+            pos = parentIter.next();
+            Position innerPosition;
             if (pos instanceof NonLeafPosition) {
-                innerPosition = ((NonLeafPosition) pos).getPosition();
+                innerPosition = pos.getPosition();
                 if (innerPosition.getLM() == this) {
                     // pos was created by this LM and was inside a penalty
                     // allowing or forbidding a page break
                     // nothing to do
-                    //log.trace(" penalty");
                 } else {
                     // innerPosition was created by another LM
                     positionList.add(innerPosition);
                     lastLM = innerPosition.getLM();
-                    //log.trace(" " + innerPosition.getClass().getName());
                 }
             }
         }
 
         // the Positions in positionList were inside the elements
         // created by the LineLM
-        StackingIter childPosIter = new StackingIter(positionList.listIterator());
+        PositionIterator childPosIter = new PositionIterator(positionList.listIterator());
 
         while ((childLM = childPosIter.getNextChildLM()) != null) {
             // set last area flag
@@ -81,6 +79,7 @@ public class FootnoteBodyLayoutManager extends BlockStackingLayoutManager {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void addChildArea(Area childArea) {
         childArea.setAreaClass(Area.CLASS_FOOTNOTE);
         parentLayoutManager.addChildArea(childArea);
@@ -92,16 +91,19 @@ public class FootnoteBodyLayoutManager extends BlockStackingLayoutManager {
     }
 
     /** {@inheritDoc} */
+    @Override
     public Keep getKeepTogether() {
         return getParentKeepTogether();
     }
 
     /** {@inheritDoc} */
+    @Override
     public Keep getKeepWithNext() {
         return Keep.KEEP_AUTO;
     }
 
     /** {@inheritDoc} */
+    @Override
     public Keep getKeepWithPrevious() {
         return Keep.KEEP_AUTO;
     }

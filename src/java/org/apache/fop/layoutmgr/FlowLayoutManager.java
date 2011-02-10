@@ -30,6 +30,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.BlockParent;
 import org.apache.fop.fo.pagination.Flow;
+import org.apache.fop.util.ListUtil;
 
 /**
  * LayoutManager for an fo:flow object.
@@ -61,22 +62,9 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
     }
 
     /** {@inheritDoc} */
+    @Override
     public List getNextKnuthElements(LayoutContext context, int alignment) {
-
-        List elements = new LinkedList();
-
-        LayoutManager currentChildLM;
-        while ((currentChildLM = getChildLM()) != null) {
-            if (addChildElements(elements, currentChildLM, context, alignment) != null) {
-                return elements;
-            }
-        }
-
-        SpaceResolver.resolveElementList(elements);
-        setFinished(true);
-
-        assert !elements.isEmpty();
-        return elements;
+        return getNextKnuthElements(context, alignment, null, null);
     }
 
     /**
@@ -84,43 +72,50 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
      * of the node assigned to the LM.
      * @param context   the LayoutContext used to store layout information
      * @param alignment the desired text alignment
-     * @param positionAtIPDChange position at ipd change
-     * @param restartAtLM restart at this layout manager
+     * @param restartPosition   {@link Position} to restart from
+     * @param restartLM {@link LayoutManager} to restart from
      * @return the list of KnuthElements
      * @see LayoutManager#getNextKnuthElements(LayoutContext,int)
      */
-    public List getNextKnuthElements(LayoutContext context, int alignment,
-            Position positionAtIPDChange, LayoutManager restartAtLM) {
+    List getNextKnuthElements(LayoutContext context, int alignment,
+            Position restartPosition, LayoutManager restartLM) {
 
-        List elements = new LinkedList();
+        List<ListElement> elements = new LinkedList<ListElement>();
 
-        LayoutManager currentChildLM = positionAtIPDChange.getLM();
-        if (currentChildLM == null) {
-            throw new IllegalStateException(
-                    "Cannot find layout manager from where to re-start layout after IPD change");
-        }
-        if (restartAtLM != null && restartAtLM.getParent() == this) {
-            currentChildLM = restartAtLM;
-            setCurrentChildLM(currentChildLM);
-            currentChildLM.reset();
-            if (addChildElements(elements, currentChildLM, context, alignment) != null) {
-                return elements;
+        boolean isRestart = (restartPosition != null);
+        LayoutManager currentChildLM;
+        if (isRestart) {
+            currentChildLM = restartPosition.getLM();
+            if (currentChildLM == null) {
+                throw new IllegalStateException(
+                        "Cannot find layout manager from where to re-start "
+                        + "layout after IPD change");
             }
-        } else {
-            Stack lmStack = new Stack();
-            while (currentChildLM.getParent() != this) {
-                lmStack.push(currentChildLM);
-                currentChildLM = currentChildLM.getParent();
-            }
-            setCurrentChildLM(currentChildLM);
-            if (addChildElements(elements, currentChildLM, context, alignment, lmStack,
-                    positionAtIPDChange, restartAtLM) != null) {
-                return elements;
+            if (restartLM != null && restartLM.getParent() == this) {
+                currentChildLM = restartLM;
+                setCurrentChildLM(currentChildLM);
+                currentChildLM.reset();
+                if (addChildElements(elements, currentChildLM, context, alignment) != null) {
+                    return elements;
+                }
+            } else {
+                Stack<LayoutManager> lmStack = new Stack<LayoutManager>();
+                while (currentChildLM.getParent() != this) {
+                    lmStack.push(currentChildLM);
+                    currentChildLM = currentChildLM.getParent();
+                }
+                setCurrentChildLM(currentChildLM);
+                if (addChildElements(elements, currentChildLM, context, alignment, lmStack,
+                        restartPosition, restartLM) != null) {
+                    return elements;
+                }
             }
         }
 
         while ((currentChildLM = getChildLM()) != null) {
-            currentChildLM.reset(); // TODO won't work with forced breaks
+            if (isRestart) {
+                currentChildLM.reset(); // TODO won't work with forced breaks
+            }
             if (addChildElements(elements, currentChildLM, context, alignment) != null) {
                 return elements;
             }
@@ -133,31 +128,33 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
         return elements;
     }
 
-    private List addChildElements(List elements, LayoutManager childLM, LayoutContext context,
-            int alignment) {
+    private List<ListElement> addChildElements(List<ListElement> elements,
+            LayoutManager childLM, LayoutContext context, int alignment) {
         return addChildElements(elements, childLM, context, alignment, null, null, null);
     }
 
-    private List addChildElements(List elements, LayoutManager childLM, LayoutContext context,
-            int alignment, Stack lmStack, Position position, LayoutManager restartAtLM) {
-        if (handleSpanChange(childLM, elements, context)) {
+    private List<ListElement> addChildElements(List<ListElement> elements,
+            LayoutManager childLM, LayoutContext context, int alignment,
+            Stack<LayoutManager> lmStack, Position position, LayoutManager restartAtLM) {
+        if (handleSpanChange(childLM, context)) {
             SpaceResolver.resolveElementList(elements);
             return elements;
         }
 
-        LayoutContext childLC = new LayoutContext(0);
-        List childrenElements = getNextChildElements(childLM, context, childLC, alignment, lmStack,
-                position, restartAtLM);
+        LayoutContext childLC = makeChildLayoutContext(context);
+        List<ListElement> childElements
+                = getNextChildElements(childLM, context, childLC, alignment, lmStack,
+                    position, restartAtLM);
         if (elements.isEmpty()) {
             context.updateKeepWithPreviousPending(childLC.getKeepWithPreviousPending());
         }
         if (!elements.isEmpty()
-                && !ElementListUtils.startsWithForcedBreak(childrenElements)) {
+                && !ElementListUtils.startsWithForcedBreak(childElements)) {
             addInBetweenBreak(elements, context, childLC);
         }
         context.updateKeepWithNextPending(childLC.getKeepWithNextPending());
 
-        elements.addAll(childrenElements);
+        elements.addAll(childElements);
 
         if (ElementListUtils.endsWithForcedBreak(elements)) {
             // a descendant of this flow has break-before or break-after
@@ -170,7 +167,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
         return null;
     }
 
-    private boolean handleSpanChange(LayoutManager childLM, List elements, LayoutContext context) {
+    private boolean handleSpanChange(LayoutManager childLM, LayoutContext context) {
         int span = EN_NONE;
         int disableColumnBalancing = EN_FALSE;
         if (childLM instanceof BlockLayoutManager) {
@@ -196,32 +193,47 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
         }
     }
 
-    private List getNextChildElements(LayoutManager childLM, LayoutContext context,
-            LayoutContext childLC, int alignment, Stack lmStack, Position restartPosition,
-            LayoutManager restartLM) {
+    /**
+     * Overridden to take into account the current page-master's
+     * writing-mode
+     * {@inheritDoc}
+     */
+    @Override
+    protected LayoutContext makeChildLayoutContext(LayoutContext context) {
+        LayoutContext childLC = new LayoutContext(0);
         childLC.setStackLimitBP(context.getStackLimitBP());
         childLC.setRefIPD(context.getRefIPD());
         childLC.setWritingMode(getCurrentPage().getSimplePageMaster().getWritingMode());
-
-        List childrenElements;
-        if (lmStack == null) {
-            childrenElements = childLM.getNextKnuthElements(childLC, alignment);
-        } else {
-            childrenElements = childLM.getNextKnuthElements(childLC,
-                    alignment, lmStack, restartPosition, restartLM);
-        }
-        assert !childrenElements.isEmpty();
-
-        // "wrap" the Position inside each element
-        List tempList = childrenElements;
-        childrenElements = new LinkedList();
-        wrapPositionElements(tempList, childrenElements);
-        return childrenElements;
+        return childLC;
     }
 
     /**
+     * Overridden to wrap the child positions before returning the list
      * {@inheritDoc}
      */
+    @Override
+    protected List<ListElement> getNextChildElements(LayoutManager childLM, LayoutContext context,
+            LayoutContext childLC, int alignment, Stack<LayoutManager> lmStack,
+            Position restartPosition, LayoutManager restartLM) {
+        
+        List<ListElement> childElements;
+        if (lmStack == null) {
+            childElements = childLM.getNextKnuthElements(childLC, alignment);
+        } else {
+            childElements = childLM.getNextKnuthElements(childLC, alignment,
+                    lmStack, restartPosition, restartLM);
+        }
+        assert !childElements.isEmpty();
+
+        // "wrap" the Position inside each element
+        List tempList = childElements;
+        childElements = new LinkedList<ListElement>();
+        wrapPositionElements(tempList, childElements);
+        return childElements;
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public int negotiateBPDAdjustment(int adj, KnuthElement lastElement) {
         log.debug(" FLM.negotiateBPDAdjustment> " + adj);
 
@@ -239,9 +251,8 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
+    @Override
     public void discardSpace(KnuthGlue spaceGlue) {
         log.debug(" FLM.discardSpace> ");
 
@@ -255,26 +266,30 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
     }
 
     /** {@inheritDoc} */
+    @Override
     public Keep getKeepTogether() {
         return Keep.KEEP_AUTO;
     }
 
     /** {@inheritDoc} */
+    @Override
     public Keep getKeepWithNext() {
         return Keep.KEEP_AUTO;
     }
 
     /** {@inheritDoc} */
+    @Override
     public Keep getKeepWithPrevious() {
         return Keep.KEEP_AUTO;
     }
 
     /** {@inheritDoc} */
-    public List getChangedKnuthElements(List oldList, /*int flaggedPenalty,*/ int alignment) {
-        ListIterator oldListIterator = oldList.listIterator();
+    @Override
+    public List<KnuthElement> getChangedKnuthElements(List oldList, int alignment) {
+        ListIterator<KnuthElement> oldListIterator = oldList.listIterator();
         KnuthElement returnedElement;
-        List returnedList = new LinkedList();
-        List returnList = new LinkedList();
+        List<KnuthElement> returnedList = new LinkedList<KnuthElement>();
+        List<KnuthElement> returnList = new LinkedList<KnuthElement>();
         KnuthElement prevElement = null;
         KnuthElement currElement = null;
         int fromIndex = 0;
@@ -282,7 +297,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
         // "unwrap" the Positions stored in the elements
         KnuthElement oldElement;
         while (oldListIterator.hasNext()) {
-            oldElement = (KnuthElement)oldListIterator.next();
+            oldElement = oldListIterator.next();
             if (oldElement.getPosition() instanceof NonLeafPosition) {
                 // oldElement was created by a descendant of this FlowLM
                 oldElement.setPosition((oldElement.getPosition()).getPosition());
@@ -296,7 +311,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
 
 
         while (oldListIterator.hasNext()) {
-            currElement = (KnuthElement) oldListIterator.next();
+            currElement = oldListIterator.next();
             if (prevElement != null
                 && prevElement.getLayoutManager() != currElement.getLayoutManager()) {
                 // prevElement is the last element generated by the same LM
@@ -314,8 +329,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
                     // add an infinite penalty to forbid a break between blocks
                     returnedList.add(new KnuthPenalty(0, KnuthElement.INFINITE, false,
                             new Position(this), false));
-                } else if (!((KnuthElement) returnedList.get(returnedList
-                        .size() - 1)).isGlue()) {
+                } else if (!ListUtil.getLast(returnedList).isGlue()) {
                     // add a null penalty to allow a break between blocks
                     returnedList.add(new KnuthPenalty(0, 0, false, new Position(this), false));
                 }
@@ -331,9 +345,9 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
 
         // "wrap" the Position stored in each element of returnedList
         // and add elements to returnList
-        ListIterator listIter = returnedList.listIterator();
+        ListIterator<KnuthElement> listIter = returnedList.listIterator();
         while (listIter.hasNext()) {
-            returnedElement = (KnuthElement)listIter.next();
+            returnedElement = listIter.next();
             if (returnedElement.getLayoutManager() != this) {
                 returnedElement.setPosition(
                         new NonLeafPosition(this, returnedElement.getPosition()));
@@ -344,9 +358,8 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
         return returnList;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
+    @Override
     public void addAreas(PositionIterator parentIter, LayoutContext layoutContext) {
         AreaAdditionUtil.addAreas(this, parentIter, layoutContext);
         flush();
@@ -359,15 +372,15 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
      *
      * @param childArea the area to add
      */
+    @Override
     public void addChildArea(Area childArea) {
         getParentArea(childArea);
         addChildToArea(childArea,
                           this.currentAreas[childArea.getAreaClass()]);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
+    @Override
     public Area getParentArea(Area childArea) {
         BlockParent parentArea = null;
         int aclass = childArea.getAreaClass();
@@ -392,6 +405,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
      * Returns the IPD of the content area
      * @return the IPD of the content area
      */
+    @Override
     public int getContentAreaIPD() {
         return getCurrentPV().getCurrentSpan().getColumnWidth();
     }
@@ -400,11 +414,13 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
      * Returns the BPD of the content area
      * @return the BPD of the content area
      */
+    @Override
     public int getContentAreaBPD() {
         return getCurrentPV().getBodyRegion().getBPD();
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean isRestartable() {
         return true;
     }

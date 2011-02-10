@@ -90,7 +90,7 @@ public class ResourceOptimizationTestCase extends AbstractPostScriptTestCase {
                 = (DSCCommentDocumentSuppliedResources)gotoDSCComment(parser,
                         DSCConstants.DOCUMENT_SUPPLIED_RESOURCES);
             Set resources = supplied.getResources();
-            assertEquals(4, resources.size());
+            assertEquals(5, resources.size());
             assertTrue(resources.contains(form1));
             assertTrue("Expected barcode.eps as supplied resource",
                     resources.contains(new PSResource(PSResource.TYPE_FILE,

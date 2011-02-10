@@ -25,7 +25,10 @@ import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
 
 import org.apache.fop.datatypes.FODimension;
-import org.apache.fop.fo.Constants;
+
+import static org.apache.fop.fo.Constants.EN_LR_TB;
+import static org.apache.fop.fo.Constants.EN_RL_TB;
+import static org.apache.fop.fo.Constants.EN_TB_RL;
 
 /**
  * Describe a PDF or PostScript style coordinate transformation matrix (CTM).
@@ -133,14 +136,14 @@ public class CTM implements Serializable {
     public static CTM getWMctm(int wm, int ipd, int bpd) {
         CTM wmctm;
         switch (wm) {
-            case Constants.EN_LR_TB:
+            case EN_LR_TB:
                 return new CTM(CTM_LRTB);
-            case Constants.EN_RL_TB:
+            case EN_RL_TB:
                 wmctm = new CTM(CTM_RLTB);
                 wmctm.e = ipd;
                 return wmctm;
                 //return  CTM_RLTB.translate(ipd, 0);
-            case Constants.EN_TB_RL:  // CJK
+            case EN_TB_RL:  // CJK
                 wmctm = new CTM(CTM_TBRL);
                 wmctm.e = bpd;
                 return wmctm;
@@ -157,13 +160,12 @@ public class CTM implements Serializable {
      * @return CTM The result of multiplying premult * this.
      */
     public CTM multiply(CTM premult) {
-        CTM result = new CTM ((premult.a * a) + (premult.b * c),
+        return new CTM ((premult.a * a) + (premult.b * c),
                               (premult.a * b) + (premult.b * d),
                               (premult.c * a) + (premult.d * c),
                               (premult.c * b) + (premult.d * d),
                               (premult.e * a) + (premult.f * c) + e,
                               (premult.e * b) + (premult.f * d) + f);
-        return result;
     }
 
     /**
@@ -249,6 +251,7 @@ public class CTM implements Serializable {
      *
      * @return a string with the transform values
      */
+    @Override
     public String toString() {
         return "[" + a + " " + b + " " + c + " " + d + " " + e + " "
                + f + "]";
@@ -332,7 +335,7 @@ public class CTM implements Serializable {
          * can set ipd and bpd appropriately based on the writing mode.
          */
 
-        if (writingMode == Constants.EN_LR_TB || writingMode == Constants.EN_RL_TB) {
+        if (writingMode == EN_LR_TB || writingMode == EN_RL_TB) {
             reldims.ipd = width;
             reldims.bpd = height;
         } else {

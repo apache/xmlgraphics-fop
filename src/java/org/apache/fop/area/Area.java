@@ -132,7 +132,7 @@ public class Area extends AreaTreeObject implements Serializable {
     /**
      * Traits for this area stored in a HashMap
      */
-    protected Map props = null;
+    protected Map<Integer, Object> props = null;
 
     /**
      * logging instance
@@ -239,7 +239,7 @@ public class Area extends AreaTreeObject implements Serializable {
 
         Integer padWidth = (Integer) getTrait(Trait.PADDING_BEFORE);
         if (padWidth != null) {
-            margin += padWidth.intValue();
+            margin += padWidth;
         }
 
         return margin;
@@ -260,7 +260,7 @@ public class Area extends AreaTreeObject implements Serializable {
 
         Integer padWidth = (Integer) getTrait(Trait.PADDING_AFTER);
         if (padWidth != null) {
-            margin += padWidth.intValue();
+            margin += padWidth;
         }
 
         return margin;
@@ -280,7 +280,7 @@ public class Area extends AreaTreeObject implements Serializable {
 
         Integer padWidth = (Integer) getTrait(Trait.PADDING_START);
         if (padWidth != null) {
-            margin += padWidth.intValue();
+            margin += padWidth;
         }
 
         return margin;
@@ -300,7 +300,7 @@ public class Area extends AreaTreeObject implements Serializable {
 
         Integer padWidth = (Integer) getTrait(Trait.PADDING_END);
         if (padWidth != null) {
-            margin += padWidth.intValue();
+            margin += padWidth;
         }
 
         return margin;
@@ -315,7 +315,7 @@ public class Area extends AreaTreeObject implements Serializable {
         int margin = 0;
         Integer space = (Integer) getTrait(Trait.SPACE_BEFORE);
         if (space != null) {
-            margin = space.intValue();
+            margin = space;
         }
         return margin;
     }
@@ -329,7 +329,7 @@ public class Area extends AreaTreeObject implements Serializable {
         int margin = 0;
         Integer space = (Integer) getTrait(Trait.SPACE_AFTER);
         if (space != null) {
-            margin = space.intValue();
+            margin = space;
         }
         return margin;
     }
@@ -343,7 +343,7 @@ public class Area extends AreaTreeObject implements Serializable {
         int margin = 0;
         Integer space = (Integer) getTrait(Trait.SPACE_START);
         if (space != null) {
-            margin = space.intValue();
+            margin = space;
         }
         return margin;
     }
@@ -357,7 +357,7 @@ public class Area extends AreaTreeObject implements Serializable {
         int margin = 0;
         Integer space = (Integer) getTrait(Trait.SPACE_END);
         if (space != null) {
-            margin = space.intValue();
+            margin = space;
         }
         return margin;
     }
@@ -378,9 +378,9 @@ public class Area extends AreaTreeObject implements Serializable {
      * @param traitCode the trait key
      * @param prop the value of the trait
      */
-    public void addTrait(Object traitCode, Object prop) {
+    public void addTrait(Integer traitCode, Object prop) {
         if (props == null) {
-            props = new java.util.HashMap(20);
+            props = new java.util.HashMap<Integer, Object>(20);
         }
         props.put(traitCode, prop);
     }
@@ -390,7 +390,7 @@ public class Area extends AreaTreeObject implements Serializable {
      *
      * @return the map of traits
      */
-    public Map getTraits() {
+    public Map<Integer, Object> getTraits() {
         return this.props;
     }
 
@@ -402,44 +402,44 @@ public class Area extends AreaTreeObject implements Serializable {
     /**
      * Get a trait from this area.
      *
-     * @param oTraitCode the trait key
+     * @param traitCode the trait key
      * @return the trait value
      */
-    public Object getTrait(Object oTraitCode) {
-        return (props != null ? props.get(oTraitCode) : null);
+    public Object getTrait(Integer traitCode) {
+        return (props != null ? props.get(traitCode) : null);
     }
 
     /**
      * Checks whether a certain trait is set on this area.
-     * @param oTraitCode the trait key
+     * @param traitCode the trait key
      * @return true if the trait is set
      */
-    public boolean hasTrait(Object oTraitCode) {
-        return (getTrait(oTraitCode) != null);
+    public boolean hasTrait(Integer traitCode) {
+        return (getTrait(traitCode) != null);
     }
 
     /**
      * Get a boolean trait from this area.
-     * @param oTraitCode the trait key
+     * @param traitCode the trait key
      * @return the trait value
      */
-    public boolean getTraitAsBoolean(Object oTraitCode) {
-        return Boolean.TRUE.equals(getTrait(oTraitCode));
+    public boolean getTraitAsBoolean(Integer traitCode) {
+        return Boolean.TRUE.equals(getTrait(traitCode));
     }
 
     /**
      * Get a trait from this area as an integer.
      *
-     * @param oTraitCode the trait key
+     * @param traitCode the trait key
      * @return the trait value
      */
-    public int getTraitAsInteger(Object oTraitCode) {
-        final Object obj = getTrait(oTraitCode);
+    public int getTraitAsInteger(Integer traitCode) {
+        final Object obj = getTrait(traitCode);
         if (obj instanceof Integer) {
-            return ((Integer)obj).intValue();
+            return (Integer) obj;
         } else {
             throw new IllegalArgumentException("Trait "
-                    + oTraitCode.getClass().getName()
+                    + traitCode.getClass().getName()
                     + " could not be converted to an integer");
         }
     }
@@ -447,7 +447,8 @@ public class Area extends AreaTreeObject implements Serializable {
     /**
      * {@inheritDoc}
      * @return ipd and bpd of area
-     * */
+     */
+    @Override
     public String toString() {
         StringBuffer sb = new StringBuffer(super.toString());
         sb.append(" {ipd=").append(Integer.toString(getIPD()));

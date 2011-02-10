@@ -378,15 +378,9 @@ public class FopFactoryConfigurator {
 
     private void setBaseURI() throws FOPException {
         String loc = cfg.getLocation();
-        String[] locationParts = (loc != null ? cfg.getLocation().split(":") : null);
         try {
-            if (locationParts != null && locationParts.length >= 2
-                    && "file".equals(locationParts[0])) {
-                StringBuilder sb = new StringBuilder(locationParts[1]);
-                for (int idx = 2; idx < locationParts.length; idx++) {
-                    sb.append(":").append(locationParts[idx]);
-                }
-                baseURI = new URI(locationParts[0], sb.toString(), null);
+            if (loc != null && loc.startsWith("file:")) {
+                baseURI = new URI(loc);
                 baseURI = baseURI.resolve(".").normalize();
             }
             if (baseURI == null) {
