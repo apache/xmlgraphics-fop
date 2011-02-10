@@ -67,7 +67,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class PDFDocument {
 
-    private static final Integer LOCATION_PLACEHOLDER = new Integer(0);
+    private static final Long LOCATION_PLACEHOLDER = new Long(0);
 
     /** Integer constant to represent PDF 1.3 */
     public static final int PDF_VERSION_1_3 = 3;
@@ -85,13 +85,13 @@ public class PDFDocument {
     private Log log = LogFactory.getLog("org.apache.fop.pdf");
 
     /** the current character position */
-    private int position = 0;
+    private long position = 0;
 
     /** character position of xref table */
-    private int xref;
+    private long xref;
 
     /** the character position of each object */
-    private List location = new ArrayList();
+    private List<Long> location = new ArrayList<Long>();
 
     /** List of objects to write in the trailer */
     private List trailerObjects = new ArrayList();
@@ -747,6 +747,7 @@ public class PDFDocument {
      * @return the image or PDFXObject for the key if found
      * @deprecated Use getXObject instead (so forms are treated in the same way)
      */
+    @Deprecated
     public PDFImageXObject getImage(String key) {
         return (PDFImageXObject)this.xObjectsMap.get(key);
     }
@@ -911,11 +912,11 @@ public class PDFDocument {
      * @param objidx    the object's index
      * @param position  the position
      */
-    private void setLocation(int objidx, int position) {
+    private void setLocation(int objidx, long position) {
         while (this.location.size() <= objidx) {
             this.location.add(LOCATION_PLACEHOLDER);
         }
-        this.location.set(objidx, new Integer(position));
+        this.location.set(objidx, position);
     }
 
     /**
@@ -1071,6 +1072,9 @@ public class PDFDocument {
         for (int count = 0; count < this.location.size(); count++) {
             final String padding = "0000000000";
             s = this.location.get(count).toString();
+            if (s.length() > 10) {
+                throw new IOException("PDF file too large. PDF cannot grow beyond approx. 9.3GB.");
+            }
 
             /* contruct xref entry for object */
             loc = padding.substring(s.length()) + s;
