@@ -59,6 +59,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="JM" type="fix">
+        Increased maximum possible PDF size from 2GB to around 9GB (hard maximum imposed by the PDF specification).
+      </action>
       <action context="Renderers" dev="JM" type="add">
         Added support for CIE Lab colors (from XSL-FO 2.0 WD).
       </action>
