@@ -265,16 +265,12 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         LayoutContext childLC;
         List<ListElement> childElements;
         LayoutManager currentChildLM;
-        // always reset in case of a restart (exception: see below)
-        boolean doReset = isRestart;
         if (isRestart) {
             if (emptyStack) {
                 assert restartAtLM != null && restartAtLM.getParent() == this;
                 currentChildLM = restartAtLM;
             } else {
                 currentChildLM = (LayoutManager) lmStack.pop();
-                // make sure the initial child LM is not reset
-                doReset = false;
             }
             setCurrentChildLM(currentChildLM);
         } else {
@@ -282,13 +278,14 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         }
 
         while (currentChildLM != null) {
-            if (doReset) {
-                currentChildLM.reset(); // TODO won't work with forced breaks
-            }
 
             childLC = makeChildLayoutContext(context);
 
             if (!isRestart || emptyStack) {
+                if (isRestart) {
+                    currentChildLM.reset(); // TODO won't work with forced breaks
+                }
+
                 childElements = getNextChildElements(currentChildLM, context, childLC, alignment,
                         null, null, null);
             } else {
@@ -297,8 +294,6 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
                         lmStack, restartPosition, restartAtLM);
                 // once encountered, irrelevant for following child LMs
                 emptyStack = true;
-                // force reset as of the next child
-                doReset = true;
             }
 
             if (contentList.isEmpty()) {

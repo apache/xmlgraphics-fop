@@ -83,42 +83,47 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
         List<ListElement> elements = new LinkedList<ListElement>();
 
         boolean isRestart = (restartPosition != null);
+        // always reset in case of restart (exception: see below)
+        boolean doReset = isRestart;
         LayoutManager currentChildLM;
+        Stack<LayoutManager> lmStack = new Stack<LayoutManager>();
         if (isRestart) {
             currentChildLM = restartPosition.getLM();
             if (currentChildLM == null) {
-                throw new IllegalStateException(
-                        "Cannot find layout manager from where to re-start "
-                        + "layout after IPD change");
+                throw new IllegalStateException("Cannot find layout manager to restart from");
             }
             if (restartLM != null && restartLM.getParent() == this) {
                 currentChildLM = restartLM;
-                setCurrentChildLM(currentChildLM);
-                currentChildLM.reset();
-                if (addChildElements(elements, currentChildLM, context, alignment) != null) {
-                    return elements;
-                }
             } else {
-                Stack<LayoutManager> lmStack = new Stack<LayoutManager>();
                 while (currentChildLM.getParent() != this) {
                     lmStack.push(currentChildLM);
                     currentChildLM = currentChildLM.getParent();
                 }
-                setCurrentChildLM(currentChildLM);
+                doReset = false;
+            }
+            setCurrentChildLM(currentChildLM);
+        } else {
+            currentChildLM = getChildLM();
+        }
+
+        while (currentChildLM != null) {
+            if (!isRestart || doReset) {
+                if (doReset) {
+                    currentChildLM.reset(); // TODO won't work with forced breaks
+                }
+                if (addChildElements(elements, currentChildLM, context, alignment,
+                        null, null, null) != null) {
+                    return elements;
+                }
+            } else {
                 if (addChildElements(elements, currentChildLM, context, alignment, lmStack,
                         restartPosition, restartLM) != null) {
                     return elements;
                 }
+                // restarted; force reset as of next child
+                doReset = true;
             }
-        }
-
-        while ((currentChildLM = getChildLM()) != null) {
-            if (isRestart) {
-                currentChildLM.reset(); // TODO won't work with forced breaks
-            }
-            if (addChildElements(elements, currentChildLM, context, alignment) != null) {
-                return elements;
-            }
+            currentChildLM = getChildLM();
         }
 
         SpaceResolver.resolveElementList(elements);
@@ -126,11 +131,6 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
 
         assert !elements.isEmpty();
         return elements;
-    }
-
-    private List<ListElement> addChildElements(List<ListElement> elements,
-            LayoutManager childLM, LayoutContext context, int alignment) {
-        return addChildElements(elements, childLM, context, alignment, null, null, null);
     }
 
     private List<ListElement> addChildElements(List<ListElement> elements,
