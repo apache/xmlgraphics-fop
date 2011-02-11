@@ -19,7 +19,6 @@
 
 package org.apache.fop.layoutmgr.list;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -51,9 +50,7 @@ import org.apache.fop.traits.SpaceVal;
 public class ListBlockLayoutManager extends BlockStackingLayoutManager
                 implements ConditionalElementListener {
 
-    /**
-     * logging instance
-     */
+    /** logging instance */
     private static Log log = LogFactory.getLog(ListBlockLayoutManager.class);
 
     private Block curBlockArea;
@@ -122,13 +119,6 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager
         return returnList;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public List getChangedKnuthElements(List oldList, int alignment) {
-        //log.debug("LBLM.getChangedKnuthElements>");
-        return super.getChangedKnuthElements(oldList, alignment);
-    }
-
     /**
      * The table area is a reference area that contains areas for
      * columns, bodies, rows and the contents are in cells.
@@ -137,8 +127,7 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager
      * @param layoutContext the layout context for adding areas
      */
     @Override
-    public void addAreas(PositionIterator parentIter,
-                         LayoutContext layoutContext) {
+    public void addAreas(PositionIterator parentIter, LayoutContext layoutContext) {
         getParentArea(null);
 
         // if this will create the first block area in a page
@@ -263,6 +252,7 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager
      *
      * @param childArea the child area to add
      */
+    @Override
     public void addChildArea(Area childArea) {
         if (curBlockArea != null) {
             curBlockArea.addBlock((Block) childArea);
@@ -270,16 +260,19 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager
     }
 
     /** {@inheritDoc} */
+    @Override
     public KeepProperty getKeepTogetherProperty() {
         return getListBlockFO().getKeepTogether();
     }
 
     /** {@inheritDoc} */
+    @Override
     public KeepProperty getKeepWithPreviousProperty() {
         return getListBlockFO().getKeepWithPrevious();
     }
 
     /** {@inheritDoc} */
+    @Override
     public KeepProperty getKeepWithNextProperty() {
         return getListBlockFO().getKeepWithNext();
     }
