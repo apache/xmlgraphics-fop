@@ -429,7 +429,7 @@ public abstract class AbstractBreaker {
                                                                       effectiveList);
                     blockListIndex = -1;
                 } else {
-                    log.debug("PLM> iOptPageCount= " + optimalPageCount
+                    log.debug("PLM> optimalPageCount= " + optimalPageCount
                             + " pageBreaks.size()= " + alg.getPageBreaks().size());
 
                     //*** Phase 3: Add areas ***
@@ -455,11 +455,7 @@ public abstract class AbstractBreaker {
             return true;
         } else {
             Position subPosition = position.getPosition();
-            if (subPosition == null) {
-                return false;
-            } else {
-                return containsNonRestartableLM(subPosition);
-            }
+            return subPosition != null && containsNonRestartableLM(subPosition);
         }
     }
 
@@ -501,7 +497,7 @@ public abstract class AbstractBreaker {
         int endElementIndex = 0;
         int lastBreak = -1;
         for (int p = startPart; p < startPart + partCount; p++) {
-            PageBreakPosition pbp = (PageBreakPosition) alg.getPageBreaks().get(p);
+            PageBreakPosition pbp = alg.getPageBreaks().get(p);
 
             //Check the last break position for forced breaks
             int lastBreakClass;
@@ -761,7 +757,7 @@ public abstract class AbstractBreaker {
         /* Retrieve the original position wrapped into this space position */
         positionAtBreak = positionAtBreak.getPosition();
         LayoutManager restartAtLM = null;
-        List<KnuthElement> firstElements = Collections.EMPTY_LIST;
+        List<KnuthElement> firstElements = Collections.emptyList();
         if (containsNonRestartableLM(positionAtBreak)) {
             if (alg.getIPDdifference() > 0) {
                 EventBroadcaster eventBroadcaster = getCurrentChildLM().getFObj()
@@ -875,11 +871,11 @@ public abstract class AbstractBreaker {
      */
     private BlockSequence justifyBoxes                          // CSOK: MethodLength
         (BlockSequence blockList, PageBreakingAlgorithm alg, int availableBPD) {
-        int iOptPageNumber;
+        int optimalPageCount;
         alg.setConstantLineWidth(availableBPD);
-        iOptPageNumber = alg.findBreakingPoints(blockList, /*availableBPD,*/
+        optimalPageCount = alg.findBreakingPoints(blockList, /*availableBPD,*/
                 1, true, BreakingAlgorithm.ALL_BREAKS);
-        log.debug("PLM> iOptPageNumber= " + iOptPageNumber);
+        log.debug("PLM> optimalPageCount= " + optimalPageCount);
 
         //
         ListIterator<KnuthElement> sequenceIterator = blockList.listIterator();
@@ -904,7 +900,7 @@ public abstract class AbstractBreaker {
             // inside the
             // while loop must be a box
             KnuthElement firstElement;
-            while ( sequenceIterator.hasNext() ) {
+            while (sequenceIterator.hasNext()) {
                 firstElement = sequenceIterator.next();
                 if ( !firstElement.isBox() ) {
                     log.debug("PLM> ignoring glue or penalty element "
