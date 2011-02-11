@@ -19,7 +19,6 @@
 
 package org.apache.fop.layoutmgr.list;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -48,20 +47,6 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager {
 
     private int xoffset;
     private int itemIPD;
-
-    private static class StackingIter extends PositionIterator {
-        StackingIter(Iterator parentIter) {
-            super(parentIter);
-        }
-
-        protected LayoutManager getLM(Object nextObj) {
-            return ((Position) nextObj).getLM();
-        }
-
-        protected Position getPos(Object nextObj) {
-            return ((Position) nextObj);
-        }
-    }
 
     /**
      * Create a new Cell layout manager.
@@ -99,6 +84,7 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager {
     }
 
     /** {@inheritDoc} */
+    @Override
     public List getChangedKnuthElements(List oldList, int alignment) {
         //log.debug("  ListItemContentLayoutManager.getChanged>");
         return super.getChangedKnuthElements(oldList, alignment);
@@ -112,6 +98,7 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager {
      * @param parentIter the iterator of the break positions
      * @param layoutContext the layout context for adding the areas
      */
+    @Override
     public void addAreas(PositionIterator parentIter,
                          LayoutContext layoutContext) {
         getParentArea(null);
@@ -127,10 +114,10 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager {
 
         // "unwrap" the NonLeafPositions stored in parentIter
         // and put them in a new list;
-        LinkedList positionList = new LinkedList();
+        LinkedList<Position> positionList = new LinkedList<Position>();
         Position pos;
         while (parentIter.hasNext()) {
-            pos = (Position)parentIter.next();
+            pos = parentIter.next();
             if (pos == null) {
                 continue;
             }
@@ -156,7 +143,7 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager {
 
         addMarkersToPage(true, isFirst(firstPos), isLast(lastPos));
 
-        StackingIter childPosIter = new StackingIter(positionList.listIterator());
+        PositionIterator childPosIter = new PositionIterator(positionList.listIterator());
         while ((childLM = childPosIter.getNextChildLM()) != null) {
             // Add the block areas to Area
             lc.setFlags(LayoutContext.FIRST_AREA, childLM == firstLM);
@@ -189,6 +176,7 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager {
      * @param childArea the child area to get the parent for
      * @return the parent area
      */
+    @Override
     public Area getParentArea(Area childArea) {
         if (curBlockArea == null) {
             curBlockArea = new Block();
@@ -215,6 +203,7 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager {
      *
      * @param childArea the child to add to the cell
      */
+    @Override
     public void addChildArea(Area childArea) {
         if (curBlockArea != null) {
             curBlockArea.addBlock((Block) childArea);

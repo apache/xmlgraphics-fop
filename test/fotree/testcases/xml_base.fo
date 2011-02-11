@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:test="http://xmlgraphics.apache.org/fop/test">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="simple" page-width="5in" page-height="5in">
+      <fo:region-body />
+    </fo:simple-page-master>
+  </fo:layout-master-set>
+  <fo:page-sequence master-reference="simple" id="simple-cases">
+    <fo:flow flow-name="xsl-region-body">
+      <fo:block xml:base="http://foo.bar.com/resources/index.html?p=1">
+        <fo:external-graphic src="url(images/image-1.png)">
+          <!-- should be resolved against xml:base of the parent -->
+          <test:assert property="src" expected="http://foo.bar.com/resources/images/image-1.png" />
+        </fo:external-graphic>
+        <fo:block xml:base="images/">
+          <fo:external-graphic src="image-1.png">
+            <!-- should be resolved against resolved xml:base of the parent -->
+            <test:assert property="src" expected="http://foo.bar.com/resources/images/image-1.png" />
+          </fo:external-graphic>
+        </fo:block>
+        <fo:block xml:base="/resources/images/">
+          <fo:external-graphic src="image-1.png">
+            <!-- xml:base is a relative URI starting at the root, should resolve to the same as the above two -->
+            <test:assert property="src" expected="http://foo.bar.com/resources/images/image-1.png" />
+          </fo:external-graphic>
+        </fo:block>
+      </fo:block>
+      <fo:block>
+        <fo:external-graphic src="images/image-1.png">
+          <!-- no xml:base, so should stay a relative URI -->
+          <test:assert property="src" expected="images/image-1.png" />
+        </fo:external-graphic>
+      </fo:block>
+      <fo:block xml:base="./resources/">
+        <fo:external-graphic src="images/image-1.png">
+          <!-- relative xml:base without inherited value, should stay a relative URI -->
+          <test:assert property="src" expected="resources/images/image-1.png" />
+        </fo:external-graphic>
+      </fo:block>
+      <fo:block xml:base="http://foo.bar.com/resources with spaces/images/index.html?p=1">
+        <fo:external-graphic src="image-1.png">
+          <!-- resolved absolute URI with spaces, should yield the normalized string representation -->
+          <test:assert property="src" expected="http://foo.bar.com/resources%20with%20spaces/images/image-1.png" />
+        </fo:external-graphic>
+      </fo:block>
+      <fo:block xml:base="./resources with spaces/images/">
+        <fo:external-graphic src="image-1.png">
+          <!-- resolved relative URI with spaces, should yield the normalized string representation -->
+          <test:assert property="src" expected="resources%20with%20spaces/images/image-1.png" />
+        </fo:external-graphic>
+      </fo:block>
+      <fo:block>
+        <fo:external-graphic src="http://foo.bar.com/resources with spaces/images/image-1.png">
+          <!-- unresolved URI with spaces, should yield the specified value (for backward compatibility) -->
+          <test:assert property="src" expected="http://foo.bar.com/resources with spaces/images/image-1.png" />
+        </fo:external-graphic>
+        <fo:external-graphic src="url('./resources with spaces/images/image-1.png')">
+          <!-- unresolved URI with spaces, should yield the specified value (for backward compatibility) -->
+          <test:assert property="src" expected="url('./resources with spaces/images/image-1.png')" />
+        </fo:external-graphic>
+      </fo:block>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>
+

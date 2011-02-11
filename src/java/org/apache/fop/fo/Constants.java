@@ -778,9 +778,11 @@ public interface Constants {
      * Used for accessibility.
      */
     int PR_X_ALT_TEXT = 275;
+    /** Property constant - FOP proprietary prototype (in XSL-FO 2.0 Requirements) */
+    int PR_X_XML_BASE = 276;
 
     /** Number of property constants defined */
-    int PROPERTY_COUNT = 275;
+    int PROPERTY_COUNT = 276;
 
     // compound property constants
 

@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.fop.afp.AFPConstants;
+import org.apache.fop.afp.Completable;
 import org.apache.fop.afp.util.BinaryUtils;
 
 /**
@@ -35,7 +36,7 @@ import org.apache.fop.afp.util.BinaryUtils;
  * No Operation structured fields, no semantics should be attached to
  * the data carried by the No Operation structured field in interchange
  */
-public class NoOperation extends AbstractAFPObject {
+public class NoOperation extends AbstractAFPObject implements Completable {
 
     /** Up to 32759 bytes of data with no architectural definition */
     private static final int MAX_DATA_LEN = 32759;
@@ -81,7 +82,7 @@ public class NoOperation extends AbstractAFPObject {
         data[1] = rl1[0];
         data[2] = rl1[1];
 
-        // Structured field ID for a TLE
+        // Structured field ID for a NOP
         data[3] = (byte) 0xD3;
         data[4] = (byte) 0xEE;
         data[5] = (byte) 0xEE;
@@ -95,6 +96,22 @@ public class NoOperation extends AbstractAFPObject {
             data[pos++] = contentData[i];
         }
         os.write(data);
+    }
+
+    /** {@inheritDoc} */
+    public boolean isComplete() {
+        return true; //always complete
+    }
+
+    /** {@inheritDoc} */
+    public void setComplete(boolean complete) {
+        //ignore
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        return "NOP: " + content.substring(0, Math.min(64, content.length()));
     }
 
 }

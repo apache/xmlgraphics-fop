@@ -25,6 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.xmlgraphics.image.loader.Image;
+import org.apache.xmlgraphics.java2d.color.profile.ColorProfileUtil;
 
 import org.apache.fop.pdf.PDFColor;
 import org.apache.fop.pdf.PDFConformanceException;
@@ -34,8 +35,8 @@ import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFICCBasedColorSpace;
 import org.apache.fop.pdf.PDFICCStream;
 import org.apache.fop.pdf.PDFImage;
+import org.apache.fop.pdf.PDFName;
 import org.apache.fop.pdf.PDFReference;
-import org.apache.fop.util.ColorProfileUtil;
 
 /**
  * Abstract PDFImage implementation for the PDF renderer.
@@ -128,7 +129,8 @@ public abstract class AbstractImageAdapter implements PDFImage {
         } else {
             if (cs == null && desc.startsWith("sRGB")) {
                 //It's the default sRGB profile which we mapped to DefaultRGB in PDFRenderer
-                cs = doc.getResources().getColorSpace("DefaultRGB");
+                cs = (PDFICCBasedColorSpace)doc.getResources().getColorSpace(
+                        new PDFName("DefaultRGB"));
             }
             if (cs == null) {
                 // sRGB hasn't been set up for the PDF document

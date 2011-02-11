@@ -201,14 +201,20 @@ public class AreaTreeHandler extends FOEventHandler {
 
     private void startAbstractPageSequence(AbstractPageSequence pageSequence) {
         rootFObj = pageSequence.getRoot();
+
+        //Before the first page-sequence...
+        if (this.prevPageSeqLM == null) {
+            // extension attachments from fo:root
+            wrapAndAddExtensionAttachments(rootFObj.getExtensionAttachments());
+            // extension attachments from fo:declarations
+            if (rootFObj.getDeclarations() != null) {
+                wrapAndAddExtensionAttachments(
+                        rootFObj.getDeclarations().getExtensionAttachments());
+            }
+        }
+
         finishPrevPageSequence(pageSequence.getInitialPageNumber());
         pageSequence.initPageNumber();
-        // extension attachments from fo:root
-        wrapAndAddExtensionAttachments(rootFObj.getExtensionAttachments());
-        // extension attachments from fo:declarations
-        if (rootFObj.getDeclarations() != null) {
-            wrapAndAddExtensionAttachments(rootFObj.getDeclarations().getExtensionAttachments());
-        }
     }
 
     private void wrapAndAddExtensionAttachments(List<ExtensionAttachment> list) {
@@ -367,6 +373,7 @@ public class AreaTreeHandler extends FOEventHandler {
      * @param pv a page viewport that contains the area with this ID
      * @deprecated use getIDTracker().associateIDWithPageViewport(id, pv) instead
      */
+    @Deprecated
     public void associateIDWithPageViewport(String id, PageViewport pv) {
         idTracker.associateIDWithPageViewport(id, pv);
     }
@@ -379,6 +386,7 @@ public class AreaTreeHandler extends FOEventHandler {
      * @param id the id of the object being processed
      * @deprecated use getIDTracker().signalPendingID(id) instead
      */
+    @Deprecated
     public void signalPendingID(String id) {
         idTracker.signalPendingID(id);
     }
@@ -391,6 +399,7 @@ public class AreaTreeHandler extends FOEventHandler {
      * @param id the id of the formatting object which was just finished
      * @deprecated use getIDTracker().signalIDProcessed(id) instead
      */
+    @Deprecated
     public void signalIDProcessed(String id) {
         idTracker.signalIDProcessed(id);
     }
@@ -402,6 +411,7 @@ public class AreaTreeHandler extends FOEventHandler {
      * @return true if the ID has been resolved
      * @deprecated use getIDTracker().alreadyResolvedID(id) instead
      */
+    @Deprecated
     public boolean alreadyResolvedID(String id) {
         return idTracker.alreadyResolvedID(id);
     }
@@ -412,6 +422,7 @@ public class AreaTreeHandler extends FOEventHandler {
      * @param pv page viewport whose ID refs to resolve
      * @deprecated use getIDTracker().tryIDResolution(pv) instead
      */
+    @Deprecated
     public void tryIDResolution(PageViewport pv) {
         idTracker.tryIDResolution(pv);
     }
@@ -423,6 +434,7 @@ public class AreaTreeHandler extends FOEventHandler {
      * @return the list of PageViewports
      * @deprecated use getIDTracker().getPageViewportsContainingID(id) instead
      */
+    @Deprecated
     public List<PageViewport> getPageViewportsContainingID(String id) {
         return idTracker.getPageViewportsContainingID(id);
     }
@@ -434,6 +446,7 @@ public class AreaTreeHandler extends FOEventHandler {
      * @param res the Resolvable object needing the idref to be resolved
      * @deprecated use getIDTracker().addUnresolvedIDRef(idref, res) instead
      */
+    @Deprecated
     public void addUnresolvedIDRef(String idref, Resolvable res) {
         idTracker.addUnresolvedIDRef(idref, res);
     }

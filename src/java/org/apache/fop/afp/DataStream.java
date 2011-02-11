@@ -595,7 +595,13 @@ public class DataStream {
      *            byte data
      */
     public void createNoOperation(String content) {
-        currentPage.createNoOperation(content);
+        if (currentPage != null) {
+            currentPage.createNoOperation(content);
+        } else if (currentPageGroup != null) {
+            currentPageGroup.createNoOperation(content);
+        } else {
+            document.createNoOperation(content);
+        }
     }
 
     /**
@@ -639,9 +645,9 @@ public class DataStream {
             currentPageGroup.endPageGroup();
             tleSequence = currentPageGroup.getTleSequence();
             document.addPageGroup(currentPageGroup);
-            document.writeToStream(outputStream);
             currentPageGroup = null;
         }
+        document.writeToStream(outputStream); //Flush objects
     }
 
     /**

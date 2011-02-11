@@ -317,7 +317,8 @@ public abstract class PropertyList {
             attributeName = attributes.getQName(i);
             attributeValue = attributes.getValue(i);
             if (attributeNS == null || attributeNS.length() == 0
-                    || "xml:lang".equals(attributeName)) {
+                    || "xml:lang".equals(attributeName)
+                    || "xml:base".equals(attributeName)) {
                 convertAttributeToProperty(attributes, attributeName, attributeValue);
             } else if (!factory.isNamespaceIgnored(attributeNS)) {
                 ElementMapping mapping = factory.getElementMappingRegistry().getElementMapping(

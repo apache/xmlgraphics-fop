@@ -26,12 +26,14 @@ import org.apache.fop.fonts.DejaVuLGCSerifTest;
 import org.apache.fop.image.loader.batik.ImageLoaderTestCase;
 import org.apache.fop.image.loader.batik.ImagePreloaderTestCase;
 import org.apache.fop.intermediate.IFMimickingTestCase;
+import org.apache.fop.render.afp.AFPTestSuite;
 import org.apache.fop.render.extensions.prepress.PageBoundariesTest;
 import org.apache.fop.render.extensions.prepress.PageScaleTest;
 import org.apache.fop.render.pdf.PDFAConformanceTestCase;
 import org.apache.fop.render.pdf.PDFCMapTestCase;
 import org.apache.fop.render.pdf.PDFEncodingTestCase;
 import org.apache.fop.render.pdf.PDFsRGBSettingsTestCase;
+import org.apache.fop.render.ps.PSTestSuite;
 import org.apache.fop.render.rtf.RichTextFormatTestSuite;
 import org.apache.fop.traits.MinOptMaxTest;
 
@@ -54,6 +56,8 @@ public class StandardTestSuite {
         suite.addTest(new TestSuite(PDFCMapTestCase.class));
         suite.addTest(new TestSuite(PDFsRGBSettingsTestCase.class));
         suite.addTest(new TestSuite(DejaVuLGCSerifTest.class));
+        suite.addTest(AFPTestSuite.suite());
+        suite.addTest(PSTestSuite.suite());
         suite.addTest(RichTextFormatTestSuite.suite());
         suite.addTest(new TestSuite(ImageLoaderTestCase.class));
         suite.addTest(new TestSuite(ImagePreloaderTestCase.class));
