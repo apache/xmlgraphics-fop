@@ -29,6 +29,8 @@ import java.util.TreeSet;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.xmlgraphics.fonts.Glyphs;
+
 /**
  * Generic SingleByte font
  */
@@ -44,6 +46,7 @@ public class SingleByteFont extends CustomFont {
 
     private Map<Character, UnencodedCharacter> unencodedCharacters;
     private List<SimpleSingleByteEncoding> additionalEncodings;
+    private Map<Character, Character> alternativeCodes;
 
 
     /**
@@ -99,19 +102,69 @@ public class SingleByteFont extends CustomFont {
         return arr;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public char mapChar(char c) {
-        notifyMapOperation();
+    /**
+     * Lookup a character using its alternative names. If found, cache it so we
+     * can speed up lookups.
+     * @param c the character
+     * @return the suggested alternative character present in the font
+     */
+    private char findAlternative(char c) {
+        char d;
+        if (alternativeCodes == null) {
+            alternativeCodes = new java.util.HashMap<Character, Character>();
+        } else {
+            Character alternative = alternativeCodes.get(c);
+            if (alternative != null) {
+                return alternative;
+            }
+        }
+        String charName = Glyphs.charToGlyphName(c);
+        String[] charNameAlternatives = Glyphs.getCharNameAlternativesFor(charName);
+        if (charNameAlternatives != null && charNameAlternatives.length > 0) {
+            for (int i = 0; i < charNameAlternatives.length; i++) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Checking alternative for char " + c + " (charname="
+                            + charName + "): " + charNameAlternatives[i]);
+                }
+                String s = Glyphs.getUnicodeSequenceForGlyphName(charNameAlternatives[i]);
+                if (s != null) {
+                    d = lookupChar(s.charAt(0));
+                    if (d != SingleByteEncoding.NOT_FOUND_CODE_POINT) {
+                        alternativeCodes.put(c, d);
+                        return d;
+                    }
+                }
+            }
+        }
+
+        return SingleByteEncoding.NOT_FOUND_CODE_POINT;
+    }
+
+    private char lookupChar(char c) {
         char d = mapping.mapChar(c);
         if (d != SingleByteEncoding.NOT_FOUND_CODE_POINT) {
             return d;
         }
 
-        //Check unencoded characters which are available in the font by character name
+        // Check unencoded characters which are available in the font by
+        // character name
         d = mapUnencodedChar(c);
+        return d;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public char mapChar(char c) {
+        notifyMapOperation();
+        char d = lookupChar(c);
         if (d != SingleByteEncoding.NOT_FOUND_CODE_POINT) {
             return d;
+        } else {
+            // Check for alternative
+            d = findAlternative(c);
+            if (d != SingleByteEncoding.NOT_FOUND_CODE_POINT) {
+                return d;
+            }
         }
         this.warnMissingGlyph(c);
         return Typeface.NOT_FOUND;
@@ -159,6 +212,11 @@ public class SingleByteFont extends CustomFont {
         }
         //Check unencoded characters which are available in the font by character name
         d = mapUnencodedChar(c);
+        if (d != SingleByteEncoding.NOT_FOUND_CODE_POINT) {
+            return true;
+        }
+        // Check if an alternative exists
+        d = findAlternative(c);
         if (d != SingleByteEncoding.NOT_FOUND_CODE_POINT) {
             return true;
         }

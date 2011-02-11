@@ -33,21 +33,27 @@ import org.apache.fop.traits.WritingMode;
  */
 public class AlignmentContext implements Constants {
 
-    /** The height or BPD of this context */
+    /** The height or BPD of this context. */
     private int areaHeight;
-    /** The computed line-height property value applicable */
+
+    /** The computed line-height property value applicable. */
     private int lineHeight;
-    /** The distance in BPD from the top of the box to the alignmentPoint */
+
+    /** The distance in BPD from the top of the box to the alignmentPoint. */
     private int alignmentPoint;
-    /** The baseline shift value in effect */
+
+    /** The baseline shift value in effect. */
     private int baselineShiftValue;
-    /** The computed alignment baseline identifier */
+
+    /** The computed alignment baseline identifier. */
     private int alignmentBaselineIdentifier;
-    /** The x height */
+
+    /** The x height. */
     private int xHeight;
-    private ScaledBaselineTable scaledBaselineTable = null;
-    private ScaledBaselineTable actualBaselineTable = null;
-    private AlignmentContext parentAlignmentContext = null;
+
+    private ScaledBaselineTable scaledBaselineTable;
+    private ScaledBaselineTable actualBaselineTable;
+    private AlignmentContext parentAlignmentContext;
 
     /**
      * Creates a new instance of AlignmentContext
@@ -59,57 +65,20 @@ public class AlignmentContext implements Constants {
      * @param dominantBaseline the dominant-baseline property
      * @param parentAlignmentContext the parent alignment context
      */
-    public AlignmentContext(int height
-                            , Length alignmentAdjust
-                            , int alignmentBaseline
-                            , Length baselineShift
-                            , int dominantBaseline
-                            , AlignmentContext parentAlignmentContext) {
+    AlignmentContext(int height,
+            Length alignmentAdjust,
+            int alignmentBaseline,
+            Length baselineShift,
+            int dominantBaseline,
+            AlignmentContext parentAlignmentContext) {
 
-        this.areaHeight = height;
-        this.lineHeight = height;
-        this.xHeight = height;
-        this.parentAlignmentContext = parentAlignmentContext;
-        this.scaledBaselineTable = parentAlignmentContext.getScaledBaselineTable();
-        setAlignmentBaselineIdentifier(alignmentBaseline
-                                       , parentAlignmentContext.getDominantBaselineIdentifier());
-        setBaselineShift(baselineShift);
-        int dominantBaselineIdentifier = parentAlignmentContext.getDominantBaselineIdentifier();
-        boolean newScaledBaselineTableRequired = false;
-        if (baselineShiftValue != 0) {
-            newScaledBaselineTableRequired = true;
-        }
-        switch (dominantBaseline) {
-            case EN_AUTO:
-                newScaledBaselineTableRequired = baselineShiftValue != 0;
-                break;
-            case EN_USE_SCRIPT: // TODO
-                break;
-            case EN_NO_CHANGE:
-                break;
-            case EN_RESET_SIZE:
-                newScaledBaselineTableRequired = true;
-                break;
-            default:
-                newScaledBaselineTableRequired = true;
-                dominantBaselineIdentifier = dominantBaseline;
-                break;
-        }
-        actualBaselineTable = ScaledBaselineTableFactory.makeGraphicsScaledBaselineTable(
-                                                            height,
-                                                            dominantBaselineIdentifier,
-                                                            scaledBaselineTable.getWritingMode());
-        if (newScaledBaselineTableRequired) {
-            scaledBaselineTable = ScaledBaselineTableFactory.makeGraphicsScaledBaselineTable(
-                                                            height,
-                                                            dominantBaselineIdentifier,
-                                                            scaledBaselineTable.getWritingMode());
-        }
-        setAlignmentAdjust(alignmentAdjust);
+        this(height, 0, height, height, alignmentAdjust, alignmentBaseline, baselineShift,
+                dominantBaseline, parentAlignmentContext);
     }
 
     /**
-     * Creates a new instance of AlignmentContext
+     * Creates a new instance.
+     *
      * @param font the font
      * @param lineHeight the computed value of the lineHeight property
      * @param alignmentAdjust the alignment-adjust property
@@ -118,18 +87,45 @@ public class AlignmentContext implements Constants {
      * @param dominantBaseline the dominant-baseline property
      * @param parentAlignmentContext the parent alignment context
      */
-    public AlignmentContext(Font font
-                            , int lineHeight
-                            , Length alignmentAdjust
-                            , int alignmentBaseline
-                            , Length baselineShift
-                            , int dominantBaseline
-                            , AlignmentContext parentAlignmentContext) {
-        this.areaHeight = font.getAscender() - font.getDescender();
+    AlignmentContext(Font font,
+            int lineHeight,
+            Length alignmentAdjust,
+            int alignmentBaseline,
+            Length baselineShift,
+            int dominantBaseline,
+            AlignmentContext parentAlignmentContext) {
+        this(font.getAscender(), font.getDescender(), lineHeight, font.getXHeight(),
+                alignmentAdjust, alignmentBaseline, baselineShift, dominantBaseline,
+                parentAlignmentContext);
+    }
+
+    /**
+     * Creates a new instance of AlignmentContext.
+     * @param altitude the altitude of the area
+     * @param depth the depth of the area
+     * @param lineHeight the line height
+     * @param xHeight the xHeight
+     * @param alignmentAdjust the alignment-adjust property
+     * @param alignmentBaseline the alignment-baseline property
+     * @param baselineShift the baseline-shift property
+     * @param dominantBaseline the dominant-baseline property
+     * @param parentAlignmentContext the parent alignment context
+     */
+    private AlignmentContext(int altitude,
+            int depth,
+            int lineHeight,
+            int xHeight,
+            Length alignmentAdjust,
+            int alignmentBaseline,
+            Length baselineShift,
+            int dominantBaseline,
+            AlignmentContext parentAlignmentContext) {
+
+        this.areaHeight = altitude - depth;
         this.lineHeight = lineHeight;
+        this.xHeight = xHeight;
         this.parentAlignmentContext = parentAlignmentContext;
         this.scaledBaselineTable = parentAlignmentContext.getScaledBaselineTable();
-        this.xHeight = font.getXHeight();
         setAlignmentBaselineIdentifier(alignmentBaseline
                                        , parentAlignmentContext.getDominantBaselineIdentifier());
         setBaselineShift(baselineShift);
@@ -154,13 +150,19 @@ public class AlignmentContext implements Constants {
                 dominantBaselineIdentifier = dominantBaseline;
                 break;
         }
-        actualBaselineTable = ScaledBaselineTableFactory.makeFontScaledBaselineTable(font,
-                                                            dominantBaselineIdentifier,
-                                                            scaledBaselineTable.getWritingMode());
+        actualBaselineTable = new ScaledBaselineTable(
+                altitude,
+                depth,
+                xHeight,
+                dominantBaselineIdentifier,
+                scaledBaselineTable.getWritingMode());
         if (newScaledBaselineTableRequired) {
-            scaledBaselineTable = ScaledBaselineTableFactory.makeFontScaledBaselineTable(font,
-                                    dominantBaselineIdentifier,
-                                    scaledBaselineTable.getWritingMode());
+            scaledBaselineTable = new ScaledBaselineTable(
+                    altitude,
+                    depth,
+                    xHeight,
+                    dominantBaselineIdentifier,
+                    scaledBaselineTable.getWritingMode());
         }
         setAlignmentAdjust(alignmentAdjust);
     }
@@ -172,13 +174,12 @@ public class AlignmentContext implements Constants {
      * @param lineHeight the computed value of the lineHeight property
      * @param writingMode the current writing mode
      */
-    public AlignmentContext(Font font, int lineHeight, WritingMode writingMode) {
+    AlignmentContext(Font font, int lineHeight, WritingMode writingMode) {
         this.areaHeight = font.getAscender() - font.getDescender();
         this.lineHeight = lineHeight;
         this.xHeight = font.getXHeight();
-        this.parentAlignmentContext = null;
-        this.scaledBaselineTable
-            = ScaledBaselineTableFactory.makeFontScaledBaselineTable(font, writingMode);
+        this.scaledBaselineTable = new ScaledBaselineTable(font.getAscender(), font.getDescender(),
+                font.getXHeight(), Constants.EN_ALPHABETIC, writingMode);
         this.actualBaselineTable = scaledBaselineTable;
         this.alignmentBaselineIdentifier = getDominantBaselineIdentifier();
         this.alignmentPoint = font.getAscender();
@@ -204,7 +205,8 @@ public class AlignmentContext implements Constants {
     }
 
     /**
-     * Returns the current alignment baseline identifier
+     * Returns the current alignment baseline identifier.
+     *
      * @return the alignment baseline identifier
      */
     public int getAlignmentBaselineIdentifier() {
@@ -212,7 +214,7 @@ public class AlignmentContext implements Constants {
     }
 
     /**
-     * Sets the current alignment baseline identifer. For
+     * Sets the current alignment baseline identifier. For
      * alignment-baseline values of "auto" and "baseline" this
      * method does the conversion into the appropriate computed
      * value assuming script is "auto" and the fo is not fo:character.
@@ -238,8 +240,7 @@ public class AlignmentContext implements Constants {
             case EN_MATHEMATICAL:
                 this.alignmentBaselineIdentifier = alignmentBaseline;
                 break;
-            default:
-                break;
+            default: throw new IllegalArgumentException(String.valueOf(alignmentBaseline));
         }
     }
 
@@ -286,7 +287,7 @@ public class AlignmentContext implements Constants {
      * Return the scaled baseline table for this context.
      * @return the scaled baseline table
      */
-    public ScaledBaselineTable getScaledBaselineTable() {
+    private ScaledBaselineTable getScaledBaselineTable() {
         return this.scaledBaselineTable;
     }
 
@@ -294,17 +295,17 @@ public class AlignmentContext implements Constants {
      * Return the dominant baseline identifier.
      * @return the dominant baseline identifier
      */
-    public int getDominantBaselineIdentifier() {
-        return scaledBaselineTable.getDominantBaselineIdentifier();
+    private int getDominantBaselineIdentifier() {
+        return actualBaselineTable.getDominantBaselineIdentifier();
     }
 
     /**
      * Return the writing mode.
      * @return the writing mode
      */
-    public WritingMode getWritingMode() {
+/*    public WritingMode getWritingMode() {
         return scaledBaselineTable.getWritingMode();
-    }
+    }*/
 
     /**
      * Calculates the baseline shift value based on the baseline-shift
@@ -313,7 +314,6 @@ public class AlignmentContext implements Constants {
      */
     private void setBaselineShift(Length baselineShift) {
         baselineShiftValue = 0;
-        ScaledBaselineTable sbt = null;
         switch (baselineShift.getEnum()) {
             case EN_BASELINE: //Nothing to do
                 break;
@@ -333,9 +333,7 @@ public class AlignmentContext implements Constants {
                                                 , LengthBase.CUSTOM_BASE
                                                 , parentAlignmentContext.getLineHeight()));
                 break;
-            default:
-                break;
-
+            default: throw new IllegalArgumentException(String.valueOf(baselineShift.getEnum()));
         }
     }
 
@@ -352,7 +350,7 @@ public class AlignmentContext implements Constants {
      * the parent dominant baseline.
      * @return the offset in shift direction
      */
-    public int getBaselineOffset() {
+    private int getBaselineOffset() {
         if (parentAlignmentContext == null) {
             return 0;
         }
@@ -371,9 +369,9 @@ public class AlignmentContext implements Constants {
     /**
      * Return the offset between the current dominant baseline and
      * the outermost parent dominant baseline.
-     * @return the offet in shift direction
+     * @return the offset in shift direction
      */
-    public int getTotalBaselineOffset() {
+    private int getTotalBaselineOffset() {
         int offset = 0;
         if (parentAlignmentContext != null) {
             offset = getBaselineOffset() + parentAlignmentContext.getTotalBaselineOffset();
@@ -396,7 +394,7 @@ public class AlignmentContext implements Constants {
      * @param alignmentBaselineId the alignment baseline
      * @return the offset
      */
-    public int getTotalAlignmentBaselineOffset(int alignmentBaselineId) {
+    private int getTotalAlignmentBaselineOffset(int alignmentBaselineId) {
         int offset = baselineShiftValue;
         if (parentAlignmentContext != null) {
             offset = parentAlignmentContext.getTotalBaselineOffset()
@@ -409,11 +407,12 @@ public class AlignmentContext implements Constants {
 
     /**
      * Return the offset between the dominant baseline and
-     * the given actual baseline
+     * the given actual baseline.
+     *
      * @param baselineIdentifier the baseline
      * @return the offset
      */
-    public int getActualBaselineOffset(int baselineIdentifier) {
+    private int getActualBaselineOffset(int baselineIdentifier) {
         // This is the offset from the dominant baseline to the alignment baseline
         int offset = getTotalAlignmentBaselineOffset() - getTotalBaselineOffset();
         // Add the offset to the actual baseline we want
@@ -444,7 +443,7 @@ public class AlignmentContext implements Constants {
      * Return the line height of the context.
      * @return the height
      */
-    public int getLineHeight() {
+    private int getLineHeight() {
         return lineHeight;
     }
 
@@ -470,7 +469,7 @@ public class AlignmentContext implements Constants {
      * The x height of the context.
      * @return the x height
      */
-    public int getXHeight() {
+    private int getXHeight() {
         return this.xHeight;
     }
 
@@ -514,9 +513,9 @@ public class AlignmentContext implements Constants {
                     && parentAlignmentContext.usesInitialBaselineTable());
     }
 
-    private boolean isHorizontalWritingMode() {
+    /* private boolean isHorizontalWritingMode() {
         return (getWritingMode() == WritingMode.LR_TB || getWritingMode() == WritingMode.RL_TB);
-    }
+    }*/
 
     /** {@inheritDoc} */
     public String toString() {

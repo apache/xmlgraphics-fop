@@ -80,7 +80,6 @@ class PropertyTokenizer {
     void next() throws PropertyException {
         currentTokenValue = null;
         currentTokenStartIndex = exprIndex;
-        boolean currentMaybeOperator = recognizeOperator;
         boolean bSawDecimal;
         recognizeOperator = true;
         while ( true ) {
@@ -244,14 +243,14 @@ class PropertyTokenizer {
 
 
     private void nextColor() throws PropertyException {
-        if (exprIndex < exprLength
-                && isHexDigit(expr.charAt(exprIndex))) {
+        if (exprIndex < exprLength) {
             ++exprIndex;
             scanHexDigits();
             int len = exprIndex - currentTokenStartIndex - 1;
             if (len % 3 == 0) {
                 currentToken = TOK_COLORSPEC;
             } else {
+                //Actually not a color at all, but an NCNAME starting with "#"
                 scanRestOfName();
                 currentToken = TOK_NCNAME;
             }

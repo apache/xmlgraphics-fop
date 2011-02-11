@@ -9,6 +9,7 @@
   <message key="rule.childOfSPM">The element must be a child of fo:simple-page-master.</message>
   <message key="rule.childOfDeclarations">The element must be a child of fo:declarations.</message>
   <message key="rule.childOfSPMorDeclarations">The element must be a child of fo:declarations or fo:simple-page-master.</message>
+  <message key="rule.childOfSPMorPSorDeclarations">The element must be a child of fo:declarations, fo:simple-page-master or fo:page-sequence.</message>
   <message key="rule.childOfInstreamForeignObjectorExternalGraphic">The element must be a child of fo:instream-foreign-object or fo:external-graphic.</message>
   <message key="rule.childOfPageSequence">The element must be a child of fo:page-sequence.</message>
   <message key="rule.childOfPageSequenceOrSPM">The element must be a child of fo:page-sequence or fo:simple-page-master.</message>

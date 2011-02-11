@@ -47,6 +47,9 @@ public class PCLRenderingUtil {
      */
     private PCLRenderingMode renderingMode = PCLRenderingMode.SPEED;
 
+    /** Controls the dithering quality when rendering gray or color images. */
+    private float ditheringQuality = 0.5f;
+
     /**
      * Controls whether all text should be painted as text. This is a fallback setting in case
      * the mixture of native and bitmapped text does not provide the necessary quality.
@@ -88,6 +91,7 @@ public class PCLRenderingUtil {
      */
     public void setRenderingMode(PCLRenderingMode mode) {
         this.renderingMode = mode;
+        this.ditheringQuality = mode.getDefaultDitheringQuality();
     }
 
     /**
@@ -96,6 +100,14 @@ public class PCLRenderingUtil {
      */
     public PCLRenderingMode getRenderingMode() {
         return this.renderingMode;
+    }
+
+    /**
+     * Returns the dithering quality to be used when encoding gray or color images.
+     * @return the quality (0.0f..1.0f)
+     */
+    public float getDitheringQuality() {
+        return this.ditheringQuality;
     }
 
     /**

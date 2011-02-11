@@ -35,6 +35,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.xmlgraphics.image.loader.util.ImageUtil;
+import org.apache.xmlgraphics.java2d.color.profile.ColorProfileUtil;
 import org.apache.xmlgraphics.xmp.Metadata;
 import org.apache.xmlgraphics.xmp.schemas.XMPBasicAdapter;
 import org.apache.xmlgraphics.xmp.schemas.XMPBasicSchema;
@@ -64,7 +65,6 @@ import org.apache.fop.pdf.PDFReference;
 import org.apache.fop.pdf.PDFText;
 import org.apache.fop.pdf.PDFXMode;
 import org.apache.fop.render.pdf.extensions.PDFEmbeddedFileExtensionAttachment;
-import org.apache.fop.util.ColorProfileUtil;
 
 /**
  * Utility class which enables all sorts of features that are not directly connected to the
@@ -294,7 +294,7 @@ class PDFRenderingUtil implements PDFConfigurationConstants {
                 in = new URL(src.getSystemId()).openStream();
             }
             try {
-                profile = ICC_Profile.getInstance(in);
+                profile = ColorProfileUtil.getICC_Profile(in);
             } finally {
                 IOUtils.closeQuietly(in);
             }

@@ -86,6 +86,7 @@ public class ImageHandlingTestCase extends AbstractPostScriptTestCase {
             gotoDSCComment(parser, DSCConstants.BEGIN_RESOURCE);
             gotoDSCComment(parser, DSCConstants.BEGIN_RESOURCE);
             gotoDSCComment(parser, DSCConstants.BEGIN_RESOURCE);
+            gotoDSCComment(parser, DSCConstants.BEGIN_RESOURCE);
 
             PSResource form2 = new PSResource(PSResource.TYPE_FORM, "FOPForm:2");
             checkResourceComment(parser, DSCConstants.BEGIN_RESOURCE, form2);

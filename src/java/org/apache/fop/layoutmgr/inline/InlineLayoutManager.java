@@ -77,8 +77,6 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
     private boolean areaCreated = false;
     private LayoutManager lastChildLM = null; // Set when return last breakposs;
 
-    private Position auxiliaryPosition;
-
     private Font font;
 
     /** The alignment adjust property */
@@ -113,6 +111,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void initialize() {
         InlineLevel fobj = (InlineLevel) this.fobj;
 
@@ -150,6 +149,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected MinOptMax getExtraIPD(boolean isNotFirst, boolean isNotLast) {
         int borderAndPadding = 0;
         if (borderProps != null) {
@@ -167,6 +167,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
 
 
     /** {@inheritDoc} */
+    @Override
     protected boolean hasLeadingFence(boolean isNotFirst) {
         return borderProps != null
             && (borderProps.getPadding(CommonBorderPaddingBackground.START, isNotFirst, this) > 0
@@ -175,6 +176,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected boolean hasTrailingFence(boolean isNotLast) {
         return borderProps != null
             && (borderProps.getPadding(CommonBorderPaddingBackground.END, isNotLast, this) > 0
@@ -183,10 +185,12 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected SpaceProperty getSpaceStart() {
         return inlineProps != null ? inlineProps.spaceStart : null;
     }
     /** {@inheritDoc} */
+    @Override
     protected SpaceProperty getSpaceEnd() {
         return inlineProps != null ? inlineProps.spaceEnd : null;
     }
@@ -212,6 +216,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void setTraits(boolean isNotFirst, boolean isNotLast) {
         if (borderProps != null) {
             // Add border and padding to current area and set flags (FIRST, LAST ...)
@@ -239,15 +244,16 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
     }
 
     /** {@inheritDoc} */
-    public List getNextKnuthElements                            // CSOK: MethodLength
+    @Override                                                   // CSOK: MethodLength
+    public List getNextKnuthElements
         (LayoutContext context, int alignment) {
         LayoutManager curLM;
 
         // the list returned by child LM
-        List returnedList;
+        List<KnuthSequence> returnedList;
 
         // the list which will be returned to the parent LM
-        List returnList = new LinkedList();
+        List<KnuthSequence> returnList = new LinkedList<KnuthSequence>();
         KnuthSequence lastSequence = null;
 
         if (fobj instanceof Title) {
@@ -328,16 +334,16 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
                     sequence.wrapPositions(this);
                 }
                 int insertionStartIndex = 0;
-                if (lastSequence != null && lastSequence.appendSequenceOrClose
-                        ((KnuthSequence) returnedList.get(0))) {
+                if (lastSequence != null
+                        && lastSequence.appendSequenceOrClose(returnedList.get(0))) {
                     insertionStartIndex = 1;
                 }
                 // add border and padding to the first complete sequence of this LM
                 if (!borderAdded && !returnedList.isEmpty()) {
-                    addKnuthElementsForBorderPaddingStart((KnuthSequence) returnedList.get(0));
+                    addKnuthElementsForBorderPaddingStart(returnedList.get(0));
                     borderAdded = true;
                 }
-                for (Iterator iter = returnedList.listIterator(insertionStartIndex);
+                for (Iterator<KnuthSequence> iter = returnedList.listIterator(insertionStartIndex);
                         iter.hasNext();) {
                     returnList.add(iter.next());
                 }
@@ -368,7 +374,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
                 context.updateKeepWithNextPending(childLC.getKeepWithNextPending());
                 childLC.clearKeepsPending();
             }
-            lastSequence = (KnuthSequence) ListUtil.getLast(returnList);
+            lastSequence = ListUtil.getLast(returnList);
             lastChildLM = curLM;
         }
 
@@ -408,6 +414,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
      * by this LayoutManager.
      * @param context layout context.
      */
+    @Override
     public void addAreas(PositionIterator parentIter,
                          LayoutContext context) {
 
@@ -433,21 +440,18 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
         // set in the layout context, it must be also set in the
         // layout context given to lastLM, but must be cleared in the
         // layout context given to the other LMs.
-        List positionList = new LinkedList();
-        NonLeafPosition pos;
+        List<Position> positionList = new LinkedList<Position>();
+        Position pos;
         LayoutManager lastLM = null; // last child LM in this iterator
         Position lastPos = null;
         while (parentIter.hasNext()) {
-            pos = (NonLeafPosition) parentIter.next();
+            pos = parentIter.next();
             if (pos != null && pos.getPosition() != null) {
                 positionList.add(pos.getPosition());
                 lastLM = pos.getPosition().getLM();
                 lastPos = pos;
             }
         }
-        /*if (pos != null) {
-            lastLM = pos.getPosition().getLM();
-        }*/
 
         addMarkersToPage(
                 true,
@@ -469,8 +473,8 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
         }
         setCurrentArea(parent);
 
-        StackingIter childPosIter
-            = new StackingIter(positionList.listIterator());
+        PositionIterator childPosIter
+            = new PositionIterator(positionList.listIterator());
 
         LayoutManager prevLM = null;
         LayoutManager childLM;
@@ -522,6 +526,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void addChildArea(Area childArea) {
         Area parent = getCurrentArea();
         if (getContext().resolveLeadingSpace()) {
@@ -532,6 +537,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
     }
 
     /** {@inheritDoc} */
+    @Override
     public List getChangedKnuthElements(List oldList, int alignment, int depth) {
         List returnedList = new LinkedList();
         addKnuthElementsForBorderPaddingStart(returnedList);
@@ -546,7 +552,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
      */
     protected void addKnuthElementsForBorderPaddingStart(List returnList) {
         //Border and Padding (start)
-        /**
+        /*
          * If the returnlist is a BlockKnuthSequence, the border and padding should be added
          * to the first paragraph inside it, but it is too late to do that now.
          * At least, avoid adding it to the bpd sequence.
@@ -571,7 +577,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
      */
     protected void addKnuthElementsForBorderPaddingEnd(List returnList) {
         //Border and Padding (after)
-        /**
+        /*
          * If the returnlist is a BlockKnuthSequence, the border and padding should be added
          * to the last paragraph inside it, but it is too late to do that now.
          * At least, avoid adding it to the bpd sequence.
@@ -590,13 +596,8 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
         }
     }
 
-    /** @return a cached auxiliary Position instance used for things like spaces. */
+    /** @return an auxiliary {@link Position} instance used for things like spaces. */
     protected Position getAuxiliaryPosition() {
-        //if (this.auxiliaryPosition == null) {
-            //this.auxiliaryPosition = new NonLeafPosition(this, new LeafPosition(this, -1));
-            this.auxiliaryPosition = new NonLeafPosition(this, null);
-        //}
-        return this.auxiliaryPosition;
+        return new NonLeafPosition(this, null);
     }
-
 }

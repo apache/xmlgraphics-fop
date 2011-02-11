@@ -26,6 +26,10 @@ import java.io.OutputStream;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 
+import org.apache.xmlgraphics.java2d.color.CIELabColorSpace;
+import org.apache.xmlgraphics.java2d.color.ColorUtil;
+import org.apache.xmlgraphics.java2d.color.ColorWithAlternatives;
+
 /**
  * Generator class for PTOCA data structures.
  */
@@ -311,9 +315,18 @@ public abstract class PtocaBuilder implements PtocaConstants {
      * @throws IOException if an I/O error occurs
      */
     public void setExtendedTextColor(Color col) throws IOException {
-        if (col.equals(currentColor)) {
+        if (ColorUtil.isSameColor(col, currentColor)) {
             return;
         }
+        if (col instanceof ColorWithAlternatives) {
+            ColorWithAlternatives cwa = (ColorWithAlternatives)col;
+            Color alt = cwa.getFirstAlternativeOfType(ColorSpace.TYPE_CMYK);
+            if (alt != null) {
+                col = alt;
+            }
+        }
+        ColorSpace cs = col.getColorSpace();
+
         newControlSequence();
         if (col.getColorSpace().getType() == ColorSpace.TYPE_CMYK) {
             writeByte(0x00); // Reserved; must be zero
@@ -332,6 +345,25 @@ public abstract class PtocaBuilder implements PtocaConstants {
                 int component = Math.round(comps[i] * 255);
                 writeByte(component);
             }
+        } else if (cs instanceof CIELabColorSpace) {
+            writeByte(0x00); // Reserved; must be zero
+            writeByte(0x08); // Color space - 0x08 = CIELAB
+            writeByte(0x00); // Reserved; must be zero
+            writeByte(0x00); // Reserved; must be zero
+            writeByte(0x00); // Reserved; must be zero
+            writeByte(0x00); // Reserved; must be zero
+            writeByte(8); // Number of bits in component 1
+            writeByte(8); // Number of bits in component 2
+            writeByte(8); // Number of bits in component 3
+            writeByte(0); // Number of bits in component 4
+            //Sadly, 16 bit components don't seem to work
+            float[] colorComponents = col.getColorComponents(null);
+            int l = Math.round(colorComponents[0] * 255f);
+            int a = Math.round(colorComponents[1] * 255f) - 128;
+            int b = Math.round(colorComponents[2] * 255f) - 128;
+            writeByte(l); // L*
+            writeByte(a); // a*
+            writeByte(b); // b*
         } else {
             writeByte(0x00); // Reserved; must be zero
             writeByte(0x01); // Color space - 0x01 = RGB

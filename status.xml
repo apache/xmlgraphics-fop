@@ -59,6 +59,29 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="JM" type="fix">
+        Increased maximum possible PDF size from 2GB to around 9GB (hard maximum imposed by the PDF specification).
+      </action>
+      <action context="Renderers" dev="JM" type="add">
+        Added support for CIE Lab colors (from XSL-FO 2.0 WD).
+      </action>
+      <action context="Renderers" dev="JM" type="add" fixes-bug="49403" due-to="Patrick Jaromin">
+        Initial work on spot colors (aka named colors) for PDF output.
+      </action>
+      <action context="Renderers" dev="JM" type="fix" fixes-bug="50705" due-to="Mehdi Houshmand">
+        Fix to preserve the order of AFP TLEs and NOPs as given in the XSL-FO document.
+      </action>
+      <action context="Fonts" dev="JM" type="add" fixes-bug="50699" due-to="Alexandros Papadakis">
+        Added support for lookup of alternative glyphs when additional single-byte encodings are
+        used, ex. replacing "Omegagreek" by "Omega" and vice versa.
+      </action>
+      <action context="Code" dev="AD" type="add" fixes-bug="48334">
+        Added support for resolution of relative URIs against a specified xml:base during
+        property refinement.
+      </action>
+      <action context="Renderers" dev="JM" type="add">
+        Allow afp:no-operation to also appear under fo:page-sequence and fo:declarations.
+      </action>
       <action context="Code" dev="AD" type="fix" fixes-bug="50635" due-to="mkoegler.AT.auto.tuwien.ac.at">
         Bugfix: fix issue in RenderPagesModel.checkPreparedPages() where the same page-sequence
         is potentially started multiple times.

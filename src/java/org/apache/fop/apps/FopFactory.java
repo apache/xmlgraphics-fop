@@ -19,7 +19,6 @@
 
 package org.apache.fop.apps;
 
-import java.awt.color.ColorSpace;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -151,7 +150,7 @@ public class FopFactory implements ImageContext {
     /** Optional overriding LayoutManagerMaker */
     private LayoutManagerMaker lmMakerOverride = null;
 
-    private Set ignoredNamespaces;
+    private Set<String> ignoredNamespaces;
 
     private FOURIResolver foURIResolver;
 
@@ -165,6 +164,7 @@ public class FopFactory implements ImageContext {
         this.fontManager = new FontManager() {
 
             /** {@inheritDoc} */
+            @Override
             public void setFontBaseURL(String fontBase) throws MalformedURLException {
                 super.setFontBaseURL(getFOURIResolver().checkBaseURL(fontBase));
             }
@@ -175,7 +175,7 @@ public class FopFactory implements ImageContext {
         this.rendererFactory = new RendererFactory();
         this.xmlHandlers = new XMLHandlerRegistry();
         this.imageHandlers = new ImageHandlerRegistry();
-        this.ignoredNamespaces = new java.util.HashSet();
+        this.ignoredNamespaces = new java.util.HashSet<String>();
     }
 
     /**
@@ -381,6 +381,7 @@ public class FopFactory implements ImageContext {
      * @throws MalformedURLException if there's a problem with a file URL
      * @deprecated use getFontManager().setFontBaseURL(fontBase) instead
      */
+    @Deprecated
     public void setFontBaseURL(String fontBase) throws MalformedURLException {
         getFontManager().setFontBaseURL(fontBase);
     }
@@ -389,6 +390,7 @@ public class FopFactory implements ImageContext {
      * @return the font base URL
      * @deprecated use getFontManager().setFontBaseURL(fontBase) instead
      */
+    @Deprecated
     public String getFontBaseURL() {
         return getFontManager().getFontBaseURL();
     }
@@ -516,6 +518,7 @@ public class FopFactory implements ImageContext {
      * @return true if kerning on base 14 fonts is enabled
      * @deprecated use getFontManager().isBase14KerningEnabled() instead
      */
+    @Deprecated
     public boolean isBase14KerningEnabled() {
         return getFontManager().isBase14KerningEnabled();
     }
@@ -525,6 +528,7 @@ public class FopFactory implements ImageContext {
      * @param value true if kerning should be activated
      * @deprecated use getFontManager().setBase14KerningEnabled(boolean) instead
      */
+    @Deprecated
     public void setBase14KerningEnabled(boolean value) {
         getFontManager().setBase14KerningEnabled(value);
     }
@@ -652,7 +656,7 @@ public class FopFactory implements ImageContext {
      * namespace is in the ignored set.
      * @param namespaceURIs the namespace URIs
      */
-    public void ignoreNamespaces(Collection namespaceURIs) {
+    public void ignoreNamespaces(Collection<String> namespaceURIs) {
         this.ignoredNamespaces.addAll(namespaceURIs);
     }
 
@@ -666,7 +670,7 @@ public class FopFactory implements ImageContext {
     }
 
     /** @return the set of namespaces that are ignored by FOP */
-    public Set getIgnoredNamespace() {
+    public Set<String> getIgnoredNamespace() {
         return Collections.unmodifiableSet(this.ignoredNamespaces);
     }
 
@@ -742,6 +746,7 @@ public class FopFactory implements ImageContext {
      * @param useCache use cache or not
      * @deprecated use getFontManager().setUseCache(boolean) instead
      */
+    @Deprecated
     public void setUseCache(boolean useCache) {
         getFontManager().setUseCache(useCache);
     }
@@ -751,6 +756,7 @@ public class FopFactory implements ImageContext {
      * @return whether this factory is uses the cache
      * @deprecated use getFontManager().useCache() instead
      */
+    @Deprecated
     public boolean useCache() {
         return getFontManager().useCache();
     }
@@ -760,6 +766,7 @@ public class FopFactory implements ImageContext {
      * @return the font cache
      * @deprecated use getFontManager().getFontCache() instead
      */
+    @Deprecated
     public FontCache getFontCache() {
         return getFontManager().getFontCache();
     }
@@ -793,20 +800,13 @@ public class FopFactory implements ImageContext {
     }
 
     /**
-     * Create (if needed) and return an ICC ColorSpace instance.
-     *
-     * The ICC profile source is taken from the src attribute of the color-profile FO element.
-     * If the ICC ColorSpace is not yet in the cache a new one is created and stored in the cache.
-     *
-     * The FOP URI resolver is used to try and locate the ICC file.
-     * If that fails null is returned.
-     *
-     * @param baseUri a base URI to resolve relative URIs
-     * @param iccProfileSrc ICC Profile source to return a ColorSpace for
-     * @return ICC ColorSpace object or null if ColorSpace could not be created
+     * Returns the color space cache for this instance.
+     * <p>
+     * Note: this method should not be considered as part of FOP's external API.
+     * @return the color space cache
      */
-    public ColorSpace getColorSpace(String baseUri, String iccProfileSrc) {
-        return colorSpaceCache.get(baseUri, iccProfileSrc);
+    public ColorSpaceCache getColorSpaceCache() {
+        return this.colorSpaceCache;
     }
 
 }
