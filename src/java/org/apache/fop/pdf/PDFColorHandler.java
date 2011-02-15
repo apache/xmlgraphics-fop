@@ -50,6 +50,10 @@ public class PDFColorHandler {
 
     private Map<String, PDFCIELabColorSpace> cieLabColorSpaces;
 
+    /**
+     * Create a new instance for the given {@link PDFResources}
+     * @param resources the PDF resources
+     */
     public PDFColorHandler(PDFResources resources) {
         this.resources = resources;
     }
