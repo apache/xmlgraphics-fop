@@ -110,7 +110,7 @@ public class AlignmentContext implements Constants {
      * @param dominantBaseline the dominant-baseline property
      * @param parentAlignmentContext the parent alignment context
      */
-    private AlignmentContext(int altitude,
+    private AlignmentContext(int altitude,                              // CSOK: ParameterNumber
             int depth,
             int lineHeight,
             int xHeight,
@@ -507,11 +507,11 @@ public class AlignmentContext implements Constants {
     /** {@inheritDoc} */
     public String toString() {
         StringBuffer sb = new StringBuffer(64);
-        sb.append("areaHeight=" + areaHeight);
-        sb.append(" lineHeight=" + lineHeight);
-        sb.append(" alignmentPoint=" + alignmentPoint);
-        sb.append(" alignmentBaselineID=" + alignmentBaselineIdentifier);
-        sb.append(" baselineShift=" + baselineShiftValue);
+        sb.append("ah=").append(areaHeight);
+        sb.append(" lp=").append(lineHeight);
+        sb.append(" ap=").append(alignmentPoint);
+        sb.append(" ab=").append(alignmentBaselineIdentifier);
+        sb.append(" bs=").append(baselineShiftValue);
         return sb.toString();
     }
 
