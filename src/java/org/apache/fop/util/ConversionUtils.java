@@ -112,28 +112,4 @@ public final class ConversionUtils {
 
     }
 
-    /**
-     * Concatenates the given array of <code>int</code>s into a <code>java.lang.String</code>,
-     * separated by the specified separator character.
-     * @param intArray  the int array
-     * @param separator the separator char
-     * @return  a String representing the int array
-     */
-    public static String toString(int[] intArray, String separator) {
-        
-        if (intArray == null || intArray.length == 0) {
-            return "";
-        }
-        
-        StringBuffer sb = new StringBuffer(64);
-        int arrayLength = intArray.length;
-        for (int i = 0; i < arrayLength; ++i) {
-            sb.append(intArray[i]);
-            if (i < (arrayLength - 1)) {
-                sb.append(separator);
-            }
-        }
-        return sb.toString();
-    }
-    
 }
