@@ -24,6 +24,8 @@ import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
 
+import org.w3c.dom.Document;
+
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.GVTBuilder;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
@@ -35,6 +37,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.xmlgraphics.image.loader.Image;
 import org.apache.xmlgraphics.image.loader.ImageFlavor;
 import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
+import org.apache.xmlgraphics.util.UnitConv;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.image.loader.batik.BatikImageFlavors;
@@ -47,7 +50,6 @@ import org.apache.fop.svg.PDFBridgeContext;
 import org.apache.fop.svg.PDFGraphics2D;
 import org.apache.fop.svg.SVGEventProducer;
 import org.apache.fop.svg.SVGUserAgent;
-import org.w3c.dom.Document;
 
 /**
  * Image Handler implementation which handles SVG images.
@@ -109,11 +111,13 @@ public class PDFImageHandlerSVG implements ImageHandler {
         //Scaling and translation for the bounding box of the image
         AffineTransform scaling = new AffineTransform(
                 sx, 0, 0, sy, pos.x / 1000f, pos.y / 1000f);
+        double sourceScale = UnitConv.IN2PT / uaResolution;
+        scaling.scale(sourceScale, sourceScale);
 
         //Scale for higher resolution on-the-fly images from Batik
-        double s = uaResolution / deviceResolution;
         AffineTransform resolutionScaling = new AffineTransform();
-        resolutionScaling.scale(s, s);
+        double targetScale = uaResolution / deviceResolution;
+        resolutionScaling.scale(targetScale, targetScale);
         resolutionScaling.scale(1.0 / sx, 1.0 / sy);
 
         //Transformation matrix that establishes the local coordinate system for the SVG graphic
@@ -122,12 +126,26 @@ public class PDFImageHandlerSVG implements ImageHandler {
         imageTransform.concatenate(scaling);
         imageTransform.concatenate(resolutionScaling);
 
+        if (log.isTraceEnabled()) {
+            log.trace("nat size: " + w + "/" + h);
+            log.trace("req size: " + pos.width + "/" + pos.height);
+            log.trace("source res: " + uaResolution + ", targetRes: " + deviceResolution
+                    + " --> target scaling: " + targetScale);
+            log.trace(image.getSize());
+            log.trace("sx: " + sx + ", sy: " + sy);
+            log.trace("scaling: " + scaling);
+            log.trace("resolution scaling: " + resolutionScaling);
+            log.trace("image transform: " + resolutionScaling);
+        }
+
         /*
          * Clip to the svg area.
          * Note: To have the svg overlay (under) a text area then use
          * an fo:block-container
          */
-        generator.comment("SVG setup");
+        if (log.isTraceEnabled()) {
+            generator.comment("SVG setup");
+        }
         generator.saveGraphicsState();
         if (context.getUserAgent().isAccessibilityEnabled()) {
             MarkedContentInfo mci = pdfContext.getMarkedContentInfo();
@@ -137,7 +155,9 @@ public class PDFImageHandlerSVG implements ImageHandler {
         generator.setColor(Color.black, true);
 
         if (!scaling.isIdentity()) {
-            generator.comment("viewbox");
+            if (log.isTraceEnabled()) {
+                generator.comment("viewbox");
+            }
             generator.add(CTMHelper.toPDFString(scaling, false) + " cm\n");
         }
 
@@ -150,8 +170,10 @@ public class PDFImageHandlerSVG implements ImageHandler {
         graphics.setGraphicContext(new org.apache.xmlgraphics.java2d.GraphicContext());
 
         if (!resolutionScaling.isIdentity()) {
-            generator.comment("resolution scaling for " + uaResolution
-                        + " -> " + deviceResolution + "\n");
+            if (log.isTraceEnabled()) {
+                generator.comment("resolution scaling for " + uaResolution
+                        + " -> " + deviceResolution);
+            }
             generator.add(
                     CTMHelper.toPDFString(resolutionScaling, false) + " cm\n");
             graphics.scale(
@@ -159,7 +181,9 @@ public class PDFImageHandlerSVG implements ImageHandler {
                     1.0 / resolutionScaling.getScaleY());
         }
 
-        generator.comment("SVG start");
+        if (log.isTraceEnabled()) {
+            generator.comment("SVG start");
+        }
 
         //Save state and update coordinate system for the SVG image
         generator.getState().save();
@@ -187,7 +211,9 @@ public class PDFImageHandlerSVG implements ImageHandler {
         } else {
             generator.restoreGraphicsState();
         }
-        generator.comment("SVG end");
+        if (log.isTraceEnabled()) {
+            generator.comment("SVG end");
+        }
     }
 
     /** {@inheritDoc} */
