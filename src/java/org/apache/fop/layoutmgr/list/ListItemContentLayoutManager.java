@@ -83,13 +83,6 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager {
         xoffset = off;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public List getChangedKnuthElements(List oldList, int alignment) {
-        //log.debug("  ListItemContentLayoutManager.getChanged>");
-        return super.getChangedKnuthElements(oldList, alignment);
-    }
-
     /**
      * Add the areas for the break points.
      * The list item contains block stacking layout managers
@@ -183,6 +176,7 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager {
             curBlockArea.setPositioning(Block.ABSOLUTE);
             // set position
             curBlockArea.setXOffset(xoffset);
+            //TODO: Check - itemIPD never set?
             curBlockArea.setIPD(itemIPD);
             //curBlockArea.setHeight();
 
@@ -211,19 +205,21 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager {
     }
 
     /** {@inheritDoc} */
+    @Override
     public KeepProperty getKeepTogetherProperty() {
         return getPartFO().getKeepTogether();
     }
 
     /** {@inheritDoc} */
+    @Override
     public Keep getKeepWithNext() {
         return Keep.KEEP_AUTO;
     }
 
     /** {@inheritDoc} */
+    @Override
     public Keep getKeepWithPrevious() {
         return Keep.KEEP_AUTO;
     }
-
 }
 
