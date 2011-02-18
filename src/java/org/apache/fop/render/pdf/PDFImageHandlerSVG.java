@@ -60,7 +60,8 @@ public class PDFImageHandlerSVG implements ImageHandler {
     private static Log log = LogFactory.getLog(PDFImageHandlerSVG.class);
 
     /** {@inheritDoc} */
-    public void handleImage(RenderingContext context, Image image, Rectangle pos)
+    public void handleImage(RenderingContext context,                // CSOK: MethodLength
+                            Image image, Rectangle pos)
                 throws IOException {
         PDFRenderingContext pdfContext = (PDFRenderingContext)context;
         PDFContentGenerator generator = pdfContext.getGenerator();

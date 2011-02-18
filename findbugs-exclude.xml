@@ -5019,4 +5019,51 @@
       <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
    </Match>
    <!-- /Automatically generated list of exclusions -->
+   <!-- Automatically generated list of exclusions on 18 February 2011 -->
+   <Match>
+	 <Class name="org.apache.fop.afp.goca.GraphicsSetProcessColor"/>
+	 <Method name="writeToStream"/>
+	 <Bug pattern="OS_OPEN_STREAM"/>
+   </Match>
+   <Match>
+	 <Class name="org.apache.fop.pdf.PDFFactory"/>
+	 <Method name="makeSeparationColorSpace"/>
+	 <Bug pattern="DM_FP_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+	 <Class name="org.apache.fop.pdf.PDFFactory"/>
+	 <Method name="toColorVector"/>
+	 <Bug pattern="DM_FP_NUMBER_CTOR"/>
+   </Match>
+   <Match>
+	 <Class name="org.apache.fop.fo.expr.PropertyTokenizer"/>
+	 <Field name="recognizeOperator"/>
+	 <Bug pattern="URF_UNREAD_FIELD"/>
+   </Match>
+   <Match>
+	 <Class name="org.apache.fop.layoutmgr.BlockLayoutManager"/>
+	 <Method name="getNextChildElements"/>
+	 <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+	 <Class name="org.apache.fop.util.ColorWithFallback"/>
+	 <!-- Listing the method 'equals' does not work -->
+	 <Bug pattern="EQ_DOESNT_OVERRIDE_EQUALS"/>
+   </Match>
+   <Match>
+	 <Class name="org.apache.fop.util.ColorWithFallback"/>
+	 <Method name="getAlternativeColors"/>
+	 <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+   </Match>
+   <Match>
+	 <Class name="org.apache.fop.fo.expr.NamedColorFunction"/>
+	 <Method name="eval"/>
+	 <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"/>
+   </Match>
+   <Match>
+	 <Class name="org.apache.fop.util.ColorUtil"/>
+	 <Method name="parseAsFopRgbNamedColor"/>
+	 <Bug pattern="REC_CATCH_EXCEPTION"/>
+   </Match>
+   <!-- /Automatically generated list of exclusions on 18 February 2011 -->
 </FindBugsFilter>
