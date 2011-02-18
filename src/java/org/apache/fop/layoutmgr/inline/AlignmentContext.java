@@ -507,11 +507,11 @@ public class AlignmentContext implements Constants {
     /** {@inheritDoc} */
     public String toString() {
         StringBuffer sb = new StringBuffer(64);
-        sb.append("areaHeight=" + areaHeight);
-        sb.append(" lineHeight=" + lineHeight);
-        sb.append(" alignmentPoint=" + alignmentPoint);
-        sb.append(" alignmentBaselineID=" + alignmentBaselineIdentifier);
-        sb.append(" baselineShift=" + baselineShiftValue);
+        sb.append("areaHeight=").append(areaHeight);
+        sb.append(" lineHeight=").append(lineHeight);
+        sb.append(" alignmentPoint=").append(alignmentPoint);
+        sb.append(" alignmentBaselineID=").append(alignmentBaselineIdentifier);
+        sb.append(" baselineShift=").append(baselineShiftValue);
         return sb.toString();
     }
 
