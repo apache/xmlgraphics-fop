@@ -141,6 +141,7 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
             return childLM.getNextKnuthElements(childLC, alignment);
         } else {
             if (childLM instanceof LineLayoutManager) {
+                assert (restartPosition instanceof LeafPosition);
                 return ((LineLayoutManager) childLM).getNextKnuthElements(childLC, alignment,
                         (LeafPosition) restartPosition);
             } else {
