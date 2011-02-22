@@ -29,7 +29,7 @@ package org.apache.fop.fo.expr;
 class PropertyTokenizer {
 
     static final int TOK_EOF = 0;
-    static final int TOK_NCNAME = TOK_EOF + 1;
+    static final int TOK_NCNAME = 1;
     static final int TOK_MULTIPLY = TOK_NCNAME + 1;
     static final int TOK_LPAR = TOK_MULTIPLY + 1;
     static final int TOK_RPAR = TOK_LPAR + 1;
@@ -55,8 +55,6 @@ class PropertyTokenizer {
     private /* final */ String expr;
     private int exprIndex = 0;
     private int exprLength;
-    private boolean recognizeOperator = false;
-
 
     /**
      * Construct a new PropertyTokenizer object to tokenize the passed
@@ -81,7 +79,6 @@ class PropertyTokenizer {
         currentTokenValue = null;
         currentTokenStartIndex = exprIndex;
         boolean bSawDecimal;
-        recognizeOperator = true;
         while ( true ) {
             if (exprIndex >= exprLength) {
                 currentToken = TOK_EOF;
@@ -96,20 +93,16 @@ class PropertyTokenizer {
                 currentTokenStartIndex = exprIndex;
                 break;
             case ',':
-                recognizeOperator = false;
                 currentToken = TOK_COMMA;
                 return;
             case '+':
-                recognizeOperator = false;
                 currentToken = TOK_PLUS;
                 return;
             case '-':
-                recognizeOperator = false;
                 currentToken = TOK_MINUS;
                 return;
             case '(':
                 currentToken = TOK_LPAR;
-                recognizeOperator = false;
                 return;
             case ')':
                 currentToken = TOK_RPAR;
@@ -188,9 +181,7 @@ class PropertyTokenizer {
                 if (exprIndex == currentTokenStartIndex) {
                     throw new PropertyException("illegal character");
                 }
-                currentTokenValue = expr.substring(currentTokenStartIndex,
-        exprIndex);
-                // if (currentMaybeOperator) {
+                currentTokenValue = expr.substring(currentTokenStartIndex, exprIndex);
                 if (currentTokenValue.equals("mod")) {
                     currentToken = TOK_MOD;
                     return;
@@ -198,19 +189,10 @@ class PropertyTokenizer {
                     currentToken = TOK_DIV;
                     return;
                 }
-                /*
-                 * else
-                 * throw new PropertyException("unrecognized operator name");
-                 * recognizeOperator = false;
-                 * return;
-                 * }
-                 */
                 if (followingParen()) {
                     currentToken = TOK_FUNCTION_LPAR;
-                    recognizeOperator = false;
                 } else {
                     currentToken = TOK_NCNAME;
-                    recognizeOperator = false;
                 }
                 return;
             }
