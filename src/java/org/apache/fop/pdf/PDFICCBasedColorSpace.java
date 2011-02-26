@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.commons.io.IOUtils;
+
 import org.apache.xmlgraphics.java2d.color.profile.ColorProfileUtil;
 
 /**
@@ -34,6 +35,7 @@ public class PDFICCBasedColorSpace extends PDFObject implements PDFColorSpace {
 
     private PDFICCStream iccStream;
     private String explicitName;
+    private int numComponents;
 
     /**
      * Constructs a the ICCBased color space with an explicit name (ex. "DefaultRGB").
@@ -43,6 +45,7 @@ public class PDFICCBasedColorSpace extends PDFObject implements PDFColorSpace {
     public PDFICCBasedColorSpace(String explicitName, PDFICCStream iccStream) {
         this.explicitName = explicitName;
         this.iccStream = iccStream;
+        this.numComponents = iccStream.getICCProfile().getNumComponents();
     }
 
     /**
@@ -60,7 +63,7 @@ public class PDFICCBasedColorSpace extends PDFObject implements PDFColorSpace {
 
     /** {@inheritDoc} */
     public int getNumComponents() {
-        return iccStream.getICCProfile().getNumComponents();
+        return this.numComponents;
     }
 
     /** {@inheritDoc} */
@@ -93,6 +96,7 @@ public class PDFICCBasedColorSpace extends PDFObject implements PDFColorSpace {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected String toPDFString() {
         StringBuffer sb = new StringBuffer(64);
         sb.append(getObjectID());
