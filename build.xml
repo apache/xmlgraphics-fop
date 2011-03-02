@@ -1440,8 +1440,20 @@ NOTE:
 <!-- =================================================================== -->
 <!-- Special target for Gump                                             -->
 <!-- =================================================================== -->
-  <target name="gump" depends="junit-reduced"/>
-<!-- =================================================================== -->
+  <target name="gump" depends="package,transcoder-pkg"/>
+  <target name="gump-test" depends="junit-full">
+    <fail>
+      <condition>
+        <or>
+          <isset property="fop.junit.error"/>
+          <isset property="fop.junit.failure"/>
+        </or>
+      </condition>
+      At least one unit test failed!
+    </fail>
+    <echo>All tests passed!</echo>
+  </target>
+  <!-- =================================================================== -->
 <!-- Clean targets                                                       -->
 <!-- =================================================================== -->
   <target name="clean" description="Cleans the build directory">
