@@ -627,7 +627,7 @@ public final class BidiUtil {
          * @param ti a text interval to which levels are to be assigned
          * @param levels array of levels each corresponding to each index of the delimited
          * text range
-         * @returns a list of text intervals as described above
+         * @return a list of text intervals as described above
          */
         private List assignLevels ( TextInterval ti, int[] levels ) {
             Vector tiv = new Vector();
@@ -994,7 +994,7 @@ public final class BidiUtil {
      * The <code>UnicodeBidiAlgorithm</code> class implements functionality prescribed by
      * the Unicode Bidirectional Algorithm, Unicode Standard Annex #9.
      */
-    private static final class UnicodeBidiAlgorithm implements BidiConstants {
+    public static final class UnicodeBidiAlgorithm implements BidiConstants {
 
         private UnicodeBidiAlgorithm() {
         }
@@ -1003,7 +1003,7 @@ public final class BidiUtil {
          * Resolve the directionality levels of each character in a character seqeunce.
          * If some character is encoded in the character sequence as a Unicode Surrogate Pair,
          * then the directionality level of each of the two members of the  pair will be identical.
-         * @returns null if bidirectional processing is not required; otherwise, returns an array
+         * @return null if bidirectional processing is not required; otherwise, returns an array
          * of integers, where each integer corresponds to exactly one UTF-16
          * encoding element present in the input character sequence, and where each integer denotes
          * the directionality level of the corresponding encoding element
@@ -1019,23 +1019,57 @@ public final class BidiUtil {
             }
         }
 
-        private static int[] resolveLevels ( int[] chars, int defaultLevel, int[] levels ) {
-            return resolveLevels ( chars, getClasses ( chars ), defaultLevel, levels );
+        /**
+         * Resolve the directionality levels of each character in a character seqeunce.
+         * @return null if bidirectional processing is not required; otherwise, returns an array
+         * of integers, where each integer corresponds to exactly one UTF-16
+         * encoding element present in the input character sequence, and where each integer denotes
+         * the directionality level of the corresponding encoding element
+         * @param chars array of input characters represented as unicode scalar values
+         * @param defaultLevel the default paragraph level, which must be zero (LR) or one (RL)
+         * @param levels array to receive levels, one for each character in chars array
+         */
+        public static int[] resolveLevels ( int[] chars, int defaultLevel, int[] levels ) {
+            return resolveLevels ( chars, getClasses ( chars ), defaultLevel, levels, false );
         }
 
-        private static int[] resolveLevels ( int[] chars, int[] classes, int defaultLevel, int[] levels ) {
-            resolveExplicit ( classes, defaultLevel, levels );
-            resolveRuns ( classes, defaultLevel, levels );
-            dump ( "RL: CC(" + chars.length + ")", chars, classes, defaultLevel, levels );
+        /**
+         * Resolve the directionality levels of each character in a character seqeunce.
+         * @return null if bidirectional processing is not required; otherwise, returns an array
+         * of integers, where each integer corresponds to exactly one UTF-16
+         * encoding element present in the input character sequence, and where each integer denotes
+         * the directionality level of the corresponding encoding element
+         * @param chars array of input characters represented as unicode scalar values
+         * @param classes array containing one bidi class per character in chars array
+         * @param defaultLevel the default paragraph level, which must be zero (LR) or one (RL)
+         * @param levels array to receive levels, one for each character in chars array
+         * @param useRuleL1 true if rule L1 should be used
+         */
+        public static int[] resolveLevels ( int[] chars, int[] classes, int defaultLevel, int[] levels, boolean useRuleL1 ) {
+            int[] ica = classes;
+            int[] wca = copySequence ( ica );
+            int[] ea  = new int [ levels.length ];
+            resolveExplicit ( wca, defaultLevel, ea );
+            resolveRuns ( wca, defaultLevel, ea, levelsFromEmbeddings ( ea, levels ) );
+            if ( useRuleL1 ) {
+                resolveSeparators ( ica, wca, defaultLevel, levels );
+            }
+            dump ( "RL: CC(" + ( ( chars != null ) ? chars.length : -1 ) + ")", chars, classes, defaultLevel, levels );
             return levels;
         }
 
-        private static void resolveExplicit ( int[] classes, int defaultLevel, int[] levels ) {
+        private static int[] copySequence ( int[] ta ) {
+            int[] na = new int [ ta.length ];
+            System.arraycopy ( ta, 0, na, 0, na.length );
+            return na;
+        }
+
+        private static void resolveExplicit ( int[] wca, int defaultLevel, int[] ea ) {
             int[] es = new int [ MAX_LEVELS ];          /* embeddings stack */
             int ei = 0;                                 /* embeddings stack index */
             int ec = defaultLevel;                      /* current embedding level */
-            for ( int i = 0, n = classes.length; i < n; i++ ) {
-                int bc = classes [ i ];                 /* bidi class of current char */
+            for ( int i = 0, n = wca.length; i < n; i++ ) {
+                int bc = wca [ i ];                     /* bidi class of current char */
                 int el;                                 /* embedding level to assign to current char */
                 switch ( bc ) {
                 case LRE:                               // start left-to-right embedding
@@ -1045,9 +1079,9 @@ public final class BidiUtil {
                     {
                         int en;                         /* new embedding level */
                         if ( ( bc == RLE ) || ( bc == RLO ) ) {
-                            en = ( ec + 1 ) | 1;
+                            en = ( ( ec & ~OVERRIDE ) + 1 ) | 1;
                         } else {
-                            en = ( ec + 2 ) & ~1;
+                            en = ( ( ec & ~OVERRIDE ) + 2 ) & ~1;
                         }
                         if ( en < ( MAX_LEVELS + 1 ) ) {
                             es [ ei++ ] = ec;
@@ -1057,7 +1091,7 @@ public final class BidiUtil {
                                 ec = en & ~OVERRIDE;
                             }
                         } else {
-                            throw new IllegalStateException ( "maximum bidi levels exceeded" );
+                            // max levels exceeded, so don't change level or override
                         }
                         el = ec;
                         break;
@@ -1068,7 +1102,7 @@ public final class BidiUtil {
                         if ( ei > 0 ) {
                             ec = es [ --ei ];
                         } else {
-                            throw new IllegalStateException ( "isolated pop directional formatting character" );
+                            // ignore isolated PDF
                         }
                         break;
                     }
@@ -1085,76 +1119,160 @@ public final class BidiUtil {
                     }
                 }
                 switch ( bc ) {
+                case BN:
+                    break;
                 case LRE: case RLE: case LRO: case RLO: case PDF:
-                    classes [ i ] = BN;
+                    wca [ i ] = BN;
                     break;
                 default:
                     if ( ( el & OVERRIDE ) != 0 ) {
-                        classes [ i ] = ( ( el & 1 ) != 0 ) ? R : L;
+                        wca [ i ] = directionOfLevel ( el );
                     }
                     break;
                 }
-                levels [ i ] = el & ~OVERRIDE;
+                ea [ i ] = el;
             }
         }
 
-        private static void resolveRuns ( int[] classes, int defaultLevel, int[] levels ) {
-            if ( levels.length != classes.length ) {
+        private static int directionOfLevel ( int level ) {
+            return ( ( level & 1 ) != 0 ) ? R : L;
+        }
+
+        private static int levelOfEmbedding ( int embedding ) {
+            return embedding & ~OVERRIDE;
+        }
+
+        private static int[] levelsFromEmbeddings ( int[] ea, int[] la ) {
+            assert ea != null;
+            assert la != null;
+            assert la.length == ea.length;
+            for ( int i = 0, n = la.length; i < n; i++ ) {
+                la [ i ] = levelOfEmbedding ( ea [ i ] );
+            }
+            return la;
+        }
+
+        private static void resolveRuns ( int[] wca, int defaultLevel, int[] ea, int[] la ) {
+            if ( la.length != wca.length ) {
                 throw new IllegalArgumentException ( "levels sequence length must match classes sequence length" );
-            }
-            for ( int i = 0, n = levels.length; i < n; ) {
-                int s = i;
-                int e = s;
-                int l = levels [ s ];
-                while ( e < n ) {
-                    if ( levels [ e ] != l ) {
-                        break;
-                    } else {
-                        e++;
+            } else if ( la.length != ea.length ) {
+                throw new IllegalArgumentException ( "levels sequence length must match embeddings sequence length" );
+            } else {
+                for ( int i = 0, n = ea.length, lPrev = defaultLevel; i < n; ) {
+                    int s = i;
+                    int e = s;
+                    int l = findNextNonRetainedFormattingLevel ( wca, ea, s, lPrev );
+                    while ( e < n ) {
+                        if ( la [ e ] != l ) {
+                            if ( startsWithRetainedFormattingRun ( wca, ea, e ) ) {
+                                e += getLevelRunLength ( ea, e );
+                            } else {
+                                break;
+                            }
+                        } else {
+                            e++;
+                        }
                     }
+                    lPrev = resolveRun ( wca, defaultLevel, ea, la, s, e, l, lPrev );
+                    i = e;
                 }
-                resolveRun ( classes, defaultLevel, levels, s, e, l );
-                i = e;
             }
         }
 
-        private static void resolveRun ( int[] classes, int defaultLevel, int[] levels, int start, int end, int level ) {
+        private static int findNextNonRetainedFormattingLevel ( int[] wca, int[] ea, int start, int lPrev ) {
+            int s = start;
+            int e = wca.length;
+            while ( s < e ) {
+                if ( startsWithRetainedFormattingRun ( wca, ea, s ) ) {
+                    s += getLevelRunLength ( ea, s );
+                } else {
+                    break;
+                }
+            }
+            if ( s < e ) {
+                return levelOfEmbedding ( ea [ s ] );
+            } else {
+                return lPrev;
+            }
+        }
+
+        private static int getLevelRunLength ( int[] ea, int start ) {
+            assert start < ea.length;
+            int nl = 0;
+            for ( int s = start, e = ea.length, l0 = levelOfEmbedding ( ea [ start ] ); s < e; s++ ) {
+                if ( levelOfEmbedding ( ea [ s ] ) == l0 ) {
+                    nl++;
+                } else {
+                    break;
+                }
+            }
+            return nl;
+        }
+
+        private static boolean startsWithRetainedFormattingRun ( int[] wca, int[] ea, int start ) {
+            int nl = getLevelRunLength ( ea, start );
+            if ( nl > 0 ) {
+                int nc = getRetainedFormattingRunLength ( wca, start );
+                return ( nc >= nl );
+            } else {
+                return false;
+            }
+        }
+
+        private static int getRetainedFormattingRunLength ( int[] wca, int start ) {
+            assert start < wca.length;
+            int nc = 0;
+            for ( int s = start, e = wca.length; s < e; s++ ) {
+                if ( wca [ s ] == BidiConstants.BN ) {
+                    nc++;
+                } else {
+                    break;
+                }
+            }
+            return nc;
+        }
+
+        private static int resolveRun ( int[] wca, int defaultLevel, int[] ea, int[] la, int start, int end, int level, int levelPrev ) {
 
             // determine start of run direction
-            int ls;
-            if ( start == 0 ) {
-                ls = max ( defaultLevel, level );
-            } else {
-                ls = max ( levels [ start - 1 ], level );
-            }
-            int sor = ( ( ls & 1 ) != 0 ) ? R : L;
+            int sor = directionOfLevel ( max ( levelPrev, level ) );
 
             // determine end of run direction
-            int le;
-            if ( end == levels.length ) {
+            int le = -1;
+            if ( end == wca.length ) {
                 le = max ( level, defaultLevel );
             } else {
-                le = max ( level, levels [ end + 1 ] );
+                for ( int i = end; i < wca.length; i++ ) {
+                    if ( wca [ i ] != BidiConstants.BN ) {
+                        le = max ( level, la [ i ] );
+                        break;
+                    }
+                }
+                if ( le < 0 ) {
+                    le = max ( level, defaultLevel );
+                }
             }
-            int eor = ( ( le & 1 ) != 0 ) ? R : L;
+            int eor = directionOfLevel ( le );
 
             if (log.isDebugEnabled()) {
                 log.debug ( "BR[" + padLeft ( start, 3 ) + "," + padLeft ( end, 3 ) + "] :" + padLeft ( level, 2 ) + ": SOR(" + getClassName(sor) + "), EOR(" + getClassName(eor) + ")" );
             }
 
-            resolveWeak ( classes, defaultLevel, levels, start, end, level, sor, eor );
-            resolveNeutrals ( classes, defaultLevel, levels, start, end, level, sor, eor );
-            resolveImplicit ( classes, defaultLevel, levels, start, end, level, sor, eor );
+            resolveWeak ( wca, defaultLevel, ea, la, start, end, level, sor, eor );
+            resolveNeutrals ( wca, defaultLevel, ea, la, start, end, level, sor, eor );
+            resolveImplicit ( wca, defaultLevel, ea, la, start, end, level, sor, eor );
 
+            // if this run is all retained formatting, then return prior level, otherwise this run's level
+            return isRetainedFormatting ( wca, start, end ) ? levelPrev : level;
         }
 
-        private static void resolveWeak ( int[] classes, int defaultLevel, int[] levels, int start, int end, int level, int sor, int eor ) {
+        private static void resolveWeak ( int[] wca, int defaultLevel, int[] ea, int[] la, int start, int end, int level, int sor, int eor ) {
 
             // W1 - X BN* NSM -> X BN* X
             for ( int i = start, n = end, bcPrev = sor; i < n; i++ ) {
-                int bc = classes [ i ];
+                int bc = wca [ i ];
                 if ( bc == NSM ) {
-                    classes [ i ] = bcPrev;
+                    wca [ i ] = bcPrev;
                 } else if ( bc != BN ) {
                     bcPrev = bc;
                 }
@@ -1162,10 +1280,10 @@ public final class BidiUtil {
 
             // W2 - AL ... EN -> AL ... AN
             for ( int i = start, n = end, bcPrev = sor; i < n; i++ ) {
-                int bc = classes [ i ];
+                int bc = wca [ i ];
                 if ( bc == EN ) {
                     if ( bcPrev == AL ) {
-                        classes [ i ] = AN;
+                        wca [ i ] = AN;
                     }
                 } else if ( isStrong ( bc ) ) {
                     bcPrev = bc;
@@ -1174,58 +1292,59 @@ public final class BidiUtil {
 
             // W3 - AL -> R
             for ( int i = start, n = end; i < n; i++ ) {
-                int bc = classes [ i ];
+                int bc = wca [ i ];
                 if ( bc == AL ) {
-                    classes [ i ] = R;
+                    wca [ i ] = R;
                 }
             }
 
             // W4 - EN BN* ES BN* EN -> EN BN* EN BN* EN; XN BN* CS BN* XN -> XN BN* XN BN* XN
             for ( int i = start, n = end, bcPrev = sor; i < n; i++ ) {
-                int bc = classes [ i ];
+                int bc = wca [ i ];
                 if ( bc == ES ) {
                     int bcNext = eor;
                     for ( int j = i + 1; j < n; j++ ) {
-                        if ( ( bc = classes [ j ] ) != BN ) {
+                        if ( ( bc = wca [ j ] ) != BN ) {
                             bcNext = bc;
                             break;
                         }
                     }
                     if ( ( bcPrev == EN ) && ( bcNext == EN ) ) {
-                        classes [ i ] = EN;
+                        wca [ i ] = EN;
                     }
                 } else if ( bc == CS ) {
                     int bcNext = eor;
                     for ( int j = i + 1; j < n; j++ ) {
-                        if ( ( bc = classes [ j ] ) != BN ) {
+                        if ( ( bc = wca [ j ] ) != BN ) {
                             bcNext = bc;
                             break;
                         }
                     }
                     if ( ( bcPrev == EN ) && ( bcNext == EN ) ) {
-                        classes [ i ] = EN;
+                        wca [ i ] = EN;
                     } else if ( ( bcPrev == AN ) && ( bcNext == AN ) ) {
-                        classes [ i ] = AN;
+                        wca [ i ] = AN;
                     }
-                } else if ( bc != BN ) {
+                }
+                if ( bc != BN ) {
                     bcPrev = bc;
                 }
             }
 
             // W5 - EN (ET|BN)* -> EN (EN|BN)*; (ET|BN)* EN -> (EN|BN)* EN
             for ( int i = start, n = end, bcPrev = sor; i < n; i++ ) {
-                int bc = classes [ i ];
+                int bc = wca [ i ];
                 if ( bc == ET ) {
                     int bcNext = eor;
                     for ( int j = i + 1; j < n; j++ ) {
-                        bc = classes [ j ];
+                        bc = wca [ j ];
                         if ( ( bc != BN ) && ( bc != ET ) ) {
                             bcNext = bc;
                             break;
                         }
                     }
                     if ( ( bcPrev == EN ) || ( bcNext == EN ) ) {
-                        classes [ i ] = EN;
+                        wca [ i ] = EN;
                     }
                 } else if ( ( bc != BN ) && ( bc != ET ) ) {
                     bcPrev = bc;
@@ -1234,19 +1353,19 @@ public final class BidiUtil {
 
             // W6 - BN* (ET|ES|CS) BN* -> ON* ON ON*
             for ( int i = start, n = end; i < n; i++ ) {
-                int bc = classes [ i ];
+                int bc = wca [ i ];
                 if ( ( bc == ET ) || ( bc == ES ) || ( bc == CS ) ) {
-                    classes [ i ] = ON;
-                    resolveAdjacentBoundaryNeutrals ( classes, start, end, i, ON );
+                    wca [ i ] = ON;
+                    resolveAdjacentBoundaryNeutrals ( wca, start, end, i, ON );
                 }
             }
 
             // W7 - L ... EN -> L ... L
             for ( int i = start, n = end, bcPrev = sor; i < n; i++ ) {
-                int bc = classes [ i ];
+                int bc = wca [ i ];
                 if ( bc == EN ) {
                     if ( bcPrev == L ) {
-                        classes [ i ] = L;
+                        wca [ i ] = L;
                     }
                 } else if ( ( bc == L ) || ( bc == R ) ) {
                     bcPrev = bc;
@@ -1255,56 +1374,68 @@ public final class BidiUtil {
 
         }
 
-        private static void resolveNeutrals ( int[] classes, int defaultLevel, int[] levels, int start, int end, int level, int sor, int eor ) {
+        private static void resolveNeutrals ( int[] wca, int defaultLevel, int[] ea, int[] la, int start, int end, int level, int sor, int eor ) {
 
-            // N1 - (L|R) N+ (L|R) -> L L+ L | R R+ R
+            // N1 - (L|R) N+ (L|R) -> L L+ L | R R+ R; (AN|EN) N+ R -> (AN|EN) R+ R; R N+ (AN|EN) -> R R+ (AN|EN)
             for ( int i = start, n = end, bcPrev = sor; i < n; i++ ) {
-                int bc = classes [ i ];
+                int bc = wca [ i ];
                 if ( isNeutral ( bc ) ) {
                     int bcNext = eor;
                     for ( int j = i + 1; j < n; j++ ) {
-                        bc = classes [ j ];
+                        bc = wca [ j ];
                         if ( ( bc == L ) || ( bc == R ) ) {
                             bcNext = bc;
+                            break;
+                        } else if ( ( bc == AN ) || ( bc == EN ) ) {
+                            bcNext = R;
+                            break;
+                        } else if ( isNeutral ( bc ) ) {
+                            continue;
+                        } else if ( isRetainedFormatting ( bc ) ) {
+                            continue;
+                        } else {
                             break;
                         }
                     }
                     if ( bcPrev == bcNext ) {
-                        classes [ i ] = bcPrev;
-                        resolveAdjacentBoundaryNeutrals ( classes, start, end, i, bcPrev );
+                        wca [ i ] = bcPrev;
+                        resolveAdjacentBoundaryNeutrals ( wca, start, end, i, bcPrev );
                     }
                 } else if ( ( bc == L ) || ( bc == R ) ) {
                     bcPrev = bc;
+                } else if ( ( bc == AN ) || ( bc == EN ) ) {
+                    bcPrev = R;
                 }
             }
 
-            // N2 - N -> default level
-            for ( int i = start, n = end, bcDefault = ( ( defaultLevel & 1 ) != 0 ) ? R : L; i < n; i++ ) {
-                int bc = classes [ i ];
+            // N2 - N -> embedding level
+            for ( int i = start, n = end; i < n; i++ ) {
+                int bc = wca [ i ];
                 if ( isNeutral ( bc ) ) {
-                    classes [ i ] = bcDefault;
-                    resolveAdjacentBoundaryNeutrals ( classes, start, end, i, bcDefault );
+                    int bcEmbedding = directionOfLevel ( levelOfEmbedding ( ea [ i ] ) );
+                    wca [ i ] = bcEmbedding;
+                    resolveAdjacentBoundaryNeutrals ( wca, start, end, i, bcEmbedding );
                 }
             }
 
         }
 
-        private static void resolveAdjacentBoundaryNeutrals ( int[] classes, int start, int end, int index, int bcNew ) {
+        private static void resolveAdjacentBoundaryNeutrals ( int[] wca, int start, int end, int index, int bcNew ) {
             if ( ( index < start ) || ( index >= end ) ) {
                 throw new IllegalArgumentException();
             } else {
                 for ( int i = index - 1; i >= start; i-- ) {
-                    int bc = classes [ i ];
+                    int bc = wca [ i ];
                     if ( bc == BN ) {
-                        classes [ i ] = bcNew;
+                        wca [ i ] = bcNew;
                     } else {
                         break;
                     }
                 }
                 for ( int i = index + 1; i < end; i++ ) {
-                    int bc = classes [ i ];
+                    int bc = wca [ i ];
                     if ( bc == BN ) {
-                        classes [ i ] = bcNew;
+                        wca [ i ] = bcNew;
                     } else {
                         break;
                     }
@@ -1312,11 +1443,10 @@ public final class BidiUtil {
             }
         }
 
-        private static void resolveImplicit ( int[] classes, int defaultLevel, int[] levels, int start, int end, int level, int sor, int eor ) {
-
+        private static void resolveImplicit ( int[] wca, int defaultLevel, int[] ea, int[] la, int start, int end, int level, int sor, int eor ) {
             for ( int i = start, n = end; i < n; i++ ) {
-                int bc = classes [ i ];                 // bidi class
-                int el = levels [ i ];                  // embedding level
+                int bc = wca [ i ];                     // bidi class
+                int el = la [ i ];                      // embedding level
                 int ed = 0;                             // embedding level delta
                 if ( ( el & 1 ) == 0 ) {                // even
                     if ( bc == R ) {
@@ -1335,9 +1465,59 @@ public final class BidiUtil {
                         ed = 1;
                     }
                 }
-                levels [ i ] = el + ed;
+                la [ i ] = el + ed;
             }
+        }
 
+        /**
+         * Resolve separators and boundary neutral levels to account for UAX#9 3.4 L1 while taking into
+         * account retention of formatting codes (5.2).
+         * @param ica original input class array (sequence)
+         * @param wca working copy of original intput class array (sequence), as modified by prior steps
+         * @param dl default paragraph level
+         * @param la array of output levels to be adjusted, as produced by bidi algorithm
+         */
+        private static void resolveSeparators ( int[] ica, int[] wca, int dl, int[] la ) {
+            // steps (1) through (3)
+            for ( int i = 0, n = ica.length; i < n; i++ ) {
+                int ic = ica[i];
+                if ( ( ic == BidiConstants.S ) || ( ic == BidiConstants.B ) ) {
+                    la[i] = dl;
+                    for ( int k = i - 1; k >= 0; k-- ) {
+                        int pc = ica[k];
+                        if ( isRetainedFormatting ( pc ) ) {
+                            continue;
+                        } if ( pc == BidiConstants.WS ) {
+                            la[k] = dl;
+                        } else {
+                            break;
+                        }
+                    }
+                }
+            }
+            // step (4) - consider end of input sequence to be end of line, but skip any trailing boundary neutrals and retained formatting codes
+            for ( int i = ica.length; i > 0; i-- ) {
+                int k = i - 1;
+                int ic = ica[k];
+                if ( isRetainedFormatting ( ic ) ) {
+                    continue;
+                } else if ( ic == BidiConstants.WS ) {
+                    la[k] = dl;
+                } else {
+                    break;
+                }
+            }
+            // step (5) - per section 5.2
+            for ( int i = 0, n = ica.length; i < n; i++ ) {
+                int ic = ica[i];
+                if ( isRetainedFormatting ( ic ) ) {
+                    if ( i == 0 ) {
+                        la[i] = dl;
+                    } else {
+                        la[i] = la [ i - 1 ];
+                    }
+                }
+            }
         }
 
         private static boolean isStrong ( int bc ) {
@@ -1361,6 +1541,29 @@ public final class BidiUtil {
             default:
                 return false;
             }
+        }
+
+        private static boolean isRetainedFormatting ( int bc ) {
+            switch ( bc ) {
+            case LRE:
+            case LRO:
+            case RLE:
+            case RLO:
+            case PDF:
+            case BN:
+                return true;
+            default:
+                return false;
+            }
+        }
+
+        private static boolean isRetainedFormatting ( int[] ca, int s, int e ) {
+            for ( int i = s; i < e; i++ ) {
+                if ( ! isRetainedFormatting ( ca[i] ) ) {
+                    return false;
+                }
+            }
+            return true;
         }
 
         private static int max ( int x, int y ) {
@@ -1393,7 +1596,7 @@ public final class BidiUtil {
          * negative one (-1). This special mechanism is used to track the use of surrogate pairs while
          * working with unicode scalar values, and permits maintaining indices that apply both to the
          * input UTF-16 and out scalar value sequences.
-         * @returns a boolean indicating that content is present that triggers bidirectional processing
+         * @return a boolean indicating that content is present that triggers bidirectional processing
          * @param cs a UTF-16 encoded character sequence
          * @param chars an integer array to accept the converted scalar values, where the length of the
          * array must be the same as the length of the input character sequence
@@ -1443,7 +1646,7 @@ public final class BidiUtil {
 
         /**
          * Convert UTF-16 surrogate pair to unicode scalar valuee.
-         * @returns a unicode scalar value
+         * @return a unicode scalar value
          * @param chHi high (most significant or first) surrogate
          * @param chLo low (least significant or second) surrogate
          * @throws IllegalArgumentException if one of the input surrogates is not valid
@@ -1463,7 +1666,7 @@ public final class BidiUtil {
          * processing is deemed triggerable if CH is a strong right-to-left character,
          * an arabic letter or number, or is a right-to-left embedding or override
          * character.
-         * @returns true if character triggers bidirectional processing
+         * @return true if character triggers bidirectional processing
          * @param ch a unicode scalar value
          */
         private static boolean triggersBidi ( int ch ) {
@@ -1483,19 +1686,30 @@ public final class BidiUtil {
             log.debug ( header );
             log.debug ( "BD: default level(" + defaultLevel + ")" );
             StringBuffer sb = new StringBuffer();
-            for ( int i = 0, n = chars.length; i < n; i++ ) {
-                int ch = chars [ i ];
-                sb.setLength(0);
-                if ( ( ch > 0x20 ) && ( ch < 0x7F ) ) {
-                    sb.append ( (char) ch );
-                } else {
-                    sb.append ( CharUtilities.charToNCRef ( ch ) );
+            if ( chars != null ) {
+                for ( int i = 0, n = chars.length; i < n; i++ ) {
+                    int ch = chars [ i ];
+                    sb.setLength(0);
+                    if ( ( ch > 0x20 ) && ( ch < 0x7F ) ) {
+                        sb.append ( (char) ch );
+                    } else {
+                        sb.append ( CharUtilities.charToNCRef ( ch ) );
+                    }
+                    for ( int k = sb.length(); k < 12; k++ ) {
+                        sb.append ( ' ' );
+                    }
+                    sb.append ( ": " + padRight ( getClassName ( classes[i] ), 4 ) + " " + levels[i] );
+                    log.debug ( sb );
                 }
-                for ( int k = sb.length(); k < 12; k++ ) {
-                    sb.append ( ' ' );
+            } else {
+                for ( int i = 0, n = classes.length; i < n; i++ ) {
+                    sb.setLength(0);
+                    for ( int k = sb.length(); k < 12; k++ ) {
+                        sb.append ( ' ' );
+                    }
+                    sb.append ( ": " + padRight ( getClassName ( classes[i] ), 4 ) + " " + levels[i] );
+                    log.debug ( sb );
                 }
-                sb.append ( ": " + padRight ( getClassName ( classes[i] ), 4 ) + " " + levels[i] );
-                log.debug ( sb );
             }
         }
 

@@ -72,14 +72,14 @@ public class GlyphPositioningTable extends GlyphTable {
     public GlyphPositioningTable ( GlyphDefinitionTable gdef, Map lookups, List subtables ) {
         super ( gdef, lookups );
         if ( ( subtables == null ) || ( subtables.size() == 0 ) ) {
-            throw new IllegalArgumentException ( "subtables must be non-empty" );
+            throw new AdvancedTypographicTableFormatException ( "subtables must be non-empty" );
         } else {
             for ( Iterator it = subtables.iterator(); it.hasNext();) {
                 Object o = it.next();
                 if ( o instanceof GlyphPositioningSubtable ) {
                     addSubtable ( (GlyphSubtable) o );
                 } else {
-                    throw new IllegalArgumentException ( "subtable must be a glyph positioning subtable" );
+                    throw new AdvancedTypographicTableFormatException ( "subtable must be a glyph positioning subtable" );
                 }
             }
             freezeSubtables();
@@ -313,14 +313,14 @@ public class GlyphPositioningTable extends GlyphTable {
         }
         private void populate ( List entries ) {
             if ( ( entries == null ) || ( entries.size() != 1 ) ) {
-                throw new IllegalArgumentException ( "illegal entries, must be non-null and contain exactly one entry" );
+                throw new AdvancedTypographicTableFormatException ( "illegal entries, must be non-null and contain exactly one entry" );
             } else {
                 Value v;
                 Object o = entries.get(0);
                 if ( o instanceof Value ) {
                     v = (Value) o;
                 } else {
-                    throw new IllegalArgumentException ( "illegal entries entry, must be Value, but is: " + ( ( o != null ) ? o.getClass() : null ) );
+                    throw new AdvancedTypographicTableFormatException ( "illegal entries entry, must be Value, but is: " + ( ( o != null ) ? o.getClass() : null ) );
                 }
                 assert this.value == null;
                 this.value = v;
@@ -357,17 +357,17 @@ public class GlyphPositioningTable extends GlyphTable {
         }
         private void populate ( List entries ) {
             if ( entries == null ) {
-                throw new IllegalArgumentException ( "illegal entries, must be non-null" );
+                throw new AdvancedTypographicTableFormatException ( "illegal entries, must be non-null" );
             } else if ( entries.size() != 1 ) {
-                throw new IllegalArgumentException ( "illegal entries, " + entries.size() + " entries present, but requires 1 entry" );
+                throw new AdvancedTypographicTableFormatException ( "illegal entries, " + entries.size() + " entries present, but requires 1 entry" );
             } else {
                 Object o;
                 if ( ( ( o = entries.get(0) ) == null ) || ! ( o instanceof Value[] ) ) {
-                    throw new IllegalArgumentException ( "illegal entries, single entry must be a Value[], but is: " + ( ( o != null ) ? o.getClass() : null ) );
+                    throw new AdvancedTypographicTableFormatException ( "illegal entries, single entry must be a Value[], but is: " + ( ( o != null ) ? o.getClass() : null ) );
                 } else {
                     Value[] va = (Value[]) o;
                     if ( va.length != getCoverageSize() ) {
-                        throw new IllegalArgumentException ( "illegal values array, " + entries.size() + " values present, but requires " + getCoverageSize() + " values" );
+                        throw new AdvancedTypographicTableFormatException ( "illegal values array, " + entries.size() + " values present, but requires " + getCoverageSize() + " values" );
                     } else {
                         assert this.values == null;
                         this.values = va;
@@ -478,13 +478,13 @@ public class GlyphPositioningTable extends GlyphTable {
         }
         private void populate ( List entries ) {
             if ( entries == null ) {
-                throw new IllegalArgumentException ( "illegal entries, must be non-null" );
+                throw new AdvancedTypographicTableFormatException ( "illegal entries, must be non-null" );
             } else if ( entries.size() != 1 ) {
-                throw new IllegalArgumentException ( "illegal entries, " + entries.size() + " entries present, but requires 1 entry" );
+                throw new AdvancedTypographicTableFormatException ( "illegal entries, " + entries.size() + " entries present, but requires 1 entry" );
             } else {
                 Object o;
                 if ( ( ( o = entries.get(0) ) == null ) || ! ( o instanceof PairValues[][] ) ) {
-                    throw new IllegalArgumentException ( "illegal entries, first (and only) entry must be a PairValues[][], but is: " + ( ( o != null ) ? o.getClass() : null ) );
+                    throw new AdvancedTypographicTableFormatException ( "illegal entries, first (and only) entry must be a PairValues[][], but is: " + ( ( o != null ) ? o.getClass() : null ) );
                 } else {
                     pvm = (PairValues[][]) o;
                 }
@@ -520,11 +520,11 @@ public class GlyphPositioningTable extends GlyphTable {
         public PairValues getPairValues ( int ci, int gi1, int gi2 ) {
             if ( pvm != null ) {
                 int c1 = cdt1.getClassIndex ( gi1, 0 );
-                if ( ( c1 < nc1 ) && ( c1 < pvm.length ) ) {
+                if ( ( c1 >= 0 ) && ( c1 < nc1 ) && ( c1 < pvm.length ) ) {
                     PairValues[] pvt = pvm [ c1 ];
                     if ( pvt != null ) {
                         int c2 = cdt2.getClassIndex ( gi2, 0 );
-                        if ( ( c2 < nc2 ) && ( c2 < pvt.length ) ) {
+                        if ( ( c2 >= 0 ) && ( c2 < nc2 ) && ( c2 < pvt.length ) ) {
                             return pvt [ c2 ];
                         }
                     }
@@ -534,33 +534,33 @@ public class GlyphPositioningTable extends GlyphTable {
         }
         private void populate ( List entries ) {
             if ( entries == null ) {
-                throw new IllegalArgumentException ( "illegal entries, must be non-null" );
+                throw new AdvancedTypographicTableFormatException ( "illegal entries, must be non-null" );
             } else if ( entries.size() != 5 ) {
-                throw new IllegalArgumentException ( "illegal entries, " + entries.size() + " entries present, but requires 5 entries" );
+                throw new AdvancedTypographicTableFormatException ( "illegal entries, " + entries.size() + " entries present, but requires 5 entries" );
             } else {
                 Object o;
                 if ( ( ( o = entries.get(0) ) == null ) || ! ( o instanceof GlyphClassTable ) ) {
-                    throw new IllegalArgumentException ( "illegal entries, first entry must be an GlyphClassTable, but is: " + ( ( o != null ) ? o.getClass() : null ) );
+                    throw new AdvancedTypographicTableFormatException ( "illegal entries, first entry must be an GlyphClassTable, but is: " + ( ( o != null ) ? o.getClass() : null ) );
                 } else {
                     cdt1 = (GlyphClassTable) o;
                 }
                 if ( ( ( o = entries.get(1) ) == null ) || ! ( o instanceof GlyphClassTable ) ) {
-                    throw new IllegalArgumentException ( "illegal entries, second entry must be an GlyphClassTable, but is: " + ( ( o != null ) ? o.getClass() : null ) );
+                    throw new AdvancedTypographicTableFormatException ( "illegal entries, second entry must be an GlyphClassTable, but is: " + ( ( o != null ) ? o.getClass() : null ) );
                 } else {
                     cdt2 = (GlyphClassTable) o;
                 }
                 if ( ( ( o = entries.get(2) ) == null ) || ! ( o instanceof Integer ) ) {
-                    throw new IllegalArgumentException ( "illegal entries, third entry must be an Integer, but is: " + ( ( o != null ) ? o.getClass() : null ) );
+                    throw new AdvancedTypographicTableFormatException ( "illegal entries, third entry must be an Integer, but is: " + ( ( o != null ) ? o.getClass() : null ) );
                 } else {
                     nc1 = ((Integer)(o)).intValue();
                 }
                 if ( ( ( o = entries.get(3) ) == null ) || ! ( o instanceof Integer ) ) {
-                    throw new IllegalArgumentException ( "illegal entries, fourth entry must be an Integer, but is: " + ( ( o != null ) ? o.getClass() : null ) );
+                    throw new AdvancedTypographicTableFormatException ( "illegal entries, fourth entry must be an Integer, but is: " + ( ( o != null ) ? o.getClass() : null ) );
                 } else {
                     nc2 = ((Integer)(o)).intValue();
                 }
                 if ( ( ( o = entries.get(4) ) == null ) || ! ( o instanceof PairValues[][] ) ) {
-                    throw new IllegalArgumentException ( "illegal entries, fifth entry must be a PairValues[][], but is: " + ( ( o != null ) ? o.getClass() : null ) );
+                    throw new AdvancedTypographicTableFormatException ( "illegal entries, fifth entry must be a PairValues[][], but is: " + ( ( o != null ) ? o.getClass() : null ) );
                 } else {
                     pvm = (PairValues[][]) o;
                 }
@@ -668,15 +668,15 @@ public class GlyphPositioningTable extends GlyphTable {
         }
         private void populate ( List entries ) {
             if ( entries == null ) {
-                throw new IllegalArgumentException ( "illegal entries, must be non-null" );
+                throw new AdvancedTypographicTableFormatException ( "illegal entries, must be non-null" );
             } else if ( entries.size() != 1 ) {
-                throw new IllegalArgumentException ( "illegal entries, " + entries.size() + " entries present, but requires 1 entry" );
+                throw new AdvancedTypographicTableFormatException ( "illegal entries, " + entries.size() + " entries present, but requires 1 entry" );
             } else {
                 Object o;
                 if ( ( ( o = entries.get(0) ) == null ) || ! ( o instanceof Anchor[] ) ) {
-                    throw new IllegalArgumentException ( "illegal entries, first (and only) entry must be a Anchor[], but is: " + ( ( o != null ) ? o.getClass() : null ) );
+                    throw new AdvancedTypographicTableFormatException ( "illegal entries, first (and only) entry must be a Anchor[], but is: " + ( ( o != null ) ? o.getClass() : null ) );
                 } else if ( ( ( (Anchor[]) o ) . length % 2 ) != 0 ) {
-                    throw new IllegalArgumentException ( "illegal entries, Anchor[] array must have an even number of entries, but has: " + ( (Anchor[]) o ) . length );
+                    throw new AdvancedTypographicTableFormatException ( "illegal entries, Anchor[] array must have an even number of entries, but has: " + ( (Anchor[]) o ) . length );
                 } else {
                     aa = (Anchor[]) o;
                 }
@@ -798,28 +798,28 @@ public class GlyphPositioningTable extends GlyphTable {
         }
         private void populate ( List entries ) {
             if ( entries == null ) {
-                throw new IllegalArgumentException ( "illegal entries, must be non-null" );
+                throw new AdvancedTypographicTableFormatException ( "illegal entries, must be non-null" );
             } else if ( entries.size() != 4 ) {
-                throw new IllegalArgumentException ( "illegal entries, " + entries.size() + " entries present, but requires 4 entries" );
+                throw new AdvancedTypographicTableFormatException ( "illegal entries, " + entries.size() + " entries present, but requires 4 entries" );
             } else {
                 Object o;
                 if ( ( ( o = entries.get(0) ) == null ) || ! ( o instanceof GlyphCoverageTable ) ) {
-                    throw new IllegalArgumentException ( "illegal entries, first entry must be an GlyphCoverageTable, but is: " + ( ( o != null ) ? o.getClass() : null ) );
+                    throw new AdvancedTypographicTableFormatException ( "illegal entries, first entry must be an GlyphCoverageTable, but is: " + ( ( o != null ) ? o.getClass() : null ) );
                 } else {
                     bct = (GlyphCoverageTable) o;
                 }
                 if ( ( ( o = entries.get(1) ) == null ) || ! ( o instanceof Integer ) ) {
-                    throw new IllegalArgumentException ( "illegal entries, second entry must be an Integer, but is: " + ( ( o != null ) ? o.getClass() : null ) );
+                    throw new AdvancedTypographicTableFormatException ( "illegal entries, second entry must be an Integer, but is: " + ( ( o != null ) ? o.getClass() : null ) );
                 } else {
                     nmc = ((Integer)(o)).intValue();
                 }
                 if ( ( ( o = entries.get(2) ) == null ) || ! ( o instanceof MarkAnchor[] ) ) {
-                    throw new IllegalArgumentException ( "illegal entries, third entry must be a MarkAnchor[], but is: " + ( ( o != null ) ? o.getClass() : null ) );
+                    throw new AdvancedTypographicTableFormatException ( "illegal entries, third entry must be a MarkAnchor[], but is: " + ( ( o != null ) ? o.getClass() : null ) );
                 } else {
                     maa = (MarkAnchor[]) o;
                 }
                 if ( ( ( o = entries.get(3) ) == null ) || ! ( o instanceof Anchor[][] ) ) {
-                    throw new IllegalArgumentException ( "illegal entries, fourth entry must be a Anchor[][], but is: " + ( ( o != null ) ? o.getClass() : null ) );
+                    throw new AdvancedTypographicTableFormatException ( "illegal entries, fourth entry must be a Anchor[][], but is: " + ( ( o != null ) ? o.getClass() : null ) );
                 } else {
                     bam = (Anchor[][]) o;
                 }
@@ -951,33 +951,33 @@ public class GlyphPositioningTable extends GlyphTable {
         }
         private void populate ( List entries ) {
             if ( entries == null ) {
-                throw new IllegalArgumentException ( "illegal entries, must be non-null" );
+                throw new AdvancedTypographicTableFormatException ( "illegal entries, must be non-null" );
             } else if ( entries.size() != 5 ) {
-                throw new IllegalArgumentException ( "illegal entries, " + entries.size() + " entries present, but requires 5 entries" );
+                throw new AdvancedTypographicTableFormatException ( "illegal entries, " + entries.size() + " entries present, but requires 5 entries" );
             } else {
                 Object o;
                 if ( ( ( o = entries.get(0) ) == null ) || ! ( o instanceof GlyphCoverageTable ) ) {
-                    throw new IllegalArgumentException ( "illegal entries, first entry must be an GlyphCoverageTable, but is: " + ( ( o != null ) ? o.getClass() : null ) );
+                    throw new AdvancedTypographicTableFormatException ( "illegal entries, first entry must be an GlyphCoverageTable, but is: " + ( ( o != null ) ? o.getClass() : null ) );
                 } else {
                     lct = (GlyphCoverageTable) o;
                 }
                 if ( ( ( o = entries.get(1) ) == null ) || ! ( o instanceof Integer ) ) {
-                    throw new IllegalArgumentException ( "illegal entries, second entry must be an Integer, but is: " + ( ( o != null ) ? o.getClass() : null ) );
+                    throw new AdvancedTypographicTableFormatException ( "illegal entries, second entry must be an Integer, but is: " + ( ( o != null ) ? o.getClass() : null ) );
                 } else {
                     nmc = ((Integer)(o)).intValue();
                 }
                 if ( ( ( o = entries.get(2) ) == null ) || ! ( o instanceof Integer ) ) {
-                    throw new IllegalArgumentException ( "illegal entries, third entry must be an Integer, but is: " + ( ( o != null ) ? o.getClass() : null ) );
+                    throw new AdvancedTypographicTableFormatException ( "illegal entries, third entry must be an Integer, but is: " + ( ( o != null ) ? o.getClass() : null ) );
                 } else {
                     mxc = ((Integer)(o)).intValue();
                 }
                 if ( ( ( o = entries.get(3) ) == null ) || ! ( o instanceof MarkAnchor[] ) ) {
-                    throw new IllegalArgumentException ( "illegal entries, fourth entry must be a MarkAnchor[], but is: " + ( ( o != null ) ? o.getClass() : null ) );
+                    throw new AdvancedTypographicTableFormatException ( "illegal entries, fourth entry must be a MarkAnchor[], but is: " + ( ( o != null ) ? o.getClass() : null ) );
                 } else {
                     maa = (MarkAnchor[]) o;
                 }
                 if ( ( ( o = entries.get(4) ) == null ) || ! ( o instanceof Anchor[][][] ) ) {
-                    throw new IllegalArgumentException ( "illegal entries, fifth entry must be a Anchor[][][], but is: " + ( ( o != null ) ? o.getClass() : null ) );
+                    throw new AdvancedTypographicTableFormatException ( "illegal entries, fifth entry must be a Anchor[][][], but is: " + ( ( o != null ) ? o.getClass() : null ) );
                 } else {
                     lam = (Anchor[][][]) o;
                 }
@@ -1086,28 +1086,28 @@ public class GlyphPositioningTable extends GlyphTable {
         }
         private void populate ( List entries ) {
             if ( entries == null ) {
-                throw new IllegalArgumentException ( "illegal entries, must be non-null" );
+                throw new AdvancedTypographicTableFormatException ( "illegal entries, must be non-null" );
             } else if ( entries.size() != 4 ) {
-                throw new IllegalArgumentException ( "illegal entries, " + entries.size() + " entries present, but requires 4 entries" );
+                throw new AdvancedTypographicTableFormatException ( "illegal entries, " + entries.size() + " entries present, but requires 4 entries" );
             } else {
                 Object o;
                 if ( ( ( o = entries.get(0) ) == null ) || ! ( o instanceof GlyphCoverageTable ) ) {
-                    throw new IllegalArgumentException ( "illegal entries, first entry must be an GlyphCoverageTable, but is: " + ( ( o != null ) ? o.getClass() : null ) );
+                    throw new AdvancedTypographicTableFormatException ( "illegal entries, first entry must be an GlyphCoverageTable, but is: " + ( ( o != null ) ? o.getClass() : null ) );
                 } else {
                     mct2 = (GlyphCoverageTable) o;
                 }
                 if ( ( ( o = entries.get(1) ) == null ) || ! ( o instanceof Integer ) ) {
-                    throw new IllegalArgumentException ( "illegal entries, second entry must be an Integer, but is: " + ( ( o != null ) ? o.getClass() : null ) );
+                    throw new AdvancedTypographicTableFormatException ( "illegal entries, second entry must be an Integer, but is: " + ( ( o != null ) ? o.getClass() : null ) );
                 } else {
                     nmc = ((Integer)(o)).intValue();
                 }
                 if ( ( ( o = entries.get(2) ) == null ) || ! ( o instanceof MarkAnchor[] ) ) {
-                    throw new IllegalArgumentException ( "illegal entries, third entry must be a MarkAnchor[], but is: " + ( ( o != null ) ? o.getClass() : null ) );
+                    throw new AdvancedTypographicTableFormatException ( "illegal entries, third entry must be a MarkAnchor[], but is: " + ( ( o != null ) ? o.getClass() : null ) );
                 } else {
                     maa = (MarkAnchor[]) o;
                 }
                 if ( ( ( o = entries.get(3) ) == null ) || ! ( o instanceof Anchor[][] ) ) {
-                    throw new IllegalArgumentException ( "illegal entries, fourth entry must be a Anchor[][], but is: " + ( ( o != null ) ? o.getClass() : null ) );
+                    throw new AdvancedTypographicTableFormatException ( "illegal entries, fourth entry must be a Anchor[][], but is: " + ( ( o != null ) ? o.getClass() : null ) );
                 } else {
                     mam = (Anchor[][]) o;
                 }
@@ -1234,13 +1234,13 @@ public class GlyphPositioningTable extends GlyphTable {
         }
         private void populate ( List entries ) {
             if ( entries == null ) {
-                throw new IllegalArgumentException ( "illegal entries, must be non-null" );
+                throw new AdvancedTypographicTableFormatException ( "illegal entries, must be non-null" );
             } else if ( entries.size() != 1 ) {
-                throw new IllegalArgumentException ( "illegal entries, " + entries.size() + " entries present, but requires 1 entry" );
+                throw new AdvancedTypographicTableFormatException ( "illegal entries, " + entries.size() + " entries present, but requires 1 entry" );
             } else {
                 Object o;
                 if ( ( ( o = entries.get(0) ) == null ) || ! ( o instanceof RuleSet[] ) ) {
-                    throw new IllegalArgumentException ( "illegal entries, first entry must be an RuleSet[], but is: " + ( ( o != null ) ? o.getClass() : null ) );
+                    throw new AdvancedTypographicTableFormatException ( "illegal entries, first entry must be an RuleSet[], but is: " + ( ( o != null ) ? o.getClass() : null ) );
                 } else {
                     rsa = (RuleSet[]) o;
                 }
@@ -1327,27 +1327,27 @@ public class GlyphPositioningTable extends GlyphTable {
         }
         private void populate ( List entries ) {
             if ( entries == null ) {
-                throw new IllegalArgumentException ( "illegal entries, must be non-null" );
+                throw new AdvancedTypographicTableFormatException ( "illegal entries, must be non-null" );
             } else if ( entries.size() != 3 ) {
-                throw new IllegalArgumentException ( "illegal entries, " + entries.size() + " entries present, but requires 3 entries" );
+                throw new AdvancedTypographicTableFormatException ( "illegal entries, " + entries.size() + " entries present, but requires 3 entries" );
             } else {
                 Object o;
                 if ( ( ( o = entries.get(0) ) == null ) || ! ( o instanceof GlyphClassTable ) ) {
-                    throw new IllegalArgumentException ( "illegal entries, first entry must be an GlyphClassTable, but is: " + ( ( o != null ) ? o.getClass() : null ) );
+                    throw new AdvancedTypographicTableFormatException ( "illegal entries, first entry must be an GlyphClassTable, but is: " + ( ( o != null ) ? o.getClass() : null ) );
                 } else {
                     cdt = (GlyphClassTable) o;
                 }
                 if ( ( ( o = entries.get(1) ) == null ) || ! ( o instanceof Integer ) ) {
-                    throw new IllegalArgumentException ( "illegal entries, second entry must be an Integer, but is: " + ( ( o != null ) ? o.getClass() : null ) );
+                    throw new AdvancedTypographicTableFormatException ( "illegal entries, second entry must be an Integer, but is: " + ( ( o != null ) ? o.getClass() : null ) );
                 } else {
                     ngc = ((Integer)(o)).intValue();
                 }
                 if ( ( ( o = entries.get(2) ) == null ) || ! ( o instanceof RuleSet[] ) ) {
-                    throw new IllegalArgumentException ( "illegal entries, third entry must be an RuleSet[], but is: " + ( ( o != null ) ? o.getClass() : null ) );
+                    throw new AdvancedTypographicTableFormatException ( "illegal entries, third entry must be an RuleSet[], but is: " + ( ( o != null ) ? o.getClass() : null ) );
                 } else {
                     rsa = (RuleSet[]) o;
                     if ( rsa.length != ngc ) {
-                        throw new IllegalArgumentException ( "illegal entries, RuleSet[] length is " + rsa.length + ", but expected " + ngc + " glyph classes" );
+                        throw new AdvancedTypographicTableFormatException ( "illegal entries, RuleSet[] length is " + rsa.length + ", but expected " + ngc + " glyph classes" );
                     }
                 }
             }
@@ -1427,13 +1427,13 @@ public class GlyphPositioningTable extends GlyphTable {
         }
         private void populate ( List entries ) {
             if ( entries == null ) {
-                throw new IllegalArgumentException ( "illegal entries, must be non-null" );
+                throw new AdvancedTypographicTableFormatException ( "illegal entries, must be non-null" );
             } else if ( entries.size() != 1 ) {
-                throw new IllegalArgumentException ( "illegal entries, " + entries.size() + " entries present, but requires 1 entry" );
+                throw new AdvancedTypographicTableFormatException ( "illegal entries, " + entries.size() + " entries present, but requires 1 entry" );
             } else {
                 Object o;
                 if ( ( ( o = entries.get(0) ) == null ) || ! ( o instanceof RuleSet[] ) ) {
-                    throw new IllegalArgumentException ( "illegal entries, first entry must be an RuleSet[], but is: " + ( ( o != null ) ? o.getClass() : null ) );
+                    throw new AdvancedTypographicTableFormatException ( "illegal entries, first entry must be an RuleSet[], but is: " + ( ( o != null ) ? o.getClass() : null ) );
                 } else {
                     rsa = (RuleSet[]) o;
                 }
@@ -1546,13 +1546,13 @@ public class GlyphPositioningTable extends GlyphTable {
         }
         private void populate ( List entries ) {
             if ( entries == null ) {
-                throw new IllegalArgumentException ( "illegal entries, must be non-null" );
+                throw new AdvancedTypographicTableFormatException ( "illegal entries, must be non-null" );
             } else if ( entries.size() != 1 ) {
-                throw new IllegalArgumentException ( "illegal entries, " + entries.size() + " entries present, but requires 1 entry" );
+                throw new AdvancedTypographicTableFormatException ( "illegal entries, " + entries.size() + " entries present, but requires 1 entry" );
             } else {
                 Object o;
                 if ( ( ( o = entries.get(0) ) == null ) || ! ( o instanceof RuleSet[] ) ) {
-                    throw new IllegalArgumentException ( "illegal entries, first entry must be an RuleSet[], but is: " + ( ( o != null ) ? o.getClass() : null ) );
+                    throw new AdvancedTypographicTableFormatException ( "illegal entries, first entry must be an RuleSet[], but is: " + ( ( o != null ) ? o.getClass() : null ) );
                 } else {
                     rsa = (RuleSet[]) o;
                 }
@@ -1622,37 +1622,37 @@ public class GlyphPositioningTable extends GlyphTable {
         }
         private void populate ( List entries ) {
             if ( entries == null ) {
-                throw new IllegalArgumentException ( "illegal entries, must be non-null" );
+                throw new AdvancedTypographicTableFormatException ( "illegal entries, must be non-null" );
             } else if ( entries.size() != 5 ) {
-                throw new IllegalArgumentException ( "illegal entries, " + entries.size() + " entries present, but requires 5 entries" );
+                throw new AdvancedTypographicTableFormatException ( "illegal entries, " + entries.size() + " entries present, but requires 5 entries" );
             } else {
                 Object o;
                 if ( ( ( o = entries.get(0) ) == null ) || ! ( o instanceof GlyphClassTable ) ) {
-                    throw new IllegalArgumentException ( "illegal entries, first entry must be an GlyphClassTable, but is: " + ( ( o != null ) ? o.getClass() : null ) );
+                    throw new AdvancedTypographicTableFormatException ( "illegal entries, first entry must be an GlyphClassTable, but is: " + ( ( o != null ) ? o.getClass() : null ) );
                 } else {
                     icdt = (GlyphClassTable) o;
                 }
                 if ( ( ( o = entries.get(1) ) != null ) && ! ( o instanceof GlyphClassTable ) ) {
-                    throw new IllegalArgumentException ( "illegal entries, second entry must be an GlyphClassTable, but is: " + o.getClass() );
+                    throw new AdvancedTypographicTableFormatException ( "illegal entries, second entry must be an GlyphClassTable, but is: " + o.getClass() );
                 } else {
                     bcdt = (GlyphClassTable) o;
                 }
                 if ( ( ( o = entries.get(2) ) != null ) && ! ( o instanceof GlyphClassTable ) ) {
-                    throw new IllegalArgumentException ( "illegal entries, third entry must be an GlyphClassTable, but is: " + o.getClass() );
+                    throw new AdvancedTypographicTableFormatException ( "illegal entries, third entry must be an GlyphClassTable, but is: " + o.getClass() );
                 } else {
                     lcdt = (GlyphClassTable) o;
                 }
                 if ( ( ( o = entries.get(3) ) == null ) || ! ( o instanceof Integer ) ) {
-                    throw new IllegalArgumentException ( "illegal entries, fourth entry must be an Integer, but is: " + ( ( o != null ) ? o.getClass() : null ) );
+                    throw new AdvancedTypographicTableFormatException ( "illegal entries, fourth entry must be an Integer, but is: " + ( ( o != null ) ? o.getClass() : null ) );
                 } else {
                     ngc = ((Integer)(o)).intValue();
                 }
                 if ( ( ( o = entries.get(4) ) == null ) || ! ( o instanceof RuleSet[] ) ) {
-                    throw new IllegalArgumentException ( "illegal entries, fifth entry must be an RuleSet[], but is: " + ( ( o != null ) ? o.getClass() : null ) );
+                    throw new AdvancedTypographicTableFormatException ( "illegal entries, fifth entry must be an RuleSet[], but is: " + ( ( o != null ) ? o.getClass() : null ) );
                 } else {
                     rsa = (RuleSet[]) o;
                     if ( rsa.length != ngc ) {
-                        throw new IllegalArgumentException ( "illegal entries, RuleSet[] length is " + rsa.length + ", but expected " + ngc + " glyph classes" );
+                        throw new AdvancedTypographicTableFormatException ( "illegal entries, RuleSet[] length is " + rsa.length + ", but expected " + ngc + " glyph classes" );
                     }
                 }
             }
@@ -1713,13 +1713,13 @@ public class GlyphPositioningTable extends GlyphTable {
         }
         private void populate ( List entries ) {
             if ( entries == null ) {
-                throw new IllegalArgumentException ( "illegal entries, must be non-null" );
+                throw new AdvancedTypographicTableFormatException ( "illegal entries, must be non-null" );
             } else if ( entries.size() != 1 ) {
-                throw new IllegalArgumentException ( "illegal entries, " + entries.size() + " entries present, but requires 1 entry" );
+                throw new AdvancedTypographicTableFormatException ( "illegal entries, " + entries.size() + " entries present, but requires 1 entry" );
             } else {
                 Object o;
                 if ( ( ( o = entries.get(0) ) == null ) || ! ( o instanceof RuleSet[] ) ) {
-                    throw new IllegalArgumentException ( "illegal entries, first entry must be an RuleSet[], but is: " + ( ( o != null ) ? o.getClass() : null ) );
+                    throw new AdvancedTypographicTableFormatException ( "illegal entries, first entry must be an RuleSet[], but is: " + ( ( o != null ) ? o.getClass() : null ) );
                 } else {
                     rsa = (RuleSet[]) o;
                 }

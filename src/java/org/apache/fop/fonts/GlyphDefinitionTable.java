@@ -77,14 +77,14 @@ public class GlyphDefinitionTable extends GlyphTable {
     public GlyphDefinitionTable ( List subtables ) {
         super ( null, new HashMap(0) );
         if ( ( subtables == null ) || ( subtables.size() == 0 ) ) {
-            throw new IllegalArgumentException ( "subtables must be non-empty" );
+            throw new AdvancedTypographicTableFormatException ( "subtables must be non-empty" );
         } else {
             for ( Iterator it = subtables.iterator(); it.hasNext();) {
                 Object o = it.next();
                 if ( o instanceof GlyphDefinitionSubtable ) {
                     addSubtable ( (GlyphSubtable) o );
                 } else {
-                    throw new IllegalArgumentException ( "subtable must be a glyph definition subtable" );
+                    throw new AdvancedTypographicTableFormatException ( "subtable must be a glyph definition subtable" );
                 }
             }
             freezeSubtables();

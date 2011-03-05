@@ -75,9 +75,9 @@ public abstract class GlyphSubtable implements Comparable {
     protected GlyphSubtable ( String lookupId, int sequence, int flags, int format, GlyphMappingTable mapping )
     {
         if ( ( lookupId == null ) || ( lookupId.length() == 0 ) ) {
-            throw new IllegalArgumentException ( "invalid lookup identifier, must be non-empty string" );
+            throw new AdvancedTypographicTableFormatException ( "invalid lookup identifier, must be non-empty string" );
         } else if ( mapping == null ) {
-            throw new IllegalArgumentException ( "invalid mapping table, must not be null" );
+            throw new AdvancedTypographicTableFormatException ( "invalid mapping table, must not be null" );
         } else {
             this.lookupId = lookupId;
             this.sequence = sequence;

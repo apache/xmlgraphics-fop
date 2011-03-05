@@ -80,9 +80,9 @@ public class GlyphTable {
      */
     public GlyphTable ( GlyphTable gdef, Map/*<LookupSpec,List<String>>*/ lookups ) {
         if ( ( gdef != null ) && ! ( gdef instanceof GlyphDefinitionTable ) ) {
-            throw new IllegalArgumentException ( "bad glyph definition table" );
+            throw new AdvancedTypographicTableFormatException ( "bad glyph definition table" );
         } else if ( lookups == null ) {
-            throw new IllegalArgumentException ( "lookups must be non-null map" );
+            throw new AdvancedTypographicTableFormatException ( "lookups must be non-null map" );
         } else {
             this.gdef = gdef;
             this.lookups = lookups;
@@ -325,17 +325,17 @@ public class GlyphTable {
          */
         public LookupSpec ( String script, String language, String feature ) {
             if ( ( script == null ) || ( script.length() == 0 ) ) {
-                throw new IllegalArgumentException ( "script must be non-empty string" );
+                throw new AdvancedTypographicTableFormatException ( "script must be non-empty string" );
             } else if ( ( language == null ) || ( language.length() == 0 ) ) {
-                throw new IllegalArgumentException ( "language must be non-empty string" );
+                throw new AdvancedTypographicTableFormatException ( "language must be non-empty string" );
             } else if ( ( feature == null ) || ( feature.length() == 0 ) ) {
-                throw new IllegalArgumentException ( "feature must be non-empty string" );
+                throw new AdvancedTypographicTableFormatException ( "feature must be non-empty string" );
             } else if ( script.equals("*") ) {
-                throw new IllegalArgumentException ( "script must not be wildcard" );
+                throw new AdvancedTypographicTableFormatException ( "script must not be wildcard" );
             } else if ( language.equals("*") ) {
-                throw new IllegalArgumentException ( "language must not be wildcard" );
+                throw new AdvancedTypographicTableFormatException ( "language must not be wildcard" );
             } else if ( feature.equals("*") ) {
-                throw new IllegalArgumentException ( "feature must not be wildcard" );
+                throw new AdvancedTypographicTableFormatException ( "feature must not be wildcard" );
             } else {
                 this.script = script;
                 this.language = language;
@@ -516,18 +516,18 @@ public class GlyphTable {
 
         private void validateSubtable ( GlyphSubtable subtable ) {
             if ( subtable == null ) {
-                throw new IllegalArgumentException ( "subtable must be non-null" );
+                throw new AdvancedTypographicTableFormatException ( "subtable must be non-null" );
             }
             if ( subtable instanceof GlyphSubstitutionSubtable ) {
                 if ( doesPos ) {
-                    throw new IllegalArgumentException ( "subtable must be positioning subtable, but is: " + subtable );
+                    throw new AdvancedTypographicTableFormatException ( "subtable must be positioning subtable, but is: " + subtable );
                 } else {
                     doesSub = true;
                 }
             }
             if ( subtable instanceof GlyphPositioningSubtable ) {
                 if ( doesSub ) {
-                    throw new IllegalArgumentException ( "subtable must be substitution subtable, but is: " + subtable );
+                    throw new AdvancedTypographicTableFormatException ( "subtable must be substitution subtable, but is: " + subtable );
                 } else {
                     doesPos = true;
                 }
@@ -535,7 +535,7 @@ public class GlyphTable {
             if ( subtables.size() > 0 ) {
                 GlyphSubtable st = (GlyphSubtable) subtables.get(0);
                 if ( ! st.isCompatible ( subtable ) ) {
-                    throw new IllegalArgumentException ( "subtable " + subtable + " is not compatible with subtable " + st );
+                    throw new AdvancedTypographicTableFormatException ( "subtable " + subtable + " is not compatible with subtable " + st );
                 }
             }
         }
@@ -1200,12 +1200,12 @@ public class GlyphTable {
         /**
          * Instantiate a Rule Set.
          * @param rules the rules
-         * @throws IllegalArgumentException if rules or some element of rules is null
+         * @throws AdvancedTypographicTableFormatException if rules or some element of rules is null
          */
-        public RuleSet ( Rule[] rules ) throws IllegalArgumentException {
+        public RuleSet ( Rule[] rules ) throws AdvancedTypographicTableFormatException {
             // enforce rules array instance
             if ( rules == null ) {
-                throw new IllegalArgumentException ( "rules[] is null" );
+                throw new AdvancedTypographicTableFormatException ( "rules[] is null" );
             }
             this.rules = rules;
         }
@@ -1246,9 +1246,9 @@ public class GlyphTable {
         /**
          * Instantiate a Homogeneous Rule Set.
          * @param rules the rules
-         * @throws IllegalArgumentException if some rule[i] is not an instance of rule[0]
+         * @throws AdvancedTypographicTableFormatException if some rule[i] is not an instance of rule[0]
          */
-        public HomogeneousRuleSet ( Rule[] rules ) throws IllegalArgumentException {
+        public HomogeneousRuleSet ( Rule[] rules ) throws AdvancedTypographicTableFormatException {
             super ( rules );
             // find first non-null rule
             Rule r0 = null;
@@ -1263,7 +1263,7 @@ public class GlyphTable {
                 for ( int i = 1, n = rules.length; i < n; i++ ) {
                     Rule r = rules[i];
                     if ( ( r != null ) && ! c.isInstance ( r ) ) {
-                        throw new IllegalArgumentException ( "rules[" + i + "] is not an instance of " + c.getName() );
+                        throw new AdvancedTypographicTableFormatException ( "rules[" + i + "] is not an instance of " + c.getName() );
                     }
                 }
             }

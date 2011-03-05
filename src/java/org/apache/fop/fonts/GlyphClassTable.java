@@ -199,7 +199,7 @@ public final class GlyphClassTable extends GlyphMappingTable implements GlyphCla
                 if ( o instanceof Integer ) {
                     firstGlyph = ( (Integer) o ) . intValue();
                 } else {
-                    throw new IllegalArgumentException ( "illegal entry, first entry must be Integer denoting first glyph value, but is: " + o );
+                    throw new AdvancedTypographicTableFormatException ( "illegal entry, first entry must be Integer denoting first glyph value, but is: " + o );
                 }
             }
             // extract glyph class array
@@ -214,7 +214,7 @@ public final class GlyphClassTable extends GlyphMappingTable implements GlyphCla
                         gcMax = gc;
                     }
                 } else {
-                    throw new IllegalArgumentException ( "illegal mapping entry, must be Integer: " + o );
+                    throw new AdvancedTypographicTableFormatException ( "illegal mapping entry, must be Integer: " + o );
                 }
             }
             assert i == n;

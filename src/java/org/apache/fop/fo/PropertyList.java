@@ -306,9 +306,9 @@ public abstract class PropertyList {
             addAttributeToList(attributes, "font-size");
         }
 
+        String attributeNS;
         String attributeName;
         String attributeValue;
-        String attributeNS;
         FopFactory factory = getFObj().getUserAgent().getFactory();
         for (int i = 0; i < attributes.getLength(); i++) {
             /* convert all attributes with the same namespace as the fo element

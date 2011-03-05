@@ -12,7 +12,10 @@
   </Match>
   <Match>
     <Class name="org.apache.fop.fo.FOText"/>
-    <Method name="getBidiLevels"/>
+    <Or>
+      <Method name="getBidiLevels"/>
+      <Method name="getMappingBidiLevels"/>
+    </Or>
     <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
   </Match>
   <Match>

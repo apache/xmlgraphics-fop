@@ -62,7 +62,6 @@ class NamedColorFunction extends FunctionBase {
             pe.setPropertyInfo(pInfo);
             throw pe;
         }
-        String src = (cp != null ? cp.getSrc() : "");
 
         float red = 0, green = 0, blue = 0;
         red = args[0].getNumber().floatValue();
@@ -85,7 +84,7 @@ class NamedColorFunction extends FunctionBase {
         sb.append(',').append(green / 255f);
         sb.append(',').append(blue / 255f);
         sb.append(',').append(colorProfileName);
-        sb.append(',').append(src);
+        sb.append(',').append(cp.getSrc());
         sb.append(", '").append(colorName).append('\'');
         sb.append(")");
 
