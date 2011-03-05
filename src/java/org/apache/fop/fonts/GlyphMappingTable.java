@@ -191,15 +191,15 @@ public class GlyphMappingTable {
                     int ge = r.getEnd();
                     int mi = r.getIndex();
                     if ( ( gs < 0 ) || ( gs > 65535 ) ) {
-                        throw new IllegalArgumentException ( "illegal glyph range: [" + gs + "," + ge + "]: bad start index" );
+                        throw new AdvancedTypographicTableFormatException ( "illegal glyph range: [" + gs + "," + ge + "]: bad start index" );
                     } else if ( ( ge < 0 ) || ( ge > 65535 ) ) {
-                        throw new IllegalArgumentException ( "illegal glyph range: [" + gs + "," + ge + "]: bad end index" );
+                        throw new AdvancedTypographicTableFormatException ( "illegal glyph range: [" + gs + "," + ge + "]: bad end index" );
                     } else if ( gs > ge ) {
-                        throw new IllegalArgumentException ( "illegal glyph range: [" + gs + "," + ge + "]: start index exceeds end index" );
+                        throw new AdvancedTypographicTableFormatException ( "illegal glyph range: [" + gs + "," + ge + "]: start index exceeds end index" );
                     } else if ( gs < gidMax ) {
-                        throw new IllegalArgumentException ( "out of order glyph range: [" + gs + "," + ge + "]" );
+                        throw new AdvancedTypographicTableFormatException ( "out of order glyph range: [" + gs + "," + ge + "]" );
                     } else if ( mi < 0 ) {
-                        throw new IllegalArgumentException ( "illegal mapping index: " + mi );
+                        throw new AdvancedTypographicTableFormatException ( "illegal mapping index: " + mi );
                     } else {
                         int miLast;
                         sa [ i ] = gs;
@@ -211,7 +211,7 @@ public class GlyphMappingTable {
                         i++;
                     }
                 } else {
-                    throw new IllegalArgumentException ( "illegal mapping entry, must be Integer: " + o );
+                    throw new AdvancedTypographicTableFormatException ( "illegal mapping entry, must be Integer: " + o );
                 }
             }
             assert i == n;
@@ -267,9 +267,9 @@ public class GlyphMappingTable {
          */
         public MappingRange ( int gidStart, int gidEnd, int index ) {
             if ( ( gidStart < 0 ) || ( gidEnd < 0 ) || ( index < 0 ) ) {
-                throw new IllegalArgumentException();
+                throw new AdvancedTypographicTableFormatException();
             } else if ( gidStart > gidEnd ) {
-                throw new IllegalArgumentException();
+                throw new AdvancedTypographicTableFormatException();
             } else {
                 this.gidStart = gidStart;
                 this.gidEnd = gidEnd;

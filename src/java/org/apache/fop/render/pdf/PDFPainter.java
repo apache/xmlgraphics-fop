@@ -412,7 +412,7 @@ public class PDFPainter extends AbstractIFPainter {
             double      xoLast          = 0f;
             double      yoLast          = 0f;
             tu.writeTextMatrix ( new AffineTransform ( 1, 0, 0, -1, x / 1000f, y / 1000f ) );
-            tu.writeTf ( fk, fsPoints );
+            tu.updateTf ( fk, fsPoints, true );
             for ( int i = 0, n = text.length(); i < n; i++ ) {
                 char    ch              = text.charAt ( i );
                 int[]   pa              = ( i < dp.length ) ? dp [ i ] : paZero;

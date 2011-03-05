@@ -31,6 +31,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.xmlgraphics.fonts.Glyphs;
 
+import org.apache.fop.fonts.AdvancedTypographicTableFormatException;
 import org.apache.fop.fonts.FontUtil;
 import org.apache.fop.fonts.GlyphClassTable;
 import org.apache.fop.fonts.GlyphCoverageTable;
@@ -626,9 +627,20 @@ public class TTFFile {
         createCMaps();
 
         readKerning(in);
-        readGDEF(in);
-        readGSUB(in);
-        readGPOS(in);
+
+        // Read advanced typographic tables. If any format exception,
+        // reset (thus ignoring) all advanced typographic tables.
+        try {
+            readGDEF(in);
+            readGSUB(in);
+            readGPOS(in);
+        } catch ( AdvancedTypographicTableFormatException e ) {
+            resetATStateAll();
+            log.warn ( "Encountered format constraint violation in advanced (typographic) table (AT) "
+                       + "in font '" + getFullName() + "', ignoring AT data: "
+                       + e.getMessage() );
+        }
+
         guessVerticalMetricsFromGlyphBBox();
         return true;
     }
@@ -658,7 +670,7 @@ public class TTFFile {
         for ( int i = 0, n = numberOfGlyphs; i < n; i++ ) {
             Integer uc = glyphToUnicode ( i );
             if ( uc == null ) {
-                while ( ( nextPrivateUse < 0xF900 ) && ( unicodeToGlyphMap.get(new Integer(nextPrivateUse)) != null ) ) {
+                while ( ( nextPrivateUse < 0xF900 ) && ( unicodeToGlyphMap.get(Integer.valueOf(nextPrivateUse)) != null ) ) {
                     nextPrivateUse++;
                 }
                 if ( nextPrivateUse < 0xF900 ) {
@@ -1823,11 +1835,11 @@ public class TTFFile {
     }
 
     /**
-     * Determine if script extension is present.
-     * @return true if script extension is present
+     * Determine if advanced (typographic) table is present.
+     * @return true if advanced (typographic) table is present
      */
-    public boolean hasScriptExtension() {
-        return ( gsub != null ) || ( gpos != null );
+    public boolean hasAdvancedTable() {
+        return ( gdef != null ) || ( gsub != null ) || ( gpos != null );
     }
 
     /**
@@ -2147,7 +2159,7 @@ public class TTFFile {
         } else if ( cf == 2 ) {
             gct = readCoverageTableFormat2 ( in, label, tableOffset, cf );
         } else {
-            throw new UnsupportedOperationException ( "unsupported coverage table format: " + cf );
+            throw new AdvancedTypographicTableFormatException ( "unsupported coverage table format: " + cf );
         }
         in.seekSet ( cp );
         return gct;
@@ -2211,7 +2223,7 @@ public class TTFFile {
         } else if ( cf == 2 ) {
             gct = readClassDefTableFormat2 ( in, label, tableOffset, cf );
         } else {
-            throw new UnsupportedOperationException ( "unsupported class definition table format: " + cf );
+            throw new AdvancedTypographicTableFormatException ( "unsupported class definition table format: " + cf );
         }
         in.seekSet ( cp );
         return gct;
@@ -2275,7 +2287,7 @@ public class TTFFile {
         } else if ( sf == 2 ) {
             readSingleSubTableFormat2 ( in, lookupType, lookupFlags, subtableOffset, sf );
         } else {
-            throw new UnsupportedOperationException ( "unsupported single substitution subtable format: " + sf );
+            throw new AdvancedTypographicTableFormatException ( "unsupported single substitution subtable format: " + sf );
         }
         return sf;
     }
@@ -2333,7 +2345,7 @@ public class TTFFile {
         if ( sf == 1 ) {
             readMultipleSubTableFormat1 ( in, lookupType, lookupFlags, subtableOffset, sf );
         } else {
-            throw new UnsupportedOperationException ( "unsupported multiple substitution subtable format: " + sf );
+            throw new AdvancedTypographicTableFormatException ( "unsupported multiple substitution subtable format: " + sf );
         }
         return sf;
     }
@@ -2385,7 +2397,7 @@ public class TTFFile {
         if ( sf == 1 ) {
             readAlternateSubTableFormat1 ( in, lookupType, lookupFlags, subtableOffset, sf );
         } else {
-            throw new UnsupportedOperationException ( "unsupported alternate substitution subtable format: " + sf );
+            throw new AdvancedTypographicTableFormatException ( "unsupported alternate substitution subtable format: " + sf );
         }
         return sf;
     }
@@ -2451,7 +2463,7 @@ public class TTFFile {
         if ( sf == 1 ) {
             readLigatureSubTableFormat1 ( in, lookupType, lookupFlags, subtableOffset, sf );
         } else {
-            throw new UnsupportedOperationException ( "unsupported ligature substitution subtable format: " + sf );
+            throw new AdvancedTypographicTableFormatException ( "unsupported ligature substitution subtable format: " + sf );
         }
         return sf;
     }
@@ -2714,7 +2726,7 @@ public class TTFFile {
         } else if ( sf == 3 ) {
             readContextualSubTableFormat3 ( in, lookupType, lookupFlags, subtableOffset, sf );
         } else {
-            throw new UnsupportedOperationException ( "unsupported contextual substitution subtable format: " + sf );
+            throw new AdvancedTypographicTableFormatException ( "unsupported contextual substitution subtable format: " + sf );
         }
         return sf;
     }
@@ -3056,7 +3068,7 @@ public class TTFFile {
         } else if ( sf == 3 ) {
             readChainedContextualSubTableFormat3 ( in, lookupType, lookupFlags, subtableOffset, sf );
         } else {
-            throw new UnsupportedOperationException ( "unsupported chained contextual substitution subtable format: " + sf );
+            throw new AdvancedTypographicTableFormatException ( "unsupported chained contextual substitution subtable format: " + sf );
         }
         return sf;
     }
@@ -3087,7 +3099,7 @@ public class TTFFile {
         if ( sf == 1 ) {
             readExtensionSubTableFormat1 ( in, lookupType, lookupFlags, lookupSequence, subtableSequence, subtableOffset, sf );
         } else {
-            throw new UnsupportedOperationException ( "unsupported extension substitution subtable format: " + sf );
+            throw new AdvancedTypographicTableFormatException ( "unsupported extension substitution subtable format: " + sf );
         }
         return sf;
     }
@@ -3174,13 +3186,13 @@ public class TTFFile {
         if ( sf == 1 ) {
             readReverseChainedSingleSubTableFormat1 ( in, lookupType, lookupFlags, subtableOffset, sf );
         } else {
-            throw new UnsupportedOperationException ( "unsupported reverse chained single substitution subtable format: " + sf );
+            throw new AdvancedTypographicTableFormatException ( "unsupported reverse chained single substitution subtable format: " + sf );
         }
         return sf;
     }
 
     private void readGSUBSubtable(FontFileReader in, int lookupType, int lookupFlags, int lookupSequence, int subtableSequence, long subtableOffset) throws IOException {
-        initSESubState();
+        initATSubState();
         int subtableFormat = -1;
         switch ( lookupType ) {
         case GSUBLookupType.SINGLE:
@@ -3211,7 +3223,7 @@ public class TTFFile {
             break;
         }
         extractSESubState ( GlyphTable.GLYPH_TABLE_TYPE_SUBSTITUTION, lookupType, lookupFlags, lookupSequence, subtableSequence, subtableFormat );
-        resetSESubState();
+        resetATSubState();
     }
 
     private GlyphPositioningTable.DeviceTable readPosDeviceTable(FontFileReader in, long subtableOffset, long deviceTableOffset) throws IOException {
@@ -3234,7 +3246,7 @@ public class TTFFile {
         } else if ( df == 3 ) {
             s1 = 8; m1 = 0xFF; dm = 127; dd = 256; s2 = 8;
         } else {
-            throw new UnsupportedOperationException ( "unsupported device table delta format: " + df );
+            throw new AdvancedTypographicTableFormatException ( "unsupported device table delta format: " + df );
         }
         for ( int i = 0; ( i < n ) && ( s2 > 0 );) {
             int p = in.readTTFUShort();
@@ -3385,7 +3397,7 @@ public class TTFFile {
         } else if ( sf == 2 ) {
             readSinglePosTableFormat2 ( in, lookupType, lookupFlags, subtableOffset, sf );
         } else {
-            throw new UnsupportedOperationException ( "unsupported single positioning subtable format: " + sf );
+            throw new AdvancedTypographicTableFormatException ( "unsupported single positioning subtable format: " + sf );
         }
         return sf;
     }
@@ -3539,7 +3551,7 @@ public class TTFFile {
         } else if ( sf == 2 ) {
             readPairPosTableFormat2 ( in, lookupType, lookupFlags, subtableOffset, sf );
         } else {
-            throw new UnsupportedOperationException ( "unsupported pair positioning subtable format: " + sf );
+            throw new AdvancedTypographicTableFormatException ( "unsupported pair positioning subtable format: " + sf );
         }
         return sf;
     }
@@ -3589,7 +3601,7 @@ public class TTFFile {
             }
             a = new GlyphPositioningTable.Anchor ( x, y, xd, yd );
         } else {
-            throw new UnsupportedOperationException ( "unsupported positioning anchor format: " + af );
+            throw new AdvancedTypographicTableFormatException ( "unsupported positioning anchor format: " + af );
         }
         in.seekSet(cp);
         return a;
@@ -3656,7 +3668,7 @@ public class TTFFile {
         if ( sf == 1 ) {
             readCursivePosTableFormat1 ( in, lookupType, lookupFlags, subtableOffset, sf );
         } else {
-            throw new UnsupportedOperationException ( "unsupported cursive positioning subtable format: " + sf );
+            throw new AdvancedTypographicTableFormatException ( "unsupported cursive positioning subtable format: " + sf );
         }
         return sf;
     }
@@ -3763,7 +3775,7 @@ public class TTFFile {
         if ( sf == 1 ) {
             readMarkToBasePosTableFormat1 ( in, lookupType, lookupFlags, subtableOffset, sf );
         } else {
-            throw new UnsupportedOperationException ( "unsupported mark-to-base positioning subtable format: " + sf );
+            throw new AdvancedTypographicTableFormatException ( "unsupported mark-to-base positioning subtable format: " + sf );
         }
         return sf;
     }
@@ -3898,7 +3910,7 @@ public class TTFFile {
         if ( sf == 1 ) {
             readMarkToLigaturePosTableFormat1 ( in, lookupType, lookupFlags, subtableOffset, sf );
         } else {
-            throw new UnsupportedOperationException ( "unsupported mark-to-ligature positioning subtable format: " + sf );
+            throw new AdvancedTypographicTableFormatException ( "unsupported mark-to-ligature positioning subtable format: " + sf );
         }
         return sf;
     }
@@ -4004,7 +4016,7 @@ public class TTFFile {
         if ( sf == 1 ) {
             readMarkToMarkPosTableFormat1 ( in, lookupType, lookupFlags, subtableOffset, sf );
         } else {
-            throw new UnsupportedOperationException ( "unsupported mark-to-mark positioning subtable format: " + sf );
+            throw new AdvancedTypographicTableFormatException ( "unsupported mark-to-mark positioning subtable format: " + sf );
         }
         return sf;
     }
@@ -4252,7 +4264,7 @@ public class TTFFile {
         } else if ( sf == 3 ) {
             readContextualPosTableFormat3 ( in, lookupType, lookupFlags, subtableOffset, sf );
         } else {
-            throw new UnsupportedOperationException ( "unsupported contextual positioning subtable format: " + sf );
+            throw new AdvancedTypographicTableFormatException ( "unsupported contextual positioning subtable format: " + sf );
         }
         return sf;
     }
@@ -4594,7 +4606,7 @@ public class TTFFile {
         } else if ( sf == 3 ) {
             readChainedContextualPosTableFormat3 ( in, lookupType, lookupFlags, subtableOffset, sf );
         } else {
-            throw new UnsupportedOperationException ( "unsupported chained contextual positioning subtable format: " + sf );
+            throw new AdvancedTypographicTableFormatException ( "unsupported chained contextual positioning subtable format: " + sf );
         }
         return sf;
     }
@@ -4625,13 +4637,13 @@ public class TTFFile {
         if ( sf == 1 ) {
             readExtensionPosTableFormat1 ( in, lookupType, lookupFlags, lookupSequence, subtableSequence, subtableOffset, sf );
         } else {
-            throw new UnsupportedOperationException ( "unsupported extension positioning subtable format: " + sf );
+            throw new AdvancedTypographicTableFormatException ( "unsupported extension positioning subtable format: " + sf );
         }
         return sf;
     }
 
     private void readGPOSSubtable(FontFileReader in, int lookupType, int lookupFlags, int lookupSequence, int subtableSequence, long subtableOffset) throws IOException {
-        initSESubState();
+        initATSubState();
         int subtableFormat = -1;
         switch ( lookupType ) {
         case GPOSLookupType.SINGLE:
@@ -4665,7 +4677,7 @@ public class TTFFile {
             break;
         }
         extractSESubState ( GlyphTable.GLYPH_TABLE_TYPE_POSITIONING, lookupType, lookupFlags, lookupSequence, subtableSequence, subtableFormat );
-        resetSESubState();
+        resetATSubState();
     }
 
     private void readLookupTable(FontFileReader in, String tableTag, int lookupSequence, long lookupTable) throws IOException {
@@ -4769,7 +4781,7 @@ public class TTFFile {
     }
 
     private void readGDEFClassDefTable(FontFileReader in, String tableTag, int lookupSequence, long subtableOffset) throws IOException {
-        initSESubState();
+        initATSubState();
         in.seekSet(subtableOffset);
         // subtable is a bare class definition table
         GlyphClassTable ct = readClassDefTable ( in, tableTag + " glyph class definition table", subtableOffset );
@@ -4777,11 +4789,11 @@ public class TTFFile {
         seMapping = ct;
         // extract subtable
         extractSESubState ( GlyphTable.GLYPH_TABLE_TYPE_DEFINITION, GDEFLookupType.GLYPH_CLASS, 0, lookupSequence, 0, 1 );
-        resetSESubState();
+        resetATSubState();
     }
 
     private void readGDEFAttachmentTable(FontFileReader in, String tableTag, int lookupSequence, long subtableOffset) throws IOException {
-        initSESubState();
+        initATSubState();
         in.seekSet(subtableOffset);
         // read coverage offset
         int co = in.readTTFUShort();
@@ -4795,11 +4807,11 @@ public class TTFFile {
         seMapping = ct;
         // extract subtable
         extractSESubState ( GlyphTable.GLYPH_TABLE_TYPE_DEFINITION, GDEFLookupType.ATTACHMENT_POINT, 0, lookupSequence, 0, 1 );
-        resetSESubState();
+        resetATSubState();
     }
 
     private void readGDEFLigatureCaretTable(FontFileReader in, String tableTag, int lookupSequence, long subtableOffset) throws IOException {
-        initSESubState();
+        initATSubState();
         in.seekSet(subtableOffset);
         // read coverage offset
         int co = in.readTTFUShort();
@@ -4825,11 +4837,11 @@ public class TTFFile {
         seMapping = ct;
         // extract subtable
         extractSESubState ( GlyphTable.GLYPH_TABLE_TYPE_DEFINITION, GDEFLookupType.LIGATURE_CARET, 0, lookupSequence, 0, 1 );
-        resetSESubState();
+        resetATSubState();
     }
 
     private void readGDEFMarkAttachmentTable(FontFileReader in, String tableTag, int lookupSequence, long subtableOffset) throws IOException {
-        initSESubState();
+        initATSubState();
         in.seekSet(subtableOffset);
         // subtable is a bare class definition table
         GlyphClassTable ct = readClassDefTable ( in, tableTag + " glyph class definition table", subtableOffset );
@@ -4837,11 +4849,11 @@ public class TTFFile {
         seMapping = ct;
         // extract subtable
         extractSESubState ( GlyphTable.GLYPH_TABLE_TYPE_DEFINITION, GDEFLookupType.MARK_ATTACHMENT, 0, lookupSequence, 0, 1 );
-        resetSESubState();
+        resetATSubState();
     }
 
     private void readGDEFMarkGlyphsTableFormat1(FontFileReader in, String tableTag, int lookupSequence, long subtableOffset, int subtableFormat) throws IOException {
-        initSESubState();
+        initATSubState();
         in.seekSet(subtableOffset);
         // skip over format (already known)
         in.skip ( 2 );
@@ -4871,7 +4883,7 @@ public class TTFFile {
         seMapping = ct;
         // extract subtable
         extractSESubState ( GlyphTable.GLYPH_TABLE_TYPE_DEFINITION, GDEFLookupType.MARK_ATTACHMENT, 0, lookupSequence, 0, 1 );
-        resetSESubState();
+        resetATSubState();
     }
 
     private void readGDEFMarkGlyphsTable(FontFileReader in, String tableTag, int lookupSequence, long subtableOffset) throws IOException {
@@ -4881,7 +4893,7 @@ public class TTFFile {
         if ( sf == 1 ) {
             readGDEFMarkGlyphsTableFormat1 ( in, tableTag, lookupSequence, subtableOffset, sf );
         } else {
-            throw new UnsupportedOperationException ( "unsupported mark glyph sets subtable format: " + sf );
+            throw new AdvancedTypographicTableFormatException ( "unsupported mark glyph sets subtable format: " + sf );
         }
     }
 
@@ -4893,7 +4905,7 @@ public class TTFFile {
     private void readGDEF(FontFileReader in) throws IOException {
         String tableTag = "GDEF";
         // Initialize temporary state
-        initSEState();
+        initATState();
         // Read glyph definition (GDEF) table
         TTFDirTabEntry dirTab = (TTFDirTabEntry)dirTabs.get(tableTag);
         if ( gdef != null ) {
@@ -4967,7 +4979,7 @@ public class TTFFile {
     private void readGSUB(FontFileReader in) throws IOException {
         String tableTag = "GSUB";
         // Initialize temporary state
-        initSEState();
+        initATState();
         // Read glyph substitution (GSUB) table
         TTFDirTabEntry dirTab = (TTFDirTabEntry)dirTabs.get(tableTag);
         if ( gpos != null ) {
@@ -5005,7 +5017,7 @@ public class TTFFile {
     private void readGPOS(FontFileReader in) throws IOException {
         String tableTag = "GPOS";
         // Initialize temporary state
-        initSEState();
+        initATState();
         // Read glyph positioning (GPOS) table
         TTFDirTabEntry dirTab = (TTFDirTabEntry)dirTabs.get(tableTag);
         if ( gpos != null ) {
@@ -5048,7 +5060,7 @@ public class TTFFile {
                 gdef = new GlyphDefinitionTable ( subtables );
             }
         }
-        resetSEState();
+        resetATState();
         return gdef;
     }
 
@@ -5068,7 +5080,7 @@ public class TTFFile {
                 }
             }
         }
-        resetSEState();
+        resetATState();
         return gsub;
     }
 
@@ -5088,7 +5100,7 @@ public class TTFFile {
                 }
             }
         }
-        resetSEState();
+        resetATState();
         return gpos;
     }
 
@@ -5259,23 +5271,23 @@ public class TTFFile {
         return st;
     }
 
-    private void initSEState() {
+    private void initATState() {
         seScripts = new java.util.LinkedHashMap();
         seLanguages = new java.util.LinkedHashMap();
         seFeatures = new java.util.LinkedHashMap();
         seSubtables = new java.util.ArrayList();
-        resetSESubState();
+        resetATSubState();
     }
 
-    private void resetSEState() {
+    private void resetATState() {
         seScripts = null;
         seLanguages = null;
         seFeatures = null;
         seSubtables = null;
-        resetSESubState();
+        resetATSubState();
     }
 
-    private void initSESubState() {
+    private void initATSubState() {
         seMapping = null;
         seEntries = new java.util.ArrayList();
     }
@@ -5296,9 +5308,14 @@ public class TTFFile {
         }
     }
 
-    private void resetSESubState() {
+    private void resetATSubState() {
         seMapping = null;
         seEntries = null;
+    }
+
+    private void resetATStateAll() {
+        resetATState();
+        gdef = null; gsub = null; gpos = null;
     }
 
     /**

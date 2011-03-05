@@ -116,7 +116,7 @@ public class Area extends AreaTreeObject implements Serializable {
     /**
      * Traits for this area stored in a HashMap
      */
-    protected Map<Integer, Object> traits = null;
+    protected transient Map<Integer, Object> traits = null;
 
     /**
      * logging instance

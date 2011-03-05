@@ -159,13 +159,13 @@ public final class Trait implements Serializable {
     public static final Integer PTR = 37;
 
     /** writing mode trait */
-    public static final Integer WRITING_MODE = new Integer(38);
+    public static final Integer WRITING_MODE = 38;
     /** inline progression direction trait */
-    public static final Integer INLINE_PROGRESSION_DIRECTION = new Integer(39);
+    public static final Integer INLINE_PROGRESSION_DIRECTION = 39;
     /** block progression direction trait */
-    public static final Integer BLOCK_PROGRESSION_DIRECTION = new Integer(40);
+    public static final Integer BLOCK_PROGRESSION_DIRECTION = 40;
     /** shift direction trait */
-    public static final Integer SHIFT_DIRECTION = new Integer(41);
+    public static final Integer SHIFT_DIRECTION = 41;
 
     /** Maximum value used by trait keys */
     public static final int MAX_TRAIT_KEY = 41;

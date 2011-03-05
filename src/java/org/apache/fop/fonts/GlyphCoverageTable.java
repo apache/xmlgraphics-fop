@@ -178,13 +178,13 @@ public final class GlyphCoverageTable extends GlyphMappingTable implements Glyph
                         if ( gid > gidMax ) {
                             map [ i++ ] = gidMax = gid;
                         } else {
-                            throw new IllegalArgumentException ( "out of order or duplicate glyph index: " + gid );
+                            throw new AdvancedTypographicTableFormatException ( "out of order or duplicate glyph index: " + gid );
                         }
                     } else {
-                        throw new IllegalArgumentException ( "illegal glyph index: " + gid );
+                        throw new AdvancedTypographicTableFormatException ( "illegal glyph index: " + gid );
                     }
                 } else {
-                    throw new IllegalArgumentException ( "illegal coverage entry, must be Integer: " + o );
+                    throw new AdvancedTypographicTableFormatException ( "illegal coverage entry, must be Integer: " + o );
                 }
             }
             assert i == n;

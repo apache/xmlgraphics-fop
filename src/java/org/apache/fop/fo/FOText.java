@@ -845,7 +845,9 @@ public class FOText extends FONode implements CharSequence {
             int   nc = end - start;
             int   nm = getMappingLength ( start, end );
             int[] la = getBidiLevels ( start, end );
-            if ( nm == nc ) {                   // mapping is same length as mapped range
+            if ( la == null ) {
+                return null;
+            } else if ( nm == nc ) {            // mapping is same length as mapped range
                 return la;
             } else if ( nm > nc ) {             // mapping is longer than mapped range
                 int[] ma = new int [ nm ];

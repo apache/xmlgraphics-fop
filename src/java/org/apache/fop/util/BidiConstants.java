@@ -28,6 +28,9 @@ public interface BidiConstants {
 
     // bidi character class
 
+    /** first external (official) category */
+    int FIRST       = 1;
+
     // strong category
     /** left-to-right class */
     int L           = 1;
@@ -72,11 +75,15 @@ public interface BidiConstants {
     /** other neutrals class */
     int ON          = 19;
 
+    /** last external (official) category */
+    int LAST        = 19;
+
     // implementation specific categories
     /** placeholder for low surrogate */
     int SURROGATE   = 20;
 
     // other constants
+    /** last 
     /** maximum bidirectional levels */
     int MAX_LEVELS  = 61;
     /** override flag */
