@@ -59,6 +59,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Layout" dev="VH" type="fix" fixes-bug="50196" due-to="Matthias Reischenbacher">
+        Bugzilla #50196: padding-start ignored when table-header/footer is repeated.
+      </action>
       <action context="Renderers" dev="JM" type="fix">
         Increased maximum possible PDF size from 2GB to around 9GB (hard maximum imposed by the PDF specification).
       </action>
