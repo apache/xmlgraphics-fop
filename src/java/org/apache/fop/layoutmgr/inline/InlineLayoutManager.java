@@ -422,18 +422,6 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
 
         setChildContext(new LayoutContext(context)); // Store current value
 
-        // If this LM has fence, make a new leading space specifier.
-        if (hasLeadingFence(areaCreated)) {
-            getContext().setLeadingSpace(new SpaceSpecifier(false));
-            getContext().setFlags(LayoutContext.RESOLVE_LEADING_SPACE, true);
-        } else {
-            getContext().setFlags(LayoutContext.RESOLVE_LEADING_SPACE, false);
-        }
-
-        if (getSpaceStart() != null) {
-            context.getLeadingSpace().addSpace(new SpaceVal(getSpaceStart(), this));
-        }
-
         // "Unwrap" the NonLeafPositions stored in parentIter and put
         // them in a new list.  Set lastLM to be the LayoutManager
         // which created the last Position: if the LAST_AREA flag is
@@ -447,10 +435,30 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
         while (parentIter.hasNext()) {
             pos = parentIter.next();
             if (pos != null && pos.getPosition() != null) {
+                if (isFirst(pos)) {
+                    /*
+                     * If this element is a descendant of a table-header/footer,
+                     * its content may be repeated over pages, so the generation
+                     * of its areas may be restarted.
+                     */
+                    areaCreated = false;
+                }
                 positionList.add(pos.getPosition());
                 lastLM = pos.getPosition().getLM();
                 lastPos = pos;
             }
+        }
+
+        // If this LM has fence, make a new leading space specifier.
+        if (hasLeadingFence(areaCreated)) {
+            getContext().setLeadingSpace(new SpaceSpecifier(false));
+            getContext().setFlags(LayoutContext.RESOLVE_LEADING_SPACE, true);
+        } else {
+            getContext().setFlags(LayoutContext.RESOLVE_LEADING_SPACE, false);
+        }
+
+        if (getSpaceStart() != null) {
+            context.getLeadingSpace().addSpace(new SpaceVal(getSpaceStart(), this));
         }
 
         addMarkersToPage(

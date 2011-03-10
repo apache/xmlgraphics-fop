@@ -43,6 +43,9 @@ public class KnuthPenalty extends KnuthElement {
 
     /** Used for flagged penalties. See Knuth algorithm. */
     public static final int FLAGGED_PENALTY = 50;
+    /** Dummy, zero-width penalty */
+    public static final KnuthPenalty DUMMY_ZERO_PENALTY
+            = new KnuthPenalty(0, 0, false, null, true);
 
     private int penalty;
     private boolean penaltyFlagged;
