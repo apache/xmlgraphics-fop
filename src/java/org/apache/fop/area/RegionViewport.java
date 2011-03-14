@@ -19,6 +19,7 @@
 
 package org.apache.fop.area;
 
+import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.util.HashMap;
@@ -29,7 +30,7 @@ import java.util.HashMap;
  * region-reference-area as its child.  These areas are described
  * in the fo:region-body description in the XSL Recommendation.
  */
-public class RegionViewport extends Area implements Cloneable {
+public class RegionViewport extends Area implements Cloneable, Viewport {
 
     private static final long serialVersionUID = 505781815165102572L;
 
@@ -75,9 +76,16 @@ public class RegionViewport extends Area implements Cloneable {
         clip = c;
     }
 
-    /** @return true if the viewport should be clipped. */
-    public boolean isClip() {
+    public boolean hasClip() {
         return this.clip;
+    }
+
+    public Rectangle getClipRectangle() {
+        if (clip) {
+            return new Rectangle(getIPD(), getBPD());
+        } else {
+            return null;
+        }
     }
 
     /**

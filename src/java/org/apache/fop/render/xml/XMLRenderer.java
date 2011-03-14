@@ -21,6 +21,7 @@ package org.apache.fop.render.xml;
 
 // Java
 import java.awt.Color;
+import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -518,7 +519,7 @@ public class XMLRenderer extends AbstractXMLRenderer {
             addAreaAttributes(port);
             addTraitAttributes(port);
             addAttribute("rect", port.getViewArea());
-            if (port.isClip()) {
+            if (port.hasClip()) {
                 addAttribute("clipped", "true");
             }
             startElement("regionViewport", atts);
@@ -558,9 +559,8 @@ public class XMLRenderer extends AbstractXMLRenderer {
         }
     }
 
-    /** {@inheritDoc} */
     @Override
-    protected void startVParea(CTM ctm, Rectangle2D clippingRect) {
+    protected void startVParea(CTM ctm, Rectangle clippingRect) {
         //only necessary for graphical output
     }
 
@@ -679,7 +679,7 @@ public class XMLRenderer extends AbstractXMLRenderer {
                 addAttribute("top-position", bvp.getYOffset());
             }
             addAttribute("ctm", bvp.getCTM().toString());
-            if (bvp.getClip()) {
+            if (bvp.hasClip()) {
                 addAttribute("clipped", "true");
             }
         } else {
@@ -749,7 +749,7 @@ public class XMLRenderer extends AbstractXMLRenderer {
         addTraitAttributes(viewport);
         addAttribute("offset", viewport.getOffset());
         addAttribute("pos", viewport.getContentPosition());
-        if (viewport.getClip()) {
+        if (viewport.hasClip()) {
             addAttribute("clip", "true");
         }
         startElement("viewport", atts);
