@@ -19,11 +19,12 @@
 
 package org.apache.fop.area.inline;
 
-import org.apache.fop.area.Area;
-
-import java.io.IOException;
+import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
+import java.io.IOException;
 import java.util.HashMap;
+
+import org.apache.fop.area.Area;
 
 /**
  * Inline viewport area.
@@ -31,7 +32,7 @@ import java.util.HashMap;
  * external graphic and instream foreign object. This viewport
  * holds the area and positions it.
  */
-public class Viewport extends InlineArea {
+public class Viewport extends InlineArea implements org.apache.fop.area.Viewport {
 
     private static final long serialVersionUID = 813338534627918689L;
 
@@ -60,13 +61,16 @@ public class Viewport extends InlineArea {
         this.clip = c;
     }
 
-    /**
-     * Get the clip of this viewport.
-     *
-     * @return true if this viewport should clip
-     */
-    public boolean getClip() {
+    public boolean hasClip() {
         return this.clip;
+    }
+
+    public Rectangle getClipRectangle() {
+        if (clip) {
+            return new Rectangle(getIPD(), getBPD());
+        } else {
+            return null;
+        }
     }
 
     /**

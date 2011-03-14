@@ -278,7 +278,6 @@ public abstract class AbstractRenderer
      * @param port  The region viewport to be rendered
      */
     protected void renderRegionViewport(RegionViewport port) {
-        Rectangle2D view = port.getViewArea();
         // The CTM will transform coordinates relative to
         // this region-reference area into page coords, so
         // set origin for the region to 0,0.
@@ -289,7 +288,7 @@ public abstract class AbstractRenderer
         handleRegionTraits(port);
 
         //  shouldn't the viewport have the CTM
-        startVParea(regionReference.getCTM(), port.isClip() ? view : null);
+        startVParea(regionReference.getCTM(), port.getClipRectangle());
         // do after starting viewport area
         if (regionReference.getRegionClass() == FO_REGION_BODY) {
             renderBodyRegion((BodyRegion) regionReference);
@@ -306,7 +305,7 @@ public abstract class AbstractRenderer
      * @param clippingRect the clipping rectangle if the viewport should be clipping,
      *                     null if no clipping is performed.
      */
-    protected abstract void startVParea(CTM ctm, Rectangle2D clippingRect);
+    protected abstract void startVParea(CTM ctm, Rectangle clippingRect);
 
     /**
      * Signals exit from a viewport area. Subclasses can restore transformation matrices
@@ -461,8 +460,8 @@ public abstract class AbstractRenderer
             int saveIP = currentIPPosition;
             int saveBP = currentBPPosition;
 
-            Rectangle2D clippingRect = null;
-            if (bv.getClip()) {
+            Rectangle clippingRect = null;
+            if (bv.hasClip()) {
                 clippingRect = new Rectangle(saveIP, saveBP, bv.getIPD(), bv.getBPD());
             }
 

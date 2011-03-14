@@ -445,7 +445,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
     }
 
     /** {@inheritDoc} */
-    protected void startVParea(CTM ctm, Rectangle2D clippingRect) {
+    protected void startVParea(CTM ctm, Rectangle clippingRect) {
 
         saveGraphicsState();
 

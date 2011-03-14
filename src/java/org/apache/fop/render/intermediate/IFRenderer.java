@@ -37,7 +37,6 @@ import java.util.Stack;
 import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
-
 import org.xml.sax.SAXException;
 
 import org.apache.batik.parser.AWTTransformProducer;
@@ -788,18 +787,11 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
             contentRectTransform.translate(borderPaddingStart, borderPaddingBefore);
             concatenateTransformationMatrixMpt(contentRectTransform, false);
 
-            //Clipping
-            Rectangle clipRect = null;
-            if (bv.getClip()) {
-                clipRect = new Rectangle(0, 0, dim.width, dim.height);
-                //clipRect(0f, 0f, width, height);
-            }
-
             //saveGraphicsState();
             //Set up coordinate system for content rectangle
             AffineTransform contentTransform = ctm.toAffineTransform();
             //concatenateTransformationMatrixMpt(contentTransform);
-            startViewport(contentTransform, clipRect);
+            startViewport(contentTransform, bv.getClipRectangle());
 
             currentIPPosition = 0;
             currentBPPosition = 0;
@@ -831,13 +823,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
             //Now adjust for border/padding
             currentBPPosition += borderPaddingBefore;
 
-            Rectangle2D clippingRect = null;
-            if (bv.getClip()) {
-                clippingRect = new Rectangle(currentIPPosition, currentBPPosition,
-                        bv.getIPD(), bv.getBPD());
-            }
-
-            startVParea(ctm, clippingRect);
+            startVParea(ctm, bv.getClipRectangle());
             currentIPPosition = 0;
             currentBPPosition = 0;
             renderBlocks(bv, children);
@@ -863,19 +849,12 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     }
 
     /** {@inheritDoc} */
-    protected void startVParea(CTM ctm, Rectangle2D clippingRect) {
+    protected void startVParea(CTM ctm, Rectangle clippingRect) {
         if (log.isTraceEnabled()) {
             log.trace("startVParea() ctm=" + ctm + ", clippingRect=" + clippingRect);
         }
         AffineTransform at = new AffineTransform(ctm.toArray());
-        Rectangle clipRect = null;
-        if (clippingRect != null) {
-            clipRect = new Rectangle(
-                    (int)clippingRect.getMinX() - currentIPPosition,
-                    (int)clippingRect.getMinY() - currentBPPosition,
-                    (int)clippingRect.getWidth(), (int)clippingRect.getHeight());
-        }
-        startViewport(at, clipRect);
+        startViewport(at, clippingRect);
         if (log.isTraceEnabled()) {
             log.trace("startVPArea: " + at + " --> " + graphicContext.getTransform());
         }
