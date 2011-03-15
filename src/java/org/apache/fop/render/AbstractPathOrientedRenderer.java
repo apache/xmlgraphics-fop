@@ -44,7 +44,7 @@ import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.InlineArea;
-import org.apache.fop.area.inline.Viewport;
+import org.apache.fop.area.inline.InlineViewport;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fonts.FontMetrics;
@@ -685,7 +685,7 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
      * This renders an inline viewport by clipping if necessary.
      * @param viewport the viewport to handle
      */
-    public void renderViewport(Viewport viewport) {
+    public void renderInlineViewport(InlineViewport viewport) {
 
         float x = currentIPPosition / 1000f;
         float y = (currentBPPosition + viewport.getOffset()) / 1000f;
@@ -706,7 +706,7 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
 
             clipRect(x + borderPaddingStart, y + borderPaddingBefore, width, height);
         }
-        super.renderViewport(viewport);
+        super.renderInlineViewport(viewport);
 
         if (viewport.hasClip()) {
             restoreGraphicsState();

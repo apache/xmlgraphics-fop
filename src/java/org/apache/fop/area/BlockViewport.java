@@ -80,10 +80,12 @@ public class BlockViewport extends Block implements Viewport  {
         clip = cl;
     }
 
+    /** {@inheritDoc} */
     public boolean hasClip() {
         return clip;
     }
 
+    /** {@inheritDoc} */
     public Rectangle getClipRectangle() {
         if (clip) {
             return new Rectangle(getIPD(), getBPD());

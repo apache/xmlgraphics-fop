@@ -65,7 +65,7 @@ import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.Space;
 import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.area.inline.TextArea;
-import org.apache.fop.area.inline.Viewport;
+import org.apache.fop.area.inline.InlineViewport;
 import org.apache.fop.area.inline.WordArea;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fonts.FontInfo;
@@ -632,8 +632,8 @@ public abstract class AbstractRenderer
             renderInlineBlockParent((InlineBlockParent) inlineArea);
         } else if (inlineArea instanceof Space) {
             renderInlineSpace((Space) inlineArea);
-        } else if (inlineArea instanceof Viewport) {
-            renderViewport((Viewport) inlineArea);
+        } else if (inlineArea instanceof InlineViewport) {
+            renderInlineViewport((InlineViewport) inlineArea);
         } else if (inlineArea instanceof Leader) {
             renderLeader((Leader) inlineArea);
         }
@@ -734,7 +734,7 @@ public abstract class AbstractRenderer
      * Render the given Viewport.
      * @param viewport the viewport to render
      */
-    protected void renderViewport(Viewport viewport) {
+    protected void renderInlineViewport(InlineViewport viewport) {
         Area content = viewport.getContent();
         int saveBP = currentBPPosition;
         currentBPPosition += viewport.getOffset();

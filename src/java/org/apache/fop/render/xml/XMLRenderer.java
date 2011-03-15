@@ -79,7 +79,7 @@ import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.Space;
 import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.area.inline.TextArea;
-import org.apache.fop.area.inline.Viewport;
+import org.apache.fop.area.inline.InlineViewport;
 import org.apache.fop.area.inline.WordArea;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
@@ -743,7 +743,7 @@ public class XMLRenderer extends AbstractXMLRenderer {
      * {@inheritDoc}
      */
     @Override
-    protected void renderViewport(Viewport viewport) {
+    protected void renderInlineViewport(InlineViewport viewport) {
         atts.clear();
         addAreaAttributes(viewport);
         addTraitAttributes(viewport);
@@ -753,7 +753,7 @@ public class XMLRenderer extends AbstractXMLRenderer {
             addAttribute("clip", "true");
         }
         startElement("viewport", atts);
-        super.renderViewport(viewport);
+        super.renderInlineViewport(viewport);
         endElement("viewport");
     }
 
