@@ -22,19 +22,19 @@ package org.apache.fop.area.inline;
 import org.apache.fop.area.ViewportTestCase;
 
 /**
- * Tests the {@linkplain Viewport} class.
+ * Tests the {@linkplain InlineViewport} class.
  */
 public class InlineViewportTestCase extends ViewportTestCase {
 
     public void testNonClip() throws Exception {
-        Viewport v = new Viewport(null);
+        InlineViewport v = new InlineViewport(null);
         v.setIPD(50);
         v.setBPD(25);
         checkNonClip(v);
     }
 
     public void testClip() throws Exception {
-        Viewport v = new Viewport(null);
+        InlineViewport v = new InlineViewport(null);
         int ipd = 50;
         int bpd = 25;
         v.setIPD(ipd);

@@ -76,10 +76,12 @@ public class RegionViewport extends Area implements Cloneable, Viewport {
         clip = c;
     }
 
+    /** {@inheritDoc} */
     public boolean hasClip() {
         return this.clip;
     }
 
+    /** {@inheritDoc} */
     public Rectangle getClipRectangle() {
         if (clip) {
             return new Rectangle(getIPD(), getBPD());

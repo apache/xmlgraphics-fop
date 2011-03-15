@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import org.apache.fop.area.Area;
+import org.apache.fop.area.Viewport;
 
 /**
  * Inline viewport area.
@@ -32,7 +33,7 @@ import org.apache.fop.area.Area;
  * external graphic and instream foreign object. This viewport
  * holds the area and positions it.
  */
-public class Viewport extends InlineArea implements org.apache.fop.area.Viewport {
+public class InlineViewport extends InlineArea implements Viewport {
 
     private static final long serialVersionUID = 813338534627918689L;
 
@@ -48,7 +49,7 @@ public class Viewport extends InlineArea implements org.apache.fop.area.Viewport
      *
      * @param child the child content area of this viewport
      */
-    public Viewport(Area child) {
+    public InlineViewport(Area child) {
         this.content = child;
     }
 
@@ -61,10 +62,12 @@ public class Viewport extends InlineArea implements org.apache.fop.area.Viewport
         this.clip = c;
     }
 
+    /** {@inheritDoc} */
     public boolean hasClip() {
         return this.clip;
     }
 
+    /** {@inheritDoc} */
     public Rectangle getClipRectangle() {
         if (clip) {
             return new Rectangle(getIPD(), getBPD());

@@ -73,7 +73,7 @@ import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.area.inline.TextArea;
-import org.apache.fop.area.inline.Viewport;
+import org.apache.fop.area.inline.InlineViewport;
 import org.apache.fop.area.inline.WordArea;
 import org.apache.fop.datatypes.URISpecification;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
@@ -838,12 +838,12 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     }
 
     /** {@inheritDoc} */
-    public void renderViewport(Viewport viewport) {
+    public void renderInlineViewport(InlineViewport viewport) {
         String ptr = (String) viewport.getTrait(Trait.PTR);
         establishStructurePointer(ptr);
         Dimension dim = new Dimension(viewport.getIPD(), viewport.getBPD());
         viewportDimensionStack.push(dim);
-        super.renderViewport(viewport);
+        super.renderInlineViewport(viewport);
         viewportDimensionStack.pop();
         resetStructurePointer();
     }

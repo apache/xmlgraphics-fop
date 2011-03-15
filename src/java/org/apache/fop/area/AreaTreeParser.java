@@ -73,7 +73,7 @@ import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.Space;
 import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.area.inline.TextArea;
-import org.apache.fop.area.inline.Viewport;
+import org.apache.fop.area.inline.InlineViewport;
 import org.apache.fop.area.inline.WordArea;
 import org.apache.fop.fo.ElementMappingRegistry;
 import org.apache.fop.fo.expr.PropertyException;
@@ -217,7 +217,7 @@ public class AreaTreeParser {
             makers.put("word", new WordMaker());
             makers.put("space", new SpaceMaker());
             makers.put("leader", new LeaderMaker());
-            makers.put("viewport", new ViewportMaker());
+            makers.put("viewport", new InlineViewportMaker());
             makers.put("image", new ImageMaker());
             makers.put("foreignObject", new ForeignObjectMaker());
             makers.put("bookmarkTree", new BookmarkTreeMaker());
@@ -265,8 +265,8 @@ public class AreaTreeParser {
             return (AbstractTextArea)findAreaType(AbstractTextArea.class);
         }
 
-        private Viewport getCurrentViewport() {
-            return (Viewport)findAreaType(Viewport.class);
+        private InlineViewport getCurrentViewport() {
+            return (InlineViewport)findAreaType(InlineViewport.class);
         }
 
         /** {@inheritDoc} */
@@ -902,10 +902,10 @@ public class AreaTreeParser {
             }
         }
 
-        private class ViewportMaker extends AbstractMaker {
+        private class InlineViewportMaker extends AbstractMaker {
 
             public void startElement(Attributes attributes) {
-                Viewport viewport = new Viewport(null);
+                InlineViewport viewport = new InlineViewport(null);
                 transferForeignObjects(attributes, viewport);
                 setAreaAttributes(attributes, viewport);
                 setTraits(attributes, viewport, SUBSET_COMMON);
@@ -921,7 +921,7 @@ public class AreaTreeParser {
             }
 
             public void endElement() {
-                assertObjectOfClass(areaStack.pop(), Viewport.class);
+                assertObjectOfClass(areaStack.pop(), InlineViewport.class);
             }
         }
 

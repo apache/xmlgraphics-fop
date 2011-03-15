@@ -45,7 +45,7 @@ import org.apache.fop.area.PageSequence;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.inline.Image;
-import org.apache.fop.area.inline.Viewport;
+import org.apache.fop.area.inline.InlineViewport;
 import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.datatypes.URISpecification;
 import org.apache.fop.fo.Constants;
@@ -184,7 +184,7 @@ public class ExternalDocumentLayoutManager extends AbstractPageSequenceLayoutMan
         TraitSetter.setProducerID(imageArea, fobj.getId());
         transferForeignAttributes(imageArea);
 
-        Viewport vp = new Viewport(imageArea);
+        InlineViewport vp = new InlineViewport(imageArea);
         TraitSetter.setProducerID(vp, fobj.getId());
         vp.setIPD(imageSize.width);
         vp.setBPD(imageSize.height);
