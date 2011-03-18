@@ -64,4 +64,14 @@ public class BFEntry {
         return glyphStartIndex;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("BFEntry: ");
+        sb.append("Unicode ").append(getUnicodeStart()).append("..").append(getUnicodeEnd());
+        sb.append(" --> ").append(getGlyphStartIndex()).append("..");
+        sb.append(getGlyphStartIndex() + getUnicodeEnd() - getUnicodeStart());
+        return sb.toString();
+    }
+
 }
