@@ -32,9 +32,9 @@
       <fo:page-sequence master-reference="normal">
         <fo:flow flow-name="xsl-region-body">
           <fo:block>block1</fo:block>
-          <fo:table table-layout="fixed">
-            <fo:table-column/>
-            <fo:table-column/>
+          <fo:table table-layout="fixed" width="100%">
+            <fo:table-column column-width="proportional-column-width(1)"/>
+            <fo:table-column column-width="proportional-column-width(1)"/>
             <fo:table-body>
               <fo:table-row keep-together.within-page="always">
                 <fo:table-cell id="cell1">
