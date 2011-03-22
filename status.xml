@@ -60,6 +60,9 @@
     -->
     <release version="FOP Trunk" date="TBD">
       <action context="Layout" dev="VH" type="fix">
+        Bugfix: keep-together does not apply to fo:table-cell.
+      </action>
+      <action context="Layout" dev="VH" type="fix">
         Bugfix: keep-together on a table containing row-spanning cells was not honored.
       </action>
       <action context="Layout" dev="VH" type="fix" fixes-bug="50196" due-to="Matthias Reischenbacher">
