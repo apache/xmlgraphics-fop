@@ -55,7 +55,7 @@
   <checks>
     <element-list category="table-cell" id="cell1">
       <box w="14400"/>
-      <penalty w="0" p="INF"/> <!-- the keep-together on the table-row has to result in an INFINITE penalty here -->
+      <penalty w="0" p="0"/>
       <box w="14400"/>
     </element-list>
     <element-list category="table-cell" id="cell2">
