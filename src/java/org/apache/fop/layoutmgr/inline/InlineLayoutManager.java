@@ -198,13 +198,13 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
     /**
      * Create and initialize an <code>InlineArea</code>
      *
-     * @param hasInlineParent   true if the parent is an inline
+     * @param isInline   true if the parent is an inline
      * @return the area
      */
-    protected InlineArea createArea(boolean hasInlineParent) {
+    protected InlineArea createArea(boolean isInline) {
         InlineArea area;
-        if (hasInlineParent) {
-            area = new InlineParent();
+        if (isInline) {
+            area = createInlineParent();
             area.setOffset(0);
         } else {
             area = new InlineBlockParent();
@@ -213,6 +213,10 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
             TraitSetter.setProducerID(area, getInlineFO().getId());
         }
         return area;
+    }
+
+    protected InlineParent createInlineParent() {
+        return new InlineParent();
     }
 
     /** {@inheritDoc} */

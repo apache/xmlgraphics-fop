@@ -20,13 +20,6 @@
 <!--DOCTYPE disabled-testcases SYSTEM "disabled-testcases.dtd"-->
 <disabled-testcases>
   <testcase>
-    <name>External link around an SVG not properly sized</name>
-    <file>basic-link_external-destination_2.xml</file>
-    <description>The bpd trait of the inlineparent area for the basic-link
-    is not sized correctly if it wraps an image that is higher than the 
-    nominal line.</description>
-  </testcase>
-  <testcase>
     <name>Auto-height block-containers produce fences</name>
     <file>block-container_space-before_space-after_3.xml</file>
     <description>Block-containers with no height currently don't

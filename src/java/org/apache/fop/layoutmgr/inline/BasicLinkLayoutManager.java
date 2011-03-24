@@ -21,7 +21,9 @@ package org.apache.fop.layoutmgr.inline;
 
 import org.apache.fop.area.LinkResolver;
 import org.apache.fop.area.Trait;
+import org.apache.fop.area.inline.BasicLinkArea;
 import org.apache.fop.area.inline.InlineArea;
+import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.datatypes.URISpecification;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.flow.BasicLink;
@@ -77,4 +79,10 @@ public class BasicLinkLayoutManager extends InlineLayoutManager {
             }
         }
     }
+
+    @Override
+    protected InlineParent createInlineParent() {
+        return new BasicLinkArea();
+    }
+
 }

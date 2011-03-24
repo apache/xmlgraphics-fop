@@ -39,31 +39,42 @@ public class InlineParent extends InlineArea {
     /** Controls whether the IPD is automatically adjusted based on the area's children. */
     protected transient boolean autoSize;
 
-    /**
-     * Create a new inline parent to add areas to.
-     */
-    public InlineParent() {
-    }
+    /** The offset of the <q>beforest</q> child area of this area. */
+    protected int minChildOffset;
 
     /**
-     * Override generic Area method.
-     *
-     * @param childArea the child area to add
+     * The offset of the <q>afterest</q> child area of this area. Offset from the
+     * before-edge of this area's content-rectangle and the after-edge of the child area's
+     * allocation-rectangle.
      */
+    private int maxAfterEdge;
+
     @Override
-    public void addChildArea(Area childArea) {
+    public void addChildArea(Area c) {
+        assert c instanceof InlineArea;
         if (inlines.size() == 0) {
             autoSize = (getIPD() == 0);
         }
-        if (childArea instanceof InlineArea) {
-            InlineArea inlineChildArea = (InlineArea) childArea;
-            inlines.add(inlineChildArea);
-            // set the parent area for the child area
-            inlineChildArea.setParentArea(this);
-            if (autoSize) {
-                increaseIPD(inlineChildArea.getAllocIPD());
-            }
+        InlineArea childArea = (InlineArea) c;
+        inlines.add(childArea);
+        // set the parent area for the child area
+        childArea.setParentArea(this);
+        if (autoSize) {
+            increaseIPD(childArea.getAllocIPD());
         }
+        int childOffset = childArea.getVirtualOffset();
+        minChildOffset = Math.min(minChildOffset, childOffset);
+        maxAfterEdge = Math.max(maxAfterEdge, childOffset + childArea.getVirtualBPD());
+    }
+
+    @Override
+    int getVirtualOffset() {
+        return getOffset() + minChildOffset;
+    }
+
+    @Override
+    int getVirtualBPD() {
+        return maxAfterEdge - minChildOffset;
     }
 
     /**
@@ -98,5 +109,6 @@ public class InlineParent extends InlineArea {
 
         return hasUnresolvedAreas;
     }
+
 }
 
