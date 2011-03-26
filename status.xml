@@ -59,6 +59,10 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Layout" dev="AD" type="fix" fixes-bug="50965" due-to="Martin Koegler">
+        Bugzilla 50965: Fixed a regression in BlockContainerLayoutManager where margins were
+        no longer reset after forced breaks.
+      </action>
       <action context="Layout" dev="VH" type="fix" fixex-bug="50763">
         Implemented non-standard behavior for basic-link areas, such that they take into account the 
         heights of their descendants areas.
