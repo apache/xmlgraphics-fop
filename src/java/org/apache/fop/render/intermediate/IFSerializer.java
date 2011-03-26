@@ -718,14 +718,18 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     }
 
     private void serializeBookmark(Bookmark bookmark) throws SAXException, IFException {
-        noteAction(bookmark.getAction());
+        if (bookmark.getAction() != null) {
+            noteAction(bookmark.getAction());
+        }
 
         AttributesImpl atts = new AttributesImpl();
         atts.addAttribute(null, "title", "title", XMLUtil.CDATA, bookmark.getTitle());
         atts.addAttribute(null, "starting-state", "starting-state",
                 XMLUtil.CDATA, bookmark.isShown() ? "show" : "hide");
         handler.startElement(DocumentNavigationExtensionConstants.BOOKMARK, atts);
-        serializeXMLizable(bookmark.getAction());
+        if (bookmark.getAction() != null) {
+            serializeXMLizable(bookmark.getAction());
+        }
         Iterator iter = bookmark.getChildBookmarks().iterator();
         while (iter.hasNext()) {
             Bookmark b = (Bookmark)iter.next();
