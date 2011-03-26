@@ -59,6 +59,10 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Code" dev="AD" type="fix" fixes-bug="50593">
+        Fixed regression introduced by Bugzilla 50593: bookmarks pointing to a non-existing
+        internal destination should just trigger a warning.
+      </action>
       <action context="Layout" dev="AD" type="fix" fixes-bug="50965" due-to="Martin Koegler">
         Bugzilla 50965: Fixed a regression in BlockContainerLayoutManager where margins were
         no longer reset after forced breaks.

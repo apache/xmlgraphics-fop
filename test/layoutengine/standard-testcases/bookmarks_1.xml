@@ -42,6 +42,12 @@
           <fo:bookmark internal-destination="chapter2-sec2">
             <fo:bookmark-title>Section 2</fo:bookmark-title>
           </fo:bookmark>
+          <!-- add a reference to a non-existing id; should only trigger a warning
+               see Bugzilla 50593 
+            -->
+          <fo:bookmark internal-destination="chapterX-secX">
+            <fo:bookmark-title>Section X</fo:bookmark-title>
+          </fo:bookmark>
         </fo:bookmark>
         <fo:bookmark internal-destination="bc">
           <fo:bookmark-title>Fixed Block Container</fo:bookmark-title>
