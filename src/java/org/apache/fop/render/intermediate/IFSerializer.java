@@ -709,7 +709,9 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
             Iterator iter = tree.getBookmarks().iterator();
             while (iter.hasNext()) {
                 Bookmark b = (Bookmark)iter.next();
-                serializeBookmark(b);
+                if (b.getAction() != null) {
+                    serializeBookmark(b);
+                }
             }
             handler.endElement(DocumentNavigationExtensionConstants.BOOKMARK_TREE);
         } catch (SAXException e) {
@@ -718,25 +720,22 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     }
 
     private void serializeBookmark(Bookmark bookmark) throws SAXException, IFException {
-        if (bookmark.getAction() != null) {
-            noteAction(bookmark.getAction());
-        }
+        noteAction(bookmark.getAction());
 
         AttributesImpl atts = new AttributesImpl();
         atts.addAttribute(null, "title", "title", XMLUtil.CDATA, bookmark.getTitle());
         atts.addAttribute(null, "starting-state", "starting-state",
                 XMLUtil.CDATA, bookmark.isShown() ? "show" : "hide");
         handler.startElement(DocumentNavigationExtensionConstants.BOOKMARK, atts);
-        if (bookmark.getAction() != null) {
-            serializeXMLizable(bookmark.getAction());
-        }
+        serializeXMLizable(bookmark.getAction());
         Iterator iter = bookmark.getChildBookmarks().iterator();
         while (iter.hasNext()) {
             Bookmark b = (Bookmark)iter.next();
-            serializeBookmark(b);
+            if (b.getAction() != null) {
+                serializeBookmark(b);
+            }
         }
         handler.endElement(DocumentNavigationExtensionConstants.BOOKMARK);
-
     }
 
     /** {@inheritDoc} */
