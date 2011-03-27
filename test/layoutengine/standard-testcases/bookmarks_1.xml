@@ -25,7 +25,7 @@
   <fo>
     <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
       <fo:layout-master-set>
-        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in" 
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in"
               margin="20pt">
           <fo:region-body background-color="yellow"/>
         </fo:simple-page-master>
@@ -43,11 +43,11 @@
             <fo:bookmark-title>Section 2</fo:bookmark-title>
           </fo:bookmark>
           <!-- add a reference to a non-existing id; should only trigger a warning
-               see Bugzilla 50593 
-            -->
+               see Bugzilla 50593
           <fo:bookmark internal-destination="chapterX-secX">
             <fo:bookmark-title>Section X</fo:bookmark-title>
           </fo:bookmark>
+            -->
         </fo:bookmark>
         <fo:bookmark internal-destination="bc">
           <fo:bookmark-title>Fixed Block Container</fo:bookmark-title>
@@ -74,7 +74,7 @@
   </fo>
   <checks>
     <eval expected="2" xpath="count(//pageViewport)"/>
-    
+
     <eval expected="Chapter 1" xpath="//bookmarkTree/bookmark[1]/@title"/>
     <eval expected="true" xpath="//bookmarkTree/bookmark[1]/@show-children"/>
     <eval expected="Chapter 2" xpath="//bookmarkTree/bookmark[2]/@title"/>
@@ -82,7 +82,7 @@
 
     <eval expected="Section 2" xpath="//bookmarkTree/bookmark[2]/bookmark[2]/@title"/>
     <eval expected="true" xpath="//bookmarkTree/bookmark[2]/bookmark[2]/@show-children"/>
-    
+
     <eval expected="(P1,chapter1)" xpath="//bookmarkTree/bookmark[1]/@internal-link"/>
     <eval expected="(P2,chapter2)" xpath="//bookmarkTree/bookmark[2]/@internal-link"/>
     <eval expected="(P2,chapter2-sec1)" xpath="//bookmarkTree/bookmark[2]/bookmark[1]/@internal-link"/>
@@ -106,7 +106,7 @@
     <eval expected="1" xpath="//n:bookmark-tree/n:bookmark[2]/n:bookmark[1]/n:goto-xy/@page-index"/>
     <eval expected="20000" xpath="//n:bookmark-tree/n:bookmark[2]/n:bookmark[1]/n:goto-xy/@x"/>
     <eval expected="51680" xpath="//n:bookmark-tree/n:bookmark[2]/n:bookmark[1]/n:goto-xy/@y"/>
-    
+
     <eval expected="show" xpath="//n:bookmark-tree/n:bookmark[3]/@starting-state"/>
     <eval expected="Fixed Block Container" xpath="//n:bookmark-tree/n:bookmark[3]/@title"/>
     <eval expected="1" xpath="//n:bookmark-tree/n:bookmark[3]/n:goto-xy/@page-index"/>
