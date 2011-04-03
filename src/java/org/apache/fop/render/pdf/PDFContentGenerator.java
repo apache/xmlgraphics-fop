@@ -270,10 +270,10 @@ public class PDFContentGenerator {
     /** Indicates the end of a text object. */
     protected void endTextObject() {
         if (textutil.isInTextObject()) {
+            textutil.endTextObject();
             if (this.inMarkedContentSequence) {
                 endMarkedContentSequence();
             }
-            textutil.endTextObject();
         }
     }
 
