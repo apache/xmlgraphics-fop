@@ -59,11 +59,11 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
-      <action context="Renderers" dev="AD" type="fix" fixes-bug="50987" due-to="Matthias Reischenbacher">
+      <action context="Renderers" dev="AD" type="fix" fixes-bug="50987" due-to="Martin Koegler">
         Bugzilla 50987: Fixed an issue in PDF output where a link was added to the parent tree 
         instead of the related structure element.
       </action>
-      <action context="Renderers" dev="AD" type="fix" fixes-bug="50986" due-to="Matthias Reischenbacher">
+      <action context="Renderers" dev="AD" type="fix" fixes-bug="50986" due-to="Martin Koegler">
         Bugzilla 50986: Fixed an issue where invalid PDF page content was generated due to 
         incorrect ET/EMC sequences.
       </action>
