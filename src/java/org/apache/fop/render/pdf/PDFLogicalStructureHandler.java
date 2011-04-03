@@ -291,12 +291,12 @@ class PDFLogicalStructureHandler {
     void addLinkContentItem(PDFLink link, String structurePointer) {
         int structParent = getNextParentTreeKey();
         link.setStructParent(structParent);
-        parentTree.getNums().put(structParent, link);
         PDFDictionary contentItem = new PDFDictionary();
         contentItem.put("Type", OBJR);
         contentItem.put("Pg", this.currentPage);
         contentItem.put("Obj", link);
         PDFStructElem parent = (PDFStructElem) structTreeMap.get(structurePointer);
+        parentTree.getNums().put(structParent, link);
         parent.addKid(contentItem);
     }
 
