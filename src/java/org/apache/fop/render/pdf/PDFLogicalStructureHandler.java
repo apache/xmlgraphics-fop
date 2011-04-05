@@ -296,7 +296,7 @@ class PDFLogicalStructureHandler {
         contentItem.put("Pg", this.currentPage);
         contentItem.put("Obj", link);
         PDFStructElem parent = (PDFStructElem) structTreeMap.get(structurePointer);
-        parentTree.getNums().put(structParent, link);
+        parentTree.getNums().put(structParent, parent);
         parent.addKid(contentItem);
     }
 
