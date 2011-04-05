@@ -27,6 +27,7 @@ import java.util.ListIterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.area.Area;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.area.Trait;
@@ -613,7 +614,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         log.trace("Restarting line breaking from index " + restartPosition.getIndex());
         int parIndex = restartPosition.getLeafPos();
         KnuthSequence paragraph = knuthParagraphs.get(parIndex);
-        paragraph.subList(0, restartPosition.getIndex()).clear();
+        paragraph.subList(0, restartPosition.getIndex() + 1).clear();
         Iterator<KnuthElement> iter = paragraph.iterator();
         while (iter.hasNext() && !iter.next().isBox()) {
             iter.remove();
