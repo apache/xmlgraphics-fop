@@ -215,6 +215,12 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
         return area;
     }
 
+    /**
+     * Creates the inline area that will contain the areas returned by the
+     * children of this layout manager.
+     *
+     * @return a new inline area
+     */
     protected InlineParent createInlineParent() {
         return new InlineParent();
     }
