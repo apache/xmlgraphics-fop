@@ -219,15 +219,15 @@
      languages and dialects, especially ancient ones, may pose a real problem
      though.</p>
     <p>If you want to generate your own patterns, an open-source utility called
-     patgen is available on many Unix/Linux distributions and every TeX
-     distribution which can be used to assist in
-     creating pattern files from dictionaries. Pattern creation for languages like
-     english or german is an art. If you can, read Frank Liang's original paper
-     "Word Hy-phen-a-tion by Com-pu-ter" (yes, with hyphens). It is not available
-     online. The original patgen.web source, included in the TeX source distributions,
-     contains valuable comments, unfortunately technical details obscure often the
-     high level issues. Another important source is
-     <a class="fork" href="http://www.ctan.org/tex-archive/systems/knuth/tex/texbook.tex">The
+     patgen can be used to assist in creating pattern files from dictionaries.
+     It is available in many Unix/Linux distributions and every TeX distribution.
+     Pattern creation for languages like english or german is an art. Read
+     Frank Liang's original paper <a class="fork" href="http://www.tug.org/docs/liang/">"Word
+     Hy-phen-a-tion by Com-pu-ter"</a> (yes, with hyphens) for details.
+     The original patgen.web source, included in the TeX source distributions,
+     contains valuable comments, unfortunately technical details often obscure the
+     high level issues. Another important source of information is
+     <a class="fork" href="http://mirrors.ctan.org/systems/knuth/dist/tex/texbook.tex">The
      TeX Book</a>, appendix H (either read the TeX source, or run it through
      TeX to typeset it). Secondary articles, for example the works by Petr Sojka,
      may also give some much needed insight into problems arising in automated
