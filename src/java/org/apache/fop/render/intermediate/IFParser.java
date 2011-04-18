@@ -24,6 +24,7 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -76,7 +77,7 @@ public class IFParser implements IFConstants {
     private static SAXTransformerFactory tFactory
         = (SAXTransformerFactory)SAXTransformerFactory.newInstance();
 
-    private static Set handledNamespaces = new java.util.HashSet();
+    private static Set<String> handledNamespaces = new java.util.HashSet<String>();
 
     static {
         handledNamespaces.add(XMLNS_NAMESPACE_URI);
@@ -132,7 +133,7 @@ public class IFParser implements IFConstants {
 
     private static class Handler extends DefaultHandler {
 
-        private Map elementHandlers = new java.util.HashMap();
+        private Map<String, ElementHandler> elementHandlers = new HashMap<String, ElementHandler>();
 
         private IFDocumentHandler documentHandler;
         private IFPainter painter;
@@ -188,6 +189,7 @@ public class IFParser implements IFConstants {
             //Page content
             elementHandlers.put(EL_VIEWPORT, new ViewportHandler());
             elementHandlers.put(EL_GROUP, new GroupHandler());
+            elementHandlers.put(EL_ID, new IDHandler());
             elementHandlers.put(EL_FONT, new FontHandler());
             elementHandlers.put(EL_TEXT, new TextHandler());
             elementHandlers.put(EL_CLIP_RECT, new ClipRectHandler());
@@ -202,7 +204,7 @@ public class IFParser implements IFConstants {
             }
         }
 
-        private void establishForeignAttributes(Map foreignAttributes) {
+        private void establishForeignAttributes(Map<QName, String> foreignAttributes) {
             documentHandler.getContext().setForeignAttributes(foreignAttributes);
         }
 
@@ -300,7 +302,7 @@ public class IFParser implements IFConstants {
         private boolean startIFElement(String localName, Attributes attributes)
                 throws SAXException {
             lastAttributes = new AttributesImpl(attributes);
-            ElementHandler elementHandler = (ElementHandler)elementHandlers.get(localName);
+            ElementHandler elementHandler = elementHandlers.get(localName);
             content.setLength(0);
             ignoreCharacters = true;
             if (elementHandler != null) {
@@ -346,7 +348,7 @@ public class IFParser implements IFConstants {
                 }
             } else {
                 if (NAMESPACE.equals(uri)) {
-                    ElementHandler elementHandler = (ElementHandler)elementHandlers.get(localName);
+                    ElementHandler elementHandler = elementHandlers.get(localName);
                     if (elementHandler != null) {
                         try {
                             elementHandler.endElement();
@@ -432,7 +434,7 @@ public class IFParser implements IFConstants {
                     documentHandler.getContext().setLanguage(
                             XMLUtil.convertRFC3066ToLocale(xmllang));
                 }
-                Map foreignAttributes = getForeignAttributes(lastAttributes);
+                Map<QName, String> foreignAttributes = getForeignAttributes(lastAttributes);
                 establishForeignAttributes(foreignAttributes);
                 documentHandler.startPageSequence(id);
                 resetForeignAttributes();
@@ -453,7 +455,7 @@ public class IFParser implements IFConstants {
                 String pageMasterName = attributes.getValue("page-master-name");
                 int width = Integer.parseInt(attributes.getValue("width"));
                 int height = Integer.parseInt(attributes.getValue("height"));
-                Map foreignAttributes = getForeignAttributes(lastAttributes);
+                Map<QName, String> foreignAttributes = getForeignAttributes(lastAttributes);
                 establishForeignAttributes(foreignAttributes);
                 documentHandler.startPage(index, name, pageMasterName,
                         new Dimension(width, height));
@@ -486,6 +488,7 @@ public class IFParser implements IFConstants {
 
             public void endElement() throws IFException {
                 painter = null;
+                documentHandler.getContext().setID("");
                 documentHandler.endPageContent();
             }
 
@@ -532,6 +535,16 @@ public class IFParser implements IFConstants {
 
             public void endElement() throws IFException {
                 painter.endGroup();
+            }
+
+        }
+
+        private class IDHandler extends AbstractElementHandler {
+
+            @Override
+            public void startElement(Attributes attributes) throws IFException, SAXException {
+                String id = attributes.getValue("name");
+                documentHandler.getContext().setID(id);
             }
 
         }
@@ -660,7 +673,7 @@ public class IFParser implements IFConstants {
                 int y = Integer.parseInt(lastAttributes.getValue("y"));
                 int width = Integer.parseInt(lastAttributes.getValue("width"));
                 int height = Integer.parseInt(lastAttributes.getValue("height"));
-                Map foreignAttributes = getForeignAttributes(lastAttributes);
+                Map<QName, String> foreignAttributes = getForeignAttributes(lastAttributes);
                 establishForeignAttributes(foreignAttributes);
                 setStructurePointer(lastAttributes);
                 if (foreignObject != null) {
@@ -712,8 +725,8 @@ public class IFParser implements IFConstants {
             }
         }
 
-        private static Map getForeignAttributes(Attributes atts) {
-            Map foreignAttributes = null;
+        private static Map<QName, String> getForeignAttributes(Attributes atts) {
+            Map<QName, String> foreignAttributes = null;
             for (int i = 0, c = atts.getLength(); i < c; i++) {
                 String ns = atts.getURI(i);
                 if (ns.length() > 0) {
@@ -721,7 +734,7 @@ public class IFParser implements IFConstants {
                         continue;
                     }
                     if (foreignAttributes == null) {
-                        foreignAttributes = new java.util.HashMap();
+                        foreignAttributes = new java.util.HashMap<QName, String>();
                     }
                     QName qname = new QName(ns, atts.getQName(i));
                     foreignAttributes.put(qname, atts.getValue(i));

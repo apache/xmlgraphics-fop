@@ -67,6 +67,8 @@ public interface IFConstants extends XMLConstants {
     String EL_FONT = "font";
     /** element name text */
     String EL_TEXT = "text";
+    /** element name id */
+    String EL_ID = "id";
     /** Parent element of the logical structure tree. */
     String EL_STRUCTURE_TREE = "structure-tree";
 }

@@ -48,6 +48,8 @@ public class IFContext {
 
     private String structurePointer;
 
+    private String id = "";
+
     /**
      * Main constructor.
      * @param ua the user agent
@@ -153,6 +155,25 @@ public class IFContext {
      */
     public String getStructurePointer() {
         return this.structurePointer;
+    }
+
+    /**
+     * Sets the ID of the object enclosing the content that will follow.
+     *
+     * @param id the ID of the nearest ancestor object for which the id property was set
+     */
+    void setID(String id) {
+        assert id != null;
+        this.id = id;
+    }
+
+    /**
+     * Returns the ID of the object enclosing the current content.
+     *
+     * @return the ID of the nearest ancestor object for which the id property was set
+     */
+    String getID() {
+        return id;
     }
 
 }

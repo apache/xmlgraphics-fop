@@ -19,8 +19,9 @@
 
 package org.apache.fop.layoutengine;
 
-import org.apache.fop.apps.FormattingResults;
 import org.w3c.dom.Node;
+
+import org.apache.fop.apps.FormattingResults;
 
 /**
  * Simple check that requires a result property to evaluate to the expected value
@@ -29,16 +30,6 @@ public class ResultCheck implements LayoutEngineCheck {
 
     private String expected;
     private String property;
-
-    /**
-     * Creates a new instance
-     * @param expected expected value
-     * @param property property of which the value needs to be evaluated
-     */
-    public ResultCheck(String expected, String property) {
-        this.expected = expected;
-        this.property = property;
-    }
 
     /**
      * Creates a new instance from a DOM node.

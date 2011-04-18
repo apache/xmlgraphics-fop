@@ -21,10 +21,12 @@ package org.apache.fop.intermediate;
 
 import org.w3c.dom.Document;
 
+import org.apache.fop.check.Check;
+
 /**
  * Check interface for intermediate format checks.
  */
-public interface IFCheck {
+public interface IFCheck extends Check {
 
     /**
      * Called to perform the check.

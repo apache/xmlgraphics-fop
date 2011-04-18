@@ -59,6 +59,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="VH" type="add">
+        Added id element to intermediate format to track the origin of content.
+      </action>
       <action context="Renderers" dev="AD" type="fix" fixes-bug="50987" due-to="Matthias Reischenbacher">
         Bugzilla 50988: Fixed a NullPointerException in case a white-space fo:character was removed
         due to white-space handling.

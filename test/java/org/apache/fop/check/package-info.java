@@ -17,19 +17,9 @@
 
 /* $Id$ */
 
-package org.apache.fop.layoutengine;
-
-import org.apache.fop.check.Check;
-
 /**
- * Defines the interface for check operations.
+ * A framework for creating checks from elements stored in an XML test case. The test case
+ * typically contains the XML document under test, along with a series of checks expressed
+ * as XML elements.
  */
-public interface LayoutEngineCheck extends Check {
-
-    /**
-     * Called to perform the check.
-     * @param result the results from the processing run
-     */
-    void check(LayoutResult result);
-
-}
+package org.apache.fop.check;

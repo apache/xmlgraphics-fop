@@ -17,7 +17,7 @@
 
 /* $Id$ */
 
-package org.apache.fop.layoutengine;
+package org.apache.fop.intermediate;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,12 +30,14 @@ import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
+import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import org.apache.xpath.XPathAPI;
 import org.apache.xpath.objects.XObject;
@@ -43,9 +45,9 @@ import org.apache.xpath.objects.XObject;
 import org.apache.fop.apps.FopFactory;
 
 /**
- * Test environment and helper code for running FOP tests.
+ * Helper class for running FOP tests.
  */
-public class TestEnvironment {
+public class TestAssistant {
 
     // configure fopFactory as desired
     private FopFactory fopFactory = FopFactory.newInstance();
@@ -62,7 +64,7 @@ public class TestEnvironment {
     /**
      * Main constructor.
      */
-    public TestEnvironment() {
+    public TestAssistant() {
         fopFactory.getFontManager().setBase14KerningEnabled(false);
         fopFactoryWithBase14Kerning.getFontManager().setBase14KerningEnabled(true);
         domBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -89,13 +91,28 @@ public class TestEnvironment {
      * @return the stylesheet
      * @throws TransformerConfigurationException if an error occurs loading the stylesheet
      */
-    public Templates getTestcase2ChecksStylesheet() throws TransformerConfigurationException {
+    private Templates getTestcase2ChecksStylesheet() throws TransformerConfigurationException {
         if (testcase2checks == null) {
             //Load and cache stylesheet
             Source src = new StreamSource(new File("test/layoutengine/testcase2checks.xsl"));
             testcase2checks = tfactory.newTemplates(src);
         }
         return testcase2checks;
+    }
+
+    /**
+     * Returns the element from the given XML file that encloses the tests.
+     *
+     * @param testFile a test case
+     * @return the parent element of the group(s) of checks
+     * @throws TransformerException if an error occurs while extracting the test element
+     */
+    public Element getTestRoot(File testFile) throws TransformerException {
+        Transformer transformer = getTestcase2ChecksStylesheet().newTransformer();
+        DOMResult res = new DOMResult();
+        transformer.transform(new StreamSource(testFile), res);
+        Document doc = (Document) res.getNode();
+        return doc.getDocumentElement();
     }
 
     public FopFactory getFopFactory(boolean base14KerningEnabled) {

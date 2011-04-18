@@ -153,6 +153,8 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
 
     private TextUtil textUtil = new TextUtil();
 
+    private Stack<String> ids = new Stack<String>();
+
     /**
      * Main constructor
      */
@@ -841,11 +843,13 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     public void renderInlineViewport(InlineViewport viewport) {
         String ptr = (String) viewport.getTrait(Trait.PTR);
         establishStructurePointer(ptr);
+        pushdID(viewport);
         Dimension dim = new Dimension(viewport.getIPD(), viewport.getBPD());
         viewportDimensionStack.push(dim);
         super.renderInlineViewport(viewport);
         viewportDimensionStack.pop();
         resetStructurePointer();
+        popID(viewport);
     }
 
     /** {@inheritDoc} */
@@ -888,7 +892,9 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     /** {@inheritDoc} */
     protected void renderInlineArea(InlineArea inlineArea) {
         saveInlinePosIfTargetable(inlineArea);
+        pushdID(inlineArea);
         super.renderInlineArea(inlineArea);
+        popID(inlineArea);
     }
 
     /** {@inheritDoc} */
@@ -952,7 +958,25 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
             log.trace("renderBlock() " + block);
         }
         saveBlockPosIfTargetable(block);
+        pushdID(block);
         super.renderBlock(block);
+        popID(block);
+    }
+
+    private void pushdID(Area area) {
+        String prodID = (String) area.getTrait(Trait.PROD_ID);
+        if (prodID != null) {
+            ids.push(prodID);
+            documentHandler.getContext().setID(prodID);
+        }
+    }
+
+    private void popID(Area area) {
+        String prodID = (String) area.getTrait(Trait.PROD_ID);
+        if (prodID != null) {
+            ids.pop();
+            documentHandler.getContext().setID(ids.empty() ? "" : ids.peek());
+        }
     }
 
     private Typeface getTypeface(String fontName) {
