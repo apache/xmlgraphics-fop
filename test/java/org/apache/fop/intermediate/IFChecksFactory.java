@@ -17,19 +17,33 @@
 
 /* $Id$ */
 
-package org.apache.fop.layoutengine;
+package org.apache.fop.intermediate;
 
-import org.apache.fop.check.Check;
+import org.w3c.dom.Element;
+
+import org.apache.fop.check.ChecksFactory;
+import org.apache.fop.layoutengine.EvalCheck;
+import org.apache.fop.layoutengine.TrueCheck;
 
 /**
- * Defines the interface for check operations.
+ * A factory class for creating {@link IFCheck} instances.
  */
-public interface LayoutEngineCheck extends Check {
+final class IFChecksFactory extends ChecksFactory<IFCheck> {
 
-    /**
-     * Called to perform the check.
-     * @param result the results from the processing run
-     */
-    void check(LayoutResult result);
+    IFChecksFactory() {
+        registerCheckFactory("true", new CheckFactory<IFCheck>() {
 
+            public IFCheck createCheck(Element element) {
+                return new TrueCheck(element);
+            }
+
+        });
+        registerCheckFactory("eval", new CheckFactory<IFCheck>() {
+
+            public IFCheck createCheck(Element element) {
+                return new EvalCheck(element);
+            }
+
+        });
+    }
 }

@@ -927,7 +927,12 @@ list of possible build targets.
       testsuite="org.apache.fop.intermediate.AreaTreeXMLFormatTestSuite" 
       outfile="TEST-area-tree-xml-format"/>
   </target>
-  <target name="junit-intermediate-format" depends="junit-compile"
+  <target name="junit-intermediate-layout" depends="junit-compile" if="xmlunit.present">
+    <junit-run title="intermediate format from layout tests" 
+      testsuite="org.apache.fop.intermediate.LayoutIFTestSuite" 
+      outfile="TEST-intermediate-format-from-layout"/>
+  </target>
+  <target name="junit-intermediate-format" depends="junit-compile,junit-intermediate-layout"
     description="Runs FOP's intermediate format JUnit tests" if="xmlunit.present">
     <junit-run title="intermediate format" 
       testsuite="org.apache.fop.intermediate.IntermediateFormatTestSuite" 

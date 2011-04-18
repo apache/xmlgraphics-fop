@@ -17,19 +17,11 @@
 
 /* $Id$ */
 
-package org.apache.fop.layoutengine;
-
-import org.apache.fop.check.Check;
+package org.apache.fop.check;
 
 /**
- * Defines the interface for check operations.
+ * A marker interface to identify checks in XML test cases.
  */
-public interface LayoutEngineCheck extends Check {
-
-    /**
-     * Called to perform the check.
-     * @param result the results from the processing run
-     */
-    void check(LayoutResult result);
+public interface Check {
 
 }

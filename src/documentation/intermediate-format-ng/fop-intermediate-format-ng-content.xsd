@@ -42,6 +42,11 @@
           </xs:complexContent>
         </xs:complexType>
       </xs:element>
+      <xs:element name="id">
+        <xs:complexType>
+          <xs:attribute name="name" use="required" type="xs:string"/>
+        </xs:complexType>
+      </xs:element>
       <xs:element name="font">
         <xs:complexType>
           <xs:attribute name="family" type="xs:string"/>

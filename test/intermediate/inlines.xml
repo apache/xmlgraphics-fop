@@ -1,0 +1,107 @@
+<?xml version="1.0" standalone="no"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<testcase>
+  <info>
+    <p>
+      This test checks that IDs coming from various inline elements properly appear in the IF 
+      output.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="page"
+          page-height="320pt" page-width="420pt" margin="10pt">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+
+      <fo:page-sequence master-reference="page" id="page-sequence">
+        <fo:flow flow-name="xsl-region-body" text-align="justify">
+          <fo:block font-family="sans-serif">Lorem ipsum dolor sit amet, <fo:character id="character" 
+              font-size="150%" font-weight="bold" color="purple" character="C"/>onsectetur adipiscing 
+            elit. <fo:inline id="inline" color="purple" font-family="serif">Fusce rutrum leo a diam 
+              bibendum auctor.</fo:inline> Vivamus porttitor sollicitudin tortor eu vulputate. In vel 
+            libero libero, a semper est. Vivamus<fo:leader id="leader" leader-length="50pt" 
+              leader-pattern="rule" color="purple"/> dapibus ante id lorem mattis eget mattis urna 
+            sodales. This is page number <fo:page-number id="page-number" color="purple"/>. Vestibulum 
+            nec dui urna, in porta mi. The fo:character object is on page <fo:page-number-citation 
+              id="page-number-citation" ref-id="character" color="purple"/>. Proin varius egestas erat. 
+            Proin ante eros, consequat eget semper a, molestie non arcu. The last page of this document 
+            is page <fo:page-number-citation-last id="page-number-citation-last" ref-id="page-sequence" 
+              color="purple"/>. Praesent hendrerit dolor vel leo luctus dapibus.</fo:block>
+
+          <fo:block break-before="page">Lorem ipsum dolor sit amet, consectetur adipiscing 
+            elit.</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+
+    </fo:root>
+  </fo>
+  <if-checks xmlns:if="http://xmlgraphics.apache.org/fop/intermediate">
+
+    <eval expected="32"        xpath="count(//if:page[1]/descendant::*[local-name() = 'text' or local-name() = 'line' or local-name() = 'id'])"/>
+
+    <eval expected="text" xpath="local-name(//if:page[1]/descendant::*[local-name() = 'text' or local-name() = 'line' or local-name() = 'id'][1])"/>
+    <eval expected="id"   xpath="local-name(//if:page[1]/descendant::*[local-name() = 'text' or local-name() = 'line' or local-name() = 'id'][2])"/>
+    <eval expected="text" xpath="local-name(//if:page[1]/descendant::*[local-name() = 'text' or local-name() = 'line' or local-name() = 'id'][3])"/>
+    <eval expected="id"   xpath="local-name(//if:page[1]/descendant::*[local-name() = 'text' or local-name() = 'line' or local-name() = 'id'][4])"/>
+    <eval expected="text" xpath="local-name(//if:page[1]/descendant::*[local-name() = 'text' or local-name() = 'line' or local-name() = 'id'][5])"/>
+    <eval expected="id"   xpath="local-name(//if:page[1]/descendant::*[local-name() = 'text' or local-name() = 'line' or local-name() = 'id'][6])"/>
+    <eval expected="text" xpath="local-name(//if:page[1]/descendant::*[local-name() = 'text' or local-name() = 'line' or local-name() = 'id'][7])"/>
+    <eval expected="text" xpath="local-name(//if:page[1]/descendant::*[local-name() = 'text' or local-name() = 'line' or local-name() = 'id'][8])"/>
+    <eval expected="id"   xpath="local-name(//if:page[1]/descendant::*[local-name() = 'text' or local-name() = 'line' or local-name() = 'id'][9])"/>
+    <eval expected="text" xpath="local-name(//if:page[1]/descendant::*[local-name() = 'text' or local-name() = 'line' or local-name() = 'id'][10])"/>
+    <eval expected="text" xpath="local-name(//if:page[1]/descendant::*[local-name() = 'text' or local-name() = 'line' or local-name() = 'id'][11])"/>
+    <eval expected="id"   xpath="local-name(//if:page[1]/descendant::*[local-name() = 'text' or local-name() = 'line' or local-name() = 'id'][12])"/>
+    <eval expected="line" xpath="local-name(//if:page[1]/descendant::*[local-name() = 'text' or local-name() = 'line' or local-name() = 'id'][13])"/>
+    <eval expected="id"   xpath="local-name(//if:page[1]/descendant::*[local-name() = 'text' or local-name() = 'line' or local-name() = 'id'][14])"/>
+    <eval expected="text" xpath="local-name(//if:page[1]/descendant::*[local-name() = 'text' or local-name() = 'line' or local-name() = 'id'][15])"/>
+    <eval expected="text" xpath="local-name(//if:page[1]/descendant::*[local-name() = 'text' or local-name() = 'line' or local-name() = 'id'][16])"/>
+    <eval expected="id"   xpath="local-name(//if:page[1]/descendant::*[local-name() = 'text' or local-name() = 'line' or local-name() = 'id'][17])"/>
+    <eval expected="text" xpath="local-name(//if:page[1]/descendant::*[local-name() = 'text' or local-name() = 'line' or local-name() = 'id'][18])"/>
+    <eval expected="id"   xpath="local-name(//if:page[1]/descendant::*[local-name() = 'text' or local-name() = 'line' or local-name() = 'id'][19])"/>
+    <eval expected="text" xpath="local-name(//if:page[1]/descendant::*[local-name() = 'text' or local-name() = 'line' or local-name() = 'id'][20])"/>
+    <eval expected="text" xpath="local-name(//if:page[1]/descendant::*[local-name() = 'text' or local-name() = 'line' or local-name() = 'id'][21])"/>
+    <eval expected="id"   xpath="local-name(//if:page[1]/descendant::*[local-name() = 'text' or local-name() = 'line' or local-name() = 'id'][22])"/>
+    <eval expected="text" xpath="local-name(//if:page[1]/descendant::*[local-name() = 'text' or local-name() = 'line' or local-name() = 'id'][23])"/>
+    <eval expected="id"   xpath="local-name(//if:page[1]/descendant::*[local-name() = 'text' or local-name() = 'line' or local-name() = 'id'][24])"/>
+    <eval expected="text" xpath="local-name(//if:page[1]/descendant::*[local-name() = 'text' or local-name() = 'line' or local-name() = 'id'][25])"/>
+    <eval expected="text" xpath="local-name(//if:page[1]/descendant::*[local-name() = 'text' or local-name() = 'line' or local-name() = 'id'][26])"/>
+    <eval expected="text" xpath="local-name(//if:page[1]/descendant::*[local-name() = 'text' or local-name() = 'line' or local-name() = 'id'][27])"/>
+    <eval expected="id"   xpath="local-name(//if:page[1]/descendant::*[local-name() = 'text' or local-name() = 'line' or local-name() = 'id'][28])"/>
+    <eval expected="text" xpath="local-name(//if:page[1]/descendant::*[local-name() = 'text' or local-name() = 'line' or local-name() = 'id'][29])"/>
+    <eval expected="id"   xpath="local-name(//if:page[1]/descendant::*[local-name() = 'text' or local-name() = 'line' or local-name() = 'id'][30])"/>
+    <eval expected="text" xpath="local-name(//if:page[1]/descendant::*[local-name() = 'text' or local-name() = 'line' or local-name() = 'id'][31])"/>
+    <eval expected="text" xpath="local-name(//if:page[1]/descendant::*[local-name() = 'text' or local-name() = 'line' or local-name() = 'id'][32])"/>
+
+    <eval expected="character"                 xpath="//if:page[1]/descendant::*[local-name() = 'id'][1]/@name"/>
+    <eval expected=""                          xpath="//if:page[1]/descendant::*[local-name() = 'id'][2]/@name"/>
+    <eval expected="inline"                    xpath="//if:page[1]/descendant::*[local-name() = 'id'][3]/@name"/>
+    <eval expected=""                          xpath="//if:page[1]/descendant::*[local-name() = 'id'][4]/@name"/>
+    <eval expected="leader"                    xpath="//if:page[1]/descendant::*[local-name() = 'id'][5]/@name"/>
+    <eval expected=""                          xpath="//if:page[1]/descendant::*[local-name() = 'id'][6]/@name"/>
+    <eval expected="page-number"               xpath="//if:page[1]/descendant::*[local-name() = 'id'][7]/@name"/>
+    <eval expected=""                          xpath="//if:page[1]/descendant::*[local-name() = 'id'][8]/@name"/>
+    <eval expected="page-number-citation"      xpath="//if:page[1]/descendant::*[local-name() = 'id'][9]/@name"/>
+    <eval expected=""                          xpath="//if:page[1]/descendant::*[local-name() = 'id'][10]/@name"/>
+    <eval expected="page-number-citation-last" xpath="//if:page[1]/descendant::*[local-name() = 'id'][11]/@name"/>
+    <eval expected=""                          xpath="//if:page[1]/descendant::*[local-name() = 'id'][12]/@name"/>
+
+  </if-checks>
+</testcase>

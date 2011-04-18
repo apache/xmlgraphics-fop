@@ -20,48 +20,45 @@
 package org.apache.fop.intermediate;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
-
-import javax.xml.transform.TransformerFactory;
+import java.util.Collection;
+import java.util.Iterator;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-/**
- * A test suite for testing the Intermediate Format output.
- */
-public final class IntermediateFormatTestSuite {
+import org.apache.fop.layoutengine.LayoutEngineTestSuite;
 
-    private IntermediateFormatTestSuite() {
+/**
+ * JUnit test suite for the intermediate format
+ */
+public final class LayoutIFTestSuite {
+
+    private LayoutIFTestSuite() {
         // This is a utility class
     }
 
     /**
-     * Creates a suite of Intermediate Format tests.
-     *
-     * @return the test suite
-     * @throws IOException if an I/O error occurs while loading one of the tests
+     * @return the test suite with all the tests (one for each XML file)
+     * @throws IOException in case of an I/O problem
      */
     public static Test suite() throws IOException {
-
-        File backupDir = new File("build/test-results/intermediate");
-        backupDir.mkdirs();
-
-        IFTester ifTester = new IFTester(TransformerFactory.newInstance(), backupDir);
-
         TestSuite suite = new TestSuite();
-        File testDir = new File("test/intermediate");
-        String[] tests = testDir.list(new FilenameFilter() {
 
-            public boolean accept(File dir, String name) {
-                return name.endsWith(".xml");
-            }
-        });
-        for (String test : tests) {
-            File testFile = new File(testDir, test);
-            suite.addTest(new IFTestCase(testFile, ifTester));
+        Collection files = LayoutEngineTestSuite.getTestFiles();
+
+        Iterator i = files.iterator();
+        while (i.hasNext()) {
+            File f = (File)i.next();
+            addIFTestCase(suite, f);
         }
+
         return suite;
     }
+
+    private static void addIFTestCase(TestSuite suite,
+            final File f) throws IOException {
+        suite.addTest(new IFParserTestCase(f));
+    }
+
 }

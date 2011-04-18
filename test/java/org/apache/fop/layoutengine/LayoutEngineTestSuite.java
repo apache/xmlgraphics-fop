@@ -56,10 +56,14 @@ import org.apache.fop.DebugHelper;
 /**
  * JUnit test suit for running layout engine test under JUnit control.
  */
-public class LayoutEngineTestSuite {
+public final class LayoutEngineTestSuite {
 
     static {
         DebugHelper.registerStandardElementListObservers();
+    }
+
+    private LayoutEngineTestSuite() {
+        // This is a utility class
     }
 
     public static String[] readDisabledTestcases(File f) throws IOException {
@@ -178,45 +182,33 @@ public class LayoutEngineTestSuite {
         Iterator i = files.iterator();
         while (i.hasNext()) {
             File f = (File)i.next();
-            addTestCase(suite, tester, f);
+            suite.addTest(new LayoutEngineTestCase(f, tester));
         }
 
         return suite;
     }
 
-    private static void addTestCase(TestSuite suite,
-                final LayoutEngineTester tester, final File f) {
-        suite.addTest(new LayoutEngineTestCase(f.getName()) {
-            public void runTest() throws Exception {
-                try {
-                    prepare(tester, f);
-                    testMain();
-                } catch (Exception e) {
-                    org.apache.commons.logging.LogFactory.getLog(
-                            this.getClass()).error("Error on " + f.getName());
-                    throw e;
-                }
-            }
-        });
-    }
-
     private static class LayoutEngineTestCase extends TestCase {
 
-        private LayoutEngineTester tester;
-        private File testFile;
+        private final File testFile;
 
-        public LayoutEngineTestCase(String name) {
-            super(name);
-        }
+        private final LayoutEngineTester tester;
 
-        public void prepare(LayoutEngineTester tester, File testFile) {
-            //super(testFile.getName());
-            this.tester = tester;
+        LayoutEngineTestCase(File testFile, LayoutEngineTester tester) {
+            super(testFile.getName());
             this.testFile = testFile;
+            this.tester = tester;
         }
 
-        public void testMain() throws Exception {
-            tester.runTest(testFile);
+        @Override
+        protected void runTest() throws Throwable {
+            try {
+                tester.runTest(testFile);
+            } catch (Exception e) {
+                org.apache.commons.logging.LogFactory.getLog(
+                        this.getClass()).error("Error on " + getName());
+                throw e;
+            }
         }
     }
 }
