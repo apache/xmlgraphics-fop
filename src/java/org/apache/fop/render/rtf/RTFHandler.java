@@ -78,6 +78,7 @@ import org.apache.fop.fo.flow.ListItemBody;
 import org.apache.fop.fo.flow.ListItemLabel;
 import org.apache.fop.fo.flow.PageNumber;
 import org.apache.fop.fo.flow.PageNumberCitation;
+import org.apache.fop.fo.flow.PageNumberCitationLast;
 import org.apache.fop.fo.flow.table.Table;
 import org.apache.fop.fo.flow.table.TableBody;
 import org.apache.fop.fo.flow.table.TableCell;
@@ -1447,6 +1448,26 @@ public class RTFHandler extends FOEventHandler {
             throw new RuntimeException(e.getMessage());
         }
     }
+    
+    /** {@inheritDoc} */
+    public void startPageNumberCitationLast(PageNumberCitationLast l) {
+        if (bDefer) {
+            return;
+        }
+        try {
+
+            IRtfTextrunContainer container
+                  = (IRtfTextrunContainer)builderContext.getContainer(
+                      IRtfTextrunContainer.class, true, this);
+            RtfTextrun textrun = container.getTextrun();
+
+            textrun.addPageNumberCitation(l.getRefId());
+
+        } catch (Exception e) {
+            log.error("startPageNumberCitationLast: " + e.getMessage());
+            throw new RuntimeException(e.getMessage());
+        }
+    }
 
     private void prepareTable(Table tab) {
         // Allows to receive the available width of the table
@@ -1640,6 +1661,12 @@ public class RTFHandler extends FOEventHandler {
                 startPageNumberCitation((PageNumberCitation) foNode);
             } else {
                 endPageNumberCitation((PageNumberCitation) foNode);
+            }
+        } else if (foNode instanceof PageNumberCitationLast) {
+            if (bStart) {
+                startPageNumberCitationLast((PageNumberCitationLast) foNode);
+            } else {
+                endPageNumberCitationLast((PageNumberCitationLast) foNode);
             }
         } else {
             RTFEventProducer eventProducer = RTFEventProducer.Provider.get(
