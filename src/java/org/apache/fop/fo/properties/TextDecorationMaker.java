@@ -59,14 +59,16 @@ public class TextDecorationMaker extends ListProperty.Maker {
         boolean over = false;
         boolean through = false;
         boolean blink = false;
-        int enumValue;
+        int enumValue = -1;
         for (int i = lst.size(); --i >= 0;) {
             Property prop = (Property)lst.get(i);
             if (prop instanceof NCnameProperty) {
                 prop = checkEnumValues(prop.getString());
                 lst.set(i, prop);
             }
-            enumValue = prop.getEnum();
+            if (prop != null) {
+                enumValue = prop.getEnum();
+            }
             switch (enumValue) {
                 case Constants.EN_NONE:
                     if (under | over | through | blink) {
@@ -115,7 +117,7 @@ public class TextDecorationMaker extends ListProperty.Maker {
                             throw new PropertyException("Invalid combination of values");
                     }
                 default:
-                    throw new PropertyException("Invalid value specified: " + prop);
+                    throw new PropertyException("Invalid value specified: " + p);
             }
         }
         return listProp;

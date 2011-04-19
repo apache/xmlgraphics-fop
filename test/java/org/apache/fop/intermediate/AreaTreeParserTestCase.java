@@ -72,7 +72,7 @@ public class AreaTreeParserTestCase extends AbstractIntermediateTestCase {
         setErrorListener(transformer);
 
         //Set up XMLRenderer to render to a DOM
-        TransformerHandler handler = env.getTransformerFactory().newTransformerHandler();
+        TransformerHandler handler = testAssistant.getTransformerFactory().newTransformerHandler();
         DOMResult domResult = new DOMResult();
         handler.setResult(domResult);
 
@@ -113,7 +113,7 @@ public class AreaTreeParserTestCase extends AbstractIntermediateTestCase {
         AreaTreeParser parser = new AreaTreeParser();
 
         //Set up XMLRenderer to render to a DOM
-        TransformerHandler handler = env.getTransformerFactory().newTransformerHandler();
+        TransformerHandler handler = testAssistant.getTransformerFactory().newTransformerHandler();
         DOMResult domResult = new DOMResult();
         handler.setResult(domResult);
         XMLRenderer renderer = new XMLRenderer();

@@ -336,7 +336,7 @@ public class AreaTreeHandler extends FOEventHandler {
             String[] ids = res.getIDRefs();
             for (String id : ids) {
                 List<PageViewport> pageVPList = idTracker.getPageViewportsContainingID(id);
-                if (pageVPList != null) {
+                if (pageVPList != null && !pageVPList.isEmpty()) {
                     res.resolveIDRef(id, pageVPList);
                 } else {
                     AreaEventProducer eventProducer = AreaEventProducer.Provider.get(

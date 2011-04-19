@@ -37,7 +37,6 @@ import java.util.Stack;
 import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
-
 import org.xml.sax.SAXException;
 
 import org.apache.batik.parser.AWTTransformProducer;
@@ -75,7 +74,7 @@ import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.area.inline.TextArea;
-import org.apache.fop.area.inline.Viewport;
+import org.apache.fop.area.inline.InlineViewport;
 import org.apache.fop.area.inline.WordArea;
 import org.apache.fop.datatypes.URISpecification;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
@@ -154,6 +153,8 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     private ActionSet actionSet = new ActionSet();
 
     private TextUtil textUtil = new TextUtil();
+
+    private Stack<String> ids = new Stack<String>();
 
     /**
      * Main constructor
@@ -790,18 +791,11 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
             contentRectTransform.translate(borderPaddingStart, borderPaddingBefore);
             concatenateTransformationMatrixMpt(contentRectTransform, false);
 
-            //Clipping
-            Rectangle clipRect = null;
-            if (bv.getClip()) {
-                clipRect = new Rectangle(0, 0, dim.width, dim.height);
-                //clipRect(0f, 0f, width, height);
-            }
-
             //saveGraphicsState();
             //Set up coordinate system for content rectangle
             AffineTransform contentTransform = ctm.toAffineTransform();
             //concatenateTransformationMatrixMpt(contentTransform);
-            startViewport(contentTransform, clipRect);
+            startViewport(contentTransform, bv.getClipRectangle());
 
             currentIPPosition = 0;
             currentBPPosition = 0;
@@ -833,13 +827,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
             //Now adjust for border/padding
             currentBPPosition += borderPaddingBefore;
 
-            Rectangle2D clippingRect = null;
-            if (bv.getClip()) {
-                clippingRect = new Rectangle(currentIPPosition, currentBPPosition,
-                        bv.getIPD(), bv.getBPD());
-            }
-
-            startVParea(ctm, clippingRect);
+            startVParea(ctm, bv.getClipRectangle());
             currentIPPosition = 0;
             currentBPPosition = 0;
             renderBlocks(bv, children);
@@ -854,30 +842,25 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     }
 
     /** {@inheritDoc} */
-    public void renderViewport(Viewport viewport) {
+    public void renderInlineViewport(InlineViewport viewport) {
         String ptr = (String) viewport.getTrait(Trait.PTR);
         establishStructurePointer(ptr);
+        pushdID(viewport);
         Dimension dim = new Dimension(viewport.getIPD(), viewport.getBPD());
         viewportDimensionStack.push(dim);
-        super.renderViewport(viewport);
+        super.renderInlineViewport(viewport);
         viewportDimensionStack.pop();
         resetStructurePointer();
+        popID(viewport);
     }
 
     /** {@inheritDoc} */
-    protected void startVParea(CTM ctm, Rectangle2D clippingRect) {
+    protected void startVParea(CTM ctm, Rectangle clippingRect) {
         if (log.isTraceEnabled()) {
             log.trace("startVParea() ctm=" + ctm + ", clippingRect=" + clippingRect);
         }
         AffineTransform at = new AffineTransform(ctm.toArray());
-        Rectangle clipRect = null;
-        if (clippingRect != null) {
-            clipRect = new Rectangle(
-                    (int)clippingRect.getMinX() - currentIPPosition,
-                    (int)clippingRect.getMinY() - currentBPPosition,
-                    (int)clippingRect.getWidth(), (int)clippingRect.getHeight());
-        }
-        startViewport(at, clipRect);
+        startViewport(at, clippingRect);
         if (log.isTraceEnabled()) {
             log.trace("startVPArea: " + at + " --> " + graphicContext.getTransform());
         }
@@ -911,7 +894,9 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     /** {@inheritDoc} */
     protected void renderInlineArea(InlineArea inlineArea) {
         saveInlinePosIfTargetable(inlineArea);
+        pushdID(inlineArea);
         super.renderInlineArea(inlineArea);
+        popID(inlineArea);
     }
 
     /** {@inheritDoc} */
@@ -975,7 +960,25 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
             log.trace("renderBlock() " + block);
         }
         saveBlockPosIfTargetable(block);
+        pushdID(block);
         super.renderBlock(block);
+        popID(block);
+    }
+
+    private void pushdID(Area area) {
+        String prodID = (String) area.getTrait(Trait.PROD_ID);
+        if (prodID != null) {
+            ids.push(prodID);
+            documentHandler.getContext().setID(prodID);
+        }
+    }
+
+    private void popID(Area area) {
+        String prodID = (String) area.getTrait(Trait.PROD_ID);
+        if (prodID != null) {
+            ids.pop();
+            documentHandler.getContext().setID(ids.empty() ? "" : ids.peek());
+        }
     }
 
     private Typeface getTypeface(String fontName) {

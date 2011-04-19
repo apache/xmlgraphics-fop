@@ -24,7 +24,7 @@ import java.awt.Rectangle;
 import java.util.List;
 
 import org.apache.fop.area.Area;
-import org.apache.fop.area.inline.Viewport;
+import org.apache.fop.area.inline.InlineViewport;
 import org.apache.fop.datatypes.LengthBase;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.flow.AbstractGraphics;
@@ -54,7 +54,7 @@ public abstract class AbstractGraphicsLayoutManager extends LeafNodeLayoutManage
      *
      * @return the viewport inline area
      */
-    private Viewport getInlineArea() {
+    private InlineViewport getInlineArea() {
         final AbstractGraphics fobj = (AbstractGraphics)this.fobj;
         Dimension intrinsicSize = new Dimension(
                 fobj.getIntrinsicWidth(),
@@ -84,7 +84,7 @@ public abstract class AbstractGraphicsLayoutManager extends LeafNodeLayoutManage
         TraitSetter.setProducerID(viewportArea, fobj.getId());
         transferForeignAttributes(viewportArea);
 
-        Viewport vp = new Viewport(viewportArea);
+        InlineViewport vp = new InlineViewport(viewportArea);
         TraitSetter.addPtr(vp, fobj.getPtr());  // used for accessibility
         TraitSetter.setProducerID(vp, fobj.getId());
         vp.setIPD(imageLayout.getViewportSize().width);
@@ -106,7 +106,7 @@ public abstract class AbstractGraphicsLayoutManager extends LeafNodeLayoutManage
     /** {@inheritDoc} */
     public List getNextKnuthElements(LayoutContext context,
                                            int alignment) {
-        Viewport areaCurrent = getInlineArea();
+        InlineViewport areaCurrent = getInlineArea();
         setCurrentArea(areaCurrent);
         return super.getNextKnuthElements(context, alignment);
     }

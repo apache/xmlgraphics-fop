@@ -22,6 +22,7 @@ package org.apache.fop;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.apache.fop.area.ViewportTestSuite;
 import org.apache.fop.fonts.DejaVuLGCSerifTest;
 import org.apache.fop.image.loader.batik.ImageLoaderTestCase;
 import org.apache.fop.image.loader.batik.ImagePreloaderTestCase;
@@ -65,6 +66,7 @@ public class StandardTestSuite {
         suite.addTest(new TestSuite(PageBoundariesTest.class));
         suite.addTest(new TestSuite(PageScaleTest.class));
         suite.addTest(new TestSuite(MinOptMaxTest.class));
+        suite.addTest(ViewportTestSuite.suite());
         //$JUnit-END$
         return suite;
     }

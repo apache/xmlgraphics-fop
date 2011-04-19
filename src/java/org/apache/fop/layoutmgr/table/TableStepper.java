@@ -239,7 +239,7 @@ public class TableStepper {
                 }
             }
 
-            Keep keep = Keep.KEEP_AUTO;
+            Keep keep = getTableLM().getKeepTogether();
             int stepPenalty = 0;
             for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
                 ActiveCell activeCell = (ActiveCell) iter.next();
@@ -248,8 +248,6 @@ public class TableStepper {
             }
             if (!rowFinished) {
                 keep = keep.compare(rowGroup[activeRowIndex].getKeepTogether());
-                //The above call doesn't take the penalty from the table into account, so...
-                keep = keep.compare(getTableLM().getKeepTogether());
             } else if (activeRowIndex < rowGroup.length - 1) {
                 keep = keep.compare(rowGroup[activeRowIndex].getKeepWithNext());
                 keep = keep.compare(rowGroup[activeRowIndex + 1].getKeepWithPrevious());

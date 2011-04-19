@@ -69,6 +69,8 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     /** Holds the intermediate format state */
     private IFState state;
 
+    private String currentID = "";
+
     /**
      * Default constructor.
      */
@@ -306,6 +308,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     public void endPageContent() throws IFException {
         try {
             this.state = null;
+            currentID = "";
             handler.endElement(EL_PAGE_CONTENT);
         } catch (SAXException e) {
             throw new IFException("SAX error in endPageContent()", e);
@@ -417,6 +420,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     /** {@inheritDoc} */
     public void drawImage(String uri, Rectangle rect) throws IFException {
         try {
+            addID();
             AttributesImpl atts = new AttributesImpl();
             addAttribute(atts, XLINK_HREF, uri);
             addAttribute(atts, "x", Integer.toString(rect.x));
@@ -445,6 +449,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     /** {@inheritDoc} */
     public void drawImage(Document doc, Rectangle rect) throws IFException {
         try {
+            addID();
             AttributesImpl atts = new AttributesImpl();
             addAttribute(atts, "x", Integer.toString(rect.x));
             addAttribute(atts, "y", Integer.toString(rect.y));
@@ -534,6 +539,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     public void drawLine(Point start, Point end, int width, Color color, RuleStyle style)
             throws IFException {
         try {
+            addID();
             AttributesImpl atts = new AttributesImpl();
             addAttribute(atts, "x1", Integer.toString(start.x));
             addAttribute(atts, "y1", Integer.toString(start.y));
@@ -552,6 +558,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     public void drawText(int x, int y, int letterSpacing, int wordSpacing,
             int[][] dp, String text) throws IFException {
         try {
+            addID();
             AttributesImpl atts = new AttributesImpl();
             addAttribute(atts, "x", Integer.toString(x));
             addAttribute(atts, "y", Integer.toString(y));
@@ -680,7 +687,16 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
         }
     }
 
-    // ---=== IFDocumentNavigationHandler ===---
+    private void addID() throws SAXException {
+        String id = getContext().getID();
+        if (!currentID.equals(id)) {
+            AttributesImpl atts = new AttributesImpl();
+            addAttribute(atts, "name", id);
+            handler.startElement(EL_ID, atts);
+            handler.endElement(EL_ID);
+            currentID = id;
+        }
+    }
 
     private Map incompleteActions = new java.util.HashMap();
     private List completeActions = new java.util.LinkedList();
@@ -718,7 +734,9 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
             Iterator iter = tree.getBookmarks().iterator();
             while (iter.hasNext()) {
                 Bookmark b = (Bookmark)iter.next();
-                serializeBookmark(b);
+                if (b.getAction() != null) {
+                    serializeBookmark(b);
+                }
             }
             handler.endElement(DocumentNavigationExtensionConstants.BOOKMARK_TREE);
         } catch (SAXException e) {
@@ -738,10 +756,11 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
         Iterator iter = bookmark.getChildBookmarks().iterator();
         while (iter.hasNext()) {
             Bookmark b = (Bookmark)iter.next();
-            serializeBookmark(b);
+            if (b.getAction() != null) {
+                serializeBookmark(b);
+            }
         }
         handler.endElement(DocumentNavigationExtensionConstants.BOOKMARK);
-
     }
 
     /** {@inheritDoc} */

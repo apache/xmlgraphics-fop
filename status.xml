@@ -59,6 +59,39 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="VH" type="add">
+        Added id element to intermediate format to track the origin of content.
+      </action>
+      <action context="Renderers" dev="AD" type="fix" fixes-bug="50987" due-to="Matthias Reischenbacher">
+        Bugzilla 50988: Fixed a NullPointerException in case a white-space fo:character was removed
+        due to white-space handling.
+      </action>
+      <action context="Renderers" dev="AD" type="fix" fixes-bug="50987" due-to="Martin Koegler">
+        Bugzilla 50987: Fixed an issue in PDF output where a link was added to the parent tree 
+        instead of the related structure element.
+      </action>
+      <action context="Renderers" dev="AD" type="fix" fixes-bug="50986" due-to="Martin Koegler">
+        Bugzilla 50986: Fixed an issue where invalid PDF page content was generated due to 
+        incorrect ET/EMC sequences.
+      </action>
+      <action context="Code" dev="AD" type="fix" fixes-bug="50593">
+        Fixed regression introduced by Bugzilla 50593: bookmarks pointing to a non-existing
+        internal destination should just trigger a warning.
+      </action>
+      <action context="Layout" dev="AD" type="fix" fixes-bug="50965" due-to="Martin Koegler">
+        Bugzilla 50965: Fixed a regression in BlockContainerLayoutManager where margins were
+        no longer reset after forced breaks.
+      </action>
+      <action context="Layout" dev="VH" type="fix" fixex-bug="50763">
+        Implemented non-standard behavior for basic-link areas, such that they take into account the 
+        heights of their descendants areas.
+      </action>
+      <action context="Layout" dev="VH" type="fix">
+        Bugfix: keep-together does not apply to fo:table-cell.
+      </action>
+      <action context="Layout" dev="VH" type="fix">
+        Bugfix: keep-together on a table containing row-spanning cells was not honored.
+      </action>
       <action context="Layout" dev="VH" type="fix" fixes-bug="50196" due-to="Matthias Reischenbacher">
         Bugzilla #50196: padding-start ignored when table-header/footer is repeated.
       </action>

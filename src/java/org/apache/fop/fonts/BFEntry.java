@@ -65,8 +65,9 @@ public class BFEntry {
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder("BFEntry: ");
         sb.append ( "{ UC[" );
         sb.append ( unicodeStart );
         sb.append ( ',' );

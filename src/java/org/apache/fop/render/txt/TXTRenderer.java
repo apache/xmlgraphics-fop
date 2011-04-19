@@ -21,6 +21,7 @@ package org.apache.fop.render.txt;
 
 import java.awt.Color;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
@@ -560,7 +561,7 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
     /**
      * {@inheritDoc}
      */
-    protected void startVParea(CTM ctm, Rectangle2D clippingRect) {
+    protected void startVParea(CTM ctm, Rectangle clippingRect) {
         currentState.push(ctm);
     }
 
