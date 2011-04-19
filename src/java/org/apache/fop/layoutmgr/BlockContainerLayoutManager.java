@@ -346,6 +346,9 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
             updateContentAreaIPDwithOverconstrainedAdjust(contentWidth);
         }
 
+        contentRectOffsetX = 0;
+        contentRectOffsetY = 0;
+
         contentRectOffsetX += fo.getCommonMarginBlock().startIndent.getValue(this);
         contentRectOffsetY += fo.getCommonBorderPaddingBackground().getBorderBeforeWidth(false);
         contentRectOffsetY += fo.getCommonBorderPaddingBackground().getPaddingBefore(false, this);

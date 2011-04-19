@@ -21,37 +21,42 @@ package org.apache.fop.layoutengine;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.sax.TransformerHandler;
-import javax.xml.transform.stream.StreamSource;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
+import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.FormattingResults;
+import org.apache.fop.area.AreaTreeModel;
+import org.apache.fop.area.AreaTreeParser;
+import org.apache.fop.area.RenderPagesModel;
 import org.apache.fop.events.model.EventSeverity;
+import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.intermediate.IFTester;
+import org.apache.fop.intermediate.TestAssistant;
 import org.apache.fop.layoutmgr.ElementListObserver;
+import org.apache.fop.render.intermediate.IFContext;
+import org.apache.fop.render.intermediate.IFRenderer;
+import org.apache.fop.render.intermediate.IFSerializer;
 import org.apache.fop.render.xml.XMLRenderer;
 import org.apache.fop.util.ConsoleEventListenerForTests;
+import org.apache.fop.util.DelegatingContentHandler;
 
 /**
  * Class for testing the FOP's layout engine using testcases specified in XML
@@ -59,19 +64,13 @@ import org.apache.fop.util.ConsoleEventListenerForTests;
  */
 public class LayoutEngineTester {
 
-    private static final Map AT_CHECK_CLASSES = new java.util.HashMap();
+    private TestAssistant testAssistant = new TestAssistant();
 
-    private TestEnvironment env = new TestEnvironment();
-
+    private LayoutEngineChecksFactory layoutEngineChecksFactory = new LayoutEngineChecksFactory();
     private File areaTreeBackupDir;
     private IFTester ifTester;
 
-    static {
-        AT_CHECK_CLASSES.put("true", TrueCheck.class);
-        AT_CHECK_CLASSES.put("eval", EvalCheck.class);
-        AT_CHECK_CLASSES.put("element-list", ElementListCheck.class);
-        AT_CHECK_CLASSES.put("result", ResultCheck.class);
-    }
+    private TransformerFactory tfactory = TransformerFactory.newInstance();
 
     /**
      * Constructs a new instance.
@@ -80,7 +79,7 @@ public class LayoutEngineTester {
      */
     public LayoutEngineTester(File areaTreeBackupDir) {
         this.areaTreeBackupDir = areaTreeBackupDir;
-        this.ifTester = new IFTester(areaTreeBackupDir);
+        this.ifTester = new IFTester(tfactory, areaTreeBackupDir);
     }
 
     /**
@@ -100,18 +99,18 @@ public class LayoutEngineTester {
         ElementListObserver.addObserver(elCollector);
 
         Fop fop;
-
+        FopFactory effFactory;
         try {
-            Document testDoc = env.loadTestCase(testFile);
-            FopFactory effFactory = env.getFopFactory(testDoc);
+            Document testDoc = testAssistant.loadTestCase(testFile);
+            effFactory = testAssistant.getFopFactory(testDoc);
 
             //Setup Transformer to convert the testcase XML to XSL-FO
-            Transformer transformer = env.getTestcase2FOStylesheet().newTransformer();
+            Transformer transformer = testAssistant.getTestcase2FOStylesheet().newTransformer();
             Source src = new DOMSource(testDoc);
 
             //Setup Transformer to convert the area tree to a DOM
             TransformerHandler athandler;
-            athandler = env.getTransformerFactory().newTransformerHandler();
+            athandler = testAssistant.getTransformerFactory().newTransformerHandler();
             athandler.setResult(domres);
 
             //Setup FOP for area tree rendering
@@ -134,36 +133,13 @@ public class LayoutEngineTester {
 
         Document doc = (Document)domres.getNode();
         if (this.areaTreeBackupDir != null) {
-            env.saveDOM(doc,
+            testAssistant.saveDOM(doc,
                     new File(this.areaTreeBackupDir, testFile.getName() + ".at.xml"));
         }
         FormattingResults results = fop.getResults();
         LayoutResult result = new LayoutResult(doc, elCollector, results);
-        checkAll(testFile, result);
+        checkAll(effFactory, testFile, result);
     }
-
-    /**
-     * Factory method to create AT checks from DOM elements.
-     * @param el DOM element to create the check from
-     * @return The newly create check
-     */
-    protected LayoutEngineCheck createATCheck(Element el) {
-        String name = el.getTagName();
-        Class clazz = (Class)AT_CHECK_CLASSES.get(name);
-        if (clazz != null) {
-            try {
-                Constructor c = clazz.getDeclaredConstructor(new Class[] {Node.class});
-                LayoutEngineCheck instance = (LayoutEngineCheck)c.newInstance(new Object[] {el});
-                return instance;
-            } catch (Exception e) {
-                throw new RuntimeException("Error while instantiating check '"
-                        + name + "': " + e.getMessage());
-            }
-        } else {
-            throw new IllegalArgumentException("No check class found: " + name);
-        }
-    }
-
 
     /**
      * Perform all checks on the area tree and, optionally, on the intermediate format.
@@ -171,54 +147,82 @@ public class LayoutEngineTester {
      * @param result The layout results
      * @throws TransformerException if a problem occurs in XSLT/JAXP
      */
-    protected void checkAll(File testFile, LayoutResult result) throws TransformerException {
-        Transformer transformer = env.getTestcase2ChecksStylesheet().newTransformer();
-        Source src = new StreamSource(testFile);
-        DOMResult res = new DOMResult();
-        transformer.transform(src, res);
-
-        Document doc = (Document)res.getNode();
-        Element root = doc.getDocumentElement();
+    protected void checkAll(FopFactory fopFactory, File testFile, LayoutResult result)
+            throws TransformerException {
+        Element testRoot = testAssistant.getTestRoot(testFile);
 
         NodeList nodes;
         //AT tests only when checks are available
-        nodes = root.getElementsByTagName("at-checks");
+        nodes = testRoot.getElementsByTagName("at-checks");
         if (nodes.getLength() > 0) {
             Element atChecks = (Element)nodes.item(0);
             doATChecks(atChecks, result);
         }
 
         //IF tests only when checks are available
-        nodes = root.getElementsByTagName("if-checks");
+        nodes = testRoot.getElementsByTagName("if-checks");
         if (nodes.getLength() > 0) {
             Element ifChecks = (Element)nodes.item(0);
-            ifTester.doIFChecks(testFile, ifChecks, result.getAreaTree());
+            Document ifDocument = createIF(fopFactory, testFile, result.getAreaTree());
+            ifTester.doIFChecks(testFile.getName(), ifChecks, ifDocument);
+        }
+    }
+
+    private Document createIF(FopFactory fopFactory, File testFile, Document areaTreeXML)
+            throws TransformerException {
+        try {
+            FOUserAgent ua = fopFactory.newFOUserAgent();
+            ua.setBaseURL(testFile.getParentFile().toURI().toURL().toExternalForm());
+            ua.getEventBroadcaster().addEventListener(
+                    new ConsoleEventListenerForTests(testFile.getName(), EventSeverity.WARN));
+
+            IFRenderer ifRenderer = new IFRenderer();
+            ifRenderer.setUserAgent(ua);
+
+            IFSerializer serializer = new IFSerializer();
+            serializer.setContext(new IFContext(ua));
+            DOMResult result = new DOMResult();
+            serializer.setResult(result);
+            ifRenderer.setDocumentHandler(serializer);
+
+            ua.setRendererOverride(ifRenderer);
+            FontInfo fontInfo = new FontInfo();
+            //Construct the AreaTreeModel that will received the individual pages
+            final AreaTreeModel treeModel = new RenderPagesModel(ua,
+                    null, fontInfo, null);
+
+            //Iterate over all intermediate files
+            AreaTreeParser parser = new AreaTreeParser();
+            ContentHandler handler = parser.getContentHandler(treeModel, ua);
+
+            DelegatingContentHandler proxy = new DelegatingContentHandler() {
+
+                public void endDocument() throws SAXException {
+                    super.endDocument();
+                    //Signal the end of the processing.
+                    //The renderer can finalize the target document.
+                    treeModel.endDocument();
+                }
+
+            };
+            proxy.setDelegateContentHandler(handler);
+
+            Transformer transformer = tfactory.newTransformer();
+            transformer.transform(new DOMSource(areaTreeXML), new SAXResult(proxy));
+
+            return (Document)result.getNode();
+        } catch (Exception e) {
+            throw new TransformerException(
+                    "Error while generating intermediate format file: " + e.getMessage(), e);
         }
     }
 
     private void doATChecks(Element checksRoot, LayoutResult result) {
-        //First create check before actually running them
-        List checks = new java.util.ArrayList();
-        NodeList nodes = checksRoot.getChildNodes();
-        for (int i = 0; i < nodes.getLength(); i++) {
-            Node node = nodes.item(i);
-            if (node instanceof Element) {
-                checks.add(createATCheck((Element)node));
-            }
-        }
-
+        List<LayoutEngineCheck> checks = layoutEngineChecksFactory.createCheckList(checksRoot);
         if (checks.size() == 0) {
-            throw new RuntimeException("No checks are available!");
+            throw new RuntimeException("No available area tree check");
         }
-
-        //Run the actual tests now that we know that the checks themselves are ok
-        doATChecks(checks, result);
-    }
-
-    private void doATChecks(List checks, LayoutResult result) {
-        Iterator i = checks.iterator();
-        while (i.hasNext()) {
-            LayoutEngineCheck check = (LayoutEngineCheck)i.next();
+        for (LayoutEngineCheck check : checks) {
             check.check(result);
         }
     }

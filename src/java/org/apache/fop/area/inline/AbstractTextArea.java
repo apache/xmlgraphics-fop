@@ -185,4 +185,15 @@ public abstract class AbstractTextArea extends InlineParent {
     public void setBaselineOffset(int baselineOffset) {
         this.baselineOffset = baselineOffset;
     }
+
+    @Override
+    int getVirtualOffset() {
+        return getBlockProgressionOffset();
+    }
+
+    @Override
+    int getVirtualBPD() {
+        /* Word and space areas don't have a properly set bpd; return this area's bpd instead. */
+        return getBPD();
+    }
 }

@@ -553,12 +553,8 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager
 
     /** {@inheritDoc} */
     public Keep getKeepTogether() {
-        Keep keep = Keep.KEEP_AUTO;
-        if (primaryGridUnit.getRow() != null) {
-            keep = Keep.getKeep(primaryGridUnit.getRow().getKeepTogether());
-        }
-        keep = keep.compare(getParentKeepTogether());
-        return keep;
+        // keep-together does not apply to fo:table-cell
+        return Keep.KEEP_AUTO;
     }
 
     /** {@inheritDoc} */

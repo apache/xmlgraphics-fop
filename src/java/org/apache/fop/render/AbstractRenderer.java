@@ -65,7 +65,7 @@ import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.Space;
 import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.area.inline.TextArea;
-import org.apache.fop.area.inline.Viewport;
+import org.apache.fop.area.inline.InlineViewport;
 import org.apache.fop.area.inline.WordArea;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fonts.FontInfo;
@@ -278,7 +278,6 @@ public abstract class AbstractRenderer
      * @param port  The region viewport to be rendered
      */
     protected void renderRegionViewport(RegionViewport port) {
-        Rectangle2D view = port.getViewArea();
         // The CTM will transform coordinates relative to
         // this region-reference area into page coords, so
         // set origin for the region to 0,0.
@@ -289,7 +288,7 @@ public abstract class AbstractRenderer
         handleRegionTraits(port);
 
         //  shouldn't the viewport have the CTM
-        startVParea(regionReference.getCTM(), port.isClip() ? view : null);
+        startVParea(regionReference.getCTM(), port.getClipRectangle());
         // do after starting viewport area
         if (regionReference.getRegionClass() == FO_REGION_BODY) {
             renderBodyRegion((BodyRegion) regionReference);
@@ -306,7 +305,7 @@ public abstract class AbstractRenderer
      * @param clippingRect the clipping rectangle if the viewport should be clipping,
      *                     null if no clipping is performed.
      */
-    protected abstract void startVParea(CTM ctm, Rectangle2D clippingRect);
+    protected abstract void startVParea(CTM ctm, Rectangle clippingRect);
 
     /**
      * Signals exit from a viewport area. Subclasses can restore transformation matrices
@@ -461,8 +460,8 @@ public abstract class AbstractRenderer
             int saveIP = currentIPPosition;
             int saveBP = currentBPPosition;
 
-            Rectangle2D clippingRect = null;
-            if (bv.getClip()) {
+            Rectangle clippingRect = null;
+            if (bv.hasClip()) {
                 clippingRect = new Rectangle(saveIP, saveBP, bv.getIPD(), bv.getBPD());
             }
 
@@ -632,8 +631,8 @@ public abstract class AbstractRenderer
             renderInlineBlockParent((InlineBlockParent) inlineArea);
         } else if (inlineArea instanceof Space) {
             renderInlineSpace((Space) inlineArea);
-        } else if (inlineArea instanceof Viewport) {
-            renderViewport((Viewport) inlineArea);
+        } else if (inlineArea instanceof InlineViewport) {
+            renderInlineViewport((InlineViewport) inlineArea);
         } else if (inlineArea instanceof Leader) {
             renderLeader((Leader) inlineArea);
         }
@@ -736,7 +735,7 @@ public abstract class AbstractRenderer
      * Render the given Viewport.
      * @param viewport the viewport to render
      */
-    protected void renderViewport(Viewport viewport) {
+    protected void renderInlineViewport(InlineViewport viewport) {
         Area content = viewport.getContent();
         int saveBP = currentBPPosition;
         currentBPPosition += viewport.getBlockProgressionOffset();

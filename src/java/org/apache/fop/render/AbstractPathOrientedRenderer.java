@@ -44,7 +44,7 @@ import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.InlineArea;
-import org.apache.fop.area.inline.Viewport;
+import org.apache.fop.area.inline.InlineViewport;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fonts.FontMetrics;
@@ -542,7 +542,7 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
             }
 
             //Clipping
-            if (bv.getClip()) {
+            if (bv.hasClip()) {
                 clipRect(0f, 0f, width, height);
             }
 
@@ -593,8 +593,8 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
             //Now adjust for border/padding
             currentBPPosition += borderPaddingBefore;
 
-            Rectangle2D clippingRect = null;
-            if (bv.getClip()) {
+            Rectangle clippingRect = null;
+            if (bv.hasClip()) {
                 clippingRect = new Rectangle(currentIPPosition, currentBPPosition,
                         bv.getIPD(), bv.getBPD());
             }
@@ -685,7 +685,7 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
      * This renders an inline viewport by clipping if necessary.
      * @param viewport the viewport to handle
      */
-    public void renderViewport(Viewport viewport) {
+    public void renderInlineViewport(InlineViewport viewport) {
 
         float x = currentIPPosition / 1000f;
         float y = (currentBPPosition + viewport.getBlockProgressionOffset()) / 1000f;
@@ -701,14 +701,14 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
 
         drawBackAndBorders(viewport, x, y, width + bpwidth, height + bpheight);
 
-        if (viewport.getClip()) {
+        if (viewport.hasClip()) {
             saveGraphicsState();
 
             clipRect(x + borderPaddingStart, y + borderPaddingBefore, width, height);
         }
-        super.renderViewport(viewport);
+        super.renderInlineViewport(viewport);
 
-        if (viewport.getClip()) {
+        if (viewport.hasClip()) {
             restoreGraphicsState();
         }
     }

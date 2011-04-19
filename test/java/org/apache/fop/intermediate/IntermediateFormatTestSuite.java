@@ -20,52 +20,48 @@
 package org.apache.fop.intermediate;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Iterator;
+
+import javax.xml.transform.TransformerFactory;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.apache.fop.layoutengine.LayoutEngineTestSuite;
-
 /**
- * JUnit test suite for the intermediate format
+ * A test suite for testing the Intermediate Format output.
  */
-public class IntermediateFormatTestSuite {
+public final class IntermediateFormatTestSuite {
+
+    private IntermediateFormatTestSuite() {
+        // This is a utility class
+    }
 
     /**
-     * @return the test suite with all the tests (one for each XML file)
-     * @throws IOException in case of an I/O problem
+     * Creates a suite of Intermediate Format tests.
+     *
+     * @return the test suite
+     * @throws IOException if an I/O error occurs while loading one of the tests
      */
     public static Test suite() throws IOException {
+
+        File backupDir = new File("build/test-results/intermediate");
+        backupDir.mkdirs();
+
+        IFTester ifTester = new IFTester(TransformerFactory.newInstance(), backupDir);
+
         TestSuite suite = new TestSuite();
+        File testDir = new File("test/intermediate");
+        String[] tests = testDir.list(new FilenameFilter() {
 
-        Collection files = LayoutEngineTestSuite.getTestFiles();
-
-        Iterator i = files.iterator();
-        while (i.hasNext()) {
-            File f = (File)i.next();
-            addIFTestCase(suite, f);
-        }
-
-        return suite;
-    }
-
-    private static void addIFTestCase(TestSuite suite,
-            final File f) throws IOException {
-        suite.addTest(new IFParserTestCase(f) {
-            public void runTest() throws Exception {
-                try {
-                    testParserToIntermediateFormat();
-                    testParserToPDF();
-                } catch (Exception e) {
-                    org.apache.commons.logging.LogFactory.getLog(
-                            this.getClass()).error("Error on " + f.getName());
-                    throw e;
-                }
+            public boolean accept(File dir, String name) {
+                return name.endsWith(".xml");
             }
         });
+        for (String test : tests) {
+            File testFile = new File(testDir, test);
+            suite.addTest(new IFTestCase(testFile, ifTester));
+        }
+        return suite;
     }
-
 }

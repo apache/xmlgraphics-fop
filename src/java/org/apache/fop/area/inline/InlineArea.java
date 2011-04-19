@@ -268,4 +268,31 @@ public class InlineArea extends Area {
             storedIPDVariation += ipdVariation;
         }
     }
+
+    /**
+     * Returns the offset that this area would have if its offset and size were taking
+     * children areas into account. The bpd of an inline area is taken from its nominal
+     * font and doesn't depend on the bpds of its children elements. However, in the case
+     * of a basic-link element we want the active area to cover all of the children
+     * elements.
+     *
+     * @return the offset that this area would have if the before-edge of its
+     * content-rectangle were coinciding with the <q>beforest</q> before-edge of its
+     * children allocation-rectangles.
+     * @see #getVirtualBPD()
+     * @see BasicLinkArea
+     */
+    int getVirtualOffset() {
+        return getBlockProgressionOffset();
+    }
+
+    /**
+     * Returns the block-progression-dimension that this area would have if it were taking
+     * its children elements into account. See {@linkplain #getVirtualOffset()}.
+     *
+     * @return the bpd
+     */
+    int getVirtualBPD() {
+        return getBPD();
+    }
 }

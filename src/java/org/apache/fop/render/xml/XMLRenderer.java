@@ -21,6 +21,7 @@ package org.apache.fop.render.xml;
 
 // Java
 import java.awt.Color;
+import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -78,7 +79,7 @@ import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.Space;
 import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.area.inline.TextArea;
-import org.apache.fop.area.inline.Viewport;
+import org.apache.fop.area.inline.InlineViewport;
 import org.apache.fop.area.inline.WordArea;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
@@ -519,7 +520,7 @@ public class XMLRenderer extends AbstractXMLRenderer {
             addAreaAttributes(port);
             addTraitAttributes(port);
             addAttribute("rect", port.getViewArea());
-            if (port.isClip()) {
+            if (port.hasClip()) {
                 addAttribute("clipped", "true");
             }
             startElement("regionViewport", atts);
@@ -559,9 +560,8 @@ public class XMLRenderer extends AbstractXMLRenderer {
         }
     }
 
-    /** {@inheritDoc} */
     @Override
-    protected void startVParea(CTM ctm, Rectangle2D clippingRect) {
+    protected void startVParea(CTM ctm, Rectangle clippingRect) {
         //only necessary for graphical output
     }
 
@@ -680,7 +680,7 @@ public class XMLRenderer extends AbstractXMLRenderer {
                 addAttribute("top-position", bvp.getYOffset());
             }
             addAttribute("ctm", bvp.getCTM().toString());
-            if (bvp.getClip()) {
+            if (bvp.hasClip()) {
                 addAttribute("clipped", "true");
             }
         } else {
@@ -746,17 +746,17 @@ public class XMLRenderer extends AbstractXMLRenderer {
      * {@inheritDoc}
      */
     @Override
-    protected void renderViewport(Viewport viewport) {
+    protected void renderInlineViewport(InlineViewport viewport) {
         atts.clear();
         addAreaAttributes(viewport);
         addTraitAttributes(viewport);
         addAttribute("offset", viewport.getBlockProgressionOffset());
         addAttribute("pos", viewport.getContentPosition());
-        if (viewport.getClip()) {
+        if (viewport.hasClip()) {
             addAttribute("clip", "true");
         }
         startElement("viewport", atts);
-        super.renderViewport(viewport);
+        super.renderInlineViewport(viewport);
         endElement("viewport");
     }
 

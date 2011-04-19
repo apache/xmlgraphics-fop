@@ -19,10 +19,10 @@
 
 package org.apache.fop.area.inline;
 
-import java.util.List;
-import java.util.ListIterator;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 
 /**
  * Filled area.
@@ -60,7 +60,7 @@ public class FilledArea extends InlineParent {
             InlineArea child = (InlineArea) childrenIterator.next();
             if (child instanceof InlineParent) {
                 setChildOffset(((InlineParent) child).getChildAreas().listIterator(), v);
-            } else if (child instanceof org.apache.fop.area.inline.Viewport) {
+            } else if (child instanceof InlineViewport) {
                 // nothing
             } else {
                 child.setBlockProgressionOffset(v);
