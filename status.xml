@@ -59,6 +59,10 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="JM" type="fix">
+        Bugfix for AFP GOCA segments: they were not properly marked as appended which could
+        lead to graphics state changes in some implementations.
+      </action>
       <action context="Renderers" dev="CB" type="fix" fixes-bug="51010" due-to="Max Aster">
         Bugzilla 51010: Bookmarks create useless lines in RTF 
       </action>	
