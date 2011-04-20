@@ -44,6 +44,7 @@ public final class GraphicsData extends AbstractGraphicsDrawingOrderContainer {
     }
 
     /** {@inheritDoc} */
+    @Override
     public int getDataLength() {
         return 8 + super.getDataLength();
     }
@@ -60,28 +61,39 @@ public final class GraphicsData extends AbstractGraphicsDrawingOrderContainer {
     }
 
     /**
-     * Creates a new graphics segment
+     * Creates a new graphics segment.
      *
      * @return a newly created graphics segment
      */
     public GraphicsChainedSegment newSegment() {
+        return newSegment(false);
+    }
+
+    /**
+     * Creates a new graphics segment.
+     * @param appended true if this segment is appended to the previous one
+     * @return a newly created graphics segment
+     */
+    public GraphicsChainedSegment newSegment(boolean appended) {
         String segmentName = createSegmentName();
         if (currentSegment == null) {
             currentSegment = new GraphicsChainedSegment(segmentName);
         } else {
             currentSegment.setComplete(true);
-            currentSegment = new GraphicsChainedSegment(segmentName, currentSegment.getNameBytes());
+            currentSegment = new GraphicsChainedSegment(segmentName,
+                    currentSegment.getNameBytes(), appended);
         }
         super.addObject(currentSegment);
         return currentSegment;
     }
 
     /** {@inheritDoc} */
+    @Override
     public void addObject(StructuredData object) {
         if (currentSegment == null
                 || (currentSegment.getDataLength() + object.getDataLength())
                 >= GraphicsChainedSegment.MAX_DATA_LEN) {
-            newSegment();
+            newSegment(true);
         }
         currentSegment.addObject(object);
     }
@@ -97,6 +109,7 @@ public final class GraphicsData extends AbstractGraphicsDrawingOrderContainer {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void writeToStream(OutputStream os) throws IOException {
         byte[] data = new byte[9];
         copySF(data, SF_CLASS, Type.DATA, Category.GRAPHICS);
@@ -110,8 +123,9 @@ public final class GraphicsData extends AbstractGraphicsDrawingOrderContainer {
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
-        return "GraphicsData";
+        return "GraphicsData(len: " + getDataLength() + ")";
     }
 
     /**
