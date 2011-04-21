@@ -60,6 +60,10 @@
     -->
     <release version="FOP Trunk" date="TBD">
       <action context="Renderers" dev="JM" type="fix">
+        AFP GOCA: Work-around for InfoPrint's AFP implementation which seems to lose
+        the character set state over Graphics Data (GAD) boundaries.
+      </action>
+      <action context="Renderers" dev="JM" type="fix">
         Bugfix for AFP GOCA segments: they were not properly marked as appended which could
         lead to graphics state changes in some implementations.
       </action>

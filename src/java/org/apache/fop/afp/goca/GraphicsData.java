@@ -32,10 +32,13 @@ import org.apache.fop.afp.util.StringUtils;
 public final class GraphicsData extends AbstractGraphicsDrawingOrderContainer {
 
     /** the maximum graphics data length */
-    public static final int MAX_DATA_LEN = 8192;
+    public static final int MAX_DATA_LEN = GraphicsChainedSegment.MAX_DATA_LEN + 16;
+    //+16 to avoid unnecessary, practically empty GraphicsData instances.
 
     /** the graphics segment */
     private GraphicsChainedSegment currentSegment = null;
+
+    private boolean segmentedData;
 
     /**
      * Main constructor
@@ -47,6 +50,15 @@ public final class GraphicsData extends AbstractGraphicsDrawingOrderContainer {
     @Override
     public int getDataLength() {
         return 8 + super.getDataLength();
+    }
+
+    /**
+     * Sets the indicator that this instance is a part of a series of segmented data chunks.
+     * This indirectly sets the SegFlag on the SFI header.
+     * @param segmented true if this data object is not the last of the series
+     */
+    public void setSegmentedData(boolean segmented) {
+        this.segmentedData = segmented;
     }
 
     /**
@@ -66,22 +78,23 @@ public final class GraphicsData extends AbstractGraphicsDrawingOrderContainer {
      * @return a newly created graphics segment
      */
     public GraphicsChainedSegment newSegment() {
-        return newSegment(false);
+        return newSegment(false, false);
     }
 
     /**
      * Creates a new graphics segment.
      * @param appended true if this segment is appended to the previous one
+     * @param prologPresent true if started with a prolog
      * @return a newly created graphics segment
      */
-    public GraphicsChainedSegment newSegment(boolean appended) {
+    public GraphicsChainedSegment newSegment(boolean appended, boolean prologPresent) {
         String segmentName = createSegmentName();
         if (currentSegment == null) {
             currentSegment = new GraphicsChainedSegment(segmentName);
         } else {
             currentSegment.setComplete(true);
             currentSegment = new GraphicsChainedSegment(segmentName,
-                    currentSegment.getNameBytes(), appended);
+                    currentSegment.getNameBytes(), appended, prologPresent);
         }
         super.addObject(currentSegment);
         return currentSegment;
@@ -93,7 +106,7 @@ public final class GraphicsData extends AbstractGraphicsDrawingOrderContainer {
         if (currentSegment == null
                 || (currentSegment.getDataLength() + object.getDataLength())
                 >= GraphicsChainedSegment.MAX_DATA_LEN) {
-            newSegment(true);
+            newSegment(true, false);
         }
         currentSegment.addObject(object);
     }
@@ -117,6 +130,9 @@ public final class GraphicsData extends AbstractGraphicsDrawingOrderContainer {
         byte[] len = BinaryUtils.convert(dataLength, 2);
         data[1] = len[0]; // Length byte 1
         data[2] = len[1]; // Length byte 2
+        if (this.segmentedData) {
+            data[6] |= 32; //Data is segmented
+        }
         os.write(data);
 
         writeObjects(objects, os);
