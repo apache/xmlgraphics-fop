@@ -39,6 +39,7 @@ import org.apache.fop.afp.goca.GraphicsBox;
 import org.apache.fop.afp.goca.GraphicsChainedSegment;
 import org.apache.fop.afp.goca.GraphicsCharacterString;
 import org.apache.fop.afp.goca.GraphicsData;
+import org.apache.fop.afp.goca.GraphicsEndProlog;
 import org.apache.fop.afp.goca.GraphicsFillet;
 import org.apache.fop.afp.goca.GraphicsFullArc;
 import org.apache.fop.afp.goca.GraphicsImage;
@@ -62,8 +63,8 @@ public class GraphicsObject extends AbstractDataObject {
     private GraphicsData currentData = null;
 
     /** list of objects contained within this container */
-    protected List/*<GraphicsData>*/ objects
-        = new java.util.ArrayList/*<GraphicsData>*/();
+    protected List<GraphicsData> objects
+        = new java.util.ArrayList<GraphicsData>();
 
     /** the graphics state */
     private final GraphicsState graphicsState = new GraphicsState();
@@ -325,6 +326,10 @@ public class GraphicsObject extends AbstractDataObject {
      * @param y the y coordinate
      */
     public void addString(String str, int x, int y) {
+        //Work-around for InfoPrint's AFP which loses character set state over Graphics Data
+        //boundaries.
+        addObject(new GraphicsSetCharacterSet(graphicsState.characterSet));
+
         addObject(new GraphicsCharacterString(str, x, y));
     }
 
@@ -340,6 +345,13 @@ public class GraphicsObject extends AbstractDataObject {
      */
     public void endArea() {
         addObject(new GraphicsAreaEnd());
+    }
+
+    /**
+     * Ends the prolog.
+     */
+    public void endProlog() {
+        addObject(new GraphicsEndProlog());
     }
 
     /** {@inheritDoc} */
@@ -359,9 +371,9 @@ public class GraphicsObject extends AbstractDataObject {
     /** {@inheritDoc} */
     @Override
     public void setComplete(boolean complete) {
-        Iterator it = objects.iterator();
+        Iterator<GraphicsData> it = objects.iterator();
         while (it.hasNext()) {
-            Completable completedObject = (Completable)it.next();
+            Completable completedObject = it.next();
             completedObject.setComplete(true);
         }
         super.setComplete(complete);

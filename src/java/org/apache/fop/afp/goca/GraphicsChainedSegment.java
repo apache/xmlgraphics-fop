@@ -34,6 +34,7 @@ public final class GraphicsChainedSegment extends AbstractGraphicsDrawingOrderCo
 
     private byte[] predecessorNameBytes;
     private boolean appended;
+    private boolean prologPresent;
 
     /**
      * Main constructor
@@ -42,7 +43,7 @@ public final class GraphicsChainedSegment extends AbstractGraphicsDrawingOrderCo
      *            the name of this graphics segment
      */
     public GraphicsChainedSegment(String name) {
-        this(name, null, false);
+        this(name, null, false, false);
     }
 
     /**
@@ -53,8 +54,10 @@ public final class GraphicsChainedSegment extends AbstractGraphicsDrawingOrderCo
      * @param predecessorNameBytes
      *            the name of the predecessor in this chain
      * @param appended true if this segment is appended to the previous one
+     * @param prologPresent true if this segment starts with a prolog
      */
-    public GraphicsChainedSegment(String name, byte[] predecessorNameBytes, boolean appended) {
+    public GraphicsChainedSegment(String name, byte[] predecessorNameBytes,
+            boolean appended, boolean prologPresent) {
         super(name);
         if (predecessorNameBytes != null) {
             this.predecessorNameBytes = new byte[predecessorNameBytes.length];
@@ -62,6 +65,7 @@ public final class GraphicsChainedSegment extends AbstractGraphicsDrawingOrderCo
                     this.predecessorNameBytes, 0, predecessorNameBytes.length);
         }
         this.appended = appended;
+        this.prologPresent = prologPresent;
     }
 
     /** {@inheritDoc} */
@@ -71,8 +75,8 @@ public final class GraphicsChainedSegment extends AbstractGraphicsDrawingOrderCo
     }
 
     private static final byte APPEND_NEW_SEGMENT = 0;
-//    private static final byte PROLOG = 4;
     private static final byte APPEND_TO_EXISING = 6;
+    private static final byte PROLOG = 0x10;
 
     private static final int NAME_LENGTH = 4;
 
@@ -98,7 +102,12 @@ public final class GraphicsChainedSegment extends AbstractGraphicsDrawingOrderCo
         System.arraycopy(nameBytes, 0, data, 2, NAME_LENGTH);
 
         data[6] = 0x00; // FLAG1 (ignored)
-        data[7] = this.appended ? APPEND_TO_EXISING : APPEND_NEW_SEGMENT; //FLAG2
+
+        //FLAG2
+        data[7] |= this.appended ? APPEND_TO_EXISING : APPEND_NEW_SEGMENT;
+        if (this.prologPresent) {
+            data[7] |= PROLOG;
+        }
 
         int dataLength = super.getDataLength();
         byte[] len = BinaryUtils.convert(dataLength, 2);
