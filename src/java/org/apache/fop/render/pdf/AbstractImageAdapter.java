@@ -127,7 +127,12 @@ public abstract class AbstractImageAdapter implements PDFImage {
                 pdfICCStream = cs.getICCStream();
             }
         } else {
-            if (cs == null && desc.startsWith("sRGB")) {
+            if (cs == null) {
+                if (desc == null || !desc.startsWith("sRGB")) {
+                    log.warn("The default sRGB profile was indicated,"
+                            + " but the profile description does not match what was expected: "
+                            + desc);
+                }
                 //It's the default sRGB profile which we mapped to DefaultRGB in PDFRenderer
                 cs = (PDFICCBasedColorSpace)doc.getResources().getColorSpace(
                         new PDFName("DefaultRGB"));
