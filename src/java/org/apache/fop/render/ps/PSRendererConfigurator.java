@@ -66,6 +66,11 @@ public class PSRendererConfigurator extends PrintRendererConfigurator
         if (child != null) {
             psUtil.setOptimizeResources(child.getValueAsBoolean(false));
         }
+        child = cfg.getChild("rendering");
+        if (child != null) {
+            psUtil.setRenderingMode(PSRenderingMode.valueOf(
+                    child.getValue(psUtil.getRenderingMode().toString()).toUpperCase()));
+        }
         psUtil.setSafeSetPageDevice(
             cfg.getChild("safe-set-page-device").getValueAsBoolean(false));
         psUtil.setDSCComplianceEnabled(

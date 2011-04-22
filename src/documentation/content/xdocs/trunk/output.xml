@@ -287,6 +287,7 @@ out = proc.getOutputStream();]]></source>
   <optimize-resources>false</optimize-resources>
   <safe-set-page-device>false</safe-set-page-device>
   <dsc-compliant>true</dsc-compliant>
+  <rendering>quality</rendering>
 </renderer>]]></source>
       <p>
         The default value for the "auto-rotate-landscape" setting is "false". Setting it
@@ -318,6 +319,12 @@ out = proc.getOutputStream();]]></source>
         blank pages are experienced in your postscript output.  This problem is caused by
         the particular postscript implementation issuing unwanted postscript subsystem
         initgraphics/erasepage calls on each setpagedevice call.
+      </p>
+      <p>
+        The default value for the "rendering" setting is "quality". Setting it to "size"
+        optimizes rendering for smaller file sizes which can involve minor compromises in
+        rendering quality. For example, solid borders are then painted as plain rectangles
+        instead of the elaborate painting instructions required for mixed-color borders.
       </p>
     </section>
   <section id="ps-limitations">
