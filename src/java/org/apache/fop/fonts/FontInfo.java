@@ -152,7 +152,7 @@ public class FontInfo {
             }
         }
         this.triplets.put(triplet, internalFontKey);
-        this.tripletPriorities.put(triplet, new Integer(newPriority));
+        this.tripletPriorities.put(triplet, Integer.valueOf(newPriority));
     }
 
     /**
@@ -316,7 +316,7 @@ public class FontInfo {
             sizes = new HashMap<Integer, Font>();
             getFontInstanceCache().put(triplet, sizes);
         }
-        Integer size = new Integer(fontSize);
+        Integer size = Integer.valueOf(fontSize);
         Font font = sizes.get(size);
         if (font == null) {
             String fontKey = getInternalFontKey(triplet);
