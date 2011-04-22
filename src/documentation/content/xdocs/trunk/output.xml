@@ -962,14 +962,19 @@ Note that the value of the encoding attribute in the example is the double-byte 
       </fo:layout-master-set>
 ]]></source>
         <p>The no-operation extension element can appear as child of
-        simple-page-master (appears after "Begin Page" BPG),
-        page-sequence (appears after "Begin Named Page Group" BNG
-        and declarations (appears after "Begin Document" BDT).
+        <code>simple-page-master</code> (appears after "Begin Page" BPG),
+        <code>page-sequence</code> (appears after "Begin Named Page Group" BNG
+        and <code>declarations</code> (appears after "Begin Document" BDT).
         Multiple no-operation extension elements inside the same formatting object are allowed.
         Each NOP will appear right after the respective "Begin" field indicated above even if it
-        is specified as the last child under its parent. However, the order inside the parent
+        is specified as the last child under its parent. The order inside the parent
         will be maintained.
-        The name attribute is mandatory but will not appear inside the AFP stream.
+        The "placement" attribute can be used to have the NOP appear before
+        the "End" field of the object rather than after the "Begin" field. Specify
+        <code>placement="before-end"</code> to do that. Please note that, at the moment, this only
+        has an effect for NOPs that are children of the <code>page-sequence</code> formatting
+        object.
+        The "name" attribute is mandatory but will not appear inside the AFP stream.
         </p>
       </section>
       <section id="afp-invoke-medium-map">

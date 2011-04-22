@@ -60,6 +60,10 @@
     -->
     <release version="FOP Trunk" date="TBD">
       <action context="Renderers" dev="JM" type="add">
+        Added option to place AFP NOPs right before the end of a named page group (page-sequence),
+        rather than after the start.
+      </action>
+      <action context="Renderers" dev="JM" type="add">
         Added option for PostScript output to optimize for file size rather than quality.
       </action>
       <action context="Renderers" dev="JM" type="add">
