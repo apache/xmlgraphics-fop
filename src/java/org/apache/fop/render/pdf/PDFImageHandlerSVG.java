@@ -43,6 +43,7 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.image.loader.batik.BatikImageFlavors;
 import org.apache.fop.image.loader.batik.BatikUtil;
 import org.apache.fop.render.ImageHandler;
+import org.apache.fop.render.ImageHandlerUtil;
 import org.apache.fop.render.RenderingContext;
 import org.apache.fop.render.pdf.PDFLogicalStructureHandler.MarkedContentInfo;
 import org.apache.fop.svg.PDFAElementBridge;
@@ -200,6 +201,7 @@ public class PDFImageHandlerSVG implements ImageHandler {
         graphics.setOutputStream(generator.getOutputStream());
         try {
             root.paint(graphics);
+            ctx.dispose();
             generator.add(graphics.getString());
         } catch (Exception e) {
             SVGEventProducer eventProducer = SVGEventProducer.Provider.get(
@@ -236,10 +238,18 @@ public class PDFImageHandlerSVG implements ImageHandler {
 
     /** {@inheritDoc} */
     public boolean isCompatible(RenderingContext targetContext, Image image) {
-        return (image == null
+        boolean supported = (image == null
                 || (image instanceof ImageXMLDOM
                         && image.getFlavor().isCompatible(BatikImageFlavors.SVG_DOM)))
                 && targetContext instanceof PDFRenderingContext;
+        if (supported) {
+            String mode = (String)targetContext.getHint(ImageHandlerUtil.CONVERSION_MODE);
+            if (ImageHandlerUtil.isConversionModeBitmap(mode)) {
+                //Disabling this image handler automatically causes a bitmap to be generated
+                return false;
+            }
+        }
+        return supported;
     }
 
 }
