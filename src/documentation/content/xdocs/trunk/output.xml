@@ -784,6 +784,29 @@ Note that the value of the encoding attribute in the example is the double-byte 
         <source><![CDATA[
       <images mode="b+w" bits-per-pixel="1" dithering-quality="maximum"/>]]></source>
       </section>
+      <section id="afp-goca-config">
+        <title>GOCA (Vector Graphics)</title>
+        <p>
+          Not all AFP implementations support GOCA. Some also have bugs related to GOCA. Therefore,
+          it is desirable to have some control over the generation of GOCA graphics.
+        </p>
+        <p>
+          GOCA is enabled by default. You can disable GOCA entirely in which case the AFP support
+          falls back to generating bitmaps for vector graphics. Example:
+        </p>
+        <source><![CDATA[
+      <goca enabled="false"/>]]></source>
+        <p>
+          Some AFP implementations have trouble rendering text in GOCA. You can instruct the AFP
+          support to render text as shapes (i.e. use vector graphics to paint text). Example: 
+        </p>
+        <source><![CDATA[
+      <goca enabled="true" text="shapes"/>]]></source>
+        <p>
+          If you disable GOCA or let text render as shapes, the size of the generated AFP usually
+          increases considerably.
+        </p>
+      </section>
       <section id="afp-shading-config">
         <title>Shading</title>
         <p>

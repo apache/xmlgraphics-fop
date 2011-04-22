@@ -76,7 +76,7 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
         FontManager fontManager = this.userAgent.getFactory().getFontManager();
 
         Configuration[] triple = fontCfg.getChildren("font-triplet");
-        List/*<FontTriplet>*/ tripletList = new java.util.ArrayList/*<FontTriplet>*/();
+        List<FontTriplet> tripletList = new java.util.ArrayList<FontTriplet>();
         if (triple.length == 0) {
             log.error("Mandatory font configuration element '<font-triplet...' is missing");
             return null;
@@ -184,8 +184,8 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
 
                 if (base14 != null) {
                     try {
-                        Class clazz = Class.forName("org.apache.fop.fonts.base14."
-                                + base14);
+                        Class<?> clazz = Class.forName(
+                                "org.apache.fop.fonts.base14." + base14);
                         try {
                             Typeface tf = (Typeface)clazz.newInstance();
                             font.addCharacterSet(sizeMpt,
@@ -223,7 +223,7 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
             String base14 = afpFontCfg.getAttribute("base14-font", null);
             if (base14 != null) {
                 try {
-                    Class clazz = Class.forName("org.apache.fop.fonts.base14."
+                    Class<?> clazz = Class.forName("org.apache.fop.fonts.base14."
                             + base14);
                     try {
                         Typeface tf = (Typeface)clazz.newInstance();
@@ -291,7 +291,7 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
      * @return List the newly created list of fonts
      * @throws ConfigurationException if something's wrong with the config data
      */
-    private List/*<AFPFontInfo>*/ buildFontListFromConfiguration(Configuration cfg)
+    private List<AFPFontInfo> buildFontListFromConfiguration(Configuration cfg)
     throws FOPException, ConfigurationException {
 
         Configuration fonts = cfg.getChild("fonts");
@@ -309,7 +309,7 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
                     referencedFontsCfg, this.userAgent.getFactory().validateUserConfigStrictly());
         }
 
-        List/*<AFPFontInfo>*/ fontList = new java.util.ArrayList();
+        List<AFPFontInfo> fontList = new java.util.ArrayList<AFPFontInfo>();
         Configuration[] font = fonts.getChildren("font");
         final String fontPath = null;
         for (int i = 0; i < font.length; i++) {
@@ -352,6 +352,7 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
      *
      * @param renderer not used
      */
+    @Override
     public void configure(Renderer renderer) {
         throw new UnsupportedOperationException();
     }
@@ -400,6 +401,16 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
                 shadingCfg.getValue(AFPShadingMode.COLOR.getName()));
         customizable.setShadingMode(shadingMode);
 
+        // GOCA Support
+        Configuration gocaCfg = cfg.getChild("goca");
+        boolean gocaEnabled = gocaCfg.getAttributeAsBoolean(
+                "enabled", customizable.isGOCAEnabled());
+        customizable.setGOCAEnabled(gocaEnabled);
+        String gocaText = gocaCfg.getAttribute(
+                "text", customizable.isStrokeGOCAText() ? "stroke" : "default");
+        customizable.setStrokeGOCAText("stroke".equalsIgnoreCase(gocaText)
+                || "shapes".equalsIgnoreCase(gocaText));
+
         // renderer resolution
         Configuration rendererResolutionCfg = cfg.getChild("renderer-resolution", false);
         if (rendererResolutionCfg != null) {
@@ -415,8 +426,8 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
                 resourceGroupDest = resourceGroupFileCfg.getValue();
                 if (resourceGroupDest != null) {
                     File resourceGroupFile = new File(resourceGroupDest);
-                    resourceGroupFile.createNewFile();
-                    if (resourceGroupFile.canWrite()) {
+                    boolean created = resourceGroupFile.createNewFile();
+                    if (created && resourceGroupFile.canWrite()) {
                         customizable.setDefaultResourceGroupFilePath(resourceGroupDest);
                     } else {
                         log.warn("Unable to write to default external resource group file '"
@@ -454,6 +465,7 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
     }
 
     /** {@inheritDoc} */
+    @Override
     public void configure(IFDocumentHandler documentHandler) throws FOPException {
         Configuration cfg = super.getRendererConfig(documentHandler.getMimeType());
         if (cfg != null) {
@@ -463,15 +475,16 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
     }
 
     /** {@inheritDoc} */
+    @Override
     public void setupFontInfo(IFDocumentHandler documentHandler, FontInfo fontInfo)
             throws FOPException {
         FontManager fontManager = userAgent.getFactory().getFontManager();
-        List fontCollections = new java.util.ArrayList();
+        List<FontCollection> fontCollections = new java.util.ArrayList<FontCollection>();
 
         Configuration cfg = super.getRendererConfig(documentHandler.getMimeType());
         if (cfg != null) {
             try {
-                List fontList = buildFontListFromConfiguration(cfg);
+                List<AFPFontInfo> fontList = buildFontListFromConfiguration(cfg);
                 fontCollections.add(new AFPFontCollection(
                         userAgent.getEventBroadcaster(), fontList));
             } catch (ConfigurationException e) {
@@ -483,7 +496,7 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
         }
 
         fontManager.setup(fontInfo,
-                (FontCollection[])fontCollections.toArray(
+                fontCollections.toArray(
                         new FontCollection[fontCollections.size()]));
         documentHandler.setFontInfo(fontInfo);
     }
