@@ -415,6 +415,26 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     }
 
     /** {@inheritDoc} */
+    public void setGOCAEnabled(boolean enabled) {
+        this.paintingState.setGOCAEnabled(enabled);
+    }
+
+    /** {@inheritDoc} */
+    public boolean isGOCAEnabled() {
+        return this.paintingState.isGOCAEnabled();
+    }
+
+    /** {@inheritDoc} */
+    public void setStrokeGOCAText(boolean stroke) {
+        this.paintingState.setStrokeGOCAText(stroke);
+    }
+
+    /** {@inheritDoc} */
+    public boolean isStrokeGOCAText() {
+        return this.paintingState.isStrokeGOCAText();
+    }
+
+    /** {@inheritDoc} */
     public void setDefaultResourceGroupFilePath(String filePath) {
         resourceManager.setDefaultResourceGroupFilePath(filePath);
     }
