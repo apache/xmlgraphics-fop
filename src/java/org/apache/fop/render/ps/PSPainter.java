@@ -202,7 +202,7 @@ public class PSPainter extends AbstractIFPainter {
             endTextObject();
             generator.defineRect(rect.x / 1000.0, rect.y / 1000.0,
                     rect.width / 1000.0, rect.height / 1000.0);
-            generator.writeln("clip newpath");
+            generator.writeln(generator.mapCommand("clip") + " " + generator.mapCommand("newpath"));
         } catch (IOException ioe) {
             throw new IFException("I/O error in clipRect()", ioe);
         }
@@ -226,7 +226,7 @@ public class PSPainter extends AbstractIFPainter {
                 }
                 generator.defineRect(rect.x / 1000.0, rect.y / 1000.0,
                         rect.width / 1000.0, rect.height / 1000.0);
-                generator.writeln("fill");
+                generator.writeln(generator.mapCommand("fill"));
             } catch (IOException ioe) {
                 throw new IFException("I/O error in fillRect()", ioe);
             }
@@ -239,7 +239,12 @@ public class PSPainter extends AbstractIFPainter {
         if (before != null || after != null || start != null || end != null) {
             try {
                 endTextObject();
-                this.borderPainter.drawBorders(rect, before, after, start, end);
+                if (getPSUtil().getRenderingMode() == PSRenderingMode.SIZE
+                    && hasOnlySolidBorders(before, after, start, end)) {
+                    super.drawBorderRect(rect, before, after, start, end);
+                } else {
+                    this.borderPainter.drawBorders(rect, before, after, start, end);
+                }
             } catch (IOException ioe) {
                 throw new IFException("I/O error in drawBorderRect()", ioe);
             }
@@ -478,9 +483,9 @@ public class PSPainter extends AbstractIFPainter {
                 spb.append(formatMptAsPt(generator, letterSpacing))
                     .append(" 0 ");
                 sb.insert(0, spb.toString());
-                sb.append(" ashow");
+                sb.append(" " + generator.mapCommand("ashow"));
             } else {
-                sb.append(" show");
+                sb.append(" " + generator.mapCommand("show"));
             }
         }
         generator.writeln(sb.toString());
