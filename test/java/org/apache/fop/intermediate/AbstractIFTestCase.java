@@ -34,6 +34,7 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
 import org.w3c.dom.Document;
+
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -55,8 +56,23 @@ abstract class AbstractIFTestCase extends AbstractIntermediateTestCase {
         Schema ifSchema = null;
         try {
             SchemaFactory sFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+            sFactory.setErrorHandler(new ErrorHandler() {
+
+                public void error(SAXParseException exception) throws SAXException {
+                    throw exception;
+                }
+
+                public void fatalError(SAXParseException exception) throws SAXException {
+                    throw exception;
+                }
+
+                public void warning(SAXParseException exception) throws SAXException {
+                    throw exception;
+                }
+
+            });
             File ifSchemaFile = new File(
-            "src/documentation/intermediate-format-ng/fop-intermediate-format-ng.xsd");
+                "src/documentation/intermediate-format-ng/fop-intermediate-format-ng.xsd");
             ifSchema = sFactory.newSchema(ifSchemaFile);
         } catch (IllegalArgumentException iae) {
             System.err.println("No suitable SchemaFactory for XML Schema validation found!");
