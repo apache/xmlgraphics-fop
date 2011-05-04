@@ -57,6 +57,10 @@
             from the TeX/LaTeX world. See his <fork href="http://www.leverkruid.eu">home
             page</fork> for some of his private projects.</li>
         <li id="jp"><link href="mailto:pietsch@apache.org">J&#x00F6;rg Pietschmann</link> (JP)</li>
+        <li id="ps"><link href="mailto:tcho@club-internet.fr">Pascal Sancho</link> (PS)
+	        is an XML developper from Aix-en-Provence (France). He works on software solutions for 	 
+	        rendering various kind of documents on various supports, more specifically taking care 	 
+	        of PDF generation with FOP.</li> 	 
       </ul>
     </section>
     <section id="contribute-active">
@@ -111,7 +115,6 @@
         <li id="gm"><link href="mailto:gmazza@apache.org">Glen Mazza</link></li>
         <li id="wvm"><link href="mailto:vmote@apache.org">Victor Mote</link></li>
         <li id="jn"><link href="mailto:jordan@apache.org">Jordan Naftolin</link></li>
-        <li id="ps"><link href="mailto:tcho@club-internet.fr">Pascal Sancho</link> (PS)</li>
         <li id="as"><link href="mailto:arved@apache.org">Arved Sandstrom</link></li>
         <li id="es"><link href="mailto:eschaeffer@apache.org">Eric Schaeffer</link></li>
         <li id="ot"><link href="mailto:olegt@apache.org">Oleg Tkachenko</link> (OT)</li>
