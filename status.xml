@@ -59,6 +59,13 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="JM" type="fix">
+        AFP GOCA: fonts were not embedded from within AFPGraphics2D.
+      </action>
+      <action context="Renderers" dev="JM" type="fix">
+        AFP GOCA: Changed the way FOP fonts are selected based on Batik's GVT fonts to match
+        the behaviour of PDF/PS output.
+      </action>
       <action context="Renderers" dev="JM" type="add">
         Added option to place AFP NOPs right before the end of a named page group (page-sequence),
         rather than after the start.
