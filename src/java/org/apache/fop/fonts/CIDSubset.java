@@ -62,18 +62,11 @@ public class CIDSubset {
     }
 
     /**
-     * Adds the initial 3 glyphs which are the same for all CID subsets.
+     * Adds the first glyph which is reserved for .notdef for all CID subsets.
      */
-    public void setupFirstThreeGlyphs() {
-        // Make sure that the 3 first glyphs are included
+    public void setupFirstGlyph() {
         usedGlyphs.put(new Integer(0), new Integer(0));
         usedGlyphsIndex.put(new Integer(0), new Integer(0));
-        usedGlyphsCount++;
-        usedGlyphs.put(new Integer(1), new Integer(1));
-        usedGlyphsIndex.put(new Integer(1), new Integer(1));
-        usedGlyphsCount++;
-        usedGlyphs.put(new Integer(2), new Integer(2));
-        usedGlyphsIndex.put(new Integer(2), new Integer(2));
         usedGlyphsCount++;
     }
 

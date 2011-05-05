@@ -59,6 +59,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Fonts" dev="JM" type="fix" fixes-bug="51144" due-to="Mehdi Houshmand">
+        Removed invalid entries in ToUnicode table of CID subset fonts. 
+      </action>
       <action context="Renderers" dev="JM" type="fix" fixes-bug="50899" due-to="Glenn Adams">
         Fixed mapping of font weights between CSS values and TextAttribute.WEIGHT_*. 
       </action>
