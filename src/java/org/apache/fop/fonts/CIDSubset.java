@@ -65,8 +65,8 @@ public class CIDSubset {
      * Adds the first glyph which is reserved for .notdef for all CID subsets.
      */
     public void setupFirstGlyph() {
-        usedGlyphs.put(new Integer(0), new Integer(0));
-        usedGlyphsIndex.put(new Integer(0), new Integer(0));
+        usedGlyphs.put(Integer.valueOf(0), Integer.valueOf(0));
+        usedGlyphsIndex.put(Integer.valueOf(0), Integer.valueOf(0));
         usedGlyphsCount++;
     }
 
@@ -77,7 +77,7 @@ public class CIDSubset {
      * @return the original index (or -1 if no glyph index is available for the subset index)
      */
     public int getGlyphIndexForSubsetIndex(int subsetIndex) {
-        Integer glyphIndex = usedGlyphsIndex.get(new Integer(subsetIndex));
+        Integer glyphIndex = usedGlyphsIndex.get(Integer.valueOf(subsetIndex));
         if (glyphIndex != null) {
             return glyphIndex.intValue();
         } else {
@@ -92,7 +92,7 @@ public class CIDSubset {
      * @return the Unicode value or "NOT A CHARACTER" (0xFFFF)
      */
     public char getUnicodeForSubsetIndex(int subsetIndex) {
-        Character mapValue = usedCharsIndex.get(new Integer(subsetIndex));
+        Character mapValue = usedCharsIndex.get(Integer.valueOf(subsetIndex));
         if (mapValue != null) {
             return mapValue.charValue();
         } else {
@@ -111,15 +111,15 @@ public class CIDSubset {
     public int mapSubsetChar(int glyphIndex, char unicode) {
         // Reencode to a new subset font or get the reencoded value
         // IOW, accumulate the accessed characters and build a character map for them
-        Integer subsetCharSelector = usedGlyphs.get(new Integer(glyphIndex));
+        Integer subsetCharSelector = usedGlyphs.get(Integer.valueOf(glyphIndex));
         if (subsetCharSelector == null) {
             int selector = usedGlyphsCount;
-            usedGlyphs.put(new Integer(glyphIndex),
-                           new Integer(selector));
-            usedGlyphsIndex.put(new Integer(selector),
-                                new Integer(glyphIndex));
-            usedCharsIndex.put(new Integer(selector),
-                                new Character(unicode));
+            usedGlyphs.put(Integer.valueOf(glyphIndex),
+                           Integer.valueOf(selector));
+            usedGlyphsIndex.put(Integer.valueOf(selector),
+                                Integer.valueOf(glyphIndex));
+            usedCharsIndex.put(Integer.valueOf(selector),
+                                Character.valueOf(unicode));
             usedGlyphsCount++;
             return selector;
         } else {
