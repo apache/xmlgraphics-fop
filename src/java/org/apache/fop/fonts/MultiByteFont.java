@@ -48,8 +48,7 @@ public class MultiByteFont extends CIDFont {
      * Default constructor
      */
     public MultiByteFont() {
-        // Make sure that the 3 first glyphs are included
-        subset.setupFirstThreeGlyphs();
+        subset.setupFirstGlyph();
 
         // Create a quasiunique prefix for fontname
         synchronized (this.getClass()) {
