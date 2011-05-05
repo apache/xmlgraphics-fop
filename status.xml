@@ -59,6 +59,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="JM" type="fix" fixes-bug="50899" due-to="Glenn Adams">
+        Fixed mapping of font weights between CSS values and TextAttribute.WEIGHT_*. 
+      </action>
       <action context="Renderers" dev="JM" type="fix">
         AFP GOCA: fonts were not embedded from within AFPGraphics2D.
       </action>

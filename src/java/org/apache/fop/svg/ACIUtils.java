@@ -152,12 +152,14 @@ public final class ACIUtils {
             return 400;
         } else if (weight <= TextAttribute.WEIGHT_SEMIBOLD.floatValue()) {
             return 500;
-        } else if (weight <= TextAttribute.WEIGHT_BOLD.floatValue()) {
+        } else if (weight <  TextAttribute.WEIGHT_BOLD.floatValue()) {
             return 600;
-        } else if (weight <= TextAttribute.WEIGHT_HEAVY.floatValue()) {
+        } else if (weight == TextAttribute.WEIGHT_BOLD.floatValue()) {
             return 700;
-        } else if (weight <= TextAttribute.WEIGHT_EXTRABOLD.floatValue()) {
+        } else if (weight <= TextAttribute.WEIGHT_HEAVY.floatValue()) {
             return 800;
+        } else if (weight <= TextAttribute.WEIGHT_EXTRABOLD.floatValue()) {
+            return 900;
         } else {
             return 900;
         }
