@@ -59,6 +59,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="VH" type="fix">
+        Bugfix: alternative text not working in tagged PDF for TIFF images.
+      </action>
       <action context="Renderers" dev="PH" type="fix" fixes-bug="50909">
         Fixed io exception in MODCAParser caused by the improper use of mark() and reset() on the
         MODCA data input stream.  Added unit test. </action>
