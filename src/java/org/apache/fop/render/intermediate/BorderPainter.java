@@ -32,9 +32,14 @@ import org.apache.fop.traits.RuleStyle;
  */
 public abstract class BorderPainter {
 
+    /** TODO remove before integration*/
     public static final String ROUNDED_CORNERS = "fop.round-corners";
 
+    /** TODO Use a class to model border instead of an array
+     * convention index of before, end, after and start borders */
     protected static final int BEFORE = 0, END = 1, AFTER = 2, START = 3;
+    /** TODO Use a class to model border corners instead of an array
+     convention index of before_start, before_end, after_end and after_start border corners*/
     protected static final int BEFORE_START = 0, BEFORE_END = 1, AFTER_END = 2, AFTER_START = 3;
 
 
@@ -45,6 +50,7 @@ public abstract class BorderPainter {
      * @param bpsAfter the border specification on the after side
      * @param bpsStart the border specification on the start side
      * @param bpsEnd the border specification on the end side
+     * @param innerBackgroundColor the inner background color
      * @throws IFException if an error occurs while drawing the borders
      */
     public void drawBorders(Rectangle borderRect,               // CSOK: MethodLength
@@ -71,6 +77,15 @@ public abstract class BorderPainter {
         return bps == null ? bps : bps.width == 0 ? (BorderProps)null : bps;
     }
 
+    /**
+     * TODO merge with drawRoundedBorders()?
+     * @param borderRect the border rectangle
+     * @param bpsBefore the border specification on the before side
+     * @param bpsAfter the border specification on the after side
+     * @param bpsStart the border specification on the start side
+     * @param bpsEnd the border specification on the end side
+     * @throws IOException
+     */
     protected void drawRectangularBorders(Rectangle borderRect,
             BorderProps bpsBefore, BorderProps bpsAfter,
             BorderProps bpsStart, BorderProps bpsEnd) throws IOException {
@@ -243,6 +258,14 @@ public abstract class BorderPainter {
         }
     }
 
+    /** TODO merge with drawRectangularBorders?
+     * @param borderRect the border rectangle
+     * @param bpsBefore the border specification on the before side
+     * @param bpsAfter the border specification on the after side
+     * @param bpsStart the border specification on the start side
+     * @param bpsEnd the border specification on the end side
+     * @throws IOException on io exception
+     * */
     protected void drawRoundedBorders(Rectangle borderRect,
             BorderProps bpsBefore, BorderProps bpsAfter,
             BorderProps bpsStart, BorderProps bpsEnd) throws IOException {
@@ -400,6 +423,7 @@ public abstract class BorderPainter {
         }
     }
 
+    /** TODO collect parameters into useful data structures*/
     private void drawBorderSegment(final int sx2, final int ex1, final int ex2,
             final int outery, final int innery,
             final int clipWidthStart, final int clipWidthEnd,
@@ -444,7 +468,7 @@ public abstract class BorderPainter {
             }
         }
 
-        if (ellipseBERadiusX != 0) {
+        if (ellipseBERadiusX != 0 && ellipseBERadiusY != 0) {
 
             final double[] outerJoinMetrics = getCornerBorderJoinMetrics(
                     ellipseBERadiusX, ellipseBERadiusY, (double)innery / (ex1 - ex2));
@@ -553,11 +577,11 @@ public abstract class BorderPainter {
 
     /**
      * Clip the background to the inner border
-     * @param rect
-     * @param bpsBefore
-     * @param bpsAfter
-     * @param bpsStart
-     * @param bpsEnd
+     * @param rect clipping rectangle
+     * @param bpsBefore before border
+     * @param bpsAfter after border
+     * @param bpsStart start border
+     * @param bpsEnd end border
      * @throws IOException if an I/O error occurs
      */
     public void clipBackground(Rectangle rect,
@@ -629,7 +653,7 @@ public abstract class BorderPainter {
 
         lineTo(startx + ellipseSE, starty + height);
 
-        if (ellipseSE > 0 && ellipseSE > 0) {
+        if (ellipseSE > 0 && ellipseAS > 0) {
             arcTo( Math.PI / 2, Math.PI, startx + ellipseSE,
                     starty + height - ellipseAS, ellipseSE, ellipseAS);
         }
@@ -645,8 +669,9 @@ public abstract class BorderPainter {
 
     }
 
-    /*
-     * If the ellipse radii exceed the border edge length, the ellipses are rescaled.
+    /**
+     * TODO javadocs
+     * If an ellipse radii exceed the border edge length then all ellipses must be  rescaled.
      */
     protected double cornerScaleFactor(int width, int height,
             BorderProps bpsBefore, BorderProps bpsAfter,
@@ -655,29 +680,35 @@ public abstract class BorderPainter {
         double esf = 1d;
 
         if (bpsBefore != null) {
-            if (bpsStart != null && bpsEnd != null
-                    && bpsStart.getRadiusStart() + bpsEnd.getRadiusStart() > 0) {
+            double ellipseExtent = (bpsStart == null ? 0 :  bpsStart.getRadiusStart())
+                    + (bpsEnd == null ? 0 :  bpsEnd.getRadiusStart());
 
-                double f = (double)width / (bpsStart.getRadiusStart() + bpsEnd.getRadiusStart());
+            if (ellipseExtent > 0) {
+                double f = width / ellipseExtent;
                 if (f < esf) {
                     esf = f;
                 }
             }
         }
+
         if (bpsStart != null) {
-            if (bpsAfter != null && bpsBefore != null
-                    && bpsAfter.getRadiusStart() + bpsBefore.getRadiusStart() > 0) {
-                double f = (double)height / (bpsAfter.getRadiusStart()
-                        + bpsBefore.getRadiusStart());
+            double ellipseExtent = (bpsAfter == null ? 0 :  bpsAfter.getRadiusStart())
+                    + (bpsBefore == null ? 0 :  bpsBefore.getRadiusStart());
+
+            if (ellipseExtent > 0) {
+                double f = height / ellipseExtent;
                 if ( f < esf) {
                     esf = f;
                 }
             }
         }
+
         if (bpsAfter != null) {
-            if (bpsStart != null && bpsEnd != null
-                    && bpsStart.getRadiusEnd() + bpsEnd.getRadiusEnd() > 0) {
-                double f = (double)width / (bpsStart.getRadiusEnd() + bpsEnd.getRadiusEnd());
+            double ellipseExtent = (bpsStart == null ? 0 :  bpsStart.getRadiusEnd())
+                    + (bpsEnd == null ? 0 :  bpsEnd.getRadiusEnd());
+
+            if (ellipseExtent > 0) {
+                double f = width / ellipseExtent;
                 if (f < esf) {
                     esf = f;
                 }
@@ -685,9 +716,11 @@ public abstract class BorderPainter {
         }
 
         if (bpsEnd != null) {
-            if (bpsAfter != null && bpsBefore != null
-                    && bpsAfter.getRadiusEnd() + bpsBefore.getRadiusEnd() > 0) {
-                double f = (double)height / (bpsAfter.getRadiusEnd() + bpsBefore.getRadiusEnd());
+            double ellipseExtent = (bpsAfter == null ? 0 :  bpsAfter.getRadiusEnd())
+                    + (bpsBefore == null ? 0 :  bpsBefore.getRadiusEnd());
+
+            if (ellipseExtent > 0) {
+                double f = height / ellipseExtent;
                 if (f < esf) {
                     esf = f;
                 }
@@ -881,6 +914,10 @@ public abstract class BorderPainter {
      */
     protected abstract void restoreGraphicsState() throws IOException;
 
+    /**
+     * TODO remove the System.props when rounded corners code is stable
+     * @return true iff in rounded corners mode
+     */
     public static boolean isRoundedCornersSupported() {
         return "true".equalsIgnoreCase(System.getProperty(ROUNDED_CORNERS, "true"));
     }
