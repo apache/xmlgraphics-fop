@@ -412,6 +412,13 @@ public class SVGPainter extends AbstractIFPainter implements SVGConstants {
         }
     }
 
+    /** {@inheritDoc} */
+    public void fillBackground(Rectangle rect, Paint fill, BorderProps bpsBefore,
+            BorderProps bpsAfter, BorderProps bpsStart, BorderProps bpsEnd) throws IFException {
+        // Not supported in SVG
+
+    }
+
 
 
 }

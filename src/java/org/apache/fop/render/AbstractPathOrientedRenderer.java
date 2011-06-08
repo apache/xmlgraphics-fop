@@ -159,8 +159,9 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
                 (Trait.Background) backgroundArea.getTrait(Trait.BACKGROUND),
                 bpsBefore, bpsAfter, bpsStart, bpsEnd);
 
-        Color bg = null;
-        if (backgroundTrait != null) {
+        // TODO what is the default bg color?   Should we serialize it?
+        Color bg = Color.white;
+        if (backgroundTrait != null &&  backgroundTrait.getColor() != null) {
             bg = backgroundTrait.getColor();
         }
 
@@ -223,9 +224,9 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
                 updateColor(back.getColor(), true);
                 fillRect(sx, sy, paddRectWidth, paddRectHeight);
             }
+
             if (back.getImageInfo() != null) {
                 ImageSize imageSize = back.getImageInfo().getSize();
-
                 int horzCount = (int)((paddRectWidth
                         * 1000 / imageSize.getWidthMpt()) + 1.0f);
                 int vertCount = (int)((paddRectHeight
@@ -267,6 +268,7 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
     }
 
     /**
+     * TODO represent border related parameters in a class
      * Clip the background to the inner border.
      * This draws the border traits given the position and the traits.
      *
@@ -300,6 +302,7 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
      * @param bpsAfter the border-after traits
      * @param bpsStart the border-start traits
      * @param bpsEnd the border-end traits
+     * @param innerBackgroundColor the background color of the block
      */
     protected void drawBorders(                                  // CSOK: ParameterNumber
             float startx, float starty, float width, float height,
@@ -321,6 +324,7 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
      * @param bpsAfter the border specification on the after side
      * @param bpsStart the border specification on the start side
      * @param bpsEnd the border specification on the end side
+     * @param innerBackgroundColor the background color of the block
      */
     protected void drawBorders(                                  // CSOK: MethodLength
             Rectangle2D.Float borderRect,

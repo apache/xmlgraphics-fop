@@ -583,6 +583,19 @@ public class IFParser implements IFConstants {
                 int y = Integer.parseInt(attributes.getValue("y"));
                 int width = Integer.parseInt(attributes.getValue("width"));
                 int height = Integer.parseInt(attributes.getValue("height"));
+                BorderProps[] borders = new BorderProps[4];
+                for (int i = 0; i < 4; i++) {
+                    String b = attributes.getValue(SIDES[i]);
+                    if (b != null) {
+                        borders[i] = BorderProps.valueOf(userAgent, b);
+                    }
+                }
+
+                if (!(borders[0] == null && borders[1] == null
+                        && borders[2] == null && borders[3] == null)) {
+                    painter.clipBackground(new Rectangle(x, y, width, height),
+                            borders[0], borders[1], borders[2], borders[3]);
+                }
                 painter.clipRect(new Rectangle(x, y, width, height));
             }
 
@@ -601,7 +614,26 @@ public class IFParser implements IFConstants {
                 } catch (PropertyException pe) {
                     throw new IFException("Error parsing the fill attribute", pe);
                 }
-                painter.fillRect(new Rectangle(x, y, width, height), fillColor);
+
+                Rectangle rectangularArea = new Rectangle(x, y, width, height);
+
+                //TODO should rect be overloaded to include rounded corners
+                // or should we introduce a new IF element?
+                BorderProps[] borders = new BorderProps[4];
+                for (int i = 0; i < 4; i++) {
+                    String b = attributes.getValue(SIDES[i]);
+                    if (b != null) {
+                        borders[i] = BorderProps.valueOf(userAgent, b);
+                    }
+                }
+
+                if (!(borders[0] == null && borders[1] == null
+                        && borders[2] == null && borders[3] == null)) {
+                    painter.clipBackground(rectangularArea,
+                            borders[0], borders[1], borders[2], borders[3]);
+                }
+
+                painter.fillRect(rectangularArea , fillColor);
             }
 
         }

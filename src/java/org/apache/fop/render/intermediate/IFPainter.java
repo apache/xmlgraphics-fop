@@ -182,14 +182,16 @@ public interface IFPainter {
 
 
     /**
-     *
-     * @param bpsBefore
-     * @param bpsAfter
-     * @param bpsStart
-     * @param bpsEnd
-     * @return true if the background needs to be painted
+     * TODO Painter-specific rounded borders logic required background drawing to be
+     * made optional.  A future refactoring of the rounded borders code should aim to make
+     * the need for this abstraction obsolete
+     * @param bpsBefore the before border
+     * @param bpsAfter the after border
+     * @param bpsStart the start border
+     * @param bpsEnd the end border
+     * @return true if and only if background drawing is required
      */
-    boolean isBackgroundRequired( BorderProps bpsBefore, BorderProps bpsAfter,
+    boolean isBackgroundRequired(BorderProps bpsBefore, BorderProps bpsAfter,
             BorderProps bpsStart, BorderProps bpsEnd);
 
     /**

@@ -309,6 +309,7 @@ public class AFPPainter extends AbstractIFPainter {
             private final boolean[] roundCorner;
             private final Color innerBackgroundColor;
 
+            /* TODO represent border related parameters in a class */
             private BorderImagePainter(double esf, Rectangle borderRect,
                     BorderProps bpsStart, BorderProps bpsEnd,
                     BorderProps bpsBefore, BorderProps bpsAfter,
@@ -807,7 +808,7 @@ public class AFPPainter extends AbstractIFPainter {
             return clip;
         }
 
-
+        /* TODO collect  parameters in a useful structure */
         private void paintCorner(final Graphics2D g2d, final int beforeWidth,
                 final int startWidth, final  int beforeRadius,
                 final int startRadius, final Color innerBackgroundColor,
@@ -841,7 +842,7 @@ public class AFPPainter extends AbstractIFPainter {
                 afterCut.lineTo(startRadius, 0);
                 beforeCut.lineTo(0, beforeRadius);
             } else {
-                afterCut.lineTo(startRadius, (float)(borderWidthRatio * startRadius));
+                afterCut.lineTo(startRadius, (borderWidthRatio * startRadius));
                 beforeCut.lineTo(1f / borderWidthRatio * beforeRadius, beforeRadius);
 
                 afterCut.lineTo(startRadius, 0);
@@ -1341,4 +1342,9 @@ public class AFPPainter extends AbstractIFPainter {
                  bpsStart,  bpsEnd);
     }
 
+    /** {@inheritDoc} */
+    public void fillBackground(Rectangle rect, Paint fill, BorderProps bpsBefore,
+            BorderProps bpsAfter, BorderProps bpsStart, BorderProps bpsEnd) throws IFException {
+        // not supported in AFP
+    }
 }

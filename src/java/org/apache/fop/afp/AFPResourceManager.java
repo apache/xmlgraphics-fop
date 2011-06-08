@@ -132,7 +132,7 @@ public class AFPResourceManager {
         AFPResourceInfo resourceInfo = dataObjectInfo.getResourceInfo();
         updateResourceInfoUri(resourceInfo);
 
-        if (includeCachedObject(resourceInfo, null)) {
+        if (includeCachedObject(resourceInfo, dataObjectInfo.getObjectAreaInfo())) {
             return;
         }
 
