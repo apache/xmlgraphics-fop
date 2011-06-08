@@ -92,7 +92,7 @@
       <!-- TODO refine me: \w+ will not be good enough for CMYK color, for example
       <xs:pattern value="\((solid|dotted|dashed|double|groove|ridge|inset|outset),\w+,\d+(,collapse-(inner|outer))?"/>
       -->
-      <xs:pattern value="\((solid|dotted|dashed|double|groove|ridge|inset|outset),.+)"/>
+      <xs:pattern value="\((solid|dotted|dashed|double|groove|ridge|inset|outset),.+\)"/>
     </xs:restriction>
   </xs:simpleType>
   <xs:simpleType name="lengthListType">
