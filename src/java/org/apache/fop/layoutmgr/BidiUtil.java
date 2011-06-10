@@ -39,7 +39,7 @@ import org.apache.fop.area.inline.Space;
 import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.WordArea;
-import org.apache.fop.area.inline.Viewport;
+import org.apache.fop.area.inline.InlineViewport;
 import org.apache.fop.fo.CharIterator;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FObj;
@@ -108,7 +108,7 @@ public final class BidiUtil {
         if (log.isDebugEnabled()) {
             dumpRuns ( "BD: REORDER: INPUT:", runs );
         }
-        
+
         // 2. split heterogeneous inlines
         runs = splitRuns ( runs );
         if (log.isDebugEnabled()) {
@@ -232,8 +232,8 @@ public final class BidiUtil {
                 runs = collectRuns ( (SpaceArea) ia, runs );
             } else if ( ia instanceof InlineParent ) {
                 runs = collectRuns ( (InlineParent) ia, runs );
-            } else if ( ia instanceof Viewport ) {
-                runs = collectRuns ( (Viewport) ia, runs );
+            } else if ( ia instanceof InlineViewport ) {
+                runs = collectRuns ( (InlineViewport) ia, runs );
             } else if ( ia instanceof Leader ) {
                 runs = collectRuns ( (Leader) ia, runs );
             } else if ( ia instanceof Space ) {
@@ -272,7 +272,7 @@ public final class BidiUtil {
         return runs;
     }
 
-    private static List collectRuns ( Viewport a, List runs ) {
+    private static List collectRuns ( InlineViewport a, List runs ) {
         return runs;
     }
 
@@ -927,7 +927,7 @@ public final class BidiUtil {
                 c = 'I';
             } else if ( inline instanceof InlineBlockParent ) {
                 c = 'B';
-            } else if ( inline instanceof Viewport ) {
+            } else if ( inline instanceof InlineViewport ) {
                 c = 'V';
             } else if ( inline instanceof Leader ) {
                 c = 'L';
@@ -1721,7 +1721,7 @@ public final class BidiUtil {
                 return "LRE";
             case LRO:                                   // left-to-right override
                 return "LRO";
-            case R:                                     // right-to-left 
+            case R:                                     // right-to-left
                 return "R";
             case AL:                                    // right-to-left arabic
                 return "AL";
