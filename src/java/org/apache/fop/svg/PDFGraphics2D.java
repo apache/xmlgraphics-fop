@@ -624,8 +624,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
                                && !trans.isIdentity();
 
         if (newClip || newTransform) {
-            currentStream.write("q\n");
-            paintingState.save();
+            saveGraphicsState();
             if (newTransform) {
                 concatMatrix(tranvals);
             }
@@ -650,8 +649,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
                 applyUnknownPaint(paint, ss);
 
                 if (newClip || newTransform) {
-                    currentStream.write("Q\n");
-                    paintingState.restore();
+                    restoreGraphicsState();
                 }
                 return;
             }
@@ -662,8 +660,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
         processPathIterator(iter);
         doDrawing(false, true, false);
         if (newClip || newTransform) {
-            currentStream.write("Q\n");
-            paintingState.restore();
+            restoreGraphicsState();
         }
     }
 
@@ -1613,8 +1610,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
                                && !trans.isIdentity();
 
         if (newClip || newTransform) {
-            currentStream.write("q\n");
-            paintingState.save();
+            saveGraphicsState();
             if (newTransform) {
                 concatMatrix(tranvals);
             }
@@ -1637,8 +1633,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
                 applyUnknownPaint(paint, s);
 
                 if (newClip || newTransform) {
-                    currentStream.write("Q\n");
-                    paintingState.restore();
+                    restoreGraphicsState();
                 }
                 return;
             }
@@ -1658,9 +1653,18 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
                     iter.getWindingRule() == PathIterator.WIND_EVEN_ODD);
         }
         if (newClip || newTransform) {
-            currentStream.write("Q\n");
-            paintingState.restore();
+            restoreGraphicsState();
         }
+    }
+
+    void saveGraphicsState() {
+        currentStream.write("q\n");
+        paintingState.save();
+    }
+
+    void restoreGraphicsState() {
+        currentStream.write("Q\n");
+        paintingState.restore();
     }
 
     /** Checks whether the use of transparency is allowed. */
