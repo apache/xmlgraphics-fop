@@ -29,8 +29,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.afp.AFPConstants;
-import org.apache.fop.afp.modca.ResourceObject;
 import org.apache.fop.afp.modca.AbstractAFPObject.Category;
+import org.apache.fop.afp.modca.ResourceObject;
 import org.apache.fop.afp.parser.MODCAParser;
 import org.apache.fop.afp.parser.UnparsedStructuredField;
 

@@ -20,14 +20,22 @@
 package org.apache.fop.afp.parser;
 
 import java.io.DataInputStream;
-import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.apache.fop.afp.parser.UnparsedStructuredField.Introducer;
 
 /**
  * An simple MO:DCA/AFP parser.
  */
 public class MODCAParser {
+
+    private static final Log LOG = LogFactory.getLog(MODCAParser.class);
+
+    private static final int INTRODUCER_LENGTH = 8;
 
     /** The carriage control character (0x5A) used to indicate the start of a structured field. */
     public static final byte CARRIAGE_CONTROL_CHAR = (byte)(0x5A & 0xFF);
@@ -39,19 +47,9 @@ public class MODCAParser {
      * @param in the {@link InputStream} to read the AFP file from.
      */
     public MODCAParser(InputStream in) {
-        if (!in.markSupported()) {
-            in = new java.io.BufferedInputStream(in);
-        }
         this.din = new DataInputStream(in);
     }
 
-    /**
-     * Returns the {@link DataInputStream} used for parsing structured fields.
-     * @return the data input stream
-     */
-    public DataInputStream getDataInputStream() {
-        return this.din;
-    }
 
     /**
      * Reads the next structured field from the input stream.
@@ -61,20 +59,46 @@ public class MODCAParser {
      * @throws IOException if an I/O error occurs
      */
     public UnparsedStructuredField readNextStructuredField() throws IOException {
-        try {
-            while (true) {
-                byte b = din.readByte(); //Skip 0x5A character if necessary (ex. AFP)
-                if (b == 0x0D || b == 0x0A) {
-                    //CR and LF may be used as field delimiters
-                    continue;
-                } else if (b == CARRIAGE_CONTROL_CHAR) {
-                    break; //Signals the start of a new structured field
-                }
-            }
-        } catch (EOFException eof) {
-            return null;
-        }
-        return UnparsedStructuredField.readStructuredField(getDataInputStream());
-    }
 
+        //Find the SF delimiter
+        do {
+            //Exhausted streams and so no next SF
+            //  - null return represents this case
+            //  TODO should this happen?
+            if (din.available() == 0) {
+                return null;
+            }
+        } while (din.readByte() != CARRIAGE_CONTROL_CHAR);
+
+        //Read introducer as byte array to preserve any data not parsed below
+        byte[] introducerData = new byte[INTRODUCER_LENGTH]; //Length of introducer
+        din.readFully(introducerData);
+
+        Introducer introducer = new Introducer(introducerData);
+
+        int dataLength = introducer.getLength() - INTRODUCER_LENGTH;
+
+        //Handle optional extension
+        byte[] extData = null;
+        if (introducer.isExtensionPresent()) {
+            short extLength = 0;
+            extLength = (short)((din.readByte()) & 0xFF);
+            if (extLength > 0) {
+                extData = new byte[extLength - 1];
+                din.readFully(extData);
+                dataLength -= extLength;
+            }
+        }
+        //Read payload
+        byte[] data = new byte[dataLength];
+        din.readFully(data);
+
+        UnparsedStructuredField sf = new UnparsedStructuredField(introducer, data, extData);
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace(sf);
+        }
+
+        return sf;
+    }
 }

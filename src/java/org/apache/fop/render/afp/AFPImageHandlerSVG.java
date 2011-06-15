@@ -82,16 +82,16 @@ public class AFPImageHandlerSVG implements ImageHandler {
         setDefaultToInlineResourceLevel(graphicsObjectInfo);
 
         // Create a new AFPGraphics2D
-        final boolean textAsShapes = false; //afpInfo.strokeText(); //TODO make configurable
+        AFPPaintingState paintingState = afpContext.getPaintingState();
+        final boolean textAsShapes = paintingState.isStrokeGOCAText();
         AFPGraphics2D g2d = new AFPGraphics2D(
                 textAsShapes,
                 afpContext.getPaintingState(),
                 afpContext.getResourceManager(),
                 resourceInfo,
-                afpContext.getFontInfo());
+                (textAsShapes ? null : afpContext.getFontInfo()));
         g2d.setGraphicContext(new org.apache.xmlgraphics.java2d.GraphicContext());
 
-        AFPPaintingState paintingState = g2d.getPaintingState();
         paintingState.setImageUri(image.getInfo().getOriginalURI());
 
         // Create an AFPBridgeContext
@@ -167,6 +167,10 @@ public class AFPImageHandlerSVG implements ImageHandler {
                 && image.getFlavor().isCompatible(BatikImageFlavors.SVG_DOM)))
                 && targetContext instanceof AFPRenderingContext;
         if (supported) {
+            AFPRenderingContext afpContext = (AFPRenderingContext)targetContext;
+            if (!afpContext.getPaintingState().isGOCAEnabled()) {
+                return false;
+            }
             String mode = (String)targetContext.getHint(ImageHandlerUtil.CONVERSION_MODE);
             if (ImageHandlerUtil.isConversionModeBitmap(mode)) {
                 //Disabling this image handler automatically causes a bitmap to be generated

@@ -454,6 +454,29 @@
       <Bug pattern="NM_CONFUSING"/>
    </Match>
    <!-- /The names of public methods will not be modified -->
+   <!-- These casts are checked in the code -->
+   <Match>
+	 <Class name="org.apache.fop.render.afp.AFPImageHandlerGraphics2D"/>
+	 <Method name="isCompatible"/>
+	 <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+	 <Class name="org.apache.fop.render.afp.AFPImageHandlerSVG"/>
+	 <Method name="isCompatible"/>
+	 <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <Match>
+	 <Class name="org.apache.fop.render.afp.AbstractPDFImageHandler"/>
+	 <Method name="handleImage"/>
+	 <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+   <!-- /These casts are checked in the code -->
+   <!-- return null is OK -->
+   <Match>
+	 <Class name="org.apache.fop.svg.ACIUtils"/>
+	 <Method name="findFontsForBatikACI"/>
+	 <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+   </Match>
    <!-- Automatically generated list of exclusions -->
    <Match>
       <Class name="org.apache.fop.area.BodyRegion"/>

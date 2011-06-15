@@ -40,6 +40,7 @@ class NamedColorFunction extends FunctionBase {
     }
 
     /** {@inheritDoc} */
+    @Override
     public PercentBase getPercentBase() {
         return new NamedPercentBase();
     }
@@ -51,7 +52,9 @@ class NamedColorFunction extends FunctionBase {
         String colorProfileName = args[3].getString();
         String colorName = args[4].getString();
 
-        Declarations decls = pInfo.getFO().getRoot().getDeclarations();
+        Declarations decls = (pInfo.getFO() != null
+                ? pInfo.getFO().getRoot().getDeclarations()
+                : null);
         ColorProfile cp = null;
         if (decls != null) {
             cp = decls.getColorProfile(colorProfileName);

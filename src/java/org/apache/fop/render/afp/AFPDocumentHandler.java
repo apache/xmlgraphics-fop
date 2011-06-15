@@ -23,6 +23,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.fop.afp.AFPDitheredRectanglePainter;
@@ -49,6 +51,7 @@ import org.apache.fop.render.afp.extensions.AFPInvokeMediumMap;
 import org.apache.fop.render.afp.extensions.AFPPageOverlay;
 import org.apache.fop.render.afp.extensions.AFPPageSegmentElement;
 import org.apache.fop.render.afp.extensions.AFPPageSetup;
+import org.apache.fop.render.afp.extensions.ExtensionPlacement;
 import org.apache.fop.render.intermediate.AbstractBinaryWritingIFDocumentHandler;
 import org.apache.fop.render.intermediate.IFDocumentHandler;
 import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
@@ -88,6 +91,10 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     }
 
     private Location location = Location.ELSEWHERE;
+
+    /** temporary holds extensions that have to be deferred until the end of the page-sequence */
+    private List<AFPPageSetup> deferredPageSequenceExtensions
+        = new java.util.LinkedList<AFPPageSetup>();
 
     /** the shading mode for filled rectangles */
     private AFPShadingMode shadingMode = AFPShadingMode.COLOR;
@@ -208,7 +215,25 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
 
     /** {@inheritDoc} */
     public void endPageSequence() throws IFException {
-        //nop
+        try {
+            //Process deferred page-sequence-level extensions
+            Iterator<AFPPageSetup> iter = this.deferredPageSequenceExtensions.iterator();
+            while (iter.hasNext()) {
+                AFPPageSetup aps = iter.next();
+                iter.remove();
+                if (AFPElementMapping.NO_OPERATION.equals(aps.getElementName())) {
+                    handleNOP(aps);
+                } else {
+                    throw new UnsupportedOperationException("Don't know how to handle " + aps);
+                }
+            }
+
+            //End page sequence
+            dataStream.endPageGroup();
+        } catch (IOException ioe) {
+            throw new IFException("I/O error in endPageSequence()", ioe);
+        }
+        this.location = Location.ELSEWHERE;
     }
 
     /**
@@ -302,13 +327,14 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
                 }
             } else if (AFPElementMapping.NO_OPERATION.equals(element)) {
                 switch (this.location) {
-                case IN_DOCUMENT_HEADER:
                 case FOLLOWING_PAGE_SEQUENCE:
-                case IN_PAGE_HEADER:
-                    String content = aps.getContent();
-                    if (content != null) {
-                        dataStream.createNoOperation(content);
+                    if (aps.getPlacement() == ExtensionPlacement.BEFORE_END) {
+                        this.deferredPageSequenceExtensions.add(aps);
+                        break;
                     }
+                case IN_DOCUMENT_HEADER:
+                case IN_PAGE_HEADER:
+                    handleNOP(aps);
                     break;
                 default:
                     throw new IFException(
@@ -372,6 +398,13 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
         }
     }
 
+    private void handleNOP(AFPPageSetup nop) {
+        String content = nop.getContent();
+        if (content != null) {
+            dataStream.createNoOperation(content);
+        }
+    }
+
     // ---=== AFPCustomizable ===---
 
     /** {@inheritDoc} */
@@ -412,6 +445,26 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     /** {@inheritDoc} */
     public int getResolution() {
         return paintingState.getResolution();
+    }
+
+    /** {@inheritDoc} */
+    public void setGOCAEnabled(boolean enabled) {
+        this.paintingState.setGOCAEnabled(enabled);
+    }
+
+    /** {@inheritDoc} */
+    public boolean isGOCAEnabled() {
+        return this.paintingState.isGOCAEnabled();
+    }
+
+    /** {@inheritDoc} */
+    public void setStrokeGOCAText(boolean stroke) {
+        this.paintingState.setStrokeGOCAText(stroke);
+    }
+
+    /** {@inheritDoc} */
+    public boolean isStrokeGOCAText() {
+        return this.paintingState.isStrokeGOCAText();
     }
 
     /** {@inheritDoc} */

@@ -59,6 +59,49 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="VH" type="fix">
+        Bugfix: alternative text not working in tagged PDF for TIFF images.
+      </action>
+      <action context="Renderers" dev="PH" type="fix" fixes-bug="50909">
+        Fixed io exception in MODCAParser caused by the improper use of mark() and reset() on the
+        MODCA data input stream.  Added unit test. </action>
+      <action context="Fonts" dev="JM" type="fix" fixes-bug="51144" due-to="Mehdi Houshmand">
+        Removed invalid entries in ToUnicode table of CID subset fonts. 
+      </action>
+      <action context="Renderers" dev="JM" type="fix" fixes-bug="50899" due-to="Glenn Adams">
+        Fixed mapping of font weights between CSS values and TextAttribute.WEIGHT_*. 
+      </action>
+      <action context="Renderers" dev="JM" type="fix">
+        AFP GOCA: fonts were not embedded from within AFPGraphics2D.
+      </action>
+      <action context="Renderers" dev="JM" type="fix">
+        AFP GOCA: Changed the way FOP fonts are selected based on Batik's GVT fonts to match
+        the behaviour of PDF/PS output.
+      </action>
+      <action context="Renderers" dev="JM" type="add">
+        Added option to place AFP NOPs right before the end of a named page group (page-sequence),
+        rather than after the start.
+      </action>
+      <action context="Renderers" dev="JM" type="add">
+        Added option for PostScript output to optimize for file size rather than quality.
+      </action>
+      <action context="Renderers" dev="JM" type="add">
+        AFP GOCA: Added option to disable GOCA and to control text painting inside GOCA graphics.
+      </action>
+      <action context="Renderers" dev="JM" type="fix">
+        AFP GOCA: Work-around for InfoPrint's AFP implementation which seems to lose
+        the character set state over Graphics Data (GAD) boundaries.
+      </action>
+      <action context="Renderers" dev="JM" type="fix">
+        Bugfix for AFP GOCA segments: they were not properly marked as appended which could
+        lead to graphics state changes in some implementations.
+      </action>
+      <action context="Renderers" dev="CB" type="fix" fixes-bug="51010" due-to="Max Aster">
+        Bugzilla 51010: Bookmarks create useless lines in RTF 
+      </action>	
+      <action context="Renderers" dev="CB" type="fix" fixes-bug="51008" due-to="Max Aster">
+        Bugzilla 51008: page-number-citation-last does not work in RTF
+      </action>	
       <action context="Renderers" dev="VH" type="add">
         Added id element to intermediate format to track the origin of content.
       </action>

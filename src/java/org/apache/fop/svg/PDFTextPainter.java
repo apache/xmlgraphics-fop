@@ -62,11 +62,13 @@ class PDFTextPainter extends NativeTextPainter {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected boolean isSupported(Graphics2D g2d) {
         return g2d instanceof PDFGraphics2D;
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void paintTextRun(TextRun textRun, Graphics2D g2d) {
         AttributedCharacterIterator runaci = textRun.getACI();
         runaci.first();
@@ -86,7 +88,9 @@ class PDFTextPainter extends NativeTextPainter {
         runaci.first(); //Reset ACI
 
         final PDFGraphics2D pdf = (PDFGraphics2D)g2d;
+
         PDFTextUtil textUtil = new PDFTextUtil(pdf.fontInfo) {
+            @Override
             protected void write(String code) {
                 pdf.currentStream.write(code);
             }
@@ -109,7 +113,7 @@ class PDFTextPainter extends NativeTextPainter {
             return;
         }
 
-        textUtil.saveGraphicsState();
+        pdf.saveGraphicsState();
         textUtil.concatMatrix(g2d.getTransform());
         Shape imclip = g2d.getClip();
         pdf.writeClip(imclip);
@@ -197,7 +201,7 @@ class PDFTextPainter extends NativeTextPainter {
         }
         textUtil.writeTJ();
         textUtil.endTextObject();
-        textUtil.restoreGraphicsState();
+        pdf.restoreGraphicsState();
         if (DEBUG) {
             g2d.setStroke(new BasicStroke(0));
             g2d.setColor(Color.LIGHT_GRAY);

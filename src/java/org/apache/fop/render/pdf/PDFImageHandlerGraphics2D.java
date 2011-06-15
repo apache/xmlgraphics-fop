@@ -31,6 +31,7 @@ import org.apache.xmlgraphics.image.loader.ImageFlavor;
 import org.apache.xmlgraphics.image.loader.impl.ImageGraphics2D;
 
 import org.apache.fop.render.AbstractImageHandlerGraphics2D;
+import org.apache.fop.render.ImageHandlerUtil;
 import org.apache.fop.render.RenderingContext;
 import org.apache.fop.render.pdf.PDFLogicalStructureHandler.MarkedContentInfo;
 import org.apache.fop.svg.PDFGraphics2D;
@@ -60,8 +61,8 @@ public class PDFImageHandlerGraphics2D extends AbstractImageHandlerGraphics2D {
         float imw = (float)dim.getWidth() / 1000f;
         float imh = (float)dim.getHeight() / 1000f;
 
-        float sx = fwidth / (float)imw;
-        float sy = fheight / (float)imh;
+        float sx = fwidth / imw;
+        float sy = fheight / imh;
 
         generator.comment("G2D start");
         boolean accessibilityEnabled = context.getUserAgent().isAccessibilityEnabled();
@@ -123,8 +124,16 @@ public class PDFImageHandlerGraphics2D extends AbstractImageHandlerGraphics2D {
 
     /** {@inheritDoc} */
     public boolean isCompatible(RenderingContext targetContext, Image image) {
-        return (image == null || image instanceof ImageGraphics2D)
+        boolean supported = (image == null || image instanceof ImageGraphics2D)
                 && targetContext instanceof PDFRenderingContext;
+        if (supported) {
+            String mode = (String)targetContext.getHint(ImageHandlerUtil.CONVERSION_MODE);
+            if (ImageHandlerUtil.isConversionModeBitmap(mode)) {
+                //Disabling this image handler automatically causes a bitmap to be generated
+                return false;
+            }
+        }
+        return supported;
     }
 
 }

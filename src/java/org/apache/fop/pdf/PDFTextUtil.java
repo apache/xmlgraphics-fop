@@ -84,7 +84,7 @@ public abstract class PDFTextUtil {
     private static void writeChar(char ch, StringBuffer sb, boolean multibyte) {
         if (!multibyte) {
             if (ch < 32 || ch > 127) {
-                sb.append("\\").append(Integer.toOctalString((int)ch));
+                sb.append("\\").append(Integer.toOctalString(ch));
             } else {
                 switch (ch) {
                 case '(':
@@ -148,21 +148,6 @@ public abstract class PDFTextUtil {
         this.currentFontName = null;
         this.currentFontSize = 0.0;
         this.textRenderingMode = TR_FILL;
-    }
-
-    /**
-     * Creates a "q" command, pushing a copy of the entire graphics state onto the stack.
-     */
-    public void saveGraphicsState() {
-        write("q\n");
-    }
-
-    /**
-     * Creates a "Q" command, restoring the entire graphics state to its former value by popping
-     * it from the stack.
-     */
-    public void restoreGraphicsState() {
-        write("Q\n");
     }
 
     /**

@@ -87,6 +87,30 @@ public interface AFPCustomizable {
     int getResolution();
 
     /**
+     * Controls whether GOCA is enabled or disabled.
+     * @param enabled true if GOCA is enabled, false if it is disabled
+     */
+     void setGOCAEnabled(boolean enabled);
+
+    /**
+     * Indicates whether GOCA is enabled or disabled.
+     * @return true if GOCA is enabled, false if GOCA is disabled
+     */
+    boolean isGOCAEnabled();
+
+    /**
+     * Controls whether to stroke text in GOCA mode or to use text operators where possible.
+     * @param stroke true to stroke, false to paint with text operators where possible
+     */
+    void setStrokeGOCAText(boolean stroke);
+
+    /**
+     * Indicates whether to stroke text in GOCA mode or to use text operators where possible.
+     * @return true to stroke, false to paint with text operators where possible
+     */
+    boolean isStrokeGOCAText();
+
+    /**
      * Sets the default resource group file path
      * @param filePath the default resource group file path
      */
