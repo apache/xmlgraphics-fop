@@ -4,5 +4,6 @@
     <suppress files="org/apache/fop/fo/FOPropertyMapping.java" checks="FileLengthCheck"/>
     <suppress files="org/apache/fop/fonts/GlyphPositioningTable.java" checks="FileLengthCheck"/>
     <suppress files="org/apache/fop/fonts/truetype/TTFFile.java" checks="FileLengthCheck"/>
+    <suppress files="org/apache/fop/layoutmgr/BidiUtil.java" checks="FileLengthCheck"/>
     <suppress files="org/apache/fop/Version.java" lines="40-50" checks="LineLengthCheck"/>
 </suppressions>

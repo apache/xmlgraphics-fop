@@ -45,8 +45,6 @@ import org.apache.fop.fonts.GlyphSubstitutionTable;
 import org.apache.fop.fonts.GlyphSubtable;
 import org.apache.fop.fonts.GlyphTable;
 
-import org.apache.fop.util.CharUtilities;
-
 // CSOFF: AvoidNestedBlocksCheck
 // CSOFF: NoWhitespaceAfterCheck
 // CSOFF: InnerAssignmentCheck
@@ -623,7 +621,6 @@ public class TTFFile {
             return false;
         }
         // Create cmaps for bfentries
-        augmentCMaps();
         createCMaps();
 
         readKerning(in);
@@ -643,67 +640,6 @@ public class TTFFile {
 
         guessVerticalMetricsFromGlyphBBox();
         return true;
-    }
-
-    /**
-     * Augment the previously ingested CMAP data with new entries to ensure
-     * that every glyph index has a corresponding Unicode value. This is required
-     * by GSUB/GPOS processing which can emit glyph indices that are not in the
-     * normal CMAP (and, for which, on other platforms, the glyph indices are used
-     * directly for rendering purposes (rather than character codes). However, in
-     * the case of FOP IF representation, character codes are used, and, consequently
-     * every glyph needs some character value. Here, we assign them to the Unicode
-     * private use range, starting at 0xE000 up to 0xF8FF. If there are existing
-     * assignments in this range, we just skip over them. Note that it is possible
-     * to exhaust this range of 6400 code values in the case a font has an
-     * extraordinary number of unmapped glyphs. In that case, we do not make
-     * any further assignments, but print a warning message.
-     */
-    private void augmentCMaps() {
-        int numMapped = 0;
-        int numUnmapped = 0;
-        int nextPrivateUse = 0xE000;
-        int firstPrivate = 0;
-        int lastPrivate = 0;
-        int firstUnmapped = 0;
-        int lastUnmapped = 0;
-        for ( int i = 0, n = numberOfGlyphs; i < n; i++ ) {
-            Integer uc = glyphToUnicode ( i );
-            if ( uc == null ) {
-                while ( ( nextPrivateUse < 0xF900 ) && ( unicodeToGlyphMap.get(Integer.valueOf(nextPrivateUse)) != null ) ) {
-                    nextPrivateUse++;
-                }
-                if ( nextPrivateUse < 0xF900 ) {
-                    int pu = nextPrivateUse;
-                    unicodeMappings.add ( new UnicodeMapping ( i, pu ) );
-                    if ( firstPrivate == 0 ) {
-                        firstPrivate = pu;
-                    }
-                    lastPrivate = pu;
-                    numMapped++;
-                } else {
-                    if ( firstUnmapped == 0 ) {
-                        firstUnmapped = i;
-                    }
-                    lastUnmapped = i;
-                    numUnmapped++;
-                }
-            }
-        }
-        if ( numMapped > 0 ) {
-            if (log.isDebugEnabled()) {
-                log.debug ( "augment CMAP for "
-                            + numMapped
-                            + " glyphs, mapped to private use characters in the range ["
-                            + CharUtilities.format ( firstPrivate ) + ","
-                            + CharUtilities.format ( lastPrivate ) + "] (inclusive)" );
-            }
-        }
-        if ( numUnmapped > 0 ) {
-            log.warn ( "Exhausted private use area: unable to map "
-                       + numUnmapped + " glyphs in glyph index range ["
-                       + firstUnmapped + "," + lastUnmapped + "] (inclusive) of font '" + getFullName() + "'" );
-        }
     }
 
     private void createCMaps() {
@@ -1523,7 +1459,7 @@ public class TTFFile {
                 capHeight = os2CapHeight;
             }
             if (capHeight == 0) {
-                log.warn("capHeight value could not be determined."
+                log.debug("capHeight value could not be determined."
                         + " The font may not work as expected.");
             }
         }
@@ -1533,7 +1469,7 @@ public class TTFFile {
                 xHeight = os2xHeight;
             }
             if (xHeight == 0) {
-                log.warn("xHeight value could not be determined."
+                log.debug("xHeight value could not be determined."
                         + " The font may not work as expected.");
             }
         }
@@ -3235,9 +3171,6 @@ public class TTFFile {
         int es = in.readTTFUShort();
         // read delta format
         int df = in.readTTFUShort();
-        // read deltas
-        int n = ( es - ss ) + 1;
-        int[] da = new int [ n ];
         int s1, m1, dm, dd, s2;
         if ( df == 1 ) {
             s1 = 14; m1 = 0x3; dm = 1; dd = 4; s2 = 2;
@@ -3246,8 +3179,16 @@ public class TTFFile {
         } else if ( df == 3 ) {
             s1 = 8; m1 = 0xFF; dm = 127; dd = 256; s2 = 8;
         } else {
-            throw new AdvancedTypographicTableFormatException ( "unsupported device table delta format: " + df );
+            log.debug ( "unsupported device table delta format: " + df + ", ignoring device table" );
+            return null;
         }
+        // read deltas
+        int n = ( es - ss ) + 1;
+        if ( n < 0 ) {
+            log.debug ( "invalid device table delta count: " + n + ", ignoring device table" );
+            return null;
+        }
+        int[] da = new int [ n ];
         for ( int i = 0; ( i < n ) && ( s2 > 0 );) {
             int p = in.readTTFUShort();
             for ( int j = 0, k = 16 / s2; j < k; j++ ) {
@@ -5413,11 +5354,9 @@ public class TTFFile {
                 dirOffsets[i] = in.readTTFULong();
             }
 
-            if (log.isDebugEnabled()) {
-                log.debug("This is a TrueType collection file with "
-                        + numDirectories + " fonts");
-                log.debug("Containing the following fonts: ");
-            }
+            log.info("This is a TrueType collection file with "
+                      + numDirectories + " fonts");
+            log.info("Containing the following fonts: ");
 
             for (int i = 0; (i < numDirectories); i++) {
                 in.seekSet(dirOffsets[i]);
@@ -5425,7 +5364,7 @@ public class TTFFile {
 
                 readName(in);
 
-                log.debug(fullName);
+                log.info(fullName);
                 fontNames.add(fullName);
 
                 // Reset names

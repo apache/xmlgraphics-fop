@@ -894,7 +894,7 @@ public class GlyphProcessingState {
         if ( gct == null ) {
             return true;
         } else {
-            return gct.test ( igs, index );
+            return gct.test ( script, language, feature, igs, index );
         }
     }
 

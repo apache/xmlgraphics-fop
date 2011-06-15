@@ -50,6 +50,17 @@ public class InlineViewport extends InlineArea implements Viewport {
      * @param child the child content area of this viewport
      */
     public InlineViewport(Area child) {
+        this(child, -1);
+    }
+
+    /**
+     * Create a new viewport area with the content area.
+     *
+     * @param child the child content area of this viewport
+     * @param bidiLevel the bidirectional embedding level (or -1 if not defined)
+     */
+    public InlineViewport(Area child, int bidiLevel) {
+        super(0, bidiLevel);
         this.content = child;
     }
 

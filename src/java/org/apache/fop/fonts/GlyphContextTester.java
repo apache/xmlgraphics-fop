@@ -27,10 +27,13 @@ public interface GlyphContextTester {
 
     /**
      * Perform a test on a glyph sequence in a specific (originating) character context.
+     * @param script governing script
+     * @param language governing language
+     * @param feature governing feature
      * @param gs glyph sequence to test
      * @param index index into glyph sequence to test
      * @return true if test is satisfied
      */
-    boolean test ( GlyphSequence gs, int index );
+    boolean test ( String script, String language, String feature, GlyphSequence gs, int index );
 
 }

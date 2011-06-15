@@ -132,5 +132,13 @@ public class Block extends BlockParent {
         return (startIndent != null ? startIndent : 0);
     }
 
+    /**
+     * @return the end-indent trait
+     */
+    public int getEndIndent() {
+        Integer endIndent = (Integer)getTrait(Trait.END_INDENT);
+        return (endIndent != null ? endIndent : 0);
+    }
+
 }
 

@@ -120,8 +120,8 @@ public class ListBlockLayoutManager extends BlockStackingLayoutManager
     }
 
     /**
-     * The table area is a reference area that contains areas for
-     * columns, bodies, rows and the contents are in cells.
+     * A list block generates one or more normal block areas whose child areas are
+     * normal block areas returned by the children of fo:list-block. See XSL-FO 1.1 6.8.2.
      *
      * @param parentIter the position iterator
      * @param layoutContext the layout context for adding areas

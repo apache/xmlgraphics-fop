@@ -57,10 +57,13 @@ public class RegionEnd extends RegionSE {
         switch ( getWritingMode().getEnumValue() ) {
         default:
         case Constants.EN_LR_TB:
-        case Constants.EN_RL_TB:
             neighbourContext = pageHeightContext;
             vpRect = new Rectangle(reldims.ipd - getExtent().getValue(pageWidthContext), 0,
                     getExtent().getValue(pageWidthContext), reldims.bpd);
+            break;
+        case Constants.EN_RL_TB:
+            neighbourContext = pageHeightContext;
+            vpRect = new Rectangle(0, 0, getExtent().getValue(pageWidthContext), reldims.bpd);
             break;
         case Constants.EN_TB_LR:
         case Constants.EN_TB_RL:

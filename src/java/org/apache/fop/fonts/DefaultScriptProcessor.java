@@ -24,7 +24,9 @@ import java.util.Map;
 // CSOFF: LineLengthCheck
 
 /**
- * Default script processor, which performs the identity substitution and produces no positioning information.
+ * Default script processor, which enables default glyph composition/decomposition, common ligatures, localized forms
+ * and kerning.
+ *
  * @author Glenn Adams
  */
 public class DefaultScriptProcessor extends ScriptProcessor {
@@ -47,24 +49,92 @@ public class DefaultScriptProcessor extends ScriptProcessor {
         super ( script );
     }
 
+    @Override
     /** {@inheritDoc} */
     public String[] getSubstitutionFeatures() {
         return gsubFeatures;
     }
 
+    @Override
     /** {@inheritDoc} */
     public ScriptContextTester getSubstitutionContextTester() {
         return null;
     }
 
+    @Override
     /** {@inheritDoc} */
     public String[] getPositioningFeatures() {
         return gposFeatures;
     }
 
+    @Override
     /** {@inheritDoc} */
     public ScriptContextTester getPositioningContextTester() {
         return null;
+    }
+
+    @Override
+    /** {@inheritDoc} */
+    public GlyphSequence reorderCombiningMarks ( GlyphDefinitionTable gdef, GlyphSequence gs, int[][] gpa, String script, String language ) {
+        int   ng  = gs.getGlyphCount();
+        int[] ga  = gs.getGlyphArray ( false );
+        int   nm  = 0;
+        // count combining marks
+        for ( int i = 0; i < ng; i++ ) {
+            int gid = ga [ i ];
+            if ( gdef.isGlyphClass ( gid, GlyphDefinitionTable.GLYPH_CLASS_MARK ) ) {
+                nm++;
+            }
+        }
+        // only reorder if there is at least one mark and at least one non-mark glyph
+        if ( ( nm > 0 ) && ( ( ng - nm ) > 0 ) ) {
+            GlyphSequence.CharAssociation[] aa = gs.getAssociations ( 0, -1 );
+            int[] nga = new int [ ng ];
+            int[][] npa = ( gpa != null ) ? new int [ ng ][] : null;
+            GlyphSequence.CharAssociation[] naa = new GlyphSequence.CharAssociation [ ng ];
+            int k = 0;
+            GlyphSequence.CharAssociation ba = null;
+            int bg = -1;
+            int[] bpa = null;
+            for ( int i = 0; i < ng; i++ ) {
+                int gid = ga [ i ];
+                int[] pa = ( gpa != null ) ? gpa [ i ] : null;
+                GlyphSequence.CharAssociation ca = aa [ i ];
+                if ( gdef.isGlyphClass ( gid, GlyphDefinitionTable.GLYPH_CLASS_MARK ) ) {
+                    nga [ k ] = gid; naa [ k ] = ca;
+                    if ( npa != null ) {
+                        npa [ k ] = pa;
+                    }
+                    k++;
+                } else {
+                    if ( bg != -1 ) {
+                        nga [ k ] = bg; naa [ k ] = ba;
+                        if ( npa != null ) {
+                            npa [ k ] = bpa;
+                        }
+                        k++;
+                        bg = -1; ba = null; bpa = null;
+                    }
+                    if ( bg == -1 ) {
+                        bg = gid; ba = ca; bpa = pa;
+                    }
+                }
+            }
+            if ( bg != -1 ) {
+                nga [ k ] = bg; naa [ k ] = ba;
+                if ( npa != null ) {
+                    npa [ k ] = bpa;
+                }
+                k++;
+            }
+            assert k == ng;
+            if ( npa != null ) {
+                System.arraycopy ( npa, 0, gpa, 0, ng );
+            }
+            return new GlyphSequence ( gs, null, nga, null, null, naa, null );
+        } else {
+            return gs;
+        }
     }
 
 }

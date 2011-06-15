@@ -62,8 +62,8 @@ public class InlineParent extends InlineArea {
         childArea.setParentArea(this);
         if (autoSize) {
             increaseIPD(childArea.getAllocIPD());
-            updateLevel ( childArea.getBidiLevel() );
         }
+        updateLevel ( childArea.getBidiLevel() );
         int childOffset = childArea.getVirtualOffset();
         minChildOffset = Math.min(minChildOffset, childOffset);
         maxAfterEdge = Math.max(maxAfterEdge, childOffset + childArea.getVirtualBPD());

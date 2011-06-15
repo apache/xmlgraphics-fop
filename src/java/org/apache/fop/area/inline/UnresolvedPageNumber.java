@@ -83,11 +83,23 @@ public class UnresolvedPageNumber extends TextArea implements Resolvable {
     }
 
     /**
+     * Get the (resolved or unresolved) text.
+     *
+     * @return the text
+     */
+    public String getText() {
+        return text;
+    }
+
+    /**
      * Resolve the page number idref
      * This resolves the idref for this object by getting the page number
      * string from the first page in the list of pages that apply
      * for this ID.  The page number text is then set to the String value
      * of the page number.
+     *
+     * TODO: [GA] May need to run bidi algorithm and script processor
+     * on resolved page number.
      *
      * @param id an id whose PageViewports have been determined
      * @param pages the list of PageViewports associated with this ID
@@ -103,7 +115,7 @@ public class UnresolvedPageNumber extends TextArea implements Resolvable {
             // replace the text
             removeText();
             text = page.getPageNumberString();
-            addWord(text, 0);
+            addWord(text, 0, getBidiLevel());
             // update ipd
             if (font != null) {
                 handleIPDVariation(font.getWordWidth(text) - getIPD());

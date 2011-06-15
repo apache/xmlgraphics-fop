@@ -81,10 +81,7 @@ public abstract class AbstractPageNumberCitationLayoutManager extends LeafNodeLa
     }
 
     /** {@inheritDoc} */
-    public InlineArea get(LayoutContext context) {
-        curArea = getPageNumberCitationInlineArea();
-        return curArea;
-    }
+    public abstract InlineArea get(LayoutContext context);
 
     /**
      * {@inheritDoc}
@@ -95,35 +92,6 @@ public abstract class AbstractPageNumberCitationLayoutManager extends LeafNodeLa
         if (!resolved) {
             getPSLM().addUnresolvedArea(fobj.getRefId(), (Resolvable) curArea);
         }
-    }
-
-    /**
-     * If id can be resolved then simply return a text area, otherwise
-     * return a resolvable area
-     *
-     * @return a corresponding InlineArea
-     */
-    private InlineArea getPageNumberCitationInlineArea() {
-        PageViewport page = getPSLM().getFirstPVWithID(fobj.getRefId());
-        TextArea text;
-        if (page != null) {
-            String str = page.getPageNumberString();
-            // get page string from parent, build area
-            text = new TextArea();
-            int width = getStringWidth(str);
-            text.addWord(str, 0);
-            text.setIPD(width);
-            resolved = true;
-        } else {
-            resolved = false;
-            text = new UnresolvedPageNumber(fobj.getRefId(), font);
-            String str = "MMM"; // reserve three spaces for page number
-            int width = getStringWidth(str);
-            text.setIPD(width);
-        }
-        updateTextAreaTraits(text);
-
-        return text;
     }
 
     /**
@@ -150,6 +118,13 @@ public abstract class AbstractPageNumberCitationLayoutManager extends LeafNodeLa
             width += font.getCharWidth(str.charAt(count));
         }
         return width;
+    }
+
+    /**
+     * @return bidi level governing abstract page number citation
+     */
+    protected int getBidiLevel() {
+        return fobj.getBidiLevel();
     }
 
 }

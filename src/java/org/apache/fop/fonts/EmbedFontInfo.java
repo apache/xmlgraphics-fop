@@ -29,7 +29,7 @@ import java.util.List;
 public class EmbedFontInfo implements Serializable {
 
     /** Serialization Version UID */
-    private static final long serialVersionUID = 8755432068669997368L;
+    private static final long serialVersionUID = 8755432068669997369L;
 
     /** filename of the metrics file */
     protected String metricsFile;

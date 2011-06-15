@@ -53,6 +53,22 @@ public final class Direction extends TraitEnum {
     }
 
     /**
+     * Determine if direction is vertical or not.
+     * @return true if vertical
+     */
+    public boolean isVertical() {
+        return ( getEnumValue() == Constants.EN_TB ) || ( getEnumValue() == Constants.EN_BT );
+    }
+
+    /**
+     * Determine if direction is horizontal or not.
+     * @return true if horizontal
+     */
+    public boolean isHorizontal() {
+        return ( getEnumValue() == Constants.EN_LR ) || ( getEnumValue() == Constants.EN_RL );
+    }
+
+    /**
      * Returns the enumeration/singleton object based on its name.
      * @param name the name of the enumeration value
      * @return the enumeration object

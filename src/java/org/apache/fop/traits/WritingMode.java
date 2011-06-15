@@ -101,6 +101,32 @@ public final class WritingMode extends TraitEnum {
     }
 
     /**
+     * Determine if WM is horizontal or not.
+     * @return true if horizontal
+     */
+    public boolean isHorizontal() {
+        switch ( getEnumValue() ) {
+        case Constants.EN_LR_TB:
+        case Constants.EN_RL_TB:
+            return true;
+        case Constants.EN_TB_LR:
+        case Constants.EN_TB_RL:
+            return false;
+        default:
+            assert false;
+            return true;
+        }
+    }
+
+    /**
+     * Determine if WM is vertical or not.
+     * @return true if vertical
+     */
+    public boolean isVertical() {
+        return !isHorizontal();
+    }
+
+    /**
      * Returns the enumeration/singleton object based on its name.
      * @param name the name of the enumeration value
      * @return the enumeration object

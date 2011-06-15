@@ -44,7 +44,7 @@ public class CTM implements Serializable {
     private double a, b, c, d, e, f;
 
     private static final CTM CTM_LRTB = new CTM(1, 0, 0, 1, 0, 0);
-    private static final CTM CTM_RLTB = new CTM(-1, 0, 0, 1, 0, 0);
+    private static final CTM CTM_RLTB = new CTM(1, 0, 0, 1, 0, 0);
     private static final CTM CTM_TBRL = new CTM(0, 1, -1, 0, 0, 0);
 
     /**
@@ -141,16 +141,12 @@ public class CTM implements Serializable {
             case EN_LR_TB:
                 return new CTM(CTM_LRTB);
             case EN_RL_TB:
-                wmctm = new CTM(CTM_RLTB);
-                wmctm.e = ipd;
-                return wmctm;
-                //return  CTM_RLTB.translate(ipd, 0);
+                return new CTM(CTM_RLTB);
             case EN_TB_RL:  // CJK
             case EN_TB_LR:  // CJK
                 wmctm = new CTM(CTM_TBRL);
                 wmctm.e = bpd;
                 return wmctm;
-                //return CTM_TBRL.translate(0, ipd);
             default:
                 return null;
         }

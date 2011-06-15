@@ -138,4 +138,20 @@ public class WritingModeTraits implements WritingModeTraitsSetter {
         writingMode.assignWritingModeTraits ( this );
     }
 
+    /**
+     * Helper function to find the writing mode traits getter (if any) that applies for
+     * a given FO node.
+     * @param fn the node to start searching from
+     * @return the applicable writing mode traits getter, or null if none applies
+     */
+    public static WritingModeTraitsGetter
+        getWritingModeTraitsGetter ( org.apache.fop.fo.FONode fn ) {
+        for ( org.apache.fop.fo.FONode n = fn; n != null; n = n.getParent() ) {
+            if ( n instanceof WritingModeTraitsGetter ) {
+                return (WritingModeTraitsGetter) n;
+            }
+        }
+        return null;
+    }
+
 }

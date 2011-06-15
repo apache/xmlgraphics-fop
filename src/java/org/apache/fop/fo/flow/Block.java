@@ -91,9 +91,6 @@ public class Block extends FObjMixed implements BreakPropertySet, StructurePoint
     //     private int visibility;
     // End of FO trait values
 
-    /* default paragraph bidi level */
-    private int bidiLevel = -1;
-
     /**
      * Base constructor
      *
@@ -344,24 +341,6 @@ public class Block extends FObjMixed implements BreakPropertySet, StructurePoint
     /** {@inheritDoc} */
     public CharIterator charIterator() {
         return NullCharIterator.getInstance();
-    }
-
-    /**
-     * Get the default paragraph bidirectional embedding level.
-     *
-     * @return the default paragraph bidirectional embedding level
-     */
-    public int getBidiLevel() {
-        return bidiLevel;
-    }
-
-    /**
-     * Set the default paragraph bidirectional embedding level.
-     *
-     * @param bidiLevel the default paragraph bidirectional embedding level
-     */
-    public void setBidiLevel ( int bidiLevel ) {
-        this.bidiLevel = bidiLevel;
     }
 
     /** {@inheritDoc} */

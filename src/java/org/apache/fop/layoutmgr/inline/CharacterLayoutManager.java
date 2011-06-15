@@ -77,17 +77,18 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
     private TextArea getCharacterInlineArea(Character node) {
         TextArea text = new TextArea();
         char ch = node.getCharacter();
+        int ipd = font.getCharWidth(ch);
         int blockProgressionOffset = 0;
-        int level = node.bidiLevelAt(0);
+        int level = node.getBidiLevel();
         if (CharUtilities.isAnySpace(ch)) {
             // add space unless it's zero-width:
             if (!CharUtilities.isZeroWidthSpace(ch)) {
-                text.addSpace(ch, 0, CharUtilities.isAdjustableSpace(ch),
+                text.addSpace(ch, ipd, CharUtilities.isAdjustableSpace(ch),
                               blockProgressionOffset, level);
             }
         } else {
             int[] levels = ( level >= 0 ) ? new int[] {level} : null;
-            text.addWord(String.valueOf(ch), 0, null, levels, null, blockProgressionOffset);
+            text.addWord(String.valueOf(ch), ipd, null, levels, null, blockProgressionOffset);
         }
         TraitSetter.setProducerID(text, node.getId());
         TraitSetter.addTextDecoration(text, node.getTextDecoration());
@@ -109,9 +110,8 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
 
         Character fobj = (Character)this.fobj;
 
-        ipd = MinOptMax.getInstance(font.getCharWidth(fobj.getCharacter()));
+        ipd = MinOptMax.getInstance(curArea.getIPD());
 
-        curArea.setIPD(ipd.getOpt());
         curArea.setBPD(font.getAscender() - font.getDescender());
 
         TraitSetter.addFontTraits(curArea, font);

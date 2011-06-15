@@ -840,12 +840,13 @@ public class AreaTreeParser {
                         = ConversionUtils.toIntArray(
                             lastAttributes.getValue("letter-adjust"), "\\s");
                 int level = XMLUtil.getAttributeAsInt(lastAttributes, "level", -1);
+                boolean reversed = XMLUtil.getAttributeAsBoolean(lastAttributes, "reversed", false);
                 int[][] gposAdjustments
                     = XMLUtil.getAttributeAsPositionAdjustments(lastAttributes, "position-adjust");
                 content.flip();
                 WordArea word = new WordArea
                     ( offset, level, content.toString().trim(), letterAdjust,
-                      null, gposAdjustments );
+                      null, gposAdjustments, reversed );
                 AbstractTextArea text = getCurrentText();
                 word.setParentArea(text);
                 text.addChildArea(word);
@@ -912,7 +913,8 @@ public class AreaTreeParser {
         private class InlineViewportMaker extends AbstractMaker {
 
             public void startElement(Attributes attributes) {
-                InlineViewport viewport = new InlineViewport(null);
+                int level = XMLUtil.getAttributeAsInt(attributes, "level", -1);
+                InlineViewport viewport = new InlineViewport(null, level);
                 transferForeignObjects(attributes, viewport);
                 setAreaAttributes(attributes, viewport);
                 setTraits(attributes, viewport, SUBSET_COMMON);

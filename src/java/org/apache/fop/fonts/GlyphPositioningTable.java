@@ -391,10 +391,9 @@ public class GlyphPositioningTable extends GlyphTable {
         }
         /** {@inheritDoc} */
         public boolean position ( GlyphPositioningState ps ) {
+            boolean applied = false;
             int gi = ps.getGlyph(0), ci;
-            if ( ( ci = getCoverageIndex ( gi ) ) < 0 ) {
-                return false;
-            } else {
+            if ( ( ci = getCoverageIndex ( gi ) ) >= 0 ) {
                 int[] counts = ps.getGlyphsAvailable ( 0 );
                 int nga = counts[0];
                 if ( nga > 1 ) {
@@ -415,11 +414,12 @@ public class GlyphPositioningTable extends GlyphTable {
                                 }
                             }
                             ps.consume ( counts[0] + counts[1] );
+                            applied = true;
                         }
                     }
                 }
-                return true;
             }
+            return applied;
         }
         /**
          * Obtain associated pair values.
@@ -582,10 +582,9 @@ public class GlyphPositioningTable extends GlyphTable {
         }
         /** {@inheritDoc} */
         public boolean position ( GlyphPositioningState ps ) {
+            boolean applied = false;
             int gi = ps.getGlyph(0), ci;
-            if ( ( ci = getCoverageIndex ( gi ) ) < 0 ) {
-                return false;
-            } else {
+            if ( ( ci = getCoverageIndex ( gi ) ) >= 0 ) {
                 int[] counts = ps.getGlyphsAvailable ( 0 );
                 int nga = counts[0];
                 if ( nga > 1 ) {
@@ -610,11 +609,12 @@ public class GlyphPositioningTable extends GlyphTable {
                             }
                             // consume only first glyph of exit/entry glyph pair
                             ps.consume ( 1 );
+                            applied = true;
                         }
                     }
                 }
-                return true;
             }
+            return applied;
         }
         /**
          * Obtain exit anchor for first glyph with coverage index <code>ci1</code> and entry anchor for second
@@ -698,10 +698,9 @@ public class GlyphPositioningTable extends GlyphTable {
         }
         /** {@inheritDoc} */
         public boolean position ( GlyphPositioningState ps ) {
+            boolean applied = false;
             int giMark = ps.getGlyph(), ciMark;
-            if ( ( ciMark = getCoverageIndex ( giMark ) ) < 0 ) {
-                return false;
-            } else {
+            if ( ( ciMark = getCoverageIndex ( giMark ) ) >= 0 ) {
                 MarkAnchor ma = getMarkAnchor ( ciMark, giMark );
                 if ( ma != null ) {
                     for ( int i = 0, n = ps.getPosition(); i < n; i++ ) {
@@ -723,12 +722,13 @@ public class GlyphPositioningTable extends GlyphTable {
                                 }
                             }
                             ps.consume(1);
+                            applied = true;
                             break;
                         }
                     }
                 }
-                return true;
             }
+            return applied;
         }
         /**
          * Obtain mark anchor associated with mark coverage index.
@@ -841,10 +841,9 @@ public class GlyphPositioningTable extends GlyphTable {
         }
         /** {@inheritDoc} */
         public boolean position ( GlyphPositioningState ps ) {
+            boolean applied = false;
             int giMark = ps.getGlyph(), ciMark;
-            if ( ( ciMark = getCoverageIndex ( giMark ) ) < 0 ) {
-                return false;
-            } else {
+            if ( ( ciMark = getCoverageIndex ( giMark ) ) >= 0 ) {
                 MarkAnchor ma = getMarkAnchor ( ciMark, giMark );
                 int mxc = getMaxComponentCount();
                 if ( ma != null ) {
@@ -860,12 +859,13 @@ public class GlyphPositioningTable extends GlyphTable {
                                 }
                             }
                             ps.consume(1);
+                            applied = true;
                             break;
                         }
                     }
                 }
-                return true;
             }
+            return applied;
         }
         /**
          * Obtain mark anchor associated with mark coverage index.
@@ -999,10 +999,9 @@ public class GlyphPositioningTable extends GlyphTable {
         }
         /** {@inheritDoc} */
         public boolean position ( GlyphPositioningState ps ) {
+            boolean applied = false;
             int giMark1 = ps.getGlyph(), ciMark1;
-            if ( ( ciMark1 = getCoverageIndex ( giMark1 ) ) < 0 ) {
-                return false;
-            } else {
+            if ( ( ciMark1 = getCoverageIndex ( giMark1 ) ) >= 0 ) {
                 MarkAnchor ma = getMark1Anchor ( ciMark1, giMark1 );
                 if ( ma != null ) {
                     if ( ps.hasPrev() ) {
@@ -1013,10 +1012,11 @@ public class GlyphPositioningTable extends GlyphTable {
                             }
                         }
                         ps.consume(1);
+                        applied = true;
                     }
                 }
-                return true;
             }
+            return applied;
         }
         /**
          * Obtain mark 1 anchor associated with mark 1 coverage index.
@@ -1129,17 +1129,17 @@ public class GlyphPositioningTable extends GlyphTable {
         }
         /** {@inheritDoc} */
         public boolean position ( GlyphPositioningState ps ) {
+            boolean applied = false;
             int gi = ps.getGlyph(), ci;
-            if ( ( ci = getCoverageIndex ( gi ) ) < 0 ) {
-                return false;
-            } else {
+            if ( ( ci = getCoverageIndex ( gi ) ) >= 0 ) {
                 int[] rv = new int[1];
                 RuleLookup[] la = getLookups ( ci, gi, ps, rv );
                 if ( la != null ) {
                     ps.apply ( la, rv[0] );
+                    applied = true;
                 }
-                return true;
             }
+            return applied;
         }
         /**
          * Obtain rule lookups set associated current input glyph context.
@@ -1455,19 +1455,17 @@ public class GlyphPositioningTable extends GlyphTable {
         }
         /** {@inheritDoc} */
         public boolean position ( GlyphPositioningState ps ) {
+            boolean applied = false;
             int gi = ps.getGlyph(), ci;
-            if ( ( ci = getCoverageIndex ( gi ) ) < 0 ) {
-                return false;
-            } else {
+            if ( ( ci = getCoverageIndex ( gi ) ) >= 0 ) {
                 int[] rv = new int[1];
                 RuleLookup[] la = getLookups ( ci, gi, ps, rv );
                 if ( la != null ) {
                     ps.apply ( la, rv[0] );
-                    return true;
-                } else {
-                    return false;
+                    applied = true;
                 }
             }
+            return applied;
         }
         /**
          * Obtain rule lookups set associated current input glyph context.

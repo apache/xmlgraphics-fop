@@ -23,6 +23,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Iterator;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 // CSOFF: LineLengthCheck
 // CSOFF: InnerAssignmentCheck
 // CSOFF: NoWhitespaceAfterCheck
@@ -32,6 +35,9 @@ import java.util.Iterator;
  * @author Glenn Adams
  */
 public final class GlyphCoverageTable extends GlyphMappingTable implements GlyphCoverageMapping {
+
+    /* logging instance */
+    private static final Log log = LogFactory.getLog(GlyphCoverageTable.class);                                         // CSOK: ConstantNameCheck
 
     /** empty mapping table */
     public static final int GLYPH_COVERAGE_TYPE_EMPTY = GLYPH_MAPPING_TYPE_EMPTY;
@@ -178,7 +184,7 @@ public final class GlyphCoverageTable extends GlyphMappingTable implements Glyph
                         if ( gid > gidMax ) {
                             map [ i++ ] = gidMax = gid;
                         } else {
-                            throw new AdvancedTypographicTableFormatException ( "out of order or duplicate glyph index: " + gid );
+                            log.info ( "ignoring out of order or duplicate glyph index: " + gid );
                         }
                     } else {
                         throw new AdvancedTypographicTableFormatException ( "illegal glyph index: " + gid );

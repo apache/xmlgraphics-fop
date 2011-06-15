@@ -70,11 +70,31 @@ public class ArabicScriptProcessor extends DefaultScriptProcessor {
     private static class SubstitutionScriptContextTester implements ScriptContextTester {
         private static Map/*<String,GlyphContextTester>*/ testerMap = new HashMap/*<String,GlyphContextTester>*/();
         static {
-            testerMap.put ( "fina", new GlyphContextTester() { public boolean test ( GlyphSequence gs, int index ) { return inFinalContext ( gs, index ); } } );
-            testerMap.put ( "init", new GlyphContextTester() { public boolean test ( GlyphSequence gs, int index ) { return inInitialContext ( gs, index ); } } );
-            testerMap.put ( "isol", new GlyphContextTester() { public boolean test ( GlyphSequence gs, int index ) { return inIsolateContext ( gs, index ); } } );
-            testerMap.put ( "medi", new GlyphContextTester() { public boolean test ( GlyphSequence gs, int index ) { return inMedialContext ( gs, index ); } } );
-            testerMap.put ( "liga", new GlyphContextTester() { public boolean test ( GlyphSequence gs, int index ) { return inLigatureContext ( gs, index ); } } );
+            testerMap.put ( "fina", new GlyphContextTester() {
+                    public boolean test ( String script, String language, String feature, GlyphSequence gs, int index ) {
+                        return inFinalContext ( script, language, feature, gs, index );
+                    }
+                } );
+            testerMap.put ( "init", new GlyphContextTester() {
+                    public boolean test ( String script, String language, String feature, GlyphSequence gs, int index ) {
+                        return inInitialContext ( script, language, feature, gs, index );
+                    }
+                } );
+            testerMap.put ( "isol", new GlyphContextTester() {
+                    public boolean test ( String script, String language, String feature, GlyphSequence gs, int index ) {
+                        return inIsolateContext ( script, language, feature, gs, index );
+                    }
+                } );
+            testerMap.put ( "liga", new GlyphContextTester() {
+                    public boolean test ( String script, String language, String feature, GlyphSequence gs, int index ) {
+                        return inLigatureContext ( script, language, feature, gs, index );
+                    }
+                } );
+            testerMap.put ( "medi", new GlyphContextTester() {
+                    public boolean test ( String script, String language, String feature, GlyphSequence gs, int index ) {
+                        return inMedialContext ( script, language, feature, gs, index );
+                    }
+                } );
         }
         public GlyphContextTester getTester ( String feature ) {
             return (GlyphContextTester) testerMap.get ( feature );
@@ -117,7 +137,15 @@ public class ArabicScriptProcessor extends DefaultScriptProcessor {
         return posContextTester;
     }
 
-    private static boolean inFinalContext ( GlyphSequence gs, int index ) {
+    /** {@inheritDoc} */
+    @Override
+    public GlyphSequence reorderCombiningMarks ( GlyphDefinitionTable gdef, GlyphSequence gs, int[][] gpa, String script, String language ) {
+        // a side effect of BIDI reordering is to order combining marks before their base, so we need to override the default here to
+        // prevent double reordering
+        return gs;
+    }
+
+    private static boolean inFinalContext ( String script, String language, String feature, GlyphSequence gs, int index ) {
         GlyphSequence.CharAssociation a = gs.getAssociation ( index );
         int[] ca = gs.getCharacterArray ( false );
         int   nc = gs.getCharacterCount();
@@ -138,28 +166,7 @@ public class ArabicScriptProcessor extends DefaultScriptProcessor {
         }
     }
 
-    private static boolean inMedialContext ( GlyphSequence gs, int index ) {
-        GlyphSequence.CharAssociation a = gs.getAssociation ( index );
-        int[] ca = gs.getCharacterArray ( false );
-        int   nc = gs.getCharacterCount();
-        if ( nc == 0 ) {
-            return false;
-        } else {
-            int s = a.getStart();
-            int e = a.getEnd();
-            if ( ! hasMedialPrecedingContext ( ca, nc, s, e ) ) {
-                return false;
-            } else if ( ! hasMedialThisContext ( ca, nc, s, e ) ) {
-                return false;
-            } else if ( ! hasMedialFollowingContext ( ca, nc, s, e ) ) {
-                return false;
-            } else {
-                return true;
-            }
-        }
-    }
-
-    private static boolean inInitialContext ( GlyphSequence gs, int index ) {
+    private static boolean inInitialContext ( String script, String language, String feature, GlyphSequence gs, int index ) {
         GlyphSequence.CharAssociation a = gs.getAssociation ( index );
         int[] ca = gs.getCharacterArray ( false );
         int   nc = gs.getCharacterCount();
@@ -178,7 +185,7 @@ public class ArabicScriptProcessor extends DefaultScriptProcessor {
         }
     }
 
-    private static boolean inIsolateContext ( GlyphSequence gs, int index ) {
+    private static boolean inIsolateContext ( String script, String language, String feature, GlyphSequence gs, int index ) {
         GlyphSequence.CharAssociation a = gs.getAssociation ( index );
         int   nc = gs.getCharacterCount();
         if ( nc == 0 ) {
@@ -190,7 +197,7 @@ public class ArabicScriptProcessor extends DefaultScriptProcessor {
         }
     }
 
-    private static boolean inLigatureContext ( GlyphSequence gs, int index ) {
+    private static boolean inLigatureContext ( String script, String language, String feature, GlyphSequence gs, int index ) {
         GlyphSequence.CharAssociation a = gs.getAssociation ( index );
         int[] ca = gs.getCharacterArray ( false );
         int   nc = gs.getCharacterCount();
@@ -202,6 +209,27 @@ public class ArabicScriptProcessor extends DefaultScriptProcessor {
             if ( ! hasLigaturePrecedingContext ( ca, nc, s, e ) ) {
                 return false;
             } else if ( ! hasLigatureFollowingContext ( ca, nc, s, e ) ) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+    }
+
+    private static boolean inMedialContext ( String script, String language, String feature, GlyphSequence gs, int index ) {
+        GlyphSequence.CharAssociation a = gs.getAssociation ( index );
+        int[] ca = gs.getCharacterArray ( false );
+        int   nc = gs.getCharacterCount();
+        if ( nc == 0 ) {
+            return false;
+        } else {
+            int s = a.getStart();
+            int e = a.getEnd();
+            if ( ! hasMedialPrecedingContext ( ca, nc, s, e ) ) {
+                return false;
+            } else if ( ! hasMedialThisContext ( ca, nc, s, e ) ) {
+                return false;
+            } else if ( ! hasMedialFollowingContext ( ca, nc, s, e ) ) {
                 return false;
             } else {
                 return true;

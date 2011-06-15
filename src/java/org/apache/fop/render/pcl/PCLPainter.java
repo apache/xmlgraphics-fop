@@ -207,13 +207,13 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
 
     /** {@inheritDoc} */
     public void drawBorderRect(final Rectangle rect,
-            final BorderProps before, final BorderProps after,
-            final BorderProps start, final BorderProps end) throws IFException {
+            final BorderProps top, final BorderProps bottom,
+            final BorderProps left, final BorderProps right) throws IFException {
         if (isSpeedOptimized()) {
-            super.drawBorderRect(rect, before, after, start, end);
+            super.drawBorderRect(rect, top, bottom, left, right);
             return;
         }
-        if (before != null || after != null || start != null || end != null) {
+        if (top != null || bottom != null || left != null || right != null) {
             final Rectangle boundingBox = rect;
             final Dimension dim = boundingBox.getSize();
 
@@ -225,7 +225,7 @@ public class PCLPainter extends AbstractIFPainter implements PCLConstants {
                     Java2DPainter painter = new Java2DPainter(g2d,
                             getContext(), parent.getFontInfo(), state);
                     try {
-                        painter.drawBorderRect(rect, before, after, start, end);
+                        painter.drawBorderRect(rect, top, bottom, left, right);
                     } catch (IFException e) {
                         //This should never happen with the Java2DPainter
                         throw new RuntimeException("Unexpected error while painting borders", e);

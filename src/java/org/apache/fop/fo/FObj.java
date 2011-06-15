@@ -67,6 +67,8 @@ public abstract class FObj extends FONode implements Constants {
     /** Markers added to this element. */
     private Map markers = null;
 
+    private int bidiLevel = -1;
+
     // The value of properties relevant for all fo objects
     private String id = null;
     // End of property values
@@ -554,6 +556,26 @@ public abstract class FObj extends FONode implements Constants {
     /** {@inheritDoc} */
     public String getNormalNamespacePrefix() {
         return "fo";
+    }
+
+    /**
+     * Set resolved bidirectional level of FO.
+     * @param bidiLevel a non-negative bidi embedding level
+     */
+    public void setBidiLevel(int bidiLevel) {
+        assert bidiLevel >= 0;
+        if ( bidiLevel >= 0 ) {
+            this.bidiLevel = bidiLevel;
+        }
+    }
+
+    /**
+     * Obtain resolved bidirectional level of FO.
+     * @return either a non-negative bidi embedding level or -1
+     * in case no bidi levels have been assigned
+     */
+    public int getBidiLevel() {
+        return bidiLevel;
     }
 
     /**

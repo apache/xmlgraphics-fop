@@ -250,7 +250,7 @@ public class GlyphSubstitutionTable extends GlyphTable {
                 if ( ( go < 0 ) || ( go > 65535 ) ) {
                     go = 65535;
                 }
-                ss.putGlyph ( go, ss.getAssociation() );
+                ss.putGlyph ( go, ss.getAssociation(), Boolean.TRUE );
                 ss.consume(1);
                 return true;
             }
@@ -378,7 +378,7 @@ public class GlyphSubstitutionTable extends GlyphTable {
             } else {
                 int[] ga = getGlyphsForCoverageIndex ( ci, gi );
                 if ( ga != null ) {
-                    ss.putGlyphs ( ga, GlyphSequence.CharAssociation.replicate ( ss.getAssociation(), ga.length ) );
+                    ss.putGlyphs ( ga, GlyphSequence.CharAssociation.replicate ( ss.getAssociation(), ga.length ), Boolean.TRUE );
                     ss.consume(1);
                 }
                 return true;
@@ -472,7 +472,7 @@ public class GlyphSubstitutionTable extends GlyphTable {
                 if ( ( go < 0 ) || ( go > 65535 ) ) {
                     go = 65535;
                 }
-                ss.putGlyph ( go, ss.getAssociation() );
+                ss.putGlyph ( go, ss.getAssociation(), Boolean.TRUE );
                 ss.consume(1);
                 return true;
             }
@@ -575,10 +575,10 @@ public class GlyphSubstitutionTable extends GlyphTable {
                             // fetch associations of matched component glyphs
                             GlyphSequence.CharAssociation[] laa = ss.getAssociations ( 0, nga );
                             // output ligature glyph and its association
-                            ss.putGlyph ( go, GlyphSequence.CharAssociation.join ( laa ) );
+                            ss.putGlyph ( go, GlyphSequence.CharAssociation.join ( laa ), Boolean.TRUE );
                             // fetch and output ignored glyphs (if necessary)
                             if ( ngi > 0 ) {
-                                ss.putGlyphs ( ss.getIgnoredGlyphs ( 0, ngi ), ss.getIgnoredAssociations ( 0, ngi ) );
+                                ss.putGlyphs ( ss.getIgnoredGlyphs ( 0, ngi ), ss.getIgnoredAssociations ( 0, ngi ), null );
                             }
                             ss.consume ( nga + ngi );
                         }
@@ -1333,8 +1333,8 @@ public class GlyphSubstitutionTable extends GlyphTable {
         public Ligature ( int ligature, int[] components ) {
             if ( ( ligature < 0 ) || ( ligature > 65535 ) ) {
                 throw new AdvancedTypographicTableFormatException ( "invalid ligature glyph index: " + ligature );
-            } else if ( ( components == null ) || ( components.length == 0 ) ) {
-                throw new AdvancedTypographicTableFormatException ( "invalid ligature components, must be non-empty array" );
+            } else if ( components == null ) {
+                throw new AdvancedTypographicTableFormatException ( "invalid ligature components, must be non-null array" );
             } else {
                 for ( int i = 0, n = components.length; i < n; i++ ) {
                     int gc = components [ i ];
@@ -1419,8 +1419,8 @@ public class GlyphSubstitutionTable extends GlyphTable {
          * @param ligatures array of ligatures
          */
         public LigatureSet ( Ligature[] ligatures ) {
-            if ( ( ligatures == null ) || ( ligatures.length == 0 ) ) {
-                throw new AdvancedTypographicTableFormatException ( "invalid ligatures, must be non-empty array" );
+            if ( ligatures == null ) {
+                throw new AdvancedTypographicTableFormatException ( "invalid ligatures, must be non-null array" );
             } else {
                 this.ligatures = ligatures;
                 int ncMax = -1;

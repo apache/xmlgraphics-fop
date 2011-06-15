@@ -40,6 +40,8 @@ public class GlyphSubstitutionState extends GlyphProcessingState {
     private IntBuffer ogb;
     /** current output glyph to character associations */
     private List oal;
+    /** character association predications */
+    private boolean predications;
 
     /**
      * Construct glyph substitution state.
@@ -53,6 +55,7 @@ public class GlyphSubstitutionState extends GlyphProcessingState {
         super ( gs, script, language, feature, sct );
         this.ogb = IntBuffer.allocate ( gs.getGlyphCount() );
         this.oal = new ArrayList ( gs.getGlyphCount() );
+        this.predications = gs.getPredications();
     }
 
     /**
@@ -97,12 +100,16 @@ public class GlyphSubstitutionState extends GlyphProcessingState {
      * Put (write) glyph into glyph output buffer.
      * @param glyph to write
      * @param a character association that applies to glyph
+     * @param predication a predication value to add to association A if predications enabled
      */
-    public void putGlyph ( int glyph, GlyphSequence.CharAssociation a ) {
+    public void putGlyph ( int glyph, GlyphSequence.CharAssociation a, Object predication ) {
         if ( ! ogb.hasRemaining() ) {
             ogb = growBuffer ( ogb ); 
         }
         ogb.put ( glyph );
+        if ( predications && ( predication != null ) ) {
+            a.setPredication ( feature, predication );
+        }
         oal.add ( a );
     }
 
@@ -110,13 +117,14 @@ public class GlyphSubstitutionState extends GlyphProcessingState {
      * Put (write) array of glyphs into glyph output buffer.
      * @param glyphs to write
      * @param associations array of character associations that apply to glyphs
+     * @param predication optional predicaion object to be associated with glyphs' associations
      */
-    public void putGlyphs ( int[] glyphs, GlyphSequence.CharAssociation[] associations ) {
+    public void putGlyphs ( int[] glyphs, GlyphSequence.CharAssociation[] associations, Object predication ) {
         assert glyphs != null;
         assert associations != null;
         assert associations.length >= glyphs.length;
         for ( int i = 0, n = glyphs.length; i < n; i++ ) {
-            putGlyph ( glyphs [ i ], associations [ i ] );
+            putGlyph ( glyphs [ i ], associations [ i ], predication );
         }
     }
 
@@ -187,7 +195,7 @@ public class GlyphSubstitutionState extends GlyphProcessingState {
                 }
             }
             // output glyphs and associations
-            putGlyphs ( getGlyphs ( 0, nog, false, null, null, null ), getAssociations ( 0, nog, false, null, null, null ) );
+            putGlyphs ( getGlyphs ( 0, nog, false, null, null, null ), getAssociations ( 0, nog, false, null, null, null ), null );
             // consume replaced input glyphs
             consume ( nog );
             return true;
@@ -204,7 +212,7 @@ public class GlyphSubstitutionState extends GlyphProcessingState {
         super.applyDefault();
         int gi = getGlyph();
         if ( gi != 65535 ) {
-            putGlyph ( gi, getAssociation() );
+            putGlyph ( gi, getAssociation(), null );
         }
     }
 

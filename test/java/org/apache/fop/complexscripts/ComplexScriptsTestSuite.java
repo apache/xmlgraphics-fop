@@ -20,6 +20,8 @@
 package org.apache.fop.complexscripts;
 
 import org.apache.fop.complexscripts.bidi.BidiTestSuite;
+import org.apache.fop.complexscripts.fonts.FontsTestSuite;
+import org.apache.fop.complexscripts.scripts.ScriptsTestSuite;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -38,6 +40,8 @@ public class ComplexScriptsTestSuite {
             "Test suite for complex scripts functionality");
         //$JUnit-BEGIN$
         suite.addTest(BidiTestSuite.suite());
+        suite.addTest(FontsTestSuite.suite());
+        suite.addTest(ScriptsTestSuite.suite());
         //$JUnit-END$
         return suite;
     }

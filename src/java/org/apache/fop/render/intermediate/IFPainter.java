@@ -180,15 +180,15 @@ public interface IFPainter {
      * Draws a border rectangle. The border segments are specified through {@link BorderProps}
      * instances.
      * @param rect the rectangle's coordinates and extent
-     * @param before the border segment on the before-side (top)
-     * @param after the border segment on the after-side (bottom)
-     * @param start the border segment on the start-side (left)
-     * @param end the border segment on the end-side (right)
+     * @param top the border segment on the top edge
+     * @param bottom the border segment on the bottom edge
+     * @param left the border segment on the left edge
+     * @param right the border segment on the right edge
      * @throws IFException if an error occurs while handling this event
      */
     void drawBorderRect(Rectangle rect,
-            BorderProps before, BorderProps after,
-            BorderProps start, BorderProps end) throws IFException;
+            BorderProps top, BorderProps bottom,
+            BorderProps left, BorderProps right) throws IFException;
 
     /**
      * Draws a line. NOTE: Currently, only horizontal lines are implemented!

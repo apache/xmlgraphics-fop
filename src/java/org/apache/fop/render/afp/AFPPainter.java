@@ -260,11 +260,11 @@ public class AFPPainter extends AbstractIFPainter {
 
     /** {@inheritDoc} */
     @Override
-    public void drawBorderRect(Rectangle rect, BorderProps before, BorderProps after,
-            BorderProps start, BorderProps end) throws IFException {
-        if (before != null || after != null || start != null || end != null) {
+    public void drawBorderRect(Rectangle rect, BorderProps top, BorderProps bottom,
+            BorderProps left, BorderProps right) throws IFException {
+        if (top != null || bottom != null || left != null || right != null) {
             try {
-                this.borderPainter.drawBorders(rect, before, after, start, end);
+                this.borderPainter.drawBorders(rect, top, bottom, left, right);
             } catch (IOException ife) {
                 throw new IFException("IO error while painting borders", ife);
             }
