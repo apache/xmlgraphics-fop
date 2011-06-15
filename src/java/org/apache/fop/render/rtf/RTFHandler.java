@@ -100,6 +100,7 @@ import org.apache.fop.layoutmgr.inline.ImageLayout;
 import org.apache.fop.layoutmgr.table.ColumnSetup;
 import org.apache.fop.render.DefaultFontResolver;
 import org.apache.fop.render.RendererEventProducer;
+import org.apache.fop.render.rtf.rtflib.exceptions.RtfException;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfAfterContainer;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfBeforeContainer;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfListContainer;
@@ -1448,7 +1449,7 @@ public class RTFHandler extends FOEventHandler {
             throw new RuntimeException(e.getMessage());
         }
     }
-    
+
     /** {@inheritDoc} */
     public void startPageNumberCitationLast(PageNumberCitationLast l) {
         if (bDefer) {
@@ -1463,7 +1464,10 @@ public class RTFHandler extends FOEventHandler {
 
             textrun.addPageNumberCitation(l.getRefId());
 
-        } catch (Exception e) {
+        } catch (RtfException e) {
+            log.error("startPageNumberCitationLast: " + e.getMessage());
+            throw new RuntimeException(e.getMessage());
+        } catch (IOException e) {
             log.error("startPageNumberCitationLast: " + e.getMessage());
             throw new RuntimeException(e.getMessage());
         }

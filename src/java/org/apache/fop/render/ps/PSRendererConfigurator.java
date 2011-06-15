@@ -19,6 +19,8 @@
 
 package org.apache.fop.render.ps;
 
+import java.util.Locale;
+
 import org.apache.avalon.framework.configuration.Configuration;
 
 import org.apache.xmlgraphics.ps.PSGenerator;
@@ -69,7 +71,8 @@ public class PSRendererConfigurator extends PrintRendererConfigurator
         child = cfg.getChild("rendering");
         if (child != null) {
             psUtil.setRenderingMode(PSRenderingMode.valueOf(
-                    child.getValue(psUtil.getRenderingMode().toString()).toUpperCase()));
+                    child.getValue(psUtil.getRenderingMode().toString())
+                    .toUpperCase(Locale.ENGLISH)));
         }
         psUtil.setSafeSetPageDevice(
             cfg.getChild("safe-set-page-device").getValueAsBoolean(false));

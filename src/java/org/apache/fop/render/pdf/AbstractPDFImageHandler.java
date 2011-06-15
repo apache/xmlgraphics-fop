@@ -39,6 +39,7 @@ abstract class AbstractPDFImageHandler implements ImageHandler {
     /** {@inheritDoc} */
     public void handleImage(RenderingContext context, Image image, Rectangle pos)
             throws IOException {
+        assert context instanceof PDFRenderingContext;
         PDFRenderingContext pdfContext = (PDFRenderingContext)context;
         PDFContentGenerator generator = pdfContext.getGenerator();
         PDFImage pdfimage = createPDFImage(image, image.getInfo().getOriginalURI());

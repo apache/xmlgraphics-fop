@@ -60,6 +60,7 @@ public class AFPTextHandler extends FOPTextHandlerAdapter {
      * Main constructor.
      *
      * @param fontInfo the AFPGraphics2D instance
+     * @param resourceManager the AFPResourceManager instance
      */
     public AFPTextHandler(FontInfo fontInfo, AFPResourceManager resourceManager) {
         this.fontInfo = fontInfo;
