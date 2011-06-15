@@ -78,6 +78,7 @@ import org.apache.fop.fo.flow.ListItemBody;
 import org.apache.fop.fo.flow.ListItemLabel;
 import org.apache.fop.fo.flow.PageNumber;
 import org.apache.fop.fo.flow.PageNumberCitation;
+import org.apache.fop.fo.flow.PageNumberCitationLast;
 import org.apache.fop.fo.flow.table.Table;
 import org.apache.fop.fo.flow.table.TableBody;
 import org.apache.fop.fo.flow.table.TableCell;
@@ -99,6 +100,7 @@ import org.apache.fop.layoutmgr.inline.ImageLayout;
 import org.apache.fop.layoutmgr.table.ColumnSetup;
 import org.apache.fop.render.DefaultFontResolver;
 import org.apache.fop.render.RendererEventProducer;
+import org.apache.fop.render.rtf.rtflib.exceptions.RtfException;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfAfterContainer;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfBeforeContainer;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.IRtfListContainer;
@@ -1448,6 +1450,29 @@ public class RTFHandler extends FOEventHandler {
         }
     }
 
+    /** {@inheritDoc} */
+    public void startPageNumberCitationLast(PageNumberCitationLast l) {
+        if (bDefer) {
+            return;
+        }
+        try {
+
+            IRtfTextrunContainer container
+                  = (IRtfTextrunContainer)builderContext.getContainer(
+                      IRtfTextrunContainer.class, true, this);
+            RtfTextrun textrun = container.getTextrun();
+
+            textrun.addPageNumberCitation(l.getRefId());
+
+        } catch (RtfException e) {
+            log.error("startPageNumberCitationLast: " + e.getMessage());
+            throw new RuntimeException(e.getMessage());
+        } catch (IOException e) {
+            log.error("startPageNumberCitationLast: " + e.getMessage());
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
     private void prepareTable(Table tab) {
         // Allows to receive the available width of the table
         percentManager.setDimension(tab);
@@ -1640,6 +1665,12 @@ public class RTFHandler extends FOEventHandler {
                 startPageNumberCitation((PageNumberCitation) foNode);
             } else {
                 endPageNumberCitation((PageNumberCitation) foNode);
+            }
+        } else if (foNode instanceof PageNumberCitationLast) {
+            if (bStart) {
+                startPageNumberCitationLast((PageNumberCitationLast) foNode);
+            } else {
+                endPageNumberCitationLast((PageNumberCitationLast) foNode);
             }
         } else {
             RTFEventProducer eventProducer = RTFEventProducer.Provider.get(

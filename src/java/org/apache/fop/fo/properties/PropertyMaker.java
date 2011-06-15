@@ -445,7 +445,9 @@ public class PropertyMaker implements Cloneable {
             }
             return newProp;
         } catch (PropertyException propEx) {
-            propEx.setLocator(fo.getLocator());
+            if (fo != null) {
+                propEx.setLocator(fo.getLocator());
+            }
             propEx.setPropertyName(getName());
             throw propEx;
         }
@@ -653,6 +655,7 @@ public class PropertyMaker implements Cloneable {
      * subproperty makers of the generic compound makers.
      * {@inheritDoc}
      */
+    @Override
     public Object clone() {
         try {
             return super.clone();

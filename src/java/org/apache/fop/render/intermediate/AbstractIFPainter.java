@@ -46,6 +46,7 @@ import org.apache.xmlgraphics.image.loader.util.ImageUtil;
 import org.apache.fop.ResourceEventProducer;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FopFactory;
+import org.apache.fop.fo.Constants;
 import org.apache.fop.render.ImageHandler;
 import org.apache.fop.render.ImageHandlerRegistry;
 import org.apache.fop.render.ImageHandlerUtil;
@@ -340,6 +341,32 @@ public abstract class AbstractIFPainter implements IFPainter {
                     start.width, rect.height);
             fillRect(b, start.color);
         }
+    }
+
+    /**
+     * Indicates whether the given border segments (if present) have only solid borders, i.e.
+     * could be painted in a simplified fashion keeping the output file smaller.
+     * @param before the border segment on the before-side (top)
+     * @param after the border segment on the after-side (bottom)
+     * @param start the border segment on the start-side (left)
+     * @param end the border segment on the end-side (right)
+     * @return true if any border segment has a non-solid border style
+     */
+    protected boolean hasOnlySolidBorders(BorderProps before, BorderProps after,
+            BorderProps start, BorderProps end) {
+        if (before != null && before.style != Constants.EN_SOLID) {
+            return false;
+        }
+        if (after != null && after.style != Constants.EN_SOLID) {
+            return false;
+        }
+        if (start != null && start.style != Constants.EN_SOLID) {
+            return false;
+        }
+        if (end != null && end.style != Constants.EN_SOLID) {
+            return false;
+        }
+        return true;
     }
 
     /** {@inheritDoc} */

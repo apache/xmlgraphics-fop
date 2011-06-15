@@ -50,6 +50,7 @@ public class AFPExtensionHandler extends DefaultHandler
     private ObjectBuiltListener listener;
 
     /** {@inheritDoc} */
+    @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes)
                 throws SAXException {
         boolean handled = false;
@@ -79,6 +80,7 @@ public class AFPExtensionHandler extends DefaultHandler
     }
 
     /** {@inheritDoc} */
+    @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if (AFPExtensionAttachment.CATEGORY.equals(uri)) {
             if (AFPElementMapping.INCLUDE_FORM_MAP.equals(localName)) {
@@ -130,13 +132,17 @@ public class AFPExtensionHandler extends DefaultHandler
                     pageSetupExtn = new AFPPageSetup(localName);
                     this.returnedObject = pageSetupExtn;
                 }
-                String name = lastAttributes.getValue("name");
+                String name = lastAttributes.getValue(AFPPageSetup.ATT_NAME);
                 if (name != null) {
                     returnedObject.setName(name);
                 }
-                String value = lastAttributes.getValue("value");
+                String value = lastAttributes.getValue(AFPPageSetup.ATT_VALUE);
                 if (value != null && pageSetupExtn != null) {
                     pageSetupExtn.setValue(value);
+                }
+                String placement = lastAttributes.getValue(AFPPageSetup.ATT_PLACEMENT);
+                if (placement != null && placement.length() > 0) {
+                    pageSetupExtn.setPlacement(ExtensionPlacement.fromXMLValue(placement));
                 }
                 if (content.length() > 0 && pageSetupExtn != null) {
                     pageSetupExtn.setContent(content.toString());
@@ -148,6 +154,7 @@ public class AFPExtensionHandler extends DefaultHandler
     }
 
     /** {@inheritDoc} */
+    @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
         content.append(ch, start, length);
     }
@@ -155,6 +162,7 @@ public class AFPExtensionHandler extends DefaultHandler
     /**
      * {@inheritDoc}
      */
+    @Override
     public void endDocument() throws SAXException {
         if (listener != null) {
             listener.notifyObjectBuilt(getObject());

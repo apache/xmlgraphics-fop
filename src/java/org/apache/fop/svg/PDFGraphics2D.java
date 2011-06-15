@@ -243,6 +243,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
      * @return     a new graphics context that is a copy of
      * this graphics context.
      */
+    @Override
     public Graphics create() {
         return new PDFGraphics2D(this);
     }
@@ -486,6 +487,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
      * @see      java.awt.image.ImageObserver
      * @see      java.awt.image.ImageObserver#imageUpdate(java.awt.Image, int, int, int, int, int)
      */
+    @Override
     public boolean drawImage(Image img, int x, int y,
                              ImageObserver observer) {
         preparePainting();
@@ -506,6 +508,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean drawImage(Image img, int x, int y, int width, int height,
                                ImageObserver observer) {
         preparePainting();
@@ -576,6 +579,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
      * @see         java.awt.Component#getGraphics
      * @see         java.awt.Graphics#create
      */
+    @Override
     public void dispose() {
         pdfDoc = null;
         fontInfo = null;
@@ -599,6 +603,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
      * @see #setClip
      * @see #setComposite
      */
+    @Override
     public void draw(Shape s) {
         preparePainting();
 
@@ -619,8 +624,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
                                && !trans.isIdentity();
 
         if (newClip || newTransform) {
-            currentStream.write("q\n");
-            paintingState.save();
+            saveGraphicsState();
             if (newTransform) {
                 concatMatrix(tranvals);
             }
@@ -645,8 +649,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
                 applyUnknownPaint(paint, ss);
 
                 if (newClip || newTransform) {
-                    currentStream.write("Q\n");
-                    paintingState.restore();
+                    restoreGraphicsState();
                 }
                 return;
             }
@@ -657,8 +660,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
         processPathIterator(iter);
         doDrawing(false, true, false);
         if (newClip || newTransform) {
-            currentStream.write("Q\n");
-            paintingState.restore();
+            restoreGraphicsState();
         }
     }
 
@@ -748,9 +750,17 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
              }
         }
 
-        StringBuffer sb = new StringBuffer();
-        colorHandler.establishColor(sb, col, fill);
-        currentStream.write(sb.toString());
+        boolean doWrite = false;
+        if (fill && paintingState.setBackColor(col)) {
+            doWrite = true;
+        } else if (paintingState.setColor(col)) {
+            doWrite = true;
+        }
+        if (doWrite) {
+            StringBuffer sb = new StringBuffer();
+            colorHandler.establishColor(sb, col, fill);
+            currentStream.write(sb.toString());
+        }
     }
 
     /**
@@ -805,7 +815,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
             transform.concatenate(getTransform());
             transform.concatenate(gp.getTransform());
 
-            List theMatrix = new java.util.ArrayList();
+            List<Double> theMatrix = new java.util.ArrayList<Double>();
             double [] mat = new double[6];
             transform.getMatrix(mat);
             for (int idx = 0; idx < mat.length; idx++) {
@@ -814,29 +824,29 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
 
             Point2D p1 = gp.getStartPoint();
             Point2D p2 = gp.getEndPoint();
-            List theCoords = new java.util.ArrayList();
+            List<Double> theCoords = new java.util.ArrayList<Double>();
             theCoords.add(new Double(p1.getX()));
             theCoords.add(new Double(p1.getY()));
             theCoords.add(new Double(p2.getX()));
             theCoords.add(new Double(p2.getY()));
 
-            List theExtend = new java.util.ArrayList();
-            theExtend.add(new Boolean(true));
-            theExtend.add(new Boolean(true));
+            List<Boolean> theExtend = new java.util.ArrayList<Boolean>();
+            theExtend.add(Boolean.TRUE);
+            theExtend.add(Boolean.TRUE);
 
-            List theDomain = new java.util.ArrayList();
+            List<Double> theDomain = new java.util.ArrayList<Double>();
             theDomain.add(new Double(0));
             theDomain.add(new Double(1));
 
-            List theEncode = new java.util.ArrayList();
+            List<Double> theEncode = new java.util.ArrayList<Double>();
             theEncode.add(new Double(0));
             theEncode.add(new Double(1));
             theEncode.add(new Double(0));
             theEncode.add(new Double(1));
 
-            List theBounds = new java.util.ArrayList();
+            List<Double> theBounds = new java.util.ArrayList<Double>();
 
-            List someColors = new java.util.ArrayList();
+            List<Color> someColors = new java.util.ArrayList<Color>();
 
             for (int count = 0; count < cols.length; count++) {
                 Color c1 = cols[count];
@@ -882,7 +892,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
             transform.concatenate(getTransform());
             transform.concatenate(rgp.getTransform());
 
-            List theMatrix = new java.util.ArrayList();
+            List<Double> theMatrix = new java.util.ArrayList<Double>();
             double [] mat = new double[6];
             transform.getMatrix(mat);
             for (int idx = 0; idx < mat.length; idx++) {
@@ -893,7 +903,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
             Point2D ac = rgp.getCenterPoint();
             Point2D af = rgp.getFocusPoint();
 
-            List theCoords = new java.util.ArrayList();
+            List<Double> theCoords = new java.util.ArrayList<Double>();
             double dx = af.getX() - ac.getX();
             double dy = af.getY() - ac.getY();
             double d = Math.sqrt(dx * dx + dy * dy);
@@ -913,7 +923,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
             theCoords.add(new Double(ar));
 
             Color[] cols = rgp.getColors();
-            List someColors = new java.util.ArrayList();
+            List<Color> someColors = new java.util.ArrayList<Color>();
             for (int count = 0; count < cols.length; count++) {
                 Color cc = cols[count];
                 if (cc.getAlpha() != 255) {
@@ -924,7 +934,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
             }
 
             float[] fractions = rgp.getFractions();
-            List theBounds = new java.util.ArrayList();
+            List<Double> theBounds = new java.util.ArrayList<Double>();
             for (int count = 1; count < fractions.length - 1; count++) {
                 float offset = fractions[count];
                 theBounds.add(new Double(offset));
@@ -964,7 +974,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
         pattGraphic.setOutputStream(outputStream);
 
         GraphicsNode gn = pp.getGraphicsNode();
-        Rectangle2D gnBBox = gn.getBounds();
+        //Rectangle2D gnBBox = gn.getBounds();
         Rectangle2D rect = pp.getPatternRect();
 
         // if (!pp.getOverflow()) {
@@ -1000,7 +1010,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
         //     }
         // }
 
-        List bbox = new java.util.ArrayList();
+        List<Double> bbox = new java.util.ArrayList<Double>();
         bbox.add(new Double(rect.getX()));
         bbox.add(new Double(rect.getHeight() + rect.getY()));
         bbox.add(new Double(rect.getWidth() + rect.getX()));
@@ -1011,7 +1021,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
         transform.concatenate(getTransform());
         transform.concatenate(pp.getPatternTransform());
 
-        List theMatrix = new java.util.ArrayList();
+        List<Double> theMatrix = new java.util.ArrayList<Double>();
         double [] mat = new double[6];
         transform.getMatrix(mat);
         for (int idx = 0; idx < mat.length; idx++) {
@@ -1219,6 +1229,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
     }
 
     /** {@inheritDoc} */
+    @Override
     public void drawRenderedImage(RenderedImage img, AffineTransform xform) {
         String key = "TempImage:" + img.toString();
         drawInnerRenderedImage(key, img, xform);
@@ -1268,6 +1279,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
     }
 
     /** {@inheritDoc} */
+    @Override
     public void drawRenderableImage(RenderableImage img,
                                     AffineTransform xform) {
         //TODO Check if this is good enough
@@ -1298,6 +1310,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
      * @see #setComposite
      * @see #setClip
      */
+    @Override
     public void drawString(String s, float x, float y) {
         preparePainting();
 
@@ -1321,7 +1334,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
         applyPaint(getPaint(), true);
         applyAlpha(c.getAlpha(), OPAQUE);
 
-        Map kerning = fontState.getKerning();
+        Map<Integer, Map<Integer, Integer>> kerning = fontState.getKerning();
         boolean kerningAvailable = (kerning != null && !kerning.isEmpty());
 
         boolean useMultiByte = isMultiByteFont(currentFontName);
@@ -1379,8 +1392,8 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
             }
 
             if (kerningAvailable && (i + 1) < l) {
-                addKerning(currentStream, (new Integer(ch)),
-                           (new Integer(fontState.mapChar(s.charAt(i + 1)))),
+                addKerning(currentStream, (Integer.valueOf(ch)),
+                           (Integer.valueOf(fontState.mapChar(s.charAt(i + 1)))),
                            kerning, startText, endText);
             }
 
@@ -1400,7 +1413,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
     protected void applyAlpha(int fillAlpha, int strokeAlpha) {
         if (fillAlpha != OPAQUE || strokeAlpha != OPAQUE) {
             checkTransparencyAllowed();
-            Map vals = new java.util.HashMap();
+            Map<String, Float> vals = new java.util.HashMap<String, Float>();
             if (fillAlpha != OPAQUE) {
                 vals.put(PDFGState.GSTATE_ALPHA_NONSTROKE, new Float(fillAlpha / 255f));
             }
@@ -1437,6 +1450,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
      * @return the internal Font
      * @deprecated use FontInfo.getFontInstanceForAWTFont(java.awt.Font awtFont) instead
      */
+    @Deprecated
     protected Font getInternalFontForAWTFont(java.awt.Font awtFont) {
         return fontInfo.getFontInstanceForAWTFont(awtFont);
     }
@@ -1449,18 +1463,18 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
     protected boolean isMultiByteFont(String name) {
         // This assumes that *all* CIDFonts use a /ToUnicode mapping
         org.apache.fop.fonts.Typeface f
-            = (org.apache.fop.fonts.Typeface)fontInfo.getFonts().get(name);
+            = fontInfo.getFonts().get(name);
         return f.isMultiByte();
     }
 
     private void addKerning(StringWriter buf, Integer ch1, Integer ch2,
-                            Map kerning, String startText,
+                            Map<Integer, Map<Integer, Integer>> kerning, String startText,
                             String endText) {
         preparePainting();
-        Map kernPair = (Map)kerning.get(ch1);
+        Map<Integer, Integer> kernPair = kerning.get(ch1);
 
         if (kernPair != null) {
-            Integer width = (Integer)kernPair.get(ch2);
+            Integer width = kernPair.get(ch2);
             if (width != null) {
                 currentStream.write(endText + (-width.intValue()) + " " + startText);
             }
@@ -1572,6 +1586,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
      * @see #clip
      * @see #setClip
      */
+    @Override
     public void fill(Shape s) {
         preparePainting();
 
@@ -1595,8 +1610,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
                                && !trans.isIdentity();
 
         if (newClip || newTransform) {
-            currentStream.write("q\n");
-            paintingState.save();
+            saveGraphicsState();
             if (newTransform) {
                 concatMatrix(tranvals);
             }
@@ -1619,22 +1633,38 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
                 applyUnknownPaint(paint, s);
 
                 if (newClip || newTransform) {
-                    currentStream.write("Q\n");
-                    paintingState.restore();
+                    restoreGraphicsState();
                 }
                 return;
             }
         }
 
-        //PathIterator iter = s.getPathIterator(getTransform());
-        PathIterator iter = s.getPathIterator(IDENTITY_TRANSFORM);
-        processPathIterator(iter);
-        doDrawing(true, false,
-                  iter.getWindingRule() == PathIterator.WIND_EVEN_ODD);
-        if (newClip || newTransform) {
-            currentStream.write("Q\n");
-            paintingState.restore();
+        if (s instanceof Rectangle2D) {
+            Rectangle2D rect = (Rectangle2D)s;
+            currentStream.write(PDFNumber.doubleOut(rect.getMinX(), DEC) + " "
+                    + PDFNumber.doubleOut(rect.getMinY(), DEC) + " ");
+            currentStream.write(PDFNumber.doubleOut(rect.getWidth(), DEC) + " "
+                    + PDFNumber.doubleOut(rect.getHeight(), DEC) + " re ");
+            doDrawing(true, false, false);
+        } else {
+            PathIterator iter = s.getPathIterator(IDENTITY_TRANSFORM);
+            processPathIterator(iter);
+            doDrawing(true, false,
+                    iter.getWindingRule() == PathIterator.WIND_EVEN_ODD);
         }
+        if (newClip || newTransform) {
+            restoreGraphicsState();
+        }
+    }
+
+    void saveGraphicsState() {
+        currentStream.write("q\n");
+        paintingState.save();
+    }
+
+    void restoreGraphicsState() {
+        currentStream.write("Q\n");
+        paintingState.restore();
     }
 
     /** Checks whether the use of transparency is allowed. */
@@ -1720,6 +1750,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
      *
      * @return the PDF graphics configuration
      */
+    @Override
     public GraphicsConfiguration getDeviceConfiguration() {
         return new PDFGraphicsConfiguration();
     }
@@ -1744,6 +1775,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
      * @see       java.awt.FontMetrics
      * @see       java.awt.Graphics#getFontMetrics()
      */
+    @Override
     public java.awt.FontMetrics getFontMetrics(java.awt.Font f) {
         return fmg.getFontMetrics(f);
     }
@@ -1763,6 +1795,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
      * drawn twice, then all pixels are restored to their original values.
      * @param     c1 the XOR alternation color
      */
+    @Override
     public void setXORMode(Color c1) {
         //NYI
     }
@@ -1787,6 +1820,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
      * @param       dx the horizontal distance to copy the pixels.
      * @param       dy the vertical distance to copy the pixels.
      */
+    @Override
     public void copyArea(int x, int y, int width, int height, int dx,
                          int dy) {
         //NYI

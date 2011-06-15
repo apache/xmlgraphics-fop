@@ -103,9 +103,8 @@ which will be used to configure the chosen Forrest skin.
     For some skins just set the attributes to blank.
   -->
   <trail location="alt">
-    <link1 name="apache.org" href="http://www.apache.org/"/>
-    <link2 name="XML Federation" href="http://xml.apache.org/"/>
-    <link3 name="xmlgraphics.apache.org" href="http://xmlgraphics.apache.org/"/>
+    <link1 name="The Apache Software Foundation" href="http://www.apache.org/"/>
+    <link2 name="Apache XML Graphics Project" href="http://xmlgraphics.apache.org/"/>
   </trail>
 
   <!-- Configure the TOC, i.e. the Table of Contents.

@@ -21,15 +21,18 @@ package org.apache.fop.afp.svg;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.io.IOException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.afp.AFPGraphics2D;
 import org.apache.fop.afp.AFPPaintingState;
+import org.apache.fop.afp.AFPResourceManager;
 import org.apache.fop.afp.fonts.AFPFont;
 import org.apache.fop.afp.fonts.AFPFontAttributes;
 import org.apache.fop.afp.fonts.AFPPageFonts;
+import org.apache.fop.afp.fonts.CharacterSet;
 import org.apache.fop.afp.modca.GraphicsObject;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
@@ -50,13 +53,18 @@ public class AFPTextHandler extends FOPTextHandlerAdapter {
     /** Font information */
     private final FontInfo fontInfo;
 
+    /** the resource manager */
+    private AFPResourceManager resourceManager;
+
     /**
      * Main constructor.
      *
      * @param fontInfo the AFPGraphics2D instance
+     * @param resourceManager the AFPResourceManager instance
      */
-    public AFPTextHandler(FontInfo fontInfo) {
+    public AFPTextHandler(FontInfo fontInfo, AFPResourceManager resourceManager) {
         this.fontInfo = fontInfo;
+        this.resourceManager = resourceManager;
     }
 
     /**
@@ -83,6 +91,14 @@ public class AFPTextHandler extends FOPTextHandlerAdapter {
                 afpFont,
                 fontSize
         );
+        if (afpFont.isEmbeddable()) {
+            try {
+                final CharacterSet charSet = afpFont.getCharacterSet(fontSize);
+                this.resourceManager.embedFont(afpFont, charSet);
+            } catch (IOException ioe) {
+                throw new RuntimeException("Error while embedding font resources", ioe);
+            }
+        }
         return afpFontAttributes.getFontReference();
     }
 
@@ -92,6 +108,7 @@ public class AFPTextHandler extends FOPTextHandlerAdapter {
      *
      * {@inheritDoc}
      */
+    @Override
     public void drawString(Graphics2D g, String str, float x, float y) {
         if (log.isDebugEnabled()) {
             log.debug("drawString() str=" + str + ", x=" + x + ", y=" + y);
@@ -115,9 +132,15 @@ public class AFPTextHandler extends FOPTextHandlerAdapter {
             if (overrideFont != null) {
                 internalFontName = overrideFont.getFontName();
                 fontSize = overrideFont.getFontSize();
+                if (log.isDebugEnabled()) {
+                    log.debug("  with overriding font: " + internalFontName + ", " + fontSize);
+                }
             } else {
                 java.awt.Font awtFont = g2d.getFont();
                 Font fopFont = fontInfo.getFontInstanceForAWTFont(awtFont);
+                if (log.isDebugEnabled()) {
+                    log.debug("  with font: " + fopFont);
+                }
                 internalFontName = fopFont.getFontName();
                 fontSize = fopFont.getFontSize();
             }

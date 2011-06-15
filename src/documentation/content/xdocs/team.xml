@@ -37,6 +37,8 @@
             is an XP/Agile practitioner with interests in open source content management and electronic
             document generation.  He is a UK expat now residing in Singapore.</li>
         <li id="ad"><link href="mailto:adelmelle@apache.org">Andreas Delmelle</link> (AD)</li>
+        <li id="pjfh"> <a href="mailto:phancock.at.apache.org">Peter Hancock</a>
+          (PH) is a Java developer from England.</li>
         <li id="vh"><link href="mailto:vhennebert@apache.org">Vincent Hennebert</link>
           (VH), a Java developer from France; with an interest in typography, and in using
           Fop as a pdf renderer for book-like documents.</li>
@@ -55,6 +57,10 @@
             from the TeX/LaTeX world. See his <fork href="http://www.leverkruid.eu">home
             page</fork> for some of his private projects.</li>
         <li id="jp"><link href="mailto:pietsch@apache.org">J&#x00F6;rg Pietschmann</link> (JP)</li>
+        <li id="ps"><link href="mailto:tcho@club-internet.fr">Pascal Sancho</link> (PS)
+	        is an XML developper from Aix-en-Provence (France). He works on software solutions for 	 
+	        rendering various kind of documents on various supports, more specifically taking care 	 
+	        of PDF generation with FOP.</li> 	 
       </ul>
     </section>
     <section id="contribute-active">
@@ -101,7 +107,7 @@
         <li id="lf"><link href="mailto:lfurini AT cs.unibo.it">Luca Furini</link> (LF)</li>
         <li id="cg"><link href="mailto:chrisg@apache.org">Christian Geisert</link> (CG)</li>
         <li id="sg"><link href="mailto:stanislav@apache.org">Stanislav Gorkhover</link></li>
-        <li id="ph"><link href="mailto:pherweg@web.de">Peter Herweg</link> (PH)</li>
+        <li id="ph"><link href="mailto:pherweg@web.de">Peter Herweg</link></li>
         <li id="fj"><link href="mailto:fotis@apache.org">Fotis Jannidis</link></li>
         <li id="kl"><link href="mailto:klease@apache.org">Karen Lease</link></li>
         <li id="kll"><link href="mailto:keiron@apache.org">Keiron Liddle</link></li>
@@ -109,7 +115,6 @@
         <li id="gm"><link href="mailto:gmazza@apache.org">Glen Mazza</link></li>
         <li id="wvm"><link href="mailto:vmote@apache.org">Victor Mote</link></li>
         <li id="jn"><link href="mailto:jordan@apache.org">Jordan Naftolin</link></li>
-        <li id="ps"><link href="mailto:tcho@club-internet.fr">Pascal Sancho</link> (PS)</li>
         <li id="as"><link href="mailto:arved@apache.org">Arved Sandstrom</link></li>
         <li id="es"><link href="mailto:eschaeffer@apache.org">Eric Schaeffer</link></li>
         <li id="ot"><link href="mailto:olegt@apache.org">Oleg Tkachenko</link> (OT)</li>
