@@ -219,7 +219,7 @@ public final class UnparsedStructuredField {
     */
    byte[] getExtData() {
        if (this.extData == null) {
-           return null;
+           return new byte[0];
        }
        byte[] rtn = new byte[this.extData.length];
        System.arraycopy(this.extData, 0, rtn, 0, rtn.length);
@@ -232,7 +232,7 @@ public final class UnparsedStructuredField {
     */
    public byte[] getData() {
        if (this.data == null) {
-           return null;
+           return new byte[0];
        }
        byte[] rtn = new byte[this.data.length];
        System.arraycopy(this.data, 0, rtn, 0, rtn.length);

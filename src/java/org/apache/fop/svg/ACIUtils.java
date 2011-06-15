@@ -79,24 +79,19 @@ public final class ACIUtils {
         GVTFont gvtFont = (GVTFont)aci.getAttribute(
                 GVTAttributedCharacterIterator.TextAttribute.GVT_FONT);
         if (gvtFont != null) {
-            try {
-                String gvtFontFamily = gvtFont.getFamilyName(); //Not available in Batik 1.6!
-                if (fontInfo.hasFont(gvtFontFamily, style, weight)) {
-                    FontTriplet triplet = fontInfo.fontLookup(gvtFontFamily, style,
-                                                       weight);
-                    Font f = fontInfo.getFontInstance(triplet, fsize);
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Found a font that matches the GVT font: "
-                                + gvtFontFamily + ", " + weight + ", " + style
-                                + " -> " + f);
-                    }
-                    fonts.add(f);
+            String gvtFontFamily = gvtFont.getFamilyName();
+            if (fontInfo.hasFont(gvtFontFamily, style, weight)) {
+                FontTriplet triplet = fontInfo.fontLookup(gvtFontFamily, style,
+                                                          weight);
+                Font f = fontInfo.getFontInstance(triplet, fsize);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Found a font that matches the GVT font: "
+                              + gvtFontFamily + ", " + weight + ", " + style
+                              + " -> " + f);
                 }
-                firstFontFamily = gvtFontFamily;
-            } catch (Exception e) {
-                //Most likely NoSuchMethodError here when using Batik 1.6
-                //Just skip this section in this case
+                fonts.add(f);
             }
+            firstFontFamily = gvtFontFamily;
         }
 
         if (gvtFonts != null) {

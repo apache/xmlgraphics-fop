@@ -19,6 +19,8 @@
 
 package org.apache.fop.render.afp.extensions;
 
+import java.util.Locale;
+
 /**
  * An enumeration for placement instruction for AFP extensions.
  */
@@ -34,7 +36,7 @@ public enum ExtensionPlacement {
      * @return the XML value
      */
     public String getXMLValue() {
-        String xmlName = name().toLowerCase();
+        String xmlName = name().toLowerCase(Locale.ENGLISH);
         xmlName = xmlName.replace('_', '-');
         return xmlName;
     }
@@ -45,7 +47,7 @@ public enum ExtensionPlacement {
      * @return the enum value
      */
     public static ExtensionPlacement fromXMLValue(String value) {
-        String name = value.toUpperCase();
+        String name = value.toUpperCase(Locale.ENGLISH);
         name = name.replace('-', '_');
         return ExtensionPlacement.valueOf(name);
     }
