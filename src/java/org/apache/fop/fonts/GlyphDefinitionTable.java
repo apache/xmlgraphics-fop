@@ -91,6 +91,22 @@ public class GlyphDefinitionTable extends GlyphTable {
         }
     }
 
+    /**
+     * Reorder combining marks in glyph sequence so that they precede (within the sequence) the base
+     * character to which they are applied. N.B. In the case of LTR segments, marks are not reordered by this,
+     * method since when the segment is reversed by BIDI processing, marks are automatically reordered to precede
+     * their base glyph.
+     * @param gs an input glyph sequence
+     * @param gpa associated glyph position adjustments (also reordered)
+     * @param script a script identifier
+     * @param language a language identifier
+     * @return the reordered (output) glyph sequence
+     */
+    public GlyphSequence reorderCombiningMarks ( GlyphSequence gs, int[][] gpa, String script, String language ) {
+        ScriptProcessor sp = ScriptProcessor.getInstance ( script );
+        return sp.reorderCombiningMarks ( this, gs, gpa, script, language );
+    }
+
     /** {@inheritDoc} */
     protected void addSubtable ( GlyphSubtable subtable ) {
         if ( subtable instanceof GlyphClassSubtable ) {

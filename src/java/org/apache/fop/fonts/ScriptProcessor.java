@@ -24,6 +24,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.fop.util.CharUtilities;
+
 // CSOFF: InnerAssignmentCheck
 // CSOFF: LineLengthCheck
 // CSOFF: ParameterNumberCheck
@@ -57,10 +59,18 @@ public abstract class ScriptProcessor {
     }
 
     /**
-     * Obtain script specific substitution features.
+     * Obtain script specific required substitution features.
      * @return array of suppported substitution features or null
      */
     public abstract String[] getSubstitutionFeatures();
+
+    /**
+     * Obtain script specific optional substitution features.
+     * @return array of suppported substitution features or null
+     */
+    public String[] getOptionalSubstitutionFeatures() {
+        return new String[0];
+    }
 
     /**
      * Obtain script specific substitution context tester.
@@ -90,7 +100,7 @@ public abstract class ScriptProcessor {
      * @param sct a script specific context tester (or null)
      * @return the substituted (output) glyph sequence
      */
-    public final GlyphSequence substitute ( GlyphSequence gs, String script, String language, GlyphTable.UseSpec[] usa, ScriptContextTester sct ) {
+    public GlyphSequence substitute ( GlyphSequence gs, String script, String language, GlyphTable.UseSpec[] usa, ScriptContextTester sct ) {
         assert usa != null;
         for ( int i = 0, n = usa.length; i < n; i++ ) {
             GlyphTable.UseSpec us = usa [ i ];
@@ -100,10 +110,34 @@ public abstract class ScriptProcessor {
     }
 
     /**
-     * Obtain script specific positioning features.
+     * Reorder combining marks in glyph sequence so that they precede (within the sequence) the base
+     * character to which they are applied. N.B. In the case of RTL segments, marks are not reordered by this,
+     * method since when the segment is reversed by BIDI processing, marks are automatically reordered to precede
+     * their base glyph.
+     * @param gdef the glyph definition table that applies
+     * @param gs an input glyph sequence
+     * @param gpa associated glyph position adjustments (also reordered)
+     * @param script a script identifier
+     * @param language a language identifier
+     * @return the reordered (output) glyph sequence
+     */
+    public GlyphSequence reorderCombiningMarks ( GlyphDefinitionTable gdef, GlyphSequence gs, int[][] gpa, String script, String language ) {
+        return gs;
+    }
+
+    /**
+     * Obtain script specific required positioning features.
      * @return array of suppported positioning features or null
      */
     public abstract String[] getPositioningFeatures();
+
+    /**
+     * Obtain script specific optional positioning features.
+     * @return array of suppported positioning features or null
+     */
+    public String[] getOptionalPositioningFeatures() {
+        return new String[0];
+    }
 
     /**
      * Obtain script specific positioning context tester.
@@ -141,7 +175,7 @@ public abstract class ScriptProcessor {
      * @param sct a script specific context tester (or null)
      * @return true if some adjustment is not zero; otherwise, false
      */
-    public final boolean position ( GlyphSequence gs, String script, String language, int fontSize, GlyphTable.UseSpec[] usa, int[] widths, int[][] adjustments, ScriptContextTester sct ) {
+    public boolean position ( GlyphSequence gs, String script, String language, int fontSize, GlyphTable.UseSpec[] usa, int[] widths, int[][] adjustments, ScriptContextTester sct ) {
         assert usa != null;
         boolean adjusted = false;
         for ( int i = 0, n = usa.length; i < n; i++ ) {
@@ -184,6 +218,8 @@ public abstract class ScriptProcessor {
         ScriptProcessor sp = null;
         if ( "arab".equals ( script ) ) {
             sp = new ArabicScriptProcessor ( script );
+        } else if ( CharUtilities.isIndicScript ( script ) ) {
+            sp = IndicScriptProcessor.makeProcessor ( script );
         } else {
             sp = new DefaultScriptProcessor ( script );
         }

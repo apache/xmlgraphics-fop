@@ -1,78 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FindBugsFilter>
-<!-- .working -->
-  <!-- use of null is preferred over zero length array -->
+  <!-- general exclusions -->
   <Match>
-    <Class name="org.apache.fop.area.inline.WordArea"/>
     <Or>
-      <Method name="getBidiLevels"/>
-      <Method name="glyphPositionAdjustmentsAt"/>
+      <!-- permit use of to{Lower,Upper}Case without warning -->
+      <Bug pattern="DM_CONVERT_CASE"/>
+      <!-- permit use of null instead of zero length array without warning -->
+      <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
     </Or>
-    <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
-  </Match>
-  <Match>
-    <Class name="org.apache.fop.fo.FOText"/>
-    <Or>
-      <Method name="getBidiLevels"/>
-      <Method name="getMappingBidiLevels"/>
-    </Or>
-    <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
-  </Match>
-  <Match>
-    <Class name="org.apache.fop.fonts.ArabicScriptProcessor"/>
-    <Method name="position"/>
-    <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
-  </Match>
-  <Match>
-    <Class name="org.apache.fop.fonts.DefaultScriptProcessor"/>
-    <Method name="position"/>
-    <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
-  </Match>
-  <Match>
-    <Class name="org.apache.fop.fonts.GlyphPositioningSubtable"/>
-    <Method name="position"/>
-    <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
-  </Match>
-  <Match>
-    <Class name="org.apache.fop.fonts.GlyphPositioningTable"/>
-    <Method name="position"/>
-    <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
-  </Match>
-  <Match>
-    <Class name="org.apache.fop.fonts.LazyFont"/>
-    <Method name="performPositioning"/>
-    <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
-  </Match>
-  <Match>
-    <Class name="org.apache.fop.fonts.MultiByteFont"/>
-    <Method name="performPositioning"/>
-    <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
-  </Match>
-  <Match>
-    <Class name="org.apache.fop.layoutmgr.BidiUtil$UnicodeBidiAlgorithm"/>
-    <Method name="resolveLevels"/>
-    <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
-  </Match>
-  <!-- string not exposed to end user -->
-  <Match>
-    <Class name="org.apache.fop.fonts.GlyphDefinitionTable"/>
-    <Method name="getLookupTypeFromName"/>
-    <Bug pattern="DM_CONVERT_CASE"/>
-  </Match>
-  <Match>
-    <Class name="org.apache.fop.fonts.GlyphPositioningTable"/>
-    <Method name="getLookupTypeFromName"/>
-    <Bug pattern="DM_CONVERT_CASE"/>
-  </Match>
-  <Match>
-    <Class name="org.apache.fop.fonts.GlyphSubstitutionTable"/>
-    <Method name="getLookupTypeFromName"/>
-    <Bug pattern="DM_CONVERT_CASE"/>
-  </Match>
-  <Match>
-    <Class name="org.apache.fop.fonts.GlyphTable"/>
-    <Method name="getTableTypeFromName"/>
-    <Bug pattern="DM_CONVERT_CASE"/>
   </Match>
   <!-- performance optimizations -->
   <Match>
@@ -95,41 +30,6 @@
     <Class name="org.apache.fop.fonts.GlyphPositioningState"/>
     <Method name="&lt;init&gt;"/>
     <Bug pattern="EI_EXPOSE_REP2"/>
-  </Match>
-  <Match>
-    <Class name="org.apache.fop.fonts.GlyphPositioningTable$ChainedContextualSubtableFormat1"/>
-    <Method name="getLookups"/>
-    <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
-  </Match>
-  <Match>
-    <Class name="org.apache.fop.fonts.GlyphPositioningTable$ChainedContextualSubtableFormat2"/>
-    <Method name="getLookups"/>
-    <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
-  </Match>
-  <Match>
-    <Class name="org.apache.fop.fonts.GlyphPositioningTable$ChainedContextualSubtableFormat3"/>
-    <Method name="getLookups"/>
-    <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
-  </Match>
-  <Match>
-    <Class name="org.apache.fop.fonts.GlyphPositioningTable$ContextualSubtableFormat1"/>
-    <Method name="getLookups"/>
-    <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
-  </Match>
-  <Match>
-    <Class name="org.apache.fop.fonts.GlyphPositioningTable$ContextualSubtableFormat2"/>
-    <Method name="getLookups"/>
-    <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
-  </Match>
-  <Match>
-    <Class name="org.apache.fop.fonts.GlyphPositioningTable$ContextualSubtableFormat3"/>
-    <Method name="getLookups"/>
-    <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
-  </Match>
-  <Match>
-    <Class name="org.apache.fop.fonts.GlyphPositioningTable$CursiveSubtableFormat1"/>
-    <Method name="getExitEntryAnchors"/>
-    <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
   </Match>
   <Match>
     <Class name="org.apache.fop.fonts.GlyphPositioningTable$DeviceTable"/>
@@ -155,46 +55,6 @@
     <Class name="org.apache.fop.fonts.GlyphSubstitutionState"/>
     <Method name="setAlternates"/>
     <Bug pattern="EI_EXPOSE_REP2"/>
-  </Match>
-  <Match>
-    <Class name="org.apache.fop.fonts.GlyphSubstitutionTable$AlternateSubtableFormat1"/>
-    <Method name="getAlternatesForCoverageIndex"/>
-    <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
-  </Match>
-  <Match>
-    <Class name="org.apache.fop.fonts.GlyphSubstitutionTable$ChainedContextualSubtableFormat1"/>
-    <Method name="getLookups"/>
-    <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
-  </Match>
-  <Match>
-    <Class name="org.apache.fop.fonts.GlyphSubstitutionTable$ChainedContextualSubtableFormat2"/>
-    <Method name="getLookups"/>
-    <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
-  </Match>
-  <Match>
-    <Class name="org.apache.fop.fonts.GlyphSubstitutionTable$ChainedContextualSubtableFormat3"/>
-    <Method name="getLookups"/>
-    <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
-  </Match>
-  <Match>
-    <Class name="org.apache.fop.fonts.GlyphSubstitutionTable$ContextualSubtableFormat1"/>
-    <Method name="getLookups"/>
-    <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
-  </Match>
-  <Match>
-    <Class name="org.apache.fop.fonts.GlyphSubstitutionTable$ContextualSubtableFormat2"/>
-    <Method name="getLookups"/>
-    <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
-  </Match>
-  <Match>
-    <Class name="org.apache.fop.fonts.GlyphSubstitutionTable$ContextualSubtableFormat3"/>
-    <Method name="getLookups"/>
-    <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
-  </Match>
-  <Match>
-    <Class name="org.apache.fop.fonts.GlyphSubstitutionTable$MultipleSubtableFormat1"/>
-    <Method name="getGlyphsForCoverageIndex"/>
-    <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
   </Match>
   <Match>
     <Class name="org.apache.fop.fonts.GlyphSubstitutionTable$Ligature"/>
@@ -289,11 +149,6 @@
     <Bug pattern="EI_EXPOSE_REP"/>
   </Match>
   <Match>
-    <Class name="org.apache.fop.fonts.GlyphTable$LookupTable"/>
-    <Method name="getSubtables"/>
-    <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
-  </Match>
-  <Match>
     <Class name="org.apache.fop.fonts.GlyphTable$Rule"/>
     <Method name="getLookups"/>
     <Bug pattern="EI_EXPOSE_REP"/>
@@ -306,6 +161,15 @@
   <Match>
     <Class name="org.apache.fop.fonts.GlyphTable$RuleSet"/>
     <Method name="getRules"/>
+    <Bug pattern="EI_EXPOSE_REP"/>
+  </Match>
+  <Match>
+    <Class name="org.apache.fop.fonts.IndicScriptProcessor"/>
+    <Or>
+      <Method name="getPositioningFeatures"/>
+      <Method name="getSubstitutionFeatures"/>
+      <Method name="getOptionalSubstitutionFeatures"/>
+    </Or>
     <Bug pattern="EI_EXPOSE_REP"/>
   </Match>
   <Match>
@@ -1332,126 +1196,6 @@
       <Class name="org.apache.fop.layoutmgr.list.ListItemContentLayoutManager"/>
       <Field name="itemIPD"/>
       <Bug pattern="UWF_UNWRITTEN_FIELD"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.afp.AFPResourceLevel"/>
-      <Method name="valueOf"/>
-      <Bug pattern="DM_CONVERT_CASE"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.afp.AFPResourceLevelDefaults"/>
-      <Method name="getResourceType"/>
-      <Bug pattern="DM_CONVERT_CASE"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.afp.AFPResourceLevelDefaults"/>
-      <Method name="registerResourceTypeName"/>
-      <Bug pattern="DM_CONVERT_CASE"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.afp.apps.FontPatternExtractor"/>
-      <Method name="extract"/>
-      <Bug pattern="DM_CONVERT_CASE"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.afp.parser.UnparsedStructuredField"/>
-      <Method name="getCategoryCodeAsString"/>
-      <Bug pattern="DM_CONVERT_CASE"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.afp.parser.UnparsedStructuredField"/>
-      <Method name="getTypeCodeAsString"/>
-      <Bug pattern="DM_CONVERT_CASE"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.afp.parser.UnparsedStructuredField"/>
-      <Method name="toString"/>
-      <Bug pattern="DM_CONVERT_CASE"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.apps.FopFactoryConfigurator"/>
-      <Method name="configure"/>
-      <Bug pattern="DM_CONVERT_CASE"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.apps.FopFactoryConfigurator"/>
-      <Method name="configureImageLoading"/>
-      <Bug pattern="DM_CONVERT_CASE"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.fo.pagination.PageNumberGenerator"/>
-      <Method name="makeFormattedPageNumber"/>
-      <Bug pattern="DM_CONVERT_CASE"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.fo.properties.CondLengthProperty"/>
-      <Method name="toString"/>
-      <Bug pattern="DM_CONVERT_CASE"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.fonts.FontInfo"/>
-      <Method name="getTripletsForName"/>
-      <Bug pattern="DM_CONVERT_CASE"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.fonts.FontLoader"/>
-      <Method name="isType1"/>
-      <Bug pattern="DM_CONVERT_CASE"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.fonts.autodetect.FontInfoFinder"/>
-      <Method name="generateTripletsFromFont"/>
-      <Bug pattern="DM_CONVERT_CASE"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.fonts.substitute.FontQualifier"/>
-      <Method name="match"/>
-      <Bug pattern="DM_CONVERT_CASE"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.pdf.PDFFactory"/>
-      <Method name="getExternalAction"/>
-      <Bug pattern="DM_CONVERT_CASE"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.render.bitmap.MultiFileRenderingUtil"/>
-      <Method name="&lt;init&gt;"/>
-      <Bug pattern="DM_CONVERT_CASE"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.render.java2d.InstalledFontCollection"/>
-      <Method name="setup"/>
-      <Bug pattern="DM_CONVERT_CASE"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.render.rtf.FoUnitsConverter"/>
-      <Method name="numberToTwips"/>
-      <Bug pattern="DM_CONVERT_CASE"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfColorTable"/>
-      <Method name="addNamedColor"/>
-      <Bug pattern="DM_CONVERT_CASE"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfColorTable"/>
-      <Method name="getColorNumber"/>
-      <Bug pattern="DM_CONVERT_CASE"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfFontManager"/>
-      <Method name="getFontKey"/>
-      <Bug pattern="DM_CONVERT_CASE"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.tools.anttasks.FOPTaskStarter"/>
-      <Method name="replaceExtension"/>
-      <Bug pattern="DM_CONVERT_CASE"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.util.ColorUtil"/>
-      <Method name="parseColorString"/>
-      <Bug pattern="DM_CONVERT_CASE"/>
    </Match>
    <Match>
       <Class name="org.apache.fop.afp.AFPDataObjectInfo"/>
@@ -4639,71 +4383,6 @@
       <Bug pattern="NS_DANGEROUS_NON_SHORT_CIRCUIT"/>
    </Match>
    <Match>
-      <Class name="org.apache.fop.afp.util.AFPResourceUtil"/>
-      <Method name="getNext"/>
-      <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.fo.FOText"/>
-      <Method name="getCharArray"/>
-      <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.fonts.FontCache"/>
-      <Method name="getFontInfos"/>
-      <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.fonts.MultiByteFont"/>
-      <Method name="getCharsUsed"/>
-      <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.fonts.autodetect.FontInfoFinder"/>
-      <Method name="find"/>
-      <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.layoutmgr.table.TableRowIterator"/>
-      <Method name="getNextRowGroup"/>
-      <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.pdf.PDFPattern"/>
-      <Method name="toPDF"/>
-      <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.render.intermediate.AffineTransformArrayParser"/>
-      <Method name="getAffineTransforms"/>
-      <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.svg.AbstractFOPTextPainter"/>
-      <Method name="getSelected"/>
-      <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.svg.NativeTextPainter"/>
-      <Method name="findFonts"/>
-      <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.util.ConversionUtils"/>
-      <Method name="toDoubleArray"/>
-      <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.util.ConversionUtils"/>
-      <Method name="toIntArray"/>
-      <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.util.XMLUtil"/>
-      <Method name="getAttributeAsIntArray"/>
-      <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
-   </Match>
-   <Match>
       <Class name="org.apache.fop.afp.modca.MapCodedFont"/>
       <Method name="addFont"/>
       <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"/>
@@ -5394,11 +5073,6 @@
 	 <Class name="org.apache.fop.util.ColorWithFallback"/>
 	 <!-- Listing the method 'equals' does not work -->
 	 <Bug pattern="EQ_DOESNT_OVERRIDE_EQUALS"/>
-   </Match>
-   <Match>
-	 <Class name="org.apache.fop.util.ColorWithFallback"/>
-	 <Method name="getAlternativeColors"/>
-	 <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
    </Match>
    <Match>
 	 <Class name="org.apache.fop.fo.expr.NamedColorFunction"/>

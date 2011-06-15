@@ -19,21 +19,19 @@
 <testcase>
   <info>
     <p>
-      This test checks relative margin on region (region-body).
+      This test checks relative margin on regions when writing mode is right to left,
+      with reference orientation 90.
     </p>
   </info>
-  <variables>
-    <img>../../resources/images/bgimg300dpi.jpg</img>
-  </variables>
   <fo>
     <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
       <fo:layout-master-set>
-        <fo:simple-page-master master-name="normal" page-width="3in" page-height="5in" margin="5%" reference-orientation="90" writing-mode="rl">
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="3in" margin="5%" reference-orientation="90" writing-mode="rl">
           <fo:region-body margin-top="10%" margin-bottom="5%" margin-left="10%" margin-right="5%" background-color="yellow" />
           <fo:region-before extent="10%" background-color="blue" precedence="true" />
           <fo:region-after extent="5%" background-color="green" precedence="true" />
-          <fo:region-start extent="5%" background-color="red" />
-          <fo:region-end extent="10%" background-color="orange" />
+          <fo:region-start extent="10%" background-color="red" />
+          <fo:region-end extent="5%" background-color="orange" />
         </fo:simple-page-master>
       </fo:layout-master-set>
       <fo:page-sequence master-reference="normal" white-space-collapse="true">
@@ -60,9 +58,9 @@
         <fo:flow flow-name="xsl-region-body">
           <fo:block>
             Demonstrates relative 5% margin on the page master, 10% margin on regions before
-            and end and 5% margin on regions start and after. Corresponding margins are set
-            on the region body. The page size is 5in x 3in with the page reference rotated by 
-            90 degrees and a rl writing-mode.
+            and start and 5% margin on regions end and after. Corresponding margins are set
+            on the region body. The page size is 5in x 3in with the page reference rotated
+            by 90 degrees and a rl writing-mode.
           </fo:block>
         </fo:flow>
       </fo:page-sequence>
@@ -71,43 +69,43 @@
   <checks>
     <!-- region before -->
     <eval expected="color=#0000ff" xpath="//page/regionViewport[1]/@background"/>
-    <eval expected="324000" xpath="//page/regionViewport[1]/@ipd"/>
-    <eval expected="21600" xpath="//page/regionViewport[1]/@bpd"/>
-    <eval expected="10800 18000 21600 324000" xpath="//page/regionViewport[1]/@rect"/>
-    <eval expected="324000" xpath="//page/regionViewport[1]/regionBefore/@ipd"/>
-    <eval expected="21600" xpath="//page/regionViewport[1]/regionBefore/@bpd"/>
-    <eval expected="[0.0 1.0 1.0 0.0 10800.0 18000.0]" xpath="//page/regionViewport[1]/regionBefore/@ctm"/>
+    <eval expected="194400" xpath="//page/regionViewport[1]/@ipd"/>
+    <eval expected="36000" xpath="//page/regionViewport[1]/@bpd"/>
+    <eval expected="18000 10800 36000 194400" xpath="//page/regionViewport[1]/@rect"/>
+    <eval expected="194400" xpath="//page/regionViewport[1]/regionBefore/@ipd"/>
+    <eval expected="36000" xpath="//page/regionViewport[1]/regionBefore/@bpd"/>
+    <eval expected="[0.0 -1.0 1.0 0.0 18000.0 205200.0]" xpath="//page/regionViewport[1]/regionBefore/@ctm"/>
     <!-- region start -->
     <eval expected="color=#ff0000" xpath="//page/regionViewport[2]/@background"/>
-    <eval expected="18000" xpath="//page/regionViewport[2]/@ipd"/>
-    <eval expected="162000" xpath="//page/regionViewport[2]/@bpd"/>
-    <eval expected="32400 18000 162000 18000" xpath="//page/regionViewport[2]/@rect"/>
-    <eval expected="18000" xpath="//page/regionViewport[2]/regionStart/@ipd"/>
-    <eval expected="162000" xpath="//page/regionViewport[2]/regionStart/@bpd"/>
-    <eval expected="[0.0 1.0 1.0 0.0 32400.0 18000.0]" xpath="//page/regionViewport[2]/regionStart/@ctm"/>
+    <eval expected="21600" xpath="//page/regionViewport[2]/@ipd"/>
+    <eval expected="270000" xpath="//page/regionViewport[2]/@bpd"/>
+    <eval expected="54000 10800 270000 21600" xpath="//page/regionViewport[2]/@rect"/>
+    <eval expected="21600" xpath="//page/regionViewport[2]/regionStart/@ipd"/>
+    <eval expected="270000" xpath="//page/regionViewport[2]/regionStart/@bpd"/>
+    <eval expected="[0.0 -1.0 1.0 0.0 54000.0 32400.0]" xpath="//page/regionViewport[2]/regionStart/@ctm"/>
     <!-- region end -->
     <eval expected="color=#ffa500" xpath="//page/regionViewport[3]/@background"/>
-    <eval expected="36000" xpath="//page/regionViewport[3]/@ipd"/>
-    <eval expected="162000" xpath="//page/regionViewport[3]/@bpd"/>
-    <eval expected="32400 306000 162000 36000" xpath="//page/regionViewport[3]/@rect"/>
-    <eval expected="36000" xpath="//page/regionViewport[3]/regionEnd/@ipd"/>
-    <eval expected="162000" xpath="//page/regionViewport[3]/regionEnd/@bpd"/>
-    <eval expected="[0.0 1.0 1.0 0.0 32400.0 306000.0]" xpath="//page/regionViewport[3]/regionEnd/@ctm"/>
+    <eval expected="10800" xpath="//page/regionViewport[3]/@ipd"/>
+    <eval expected="270000" xpath="//page/regionViewport[3]/@bpd"/>
+    <eval expected="54000 194400 270000 10800" xpath="//page/regionViewport[3]/@rect"/>
+    <eval expected="10800" xpath="//page/regionViewport[3]/regionEnd/@ipd"/>
+    <eval expected="270000" xpath="//page/regionViewport[3]/regionEnd/@bpd"/>
+    <eval expected="[0.0 -1.0 1.0 0.0 54000.0 205200.0]" xpath="//page/regionViewport[3]/regionEnd/@ctm"/>
     <!-- region after -->
     <eval expected="color=#008000" xpath="//page/regionViewport[4]/@background"/>
-    <eval expected="324000" xpath="//page/regionViewport[4]/@ipd"/>
-    <eval expected="10800" xpath="//page/regionViewport[4]/@bpd"/>
-    <eval expected="194400 18000 10800 324000" xpath="//page/regionViewport[4]/@rect"/>
-    <eval expected="324000" xpath="//page/regionViewport[4]/regionAfter/@ipd"/>
-    <eval expected="10800" xpath="//page/regionViewport[4]/regionAfter/@bpd"/>
-    <eval expected="[0.0 1.0 1.0 0.0 194400.0 18000.0]" xpath="//page/regionViewport[4]/regionAfter/@ctm"/>
+    <eval expected="194400" xpath="//page/regionViewport[4]/@ipd"/>
+    <eval expected="18000" xpath="//page/regionViewport[4]/@bpd"/>
+    <eval expected="324000 10800 18000 194400" xpath="//page/regionViewport[4]/@rect"/>
+    <eval expected="194400" xpath="//page/regionViewport[4]/regionAfter/@ipd"/>
+    <eval expected="18000" xpath="//page/regionViewport[4]/regionAfter/@bpd"/>
+    <eval expected="[0.0 -1.0 1.0 0.0 324000.0 205200.0]" xpath="//page/regionViewport[4]/regionAfter/@ctm"/>
     <!-- region body -->
     <eval expected="color=#ffff00" xpath="//page/regionViewport[5]/@background"/>
-    <eval expected="270000" xpath="//page/regionViewport[5]/@ipd"/>
-    <eval expected="162000" xpath="//page/regionViewport[5]/@bpd"/>
-    <eval expected="32400 36000 162000 270000" xpath="//page/regionViewport[5]/@rect"/>
-    <eval expected="270000" xpath="//page/regionViewport[5]/regionBody/@ipd"/>
-    <eval expected="162000" xpath="//page/regionViewport[5]/regionBody/@bpd"/>
-    <eval expected="[0.0 1.0 1.0 0.0 32400.0 36000.0]" xpath="//page/regionViewport[5]/regionBody/@ctm"/>
+    <eval expected="162000" xpath="//page/regionViewport[5]/@ipd"/>
+    <eval expected="270000" xpath="//page/regionViewport[5]/@bpd"/>
+    <eval expected="54000 32400 270000 162000" xpath="//page/regionViewport[5]/@rect"/>
+    <eval expected="162000" xpath="//page/regionViewport[5]/regionBody/@ipd"/>
+    <eval expected="270000" xpath="//page/regionViewport[5]/regionBody/@bpd"/>
+    <eval expected="[0.0 -1.0 1.0 0.0 54000.0 194400.0]" xpath="//page/regionViewport[5]/regionBody/@ctm"/>
   </checks>
 </testcase>

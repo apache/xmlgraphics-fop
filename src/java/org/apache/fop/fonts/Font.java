@@ -370,6 +370,16 @@ public class Font implements Substitutable, Positionable {
     }
 
     /** {@inheritDoc} */
+    public CharSequence reorderCombiningMarks ( CharSequence cs, int[][] gpa, String script, String language ) {
+        if ( metric instanceof Substitutable ) {
+            Substitutable s = (Substitutable) metric;
+            return s.reorderCombiningMarks ( cs, gpa, script, language );
+        } else {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    /** {@inheritDoc} */
     public boolean performsPositioning() {
         if ( metric instanceof Positionable ) {
             Positionable p = (Positionable) metric;

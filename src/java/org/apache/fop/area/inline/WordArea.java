@@ -62,17 +62,34 @@ public class WordArea extends InlineArea {
      * @param levels array of per-character (glyph) bidirectional levels,
      * in case word area is heterogenously leveled
      * @param gposAdjustments array of general position adjustments or null if none apply
+     * @param reversed true if word is known to be reversed at construction time
      */
     public WordArea
         ( int blockProgressionOffset, int level, String word, int[] letterAdjust, int[] levels,
-          int[][] gposAdjustments ) {
+          int[][] gposAdjustments, boolean reversed ) {
         super ( blockProgressionOffset, level );
         int length = ( word != null ) ? word.length() : 0;
         this.word = word;
         this.letterAdjust = maybeAdjustLength ( letterAdjust, length );
         this.levels = maybePopulateLevels ( levels, level, length );
         this.gposAdjustments = maybeAdjustLength ( gposAdjustments, length );
-        this.reversed = false;
+        this.reversed = reversed;
+    }
+
+    /**
+     * Create a word area
+     * @param blockProgressionOffset the offset for this area
+     * @param level the bidirectional embedding level (or -1 if not defined) for word as a group
+     * @param word the word string
+     * @param letterAdjust the letter adjust array (may be null)
+     * @param levels array of per-character (glyph) bidirectional levels,
+     * in case word area is heterogenously leveled
+     * @param gposAdjustments array of general position adjustments or null if none apply
+     */
+    public WordArea
+        ( int blockProgressionOffset, int level, String word, int[] letterAdjust, int[] levels,
+          int[][] gposAdjustments ) {
+        this ( blockProgressionOffset, level, word, letterAdjust, levels, gposAdjustments, false );
     }
 
     /** @return Returns the word. */

@@ -190,7 +190,7 @@ public class FontInfoFinder {
 
         // try to determine triplet information from font file
         CustomFont customFont = null;
-        if (fontURL.toExternalForm().endsWith(".ttc")) {
+        if (fontURL.toExternalForm().toLowerCase().endsWith(".ttc")) {
             // Get a list of the TTC Font names
             List<String> ttcNames = null;
             String fontFileURL = fontURL.toExternalForm().trim();

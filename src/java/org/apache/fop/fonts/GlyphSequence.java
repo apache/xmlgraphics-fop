@@ -22,12 +22,15 @@ package org.apache.fop.fonts;
 import java.nio.IntBuffer;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.fop.util.CharUtilities;
 
 // CSOFF: InnerAssignmentCheck
 // CSOFF: LineLengthCheck
+// CSOFF: WhitespaceAfterCheck
 // CSOFF: NoWhitespaceAfterCheck
 
 /**
@@ -49,6 +52,8 @@ public class GlyphSequence implements Cloneable {
     private IntBuffer glyphs;
     /** association list */
     private List associations;
+    /** predications flag */
+    private boolean predications;
 
     /**
      * Instantiate a glyph sequence, reusing (i.e., not copying) the referenced
@@ -59,8 +64,9 @@ public class GlyphSequence implements Cloneable {
      * @param characters a (possibly null) buffer of associated (originating) characters
      * @param glyphs a (possibly null) buffer of glyphs
      * @param associations a (possibly null) array of glyph to character associations
+     * @param predications true if predications are enabled
      */
-    public GlyphSequence ( IntBuffer characters, IntBuffer glyphs, List associations ) {
+    public GlyphSequence ( IntBuffer characters, IntBuffer glyphs, List associations, boolean predications ) {
         if ( characters == null ) {
             characters = IntBuffer.allocate ( DEFAULT_CHARS_CAPACITY );
         }
@@ -73,6 +79,21 @@ public class GlyphSequence implements Cloneable {
         this.characters = characters;
         this.glyphs = glyphs;
         this.associations = associations;
+        this.predications = predications;
+    }
+
+    /**
+     * Instantiate a glyph sequence, reusing (i.e., not copying) the referenced
+     * character and glyph buffers and associations. If characters is null, then
+     * an empty character buffer is created. If glyphs is null, then a glyph buffer
+     * is created whose capacity is that of the character buffer. If associations is
+     * null, then identity associations are created.
+     * @param characters a (possibly null) buffer of associated (originating) characters
+     * @param glyphs a (possibly null) buffer of glyphs
+     * @param associations a (possibly null) array of glyph to character associations
+     */
+    public GlyphSequence ( IntBuffer characters, IntBuffer glyphs, List associations ) {
+        this ( characters, glyphs, associations, false );
     }
 
     /**
@@ -82,7 +103,7 @@ public class GlyphSequence implements Cloneable {
      * @param gs an existing glyph sequence
      */
     public GlyphSequence ( GlyphSequence gs ) {
-        this ( gs.characters.duplicate(), copyBuffer ( gs.glyphs ), copyAssociations ( gs.associations ) );
+        this ( gs.characters.duplicate(), copyBuffer ( gs.glyphs ), copyAssociations ( gs.associations ), gs.predications );
     }
 
     /**
@@ -100,7 +121,7 @@ public class GlyphSequence implements Cloneable {
      * @param lal lookahead association list
      */
     public GlyphSequence ( GlyphSequence gs, int[] bga, int[] iga, int[] lga, CharAssociation[] bal, CharAssociation[] ial, CharAssociation[] lal ) {
-        this ( gs.characters.duplicate(), concatGlyphs ( bga, iga, lga ), concatAssociations ( bal, ial, lal ) );
+        this ( gs.characters.duplicate(), concatGlyphs ( bga, iga, lga ), concatAssociations ( bal, ial, lal ), gs.predications );
     }
 
     /**
@@ -272,6 +293,52 @@ public class GlyphSequence implements Cloneable {
     }
 
     /**
+     * Enable or disable predications.
+     * @param enable true if predications are to be enabled; otherwise false to disable
+     */
+    public void setPredications ( boolean enable ) {
+        this.predications = enable;
+    }
+
+    /**
+     * Obtain predications state.
+     * @return true if predications are enabled
+     */
+    public boolean getPredications() {
+        return this.predications;
+    }
+
+    /**
+     * Set predication <KEY,VALUE> at glyph sequence OFFSET.
+     * @param offset offset (index) into glyph sequence
+     * @param key predication key
+     * @param value predication value
+     */
+    public void setPredication ( int offset, String key, Object value ) {
+        if ( predications ) {
+            CharAssociation[] aa = getAssociations ( offset, 1 );
+            CharAssociation   ca = aa[0];
+            ca.setPredication ( key, value );
+        }
+    }
+
+    /**
+     * Get predication KEY at glyph sequence OFFSET.
+     * @param offset offset (index) into glyph sequence
+     * @param key predication key
+     * @return predication KEY at OFFSET or null if none exists
+     */
+    public Object getPredication ( int offset, String key ) {
+        if ( predications ) {
+            CharAssociation[] aa = getAssociations ( offset, 1 );
+            CharAssociation   ca = aa[0];
+            return ca.getPredication ( key );
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Compare glyphs.
      * @param gb buffer containing glyph indices with which this glyph sequence's glyphs are to be compared
      * @return zero if glyphs are the same, otherwise returns 1 or -1 according to whether this glyph sequence's
@@ -419,6 +486,96 @@ public class GlyphSequence implements Cloneable {
         }
     }
 
+    /**
+     * Join (concatenate) glyph sequences.
+     * @param gs original glyph sequence from which to reuse character array reference
+     * @param sa array of glyph sequences, whose glyph arrays and association lists are to be concatenated
+     * @return new glyph sequence referring to character array of GS and concatenated glyphs and associations of SA
+     */
+    public static GlyphSequence join ( GlyphSequence gs, GlyphSequence[] sa ) {
+        assert sa != null;
+        int tg = 0;
+        int ta = 0;
+        for ( int i = 0, n = sa.length; i < n; i++ ) {
+            GlyphSequence s = sa [ i ];
+            IntBuffer ga = s.getGlyphs();
+            assert ga != null;
+            int ng = ga.limit();
+            List al = s.getAssociations();
+            assert al != null;
+            int na = al.size();
+            assert na == ng;
+            tg += ng;
+            ta += na;
+        }
+        IntBuffer uga = IntBuffer.allocate ( tg );
+        ArrayList ual = new ArrayList ( ta );
+        for ( int i = 0, n = sa.length; i < n; i++ ) {
+            GlyphSequence s = sa [ i ];
+            uga.put ( s.getGlyphs() );
+            ual.addAll ( s.getAssociations() );
+        }
+        return new GlyphSequence ( gs.getCharacters(), uga, ual, gs.getPredications() );
+    }
+
+    /**
+     * Reorder sequence such that [SOURCE,SOURCE+COUNT) is moved just prior to TARGET.
+     * @param gs input sequence
+     * @param source index of sub-sequence to reorder
+     * @param count length of sub-sequence to reorder
+     * @param target index to which source sub-sequence is to be moved
+     * @return reordered sequence (or original if no reordering performed)
+     */
+    public static GlyphSequence reorder ( GlyphSequence gs, int source, int count, int target ) {
+        if ( source != target ) {
+            int   ng  = gs.getGlyphCount();
+            int[] ga  = gs.getGlyphArray ( false );
+            int[] nga = new int [ ng ];
+            GlyphSequence.CharAssociation[] aa  = gs.getAssociations ( 0, ng );
+            GlyphSequence.CharAssociation[] naa = new GlyphSequence.CharAssociation [ ng ];
+            if ( source < target ) {
+                int t = 0;
+                for ( int s = 0, e = source; s < e; s++, t++ ) {
+                    nga[t] = ga[s];
+                    naa[t] = aa[s];
+                }
+                for ( int s = source + count, e = target; s < e; s++, t++ ) {
+                    nga[t] = ga[s];
+                    naa[t] = aa[s];
+                }
+                for ( int s = source, e = source + count; s < e; s++, t++ ) {
+                    nga[t] = ga[s];
+                    naa[t] = aa[s];
+                }
+                for ( int s = target, e = ng; s < e; s++, t++ ) {
+                    nga[t] = ga[s];
+                    naa[t] = aa[s];
+                }
+            } else {
+                int t = 0;
+                for ( int s = 0, e = target; s < e; s++, t++ ) {
+                    nga[t] = ga[s];
+                    naa[t] = aa[s];
+                }
+                for ( int s = source, e = source + count; s < e; s++, t++ ) {
+                    nga[t] = ga[s];
+                    naa[t] = aa[s];
+                }
+                for ( int s = target, e = source; s < e; s++, t++ ) {
+                    nga[t] = ga[s];
+                    naa[t] = aa[s];
+                }
+                for ( int s = source + count, e = ng; s < e; s++, t++ ) {
+                    nga[t] = ga[s];
+                    naa[t] = aa[s];
+                }
+            }
+            return new GlyphSequence ( gs, null, nga, null, null, naa, null );
+        } else {
+            return gs;
+        }
+    }
+
     private static int[] toArray ( IntBuffer ib ) {
         if ( ib != null ) {
             int n = ib.limit();
@@ -462,22 +619,40 @@ public class GlyphSequence implements Cloneable {
     }
 
     /**
-     * A structure class encapsulating an interval of character codes (in a CharSequence)
-     * expressed as an offset and count (of code elements in a CharSequence, i.e., number of
-     * UTF-16 code elements. N.B. count does not necessarily designate the number of Unicode
-     * scalar values expressed by the CharSequence; in particular, it does not do so if there
-     * is one or more UTF-16 surrogate pairs present in the CharSequence.)
+     * A structure class encapsulating an interval of characters
+     * expressed as an offset and count of Unicode scalar values (in
+     * an IntBuffer). A <code>CharAssociation</code> is used to
+     * maintain a backpointer from a glyph to one or more character
+     * intervals from which the glyph was derived.
+     *
+     * Each glyph in a glyph sequence is associated with a single
+     * <code>CharAssociation</code> instance.
+     *
+     * A <code>CharAssociation</code> instance is additionally (and
+     * optionally) used to record predication information about the
+     * glyph, such as whether the glyph was produced by the
+     * application of a specific substitution table or whether its
+     * position was adjusted by a specific poisitioning table.
      */
     public static class CharAssociation implements Cloneable {
 
+        // instance state
         private final int offset;
         private final int count;
         private final int[] subIntervals;
+        private Map<String,Object> predications;
+
+        // class state
+        private static volatile Map<String,PredicationMerger> predicationMergers;
+
+        interface PredicationMerger {
+            Object merge ( String key, Object v1, Object v2 );
+        }
 
         /**
          * Instantiate a character association.
-         * @param offset into array of UTF-16 code elements (in associated CharSequence)
-         * @param count of UTF-16 character code elements (in associated CharSequence)
+         * @param offset into array of Unicode scalar values (in associated IntBuffer)
+         * @param count of Unicode scalar values (in associated IntBuffer)
          * @param subIntervals if disjoint, then array of sub-intervals, otherwise null; even
          * members of array are sub-interval starts, and odd members are sub-interval
          * ends (exclusive)
@@ -542,11 +717,145 @@ public class GlyphSequence implements Cloneable {
             return ( subIntervals != null ) ? ( subIntervals.length / 2 ) : 0;
         }
 
+        /**
+         * @param offset of interval in sequence
+         * @param count length of interval
+         * @return true if this association is contained within [offset,offset+count)
+         */
+        public boolean contained ( int offset, int count ) {
+            int s = offset;
+            int e = offset + count;
+            if ( ! isDisjoint() ) {
+                int s0 = getStart();
+                int e0 = getEnd();
+                return ( s0 >= s ) && ( e0 <= e );
+            } else {
+                int ns = getSubIntervalCount();
+                for ( int i = 0; i < ns; i++ ) {
+                    int s0 = subIntervals [ 2 * i + 0 ];
+                    int e0 = subIntervals [ 2 * i + 1 ];
+                    if ( ( s0 >= s ) && ( e0 <= e ) ) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
+
+        /**
+         * Set predication <KEY,VALUE>.
+         * @param key predication key
+         * @param value predication value
+         */
+        public void setPredication ( String key, Object value ) {
+            if ( predications == null ) {
+                predications = new HashMap<String,Object>();
+            }
+            if ( predications != null ) {
+                predications.put ( key, value );
+            }
+        }
+
+        /**
+         * Get predication KEY.
+         * @param key predication key
+         * @return predication KEY at OFFSET or null if none exists
+         */
+        public Object getPredication ( String key ) {
+            if ( predications != null ) {
+                return predications.get ( key );
+            } else {
+                return null;
+            }
+        }
+
+        /**
+         * Merge predication <KEY,VALUE>.
+         * @param key predication key
+         * @param value predication value
+         */
+        public void mergePredication ( String key, Object value ) {
+            if ( predications == null ) {
+                predications = new HashMap<String,Object>();
+            }
+            if ( predications != null ) {
+                if ( predications.containsKey ( key ) ) {
+                    Object v1 = predications.get ( key );
+                    Object v2 = value;
+                    predications.put ( key, mergePredicationValues ( key, v1, v2 ) );
+                } else {
+                    predications.put ( key, value );
+                }
+            }
+        }
+
+        /**
+         * Merge predication values V1 and V2 on KEY. Uses registered <code>PredicationMerger</code>
+         * if one exists, otherwise uses V2 if non-null, otherwise uses V1.
+         * @param key predication key
+         * @param v1 first (original) predication value
+         * @param v2 second (to be merged) predication value
+         * @return merged value
+         */
+        public static Object mergePredicationValues ( String key, Object v1, Object v2 ) {
+            PredicationMerger pm = getPredicationMerger ( key );
+            if ( pm != null ) {
+                return pm.merge ( key, v1, v2 );
+            } else if ( v2 != null ) {
+                return v2;
+            } else {
+                return v1;
+            }
+        }
+
+        /**
+         * Merge predications from another CA.
+         * @param ca from which to merge
+         */
+        public void mergePredications ( CharAssociation ca ) {
+            if ( ca.predications != null ) {
+                for ( Map.Entry<String,Object> e : ca.predications.entrySet() ) {
+                    mergePredication ( e.getKey(), e.getValue() );
+                }
+            }
+        }
+
         /** {@inheritDoc} */
         public Object clone() {
             try {
-                return super.clone();
+                CharAssociation ca = (CharAssociation) super.clone();
+                if ( predications != null ) {
+                    ca.predications = new HashMap<String,Object> ( predications );
+                }
+                return ca;
             } catch ( CloneNotSupportedException e ) {
+                return null;
+            }
+        }
+
+        /**
+         * Register predication merger PM for KEY.
+         * @param key for predication merger
+         * @param pm predication merger
+         */
+        public static void setPredicationMerger ( String key, PredicationMerger pm ) {
+            if ( predicationMergers == null ) {
+                predicationMergers = new HashMap<String,PredicationMerger>();
+            }
+            if ( predicationMergers != null ) {
+                predicationMergers.put ( key, pm );
+            }            
+        }
+
+        /**
+         * Obtain predication merger for KEY.
+         * @param key for predication merger
+         * @return predication merger or null if none exists
+         */
+        public static PredicationMerger getPredicationMerger ( String key ) {
+            if ( predicationMergers != null ) {
+                return predicationMergers.get ( key );
+            } else {
                 return null;
             }
         }
@@ -572,17 +881,26 @@ public class GlyphSequence implements Cloneable {
          * @return (possibly disjoint) association containing joined associations
          */
         public static CharAssociation join ( CharAssociation[] aa ) {
+            CharAssociation ca;
             // extract sorted intervals
             int[] ia = extractIntervals ( aa );
             if ( ( ia == null ) || ( ia.length == 0 ) ) {
-                return new CharAssociation ( 0, 0 );
+                ca = new CharAssociation ( 0, 0 );
             } else if ( ia.length == 2 ) {
                 int s = ia[0];
                 int e = ia[1];
-                return new CharAssociation ( s, e - s );
+                ca = new CharAssociation ( s, e - s );
             } else {
-                return new CharAssociation ( mergeIntervals ( ia ) );
+                ca = new CharAssociation ( mergeIntervals ( ia ) );
             }
+            return mergePredicates ( ca, aa );
+        }
+
+        private static CharAssociation mergePredicates ( CharAssociation ca, CharAssociation[] aa ) {
+            for ( CharAssociation a : aa ) {
+                ca.mergePredications ( a );
+            }
+            return ca;
         }
 
         private static int getSubIntervalsStart ( int[] ia ) {

@@ -140,7 +140,7 @@ final class ScaledBaselineTable {
     }
 
     private boolean isHorizontalWritingMode() {
-        return writingMode == WritingMode.LR_TB || writingMode == WritingMode.RL_TB;
+        return writingMode.isHorizontal();
     }
 
     /**

@@ -107,21 +107,31 @@ public class FOText extends FONode implements CharSequence {
     /** {@inheritDoc} */
     protected void characters(char[] data, int start, int length,
             PropertyList list, Locator locator) throws FOPException {
-
-        if (this.charBuffer == null) {
+        if (charBuffer == null) {
             // buffer not yet initialized, do so now
-            this.charBuffer = CharBuffer.allocate(length);
+            int newLength = ( length < 16 ) ? 16 : length;
+            charBuffer = CharBuffer.allocate(newLength);
         } else {
             // allocate a larger buffer, and transfer contents
-            int newLength = this.charBuffer.limit() + length;
-            CharBuffer newBuffer = CharBuffer.allocate(newLength);
-            this.charBuffer.rewind();
-            newBuffer.put(this.charBuffer);
-            this.charBuffer = newBuffer;
+            int requires = charBuffer.position() + length;
+            int capacity = charBuffer.capacity();
+            if ( requires > capacity ) {
+                int newCapacity = capacity * 2;
+                if ( requires > newCapacity ) {
+                    newCapacity = requires;
+                }
+                CharBuffer newBuffer = CharBuffer.allocate(newCapacity);
+                charBuffer.rewind();
+                newBuffer.put(charBuffer);
+                charBuffer = newBuffer;
+            }
         }
+        // extend limit to capacity
+        charBuffer.limit(charBuffer.capacity());
         // append characters
-        this.charBuffer.put(data, start, length);
-
+        charBuffer.put(data, start, length);
+        // shrink limit to position
+        charBuffer.limit(charBuffer.position());
     }
 
     /**
@@ -131,19 +141,19 @@ public class FOText extends FONode implements CharSequence {
      */
     public char[] getCharArray() {
 
-        if (this.charBuffer == null) {
+        if (charBuffer == null) {
             return null;
         }
 
-        if (this.charBuffer.hasArray()) {
-            return this.charBuffer.array();
+        if (charBuffer.hasArray()) {
+            return charBuffer.array();
         }
 
         // only if the buffer implementation has
         // no accessible backing array, return a new one
-        char[] ca = new char[this.charBuffer.limit()];
-        this.charBuffer.rewind();
-        this.charBuffer.get(ca);
+        char[] ca = new char[charBuffer.limit()];
+        charBuffer.rewind();
+        charBuffer.get(ca);
         return ca;
 
     }
@@ -155,10 +165,10 @@ public class FOText extends FONode implements CharSequence {
         if (removeChildren) {
             // not really removing, just make sure the char buffer
             // pointed to is really a different one
-            if (this.charBuffer != null) {
-                ft.charBuffer = CharBuffer.allocate(this.charBuffer.limit());
-                this.charBuffer.rewind();
-                ft.charBuffer.put(this.charBuffer);
+            if (charBuffer != null) {
+                ft.charBuffer = CharBuffer.allocate(charBuffer.limit());
+                charBuffer.rewind();
+                ft.charBuffer.put(charBuffer);
                 ft.charBuffer.rewind();
             }
         }
@@ -190,9 +200,12 @@ public class FOText extends FONode implements CharSequence {
 
     /** {@inheritDoc} */
     protected void endOfNode() throws FOPException {
+        if ( charBuffer != null ) {
+            charBuffer.rewind();
+        }
         super.endOfNode();
         getFOEventHandler().characters(
-                this.getCharArray(), 0, this.charBuffer.limit());
+                this.getCharArray(), 0, charBuffer.limit());
     }
 
     /** {@inheritDoc} */
@@ -211,20 +224,20 @@ public class FOText extends FONode implements CharSequence {
      */
     public boolean willCreateArea() {
         if (whiteSpaceCollapse == Constants.EN_FALSE
-                && this.charBuffer.limit() > 0) {
+                && charBuffer.limit() > 0) {
             return true;
         }
 
         char ch;
-        this.charBuffer.rewind();
-        while (this.charBuffer.hasRemaining()) {
-            ch = this.charBuffer.get();
+        charBuffer.rewind();
+        while (charBuffer.hasRemaining()) {
+            ch = charBuffer.get();
             if (!((ch == CharUtilities.SPACE)
                     || (ch == CharUtilities.LINEFEED_CHAR)
                     || (ch == CharUtilities.CARRIAGE_RETURN)
                     || (ch == CharUtilities.TAB))) {
                 // not whitespace
-                this.charBuffer.rewind();
+                charBuffer.rewind();
                 return true;
             }
         }
@@ -267,13 +280,13 @@ public class FOText extends FONode implements CharSequence {
             return;
         }
 
-        this.charBuffer.rewind();
-        CharBuffer tmp = this.charBuffer.slice();
+        charBuffer.rewind();
+        CharBuffer tmp = charBuffer.slice();
         char c;
-        int lim = this.charBuffer.limit();
+        int lim = charBuffer.limit();
         int pos = -1;
         while (++pos < lim) {
-            c = this.charBuffer.get();
+            c = charBuffer.get();
             switch (textTransform) {
                 case Constants.EN_UPPERCASE:
                     tmp.put(Character.toUpperCase(c));
@@ -688,25 +701,25 @@ public class FOText extends FONode implements CharSequence {
 
     /** {@inheritDoc} */
     public char charAt(int position) {
-        return this.charBuffer.get(position);
+        return charBuffer.get(position);
     }
 
     /** {@inheritDoc} */
     public CharSequence subSequence(int start, int end) {
-        return this.charBuffer.subSequence(start, end);
+        return charBuffer.subSequence(start, end);
     }
 
     /** {@inheritDoc} */
     public int length() {
-        return this.charBuffer.limit();
+        return charBuffer.limit();
     }
 
     /**
      * Resets the backing <code>java.nio.CharBuffer</code>
      */
     public void resetBuffer() {
-        if (this.charBuffer != null) {
-            this.charBuffer.rewind();
+        if (charBuffer != null) {
+            charBuffer.rewind();
         }
     }
 

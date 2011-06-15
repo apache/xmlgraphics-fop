@@ -47,6 +47,7 @@ import org.apache.fop.render.intermediate.IFState;
 import org.apache.fop.render.intermediate.IFUtil;
 import org.apache.fop.render.pdf.PDFLogicalStructureHandler.MarkedContentInfo;
 import org.apache.fop.traits.BorderProps;
+import org.apache.fop.traits.Direction;
 import org.apache.fop.traits.RuleStyle;
 import org.apache.fop.util.CharUtilities;
 
@@ -256,12 +257,12 @@ public class PDFPainter extends AbstractIFPainter {
     }
 
     /** {@inheritDoc} */
-    public void drawBorderRect(Rectangle rect, BorderProps before, BorderProps after,
-            BorderProps start, BorderProps end) throws IFException {
-        if (before != null || after != null || start != null || end != null) {
+    public void drawBorderRect(Rectangle rect, BorderProps top, BorderProps bottom,
+            BorderProps left, BorderProps right) throws IFException {
+        if (top != null || bottom != null || left != null || right != null) {
             generator.endTextObject();
             try {
-                this.borderPainter.drawBorders(rect, before, after, start, end);
+                this.borderPainter.drawBorders(rect, top, bottom, left, right);
             } catch (IOException ioe) {
                 throw new IFException("I/O error while drawing borders", ioe);
             }
@@ -398,7 +399,6 @@ public class PDFPainter extends AbstractIFPainter {
         assert text != null;
         assert triplet != null;
         assert dp != null;
-        assert dp.length == text.length();
         String          fk              = getFontInfo().getInternalFontKey(triplet);
         Typeface        tf              = getTypeface(fk);
         if ( tf.isMultiByte() ) {
@@ -411,14 +411,16 @@ public class PDFPainter extends AbstractIFPainter {
             double      yc              = 0f;
             double      xoLast          = 0f;
             double      yoLast          = 0f;
+            double      wox             = wordSpacing;
             tu.writeTextMatrix ( new AffineTransform ( 1, 0, 0, -1, x / 1000f, y / 1000f ) );
             tu.updateTf ( fk, fsPoints, true );
+            generator.updateCharacterSpacing ( letterSpacing / 1000f );
             for ( int i = 0, n = text.length(); i < n; i++ ) {
                 char    ch              = text.charAt ( i );
                 int[]   pa              = ( i < dp.length ) ? dp [ i ] : paZero;
                 double  xo              = xc + pa[0];
                 double  yo              = yc + pa[1];
-                double  xa              = f.getCharWidth(ch);
+                double  xa              = f.getCharWidth(ch) + maybeWordOffsetX ( wox, ch, null );
                 double  ya              = 0;
                 double  xd              = ( xo - xoLast ) / 1000f;
                 double  yd              = ( yo - yoLast ) / 1000f;
@@ -431,5 +433,27 @@ public class PDFPainter extends AbstractIFPainter {
             }
         }
     }
+
+    private double maybeWordOffsetX ( double wox, char ch, Direction dir ) {
+        if ( ( wox != 0 )
+             && CharUtilities.isAdjustableSpace ( ch )
+             && ( ( dir == null ) || dir.isHorizontal() ) ) {
+            return wox;
+        } else {
+            return 0;
+        }
+    }
+
+    /*
+    private double maybeWordOffsetY ( double woy, char ch, Direction dir ) {
+        if ( ( woy != 0 )
+             && CharUtilities.isAdjustableSpace ( ch ) && dir.isVertical()
+             && ( ( dir != null ) && dir.isVertical() ) ) {
+            return woy;
+        } else {
+            return 0;
+        }
+    }
+    */
 
 }

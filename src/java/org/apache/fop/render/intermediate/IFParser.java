@@ -645,7 +645,7 @@ public class IFParser implements IFConstants {
 
         }
 
-        private static final String[] SIDES = new String[] {"before", "after", "start", "end"};
+        private static final String[] SIDES = new String[] {"top", "bottom", "left", "right"};
 
         private class BorderRectHandler extends AbstractElementHandler {
 

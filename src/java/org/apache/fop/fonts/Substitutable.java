@@ -47,4 +47,17 @@ public interface Substitutable {
      */
     CharSequence performSubstitution ( CharSequence cs, String script, String language );
 
+    /**
+     * Reorder combining marks in character sequence so that they precede (within the sequence) the base
+     * character to which they are applied. N.B. In the case of LTR segments, marks are not reordered by this,
+     * method since when the segment is reversed by BIDI processing, marks are automatically reordered to precede
+     * their base character.
+     * @param cs character sequence within which combining marks to be reordered
+     * @param gpa associated glyph position adjustments (also reordered)
+     * @param script a script identifier
+     * @param language a language identifier
+     * @return output sequence containing reordered "font characters"
+     */
+    CharSequence reorderCombiningMarks ( CharSequence cs, int[][] gpa, String script, String language );
+
 }

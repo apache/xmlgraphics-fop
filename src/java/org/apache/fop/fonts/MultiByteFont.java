@@ -50,13 +50,27 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
 
     private CIDSubset subset = new CIDSubset();
 
-    /** A map from Unicode indices to glyph indices */
+    /**
+     * A map from Unicode indices to glyph indices. No assumption
+     * about ordering is made below. If lookup is changed to a binary
+     * search (from the current linear search), then addPrivateUseMapping()
+     * needs to be changed to perform ordered inserts.
+     */
     private BFEntry[] bfentries = null;
 
     /* advanced typographic support */
     private GlyphDefinitionTable gdef;
     private GlyphSubstitutionTable gsub;
     private GlyphPositioningTable gpos;
+
+    /* dynamic private use (character) mappings */
+    private int numMapped;
+    private int numUnmapped;
+    private int nextPrivateUse = 0xE000;
+    private int firstPrivate;
+    private int lastPrivate;
+    private int firstUnmapped;
+    private int lastUnmapped;
 
     /**
      * Default constructor
@@ -170,14 +184,14 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
      * @param c the Unicode character index
      * @return the glyph index (or 0 if the glyph is not available)
      */
-    // [TBD] - needs optimization
+    // [TBD] - needs optimization, i.e., change from linear search to binary search
     private int findGlyphIndex(int c) {
         int idx = c;
         int retIdx = SingleByteEncoding.NOT_FOUND_CODE_POINT;
 
         for (int i = 0; (i < bfentries.length) && retIdx == 0; i++) {
             if (bfentries[i].getUnicodeStart() <= idx
-                    && bfentries[i].getUnicodeEnd() >= idx) {
+                && bfentries[i].getUnicodeEnd() >= idx) {
 
                 retIdx = bfentries[i].getGlyphStartIndex()
                     + idx
@@ -188,15 +202,73 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
     }
 
     /**
-     * Returns the Unicode scalar value that corresponds to the glyph index. If more than
-     * one correspondence exists, then the first one is returned (ordered by bfentries[]).
-     * If the glyph index is Typeface.NOT_FOUND, then returns the Unicode replacement
-     * character (0x00FFFD).
+     * Add a private use mapping {PU,GI} to the existing BFENTRIES map.
+     * N.B. Does not insert in order, merely appends to end of existing map.
+     */
+    private synchronized void addPrivateUseMapping ( int pu, int gi ) {
+        assert findGlyphIndex ( pu ) == SingleByteEncoding.NOT_FOUND_CODE_POINT;
+        BFEntry[] bfeOld = bfentries;
+        int       bfeCnt = bfeOld.length;
+        BFEntry[] bfeNew = new BFEntry [ bfeCnt + 1 ];
+        System.arraycopy ( bfeOld, 0, bfeNew, 0, bfeCnt );
+        bfeNew [ bfeCnt ] = new BFEntry ( pu, pu, gi );
+        bfentries = bfeNew;
+    }
+
+    /**
+     * Given a glyph index, create a new private use mapping, augmenting the bfentries
+     * table. This is needed to accommodate the presence of an (output) glyph index in a
+     * complex script glyph substitution that does not correspond to a character in the
+     * font's CMAP.  The creation of such private use mappings is deferred until an
+     * attempt is actually made to perform the reverse lookup from the glyph index. This
+     * is necessary in order to avoid exhausting the private use space on fonts containing
+     * many such non-mapped glyph indices, if these mappings had been created statically
+     * at font load time.
      * @param gi glyph index
      * @returns unicode scalar value
      */
-    // [TBD] - needs optimization
-    private int findCharacterFromGlyphIndex ( int gi ) {
+    private int createPrivateUseMapping ( int gi ) {
+        while ( ( nextPrivateUse < 0xF900 )
+                && ( findGlyphIndex(nextPrivateUse) != SingleByteEncoding.NOT_FOUND_CODE_POINT ) ) {
+            nextPrivateUse++;
+        }
+        if ( nextPrivateUse < 0xF900 ) {
+            int pu = nextPrivateUse;
+            addPrivateUseMapping ( pu, gi );
+            if ( firstPrivate == 0 ) {
+                firstPrivate = pu;
+            }
+            lastPrivate = pu;
+            numMapped++;
+            if (log.isDebugEnabled()) {
+                log.debug ( "Create private use mapping from "
+                            + CharUtilities.format ( pu )
+                            + " to glyph index " + gi
+                            + " in font '" + getFullName() + "'" );
+            }
+            return pu;
+        } else {
+            if ( firstUnmapped == 0 ) {
+                firstUnmapped = gi;
+            }
+            lastUnmapped = gi;
+            numUnmapped++;
+            log.warn ( "Exhausted private use area: unable to map "
+                       + numUnmapped + " glyphs in glyph index range ["
+                       + firstUnmapped + "," + lastUnmapped
+                       + "] (inclusive) of font '" + getFullName() + "'" );
+            return 0;
+        }
+    }
+
+    /**
+     * Returns the Unicode scalar value that corresponds to the glyph index. If more than
+     * one correspondence exists, then the first one is returned (ordered by bfentries[]).
+     * @param gi glyph index
+     * @returns unicode scalar value
+     */
+    // [TBD] - needs optimization, i.e., change from linear search to binary search
+    private int findCharacterFromGlyphIndex ( int gi, boolean augment ) {
         int cc = 0;
         for ( int i = 0, n = bfentries.length; i < n; i++ ) {
             BFEntry be = bfentries [ i ];
@@ -207,8 +279,16 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
                 break;
             }
         }
+        if ( ( cc == 0 ) && augment ) {
+            cc = createPrivateUseMapping ( gi );
+        }
         return cc;
     }
+
+    private int findCharacterFromGlyphIndex ( int gi ) {
+        return findCharacterFromGlyphIndex ( gi, true );
+    }
+
 
     /** {@inheritDoc} */
     public char mapChar(char c) {
@@ -364,6 +444,19 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
     }
 
     /** {@inheritDoc} */
+    public CharSequence reorderCombiningMarks
+        ( CharSequence cs, int[][] gpa, String script, String language ) {
+        if ( gdef != null ) {
+            GlyphSequence igs = mapCharsToGlyphs ( cs );
+            GlyphSequence ogs = gdef.reorderCombiningMarks ( igs, gpa, script, language );
+            CharSequence ocs = mapGlyphsToChars ( ogs );
+            return ocs;
+        } else {
+            return cs;
+        }
+    }
+
+    /** {@inheritDoc} */
     public boolean performsPositioning() {
         return gpos != null;
     }
@@ -438,8 +531,10 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
                     ( "ill-formed UTF-16 sequence, "
                       + "contains isolated low surrogate at index " + i );
             }
+            notifyMapOperation();
             gi = findGlyphIndex ( cc );
             if ( gi == SingleByteEncoding.NOT_FOUND_CODE_POINT ) {
+                warnMissingGlyph ( (char) cc );
                 gi = giMissing;
             }
             cb.put ( cc );

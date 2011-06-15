@@ -28,6 +28,7 @@ import java.util.Set;
 
 // CSOFF: AvoidNestedBlocksCheck
 // CSOFF: InnerAssignmentCheck
+// CSOFF: WhitespaceAfterCheck
 // CSOFF: SimplifyBooleanReturnCheck
 
 /**
@@ -111,9 +112,16 @@ public class CharUtilities {
     public static final char MISSING_IDEOGRAPH = '\u25A1';
     /** Ideogreaphic space */
     public static final char IDEOGRAPHIC_SPACE = '\u3000';
+    /** Object replacement character */
+    public static final char OBJECT_REPLACEMENT_CHARACTER = '\uFFFC';
     /** Unicode value indicating the the character is "not a character". */
     public static final char NOT_A_CHARACTER = '\uFFFF';
 
+    /**
+      * A static (class) parameter indicating whether V2 indic shaping
+      * rules apply or not, with default being <code>true</code>.
+      */
+    private static final boolean useV2Indic = true; // CSOK: ConstantNameCheck
 
     /**
      * Utility class: Constructor prevents instantiating when subclassed.
@@ -264,6 +272,12 @@ public class CharUtilities {
     }
 
 
+    //
+    // The following script codes are based on ISO 15924. Codes less than 1000 are
+    // official assignments from 15924; those equal to or greater than 1000 are FOP
+    // implementation specific.
+    // 
+    // CSOFF: LineLengthCheck
     /** hebrew script constant */
     public static final int SCRIPT_HEBREW                               = 125;  // 'hebr'
     /** mongolian script constant */
@@ -284,22 +298,42 @@ public class CharUtilities {
     public static final int SCRIPT_HANGUL                               = 286;  // 'hang'
     /** gurmukhi script constant */
     public static final int SCRIPT_GURMUKHI                             = 310;  // 'guru'
+    /** gurmukhi 2 script constant */
+    public static final int SCRIPT_GURMUKHI_2                           = 1310; // 'gur2'       -- MSFT (pseudo) script tag for variant shaping semantics
     /** devanagari script constant */
     public static final int SCRIPT_DEVANAGARI                           = 315;  // 'deva'
+    /** devanagari 2 script constant */
+    public static final int SCRIPT_DEVANAGARI_2                         = 1315; // 'dev2'       -- MSFT (pseudo) script tag for variant shaping semantics
     /** gujarati script constant */
     public static final int SCRIPT_GUJARATI                             = 320;  // 'gujr'
+    /** gujarati 2 script constant */
+    public static final int SCRIPT_GUJARATI_2                           = 1320; // 'gjr2'       -- MSFT (pseudo) script tag for variant shaping semantics
     /** bengali script constant */
     public static final int SCRIPT_BENGALI                              = 326;  // 'beng'
+    /** bengali 2 script constant */
+    public static final int SCRIPT_BENGALI_2                            = 1326; // 'bng2'       -- MSFT (pseudo) script tag for variant shaping semantics
     /** oriya script constant */
     public static final int SCRIPT_ORIYA                                = 327;  // 'orya'
+    /** oriya 2 script constant */
+    public static final int SCRIPT_ORIYA_2                              = 1327; // 'ory2'       -- MSFT (pseudo) script tag for variant shaping semantics
     /** tibetan script constant */
     public static final int SCRIPT_TIBETAN                              = 330;  // 'tibt'
     /** telugu script constant */
     public static final int SCRIPT_TELUGU                               = 340;  // 'telu'
+    /** telugu 2 script constant */
+    public static final int SCRIPT_TELUGU_2                             = 1340; // 'tel2'       -- MSFT (pseudo) script tag for variant shaping semantics
+    /** kannada script constant */
+    public static final int SCRIPT_KANNADA                              = 345;  // 'knda'
+    /** kannada 2 script constant */
+    public static final int SCRIPT_KANNADA_2                            = 1345; // 'knd2'       -- MSFT (pseudo) script tag for variant shaping semantics
     /** tamil script constant */
     public static final int SCRIPT_TAMIL                                = 346;  // 'taml'
+    /** tamil 2 script constant */
+    public static final int SCRIPT_TAMIL_2                              = 1346; // 'tml2'       -- MSFT (pseudo) script tag for variant shaping semantics
     /** malayalam script constant */
     public static final int SCRIPT_MALAYALAM                            = 347;  // 'mlym'
+    /** malayalam 2 script constant */
+    public static final int SCRIPT_MALAYALAM_2                          = 1347; // 'mlm2'       -- MSFT (pseudo) script tag for variant shaping semantics
     /** sinhalese script constant */
     public static final int SCRIPT_SINHALESE                            = 348;  // 'sinh'
     /** burmese script constant */
@@ -326,6 +360,7 @@ public class CharUtilities {
     public static final int SCRIPT_UNDETERMINED                         = 998;  // 'zyyy'
     /** uncoded script constant */
     public static final int SCRIPT_UNCODED                              = 999;  // 'zzzz'
+    // CSON: LineLengthCheck
 
     /**
      * Determine if character c is punctuation.
@@ -375,7 +410,13 @@ public class CharUtilities {
      * @return true if character belongs to hebrew script
      */
     public static boolean isHebrew ( int c ) {
-        return false; // [TBD] - implement me
+        if ( ( c >= 0x0590 ) && ( c <= 0x05FF ) ) {             // hebrew block
+            return true;
+        } else if ( ( c >= 0xFB00 ) && ( c <= 0xFB4F ) ) {      // hebrew presentation forms block
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -384,7 +425,11 @@ public class CharUtilities {
      * @return true if character belongs to mongolian script
      */
     public static boolean isMongolian ( int c ) {
-        return false; // [TBD] - implement me
+        if ( ( c >= 0x1800 ) && ( c <= 0x18AF ) ) {             // mongolian block
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -412,7 +457,13 @@ public class CharUtilities {
      * @return true if character belongs to greek script
      */
     public static boolean isGreek ( int c ) {
-        return false; // [TBD] - implement me
+        if ( ( c >= 0x0370 ) && ( c <= 0x03FF ) ) {             // greek (and coptic) block
+            return true;
+        } else if ( ( c >= 0x1F00 ) && ( c <= 0x1FFF ) ) {      // greek extended block
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -456,7 +507,17 @@ public class CharUtilities {
      * @return true if character belongs to cyrillic script
      */
     public static boolean isCyrillic ( int c ) {
-        return false; // [TBD] - implement me
+        if ( ( c >= 0x0400 ) && ( c <= 0x04FF ) ) {             // cyrillic block
+            return true;
+        } else if ( ( c >= 0x0500 ) && ( c <= 0x052F ) ) {      // cyrillic supplement block
+            return true;
+        } else if ( ( c >= 0x2DE0 ) && ( c <= 0x2DFF ) ) {      // cyrillic extended-a block
+            return true;
+        } else if ( ( c >= 0xA640 ) && ( c <= 0xA69F ) ) {      // cyrillic extended-b block
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -465,7 +526,13 @@ public class CharUtilities {
      * @return true if character belongs to georgian script
      */
     public static boolean isGeorgian ( int c ) {
-        return false; // [TBD] - implement me
+        if ( ( c >= 0x10A0 ) && ( c <= 0x10FF ) ) {             // georgian block
+            return true;
+        } else if ( ( c >= 0x2D00 ) && ( c <= 0x2D2F ) ) {      // georgian supplement block
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -495,7 +562,11 @@ public class CharUtilities {
      * @return true if character belongs to gurmukhi script
      */
     public static boolean isGurmukhi ( int c ) {
-        return false; // [TBD] - implement me
+        if ( ( c >= 0x0A00 ) && ( c <= 0x0A7F ) ) {             // gurmukhi block
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -504,7 +575,13 @@ public class CharUtilities {
      * @return true if character belongs to devanagari script
      */
     public static boolean isDevanagari ( int c ) {
-        return false; // [TBD] - implement me
+        if ( ( c >= 0x0900 ) && ( c <= 0x097F ) ) {             // devangari block
+            return true;
+        } else if ( ( c >= 0xA8E0 ) && ( c <= 0xA8FF ) ) {      // devangari extended block
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -513,7 +590,11 @@ public class CharUtilities {
      * @return true if character belongs to gujarati script
      */
     public static boolean isGujarati ( int c ) {
-        return false; // [TBD] - implement me
+        if ( ( c >= 0x0A80 ) && ( c <= 0x0AFF ) ) {             // gujarati block
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -522,7 +603,11 @@ public class CharUtilities {
      * @return true if character belongs to bengali script
      */
     public static boolean isBengali ( int c ) {
-        return false; // [TBD] - implement me
+        if ( ( c >= 0x0980 ) && ( c <= 0x09FF ) ) {             // bengali block
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -531,7 +616,11 @@ public class CharUtilities {
      * @return true if character belongs to oriya script
      */
     public static boolean isOriya ( int c ) {
-        return false; // [TBD] - implement me
+        if ( ( c >= 0x0B00 ) && ( c <= 0x0B7F ) ) {             // oriya block
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -540,7 +629,11 @@ public class CharUtilities {
      * @return true if character belongs to tibetan script
      */
     public static boolean isTibetan ( int c ) {
-        return false; // [TBD] - implement me
+        if ( ( c >= 0x0F00 ) && ( c <= 0x0FFF ) ) {             // tibetan block
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -549,7 +642,24 @@ public class CharUtilities {
      * @return true if character belongs to telugu script
      */
     public static boolean isTelugu ( int c ) {
-        return false; // [TBD] - implement me
+        if ( ( c >= 0x0C00 ) && ( c <= 0x0C7F ) ) {             // telugu block
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Determine if character c belong to the kannada script.
+     * @param c a character represented as a unicode scalar value
+     * @return true if character belongs to kannada script
+     */
+    public static boolean isKannada ( int c ) {
+        if ( ( c >= 0x0C00 ) && ( c <= 0x0C7F ) ) {             // kannada block
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -558,7 +668,11 @@ public class CharUtilities {
      * @return true if character belongs to tamil script
      */
     public static boolean isTamil ( int c ) {
-        return false; // [TBD] - implement me
+        if ( ( c >= 0x0B80 ) && ( c <= 0x0BFF ) ) {             // tamil block
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -567,7 +681,11 @@ public class CharUtilities {
      * @return true if character belongs to malayalam script
      */
     public static boolean isMalayalam ( int c ) {
-        return false; // [TBD] - implement me
+        if ( ( c >= 0x0D00 ) && ( c <= 0x0D7F ) ) {             // malayalam block
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -576,7 +694,11 @@ public class CharUtilities {
      * @return true if character belongs to sinhalese script
      */
     public static boolean isSinhalese ( int c ) {
-        return false; // [TBD] - implement me
+        if ( ( c >= 0x0D80 ) && ( c <= 0x0DFF ) ) {             // sinhala block
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -585,7 +707,13 @@ public class CharUtilities {
      * @return true if character belongs to burmese script
      */
     public static boolean isBurmese ( int c ) {
-        return false; // [TBD] - implement me
+        if ( ( c >= 0x1000 ) && ( c <= 0x109F ) ) {             // burmese (myanmar) block
+            return true;
+        } else if ( ( c >= 0xAA60 ) && ( c <= 0xAA7F ) ) {      // burmese (myanmar) extended block
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -594,7 +722,11 @@ public class CharUtilities {
      * @return true if character belongs to thai script
      */
     public static boolean isThai ( int c ) {
-        return false; // [TBD] - implement me
+        if ( ( c >= 0x0E00 ) && ( c <= 0x0E7F ) ) {             // thai block
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -603,7 +735,13 @@ public class CharUtilities {
      * @return true if character belongs to khmer script
      */
     public static boolean isKhmer ( int c ) {
-        return false; // [TBD] - implement me
+        if ( ( c >= 0x1780 ) && ( c <= 0x17FF ) ) {             // khmer block
+            return true;
+        } else if ( ( c >= 0x19E0 ) && ( c <= 0x19FF ) ) {      // khmer symbols block
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -612,7 +750,11 @@ public class CharUtilities {
      * @return true if character belongs to lao script
      */
     public static boolean isLao ( int c ) {
-        return false; // [TBD] - implement me
+        if ( ( c >= 0x0E80 ) && ( c <= 0x0EFF ) ) {             // lao block
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -621,7 +763,17 @@ public class CharUtilities {
      * @return true if character belongs to ethiopic (amharic) script
      */
     public static boolean isEthiopic ( int c ) {
-        return false; // [TBD] - implement me
+        if ( ( c >= 0x1200 ) && ( c <= 0x137F ) ) {             // ethiopic block
+            return true;
+        } else if ( ( c >= 0x1380 ) && ( c <= 0x139F ) ) {      // ethoipic supplement block
+            return true;
+        } else if ( ( c >= 0x2D80 ) && ( c <= 0x2DDF ) ) {      // ethoipic extended block
+            return true;
+        } else if ( ( c >= 0xAB00 ) && ( c <= 0xAB2F ) ) {      // ethoipic extended-a block
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -726,23 +878,25 @@ public class CharUtilities {
         } else if ( isGeorgian ( c ) ) {
             return SCRIPT_GEORGIAN;
         } else if ( isGurmukhi ( c ) ) {
-            return SCRIPT_GURMUKHI;
+            return useV2IndicRules ( SCRIPT_GURMUKHI );
         } else if ( isDevanagari ( c ) ) {
-            return SCRIPT_DEVANAGARI;
+            return useV2IndicRules ( SCRIPT_DEVANAGARI );
         } else if ( isGujarati ( c ) ) {
-            return SCRIPT_GUJARATI;
+            return useV2IndicRules ( SCRIPT_GUJARATI );
         } else if ( isBengali ( c ) ) {
-            return SCRIPT_BENGALI;
+            return useV2IndicRules ( SCRIPT_BENGALI );
         } else if ( isOriya ( c ) ) {
-            return SCRIPT_ORIYA;
+            return useV2IndicRules ( SCRIPT_ORIYA );
         } else if ( isTibetan ( c ) ) {
             return SCRIPT_TIBETAN;
         } else if ( isTelugu ( c ) ) {
-            return SCRIPT_TELUGU;
+            return useV2IndicRules ( SCRIPT_TELUGU );
+        } else if ( isKannada ( c ) ) {
+            return useV2IndicRules ( SCRIPT_KANNADA );
         } else if ( isTamil ( c ) ) {
-            return SCRIPT_TAMIL;
+            return useV2IndicRules ( SCRIPT_TAMIL );
         } else if ( isMalayalam ( c ) ) {
-            return SCRIPT_MALAYALAM;
+            return useV2IndicRules ( SCRIPT_MALAYALAM );
         } else if ( isSinhalese ( c ) ) {
             return SCRIPT_SINHALESE;
         } else if ( isBurmese ( c ) ) {
@@ -757,6 +911,20 @@ public class CharUtilities {
             return SCRIPT_ETHIOPIC;
         } else {
             return SCRIPT_UNDETERMINED;
+        }
+    }
+
+    /**
+     * Obtain the V2 indic script code corresponding to V1 indic script code SC if
+     * and only iff V2 indic rules apply; otherwise return SC.
+     * @param sc a V1 indic script code
+     * @return either SC or the V2 flavor of SC if V2 indic rules apply
+     */
+    public static int useV2IndicRules ( int sc ) {
+        if ( useV2Indic ) {
+            return ( sc < 1000 ) ? ( sc + 1000 ) : sc;
+        } else {
+            return sc;
         }
     }
 
@@ -828,20 +996,75 @@ public class CharUtilities {
     }
 
     /**
-     * Determine the ISO script tag associated with an internal
-     * script code.
+     * Determine if script tag denotes an 'Indic' script, where a
+     * script is an 'Indic' script if it is intended to be processed by
+     * the generic 'Indic' Script Processor.
+     * @param script a script tag
+     * @return true if script tag is a designated 'Indic' script
+     */
+    public static boolean isIndicScript ( String script ) {
+        switch ( scriptCodeFromTag ( script ) ) {
+        case SCRIPT_BENGALI:
+        case SCRIPT_BENGALI_2:
+        case SCRIPT_BURMESE:
+        case SCRIPT_DEVANAGARI:
+        case SCRIPT_DEVANAGARI_2:
+        case SCRIPT_GUJARATI:
+        case SCRIPT_GUJARATI_2:
+        case SCRIPT_GURMUKHI:
+        case SCRIPT_GURMUKHI_2:
+        case SCRIPT_KANNADA:
+        case SCRIPT_KANNADA_2:
+        case SCRIPT_MALAYALAM:
+        case SCRIPT_MALAYALAM_2:
+        case SCRIPT_ORIYA:
+        case SCRIPT_ORIYA_2:
+        case SCRIPT_TAMIL:
+        case SCRIPT_TAMIL_2:
+        case SCRIPT_TELUGU:
+        case SCRIPT_TELUGU_2:
+            return true;
+        default:
+            return false;
+        }
+    }
+
+    /**
+     * Determine the script tag associated with an internal script code.
      * @param code the script code
-     * @return an ISO script tag
+     * @return a  script tag
      */
     public static String scriptTagFromCode ( int code ) {
-        String tag;
-        if ( scriptTagsMap == null ) {
-            scriptTagsMap = makeScriptTagsMap();
+        Map<Integer,String> m = getScriptTagsMap();
+        if ( m != null ) {
+            String tag;
+            if ( ( tag = m.get ( Integer.valueOf ( code ) ) ) != null ) {
+                return tag;
+            } else {
+                return "";
+            }
+        } else {
+            return "";
         }
-        if ( ( tag = (String) scriptTagsMap.get ( Integer.valueOf ( code ) ) ) == null ) {
-            tag = scriptTagFromCode ( SCRIPT_UNDETERMINED );
+    }
+
+    /**
+     * Determine the internal script code associated with a script tag.
+     * @param tag the script tag
+     * @return a script code
+     */
+    public static int scriptCodeFromTag ( String tag ) {
+        Map<String,Integer> m = getScriptCodeMap();
+        if ( m != null ) {
+            Integer c;
+            if ( ( c = m.get ( tag ) ) != null ) {
+                return (int) c;
+            } else {
+                return SCRIPT_UNDETERMINED;
+            }
+        } else {
+            return SCRIPT_UNDETERMINED;
         }
-        return tag;
     }
 
     /**
@@ -917,46 +1140,78 @@ public class CharUtilities {
         }
     }
 
-    private static Map scriptTagsMap = null;
+    private static Map<Integer,String> scriptTagsMap = null;
+    private static Map<String,Integer> scriptCodeMap = null;
 
-    private static void putScriptTag ( Map m, int code, String tag ) {
-        m.put ( Integer.valueOf ( code ), tag );
+    private static void putScriptTag ( Map tm, Map cm, int code, String tag ) {
+        assert tag != null;
+        assert tag.length() != 0;
+        assert code >= 0;
+        assert code <  2000;
+        tm.put ( Integer.valueOf ( code ), tag );
+        cm.put ( tag, Integer.valueOf ( code ) );
     }
 
-    private static Map makeScriptTagsMap() {
-        HashMap m = new HashMap();
-        putScriptTag ( m, SCRIPT_HEBREW, "hebr" );
-        putScriptTag ( m, SCRIPT_MONGOLIAN, "mong" );
-        putScriptTag ( m, SCRIPT_ARABIC, "arab" );
-        putScriptTag ( m, SCRIPT_GREEK, "grek" );
-        putScriptTag ( m, SCRIPT_LATIN, "latn" );
-        putScriptTag ( m, SCRIPT_CYRILLIC, "cyrl" );
-        putScriptTag ( m, SCRIPT_GEORGIAN, "geor" );
-        putScriptTag ( m, SCRIPT_BOPOMOFO, "bopo" );
-        putScriptTag ( m, SCRIPT_HANGUL, "hang" );
-        putScriptTag ( m, SCRIPT_GURMUKHI, "guru" );
-        putScriptTag ( m, SCRIPT_DEVANAGARI, "deva" );
-        putScriptTag ( m, SCRIPT_GUJARATI, "gujr" );
-        putScriptTag ( m, SCRIPT_BENGALI, "beng" );
-        putScriptTag ( m, SCRIPT_ORIYA, "orya" );
-        putScriptTag ( m, SCRIPT_TIBETAN, "tibt" );
-        putScriptTag ( m, SCRIPT_TELUGU, "telu" );
-        putScriptTag ( m, SCRIPT_TAMIL, "taml" );
-        putScriptTag ( m, SCRIPT_MALAYALAM, "mlym" );
-        putScriptTag ( m, SCRIPT_SINHALESE, "sinh" );
-        putScriptTag ( m, SCRIPT_BURMESE, "mymr" );
-        putScriptTag ( m, SCRIPT_THAI, "thai" );
-        putScriptTag ( m, SCRIPT_KHMER, "khmr" );
-        putScriptTag ( m, SCRIPT_LAO, "laoo" );
-        putScriptTag ( m, SCRIPT_HIRAGANA, "hira" );
-        putScriptTag ( m, SCRIPT_ETHIOPIC, "ethi" );
-        putScriptTag ( m, SCRIPT_HAN, "hani" );
-        putScriptTag ( m, SCRIPT_KATAKANA, "kana" );
-        putScriptTag ( m, SCRIPT_MATH, "zmth" );
-        putScriptTag ( m, SCRIPT_SYMBOL, "zsym" );
-        putScriptTag ( m, SCRIPT_UNDETERMINED, "zyyy" );
-        putScriptTag ( m, SCRIPT_UNCODED, "zzzz" );
-        return m;
+    private static void makeScriptMaps() {
+        HashMap<Integer,String> tm = new HashMap<Integer,String>();
+        HashMap<String,Integer> cm = new HashMap<String,Integer>();
+        putScriptTag ( tm, cm, SCRIPT_HEBREW, "hebr" );
+        putScriptTag ( tm, cm, SCRIPT_MONGOLIAN, "mong" );
+        putScriptTag ( tm, cm, SCRIPT_ARABIC, "arab" );
+        putScriptTag ( tm, cm, SCRIPT_GREEK, "grek" );
+        putScriptTag ( tm, cm, SCRIPT_LATIN, "latn" );
+        putScriptTag ( tm, cm, SCRIPT_CYRILLIC, "cyrl" );
+        putScriptTag ( tm, cm, SCRIPT_GEORGIAN, "geor" );
+        putScriptTag ( tm, cm, SCRIPT_BOPOMOFO, "bopo" );
+        putScriptTag ( tm, cm, SCRIPT_HANGUL, "hang" );
+        putScriptTag ( tm, cm, SCRIPT_GURMUKHI, "guru" );
+        putScriptTag ( tm, cm, SCRIPT_GURMUKHI_2, "gur2" );
+        putScriptTag ( tm, cm, SCRIPT_DEVANAGARI, "deva" );
+        putScriptTag ( tm, cm, SCRIPT_DEVANAGARI_2, "dev2" );
+        putScriptTag ( tm, cm, SCRIPT_GUJARATI, "gujr" );
+        putScriptTag ( tm, cm, SCRIPT_GUJARATI_2, "gjr2" );
+        putScriptTag ( tm, cm, SCRIPT_BENGALI, "beng" );
+        putScriptTag ( tm, cm, SCRIPT_BENGALI_2, "bng2" );
+        putScriptTag ( tm, cm, SCRIPT_ORIYA, "orya" );
+        putScriptTag ( tm, cm, SCRIPT_ORIYA_2, "ory2" );
+        putScriptTag ( tm, cm, SCRIPT_TIBETAN, "tibt" );
+        putScriptTag ( tm, cm, SCRIPT_TELUGU, "telu" );
+        putScriptTag ( tm, cm, SCRIPT_TELUGU_2, "tel2" );
+        putScriptTag ( tm, cm, SCRIPT_KANNADA, "knda" );
+        putScriptTag ( tm, cm, SCRIPT_KANNADA_2, "knd2" );
+        putScriptTag ( tm, cm, SCRIPT_TAMIL, "taml" );
+        putScriptTag ( tm, cm, SCRIPT_TAMIL_2, "tml2" );
+        putScriptTag ( tm, cm, SCRIPT_MALAYALAM, "mlym" );
+        putScriptTag ( tm, cm, SCRIPT_MALAYALAM_2, "mlm2" );
+        putScriptTag ( tm, cm, SCRIPT_SINHALESE, "sinh" );
+        putScriptTag ( tm, cm, SCRIPT_BURMESE, "mymr" );
+        putScriptTag ( tm, cm, SCRIPT_THAI, "thai" );
+        putScriptTag ( tm, cm, SCRIPT_KHMER, "khmr" );
+        putScriptTag ( tm, cm, SCRIPT_LAO, "laoo" );
+        putScriptTag ( tm, cm, SCRIPT_HIRAGANA, "hira" );
+        putScriptTag ( tm, cm, SCRIPT_ETHIOPIC, "ethi" );
+        putScriptTag ( tm, cm, SCRIPT_HAN, "hani" );
+        putScriptTag ( tm, cm, SCRIPT_KATAKANA, "kana" );
+        putScriptTag ( tm, cm, SCRIPT_MATH, "zmth" );
+        putScriptTag ( tm, cm, SCRIPT_SYMBOL, "zsym" );
+        putScriptTag ( tm, cm, SCRIPT_UNDETERMINED, "zyyy" );
+        putScriptTag ( tm, cm, SCRIPT_UNCODED, "zzzz" );
+        scriptTagsMap = tm;
+        scriptCodeMap = cm;
+    }
+
+    private static Map<Integer,String> getScriptTagsMap() {
+        if ( scriptTagsMap == null ) {
+            makeScriptMaps();
+        }
+        return scriptTagsMap;
+    }
+
+    private static Map<String,Integer> getScriptCodeMap() {
+        if ( scriptCodeMap == null ) {
+            makeScriptMaps();
+        }
+        return scriptCodeMap;
     }
 
     /**
@@ -1638,6 +1893,27 @@ public class CharUtilities {
             return c;
         } else {
             return mirroredCharactersMapping [ i ];
+        }
+    }
+
+    /**
+     * Determine if two character sequences contain the same characters.
+     * @param cs1 first character sequence
+     * @param cs2 second character sequence
+     * @return true if both sequences have same length and same character sequence
+     */
+    public static boolean isSameSequence ( CharSequence cs1, CharSequence cs2 ) {
+        assert cs1 != null;
+        assert cs2 != null;
+        if ( cs1.length() != cs2.length() ) {
+            return false;
+        } else {
+            for ( int i = 0, n = cs1.length(); i < n; i++ ) {
+                if ( cs1.charAt(i) != cs2.charAt(i) ) {
+                    return false;
+                }
+            }
+            return true;
         }
     }
 

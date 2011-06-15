@@ -72,8 +72,6 @@ public abstract class AbstractGraphics extends FObj
     //     private int scalingMethod;
     // End of property values
 
-
-
     /**
      * constructs an instream-foreign-object object (called by Maker).
      *
@@ -230,4 +228,5 @@ public abstract class AbstractGraphics extends FObj
 
     /** @return the graphic's intrinsic alignment-adjust */
     public abstract Length getIntrinsicAlignmentAdjust();
+
 }

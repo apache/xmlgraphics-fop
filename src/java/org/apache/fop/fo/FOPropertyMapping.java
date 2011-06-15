@@ -1493,6 +1493,37 @@ public final class FOPropertyMapping implements Constants {
         addPropertyMaker("fox:block-progression-unit", l);
     }
 
+    private Property calcWritingModeDependent ( int pv, int wm ) {
+        if ( pv == EN_LEFT ) {
+            if ( wm == Constants.EN_LR_TB ) {
+                pv = EN_START;
+            } else if ( wm == Constants.EN_RL_TB ) {
+                pv = EN_END;
+            } else {
+                pv = EN_START;
+            }
+        } else if ( pv == EN_RIGHT ) {
+            if ( wm == Constants.EN_LR_TB ) {
+                pv = EN_END;
+            } else if ( wm == Constants.EN_RL_TB ) {
+                pv = EN_START;
+            } else {
+                pv = EN_END;
+            }
+        }
+        return makeWritingModeDependentEnum ( pv );
+    }
+
+    private Property makeWritingModeDependentEnum ( int pv ) {
+        if ( pv == EN_START ) {
+            return getEnumProperty ( EN_START, "START" );
+        } else if ( pv == EN_END ) {
+            return getEnumProperty ( EN_END, "END" );
+        } else {
+            return null;
+        }
+    }
+
     private void createBlockAndLineProperties() {               // CSOK: MethodLength
         PropertyMaker m;
 
@@ -1578,16 +1609,29 @@ public final class FOPropertyMapping implements Constants {
         addPropertyMaker("white-space-treatment", m);
 
         // text-align TODO: make it a StringProperty with enums.
-        m  = new EnumProperty.Maker(PR_TEXT_ALIGN);
+        m  = new EnumProperty.Maker(PR_TEXT_ALIGN) {
+            public Property get(int subpropId, PropertyList propertyList,
+                    boolean bTryInherit, boolean bTryDefault) throws PropertyException {
+                Property p = super.get(subpropId, propertyList, bTryInherit, bTryDefault);
+                if ( p != null ) {
+                    int pv = p.getEnum();
+                    if ( ( pv == EN_LEFT ) || ( pv == EN_RIGHT ) ) {
+                        p = calcWritingModeDependent
+                            ( pv, propertyList.get(Constants.PR_WRITING_MODE).getEnum() );
+                    }
+                }
+                return p;
+            }
+        };
         m.setInherited(true);
-        // Note: both 'end', 'right' and 'outside' are mapped to END
-        //       both 'start', 'left' and 'inside' are mapped to START
         m.addEnum("center", getEnumProperty(EN_CENTER, "CENTER"));
         m.addEnum("end", getEnumProperty(EN_END, "END"));
-        m.addEnum("right", getEnumProperty(EN_END, "END"));
         m.addEnum("start", getEnumProperty(EN_START, "START"));
-        m.addEnum("left", getEnumProperty(EN_START, "START"));
         m.addEnum("justify", getEnumProperty(EN_JUSTIFY, "JUSTIFY"));
+        // [GA] must defer writing-mode relative mapping of left/right
+        m.addEnum("left", getEnumProperty(EN_LEFT, "LEFT"));
+        m.addEnum("right", getEnumProperty(EN_RIGHT, "RIGHT"));
+        // [GA] inside and outside are not correctly implemented by the following mapping
         m.addEnum("inside", getEnumProperty(EN_START, "START"));
         m.addEnum("outside", getEnumProperty(EN_END, "END"));
         m.setDefault("start");
@@ -1607,7 +1651,6 @@ public final class FOPropertyMapping implements Constants {
                 }
                 return p;
             }
-
             private Property calcRelative(PropertyList propertyList) throws PropertyException {
                 Property corresponding = propertyList.get(PR_TEXT_ALIGN);
                 if (corresponding == null) {
@@ -1622,6 +1665,12 @@ public final class FOPropertyMapping implements Constants {
                     return getEnumProperty(EN_START, "START");
                 } else if (correspondingValue == EN_CENTER) {
                     return getEnumProperty(EN_CENTER, "CENTER");
+                } else if (correspondingValue == EN_LEFT) {
+                    return calcWritingModeDependent
+                        ( EN_LEFT, propertyList.get(Constants.PR_WRITING_MODE).getEnum() );
+                } else if (correspondingValue == EN_RIGHT) {
+                    return calcWritingModeDependent
+                        ( EN_RIGHT, propertyList.get(Constants.PR_WRITING_MODE).getEnum() );
                 } else {
                     return null;
                 }

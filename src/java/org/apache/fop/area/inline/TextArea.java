@@ -19,6 +19,8 @@
 
 package org.apache.fop.area.inline;
 
+import java.util.Arrays;
+
 import org.apache.fop.util.CharUtilities;
 
 /**
@@ -65,10 +67,21 @@ public class TextArea extends AbstractTextArea {
     /**
      * Create and add a WordArea child to this TextArea.
      *
+     * @param word   the word string
+     * @param offset the offset for the next area
+     * @param level  bidirectional level that applies to entire word
+     */
+    public void addWord(String word, int offset, int level) {
+        addWord(word, 0, null, makeLevels(level, word.length()), null, offset);
+    }
+
+    /**
+     * Create and add a WordArea child to this TextArea.
+     *
      * @param word the word string
      * @param ipd the word's ipd
      * @param letterAdjust the letter adjustment array (may be null)
-     * @param levels array of resolved bidirection levels of word characters,
+     * @param levels array of resolved bidirectional levels of word characters,
      * or null if default level
      * @param gposAdjustments array of general position adjustments or null if none apply
      * @param blockProgressionOffset the offset for the next area
@@ -167,6 +180,16 @@ public class TextArea extends AbstractTextArea {
             }
         } else {
             return -1;
+        }
+    }
+
+    private int[] makeLevels ( int level, int count ) {
+        if ( level >= 0 ) {
+            int[] levels = new int [ count ];
+            Arrays.fill ( levels, level );
+            return levels;
+        } else {
+            return null;
         }
     }
 

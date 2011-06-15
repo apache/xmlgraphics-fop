@@ -21,6 +21,7 @@ package org.apache.fop.area;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.fop.area.inline.InlineArea;
@@ -130,6 +131,15 @@ public class LineArea extends Area {
      * @param inlineAreas the list of inline areas
      */
     public void setInlineAreas ( List inlineAreas ) {
+        for ( Iterator<InlineArea> it = inlineAreas.iterator(); it.hasNext();) {
+            InlineArea ia = it.next();
+            Area pa = ia.getParentArea();
+            if ( pa == null ) {
+                ia.setParentArea ( this );
+            } else {
+                assert pa == this;
+            }
+        }
         this.inlineAreas = inlineAreas;
     }
 
@@ -152,6 +162,21 @@ public class LineArea extends Area {
     public int getStartIndent() {
         if (hasTrait(Trait.START_INDENT)) {
             return getTraitAsInteger(Trait.START_INDENT);
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * Get the end indent of this line area.
+     * The end indent is used for offsetting the end of
+     * the inline areas for alignment or other indents.
+     *
+     * @return the end indent value
+     */
+    public int getEndIndent() {
+        if (hasTrait(Trait.END_INDENT)) {
+            return getTraitAsInteger(Trait.END_INDENT);
         } else {
             return 0;
         }
@@ -187,17 +212,21 @@ public class LineArea extends Area {
      * @param ipdVariation the difference between old and new ipd
      */
     public void handleIPDVariation(int ipdVariation) {
+        int si = getStartIndent();
+        int ei = getEndIndent();
         switch (adjustingInfo.lineAlignment) {
             case EN_START:
-                // nothing to do in this case
+                // adjust end indent
+                addTrait(Trait.END_INDENT, ei - ipdVariation);
                 break;
             case EN_CENTER:
-                // re-compute indent
-                addTrait(Trait.START_INDENT, getStartIndent() - ipdVariation / 2);
+                // adjust start and end indents
+                addTrait(Trait.START_INDENT, si - ipdVariation / 2);
+                addTrait(Trait.END_INDENT, ei - ipdVariation / 2);
                 break;
             case EN_END:
-                // re-compute indent
-                addTrait(Trait.START_INDENT, getStartIndent() - ipdVariation);
+                // adjust start indent
+                addTrait(Trait.START_INDENT, si - ipdVariation);
                 break;
             case EN_JUSTIFY:
                 // compute variation factor

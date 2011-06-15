@@ -235,16 +235,16 @@ public class PSPainter extends AbstractIFPainter {
     }
 
     /** {@inheritDoc} */
-    public void drawBorderRect(Rectangle rect, BorderProps before, BorderProps after,
-            BorderProps start, BorderProps end) throws IFException {
-        if (before != null || after != null || start != null || end != null) {
+    public void drawBorderRect(Rectangle rect, BorderProps top, BorderProps bottom,
+            BorderProps left, BorderProps right) throws IFException {
+        if (top != null || bottom != null || left != null || right != null) {
             try {
                 endTextObject();
                 if (getPSUtil().getRenderingMode() == PSRenderingMode.SIZE
-                    && hasOnlySolidBorders(before, after, start, end)) {
-                    super.drawBorderRect(rect, before, after, start, end);
+                    && hasOnlySolidBorders(top, bottom, left, right)) {
+                    super.drawBorderRect(rect, top, bottom, left, right);
                 } else {
-                    this.borderPainter.drawBorders(rect, before, after, start, end);
+                    this.borderPainter.drawBorders(rect, top, bottom, left, right);
                 }
             } catch (IOException ioe) {
                 throw new IFException("I/O error in drawBorderRect()", ioe);

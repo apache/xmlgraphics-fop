@@ -337,9 +337,9 @@ public class GlyphTable {
             } else if ( feature.equals("*") ) {
                 throw new AdvancedTypographicTableFormatException ( "feature must not be wildcard" );
             } else {
-                this.script = script;
-                this.language = language;
-                this.feature = feature;
+                this.script = script.trim();
+                this.language = language.trim();
+                this.feature = feature.trim();
             }
         }
 
@@ -670,12 +670,24 @@ public class GlyphTable {
         /**
          * {@inheritDoc}
          * @return the result of comparing the identifier of the specified lookup table with
-         * the identifier of this lookup table
+         * the identifier of this lookup table; lookup table identifiers take the form
+         * "lu(DIGIT)+", with comparison based on numerical ordering of numbers expressed by
+         * (DIGIT)+.
          */
         public int compareTo ( Object o ) {
             if ( o instanceof LookupTable ) {
                 LookupTable lt = (LookupTable) o;
-                return id.compareTo ( lt.id );
+                assert id.startsWith ( "lu" );
+                int i = Integer.parseInt ( id.substring ( 2 ) );
+                assert lt.id.startsWith ( "lu" );
+                int j = Integer.parseInt ( lt.id.substring ( 2 ) );
+                if ( i < j ) {
+                    return -1;
+                } else if ( i > j ) {
+                    return 1;
+                } else {
+                    return 0;
+                }
             } else {
                 return -1;
             }

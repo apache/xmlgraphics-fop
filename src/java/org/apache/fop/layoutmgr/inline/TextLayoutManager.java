@@ -19,6 +19,7 @@
 
 package org.apache.fop.layoutmgr.inline;
 
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -75,6 +76,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
 
         private final int startIndex;
         private final int breakIndex;
+        private int wordCharLength;
         private final int wordSpaceCount;
         private int letterSpaceCount;
         private MinOptMax areaIPD;
@@ -92,6 +94,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             assert startIndex <= breakIndex;
             this.startIndex = startIndex;
             this.breakIndex = breakIndex;
+            this.wordCharLength = -1;
             this.wordSpaceCount = wordSpaceCount;
             this.letterSpaceCount = letterSpaceCount;
             this.areaIPD = areaIPD;
@@ -103,8 +106,22 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             this.gposAdjustments = gposAdjustments;
         }
 
-        private int getCharLength() {
-            return breakIndex - startIndex;
+        /**
+         * Obtain number of 'characters' contained in word. If word
+         * is mapped, then this number may be less than or greater than the
+         * original length (breakIndex - startIndex). We compute and
+         * memoize thius length upon first invocation of this method.
+         */
+        private int getWordLength() {
+            if ( wordCharLength == -1 ) {
+                if ( foText.hasMapping ( startIndex, breakIndex ) ) {
+                    wordCharLength = foText.getMapping ( startIndex, breakIndex ).length();
+                } else {
+                    assert breakIndex >= startIndex;
+                    wordCharLength = breakIndex - startIndex;
+                }
+            }
+            return wordCharLength;
         }
 
         private void addToAreaIPD(MinOptMax idp) {
@@ -312,7 +329,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         // changes. However, it seems as if they should use the AreaInfo from
         // firstAreaInfoIndex.. lastAreaInfoIndex rather than just the last areaInfo.
         // This needs to be checked.
-        int textLength = areaInfo.getCharLength();
+        int textLength = areaInfo.getWordLength();
         if (areaInfo.letterSpaceCount == textLength && !areaInfo.isHyphenated
                 && context.isLastArea()) {
             // the line ends at a character like "/" or "-";
@@ -398,26 +415,27 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
 
     private final class TextAreaBuilder {
 
-        private final MinOptMax width;
-        private final int adjust;
-        private final LayoutContext context;
-        private final int firstIndex;
-        private final int lastIndex;
-        private final boolean isLastArea;
-        private final Font font;
+        // constructor initialized state
+        private final MinOptMax width;          // content ipd
+        private final int adjust;               // content ipd adjustment
+        private final LayoutContext context;    // layout context
+        private final int firstIndex;           // index of first AreaInfo
+        private final int lastIndex;            // index of last AreaInfo
+        private final boolean isLastArea;       // true if last inline area in line area
+        private final Font font;                // applicable font
 
-        private int blockProgressionDimension;
-        private AreaInfo areaInfo;
-        private StringBuffer wordChars;
-        private int[] letterSpaceAdjust;
-        private int letterSpaceAdjustIndex;
-        private int[] wordLevels;
-        private int wordLevelsCount;
-        private int wordIPD;
-        private int[][] gposAdjustments;
-        private int gposAdjustmentsIndex;
-
-        private TextArea textArea;
+        // other, non-constructor state
+        private TextArea textArea;              // text area being constructed
+        private int blockProgressionDimension;  // calculated bpd
+        private AreaInfo areaInfo;              // current area info when iterating over words
+        private StringBuffer wordChars;         // current word's character buffer
+        private int[] letterSpaceAdjust;        // current word's letter space adjustments
+        private int letterSpaceAdjustIndex;     // last written letter space adjustment index
+        private int[] wordLevels;               // current word's bidi levels
+        private int wordLevelsIndex;            // last written bidi level index
+        private int wordIPD;                    // accumulated ipd of current word
+        private int[][] gposAdjustments;        // current word's glyph position adjustments
+        private int gposAdjustmentsIndex;       // last written glyph position adjustment index
 
         /**
          * Creates a new <code>TextAreaBuilder</code> which itself builds an inline word area. This
@@ -499,7 +517,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
          * Sets the text of the TextArea, split into words and spaces.
          */
         private void setText() {
-            int wordStartIndex = -1;
+            int areaInfoIndex = -1;
             int wordCharLength = 0;
             for (int wordIndex = firstIndex; wordIndex <= lastIndex; wordIndex++) {
                 areaInfo = getAreaInfo(wordIndex);
@@ -507,15 +525,15 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                     addSpaces();
                 } else {
                     // areaInfo stores information about a word fragment
-                    if (wordStartIndex == -1) {
+                    if (areaInfoIndex == -1) {
                         // here starts a new word
-                        wordStartIndex = wordIndex;
+                        areaInfoIndex = wordIndex;
                         wordCharLength = 0;
                     }
-                    wordCharLength += areaInfo.getCharLength();
+                    wordCharLength += areaInfo.getWordLength();
                     if (isWordEnd(wordIndex)) {
-                        addWord(wordStartIndex, wordIndex, wordCharLength);
-                        wordStartIndex = -1;
+                        addWord(areaInfoIndex, wordIndex, wordCharLength);
+                        areaInfoIndex = -1;
                     }
                 }
             }
@@ -525,13 +543,27 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             return areaInfoIndex == lastIndex || getAreaInfo(areaInfoIndex + 1).isSpace;
         }
 
-        private void addWord(int startIndex, int endIndex, int charLength) {
+        /**
+         * Add word with fragments from STARTINDEX to ENDINDEX, where
+         * total length of (possibly mapped) word is CHARLENGTH.
+         * A word is composed from one or more word fragments, where each
+         * fragment corresponds to distinct instance in a sequence of
+         * area info instances starting at STARTINDEX continuing through (and
+         * including)  ENDINDEX.
+         * @param startIndex index of first area info of word to add
+         * @param endIndex index of last area info of word to add
+         * @param wordLength number of (mapped) characters in word
+         */
+        private void addWord(int startIndex, int endIndex, int wordLength) {
             int blockProgressionOffset = 0;
             boolean gposAdjusted = false;
             if (isHyphenated(endIndex)) {
-                charLength++;
+                // TODO may be problematic in some I18N contexts [GA]
+                wordLength++;
             }
-            initWord(charLength);
+            initWord(wordLength);
+            // iterate over word's fragments, adding word chars (with bidi
+            // levels), letter space adjustments, and glyph position adjustments
             for (int i = startIndex; i <= endIndex; i++) {
                 AreaInfo wordAreaInfo = getAreaInfo(i);
                 addWordChars(wordAreaInfo);
@@ -541,22 +573,46 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                 }
             }
             if (isHyphenated(endIndex)) {
+                // TODO may be problematic in some I18N contexts [GA]
                 addHyphenationChar();
             }
             if ( !gposAdjusted ) {
                 gposAdjustments = null;
             }
-            textArea.addWord(wordChars.toString(), wordIPD, letterSpaceAdjust, wordLevels,
-                             gposAdjustments, blockProgressionOffset);
+            textArea.addWord(wordChars.toString(), wordIPD, letterSpaceAdjust,
+                             getNonEmptyLevels(), gposAdjustments, blockProgressionOffset);
         }
 
-        private void initWord(int charLength) {
-            wordChars = new StringBuffer(charLength);
-            letterSpaceAdjust = new int[charLength];
+        private int[] getNonEmptyLevels() {
+            if ( wordLevels != null ) {
+                assert wordLevelsIndex <= wordLevels.length;
+                boolean empty = true;
+                for ( int i = 0, n = wordLevelsIndex; i < n; i++ ) {
+                    if ( wordLevels [ i ] >= 0 ) {
+                        empty = false;
+                        break;
+                    }
+                }
+                return empty ? null : wordLevels;
+            } else {
+                return null;
+            }
+        }
+
+        /**
+         * Fully allocate word character buffer, letter space adjustments
+         * array, bidi levels array, and glyph position adjustments array.
+         * based on full word length, including all (possibly mapped) fragments.
+         * @param wordLength length of word including all (possibly mapped) fragments
+         */
+        private void initWord(int wordLength) {
+            wordChars = new StringBuffer(wordLength);
+            letterSpaceAdjust = new int[wordLength];
             letterSpaceAdjustIndex = 0;
-            wordLevels = new int[charLength];
-            wordLevelsCount = 0;
-            gposAdjustments = new int[charLength][4];
+            wordLevels = new int[wordLength];
+            wordLevelsIndex = 0;
+            Arrays.fill ( wordLevels, -1 );
+            gposAdjustments = new int[wordLength][4];
             gposAdjustmentsIndex = 0;
             wordIPD = 0;
         }
@@ -567,8 +623,17 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
 
         private void addHyphenationChar() {
             wordChars.append(foText.getCommonHyphenation().getHyphChar(font));
+            // [TBD] expand bidi word levels, letter space adjusts, gpos adjusts
+            // [TBD] [GA] problematic in bidi context... what is level of hyphen?
         }
 
+        /**
+         * Given a word area info associated with a word fragment,
+         * (1) concatenate (possibly mapped) word characters to word character buffer;
+         * (2) concatenante (possibly mapped) word bidi levels to levels buffer;
+         * (3) update word's IPD with optimal IPD of fragment.
+         * @param wordAreaInfo fragment info
+         */
         private void addWordChars(AreaInfo wordAreaInfo) {
             int s = wordAreaInfo.startIndex;
             int e = wordAreaInfo.breakIndex;
@@ -584,65 +649,85 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             wordIPD += wordAreaInfo.areaIPD.getOpt();
         }
 
+        /**
+         * Given a (possibly null) bidi levels array associated with a word fragment,
+         * concatenante (possibly mapped) word bidi levels to levels buffer.
+         * @param levels bidi levels array or null
+         */
         private void addWordLevels ( int[] levels ) {
-            if ( levels != null ) {
-                int n = levels.length;
-                int need = wordLevelsCount + n;
-                if ( need > wordLevels.length ) {
-                    int[] wordLevelsNew = new int [ need * 2 ];
-                    System.arraycopy ( wordLevels, 0, wordLevelsNew, 0, wordLevelsCount );
-                    wordLevels = wordLevelsNew;
+            int numLevels = ( levels != null ) ? levels.length : 0;
+            if ( numLevels > 0 ) {
+                int need = wordLevelsIndex + numLevels;
+                if ( need <= wordLevels.length ) {
+                    System.arraycopy ( levels, 0, wordLevels, wordLevelsIndex, numLevels );
+                } else {
+                    throw new IllegalStateException
+                        ( "word levels array too short: expect at least "
+                          + need + " entries, but has only " + wordLevels.length + " entries" );
                 }
-                System.arraycopy ( levels, 0, wordLevels, wordLevelsCount, n );
-                wordLevelsCount += n;
             }
+            wordLevelsIndex += numLevels;
         }
 
+        /**
+         * Given a word area info associated with a word fragment,
+         * concatenate letter space adjustments for each (possibly mapped) character.
+         * @param wordAreaInfo fragment info
+         */
         private void addLetterAdjust(AreaInfo wordAreaInfo) {
             int letterSpaceCount = wordAreaInfo.letterSpaceCount;
-            for (int i = wordAreaInfo.startIndex; i < wordAreaInfo.breakIndex; i++) {
-                if (letterSpaceAdjustIndex > 0) {
-                    MinOptMax adj = letterSpaceAdjustArray[i];
-                    letterSpaceAdjust[letterSpaceAdjustIndex] = adj == null ? 0 : adj.getOpt();
+            int wordLength = wordAreaInfo.getWordLength();
+            int taAdjust = textArea.getTextLetterSpaceAdjust();
+            for ( int i = 0, n = wordLength; i < n; i++ ) {
+                int j = letterSpaceAdjustIndex + i;
+                if ( j > 0 ) {
+                    int k = wordAreaInfo.startIndex + i;
+                    MinOptMax adj = ( k < letterSpaceAdjustArray.length )
+                        ? letterSpaceAdjustArray [ k ] : null;
+                    letterSpaceAdjust [ j ] = ( adj == null ) ? 0 : adj.getOpt();
                 }
-                if (letterSpaceCount > 0) {
-                    letterSpaceAdjust[letterSpaceAdjustIndex]
-                        += textArea.getTextLetterSpaceAdjust();
+                if ( letterSpaceCount > 0 ) {
+                    letterSpaceAdjust [ j ] += taAdjust;
                     letterSpaceCount--;
                 }
-                letterSpaceAdjustIndex++;
             }
+            letterSpaceAdjustIndex += wordLength;
         }
 
+        /**
+         * Given a word area info associated with a word fragment,
+         * concatenate glyph position adjustments for each (possibly mapped) character.
+         * @param wordAreaInfo fragment info
+         * @return true if an adjustment was non-zero
+         */
         private boolean addGlyphPositionAdjustments(AreaInfo wordAreaInfo) {
             boolean adjusted = false;
             int[][] gpa = wordAreaInfo.gposAdjustments;
-            if ( gpa != null ) {
-                // ensure that gposAdjustments is of sufficient length
-                int need = gposAdjustmentsIndex + gpa.length;
-                if ( need > gposAdjustments.length ) {
-                    int[][] gposAdjustmentsNew = new int [ need ][];
-                    System.arraycopy ( gposAdjustments, 0,
-                                       gposAdjustmentsNew, 0, gposAdjustments.length );
-                    for ( int i = gposAdjustments.length; i < need; i++ ) {
-                        gposAdjustmentsNew [ i ] = new int[4];
-                    }
-                    gposAdjustments = gposAdjustmentsNew;
-                }
-                // add gpos adjustments from word area info, incrementing gposAdjustmentsIndex
-                for ( int i = gposAdjustmentsIndex,
-                          n = gposAdjustmentsIndex + gpa.length, j = 0; i < n; i++ ) {
-                    int[] wpa1 = gposAdjustments [ i ];
-                    int[] wpa2 = gpa [ j++ ];
-                    for ( int k = 0; k < 4; k++ ) {
-                        int a = wpa2 [ k ];
-                        if ( a != 0 ) {
-                            wpa1 [ k ] += a; adjusted = true;
+            int numAdjusts = ( gpa != null ) ? gpa.length : 0;
+            int wordLength = wordAreaInfo.getWordLength();
+            if ( numAdjusts > 0 ) {
+                int need = gposAdjustmentsIndex + numAdjusts;
+                if ( need <= gposAdjustments.length ) {
+                    for ( int i = 0, n = wordLength, j = 0; i < n; i++ ) {
+                        if ( i < numAdjusts ) {
+                            int[] wpa1 = gposAdjustments [ gposAdjustmentsIndex + i ];
+                            int[] wpa2 = gpa [ j++ ];
+                            for ( int k = 0; k < 4; k++ ) {
+                                int a = wpa2 [ k ];
+                                if ( a != 0 ) {
+                                    wpa1 [ k ] += a; adjusted = true;
+                                }
+                            }
                         }
                     }
-                    gposAdjustmentsIndex++;
+                } else {
+                    throw new IllegalStateException
+                        ( "gpos adjustments array too short: expect at least "
+                          + need + " entries, but has only " + gposAdjustments.length
+                          + " entries" );
                 }
             }
+            gposAdjustmentsIndex += wordLength;
             return adjusted;
         }
 
@@ -794,7 +879,8 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                 }
             } else if (inWhitespace) {
                 if (ch != CharUtilities.SPACE || breakOpportunity) {
-                    prevAreaInfo = processWhitespace(alignment, sequence, breakOpportunity);
+                    prevAreaInfo = processWhitespace(alignment, sequence,
+                                                     breakOpportunity, prevLevel);
                 }
             } else {
                 if (areaInfo != null) {
@@ -839,7 +925,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         if (inWord) {
             processWord(alignment, sequence, prevAreaInfo, ch, false, false, prevLevel);
         } else if (inWhitespace) {
-            processWhitespace(alignment, sequence, !keepTogether);
+            processWhitespace(alignment, sequence, !keepTogether, prevLevel);
         } else if (areaInfo != null) {
             processLeftoverAreaInfo(alignment, sequence, areaInfo,
                     ch == CharUtilities.ZERO_WIDTH_SPACE);
@@ -881,7 +967,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
     }
 
     private AreaInfo processWhitespace(final int alignment,
-            final KnuthSequence sequence, final boolean breakOpportunity) {
+            final KnuthSequence sequence, final boolean breakOpportunity, int level) {
 
         if (LOG.isDebugEnabled()) {
             LOG.debug ( "PS: [" + thisStart + "," + nextStart + "]" );
@@ -893,7 +979,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         AreaInfo areaInfo = new AreaInfo
             ( thisStart, nextStart, nextStart - thisStart, 0,
               wordSpaceIPD.mult(nextStart - thisStart),
-              false, true, breakOpportunity, spaceFont, -1, null );
+              false, true, breakOpportunity, spaceFont, level, null );
 
         addAreaInfo(areaInfo);
 
@@ -920,10 +1006,10 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                         + " }" );
         }
 
-        // extract unmapped character sequence
+        // 1. extract unmapped character sequence
         CharSequence ics = foText.subSequence ( s, e );
 
-        // if script is not specified (by FO property) or it is specified as 'auto',
+        // 2. if script is not specified (by FO property) or it is specified as 'auto',
         // then compute dominant script
         if ( ( script == null ) || "auto".equals(script) ) {
             script = CharUtilities.scriptTagFromCode ( CharUtilities.dominantScript ( ics ) );
@@ -932,13 +1018,10 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             language = "dflt";
         }
 
-        // perform mapping (of chars to glyphs ... to glyphs ... to chars)
+        // 3. perform mapping of chars to glyphs ... to glyphs ... to chars
         CharSequence mcs = font.performSubstitution ( ics, script, language );
 
-        // memoize mapping
-        foText.addMapping ( s, e, mcs );
-
-        // compute glyph position adjustment on (substituted) characters
+        // 4. compute glyph position adjustments on (substituted) characters
         int[][] gpa;
         if ( font.performsPositioning() ) {
             gpa = font.performPositioning ( mcs, script, language );
@@ -946,6 +1029,16 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             gpa = null;
         }
 
+        // 5. reorder combining marks so that they precede (within the mapped char sequence) the
+        // base to which they are applied; N.B. position adjustments (gpa) are reordered in place
+        mcs = font.reorderCombiningMarks ( mcs, gpa, script, language );
+
+        // 6. if mapped sequence differs from input sequence, then memoize mapped sequence
+        if ( !CharUtilities.isSameSequence ( mcs, ics ) ) {
+            foText.addMapping ( s, e, mcs );
+        }
+
+        // 7. compute word ipd based on final position adjustments
         MinOptMax ipd = MinOptMax.ZERO;
         for ( int i = 0, n = mcs.length(); i < n; i++ ) {
             char c = mcs.charAt ( i );
@@ -1054,7 +1147,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         Font font = FontSelector.selectFontForCharactersInText
             ( foText, thisStart, lastIndex, foText, this );
         AreaInfo areaInfo;
-        if ( font.performsSubstitution() ) {
+        if ( font.performsSubstitution() || font.performsPositioning() ) {
             areaInfo = processWordMapping
                 ( lastIndex, font, prevAreaInfo, breakOpportunity ? ch : 0, endsWithHyphen, level );
         } else {
@@ -1162,7 +1255,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             // add letter spaces
             boolean isWordEnd
                 = (stopIndex == areaInfo.breakIndex)
-                && (areaInfo.letterSpaceCount < areaInfo.getCharLength());
+                && (areaInfo.letterSpaceCount < areaInfo.getWordLength());
             int letterSpaceCount = isWordEnd ? stopIndex - startIndex - 1 : stopIndex - startIndex;
 
             assert letterSpaceCount >= 0;
@@ -1283,7 +1376,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         int leafValue = ((LeafPosition) pos).getLeafPos() + changeOffset;
         if (leafValue != -1) {
             AreaInfo areaInfo = getAreaInfo(leafValue);
-            StringBuffer buffer = new StringBuffer(areaInfo.getCharLength());
+            StringBuffer buffer = new StringBuffer(areaInfo.getWordLength());
             for (int i = areaInfo.startIndex; i < areaInfo.breakIndex; i++) {
                 buffer.append(foText.charAt(i));
             }

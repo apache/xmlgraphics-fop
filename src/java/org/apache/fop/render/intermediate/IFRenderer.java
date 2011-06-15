@@ -1324,10 +1324,21 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
             float startx, float starty,
             float width, float height,
             BorderProps bpsBefore, BorderProps bpsAfter,
-            BorderProps bpsStart, BorderProps bpsEnd) {
+            BorderProps bpsStart, BorderProps bpsEnd, int level) {
         Rectangle rect = toMillipointRectangle(startx, starty, width, height);
         try {
-            painter.drawBorderRect(rect, bpsBefore, bpsAfter, bpsStart, bpsEnd);
+            BorderProps bpsTop = bpsBefore;
+            BorderProps bpsBottom = bpsAfter;
+            BorderProps bpsLeft;
+            BorderProps bpsRight;
+            if ( ( level == -1 ) || ( ( level & 1 ) == 0 ) ) {
+                bpsLeft = bpsStart;
+                bpsRight = bpsEnd;
+            } else {
+                bpsLeft = bpsEnd;
+                bpsRight = bpsStart;
+            }
+            painter.drawBorderRect(rect, bpsTop, bpsBottom, bpsLeft, bpsRight);
         } catch (IFException ife) {
             handleIFException(ife);
         }

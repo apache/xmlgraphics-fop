@@ -185,7 +185,7 @@ public class ExternalDocumentLayoutManager extends AbstractPageSequenceLayoutMan
         TraitSetter.setProducerID(imageArea, fobj.getId());
         transferForeignAttributes(imageArea);
 
-        InlineViewport vp = new InlineViewport(imageArea);
+        InlineViewport vp = new InlineViewport(imageArea, fobj.getBidiLevel());
         TraitSetter.setProducerID(vp, fobj.getId());
         vp.setIPD(imageSize.width);
         vp.setBPD(imageSize.height);
