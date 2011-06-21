@@ -151,6 +151,7 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler implements Ima
         private boolean useFS10;
         private int maxPixelSize;
         private boolean usePageSegments;
+        private boolean resample;
         private Dimension resampledDim;
         private ImageSize intrinsicSize;
         private ImageSize effIntrinsicSize;
@@ -187,8 +188,14 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler implements Ima
                         (int)Math.ceil(UnitConv.mpt2px(targetSize.getWidth(), resolution)),
                         (int)Math.ceil(UnitConv.mpt2px(targetSize.getHeight(), resolution)));
                 resourceInfo.setImageDimension(resampledDim);
-                effIntrinsicSize = new ImageSize(
-                        resampledDim.width, resampledDim.height, resolution);
+                //Only resample/downsample if image is smaller than its intrinsic size
+                //to make print file smaller
+                this.resample = resampledDim.width < renderedImage.getWidth()
+                        && resampledDim.height < renderedImage.getHeight();
+                if (resample) {
+                    effIntrinsicSize = new ImageSize(
+                            resampledDim.width, resampledDim.height, resolution);
+                }
             }
 
             //Update image object info
@@ -221,11 +228,7 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler implements Ima
                 imageObjectInfo.setCreatePageSegment(true);
 
                 float ditheringQuality = paintingState.getDitheringQuality();
-                //Only resample/downsample if image is smaller than its intrinsic size
-                //to make print file smaller
-                boolean resample = resampledDim.width < renderedImage.getWidth()
-                    && resampledDim.height < renderedImage.getHeight();
-                if (resample) {
+                if (this.resample) {
                     if (log.isDebugEnabled()) {
                         log.debug("Resample from " + intrinsicSize.getDimensionPx()
                                 + " to " + resampledDim);
