@@ -95,7 +95,7 @@ See main/fresh-site/src/documentation/skinconf.xml for details.
 <!-- Optional text trademark statement below the copyright statement -->
   <trademark-statement>
     Apache, Apache Forrest, the Apache feather logo, and the Apache Forrest
-    logos are trademarks of The Apache Software Foundation.
+    logos are trademarks of The Apache Software Foundation. All other marks mentioned may be trademarks or registered trademarks of their respective owners.
   </trademark-statement>
 <!-- Some skins use this to form a 'breadcrumb trail' of links.
     If you don't want these, then set the attributes to blank.
