@@ -15,20 +15,20 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-
 <!--
 Skin configuration file. This file contains details of your project,
 which will be used to configure the chosen Forrest skin.
--->
 
-<!DOCTYPE skinconfig PUBLIC "-//APACHE//DTD Skin Configuration V0.6-3//EN" "http://forrest.apache.org/dtd/skinconfig-v06-3.dtd">
+Explanation of some elements has been removed from this file.
+See main/fresh-site/src/documentation/skinconf.xml for details.
+-->
+<!DOCTYPE skinconfig PUBLIC "-//APACHE//DTD Skin Configuration V0.8-2//EN" "http://forrest.apache.org/dtd/skinconfig-v08-2.dtd">
 <skinconfig>
-  <!-- To enable lucene search add provider="lucene" (default is google).
+<!-- To enable lucene search add provider="lucene"
     Add box-location="alt" to move the search box to an alternate location
     (if the skin supports it) and box-location="all" to show it in all
     available locations on the page.  Remove the <search> element to show
-    no search box. @domain will enable sitesearch for the specific domain with google.
-    In other words google will search the @domain for the query string.
+    no search box.
   -->
   <search name="Apache FOP" domain="xmlgraphics.apache.org" provider="google"/>
 
@@ -60,8 +60,7 @@ which will be used to configure the chosen Forrest skin.
   <!-- Render mailto: links unrecognisable by spam harvesters? -->
   <obfuscate-mail-links>true</obfuscate-mail-links>
   <obfuscate-mail-value>.at.</obfuscate-mail-value>
-
-  <!-- Disable the javascript facility to change the font size -->
+<!-- Disable the javascript facility to change the font size -->
   <disable-font-script>false</disable-font-script>
 
   <!-- mandatory project logo
@@ -86,16 +85,21 @@ which will be used to configure the chosen Forrest skin.
        default skin: renders it at the bottom-left corner -->
   <host-url></host-url>
   <host-logo></host-logo>
-
-  <!-- relative url of a favicon file, normally favicon.ico -->
-  <favicon-url></favicon-url>
-
-  <!-- The following used to construct a copyright statement -->
-  <year>1999-2009</year>
-  <vendor>The Apache Software Foundation.</vendor>
+<!-- relative url of a favicon file, normally favicon.ico -->
+  <favicon-url>favicon.ico</favicon-url>
+<!-- The following used to construct a copyright statement -->
+  <!-- <year>1999-2011</year> -->
+  <year inception="true">1999</year>
+  <vendor>The Apache Software Foundation. Licensed under Apache License 2.0</vendor>
   <copyright-link>http://www.apache.org/licenses/</copyright-link>
-  
-  <!-- Some skins use this to form a 'breadcrumb trail' of links.
+<!-- Optional text trademark statement below the copyright statement -->
+  <trademark-statement>
+    Apache, Apache Forrest, the Apache feather logo, and the Apache Forrest
+    logos are trademarks of The Apache Software Foundation.
+  </trademark-statement>
+<!-- Some skins use this to form a 'breadcrumb trail' of links.
+    If you don't want these, then set the attributes to blank.
+    The DTD purposefully requires them.
     Use location="alt" to move the trail to an alternate location
     (if the skin supports it).
           Omit the location attribute to display the trail in the default location.
@@ -107,8 +111,7 @@ which will be used to configure the chosen Forrest skin.
     <link2 name="XML Federation" href="http://xml.apache.org/"/>
     <link3 name="xmlgraphics.apache.org" href="http://xmlgraphics.apache.org/"/>
   </trail>
-
-  <!-- Configure the TOC, i.e. the Table of Contents.
+<!-- Configure the TOC, i.e. the Table of Contents.
   @max-depth
    how many "section" levels need to be included in the
    generated Table of Contents (TOC). 
@@ -118,8 +121,7 @@ which will be used to configure the chosen Forrest skin.
    Where to show the TOC.
   -->
   <toc max-depth="2" min-sections="1" location="page"/>
-
-  <!-- Heading types can be clean|underlined|boxed  -->
+<!-- Heading types can be clean|underlined|boxed  -->
   <headings type="underlined"/>
   
   <!-- The optional feedback element will be used to construct a
@@ -167,7 +169,6 @@ which will be used to configure the chosen Forrest skin.
     .menuitemgroup{ display: block;}
 
   </extra-css>
-
   <colors>
   <!-- These values are used for the generated CSS files. -->
 
@@ -302,10 +303,9 @@ which will be used to configure the chosen Forrest skin.
     <color name="footer" value="#E5E4D9"/>
 -->
   </colors>
- 
-  <!-- Settings specific to PDF output. -->
+<!-- Settings specific to PDF output.  -->
   <pdf>
-    <!-- 
+<!-- 
        Supported page sizes are a0, a1, a2, a3, a4, a5, executive,
        folio, legal, ledger, letter, quarto, tabloid (default letter).
        Supported page orientations are portrait, landscape (default
@@ -313,7 +313,7 @@ which will be used to configure the chosen Forrest skin.
        Supported text alignments are left, right, justify (default left).
     -->
     <page size="letter" orientation="portrait" text-align="justify"/>
-    <page-numbering-format>1</page-numbering-format>
+    <page-numbering-format>Page 1/1</page-numbering-format>
     <!--
        Margins can be specified for top, bottom, inner, and outer
        edges. If double-sided="false", the inner edge is always left
@@ -328,8 +328,7 @@ which will be used to configure the chosen Forrest skin.
       <inner>1in</inner>
       <outer>0.5in</outer>
     </margins>
-
-    <!--
+<!--
       Print the URL text next to all links going outside the file
     -->
     <show-external-urls>false</show-external-urls>
@@ -342,8 +341,7 @@ which will be used to configure the chosen Forrest skin.
     -->
     <disable-copyright-footer>false</disable-copyright-footer>
   </pdf>
-
-  <!-- 
+<!-- 
     Credits are typically rendered as a set of small clickable
     images in the page footer.
     
@@ -378,15 +376,13 @@ which will be used to configure the chosen Forrest skin.
       <height>125</height>
     </credit>
     -->
-    <!--
     <credit box-location="alt2">
-      <name>ApacheCon US 2009</name>
-      <url>http://us.apachecon.com/</url>
-      <image>http://apache.org/ads/ApacheCon/2009-usa-125x125.png</image>
+      <name>ApacheCon NA 2011</name>
+      <url>http://na11.apachecon.com/</url>
+      <image>http://apache.org/ads/ApacheCon/2011-na-125x125.png</image>
       <width>125</width>
       <height>125</height>
     </credit>
-    -->
     
     <credit role="pdf">
       <name>PDF created by Apache FOP</name>
