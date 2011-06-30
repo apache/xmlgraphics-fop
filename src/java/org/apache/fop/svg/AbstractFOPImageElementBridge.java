@@ -23,11 +23,15 @@ import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
 
+import org.w3c.dom.Element;
+import org.w3c.dom.svg.SVGDocument;
+
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.SVGImageElementBridge;
 import org.apache.batik.gvt.AbstractGraphicsNode;
 import org.apache.batik.gvt.GraphicsNode;
 import org.apache.batik.util.ParsedURL;
+
 import org.apache.xmlgraphics.image.loader.Image;
 import org.apache.xmlgraphics.image.loader.ImageException;
 import org.apache.xmlgraphics.image.loader.ImageFlavor;
@@ -39,8 +43,8 @@ import org.apache.xmlgraphics.image.loader.impl.ImageRawCCITTFax;
 import org.apache.xmlgraphics.image.loader.impl.ImageRawJPEG;
 import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
 import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
-import org.w3c.dom.Element;
-import org.w3c.dom.svg.SVGDocument;
+
+import org.apache.fop.image.loader.batik.BatikUtil;
 
 /**
  * Bridge class for the &lt;image> element when jpeg images.
@@ -63,6 +67,7 @@ public abstract class AbstractFOPImageElementBridge extends SVGImageElementBridg
      * @param purl the parsed url for the image resource
      * @return a new graphics node
      */
+    @Override
     protected GraphicsNode createImageGraphicsNode
                 (BridgeContext ctx, Element imageElement, ParsedURL purl) {
         AbstractFOPBridgeContext bridgeCtx = (AbstractFOPBridgeContext)ctx;
@@ -80,8 +85,11 @@ public abstract class AbstractFOPImageElementBridge extends SVGImageElementBridg
             if (image instanceof ImageXMLDOM) {
                 ImageXMLDOM xmlImage = (ImageXMLDOM)image;
                 if (xmlImage.getDocument() instanceof SVGDocument) {
-                    return createSVGImageNode(ctx, imageElement,
-                            (SVGDocument)xmlImage.getDocument());
+                    //Clone DOM because the Batik's CSS Parser attaches to the DOM and is therefore
+                    //no thread-safe.
+                    SVGDocument clonedDoc = (SVGDocument)BatikUtil.cloneSVGDocument(
+                            xmlImage.getDocument());
+                    return createSVGImageNode(ctx, imageElement, clonedDoc);
                 } else {
                     //Convert image to Graphics2D
                     image = manager.convertImage(xmlImage,
