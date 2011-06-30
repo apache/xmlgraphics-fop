@@ -86,7 +86,7 @@ public abstract class AbstractFOPImageElementBridge extends SVGImageElementBridg
                 ImageXMLDOM xmlImage = (ImageXMLDOM)image;
                 if (xmlImage.getDocument() instanceof SVGDocument) {
                     //Clone DOM because the Batik's CSS Parser attaches to the DOM and is therefore
-                    //no thread-safe.
+                    //not thread-safe.
                     SVGDocument clonedDoc = (SVGDocument)BatikUtil.cloneSVGDocument(
                             xmlImage.getDocument());
                     return createSVGImageNode(ctx, imageElement, clonedDoc);
@@ -108,22 +108,25 @@ public abstract class AbstractFOPImageElementBridge extends SVGImageElementBridg
                         new ImageException("Cannot convert an image to a usable format: " + purl));
             }
 
-            Rectangle2D imgBounds = getImageBounds(ctx, imageElement);
-            Rectangle2D bounds = specializedNode.getPrimitiveBounds();
-            float [] vb = new float[4];
-            vb[0] = 0; // x
-            vb[1] = 0; // y
-            vb[2] = (float) bounds.getWidth(); // width
-            vb[3] = (float) bounds.getHeight(); // height
+            if (specializedNode != null) {
+                Rectangle2D imgBounds = getImageBounds(ctx, imageElement);
+                Rectangle2D bounds = specializedNode.getPrimitiveBounds();
+                float [] vb = new float[4];
+                vb[0] = 0; // x
+                vb[1] = 0; // y
+                vb[2] = (float) bounds.getWidth(); // width
+                vb[3] = (float) bounds.getHeight(); // height
 
-            // handles the 'preserveAspectRatio', 'overflow' and 'clip'
-            // and sets the appropriate AffineTransform to the image node
-            initializeViewport(ctx, imageElement, specializedNode, vb, imgBounds);
-            return specializedNode;
+                // handles the 'preserveAspectRatio', 'overflow' and 'clip'
+                // and sets the appropriate AffineTransform to the image node
+                initializeViewport(ctx, imageElement, specializedNode, vb, imgBounds);
+                return specializedNode;
+            }
         } catch (Exception e) {
             ctx.getUserAgent().displayError(e);
         }
 
+        //Fallback
         return superCreateGraphicsNode(ctx, imageElement, purl);
     }
 
@@ -249,7 +252,7 @@ public abstract class AbstractFOPImageElementBridge extends SVGImageElementBridg
     /**
      * A node that holds a Graphics2D image.
      */
-    public class Graphics2DNode extends AbstractGraphicsNode {
+    public static class Graphics2DNode extends AbstractGraphicsNode {
 
         private final ImageGraphics2D image;
 
