@@ -20,11 +20,10 @@
 package org.apache.fop.fonts;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+
+import org.apache.xmlgraphics.fonts.Glyphs;
 
 import org.apache.fop.util.CharUtilities;
-import org.apache.xmlgraphics.fonts.Glyphs;
 
 /**
  * Abstract base class for code point mapping classes (1-byte character encodings).
@@ -37,8 +36,6 @@ public class AbstractCodePointMapping implements SingleByteEncoding {
     private char[] codepoints;
     private char[] unicodeMap; //code point to Unicode char
     private String[] charNameMap; //all character names in the encoding
-    //Here we accumulate all mappings we have found through substitution
-    private Map<Character, Character> fallbackMap;
 
     /**
      * Main constructor.
@@ -141,42 +138,7 @@ public class AbstractCodePointMapping implements SingleByteEncoding {
                 bot = mid + 1;
             }
         }
-
-        //Fallback: using cache
-        synchronized (this) {
-            if (fallbackMap != null) {
-                Character fallback = fallbackMap.get(new Character(c));
-                if (fallback != null) {
-                    return fallback.charValue();
-                }
-            }
-        }
-        //Fallback: find alternatives (slow!)
-        String glyphName = Glyphs.charToGlyphName(c);
-        if (glyphName.length() > 0) {
-            String[] alternatives = Glyphs.getCharNameAlternativesFor(glyphName);
-            if (alternatives != null) {
-                for (int i = 0, ic = alternatives.length; i < ic; i++) {
-                    int idx = getCodePointForGlyph(alternatives[i]);
-                    if (idx >= 0) {
-                        putFallbackCharacter(c, (char)idx);
-                        return (char)idx;
-                    }
-                }
-            }
-        }
-
-        putFallbackCharacter(c, NOT_FOUND_CODE_POINT);
         return NOT_FOUND_CODE_POINT;
-    }
-
-    private void putFallbackCharacter(char c, char mapTo) {
-        synchronized (this) {
-            if (this.fallbackMap == null) {
-                this.fallbackMap = new HashMap<Character, Character>();
-            }
-            this.fallbackMap.put(new Character(c), new Character(mapTo));
-        }
     }
 
     /**
