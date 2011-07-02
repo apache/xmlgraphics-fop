@@ -81,7 +81,7 @@ public class SingleByteFont extends CustomFont {
         if (i < 256) {
             int idx = i - getFirstChar();
             if (idx >= 0 && idx < width.length) {
-                return size * width[i - getFirstChar()];
+                return size * width[idx];
             }
         } else if (this.additionalEncodings != null) {
             int encodingIndex = (i / 256) - 1;
@@ -89,7 +89,7 @@ public class SingleByteFont extends CustomFont {
             int codePoint = i % 256;
             NamedCharacter nc = encoding.getCharacterForIndex(codePoint);
             UnencodedCharacter uc
-                = this.unencodedCharacters.get(new Character(nc.getSingleUnicodeValue()));
+                = this.unencodedCharacters.get(Character.valueOf(nc.getSingleUnicodeValue()));
             return size * uc.getWidth();
         }
         return 0;
@@ -172,7 +172,7 @@ public class SingleByteFont extends CustomFont {
 
     private char mapUnencodedChar(char ch) {
         if (this.unencodedCharacters != null) {
-            UnencodedCharacter unencoded = this.unencodedCharacters.get(new Character(ch));
+            UnencodedCharacter unencoded = this.unencodedCharacters.get(Character.valueOf(ch));
             if (unencoded != null) {
                 if (this.additionalEncodings == null) {
                     this.additionalEncodings = new ArrayList<SimpleSingleByteEncoding>();
@@ -294,7 +294,7 @@ public class SingleByteFont extends CustomFont {
         }
         if (ch.hasSingleUnicodeValue()) {
             UnencodedCharacter uc = new UnencodedCharacter(ch, width);
-            this.unencodedCharacters.put(new Character(ch.getSingleUnicodeValue()), uc);
+            this.unencodedCharacters.put(Character.valueOf(ch.getSingleUnicodeValue()), uc);
         } else {
             //Cannot deal with unicode sequences, so ignore this character
         }
@@ -362,7 +362,7 @@ public class SingleByteFont extends CustomFont {
         for (int i = 0, c = arr.length; i < c; i++) {
             NamedCharacter nc = enc.getCharacterForIndex(enc.getFirstChar() + i);
             UnencodedCharacter uc = this.unencodedCharacters.get(
-                    new Character(nc.getSingleUnicodeValue()));
+                    Character.valueOf(nc.getSingleUnicodeValue()));
             arr[i] = uc.getWidth();
         }
         return arr;
