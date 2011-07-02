@@ -25,8 +25,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.fop.util.CharUtilities;
 import org.apache.xmlgraphics.fonts.Glyphs;
+
+import org.apache.fop.util.CharUtilities;
 
 /**
  * A simple implementation of the OneByteEncoding mostly used for encodings that are constructed
@@ -53,7 +54,7 @@ public class SimpleSingleByteEncoding implements SingleByteEncoding {
 
     /** {@inheritDoc} */
     public char mapChar(char c) {
-        Character nc = charMap.get(new Character(c));
+        Character nc = charMap.get(Character.valueOf(c));
         if (nc != null) {
             return nc.charValue();
         }
@@ -118,7 +119,7 @@ public class SimpleSingleByteEncoding implements SingleByteEncoding {
         }
         char newSlot = (char)(getLastChar() + 1);
         this.mapping.add(ch);
-        this.charMap.put(new Character(ch.getSingleUnicodeValue()), new Character(newSlot));
+        this.charMap.put(Character.valueOf(ch.getSingleUnicodeValue()), Character.valueOf(newSlot));
         return newSlot;
     }
 
