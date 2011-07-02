@@ -84,6 +84,7 @@ public class PDFPainter extends AbstractIFPainter {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected IFContext getContext() {
         return this.documentHandler.getContext();
     }
@@ -153,6 +154,7 @@ public class PDFPainter extends AbstractIFPainter {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected RenderingContext createRenderingContext() {
         PDFRenderingContext pdfContext = new PDFRenderingContext(
                 getUserAgent(), generator, this.documentHandler.currentPage, getFontInfo());
@@ -255,6 +257,7 @@ public class PDFPainter extends AbstractIFPainter {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void drawBorderRect(Rectangle rect, BorderProps before, BorderProps after,
             BorderProps start, BorderProps end) throws IFException {
         if (before != null || after != null || start != null || end != null) {
@@ -268,6 +271,7 @@ public class PDFPainter extends AbstractIFPainter {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void drawLine(Point start, Point end, int width, Color color, RuleStyle style)
         throws IFException {
         generator.endTextObject();
@@ -278,7 +282,7 @@ public class PDFPainter extends AbstractIFPainter {
         if (fontName == null) {
             throw new NullPointerException("fontName must not be null");
         }
-        Typeface tf = (Typeface)getFontInfo().getFonts().get(fontName);
+        Typeface tf = getFontInfo().getFonts().get(fontName);
         if (tf instanceof LazyFont) {
             tf = ((LazyFont)tf).getRealFont();
         }
@@ -337,16 +341,7 @@ public class PDFPainter extends AbstractIFPainter {
             float glyphAdjust = 0;
             if (font.hasChar(orgChar)) {
                 ch = font.mapChar(orgChar);
-                if (singleByteFont != null && singleByteFont.hasAdditionalEncodings()) {
-                    int encoding = ch / 256;
-                    if (encoding == 0) {
-                        textutil.updateTf(fontName, fontSize, tf.isMultiByte());
-                    } else {
-                        textutil.updateTf(fontName + "_" + Integer.toString(encoding),
-                                fontSize, tf.isMultiByte());
-                        ch = (char)(ch % 256);
-                    }
-                }
+                ch = selectAndMapSingleByteFont(singleByteFont, fontName, fontSize, textutil, ch);
                 if ((wordSpacing != 0) && CharUtilities.isAdjustableSpace(orgChar)) {
                     glyphAdjust += wordSpacing;
                 }
@@ -362,6 +357,8 @@ public class PDFPainter extends AbstractIFPainter {
                         glyphAdjust += wordSpacing;
                     }
                 }
+                ch = selectAndMapSingleByteFont(singleByteFont, fontName, fontSize,
+                        textutil, ch);
             }
             textutil.writeTJMappedChar(ch);
 
@@ -375,6 +372,21 @@ public class PDFPainter extends AbstractIFPainter {
 
         }
         textutil.writeTJ();
+    }
+
+    private char selectAndMapSingleByteFont(SingleByteFont singleByteFont, String fontName,
+            float fontSize, PDFTextUtil textutil, char ch) {
+        if (singleByteFont != null && singleByteFont.hasAdditionalEncodings()) {
+            int encoding = ch / 256;
+            if (encoding == 0) {
+                textutil.updateTf(fontName, fontSize, singleByteFont.isMultiByte());
+            } else {
+                textutil.updateTf(fontName + "_" + Integer.toString(encoding),
+                        fontSize, singleByteFont.isMultiByte());
+                ch = (char)(ch % 256);
+            }
+        }
+        return ch;
     }
 
 }
