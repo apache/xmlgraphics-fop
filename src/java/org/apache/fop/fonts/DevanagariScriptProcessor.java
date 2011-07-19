@@ -44,7 +44,7 @@ public class DevanagariScriptProcessor extends IndicScriptProcessor {
     }
 
     @Override
-    protected Class getSyllabizerClass() {
+    protected Class<? extends DevanagariSyllabizer> getSyllabizerClass() {
         return DevanagariSyllabizer.class;
     }
 

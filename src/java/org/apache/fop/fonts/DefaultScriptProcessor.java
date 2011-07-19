@@ -19,8 +19,6 @@
 
 package org.apache.fop.fonts;
 
-import java.util.Map;
-
 // CSOFF: LineLengthCheck
 
 /**

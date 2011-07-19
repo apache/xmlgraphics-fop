@@ -19,9 +19,7 @@
 
 package org.apache.fop.fonts;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.fop.util.CharUtilities;
@@ -39,7 +37,7 @@ public abstract class ScriptProcessor {
 
     private final String script;
 
-    private static Map processors = new HashMap();
+    private static Map<String, ScriptProcessor> processors = new HashMap<String, ScriptProcessor>();
 
     /**
      * Instantiate a script processor.
@@ -207,7 +205,7 @@ public abstract class ScriptProcessor {
     public static synchronized ScriptProcessor getInstance ( String script ) {
         ScriptProcessor sp = null;
         assert processors != null;
-        if ( ( sp = (ScriptProcessor) processors.get ( script ) ) == null ) {
+        if ( ( sp = processors.get ( script ) ) == null ) {
             processors.put ( script, sp = createProcessor ( script ) );
         }
         return sp;
