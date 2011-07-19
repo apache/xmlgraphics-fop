@@ -207,7 +207,7 @@ public class IndicScriptProcessor extends DefaultScriptProcessor {
      * Get script specific syllabizer class.
      * @return a syllabizer class object or null
      */
-    protected Class getSyllabizerClass() {
+    protected Class<? extends Syllabizer> getSyllabizerClass() {
         return null;
     }
 
@@ -391,9 +391,7 @@ public class IndicScriptProcessor extends DefaultScriptProcessor {
             if ( o instanceof Syllabizer ) {
                 Syllabizer s = (Syllabizer) o;
                 if ( ( d = script.compareTo ( s.script ) ) == 0 ) {
-                    if ( ( d = language.compareTo ( s.language ) ) == 0 ) {
-                        d = 0;
-                    }
+                    d = language.compareTo ( s.language );
                 }
             } else {
                 d = -1;
@@ -401,7 +399,7 @@ public class IndicScriptProcessor extends DefaultScriptProcessor {
             return d;
         }
         private static Map<String,Syllabizer> syllabizers = new HashMap<String,Syllabizer>();
-        static Syllabizer getSyllabizer ( String script, String language, Class syllabizerClass ) {
+        static Syllabizer getSyllabizer ( String script, String language, Class<? extends Syllabizer> syllabizerClass ) {
             String sid = makeSyllabizerId ( script, language );
             Syllabizer s = syllabizers.get ( sid );
             if ( s == null ) {
@@ -415,10 +413,10 @@ public class IndicScriptProcessor extends DefaultScriptProcessor {
         static String makeSyllabizerId ( String script, String language ) {
             return script + ":" + language;
         }
-        static Syllabizer makeSyllabizer ( String script, String language, Class syllabizerClass ) {
+        static Syllabizer makeSyllabizer ( String script, String language, Class<? extends Syllabizer> syllabizerClass ) {
             Syllabizer s;
             try {
-                Constructor cf = syllabizerClass.getDeclaredConstructor ( new Class[] { String.class, String.class } );
+                Constructor<? extends Syllabizer> cf = syllabizerClass.getDeclaredConstructor ( new Class[] { String.class, String.class } );
                 s = (Syllabizer) cf.newInstance ( script, language );
             } catch ( NoSuchMethodException e ) {
                 s = null;
