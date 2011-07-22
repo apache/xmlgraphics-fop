@@ -30,6 +30,7 @@
     <person name="Andreas Delmelle"  email="adelmelle@apache.org"     id="AD"/>
     <person name="Luca Furini"       email="lfurini@apache.org"       id="LF"/>
     <person name="Christian Geisert" email="chrisg@apache.org"        id="CG"/>
+    <person name="Peter Hancock"     email="phancock@apache.org"      id="PH"/>
     <person name="Vincent Hennebert" email="vhennebert@apache.org"    id="VH"/>
     <person name="Clay Leeds"        email="clay@apache.org"          id="CL"/>
     <person name="Manuel Mall"       email="manuel@apache.org"        id="MM"/>
@@ -59,6 +60,17 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Fonts" dev="JM" type="fix" fixes-bug="50605">
+        Fixed a number of bugs concerning Type 1 and other single-byte fonts
+        (glyph width mismatches and overlapping characters).
+      </action>
+      <action context="Renderers" dev="JM" type="fix">
+        Fixed a multi-threading bug for SVG images included through svg:image inside SVG documents.
+      </action>
+      <action context="Renderers" dev="PH" type="add">
+        Added an IFDocumentHandler filter for triggering rendering events.  Created an Event that
+        captures an end page event with the page number.
+      </action>
       <action context="Renderers" dev="VH" type="fix">
         Bugfix: alternative text not working in tagged PDF for TIFF images.
       </action>

@@ -680,8 +680,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager
 
         Paragraph lastPar = null;
 
-        InlineLevelLayoutManager curLM = (InlineLevelLayoutManager) getChildLM();
-        while (curLM != null) {
+        InlineLevelLayoutManager curLM;
+        while ((curLM = (InlineLevelLayoutManager) getChildLM()) != null) {
             List inlineElements = curLM.getNextKnuthElements(inlineLC, effectiveAlignment);
             if (inlineElements == null || inlineElements.size() == 0) {
                 /* curLM.getNextKnuthElements() returned null or an empty list;
@@ -778,7 +778,6 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                     }
                 }
             } // end of loop over returnedList
-            curLM = (InlineLevelLayoutManager) getChildLM();
         }
 
         if (lastPar != null) {
@@ -1180,6 +1179,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     }
 
     /** {@inheritDoc} */
+    @Override
     public List getChangedKnuthElements(List oldList, int alignment) {
         List<KnuthElement> returnList = new LinkedList<KnuthElement>();
         for (int p = 0; p < knuthParagraphs.size(); p++) {
@@ -1450,7 +1450,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     private void addInlineArea(LayoutContext context, LineBreakPosition lbp,
             boolean isLastPosition) {
 
-        KnuthSequence seq = (KnuthSequence) knuthParagraphs.get(lbp.parIndex);
+        KnuthSequence seq = knuthParagraphs.get(lbp.parIndex);
         int startElementIndex = lbp.startIndex;
         int endElementIndex = lbp.getLeafPos();
 
