@@ -83,9 +83,6 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     private Map<String, PageSegmentDescriptor> pageSegmentMap
         = new java.util.HashMap<String, PageSegmentDescriptor>();
 
-    /** Medium Map referenced on previous page **/
-    private String lastMediumMap;
-
     private static enum Location {
         ELSEWHERE, IN_DOCUMENT_HEADER, FOLLOWING_PAGE_SEQUENCE, IN_PAGE_HEADER
     }
@@ -379,9 +376,8 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
             }
             AFPInvokeMediumMap imm = (AFPInvokeMediumMap)extension;
             String mediumMap = imm.getName();
-            if (mediumMap != null && !mediumMap.equals(lastMediumMap)) {
+            if (mediumMap != null) {
                 dataStream.createInvokeMediumMap(mediumMap);
-                lastMediumMap = mediumMap;
             }
         } else if (extension instanceof AFPIncludeFormMap) {
             AFPIncludeFormMap formMap = (AFPIncludeFormMap)extension;

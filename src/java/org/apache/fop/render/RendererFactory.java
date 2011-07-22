@@ -35,6 +35,7 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.area.AreaTreeHandler;
 import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.render.intermediate.AbstractIFDocumentHandlerMaker;
+import org.apache.fop.render.intermediate.EventProducingFilter;
 import org.apache.fop.render.intermediate.IFDocumentHandler;
 import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
 import org.apache.fop.render.intermediate.IFRenderer;
@@ -389,7 +390,7 @@ public class RendererFactory {
         if (configurator != null) {
             configurator.configure(documentHandler);
         }
-        return documentHandler;
+        return new EventProducingFilter(documentHandler, userAgent);
     }
 
     /**

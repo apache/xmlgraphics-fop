@@ -65,6 +65,7 @@ public class Type1FontLoader extends FontLoader {
     private static final String[] AFM_EXTENSIONS = new String[] {".AFM", ".afm", ".Afm"};
 
     /** {@inheritDoc} */
+    @Override
     protected void read() throws IOException {
         AFMFile afm = null;
         PFMFile pfm = null;
@@ -173,10 +174,10 @@ public class Type1FontLoader extends FontLoader {
         }
     }
 
-    private Set toGlyphSet(String[] glyphNames) {
-        Set glyphSet = new java.util.HashSet();
-        for (int i = 0, c = glyphNames.length; i < c; i++) {
-            glyphSet.add(glyphNames[i]);
+    private Set<String> toGlyphSet(String[] glyphNames) {
+        Set<String> glyphSet = new java.util.HashSet<String>();
+        for (String name : glyphNames) {
+            glyphSet.add(name);
         }
         return glyphSet;
     }
@@ -188,10 +189,9 @@ public class Type1FontLoader extends FontLoader {
      */
     private void addUnencodedBasedOnEncoding(AFMFile afm) {
         SingleByteEncoding encoding = singleFont.getEncoding();
-        Set glyphNames = toGlyphSet(encoding.getCharNameMap());
-        List charMetrics = afm.getCharMetrics();
-        for (int i = 0, c = afm.getCharCount(); i < c; i++) {
-            AFMCharMetrics metrics = (AFMCharMetrics)charMetrics.get(i);
+        Set<String> glyphNames = toGlyphSet(encoding.getCharNameMap());
+        List<AFMCharMetrics> charMetrics = afm.getCharMetrics();
+        for (AFMCharMetrics metrics : charMetrics) {
             String charName = metrics.getCharName();
             if (charName != null && !glyphNames.contains(charName)) {
                 singleFont.addUnencodedCharacter(metrics.getCharacter(),
@@ -357,9 +357,7 @@ public class Type1FontLoader extends FontLoader {
 
             returnFont.setFirstChar(afm.getFirstChar());
             returnFont.setLastChar(afm.getLastChar());
-            Iterator iter = afm.getCharMetrics().iterator();
-            while (iter.hasNext()) {
-                AFMCharMetrics chm = (AFMCharMetrics)iter.next();
+            for (AFMCharMetrics chm : afm.getCharMetrics()) {
                 if (chm.hasCharCode()) {
                     singleFont.setWidth(chm.getCharCode(), (int)Math.round(chm.getWidthX()));
                 }
