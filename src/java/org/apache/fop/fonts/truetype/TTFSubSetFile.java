@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -469,9 +470,9 @@ public class TTFSubSetFile extends TTFFile {
      * Returns a List containing the glyph itself plus all glyphs
      * that this composite glyph uses
      */
-    private List getIncludedGlyphs(FontFileReader in, int glyphOffset,
+    private List<Integer> getIncludedGlyphs(FontFileReader in, int glyphOffset,
                                      Integer glyphIdx) throws IOException {
-        List ret = new java.util.ArrayList();
+        List<Integer> ret = new java.util.ArrayList<Integer>();
         ret.add(glyphIdx);
         int offset = glyphOffset + (int)mtxTab[glyphIdx.intValue()].getOffset() + 10;
         Integer compositeIdx = null;
@@ -479,7 +480,7 @@ public class TTFSubSetFile extends TTFFile {
         boolean moreComposites = true;
         while (moreComposites) {
             flags = in.readTTFUShort(offset);
-            compositeIdx = new Integer(in.readTTFUShort(offset + 2));
+            compositeIdx = Integer.valueOf(in.readTTFUShort(offset + 2));
             ret.add(compositeIdx);
 
             offset += 4;
@@ -510,14 +511,27 @@ public class TTFSubSetFile extends TTFFile {
 
 
     /**
-     * Rewrite all compositepointers in glyphindex glyphIdx
-     *
+     * We need to remember which composites were already remapped because the value to be
+     * remapped is being read from the TTF file and being replaced right there. Doing this
+     * twice would create a bad map the second time.
      */
-    private void remapComposite(FontFileReader in, Map glyphs,
-                                int glyphOffset,
+    private Set<Long> remappedComposites = null;
+
+    /**
+     * Rewrite all compositepointers in glyphindex glyphIdx
+     */
+    private void remapComposite(FontFileReader in, Map<Integer, Integer> glyphs,
+                                long glyphOffset,
                                 Integer glyphIdx) throws IOException {
-        int offset = glyphOffset + (int)mtxTab[glyphIdx.intValue()].getOffset()
-                     + 10;
+        if (remappedComposites == null) {
+            remappedComposites = new java.util.HashSet<Long>();
+        }
+        TTFMtxEntry mtxEntry = mtxTab[glyphIdx.intValue()];
+        long offset = glyphOffset + mtxEntry.getOffset() + 10;
+        if (remappedComposites.contains(offset)) {
+            return;
+        }
+        remappedComposites.add(offset);
 
         Integer compositeIdx = null;
         int flags = 0;
@@ -525,8 +539,8 @@ public class TTFSubSetFile extends TTFFile {
 
         while (moreComposites) {
             flags = in.readTTFUShort(offset);
-            compositeIdx = new Integer(in.readTTFUShort(offset + 2));
-            Integer newIdx = (Integer)glyphs.get(compositeIdx);
+            compositeIdx = Integer.valueOf(in.readTTFUShort(offset + 2));
+            Integer newIdx = glyphs.get(compositeIdx);
             if (newIdx == null) {
                 // This errormessage would look much better
                 // if the fontname was printed to
@@ -538,7 +552,7 @@ public class TTFSubSetFile extends TTFFile {
                 continue;
             }
 
-            in.writeTTFUShort(offset + 2, newIdx.intValue());
+            in.writeTTFUShort((int)(offset + 2), newIdx.intValue());
 
             offset += 4;
 
@@ -572,40 +586,41 @@ public class TTFSubSetFile extends TTFFile {
      * mapping
      */
     private void scanGlyphs(FontFileReader in,
-                            Map glyphs) throws IOException {
-        TTFDirTabEntry entry = (TTFDirTabEntry)dirTabs.get("glyf");
-        Map newComposites = null;
-        Map allComposites = new java.util.HashMap();
+                            Map<Integer, Integer> glyphs) throws IOException {
+        TTFDirTabEntry glyfTable = (TTFDirTabEntry)dirTabs.get("glyf");
+        Map<Integer, Integer> newComposites = null;
+        Set<Integer> allComposites = new java.util.HashSet<Integer>();
 
         int newIndex = glyphs.size();
 
-        if (entry != null) {
+        if (glyfTable != null) {
             while (newComposites == null || newComposites.size() > 0) {
                 // Inefficient to iterate through all glyphs
-                newComposites = new java.util.HashMap();
+                newComposites = new java.util.HashMap<Integer, Integer>();
 
-                Iterator e = glyphs.keySet().iterator();
-                while (e.hasNext()) {
-                    Integer origIndex = (Integer)e.next();
-
-                    if (in.readTTFShort(entry.getOffset()
-                                        + mtxTab[origIndex.intValue()].getOffset()) < 0) {
+                for (int origIndex : glyphs.keySet()) {
+                    short numberOfContours = in.readTTFShort(glyfTable.getOffset()
+                            + mtxTab[origIndex].getOffset());
+                    if (numberOfContours < 0) {
                         // origIndex is a composite glyph
-                        allComposites.put(origIndex, glyphs.get(origIndex));
-                        List composites
-                            = getIncludedGlyphs(in, (int)entry.getOffset(),
+                        allComposites.add(origIndex);
+                        List<Integer> composites
+                            = getIncludedGlyphs(in, (int)glyfTable.getOffset(),
                                               origIndex);
+
+                        if (log.isTraceEnabled()) {
+                            log.trace("Glyph " + origIndex
+                                    + " is a composite glyph using the following glyphs: "
+                                    + composites);
+                        }
 
                         // Iterate through all composites pointed to
                         // by this composite and check if they exists
                         // in the glyphs map, add them if not.
-                        Iterator cps = composites.iterator();
-                        while (cps.hasNext()) {
-                            Integer cIdx = (Integer)cps.next();
+                        for (int cIdx : composites) {
                             if (glyphs.get(cIdx) == null
                                     && newComposites.get(cIdx) == null) {
-                                newComposites.put(cIdx,
-                                                  new Integer(newIndex));
+                                newComposites.put(cIdx, newIndex);
                                 newIndex++;
                             }
                         }
@@ -613,18 +628,14 @@ public class TTFSubSetFile extends TTFFile {
                 }
 
                 // Add composites to glyphs
-                Iterator m = newComposites.keySet().iterator();
-                while (m.hasNext()) {
-                    Integer im = (Integer)m.next();
+                for (int im : newComposites.keySet()) {
                     glyphs.put(im, newComposites.get(im));
                 }
             }
 
             // Iterate through all composites to remap their composite index
-            Iterator ce = allComposites.keySet().iterator();
-            while (ce.hasNext()) {
-                remapComposite(in, glyphs, (int)entry.getOffset(),
-                               (Integer)ce.next());
+            for (int glyphIdx : allComposites) {
+                remapComposite(in, glyphs, glyfTable.getOffset(), glyphIdx);
             }
 
         } else {

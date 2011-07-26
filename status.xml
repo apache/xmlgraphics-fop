@@ -60,6 +60,10 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Fonts" dev="JM" type="fix">
+        Fixed a bug in TTF subsetting where a composite glyph could get
+        remapped more than once resulting in garbled character.
+      </action>
       <action context="Fonts" dev="JM" type="fix" fixes-bug="50605">
         Fixed a number of bugs concerning Type 1 and other single-byte fonts
         (glyph width mismatches and overlapping characters).
