@@ -246,11 +246,11 @@ public class IncludeObject extends AbstractNamedAFPObject {
         RIGHT_HANDED_270(Rotation.ROTATION_270, Rotation.ROTATION_0);
 
         /**
-         * The object area’s X-axis rotation from the X axis of the reference coordinate system
+         * The object area's X-axis rotation from the X axis of the reference coordinate system
          */
         private final Rotation xoaOrent;
         /**
-         * The object area’s Y-axis rotation from the Y axis of the reference coordinate system
+         * The object area's Y-axis rotation from the Y axis of the reference coordinate system
          */
         private final Rotation yoaOrent;
 
