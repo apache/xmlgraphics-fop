@@ -22,7 +22,6 @@ package org.apache.fop.afp.modca;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.fop.afp.modca.Registry.ObjectType;
@@ -35,10 +34,10 @@ import org.apache.fop.afp.modca.triplets.Triplet;
 /**
  * A MODCA structured object base class providing support for Triplets
  */
-public class AbstractTripletStructuredObject extends AbstractStructuredObject {
+public abstract class AbstractTripletStructuredObject extends AbstractStructuredObject {
 
     /** list of object triplets */
-    protected List/*<Triplet>*/ triplets = new java.util.ArrayList/*<Triplet>*/();
+    protected List<AbstractTriplet> triplets = new java.util.ArrayList<AbstractTriplet>();
 
     /**
      * Returns the triplet data length
@@ -47,12 +46,8 @@ public class AbstractTripletStructuredObject extends AbstractStructuredObject {
      */
     protected int getTripletDataLength() {
         int dataLength = 0;
-        if (hasTriplets()) {
-            Iterator it = triplets.iterator();
-            while (it.hasNext()) {
-                AbstractTriplet triplet = (AbstractTriplet)it.next();
-                dataLength += triplet.getDataLength();
-            }
+        for (Triplet triplet : triplets) {
+            dataLength += triplet.getDataLength();
         }
         return dataLength;
     }
@@ -85,11 +80,9 @@ public class AbstractTripletStructuredObject extends AbstractStructuredObject {
      * @param tripletId the triplet identifier
      */
     private AbstractTriplet getTriplet(byte tripletId) {
-        Iterator it = getTriplets().iterator();
-        while (it.hasNext()) {
-            AbstractTriplet triplet = (AbstractTriplet)it.next();
-            if (triplet.getId() == tripletId) {
-                return triplet;
+        for (AbstractTriplet trip : triplets) {
+            if (trip.getId() == tripletId) {
+                return trip;
             }
         }
         return null;
@@ -110,7 +103,7 @@ public class AbstractTripletStructuredObject extends AbstractStructuredObject {
      *
      * @param triplet the triplet to add
      */
-    protected void addTriplet(Triplet triplet) {
+    protected void addTriplet(AbstractTriplet triplet) {
         triplets.add(triplet);
     }
 
@@ -119,14 +112,14 @@ public class AbstractTripletStructuredObject extends AbstractStructuredObject {
      *
      * @param tripletCollection a collection of triplets
      */
-    public void addTriplets(Collection/*<Triplet>*/ tripletCollection) {
+    public void addTriplets(Collection<AbstractTriplet> tripletCollection) {
         if (tripletCollection != null) {
             triplets.addAll(tripletCollection);
         }
     }
 
     /** @return the triplet list pertaining to this resource */
-    protected List/*<Triplet>*/ getTriplets() {
+    protected List<AbstractTriplet> getTriplets() {
         return triplets;
     }
 

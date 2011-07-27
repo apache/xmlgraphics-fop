@@ -57,7 +57,6 @@ public class IncludeObject extends AbstractNamedAFPObject {
     /** the object referenced is of type image */
     public static final byte TYPE_IMAGE = (byte)0xFB;
 
-
     /** the object type referenced (default is other) */
     private byte objectType = TYPE_OTHER;
 
@@ -68,7 +67,7 @@ public class IncludeObject extends AbstractNamedAFPObject {
     private int yoaOset = 0;
 
     /** the orientation of the referenced object */
-    private int oaOrent = 0;
+    private ObjectAreaRotation oaOrent = ObjectAreaRotation.RIGHT_HANDED_0;
 
     /** the X-axis origin defined in the object */
     private int xocaOset = -1;
@@ -94,13 +93,7 @@ public class IncludeObject extends AbstractNamedAFPObject {
      *            The orientation (0,90, 180, 270)
      */
     public void setObjectAreaOrientation(int orientation) {
-        if (orientation == 0 || orientation == 90 || orientation == 180
-            || orientation == 270) {
-            this.oaOrent = orientation;
-        } else {
-            throw new IllegalArgumentException(
-                "The orientation must be one of the values 0, 90, 180, 270");
-        }
+        this.oaOrent = ObjectAreaRotation.objectAreaRotationFor(orientation);
     }
 
     /**
@@ -151,87 +144,16 @@ public class IncludeObject extends AbstractNamedAFPObject {
         data[17] = 0x00; // reserved
         data[18] = objectType;
 
-        //XoaOset (object area)
-        if (xoaOset > -1) {
-            byte[] x = BinaryUtils.convert(xoaOset, 3);
-            data[19] = x[0];
-            data[20] = x[1];
-            data[21] = x[2];
-        } else {
-            data[19] = (byte)0xFF;
-            data[20] = (byte)0xFF;
-            data[21] = (byte)0xFF;
-        }
+        writeOsetTo(data, 19, xoaOset);
 
-        // YoaOset (object area)
-        if (yoaOset > -1) {
-            byte[] y = BinaryUtils.convert(yoaOset, 3);
-            data[22] = y[0];
-            data[23] = y[1];
-            data[24] = y[2];
-        } else {
-            data[22] = (byte)0xFF;
-            data[23] = (byte)0xFF;
-            data[24] = (byte)0xFF;
-        }
+        writeOsetTo(data, 22, yoaOset);
 
-        // XoaOrent/YoaOrent
-        switch (oaOrent) {
-            case -1: // use x/y axis orientation defined in object
-                data[25] = (byte)0xFF; // x axis rotation
-                data[26] = (byte)0xFF; //
-                data[27] = (byte)0xFF; // y axis rotation
-                data[28] = (byte)0xFF;
-                break;
-            case 90:
-                data[25] = 0x2D;
-                data[26] = 0x00;
-                data[27] = 0x5A;
-                data[28] = 0x00;
-                break;
-            case 180:
-                data[25] = 0x5A;
-                data[25] = 0x00;
-                data[27] = (byte)0x87;
-                data[28] = 0x00;
-                break;
-            case 270:
-                data[25] = (byte)0x87;
-                data[26] = 0x00;
-                data[27] = 0x00;
-                data[28] = 0x00;
-                break;
-            default: // 0 degrees
-                data[25] = 0x00;
-                data[26] = 0x00;
-                data[27] = 0x2D;
-                data[28] = 0x00;
-                break;
-        }
+        oaOrent.writeTo(data, 25);
 
-        // XocaOset (object content)
-        if (xocaOset > -1) {
-            byte[] x = BinaryUtils.convert(xocaOset, 3);
-            data[29] = x[0];
-            data[30] = x[1];
-            data[31] = x[2];
-        } else {
-            data[29] = (byte)0xFF;
-            data[30] = (byte)0xFF;
-            data[31] = (byte)0xFF;
-        }
+        writeOsetTo(data, 29, xocaOset);
 
-        // YocaOset (object content)
-        if (yocaOset > -1) {
-            byte[] y = BinaryUtils.convert(yocaOset, 3);
-            data[32] = y[0];
-            data[33] = y[1];
-            data[34] = y[2];
-        } else {
-            data[32] = (byte)0xFF;
-            data[33] = (byte)0xFF;
-            data[34] = (byte)0xFF;
-        }
+        writeOsetTo(data, 32, yocaOset);
+
         // RefCSys (Reference coordinate system)
         data[35] = 0x01; // Page or overlay coordinate system
 
@@ -240,6 +162,19 @@ public class IncludeObject extends AbstractNamedAFPObject {
 
         // Write triplet for FQN internal/external object reference
         writeTriplets(os);
+    }
+
+    private static void writeOsetTo(byte[] out, int offset, int oset) {
+        if (oset > -1) {
+            byte[] y = BinaryUtils.convert(oset, 3);
+            out[offset] = y[0];
+            out[offset + 1] = y[1];
+            out[offset + 2] = y[2];
+        } else {
+            out[offset] = (byte)0xFF;
+            out[offset + 1] = (byte)0xFF;
+            out[offset + 2] = (byte)0xFF;
+        }
     }
 
     private String getObjectTypeName() {
@@ -297,6 +232,71 @@ public class IncludeObject extends AbstractNamedAFPObject {
      */
     public void setMeasurementUnits(int xRes, int yRes) {
         addTriplet(new MeasurementUnitsTriplet(xRes, xRes));
+    }
+
+    /**
+     * Represents the 4 bytes that specify the area rotation reference coordinate system
+     *
+     */
+    private enum ObjectAreaRotation {
+
+        RIGHT_HANDED_0(Rotation.ROTATION_0, Rotation.ROTATION_90),
+        RIGHT_HANDED_90(Rotation.ROTATION_90, Rotation.ROTATION_180),
+        RIGHT_HANDED_180(Rotation.ROTATION_180, Rotation.ROTATION_270),
+        RIGHT_HANDED_270(Rotation.ROTATION_270, Rotation.ROTATION_0);
+
+        /**
+         * The object area’s X-axis rotation from the X axis of the reference coordinate system
+         */
+        private final Rotation xoaOrent;
+        /**
+         * The object area’s Y-axis rotation from the Y axis of the reference coordinate system
+         */
+        private final Rotation yoaOrent;
+
+        public void writeTo(byte[] out, int offset) {
+            xoaOrent.writeTo(out, offset);
+            yoaOrent.writeTo(out, offset + 2);
+        }
+
+        ObjectAreaRotation(Rotation xoaOrent, Rotation yoaOrent) {
+            this.xoaOrent = xoaOrent;
+            this.yoaOrent = yoaOrent;
+        }
+
+        private static ObjectAreaRotation objectAreaRotationFor(int orientation) {
+            switch (orientation) {
+                case 0: return RIGHT_HANDED_0;
+                case 90: return RIGHT_HANDED_90;
+                case 180: return RIGHT_HANDED_180;
+                case 270: return RIGHT_HANDED_270;
+                default: throw new IllegalArgumentException(
+                "The orientation must be one of the values 0, 90, 180, 270");
+            }
+        }
+    }
+
+    /**
+     * Represents a rotation value
+     *
+     */
+    private enum Rotation {
+
+        ROTATION_0(0),
+        ROTATION_90(0x2D),
+        ROTATION_180(0x5A),
+        ROTATION_270(0x87);
+
+        private final byte firstByte;
+
+        public void writeTo(byte[] out, int offset) {
+            out[offset] = firstByte;
+            out[offset + 1] = (byte)0;
+        }
+
+        Rotation(int firstByte) {
+            this.firstByte = (byte) firstByte;
+        }
     }
 
 }
