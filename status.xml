@@ -66,7 +66,7 @@
       <action context="Renderers" dev="PH" type="fix">
         Fixed a bug in AFP where the object area axes of an Include Object was incorrectly set when 
         rotated by 180. </action>
-      <action context="Fonts" dev="JM" type="fix">
+      <action context="Fonts" dev="JM" type="fix" fixes-bug="51596" due-to="Mehdi Houshmand">
         Fixed a bug in TTF subsetting where a composite glyph could get
         remapped more than once resulting in garbled character.
       </action>

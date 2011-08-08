@@ -198,14 +198,15 @@ public class FontFileReader {
      * @param val The value to write
      * @throws IOException If EOF is reached
      */
-    public final void writeTTFUShort(int pos, int val) throws IOException {
+    public final void writeTTFUShort(long pos, int val) throws IOException {
         if ((pos + 2) > fsize) {
             throw new java.io.EOFException("Reached EOF");
         }
         final byte b1 = (byte)((val >> 8) & 0xff);
         final byte b2 = (byte)(val & 0xff);
-        file[pos] = b1;
-        file[pos + 1] = b2;
+        final int fileIndex = (int) pos;
+        file[fileIndex] = b1;
+        file[fileIndex + 1] = b2;
     }
 
     /**
