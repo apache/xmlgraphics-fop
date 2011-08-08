@@ -60,6 +60,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="VH" type="add">
+        Added support for 128bit encryption in PDF output. Based on work by Michael Rubin.
+      </action>
       <action context="Renderers" dev="PH" type="fix">
         Fixed a bug in AFP where the object area axes of an Include Object was incorrectly set when 
         rotated by 180. </action>

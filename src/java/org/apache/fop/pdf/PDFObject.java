@@ -112,7 +112,7 @@ public abstract class PDFObject implements PDFWritable {
     }
 
     /**
-     * Returns the object's generation.
+     * Returns this object's generation.
      * @return the PDF Object generation
      */
     public int getGeneration() {

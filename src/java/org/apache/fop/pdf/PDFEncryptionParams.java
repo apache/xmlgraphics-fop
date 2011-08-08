@@ -26,10 +26,17 @@ public class PDFEncryptionParams {
 
     private String userPassword = ""; //May not be null
     private String ownerPassword = ""; //May not be null
+
     private boolean allowPrint = true;
     private boolean allowCopyContent = true;
     private boolean allowEditContent = true;
     private boolean allowEditAnnotations = true;
+    private boolean allowFillInForms = true;
+    private boolean allowAccessContent = true;
+    private boolean allowAssembleDocument = true;
+    private boolean allowPrintHq = true;
+
+    private int encryptionLengthInBits = 40;
 
     /**
      * Creates a new instance.
@@ -58,6 +65,25 @@ public class PDFEncryptionParams {
      */
     public PDFEncryptionParams() {
         //nop
+    }
+
+    /**
+     * Creates a copy of the given encryption parameters.
+     *
+     * @param source source encryption parameters
+     */
+    public PDFEncryptionParams(PDFEncryptionParams source) {
+        setUserPassword(source.getUserPassword());
+        setOwnerPassword(source.getOwnerPassword());
+        setAllowPrint(source.isAllowPrint());
+        setAllowCopyContent(source.isAllowCopyContent());
+        setAllowEditContent(source.isAllowEditContent());
+        setAllowEditAnnotations(source.isAllowEditAnnotations());
+        setAllowAssembleDocument(source.isAllowAssembleDocument());
+        setAllowAccessContent(source.isAllowAccessContent());
+        setAllowFillInForms(source.isAllowFillInForms());
+        setAllowPrintHq(source.isAllowPrintHq());
+        setEncryptionLengthInBits(source.getEncryptionLengthInBits());
     }
 
     /**
@@ -90,6 +116,38 @@ public class PDFEncryptionParams {
      */
     public boolean isAllowPrint() {
         return allowPrint;
+    }
+
+    /**
+     * Indicates whether revision 3 filling in forms is allowed.
+     * @return true if revision 3 filling in forms is allowed
+     */
+    public boolean isAllowFillInForms() {
+        return allowFillInForms;
+    }
+
+    /**
+     * Indicates whether revision 3 extracting text and graphics is allowed.
+     * @return true if revision 3 extracting text and graphics is allowed
+     */
+    public boolean isAllowAccessContent() {
+        return allowAccessContent;
+    }
+
+    /**
+     * Indicates whether revision 3 assembling document is allowed.
+     * @return true if revision 3 assembling document is allowed
+     */
+    public boolean isAllowAssembleDocument() {
+        return allowAssembleDocument;
+    }
+
+    /**
+     * Indicates whether revision 3 printing to high quality is allowed.
+     * @return true if revision 3 printing to high quality is allowed
+     */
+    public boolean isAllowPrintHq() {
+        return allowPrintHq;
     }
 
     /**
@@ -133,11 +191,43 @@ public class PDFEncryptionParams {
     }
 
     /**
-     * Sets the persmission for printing.
+     * Sets the permission for printing.
      * @param allowPrint true if printing is allowed
      */
     public void setAllowPrint(boolean allowPrint) {
         this.allowPrint = allowPrint;
+    }
+
+    /**
+     * Sets whether revision 3 filling in forms is allowed.
+     * @param allowFillInForms true if revision 3 filling in forms is allowed.
+     */
+    public void setAllowFillInForms(boolean allowFillInForms) {
+        this.allowFillInForms = allowFillInForms;
+    }
+
+    /**
+     * Sets whether revision 3 extracting text and graphics is allowed.
+     * @param allowAccessContent true if revision 3 extracting text and graphics is allowed
+     */
+    public void setAllowAccessContent(boolean allowAccessContent) {
+        this.allowAccessContent = allowAccessContent;
+    }
+
+    /**
+     * Sets whether revision 3 assembling document is allowed.
+     * @param allowAssembleDocument true if revision 3 assembling document is allowed
+     */
+    public void setAllowAssembleDocument(boolean allowAssembleDocument) {
+        this.allowAssembleDocument = allowAssembleDocument;
+    }
+
+    /**
+     * Sets whether revision 3 printing to high quality is allowed.
+     * @param allowPrintHq true if revision 3 printing to high quality is allowed
+     */
+    public void setAllowPrintHq(boolean allowPrintHq) {
+        this.allowPrintHq = allowPrintHq;
     }
 
     /**
@@ -164,6 +254,23 @@ public class PDFEncryptionParams {
         } else {
             this.userPassword = userPassword;
         }
+    }
+
+    /**
+     * Returns the encryption length.
+     * @return the encryption length
+     */
+    public int getEncryptionLengthInBits() {
+        return encryptionLengthInBits;
+    }
+
+    /**
+     * Sets the encryption length.
+     *
+     * @param encryptionLength the encryption length
+     */
+    public void setEncryptionLengthInBits(int encryptionLength) {
+        this.encryptionLengthInBits = encryptionLength;
     }
 
 }
