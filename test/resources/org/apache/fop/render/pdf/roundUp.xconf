@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fop version="1.0">
+  <renderers>
+    <renderer mime="application/pdf">
+      <encryption-params>
+        <encryption-length>55</encryption-length>
+      </encryption-params>
+    </renderer>
+  </renderers>
+</fop>

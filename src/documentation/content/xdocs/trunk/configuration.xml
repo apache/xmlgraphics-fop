@@ -367,12 +367,17 @@
       <source><![CDATA[
     <renderer mime="application/pdf">
       <encryption-params>
+         <encryption-length>128</encryption-length>
          <user-password>testuserpass</user-password>
          <owner-password>testownerpass</owner-password>
          <noprint/>
          <nocopy/>
          <noedit/>
          <noannotations/>
+         <nofillinforms/>
+         <noaccesscontent/>
+         <noassembledoc/>
+         <noprinthq/>
       </encryption-params>
     </renderer>]]></source>
       

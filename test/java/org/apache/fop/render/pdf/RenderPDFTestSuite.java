@@ -17,31 +17,29 @@
 
 /* $Id$ */
 
-package org.apache.fop.pdf;
+package org.apache.fop.render.pdf;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
 
 /**
- * This interface defines the contract for classes implementing PDF encryption.
+ * A test suite for org.apache.fop.render.pdf.*
  */
-public interface PDFEncryption {
+public final class RenderPDFTestSuite {
+
+    private RenderPDFTestSuite() { }
 
     /**
-     * Adds a PDFFilter to the PDFStream object
-     * @param stream the stream to add an encryption filter to
+     * Creates the test suite.
+     *
+     * @return the test suite
      */
-    void applyFilter(AbstractPDFStream stream);
-
-    /**
-     * Encrypt an array of bytes using a reference PDFObject for calculating
-     * the encryption key.
-     * @param data data to encrypt
-     * @param refObj reference PDFObject
-     * @return byte[] the encrypted data
-     */
-    byte[] encrypt(byte[] data, PDFObject refObj);
-
-    /**
-     * Returns the trailer entry for encryption.
-     * @return the trailer entry
-     */
-    String getTrailerEntry();
+    public static Test suite() {
+        TestSuite suite = new TestSuite();
+        //$JUnit-BEGIN$
+        suite.addTest(new TestSuite(PDFRendererConfiguratorTestCase.class));
+        //$JUnit-END$
+        return suite;
+    }
 }
