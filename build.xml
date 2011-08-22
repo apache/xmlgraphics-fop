@@ -738,6 +738,7 @@ list of possible build targets.
         <include name="META-INF/**"/>
         <include name="**/*.xml"/>
         <include name="**/*.fo"/>
+        <include name="**/*.afp"/>
       </fileset>
       <fileset dir="${build.dir}/test-gensrc">
         <include name="**/*.xml"/>
