@@ -38,6 +38,7 @@ public class AFPTestSuite {
         TestSuite suite = new TestSuite("Test suite for FOP's AFP classes");
         //$JUnit-BEGIN$
         suite.addTest(new TestSuite(IncludeObjectTestCase.class));
+        suite.addTest(new TestSuite(AFPResourceUtilTestCase.class));
         //$JUnit-END$
         return suite;
     }
