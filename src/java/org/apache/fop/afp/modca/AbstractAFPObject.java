@@ -56,6 +56,7 @@ public abstract class AbstractAFPObject implements Streamable {
         0x00, // Reserved
     };
 
+    /** Length of bytes of a Structured Field Header */
     protected static final int SF_HEADER_LENGTH = SF_HEADER.length;
 
     /**
@@ -78,7 +79,7 @@ public abstract class AbstractAFPObject implements Streamable {
      * @param category the category code
      */
     protected static void copySF(byte[] data, byte clazz, byte type, byte category) {
-        System.arraycopy(SF_HEADER, 0, data, 0, SF_HEADER.length);
+        System.arraycopy(SF_HEADER, 0, data, 0, SF_HEADER_LENGTH);
         data[3] = clazz;
         data[4] = type;
         data[5] = category;
@@ -88,6 +89,7 @@ public abstract class AbstractAFPObject implements Streamable {
      * Writes a collection of Streamable to the AFP Datastream.
      *
      * @param objects a list of AFPObjects
+     * @param <S> Streamable view of an AFPObject
      * @param os The stream to write to
      * @throws java.io.IOException an I/O exception of some sort has occurred.
      */
