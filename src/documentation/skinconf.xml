@@ -94,7 +94,7 @@ See main/fresh-site/src/documentation/skinconf.xml for details.
   <copyright-link>http://www.apache.org/licenses/</copyright-link>
 <!-- Optional text trademark statement below the copyright statement -->
   <trademark-statement>
-    Apache, Apache Forrest, the Apache feather logo, and the Apache Forrest
+    Apache, Apache FOP, the Apache feather logo, and the Apache FOP
     logos are trademarks of The Apache Software Foundation. All other marks mentioned may be trademarks or registered trademarks of their respective owners.
   </trademark-statement>
 <!-- Some skins use this to form a 'breadcrumb trail' of links.
@@ -109,6 +109,7 @@ See main/fresh-site/src/documentation/skinconf.xml for details.
   <trail location="alt">
     <link1 name="The Apache Software Foundation" href="http://www.apache.org/"/>
     <link2 name="Apache XML Graphics Project" href="http://xmlgraphics.apache.org/"/>
+    <link3 name="" href=""/>
   </trail>
 <!-- Configure the TOC, i.e. the Table of Contents.
   @max-depth
