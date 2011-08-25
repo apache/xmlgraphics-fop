@@ -3669,10 +3669,10 @@
       "http://www.w3.org/TR/xsl/#format">&sect;7.26.1</a></td>
       <td><a name="fo-property-format" id="fo-property-format">format</a></td>
       <td class="basic">Basic</td>
-      <td class="yes">yes</td>
-      <td class="yes">yes</td>
-      <td class="yes">yes</td>
-      <td>&nbsp;</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td>only values '0*1', 'a', 'A', 'i', 'I' supported</td>
     </tr>
     <tr>
       <td align="center"><a href=
