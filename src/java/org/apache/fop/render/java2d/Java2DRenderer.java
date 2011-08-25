@@ -171,11 +171,11 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         //Don't call super.setupFontInfo() here! Java2D needs a special font setup
         // create a temp Image to test font metrics on
         this.fontInfo = inFontInfo;
-        Graphics2D graphics2D = Java2DFontMetrics.createFontMetricsGraphics2D();
+        final Java2DFontMetrics java2DFontMetrics = new Java2DFontMetrics();
 
         FontCollection[] fontCollections = new FontCollection[] {
-                new Base14FontCollection(graphics2D),
-                new InstalledFontCollection(graphics2D),
+                new Base14FontCollection(java2DFontMetrics),
+                new InstalledFontCollection(java2DFontMetrics),
                 new ConfiguredFontCollection(getFontResolver(), getFontList())
         };
         userAgent.getFactory().getFontManager().setup(
