@@ -60,6 +60,11 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="PH" type="fix" fixes-bug="48062">
+        Improved fix of a bug relating to PCL painter thread safetly.  Previous fix in rev 895012
+        worked by synchronizing methods of a static instance of Java2DFontMetrics.  This fix uses a
+        unique instance for per thread.
+      </action>
       <action context="Renderers" dev="PH" type="fix">
         Fixed a bug in AFP where an ArrayOutofBoundsException is throwqn when embedding a Page 
         Segment.
