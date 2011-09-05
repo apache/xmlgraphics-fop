@@ -108,22 +108,22 @@ public class AFPBase12FontCollection implements FontCollection {
                 "Times New Roman", "TimesNewRoman", "serif", "any"};
 
         font = createReferencedRasterFont("Times Roman");
-        addCharacterSet(font, "CON200", new TimesRoman());
+        addCharacterSet(font, "C0N200", new TimesRoman());
         num = addFontProperties(fontInfo, font, timesNames,
                 Font.STYLE_NORMAL, Font.WEIGHT_NORMAL, num);
 
         font = createReferencedRasterFont("Times Roman Italic");
-        addCharacterSet(font, "CON300", new TimesItalic());
+        addCharacterSet(font, "C0N300", new TimesItalic());
         num = addFontProperties(fontInfo, font, timesNames,
                 Font.STYLE_ITALIC, Font.WEIGHT_NORMAL, num);
 
         font = createReferencedRasterFont("Times Roman Bold");
-        addCharacterSet(font, "CON400", new TimesBold());
+        addCharacterSet(font, "C0N400", new TimesBold());
         num = addFontProperties(fontInfo, font, timesNames,
                 Font.STYLE_NORMAL, Font.WEIGHT_BOLD, num);
 
         font = createReferencedRasterFont("Times Roman Italic Bold");
-        addCharacterSet(font, "CON500", new TimesBoldItalic());
+        addCharacterSet(font, "C0N500", new TimesBoldItalic());
         num = addFontProperties(fontInfo, font, timesNames,
                 Font.STYLE_ITALIC, Font.WEIGHT_BOLD, num);
 
