@@ -30,13 +30,11 @@ import java.util.WeakHashMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import org.apache.xmlgraphics.image.loader.util.SoftMapCache;
-
 import org.apache.fop.afp.AFPConstants;
 import org.apache.fop.afp.util.ResourceAccessor;
 import org.apache.fop.afp.util.StructuredFieldReader;
 import org.apache.fop.fonts.Typeface;
+import org.apache.xmlgraphics.image.loader.util.SoftMapCache;
 
 /**
  * The CharacterSetBuilder is responsible building the a CharacterSet instance that holds
@@ -181,9 +179,9 @@ public class CharacterSetBuilder {
     }
 
     /**
-     * Load the font details and metrics into the CharacterSetMetric object,
-     * this will use the actual afp code page and character set files to load
-     * the object with the necessary metrics.
+     * Load the font details and metrics into the CharacterSetMetric object, this will use the
+     * actual afp code page and character set files to load the object with the necessary metrics.
+     * 
      * @param characterSetName name of the characterset
      * @param codePageName name of the code page file
      * @param encoding encoding name
@@ -191,9 +189,47 @@ public class CharacterSetBuilder {
      * @return CharacterSet object
      * @throws IOException if an I/O error occurs
      */
-    public CharacterSet build(String characterSetName, String codePageName,
-            String encoding, ResourceAccessor accessor) throws IOException {
+    public CharacterSet build(String characterSetName, String codePageName, String encoding,
+            ResourceAccessor accessor) throws IOException {
+        return processFont(characterSetName, codePageName, encoding, false, accessor);
+    }
 
+    /**
+     * Load the font details and metrics into the CharacterSetMetric object, this will use the
+     * actual afp code page and character set files to load the object with the necessary metrics.
+     * This method is to be used for double byte character sets (DBCS).
+     *
+     * @param characterSetName name of the characterset
+     * @param codePageName name of the code page file
+     * @param encoding encoding name
+     * @param isEDBCS if this is an EBCDIC double byte character set (DBCS)
+     * @param accessor used to load codepage and characterset
+     * @return CharacterSet object
+     * @throws IOException if an I/O error occurs
+     */
+    public CharacterSet buildDBCS(String characterSetName, String codePageName, String encoding,
+            boolean isEDBCS, ResourceAccessor accessor) throws IOException {
+        return processFont(characterSetName, codePageName, encoding, isEDBCS, accessor);
+    }
+
+    /**
+     * Load the font details and metrics into the CharacterSetMetric object, this will use the
+     * actual afp code page and character set files to load the object with the necessary metrics.
+     * 
+     * @param characterSetName the CharacterSetMetric object to populate
+     * @param codePageName the name of the code page to use
+     * @param encoding name of the encoding in use
+     * @param typeface base14 font name
+     * @return CharacterSet object
+     * @throws IOException if an I/O error occurs
+     */
+    public CharacterSet build(String characterSetName, String codePageName, String encoding,
+            Typeface typeface) throws IOException {
+        return new FopCharacterSet(codePageName, encoding, characterSetName, typeface);
+    }
+
+    private CharacterSet processFont(String characterSetName, String codePageName, String encoding,
+            boolean isEDBCS, ResourceAccessor accessor) throws IOException {
         // check for cached version of the characterset
         String descriptor = characterSetName + "_" + encoding + "_" + codePageName;
         CharacterSet characterSet = (CharacterSet)characterSetsCache.get(descriptor);
@@ -203,8 +239,8 @@ public class CharacterSetBuilder {
         }
 
         // characterset not in the cache, so recreating
-        characterSet = new CharacterSet(
-                codePageName, encoding, characterSetName, accessor);
+        characterSet = new CharacterSet(codePageName, encoding, isEDBCS, characterSetName,
+                accessor);
 
         InputStream inputStream = null;
 
@@ -268,23 +304,6 @@ public class CharacterSetBuilder {
         }
         characterSetsCache.put(descriptor, characterSet);
         return characterSet;
-
-    }
-
-    /**
-     * Load the font details and metrics into the CharacterSetMetric object,
-     * this will use the actual afp code page and character set files to load
-     * the object with the necessary metrics.
-     *
-     * @param characterSetName the CharacterSetMetric object to populate
-     * @param codePageName the name of the code page to use
-     * @param encoding name of the encoding in use
-     * @param typeface base14 font name
-     * @return CharacterSet object
-     */
-    public CharacterSet build(String characterSetName, String codePageName,
-            String encoding, Typeface typeface) {
-       return new FopCharacterSet(codePageName, encoding, characterSetName, typeface);
     }
 
     /**

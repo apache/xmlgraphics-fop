@@ -60,8 +60,12 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Fonts" dev="PH" type="fix" fixes-bug="51530" due-to="Mehdi Houshmand">
+        Improved support for EBCDIC encoded double byte fonts fo AFP.
+      </action>
       <action context="Fonts" dev="PH" type="fix" fixes-bug="51205" due-to="Mehdi Houshmand">
-        Corrected typographical errors in AFPBase12FontCollection.</action>
+        Corrected typographical errors in AFPBase12FontCollection.
+      </action>
       <action context="Renderers" dev="PH" type="fix" fixes-bug="48062">
         Improved fix of a bug relating to PCL painter thread safetly.  Previous fix in rev 895012
         worked by synchronizing methods of a static instance of Java2DFontMetrics.  This fix uses a
