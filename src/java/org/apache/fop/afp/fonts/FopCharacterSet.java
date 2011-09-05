@@ -44,7 +44,7 @@ public class FopCharacterSet extends CharacterSet {
         String name,
         Typeface charSet) {
 
-        super(codePage, encoding, name, (ResourceAccessor)null);
+        super(codePage, encoding, false, name, (ResourceAccessor) null);
         this.charSet = charSet;
     }
 

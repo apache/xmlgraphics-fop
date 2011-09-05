@@ -27,7 +27,6 @@ import java.util.List;
 
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
-
 import org.apache.fop.afp.AFPResourceLevel;
 import org.apache.fop.afp.AFPResourceLevelDefaults;
 import org.apache.fop.afp.fonts.AFPFont;
@@ -258,9 +257,11 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
             }
             String name = afpFontCfg.getAttribute("name", characterset);
             CharacterSet characterSet = null;
+            boolean ebcdicDBCS = afpFontCfg.getAttributeAsBoolean("ebcdic-dbcs", false);
+
             try {
-                characterSet = CharacterSetBuilder.getDoubleByteInstance()
-                                .build(characterset, codepage, encoding, accessor);
+                characterSet = CharacterSetBuilder.getDoubleByteInstance().buildDBCS(characterset,
+                        codepage, encoding, ebcdicDBCS, accessor);
             } catch (IOException ioe) {
                 toConfigurationException(codepage, characterset, ioe);
             }
