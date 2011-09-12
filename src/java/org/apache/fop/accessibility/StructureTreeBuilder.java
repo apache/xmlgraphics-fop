@@ -31,7 +31,7 @@ import org.apache.fop.util.DelegatingContentHandler;
 
 /**
  * Helper class that re-builds a structure tree from what is stored in an
- * intermediate XML file (IF XML or Area Tree XML).
+ * intermediate XML file (IF XML or Area Tree XML).
  */
 public final class StructureTreeBuilder {
 
