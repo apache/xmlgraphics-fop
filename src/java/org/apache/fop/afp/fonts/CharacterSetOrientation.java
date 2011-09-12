@@ -107,7 +107,7 @@ public class CharacterSetOrientation {
      * a character rotation other than 0, ascender height loses its
      * meaning when the character is lying on its side or is upside down
      * with respect to normal viewing orientation. For the general case,
-     * Ascender Height is the character’s most positive y-axis value.
+     * Ascender Height is the character's most positive y-axis value.
      * For bounded character boxes, for a given character having an
      * ascender, ascender height and baseline offset are equal.
      * @return the ascender value in millipoints
