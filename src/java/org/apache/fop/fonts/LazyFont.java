@@ -27,12 +27,10 @@ import java.util.Set;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
-import org.xml.sax.InputSource;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.apache.fop.apps.FOPException;
+import org.xml.sax.InputSource;
 
 /**
  * This class is used to defer the loading of a font until it is really used.
@@ -373,6 +371,14 @@ public class LazyFont extends Typeface implements FontDescriptor {
     public boolean isEmbeddable() {
         load(true);
         return realFontDescriptor.isEmbeddable();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isSubsetEmbedded() {
+        load(true);
+        return realFont.isMultiByte();
     }
 
 }

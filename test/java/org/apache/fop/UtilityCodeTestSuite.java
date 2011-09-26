@@ -25,6 +25,7 @@ import junit.framework.TestSuite;
 import org.apache.fop.events.BasicEventTestCase;
 import org.apache.fop.pdf.FileIDGeneratorTestCase;
 import org.apache.fop.pdf.PDFEncryptionJCETestCase;
+import org.apache.fop.pdf.PDFFactoryTestCase;
 import org.apache.fop.pdf.PDFObjectTestCase;
 import org.apache.fop.traits.BorderPropsTestCase;
 import org.apache.fop.util.BitmapImageUtilTestCase;
@@ -49,6 +50,7 @@ public class UtilityCodeTestSuite {
         suite.addTest(new TestSuite(PDFNumberTestCase.class));
         suite.addTest(new TestSuite(PDFObjectTestCase.class));
         suite.addTest(FileIDGeneratorTestCase.suite());
+        suite.addTest(new TestSuite(PDFFactoryTestCase.class));
         suite.addTest(new TestSuite(ColorUtilTestCase.class));
         suite.addTest(new TestSuite(BorderPropsTestCase.class));
         suite.addTest(new TestSuite(ElementListUtilsTestCase.class));
