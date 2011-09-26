@@ -60,6 +60,10 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Fonts" dev="PH" type="fix" fixes-bug="48696">
+        Bugfix for color model in IOCA IDE structure parameter for 4- and 8-bit grayscale images.
+        Revision 4.
+      </action>
       <action context="Fonts" dev="PH" type="fix" fixes-bug="51760" due-to="Mehdi Houshmand">
         Changes the way PostScript handles Graphics2D images such that if the language is set to
         level 3, the image is stored as an embedded file which has no length limit.  Previously it
