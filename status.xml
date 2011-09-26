@@ -60,6 +60,11 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Fonts" dev="PH" type="fix" fixes-bug="51760" due-to="Mehdi Houshmand">
+        Changes the way PostScript handles Graphics2D images such that if the language is set to
+        level 3, the image is stored as an embedded file which has no length limit.  Previously it
+        was stored as an array which has a implementation limit of 65535 elements.
+      </action>
       <action context="Fonts" dev="PH" type="fix" fixes-bug="51759" due-to="Mehdi Houshmand">
         PDFFactory responsible for asdigning name to a subset font.
       </action>
