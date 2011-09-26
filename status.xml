@@ -60,6 +60,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Fonts" dev="PH" type="fix" fixes-bug="51759" due-to="Mehdi Houshmand">
+        PDFFactory responsible for asdigning name to a subset font.
+      </action>
       <action context="Fonts" dev="PH" type="fix" fixes-bug="51530" due-to="Mehdi Houshmand">
         Improved support for EBCDIC encoded double byte fonts fo AFP.
       </action>

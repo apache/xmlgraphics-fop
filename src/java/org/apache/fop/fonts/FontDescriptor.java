@@ -86,5 +86,10 @@ public interface FontDescriptor extends FontMetrics {
      */
     boolean isEmbeddable();
 
+    /**
+     * Indicates whether this font is subset embedded.
+     * @return true if this font is subset embedded
+     */
+    boolean isSubsetEmbedded();
 
 }
