@@ -30,14 +30,15 @@ import org.apache.fop.fonts.FontInfo;
  */
 public class Base14FontCollection implements FontCollection {
 
-    private Graphics2D graphics2d = null;
+    /** required when creating new instances of SystemFontMetricsMapper */
+    private final Java2DFontMetrics java2DFontMetrics;
 
     /**
      * Main constructor
-     * @param graphics2d a graphics 2D
+     * @param java2DFontMetrics required when creating new instances of SystemFontMetricsMapper
      */
-    public Base14FontCollection(Graphics2D graphics2d) {
-        this.graphics2d = graphics2d;
+    public Base14FontCollection(Java2DFontMetrics java2DFontMetrics) {
+        this.java2DFontMetrics = java2DFontMetrics;
     }
 
     /**
@@ -56,47 +57,47 @@ public class Base14FontCollection implements FontCollection {
         final int bolditalic = java.awt.Font.BOLD + java.awt.Font.ITALIC;
 
         FontMetricsMapper metric;
-        metric = new SystemFontMetricsMapper("SansSerif", normal, graphics2d);
+        metric = new SystemFontMetricsMapper("SansSerif", normal, java2DFontMetrics);
         // --> goes to  F1
         fontInfo.addMetrics("F1", metric);
-        metric = new SystemFontMetricsMapper("SansSerif", italic, graphics2d);
+        metric = new SystemFontMetricsMapper("SansSerif", italic, java2DFontMetrics);
         // --> goes to  F2
         fontInfo.addMetrics("F2", metric);
-        metric = new SystemFontMetricsMapper("SansSerif", bold, graphics2d);
+        metric = new SystemFontMetricsMapper("SansSerif", bold, java2DFontMetrics);
         // --> goes to  F3
         fontInfo.addMetrics("F3", metric);
-        metric = new SystemFontMetricsMapper("SansSerif", bolditalic, graphics2d);
+        metric = new SystemFontMetricsMapper("SansSerif", bolditalic, java2DFontMetrics);
         // --> goes to  F4
         fontInfo.addMetrics("F4", metric);
 
 
-        metric = new SystemFontMetricsMapper("Serif", normal, graphics2d);
+        metric = new SystemFontMetricsMapper("Serif", normal, java2DFontMetrics);
         // --> goes to  F5
         fontInfo.addMetrics("F5", metric);
-        metric = new SystemFontMetricsMapper("Serif", italic, graphics2d);
+        metric = new SystemFontMetricsMapper("Serif", italic, java2DFontMetrics);
         // --> goes to  F6
         fontInfo.addMetrics("F6", metric);
-        metric = new SystemFontMetricsMapper("Serif", bold, graphics2d);
+        metric = new SystemFontMetricsMapper("Serif", bold, java2DFontMetrics);
         // --> goes to  F7
         fontInfo.addMetrics("F7", metric);
-        metric = new SystemFontMetricsMapper("Serif", bolditalic, graphics2d);
+        metric = new SystemFontMetricsMapper("Serif", bolditalic, java2DFontMetrics);
         // --> goes to  F8
         fontInfo.addMetrics("F8", metric);
 
-        metric = new SystemFontMetricsMapper("MonoSpaced", normal, graphics2d);
+        metric = new SystemFontMetricsMapper("MonoSpaced", normal, java2DFontMetrics);
         // --> goes to  F9
         fontInfo.addMetrics("F9", metric);
-        metric = new SystemFontMetricsMapper("MonoSpaced", italic, graphics2d);
+        metric = new SystemFontMetricsMapper("MonoSpaced", italic, java2DFontMetrics);
         // --> goes to  F10
         fontInfo.addMetrics("F10", metric);
-        metric = new SystemFontMetricsMapper("MonoSpaced", bold, graphics2d);
+        metric = new SystemFontMetricsMapper("MonoSpaced", bold, java2DFontMetrics);
         // --> goes to  F11
         fontInfo.addMetrics("F11", metric);
-        metric = new SystemFontMetricsMapper("MonoSpaced", bolditalic, graphics2d);
+        metric = new SystemFontMetricsMapper("MonoSpaced", bolditalic, java2DFontMetrics);
         // --> goes to  F12
         fontInfo.addMetrics("F12", metric);
 
-        metric = new SystemFontMetricsMapper("Serif", normal, graphics2d);
+        metric = new SystemFontMetricsMapper("Serif", normal, java2DFontMetrics);
         //"Symbol" doesn't seem to work here, but "Serif" does the job just fine. *shrug*
         // --> goes to  F13 and F14
         fontInfo.addMetrics("F13", metric);

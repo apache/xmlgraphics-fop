@@ -21,8 +21,8 @@ package org.apache.fop.fonts.truetype;
 
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -466,175 +466,6 @@ public class TTFSubSetFile extends TTFFile {
     }
 
     /**
-     * Returns a List containing the glyph itself plus all glyphs
-     * that this composite glyph uses
-     */
-    private List getIncludedGlyphs(FontFileReader in, int glyphOffset,
-                                     Integer glyphIdx) throws IOException {
-        List ret = new java.util.ArrayList();
-        ret.add(glyphIdx);
-        int offset = glyphOffset + (int)mtxTab[glyphIdx.intValue()].getOffset() + 10;
-        Integer compositeIdx = null;
-        int flags = 0;
-        boolean moreComposites = true;
-        while (moreComposites) {
-            flags = in.readTTFUShort(offset);
-            compositeIdx = new Integer(in.readTTFUShort(offset + 2));
-            ret.add(compositeIdx);
-
-            offset += 4;
-            if ((flags & 1) > 0) {
-                // ARG_1_AND_ARG_2_ARE_WORDS
-                offset += 4;
-            } else {
-                offset += 2;
-            }
-
-            if ((flags & 8) > 0) {
-                offset += 2;    // WE_HAVE_A_SCALE
-            } else if ((flags & 64) > 0) {
-                offset += 4;    // WE_HAVE_AN_X_AND_Y_SCALE
-            } else if ((flags & 128) > 0) {
-                offset += 8;    // WE_HAVE_A_TWO_BY_TWO
-            }
-
-            if ((flags & 32) > 0) {
-                moreComposites = true;
-            } else {
-                moreComposites = false;
-            }
-        }
-
-        return ret;
-    }
-
-
-    /**
-     * Rewrite all compositepointers in glyphindex glyphIdx
-     *
-     */
-    private void remapComposite(FontFileReader in, Map glyphs,
-                                int glyphOffset,
-                                Integer glyphIdx) throws IOException {
-        int offset = glyphOffset + (int)mtxTab[glyphIdx.intValue()].getOffset()
-                     + 10;
-
-        Integer compositeIdx = null;
-        int flags = 0;
-        boolean moreComposites = true;
-
-        while (moreComposites) {
-            flags = in.readTTFUShort(offset);
-            compositeIdx = new Integer(in.readTTFUShort(offset + 2));
-            Integer newIdx = (Integer)glyphs.get(compositeIdx);
-            if (newIdx == null) {
-                // This errormessage would look much better
-                // if the fontname was printed to
-                //log.error("An embedded font "
-                //                     + "contains bad glyph data. "
-                //                     + "Characters might not display "
-                //                     + "correctly.");
-                moreComposites = false;
-                continue;
-            }
-
-            in.writeTTFUShort(offset + 2, newIdx.intValue());
-
-            offset += 4;
-
-            if ((flags & 1) > 0) {
-                // ARG_1_AND_ARG_2_ARE_WORDS
-                offset += 4;
-            } else {
-                offset += 2;
-            }
-
-            if ((flags & 8) > 0) {
-                offset += 2;    // WE_HAVE_A_SCALE
-            } else if ((flags & 64) > 0) {
-                offset += 4;    // WE_HAVE_AN_X_AND_Y_SCALE
-            } else if ((flags & 128) > 0) {
-                offset += 8;    // WE_HAVE_A_TWO_BY_TWO
-            }
-
-            if ((flags & 32) > 0) {
-                moreComposites = true;
-            } else {
-                moreComposites = false;
-            }
-        }
-    }
-
-
-    /**
-     * Scan all the original glyphs for composite glyphs and add those glyphs
-     * to the glyphmapping also rewrite the composite glyph pointers to the new
-     * mapping
-     */
-    private void scanGlyphs(FontFileReader in,
-                            Map glyphs) throws IOException {
-        TTFDirTabEntry entry = (TTFDirTabEntry)dirTabs.get("glyf");
-        Map newComposites = null;
-        Map allComposites = new java.util.HashMap();
-
-        int newIndex = glyphs.size();
-
-        if (entry != null) {
-            while (newComposites == null || newComposites.size() > 0) {
-                // Inefficient to iterate through all glyphs
-                newComposites = new java.util.HashMap();
-
-                Iterator e = glyphs.keySet().iterator();
-                while (e.hasNext()) {
-                    Integer origIndex = (Integer)e.next();
-
-                    if (in.readTTFShort(entry.getOffset()
-                                        + mtxTab[origIndex.intValue()].getOffset()) < 0) {
-                        // origIndex is a composite glyph
-                        allComposites.put(origIndex, glyphs.get(origIndex));
-                        List composites
-                            = getIncludedGlyphs(in, (int)entry.getOffset(),
-                                              origIndex);
-
-                        // Iterate through all composites pointed to
-                        // by this composite and check if they exists
-                        // in the glyphs map, add them if not.
-                        Iterator cps = composites.iterator();
-                        while (cps.hasNext()) {
-                            Integer cIdx = (Integer)cps.next();
-                            if (glyphs.get(cIdx) == null
-                                    && newComposites.get(cIdx) == null) {
-                                newComposites.put(cIdx,
-                                                  new Integer(newIndex));
-                                newIndex++;
-                            }
-                        }
-                    }
-                }
-
-                // Add composites to glyphs
-                Iterator m = newComposites.keySet().iterator();
-                while (m.hasNext()) {
-                    Integer im = (Integer)m.next();
-                    glyphs.put(im, newComposites.get(im));
-                }
-            }
-
-            // Iterate through all composites to remap their composite index
-            Iterator ce = allComposites.keySet().iterator();
-            while (ce.hasNext()) {
-                remapComposite(in, glyphs, (int)entry.getOffset(),
-                               (Integer)ce.next());
-            }
-
-        } else {
-            throw new IOException("Can't find glyf table");
-        }
-    }
-
-
-
-    /**
      * Returns a subset of the original font.
      *
      * @param in FontFileReader to read from
@@ -702,6 +533,17 @@ public class TTFSubSetFile extends TTFFile {
         System.arraycopy(output, 0, ret, 0, realSize);
 
         return ret;
+    }
+
+    private void scanGlyphs(FontFileReader in, Map<Integer, Integer> subsetGlyphs)
+            throws IOException {
+        TTFDirTabEntry glyfTableInfo = (TTFDirTabEntry) dirTabs.get("glyf");
+        if (glyfTableInfo == null) {
+            throw new IOException("Glyf table could not be found");
+        }
+
+        GlyfTable glyfTable = new GlyfTable(in, mtxTab, glyfTableInfo, subsetGlyphs);
+        glyfTable.populateGlyphsWithComposites();
     }
 
     /**
@@ -795,15 +637,15 @@ public class TTFSubSetFile extends TTFFile {
      * Read a unsigned short value at given position
      */
     private int readUShort(int pos) {
-        int ret = (int)output[pos];
+        int ret = output[pos];
         if (ret < 0) {
             ret += 256;
         }
         ret = ret << 8;
-        if ((int)output[pos + 1] < 0) {
-            ret |= (int)output[pos + 1] + 256;
+        if (output[pos + 1] < 0) {
+            ret |= output[pos + 1] + 256;
         } else {
-            ret |= (int)output[pos + 1];
+            ret |= output[pos + 1];
         }
 
         return ret;
@@ -826,7 +668,7 @@ public class TTFSubSetFile extends TTFFile {
      */
     private int maxPow2(int max) {
         int i = 0;
-        while (Math.pow(2, (double)i) < max) {
+        while (Math.pow(2, i) < max) {
             i++;
         }
 
@@ -834,7 +676,7 @@ public class TTFSubSetFile extends TTFFile {
     }
 
     private int log2(int num) {
-        return (int)(Math.log((double)num) / Math.log(2));
+        return (int)(Math.log(num) / Math.log(2));
     }
 
 
@@ -853,10 +695,10 @@ public class TTFSubSetFile extends TTFFile {
         long sum = 0;
 
         for (int i = 0; i < size; i += 4) {
-            int l = (int)(output[start + i] << 24);
-            l += (int)(output[start + i + 1] << 16);
-            l += (int)(output[start + i + 2] << 16);
-            l += (int)(output[start + i + 3] << 16);
+            int l = (output[start + i] << 24);
+            l += (output[start + i + 1] << 16);
+            l += (output[start + i + 2] << 16);
+            l += (output[start + i + 3] << 16);
             sum += l;
             if (sum > 0xffffffff) {
                 sum = sum - 0xffffffff;

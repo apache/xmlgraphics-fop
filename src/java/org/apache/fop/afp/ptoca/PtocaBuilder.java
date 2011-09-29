@@ -25,7 +25,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
-
+import org.apache.fop.afp.fonts.CharactersetEncoder.EncodedChars;
 import org.apache.xmlgraphics.java2d.color.CIELabColorSpace;
 import org.apache.xmlgraphics.java2d.color.ColorUtil;
 import org.apache.xmlgraphics.java2d.color.ColorWithAlternatives;
@@ -83,10 +83,6 @@ public abstract class PtocaBuilder implements PtocaConstants {
         out.write(length);
         out.write(functionType);
         baout.writeTo(out);
-    }
-
-    private void write(byte[] data, int offset, int length) {
-        baout.write(data, offset, length);
     }
 
     private void writeByte(int data) {
@@ -180,44 +176,34 @@ public abstract class PtocaBuilder implements PtocaConstants {
         currentX = -1;
     }
 
-    private static final int TRANSPARENT_MAX_SIZE = 253;
-
     /**
      * The Transparent Data control sequence contains a sequence of code points
      * that are presented without a scan for embedded control sequences. If the data is larger
      * than fits in one chunk, additional chunks are automatically generated.
      *
-     * @param data The text data to add.
+     * @param encodedChars The encoded text data to add.
      * @throws IOException if an I/O error occurs
      */
-    public void addTransparentData(byte[] data) throws IOException {
-        if (data.length <= TRANSPARENT_DATA_MAX_SIZE) {
-            addTransparentDataChunk(data);
-        } else {
-            // data size greater than TRANSPARENT_MAX_SIZE, so slice
-            int numTransData = data.length / TRANSPARENT_DATA_MAX_SIZE;
-            int currIndex = 0;
-            for (int transDataCnt = 0; transDataCnt < numTransData; transDataCnt++) {
-                addTransparentDataChunk(data, currIndex, TRANSPARENT_DATA_MAX_SIZE);
-                currIndex += TRANSPARENT_DATA_MAX_SIZE;
-            }
-            int left = data.length - currIndex;
-            addTransparentDataChunk(data, currIndex, left);
+    public void addTransparentData(EncodedChars encodedChars) throws IOException {
+
+        // data size greater than TRANSPARENT_MAX_SIZE, so slice
+        int numTransData = encodedChars.getLength() / TRANSPARENT_DATA_MAX_SIZE;
+        int currIndex = 0;
+        for (int transDataCnt = 0; transDataCnt < numTransData; transDataCnt++) {
+            addTransparentDataChunk(encodedChars, currIndex, TRANSPARENT_DATA_MAX_SIZE);
+            currIndex += TRANSPARENT_DATA_MAX_SIZE;
         }
+        int left = encodedChars.getLength() - currIndex;
+        addTransparentDataChunk(encodedChars, currIndex, left);
+
     }
 
-    private void addTransparentDataChunk(byte[] data) throws IOException {
-        addTransparentDataChunk(data, 0, data.length);
-    }
 
-    private void addTransparentDataChunk(byte[] data, int offset, int length) throws IOException {
-        if (length > TRANSPARENT_MAX_SIZE) {
-            // Check that we are not exceeding the maximum length
-            throw new IllegalArgumentException(
-                    "Transparent data is longer than " + TRANSPARENT_MAX_SIZE + " bytes");
-        }
+
+    private void addTransparentDataChunk(EncodedChars encodedChars, int offset, int length)
+            throws IOException {
         newControlSequence();
-        write(data, offset, length);
+        encodedChars.writeTo(baout, offset, length);
         commit(chained(TRN));
     }
 

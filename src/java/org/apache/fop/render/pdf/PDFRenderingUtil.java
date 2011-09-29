@@ -124,49 +124,45 @@ class PDFRenderingUtil implements PDFConfigurationConstants {
         if (params != null) {
             this.encryptionParams = params; //overwrite if available
         }
-        String pwd;
-        pwd = (String)userAgent.getRendererOptions().get(USER_PASSWORD);
-        if (pwd != null) {
-            if (encryptionParams == null) {
-                this.encryptionParams = new PDFEncryptionParams();
-            }
-            this.encryptionParams.setUserPassword(pwd);
+        String userPassword = (String)userAgent.getRendererOptions().get(USER_PASSWORD);
+        if (userPassword != null) {
+            getEncryptionParams().setUserPassword(userPassword);
         }
-        pwd = (String)userAgent.getRendererOptions().get(OWNER_PASSWORD);
-        if (pwd != null) {
-            if (encryptionParams == null) {
-                this.encryptionParams = new PDFEncryptionParams();
-            }
-            this.encryptionParams.setOwnerPassword(pwd);
+        String ownerPassword = (String)userAgent.getRendererOptions().get(OWNER_PASSWORD);
+        if (ownerPassword != null) {
+            getEncryptionParams().setOwnerPassword(ownerPassword);
         }
-        Object setting;
-        setting = userAgent.getRendererOptions().get(NO_PRINT);
-        if (setting != null) {
-            if (encryptionParams == null) {
-                this.encryptionParams = new PDFEncryptionParams();
-            }
-            this.encryptionParams.setAllowPrint(!booleanValueOf(setting));
+        Object noPrint = userAgent.getRendererOptions().get(NO_PRINT);
+        if (noPrint != null) {
+            getEncryptionParams().setAllowPrint(!booleanValueOf(noPrint));
         }
-        setting = userAgent.getRendererOptions().get(NO_COPY_CONTENT);
-        if (setting != null) {
-            if (encryptionParams == null) {
-                this.encryptionParams = new PDFEncryptionParams();
-            }
-            this.encryptionParams.setAllowCopyContent(!booleanValueOf(setting));
+        Object noCopyContent = userAgent.getRendererOptions().get(NO_COPY_CONTENT);
+        if (noCopyContent != null) {
+            getEncryptionParams().setAllowCopyContent(!booleanValueOf(noCopyContent));
         }
-        setting = userAgent.getRendererOptions().get(NO_EDIT_CONTENT);
-        if (setting != null) {
-            if (encryptionParams == null) {
-                this.encryptionParams = new PDFEncryptionParams();
-            }
-            this.encryptionParams.setAllowEditContent(!booleanValueOf(setting));
+        Object noEditContent = userAgent.getRendererOptions().get(NO_EDIT_CONTENT);
+        if (noEditContent != null) {
+            getEncryptionParams().setAllowEditContent(!booleanValueOf(noEditContent));
         }
-        setting = userAgent.getRendererOptions().get(NO_ANNOTATIONS);
-        if (setting != null) {
-            if (encryptionParams == null) {
-                this.encryptionParams = new PDFEncryptionParams();
-            }
-            this.encryptionParams.setAllowEditAnnotations(!booleanValueOf(setting));
+        Object noAnnotations = userAgent.getRendererOptions().get(NO_ANNOTATIONS);
+        if (noAnnotations != null) {
+            getEncryptionParams().setAllowEditAnnotations(!booleanValueOf(noAnnotations));
+        }
+        Object noFillInForms = userAgent.getRendererOptions().get(NO_FILLINFORMS);
+        if (noFillInForms != null) {
+            getEncryptionParams().setAllowFillInForms(!booleanValueOf(noFillInForms));
+        }
+        Object noAccessContent = userAgent.getRendererOptions().get(NO_ACCESSCONTENT);
+        if (noAccessContent != null) {
+            getEncryptionParams().setAllowAccessContent(!booleanValueOf(noAccessContent));
+        }
+        Object noAssembleDoc = userAgent.getRendererOptions().get(NO_ASSEMBLEDOC);
+        if (noAssembleDoc != null) {
+            getEncryptionParams().setAllowAssembleDocument(!booleanValueOf(noAssembleDoc));
+        }
+        Object noPrintHQ = userAgent.getRendererOptions().get(NO_PRINTHQ);
+        if (noPrintHQ != null) {
+            getEncryptionParams().setAllowPrintHq(!booleanValueOf(noPrintHQ));
         }
         String s = (String)userAgent.getRendererOptions().get(PDF_A_MODE);
         if (s != null) {
@@ -184,9 +180,10 @@ class PDFRenderingUtil implements PDFConfigurationConstants {
         if (s != null) {
             this.outputProfileURI = s;
         }
-        setting = userAgent.getRendererOptions().get(KEY_DISABLE_SRGB_COLORSPACE);
-        if (setting != null) {
-            this.disableSRGBColorSpace = booleanValueOf(setting);
+        Object disableSRGBColorSpace = userAgent.getRendererOptions().get(
+                KEY_DISABLE_SRGB_COLORSPACE);
+        if (disableSRGBColorSpace != null) {
+            this.disableSRGBColorSpace = booleanValueOf(disableSRGBColorSpace);
         }
     }
 
@@ -236,11 +233,14 @@ class PDFRenderingUtil implements PDFConfigurationConstants {
     }
 
     /**
-     * Sets the encryption parameters used by the PDF renderer.
-     * @param encryptionParams the encryption parameters
+     * Gets the encryption parameters used by the PDF renderer.
+     * @return encryptionParams the encryption parameters
      */
-    public void setEncryptionParams(PDFEncryptionParams encryptionParams) {
-        this.encryptionParams = encryptionParams;
+    PDFEncryptionParams getEncryptionParams() {
+        if (this.encryptionParams == null) {
+            this.encryptionParams = new PDFEncryptionParams();
+        }
+        return this.encryptionParams;
     }
 
     private void updateInfo() {

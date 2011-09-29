@@ -25,18 +25,6 @@ package org.apache.fop.pdf;
 public interface PDFEncryption {
 
     /**
-     * Returns the encryption parameters.
-     * @return the encryption parameters
-     */
-    PDFEncryptionParams getParams();
-
-    /**
-     * Sets the encryption parameters.
-     * @param params The parameterss to set
-     */
-    void setParams(PDFEncryptionParams params);
-
-    /**
      * Adds a PDFFilter to the PDFStream object
      * @param stream the stream to add an encryption filter to
      */

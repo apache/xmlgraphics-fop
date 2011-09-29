@@ -104,7 +104,7 @@ public class TagLogicalElement extends AbstractTripletStructuredObject {
         setAttributeValue(value);
         setAttributeQualifier(tleID, 1);
 
-        byte[] data = new byte[SF_HEADER.length];
+        byte[] data = new byte[SF_HEADER_LENGTH];
         copySF(data, Type.ATTRIBUTE, Category.PROCESS_ELEMENT);
 
         int tripletDataLength = getTripletDataLength();
