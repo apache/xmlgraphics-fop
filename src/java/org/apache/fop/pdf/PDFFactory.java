@@ -64,7 +64,6 @@ import org.apache.fop.fonts.truetype.FontFileReader;
 import org.apache.fop.fonts.truetype.TTFSubSetFile;
 import org.apache.fop.fonts.type1.PFBData;
 import org.apache.fop.fonts.type1.PFBParser;
-import org.apache.xmlgraphics.xmp.Metadata;
 
 /**
  * This class provides method to create and register PDF objects.
