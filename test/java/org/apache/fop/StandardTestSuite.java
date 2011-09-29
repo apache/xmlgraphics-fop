@@ -22,13 +22,14 @@ package org.apache.fop;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.apache.fop.area.ViewportTestSuite;
+import org.apache.fop.afp.fonts.CharactersetEncoderTest;
 import org.apache.fop.afp.parser.MODCAParserTestCase;
+import org.apache.fop.area.ViewportTestSuite;
 import org.apache.fop.fonts.DejaVuLGCSerifTest;
+import org.apache.fop.fonts.truetype.GlyfTableTestCase;
 import org.apache.fop.image.loader.batik.ImageLoaderTestCase;
 import org.apache.fop.image.loader.batik.ImagePreloaderTestCase;
 import org.apache.fop.intermediate.IFMimickingTestCase;
-import org.apache.fop.render.afp.AFPTestSuite;
 import org.apache.fop.render.extensions.prepress.PageBoundariesTest;
 import org.apache.fop.render.extensions.prepress.PageScaleTest;
 import org.apache.fop.render.pdf.PDFAConformanceTestCase;
@@ -53,14 +54,17 @@ public class StandardTestSuite {
         //$JUnit-BEGIN$
         suite.addTest(BasicDriverTestSuite.suite());
         suite.addTest(UtilityCodeTestSuite.suite());
+        suite.addTest(org.apache.fop.afp.AFPTestSuite.suite());
         suite.addTest(new TestSuite(PDFAConformanceTestCase.class));
         suite.addTest(new TestSuite(PDFEncodingTestCase.class));
         suite.addTest(new TestSuite(PDFCMapTestCase.class));
         suite.addTest(new TestSuite(PDFsRGBSettingsTestCase.class));
         suite.addTest(new TestSuite(DejaVuLGCSerifTest.class));
         suite.addTest(new TestSuite(MODCAParserTestCase.class));
-        suite.addTest(AFPTestSuite.suite());
+        suite.addTest(new TestSuite(CharactersetEncoderTest.class));
+        suite.addTest(org.apache.fop.render.afp.AFPTestSuite.suite());
         suite.addTest(PSTestSuite.suite());
+        suite.addTest(new TestSuite(GlyfTableTestCase.class));
         suite.addTest(RichTextFormatTestSuite.suite());
         suite.addTest(new TestSuite(ImageLoaderTestCase.class));
         suite.addTest(new TestSuite(ImagePreloaderTestCase.class));

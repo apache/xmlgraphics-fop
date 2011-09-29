@@ -132,12 +132,6 @@ import org.apache.fop.render.rtf.rtflib.tools.TableContext;
 /**
  * RTF Handler: generates RTF output using the structure events from
  * the FO Tree sent to this structure handler.
- *
- * @author Bertrand Delacretaz <bdelacretaz@codeconsult.ch>
- * @author Trembicki-Guy, Ed <GuyE@DNB.com>
- * @author Boris Poudérous <boris.pouderous@eads-telecom.com>
- * @author Peter Herweg <pherweg@web.de>
- * @author Andreas Putz <a.putz@skynamics.com>
  */
 public class RTFHandler extends FOEventHandler {
 

@@ -39,13 +39,12 @@ import org.apache.fop.afp.util.BinaryUtils;
 public abstract class AbstractAFPObject implements Streamable {
 
     /** Static logging instance */
-    protected static final Log LOG = LogFactory.getLog("org.apache.xmlgraphics.afp.modca");
+    protected static final Log LOG = LogFactory.getLog(AbstractAFPObject.class);
 
     /** the structured field class id */
     protected static final byte SF_CLASS = (byte)0xD3;
 
-    /** the structure field header */
-    static final byte[] SF_HEADER = new byte[] {
+    private static final byte[] SF_HEADER = new byte[] {
         0x5A, // Structured field identifier
         0x00, // Length byte 1
         0x10, // Length byte 2
@@ -56,6 +55,9 @@ public abstract class AbstractAFPObject implements Streamable {
         0x00, // Reserved
         0x00, // Reserved
     };
+
+    /** Length of bytes of a Structured Field Header */
+    protected static final int SF_HEADER_LENGTH = SF_HEADER.length;
 
     /**
      * Copies the template structured field data array to the given byte array
@@ -77,7 +79,7 @@ public abstract class AbstractAFPObject implements Streamable {
      * @param category the category code
      */
     protected static void copySF(byte[] data, byte clazz, byte type, byte category) {
-        System.arraycopy(SF_HEADER, 0, data, 0, SF_HEADER.length);
+        System.arraycopy(SF_HEADER, 0, data, 0, SF_HEADER_LENGTH);
         data[3] = clazz;
         data[4] = type;
         data[5] = category;
@@ -87,50 +89,19 @@ public abstract class AbstractAFPObject implements Streamable {
      * Writes a collection of Streamable to the AFP Datastream.
      *
      * @param objects a list of AFPObjects
+     * @param <S> Streamable view of an AFPObject
      * @param os The stream to write to
      * @throws java.io.IOException an I/O exception of some sort has occurred.
      */
-    protected void writeObjects(Collection/*<Streamable>*/ objects, OutputStream os)
-        throws IOException {
-        if (objects != null && objects.size() > 0) {
-            Iterator it = objects.iterator();
+    protected <S extends Streamable> void writeObjects(Collection<S> objects, OutputStream os)
+            throws IOException {
+        if (objects != null) {
+            Iterator<S> it = objects.iterator();
             while (it.hasNext()) {
-                Object object = it.next();
-                if (object instanceof Streamable) {
-                    ((Streamable)object).writeToStream(os);
-                    it.remove(); // once written, immediately remove the object
-                }
+                Streamable s = it.next();
+                s.writeToStream(os);
+                it.remove(); // once written, immediately remove the object
             }
-        }
-    }
-
-    /**
-     * Reads data chunks from an InputStream
-     * and then formats them with a structured header to a given OutputStream
-     *
-     * @param dataHeader the header data
-     * @param lengthOffset offset of length field in data chunk
-     * @param maxChunkLength the maximum chunk length
-     * @param inputStream the InputStream to read from
-     * @param outputStream the OutputStream to write to
-     * @throws IOException thrown if an I/O exception of some sort has occurred.
-     */
-    protected static void copyChunks(byte[] dataHeader, int lengthOffset,
-            int maxChunkLength, InputStream inputStream, OutputStream outputStream)
-    throws IOException {
-        int headerLen = dataHeader.length - lengthOffset;
-        // length field is just before data so do not include in data length
-        if (headerLen == 2) {
-            headerLen = 0;
-        }
-        byte[] data = new byte[maxChunkLength];
-        int numBytesRead = 0;
-        while ((numBytesRead = inputStream.read(data, 0, maxChunkLength)) > 0) {
-            byte[] len = BinaryUtils.convert(headerLen + numBytesRead, 2);
-            dataHeader[lengthOffset] = len[0]; // Length byte 1
-            dataHeader[lengthOffset + 1] = len[1]; // Length byte 2
-            outputStream.write(dataHeader);
-            outputStream.write(data, 0, numBytesRead);
         }
     }
 
@@ -186,7 +157,7 @@ public abstract class AbstractAFPObject implements Streamable {
      * @param maxLength the maximum length allowed for the string
      * @return a possibly truncated string
      */
-    protected String truncate(String str, int maxLength) {
+    protected static String truncate(String str, int maxLength) {
         if (str.length() > maxLength) {
             str = str.substring(0, maxLength);
             LOG.warn("truncated character string '"

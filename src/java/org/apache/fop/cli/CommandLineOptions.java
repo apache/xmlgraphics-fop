@@ -381,6 +381,14 @@ public class CommandLineOptions {
                 getPDFEncryptionParams().setAllowEditContent(false);
             } else if (args[i].equals("-noannotations")) {
                 getPDFEncryptionParams().setAllowEditAnnotations(false);
+            } else if (args[i].equals("-nofillinforms")) {
+                getPDFEncryptionParams().setAllowFillInForms(false);
+            } else if (args[i].equals("-noaccesscontent")) {
+                getPDFEncryptionParams().setAllowAccessContent(false);
+            } else if (args[i].equals("-noassembledoc")) {
+                getPDFEncryptionParams().setAllowAssembleDocument(false);
+            } else if (args[i].equals("-noprinthq")) {
+                getPDFEncryptionParams().setAllowPrintHq(false);
             } else if (args[i].equals("-version")) {
                 printVersion();
                 return false;
@@ -1181,6 +1189,14 @@ public class CommandLineOptions {
             + "  -nocopy           PDF file will be encrypted without copy content permission\n"
             + "  -noedit           PDF file will be encrypted without edit content permission\n"
             + "  -noannotations    PDF file will be encrypted without edit annotation permission\n"
+            + "  -nofillinforms    PDF file will be encrypted without"
+            + " fill in interactive form fields permission\n"
+            + "  -noaccesscontent  PDF file will be encrypted without"
+            + " extract text and graphics permission\n"
+            + "  -noassembledoc    PDF file will be encrypted without"
+            + " assemble the document permission\n"
+            + "  -noprinthq        PDF file will be encrypted without"
+            + " print high quality permission\n"
             + "  -a                enables accessibility features (Tagged PDF etc., default off)\n"
             + "  -pdfprofile prof  PDF file will be generated with the specified profile\n"
             + "                    (Examples for prof: PDF/A-1b or PDF/X-3:2003)\n\n"

@@ -38,6 +38,36 @@ public interface PDFConfigurationConstants {
     String NO_EDIT_CONTENT = "noedit";
     /** PDF encryption parameter: Forbids annotations, datatype: Boolean or "true"/"false" */
     String NO_ANNOTATIONS = "noannotations";
+
+    /**
+     * PDF encryption parameter: Forbids filling in existing interactive forms, datatype:
+     * Boolean or "true"/"false"
+     */
+    String NO_FILLINFORMS = "nofillinforms";
+
+    /**
+     * PDF encryption parameter: Forbids extracting text and graphics, datatype: Boolean
+     * or "true"/"false"
+     */
+    String NO_ACCESSCONTENT = "noaccesscontent";
+
+    /**
+     * PDF encryption parameter: Forbids assembling document, datatype: Boolean or
+     * "true"/"false"
+     */
+    String NO_ASSEMBLEDOC = "noassembledoc";
+
+    /**
+     * PDF encryption parameter: Forbids printing to high quality, datatype: Boolean or
+     * "true"/"false"
+     */
+    String NO_PRINTHQ = "noprinthq";
+
+    /**
+     * PDF encryption length parameter: must be a multiple of 8 between 40 and 128,
+     * default value 40, datatype: int.
+     */
+    String ENCRYPTION_LENGTH = "encryption-length";
     /** Rendering Options key for the PDF/A mode. */
     String PDF_A_MODE = "pdf-a-mode";
     /** Rendering Options key for the PDF/X mode. */

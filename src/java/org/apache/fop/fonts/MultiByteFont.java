@@ -21,7 +21,6 @@ package org.apache.fop.fonts;
 
 import java.nio.CharBuffer;
 import java.nio.IntBuffer;
-import java.text.DecimalFormat;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -38,15 +37,11 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
     private static final Log log // CSOK: ConstantNameCheck
         = LogFactory.getLog(MultiByteFont.class);
 
-    private static int uniqueCounter = -1;
-
     private String ttcName = null;
     private String encoding = "Identity-H";
 
     private int defaultWidth = 0;
     private CIDFontType cidType = CIDFontType.CIDTYPE2;
-
-    private String namePrefix = null;    // Quasi unique prefix
 
     private CIDSubset subset = new CIDSubset();
 
@@ -77,26 +72,6 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
      */
     public MultiByteFont() {
         subset.setupFirstGlyph();
-
-        // Create a quasiunique prefix for fontname
-        synchronized (this.getClass()) {
-            uniqueCounter++;
-            if (uniqueCounter > 99999 || uniqueCounter < 0) {
-                uniqueCounter = 0; //We need maximum 5 character then we start again
-            }
-        }
-        DecimalFormat counterFormat = new DecimalFormat("00000");
-        String cntString = counterFormat.format(uniqueCounter);
-
-        //Subset prefix as described in chapter 5.5.3 of PDF 1.4
-        StringBuffer sb = new StringBuffer("E");
-        for (int i = 0, c = cntString.length(); i < c; i++) {
-            //translate numbers to uppercase characters
-            sb.append((char)(cntString.charAt(i) + (65 - 48)));
-        }
-        sb.append("+");
-        namePrefix = sb.toString();
-
         setFontType(FontType.TYPE0);
     }
 
@@ -133,14 +108,10 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
         this.cidType = cidType;
     }
 
-    private String getPrefixedFontName() {
-        return namePrefix + FontUtil.stripWhiteSpace(super.getFontName());
-    }
-
     /** {@inheritDoc} */
     public String getEmbedFontName() {
         if (isEmbeddable()) {
-            return getPrefixedFontName();
+            return FontUtil.stripWhiteSpace(super.getFontName());
         } else {
             return super.getFontName();
         }
@@ -149,6 +120,11 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
     /** {@inheritDoc} */
     public boolean isEmbeddable() {
         return !(getEmbedFileName() == null && getEmbedResourceName() == null);
+    }
+
+    /** {@inheritDoc} */
+    public boolean isSubsetEmbedded() {
+        return true;
     }
 
     /** {@inheritDoc} */

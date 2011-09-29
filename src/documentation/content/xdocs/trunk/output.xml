@@ -743,6 +743,12 @@ Note that the value of the encoding attribute in the example is the double-byte 
           <a href="fonts.html#embedding"><code>referenced-fonts</code> section of the configuration file</a>.
           However, the default fonts shown above will not be embedded.
         </p>
+        <p>
+          For double byte EBCDIC encoded character sets, there is an optional tag that must be set to prevent
+          characters from being miscoded. This defaults to "false" if not specified.</p>
+          <source><![CDATA[
+        <afp-font type="CIDKeyed" codepage="T10835  " encoding="Cp937" characterset="CZTKAI" ebcdic-dbcs="true"/>]]>
+          </source>
       </section>
       <section id="afp-renderer-resolution-config">
         <title>Output Resolution</title>

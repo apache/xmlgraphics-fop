@@ -63,7 +63,11 @@ public class SingleByteFont extends CustomFont {
     }
 
     /** {@inheritDoc} */
-    @Override
+    public boolean isSubsetEmbedded() {
+        return false;
+    }
+
+    /** {@inheritDoc} */
     public String getEncodingName() {
         return this.mapping.getName();
     }

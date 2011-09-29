@@ -269,7 +269,6 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder implem
             }
 
             public Source resolveURI(String uri) {
-                System.out.println("resolve " + uri);
                 try {
                     ParsedURL url = new ParsedURL(baseURI, uri);
                     InputStream in = url.openStream();

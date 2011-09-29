@@ -124,8 +124,10 @@ public class AFPDataObjectFactory {
             break;
         case 4:
         case 8:
+            //A grayscale image
             ideStruct = content.needIDEStructureParameter();
             ideStruct.setBitsPerComponent(new int[] {bitsPerPixel});
+            ideStruct.setColorModel(IDEStructureParameter.COLOR_MODEL_YCBCR);
             break;
         case 24:
             ideStruct = content.needIDEStructureParameter();
@@ -139,7 +141,7 @@ public class AFPDataObjectFactory {
             throw new IllegalArgumentException("Unsupported number of bits per pixel: "
                     + bitsPerPixel);
         }
-        if (imageObjectInfo.isSubtractive()) {
+        if (bitsPerPixel > 1 && imageObjectInfo.isSubtractive()) {
             ideStruct = content.needIDEStructureParameter();
             ideStruct.setSubtractive(imageObjectInfo.isSubtractive());
         }

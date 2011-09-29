@@ -26,6 +26,7 @@ import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 
+import org.apache.fop.render.RenderingContext;
 import org.apache.xmlgraphics.image.loader.Image;
 import org.apache.xmlgraphics.image.loader.ImageFlavor;
 import org.apache.xmlgraphics.image.loader.ImageInfo;
@@ -35,8 +36,6 @@ import org.apache.xmlgraphics.java2d.ps.PSGraphics2D;
 import org.apache.xmlgraphics.ps.FormGenerator;
 import org.apache.xmlgraphics.ps.PSGenerator;
 import org.apache.xmlgraphics.ps.PSProcSets;
-
-import org.apache.fop.render.RenderingContext;
 
 /**
  * Image handler implementation which handles vector graphics (Java2D) for PostScript output.
@@ -97,34 +96,14 @@ public class PSImageHandlerGraphics2D implements PSImageHandler {
     }
 
     /** {@inheritDoc} */
-    public void generateForm(RenderingContext context, Image image, PSImageFormResource form)
+    public void generateForm(RenderingContext context, Image image, final PSImageFormResource form)
             throws IOException {
         PSRenderingContext psContext = (PSRenderingContext)context;
         PSGenerator gen = psContext.getGenerator();
         final ImageGraphics2D imageG2D = (ImageGraphics2D)image;
         ImageInfo info = image.getInfo();
-        String imageDescription = info.getMimeType() + " " + info.getOriginalURI();
-        final Dimension2D dimensionsPt = info.getSize().getDimensionPt();
-        final Dimension2D dimensionsMpt = info.getSize().getDimensionMpt();
 
-        FormGenerator formGen = new FormGenerator(
-                form.getName(), imageDescription, dimensionsPt) {
-
-            protected void generatePaintProc(PSGenerator gen)
-                    throws IOException {
-                gen.getResourceTracker().notifyResourceUsageOnPage(
-                        PSProcSets.EPS_PROCSET);
-                gen.writeln("BeginEPSF");
-                PSGraphics2DAdapter adapter = new PSGraphics2DAdapter(gen, false);
-                adapter.paintImage(imageG2D.getGraphics2DImagePainter(),
-                        null,
-                        0, 0,
-                        (int)Math.round(dimensionsMpt.getWidth()),
-                        (int)Math.round(dimensionsMpt.getHeight()));
-                gen.writeln("EndEPSF");
-            }
-
-        };
+        FormGenerator formGen = buildFormGenerator(gen.getPSLevel(), form, info, imageG2D);
         formGen.generate(gen);
     }
     /** {@inheritDoc} */
@@ -150,4 +129,70 @@ public class PSImageHandlerGraphics2D implements PSImageHandler {
         return false;
     }
 
+    private FormGenerator buildFormGenerator(int psLanguageLevel, final PSImageFormResource form,
+            final ImageInfo info, final ImageGraphics2D imageG2D) {
+        String imageDescription = info.getMimeType() + " " + info.getOriginalURI();
+        final Dimension2D dimensionsPt = info.getSize().getDimensionPt();
+        final Dimension2D dimensionsMpt = info.getSize().getDimensionMpt();
+        FormGenerator formGen;
+
+        if (psLanguageLevel <= 2) {
+            formGen = new EPSFormGenerator(form.getName(), imageDescription, dimensionsPt) {
+
+                @Override
+                void doGeneratePaintProc(PSGenerator gen) throws IOException {
+                    paintImageG2D(imageG2D, dimensionsMpt, gen);
+                }
+            };
+        } else {
+            formGen = new EPSFormGenerator(form.getName(), imageDescription, dimensionsPt) {
+
+                @Override
+                protected void generateAdditionalDataStream(PSGenerator gen) throws IOException {
+                    gen.writeln("/" + form.getName() + ":Data currentfile <<");
+                    gen.writeln("  /Filter /SubFileDecode");
+                    gen.writeln("  /DecodeParms << /EODCount 0 /EODString (%FOPEndOfData) >>");
+                    gen.writeln(">> /ReusableStreamDecode filter");
+                    paintImageG2D(imageG2D, dimensionsMpt, gen);
+                    gen.writeln("%FOPEndOfData");
+                    gen.writeln("def");
+                }
+
+                @Override
+                void doGeneratePaintProc(PSGenerator gen) throws IOException {
+                    gen.writeln(form.getName() + ":Data 0 setfileposition");
+                    gen.writeln(form.getName() + ":Data cvx exec");
+                }
+            };
+        }
+        return formGen;
+    }
+
+    private abstract static class EPSFormGenerator extends FormGenerator {
+
+        EPSFormGenerator(String formName, String title, Dimension2D dimensions) {
+            super(formName, title, dimensions);
+        }
+
+        protected void paintImageG2D(final ImageGraphics2D imageG2D, Dimension2D dimensionsMpt,
+                PSGenerator gen) throws IOException {
+            PSGraphics2DAdapter adapter = new PSGraphics2DAdapter(gen, false);
+            adapter.paintImage(imageG2D.getGraphics2DImagePainter(),
+                        null,
+                        0, 0,
+                        (int) Math.round(dimensionsMpt.getWidth()),
+                        (int) Math.round(dimensionsMpt.getHeight()));
+        }
+
+        @Override
+        protected final void generatePaintProc(PSGenerator gen) throws IOException {
+            gen.getResourceTracker().notifyResourceUsageOnPage(
+                    PSProcSets.EPS_PROCSET);
+            gen.writeln("BeginEPSF");
+            doGeneratePaintProc(gen);
+            gen.writeln("EndEPSF");
+        }
+
+        abstract void doGeneratePaintProc(PSGenerator gen) throws IOException;
+    }
 }
