@@ -98,7 +98,7 @@ public abstract class CharactersetEncoder {
      * sequence it will return its EBCDIC code-point, however, the "Shift In - Shift Out" operators
      * are removed from the sequence of bytes. These are only used in Line Data.
      */
-    private final static class EbcdicDoubleByteEncoder extends CharactersetEncoder {
+    private static final class EbcdicDoubleByteEncoder extends CharactersetEncoder {
         private EbcdicDoubleByteEncoder(String encoding) {
             super(encoding);
         }
@@ -116,7 +116,7 @@ public abstract class CharactersetEncoder {
      * the primary format for most Latin character sets. This can also be used for Unicode double-
      * byte character sets (DBCS).
      */
-    private final static class DefaultEncoder extends CharactersetEncoder {
+    private static final class DefaultEncoder extends CharactersetEncoder {
         private DefaultEncoder(String encoding) {
             super(encoding);
         }
@@ -145,20 +145,26 @@ public abstract class CharactersetEncoder {
     /**
      * A container for encoded character bytes
      */
-    public static class EncodedChars {
+    public static final class EncodedChars {
 
-        final private byte[] bytes;
+        private final byte[] bytes;
 
-        final private int offset;
+        private final int offset;
 
-        final private int length;
+        private final int length;
 
         private EncodedChars(byte[] bytes, int offset, int length) {
-            if (offset < 0) throw new IllegalArgumentException();
+            if (offset < 0) {
+                throw new IllegalArgumentException();
+            }
 
-            if (length < 0) throw new IllegalArgumentException();
+            if (length < 0) {
+                throw new IllegalArgumentException();
+            }
 
-            if (offset + length > bytes.length) throw new IllegalArgumentException();
+            if (offset + length > bytes.length) {
+                throw new IllegalArgumentException();
+            }
 
             this.bytes = bytes;
 
@@ -175,14 +181,22 @@ public abstract class CharactersetEncoder {
          * write <code>length</code> bytes from <code>offset</code> to the output stream
          *
          * @param out output to write the bytes to
+         * @param offset the offset where to write
+         * @param length the length to write
          * @throws IOException if an I/O error occurs
          */
         public void writeTo(OutputStream out, int offset, int length) throws IOException {
-            if (offset < 0) throw new IllegalArgumentException();
+            if (offset < 0) {
+                throw new IllegalArgumentException();
+            }
 
-            if (length < 0) throw new IllegalArgumentException();
+            if (length < 0) {
+                throw new IllegalArgumentException();
+            }
 
-            if (offset + length > this.length) throw new IllegalArgumentException();
+            if (offset + length > this.length) {
+                throw new IllegalArgumentException();
+            }
 
             out.write(bytes, this.offset + offset, length);
         }
@@ -190,7 +204,7 @@ public abstract class CharactersetEncoder {
         /**
          * The number of containing bytes.
          *
-         * @return
+         * @return the length
          */
         public int getLength() {
             return length;

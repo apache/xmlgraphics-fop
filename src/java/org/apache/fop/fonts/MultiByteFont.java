@@ -47,8 +47,8 @@ public class MultiByteFont extends CIDFont {
         setFontType(FontType.TYPE0);
     }
 
-    /** {@inheritdoc} */
-    public int getdefaultwidth() {
+    /** {@inheritDoc} */
+    public int getDefaultWidth() {
         return defaultWidth;
     }
 
