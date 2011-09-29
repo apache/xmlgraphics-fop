@@ -85,10 +85,6 @@ public abstract class PtocaBuilder implements PtocaConstants {
         baout.writeTo(out);
     }
 
-    private void write(byte[] data, int offset, int length) {
-        baout.write(data, offset, length);
-    }
-
     private void writeByte(int data) {
         baout.write(data);
     }
@@ -180,14 +176,12 @@ public abstract class PtocaBuilder implements PtocaConstants {
         currentX = -1;
     }
 
-    private static final int TRANSPARENT_MAX_SIZE = 253;
-
     /**
      * The Transparent Data control sequence contains a sequence of code points
      * that are presented without a scan for embedded control sequences. If the data is larger
      * than fits in one chunk, additional chunks are automatically generated.
      *
-     * @param data The text data to add.
+     * @param encodedChars The encoded text data to add.
      * @throws IOException if an I/O error occurs
      */
     public void addTransparentData(EncodedChars encodedChars) throws IOException {
@@ -206,7 +200,8 @@ public abstract class PtocaBuilder implements PtocaConstants {
 
 
 
-    private void addTransparentDataChunk(EncodedChars encodedChars, int offset, int length) throws IOException {
+    private void addTransparentDataChunk(EncodedChars encodedChars, int offset, int length)
+            throws IOException {
         newControlSequence();
         encodedChars.writeTo(baout, offset, length);
         commit(chained(TRN));

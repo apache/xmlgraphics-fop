@@ -38,10 +38,10 @@ public class InstalledFontCollection implements FontCollection {
 
     private static Log log = LogFactory.getLog(InstalledFontCollection.class);
 
-    private static final Set HARDCODED_FONT_NAMES;
+    private static final Set<String> HARDCODED_FONT_NAMES;
 
     static {
-        HARDCODED_FONT_NAMES = new java.util.HashSet();
+        HARDCODED_FONT_NAMES = new java.util.HashSet<String>();
         HARDCODED_FONT_NAMES.add("any");
         HARDCODED_FONT_NAMES.add("sans-serif");
         HARDCODED_FONT_NAMES.add("serif");
@@ -58,7 +58,7 @@ public class InstalledFontCollection implements FontCollection {
     }
 
     /** Required by new instances of FontMetricsMapper */
-    final private Java2DFontMetrics java2DFontMetrics;
+    private final Java2DFontMetrics java2DFontMetrics;
 
     /**
      * Main constructor

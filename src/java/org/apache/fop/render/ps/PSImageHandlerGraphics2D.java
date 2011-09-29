@@ -168,7 +168,7 @@ public class PSImageHandlerGraphics2D implements PSImageHandler {
         return formGen;
     }
 
-    private static abstract class EPSFormGenerator extends FormGenerator {
+    private abstract static class EPSFormGenerator extends FormGenerator {
 
         EPSFormGenerator(String formName, String title, Dimension2D dimensions) {
             super(formName, title, dimensions);
