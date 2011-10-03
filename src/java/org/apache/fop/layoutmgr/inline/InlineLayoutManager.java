@@ -107,10 +107,6 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
         super(node);
     }
 
-    private Inline getInlineFO() {
-        return (Inline) fobj;
-    }
-
     /** {@inheritDoc} */
     @Override
     public void initialize() {
