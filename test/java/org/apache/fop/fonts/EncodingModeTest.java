@@ -19,15 +19,20 @@
 
 package org.apache.fop.fonts;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
-public class EncodingModeTest extends TestCase {
+import org.junit.Test;
+
+public class EncodingModeTest {
+
+    @Test
     public void testGetName() {
         assertEquals("auto", EncodingMode.AUTO.getName());
         assertEquals("single-byte", EncodingMode.SINGLE_BYTE.getName());
         assertEquals("cid", EncodingMode.CID.getName());
     }
 
+    @Test
     public void testGetValue() {
         assertEquals(EncodingMode.AUTO, EncodingMode.getEncodingMode("auto"));
         assertEquals(EncodingMode.SINGLE_BYTE, EncodingMode.getEncodingMode("single-byte"));

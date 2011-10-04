@@ -19,18 +19,23 @@
 
 package org.apache.fop.afp.parser;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
 import java.io.InputStream;
 import java.util.Arrays;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * MODCAParser and MODCAParser.UnparsedStructuredField Unit tests
  */
-public class MODCAParserTestCase extends TestCase {
+public class MODCAParserTestCase {
 
     /** The carriage control character (0x5A) used to indicate the start of a structured field. */
     public static final byte CARRIAGE_CONTROL_CHAR = (byte)0x5A;
@@ -47,6 +52,7 @@ public class MODCAParserTestCase extends TestCase {
      *
      * @throws Exception *
      */
+    @Test
     public void testReadNextStructuredField1() throws Exception {
 
         // carriage control (0x5A) delimits structured fields,
@@ -87,6 +93,7 @@ public class MODCAParserTestCase extends TestCase {
      *
      * @throws Exception *
      */
+    @Test
     public void testReadNextStructuredField2() throws Exception {
 
         // no extension data

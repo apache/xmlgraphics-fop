@@ -40,9 +40,7 @@ public class ResultCheck implements LayoutEngineCheck {
         this.property = node.getAttributes().getNamedItem("property").getNodeValue();
     }
 
-    /* (non-Javadoc)
-     * @see LayoutEngineCheck#check(LayoutResult)
-     */
+    /** {@inheritDoc} */
     public void check(LayoutResult result) {
         FormattingResults results = result.getResults();
         String actual;
@@ -59,7 +57,7 @@ public class ResultCheck implements LayoutEngineCheck {
 
     }
 
-    /** @see java.lang.Object#toString() */
+    @Override
     public String toString() {
         return "Property: " + property;
     }

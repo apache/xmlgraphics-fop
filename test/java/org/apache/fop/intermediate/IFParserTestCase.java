@@ -22,15 +22,21 @@ package org.apache.fop.intermediate;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Collection;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.stream.StreamResult;
 
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 import org.w3c.dom.Document;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.layoutengine.LayoutEngineTestUtils;
 import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFDocumentHandler;
 import org.apache.fop.render.intermediate.IFParser;
@@ -39,7 +45,19 @@ import org.apache.fop.render.intermediate.IFSerializer;
 /**
  * Tests the intermediate format parser.
  */
+@RunWith(Parameterized.class)
 public class IFParserTestCase extends AbstractIFTestCase {
+
+    /**
+     * Gets the parameters for this test
+     *
+     * @return a collection of file arrays containing the test files
+     * @throws IOException if an error occurs when trying to read the test files
+     */
+    @Parameters
+    public static Collection<File[]> getParameters() throws IOException {
+        return LayoutEngineTestUtils.getTestFiles();
+    }
 
     /**
      * Constructor for the test suite that is used for each test file.
@@ -81,11 +99,16 @@ public class IFParserTestCase extends AbstractIFTestCase {
         return (Document)domResult.getNode();
     }
 
-    /** {@inheritDoc} */
     @Override
+    @Test
     public void runTest() throws Exception {
-        testParserToIntermediateFormat();
-        testParserToPDF();
+        try {
+            testParserToIntermediateFormat();
+            testParserToPDF();
+        } catch (Exception e) {
+            org.apache.commons.logging.LogFactory.getLog(this.getClass()).error(
+                    "Error on " + testFile.getName());
+            throw e;
+        }
     }
-
 }

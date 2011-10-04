@@ -19,14 +19,18 @@
 
 package org.apache.fop.afp.modca;
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.Arrays;
+
+import org.junit.Test;
 
 /**
  * Tests the {@linkplain AbstractAFPObject} class.
  */
 public abstract class AbstractNamedAFPObjectTestCase<S extends  AbstractNamedAFPObject>
         extends AbstractAFPObjectTestCase<S> {
-
+    @Test
     public void testCopySF() {
 
         final S sut = getSut();

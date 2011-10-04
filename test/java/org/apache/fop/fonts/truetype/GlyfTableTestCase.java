@@ -19,6 +19,8 @@
 
 package org.apache.fop.fonts.truetype;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,12 +28,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests {@link GlyfTable}.
  */
-public class GlyfTableTestCase extends TestCase {
+public class GlyfTableTestCase {
 
     private final static class DirData {
 
@@ -50,7 +53,7 @@ public class GlyfTableTestCase extends TestCase {
 
     private FontFileReader originalFontReader;
 
-    @Override
+    @Before
     public void setUp() throws IOException {
         originalFontReader = new FontFileReader("test/resources/fonts/DejaVuLGCSerif.ttf");
     }
@@ -60,6 +63,7 @@ public class GlyfTableTestCase extends TestCase {
      *
      * @throws IOException if an I/O error occurs
      */
+    @Test
     public void testPopulateGlyphsWithComposites() throws IOException {
         // Glyph 408 -> U+01D8 "uni01D8" this is a composite glyph.
         int[] composedIndices = setupTest(408);
@@ -77,6 +81,7 @@ public class GlyfTableTestCase extends TestCase {
      *
      * @throws IOException if an I/O error occurs
      */
+    @Test
     public void testPopulateNoCompositeGlyphs() throws IOException {
         int[] composedIndices = setupTest(36, 37, 38); // "A", "B", "C"
         int[] expected = new int[composedIndices.length];
@@ -90,6 +95,7 @@ public class GlyfTableTestCase extends TestCase {
      *
      * @throws IOException if an I/O error occurs
      */
+    @Test
     public void testGlyphsNotRemappedTwice() throws IOException {
         int composedGlyph = 12;
         // The order of these glyph indices, must NOT be changed! (see javadoc above)
@@ -108,6 +114,7 @@ public class GlyfTableTestCase extends TestCase {
      *
      * @throws IOException if an I/O error occurs
      */
+    @Test
     public void testSingleRecursionStep() throws IOException {
         // Glyph 2077 -> U+283F "uni283F" this is composed of a composite glyph (recursive).
         int[] composedIndices = setupTest(2077);

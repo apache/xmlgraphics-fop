@@ -19,32 +19,21 @@
 
 package org.apache.fop.render.extensions.prepress;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
+
 import java.awt.geom.Point2D;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Tests for the fox:scale extension property.
  */
-public class PageScaleTest extends TestCase {
-
-    /**
-     * Default constructor.
-     */
-    public PageScaleTest() {
-        super();
-    }
-
-    /**
-     * Creates a test case with the given name.
-     *
-     * @param name name for the test case
-     */
-    public PageScaleTest(String name) {
-        super(name);
-    }
+public class PageScaleTest {
 
     /** 1 value is used for both x and y. */
+    @Test
     public void testScale1() {
         Point2D res = PageScale.getScale(".5");
         assertEquals(0.5, res.getX(), 0.0);
@@ -52,6 +41,7 @@ public class PageScaleTest extends TestCase {
     }
 
     /** Two values, used resp. for x and y. */
+    @Test
     public void testScale2() {
         Point2D res = PageScale.getScale("1. \t \n 1.2");
         assertEquals(1.0, res.getX(), 0.0);
@@ -59,6 +49,7 @@ public class PageScaleTest extends TestCase {
     }
 
     /** Scale must not contain units. */
+    @Test
     public void testScaleFail() {
         try {
             PageScale.getScale("0.5mm 0.5cm");
@@ -69,6 +60,7 @@ public class PageScaleTest extends TestCase {
     }
 
     /** @{code null} is returned when scale is unspecified. */
+    @Test
     public void testScaleNull() {
         Point2D res = PageScale.getScale(null);
         assertNull("Result should be null", res);

@@ -19,20 +19,21 @@
 
 package org.apache.fop.util;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Map;
-
-import junit.framework.TestCase;
-
-import org.xml.sax.helpers.LocatorImpl;
 
 import org.apache.fop.events.model.EventSeverity;
 import org.apache.fop.util.text.AdvancedMessageFormat;
+import org.junit.Test;
+import org.xml.sax.helpers.LocatorImpl;
 
 /**
  * Tests for EventFormatter.
  */
-public class AdvancedMessageFormatTestCase extends TestCase {
+public class AdvancedMessageFormatTestCase {
 
+    @Test
     public void testFormatting() throws Exception {
         String msg;
         AdvancedMessageFormat format;
@@ -74,6 +75,7 @@ public class AdvancedMessageFormatTestCase extends TestCase {
         assertEquals("Multi-conditional: case1: value1", msg);
     }
 
+    @Test
     public void testObjectFormatting() throws Exception {
         String msg;
         AdvancedMessageFormat format;
@@ -92,6 +94,7 @@ public class AdvancedMessageFormatTestCase extends TestCase {
         assertEquals("Here\'s a Locator: 12:7", msg);
     }
 
+    @Test
     public void testIfFormatting() throws Exception {
         String msg;
         AdvancedMessageFormat format;
@@ -139,6 +142,7 @@ public class AdvancedMessageFormatTestCase extends TestCase {
         assertEquals("You are very, very nice!", msg);
     }
 
+    @Test
     public void testEqualsFormatting() throws Exception {
         String msg;
         AdvancedMessageFormat format;
@@ -157,6 +161,7 @@ public class AdvancedMessageFormatTestCase extends TestCase {
         assertEquals("Error\nSome explanation!", msg);
     }
 
+    @Test
     public void testChoiceFormatting() throws Exception {
         String msg;
         AdvancedMessageFormat format;

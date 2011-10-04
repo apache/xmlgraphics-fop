@@ -19,17 +19,21 @@
 
 package org.apache.fop.util;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Tests for XMLResourceBundle.
  */
-public class XMLResourceBundleTestCase extends TestCase {
+public class XMLResourceBundleTestCase {
 
+    @Test
     public void testWithValidFile() throws Exception {
         ResourceBundle bundle = XMLResourceBundle.getXMLBundle(
                 getClass().getName(), Locale.ENGLISH, getClass().getClassLoader());
@@ -47,6 +51,7 @@ public class XMLResourceBundleTestCase extends TestCase {
         assertEquals("Untranslatable", bundleDE.getString("untranslatable"));
     }
 
+    @Test
     public void testWithInvalidFile() throws Exception {
         try {
             ResourceBundle bundle = XMLResourceBundle.getXMLBundle(

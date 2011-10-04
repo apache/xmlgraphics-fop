@@ -19,6 +19,9 @@
 
 package org.apache.fop.pdf;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -26,12 +29,12 @@ import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Tests the {@link PDFEncryptionJCE} class.
  */
-public class PDFEncryptionJCETestCase extends TestCase {
+public class PDFEncryptionJCETestCase {
 
     private EncryptionTest test;
 
@@ -271,12 +274,14 @@ public class PDFEncryptionJCETestCase extends TestCase {
         }
     }
 
+    @Test
     public final void testMake() {
         PDFEncryption testEncryptionObj = createEncryptionObject(new PDFEncryptionParams());
         assertTrue(testEncryptionObj instanceof PDFEncryptionJCE);
         assertEquals(1, ((PDFEncryptionJCE) testEncryptionObj).getObjectNumber());
     }
 
+    @Test
     public void testBasic() throws IOException {
         test = new EncryptionTest();
         test.setData(0x00).setEncryptedData(0x56);
@@ -292,6 +297,7 @@ public class PDFEncryptionJCETestCase extends TestCase {
         runEncryptionTests();
     }
 
+    @Test
     public void test128bit() throws IOException {
         EncryptionDictionaryTester encryptionDictionaryTester = new EncryptionDictionaryTester()
                 .setVersion(2)
@@ -306,6 +312,7 @@ public class PDFEncryptionJCETestCase extends TestCase {
         runEncryptionTests();
     }
 
+    @Test
     public void testDisableRev2Permissions() throws IOException {
         EncryptionDictionaryTester encryptionDictionaryTester = new EncryptionDictionaryTester()
                 .setPermissions(-64)
@@ -320,6 +327,7 @@ public class PDFEncryptionJCETestCase extends TestCase {
         runEncryptionTests();
     }
 
+    @Test
     public void testDisableRev3Permissions() throws IOException {
         EncryptionDictionaryTester encryptionDictionaryTester = new EncryptionDictionaryTester()
                 .setVersion(2)
@@ -337,6 +345,7 @@ public class PDFEncryptionJCETestCase extends TestCase {
         runEncryptionTests();
     }
 
+    @Test
     public void test128bitDisableSomePermissions() throws IOException {
         EncryptionDictionaryTester encryptionDictionaryTester = new EncryptionDictionaryTester()
                 .setVersion(2)
@@ -355,6 +364,7 @@ public class PDFEncryptionJCETestCase extends TestCase {
         runEncryptionTests();
     }
 
+    @Test
     public void testDifferentPasswords() throws IOException {
         EncryptionDictionaryTester encryptionDictionaryTester = new EncryptionDictionaryTester()
                 .setOwnerEntry("D11C233C65E9DC872E858ABBD8B62198771167ADCE7AB8DC7AE0A1A7E21A1E25")
@@ -367,6 +377,7 @@ public class PDFEncryptionJCETestCase extends TestCase {
         runEncryptionTests();
     }
 
+    @Test
     public void testNoOwnerPassword() throws IOException {
         EncryptionDictionaryTester encryptionDictionaryTester = new EncryptionDictionaryTester()
                 .setOwnerEntry("5163AAF3EE74C76D7C223593A84C8702FEA8AA4493E4933FF5B5A5BBB20AE4BB")
@@ -379,6 +390,7 @@ public class PDFEncryptionJCETestCase extends TestCase {
         runEncryptionTests();
     }
 
+    @Test
     public void test128bitDisableSomePermissionsDifferentPasswords() throws IOException {
         EncryptionDictionaryTester encryptionDictionaryTester = new EncryptionDictionaryTester()
                 .setVersion(2)
@@ -399,6 +411,7 @@ public class PDFEncryptionJCETestCase extends TestCase {
         runEncryptionTests();
     }
 
+    @Test
     public void test128bitNoPermissionNoOwnerPassword() throws IOException {
         EncryptionDictionaryTester encryptionDictionaryTester = new EncryptionDictionaryTester()
                 .setVersion(2)

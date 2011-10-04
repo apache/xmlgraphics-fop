@@ -22,6 +22,8 @@ package org.apache.fop.area;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 
+import org.junit.Test;
+
 /**
  * Tests the {@linkplain RegionViewport} class.
  */
@@ -35,11 +37,13 @@ public class RegionViewportTestCase extends ViewportTestCase {
         return viewport;
     }
 
+    @Test
     public void testNonClip() throws Exception {
         RegionViewport viewport = createRegionViewport(10, 10, 100, 20);
         checkNonClip(viewport);
     }
 
+    @Test
     public void testClip() throws Exception {
         int ipd = 150;
         int bpd = 20;

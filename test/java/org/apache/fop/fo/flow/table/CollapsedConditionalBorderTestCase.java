@@ -19,6 +19,8 @@
 
 package org.apache.fop.fo.flow.table;
 
+import static org.junit.Assert.assertEquals;
+
 import java.awt.Color;
 import java.util.Iterator;
 import java.util.List;
@@ -26,6 +28,7 @@ import java.util.List;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode.FONodeIterator;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground.BorderInfo;
+import org.junit.Test;
 
 /**
  * A testcase for the resolution of collapsed borders in the FO tree, taking
@@ -130,6 +133,7 @@ public class CollapsedConditionalBorderTestCase extends AbstractTableTestCase {
                 (Color) resolvedBorder[1]);
     }
 
+    @Test
     public void testCollapsedConditionalBorders() throws Exception {
         setUp("table/collapsed-conditional-borders.fo");
         int tableNum = 0;
@@ -154,6 +158,7 @@ public class CollapsedConditionalBorderTestCase extends AbstractTableTestCase {
         } while (tableIterator.hasNext());
     }
 
+    @Test
     public void testCollapsedConditionalBordersHeaderFooter() throws Exception {
         setUp("table/collapsed-conditional-borders_header-footer.fo");
         int tableNum = 0;

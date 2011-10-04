@@ -19,23 +19,17 @@
 
 package org.apache.fop.config;
 
-/*
+/**
  * this font has a metrics-url that does not exist on filesystem
  */
 public class FontsDirectoryBadTestCase extends BaseDestructiveUserConfigTestCase {
 
-    public FontsDirectoryBadTestCase(String name) {
-        super(name);
-    }
-
-    /**
-     * @see org.apache.fop.config.BaseUserConfigTestCase#getUserConfigFilename()
-     */
+    @Override
     public String getUserConfigFilename() {
         return "test_fonts_directory_bad.xconf";
     }
 
-    /** get test FOP config File */
+    @Override
     protected String getFontFOFilePath() {
         return "test/xml/bugtests/font-dir.fo";
     }

@@ -19,6 +19,8 @@
 
 package org.apache.fop;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 import java.io.StringReader;
 import java.security.NoSuchAlgorithmException;
@@ -26,9 +28,9 @@ import java.security.NoSuchAlgorithmException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
-import junit.framework.TestCase;
-
 import org.apache.fop.util.DigestFilter;
+import org.junit.Before;
+import org.junit.Test;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -37,12 +39,12 @@ import org.xml.sax.XMLReader;
  * Test case for digesting SAX filter.
  *
  */
-public class DigestFilterTestCase extends TestCase {
+public class DigestFilterTestCase {
 
     private SAXParserFactory parserFactory;
 
-    /** @see junit.framework.TestCase#setUp() */
-    protected void setUp() {
+    @Before
+    public void setUp() {
         parserFactory = SAXParserFactory.newInstance();
         parserFactory.setNamespaceAware(true);
     }
@@ -95,6 +97,7 @@ public class DigestFilterTestCase extends TestCase {
         return digestFilter.getDigestValue();
     }
 
+    @Test
     public final void testLineFeed()
         throws
             NoSuchAlgorithmException,
@@ -111,6 +114,7 @@ public class DigestFilterTestCase extends TestCase {
             compareDigest(lfDigest, crlfDigest));
     }
 
+    @Test
     public final void testAttributeOrder()
         throws
             NoSuchAlgorithmException,
@@ -134,6 +138,7 @@ public class DigestFilterTestCase extends TestCase {
             compareDigest(sortDigest, reverseDigest));
     }
 
+    @Test
     public final void testNamespacePrefix()
         throws
             NoSuchAlgorithmException,

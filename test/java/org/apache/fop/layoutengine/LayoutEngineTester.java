@@ -21,6 +21,7 @@ package org.apache.fop.layoutengine;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -33,12 +34,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.sax.TransformerHandler;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
-
+import org.apache.fop.DebugHelper;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
@@ -57,41 +53,74 @@ import org.apache.fop.render.intermediate.IFSerializer;
 import org.apache.fop.render.xml.XMLRenderer;
 import org.apache.fop.util.ConsoleEventListenerForTests;
 import org.apache.fop.util.DelegatingContentHandler;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
 
 /**
  * Class for testing the FOP's layout engine using testcases specified in XML
  * files.
  */
+@RunWith(Parameterized.class)
 public class LayoutEngineTester {
+    private static File areaTreeBackupDir;
+    /**
+     * Sets up the class, this is invoked only once.
+     */
+    @BeforeClass
+    public static void makeDirAndRegisterDebugHelper() {
+        DebugHelper.registerStandardElementListObservers();
+        areaTreeBackupDir = new File("build/test-results/layoutengine");
+        areaTreeBackupDir.mkdirs();
+    }
+
+    /**
+     * Creates the parameters for this test.
+     *
+     * @return the list of file arrays populated with test files
+     * @throws IOException if an I/O error occurs while reading the test file
+     */
+    @Parameters
+    public static Collection<File[]> getParameters() throws IOException {
+        return LayoutEngineTestUtils.getTestFiles();
+    }
 
     private TestAssistant testAssistant = new TestAssistant();
 
     private LayoutEngineChecksFactory layoutEngineChecksFactory = new LayoutEngineChecksFactory();
-    private File areaTreeBackupDir;
+
     private IFTester ifTester;
+    private File testFile;
 
     private TransformerFactory tfactory = TransformerFactory.newInstance();
 
     /**
      * Constructs a new instance.
-     * @param areaTreeBackupDir Optional directory that receives the generated
-     *     area tree XML files. May be null.
+     *
+     * @param testFile the test file
      */
-    public LayoutEngineTester(File areaTreeBackupDir) {
-        this.areaTreeBackupDir = areaTreeBackupDir;
+    public LayoutEngineTester(File testFile) {
         this.ifTester = new IFTester(tfactory, areaTreeBackupDir);
+        this.testFile = testFile;
     }
 
     /**
      * Runs a single layout engine test case.
-     * @param testFile Test case to run
      * @throws TransformerException In case of an XSLT/JAXP problem
      * @throws IOException In case of an I/O problem
      * @throws SAXException In case of a problem during SAX processing
      * @throws ParserConfigurationException In case of a problem with the XML parser setup
      */
-    public void runTest(File testFile)
-            throws TransformerException, SAXException, IOException, ParserConfigurationException {
+    @Test
+    public void runTest() throws TransformerException, SAXException, IOException,
+            ParserConfigurationException {
 
         DOMResult domres = new DOMResult();
 

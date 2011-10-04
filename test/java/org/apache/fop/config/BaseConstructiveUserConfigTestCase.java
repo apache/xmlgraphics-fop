@@ -19,19 +19,20 @@
 
 package org.apache.fop.config;
 
-public abstract class BaseConstructiveUserConfigTestCase extends BaseUserConfigTestCase {
+import static org.junit.Assert.fail;
 
-    /**
-     * @see junit.framework.TestCase#TestCase(String)
-     */
-    public BaseConstructiveUserConfigTestCase(String name) {
-        super(name);
-    }
+import org.junit.Test;
+
+/**
+ * Super class of several user config cases.
+ */
+public abstract class BaseConstructiveUserConfigTestCase extends BaseUserConfigTestCase {
 
     /**
      * Test using a standard FOP font
      * @throws Exception checkstyle wants a comment here, even a silly one
      */
+    @Test
     public void testUserConfig() throws Exception {
         try {
             initConfig();

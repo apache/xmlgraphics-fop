@@ -19,6 +19,10 @@
 
 package org.apache.fop.afp.modca;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,6 +35,7 @@ import org.apache.fop.afp.modca.triplets.AttributeQualifierTriplet;
 import org.apache.fop.afp.modca.triplets.CommentTriplet;
 import org.apache.fop.afp.modca.triplets.ObjectAreaSizeTriplet;
 import org.apache.fop.afp.modca.triplets.Triplet;
+import org.junit.Before;
 
 /**
  * Test {@link AbstractTripletStructuredObject}
@@ -55,10 +60,8 @@ public abstract class AbstractTripletStructuredObjectTestCase<S extends Abstract
     private AbstractTripletStructuredObject emptyStructuredObject
             = new AbstractTripletStructuredObject() { };
 
-    @Override
+    @Before
     public void setUp() throws Exception {
-        super.setUp();
-
         AbstractTripletStructuredObject sut = getSut();
 
         for (AbstractTriplet triplet : TRIPLETS) {

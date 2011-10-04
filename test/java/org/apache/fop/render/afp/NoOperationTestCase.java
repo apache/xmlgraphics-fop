@@ -19,19 +19,20 @@
 
 package org.apache.fop.render.afp;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 
-import junit.framework.Assert;
-
 import org.apache.commons.io.IOUtils;
-
 import org.apache.fop.afp.AFPConstants;
 import org.apache.fop.afp.parser.MODCAParser;
 import org.apache.fop.afp.parser.UnparsedStructuredField;
 import org.apache.fop.apps.FOUserAgent;
+import org.junit.Test;
 
 /**
  * Tests generation of afp:no-operation (NOPs).
@@ -42,6 +43,7 @@ public class NoOperationTestCase extends AbstractAFPTestCase {
      * Tests afp:no-operation.
      * @throws Exception if an error occurs
      */
+    @Test
     public void testNoOperation() throws Exception {
         FOUserAgent ua = fopFactory.newFOUserAgent();
         File outputFile = renderFile(ua, "nops.fo", "");
@@ -116,7 +118,7 @@ public class NoOperationTestCase extends AbstractAFPTestCase {
                 return field;
             }
         } while (field != null);
-        Assert.fail("Structured field not found: " + Integer.toHexString(typeID));
+        fail("Structured field not found: " + Integer.toHexString(typeID));
         return null;
     }
 
