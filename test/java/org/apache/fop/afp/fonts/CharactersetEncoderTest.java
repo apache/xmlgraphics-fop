@@ -19,19 +19,25 @@
 
 package org.apache.fop.afp.fonts;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.CharacterCodingException;
 
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Test {@link CharactersetEncoder}
  */
-public class CharactersetEncoderTest extends TestCase {
+public class CharactersetEncoderTest {
     private CharactersetEncoder singlebyteEncoder;
     private CharactersetEncoder doublebyteEncoder;
 
+    @Before
     public void setUp() {
         singlebyteEncoder = CharactersetEncoder.newInstance("cp500", false);
         doublebyteEncoder = CharactersetEncoder.newInstance("cp937", true);
@@ -71,6 +77,7 @@ public class CharactersetEncoderTest extends TestCase {
     /**
      * Tests canEncode() - tests that canEncode() responds properly to various input characters.
      */
+    @Test
     public void testCanEncode() {
         // Both SBCS and DBCS should support Latin characters
         for (char c = '!'; c < '~'; c++) {
@@ -86,6 +93,7 @@ public class CharactersetEncoderTest extends TestCase {
         assertFalse(doublebyteEncoder.canEncode('\u00BB'));
     }
 
+    @Test
     public void testEncode() throws CharacterCodingException, IOException {
         CharactersetEncoder.EncodedChars encChars;// = doublebyteEncoder.encode(testCJKText);
         ByteArrayOutputStream bOut = new ByteArrayOutputStream();

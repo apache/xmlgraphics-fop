@@ -21,25 +21,16 @@ package org.apache.fop;
 
 import java.io.File;
 
-import junit.framework.TestCase;
-
 /**
  * Abstract base test class for FOP's tests.
  */
-public abstract class AbstractFOPTestCase extends TestCase {
-
-    /**
-     * @see junit.framework.TestCase#TestCase(String)
-     */
-    public AbstractFOPTestCase(String name) {
-        super(name);
-    }
+public abstract class AbstractFOPTestCase {
 
     /**
      * Returns the base directory to use for the tests.
      * @return the base directory
      */
-    protected File getBaseDir() {
+    protected static File getBaseDir() {
         String basedir = System.getProperty("basedir");
         if (basedir != null) {
             return new File(basedir);

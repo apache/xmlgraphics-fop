@@ -24,15 +24,12 @@ import java.io.File;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import junit.framework.TestCase;
-
-import org.xml.sax.XMLReader;
-
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.util.ConsoleEventListenerForTests;
+import org.xml.sax.XMLReader;
 
 
 /**
@@ -40,7 +37,7 @@ import org.apache.fop.util.ConsoleEventListenerForTests;
  * to parse an FO file and register a proper {@link FOEventHandler}. That handler will be
  * the entry point to test classes from the FObj hierarchy.
  */
-public abstract class FOTreeUnitTester extends TestCase {
+public abstract class FOTreeUnitTester {
 
     private XMLReader foReader;
 

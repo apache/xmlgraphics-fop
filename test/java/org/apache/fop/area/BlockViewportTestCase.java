@@ -19,12 +19,14 @@
 
 package org.apache.fop.area;
 
+import org.junit.Test;
 
 /**
  * Tests the {@linkplain BlockViewport} class.
  */
 public class BlockViewportTestCase extends ViewportTestCase {
 
+    @Test
     public void testNonClip() throws Exception {
         BlockViewport bv = new BlockViewport();
         bv.setIPD(100);
@@ -32,6 +34,7 @@ public class BlockViewportTestCase extends ViewportTestCase {
         checkNonClip(bv);
     }
 
+    @Test
     public void testClip() throws Exception {
         BlockViewport bv = new BlockViewport();
         int ipd = 100;

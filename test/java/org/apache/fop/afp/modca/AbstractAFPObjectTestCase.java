@@ -19,6 +19,10 @@
 
 package org.apache.fop.afp.modca;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -26,15 +30,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.apache.fop.afp.Streamable;
+import org.junit.Test;
 
 /**
  * Tests the {@link AbstractAFPObject} class.
  */
-public abstract class  AbstractAFPObjectTestCase<S extends  AbstractAFPObject>
-        extends TestCase {
+public abstract class AbstractAFPObjectTestCase<S extends AbstractAFPObject> {
 
     private S sut;
 
@@ -61,7 +63,7 @@ public abstract class  AbstractAFPObjectTestCase<S extends  AbstractAFPObject>
             0x00 // Reserved
     };
 
-
+    @Test
     public void testCopySFStatic() {
         byte[] actual = new byte[9];
         Arrays.fill(actual, (byte)-1);
@@ -85,6 +87,7 @@ public abstract class  AbstractAFPObjectTestCase<S extends  AbstractAFPObject>
         assertTrue(Arrays.equals(actual, expected2));
     }
 
+    @Test
     public void testCopySF() {
         byte[] expected = new byte[9];
         S.copySF(expected, (byte) 0xD3, (byte)0, (byte)0);
@@ -112,6 +115,7 @@ public abstract class  AbstractAFPObjectTestCase<S extends  AbstractAFPObject>
     /**
      *
      */
+    @Test
     public void testwriteObjects() {
        final byte[][] expected = {{(byte)0, (byte)1}, {(byte)2, (byte)3}, {(byte)4, (byte)5}};
 
@@ -144,6 +148,7 @@ public abstract class  AbstractAFPObjectTestCase<S extends  AbstractAFPObject>
     /**
      *
      */
+    @Test
     public void testTruncate() {
         String expected = "abc";
         assertTrue(AbstractAFPObject.truncate(expected, 4)  == expected);
@@ -161,6 +166,7 @@ public abstract class  AbstractAFPObjectTestCase<S extends  AbstractAFPObject>
     /**
      *
      */
+    @Test
     public void testWriteChunksToStream() throws IOException {
         final byte[] data = new byte[256];
         int counter = 0;

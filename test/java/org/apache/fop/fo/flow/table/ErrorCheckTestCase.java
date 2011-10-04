@@ -19,6 +19,8 @@
 
 package org.apache.fop.fo.flow.table;
 
+import static org.junit.Assert.fail;
+
 import org.apache.fop.fo.ValidationException;
 
 /**

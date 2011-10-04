@@ -19,14 +19,17 @@
 
 package org.apache.fop.area;
 
-import java.awt.Rectangle;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
-import junit.framework.TestCase;
+import java.awt.Rectangle;
 
 /**
  * Tests implementations of the {@linkplain Viewport} interface.
  */
-public abstract class ViewportTestCase extends TestCase {
+public abstract class ViewportTestCase {
 
     protected void checkNonClip(Viewport v) throws Exception {
         assertFalse(v.hasClip());

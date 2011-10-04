@@ -19,8 +19,9 @@
 
 package org.apache.fop;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
 import org.apache.fop.afp.fonts.CharactersetEncoderTest;
 import org.apache.fop.afp.parser.MODCAParserTestCase;
@@ -36,6 +37,7 @@ import org.apache.fop.render.pdf.PDFAConformanceTestCase;
 import org.apache.fop.render.pdf.PDFCMapTestCase;
 import org.apache.fop.render.pdf.PDFEncodingTestCase;
 import org.apache.fop.render.pdf.PDFsRGBSettingsTestCase;
+import org.apache.fop.render.pdf.RenderPDFTestSuite;
 import org.apache.fop.render.ps.PSTestSuite;
 import org.apache.fop.render.rtf.RichTextFormatTestSuite;
 import org.apache.fop.traits.MinOptMaxTest;
@@ -43,37 +45,30 @@ import org.apache.fop.traits.MinOptMaxTest;
 /**
  * Test suite for basic functionality of FOP.
  */
+@RunWith(Suite.class)
+@SuiteClasses({
+    BasicDriverTestSuite.class,
+    UtilityCodeTestSuite.class,
+    PDFAConformanceTestCase.class,
+    PDFEncodingTestCase.class,
+    PDFCMapTestCase.class,
+    PDFsRGBSettingsTestCase.class,
+    DejaVuLGCSerifTest.class,
+    RichTextFormatTestSuite.class,
+    ImageLoaderTestCase.class,
+    ImagePreloaderTestCase.class,
+    IFMimickingTestCase.class,
+    PageBoundariesTest.class,
+    PageScaleTest.class,
+    org.apache.fop.afp.AFPTestSuite.class,
+    GlyfTableTestCase.class,
+    ViewportTestSuite.class,
+    RenderPDFTestSuite.class,
+    MODCAParserTestCase.class,
+    CharactersetEncoderTest.class,
+    org.apache.fop.render.afp.AFPTestSuite.class,
+    PSTestSuite.class,
+    MinOptMaxTest.class
+})
 public class StandardTestSuite {
-
-    /**
-     * Builds the test suite
-     * @return the test suite
-     */
-    public static Test suite() {
-        TestSuite suite = new TestSuite("Basic functionality test suite for FOP");
-        //$JUnit-BEGIN$
-        suite.addTest(BasicDriverTestSuite.suite());
-        suite.addTest(UtilityCodeTestSuite.suite());
-        suite.addTest(org.apache.fop.afp.AFPTestSuite.suite());
-        suite.addTest(new TestSuite(PDFAConformanceTestCase.class));
-        suite.addTest(new TestSuite(PDFEncodingTestCase.class));
-        suite.addTest(new TestSuite(PDFCMapTestCase.class));
-        suite.addTest(new TestSuite(PDFsRGBSettingsTestCase.class));
-        suite.addTest(new TestSuite(DejaVuLGCSerifTest.class));
-        suite.addTest(new TestSuite(MODCAParserTestCase.class));
-        suite.addTest(new TestSuite(CharactersetEncoderTest.class));
-        suite.addTest(org.apache.fop.render.afp.AFPTestSuite.suite());
-        suite.addTest(PSTestSuite.suite());
-        suite.addTest(new TestSuite(GlyfTableTestCase.class));
-        suite.addTest(RichTextFormatTestSuite.suite());
-        suite.addTest(new TestSuite(ImageLoaderTestCase.class));
-        suite.addTest(new TestSuite(ImagePreloaderTestCase.class));
-        suite.addTest(new TestSuite(IFMimickingTestCase.class));
-        suite.addTest(new TestSuite(PageBoundariesTest.class));
-        suite.addTest(new TestSuite(PageScaleTest.class));
-        suite.addTest(new TestSuite(MinOptMaxTest.class));
-        suite.addTest(ViewportTestSuite.suite());
-        //$JUnit-END$
-        return suite;
-    }
 }

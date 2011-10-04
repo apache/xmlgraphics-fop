@@ -19,6 +19,8 @@
 
 package org.apache.fop.intermediate;
 
+import static org.junit.Assert.fail;
+
 import java.io.File;
 
 import javax.xml.transform.ErrorListener;
@@ -29,7 +31,8 @@ import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
@@ -48,13 +51,12 @@ import org.apache.fop.render.intermediate.IFSerializer;
 /**
  * This test checks the correct mimicking of a different output format.
  */
-public class IFMimickingTestCase extends TestCase {
+public class IFMimickingTestCase {
 
     private FopFactory fopFactory;
 
-    /** {@inheritDoc} */
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         fopFactory = FopFactory.newInstance();
         File configFile = new File("test/test-no-xml-metrics.xconf");
         fopFactory.setUserConfig(configFile);
@@ -64,6 +66,7 @@ public class IFMimickingTestCase extends TestCase {
      * Tests IF document handler mimicking with PDF output.
      * @throws Exception if an error occurs
      */
+    @Test
     public void testMimickingPDF() throws Exception {
         doTestMimicking(MimeConstants.MIME_PDF);
     }
@@ -72,6 +75,7 @@ public class IFMimickingTestCase extends TestCase {
      * Tests IF document handler mimicking with PostScript output.
      * @throws Exception if an error occurs
      */
+    @Test
     public void testMimickingPS() throws Exception {
         doTestMimicking(MimeConstants.MIME_POSTSCRIPT);
     }
@@ -80,6 +84,7 @@ public class IFMimickingTestCase extends TestCase {
      * Tests IF document handler mimicking with TIFF output.
      * @throws Exception if an error occurs
      */
+    @Test
     public void testMimickingTIFF() throws Exception {
         doTestMimicking(MimeConstants.MIME_TIFF);
     }

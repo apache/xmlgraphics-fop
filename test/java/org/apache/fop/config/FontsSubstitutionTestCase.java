@@ -38,17 +38,7 @@ import org.apache.fop.render.PrintRenderer;
 public class FontsSubstitutionTestCase extends
         BaseConstructiveUserConfigTestCase {
 
-    /**
-     * Main constructor
-     * @param name test case name
-     */
-    public FontsSubstitutionTestCase(String name) {
-        super(name);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     protected byte[] convertFO(File foFile, FOUserAgent ua, boolean dumpPdfFile)
             throws Exception {
         PrintRenderer renderer = (PrintRenderer) ua.getRendererFactory()
@@ -72,9 +62,7 @@ public class FontsSubstitutionTestCase extends
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public String getUserConfigFilename() {
         return "test_fonts_substitution.xconf";
     }

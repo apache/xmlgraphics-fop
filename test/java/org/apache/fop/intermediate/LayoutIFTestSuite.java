@@ -19,46 +19,14 @@
 
 package org.apache.fop.intermediate;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Iterator;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
-import org.apache.fop.layoutengine.LayoutEngineTestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
 /**
  * JUnit test suite for the intermediate format
  */
+@RunWith(Suite.class)
+@SuiteClasses({ IFParserTestCase.class })
 public final class LayoutIFTestSuite {
-
-    private LayoutIFTestSuite() {
-        // This is a utility class
-    }
-
-    /**
-     * @return the test suite with all the tests (one for each XML file)
-     * @throws IOException in case of an I/O problem
-     */
-    public static Test suite() throws IOException {
-        TestSuite suite = new TestSuite();
-
-        Collection files = LayoutEngineTestSuite.getTestFiles();
-
-        Iterator i = files.iterator();
-        while (i.hasNext()) {
-            File f = (File)i.next();
-            addIFTestCase(suite, f);
-        }
-
-        return suite;
-    }
-
-    private static void addIFTestCase(TestSuite suite,
-            final File f) throws IOException {
-        suite.addTest(new IFParserTestCase(f));
-    }
-
 }

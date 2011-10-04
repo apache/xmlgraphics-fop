@@ -28,16 +28,14 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.xml.sax.SAXException;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
-
 import org.apache.fop.AbstractFOPTestCase;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
+import org.xml.sax.SAXException;
 
 /**
  * Base class for automated tests that create PDF files
@@ -52,10 +50,8 @@ public class BasePDFTestCase extends AbstractFOPTestCase {
 
     /**
      * Main constructor
-     * @param name the name of the test case
      */
-    protected BasePDFTestCase(String name) {
-        super(name);
+    protected BasePDFTestCase() {
         init();
     }
 

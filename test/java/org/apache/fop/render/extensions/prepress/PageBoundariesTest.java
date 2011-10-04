@@ -19,15 +19,19 @@
 
 package org.apache.fop.render.extensions.prepress;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
 import java.awt.Dimension;
 import java.awt.Rectangle;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Tests for the fox:bleed, fox:crop-offset, fox:crop-box extension properties.
  */
-public class PageBoundariesTest extends TestCase {
+public class PageBoundariesTest {
 
     private static final Dimension TEST_AREA_SIZE = new Dimension(20000, 15000);
 
@@ -37,22 +41,8 @@ public class PageBoundariesTest extends TestCase {
 
     private static final String CROP_OFFSET = "8pt";
 
-    /**
-     * Default constructor.
-     */
-    public PageBoundariesTest() {
-    }
-
-    /**
-     * Creates a test case with the given name.
-     *
-     * @param name name for the test case
-     */
-    public PageBoundariesTest(String name) {
-        super(name);
-    }
-
     /** Test for page boundaries. */
+    @Test
     public void testBoundaries1() {
         PageBoundaries boundaries = new PageBoundaries(TEST_AREA_SIZE, BLEED, CROP_OFFSET, null);
         assertEquals(TEST_AREA, boundaries.getTrimBox());
@@ -73,6 +63,7 @@ public class PageBoundariesTest extends TestCase {
     }
 
     /** Test for page boundaries. */
+    @Test
     public void testBoundaries2() {
         PageBoundaries boundaries = new PageBoundaries(
                 TEST_AREA_SIZE, BLEED, null, null);
@@ -86,6 +77,7 @@ public class PageBoundariesTest extends TestCase {
     }
 
     /** Two values for the properties. */
+    @Test
     public void testBoundaries2Values() {
         PageBoundaries boundaries = new PageBoundaries(
                 TEST_AREA_SIZE, "5pt  10pt", "6pt \t 12pt", null);
@@ -103,6 +95,7 @@ public class PageBoundariesTest extends TestCase {
     }
 
     /** Three values for the properties. */
+    @Test
     public void testBoundaries3Values() {
         PageBoundaries boundaries = new PageBoundaries(
                 TEST_AREA_SIZE, "5pt  10pt 7pt", "6pt \t 12pt 14pt", null);
@@ -120,6 +113,7 @@ public class PageBoundariesTest extends TestCase {
     }
 
     /** Four values for the properties. */
+    @Test
     public void testBoundaries4Values() {
         PageBoundaries boundaries = new PageBoundaries(
                 TEST_AREA_SIZE, "5pt  6pt 7pt   8pt", "9pt 10pt  11pt 12pt", null);
@@ -137,6 +131,7 @@ public class PageBoundariesTest extends TestCase {
     }
 
     /** Test for the different values of crop-box. */
+    @Test
     public void testCropBox() {
         PageBoundaries boundaries = new PageBoundaries(TEST_AREA_SIZE, BLEED, CROP_OFFSET, null);
         assertEquals(boundaries.getMediaBox(), boundaries.getCropBox());
@@ -155,6 +150,7 @@ public class PageBoundariesTest extends TestCase {
     }
 
     /** Test for default values returned when properties are null. */
+    @Test
     public void testBoundariesNull() {
         PageBoundaries b = new PageBoundaries(TEST_AREA_SIZE, null, null, null);
 
@@ -165,6 +161,7 @@ public class PageBoundariesTest extends TestCase {
     }
 
     /** Units must be specified. */
+    @Test
     public void testBoundariesFail() {
         try {
             new PageBoundaries(TEST_AREA_SIZE, "0", null, null);

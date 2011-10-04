@@ -19,12 +19,18 @@
 
 package org.apache.fop.events;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.apache.fop.events.model.EventSeverity;
+import org.junit.Test;
 
-public class BasicEventTestCase extends TestCase {
+public class BasicEventTestCase {
 
+    @Test
     public void testBasics() throws Exception {
 
         MyEventListener listener = new MyEventListener();
@@ -54,6 +60,7 @@ public class BasicEventTestCase extends TestCase {
         broadcaster.broadcastEvent(ev);
     }
 
+    @Test
     public void testEventProducer() throws Exception {
         MyEventListener listener = new MyEventListener();
 

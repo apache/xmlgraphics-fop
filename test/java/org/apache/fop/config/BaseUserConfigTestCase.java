@@ -23,16 +23,14 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 
-import org.xml.sax.SAXException;
-
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.avalon.framework.configuration.DefaultConfigurationBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.render.pdf.BasePDFTestCase;
+import org.xml.sax.SAXException;
 
 /**
  * Basic runtime test for FOP's font configuration. It is used to verify that
@@ -45,13 +43,6 @@ public abstract class BaseUserConfigTestCase extends BasePDFTestCase {
     /** logging instance */
     protected Log log = LogFactory.getLog(BaseUserConfigTestCase.class);
 
-
-    /**
-     * @see junit.framework.TestCase#TestCase(String)
-     */
-    public BaseUserConfigTestCase(String name) {
-        super(name);
-    }
 
     /**
      * @see org.apache.fop.render.pdf.BasePDFTestCase#init()
@@ -102,8 +93,8 @@ public abstract class BaseUserConfigTestCase extends BasePDFTestCase {
      */
     protected abstract String getUserConfigFilename();
 
-    /*
-     * @see junit.framework.TestCase#getName()
+    /**
+     * The name of this test.
      */
     public String getName() {
         return getUserConfigFilename();

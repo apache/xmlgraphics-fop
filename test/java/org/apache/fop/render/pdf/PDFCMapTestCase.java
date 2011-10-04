@@ -19,16 +19,18 @@
 
 package org.apache.fop.render.pdf;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.StringWriter;
 
-import junit.framework.TestCase;
-
 import org.apache.fop.pdf.CMapBuilder;
+import org.junit.Test;
 
 /** Simple sanity test of the PDFCmap class */
-public class PDFCMapTestCase extends TestCase {
+public class PDFCMapTestCase {
     private static final String EOL = "\n";
 
+    @Test
     public void testPDFCMapFillInPDF() throws Exception {
         final String expected
             = "%!PS-Adobe-3.0 Resource-CMap" + EOL

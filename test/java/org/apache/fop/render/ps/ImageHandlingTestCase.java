@@ -18,13 +18,16 @@
 /* $Id$ */
 
 package org.apache.fop.render.ps;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.commons.io.IOUtils;
-
+import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.render.intermediate.IFContext;
 import org.apache.xmlgraphics.ps.DSCConstants;
 import org.apache.xmlgraphics.ps.PSResource;
 import org.apache.xmlgraphics.ps.dsc.DSCException;
@@ -33,9 +36,7 @@ import org.apache.xmlgraphics.ps.dsc.events.DSCCommentPage;
 import org.apache.xmlgraphics.ps.dsc.events.DSCCommentPages;
 import org.apache.xmlgraphics.ps.dsc.events.DSCCommentTitle;
 import org.apache.xmlgraphics.ps.dsc.events.DSCEvent;
-
-import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.render.intermediate.IFContext;
+import org.junit.Test;
 
 /**
  * Tests the image handling in PostScript output.
@@ -46,6 +47,7 @@ public class ImageHandlingTestCase extends AbstractPostScriptTestCase {
      * Tests JPEG handling.
      * @throws Exception if an error occurs
      */
+    @Test
     public void testJPEGImageLevel3() throws Exception {
         innerTestJPEGImage(3);
     }
@@ -54,6 +56,7 @@ public class ImageHandlingTestCase extends AbstractPostScriptTestCase {
      * Tests JPEG handling.
      * @throws Exception if an error occurs
      */
+    @Test
     public void testJPEGImageLevel2() throws Exception {
         innerTestJPEGImage(2);
     }
