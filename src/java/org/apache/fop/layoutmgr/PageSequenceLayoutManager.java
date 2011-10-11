@@ -25,6 +25,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fop.area.AreaTreeHandler;
 import org.apache.fop.area.AreaTreeModel;
 import org.apache.fop.area.LineArea;
+import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.PageSequenceMaster;
 import org.apache.fop.fo.pagination.SideRegion;
@@ -165,6 +166,26 @@ public class PageSequenceLayoutManager extends AbstractPageSequenceLayoutManager
         layoutSideRegion(FO_REGION_END);
 
         super.finishPage();
+    }
+
+    /**
+     * The last page number of the sequence may be incremented, as determined by the
+     *  force-page-count formatting property semantics
+     * @param lastPageNum number of sequence
+     * @return the forced last page number of sequence
+     */
+    protected int getForcedLastPageNum(final int lastPageNum) {
+        int forcedLastPageNum = lastPageNum;
+        if (  lastPageNum % 2 != 0
+                && ( getPageSequence().getForcePageCount() ==  Constants.EN_EVEN
+                 || getPageSequence().getForcePageCount() ==  Constants.EN_END_ON_EVEN )) {
+            forcedLastPageNum++;
+        } else if ( lastPageNum % 2 == 0 && (
+                getPageSequence().getForcePageCount() ==  Constants.EN_ODD
+                ||  getPageSequence().getForcePageCount() ==  Constants.EN_END_ON_ODD )) {
+            forcedLastPageNum++;
+        }
+        return forcedLastPageNum;
     }
 
 }
