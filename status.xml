@@ -60,6 +60,10 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Code" dev="PH" type="add" fixes-bug="51962" due-to="Mehdi Houshmand">
+        Bugfix for when the last simple-page-master referenced in a page-sequence-master is not
+        chosen when force-page-count=odd.
+      </action>
       <action context="Code" dev="VH" type="add" fixes-bug="51928" due-to="Mehdi Houshmand">
         Upgraded all tests to JUnit 4.
       </action>
