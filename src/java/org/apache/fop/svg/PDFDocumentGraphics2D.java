@@ -276,6 +276,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void preparePainting() {
         if (pdfContext.isPagePending()) {
             return;
@@ -391,7 +392,9 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
      * @return     a new graphics context that is a copy of
      * this graphics context.
      */
+    @Override
     public Graphics create() {
+        preparePainting();
         return new PDFDocumentGraphics2D(this);
     }
 
@@ -403,6 +406,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
      * @param x the x position
      * @param y the y position
      */
+    @Override
     public void drawString(String s, float x, float y) {
         if (super.textAsShapes) {
             Font font = super.getFont();

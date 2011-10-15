@@ -751,10 +751,14 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
         }
 
         boolean doWrite = false;
-        if (fill && paintingState.setBackColor(col)) {
-            doWrite = true;
-        } else if (paintingState.setColor(col)) {
-            doWrite = true;
+        if (fill) {
+            if (paintingState.setBackColor(col)) {
+                doWrite = true;
+            }
+        } else {
+            if (paintingState.setColor(col)) {
+                doWrite = true;
+            }
         }
         if (doWrite) {
             StringBuffer sb = new StringBuffer();
@@ -1327,7 +1331,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
         }
         updateCurrentFont(fontState);
 
-        currentStream.write("q\n");
+        saveGraphicsState();
 
         Color c = getColor();
         applyColor(c, true);
@@ -1402,7 +1406,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
 
         currentStream.write("] TJ\n");
         currentStream.write("ET\n");
-        currentStream.write("Q\n");
+        restoreGraphicsState();
     }
 
     /**

@@ -60,6 +60,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="JM" type="add">
+        Various bugfixes to make PDFDocumentGraphics2D operational again.
+      </action>
       <action context="Code" dev="PH" type="add" fixes-bug="51962" due-to="Mehdi Houshmand">
         Bugfix for when the last simple-page-master referenced in a page-sequence-master is not
         chosen when force-page-count=odd.
