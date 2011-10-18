@@ -19,27 +19,15 @@
 
 package org.apache.fop.render.pdf;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
 
 /**
  * A test suite for org.apache.fop.render.pdf.*
  */
+@RunWith(Suite.class)
+@SuiteClasses({ PDFRendererConfiguratorTestCase.class })
 public final class RenderPDFTestSuite {
-
-    private RenderPDFTestSuite() { }
-
-    /**
-     * Creates the test suite.
-     *
-     * @return the test suite
-     */
-    public static Test suite() {
-        TestSuite suite = new TestSuite();
-        //$JUnit-BEGIN$
-        suite.addTest(new TestSuite(PDFRendererConfiguratorTestCase.class));
-        //$JUnit-END$
-        return suite;
-    }
 }

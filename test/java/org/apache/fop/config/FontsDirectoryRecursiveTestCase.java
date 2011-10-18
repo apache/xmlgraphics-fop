@@ -24,13 +24,7 @@ package org.apache.fop.config;
  */
 public class FontsDirectoryRecursiveTestCase extends BaseConstructiveUserConfigTestCase {
 
-    public FontsDirectoryRecursiveTestCase(String name) {
-        super(name);
-    }
-
-    /**
-     * @see org.apache.fop.config.BaseUserConfigTestCase#getUserConfigFilename()
-     */
+    @Override
     protected String getUserConfigFilename() {
         return "test_fonts_directory_recursive.xconf";
     }

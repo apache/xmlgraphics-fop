@@ -19,11 +19,13 @@
 
 package org.apache.fop.image.loader.batik;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.io.File;
-
-import junit.framework.TestCase;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FopFactory;
@@ -35,23 +37,24 @@ import org.apache.xmlgraphics.image.loader.XMLNamespaceEnabledImageFlavor;
 import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
 import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
 import org.apache.xmlgraphics.image.writer.ImageWriterUtil;
+import org.junit.Test;
 
 /**
  * Tests for bundled ImageLoader implementations.
  */
-public class ImageLoaderTestCase extends TestCase {
+public class ImageLoaderTestCase {
 
     private static final File DEBUG_TARGET_DIR = null; //new File("D:/");
 
     private FopFactory fopFactory;
 
-    public ImageLoaderTestCase(String name) {
-        super(name);
+    public ImageLoaderTestCase() {
         fopFactory = FopFactory.newInstance();
         fopFactory.setSourceResolution(72);
         fopFactory.setTargetResolution(300);
     }
 
+    @Test
     public void testSVG() throws Exception {
         String uri = "test/resources/images/img-w-size.svg";
 
@@ -90,6 +93,7 @@ public class ImageLoaderTestCase extends TestCase {
         assertEquals(16000, info.getSize().getHeightMpt());
     }
 
+    @Test
     public void testSVGNoViewbox() throws Exception {
         String uri = "test/resources/images/circles.svg";
 
@@ -135,6 +139,7 @@ public class ImageLoaderTestCase extends TestCase {
         assertEquals(340158, info.getSize().getHeightMpt());
     }
 
+    @Test
     public void testWMF() throws Exception {
         String uri = "test/resources/images/testChart.wmf";
 
@@ -162,6 +167,7 @@ public class ImageLoaderTestCase extends TestCase {
         assertEquals(612000, info.getSize().getHeightMpt());
     }
 
+    @Test
     public void testSVGWithReferences() throws Exception {
         String uri = "test/resources/fop/svg/images.svg";
         FopFactory ff = FopFactory.newInstance();
@@ -213,7 +219,4 @@ public class ImageLoaderTestCase extends TestCase {
         }
         assertFalse("Embedding JPG into SVG failed", same);
     }
-
-
-    
 }

@@ -33,6 +33,7 @@ import org.apache.fop.fo.pagination.RegionBody;
 import org.apache.fop.fo.pagination.SimplePageMaster;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.layoutmgr.TraitSetter;
+import org.apache.fop.traits.WritingModeTraitsGetter;
 
 import static org.apache.fop.fo.Constants.FO_REGION_AFTER;
 import static org.apache.fop.fo.Constants.FO_REGION_BEFORE;
@@ -302,6 +303,29 @@ public class Page extends AreaTreeObject implements Serializable, Cloneable {
      */
     public Map<String, List<Resolvable>> getUnresolvedReferences() {
         return unresolved;
+    }
+
+    /**
+     * Sets the writing mode traits for the region viewports of
+     * this page.
+     * @param wmtg a WM traits getter
+     */
+    public void setWritingModeTraits(WritingModeTraitsGetter wmtg) {
+        if (regionBefore != null) {
+            regionBefore.setWritingModeTraits(wmtg);
+        }
+        if (regionStart != null) {
+            regionStart.setWritingModeTraits(wmtg);
+        }
+        if (regionBody != null) {
+            regionBody.setWritingModeTraits(wmtg);
+        }
+        if (regionEnd != null) {
+            regionEnd.setWritingModeTraits(wmtg);
+        }
+        if (regionAfter != null) {
+            regionAfter.setWritingModeTraits(wmtg);
+        }
     }
 
 }

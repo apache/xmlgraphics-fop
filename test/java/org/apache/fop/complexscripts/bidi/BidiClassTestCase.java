@@ -19,13 +19,17 @@
 
 package org.apache.fop.complexscripts.bidi;
 
-import junit.framework.TestCase;
-
 import org.apache.fop.text.bidi.BidiClassUtils;
 import org.apache.fop.util.CharUtilities;
 
-public class BidiClassTestCase extends TestCase {
+import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
+public class BidiClassTestCase {
+
+    @Test
     public void testBidiClasses() throws Exception {
         String tdPfx = BidiTestData.TD_PFX;
         int tdCount = BidiTestData.TD_CNT;

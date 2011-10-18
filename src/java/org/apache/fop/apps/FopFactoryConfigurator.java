@@ -69,6 +69,9 @@ public class FopFactoryConfigurator {
     /** Defines the default target resolution (72dpi) for FOP */
     public static final float DEFAULT_TARGET_RESOLUTION = GraphicsConstants.DEFAULT_DPI; //dpi
 
+    /** Defines the default complex script support  */
+    public static final boolean DEFAULT_COMPLEX_SCRIPT_FEATURES = true;
+
     private static final String PREFER_RENDERER = "prefer-renderer";
 
     /** logger instance */
@@ -267,6 +270,13 @@ public class FopFactoryConfigurator {
             } catch (ConfigurationException e) {
                 LogUtil.handleException(log, e, strict);
             }
+        }
+
+        // configure complex script support
+        Configuration csConfig = cfg.getChild("complex-scripts");
+        if (csConfig != null) {
+            this.factory.setComplexScriptFeaturesEnabled
+                (!csConfig.getAttributeAsBoolean ( "disabled", false ));
         }
 
         // configure font manager

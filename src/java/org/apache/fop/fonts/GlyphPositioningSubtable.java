@@ -81,7 +81,7 @@ public abstract class GlyphPositioningSubtable extends GlyphSubtable implements 
      * @param sequenceIndex if non negative, then apply subtables only at specified sequence index
      * @return true if a non-zero adjustment occurred
      */
-    static final boolean position ( GlyphPositioningState ps, GlyphPositioningSubtable[] sta, int sequenceIndex ) {
+    public static final boolean position ( GlyphPositioningState ps, GlyphPositioningSubtable[] sta, int sequenceIndex ) {
         int sequenceStart = ps.getPosition();
         boolean appliedOneShot = false;
         while ( ps.hasNext() ) {
@@ -106,7 +106,20 @@ public abstract class GlyphPositioningSubtable extends GlyphSubtable implements 
         return ps.getAdjusted();
     }
 
-    static final boolean position ( GlyphSequence gs, String script, String language, String feature, int fontSize, GlyphPositioningSubtable[] sta, int[] widths, int[][] adjustments, ScriptContextTester sct ) {
+    /**
+     * Apply positioning.
+     * @param gs input glyph sequence
+     * @param script tag
+     * @param language tag
+     * @param feature tag
+     * @param fontSize the font size
+     * @param sta subtable array
+     * @param widths array
+     * @param adjustments array (receives output adjustments)
+     * @param sct script context tester
+     * @return true if a non-zero adjustment occurred
+     */
+    public static final boolean position ( GlyphSequence gs, String script, String language, String feature, int fontSize, GlyphPositioningSubtable[] sta, int[] widths, int[][] adjustments, ScriptContextTester sct ) {
         return position ( new GlyphPositioningState ( gs, script, language, feature, fontSize, widths, adjustments, sct ), sta, -1 );
     }
 

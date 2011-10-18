@@ -48,6 +48,11 @@
             <xsd:attribute name="height" type="xsd:string"></xsd:attribute>
           </xsd:complexType>
         </xsd:element>
+        <xsd:element name="complex-scripts" minOccurs="0"
+          <xsd:complexType>
+            <xsd:attribute name="disabled" type="xsd:boolean"/>
+          </xsd:complexType>
+        </xsd:element>
         <xsd:element name="renderers" minOccurs="0">
           <xsd:complexType>
             <xsd:sequence>

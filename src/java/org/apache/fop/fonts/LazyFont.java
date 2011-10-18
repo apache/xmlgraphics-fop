@@ -63,7 +63,11 @@ public class LazyFont extends Typeface implements FontDescriptor, Substitutable,
         this.metricsFileName = fontInfo.getMetricsFile();
         this.fontEmbedPath = fontInfo.getEmbedFile();
         this.useKerning = fontInfo.getKerning();
-        this.useAdvanced = fontInfo.getAdvanced();
+        if ( resolver != null ) {
+            this.useAdvanced = resolver.isComplexScriptFeaturesEnabled();
+        } else {
+            this.useAdvanced = fontInfo.getAdvanced();
+        }
         this.encodingMode = fontInfo.getEncodingMode();
         this.subFontName = fontInfo.getSubFontName();
         this.embedded = fontInfo.isEmbedded();

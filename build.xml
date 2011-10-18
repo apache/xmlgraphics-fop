@@ -257,7 +257,7 @@ list of possible build targets.
     <echo message="${jce.message}"/>
     <available property="jdk14.present" classname="java.lang.CharSequence"/>
     <fail message="${Name} requires at least Java 1.4!" unless="jdk14.present"/>
-    <available property="junit.present" classname="junit.framework.TestCase" classpathref="libs-tools-build-classpath"/>
+    <available property="junit.present" classname="org.junit.Test" classpathref="libs-tools-build-classpath"/>
     <condition property="junit.message" value="JUnit Support PRESENT">
       <equals arg1="${junit.present}" arg2="true"/>
     </condition>
@@ -839,7 +839,7 @@ list of possible build targets.
   </target>
   <target name="junit-complexscripts" depends="junit-compile" description="Runs FOP's JUnit complex scripts tests" if="junit.present">
     <echo message="Running complex scripts tests for fop.jar"/>
-    <junit dir="${basedir}" haltonfailure="${junit.haltonfailure}" fork="${junit.fork}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure" printsummary="${junit.printsummary}">
+    <junit dir="${basedir}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure">
       <sysproperty key="basedir" value="${basedir}"/>
       <sysproperty key="jawa.awt.headless" value="true"/>
       <formatter type="brief" usefile="false" if="junit.formatter.brief.use"/>
@@ -1508,6 +1508,24 @@ NOTE:
       <arg line="-b http://www.unicode.org/Public/6.0.0/ucd/BidiTest.txt"/>
       <arg line="-d http://www.unicode.org/Public/6.0.0/ucd/UnicodeData.txt"/>
       <arg line="-o ${test.dir}/java/org/apache/fop/complexscripts/bidi/BidiTestData.java"/>
+    </java>
+  </target>
+  <target name="resgen-complexscripts" depends="compile-java">
+    <mkdir dir="${build.dir}/test-classes"/>
+    <javac destdir="${build.dir}/test-classes" includeAntRuntime="true" memoryMaximumSize="1024m">
+      <src path="${test.dir}/java/org/apache/fop/complexscripts/"/>
+      <classpath>
+        <path refid="libs-build-classpath"/>
+        <pathelement location="${build.classes.dir}"/>
+      </classpath>
+    </javac>
+    <java classname="org.apache.fop.complexscripts.arabic.GenerateArabicTestData">
+      <classpath>
+        <path refid="libs-build-classpath"/>
+        <pathelement location="${build.classes.dir}"/>
+        <pathelement location="${build.dir}/test-classes"/>
+      </classpath>
+      <arg line="-c"/>
     </java>
   </target>
 <!-- =================================================================== -->

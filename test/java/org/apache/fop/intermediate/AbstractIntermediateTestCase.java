@@ -33,7 +33,9 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMSource;
 
-import org.custommonkey.xmlunit.XMLTestCase;
+import org.custommonkey.xmlunit.XMLAssert;
+import org.junit.After;
+import org.junit.Before;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -49,7 +51,7 @@ import org.apache.fop.util.ConsoleEventListenerForTests;
 /**
  * Abstract base class for intermediate format tests.
  */
-public abstract class AbstractIntermediateTestCase extends XMLTestCase {
+public abstract class AbstractIntermediateTestCase {
 
     /** the test environment */
     protected static TestAssistant testAssistant = new TestAssistant();
@@ -76,30 +78,27 @@ public abstract class AbstractIntermediateTestCase extends XMLTestCase {
      */
     public AbstractIntermediateTestCase(File testFile)
             throws IOException {
-        super(testFile.getName());
         this.testFile = testFile;
     }
 
-    /** {@inheritDoc} */
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         setupOutputDirectory();
         this.testDoc = testAssistant.loadTestCase(testFile);
         this.fopFactory = testAssistant.getFopFactory(testDoc);
         intermediate = buildIntermediateDocument(testAssistant.getTestcase2FOStylesheet());
         if (outputDir != null) {
             testAssistant.saveDOM(intermediate, new File(outputDir,
-                    getName() + ".1" + getIntermediateFileExtension()));
+                    testFile.getName() + ".1" + getIntermediateFileExtension()));
         }
     }
 
-    /** {@inheritDoc} */
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         //Release memory
         this.intermediate = null;
         this.fopFactory = null;
         this.testDoc = null;
-        super.tearDown();
     }
 
     /**
@@ -172,11 +171,12 @@ public abstract class AbstractIntermediateTestCase extends XMLTestCase {
         Source src = new DOMSource(intermediate);
         Document doc = parseAndRenderToIntermediateFormat(src);
         if (outputDir != null) {
-            File tgtFile = new File(outputDir, getName() + ".2" + getIntermediateFileExtension());
+            File tgtFile = new File(outputDir, testFile.getName() + ".2"
+                    + getIntermediateFileExtension());
             testAssistant.saveDOM(doc, tgtFile);
         }
 
-        assertXMLEqual(intermediate, doc);
+        XMLAssert.assertXMLEqual(intermediate, doc);
     }
 
     /**
@@ -195,7 +195,7 @@ public abstract class AbstractIntermediateTestCase extends XMLTestCase {
     public void testParserToPDF() throws Exception {
         OutputStream out;
         if (outputDir != null) {
-            File tgtFile = new File(outputDir, getName() + ".pdf");
+            File tgtFile = new File(outputDir, testFile.getName() + ".pdf");
             out = new FileOutputStream(tgtFile);
             out = new BufferedOutputStream(out);
         } else {
@@ -217,6 +217,13 @@ public abstract class AbstractIntermediateTestCase extends XMLTestCase {
      */
     protected abstract void parseAndRender(Source src, OutputStream out)
             throws Exception;
+
+    /**
+     * Run the test.
+     *
+     * @throws Exception if an error occurs during the test
+     */
+    public abstract void runTest() throws Exception;
 
     /**
      * Sets an error listener which doesn't swallow errors like Xalan's default one.

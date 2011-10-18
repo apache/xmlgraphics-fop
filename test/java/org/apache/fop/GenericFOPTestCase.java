@@ -18,6 +18,7 @@
 /* $Id$ */
 
 package org.apache.fop;
+import static org.junit.Assert.fail;
 
 import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
@@ -27,10 +28,8 @@ import java.util.Date;
 
 import javax.xml.parsers.SAXParserFactory;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
+import org.junit.Before;
+import org.junit.Test;
 import org.xml.sax.InputSource;
 
 import org.apache.fop.apps.FOUserAgent;
@@ -47,33 +46,20 @@ import org.apache.fop.util.DigestFilter;
  * PDF currently supported) and a MD5 for the result.
  *
  */
-public final class GenericFOPTestCase extends TestCase {
+public final class GenericFOPTestCase {
 
     // configure fopFactory as desired
     private FopFactory fopFactory = FopFactory.newInstance();
 
-    protected SAXParserFactory parserFactory;
+    private SAXParserFactory parserFactory;
 
-    public static Test suite() {
-        TestSuite suite = new TestSuite(GenericFOPTestCase.class);
-        suite.setName("Fop regression tests");
-        return suite;
-    }
-
-    /**
-     * Constructor for FopTest.
-     * @param name the name of the test suite
-     */
-    public GenericFOPTestCase(String name) {
-        super(name);
-    }
-
-    /** @see junit.framework.TestCase#setUp() */
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         parserFactory = SAXParserFactory.newInstance();
         parserFactory.setNamespaceAware(true);
     }
 
+    @org.junit.Test
     public void testSimple() throws Exception {
         final String digestIn = "17bf13298796065f7775db8707133aeb";
         final String digestOut = "e2761f51152f6663911e567901596707";
@@ -119,8 +105,7 @@ public final class GenericFOPTestCase extends TestCase {
         FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
         foUserAgent.setCreationDate(new Date(10000));
         MessageDigest outDigest = MessageDigest.getInstance("MD5");
-        DigestOutputStream out
-            = new DigestOutputStream(new ByteArrayOutputStream(), outDigest);
+        DigestOutputStream out = new DigestOutputStream(new ByteArrayOutputStream(), outDigest);
         Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, foUserAgent, out);
         InputSource source = new InputSource(new StringReader(fo));
         DigestFilter filter = new DigestFilter("MD5");

@@ -19,15 +19,19 @@
 
 package org.apache.fop.util;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
 import java.util.Locale;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Tests {@link XMLUtil}.
  */
-public class XMLUtilTestCase extends TestCase {
+public class XMLUtilTestCase {
 
+    @Test
     public void testLocaleToRFC3066() throws Exception {
         assertNull(XMLUtil.toRFC3066(null));
         assertEquals("en", XMLUtil.toRFC3066(new Locale("en")));
@@ -35,6 +39,7 @@ public class XMLUtilTestCase extends TestCase {
         assertEquals("en-US", XMLUtil.toRFC3066(new Locale("EN", "us")));
     }
 
+    @Test
     public void testRFC3066ToLocale() throws Exception {
         assertNull(XMLUtil.convertRFC3066ToLocale(null));
         assertNull(XMLUtil.convertRFC3066ToLocale(""));

@@ -397,22 +397,34 @@ public abstract class AbstractRenderer
      * @param mr  The main reference area
      */
     protected void renderMainReference(MainReference mr) {
-        int saveIPPos = currentIPPosition;
-
         Span span = null;
         List spans = mr.getSpans();
         int saveBPPos = currentBPPosition;
         int saveSpanBPPos = saveBPPos;
+        int saveIPPos = currentIPPosition;
         for (int count = 0; count < spans.size(); count++) {
             span = (Span) spans.get(count);
+            int level = span.getBidiLevel();
+            if ( level < 0 ) {
+                level = 0;
+            }
+            if ( ( level & 1 ) == 1 ) {
+                currentIPPosition += span.getIPD();
+                currentIPPosition += mr.getColumnGap();
+            }
             for (int c = 0; c < span.getColumnCount(); c++) {
                 NormalFlow flow = span.getNormalFlow(c);
-
                 if (flow != null) {
                     currentBPPosition = saveSpanBPPos;
+                    if ( ( level & 1 ) == 1 ) {
+                        currentIPPosition -= flow.getIPD();
+                        currentIPPosition -= mr.getColumnGap();
+                    }
                     renderFlow(flow);
-                    currentIPPosition += flow.getIPD();
-                    currentIPPosition += mr.getColumnGap();
+                    if ( ( level & 1 ) == 0 ) {
+                        currentIPPosition += flow.getIPD();
+                        currentIPPosition += mr.getColumnGap();
+                    }
                 }
             }
             currentIPPosition = saveIPPos;

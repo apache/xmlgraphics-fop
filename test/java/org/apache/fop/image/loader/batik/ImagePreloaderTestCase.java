@@ -19,6 +19,9 @@
 
 package org.apache.fop.image.loader.batik;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.io.IOException;
 
 import javax.xml.transform.Source;
@@ -26,42 +29,39 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.URIResolver;
 import javax.xml.transform.dom.DOMSource;
 
-import junit.framework.TestCase;
-
+import org.apache.batik.dom.svg.SVGDOMImplementation;
+import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.FopFactory;
+import org.apache.fop.apps.MimeConstants;
+import org.apache.xmlgraphics.image.loader.ImageException;
+import org.apache.xmlgraphics.image.loader.ImageInfo;
+import org.apache.xmlgraphics.image.loader.ImageManager;
+import org.junit.Test;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import org.apache.batik.dom.svg.SVGDOMImplementation;
-
-import org.apache.xmlgraphics.image.loader.ImageException;
-import org.apache.xmlgraphics.image.loader.ImageInfo;
-import org.apache.xmlgraphics.image.loader.ImageManager;
-
-import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.apps.FopFactory;
-import org.apache.fop.apps.MimeConstants;
-
 /**
  * Tests for bundled image preloader implementations.
  */
-public class ImagePreloaderTestCase extends TestCase {
+public class ImagePreloaderTestCase {
 
     private FopFactory fopFactory;
 
-    public ImagePreloaderTestCase(String name) {
-        super(name);
+    public ImagePreloaderTestCase() {
         fopFactory = FopFactory.newInstance();
         fopFactory.setSourceResolution(72);
         fopFactory.setTargetResolution(300);
     }
 
+    @Test
     public void testSVG() throws Exception {
         String uri = "test/resources/images/img-w-size.svg";
 
         checkSVGFile(uri);
     }
 
+    @Test
     public void testSVGZ() throws Exception {
         String uri = "test/resources/images/img-w-size.svgz";
 
@@ -83,6 +83,7 @@ public class ImagePreloaderTestCase extends TestCase {
         assertEquals(16000, info.getSize().getHeightMpt());
     }
 
+    @Test
     public void testSVGNoSize() throws Exception {
         String uri = "test/resources/images/img.svg";
         FOUserAgent userAgent = fopFactory.newFOUserAgent();
@@ -99,6 +100,7 @@ public class ImagePreloaderTestCase extends TestCase {
         assertEquals(100000, info.getSize().getHeightMpt());
     }
 
+    @Test
     public void testSVGWithDOM() throws Exception {
         String uri = "my:SVGImage";
         FOUserAgent userAgent = fopFactory.newFOUserAgent();
@@ -143,6 +145,7 @@ public class ImagePreloaderTestCase extends TestCase {
         assertEquals(20000, info.getSize().getHeightMpt());
     }
 
+    @Test
     public void testWMF() throws Exception {
         String uri = "test/resources/images/testChart.wmf";
 

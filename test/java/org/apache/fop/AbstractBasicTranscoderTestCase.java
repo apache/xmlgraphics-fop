@@ -19,6 +19,8 @@
 
 package org.apache.fop;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.InputStream;
 
@@ -26,19 +28,13 @@ import org.apache.batik.transcoder.Transcoder;
 import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.junit.Test;
 
 /**
  * Basic runtime test for FOP's transcoders. It is used to verify that
  * nothing obvious is broken after compiling.
  */
 public abstract class AbstractBasicTranscoderTestCase extends AbstractFOPTestCase {
-
-    /**
-     * @see junit.framework.TestCase#TestCase(String)
-     */
-    public AbstractBasicTranscoderTestCase(String name) {
-        super(name);
-    }
 
     /**
      * Creates the transcoder to test.
@@ -51,6 +47,7 @@ public abstract class AbstractBasicTranscoderTestCase extends AbstractFOPTestCas
      * Without special configuration stuff.
      * @throws Exception if a problem occurs
      */
+    @Test
     public void testGenericPDFTranscoder() throws Exception {
         //Create transcoder
         Transcoder transcoder = createTranscoder();

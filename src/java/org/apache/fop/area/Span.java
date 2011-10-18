@@ -19,6 +19,9 @@
 
 package org.apache.fop.area;
 
+import org.apache.fop.fo.Constants;
+import org.apache.fop.traits.WritingModeTraitsGetter;
+
 import java.util.List;
 
 /**
@@ -181,6 +184,22 @@ public class Span extends Area {
             }
         }
         return (areaCount == 0);
+    }
+
+    /**
+     * Sets the writing mode traits for the main reference area of
+     * this span area.
+     * @param wmtg a WM traits getter
+     */
+    public void setWritingModeTraits(WritingModeTraitsGetter wmtg) {
+        switch ( wmtg.getColumnProgressionDirection().getEnumValue() ) {
+        case Constants.EN_RL:
+            setBidiLevel(1);
+            break;
+        default:
+            resetBidiLevel();
+            break;
+        }
     }
 
     /** {@inheritDoc} */

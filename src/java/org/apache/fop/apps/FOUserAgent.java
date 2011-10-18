@@ -650,6 +650,24 @@ public class FOUserAgent {
     }
 
     /**
+     * Check whether complex script features are enabled.
+     *
+     * @return true if FOP is to use complex script features
+     */
+    public boolean isComplexScriptFeaturesEnabled() {
+        return factory.isComplexScriptFeaturesEnabled();
+    }
+
+    /**
+     * Control whether complex script features should be enabled
+     *
+     * @param useComplexScriptFeatures true if FOP is to use complex script features
+     */
+    public void setComplexScriptFeaturesEnabled(boolean useComplexScriptFeatures) {
+        factory.setComplexScriptFeaturesEnabled ( useComplexScriptFeatures );
+    }
+
+    /**
      * Activates accessibility (for output formats that support it).
      *
      * @param accessibility <code>true</code> to enable accessibility support

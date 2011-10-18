@@ -19,41 +19,57 @@
 
 package org.apache.fop.pdf;
 
-import java.util.Arrays;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
 /**
  * Tests the {@link FileIDGenerator} class.
  */
-public abstract class FileIDGeneratorTestCase extends TestCase {
-
-    /**
-     * Returns a suite containing all the {@link FileIDGenerator} test cases.
-     *
-     * @return the test suite
-     */
-    public static final Test suite() {
-        TestSuite suite = new TestSuite(new Class[] {
-                RandomFileIDGeneratorTestCase.class,
-                DigestFileIDGeneratorTestCase.class },
-                FileIDGeneratorTestCase.class.getName());
-        return suite;
-    }
+@RunWith(Parameterized.class)
+public class FileIDGeneratorTestCase {
 
     /** The generator under test. */
     protected FileIDGenerator fileIDGenerator;
 
+    private TestGetter initializer;
+
+    @Parameters
+    public static Collection<TestGetter[]> getParameters() {
+        ArrayList<TestGetter[]> params = new ArrayList<TestGetter[]>();
+        params.add(new TestGetter[] { new RandomFileIDGeneratorTest() });
+        params.add(new TestGetter[] { new DigestFileIDGeneratorTest() });
+        return params;
+    }
+
+    public FileIDGeneratorTestCase(TestGetter initializer) {
+        this.initializer = initializer;
+    }
+
+    @Before
+    public void setUp() throws Exception {
+        fileIDGenerator = initializer.getSut();
+    }
 
     /** Tests that the getOriginalFileID method generates valid output. */
+    @Test
     public void testOriginal() {
         byte[] fileID = fileIDGenerator.getOriginalFileID();
         fileIDMustBeValid(fileID);
     }
 
     /** Tests that the getUpdatedFileID method generates valid output. */
+    @Test
     public void testUpdated() {
         byte[] fileID = fileIDGenerator.getUpdatedFileID();
         fileIDMustBeValid(fileID);
@@ -65,6 +81,7 @@ public abstract class FileIDGeneratorTestCase extends TestCase {
     }
 
     /** Tests that multiple calls to getOriginalFileID method always return the same value. */
+    @Test
     public void testOriginalMultipleCalls() {
         byte[] fileID1 = fileIDGenerator.getUpdatedFileID();
         byte[] fileID2 = fileIDGenerator.getUpdatedFileID();
@@ -72,20 +89,24 @@ public abstract class FileIDGeneratorTestCase extends TestCase {
     }
 
     /** Tests that getUpdatedFileID returns the same value as getOriginalFileID. */
+    @Test
     public void testUpdateEqualsOriginal() {
         byte[] originalFileID = fileIDGenerator.getOriginalFileID();
         byte[] updatedFileID = fileIDGenerator.getUpdatedFileID();
         assertTrue(Arrays.equals(originalFileID, updatedFileID));
     }
 
+    private static interface TestGetter {
+        FileIDGenerator getSut() throws Exception;
+    }
+
     /**
      * Tests the random file ID generator.
      */
-    public static class RandomFileIDGeneratorTestCase extends FileIDGeneratorTestCase {
+    private static class RandomFileIDGeneratorTest implements TestGetter {
 
-        @Override
-        protected void setUp() throws Exception {
-            fileIDGenerator = FileIDGenerator.getRandomFileIDGenerator();
+        public FileIDGenerator getSut() throws Exception {
+            return FileIDGenerator.getRandomFileIDGenerator();
         }
 
     }
@@ -93,11 +114,10 @@ public abstract class FileIDGeneratorTestCase extends TestCase {
     /**
      * Tests the file ID generator based on an MD5 digest.
      */
-    public static class DigestFileIDGeneratorTestCase extends FileIDGeneratorTestCase {
+    private static class DigestFileIDGeneratorTest implements TestGetter {
 
-        @Override
-        protected void setUp() throws Exception {
-            fileIDGenerator = FileIDGenerator.getDigestFileIDGenerator(
+        public FileIDGenerator getSut() throws Exception {
+            return FileIDGenerator.getDigestFileIDGenerator(
                     new PDFDocument("Apache FOP"));
         }
 

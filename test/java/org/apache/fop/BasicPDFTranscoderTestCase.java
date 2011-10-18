@@ -28,16 +28,7 @@ import org.apache.fop.svg.PDFTranscoder;
  */
 public class BasicPDFTranscoderTestCase extends AbstractBasicTranscoderTestCase {
 
-    /**
-     * @see junit.framework.TestCase#TestCase(String)
-     */
-    public BasicPDFTranscoderTestCase(String name) {
-        super(name);
-    }
-
-    /**
-     * @see org.apache.fop.AbstractBasicTranscoderTestCase#createTranscoder()
-     */
+    @Override
     protected Transcoder createTranscoder() {
         return new PDFTranscoder();
     }

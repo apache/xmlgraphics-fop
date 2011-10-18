@@ -20,12 +20,14 @@
 package org.apache.fop.area.inline;
 
 import org.apache.fop.area.ViewportTestCase;
+import org.junit.Test;
 
 /**
  * Tests the {@linkplain InlineViewport} class.
  */
 public class InlineViewportTestCase extends ViewportTestCase {
 
+    @Test
     public void testNonClip() throws Exception {
         InlineViewport v = new InlineViewport(null);
         v.setIPD(50);
@@ -33,6 +35,7 @@ public class InlineViewportTestCase extends ViewportTestCase {
         checkNonClip(v);
     }
 
+    @Test
     public void testClip() throws Exception {
         InlineViewport v = new InlineViewport(null);
         int ipd = 50;

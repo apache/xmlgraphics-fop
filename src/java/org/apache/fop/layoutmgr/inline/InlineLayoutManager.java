@@ -32,6 +32,7 @@ import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.InlineBlockParent;
 import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.datatypes.Length;
+import org.apache.fop.fo.flow.BasicLink;
 import org.apache.fop.fo.flow.Inline;
 import org.apache.fop.fo.flow.InlineLevel;
 import org.apache.fop.fo.flow.Leader;
@@ -106,10 +107,6 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
         super(node);
     }
 
-    private Inline getInlineFO() {
-        return (Inline) fobj;
-    }
-
     /** {@inheritDoc} */
     @Override
     public void initialize() {
@@ -136,6 +133,11 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
             alignmentBaseline = ((Leader)fobj).getAlignmentBaseline();
             baselineShift = ((Leader)fobj).getBaselineShift();
             dominantBaseline = ((Leader)fobj).getDominantBaseline();
+        } else if (fobj instanceof BasicLink) {
+            alignmentAdjust = ((BasicLink)fobj).getAlignmentAdjust();
+            alignmentBaseline = ((BasicLink)fobj).getAlignmentBaseline();
+            baselineShift = ((BasicLink)fobj).getBaselineShift();
+            dominantBaseline = ((BasicLink)fobj).getDominantBaseline();
         }
         if (borderProps != null) {
             padding = borderProps.getPadding(CommonBorderPaddingBackground.BEFORE, false, this);
@@ -209,8 +211,8 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
         } else {
             area = new InlineBlockParent();
         }
-        if (fobj instanceof Inline) {
-            TraitSetter.setProducerID(area, getInlineFO().getId());
+        if (fobj instanceof Inline || fobj instanceof BasicLink) {
+            TraitSetter.setProducerID(area, fobj.getId());
         }
         return area;
     }

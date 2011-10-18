@@ -19,22 +19,18 @@
 
 package org.apache.fop.text.linebreak;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
 
 /**
  * TODO add javadoc
  *
  *
  */
-public class LineBreakUtilsTest extends TestCase {
+public class LineBreakUtilsTest {
 
-    /**
-     * @param name
-     */
-    public LineBreakUtilsTest(String name) {
-        super(name);
-    }
-
+    @Test
     public void testLineBreakProperty() {
         assertEquals(LineBreakUtils.getLineBreakProperty('A'), LineBreakUtils.LINE_BREAK_PROPERTY_AL);
         assertEquals(LineBreakUtils.getLineBreakProperty('1'), LineBreakUtils.LINE_BREAK_PROPERTY_NU);
@@ -44,6 +40,7 @@ public class LineBreakUtilsTest extends TestCase {
         assertEquals(LineBreakUtils.getLineBreakProperty('\u1F7E'), 0);
     }
 
+    @Test
     public void testLineBreakPair() {
         assertEquals(
             LineBreakUtils.getLineBreakPairProperty(

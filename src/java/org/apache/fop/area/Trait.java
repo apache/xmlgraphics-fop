@@ -164,11 +164,13 @@ public final class Trait implements Serializable {
     public static final Integer INLINE_PROGRESSION_DIRECTION = 39;
     /** block progression direction trait */
     public static final Integer BLOCK_PROGRESSION_DIRECTION = 40;
+    /** column progression direction trait */
+    public static final Integer COLUMN_PROGRESSION_DIRECTION = 41;
     /** shift direction trait */
-    public static final Integer SHIFT_DIRECTION = 41;
+    public static final Integer SHIFT_DIRECTION = 42;
 
     /** Maximum value used by trait keys */
-    public static final int MAX_TRAIT_KEY = 41;
+    public static final int MAX_TRAIT_KEY = 42;
 
     private static final TraitInfo[] TRAIT_INFO = new TraitInfo[MAX_TRAIT_KEY + 1];
 

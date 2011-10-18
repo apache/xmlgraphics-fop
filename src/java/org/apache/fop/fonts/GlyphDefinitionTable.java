@@ -140,6 +140,19 @@ public class GlyphDefinitionTable extends GlyphTable {
     }
 
     /**
+     * Determine glyph class.
+     * @param gid a glyph identifier (index)
+     * @return a pre-defined glyph class (GLYPH_CLASS_BASE|GLYPH_CLASS_LIGATURE|GLYPH_CLASS_MARK|GLYPH_CLASS_COMPONENT). 
+     */
+    public int getGlyphClass ( int gid ) {
+        if ( gct != null ) {
+            return gct.getGlyphClass ( gid );
+        } else {
+            return -1;
+        }
+    }
+
+    /**
      * Map a lookup type name to its constant (integer) value.
      * @param name lookup type name
      * @return lookup type
@@ -235,6 +248,12 @@ public class GlyphDefinitionTable extends GlyphTable {
          * @return true if glyph belongs to specified glyph class
          */
         public abstract boolean isGlyphClass ( int gid, int gc );
+        /**
+         * Determine glyph class.
+         * @param gid a glyph identifier (index)
+         * @return a pre-defined glyph class (GLYPH_CLASS_BASE|GLYPH_CLASS_LIGATURE|GLYPH_CLASS_MARK|GLYPH_CLASS_COMPONENT).
+         */
+        public abstract int getGlyphClass ( int gid );
         static GlyphDefinitionSubtable create ( String id, int sequence, int flags, int format, GlyphMappingTable mapping, List entries ) {
             if ( format == 1 ) {
                 return new GlyphClassSubtableFormat1 ( id, sequence, flags, format, mapping, entries );
@@ -263,6 +282,15 @@ public class GlyphDefinitionTable extends GlyphTable {
                 return cm.getClassIndex ( gid, 0 ) == gc;
             } else {
                 return false;
+            }
+        }
+        /** {@inheritDoc} */
+        public int getGlyphClass ( int gid ) {
+            GlyphClassMapping cm = getClasses();
+            if ( cm != null ) {
+                return cm.getClassIndex ( gid, 0 );
+            } else {
+                return -1;
             }
         }
     }

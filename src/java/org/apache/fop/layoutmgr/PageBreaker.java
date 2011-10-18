@@ -367,7 +367,9 @@ public class PageBreaker extends AbstractBreaker {
             // Handle special page-master for last page
             BodyRegion currentBody = pageProvider.getPage(false, currentPageNum)
                     .getPageViewport().getBodyRegion();
-            pageProvider.setLastPageIndex(currentPageNum);
+
+            setLastPageIndex(currentPageNum);
+
             BodyRegion lastBody = pageProvider.getPage(false, currentPageNum)
                     .getPageViewport().getBodyRegion();
             lastBody.getMainReference().setSpans(currentBody.getMainReference().getSpans());
@@ -410,13 +412,18 @@ public class PageBreaker extends AbstractBreaker {
                 //Add areas now...
                 addAreas(alg, restartPoint, partCount - restartPoint, originalList, effectiveList);
                 //...and add a blank last page
-                pageProvider.setLastPageIndex(currentPageNum + 1);
+                setLastPageIndex(currentPageNum + 1);
                 pslm.setCurrentPage(pslm.makeNewPage(true, true));
                 return;
             }
         }
 
         addAreas(algRestart, optimalPageCount, originalList, effectiveList);
+    }
+
+    private void setLastPageIndex(int currentPageNum) {
+        int lastPageIndex = pslm.getForcedLastPageNum(currentPageNum);
+        pageProvider.setLastPageIndex(lastPageIndex);
     }
 
     /** {@inheritDoc} */

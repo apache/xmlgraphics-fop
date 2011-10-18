@@ -24,13 +24,7 @@ package org.apache.fop.config;
  */
 public class FontEmbedUrlMalformedTestCase extends BaseDestructiveUserConfigTestCase {
 
-    public FontEmbedUrlMalformedTestCase(String name) {
-        super(name);
-    }
-
-    /**
-     * @see org.apache.fop.config.BaseUserConfigTestCase#getUserConfigFilename()
-     */
+    @Override
     public String getUserConfigFilename() {
         return "test_font_embedurl_malformed.xconf";
     }

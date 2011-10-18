@@ -19,16 +19,19 @@
 
 package org.apache.fop.fonts;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  *
  */
-public class DejaVuLGCSerifTest extends TestCase {
+public class DejaVuLGCSerifTest {
 
-    private FontResolver fontResolver = FontManager.createMinimalFontResolver();
+    private FontResolver fontResolver = FontManager.createMinimalFontResolver(false);
     private CustomFont font;
 
     /**
@@ -37,6 +40,7 @@ public class DejaVuLGCSerifTest extends TestCase {
      * @throws Exception
      *             if the test fails.
      */
+    @Before
     public void setUp() throws Exception {
         File file = new File("test/resources/fonts/DejaVuLGCSerif.ttf");
         font = FontLoader.loadFont(file, "", true, EncodingMode.AUTO,
@@ -46,6 +50,7 @@ public class DejaVuLGCSerifTest extends TestCase {
     /**
      * Simple test to see if font name was detected correctly.
      */
+    @Test
     public void testFontName() {
         assertEquals("DejaVuLGCSerif", font.getFontName());
     }

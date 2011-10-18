@@ -19,27 +19,31 @@
 
 package org.apache.fop.afp.modca;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
 import org.apache.fop.afp.util.BinaryUtils;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Test {@link IncludeObject}
  */
 public class IncludeObjectTestCase extends AbstractNamedAFPObjectTestCase<IncludeObject> {
 
-    @Override
+    @Before
     public void setUp() throws Exception {
         setSut(new IncludeObject("8__chars"));
-        super.setUp();
     }
 
     /**
      * Test writeToStream()
      * @throws IOException -
      */
+    @Test
     public void testWriteToStream() throws IOException {
         final IncludeObject sut = getSut();
 
@@ -53,6 +57,7 @@ public class IncludeObjectTestCase extends AbstractNamedAFPObjectTestCase<Includ
      * handed with a 180 x-axis
      * @throws IOException -
      */
+    @Test
     public void testWriteToStreamForOrientation() throws IOException {
         final IncludeObject sut = getSut();
 

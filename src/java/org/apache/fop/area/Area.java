@@ -25,6 +25,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.traits.BorderProps;
+import org.apache.fop.traits.WritingModeTraitsGetter;
 
 // If the area appears more than once in the output
 // or if the area has external data it is cached
@@ -464,6 +465,14 @@ public class Area extends AreaTreeObject implements Serializable {
                     + traitCode.getClass().getName()
                     + " could not be converted to an integer");
         }
+    }
+
+    /**
+     * Sets the writing mode traits for this area. Default implementation
+     * does nothing.
+     * @param wmtg a WM traits getter
+     */
+    public void setWritingModeTraits(WritingModeTraitsGetter wmtg) {
     }
 
     /**

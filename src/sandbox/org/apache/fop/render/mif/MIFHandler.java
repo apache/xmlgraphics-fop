@@ -84,7 +84,8 @@ public class MIFHandler extends FOEventHandler {
     public MIFHandler(FOUserAgent ua, OutputStream os) {
         super(ua);
         outStream = os;
-        FontSetup.setup(fontInfo, null, new DefaultFontResolver(ua));
+        boolean base14Kerning = false; //TODO - FIXME
+        FontSetup.setup(fontInfo, null, new DefaultFontResolver(ua), base14Kerning);
     }
 
     /** {@inheritDoc} */

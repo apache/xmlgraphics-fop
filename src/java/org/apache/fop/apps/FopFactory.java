@@ -143,6 +143,10 @@ public class FopFactory implements ImageContext {
     /** Page width */
     private String pageWidth = FopFactoryConfigurator.DEFAULT_PAGE_WIDTH;
 
+    /** Complex scripts support enabled */
+    private boolean useComplexScriptFeatures
+        = FopFactoryConfigurator.DEFAULT_COMPLEX_SCRIPT_FEATURES;
+
     /** @see #setBreakIndentInheritanceOnReferenceAreaBoundary(boolean) */
     private boolean breakIndentInheritanceOnReferenceAreaBoundary
         = FopFactoryConfigurator.DEFAULT_BREAK_INDENT_INHERITANCE;
@@ -209,6 +213,19 @@ public class FopFactory implements ImageContext {
 
     boolean isAccessibilityEnabled() {
         return accessibility;
+    }
+
+    /**
+     * Sets complex script support.
+     * @param value <code>true</code> to enable complex script features,
+     * <code>false</code> otherwise
+     */
+    void setComplexScriptFeaturesEnabled(boolean value) {
+        this.useComplexScriptFeatures = value;
+    }
+
+    boolean isComplexScriptFeaturesEnabled() {
+        return useComplexScriptFeatures;
     }
 
     /**

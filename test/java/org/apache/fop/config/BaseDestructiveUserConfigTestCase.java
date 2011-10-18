@@ -19,18 +19,21 @@
 
 package org.apache.fop.config;
 
-import org.apache.fop.apps.FOPException;
+import static org.junit.Assert.fail;
 
+import org.apache.fop.apps.FOPException;
+import org.junit.Test;
+
+/**
+ * Super class for several user configuration failure cases.
+ */
 public abstract class BaseDestructiveUserConfigTestCase extends BaseUserConfigTestCase {
 
     /**
-     * @see junit.framework.TestCase#TestCase(String)
+     * Test the user configuration failure.
      */
-    public BaseDestructiveUserConfigTestCase(String name) {
-        super(name);
-    }
-
-    public void testUserConfig() throws Exception {
+    @Test
+    public void testUserConfig() {
         try {
             initConfig();
             convertFO();

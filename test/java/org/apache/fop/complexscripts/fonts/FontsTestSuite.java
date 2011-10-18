@@ -19,27 +19,24 @@
 
 package org.apache.fop.complexscripts.fonts;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
+import org.apache.fop.complexscripts.gdef.GDEFTestCase;
+import org.apache.fop.complexscripts.gpos.GPOSTestCase;
+import org.apache.fop.complexscripts.gsub.GSUBTestCase;
 import org.apache.fop.complexscripts.util.TTXFileTestCase;
 
 /**
  * Test suite for fonts functionality related to complex scripts.
  */
+@RunWith(Suite.class)
+@SuiteClasses({
+    TTXFileTestCase.class,
+    GDEFTestCase.class,
+    GSUBTestCase.class,
+    GPOSTestCase.class
+})
 public class FontsTestSuite {
-
-    /**
-     * Builds the test suite
-     * @return the test suite
-     */
-    public static Test suite() {
-        TestSuite suite = new TestSuite(
-            "Basic functionality test suite for complex scripts fonts related functionality");
-        //$JUnit-BEGIN$
-        suite.addTest(new TestSuite(TTXFileTestCase.class));
-        //$JUnit-END$
-        return suite;
-    }
-
 }

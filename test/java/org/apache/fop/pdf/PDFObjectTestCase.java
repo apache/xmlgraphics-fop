@@ -19,22 +19,25 @@
 
 package org.apache.fop.pdf;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Tests the PDFObject class.
  */
-public class PDFObjectTestCase extends TestCase {
+public class PDFObjectTestCase {
 
     /**
      * Tests date/time formatting in PDFObject.
      * @throws Exception if an error occurs
      */
+    @Test
     public void testDateFormatting() throws Exception {
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"), Locale.ENGLISH);
         cal.set(2008, Calendar.FEBRUARY, 07, 15, 11, 07);
@@ -60,6 +63,7 @@ public class PDFObjectTestCase extends TestCase {
      * Tests PDF object references.
      * @throws Exception if an error occurs
      */
+    @Test
     public void testReference() throws Exception {
         PDFDictionary dict = new PDFDictionary();
         dict.setObjectNumber(7);

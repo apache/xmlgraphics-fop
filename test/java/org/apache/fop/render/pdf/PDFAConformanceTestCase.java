@@ -19,10 +19,13 @@
 
 package org.apache.fop.render.pdf;
 
+import static org.junit.Assert.fail;
+
 import java.io.File;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.pdf.PDFConformanceException;
+import org.junit.Test;
 
 /**
  * Tests PDF/A-1 functionality.
@@ -32,13 +35,6 @@ public class PDFAConformanceTestCase extends BasePDFTestCase {
     private File foBaseDir = new File("test/xml/pdf-a");
     private boolean dumpPDF = Boolean.getBoolean("PDFAConformanceTestCase.dumpPDF");
 
-    /**
-     * Main constructor
-     * @param name the name of the test case
-     */
-    public PDFAConformanceTestCase(String name) {
-        super(name);
-    }
 
     /** create an FOUserAgent for our tests
      *  @return an initialized FOUserAgent
@@ -53,6 +49,7 @@ public class PDFAConformanceTestCase extends BasePDFTestCase {
      * Test exception when PDF/A-1 is enabled and everything is as it should.
      * @throws Exception if the test fails
      */
+    @Test
     public void testAllOk() throws Exception {
         File foFile = new File(foBaseDir, "minimal-pdf-a.fo");
         convertFO(foFile, getUserAgent(), dumpPDF);
@@ -62,6 +59,7 @@ public class PDFAConformanceTestCase extends BasePDFTestCase {
      * Test exception when PDF/A-1 is enabled together with encryption.
      * @throws Exception if the test fails
      */
+    @Test
     public void testNoEncryption() throws Exception {
         final FOUserAgent ua = getUserAgent();
         ua.getRendererOptions().put("owner-password", "mypassword"); //To enabled encryption
@@ -78,6 +76,7 @@ public class PDFAConformanceTestCase extends BasePDFTestCase {
      * Test exception when PDF/A-1 is enabled and a font is used which is not embedded.
      * @throws Exception if the test fails
      */
+    @Test
     public void testFontNotEmbedded() throws Exception {
         File foFile = new File(foBaseDir, "base14-font.fo");
         try {
@@ -92,6 +91,7 @@ public class PDFAConformanceTestCase extends BasePDFTestCase {
      * Test exception when PDF/A-1 is enabled and images.
      * @throws Exception if the test fails
      */
+    @Test
     public void testImages() throws Exception {
         File foFile = new File(foBaseDir, "with-rgb-images.fo");
         convertFO(foFile, getUserAgent(), dumpPDF);

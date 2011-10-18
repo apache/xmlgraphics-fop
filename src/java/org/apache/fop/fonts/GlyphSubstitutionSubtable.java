@@ -104,7 +104,17 @@ public abstract class GlyphSubstitutionSubtable extends GlyphSubtable implements
         return ss.getOutput();
     }
 
-    static final GlyphSequence substitute ( GlyphSequence gs, String script, String language, String feature, GlyphSubstitutionSubtable[] sta, ScriptContextTester sct ) {
+    /**
+     * Apply substitutions.
+     * @param gs input glyph sequence
+     * @param script tag
+     * @param language tag
+     * @param feature tag
+     * @param sta subtable array
+     * @param sct script context tester
+     * @return output glyph sequence
+     */
+    public static final GlyphSequence substitute ( GlyphSequence gs, String script, String language, String feature, GlyphSubstitutionSubtable[] sta, ScriptContextTester sct ) {
         return substitute ( new GlyphSubstitutionState ( gs, script, language, feature, sct ), sta, -1 );
     }
 

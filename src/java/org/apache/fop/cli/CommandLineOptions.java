@@ -118,6 +118,8 @@ public class CommandLineOptions {
     private int targetResolution = 0;
     /* control memory-conservation policy */
     private boolean conserveMemoryPolicy = false;
+    /* true if a complex script features are enabled */
+    private boolean useComplexScriptFeatures = true;
 
     private FopFactory factory = FopFactory.newInstance();
     private FOUserAgent foUserAgent;
@@ -181,6 +183,9 @@ public class CommandLineOptions {
                 addXSLTParameter("fop-output-format", getOutputFormat());
                 addXSLTParameter("fop-version", Version.getVersion());
                 foUserAgent.setConserveMemoryPolicy(conserveMemoryPolicy);
+                if (!useComplexScriptFeatures) {
+                    foUserAgent.setComplexScriptFeaturesEnabled(false);
+                }
             } else {
                 return false;
             }
@@ -381,6 +386,8 @@ public class CommandLineOptions {
                 getPDFEncryptionParams().setAllowEditContent(false);
             } else if (args[i].equals("-noannotations")) {
                 getPDFEncryptionParams().setAllowEditAnnotations(false);
+            } else if (args[i].equals("-nocs")) {
+                useComplexScriptFeatures = false;
             } else if (args[i].equals("-nofillinforms")) {
                 getPDFEncryptionParams().setAllowFillInForms(false);
             } else if (args[i].equals("-noaccesscontent")) {
@@ -1178,6 +1185,7 @@ public class CommandLineOptions {
             + "  -q                quiet mode  \n"
             + "  -c cfg.xml        use additional configuration file cfg.xml\n"
             + "  -l lang           the language to use for user information \n"
+            + "  -nocs             disable complex script features\n"
             + "  -r                relaxed/less strict validation (where available)\n"
             + "  -dpi xxx          target resolution in dots per inch (dpi) where xxx is a number\n"
             + "  -s                for area tree XML, down to block areas only\n"
