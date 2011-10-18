@@ -66,6 +66,10 @@ public class TTFFile {
     private final String encoding = "WinAnsiEncoding";    // Default encoding
 
     private final short firstChar = 0;
+
+    private boolean useKerning = false;
+    private boolean useAdvanced = false;
+
     private boolean isEmbeddable = true;
     private boolean hasSerifs = true;
     /**
@@ -138,9 +142,9 @@ public class TTFFile {
     private boolean isCFF;
 
     /* advanced typographic support */
-    private Map/*<String,Object[3]>*/ seScripts;
-    private Map/*<String,Object[2]>*/ seLanguages;
-    private Map/*<String,List<String>>*/ seFeatures;
+    private Map/*<String,Object[3]>*/ seScripts;                // script-tag         => Object[3] : { default-language-tag, List(language-tag), seLanguages }
+    private Map/*<String,Object[2]>*/ seLanguages;              // language-tag       => Object[2] : { "f<required-feature-index>", List("f<feature-index>")
+    private Map/*<String,List<String>>*/ seFeatures;            // "f<feature-index>" => Object[2] : { feature-tag, List("lu<lookup-index>") }
     private GlyphMappingTable seMapping;
     private List seEntries;
     private List seSubtables;
@@ -152,6 +156,16 @@ public class TTFFile {
      * logging instance
      */
     protected Log log = LogFactory.getLog(TTFFile.class);
+
+    /**
+     * Constructor
+     * @param useKerning true if kerning data should be loaded
+     * @param useAdvanced true if advanced typographic tables should be loaded
+     */
+    public TTFFile ( boolean useKerning, boolean useAdvanced ) {
+        this.useKerning = useKerning;
+        this.useAdvanced = useAdvanced;
+    }
 
     /**
      * Key-value helper class
@@ -623,19 +637,23 @@ public class TTFFile {
         // Create cmaps for bfentries
         createCMaps();
 
-        readKerning(in);
+        if ( useKerning ) {
+            readKerning(in);
+        }
 
         // Read advanced typographic tables. If any format exception,
         // reset (thus ignoring) all advanced typographic tables.
-        try {
-            readGDEF(in);
-            readGSUB(in);
-            readGPOS(in);
-        } catch ( AdvancedTypographicTableFormatException e ) {
-            resetATStateAll();
-            log.warn ( "Encountered format constraint violation in advanced (typographic) table (AT) "
-                       + "in font '" + getFullName() + "', ignoring AT data: "
-                       + e.getMessage() );
+        if ( useAdvanced ) {
+            try {
+                readGDEF(in);
+                readGSUB(in);
+                readGPOS(in);
+            } catch ( AdvancedTypographicTableFormatException e ) {
+                resetATStateAll();
+                log.warn ( "Encountered format constraint violation in advanced (typographic) table (AT) "
+                           + "in font '" + getFullName() + "', ignoring AT data: "
+                           + e.getMessage() );
+            }
         }
 
         guessVerticalMetricsFromGlyphBBox();
@@ -2910,14 +2928,14 @@ public class TTFFile {
         }
         // read input glyph count
         int nig = in.readTTFUShort();
-        // read backtrack glyph coverage offsets
+        // read input glyph coverage offsets
         int[] igcoa = new int [ nig ];
         for ( int i = 0; i < nig; i++ ) {
             igcoa [ i ] = in.readTTFUShort();
         }
         // read lookahead glyph count
         int nlg = in.readTTFUShort();
-        // read backtrack glyph coverage offsets
+        // read lookahead glyph coverage offsets
         int[] lgcoa = new int [ nlg ];
         for ( int i = 0; i < nlg; i++ ) {
             lgcoa [ i ] = in.readTTFUShort();
@@ -5121,12 +5139,12 @@ public class TTFFile {
     private GlyphSubtable constructGDEFSubtable ( Object[] stp ) {
         GlyphSubtable st = null;
         assert ( stp != null ) && ( stp.length == 8 );
-        Integer tt = (Integer) stp[0];
-        Integer lt = (Integer) stp[1];
-        Integer ln = (Integer) stp[2];
-        Integer lf = (Integer) stp[3];
-        Integer sn = (Integer) stp[4];
-        Integer sf = (Integer) stp[5];
+        Integer tt = (Integer) stp[0];          // table type
+        Integer lt = (Integer) stp[1];          // lookup type
+        Integer ln = (Integer) stp[2];          // lookup sequence number
+        Integer lf = (Integer) stp[3];          // lookup flags
+        Integer sn = (Integer) stp[4];          // subtable sequence number
+        Integer sf = (Integer) stp[5];          // subtable format
         GlyphMappingTable mapping = (GlyphMappingTable) stp[6];
         List entries = (List) stp[7];
         if ( tt.intValue() == GlyphTable.GLYPH_TABLE_TYPE_DEFINITION ) {
@@ -5157,12 +5175,12 @@ public class TTFFile {
     private GlyphSubtable constructGSUBSubtable ( Object[] stp ) {
         GlyphSubtable st = null;
         assert ( stp != null ) && ( stp.length == 8 );
-        Integer tt = (Integer) stp[0];
-        Integer lt = (Integer) stp[1];
-        Integer ln = (Integer) stp[2];
-        Integer lf = (Integer) stp[3];
-        Integer sn = (Integer) stp[4];
-        Integer sf = (Integer) stp[5];
+        Integer tt = (Integer) stp[0];          // table type
+        Integer lt = (Integer) stp[1];          // lookup type
+        Integer ln = (Integer) stp[2];          // lookup sequence number
+        Integer lf = (Integer) stp[3];          // lookup flags
+        Integer sn = (Integer) stp[4];          // subtable sequence number
+        Integer sf = (Integer) stp[5];          // subtable format
         GlyphCoverageTable coverage = (GlyphCoverageTable) stp[6];
         List entries = (List) stp[7];
         if ( tt.intValue() == GlyphTable.GLYPH_TABLE_TYPE_SUBSTITUTION ) {
@@ -5193,12 +5211,12 @@ public class TTFFile {
     private GlyphSubtable constructGPOSSubtable ( Object[] stp ) {
         GlyphSubtable st = null;
         assert ( stp != null ) && ( stp.length == 8 );
-        Integer tt = (Integer) stp[0];
-        Integer lt = (Integer) stp[1];
-        Integer ln = (Integer) stp[2];
-        Integer lf = (Integer) stp[3];
-        Integer sn = (Integer) stp[4];
-        Integer sf = (Integer) stp[5];
+        Integer tt = (Integer) stp[0];          // table type
+        Integer lt = (Integer) stp[1];          // lookup type
+        Integer ln = (Integer) stp[2];          // lookup sequence number
+        Integer lf = (Integer) stp[3];          // lookup flags
+        Integer sn = (Integer) stp[4];          // subtable sequence number
+        Integer sf = (Integer) stp[5];          // subtable format
         GlyphCoverageTable coverage = (GlyphCoverageTable) stp[6];
         List entries = (List) stp[7];
         if ( tt.intValue() == GlyphTable.GLYPH_TABLE_TYPE_POSITIONING ) {
@@ -5462,7 +5480,9 @@ public class TTFFile {
      */
     public static void main(String[] args) {
         try {
-            TTFFile ttfFile = new TTFFile();
+            boolean useKerning = true;
+            boolean useAdvanced = true;
+            TTFFile ttfFile = new TTFFile(useKerning, useAdvanced);
 
             FontFileReader reader = new FontFileReader(args[0]);
 

@@ -29,14 +29,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.apache.commons.io.output.NullOutputStream;
-
-import org.apache.xmlgraphics.util.MimeConstants;
-
 import org.apache.fop.ResourceEventProducer;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.Fop;
@@ -47,11 +40,13 @@ import org.apache.fop.fo.flow.table.TableEventProducer;
 import org.apache.fop.fonts.FontEventProducer;
 import org.apache.fop.layoutmgr.BlockLevelEventProducer;
 import org.apache.fop.layoutmgr.inline.InlineLevelEventProducer;
+import org.apache.xmlgraphics.util.MimeConstants;
+import org.junit.Test;
 
 /**
  * Tests that the event notification system runs smoothly.
  */
-public class EventProcessingTestCase extends TestCase {
+public class EventProcessingTestCase {
 
     private final FopFactory fopFactory = FopFactory.newInstance();
 
@@ -59,8 +54,7 @@ public class EventProcessingTestCase extends TestCase {
 
     private final File basedir;
 
-    public EventProcessingTestCase(String name) {
-        super(name);
+    public EventProcessingTestCase() {
         String base = System.getProperty("basedir");
         if (base != null) {
             basedir = new File(base);
@@ -81,45 +75,45 @@ public class EventProcessingTestCase extends TestCase {
         eventChecker.end();
     }
 
+    @Test
     public void testArea() throws FOPException, TransformerException {
         doTest("area.fo",
                 AreaEventProducer.class.getName() + ".unresolvedIDReferenceOnPage");
     }
 
+    @Test
     public void testResource() throws FOPException, TransformerException {
         doTest("resource.fo",
                 ResourceEventProducer.class.getName() + ".imageNotFound");
     }
 
+    @Test
     public void testValidation() throws FOPException, TransformerException {
         doTest("validation.fo",
                 FOValidationEventProducer.class.getName() + ".invalidPropertyValue");
     }
 
+    @Test
     public void testTable() throws FOPException, TransformerException {
         doTest("table.fo",
                 TableEventProducer.class.getName() + ".noTablePaddingWithCollapsingBorderModel");
     }
 
+    @Test
     public void testBlockLevel() throws FOPException, TransformerException {
         doTest("block-level.fo",
                 BlockLevelEventProducer.class.getName() + ".overconstrainedAdjustEndIndent");
     }
 
+    @Test
     public void testInlineLevel() throws FOPException, TransformerException {
         doTest("inline-level.fo",
                 InlineLevelEventProducer.class.getName() + ".lineOverflows");
     }
 
+    @Test
     public void testFont() throws FOPException, TransformerException {
         doTest("font.fo",
                 FontEventProducer.class.getName() + ".fontSubstituted");
-    }
-
-
-    public static Test suite() {
-        TestSuite suite = new TestSuite();
-        suite.addTestSuite(EventProcessingTestCase.class);
-        return suite;
     }
 }

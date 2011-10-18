@@ -19,24 +19,14 @@
 
 package org.apache.fop.render.rtf;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
 /**
  * Test suite for FOP's RTF library.
  */
+@RunWith(Suite.class)
+@SuiteClasses({ Bug39607TestCase.class })
 public class RichTextFormatTestSuite {
-
-    /**
-     * Builds the test suite
-     * @return the test suite
-     */
-    public static Test suite() {
-        TestSuite suite = new TestSuite(
-            "Test suite for RTF library");
-        //$JUnit-BEGIN$
-        suite.addTest(new TestSuite(Bug39607TestCase.class));
-        //$JUnit-END$
-        return suite;
-    }
 }

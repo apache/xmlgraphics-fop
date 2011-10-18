@@ -19,26 +19,17 @@
 
 package org.apache.fop.complexscripts.bidi;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
 /**
  * Test suite for bidirectional functionality.
  */
+@RunWith(Suite.class)
+@SuiteClasses({
+    BidiClassTestCase.class,
+    BidiAlgorithmTestCase.class
+})
 public class BidiTestSuite {
-
-    /**
-     * Builds the test suite
-     * @return the test suite
-     */
-    public static Test suite() {
-        TestSuite suite = new TestSuite(
-            "Basic functionality test suite for bidrectional functionality");
-        //$JUnit-BEGIN$
-        suite.addTest(new TestSuite(BidiClassTestCase.class));
-        suite.addTest(new TestSuite(BidiAlgorithmTestCase.class));
-        //$JUnit-END$
-        return suite;
-    }
-
 }

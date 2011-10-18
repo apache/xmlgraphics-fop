@@ -19,10 +19,13 @@
 
 package org.apache.fop.fo.flow.table;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Iterator;
 
 import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.FObj;
+import org.junit.Test;
 
 
 public class TableColumnColumnNumberTestCase extends AbstractTableTestCase {
@@ -61,6 +64,7 @@ public class TableColumnColumnNumberTestCase extends AbstractTableTestCase {
         assertEquals(width, c.getColumnWidth().getValue(percentBaseContext));
     }
 
+    @Test
     public void testColumnNumber() throws Exception {
         setUp("table/table-column_column-number.fo");
         Iterator tableIter = getTableIterator();
@@ -97,6 +101,7 @@ public class TableColumnColumnNumberTestCase extends AbstractTableTestCase {
         }
     }
 
+    @Test
     public void testImplicitColumns() throws Exception {
         setUp("table/implicit_columns_column-number.fo");
         percentBaseContext.setUnitaryWidth(100000);

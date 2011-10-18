@@ -345,6 +345,7 @@ public class PageProvider implements Constants {
         //Set unique key obtained from the AreaTreeHandler
         page.getPageViewport().setKey(areaTreeHandler.generatePageViewportKey());
         page.getPageViewport().setForeignAttributes(spm.getForeignAttributes());
+        page.getPageViewport().setWritingModeTraits(pageSeq);
         cachedPages.add(page);
         return page;
     }

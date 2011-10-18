@@ -19,18 +19,12 @@
 
 package org.apache.fop.config;
 
-/*
+/**
  * this font has a malformed metrics-url
  */
 public class FontMetricsUrlMalformedTestCase extends BaseDestructiveUserConfigTestCase {
 
-    public FontMetricsUrlMalformedTestCase(String name) {
-        super(name);
-    }
-
-    /**
-     * @see org.apache.fop.config.BaseUserConfigTestCase#getUserConfigFilename()
-     */
+    @Override
     public String getUserConfigFilename() {
         return "test_font_metricsurl_malformed.xconf";
     }

@@ -19,53 +19,14 @@
 
 package org.apache.fop.intermediate;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Iterator;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
-import org.apache.fop.layoutengine.LayoutEngineTestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
 /**
  * JUnit test suite for the area tree XML format
  */
+@RunWith(Suite.class)
+@SuiteClasses({ AreaTreeParserTestCase.class })
 public class AreaTreeXMLFormatTestSuite {
-
-    /**
-     * @return the test suite with all the tests (one for each XML file)
-     * @throws IOException in case of an I/O problem
-     */
-    public static Test suite() throws IOException {
-        TestSuite suite = new TestSuite();
-
-        Collection files = LayoutEngineTestSuite.getTestFiles();
-
-        Iterator i = files.iterator();
-        while (i.hasNext()) {
-            File f = (File)i.next();
-            addATTestCase(suite, f);
-        }
-
-        return suite;
-    }
-
-    private static void addATTestCase(TestSuite suite,
-            final File f) throws IOException {
-        suite.addTest(new AreaTreeParserTestCase(f) {
-            public void runTest() throws Exception {
-                try {
-                    testParserToIntermediateFormat();
-                    testParserToPDF();
-                } catch (Exception e) {
-                    org.apache.commons.logging.LogFactory.getLog(
-                            this.getClass()).error("Error on " + f.getName());
-                    throw e;
-                }
-            }
-        });
-    }
-
 }

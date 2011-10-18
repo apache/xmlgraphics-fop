@@ -19,20 +19,27 @@
 
 package org.apache.fop.traits;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import org.junit.Test;
 
 /**
  * Tests the {@link MinOptMaxTest} class.
  */
-public class MinOptMaxTest extends TestCase {
+public class MinOptMaxTest {
 
     /**
      * Tests that the constant <code>MinOptMax.ZERO</code> is really zero.
      */
+    @Test
     public void testZero() {
         assertEquals(MinOptMax.getInstance(0), MinOptMax.ZERO);
     }
 
+    @Test
     public void testNewStiffMinOptMax() {
         MinOptMax value = MinOptMax.getInstance(1);
         assertTrue(value.isStiff());
@@ -41,6 +48,7 @@ public class MinOptMaxTest extends TestCase {
         assertEquals(1, value.getMax());
     }
 
+    @Test
     public void testNewMinOptMax() {
         MinOptMax value = MinOptMax.getInstance(1, 2, 3);
         assertTrue(value.isElastic());
@@ -52,6 +60,7 @@ public class MinOptMaxTest extends TestCase {
     /**
      * Test that it is possible to create stiff instances with the normal factory method.
      */
+    @Test
     public void testNewMinOptMaxStiff() {
         MinOptMax value = MinOptMax.getInstance(1, 1, 1);
         assertTrue(value.isStiff());
@@ -60,6 +69,7 @@ public class MinOptMaxTest extends TestCase {
         assertEquals(1, value.getMax());
     }
 
+    @Test
     public void testNewMinOptMaxMinGreaterOpt() {
         try {
             MinOptMax.getInstance(1, 0, 2);
@@ -69,6 +79,7 @@ public class MinOptMaxTest extends TestCase {
         }
     }
 
+    @Test
     public void testNewMinOptMaxMaxSmallerOpt() {
         try {
             MinOptMax.getInstance(0, 1, 0);
@@ -78,18 +89,21 @@ public class MinOptMaxTest extends TestCase {
         }
     }
 
+    @Test
     public void testShrinkablility() {
         assertEquals(0, MinOptMax.getInstance(1).getShrink());
         assertEquals(1, MinOptMax.getInstance(1, 2, 2).getShrink());
         assertEquals(2, MinOptMax.getInstance(1, 3, 3).getShrink());
     }
 
+    @Test
     public void testStrechablilty() {
         assertEquals(0, MinOptMax.getInstance(1).getStretch());
         assertEquals(1, MinOptMax.getInstance(1, 1, 2).getStretch());
         assertEquals(2, MinOptMax.getInstance(1, 1, 3).getStretch());
     }
 
+    @Test
     public void testPlus() {
         assertEquals(MinOptMax.ZERO,
                 MinOptMax.ZERO.plus(MinOptMax.ZERO));
@@ -100,6 +114,7 @@ public class MinOptMaxTest extends TestCase {
         assertEquals(MinOptMax.getInstance(4, 5, 6), MinOptMax.getInstance(1, 2, 3).plus(3));
     }
 
+    @Test
     public void testMinus() {
         assertEquals(MinOptMax.ZERO,
                 MinOptMax.ZERO.minus(MinOptMax.ZERO));
@@ -110,6 +125,7 @@ public class MinOptMaxTest extends TestCase {
         assertEquals(MinOptMax.getInstance(1, 2, 3), MinOptMax.getInstance(5, 6, 7).minus(4));
     }
 
+    @Test
     public void testMinusFail1() {
         try {
             MinOptMax.ZERO.minus(MinOptMax.getInstance(1, 2, 3));
@@ -119,6 +135,7 @@ public class MinOptMaxTest extends TestCase {
         }
     }
 
+    @Test
     public void testMinusFail2() {
         try {
             MinOptMax.getInstance(1, 2, 3).minus(MinOptMax.getInstance(1, 3, 3));
@@ -128,6 +145,7 @@ public class MinOptMaxTest extends TestCase {
         }
     }
 
+    @Test
     public void testMinusFail3() {
         try {
             MinOptMax.ZERO.minus(MinOptMax.getInstance(1, 1, 2));
@@ -137,6 +155,7 @@ public class MinOptMaxTest extends TestCase {
         }
     }
 
+    @Test
     public void testMinusFail4() {
         try {
             MinOptMax.getInstance(1, 2, 3).minus(MinOptMax.getInstance(1, 1, 3));
@@ -146,12 +165,14 @@ public class MinOptMaxTest extends TestCase {
         }
     }
 
+    @Test
     public void testMult() {
         assertEquals(MinOptMax.ZERO, MinOptMax.ZERO.mult(0));
         assertEquals(MinOptMax.getInstance(1, 2, 3), MinOptMax.getInstance(1, 2, 3).mult(1));
         assertEquals(MinOptMax.getInstance(2, 4, 6), MinOptMax.getInstance(1, 2, 3).mult(2));
     }
 
+    @Test
     public void testMultFail() {
         try {
             MinOptMax.getInstance(1, 2, 3).mult(-1);
@@ -161,12 +182,14 @@ public class MinOptMaxTest extends TestCase {
         }
     }
 
+    @Test
     public void testNonZero() {
         assertFalse(MinOptMax.ZERO.isNonZero());
         assertTrue(MinOptMax.getInstance(1).isNonZero());
         assertTrue(MinOptMax.getInstance(1, 2, 3).isNonZero());
     }
 
+    @Test
     public void testExtendMinimum() {
         assertEquals(MinOptMax.getInstance(1, 1, 1),
                 MinOptMax.ZERO.extendMinimum(1));
@@ -180,6 +203,7 @@ public class MinOptMaxTest extends TestCase {
                 MinOptMax.getInstance(1, 2, 3).extendMinimum(4));
     }
 
+    @Test
     public void testEquals() {
         MinOptMax number = MinOptMax.getInstance(1, 3, 5);
         assertEquals(number, number);
@@ -191,6 +215,7 @@ public class MinOptMaxTest extends TestCase {
         assertFalse(number.equals(new Integer(1)));
     }
 
+    @Test
     public void testHashCode() {
         MinOptMax number = MinOptMax.getInstance(1, 2, 3);
         assertEquals(number.hashCode(), number.hashCode());

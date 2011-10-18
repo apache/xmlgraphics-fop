@@ -19,8 +19,6 @@
 
 package org.apache.fop.complexscripts.bidi;
 
-import junit.framework.TestCase;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -28,11 +26,16 @@ import org.apache.fop.layoutmgr.BidiUtil;
 import org.apache.fop.text.bidi.BidiClassUtils;
 import org.apache.fop.util.BidiConstants;
 
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 /**
  * <p>Test case for Unicode Bidi Algorithm.</p>
  * @author Glenn Adams
  */
-public class BidiAlgorithmTestCase extends TestCase {
+public class BidiAlgorithmTestCase {
 
     /**
      * logging instance
@@ -71,6 +74,7 @@ public class BidiAlgorithmTestCase extends TestCase {
     private int excludedSequences;
     private int passedSequences;
 
+    @Test
     public void testBidiAlgorithm() throws Exception {
         String ldPfx = BidiTestData.LD_PFX;
         int ldCount = BidiTestData.LD_CNT;

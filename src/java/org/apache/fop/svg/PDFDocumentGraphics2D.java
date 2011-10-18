@@ -159,7 +159,8 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
         if (fontInfo == null) {
             //Default minimal fonts
             FontInfo fontInfo = new FontInfo();
-            FontSetup.setup(fontInfo);
+            boolean base14Kerning = false;
+            FontSetup.setup(fontInfo, base14Kerning);
             setFontInfo(fontInfo);
         }
     }

@@ -19,49 +19,14 @@
 
 package org.apache.fop.intermediate;
 
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.IOException;
-
-import javax.xml.transform.TransformerFactory;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
 /**
  * A test suite for testing the Intermediate Format output.
  */
+@RunWith(Suite.class)
+@SuiteClasses({ IFTestCase.class })
 public final class IntermediateFormatTestSuite {
-
-    private IntermediateFormatTestSuite() {
-        // This is a utility class
-    }
-
-    /**
-     * Creates a suite of Intermediate Format tests.
-     *
-     * @return the test suite
-     * @throws IOException if an I/O error occurs while loading one of the tests
-     */
-    public static Test suite() throws IOException {
-
-        File backupDir = new File("build/test-results/intermediate");
-        backupDir.mkdirs();
-
-        IFTester ifTester = new IFTester(TransformerFactory.newInstance(), backupDir);
-
-        TestSuite suite = new TestSuite();
-        File testDir = new File("test/intermediate");
-        String[] tests = testDir.list(new FilenameFilter() {
-
-            public boolean accept(File dir, String name) {
-                return name.endsWith(".xml");
-            }
-        });
-        for (String test : tests) {
-            File testFile = new File(testDir, test);
-            suite.addTest(new IFTestCase(testFile, ifTester));
-        }
-        return suite;
-    }
 }

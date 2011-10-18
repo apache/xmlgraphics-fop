@@ -19,6 +19,8 @@
 
 package org.apache.fop;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 
 import javax.xml.transform.Result;
@@ -34,6 +36,7 @@ import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.cli.InputHandler;
+import org.junit.Test;
 
 /**
  * Basic runtime test for the old Fop class. It is used to verify that
@@ -44,16 +47,10 @@ public class BasicDriverTestCase extends AbstractFOPTestCase {
     private FopFactory fopFactory = FopFactory.newInstance();
 
     /**
-     * @see junit.framework.TestCase#TestCase(String)
-     */
-    public BasicDriverTestCase(String name) {
-        super(name);
-    }
-
-    /**
      * Tests Fop with JAXP and OutputStream generating PDF.
      * @throws Exception if anything fails
      */
+    @Test
     public void testFO2PDFWithJAXP() throws Exception {
         FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
         File foFile = new File(getBaseDir(), "test/xml/bugtests/block.fo");
@@ -73,6 +70,7 @@ public class BasicDriverTestCase extends AbstractFOPTestCase {
      * Tests Fop with JAXP and OutputStream generating PostScript.
      * @throws Exception if anything fails
      */
+    @Test
     public void testFO2PSWithJAXP() throws Exception {
         FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
         File foFile = new File(getBaseDir(), "test/xml/bugtests/block.fo");
@@ -92,6 +90,7 @@ public class BasicDriverTestCase extends AbstractFOPTestCase {
      * Tests Fop with JAXP and OutputStream generating RTF.
      * @throws Exception if anything fails
      */
+    @Test
     public void testFO2RTFWithJAXP() throws Exception {
         FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
         File foFile = new File(getBaseDir(), "test/xml/bugtests/block.fo");
@@ -111,6 +110,7 @@ public class BasicDriverTestCase extends AbstractFOPTestCase {
      * Tests Fop with XsltInputHandler and OutputStream.
      * @throws Exception if anything fails
      */
+    @Test
     public void testFO2PDFWithXSLTInputHandler() throws Exception {
         FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
         File xmlFile = new File(getBaseDir(), "test/xml/1.xml");

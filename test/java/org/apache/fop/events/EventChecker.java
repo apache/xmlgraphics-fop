@@ -19,12 +19,12 @@
 
 package org.apache.fop.events;
 
-import junit.framework.Assert;
+import static org.junit.Assert.fail;
 
 /**
  * Class that checks that an expected event is produced, and only this one.
  */
-class EventChecker extends Assert implements EventListener {
+class EventChecker implements EventListener {
 
     private final String expectedEventID;
 

@@ -129,7 +129,8 @@ public class BitmapRendererConfigurator extends Java2DRendererConfigurator
             FontEventListener listener = new FontEventAdapter(
                     userAgent.getEventBroadcaster());
             List fontList = buildFontList(cfg, fontResolver, listener);
-            fontCollections.add(new ConfiguredFontCollection(fontResolver, fontList));
+            fontCollections.add(new ConfiguredFontCollection(fontResolver, fontList,
+                                userAgent.isComplexScriptFeaturesEnabled()));
         }
 
         fontManager.setup(fontInfo,

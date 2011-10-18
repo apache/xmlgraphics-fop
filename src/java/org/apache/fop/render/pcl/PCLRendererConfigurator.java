@@ -119,7 +119,8 @@ public class PCLRendererConfigurator extends PrintRendererConfigurator
             FontEventListener listener = new FontEventAdapter(
                     userAgent.getEventBroadcaster());
             List fontList = buildFontList(cfg, fontResolver, listener);
-            fontCollections.add(new ConfiguredFontCollection(fontResolver, fontList));
+            fontCollections.add(new ConfiguredFontCollection(fontResolver, fontList,
+                                userAgent.isComplexScriptFeaturesEnabled()));
         }
 
         fontManager.setup(fontInfo,

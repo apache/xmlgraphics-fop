@@ -19,25 +19,17 @@
 
 package org.apache.fop;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
 /**
  * Test suite for basic functionality of FOP's transcoders.
  */
+@RunWith(Suite.class)
+@SuiteClasses({
+    BasicPDFTranscoderTestCase.class,
+    BasicPSTranscoderTestCase.class
+})
 public class BasicTranscoderTestSuite {
-
-    /**
-     * Builds the test suite
-     * @return the test suite
-     */
-    public static Test suite() {
-        TestSuite suite = new TestSuite(
-            "Basic functionality test suite for FOP's transcoders");
-        //$JUnit-BEGIN$
-        suite.addTest(new TestSuite(BasicPDFTranscoderTestCase.class));
-        suite.addTest(new TestSuite(BasicPSTranscoderTestCase.class));
-        //$JUnit-END$
-        return suite;
-    }
 }

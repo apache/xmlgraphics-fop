@@ -28,16 +28,7 @@ import org.apache.fop.render.ps.PSTranscoder;
  */
 public class BasicPSTranscoderTestCase extends AbstractBasicTranscoderTestCase {
 
-    /**
-     * @see junit.framework.TestCase#TestCase(String)
-     */
-    public BasicPSTranscoderTestCase(String name) {
-        super(name);
-    }
-
-    /**
-     * @see org.apache.fop.AbstractBasicTranscoderTestCase#createTranscoder()
-     */
+    @Override
     protected Transcoder createTranscoder() {
         return new PSTranscoder();
     }

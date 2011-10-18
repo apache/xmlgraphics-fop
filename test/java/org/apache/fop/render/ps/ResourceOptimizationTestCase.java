@@ -19,6 +19,11 @@
 
 package org.apache.fop.render.ps;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,7 +32,8 @@ import java.util.Collection;
 import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
-
+import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.render.intermediate.IFContext;
 import org.apache.xmlgraphics.ps.DSCConstants;
 import org.apache.xmlgraphics.ps.PSResource;
 import org.apache.xmlgraphics.ps.dsc.DSCException;
@@ -43,9 +49,7 @@ import org.apache.xmlgraphics.ps.dsc.events.DSCCommentEndOfFile;
 import org.apache.xmlgraphics.ps.dsc.events.DSCCommentIncludeResource;
 import org.apache.xmlgraphics.ps.dsc.events.DSCCommentPage;
 import org.apache.xmlgraphics.ps.dsc.events.DSCCommentPages;
-
-import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.render.intermediate.IFContext;
+import org.junit.Test;
 
 /**
  * Tests the PostScript resource optimization (selective de-duplication of
@@ -57,6 +61,7 @@ public class ResourceOptimizationTestCase extends AbstractPostScriptTestCase {
      * Tests resource optimization.
      * @throws Exception if an error occurs
      */
+    @Test
     public void testResourceOptimization() throws Exception {
         FOUserAgent ua = fopFactory.newFOUserAgent();
         PSDocumentHandler handler = new PSDocumentHandler();

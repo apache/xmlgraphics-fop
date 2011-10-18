@@ -19,31 +19,22 @@
 
 package org.apache.fop.complexscripts;
 
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
+
 import org.apache.fop.complexscripts.bidi.BidiTestSuite;
 import org.apache.fop.complexscripts.fonts.FontsTestSuite;
 import org.apache.fop.complexscripts.scripts.ScriptsTestSuite;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 /**
  * Test suite for complex scripts functionality.
  */
+@RunWith(Suite.class)
+@SuiteClasses({
+    BidiTestSuite.class,
+    FontsTestSuite.class,
+    ScriptsTestSuite.class
+})
 public class ComplexScriptsTestSuite {
-
-    /**
-     * Builds the test suite
-     * @return the test suite
-     */
-    public static Test suite() {
-        TestSuite suite = new TestSuite(
-            "Test suite for complex scripts functionality");
-        //$JUnit-BEGIN$
-        suite.addTest(BidiTestSuite.suite());
-        suite.addTest(FontsTestSuite.suite());
-        suite.addTest(ScriptsTestSuite.suite());
-        //$JUnit-END$
-        return suite;
-    }
-
 }

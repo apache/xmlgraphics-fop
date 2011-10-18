@@ -94,7 +94,7 @@ public class TTFFontLoader extends FontLoader {
     private void read(String ttcFontName) throws IOException {
         InputStream in = openFontUri(resolver, this.fontFileURI);
         try {
-            TTFFile ttf = new TTFFile();
+            TTFFile ttf = new TTFFile(useKerning, useAdvanced);
             FontFileReader reader = new FontFileReader(in);
             boolean supported = ttf.readFont(reader, ttcFontName);
             if (!supported) {

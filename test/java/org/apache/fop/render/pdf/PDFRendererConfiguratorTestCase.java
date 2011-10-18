@@ -19,10 +19,11 @@
 
 package org.apache.fop.render.pdf;
 
-import java.io.File;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import java.io.File;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
@@ -30,11 +31,12 @@ import org.apache.fop.apps.FopFactory;
 import org.apache.fop.events.Event;
 import org.apache.fop.events.EventListener;
 import org.apache.fop.pdf.PDFEncryptionParams;
+import org.junit.Test;
 
 /**
  * Tests that encryption length is properly set up.
  */
-public class PDFRendererConfiguratorTestCase extends TestCase {
+public class PDFRendererConfiguratorTestCase {
 
     private FOUserAgent foUserAgent;
 
@@ -67,6 +69,7 @@ public class PDFRendererConfiguratorTestCase extends TestCase {
      *
      * @throws Exception if an error occurs
      */
+    @Test
     public void testRoundUp() throws Exception {
         runTest("roundUp", 55, 56);
     }
@@ -76,6 +79,7 @@ public class PDFRendererConfiguratorTestCase extends TestCase {
      *
      * @throws Exception if an error occurs
      */
+    @Test
     public void testRoundDown() throws Exception {
         runTest("roundDown", 67, 64);
     }
@@ -85,6 +89,7 @@ public class PDFRendererConfiguratorTestCase extends TestCase {
      *
      * @throws Exception if an error occurs
      */
+    @Test
     public void testBelow40() throws Exception {
         runTest("below40", 32, 40);
     }
@@ -94,6 +99,7 @@ public class PDFRendererConfiguratorTestCase extends TestCase {
      *
      * @throws Exception if an error occurs
      */
+    @Test
     public void testAbove128() throws Exception {
         runTest("above128", 233, 128);
     }
@@ -103,11 +109,12 @@ public class PDFRendererConfiguratorTestCase extends TestCase {
      *
      * @throws Exception if an error occurs
      */
+    @Test
     public void testCorrectValue() throws Exception {
         givenAConfigurationFile("correct", new EventListener() {
 
             public void processEvent(Event event) {
-                throw new AssertionFailedError("No event was expected");
+                fail("No event was expected");
             }
         });
         whenCreatingAndConfiguringDocumentHandler();

@@ -122,6 +122,16 @@ public class GlyphTable {
     }
 
     /**
+     * Obtain lookup table by lookup id. This method is used by test code, and provides
+     * access to embedded lookups not normally accessed by {script, language, feature} lookup spec.
+     * @param lid lookup id
+     * @return table associated with lookup id or null if none
+     */
+    public LookupTable getLookupTable ( String lid ) {
+        return (LookupTable) lookupTables.get ( lid );
+    }
+
+    /**
      * Add a subtable.
      * @param subtable a (non-null) glyph subtable
      */

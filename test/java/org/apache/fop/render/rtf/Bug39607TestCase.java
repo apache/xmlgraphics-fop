@@ -27,18 +27,18 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfParagraph;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfSection;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTable;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTableRow;
-
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Test for http://issues.apache.org/bugzilla/show_bug.cgi?id=39607
  */
-public class Bug39607TestCase extends TestCase {
+public class Bug39607TestCase {
 
     /**
      * Test for the NPE describes in bug 39607
      * @throws Exception If an error occurs
      */
+    @Test
     public void testForNPE() throws Exception {
         StringWriter writer = new StringWriter();
         RtfFile f = new RtfFile(writer);

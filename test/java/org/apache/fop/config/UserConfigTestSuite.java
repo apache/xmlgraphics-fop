@@ -19,35 +19,26 @@
 
 package org.apache.fop.config;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
 /**
  * Test suite for font configuration.
  */
+@RunWith(Suite.class)
+@SuiteClasses({
+    FontBaseBadTestCase.class,
+    FontAttributesMissingTestCase.class,
+    FontTripletAttributeMissingTestCase.class,
+    FontMetricsUrlBadTestCase.class,
+    FontEmbedUrlBadTestCase.class,
+    FontMetricsUrlMalformedTestCase.class,
+    FontMetricsUrlMalformedTestCase.class,
+    FontsDirectoryRecursiveTestCase.class,
+    FontsAutoDetectTestCase.class,
+    FontsSubstitutionTestCase.class,
+    FOURIResolverTestCase.class
+})
 public class UserConfigTestSuite {
-
-    /**
-     * Builds the test suite
-     * @return the test suite
-     */
-    public static Test suite() {
-        TestSuite suite = new TestSuite(
-            "Basic functionality test suite for user configuration");
-        //$JUnit-BEGIN$
-        suite.addTest(new TestSuite(FontBaseBadTestCase.class));
-        suite.addTest(new TestSuite(FontAttributesMissingTestCase.class));
-        suite.addTest(new TestSuite(FontTripletAttributeMissingTestCase.class));
-        suite.addTest(new TestSuite(FontMetricsUrlBadTestCase.class));
-        suite.addTest(new TestSuite(FontEmbedUrlBadTestCase.class));
-        suite.addTest(new TestSuite(FontMetricsUrlMalformedTestCase.class));
-        suite.addTest(new TestSuite(FontEmbedUrlMalformedTestCase.class));
-        suite.addTest(new TestSuite(FontsDirectoryRecursiveTestCase.class));
-        suite.addTest(new TestSuite(FontsAutoDetectTestCase.class));
-        suite.addTest(new TestSuite(FontsSubstitutionTestCase.class));
-        suite.addTest(new TestSuite(FOURIResolverTestCase.class));
-        //$JUnit-END$
-        return suite;
-    }
-
 }

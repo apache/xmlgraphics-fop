@@ -19,25 +19,27 @@
 
 package org.apache.fop.traits;
 
-import java.awt.Color;
+import static org.junit.Assert.assertEquals;
 
-import junit.framework.TestCase;
+import java.awt.Color;
 
 import org.apache.xmlgraphics.java2d.color.ColorWithAlternatives;
 import org.apache.xmlgraphics.java2d.color.DeviceCMYKColorSpace;
 
 import org.apache.fop.fo.Constants;
 import org.apache.fop.util.ColorUtil;
+import org.junit.Test;
 
 /**
  * Tests the BorderProps class.
  */
-public class BorderPropsTestCase extends TestCase {
+public class BorderPropsTestCase {
 
     /**
      * Test serialization and deserialization to/from String.
      * @throws Exception if an error occurs
      */
+    @Test
     public void testSerialization() throws Exception {
         Color col = new Color(1.0f, 1.0f, 0.5f, 1.0f);
         //Normalize: Avoid false alarms due to color conversion (rounding)

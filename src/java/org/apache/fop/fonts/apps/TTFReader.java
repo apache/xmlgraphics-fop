@@ -107,6 +107,8 @@ public class TTFReader extends AbstractFontReader {
      * you can also include the fontfile in the fop.jar file when building fop.
      * You can use both -ef and -er. The file specified in -ef will be searched first,
      * then the -er file.
+     * -nocs
+     * if complex script features are disabled
      */
     public static void main(String[] args) {
         String embFile = null;
@@ -160,13 +162,19 @@ public class TTFReader extends AbstractFontReader {
             className = (String)options.get("-cn");
         }
 
+        boolean useKerning = true;
+        boolean useAdvanced = true;
+        if (options.get("-nocs") != null) {
+            useAdvanced = false;
+        }
+
         if (arguments.length != 2 || options.get("-h") != null
             || options.get("-help") != null || options.get("--help") != null) {
             displayUsage();
         } else {
             try {
                 log.info("Parsing font...");
-                TTFFile ttf = app.loadTTF(arguments[0], ttcName);
+                TTFFile ttf = app.loadTTF(arguments[0], ttcName, useKerning, useAdvanced);
                 if (ttf != null) {
                     org.w3c.dom.Document doc = app.constructFontXML(ttf,
                             fontName, className, embResource, embFile, isCid,
@@ -203,11 +211,13 @@ public class TTFReader extends AbstractFontReader {
      *
      * @param  fileName The filename of the TTF file.
      * @param  fontName The name of the font
+     * @param  useKerning true if should load kerning data
+     * @param  useAdvanced true if should load advanced typographic table data
      * @return The TTF as an object, null if the font is incompatible.
      * @throws IOException In case of an I/O problem
      */
-    public TTFFile loadTTF(String fileName, String fontName) throws IOException {
-        TTFFile ttfFile = new TTFFile();
+    public TTFFile loadTTF(String fileName, String fontName, boolean useKerning, boolean useAdvanced) throws IOException {
+        TTFFile ttfFile = new TTFFile(useKerning, useAdvanced);
         log.info("Reading " + fileName + "...");
 
         FontFileReader reader = new FontFileReader(fileName);

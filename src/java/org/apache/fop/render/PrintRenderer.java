@@ -83,7 +83,8 @@ public abstract class PrintRenderer extends AbstractRenderer {
         FontManager fontManager = userAgent.getFactory().getFontManager();
         FontCollection[] fontCollections = new FontCollection[] {
                 new Base14FontCollection(fontManager.isBase14KerningEnabled()),
-                new CustomFontCollection(getFontResolver(), getFontList())
+                new CustomFontCollection(getFontResolver(), getFontList(),
+                                         userAgent.isComplexScriptFeaturesEnabled())
         };
         fontManager.setup(getFontInfo(), fontCollections);
     }

@@ -19,8 +19,15 @@
 
 package org.apache.fop.fo.flow.table;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Iterator;
 import java.util.List;
+
+import org.junit.Test;
 
 /**
  * Tests that RowGroupBuilder returns, for each part of a table, the expected number of
@@ -137,34 +144,42 @@ public class RowGroupBuilderTestCase extends AbstractTableTestCase {
         checkNextTableRowGroups(tableIter, new int[] {2}, new int[] {1, 3}, new int[][] {{2, 1, 3}});
     }
 
+    @Test
     public void testWithRowsSimple() throws Exception {
         checkSimple("table/RowGroupBuilder_simple.fo");
     }
 
+    @Test
     public void testWithRowsSpans() throws Exception {
         checkSpans("table/RowGroupBuilder_spans.fo");
     }
 
+    @Test
     public void testNoRowSimple() throws Exception {
         checkSimple("table/RowGroupBuilder_no-row_simple.fo");
     }
 
+    @Test
     public void testNoRowSpans() throws Exception {
         checkSpans("table/RowGroupBuilder_no-row_spans.fo");
     }
 
+    @Test
     public void testNoColWithRowsSimple() throws Exception {
         checkSimple("table/RowGroupBuilder_no-col_simple.fo");
     }
 
+    @Test
     public void testNoColWithRowsSpans() throws Exception {
         checkSpans("table/RowGroupBuilder_no-col_spans.fo");
     }
 
+    @Test
     public void testNoColNoRowSimple() throws Exception {
         checkSimple("table/RowGroupBuilder_no-col_no-row_simple.fo");
     }
 
+    @Test
     public void testNoColNoRowSpans() throws Exception {
         checkSpans("table/RowGroupBuilder_no-col_no-row_spans.fo");
     }

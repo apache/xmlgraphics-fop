@@ -31,11 +31,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 
-import junit.framework.TestCase;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
@@ -44,7 +41,7 @@ import org.apache.fop.apps.MimeConstants;
 /**
  * Abstract base class for rendering (output) verification tests.
  */
-public abstract class AbstractRenderingTestCase extends TestCase {
+public abstract class AbstractRenderingTestCase {
 
     private static final Map<String, String> MIME_MAP = new java.util.HashMap<String, String>();
 

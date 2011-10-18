@@ -19,6 +19,8 @@
 
 package org.apache.fop.area;
 
+import org.apache.fop.traits.WritingModeTraitsGetter;
+
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
@@ -136,5 +138,17 @@ public class RegionViewport extends Area implements Cloneable, Viewport {
         }
         return rv;
     }
+
+    /**
+     * Sets the writing mode traits for the region reference of
+     * this region viewport
+     * @param wmtg a WM traits getter
+     */
+    public void setWritingModeTraits(WritingModeTraitsGetter wmtg) {
+        if (regionReference != null) {
+            regionReference.setWritingModeTraits(wmtg);
+        }
+    }
+
 }
 

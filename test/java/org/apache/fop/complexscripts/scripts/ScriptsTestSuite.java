@@ -19,27 +19,18 @@
 
 package org.apache.fop.complexscripts.scripts;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
-import org.apache.fop.complexscripts.arabic.ArabicScriptTestSuite;
+import org.apache.fop.complexscripts.arabic.ArabicTestCase;
 
 /**
  * Test suite for script specific functionality related to complex scripts.
  */
+@RunWith(Suite.class)
+@SuiteClasses({
+    ArabicTestCase.class
+})
 public class ScriptsTestSuite {
-
-    /**
-     * Builds the test suite
-     * @return the test suite
-     */
-    public static Test suite() {
-        TestSuite suite = new TestSuite(
-            "Basic functionality test suite for script specific functionality.");
-        //$JUnit-BEGIN$
-        suite.addTest(ArabicScriptTestSuite.suite());
-        //$JUnit-END$
-        return suite;
-    }
-
 }

@@ -19,19 +19,22 @@
 
 package org.apache.fop.util;
 
-import org.apache.fop.pdf.PDFNumber;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
-import junit.framework.TestCase;
+import org.apache.fop.pdf.PDFNumber;
+import org.junit.Test;
 
 /**
  * This test tests PDFNumber's doubleOut() methods.
  */
-public class PDFNumberTestCase extends TestCase {
+public class PDFNumberTestCase {
 
     /**
      * Tests PDFNumber.doubleOut().
      * @throws Exception if the test fails
      */
+    @Test
     public void testDoubleOut1() throws Exception {
         //Default is 6 decimal digits
         assertEquals("0", PDFNumber.doubleOut(0.0f));
@@ -51,6 +54,7 @@ public class PDFNumberTestCase extends TestCase {
      * Tests PDFNumber.doubleOut().
      * @throws Exception if the test fails
      */
+    @Test
     public void testDoubleOut2() throws Exception {
         //4 decimal digits in this case
         assertEquals("0", PDFNumber.doubleOut(0.0f, 4));
@@ -66,6 +70,7 @@ public class PDFNumberTestCase extends TestCase {
      * Tests PDFNumber.doubleOut().
      * @throws Exception if the test fails
      */
+    @Test
     public void testDoubleOut3() throws Exception {
         //0 decimal digits in this case
         assertEquals("0", PDFNumber.doubleOut(0.0f, 0));
@@ -79,6 +84,7 @@ public class PDFNumberTestCase extends TestCase {
      * Tests PDFNumber.doubleOut(). Special cases (former bugs).
      * @throws Exception if the test fails
      */
+    @Test
     public void testDoubleOut4() throws Exception {
         double d = Double.parseDouble("5.7220458984375E-6");
         assertEquals("0.000006", PDFNumber.doubleOut(d));
@@ -90,6 +96,7 @@ public class PDFNumberTestCase extends TestCase {
      * Tests PDFNumber.doubleOut(). Tests for wrong parameters.
      * @throws Exception if the test fails
      */
+    @Test
     public void testDoubleOutWrongParameters() throws Exception {
         try {
             PDFNumber.doubleOut(0.1f, -1);

@@ -19,27 +19,18 @@
 
 package org.apache.fop.afp;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
-import org.apache.fop.afp.modca.AbstractStructuredObjectTestCase;
-import org.apache.fop.afp.modca.AbstractTripletStructuredObjectTestCase;
 import org.apache.fop.afp.modca.IncludeObjectTestCase;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
 /**
  * Test suite for FOP's AFP classes.
  */
+@RunWith(Suite.class)
+@SuiteClasses({
+    IncludeObjectTestCase.class,
+    AFPResourceUtilTestCase.class
+})
 public class AFPTestSuite {
-    /**
-     * Builds the test suite
-     * @return the test suite
-     */
-    public static Test suite() {
-        TestSuite suite = new TestSuite("Test suite for FOP's AFP classes");
-        //$JUnit-BEGIN$
-        suite.addTest(new TestSuite(IncludeObjectTestCase.class));
-        suite.addTest(new TestSuite(AFPResourceUtilTestCase.class));
-        //$JUnit-END$
-        return suite;
-    }
 }

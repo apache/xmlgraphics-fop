@@ -2222,6 +2222,12 @@ public final class FOPropertyMapping implements Constants {
         m.addEnum("auto", getEnumProperty(EN_AUTO, "AUTO"));
         m.setDefault("auto");
         addPropertyMaker("letter-value", m);
+
+        // fox:alt-text, used for accessibility
+        m = new StringProperty.Maker(PR_X_NUMBER_CONVERSION_FEATURES);
+        m.setInherited(false);
+        m.setDefault("");
+        addPropertyMaker("fox:number-conversion-features", m);
     }
 
     private void createPaginationAndLayoutProperties() {

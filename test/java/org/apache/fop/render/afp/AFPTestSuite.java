@@ -19,24 +19,14 @@
 
 package org.apache.fop.render.afp;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
 /**
  * Test suite for FOP's AFP output.
  */
+@RunWith(Suite.class)
+@SuiteClasses({ NoOperationTestCase.class })
 public class AFPTestSuite {
-
-    /**
-     * Builds the test suite
-     * @return the test suite
-     */
-    public static Test suite() {
-        TestSuite suite = new TestSuite(
-            "Test suite for AFP output");
-        //$JUnit-BEGIN$
-        suite.addTest(new TestSuite(NoOperationTestCase.class));
-        //$JUnit-END$
-        return suite;
-    }
 }

@@ -21,9 +21,12 @@ package org.apache.fop.complexscripts.util;
 
 import java.io.File;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public class TTXFileTestCase extends TestCase {
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+public class TTXFileTestCase {
 
     private static String ttxFilesRoot = "test/resources/complexscripts";
 
@@ -34,11 +37,12 @@ public class TTXFileTestCase extends TestCase {
         "arab/ttx/arab-004.ttx",
     };
 
+    @Test
     public void testTTXFiles() throws Exception {
         for ( String tfn : ttxFiles ) {
             try {
-                TTXFile tf = new TTXFile();
-                tf.parse ( ttxFilesRoot + File.separator + tfn );
+                TTXFile tf = TTXFile.getFromCache ( ttxFilesRoot + File.separator + tfn );
+                assertTrue ( tf != null );
             } catch ( Exception e ) {
                 fail ( e.getMessage() );
             }

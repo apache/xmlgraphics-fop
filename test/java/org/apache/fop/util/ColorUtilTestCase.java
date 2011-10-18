@@ -19,29 +19,33 @@
 
 package org.apache.fop.util;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.awt.Color;
 import java.awt.color.ColorSpace;
 import java.net.URI;
 
-import junit.framework.TestCase;
-
+import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.FopFactory;
 import org.apache.xmlgraphics.java2d.color.ColorSpaces;
 import org.apache.xmlgraphics.java2d.color.ColorWithAlternatives;
 import org.apache.xmlgraphics.java2d.color.NamedColorSpace;
 import org.apache.xmlgraphics.java2d.color.RenderingIntent;
-
-import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.apps.FopFactory;
+import org.junit.Test;
 
 /**
  * Tests the ColorUtil class.
  */
-public class ColorUtilTestCase extends TestCase {
+public class ColorUtilTestCase {
 
     /**
      * Test serialization to String.
      * @throws Exception if an error occurs
      */
+    @Test
     public void testSerialization() throws Exception {
         Color col = new Color(1.0f, 1.0f, 0.5f, 1.0f);
         String s = ColorUtil.colorToString(col);
@@ -59,6 +63,7 @@ public class ColorUtilTestCase extends TestCase {
      * Test deserialization from String.
      * @throws Exception if an error occurs
      */
+    @Test
     public void testDeserialization() throws Exception {
         Color col = ColorUtil.parseColorString(null, "#ffff7f");
         assertEquals(255, col.getRed());
@@ -77,6 +82,7 @@ public class ColorUtilTestCase extends TestCase {
      * Test equals().
      * @throws Exception if an error occurs
      */
+    @Test
     public void testEquals() throws Exception {
         Color col1 = ColorUtil.parseColorString(null, "#ff0000cc");
         Color col2 = ColorUtil.parseColorString(null, "#ff0000cc");
@@ -97,6 +103,7 @@ public class ColorUtilTestCase extends TestCase {
      * Tests the rgb() function.
      * @throws Exception if an error occurs
      */
+    @Test
     public void testRGB() throws Exception {
         FopFactory fopFactory = FopFactory.newInstance();
         FOUserAgent ua = fopFactory.newFOUserAgent();
@@ -114,6 +121,7 @@ public class ColorUtilTestCase extends TestCase {
      * Tests the fop-rgb-icc() function.
      * @throws Exception if an error occurs
      */
+    @Test
     public void testRGBICC() throws Exception {
         FopFactory fopFactory = FopFactory.newInstance();
         URI sRGBLoc = new URI(
@@ -162,6 +170,7 @@ public class ColorUtilTestCase extends TestCase {
      * Tests the cmyk() function.
      * @throws Exception if an error occurs
      */
+    @Test
     public void testCMYK() throws Exception {
         ColorWithAlternatives colActual;
         String colSpec;
@@ -248,6 +257,7 @@ public class ColorUtilTestCase extends TestCase {
      * Tests color for the #Separation pseudo-colorspace.
      * @throws Exception if an error occurs
      */
+    @Test
     public void testSeparationColor() throws Exception {
         ColorWithFallback colActual;
         String colSpec;
@@ -281,6 +291,7 @@ public class ColorUtilTestCase extends TestCase {
      * Tests the fop-rgb-named-color() function.
      * @throws Exception if an error occurs
      */
+    @Test
     public void testNamedColorProfile() throws Exception {
         FopFactory fopFactory = FopFactory.newInstance();
         URI ncpLoc = new URI("file:test/resources/color/ncp-example.icc");

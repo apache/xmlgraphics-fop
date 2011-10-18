@@ -19,20 +19,22 @@
 
 package org.apache.fop.pdf;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
 import org.apache.fop.fonts.CIDSubset;
 import org.apache.fop.fonts.MultiByteFont;
+import org.junit.Test;
 
 /**
  * Test case for {@link PDFFactory}.
  */
-public class PDFFactoryTestCase extends TestCase {
+public class PDFFactoryTestCase {
 
     /**
      * This tests that when a font is subset embedded in a PDF, the font name is prefixed with a
      * pseudo-random tag as per the PDF spec.
      */
+    @Test
     public void testSubsetFontNamePrefix() {
         class MockedFont extends MultiByteFont {
             @Override

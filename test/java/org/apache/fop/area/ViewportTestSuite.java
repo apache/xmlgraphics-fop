@@ -19,29 +19,19 @@
 
 package org.apache.fop.area;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.apache.fop.area.inline.InlineViewportTestCase;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
 /**
  * A suite of all the tests relating to the {@linkplain Viewport} interface.
  */
+@RunWith(Suite.class)
+@SuiteClasses({
+    RegionViewportTestCase.class,
+    BlockViewportTestCase.class,
+    InlineViewportTestCase.class
+})
 public final class ViewportTestSuite {
-
-    private ViewportTestSuite() { }
-
-    /**
-     * Returns the suite of {@linkplain Viewport} implementation tests.
-     *
-     * @return the tests
-     */
-    public static Test suite() {
-        TestSuite suite = new TestSuite("Tests for viewport-areas");
-        suite.addTestSuite(RegionViewportTestCase.class);
-        suite.addTestSuite(BlockViewportTestCase.class);
-        suite.addTestSuite(InlineViewportTestCase.class);
-        return suite;
-    }
-
 }

@@ -781,8 +781,15 @@ public interface Constants {
     /** Property constant - FOP proprietary prototype (in XSL-FO 2.0 Requirements) */
     int PR_X_XML_BASE = 276;
 
+    /**
+     * Property constant - FOP proprietary extension (see NumberConverter) used
+     * to perform additional control over number conversion when generating page
+     * numbers.
+     */
+    int PR_X_NUMBER_CONVERSION_FEATURES = 277;
+
     /** Number of property constants defined */
-    int PROPERTY_COUNT = 276;
+    int PROPERTY_COUNT = 277;
 
     // compound property constants
 

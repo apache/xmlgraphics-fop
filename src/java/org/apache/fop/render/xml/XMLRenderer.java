@@ -625,6 +625,7 @@ public class XMLRenderer extends AbstractXMLRenderer {
             }
             addAreaAttributes(span);
             addTraitAttributes(span);
+            maybeAddLevelAttribute(span);
             startElement("span", atts);
             for (int c = 0; c < span.getColumnCount(); c++) {
                 NormalFlow flow = span.getNormalFlow(c);

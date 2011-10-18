@@ -44,7 +44,7 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.xmlgraphics.image.writer.ImageWriterUtil;
 
-import org.apache.fop.layoutengine.LayoutEngineTestSuite;
+import org.apache.fop.layoutengine.LayoutEngineTestUtils;
 
 /**
  * This class is used to visually diff bitmap images created through various sources.
@@ -164,7 +164,7 @@ public class BatchDiffer {
             IOFileFilter filter = new SuffixFileFilter(new String[] {".xml", ".fo"});
             //Same filtering as in layout engine tests
             if (cfg.getChild("filter-disabled").getValueAsBoolean(true)) {
-                filter = LayoutEngineTestSuite.decorateWithDisabledList(filter);
+                filter = LayoutEngineTestUtils.decorateWithDisabledList(filter);
             }
             String manualFilter = cfg.getChild("manual-filter").getValue(null);
             if (manualFilter != null) {

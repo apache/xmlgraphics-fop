@@ -19,6 +19,8 @@
 
 package org.apache.fop.util;
 
+import static org.junit.Assert.assertEquals;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
@@ -29,21 +31,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 
-import junit.framework.TestCase;
-
 import org.apache.commons.io.IOUtils;
-
+import org.apache.fop.util.bitmap.BitmapImageUtil;
+import org.apache.fop.util.bitmap.MonochromeBitmapConverter;
 import org.apache.xmlgraphics.image.writer.ImageWriterUtil;
 import org.apache.xmlgraphics.util.WriterOutputStream;
 import org.apache.xmlgraphics.util.io.ASCIIHexOutputStream;
-
-import org.apache.fop.util.bitmap.BitmapImageUtil;
-import org.apache.fop.util.bitmap.MonochromeBitmapConverter;
+import org.junit.Test;
 
 /**
  * Tests {@link BitmapImageUtil}.
  */
-public class BitmapImageUtilTestCase extends TestCase {
+public class BitmapImageUtilTestCase {
 
     private static final boolean DEBUG = true;
     private static final boolean TEST_PIXELS = false;
@@ -52,6 +51,7 @@ public class BitmapImageUtilTestCase extends TestCase {
      * Tests the convertTo* methods.
      * @throws Exception if an error occurs
      */
+    @Test
     public void testConvertToMono() throws Exception {
         BufferedImage testImage = createTestImage();
         saveAsPNG(testImage, "test-image");

@@ -19,25 +19,17 @@
 
 package org.apache.fop.render.ps;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
 /**
  * Test suite for FOP's PostScript output.
  */
+@RunWith(Suite.class)
+@SuiteClasses({
+    ImageHandlingTestCase.class,
+    ResourceOptimizationTestCase.class
+})
 public class PSTestSuite {
-
-    /**
-     * Builds the test suite
-     * @return the test suite
-     */
-    public static Test suite() {
-        TestSuite suite = new TestSuite(
-            "Test suite for PostScript output");
-        //$JUnit-BEGIN$
-        suite.addTest(new TestSuite(ImageHandlingTestCase.class));
-        suite.addTest(new TestSuite(ResourceOptimizationTestCase.class));
-        //$JUnit-END$
-        return suite;
-    }
 }

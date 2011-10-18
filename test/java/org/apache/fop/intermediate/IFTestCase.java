@@ -20,11 +20,20 @@
 package org.apache.fop.intermediate;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import javax.xml.transform.Source;
+import javax.xml.transform.TransformerFactory;
 
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -33,9 +42,40 @@ import org.w3c.dom.NodeList;
 /**
  * Test case for the IF output.
  */
+@RunWith(Parameterized.class)
 public class IFTestCase extends AbstractIFTestCase {
 
-    private final IFTester ifTester;
+    /**
+     * Gets the files for this test.
+     *
+     * @return a collection of file arrays containing the files to test
+     * @throws IOException if an error occurs when reading the test files
+     */
+    @Parameters
+    public static Collection<File[]> getParameters() throws IOException {
+        File testDir = new File("test/intermediate");
+        String[] tests = testDir.list(new FilenameFilter() {
+
+            public boolean accept(File dir, String name) {
+                return name.endsWith(".xml");
+            }
+        });
+
+        Collection<File[]> parameters = new ArrayList<File[]>();
+        for (String test : tests) {
+            parameters.add(new File[] { new File(testDir, test) });
+        }
+        return parameters;
+    }
+
+    private static IFTester ifTester;
+
+    @BeforeClass
+    public static void setupTestEnvironment() {
+        File backupDir = new File("build/test-results/intermediate");
+        backupDir.mkdirs();
+        ifTester = new IFTester(TransformerFactory.newInstance(), backupDir);
+    }
 
     /**
      * Creates a new test case.
@@ -44,15 +84,14 @@ public class IFTestCase extends AbstractIFTestCase {
      * @param ifTester the helper instance that will perform checks
      * @throws IOException if an I/O error occurs while loading the test case
      */
-    public IFTestCase(File test, IFTester ifTester) throws IOException {
+    public IFTestCase(File test) throws IOException {
         super(test);
-        this.ifTester = ifTester;
         this.testDir = test.getParentFile();
     }
 
-    /** {@inheritDoc} */
     @Override
-    protected void runTest() throws Exception {
+    @Test
+    public void runTest() throws Exception {
         Element testRoot = testAssistant.getTestRoot(testFile);
         NodeList nodes = testRoot.getElementsByTagName("if-checks");
         if (nodes.getLength() == 0) {
@@ -61,7 +100,7 @@ public class IFTestCase extends AbstractIFTestCase {
         Element ifChecks = (Element) nodes.item(0);
 
         Document doc = buildIntermediateDocument(testAssistant.getTestcase2FOStylesheet());
-        ifTester.doIFChecks(getName(), ifChecks, doc);
+        ifTester.doIFChecks(testFile.getName(), ifChecks, doc);
     }
 
     @Override

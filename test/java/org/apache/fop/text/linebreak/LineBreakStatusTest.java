@@ -19,14 +19,15 @@
 
 package org.apache.fop.text.linebreak;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
+
 
 /**
  * JUnit test case for the LineBreakStatus class
  */
-public class LineBreakStatusTest extends TestCase {
+public class LineBreakStatusTest {
 
     /*
      * These symbols are used to indicate the break action returned
@@ -37,27 +38,9 @@ public class LineBreakStatusTest extends TestCase {
     private static final String BREAK_ACTION = "_%#@^!";
 
     /**
-     * Creates the test with the given name.
-     * @param testName The name for this test.
-     */
-    public LineBreakStatusTest(String testName) {
-        super(testName);
-    }
-
-    /**
-     * Returns an TestSuite constructed from this class.
-     * @return the TestSuite
-     * @see junit.framework.TestSuite#TestSuite(class)
-     */
-    public static Test suite() {
-        TestSuite suite = new TestSuite(LineBreakStatusTest.class);
-
-        return suite;
-    }
-
-    /**
      * Test of reset method, of class org.apache.commons.text.linebreak.LineBreakStatus.
      */
+    @Test
     public void testReset() {
         System.out.println("testReset");
         // TODO
@@ -67,6 +50,7 @@ public class LineBreakStatusTest extends TestCase {
      * Test of nextChar method, of class org.apache.commons.text.linebreak.LineBreakStatus.
      * Runs tests for most of the Line Breaking Properties defined in the Unicode standard.
      */
+    @Test
     public void testNextChar() {
         System.out.println("testNextChar");
 
