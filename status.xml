@@ -60,6 +60,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Code" dev="PH" type="add" fixes-bug="52010" due-to="Mehdi Houshmand">
+        Simplification of the build: Reduced code duplication and layout engine tests.
+      </action>
       <action context="Renderers" dev="JM" type="add">
         Various bugfixes to make PDFDocumentGraphics2D operational again.
       </action>
