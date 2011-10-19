@@ -56,7 +56,7 @@ public class IFParserTestCase extends AbstractIFTestCase {
      */
     @Parameters
     public static Collection<File[]> getParameters() throws IOException {
-        return LayoutEngineTestUtils.getTestFiles();
+        return LayoutEngineTestUtils.getLayoutTestFiles();
     }
 
     /**

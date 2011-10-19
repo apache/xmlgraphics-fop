@@ -20,7 +20,6 @@
 package org.apache.fop.fotreetest;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -36,14 +35,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLFilterImpl;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.AndFileFilter;
-import org.apache.commons.io.filefilter.IOFileFilter;
-import org.apache.commons.io.filefilter.NameFileFilter;
-import org.apache.commons.io.filefilter.PrefixFileFilter;
-import org.apache.commons.io.filefilter.SuffixFileFilter;
-import org.apache.commons.io.filefilter.TrueFileFilter;
-
 import org.apache.fop.DebugHelper;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
@@ -51,6 +42,7 @@ import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.FopFactoryConfigurator;
 import org.apache.fop.fotreetest.ext.TestElementMapping;
 import org.apache.fop.layoutengine.LayoutEngineTestUtils;
+import org.apache.fop.layoutengine.TestFilesConfiguration;
 import org.apache.fop.util.ConsoleEventListenerForTests;
 
 /**
@@ -64,36 +56,23 @@ public class FOTreeTester {
         DebugHelper.registerStandardElementListObservers();
     }
 
+    /**
+     * Gets the parameters to run the FO tree test cases.
+     * @return a collection of file arrays containing the test files
+     */
     @Parameters
-    public static Collection<File[]> testXMLTestCases() throws Exception {
-        File mainDir = new File("test/fotree");
+    public static Collection<File[]> getParameters() {
+        TestFilesConfiguration.Builder builder = new TestFilesConfiguration.Builder();
+        builder.testDir("test/fotree")
+               .singleProperty("fop.fotree.single")
+               .startsWithProperty("fop.fotree.starts-with")
+               .suffix(".fo")
+               .testSet("testcases")
+               .disabledProperty("fop.layoutengine.disabled", "test/fotree/disabled-testcases.xml")
+               .privateTestsProperty("fop.fotree.private");
 
-        IOFileFilter filter;
-        String single = System.getProperty("fop.fotree.single");
-        String startsWith = System.getProperty("fop.fotree.starts-with");
-        if (single != null) {
-            filter = new NameFileFilter(single);
-        } else if (startsWith != null) {
-            filter = new PrefixFileFilter(startsWith);
-            filter = new AndFileFilter(filter, new SuffixFileFilter(".fo"));
-        } else {
-            filter = new SuffixFileFilter(".fo");
-            filter = LayoutEngineTestUtils.decorateWithDisabledList(filter);
-        }
-        Collection<File> files = FileUtils.listFiles(new File(mainDir, "testcases"), filter,
-                TrueFileFilter.INSTANCE);
-        String privateTests = System.getProperty("fop.fotree.private");
-        if ("true".equalsIgnoreCase(privateTests)) {
-            Collection privateFiles = FileUtils.listFiles(new File(mainDir, "private-testcases"),
-                    filter, TrueFileFilter.INSTANCE);
-            files.addAll(privateFiles);
-        }
-        // Unfortunately JUnit forces us to return a collection of arrays.
-        Collection<File[]> parameters = new ArrayList<File[]>();
-        for (File f : files) {
-            parameters.add(new File[] { f });
-        }
-        return parameters;
+        TestFilesConfiguration testConfig = builder.build();
+        return LayoutEngineTestUtils.getTestFiles(testConfig);
     }
 
     private FopFactory fopFactory = FopFactory.newInstance();
@@ -153,7 +132,7 @@ public class FOTreeTester {
                 throw e;
             }
 
-            List results = collector.getResults();
+            List<String> results = collector.getResults();
             if (results.size() > 0) {
                 for (int i = 0; i < results.size(); i++) {
                     System.out.println((String) results.get(i));

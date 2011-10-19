@@ -63,7 +63,7 @@ public class AreaTreeParserTestCase extends AbstractIntermediateTestCase {
      */
     @Parameters
     public static Collection<File[]> getParameters() throws IOException {
-        return LayoutEngineTestUtils.getTestFiles();
+        return LayoutEngineTestUtils.getLayoutTestFiles();
     }
     /**
      * Constructor for the test suite that is used for each test file.

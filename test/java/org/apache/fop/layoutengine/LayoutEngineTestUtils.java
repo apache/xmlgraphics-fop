@@ -20,7 +20,6 @@
 package org.apache.fop.layoutengine;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -58,9 +57,9 @@ public final class LayoutEngineTestUtils {
     private static class FilenameHandler extends DefaultHandler {
         private StringBuffer buffer = new StringBuffer(128);
         private boolean readingFilename = false;
-        private List filenames;
+        private List<String> filenames;
 
-        public FilenameHandler(List filenames) {
+        public FilenameHandler(List<String> filenames) {
             this.filenames = filenames;
         }
 
@@ -93,19 +92,24 @@ public final class LayoutEngineTestUtils {
         }
     }
 
-    public static IOFileFilter decorateWithDisabledList(IOFileFilter filter) throws IOException {
-        String disabled = System.getProperty("fop.layoutengine.disabled");
+    /**
+     * Removes from {@code filter} any tests that have been disabled.
+     *
+     * @param filter the filter populated with tests
+     * @param disabled name of the file containing disabled test cases. If null or empty,
+     * no file is read
+     * @return {@code filter} minus any disabled tests
+     */
+    public static IOFileFilter decorateWithDisabledList(IOFileFilter filter, String disabled) {
         if (disabled != null && disabled.length() > 0) {
-            filter = new AndFileFilter(new NotFileFilter(
-                    new NameFileFilter(LayoutEngineTestUtils.readDisabledTestcases(new File(
-                            disabled)))),
-                    filter);
+            filter = new AndFileFilter(new NotFileFilter(new NameFileFilter(
+                    LayoutEngineTestUtils.readDisabledTestcases(new File(disabled)))), filter);
         }
         return filter;
     }
 
-    public static String[] readDisabledTestcases(File f) throws IOException {
-        List lines = new java.util.ArrayList();
+    private static String[] readDisabledTestcases(File f) {
+        List<String> lines = new ArrayList<String>();
         Source stylesheet = new StreamSource(
                 new File("test/layoutengine/disabled-testcase2filename.xsl"));
         Source source = new StreamSource(f);
@@ -114,43 +118,41 @@ public final class LayoutEngineTestUtils {
             Transformer transformer = TransformerFactory.newInstance().newTransformer(stylesheet);
             transformer.transform(source, result);
         } catch (TransformerConfigurationException tce) {
-            throw new RuntimeException(tce.getMessage());
+            throw new RuntimeException(tce);
         } catch (TransformerException te) {
-            throw new RuntimeException(te.getMessage());
+            throw new RuntimeException(te);
         }
         return (String[]) lines.toArray(new String[lines.size()]);
     }
 
     /**
-     * @return a Collection of File instances containing all the test cases set up for processing.
-     * @throws IOException if there's a problem gathering the list of test files
+     * Returns the test files matching the given configuration.
+     *
+     * @param testConfig the test configuration
+     * @return the applicable test cases
      */
-    public static Collection<File[]> getTestFiles() throws IOException {
-        File mainDir = new File("test/layoutengine");
+    public static Collection<File[]> getTestFiles(TestFilesConfiguration testConfig) {
+        File mainDir = testConfig.getTestDirectory();
         IOFileFilter filter;
-        String single = System.getProperty("fop.layoutengine.single");
-        String startsWith = System.getProperty("fop.layoutengine.starts-with");
+        String single = testConfig.getSingleTest();
+        String startsWith = testConfig.getStartsWith();
         if (single != null) {
             filter = new NameFileFilter(single);
         } else if (startsWith != null) {
             filter = new PrefixFileFilter(startsWith);
-            filter = new AndFileFilter(filter, new SuffixFileFilter(".xml"));
-            filter = decorateWithDisabledList(filter);
+            filter = new AndFileFilter(filter, new SuffixFileFilter(testConfig.getFileSuffix()));
+            filter = decorateWithDisabledList(filter, testConfig.getDisabledTests());
         } else {
-            filter = new SuffixFileFilter(".xml");
-            filter = decorateWithDisabledList(filter);
+            filter = new SuffixFileFilter(testConfig.getFileSuffix());
+            filter = decorateWithDisabledList(filter, testConfig.getDisabledTests());
         }
-        String testset = System.getProperty("fop.layoutengine.testset");
-        if (testset == null) {
-            testset = "standard";
-        }
-        Collection<File> files = FileUtils.listFiles(new File(mainDir, testset + "-testcases"),
-                filter, TrueFileFilter.INSTANCE);
-        String privateTests = System.getProperty("fop.layoutengine.private");
-        if ("true".equalsIgnoreCase(privateTests)) {
-            Collection privateFiles = FileUtils.listFiles(
-                    new File(mainDir, "private-testcases"),
-                    filter, TrueFileFilter.INSTANCE);
+        String testset = testConfig.getTestSet();
+
+        Collection<File> files = FileUtils.listFiles(new File(mainDir, testset), filter,
+                TrueFileFilter.INSTANCE);
+        if (testConfig.hasPrivateTests()) {
+            Collection<File> privateFiles = FileUtils.listFiles(new File(mainDir,
+                    "private-testcases"), filter, TrueFileFilter.INSTANCE);
             files.addAll(privateFiles);
         }
 
@@ -160,6 +162,31 @@ public final class LayoutEngineTestUtils {
         }
 
         return parametersForJUnit4;
+    }
+
+    /**
+     * This is a helper method that uses the standard parameters for FOP's layout engine tests and
+     * returns a set of test files. These pull in System parameters to configure the layout tests
+     * to run.
+     *
+     * @return A collection of file arrays that contain the test files
+     */
+    public static Collection<File[]> getLayoutTestFiles() {
+        TestFilesConfiguration.Builder builder = new TestFilesConfiguration.Builder();
+        String testSet = System.getProperty("fop.layoutengine.testset");
+        testSet = (testSet != null ? testSet : "standard") + "-testcases";
+
+        builder.testDir("test/layoutengine")
+               .singleProperty("fop.layoutengine.single")
+               .startsWithProperty("fop.layoutengine.starts-with")
+               .suffix(".xml")
+               .testSet(testSet)
+               .disabledProperty("fop.layoutengine.disabled",
+                       "test/layoutengine/disabled-testcases.xml")
+               .privateTestsProperty("fop.layoutengine.private");
+
+        TestFilesConfiguration testConfig = builder.build();
+        return getTestFiles(testConfig);
     }
 
 }

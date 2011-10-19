@@ -277,9 +277,8 @@ public class PageBreaker extends AbstractBreaker {
             separatorArea.setIPD(
                     pslm.getCurrentPV().getRegionReference(Constants.FO_REGION_BODY).getIPD());
             // create a StaticContentLM for the footnote separator
-            footnoteSeparatorLM = (StaticContentLayoutManager)
-                pslm.getLayoutManagerMaker().makeStaticContentLayoutManager(
-                pslm, footnoteSeparator, separatorArea);
+            footnoteSeparatorLM = pslm.getLayoutManagerMaker().makeStaticContentLayoutManager(
+            pslm, footnoteSeparator, separatorArea);
             footnoteSeparatorLM.doLayout();
         }
 

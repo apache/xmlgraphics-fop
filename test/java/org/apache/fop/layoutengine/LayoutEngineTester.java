@@ -34,6 +34,17 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.sax.TransformerHandler;
 
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
+
 import org.apache.fop.DebugHelper;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
@@ -53,16 +64,6 @@ import org.apache.fop.render.intermediate.IFSerializer;
 import org.apache.fop.render.xml.XMLRenderer;
 import org.apache.fop.util.ConsoleEventListenerForTests;
 import org.apache.fop.util.DelegatingContentHandler;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
 
 /**
  * Class for testing the FOP's layout engine using testcases specified in XML
@@ -71,14 +72,15 @@ import org.xml.sax.SAXException;
 @RunWith(Parameterized.class)
 public class LayoutEngineTester {
     private static File areaTreeBackupDir;
-    /**
-     * Sets up the class, this is invoked only once.
-     */
+
     @BeforeClass
-    public static void makeDirAndRegisterDebugHelper() {
+    public static void makeDirAndRegisterDebugHelper() throws IOException {
         DebugHelper.registerStandardElementListObservers();
         areaTreeBackupDir = new File("build/test-results/layoutengine");
-        areaTreeBackupDir.mkdirs();
+        if (!areaTreeBackupDir.mkdirs() && !areaTreeBackupDir.exists()) {
+            throw new IOException("Failed to create the layout engine directory at "
+                    + "build/test-results/layoutengine");
+        }
     }
 
     /**
@@ -89,7 +91,7 @@ public class LayoutEngineTester {
      */
     @Parameters
     public static Collection<File[]> getParameters() throws IOException {
-        return LayoutEngineTestUtils.getTestFiles();
+        return LayoutEngineTestUtils.getLayoutTestFiles();
     }
 
     private TestAssistant testAssistant = new TestAssistant();
@@ -161,9 +163,9 @@ public class LayoutEngineTester {
         }
 
         Document doc = (Document)domres.getNode();
-        if (this.areaTreeBackupDir != null) {
+        if (areaTreeBackupDir != null) {
             testAssistant.saveDOM(doc,
-                    new File(this.areaTreeBackupDir, testFile.getName() + ".at.xml"));
+                    new File(areaTreeBackupDir, testFile.getName() + ".at.xml"));
         }
         FormattingResults results = fop.getResults();
         LayoutResult result = new LayoutResult(doc, elCollector, results);
@@ -172,6 +174,7 @@ public class LayoutEngineTester {
 
     /**
      * Perform all checks on the area tree and, optionally, on the intermediate format.
+     * @param fopFactory the FOP factory
      * @param testFile Test case XML file
      * @param result The layout results
      * @throws TransformerException if a problem occurs in XSLT/JAXP
