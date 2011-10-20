@@ -836,11 +836,29 @@ list of possible build targets.
   <target name="junit-area-tree-xml-format" depends="junit-compile" description="Runs FOP's area tree XML format JUnit tests" if="xmlunit.present">
     <junit-run title="area tree XML format" testsuite="org.apache.fop.intermediate.AreaTreeXMLFormatTestSuite" outfile="TEST-area-tree-xml-format"/>
   </target>
-  <target name="junit-intermediate-layout" depends="junit-compile" if="xmlunit.present">
-    <junit-run title="intermediate format from layout tests" testsuite="org.apache.fop.intermediate.LayoutIFTestSuite" outfile="TEST-intermediate-format-from-layout"/>
+  <target name="junit-intermediate-layout" depends="junit-compile,setup-xml-schema" 
+    if="xmlunit.present">
+    <junit-run title="intermediate format from layout tests" 
+      testsuite="org.apache.fop.intermediate.LayoutIFTestSuite" 
+      outfile="TEST-intermediate-format-from-layout"/>
   </target>
-  <target name="junit-intermediate-format" depends="junit-compile,junit-intermediate-layout" description="Runs FOP's intermediate format JUnit tests" if="xmlunit.present">
-    <junit-run title="intermediate format" testsuite="org.apache.fop.intermediate.IntermediateFormatTestSuite" outfile="TEST-intermediate-format"/>
+  <target name="setup-xml-schema">
+    <local name="cache-dir"/>
+    <property name="cache-dir" value="${basedir}/.cache/junit/intermediate"/>
+    <mkdir dir="${cache-dir}"/>
+    <get src="http://www.w3.org/2001/xml.xsd"
+      dest="${cache-dir}/xml.xsd"
+      usetimestamp="true"/>
+    <copy file="${cache-dir}/xml.xsd" 
+      todir="${build.dir}/test-classes/org/apache/fop/intermediate"/>
+  </target>
+
+  <target name="junit-intermediate-format" 
+    depends="junit-compile,setup-xml-schema,junit-intermediate-layout"
+    description="Runs FOP's intermediate format JUnit tests" if="xmlunit.present">
+    <junit-run title="intermediate format" 
+      testsuite="org.apache.fop.intermediate.IntermediateFormatTestSuite" 
+      outfile="TEST-intermediate-format"/>
   </target>
   <target name="junit-events" depends="junit-compile" description="Runs FOP's event JUnit tests" if="junit.present">
     <junit-run title="event" basedir="test/events" testsuite="org.apache.fop.events.EventProcessingTestCase" outfile="TEST-events"/>

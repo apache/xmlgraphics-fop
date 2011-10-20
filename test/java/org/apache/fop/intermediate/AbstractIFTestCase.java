@@ -71,6 +71,7 @@ abstract class AbstractIFTestCase extends AbstractIntermediateTestCase {
                 }
 
             });
+            sFactory.setResourceResolver(XMLSchemaResolver.getInstance());
             File ifSchemaFile = new File(
                 "src/documentation/intermediate-format-ng/fop-intermediate-format-ng.xsd");
             ifSchema = sFactory.newSchema(ifSchemaFile);
