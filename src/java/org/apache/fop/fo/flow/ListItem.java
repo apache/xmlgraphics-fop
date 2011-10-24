@@ -27,6 +27,8 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.BreakPropertySet;
+import org.apache.fop.fo.properties.CommonAccessibility;
+import org.apache.fop.fo.properties.CommonAccessibilityHolder;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.KeepProperty;
@@ -35,8 +37,9 @@ import org.apache.fop.fo.properties.KeepProperty;
  * Class modelling the <a href=http://www.w3.org/TR/xsl/#fo_list-item">
  * <code>fo:list-item</code></a> object.
  */
-public class ListItem extends FObj implements BreakPropertySet {
+public class ListItem extends FObj implements BreakPropertySet, CommonAccessibilityHolder {
     // The value of properties relevant for fo:list-item.
+    private CommonAccessibility commonAccessibility;
     private CommonBorderPaddingBackground commonBorderPaddingBackground;
     private CommonMarginBlock commonMarginBlock;
     private int breakAfter;
@@ -45,7 +48,6 @@ public class ListItem extends FObj implements BreakPropertySet {
     private KeepProperty keepWithNext;
     private KeepProperty keepWithPrevious;
     // Unused but valid items, commented out for performance:
-    //     private CommonAccessibility commonAccessibility;
     //     private CommonAural commonAural;
     //     private CommonRelativePosition commonRelativePosition;
     //     private int intrusionDisplace;
@@ -67,6 +69,7 @@ public class ListItem extends FObj implements BreakPropertySet {
     /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
+        commonAccessibility = CommonAccessibility.getInstance(pList);
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
         commonMarginBlock = pList.getMarginBlockProps();
         breakAfter = pList.get(PR_BREAK_AFTER).getEnum();
@@ -132,6 +135,10 @@ public class ListItem extends FObj implements BreakPropertySet {
         } else if (nameId == FO_MARKER) {
             addMarker((Marker) child);
         }
+    }
+
+    public CommonAccessibility getCommonAccessibility() {
+        return commonAccessibility;
     }
 
     /** @return the {@link CommonMarginBlock} */

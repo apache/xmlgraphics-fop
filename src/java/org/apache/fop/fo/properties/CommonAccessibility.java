@@ -24,37 +24,62 @@ import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
 
 /**
- * Store all common accessibility properties.
- * See Sec 7.4 of the XSL-FO Standard.
- * Public "structure" allows direct member access.
+ * The "role" and "source-document" properties, see Section 7.5 of the XSL-FO 1.1
+ * Recommendation.
  */
-public class CommonAccessibility {
-    /**
-     * The "source-doc" property.
-     */
-    public String sourceDoc = null;                             // CSOK: VisibilityModifier
+public final class CommonAccessibility {
+
+    private static final CommonAccessibility DEFAULT_INSTANCE = new CommonAccessibility(null, null);
+
+    private final String sourceDocument;
+
+    private final String role;
+
+    private CommonAccessibility(String sourceDocument, String role) {
+        this.sourceDocument = sourceDocument;
+        this.role = role;
+    }
 
     /**
-     * The "role" property.
+     * Returns an instance that matches the values (if any) in the given property list.
+     *
+     * @param propertyList a list from which to retrieve the accessibility properties
+     * @return the corresponding instance
+     * @throws PropertyException if a problem occurs while retrieving the properties
      */
-    public String role = null;                                  // CSOK: VisibilityModifier
-
-    /**
-     * Create a <code>CommonAccessibility</code> object.
-     * @param pList The PropertyList with propery values.
-     * @throws PropertyException if a property exception is raised
-     */
-    public CommonAccessibility(PropertyList pList) throws PropertyException {
-        sourceDoc = pList.get(Constants.PR_SOURCE_DOCUMENT).getString();
-        if ("none".equals(sourceDoc)) {
-            sourceDoc = null;
+    public static CommonAccessibility getInstance(PropertyList propertyList)
+            throws PropertyException {
+        String sourceDocument = propertyList.get(Constants.PR_SOURCE_DOCUMENT).getString();
+        if ("none".equals(sourceDocument)) {
+            sourceDocument = null;
         }
-        role = pList.get(Constants.PR_ROLE).getString();
+        String role = propertyList.get(Constants.PR_ROLE).getString();
         if ("none".equals(role)) {
             role = null;
         }
-
+        if (sourceDocument == null && role == null) {
+            return DEFAULT_INSTANCE;
+        } else {
+            return new CommonAccessibility(sourceDocument, role);
+        }
     }
 
+    /**
+     * Returns the value of the source-document property.
+     *
+     * @return the source document, or null if the property was set to "none"
+     */
+    public String getSourceDocument() {
+        return sourceDocument;
+    }
+
+    /**
+     * Returns the value of the role property.
+     *
+     * @return the role, or null if the property was set to "none"
+     */
+    public String getRole() {
+        return role;
+    }
 
 }

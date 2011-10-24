@@ -149,9 +149,6 @@ class PDFLogicalStructureHandler {
     }
 
     private void processNode(Node node, PDFStructElem parent, boolean addKid) {
-        Node attr = node.getAttributes().getNamedItemNS(InternalElementMapping.URI, "ptr");
-        assert attr != null;
-        String ptr = attr.getNodeValue();
         PDFStructElem structElem = pdfDoc.getFactory().makeStructureElement(
                 FOToPDFRoleMap.mapFormattingObject(node, parent, eventBroadcaster), parent);
         // TODO necessary? If a page-sequence is empty (e.g., contains a single
@@ -170,7 +167,11 @@ class PDFLogicalStructureHandler {
                 structElem.put("Alt", "No alternate text specified");
             }
         }
-        structTreeMap.put(ptr, structElem);
+        Node attr = node.getAttributes().getNamedItemNS(InternalElementMapping.URI, "ptr");
+        if (attr != null) {
+            String ptr = attr.getNodeValue();
+            structTreeMap.put(ptr, structElem);
+        }
         NodeList nodes = node.getChildNodes();
         for (int i = 0, n = nodes.getLength(); i < n; i++) {
             processNode(nodes.item(i), structElem, false);

@@ -25,6 +25,8 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.GraphicsProperties;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.properties.CommonAccessibility;
+import org.apache.fop.fo.properties.CommonAccessibilityHolder;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.LengthRangeProperty;
@@ -38,10 +40,11 @@ import org.apache.fop.fo.properties.StructurePointerPropertySet;
  * <code>fo:external-graphic</code></a> flow formatting objects.
  */
 public abstract class AbstractGraphics extends FObj
-        implements GraphicsProperties, StructurePointerPropertySet {
+        implements GraphicsProperties, StructurePointerPropertySet, CommonAccessibilityHolder {
 
     // The value of properties relevant for fo:instream-foreign-object
     // and external-graphics.
+    private CommonAccessibility commonAccessibility;
     private CommonBorderPaddingBackground commonBorderPaddingBackground;
     private Length alignmentAdjust;
     private int alignmentBaseline;
@@ -62,6 +65,7 @@ public abstract class AbstractGraphics extends FObj
     private int scaling;
     private int textAlign;
     private Length width;
+    private String altText;
     private String ptr;   // used for accessibility
     // Unused but valid items, commented out for performance:
     //     private CommonAccessibility commonAccessibility;
@@ -85,6 +89,7 @@ public abstract class AbstractGraphics extends FObj
 
     /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
+        commonAccessibility = CommonAccessibility.getInstance(pList);
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
         alignmentAdjust = pList.get(PR_ALIGNMENT_ADJUST).getLength();
         alignmentBaseline = pList.get(PR_ALIGNMENT_BASELINE).getEnum();
@@ -97,7 +102,6 @@ public abstract class AbstractGraphics extends FObj
         dominantBaseline = pList.get(PR_DOMINANT_BASELINE).getEnum();
         height = pList.get(PR_HEIGHT).getLength();
         id = pList.get(PR_ID).getString();
-        ptr = pList.get(PR_X_PTR).getString();   // used for accessibility
         inlineProgressionDimension = pList.get(PR_INLINE_PROGRESSION_DIMENSION).getLengthRange();
         keepWithNext = pList.get(PR_KEEP_WITH_NEXT).getKeep();
         keepWithPrevious = pList.get(PR_KEEP_WITH_PREVIOUS).getKeep();
@@ -107,11 +111,15 @@ public abstract class AbstractGraphics extends FObj
         textAlign = pList.get(PR_TEXT_ALIGN).getEnum();
         width = pList.get(PR_WIDTH).getLength();
         if (getUserAgent().isAccessibilityEnabled()) {
-            String altText = pList.get(PR_X_ALT_TEXT).getString();
+            altText = pList.get(PR_X_ALT_TEXT).getString();
             if (altText.equals("")) {
                 getFOValidationEventProducer().altTextMissing(this, getLocalName(), getLocator());
             }
         }
+    }
+
+    public CommonAccessibility getCommonAccessibility() {
+        return commonAccessibility;
     }
 
     /**
@@ -217,9 +225,18 @@ public abstract class AbstractGraphics extends FObj
         return keepWithPrevious;
     }
 
+    @Override
+    public void setPtr(String ptr) {
+        this.ptr = ptr;
+    }
+
     /** {@inheritDoc} */
     public String getPtr() {
         return ptr;
+    }
+
+    public String getAltText() {
+        return altText;
     }
 
     /** @return the graphic's intrinsic width in millipoints */

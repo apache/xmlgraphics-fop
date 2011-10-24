@@ -68,7 +68,6 @@ public class Inline extends InlineLevel implements StructurePointerPropertySet {
         alignmentBaseline = pList.get(PR_ALIGNMENT_BASELINE).getEnum();
         baselineShift = pList.get(PR_BASELINE_SHIFT).getLength();
         dominantBaseline = pList.get(PR_DOMINANT_BASELINE).getEnum();
-        ptr = pList.get(PR_X_PTR).getString(); // used for accessibility
     }
 
     /** {@inheritDoc} */
@@ -146,6 +145,11 @@ public class Inline extends InlineLevel implements StructurePointerPropertySet {
     /** @return the "dominant-baseline" property */
     public int getDominantBaseline() {
         return dominantBaseline;
+    }
+
+    @Override
+    public void setPtr(String ptr) {
+        this.ptr = ptr;
     }
 
     /** {@inheritDoc} */

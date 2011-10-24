@@ -30,6 +30,8 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
+import org.apache.fop.fo.properties.CommonAccessibility;
+import org.apache.fop.fo.properties.CommonAccessibilityHolder;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonFont;
 import org.apache.fop.fo.properties.CommonTextDecoration;
@@ -40,8 +42,10 @@ import org.apache.fop.fo.properties.StructurePointerPropertySet;
  * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_page-number">
  * <code>fo:page-number</code></a> object.
  */
-public class PageNumber extends FObj implements StructurePointerPropertySet {
+public class PageNumber extends FObj
+        implements StructurePointerPropertySet, CommonAccessibilityHolder {
     // The value of properties relevant for fo:page-number.
+    private CommonAccessibility commonAccessibility;
     private CommonBorderPaddingBackground commonBorderPaddingBackground;
     private CommonFont commonFont;
     private Length alignmentAdjust;
@@ -55,7 +59,6 @@ public class PageNumber extends FObj implements StructurePointerPropertySet {
     private CommonTextDecoration textDecoration;
     // private ToBeImplementedProperty textShadow;
     // Unused but valid items, commented out for performance:
-    //     private CommonAccessibility commonAccessibility;
     //     private CommonAural commonAural;
     //     private CommonMarginInline commonMarginInline;
     //     private CommonRelativePosition commonRelativePosition;
@@ -85,6 +88,7 @@ public class PageNumber extends FObj implements StructurePointerPropertySet {
     /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
+        commonAccessibility = CommonAccessibility.getInstance(pList);
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
         commonFont = pList.getFontProps();
         alignmentAdjust = pList.get(PR_ALIGNMENT_ADJUST).getLength();
@@ -94,7 +98,6 @@ public class PageNumber extends FObj implements StructurePointerPropertySet {
         // letterSpacing = pList.get(PR_LETTER_SPACING);
         lineHeight = pList.get(PR_LINE_HEIGHT).getSpace();
         textDecoration = pList.getTextDecorationProps();
-        ptr = pList.get(PR_X_PTR).getString(); // used for accessibility
         // textShadow = pList.get(PR_TEXT_SHADOW);
 
         // implicit properties
@@ -121,6 +124,10 @@ public class PageNumber extends FObj implements StructurePointerPropertySet {
         if (FO_URI.equals(nsURI)) {
             invalidChildError(loc, nsURI, localName);
         }
+    }
+
+    public CommonAccessibility getCommonAccessibility() {
+        return commonAccessibility;
     }
 
     /** @return the Common Font Properties. */
@@ -166,6 +173,11 @@ public class PageNumber extends FObj implements StructurePointerPropertySet {
     /** @return the "line-height" property */
     public SpaceProperty getLineHeight() {
         return lineHeight;
+    }
+
+    @Override
+    public void setPtr(String ptr) {
+        this.ptr = ptr;
     }
 
     /** {@inheritDoc} */

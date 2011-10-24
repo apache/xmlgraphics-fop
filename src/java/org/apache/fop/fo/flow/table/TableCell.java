@@ -26,6 +26,8 @@ import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
+import org.apache.fop.fo.properties.CommonAccessibility;
+import org.apache.fop.fo.properties.CommonAccessibilityHolder;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.LengthRangeProperty;
 
@@ -33,8 +35,9 @@ import org.apache.fop.fo.properties.LengthRangeProperty;
  * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_table-cell">
  * <code>fo:table-cell</code></a> object.
  */
-public class TableCell extends TableFObj {
+public class TableCell extends TableFObj implements CommonAccessibilityHolder {
     // The value of properties relevant for fo:table-cell.
+    private CommonAccessibility commonAccessibility;
     private CommonBorderPaddingBackground commonBorderPaddingBackground;
     private LengthRangeProperty blockProgressionDimension;
     private int columnNumber;
@@ -46,7 +49,6 @@ public class TableCell extends TableFObj {
     private int startsRow;
     private Length width;
     // Unused but valid items, commented out for performance:
-    //     private CommonAccessibility commonAccessibility;
     //     private CommonAural commonAural;
     //     private CommonRelativePosition commonRelativePosition;
     //     private int relativeAlign;
@@ -74,6 +76,7 @@ public class TableCell extends TableFObj {
      */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
+        commonAccessibility = CommonAccessibility.getInstance(pList);
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
         blockProgressionDimension = pList.get(PR_BLOCK_PROGRESSION_DIMENSION).getLengthRange();
         displayAlign = pList.get(PR_DISPLAY_ALIGN).getEnum();
@@ -143,6 +146,10 @@ public class TableCell extends TableFObj {
     /** {@inheritDoc} */
     public boolean generatesReferenceAreas() {
         return true;
+    }
+
+    public CommonAccessibility getCommonAccessibility() {
+        return commonAccessibility;
     }
 
     /**

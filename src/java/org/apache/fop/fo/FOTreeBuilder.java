@@ -33,6 +33,8 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.xmlgraphics.util.QName;
 
+import org.apache.fop.accessibility.StructureTree;
+import org.apache.fop.accessibility.StructureTreeBuildingFOEventHandler;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FormattingResults;
@@ -104,6 +106,11 @@ public class FOTreeBuilder extends DefaultHandler {
         //one of the RTF-, MIF- etc. Handlers.
         foEventHandler = foUserAgent.getRendererFactory().createFOEventHandler(
                 foUserAgent, outputFormat, stream);
+        if (userAgent.isAccessibilityEnabled()) {
+            StructureTree structureTree = new StructureTree();
+            foEventHandler = new StructureTreeBuildingFOEventHandler(structureTree, foEventHandler);
+            userAgent.setStructureTree(structureTree);
+        }
         builderContext = new FOTreeBuilderContext();
         builderContext.setPropertyListMaker(new PropertyListMaker() {
             public PropertyList make(FObj fobj, PropertyList parentPropertyList) {

@@ -31,6 +31,8 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
+import org.apache.fop.fo.properties.CommonAccessibility;
+import org.apache.fop.fo.properties.CommonAccessibilityHolder;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonFont;
 import org.apache.fop.fo.properties.CommonTextDecoration;
@@ -44,9 +46,10 @@ import org.apache.fop.fo.properties.StructurePointerPropertySet;
  * <code>fo:page-number-citation-last</code></a> objects.
  */
 public abstract class AbstractPageNumberCitation extends FObj
-            implements StructurePointerPropertySet {
+        implements StructurePointerPropertySet, CommonAccessibilityHolder {
 
     // The value of properties relevant for fo:page-number-citation(-last).
+    private CommonAccessibility commonAccessibility;
     private CommonBorderPaddingBackground commonBorderPaddingBackground;
     private CommonFont commonFont;
     private Length alignmentAdjust;
@@ -61,7 +64,6 @@ public abstract class AbstractPageNumberCitation extends FObj
     private CommonTextDecoration textDecoration;
     // private ToBeImplementedProperty textShadow;
     // Unused but valid items, commented out for performance:
-    //     private CommonAccessibility commonAccessibility;
     //     private CommonAural commonAural;
     //     private CommonMarginInline commonMarginInline;
     //     private CommonRelativePosition commonRelativePosition;
@@ -91,6 +93,7 @@ public abstract class AbstractPageNumberCitation extends FObj
     /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
+        commonAccessibility = CommonAccessibility.getInstance(pList);
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
         commonFont = pList.getFontProps();
         alignmentAdjust = pList.get(PR_ALIGNMENT_ADJUST).getLength();
@@ -99,7 +102,6 @@ public abstract class AbstractPageNumberCitation extends FObj
         dominantBaseline = pList.get(PR_DOMINANT_BASELINE).getEnum();
         // letterSpacing = pList.get(PR_LETTER_SPACING);
         lineHeight = pList.get(PR_LINE_HEIGHT).getSpace();
-        ptr = pList.get(PR_X_PTR).getString();   // used for accessibility
         refId = pList.get(PR_REF_ID).getString();
         textDecoration = pList.getTextDecorationProps();
         // textShadow = pList.get(PR_TEXT_SHADOW);
@@ -129,6 +131,10 @@ public abstract class AbstractPageNumberCitation extends FObj
         }
     }
 
+    public CommonAccessibility getCommonAccessibility() {
+        return commonAccessibility;
+    }
+
     /** @return the {@link CommonFont} */
     public CommonFont getCommonFont() {
         return commonFont;
@@ -142,6 +148,11 @@ public abstract class AbstractPageNumberCitation extends FObj
     /** @return the "text-decoration" property. */
     public CommonTextDecoration getTextDecoration() {
         return textDecoration;
+    }
+
+    @Override
+    public void setPtr(String ptr) {
+        this.ptr = ptr;
     }
 
     /** {@inheritDoc} */

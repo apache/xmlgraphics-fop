@@ -25,17 +25,22 @@ import org.xml.sax.Locator;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
+import org.apache.fop.fo.properties.CommonAccessibility;
+import org.apache.fop.fo.properties.CommonAccessibilityHolder;
 
 /**
  * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_table-and-caption">
  * <code>fo:table-and-caption</code></a> property.
  * TODO needs implementation
  */
-public class TableAndCaption extends FObj /*implements BreakPropertySet*/ {
+public class TableAndCaption extends FObj implements CommonAccessibilityHolder {
+
+    private CommonAccessibility commonAccessibility;
+
     // The value of properties relevant for fo:table-and-caption.
     // Unused but valid items, commented out for performance:
-    //     private CommonAccessibility commonAccessibility;
     //     private CommonAural commonAural;
     //     private CommonBorderPaddingBackground commonBorderPaddingBackground;
     //     private CommonMarginBlock commonMarginBlock;
@@ -50,7 +55,7 @@ public class TableAndCaption extends FObj /*implements BreakPropertySet*/ {
     //     private int textAlign;
     // End of property values
 
-    private static boolean notImplementedWarningGiven = false;
+    static boolean notImplementedWarningGiven = false; // CSOK: VisibilityModifier
 
     /** used for FO validation */
     private boolean tableCaptionFound = false;
@@ -69,6 +74,12 @@ public class TableAndCaption extends FObj /*implements BreakPropertySet*/ {
                     "fo:table-and-caption", getLocator());
             notImplementedWarningGiven = true;
         }
+    }
+
+    @Override
+    public void bind(PropertyList pList) throws FOPException {
+        super.bind(pList);
+        commonAccessibility = CommonAccessibility.getInstance(pList);
     }
 
     /**
@@ -128,5 +139,10 @@ public class TableAndCaption extends FObj /*implements BreakPropertySet*/ {
     public int getNameId() {
         return FO_TABLE_AND_CAPTION;
     }
+
+    public CommonAccessibility getCommonAccessibility() {
+        return commonAccessibility;
+    }
+
 }
 

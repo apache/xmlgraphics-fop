@@ -735,6 +735,7 @@ list of possible build targets.
         <include name="**/*.xml"/>
         <include name="**/*.fo"/>
         <include name="**/*.afp"/>
+        <include name="**/*.xsl"/>
       </fileset>
       <fileset dir="${build.dir}/test-gensrc">
         <include name="**/*.xml"/>

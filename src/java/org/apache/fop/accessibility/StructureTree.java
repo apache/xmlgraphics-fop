@@ -44,7 +44,7 @@ public final class StructureTree {
     /**
      * Package-private default constructor.
      */
-    StructureTree() { }
+    public StructureTree() { }
 
     private static boolean flowOrStaticContentNodes(NodeList nodes) {
         for (int i = 0; i < nodes.getLength(); i++) {

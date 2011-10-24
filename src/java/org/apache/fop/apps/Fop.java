@@ -24,7 +24,6 @@ import java.io.OutputStream;
 
 import org.xml.sax.helpers.DefaultHandler;
 
-import org.apache.fop.accessibility.Accessibility;
 import org.apache.fop.fo.FOTreeBuilder;
 
 /**
@@ -111,11 +110,7 @@ public class Fop {
         if (foTreeBuilder == null) {
             createDefaultHandler();
         }
-        if (this.foUserAgent.isAccessibilityEnabled()) {
-            return Accessibility.decorateDefaultHandler(this.foTreeBuilder, foUserAgent);
-        } else {
-            return this.foTreeBuilder;
-        }
+        return this.foTreeBuilder;
     }
 
     /**

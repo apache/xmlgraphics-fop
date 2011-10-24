@@ -912,4 +912,8 @@ public abstract class FONode implements Cloneable {
 
     }
 
+    public void setPtr(String ptr) {
+        throw new UnsupportedOperationException();
+    }
+
 }
