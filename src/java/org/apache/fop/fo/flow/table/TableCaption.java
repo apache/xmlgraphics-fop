@@ -27,13 +27,18 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
+import org.apache.fop.fo.properties.CommonAccessibility;
+import org.apache.fop.fo.properties.CommonAccessibilityHolder;
 
 
 /**
  * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_table-caption">
  * <code>fo:table-caption</code></a> object.
  */
-public class TableCaption extends FObj {
+public class TableCaption extends FObj implements CommonAccessibilityHolder {
+
+    private CommonAccessibility commonAccessibility;
+
     // The value of properties relevant for fo:table-caption.
     // Unused but valid items, commented out for performance:
     //     private CommonAural commonAural;
@@ -49,7 +54,7 @@ public class TableCaption extends FObj {
     /** used for FO validation */
     private boolean blockItemFound = false;
 
-    private static boolean notImplementedWarningGiven = false;
+    static boolean notImplementedWarningGiven = false; // CSOK: VisibilityModifier
 
     /**
      * Create a TableCaption instance with the given {@link FONode}
@@ -69,6 +74,7 @@ public class TableCaption extends FObj {
     /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
+        commonAccessibility = CommonAccessibility.getInstance(pList);
     }
 
     /** {@inheritDoc} */
@@ -109,5 +115,10 @@ public class TableCaption extends FObj {
     public int getNameId() {
         return FO_TABLE_CAPTION;
     }
+
+    public CommonAccessibility getCommonAccessibility() {
+        return commonAccessibility;
+    }
+
 }
 

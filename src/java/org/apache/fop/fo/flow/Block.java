@@ -33,6 +33,8 @@ import org.apache.fop.fo.NullCharIterator;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.BreakPropertySet;
+import org.apache.fop.fo.properties.CommonAccessibility;
+import org.apache.fop.fo.properties.CommonAccessibilityHolder;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonFont;
 import org.apache.fop.fo.properties.CommonHyphenation;
@@ -46,13 +48,15 @@ import org.apache.fop.fo.properties.StructurePointerPropertySet;
   * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_block">
   * <code>fo:block object</code></a>.
   */
-public class Block extends FObjMixed implements BreakPropertySet, StructurePointerPropertySet {
+public class Block extends FObjMixed implements BreakPropertySet, StructurePointerPropertySet,
+        CommonAccessibilityHolder {
 
     // used for FO validation
     private boolean blockOrInlineItemFound = false;
     private boolean initialPropertySetFound = false;
 
     // The value of properties relevant for fo:block.
+    private CommonAccessibility commonAccessibility;
     private CommonBorderPaddingBackground commonBorderPaddingBackground;
     private CommonFont commonFont;
     private CommonHyphenation commonHyphenation;
@@ -104,6 +108,7 @@ public class Block extends FObjMixed implements BreakPropertySet, StructurePoint
     /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
+        commonAccessibility = CommonAccessibility.getInstance(pList);
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
         commonFont = pList.getFontProps();
         commonHyphenation = pList.getHyphenationProps();
@@ -125,7 +130,6 @@ public class Block extends FObjMixed implements BreakPropertySet, StructurePoint
         lineHeightShiftAdjustment = pList.get(PR_LINE_HEIGHT_SHIFT_ADJUSTMENT).getEnum();
         lineStackingStrategy = pList.get(PR_LINE_STACKING_STRATEGY).getEnum();
         orphans = pList.get(PR_ORPHANS).getNumeric();
-        ptr = pList.get(PR_X_PTR).getString();  //used for accessibility
         whiteSpaceTreatment = pList.get(PR_WHITE_SPACE_TREATMENT).getEnum();
         span = pList.get(PR_SPAN).getEnum();
         textAlign = pList.get(PR_TEXT_ALIGN).getEnum();
@@ -147,6 +151,10 @@ public class Block extends FObjMixed implements BreakPropertySet, StructurePoint
     protected void endOfNode() throws FOPException {
         super.endOfNode();
         getFOEventHandler().endBlock(this);
+    }
+
+    public CommonAccessibility getCommonAccessibility() {
+        return commonAccessibility;
     }
 
     /** @return the {@link CommonMarginBlock} */
@@ -173,6 +181,11 @@ public class Block extends FObjMixed implements BreakPropertySet, StructurePoint
     /** @return the "break-after" property. */
     public int getBreakAfter() {
         return breakAfter;
+    }
+
+    @Override
+    public void setPtr(String ptr) {
+        this.ptr = ptr;
     }
 
     /** {@inheritDoc} */

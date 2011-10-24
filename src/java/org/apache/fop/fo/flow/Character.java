@@ -110,7 +110,6 @@ public class Character extends FObj implements StructurePointerPropertySet {
         lineHeight = pList.get(PR_LINE_HEIGHT).getSpace();
         textDecoration = pList.getTextDecorationProps();
         wordSpacing = pList.get(PR_WORD_SPACING);
-        ptr = pList.get(PR_X_PTR).getString();  // used for accessibility
     }
 
     /** {@inheritDoc} */
@@ -208,6 +207,11 @@ public class Character extends FObj implements StructurePointerPropertySet {
     /** @return the "keep-with-previous" property */
     public KeepProperty getKeepWithPrevious() {
         return keepWithPrevious;
+    }
+
+    @Override
+    public void setPtr(String ptr) {
+        this.ptr = ptr;
     }
 
     /** {@inheritDoc} */

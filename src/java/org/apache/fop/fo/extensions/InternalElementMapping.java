@@ -34,6 +34,9 @@ public class InternalElementMapping extends ElementMapping {
     /** The FOP extension namespace URI */
     public static final String URI = "http://xmlgraphics.apache.org/fop/internal";
 
+    /** The standard XML prefix for elements and attributes in this namespace. */
+    public static final String STANDARD_PREFIX = "foi";
+
     private static final Set<String> PROPERTY_ATTRIBUTES = new java.util.HashSet<String>();
 
     static {
@@ -59,7 +62,7 @@ public class InternalElementMapping extends ElementMapping {
 
     /** {@inheritDoc} */
     public String getStandardPrefix() {
-        return "foi";
+        return STANDARD_PREFIX;
     }
 
     /** {@inheritDoc} */

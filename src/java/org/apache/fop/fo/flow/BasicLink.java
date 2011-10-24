@@ -76,7 +76,6 @@ public class BasicLink extends InlineLevel implements StructurePointerPropertySe
         alignmentBaseline = pList.get(PR_ALIGNMENT_BASELINE).getEnum();
         baselineShift = pList.get(PR_BASELINE_SHIFT).getLength();
         dominantBaseline = pList.get(PR_DOMINANT_BASELINE).getEnum();
-        ptr = pList.get(PR_X_PTR).getString(); // used for accessibility
         // destinationPlacementOffset = pList.get(PR_DESTINATION_PLACEMENT_OFFSET);
         externalDestination = pList.get(PR_EXTERNAL_DESTINATION).getString();
         // indicateDestination = pList.get(PR_INDICATE_DESTINATION);
@@ -104,7 +103,7 @@ public class BasicLink extends InlineLevel implements StructurePointerPropertySe
     /** {@inheritDoc} */
     protected void endOfNode() throws FOPException {
         super.endOfNode();
-        getFOEventHandler().endLink();
+        getFOEventHandler().endLink(this);
     }
 
     /** {@inheritDoc} */
@@ -141,6 +140,11 @@ public class BasicLink extends InlineLevel implements StructurePointerPropertySe
     /** @return the "dominant-baseline" property */
     public int getDominantBaseline() {
         return dominantBaseline;
+    }
+
+    @Override
+    public void setPtr(String ptr) {
+        this.ptr = ptr;
     }
 
     /** {@inheritDoc} */

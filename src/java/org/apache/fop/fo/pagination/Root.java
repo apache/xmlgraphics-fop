@@ -33,16 +33,19 @@ import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.extensions.destination.Destination;
 import org.apache.fop.fo.pagination.bookmarks.BookmarkTree;
+import org.apache.fop.fo.properties.CommonAccessibility;
+import org.apache.fop.fo.properties.CommonAccessibilityHolder;
 
 /**
  * Class modeling the <a href="http://www.w3.org/TR/xsl/#fo_root">
  * <code>fo:root</code></a> formatting object.
  * Contains page masters, page-sequences.
  */
-public class Root extends FObj {
-    // The value of properties relevant for fo:root.
+public class Root extends FObj implements CommonAccessibilityHolder {
+
+    private CommonAccessibility commonAccessibility;
+
     private int mediaUsage;
-    // End of property values
 
     private LayoutMasterSet layoutMasterSet;
     private Declarations declarations;
@@ -83,6 +86,7 @@ public class Root extends FObj {
     /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
+        commonAccessibility = CommonAccessibility.getInstance(pList);
         mediaUsage = pList.get(PR_MEDIA_USAGE).getEnum();
     }
 
@@ -154,6 +158,10 @@ public class Root extends FObj {
         if (child instanceof AbstractPageSequence) {
             pageSequenceFound = true;
         }
+    }
+
+    public CommonAccessibility getCommonAccessibility() {
+        return commonAccessibility;
     }
 
     /**

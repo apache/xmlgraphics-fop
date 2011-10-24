@@ -26,6 +26,8 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
+import org.apache.fop.fo.properties.CommonAccessibility;
+import org.apache.fop.fo.properties.CommonAccessibilityHolder;
 import org.apache.fop.fo.properties.KeepProperty;
 
 /**
@@ -33,8 +35,10 @@ import org.apache.fop.fo.properties.KeepProperty;
  * <code>fo:list-item-label</code></a> and <a href="http://www.w3.org/TR/xsl/#fo_list-item-body">
  * <code>fo:list-item-body</code></a>.
  */
-public abstract class AbstractListItemPart extends FObj {
-    // The value of properties relevant for fo:list-item-label and fo:list-item-body.
+public abstract class AbstractListItemPart extends FObj implements CommonAccessibilityHolder {
+
+    private CommonAccessibility commonAccessibility;
+
     private KeepProperty keepTogether;
     // Valid properties, commented out for performance:
     //   private CommonAccessibility commonAccessibility;
@@ -55,6 +59,7 @@ public abstract class AbstractListItemPart extends FObj {
     /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
+        commonAccessibility = CommonAccessibility.getInstance(pList);
         keepTogether = pList.get(PR_KEEP_TOGETHER).getKeep();
     }
 
@@ -84,6 +89,10 @@ public abstract class AbstractListItemPart extends FObj {
             getFOValidationEventProducer().missingChildElement(this, getName(),
                     contentModel, true, getLocator());
         }
+    }
+
+    public CommonAccessibility getCommonAccessibility() {
+        return commonAccessibility;
     }
 
     /** @return the "keep-together" property.  */

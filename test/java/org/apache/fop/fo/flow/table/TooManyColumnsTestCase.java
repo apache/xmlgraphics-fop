@@ -23,10 +23,6 @@ import org.junit.Test;
 
 public class TooManyColumnsTestCase extends ErrorCheckTestCase {
 
-    public TooManyColumnsTestCase() throws Exception {
-        super();
-    }
-
     @Test
     public void testBody1() throws Exception {
         launchTest("table/too-many-columns_body_1.fo");

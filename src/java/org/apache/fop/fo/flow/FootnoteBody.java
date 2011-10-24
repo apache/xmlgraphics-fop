@@ -27,15 +27,16 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
+import org.apache.fop.fo.properties.CommonAccessibility;
+import org.apache.fop.fo.properties.CommonAccessibilityHolder;
 
 /**
  * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_footnote-body">
  * <code>fo:footnote-body</code></a> object.
  */
-public class FootnoteBody extends FObj {
-    // The value of properties relevant for fo:footnote-body (commented out for perforance).
-    //     private CommonAccessibility commonAccessibility;
-    // End of property values
+public class FootnoteBody extends FObj implements CommonAccessibilityHolder {
+
+    private CommonAccessibility commonAccessibility;
 
     /**
      * Base constructor
@@ -48,6 +49,7 @@ public class FootnoteBody extends FObj {
 
     /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
+        commonAccessibility = CommonAccessibility.getInstance(pList);
     }
 
     /** {@inheritDoc} */
@@ -93,4 +95,9 @@ public class FootnoteBody extends FObj {
     public int getNameId() {
         return FO_FOOTNOTE_BODY;
     }
+
+    public CommonAccessibility getCommonAccessibility() {
+        return commonAccessibility;
+    }
+
 }

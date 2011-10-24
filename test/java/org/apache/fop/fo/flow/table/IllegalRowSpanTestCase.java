@@ -27,10 +27,6 @@ import org.junit.Test;
  */
 public class IllegalRowSpanTestCase extends ErrorCheckTestCase {
 
-    public IllegalRowSpanTestCase() throws Exception {
-        super();
-    }
-
     @Test
     public void testBody1() throws Exception {
         launchTest("table/illegal-row-span_body_1.fo");

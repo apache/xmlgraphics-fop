@@ -24,11 +24,17 @@ import java.util.List;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.properties.CommonAccessibility;
+import org.apache.fop.fo.properties.CommonAccessibilityHolder;
 
 /**
  * A common class for fo:table-body and fo:table-row which both can contain fo:table-cell.
  */
-public abstract class TableCellContainer extends TableFObj implements ColumnNumberManagerHolder {
+public abstract class TableCellContainer extends TableFObj
+        implements ColumnNumberManagerHolder, CommonAccessibilityHolder {
+
+    private CommonAccessibility commonAccessibility;
 
     /** list of pending spans */
     protected List pendingSpans;
@@ -42,6 +48,12 @@ public abstract class TableCellContainer extends TableFObj implements ColumnNumb
      */
     public TableCellContainer(FONode parent) {
         super(parent);
+    }
+
+    @Override
+    public void bind(PropertyList pList) throws FOPException {
+        super.bind(pList);
+        commonAccessibility = CommonAccessibility.getInstance(pList);
     }
 
     /**
@@ -114,6 +126,10 @@ public abstract class TableCellContainer extends TableFObj implements ColumnNumb
     /** {@inheritDoc} */
     public ColumnNumberManager getColumnNumberManager() {
         return columnNumberManager;
+    }
+
+    public CommonAccessibility getCommonAccessibility() {
+        return commonAccessibility;
     }
 
 }
