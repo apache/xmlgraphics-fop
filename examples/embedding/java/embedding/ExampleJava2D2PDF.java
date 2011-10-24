@@ -116,7 +116,8 @@ public class ExampleJava2D2PDF {
             g2d.setFont(new Font("serif", Font.PLAIN, 36));
             g2d.drawString("Hello world!", 140, 180);
 
-            g2d.nextPage();
+            pageSize = new Dimension(pageSize.height, pageSize.width);
+            g2d.nextPage(pageSize.width, pageSize.height);
 
             //Demonstrate painting rich text
             String someHTML = "<html><body style=\"font-family:Verdana\">"
