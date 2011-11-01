@@ -74,8 +74,8 @@ public abstract class AbstractDataObject extends AbstractNamedAFPObject
         int height = objectAreaInfo.getHeight();
         int widthRes = objectAreaInfo.getWidthRes();
         int heightRes = objectAreaInfo.getHeightRes();
-        ObjectAreaDescriptor objectAreaDescriptor
-            = factory.createObjectAreaDescriptor(width, height, widthRes, heightRes);
+        ObjectAreaDescriptor objectAreaDescriptor = factory.createObjectAreaDescriptor(width,
+                height, widthRes, heightRes);
         getObjectEnvironmentGroup().setObjectAreaDescriptor(objectAreaDescriptor);
 
         // object area position

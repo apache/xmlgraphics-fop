@@ -796,6 +796,23 @@ Note that the value of the encoding attribute in the example is the double-byte 
         </p>
         <source><![CDATA[
       <images mode="b+w" bits-per-pixel="1" dithering-quality="maximum"/>]]></source>
+        <p>
+          By default, JPEG images are rasterized to a bitmap and the bitmap is included in the AFP doc.
+          However it is possible to encode in a lossless way to maintain maximum quality. But due
+          to lack of support for compression schemes like LZW (patent concerns), bitmap data is currently
+          not compressed resulting in large AFP files. Using the "allow-embedding" attribute on jpeg child
+          element allows the user to pass the JPEG as is in the document. The default is set to "false" since
+          there are compatibility concerns as some AFP printers don't support JPEG decoding. Using the
+          "bitmap-encoding-quality" attribute it is possible to enable lossy compression (JPEG baseline
+          DCT). The default is "1.0" which means lossless encoding. Setting a value lower than 1.0, JPEG
+          compression is enabled and the setting is used as the quality setting when encoding bitmap data.
+          Note that this setting does not always have an effect. Bi-level (1 bit) bitmaps are not compressed
+          using JPEG. Example:
+        </p>
+        <source><![CDATA[
+      <images mode="color" cmyk="true">
+        <jpeg allow-embedding="false" bitmap-encoding-quality="0.8"/>
+      </images>]]></source>
       </section>
       <section id="afp-goca-config">
         <title>GOCA (Vector Graphics)</title>

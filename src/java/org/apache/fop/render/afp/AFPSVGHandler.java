@@ -154,23 +154,18 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
     private AFPObjectAreaInfo createObjectAreaInfo(AFPPaintingState paintingState,
             int x, int y, int width, int height, int resolution) {
         // set the data object parameters
-        AFPObjectAreaInfo objectAreaInfo = new AFPObjectAreaInfo();
 
         AffineTransform at = paintingState.getData().getTransform();
         at.translate(x, y);
-        objectAreaInfo.setX((int)Math.round(at.getTranslateX()));
-        objectAreaInfo.setY((int)Math.round(at.getTranslateY()));
-
-        objectAreaInfo.setWidthRes(resolution);
-        objectAreaInfo.setHeightRes(resolution);
-
         AFPUnitConverter unitConv = paintingState.getUnitConverter();
-        objectAreaInfo.setWidth(Math.round(unitConv.mpt2units(width)));
-        objectAreaInfo.setHeight(Math.round(unitConv.mpt2units(height)));
 
         int rotation = paintingState.getRotation();
-        objectAreaInfo.setRotation(rotation);
-
+        int objX = (int) Math.round(at.getTranslateX());
+        int objY = (int) Math.round(at.getTranslateY());
+        int objWidth = Math.round(unitConv.mpt2units(width));
+        int objHeight = Math.round(unitConv.mpt2units(height));
+        AFPObjectAreaInfo objectAreaInfo = new AFPObjectAreaInfo(objX, objY, objWidth, objHeight,
+                resolution, rotation);
         return objectAreaInfo;
     }
 

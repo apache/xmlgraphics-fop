@@ -72,6 +72,16 @@ public interface AFPCustomizable {
     void setDitheringQuality(float quality);
 
     /**
+     * Sets the image encoding quality setting to use when encoding bitmap images.
+     * The default setting is 1.0 which means loss-less encoding. Settings of less than 1.0
+     * allow loss-less encoding schemes like JPEG. The value serves as quality setting for
+     * the encoders in that case.
+     * @param quality Defines the desired quality level.
+     *                  Valid values: a value between 0.0f (lowest) and 1.0f (best, loss-less)
+     */
+    void setBitmapEncodingQuality(float quality);
+
+    /**
      * Sets the output/device resolution
      *
      * @param resolution
@@ -122,5 +132,12 @@ public interface AFPCustomizable {
      * @param defaults the resource level defaults
      */
     void setResourceLevelDefaults(AFPResourceLevelDefaults defaults);
+
+    /**
+     * Sets whether or not to JPEG images can be embedded in the AFP document.
+     *
+     * @param canEmbed whether or not to embed JPEG image
+     */
+    void canEmbedJpeg(boolean canEmbed);
 
 }
