@@ -85,7 +85,7 @@ public class AFPImageObjectInfo extends AFPDataObjectInfo {
      * @return true if this image uses compression
      */
     public boolean hasCompression() {
-        return compression > -1;
+        return compression != -1;
     }
 
     /**
@@ -123,6 +123,7 @@ public class AFPImageObjectInfo extends AFPDataObjectInfo {
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
         return "AFPImageObjectInfo{" + super.toString()
             + ", compression=" + compression

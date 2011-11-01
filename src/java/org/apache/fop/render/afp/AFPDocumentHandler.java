@@ -429,6 +429,11 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     }
 
     /** {@inheritDoc} */
+    public void setBitmapEncodingQuality(float quality) {
+        this.paintingState.setBitmapEncodingQuality(quality);
+    }
+
+    /** {@inheritDoc} */
     public void setShadingMode(AFPShadingMode shadingMode) {
         this.shadingMode = shadingMode;
     }
@@ -481,6 +486,11 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
      */
     PageSegmentDescriptor getPageSegmentNameFor(String uri) {
         return pageSegmentMap.get(uri);
+    }
+
+    /** {@inheritDoc} */
+    public void canEmbedJpeg(boolean canEmbed) {
+        paintingState.setCanEmbedJpeg(canEmbed);
     }
 
 }

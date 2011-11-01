@@ -90,22 +90,18 @@ public class AFPDitheredRectanglePainter extends AbstractAFPPainter {
         imageObjectInfo.setData(dither);
 
         //Positioning
-        AFPObjectAreaInfo objectAreaInfo = new AFPObjectAreaInfo();
         int rotation = paintingState.getRotation();
         AffineTransform at = paintingState.getData().getTransform();
         Point2D origin = at.transform(new Point2D.Float(
                 rectanglePaintInfo.getX() * 1000,
                 rectanglePaintInfo.getY() * 1000), null);
-        objectAreaInfo.setX((int)Math.round(origin.getX()));
-        objectAreaInfo.setY((int)Math.round(origin.getY()));
         AFPUnitConverter unitConv = paintingState.getUnitConverter();
         float width = unitConv.pt2units(rectanglePaintInfo.getWidth());
         float height = unitConv.pt2units(rectanglePaintInfo.getHeight());
-        objectAreaInfo.setWidth(Math.round(width));
-        objectAreaInfo.setHeight(Math.round(height));
-        objectAreaInfo.setHeightRes(resolution);
-        objectAreaInfo.setWidthRes(resolution);
-        objectAreaInfo.setRotation(rotation);
+        AFPObjectAreaInfo objectAreaInfo = new AFPObjectAreaInfo(
+                (int) Math.round(origin.getX()),
+                (int) Math.round(origin.getY()),
+                Math.round(width), Math.round(height), resolution, rotation);
         imageObjectInfo.setObjectAreaInfo(objectAreaInfo);
 
         //Create rectangle

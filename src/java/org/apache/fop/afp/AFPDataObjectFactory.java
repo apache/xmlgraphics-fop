@@ -108,6 +108,9 @@ public class AFPDataObjectFactory {
             case TIFFImage.COMP_FAX_G4_2D:
                 imageObj.setEncoding(ImageContent.COMPID_G3_MMR);
                 break;
+            case ImageContent.COMPID_JPEG:
+                imageObj.setEncoding((byte)compression);
+                break;
             default:
                 throw new IllegalStateException(
                         "Invalid compression scheme: " + compression);

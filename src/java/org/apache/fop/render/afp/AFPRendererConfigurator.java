@@ -23,10 +23,12 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
+
 import org.apache.fop.afp.AFPResourceLevel;
 import org.apache.fop.afp.AFPResourceLevelDefaults;
 import org.apache.fop.afp.fonts.AFPFont;
@@ -80,10 +82,10 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
             log.error("Mandatory font configuration element '<font-triplet...' is missing");
             return null;
         }
-        for (int j = 0; j < triple.length; j++) {
-            int weight = FontUtil.parseCSS2FontWeight(triple[j].getAttribute("weight"));
-            FontTriplet triplet = new FontTriplet(triple[j].getAttribute("name"),
-                    triple[j].getAttribute("style"),
+        for (Configuration config : triple) {
+            int weight = FontUtil.parseCSS2FontWeight(config.getAttribute("weight"));
+            FontTriplet triplet = new FontTriplet(config.getAttribute("name"),
+                    config.getAttribute("style"),
                     weight);
             tripletList.add(triplet);
         }
@@ -183,10 +185,10 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
 
                 if (base14 != null) {
                     try {
-                        Class<?> clazz = Class.forName(
-                                "org.apache.fop.fonts.base14." + base14);
+                        Class<? extends Typeface> clazz = Class.forName(
+                                "org.apache.fop.fonts.base14." + base14).asSubclass(Typeface.class);
                         try {
-                            Typeface tf = (Typeface)clazz.newInstance();
+                            Typeface tf = clazz.newInstance();
                             font.addCharacterSet(sizeMpt,
                                     CharacterSetBuilder.getInstance()
                                         .build(characterset, codepage, encoding, tf));
@@ -222,10 +224,10 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
             String base14 = afpFontCfg.getAttribute("base14-font", null);
             if (base14 != null) {
                 try {
-                    Class<?> clazz = Class.forName("org.apache.fop.fonts.base14."
-                            + base14);
+                    Class<? extends Typeface> clazz = Class.forName("org.apache.fop.fonts.base14."
+                            + base14).asSubclass(Typeface.class);
                     try {
-                        Typeface tf = (Typeface)clazz.newInstance();
+                        Typeface tf = clazz.newInstance();
                         characterSet = CharacterSetBuilder.getInstance()
                                         .build(characterset, codepage, encoding, tf);
                     } catch (Exception ie) {
@@ -319,7 +321,7 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
                 if (log.isDebugEnabled()) {
                     log.debug("Adding font " + afi.getAFPFont().getFontName());
                 }
-                List/*<FontTriplet>*/ fontTriplets = afi.getFontTriplets();
+                List<FontTriplet> fontTriplets = afi.getFontTriplets();
                 for (int j = 0; j < fontTriplets.size(); ++j) {
                     FontTriplet triplet = (FontTriplet) fontTriplets.get(j);
                     if (log.isDebugEnabled()) {
@@ -395,6 +397,24 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
         // native image support
         boolean nativeImageSupport = imagesCfg.getAttributeAsBoolean("native", false);
         customizable.setNativeImagesSupported(nativeImageSupport);
+
+        Configuration jpegConfig = imagesCfg.getChild("jpeg");
+        boolean allowEmbedding = false;
+        float ieq = 1.0f;
+        if (jpegConfig != null) {
+            allowEmbedding = jpegConfig.getAttributeAsBoolean("allow-embedding", false);
+            String bitmapEncodingQuality = jpegConfig.getAttribute("bitmap-encoding-quality", null);
+
+            if (bitmapEncodingQuality != null) {
+                try {
+                    ieq = Float.parseFloat(bitmapEncodingQuality);
+                } catch (NumberFormatException nfe) {
+                    //ignore and leave the default above
+                }
+            }
+        }
+        customizable.canEmbedJpeg(allowEmbedding);
+        customizable.setBitmapEncodingQuality(ieq);
 
         // shading (filled rectangles)
         Configuration shadingCfg = cfg.getChild("shading");
@@ -480,7 +500,7 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
     public void setupFontInfo(IFDocumentHandler documentHandler, FontInfo fontInfo)
             throws FOPException {
         FontManager fontManager = userAgent.getFactory().getFontManager();
-        List<FontCollection> fontCollections = new java.util.ArrayList<FontCollection>();
+        List<AFPFontCollection> fontCollections = new ArrayList<AFPFontCollection>();
 
         Configuration cfg = super.getRendererConfig(documentHandler.getMimeType());
         if (cfg != null) {

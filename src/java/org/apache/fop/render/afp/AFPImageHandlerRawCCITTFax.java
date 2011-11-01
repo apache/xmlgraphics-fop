@@ -19,6 +19,12 @@
 
 package org.apache.fop.render.afp;
 
+import java.awt.Rectangle;
+import java.io.IOException;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.apache.xmlgraphics.image.loader.Image;
 import org.apache.xmlgraphics.image.loader.ImageFlavor;
 import org.apache.xmlgraphics.image.loader.impl.ImageRawCCITTFax;
@@ -38,7 +44,11 @@ public class AFPImageHandlerRawCCITTFax extends AbstractAFPImageHandlerRawStream
         ImageFlavor.RAW_CCITTFAX,
     };
 
+    /** logging instance */
+    private final Log log = LogFactory.getLog(AFPImageHandlerRawJPEG.class);
+
     /** {@inheritDoc} */
+    @Override
     protected void setAdditionalParameters(AFPDataObjectInfo dataObjectInfo,
             ImageRawStream image) {
         AFPImageObjectInfo imageObjectInfo = (AFPImageObjectInfo)dataObjectInfo;
@@ -54,6 +64,15 @@ public class AFPImageHandlerRawCCITTFax extends AbstractAFPImageHandlerRawStream
     }
 
     /** {@inheritDoc} */
+    @Override
+    public void handleImage(RenderingContext context, Image image, Rectangle pos)
+            throws IOException {
+        log.debug("Embedding undecoded CCITT data as data container...");
+        super.handleImage(context, image, pos);
+    }
+
+    /** {@inheritDoc} */
+    @Override
     protected AFPDataObjectInfo createDataObjectInfo() {
         return new AFPImageObjectInfo();
     }

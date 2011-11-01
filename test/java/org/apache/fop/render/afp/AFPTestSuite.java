@@ -27,6 +27,8 @@ import org.junit.runners.Suite.SuiteClasses;
  * Test suite for FOP's AFP output.
  */
 @RunWith(Suite.class)
-@SuiteClasses({ NoOperationTestCase.class })
+@SuiteClasses({
+        NoOperationTestCase.class,
+        AFPRendererConfiguratorTestCase.class })
 public class AFPTestSuite {
 }

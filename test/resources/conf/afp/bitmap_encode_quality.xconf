@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fop version="1.0">
+  <base>.</base>
+  <source-resolution>72</source-resolution>
+  <target-resolution>72</target-resolution>
+  <image-loading>
+  </image-loading>
+  <default-page-settings height="11in" width="8.26in"/>
+  <renderers>
+    <renderer mime="application/x-afp">
+      <images>
+        <jpeg allow-embedding="false" bitmap-encoding-quality="0.5"/>
+      </images>
+    </renderer>
+  </renderers>
+</fop>

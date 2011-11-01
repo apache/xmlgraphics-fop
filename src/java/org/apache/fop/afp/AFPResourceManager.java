@@ -242,8 +242,7 @@ public class AFPResourceManager {
 
     private void includeObject(AFPDataObjectInfo dataObjectInfo,
             String objectName) {
-        IncludeObject includeObject
-            = dataObjectFactory.createInclude(objectName, dataObjectInfo);
+        IncludeObject includeObject = dataObjectFactory.createInclude(objectName, dataObjectInfo);
         dataStream.getCurrentPage().addObject(includeObject);
     }
 

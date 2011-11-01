@@ -28,10 +28,10 @@ import java.awt.image.MultiPixelPackedSampleModel;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -40,6 +40,9 @@ import org.apache.xmlgraphics.image.loader.ImageFlavor;
 import org.apache.xmlgraphics.image.loader.ImageInfo;
 import org.apache.xmlgraphics.image.loader.ImageSize;
 import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
+import org.apache.xmlgraphics.image.writer.ImageWriter;
+import org.apache.xmlgraphics.image.writer.ImageWriterParams;
+import org.apache.xmlgraphics.image.writer.ImageWriterRegistry;
 import org.apache.xmlgraphics.ps.ImageEncodingHelper;
 import org.apache.xmlgraphics.util.MimeConstants;
 import org.apache.xmlgraphics.util.UnitConv;
@@ -50,6 +53,7 @@ import org.apache.fop.afp.AFPObjectAreaInfo;
 import org.apache.fop.afp.AFPPaintingState;
 import org.apache.fop.afp.AFPResourceInfo;
 import org.apache.fop.afp.AFPResourceManager;
+import org.apache.fop.afp.ioca.ImageContent;
 import org.apache.fop.afp.modca.ResourceObject;
 import org.apache.fop.render.ImageHandler;
 import org.apache.fop.render.RenderingContext;
@@ -284,7 +288,26 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler implements Ima
                         functionSet = 45; //IOCA FS45 required for CMYK
                     }
 
-                    helper.encode(baos);
+                    //Lossy or loss-less?
+                    if (!paintingState.canEmbedJpeg()
+                            && paintingState.getBitmapEncodingQuality() < 1.0f) {
+                        try {
+                            if (log.isDebugEnabled()) {
+                                log.debug("Encoding using baseline DCT (JPEG, q="
+                                        + paintingState.getBitmapEncodingQuality() + ")...");
+                            }
+                            encodeToBaselineDCT(renderedImage,
+                                    paintingState.getBitmapEncodingQuality(),
+                                    paintingState.getResolution(),
+                                    baos);
+                            imageObjectInfo.setCompression(ImageContent.COMPID_JPEG);
+                        } catch (IOException ioe) {
+                            //Some JPEG codecs cannot encode CMYK
+                            helper.encode(baos);
+                        }
+                    } else {
+                        helper.encode(baos);
+                    }
                     imageData = baos.toByteArray();
                 }
             }
@@ -393,6 +416,14 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler implements Ima
             return false;
         }
 
-    }
+        private void encodeToBaselineDCT(RenderedImage image,
+                float quality, int resolution, OutputStream out) throws IOException {
+            ImageWriter writer = ImageWriterRegistry.getInstance().getWriterFor("image/jpeg");
+            ImageWriterParams params = new ImageWriterParams();
+            params.setJPEGQuality(quality, true);
+            params.setResolution(resolution);
+            writer.writeImage(image, out, params);
+        }
 
+    }
 }

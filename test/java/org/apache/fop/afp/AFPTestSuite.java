@@ -19,18 +19,21 @@
 
 package org.apache.fop.afp;
 
-import org.apache.fop.afp.modca.IncludeObjectTestCase;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
+
+import org.apache.fop.afp.modca.IncludeObjectTestCase;
 
 /**
  * Test suite for FOP's AFP classes.
  */
 @RunWith(Suite.class)
 @SuiteClasses({
-    IncludeObjectTestCase.class,
-    AFPResourceUtilTestCase.class
+        IncludeObjectTestCase.class,
+        AFPResourceUtilTestCase.class,
+        AFPObjectAreaInfoTestCase.class,
+        AFPPaintingStateTestCase.class
 })
 public class AFPTestSuite {
 }

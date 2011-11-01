@@ -96,7 +96,7 @@ public class GraphicsObject extends AbstractDataObject {
         final int leftEdge = 0;
         final int topEdge = 0;
         GraphicsDataDescriptor graphicsDataDescriptor = factory.createGraphicsDataDescriptor(
-                    leftEdge, width, topEdge, height, widthRes, heightRes);
+                leftEdge, width, topEdge, height, widthRes, heightRes);
 
         getObjectEnvironmentGroup().setDataDescriptor(graphicsDataDescriptor);
     }

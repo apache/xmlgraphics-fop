@@ -17,49 +17,45 @@
 
 /* $Id$ */
 
-package org.apache.fop.afp.fonts;
+package org.apache.fop.afp;
 
-import java.util.List;
+import static org.junit.Assert.assertEquals;
 
-import org.apache.fop.fonts.FontTriplet;
-
+import org.junit.Before;
+import org.junit.Test;
 
 /**
- * FontInfo contains meta information on fonts
+ * Test case for {@link AFPPaintingState}.
  */
-public class AFPFontInfo {
-
-    private AFPFont font;
-    private List<FontTriplet> tripletList;
+public class AFPPaintingStateTestCase {
+    private AFPPaintingState sut;
 
     /**
-     * Main constructor
-     *
-     * @param afpFont The AFP Font
-     * @param tripletList List of font triplets to associate with this font
+     * Set up the system under test
      */
-    public AFPFontInfo(AFPFont afpFont, List<FontTriplet> tripletList) {
-        this.font = afpFont;
-        this.tripletList = tripletList;
+    @Before
+    public void setUp() {
+        sut = new AFPPaintingState();
     }
 
     /**
-     * Returns the afp font
-     *
-     * @return the afp font
+     * Test {get,set}BitmapEncodingQuality()
      */
-    public AFPFont getAFPFont() {
-        return font;
+    @Test
+    public void testGetSetBitmapEncodingQuality() {
+        sut.setBitmapEncodingQuality(0.5f);
+        assertEquals(0.5f, sut.getBitmapEncodingQuality(), 0.01f);
+
+        sut.setBitmapEncodingQuality(0.9f);
+        assertEquals(0.9f, sut.getBitmapEncodingQuality(), 0.01f);
     }
 
     /**
-     * Returns the list of font triplets associated with this font.
-     *
-     * @return List of font triplets
+     * Test {,set}CanEmbedJpeg
      */
-    public List<FontTriplet> getFontTriplets() {
-        return tripletList;
+    public void testGetSetCanEmbedJpeg() {
+        assertEquals(false, sut.canEmbedJpeg());
+        sut.setCanEmbedJpeg(true);
+        assertEquals(true, sut.canEmbedJpeg());
     }
-
 }
-
