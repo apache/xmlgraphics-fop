@@ -22,7 +22,7 @@ package org.apache.fop.config;
 /**
  * this font has a metrics-url that does not exist on filesystem
  */
-public class FontMetricsUrlBadTestCase extends BaseDestructiveUserConfigTestCase {
+public class FontMetricsUrlBadTestCase extends BaseDestructiveUserConfigTest {
 
     @Override
     public String getUserConfigFilename() {

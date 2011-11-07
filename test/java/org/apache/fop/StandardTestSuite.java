@@ -23,16 +23,16 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-import org.apache.fop.afp.fonts.CharactersetEncoderTest;
+import org.apache.fop.afp.fonts.CharactersetEncoderTestCase;
 import org.apache.fop.afp.parser.MODCAParserTestCase;
 import org.apache.fop.area.ViewportTestSuite;
-import org.apache.fop.fonts.DejaVuLGCSerifTest;
+import org.apache.fop.fonts.DejaVuLGCSerifTestCase;
 import org.apache.fop.fonts.truetype.GlyfTableTestCase;
 import org.apache.fop.image.loader.batik.ImageLoaderTestCase;
 import org.apache.fop.image.loader.batik.ImagePreloaderTestCase;
 import org.apache.fop.intermediate.IFMimickingTestCase;
-import org.apache.fop.render.extensions.prepress.PageBoundariesTest;
-import org.apache.fop.render.extensions.prepress.PageScaleTest;
+import org.apache.fop.render.extensions.prepress.PageBoundariesTestCase;
+import org.apache.fop.render.extensions.prepress.PageScaleTestCase;
 import org.apache.fop.render.pdf.PDFAConformanceTestCase;
 import org.apache.fop.render.pdf.PDFCMapTestCase;
 import org.apache.fop.render.pdf.PDFEncodingTestCase;
@@ -40,7 +40,7 @@ import org.apache.fop.render.pdf.PDFsRGBSettingsTestCase;
 import org.apache.fop.render.pdf.RenderPDFTestSuite;
 import org.apache.fop.render.ps.PSTestSuite;
 import org.apache.fop.render.rtf.RichTextFormatTestSuite;
-import org.apache.fop.traits.MinOptMaxTest;
+import org.apache.fop.traits.MinOptMaxTestCase;
 
 /**
  * Test suite for basic functionality of FOP.
@@ -53,22 +53,22 @@ import org.apache.fop.traits.MinOptMaxTest;
     PDFEncodingTestCase.class,
     PDFCMapTestCase.class,
     PDFsRGBSettingsTestCase.class,
-    DejaVuLGCSerifTest.class,
+    DejaVuLGCSerifTestCase.class,
     RichTextFormatTestSuite.class,
     ImageLoaderTestCase.class,
     ImagePreloaderTestCase.class,
     IFMimickingTestCase.class,
-    PageBoundariesTest.class,
-    PageScaleTest.class,
+    PageBoundariesTestCase.class,
+    PageScaleTestCase.class,
     org.apache.fop.afp.AFPTestSuite.class,
     GlyfTableTestCase.class,
     ViewportTestSuite.class,
     RenderPDFTestSuite.class,
     MODCAParserTestCase.class,
-    CharactersetEncoderTest.class,
+    CharactersetEncoderTestCase.class,
     org.apache.fop.render.afp.AFPTestSuite.class,
     PSTestSuite.class,
-    MinOptMaxTest.class
+    MinOptMaxTestCase.class
 })
 public class StandardTestSuite {
 }

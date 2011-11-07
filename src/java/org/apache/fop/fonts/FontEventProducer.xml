@@ -20,4 +20,5 @@
   <message key="fontSubstituted">Font "{requested}" not found. Substituting with "{effective}".</message>
   <message key="fontLoadingErrorAtAutoDetection">Unable to load font file: {fontURL}.[ Reason: {e}]</message>
   <message key="glyphNotAvailable">Glyph "{ch}" (0x{ch,hex}[, {ch,glyph-name}]) not available in font "{fontName}".</message>
+  <message key="fontDirectoryNotFound">'{dir}' does not exist or is not a directory.</message>
 </catalogue>

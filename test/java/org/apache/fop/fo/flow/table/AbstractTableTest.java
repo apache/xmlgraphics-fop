@@ -28,13 +28,13 @@ import org.apache.fop.fotreetest.FOTreeUnitTester;
 /**
  * Superclass for testcases related to tables, factoring the common stuff.
  */
-abstract class AbstractTableTestCase extends FOTreeUnitTester {
+abstract class AbstractTableTest extends FOTreeUnitTester {
 
     private FOTreeUnitTester.FOEventHandlerFactory tableHandlerFactory;
 
     private TableHandler tableHandler;
 
-    public AbstractTableTestCase() throws Exception {
+    public AbstractTableTest() throws Exception {
         super();
         tableHandlerFactory = new FOEventHandlerFactory() {
             public FOEventHandler createFOEventHandler(FOUserAgent foUserAgent) {

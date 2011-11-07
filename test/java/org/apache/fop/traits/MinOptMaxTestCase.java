@@ -27,9 +27,9 @@ import static org.junit.Assert.fail;
 import org.junit.Test;
 
 /**
- * Tests the {@link MinOptMaxTest} class.
+ * Tests the {@link MinOptMax} class.
  */
-public class MinOptMaxTest {
+public class MinOptMaxTestCase {
 
     /**
      * Tests that the constant <code>MinOptMax.ZERO</code> is really zero.

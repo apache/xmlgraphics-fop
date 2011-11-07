@@ -28,8 +28,8 @@ import org.junit.Test;
 /**
  * Tests the {@linkplain AbstractAFPObject} class.
  */
-public abstract class AbstractNamedAFPObjectTestCase<S extends  AbstractNamedAFPObject>
-        extends AbstractAFPObjectTestCase<S> {
+public abstract class AbstractNamedAFPObjectTest<S extends  AbstractNamedAFPObject>
+        extends AbstractAFPObjectTest<S> {
     @Test
     public void testCopySF() {
 

@@ -33,7 +33,7 @@ import org.junit.Test;
  * Tests that RowGroupBuilder returns, for each part of a table, the expected number of
  * row-groups with the expected number or rows in each.
  */
-public class RowGroupBuilderTestCase extends AbstractTableTestCase {
+public class RowGroupBuilderTestCase extends AbstractTableTest {
 
     public RowGroupBuilderTestCase() throws Exception {
         super();

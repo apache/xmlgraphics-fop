@@ -29,7 +29,7 @@ import org.junit.Test;
 /**
  * Tests the disables-srgb-colorspace setting.
  */
-public class PDFsRGBSettingsTestCase extends BasePDFTestCase {
+public class PDFsRGBSettingsTestCase extends BasePDFTest {
 
     private File foBaseDir = new File("test/xml/pdf-a");
 

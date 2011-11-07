@@ -19,13 +19,13 @@
 
 package org.apache.fop.area.inline;
 
-import org.apache.fop.area.ViewportTestCase;
+import org.apache.fop.area.ViewportTest;
 import org.junit.Test;
 
 /**
  * Tests the {@linkplain InlineViewport} class.
  */
-public class InlineViewportTestCase extends ViewportTestCase {
+public class InlineViewportTestCase extends ViewportTest {
 
     @Test
     public void testNonClip() throws Exception {

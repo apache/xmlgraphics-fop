@@ -33,7 +33,7 @@ import org.junit.Test;
 /**
  * Test {@link CharactersetEncoder}
  */
-public class CharactersetEncoderTest {
+public class CharactersetEncoderTestCase {
     private CharactersetEncoder singlebyteEncoder;
     private CharactersetEncoder doublebyteEncoder;
 

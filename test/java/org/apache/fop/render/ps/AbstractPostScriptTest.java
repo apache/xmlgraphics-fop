@@ -33,12 +33,12 @@ import org.apache.xmlgraphics.ps.dsc.events.DSCEvent;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
-import org.apache.fop.render.AbstractRenderingTestCase;
+import org.apache.fop.render.AbstractRenderingTest;
 
 /**
  * Abstract base class for PostScript verification tests.
  */
-public abstract class AbstractPostScriptTestCase extends AbstractRenderingTestCase {
+public abstract class AbstractPostScriptTest extends AbstractRenderingTest {
 
     /**
      * Renders a test file.

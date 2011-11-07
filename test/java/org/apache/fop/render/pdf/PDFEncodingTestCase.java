@@ -31,7 +31,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 /** Test that characters are correctly encoded in a generated PDF file */
-public class PDFEncodingTestCase extends BasePDFTestCase {
+public class PDFEncodingTestCase extends BasePDFTest {
     private File foBaseDir = new File("test/xml/pdf-encoding");
     private final boolean dumpPDF = Boolean.getBoolean("PDFEncodingTestCase.dumpPDF");
     static final String INPUT_FILE = "test/xml/pdf-encoding/pdf-encoding-test.xconf";

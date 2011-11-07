@@ -22,7 +22,7 @@ package org.apache.fop.config;
 /**
  * this font has a malformed embed-url
  */
-public class FontEmbedUrlMalformedTestCase extends BaseDestructiveUserConfigTestCase {
+public class FontEmbedUrlMalformedTestCase extends BaseDestructiveUserConfigTest {
 
     @Override
     public String getUserConfigFilename() {

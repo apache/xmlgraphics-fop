@@ -51,7 +51,7 @@ import org.apache.fop.util.ConsoleEventListenerForTests;
 /**
  * Abstract base class for intermediate format tests.
  */
-public abstract class AbstractIntermediateTestCase {
+public abstract class AbstractIntermediateTest {
 
     /** the test environment */
     protected static TestAssistant testAssistant = new TestAssistant();
@@ -76,7 +76,7 @@ public abstract class AbstractIntermediateTestCase {
      * @param testFile the test file to run
      * @throws IOException if an I/O error occurs while loading the test case
      */
-    public AbstractIntermediateTestCase(File testFile)
+    public AbstractIntermediateTest(File testFile)
             throws IOException {
         this.testFile = testFile;
     }

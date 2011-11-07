@@ -60,6 +60,10 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Code" dev="VH" type="add" fixes-bug="52136" due-to="Mehdi Houshmand">
+        Added to build file JUnit target that uses a regex to run all of the test cases. This 
+        reduces the risk that some of them are omitted when building FOP.
+      </action>
       <action context="Code" dev="PH" type="add" fixes-bug="52089" due-to="JM, Mehdi Houshmand">
         Allow JPEG images to be embedded in an AFP document as is, without being decoded and 
         encoded.

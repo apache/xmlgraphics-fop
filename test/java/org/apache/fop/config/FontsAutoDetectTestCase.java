@@ -19,7 +19,7 @@
 
 package org.apache.fop.config;
 
-public class FontsAutoDetectTestCase extends BaseConstructiveUserConfigTestCase {
+public class FontsAutoDetectTestCase extends BaseConstructiveUserConfigTest {
 
     @Override
     public String getUserConfigFilename() {

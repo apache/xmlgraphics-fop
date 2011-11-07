@@ -49,7 +49,7 @@ import org.apache.fop.util.ConsoleEventListenerForTests;
  * Test driver class for FO tree tests.
  */
 @RunWith(Parameterized.class)
-public class FOTreeTester {
+public class FOTreeTestCase {
 
     @BeforeClass
     public static void registerElementListObservers() {
@@ -84,7 +84,7 @@ public class FOTreeTester {
      *
      * @param testFile the FO file to test
      */
-    public FOTreeTester(File testFile) {
+    public FOTreeTestCase(File testFile) {
         fopFactory.addElementMapping(new TestElementMapping());
         this.testFile = testFile;
     }

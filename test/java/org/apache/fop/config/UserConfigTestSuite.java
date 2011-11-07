@@ -34,7 +34,6 @@ import org.junit.runners.Suite.SuiteClasses;
     FontMetricsUrlBadTestCase.class,
     FontEmbedUrlBadTestCase.class,
     FontMetricsUrlMalformedTestCase.class,
-    FontMetricsUrlMalformedTestCase.class,
     FontsDirectoryRecursiveTestCase.class,
     FontsAutoDetectTestCase.class,
     FontsSubstitutionTestCase.class,

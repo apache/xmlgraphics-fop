@@ -41,7 +41,7 @@ import org.apache.fop.apps.MimeConstants;
 /**
  * Abstract base class for rendering (output) verification tests.
  */
-public abstract class AbstractRenderingTestCase {
+public abstract class AbstractRenderingTest {
 
     private static final Map<String, String> MIME_MAP = new java.util.HashMap<String, String>();
 

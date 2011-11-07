@@ -70,7 +70,7 @@ import org.apache.fop.util.DelegatingContentHandler;
  * files.
  */
 @RunWith(Parameterized.class)
-public class LayoutEngineTester {
+public class LayoutEngineTestCase {
     private static File areaTreeBackupDir;
 
     @BeforeClass
@@ -108,7 +108,7 @@ public class LayoutEngineTester {
      *
      * @param testFile the test file
      */
-    public LayoutEngineTester(File testFile) {
+    public LayoutEngineTestCase(File testFile) {
         this.ifTester = new IFTester(tfactory, areaTreeBackupDir);
         this.testFile = testFile;
     }

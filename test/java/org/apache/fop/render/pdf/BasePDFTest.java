@@ -30,7 +30,7 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.apache.fop.AbstractFOPTestCase;
+import org.apache.fop.AbstractFOPTest;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
@@ -40,7 +40,7 @@ import org.xml.sax.SAXException;
 /**
  * Base class for automated tests that create PDF files
  */
-public class BasePDFTestCase extends AbstractFOPTestCase {
+public class BasePDFTest extends AbstractFOPTest {
 
     /** the FopFactory */
     protected final FopFactory fopFactory = FopFactory.newInstance();
@@ -51,7 +51,7 @@ public class BasePDFTestCase extends AbstractFOPTestCase {
     /**
      * Main constructor
      */
-    protected BasePDFTestCase() {
+    protected BasePDFTest() {
         init();
     }
 

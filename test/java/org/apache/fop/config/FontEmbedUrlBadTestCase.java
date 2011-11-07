@@ -22,7 +22,7 @@ package org.apache.fop.config;
 /**
  * this font has an embed-url that does not exist on filesystem.
  */
-public class FontEmbedUrlBadTestCase extends BaseDestructiveUserConfigTestCase {
+public class FontEmbedUrlBadTestCase extends BaseDestructiveUserConfigTest {
 
     @Override
     public String getUserConfigFilename() {

@@ -30,7 +30,7 @@ import org.junit.Test;
 /**
  * Tests PDF/A-1 functionality.
  */
-public class PDFAConformanceTestCase extends BasePDFTestCase {
+public class PDFAConformanceTestCase extends BasePDFTest {
 
     private File foBaseDir = new File("test/xml/pdf-a");
     private boolean dumpPDF = Boolean.getBoolean("PDFAConformanceTestCase.dumpPDF");

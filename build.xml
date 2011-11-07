@@ -179,8 +179,10 @@ list of possible build targets.
   <property name="build.classes.dir" value="${build.dir}/classes"/>
   <property name="build.sandbox-classes.dir" value="${build.dir}/sandbox-classes"/>
   <property name="build.codegen-classes.dir" value="${build.dir}/codegen-classes"/>
+  <property name="build.codegen.fonts.dir" value="${build.gensrc.dir}/org/apache/fop/fonts/"/>
   <property name="build.javadocs.dir" value="${build.dir}/javadocs"/>
   <property name="build.examples.dir" value="${build.dir}/examples"/>
+  <property name="build.unit.tests.dir" value="${build.dir}/test-classes"/>
   <property name="build.tests.dir" value="${build.dir}/tests"/>
   <property name="build.viewer.resources.dir" value="${build.classes.dir}/org/apache/fop/render/awt/viewer/resources"/>
   <property name="build.viewer.images.dir" value="${build.classes.dir}/org/apache/fop/render/awt/viewer/images"/>
@@ -283,57 +285,22 @@ list of possible build targets.
 <!-- =================================================================== -->
 <!-- Generate the source code                                            -->
 <!-- =================================================================== -->
+  <macrodef name="create-font">
+    <attribute name="name"/>
+    <sequential>
+      <xslt in="${src.codegen.fonts.dir}/@{name}.xml" style="${src.codegen.fonts.dir}/font-file.xsl" out="${build.codegen.fonts.dir}/base14/@{name}.java"/>
+    </sequential>
+  </macrodef>
   <target name="codegen" depends="init" description="Generates the java files from the xml resources">
     <echo message="Generating the java files from xml resources"/>
     <mkdir dir="${build.gensrc.dir}"/>
     <mkdir dir="${build.gensrc.dir}/org/apache/fop/fonts/base14"/>
-    <xslt in="${src.codegen.fonts.dir}/encodings.xml" style="${src.codegen.fonts.dir}/code-point-mapping.xsl" out="${build.gensrc.dir}/org/apache/fop/fonts/CodePointMapping.java"/>
-<!-- Task unrolled because of a bug in Xalan included in some
-         JDK 1.4 releases
-    <xslt basedir="src/codegen" includes="Helvetica*.xml,Times*.xml,Courier*.xml"
-        style="${src.codegen.fonts.dir}/font-file.xsl"
-        destdir="${build.gensrc.dir}/org/apache/fop/fonts/base14" extension=".java">
-        <param name="encoding" expression="WinAnsiEncoding"/>
-    </xslt>
-    -->
-    <xslt in="${src.codegen.fonts.dir}/Courier.xml" style="${src.codegen.fonts.dir}/font-file.xsl" out="${build.gensrc.dir}/org/apache/fop/fonts/base14/Courier.java">
+    <xslt in="${src.codegen.fonts.dir}/encodings.xml" style="${src.codegen.fonts.dir}/code-point-mapping.xsl" out="${build.codegen.fonts.dir}/CodePointMapping.java"/>
+    <xslt basedir="${src.codegen.fonts.dir}" includes="Helvetica*.xml,Times*.xml,Courier*.xml" style="${src.codegen.fonts.dir}/font-file.xsl" destdir="${build.codegen.fonts.dir}/base14/" extension=".java">
       <param name="encoding" expression="WinAnsiEncoding"/>
     </xslt>
-    <xslt in="${src.codegen.fonts.dir}/CourierOblique.xml" style="${src.codegen.fonts.dir}/font-file.xsl" out="${build.gensrc.dir}/org/apache/fop/fonts/base14/CourierOblique.java">
-      <param name="encoding" expression="WinAnsiEncoding"/>
-    </xslt>
-    <xslt in="${src.codegen.fonts.dir}/CourierBold.xml" style="${src.codegen.fonts.dir}/font-file.xsl" out="${build.gensrc.dir}/org/apache/fop/fonts/base14/CourierBold.java">
-      <param name="encoding" expression="WinAnsiEncoding"/>
-    </xslt>
-    <xslt in="${src.codegen.fonts.dir}/CourierBoldOblique.xml" style="${src.codegen.fonts.dir}/font-file.xsl" out="${build.gensrc.dir}/org/apache/fop/fonts/base14/CourierBoldOblique.java">
-      <param name="encoding" expression="WinAnsiEncoding"/>
-    </xslt>
-    <xslt in="${src.codegen.fonts.dir}/Helvetica.xml" style="${src.codegen.fonts.dir}/font-file.xsl" destdir="${build.gensrc.dir}/org/apache/fop/fonts/base14" out="${build.gensrc.dir}/org/apache/fop/fonts/base14/Helvetica.java">
-      <param name="encoding" expression="WinAnsiEncoding"/>
-    </xslt>
-    <xslt in="${src.codegen.fonts.dir}/HelveticaBold.xml" style="${src.codegen.fonts.dir}/font-file.xsl" out="${build.gensrc.dir}/org/apache/fop/fonts/base14/HelveticaBold.java">
-      <param name="encoding" expression="WinAnsiEncoding"/>
-    </xslt>
-    <xslt in="${src.codegen.fonts.dir}/HelveticaOblique.xml" style="${src.codegen.fonts.dir}/font-file.xsl" out="${build.gensrc.dir}/org/apache/fop/fonts/base14/HelveticaOblique.java">
-      <param name="encoding" expression="WinAnsiEncoding"/>
-    </xslt>
-    <xslt in="${src.codegen.fonts.dir}/HelveticaBoldOblique.xml" style="${src.codegen.fonts.dir}/font-file.xsl" out="${build.gensrc.dir}/org/apache/fop/fonts/base14/HelveticaBoldOblique.java">
-      <param name="encoding" expression="WinAnsiEncoding"/>
-    </xslt>
-    <xslt in="${src.codegen.fonts.dir}/TimesRoman.xml" style="${src.codegen.fonts.dir}/font-file.xsl" out="${build.gensrc.dir}/org/apache/fop/fonts/base14/TimesRoman.java">
-      <param name="encoding" expression="WinAnsiEncoding"/>
-    </xslt>
-    <xslt in="${src.codegen.fonts.dir}/TimesItalic.xml" style="${src.codegen.fonts.dir}/font-file.xsl" out="${build.gensrc.dir}/org/apache/fop/fonts/base14/TimesItalic.java">
-      <param name="encoding" expression="WinAnsiEncoding"/>
-    </xslt>
-    <xslt in="${src.codegen.fonts.dir}/TimesBold.xml" style="${src.codegen.fonts.dir}/font-file.xsl" out="${build.gensrc.dir}/org/apache/fop/fonts/base14/TimesBold.java">
-      <param name="encoding" expression="WinAnsiEncoding"/>
-    </xslt>
-    <xslt in="${src.codegen.fonts.dir}/TimesBoldItalic.xml" style="${src.codegen.fonts.dir}/font-file.xsl" out="${build.gensrc.dir}/org/apache/fop/fonts/base14/TimesBoldItalic.java">
-      <param name="encoding" expression="WinAnsiEncoding"/>
-    </xslt>
-    <xslt in="${src.codegen.fonts.dir}/Symbol.xml" style="${src.codegen.fonts.dir}/font-file.xsl" out="${build.gensrc.dir}/org/apache/fop/fonts/base14/Symbol.java"/>
-    <xslt in="${src.codegen.fonts.dir}/ZapfDingbats.xml" style="${src.codegen.fonts.dir}/font-file.xsl" out="${build.gensrc.dir}/org/apache/fop/fonts/base14/ZapfDingbats.java"/>
+    <create-font name="Symbol"/>
+    <create-font name="ZapfDingbats"/>
   </target>
 <!-- =================================================================== -->
 <!-- Compiles the source directory                                       -->
@@ -703,10 +670,10 @@ list of possible build targets.
     </patternset>
   </target>
   <target name="junit-compile-java" depends="package, transcoder-pkg, junit-with-xmlunit, junit-without-xmlunit" if="junit.present">
-    <mkdir dir="${build.dir}/test-classes"/>
+    <mkdir dir="${build.unit.tests.dir}"/>
     <mkdir dir="${build.dir}/test-gensrc"/>
     <mkdir dir="${junit.reports.dir}"/>
-    <javac destdir="${build.dir}/test-classes" includeAntRuntime="true">
+    <javac destdir="${build.unit.tests.dir}" includeAntRuntime="true">
       <src path="${test.dir}/java"/>
       <patternset refid="test-sources"/>
       <classpath>
@@ -716,7 +683,7 @@ list of possible build targets.
         </fileset>
       </classpath>
     </javac>
-    <copy todir="${build.dir}/test-classes">
+    <copy todir="${build.unit.tests.dir}">
       <fileset dir="${test.dir}/java">
         <include name="**/*.xsl"/>
       </fileset>
@@ -729,7 +696,7 @@ list of possible build targets.
         <include name="**/*.java"/>
       </fileset>
     </eventResourceGenerator>
-    <copy todir="${build.dir}/test-classes">
+    <copy todir="${build.unit.tests.dir}">
       <fileset dir="${test.dir}/java">
         <include name="META-INF/**"/>
         <include name="**/*.xml"/>
@@ -744,7 +711,7 @@ list of possible build targets.
   <target name="junit-compile" depends="junit-compile-java, junit-compile-copy-resources" description="Compiles FOP's JUnit tests" if="junit.present"/>
   <target name="junit-transcoder" depends="junit-compile" description="Runs FOP's JUnit transcoder tests" if="junit.present">
     <path id="transcoder-classpath">
-      <pathelement location="${build.dir}/test-classes"/>
+      <pathelement location="${build.unit.tests.dir}"/>
       <path refid="libs-build-classpath"/>
       <fileset dir="${build.dir}">
         <include name="fop-transcoder.jar"/>
@@ -759,7 +726,7 @@ list of possible build targets.
          JAR needs to be updated.
     -->
     <path id="transcoder-all-classpath">
-      <pathelement location="${build.dir}/test-classes"/>
+      <pathelement location="${build.unit.tests.dir}"/>
       <path refid="libs-build-classpath"/>
       <fileset dir="build">
         <include name="fop-transcoder-allinone.jar"/>
@@ -791,7 +758,7 @@ list of possible build targets.
     <echo message="${hyphenation.message}"/>
   </target>
   <path id="standard-junit-classpath">
-    <pathelement location="${build.dir}/test-classes"/>
+    <pathelement location="${build.unit.tests.dir}"/>
     <path refid="libs-tools-build-classpath"/>
     <pathelement location="${build.dir}/fop.jar"/>
   </path>
@@ -816,6 +783,20 @@ list of possible build targets.
       </junit>
     </sequential>
   </macrodef>
+  <target name="junit-all" depends="junit-compile, junit-transcoder, junit-layout-hyphenation, setup-xml-schema" description="Runs FOP's JUnit basic tests" if="junit.present">
+    <junit dir="${basedir}" haltonfailure="yes" fork="${junit.fork}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure">
+      <sysproperty key="jawa.awt.headless" value="true"/>
+      <formatter type="brief" usefile="false"/>
+      <formatter type="plain" usefile="true"/>
+      <formatter type="xml" usefile="true"/>
+      <classpath>
+        <path refid="standard-junit-classpath"/>
+      </classpath>
+      <batchtest todir="${junit.reports.dir}">
+        <fileset dir="${build.unit.tests.dir}" includes="**/*TestCase.class"/>
+      </batchtest>
+    </junit>
+  </target>
   <target name="junit-basic" depends="junit-compile" description="Runs FOP's JUnit basic tests" if="junit.present">
     <junit-run title="Standard test suite" testsuite="org.apache.fop.StandardTestSuite" outfile="TEST-standard-tests-suite"/>
   </target>
@@ -861,17 +842,16 @@ list of possible build targets.
       outfile="TEST-intermediate-format"/>
   </target>
   <target name="junit-events" depends="junit-compile" description="Runs FOP's event JUnit tests" if="junit.present">
-    <junit-run title="event" basedir="test/events" testsuite="org.apache.fop.events.EventProcessingTestCase" outfile="TEST-events"/>
+    <junit-run title="event" testsuite="org.apache.fop.events.EventProcessingTestCase" outfile="TEST-events"/>
   </target>
   <target name="junit-text-linebreak" depends="junit-compile" description="Runs FOP's JUnit unicode linebreak tests" if="junit.present">
-    <junit-run title="Unicode UAX#14 support" testsuite="org.apache.fop.text.linebreak.LineBreakStatusTest" outfile="TEST-linebreak"/>
+    <junit-run title="Unicode UAX#14 support" testsuite="org.apache.fop.text.linebreak.LineBreakStatusTestCase" outfile="TEST-linebreak"/>
   </target>
   <target name="junit-render-pdf" depends="junit-compile">
     <junit-run title="render-pdf" testsuite="org.apache.fop.render.pdf.RenderPDFTestSuite" outfile="TEST-render-pdf"/>
   </target>
   <target name="junit-reduced" depends="junit-userconfig, junit-basic, junit-transcoder, junit-text-linebreak, junit-fotree, junit-render-pdf"/>
-  <target name="junit-full" depends="junit-reduced, junit-layout, junit-area-tree-xml-format, junit-intermediate-format"/>
-  <target name="junit" depends="junit-full" description="Runs all of FOP's JUnit tests" if="junit.present">
+  <target name="junit" depends="junit-all" description="Runs all of FOP's JUnit tests" if="junit.present">
     <fail><condition><or><isset property="fop.junit.error"/><isset property="fop.junit.failure"/><not><isset property="hyphenation.present"/></not></or></condition>
 NOTE:
 **************************************************************************
@@ -1353,7 +1333,7 @@ NOTE:
 <!-- Special target for Gump                                             -->
 <!-- =================================================================== -->
   <target name="gump" depends="package,transcoder-pkg"/>
-  <target name="gump-test" depends="junit-full">
+  <target name="gump-test" depends="junit-all">
     <fail>
       <condition>
         <or>

@@ -22,7 +22,10 @@ package org.apache.fop.render;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import org.junit.Test;
+
 import org.apache.commons.io.output.NullOutputStream;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FopFactory;
@@ -34,12 +37,11 @@ import org.apache.fop.render.intermediate.IFDocumentHandler;
 import org.apache.fop.render.intermediate.IFRenderer;
 import org.apache.fop.render.pdf.PDFDocumentHandler;
 import org.apache.fop.render.rtf.RTFHandler;
-import org.junit.Test;
 
 /**
  * Tests for {@link RendererFactory}.
  */
-public class RendererFactoryTest {
+public class RendererFactoryTestCase {
 
     @Test
     public void testDocumentHandlerLevel() throws Exception {
@@ -51,7 +53,6 @@ public class RendererFactoryTest {
 
         ua = fopFactory.newFOUserAgent();
         handler = factory.createDocumentHandler(ua, MimeConstants.MIME_PDF);
-        assertTrue(handler instanceof PDFDocumentHandler);
 
         ua = fopFactory.newFOUserAgent();
         overrideHandler = new PDFDocumentHandler();

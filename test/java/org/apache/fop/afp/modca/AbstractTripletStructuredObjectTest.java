@@ -30,18 +30,20 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.junit.Before;
+import org.junit.Test;
+
 import org.apache.fop.afp.modca.triplets.AbstractTriplet;
 import org.apache.fop.afp.modca.triplets.AttributeQualifierTriplet;
 import org.apache.fop.afp.modca.triplets.CommentTriplet;
 import org.apache.fop.afp.modca.triplets.ObjectAreaSizeTriplet;
 import org.apache.fop.afp.modca.triplets.Triplet;
-import org.junit.Before;
 
 /**
  * Test {@link AbstractTripletStructuredObject}
  */
-public abstract class AbstractTripletStructuredObjectTestCase<S extends AbstractTripletStructuredObject>
-        extends AbstractStructuredObjectTestCase<AbstractTripletStructuredObject> {
+public class AbstractTripletStructuredObjectTest<S extends AbstractTripletStructuredObject>
+        extends AbstractStructuredObjectTest<AbstractTripletStructuredObject> {
 
     private static final List<AbstractTriplet> TRIPLETS;
 
@@ -136,6 +138,7 @@ public abstract class AbstractTripletStructuredObjectTestCase<S extends Abstract
     /**
      * Test addTriplets() - ensure all triplets are added.
      */
+    @Test
     public void testAddTriplets() {
         // Tested on empty object
         List<AbstractTriplet> expectedList = TRIPLETS;

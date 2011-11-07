@@ -61,4 +61,9 @@ public class FontEventAdapter implements FontEventListener {
         getEventProducer().glyphNotAvailable(source, ch, fontName);
     }
 
+    /** {@inheritDoc} */
+    public void fontDirectoryNotFound(Object source, String dir) {
+        getEventProducer().fontDirectoryNotFound(source, dir);
+    }
+
 }

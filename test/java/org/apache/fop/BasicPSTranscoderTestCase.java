@@ -26,7 +26,7 @@ import org.apache.fop.render.ps.PSTranscoder;
  * Basic runtime test for the PS transcoder. It is used to verify that
  * nothing obvious is broken after compiling.
  */
-public class BasicPSTranscoderTestCase extends AbstractBasicTranscoderTestCase {
+public class BasicPSTranscoderTestCase extends AbstractBasicTranscoderTest {
 
     @Override
     protected Transcoder createTranscoder() {

@@ -17,31 +17,32 @@
 
 /* $Id$ */
 
-package org.apache.fop.render.afp;
+package org.apache.fop.config;
 
-import java.io.File;
+import static org.junit.Assert.fail;
 
-import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.apps.MimeConstants;
-import org.apache.fop.render.AbstractRenderingTestCase;
+import org.apache.fop.apps.FOPException;
+import org.junit.Test;
 
 /**
- * Abstract base class for AFP verification tests.
+ * Super class for several user configuration failure cases.
  */
-abstract class AbstractAFPTestCase extends AbstractRenderingTestCase {
+public abstract class BaseDestructiveUserConfigTest extends BaseUserConfigTest {
 
     /**
-     * Renders a test file.
-     * @param ua the user agent (with override set!)
-     * @param resourceName the resource name for the FO file
-     * @param suffix a suffix for the output filename
-     * @return the output file
-     * @throws Exception if an error occurs
+     * Test the user configuration failure.
      */
-    protected File renderFile(FOUserAgent ua, String resourceName, String suffix)
-                throws Exception {
-        return renderFile(ua, resourceName, suffix, MimeConstants.MIME_AFP);
+    @Test
+    public void testUserConfig() {
+        try {
+            initConfig();
+            convertFO();
+            fail( getName() + ": Expected Configuration Exception" );
+        } catch (FOPException e) {
+            // this *should* happen!
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail( getName() + ": Expected FOPException but got: " + e.getMessage() );
+        }
     }
-
-
 }

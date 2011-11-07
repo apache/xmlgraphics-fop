@@ -34,7 +34,7 @@ import org.junit.Test;
  * Basic runtime test for FOP's transcoders. It is used to verify that
  * nothing obvious is broken after compiling.
  */
-public abstract class AbstractBasicTranscoderTestCase extends AbstractFOPTestCase {
+public abstract class AbstractBasicTranscoderTest extends AbstractFOPTest {
 
     /**
      * Creates the transcoder to test.

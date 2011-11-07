@@ -22,7 +22,7 @@ package org.apache.fop.config;
 /**
  * tests font directory on system
  */
-public class FontsDirectoryRecursiveTestCase extends BaseConstructiveUserConfigTestCase {
+public class FontsDirectoryRecursiveTestCase extends BaseConstructiveUserConfigTest {
 
     @Override
     protected String getUserConfigFilename() {

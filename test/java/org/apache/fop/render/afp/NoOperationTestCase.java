@@ -37,7 +37,7 @@ import org.junit.Test;
 /**
  * Tests generation of afp:no-operation (NOPs).
  */
-public class NoOperationTestCase extends AbstractAFPTestCase {
+public class NoOperationTestCase extends AbstractAFPTest {
 
     /**
      * Tests afp:no-operation.

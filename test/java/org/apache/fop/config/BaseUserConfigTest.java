@@ -29,23 +29,23 @@ import org.apache.avalon.framework.configuration.DefaultConfigurationBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.render.pdf.BasePDFTestCase;
+import org.apache.fop.render.pdf.BasePDFTest;
 import org.xml.sax.SAXException;
 
 /**
  * Basic runtime test for FOP's font configuration. It is used to verify that
  * nothing obvious is broken after compiling.
  */
-public abstract class BaseUserConfigTestCase extends BasePDFTestCase {
+public abstract class BaseUserConfigTest extends BasePDFTest {
 
     protected DefaultConfigurationBuilder cfgBuilder = new DefaultConfigurationBuilder();
 
     /** logging instance */
-    protected Log log = LogFactory.getLog(BaseUserConfigTestCase.class);
+    protected Log log = LogFactory.getLog(BaseUserConfigTest.class);
 
 
     /**
-     * @see org.apache.fop.render.pdf.BasePDFTestCase#init()
+     * @see org.apache.fop.render.pdf.BasePDFTest#init()
      */
     protected void init() {
         // do nothing
