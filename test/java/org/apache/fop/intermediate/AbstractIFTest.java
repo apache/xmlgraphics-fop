@@ -48,7 +48,7 @@ import org.apache.fop.render.intermediate.IFSerializer;
 /**
  * A common super-class for intermediate format test cases.
  */
-abstract class AbstractIFTestCase extends AbstractIntermediateTestCase {
+abstract class AbstractIFTest extends AbstractIntermediateTest {
 
     private static final Schema IF_SCHEMA;
 
@@ -89,7 +89,7 @@ abstract class AbstractIFTestCase extends AbstractIntermediateTestCase {
      * @param testFile the file containing the document and the tests
      * @throws IOException if an I/O error occurs while loading the test case
      */
-    public AbstractIFTestCase(File testFile) throws IOException {
+    public AbstractIFTest(File testFile) throws IOException {
         super(testFile);
     }
 

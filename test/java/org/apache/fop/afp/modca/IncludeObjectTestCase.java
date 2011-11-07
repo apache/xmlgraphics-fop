@@ -32,7 +32,7 @@ import org.junit.Test;
 /**
  * Test {@link IncludeObject}
  */
-public class IncludeObjectTestCase extends AbstractNamedAFPObjectTestCase<IncludeObject> {
+public class IncludeObjectTestCase extends AbstractNamedAFPObjectTest<IncludeObject> {
 
     @Before
     public void setUp() throws Exception {

@@ -22,7 +22,7 @@ package org.apache.fop.config;
 /**
  * this font is without a metrics-url or an embed-url
  */
-public class FontAttributesMissingTestCase extends BaseDestructiveUserConfigTestCase {
+public class FontAttributesMissingTestCase extends BaseDestructiveUserConfigTest {
 
     @Override
     public String getUserConfigFilename() {

@@ -28,7 +28,7 @@ import org.junit.Test;
  *
  *
  */
-public class LineBreakUtilsTest {
+public class LineBreakUtilsTestCase {
 
     @Test
     public void testLineBreakProperty() {
@@ -61,7 +61,7 @@ public class LineBreakUtilsTest {
             LineBreakUtils.getLineBreakPairProperty(
                 LineBreakUtils.LINE_BREAK_PROPERTY_AL,
                 LineBreakUtils.LINE_BREAK_PROPERTY_OP),
-            LineBreakUtils.DIRECT_BREAK);
+            LineBreakUtils.INDIRECT_BREAK);
         assertEquals(
             LineBreakUtils.getLineBreakPairProperty(
                 LineBreakUtils.LINE_BREAK_PROPERTY_LF,

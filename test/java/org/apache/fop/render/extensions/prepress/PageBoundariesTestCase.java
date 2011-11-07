@@ -31,7 +31,7 @@ import org.junit.Test;
 /**
  * Tests for the fox:bleed, fox:crop-offset, fox:crop-box extension properties.
  */
-public class PageBoundariesTest {
+public class PageBoundariesTestCase {
 
     private static final Dimension TEST_AREA_SIZE = new Dimension(20000, 15000);
 

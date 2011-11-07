@@ -28,7 +28,7 @@ import org.apache.fop.fo.FObj;
 import org.junit.Test;
 
 
-public class TableColumnColumnNumberTestCase extends AbstractTableTestCase {
+public class TableColumnColumnNumberTestCase extends AbstractTableTest {
 
     /**
      * A percentBaseContext that mimics the behaviour of TableLM for computing the widths

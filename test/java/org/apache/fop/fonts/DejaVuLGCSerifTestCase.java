@@ -17,27 +17,41 @@
 
 /* $Id$ */
 
-package org.apache.fop.area;
+package org.apache.fop.fonts;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
-import java.awt.Rectangle;
+import java.io.File;
+
+import org.junit.Before;
+import org.junit.Test;
 
 /**
- * Tests implementations of the {@linkplain Viewport} interface.
+ *
  */
-public abstract class ViewportTestCase {
+public class DejaVuLGCSerifTestCase {
 
-    protected void checkNonClip(Viewport v) throws Exception {
-        assertFalse(v.hasClip());
-        assertNull(v.getClipRectangle());
+    private FontResolver fontResolver = FontManager.createMinimalFontResolver();
+    private CustomFont font;
+
+    /**
+     * sets up the testcase by loading the DejaVu Font.
+     *
+     * @throws Exception
+     *             if the test fails.
+     */
+    @Before
+    public void setUp() throws Exception {
+        File file = new File("test/resources/fonts/DejaVuLGCSerif.ttf");
+        font = FontLoader.loadFont(file, "", true, EncodingMode.AUTO,
+                fontResolver);
     }
 
-    protected void checkClip(Viewport v, int expectedWidth, int expectedHeight) throws Exception {
-        assertTrue(v.hasClip());
-        assertEquals(new Rectangle(0, 0, expectedWidth, expectedHeight), v.getClipRectangle());
+    /**
+     * Simple test to see if font name was detected correctly.
+     */
+    @Test
+    public void testFontName() {
+        assertEquals("DejaVuLGCSerif", font.getFontName());
     }
 }

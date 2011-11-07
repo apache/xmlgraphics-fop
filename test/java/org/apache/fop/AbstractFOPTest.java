@@ -24,19 +24,14 @@ import java.io.File;
 /**
  * Abstract base test class for FOP's tests.
  */
-public abstract class AbstractFOPTestCase {
+public abstract class AbstractFOPTest {
 
     /**
      * Returns the base directory to use for the tests.
      * @return the base directory
      */
     protected static File getBaseDir() {
-        String basedir = System.getProperty("basedir");
-        if (basedir != null) {
-            return new File(basedir);
-        } else {
-            return new File(".");
-        }
+        return new File(".");
     }
 
 }

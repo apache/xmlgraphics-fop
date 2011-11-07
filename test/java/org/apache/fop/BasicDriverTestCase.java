@@ -42,7 +42,7 @@ import org.junit.Test;
  * Basic runtime test for the old Fop class. It is used to verify that
  * nothing obvious is broken after compiling.
  */
-public class BasicDriverTestCase extends AbstractFOPTestCase {
+public class BasicDriverTestCase extends AbstractFOPTest {
 
     private FopFactory fopFactory = FopFactory.newInstance();
 

@@ -24,7 +24,7 @@ import org.junit.Test;
 /**
  * Tests the {@linkplain BlockViewport} class.
  */
-public class BlockViewportTestCase extends ViewportTestCase {
+public class BlockViewportTestCase extends ViewportTest {
 
     @Test
     public void testNonClip() throws Exception {

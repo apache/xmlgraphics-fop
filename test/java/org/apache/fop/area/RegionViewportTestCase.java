@@ -27,7 +27,7 @@ import org.junit.Test;
 /**
  * Tests the {@linkplain RegionViewport} class.
  */
-public class RegionViewportTestCase extends ViewportTestCase {
+public class RegionViewportTestCase extends ViewportTest {
 
     private RegionViewport createRegionViewport(int x, int y, int ipd, int bpd) {
         Rectangle2D v = new Rectangle(x, y, ipd, bpd);

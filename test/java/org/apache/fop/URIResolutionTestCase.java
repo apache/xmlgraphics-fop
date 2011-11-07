@@ -56,7 +56,7 @@ import org.w3c.dom.Document;
 /**
  * Tests URI resolution facilities.
  */
-public class URIResolutionTestCase extends AbstractFOPTestCase {
+public class URIResolutionTestCase extends AbstractFOPTest {
 
     // configure fopFactory as desired
     private FopFactory fopFactory = FopFactory.newInstance();

@@ -27,6 +27,6 @@ import org.junit.runners.Suite.SuiteClasses;
  * JUnit test suit for running layout engine test under JUnit control.
  */
 @RunWith(Suite.class)
-@SuiteClasses({ LayoutEngineTester.class })
+@SuiteClasses({ LayoutEngineTestCase.class })
 public class LayoutEngineTestSuite {
 }

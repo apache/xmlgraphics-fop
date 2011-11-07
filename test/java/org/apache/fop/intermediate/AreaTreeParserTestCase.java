@@ -53,7 +53,7 @@ import org.w3c.dom.Document;
  * Tests the area tree parser.
  */
 @RunWith(Parameterized.class)
-public class AreaTreeParserTestCase extends AbstractIntermediateTestCase {
+public class AreaTreeParserTestCase extends AbstractIntermediateTest {
 
     /**
      * Creates the parameters for this test.

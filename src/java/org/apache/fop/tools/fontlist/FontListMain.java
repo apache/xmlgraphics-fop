@@ -143,6 +143,10 @@ public final class FontListMain {
                 //ignore
             }
 
+            public void fontDirectoryNotFound(Object source, String msg) {
+                //ignore
+            }
+
         };
 
         FontListGenerator listGenerator = new FontListGenerator();

@@ -21,37 +21,21 @@ package org.apache.fop.fonts;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.File;
-
-import org.junit.Before;
 import org.junit.Test;
 
-/**
- *
- */
-public class DejaVuLGCSerifTest {
+public class EncodingModeTestCase {
 
-    private FontResolver fontResolver = FontManager.createMinimalFontResolver();
-    private CustomFont font;
-
-    /**
-     * sets up the testcase by loading the DejaVu Font.
-     * 
-     * @throws Exception
-     *             if the test fails.
-     */
-    @Before
-    public void setUp() throws Exception {
-        File file = new File("test/resources/fonts/DejaVuLGCSerif.ttf");
-        font = FontLoader.loadFont(file, "", true, EncodingMode.AUTO,
-                fontResolver);
+    @Test
+    public void testGetName() {
+        assertEquals("auto", EncodingMode.AUTO.getName());
+        assertEquals("single-byte", EncodingMode.SINGLE_BYTE.getName());
+        assertEquals("cid", EncodingMode.CID.getName());
     }
 
-    /**
-     * Simple test to see if font name was detected correctly.
-     */
     @Test
-    public void testFontName() {
-        assertEquals("DejaVuLGCSerif", font.getFontName());
+    public void testGetValue() {
+        assertEquals(EncodingMode.AUTO, EncodingMode.getEncodingMode("auto"));
+        assertEquals(EncodingMode.SINGLE_BYTE, EncodingMode.getEncodingMode("single-byte"));
+        assertEquals(EncodingMode.CID, EncodingMode.getEncodingMode("cid"));
     }
 }

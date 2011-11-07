@@ -17,28 +17,30 @@
 
 /* $Id$ */
 
-package org.apache.fop.fo.flow.table;
+package org.apache.fop.config;
 
 import static org.junit.Assert.fail;
 
-import org.apache.fop.fo.ValidationException;
+import org.junit.Test;
 
 /**
- * Abstract class for testing erroneous files, checking that a ValidationException is thrown.
+ * Super class of several user config cases.
  */
-abstract class ErrorCheckTestCase extends AbstractTableTestCase {
+public abstract class BaseConstructiveUserConfigTest extends BaseUserConfigTest {
 
-    public ErrorCheckTestCase() throws Exception {
-        super();
-    }
-
-    protected void launchTest(String filename) throws Exception {
+    /**
+     * Test using a standard FOP font
+     * @throws Exception checkstyle wants a comment here, even a silly one
+     */
+    @Test
+    public void testUserConfig() throws Exception {
         try {
-            setUp(filename);
-            fail();
-        } catch (ValidationException e) {
-            // TODO check location
+            initConfig();
+            convertFO();
+        } catch (Exception e) {
+            // this should *not* happen!
+            e.printStackTrace();
+            fail(e.getMessage());
         }
     }
-
 }

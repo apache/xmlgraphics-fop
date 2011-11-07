@@ -46,7 +46,7 @@ import org.apache.fop.render.intermediate.IFSerializer;
  * Tests the intermediate format parser.
  */
 @RunWith(Parameterized.class)
-public class IFParserTestCase extends AbstractIFTestCase {
+public class IFParserTestCase extends AbstractIFTest {
 
     /**
      * Gets the parameters for this test

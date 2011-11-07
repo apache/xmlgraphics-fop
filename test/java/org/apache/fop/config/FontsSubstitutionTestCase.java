@@ -36,7 +36,7 @@ import org.apache.fop.render.PrintRenderer;
  * Tests the font substitution mechanism
  */
 public class FontsSubstitutionTestCase extends
-        BaseConstructiveUserConfigTestCase {
+        BaseConstructiveUserConfigTest {
 
     @Override
     protected byte[] convertFO(File foFile, FOUserAgent ua, boolean dumpPdfFile)

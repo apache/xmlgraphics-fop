@@ -22,7 +22,7 @@ package org.apache.fop.config;
 /**
  * This font base does not exist and a relative font path is used.
  */
-public class FontBaseBadTestCase extends BaseDestructiveUserConfigTestCase {
+public class FontBaseBadTestCase extends BaseDestructiveUserConfigTest {
 
     @Override
     public String getUserConfigFilename() {

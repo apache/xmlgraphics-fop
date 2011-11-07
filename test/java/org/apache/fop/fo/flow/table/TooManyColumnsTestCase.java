@@ -21,7 +21,7 @@ package org.apache.fop.fo.flow.table;
 
 import org.junit.Test;
 
-public class TooManyColumnsTestCase extends ErrorCheckTestCase {
+public class TooManyColumnsTestCase extends ErrorCheckTest {
 
     public TooManyColumnsTestCase() throws Exception {
         super();

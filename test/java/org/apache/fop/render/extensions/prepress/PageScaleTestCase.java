@@ -30,7 +30,7 @@ import org.junit.Test;
 /**
  * Tests for the fox:scale extension property.
  */
-public class PageScaleTest {
+public class PageScaleTestCase {
 
     /** 1 value is used for both x and y. */
     @Test

@@ -27,7 +27,7 @@ import org.junit.Test;
 /**
  * JUnit test case for the LineBreakStatus class
  */
-public class LineBreakStatusTest {
+public class LineBreakStatusTestCase {
 
     /*
      * These symbols are used to indicate the break action returned

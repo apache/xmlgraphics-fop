@@ -36,7 +36,7 @@ import org.junit.Test;
 /**
  * Tests the {@link AbstractAFPObject} class.
  */
-public abstract class AbstractAFPObjectTestCase<S extends AbstractAFPObject> {
+public abstract class AbstractAFPObjectTest<S extends AbstractAFPObject> {
 
     private S sut;
 

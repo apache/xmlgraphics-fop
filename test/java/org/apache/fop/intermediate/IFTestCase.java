@@ -43,7 +43,7 @@ import org.w3c.dom.NodeList;
  * Test case for the IF output.
  */
 @RunWith(Parameterized.class)
-public class IFTestCase extends AbstractIFTestCase {
+public class IFTestCase extends AbstractIFTest {
 
     /**
      * Gets the files for this test.

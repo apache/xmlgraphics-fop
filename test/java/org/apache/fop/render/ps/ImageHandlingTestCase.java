@@ -25,9 +25,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.junit.Test;
+
 import org.apache.commons.io.IOUtils;
-import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.render.intermediate.IFContext;
+
 import org.apache.xmlgraphics.ps.DSCConstants;
 import org.apache.xmlgraphics.ps.PSResource;
 import org.apache.xmlgraphics.ps.dsc.DSCException;
@@ -36,12 +37,14 @@ import org.apache.xmlgraphics.ps.dsc.events.DSCCommentPage;
 import org.apache.xmlgraphics.ps.dsc.events.DSCCommentPages;
 import org.apache.xmlgraphics.ps.dsc.events.DSCCommentTitle;
 import org.apache.xmlgraphics.ps.dsc.events.DSCEvent;
-import org.junit.Test;
+
+import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.render.intermediate.IFContext;
 
 /**
  * Tests the image handling in PostScript output.
  */
-public class ImageHandlingTestCase extends AbstractPostScriptTestCase {
+public class ImageHandlingTestCase extends AbstractPostScriptTest {
 
     /**
      * Tests JPEG handling.
@@ -71,7 +74,8 @@ public class ImageHandlingTestCase extends AbstractPostScriptTestCase {
         ua.setDocumentHandlerOverride(handler);
 
         // Prepare output file
-        File outputFile = renderFile(ua, "ps-jpeg-image.fo", "-if-l" + psUtil.getLanguageLevel());
+        File outputFile = renderFile(ua, "ps-jpeg-image.fo",
+                "-if-l" + psUtil.getLanguageLevel());
         verifyPostScriptFile(outputFile, psUtil.getLanguageLevel());
     }
 

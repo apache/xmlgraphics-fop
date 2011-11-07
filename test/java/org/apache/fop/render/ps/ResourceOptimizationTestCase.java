@@ -31,9 +31,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
 
+import org.junit.Test;
+
 import org.apache.commons.io.IOUtils;
-import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.render.intermediate.IFContext;
+
 import org.apache.xmlgraphics.ps.DSCConstants;
 import org.apache.xmlgraphics.ps.PSResource;
 import org.apache.xmlgraphics.ps.dsc.DSCException;
@@ -49,13 +50,15 @@ import org.apache.xmlgraphics.ps.dsc.events.DSCCommentEndOfFile;
 import org.apache.xmlgraphics.ps.dsc.events.DSCCommentIncludeResource;
 import org.apache.xmlgraphics.ps.dsc.events.DSCCommentPage;
 import org.apache.xmlgraphics.ps.dsc.events.DSCCommentPages;
-import org.junit.Test;
+
+import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.render.intermediate.IFContext;
 
 /**
  * Tests the PostScript resource optimization (selective de-duplication of
  * images that are used multiple times).
  */
-public class ResourceOptimizationTestCase extends AbstractPostScriptTestCase {
+public class ResourceOptimizationTestCase extends AbstractPostScriptTest {
 
     /**
      * Tests resource optimization.

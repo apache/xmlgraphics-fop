@@ -17,25 +17,31 @@
 
 /* $Id$ */
 
-package org.apache.fop.fonts;
+package org.apache.fop.render.afp;
 
-import static org.junit.Assert.assertEquals;
+import java.io.File;
 
-import org.junit.Test;
+import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.render.AbstractRenderingTest;
 
-public class EncodingModeTest {
+/**
+ * Abstract base class for AFP verification tests.
+ */
+abstract class AbstractAFPTest extends AbstractRenderingTest {
 
-    @Test
-    public void testGetName() {
-        assertEquals("auto", EncodingMode.AUTO.getName());
-        assertEquals("single-byte", EncodingMode.SINGLE_BYTE.getName());
-        assertEquals("cid", EncodingMode.CID.getName());
+    /**
+     * Renders a test file.
+     * @param ua the user agent (with override set!)
+     * @param resourceName the resource name for the FO file
+     * @param suffix a suffix for the output filename
+     * @return the output file
+     * @throws Exception if an error occurs
+     */
+    protected File renderFile(FOUserAgent ua, String resourceName, String suffix)
+                throws Exception {
+        return renderFile(ua, resourceName, suffix, MimeConstants.MIME_AFP);
     }
 
-    @Test
-    public void testGetValue() {
-        assertEquals(EncodingMode.AUTO, EncodingMode.getEncodingMode("auto"));
-        assertEquals(EncodingMode.SINGLE_BYTE, EncodingMode.getEncodingMode("single-byte"));
-        assertEquals(EncodingMode.CID, EncodingMode.getEncodingMode("cid"));
-    }
+
 }
