@@ -70,7 +70,7 @@ public class TTFFontLoader extends FontLoader {
     public TTFFontLoader(String fontFileURI, String subFontName,
                 boolean embedded, EncodingMode encodingMode, boolean useKerning,
                 FontResolver resolver) {
-        super(fontFileURI, embedded, true, resolver);
+        super(fontFileURI, embedded, useKerning, resolver);
         this.subFontName = subFontName;
         this.encodingMode = encodingMode;
         if (this.encodingMode == EncodingMode.AUTO) {
