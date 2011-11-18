@@ -172,15 +172,26 @@ public final class LayoutEngineTestUtils {
      * @return A collection of file arrays that contain the test files
      */
     public static Collection<File[]> getLayoutTestFiles() {
-        TestFilesConfiguration.Builder builder = new TestFilesConfiguration.Builder();
         String testSet = System.getProperty("fop.layoutengine.testset");
         testSet = (testSet != null ? testSet : "standard") + "-testcases";
+        return getLayoutTestFiles(testSet);
+    }
+
+    /**
+     * This is a helper method that uses the standard parameters for FOP's layout engine tests,
+     * given a test set name returns a set of test files.
+     *
+     * @param testSetName the name of the test set
+     * @return A collection of file arrays that contain the test files
+     */
+    public static Collection<File[]> getLayoutTestFiles(String testSetName) {
+        TestFilesConfiguration.Builder builder = new TestFilesConfiguration.Builder();
 
         builder.testDir("test/layoutengine")
                .singleProperty("fop.layoutengine.single")
                .startsWithProperty("fop.layoutengine.starts-with")
                .suffix(".xml")
-               .testSet(testSet)
+               .testSet(testSetName)
                .disabledProperty("fop.layoutengine.disabled",
                        "test/layoutengine/disabled-testcases.xml")
                .privateTestsProperty("fop.layoutengine.private");
