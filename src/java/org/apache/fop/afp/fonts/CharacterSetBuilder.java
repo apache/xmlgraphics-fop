@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -56,17 +57,12 @@ import org.apache.xmlgraphics.image.loader.util.SoftMapCache;
  * formatted object. <p/>
  *
  */
-public class CharacterSetBuilder {
+public abstract class CharacterSetBuilder {
 
     /**
      * Static logging instance
      */
     protected static final Log LOG = LogFactory.getLog(CharacterSetBuilder.class);
-
-    /**
-     * Singleton reference
-     */
-    private static CharacterSetBuilder instance;
 
     /**
      * Template used to convert lists to arrays.
@@ -104,8 +100,8 @@ public class CharacterSetBuilder {
     /**
      * The collection of code pages
      */
-    private final Map/*<String, Map<String, String>>*/ codePagesCache
-            = new WeakHashMap/*<String, Map<String, String>>*/();
+    private final Map<String, Map<String, String>> codePagesCache
+            = Collections.synchronizedMap(new WeakHashMap<String, Map<String, String>>());
 
     /**
      * Cache of charactersets
@@ -120,11 +116,8 @@ public class CharacterSetBuilder {
      * Factory method for the single-byte implementation of AFPFontReader.
      * @return AFPFontReader
      */
-    public static CharacterSetBuilder getInstance() {
-        if (instance == null) {
-            instance = new CharacterSetBuilder();
-        }
-        return instance;
+    public static CharacterSetBuilder getSingleByteInstance() {
+        return SingleByteLoader.getInstance();
     }
 
     /**
@@ -132,7 +125,7 @@ public class CharacterSetBuilder {
      * @return AFPFontReader
      */
     public static CharacterSetBuilder getDoubleByteInstance() {
-        return new DoubleByteLoader();
+        return DoubleByteLoader.getInstance();
     }
 
 
@@ -251,13 +244,14 @@ public class CharacterSetBuilder {
              * information to map the unicode character id to the graphic
              * chracter global identifier.
              */
+            Map<String, String> codePage;
+            synchronized (codePagesCache) {
+                codePage = codePagesCache.get(codePageName);
 
-            Map/*<String,String>*/ codePage
-                = (Map/*<String,String>*/)codePagesCache.get(codePageName);
-
-            if (codePage == null) {
-                codePage = loadCodePage(codePageName, encoding, accessor);
-                codePagesCache.put(codePageName, codePage);
+                if (codePage == null) {
+                    codePage = loadCodePage(codePageName, encoding, accessor);
+                    codePagesCache.put(codePageName, codePage);
+                }
             }
 
             inputStream = openInputStream(accessor, characterSetName);
@@ -671,10 +665,32 @@ public class CharacterSetBuilder {
         }
     }
 
+    private static final class SingleByteLoader extends CharacterSetBuilder {
+
+        private static final SingleByteLoader INSTANCE = new SingleByteLoader();
+
+        private SingleByteLoader() {
+            super();
+        }
+
+        private static SingleByteLoader getInstance() {
+            return INSTANCE;
+        }
+    }
+
     /**
      * Double-byte (CID Keyed font (Type 0)) implementation of AFPFontReader.
      */
-    private static class DoubleByteLoader extends CharacterSetBuilder {
+    private static final class DoubleByteLoader extends CharacterSetBuilder {
+
+        private static final DoubleByteLoader INSTANCE = new DoubleByteLoader();
+
+        private DoubleByteLoader() {
+        }
+
+        static DoubleByteLoader getInstance() {
+            return INSTANCE;
+        }
 
         protected Map/*<String,String>*/ loadCodePage(String codePage, String encoding,
                 ResourceAccessor accessor) throws IOException {

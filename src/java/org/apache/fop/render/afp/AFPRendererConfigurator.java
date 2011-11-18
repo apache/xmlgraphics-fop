@@ -190,7 +190,7 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
                         try {
                             Typeface tf = clazz.newInstance();
                             font.addCharacterSet(sizeMpt,
-                                    CharacterSetBuilder.getInstance()
+                                    CharacterSetBuilder.getSingleByteInstance()
                                         .build(characterset, codepage, encoding, tf));
                         } catch (Exception ie) {
                             String msg = "The base 14 font class " + clazz.getName()
@@ -204,7 +204,7 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
                     }
                 } else {
                     try {
-                        font.addCharacterSet(sizeMpt, CharacterSetBuilder.getInstance()
+                        font.addCharacterSet(sizeMpt, CharacterSetBuilder.getSingleByteInstance()
                                 .build(characterset, codepage, encoding, accessor));
                     } catch (IOException ioe) {
                         toConfigurationException(codepage, characterset, ioe);
@@ -228,7 +228,7 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
                             + base14).asSubclass(Typeface.class);
                     try {
                         Typeface tf = clazz.newInstance();
-                        characterSet = CharacterSetBuilder.getInstance()
+                        characterSet = CharacterSetBuilder.getSingleByteInstance()
                                         .build(characterset, codepage, encoding, tf);
                     } catch (Exception ie) {
                         String msg = "The base 14 font class " + clazz.getName()
@@ -242,7 +242,7 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
                 }
             } else {
                 try {
-                    characterSet = CharacterSetBuilder.getInstance().build(
+                    characterSet = CharacterSetBuilder.getSingleByteInstance().build(
                             characterset, codepage, encoding, accessor);
                 } catch (IOException ioe) {
                     toConfigurationException(codepage, characterset, ioe);
