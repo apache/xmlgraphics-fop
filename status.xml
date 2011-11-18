@@ -60,6 +60,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Code" dev="VH" type="add" fixes-bug="52151" due-to="Mehdi Houshmand">
+        Added ant script to get JaCoCo code coverage.
+      </action>
       <action context="Code" dev="VH" type="add" fixes-bug="52136" due-to="Mehdi Houshmand">
         Added to build file JUnit target that uses a regex to run all of the test cases. This 
         reduces the risk that some of them are omitted when building FOP.

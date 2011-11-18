@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<project xmlns:jacoco="antlib:org.jacoco.ant" name="JaCoCo" default="coverage-report">
+  <import file="build.xml"/>
+  <property name="jacoco.report.dir" value="${build.dir}/report_jacoco"/>
+  <taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml">
+    <classpath location="${jacocoant.jar}"/>
+  </taskdef>
+  <target name="test-coverage" depends="junit-compile, setup-xml-schema">
+    <jacoco:coverage destfile="${jacoco.report.dir}/jacoco.exec">
+      <junit dir="${basedir}" haltonfailure="yes" fork="on" forkmode="once">
+        <sysproperty key="jawa.awt.headless" value="true"/>
+        <classpath>
+          <path refid="standard-junit-classpath"/>
+        </classpath>
+        <batchtest>
+          <fileset dir="${build.unit.tests.dir}" includes="**/*TestCase.class"/>
+        </batchtest>
+      </junit>
+    </jacoco:coverage>
+  </target>
+  <target name="coverage-report" depends="test-coverage"
+    description="Runs JaCoCo for a code coverage report">
+    <jacoco:report>
+      <executiondata>
+        <file file="${jacoco.report.dir}/jacoco.exec"/>
+      </executiondata>
+      <structure name="Apache FOP">
+        <classfiles>
+          <fileset dir="${build.classes.dir}"/>
+        </classfiles>
+        <sourcefiles>
+          <fileset dir="${src.java.dir}"/>
+        </sourcefiles>
+      </structure>
+      <html destdir="${jacoco.report.dir}"/>
+    </jacoco:report>
+  </target>
+</project>
