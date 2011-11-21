@@ -19,8 +19,9 @@
 
 package org.apache.fop.events;
 
-import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -45,7 +46,6 @@ import org.apache.fop.apps.FopFactory;
 import org.apache.fop.area.AreaEventProducer;
 import org.apache.fop.fo.FOValidationEventProducer;
 import org.apache.fop.fo.flow.table.TableEventProducer;
-import org.apache.fop.fonts.FontEventProducer;
 import org.apache.fop.layoutmgr.BlockLevelEventProducer;
 import org.apache.fop.layoutmgr.inline.InlineLevelEventProducer;
 
@@ -58,7 +58,9 @@ public class EventProcessingTestCase {
 
     private final TransformerFactory tFactory = TransformerFactory.newInstance();
 
-    private void doTest(String filename, String fopConf, String expectedEventID)
+    private static final String BASE_DIR = "test/events/";
+
+    public void doTest(InputStream inStream, String fopConf, String expectedEventID)
             throws FOPException, TransformerException, IOException, SAXException {
         EventChecker eventChecker = new EventChecker(expectedEventID);
         if (fopConf != null) {
@@ -68,15 +70,20 @@ public class EventProcessingTestCase {
         userAgent.getEventBroadcaster().addEventListener(eventChecker);
         Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, userAgent, new NullOutputStream());
         Transformer transformer = tFactory.newTransformer();
-        Source src = new StreamSource(new File("test/events/" + filename));
+        Source src = new StreamSource(inStream);
         Result res = new SAXResult(fop.getDefaultHandler());
         transformer.transform(src, res);
         eventChecker.end();
     }
 
-    private void doTest(String filename, String expectedEventID) throws
+    public void doTest(String filename, String expectedEventID) throws
             FOPException, TransformerException, IOException, SAXException {
         doTest(filename, null, expectedEventID);
+    }
+
+    public void doTest(String filename, String fopConf, String expectedEventID) throws
+            FOPException, TransformerException, IOException, SAXException {
+        doTest(new FileInputStream(BASE_DIR + filename), fopConf, expectedEventID);
     }
 
     @Test
@@ -117,18 +124,5 @@ public class EventProcessingTestCase {
             SAXException {
         doTest("inline-level.fo",
                 InlineLevelEventProducer.class.getName() + ".lineOverflows");
-    }
-
-    @Test
-    public void testFont() throws FOPException, TransformerException, IOException, SAXException {
-        doTest("font.fo",
-                FontEventProducer.class.getName() + ".fontSubstituted");
-    }
-
-    @Test
-    public void testFontWithBadDirectory() throws FOPException, TransformerException, IOException,
-            SAXException {
-        doTest("font.fo", "test/config/test_fonts_directory_bad.xconf",
-                FontEventProducer.class.getName() + ".fontDirectoryNotFound");
     }
 }

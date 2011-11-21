@@ -686,6 +686,9 @@ list of possible build targets.
     <copy todir="${build.unit.tests.dir}">
       <fileset dir="${test.dir}/java">
         <include name="**/*.xsl"/>
+        <include name="**/*.txt"/>
+        <include name="**/*.afm"/>
+        <include name="**/*.fo"/>
       </fileset>
     </copy>
   </target>

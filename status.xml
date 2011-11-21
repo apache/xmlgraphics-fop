@@ -36,6 +36,7 @@
     <person name="Manuel Mall"       email="manuel@apache.org"        id="MM"/>
     <person name="Jeremias Märki"    email="jeremias@apache.org"      id="JM"/>
     <person name="Simon Pepping"     email="spepping@apache.org"      id="SP"/>
+    <person name="Mehdi Houshmand"   email="mehdi@apache.org"         id="MH"/>
     <person name="the FOP committers" email="fop-dev@xmlgraphics.apache.org" id="all"/>
     <person name="Volunteer needed"  email="general@xmlgraphics.apache.org" id="open"/>
     <!-- See also src/documentation/content/xdocs/team.xml -->
@@ -60,6 +61,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Code" dev="MH" type="add" fixes-bug="52197">
+        Improved AdobeStandardEncoding support in AFM files for type1 fonts
+      </action>
       <action context="Code" dev="VH" type="add" fixes-bug="52151" due-to="Mehdi Houshmand">
         Added ant script to get JaCoCo code coverage.
       </action>
