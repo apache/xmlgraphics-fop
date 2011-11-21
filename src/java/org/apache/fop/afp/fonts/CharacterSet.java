@@ -19,17 +19,17 @@
 
 package org.apache.fop.afp.fonts;
 
-import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.CharacterCodingException;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.fop.afp.AFPConstants;
+import org.apache.fop.afp.AFPEventProducer;
 import org.apache.fop.afp.fonts.CharactersetEncoder.EncodedChars;
 import org.apache.fop.afp.util.ResourceAccessor;
-import org.apache.fop.afp.util.SimpleResourceAccessor;
 import org.apache.fop.afp.util.StringUtils;
 
 /**
@@ -76,32 +76,16 @@ public class CharacterSet {
     protected final String name;
 
     /** The path to the installed fonts */
-    private ResourceAccessor accessor;
+    private final ResourceAccessor accessor;
 
     /** The current orientation (currently only 0 is supported by FOP) */
     private final String currentOrientation = "0";
 
     /** The collection of objects for each orientation */
-    private Map characterSetOrientations = null;
+    private final Map<String, CharacterSetOrientation> characterSetOrientations;
 
     /** The nominal vertical size (in millipoints) for bitmap fonts. 0 for outline fonts. */
-    private int nominalVerticalSize = 0;
-
-    /**
-     * Constructor for the CharacterSetMetric object, the character set is used
-     * to load the font information from the actual AFP font.
-     *
-     * @param codePage the code page identifier
-     * @param encoding the encoding of the font
-     * @param name the character set name
-     * @param path the path to the installed afp fonts
-     * @deprecated Please use
-     * {@link #CharacterSet(String, String, String, ResourceAccessor)} instead.
-     */
-    public CharacterSet(String codePage, String encoding, String name, String path) {
-        this(codePage, encoding, false, name,
-                new SimpleResourceAccessor(path != null ? new File(path) : null));
-    }
+    private int nominalVerticalSize;
 
     /**
      * Constructor for the CharacterSetMetric object, the character set is used to load the font
@@ -112,13 +96,14 @@ public class CharacterSet {
      * @param isEBDCS if this is an EBCDIC double byte character set.
      * @param name the character set name
      * @param accessor the resource accessor to load resource with
+     * @param eventProducer for handling AFP related events
      */
     CharacterSet(String codePage, String encoding, boolean isEBDCS, String name,
-            ResourceAccessor accessor) {
+            ResourceAccessor accessor, AFPEventProducer eventProducer) {
         if (name.length() > MAX_NAME_LEN) {
             String msg = "Character set name '" + name + "' must be a maximum of "
                 + MAX_NAME_LEN + " characters";
-            LOG.error("Constructor:: " + msg);
+            eventProducer.characterSetNameInvalid(this, msg);
             throw new IllegalArgumentException(msg);
         }
 
@@ -132,7 +117,7 @@ public class CharacterSet {
         this.encoder = CharactersetEncoder.newInstance(encoding, isEBDCS);
         this.accessor = accessor;
 
-        this.characterSetOrientations = new java.util.HashMap(4);
+        this.characterSetOrientations = new HashMap<String, CharacterSetOrientation>(4);
     }
 
     /**
@@ -141,9 +126,7 @@ public class CharacterSet {
      * @param cso the metrics for the orientation
      */
     public void addCharacterSetOrientation(CharacterSetOrientation cso) {
-        characterSetOrientations.put(
-            String.valueOf(cso.getOrientation()),
-            cso);
+        characterSetOrientations.put(String.valueOf(cso.getOrientation()), cso);
     }
 
     /**

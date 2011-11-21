@@ -60,7 +60,10 @@ public class EventProcessingTestCase {
 
     private static final String BASE_DIR = "test/events/";
 
-    public void doTest(InputStream inStream, String fopConf, String expectedEventID)
+    /** The base directory of configuration files */
+    public static final String CONFIG_BASE_DIR = "test/config/";
+
+    public void doTest(InputStream inStream, String fopConf, String expectedEventID, String mimeType)
             throws FOPException, TransformerException, IOException, SAXException {
         EventChecker eventChecker = new EventChecker(expectedEventID);
         if (fopConf != null) {
@@ -68,7 +71,7 @@ public class EventProcessingTestCase {
         }
         FOUserAgent userAgent = fopFactory.newFOUserAgent();
         userAgent.getEventBroadcaster().addEventListener(eventChecker);
-        Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, userAgent, new NullOutputStream());
+        Fop fop = fopFactory.newFop(mimeType, userAgent, new NullOutputStream());
         Transformer transformer = tFactory.newTransformer();
         Source src = new StreamSource(inStream);
         Result res = new SAXResult(fop.getDefaultHandler());
@@ -78,12 +81,8 @@ public class EventProcessingTestCase {
 
     public void doTest(String filename, String expectedEventID) throws
             FOPException, TransformerException, IOException, SAXException {
-        doTest(filename, null, expectedEventID);
-    }
-
-    public void doTest(String filename, String fopConf, String expectedEventID) throws
-            FOPException, TransformerException, IOException, SAXException {
-        doTest(new FileInputStream(BASE_DIR + filename), fopConf, expectedEventID);
+        doTest(new FileInputStream(BASE_DIR + filename), null, expectedEventID,
+                MimeConstants.MIME_PDF);
     }
 
     @Test

@@ -19,6 +19,7 @@
 
 package org.apache.fop.afp.fonts;
 
+import org.apache.fop.afp.AFPEventProducer;
 import org.apache.fop.fonts.Base14Font;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontCollection;
@@ -40,6 +41,12 @@ import org.apache.fop.fonts.base14.TimesRoman;
  */
 public class AFPBase12FontCollection implements FontCollection {
 
+    private final AFPEventProducer eventProducer;
+
+    public AFPBase12FontCollection(AFPEventProducer eventProducer) {
+        this.eventProducer = eventProducer;
+    }
+
     /** standard raster font sizes */
     private static final int[] RASTER_SIZES = {6, 7, 8, 9, 10, 11, 12, 14, 16, 18, 20, 24, 30, 36};
 
@@ -52,7 +59,7 @@ public class AFPBase12FontCollection implements FontCollection {
             int size = RASTER_SIZES[i] * 1000;
             FopCharacterSet characterSet = new FopCharacterSet(
                     CharacterSet.DEFAULT_CODEPAGE, CharacterSet.DEFAULT_ENCODING,
-                    charsetName + CHARSET_REF[i], base14);
+                    charsetName + CHARSET_REF[i], base14, eventProducer);
             font.addCharacterSet(size, characterSet);
         }
     }

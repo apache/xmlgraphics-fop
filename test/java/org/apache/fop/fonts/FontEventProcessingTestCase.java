@@ -27,6 +27,8 @@ import javax.xml.transform.TransformerException;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
+import org.apache.xmlgraphics.util.MimeConstants;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.events.EventProcessingTestCase;
 
@@ -37,17 +39,22 @@ public class FontEventProcessingTestCase {
 
     private EventProcessingTestCase eventsTests = new EventProcessingTestCase();
 
+    private static final String CONFIG_BASE_DIR = EventProcessingTestCase.CONFIG_BASE_DIR;
+
     @Test
     public void testFont() throws FOPException, TransformerException, IOException, SAXException {
         InputStream inStream = getClass().getResourceAsStream("substituted-font.fo");
-        eventsTests.doTest(inStream, null, FontEventProducer.class.getName() + ".fontSubstituted");
+        eventsTests.doTest(inStream, null, FontEventProducer.class.getName() + ".fontSubstituted",
+                MimeConstants.MIME_PDF);
     }
 
     @Test
     public void testFontWithBadDirectory() throws FOPException, TransformerException, IOException,
             SAXException {
         InputStream inStream = getClass().getResourceAsStream("substituted-font.fo");
-        eventsTests.doTest(inStream, "test/config/test_fonts_directory_bad.xconf",
-                FontEventProducer.class.getName() + ".fontDirectoryNotFound");
+        eventsTests.doTest(inStream, CONFIG_BASE_DIR + "test_fonts_directory_bad.xconf",
+                FontEventProducer.class.getName() + ".fontDirectoryNotFound",
+                MimeConstants.MIME_PDF);
     }
+
 }

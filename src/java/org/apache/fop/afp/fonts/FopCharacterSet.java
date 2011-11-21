@@ -19,6 +19,7 @@
 
 package org.apache.fop.afp.fonts;
 
+import org.apache.fop.afp.AFPEventProducer;
 import org.apache.fop.afp.util.ResourceAccessor;
 import org.apache.fop.fonts.Typeface;
 
@@ -37,14 +38,11 @@ public class FopCharacterSet extends CharacterSet {
      * @param encoding the encoding of the font
      * @param name the character set name
      * @param charSet the fop character set
+     * @param eventProducer for handling AFP related events
      */
-    public FopCharacterSet(
-        String codePage,
-        String encoding,
-        String name,
-        Typeface charSet) {
-
-        super(codePage, encoding, false, name, (ResourceAccessor) null);
+    public FopCharacterSet(String codePage, String encoding, String name, Typeface charSet,
+            AFPEventProducer eventProducer) {
+        super(codePage, encoding, false, name, (ResourceAccessor) null, eventProducer);
         this.charSet = charSet;
     }
 
