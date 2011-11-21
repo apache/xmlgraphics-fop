@@ -7,7 +7,7 @@
   <base>./</base>
 
   <!-- Font Base URL for resolving relative font URLs -->
-  <font-base>./resources/fonts</font-base>
+  <font-base>./resources/fonts/ttf/</font-base>
   
   <renderers>
     <renderer mime="application/pdf">

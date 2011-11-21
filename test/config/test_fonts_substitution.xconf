@@ -24,7 +24,7 @@
   <renderers>
     <renderer mime="application/pdf">
       <fonts>
-        <font metrics-url="test/resources/fonts/glb12.ttf.xml" embed-url="test/resources/fonts/glb12.ttf">
+        <font metrics-url="test/resources/fonts/ttf/glb12.ttf.xml" embed-url="test/resources/fonts/ttf/glb12.ttf">
           <font-triplet name="Gladiator" style="normal" weight="bold"/>
         </font>
       </fonts>

@@ -19,15 +19,15 @@
         <value>null</value>
       </filterList>
       <fonts>
-        <font metrics-url="test/resources/fonts/glb12.ttf.xml" embed-url="test/resources/fonts/glb12.ttf">
+        <font metrics-url="test/resources/fonts/ttf/glb12.ttf.xml" embed-url="test/resources/fonts/ttf/glb12.ttf">
           <font-triplet name="Gladiator" style="normal" weight="normal"/>
           <font-triplet name="Gladiator" style="normal" weight="bold"/>
         </font>
-        <font metrics-url="test/resources/fonts/glb12.ttf.ansi.xml" embed-url="test/resources/fonts/glb12.ttf">
+        <font metrics-url="test/resources/fonts/ttf/glb12.ttf.ansi.xml" embed-url="test/resources/fonts/ttf/glb12.ttf">
           <font-triplet name="Gladiator-Ansi" style="normal" weight="normal"/>
           <font-triplet name="Gladiator-Ansi" style="normal" weight="bold"/>
         </font>
-        <font metrics-url="test/resources/fonts/glb12.ttf.ansi.xml">
+        <font metrics-url="test/resources/fonts/ttf/glb12.ttf.ansi.xml">
           <font-triplet name="Gladiator-Non-Embedded" style="normal" weight="normal"/>
           <font-triplet name="Gladiator-Non-Embedded" style="normal" weight="bold"/>
         </font>

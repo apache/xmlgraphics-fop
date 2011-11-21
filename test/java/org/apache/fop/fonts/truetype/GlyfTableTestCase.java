@@ -55,7 +55,7 @@ public class GlyfTableTestCase {
 
     @Before
     public void setUp() throws IOException {
-        originalFontReader = new FontFileReader("test/resources/fonts/DejaVuLGCSerif.ttf");
+        originalFontReader = new FontFileReader("test/resources/fonts/ttf/DejaVuLGCSerif.ttf");
     }
 
     /**
