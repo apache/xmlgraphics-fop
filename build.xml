@@ -763,7 +763,10 @@ list of possible build targets.
   <path id="standard-junit-classpath">
     <pathelement location="${build.unit.tests.dir}"/>
     <path refid="libs-tools-build-classpath"/>
-    <pathelement location="${build.dir}/fop.jar"/>
+    <fileset dir="${build.dir}">
+      <include name="fop.jar"/>
+      <include name="fop-hyph.jar"/>
+    </fileset>
   </path>
   <macrodef name="junit-run">
     <attribute name="title"/>
