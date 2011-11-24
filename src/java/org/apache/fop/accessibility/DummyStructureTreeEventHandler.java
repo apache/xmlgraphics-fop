@@ -17,34 +17,36 @@
 
 /* $Id$ */
 
-package org.apache.fop.render.intermediate;
+package org.apache.fop.accessibility;
 
-import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.apps.MimeConstants;
+import java.util.Locale;
+
+import org.xml.sax.Attributes;
 
 /**
- * Intermediate format document handler factory for intermediate format XML output.
+ * This implementation ignores all structure tree events.
  */
-public class IFSerializerMaker extends AbstractIFDocumentHandlerMaker {
+public final class DummyStructureTreeEventHandler implements StructureTreeEventHandler {
+
+    /** The singleton instance of this class. */
+    public static final StructureTreeEventHandler INSTANCE = new DummyStructureTreeEventHandler();
+
+    private DummyStructureTreeEventHandler() { }
 
     /** {@inheritDoc} */
-    public IFDocumentHandler makeIFDocumentHandler(FOUserAgent ua) {
-        IFSerializer handler = new IFSerializer();
-        handler.setContext(new IFContext(ua));
-        if (ua.isAccessibilityEnabled()) {
-            ua.setStructureTreeEventHandler(handler.getStructureTreeEventHandler());
-        }
-        return handler;
+    public void startPageSequence(Locale locale) {
     }
 
     /** {@inheritDoc} */
-    public boolean needsOutputStream() {
-        return true;
+    public void startNode(String name, Attributes attributes) {
     }
 
     /** {@inheritDoc} */
-    public String[] getSupportedMimeTypes() {
-        return new String[] {MimeConstants.MIME_FOP_IF};
+    public void endNode(String name) {
+    }
+
+    /** {@inheritDoc} */
+    public void endPageSequence() {
     }
 
 }

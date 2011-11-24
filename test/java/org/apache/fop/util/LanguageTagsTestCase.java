@@ -20,31 +20,39 @@
 package org.apache.fop.util;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 import java.util.Locale;
 
 import org.junit.Test;
 
 /**
- * Tests {@link XMLUtil}.
+ * Tests {@link LanguageTags}.
  */
-public class XMLUtilTestCase {
+public class LanguageTagsTestCase {
+
+    @Test(expected = NullPointerException.class)
+    public void toLanguageTagRejectsNull() {
+        LanguageTags.toLanguageTag(null);
+    }
 
     @Test
-    public void testLocaleToRFC3066() throws Exception {
-        assertNull(XMLUtil.toRFC3066(null));
-        assertEquals("en", XMLUtil.toRFC3066(new Locale("en")));
-        assertEquals("en-US", XMLUtil.toRFC3066(new Locale("en", "US")));
-        assertEquals("en-US", XMLUtil.toRFC3066(new Locale("EN", "us")));
+    public void testToLanguageTag() throws Exception {
+        assertEquals("", LanguageTags.toLanguageTag(new Locale("")));
+        assertEquals("en", LanguageTags.toLanguageTag(new Locale("en")));
+        assertEquals("en-US", LanguageTags.toLanguageTag(new Locale("en", "US")));
+        assertEquals("en-US", LanguageTags.toLanguageTag(new Locale("EN", "us")));
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void toLocaleRejectsNull() {
+        LanguageTags.toLocale(null);
     }
 
     @Test
     public void testRFC3066ToLocale() throws Exception {
-        assertNull(XMLUtil.convertRFC3066ToLocale(null));
-        assertNull(XMLUtil.convertRFC3066ToLocale(""));
-        assertEquals(new Locale("en"), XMLUtil.convertRFC3066ToLocale("en"));
-        assertEquals(new Locale("en", "US"), XMLUtil.convertRFC3066ToLocale("en-US"));
-        assertEquals(new Locale("en", "US"), XMLUtil.convertRFC3066ToLocale("EN-us"));
+        assertEquals(new Locale(""), LanguageTags.toLocale(""));
+        assertEquals(new Locale("en"), LanguageTags.toLocale("en"));
+        assertEquals(new Locale("en", "US"), LanguageTags.toLocale("en-US"));
+        assertEquals(new Locale("en", "US"), LanguageTags.toLocale("EN-us"));
     }
 }

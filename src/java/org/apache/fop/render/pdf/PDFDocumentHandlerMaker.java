@@ -36,6 +36,9 @@ public class PDFDocumentHandlerMaker extends AbstractIFDocumentHandlerMaker {
     public IFDocumentHandler makeIFDocumentHandler(FOUserAgent ua) {
         PDFDocumentHandler handler = new PDFDocumentHandler();
         handler.setContext(new IFContext(ua));
+        if (ua.isAccessibilityEnabled()) {
+            ua.setStructureTreeEventHandler(handler.getStructureTreeEventHandler());
+        }
         return handler;
     }
 

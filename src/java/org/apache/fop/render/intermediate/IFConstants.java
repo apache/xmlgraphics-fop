@@ -39,6 +39,7 @@ public interface IFConstants extends XMLConstants {
     String EL_HEADER = "header";
     /** element name trailer */
     String EL_TRAILER = "trailer";
+    String EL_LOCALE = "locale";
     /** element name page-sequence */
     String EL_PAGE_SEQUENCE = "page-sequence";
     /** element name page */

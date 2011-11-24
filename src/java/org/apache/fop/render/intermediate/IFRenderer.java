@@ -51,6 +51,7 @@ import org.apache.xmlgraphics.xmp.schemas.XMPBasicSchema;
 
 import org.apache.fop.Version;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.AreaTreeObject;
@@ -70,10 +71,10 @@ import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Image;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.InlineParent;
+import org.apache.fop.area.inline.InlineViewport;
 import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.area.inline.TextArea;
-import org.apache.fop.area.inline.InlineViewport;
 import org.apache.fop.area.inline.WordArea;
 import org.apache.fop.datatypes.URISpecification;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
@@ -227,7 +228,11 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
      */
     protected IFDocumentHandler createDefaultDocumentHandler() {
         IFSerializer serializer = new IFSerializer();
-        serializer.setContext(new IFContext(getUserAgent()));
+        FOUserAgent userAgent = getUserAgent();
+        serializer.setContext(new IFContext(userAgent));
+        if (userAgent.isAccessibilityEnabled()) {
+            userAgent.setStructureTreeEventHandler(serializer.getStructureTreeEventHandler());
+        }
         return serializer;
     }
 
@@ -292,6 +297,11 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         actionSet.clear();
         super.stopRenderer();
         log.debug("Rendering finished.");
+    }
+
+    @Override
+    public void setDocumentLocale(Locale locale) {
+        documentHandler.setDocumentLocale(locale);
     }
 
     /** {@inheritDoc} */

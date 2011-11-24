@@ -32,6 +32,9 @@ public class FOElementMapping extends ElementMapping {
     /** The XSL-FO namespace URI */
     public static final String URI = "http://www.w3.org/1999/XSL/Format";
 
+     /** Standard prefix */
+    public static final String STANDARD_PREFIX = "fo";
+
     /**
      * Basic constructor; inititializes the namespace URI for the fo: namespace
      */
@@ -141,7 +144,7 @@ public class FOElementMapping extends ElementMapping {
 
     /** {@inheritDoc} */
     public String getStandardPrefix() {
-        return "fo";
+        return STANDARD_PREFIX;
     }
 
     /** {@inheritDoc} */

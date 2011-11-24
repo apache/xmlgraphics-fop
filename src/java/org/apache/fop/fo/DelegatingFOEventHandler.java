@@ -50,6 +50,7 @@ import org.apache.fop.fo.flow.table.TableHeader;
 import org.apache.fop.fo.flow.table.TableRow;
 import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.pagination.PageSequence;
+import org.apache.fop.fo.pagination.Root;
 import org.apache.fop.fo.pagination.StaticContent;
 import org.apache.fop.fonts.FontInfo;
 
@@ -88,6 +89,16 @@ public abstract class DelegatingFOEventHandler extends FOEventHandler {
     @Override
     public void endDocument() throws SAXException {
         delegate.endDocument();
+    }
+
+    @Override
+    public void startRoot(Root root) {
+        delegate.startRoot(root);
+    }
+
+    @Override
+    public void endRoot(Root root) {
+        delegate.endRoot(root);
     }
 
     @Override

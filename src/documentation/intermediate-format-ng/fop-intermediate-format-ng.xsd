@@ -40,10 +40,17 @@
   </xs:element>
   <xs:element name="header">
     <xs:complexType>
-      <xs:choice minOccurs="0" maxOccurs="unbounded">
-        <!--xs:element ref="x:xmpmeta" xmlns:x="adobe:ns:meta/"/-->
-        <xs:any namespace="##other" processContents="lax"/>
-      </xs:choice>
+      <xs:sequence>
+        <xs:element name="locale" minOccurs="0" maxOccurs="1">
+          <xs:complexType>
+            <xs:attributeGroup ref="mf:foreignAtts"/>
+          </xs:complexType>
+        </xs:element>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+          <!--xs:element ref="x:xmpmeta" xmlns:x="adobe:ns:meta/"/-->
+          <xs:any namespace="##other" processContents="lax"/>
+        </xs:choice>
+      </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="trailer">

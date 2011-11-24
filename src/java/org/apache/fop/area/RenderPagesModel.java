@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import org.xml.sax.SAXException;
 
@@ -81,6 +82,11 @@ public class RenderPagesModel extends AreaTreeModel {
         } catch (IOException e) {
             throw new FOPException(e);
         }
+    }
+
+    @Override
+    public void setDocumentLocale(Locale locale) {
+        renderer.setDocumentLocale(locale);
     }
 
     /** {@inheritDoc} */

@@ -71,6 +71,7 @@ import org.apache.fop.fo.flow.table.TableHeader;
 import org.apache.fop.fo.flow.table.TableRow;
 import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.pagination.PageSequence;
+import org.apache.fop.fo.pagination.Root;
 import org.apache.fop.fo.pagination.StaticContent;
 
 /**
@@ -97,12 +98,22 @@ public class DelegatingFOEventHandlerTestCase {
 
         @Override
         public void startDocument() throws SAXException {
-            actualEvents.add("start root");
+            actualEvents.add("start document");
         }
 
         @Override
         public void endDocument() throws SAXException {
-            actualEvents.add("end   root");
+            actualEvents.add("end   document");
+        }
+
+        @Override
+        public void startRoot(Root root) {
+            startElement(root);
+        }
+
+        @Override
+        public void endRoot(Root root) {
+            endElement(root);
         }
 
         @Override
@@ -417,9 +428,7 @@ public class DelegatingFOEventHandlerTestCase {
     }
 
     private void loadDocument() {
-        Class<?> clazz = getClass();
-        String documentName = clazz.getSimpleName() + ".fo";
-        document = clazz.getResourceAsStream(documentName);
+        document = getClass().getResourceAsStream("complete_document.fo");
     }
 
     private void loadExpectedEvents() throws IOException {

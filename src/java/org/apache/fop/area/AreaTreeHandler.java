@@ -22,6 +22,7 @@ package org.apache.fop.area;
 // Java
 import java.io.OutputStream;
 import java.util.List;
+import java.util.Locale;
 
 import org.xml.sax.SAXException;
 
@@ -179,6 +180,14 @@ public class AreaTreeHandler extends FOEventHandler {
         // Initialize statistics
         if (statistics != null) {
             statistics.start();
+        }
+    }
+
+    @Override
+    public void startRoot(Root root) {
+        Locale locale = root.getLocale();
+        if (locale != null) {
+            model.setDocumentLocale(locale);
         }
     }
 
