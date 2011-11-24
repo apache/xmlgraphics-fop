@@ -6,14 +6,20 @@
 
   <xsl:output indent="yes" omit-xml-declaration="yes"/>
 
+  <xsl:template match="/">
+    <event>
+      <xsl:text>start document</xsl:text>
+    </event>
+    <xsl:apply-templates/>
+    <event>
+      <xsl:text>end   document</xsl:text>
+    </event>
+  </xsl:template>
+
   <xsl:template match="fo:root">
-    <event>
-      <xsl:text>start root</xsl:text>
-    </event>
+    <event>start root</event>
     <xsl:apply-templates select="fo:page-sequence"/>
-    <event>
-      <xsl:text>end   root</xsl:text>
-    </event>
+    <event>end   root</event>
   </xsl:template>
 
   <xsl:template match="fo:*">

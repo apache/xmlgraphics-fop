@@ -108,13 +108,29 @@ public final class FODocumentParser {
      * @throws LoadingException if an error occurs when parsing the document
      */
     public void parse(InputStream document) throws FOPException, LoadingException {
-        FOUserAgent foUserAgent = createFOUserAgent();
+        parse(document, createFOUserAgent());
+    }
+
+    /**
+     * Runs FOP on the given document with the supplied {@link FOUserAgent}.
+     *
+     * @param document XSL-FO document to parse
+     * @param foUserAgent The user agent
+     * @throws FOPException if an error occurs when initializing FOP
+     * @throws LoadingException if an error occurs when parsing the document
+     */
+    public void parse(InputStream document, FOUserAgent foUserAgent)
+            throws FOPException, LoadingException {
         fop = FOP_FACTORY.newFop(foUserAgent);
         createTransformer();
         runTransformer(document);
     }
 
-    private FOUserAgent createFOUserAgent() {
+    /**
+     * Creates a new {@link FOUserAgent}.
+     * @return It
+     */
+    public FOUserAgent createFOUserAgent() {
         FOUserAgent userAgent = FOP_FACTORY.newFOUserAgent();
         FOEventHandler foEventHandler = foEventHandlerFactory.newFOEventHandler(userAgent);
         userAgent.setFOEventHandlerOverride(foEventHandler);

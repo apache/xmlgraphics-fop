@@ -21,6 +21,7 @@ package org.apache.fop.fo.pagination;
 
 // java
 import java.util.List;
+import java.util.Locale;
 
 import org.xml.sax.Locator;
 
@@ -52,6 +53,7 @@ public class Root extends FObj implements CommonAccessibilityHolder {
     private BookmarkTree bookmarkTree = null;
     private List<Destination> destinationList;
     private List<PageSequence> pageSequences;
+    private Locale locale;
 
     // temporary until above list populated
     private boolean pageSequenceFound = false;
@@ -88,6 +90,24 @@ public class Root extends FObj implements CommonAccessibilityHolder {
         super.bind(pList);
         commonAccessibility = CommonAccessibility.getInstance(pList);
         mediaUsage = pList.get(PR_MEDIA_USAGE).getEnum();
+        String language = pList.get(PR_LANGUAGE).getString();
+        String country = pList.get(PR_COUNTRY).getString();
+        if (isLocalePropertySet(language)) {
+            if (isLocalePropertySet(country)) {
+                locale = new Locale(language, country);
+            } else {
+                locale = new Locale(language);
+            }
+        }
+    }
+
+    private boolean isLocalePropertySet(String property) {
+        return property != null && !property.equals("none");
+    }
+
+     /** {@inheritDoc} */
+    protected void startOfNode() throws FOPException {
+        foEventHandler.startRoot(this);
     }
 
     /** {@inheritDoc} */
@@ -96,6 +116,7 @@ public class Root extends FObj implements CommonAccessibilityHolder {
             missingChildElementError("(layout-master-set, declarations?, "
                 + "bookmark-tree?, (page-sequence|fox:external-document)+)");
         }
+        foEventHandler.endRoot(this);
     }
 
     /**
@@ -341,6 +362,11 @@ public class Root extends FObj implements CommonAccessibilityHolder {
      */
     public int getNameId() {
         return FO_ROOT;
+    }
+
+
+    public Locale getLocale() {
+        return locale;
     }
 
 }

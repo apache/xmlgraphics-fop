@@ -21,6 +21,9 @@ package org.apache.fop.pdf;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Locale;
+
+import org.apache.fop.util.LanguageTags;
 
 /**
  * Class representing a Root (/Catalog) object.
@@ -69,6 +72,7 @@ public class PDFRoot extends PDFDictionary {
         setObjectNumber(objnum);
         put("Type", new PDFName("Catalog"));
         setRootPages(pages);
+        setLanguage("x-unknown");
     }
 
     /** {@inheritDoc} */
@@ -254,10 +258,14 @@ public class PDFRoot extends PDFDictionary {
      * Sets the language identifier of the document.
      * @param lang the language identifier of the document.
      */
-    public void setLanguage(String lang) {
-        if (lang == null) {
-            throw new NullPointerException("lang must not be null");
+    public void setLanguage(Locale locale) {
+        if (locale == null) {
+            throw new NullPointerException("locale must not be null");
         }
+        setLanguage(LanguageTags.toLanguageTag(locale));
+    }
+
+    private void setLanguage(String lang) {
         put("Lang", lang);
     }
 

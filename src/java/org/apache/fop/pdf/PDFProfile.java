@@ -133,8 +133,12 @@ public class PDFProfile {
 
     //---------=== Info and validation methods ===---------
 
+    private String format(String pattern, Object[] args) {
+        return MessageFormat.format(pattern, args);
+    }
+
     private String format(String pattern, Object arg) {
-        return MessageFormat.format(pattern, new Object[] {arg});
+        return format(pattern, new Object[] {arg});
     }
 
     /** Checks if encryption is allowed. */

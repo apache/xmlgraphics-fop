@@ -23,12 +23,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import org.apache.fop.events.EventBroadcaster;
-import org.apache.fop.fo.extensions.ExtensionElementMapping;
-import org.apache.fop.fo.extensions.InternalElementMapping;
 import org.apache.fop.pdf.PDFArray;
 import org.apache.fop.pdf.PDFDictionary;
 import org.apache.fop.pdf.PDFDocument;
@@ -53,12 +47,10 @@ class PDFLogicalStructureHandler {
 
     private final PDFDocument pdfDoc;
 
-    private final EventBroadcaster eventBroadcaster;
-
     /**
      * Map of references to the corresponding structure elements.
      */
-    private final Map structTreeMap = new HashMap();
+    private final Map<String, PDFStructElem> structTreeMap = new HashMap<String, PDFStructElem>();
 
     private final PDFParentTree parentTree = new PDFParentTree();
 
@@ -108,23 +100,16 @@ class PDFLogicalStructureHandler {
      *
      * @param pdfDoc a document
      */
-    PDFLogicalStructureHandler(PDFDocument pdfDoc, EventBroadcaster eventBroadcaster) {
+    PDFLogicalStructureHandler(PDFDocument pdfDoc) {
         this.pdfDoc = pdfDoc;
-        this.eventBroadcaster = eventBroadcaster;
         PDFStructTreeRoot structTreeRoot = pdfDoc.getFactory().makeStructTreeRoot(parentTree);
         rootStructureElement = pdfDoc.getFactory().makeStructureElement(
                 FOToPDFRoleMap.mapFormattingObject("root", structTreeRoot), structTreeRoot);
         structTreeRoot.addKid(rootStructureElement);
     }
 
-    /**
-     * Converts the given structure tree into PDF.
-     *
-     * @param structureTree the structure tree of the current page sequence
-     * @param language language set on the page sequence
-     */
-    void processStructureTree(NodeList structureTree, Locale language) {
-        pdfDoc.enforceLanguageOnRoot();
+
+    PDFStructElem createPageSequence(Locale language) {
         PDFStructElem structElemPart = pdfDoc.getFactory().makeStructureElement(
                 FOToPDFRoleMap.mapFormattingObject("page-sequence", rootStructureElement),
                 rootStructureElement);
@@ -132,50 +117,7 @@ class PDFLogicalStructureHandler {
         if (language != null) {
             structElemPart.setLanguage(language);
         }
-
-        for (int i = 0, n = structureTree.getLength(); i < n; i++) {
-            Node node = structureTree.item(i);
-            assert node.getLocalName().equals("flow")
-                    || node.getLocalName().equals("static-content");
-            PDFStructElem structElemSect = pdfDoc.getFactory().makeStructureElement(
-                    FOToPDFRoleMap.mapFormattingObject(node.getLocalName(), structElemPart),
-                    structElemPart);
-            structElemPart.addKid(structElemSect);
-            NodeList childNodes = node.getChildNodes();
-            for (int j = 0, m = childNodes.getLength(); j < m; j++) {
-                processNode(childNodes.item(j), structElemSect, true);
-            }
-        }
-    }
-
-    private void processNode(Node node, PDFStructElem parent, boolean addKid) {
-        PDFStructElem structElem = pdfDoc.getFactory().makeStructureElement(
-                FOToPDFRoleMap.mapFormattingObject(node, parent, eventBroadcaster), parent);
-        // TODO necessary? If a page-sequence is empty (e.g., contains a single
-        // empty fo:block), should the block still be added to the structure
-        // tree? This is not being done for descendant empty elements...
-        if (addKid) {
-            parent.addKid(structElem);
-        }
-        String nodeName = node.getLocalName();
-        if (nodeName.equals("external-graphic") || nodeName.equals("instream-foreign-object")) {
-            Node altTextNode = node.getAttributes().getNamedItemNS(
-                    ExtensionElementMapping.URI, "alt-text");
-            if (altTextNode != null) {
-                structElem.put("Alt", altTextNode.getNodeValue());
-            } else {
-                structElem.put("Alt", "No alternate text specified");
-            }
-        }
-        Node attr = node.getAttributes().getNamedItemNS(InternalElementMapping.URI, "ptr");
-        if (attr != null) {
-            String ptr = attr.getNodeValue();
-            structTreeMap.put(ptr, structElem);
-        }
-        NodeList nodes = node.getChildNodes();
-        for (int i = 0, n = nodes.getLength(); i < n; i++) {
-            processNode(nodes.item(i), structElem, false);
-        }
+        return structElemPart;
     }
 
     private int getNextParentTreeKey() {
@@ -299,6 +241,10 @@ class PDFLogicalStructureHandler {
         PDFStructElem parent = (PDFStructElem) structTreeMap.get(structurePointer);
         parentTree.getNums().put(structParent, parent);
         parent.addKid(contentItem);
+    }
+
+    void addStructurePointer(String ptr, PDFStructElem structElem) {
+        structTreeMap.put(ptr, structElem);
     }
 
 }

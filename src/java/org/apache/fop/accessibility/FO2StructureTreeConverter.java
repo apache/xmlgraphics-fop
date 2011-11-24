@@ -19,11 +19,7 @@
 
 package org.apache.fop.accessibility;
 
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMResult;
-import javax.xml.transform.sax.SAXTransformerFactory;
-import javax.xml.transform.sax.TransformerHandler;
+import java.util.Locale;
 
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
@@ -63,34 +59,32 @@ import org.apache.fop.fo.flow.table.TableHeader;
 import org.apache.fop.fo.flow.table.TableRow;
 import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.pagination.PageSequence;
+import org.apache.fop.fo.pagination.Root;
 import org.apache.fop.fo.pagination.StaticContent;
 import org.apache.fop.fo.properties.CommonAccessibilityHolder;
 import org.apache.fop.util.XMLUtil;
 
 /**
- * A class that builds the document's structure tree.
+ * Allows to create the structure tree of an FO document, by converting FO
+ * events into appropriate structure tree events.
  */
-public class StructureTreeBuildingFOEventHandler extends DelegatingFOEventHandler {
+public class FO2StructureTreeConverter extends DelegatingFOEventHandler {
 
     private int idCounter;
 
-    private final StructureTree structureTree;
+    /** Delegates to either {@link #foToStructureTreeEventAdapter} or {@link #eventSwallower}. */
+    private FOEventHandler converter;
 
-    private TransformerHandler structureTreeDOMBuilder;
-
-    private DOMResult result;
-
-    /** Delegates to either {@link #actualStructureTreeBuilder} or {@link #eventSwallower}. */
-    private FOEventHandler structureTreeBuilder;
-
-    private FOEventHandler actualStructureTreeBuilder;
+    private final FOEventHandler foToStructureTreeEventAdapter;
 
     /** The descendants of some elements like fo:leader must be ignored. */
     private final FOEventHandler eventSwallower;
 
-    private final class StructureTreeBuilder extends FOEventHandler {
+    private final StructureTreeEventHandler structureTreeEventHandler;
 
-        public StructureTreeBuilder(FOUserAgent foUserAgent) {
+    private final class FOToStructureTreeEventAdapter extends FOEventHandler {
+
+        public FOToStructureTreeEventAdapter(FOUserAgent foUserAgent) {
             super(foUserAgent);
         }
 
@@ -104,33 +98,20 @@ public class StructureTreeBuildingFOEventHandler extends DelegatingFOEventHandle
 
         @Override
         public void startPageSequence(PageSequence pageSeq) {
-            SAXTransformerFactory transformerFactory =
-                    (SAXTransformerFactory) TransformerFactory.newInstance();
-            try {
-                structureTreeDOMBuilder = transformerFactory.newTransformerHandler();
-            } catch (TransformerConfigurationException e) {
-                throw new RuntimeException(e);
+            Locale locale = null;
+            if (pageSeq.getLanguage() != null) {
+                if (pageSeq.getCountry() != null) {
+                    locale = new Locale(pageSeq.getLanguage(), pageSeq.getCountry());
+                } else {
+                    locale = new Locale(pageSeq.getLanguage());
+                }
             }
-            result = new DOMResult();
-            structureTreeDOMBuilder.setResult(result);
-            try {
-                structureTreeDOMBuilder.startDocument();
-            } catch (SAXException e) {
-                throw new RuntimeException(e);
-            }
-            startElement(pageSeq);
+            structureTreeEventHandler.startPageSequence(locale);
         }
 
         @Override
         public void endPageSequence(PageSequence pageSeq) {
-            endElement(pageSeq);
-            try {
-                structureTreeDOMBuilder.endDocument();
-            } catch (SAXException e) {
-                throw new RuntimeException(e);
-            }
-            structureTree.addPageSequenceStructure(
-                    result.getNode().getFirstChild().getChildNodes());
+            structureTreeEventHandler.endPageSequence();
         }
 
         @Override
@@ -381,6 +362,7 @@ public class StructureTreeBuildingFOEventHandler extends DelegatingFOEventHandle
             endElement(c);
         }
 
+
         private void startElement(FONode node) {
             startElement(node, new AttributesImpl());
         }
@@ -409,13 +391,7 @@ public class StructureTreeBuildingFOEventHandler extends DelegatingFOEventHandle
             if (node instanceof CommonAccessibilityHolder) {
                 addRole((CommonAccessibilityHolder) node, attributes);
             }
-            try {
-                structureTreeDOMBuilder.startElement(node.getNamespaceURI(), localName,
-                        node.getNormalNamespacePrefix() + ":" + localName,
-                        attributes);
-            } catch (SAXException e) {
-                throw new RuntimeException(e);
-            }
+            structureTreeEventHandler.startNode(localName, attributes);
         }
 
         private void addNoNamespaceAttribute(AttributesImpl attributes, String name, String value) {
@@ -438,12 +414,7 @@ public class StructureTreeBuildingFOEventHandler extends DelegatingFOEventHandle
 
         private void endElement(FONode node) {
             String localName = node.getLocalName();
-            try {
-                structureTreeDOMBuilder.endElement(node.getNamespaceURI(), localName,
-                        node.getNormalNamespacePrefix() + ":" + localName);
-            } catch (SAXException e) {
-                throw new RuntimeException(e);
-            }
+            structureTreeEventHandler.endNode(localName);
         }
 
     }
@@ -451,389 +422,401 @@ public class StructureTreeBuildingFOEventHandler extends DelegatingFOEventHandle
     /**
      * Creates a new instance.
      *
-     * @param structureTree the object that will hold the structure tree
+     * @param structureTreeEventHandler the object that will hold the structure tree
      * @param delegate the FO event handler that must be wrapped by this instance
      */
-    public StructureTreeBuildingFOEventHandler(StructureTree structureTree,
+    public FO2StructureTreeConverter(StructureTreeEventHandler structureTreeEventHandler,
             FOEventHandler delegate) {
         super(delegate);
-        this.structureTree = structureTree;
-        this.actualStructureTreeBuilder = new StructureTreeBuilder(foUserAgent);
-        this.structureTreeBuilder = actualStructureTreeBuilder;
+        this.structureTreeEventHandler = structureTreeEventHandler;
+        this.foToStructureTreeEventAdapter = new FOToStructureTreeEventAdapter(foUserAgent);
+        this.converter = foToStructureTreeEventAdapter;
         this.eventSwallower = new FOEventHandler(foUserAgent) { };
     }
 
     @Override
     public void startDocument() throws SAXException {
-        structureTreeBuilder.startDocument();
+        converter.startDocument();
         super.startDocument();
     }
 
     @Override
     public void endDocument() throws SAXException {
-        structureTreeBuilder.endDocument();
+        converter.endDocument();
         super.endDocument();
     }
 
     @Override
+    public void startRoot(Root root) {
+       converter.startRoot(root);
+       super.startRoot(root);
+    }
+
+    @Override
+    public void endRoot(Root root) {
+        converter.endRoot(root);
+        super.endRoot(root);
+    }
+
+    @Override
     public void startPageSequence(PageSequence pageSeq) {
-        structureTreeBuilder.startPageSequence(pageSeq);
+        converter.startPageSequence(pageSeq);
         super.startPageSequence(pageSeq);
     }
 
     @Override
     public void endPageSequence(PageSequence pageSeq) {
-        structureTreeBuilder.endPageSequence(pageSeq);
+        converter.endPageSequence(pageSeq);
         super.endPageSequence(pageSeq);
     }
 
     @Override
     public void startPageNumber(PageNumber pagenum) {
-        structureTreeBuilder.startPageNumber(pagenum);
+        converter.startPageNumber(pagenum);
         super.startPageNumber(pagenum);
     }
 
     @Override
     public void endPageNumber(PageNumber pagenum) {
-        structureTreeBuilder.endPageNumber(pagenum);
+        converter.endPageNumber(pagenum);
         super.endPageNumber(pagenum);
     }
 
     @Override
     public void startPageNumberCitation(PageNumberCitation pageCite) {
-        structureTreeBuilder.startPageNumberCitation(pageCite);
+        converter.startPageNumberCitation(pageCite);
         super.startPageNumberCitation(pageCite);
     }
 
     @Override
     public void endPageNumberCitation(PageNumberCitation pageCite) {
-        structureTreeBuilder.endPageNumberCitation(pageCite);
+        converter.endPageNumberCitation(pageCite);
         super.endPageNumberCitation(pageCite);
     }
 
     @Override
     public void startPageNumberCitationLast(PageNumberCitationLast pageLast) {
-        structureTreeBuilder.startPageNumberCitationLast(pageLast);
+        converter.startPageNumberCitationLast(pageLast);
         super.startPageNumberCitationLast(pageLast);
     }
 
     @Override
     public void endPageNumberCitationLast(PageNumberCitationLast pageLast) {
-        structureTreeBuilder.endPageNumberCitationLast(pageLast);
+        converter.endPageNumberCitationLast(pageLast);
         super.endPageNumberCitationLast(pageLast);
     }
 
     @Override
     public void startFlow(Flow fl) {
-        structureTreeBuilder.startFlow(fl);
+        converter.startFlow(fl);
         super.startFlow(fl);
     }
 
     @Override
     public void endFlow(Flow fl) {
-        structureTreeBuilder.endFlow(fl);
+        converter.endFlow(fl);
         super.endFlow(fl);
     }
 
     @Override
     public void startBlock(Block bl) {
-        structureTreeBuilder.startBlock(bl);
+        converter.startBlock(bl);
         super.startBlock(bl);
     }
 
     @Override
     public void endBlock(Block bl) {
-        structureTreeBuilder.endBlock(bl);
+        converter.endBlock(bl);
         super.endBlock(bl);
     }
 
     @Override
     public void startBlockContainer(BlockContainer blc) {
-        structureTreeBuilder.startBlockContainer(blc);
+        converter.startBlockContainer(blc);
         super.startBlockContainer(blc);
     }
 
     @Override
     public void endBlockContainer(BlockContainer blc) {
-        structureTreeBuilder.endBlockContainer(blc);
+        converter.endBlockContainer(blc);
         super.endBlockContainer(blc);
     }
 
     @Override
     public void startInline(Inline inl) {
-        structureTreeBuilder.startInline(inl);
+        converter.startInline(inl);
         super.startInline(inl);
     }
 
     @Override
     public void endInline(Inline inl) {
-        structureTreeBuilder.endInline(inl);
+        converter.endInline(inl);
         super.endInline(inl);
     }
 
     @Override
     public void startTable(Table tbl) {
-        structureTreeBuilder.startTable(tbl);
+        converter.startTable(tbl);
         super.startTable(tbl);
     }
 
     @Override
     public void endTable(Table tbl) {
-        structureTreeBuilder.endTable(tbl);
+        converter.endTable(tbl);
         super.endTable(tbl);
     }
 
     @Override
     public void startColumn(TableColumn tc) {
-        structureTreeBuilder.startColumn(tc);
+        converter.startColumn(tc);
         super.startColumn(tc);
     }
 
     @Override
     public void endColumn(TableColumn tc) {
-        structureTreeBuilder.endColumn(tc);
+        converter.endColumn(tc);
         super.endColumn(tc);
     }
 
     @Override
     public void startHeader(TableHeader header) {
-        structureTreeBuilder.startHeader(header);
+        converter.startHeader(header);
         super.startHeader(header);
     }
 
     @Override
     public void endHeader(TableHeader header) {
-        structureTreeBuilder.endHeader(header);
+        converter.endHeader(header);
         super.endHeader(header);
     }
 
     @Override
     public void startFooter(TableFooter footer) {
-        structureTreeBuilder.startFooter(footer);
+        converter.startFooter(footer);
         super.startFooter(footer);
     }
 
     @Override
     public void endFooter(TableFooter footer) {
-        structureTreeBuilder.endFooter(footer);
+        converter.endFooter(footer);
         super.endFooter(footer);
     }
 
     @Override
     public void startBody(TableBody body) {
-        structureTreeBuilder.startBody(body);
+        converter.startBody(body);
         super.startBody(body);
     }
 
     @Override
     public void endBody(TableBody body) {
-        structureTreeBuilder.endBody(body);
+        converter.endBody(body);
         super.endBody(body);
     }
 
     @Override
     public void startRow(TableRow tr) {
-        structureTreeBuilder.startRow(tr);
+        converter.startRow(tr);
         super.startRow(tr);
     }
 
     @Override
     public void endRow(TableRow tr) {
-        structureTreeBuilder.endRow(tr);
+        converter.endRow(tr);
         super.endRow(tr);
     }
 
     @Override
     public void startCell(TableCell tc) {
-        structureTreeBuilder.startCell(tc);
+        converter.startCell(tc);
         super.startCell(tc);
     }
 
     @Override
     public void endCell(TableCell tc) {
-        structureTreeBuilder.endCell(tc);
+        converter.endCell(tc);
         super.endCell(tc);
     }
 
     @Override
     public void startList(ListBlock lb) {
-        structureTreeBuilder.startList(lb);
+        converter.startList(lb);
         super.startList(lb);
     }
 
     @Override
     public void endList(ListBlock lb) {
-        structureTreeBuilder.endList(lb);
+        converter.endList(lb);
         super.endList(lb);
     }
 
     @Override
     public void startListItem(ListItem li) {
-        structureTreeBuilder.startListItem(li);
+        converter.startListItem(li);
         super.startListItem(li);
     }
 
     @Override
     public void endListItem(ListItem li) {
-        structureTreeBuilder.endListItem(li);
+        converter.endListItem(li);
         super.endListItem(li);
     }
 
     @Override
     public void startListLabel(ListItemLabel listItemLabel) {
-        structureTreeBuilder.startListLabel(listItemLabel);
+        converter.startListLabel(listItemLabel);
         super.startListLabel(listItemLabel);
     }
 
     @Override
     public void endListLabel(ListItemLabel listItemLabel) {
-        structureTreeBuilder.endListLabel(listItemLabel);
+        converter.endListLabel(listItemLabel);
         super.endListLabel(listItemLabel);
     }
 
     @Override
     public void startListBody(ListItemBody listItemBody) {
-        structureTreeBuilder.startListBody(listItemBody);
+        converter.startListBody(listItemBody);
         super.startListBody(listItemBody);
     }
 
     @Override
     public void endListBody(ListItemBody listItemBody) {
-        structureTreeBuilder.endListBody(listItemBody);
+        converter.endListBody(listItemBody);
         super.endListBody(listItemBody);
     }
 
     @Override
     public void startStatic(StaticContent staticContent) {
-        structureTreeBuilder.startStatic(staticContent);
+        converter.startStatic(staticContent);
         super.startStatic(staticContent);
     }
 
     @Override
     public void endStatic(StaticContent statisContent) {
-        structureTreeBuilder.endStatic(statisContent);
+        converter.endStatic(statisContent);
         super.endStatic(statisContent);
     }
 
     @Override
     public void startMarkup() {
-        structureTreeBuilder.startMarkup();
+        converter.startMarkup();
         super.startMarkup();
     }
 
     @Override
     public void endMarkup() {
-        structureTreeBuilder.endMarkup();
+        converter.endMarkup();
         super.endMarkup();
     }
 
     @Override
     public void startLink(BasicLink basicLink) {
-        structureTreeBuilder.startLink(basicLink);
+        converter.startLink(basicLink);
         super.startLink(basicLink);
     }
 
     @Override
     public void endLink(BasicLink basicLink) {
-        structureTreeBuilder.endLink(basicLink);
+        converter.endLink(basicLink);
         super.endLink(basicLink);
     }
 
     @Override
     public void image(ExternalGraphic eg) {
-        structureTreeBuilder.image(eg);
+        converter.image(eg);
         super.image(eg);
     }
 
     @Override
     public void pageRef() {
-        structureTreeBuilder.pageRef();
+        converter.pageRef();
         super.pageRef();
     }
 
     @Override
     public void startInstreamForeignObject(InstreamForeignObject ifo) {
-        structureTreeBuilder.startInstreamForeignObject(ifo);
+        converter.startInstreamForeignObject(ifo);
         super.startInstreamForeignObject(ifo);
     }
 
     @Override
     public void endInstreamForeignObject(InstreamForeignObject ifo) {
-        structureTreeBuilder.endInstreamForeignObject(ifo);
+        converter.endInstreamForeignObject(ifo);
         super.endInstreamForeignObject(ifo);
     }
 
     @Override
     public void startFootnote(Footnote footnote) {
-        structureTreeBuilder.startFootnote(footnote);
+        converter.startFootnote(footnote);
         super.startFootnote(footnote);
     }
 
     @Override
     public void endFootnote(Footnote footnote) {
-        structureTreeBuilder.endFootnote(footnote);
+        converter.endFootnote(footnote);
         super.endFootnote(footnote);
     }
 
     @Override
     public void startFootnoteBody(FootnoteBody body) {
-        structureTreeBuilder.startFootnoteBody(body);
+        converter.startFootnoteBody(body);
         super.startFootnoteBody(body);
     }
 
     @Override
     public void endFootnoteBody(FootnoteBody body) {
-        structureTreeBuilder.endFootnoteBody(body);
+        converter.endFootnoteBody(body);
         super.endFootnoteBody(body);
     }
 
     @Override
     public void startLeader(Leader l) {
-        structureTreeBuilder = eventSwallower;
-        structureTreeBuilder.startLeader(l);
+        converter = eventSwallower;
+        converter.startLeader(l);
         super.startLeader(l);
     }
 
     @Override
     public void endLeader(Leader l) {
-        structureTreeBuilder.endLeader(l);
-        structureTreeBuilder = actualStructureTreeBuilder;
+        converter.endLeader(l);
+        converter = foToStructureTreeEventAdapter;
         super.endLeader(l);
     }
 
     @Override
     public void startWrapper(Wrapper wrapper) {
-        structureTreeBuilder.startWrapper(wrapper);
+        converter.startWrapper(wrapper);
         super.startWrapper(wrapper);
     }
 
     @Override
     public void endWrapper(Wrapper wrapper) {
-        structureTreeBuilder.endWrapper(wrapper);
+        converter.endWrapper(wrapper);
         super.endWrapper(wrapper);
     }
 
     @Override
     public void character(Character c) {
-        structureTreeBuilder.character(c);
+        converter.character(c);
         super.character(c);
     }
 
     @Override
     public void characters(char[] data, int start, int length) {
-        structureTreeBuilder.characters(data, start, length);
+        converter.characters(data, start, length);
         super.characters(data, start, length);
     }
 
     @Override
     public void startExternalDocument(ExternalDocument document) {
-        structureTreeBuilder.startExternalDocument(document);
+        converter.startExternalDocument(document);
         super.startExternalDocument(document);
     }
 
     @Override
     public void endExternalDocument(ExternalDocument document) {
-        structureTreeBuilder.endExternalDocument(document);
+        converter.endExternalDocument(document);
         super.endExternalDocument(document);
     }
 

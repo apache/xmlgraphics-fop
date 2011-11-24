@@ -20,9 +20,11 @@
 package org.apache.fop.render.intermediate;
 
 import java.awt.Dimension;
+import java.util.Locale;
 
 import javax.xml.transform.Result;
 
+import org.apache.fop.accessibility.StructureTreeEventHandler;
 import org.apache.fop.fonts.FontInfo;
 
 /**
@@ -32,6 +34,7 @@ import org.apache.fop.fonts.FontInfo;
  * <p>
  * <pre>
  * startDocument()
+ *   [setDocumentLocale()]
  *   startDocumentHeader()
  *   [handleExtension()]*
  *   endDocumentHeader()
@@ -118,6 +121,11 @@ public interface IFDocumentHandler {
     IFDocumentHandlerConfigurator getConfigurator();
 
     /**
+     * @return the structure tree builder
+     */
+    StructureTreeEventHandler getStructureTreeEventHandler();
+
+    /**
      * Returns a document navigation handler if this feature is supported.
      * @return the document navigation handler or null if not supported
      */
@@ -150,6 +158,11 @@ public interface IFDocumentHandler {
      * @throws IFException if an error occurs while handling this event
      */
     void endDocument() throws IFException;
+
+    /**
+    * @param locale Locale of the document.
+    */
+    void setDocumentLocale(Locale locale);
 
     /**
      * Indicates the start of the document header. This method is called right after the
@@ -261,7 +274,4 @@ public interface IFDocumentHandler {
      * @throws IFException if an error occurs while handling this event
      */
     void handleExtensionObject(Object extension) throws IFException;
-
-    //TODO Prototype the following:
-    //ContentHandler handleExtension() throws Exception
 }

@@ -68,7 +68,8 @@ import org.apache.fop.traits.MinOptMaxTest;
     CharactersetEncoderTest.class,
     org.apache.fop.render.afp.AFPTestSuite.class,
     PSTestSuite.class,
-    MinOptMaxTest.class
+    MinOptMaxTest.class,
+    org.apache.fop.render.intermediate.IFStructureTreeBuilderTestCase.class
 })
 public class StandardTestSuite {
 }

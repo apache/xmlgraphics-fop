@@ -21,7 +21,7 @@ package org.apache.fop.pdf;
 
 import java.util.Locale;
 
-import org.apache.fop.util.XMLUtil;
+import org.apache.fop.util.LanguageTags;
 
 /**
  * Class representing a PDF Structure Element.
@@ -145,7 +145,7 @@ public class PDFStructElem extends PDFDictionary {
      * @param language a value for the Lang entry
      */
     public void setLanguage(Locale language) {
-        setLanguage(XMLUtil.toRFC3066(language));
+        setLanguage(LanguageTags.toLanguageTag(language));
     }
 
     /**

@@ -50,6 +50,7 @@ import org.apache.fop.fo.flow.table.TableHeader;
 import org.apache.fop.fo.flow.table.TableRow;
 import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.pagination.PageSequence;
+import org.apache.fop.fo.pagination.Root;
 import org.apache.fop.fo.pagination.StaticContent;
 import org.apache.fop.fonts.FontEventAdapter;
 import org.apache.fop.fonts.FontInfo;
@@ -115,6 +116,12 @@ public abstract class FOEventHandler {
      * @throws SAXException In case of a problem
      */
     public void endDocument() throws SAXException {
+    }
+
+    public void startRoot(Root root) {
+    }
+
+    public void endRoot(Root root) {
     }
 
     /**

@@ -147,7 +147,8 @@
         </fo:list-item>
       </fo:list-block>
       <fo:block id="70" text-align="center"><fo:instream-foreign-object id="71" 
-          inline-progression-dimension.maximum="50%" content-width="scale-to-fit">
+          inline-progression-dimension.maximum="50%" content-width="scale-to-fit"
+          fox:alt-text="An inline SVG">
           <svg xmlns="http://www.w3.org/2000/svg" width="319" height="286.6">
             <g style="fill-opacity:0.7; stroke:black; stroke-width:3"
               transform="translate(0, 286.6) scale(1, -1) translate(100, 100)">

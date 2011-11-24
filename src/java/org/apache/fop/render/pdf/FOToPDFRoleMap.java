@@ -22,8 +22,6 @@ package org.apache.fop.render.pdf;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.w3c.dom.Node;
-
 import org.apache.fop.events.EventBroadcaster;
 import org.apache.fop.pdf.PDFName;
 import org.apache.fop.pdf.PDFObject;
@@ -37,9 +35,9 @@ final class FOToPDFRoleMap {
     /**
      * Standard structure types defined by the PDF Reference, Fourth Edition (PDF 1.5).
      */
-    private static final Map STANDARD_STRUCTURE_TYPES = new HashMap();
+    private static final Map<String, PDFName> STANDARD_STRUCTURE_TYPES = new HashMap<String, PDFName>();
 
-    private static final Map DEFAULT_MAPPINGS = new java.util.HashMap();
+    private static final Map<String, Mapper> DEFAULT_MAPPINGS = new java.util.HashMap<String, Mapper>();
 
     private static final PDFName THEAD;
     private static final PDFName NON_STRUCT;
@@ -172,7 +170,7 @@ final class FOToPDFRoleMap {
      * @return the structure type or null if no match could be found
      */
     public static PDFName mapFormattingObject(String fo, PDFObject parent) {
-        Mapper mapper = (Mapper)DEFAULT_MAPPINGS.get(fo);
+        Mapper mapper = (Mapper) DEFAULT_MAPPINGS.get(fo);
         if (mapper != null) {
             return mapper.getStructureType(parent);
         } else {
@@ -180,27 +178,32 @@ final class FOToPDFRoleMap {
         }
     }
 
-    public static PDFName mapFormattingObject(Node fo, PDFObject parent,
-            EventBroadcaster eventBroadcaster) {
+    /**
+     * Maps a Formatting Object to a PDFName representing the associated structure type.
+     * @param fo the formatting object's local name
+     * @param role the value of the formatting object's role property
+     * @param parent the parent of the structure element to be mapped
+     * @param eventBroadcaster the event broadcaster
+     * @return the structure type or null if no match could be found
+     */
+    public static PDFName mapFormattingObject(String fo, String role,
+            PDFObject parent, EventBroadcaster eventBroadcaster) {
         PDFName type = null;
-        Node role = fo.getAttributes().getNamedItemNS(null, "role");
         if (role == null) {
-            type = mapFormattingObject(fo.getLocalName(), parent);
+            type = mapFormattingObject(fo, parent);
         } else {
-            String customType = role.getNodeValue();
-            type = (PDFName) STANDARD_STRUCTURE_TYPES.get(customType);
+            type = (PDFName) STANDARD_STRUCTURE_TYPES.get(role);
             if (type == null) {
-                String foName = fo.getLocalName();
-                type = mapFormattingObject(foName, parent);
+                type = mapFormattingObject(fo, parent);
                 PDFEventProducer.Provider.get(eventBroadcaster).nonStandardStructureType(fo,
-                        foName, customType, type.toString().substring(1));
+                        fo, role, type.toString().substring(1));
             }
         }
         assert type != null;
         return type;
     }
 
-    private static interface Mapper {
+    private interface Mapper {
         PDFName getStructureType(PDFObject parent);
     }
 
@@ -222,7 +225,7 @@ final class FOToPDFRoleMap {
 
         public PDFName getStructureType(PDFObject parent) {
             PDFStructElem grandParent = (PDFStructElem)
-                ((PDFStructElem)parent).getParentStructElem();
+                ((PDFStructElem) parent).getParentStructElem();
             //TODO What to do with cells from table-footer? Currently they are mapped on TD.
             PDFName type;
             if (THEAD.equals(grandParent.getStructureType())) {

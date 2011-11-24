@@ -354,25 +354,6 @@ public class PDFDocument {
     }
 
     /**
-     * Makes sure a Lang entry has been set on the document catalog, setting it
-     * to a default value if necessary. When accessibility is enabled the
-     * language must be specified for any text element in the document.
-     */
-    public void enforceLanguageOnRoot() {
-        if (root.getLanguage() == null) {
-            String fallbackLanguage;
-            if (getProfile().getPDFAMode().isPDFA1LevelA()) {
-                //According to Annex B of ISO-19005-1:2005(E), section B.2
-                fallbackLanguage = "x-unknown";
-            } else {
-                //No language has been set on the first page-sequence, so fall back to "en".
-                fallbackLanguage = "en";
-            }
-            root.setLanguage(fallbackLanguage);
-        }
-    }
-
-    /**
      * Get the {@link PDFInfo} object for this document.
      *
      * @return the {@link PDFInfo} object
