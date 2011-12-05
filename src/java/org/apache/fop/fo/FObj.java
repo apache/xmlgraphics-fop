@@ -627,7 +627,7 @@ public abstract class FObj extends FONode implements Constants {
     }
 
     /** Basic {@link FONode.FONodeIterator} implementation */
-    public class FObjIterator implements FONodeIterator {
+    public static class FObjIterator implements FONodeIterator {
 
         private static final int F_NONE_ALLOWED = 0;
         private static final int F_SET_ALLOWED = 1;
