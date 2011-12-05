@@ -23,7 +23,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.w3c.dom.DOMImplementation;
-
 import org.xml.sax.Locator;
 
 import org.apache.commons.logging.Log;
@@ -42,7 +41,7 @@ import org.apache.fop.fo.ElementMapping.Maker;
 public class ElementMappingRegistry {
 
     /** logging instance */
-    protected Log log = LogFactory.getLog(ElementMappingRegistry.class);
+    private static final Log LOG = LogFactory.getLog(ElementMappingRegistry.class);
 
     /**
      * Table mapping element names to the makers of objects
@@ -79,7 +78,7 @@ public class ElementMappingRegistry {
                 try {
                     addElementMapping(mapping);
                 } catch (IllegalArgumentException e) {
-                    log.warn("Error while adding element mapping", e);
+                    LOG.warn("Error while adding element mapping", e);
                 }
 
             }
