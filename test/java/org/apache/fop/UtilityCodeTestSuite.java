@@ -28,12 +28,10 @@ import org.apache.fop.pdf.FileIDGeneratorTestCase;
 import org.apache.fop.pdf.PDFDocumentGraphics2DTestCase;
 import org.apache.fop.pdf.PDFEncryptionJCETestCase;
 import org.apache.fop.pdf.PDFFactoryTestCase;
-import org.apache.fop.pdf.PDFObjectTestCase;
 import org.apache.fop.traits.BorderPropsTestCase;
 import org.apache.fop.util.BitmapImageUtilTestCase;
 import org.apache.fop.util.ColorUtilTestCase;
 import org.apache.fop.util.ElementListUtilsTestCase;
-import org.apache.fop.util.PDFNumberTestCase;
 import org.apache.fop.util.XMLResourceBundleTestCase;
 
 /**
@@ -41,8 +39,6 @@ import org.apache.fop.util.XMLResourceBundleTestCase;
  */
 @RunWith(Suite.class)
 @SuiteClasses({
-    PDFNumberTestCase.class,
-    PDFObjectTestCase.class,
     ColorUtilTestCase.class,
     BorderPropsTestCase.class,
     ElementListUtilsTestCase.class,

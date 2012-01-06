@@ -21,8 +21,6 @@ package org.apache.fop.pdf;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.Writer;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -36,13 +34,13 @@ public class PDFDictionary extends PDFObject {
     /**
      * the entry map
      */
-    protected Map entries = new java.util.HashMap();
+    protected Map<String, Object> entries = new java.util.HashMap<String, Object>();
 
     /**
      * maintains the order of the entries added to the entry map. Whenever you modify
      * "entries", always make sure you adjust this list accordingly.
      */
-    protected List order = new java.util.ArrayList();
+    protected List<String> order = new java.util.ArrayList<String>();
 
     /**
      * Create a new dictionary object.
@@ -86,7 +84,7 @@ public class PDFDictionary extends PDFObject {
         if (!entries.containsKey(name)) {
             this.order.add(name);
         }
-        this.entries.put(name, new Integer(value));
+        this.entries.put(name, Integer.valueOf(value));
     }
 
     /**
@@ -99,51 +97,50 @@ public class PDFDictionary extends PDFObject {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected int output(OutputStream stream) throws IOException {
         CountingOutputStream cout = new CountingOutputStream(stream);
-        Writer writer = PDFDocument.getWriterFor(cout);
+        StringBuilder textBuffer = new StringBuilder(64);
         if (hasObjectNumber()) {
-            writer.write(getObjectID());
+            textBuffer.append(getObjectID());
         }
 
-        writeDictionary(cout, writer);
+        writeDictionary(cout, textBuffer);
 
         if (hasObjectNumber()) {
-            writer.write("\nendobj\n");
+            textBuffer.append("\nendobj\n");
         }
 
-        writer.flush();
+        PDFDocument.flushTextBuffer(textBuffer, cout);
         return cout.getCount();
     }
 
     /**
      * Writes the contents of the dictionary to a StringBuffer.
      * @param out the OutputStream (for binary content)
-     * @param writer the Writer (for text content, wraps the above OutputStream)
+     * @param textBuffer the text buffer for text output
      * @throws IOException if an I/O error occurs
      */
-    protected void writeDictionary(OutputStream out, Writer writer) throws IOException {
-        writer.write("<<");
+    protected void writeDictionary(OutputStream out, StringBuilder textBuffer) throws IOException {
+        textBuffer.append("<<");
         boolean compact = (this.order.size() <= 2);
-        Iterator iter = this.order.iterator();
-        while (iter.hasNext()) {
-            String key = (String)iter.next();
+        for (String key : this.order) {
             if (compact) {
-                writer.write(' ');
+                textBuffer.append(' ');
             } else {
-                writer.write("\n  ");
+                textBuffer.append("\n  ");
             }
-            writer.write(PDFName.escapeName(key));
-            writer.write(' ');
+            textBuffer.append(PDFName.escapeName(key));
+            textBuffer.append(' ');
             Object obj = this.entries.get(key);
-            formatObject(obj, out, writer);
+            formatObject(obj, out, textBuffer);
         }
         if (compact) {
-            writer.write(' ');
+            textBuffer.append(' ');
         } else {
-            writer.write('\n');
+            textBuffer.append('\n');
         }
-        writer.write(">>\n");
+        textBuffer.append(">>\n");
     }
 
 }

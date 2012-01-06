@@ -21,7 +21,6 @@ package org.apache.fop.pdf;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.Writer;
 
 import org.apache.commons.io.output.CountingOutputStream;
 
@@ -164,7 +163,7 @@ public abstract class AbstractPDFStream extends PDFDictionary {
         OutputStream filteredOutput = getFilterList().applyFilters(cout);
         outputRawStreamData(filteredOutput);
         filteredOutput.close();
-        refLength.setNumber(new Integer(cout.getCount()));
+        refLength.setNumber(Integer.valueOf(cout.getCount()));
         bytesWritten += cout.getCount();
 
         //Stream trailer
@@ -180,13 +179,13 @@ public abstract class AbstractPDFStream extends PDFDictionary {
      * byte arrays around so much
      * {@inheritDoc}
      */
+    @Override
     protected int output(OutputStream stream) throws IOException {
         setupFilterList();
 
         CountingOutputStream cout = new CountingOutputStream(stream);
-        Writer writer = PDFDocument.getWriterFor(cout);
-        writer.write(getObjectID());
-        //int length = 0;
+        StringBuilder textBuffer = new StringBuilder(64);
+        textBuffer.append(getObjectID());
 
         StreamCache encodedStream = null;
         PDFNumber refLength = null;
@@ -197,14 +196,14 @@ public abstract class AbstractPDFStream extends PDFDictionary {
             lengthEntry = refLength;
         } else {
             encodedStream = encodeStream();
-            lengthEntry = new Integer(encodedStream.getSize() + 1);
+            lengthEntry = Integer.valueOf(encodedStream.getSize() + 1);
         }
 
         populateStreamDict(lengthEntry);
-        writeDictionary(cout, writer);
+        writeDictionary(cout, textBuffer);
 
         //Send encoded stream to target OutputStream
-        writer.flush();
+        PDFDocument.flushTextBuffer(textBuffer, cout);
         if (encodedStream == null) {
             encodeAndWriteStream(cout, refLength);
         } else {
@@ -212,8 +211,8 @@ public abstract class AbstractPDFStream extends PDFDictionary {
             encodedStream.clear(); //Encoded stream can now be discarded
         }
 
-        writer.write("\nendobj\n");
-        writer.flush();
+        textBuffer.append("\nendobj\n");
+        PDFDocument.flushTextBuffer(textBuffer, cout);
         return cout.getCount();
     }
 

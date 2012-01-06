@@ -19,44 +19,133 @@
 
 package org.apache.fop.pdf;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
-
 import org.junit.Test;
+import org.junit.Before;
+import static org.junit.Assert.*;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 /**
  * Tests the PDFObject class.
  */
 public class PDFObjectTestCase {
+    /** The document behind this object */
+    protected final PDFDocument doc = new PDFDocument("test");
+    /** The parent of this object */
+    protected final PDFObject parent = new DummyPDFObject();
+    /** The test subject */
+    protected PDFObject pdfObjectUnderTest;
+    /** The string to begin describing the object <code>"1 0 obj\n"</code> */
+    protected final String beginObj = "1 0 obj\n";
+    /** The string to end describing the object <code>"\nendobj\n"</code> */
+    protected final String endObj = "\nendobj\n";
 
-    /**
-     * Tests date/time formatting in PDFObject.
-     * @throws Exception if an error occurs
-     */
-    @Test
-    public void testDateFormatting() throws Exception {
-        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"), Locale.ENGLISH);
-        cal.set(2008, Calendar.FEBRUARY, 07, 15, 11, 07);
-        cal.set(Calendar.MILLISECOND, 0);
-        Date dt = cal.getTime();
+    private static class DummyPDFObject extends PDFObject {
 
-        MyPDFObject obj = new MyPDFObject();
-        String s = obj.formatDateTime(dt, TimeZone.getTimeZone("GMT"));
-        assertEquals("D:20080207151107Z", s);
-        s = obj.formatDateTime(dt, TimeZone.getTimeZone("GMT+02:00"));
-        assertEquals("D:20080207171107+02'00'", s);
-        s = obj.formatDateTime(dt, TimeZone.getTimeZone("GMT+02:30"));
-        assertEquals("D:20080207174107+02'30'", s);
-        s = obj.formatDateTime(dt, TimeZone.getTimeZone("GMT-08:00"));
-        assertEquals("D:20080207071107-08'00'", s);
+    };
+
+    @Before
+    public void setUp() {
+        pdfObjectUnderTest = new DummyPDFObject();
+        pdfObjectUnderTest.setDocument(doc);
+        pdfObjectUnderTest.setParent(parent);
     }
 
-    private class MyPDFObject extends PDFObject {
+    /**
+     * Tests setObjectNumber()
+     */
+    @Test
+    public void testSetObjectNumber() {
+        pdfObjectUnderTest.setObjectNumber(1);
+        assertEquals(1, pdfObjectUnderTest.getObjectNumber());
 
+        pdfObjectUnderTest.setObjectNumber(5);
+        assertEquals(5, pdfObjectUnderTest.getObjectNumber());
+    }
+
+    /**
+     * Tests hasObjectNumber() - returns the object number of the underlying PDF object.
+     */
+    @Test
+    public void testHasObjectNumber() {
+        assertFalse(pdfObjectUnderTest.hasObjectNumber());
+
+        pdfObjectUnderTest.setObjectNumber(1);
+        assertTrue(pdfObjectUnderTest.hasObjectNumber());
+    }
+
+    /**
+     * Tests getGeneration() - returns the generation number of the underlying PDF object.
+     */
+    @Test
+    public void testGetGeneration() {
+        // Default should be 0
+        assertEquals(0, pdfObjectUnderTest.getGeneration());
+        // apparently there is no way to set this to anything other than 0
+    }
+
+    /**
+     * Tests setDocument() - returns the document to which this object is bound.
+     */
+    @Test
+    public void testSetDocument() {
+        assertEquals(doc, pdfObjectUnderTest.getDocument());
+        // assign a different document to the object and test (this should be immutable but isn't)
+        PDFDocument anotherDoc = new PDFDocument("another test");
+        pdfObjectUnderTest.setDocument(anotherDoc);
+        assertEquals(anotherDoc, pdfObjectUnderTest.getDocument());
+    }
+
+    /**
+     * Tests setParent() - assigns the object a parent.
+     */
+    @Test
+    public void testSetParent() {
+        assertEquals(parent, pdfObjectUnderTest.getParent());
+        // assign another parent (this probably shouldn't me mutable)
+        DummyPDFObject anotherParent = new DummyPDFObject();
+        pdfObjectUnderTest.setParent(anotherParent);
+        assertEquals(anotherParent, pdfObjectUnderTest.getParent());
+    }
+
+    /**
+     * Test getObjectID() - returns the PDF object ID.
+     */
+    @Test
+    public void testGetObjectID() {
+        pdfObjectUnderTest.setObjectNumber(10);
+        // String is of the format "<object#> <generation#> obj\n"
+        assertEquals("10 0 obj\n", pdfObjectUnderTest.getObjectID());
+    }
+
+    /**
+     * Test referencePDF() - returns a {@link String} in PDF format to reference this object.
+     */
+    @Test
+    public void testReferencePDF() {
+        try {
+            pdfObjectUnderTest.referencePDF();
+            fail("The object number is not set, an exception should be thrown");
+        } catch (IllegalArgumentException e) {
+            // PASS
+        }
+        pdfObjectUnderTest.setObjectNumber(10);
+        // Referencing this object is in the format "<obj#> <gen#> R"
+        assertEquals("10 0 R", pdfObjectUnderTest.referencePDF());
+    }
+
+    /**
+     * Test makeReference() - returns this object represented as a {@link PDFReference}.
+     */
+    @Test
+    public void testMakeReference() {
+        // Not very intelligent but, there's not much to test here
+        pdfObjectUnderTest.setObjectNumber(10);
+        PDFReference ref = pdfObjectUnderTest.makeReference();
+        assertEquals(pdfObjectUnderTest.getObjectNumber(), ref.getObjectNumber());
+        assertEquals(pdfObjectUnderTest, ref.getObject());
+        assertEquals(pdfObjectUnderTest.referencePDF(), ref.toString());
     }
 
     /**
@@ -78,4 +167,32 @@ public class PDFObjectTestCase {
         assertEquals(ref.toString(), "8 0 R");
     }
 
+    /**
+     * A generic method to test output() for sub-classes of (@link PDFObject}. The expected String
+     * should be formatted such that the object number and object descriptor aren't printed i.e.
+     * for a simple integer object in PDF:
+     * <pre>
+     * 1 0 obj  ** ommited from expectedString
+     * 10
+     * endobj   ** ommited from expectedString
+     * </pre>
+     * Thus the expected string would be "10".
+     * @param expectedString the string that is expected.
+     * @param object the object being tested
+     * @throws IOException error with I/O
+     */
+    protected void testOutputStreams(String expectedString, PDFObject object) throws IOException {
+        // Test both with and without object numbers
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        // Ensure that
+        object.setObjectNumber(0);
+        assertEquals(expectedString.length(), object.output(outStream));
+        assertEquals(expectedString, outStream.toString());
+        outStream.reset();
+        object.setObjectNumber(1);
+        // Test the length of the output string is returned correctly.
+        String string = beginObj + expectedString + endObj;
+        assertEquals(string.length(), object.output(outStream));
+        assertEquals(string, outStream.toString());
+    }
 }

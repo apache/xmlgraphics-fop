@@ -21,7 +21,6 @@ package org.apache.fop.pdf;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.Writer;
 import java.util.Collection;
 import java.util.List;
 
@@ -34,7 +33,7 @@ public class PDFArray extends PDFObject {
     /**
      * List holding the values of this array
      */
-    protected List values = new java.util.ArrayList();
+    protected List<Object> values = new java.util.ArrayList<Object>();
 
     /**
      * Create a new, empty array object
@@ -62,7 +61,7 @@ public class PDFArray extends PDFObject {
         super(parent);
 
         for (int i = 0, c = values.length; i < c; i++) {
-            this.values.add(new Integer(values[i]));
+            this.values.add(Integer.valueOf(values[i]));
         }
     }
 
@@ -85,7 +84,7 @@ public class PDFArray extends PDFObject {
      * @param parent the array's parent if any
      * @param values the actual values wrapped by this object
      */
-    public PDFArray(PDFObject parent, Collection values) {
+    public PDFArray(PDFObject parent, Collection<Object> values) {
         /* generic creation of PDF object */
         super(parent);
 
@@ -180,28 +179,29 @@ public class PDFArray extends PDFObject {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected int output(OutputStream stream) throws IOException {
         CountingOutputStream cout = new CountingOutputStream(stream);
-        Writer writer = PDFDocument.getWriterFor(cout);
+        StringBuilder textBuffer = new StringBuilder(64);
         if (hasObjectNumber()) {
-            writer.write(getObjectID());
+            textBuffer.append(getObjectID());
         }
 
-        writer.write('[');
+        textBuffer.append('[');
         for (int i = 0; i < values.size(); i++) {
             if (i > 0) {
-                writer.write(' ');
+                textBuffer.append(' ');
             }
             Object obj = this.values.get(i);
-            formatObject(obj, cout, writer);
+            formatObject(obj, cout, textBuffer);
         }
-        writer.write(']');
+        textBuffer.append(']');
 
         if (hasObjectNumber()) {
-            writer.write("\nendobj\n");
+            textBuffer.append("\nendobj\n");
         }
 
-        writer.flush();
+        PDFDocument.flushTextBuffer(textBuffer, cout);
         return cout.getCount();
     }
 

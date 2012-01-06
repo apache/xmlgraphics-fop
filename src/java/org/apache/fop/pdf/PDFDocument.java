@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.io.Writer;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -274,20 +273,17 @@ public class PDFDocument {
     }
 
     /**
-     * Creates and returns a Writer object wrapping the given OutputStream. The Writer is
-     * buffered to reduce the number of calls to the encoding converter so don't forget
-     * to <code>flush()</code> the Writer after use or before writing directly to the
-     * underlying OutputStream.
-     *
-     * @param out the OutputStream to write to
-     * @return the requested Writer
+     * Flushes the given text buffer to an output stream with the right encoding and resets
+     * the text buffer. This is used to efficiently switch between outputting text and binary
+     * content.
+     * @param textBuffer the text buffer
+     * @param out the output stream to flush the text content to
+     * @throws IOException if an I/O error occurs while writing to the output stream
      */
-    public static Writer getWriterFor(OutputStream out) {
-        try {
-            return new java.io.BufferedWriter(new java.io.OutputStreamWriter(out, ENCODING));
-        } catch (UnsupportedEncodingException uee) {
-            throw new Error("JVM doesn't support " + ENCODING + " encoding!");
-        }
+    public static void flushTextBuffer(StringBuilder textBuffer, OutputStream out)
+            throws IOException {
+        out.write(encode(textBuffer.toString()));
+        textBuffer.setLength(0);
     }
 
     /**

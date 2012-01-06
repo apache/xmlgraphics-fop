@@ -21,7 +21,6 @@ package org.apache.fop.pdf;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.Writer;
 
 import org.apache.commons.io.output.CountingOutputStream;
 
@@ -52,15 +51,16 @@ public class PDFDestination extends PDFObject {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected int output(OutputStream stream) throws IOException {
         CountingOutputStream cout = new CountingOutputStream(stream);
-        Writer writer = PDFDocument.getWriterFor(cout);
+        StringBuilder textBuffer = new StringBuilder(64);
 
-        formatObject(getIDRef(), cout, writer);
-        writer.write(' ');
-        formatObject(goToReference, cout, writer);
+        formatObject(getIDRef(), cout, textBuffer);
+        textBuffer.append(' ');
+        formatObject(goToReference, cout, textBuffer);
 
-        writer.flush();
+        PDFDocument.flushTextBuffer(textBuffer, cout);
         return cout.getCount();
     }
 
@@ -70,6 +70,7 @@ public class PDFDestination extends PDFObject {
      * @param goToReference the reference to set in the associated DestinationData object.
      * @deprecated use setGoToReference(Object) instead
      */
+    @Deprecated
     public void setGoToReference(String goToReference) {
         this.goToReference = goToReference;
     }
@@ -107,6 +108,7 @@ public class PDFDestination extends PDFObject {
      * @param obj the object to compare
      * @return true if this equals other object
      */
+    @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
@@ -125,6 +127,7 @@ public class PDFDestination extends PDFObject {
     }
 
     /** {@inheritDoc} */
+    @Override
     public int hashCode() {
         return getIDRef().hashCode();
     }

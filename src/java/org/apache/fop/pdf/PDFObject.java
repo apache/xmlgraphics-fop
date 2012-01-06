@@ -217,10 +217,15 @@ public abstract class PDFObject implements PDFWritable {
 
     /** {@inheritDoc} */
     public void outputInline(OutputStream out, Writer writer) throws IOException {
+        throw new UnsupportedOperationException("Don't use anymore: " + getClass().getName());
+    }
+
+    /** {@inheritDoc} */
+    public void outputInline(OutputStream out, StringBuilder textBuffer) throws IOException {
         if (hasObjectNumber()) {
-            writer.write(referencePDF());
+            textBuffer.append(referencePDF());
         } else {
-            writer.flush();
+            PDFDocument.flushTextBuffer(textBuffer, out);
             output(out);
         }
     }
@@ -302,40 +307,46 @@ public abstract class PDFObject implements PDFWritable {
 
     /**
      * Formats an object for serialization to PDF.
+     * <p>
+     * IMPORTANT: If you need to write out binary output, call
+     * {@link PDFDocument#flushTextBuffer(StringBuilder, OutputStream)} before writing any content
+     * to the {@link OutputStream}!
      * @param obj the object
      * @param out the OutputStream to write to
-     * @param writer a Writer for text content (will always be a wrapper around the above
-     *                  OutputStream. Make sure <code>flush</code> is called when mixing calls)
+     * @param textBuffer a text buffer for text output
      * @throws IOException If an I/O error occurs
      */
-    protected void formatObject(Object obj, OutputStream out, Writer writer) throws IOException {
+    protected void formatObject(Object obj, OutputStream out, StringBuilder textBuffer)
+                throws IOException {
         if (obj == null) {
-            writer.write("null");
+            textBuffer.append("null");
         } else if (obj instanceof PDFWritable) {
-            ((PDFWritable)obj).outputInline(out, writer);
+            ((PDFWritable)obj).outputInline(out, textBuffer);
         } else if (obj instanceof Number) {
             if (obj instanceof Double || obj instanceof Float) {
-                writer.write(PDFNumber.doubleOut(((Number)obj).doubleValue()));
+                textBuffer.append(PDFNumber.doubleOut(((Number)obj).doubleValue()));
             } else {
-                writer.write(obj.toString());
+                textBuffer.append(obj.toString());
             }
         } else if (obj instanceof Boolean) {
-            writer.write(obj.toString());
+            textBuffer.append(obj.toString());
         } else if (obj instanceof byte[]) {
-            writer.flush();
+            PDFDocument.flushTextBuffer(textBuffer, out);
             encodeBinaryToHexString((byte[])obj, out);
         } else {
-            writer.flush();
+            PDFDocument.flushTextBuffer(textBuffer, out);
             out.write(encodeText(obj.toString()));
         }
     }
 
-    /** Formatting pattern for PDF date */
-    protected static final SimpleDateFormat DATE_FORMAT;
-
-    static {
-        DATE_FORMAT = new SimpleDateFormat("'D:'yyyyMMddHHmmss", Locale.ENGLISH);
-        DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("GMT"));
+    /**
+     * Returns a SimpleDateFormat instance for formatting PDF date-times.
+     * @return a new SimpleDateFormat instance
+     */
+    protected SimpleDateFormat getPDFDateFormat() {
+        SimpleDateFormat df = new SimpleDateFormat("'D:'yyyyMMddHHmmss", Locale.ENGLISH);
+        df.setTimeZone(TimeZone.getTimeZone("GMT"));
+        return df;
     }
 
     /**
@@ -355,7 +366,7 @@ public abstract class PDFObject implements PDFWritable {
         //DateFormat is operating on GMT so adjust for time zone offset
         Date dt1 = new Date(time.getTime() + offset);
         StringBuffer sb = new StringBuffer();
-        sb.append(DATE_FORMAT.format(dt1));
+        sb.append(getPDFDateFormat().format(dt1));
 
         offset /= (1000 * 60); //Convert to minutes
 
