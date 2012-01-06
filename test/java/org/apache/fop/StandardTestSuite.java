@@ -44,6 +44,7 @@ import org.apache.fop.render.pdf.RenderPDFTestSuite;
 import org.apache.fop.render.ps.PSTestSuite;
 import org.apache.fop.render.rtf.RichTextFormatTestSuite;
 import org.apache.fop.traits.MinOptMaxTestCase;
+import org.apache.fop.pdf.PDFLibraryTestSuite;
 
 /**
  * Test suite for basic functionality of FOP.
@@ -70,6 +71,7 @@ import org.apache.fop.traits.MinOptMaxTestCase;
         MODCAParserTestCase.class,
         CharactersetEncoderTestCase.class,
         org.apache.fop.render.afp.AFPTestSuite.class,
+        PDFLibraryTestSuite.class,
         PSTestSuite.class,
         MinOptMaxTestCase.class,
         AdobeStandardEncodingTestCase.class,

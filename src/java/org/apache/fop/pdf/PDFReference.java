@@ -19,9 +19,7 @@
 
 package org.apache.fop.pdf;
 
-import java.io.IOException;
 import java.io.OutputStream;
-import java.io.Writer;
 import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
 
@@ -36,7 +34,7 @@ public class PDFReference implements PDFWritable {
     private int objectNumber;
     private int generation;
 
-    private Reference objReference;
+    private Reference<PDFObject> objReference;
 
     /**
      * Creates a new PDF reference.
@@ -45,7 +43,7 @@ public class PDFReference implements PDFWritable {
     public PDFReference(PDFObject obj) {
         this.objectNumber = obj.getObjectNumber();
         this.generation = obj.getGeneration();
-        this.objReference = new SoftReference(obj);
+        this.objReference = new SoftReference<PDFObject>(obj);
     }
 
     /**
@@ -69,7 +67,7 @@ public class PDFReference implements PDFWritable {
      */
     public PDFObject getObject() {
         if (this.objReference != null) {
-            PDFObject obj = (PDFObject)this.objReference.get();
+            PDFObject obj = this.objReference.get();
             if (obj == null) {
                 this.objReference = null;
             }
@@ -96,13 +94,16 @@ public class PDFReference implements PDFWritable {
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
-        return getObjectNumber() + " " + getGeneration() + " R";
+        StringBuilder textBuffer = new StringBuilder();
+        outputInline(null, textBuffer);
+        return textBuffer.toString();
     }
 
     /** {@inheritDoc} */
-    public void outputInline(OutputStream out, Writer writer) throws IOException {
-        writer.write(toString());
+    public void outputInline(OutputStream out, StringBuilder textBuffer) {
+        textBuffer.append(getObjectNumber()).append(' ').append(getGeneration()).append(" R");
     }
 
 }
