@@ -167,7 +167,7 @@ public class ExternalDocumentLayoutManager extends AbstractPageSequenceLayoutMan
 
     private void makePageForImage(ImageInfo info, ImageLayout layout) {
         this.imageLayout = layout;
-        curPage = makeNewPage(false, false);
+        curPage = makeNewPage(false);
         fillPage(info.getOriginalURI());
         finishPage();
     }

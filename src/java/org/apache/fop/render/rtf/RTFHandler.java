@@ -32,7 +32,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.w3c.dom.Document;
-
 import org.xml.sax.SAXException;
 
 import org.apache.commons.io.IOUtils;
@@ -118,13 +117,13 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfFootnote;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfHyperLink;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfList;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfListItem;
+import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfListItem.RtfListItemLabel;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfPage;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfSection;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTable;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTableCell;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTableRow;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTextrun;
-import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfListItem.RtfListItemLabel;
 import org.apache.fop.render.rtf.rtflib.tools.BuilderContext;
 import org.apache.fop.render.rtf.rtflib.tools.PercentContext;
 import org.apache.fop.render.rtf.rtflib.tools.TableContext;
@@ -218,7 +217,7 @@ public class RTFHandler extends FOEventHandler {
                     PageSequenceMaster master
                         = pageSeq.getRoot().getLayoutMasterSet().getPageSequenceMaster(reference);
                     this.pagemaster = master.getNextSimplePageMaster(
-                            false, false, false, false);
+                            false, false, false, false, pageSeq.getMainFlow().getFlowName());
                 }
             }
 

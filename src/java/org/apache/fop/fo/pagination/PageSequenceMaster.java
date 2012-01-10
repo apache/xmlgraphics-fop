@@ -20,6 +20,7 @@
 package org.apache.fop.fo.pagination;
 
 // Java
+import java.util.Collections;
 import java.util.List;
 
 import org.xml.sax.Locator;
@@ -47,6 +48,7 @@ public class PageSequenceMaster extends FObj {
     private List<SubSequenceSpecifier> subSequenceSpecifiers;
     private SubSequenceSpecifier currentSubSequence;
     private int currentSubSequenceNumber = -1;
+    private BlockLevelEventProducer blockLevelEventProducer;
 
     // The terminology may be confusing. A 'page-sequence-master' consists
     // of a sequence of what the XSL spec refers to as
@@ -60,9 +62,11 @@ public class PageSequenceMaster extends FObj {
      * given {@link FONode}.
      *
      * @param parent {@link FONode} that is the parent of this object
+     * @param blockLevelEventProducer event producer
      */
-    public PageSequenceMaster(FONode parent) {
+    public PageSequenceMaster(FONode parent, BlockLevelEventProducer blockLevelEventProducer) {
         super(parent);
+        this.blockLevelEventProducer = blockLevelEventProducer;
     }
 
     /** {@inheritDoc} */
@@ -126,6 +130,10 @@ public class PageSequenceMaster extends FObj {
         return null;
     }
 
+    List<SubSequenceSpecifier> getSubSequenceSpecifier() {
+        return Collections.unmodifiableList(subSequenceSpecifiers);
+    }
+
     /**
      * Resets the subsequence specifiers subsystem.
      */
@@ -177,51 +185,57 @@ public class PageSequenceMaster extends FObj {
      * @param isFirstPage True if the next page is the first
      * @param isLastPage True if the next page is the last
      * @param isBlankPage True if the next page is blank
+     * @param mainFlowName the name of the main flow of the page sequence
      * @return the requested page master
      * @throws PageProductionException if there's a problem determining the next page master
      */
     public SimplePageMaster getNextSimplePageMaster(boolean isOddPage,
                                                     boolean isFirstPage,
                                                     boolean isLastPage,
-                                                    boolean isBlankPage)
+                                                    boolean isBlankPage,
+                                                    String mainFlowName)
                                                       throws PageProductionException {
         if (currentSubSequence == null) {
             currentSubSequence = getNextSubSequence();
             if (currentSubSequence == null) {
-                BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Provider.get(
-                        getUserAgent().getEventBroadcaster());
-                eventProducer.missingSubsequencesInPageSequenceMaster(this,
+                blockLevelEventProducer.missingSubsequencesInPageSequenceMaster(this,
                         masterName, getLocator());
             }
+            if (currentSubSequence.isInfinite() && !currentSubSequence.canProcess(mainFlowName)) {
+                throw new PageProductionException(
+                "The current sub-sequence will not terminate whilst processing then main flow");
+            }
         }
-        String pageMasterName = currentSubSequence
-            .getNextPageMasterName(isOddPage, isFirstPage, isLastPage, isBlankPage);
+
+        SimplePageMaster pageMaster = currentSubSequence
+            .getNextPageMaster(isOddPage, isFirstPage, isLastPage, isBlankPage);
+
         boolean canRecover = true;
-        while (pageMasterName == null) {
+
+        while (pageMaster == null) {
             SubSequenceSpecifier nextSubSequence = getNextSubSequence();
+
             if (nextSubSequence == null) {
-                BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Provider.get(
-                        getUserAgent().getEventBroadcaster());
-                eventProducer.pageSequenceMasterExhausted(this,
+                //Sub-sequence exhausted so attempt to reuse it
+                blockLevelEventProducer.pageSequenceMasterExhausted(this,
                         masterName, canRecover, getLocator());
                 currentSubSequence.reset();
+                if (!currentSubSequence.canProcess(mainFlowName)) {
+                    throw new PageProductionException(
+                    "The last simple-page-master does not reference the main flow");
+                }
                 canRecover = false;
             } else {
                 currentSubSequence = nextSubSequence;
             }
-            pageMasterName = currentSubSequence
-                .getNextPageMasterName(isOddPage, isFirstPage, isLastPage, isBlankPage);
+
+            pageMaster = currentSubSequence
+                .getNextPageMaster(isOddPage, isFirstPage, isLastPage, isBlankPage);
         }
-        SimplePageMaster pageMaster = this.layoutMasterSet
-            .getSimplePageMaster(pageMasterName);
-        if (pageMaster == null) {
-            BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Provider.get(
-                    getUserAgent().getEventBroadcaster());
-            eventProducer.noMatchingPageMaster(this,
-                    masterName, pageMasterName, getLocator());
-        }
+
         return pageMaster;
     }
+
 
     /** {@inheritDoc} */
     public String getLocalName() {
@@ -235,5 +249,7 @@ public class PageSequenceMaster extends FObj {
     public int getNameId() {
         return FO_PAGE_SEQUENCE_MASTER;
     }
+
+
 }
 

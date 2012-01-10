@@ -27,6 +27,7 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
+import org.apache.fop.layoutmgr.BlockLevelEventProducer;
 
 /**
  * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_single-page-master-reference">
@@ -39,6 +40,10 @@ public class SinglePageMasterReference extends FObj
 
     // The value of properties relevant for fo:single-page-master-reference.
     private String masterReference;
+
+    // The simple page master referenced
+    private SimplePageMaster master;
+
     // End of property values
 
     private static final int FIRST = 0;
@@ -83,13 +88,13 @@ public class SinglePageMasterReference extends FObj
     }
 
     /** {@inheritDoc} */
-    public String getNextPageMasterName(boolean isOddPage,
+    public SimplePageMaster getNextPageMaster(boolean isOddPage,
                                         boolean isFirstPage,
                                         boolean isLastPage,
                                         boolean isBlankPage) {
         if (this.state == FIRST) {
             this.state = DONE;
-            return masterReference;
+            return master;
         } else {
             return null;
         }
@@ -131,6 +136,26 @@ public class SinglePageMasterReference extends FObj
      */
     public int getNameId() {
         return FO_SINGLE_PAGE_MASTER_REFERENCE;
+    }
+
+    /** {@inheritDoc} */
+    public void resolveReferences(LayoutMasterSet layoutMasterSet) throws ValidationException {
+        master = layoutMasterSet.getSimplePageMaster(masterReference);
+        if (master == null) {
+            BlockLevelEventProducer.Provider.get(
+                getUserAgent().getEventBroadcaster())
+                .noMatchingPageMaster(this, parent.getName(), masterReference, getLocator());
+        }
+    }
+
+    /** {@inheritDoc} */
+    public boolean canProcess(String flowName) {
+        return master.getRegion(FO_REGION_BODY).getRegionName().equals(flowName);
+    }
+
+    /** {@inheritDoc} */
+    public boolean isInfinite() {
+        return false;
     }
 
 }

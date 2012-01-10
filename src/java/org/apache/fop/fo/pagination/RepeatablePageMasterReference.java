@@ -28,6 +28,7 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.Property;
+import org.apache.fop.layoutmgr.BlockLevelEventProducer;
 
 /**
  * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_repeatable-page-master-reference">
@@ -40,6 +41,8 @@ public class RepeatablePageMasterReference extends FObj
 
     // The value of properties relevant for fo:repeatable-page-master-reference.
     private String masterReference;
+    // The simple page master referenced
+    private SimplePageMaster master;
     private Property maximumRepeats;
     // End of property values
 
@@ -87,18 +90,15 @@ public class RepeatablePageMasterReference extends FObj
     }
 
     /** {@inheritDoc} */
-    public String getNextPageMasterName(boolean isOddPage,
+    public SimplePageMaster getNextPageMaster(boolean isOddPage,
                                         boolean isFirstPage,
                                         boolean isLastPage,
                                         boolean isEmptyPage) {
-        if (getMaximumRepeats() != INFINITE) {
-            if (numberConsumed < getMaximumRepeats()) {
-                numberConsumed++;
-            } else {
-                return null;
-            }
+        if (getMaximumRepeats() != INFINITE && numberConsumed >= getMaximumRepeats()) {
+           return null;
         }
-        return masterReference;
+        numberConsumed++;
+        return master;
     }
 
     /**
@@ -157,6 +157,29 @@ public class RepeatablePageMasterReference extends FObj
     public int getNameId() {
         return FO_REPEATABLE_PAGE_MASTER_REFERENCE;
     }
+
+
+    /** {@inheritDoc} */
+    public void resolveReferences(LayoutMasterSet layoutMasterSet) throws ValidationException {
+        master = layoutMasterSet.getSimplePageMaster(masterReference);
+        if (master == null) {
+            BlockLevelEventProducer.Provider.get(
+                getUserAgent().getEventBroadcaster())
+                .noMatchingPageMaster(this, parent.getName(), masterReference, getLocator());
+        }
+
+    }
+
+    /** {@inheritDoc} */
+    public boolean canProcess(String flowName) {
+        return master.getRegion(FO_REGION_BODY).getRegionName().equals(flowName);
+    }
+
+    /** {@inheritDoc} */
+    public boolean isInfinite() {
+        return getMaximumRepeats() == INFINITE;
+    }
+
 
 
 }

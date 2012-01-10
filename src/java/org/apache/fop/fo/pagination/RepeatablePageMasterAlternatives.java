@@ -20,6 +20,7 @@
 package org.apache.fop.fo.pagination;
 
 // Java
+import java.util.ArrayList;
 import java.util.List;
 
 import org.xml.sax.Locator;
@@ -114,25 +115,24 @@ public class RepeatablePageMasterAlternatives extends FObj
     }
 
     /** {@inheritDoc} */
-    public String getNextPageMasterName(boolean isOddPage,
+    public SimplePageMaster getNextPageMaster(boolean isOddPage,
                                         boolean isFirstPage,
                                         boolean isLastPage,
                                         boolean isBlankPage) {
-        if (getMaximumRepeats() != INFINITE) {
-            if (numberConsumed < getMaximumRepeats()) {
-                numberConsumed++;
-            } else {
-                return null;
-            }
-        } else {
-            numberConsumed++;
+
+        if (!isInfinite() && numberConsumed >= getMaximumRepeats()) {
+            return null;
         }
+
+        numberConsumed++;
 
         for (ConditionalPageMasterReference cpmr : conditionalPageMasterRefs) {
             if (cpmr.isValid(isOddPage, isFirstPage, isLastPage, isBlankPage)) {
-                return cpmr.getMasterReference();
+                return cpmr.getMaster();
             }
         }
+
+
         return null;
     }
 
@@ -188,5 +188,51 @@ public class RepeatablePageMasterAlternatives extends FObj
     public int getNameId() {
         return FO_REPEATABLE_PAGE_MASTER_ALTERNATIVES;
     }
+
+
+
+    /** {@inheritDoc} */
+    public void resolveReferences(LayoutMasterSet layoutMasterSet) throws ValidationException {
+        for (ConditionalPageMasterReference conditionalPageMasterReference
+                : conditionalPageMasterRefs) {
+            conditionalPageMasterReference.resolveReferences(layoutMasterSet);
+        }
+
+    }
+
+    /** {@inheritDoc} */
+    public boolean canProcess(String flowName) {
+
+        boolean willTerminate = true;
+
+
+        //Look for rest spm that cannot terminate
+        ArrayList<ConditionalPageMasterReference> rest
+                = new ArrayList<ConditionalPageMasterReference>();
+        for (ConditionalPageMasterReference cpmr
+                : conditionalPageMasterRefs) {
+            if (cpmr.isValid(true, false, false, false)
+                    || cpmr.isValid(false, false, false, false)) {
+                rest.add(cpmr);
+            }
+        }
+        if (!rest.isEmpty()) {
+            willTerminate = false;
+            for (ConditionalPageMasterReference cpmr : rest) {
+                willTerminate |= cpmr.getMaster().getRegion(FO_REGION_BODY).getRegionName()
+                        .equals(flowName);
+            }
+        }
+
+
+        return willTerminate;
+    }
+
+    /** {@inheritDoc} */
+    public boolean isInfinite() {
+        return getMaximumRepeats() == INFINITE;
+    }
+
+
 
 }

@@ -24,6 +24,8 @@ import java.util.HashMap;
 
 import org.apache.xmlgraphics.util.QName;
 
+import org.apache.fop.layoutmgr.BlockLevelEventProducer;
+
 /**
  * Element mapping class for all XSL-FO elements.
  */
@@ -205,7 +207,9 @@ public class FOElementMapping extends ElementMapping {
 
     static class PageSequenceMasterMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new org.apache.fop.fo.pagination.PageSequenceMaster(parent);
+            return new org.apache.fop.fo.pagination.PageSequenceMaster(parent,
+                    BlockLevelEventProducer.Provider.get(
+                            parent.getUserAgent().getEventBroadcaster()));
         }
     }
 
