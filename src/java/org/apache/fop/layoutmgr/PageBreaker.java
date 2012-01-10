@@ -412,7 +412,7 @@ public class PageBreaker extends AbstractBreaker {
                 addAreas(alg, restartPoint, partCount - restartPoint, originalList, effectiveList);
                 //...and add a blank last page
                 setLastPageIndex(currentPageNum + 1);
-                pslm.setCurrentPage(pslm.makeNewPage(true, true));
+                pslm.setCurrentPage(pslm.makeNewPage(true));
                 return;
             }
         }
@@ -535,14 +535,14 @@ public class PageBreaker extends AbstractBreaker {
 
             if (forceNewPageWithSpan) {
                 log.trace("Forcing new page with span");
-                curPage = pslm.makeNewPage(false, false);
+                curPage = pslm.makeNewPage(false);
                 curPage.getPageViewport().createSpan(true);
             } else if (pv.getCurrentSpan().hasMoreFlows()) {
                 log.trace("Moving to next flow");
                 pv.getCurrentSpan().moveToNextFlow();
             } else {
                 log.trace("Making new page");
-                /*curPage = */pslm.makeNewPage(false, false);
+                /*curPage = */pslm.makeNewPage(false);
             }
             return;
         default:
@@ -550,11 +550,11 @@ public class PageBreaker extends AbstractBreaker {
                 + " breakVal=" + getBreakClassName(breakVal));
             if (needBlankPageBeforeNew(breakVal)) {
                 log.trace("Inserting blank page");
-                /*curPage = */pslm.makeNewPage(true, false);
+                /*curPage = */pslm.makeNewPage(true);
             }
             if (needNewPage(breakVal)) {
                 log.trace("Making new page");
-                /*curPage = */pslm.makeNewPage(false, false);
+                /*curPage = */pslm.makeNewPage(false);
             }
         }
     }

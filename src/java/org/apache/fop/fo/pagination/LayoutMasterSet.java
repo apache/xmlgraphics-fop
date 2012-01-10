@@ -20,7 +20,6 @@
 package org.apache.fop.fo.pagination;
 
 // Java
-import java.util.Iterator;
 import java.util.Map;
 
 import org.xml.sax.Locator;
@@ -75,6 +74,7 @@ public class LayoutMasterSet extends FObj {
             missingChildElementError("(simple-page-master|page-sequence-master)+");
         }
         checkRegionNames();
+        resolveSubSequenceReferences();
     }
 
     /**
@@ -104,7 +104,7 @@ public class LayoutMasterSet extends FObj {
             for (Region region : spmRegions.values()) {
                 if (allRegions.containsKey(region.getRegionName())) {
                     String defaultRegionName
-                            = allRegions.get(region.getRegionName());
+                        =  allRegions.get(region.getRegionName());
                     if (!defaultRegionName.equals(region.getDefaultRegionName())) {
                         getFOValidationEventProducer().regionNameMappedToMultipleRegionClasses(this,
                                 region.getRegionName(),
@@ -114,6 +114,14 @@ public class LayoutMasterSet extends FObj {
                 }
                 allRegions.put(region.getRegionName(),
                         region.getDefaultRegionName());
+            }
+        }
+    }
+
+    private void resolveSubSequenceReferences() throws ValidationException {
+        for (PageSequenceMaster psm : pageSequenceMasters.values()) {
+            for (SubSequenceSpecifier subSequenceSpecifier : psm.getSubSequenceSpecifier()) {
+                subSequenceSpecifier.resolveReferences(this);
             }
         }
     }
@@ -150,7 +158,7 @@ public class LayoutMasterSet extends FObj {
      * @return the requested simple-page-master
      */
     public SimplePageMaster getSimplePageMaster(String masterName) {
-        return this.simplePageMasters.get(masterName);
+        return simplePageMasters.get(masterName);
     }
 
     /**

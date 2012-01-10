@@ -21,7 +21,6 @@ package org.apache.fop.fo.pagination;
 
 // Java
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.xml.sax.Locator;
@@ -29,8 +28,8 @@ import org.xml.sax.Locator;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.Numeric;
-import org.apache.fop.datatypes.SimplePercentBaseContext;
 import org.apache.fop.datatypes.PercentBaseContext;
+import org.apache.fop.datatypes.SimplePercentBaseContext;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;

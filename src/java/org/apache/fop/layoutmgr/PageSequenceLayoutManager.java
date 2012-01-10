@@ -101,7 +101,7 @@ public class PageSequenceLayoutManager extends AbstractPageSequenceLayoutManager
             log.debug("Starting layout");
         }
 
-        curPage = makeNewPage(false, false);
+        curPage = makeNewPage(false);
 
         PageBreaker breaker = new PageBreaker(this);
         int flowBPD = getCurrentPV().getBodyRegion().getRemainingBPD();
@@ -139,6 +139,18 @@ public class PageSequenceLayoutManager extends AbstractPageSequenceLayoutManager
     protected Page createPage(int pageNumber, boolean isBlank) {
         return pageProvider.getPage(isBlank,
                 pageNumber, PageProvider.RELTO_PAGE_SEQUENCE);
+    }
+
+    @Override
+    protected Page makeNewPage(boolean isBlank) {
+        Page newPage;
+
+        do {
+            newPage = super.makeNewPage(isBlank);
+        } while (!getPageSequence().getMainFlow().getFlowName()
+                .equals(newPage.getSimplePageMaster().getRegion(FO_REGION_BODY).getRegionName()));
+
+        return newPage;
     }
 
     private void layoutSideRegion(int regionID) {

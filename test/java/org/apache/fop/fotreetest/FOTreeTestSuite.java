@@ -22,22 +22,14 @@ package org.apache.fop.fotreetest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
-import org.apache.fop.fo.flow.table.CollapsedConditionalBorderTestCase;
-import org.apache.fop.fo.flow.table.IllegalRowSpanTestCase;
-import org.apache.fop.fo.flow.table.RowGroupBuilderTestCase;
-import org.apache.fop.fo.flow.table.TableColumnColumnNumberTestCase;
-import org.apache.fop.fo.flow.table.TooManyColumnsTestCase;
-
 /**
  * JUnit test suit for running layout engine test under JUnit control.
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-        TooManyColumnsTestCase.class,
-        IllegalRowSpanTestCase.class,
-        RowGroupBuilderTestCase.class,
-        TableColumnColumnNumberTestCase.class,
-        CollapsedConditionalBorderTestCase.class,
+        org.apache.fop.fo.flow.table.AllTests.class,
+        org.apache.fop.fo.pagination.AllTests.class,
         FOTreeTestCase.class })
+
 public final class FOTreeTestSuite {
 }

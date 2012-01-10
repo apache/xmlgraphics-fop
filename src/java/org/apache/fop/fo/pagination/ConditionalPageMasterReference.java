@@ -27,6 +27,7 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
+import org.apache.fop.layoutmgr.BlockLevelEventProducer;
 
 /**
  * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_conditional-page-master-reference">
@@ -41,6 +42,8 @@ import org.apache.fop.fo.ValidationException;
 public class ConditionalPageMasterReference extends FObj {
     // The value of properties relevant for fo:conditional-page-master-reference.
     private String masterReference;
+    // The simple page master referenced
+    private SimplePageMaster master;
     private int pagePosition;
     private int oddOrEven;
     private int blankOrNotBlank;
@@ -127,8 +130,8 @@ public class ConditionalPageMasterReference extends FObj {
      * Get the value for the <code>master-reference</code> property.
      * @return the "master-reference" property
      */
-    public String getMasterReference() {
-        return masterReference;
+    public SimplePageMaster getMaster() {
+        return master;
     }
 
     /**
@@ -150,5 +153,20 @@ public class ConditionalPageMasterReference extends FObj {
      */
     public int getNameId() {
         return FO_CONDITIONAL_PAGE_MASTER_REFERENCE;
+    }
+
+    /**
+     * called by the parent RepeatablePageMasterAlternatives to resolve object references
+     * from  simple page master reference names
+     * @param layoutMasterSet the layout-master-set
+     * @throws ValidationException when a named reference cannot be resolved
+     * */
+    public void resolveReferences(LayoutMasterSet layoutMasterSet) throws ValidationException {
+        master = layoutMasterSet.getSimplePageMaster(masterReference);
+        if (master == null) {
+            BlockLevelEventProducer.Provider.get(
+                getUserAgent().getEventBroadcaster())
+                .noMatchingPageMaster(this, parent.getName(), masterReference, getLocator());
+        }
     }
 }
