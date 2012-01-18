@@ -3532,23 +3532,8 @@
       <Bug pattern="BC_UNCONFIRMED_CAST"/>
    </Match>
    <Match>
-      <Class name="org.apache.fop.render.afp.AFPImageHandlerGraphics2D"/>
-      <Method name="handleImage"/>
-      <Bug pattern="BC_UNCONFIRMED_CAST"/>
-   </Match>
-   <Match>
       <Class name="org.apache.fop.render.afp.AFPImageHandlerRawCCITTFax"/>
       <Method name="setAdditionalParameters"/>
-      <Bug pattern="BC_UNCONFIRMED_CAST"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.render.afp.AFPImageHandlerRawCCITTFax"/>
-      <Method name="setAdditionalParameters"/>
-      <Bug pattern="BC_UNCONFIRMED_CAST"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.render.afp.AFPImageHandlerRenderedImage"/>
-      <Method name="handleImage"/>
       <Bug pattern="BC_UNCONFIRMED_CAST"/>
    </Match>
    <Match>
@@ -3558,11 +3543,6 @@
    </Match>
     <Match>
       <Class name="org.apache.fop.render.afp.AFPImageHandlerRawJPEG"/>
-      <Method name="handleImage"/>
-      <Bug pattern="BC_UNCONFIRMED_CAST"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.render.afp.AFPImageHandlerSVG"/>
       <Method name="handleImage"/>
       <Bug pattern="BC_UNCONFIRMED_CAST"/>
    </Match>
@@ -3587,11 +3567,6 @@
       <Bug pattern="BC_UNCONFIRMED_CAST"/>
    </Match>
    <Match>
-      <Class name="org.apache.fop.render.afp.AbstractAFPImageHandlerRawStream"/>
-      <Method name="handleImage"/>
-      <Bug pattern="BC_UNCONFIRMED_CAST"/>
-   </Match>
-   <Match>
       <Class name="org.apache.fop.render.bitmap.BitmapRendererConfigurator"/>
       <Method name="configure"/>
       <Bug pattern="BC_UNCONFIRMED_CAST"/>
@@ -3602,22 +3577,7 @@
       <Bug pattern="BC_UNCONFIRMED_CAST"/>
    </Match>
    <Match>
-      <Class name="org.apache.fop.render.bitmap.TIFFRendererConfigurator"/>
-      <Method name="configure"/>
-      <Bug pattern="BC_UNCONFIRMED_CAST"/>
-   </Match>
-   <Match>
       <Class name="org.apache.fop.render.java2d.Java2DImageHandlerGraphics2D"/>
-      <Method name="handleImage"/>
-      <Bug pattern="BC_UNCONFIRMED_CAST"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.render.java2d.Java2DImageHandlerGraphics2D"/>
-      <Method name="handleImage"/>
-      <Bug pattern="BC_UNCONFIRMED_CAST"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.render.java2d.Java2DImageHandlerRenderedImage"/>
       <Method name="handleImage"/>
       <Bug pattern="BC_UNCONFIRMED_CAST"/>
    </Match>
@@ -3638,16 +3598,6 @@
    </Match>
    <Match>
       <Class name="org.apache.fop.render.pcl.PCLImageHandlerGraphics2D"/>
-      <Method name="handleImage"/>
-      <Bug pattern="BC_UNCONFIRMED_CAST"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.render.pcl.PCLImageHandlerGraphics2D"/>
-      <Method name="handleImage"/>
-      <Bug pattern="BC_UNCONFIRMED_CAST"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.render.pcl.PCLImageHandlerRenderedImage"/>
       <Method name="handleImage"/>
       <Bug pattern="BC_UNCONFIRMED_CAST"/>
    </Match>
@@ -3677,16 +3627,6 @@
       <Bug pattern="BC_UNCONFIRMED_CAST"/>
    </Match>
    <Match>
-      <Class name="org.apache.fop.render.pdf.PDFImageHandlerGraphics2D"/>
-      <Method name="handleImage"/>
-      <Bug pattern="BC_UNCONFIRMED_CAST"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.render.pdf.PDFImageHandlerRawCCITTFax"/>
-      <Method name="handleImage"/>
-      <Bug pattern="BC_UNCONFIRMED_CAST"/>
-   </Match>
-   <Match>
       <Class name="org.apache.fop.render.pdf.PDFImageHandlerRawCCITTFax"/>
       <Method name="handleImage"/>
       <Bug pattern="BC_UNCONFIRMED_CAST"/>
@@ -3697,22 +3637,7 @@
       <Bug pattern="BC_UNCONFIRMED_CAST"/>
    </Match>
    <Match>
-      <Class name="org.apache.fop.render.pdf.PDFImageHandlerRawJPEG"/>
-      <Method name="handleImage"/>
-      <Bug pattern="BC_UNCONFIRMED_CAST"/>
-   </Match>
-   <Match>
       <Class name="org.apache.fop.render.pdf.PDFImageHandlerRenderedImage"/>
-      <Method name="handleImage"/>
-      <Bug pattern="BC_UNCONFIRMED_CAST"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.render.pdf.PDFImageHandlerRenderedImage"/>
-      <Method name="handleImage"/>
-      <Bug pattern="BC_UNCONFIRMED_CAST"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.render.pdf.PDFImageHandlerSVG"/>
       <Method name="handleImage"/>
       <Bug pattern="BC_UNCONFIRMED_CAST"/>
    </Match>
@@ -3737,23 +3662,8 @@
       <Bug pattern="BC_UNCONFIRMED_CAST"/>
    </Match>
    <Match>
-      <Class name="org.apache.fop.render.ps.PSImageHandlerEPS"/>
-      <Method name="handleImage"/>
-      <Bug pattern="BC_UNCONFIRMED_CAST"/>
-   </Match>
-   <Match>
       <Class name="org.apache.fop.render.ps.PSImageHandlerGraphics2D"/>
       <Method name="generateForm"/>
-      <Bug pattern="BC_UNCONFIRMED_CAST"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.render.ps.PSImageHandlerGraphics2D"/>
-      <Method name="generateForm"/>
-      <Bug pattern="BC_UNCONFIRMED_CAST"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.render.ps.PSImageHandlerGraphics2D"/>
-      <Method name="handleImage"/>
       <Bug pattern="BC_UNCONFIRMED_CAST"/>
    </Match>
    <Match>
@@ -3768,32 +3678,12 @@
    </Match>
    <Match>
       <Class name="org.apache.fop.render.ps.PSImageHandlerRawCCITTFax"/>
-      <Method name="generateForm"/>
-      <Bug pattern="BC_UNCONFIRMED_CAST"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.render.ps.PSImageHandlerRawCCITTFax"/>
-      <Method name="handleImage"/>
-      <Bug pattern="BC_UNCONFIRMED_CAST"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.render.ps.PSImageHandlerRawCCITTFax"/>
       <Method name="handleImage"/>
       <Bug pattern="BC_UNCONFIRMED_CAST"/>
    </Match>
    <Match>
       <Class name="org.apache.fop.render.ps.PSImageHandlerRawJPEG"/>
       <Method name="generateForm"/>
-      <Bug pattern="BC_UNCONFIRMED_CAST"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.render.ps.PSImageHandlerRawJPEG"/>
-      <Method name="generateForm"/>
-      <Bug pattern="BC_UNCONFIRMED_CAST"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.render.ps.PSImageHandlerRawJPEG"/>
-      <Method name="handleImage"/>
       <Bug pattern="BC_UNCONFIRMED_CAST"/>
    </Match>
    <Match>
@@ -3808,21 +3698,6 @@
    </Match>
    <Match>
       <Class name="org.apache.fop.render.ps.PSImageHandlerRenderedImage"/>
-      <Method name="generateForm"/>
-      <Bug pattern="BC_UNCONFIRMED_CAST"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.render.ps.PSImageHandlerRenderedImage"/>
-      <Method name="handleImage"/>
-      <Bug pattern="BC_UNCONFIRMED_CAST"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.render.ps.PSImageHandlerRenderedImage"/>
-      <Method name="handleImage"/>
-      <Bug pattern="BC_UNCONFIRMED_CAST"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.render.ps.PSImageHandlerSVG"/>
       <Method name="handleImage"/>
       <Bug pattern="BC_UNCONFIRMED_CAST"/>
    </Match>
