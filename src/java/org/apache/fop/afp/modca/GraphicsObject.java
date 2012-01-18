@@ -33,6 +33,7 @@ import org.apache.fop.afp.AFPObjectAreaInfo;
 import org.apache.fop.afp.Completable;
 import org.apache.fop.afp.Factory;
 import org.apache.fop.afp.StructuredData;
+import org.apache.fop.afp.fonts.CharacterSet;
 import org.apache.fop.afp.goca.GraphicsAreaBegin;
 import org.apache.fop.afp.goca.GraphicsAreaEnd;
 import org.apache.fop.afp.goca.GraphicsBox;
@@ -229,9 +230,9 @@ public class GraphicsObject extends AbstractDataObject {
      */
     public void setCharacterSet(int characterSet) {
         if (characterSet != graphicsState.characterSet) {
-            addObject(new GraphicsSetCharacterSet(characterSet));
             graphicsState.characterSet = characterSet;
         }
+        addObject(new GraphicsSetCharacterSet(characterSet));
     }
 
     /**
@@ -325,12 +326,8 @@ public class GraphicsObject extends AbstractDataObject {
      * @param x the x coordinate
      * @param y the y coordinate
      */
-    public void addString(String str, int x, int y) {
-        //Work-around for InfoPrint's AFP which loses character set state over Graphics Data
-        //boundaries.
-        addObject(new GraphicsSetCharacterSet(graphicsState.characterSet));
-
-        addObject(new GraphicsCharacterString(str, x, y));
+    public void addString(String str, int x, int y, CharacterSet charSet) {
+        addObject(new GraphicsCharacterString(str, x, y, charSet));
     }
 
     /**

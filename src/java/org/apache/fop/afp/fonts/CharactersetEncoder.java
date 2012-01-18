@@ -209,5 +209,17 @@ public abstract class CharactersetEncoder {
         public int getLength() {
             return length;
         }
+
+        /**
+         * The bytes
+         * 
+         * @return the bytes
+         */
+        public byte[] getBytes() {
+            // return copy just in case
+            byte[] copy = new byte[bytes.length];
+            System.arraycopy(bytes, 0, copy, 0, bytes.length);
+            return copy;
+        }
     }
 }
