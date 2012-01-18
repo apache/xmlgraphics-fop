@@ -2507,6 +2507,16 @@
       <Bug pattern="DM_NUMBER_CTOR"/>
    </Match>
    <Match>
+      <Class name="org.apache.fop.render.rtf.RTFHandler"/>
+      <Method name="startPageSequence"/>
+      <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.afp.AFPImageHandlerRawCCITTFax"/>
+      <Method name="setAdditionalParameters"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>   
+   <Match>
       <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAttributes"/>
       <Method name="set"/>
       <Bug pattern="DM_NUMBER_CTOR"/>
@@ -3543,6 +3553,11 @@
    </Match>
    <Match>
       <Class name="org.apache.fop.render.afp.AFPImageHandlerRenderedImage"/>
+      <Method name="handleImage"/>
+      <Bug pattern="BC_UNCONFIRMED_CAST"/>
+   </Match>
+    <Match>
+      <Class name="org.apache.fop.render.afp.AFPImageHandlerRawJPEG"/>
       <Method name="handleImage"/>
       <Bug pattern="BC_UNCONFIRMED_CAST"/>
    </Match>
