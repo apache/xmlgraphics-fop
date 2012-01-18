@@ -147,10 +147,15 @@ public class AFPTextHandler extends FOPTextHandlerAdapter {
             fontSize = (int)Math.round(
                     g2d.convertToAbsoluteLength(fontSize));
             fontReference = registerPageFont(pageFonts, internalFontName, fontSize);
+            // TODO: re-think above registerPageFont code...
+            AFPFont afpFont = (AFPFont) fontInfo.getFonts().get(internalFontName);
+            final CharacterSet charSet = afpFont.getCharacterSet(fontSize);
+            // Work-around for InfoPrint's AFP which loses character set state
+            // over Graphics Data
+            // boundaries.
             graphicsObj.setCharacterSet(fontReference);
-
             // add the character string
-            graphicsObj.addString(str, Math.round(x), Math.round(y));
+            graphicsObj.addString(str, Math.round(x), Math.round(y), charSet);
         } else {
             //Inside Batik's SVG filter operations, you won't get an AFPGraphics2D
             g.drawString(str, x, y);

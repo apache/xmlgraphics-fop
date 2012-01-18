@@ -22,8 +22,9 @@ package org.apache.fop.afp.goca;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.CharacterCodingException;
 
-import org.apache.fop.afp.AFPConstants;
+import org.apache.fop.afp.fonts.CharacterSet;
 
 /**
  * A GOCA graphics string
@@ -34,7 +35,12 @@ public class GraphicsCharacterString extends AbstractGraphicsCoord {
     protected static final int MAX_STR_LEN = 255;
 
     /** the string to draw */
-    protected final String str;
+    private final String str;
+
+    /**
+     * The character set encoding to use
+     */
+    private final CharacterSet charSet;
 
     /**
      * Constructor (absolute positioning)
@@ -42,20 +48,12 @@ public class GraphicsCharacterString extends AbstractGraphicsCoord {
      * @param str the character string
      * @param x the x coordinate
      * @param y the y coordinate
+     * @param charSet the character set
      */
-    public GraphicsCharacterString(String str, int x, int y) {
+    public GraphicsCharacterString(String str, int x, int y, CharacterSet charSet) {
         super(x, y);
         this.str = truncate(str, MAX_STR_LEN);
-    }
-
-    /**
-     * Constructor (relative positioning)
-     *
-     * @param str the character string
-     */
-    public GraphicsCharacterString(String str) {
-        super(null);
-        this.str = truncate(str, MAX_STR_LEN);
+        this.charSet = charSet;
     }
 
     /** {@inheritDoc} */
@@ -84,9 +82,11 @@ public class GraphicsCharacterString extends AbstractGraphicsCoord {
      * Returns the text string as an encoded byte array
      *
      * @return the text string as an encoded byte array
+     * @throws UnsupportedEncodingException, CharacterCodingException
      */
-    private byte[] getStringAsBytes() throws UnsupportedEncodingException {
-        return str.getBytes(AFPConstants.EBCIDIC_ENCODING);
+    private byte[] getStringAsBytes() throws UnsupportedEncodingException, 
+            CharacterCodingException {
+        return charSet.encodeChars(str).getBytes();
     }
 
     /** {@inheritDoc} */
