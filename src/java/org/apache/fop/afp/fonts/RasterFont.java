@@ -70,14 +70,14 @@ public class RasterFont extends AFPFont {
     /**
      * Get the character set metrics for the specified point size.
      *
-     * @param size the point size (in mpt)
+     * @param sizeInMpt the point size (in mpt)
      * @return the character set metrics
      */
-    public CharacterSet getCharacterSet(int size) {
+    public CharacterSet getCharacterSet(int sizeInMpt) {
 
-        //TODO: replace with Integer.valueOf() once we switch to Java 5
-        Integer requestedSize = new Integer(size);
+        Integer requestedSize = Integer.valueOf(sizeInMpt);
         CharacterSet csm = (CharacterSet) charSets.get(requestedSize);
+        double sizeInPt = sizeInMpt / 1000.0;
 
         if (csm != null) {
             return csm;
@@ -101,10 +101,10 @@ public class RasterFont extends AFPFont {
 
             Integer fontSize;
             if (!smallerSizes.isEmpty()
-                            && (size - smallerSize) <= (largerSize - size)) {
-                fontSize = new Integer(smallerSize);
+                            && (sizeInMpt - smallerSize) <= (largerSize - sizeInMpt)) {
+                fontSize = Integer.valueOf(smallerSize);
             } else {
-                fontSize = new Integer(largerSize);
+                fontSize = Integer.valueOf(largerSize);
             }
             csm = (CharacterSet) charSets.get(fontSize);
 
@@ -115,16 +115,18 @@ public class RasterFont extends AFPFont {
                     substitutionCharSets = new HashMap();
                 }
                 substitutionCharSets.put(requestedSize, csm);
-                String msg = "No " + (size / 1000f) + "pt font " + getFontName()
-                    + " found, substituted with " + fontSize.intValue() / 1000f + "pt font";
-                LOG.warn(msg);
+                // do not output the warning if the font size is closer to an integer less than 0.1
+                if (!(Math.abs(fontSize.intValue() / 1000.0 - sizeInPt) < 0.1)) {
+                    String msg = "No " + sizeInPt + "pt font " + getFontName()
+                            + " found, substituted with " + fontSize.intValue() / 1000f + "pt font";
+                    LOG.warn(msg);
+                }
             }
         }
 
         if (csm == null) {
             // Still no match -> error
-            String msg = "No font found for font " + getFontName()
-                + " with point size " + size / 1000f;
+            String msg = "No font found for font " + getFontName() + " with point size " + sizeInPt;
             LOG.error(msg);
             throw new FontRuntimeException(msg);
         }
