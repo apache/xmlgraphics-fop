@@ -272,11 +272,6 @@
       <Bug pattern="DP_CREATE_CLASSLOADER_INSIDE_DO_PRIVILEGED"/>
    </Match>
    <Match>
-      <Class name="java.net.URLClassLoader"/>
-      <!--Neither method nor field-->
-      <Bug pattern="DP_CREATE_CLASSLOADER_INSIDE_DO_PRIVILEGED"/>
-   </Match>
-   <Match>
       <Class name="org.apache.fop.tools.fontlist.FontSpec"/>
       <Method name="compareTo"/>
       <Bug pattern="EQ_COMPARETO_USE_OBJECT_EQUALS"/>
@@ -690,11 +685,6 @@
       <Class name="org.apache.fop.layoutmgr.inline.LineLayoutManager$Paragraph"/>
       <!--Neither method nor field-->
       <Bug pattern="SE_BAD_FIELD_INNER_CLASS"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.afp.AFPPaintingState"/>
-      <Field name="colorConverter"/>
-      <Bug pattern="SE_BAD_FIELD_STORE"/>
    </Match>
    <Match>
       <Class name="org.apache.fop.afp.AFPPaintingState"/>
@@ -1507,16 +1497,6 @@
       <Bug pattern="EI_EXPOSE_REP2"/>
    </Match>
    <Match>
-      <Class name="org.apache.fop.hyphenation.ByteVector"/>
-      <Method name="&lt;init&gt;"/>
-      <Bug pattern="EI_EXPOSE_REP2"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.hyphenation.CharVector"/>
-      <Method name="&lt;init&gt;"/>
-      <Bug pattern="EI_EXPOSE_REP2"/>
-   </Match>
-   <Match>
       <Class name="org.apache.fop.hyphenation.CharVector"/>
       <Method name="&lt;init&gt;"/>
       <Bug pattern="EI_EXPOSE_REP2"/>
@@ -1749,11 +1729,6 @@
    <Match>
       <Class name="org.apache.fop.layoutmgr.table.CollapsingBorderModel"/>
       <Method name="getBorderModelFor"/>
-      <Bug pattern="LI_LAZY_INIT_STATIC"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.pdf.StreamCacheFactory"/>
-      <Method name="getInstance"/>
       <Bug pattern="LI_LAZY_INIT_STATIC"/>
    </Match>
    <Match>
@@ -2027,16 +2002,6 @@
       <Bug pattern="DM_NUMBER_CTOR"/>
    </Match>
    <Match>
-      <Class name="org.apache.fop.fo.properties.NumberProperty"/>
-      <Method name="&lt;init&gt;"/>
-      <Bug pattern="DM_NUMBER_CTOR"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.fo.properties.NumberProperty"/>
-      <Method name="&lt;init&gt;"/>
-      <Bug pattern="DM_NUMBER_CTOR"/>
-   </Match>
-   <Match>
       <Class name="org.apache.fop.fonts.AbstractCodePointMapping"/>
       <Method name="mapChar"/>
       <Bug pattern="DM_NUMBER_CTOR"/>
@@ -2054,11 +2019,6 @@
    <Match>
       <Class name="org.apache.fop.fonts.CIDSubset"/>
       <Method name="getUnicodeForSubsetIndex"/>
-      <Bug pattern="DM_NUMBER_CTOR"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.fonts.CIDSubset"/>
-      <Method name="mapSubsetChar"/>
       <Bug pattern="DM_NUMBER_CTOR"/>
    </Match>
    <Match>
@@ -2142,22 +2102,7 @@
       <Bug pattern="DM_NUMBER_CTOR"/>
    </Match>
    <Match>
-      <Class name="org.apache.fop.fonts.base14.Helvetica"/>
-      <Method name="&lt;clinit&gt;"/>
-      <Bug pattern="DM_NUMBER_CTOR"/>
-   </Match>
-   <Match>
       <Class name="org.apache.fop.fonts.base14.HelveticaBold"/>
-      <Method name="&lt;clinit&gt;"/>
-      <Bug pattern="DM_NUMBER_CTOR"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.fonts.base14.HelveticaBold"/>
-      <Method name="&lt;clinit&gt;"/>
-      <Bug pattern="DM_NUMBER_CTOR"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.fonts.base14.HelveticaBoldOblique"/>
       <Method name="&lt;clinit&gt;"/>
       <Bug pattern="DM_NUMBER_CTOR"/>
    </Match>
@@ -2172,16 +2117,6 @@
       <Bug pattern="DM_NUMBER_CTOR"/>
    </Match>
    <Match>
-      <Class name="org.apache.fop.fonts.base14.HelveticaOblique"/>
-      <Method name="&lt;clinit&gt;"/>
-      <Bug pattern="DM_NUMBER_CTOR"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.fonts.base14.TimesBold"/>
-      <Method name="&lt;clinit&gt;"/>
-      <Bug pattern="DM_NUMBER_CTOR"/>
-   </Match>
-   <Match>
       <Class name="org.apache.fop.fonts.base14.TimesBold"/>
       <Method name="&lt;clinit&gt;"/>
       <Bug pattern="DM_NUMBER_CTOR"/>
@@ -2192,22 +2127,7 @@
       <Bug pattern="DM_NUMBER_CTOR"/>
    </Match>
    <Match>
-      <Class name="org.apache.fop.fonts.base14.TimesBoldItalic"/>
-      <Method name="&lt;clinit&gt;"/>
-      <Bug pattern="DM_NUMBER_CTOR"/>
-   </Match>
-   <Match>
       <Class name="org.apache.fop.fonts.base14.TimesItalic"/>
-      <Method name="&lt;clinit&gt;"/>
-      <Bug pattern="DM_NUMBER_CTOR"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.fonts.base14.TimesItalic"/>
-      <Method name="&lt;clinit&gt;"/>
-      <Bug pattern="DM_NUMBER_CTOR"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.fonts.base14.TimesRoman"/>
       <Method name="&lt;clinit&gt;"/>
       <Bug pattern="DM_NUMBER_CTOR"/>
    </Match>
@@ -2488,11 +2408,6 @@
    </Match>
    <Match>
       <Class name="org.apache.fop.render.ps.PSDocumentHandler"/>
-      <Method name="startPage"/>
-      <Bug pattern="DM_NUMBER_CTOR"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.render.ps.PSDocumentHandler"/>
       <Method name="writeHeader"/>
       <Bug pattern="DM_NUMBER_CTOR"/>
    </Match>
@@ -2511,11 +2426,6 @@
       <Method name="startPageSequence"/>
       <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"/>
    </Match>
-   <Match>
-      <Class name="org.apache.fop.render.afp.AFPImageHandlerRawCCITTFax"/>
-      <Method name="setAdditionalParameters"/>
-      <Bug pattern="BC_UNCONFIRMED_CAST"/>
-   </Match>   
    <Match>
       <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAttributes"/>
       <Method name="set"/>
@@ -3237,21 +3147,6 @@
       <Bug pattern="BC_UNCONFIRMED_CAST"/>
    </Match>
    <Match>
-      <Class name="org.apache.fop.fo.flow.Footnote"/>
-      <Method name="addChildNode"/>
-      <Bug pattern="BC_UNCONFIRMED_CAST"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.fo.flow.ListItem"/>
-      <Method name="addChildNode"/>
-      <Bug pattern="BC_UNCONFIRMED_CAST"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.fo.flow.ListItem"/>
-      <Method name="addChildNode"/>
-      <Bug pattern="BC_UNCONFIRMED_CAST"/>
-   </Match>
-   <Match>
       <Class name="org.apache.fop.fo.flow.ListItem"/>
       <Method name="addChildNode"/>
       <Bug pattern="BC_UNCONFIRMED_CAST"/>
@@ -3259,16 +3154,6 @@
    <Match>
       <Class name="org.apache.fop.fo.pagination.Declarations"/>
       <Method name="&lt;init&gt;"/>
-      <Bug pattern="BC_UNCONFIRMED_CAST"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.fo.pagination.PageSequence"/>
-      <Method name="addChildNode"/>
-      <Bug pattern="BC_UNCONFIRMED_CAST"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.fo.pagination.PageSequence"/>
-      <Method name="addChildNode"/>
       <Bug pattern="BC_UNCONFIRMED_CAST"/>
    </Match>
    <Match>
@@ -3504,11 +3389,6 @@
    <Match>
       <Class name="org.apache.fop.layoutmgr.table.TableLayoutManager"/>
       <Method name="addChildArea"/>
-      <Bug pattern="BC_UNCONFIRMED_CAST"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.pdf.PDFFactory"/>
-      <Method name="makeFont"/>
       <Bug pattern="BC_UNCONFIRMED_CAST"/>
    </Match>
    <Match>
@@ -3782,11 +3662,6 @@
       <Bug pattern="DB_DUPLICATE_SWITCH_CLAUSES"/>
    </Match>
    <Match>
-      <Class name="org.apache.fop.fo.FOText"/>
-      <Method name="isWordChar"/>
-      <Bug pattern="DB_DUPLICATE_SWITCH_CLAUSES"/>
-   </Match>
-   <Match>
       <Class name="org.apache.fop.fo.flow.Leader"/>
       <Method name="bind"/>
       <Bug pattern="DB_DUPLICATE_SWITCH_CLAUSES"/>
@@ -3812,11 +3687,6 @@
       <Bug pattern="DB_DUPLICATE_SWITCH_CLAUSES"/>
    </Match>
    <Match>
-      <Class name="org.apache.fop.layoutmgr.inline.AlignmentContext"/>
-      <Method name="&lt;init&gt;"/>
-      <Bug pattern="DB_DUPLICATE_SWITCH_CLAUSES"/>
-   </Match>
-   <Match>
       <Class name="org.apache.fop.layoutmgr.inline.TextLayoutManager"/>
       <Method name="getNextKnuthElements"/>
       <Bug pattern="DB_DUPLICATE_SWITCH_CLAUSES"/>
@@ -3829,11 +3699,6 @@
    <Match>
       <Class name="org.apache.fop.render.pcl.PCLGraphics2D"/>
       <Method name="processPathIteratorFill"/>
-      <Bug pattern="DB_DUPLICATE_SWITCH_CLAUSES"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.tools.anttasks.Fop"/>
-      <Method name="execute"/>
       <Bug pattern="DB_DUPLICATE_SWITCH_CLAUSES"/>
    </Match>
    <Match>
@@ -3907,16 +3772,6 @@
       <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
    </Match>
    <Match>
-      <Class name="org.apache.fop.layoutmgr.AbstractBreaker"/>
-      <Method name="justifyBoxes"/>
-      <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.layoutmgr.BlockContainerLayoutManager"/>
-      <Method name="getNextKnuthElements"/>
-      <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
-   </Match>
-   <Match>
       <Class name="org.apache.fop.layoutmgr.BlockContainerLayoutManager"/>
       <Method name="getNextKnuthElements"/>
       <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
@@ -3929,11 +3784,6 @@
    <Match>
       <Class name="org.apache.fop.layoutmgr.FootnoteBodyLayoutManager"/>
       <Method name="addAreas"/>
-      <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.layoutmgr.inline.ContentLayoutManager"/>
-      <Method name="fillArea"/>
       <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
    </Match>
    <Match>
@@ -3987,11 +3837,6 @@
       <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
    </Match>
    <Match>
-      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfContainer"/>
-      <Method name="addChild"/>
-      <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
-   </Match>
-   <Match>
       <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfExtraRowSet"/>
       <Method name="writeRow"/>
       <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
@@ -3999,11 +3844,6 @@
    <Match>
       <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTableRow"/>
       <Method name="writePaddingAttributes"/>
-      <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTextrun"/>
-      <Method name="addCloseGroupMark"/>
       <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
    </Match>
    <Match>
@@ -4187,11 +4027,6 @@
       <Bug pattern="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE"/>
    </Match>
    <Match>
-      <Class name="org.apache.fop.render.awt.viewer.ImageProxyPanel"/>
-      <Method name="paintComponent"/>
-      <Bug pattern="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE"/>
-   </Match>
-   <Match>
       <Class name="org.apache.fop.layoutmgr.table.TableStepper"/>
       <Method name="considerRowLastStep"/>
       <Bug pattern="NS_DANGEROUS_NON_SHORT_CIRCUIT"/>
@@ -4339,11 +4174,6 @@
    <Match>
       <Class name="org.apache.fop.layoutmgr.BlockContainerLayoutManager"/>
       <Method name="getNextKnuthElements"/>
-      <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NULL_VALUE"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.render.pcl.PCLGenerator"/>
-      <Method name="paintBitmap"/>
       <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NULL_VALUE"/>
    </Match>
    <Match>
@@ -4572,11 +4402,6 @@
       <Bug pattern="RI_REDUNDANT_INTERFACES"/>
    </Match>
    <Match>
-      <Class name="org.apache.fop.layoutmgr.BlockLevelLayoutManager"/>
-      <!--Neither method nor field-->
-      <Bug pattern="RI_REDUNDANT_INTERFACES"/>
-   </Match>
-   <Match>
       <Class name="org.apache.fop.render.afp.AFPRendererConfigurator"/>
       <!--Neither method nor field-->
       <Bug pattern="RI_REDUNDANT_INTERFACES"/>
@@ -4592,27 +4417,12 @@
       <Bug pattern="RI_REDUNDANT_INTERFACES"/>
    </Match>
    <Match>
-      <Class name="org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator"/>
-      <!--Neither method nor field-->
-      <Bug pattern="RI_REDUNDANT_INTERFACES"/>
-   </Match>
-   <Match>
       <Class name="org.apache.fop.render.pcl.PCLRendererConfigurator"/>
       <!--Neither method nor field-->
       <Bug pattern="RI_REDUNDANT_INTERFACES"/>
    </Match>
    <Match>
-      <Class name="org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator"/>
-      <!--Neither method nor field-->
-      <Bug pattern="RI_REDUNDANT_INTERFACES"/>
-   </Match>
-   <Match>
       <Class name="org.apache.fop.render.ps.PSRendererConfigurator"/>
-      <!--Neither method nor field-->
-      <Bug pattern="RI_REDUNDANT_INTERFACES"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator"/>
       <!--Neither method nor field-->
       <Bug pattern="RI_REDUNDANT_INTERFACES"/>
    </Match>
