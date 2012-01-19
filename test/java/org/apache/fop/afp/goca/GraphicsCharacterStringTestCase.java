@@ -33,7 +33,7 @@ public class GraphicsCharacterStringTestCase {
     // consider the EBCDIC code page variants Cp500 and Cp1146
     // the £ corresponds to byte 5B (position 91) in the CCSID 285 and CCSID 1146
     // the $ corresponds to byte 5B (position 91) in the CCSID 500
-    private final String poundsText = "££££";
+    private final String poundsText = "\u00A3\u00A3\u00A3\u00A3";
     private final String dollarsText = "$$$$";
     private final byte[] bytesToCheck = {(byte) 0x5b, (byte) 0x5b, (byte) 0x5b, (byte) 0x5b};
 
