@@ -169,8 +169,13 @@ public class TTFFontLoader extends FontLoader {
         if (useKerning) {
             copyKerning(ttf, isCid);
         }
-        if (this.embedded && ttf.isEmbeddable()) {
-            returnFont.setEmbedFileName(this.fontFileURI);
+        if (this.embedded) {
+            if (ttf.isEmbeddable()) {
+                returnFont.setEmbedFileName(this.fontFileURI);
+            } else {
+                String msg = "The font " + this.fontFileURI + " is not embedabble.";
+                throw new RuntimeException(msg);
+            }
         }
     }
 
