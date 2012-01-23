@@ -34,7 +34,7 @@ public class TXTRendererMaker extends AbstractRendererMaker {
 
     /**{@inheritDoc} */
     public Renderer makeRenderer(FOUserAgent userAgent) {
-        return new TXTRenderer();
+        return new TXTRenderer(userAgent);
     }
 
     /**{@inheritDoc} */

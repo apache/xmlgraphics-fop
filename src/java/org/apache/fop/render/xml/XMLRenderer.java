@@ -37,7 +37,6 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
 import org.xml.sax.SAXException;
 
 import org.apache.xmlgraphics.util.QName;
@@ -75,11 +74,11 @@ import org.apache.fop.area.inline.Image;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.InlineBlockParent;
 import org.apache.fop.area.inline.InlineParent;
+import org.apache.fop.area.inline.InlineViewport;
 import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.Space;
 import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.area.inline.TextArea;
-import org.apache.fop.area.inline.InlineViewport;
 import org.apache.fop.area.inline.WordArea;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
@@ -113,20 +112,9 @@ public class XMLRenderer extends AbstractXMLRenderer {
 
     private int pageSequenceIndex;
 
-    /**
-     * Creates a new XML renderer.
-     */
-    public XMLRenderer() {
+    public XMLRenderer(FOUserAgent userAgent) {
+        super(userAgent);
         context = new RendererContext(this, XML_MIME_TYPE);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setUserAgent(FOUserAgent agent) {
-        super.setUserAgent(agent);
-
         XMLHandler xmlHandler = new XMLXMLHandler();
         userAgent.getXMLHandlerRegistry().addXMLHandler(xmlHandler);
         Boolean b = (Boolean)userAgent.getRendererOptions().get("compact-format");

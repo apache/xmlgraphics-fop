@@ -39,19 +39,21 @@ import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.w3c.dom.Document;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.apache.xpath.XPathAPI;
+import org.apache.xpath.objects.XObject;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.render.xml.XMLRenderer;
-import org.apache.xpath.XPathAPI;
-import org.apache.xpath.objects.XObject;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.w3c.dom.Document;
 
 /**
  * Tests URI resolution facilities.
@@ -160,8 +162,7 @@ public class URIResolutionTestCase extends AbstractFOPTest {
         TransformerHandler athandler = tfactory.newTransformerHandler();
         athandler.setResult(domres);
 
-        XMLRenderer atrenderer = new XMLRenderer();
-        atrenderer.setUserAgent(ua);
+        XMLRenderer atrenderer = new XMLRenderer(ua);
         atrenderer.setContentHandler(athandler);
         ua.setRendererOverride(atrenderer);
 

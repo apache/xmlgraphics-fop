@@ -85,8 +85,7 @@ public class ExampleFO2JPSPrint {
         //Set up a custom user agent so we can supply our own renderer instance
         FOUserAgent userAgent = fopFactory.newFOUserAgent();
 
-        PageableRenderer renderer = new PageableRenderer();
-        renderer.setUserAgent(userAgent);
+        PageableRenderer renderer = new PageableRenderer(userAgent);
         userAgent.setRendererOverride(renderer);
 
         // Construct FOP with desired output format

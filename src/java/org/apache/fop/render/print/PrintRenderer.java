@@ -55,19 +55,9 @@ public class PrintRenderer extends PageableRenderer {
      * Creates a new PrintRenderer with the options set through the renderer options if a custom
      * PrinterJob is not given in FOUserAgent's renderer options.
      */
-    public PrintRenderer() {
-    }
-
-    /**
-     * Creates a new PrintRenderer and allows you to pass in a specific PrinterJob instance
-     * that this renderer should work with.
-     * @param printerJob the PrinterJob instance
-     * @deprecated Please use the rendering options on the user agent to pass in the PrinterJob!
-     */
-    public PrintRenderer(PrinterJob printerJob) {
-        this();
-        this.printerJob = printerJob;
-        printerJob.setPageable(this);
+    public PrintRenderer(FOUserAgent userAgent) {
+        super(userAgent);
+        setRendererOptions();
     }
 
     private void initializePrinterJob() {
@@ -85,11 +75,8 @@ public class PrintRenderer extends PageableRenderer {
         }
     }
 
-    /** {@inheritDoc} */
-    public void setUserAgent(FOUserAgent agent) {
-        super.setUserAgent(agent);
-
-        Map rendererOptions = agent.getRendererOptions();
+    private void setRendererOptions() {
+        Map rendererOptions = getUserAgent().getRendererOptions();
 
         Object printerJobO = rendererOptions.get(PrintRenderer.PRINTER_JOB);
         if (printerJobO != null) {
