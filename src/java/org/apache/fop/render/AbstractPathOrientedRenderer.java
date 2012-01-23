@@ -34,6 +34,7 @@ import org.apache.xmlgraphics.image.loader.ImageSize;
 import org.apache.xmlgraphics.util.QName;
 import org.apache.xmlgraphics.util.UnitConv;
 
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.BlockViewport;
@@ -55,6 +56,10 @@ import org.apache.fop.traits.BorderProps;
  * follow similar patterns which makes it possible to share some code.
  */
 public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
+
+    public AbstractPathOrientedRenderer(FOUserAgent userAgent) {
+        super(userAgent);
+    }
 
     /**
      * Handle block traits.

@@ -83,19 +83,11 @@ public class TIFFRenderer extends Java2DRenderer implements TIFFConstants {
     }
 
     /** Creates TIFF renderer. */
-    public TIFFRenderer() {
+    public TIFFRenderer(FOUserAgent userAgent) {
+        super(userAgent);
         writerParams = new ImageWriterParams();
         writerParams.setCompressionMethod(COMPRESSION_PACKBITS);
-    }
 
-    /**
-     * {@inheritDoc}
-     *          org.apache.fop.apps.FOUserAgent)
-     */
-    public void setUserAgent(FOUserAgent foUserAgent) {
-        super.setUserAgent(foUserAgent);
-
-        //Set target resolution
         int dpi = Math.round(userAgent.getTargetResolution());
         writerParams.setResolution(dpi);
     }

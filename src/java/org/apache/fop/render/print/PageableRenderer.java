@@ -73,21 +73,16 @@ public class PageableRenderer extends Java2DRenderer implements Pageable {
     /**
      * Creates a new PageableRenderer.
      */
-    public PageableRenderer() {
+    public PageableRenderer(FOUserAgent userAgent) {
+        super(userAgent);
+        Map rendererOptions = getUserAgent().getRendererOptions();
+        processOptions(rendererOptions);
+        this.pageFilter = new DefaultPageFilter();
     }
 
     /** {@inheritDoc} */
     public String getMimeType() {
         return MimeConstants.MIME_FOP_PRINT;
-    }
-
-    /** {@inheritDoc} */
-    public void setUserAgent(FOUserAgent agent) {
-        super.setUserAgent(agent);
-
-        Map rendererOptions = agent.getRendererOptions();
-        processOptions(rendererOptions);
-        this.pageFilter = new DefaultPageFilter();
     }
 
     private void processOptions(Map rendererOptions) {
