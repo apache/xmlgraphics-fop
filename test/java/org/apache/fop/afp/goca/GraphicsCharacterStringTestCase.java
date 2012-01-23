@@ -31,7 +31,7 @@ public class GraphicsCharacterStringTestCase {
     private GraphicsCharacterString gcsCp500;
     private GraphicsCharacterString gcsCp1146;
     // consider the EBCDIC code page variants Cp500 and Cp1146
-    // the £ corresponds to byte 5B (position 91) in the CCSID 285 and CCSID 1146
+    // the <A3> (pound sign) corresponds to byte 5B (position 91) in the CCSID 285 and CCSID 1146
     // the $ corresponds to byte 5B (position 91) in the CCSID 500
     private final String poundsText = "\u00A3\u00A3\u00A3\u00A3";
     private final String dollarsText = "$$$$";
