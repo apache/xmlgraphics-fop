@@ -27,7 +27,6 @@ import java.util.Map;
 import org.w3c.dom.Document;
 
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Trait;
 import org.apache.fop.fonts.CustomFontCollection;
@@ -42,10 +41,6 @@ import org.apache.fop.fonts.base14.Base14FontCollection;
 
 /** Abstract base class of "Print" type renderers.  */
 public abstract class PrintRenderer extends AbstractRenderer {
-
-    public PrintRenderer(FOUserAgent userAgent) {
-        super(userAgent);
-    }
 
     /** Font configuration */
     protected FontInfo fontInfo;

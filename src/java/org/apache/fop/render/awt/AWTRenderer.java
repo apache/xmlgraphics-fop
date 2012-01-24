@@ -64,6 +64,18 @@ public class AWTRenderer extends Java2DRenderer implements Pageable {
     /** flag for debugging */
     public boolean debug;                                       // CSOK: VisibilityModifier
 
+    /** If true, preview dialog is shown. */
+    public boolean dialogDisplay = true;                        // CSOK: VisibilityModifier
+
+    /** true if the preview dialog should be the main window of the application */
+    private boolean previewAsMainWindow;
+
+    /**
+     * Renderable instance that can be used to reload and re-render a document after
+     * modifications.
+     */
+    protected Renderable renderable;
+
     /**
      * Will be notified when rendering progresses
      */
@@ -72,33 +84,45 @@ public class AWTRenderer extends Java2DRenderer implements Pageable {
 
     /**
      * Creates a new AWTRenderer instance.
-     *
-     * @param userAgent the user agent that contains configuration data
      */
-    public AWTRenderer(FOUserAgent userAgent) {
-        this(userAgent, null, false, false);
+    public AWTRenderer() {
+        this(false);
     }
 
     /**
      * Creates a new AWTRenderer instance.
-     *
-     * @param userAgent the user agent that contains configuration data
-     * @param renderable a Renderable instance can be set so the Preview Dialog can enable the
-     * "Reload" button which causes the current document to be reprocessed and redisplayed.
      * @param previewAsMainWindow true if the preview dialog created by the renderer should be
-     * the main window of the application.
-     * @param show sets whether the preview dialog should be created and displayed when the
-     * rendering has finished.
+     *                            the main window of the application.
      */
-    public AWTRenderer(FOUserAgent userAgent, Renderable renderable, boolean previewAsMainWindow,
-            boolean show) {
-        super(userAgent);
-        if (show) {
-            // MH: Not sure about this??? If show is false, there's no way for this class
-            // to create a preview dialog... Previously a "setUserAgent" could be called.
-            setStatusListener(PreviewDialog.createPreviewDialog(userAgent, renderable,
-                    previewAsMainWindow));
+    public AWTRenderer(boolean previewAsMainWindow) {
+        this.previewAsMainWindow = previewAsMainWindow;
+    }
+
+    /** {@inheritDoc} */
+    public void setUserAgent(FOUserAgent foUserAgent) {
+        super.setUserAgent(foUserAgent);
+        if (dialogDisplay) {
+            setStatusListener(PreviewDialog.createPreviewDialog(userAgent, this.renderable,
+                    this.previewAsMainWindow));
         }
+    }
+
+    /**
+     * A Renderable instance can be set so the Preview Dialog can enable the "Reload" button
+     * which causes the current document to be reprocessed and redisplayed.
+     * @param renderable the Renderable instance.
+     */
+    public void setRenderable(Renderable renderable) {
+        this.renderable = renderable;
+    }
+
+    /**
+     * Sets whether the preview dialog should be created and displayed when
+     * the rendering is finished.
+     * @param show If false, preview dialog is not shown. True by default
+     */
+    public void setPreviewDialogDisplayed(boolean show) {
+        dialogDisplay = show;
     }
 
     /**

@@ -93,7 +93,8 @@ public class ExampleConcat {
                 userAgent, MimeConstants.MIME_PDF);
 
         //Create the XMLRenderer to create the area tree XML
-        XMLRenderer xmlRenderer = new XMLRenderer(userAgent);
+        XMLRenderer xmlRenderer = new XMLRenderer();
+        xmlRenderer.setUserAgent(userAgent);
 
         //Tell the XMLRenderer to mimic the target renderer
         xmlRenderer.mimicRenderer(targetRenderer);

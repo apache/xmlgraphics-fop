@@ -61,11 +61,11 @@ import org.apache.fop.area.inline.Image;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.InlineBlockParent;
 import org.apache.fop.area.inline.InlineParent;
-import org.apache.fop.area.inline.InlineViewport;
 import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.Space;
 import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.area.inline.TextArea;
+import org.apache.fop.area.inline.InlineViewport;
 import org.apache.fop.area.inline.WordArea;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fonts.FontInfo;
@@ -116,16 +116,16 @@ public abstract class AbstractRenderer
     /** {@inheritDoc} */
     public abstract void setupFontInfo(FontInfo fontInfo) throws FOPException;
 
-    /**
-     *
-     * @param userAgent the user agent that contains configuration details. This cannot be null.
-     */
-    public AbstractRenderer(FOUserAgent userAgent) {
-        this.userAgent = userAgent;
+    /** {@inheritDoc} */
+    public void setUserAgent(FOUserAgent agent) {
+        userAgent = agent;
     }
 
     /** {@inheritDoc} */
     public FOUserAgent getUserAgent() {
+        if (userAgent == null) {
+            throw new IllegalStateException("FOUserAgent has not been set on Renderer");
+        }
         return userAgent;
     }
 

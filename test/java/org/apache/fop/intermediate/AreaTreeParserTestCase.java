@@ -97,9 +97,10 @@ public class AreaTreeParserTestCase extends AbstractIntermediateTest {
         Renderer targetRenderer = userAgent.getRendererFactory().createRenderer(
                 userAgent, getTargetMIME());
 
-        XMLRenderer renderer = new XMLRenderer(userAgent);
+        XMLRenderer renderer = new XMLRenderer();
         renderer.mimicRenderer(targetRenderer);
         renderer.setContentHandler(handler);
+        renderer.setUserAgent(userAgent);
 
         userAgent.setRendererOverride(renderer);
 
@@ -130,10 +131,12 @@ public class AreaTreeParserTestCase extends AbstractIntermediateTest {
         TransformerHandler handler = testAssistant.getTransformerFactory().newTransformerHandler();
         DOMResult domResult = new DOMResult();
         handler.setResult(domResult);
-        FOUserAgent userAgent = createUserAgent();
-        XMLRenderer renderer = new XMLRenderer(userAgent);
-        userAgent.setRendererOverride(renderer);
+        XMLRenderer renderer = new XMLRenderer();
         renderer.setContentHandler(handler);
+
+        FOUserAgent userAgent = createUserAgent();
+        userAgent.setRendererOverride(renderer);
+        renderer.setUserAgent(userAgent);
 
         FontInfo fontInfo = new FontInfo();
         AreaTreeModel treeModel = new RenderPagesModel(userAgent,

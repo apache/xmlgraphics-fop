@@ -35,7 +35,7 @@ public class XMLRendererMaker extends AbstractRendererMaker {
 
     /**{@inheritDoc} */
     public Renderer makeRenderer(FOUserAgent userAgent) {
-        return new XMLRenderer(userAgent);
+        return new XMLRenderer();
     }
 
     /**{@inheritDoc} */
