@@ -173,7 +173,7 @@ public class TTFFontLoader extends FontLoader {
             if (ttf.isEmbeddable()) {
                 returnFont.setEmbedFileName(this.fontFileURI);
             } else {
-                String msg = "The font " + this.fontFileURI + " is not embedabble.";
+                String msg = "The font " + this.fontFileURI + " is not embeddable.";
                 throw new RuntimeException(msg);
             }
         }
