@@ -150,7 +150,8 @@ public class LayoutEngineTestCase {
             ua.getEventBroadcaster().addEventListener(
                     new ConsoleEventListenerForTests(testFile.getName(), EventSeverity.WARN));
 
-            XMLRenderer atrenderer = new XMLRenderer(ua);
+            XMLRenderer atrenderer = new XMLRenderer();
+            atrenderer.setUserAgent(ua);
             atrenderer.setContentHandler(athandler);
             ua.setRendererOverride(atrenderer);
             fop = effFactory.newFop(ua);
@@ -207,7 +208,8 @@ public class LayoutEngineTestCase {
             ua.getEventBroadcaster().addEventListener(
                     new ConsoleEventListenerForTests(testFile.getName(), EventSeverity.WARN));
 
-            IFRenderer ifRenderer = new IFRenderer(ua);
+            IFRenderer ifRenderer = new IFRenderer();
+            ifRenderer.setUserAgent(ua);
 
             IFSerializer serializer = new IFSerializer();
             serializer.setContext(new IFContext(ua));

@@ -203,14 +203,17 @@ public class CommandLineOptions {
                 System.err.println("Couldn't set system look & feel!");
             }
 
-            AWTRenderer renderer = new AWTRenderer(foUserAgent, inputHandler, true, true);
+            AWTRenderer renderer = new AWTRenderer(true);
+            renderer.setRenderable(inputHandler); //set before user agent!
+            renderer.setUserAgent(foUserAgent);
             foUserAgent.setRendererOverride(renderer);
         } else if (MimeConstants.MIME_FOP_AREA_TREE.equals(outputmode)
                && mimicRenderer != null) {
             // render from FO to Intermediate Format
             Renderer targetRenderer = foUserAgent.getRendererFactory().createRenderer(
                    foUserAgent, mimicRenderer);
-            XMLRenderer xmlRenderer = new XMLRenderer(foUserAgent);
+            XMLRenderer xmlRenderer = new XMLRenderer();
+            xmlRenderer.setUserAgent(foUserAgent);
 
             //Tell the XMLRenderer to mimic the target renderer
             xmlRenderer.mimicRenderer(targetRenderer);

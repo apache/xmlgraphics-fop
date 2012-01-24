@@ -34,7 +34,7 @@ public class AWTRendererMaker extends AbstractRendererMaker {
 
     /** {@inheritDoc} */
     public Renderer makeRenderer(FOUserAgent ua) {
-        return new AWTRenderer(ua);
+        return new AWTRenderer();
     }
 
     /** {@inheritDoc} */

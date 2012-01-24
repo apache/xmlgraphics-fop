@@ -34,7 +34,7 @@ public class SVGRendererMaker extends AbstractRendererMaker {
 
     /** {@inheritDoc} */
     public Renderer makeRenderer(FOUserAgent ua) {
-        return new SVGRenderer(ua);
+        return new SVGRenderer();
     }
 
     /** {@inheritDoc} */

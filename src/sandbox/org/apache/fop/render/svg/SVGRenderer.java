@@ -26,22 +26,19 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
 
-import org.w3c.dom.DOMImplementation;
-import org.w3c.dom.Document;
-
 import org.apache.batik.dom.GenericDOMImplementation;
 import org.apache.batik.svggen.SVGGeneratorContext;
 import org.apache.batik.svggen.SVGGraphics2D;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.render.bitmap.MultiFileRenderingUtil;
 import org.apache.fop.render.java2d.Java2DGraphicsState;
 import org.apache.fop.render.java2d.Java2DRenderer;
+import org.w3c.dom.DOMImplementation;
+import org.w3c.dom.Document;
 
 /**
  * <p>
@@ -70,8 +67,8 @@ public class SVGRenderer extends Java2DRenderer {
     /** Helper class for generating multiple files */
     private MultiFileRenderingUtil multiFileUtil;
 
-    public SVGRenderer(FOUserAgent userAgent) {
-        super(userAgent);
+    /** Default constructor. */
+    public SVGRenderer() {
     }
 
     /** {@inheritDoc} */

@@ -299,6 +299,7 @@ public class RendererFactory {
         AbstractRendererMaker maker = getRendererMaker(outputFormat);
         if (maker != null) {
             Renderer rend = maker.makeRenderer(userAgent);
+            rend.setUserAgent(userAgent);
             RendererConfigurator configurator = maker.getConfigurator(userAgent);
             if (configurator != null) {
                 configurator.configure(rend);
@@ -310,7 +311,8 @@ public class RendererFactory {
     }
 
     private Renderer createRendererForDocumentHandler(IFDocumentHandler documentHandler) {
-        IFRenderer rend = new IFRenderer(documentHandler.getContext().getUserAgent());
+        IFRenderer rend = new IFRenderer();
+        rend.setUserAgent(documentHandler.getContext().getUserAgent());
         rend.setDocumentHandler(documentHandler);
         return rend;
     }

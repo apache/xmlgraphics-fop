@@ -29,7 +29,6 @@ import org.apache.xmlgraphics.image.writer.ImageWriter;
 import org.apache.xmlgraphics.image.writer.ImageWriterParams;
 import org.apache.xmlgraphics.image.writer.ImageWriterRegistry;
 
-import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.render.java2d.Java2DRenderer;
@@ -40,10 +39,6 @@ import org.apache.fop.render.java2d.Java2DRenderer;
  * rendering results into PNG format using Batik's image codec
  */
 public class PNGRenderer extends Java2DRenderer {
-
-    public PNGRenderer(FOUserAgent userAgent) {
-        super(userAgent);
-    }
 
     /** The MIME type for png-Rendering */
     public static final String MIME_TYPE = MimeConstants.MIME_PNG;

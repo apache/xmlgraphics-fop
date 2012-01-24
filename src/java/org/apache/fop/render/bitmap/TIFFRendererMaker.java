@@ -34,7 +34,7 @@ public class TIFFRendererMaker extends AbstractRendererMaker {
 
     /** {@inheritDoc} */
     public Renderer makeRenderer(FOUserAgent userAgent) {
-        return new TIFFRenderer(userAgent);
+        return new TIFFRenderer();
     }
 
     /** {@inheritDoc} */

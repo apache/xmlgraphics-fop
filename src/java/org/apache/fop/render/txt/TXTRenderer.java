@@ -32,7 +32,6 @@ import java.util.Map;
 import org.apache.xmlgraphics.util.UnitConv;
 
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.CTM;
 import org.apache.fop.area.PageViewport;
@@ -111,8 +110,7 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
     /**
      * Constructs a newly allocated <code>TXTRenderer</code> object.
      */
-    public TXTRenderer(FOUserAgent userAgent) {
-        super(userAgent);
+    public TXTRenderer() {
     }
 
     /** {@inheritDoc} */
