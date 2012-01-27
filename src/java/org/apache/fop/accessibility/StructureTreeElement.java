@@ -17,18 +17,15 @@
 
 /* $Id$ */
 
-package org.apache.fop.fo.properties;
+/**
+ *
+ */
+package org.apache.fop.accessibility;
 
 /**
- * Defines property access methods for internal structure pointer extension properties.
+ * An object that represents the structure of the document in the output format.
+ * In PDF, an implementation of this interface will typically result into the
+ * creation of a structure element dictionary (a dictionary of type StructElem).
  */
-public interface StructurePointerPropertySet {
-
-    /**
-     * Returns the value of the "foi:ptr" property, the internal structure pointer used
-     * for tagged PDF and other formats that support a structure tree in addition to paged content.
-     * @return the "foi:ptr" property
-     */
-    String getPtr();
-
+public interface StructureTreeElement {
 }

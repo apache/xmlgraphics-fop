@@ -136,7 +136,7 @@ public abstract class AbstractPageNumberCitationLayoutManager extends LeafNodeLa
         text.setBaselineOffset(font.getAscender());
         TraitSetter.addFontTraits(text, font);
         text.addTrait(Trait.COLOR, fobj.getColor());
-        TraitSetter.addPtr(text, fobj.getPtr());   // used for accessibility
+        TraitSetter.addStructureTreeElement(text, fobj.getStructureTreeElement());
         TraitSetter.addTextDecoration(text, fobj.getTextDecoration());
     }
 

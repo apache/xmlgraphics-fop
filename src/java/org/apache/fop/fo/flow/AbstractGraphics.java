@@ -19,6 +19,7 @@
 
 package org.apache.fop.fo.flow;
 
+import org.apache.fop.accessibility.StructureTreeElement;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
@@ -31,7 +32,7 @@ import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.LengthRangeProperty;
 import org.apache.fop.fo.properties.SpaceProperty;
-import org.apache.fop.fo.properties.StructurePointerPropertySet;
+import org.apache.fop.fo.properties.StructureTreeElementHolder;
 
 /**
  * Common base class for the <a href="http://www.w3.org/TR/xsl/#fo_instream-foreign-object">
@@ -40,7 +41,7 @@ import org.apache.fop.fo.properties.StructurePointerPropertySet;
  * <code>fo:external-graphic</code></a> flow formatting objects.
  */
 public abstract class AbstractGraphics extends FObj
-        implements GraphicsProperties, StructurePointerPropertySet, CommonAccessibilityHolder {
+        implements GraphicsProperties, StructureTreeElementHolder, CommonAccessibilityHolder {
 
     // The value of properties relevant for fo:instream-foreign-object
     // and external-graphics.
@@ -66,7 +67,7 @@ public abstract class AbstractGraphics extends FObj
     private int textAlign;
     private Length width;
     private String altText;
-    private String ptr;   // used for accessibility
+    private StructureTreeElement structureTreeElement;
     // Unused but valid items, commented out for performance:
     //     private CommonAccessibility commonAccessibility;
     //     private CommonAural commonAural;
@@ -226,13 +227,13 @@ public abstract class AbstractGraphics extends FObj
     }
 
     @Override
-    public void setPtr(String ptr) {
-        this.ptr = ptr;
+    public void setStructureTreeElement(StructureTreeElement structureTreeElement) {
+        this.structureTreeElement = structureTreeElement;
     }
 
     /** {@inheritDoc} */
-    public String getPtr() {
-        return ptr;
+    public StructureTreeElement getStructureTreeElement() {
+        return structureTreeElement;
     }
 
     public String getAltText() {

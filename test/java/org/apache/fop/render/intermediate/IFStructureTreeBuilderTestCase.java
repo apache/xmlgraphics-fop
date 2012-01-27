@@ -85,7 +85,7 @@ public class IFStructureTreeBuilderTestCase {
 
     @Test
     public void startNode() throws Exception {
-        final String[] attributes = {"ptr", "1"};
+        final String[] attributes = {"struct-id", "1"};
         final String nodeName = "block";
         final ContentHandler handler = mock(ContentHandler.class);
 

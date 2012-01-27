@@ -17,10 +17,12 @@
 
 /* $Id$ */
 
-package org.apache.fop.accessibility;
+package org.apache.fop.accessibility.fo;
 
 import static org.junit.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -34,18 +36,17 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.custommonkey.xmlunit.Diff;
-import org.custommonkey.xmlunit.Difference;
-import org.custommonkey.xmlunit.DifferenceConstants;
-import org.custommonkey.xmlunit.DifferenceListener;
 import org.junit.Test;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
+import org.apache.fop.accessibility.StructureTree2SAXEventAdapter;
+import org.apache.fop.accessibility.StructureTreeEventHandler;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.FODocumentParser;
@@ -56,52 +57,73 @@ import org.apache.fop.fotreetest.DummyFOEventHandler;
 
 public class FO2StructureTreeConverterTestCase {
 
-    private static class IgnoringPtrDifferenceListener implements DifferenceListener {
+    private interface FOLoader {
 
-        public int differenceFound(Difference difference) {
-            switch (difference.getId()) {
-            case DifferenceConstants.ELEMENT_NUM_ATTRIBUTES_ID:
-                return RETURN_IGNORE_DIFFERENCE_NODES_SIMILAR;
-            case DifferenceConstants.ATTR_NAME_NOT_FOUND_ID:
-                String additionalAttribute = difference.getTestNodeDetail().getValue();
-                if (additionalAttribute.equals("ptr")) {
-                    return RETURN_IGNORE_DIFFERENCE_NODES_SIMILAR;
-                } else {
-                    return RETURN_ACCEPT_DIFFERENCE;
-                }
-            default:
-                return RETURN_ACCEPT_DIFFERENCE;
-            }
-        }
-
-        public void skippedComparison(Node control, Node test) {
-            throw new UnsupportedOperationException("Not implemented");
-        }
+        InputStream getFoInputStream();
     }
 
     private static final String STRUCTURE_TREE_SEQUENCE_NAME = "structure-tree-sequence";
 
+    private FOLoader foLoader;
+
     @Test
-    public void testConverter() throws Exception {
+    public void testCompleteDocument() throws Exception {
+        foLoader = new FOLoader() {
+            public InputStream getFoInputStream() {
+                return getResource("/org/apache/fop/fo/complete_document.fo");
+            }
+        };
+        testConverter();
+    }
+
+    @Test
+    public void testTableFooters() throws Exception {
+        foLoader = new FOLoader() {
+            public InputStream getFoInputStream() {
+                return getResource("table-footers.fo");
+            }
+        };
+        testConverter();
+    }
+
+    @Test
+    public void testCompleteContentWrappedInTableFooter() throws Exception {
+        Source xslt = new StreamSource(getResource("wrapCompleteDocumentInTableFooter.xsl"));
+        Transformer transformer = createTransformer(xslt);
+        InputStream originalFO = getResource("/org/apache/fop/fo/complete_document.fo");
+        ByteArrayOutputStream transformedFoOutput = new ByteArrayOutputStream();
+        transformer.transform(new StreamSource(originalFO), new StreamResult(transformedFoOutput));
+        final byte[] transformedFoOutputBytes = transformedFoOutput.toByteArray();
+        foLoader = new FOLoader() {
+            public InputStream getFoInputStream() {
+                return new ByteArrayInputStream(transformedFoOutputBytes);
+            }
+        };
+        testConverter();
+    }
+
+    private Transformer createTransformer(Source xslt) throws TransformerFactoryConfigurationError,
+            TransformerConfigurationException {
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        return transformerFactory.newTransformer(xslt);
+    }
+
+    private static InputStream getResource(String name) {
+        return FO2StructureTreeConverterTestCase.class.getResourceAsStream(name);
+    }
+
+    private void testConverter() throws Exception {
         DOMResult expectedStructureTree = loadExpectedStructureTree();
         DOMResult actualStructureTree = buildActualStructureTree();
         final Diff diff = createDiff(expectedStructureTree, actualStructureTree);
-        assertTrue(diff.toString(), diff.similar());
+        assertTrue(diff.toString(), diff.identical());
     }
 
-    private static DOMResult loadExpectedStructureTree() {
+    private DOMResult loadExpectedStructureTree() {
         DOMResult expectedStructureTree = new DOMResult();
-        runXSLT(getXsltInputStream(), getFoInputStream(), expectedStructureTree);
+        InputStream xslt = getResource("fo2StructureTree.xsl");
+        runXSLT(xslt, foLoader.getFoInputStream(), expectedStructureTree);
         return expectedStructureTree;
-    }
-
-    private static InputStream getXsltInputStream() {
-        return FO2StructureTreeConverterTestCase.class.getResourceAsStream("foToIfStructureTree.xsl");
-    }
-
-    private static InputStream getFoInputStream() {
-        return FO2StructureTreeConverterTestCase.class.getResourceAsStream(
-                "/org/apache/fop/fo/complete_document.fo");
     }
 
     private static void runXSLT(InputStream xslt, InputStream doc, Result result) {
@@ -128,15 +150,15 @@ public class FO2StructureTreeConverterTestCase {
         }
     }
 
-    private static DOMResult buildActualStructureTree() throws Exception {
+    private DOMResult buildActualStructureTree() throws Exception {
         DOMResult actualStructureTree = new DOMResult();
-        createStructureTreeFromDocument(getFoInputStream(), actualStructureTree);
+        createStructureTreeFromDocument(foLoader.getFoInputStream(), actualStructureTree);
         return actualStructureTree;
     }
 
     private static void createStructureTreeFromDocument(InputStream foInputStream,
-            DOMResult domResult) throws Exception {
-        TransformerHandler tHandler = createTransformerHandler(domResult);
+            Result result) throws Exception {
+        TransformerHandler tHandler = createTransformerHandler(result);
         startStructureTreeSequence(tHandler);
         StructureTreeEventHandler structureTreeEventHandler
                 = StructureTree2SAXEventAdapter.newInstance(tHandler);
@@ -146,7 +168,7 @@ public class FO2StructureTreeConverterTestCase {
         endStructureTreeSequence(tHandler);
     }
 
-    private static TransformerHandler createTransformerHandler(DOMResult domResult)
+    private static TransformerHandler createTransformerHandler(Result domResult)
             throws TransformerConfigurationException, TransformerFactoryConfigurationError {
         SAXTransformerFactory factory = (SAXTransformerFactory) SAXTransformerFactory.newInstance();
         TransformerHandler transformerHandler = factory.newTransformerHandler();
@@ -192,7 +214,6 @@ public class FO2StructureTreeConverterTestCase {
 
     private static Diff createDiff(DOMResult expected, DOMResult actual) {
         Diff diff = new Diff(getDocument(expected), getDocument(actual));
-        diff.overrideDifferenceListener(new IgnoringPtrDifferenceListener());
         return diff;
     }
 

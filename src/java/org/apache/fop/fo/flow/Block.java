@@ -42,13 +42,12 @@ import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.CommonRelativePosition;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.SpaceProperty;
-import org.apache.fop.fo.properties.StructurePointerPropertySet;
 
  /**
   * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_block">
   * <code>fo:block object</code></a>.
   */
-public class Block extends FObjMixed implements BreakPropertySet, StructurePointerPropertySet,
+public class Block extends FObjMixed implements BreakPropertySet,
         CommonAccessibilityHolder {
 
     // used for FO validation
@@ -77,7 +76,6 @@ public class Block extends FObjMixed implements BreakPropertySet, StructurePoint
     private int lineHeightShiftAdjustment;
     private int lineStackingStrategy;
     private Numeric orphans;
-    private String ptr;  //used for accessibility
     private int whiteSpaceTreatment;
     private int span;
     private int textAlign;
@@ -181,16 +179,6 @@ public class Block extends FObjMixed implements BreakPropertySet, StructurePoint
     /** @return the "break-after" property. */
     public int getBreakAfter() {
         return breakAfter;
-    }
-
-    @Override
-    public void setPtr(String ptr) {
-        this.ptr = ptr;
-    }
-
-    /** {@inheritDoc} */
-    public String getPtr() {
-        return ptr;
     }
 
     /** @return the "break-before" property. */

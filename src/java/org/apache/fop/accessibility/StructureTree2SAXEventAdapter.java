@@ -50,7 +50,6 @@ public final class StructureTree2SAXEventAdapter implements StructureTreeEventHa
         return new StructureTree2SAXEventAdapter(contentHandler);
     }
 
-    /** {@inheritDoc} */
     public void startPageSequence(Locale locale) {
         try {
 
@@ -66,7 +65,6 @@ public final class StructureTree2SAXEventAdapter implements StructureTreeEventHa
         }
     }
 
-    /** {@inheritDoc} */
     public void endPageSequence() {
         try {
             contentHandler.endElement(IFConstants.NAMESPACE, IFConstants.EL_STRUCTURE_TREE,
@@ -81,18 +79,23 @@ public final class StructureTree2SAXEventAdapter implements StructureTreeEventHa
         }
     }
 
-    /** {@inheritDoc} */
-    public void startNode(String name, Attributes attributes) {
+    public StructureTreeElement startNode(String name, Attributes attributes) {
         try {
-            contentHandler.startElement(FOElementMapping.URI, name,
-                    FOElementMapping.STANDARD_PREFIX + ":" + name,
-                    attributes);
+            if (name.equals("#PCDATA")) {
+                name = "marked-content";
+                contentHandler.startElement(IFConstants.NAMESPACE, name,
+                        name, attributes);
+            } else {
+                contentHandler.startElement(FOElementMapping.URI, name,
+                        FOElementMapping.STANDARD_PREFIX + ":" + name,
+                        attributes);
+            }
+            return null;
         } catch (SAXException e) {
             throw new RuntimeException(e);
         }
     }
 
-    /** {@inheritDoc} */
     public void endNode(String name) {
         try {
             contentHandler.endElement(FOElementMapping.URI, name,
@@ -100,5 +103,21 @@ public final class StructureTree2SAXEventAdapter implements StructureTreeEventHa
         } catch (SAXException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public StructureTreeElement startImageNode(String name, Attributes attributes) {
+        return startNode(name, attributes);
+    }
+
+    public void endImageNode(String name) {
+        endNode(name);
+    }
+
+    public StructureTreeElement startReferencedNode(String name, Attributes attributes) {
+        return startNode(name, attributes);
+    }
+
+    public void endReferencedNode(String name) {
+        endNode(name);
     }
 }

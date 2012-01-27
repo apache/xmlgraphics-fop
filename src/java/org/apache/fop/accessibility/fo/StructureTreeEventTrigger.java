@@ -17,12 +17,20 @@
 
 /* $Id$ */
 
-package org.apache.fop.fo;
+package org.apache.fop.accessibility.fo;
+
+import java.util.Locale;
 
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
 
-import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.fo.extensions.ExternalDocument;
+import org.apache.fop.accessibility.StructureTreeElement;
+import org.apache.fop.accessibility.StructureTreeEventHandler;
+import org.apache.fop.fo.FOEventHandler;
+import org.apache.fop.fo.FONode;
+import org.apache.fop.fo.FOText;
+import org.apache.fop.fo.extensions.ExtensionElementMapping;
+import org.apache.fop.fo.flow.AbstractGraphics;
 import org.apache.fop.fo.flow.BasicLink;
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.flow.BlockContainer;
@@ -32,7 +40,6 @@ import org.apache.fop.fo.flow.Footnote;
 import org.apache.fop.fo.flow.FootnoteBody;
 import org.apache.fop.fo.flow.Inline;
 import org.apache.fop.fo.flow.InstreamForeignObject;
-import org.apache.fop.fo.flow.Leader;
 import org.apache.fop.fo.flow.ListBlock;
 import org.apache.fop.fo.flow.ListItem;
 import org.apache.fop.fo.flow.ListItemBody;
@@ -44,361 +51,358 @@ import org.apache.fop.fo.flow.Wrapper;
 import org.apache.fop.fo.flow.table.Table;
 import org.apache.fop.fo.flow.table.TableBody;
 import org.apache.fop.fo.flow.table.TableCell;
-import org.apache.fop.fo.flow.table.TableColumn;
 import org.apache.fop.fo.flow.table.TableFooter;
 import org.apache.fop.fo.flow.table.TableHeader;
 import org.apache.fop.fo.flow.table.TableRow;
 import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.pagination.PageSequence;
-import org.apache.fop.fo.pagination.Root;
 import org.apache.fop.fo.pagination.StaticContent;
-import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.fo.properties.CommonAccessibilityHolder;
+import org.apache.fop.util.XMLUtil;
 
 /**
- * This class delegates all FO events to another FOEventHandler instance.
+ * A bridge between {@link FOEventHandler} and {@link StructureTreeEventHandler}.
  */
-public abstract class DelegatingFOEventHandler extends FOEventHandler {
+class StructureTreeEventTrigger extends FOEventHandler {
 
-    private final FOEventHandler delegate;
+    private StructureTreeEventHandler structureTreeEventHandler;
 
-    /**
-     * Creates a new instance that delegates events to the given object.
-     *
-     * @param delegate the object to which all FO events will be forwarded
-     */
-    public DelegatingFOEventHandler(FOEventHandler delegate) {
-        super(delegate.getUserAgent());
-        this.delegate = delegate;
-    }
-
-    @Override
-    public FOUserAgent getUserAgent() {
-        return delegate.getUserAgent();
-    }
-
-    @Override
-    public FontInfo getFontInfo() {
-        return delegate.getFontInfo();
+    public StructureTreeEventTrigger(StructureTreeEventHandler structureTreeEventHandler) {
+        this.structureTreeEventHandler = structureTreeEventHandler;
     }
 
     @Override
     public void startDocument() throws SAXException {
-        delegate.startDocument();
     }
 
     @Override
     public void endDocument() throws SAXException {
-        delegate.endDocument();
-    }
-
-    @Override
-    public void startRoot(Root root) {
-        delegate.startRoot(root);
-    }
-
-    @Override
-    public void endRoot(Root root) {
-        delegate.endRoot(root);
     }
 
     @Override
     public void startPageSequence(PageSequence pageSeq) {
-        delegate.startPageSequence(pageSeq);
+        Locale locale = null;
+        if (pageSeq.getLanguage() != null) {
+            if (pageSeq.getCountry() != null) {
+                locale = new Locale(pageSeq.getLanguage(), pageSeq.getCountry());
+            } else {
+                locale = new Locale(pageSeq.getLanguage());
+            }
+        }
+        structureTreeEventHandler.startPageSequence(locale);
     }
 
     @Override
     public void endPageSequence(PageSequence pageSeq) {
-        delegate.endPageSequence(pageSeq);
+        structureTreeEventHandler.endPageSequence();
     }
 
     @Override
     public void startPageNumber(PageNumber pagenum) {
-        delegate.startPageNumber(pagenum);
+        startElementWithID(pagenum);
     }
 
     @Override
     public void endPageNumber(PageNumber pagenum) {
-        delegate.endPageNumber(pagenum);
+        endElement(pagenum);
     }
 
     @Override
     public void startPageNumberCitation(PageNumberCitation pageCite) {
-        delegate.startPageNumberCitation(pageCite);
+        startElementWithID(pageCite);
     }
 
     @Override
     public void endPageNumberCitation(PageNumberCitation pageCite) {
-        delegate.endPageNumberCitation(pageCite);
+        endElement(pageCite);
     }
 
     @Override
     public void startPageNumberCitationLast(PageNumberCitationLast pageLast) {
-        delegate.startPageNumberCitationLast(pageLast);
+        startElementWithID(pageLast);
     }
 
     @Override
     public void endPageNumberCitationLast(PageNumberCitationLast pageLast) {
-        delegate.endPageNumberCitationLast(pageLast);
+        endElement(pageLast);
     }
 
     @Override
     public void startFlow(Flow fl) {
-        delegate.startFlow(fl);
+        startElement(fl);
     }
 
     @Override
     public void endFlow(Flow fl) {
-        delegate.endFlow(fl);
+        endElement(fl);
     }
 
     @Override
     public void startBlock(Block bl) {
-        delegate.startBlock(bl);
+        startElement(bl);
     }
 
     @Override
     public void endBlock(Block bl) {
-        delegate.endBlock(bl);
+        endElement(bl);
     }
 
     @Override
     public void startBlockContainer(BlockContainer blc) {
-        delegate.startBlockContainer(blc);
+        startElement(blc);
     }
 
     @Override
     public void endBlockContainer(BlockContainer blc) {
-        delegate.endBlockContainer(blc);
+        endElement(blc);
     }
 
     @Override
     public void startInline(Inline inl) {
-        delegate.startInline(inl);
+        startElement(inl);
     }
 
     @Override
     public void endInline(Inline inl) {
-        delegate.endInline(inl);
+        endElement(inl);
     }
 
     @Override
     public void startTable(Table tbl) {
-        delegate.startTable(tbl);
+        startElement(tbl);
     }
 
     @Override
     public void endTable(Table tbl) {
-        delegate.endTable(tbl);
-    }
-
-    @Override
-    public void startColumn(TableColumn tc) {
-        delegate.startColumn(tc);
-    }
-
-    @Override
-    public void endColumn(TableColumn tc) {
-        delegate.endColumn(tc);
+        endElement(tbl);
     }
 
     @Override
     public void startHeader(TableHeader header) {
-        delegate.startHeader(header);
+        startElement(header);
     }
 
     @Override
     public void endHeader(TableHeader header) {
-        delegate.endHeader(header);
+        endElement(header);
     }
 
     @Override
     public void startFooter(TableFooter footer) {
-        delegate.startFooter(footer);
+        startElement(footer);
     }
 
     @Override
     public void endFooter(TableFooter footer) {
-        delegate.endFooter(footer);
+        endElement(footer);
     }
 
     @Override
     public void startBody(TableBody body) {
-        delegate.startBody(body);
+        startElement(body);
     }
 
     @Override
     public void endBody(TableBody body) {
-        delegate.endBody(body);
+        endElement(body);
     }
 
     @Override
     public void startRow(TableRow tr) {
-        delegate.startRow(tr);
+        startElement(tr);
     }
 
     @Override
     public void endRow(TableRow tr) {
-        delegate.endRow(tr);
+        endElement(tr);
     }
 
     @Override
     public void startCell(TableCell tc) {
-        delegate.startCell(tc);
+        AttributesImpl attributes = new AttributesImpl();
+        int colSpan = tc.getNumberColumnsSpanned();
+        if (colSpan > 1) {
+            addNoNamespaceAttribute(attributes, "number-columns-spanned",
+                    Integer.toString(colSpan));
+        }
+        startElement(tc, attributes);
     }
 
     @Override
     public void endCell(TableCell tc) {
-        delegate.endCell(tc);
+        endElement(tc);
     }
 
     @Override
     public void startList(ListBlock lb) {
-        delegate.startList(lb);
+        startElement(lb);
     }
 
     @Override
     public void endList(ListBlock lb) {
-        delegate.endList(lb);
+        endElement(lb);
     }
 
     @Override
     public void startListItem(ListItem li) {
-        delegate.startListItem(li);
+        startElement(li);
     }
 
     @Override
     public void endListItem(ListItem li) {
-        delegate.endListItem(li);
+        endElement(li);
     }
 
     @Override
     public void startListLabel(ListItemLabel listItemLabel) {
-        delegate.startListLabel(listItemLabel);
+        startElement(listItemLabel);
     }
 
     @Override
     public void endListLabel(ListItemLabel listItemLabel) {
-        delegate.endListLabel(listItemLabel);
+        endElement(listItemLabel);
     }
 
     @Override
     public void startListBody(ListItemBody listItemBody) {
-        delegate.startListBody(listItemBody);
+        startElement(listItemBody);
     }
 
     @Override
     public void endListBody(ListItemBody listItemBody) {
-        delegate.endListBody(listItemBody);
+        endElement(listItemBody);
     }
 
     @Override
     public void startStatic(StaticContent staticContent) {
-        delegate.startStatic(staticContent);
+        startElement(staticContent);
     }
 
     @Override
     public void endStatic(StaticContent statisContent) {
-        delegate.endStatic(statisContent);
-    }
-
-    @Override
-    public void startMarkup() {
-        delegate.startMarkup();
-    }
-
-    @Override
-    public void endMarkup() {
-        delegate.endMarkup();
+        endElement(statisContent);
     }
 
     @Override
     public void startLink(BasicLink basicLink) {
-        delegate.startLink(basicLink);
+        startElementWithID(basicLink);
     }
 
     @Override
     public void endLink(BasicLink basicLink) {
-        delegate.endLink(basicLink);
+        endElement(basicLink);
     }
 
     @Override
     public void image(ExternalGraphic eg) {
-        delegate.image(eg);
-    }
-
-    @Override
-    public void pageRef() {
-        delegate.pageRef();
+        startElementWithIDAndAltText(eg);
+        endElement(eg);
     }
 
     @Override
     public void startInstreamForeignObject(InstreamForeignObject ifo) {
-        delegate.startInstreamForeignObject(ifo);
+        startElementWithIDAndAltText(ifo);
     }
 
     @Override
     public void endInstreamForeignObject(InstreamForeignObject ifo) {
-        delegate.endInstreamForeignObject(ifo);
+        endElement(ifo);
     }
 
     @Override
     public void startFootnote(Footnote footnote) {
-        delegate.startFootnote(footnote);
+        startElement(footnote);
     }
 
     @Override
     public void endFootnote(Footnote footnote) {
-        delegate.endFootnote(footnote);
+        endElement(footnote);
     }
 
     @Override
     public void startFootnoteBody(FootnoteBody body) {
-        delegate.startFootnoteBody(body);
+        startElement(body);
     }
 
     @Override
     public void endFootnoteBody(FootnoteBody body) {
-        delegate.endFootnoteBody(body);
-    }
-
-    @Override
-    public void startLeader(Leader l) {
-        delegate.startLeader(l);
-    }
-
-    @Override
-    public void endLeader(Leader l) {
-        delegate.endLeader(l);
+        endElement(body);
     }
 
     @Override
     public void startWrapper(Wrapper wrapper) {
-        delegate.startWrapper(wrapper);
+        startElement(wrapper);
     }
 
     @Override
     public void endWrapper(Wrapper wrapper) {
-        delegate.endWrapper(wrapper);
+        endElement(wrapper);
     }
 
     @Override
     public void character(Character c) {
-        delegate.character(c);
+        startElementWithID(c);
+        endElement(c);
     }
 
     @Override
     public void characters(FOText foText) {
-        delegate.characters(foText);
+        startElementWithID(foText);
+        endElement(foText);
     }
 
-    @Override
-    public void startExternalDocument(ExternalDocument document) {
-        delegate.startExternalDocument(document);
+
+    private void startElement(FONode node) {
+        startElement(node, new AttributesImpl());
     }
 
-    @Override
-    public void endExternalDocument(ExternalDocument document) {
-        delegate.endExternalDocument(document);
+    private void startElementWithID(FONode node) {
+        AttributesImpl attributes = new AttributesImpl();
+        String localName = node.getLocalName();
+        if (node instanceof CommonAccessibilityHolder) {
+            addRole((CommonAccessibilityHolder) node, attributes);
+        }
+        node.setStructureTreeElement(structureTreeEventHandler.startReferencedNode(localName, attributes));
+    }
+
+    private void startElementWithIDAndAltText(AbstractGraphics node) {
+        AttributesImpl attributes = new AttributesImpl();
+        String localName = node.getLocalName();
+        addRole(node, attributes);
+        addAttribute(attributes, ExtensionElementMapping.URI, "alt-text",
+                ExtensionElementMapping.STANDARD_PREFIX, node.getAltText());
+        node.setStructureTreeElement(structureTreeEventHandler.startImageNode(localName, attributes));
+    }
+
+    private StructureTreeElement startElement(FONode node, AttributesImpl attributes) {
+        String localName = node.getLocalName();
+        if (node instanceof CommonAccessibilityHolder) {
+            addRole((CommonAccessibilityHolder) node, attributes);
+        }
+        return structureTreeEventHandler.startNode(localName, attributes);
+    }
+
+    private void addNoNamespaceAttribute(AttributesImpl attributes, String name, String value) {
+        attributes.addAttribute("", name, name, XMLUtil.CDATA, value);
+    }
+
+    private void addAttribute(AttributesImpl attributes,
+            String namespace, String localName, String prefix, String value) {
+        assert namespace.length() > 0 && prefix.length() > 0;
+        String qualifiedName = prefix + ":" + localName;
+        attributes.addAttribute(namespace, localName, qualifiedName, XMLUtil.CDATA, value);
+    }
+
+    private void addRole(CommonAccessibilityHolder node, AttributesImpl attributes) {
+        String role = node.getCommonAccessibility().getRole();
+        if (role != null) {
+            addNoNamespaceAttribute(attributes, "role", role);
+        }
+    }
+
+    private void endElement(FONode node) {
+        String localName = node.getLocalName();
+        structureTreeEventHandler.endNode(localName);
     }
 
 }

@@ -36,19 +36,17 @@ import org.apache.fop.fo.properties.EnumProperty;
 import org.apache.fop.fo.properties.NumberProperty;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.PropertyMaker;
-import org.apache.fop.fo.properties.StructurePointerPropertySet;
 import org.apache.fop.layoutmgr.table.CollapsingBorderModel;
 
 /**
  * Common base class for table-related FOs
  */
-public abstract class TableFObj extends FObj implements StructurePointerPropertySet {
+public abstract class TableFObj extends FObj {
 
     private Numeric borderAfterPrecedence;
     private Numeric borderBeforePrecedence;
     private Numeric borderEndPrecedence;
     private Numeric borderStartPrecedence;
-    private String ptr;
 
     ConditionalBorder borderBefore;             // CSOK: VisibilityModifier
     ConditionalBorder borderAfter;              // CSOK: VisibilityModifier
@@ -238,16 +236,6 @@ public abstract class TableFObj extends FObj implements StructurePointerProperty
                     .getBorderCollapse());
             setCollapsedBorders();
         }
-    }
-
-    @Override
-    public void setPtr(String ptr) {
-        this.ptr = ptr;
-    }
-
-    /** {@inheritDoc} */
-    public String getPtr() {
-        return ptr;
     }
 
     /**

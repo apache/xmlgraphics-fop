@@ -88,6 +88,10 @@ public abstract class FOEventHandler {
         this.fontInfo.setEventListener(new FontEventAdapter(foUserAgent.getEventBroadcaster()));
     }
 
+    /** Constructor for sub-classes that do not need an {@link FOUserAgent} instance. */
+    protected FOEventHandler() {
+    }
+
     /**
      * Returns the User Agent object associated with this FOEventHandler.
      * @return the User Agent object
@@ -532,11 +536,9 @@ public abstract class FOEventHandler {
 
     /**
      * Process character data.
-     * @param data Array of characters to process.
-     * @param start Offset for characters to process.
-     * @param length Portion of array to process.
+     * @param foText text to process
      */
-    public void characters(char[] data, int start, int length) {
+    public void characters(FOText foText) {
     }
 
     /**

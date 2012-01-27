@@ -23,6 +23,7 @@ import java.awt.Color;
 
 import org.xml.sax.Locator;
 
+import org.apache.fop.accessibility.StructureTreeElement;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.Constants;
@@ -36,14 +37,14 @@ import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonFont;
 import org.apache.fop.fo.properties.CommonTextDecoration;
 import org.apache.fop.fo.properties.SpaceProperty;
-import org.apache.fop.fo.properties.StructurePointerPropertySet;
+import org.apache.fop.fo.properties.StructureTreeElementHolder;
 
 /**
  * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_page-number">
  * <code>fo:page-number</code></a> object.
  */
 public class PageNumber extends FObj
-        implements StructurePointerPropertySet, CommonAccessibilityHolder {
+        implements StructureTreeElementHolder, CommonAccessibilityHolder {
     // The value of properties relevant for fo:page-number.
     private CommonAccessibility commonAccessibility;
     private CommonBorderPaddingBackground commonBorderPaddingBackground;
@@ -52,7 +53,7 @@ public class PageNumber extends FObj
     private int alignmentBaseline;
     private Length baselineShift;
     private int dominantBaseline;
-    private String ptr; // used for accessibility
+    private StructureTreeElement structureTreeElement;
     // private ToBeImplementedProperty letterSpacing;
     private SpaceProperty lineHeight;
     /** Holds the text decoration values. May be null */
@@ -176,13 +177,13 @@ public class PageNumber extends FObj
     }
 
     @Override
-    public void setPtr(String ptr) {
-        this.ptr = ptr;
+    public void setStructureTreeElement(StructureTreeElement structureTreeElement) {
+        this.structureTreeElement = structureTreeElement;
     }
 
     /** {@inheritDoc} */
-    public String getPtr() {
-        return ptr;
+    public StructureTreeElement getStructureTreeElement() {
+        return structureTreeElement;
     }
 
     /** {@inheritDoc} */

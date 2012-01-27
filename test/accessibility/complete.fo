@@ -17,7 +17,7 @@
 -->
 <!-- $Id$ -->
 <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
-  xmlns:fox="http://xmlgraphics.apache.org/fop/extensions">
+  xmlns:fox="http://xmlgraphics.apache.org/fop/extensions" language="en" country="GB">
   <fo:layout-master-set>
     <fo:simple-page-master master-name="page"
       page-height="220pt" page-width="320pt" margin="10pt">
@@ -25,7 +25,7 @@
       <fo:region-before extent="12pt"/>
     </fo:simple-page-master>
   </fo:layout-master-set>
-  <fo:page-sequence master-reference="page" language="en" country="GB">
+  <fo:page-sequence master-reference="page">
     <fo:static-content flow-name="xsl-region-before">
       <fo:block font-size="8pt" text-align-last="justify">This is the page header<fo:leader/>Page 
         <fo:page-number/></fo:block>
@@ -117,7 +117,7 @@
       <fo:block>And now we are going to see how a second page sequence is handled.</fo:block>
     </fo:flow>
   </fo:page-sequence>
-  <fo:page-sequence master-reference="page" language="en" country="GB">
+  <fo:page-sequence master-reference="page">
     <fo:static-content flow-name="xsl-region-before">
       <fo:block font-size="8pt" text-align-last="justify">This is the page header<fo:leader/>Page 
         <fo:page-number/></fo:block>

@@ -19,16 +19,27 @@
 
 package org.apache.fop.pdf;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
+import org.apache.fop.accessibility.StructureTreeElement;
 import org.apache.fop.util.LanguageTags;
 
 /**
  * Class representing a PDF Structure Element.
  */
-public class PDFStructElem extends PDFDictionary {
+public class PDFStructElem extends PDFDictionary implements StructureTreeElement {
 
     private PDFStructElem parentElement;
+
+    /**
+     * Elements to be added to the kids array.
+     */
+    protected List<PDFObject> kids;
 
     /**
      * Creates a new structure element.
@@ -57,18 +68,9 @@ public class PDFStructElem extends PDFDictionary {
 
     /** {@inheritDoc} */
     public void setParent(PDFObject parent) {
-        if (parent != null) {
+        if (parent != null && parent.hasObjectNumber()) {
            put("P", new PDFReference(parent));
         }
-    }
-
-    /**
-     * Returns the kids of this structure element.
-     *
-     * @return the value of the K entry
-     */
-    private PDFArray getKids() {
-        return (PDFArray) get("K");
     }
 
     /**
@@ -79,24 +81,10 @@ public class PDFStructElem extends PDFDictionary {
      * @param kid element to be added
      */
     public void addKid(PDFObject kid) {
-        PDFArray kids = getKids();
         if (kids == null) {
-            kids = new PDFArray();
-            put("K", kids);
+            kids = new ArrayList<PDFObject>();
         }
         kids.add(kid);
-        joinHierarchy();
-    }
-
-    private boolean containsKid(PDFObject kid) {
-        PDFArray kids = getKids();
-        return kids != null && kids.contains(kid);
-    }
-
-    private void joinHierarchy() {
-        if (parentElement != null && !parentElement.containsKid(this)) {
-            parentElement.addKid(this);
-        }
     }
 
     /**
@@ -109,7 +97,6 @@ public class PDFStructElem extends PDFDictionary {
      */
     public void setMCIDKid(int mcid) {
         put("K", mcid);
-        joinHierarchy();
     }
 
     /**
@@ -127,7 +114,7 @@ public class PDFStructElem extends PDFDictionary {
      * @return the value of the S entry
      */
     public PDFName getStructureType() {
-        return (PDFName)get("S");
+        return (PDFName) get("S");
     }
 
     /**
@@ -154,6 +141,63 @@ public class PDFStructElem extends PDFDictionary {
      * @return the value of the Lang entry (<code>null</code> if no language was specified)
      */
     public String getLanguage() {
-        return (String)get("Lang");
+        return (String) get("Lang");
     }
+
+    @Override
+    protected void writeDictionary(OutputStream out, Writer writer) throws IOException {
+        attachKids();
+        super.writeDictionary(out, writer);
+    }
+
+    /**
+     * Attaches all valid kids to the kids array.
+     *
+     * @return true iff 1+ kids were added to the kids array
+     */
+    protected boolean attachKids() {
+        List<PDFObject> validKids = new ArrayList<PDFObject>();
+        if (kids != null) {
+            for (PDFObject kid : kids) {
+                if (kid instanceof Placeholder)  {
+                    if (((Placeholder) kid).attachKids()) {
+                        validKids.add(kid);
+                    }
+                } else {
+                    validKids.add(kid);
+                }
+            }
+        }
+        boolean kidsAttached = !validKids.isEmpty();
+        if (kidsAttached) {
+            PDFArray array = new PDFArray();
+            for (PDFObject ob : validKids) {
+                array.add(ob);
+            }
+            put("K", array);
+        }
+        return kidsAttached;
+    }
+
+    public static class Placeholder extends PDFStructElem {
+
+        @Override
+        public void outputInline(OutputStream out, Writer writer) throws IOException {
+            if (kids != null) {
+                assert kids.size() > 0;
+                for (int i = 0; i < kids.size(); i++) {
+                    if (i > 0) {
+                        writer.write(' ');
+                    }
+                    Object obj = kids.get(i);
+                    formatObject(obj, out, writer);
+                }
+            }
+        }
+
+        public Placeholder(PDFObject parent, String name) {
+            super(parent, new PDFName(name));
+        }
+    }
+
 }

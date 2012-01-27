@@ -21,12 +21,13 @@ package org.apache.fop.fo.flow;
 
 import org.xml.sax.Locator;
 
+import org.apache.fop.accessibility.StructureTreeElement;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
-import org.apache.fop.fo.properties.StructurePointerPropertySet;
+import org.apache.fop.fo.properties.StructureTreeElementHolder;
 
 /**
  * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_basic-link">
@@ -36,14 +37,14 @@ import org.apache.fop.fo.properties.StructurePointerPropertySet;
  * and whether that link is external (uses a URI) or internal (an id
  * reference).
  */
-public class BasicLink extends InlineLevel implements StructurePointerPropertySet {
+public class BasicLink extends InlineLevel implements StructureTreeElementHolder {
 
     // The value of properties relevant for fo:basic-link.
     private Length alignmentAdjust;
     private int alignmentBaseline;
     private Length baselineShift;
     private int dominantBaseline;
-    private String ptr;
+    private StructureTreeElement structureTreeElement;
     // private ToBeImplementedProperty destinationPlacementOffset;
     private String externalDestination;
     // private ToBeImplementedProperty indicateDestination;
@@ -143,13 +144,13 @@ public class BasicLink extends InlineLevel implements StructurePointerPropertySe
     }
 
     @Override
-    public void setPtr(String ptr) {
-        this.ptr = ptr;
+    public void setStructureTreeElement(StructureTreeElement structureTreeElement) {
+        this.structureTreeElement = structureTreeElement;
     }
 
     /** {@inheritDoc} */
-    public String getPtr() {
-        return ptr;
+    public StructureTreeElement getStructureTreeElement() {
+        return structureTreeElement;
     }
 
     /**

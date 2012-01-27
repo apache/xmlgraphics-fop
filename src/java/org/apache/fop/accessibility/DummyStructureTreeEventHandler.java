@@ -33,20 +33,31 @@ public final class DummyStructureTreeEventHandler implements StructureTreeEventH
 
     private DummyStructureTreeEventHandler() { }
 
-    /** {@inheritDoc} */
     public void startPageSequence(Locale locale) {
     }
 
-    /** {@inheritDoc} */
-    public void startNode(String name, Attributes attributes) {
+    public void endPageSequence() {
     }
 
-    /** {@inheritDoc} */
+    public StructureTreeElement startNode(String name, Attributes attributes) {
+        return null;
+    }
+
     public void endNode(String name) {
     }
 
-    /** {@inheritDoc} */
-    public void endPageSequence() {
+    public StructureTreeElement startImageNode(String name, Attributes attributes) {
+        return null;
+    }
+
+    public void endImageNode(String name) {
+    }
+
+    public StructureTreeElement startReferencedNode(String name, Attributes attributes) {
+        return null;
+    }
+
+    public void endReferencedNode(String name) {
     }
 
 }

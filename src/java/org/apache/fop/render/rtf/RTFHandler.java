@@ -117,13 +117,13 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfFootnote;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfHyperLink;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfList;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfListItem;
+import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfListItem.RtfListItemLabel;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfPage;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfSection;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTable;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTableCell;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTableRow;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTextrun;
-import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfListItem.RtfListItemLabel;
 import org.apache.fop.render.rtf.rtflib.tools.BuilderContext;
 import org.apache.fop.render.rtf.rtflib.tools.PercentContext;
 import org.apache.fop.render.rtf.rtflib.tools.TableContext;
@@ -1362,11 +1362,9 @@ public class RTFHandler extends FOEventHandler {
 
     /**
      * @param text FOText object
-     * @param data Array of characters to process.
-     * @param start Offset for characters to process.
-     * @param length Portion of array to process.
+     * @param characters CharSequence of the characters to process.
      */
-    public void text(FOText text, char[] data, int start, int length) {
+    public void text(FOText text, CharSequence characters) {
         if (bDefer) {
             return;
         }
@@ -1381,7 +1379,7 @@ public class RTFHandler extends FOEventHandler {
                 = TextAttributesConverter.convertCharacterAttributes(text);
 
             textrun.pushInlineAttributes(rtfAttr);
-            textrun.addString(new String(data, start, length - start));
+            textrun.addString(characters.toString());
             textrun.popInlineAttributes();
         } catch (IOException ioe) {
             handleIOTrouble(ioe);
@@ -1558,7 +1556,7 @@ public class RTFHandler extends FOEventHandler {
         } else if (foNode instanceof FOText) {
             if (bStart) {
                 FOText text = (FOText) foNode;
-                text(text, text.getCharArray(), 0, text.length());
+                text(text, text.getCharSequence());
             }
         } else if (foNode instanceof Character) {
             if (bStart) {

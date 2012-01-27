@@ -69,8 +69,16 @@
   </xsl:template>
 
   <!-- Formatting Objects for Tables -->
-  <xsl:template match="fo:table-and-caption|fo:table-caption|fo:table">
+  <xsl:template match="fo:table-and-caption|fo:table-caption">
     <xsl:call-template name="copy"/>
+  </xsl:template>
+
+  <xsl:template match="fo:table">
+    <xsl:copy>
+      <xsl:apply-templates select="@*"/>
+      <xsl:apply-templates select="*[name() != 'fo:table-footer']"/>
+      <xsl:apply-templates select="fo:table-footer"/>
+    </xsl:copy>
   </xsl:template>
 
   <xsl:template match="fo:table-header|fo:table-footer|fo:table-body|fo:table-row|fo:table-cell">
@@ -110,7 +118,18 @@
   <xsl:template match="@*"/>
 
 
-  <!-- Discard text -->
+  <!-- Discard text nodes... -->
   <xsl:template match="text()"/>
+
+  <!-- ...except those that will result into marked content -->
+  <xsl:template match="fo:title/text()
+    |fo:block/text()
+    |fo:bidi-override/text()
+    |fo:inline/text()
+    |fo:basic-link/text()
+    |fo:wrapper/text()
+    |fo:marker/text()">
+    <marked-content xmlns="http://xmlgraphics.apache.org/fop/intermediate"/>
+  </xsl:template>
 
 </xsl:stylesheet>

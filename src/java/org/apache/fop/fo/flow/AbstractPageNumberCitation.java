@@ -24,6 +24,7 @@ import java.awt.Color;
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 
+import org.apache.fop.accessibility.StructureTreeElement;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.Constants;
@@ -37,7 +38,7 @@ import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonFont;
 import org.apache.fop.fo.properties.CommonTextDecoration;
 import org.apache.fop.fo.properties.SpaceProperty;
-import org.apache.fop.fo.properties.StructurePointerPropertySet;
+import org.apache.fop.fo.properties.StructureTreeElementHolder;
 
 /**
  * Common base class for the <a href="http://www.w3.org/TR/xsl/#fo_page-number-citation">
@@ -46,7 +47,7 @@ import org.apache.fop.fo.properties.StructurePointerPropertySet;
  * <code>fo:page-number-citation-last</code></a> objects.
  */
 public abstract class AbstractPageNumberCitation extends FObj
-        implements StructurePointerPropertySet, CommonAccessibilityHolder {
+        implements StructureTreeElementHolder, CommonAccessibilityHolder {
 
     // The value of properties relevant for fo:page-number-citation(-last).
     private CommonAccessibility commonAccessibility;
@@ -56,7 +57,7 @@ public abstract class AbstractPageNumberCitation extends FObj
     private int alignmentBaseline;
     private Length baselineShift;
     private int dominantBaseline;
-    private String ptr;  // used for accessibility
+    private StructureTreeElement structureTreeElement;
     // private ToBeImplementedProperty letterSpacing;
     private SpaceProperty lineHeight;
     private String refId;
@@ -151,13 +152,13 @@ public abstract class AbstractPageNumberCitation extends FObj
     }
 
     @Override
-    public void setPtr(String ptr) {
-        this.ptr = ptr;
+    public void setStructureTreeElement(StructureTreeElement structureTreeElement) {
+        this.structureTreeElement = structureTreeElement;
     }
 
     /** {@inheritDoc} */
-    public String getPtr() {
-        return ptr;
+    public StructureTreeElement getStructureTreeElement() {
+        return structureTreeElement;
     }
 
     /** @return the "alignment-adjust" property */
