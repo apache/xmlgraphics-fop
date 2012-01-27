@@ -49,11 +49,13 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.xmlgraphics.util.QName;
 
 import org.apache.fop.accessibility.AccessibilityEventProducer;
+import org.apache.fop.accessibility.StructureTreeElement;
 import org.apache.fop.accessibility.StructureTreeEventHandler;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.ElementMappingRegistry;
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.fo.extensions.InternalElementMapping;
 import org.apache.fop.render.intermediate.extensions.DocumentNavigationExtensionConstants;
 import org.apache.fop.render.intermediate.extensions.DocumentNavigationHandler;
 import org.apache.fop.traits.BorderProps;
@@ -158,6 +160,9 @@ public class IFParser implements IFConstants {
 
         private Attributes pageSequenceAttributes;
 
+        private Map<String, StructureTreeElement> structureTreeElements =
+                new HashMap<String, StructureTreeElement>();
+
         private final class StructureTreeHandler extends DefaultHandler {
 
             private final StructureTreeEventHandler structureTreeEventHandler;
@@ -177,7 +182,23 @@ public class IFParser implements IFConstants {
             public void startElement(String uri, String localName, String qName,
                     Attributes attributes) throws SAXException {
                 if (!"structure-tree".equals(localName)) {
-                    structureTreeEventHandler.startNode(localName, attributes);
+                    if (localName.equals("marked-content")) {
+                        localName = "#PCDATA";
+                    }
+                    String structID = attributes.getValue(InternalElementMapping.URI,
+                            InternalElementMapping.STRUCT_ID);
+                    if (structID == null) {
+                        structureTreeEventHandler.startNode(localName, attributes);
+                    } else if (localName.equals("external-graphic")
+                            || localName.equals("instream-foreign-object")) {
+                        StructureTreeElement structureTreeElement =
+                            structureTreeEventHandler.startImageNode(localName, attributes);
+                        structureTreeElements.put(structID, structureTreeElement);
+                    } else {
+                        StructureTreeElement structureTreeElement =
+                            structureTreeEventHandler.startReferencedNode(localName, attributes);
+                        structureTreeElements.put(structID, structureTreeElement);
+                    }
                 }
             }
 
@@ -225,14 +246,6 @@ public class IFParser implements IFConstants {
             documentHandler.getContext().resetForeignAttributes();
         }
 
-        private void establishStructurePointer(String ptr) {
-            documentHandler.getContext().setStructurePointer(ptr);
-        }
-
-        private void resetStructurePointer() {
-            documentHandler.getContext().resetStructurePointer();
-        }
-
         /** {@inheritDoc} */
         public void startElement(String uri, String localName, String qName, Attributes attributes)
                     throws SAXException {
@@ -276,7 +289,7 @@ public class IFParser implements IFConstants {
                 } else if (DocumentNavigationExtensionConstants.NAMESPACE.equals(uri)) {
                     if (this.navParser == null) {
                         this.navParser = new DocumentNavigationHandler(
-                                this.documentHandler.getDocumentNavigationHandler());
+                                this.documentHandler.getDocumentNavigationHandler(), structureTreeElements);
                     }
                     delegate = this.navParser;
                     delegateDepth++;
@@ -604,9 +617,9 @@ public class IFParser implements IFConstants {
                 s = lastAttributes.getValue("word-spacing");
                 int wordSpacing = (s != null ? Integer.parseInt(s) : 0);
                 int[] dx = XMLUtil.getAttributeAsIntArray(lastAttributes, "dx");
-                setStructurePointer(lastAttributes);
+                establishStructureTreeElement(lastAttributes);
                 painter.drawText(x, y, letterSpacing, wordSpacing, dx, content.toString());
-                resetStructurePointer();
+                resetStructureTreeElement();
             }
 
             public boolean ignoreCharacters() {
@@ -701,7 +714,7 @@ public class IFParser implements IFConstants {
                 int height = Integer.parseInt(lastAttributes.getValue("height"));
                 Map<QName, String> foreignAttributes = getForeignAttributes(lastAttributes);
                 establishForeignAttributes(foreignAttributes);
-                setStructurePointer(lastAttributes);
+                establishStructureTreeElement(lastAttributes);
                 if (foreignObject != null) {
                     painter.drawImage(foreignObject,
                             new Rectangle(x, y, width, height));
@@ -715,7 +728,7 @@ public class IFParser implements IFConstants {
                     painter.drawImage(uri, new Rectangle(x, y, width, height));
                 }
                 resetForeignAttributes();
-                resetStructurePointer();
+                resetStructureTreeElement();
                 inForeignObject = false;
             }
 
@@ -769,11 +782,18 @@ public class IFParser implements IFConstants {
             return foreignAttributes;
         }
 
-        private void setStructurePointer(Attributes attributes) {
-            String ptr = attributes.getValue("ptr");
-            if (ptr != null && ptr.length() > 0) {
-                establishStructurePointer(ptr);
+        private void establishStructureTreeElement(Attributes attributes) {
+            String structRef = attributes.getValue(InternalElementMapping.URI,
+                    InternalElementMapping.STRUCT_REF);
+            if (structRef != null && structRef.length() > 0) {
+                assert structureTreeElements.containsKey(structRef);
+                StructureTreeElement structureTreeElement = structureTreeElements.get(structRef);
+                documentHandler.getContext().setStructureTreeElement(structureTreeElement);
             }
+        }
+
+        private void resetStructureTreeElement() {
+            documentHandler.getContext().resetStructureTreeElement();
         }
 
         /** {@inheritDoc} */

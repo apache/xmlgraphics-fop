@@ -728,7 +728,6 @@ public class AreaTreeParser {
                 setTraits(attributes, ip, SUBSET_BOX);
                 setTraits(attributes, ip, SUBSET_COLOR);
                 setTraits(attributes, ip, SUBSET_LINK);
-                setPtr(ip, attributes);
                 Area parent = (Area)areaStack.peek();
                 parent.addChildArea(ip);
                 areaStack.push(ip);
@@ -777,7 +776,6 @@ public class AreaTreeParser {
                         "tlsadjust", 0));
                 text.setTextWordSpaceAdjust(XMLUtil.getAttributeAsInt(attributes,
                         "twsadjust", 0));
-                setPtr(text, attributes);
                 Area parent = (Area)areaStack.peek();
                 parent.addChildArea(text);
                 areaStack.push(text);
@@ -870,7 +868,6 @@ public class AreaTreeParser {
                 viewport.setContentPosition(XMLUtil.getAttributeAsRectangle2D(attributes, "pos"));
                 viewport.setClip(XMLUtil.getAttributeAsBoolean(attributes, "clip", false));
                 viewport.setOffset(XMLUtil.getAttributeAsInt(attributes, "offset", 0));
-                setPtr(viewport, attributes);
                 Area parent = (Area)areaStack.peek();
                 parent.addChildArea(viewport);
                 areaStack.push(viewport);
@@ -889,7 +886,6 @@ public class AreaTreeParser {
                 transferForeignObjects(attributes, image);
                 setAreaAttributes(attributes, image);
                 setTraits(attributes, image, SUBSET_COMMON);
-                setPtr(image, attributes);
                 getCurrentViewport().setContent(image);
             }
         }
@@ -1171,13 +1167,6 @@ public class AreaTreeParser {
                     QName qname = new QName(ns, atts.getQName(i));
                     ato.setForeignAttribute(qname, atts.getValue(i));
                 }
-            }
-        }
-
-        private void setPtr(Area area, Attributes attributes) {
-            String ptr = attributes.getValue("ptr");
-            if (ptr != null) {
-                area.addTrait(Trait.PTR, ptr);
             }
         }
 

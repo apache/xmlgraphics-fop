@@ -16,14 +16,14 @@
   limitations under the License.
 -->
 <!-- $Id$ -->
-<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" language="en" country="GB">
   <fo:layout-master-set>
     <fo:simple-page-master master-name="page"
       page-height="220pt" page-width="320pt" margin="10pt">
       <fo:region-body background-image="../resources/images/rgb-circles.svg"/>
     </fo:simple-page-master>
   </fo:layout-master-set>
-  <fo:page-sequence master-reference="page" language="en" country="GB">
+  <fo:page-sequence master-reference="page">
     <fo:flow flow-name="xsl-region-body" hyphenate="true" text-align="justify">
       <fo:block>Apache FOP (Formatting Objects Processor) is a print formatter driven by XSL 
         formatting objects (XSL-FO) and an output independent formatter. It is a Java application 

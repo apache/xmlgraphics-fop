@@ -24,10 +24,10 @@ import java.util.Locale;
 
 import org.xml.sax.Attributes;
 
+import org.apache.fop.accessibility.StructureTreeElement;
 import org.apache.fop.accessibility.StructureTreeEventHandler;
 import org.apache.fop.events.EventBroadcaster;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
-import org.apache.fop.fo.extensions.InternalElementMapping;
 import org.apache.fop.pdf.PDFFactory;
 import org.apache.fop.pdf.PDFStructElem;
 
@@ -61,33 +61,64 @@ class PDFStructureTreeBuilder implements StructureTreeEventHandler {
     public void endPageSequence() {
     }
 
-    public void startNode(String name, Attributes attributes) {
+    public StructureTreeElement startNode(String name, Attributes attributes) {
         PDFStructElem parent = ancestors.getFirst();
         String role = attributes.getValue("role");
-        PDFStructElem created = pdfFactory.makeStructureElement(
-                FOToPDFRoleMap.mapFormattingObject(name, role, parent,
-                        eventBroadcaster), parent);
-        if (ancestors.size() <= 2) { // TODO remove
-            parent.addKid(created);
-        }
-        String ptr = attributes.getValue(InternalElementMapping.URI, "ptr");
-        if (ptr != null) {
-            logicalStructureHandler.addStructurePointer(ptr, created);
-        }
-
-        if (name.equals("external-graphic") || name.equals("instream-foreign-object")) {
-            String altTextNode = attributes.getValue(ExtensionElementMapping.URI, "alt-text");
-            if (altTextNode != null) {
-                created.put("Alt", altTextNode);
-            } else {
-                created.put("Alt", "No alternate text specified");
-            }
-        }
+        PDFStructElem created;
+        created = pdfFactory.makeStructureElement(
+                FOToPDFRoleMap.mapFormattingObject(name, role, parent, eventBroadcaster), parent);
+        parent.addKid(created);
         ancestors.addFirst(created);
+        return created;
     }
 
     public void endNode(String name) {
+        removeFirstAncestor();
+    }
+
+    private void removeFirstAncestor() {
         ancestors.removeFirst();
+    }
+
+    public StructureTreeElement startImageNode(String name, Attributes attributes) {
+        PDFStructElem parent = ancestors.getFirst();
+        String role = attributes.getValue("role");
+        PDFStructElem created;
+        created = pdfFactory.makeStructureElement(
+                FOToPDFRoleMap.mapFormattingObject(name, role, parent, eventBroadcaster), parent);
+        parent.addKid(created);
+        String altTextNode = attributes.getValue(ExtensionElementMapping.URI, "alt-text");
+        if (altTextNode != null) {
+            created.put("Alt", altTextNode);
+        } else {
+            created.put("Alt", "No alternate text specified");
+        }
+        ancestors.addFirst(created);
+        return created;
+    }
+
+    public void endImageNode(String name) {
+        removeFirstAncestor();
+    }
+
+    public StructureTreeElement startReferencedNode(String name, Attributes attributes) {
+        PDFStructElem parent = ancestors.getFirst();
+        String role = attributes.getValue("role");
+        PDFStructElem created;
+        if ("#PCDATA".equals(name)) {
+            created = new PDFStructElem.Placeholder(parent, name);
+        } else {
+            created = pdfFactory.makeStructureElement(
+                    FOToPDFRoleMap.mapFormattingObject(name, role, parent,
+                            eventBroadcaster), parent);
+        }
+        parent.addKid(created);
+        ancestors.addFirst(created);
+        return created;
+    }
+
+    public void endReferencedNode(String name) {
+        removeFirstAncestor();
     }
 
 }

@@ -26,10 +26,14 @@ import java.util.Locale;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
 import org.xml.sax.helpers.DefaultHandler;
 
 import org.apache.fop.accessibility.StructureTree2SAXEventAdapter;
+import org.apache.fop.accessibility.StructureTreeElement;
 import org.apache.fop.accessibility.StructureTreeEventHandler;
+import org.apache.fop.fo.extensions.InternalElementMapping;
+import org.apache.fop.util.XMLUtil;
 
 /**
  * Saves structure tree events as SAX events in order to replay them when it's
@@ -37,42 +41,17 @@ import org.apache.fop.accessibility.StructureTreeEventHandler;
  */
 final class IFStructureTreeBuilder implements StructureTreeEventHandler {
 
-    private StructureTreeEventHandler delegate;
+    static final class IFStructureTreeElement implements StructureTreeElement {
 
-    private final List<SAXEventRecorder> pageSequenceEventRecorders = new ArrayList<SAXEventRecorder>();
+        final String id;
 
-    /**
-     * Replay SAX events for a page sequence.
-     * @param handler The handler that receives SAX events
-     * @param pageSequenceIndex The index of the page sequence
-     * @throws SAXException
-     */
-    public void replayEventsForPageSequence(ContentHandler handler,
-            int pageSequenceIndex) throws SAXException {
-        pageSequenceEventRecorders.get(pageSequenceIndex).replay(handler);
-    }
+        IFStructureTreeElement() {
+            this.id = null;
+        }
 
-    /** {@inheritDoc} */
-    public void startPageSequence(Locale locale) {
-        SAXEventRecorder eventRecorder = new SAXEventRecorder();
-        pageSequenceEventRecorders.add(eventRecorder);
-        delegate = StructureTree2SAXEventAdapter.newInstance(eventRecorder);
-        delegate.startPageSequence(locale);
-    }
-
-    /** {@inheritDoc} */
-    public void endPageSequence() {
-         delegate.endPageSequence();
-    }
-
-    /** {@inheritDoc} */
-    public void startNode(String name, Attributes attributes) {
-        delegate.startNode(name, attributes);
-    }
-
-    /** {@inheritDoc} */
-    public void endNode(String name) {
-        delegate.endNode(name);
+        IFStructureTreeElement(String id) {
+            this.id = id;
+        }
     }
 
     /** A SAX handler that records events to replay them later. */
@@ -159,22 +138,22 @@ final class IFStructureTreeBuilder implements StructureTreeEventHandler {
         public void startElement(String uri, String localName, String qName,
                 Attributes attributes) throws SAXException {
             events.add(new StartElement(uri, localName, qName, attributes));
-        };
+        }
 
         @Override
         public void endElement(String uri, String localName, String qName) throws SAXException {
             events.add(new EndElement(uri, localName, qName));
-        };
+        }
 
         @Override
         public void startPrefixMapping(String prefix, String uri) throws SAXException {
             events.add(new StartPrefixMapping(prefix, uri));
-        };
+        }
 
         @Override
         public void endPrefixMapping(String prefix) throws SAXException {
             events.add(new EndPrefixMapping(prefix));
-        };
+        }
 
         /**
          * Replays the recorded events.
@@ -186,5 +165,70 @@ final class IFStructureTreeBuilder implements StructureTreeEventHandler {
                 e.replay(handler);
             }
         }
+    }
+
+    private StructureTreeEventHandler delegate;
+
+    private final List<SAXEventRecorder> pageSequenceEventRecorders = new ArrayList<SAXEventRecorder>();
+
+    private int idCounter;
+
+    /**
+     * Replay SAX events for a page sequence.
+     * @param handler The handler that receives SAX events
+     * @param pageSequenceIndex The index of the page sequence
+     * @throws SAXException
+     */
+    public void replayEventsForPageSequence(ContentHandler handler,
+            int pageSequenceIndex) throws SAXException {
+        pageSequenceEventRecorders.get(pageSequenceIndex).replay(handler);
+    }
+
+    public void startPageSequence(Locale locale) {
+        SAXEventRecorder eventRecorder = new SAXEventRecorder();
+        pageSequenceEventRecorders.add(eventRecorder);
+        delegate = StructureTree2SAXEventAdapter.newInstance(eventRecorder);
+        delegate.startPageSequence(locale);
+    }
+
+    public void endPageSequence() {
+         delegate.endPageSequence();
+    }
+
+    public StructureTreeElement startNode(String name, Attributes attributes) {
+        delegate.startNode(name, attributes);
+        return new IFStructureTreeElement();
+    }
+
+    public void endNode(String name) {
+        delegate.endNode(name);
+    }
+
+    public StructureTreeElement startImageNode(String name, Attributes attributes) {
+        String id = getNextID();
+        AttributesImpl atts = addIDAttribute(attributes, id);
+        delegate.startImageNode(name, atts);
+        return new IFStructureTreeElement(id);
+    }
+
+    public StructureTreeElement startReferencedNode(String name, Attributes attributes) {
+        String id = getNextID();
+        AttributesImpl atts = addIDAttribute(attributes, id);
+        delegate.startReferencedNode(name, atts);
+        return new IFStructureTreeElement(id);
+    }
+
+    private String getNextID() {
+        return Integer.toHexString(idCounter++);
+    }
+
+    private AttributesImpl addIDAttribute(Attributes attributes, String id) {
+        AttributesImpl atts = new AttributesImpl(attributes);
+        atts.addAttribute(InternalElementMapping.URI,
+                InternalElementMapping.STRUCT_ID,
+                InternalElementMapping.STANDARD_PREFIX + ":" + InternalElementMapping.STRUCT_ID,
+                XMLUtil.CDATA,
+                id);
+        return atts;
     }
 }

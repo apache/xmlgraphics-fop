@@ -37,6 +37,7 @@ import org.apache.fop.fonts.SingleByteFont;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFNumber;
+import org.apache.fop.pdf.PDFStructElem;
 import org.apache.fop.pdf.PDFTextUtil;
 import org.apache.fop.pdf.PDFXObject;
 import org.apache.fop.render.RenderingContext;
@@ -133,24 +134,24 @@ public class PDFPainter extends AbstractIFPainter {
         PDFXObject xobject = getPDFDoc().getXObject(uri);
         if (xobject != null) {
             if (accessEnabled) {
-                String ptr = getContext().getStructurePointer();
-                prepareImageMCID(ptr);
+                PDFStructElem structElem = (PDFStructElem) getContext().getStructureTreeElement();
+                prepareImageMCID(structElem);
                 placeImageAccess(rect, xobject);
             } else {
                 placeImage(rect, xobject);
             }
         } else {
             if (accessEnabled) {
-                String ptr = getContext().getStructurePointer();
-                prepareImageMCID(ptr);
+                PDFStructElem structElem = (PDFStructElem) getContext().getStructureTreeElement();
+                prepareImageMCID(structElem);
             }
             drawImageUsingURI(uri, rect);
             flushPDFDoc();
         }
     }
 
-    private void prepareImageMCID(String ptr) {
-        imageMCI = logicalStructureHandler.addImageContentItem(ptr);
+    private void prepareImageMCID(PDFStructElem structElem) {
+        imageMCI = logicalStructureHandler.addImageContentItem(structElem);
     }
 
     /** {@inheritDoc} */
@@ -194,8 +195,8 @@ public class PDFPainter extends AbstractIFPainter {
     /** {@inheritDoc} */
     public void drawImage(Document doc, Rectangle rect) throws IFException {
         if (accessEnabled) {
-            String ptr = getContext().getStructurePointer();
-            prepareImageMCID(ptr);
+            PDFStructElem structElem = (PDFStructElem) getContext().getStructureTreeElement();
+            prepareImageMCID(structElem);
         }
         drawImageUsingDocument(doc, rect);
         flushPDFDoc();
@@ -294,8 +295,8 @@ public class PDFPainter extends AbstractIFPainter {
             String text)
             throws IFException {
         if (accessEnabled) {
-            String ptr = getContext().getStructurePointer();
-            MarkedContentInfo mci = logicalStructureHandler.addTextContentItem(ptr);
+            PDFStructElem structElem = (PDFStructElem) getContext().getStructureTreeElement();
+            MarkedContentInfo mci = logicalStructureHandler.addTextContentItem(structElem);
             if (generator.getTextUtil().isInTextObject()) {
                 generator.separateTextElements(mci.tag, mci.mcid);
             }

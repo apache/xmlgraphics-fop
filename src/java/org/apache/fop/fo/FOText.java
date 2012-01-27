@@ -25,6 +25,7 @@ import java.util.NoSuchElementException;
 
 import org.xml.sax.Locator;
 
+import org.apache.fop.accessibility.StructureTreeElement;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.flow.Block;
@@ -79,6 +80,8 @@ public class FOText extends FONode implements CharSequence {
     /** Holds the text decoration values. May be null */
     private CommonTextDecoration textDecoration;
 
+    private StructureTreeElement structureTreeElement;
+
     private static final int IS_WORD_CHAR_FALSE = 0;
     private static final int IS_WORD_CHAR_TRUE = 1;
     private static final int IS_WORD_CHAR_MAYBE = 2;
@@ -115,25 +118,14 @@ public class FOText extends FONode implements CharSequence {
     /**
      * Return the array of characters for this instance.
      *
-     * @return  a char array containing the text
+     * @return  a char sequence containing the text
      */
-    public char[] getCharArray() {
-
+    public CharSequence getCharSequence() {
         if (this.charBuffer == null) {
             return null;
         }
-
-        if (this.charBuffer.hasArray()) {
-            return this.charBuffer.array();
-        }
-
-        // only if the buffer implementation has
-        // no accessible backing array, return a new one
-        char[] ca = new char[this.charBuffer.limit()];
         this.charBuffer.rewind();
-        this.charBuffer.get(ca);
-        return ca;
-
+        return this.charBuffer.asReadOnlyBuffer().subSequence(0, this.charBuffer.limit());
     }
 
     /** {@inheritDoc} */
@@ -176,8 +168,7 @@ public class FOText extends FONode implements CharSequence {
     /** {@inheritDoc} */
     protected void endOfNode() throws FOPException {
         super.endOfNode();
-        getFOEventHandler().characters(
-                this.getCharArray(), 0, this.charBuffer.limit());
+        getFOEventHandler().characters(this);
     }
 
     /** {@inheritDoc} */
@@ -670,4 +661,14 @@ public class FOText extends FONode implements CharSequence {
             this.charBuffer.rewind();
         }
     }
+
+    @Override
+    public void setStructureTreeElement(StructureTreeElement structureTreeElement) {
+        this.structureTreeElement = structureTreeElement;
+    }
+
+    public StructureTreeElement getStructureTreeElement() {
+        return structureTreeElement;
+    }
+
 }

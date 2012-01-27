@@ -32,22 +32,45 @@ public interface StructureTreeEventHandler {
 
     /**
      * Starts a page sequence structure tree node.
+     *
      * @param locale The locale of the page sequence
      */
     void startPageSequence(Locale locale);
 
     /**
      * Starts a structure tree node.
-     * @param name The name of the structure tree node
-     * @param attributes Map of node properties
+     *
+     * @param name the name of the structure tree node
+     * @param attributes the node properties
+     * @return the corresponding structure tree element
      */
-    void startNode(String name, Attributes attributes);
+    StructureTreeElement startNode(String name, Attributes attributes);
 
     /**
      * Ends a structure tree node.
-     * @param name The name of the structure tree node
+     *
+     * @param name the name of the structure tree node
      */
     void endNode(String name);
+
+    /**
+     * Starts an image node.
+     *
+     * @param name the name of the structure tree node
+     * @param attributes the node properties
+     * @return the corresponding structure tree element
+     */
+    StructureTreeElement startImageNode(String name, Attributes attributes);
+
+    /**
+     * Starts a node that can be referenced by other nodes. This is usually a
+     * node that can have Marked Content References as children.
+     *
+     * @param name the name of the structure tree node
+     * @param attributes the node properties
+     * @return the corresponding structure tree element
+     */
+    StructureTreeElement startReferencedNode(String name, Attributes attributes);
 
     /**
      * Ends a page sequence structure tree node.

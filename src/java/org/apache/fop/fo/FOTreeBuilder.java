@@ -33,7 +33,7 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.xmlgraphics.util.QName;
 
-import org.apache.fop.accessibility.FO2StructureTreeConverter;
+import org.apache.fop.accessibility.fo.FO2StructureTreeConverter;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FormattingResults;

@@ -38,9 +38,11 @@ import org.apache.xmlgraphics.util.QName;
 import org.apache.xmlgraphics.util.XMLizable;
 
 import org.apache.fop.accessibility.StructureTreeEventHandler;
+import org.apache.fop.fo.extensions.InternalElementMapping;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.render.PrintRendererConfigurator;
 import org.apache.fop.render.RenderingContext;
+import org.apache.fop.render.intermediate.IFStructureTreeBuilder.IFStructureTreeElement;
 import org.apache.fop.render.intermediate.extensions.AbstractAction;
 import org.apache.fop.render.intermediate.extensions.Bookmark;
 import org.apache.fop.render.intermediate.extensions.BookmarkTree;
@@ -163,6 +165,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
             handler.startPrefixMapping(XLINK_PREFIX, XLINK_NAMESPACE);
             handler.startPrefixMapping(DocumentNavigationExtensionConstants.PREFIX,
                     DocumentNavigationExtensionConstants.NAMESPACE);
+            handler.startPrefixMapping(InternalElementMapping.STANDARD_PREFIX, InternalElementMapping.URI);
             handler.startElement(EL_DOCUMENT);
         } catch (SAXException e) {
             throw new IFException("SAX error in startDocument()", e);
@@ -439,7 +442,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
             addAttribute(atts, "width", Integer.toString(rect.width));
             addAttribute(atts, "height", Integer.toString(rect.height));
             addForeignAttributes(atts);
-            addStructurePointerAttribute(atts);
+            addStructureReference(atts);
             handler.element(EL_IMAGE, atts);
         } catch (SAXException e) {
             throw new IFException("SAX error in startGroup()", e);
@@ -467,7 +470,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
             addAttribute(atts, "width", Integer.toString(rect.width));
             addAttribute(atts, "height", Integer.toString(rect.height));
             addForeignAttributes(atts);
-            addStructurePointerAttribute(atts);
+            addStructureReference(atts);
             handler.startElement(EL_IMAGE, atts);
             new DOM2SAX(handler).writeDocument(doc, true);
             handler.endElement(EL_IMAGE);
@@ -582,7 +585,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
             if (dx != null) {
                 addAttribute(atts, "dx", IFUtil.toString(dx));
             }
-            addStructurePointerAttribute(atts);
+            addStructureReference(atts);
             handler.startElement(EL_TEXT, atts);
             char[] chars = text.toCharArray();
             handler.characters(chars, 0, chars.length);
@@ -682,11 +685,20 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
         XMLUtil.addAttribute(atts, localName, value);
     }
 
-    private void addStructurePointerAttribute(AttributesImpl atts) {
-        String ptr = getContext().getStructurePointer();
-        if (ptr != null) {
-            addAttribute(atts, "ptr", ptr);
+    private void addStructureReference(AttributesImpl atts) {
+        IFStructureTreeElement structureTreeElement =
+                (IFStructureTreeElement) getContext().getStructureTreeElement();
+        if (structureTreeElement != null) {
+            addStructRefAttribute(atts, structureTreeElement.id);
         }
+    }
+
+    private void addStructRefAttribute(AttributesImpl atts, String id) {
+        atts.addAttribute(InternalElementMapping.URI,
+                InternalElementMapping.STRUCT_REF,
+                InternalElementMapping.STANDARD_PREFIX + ":" + InternalElementMapping.STRUCT_REF,
+                XMLConstants.CDATA,
+                id);
     }
 
     private void addID() throws SAXException {
@@ -773,7 +785,8 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
         atts.addAttribute(null, "rect", "rect",
                 XMLConstants.CDATA, IFUtil.toString(link.getTargetRect()));
         if (getUserAgent().isAccessibilityEnabled()) {
-            addAttribute(atts, "ptr", link.getAction().getStructurePointer());
+            addStructRefAttribute(atts,
+                    ((IFStructureTreeElement) link.getAction().getStructureTreeElement()).id);
         }
         try {
             handler.startElement(DocumentNavigationExtensionConstants.LINK, atts);

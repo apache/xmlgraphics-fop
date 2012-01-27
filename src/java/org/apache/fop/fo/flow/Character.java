@@ -24,6 +24,7 @@ import java.util.NoSuchElementException;
 
 import org.xml.sax.Locator;
 
+import org.apache.fop.accessibility.StructureTreeElement;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.CharIterator;
@@ -38,13 +39,13 @@ import org.apache.fop.fo.properties.CommonTextDecoration;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.SpaceProperty;
-import org.apache.fop.fo.properties.StructurePointerPropertySet;
+import org.apache.fop.fo.properties.StructureTreeElementHolder;
 
 /**
  * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_character">
  * <code>fo:character</code></a> object.
  */
-public class Character extends FObj implements StructurePointerPropertySet {
+public class Character extends FObj implements StructureTreeElementHolder {
     // The value of properties relevant for fo:character.
     private CommonBorderPaddingBackground commonBorderPaddingBackground;
     private CommonFont commonFont;
@@ -63,7 +64,7 @@ public class Character extends FObj implements StructurePointerPropertySet {
     private CommonTextDecoration textDecoration;
     // private ToBeImplementedProperty textShadow;
     private Property wordSpacing;
-    private String ptr;  // used for accessibility
+    private StructureTreeElement structureTreeElement;
     // Unused but valid items, commented out for performance:
     //     private CommonAural commonAural;
     //     private CommonMarginInline commonMarginInline;
@@ -210,13 +211,13 @@ public class Character extends FObj implements StructurePointerPropertySet {
     }
 
     @Override
-    public void setPtr(String ptr) {
-        this.ptr = ptr;
+    public void setStructureTreeElement(StructureTreeElement structureTreeElement) {
+        this.structureTreeElement = structureTreeElement;
     }
 
     /** {@inheritDoc} */
-    public String getPtr() {
-        return ptr;
+    public StructureTreeElement getStructureTreeElement() {
+        return structureTreeElement;
     }
 
     /** {@inheritDoc} */

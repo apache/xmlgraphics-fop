@@ -32,6 +32,7 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.xmlgraphics.util.QName;
 
+import org.apache.fop.accessibility.StructureTreeElement;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
@@ -912,7 +913,7 @@ public abstract class FONode implements Cloneable {
 
     }
 
-    public void setPtr(String ptr) {
+    public void setStructureTreeElement(StructureTreeElement structureTreeElement) {
         throw new UnsupportedOperationException();
     }
 
