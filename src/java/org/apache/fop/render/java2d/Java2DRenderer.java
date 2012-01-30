@@ -147,15 +147,13 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
     private GeneralPath currentPath = null;
 
     /** Default constructor */
-    public Java2DRenderer() {
-    }
+    public Java2DRenderer(FOUserAgent userAgent) {
+        super(userAgent);
 
-    /** {@inheritDoc} */
-    public void setUserAgent(FOUserAgent foUserAgent) {
-        super.setUserAgent(foUserAgent);
+        // MH: necessary? the caller has access to FOUserAgent
         userAgent.setRendererOverride(this); // for document regeneration
 
-        String s = (String)userAgent.getRendererOptions().get(JAVA2D_TRANSPARENT_PAGE_BACKGROUND);
+        String s = (String) userAgent.getRendererOptions().get(JAVA2D_TRANSPARENT_PAGE_BACKGROUND);
         if (s != null) {
             this.transparentPageBackground = "true".equalsIgnoreCase(s);
         }

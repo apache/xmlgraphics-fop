@@ -51,6 +51,7 @@ import org.apache.xmlgraphics.xmp.schemas.XMPBasicSchema;
 
 import org.apache.fop.Version;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.AreaTreeObject;
@@ -70,10 +71,10 @@ import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Image;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.InlineParent;
+import org.apache.fop.area.inline.InlineViewport;
 import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.area.inline.TextArea;
-import org.apache.fop.area.inline.InlineViewport;
 import org.apache.fop.area.inline.WordArea;
 import org.apache.fop.datatypes.URISpecification;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
@@ -158,7 +159,8 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     /**
      * Main constructor
      */
-    public IFRenderer() {
+    public IFRenderer(FOUserAgent userAgent) {
+        super(userAgent);
     }
 
     /** {@inheritDoc} */
