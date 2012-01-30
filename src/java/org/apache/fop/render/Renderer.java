@@ -82,13 +82,6 @@ public interface Renderer {
         throws IOException;
 
     /**
-     * Set the User Agent.
-     *
-     * @param agent  The User Agent
-     */
-    void setUserAgent(FOUserAgent agent);
-
-    /**
      * Returns the associated user agent.
      * @return the user agent
      */
