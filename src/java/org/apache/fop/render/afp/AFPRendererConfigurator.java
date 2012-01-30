@@ -204,8 +204,10 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
                                 "org.apache.fop.fonts.base14." + base14).asSubclass(Typeface.class);
                         try {
                             Typeface tf = clazz.newInstance();
-                            font.addCharacterSet(sizeMpt, CharacterSetBuilder.getSingleByteInstance()
-                                      .build(characterset, codepage, encoding, tf, eventProducer));
+                            font.addCharacterSet(sizeMpt,
+                                    CharacterSetBuilder.getSingleByteInstance()
+                                                       .build(characterset, codepage, encoding, tf,
+                                                               eventProducer));
                         } catch (Exception ie) {
                             String msg = "The base 14 font class " + clazz.getName()
                             + " could not be instantiated";

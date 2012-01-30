@@ -325,6 +325,7 @@ public class GraphicsObject extends AbstractDataObject {
      * @param str the string
      * @param x the x coordinate
      * @param y the y coordinate
+     * @param charSet the character set associated with the string
      */
     public void addString(String str, int x, int y, CharacterSet charSet) {
         addObject(new GraphicsCharacterString(str, x, y, charSet));

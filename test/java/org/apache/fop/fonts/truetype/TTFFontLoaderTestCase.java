@@ -39,7 +39,7 @@ public class TTFFontLoaderTestCase {
     @Test
     public void testUseKerning() throws IOException {
         File file = new File("test/resources/fonts/ttf/DejaVuLGCSerif.ttf");
-        String absoluteFilePath = file.toURL().toExternalForm();
+        String absoluteFilePath = file.toURI().toURL().toExternalForm();
         FontResolver resolver = FontManager.createMinimalFontResolver();
         String fontName = "Deja Vu";
         boolean embedded = false;

@@ -41,6 +41,9 @@ import org.apache.fop.render.java2d.Java2DRenderer;
  */
 public class PNGRenderer extends Java2DRenderer {
 
+    /**
+     * @param userAgent the user agent that contains configuration details. This cannot be null.
+     */
     public PNGRenderer(FOUserAgent userAgent) {
         super(userAgent);
     }

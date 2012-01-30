@@ -112,6 +112,9 @@ public class XMLRenderer extends AbstractXMLRenderer {
 
     private int pageSequenceIndex;
 
+    /**
+     * @param userAgent the user agent that contains configuration details. This cannot be null.
+     */
     public XMLRenderer(FOUserAgent userAgent) {
         super(userAgent);
         context = new RendererContext(this, XML_MIME_TYPE);

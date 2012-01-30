@@ -49,6 +49,9 @@ import org.apache.fop.render.RendererContext;
 /** Abstract xml renderer base class. */
 public abstract class AbstractXMLRenderer extends PrintRenderer {
 
+    /**
+     * @param userAgent the user agent that contains configuration details. This cannot be null.
+     */
     public AbstractXMLRenderer(FOUserAgent userAgent) {
         super(userAgent);
     }

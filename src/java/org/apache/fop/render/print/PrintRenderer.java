@@ -54,6 +54,8 @@ public class PrintRenderer extends PageableRenderer {
     /**
      * Creates a new PrintRenderer with the options set through the renderer options if a custom
      * PrinterJob is not given in FOUserAgent's renderer options.
+     *
+     * @param userAgent the user agent that contains configuration details. This cannot be null.
      */
     public PrintRenderer(FOUserAgent userAgent) {
         super(userAgent);

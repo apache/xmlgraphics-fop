@@ -82,7 +82,11 @@ public class TIFFRenderer extends Java2DRenderer implements TIFFConstants {
         return MIME_TYPE;
     }
 
-    /** Creates TIFF renderer. */
+    /**
+     * Creates TIFF renderer.
+     *
+     * @param userAgent the user agent that contains configuration details. This cannot be null.
+     */
     public TIFFRenderer(FOUserAgent userAgent) {
         super(userAgent);
         writerParams = new ImageWriterParams();

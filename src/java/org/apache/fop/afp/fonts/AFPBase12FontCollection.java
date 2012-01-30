@@ -43,6 +43,9 @@ public class AFPBase12FontCollection implements FontCollection {
 
     private final AFPEventProducer eventProducer;
 
+    /**
+     * @param eventProducer the AFP-specific event producer
+     */
     public AFPBase12FontCollection(AFPEventProducer eventProducer) {
         this.eventProducer = eventProducer;
     }

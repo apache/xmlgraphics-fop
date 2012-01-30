@@ -57,6 +57,9 @@ import org.apache.fop.traits.BorderProps;
  */
 public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
 
+    /**
+     * @param userAgent the user agent that contains configuration details. This cannot be null.
+     */
     public AbstractPathOrientedRenderer(FOUserAgent userAgent) {
         super(userAgent);
     }
