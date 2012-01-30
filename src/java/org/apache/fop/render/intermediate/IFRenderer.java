@@ -158,6 +158,8 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
 
     /**
      * Main constructor
+     *
+     * @param userAgent the user agent that contains configuration details. This cannot be null.
      */
     public IFRenderer(FOUserAgent userAgent) {
         super(userAgent);

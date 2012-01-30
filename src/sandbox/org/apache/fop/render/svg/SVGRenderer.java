@@ -70,6 +70,9 @@ public class SVGRenderer extends Java2DRenderer {
     /** Helper class for generating multiple files */
     private MultiFileRenderingUtil multiFileUtil;
 
+    /**
+     * @param userAgent the user agent that contains configuration details. This cannot be null.
+     */
     public SVGRenderer(FOUserAgent userAgent) {
         super(userAgent);
     }

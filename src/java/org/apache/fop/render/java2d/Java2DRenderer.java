@@ -146,7 +146,11 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
 
     private GeneralPath currentPath = null;
 
-    /** Default constructor */
+    /**
+     * Default constructor
+     *
+     * @param userAgent the user agent that contains configuration details. This cannot be null.
+     */
     public Java2DRenderer(FOUserAgent userAgent) {
         super(userAgent);
 

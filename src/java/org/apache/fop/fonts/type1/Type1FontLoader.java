@@ -62,7 +62,7 @@ public class Type1FontLoader extends FontLoader {
         return pfbURI.substring(0, pfbURI.length() - 4) + "." + pfmExt;
     }
 
-    private static final String[] AFM_EXTENSIONS = new String[] { ".AFM", ".afm", ".Afm" };
+    private static final String[] AFM_EXTENSIONS = new String[] {".AFM", ".afm", ".Afm"};
 
     /** {@inheritDoc} */
     @Override

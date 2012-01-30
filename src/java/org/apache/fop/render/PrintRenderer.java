@@ -43,6 +43,9 @@ import org.apache.fop.fonts.base14.Base14FontCollection;
 /** Abstract base class of "Print" type renderers.  */
 public abstract class PrintRenderer extends AbstractRenderer {
 
+    /**
+     * @param userAgent the user agent that contains configuration details. This cannot be null.
+     */
     public PrintRenderer(FOUserAgent userAgent) {
         super(userAgent);
     }

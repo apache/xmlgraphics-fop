@@ -72,6 +72,8 @@ public class PageableRenderer extends Java2DRenderer implements Pageable {
 
     /**
      * Creates a new PageableRenderer.
+     *
+     * @param userAgent the user agent that contains configuration details. This cannot be null.
      */
     public PageableRenderer(FOUserAgent userAgent) {
         super(userAgent);

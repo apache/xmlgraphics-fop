@@ -110,6 +110,8 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
 
     /**
      * Constructs a newly allocated <code>TXTRenderer</code> object.
+     *
+     * @param userAgent the user agent that contains configuration details. This cannot be null.
      */
     public TXTRenderer(FOUserAgent userAgent) {
         super(userAgent);
