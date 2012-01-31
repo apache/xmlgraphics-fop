@@ -109,15 +109,8 @@ public final class StructureTree2SAXEventAdapter implements StructureTreeEventHa
         return startNode(name, attributes);
     }
 
-    public void endImageNode(String name) {
-        endNode(name);
-    }
-
     public StructureTreeElement startReferencedNode(String name, Attributes attributes) {
         return startNode(name, attributes);
     }
 
-    public void endReferencedNode(String name) {
-        endNode(name);
-    }
 }

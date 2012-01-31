@@ -97,10 +97,6 @@ class PDFStructureTreeBuilder implements StructureTreeEventHandler {
         return created;
     }
 
-    public void endImageNode(String name) {
-        removeFirstAncestor();
-    }
-
     public StructureTreeElement startReferencedNode(String name, Attributes attributes) {
         PDFStructElem parent = ancestors.getFirst();
         String role = attributes.getValue("role");
@@ -115,10 +111,6 @@ class PDFStructureTreeBuilder implements StructureTreeEventHandler {
         parent.addKid(created);
         ancestors.addFirst(created);
         return created;
-    }
-
-    public void endReferencedNode(String name) {
-        removeFirstAncestor();
     }
 
 }
