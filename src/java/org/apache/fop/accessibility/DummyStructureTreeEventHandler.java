@@ -50,14 +50,8 @@ public final class DummyStructureTreeEventHandler implements StructureTreeEventH
         return null;
     }
 
-    public void endImageNode(String name) {
-    }
-
     public StructureTreeElement startReferencedNode(String name, Attributes attributes) {
         return null;
-    }
-
-    public void endReferencedNode(String name) {
     }
 
 }
