@@ -150,12 +150,8 @@ public class SinglePageMasterReference extends FObj
 
     /** {@inheritDoc} */
     public boolean canProcess(String flowName) {
-        if (master != null) {
-            return master.getRegion(FO_REGION_BODY).getRegionName().equals(flowName);
-        }
-        else {
-            return false;
-        }
+        assert master != null;
+        return master.getRegion(FO_REGION_BODY).getRegionName().equals(flowName);
     }
 
     /** {@inheritDoc} */
