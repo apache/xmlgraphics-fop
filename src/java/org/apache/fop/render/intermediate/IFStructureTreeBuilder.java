@@ -43,7 +43,7 @@ final class IFStructureTreeBuilder implements StructureTreeEventHandler {
 
     static final class IFStructureTreeElement implements StructureTreeElement {
 
-        final String id;
+        private final String id;
 
         IFStructureTreeElement() {
             this.id = null;
@@ -51,6 +51,10 @@ final class IFStructureTreeBuilder implements StructureTreeEventHandler {
 
         IFStructureTreeElement(String id) {
             this.id = id;
+        }
+
+        public String getId() {
+            return id;
         }
     }
 
@@ -106,8 +110,8 @@ final class IFStructureTreeBuilder implements StructureTreeEventHandler {
 
         private static final class StartPrefixMapping extends SAXEventRecorder.Event {
 
-            protected final String prefix;
-            protected final String uri;
+            private final String prefix;
+            private final String uri;
 
             private StartPrefixMapping(String prefix, String uri) {
                 this.prefix = prefix;
@@ -122,7 +126,7 @@ final class IFStructureTreeBuilder implements StructureTreeEventHandler {
 
         private static final class EndPrefixMapping extends SAXEventRecorder.Event {
 
-            protected final String prefix;
+            private final String prefix;
 
             private EndPrefixMapping(String prefix) {
                 this.prefix = prefix;
@@ -169,7 +173,8 @@ final class IFStructureTreeBuilder implements StructureTreeEventHandler {
 
     private StructureTreeEventHandler delegate;
 
-    private final List<SAXEventRecorder> pageSequenceEventRecorders = new ArrayList<SAXEventRecorder>();
+    private final List<SAXEventRecorder> pageSequenceEventRecorders
+            = new ArrayList<SAXEventRecorder>();
 
     private int idCounter;
 

@@ -36,6 +36,7 @@ import org.apache.fop.fo.properties.CommonAccessibilityHolder;
  */
 public class FootnoteBody extends FObj implements CommonAccessibilityHolder {
 
+    /** {@inheritDoc} */
     private CommonAccessibility commonAccessibility;
 
     /**
@@ -96,6 +97,7 @@ public class FootnoteBody extends FObj implements CommonAccessibilityHolder {
         return FO_FOOTNOTE_BODY;
     }
 
+    /** {@inheritDoc} */
     public CommonAccessibility getCommonAccessibility() {
         return commonAccessibility;
     }

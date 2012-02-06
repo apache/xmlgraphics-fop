@@ -163,8 +163,6 @@ public class AreaTreeParser {
         private DOMImplementation domImplementation;
         private Locator locator;
 
-        private Attributes pageSequenceAttributes;
-
         public Handler(AreaTreeModel treeModel, FOUserAgent userAgent,
                 ElementMappingRegistry elementMappingRegistry) {
             this.treeModel = treeModel;

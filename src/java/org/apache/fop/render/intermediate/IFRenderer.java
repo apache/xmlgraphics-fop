@@ -852,8 +852,8 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
 
     /** {@inheritDoc} */
     public void renderInlineViewport(InlineViewport viewport) {
-        StructureTreeElement structElem =
-                (StructureTreeElement) viewport.getTrait(Trait.STRUCTURE_TREE_ELEMENT);
+        StructureTreeElement structElem
+                = (StructureTreeElement) viewport.getTrait(Trait.STRUCTURE_TREE_ELEMENT);
         establishStructureTreeElement(structElem);
         pushdID(viewport);
         Dimension dim = new Dimension(viewport.getIPD(), viewport.getBPD());
@@ -957,8 +957,8 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
 
         // warn if link trait found but not allowed, else create link
         if (linkTraitFound) {
-            StructureTreeElement structElem =
-                    (StructureTreeElement) ip.getTrait(Trait.STRUCTURE_TREE_ELEMENT);
+            StructureTreeElement structElem 
+                    = (StructureTreeElement) ip.getTrait(Trait.STRUCTURE_TREE_ELEMENT);
             action.setStructureTreeElement(structElem);
             Link link = new Link(action, ipRect);
             this.deferredLinks.add(link);
@@ -1012,7 +1012,8 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
 
         String fontName = getInternalFontNameForArea(text);
         int size = ((Integer) text.getTrait(Trait.FONT_SIZE)).intValue();
-        StructureTreeElement structElem = (StructureTreeElement) text.getTrait(Trait.STRUCTURE_TREE_ELEMENT);
+        StructureTreeElement structElem
+                = (StructureTreeElement) text.getTrait(Trait.STRUCTURE_TREE_ELEMENT);
         establishStructureTreeElement(structElem);
 
         // This assumes that *all* CIDFonts use a /ToUnicode mapping

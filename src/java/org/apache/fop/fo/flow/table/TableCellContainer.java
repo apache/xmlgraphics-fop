@@ -128,6 +128,7 @@ public abstract class TableCellContainer extends TableFObj
         return columnNumberManager;
     }
 
+    /** {@inheritDoc} */
     public CommonAccessibility getCommonAccessibility() {
         return commonAccessibility;
     }

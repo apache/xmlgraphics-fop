@@ -179,6 +179,9 @@ public class PDFStructElem extends PDFDictionary implements StructureTreeElement
         return kidsAttached;
     }
 
+    /**
+     * Class representing a placeholder for a PDF Structure Element.
+     */
     public static class Placeholder extends PDFStructElem {
 
         @Override
@@ -195,6 +198,11 @@ public class PDFStructElem extends PDFDictionary implements StructureTreeElement
             }
         }
 
+        /**
+         * Constructor
+         * @param parent -
+         * @param name -
+         */
         public Placeholder(PDFObject parent, String name) {
             super(parent, new PDFName(name));
         }

@@ -126,6 +126,7 @@ public class ListBlock extends FObj implements BreakPropertySet, CommonAccessibi
         }
     }
 
+    /** {@inheritDoc} */
     public CommonAccessibility getCommonAccessibility() {
         return commonAccessibility;
     }

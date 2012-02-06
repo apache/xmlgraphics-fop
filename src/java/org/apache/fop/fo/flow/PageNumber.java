@@ -127,6 +127,7 @@ public class PageNumber extends FObj
         }
     }
 
+    /** {@inheritDoc} */
     public CommonAccessibility getCommonAccessibility() {
         return commonAccessibility;
     }

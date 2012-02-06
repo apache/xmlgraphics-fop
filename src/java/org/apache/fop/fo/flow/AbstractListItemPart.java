@@ -91,6 +91,7 @@ public abstract class AbstractListItemPart extends FObj implements CommonAccessi
         }
     }
 
+    /** {@inheritDoc} */
     public CommonAccessibility getCommonAccessibility() {
         return commonAccessibility;
     }

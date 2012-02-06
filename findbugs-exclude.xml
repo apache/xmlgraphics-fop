@@ -1,6 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FindBugsFilter>
-   <!-- The names of public methods will not be modified -->
+   <Match>
+      <Class name="org.apache.fop.render.intermediate.IFStructureTreeBuilder"/>
+      <Field name="delegate"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pdf.PDFLogicalStructureHandler"/>
+      <Field name="currentPage"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pdf.PDFLogicalStructureHandler"/>
+      <Field name="pageParentTreeArray"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pdf.PDFStructureTreeBuilder"/>
+      <Field name="logicalStructureHandler"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.render.pdf.PDFStructureTreeBuilder"/>
+      <Field name="pdfFactory"/>
+      <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+   </Match>
+   <Match>
+      <Class name="org.apache.fop.accessibility.fo.FO2StructureTreeConverter$1"/>
+      <Bug pattern="SIC_INNER_SHOULD_BE_STATIC_ANON"/>
+   </Match>
+   <Match>
+      <Class name="~org.apache.fop.accessibility.fo.FOEventRecorder.*"/>
+      <Bug pattern="SIC_INNER_SHOULD_BE_STATIC_ANON"/>
+   </Match>
    <Match>
       <Class name="org.apache.fop.afp.AFPDataObjectInfo"/>
       <Method name="getUri"/>

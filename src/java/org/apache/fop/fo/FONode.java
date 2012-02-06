@@ -913,6 +913,11 @@ public abstract class FONode implements Cloneable {
 
     }
 
+    /**
+     * Sets the structure tree element.
+     *
+     * @param structureTreeElement set.
+     */
     public void setStructureTreeElement(StructureTreeElement structureTreeElement) {
         throw new UnsupportedOperationException();
     }

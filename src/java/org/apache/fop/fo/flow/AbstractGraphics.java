@@ -119,6 +119,7 @@ public abstract class AbstractGraphics extends FObj
         }
     }
 
+    /** {@inheritDoc} */
     public CommonAccessibility getCommonAccessibility() {
         return commonAccessibility;
     }
@@ -236,6 +237,7 @@ public abstract class AbstractGraphics extends FObj
         return structureTreeElement;
     }
 
+    /** @return  the alternative text property. */
     public String getAltText() {
         return altText;
     }

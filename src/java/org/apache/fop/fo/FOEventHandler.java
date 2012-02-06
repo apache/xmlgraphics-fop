@@ -122,9 +122,11 @@ public abstract class FOEventHandler {
     public void endDocument() throws SAXException {
     }
 
+    /** {@inheritDoc} */
     public void startRoot(Root root) {
     }
 
+    /** {@inheritDoc} */
     public void endRoot(Root root) {
     }
 

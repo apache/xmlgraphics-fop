@@ -148,6 +148,7 @@ public class TableCell extends TableFObj implements CommonAccessibilityHolder {
         return true;
     }
 
+    /** {@inheritDoc} */
     public CommonAccessibility getCommonAccessibility() {
         return commonAccessibility;
     }

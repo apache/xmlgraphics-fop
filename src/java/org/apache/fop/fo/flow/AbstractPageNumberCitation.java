@@ -132,6 +132,7 @@ public abstract class AbstractPageNumberCitation extends FObj
         }
     }
 
+    /** {@inheritDoc} */
     public CommonAccessibility getCommonAccessibility() {
         return commonAccessibility;
     }

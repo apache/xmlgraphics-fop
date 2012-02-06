@@ -667,6 +667,7 @@ public class FOText extends FONode implements CharSequence {
         this.structureTreeElement = structureTreeElement;
     }
 
+    /** @return the structure tree element. */
     public StructureTreeElement getStructureTreeElement() {
         return structureTreeElement;
     }

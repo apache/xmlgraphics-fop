@@ -101,6 +101,7 @@ public class InitialPropertySet extends FObj implements CommonAccessibilityHolde
         return FO_INITIAL_PROPERTY_SET;
     }
 
+    /** {@inheritDoc} */
     public CommonAccessibility getCommonAccessibility() {
         return commonAccessibility;
     }

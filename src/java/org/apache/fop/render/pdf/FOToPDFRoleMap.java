@@ -35,9 +35,11 @@ final class FOToPDFRoleMap {
     /**
      * Standard structure types defined by the PDF Reference, Fourth Edition (PDF 1.5).
      */
-    private static final Map<String, PDFName> STANDARD_STRUCTURE_TYPES = new HashMap<String, PDFName>();
+    private static final Map<String, PDFName> STANDARD_STRUCTURE_TYPES
+            = new HashMap<String, PDFName>();
 
-    private static final Map<String, Mapper> DEFAULT_MAPPINGS = new java.util.HashMap<String, Mapper>();
+    private static final Map<String, Mapper> DEFAULT_MAPPINGS
+            = new java.util.HashMap<String, Mapper>();
 
     private static final PDFName THEAD;
     private static final PDFName NON_STRUCT;

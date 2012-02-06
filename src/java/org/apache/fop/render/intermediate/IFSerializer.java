@@ -165,7 +165,8 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
             handler.startPrefixMapping(XLINK_PREFIX, XLINK_NAMESPACE);
             handler.startPrefixMapping(DocumentNavigationExtensionConstants.PREFIX,
                     DocumentNavigationExtensionConstants.NAMESPACE);
-            handler.startPrefixMapping(InternalElementMapping.STANDARD_PREFIX, InternalElementMapping.URI);
+            handler.startPrefixMapping(InternalElementMapping.STANDARD_PREFIX,
+                    InternalElementMapping.URI);
             handler.startElement(EL_DOCUMENT);
         } catch (SAXException e) {
             throw new IFException("SAX error in startDocument()", e);
@@ -686,10 +687,10 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     }
 
     private void addStructureReference(AttributesImpl atts) {
-        IFStructureTreeElement structureTreeElement =
-                (IFStructureTreeElement) getContext().getStructureTreeElement();
+        IFStructureTreeElement structureTreeElement
+                = (IFStructureTreeElement) getContext().getStructureTreeElement();
         if (structureTreeElement != null) {
-            addStructRefAttribute(atts, structureTreeElement.id);
+            addStructRefAttribute(atts, structureTreeElement.getId());
         }
     }
 
@@ -786,7 +787,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
                 XMLConstants.CDATA, IFUtil.toString(link.getTargetRect()));
         if (getUserAgent().isAccessibilityEnabled()) {
             addStructRefAttribute(atts,
-                    ((IFStructureTreeElement) link.getAction().getStructureTreeElement()).id);
+                    ((IFStructureTreeElement) link.getAction().getStructureTreeElement()).getId());
         }
         try {
             handler.startElement(DocumentNavigationExtensionConstants.LINK, atts);
