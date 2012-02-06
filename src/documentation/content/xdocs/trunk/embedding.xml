@@ -37,19 +37,39 @@
       org.apache.fop.apps.FopFactory instance. This object can be used to launch multiple
       rendering runs. For each run, create a new org.apache.fop.apps.Fop instance through
       one of the factory methods of FopFactory. In the method call you specify which output
-      format (i.e. Renderer) to use and, if the selected renderer requires an OutputStream,
-      which OutputStream to use for the results of the rendering. You can customize FOP's
-      behaviour in a rendering run by supplying your own FOUserAgent instance. The
-      FOUserAgent can, for example, be used to set your own Renderer instance (details
-      below). Finally, you retrieve a SAX DefaultHandler instance from the Fop object and
-      use that as the SAXResult of your transformation.
+      format (i.e. MIME type) to use and, if the selected output format requires an
+      OutputStream, which OutputStream to use for the results of the rendering. You can
+      customize FOP's behaviour in a rendering run by supplying your own FOUserAgent
+      instance. The FOUserAgent can, for example, be used to set your own document handler
+      instance (details below). Finally, you retrieve a SAX DefaultHandler instance from
+      the Fop object and use that as the SAXResult of your transformation.
     </p>
-    <note>
-      We recently changed FOP's outer API to what we consider the final API. This might require
-      some changes in your application. The main reasons for these changes were performance
-      improvements due to better reuse of reusable objects and reduced use of static variables
-      for added flexibility in complex environments.
-    </note>
+  </section>
+  <section id="API">
+    <title>The API</title>
+    <p>
+      FOP has many classes which express the "public" access modifier, however, this is not
+      indicative of their inclusion into the public API. Every attempt will be made to keep the
+      public API static, to minimize regressions for existing users, however, since the API is not
+      clearly defined, the list of classes below are the generally agreed public API:
+      <source><![CDATA[
+org.apache.fop.apps.*
+org.apache.fop.fo.FOEventHandler
+org.apache.fop.fo.ElementMappingRegistry
+org.apache.fop.fonts.FontManager
+org.apache.fop.events.EventListener
+org.apache.fop.events.Event
+org.apache.fop.events.model.EventSeverity
+org.apache.fop.render.ImageHandlerRegistry
+org.apache.fop.render.RendererFactory
+org.apache.fop.render.intermediate.IFContext
+org.apache.fop.render.intermediate.IFDocumentHandler
+org.apache.fop.render.intermediate.IFException
+org.apache.fop.render.intermediate.IFParser
+org.apache.fop.render.intermediate.IFSerializer
+org.apache.fop.render.intermediate.IFUtil
+org.apache.fop.render.intermediate.util.IFConcatenator]]></source>
+    </p>
   </section>
   <section id="basics">
     <title>Basic Usage Pattern</title>
@@ -425,11 +445,11 @@ try {
         </li>
         <li>
           <p>
-            Set <strong>your own Renderer instance</strong>. If you want to supply your own renderer or
-            configure a Renderer in a special way you can give the instance to the FOUserAgent. Normally,
-            the Renderer instance is created by FOP. Example:
+            Set <strong>your own Document Handler</strong>. This feature can be used for several purposes, the most likey usage of which would probably be
+            binding a MIME type when the output is Intermediate Format (see <a href="#documenthandlers">Document Handlers</a>). This also allows advanced
+            users to create their own implementation of the document handler.
           </p>
-          <source>userAgent.setRendererOverride(myRenderer); // myRenderer is an org.apache.fop.render.Renderer</source>
+          <source>userAgent.setDocumentHandlerOverride(documentHandler) // documentHandler is an instance of org.apache.fop.render.intermediate.IFDocumentHandler</source>
         </li>
         <li>
           <p>
@@ -480,6 +500,28 @@ fopFactory.setUserConfig(cfg);
 fopFactory.setUserConfig(new File("C:/Temp/mycfg.xml"));]]></source>
     <p>
       The layout of the configuration file is described on the <a href="configuration.html">Configuration page</a>.
+    </p>
+  </section>
+  <section id="documenthandlers">
+    <title>Document Handlers</title>
+    <p>
+      The document handlers are classes that inherit from <code>org.apache.fop.render.intermediate.IFDocumentHandler</code>. This
+      is an interface for which a MIME type specific implementation can be created. This same handler is used either when XSL-FO
+      is used as the input or when Intermediate Format is used. Since IF is output format agnostic, if custom fonts or other
+      configuration information that affect layout (specific to a particular MIME type) are given then FOP needs that contextual
+      information. The document handler provides that context so that when the IF is rendered, it is more visually consistent with
+      FO rendering. The code below shows an example of how a document handler can be used to provide PDF configuration data to the
+      IFSerializer.
+      <source><![CDATA[
+IFDocumentHandler targetHandler = userAgent.getRendererFactory().createDocumentHandler(userAgent, MimeConstants.MIME_PDF);
+
+IFSerializer ifSerializer = new IFSerializer();  //Create the IFSerializer to write the intermediate format
+ifSerializer.setContext(new IFContext(userAgent));
+ifSerializer.mimicDocumentHandler(targetHandler);   //Tell the IFSerializer to mimic the target format
+
+userAgent.setDocumentHandlerOverride(ifSerializer);  //Make sure the prepared document handler is used
+      ]]></source>
+      The rest of the code is the same as in <a href="#basics">Basic Usage Patterns</a>. 
     </p>
   </section>
   <section id="hints">
@@ -684,6 +726,15 @@ use a DOM tree as input for an XSL transformation.
             example</a>
 shows the usage of the PDF Transcoder, a sub-application within FOP.
 It is used to generate a PDF document from an SVG file.
+    </p>
+  </section>
+  <section id="ExampleConcat">
+    <title>ExampleConcat.java (IF Concatenation example)</title>
+    <p>
+This can be found in the <code>embedding.intermediate</code> package within the
+examples and describes how IF can be concatenated to produce a document. Because
+IF has been through FOPs layout engine, it should be visually consistent with FO
+rendered documents while allowing the user to merge numerous documents together.
     </p>
   </section>
   <section id="example-notes">
