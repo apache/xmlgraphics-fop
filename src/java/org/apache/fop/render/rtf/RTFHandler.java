@@ -1353,8 +1353,10 @@ public class RTFHandler extends FOEventHandler {
             RtfTextrun textrun = container.getTextrun();
 
             textrun.addLeader(rtfAttr);
-
-        } catch (Exception e) {
+        } catch (IOException e) {
+            log.error("startLeader: " + e.getMessage());
+            throw new RuntimeException(e.getMessage());
+        } catch (FOPException e) {
             log.error("startLeader: " + e.getMessage());
             throw new RuntimeException(e.getMessage());
         }

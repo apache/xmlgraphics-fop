@@ -72,6 +72,7 @@ public abstract class InlineLevel extends FObjMixed implements CommonAccessibili
         lineHeight = pList.get(PR_LINE_HEIGHT).getSpace();
     }
 
+    /** {@inheritDoc} */
     public CommonAccessibility getCommonAccessibility() {
         return commonAccessibility;
     }

@@ -597,7 +597,8 @@ public final class TraitSetter {
      * @param area the area to set the traits on
      * @param structureTreeElement the element the area is associated to in the document structure
      */
-    public static void addStructureTreeElement(Area area, StructureTreeElement structureTreeElement) {
+    public static void addStructureTreeElement(Area area,
+            StructureTreeElement structureTreeElement) {
         if (structureTreeElement != null) {
             area.addTrait(Trait.STRUCTURE_TREE_ELEMENT, structureTreeElement);
         }

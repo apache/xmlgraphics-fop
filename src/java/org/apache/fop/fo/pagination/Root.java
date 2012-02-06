@@ -181,6 +181,7 @@ public class Root extends FObj implements CommonAccessibilityHolder {
         }
     }
 
+    /** {@inheritDoc} */
     public CommonAccessibility getCommonAccessibility() {
         return commonAccessibility;
     }
@@ -365,6 +366,7 @@ public class Root extends FObj implements CommonAccessibilityHolder {
     }
 
 
+    /** @return locale proprty. */
     public Locale getLocale() {
         return locale;
     }

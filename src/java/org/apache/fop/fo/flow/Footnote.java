@@ -111,6 +111,7 @@ public class Footnote extends FObj implements CommonAccessibilityHolder {
         }
     }
 
+    /** {@inheritDoc} */
     public CommonAccessibility getCommonAccessibility() {
         return commonAccessibility;
     }

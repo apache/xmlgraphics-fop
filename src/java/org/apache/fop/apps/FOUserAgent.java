@@ -102,7 +102,8 @@ public class FOUserAgent {
     private boolean locatorEnabled = true; // true by default (for error messages).
     private boolean conserveMemoryPolicy = false;
     private EventBroadcaster eventBroadcaster = new FOPEventBroadcaster();
-    private StructureTreeEventHandler structureTreeEventHandler = DummyStructureTreeEventHandler.INSTANCE;
+    private StructureTreeEventHandler structureTreeEventHandler
+            = DummyStructureTreeEventHandler.INSTANCE;
 
     /** Producer:  Metadata element for the system/software that produces
      * the document. (Some renderers can store this in the document.)

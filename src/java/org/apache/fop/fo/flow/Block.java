@@ -151,6 +151,7 @@ public class Block extends FObjMixed implements BreakPropertySet,
         getFOEventHandler().endBlock(this);
     }
 
+    /** {@inheritDoc} */
     public CommonAccessibility getCommonAccessibility() {
         return commonAccessibility;
     }

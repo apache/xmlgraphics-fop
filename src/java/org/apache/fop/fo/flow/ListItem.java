@@ -137,6 +137,7 @@ public class ListItem extends FObj implements BreakPropertySet, CommonAccessibil
         }
     }
 
+    /** {@inheritDoc} */
     public CommonAccessibility getCommonAccessibility() {
         return commonAccessibility;
     }

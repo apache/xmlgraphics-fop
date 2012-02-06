@@ -255,8 +255,8 @@ public class PDFRoot extends PDFDictionary {
     }
 
     /**
-     * Sets the language identifier of the document.
-     * @param lang the language identifier of the document.
+     * Sets the locale of the document.
+     * @param locale the locale of the document.
      */
     public void setLanguage(Locale locale) {
         if (locale == null) {

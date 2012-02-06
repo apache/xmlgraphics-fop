@@ -140,6 +140,7 @@ public class TableAndCaption extends FObj implements CommonAccessibilityHolder {
         return FO_TABLE_AND_CAPTION;
     }
 
+    /** {@inheritDoc} */
     public CommonAccessibility getCommonAccessibility() {
         return commonAccessibility;
     }

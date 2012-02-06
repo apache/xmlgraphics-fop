@@ -362,7 +362,8 @@ class StructureTreeEventTrigger extends FOEventHandler {
         if (node instanceof CommonAccessibilityHolder) {
             addRole((CommonAccessibilityHolder) node, attributes);
         }
-        node.setStructureTreeElement(structureTreeEventHandler.startReferencedNode(localName, attributes));
+        node.setStructureTreeElement(
+                structureTreeEventHandler.startReferencedNode(localName, attributes));
     }
 
     private void startElementWithIDAndAltText(AbstractGraphics node) {
@@ -371,7 +372,8 @@ class StructureTreeEventTrigger extends FOEventHandler {
         addRole(node, attributes);
         addAttribute(attributes, ExtensionElementMapping.URI, "alt-text",
                 ExtensionElementMapping.STANDARD_PREFIX, node.getAltText());
-        node.setStructureTreeElement(structureTreeEventHandler.startImageNode(localName, attributes));
+        node.setStructureTreeElement(
+                structureTreeEventHandler.startImageNode(localName, attributes));
     }
 
     private StructureTreeElement startElement(FONode node, AttributesImpl attributes) {

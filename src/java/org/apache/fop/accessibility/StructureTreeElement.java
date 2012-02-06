@@ -17,9 +17,6 @@
 
 /* $Id$ */
 
-/**
- *
- */
 package org.apache.fop.accessibility;
 
 /**

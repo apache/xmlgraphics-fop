@@ -45,11 +45,13 @@ public final class StructureTree2SAXEventAdapter implements StructureTreeEventHa
     /**
      * Factory method that creates a new instance.
      * @param contentHandler The handler that receives SAX events
+     * @return -
      */
     public static StructureTreeEventHandler newInstance(ContentHandler contentHandler) {
         return new StructureTree2SAXEventAdapter(contentHandler);
     }
 
+    /** {@inheritDoc} */
     public void startPageSequence(Locale locale) {
         try {
 
@@ -65,6 +67,7 @@ public final class StructureTree2SAXEventAdapter implements StructureTreeEventHa
         }
     }
 
+    /** {@inheritDoc} */
     public void endPageSequence() {
         try {
             contentHandler.endElement(IFConstants.NAMESPACE, IFConstants.EL_STRUCTURE_TREE,
@@ -79,6 +82,7 @@ public final class StructureTree2SAXEventAdapter implements StructureTreeEventHa
         }
     }
 
+    /** {@inheritDoc} */
     public StructureTreeElement startNode(String name, Attributes attributes) {
         try {
             if (name.equals("#PCDATA")) {
@@ -96,6 +100,7 @@ public final class StructureTree2SAXEventAdapter implements StructureTreeEventHa
         }
     }
 
+    /** {@inheritDoc} */
     public void endNode(String name) {
         try {
             contentHandler.endElement(FOElementMapping.URI, name,
@@ -105,10 +110,12 @@ public final class StructureTree2SAXEventAdapter implements StructureTreeEventHa
         }
     }
 
+    /** {@inheritDoc} */
     public StructureTreeElement startImageNode(String name, Attributes attributes) {
         return startNode(name, attributes);
     }
 
+    /** {@inheritDoc} */
     public StructureTreeElement startReferencedNode(String name, Attributes attributes) {
         return startNode(name, attributes);
     }

@@ -160,8 +160,8 @@ public class IFParser implements IFConstants {
 
         private Attributes pageSequenceAttributes;
 
-        private Map<String, StructureTreeElement> structureTreeElements =
-                new HashMap<String, StructureTreeElement>();
+        private Map<String, StructureTreeElement> structureTreeElements
+                = new HashMap<String, StructureTreeElement>();
 
         private final class StructureTreeHandler extends DefaultHandler {
 
@@ -191,12 +191,12 @@ public class IFParser implements IFConstants {
                         structureTreeEventHandler.startNode(localName, attributes);
                     } else if (localName.equals("external-graphic")
                             || localName.equals("instream-foreign-object")) {
-                        StructureTreeElement structureTreeElement =
-                            structureTreeEventHandler.startImageNode(localName, attributes);
+                        StructureTreeElement structureTreeElement
+                                = structureTreeEventHandler.startImageNode(localName, attributes);
                         structureTreeElements.put(structID, structureTreeElement);
                     } else {
-                        StructureTreeElement structureTreeElement =
-                            structureTreeEventHandler.startReferencedNode(localName, attributes);
+                        StructureTreeElement structureTreeElement = structureTreeEventHandler
+                                    .startReferencedNode(localName, attributes);
                         structureTreeElements.put(structID, structureTreeElement);
                     }
                 }
@@ -289,7 +289,8 @@ public class IFParser implements IFConstants {
                 } else if (DocumentNavigationExtensionConstants.NAMESPACE.equals(uri)) {
                     if (this.navParser == null) {
                         this.navParser = new DocumentNavigationHandler(
-                                this.documentHandler.getDocumentNavigationHandler(), structureTreeElements);
+                                this.documentHandler.getDocumentNavigationHandler(),
+                                        structureTreeElements);
                     }
                     delegate = this.navParser;
                     delegateDepth++;

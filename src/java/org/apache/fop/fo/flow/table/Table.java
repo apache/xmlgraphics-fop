@@ -305,6 +305,7 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder, Break
         }
     }
 
+    /** {@inheritDoc} */
     public CommonAccessibility getCommonAccessibility() {
         return commonAccessibility;
     }

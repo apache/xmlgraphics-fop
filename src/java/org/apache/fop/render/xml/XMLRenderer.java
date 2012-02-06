@@ -105,8 +105,6 @@ public class XMLRenderer extends AbstractXMLRenderer {
     /** If not null, the XMLRenderer will mimic another renderer by using its font setup. */
     protected Renderer mimic;
 
-    private int pageSequenceIndex;
-
     /**
      * Creates a new XML renderer.
      */

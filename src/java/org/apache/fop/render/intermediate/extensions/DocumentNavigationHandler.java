@@ -107,8 +107,8 @@ public class DocumentNavigationHandler extends DefaultHandler
                     throw new SAXException(localName + " must be the root element!");
                 }
                 Rectangle targetRect = XMLUtil.getAttributeAsRectangle(attributes, "rect");
-                structureTreeElement = structureTreeElements.get(
-                        attributes.getValue(InternalElementMapping.URI, InternalElementMapping.STRUCT_REF));
+                structureTreeElement = structureTreeElements.get(attributes.getValue(
+                        InternalElementMapping.URI, InternalElementMapping.STRUCT_REF));
                 Link link = new Link(null, targetRect);
                 objectStack.push(link);
             } else if (GOTO_XY.getLocalName().equals(localName)) {

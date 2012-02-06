@@ -37,7 +37,6 @@ public final class LanguageTags {
      *
      * @param locale a locale
      * @return the corresponding language tag
-     * @throws NullPointerException if the specified locale is null
      */
     public static String toLanguageTag(Locale locale) {
         StringBuffer sb = new StringBuffer(5);
@@ -53,7 +52,8 @@ public final class LanguageTags {
     /**
      * Converts an RFC 3066 compliant language tag to a locale.
      *
-     * @throws NullPointerException if the specified language tag is null
+     * @param languageTag language tag to convert
+     * @return the corresponding locale
      */
     public static Locale toLocale(String languageTag) {
         String[] parts = languageTag.split("-");
