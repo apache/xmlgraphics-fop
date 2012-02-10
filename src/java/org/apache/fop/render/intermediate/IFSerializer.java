@@ -31,19 +31,18 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
 import org.apache.xmlgraphics.util.QName;
 import org.apache.xmlgraphics.util.XMLizable;
 
-import org.apache.fop.accessibility.StructureTree;
+import org.apache.fop.accessibility.StructureTreeEventHandler;
+import org.apache.fop.fo.extensions.InternalElementMapping;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.render.PrintRendererConfigurator;
 import org.apache.fop.render.RenderingContext;
+import org.apache.fop.render.intermediate.IFStructureTreeBuilder.IFStructureTreeElement;
 import org.apache.fop.render.intermediate.extensions.AbstractAction;
 import org.apache.fop.render.intermediate.extensions.Bookmark;
 import org.apache.fop.render.intermediate.extensions.BookmarkTree;
@@ -54,8 +53,10 @@ import org.apache.fop.traits.BorderProps;
 import org.apache.fop.traits.RuleStyle;
 import org.apache.fop.util.ColorUtil;
 import org.apache.fop.util.DOM2SAX;
+import org.apache.fop.util.LanguageTags;
 import org.apache.fop.util.XMLConstants;
 import org.apache.fop.util.XMLUtil;
+
 
 /**
  * IFPainter implementation that serializes the intermediate format to XML.
@@ -71,11 +72,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
 
     private String currentID = "";
 
-    /**
-     * Default constructor.
-     */
-    public IFSerializer() {
-    }
+    private IFStructureTreeBuilder structureTreeBuilder;
 
     /** {@inheritDoc} */
     @Override
@@ -150,6 +147,14 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
         }
     }
 
+    @Override
+    public StructureTreeEventHandler getStructureTreeEventHandler() {
+        if (structureTreeBuilder == null) {
+            structureTreeBuilder = new IFStructureTreeBuilder();
+        }
+        return structureTreeBuilder;
+    }
+
     /** {@inheritDoc} */
     @Override
     public void startDocument() throws IFException {
@@ -160,9 +165,24 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
             handler.startPrefixMapping(XLINK_PREFIX, XLINK_NAMESPACE);
             handler.startPrefixMapping(DocumentNavigationExtensionConstants.PREFIX,
                     DocumentNavigationExtensionConstants.NAMESPACE);
+            handler.startPrefixMapping(InternalElementMapping.STANDARD_PREFIX,
+                    InternalElementMapping.URI);
             handler.startElement(EL_DOCUMENT);
         } catch (SAXException e) {
             throw new IFException("SAX error in startDocument()", e);
+        }
+    }
+
+    @Override
+    public void setDocumentLocale(Locale locale) {
+        AttributesImpl atts  = new AttributesImpl();
+        atts.addAttribute(XML_NAMESPACE, "lang", "xml:lang", XMLUtil.CDATA,
+                LanguageTags.toLanguageTag(locale));
+        try {
+            handler.startElement(EL_LOCALE, atts);
+            handler.endElement(EL_LOCALE);
+        } catch (SAXException e) {
+            throw new RuntimeException("Unable to create the " + EL_LOCALE + " element.", e);
         }
     }
 
@@ -227,20 +247,14 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
             Locale lang = getContext().getLanguage();
             if (lang != null) {
                 atts.addAttribute(XML_NAMESPACE, "lang", "xml:lang", XMLUtil.CDATA,
-                        XMLUtil.toRFC3066(lang));
+                        LanguageTags.toLanguageTag(lang));
             }
             XMLUtil.addAttribute(atts, XMLConstants.XML_SPACE, "preserve");
             addForeignAttributes(atts);
             handler.startElement(EL_PAGE_SEQUENCE, atts);
             if (this.getUserAgent().isAccessibilityEnabled()) {
-                StructureTree structureTree = getUserAgent().getStructureTree();
-                handler.startElement(EL_STRUCTURE_TREE); // add structure tree
-                NodeList nodes = structureTree.getPageSequence(pageSequenceIndex++);
-                for (int i = 0, n = nodes.getLength(); i < n; i++) {
-                    Node node = nodes.item(i);
-                    new DOM2SAX(handler).writeFragment(node);
-                }
-                handler.endElement(EL_STRUCTURE_TREE);
+                assert (structureTreeBuilder != null);
+                structureTreeBuilder.replayEventsForPageSequence(handler, pageSequenceIndex++);
             }
         } catch (SAXException e) {
             throw new IFException("SAX error in startPageSequence()", e);
@@ -250,6 +264,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     /** {@inheritDoc} */
     public void endPageSequence() throws IFException {
         try {
+
             handler.endElement(EL_PAGE_SEQUENCE);
         } catch (SAXException e) {
             throw new IFException("SAX error in endPageSequence()", e);
@@ -428,7 +443,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
             addAttribute(atts, "width", Integer.toString(rect.width));
             addAttribute(atts, "height", Integer.toString(rect.height));
             addForeignAttributes(atts);
-            addStructurePointerAttribute(atts);
+            addStructureReference(atts);
             handler.element(EL_IMAGE, atts);
         } catch (SAXException e) {
             throw new IFException("SAX error in startGroup()", e);
@@ -456,7 +471,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
             addAttribute(atts, "width", Integer.toString(rect.width));
             addAttribute(atts, "height", Integer.toString(rect.height));
             addForeignAttributes(atts);
-            addStructurePointerAttribute(atts);
+            addStructureReference(atts);
             handler.startElement(EL_IMAGE, atts);
             new DOM2SAX(handler).writeDocument(doc, true);
             handler.endElement(EL_IMAGE);
@@ -571,7 +586,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
             if (dx != null) {
                 addAttribute(atts, "dx", IFUtil.toString(dx));
             }
-            addStructurePointerAttribute(atts);
+            addStructureReference(atts);
             handler.startElement(EL_TEXT, atts);
             char[] chars = text.toCharArray();
             handler.characters(chars, 0, chars.length);
@@ -671,11 +686,20 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
         XMLUtil.addAttribute(atts, localName, value);
     }
 
-    private void addStructurePointerAttribute(AttributesImpl atts) {
-        String ptr = getContext().getStructurePointer();
-        if (ptr != null) {
-            addAttribute(atts, "ptr", ptr);
+    private void addStructureReference(AttributesImpl atts) {
+        IFStructureTreeElement structureTreeElement
+                = (IFStructureTreeElement) getContext().getStructureTreeElement();
+        if (structureTreeElement != null) {
+            addStructRefAttribute(atts, structureTreeElement.getId());
         }
+    }
+
+    private void addStructRefAttribute(AttributesImpl atts, String id) {
+        atts.addAttribute(InternalElementMapping.URI,
+                InternalElementMapping.STRUCT_REF,
+                InternalElementMapping.STANDARD_PREFIX + ":" + InternalElementMapping.STRUCT_REF,
+                XMLConstants.CDATA,
+                id);
     }
 
     private void addID() throws SAXException {
@@ -762,7 +786,8 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
         atts.addAttribute(null, "rect", "rect",
                 XMLConstants.CDATA, IFUtil.toString(link.getTargetRect()));
         if (getUserAgent().isAccessibilityEnabled()) {
-            addAttribute(atts, "ptr", link.getAction().getStructurePointer());
+            addStructRefAttribute(atts,
+                    ((IFStructureTreeElement) link.getAction().getStructureTreeElement()).getId());
         }
         try {
             handler.startElement(DocumentNavigationExtensionConstants.LINK, atts);
@@ -806,5 +831,4 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
             throw new IFException("SAX error serializing object", e);
         }
     }
-
 }

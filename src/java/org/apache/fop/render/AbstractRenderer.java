@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import org.w3c.dom.Document;
@@ -150,6 +151,10 @@ public abstract class AbstractRenderer
      */
     public boolean supportsOutOfOrder() {
         return false;
+    }
+
+    /** {@inheritDoc} */
+    public void setDocumentLocale(Locale locale) {
     }
 
     /**

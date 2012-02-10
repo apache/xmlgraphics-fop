@@ -21,7 +21,6 @@ package org.apache.fop.util;
 
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
-import java.util.Locale;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -172,41 +171,6 @@ public final class XMLUtil implements XMLConstants {
      */
     public static void addAttribute(AttributesImpl atts, String localName, String value) {
         atts.addAttribute("", localName, localName, XMLUtil.CDATA, value);
-    }
-
-    /**
-     * Converts a {@link Locale} instance to an RFC 3066 compliant language identifier.
-     * @param language the language
-     * @return the formatted language identifier
-     */
-    public static String toRFC3066(Locale language) {
-        if (language == null || language.getLanguage().length() == 0) {
-            return null;
-        }
-        StringBuffer sb = new StringBuffer();
-        sb.append(language.getLanguage());
-        if (language.getCountry().length() > 0) {
-            sb.append('-');
-            sb.append(language.getCountry());
-        }
-        return sb.toString();
-    }
-
-    /**
-     * Converts an RFC 3066 compliant language identifier to a {@link Locale} instance.
-     * @param lang the language string
-     * @return the converted locale instance
-     */
-    public static Locale convertRFC3066ToLocale(String lang) {
-        if (lang == null || lang.length() == 0) {
-            return null;
-        }
-        String[] parts = lang.split("-");
-        if (parts.length == 1) {
-            return new Locale(parts[0]);
-        } else {
-            return new Locale(parts[0], parts[1]);
-        }
     }
 
 }

@@ -329,7 +329,6 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
 
         addMarkersToPage(false, isFirst(firstPos), isLast(lastPos));
 
-        TraitSetter.addPtr(curBlockArea, getBlockFO().getPtr());  // used for accessibility
         TraitSetter.addSpaceBeforeAfter(curBlockArea, layoutContext.getSpaceAdjust(),
                 effSpaceBefore, effSpaceAfter);
         flush();

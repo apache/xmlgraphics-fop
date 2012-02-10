@@ -25,15 +25,16 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
-
-import org.w3c.dom.NodeList;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.xmlgraphics.xmp.Metadata;
 
+import org.apache.fop.accessibility.StructureTreeEventHandler;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.fo.extensions.xmp.XMPMetadata;
 import org.apache.fop.pdf.PDFAnnotList;
@@ -45,27 +46,25 @@ import org.apache.fop.render.extensions.prepress.PageBoundaries;
 import org.apache.fop.render.extensions.prepress.PageScale;
 import org.apache.fop.render.intermediate.AbstractBinaryWritingIFDocumentHandler;
 import org.apache.fop.render.intermediate.IFContext;
-import org.apache.fop.render.intermediate.IFDocumentHandler;
 import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
 import org.apache.fop.render.intermediate.IFDocumentNavigationHandler;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFPainter;
 import org.apache.fop.render.pdf.extensions.PDFEmbeddedFileExtensionAttachment;
-import org.apache.fop.util.XMLUtil;
 
 /**
- * {@link IFDocumentHandler} implementation that produces PDF.
+ * {@link org.apache.fop.render.intermediate.IFDocumentHandler} implementation that produces PDF.
  */
 public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
 
     /** logging instance */
     private static Log log = LogFactory.getLog(PDFDocumentHandler.class);
 
-    private int pageSequenceIndex;
-
     private boolean accessEnabled;
 
     private PDFLogicalStructureHandler logicalStructureHandler;
+
+    private PDFStructureTreeBuilder structureTreeBuilder;
 
     /** the PDF Document being created */
     protected PDFDocument pdfDoc;
@@ -92,8 +91,7 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
     protected PageReference currentPageRef;
 
     /** Used for bookmarks/outlines. */
-    protected Map<Integer, PageReference> pageReferences
-        = new java.util.HashMap<Integer, PageReference>();
+    protected Map<Integer, PageReference> pageReferences = new HashMap<Integer, PageReference>();
 
     private final PDFDocumentNavigationHandler documentNavigationHandler
             = new PDFDocumentNavigationHandler(this);
@@ -145,13 +143,21 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
             this.pdfDoc = pdfUtil.setupPDFDocument(this.outputStream);
             this.accessEnabled = getUserAgent().isAccessibilityEnabled();
             if (accessEnabled) {
-                pdfDoc.getRoot().makeTagged();
-                logicalStructureHandler = new PDFLogicalStructureHandler(pdfDoc,
-                        getUserAgent().getEventBroadcaster());
+                setupAccessibility();
             }
         } catch (IOException e) {
             throw new IFException("I/O error in startDocument()", e);
         }
+    }
+
+    private void setupAccessibility() {
+        pdfDoc.getRoot().makeTagged();
+        logicalStructureHandler = new PDFLogicalStructureHandler(pdfDoc);
+        // TODO this is ugly. All the necessary information should be available
+        // at creation time in order to enforce immutability
+        structureTreeBuilder.setPdfFactory(pdfDoc.getFactory());
+        structureTreeBuilder.setLogicalStructureHandler(logicalStructureHandler);
+        structureTreeBuilder.setEventBroadcaster(getUserAgent().getEventBroadcaster());
     }
 
     /** {@inheritDoc} */
@@ -178,18 +184,7 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
 
     /** {@inheritDoc} */
     public void startPageSequence(String id) throws IFException {
-        //TODO page sequence title
-
-        if (this.pdfDoc.getRoot().getLanguage() == null
-                && getContext().getLanguage() != null) {
-            //No document-level language set, so we use the first page-sequence's language
-            this.pdfDoc.getRoot().setLanguage(XMLUtil.toRFC3066(getContext().getLanguage()));
-        }
-
-        if (accessEnabled) {
-            NodeList nodes = getUserAgent().getStructureTree().getPageSequence(pageSequenceIndex++);
-            logicalStructureHandler.processStructureTree(nodes, getContext().getLanguage());
-        }
+        //nop
     }
 
     /** {@inheritDoc} */
@@ -289,9 +284,9 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
     /** {@inheritDoc} */
     public void handleExtensionObject(Object extension) throws IFException {
         if (extension instanceof XMPMetadata) {
-            pdfUtil.renderXMPMetadata((XMPMetadata)extension);
+            pdfUtil.renderXMPMetadata((XMPMetadata) extension);
         } else if (extension instanceof Metadata) {
-            XMPMetadata wrapper = new XMPMetadata(((Metadata)extension));
+            XMPMetadata wrapper = new XMPMetadata(((Metadata) extension));
             pdfUtil.renderXMPMetadata(wrapper);
         } else if (extension instanceof PDFEmbeddedFileExtensionAttachment) {
             PDFEmbeddedFileExtensionAttachment embeddedFile
@@ -305,6 +300,11 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
             log.debug("Don't know how to handle extension object. Ignoring: "
                     + extension + " (" + extension.getClass().getName() + ")");
         }
+    }
+
+    /** {@inheritDoc} */
+    public void setDocumentLocale(Locale locale) {
+        pdfDoc.getRoot().setLanguage(locale);
     }
 
     PageReference getPageReference(int pageIndex) {
@@ -332,4 +332,11 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
         }
     }
 
+    @Override
+    public StructureTreeEventHandler getStructureTreeEventHandler() {
+        if (structureTreeBuilder == null) {
+            structureTreeBuilder = new PDFStructureTreeBuilder();
+        }
+        return structureTreeBuilder;
+    }
 }

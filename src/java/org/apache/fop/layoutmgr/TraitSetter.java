@@ -22,6 +22,7 @@ package org.apache.fop.layoutmgr;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.fop.accessibility.StructureTreeElement;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Trait;
 import org.apache.fop.datatypes.LengthBase;
@@ -29,9 +30,9 @@ import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.datatypes.SimplePercentBaseContext;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
+import org.apache.fop.fo.properties.CommonBorderPaddingBackground.BorderInfo;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.CommonTextDecoration;
-import org.apache.fop.fo.properties.CommonBorderPaddingBackground.BorderInfo;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.traits.MinOptMax;
@@ -591,13 +592,15 @@ public final class TraitSetter {
     }
 
     /**
-     * Adds the ptr trait to the area.
+     * Sets the structure tree element associated to the given area.
+     *
      * @param area the area to set the traits on
-     * @param ptr string
+     * @param structureTreeElement the element the area is associated to in the document structure
      */
-    public static void addPtr(Area area, String ptr) {
-        if (ptr != null && ptr.length() > 0) {
-            area.addTrait(Trait.PTR, ptr);
+    public static void addStructureTreeElement(Area area,
+            StructureTreeElement structureTreeElement) {
+        if (structureTreeElement != null) {
+            area.addTrait(Trait.STRUCTURE_TREE_ELEMENT, structureTreeElement);
         }
     }
 

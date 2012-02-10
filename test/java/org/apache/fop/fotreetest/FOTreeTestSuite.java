@@ -29,7 +29,9 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
         org.apache.fop.fo.flow.table.AllTests.class,
         org.apache.fop.fo.pagination.AllTests.class,
-        FOTreeTestCase.class })
-
+        org.apache.fop.fotreetest.FOTreeTestCase.class,
+        org.apache.fop.fo.properties.CommonAccessibilityHolderTestCase.class,
+        org.apache.fop.fo.DelegatingFOEventHandlerTestCase.class
+})
 public final class FOTreeTestSuite {
 }

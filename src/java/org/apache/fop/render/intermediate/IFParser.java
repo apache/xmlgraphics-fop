@@ -25,6 +25,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -48,11 +49,13 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.xmlgraphics.util.QName;
 
 import org.apache.fop.accessibility.AccessibilityEventProducer;
-import org.apache.fop.accessibility.StructureTreeBuilder;
+import org.apache.fop.accessibility.StructureTreeElement;
+import org.apache.fop.accessibility.StructureTreeEventHandler;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.ElementMappingRegistry;
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.fo.extensions.InternalElementMapping;
 import org.apache.fop.render.intermediate.extensions.DocumentNavigationExtensionConstants;
 import org.apache.fop.render.intermediate.extensions.DocumentNavigationHandler;
 import org.apache.fop.traits.BorderProps;
@@ -62,7 +65,7 @@ import org.apache.fop.util.ContentHandlerFactory;
 import org.apache.fop.util.ContentHandlerFactoryRegistry;
 import org.apache.fop.util.DOMBuilderContentHandlerFactory;
 import org.apache.fop.util.DefaultErrorListener;
-import org.apache.fop.util.DelegatingContentHandler;
+import org.apache.fop.util.LanguageTags;
 import org.apache.fop.util.XMLUtil;
 
 /**
@@ -153,23 +156,58 @@ public class IFParser implements IFConstants {
 
         private ContentHandler navParser;
 
-        private StructureTreeBuilder structureTreeBuilder;
-
-        private ContentHandler structureTreeBuilderWrapper;
+        private ContentHandler structureTreeHandler;
 
         private Attributes pageSequenceAttributes;
 
-        private final class StructureTreeBuilderWrapper extends DelegatingContentHandler {
+        private Map<String, StructureTreeElement> structureTreeElements
+                = new HashMap<String, StructureTreeElement>();
 
-            private StructureTreeBuilderWrapper()
-                    throws SAXException {
-                super(structureTreeBuilder.getHandlerForNextPageSequence());
+        private final class StructureTreeHandler extends DefaultHandler {
+
+            private final StructureTreeEventHandler structureTreeEventHandler;
+
+            private StructureTreeHandler(StructureTreeEventHandler structureTreeEventHandler,
+                    Locale pageSequenceLanguage) throws SAXException {
+                this.structureTreeEventHandler = structureTreeEventHandler;
+                structureTreeEventHandler.startPageSequence(pageSequenceLanguage);
             }
 
             public void endDocument() throws SAXException {
-                super.endDocument();
                 startIFElement(EL_PAGE_SEQUENCE, pageSequenceAttributes);
                 pageSequenceAttributes = null;
+            }
+
+            @Override
+            public void startElement(String uri, String localName, String qName,
+                    Attributes attributes) throws SAXException {
+                if (!"structure-tree".equals(localName)) {
+                    if (localName.equals("marked-content")) {
+                        localName = "#PCDATA";
+                    }
+                    String structID = attributes.getValue(InternalElementMapping.URI,
+                            InternalElementMapping.STRUCT_ID);
+                    if (structID == null) {
+                        structureTreeEventHandler.startNode(localName, attributes);
+                    } else if (localName.equals("external-graphic")
+                            || localName.equals("instream-foreign-object")) {
+                        StructureTreeElement structureTreeElement
+                                = structureTreeEventHandler.startImageNode(localName, attributes);
+                        structureTreeElements.put(structID, structureTreeElement);
+                    } else {
+                        StructureTreeElement structureTreeElement = structureTreeEventHandler
+                                    .startReferencedNode(localName, attributes);
+                        structureTreeElements.put(structID, structureTreeElement);
+                    }
+                }
+            }
+
+            @Override
+            public void endElement(String uri, String localName, String arqNameg2)
+                    throws SAXException {
+                if (!"structure-tree".equals(localName)) {
+                    structureTreeEventHandler.endNode(localName);
+                }
             }
         }
 
@@ -180,6 +218,7 @@ public class IFParser implements IFConstants {
             this.elementMappingRegistry = elementMappingRegistry;
             elementHandlers.put(EL_DOCUMENT, new DocumentHandler());
             elementHandlers.put(EL_HEADER, new DocumentHeaderHandler());
+            elementHandlers.put(EL_LOCALE, new LocaleHandler());
             elementHandlers.put(EL_TRAILER, new DocumentTrailerHandler());
             elementHandlers.put(EL_PAGE_SEQUENCE, new PageSequenceHandler());
             elementHandlers.put(EL_PAGE, new PageHandler());
@@ -197,11 +236,6 @@ public class IFParser implements IFConstants {
             elementHandlers.put(EL_LINE, new LineHandler());
             elementHandlers.put(EL_BORDER_RECT, new BorderRectHandler());
             elementHandlers.put(EL_IMAGE, new ImageHandler());
-
-            if (userAgent.isAccessibilityEnabled()) {
-                structureTreeBuilder = new StructureTreeBuilder(tFactory);
-                userAgent.setStructureTree(structureTreeBuilder.getStructureTree());
-            }
         }
 
         private void establishForeignAttributes(Map<QName, String> foreignAttributes) {
@@ -210,14 +244,6 @@ public class IFParser implements IFConstants {
 
         private void resetForeignAttributes() {
             documentHandler.getContext().resetForeignAttributes();
-        }
-
-        private void establishStructurePointer(String ptr) {
-            documentHandler.getContext().setStructurePointer(ptr);
-        }
-
-        private void resetStructurePointer() {
-            documentHandler.getContext().resetStructurePointer();
         }
 
         /** {@inheritDoc} */
@@ -231,10 +257,13 @@ public class IFParser implements IFConstants {
                 if (NAMESPACE.equals(uri)) {
                     if (localName.equals(EL_PAGE_SEQUENCE) && userAgent.isAccessibilityEnabled()) {
                         pageSequenceAttributes = new AttributesImpl(attributes);
-                        structureTreeBuilderWrapper = new StructureTreeBuilderWrapper();
+                        Locale language = getLanguage(attributes);
+                        structureTreeHandler = new StructureTreeHandler(
+                                userAgent.getStructureTreeEventHandler(), language);
+
                     } else if (localName.equals(EL_STRUCTURE_TREE)) {
                         if (userAgent.isAccessibilityEnabled()) {
-                            delegate = structureTreeBuilderWrapper;
+                            delegate = structureTreeHandler;
                         } else {
                             /* Delegate to a handler that does nothing */
                             delegate = new DefaultHandler();
@@ -260,7 +289,8 @@ public class IFParser implements IFConstants {
                 } else if (DocumentNavigationExtensionConstants.NAMESPACE.equals(uri)) {
                     if (this.navParser == null) {
                         this.navParser = new DocumentNavigationHandler(
-                                this.documentHandler.getDocumentNavigationHandler());
+                                this.documentHandler.getDocumentNavigationHandler(),
+                                        structureTreeElements);
                     }
                     delegate = this.navParser;
                     delegateDepth++;
@@ -297,6 +327,11 @@ public class IFParser implements IFConstants {
                     }
                 }
             }
+        }
+
+        private static Locale getLanguage(Attributes attributes) {
+            String xmllang = attributes.getValue(XML_NAMESPACE, "lang");
+            return (xmllang == null) ? null : LanguageTags.toLocale(xmllang);
         }
 
         private boolean startIFElement(String localName, Attributes attributes)
@@ -413,6 +448,12 @@ public class IFParser implements IFConstants {
 
         }
 
+        private class LocaleHandler extends AbstractElementHandler {
+            public void startElement(Attributes attributes) throws IFException {
+                documentHandler.setDocumentLocale(getLanguage(attributes));
+            }
+        }
+
         private class DocumentTrailerHandler extends AbstractElementHandler {
 
             public void startElement(Attributes attributes) throws IFException {
@@ -429,10 +470,9 @@ public class IFParser implements IFConstants {
 
             public void startElement(Attributes attributes) throws IFException {
                 String id = attributes.getValue("id");
-                String xmllang = attributes.getValue(XML_NAMESPACE, "lang");
-                if (xmllang != null) {
-                    documentHandler.getContext().setLanguage(
-                            XMLUtil.convertRFC3066ToLocale(xmllang));
+                Locale language = getLanguage(attributes);
+                if (language != null) {
+                    documentHandler.getContext().setLanguage(language);
                 }
                 Map<QName, String> foreignAttributes = getForeignAttributes(lastAttributes);
                 establishForeignAttributes(foreignAttributes);
@@ -578,9 +618,9 @@ public class IFParser implements IFConstants {
                 s = lastAttributes.getValue("word-spacing");
                 int wordSpacing = (s != null ? Integer.parseInt(s) : 0);
                 int[] dx = XMLUtil.getAttributeAsIntArray(lastAttributes, "dx");
-                setStructurePointer(lastAttributes);
+                establishStructureTreeElement(lastAttributes);
                 painter.drawText(x, y, letterSpacing, wordSpacing, dx, content.toString());
-                resetStructurePointer();
+                resetStructureTreeElement();
             }
 
             public boolean ignoreCharacters() {
@@ -675,7 +715,7 @@ public class IFParser implements IFConstants {
                 int height = Integer.parseInt(lastAttributes.getValue("height"));
                 Map<QName, String> foreignAttributes = getForeignAttributes(lastAttributes);
                 establishForeignAttributes(foreignAttributes);
-                setStructurePointer(lastAttributes);
+                establishStructureTreeElement(lastAttributes);
                 if (foreignObject != null) {
                     painter.drawImage(foreignObject,
                             new Rectangle(x, y, width, height));
@@ -689,7 +729,7 @@ public class IFParser implements IFConstants {
                     painter.drawImage(uri, new Rectangle(x, y, width, height));
                 }
                 resetForeignAttributes();
-                resetStructurePointer();
+                resetStructureTreeElement();
                 inForeignObject = false;
             }
 
@@ -743,11 +783,18 @@ public class IFParser implements IFConstants {
             return foreignAttributes;
         }
 
-        private void setStructurePointer(Attributes attributes) {
-            String ptr = attributes.getValue("ptr");
-            if (ptr != null && ptr.length() > 0) {
-                establishStructurePointer(ptr);
+        private void establishStructureTreeElement(Attributes attributes) {
+            String structRef = attributes.getValue(InternalElementMapping.URI,
+                    InternalElementMapping.STRUCT_REF);
+            if (structRef != null && structRef.length() > 0) {
+                assert structureTreeElements.containsKey(structRef);
+                StructureTreeElement structureTreeElement = structureTreeElements.get(structRef);
+                documentHandler.getContext().setStructureTreeElement(structureTreeElement);
             }
+        }
+
+        private void resetStructureTreeElement() {
+            documentHandler.getContext().resetStructureTreeElement();
         }
 
         /** {@inheritDoc} */

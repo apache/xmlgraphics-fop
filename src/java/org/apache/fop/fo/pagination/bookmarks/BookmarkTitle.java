@@ -21,17 +21,23 @@ package org.apache.fop.fo.pagination.bookmarks;
 
 import org.xml.sax.Locator;
 
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
+import org.apache.fop.fo.properties.CommonAccessibility;
+import org.apache.fop.fo.properties.CommonAccessibilityHolder;
 
 /**
  * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_bookmark-title">
  * <code>fo:bookmark-title</code></a> object, first introduced in the
  * XSL 1.1 WD.
  */
-public class BookmarkTitle extends FObj {
+public class BookmarkTitle extends FObj implements CommonAccessibilityHolder {
+
+    private CommonAccessibility commonAccessibility;
+
     private String title = "";
 
     /**
@@ -42,6 +48,12 @@ public class BookmarkTitle extends FObj {
      */
     public BookmarkTitle(FONode parent) {
         super(parent);
+    }
+
+    @Override
+    public void bind(PropertyList pList) throws FOPException {
+        super.bind(pList);
+        commonAccessibility = CommonAccessibility.getInstance(pList);
     }
 
     /**
@@ -70,6 +82,11 @@ public class BookmarkTitle extends FObj {
         if (FO_URI.equals(nsURI)) {
             invalidChildError(loc, nsURI, localName);
         }
+    }
+
+    /** {@inheritDoc} */
+    public CommonAccessibility getCommonAccessibility() {
+        return commonAccessibility;
     }
 
     /**

@@ -548,6 +548,7 @@ list of possible build targets.
 <!-- General classes -->
     <patternset>
       <include name="org/apache/fop/Version.class"/>
+      <include name="org/apache/fop/accessibility/StructureTreeElement.class"/>
       <include name="org/apache/fop/apps/Fop.class"/>
       <include name="org/apache/fop/apps/FOPException.class"/>
       <include name="org/apache/fop/fo/Constants.class"/>
@@ -705,6 +706,7 @@ list of possible build targets.
         <include name="**/*.xml"/>
         <include name="**/*.fo"/>
         <include name="**/*.afp"/>
+        <include name="**/*.xsl"/>
       </fileset>
       <fileset dir="${build.dir}/test-gensrc">
         <include name="**/*.xml"/>

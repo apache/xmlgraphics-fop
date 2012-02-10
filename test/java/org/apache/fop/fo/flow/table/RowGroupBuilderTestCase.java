@@ -35,10 +35,6 @@ import org.junit.Test;
  */
 public class RowGroupBuilderTestCase extends AbstractTableTest {
 
-    public RowGroupBuilderTestCase() throws Exception {
-        super();
-    }
-
     /**
      * Checks that the given table-body(header,footer) will return row groups as expected.
      * More precisely, checks that the number of row groups corresponds to the size of the

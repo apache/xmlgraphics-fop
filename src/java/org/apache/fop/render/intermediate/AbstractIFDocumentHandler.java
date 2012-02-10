@@ -19,6 +19,13 @@
 
 package org.apache.fop.render.intermediate;
 
+import java.util.Locale;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.apache.fop.accessibility.DummyStructureTreeEventHandler;
+import org.apache.fop.accessibility.StructureTreeEventHandler;
 import org.apache.fop.apps.FOUserAgent;
 
 /**
@@ -53,6 +60,11 @@ public abstract class AbstractIFDocumentHandler implements IFDocumentHandler {
     }
 
     /** {@inheritDoc} */
+    public StructureTreeEventHandler getStructureTreeEventHandler() {
+        return DummyStructureTreeEventHandler.INSTANCE;
+    }
+
+    /** {@inheritDoc} */
     public IFDocumentNavigationHandler getDocumentNavigationHandler() {
         return null; //By default, this is not supported
     }
@@ -63,6 +75,10 @@ public abstract class AbstractIFDocumentHandler implements IFDocumentHandler {
             throw new IllegalStateException(
                     "User agent must be set before starting document generation");
         }
+    }
+
+    /** {@inheritDoc} */
+    public void setDocumentLocale(Locale locale) {
     }
 
     /** {@inheritDoc} */
@@ -104,5 +120,4 @@ public abstract class AbstractIFDocumentHandler implements IFDocumentHandler {
     public void endPageTrailer() throws IFException {
         //nop
     }
-
 }

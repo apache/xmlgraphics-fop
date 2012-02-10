@@ -30,7 +30,6 @@ import org.apache.xmlgraphics.util.QName;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.properties.CommonAbsolutePosition;
-import org.apache.fop.fo.properties.CommonAccessibility;
 import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonFont;
@@ -598,15 +597,6 @@ public abstract class PropertyList {
      */
     public CommonMarginInline getMarginInlineProps() throws PropertyException {
         return new CommonMarginInline(this);
-    }
-
-    /**
-     * Constructs a CommonAccessibility object.
-     * @return the CommonAccessibility object
-     * @throws PropertyException if there's a problem while processing the properties
-     */
-    public CommonAccessibility getAccessibilityProps() throws PropertyException {
-        return new CommonAccessibility(this);
     }
 
     /**

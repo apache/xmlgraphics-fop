@@ -25,6 +25,8 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObjMixed;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.properties.CommonAccessibility;
+import org.apache.fop.fo.properties.CommonAccessibilityHolder;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonFont;
 import org.apache.fop.fo.properties.CommonMarginInline;
@@ -35,9 +37,10 @@ import org.apache.fop.fo.properties.SpaceProperty;
  * Class modelling the commonalities of several inline-level
  * formatting objects.
  */
-public abstract class InlineLevel extends FObjMixed {
+public abstract class InlineLevel extends FObjMixed implements CommonAccessibilityHolder {
 
     // The value of properties relevant for inline-level FOs.
+    private CommonAccessibility commonAccessibility;
     private CommonBorderPaddingBackground commonBorderPaddingBackground;
     private CommonMarginInline commonMarginInline;
     private CommonFont commonFont;
@@ -59,6 +62,7 @@ public abstract class InlineLevel extends FObjMixed {
     /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
+        commonAccessibility = CommonAccessibility.getInstance(pList);
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
         commonMarginInline = pList.getMarginInlineProps();
         commonFont = pList.getFontProps();
@@ -66,6 +70,11 @@ public abstract class InlineLevel extends FObjMixed {
         keepWithNext = pList.get(PR_KEEP_WITH_NEXT).getKeep();
         keepWithPrevious = pList.get(PR_KEEP_WITH_PREVIOUS).getKeep();
         lineHeight = pList.get(PR_LINE_HEIGHT).getSpace();
+    }
+
+    /** {@inheritDoc} */
+    public CommonAccessibility getCommonAccessibility() {
+        return commonAccessibility;
     }
 
     /** @return the {@link CommonMarginInline} */

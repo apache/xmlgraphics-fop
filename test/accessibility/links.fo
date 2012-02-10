@@ -17,14 +17,14 @@
 -->
 <!-- $Id$ -->
 <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" 
-  xmlns:fox="http://xmlgraphics.apache.org/fop/extensions">
+  xmlns:fox="http://xmlgraphics.apache.org/fop/extensions" language="en" country="GB">
   <fo:layout-master-set>
     <fo:simple-page-master master-name="page"
       page-height="220pt" page-width="320pt" margin="10pt">
       <fo:region-body/>
     </fo:simple-page-master>
   </fo:layout-master-set>
-  <fo:page-sequence master-reference="page" language="en" country="GB">
+  <fo:page-sequence master-reference="page">
     <fo:flow flow-name="xsl-region-body" hyphenate="true" text-align="justify">
       <fo:block>This is a <fo:wrapper color="blue"><fo:basic-link 
             internal-destination="FOP">link</fo:basic-link></fo:wrapper> to the next 

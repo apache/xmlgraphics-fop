@@ -25,6 +25,7 @@ import java.util.Map;
 
 import org.apache.xmlgraphics.util.QName;
 
+import org.apache.fop.accessibility.StructureTreeElement;
 import org.apache.fop.apps.FOUserAgent;
 
 /**
@@ -46,7 +47,7 @@ public class IFContext {
 
     private Locale language;
 
-    private String structurePointer;
+    private StructureTreeElement structureTreeElement;
 
     private String id = "";
 
@@ -132,29 +133,31 @@ public class IFContext {
     }
 
     /**
-     * Sets the structure pointer for the following painted marks. This method is used when
-     * accessibility features are enabled.
-     * @param ptr the structure pointer
+     * Sets the structure tree element to which the subsequently painted marks
+     * will correspond. This method is used when accessibility features are
+     * enabled.
+     *
+     * @param structureTreeElement the structure tree element
      */
-    public void setStructurePointer(String ptr) {
-        this.structurePointer = ptr;
+    public void setStructureTreeElement(StructureTreeElement structureTreeElement) {
+        this.structureTreeElement = structureTreeElement;
     }
 
     /**
-     * Resets the current structure pointer.
-     * @see #setStructurePointer(String)
+     * Resets the current structure tree element.
+     * @see #setStructureTreeElement(String)
      */
-    public void resetStructurePointer() {
-        setStructurePointer(null);
+    public void resetStructureTreeElement() {
+        setStructureTreeElement(null);
     }
 
     /**
-     * Returns the current structure pointer.
-     * @return the structure pointer (or null if no pointer is active)
-     * @see #setStructurePointer(String)
+     * Returns the current structure tree element.
+     * @return the structure tree element (or null if no element is active)
+     * @see #setStructureTreeElement(String)
      */
-    public String getStructurePointer() {
-        return this.structurePointer;
+    public StructureTreeElement getStructureTreeElement() {
+        return this.structureTreeElement;
     }
 
     /**

@@ -51,6 +51,18 @@ public class Wrapper extends FObjMixed {
         super(parent);
     }
 
+    @Override
+    protected void startOfNode() throws FOPException {
+        super.startOfNode();
+        getFOEventHandler().startWrapper(this);
+    }
+
+    @Override
+    protected void endOfNode() throws FOPException {
+        super.endOfNode();
+        getFOEventHandler().endWrapper(this);
+    }
+
     /**
      * {@inheritDoc}
      * <br>XSL Content Model: marker* (#PCDATA|%inline;|%block;)*

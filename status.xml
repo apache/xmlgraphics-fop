@@ -61,6 +61,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Code" dev="PH" type="add" due-to="VH and PH">
+        Improvements of the Accessibility feature
+      </action>
       <action context="Code" dev="CB" type="add" fixes-bug="52416" due-to="Luis Bernardo">
         Suppress unnecessary "font not found warnings" when generating AFP with raster fonts 
       </action>

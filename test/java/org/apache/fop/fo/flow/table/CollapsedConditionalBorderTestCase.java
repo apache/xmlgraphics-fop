@@ -25,10 +25,11 @@ import java.awt.Color;
 import java.util.Iterator;
 import java.util.List;
 
+import org.junit.Test;
+
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode.FONodeIterator;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground.BorderInfo;
-import org.junit.Test;
 
 /**
  * A testcase for the resolution of collapsed borders in the FO tree, taking
@@ -106,10 +107,6 @@ public class CollapsedConditionalBorderTestCase extends AbstractTableTest {
 {{border8pt, Color.black}, {border6pt, Color.blue}, {border8pt, Color.black}, {border6pt, Color.blue}, {border4pt, Color.black}, {border4pt, Color.black}, {border4pt, Color.red}, {border6pt, Color.black}, {border8pt, Color.magenta}, {border8pt, Color.magenta}, {border6pt, Color.black}, {border4pt, Color.blue}, {border4pt, Color.red}, {border8pt, Color.magenta}, {border8pt, Color.magenta}, {border8pt, Color.magenta}},
 {{border8pt, Color.black}, {border6pt, Color.blue}, {border8pt, Color.black}, {border6pt, Color.blue}, {border4pt, Color.black}, {border4pt, Color.black}, {border4pt, Color.red}, {border8pt, Color.black}, {border8pt, Color.black}, {border8pt, Color.black}, {border8pt, Color.black}, {border4pt, Color.blue}, {border4pt, Color.red}, {border6pt, Color.magenta}, {border6pt, Color.magenta}, {border6pt, Color.magenta}}
     };
-
-    public CollapsedConditionalBorderTestCase() throws Exception {
-        super();
-    }
 
     private static GridUnit getGridUnit(TablePart part) {
         return (GridUnit) ((List) ((List) part.getRowGroups().get(0)).get(0)).get(0);

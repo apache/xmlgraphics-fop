@@ -32,6 +32,8 @@ import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.StaticPropertyList;
 import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.BreakPropertySet;
+import org.apache.fop.fo.properties.CommonAccessibility;
+import org.apache.fop.fo.properties.CommonAccessibilityHolder;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.KeepProperty;
@@ -43,9 +45,11 @@ import org.apache.fop.fo.properties.TableColLength;
  * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_table">
  * <code>fo:table</code></a> object.
  */
-public class Table extends TableFObj implements ColumnNumberManagerHolder, BreakPropertySet {
+public class Table extends TableFObj implements ColumnNumberManagerHolder, BreakPropertySet,
+        CommonAccessibilityHolder {
 
     /** properties */
+    private CommonAccessibility commonAccessibility;
     private CommonBorderPaddingBackground commonBorderPaddingBackground;
     private CommonMarginBlock commonMarginBlock;
     private LengthRangeProperty blockProgressionDimension;
@@ -61,7 +65,6 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder, Break
     private int tableOmitFooterAtBreak;
     private int tableOmitHeaderAtBreak;
     // Unused but valid items, commented out for performance:
-    //     private CommonAccessibility commonAccessibility;
     //     private CommonAural commonAural;
     //     private CommonRelativePosition commonRelativePosition;
     //     private int intrusionDisplace;
@@ -112,6 +115,7 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder, Break
      */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
+        commonAccessibility = CommonAccessibility.getInstance(pList);
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
         commonMarginBlock = pList.getMarginBlockProps();
         blockProgressionDimension = pList.get(PR_BLOCK_PROGRESSION_DIMENSION).getLengthRange();
@@ -299,6 +303,11 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder, Break
                 columns.set(i, createImplicitColumn(i + 1));
             }
         }
+    }
+
+    /** {@inheritDoc} */
+    public CommonAccessibility getCommonAccessibility() {
+        return commonAccessibility;
     }
 
     /** {@inheritDoc} */

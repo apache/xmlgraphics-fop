@@ -50,6 +50,7 @@ import org.apache.xmlgraphics.xmp.schemas.XMPBasicAdapter;
 import org.apache.xmlgraphics.xmp.schemas.XMPBasicSchema;
 
 import org.apache.fop.Version;
+import org.apache.fop.accessibility.StructureTreeElement;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
@@ -231,7 +232,11 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
      */
     protected IFDocumentHandler createDefaultDocumentHandler() {
         IFSerializer serializer = new IFSerializer();
-        serializer.setContext(new IFContext(getUserAgent()));
+        FOUserAgent userAgent = getUserAgent();
+        serializer.setContext(new IFContext(userAgent));
+        if (userAgent.isAccessibilityEnabled()) {
+            userAgent.setStructureTreeEventHandler(serializer.getStructureTreeEventHandler());
+        }
         return serializer;
     }
 
@@ -296,6 +301,11 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         actionSet.clear();
         super.stopRenderer();
         log.debug("Rendering finished.");
+    }
+
+    @Override
+    public void setDocumentLocale(Locale locale) {
+        documentHandler.setDocumentLocale(locale);
     }
 
     /** {@inheritDoc} */
@@ -623,12 +633,12 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         documentHandler.getContext().resetForeignAttributes();
     }
 
-    private void establishStructurePointer(String ptr) {
-        documentHandler.getContext().setStructurePointer(ptr);
+    private void establishStructureTreeElement(StructureTreeElement structureTreeElement) {
+        documentHandler.getContext().setStructureTreeElement(structureTreeElement);
     }
 
     private void resetStructurePointer() {
-        documentHandler.getContext().resetStructurePointer();
+        documentHandler.getContext().resetStructureTreeElement();
     }
 
     /** {@inheritDoc} */
@@ -845,8 +855,9 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
 
     /** {@inheritDoc} */
     public void renderInlineViewport(InlineViewport viewport) {
-        String ptr = (String) viewport.getTrait(Trait.PTR);
-        establishStructurePointer(ptr);
+        StructureTreeElement structElem
+                = (StructureTreeElement) viewport.getTrait(Trait.STRUCTURE_TREE_ELEMENT);
+        establishStructureTreeElement(structElem);
         pushdID(viewport);
         Dimension dim = new Dimension(viewport.getIPD(), viewport.getBPD());
         viewportDimensionStack.push(dim);
@@ -906,7 +917,6 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         // stuff we only need if a link must be created:
         Rectangle ipRect = null;
         AbstractAction action = null;
-        String ptr = (String) ip.getTrait(Trait.PTR); // used for accessibility
         // make sure the rect is determined *before* calling super!
         int ipp = currentIPPosition;
         int bpp = currentBPPosition + ip.getOffset();
@@ -950,7 +960,9 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
 
         // warn if link trait found but not allowed, else create link
         if (linkTraitFound) {
-            action.setStructurePointer(ptr);  // used for accessibility
+            StructureTreeElement structElem 
+                    = (StructureTreeElement) ip.getTrait(Trait.STRUCTURE_TREE_ELEMENT);
+            action.setStructureTreeElement(structElem);
             Link link = new Link(action, ipRect);
             this.deferredLinks.add(link);
         }
@@ -1003,8 +1015,9 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
 
         String fontName = getInternalFontNameForArea(text);
         int size = ((Integer) text.getTrait(Trait.FONT_SIZE)).intValue();
-        String ptr = (String)text.getTrait(Trait.PTR); // used for accessibility
-        establishStructurePointer(ptr);
+        StructureTreeElement structElem
+                = (StructureTreeElement) text.getTrait(Trait.STRUCTURE_TREE_ELEMENT);
+        establishStructureTreeElement(structElem);
 
         // This assumes that *all* CIDFonts use a /ToUnicode mapping
         Typeface tf = getTypeface(fontName);
