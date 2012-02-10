@@ -19,33 +19,37 @@
 
 package org.apache.fop.fo.flow.table;
 
+import java.io.FileInputStream;
 import java.util.Iterator;
 
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.fo.FODocumentParser;
 import org.apache.fop.fo.FOEventHandler;
-import org.apache.fop.fotreetest.FOTreeUnitTester;
+import org.apache.fop.fo.FODocumentParser.FOEventHandlerFactory;
+import org.apache.fop.util.ConsoleEventListenerForTests;
 
 /**
  * Superclass for testcases related to tables, factoring the common stuff.
  */
-abstract class AbstractTableTest extends FOTreeUnitTester {
+abstract class AbstractTableTest {
 
-    private FOTreeUnitTester.FOEventHandlerFactory tableHandlerFactory;
+    private FODocumentParser documentParser;
 
     private TableHandler tableHandler;
 
-    public AbstractTableTest() throws Exception {
-        super();
-        tableHandlerFactory = new FOEventHandlerFactory() {
-            public FOEventHandler createFOEventHandler(FOUserAgent foUserAgent) {
+    protected void setUp(String filename) throws Exception {
+        createDocumentParser();
+        documentParser.setEventListener(new ConsoleEventListenerForTests(filename));
+        documentParser.parse(new FileInputStream("test/fotree/unittests/" + filename));
+    }
+
+    private void createDocumentParser() {
+        documentParser = FODocumentParser.newInstance(new FOEventHandlerFactory() {
+            public FOEventHandler newFOEventHandler(FOUserAgent foUserAgent) {
                 tableHandler = new TableHandler(foUserAgent);
                 return tableHandler;
             }
-        };
-    }
-
-    protected void setUp(String filename) throws Exception {
-        setUp(filename, tableHandlerFactory);
+        });
     }
 
     protected TableHandler getTableHandler() {

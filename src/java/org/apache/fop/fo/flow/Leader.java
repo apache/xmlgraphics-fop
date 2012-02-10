@@ -158,4 +158,16 @@ public class Leader extends InlineLevel {
     public int getNameId() {
         return FO_LEADER;
     }
+
+    @Override
+    protected void startOfNode() throws FOPException {
+        super.startOfNode();
+        getFOEventHandler().startLeader(this);
+    }
+
+    @Override
+    protected void endOfNode() throws FOPException {
+        super.endOfNode();
+        getFOEventHandler().endLeader(this);
+    }
 }

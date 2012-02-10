@@ -937,10 +937,10 @@ public class RTFHandler extends FOEventHandler {
              */
             //TODO: do this only, if the labels content <> previous labels content
             if (list.getChildCount() > 0) {
-                this.endListBody();
+                this.endListBody(null);
                 this.endList((ListBlock) li.getParent());
                 this.startList((ListBlock) li.getParent());
-                this.startListBody();
+                this.startListBody(null);
 
                 list = (RtfList)builderContext.getContainer(
                         RtfList.class, true, this);
@@ -965,7 +965,7 @@ public class RTFHandler extends FOEventHandler {
     }
 
     /** {@inheritDoc} */
-    public void startListLabel() {
+    public void startListLabel(ListItemLabel listItemLabel) {
         if (bDefer) {
             return;
         }
@@ -985,7 +985,7 @@ public class RTFHandler extends FOEventHandler {
     }
 
     /** {@inheritDoc} */
-    public void endListLabel() {
+    public void endListLabel(ListItemLabel listItemLabel) {
         if (bDefer) {
             return;
         }
@@ -994,20 +994,20 @@ public class RTFHandler extends FOEventHandler {
     }
 
     /** {@inheritDoc} */
-    public void startListBody() {
+    public void startListBody(ListItemBody listItemBody) {
     }
 
     /** {@inheritDoc} */
-    public void endListBody() {
+    public void endListBody(ListItemBody listItemBody) {
     }
 
     // Static Regions
     /** {@inheritDoc} */
-    public void startStatic() {
+    public void startStatic(StaticContent staticContent) {
     }
 
     /** {@inheritDoc} */
-    public void endStatic() {
+    public void endStatic(StaticContent statisContent) {
     }
 
     /** {@inheritDoc} */
@@ -1050,7 +1050,7 @@ public class RTFHandler extends FOEventHandler {
     }
 
     /** {@inheritDoc} */
-    public void endLink() {
+    public void endLink(BasicLink basicLink) {
         if (bDefer) {
             return;
         }
@@ -1090,7 +1090,7 @@ public class RTFHandler extends FOEventHandler {
     }
 
     /** {@inheritDoc} */
-    public void foreignObject(InstreamForeignObject ifo) {
+    public void endInstreamForeignObject(InstreamForeignObject ifo) {
         if (bDefer) {
             return;
         }
@@ -1337,7 +1337,7 @@ public class RTFHandler extends FOEventHandler {
     }
 
     /** {@inheritDoc} */
-    public void leader(Leader l) {
+    public void startLeader(Leader l) {
         if (bDefer) {
             return;
         }
@@ -1353,8 +1353,10 @@ public class RTFHandler extends FOEventHandler {
             RtfTextrun textrun = container.getTextrun();
 
             textrun.addLeader(rtfAttr);
-
-        } catch (Exception e) {
+        } catch (IOException e) {
+            log.error("startLeader: " + e.getMessage());
+            throw new RuntimeException(e.getMessage());
+        } catch (FOPException e) {
             log.error("startLeader: " + e.getMessage());
             throw new RuntimeException(e.getMessage());
         }
@@ -1362,11 +1364,9 @@ public class RTFHandler extends FOEventHandler {
 
     /**
      * @param text FOText object
-     * @param data Array of characters to process.
-     * @param start Offset for characters to process.
-     * @param length Portion of array to process.
+     * @param characters CharSequence of the characters to process.
      */
-    public void text(FOText text, char[] data, int start, int length) {
+    public void text(FOText text, CharSequence characters) {
         if (bDefer) {
             return;
         }
@@ -1381,7 +1381,7 @@ public class RTFHandler extends FOEventHandler {
                 = TextAttributesConverter.convertCharacterAttributes(text);
 
             textrun.pushInlineAttributes(rtfAttr);
-            textrun.addString(new String(data, start, length - start));
+            textrun.addString(characters.toString());
             textrun.popInlineAttributes();
         } catch (IOException ioe) {
             handleIOTrouble(ioe);
@@ -1518,9 +1518,9 @@ public class RTFHandler extends FOEventHandler {
             }
         } else if (foNode instanceof StaticContent) {
             if (bStart) {
-                startStatic();
+                startStatic(null);
             } else {
-                endStatic();
+                endStatic(null);
             }
         } else if (foNode instanceof ExternalGraphic) {
             if (bStart) {
@@ -1528,7 +1528,7 @@ public class RTFHandler extends FOEventHandler {
             }
         } else if (foNode instanceof InstreamForeignObject) {
             if (bStart) {
-                foreignObject( (InstreamForeignObject) foNode );
+                endInstreamForeignObject( (InstreamForeignObject) foNode );
             }
         } else if (foNode instanceof Block) {
             if (bStart) {
@@ -1547,7 +1547,7 @@ public class RTFHandler extends FOEventHandler {
             if (bStart) {
                 startLink( (BasicLink) foNode);
             } else {
-                endLink();
+                endLink(null);
             }
         } else if (foNode instanceof Inline) {
             if (bStart) {
@@ -1558,7 +1558,7 @@ public class RTFHandler extends FOEventHandler {
         } else if (foNode instanceof FOText) {
             if (bStart) {
                 FOText text = (FOText) foNode;
-                text(text, text.getCharArray(), 0, text.length());
+                text(text, text.getCharSequence());
             }
         } else if (foNode instanceof Character) {
             if (bStart) {
@@ -1591,9 +1591,9 @@ public class RTFHandler extends FOEventHandler {
             }
         } else if (foNode instanceof ListItemBody) {
             if (bStart) {
-                startListBody();
+                startListBody(null);
             } else {
-                endListBody();
+                endListBody(null);
             }
         } else if (foNode instanceof ListItem) {
             if (bStart) {
@@ -1603,9 +1603,9 @@ public class RTFHandler extends FOEventHandler {
             }
         } else if (foNode instanceof ListItemLabel) {
             if (bStart) {
-                startListLabel();
+                startListLabel(null);
             } else {
-                endListLabel();
+                endListLabel(null);
             }
         } else if (foNode instanceof Table) {
             if (bStart) {
@@ -1651,7 +1651,7 @@ public class RTFHandler extends FOEventHandler {
             }
         } else if (foNode instanceof Leader) {
             if (bStart) {
-                leader((Leader) foNode);
+                startLeader((Leader) foNode);
             }
         } else if (foNode instanceof PageNumberCitation) {
             if (bStart) {

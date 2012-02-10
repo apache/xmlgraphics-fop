@@ -76,7 +76,8 @@ import org.apache.fop.pdf.PDFLibraryTestSuite;
         MinOptMaxTestCase.class,
         AdobeStandardEncodingTestCase.class,
         AFMParserTestCase.class,
-        FontEventProcessingTestCase.class
+        FontEventProcessingTestCase.class,
+        org.apache.fop.render.intermediate.IFStructureTreeBuilderTestCase.class
 })
 public class StandardTestSuite {
 }

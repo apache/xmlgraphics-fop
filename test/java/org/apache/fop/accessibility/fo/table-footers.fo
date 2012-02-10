@@ -1,0 +1,195 @@
+<?xml version="1.0" standalone="no"?>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="page"
+      page-height="440pt" page-width="420pt" margin="10pt">
+      <fo:region-body display-align="center"/>
+    </fo:simple-page-master>
+  </fo:layout-master-set>
+  <fo:page-sequence master-reference="page">
+    <fo:flow flow-name="xsl-region-body" line-height="10pt" font-size="8pt">
+      <fo:table width="100% - 6pt" table-layout="fixed"
+        border-collapse="separate" border="2pt solid black" border-separation="2pt" padding="1pt"
+        start-indent="3pt" end-indent="3pt" space-after="2pt">
+        <fo:table-header start-indent="0" end-indent="0">
+          <fo:table-cell background-color="#E0E0E0" padding="2pt">
+            <fo:block>Start Outer Header</fo:block>
+            <fo:table width="100% - 6pt" table-layout="fixed"
+              border="2pt solid red" padding="1pt"
+              start-indent="3pt" end-indent="3pt" space-after="2pt">
+              <fo:table-header start-indent="0" end-indent="0">
+                <fo:table-cell background-color="#FFB0B0" padding="2pt">
+                  <fo:block>Inner Header 1.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell background-color="#FFB0B0" padding="2pt">
+                  <fo:block>Inner Header 1.2</fo:block>
+                </fo:table-cell>
+              </fo:table-header>
+              <fo:table-footer start-indent="0" end-indent="0">
+                <fo:table-cell background-color="#FFB0B0" padding="2pt">
+                  <fo:block>Inner Footer 1.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell background-color="#FFB0B0" padding="2pt">
+                  <fo:block>Inner Footer 1.2</fo:block>
+                </fo:table-cell>
+              </fo:table-footer>
+              <fo:table-body start-indent="0" end-indent="0">
+                <fo:table-row>
+                  <fo:table-cell background-color="#FFB0B0" padding="2pt">
+                    <fo:block>Inner Body 1.1</fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell background-color="#FFB0B0" padding="2pt">
+                    <fo:block>Inner Body 1.2</fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+                <fo:table-row>
+                  <fo:table-cell background-color="#FFB0B0" padding="2pt">
+                    <fo:block>Inner Body 2.1</fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell background-color="#FFB0B0" padding="2pt">
+                    <fo:block>Inner Body 2.2</fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+              </fo:table-body>
+            </fo:table>
+            <fo:block>End Outer Header</fo:block>
+          </fo:table-cell>
+        </fo:table-header>
+        <fo:table-footer start-indent="0" end-indent="0">
+          <fo:table-cell background-color="#E0E0E0" padding="2pt">
+            <fo:block>Start Outer Footer</fo:block>
+            <fo:table width="100% - 6pt" table-layout="fixed"
+              border="2pt solid green" padding="1pt"
+              start-indent="3pt" end-indent="3pt" space-after="2pt">
+              <fo:table-header start-indent="0" end-indent="0">
+                <fo:table-cell background-color="lightgreen" padding="2pt">
+                  <fo:block>Inner Header 1.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell background-color="lightgreen" padding="2pt">
+                  <fo:block>Inner Header 1.2</fo:block>
+                </fo:table-cell>
+              </fo:table-header>
+              <fo:table-footer start-indent="0" end-indent="0">
+                <fo:table-cell background-color="lightgreen" padding="2pt">
+                  <fo:block>Start Inner Footer 1.1</fo:block>
+                  <fo:table width="100% - 6pt" table-layout="fixed"
+                    border="2pt solid yellow" padding="1pt"
+                    start-indent="3pt" end-indent="3pt" space-after="2pt">
+                    <fo:table-header start-indent="0" end-indent="0">
+                      <fo:table-cell background-color="yellow" padding="2pt">
+                        <fo:block>Inner Inner Header 1.1</fo:block>
+                      </fo:table-cell>
+                      <fo:table-cell background-color="yellow" padding="2pt">
+                        <fo:block>Inner Inner Header 1.2</fo:block>
+                      </fo:table-cell>
+                    </fo:table-header>
+                    <fo:table-footer start-indent="0" end-indent="0">
+                      <fo:table-cell background-color="yellow" padding="2pt">
+                        <fo:block>Inner Inner Footer 1.1</fo:block>
+                      </fo:table-cell>
+                      <fo:table-cell background-color="yellow" padding="2pt">
+                        <fo:block>Inner Inner Footer 1.2</fo:block>
+                      </fo:table-cell>
+                    </fo:table-footer>
+                    <fo:table-body start-indent="0" end-indent="0">
+                      <fo:table-row>
+                        <fo:table-cell background-color="yellow" padding="2pt">
+                          <fo:block>Inner Inner Body 1.1</fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell background-color="yellow" padding="2pt">
+                          <fo:block>Inner Inner Body 1.2</fo:block>
+                        </fo:table-cell>
+                      </fo:table-row>
+                      <fo:table-row>
+                        <fo:table-cell background-color="yellow" padding="2pt">
+                          <fo:block>Inner Inner Body 2.1</fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell background-color="yellow" padding="2pt">
+                          <fo:block>Inner Inner Body 2.2</fo:block>
+                        </fo:table-cell>
+                      </fo:table-row>
+                    </fo:table-body>
+                  </fo:table>
+                  <fo:block>End Inner Footer 1.1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell background-color="lightgreen" padding="2pt">
+                  <fo:block>Inner Footer 1.2</fo:block>
+                </fo:table-cell>
+              </fo:table-footer>
+              <fo:table-body start-indent="0" end-indent="0">
+                <fo:table-row>
+                  <fo:table-cell background-color="lightgreen" padding="2pt">
+                    <fo:block>Inner Body 1.1</fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell background-color="lightgreen" padding="2pt">
+                    <fo:block>Inner Body 1.2</fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+                <fo:table-row>
+                  <fo:table-cell background-color="lightgreen" padding="2pt">
+                    <fo:block>Inner Body 2.1</fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell background-color="lightgreen" padding="2pt">
+                    <fo:block>Inner Body 2.2</fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+              </fo:table-body>
+            </fo:table>
+            <fo:block>End Outer Footer</fo:block>
+          </fo:table-cell>
+        </fo:table-footer>
+        <fo:table-body start-indent="0" end-indent="0">
+          <fo:table-row>
+            <fo:table-cell background-color="#E0E0E0" padding="2pt">
+              <fo:block>Outer Body Cell 1</fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+          <fo:table-row>
+            <fo:table-cell background-color="#E0E0E0" padding="2pt">
+              <fo:block>Start Outer Body Cell 2</fo:block>
+              <fo:table width="100% - 6pt" table-layout="fixed"
+                border="2pt solid blue" padding="1pt"
+                start-indent="3pt" end-indent="3pt" space-after="2pt">
+                <fo:table-header start-indent="0" end-indent="0">
+                  <fo:table-cell background-color="lightblue" padding="2pt">
+                    <fo:block>Inner Footer 1.1</fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell background-color="lightblue" padding="2pt">
+                    <fo:block>Inner Footer 1.2</fo:block>
+                  </fo:table-cell>
+                </fo:table-header>
+                <fo:table-footer start-indent="0" end-indent="0">
+                  <fo:table-cell background-color="lightblue" padding="2pt">
+                    <fo:block>Inner Header 1.1</fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell background-color="lightblue" padding="2pt">
+                    <fo:block>Inner Header 1.2</fo:block>
+                  </fo:table-cell>
+                </fo:table-footer>
+                <fo:table-body start-indent="0" end-indent="0">
+                  <fo:table-row>
+                    <fo:table-cell background-color="lightblue" padding="2pt">
+                      <fo:block>Inner Body 1.1</fo:block>
+                    </fo:table-cell>
+                    <fo:table-cell background-color="lightblue" padding="2pt">
+                      <fo:block>Inner Body 1.2</fo:block>
+                    </fo:table-cell>
+                  </fo:table-row>
+                  <fo:table-row>
+                    <fo:table-cell background-color="lightblue" padding="2pt">
+                      <fo:block>Inner Body 2.1</fo:block>
+                    </fo:table-cell>
+                    <fo:table-cell background-color="lightblue" padding="2pt">
+                      <fo:block>Inner Body 2.2</fo:block>
+                    </fo:table-cell>
+                  </fo:table-row>
+                </fo:table-body>
+              </fo:table>
+              <fo:block>End Outer Body Cell 2</fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+        </fo:table-body>
+      </fo:table>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>

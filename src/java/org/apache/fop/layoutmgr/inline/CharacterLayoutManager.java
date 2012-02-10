@@ -87,7 +87,7 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
         }
         TraitSetter.setProducerID(text, node.getId());
         TraitSetter.addTextDecoration(text, node.getTextDecoration());
-        TraitSetter.addPtr(text, node.getPtr()); // used for accessibility
+        TraitSetter.addStructureTreeElement(text, node.getStructureTreeElement());
         return text;
     }
 

@@ -19,8 +19,10 @@
 
 package org.apache.fop.fo.flow.table;
 
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import org.apache.fop.fo.LoadingException;
 import org.apache.fop.fo.ValidationException;
 
 /**
@@ -28,16 +30,13 @@ import org.apache.fop.fo.ValidationException;
  */
 abstract class ErrorCheckTest extends AbstractTableTest {
 
-    public ErrorCheckTest() throws Exception {
-        super();
-    }
-
     protected void launchTest(String filename) throws Exception {
         try {
             setUp(filename);
-            fail();
-        } catch (ValidationException e) {
+            fail("Expected ValidationException to be thrown");
+        } catch (LoadingException e) {
             // TODO check location
+            assertTrue(e.getCause() instanceof ValidationException);
         }
     }
 

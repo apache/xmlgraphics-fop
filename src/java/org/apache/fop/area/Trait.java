@@ -153,8 +153,8 @@ public final class Trait implements Serializable {
     /** Trait for color of linethrough decorations when rendering inline parent. */
     public static final Integer LINETHROUGH_COLOR = 36;
 
-    /** The ptr trait. Used for accessibility   */
-    public static final Integer PTR = 37;
+    /** For navigation in the document structure. */
+    public static final Integer STRUCTURE_TREE_ELEMENT = 37;
 
     /** Maximum value used by trait keys */
     public static final int MAX_TRAIT_KEY = 37;
@@ -186,7 +186,7 @@ public final class Trait implements Serializable {
     static {
         // Create a hashmap mapping trait code to name for external representation
         //put(ID_LINK, new TraitInfo("id-link", String.class));
-        put(PTR,            new TraitInfo("ptr", String.class));
+        put(STRUCTURE_TREE_ELEMENT, new TraitInfo("structure-tree-element", String.class));
         put(INTERNAL_LINK,  new TraitInfo("internal-link", InternalLink.class));
         put(EXTERNAL_LINK,  new TraitInfo("external-link", ExternalLink.class));
         put(FONT,           new TraitInfo("font", FontTriplet.class));

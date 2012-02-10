@@ -59,6 +59,12 @@ public class InstreamForeignObject extends AbstractGraphics {
         super(parent);
     }
 
+    @Override
+    protected void startOfNode() throws FOPException {
+        super.startOfNode();
+        getFOEventHandler().startInstreamForeignObject(this);
+    }
+
     /**
      * Make sure content model satisfied, if so then tell the
      * {@link org.apache.fop.fo.FOEventHandler} that we are at
@@ -69,7 +75,7 @@ public class InstreamForeignObject extends AbstractGraphics {
         if (firstChild == null) {
             missingChildElementError("one (1) non-XSL namespace child");
         }
-        getFOEventHandler().foreignObject(this);
+        getFOEventHandler().endInstreamForeignObject(this);
     }
 
     /**

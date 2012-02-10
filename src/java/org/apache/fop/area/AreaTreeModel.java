@@ -21,6 +21,7 @@ package org.apache.fop.area;
 
 // Java
 import java.util.List;
+import java.util.Locale;
 
 import org.xml.sax.SAXException;
 
@@ -122,5 +123,12 @@ public class AreaTreeModel {
      */
     public PageViewport getPage(int seq, int count) {
         return pageSequenceList.get(seq - 1).getPage(count);
+    }
+
+    /**
+     *
+     * @param locale The locale of the document
+     */
+    public void setDocumentLocale(Locale locale) {
     }
 }

@@ -37,6 +37,9 @@ public class ExtensionElementMapping extends ElementMapping {
     /** The FOP extension namespace URI */
     public static final String URI = "http://xmlgraphics.apache.org/fop/extensions";
 
+    /** The standard XML prefix for elements and attributes in this namespace. */
+    public static final String STANDARD_PREFIX = "fox";
+
     private static final Set<String> PROPERTY_ATTRIBUTES
         = new java.util.HashSet<String>();
 
@@ -85,7 +88,7 @@ public class ExtensionElementMapping extends ElementMapping {
 
     /** {@inheritDoc} */
     public String getStandardPrefix() {
-        return "fox";
+        return STANDARD_PREFIX;
     }
 
     /** {@inheritDoc} */

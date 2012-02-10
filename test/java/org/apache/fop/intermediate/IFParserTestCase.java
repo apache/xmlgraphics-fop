@@ -48,6 +48,9 @@ import org.apache.fop.render.intermediate.IFSerializer;
 @RunWith(Parameterized.class)
 public class IFParserTestCase extends AbstractIFTest {
 
+    /** Set this to true to get the correspondence between test number and test file. */
+    private static final boolean DEBUG = false;
+
     /**
      * Gets the parameters for this test
      *
@@ -56,7 +59,19 @@ public class IFParserTestCase extends AbstractIFTest {
      */
     @Parameters
     public static Collection<File[]> getParameters() throws IOException {
-        return LayoutEngineTestUtils.getLayoutTestFiles();
+        Collection<File[]> testFiles = LayoutEngineTestUtils.getLayoutTestFiles();
+        if (DEBUG) {
+            printFiles(testFiles);
+        }
+        return testFiles;
+    }
+
+    private static void printFiles(Collection<File[]> files) {
+        int index = 0;
+        for (File[] file : files) {
+            assert file.length == 1;
+            System.out.println(String.format("%3d %s", index++, file[0]));
+        }
     }
 
     /**

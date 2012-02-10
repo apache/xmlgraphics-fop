@@ -21,6 +21,7 @@ package org.apache.fop.render.intermediate.extensions;
 
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.util.Map;
 import java.util.Stack;
 
 import org.xml.sax.Attributes;
@@ -30,6 +31,8 @@ import org.xml.sax.helpers.DefaultHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.fop.accessibility.StructureTreeElement;
+import org.apache.fop.fo.extensions.InternalElementMapping;
 import org.apache.fop.render.intermediate.IFDocumentNavigationHandler;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.util.XMLUtil;
@@ -48,14 +51,20 @@ public class DocumentNavigationHandler extends DefaultHandler
 
     private IFDocumentNavigationHandler navHandler;
 
-    private String structurePointer;
+    private StructureTreeElement structureTreeElement;
+
+    private Map<String, StructureTreeElement> structureTreeElements;
 
     /**
      * Main constructor.
      * @param navHandler the navigation handler that will receive the events
+     * @param structureTreeElements the elements representing the structure of the document
      */
-    public DocumentNavigationHandler(IFDocumentNavigationHandler navHandler) {
+    public DocumentNavigationHandler(IFDocumentNavigationHandler navHandler,
+            Map<String, StructureTreeElement> structureTreeElements) {
         this.navHandler = navHandler;
+        assert structureTreeElements != null;
+        this.structureTreeElements = structureTreeElements;
     }
 
     /** {@inheritDoc} */
@@ -98,7 +107,8 @@ public class DocumentNavigationHandler extends DefaultHandler
                     throw new SAXException(localName + " must be the root element!");
                 }
                 Rectangle targetRect = XMLUtil.getAttributeAsRectangle(attributes, "rect");
-                structurePointer = attributes.getValue("ptr");
+                structureTreeElement = structureTreeElements.get(attributes.getValue(
+                        InternalElementMapping.URI, InternalElementMapping.STRUCT_REF));
                 Link link = new Link(null, targetRect);
                 objectStack.push(link);
             } else if (GOTO_XY.getLocalName().equals(localName)) {
@@ -121,8 +131,8 @@ public class DocumentNavigationHandler extends DefaultHandler
                     }
                     action = new GoToXYAction(id, pageIndex, location);
                 }
-                if (structurePointer != null) {
-                    action.setStructurePointer(structurePointer);
+                if (structureTreeElement != null) {
+                    action.setStructureTreeElement(structureTreeElement);
                 }
                 objectStack.push(action);
             } else if (GOTO_URI.getLocalName().equals(localName)) {
@@ -134,8 +144,8 @@ public class DocumentNavigationHandler extends DefaultHandler
                 if (id != null) {
                     action.setID(id);
                 }
-                if (structurePointer != null) {
-                    action.setStructurePointer(structurePointer);
+                if (structureTreeElement != null) {
+                    action.setStructureTreeElement(structureTreeElement);
                 }
                 objectStack.push(action);
             } else {

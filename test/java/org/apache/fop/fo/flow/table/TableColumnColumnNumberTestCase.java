@@ -23,9 +23,10 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Iterator;
 
+import org.junit.Test;
+
 import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.FObj;
-import org.junit.Test;
 
 
 public class TableColumnColumnNumberTestCase extends AbstractTableTest {
@@ -49,10 +50,6 @@ public class TableColumnColumnNumberTestCase extends AbstractTableTest {
     }
 
     private TablePercentBaseContext percentBaseContext = new TablePercentBaseContext();
-
-    public TableColumnColumnNumberTestCase() throws Exception {
-        super();
-    }
 
     private void checkColumn(Table t, int number, boolean isImplicit, int spans, int repeated, int width) {
         TableColumn c = t.getColumn(number - 1);

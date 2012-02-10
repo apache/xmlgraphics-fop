@@ -27,19 +27,22 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
+import org.apache.fop.fo.properties.CommonAccessibility;
+import org.apache.fop.fo.properties.CommonAccessibilityHolder;
 import org.apache.fop.fo.properties.SpaceProperty;
 
 /**
  * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_initial-property-set">
  * <code>fo:initial-property-set</code></a> object.
  */
-public class InitialPropertySet extends FObj {
-    // The value of properties relevant for fo:initial-property-set.
+public class InitialPropertySet extends FObj implements CommonAccessibilityHolder {
+
+    private CommonAccessibility commonAccessibility;
+
     // private ToBeImplementedProperty letterSpacing;
     private SpaceProperty lineHeight;
     // private ToBeImplementedProperty textShadow;
     // Unused but valid items, commented out for performance:
-    //     private CommonAccessibility commonAccessibility;
     //     private CommonAural commonAural;
     //     private CommonBorderPaddingBackground commonBorderPaddingBackground;
     //     private CommonFont commonFont;
@@ -63,6 +66,7 @@ public class InitialPropertySet extends FObj {
     /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
+        commonAccessibility = CommonAccessibility.getInstance(pList);
         // letterSpacing = pList.get(PR_LETTER_SPACING);
         lineHeight = pList.get(PR_LINE_HEIGHT).getSpace();
         // textShadow = pList.get(PR_TEXT_SHADOW);
@@ -96,4 +100,10 @@ public class InitialPropertySet extends FObj {
     public int getNameId() {
         return FO_INITIAL_PROPERTY_SET;
     }
+
+    /** {@inheritDoc} */
+    public CommonAccessibility getCommonAccessibility() {
+        return commonAccessibility;
+    }
+
 }

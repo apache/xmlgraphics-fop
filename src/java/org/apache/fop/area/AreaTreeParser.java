@@ -58,8 +58,6 @@ import org.apache.xmlgraphics.image.loader.ImageSessionContext;
 import org.apache.xmlgraphics.util.QName;
 
 import org.apache.fop.ResourceEventProducer;
-import org.apache.fop.accessibility.AccessibilityEventProducer;
-import org.apache.fop.accessibility.StructureTreeBuilder;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.area.Trait.Background;
 import org.apache.fop.area.Trait.InternalLink;
@@ -69,11 +67,11 @@ import org.apache.fop.area.inline.Image;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.InlineBlockParent;
 import org.apache.fop.area.inline.InlineParent;
+import org.apache.fop.area.inline.InlineViewport;
 import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.Space;
 import org.apache.fop.area.inline.SpaceArea;
 import org.apache.fop.area.inline.TextArea;
-import org.apache.fop.area.inline.InlineViewport;
 import org.apache.fop.area.inline.WordArea;
 import org.apache.fop.fo.ElementMappingRegistry;
 import org.apache.fop.fo.expr.PropertyException;
@@ -86,7 +84,6 @@ import org.apache.fop.util.ContentHandlerFactory;
 import org.apache.fop.util.ContentHandlerFactoryRegistry;
 import org.apache.fop.util.ConversionUtils;
 import org.apache.fop.util.DefaultErrorListener;
-import org.apache.fop.util.DelegatingContentHandler;
 import org.apache.fop.util.XMLConstants;
 import org.apache.fop.util.XMLUtil;
 
@@ -166,27 +163,6 @@ public class AreaTreeParser {
         private DOMImplementation domImplementation;
         private Locator locator;
 
-
-        private StructureTreeBuilder structureTreeBuilder;
-
-        private ContentHandler structureTreeBuilderWrapper;
-
-        private Attributes pageSequenceAttributes;
-
-        private final class StructureTreeBuilderWrapper extends DelegatingContentHandler {
-
-            private StructureTreeBuilderWrapper()
-                    throws SAXException {
-                super(structureTreeBuilder.getHandlerForNextPageSequence());
-            }
-
-            public void endDocument() throws SAXException {
-                super.endDocument();
-                startAreaTreeElement("pageSequence", pageSequenceAttributes);
-                pageSequenceAttributes = null;
-            }
-        }
-
         public Handler(AreaTreeModel treeModel, FOUserAgent userAgent,
                 ElementMappingRegistry elementMappingRegistry) {
             this.treeModel = treeModel;
@@ -223,11 +199,6 @@ public class AreaTreeParser {
             makers.put("bookmarkTree", new BookmarkTreeMaker());
             makers.put("bookmark", new BookmarkMaker());
             makers.put("destination", new DestinationMaker());
-
-            if (userAgent.isAccessibilityEnabled()) {
-                structureTreeBuilder = new StructureTreeBuilder(tFactory);
-                userAgent.setStructureTree(structureTreeBuilder.getStructureTree());
-            }
         }
 
         private Area findAreaType(Class clazz) {
@@ -308,32 +279,15 @@ public class AreaTreeParser {
             } else {
                 boolean handled = true;
                 if ("".equals(uri)) {
-                    if (localName.equals("pageSequence") && userAgent.isAccessibilityEnabled()) {
-                        structureTreeBuilderWrapper = new StructureTreeBuilderWrapper();
-                        pageSequenceAttributes = new AttributesImpl(attributes);
-                    } else if (localName.equals("structureTree")) {
-                        if (userAgent.isAccessibilityEnabled()) {
-                            delegate = structureTreeBuilderWrapper;
-                        } else {
-                            /* Delegate to a handler that does nothing */
-                            delegate = new DefaultHandler();
-                        }
+                    if (localName.equals("structureTree")) {
+
+                        /* The area tree parser no longer supports the structure tree. */
+                        delegate = new DefaultHandler();
+
                         delegateStack.push(qName);
                         delegate.startDocument();
                         delegate.startElement(uri, localName, qName, attributes);
                     } else {
-                        if (pageSequenceAttributes != null) {
-                            /*
-                             * This means that no structure-element tag was
-                             * found in the XML, otherwise a
-                             * StructureTreeBuilderWrapper object would have
-                             * been created, which would have reset the
-                             * pageSequenceAttributes field.
-                             */
-                            AccessibilityEventProducer.Provider
-                                    .get(userAgent.getEventBroadcaster())
-                                    .noStructureTreeInXML(this);
-                        }
                         handled = startAreaTreeElement(localName, attributes);
                     }
                 } else {
@@ -772,7 +726,6 @@ public class AreaTreeParser {
                 setTraits(attributes, ip, SUBSET_BOX);
                 setTraits(attributes, ip, SUBSET_COLOR);
                 setTraits(attributes, ip, SUBSET_LINK);
-                setPtr(ip, attributes);
                 Area parent = (Area)areaStack.peek();
                 parent.addChildArea(ip);
                 areaStack.push(ip);
@@ -821,7 +774,6 @@ public class AreaTreeParser {
                         "tlsadjust", 0));
                 text.setTextWordSpaceAdjust(XMLUtil.getAttributeAsInt(attributes,
                         "twsadjust", 0));
-                setPtr(text, attributes);
                 Area parent = (Area)areaStack.peek();
                 parent.addChildArea(text);
                 areaStack.push(text);
@@ -914,7 +866,6 @@ public class AreaTreeParser {
                 viewport.setContentPosition(XMLUtil.getAttributeAsRectangle2D(attributes, "pos"));
                 viewport.setClip(XMLUtil.getAttributeAsBoolean(attributes, "clip", false));
                 viewport.setOffset(XMLUtil.getAttributeAsInt(attributes, "offset", 0));
-                setPtr(viewport, attributes);
                 Area parent = (Area)areaStack.peek();
                 parent.addChildArea(viewport);
                 areaStack.push(viewport);
@@ -933,7 +884,6 @@ public class AreaTreeParser {
                 transferForeignObjects(attributes, image);
                 setAreaAttributes(attributes, image);
                 setTraits(attributes, image, SUBSET_COMMON);
-                setPtr(image, attributes);
                 getCurrentViewport().setContent(image);
             }
         }
@@ -1215,13 +1165,6 @@ public class AreaTreeParser {
                     QName qname = new QName(ns, atts.getQName(i));
                     ato.setForeignAttribute(qname, atts.getValue(i));
                 }
-            }
-        }
-
-        private void setPtr(Area area, Attributes attributes) {
-            String ptr = attributes.getValue("ptr");
-            if (ptr != null) {
-                area.addTrait(Trait.PTR, ptr);
             }
         }
 
