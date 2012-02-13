@@ -19,16 +19,20 @@
 
 package org.apache.fop.fo.flow.table;
 
+import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
 /**
  * All test to be added in FOTreeTestSuite
  *
  */
-@Suite.SuiteClasses({ CollapsedConditionalBorderTestCase.class, IllegalRowSpanTestCase.class,
-        RowGroupBuilderTestCase.class, TableColumnColumnNumberTestCase.class,
+@RunWith(Suite.class)
+@SuiteClasses({
+        CollapsedConditionalBorderTestCase.class,
+        IllegalRowSpanTestCase.class,
+        RowGroupBuilderTestCase.class,
+        TableColumnColumnNumberTestCase.class,
         TooManyColumnsTestCase.class })
-
 public final class AllTests {
 }
-
