@@ -787,6 +787,9 @@ list of possible build targets.
         <classpath>
           <path refid="@{classpath}"/>
         </classpath>
+	<assertions>
+	  <enable/>
+	</assertions>
         <test name="@{testsuite}" todir="${junit.reports.dir}" outfile="@{outfile}"/>
       </junit>
     </sequential>
@@ -801,6 +804,9 @@ list of possible build targets.
       <classpath>
         <path refid="standard-junit-classpath"/>
       </classpath>
+      <assertions>
+        <enable/>
+      </assertions>
       <batchtest todir="${junit.reports.dir}">
         <fileset dir="${build.unit.tests.dir}" includes="**/*TestCase.class"/>
       </batchtest>

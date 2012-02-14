@@ -158,6 +158,7 @@ implements Constants {
         when(pList.get(anyInt())).thenReturn(maximumRepeats);
 
         PageSequenceMaster parent = mock(PageSequenceMaster.class);
+        when(parent.getName()).thenReturn("fo:page-sequence-master");
 
         RepeatablePageMasterAlternatives sut = new RepeatablePageMasterAlternatives(parent);
 
