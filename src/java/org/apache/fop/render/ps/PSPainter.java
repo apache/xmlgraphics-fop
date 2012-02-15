@@ -373,9 +373,9 @@ public class PSPainter extends AbstractIFPainter {
                     + " " + formatMptAsPt(generator, y) + " Tm");
 
             int textLen = text.length();
-            if (singleByteFont != null && singleByteFont.hasAdditionalEncodings()) {
+            int start = 0;
+            if (singleByteFont != null) {
                 //Analyze string and split up in order to paint in different sub-fonts/encodings
-                int start = 0;
                 int currentEncoding = -1;
                 for (int i = 0; i < textLen; i++) {
                     char c = text.charAt(i);
@@ -383,8 +383,8 @@ public class PSPainter extends AbstractIFPainter {
                     int encoding = mapped / 256;
                     if (currentEncoding != encoding) {
                         if (i > 0) {
-                            writeText(text, start, i - start,
-                                    letterSpacing, wordSpacing, dx, font, tf);
+                            writeText(text, start, i - start, letterSpacing, wordSpacing, dx,
+                                    font, tf);
                         }
                         if (encoding == 0) {
                             useFont(fontKey, sizeMillipoints);
@@ -395,14 +395,11 @@ public class PSPainter extends AbstractIFPainter {
                         start = i;
                     }
                 }
-                writeText(text, start, textLen - start,
-                        letterSpacing, wordSpacing, dx, font, tf);
             } else {
                 //Simple single-font painting
                 useFont(fontKey, sizeMillipoints);
-                writeText(text, 0, textLen,
-                        letterSpacing, wordSpacing, dx, font, tf);
             }
+            writeText(text, start, textLen - start, letterSpacing, wordSpacing, dx, font, tf);
         } catch (IOException ioe) {
             throw new IFException("I/O error in drawText()", ioe);
         }
