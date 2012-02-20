@@ -153,8 +153,8 @@ public class PDFImageHandlerSVG implements ImageHandler {
             MarkedContentInfo mci = pdfContext.getMarkedContentInfo();
             generator.beginMarkedContentSequence(mci.tag, mci.mcid);
         }
-        generator.setColor(Color.black, false);
-        generator.setColor(Color.black, true);
+        generator.updateColor(Color.black, false, null);
+        generator.updateColor(Color.black, true, null);
 
         if (!scaling.isIdentity()) {
             if (log.isTraceEnabled()) {
