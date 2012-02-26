@@ -66,11 +66,8 @@
               <xs:attribute name="y" use="required" type="mf:lengthType"/>
               <xs:attribute name="letter-spacing" type="mf:lengthType"/>
               <xs:attribute name="word-spacing" type="mf:lengthType"/>
-              <xs:attribute name="dx">
-                <xs:simpleType>
-                  <xs:list itemType="mf:lengthType"/>
-                </xs:simpleType>
-              </xs:attribute>
+              <xs:attribute name="dx" type="mf:lengthListType"/>
+              <xs:attribute name="dp" type="mf:dpListType"/>
             </xs:extension>
           </xs:simpleContent>
         </xs:complexType>
