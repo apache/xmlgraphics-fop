@@ -965,7 +965,8 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
         preparePainting();
 
         FontInfo specialFontInfo = new FontInfo();
-        FontSetup.setup(specialFontInfo);
+        boolean base14Kerning = false;
+        FontSetup.setup(specialFontInfo, base14Kerning);
 
         PDFResources res = pdfDoc.getFactory().makeResources();
         PDFResourceContext context = new PDFResourceContext(res);

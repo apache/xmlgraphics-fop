@@ -151,12 +151,14 @@ public interface IFPainter {
      * @param y Y-coordinate of the starting point of the text
      * @param letterSpacing additional spacing between characters (may be 0)
      * @param wordSpacing additional spacing between words (may be 0)
-     * @param dx an array of adjustment values for each character in X-direction (may be null)
+     * @param dp an array of 4-tuples, expressing [X,Y] placment
+     * adjustments and [X,Y] advancement adjustments, in that order (may be null); if
+     * not null, then adjustments.length must be the same as text.length()
      * @param text the text
      * @throws IFException if an error occurs while handling this event
      */
     void drawText(int x, int y, int letterSpacing, int wordSpacing,
-            int[] dx, String text) throws IFException;
+            int[][] dp, String text) throws IFException;
 
     /**
      * Restricts the current clipping region with the given rectangle.
@@ -178,15 +180,15 @@ public interface IFPainter {
      * Draws a border rectangle. The border segments are specified through {@link BorderProps}
      * instances.
      * @param rect the rectangle's coordinates and extent
-     * @param before the border segment on the before-side (top)
-     * @param after the border segment on the after-side (bottom)
-     * @param start the border segment on the start-side (left)
-     * @param end the border segment on the end-side (right)
+     * @param top the border segment on the top edge
+     * @param bottom the border segment on the bottom edge
+     * @param left the border segment on the left edge
+     * @param right the border segment on the right edge
      * @throws IFException if an error occurs while handling this event
      */
     void drawBorderRect(Rectangle rect,
-            BorderProps before, BorderProps after,
-            BorderProps start, BorderProps end) throws IFException;
+            BorderProps top, BorderProps bottom,
+            BorderProps left, BorderProps right) throws IFException;
 
     /**
      * Draws a line. NOTE: Currently, only horizontal lines are implemented!

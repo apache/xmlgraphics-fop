@@ -25,10 +25,12 @@ import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
 
 import org.apache.fop.datatypes.FODimension;
+import org.apache.fop.traits.WritingMode;
 
 import static org.apache.fop.fo.Constants.EN_LR_TB;
 import static org.apache.fop.fo.Constants.EN_RL_TB;
 import static org.apache.fop.fo.Constants.EN_TB_RL;
+import static org.apache.fop.fo.Constants.EN_TB_LR;
 
 /**
  * Describe a PDF or PostScript style coordinate transformation matrix (CTM).
@@ -42,7 +44,7 @@ public class CTM implements Serializable {
     private double a, b, c, d, e, f;
 
     private static final CTM CTM_LRTB = new CTM(1, 0, 0, 1, 0, 0);
-    private static final CTM CTM_RLTB = new CTM(-1, 0, 0, 1, 0, 0);
+    private static final CTM CTM_RLTB = new CTM(1, 0, 0, 1, 0, 0);
     private static final CTM CTM_TBRL = new CTM(0, 1, -1, 0, 0, 0);
 
     /**
@@ -126,28 +128,25 @@ public class CTM implements Serializable {
      * Return a CTM which will transform coordinates for a particular writing-mode
      * into normalized first quandrant coordinates.
      * @param wm A writing mode constant from fo.properties.WritingMode, ie.
-     * one of LR_TB, RL_TB, TB_RL.
+     * one of LR_TB, RL_TB, TB_RL, TB_LR.
      * @param ipd The inline-progression dimension of the reference area whose
      * CTM is being set..
      * @param bpd The block-progression dimension of the reference area whose
      * CTM is being set.
      * @return a new CTM with the required transform
      */
-    public static CTM getWMctm(int wm, int ipd, int bpd) {
+    public static CTM getWMctm(WritingMode wm, int ipd, int bpd) {
         CTM wmctm;
-        switch (wm) {
+        switch (wm.getEnumValue()) {
             case EN_LR_TB:
                 return new CTM(CTM_LRTB);
             case EN_RL_TB:
-                wmctm = new CTM(CTM_RLTB);
-                wmctm.e = ipd;
-                return wmctm;
-                //return  CTM_RLTB.translate(ipd, 0);
+                return new CTM(CTM_RLTB);
             case EN_TB_RL:  // CJK
+            case EN_TB_LR:  // CJK
                 wmctm = new CTM(CTM_TBRL);
                 wmctm.e = bpd;
                 return wmctm;
-                //return CTM_TBRL.translate(0, ipd);
             default:
                 return null;
         }
@@ -284,7 +283,7 @@ public class CTM implements Serializable {
      * @return CTM the coordinate transformation matrix (CTM)
      */
     public static CTM getCTMandRelDims(int absRefOrient,
-                                       int writingMode,
+                                       WritingMode writingMode,
                                        Rectangle2D absVPrect,
                                        FODimension reldims) {
         int width, height;
@@ -335,12 +334,18 @@ public class CTM implements Serializable {
          * can set ipd and bpd appropriately based on the writing mode.
          */
 
-        if (writingMode == EN_LR_TB || writingMode == EN_RL_TB) {
+        switch ( writingMode.getEnumValue() ) {
+        default:
+        case EN_LR_TB:
+        case EN_RL_TB:
             reldims.ipd = width;
             reldims.bpd = height;
-        } else {
+            break;
+        case EN_TB_LR:
+        case EN_TB_RL:
             reldims.ipd = height;
             reldims.bpd = width;
+            break;
         }
         // Set a rectangle to be the writing-mode relative version???
         // Now transform for writing mode

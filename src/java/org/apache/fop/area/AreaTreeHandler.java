@@ -73,6 +73,9 @@ public class AreaTreeHandler extends FOEventHandler {
     /** The AreaTreeModel in use */
     protected AreaTreeModel model;
 
+    // Flag for controlling complex script features (default: true).
+    private boolean useComplexScriptFeatures = true;
+
     // Keeps track of all meaningful id references
     private IDTracker idTracker;
 
@@ -107,6 +110,8 @@ public class AreaTreeHandler extends FOEventHandler {
         }
 
         this.idTracker = new IDTracker();
+
+        this.useComplexScriptFeatures = userAgent.isComplexScriptFeaturesEnabled();
 
         if (log.isDebugEnabled()) {
             statistics = new Statistics();
@@ -166,6 +171,15 @@ public class AreaTreeHandler extends FOEventHandler {
      */
     public FormattingResults getResults() {
         return this.results;
+    }
+
+    /**
+     * Check whether complex script features are enabled.
+     *
+     * @return true if using complex script features
+     */
+    public boolean isComplexScriptFeaturesEnabled() {
+        return useComplexScriptFeatures;
     }
 
     /**

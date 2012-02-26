@@ -75,7 +75,7 @@
     <eval expected="0" xpath="//flow/block[5]/lineArea/inlineparent/@offset"/>
     <eval expected="8616" xpath="//flow/block[5]/lineArea/inlineparent/text/@baseline"/>
     <eval expected="0" xpath="//flow/block[6]/lineArea/text/@offset"/>
-    <eval expected="0" xpath="//flow/block[6]/lineArea/text/word/@offset"/>
+    <true xpath="not(boolean(//flow/block[6]/lineArea/text/word/@offset))"/>
     <eval expected="8616" xpath="//flow/block[6]/lineArea/text/@baseline"/>
   </checks>
 </testcase>

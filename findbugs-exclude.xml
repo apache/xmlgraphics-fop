@@ -4821,4 +4821,389 @@
 	 <Bug pattern="REC_CATCH_EXCEPTION"/>
    </Match>
    <!-- /Automatically generated list of exclusions on 18 February 2011 -->
+   <!-- complex script exclusions -->
+   <Match>
+     <Class name="org.apache.fop.complexscripts.fonts.GlyphDefinitionTable"/>
+     <Method name="getLookupTypeFromName"/>
+     <Bug pattern="DM_CONVERT_CASE"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.fonts.GlyphPositioningTable"/>
+     <Method name="getLookupTypeFromName"/>
+     <Bug pattern="DM_CONVERT_CASE"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.fonts.GlyphSubstitutionTable"/>
+     <Method name="getLookupTypeFromName"/>
+     <Bug pattern="DM_CONVERT_CASE"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.fonts.GlyphTable"/>
+     <Method name="getTableTypeFromName"/>
+     <Bug pattern="DM_CONVERT_CASE"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.util.NumberConverter"/>
+     <Method name="&lt;init&gt;"/>
+     <Bug pattern="DM_CONVERT_CASE"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.util.NumberConverter"/>
+     <Method name="convertWordCase"/>
+     <Bug pattern="DM_CONVERT_CASE"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.fonts.autodetect.FontInfoFinder"/>
+     <Method name="find"/>
+     <Bug pattern="DM_CONVERT_CASE"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.bidi.InlineRun"/>
+     <Method name="&lt;init&gt;" params="org.apache.fop.area.inline.InlineArea, int[]" returns="void"/>
+     <Bug pattern="EI_EXPOSE_REP2"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.fonts.GlyphPositioningState"/>
+     <Method name="&lt;init&gt;"/>
+     <Bug pattern="EI_EXPOSE_REP2"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.fonts.GlyphPositioningTable$DeviceTable"/>
+     <Method name="getDeltas"/>
+     <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.fonts.GlyphPositioningTable$DeviceTable"/>
+     <Method name="&lt;init&gt;"/>
+     <Bug pattern="EI_EXPOSE_REP2"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.scripts.ArabicScriptProcessor"/>
+     <Or>
+       <Method name="getPositioningFeatures"/>
+       <Method name="getSubstitutionFeatures"/>
+     </Or>
+     <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.scripts.DefaultScriptProcessor"/>
+     <Or>
+       <Method name="getPositioningFeatures"/>
+       <Method name="getSubstitutionFeatures"/>
+     </Or>
+     <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.util.GlyphSequence"/>
+     <Method name="getAssociations"/>
+     <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.util.GlyphSequence$CharAssociation"/>
+     <Method name="getSubIntervals"/>
+     <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.fonts.GlyphSubstitutionState"/>
+     <Method name="setAlternates"/>
+     <Bug pattern="EI_EXPOSE_REP2"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.fonts.GlyphSubstitutionTable$Ligature"/>
+     <Or>
+       <Method name="getComponents"/>
+       <Method name="getLigatures"/>
+     </Or>
+     <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.fonts.GlyphSubstitutionTable$Ligature"/>
+     <Method name="&lt;init&gt;" params="int, int[]" returns="void"/>
+     <Bug pattern="EI_EXPOSE_REP2"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.fonts.GlyphSubstitutionTable$LigatureSet"/>
+     <Method name="getLigatures"/>
+     <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.fonts.GlyphSubstitutionTable$LigatureSet"/>
+     <Method name="&lt;init&gt;" params="org.apache.fop.complexscripts.fonts.GlyphSubstitutionTable$Ligature[]" returns="void"/>
+     <Bug pattern="EI_EXPOSE_REP2"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.fonts.GlyphTable$ChainedClassSequenceRule"/>
+     <Method name="&lt;init&gt;"/>
+     <Bug pattern="EI_EXPOSE_REP2"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.fonts.GlyphTable$ChainedClassSequenceRule"/>
+     <Or>
+       <Method name="getBacktrackClasses"/>
+       <Method name="getLookaheadClasses"/>
+     </Or>
+     <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.fonts.GlyphTable$ChainedCoverageSequenceRule"/>
+     <Method name="&lt;init&gt;"/>
+     <Bug pattern="EI_EXPOSE_REP2"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.fonts.GlyphTable$ChainedCoverageSequenceRule"/>
+     <Or>
+       <Method name="getBacktrackCoverages"/>
+       <Method name="getLookaheadCoverages"/>
+     </Or>
+     <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.fonts.GlyphTable$ChainedGlyphSequenceRule"/>
+     <Method name="&lt;init&gt;"/>
+     <Bug pattern="EI_EXPOSE_REP2"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.fonts.GlyphTable$ChainedGlyphSequenceRule"/>
+     <Or>
+       <Method name="getBacktrackGlyphs"/>
+       <Method name="getLookaheadGlyphs"/>
+     </Or>
+     <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.fonts.GlyphTable$ClassSequenceRule"/>
+     <Method name="&lt;init&gt;"/>
+     <Bug pattern="EI_EXPOSE_REP2"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.fonts.GlyphTable$ClassSequenceRule"/>
+     <Method name="getClasses"/>
+     <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.fonts.GlyphTable$CoverageSequenceRule"/>
+     <Method name="&lt;init&gt;"/>
+     <Bug pattern="EI_EXPOSE_REP2"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.fonts.GlyphTable$CoverageSequenceRule"/>
+     <Method name="getCoverages"/>
+     <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.fonts.GlyphTable$GlyphSequenceRule"/>
+     <Method name="&lt;init&gt;"/>
+     <Bug pattern="EI_EXPOSE_REP2"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.fonts.GlyphTable$GlyphSequenceRule"/>
+     <Method name="getGlyphs"/>
+     <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.fonts.GlyphTable$Rule"/>
+     <Method name="getLookups"/>
+     <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.fonts.GlyphTable$RuleSet"/>
+     <Method name="&lt;init&gt;"/>
+     <Bug pattern="EI_EXPOSE_REP2"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.fonts.GlyphTable$RuleSet"/>
+     <Method name="getRules"/>
+     <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.scripts.IndicScriptProcessor"/>
+     <Or>
+       <Method name="getPositioningFeatures"/>
+       <Method name="getSubstitutionFeatures"/>
+       <Method name="getOptionalSubstitutionFeatures"/>
+     </Or>
+     <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.area.inline.WordArea"/>
+     <Or>
+       <Method name="getBidiLevels"/>
+       <Method name="getGlyphPositionAdjustments"/>
+     </Or>
+     <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.fo.FOText"/>
+     <Method name="getBidiLevels"/>
+     <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.fonts.truetype.TTFDirTabEntry"/>
+     <Method name="getTag"/>
+     <Bug pattern="EI_EXPOSE_REP"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.area.inline.TextArea"/>
+     <Method name="makeLevels"/>
+     <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.area.inline.WordArea"/>
+     <Or>
+       <Method name="getBidiLevels"/>
+       <Method name="glyphPositionAdjustmentsAt"/>
+     </Or>
+     <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.bidi.UnicodeBidiAlgorithm"/>
+     <Method name="resolveLevels"/>
+     <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.fonts.GlyphPositioningTable$ChainedContextualSubtableFormat1"/>
+     <Method name="getLookups"/>
+     <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.fonts.GlyphPositioningTable$ChainedContextualSubtableFormat2"/>
+     <Method name="getLookups"/>
+     <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.fonts.GlyphPositioningTable$ChainedContextualSubtableFormat3"/>
+     <Method name="getLookups"/>
+     <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.fonts.GlyphPositioningTable$ContextualSubtableFormat1"/>
+     <Method name="getLookups"/>
+     <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.fonts.GlyphPositioningTable$ContextualSubtableFormat2"/>
+     <Method name="getLookups"/>
+     <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.fonts.GlyphPositioningTable$ContextualSubtableFormat3"/>
+     <Method name="getLookups"/>
+     <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.fonts.GlyphPositioningTable$CursiveSubtableFormat1"/>
+     <Method name="getExitEntryAnchors"/>
+     <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.fonts.GlyphSubstitutionTable$AlternateSubtableFormat1"/>
+     <Method name="getAlternatesForCoverageIndex"/>
+     <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.fonts.GlyphSubstitutionTable$ChainedContextualSubtableFormat1"/>
+     <Method name="getLookups"/>
+     <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.fonts.GlyphSubstitutionTable$ChainedContextualSubtableFormat2"/>
+     <Method name="getLookups"/>
+     <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.fonts.GlyphSubstitutionTable$ChainedContextualSubtableFormat3"/>
+     <Method name="getLookups"/>
+     <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.fonts.GlyphSubstitutionTable$ContextualSubtableFormat1"/>
+     <Method name="getLookups"/>
+     <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.fonts.GlyphSubstitutionTable$ContextualSubtableFormat2"/>
+     <Method name="getLookups"/>
+     <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.fonts.GlyphSubstitutionTable$ContextualSubtableFormat3"/>
+     <Method name="getLookups"/>
+     <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.fonts.GlyphSubstitutionTable$MultipleSubtableFormat1"/>
+     <Method name="getGlyphsForCoverageIndex"/>
+     <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.fonts.GlyphTable$LookupTable"/>
+     <Method name="getSubtables"/>
+     <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.util.NumberConverter"/>
+     <Or>
+       <Method name="formatNumberAsSequence"/>
+       <Method name="formatNumberAsSpecial"/>
+     </Or>
+     <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.util.NumberConverter$ArabicNumeralsFormatter"/>
+     <Method name="format"/>
+     <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.util.NumberConverter$EnglishNumberAsWordFormatter"/>
+     <Method name="format"/>
+     <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.util.NumberConverter$FrenchNumberAsWordFormatter"/>
+     <Method name="format"/>
+     <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.util.NumberConverter$GematriaNumeralsFormatter"/>
+     <Method name="format"/>
+     <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.util.NumberConverter$IsopsephryNumeralsFormatter"/>
+     <Method name="format"/>
+     <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.util.NumberConverter$KanaNumeralsFormatter"/>
+     <Method name="format"/>
+     <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.util.NumberConverter$RomanNumeralsFormatter"/>
+     <Method name="format"/>
+     <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.util.NumberConverter$SpanishNumberAsWordFormatter"/>
+     <Method name="format"/>
+     <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.complexscripts.util.NumberConverter$ThaiNumeralsFormatter"/>
+     <Method name="format"/>
+     <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.fo.FOText"/>
+     <Or>
+       <Method name="getBidiLevels"/>
+       <Method name="getMappingBidiLevels"/>
+     </Or>
+     <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+   </Match>
+   <Match>
+     <Class name="org.apache.fop.layoutmgr.inline.TextLayoutManager$TextAreaBuilder"/>
+     <Method name="getNonEmptyLevels"/>
+     <Bug pattern="PZLA_PREFER_ZERO_LENGTH_ARRAYS"/>
+   </Match>
 </FindBugsFilter>

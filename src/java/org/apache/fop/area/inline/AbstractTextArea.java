@@ -188,7 +188,7 @@ public abstract class AbstractTextArea extends InlineParent {
 
     @Override
     int getVirtualOffset() {
-        return getOffset();
+        return getBlockProgressionOffset();
     }
 
     @Override

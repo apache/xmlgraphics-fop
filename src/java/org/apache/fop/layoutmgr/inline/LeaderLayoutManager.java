@@ -115,7 +115,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
 
     private InlineArea getLeaderInlineArea(LayoutContext context) {
         InlineArea leaderArea = null;
-
+        int level = fobj.getBidiLevel();
         if (fobj.getLeaderPattern() == EN_RULE) {
             if (fobj.getRuleStyle() != EN_NONE) {
                 org.apache.fop.area.inline.Leader leader
@@ -125,28 +125,41 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
                 leaderArea = leader;
             } else {
                 leaderArea = new Space();
+                if ( level >= 0 ) {
+                    leaderArea.setBidiLevel ( level );
+                }
             }
             leaderArea.setBPD(fobj.getRuleThickness().getValue(this));
             leaderArea.addTrait(Trait.COLOR, fobj.getColor());
+            if ( level >= 0 ) {
+                leaderArea.setBidiLevel ( level );
+            }
         } else if (fobj.getLeaderPattern() == EN_SPACE) {
             leaderArea = new Space();
             leaderArea.setBPD(fobj.getRuleThickness().getValue(this));
+            if ( level >= 0 ) {
+                leaderArea.setBidiLevel ( level );
+            }
         } else if (fobj.getLeaderPattern() == EN_DOTS) {
             TextArea t = new TextArea();
             char dot = '.'; // userAgent.getLeaderDotCharacter();
-
             int width = font.getCharWidth(dot);
-            t.addWord("" + dot, 0);
+            int[] levels = ( level < 0 ) ? null : new int[] {level};
+            t.addWord("" + dot, width, null, levels, null, 0);
             t.setIPD(width);
             t.setBPD(width);
             t.setBaselineOffset(width);
             TraitSetter.addFontTraits(t, font);
             t.addTrait(Trait.COLOR, fobj.getColor());
             Space spacer = null;
-            if (fobj.getLeaderPatternWidth().getValue(this) > width) {
+            int widthLeaderPattern = fobj.getLeaderPatternWidth().getValue(this);
+            if (widthLeaderPattern > width) {
                 spacer = new Space();
-                spacer.setIPD(fobj.getLeaderPatternWidth().getValue(this) - width);
-                width = fobj.getLeaderPatternWidth().getValue(this);
+                spacer.setIPD(widthLeaderPattern - width);
+                if ( level >= 0 ) {
+                    spacer.setBidiLevel ( level );
+                }
+                width = widthLeaderPattern;
             }
             FilledArea fa = new FilledArea();
             fa.setUnitWidth(width);
@@ -155,7 +168,6 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
                 fa.addChildArea(spacer);
             }
             fa.setBPD(t.getBPD());
-
             leaderArea = fa;
         } else if (fobj.getLeaderPattern() == EN_USECONTENT) {
             if (fobj.getChildNodes() == null) {
@@ -188,6 +200,9 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
                 if (fobj.getLeaderPatternWidth().getValue(this) > width) {
                     spacer = new Space();
                     spacer.setIPD(fobj.getLeaderPatternWidth().getValue(this) - width);
+                    if ( level >= 0 ) {
+                        spacer.setBidiLevel ( level );
+                    }
                     width = fobj.getLeaderPatternWidth().getValue(this);
                 }
                 fa.setUnitWidth(width);
@@ -199,6 +214,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
                 //Content collapsed to nothing, so use a space
                 leaderArea = new Space();
                 leaderArea.setBPD(fobj.getRuleThickness().getValue(this));
+                leaderArea.setBidiLevel ( fobj.getBidiLevelRecursive() );
             }
         }
         TraitSetter.setProducerID(leaderArea, fobj.getId());

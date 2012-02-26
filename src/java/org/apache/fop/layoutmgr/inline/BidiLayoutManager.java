@@ -19,56 +19,19 @@
 
 package org.apache.fop.layoutmgr.inline;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.fo.flow.BidiOverride;
 
-
 /**
- * If this bidi has a different writing mode direction
- * ltr or rtl than its parent writing mode then this
- * reverses the inline areas (at the character level).
+ * Layout manager for fo:bidi-override.
  */
-public class BidiLayoutManager extends LeafNodeLayoutManager {
-
-    private List children;
+public class BidiLayoutManager extends InlineLayoutManager {
 
     /**
      * Construct bidi layout manager.
-     * @param node bidi override FO
-     * @param cLM parent layout manager
+     * @param node an BidiOverride FONode
      */
-    public BidiLayoutManager(BidiOverride node, InlineLayoutManager cLM) {
+    public BidiLayoutManager(BidiOverride node) {
         super(node);
-        setParent(cLM);
-        children = new ArrayList();
-/*
-        for (int count = cLM.size() - 1; count >= 0; count--) {
-            InlineArea ia = cLM.get(count);
-            if (ia instanceof Word) {
-                // reverse word
-                Word word = (Word) ia;
-                StringBuffer sb = new StringBuffer(word.getWord());
-                word.setWord(sb.reverse().toString());
-            }
-            children.add(ia);
-        }
-*/
-    }
-
-    /** @return number of children */
-    public int size() {
-        return children.size();
-    }
-
-    /**
-     * @param index of child inline area
-     * @return a child inline area
-     */
-    public InlineArea get(int index) {
-        return (InlineArea) children.get(index);
     }
 
 }

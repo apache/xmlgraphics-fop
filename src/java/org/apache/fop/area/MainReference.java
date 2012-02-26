@@ -19,6 +19,8 @@
 
 package org.apache.fop.area;
 
+import org.apache.fop.traits.WritingModeTraitsGetter;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -122,6 +124,17 @@ public class MainReference extends Area {
     /** @return the column gap in millipoints */
     public int getColumnGap() {
         return parent.getColumnGap();
+    }
+
+    /**
+     * Sets the writing mode traits for the spans of this main
+     * reference area.
+     * @param wmtg a WM traits getter
+     */
+    public void setWritingModeTraits(WritingModeTraitsGetter wmtg) {
+        for ( Span s : (List<Span>) getSpans() ) {
+            s.setWritingModeTraits ( wmtg );
+        }
     }
 
 }

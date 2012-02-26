@@ -349,7 +349,12 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         contentRectOffsetX = 0;
         contentRectOffsetY = 0;
 
-        contentRectOffsetX += fo.getCommonMarginBlock().startIndent.getValue(this);
+        int level = fo.getBidiLevel();
+        if ( ( level < 0 ) || ( ( level & 1 ) == 0 ) ) {
+            contentRectOffsetX += fo.getCommonMarginBlock().startIndent.getValue(this);
+        } else {
+            contentRectOffsetX += fo.getCommonMarginBlock().endIndent.getValue(this);
+        }
         contentRectOffsetY += fo.getCommonBorderPaddingBackground().getBorderBeforeWidth(false);
         contentRectOffsetY += fo.getCommonBorderPaddingBackground().getPaddingBefore(false, this);
 
@@ -834,10 +839,13 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         if (referenceArea == null) {
             boolean switchedProgressionDirection = blockProgressionDirectionChanges();
             boolean allowBPDUpdate = autoHeight && !switchedProgressionDirection;
+            int level = getBlockContainerFO().getBidiLevel();
 
             viewportBlockArea = new BlockViewport(allowBPDUpdate);
             viewportBlockArea.addTrait(Trait.IS_VIEWPORT_AREA, Boolean.TRUE);
-
+            if ( level >= 0 ) {
+                viewportBlockArea.setBidiLevel ( level );
+            }
             viewportBlockArea.setIPD(getContentAreaIPD());
             if (allowBPDUpdate) {
                 viewportBlockArea.setBPD(0);
@@ -872,6 +880,9 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
 
             referenceArea = new Block();
             referenceArea.addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
+            if ( level >= 0 ) {
+                referenceArea.setBidiLevel ( level );
+            }
             TraitSetter.setProducerID(referenceArea, getBlockContainerFO().getId());
 
             if (abProps.absolutePosition == EN_ABSOLUTE) {

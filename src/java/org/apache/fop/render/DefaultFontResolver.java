@@ -44,4 +44,9 @@ public class DefaultFontResolver implements FontResolver {
         return userAgent.resolveURI(href, userAgent.getFactory().getFontManager().getFontBaseURL());
     }
 
+    /** {@inheritDoc} */
+    public boolean isComplexScriptFeaturesEnabled() {
+        return userAgent.isComplexScriptFeaturesEnabled();
+    }
+
 }

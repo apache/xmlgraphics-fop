@@ -32,6 +32,7 @@ import org.apache.fop.area.Area;
 import org.apache.fop.area.LineArea;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.InlineArea;
+import org.apache.fop.complexscripts.bidi.BidiResolver;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.Constants;
@@ -111,6 +112,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         private final double dAdjust; // Percentage to adjust (stretch or shrink)
         private final double ipdAdjust; // Percentage to adjust (stretch or shrink)
         private final int startIndent;
+        private final int endIndent;
         private final int lineHeight;
         private final int lineWidth;
         private final int spaceBefore;
@@ -119,8 +121,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager
 
         LineBreakPosition(                                       // CSOK: ParameterNumber
                 LayoutManager lm, int index, int startIndex, int breakIndex,
-                int shrink, int stretch, int diff, double ipdA, double adjust, int ind,
-                int lh, int lw, int sb, int sa, int bl) {
+                int shrink, int stretch, int diff, double ipdA, double adjust, int si,
+                int ei, int lh, int lw, int sb, int sa, int bl) {
             super(lm, breakIndex);
             availableShrink = shrink;
             availableStretch = stretch;
@@ -129,7 +131,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             this.startIndex = startIndex;
             ipdAdjust = ipdA;
             dAdjust = adjust;
-            startIndent = ind;
+            startIndent = si;
+            endIndent = ei;
             lineHeight = lh;
             lineWidth = lw;
             spaceBefore = sb;
@@ -140,6 +143,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     }
 
 
+    private int bidiLevel = -1;
     private int textAlignment = EN_JUSTIFY;
     private int textAlignmentLast;
     private int effectiveAlignment;
@@ -333,13 +337,38 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                                 int total) {
             // compute indent and adjustment ratio, according to
             // the value of text-align and text-align-last
-            int indent = 0;
+            int startIndent;
+            int endIndent;
             int difference = bestActiveNode.difference;
             int textAlign = (bestActiveNode.line < total) ? alignment : alignmentLast;
-            indent += (textAlign == Constants.EN_CENTER)
+
+            switch ( textAlign ) {
+            case Constants.EN_START:
+                startIndent = 0;
+                endIndent = difference > 0 ? difference : 0;
+                break;
+            case Constants.EN_END:
+                startIndent = difference > 0 ? difference : 0;
+                endIndent = 0;
+                break;
+            case Constants.EN_CENTER:
+                startIndent = difference / 2;
+                endIndent = startIndent;
+                break;
+            default:
+            case Constants.EN_JUSTIFY:
+                startIndent = 0;
+                endIndent = 0;
+                break;
+            }
+
+            /*
+            startIndent += (textAlign == Constants.EN_CENTER)
                       ? difference / 2 : (textAlign == Constants.EN_END) ? difference : 0;
-            indent += (bestActiveNode.line == 1 && indentFirstPart && isFirstInBlock)
+            */
+            startIndent += (bestActiveNode.line == 1 && indentFirstPart && isFirstInBlock)
                       ? textIndent : 0;
+
             double ratio = (textAlign == Constants.EN_JUSTIFY
                 || difference < 0 && -difference <= bestActiveNode.availableShrink)
                         ? bestActiveNode.adjustRatio : 0;
@@ -377,7 +406,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                    bestActiveNode.availableShrink - (addedPositions > 0
                        ? 0 : ((Paragraph) par).lineFiller.getShrink()),
                    bestActiveNode.availableStretch,
-                   difference, ratio, indent), activePossibility);
+                   difference, ratio, startIndent, endIndent), activePossibility);
             addedPositions++;
         }
 
@@ -389,7 +418,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager
 
         private LineBreakPosition makeLineBreakPosition(         // CSOK: ParameterNumber
                 KnuthSequence par, int firstElementIndex, int lastElementIndex, int availableShrink,
-                int availableStretch, int difference, double ratio, int indent) {
+                int availableStretch, int difference, double ratio, int startIndent,
+                int endIndent) {
             // line height calculation - spaceBefore may differ from spaceAfter
             // by 1mpt due to rounding
             int spaceBefore = (lineHeight - lead - follow) / 2;
@@ -456,14 +486,14 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                                              knuthParagraphs.indexOf(par),
                                              firstElementIndex, lastElementIndex,
                                              availableShrink, availableStretch,
-                                             difference, ratio, 0, indent,
+                                             difference, ratio, 0, startIndent, endIndent,
                                              0, ipd, 0, 0, 0);
             } else {
                 return new LineBreakPosition(thisLLM,
                                              knuthParagraphs.indexOf(par),
                                              firstElementIndex, lastElementIndex,
                                              availableShrink, availableStretch,
-                                             difference, ratio, 0, indent,
+                                             difference, ratio, 0, startIndent, endIndent,
                                              lineLead + lineFollow,
                                              ipd, spaceBefore, spaceAfter,
                                              lineLead);
@@ -544,6 +574,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     /** {@inheritDoc} */
     @Override
     public void initialize() {
+        bidiLevel = fobj.getBidiLevel();
         textAlignment = fobj.getTextAlign();
         textAlignmentLast = fobj.getTextAlignLast();
         textIndent = fobj.getTextIndent();
@@ -1429,8 +1460,12 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         if (lbp.startIndent != 0) {
             lineArea.addTrait(Trait.START_INDENT, lbp.startIndent);
         }
+        if (lbp.endIndent != 0) {
+            lineArea.addTrait(Trait.END_INDENT, new Integer(lbp.endIndent));
+        }
         lineArea.setBPD(lbp.lineHeight);
         lineArea.setIPD(lbp.lineWidth);
+        lineArea.setBidiLevel(bidiLevel);
         lineArea.addTrait(Trait.SPACE_BEFORE, lbp.spaceBefore);
         lineArea.addTrait(Trait.SPACE_AFTER, lbp.spaceAfter);
         alignmentContext.resizeLine(lbp.lineHeight, lbp.baseline);
@@ -1506,7 +1541,10 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 && (!context.isLastArea() || !isLastPosition)) {
             lineArea.setBPD(lineArea.getBPD() + context.getSpaceAfter());
         }
-        lineArea.finalise();
+        lineArea.finish();
+        if ( lineArea.getBidiLevel() >= 0 ) {
+            BidiResolver.reorder ( lineArea );
+        }
         parentLayoutManager.addChildArea(lineArea);
     }
 
@@ -1556,6 +1594,9 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             blocklc.setTrailingSpace(new SpaceSpecifier(false));
         }
         lineArea.updateExtentsFromChildren();
+        if ( lineArea.getBidiLevel() >= 0 ) {
+            BidiResolver.reorder ( lineArea );
+        }
         parentLayoutManager.addChildArea(lineArea);
     }
 

@@ -135,5 +135,11 @@ public class Wrapper extends FObjMixed {
     public int getNameId() {
         return FO_WRAPPER;
     }
+
+    @Override
+    public boolean isDelimitedTextRangeBoundary ( int boundary ) {
+        return false;
+    }
+
 }
 

@@ -112,8 +112,9 @@ public abstract class AbstractPSTranscoder extends AbstractFOPTranscoder {
         graphics = createDocumentGraphics2D();
         if (!isTextStroked()) {
             try {
+                boolean useComplexScriptFeatures = false; //TODO - FIX ME
                 this.fontInfo = PDFDocumentGraphics2DConfigurator.createFontInfo(
-                        getEffectiveConfiguration());
+                        getEffectiveConfiguration(), useComplexScriptFeatures);
                 graphics.setCustomTextHandler(new NativeTextHandler(graphics, fontInfo));
             } catch (FOPException fe) {
                 throw new TranscoderException(fe);

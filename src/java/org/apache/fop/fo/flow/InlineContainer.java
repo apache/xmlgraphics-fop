@@ -33,6 +33,10 @@ import org.apache.fop.fo.properties.CommonMarginInline;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.LengthRangeProperty;
 import org.apache.fop.fo.properties.SpaceProperty;
+import org.apache.fop.traits.Direction;
+import org.apache.fop.traits.WritingMode;
+import org.apache.fop.traits.WritingModeTraits;
+import org.apache.fop.traits.WritingModeTraitsGetter;
 
 /**
  * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_inline-container">
@@ -40,7 +44,7 @@ import org.apache.fop.fo.properties.SpaceProperty;
  */
 public class InlineContainer extends FObj {
 
-    // The value of properties relevant for fo:inline-container.
+    // The value of FO traits (refined properties) that apply to fo:inline-container.
     private Length alignmentAdjust;
     private int alignmentBaseline;
     private Length baselineShift;
@@ -54,7 +58,7 @@ public class InlineContainer extends FObj {
     private SpaceProperty lineHeight;
     private int overflow;
     private Numeric referenceOrientation;
-    private int writingMode;
+    private WritingModeTraits writingModeTraits;
     // Unused but valid items, commented out for performance:
     //     private CommonRelativePosition commonRelativePosition;
     //     private int displayAlign;
@@ -62,7 +66,7 @@ public class InlineContainer extends FObj {
     //     private KeepProperty keepWithNext;
     //     private KeepProperty keepWithPrevious;
     //     private Length width;
-    // End of property values
+    // End of FO trait values
 
     /** used for FO validation */
     private boolean blockItemFound = false;
@@ -92,7 +96,8 @@ public class InlineContainer extends FObj {
         lineHeight = pList.get(PR_LINE_HEIGHT).getSpace();
         overflow = pList.get(PR_OVERFLOW).getEnum();
         referenceOrientation = pList.get(PR_REFERENCE_ORIENTATION).getNumeric();
-        writingMode = pList.get(PR_WRITING_MODE).getEnum();
+        writingModeTraits = new WritingModeTraits
+            ( WritingMode.valueOf(pList.get(PR_WRITING_MODE).getEnum()) );
     }
 
     /**
@@ -121,27 +126,27 @@ public class InlineContainer extends FObj {
         }
     }
 
-    /** @return the "alignment-adjust" property */
+    /** @return the "alignment-adjust" FO trait */
     public Length getAlignmentAdjust() {
         return alignmentAdjust;
     }
 
-    /** @return the "alignment-baseline" property */
+    /** @return the "alignment-baseline" FO trait */
     public int getAlignmentBaseline() {
         return alignmentBaseline;
     }
 
-    /** @return the "baseline-shift" property */
+    /** @return the "baseline-shift" FO trait */
     public Length getBaselineShift() {
         return baselineShift;
     }
 
-    /** @return the "block-progression-dimension" property */
+    /** @return the "block-progression-dimension" FO trait */
     public LengthRangeProperty getBlockProgressionDimension() {
         return blockProgressionDimension;
     }
 
-    /** @return the "clip" property */
+    /** @return the "clip" FO trait */
     public int getClip() {
         return clip;
     }
@@ -156,39 +161,82 @@ public class InlineContainer extends FObj {
         return this.commonMarginInline;
     }
 
-    /** @return the "dominant-baseline" property */
+    /** @return the "dominant-baseline" FO trait */
     public int getDominantBaseline() {
         return dominantBaseline;
     }
 
-    /** @return the "keep-together" property */
+    /** @return the "keep-together" FO trait */
     public KeepProperty getKeepTogether() {
         return keepTogether;
     }
 
-    /** @return the "inline-progression-dimension" property */
+    /** @return the "inline-progression-dimension" FO trait */
     public LengthRangeProperty getInlineProgressionDimension() {
         return inlineProgressionDimension;
     }
 
-    /** @return the "line-height" property */
+    /** @return the "line-height" FO trait */
     public SpaceProperty getLineHeight() {
         return lineHeight;
     }
 
-    /** @return the "overflow" property */
+    /** @return the "overflow" FO trait */
     public int getOverflow() {
         return overflow;
     }
 
-    /** @return the "reference-orientation" property */
+    /** @return the "reference-orientation" FO trait */
     public int getReferenceOrientation() {
         return referenceOrientation.getValue();
     }
 
-    /** @return the "writing-mode" property */
-    public int getWritingMode() {
-        return writingMode;
+    /**
+     * Obtain inline progression direction.
+     * @return the inline progression direction
+     */
+    public Direction getInlineProgressionDirection() {
+        return writingModeTraits.getInlineProgressionDirection();
+    }
+
+    /**
+     * Obtain block progression direction.
+     * @return the block progression direction
+     */
+    public Direction getBlockProgressionDirection() {
+        return writingModeTraits.getBlockProgressionDirection();
+    }
+
+    /**
+     * Obtain column progression direction.
+     * @return the column progression direction
+     */
+    public Direction getColumnProgressionDirection() {
+        return writingModeTraits.getColumnProgressionDirection();
+    }
+
+    /**
+     * Obtain row progression direction.
+     * @return the row progression direction
+     */
+    public Direction getRowProgressionDirection() {
+        return writingModeTraits.getRowProgressionDirection();
+    }
+
+    /**
+     * Obtain (baseline) shift direction.
+     * @return the (baseline) shift direction
+     */
+    public Direction getShiftDirection() {
+        return writingModeTraits.getShiftDirection();
+    }
+
+    /**
+     * Obtain writing mode.
+     * @return the writing mode
+     */
+    public WritingMode getWritingMode() {
+        return writingModeTraits.getWritingMode();
     }
 
     /** {@inheritDoc} */
@@ -202,6 +250,11 @@ public class InlineContainer extends FObj {
      */
     public int getNameId() {
         return FO_INLINE_CONTAINER;
+    }
+
+    @Override
+    public boolean isDelimitedTextRangeBoundary ( int boundary ) {
+        return false;
     }
 
 }

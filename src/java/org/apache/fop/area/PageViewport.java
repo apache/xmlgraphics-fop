@@ -34,6 +34,7 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.fo.pagination.SimplePageMaster;
+import org.apache.fop.traits.WritingModeTraitsGetter;
 
 import static org.apache.fop.fo.Constants.FO_REGION_BODY;
 import static org.apache.fop.fo.Constants.EN_FSWP;
@@ -654,4 +655,15 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
     public RegionReference getRegionReference(int id) {
         return getPage().getRegionViewport(id).getRegionReference();
     }
+
+    /**
+     * Sets the writing mode traits for the page associated with this viewport.
+     * @param wmtg a WM traits getter
+     */
+    public void setWritingModeTraits(WritingModeTraitsGetter wmtg) {
+        if ( page != null ) {
+            page.setWritingModeTraits(wmtg);
+        }
+    }
+
 }

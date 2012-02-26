@@ -199,4 +199,10 @@ public class PageNumber extends FObj
     public int getNameId() {
         return FO_PAGE_NUMBER;
     }
+
+    @Override
+    public boolean isDelimitedTextRangeBoundary ( int boundary ) {
+        return false;
+    }
+
 }

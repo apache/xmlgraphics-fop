@@ -27,4 +27,10 @@ public class Space extends InlineArea {
 
     private static final long serialVersionUID = -8748265505356839796L;
 
+    /**
+     * Default constructor.
+     */
+    public Space() {
+    }
+
 }

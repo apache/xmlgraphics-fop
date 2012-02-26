@@ -50,10 +50,9 @@ public class FilledArea extends InlineParent {
      * @param v the offset
      */
     /*
-    public void setOffset(int v) {
+    public void setBlockProgressionOffset(int v) {
         setChildOffset(inlines.listIterator(), v);
     }
-    */
 
     private void setChildOffset(ListIterator childrenIterator, int v) {
         while (childrenIterator.hasNext()) {
@@ -63,10 +62,11 @@ public class FilledArea extends InlineParent {
             } else if (child instanceof InlineViewport) {
                 // nothing
             } else {
-                child.setOffset(v);
+                child.setBlockProgressionOffset(v);
             }
         }
     }
+    */
 
     /**
      * Set the unit width for the areas to fill the full width.
@@ -129,5 +129,6 @@ public class FilledArea extends InlineParent {
         setIPD(getIPD() + adjustingInfo.applyVariationFactor(variationFactor));
         return false;
     }
+
 }
 
