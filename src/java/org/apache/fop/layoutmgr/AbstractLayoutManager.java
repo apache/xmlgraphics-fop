@@ -448,7 +448,7 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        return (super.toString() + (fobj != null ? "[fobj=" + fobj.toString() + "]" : ""));
+        return (super.toString() + (fobj != null ? "{fobj = " + fobj.toString() + "}" : ""));
     }
 
     /** {@inheritDoc} */

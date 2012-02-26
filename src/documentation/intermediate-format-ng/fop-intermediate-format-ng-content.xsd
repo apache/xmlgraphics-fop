@@ -100,10 +100,10 @@
       <xs:element name="border-rect">
         <xs:complexType>
           <xs:attributeGroup ref="mf:rectAtts"/>
-          <xs:attribute name="start" type="mf:borderDef"/>
-          <xs:attribute name="end" type="mf:borderDef"/>
-          <xs:attribute name="before" type="mf:borderDef"/>
-          <xs:attribute name="after" type="mf:borderDef"/>
+          <xs:attribute name="left" type="mf:borderDef"/>
+          <xs:attribute name="right" type="mf:borderDef"/>
+          <xs:attribute name="top" type="mf:borderDef"/>
+          <xs:attribute name="bottom" type="mf:borderDef"/>
         </xs:complexType>
       </xs:element>
       <xs:element name="image">

@@ -126,7 +126,8 @@ public class PDFTranscoder extends AbstractFOPTranscoder {
             if (effCfg != null) {
                 PDFDocumentGraphics2DConfigurator configurator
                         = new PDFDocumentGraphics2DConfigurator();
-                configurator.configure(graphics, effCfg);
+                boolean useComplexScriptFeatures = false; //TODO - FIX ME
+                configurator.configure(graphics, effCfg, useComplexScriptFeatures);
             } else {
                 graphics.setupDefaultFontInfo();
             }

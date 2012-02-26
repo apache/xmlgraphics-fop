@@ -61,6 +61,7 @@ import org.apache.fop.area.BlockViewport;
 import org.apache.fop.area.BookmarkData;
 import org.apache.fop.area.CTM;
 import org.apache.fop.area.DestinationData;
+import org.apache.fop.area.LineArea;
 import org.apache.fop.area.OffDocumentExtensionAttachment;
 import org.apache.fop.area.OffDocumentItem;
 import org.apache.fop.area.PageSequence;
@@ -488,7 +489,8 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         if (hasDocumentNavigation() && id != null) {
             int extraMarginBefore = 5000; // millipoints
             int ipp = currentIPPosition;
-            int bpp = currentBPPosition + inlineArea.getOffset() - extraMarginBefore;
+            int bpp = currentBPPosition
+                + inlineArea.getBlockProgressionOffset() - extraMarginBefore;
             saveAbsolutePosition(id, ipp, bpp);
         }
     }
@@ -919,7 +921,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         AbstractAction action = null;
         // make sure the rect is determined *before* calling super!
         int ipp = currentIPPosition;
-        int bpp = currentBPPosition + ip.getOffset();
+        int bpp = currentBPPosition + ip.getBlockProgressionOffset();
         ipRect = new Rectangle(ipp, bpp, ip.getIPD(), ip.getBPD());
         AffineTransform transform = graphicContext.getTransform();
         ipRect = transform.createTransformedShape(ipRect).getBounds();
@@ -1031,7 +1033,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         }
 
         int rx = currentIPPosition + text.getBorderAndPaddingWidthStart();
-        int bl = currentBPPosition + text.getOffset() + text.getBaselineOffset();
+        int bl = currentBPPosition + text.getBlockProgressionOffset() + text.getBaselineOffset();
         textUtil.flush();
         textUtil.setStartPosition(rx, bl);
         textUtil.setSpacing(text.getTextLetterSpaceAdjust(), text.getTextWordSpaceAdjust());
@@ -1047,7 +1049,12 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         Font font = getFontFromArea(word.getParentArea());
         String s = word.getWord();
 
-        renderText(s, word.getLetterAdjustArray(),
+        int[][] dp = word.getGlyphPositionAdjustments();
+        if ( dp == null ) {
+            dp = IFUtil.convertDXToDP ( word.getLetterAdjustArray() );
+        }
+
+        renderText(s, dp, word.isReversed(),
                 font, (AbstractTextArea)word.getParentArea());
 
         super.renderWord(word);
@@ -1059,7 +1066,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         String s = space.getSpace();
 
         AbstractTextArea textArea = (AbstractTextArea)space.getParentArea();
-        renderText(s, null, font, textArea);
+        renderText(s, null, false, font, textArea);
 
         if (textUtil.combined && space.isAdjustable()) {
             //Used for justified text, for example
@@ -1072,23 +1079,31 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         super.renderSpace(space);
     }
 
+    private void renderText(String s,
+                              int[][] dp, boolean reversed,
+                              Font font, AbstractTextArea parentArea) {
+        if ( ( dp == null ) || IFUtil.isDPOnlyDX ( dp ) ) {
+            int[] dx = IFUtil.convertDPToDX ( dp );
+            renderTextWithAdjustments ( s, dx, reversed, font, parentArea );
+        } else {
+            renderTextWithAdjustments ( s, dp, reversed, font, parentArea );
+        }
+    }
+
     /**
-     * Does low-level rendering of text.
+     * Does low-level rendering of text using DX only position adjustments.
      * @param s text to render
-     * @param letterAdjust an array of widths for letter adjustment (may be null)
+     * @param dx an array of widths for letter adjustment (may be null)
+     * @param reversed if true then text has been reversed (from logical order)
      * @param font to font in use
      * @param parentArea the parent text area to retrieve certain traits from
      */
-    protected void renderText(String s,
-                           int[] letterAdjust,
-                           Font font, AbstractTextArea parentArea) {
+    private void renderTextWithAdjustments(String s,
+                              int[] dx, boolean reversed,
+                              Font font, AbstractTextArea parentArea) {
         int l = s.length();
         if (l == 0) {
             return;
-        }
-
-        if (letterAdjust != null) {
-            textUtil.adjust(letterAdjust[0]);
         }
         for (int i = 0; i < l; i++) {
             char ch = s.charAt(i);
@@ -1098,18 +1113,38 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
                 int tls = (i < l - 1 ? parentArea.getTextLetterSpaceAdjust() : 0);
                 glyphAdjust += tls;
             }
-            if (letterAdjust != null && i < l - 1) {
-                glyphAdjust += letterAdjust[i + 1];
+            if (dx != null && i < l) {
+                glyphAdjust += dx[i];
             }
-
             textUtil.adjust(glyphAdjust);
+        }
+    }
+
+    /**
+     * Does low-level rendering of text using generalized position adjustments.
+     * @param s text to render
+     * @param dp an array of 4-tuples, expressing [X,Y] placment
+     * adjustments and [X,Y] advancement adjustments, in that order (may be null)
+     * @param reversed if true then text has been reversed (from logical order)
+     * @param font to font in use
+     * @param parentArea the parent text area to retrieve certain traits from
+     */
+    private void renderTextWithAdjustments(String s,
+                              int[][] dp, boolean reversed,
+                              Font font, AbstractTextArea parentArea) {
+        assert !textUtil.combined;
+        for ( int i = 0, n = s.length(); i < n; i++ ) {
+            textUtil.addChar ( s.charAt ( i ) );
+            if ( dp != null ) {
+                textUtil.adjust ( dp[i] );
+            }
         }
     }
 
     private class TextUtil {
         private static final int INITIAL_BUFFER_SIZE = 16;
-        private int[] dx = new int[INITIAL_BUFFER_SIZE];
-        private int lastDXPos = 0;
+        private int[][] dp = new int[INITIAL_BUFFER_SIZE][4];
+        // private int lastDPPos = 0; // TBD - not yet used
         private final StringBuffer text = new StringBuffer();
         private int startx, starty;
         private int tls, tws;
@@ -1119,25 +1154,41 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
             text.append(ch);
         }
 
-        void adjust(int adjust) {
-            if (adjust != 0) {
+        void adjust(int dx) {
+            adjust ( new int[] {
+                    dx,                         // xPlaAdjust
+                    0,                          // yPlaAdjust
+                    dx,                         // xAdvAdjust
+                    0                           // yAdvAdjust
+                } );
+        }
+
+        void adjust(int[] pa) {
+            if ( !IFUtil.isPAIdentity ( pa ) ) {
                 int idx = text.length();
-                if (idx > dx.length - 1) {
-                    int newSize = Math.max(dx.length, idx + 1) + INITIAL_BUFFER_SIZE;
-                    int[] newDX = new int[newSize];
-                    System.arraycopy(dx, 0, newDX, 0, dx.length);
-                    dx = newDX;
+                if (idx > dp.length - 1) {
+                    int newSize = Math.max(dp.length, idx + 1) + INITIAL_BUFFER_SIZE;
+                    int[][] newDP = new int[newSize][];
+                    // reuse prior PA[0]...PA[dp.length-1]
+                    System.arraycopy(dp, 0, newDP, 0, dp.length);
+                    // populate new PA[dp.length]...PA[newDP.length-1]
+                    for ( int i = dp.length, n = newDP.length; i < n; i++ ) {
+                        newDP[i] = new int[4];
+                    }
+                    dp = newDP;
                 }
-                dx[idx] += adjust;
-                lastDXPos = idx;
+                IFUtil.adjustPA ( dp[idx - 1], pa );
+                // lastDPPos = idx;
             }
         }
 
         void reset() {
             if (text.length() > 0) {
                 text.setLength(0);
-                Arrays.fill(dx, 0);
-                lastDXPos = 0;
+                for ( int i = 0, n = dp.length; i < n; i++ ) {
+                    Arrays.fill(dp[i], 0);
+                }
+                // lastDPPos = 0;
             }
         }
 
@@ -1154,22 +1205,50 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         void flush() {
             if (text.length() > 0) {
                 try {
-                    int[] effDX = null;
-                    if (lastDXPos > 0) {
-                        int size = lastDXPos + 1;
-                        effDX = new int[size];
-                        System.arraycopy(dx, 0, effDX, 0, size);
-                    }
                     if (combined) {
-                        painter.drawText(startx, starty, 0, 0, effDX, text.toString());
+                        painter.drawText(startx, starty, 0, 0,
+                                         trimAdjustments ( dp, text.length() ), text.toString());
                     } else {
-                        painter.drawText(startx, starty, tls, tws, effDX, text.toString());
+                        painter.drawText(startx, starty, tls, tws,
+                                         trimAdjustments ( dp, text.length() ), text.toString());
                     }
                 } catch (IFException e) {
                     handleIFException(e);
                 }
                 reset();
             }
+        }
+
+        /**
+         * Trim adjustments array <code>dp</code> to be no greater length than
+         * text length, and where trailing all-zero entries are removed.
+         * @param dp a position adjustments array (or null)
+         * @param textLength the length of the associated text
+         * @return either the original value of <code>dp</code> or a copy
+         * of its first N significant adjustment entries, such that N is
+         * no greater than text length, and the last entry has a non-zero
+         * adjustment.
+         */
+        private int[][] trimAdjustments ( int[][] dp, int textLength ) {
+            if ( dp != null ) {
+                int tl = textLength;
+                int pl = dp.length;
+                int i  = ( tl < pl ) ? tl : pl;
+                while ( i > 0 ) {
+                    int[] pa = dp [ i - 1 ];
+                    if ( !IFUtil.isPAIdentity ( pa ) ) {
+                        break;
+                    } else {
+                        i--;
+                    }
+                }
+                if ( i == 0 ) {
+                    dp = null;
+                } else if ( i < pl ) {
+                    dp = IFUtil.copyDP ( dp, 0, i );
+                }
+            }
+            return dp;
         }
     }
 
@@ -1220,7 +1299,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         int style = area.getRuleStyle();
         int ruleThickness = area.getRuleThickness();
         int startx = currentIPPosition + area.getBorderAndPaddingWidthStart();
-        int starty = currentBPPosition + area.getOffset() + (ruleThickness / 2);
+        int starty = currentBPPosition + area.getBlockProgressionOffset() + (ruleThickness / 2);
         int endx = currentIPPosition
                         + area.getBorderAndPaddingWidthStart()
                         + area.getIPD();
@@ -1262,10 +1341,21 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
             float startx, float starty,
             float width, float height,
             BorderProps bpsBefore, BorderProps bpsAfter,
-            BorderProps bpsStart, BorderProps bpsEnd) {
+            BorderProps bpsStart, BorderProps bpsEnd, int level) {
         Rectangle rect = toMillipointRectangle(startx, starty, width, height);
         try {
-            painter.drawBorderRect(rect, bpsBefore, bpsAfter, bpsStart, bpsEnd);
+            BorderProps bpsTop = bpsBefore;
+            BorderProps bpsBottom = bpsAfter;
+            BorderProps bpsLeft;
+            BorderProps bpsRight;
+            if ( ( level == -1 ) || ( ( level & 1 ) == 0 ) ) {
+                bpsLeft = bpsStart;
+                bpsRight = bpsEnd;
+            } else {
+                bpsLeft = bpsEnd;
+                bpsRight = bpsStart;
+            }
+            painter.drawBorderRect(rect, bpsTop, bpsBottom, bpsLeft, bpsRight);
         } catch (IFException ife) {
             handleIFException(ife);
         }

@@ -19,18 +19,24 @@
 
 package org.apache.fop.fo.flow;
 
+import java.util.Stack;
+
+import org.xml.sax.Locator;
+
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.complexscripts.bidi.DelimitedTextRange;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.LengthRangeProperty;
+import org.apache.fop.util.CharUtilities;
 
 /**
  * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_leader">
  * <code>fo:leader</code></a> object.
  * The main property of <code>fo:leader</code> is leader-pattern.
  * The following patterns are treated: rule, space, dots and use-content.
- * TODO implement validateChildNode()
  */
 public class Leader extends InlineLevel {
     // The value of properties relevant for fo:leader.
@@ -94,6 +100,28 @@ public class Leader extends InlineLevel {
         }
         // letterSpacing = pList.get(PR_LETTER_SPACING);
         // textShadow = pList.get(PR_TEXT_SHADOW);
+    }
+
+    /**
+     * {@inheritDoc}
+     * <br>XSL Content Model: (#PCDATA|%inline;)*
+     * <br><i>Additionally: "The content must not contain an
+     * fo:leader, fo:inline-container, fo:block-container, fo:float,
+     * fo:footnote, or fo:marker either as a direct child or as a
+     * descendant."</i>
+     */
+    protected void validateChildNode(Locator loc, String nsURI, String localName)
+        throws ValidationException {
+        if (FO_URI.equals(nsURI)) {
+            if ( localName.equals("leader")
+                 || localName.equals("inline-container")
+                 || localName.equals("block-container")
+                 || localName.equals("float")
+                 || localName.equals("marker")
+                 || !isInlineItem(nsURI, localName) ) {
+                invalidChildError(loc, nsURI, localName);
+            }
+        }
     }
 
     /** @return the "rule-style" property */
@@ -170,4 +198,17 @@ public class Leader extends InlineLevel {
         super.endOfNode();
         getFOEventHandler().endLeader(this);
     }
+
+    @Override
+    protected Stack collectDelimitedTextRanges ( Stack ranges, DelimitedTextRange currentRange ) {
+        if ( currentRange != null ) {
+            if ( leaderPattern == EN_USECONTENT ) {
+                ranges = super.collectDelimitedTextRanges ( ranges, currentRange );
+            } else {
+                currentRange.append ( CharUtilities.OBJECT_REPLACEMENT_CHARACTER, this );
+            }
+        }
+        return ranges;
+    }
+
 }

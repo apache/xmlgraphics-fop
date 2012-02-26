@@ -57,6 +57,7 @@ import org.apache.fop.render.intermediate.BorderPainter;
 import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFState;
+import org.apache.fop.render.intermediate.IFUtil;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.traits.RuleStyle;
 import org.apache.fop.util.CharUtilities;
@@ -259,11 +260,11 @@ public class AFPPainter extends AbstractIFPainter {
 
     /** {@inheritDoc} */
     @Override
-    public void drawBorderRect(Rectangle rect, BorderProps before, BorderProps after,
-            BorderProps start, BorderProps end) throws IFException {
-        if (before != null || after != null || start != null || end != null) {
+    public void drawBorderRect(Rectangle rect, BorderProps top, BorderProps bottom,
+            BorderProps left, BorderProps right) throws IFException {
+        if (top != null || bottom != null || left != null || right != null) {
             try {
-                this.borderPainter.drawBorders(rect, before, after, start, end);
+                this.borderPainter.drawBorders(rect, top, bottom, left, right);
             } catch (IOException ife) {
                 throw new IFException("IO error while painting borders", ife);
             }
@@ -354,8 +355,8 @@ public class AFPPainter extends AbstractIFPainter {
 
     /** {@inheritDoc} */
     public void drawText(                                        // CSOK: MethodLength
-            int x, int y, final int letterSpacing, final int wordSpacing, final int[] dx,
-            final String text) throws IFException {
+            int x, int y, final int letterSpacing, final int wordSpacing,
+            final int[][] dp, final String text) throws IFException {
         final int fontSize = this.state.getFontSize();
         getPaintingState().setFontSize(fontSize);
 
@@ -404,6 +405,7 @@ public class AFPPainter extends AbstractIFPainter {
                     builder.setCodedFont((byte)fontReference);
 
                     int l = text.length();
+                    int[] dx = IFUtil.convertDPToDX ( dp );
                     int dxl = (dx != null ? dx.length : 0);
                     StringBuffer sb = new StringBuffer();
 

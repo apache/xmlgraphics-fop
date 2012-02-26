@@ -700,7 +700,7 @@ public class AreaTreeParser {
             public void startElement(Attributes attributes) {
                 InlineArea inl = new InlineArea();
                 transferForeignObjects(attributes, inl);
-                inl.setOffset(XMLUtil.getAttributeAsInt(attributes, "offset", 0));
+                inl.setBlockProgressionOffset(XMLUtil.getAttributeAsInt(attributes, "offset", 0));
                 setAreaAttributes(attributes, inl);
                 setTraits(attributes, inl, SUBSET_COMMON);
                 setTraits(attributes, inl, SUBSET_BOX);
@@ -720,7 +720,7 @@ public class AreaTreeParser {
             public void startElement(Attributes attributes) {
                 InlineParent ip = new InlineParent();
                 transferForeignObjects(attributes, ip);
-                ip.setOffset(XMLUtil.getAttributeAsInt(attributes, "offset", 0));
+                ip.setBlockProgressionOffset(XMLUtil.getAttributeAsInt(attributes, "offset", 0));
                 setAreaAttributes(attributes, ip);
                 setTraits(attributes, ip, SUBSET_COMMON);
                 setTraits(attributes, ip, SUBSET_BOX);
@@ -741,7 +741,7 @@ public class AreaTreeParser {
             public void startElement(Attributes attributes) {
                 InlineBlockParent ibp = new InlineBlockParent();
                 transferForeignObjects(attributes, ibp);
-                ibp.setOffset(XMLUtil.getAttributeAsInt(attributes, "offset", 0));
+                ibp.setBlockProgressionOffset(XMLUtil.getAttributeAsInt(attributes, "offset", 0));
                 setAreaAttributes(attributes, ibp);
                 setTraits(attributes, ibp, SUBSET_COMMON);
                 setTraits(attributes, ibp, SUBSET_BOX);
@@ -769,7 +769,7 @@ public class AreaTreeParser {
                 setTraits(attributes, text, SUBSET_COLOR);
                 setTraits(attributes, text, SUBSET_FONT);
                 text.setBaselineOffset(XMLUtil.getAttributeAsInt(attributes, "baseline", 0));
-                text.setOffset(XMLUtil.getAttributeAsInt(attributes, "offset", 0));
+                text.setBlockProgressionOffset(XMLUtil.getAttributeAsInt(attributes, "offset", 0));
                 text.setTextLetterSpaceAdjust(XMLUtil.getAttributeAsInt(attributes,
                         "tlsadjust", 0));
                 text.setTextWordSpaceAdjust(XMLUtil.getAttributeAsInt(attributes,
@@ -791,8 +791,14 @@ public class AreaTreeParser {
                 int[] letterAdjust
                         = ConversionUtils.toIntArray(
                             lastAttributes.getValue("letter-adjust"), "\\s");
+                int level = XMLUtil.getAttributeAsInt(lastAttributes, "level", -1);
+                boolean reversed = XMLUtil.getAttributeAsBoolean(lastAttributes, "reversed", false);
+                int[][] gposAdjustments
+                    = XMLUtil.getAttributeAsPositionAdjustments(lastAttributes, "position-adjust");
                 content.flip();
-                WordArea word = new WordArea(content.toString().trim(), offset, letterAdjust);
+                WordArea word = new WordArea
+                    ( offset, level, content.toString().trim(), letterAdjust,
+                      null, gposAdjustments, reversed );
                 AbstractTextArea text = getCurrentText();
                 word.setParentArea(text);
                 text.addChildArea(word);
@@ -811,7 +817,8 @@ public class AreaTreeParser {
                 if (content.position() > 0) {
                     content.flip();
                     boolean adjustable = XMLUtil.getAttributeAsBoolean(lastAttributes, "adj", true);
-                    SpaceArea space = new SpaceArea(content.charAt(0), offset, adjustable);
+                    int level = XMLUtil.getAttributeAsInt(lastAttributes, "level", -1);
+                    SpaceArea space = new SpaceArea(offset, level, content.charAt(0), adjustable);
                     AbstractTextArea text = getCurrentText();
                     space.setParentArea(text);
                     text.addChildArea(space);
@@ -821,7 +828,7 @@ public class AreaTreeParser {
                     setTraits(lastAttributes, space, SUBSET_COMMON);
                     setTraits(lastAttributes, space, SUBSET_BOX);
                     setTraits(lastAttributes, space, SUBSET_COLOR);
-                    space.setOffset(offset);
+                    space.setBlockProgressionOffset(offset);
                     Area parent = (Area)areaStack.peek();
                     parent.addChildArea(space);
                 }
@@ -842,7 +849,8 @@ public class AreaTreeParser {
                 setTraits(attributes, leader, SUBSET_BOX);
                 setTraits(attributes, leader, SUBSET_COLOR);
                 setTraits(attributes, leader, SUBSET_FONT);
-                leader.setOffset(XMLUtil.getAttributeAsInt(attributes, "offset", 0));
+                leader.setBlockProgressionOffset
+                    ( XMLUtil.getAttributeAsInt(attributes, "offset", 0) );
                 String ruleStyle = attributes.getValue("ruleStyle");
                 if (ruleStyle != null) {
                     leader.setRuleStyle(ruleStyle);
@@ -857,7 +865,8 @@ public class AreaTreeParser {
         private class InlineViewportMaker extends AbstractMaker {
 
             public void startElement(Attributes attributes) {
-                InlineViewport viewport = new InlineViewport(null);
+                int level = XMLUtil.getAttributeAsInt(attributes, "level", -1);
+                InlineViewport viewport = new InlineViewport(null, level);
                 transferForeignObjects(attributes, viewport);
                 setAreaAttributes(attributes, viewport);
                 setTraits(attributes, viewport, SUBSET_COMMON);
@@ -865,7 +874,8 @@ public class AreaTreeParser {
                 setTraits(attributes, viewport, SUBSET_COLOR);
                 viewport.setContentPosition(XMLUtil.getAttributeAsRectangle2D(attributes, "pos"));
                 viewport.setClip(XMLUtil.getAttributeAsBoolean(attributes, "clip", false));
-                viewport.setOffset(XMLUtil.getAttributeAsInt(attributes, "offset", 0));
+                viewport.setBlockProgressionOffset
+                    ( XMLUtil.getAttributeAsInt(attributes, "offset", 0) );
                 Area parent = (Area)areaStack.peek();
                 parent.addChildArea(viewport);
                 areaStack.push(viewport);
@@ -1025,6 +1035,7 @@ public class AreaTreeParser {
         private void setAreaAttributes(Attributes attributes, Area area) {
             area.setIPD(Integer.parseInt(attributes.getValue("ipd")));
             area.setBPD(Integer.parseInt(attributes.getValue("bpd")));
+            area.setBidiLevel(XMLUtil.getAttributeAsInt(attributes, "level", -1));
         }
 
         private static final Object[] SUBSET_COMMON = new Object[] {

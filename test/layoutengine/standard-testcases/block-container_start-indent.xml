@@ -78,6 +78,7 @@
     <eval expected="10000" xpath="//flow/block[2]/block[2]/@space-start"/>
     <eval expected="350000" xpath="//flow/block[2]/block[2]/@ipd"/>
     <eval expected="350000" xpath="//flow/block[2]/block[2]/@ipda"/>
+    <eval expected="[1.0 0.0 0.0 1.0 10000.0 0.0]" xpath="//flow/block[2]/block[2]/@ctm"/>
     <!-- block-container's reference area -->
     <eval expected="350000" xpath="//flow/block[2]/block[2]/block[1]/@ipd"/>
     <eval expected="350000" xpath="//flow/block[2]/block[2]/block[1]/@ipda"/>
@@ -119,6 +120,7 @@
     <eval expected="10000" xpath="//flow/block[4]/block[2]/@space-start"/>
     <eval expected="350000" xpath="//flow/block[4]/block[2]/@ipd"/>
     <eval expected="350000" xpath="//flow/block[4]/block[2]/@ipda"/>
+    <eval expected="[1.0 0.0 0.0 1.0 10000.0 0.0]" xpath="//flow/block[4]/block[2]/@ctm"/>
     <!-- block-container's reference area -->
     <eval expected="350000" xpath="//flow/block[4]/block[2]/block[1]/@ipd"/>
     <eval expected="350000" xpath="//flow/block[4]/block[2]/block[1]/@ipda"/>

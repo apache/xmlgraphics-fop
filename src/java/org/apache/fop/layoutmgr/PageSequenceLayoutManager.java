@@ -25,6 +25,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fop.area.AreaTreeHandler;
 import org.apache.fop.area.AreaTreeModel;
 import org.apache.fop.area.LineArea;
+import org.apache.fop.complexscripts.bidi.BidiResolver;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.PageSequenceMaster;
@@ -78,8 +79,12 @@ public class PageSequenceLayoutManager extends AbstractPageSequenceLayoutManager
     public void activateLayout() {
         initialize();
 
-        LineArea title = null;
+        // perform step 5.8 of refinement process (Unicode BIDI Processing)
+        if ( areaTreeHandler.isComplexScriptFeaturesEnabled() ) {
+            BidiResolver.resolveInlineDirectionality(getPageSequence());
+        }
 
+        LineArea title = null;
         if (getPageSequence().getTitleFO() != null) {
             try {
                 ContentLayoutManager clm = getLayoutManagerMaker().

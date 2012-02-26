@@ -73,7 +73,8 @@ public class NativeTextHandler implements PSTextHandler {
     private void setupFontInfo() {
         //Sets up a FontInfo with default fonts
         fontInfo = new FontInfo();
-        FontSetup.setup(fontInfo);
+        boolean base14Kerning = false;
+        FontSetup.setup(fontInfo, base14Kerning);
     }
 
     /**

@@ -29,7 +29,7 @@ import java.util.List;
 public class EmbedFontInfo implements Serializable {
 
     /** Serialization Version UID */
-    private static final long serialVersionUID = 8755432068669997368L;
+    private static final long serialVersionUID = 8755432068669997369L;
 
     /** filename of the metrics file */
     protected String metricsFile;
@@ -37,6 +37,8 @@ public class EmbedFontInfo implements Serializable {
     protected String embedFile;
     /** false, to disable kerning */
     protected boolean kerning;
+    /** false, to disable advanced typographic features */
+    protected boolean advanced;
     /** the requested encoding mode for the font */
     protected EncodingMode encodingMode = EncodingMode.AUTO;
 
@@ -52,17 +54,19 @@ public class EmbedFontInfo implements Serializable {
 
     /**
      * Main constructor
-     * @param metricsFile Path to the xml file containing font metrics
-     * @param kerning True if kerning should be enabled
-     * @param fontTriplets List of font triplets to associate with this font
-     * @param embedFile Path to the embeddable font file (may be null)
+     * @param metricsFile path to the xml file containing font metrics
+     * @param kerning true if kerning should be enabled
+     * @param advanced true if advanced typography features should be enabled
+     * @param fontTriplets list of font triplets to associate with this font
+     * @param embedFile path to the embeddable font file (may be null)
      * @param subFontName the sub-fontname used for TrueType Collections (null otherwise)
      */
-    public EmbedFontInfo(String metricsFile, boolean kerning,
+    public EmbedFontInfo(String metricsFile, boolean kerning, boolean advanced,
                     List<FontTriplet> fontTriplets, String embedFile, String subFontName) {
         this.metricsFile = metricsFile;
         this.embedFile = embedFile;
         this.kerning = kerning;
+        this.advanced = advanced;
         this.fontTriplets = fontTriplets;
         this.subFontName = subFontName;
     }
@@ -85,10 +89,18 @@ public class EmbedFontInfo implements Serializable {
 
     /**
      * Determines if kerning is enabled
-     * @return True if enabled
+     * @return true if enabled
      */
     public boolean getKerning() {
         return kerning;
+    }
+
+    /**
+     * Determines if advanced typographic features are enabled
+     * @return true if enabled
+     */
+    public boolean getAdvanced() {
+        return advanced;
     }
 
     /**
@@ -173,6 +185,7 @@ public class EmbedFontInfo implements Serializable {
     public String toString() {
         return "metrics-url=" + metricsFile + ", embed-url=" + embedFile
             + ", kerning=" + kerning
+            + ", advanced=" + advanced
             + ", enc-mode=" + encodingMode
             + ", font-triplet=" + fontTriplets
             + (getSubFontName() != null ? ", sub-font=" + getSubFontName() : "")

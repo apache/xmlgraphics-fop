@@ -58,7 +58,6 @@ public class Block extends BlockParent {
      */
     public static final int FIXED = 3;
 
-    private int stacking = TB;
     private int positioning = STACK;
 
     /** if true, allow BPD update */
@@ -131,6 +130,14 @@ public class Block extends BlockParent {
     public int getStartIndent() {
         Integer startIndent = (Integer)getTrait(Trait.START_INDENT);
         return (startIndent != null ? startIndent : 0);
+    }
+
+    /**
+     * @return the end-indent trait
+     */
+    public int getEndIndent() {
+        Integer endIndent = (Integer)getTrait(Trait.END_INDENT);
+        return (endIndent != null ? endIndent : 0);
     }
 
 }

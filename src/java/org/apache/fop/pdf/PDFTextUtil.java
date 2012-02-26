@@ -81,8 +81,8 @@ public abstract class PDFTextUtil {
         sb.append(PDFNumber.doubleOut(lt[5], DEC));
     }
 
-    private void writeChar(char ch, StringBuffer sb) {
-        if (!useMultiByte) {
+    private static void writeChar(char ch, StringBuffer sb, boolean multibyte) {
+        if (!multibyte) {
             if (ch < 32 || ch > 127) {
                 sb.append("\\").append(Integer.toOctalString(ch));
             } else {
@@ -99,6 +99,10 @@ public abstract class PDFTextUtil {
         } else {
             sb.append(PDFText.toUnicodeHex(ch));
         }
+    }
+
+    private void writeChar(char ch, StringBuffer sb) {
+        writeChar ( ch, sb, useMultiByte );
     }
 
     private void checkInTextObject() {
@@ -245,24 +249,38 @@ public abstract class PDFTextUtil {
             bufTJ = new StringBuffer();
         }
         if (bufTJ.length() == 0) {
-            bufTJ.append("[").append(startText);
+            bufTJ.append("[");
+            bufTJ.append(startText);
         }
         writeChar(codepoint, bufTJ);
     }
 
     /**
      * Writes a glyph adjust value to the "TJ-Buffer".
+
+     * <p>Assumes the following:</p>
+     * <ol>
+     * <li>if buffer is currently empty, then this is the start of the array object
+     * that encodes the adjustment and character values, and, therfore, a LEFT
+     * SQUARE BRACKET '[' must be prepended; and
+     * </li>
+     * <li>otherwise (the buffer is
+     * not empty), then the last element written to the buffer was a mapped
+     * character, and, therefore, a terminating '&gt;' or ')' followed by a space
+     * must be appended to the buffer prior to appending the adjustment value.
+     * </li>
+     * </ol>
      * @param adjust the glyph adjust value in thousands of text unit space.
      */
     public void adjustGlyphTJ(double adjust) {
         if (bufTJ == null) {
             bufTJ = new StringBuffer();
         }
-        if (bufTJ.length() > 0) {
-            bufTJ.append(endText).append(" ");
-        }
         if (bufTJ.length() == 0) {
             bufTJ.append("[");
+        } else {
+            bufTJ.append(endText);
+            bufTJ.append(" ");
         }
         bufTJ.append(PDFNumber.doubleOut(adjust, DEC - 4));
         bufTJ.append(" ");
@@ -283,6 +301,33 @@ public abstract class PDFTextUtil {
 
     private boolean isInString() {
         return bufTJ != null && bufTJ.length() > 0;
+    }
+
+    /**
+     * Writes a "Td" command with specified x and y coordinates.
+     * @param x coordinate
+     * @param y coordinate
+     */
+    public void writeTd ( double x, double y ) {
+        StringBuffer sb = new StringBuffer();
+        sb.append(PDFNumber.doubleOut(x, DEC));
+        sb.append(' ');
+        sb.append(PDFNumber.doubleOut(y, DEC));
+        sb.append ( " Td\n" );
+        write ( sb.toString() );
+    }
+
+    /**
+     * Writes a "Tj" command with specified character code.
+     * @param ch character code to write
+     */
+    public void writeTj ( char ch ) {
+        StringBuffer sb = new StringBuffer();
+        sb.append ( '<' );
+        writeChar ( ch, sb, true );
+        sb.append ( '>' );
+        sb.append ( " Tj\n" );
+        write ( sb.toString() );
     }
 
 }

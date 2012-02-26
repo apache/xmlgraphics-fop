@@ -45,7 +45,7 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager {
 
     private Block curBlockArea;
 
-    private int xoffset;
+    private int xOffset;
     private int itemIPD;
 
     /**
@@ -80,7 +80,7 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager {
      * @param off the x offset
      */
     public void setXOffset(int off) {
-        xoffset = off;
+        xOffset = off;
     }
 
     /**
@@ -175,7 +175,7 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager {
             curBlockArea = new Block();
             curBlockArea.setPositioning(Block.ABSOLUTE);
             // set position
-            curBlockArea.setXOffset(xoffset);
+            curBlockArea.setXOffset(xOffset);
             //TODO: Check - itemIPD never set?
             curBlockArea.setIPD(itemIPD);
             //curBlockArea.setHeight();

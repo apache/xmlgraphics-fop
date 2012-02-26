@@ -359,6 +359,8 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
 
             curBlockArea.setIPD(super.getContentAreaIPD());
 
+            curBlockArea.setBidiLevel ( getBlockFO().getBidiLevel() );
+
             TraitSetter.addBreaks(curBlockArea,
                     getBlockFO().getBreakBefore(), getBlockFO().getBreakAfter());
 
@@ -503,4 +505,3 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
     }
 
 }
-

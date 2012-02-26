@@ -101,7 +101,7 @@ public class PageNumberLayoutManager extends LeafNodeLayoutManager {
         TraitSetter.setProducerID(ta, fobj.getId());
         ta.setIPD(baseArea.getIPD());
         ta.setBPD(baseArea.getBPD());
-        ta.setOffset(baseArea.getOffset());
+        ta.setBlockProgressionOffset(baseArea.getBlockProgressionOffset());
         ta.setBaselineOffset(baseArea.getBaselineOffset());
         ta.addTrait(Trait.COLOR, fobj.getColor()); //only to initialize the trait map
         ta.getTraits().putAll(baseArea.getTraits());

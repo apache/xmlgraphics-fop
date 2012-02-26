@@ -180,6 +180,10 @@ public abstract class InlineStackingLayoutManager extends AbstractLayoutManager
                 //getLogger().debug("Add leading space: " + iAdjust);
                 Space ls = new Space();
                 ls.setIPD(iAdjust);
+                int level = parentArea.getBidiLevel();
+                if ( level >= 0 ) {
+                    ls.setBidiLevel ( level );
+                }
                 parentArea.addChildArea(ls);
             }
         }

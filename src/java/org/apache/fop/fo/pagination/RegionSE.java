@@ -26,6 +26,7 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.traits.WritingMode;
 
 /**
  * Abstract base class for <a href="http://www.w3.org/TR/xsl/#fo_region-start">
@@ -61,7 +62,8 @@ public abstract class RegionSE extends SideRegion {
      * @param wm writing mode
      * @param siblingContext the context to use to resolve extent on siblings
      */
-    protected void adjustIPD(Rectangle vpRefRect, int wm, PercentBaseContext siblingContext) {
+    protected void adjustIPD
+        ( Rectangle vpRefRect, WritingMode wm, PercentBaseContext siblingContext ) {
         int offset = 0;
         RegionBefore before = (RegionBefore) getSiblingRegion(FO_REGION_BEFORE);
         if (before != null && before.getPrecedence() == EN_TRUE) {
@@ -72,8 +74,9 @@ public abstract class RegionSE extends SideRegion {
         if (after != null && after.getPrecedence() == EN_TRUE) {
             offset += after.getExtent().getValue(siblingContext);
         }
+        // [TBD] WRITING MODE ALERT
         if (offset > 0) {
-            if (wm == EN_LR_TB || wm == EN_RL_TB) {
+            if (wm == WritingMode.LR_TB || wm == WritingMode.RL_TB) {
                 vpRefRect.height -= offset;
             } else {
                 vpRefRect.width -= offset;

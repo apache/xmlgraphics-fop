@@ -152,6 +152,21 @@
         <td>false</td>
       </tr>
       <tr>
+        <td>complex-scripts</td>
+        <td>attribute disabled (optional)</td>
+        <td>
+          If present and if an attribute 'disabled' is specified with the value 'false', then
+          complex script features are disabled. The same result can be obtained on an FOP
+          per-invocation basis by specifying a '-nocs' command line option when invoking FOP.
+          When complex script features are disabled, all bidirectional processing and complex
+          character to glyph mapping processing is disabled; in addition, the loading of
+          GDEF, GSUB, and GPOS advanced typographic tables is disabled for OpenType and
+          TrueType fonts. Unless disabled by this mechanism or by use of the '-nocs' command
+          line option, complex script features will be enabled by default.
+        </td>
+        <td>n/a</td>
+      </tr>
+      <tr>
         <td>default-page-settings</td>
         <td>n/a</td>
         <td>

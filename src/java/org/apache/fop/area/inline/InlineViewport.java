@@ -50,6 +50,17 @@ public class InlineViewport extends InlineArea implements Viewport {
      * @param child the child content area of this viewport
      */
     public InlineViewport(Area child) {
+        this(child, -1);
+    }
+
+    /**
+     * Create a new viewport area with the content area.
+     *
+     * @param child the child content area of this viewport
+     * @param bidiLevel the bidirectional embedding level (or -1 if not defined)
+     */
+    public InlineViewport(Area child, int bidiLevel) {
+        super(0, bidiLevel);
         this.content = child;
     }
 
@@ -121,7 +132,7 @@ public class InlineViewport extends InlineArea implements Viewport {
             out.writeFloat((float) contentPosition.getHeight());
         }
         out.writeBoolean(clip);
-        out.writeObject(props);
+        out.writeObject(traits);
         out.writeObject(content);
     }
 
@@ -134,7 +145,7 @@ public class InlineViewport extends InlineArea implements Viewport {
                                                     in.readFloat());
         }
         this.clip = in.readBoolean();
-        this.props = (HashMap) in.readObject();
+        this.traits = (HashMap) in.readObject();
         this.content = (Area) in.readObject();
     }
 

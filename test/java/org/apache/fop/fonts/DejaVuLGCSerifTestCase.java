@@ -31,7 +31,7 @@ import org.junit.Test;
  */
 public class DejaVuLGCSerifTestCase {
 
-    private FontResolver fontResolver = FontManager.createMinimalFontResolver();
+    private FontResolver fontResolver = FontManager.createMinimalFontResolver(false);
     private CustomFont font;
 
     /**

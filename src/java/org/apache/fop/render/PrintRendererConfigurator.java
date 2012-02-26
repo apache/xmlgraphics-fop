@@ -95,7 +95,9 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
         FontManager fontManager = factory.getFontManager();
         if (fontResolver == null) {
             //Ensure that we have minimal font resolution capabilities
-            fontResolver = FontManager.createMinimalFontResolver();
+            fontResolver
+                = FontManager.createMinimalFontResolver
+                    ( userAgent.isComplexScriptFeaturesEnabled() );
         }
 
         boolean strict = factory.validateUserConfigStrictly();
@@ -128,7 +130,8 @@ public class PrintRendererConfigurator extends AbstractRendererConfigurator
             FontEventListener listener = new FontEventAdapter(
                     userAgent.getEventBroadcaster());
             List<EmbedFontInfo> fontList = buildFontList(cfg, fontResolver, listener);
-            fontCollections.add(new CustomFontCollection(fontResolver, fontList));
+            fontCollections.add(new CustomFontCollection(fontResolver, fontList,
+                                userAgent.isComplexScriptFeaturesEnabled()));
         }
 
         fontManager.setup(fontInfo,

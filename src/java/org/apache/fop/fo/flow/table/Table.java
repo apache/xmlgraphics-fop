@@ -48,7 +48,7 @@ import org.apache.fop.fo.properties.TableColLength;
 public class Table extends TableFObj implements ColumnNumberManagerHolder, BreakPropertySet,
         CommonAccessibilityHolder {
 
-    /** properties */
+    // The value of FO traits (refined properties) that apply to fo:table.
     private CommonAccessibility commonAccessibility;
     private CommonBorderPaddingBackground commonBorderPaddingBackground;
     private CommonMarginBlock commonMarginBlock;
@@ -64,11 +64,12 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder, Break
     private int tableLayout;
     private int tableOmitFooterAtBreak;
     private int tableOmitHeaderAtBreak;
+    private int writingMode;
     // Unused but valid items, commented out for performance:
     //     private CommonAural commonAural;
     //     private CommonRelativePosition commonRelativePosition;
     //     private int intrusionDisplace;
-    //     private int writingMode;
+    // End of FO trait values
 
     /** extension properties */
     private Length widowContentLimit;
@@ -130,6 +131,7 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder, Break
         tableLayout = pList.get(PR_TABLE_LAYOUT).getEnum();
         tableOmitFooterAtBreak = pList.get(PR_TABLE_OMIT_FOOTER_AT_BREAK).getEnum();
         tableOmitHeaderAtBreak = pList.get(PR_TABLE_OMIT_HEADER_AT_BREAK).getEnum();
+        writingMode = pList.get(PR_WRITING_MODE).getEnum();
 
         //Bind extension properties
         widowContentLimit = pList.get(PR_X_WIDOW_CONTENT_LIMIT).getLength();
@@ -336,7 +338,6 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder, Break
         TableColumn implicitColumn = new TableColumn(this, true);
         PropertyList pList = new StaticPropertyList(
                                 implicitColumn, this.propList);
-        pList.setWritingMode();
         implicitColumn.bind(pList);
         implicitColumn.setColumnWidth(new TableColLength(1.0, implicitColumn));
         implicitColumn.setColumnNumber(colNumber);
@@ -433,14 +434,14 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder, Break
     }
 
     /**
-     * @return the "inline-progression-dimension" property.
+     * @return the "inline-progression-dimension" FO trait.
      */
     public LengthRangeProperty getInlineProgressionDimension() {
         return inlineProgressionDimension;
     }
 
     /**
-     * @return the "block-progression-dimension" property.
+     * @return the "block-progression-dimension" FO trait.
      */
     public LengthRangeProperty getBlockProgressionDimension() {
         return blockProgressionDimension;
@@ -460,27 +461,27 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder, Break
         return commonBorderPaddingBackground;
     }
 
-    /** @return the "break-after" property. */
+    /** @return the "break-after" FO trait. */
     public int getBreakAfter() {
         return breakAfter;
     }
 
-    /** @return the "break-before" property. */
+    /** @return the "break-before" FO trait. */
     public int getBreakBefore() {
         return breakBefore;
     }
 
-    /** @return the "keep-with-next" property.  */
+    /** @return the "keep-with-next" FO trait.  */
     public KeepProperty getKeepWithNext() {
         return keepWithNext;
     }
 
-    /** @return the "keep-with-previous" property.  */
+    /** @return the "keep-with-previous" FO trait.  */
     public KeepProperty getKeepWithPrevious() {
         return keepWithPrevious;
     }
 
-    /** @return the "keep-together" property.  */
+    /** @return the "keep-together" FO trait.  */
     public KeepProperty getKeepTogether() {
         return keepTogether;
     }
@@ -494,7 +495,7 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder, Break
                 || !getKeepTogether().getWithinColumn().isAuto();
     }
 
-    /** @return the "border-collapse" property. */
+    /** @return the "border-collapse" FO trait. */
     public int getBorderCollapse() {
         return borderCollapse;
     }
@@ -504,17 +505,22 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder, Break
         return (getBorderCollapse() == EN_SEPARATE);
     }
 
-    /** @return the "border-separation" property. */
+    /** @return the "border-separation" FO trait. */
     public LengthPairProperty getBorderSeparation() {
         return borderSeparation;
     }
 
-    /** @return the "fox:widow-content-limit" extension property */
+    /** @return the "writing-mode" FO trait */
+    public int getWritingMode() {
+        return writingMode;
+    }
+
+    /** @return the "fox:widow-content-limit" extension FO trait */
     public Length getWidowContentLimit() {
         return widowContentLimit;
     }
 
-    /** @return the "fox:orphan-content-limit" extension property */
+    /** @return the "fox:orphan-content-limit" extension FO trait */
     public Length getOrphanContentLimit() {
         return orphanContentLimit;
     }

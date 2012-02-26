@@ -19,7 +19,11 @@
 
 package org.apache.fop.area;
 
+import java.util.Iterator;
 import java.util.List;
+
+import org.apache.fop.fo.Constants;
+import org.apache.fop.traits.WritingModeTraitsGetter;
 
 /**
  * The span-reference-area.
@@ -181,6 +185,28 @@ public class Span extends Area {
             }
         }
         return (areaCount == 0);
+    }
+
+    /**
+     * Sets the writing mode traits for the main reference area of
+     * this span area.
+     * @param wmtg a WM traits getter
+     */
+    public void setWritingModeTraits(WritingModeTraitsGetter wmtg) {
+        switch ( wmtg.getColumnProgressionDirection().getEnumValue() ) {
+        case Constants.EN_RL:
+            setBidiLevel(1);
+            for ( Iterator<NormalFlow> it = flowAreas.iterator(); it.hasNext();) {
+                it.next().setBidiLevel(1);
+            }
+            break;
+        default:
+            resetBidiLevel();
+            for ( Iterator<NormalFlow> it = flowAreas.iterator(); it.hasNext();) {
+                it.next().resetBidiLevel();
+            }
+            break;
+        }
     }
 
     /** {@inheritDoc} */

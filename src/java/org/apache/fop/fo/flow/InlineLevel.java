@@ -39,7 +39,7 @@ import org.apache.fop.fo.properties.SpaceProperty;
  */
 public abstract class InlineLevel extends FObjMixed implements CommonAccessibilityHolder {
 
-    // The value of properties relevant for inline-level FOs.
+    // The value of FO traits (refined properties) that apply to inline level FOs.
     private CommonAccessibility commonAccessibility;
     private CommonBorderPaddingBackground commonBorderPaddingBackground;
     private CommonMarginInline commonMarginInline;
@@ -48,7 +48,7 @@ public abstract class InlineLevel extends FObjMixed implements CommonAccessibili
     private KeepProperty keepWithNext;
     private KeepProperty keepWithPrevious;
     private SpaceProperty lineHeight;
-    // End of property values
+    // End of trait values
 
     /**
      * Base constructor
@@ -92,24 +92,29 @@ public abstract class InlineLevel extends FObjMixed implements CommonAccessibili
         return commonFont;
     }
 
-    /** @return the "color" property */
+    /** @return the "color" trait */
     public Color getColor() {
         return color;
     }
 
-    /** @return the "line-height" property */
+    /** @return the "line-height" trait */
     public SpaceProperty getLineHeight() {
         return lineHeight;
     }
 
-    /** @return the "keep-with-next" property */
+    /** @return the "keep-with-next" trait */
     public KeepProperty getKeepWithNext() {
         return keepWithNext;
     }
 
-    /** @return the "keep-with-previous" property */
+    /** @return the "keep-with-previous" trait */
     public KeepProperty getKeepWithPrevious() {
         return keepWithPrevious;
+    }
+
+    @Override
+    public boolean isDelimitedTextRangeBoundary ( int boundary ) {
+        return false;
     }
 
 }

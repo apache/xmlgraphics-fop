@@ -46,8 +46,6 @@ import org.apache.fop.fo.properties.PropertyMaker;
  */
 public abstract class PropertyList {
 
-    // writing-mode index
-    private int writingMode;
 
     private static boolean[] inheritableProperty;
 
@@ -220,58 +218,60 @@ public abstract class PropertyList {
     }
 
     /**
-     * Set writing mode for this FO.
-     * Use that from the nearest ancestor, including self, which generates
-     * reference areas, or from root FO if no ancestor found.
-     * @throws PropertyException ...
-     */
-    public void setWritingMode() throws PropertyException {
-        FObj p = fobj.findNearestAncestorFObj();
-        // If this is a reference area or the root, use the property value.
-        if (fobj.generatesReferenceAreas() || p == null) {
-            writingMode = get(Constants.PR_WRITING_MODE).getEnum();
-        } else {
-            // Otherwise get the writing mode value from the parent.
-            writingMode = getParentPropertyList().getWritingMode();
-        }
-    }
-
-    /**
-     * Return the "writing-mode" property value.
-     * @return the "writing-mode" property value.
-     */
-    public int getWritingMode() {
-        return writingMode;
-    }
-
-
-    /**
-     * Uses the stored writingMode.
+     * Select a writing mode dependent property ID based on value of writing mode property.
      * @param lrtb the property ID to return under lrtb writingmode.
      * @param rltb the property ID to return under rltb writingmode.
      * @param tbrl the property ID to return under tbrl writingmode.
+     * @param tblr the property ID to return under tblr writingmode.
      * @return one of the property IDs, depending on the writing mode.
      */
-    public int getWritingMode(int lrtb, int rltb, int tbrl) {
-        switch (writingMode) {
-            case Constants.EN_LR_TB: return lrtb;
-            case Constants.EN_RL_TB: return rltb;
-            case Constants.EN_TB_RL: return tbrl;
+    public int selectFromWritingMode(int lrtb, int rltb, int tbrl, int tblr) {
+        int propID;
+        try {
+            switch (get(Constants.PR_WRITING_MODE).getEnum()) {
+            case Constants.EN_LR_TB:
+                propID = lrtb;
+                break;
+            case Constants.EN_RL_TB:
+                propID = rltb;
+                break;
+            case Constants.EN_TB_RL:
+                propID = tbrl;
+                break;
+            case Constants.EN_TB_LR:
+                propID = tblr;
+                break;
             default:
-                //nop
+            propID = -1;
+                break;
+            }
+        } catch ( PropertyException e ) {
+            propID = -1;
         }
-        return -1;
+        return propID;
     }
 
     private String addAttributeToList(Attributes attributes,
                                     String attributeName) throws ValidationException {
         String attributeValue = attributes.getValue(attributeName);
-        convertAttributeToProperty(attributes, attributeName, attributeValue);
+        if ( attributeValue != null ) {
+            convertAttributeToProperty(attributes, attributeName, attributeValue);
+        }
         return attributeValue;
     }
 
     /**
-     * Adds the attributes, passed in by the parser to the PropertyList
+     * <p>Adds the attributes, passed in by the parser to the PropertyList.</p>
+     * <p>Note that certain attributes are given priority in terms of order of
+     * processing due to conversion dependencies, where the order is as follows:</p>
+     * <ol>
+     * <li>writing-mode</li>
+     * <li>column-number</li>
+     * <li>number-columns-spanned</li>
+     * <li>font</li>
+     * <li>font-size</li>
+     * <li><emph>all others in order of appearance</emph></li>
+     * </ol>
      *
      * @param attributes Collection of attributes passed to us from the parser.
      * @throws ValidationException if there is an attribute that does not
@@ -279,6 +279,11 @@ public abstract class PropertyList {
      */
     public void addAttributesToList(Attributes attributes)
                     throws ValidationException {
+        /*
+         * Give writing-mode highest conversion priority.
+         */
+        addAttributeToList(attributes, "writing-mode");
+
         /*
          * If column-number/number-columns-spanned are specified, then we
          * need them before all others (possible from-table-column() on any
@@ -300,9 +305,9 @@ public abstract class PropertyList {
             addAttributeToList(attributes, "font-size");
         }
 
+        String attributeNS;
         String attributeName;
         String attributeValue;
-        String attributeNS;
         FopFactory factory = getFObj().getUserAgent().getFactory();
         for (int i = 0; i < attributes.getLength(); i++) {
             /* convert all attributes with the same namespace as the fo element
@@ -646,4 +651,3 @@ public abstract class PropertyList {
         return CommonTextDecoration.createFromPropertyList(this);
     }
 }
-

@@ -521,9 +521,9 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     }
 
     /** {@inheritDoc} */
-    public void drawBorderRect(Rectangle rect, BorderProps before, BorderProps after,
-            BorderProps start, BorderProps end) throws IFException {
-        if (before == null && after == null && start == null && end == null) {
+    public void drawBorderRect(Rectangle rect, BorderProps top, BorderProps bottom,
+            BorderProps left, BorderProps right) throws IFException {
+        if (top == null && bottom == null && left == null && right == null) {
             return;
         }
         try {
@@ -532,17 +532,17 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
             addAttribute(atts, "y", Integer.toString(rect.y));
             addAttribute(atts, "width", Integer.toString(rect.width));
             addAttribute(atts, "height", Integer.toString(rect.height));
-            if (before != null) {
-                addAttribute(atts, "before", before.toString());
+            if (top != null) {
+                addAttribute(atts, "top", top.toString());
             }
-            if (after != null) {
-                addAttribute(atts, "after", after.toString());
+            if (bottom != null) {
+                addAttribute(atts, "bottom", bottom.toString());
             }
-            if (start != null) {
-                addAttribute(atts, "start", start.toString());
+            if (left != null) {
+                addAttribute(atts, "left", left.toString());
             }
-            if (end != null) {
-                addAttribute(atts, "end", end.toString());
+            if (right != null) {
+                addAttribute(atts, "right", right.toString());
             }
             handler.element(EL_BORDER_RECT, atts);
         } catch (SAXException e) {
@@ -571,7 +571,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
 
     /** {@inheritDoc} */
     public void drawText(int x, int y, int letterSpacing, int wordSpacing,
-            int[] dx, String text) throws IFException {
+            int[][] dp, String text) throws IFException {
         try {
             addID();
             AttributesImpl atts = new AttributesImpl();
@@ -583,8 +583,17 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
             if (wordSpacing != 0) {
                 addAttribute(atts, "word-spacing", Integer.toString(wordSpacing));
             }
-            if (dx != null) {
-                addAttribute(atts, "dx", IFUtil.toString(dx));
+            if (dp != null) {
+                if ( IFUtil.isDPIdentity(dp) ) {
+                    // don't add dx or dp attribute
+                } else if ( IFUtil.isDPOnlyDX(dp) ) {
+                    // add dx attribute only
+                    int[] dx = IFUtil.convertDPToDX(dp);
+                    addAttribute(atts, "dx", IFUtil.toString(dx));
+                } else {
+                    // add dp attribute only
+                    addAttribute(atts, "dp", XMLUtil.encodePositionAdjustments(dp));
+                }
             }
             addStructureReference(atts);
             handler.startElement(EL_TEXT, atts);

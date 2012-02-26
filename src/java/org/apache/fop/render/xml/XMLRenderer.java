@@ -86,6 +86,7 @@ import org.apache.fop.render.Renderer;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.XMLHandler;
 import org.apache.fop.util.ColorUtil;
+import org.apache.fop.util.XMLUtil;
 
 /**
  * Renderer that renders areas to XML for debugging purposes.
@@ -157,6 +158,7 @@ public class XMLRenderer extends AbstractXMLRenderer {
     protected void addAreaAttributes(Area area) {
         addAttribute("ipd", area.getIPD());
         addAttribute("bpd", area.getBPD());
+        maybeAddLevelAttribute(area);
         if (isDetailedFormat()) {
             if (area.getIPD() != 0) {
                 addAttribute("ipda", area.getAllocIPD());
@@ -708,7 +710,7 @@ public class XMLRenderer extends AbstractXMLRenderer {
         atts.clear();
         addAreaAttributes(viewport);
         addTraitAttributes(viewport);
-        addAttribute("offset", viewport.getOffset());
+        addAttribute("offset", viewport.getBlockProgressionOffset());
         addAttribute("pos", viewport.getContentPosition());
         if (viewport.hasClip()) {
             addAttribute("clip", "true");
@@ -770,7 +772,7 @@ public class XMLRenderer extends AbstractXMLRenderer {
         atts.clear();
         addAreaAttributes(space);
         addTraitAttributes(space);
-        addAttribute("offset", space.getOffset());
+        addAttribute("offset", space.getBlockProgressionOffset());
         startElement("space", atts);
         endElement("space");
     }
@@ -787,7 +789,7 @@ public class XMLRenderer extends AbstractXMLRenderer {
         if (text.getTextLetterSpaceAdjust() != 0) {
             addAttribute("tlsadjust", text.getTextLetterSpaceAdjust());
         }
-        addAttribute("offset", text.getOffset());
+        addAttribute("offset", text.getBlockProgressionOffset());
         addAttribute("baseline", text.getBaselineOffset());
         addAreaAttributes(text);
         addTraitAttributes(text);
@@ -802,7 +804,10 @@ public class XMLRenderer extends AbstractXMLRenderer {
     @Override
     protected void renderWord(WordArea word) {
         atts.clear();
-        addAttribute("offset", word.getOffset());
+        int offset = word.getBlockProgressionOffset();
+        if ( offset != 0 ) {
+            addAttribute("offset", offset);
+        }
         int[] letterAdjust = word.getLetterAdjustArray();
         if (letterAdjust != null) {
             StringBuffer sb = new StringBuffer(64);
@@ -818,6 +823,11 @@ public class XMLRenderer extends AbstractXMLRenderer {
                 addAttribute("letter-adjust", sb.toString());
             }
         }
+        maybeAddLevelAttribute(word);
+        maybeAddPositionAdjustAttribute(word);
+        if ( word.isReversed() ) {
+            addAttribute("reversed", "true");
+        }
         startElement("word", atts);
         characters(word.getWord());
         endElement("word");
@@ -830,7 +840,11 @@ public class XMLRenderer extends AbstractXMLRenderer {
     @Override
     protected void renderSpace(SpaceArea space) {
         atts.clear();
-        addAttribute("offset", space.getOffset());
+        int offset = space.getBlockProgressionOffset();
+        if ( offset != 0 ) {
+            addAttribute("offset", offset);
+        }
+        maybeAddLevelAttribute(space);
         if (!space.isAdjustable()) {
             addAttribute("adj", "false"); //default is true
         }
@@ -848,7 +862,7 @@ public class XMLRenderer extends AbstractXMLRenderer {
         atts.clear();
         addAreaAttributes(ip);
         addTraitAttributes(ip);
-        addAttribute("offset", ip.getOffset());
+        addAttribute("offset", ip.getBlockProgressionOffset());
         startElement("inlineparent", atts);
         super.renderInlineParent(ip);
         endElement("inlineparent");
@@ -862,7 +876,7 @@ public class XMLRenderer extends AbstractXMLRenderer {
         atts.clear();
         addAreaAttributes(ibp);
         addTraitAttributes(ibp);
-        addAttribute("offset", ibp.getOffset());
+        addAttribute("offset", ibp.getBlockProgressionOffset());
         startElement("inlineblockparent", atts);
         super.renderInlineBlockParent(ibp);
         endElement("inlineblockparent");
@@ -876,7 +890,7 @@ public class XMLRenderer extends AbstractXMLRenderer {
         atts.clear();
         addAreaAttributes(area);
         addTraitAttributes(area);
-        addAttribute("offset", area.getOffset());
+        addAttribute("offset", area.getBlockProgressionOffset());
         addAttribute("ruleStyle", area.getRuleStyleAsString());
         addAttribute("ruleThickness", area.getRuleThickness());
         startElement("leader", atts);
@@ -889,5 +903,19 @@ public class XMLRenderer extends AbstractXMLRenderer {
         return XML_MIME_TYPE;
     }
 
-}
+    private void maybeAddLevelAttribute ( Area a ) {
+        int level = a.getBidiLevel();
+        if ( level >= 0 ) {
+            addAttribute ( "level", level );
+        }
+    }
 
+    private void maybeAddPositionAdjustAttribute ( WordArea w ) {
+        int[][] adjustments = w.getGlyphPositionAdjustments();
+        if ( adjustments != null ) {
+            addAttribute ( "position-adjust", XMLUtil.encodePositionAdjustments ( adjustments ) );
+        }
+    }
+
+
+}
