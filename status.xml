@@ -22,6 +22,7 @@
 
   <developers>
     <!-- In alphabetical order (last name) -->
+    <person name="Glenn Adams"       email="gadams@apache.org"        id="GA"/>
     <person name="Max Berger"        email="mayberger@apache.org"     id="MB"/>
     <person name="Chris Bowditch"    email="cbowditch@apache.org"     id="CB"/>
     <person name="Jay Bryant"        email="jbryant@apache.org"       id="JB"/>
@@ -32,11 +33,11 @@
     <person name="Christian Geisert" email="chrisg@apache.org"        id="CG"/>
     <person name="Peter Hancock"     email="phancock@apache.org"      id="PH"/>
     <person name="Vincent Hennebert" email="vhennebert@apache.org"    id="VH"/>
+    <person name="Mehdi Houshmand"   email="mehdi@apache.org"         id="MH"/>
     <person name="Clay Leeds"        email="clay@apache.org"          id="CL"/>
     <person name="Manuel Mall"       email="manuel@apache.org"        id="MM"/>
     <person name="Jeremias Märki"    email="jeremias@apache.org"      id="JM"/>
     <person name="Simon Pepping"     email="spepping@apache.org"      id="SP"/>
-    <person name="Mehdi Houshmand"   email="mehdi@apache.org"         id="MH"/>
     <person name="the FOP committers" email="fop-dev@xmlgraphics.apache.org" id="all"/>
     <person name="Volunteer needed"  email="general@xmlgraphics.apache.org" id="open"/>
     <!-- See also src/documentation/content/xdocs/team.xml -->
@@ -51,7 +52,7 @@
     <context id="API" title="Changes to the End-User API"/>
     <context id="Extensions" title="Changes to the Bundled Extensions"/>
     <context id="Images" title="Changes to the Image Support"/>
-	<context id="Config" title="Changes to the User Configuration"/>
+    <context id="Config" title="Changes to the User Configuration"/>
   </contexts>
 
   <changes>
@@ -61,6 +62,13 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Code" dev="GA" type="add" fixes-bug="32789, 49008, 49687" importance="high">
+        Add support for complex scripts, including: full bidi support, support for advanced
+        typographic tables, advanced support for number conversion.
+      </action>
+      <action context="Fonts" dev="GA" type="add">
+        Add support for OpenType advanced typographic tables (GDEF, GSUB, GPOS).
+      </action>
       <action context="Code" dev="VH" type="fix" fixes-bug="52655" due-to="Luis Bernardo">
         Fixed rendering of special glyphs when using single-byte encoding mode.
       </action>
