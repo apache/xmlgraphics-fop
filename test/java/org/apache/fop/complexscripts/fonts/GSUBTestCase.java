@@ -2242,12 +2242,10 @@ public class GSUBTestCase implements ScriptContextTester, GlyphContextTester {
         return this;
     }
 
-    @Override
     public GlyphContextTester getTester ( String feature ) {
         return this;
     }
 
-    @Override
     public boolean test ( String script, String language, String feature, GlyphSequence gs, int index, int flags ) {
         return true;
     }
