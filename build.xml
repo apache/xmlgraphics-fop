@@ -1030,28 +1030,34 @@ NOTE:
 <!-- =================================================================== -->
 <!-- Checkstyle                                                          -->
 <!-- =================================================================== -->
+  <property name="checkstyle.location" value="${lib-tools}/checkstyle-all-5.1.jar" />
   <property name="checkstyle.noframes.xslt" value="${basedir}/checkstyle-noframes.xsl" />
+  <property name="checkstyle.config" value="${basedir}/checkstyle-5.1.xml" />
+  <path id="checkstyle-classpath">
+    <path refid="libs-build-classpath"/>
+    <pathelement location="${checkstyle.location}"/>
+  </path>
   <condition property="checkstyle.avail">
     <and>
       <available classname="com.puppycrawl.tools.checkstyle.CheckStyleTask">
-        <classpath>
-          <path refid="libs-tools-build-classpath"/>
-        </classpath>
+        <classpath refid="checkstyle-classpath"/>
       </available>
       <available file="${checkstyle.noframes.xslt}"/>
+      <available file="${checkstyle.config}"/>
     </and>
   </condition>
   <target name="checkstyle-avail" unless="checkstyle.avail">
-    <echo message="Checkstyle support NOT present. Please download it from http://checkstyle.sf.net/ and"/>
-    <echo message="..copy or link checkstyle-all-5.1.jar to ${lib-tools}"/>
-    <echo message="..copy or link checkstyle-noframes.xsl to ${checkstyle.noframes.xslt}"/>
+    <echo message="checkstyle support NOT present. Please download it from http://checkstyle.sf.net/ and"/>
+    <echo message="... please provide ${checkstyle.location}"/>
+    <echo message="... please provide ${checkstyle.noframes.xslt}"/>
+    <echo message="... please provide ${checkstyle.config}"/>
   </target>
-  <target name="checkstyle" depends="package, checkstyle-avail" if="checkstyle.avail" description="Runs Checkstyle for a code quality report">
-    <taskdef name="checkstyle" classname="com.puppycrawl.tools.checkstyle.CheckStyleTask" classpathref="libs-tools-build-classpath"/>
+  <target name="checkstyle" depends="package, checkstyle-avail" if="checkstyle.avail" description="Runs checkstyle for a code quality report">
+    <taskdef name="checkstyle" classname="com.puppycrawl.tools.checkstyle.CheckStyleTask" classpathref="checkstyle-classpath"/>
     <mkdir dir="${build.dir}"/>
-    <checkstyle config="checkstyle-5.1.xml" failonviolation="false">
+    <checkstyle config="${checkstyle.config}" failonviolation="false">
       <classpath>
-        <path refid="libs-build-classpath"/>
+        <path refid="checkstyle-classpath"/>
         <pathelement location="${build.classes.dir}"/>
         <pathelement location="${build.sandbox-classes.dir}"/>
         <pathelement location="${build.codegen-classes.dir}"/>
