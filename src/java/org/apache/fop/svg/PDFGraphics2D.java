@@ -1064,7 +1064,8 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
         preparePainting();
 
         Shape clip = getClip();
-        Rectangle2D usrClipBounds, usrBounds;
+        Rectangle2D usrClipBounds;
+        Rectangle2D usrBounds;
         usrBounds = shape.getBounds2D();
         if (clip != null) {
             usrClipBounds  = clip.getBounds2D();
@@ -1078,7 +1079,9 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
         double usrW = usrBounds.getWidth();
         double usrH = usrBounds.getHeight();
 
-        Rectangle devShapeBounds, devClipBounds, devBounds;
+        Rectangle devShapeBounds;
+        Rectangle devClipBounds;
+        Rectangle devBounds;
         AffineTransform at = getTransform();
         devShapeBounds = at.createTransformedShape(shape).getBounds();
         if (clip != null) {
@@ -1117,7 +1120,10 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
             final byte[] rgb  = new byte[devW * devH * 3];
             final int[]  line = new int[devW];
             final byte[] mask;
-            int x, y, val, rgbIdx = 0;
+            int x;
+            int y;
+            int val;
+            int rgbIdx = 0;
 
             if (pcm.hasAlpha()) {
                 mask = new byte[devW * devH];

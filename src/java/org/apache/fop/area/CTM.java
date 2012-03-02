@@ -41,7 +41,12 @@ public class CTM implements Serializable {
 
     private static final long serialVersionUID = -8743287485623778341L;
 
-    private double a, b, c, d, e, f;
+    private double a;
+    private double b;
+    private double c;
+    private double d;
+    private double e;
+    private double f;
 
     private static final CTM CTM_LRTB = new CTM(1, 0, 0, 1, 0, 0);
     private static final CTM CTM_RLTB = new CTM(1, 0, 0, 1, 0, 0);
@@ -175,7 +180,8 @@ public class CTM implements Serializable {
      * @return CTM The result of rotating this CTM.
      */
     public CTM rotate(double angle) {
-        double cos, sin;
+        double cos;
+        double sin;
         if (angle == 90.0 || angle == -270.0) {
             cos = 0.0;
             sin = 1.0;
@@ -286,7 +292,8 @@ public class CTM implements Serializable {
                                        WritingMode writingMode,
                                        Rectangle2D absVPrect,
                                        FODimension reldims) {
-        int width, height;
+        int width;
+        int height;
         // We will use the absolute reference-orientation to set up the CTM.
         // The value here is relative to its ancestor reference area.
         if (absRefOrient % 180 == 0) {

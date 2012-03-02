@@ -174,7 +174,9 @@ public final class GlyphCoverageTable extends GlyphMappingTable implements Glyph
             return getMappedIndex ( gid );
         }
         private void populate ( List entries ) {
-            int i = 0, n = entries.size(), gidMax = -1;
+            int i = 0;
+            int n = entries.size();
+            int gidMax = -1;
             int[] map = new int [ n ];
             for ( Iterator it = entries.iterator(); it.hasNext();) {
                 Object o = it.next();

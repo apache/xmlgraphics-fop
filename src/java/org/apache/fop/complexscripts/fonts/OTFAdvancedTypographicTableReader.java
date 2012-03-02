@@ -1678,7 +1678,11 @@ public final class OTFAdvancedTypographicTableReader {
         int es = in.readTTFUShort();
         // read delta format
         int df = in.readTTFUShort();
-        int s1, m1, dm, dd, s2;
+        int s1;
+        int m1;
+        int dm;
+        int dd;
+        int s2;
         if ( df == 1 ) {
             s1 = 14;
             m1 = 0x3;

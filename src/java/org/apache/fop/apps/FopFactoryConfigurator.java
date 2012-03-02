@@ -168,7 +168,9 @@ public class FopFactoryConfigurator {
         if (hyphPatConfig.length != 0) {
             Map/*<String,String>*/ hyphPatNames = new HashMap/*<String,String>*/();
             for (int i = 0; i < hyphPatConfig.length; ++i) {
-                String lang, country, filename;
+                String lang;
+                String country;
+                String filename;
                 StringBuffer error = new StringBuffer();
                 String location = hyphPatConfig[i].getLocation();
 

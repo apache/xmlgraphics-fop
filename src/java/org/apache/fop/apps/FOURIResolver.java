@@ -183,7 +183,8 @@ public class FOURIResolver implements javax.xml.transform.URIResolver {
         if (source == null) {
             URL absoluteURL = null;
             int hashPos = href.indexOf('#');
-            String fileURL, fragment;
+            String fileURL;
+            String fragment;
             if (hashPos >= 0) {
                 fileURL = href.substring(0, hashPos);
                 fragment = href.substring(hashPos);

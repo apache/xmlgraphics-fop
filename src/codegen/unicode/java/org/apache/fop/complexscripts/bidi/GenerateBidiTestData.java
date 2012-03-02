@@ -715,7 +715,9 @@ public final class GenerateBidiTestData {
             rm.put ( Integer.valueOf ( r[0] ), Integer.valueOf ( r[1] ) );
         }
         // add complement ranges save last
-        int s, e, cs = 0;
+        int s;
+        int e;
+        int cs = 0;
         List compRanges = new ArrayList ( rm.size() + 1 );
         for ( Iterator it = rm.entrySet().iterator(); it.hasNext(); ) {
             Map.Entry/*<Integer,Integer>*/ me = (Map.Entry/*<Integer,Integer>*/) it.next();

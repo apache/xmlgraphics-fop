@@ -1025,7 +1025,8 @@ public class PDFDocument {
         pdf.append(this.objectcount + 1);
         pdf.append("\n0000000000 65535 f \n");
 
-        String s, loc;
+        String s;
+        String loc;
         for (int count = 0; count < this.location.size(); count++) {
             final String padding = "0000000000";
             s = this.location.get(count).toString();

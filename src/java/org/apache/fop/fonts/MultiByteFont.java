@@ -489,7 +489,8 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
     private GlyphSequence mapCharsToGlyphs ( CharSequence cs ) {
         IntBuffer cb = IntBuffer.allocate ( cs.length() );
         IntBuffer gb = IntBuffer.allocate ( cs.length() );
-        int gi, giMissing = findGlyphIndex ( Typeface.NOT_FOUND );
+        int gi;
+        int giMissing = findGlyphIndex ( Typeface.NOT_FOUND );
         for ( int i = 0, n = cs.length(); i < n; i++ ) {
             int cc = cs.charAt ( i );
             if ( ( cc >= 0xD800 ) && ( cc < 0xDC00 ) ) {
@@ -548,7 +549,8 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
                          + (char) cc + "'");
             }
             if ( cc > 0x00FFFF ) {
-                int sh, sl;
+                int sh;
+                int sl;
                 cc -= 0x10000;
                 sh = ( ( cc >> 10 ) & 0x3FF ) + 0xD800;
                 sl = ( ( cc >>  0 ) & 0x3FF ) + 0xDC00;

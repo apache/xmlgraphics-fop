@@ -211,7 +211,8 @@ public final class GenerateBidiClass {
             }
         }
         // compile interval search data
-        int ivIndex = 0, niv = intervals.size();
+        int ivIndex = 0;
+        int niv = intervals.size();
         bcS1 = new int [ niv ];
         bcE1 = new int [ niv ];
         bcC1 = new byte [ niv ];
@@ -226,7 +227,8 @@ public final class GenerateBidiClass {
     }
 
     private static int[] parseInterval ( String interval ) throws Exception {
-        int s, e;
+        int s;
+        int e;
         String[] fa = interval.split("\\.\\.");
         if ( fa.length == 1 ) {
             s = Integer.parseInt ( fa[0], 16 );

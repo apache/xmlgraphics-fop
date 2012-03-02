@@ -423,7 +423,8 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
 
         boolean bpDirectionChanges = blockProgressionDirectionChanges();
         Point offset = getAbsOffset();
-        int allocBPD, allocIPD;
+        int allocBPD;
+        int allocIPD;
         if (height.getEnum() == EN_AUTO
                 || (!height.isAbsolute() && getAncestorBlockAreaBPD() <= 0)) {
             //auto height when height="auto" or "if that dimension is not specified explicitly

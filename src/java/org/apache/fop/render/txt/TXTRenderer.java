@@ -508,7 +508,8 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
         int borderStartX = bm.getStartX();
         int borderStartY = bm.getStartY();
 
-        int x, y;
+        int x;
+        int y;
         if (horz && startOrBefore) { // BEFORE
             x = borderStartX;
             y = borderStartY;
@@ -523,7 +524,11 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
             y = borderStartY;
         }
 
-        int dx, dy, length, startType, endType;
+        int dx;
+        int dy;
+        int length;
+        int startType;
+        int endType;
         if (horz) {
             length = borderWidth;
             dx = 1;

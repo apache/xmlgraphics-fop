@@ -125,7 +125,8 @@ public class AbstractCodePointMapping implements SingleByteEncoding {
                 return latin1;
             }
         }
-        int bot = 0, top = characters.length - 1;
+        int bot = 0;
+        int top = characters.length - 1;
         while (top >= bot) {
             int mid = (bot + top) / 2;
             char mc = characters[mid];

@@ -558,7 +558,8 @@ public final class GenerateLineBreakUtils {
                     throw new Exception(lineBreakFileName + ':' + lineNumber + ": Unknown property value in " + line);
                 }
                 String codepoint = line.substring(0, idx);
-                int low, high;
+                int low;
+                int high;
                 idx = codepoint.indexOf("..");
                 try {
                     if (idx >= 0) {
