@@ -25,7 +25,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;

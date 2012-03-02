@@ -19,7 +19,6 @@
 
 package org.apache.fop.render.pcl;
 
-import java.awt.Graphics2D;
 import java.util.List;
 
 import org.apache.avalon.framework.configuration.Configuration;

@@ -24,7 +24,6 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.complexscripts.fonts.GlyphDefinitionTable;
 import org.apache.fop.complexscripts.util.GlyphSequence;
-import org.apache.fop.complexscripts.util.ScriptContextTester;
 
 // CSOFF: AvoidNestedBlocksCheck
 // CSOFF: NoWhitespaceAfterCheck

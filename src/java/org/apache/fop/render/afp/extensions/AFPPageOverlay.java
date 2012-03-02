@@ -23,8 +23,6 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
-import org.apache.fop.fo.extensions.ExtensionAttachment;
-
 /**
  * This extension allows to include an AFP Page Overlay resource. It is implemented as an extension
  * attachment ({@link ExtensionAttachment}).

@@ -19,7 +19,6 @@
 
 package org.apache.fop.pdf;
 
-import java.awt.Color;
 import java.awt.color.ColorSpace;
 import java.util.ArrayList;
 import java.util.List;

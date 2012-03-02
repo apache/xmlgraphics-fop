@@ -21,8 +21,6 @@ package org.apache.fop.traits;
 
 import java.io.Serializable;
 
-import org.apache.fop.fo.Constants;
-
 /** Base class for enumeration classes representing traits. */
 public abstract class TraitEnum implements Serializable {
 

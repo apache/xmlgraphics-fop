@@ -23,7 +23,6 @@ import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.apps.FopFactory;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.util.DecimalFormatCache;
 

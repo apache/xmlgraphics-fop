@@ -48,7 +48,6 @@ import org.apache.fop.events.EventListener;
 import org.apache.fop.events.FOPEventListenerProxy;
 import org.apache.fop.events.LoggingEventListener;
 import org.apache.fop.fo.FOEventHandler;
-import org.apache.fop.fonts.FontManager;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.RendererFactory;
 import org.apache.fop.render.XMLHandlerRegistry;

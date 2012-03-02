@@ -19,8 +19,6 @@
 
 package org.apache.fop.complexscripts.fonts;
 
-import java.util.List;
-
 import org.apache.fop.complexscripts.util.GlyphSequence;
 import org.apache.fop.complexscripts.util.ScriptContextTester;
 

@@ -19,8 +19,6 @@
 
 package org.apache.fop.render.java2d;
 
-import java.awt.Graphics2D;
-
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontCollection;
 import org.apache.fop.fonts.FontInfo;

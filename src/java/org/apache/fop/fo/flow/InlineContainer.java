@@ -36,7 +36,6 @@ import org.apache.fop.fo.properties.SpaceProperty;
 import org.apache.fop.traits.Direction;
 import org.apache.fop.traits.WritingMode;
 import org.apache.fop.traits.WritingModeTraits;
-import org.apache.fop.traits.WritingModeTraitsGetter;
 
 /**
  * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_inline-container">

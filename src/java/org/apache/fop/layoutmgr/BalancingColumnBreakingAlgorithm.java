@@ -22,7 +22,6 @@ package org.apache.fop.layoutmgr;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.apache.fop.fo.Constants;
 import org.apache.fop.traits.MinOptMax;
 
 /**

@@ -20,7 +20,6 @@
 package org.apache.fop.complexscripts.bidi;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;

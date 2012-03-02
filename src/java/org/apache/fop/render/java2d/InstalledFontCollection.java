@@ -19,7 +19,6 @@
 
 package org.apache.fop.render.java2d;
 
-import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
 import java.util.Set;
 

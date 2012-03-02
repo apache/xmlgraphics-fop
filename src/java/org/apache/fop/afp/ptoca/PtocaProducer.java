@@ -21,8 +21,6 @@ package org.apache.fop.afp.ptoca;
 
 import java.io.IOException;
 
-import org.apache.fop.afp.modca.PresentationTextObject;
-
 /**
  * Producer interface that is passed to a {@link PresentationTextObject} to produce PTOCA control
  * sequences using a {@link PtocaBuilder}.
