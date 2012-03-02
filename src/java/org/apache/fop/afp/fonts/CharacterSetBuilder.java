@@ -748,9 +748,7 @@ public abstract class CharacterSetBuilder {
                                     AFPConstants.EBCIDIC_ENCODING);
                             String charString = new String(charBytes, encoding);
                             codePages.put(gcgiString, charString);
-
-                        }
-                        else {
+                        } else {
                             position++;
                         }
                     }

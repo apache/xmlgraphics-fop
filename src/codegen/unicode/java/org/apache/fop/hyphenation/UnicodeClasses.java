@@ -322,8 +322,7 @@ public final class UnicodeClasses {
             if (codes[0].equals("\\l") && codes.length != 2) {
                 ow.write("\"" + line + "\" should have one code");
                 continue;
-            }
-            else if (codes[0].equals("\\L") && codes.length != 4) {
+            } else if (codes[0].equals("\\L") && codes.length != 4) {
                 ow.write("\"" + line + "\" should have three codes");
                 continue;
             }
