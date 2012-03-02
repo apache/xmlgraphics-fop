@@ -62,6 +62,12 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Code" dev="PH" type="fix">
+        Fix of a bug introduced when merging ImproveAccessibility.
+      </action>
+      <action context="Code" dev="PH" type="add">
+          Improved support for empty flow-name mapping (see bugzilla#50391).
+      </action>
       <action context="Code" dev="GA" type="add" fixes-bug="32789, 49008, 49687" importance="high">
         Add support for complex scripts, including: full bidi support, support for advanced
         typographic tables, advanced support for number conversion.
