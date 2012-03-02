@@ -19,8 +19,6 @@
 
 package org.apache.fop.layoutmgr;
 
-import org.apache.fop.fo.Constants;
-
 /**
  * An instance of this class represents information about a feasible
  * breaking point; it does not represent any piece of content.

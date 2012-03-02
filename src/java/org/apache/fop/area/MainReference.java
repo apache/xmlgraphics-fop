@@ -22,7 +22,6 @@ package org.apache.fop.area;
 import org.apache.fop.traits.WritingModeTraitsGetter;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**

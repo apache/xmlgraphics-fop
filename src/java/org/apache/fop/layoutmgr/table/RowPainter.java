@@ -46,7 +46,6 @@ import org.apache.fop.layoutmgr.KnuthPossPosIter;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.SpaceResolver;
 import org.apache.fop.layoutmgr.TraitSetter;
-import org.apache.fop.traits.BorderProps;
 
 class RowPainter {
     private static Log log = LogFactory.getLog(RowPainter.class);

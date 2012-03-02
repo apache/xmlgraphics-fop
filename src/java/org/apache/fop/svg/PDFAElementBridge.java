@@ -26,7 +26,6 @@ import org.w3c.dom.svg.SVGAElement;
 
 import org.apache.batik.bridge.AbstractGraphicsNodeBridge;
 import org.apache.batik.bridge.BridgeContext;
-import org.apache.batik.gvt.CompositeGraphicsNode;
 import org.apache.batik.gvt.GraphicsNode;
 
 /**

@@ -31,8 +31,6 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.commons.io.IOUtils;
 
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.apps.FopFactory;
-import org.apache.fop.fonts.FontManager;
 
 /**
  * Default implementation of the {@link ResourceAccessor} interface for use inside FOP.

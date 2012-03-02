@@ -19,8 +19,6 @@
 
 package org.apache.fop.complexscripts.fonts;
 
-import java.nio.CharBuffer;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;

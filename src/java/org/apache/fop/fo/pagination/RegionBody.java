@@ -32,7 +32,6 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.properties.CommonMarginBlock;
-import org.apache.fop.traits.WritingMode;
 
 /**
  * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_region-body">

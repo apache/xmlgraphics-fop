@@ -29,7 +29,6 @@ import org.apache.xmlgraphics.util.MimeConstants;
 import org.apache.fop.afp.AFPDataObjectInfo;
 import org.apache.fop.afp.AFPImageObjectInfo;
 import org.apache.fop.afp.Factory;
-import org.apache.fop.afp.ioca.IDEStructureParameter;
 import org.apache.fop.afp.ioca.ImageSegment;
 
 /**

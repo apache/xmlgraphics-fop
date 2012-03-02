@@ -19,7 +19,6 @@
 
 package org.apache.fop.render.bitmap;
 
-import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.List;
 

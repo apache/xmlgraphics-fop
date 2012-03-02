@@ -20,7 +20,6 @@
 package org.apache.fop.layoutmgr.list;
 
 import java.util.LinkedList;
-import java.util.List;
 
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;

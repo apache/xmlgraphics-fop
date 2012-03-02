@@ -23,8 +23,6 @@ import java.awt.Color;
 import java.awt.color.ColorSpace;
 import java.util.Arrays;
 
-import org.apache.xmlgraphics.java2d.color.ColorWithAlternatives;
-
 /**
  * Color helper class.
  * <p>

@@ -31,10 +31,8 @@ import org.apache.fop.area.inline.InlineViewport;
 import org.apache.fop.area.inline.Leader;
 import org.apache.fop.area.inline.Space;
 import org.apache.fop.area.inline.SpaceArea;
-import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.area.inline.UnresolvedPageNumber;
 import org.apache.fop.area.inline.WordArea;
-import org.apache.fop.traits.Direction;
 import org.apache.fop.util.CharUtilities;
 
 // CSOFF: EmptyForIteratorPadCheck

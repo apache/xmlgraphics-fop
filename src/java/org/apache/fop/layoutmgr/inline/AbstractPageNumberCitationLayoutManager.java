@@ -19,12 +19,10 @@
 
 package org.apache.fop.layoutmgr.inline;
 
-import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.Resolvable;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.TextArea;
-import org.apache.fop.area.inline.UnresolvedPageNumber;
 import org.apache.fop.fo.flow.AbstractPageNumberCitation;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
