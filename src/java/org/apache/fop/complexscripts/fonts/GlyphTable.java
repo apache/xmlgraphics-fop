@@ -516,7 +516,8 @@ public class GlyphTable {
                     added = true;
                 } else if ( d == 0 ) {
                     // duplicate entry is ignored
-                    added = false; subtable = null;
+                    added = false;
+                    subtable = null;
                 }
             }
             // append at end of list

@@ -758,7 +758,8 @@ public final class CharScript {
                     assert v != null;
                     int c = v.intValue();
                     if ( c > cMax ) {
-                        cMax = c; sMax = s;
+                        cMax = c;
+                        sMax = s;
                     }
                     break;
                 }

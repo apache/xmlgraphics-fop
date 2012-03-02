@@ -345,7 +345,8 @@ public final class IFUtil {
      */
     public static void adjustPA ( int[] paDst, int[] paSrc ) {
         if ( ( paDst != null ) && ( paSrc != null ) ) {
-            assert paDst.length == 4; assert paSrc.length == 4;
+            assert paDst.length == 4;
+            assert paSrc.length == 4;
             for ( int i = 0; i < 4; i++ ) {
                 paDst[i] += paSrc[i];
             }

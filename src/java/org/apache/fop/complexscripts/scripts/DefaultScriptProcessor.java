@@ -105,27 +105,34 @@ public class DefaultScriptProcessor extends ScriptProcessor {
                 int[] pa = ( gpa != null ) ? gpa [ i ] : null;
                 GlyphSequence.CharAssociation ca = aa [ i ];
                 if ( gdef.isGlyphClass ( gid, GlyphDefinitionTable.GLYPH_CLASS_MARK ) ) {
-                    nga [ k ] = gid; naa [ k ] = ca;
+                    nga [ k ] = gid;
+                    naa [ k ] = ca;
                     if ( npa != null ) {
                         npa [ k ] = pa;
                     }
                     k++;
                 } else {
                     if ( bg != -1 ) {
-                        nga [ k ] = bg; naa [ k ] = ba;
+                        nga [ k ] = bg;
+                        naa [ k ] = ba;
                         if ( npa != null ) {
                             npa [ k ] = bpa;
                         }
                         k++;
-                        bg = -1; ba = null; bpa = null;
+                        bg = -1;
+                        ba = null;
+                        bpa = null;
                     }
                     if ( bg == -1 ) {
-                        bg = gid; ba = ca; bpa = pa;
+                        bg = gid;
+                        ba = ca;
+                        bpa = pa;
                     }
                 }
             }
             if ( bg != -1 ) {
-                nga [ k ] = bg; naa [ k ] = ba;
+                nga [ k ] = bg;
+                naa [ k ] = ba;
                 if ( npa != null ) {
                     npa [ k ] = bpa;
                 }

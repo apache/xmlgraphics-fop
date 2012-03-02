@@ -1680,11 +1680,23 @@ public final class OTFAdvancedTypographicTableReader {
         int df = in.readTTFUShort();
         int s1, m1, dm, dd, s2;
         if ( df == 1 ) {
-            s1 = 14; m1 = 0x3; dm = 1; dd = 4; s2 = 2;
+            s1 = 14;
+            m1 = 0x3;
+            dm = 1;
+            dd = 4;
+            s2 = 2;
         } else if ( df == 2 ) {
-            s1 = 12; m1 = 0xF; dm = 7; dd = 16; s2 = 4;
+            s1 = 12;
+            m1 = 0xF;
+            dm = 7;
+            dd = 16;
+            s2 = 4;
         } else if ( df == 3 ) {
-            s1 = 8; m1 = 0xFF; dm = 127; dd = 256; s2 = 8;
+            s1 = 8;
+            m1 = 0xFF;
+            dm = 127;
+            dd = 256;
+            s2 = 8;
         } else {
             log.debug ( "unsupported device table delta format: " + df + ", ignoring device table" );
             return null;
@@ -3760,7 +3772,9 @@ public final class OTFAdvancedTypographicTableReader {
 
     private void resetATStateAll() {
         resetATState();
-        gdef = null; gsub = null; gpos = null;
+        gdef = null;
+        gsub = null;
+        gpos = null;
     }
 
     /** helper method for formatting an integer array for output */

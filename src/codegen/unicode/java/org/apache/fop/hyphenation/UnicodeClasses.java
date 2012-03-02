@@ -151,8 +151,12 @@ public final class UnicodeClasses {
     /**
      * The column numbers in the UCD file
      */
-    public static final int UNICODE = 0, GENERAL_CATEGORY = 2, SIMPLE_UPPERCASE_MAPPING = 12,
-    SIMPLE_LOWERCASE_MAPPING = 13, SIMPLE_TITLECASE_MAPPING = 14, NUM_FIELDS = 15;
+    public static final int UNICODE = 0;
+    public static final int GENERAL_CATEGORY = 2;
+    public static final int SIMPLE_UPPERCASE_MAPPING = 12;
+    public static final int SIMPLE_LOWERCASE_MAPPING = 13;
+    public static final int SIMPLE_TITLECASE_MAPPING = 14;
+    public static final int NUM_FIELDS = 15;
 
     /**
      * Generate classes.xml from Unicode Character Database files

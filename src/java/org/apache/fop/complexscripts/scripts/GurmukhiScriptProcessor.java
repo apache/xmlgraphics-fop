@@ -223,11 +223,13 @@ public class GurmukhiScriptProcessor extends IndicScriptProcessor {
                 int i;
                 // consume dead consonants
                 while ( ( i = isDeadConsonant ( ca, s, e ) ) > s ) {
-                    s = i; nd++;
+                    s = i;
+                    nd++;
                 }
                 // consume zero or one live consonant
                 if ( ( i = isLiveConsonant ( ca, s, e ) ) > s ) {
-                    s = i; nl++;
+                    s = i;
+                    nl++;
                 }
                 return ( ( nd > 0 ) || ( nl > 0 ) ) ? s : -1;
             }
