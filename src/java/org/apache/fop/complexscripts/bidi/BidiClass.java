@@ -20,7 +20,6 @@
 package org.apache.fop.complexscripts.bidi;
 
 import java.util.Arrays;
-import org.apache.fop.complexscripts.bidi.BidiConstants;
 
 // CSOFF: WhitespaceAfterCheck
 // CSOFF: LineLengthCheck

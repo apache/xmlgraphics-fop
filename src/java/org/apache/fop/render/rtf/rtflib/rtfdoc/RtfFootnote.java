@@ -23,9 +23,6 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
 import java.io.Writer;
 import java.io.IOException;
 
-//FOP
-import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTextrun;
-
 /**  Model of an RTF footnote
  *  @author Peter Herweg, pherweg@web.de
  *  @author Marc Wilhelm Kuester

@@ -29,8 +29,6 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
 import java.io.Writer;
 import java.io.IOException;
 
-import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTextrun;
-
 /**  Model of an RTF list item, which can contain RTF paragraphs
  *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
  *  @author Andreas Putz a.putz@skynamics.com

@@ -30,7 +30,6 @@ import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.apache.fop.complexscripts.bidi.BidiConstants;
 import org.apache.fop.util.License;
 
 // CSOFF: LineLength
