@@ -197,7 +197,8 @@ public final class XMLUtil implements XMLConstants {
             for ( int k = 0; k < 4; k++ ) {
                 int a = pa [ k ];
                 if ( a != 0 ) {
-                    encodeNextAdjustment ( sb, nz, a ); nz = 0;
+                    encodeNextAdjustment ( sb, nz, a );
+                    nz = 0;
                 } else {
                     nz++;
                 }

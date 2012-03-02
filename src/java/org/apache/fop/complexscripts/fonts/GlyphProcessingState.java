@@ -256,7 +256,8 @@ public class GlyphProcessingState {
             if ( consumed == 0 ) {
                 consumed = 1;
             }
-            index += consumed; consumed = 0;
+            index += consumed;
+            consumed = 0;
             if ( index > indexLast ) {
                 index = indexLast;
             }
@@ -297,7 +298,8 @@ public class GlyphProcessingState {
             if ( consumed == 0 ) {
                 consumed = 1;
             }
-            index -= consumed; consumed = 0;
+            index -= consumed;
+            consumed = 0;
             if ( index < 0 ) {
                 index = 0;
             }
@@ -452,7 +454,8 @@ public class GlyphProcessingState {
             } else {
                 if ( ( ignoreTester == null ) || ! ignoreTester.test ( gi, getLookupFlags() ) ) {
                     if ( k < count ) {
-                        glyphs [ k++ ] = gi; counted++;
+                        glyphs [ k++ ] = gi;
+                        counted++;
                     } else {
                         break;
                     }
@@ -478,7 +481,8 @@ public class GlyphProcessingState {
             } else {
                 if ( ( ignoreTester == null ) || ! ignoreTester.test ( gi, getLookupFlags() ) ) {
                     if ( k < count ) {
-                        glyphs [ k++ ] = gi; counted++;
+                        glyphs [ k++ ] = gi;
+                        counted++;
                     } else {
                         break;
                     }
@@ -698,7 +702,8 @@ public class GlyphProcessingState {
             } else {
                 if ( ( ignoreTester == null ) || ! ignoreTester.test ( gi, getLookupFlags() ) ) {
                     if ( k < count ) {
-                        associations [ k++ ] = getAssociation ( i - index ); counted++;
+                        associations [ k++ ] = getAssociation ( i - index );
+                        counted++;
                     } else {
                         break;
                     }
@@ -725,7 +730,8 @@ public class GlyphProcessingState {
             } else {
                 if ( ( ignoreTester == null ) || ! ignoreTester.test ( gi, getLookupFlags() ) ) {
                     if ( k < count ) {
-                        associations [ k++ ] = getAssociation ( i - index ); counted++;
+                        associations [ k++ ] = getAssociation ( i - index );
+                        counted++;
                     } else {
                         break;
                     }

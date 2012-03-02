@@ -44,7 +44,9 @@ public class GraphicsSetProcessColor extends AbstractGraphicsDrawingOrder {
      * X'08' CIELAB
      * X'40' Standard OCA color space
      */
-    private static final byte RGB = 0x01, CMYK = 0x04, CIELAB = 0x08;
+    private static final byte RGB = 0x01;
+    private static final byte CMYK = 0x04;
+    private static final byte CIELAB = 0x08;
 
     private final Color color;
     private final int componentsSize;

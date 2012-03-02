@@ -712,7 +712,8 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                             for ( int k = 0; k < 4; k++ ) {
                                 int a = wpa2 [ k ];
                                 if ( a != 0 ) {
-                                    wpa1 [ k ] += a; adjusted = true;
+                                    wpa1 [ k ] += a;
+                                    adjusted = true;
                                 }
                             }
                         }
