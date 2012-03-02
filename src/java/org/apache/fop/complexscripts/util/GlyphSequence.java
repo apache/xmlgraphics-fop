@@ -1033,7 +1033,11 @@ public class GlyphSequence implements Cloneable {
          */
         private static int[] mergeIntervals ( int[] ia ) {
             int ni = ia.length;
-            int i, n, nm, is, ie;
+            int i;
+            int n;
+            int nm;
+            int is;
+            int ie;
             // count merged sub-intervals
             for ( i = 0, n = ni, nm = 0, is = ie = -1; i < n; i += 2 ) {
                 int s = ia [ i + 0 ];

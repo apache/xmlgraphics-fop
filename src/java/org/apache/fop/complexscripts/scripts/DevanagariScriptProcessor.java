@@ -238,8 +238,10 @@ public class DevanagariScriptProcessor extends IndicScriptProcessor {
             if ( s < 0 ) {
                 return -1;
             } else {
-                int c, i = 0;
-                int nc = 0, nh = 0;
+                int c;
+                int i = 0;
+                int nc = 0;
+                int nh = 0;
                 do {
                     // C
                     if ( ( s + i ) < e ) {
@@ -277,8 +279,11 @@ public class DevanagariScriptProcessor extends IndicScriptProcessor {
             if ( s < 0 ) {
                 return -1;
             } else {
-                int c, i = 0;
-                int nc = 0, nv = 0, nx = 0;
+                int c;
+                int i = 0;
+                int nc = 0;
+                int nv = 0;
+                int nx = 0;
                 do {
                     // C
                     if ( ( s + i ) < e ) {

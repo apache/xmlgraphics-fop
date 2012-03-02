@@ -38,7 +38,8 @@ import java.text.DateFormat;
 
 public class FileCompare {
 
-    private String referenceDirectory, testDirectory;
+    private String referenceDirectory;
+    private String testDirectory;
     private String[] filenameList;
     private String filenames;
 

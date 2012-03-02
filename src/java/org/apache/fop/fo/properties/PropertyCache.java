@@ -263,7 +263,8 @@ public final class PropertyCache {
 
                     CacheEntry[] newTable = new CacheEntry[newLength];
 
-                    int hash, idx;
+                    int hash;
+                    int idx;
                     Object o;
                     newLength--;
                     for (int i = table.length; --i >= 0;) {

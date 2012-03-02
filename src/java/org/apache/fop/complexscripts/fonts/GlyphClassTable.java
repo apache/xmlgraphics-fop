@@ -203,7 +203,9 @@ public final class GlyphClassTable extends GlyphMappingTable implements GlyphCla
                 }
             }
             // extract glyph class array
-            int i = 0, n = entries.size() - 1, gcMax = -1;
+            int i = 0;
+            int n = entries.size() - 1;
+            int gcMax = -1;
             int[] gca = new int [ n ];
             while ( it.hasNext() ) {
                 Object o = it.next();

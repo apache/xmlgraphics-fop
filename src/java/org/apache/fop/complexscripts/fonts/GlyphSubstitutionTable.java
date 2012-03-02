@@ -246,7 +246,8 @@ public class GlyphSubstitutionTable extends GlyphTable {
         }
         /** {@inheritDoc} */
         public boolean substitute ( GlyphSubstitutionState ss ) {
-            int gi = ss.getGlyph(), ci;
+            int gi = ss.getGlyph();
+            int ci;
             if ( ( ci = getCoverageIndex ( gi ) ) < 0 ) {
                 return false;
             } else {
@@ -341,7 +342,8 @@ public class GlyphSubstitutionTable extends GlyphTable {
             }
         }
         private void populate ( List entries ) {
-            int i = 0, n = entries.size();
+            int i = 0;
+            int n = entries.size();
             int[] glyphs = new int [ n ];
             for ( Iterator it = entries.iterator(); it.hasNext();) {
                 Object o = it.next();
@@ -376,7 +378,8 @@ public class GlyphSubstitutionTable extends GlyphTable {
         }
         /** {@inheritDoc} */
         public boolean substitute ( GlyphSubstitutionState ss ) {
-            int gi = ss.getGlyph(), ci;
+            int gi = ss.getGlyph();
+            int ci;
             if ( ( ci = getCoverageIndex ( gi ) ) < 0 ) {
                 return false;
             } else {
@@ -461,7 +464,8 @@ public class GlyphSubstitutionTable extends GlyphTable {
         }
         /** {@inheritDoc} */
         public boolean substitute ( GlyphSubstitutionState ss ) {
-            int gi = ss.getGlyph(), ci;
+            int gi = ss.getGlyph();
+            int ci;
             if ( ( ci = getCoverageIndex ( gi ) ) < 0 ) {
                 return false;
             } else {
@@ -523,7 +527,8 @@ public class GlyphSubstitutionTable extends GlyphTable {
             }
         }
         private void populate ( List entries ) {
-            int i = 0, n = entries.size();
+            int i = 0;
+            int n = entries.size();
             int[][] gaa = new int [ n ][];
             for ( Iterator it = entries.iterator(); it.hasNext();) {
                 Object o = it.next();
@@ -553,7 +558,8 @@ public class GlyphSubstitutionTable extends GlyphTable {
         }
         /** {@inheritDoc} */
         public boolean substitute ( GlyphSubstitutionState ss ) {
-            int gi = ss.getGlyph(), ci;
+            int gi = ss.getGlyph();
+            int ci;
             if ( ( ci = getCoverageIndex ( gi ) ) < 0 ) {
                 return false;
             } else {
@@ -562,7 +568,8 @@ public class GlyphSubstitutionTable extends GlyphTable {
                     boolean reverse = false;
                     GlyphTester ignores = ss.getIgnoreDefault();
                     int[] counts = ss.getGlyphsAvailable ( 0, reverse, ignores );
-                    int nga = counts[0], ngi;
+                    int nga = counts[0];
+                    int ngi;
                     if ( nga > 1 ) {
                         int[] iga = ss.getGlyphs ( 0, nga, reverse, ignores, null, counts );
                         Ligature l = findLigature ( ls, iga );
@@ -653,7 +660,8 @@ public class GlyphSubstitutionTable extends GlyphTable {
             }
         }
         private void populate ( List entries ) {
-            int i = 0, n = entries.size();
+            int i = 0;
+            int n = entries.size();
             LigatureSet[] ligatureSets = new LigatureSet [ n ];
             for ( Iterator it = entries.iterator(); it.hasNext();) {
                 Object o = it.next();
@@ -683,7 +691,8 @@ public class GlyphSubstitutionTable extends GlyphTable {
         }
         /** {@inheritDoc} */
         public boolean substitute ( GlyphSubstitutionState ss ) {
-            int gi = ss.getGlyph(), ci;
+            int gi = ss.getGlyph();
+            int ci;
             if ( ( ci = getCoverageIndex ( gi ) ) < 0 ) {
                 return false;
             } else {
@@ -1009,7 +1018,8 @@ public class GlyphSubstitutionTable extends GlyphTable {
         }
         /** {@inheritDoc} */
         public boolean substitute ( GlyphSubstitutionState ss ) {
-            int gi = ss.getGlyph(), ci;
+            int gi = ss.getGlyph();
+            int ci;
             if ( ( ci = getCoverageIndex ( gi ) ) < 0 ) {
                 return false;
             } else {

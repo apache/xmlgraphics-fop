@@ -258,7 +258,8 @@ public class GlyphPositioningTable extends GlyphTable {
         }
         /** {@inheritDoc} */
         public boolean position ( GlyphPositioningState ps ) {
-            int gi = ps.getGlyph(), ci;
+            int gi = ps.getGlyph();
+            int ci;
             if ( ( ci = getCoverageIndex ( gi ) ) < 0 ) {
                 return false;
             } else {
@@ -396,7 +397,8 @@ public class GlyphPositioningTable extends GlyphTable {
         /** {@inheritDoc} */
         public boolean position ( GlyphPositioningState ps ) {
             boolean applied = false;
-            int gi = ps.getGlyph(0), ci;
+            int gi = ps.getGlyph(0);
+            int ci;
             if ( ( ci = getCoverageIndex ( gi ) ) >= 0 ) {
                 int[] counts = ps.getGlyphsAvailable ( 0 );
                 int nga = counts[0];
@@ -587,7 +589,8 @@ public class GlyphPositioningTable extends GlyphTable {
         /** {@inheritDoc} */
         public boolean position ( GlyphPositioningState ps ) {
             boolean applied = false;
-            int gi = ps.getGlyph(0), ci;
+            int gi = ps.getGlyph(0);
+            int ci;
             if ( ( ci = getCoverageIndex ( gi ) ) >= 0 ) {
                 int[] counts = ps.getGlyphsAvailable ( 0 );
                 int nga = counts[0];
@@ -703,7 +706,8 @@ public class GlyphPositioningTable extends GlyphTable {
         /** {@inheritDoc} */
         public boolean position ( GlyphPositioningState ps ) {
             boolean applied = false;
-            int giMark = ps.getGlyph(), ciMark;
+            int giMark = ps.getGlyph();
+            int ciMark;
             if ( ( ciMark = getCoverageIndex ( giMark ) ) >= 0 ) {
                 MarkAnchor ma = getMarkAnchor ( ciMark, giMark );
                 if ( ma != null ) {
@@ -846,7 +850,8 @@ public class GlyphPositioningTable extends GlyphTable {
         /** {@inheritDoc} */
         public boolean position ( GlyphPositioningState ps ) {
             boolean applied = false;
-            int giMark = ps.getGlyph(), ciMark;
+            int giMark = ps.getGlyph();
+            int ciMark;
             if ( ( ciMark = getCoverageIndex ( giMark ) ) >= 0 ) {
                 MarkAnchor ma = getMarkAnchor ( ciMark, giMark );
                 int mxc = getMaxComponentCount();
@@ -1004,7 +1009,8 @@ public class GlyphPositioningTable extends GlyphTable {
         /** {@inheritDoc} */
         public boolean position ( GlyphPositioningState ps ) {
             boolean applied = false;
-            int giMark1 = ps.getGlyph(), ciMark1;
+            int giMark1 = ps.getGlyph();
+            int ciMark1;
             if ( ( ciMark1 = getCoverageIndex ( giMark1 ) ) >= 0 ) {
                 MarkAnchor ma = getMark1Anchor ( ciMark1, giMark1 );
                 if ( ma != null ) {
@@ -1134,7 +1140,8 @@ public class GlyphPositioningTable extends GlyphTable {
         /** {@inheritDoc} */
         public boolean position ( GlyphPositioningState ps ) {
             boolean applied = false;
-            int gi = ps.getGlyph(), ci;
+            int gi = ps.getGlyph();
+            int ci;
             if ( ( ci = getCoverageIndex ( gi ) ) >= 0 ) {
                 int[] rv = new int[1];
                 RuleLookup[] la = getLookups ( ci, gi, ps, rv );
@@ -1460,7 +1467,8 @@ public class GlyphPositioningTable extends GlyphTable {
         /** {@inheritDoc} */
         public boolean position ( GlyphPositioningState ps ) {
             boolean applied = false;
-            int gi = ps.getGlyph(), ci;
+            int gi = ps.getGlyph();
+            int ci;
             if ( ( ci = getCoverageIndex ( gi ) ) >= 0 ) {
                 int[] rv = new int[1];
                 RuleLookup[] la = getLookups ( ci, gi, ps, rv );

@@ -1320,7 +1320,8 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
 
         // Find the first and last positions in oldList that point to an AreaInfo
         // (i.e. getLeafPos() != -1)
-        LeafPosition startPos = null, endPos = null;
+        LeafPosition startPos = null;
+        LeafPosition endPos = null;
         ListIterator oldListIter;
         for (oldListIter = oldList.listIterator(); oldListIter.hasNext();) {
             Position pos = ((KnuthElement) oldListIter.next()).getPosition();
@@ -1346,7 +1347,8 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         int areaInfosRemoved = 0;
 
         if (!changeList.isEmpty()) {
-            int oldIndex = -1, changeIndex;
+            int oldIndex = -1;
+            int changeIndex;
             PendingChange currChange;
             ListIterator changeListIterator = changeList.listIterator();
             while (changeListIterator.hasNext()) {

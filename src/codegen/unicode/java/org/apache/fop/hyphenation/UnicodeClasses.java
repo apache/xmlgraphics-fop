@@ -258,7 +258,8 @@ public final class UnicodeClasses {
                     continue;
                 }
 
-                int uppercode = -1, titlecode = -1;
+                int uppercode = -1;
+                int titlecode = -1;
                 if (!"".equals(fields[SIMPLE_UPPERCASE_MAPPING])) {
                     uppercode = Integer.parseInt(fields[SIMPLE_UPPERCASE_MAPPING], 16);
                 }
@@ -355,7 +356,10 @@ public final class UnicodeClasses {
      * @throws URISyntaxException if the input URI is incorrect
      */
     public static void main(String[] args) throws IOException, URISyntaxException {
-        String type = "ucd", prefix = "--", infile = null, outfile = null;
+        String type = "ucd";
+        String prefix = "--";
+        String infile = null;
+        String outfile = null;
         boolean hexcode = false;
         int i;
         for (i = 0; i < args.length && args[i].startsWith(prefix); ++i) {

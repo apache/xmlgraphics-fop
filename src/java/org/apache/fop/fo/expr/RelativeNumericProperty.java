@@ -223,7 +223,8 @@ public class RelativeNumericProperty extends Property implements Length {
      *         specification.
      */
     public double getTableUnits() {
-        double tu1 = 0.0, tu2 = 0.0;
+        double tu1 = 0.0;
+        double tu2 = 0.0;
         if (op1 instanceof RelativeNumericProperty) {
             tu1 = ((RelativeNumericProperty) op1).getTableUnits();
         } else if (op1 instanceof TableColLength) {

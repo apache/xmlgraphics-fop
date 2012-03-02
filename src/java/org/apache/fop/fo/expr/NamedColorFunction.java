@@ -66,7 +66,9 @@ class NamedColorFunction extends FunctionBase {
             throw pe;
         }
 
-        float red = 0, green = 0, blue = 0;
+        float red = 0;
+        float green = 0;
+        float blue = 0;
         red = args[0].getNumber().floatValue();
         green = args[1].getNumber().floatValue();
         blue = args[2].getNumber().floatValue();

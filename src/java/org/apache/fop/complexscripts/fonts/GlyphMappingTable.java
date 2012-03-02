@@ -157,7 +157,8 @@ public class GlyphMappingTable {
         }
         /** {@inheritDoc} */
         public int getMappedIndex ( int gid ) {
-            int i, mi;
+            int i;
+            int mi;
             if ( ( i = Arrays.binarySearch ( sa, gid ) ) >= 0 ) {
                 mi = getMappedIndex ( gid, sa [ i ], ma [ i ] );                // matches start of (some) range
             } else if ( ( i = - ( i + 1 ) ) == 0 ) {
@@ -179,7 +180,10 @@ public class GlyphMappingTable {
          */
         public abstract int getMappedIndex ( int gid, int s, int m );
         private void populate ( List entries ) {
-            int i = 0, n = entries.size(), gidMax = -1, miMax = -1;
+            int i = 0;
+            int n = entries.size();
+            int gidMax = -1;
+            int miMax = -1;
             int[] sa = new int [ n ];
             int[] ea = new int [ n ];
             int[] ma = new int [ n ];

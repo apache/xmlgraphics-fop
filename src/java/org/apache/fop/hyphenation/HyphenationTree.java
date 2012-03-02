@@ -84,7 +84,8 @@ public class HyphenationTree extends TernaryTree
      * are stored.
      */
     protected int packValues(String values) {
-        int i, n = values.length();
+        int i;
+        int n = values.length();
         int m = (n & 1) == 1 ? (n >> 1) + 2 : (n >> 1) + 1;
         int offset = vspace.alloc(m);
         byte[] va = vspace.getArray();
@@ -247,7 +248,8 @@ public class HyphenationTree extends TernaryTree
     protected void searchPatterns(char[] word, int index, byte[] il) {
         byte[] values;
         int i = index;
-        char p, q;
+        char p;
+        char q;
         char sp = word[i];
         p = root;
 

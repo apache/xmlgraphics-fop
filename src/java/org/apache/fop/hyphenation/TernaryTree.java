@@ -271,7 +271,9 @@ public class TernaryTree implements Cloneable, Serializable {
      * @return an integer
      */
     public static int strcmp(String str, char[] a, int start) {
-        int i, d, len = str.length();
+        int i;
+        int d;
+        int len = str.length();
         for (i = 0; i < len; i++) {
             d = (int)str.charAt(i) - a[start + i];
             if (d != 0) {
@@ -448,7 +450,8 @@ public class TernaryTree implements Cloneable, Serializable {
     public void balance() {
         // System.out.print("Before root splitchar = "); System.out.println(sc[root]);
 
-        int i = 0, n = length;
+        int i = 0;
+        int n = length;
         String[] k = new String[n];
         char[] v = new char[n];
         Iterator iter = new Iterator();

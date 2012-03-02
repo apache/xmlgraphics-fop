@@ -1231,7 +1231,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         ListIterator currParIterator = currPar.listIterator(currPar.ignoreAtStart);
         // list of TLM involved in hyphenation
         List updateList = new LinkedList();
-        KnuthElement firstElement, nextElement;
+        KnuthElement firstElement;
+        KnuthElement nextElement;
         // current InlineLevelLayoutManager
         InlineLevelLayoutManager currLM = null;
         // number of KnuthBox elements containing word fragments
