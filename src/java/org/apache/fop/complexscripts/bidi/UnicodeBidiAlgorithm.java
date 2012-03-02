@@ -536,7 +536,7 @@ public final class UnicodeBidiAlgorithm implements BidiConstants {
                     int pc = ica[k];
                     if ( isRetainedFormatting ( pc ) ) {
                         continue;
-                    } if ( pc == BidiConstants.WS ) {
+                    } else if ( pc == BidiConstants.WS ) {
                         la[k] = dl;
                     } else {
                         break;
