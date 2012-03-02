@@ -55,11 +55,6 @@ public class RegionStart extends RegionSE {
         Rectangle vpRect;
         // [TBD] WRITING MODE ALERT
         switch ( getWritingMode().getEnumValue() ) {
-        default:
-        case Constants.EN_LR_TB:
-            neighbourContext = pageHeightContext;
-            vpRect = new Rectangle(0, 0, getExtent().getValue(pageWidthContext), reldims.bpd);
-            break;
         case Constants.EN_RL_TB:
             neighbourContext = pageHeightContext;
             vpRect = new Rectangle(reldims.ipd - getExtent().getValue(pageWidthContext), 0,
@@ -69,6 +64,11 @@ public class RegionStart extends RegionSE {
         case Constants.EN_TB_RL:
             neighbourContext = pageWidthContext;
             vpRect = new Rectangle(0, 0, reldims.bpd, getExtent().getValue(pageHeightContext));
+            break;
+        case Constants.EN_LR_TB:
+        default:
+            neighbourContext = pageHeightContext;
+            vpRect = new Rectangle(0, 0, getExtent().getValue(pageWidthContext), reldims.bpd);
             break;
         }
         adjustIPD(vpRect, layoutMaster.getWritingMode(), neighbourContext);

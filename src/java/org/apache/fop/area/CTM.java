@@ -335,16 +335,16 @@ public class CTM implements Serializable {
          */
 
         switch ( writingMode.getEnumValue() ) {
-        default:
-        case EN_LR_TB:
-        case EN_RL_TB:
-            reldims.ipd = width;
-            reldims.bpd = height;
-            break;
         case EN_TB_LR:
         case EN_TB_RL:
             reldims.ipd = height;
             reldims.bpd = width;
+            break;
+        case EN_LR_TB:
+        case EN_RL_TB:
+        default:
+            reldims.ipd = width;
+            reldims.bpd = height;
             break;
         }
         // Set a rectangle to be the writing-mode relative version???

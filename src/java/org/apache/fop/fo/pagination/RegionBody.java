@@ -117,11 +117,6 @@ public class RegionBody extends Region {
         int end;
         // [TBD] WRITING MODE ALERT
         switch ( getWritingMode().getEnumValue() ) {
-        default:
-        case Constants.EN_LR_TB:
-            start = commonMarginBlock.marginLeft.getValue(pageWidthContext);
-            end = commonMarginBlock.marginRight.getValue(pageWidthContext);
-            break;
         case Constants.EN_RL_TB:
             start = commonMarginBlock.marginRight.getValue(pageWidthContext);
             end = commonMarginBlock.marginLeft.getValue(pageWidthContext);
@@ -130,6 +125,11 @@ public class RegionBody extends Region {
         case Constants.EN_TB_RL:
             start = commonMarginBlock.marginTop.getValue(pageWidthContext);
             end = commonMarginBlock.marginBottom.getValue(pageWidthContext);
+            break;
+        case Constants.EN_LR_TB:
+        default:
+            start = commonMarginBlock.marginLeft.getValue(pageWidthContext);
+            end = commonMarginBlock.marginRight.getValue(pageWidthContext);
             break;
         }
         int before = commonMarginBlock.spaceBefore.getOptimum(pageHeightContext)

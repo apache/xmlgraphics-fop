@@ -62,14 +62,6 @@ public final class WritingMode extends TraitEnum {
         Direction rowProgressionDirection;
         Direction shiftDirection;
         switch ( getEnumValue() ) {
-        default:
-        case Constants.EN_LR_TB:
-            inlineProgressionDirection = Direction.LR;
-            blockProgressionDirection = Direction.TB;
-            columnProgressionDirection = Direction.LR;
-            rowProgressionDirection = Direction.TB;
-            shiftDirection = Direction.BT;
-            break;
         case Constants.EN_RL_TB:
             inlineProgressionDirection = Direction.RL;
             blockProgressionDirection = Direction.TB;
@@ -90,6 +82,14 @@ public final class WritingMode extends TraitEnum {
             columnProgressionDirection = Direction.TB;
             rowProgressionDirection = Direction.RL;
             shiftDirection = Direction.LR;
+            break;
+        case Constants.EN_LR_TB:
+        default:
+            inlineProgressionDirection = Direction.LR;
+            blockProgressionDirection = Direction.TB;
+            columnProgressionDirection = Direction.LR;
+            rowProgressionDirection = Direction.TB;
+            shiftDirection = Direction.BT;
             break;
         }
         wms.setInlineProgressionDirection ( inlineProgressionDirection );
