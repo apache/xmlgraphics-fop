@@ -56,18 +56,18 @@ public class RegionAfter extends RegionBA {
 
         // [TBD] WRITING MODE ALERT
         switch ( getWritingMode().getEnumValue() ) {
-        default:
-        case Constants.EN_LR_TB:
-        case Constants.EN_RL_TB:
-            neighbourContext = pageWidthContext;
-            vpRect = new Rectangle(0, reldims.bpd - getExtent().getValue(pageHeightContext)
-                                   , reldims.ipd, getExtent().getValue(pageHeightContext));
-            break;
         case Constants.EN_TB_LR:
         case Constants.EN_TB_RL:
             neighbourContext = pageHeightContext;
-            vpRect = new Rectangle(0, reldims.bpd - getExtent().getValue(pageWidthContext)
-                                   , getExtent().getValue(pageWidthContext), reldims.ipd);
+            vpRect = new Rectangle(0, reldims.bpd - getExtent().getValue(pageWidthContext),
+                                   getExtent().getValue(pageWidthContext), reldims.ipd);
+            break;
+        case Constants.EN_LR_TB:
+        case Constants.EN_RL_TB:
+        default:
+            neighbourContext = pageWidthContext;
+            vpRect = new Rectangle(0, reldims.bpd - getExtent().getValue(pageHeightContext),
+                                   reldims.ipd, getExtent().getValue(pageHeightContext));
             break;
         }
         if (getPrecedence() == EN_FALSE) {

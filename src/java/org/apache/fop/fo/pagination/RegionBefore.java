@@ -60,16 +60,16 @@ public class RegionBefore extends RegionBA {
         Rectangle vpRect;
         // [TBD] WRITING MODE ALERT
         switch ( getWritingMode().getEnumValue() ) {
-        default:
-        case Constants.EN_LR_TB:
-        case Constants.EN_RL_TB:
-            neighbourContext = pageWidthContext;
-            vpRect = new Rectangle(0, 0, reldims.ipd, getExtent().getValue(pageHeightContext));
-            break;
         case Constants.EN_TB_LR:
         case Constants.EN_TB_RL:
             neighbourContext = pageHeightContext;
             vpRect = new Rectangle(0, 0, getExtent().getValue(pageWidthContext), reldims.ipd);
+            break;
+        case Constants.EN_LR_TB:
+        case Constants.EN_RL_TB:
+        default:
+            neighbourContext = pageWidthContext;
+            vpRect = new Rectangle(0, 0, reldims.ipd, getExtent().getValue(pageHeightContext));
             break;
         }
         if (getPrecedence() == EN_FALSE) {

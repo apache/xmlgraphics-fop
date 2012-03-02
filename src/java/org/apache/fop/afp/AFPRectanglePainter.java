@@ -58,14 +58,6 @@ public class AFPRectanglePainter extends AbstractAFPPainter {
         lineDataInfo.setThickness ( Math.round(height) );
 
         switch (lineDataInfo.getRotation()) {
-        default:
-        case 0:
-            lineDataInfo.setX1 ( Math.round((float)at.getTranslateX() + x) );
-            yNew = Math.round((float)at.getTranslateY() + y);
-            lineDataInfo.setY1 ( yNew );
-            lineDataInfo.setY2 ( yNew );
-            lineDataInfo.setX2 ( Math.round((float)at.getTranslateX() + x + width) );
-            break;
         case 90:
             lineDataInfo.setX1 ( Math.round((float)at.getTranslateY() + x) );
             yNew = pageWidth - Math.round((float)at.getTranslateX()) + Math.round(y);
@@ -86,6 +78,14 @@ public class AFPRectanglePainter extends AbstractAFPPainter {
             lineDataInfo.setY1 ( yNew );
             lineDataInfo.setY2 ( yNew );
             lineDataInfo.setX2 ( pageHeight - Math.round((float)at.getTranslateY() - x - width) );
+            break;
+        case 0:
+        default:
+            lineDataInfo.setX1 ( Math.round((float)at.getTranslateX() + x) );
+            yNew = Math.round((float)at.getTranslateY() + y);
+            lineDataInfo.setY1 ( yNew );
+            lineDataInfo.setY2 ( yNew );
+            lineDataInfo.setX2 ( Math.round((float)at.getTranslateX() + x + width) );
             break;
         }
         dataStream.createLine(lineDataInfo);
