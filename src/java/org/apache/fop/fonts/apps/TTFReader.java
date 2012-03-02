@@ -496,8 +496,7 @@ public class TTFReader extends AbstractFontReader {
                 if (version < METRICS_VERSION) {
                     err = "Incompatible " + METRICS_VERSION_ATTR
                         + " value (" + version + ", should be " + METRICS_VERSION
-                        + ")"
-                     ;
+                        + ")";
                 }
             } catch (NumberFormatException e) {
                 err = "Invalid " + METRICS_VERSION_ATTR
