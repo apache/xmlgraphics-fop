@@ -148,12 +148,18 @@ public class PageSequenceLayoutManager extends AbstractPageSequenceLayoutManager
 
     @Override
     protected Page makeNewPage(boolean isBlank) {
-        Page newPage;
+        Page newPage = super.makeNewPage(isBlank);
 
-        do {
-            newPage = super.makeNewPage(isBlank);
-        } while (!getPageSequence().getMainFlow().getFlowName()
-                .equals(newPage.getSimplePageMaster().getRegion(FO_REGION_BODY).getRegionName()));
+        // Empty pages (pages that have been generated from a SPM that has an un-mapped flow name)
+        // cannot layout areas from the main flow.  Blank pages can be created from empty pages.
+
+        if (!isBlank) {
+            while (!getPageSequence().getMainFlow().getFlowName()
+                    .equals(newPage.getSimplePageMaster()
+                            .getRegion(FO_REGION_BODY).getRegionName())) {
+                newPage = super.makeNewPage(isBlank);
+            }
+        }
 
         return newPage;
     }

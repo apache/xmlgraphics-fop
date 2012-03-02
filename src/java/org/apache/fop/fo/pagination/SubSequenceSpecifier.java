@@ -82,5 +82,12 @@ public interface SubSequenceSpecifier {
      */
     boolean isInfinite();
 
+    /**
+     * Test if this can be reused when it is the last sub-sequence specifer,
+     * and has been exhausted
+     * @return true if and only if it can be reused
+     */
+    boolean isReusable();
+
 }
 

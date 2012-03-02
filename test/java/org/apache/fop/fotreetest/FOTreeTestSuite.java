@@ -34,4 +34,5 @@ import org.junit.runners.Suite;
         org.apache.fop.fo.DelegatingFOEventHandlerTestCase.class
 })
 public final class FOTreeTestSuite {
+
 }

@@ -181,6 +181,9 @@ public class RepeatablePageMasterReference extends FObj
         return getMaximumRepeats() == INFINITE;
     }
 
-
+    /** {@inheritDoc} */
+    public boolean isReusable() {
+        return false;
+    }
 
 }
