@@ -468,9 +468,8 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             setText();
             TraitSetter.addFontTraits(textArea, font);
             textArea.addTrait(Trait.COLOR, foText.getColor());
-            TraitSetter.addStructureTreeElement(textArea, foText.getStructureTreeElement());
             TraitSetter.addTextDecoration(textArea, foText.getTextDecoration());
-            TraitSetter.addFontTraits(textArea, font);
+            TraitSetter.addStructureTreeElement(textArea, foText.getStructureTreeElement());
             return textArea;
         }
 
