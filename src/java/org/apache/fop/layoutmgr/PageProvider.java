@@ -330,7 +330,6 @@ public class PageProvider implements Constants {
         boolean isFirstPage = (startPageOfPageSequence == index);
         SimplePageMaster spm = pageSeq.getNextSimplePageMaster(
                 index, isFirstPage, isLastPage, isBlank);
-
         Page page = new Page(spm, index, pageNumberString, isBlank, spanAll);
         //Set unique key obtained from the AreaTreeHandler
         page.getPageViewport().setKey(areaTreeHandler.generatePageViewportKey());

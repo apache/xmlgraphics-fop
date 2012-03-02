@@ -36,6 +36,7 @@ import org.apache.fop.image.loader.batik.ImagePreloaderTestCase;
 import org.apache.fop.intermediate.IFMimickingTestCase;
 import org.apache.fop.render.extensions.prepress.PageBoundariesTestCase;
 import org.apache.fop.render.extensions.prepress.PageScaleTestCase;
+import org.apache.fop.layoutmgr.PageSequenceLayoutManagerTestCase;
 import org.apache.fop.render.pdf.PDFAConformanceTestCase;
 import org.apache.fop.render.pdf.PDFCMapTestCase;
 import org.apache.fop.render.pdf.PDFEncodingTestCase;
@@ -62,6 +63,7 @@ import org.apache.fop.pdf.PDFLibraryTestSuite;
         ImageLoaderTestCase.class,
         ImagePreloaderTestCase.class,
         IFMimickingTestCase.class,
+        PageSequenceLayoutManagerTestCase.class,
         PageBoundariesTestCase.class,
         PageScaleTestCase.class,
         org.apache.fop.afp.AFPTestSuite.class,

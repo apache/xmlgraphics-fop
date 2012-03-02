@@ -29,7 +29,5 @@ import org.junit.runner.RunWith;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({ PageSequenceMasterTestCase.class,
         RepeatablePageMasterAlternativesTestCase.class})
-
 public final class AllTests {
-
 }

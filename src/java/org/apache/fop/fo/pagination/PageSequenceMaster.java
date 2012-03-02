@@ -218,7 +218,7 @@ public class PageSequenceMaster extends FObj {
             if (nextSubSequence == null) {
                 //Sub-sequence exhausted so attempt to reuse it
                 blockLevelEventProducer.pageSequenceMasterExhausted(this,
-                        masterName, canRecover, getLocator());
+                        masterName, canRecover & currentSubSequence.isReusable(), getLocator());
                 currentSubSequence.reset();
                 if (!currentSubSequence.canProcess(mainFlowName)) {
                     throw new PageProductionException(
