@@ -224,13 +224,7 @@ public class FOTreeBuilder extends DefaultHandler {
      * @return the results of the rendering process.
      */
     public FormattingResults getResults() {
-        if (getEventHandler() instanceof AreaTreeHandler) {
-            return ((AreaTreeHandler) getEventHandler()).getResults();
-        } else {
-            //No formatting results available for output formats no
-            //involving the layout engine.
-            return null;
-        }
+        return getEventHandler().getResults();
     }
 
     /**
