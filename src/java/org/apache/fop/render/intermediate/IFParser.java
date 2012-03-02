@@ -403,7 +403,7 @@ public class IFParser implements IFConstants {
 
         // ============== Element handlers for the intermediate format =============
 
-        private static interface ElementHandler {
+        private interface ElementHandler {
             void startElement(Attributes attributes) throws IFException, SAXException;
             void endElement() throws IFException;
             boolean ignoreCharacters();

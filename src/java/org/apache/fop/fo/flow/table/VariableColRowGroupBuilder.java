@@ -40,7 +40,7 @@ class VariableColRowGroupBuilder extends RowGroupBuilder {
      * Each event is recorded and will be played once the table is finished, and the final
      * number of columns known.
      */
-    private static interface Event {
+    private interface Event {
         /**
          * Plays this event
          *

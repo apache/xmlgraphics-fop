@@ -361,7 +361,7 @@ public class AreaTreeParser {
 
         // ============== Maker classes for the area tree objects =============
 
-        private static interface Maker {
+        private interface Maker {
             void startElement(Attributes attributes) throws SAXException;
             void endElement();
             boolean ignoreCharacters();
