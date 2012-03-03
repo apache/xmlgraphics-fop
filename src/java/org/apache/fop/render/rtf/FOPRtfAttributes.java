@@ -20,6 +20,7 @@
 package org.apache.fop.render.rtf;
 
 import java.awt.Color;
+
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.render.DummyPercentBaseContext;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAttributes;

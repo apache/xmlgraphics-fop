@@ -26,8 +26,8 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
  * the FOP project.
  */
 
-import java.io.Writer;
 import java.io.IOException;
+import java.io.Writer;
 import java.util.List;
 
 /**  Model of an RTF paragraph, which can contain RTF text elements.

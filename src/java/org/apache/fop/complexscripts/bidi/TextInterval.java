@@ -21,8 +21,8 @@ package org.apache.fop.complexscripts.bidi;
 
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOText;
-import org.apache.fop.fo.flow.AbstractPageNumberCitation;
 import org.apache.fop.fo.flow.AbstractGraphics;
+import org.apache.fop.fo.flow.AbstractPageNumberCitation;
 import org.apache.fop.fo.flow.BidiOverride;
 import org.apache.fop.fo.flow.Character;
 import org.apache.fop.fo.flow.Leader;

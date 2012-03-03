@@ -21,11 +21,12 @@ package org.apache.fop.fo.extensions.xmp;
 
 import java.util.HashMap;
 
-import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.ElementMapping;
+import org.w3c.dom.DOMImplementation;
+
 import org.apache.xmlgraphics.xmp.XMPConstants;
 
-import org.w3c.dom.DOMImplementation;
+import org.apache.fop.fo.ElementMapping;
+import org.apache.fop.fo.FONode;
 
 /**
  * Setup the element mapping for XMP metadata.

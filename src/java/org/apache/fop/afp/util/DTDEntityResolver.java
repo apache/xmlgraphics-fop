@@ -22,9 +22,10 @@ package org.apache.fop.afp.util;
 import java.io.IOException;
 import java.net.URL;
 
-import org.apache.fop.afp.fonts.FontRuntimeException;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
+
+import org.apache.fop.afp.fonts.FontRuntimeException;
 
 /**
  * An entity resolver for both DOM and SAX models of the SAX document.

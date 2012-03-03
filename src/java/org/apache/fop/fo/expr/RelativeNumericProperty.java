@@ -20,8 +20,8 @@
 package org.apache.fop.fo.expr;
 
 import org.apache.fop.datatypes.Length;
-import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.datatypes.Numeric;
+import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.TableColLength;
 

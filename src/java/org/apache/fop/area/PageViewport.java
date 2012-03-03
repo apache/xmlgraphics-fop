@@ -36,11 +36,11 @@ import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.fo.pagination.SimplePageMaster;
 import org.apache.fop.traits.WritingModeTraitsGetter;
 
-import static org.apache.fop.fo.Constants.FO_REGION_BODY;
-import static org.apache.fop.fo.Constants.EN_FSWP;
 import static org.apache.fop.fo.Constants.EN_FIC;
-import static org.apache.fop.fo.Constants.EN_LSWP;
+import static org.apache.fop.fo.Constants.EN_FSWP;
 import static org.apache.fop.fo.Constants.EN_LEWP;
+import static org.apache.fop.fo.Constants.EN_LSWP;
+import static org.apache.fop.fo.Constants.FO_REGION_BODY;
 
 /**
  * Page viewport that specifies the viewport area and holds the page contents.

@@ -19,11 +19,12 @@
 
 package org.apache.fop.fo.flow;
 
+import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
-import org.xml.sax.Locator;
-import org.xml.sax.Attributes;
 
 /**
  * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_retrieve-marker">

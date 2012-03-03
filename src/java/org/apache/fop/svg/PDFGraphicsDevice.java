@@ -19,9 +19,9 @@
 
 package org.apache.fop.svg;
 
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsConfigTemplate;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
 
 /**
  * This implements the GraphicsDevice interface as appropriate for

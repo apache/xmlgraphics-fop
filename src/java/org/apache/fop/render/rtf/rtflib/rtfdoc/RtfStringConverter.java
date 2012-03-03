@@ -26,10 +26,10 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
  * the FOP project.
  */
 
-import java.util.Map;
-import java.util.HashMap;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.HashMap;
+import java.util.Map;
 
 /**  Converts java Strings according to RTF conventions
  *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch

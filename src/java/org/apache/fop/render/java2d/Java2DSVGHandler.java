@@ -25,11 +25,12 @@ import java.util.Map;
 
 import org.w3c.dom.Document;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.GVTBuilder;
 import org.apache.batik.gvt.GraphicsNode;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.image.loader.batik.BatikUtil;
 import org.apache.fop.render.AbstractGenericSVGHandler;

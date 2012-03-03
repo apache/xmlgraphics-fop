@@ -27,6 +27,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
+
+import org.apache.xmlgraphics.fonts.Glyphs;
+
 import org.apache.fop.fonts.BFEntry;
 import org.apache.fop.fonts.CIDFontType;
 import org.apache.fop.fonts.EncodingMode;
@@ -36,7 +39,6 @@ import org.apache.fop.fonts.FontType;
 import org.apache.fop.fonts.MultiByteFont;
 import org.apache.fop.fonts.NamedCharacter;
 import org.apache.fop.fonts.SingleByteFont;
-import org.apache.xmlgraphics.fonts.Glyphs;
 
 /**
  * Loads a TrueType font into memory directly from the original font file.

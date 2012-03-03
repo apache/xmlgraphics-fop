@@ -25,10 +25,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.apache.fop.afp.fonts.CharactersetEncoder.EncodedChars;
+
 import org.apache.xmlgraphics.java2d.color.CIELabColorSpace;
 import org.apache.xmlgraphics.java2d.color.ColorUtil;
 import org.apache.xmlgraphics.java2d.color.ColorWithAlternatives;
+
+import org.apache.fop.afp.fonts.CharactersetEncoder.EncodedChars;
 
 /**
  * Generator class for PTOCA data structures.

@@ -19,15 +19,13 @@
 
 package org.apache.fop.fo.pagination;
 
-// Java
 import java.awt.Rectangle;
 
-// FOP
-import org.apache.fop.fo.Constants;
-import org.apache.fop.fo.FONode;
 import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.datatypes.LengthBase;
 import org.apache.fop.datatypes.PercentBaseContext;
+import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.FONode;
 
 /**
  * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_region-end">

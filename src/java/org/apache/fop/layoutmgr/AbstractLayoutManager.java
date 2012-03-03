@@ -27,6 +27,8 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.xmlgraphics.util.QName;
+
 import org.apache.fop.area.Area;
 import org.apache.fop.area.AreaTreeObject;
 import org.apache.fop.area.PageViewport;
@@ -35,7 +37,6 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.fo.flow.RetrieveMarker;
-import org.apache.xmlgraphics.util.QName;
 
 /**
  * The base class for most LayoutManagers.

@@ -19,7 +19,6 @@
 
 package org.apache.fop.fo;
 
-// Java
 import java.awt.geom.Point2D;
 import java.util.HashMap;
 
@@ -33,8 +32,8 @@ import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
-import org.apache.fop.util.XMLConstants;
 import org.apache.fop.util.ContentHandlerFactory.ObjectBuiltListener;
+import org.apache.fop.util.XMLConstants;
 
 /**
  * Abstract class modelling generic, non-XSL-FO XML objects. Such objects are

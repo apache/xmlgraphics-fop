@@ -19,9 +19,8 @@
 
 package org.apache.fop.render.awt.viewer;
 
-//Java
-import java.util.ResourceBundle;
 import java.util.Locale;
+import java.util.ResourceBundle;
 
 /**
  * AWT Viewer's localization class, backed up by <code>java.util.ResourceBundle</code>.

@@ -26,12 +26,12 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
  * the FOP project.
  */
 
-import java.io.Writer;
 import java.io.IOException;
-import java.util.List;
-import java.util.LinkedList;
-import java.util.Iterator;
+import java.io.Writer;
 import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 
 /**

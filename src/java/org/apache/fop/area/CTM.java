@@ -29,8 +29,8 @@ import org.apache.fop.traits.WritingMode;
 
 import static org.apache.fop.fo.Constants.EN_LR_TB;
 import static org.apache.fop.fo.Constants.EN_RL_TB;
-import static org.apache.fop.fo.Constants.EN_TB_RL;
 import static org.apache.fop.fo.Constants.EN_TB_LR;
+import static org.apache.fop.fo.Constants.EN_TB_RL;
 
 /**
  * Describe a PDF or PostScript style coordinate transformation matrix (CTM).

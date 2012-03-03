@@ -19,9 +19,8 @@
 
 package org.apache.fop.pdf;
 
-// Java
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * class representing a /Pages object.

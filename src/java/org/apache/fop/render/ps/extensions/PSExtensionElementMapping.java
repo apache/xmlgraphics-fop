@@ -19,8 +19,8 @@
 
 package org.apache.fop.render.ps.extensions;
 
-import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.ElementMapping;
+import org.apache.fop.fo.FONode;
 
 /**
  * This class provides the element mapping for the PostScript-specific extensions.

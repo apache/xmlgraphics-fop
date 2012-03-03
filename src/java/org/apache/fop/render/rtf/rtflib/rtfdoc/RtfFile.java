@@ -26,12 +26,13 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
  * the FOP project.
  */
 
-import org.apache.fop.render.rtf.rtflib.exceptions.RtfStructureException;
-import java.io.Writer;
-import java.io.IOException;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.Writer;
+
+import org.apache.fop.render.rtf.rtflib.exceptions.RtfStructureException;
 
 /**
  * Models the top-level structure of an RTF file.

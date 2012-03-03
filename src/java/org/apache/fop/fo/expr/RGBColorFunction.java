@@ -19,8 +19,8 @@
 
 package org.apache.fop.fo.expr;
 
-import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.datatypes.PercentBase;
+import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.properties.ColorProperty;
 import org.apache.fop.fo.properties.Property;
 

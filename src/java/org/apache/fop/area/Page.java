@@ -35,13 +35,13 @@ import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.traits.WritingModeTraitsGetter;
 
+import static org.apache.fop.fo.Constants.EN_ERROR_IF_OVERFLOW;
+import static org.apache.fop.fo.Constants.EN_HIDDEN;
 import static org.apache.fop.fo.Constants.FO_REGION_AFTER;
 import static org.apache.fop.fo.Constants.FO_REGION_BEFORE;
 import static org.apache.fop.fo.Constants.FO_REGION_BODY;
 import static org.apache.fop.fo.Constants.FO_REGION_END;
 import static org.apache.fop.fo.Constants.FO_REGION_START;
-import static org.apache.fop.fo.Constants.EN_ERROR_IF_OVERFLOW;
-import static org.apache.fop.fo.Constants.EN_HIDDEN;
 
 /**
  * The page.

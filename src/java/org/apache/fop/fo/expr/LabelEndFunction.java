@@ -19,9 +19,9 @@
 
 package org.apache.fop.fo.expr;
 
-import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.LengthBase;
+import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.flow.ListItem;

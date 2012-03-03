@@ -19,8 +19,8 @@
 
 package org.apache.fop.pdf;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * class representing a /CharProcs dictionary for Type3 fonts.

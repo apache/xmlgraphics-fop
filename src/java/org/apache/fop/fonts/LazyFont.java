@@ -27,6 +27,8 @@ import java.util.Set;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
+import org.xml.sax.InputSource;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -34,8 +36,6 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.complexscripts.fonts.Positionable;
 import org.apache.fop.complexscripts.fonts.Substitutable;
 
-
-import org.xml.sax.InputSource;
 
 /**
  * This class is used to defer the loading of a font until it is really used.

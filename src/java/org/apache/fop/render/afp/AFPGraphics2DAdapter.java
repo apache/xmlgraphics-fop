@@ -25,6 +25,8 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
+import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
+
 import org.apache.fop.afp.AFPGraphics2D;
 import org.apache.fop.afp.AFPGraphicsObjectInfo;
 import org.apache.fop.afp.AFPPaintingState;
@@ -32,7 +34,6 @@ import org.apache.fop.afp.AFPResourceManager;
 import org.apache.fop.render.AbstractGraphics2DAdapter;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.RendererContext.RendererContextWrapper;
-import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
 
 /**
  * Graphics2DAdapter implementation for AFP.

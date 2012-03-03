@@ -19,10 +19,9 @@
 
 package org.apache.fop.area;
 
-// Java
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.io.Serializable;
 
 /**
  * Link resolving for resolving internal links.

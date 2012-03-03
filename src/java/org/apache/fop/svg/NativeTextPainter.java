@@ -24,10 +24,11 @@ import java.io.IOException;
 import java.text.AttributedCharacterIterator;
 import java.util.List;
 
-import org.apache.batik.gvt.renderer.StrokingTextPainter;
-import org.apache.batik.gvt.text.TextSpanLayout;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import org.apache.batik.gvt.renderer.StrokingTextPainter;
+import org.apache.batik.gvt.text.TextSpanLayout;
 
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;

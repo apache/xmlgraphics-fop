@@ -19,13 +19,13 @@
 
 package org.apache.fop.fo.properties;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import org.apache.fop.datatypes.URISpecification;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
-
-import java.net.URI;
-import java.net.URISyntaxException;
 
 import static org.apache.fop.fo.Constants.PR_X_XML_BASE;
 

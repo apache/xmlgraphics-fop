@@ -22,8 +22,8 @@ package org.apache.fop.layoutmgr;
 import java.util.Locale;
 
 import org.apache.fop.events.Event;
-import org.apache.fop.events.EventFormatter;
 import org.apache.fop.events.EventExceptionManager.ExceptionFactory;
+import org.apache.fop.events.EventFormatter;
 
 /**
  * Exception thrown by FOP if an unrecoverable layout error occurs. An example: An area overflows

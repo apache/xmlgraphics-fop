@@ -22,9 +22,10 @@ package org.apache.fop.render.rtf;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.xmlgraphics.util.UnitConv;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.properties.FixedLength;
-import org.apache.xmlgraphics.util.UnitConv;
 
 
 /**  Converts XSL-FO units to RTF units

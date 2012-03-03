@@ -27,8 +27,8 @@ import java.util.List;
 import org.apache.fop.afp.AFPLineDataInfo;
 import org.apache.fop.afp.Completable;
 import org.apache.fop.afp.Factory;
-import org.apache.fop.afp.ptoca.PtocaProducer;
 import org.apache.fop.afp.fonts.AFPFont;
+import org.apache.fop.afp.ptoca.PtocaProducer;
 
 /**
  * Pages contain the data objects that comprise a presentation document. Each
