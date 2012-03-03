@@ -558,6 +558,10 @@ public abstract class FOEventHandler {
     public void endExternalDocument(ExternalDocument document) {
     }
 
+    /**
+     * Get formatting results.
+     * @return the FormattingResults instance for this document
+     */
     public FormattingResults getResults() {
         return null;
     }
