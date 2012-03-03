@@ -148,14 +148,17 @@ public final class UnicodeClasses {
     }
 
 
-    /**
-     * The column numbers in the UCD file
-     */
+    /** The 1st column in the UCD file. */
     public static final int UNICODE = 0;
+    /** The 3rd column in the UCD file. */
     public static final int GENERAL_CATEGORY = 2;
+    /** The 13th column in the UCD file. */
     public static final int SIMPLE_UPPERCASE_MAPPING = 12;
+    /** The 14th column in the UCD file. */
     public static final int SIMPLE_LOWERCASE_MAPPING = 13;
+    /** The 15th column in the UCD file. */
     public static final int SIMPLE_TITLECASE_MAPPING = 14;
+    /** The number of columns in the UCD file. */
     public static final int NUM_FIELDS = 15;
 
     /**
