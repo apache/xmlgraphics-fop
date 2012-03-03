@@ -176,8 +176,12 @@
 
     <!-- ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... -->
     <module name="NoWhitespaceAfter">
-      <property name="allowLineBreaks" value="true"/>                                                           <!-- changing to false produces 183 new errors -->
-      <property name="tokens" value="ARRAY_INIT,BNOT,DEC,DOT,INC,LNOT,UNARY_MINUS,UNARY_PLUS"/>
+      <property name="allowLineBreaks" value="false"/>
+      <property name="tokens" value="BNOT,DEC,INC,LNOT,UNARY_MINUS,UNARY_PLUS"/>
+    </module>
+    <module name="NoWhitespaceAfter">
+      <property name="allowLineBreaks" value="true"/>
+      <property name="tokens" value="ARRAY_INIT,DOT"/>
     </module>
     <!-- ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... -->
 
