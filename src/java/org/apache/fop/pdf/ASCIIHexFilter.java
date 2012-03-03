@@ -19,8 +19,8 @@
 
 package org.apache.fop.pdf;
 
-import java.io.OutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import org.apache.xmlgraphics.util.io.ASCIIHexOutputStream;
 

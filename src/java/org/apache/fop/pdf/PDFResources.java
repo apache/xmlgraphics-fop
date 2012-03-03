@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.xmlgraphics.java2d.color.profile.ColorProfileUtil;
+
 import org.apache.fop.fonts.FontDescriptor;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.Typeface;

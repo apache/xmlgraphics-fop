@@ -19,8 +19,8 @@
 
 package org.apache.fop.fo.flow.table;
 
-import org.apache.fop.fo.FONode;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.fo.FONode;
 
 /**
  * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_table-body">

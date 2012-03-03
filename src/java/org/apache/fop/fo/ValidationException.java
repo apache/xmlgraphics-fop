@@ -19,8 +19,9 @@
 
 package org.apache.fop.fo;
 
-import org.apache.fop.apps.FOPException;
 import org.xml.sax.Locator;
+
+import org.apache.fop.apps.FOPException;
 
 /**
  * Exception thrown during FO tree validation.

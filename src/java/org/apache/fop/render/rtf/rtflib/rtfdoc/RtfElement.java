@@ -26,10 +26,9 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
  * the FOP project.
  */
 
-import java.io.Writer;
 import java.io.IOException;
+import java.io.Writer;
 import java.util.Iterator;
-//import org.apache.fop.render.rtf.rtflib.jfor.main.JForVersionInfo;
 
 /**  Base class for all elements of an RTF file.
  *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch

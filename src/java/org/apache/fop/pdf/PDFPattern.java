@@ -19,10 +19,9 @@
 
 package org.apache.fop.pdf;
 
-// Java
-import java.util.List;
-import java.io.OutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.util.List;
 
 /**
  * class representing a PDF Function.

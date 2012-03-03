@@ -19,9 +19,8 @@
 
 package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
-//Java
-import java.io.Writer;
 import java.io.IOException;
+import java.io.Writer;
 
 /**  Model of an RTF footnote
  *  @author Peter Herweg, pherweg@web.de

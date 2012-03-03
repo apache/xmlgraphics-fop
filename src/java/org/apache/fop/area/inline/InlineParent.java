@@ -19,8 +19,8 @@
 
 package org.apache.fop.area.inline;
 
-import java.util.List;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.fop.area.Area;
 

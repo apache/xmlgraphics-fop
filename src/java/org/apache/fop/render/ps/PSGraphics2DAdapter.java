@@ -34,8 +34,8 @@ import org.apache.fop.pdf.PDFFactory;
 import org.apache.fop.render.AbstractGraphics2DAdapter;
 import org.apache.fop.render.ImageHandlerUtil;
 import org.apache.fop.render.RendererContext;
-import org.apache.fop.render.RendererContextConstants;
 import org.apache.fop.render.RendererContext.RendererContextWrapper;
+import org.apache.fop.render.RendererContextConstants;
 
 /**
  * Graphics2DAdapter implementation for PostScript.

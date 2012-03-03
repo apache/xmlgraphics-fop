@@ -28,6 +28,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.svg.SVGLength;
 
 import org.apache.avalon.framework.configuration.Configuration;
+
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.UnitProcessor;
 import org.apache.batik.bridge.UserAgent;

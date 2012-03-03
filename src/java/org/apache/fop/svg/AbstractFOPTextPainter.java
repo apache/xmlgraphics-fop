@@ -33,6 +33,9 @@ import java.text.CharacterIterator;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.apache.batik.dom.svg.SVGOMTextElement;
 import org.apache.batik.gvt.TextNode;
 import org.apache.batik.gvt.TextPainter;
@@ -40,8 +43,6 @@ import org.apache.batik.gvt.renderer.StrokingTextPainter;
 import org.apache.batik.gvt.text.GVTAttributedCharacterIterator;
 import org.apache.batik.gvt.text.Mark;
 import org.apache.batik.gvt.text.TextPaintInfo;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.afp.AFPGraphics2D;
 import org.apache.fop.fonts.Font;

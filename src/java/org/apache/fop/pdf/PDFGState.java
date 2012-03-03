@@ -19,8 +19,8 @@
 
 package org.apache.fop.pdf;
 
-import java.util.Map;
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Class representing a /ExtGState object.

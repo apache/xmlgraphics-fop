@@ -25,6 +25,7 @@ import java.awt.Insets;
 import java.awt.image.BufferedImage;
 import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
+
 import javax.swing.JPanel;
 
 import org.apache.fop.apps.FOPException;

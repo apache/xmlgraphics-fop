@@ -19,12 +19,12 @@
 
 package org.apache.fop.area;
 
-import org.apache.fop.traits.WritingModeTraitsGetter;
-
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.util.HashMap;
+
+import org.apache.fop.traits.WritingModeTraitsGetter;
 
 /**
  * Region Viewport area.

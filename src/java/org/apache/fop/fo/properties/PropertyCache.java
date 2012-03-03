@@ -19,10 +19,10 @@
 
 package org.apache.fop.fo.properties;
 
-import org.apache.fop.fo.flow.Marker;
-
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
+
+import org.apache.fop.fo.flow.Marker;
 
 /**
  *  Dedicated cache, meant for storing canonical instances

@@ -26,11 +26,10 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
  * the FOP project.
  */
 
-import java.util.LinkedList;
-import java.util.Iterator;
-import java.io.Writer;
 import java.io.IOException;
-//import org.apache.fop.render.rtf.rtflib.jfor.main.JForVersionInfo;
+import java.io.Writer;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 /**
  * RtfListTable: used to make the list table in the header section of the RtfFile.

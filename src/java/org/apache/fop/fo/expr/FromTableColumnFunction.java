@@ -20,9 +20,10 @@
 package org.apache.fop.fo.expr;
 
 import java.util.List;
+
 import org.apache.fop.fo.Constants;
-import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FOPropertyMapping;
+import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.flow.table.ColumnNumberManager;
 import org.apache.fop.fo.flow.table.Table;
 import org.apache.fop.fo.flow.table.TableCell;

@@ -26,9 +26,9 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
  * the FOP project.
  */
 
-import java.util.Vector;
-import java.util.Hashtable;
 import java.io.IOException;
+import java.util.Hashtable;
+import java.util.Vector;
 
 /**
  * Singelton of the RTF color table.

@@ -19,8 +19,8 @@
 
 package org.apache.fop.complexscripts.fonts;
 
-import java.util.List;
 import java.util.Iterator;
+import java.util.List;
 
 // CSOFF: LineLengthCheck
 // CSOFF: NoWhitespaceAfterCheck

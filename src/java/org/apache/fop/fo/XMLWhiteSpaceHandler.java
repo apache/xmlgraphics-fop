@@ -21,6 +21,7 @@ package org.apache.fop.fo;
 
 import java.util.List;
 import java.util.Stack;
+
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.util.CharUtilities;
 

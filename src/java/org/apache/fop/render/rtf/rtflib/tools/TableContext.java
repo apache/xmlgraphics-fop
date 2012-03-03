@@ -21,8 +21,9 @@ package org.apache.fop.render.rtf.rtflib.tools;
 
 import java.util.List;
 
-import org.apache.commons.logging.impl.SimpleLog;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.impl.SimpleLog;
+
 import org.apache.fop.render.rtf.rtflib.rtfdoc.ITableColumnsInfo;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAttributes;
 

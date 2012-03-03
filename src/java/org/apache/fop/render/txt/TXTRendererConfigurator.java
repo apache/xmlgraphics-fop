@@ -20,6 +20,7 @@
 package org.apache.fop.render.txt;
 
 import org.apache.avalon.framework.configuration.Configuration;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.render.PrintRendererConfigurator;

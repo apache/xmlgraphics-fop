@@ -30,10 +30,10 @@ import org.apache.fop.traits.Direction;
 import org.apache.fop.traits.WritingMode;
 import org.apache.fop.util.ColorUtil;
 
+import static org.apache.fop.fo.Constants.EN_NOREPEAT;
 import static org.apache.fop.fo.Constants.EN_REPEAT;
 import static org.apache.fop.fo.Constants.EN_REPEATX;
 import static org.apache.fop.fo.Constants.EN_REPEATY;
-import static org.apache.fop.fo.Constants.EN_NOREPEAT;
 
 // properties should be serialized by the holder
 /**

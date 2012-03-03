@@ -26,8 +26,8 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
  * the FOP project.
  */
 
-import java.io.Writer;
 import java.io.IOException;
+import java.io.Writer;
 
 /**  The RTF document area, container for RtfSection objects.
  *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch

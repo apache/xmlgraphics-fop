@@ -19,9 +19,9 @@
 
 package org.apache.fop.pdf;
 
-import java.util.Date;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Date;
 
 /**
  * class representing an /Info object

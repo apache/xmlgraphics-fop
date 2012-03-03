@@ -19,8 +19,8 @@
 
 package org.apache.fop.layoutmgr.inline;
 
-import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.Block;
+import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.fo.flow.Wrapper;
 import org.apache.fop.layoutmgr.BlockLayoutManager;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;

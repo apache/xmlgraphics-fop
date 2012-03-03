@@ -121,13 +121,11 @@
     <!-- ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... -->
 
     <!-- ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... -->
-    <!-- produces 255 new errors 
     <module name="ImportOrder">
-      <property name="option" value="top"/>
+      <property name="option" value="under"/>
       <property name="groups" value="java,javax,org,org.apache,org.apache.batik,org.apache.xmlgraphics,org.apache.fop,com"/>
       <property name="separated" value="true"/>
     </module>
-    -->
     <!-- ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... -->
 
     <!-- ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... -->

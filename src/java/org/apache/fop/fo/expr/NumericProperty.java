@@ -23,8 +23,8 @@ import java.awt.Color;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.datatypes.Length;
-import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.datatypes.Numeric;
+import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.properties.FixedLength;
 import org.apache.fop.fo.properties.Property;
 

@@ -19,11 +19,11 @@
 
 package org.apache.fop.layoutmgr;
 
-import org.apache.fop.util.ListUtil;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
+
+import org.apache.fop.util.ListUtil;
 
 /**
  * Represents a list of {@link KnuthElement Knuth elements}.

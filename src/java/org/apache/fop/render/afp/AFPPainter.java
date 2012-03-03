@@ -30,6 +30,11 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
 
+import org.w3c.dom.Document;
+
+import org.apache.xmlgraphics.image.loader.ImageProcessingHints;
+import org.apache.xmlgraphics.image.loader.ImageSessionContext;
+
 import org.apache.fop.afp.AFPBorderPainter;
 import org.apache.fop.afp.AFPPaintingState;
 import org.apache.fop.afp.AFPUnitConverter;
@@ -61,9 +66,6 @@ import org.apache.fop.render.intermediate.IFUtil;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.traits.RuleStyle;
 import org.apache.fop.util.CharUtilities;
-import org.apache.xmlgraphics.image.loader.ImageProcessingHints;
-import org.apache.xmlgraphics.image.loader.ImageSessionContext;
-import org.w3c.dom.Document;
 
 /**
  * IFPainter implementation that produces AFP (MO:DCA).

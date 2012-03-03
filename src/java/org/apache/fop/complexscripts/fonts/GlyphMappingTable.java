@@ -20,8 +20,8 @@
 package org.apache.fop.complexscripts.fonts;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Iterator;
+import java.util.List;
 
 // CSOFF: NoWhitespaceAfterCheck
 // CSOFF: InnerAssignmentCheck

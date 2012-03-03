@@ -23,8 +23,8 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.fop.complexscripts.util.GlyphSequence;
 import org.apache.fop.complexscripts.util.GlyphContextTester;
+import org.apache.fop.complexscripts.util.GlyphSequence;
 import org.apache.fop.complexscripts.util.GlyphTester;
 import org.apache.fop.complexscripts.util.ScriptContextTester;
 

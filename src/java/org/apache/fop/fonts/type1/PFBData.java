@@ -19,8 +19,8 @@
 
 package org.apache.fop.fonts.type1;
 
-import java.io.OutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * Class that represents the contents of a PFB file.
