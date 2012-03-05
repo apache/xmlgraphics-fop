@@ -83,7 +83,7 @@ public interface BidiConstants {
     int SURROGATE   = 20;
 
     // other constants
-    /** last 
+    /** last
     /** maximum bidirectional levels */
     int MAX_LEVELS  = 61;
     /** override flag */

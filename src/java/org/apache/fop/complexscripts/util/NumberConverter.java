@@ -397,7 +397,7 @@ public class NumberConverter {
 
     /**
      * Format NUMBER as word according to TYPE, which must be either
-     * Character.UPPERCASE_LETTER, Character.LOWERCASE_LETTER, or 
+     * Character.UPPERCASE_LETTER, Character.LOWERCASE_LETTER, or
      * Character.TITLECASE_LETTER. Makes use of this.language to
      * determine language of word.
      * @param number to be formatted

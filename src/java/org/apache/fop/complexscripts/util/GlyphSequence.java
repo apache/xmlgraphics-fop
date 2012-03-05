@@ -842,7 +842,7 @@ public class GlyphSequence implements Cloneable {
             }
             if ( predicationMergers != null ) {
                 predicationMergers.put ( key, pm );
-            }            
+            }
         }
 
         /**

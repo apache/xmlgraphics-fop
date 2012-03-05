@@ -107,7 +107,7 @@ public class GlyphSubstitutionState extends GlyphProcessingState {
      */
     public void putGlyph ( int glyph, GlyphSequence.CharAssociation a, Object predication ) {
         if ( ! ogb.hasRemaining() ) {
-            ogb = growBuffer ( ogb ); 
+            ogb = growBuffer ( ogb );
         }
         ogb.put ( glyph );
         if ( predications && ( predication != null ) ) {

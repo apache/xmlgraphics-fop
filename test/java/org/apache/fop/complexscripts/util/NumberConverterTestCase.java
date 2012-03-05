@@ -208,7 +208,7 @@ public class NumberConverterTestCase {
 
     static private String[][] formatRomanUpper =
     {
-        
+
         { "I" },
         { "0", "0" },
         { "1", "I" },
@@ -477,7 +477,7 @@ public class NumberConverterTestCase {
         { "999999", "bdwgm" },
         { "1000000", "bdwgn" },
     };
-    
+
     static private String[][] formatAlphabeticLatinUpper =
     {
         { "A" },
@@ -498,7 +498,7 @@ public class NumberConverterTestCase {
         { "999999", "BDWGM" },
         { "1000000", "BDWGN" },
     };
-    
+
     static private String[][] formatAlphabeticArabicHijai =
     {
         { "\u0627", null, null, "alphabetic" },
@@ -539,7 +539,7 @@ public class NumberConverterTestCase {
         { "999999", "\u0623\u0638\u0636\u0635\u062E" },
         { "1000000", "\u0623\u0638\u0636\u0635\u062F" },
     };
-    
+
     static private String[][] formatAlphabeticArabicAbjadi =
     {
         { "\u0627", null, null, "traditional" },
@@ -580,7 +580,7 @@ public class NumberConverterTestCase {
         { "999999", "\u0623\u0641\u0633\u0646\u0632" },
         { "1000000", "\u0623\u0641\u0633\u0646\u062D" },
     };
-    
+
     static private String[][] formatNumeralArabicAbjadi =
     {
         { "\u0623", null, null, "traditional" },
@@ -628,7 +628,7 @@ public class NumberConverterTestCase {
         { "1999", "\u063A\u0638\u0635\u0637" },
         { "2000", "2000" },
     };
-    
+
     static private String[][] formatAlphabeticHebrew =
     {
         { "\u05D0", null, null, "alphabetic" },
@@ -668,7 +668,7 @@ public class NumberConverterTestCase {
         { "999999", "\u05D0\u05DA\u05E9\u05E7\u05E5" },
         { "1000000", "\u05D0\u05DA\u05E9\u05E8\u05D0" },
     };
-    
+
     static private String[][] formatNumeralHebrewGematria =
     {
         { "\u05D0", null, null, "traditional" },
@@ -716,7 +716,7 @@ public class NumberConverterTestCase {
         { "1999", "\u05D0\u05F3\u05EA\u05EA\u05F4\u05E7\u05E6\u05D8" },
         { "2000", "2000" },
     };
-    
+
     static private String[][] formatAlphabeticThai =
     {
         { "\u0E01", null, null, "alphabetic" },
@@ -737,7 +737,7 @@ public class NumberConverterTestCase {
         { "999999", "\u0E0B\u0E20\u0E17\u0E0B" },
         { "1000000", "\u0E0B\u0E20\u0E17\u0E0C" },
     };
-    
+
     static private String[][] formatWordEnglishLower =
     {
         { "w", null, null, null, null, "eng" },

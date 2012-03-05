@@ -267,7 +267,7 @@ public class GlyphTable {
         }
         return (UseSpec[]) uss.toArray ( new UseSpec [ uss.size() ] );
     }
-    
+
     /** {@inheritDoc} */
     public String toString() {
         StringBuffer sb = new StringBuffer(super.toString());
@@ -442,7 +442,7 @@ public class GlyphTable {
         // frozen state
         private GlyphSubtable[] subtablesArray;
         private static GlyphSubtable[] subtablesArrayEmpty       = new GlyphSubtable[0];
-        
+
         /**
          * Instantiate a LookupTable.
          * @param id the lookup table's identifier
@@ -742,7 +742,7 @@ public class GlyphTable {
         /**
          * Construct a glyph lookup table use specification.
          * @param lookupTable a glyph lookup table
-         * @param feature a feature that caused lookup table selection 
+         * @param feature a feature that caused lookup table selection
          */
         public UseSpec ( LookupTable lookupTable, String feature ) {
             this.lookupTable = lookupTable;

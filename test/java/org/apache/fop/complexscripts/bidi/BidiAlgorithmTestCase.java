@@ -67,7 +67,7 @@ public class BidiAlgorithmTestCase {
         0, -1                                   // all test sets
     };
 
-    // instrumentation 
+    // instrumentation
     private int includedSequences;
     private int excludedSequences;
     private int passedSequences;

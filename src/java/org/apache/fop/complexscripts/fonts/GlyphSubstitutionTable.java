@@ -562,7 +562,7 @@ public class GlyphSubstitutionTable extends GlyphTable {
                 return false;
             } else {
                 LigatureSet ls = getLigatureSetForCoverageIndex ( ci, gi );
-                if ( ls != null ) { 
+                if ( ls != null ) {
                     boolean reverse = false;
                     GlyphTester ignores = ss.getIgnoreDefault();
                     int[] counts = ss.getGlyphsAvailable ( 0, reverse, ignores );
@@ -1334,7 +1334,7 @@ public class GlyphSubstitutionTable extends GlyphTable {
      */
     public static class Ligature {
 
-        private final int ligature;                     // (resulting) ligature glyph 
+        private final int ligature;                     // (resulting) ligature glyph
         private final int[] components;                 // component glyph codes (note that first component is implied)
 
         /**

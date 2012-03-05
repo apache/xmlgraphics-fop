@@ -553,9 +553,9 @@ public abstract class AbstractRenderer
                 if ( parent != null ) {
                     int level = parent.getBidiLevel();
                     if ( ( level == -1 ) || ( ( level & 1 ) == 0 ) ) {
-                        currentIPPosition += parent.getStartIndent(); 
+                        currentIPPosition += parent.getStartIndent();
                     } else {
-                        currentIPPosition += parent.getEndIndent(); 
+                        currentIPPosition += parent.getEndIndent();
                     }
                 }
                 renderLineArea(line);
@@ -624,9 +624,9 @@ public abstract class AbstractRenderer
         int bl = line.getBidiLevel();
         if ( bl >= 0 ) {
             if ( ( bl & 1 ) == 0 ) {
-                currentIPPosition += line.getStartIndent(); 
+                currentIPPosition += line.getStartIndent();
             } else {
-                currentIPPosition += line.getEndIndent(); 
+                currentIPPosition += line.getEndIndent();
                 // if line's content overflows line area, then
                 // ensure that overflow is drawn (extends)
                 // outside of left side of line area
@@ -636,7 +636,7 @@ public abstract class AbstractRenderer
                 }
             }
         } else {
-            currentIPPosition += line.getStartIndent(); 
+            currentIPPosition += line.getStartIndent();
         }
         for (int i = 0, l = children.size(); i < l; i++) {
             InlineArea inline = (InlineArea) children.get(i);

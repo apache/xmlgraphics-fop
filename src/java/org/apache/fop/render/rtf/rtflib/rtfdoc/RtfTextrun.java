@@ -443,7 +443,7 @@ public class RtfTextrun extends RtfContainer {
                 if (e instanceof RtfParagraphBreak) {
                     //If the element before was a paragraph break or a bookmark
                     //they will be hidden and are therefore not considered as visible
-                    if (!(aBefore instanceof RtfParagraphBreak) 
+                    if (!(aBefore instanceof RtfParagraphBreak)
                      && !(aBefore instanceof RtfBookmark)) {
                       lastParagraphBreak = (RtfParagraphBreak)e;
                     }
@@ -467,7 +467,7 @@ public class RtfTextrun extends RtfContainer {
 
         //write all children
         boolean bPrevPar = false;
-        boolean bBookmark = false; 
+        boolean bBookmark = false;
         boolean bFirst = true;
         for (Iterator it = getChildren().iterator(); it.hasNext();) {
             final RtfElement e = (RtfElement)it.next();

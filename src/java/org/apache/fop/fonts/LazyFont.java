@@ -89,7 +89,7 @@ public class LazyFont extends Typeface implements FontDescriptor, Substitutable,
         sbuf.append(",advanced=" + useAdvanced);
         sbuf.append('}');
         return sbuf.toString();
-    }   
+    }
 
     private void load(boolean fail) {
         if (!isMetricsLoaded) {
