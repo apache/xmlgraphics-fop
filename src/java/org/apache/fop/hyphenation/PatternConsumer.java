@@ -22,10 +22,10 @@ package org.apache.fop.hyphenation;
 import java.util.ArrayList;
 
 /**
- * This interface is used to connect the XML pattern file parser to
- * the hyphenation tree.
+ * <p>This interface is used to connect the XML pattern file parser to
+ * the hyphenation tree.</p>
  *
- * @author Carlos Villegas <cav@uniscope.co.jp>
+ * <p>This work was authored by Carlos Villegas (cav@uniscope.co.jp).</p>
  */
 public interface PatternConsumer {
 

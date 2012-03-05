@@ -31,9 +31,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * Class which contains a linear text run. It has methods to add attributes,
- * text, paragraph breaks....
- * @author Peter Herweg, pherweg@web.de
+ * <p>Class which contains a linear text run. It has methods to add attributes,
+ * text, paragraph breaks....</p>
+ *
+ * <p>This work was authored by Peter Herweg (pherweg@web.de).</p>
  */
 public class RtfTextrun extends RtfContainer {
 

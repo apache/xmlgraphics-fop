@@ -35,11 +35,11 @@ import java.util.HashMap;
 import org.xml.sax.InputSource;
 
 /**
- * This tree structure stores the hyphenation patterns in an efficient
+ * <p>This tree structure stores the hyphenation patterns in an efficient
  * way for fast lookup. It provides the provides the method to
- * hyphenate a word.
+ * hyphenate a word.</p>
  *
- * @author Carlos Villegas <cav@uniscope.co.jp>
+ * <p>This work was authored by Carlos Villegas (cav@uniscope.co.jp).</p>
  */
 public class HyphenationTree extends TernaryTree
             implements PatternConsumer, Serializable {

@@ -33,11 +33,12 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.ITableAttributes;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAttributes;
 
 /**
- * Contributor(s):
- *  @author Roberto Marra <roberto@link-u.com>
- *  @author Boris Poudérous <boris.pouderous@eads-telecom.com>
- *  @author Normand Massé
- *  @author Peter Herweg <pherweg@web.de>
+ * <p>Table attributes converter.</p>
+ *
+ * <p>This work was authored by Roberto Marra (roberto@link-u.com),
+ * Boris Poudérous (boris.pouderous@eads-telecom.com),
+ * Normand Massé, and
+ * Peter Herweg (pherweg@web.de).</p>
  *
  * This class was originally developed for the JFOR project and
  * is now integrated into FOP.

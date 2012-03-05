@@ -32,10 +32,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-/**  RTF file header, contains style, font and other document-level information.
- *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
- *  @author Andreas Putz a.putz@skynamics.com
- *  @author Marc Wilhelm Kuester
+/**
+ * <p>RTF file header, contains style, font and other document-level information.</p>
+ *
+ * <p>This work was authored by Bertrand Delacretaz (bdelacretaz@codeconsult.ch),
+ * Andreas Putz (a.putz@skynamics.com), and
+ * Marc Wilhelm Kuester.</p>
  */
 
 class RtfHeader extends RtfContainer {

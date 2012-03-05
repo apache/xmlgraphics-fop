@@ -22,9 +22,10 @@ package org.apache.fop.complexscripts.fonts;
 // CSOFF: LineLengthCheck
 
 /**
- * Optional interface which indicates that glyph substitution is supported and, if supported,
- * can perform substitution.
- * @author Glenn Adams
+ * <p>Optional interface which indicates that glyph substitution is supported and, if supported,
+ * can perform substitution.</p>
+ *
+ * <p>This work was originally authored by Glenn Adams (gadams@apache.org).</p>
  */
 public interface Substitutable {
 

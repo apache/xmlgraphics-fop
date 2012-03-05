@@ -21,8 +21,9 @@ package org.apache.fop.complexscripts.bidi;
 
 
 /**
- * Constants used for bidirectional processing.
- * @author Glenn Adams
+ * <p>Constants used for bidirectional processing.</p>
+ *
+ * <p>This work was originally authored by Glenn Adams (gadams@apache.org).</p>
  */
 public interface BidiConstants {
 

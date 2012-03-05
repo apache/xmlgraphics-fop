@@ -22,8 +22,9 @@ package org.apache.fop.complexscripts.util;
 import java.util.Arrays;
 
 /**
- * Mirror related utilities.
- * @author Glenn Adams
+ * <p>Mirror related utilities.</p>
+ *
+ * <p>This work was originally authored by Glenn Adams (gadams@apache.org).</p>
  */
 public final class CharMirror {
 

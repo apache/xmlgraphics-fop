@@ -43,11 +43,10 @@ import org.apache.fop.render.txt.border.AbstractBorderElement;
 import org.apache.fop.render.txt.border.BorderManager;
 
 /**
- * Renderer that renders areas to plain text.
+ * <p>Renderer that renders areas to plain text.</p>
  *
- * @author Art Welch
- * @author <a href="mailto:mark-fop@inomial.com">Mark Lillywhite</a> (to use
- *         the new Renderer interface)
+ * <p>This work was authored by Art Welch and
+ * Mark Lillywhite (mark-fop@inomial.com) [to use the new Renderer interface].</p>
  */
 public class TXTRenderer extends AbstractPathOrientedRenderer {
 

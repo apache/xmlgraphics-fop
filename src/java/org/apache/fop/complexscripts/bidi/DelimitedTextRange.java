@@ -44,7 +44,7 @@ import org.apache.fop.util.CharUtilities;
  * by XML-FO 1.1 §5.8, which contains a flattened sequence of characters. Any FO that generates
  * block areas serves as a delimiter.
  *
- * @author Glenn Adams
+ * <p>This work was originally authored by Glenn Adams (gadams@apache.org).</p>
  */
 public class DelimitedTextRange {
     private FONode fn;                              // node that generates this text range

@@ -29,9 +29,9 @@ import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.gvt.GraphicsNode;
 
 /**
- * Bridge class for the &lt;a> element.
+ * <p>Bridge class for the &lt;a> element.</p>
  *
- * @author <a href="mailto:keiron@aftexsw.com">Keiron Liddle</a>
+ * <p>This work was authored by Keiron Liddle (keiron@aftexsw.com).</p>
  */
 public class PDFAElementBridge extends AbstractGraphicsNodeBridge {
     private AffineTransform transform;

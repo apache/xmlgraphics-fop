@@ -62,7 +62,7 @@ import java.util.Stack;
  * char value as an index to an array that contains the object
  * values.</p>
  *
- * @author cav@uniscope.co.jp
+ * <p>This work was authored by Carlos Villegas (cav@uniscope.co.jp).</p>
  */
 
 public class TernaryTree implements Cloneable, Serializable {

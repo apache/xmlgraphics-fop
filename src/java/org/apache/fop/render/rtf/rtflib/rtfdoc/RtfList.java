@@ -31,10 +31,11 @@ import java.io.Writer;
 import java.util.Random;
 
 /**
- * Model of an RTF list, which can contain RTF list items
- * @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
- * @author Christopher Scott, scottc@westinghouse.com
- * @author Peter Herweg, pherweg@web.de
+ * <p>Model of an RTF list, which can contain RTF list items.</p>
+ *
+ * <p>This work was authored by Bertrand Delacretaz (bdelacretaz@codeconsult.ch),
+ * Christopher Scott (scottc@westinghouse.com), and
+ * Peter Herweg (pherweg@web.de).</p>
  */
 public class RtfList extends RtfContainer {
     private RtfListItem item;

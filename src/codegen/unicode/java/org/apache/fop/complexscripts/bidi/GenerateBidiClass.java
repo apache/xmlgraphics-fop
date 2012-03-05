@@ -40,7 +40,7 @@ import org.apache.fop.util.License;
  *
  * <p>This code is derived in part from GenerateLineBreakUtils.java.</p>
  *
- * @author Glenn Adams
+ * <p>This work was originally authored by Glenn Adams (gadams@apache.org).</p>
  */
 public final class GenerateBidiClass {
 

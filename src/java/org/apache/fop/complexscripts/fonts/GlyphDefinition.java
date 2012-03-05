@@ -22,9 +22,10 @@ package org.apache.fop.complexscripts.fonts;
 // CSOFF: LineLengthCheck
 
 /**
- * The <code>GlyphDefinition</code> interface is a marker interface implemented by a glyph definition
- * subtable.
- * @author Glenn Adams
+ * <p>The <code>GlyphDefinition</code> interface is a marker interface implemented by a glyph definition
+ * subtable.</p>
+ *
+ * <p>This work was originally authored by Glenn Adams (gadams@apache.org).</p>
  */
 public interface GlyphDefinition {
 

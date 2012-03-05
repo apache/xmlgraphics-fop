@@ -28,8 +28,10 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
 import java.io.IOException;
 
-/** interface for RtfElements that can contain RtfHyperLinks
- *  @author Andreas Putz a.putz@skynamics.com
+/**
+ * <p>Interface for RtfElements that can contain RtfHyperLinks.</p>
+ *
+ * <p>This work was authored by Andreas Putz (a.putz@skynamics.com).</p>
  */
 public interface IRtfHyperLinkContainer extends IRtfTextContainer {
     /**

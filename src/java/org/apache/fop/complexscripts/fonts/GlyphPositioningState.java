@@ -26,9 +26,10 @@ import org.apache.fop.complexscripts.util.ScriptContextTester;
 // CSOFF: ParameterNumberCheck
 
 /**
- * The <code>GlyphPositioningState</code> implements an state object used during glyph positioning
- * processing.
- * @author Glenn Adams
+ * <p>The <code>GlyphPositioningState</code> implements an state object used during glyph positioning
+ * processing.</p>
+ *
+ * <p>This work was originally authored by Glenn Adams (gadams@apache.org).</p>
  */
 
 public class GlyphPositioningState extends GlyphProcessingState {

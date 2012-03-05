@@ -20,9 +20,10 @@
 package org.apache.fop.complexscripts.fonts;
 
 /**
- * Exception thrown when attempting to decode a truetype font file and a format
- * constraint is violated.
- * @author Glenn Adams
+ * <p>Exception thrown when attempting to decode a truetype font file and a format
+ * constraint is violated.</p>
+ *
+ * <p>This work was originally authored by Glenn Adams (gadams@apache.org).</p>
  */
 public class AdvancedTypographicTableFormatException extends RuntimeException {
     /**

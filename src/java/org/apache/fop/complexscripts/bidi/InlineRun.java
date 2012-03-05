@@ -44,7 +44,7 @@ import org.apache.fop.util.CharUtilities;
  * The <code>InlineRun</code> class is a utility class, the instances of which are used
  * to capture a sequence of reordering levels associated with an inline area.
  *
- * @author Glenn Adams
+ * <p>This work was originally authored by Glenn Adams (gadams@apache.org).</p>
  */
 public class InlineRun {
     private InlineArea inline;

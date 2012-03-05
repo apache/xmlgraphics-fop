@@ -32,9 +32,10 @@ import org.apache.fop.complexscripts.util.ScriptContextTester;
 // CSOFF: NoWhitespaceAfterCheck
 
 /**
- * The <code>GlyphProcessingState</code> implements a common, base state object used during glyph substitution
- * and positioning processing.
- * @author Glenn Adams
+ * <p>The <code>GlyphProcessingState</code> implements a common, base state object used during glyph substitution
+ * and positioning processing.</p>
+ *
+ * <p>This work was originally authored by Glenn Adams (gadams@apache.org).</p>
  */
 
 public class GlyphProcessingState {

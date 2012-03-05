@@ -29,8 +29,10 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
 import java.io.IOException;
 import java.io.Writer;
 
-/** Plain text in a RTF file, without any formatings.
- *  @author Peter Herweg, pherweg@web.de
+/**
+ * <p>Plain text in a RTF file, without any formatings.</p>
+ *
+ * <p>This work was authored by Peter Herweg (pherweg@web.de).</p>
  */
 
 public class RtfString extends RtfElement {

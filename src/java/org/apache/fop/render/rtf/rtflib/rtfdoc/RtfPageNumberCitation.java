@@ -30,8 +30,10 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
- * @author Christopher Scott, scottc@westinghouse.com
- * @author Boris Pouderous, boris.pouderous@free.fr
+ * <p>Page number citation container.</p>
+
+ * <p>This work was authored by Christopher Scott (scottc@westinghouse.com) and
+ * Boris Pouderous (boris.pouderous@free.fr).</p>
  */
 public class RtfPageNumberCitation extends RtfContainer {
     /* Page field :

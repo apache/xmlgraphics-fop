@@ -22,9 +22,10 @@ package org.apache.fop.complexscripts.fonts;
 // CSOFF: LineLengthCheck
 
 /**
- * Optional interface which indicates that glyph positioning is supported and, if supported,
- * can perform positioning.
- * @author Glenn Adams
+ * <p>Optional interface which indicates that glyph positioning is supported and, if supported,
+ * can perform positioning.</p>
+ *
+ * <p>This work was originally authored by Glenn Adams (gadams@apache.org).</p>
  */
 public interface Positionable {
 

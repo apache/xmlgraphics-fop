@@ -30,11 +30,10 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
- * Creates an hyperlink.
- * This class belongs to the <fo:basic-link> tag processing.
- * @author <a href="mailto:a.putz@skynamics.com">Andreas Putz</a>
+ * <p>Creates an hyperlink.
+ * This class belongs to the <fo:basic-link> tag processing.</p>
  *
- * {\field {\*\fldinst HYPERLINK "http://www.test.de"   }{\fldrslt Joe Smith}}
+ * <p>This work was authored by Andreas Putz (a.putz@skynamics.com).</p>
  */
 public class RtfHyperLink
 extends RtfContainer

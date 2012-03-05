@@ -34,7 +34,8 @@ import org.apache.fop.complexscripts.util.GlyphSequence;
 /**
  * <p>The <code>DevanagariScriptProcessor</code> class implements a script processor for
  * performing glyph substitution and positioning operations on content associated with the Devanagari script.</p>
- * @author Glenn Adams
+ *
+ * <p>This work was originally authored by Glenn Adams (gadams@apache.org).</p>
  */
 public class DevanagariScriptProcessor extends IndicScriptProcessor {
 

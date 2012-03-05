@@ -35,9 +35,10 @@ import org.apache.fop.complexscripts.util.ScriptContextTester;
 // CSOFF: ParameterNumberCheck
 
 /**
- * Abstract script processor base class for which an implementation of the substitution and positioning methods
- * must be supplied.
- * @author Glenn Adams
+ * <p>Abstract script processor base class for which an implementation of the substitution and positioning methods
+ * must be supplied.</p>
+ *
+ * <p>This work was originally authored by Glenn Adams (gadams@apache.org).</p>
  */
 public abstract class ScriptProcessor {
 

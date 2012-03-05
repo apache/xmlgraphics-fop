@@ -32,12 +32,13 @@ import java.util.Map;
 // CSOFF: NoWhitespaceAfterCheck
 
 /**
- * A GlyphSequence encapsulates a sequence of character codes, a sequence of glyph codes,
+ * <p>A GlyphSequence encapsulates a sequence of character codes, a sequence of glyph codes,
  * and a sequence of character associations, where, for each glyph in the sequence of glyph
  * codes, there is a corresponding character association. Character associations server to
  * relate the glyph codes in a glyph sequence to the specific characters in an original
- * character code sequence with which the glyph codes are associated.
- * @author Glenn Adams
+ * character code sequence with which the glyph codes are associated.</p>
+ *
+ * <p>This work was originally authored by Glenn Adams (gadams@apache.org).</p>
  */
 public class GlyphSequence implements Cloneable {
 

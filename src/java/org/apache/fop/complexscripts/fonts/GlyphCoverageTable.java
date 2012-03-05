@@ -31,8 +31,9 @@ import org.apache.commons.logging.LogFactory;
 // CSOFF: NoWhitespaceAfterCheck
 
 /**
- * Base class implementation of glyph coverage table.
- * @author Glenn Adams
+ * <p>.Base class implementation of glyph coverage table.</p>
+ *
+ * <p>This work was originally authored by Glenn Adams (gadams@apache.org).</p>
  */
 public final class GlyphCoverageTable extends GlyphMappingTable implements GlyphCoverageMapping {
 

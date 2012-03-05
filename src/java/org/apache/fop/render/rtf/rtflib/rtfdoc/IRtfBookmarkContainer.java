@@ -29,8 +29,9 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
 import java.io.IOException;
 
 /**
- * RTF Bookmark container interface.
- * @author <a href="mailto:a.putz@skynamics.com">Andreas Putz</a>
+ * <p>RTF Bookmark container interface.</p>
+ *
+ * <p>This work was authored by Andreas Putz (a.putz@skynamics.com).</p>
  */
 public interface IRtfBookmarkContainer {
 

@@ -26,10 +26,10 @@ import org.apache.fop.complexscripts.util.ScriptContextTester;
 // CSOFF: LineLengthCheck
 
 /**
- * Default script processor, which enables default glyph composition/decomposition, common ligatures, localized forms
- * and kerning.
+ * <p>Default script processor, which enables default glyph composition/decomposition, common ligatures, localized forms
+ * and kerning.</p>
  *
- * @author Glenn Adams
+ * <p>This work was originally authored by Glenn Adams (gadams@apache.org).</p>
  */
 public class DefaultScriptProcessor extends ScriptProcessor {
 

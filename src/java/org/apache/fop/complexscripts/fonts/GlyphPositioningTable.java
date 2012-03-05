@@ -38,9 +38,10 @@ import org.apache.fop.complexscripts.util.GlyphTester;
 // CSOFF: ParameterNumberCheck
 
 /**
- * The <code>GlyphPositioningTable</code> class is a glyph table that implements
- * <code>GlyphPositioning</code> functionality.
- * @author Glenn Adams
+ * <p>The <code>GlyphPositioningTable</code> class is a glyph table that implements
+ * <code>GlyphPositioning</code> functionality.</p>
+ *
+ * <p>This work was originally authored by Glenn Adams (gadams@apache.org).</p>
  */
 public class GlyphPositioningTable extends GlyphTable {
 

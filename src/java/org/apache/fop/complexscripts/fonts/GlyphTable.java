@@ -44,8 +44,9 @@ import org.apache.fop.complexscripts.util.ScriptContextTester;
 // CSOFF: SimplifyBooleanReturnCheck
 
 /**
- * Base class for all advanced typographic glyph tables.
- * @author Glenn Adams
+ * <p>Base class for all advanced typographic glyph tables.</p>
+ *
+ * <p>This work was originally authored by Glenn Adams (gadams@apache.org).</p>
  */
 public class GlyphTable {
 

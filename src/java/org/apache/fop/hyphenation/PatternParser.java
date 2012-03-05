@@ -38,10 +38,10 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * A SAX document handler to read and parse hyphenation patterns
- * from a XML file.
+ * <p>A SAX document handler to read and parse hyphenation patterns
+ * from a XML file.</p>
  *
- * @author Carlos Villegas <cav@uniscope.co.jp>
+ * <p>This work was authored by Carlos Villegas (cav@uniscope.co.jp).</p>
  */
 public class PatternParser extends DefaultHandler implements PatternConsumer {
 
