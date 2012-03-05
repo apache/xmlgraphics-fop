@@ -44,7 +44,7 @@ public final class CharScript {
     // The following script codes are based on ISO 15924. Codes less than 1000 are
     // official assignments from 15924; those equal to or greater than 1000 are FOP
     // implementation specific.
-    // 
+    //
     /** hebrew script constant */
     public static final int SCRIPT_HEBREW                               = 125;  // 'hebr'
     /** mongolian script constant */
@@ -557,17 +557,17 @@ public final class CharScript {
      * @return true if character belongs to han (unified cjk) script
      */
     public static boolean isHan ( int c ) {
-        if ( ( c >= 0x3400 ) && ( c <= 0x4DBF ) ) {             
+        if ( ( c >= 0x3400 ) && ( c <= 0x4DBF ) ) {
             return true; // cjk unified ideographs extension a
-        } else if ( ( c >= 0x4E00 ) && ( c <= 0x9FFF ) ) {      
+        } else if ( ( c >= 0x4E00 ) && ( c <= 0x9FFF ) ) {
             return true; // cjk unified ideographs
-        } else if ( ( c >= 0xF900 ) && ( c <= 0xFAFF ) ) {      
+        } else if ( ( c >= 0xF900 ) && ( c <= 0xFAFF ) ) {
             return true; // cjk compatibility ideographs
-        } else if ( ( c >= 0x20000 ) && ( c <= 0x2A6DF ) ) {    
+        } else if ( ( c >= 0x20000 ) && ( c <= 0x2A6DF ) ) {
             return true; // cjk unified ideographs extension b
-        } else if ( ( c >= 0x2A700 ) && ( c <= 0x2B73F ) ) {    
+        } else if ( ( c >= 0x2A700 ) && ( c <= 0x2B73F ) ) {
             return true; // cjk unified ideographs extension c
-        } else if ( ( c >= 0x2F800 ) && ( c <= 0x2FA1F ) ) {    
+        } else if ( ( c >= 0x2F800 ) && ( c <= 0x2FA1F ) ) {
             return true; // cjk compatibility ideographs supplement
         } else {
             return false;

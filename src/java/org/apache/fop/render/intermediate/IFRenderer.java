@@ -962,7 +962,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
 
         // warn if link trait found but not allowed, else create link
         if (linkTraitFound) {
-            StructureTreeElement structElem 
+            StructureTreeElement structElem
                     = (StructureTreeElement) ip.getTrait(Trait.STRUCTURE_TREE_ELEMENT);
             action.setStructureTreeElement(structElem);
             Link link = new Link(action, ipRect);

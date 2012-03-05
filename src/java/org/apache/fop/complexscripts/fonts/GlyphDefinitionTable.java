@@ -140,7 +140,7 @@ public class GlyphDefinitionTable extends GlyphTable {
     /**
      * Determine glyph class.
      * @param gid a glyph identifier (index)
-     * @return a pre-defined glyph class (GLYPH_CLASS_BASE|GLYPH_CLASS_LIGATURE|GLYPH_CLASS_MARK|GLYPH_CLASS_COMPONENT). 
+     * @return a pre-defined glyph class (GLYPH_CLASS_BASE|GLYPH_CLASS_LIGATURE|GLYPH_CLASS_MARK|GLYPH_CLASS_COMPONENT).
      */
     public int getGlyphClass ( int gid ) {
         if ( gct != null ) {

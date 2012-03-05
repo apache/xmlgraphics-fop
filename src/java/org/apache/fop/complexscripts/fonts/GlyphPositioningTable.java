@@ -1749,7 +1749,7 @@ public class GlyphPositioningTable extends GlyphTable {
 
         /**
          * Instantiate a DeviceTable.
-         * @param startSize the 
+         * @param startSize the
          * @param endSize the ending (scaled) size
          * @param deltas adjustments for each scaled size
          */

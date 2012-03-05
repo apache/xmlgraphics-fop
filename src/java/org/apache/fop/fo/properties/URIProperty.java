@@ -144,5 +144,5 @@ public class URIProperty extends Property {
             return p;
         }
     }
-    
+
 }

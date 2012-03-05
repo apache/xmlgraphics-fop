@@ -212,7 +212,7 @@ public abstract class CharactersetEncoder {
 
         /**
          * The bytes
-         * 
+         *
          * @return the bytes
          */
         public byte[] getBytes() {

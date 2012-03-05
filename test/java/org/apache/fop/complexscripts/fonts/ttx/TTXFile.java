@@ -3301,7 +3301,7 @@ public class TTXFile {
         Integer gid = glyphIds.get ( glyph );
         if ( gid != null ) {
             if ( gmap != null ) {
-                Integer cid = gmap.get ( gid ); 
+                Integer cid = gmap.get ( gid );
                 if ( cid != null ) {
                     return cid.intValue();
                 }

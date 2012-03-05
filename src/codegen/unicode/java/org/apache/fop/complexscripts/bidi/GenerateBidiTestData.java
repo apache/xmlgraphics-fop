@@ -994,7 +994,7 @@ public final class GenerateBidiTestData {
         int[] la = new int [ levels.size() ];
         int k = 0;
         for ( Iterator it = levels.iterator(); it.hasNext(); ) {
-            la [ k++ ] = ( (Integer) it.next() ).intValue(); 
+            la [ k++ ] = ( (Integer) it.next() ).intValue();
         }
         return la;
     }
@@ -1050,7 +1050,7 @@ public final class GenerateBidiTestData {
                     if ( it.hasNext() ) {
                         r = ( (Integer) it.next() ).intValue();
                     }
-                } 
+                }
                 ra [ i ] = r;
             }
             return ra;
@@ -1155,7 +1155,7 @@ public final class GenerateBidiTestData {
             int k = 0;
             ta [ k++ ] = bitset;
             for ( Iterator it = classes.iterator(); it.hasNext(); ) {
-                ta [ k++ ] = ( (Integer) it.next() ).intValue(); 
+                ta [ k++ ] = ( (Integer) it.next() ).intValue();
             }
             return ta;
         } else {

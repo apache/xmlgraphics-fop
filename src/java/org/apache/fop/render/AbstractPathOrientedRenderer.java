@@ -85,10 +85,10 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
 
         int level = block.getBidiLevel();
         if ( ( level == -1 ) || ( ( level & 1 ) == 0 ) ) {
-            startx += block.getStartIndent() / 1000f; 
+            startx += block.getStartIndent() / 1000f;
             startx -= borderPaddingStart;
         } else {
-            startx += block.getEndIndent() / 1000f; 
+            startx += block.getEndIndent() / 1000f;
             startx -= borderPaddingEnd;
         }
 

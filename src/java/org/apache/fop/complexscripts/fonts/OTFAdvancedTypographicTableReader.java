@@ -1995,7 +1995,7 @@ public final class OTFAdvancedTypographicTableReader {
                 if (log.isDebugEnabled()) {
                     log.debug(tableTag + " pair set table value[" + i + "][" + j + "]: " + pv);
                 }
-            }            
+            }
         }
         // store results
         seMapping = ct;
@@ -2222,7 +2222,7 @@ public final class OTFAdvancedTypographicTableReader {
                 if (log.isDebugEnabled()) {
                     log.debug(tableTag + " mark-to-base positioning base anchor[" + i + "][" + j + "]: " + a);
                 }
-            }            
+            }
         }
         // store results
         seMapping = mct;
@@ -2463,7 +2463,7 @@ public final class OTFAdvancedTypographicTableReader {
                 if (log.isDebugEnabled()) {
                     log.debug(tableTag + " mark-to-mark positioning mark #2 anchor[" + i + "][" + j + "]: " + a);
                 }
-            }            
+            }
         }
         // store results
         seMapping = mct1;
@@ -3113,7 +3113,7 @@ public final class OTFAdvancedTypographicTableReader {
         case GPOSLookupType.SINGLE:
             subtableFormat = readSinglePosTable ( lookupType, lookupFlags, subtableOffset );
             break;
-        case GPOSLookupType.PAIR:           
+        case GPOSLookupType.PAIR:
             subtableFormat = readPairPosTable ( lookupType, lookupFlags, subtableOffset );
             break;
         case GPOSLookupType.CURSIVE:
@@ -3286,7 +3286,7 @@ public final class OTFAdvancedTypographicTableReader {
         for ( int i = 0; i < nl; i++ ) {
             lgto [ i ] = in.readTTFUShort();
         }
-        
+
         // dump info if debugging
         if (log.isDebugEnabled()) {
             log.debug(tableTag + " ligature caret coverage table offset: " + co );

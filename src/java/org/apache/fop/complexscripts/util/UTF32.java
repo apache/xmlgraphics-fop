@@ -36,7 +36,7 @@ public final class UTF32 {
      * Convert Java string (UTF-16) to a Unicode scalar array (UTF-32).
      * Note that if there are any non-BMP encoded characters present in the
      * input, then the number of entries in the output array will be less
-     * than the number of elements in the input string. Any 
+     * than the number of elements in the input string. Any
      * @param s input string
      * @param substitution value to substitute for ill-formed surrogate
      * @param errorOnSubstitution throw runtime exception (IllegalArgumentException) in

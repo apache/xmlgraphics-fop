@@ -2220,7 +2220,7 @@ public class GSUBTestCase implements ScriptContextTester, GlyphContextTester {
     private TTXFile findTTX ( String fid ) {
         String pn = findTTXPath ( fid );
         assertTrue ( pn != null );
-        try { 
+        try {
             TTXFile tf = TTXFile.getFromCache ( pn );
             return tf;
         } catch ( Exception e ) {

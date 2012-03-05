@@ -1103,7 +1103,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
 
         for (int i = thisStart; i < lastIndex; i++) {
             char currentChar = foText.charAt(i);
-            
+
             //character width
             int charWidth = font.getCharWidth(currentChar);
             wordIPD = wordIPD.plus(charWidth);
