@@ -130,8 +130,8 @@ public abstract class AbstractPDFStream extends PDFDictionary {
      */
     protected StreamCache encodeStream() throws IOException {
         //Allocate a temporary buffer to find out the size of the encoded stream
-        final StreamCache encodedStream = StreamCacheFactory.getInstance().
-                createStreamCache(getSizeHint());
+        final StreamCache encodedStream = StreamCacheFactory.getInstance()
+                .createStreamCache(getSizeHint());
         OutputStream filteredOutput
                 = getFilterList().applyFilters(encodedStream.getOutputStream());
         outputRawStreamData(filteredOutput);

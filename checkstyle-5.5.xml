@@ -175,11 +175,11 @@
     <!-- ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... -->
     <module name="NoWhitespaceAfter">
       <property name="allowLineBreaks" value="false"/>
-      <property name="tokens" value="BNOT,DEC,INC,LNOT,UNARY_MINUS,UNARY_PLUS"/>
+      <property name="tokens" value="BNOT,DEC,DOT,INC,LNOT,UNARY_MINUS,UNARY_PLUS"/>
     </module>
     <module name="NoWhitespaceAfter">
       <property name="allowLineBreaks" value="true"/>
-      <property name="tokens" value="ARRAY_INIT,DOT"/>
+      <property name="tokens" value="ARRAY_INIT"/>
     </module>
     <!-- ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... -->
 

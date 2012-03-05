@@ -422,8 +422,8 @@ public class LazyFont extends Typeface implements FontDescriptor, Substitutable,
         ( CharSequence cs, int[][] gpa, String script, String language ) {
         load(true);
         if ( realFontDescriptor instanceof Substitutable ) {
-            return ((Substitutable)realFontDescriptor).
-                reorderCombiningMarks(cs, gpa, script, language);
+            return ((Substitutable)realFontDescriptor)
+                .reorderCombiningMarks(cs, gpa, script, language);
         } else {
             return cs;
         }
