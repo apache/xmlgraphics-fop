@@ -376,6 +376,7 @@ See main/fresh-site/src/documentation/skinconf.xml for details.
       <height>125</height>
     </credit>
     -->
+	<!--
     <credit box-location="alt2">
       <name>ApacheCon NA 2011</name>
       <url>http://www.apachecon.com/</url>
@@ -383,6 +384,7 @@ See main/fresh-site/src/documentation/skinconf.xml for details.
       <width>125</width>
       <height>125</height>
     </credit>
+	-->
     
     <credit role="pdf">
       <name>PDF created by Apache FOP</name>
