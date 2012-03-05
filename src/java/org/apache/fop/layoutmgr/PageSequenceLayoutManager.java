@@ -87,8 +87,8 @@ public class PageSequenceLayoutManager extends AbstractPageSequenceLayoutManager
         LineArea title = null;
         if (getPageSequence().getTitleFO() != null) {
             try {
-                ContentLayoutManager clm = getLayoutManagerMaker().
-                    makeContentLayoutManager(this, getPageSequence().getTitleFO());
+                ContentLayoutManager clm = getLayoutManagerMaker()
+                    .makeContentLayoutManager(this, getPageSequence().getTitleFO());
                 title = (LineArea) clm.getParentArea(null);
             } catch (IllegalStateException e) {
                 // empty title; do nothing

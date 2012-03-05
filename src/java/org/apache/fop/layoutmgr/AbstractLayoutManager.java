@@ -222,8 +222,8 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
                         (RetrieveMarker) foNode);
                 }
                 if (foNode != null) {
-                    getPSLM().getLayoutManagerMaker().
-                        makeLayoutManagers(foNode, newLMs);
+                    getPSLM().getLayoutManagerMaker()
+                        .makeLayoutManagers(foNode, newLMs);
                 }
             }
         }
