@@ -28,10 +28,11 @@ import java.util.List;
 // CSOFF: LineLengthCheck
 
 /**
- * Base class implementation of glyph mapping table. This base
+ * <p>Base class implementation of glyph mapping table. This base
  * class maps glyph indices to arbitrary integers (mappping indices), and
- * is used to implement both glyph coverage and glyph class maps.
- * @author Glenn Adams
+ * is used to implement both glyph coverage and glyph class maps.</p>
+ *
+ * <p>This work was originally authored by Glenn Adams (gadams@apache.org).</p>
  */
 public class GlyphMappingTable {
 

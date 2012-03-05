@@ -29,6 +29,13 @@
   <!-- ===================================================================================================== -->
 
   <!-- ===================================================================================================== -->
+  <module name="RegexpSingleline">
+    <property name="format" value="@author"/>
+    <property name="message" value="Use of @author javadoc keyword is prohibited."/>
+  </module>
+  <!-- ===================================================================================================== -->
+
+  <!-- ===================================================================================================== -->
   <module name="SuppressionCommentFilter">
     <property name="offCommentFormat" value="CSOFF\: ([\w\|]+)"/>
     <property name="onCommentFormat" value="CSON\: ([\w\|]+)"/>

@@ -55,9 +55,6 @@ import org.apache.fop.apps.MimeConstants;
  * <br/>
  * <b>Note:</b> This servlet is derived from FopServlet. Most methods are inherited from the
  * superclass. Only the differences to the base class are necessary.
- *
- * @author <a href="mailto:fop-dev@xmlgraphics.apache.org">Apache FOP Development Team</a>
- * @version $Id$
  */
 public class FopPrintServlet extends FopServlet {
 

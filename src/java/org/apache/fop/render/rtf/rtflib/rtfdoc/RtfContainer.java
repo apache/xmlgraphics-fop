@@ -34,8 +34,10 @@ import java.util.List;
 
 import org.apache.fop.render.rtf.rtflib.exceptions.RtfStructureException;
 
-/**  An RtfElement that can contain other elements.
- *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
+/**
+ * <p>An RtfElement that can contain other elements.</p>
+ *
+ * <p>This work was authored by Bertrand Delacretaz (bdelacretaz@codeconsult.ch).</p>
  */
 
 public class RtfContainer extends RtfElement {

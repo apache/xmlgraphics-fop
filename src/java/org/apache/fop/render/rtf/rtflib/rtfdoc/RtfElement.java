@@ -30,9 +30,11 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Iterator;
 
-/**  Base class for all elements of an RTF file.
- *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
- *  @author Andreas Putz a.putz@skynamics.com
+/**
+ * <p>Base class for all elements of an RTF file.</p>
+ *
+ * <p>This work was authored by Bertrand Delacretaz (bdelacretaz@codeconsult.ch)
+ * and Andreas Putz (a.putz@skynamics.com).</p>
  */
 public abstract class RtfElement {
     /** Writer to be used */

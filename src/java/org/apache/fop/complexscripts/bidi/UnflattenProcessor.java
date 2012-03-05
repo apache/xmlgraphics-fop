@@ -41,10 +41,10 @@ import org.apache.fop.area.inline.UnresolvedPageNumber;
 // CSOFF: SimplifyBooleanReturnCheck
 
 /**
- * The <code>UnflattenProcessor</code> class is used to reconstruct (by unflattening) a line
- * area's internal area hierarachy after leaf inline area reordering is completed.
+ * <p>The <code>UnflattenProcessor</code> class is used to reconstruct (by unflattening) a line
+ * area's internal area hierarachy after leaf inline area reordering is completed.</p>
  *
- * @author Glenn Adams
+ * <p>This work was originally authored by Glenn Adams (gadams@apache.org).</p>
  */
 class UnflattenProcessor {
     private List<InlineArea>        il;             // list of flattened inline areas being unflattened

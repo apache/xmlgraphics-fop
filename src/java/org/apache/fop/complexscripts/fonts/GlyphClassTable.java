@@ -26,8 +26,9 @@ import java.util.List;
 // CSOFF: NoWhitespaceAfterCheck
 
 /**
- * Base class implementation of glyph class table.
- * @author Glenn Adams
+ * <p>Base class implementation of glyph class table.</p>
+ *
+ * <p>This work was originally authored by Glenn Adams (gadams@apache.org).</p>
  */
 public final class GlyphClassTable extends GlyphMappingTable implements GlyphClassMapping {
 

@@ -24,8 +24,9 @@ import org.apache.fop.util.CharUtilities;
 // CSOFF: InnerAssignmentCheck
 
 /**
- * UTF32 related utilities.
- * @author Glenn Adams
+ * <p>UTF32 related utilities.</p>
+ *
+ * <p>This work was originally authored by Glenn Adams (gadams@apache.org).</p>
  */
 public final class UTF32 {
 

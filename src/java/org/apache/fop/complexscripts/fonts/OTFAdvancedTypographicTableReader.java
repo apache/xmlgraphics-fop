@@ -39,10 +39,10 @@ import org.apache.fop.fonts.truetype.TTFFile;
 // CSOFF: LineLengthCheck
 
 /**
- * OpenType Font (OTF) advanced typographic table reader. Used by @{Link org.apache.fop.fonts.truetype.TTFFile}
- * to read advanced typographic tables (GDEF, GSUB, GPOS).
+ * <p>OpenType Font (OTF) advanced typographic table reader. Used by @{Link org.apache.fop.fonts.truetype.TTFFile}
+ * to read advanced typographic tables (GDEF, GSUB, GPOS).</p>
  *
- * @author Glenn Adams
+ * <p>This work was originally authored by Glenn Adams (gadams@apache.org).</p>
  */
 public final class OTFAdvancedTypographicTableReader {
 

@@ -33,10 +33,10 @@ import org.apache.fop.util.CharUtilities;
 // CSOFF: ParameterNumberCheck
 
 /**
- * The <code>UnicodeBidiAlgorithm</code> class implements functionality prescribed by
- * the Unicode Bidirectional Algorithm, Unicode Standard Annex #9.
+ * <p>The <code>UnicodeBidiAlgorithm</code> class implements functionality prescribed by
+ * the Unicode Bidirectional Algorithm, Unicode Standard Annex #9.</p>
  *
- * @author Glenn Adams
+ * <p>This work was originally authored by Glenn Adams (gadams@apache.org).</p>
  */
 public final class UnicodeBidiAlgorithm implements BidiConstants {
 

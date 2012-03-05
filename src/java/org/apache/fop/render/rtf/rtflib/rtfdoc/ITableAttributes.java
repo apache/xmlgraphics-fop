@@ -30,10 +30,9 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
  */
 
 /**
- * Constants for RTF table attribute names
- * @author unascribed
- * @author Boris POUDEROUS
- * @author Chris Scott, Westinghouse
+ * <p>Constants for RTF table attribute names.</p>
+ *
+ * <p>This work was authored by Boris Pouderous and Chris Scott.</p>
  */
 public interface ITableAttributes {
     /** to process column spanning */

@@ -27,9 +27,10 @@ import org.apache.fop.complexscripts.util.ScriptContextTester;
 // CSOFF: ParameterNumberCheck
 
 /**
- * The <code>GlyphPositioningSubtable</code> implements an abstract base of a glyph subtable,
- * providing a default implementation of the <code>GlyphPositioning</code> interface.
- * @author Glenn Adams
+ * <p>The <code>GlyphPositioningSubtable</code> implements an abstract base of a glyph subtable,
+ * providing a default implementation of the <code>GlyphPositioning</code> interface.</p>
+ *
+ * <p>This work was originally authored by Glenn Adams (gadams@apache.org).</p>
  */
 public abstract class GlyphPositioningSubtable extends GlyphSubtable implements GlyphPositioning {
 

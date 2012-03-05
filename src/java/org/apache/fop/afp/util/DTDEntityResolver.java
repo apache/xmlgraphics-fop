@@ -33,7 +33,8 @@ import org.apache.fop.afp.fonts.FontRuntimeException;
  * The entity resolver only handles queries for the DTD. It will find any URI
  * with a recognised public id and return an {@link org.xml.sax.InputSource}.
  * <p>
- * @author <a href="mailto:joe@exubero.com">Joe Schmetzer</a>
+ *
+ * <p>This work was authored by Joe Schmetzer (joe@exubero.com).</p>
  */
 public class DTDEntityResolver implements EntityResolver {
 

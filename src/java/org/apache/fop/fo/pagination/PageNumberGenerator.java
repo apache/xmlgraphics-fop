@@ -24,14 +24,15 @@ import org.apache.fop.complexscripts.util.NumberConverter;
 // CSOFF: LineLengthCheck
 
 /**
- * This class uses the 'format', 'groupingSeparator', 'groupingSize',
+ * <p>This class uses the 'format', 'groupingSeparator', 'groupingSize',
  * and 'letterValue' properties on fo:page-sequence to return a String
- * corresponding to the supplied integer page number.
+ * corresponding to the supplied integer page number.</p>
  *
- * In addition, (now) uses 'language' parameter and new 'fox:page-number-features'
- * parameter to express applicable language and number conversion features.
+ * <p>In addition, (now) uses 'language' parameter and new 'fox:page-number-features'
+ * parameter to express applicable language and number conversion features.</p>
  *
- * @author Glenn Adams (rewrite to use new NumberConverter utility)
+ * <p>This work was authored by Glenn Adams (gadams@apache.org), based on a
+ * rewrite of prior work to use the new <code>NumberConverter</code> utility class.</p>
  * @see NumberConverter
  */
 public class PageNumberGenerator {

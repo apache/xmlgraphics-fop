@@ -31,10 +31,10 @@ import org.apache.fop.fo.flow.Leader;
 // CSOFF: SimplifyBooleanReturnCheck
 
 /**
- * The <code>TextInterval</code> class is a utility class, the instances of which are used
- * to record backpointers to associated nodes over sub-intervals of a delimited text range.
+ * <p>The <code>TextInterval</code> class is a utility class, the instances of which are used
+ * to record backpointers to associated nodes over sub-intervals of a delimited text range.</p>
  *
- * @author Glenn Adams
+ * <p>This work was originally authored by Glenn Adams (gadams@apache.org).</p>
  */
 class TextInterval {
     private FONode fn;              // associated node

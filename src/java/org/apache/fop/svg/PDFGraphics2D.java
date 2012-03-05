@@ -95,12 +95,12 @@ import org.apache.fop.render.pdf.ImageRawJPEGAdapter;
 import org.apache.fop.render.pdf.ImageRenderedAdapter;
 
 /**
- * PDF Graphics 2D.
+ * <p>PDF Graphics 2D.
  * Used for drawing into a pdf document as if it is a graphics object.
- * This takes a pdf document and draws into it.
+ * This takes a pdf document and draws into it.</p>
  *
- * @author <a href="mailto:keiron@aftexsw.com">Keiron Liddle</a>
- * @version $Id$
+ * <p>This work was authored by Keiron Liddle (keiron@aftexsw.com).</p>
+ *
  * @see org.apache.batik.ext.awt.g2d.AbstractGraphics2D
  */
 public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHandler {

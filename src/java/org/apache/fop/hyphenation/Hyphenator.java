@@ -36,10 +36,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * This class is the main entry point to the hyphenation package.
- * You can use only the static methods or create an instance.
+ * <p>This class is the main entry point to the hyphenation package.
+ * You can use only the static methods or create an instance.</p>
  *
- * @author Carlos Villegas <cav@uniscope.co.jp>
+ * <p>This work was authored by Carlos Villegas (cav@uniscope.co.jp).</p>
  */
 public final class Hyphenator {
 

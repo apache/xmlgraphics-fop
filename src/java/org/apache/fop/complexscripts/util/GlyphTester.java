@@ -20,8 +20,9 @@
 package org.apache.fop.complexscripts.util;
 
 /**
- * Interface for testing glyph properties according to glyph identifier.
- * @author Glenn Adams
+ * <p>Interface for testing glyph properties according to glyph identifier.</p>
+ *
+ * <p>This work was originally authored by Glenn Adams (gadams@apache.org).</p>
  */
 public interface GlyphTester {
 

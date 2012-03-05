@@ -35,17 +35,20 @@ import java.util.List;
 
 
 /**
- * Used to add extra table rows after a row that contains a nested table:
+ * <p>Used to add extra table rows after a row that contains a nested table:</p>
+ * <ul>
  * <li> created by RtfTableRow before generating RTF code
  * <li> an RtfTableCell that contains a nested table can ask this to put
  *         some of its children in extra rows that after the current row
  * <li> once RtfTableRow is done rendering its children, it renders this,
  *         causing extra rows to be generated, with content that can come
  *         from several RtfTableCells
+ * </ul>
  *
- * See org.apache.fop.rtf.rtflib.testdocs.NestedTable for an example of
- * usage.
- * @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
+ * <p>See org.apache.fop.rtf.rtflib.testdocs.NestedTable for an example of
+ * usage.</p>
+ *
+ * <p>This work was authored by Bertrand Delacretaz (bdelacretaz@codeconsult.ch).</p>
  */
 
 public class RtfExtraRowSet extends RtfContainer {

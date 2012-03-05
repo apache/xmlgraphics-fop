@@ -35,8 +35,9 @@ import org.apache.fop.util.CharUtilities;
 // CSOFF: WhitespaceAfterCheck
 
 /**
- * Script related utilities.
- * @author Glenn Adams
+ * <p>Script related utilities.</p>
+ *
+ * <p>This work was originally authored by Glenn Adams (gadams@apache.org).</p>
  */
 public final class CharScript {
 

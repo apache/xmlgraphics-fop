@@ -22,9 +22,10 @@ package org.apache.fop.complexscripts.fonts;
 // CSOFF: LineLengthCheck
 
 /**
- * The <code>GlyphCoverageMapping</code> interface provides glyph identifier to coverage
- * index mapping support.
- * @author Glenn Adams
+ * <p>The <code>GlyphCoverageMapping</code> interface provides glyph identifier to coverage
+ * index mapping support.</p>
+ *
+ * <p>This work was originally authored by Glenn Adams (gadams@apache.org).</p>
  */
 public interface GlyphCoverageMapping {
 

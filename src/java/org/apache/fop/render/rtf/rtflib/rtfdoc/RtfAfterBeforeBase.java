@@ -29,11 +29,13 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
 import java.io.IOException;
 import java.io.Writer;
 
-/** Common code for RtfAfter and RtfBefore
-*  @author Andreas Lambert <andreas.lambert@cronidesoft.com>
-*  @author Christopher Scott, scottc@westinghouse.com
-*  @author Christoph Zahm <zahm@jnet.ch> (support for tables in headers/footers)
-*/
+/**
+ * <p>Common code for RtfAfter and RtfBefore.</p>
+ *
+ * <p>This work was authored by Andreas Lambert (andreas.lambert@cronidesoft.com),
+ * Christopher Scott (scottc@westinghouse.com), and
+ * Christoph Zahm (zahm@jnet.ch) [support for tables in headers/footers].</p>
+ */
 
 abstract class RtfAfterBeforeBase
 extends RtfContainer

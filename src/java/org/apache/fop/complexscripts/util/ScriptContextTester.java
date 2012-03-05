@@ -20,8 +20,9 @@
 package org.apache.fop.complexscripts.util;
 
 /**
- * Interface for providing script specific context testers.
- * @author Glenn Adams
+ * <p>Interface for providing script specific context testers.</p>
+ *
+ * <p>This work was originally authored by Glenn Adams (gadams@apache.org).</p>
  */
 public interface ScriptContextTester {
 

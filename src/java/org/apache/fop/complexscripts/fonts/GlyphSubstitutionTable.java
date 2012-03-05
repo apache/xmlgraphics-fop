@@ -36,9 +36,10 @@ import org.apache.fop.complexscripts.util.GlyphTester;
 // CSOFF: NoWhitespaceAfterCheck
 
 /**
- * The <code>GlyphSubstitutionTable</code> class is a glyph table that implements
- * <code>GlyphSubstitution</code> functionality.
- * @author Glenn Adams
+ * <p>The <code>GlyphSubstitutionTable</code> class is a glyph table that implements
+ * <code>GlyphSubstitution</code> functionality.</p>
+ *
+ * <p>This work was originally authored by Glenn Adams (gadams@apache.org).</p>
  */
 public class GlyphSubstitutionTable extends GlyphTable {
 

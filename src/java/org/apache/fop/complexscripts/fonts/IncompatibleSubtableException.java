@@ -20,9 +20,10 @@
 package org.apache.fop.complexscripts.fonts;
 
 /**
- * Exception thrown during when attempting to map glyphs to associated characters
- * in the case that the associated characters do not represent a compact interval.
- * @author Glenn Adams
+ * <p>Exception thrown during when attempting to map glyphs to associated characters
+ * in the case that the associated characters do not represent a compact interval.</p>
+ *
+ * <p>This work was originally authored by Glenn Adams (gadams@apache.org).</p>
  */
 public class IncompatibleSubtableException extends RuntimeException {
     /**

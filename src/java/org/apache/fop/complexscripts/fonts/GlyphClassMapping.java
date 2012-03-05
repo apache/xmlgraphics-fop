@@ -22,9 +22,10 @@ package org.apache.fop.complexscripts.fonts;
 // CSOFF: LineLengthCheck
 
 /**
- * The <code>GlyphClassMapping</code> interface provides glyph identifier to class
- * index mapping support.
- * @author Glenn Adams
+ * <p>The <code>GlyphClassMapping</code> interface provides glyph identifier to class
+ * index mapping support.</p>
+ *
+ * <p>This work was originally authored by Glenn Adams (gadams@apache.org).</p>
  */
 public interface GlyphClassMapping {
 

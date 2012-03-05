@@ -41,7 +41,7 @@ import org.apache.fop.Version;
 import org.apache.fop.fonts.FontInfo;
 
 /**
- * This class enables to transcode an input to a pdf document.
+ * <p>This class enables to transcode an input to a PDF document.</p>
  *
  * <p>Two transcoding hints (<code>KEY_WIDTH</code> and
  * <code>KEY_HEIGHT</code>) can be used to respectively specify the image
@@ -70,8 +70,7 @@ import org.apache.fop.fonts.FontInfo;
  * of the other transcoders, but this may be associated with a price in the form of a small
  * performance penalty. If font auto-detection is not desired, it can be disable using this key.
  *
- * @author <a href="mailto:keiron@aftexsw.com">Keiron Liddle</a>
- * @version $Id$
+ * <p>This work was authored by Keiron Liddle (keiron@aftexsw.com).</p>
  */
 public class PDFTranscoder extends AbstractFOPTranscoder {
 

@@ -31,8 +31,10 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
-/**  Converts java Strings according to RTF conventions
- *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
+/**
+ * <p>Converts java Strings according to RTF conventions.</p>
+ *
+ * <p>This work was authored by Bertrand Delacretaz (bdelacretaz@codeconsult.ch).</p>
  */
 
 public final class RtfStringConverter {

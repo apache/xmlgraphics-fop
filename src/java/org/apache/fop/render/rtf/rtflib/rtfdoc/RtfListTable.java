@@ -32,10 +32,11 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 /**
- * RtfListTable: used to make the list table in the header section of the RtfFile.
+ * <p>RtfListTable: used to make the list table in the header section of the RtfFile.
  * This is the method that Word uses to make lists in RTF and the way most RTF readers,
- * esp. Adobe FrameMaker read lists from RTF.
- * @author Christopher Scott, scottc@westinghouse.com
+ * esp. Adobe FrameMaker read lists from RTF.</p>
+ *
+ * <p>This work was authored by Christopher Scott (scottc@westinghouse.com).</p>
  */
 public class RtfListTable extends RtfContainer {
     private LinkedList lists;

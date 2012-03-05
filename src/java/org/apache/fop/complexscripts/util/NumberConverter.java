@@ -28,18 +28,18 @@ import java.util.List;
 // CSOFF: AvoidNestedBlocksCheck
 
 /**
- * Implementation of Number to String Conversion algorithm specified by
- * XSL Transformations (XSLT) Version 2.0, W3C Recommendation, 23 January 2007.
+ * <p>Implementation of Number to String Conversion algorithm specified by
+ * XSL Transformations (XSLT) Version 2.0, W3C Recommendation, 23 January 2007.</p>
  *
- * This algorithm differs from that specified in XSLT 1.0 in the following
- * ways:
+ * <p>This algorithm differs from that specified in XSLT 1.0 in the following
+ * ways:</p>
  * <ul>
  * <li>input numbers are greater than or equal to zero rather than greater than zero;</li>
  * <li>introduces format tokens { w, W, Ww };</li>
  * <li>introduces ordinal parameter to generate ordinal numbers;</li>
  * </ul>
  *
- * Implementation Defaults and Limitations
+ * <p>Implementation Defaults and Limitations</p>
  * <ul>
  * <li>If language parameter is unspecified (null or empty string), then the value
  * of DEFAULT_LANGUAGE is used, which is defined below as "eng" (English).</li>
@@ -47,7 +47,7 @@ import java.util.List;
  * <li>Ordinal word numerals are supported for French and Spanish only when less than or equal to ten (10).</li>
  * </ul>
  *
- * Implementation Notes
+ * <p>Implementation Notes</p>
  * <ul>
  * <li>In order to handle format tokens outside the Unicode BMP, all processing is
  * done in Unicode Scalar Values represented with Integer and Integer[]
@@ -61,7 +61,7 @@ import java.util.List;
  * selects female ordinals.</li>
  * </ul>
  *
- * @author Glenn Adams
+ * <p>This work was originally authored by Glenn Adams (gadams@apache.org).</p>
  */
 public class NumberConverter {
 

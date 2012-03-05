@@ -279,7 +279,6 @@ public class CharUtilities {
      * @param s a java string (encoded in UTF-16)
      * @return a string representing a sequence of numeric character reference or
      * ASCII characters
-     * @author Glenn Adams
      */
     public static String toNCRefs ( String s ) {
         StringBuffer sb = new StringBuffer();
@@ -310,7 +309,6 @@ public class CharUtilities {
      * @param width width of field to add padding
      * @param pad character to use for padding
      * @return padded string
-     * @author Glenn Adams
      */
     public static String padLeft ( String s, int width, char pad ) {
         StringBuffer sb = new StringBuffer();
@@ -326,7 +324,6 @@ public class CharUtilities {
      * and either 4 or 6 hex characters in width according to whether it is in the BMP or not.
      * @param c character code
      * @return formatted character string
-     * @author Glenn Adams
      */
     public static String format ( int c ) {
         if ( c < 1114112 ) {
@@ -341,7 +338,6 @@ public class CharUtilities {
      * @param cs1 first character sequence
      * @param cs2 second character sequence
      * @return true if both sequences have same length and same character sequence
-     * @author Glenn Adams
      */
     public static boolean isSameSequence ( CharSequence cs1, CharSequence cs2 ) {
         assert cs1 != null;

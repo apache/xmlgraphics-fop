@@ -29,8 +29,10 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
 import java.io.IOException;
 import java.io.Writer;
 
-/**  "Model" of an RTF line break
- *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
+/**
+ * <p>Model of an RTF line break.</p>
+ *
+ * <p>This work was authored by Bertrand Delacretaz (bdelacretaz@codeconsult.ch).</p>
  */
 
 public class RtfLineBreak extends RtfElement {

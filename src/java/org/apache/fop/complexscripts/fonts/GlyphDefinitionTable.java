@@ -33,9 +33,10 @@ import org.apache.fop.complexscripts.util.GlyphSequence;
 // CSOFF: LineLengthCheck
 
 /**
- * The <code>GlyphDefinitionTable</code> class is a glyph table that implements
- * glyph definition functionality according to the OpenType GDEF table.
- * @author Glenn Adams
+ * <p>The <code>GlyphDefinitionTable</code> class is a glyph table that implements
+ * glyph definition functionality according to the OpenType GDEF table.</p>
+ *
+ * <p>This work was originally authored by Glenn Adams (gadams@apache.org).</p>
  */
 public class GlyphDefinitionTable extends GlyphTable {
 

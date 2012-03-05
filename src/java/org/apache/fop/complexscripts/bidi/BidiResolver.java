@@ -41,7 +41,7 @@ import org.apache.fop.fo.pagination.PageSequence;
 /**
  * <p>A utility class for performing bidirectional resolution processing.</p>
  *
- * @author Glenn Adams
+ * <p>This work was originally authored by Glenn Adams (gadams@apache.org).</p>
  */
 public final class BidiResolver {
 

@@ -32,7 +32,7 @@ import org.apache.fop.fo.flow.table.Table;
 import org.apache.fop.fo.pagination.PageSequence;
 
 /**
- * PercentBaseContext implementation to track base widths for percentage calculations.
+ * <p>PercentBaseContext implementation to track base widths for percentage calculations.</p>
  */
 public class PercentContext implements PercentBaseContext {
     private static Log log = LogFactory.getLog(PercentContext.class);

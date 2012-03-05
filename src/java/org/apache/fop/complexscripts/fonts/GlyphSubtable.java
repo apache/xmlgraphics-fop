@@ -28,9 +28,10 @@ import java.util.Map;
 // CSOFF: LineLengthCheck
 
 /**
- * The <code>GlyphSubtable</code> implements an abstract glyph subtable that
- * encapsulates identification, type, format, and coverage information.
- * @author Glenn Adams
+ * <p>The <code>GlyphSubtable</code> implements an abstract glyph subtable that
+ * encapsulates identification, type, format, and coverage information.</p>
+ *
+ * <p>This work was originally authored by Glenn Adams (gadams@apache.org).</p>
  */
 public abstract class GlyphSubtable implements Comparable {
 

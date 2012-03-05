@@ -23,9 +23,10 @@ package org.apache.fop.complexscripts.fonts;
 // CSOFF: InnerAssignmentCheck
 
 /**
- * The <code>GlyphDefinitionSubtable</code> implements an abstract base of a glyph definition subtable,
- * providing a default implementation of the <code>GlyphDefinition</code> interface.
- * @author Glenn Adams
+ * <p>The <code>GlyphDefinitionSubtable</code> implements an abstract base of a glyph definition subtable,
+ * providing a default implementation of the <code>GlyphDefinition</code> interface.</p>
+ *
+ * <p>This work was originally authored by Glenn Adams (gadams@apache.org).</p>
  */
 public abstract class GlyphDefinitionSubtable extends GlyphSubtable implements GlyphDefinition {
 

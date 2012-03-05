@@ -42,7 +42,8 @@ import org.apache.fop.complexscripts.util.ScriptContextTester;
 /**
  * <p>The <code>ArabicScriptProcessor</code> class implements a script processor for
  * performing glyph substitution and positioning operations on content associated with the Arabic script.</p>
- * @author Glenn Adams
+ *
+ * <p>This work was originally authored by Glenn Adams (gadams@apache.org).</p>
  */
 public class ArabicScriptProcessor extends DefaultScriptProcessor {
 

@@ -24,10 +24,7 @@ import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
 
 /**
- * @author me
- *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
+ * <p>Dimensioned property maker.</p>
  */
 public class DimensionPropertyMaker extends CorrespondingPropertyMaker {
 

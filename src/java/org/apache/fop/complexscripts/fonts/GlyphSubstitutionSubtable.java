@@ -26,9 +26,10 @@ import org.apache.fop.complexscripts.util.ScriptContextTester;
 // CSOFF: NoWhitespaceAfterCheck
 
 /**
- * The <code>GlyphSubstitutionSubtable</code> implements an abstract base of a glyph substitution subtable,
- * providing a default implementation of the <code>GlyphSubstitution</code> interface.
- * @author Glenn Adams
+ * <p>The <code>GlyphSubstitutionSubtable</code> implements an abstract base of a glyph substitution subtable,
+ * providing a default implementation of the <code>GlyphSubstitution</code> interface.</p>
+ *
+ * <p>This work was originally authored by Glenn Adams (gadams@apache.org).</p>
  */
 public abstract class GlyphSubstitutionSubtable extends GlyphSubtable implements GlyphSubstitution {
 
