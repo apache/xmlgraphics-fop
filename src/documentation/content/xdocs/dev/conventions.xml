@@ -102,12 +102,10 @@ In general, other languages must not be used, except in translated documentation
             <td>checkstyle</td>
           </tr>
           <tr>
-            <td>Personal attribution in the source code, such as @author tags and attribution comments should not be used.
-Excepted from this general rule are potentially confusing or wide-ranging changes.
-If such changes prove useful over time, the related comments should be removed.</td>
-            <td>Personal attribution tends to clutter the code.
-The relevant historical information that might be useful for problem-solving is tracked in the code repository.</td>
-            <td>Not enforced. Anyone is free to remove such comments.</td>
+            <td>By <link href="http://mail-archives.apache.org/mod_mbox/jakarta-jmeter-dev/200402.mbox/%3C4039F65E.7020406@atg.com%3E">ASF policy</link>, @author tags are officially discouraged.
+However it is permissible to indicate the original author(s) of an entire file or package in a comment provided it follows the copyright and license header.</td>
+            <td>Attribution of subsequent contributions are recorded by the SVN commit history logs, so should not be included.</td>
+            <td>checkstyle</td>
           </tr>
         </table>
         <p>For developers that dislike these conventions, one workaround is to develop using their own style, then use a formatting tool like <link href="http://astyle.sourceforge.net/">astyle</link> (Artistic Style) before committing.</p>
