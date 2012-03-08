@@ -1047,12 +1047,12 @@ NOTE:
     </and>
   </condition>
   <target name="checkstyle-avail" unless="checkstyle.avail">
-    <echo message="checkstyle support NOT present. Please download it from http://checkstyle.sf.net/ and"/>
+    <echo message="Checkstyle support NOT present. Please download it from http://checkstyle.sf.net/ and"/>
     <echo message="... please provide ${checkstyle.location}"/>
     <echo message="... please provide ${checkstyle.noframes.xslt}"/>
     <echo message="... please provide ${checkstyle.config}"/>
   </target>
-  <target name="checkstyle" depends="package, checkstyle-avail" if="checkstyle.avail" description="Runs checkstyle for a code quality report">
+  <target name="checkstyle" depends="package, checkstyle-avail" if="checkstyle.avail" description="Runs Checkstyle for a code quality report">
     <taskdef name="checkstyle" classname="com.puppycrawl.tools.checkstyle.CheckStyleTask" classpathref="checkstyle-classpath"/>
     <mkdir dir="${build.dir}"/>
     <checkstyle config="${checkstyle.config}" failonviolation="false">
