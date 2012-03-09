@@ -19,13 +19,13 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.3//EN" "http://forrest.apache.org/dtd/document-v13.dtd">
 <document>
   <header>
-    <title>FOP Development: Developer Tools</title>
+    <title>Apache™ FOP Development: Developer Tools</title>
     <version>$Revision$</version>
   </header>
   <body>
     <p>
       This page documents items that may be helpful to other developers, 
-      especially to those who are new to FOP. Exhaustive treatment of these 
+      especially to those who are new to Apache™ FOP. Exhaustive treatment of these
       topics is better suited to other fora, but the information presented 
       here is intended to deal with FOP-specific issues related to these 
       tools, especially "gotchas", and to help developers get jump-started.

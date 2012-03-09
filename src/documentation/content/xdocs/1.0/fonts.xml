@@ -1,4 +1,4 @@
-<?xml version="1.0" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -19,7 +19,7 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
 <document>
   <header>
-    <title>Apache FOP: Fonts</title>
+    <title>Apache™ FOP: Fonts</title>
     <version>$Revision$</version>
     <authors>
       <person name="Jeremias M&#xE4;rki" email=""/>
@@ -31,7 +31,7 @@
   <body>
     <section id="intro">
       <title>Summary</title>
-      <p>The following table summarizes the font capabilities of the various FOP renderers:</p>
+      <p>The following table summarizes the font capabilities of the various Apache� FOP renderers:</p>
       <table>
         <tr>
           <th>Renderer</th>

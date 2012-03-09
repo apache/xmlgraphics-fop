@@ -1,4 +1,4 @@
-<?xml version="1.0" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -19,7 +19,7 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
 <document>
   <header>
-    <title>Apache FOP: Configuration</title>
+    <title>Apache™ FOP: Configuration</title>
     <version>$Revision$</version>
   </header>
 
@@ -27,7 +27,7 @@
   <section id="general">
     <title>Configuration File Basics</title>
     <p>
-      The FOP configuration file is an XML file containing a variety of settings that are useful 
+      The Apache™ FOP configuration file is an XML file containing a variety of settings that are useful
       for controlling FOP's behavior, and for helping it find resources that you wish it to use.
     </p>
     <p>
@@ -523,4 +523,3 @@ information it finds. Check if FOP finds what you expect.</li>
         </section>
   </body>
 </document>
-

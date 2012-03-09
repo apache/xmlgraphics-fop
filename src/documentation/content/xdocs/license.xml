@@ -1,4 +1,4 @@
-<?xml version="1.0" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -20,15 +20,15 @@
 
 <document>
   <header>
-    <title>Apache FOP License</title>
+    <title>Apache™ FOP License</title>
     <version>$Revision$</version>
   </header>
 <body>
 <section>
   <title>License</title>
   <p>
-    All new Apache FOP releases will be licensed under the <strong>Apache License, version 2.0</strong>.
-    Releases until version 0.20.5 are released unter the Apache License, version 1.1.
+    All new Apache™ FOP releases will be licensed under the <strong>Apache™ License, version 2.0</strong>.
+    Releases until version 0.20.5 are released unter the Apache™ License, version 1.1.
   </p>
   <p>
     To inspect the license terms please consult the LICENSE and NOTICE files in the root

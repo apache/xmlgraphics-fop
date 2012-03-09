@@ -1,4 +1,4 @@
-<?xml version="1.0" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -20,8 +20,8 @@
 <!-- Embedding FOP -->
 <document>
   <header>
-    <title>Apache FOP: Embedding</title>
-    <subtitle>How to Embed FOP in a Java application</subtitle>
+    <title>Apache™ FOP: Embedding</title>
+    <subtitle>How to Embed Apache� FOP in a Java application</subtitle>
     <version>$Revision$</version>
   </header>
 
@@ -33,7 +33,7 @@
       to embedded applications as well as command-line use, such as options and performance.
     </p>
     <p>
-      To embed Apache FOP in your application, first create a new
+      To embed Apache™ FOP in your application, first create a new
       org.apache.fop.apps.FopFactory instance. This object can be used to launch multiple
       rendering runs. For each run, create a new org.apache.fop.apps.Fop instance through
       one of the factory methods of FopFactory. In the method call you specify which output
@@ -699,4 +699,3 @@ mailing list.
 </section>
   </body>
 </document>
-

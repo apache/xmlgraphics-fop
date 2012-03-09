@@ -25,9 +25,9 @@
   <body>
     <section id="intro">
       <title>Introduction</title>
-      <p>These pages contain information that should be helpful for those developing FOP.
+      <p>These pages contain information that should be helpful for those developing Apache™ FOP.
 This certainly includes programmers, but may also include those contributing to the project in other ways.</p>
-      <p>For basic and user information on FOP, please visit the <link href="http://xml.apache.org/fop">FOP homepage</link>.</p>
+      <p>For basic and user information on FOP, please visit the <link href="http://xml.apache.org/fop">Apache™ FOP homepage</link>.</p>
     </section>
     <section id="lines">
       <title>Development</title>

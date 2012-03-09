@@ -20,9 +20,9 @@
 
 <faqs title="FOP FAQ">
   <part id="part-general">
-    <title>General questions</title>
+    <title>Apache™ FOP: General questions</title>
     <faq id="fop-general">
-      <question>What is FOP?</question>
+      <question>What is Apache™ FOP?</question>
       <answer>
       <p>
         FOP is a print formatter for <link href="#XSLFO">XSL formatting

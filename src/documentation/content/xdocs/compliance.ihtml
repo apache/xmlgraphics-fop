@@ -19,13 +19,13 @@
 
 <html>
 <head>
-  <title>Apache FOP Compliance Page</title>
+  <title>Apache™ FOP Compliance Page</title>
 </head>
 
 <body>
   <h1>W3C XSL-FO 1.1 Standard</h1>
 
-  <p>One of FOP's design goals is conformance to the <a href=
+  <p>One of Apache™ FOP's design goals is conformance to the <a href=
   "http://www.w3.org/TR/xsl/">W3C XSL-FO 1.1 standard</a>, which specifies three
   levels of "conformance": basic, extended, and complete. Although FOP does not currently conform
   to any of these levels, it is nevertheless a useful work-in-progress for many applications. The

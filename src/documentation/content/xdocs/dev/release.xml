@@ -19,13 +19,13 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.3//EN" "http://forrest.apache.org/dtd/document-v13.dtd">
 <document>
   <header>
-    <title>FOP Development: Release Mechanics</title>
+    <title>Apache™ FOP Development: Release Mechanics</title>
     <version>$Revision$</version>
   </header>
   <body>
     <section id="intro">
       <title>Introduction</title>
-      <p>This page documents the process of creating a FOP release.
+      <p>This page documents the process of creating a Apache™ FOP release.
 FOP releases are coordinated by one member of the team (currently Christian Geisert), so others do not ordinarily need to use this information.
 The purpose of documenting it here is to facilitate consistency, ensure that the process is captured, and to allow others to comment on the process.</p>
       <p>The checklist below was assembled from Christian Geisert's notes. It will be expanded in the future as he has time.</p>
@@ -60,8 +60,8 @@ The purpose of documenting it here is to facilitate consistency, ensure that the
         <li>Copy <code>test/fotree/disabled-testcases.xml</code> and
         <code>test/layoutengine/disabled-testcases.xml</code> to the
         new version directory
-        <code>&lt;version>/fotree/disabled-testcases.xml</code> and
-        <code>&lt;version>/layoutengine/disabled-testcases.xml</code>.
+        <code>&lt;version&gt;/fotree/disabled-testcases.xml</code> and
+        <code>&lt;version&gt;/layoutengine/disabled-testcases.xml</code>.
         Copy <code>known-issues.xml</code> to the new version
         directory. Copy <code>knownissues-overview.xml</code> from the
         current to the new version directory, and update the <code>xi:include</code>

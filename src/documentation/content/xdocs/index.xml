@@ -33,6 +33,10 @@
         currently supported include PDF, PS, PCL, AFP, XML (area tree representation),
         Print, AWT and PNG, and to a lesser extent, RTF and TXT. The primary output target is PDF.
       </p>
+      <p>The Apache™ FOP project is part of the <a href="http://www.apache.org">Apache™</a>
+        Software Foundation, which is a wider community of users and developers of open
+		source projects.
+      </p>
         <figure width="480" height="260" src="images/document.jpg" alt="Render Diagram" />
     <p>
       A stable release of the latest version of FOP (<link href="1.0/">1.0</link>) is

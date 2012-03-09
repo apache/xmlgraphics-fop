@@ -1,4 +1,4 @@
-<?xml version="1.0" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -19,13 +19,13 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.3//EN" "http://forrest.apache.org/dtd/document-v13.dtd">
 <document>
   <header>
-    <title>FOP Development: Managing Documentation</title>
+    <title>Apache™ FOP Development: Managing Documentation</title>
     <version>$Revision$</version>
   </header>
   <body>
     <section id="general">
       <title>General Information</title>
-      <p>All raw documentation content is managed in the FOP SVN repository.
+      <p>All raw documentation content is managed in the Apache™ FOP SVN repository.
 Updates should be committed to the repository, then the repository files are used to generate usable output.
 The remaining discussions on this page assume that the SVN repository is the starting place for processing.
 The path to the documentation is src/documentation/content/xdocs.</p>

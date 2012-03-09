@@ -1,4 +1,4 @@
-<?xml version="1.0" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -19,7 +19,7 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
 <document>
   <header>
-    <title>PDF encryption.</title>
+    <title>Apache™ FOP: PDF encryption.</title>
     <version>$Revision$</version>
     <authors>
       <person name="J.Pietschmann" email="pietsch@apache.org"/>
@@ -30,7 +30,7 @@
     <section>
       <title>Overview</title>
       <p>
-        FOP supports encryption of PDF output, thanks to Patrick
+        Apache™ FOP supports encryption of PDF output, thanks to Patrick
         C. Lankswert. This feature is commonly used to prevent
         unauthorized viewing, printing, editing, copying text from the
         document and doing annotations. It is also possible to ask the

@@ -1,4 +1,4 @@
-<?xml version="1.0" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -20,16 +20,17 @@
 
 <document>
   <header>
-    <title>FOP Design: SVG</title>
+    <title>Apache™ FOP Design: SVG</title>
     <version>$Revision$</version>
   </header>
   <body>
 <section id="intro">
   <title>Introduction</title>
-    <p>SVG is rendered through Batik.</p><p>The XML from the XSL:FO document
+    <p>SVG is rendered through Apache™ Batik.</p><p>The XML from the XSL:FO document
       is converted into an SVG DOM with batik. This DOM is then set as the Document
       on the Foreign Object area in the Area Tree.</p><p>This DOM is then available to
-      be rendered by the renderer.</p><p>SVG is rendered in the renderers via an      XMLHandler in the FOUserAgent. This XML handler is used to render the SVG. The
+      be rendered by the renderer.</p><p>SVG is rendered in the renderers via an
+      XMLHandler in the FOUserAgent. This XML handler is used to render the SVG. The
       SVG is rendered by using batik. Batik converts the SVG DOM into an internal
       structure that can be drawn into a Graphics2D. So for PDF we use a
       PDFGraphics2D to draw into.</p><p>This creates the necessary PDF information to
@@ -87,4 +88,3 @@
 
     </body>
 </document>
-

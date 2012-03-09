@@ -1,4 +1,4 @@
-<?xml version="1.0" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -19,7 +19,7 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "document-v20.dtd">
 <document>
   <header>
-    <title>PDF/A (ISO 19005)</title>
+    <title>Apache™ FOP: PDF/A (ISO 19005)</title>
     <version>$Revision$</version>
     <authors>
       <person name="Jeremias Märki" email="jeremias@apache.org"/>
