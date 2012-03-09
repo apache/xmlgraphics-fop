@@ -19,11 +19,11 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.3//EN" "http://forrest.apache.org/dtd/document-v13.dtd">
 <document>
   <header>
-    <title>FOP Development: Coding Conventions</title>
+    <title>Apache™ FOP Development: Coding Conventions</title>
     <version>$Revision$</version>
   </header>
   <body>
-    <p>Acknowledgement: Some content in this guide was adapted from other Apache projects such as Avalon, Cactus, Turbine and Velocity.</p>
+    <p>Acknowledgement: Some content in this guide was adapted from other Apache™ projects such as Avalon, Cactus, Turbine and Velocity.</p>
     <section id="svn">
       <title>Subversion Repository</title>
       <p>Conventions in this section apply to Repository content, regardless of type:</p>

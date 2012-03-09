@@ -18,7 +18,7 @@
 <!-- $Id$ -->
 <!DOCTYPE faqs PUBLIC "-//APACHE//DTD FAQ V1.3//EN" "http://forrest.apache.org/dtd/faq-v13.dtd">
 
-<faqs title="FOP Development: FAQ">
+<faqs title="Apache™ FOP Development: FAQ">
   <part id="part_general">
     <title>General Questions</title>
     <faq>
@@ -63,4 +63,3 @@
     </faq>
   </part>
 </faqs>
-

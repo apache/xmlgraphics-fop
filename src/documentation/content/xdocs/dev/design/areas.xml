@@ -1,4 +1,4 @@
-<?xml version="1.0" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -19,7 +19,7 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.3//EN" "http://forrest.apache.org/dtd/document-v13.dtd">
 <document>
   <header>
-    <title>FOP Design: Area Tree</title>
+    <title>Apache™ FOP Design: Area Tree</title>
     <version>$Revision$</version>
     <authors>
       <person name="Keiron Liddle" email="keiron@aftexsw.com"/>

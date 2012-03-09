@@ -1,4 +1,4 @@
-<?xml version="1.0" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -19,14 +19,14 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.3//EN" "http://forrest.apache.org/dtd/document-v13.dtd">
 <document>
   <header>
-    <title>FOP Development: Testing</title>
+    <title>Apache™ FOP Development: Testing</title>
     <version>$Revision$</version>
   </header>
 
     <body>
     <section id="build">
       <title>"Build" Testing</title>
-      <p>Apache projects use an automated build tool called "gump" to create nightly builds from the SVN repository. Gump sends "nag" messages if the build fails. This can be considered a sort of basic test of the build process. To view the most recent logs of the gump builds:</p>
+      <p>Apache™ projects use an automated build tool called "gump" to create nightly builds from the SVN repository. Gump sends "nag" messages if the build fails. This can be considered a sort of basic test of the build process. To view the most recent logs of the gump builds:</p>
       <ul>
         <li><link href="http://gump.cocoondev.org/xml-fop.html">Gump build for the Trunk</link></li>
         <li><link href="http://gump.cocoondev.org/xml-fop-maintenance.html">Gump build for the Maintenance Branch</link></li>
@@ -43,7 +43,7 @@ The tests do not check the output, but only ensure that something is generated a
       <title>Layout Engine Testing</title>
       <p>
         The <link href="http://svn.apache.org/viewcvs.cgi/xmlgraphics/fop/trunk/test/layoutengine/"><code>test/layoutengine</code></link>
-        directory in the repository contains a test suite for checking the functionality of FOP's 
+        directory in the repository contains a test suite for checking the functionality of Apache� FOP's
         layout engine. For information on how to create test cases for the layout engine, please
         visit the <link href="http://wiki.apache.org/xmlgraphics-fop/HowToCreateLayoutEngineTests">Wiki page</link>.
       </p>
@@ -64,7 +64,7 @@ is to have the tests run to verfiy that nothing working has been broken.
     </p>
     <p>
 To setup the testing the developer must place a reference fop.jar in the
-"&lt;cvs_repository>/test/reference/" directory. This jar will be dynamically
+"&lt;cvs_repository&gt;/test/reference/" directory. This jar will be dynamically
 loaded to create the reference output.
     </p>
   </section>
@@ -114,7 +114,7 @@ test works as would be expected against the current build.
   <section>
     <title>How Testing Works</title>
     <p>
-The tests are stored in the "&lt;svn_repository>/test" directory.
+The tests are stored in the "&lt;svn_repository&gt;/test" directory.
     </p>
     <p>
 You can run the tests by specifying the build target "test" ie: <br/>
@@ -151,4 +151,3 @@ testing is how the SVG image is embedded inside the flow of the fo document.
 </section>
 </body>
 </document>
-

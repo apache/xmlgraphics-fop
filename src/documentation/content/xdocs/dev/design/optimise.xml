@@ -1,4 +1,4 @@
-<?xml version="1.0" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -20,7 +20,7 @@
 
 <document>
   <header>
-    <title>FOP Design: Optimisations</title>
+    <title>Apache™ FOP Design: Optimisations</title>
     <version>$Revision$</version>
     <authors>
       <person name="Keiron Liddle" email="keiron@aftexsw.com"/>
@@ -31,7 +31,7 @@
 <section id="intro">
   <title>Introduction</title>
 <p>
-FOP should be able to handle very large documents. A document can be
+Apache™ FOP should be able to handle very large documents. A document can be
 supplied using SAX and the information should be passed entirely through
 the system, from fo elements to rendered output as soon as possible.
   </p>
@@ -72,4 +72,3 @@ is to make the page and all children serializable.
 
     </body>
 </document>
-
