@@ -176,6 +176,7 @@ public final class GlyphCoverageTable extends GlyphMappingTable implements Glyph
         }
         private void populate ( List entries ) {
             int i = 0;
+            int skipped = 0;
             int n = entries.size();
             int gidMax = -1;
             int[] map = new int [ n ];
@@ -188,6 +189,7 @@ public final class GlyphCoverageTable extends GlyphMappingTable implements Glyph
                             map [ i++ ] = gidMax = gid;
                         } else {
                             log.info ( "ignoring out of order or duplicate glyph index: " + gid );
+                            skipped++;
                         }
                     } else {
                         throw new AdvancedTypographicTableFormatException ( "illegal glyph index: " + gid );
@@ -196,7 +198,7 @@ public final class GlyphCoverageTable extends GlyphMappingTable implements Glyph
                     throw new AdvancedTypographicTableFormatException ( "illegal coverage entry, must be Integer: " + o );
                 }
             }
-            assert i == n;
+            assert ( i + skipped ) == n;
             assert this.map == null;
             this.map = map;
         }
