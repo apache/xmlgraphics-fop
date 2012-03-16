@@ -57,4 +57,14 @@ public class FontEventProcessingTestCase {
                 MimeConstants.MIME_PDF);
     }
 
+    @Test
+    public void testSVGFontStrokedAsShapes() throws FOPException, TransformerException, IOException,
+            SAXException {
+        // svg-fonts.fo embeds two fonts; one that is present in the system and the other is not; the
+        // missing font is stroked as shapes while the fonts that exists is stroked as text
+        InputStream inStream = getClass().getResourceAsStream("svg-fonts.fo");
+        eventsTests.doTest(inStream, null, FontEventProducer.class.getName() + ".svgTextStrokedAsShapes",
+                MimeConstants.MIME_PDF);
+    }
+
 }

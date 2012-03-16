@@ -19,6 +19,9 @@
 
 package org.apache.fop.events;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -35,6 +38,8 @@ public class LoggingEventListener implements EventListener {
 
     private Log log;
     private boolean skipFatal;
+
+    private final Set<String> loggedMessages = new HashSet<String>();
 
     /**
      * Creates an instance logging to the default log category of this class.
@@ -77,7 +82,20 @@ public class LoggingEventListener implements EventListener {
         if (severity == EventSeverity.INFO) {
             log.info(msg);
         } else if (severity == EventSeverity.WARN) {
-            log.warn(msg);
+            // we want to prevent logging of duplicate messages in situations where they are likely
+            // to occur; for instance, warning related to layout do not repeat (since line number
+            // will be different) and as such we do not try to filter them here; on the other hand,
+            // font related warnings are very likely to repeat and we try to filter them out here;
+            // the same may happen with missing images (but not implemented yet).
+            String eventGroupID = event.getEventGroupID();
+            if (eventGroupID.equals("org.apache.fop.fonts.FontEventProducer")) {
+                if (!loggedMessages.contains(msg)) {
+                    loggedMessages.add(msg);
+                    log.warn(msg);
+                }
+            } else {
+                log.warn(msg);
+            }
         } else if (severity == EventSeverity.ERROR) {
             if (event.getParam("e") != null) {
                 log.error(msg, (Throwable)event.getParam("e"));
@@ -96,5 +114,4 @@ public class LoggingEventListener implements EventListener {
             assert false;
         }
     }
-
 }
