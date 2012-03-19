@@ -65,12 +65,6 @@ public class PDFDocument {
 
     private static final Long LOCATION_PLACEHOLDER = new Long(0);
 
-    /** Integer constant to represent PDF 1.3 */
-    public static final int PDF_VERSION_1_3 = 3;
-
-    /** Integer constant to represent PDF 1.4 */
-    public static final int PDF_VERSION_1_4 = 4;
-
     /** the encoding to use when converting strings to PDF commands */
     public static final String ENCODING = "ISO-8859-1";
 
@@ -95,8 +89,8 @@ public class PDFDocument {
     /** the objects themselves */
     private List objects = new LinkedList();
 
-    /** Indicates what PDF version is active */
-    private int pdfVersion = PDF_VERSION_1_4;
+    /** Controls the PDF version of this document */
+    private VersionController versionController;
 
     /** Indicates which PDF profiles are active (PDF/A, PDF/X etc.) */
     private PDFProfile pdfProfile = new PDFProfile(this);
@@ -197,6 +191,24 @@ public class PDFDocument {
      * @param prod the name of the producer of this pdf document
      */
     public PDFDocument(String prod) {
+        this(prod, null);
+        versionController = VersionController.getDynamicVersionController(Version.V1_4, this);
+    }
+
+    /**
+     * Creates an empty PDF document.
+     *
+     * The constructor creates a /Root and /Pages object to
+     * track the document but does not write these objects until
+     * the trailer is written. Note that the object ID of the
+     * pages object is determined now, and the xref table is
+     * updated later. This allows Pages to refer to their
+     * Parent before we write it out.
+     *
+     * @param prod the name of the producer of this pdf document
+     * @param versionController the version controller of this PDF document
+     */
+    public PDFDocument(String prod, VersionController versionController) {
 
         this.factory = new PDFFactory(this);
 
@@ -211,26 +223,32 @@ public class PDFDocument {
 
         // Make the /Info record
         this.info = getFactory().makeInfo(prod);
+
+        this.versionController = versionController;
     }
 
     /**
-     * @return the integer representing the active PDF version
-     *          (one of PDFDocument.PDF_VERSION_*)
+     * Returns the current PDF version.
+     *
+     * @return returns the PDF version
      */
-    public int getPDFVersion() {
-        return this.pdfVersion;
+    public Version getPDFVersion() {
+        return versionController.getPDFVersion();
     }
 
-    /** @return the String representing the active PDF version */
+    /**
+     * Sets the PDF version of this document.
+     *
+     * @param version the PDF version
+     * @throws IllegalStateException if the version of this PDF is not allowed to change.
+     */
+    public void setPDFVersion(Version version) {
+        versionController.setPDFVersion(version);
+    }
+
+    /** @return the String representing the current PDF version */
     public String getPDFVersionString() {
-        switch (getPDFVersion()) {
-        case PDF_VERSION_1_3:
-            return "1.3";
-        case PDF_VERSION_1_4:
-            return "1.4";
-        default:
-            throw new IllegalStateException("Unsupported PDF version selected");
-        }
+        return versionController.getPDFVersion().toString();
     }
 
     /** @return the PDF profile currently active. */

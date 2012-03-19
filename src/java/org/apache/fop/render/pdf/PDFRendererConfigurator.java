@@ -157,6 +157,8 @@ public class PDFRendererConfigurator extends PrintRendererConfigurator {
             pdfUtil.setDisableSRGBColorSpace(
                     disableColorSpaceConfig.getValueAsBoolean(false));
         }
+
+        setPDFDocVersion(cfg, pdfUtil);
     }
 
     private int checkEncryptionLength(int encryptionLength) {
@@ -173,6 +175,22 @@ public class PDFRendererConfigurator extends PrintRendererConfigurator {
                     .incorrectEncryptionLength(this, encryptionLength, correctEncryptionLength);
         }
         return correctEncryptionLength;
+    }
+
+    private void setPDFDocVersion(Configuration cfg, PDFRenderingUtil pdfUtil) throws FOPException {
+        Configuration pdfVersion = cfg.getChild(PDFConfigurationConstants.PDF_VERSION, false);
+        if (pdfVersion != null) {
+            String version = pdfVersion.getValue(null);
+            if (version != null && version.length() != 0) {
+                try {
+                    pdfUtil.setPDFVersion(version);
+                } catch (IllegalArgumentException e) {
+                    throw new FOPException(e.getMessage());
+                }
+            } else {
+                throw new FOPException("The PDF version has not been set.");
+            }
+        }
     }
 
     /**
