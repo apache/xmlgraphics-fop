@@ -74,6 +74,8 @@ public interface PDFConfigurationConstants {
     String PDF_X_MODE = "pdf-x-mode";
     /** Rendering Options key for the ICC profile for the output intent. */
     String KEY_OUTPUT_PROFILE = "output-profile";
+    /** PDF version entry: specify the version of the PDF document created, datatype: String */
+    String PDF_VERSION = "version";
     /**
      * Rendering Options key for disabling the sRGB color space (only possible if no PDF/A or
      * PDF/X profile is active).

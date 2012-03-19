@@ -62,6 +62,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Code" dev="VH" type="add" fixes-bug="51385" due-to="Mehdi Houshmand">
+        Added configuration option to set the version of the output PDF document.
+      </action>
       <action context="Code" dev="MH" type="fix" fixes-bug="52849" due-to="Luis Bernardo">
         Fixed bug that caused a configured and installed SVG font to stroked,
         also added an event indicating when fonts are stroked.

@@ -34,7 +34,7 @@ public class PDFEmbeddedFile extends PDFStream {
         super();
         put("Type", new PDFName("EmbeddedFile"));
         PDFDictionary params = new PDFDictionary();
-        params.put("CreationDate", params.formatDateTime(new Date()));
+        params.put("CreationDate", PDFInfo.formatDateTime(new Date()));
         put("Params", params);
     }
 
