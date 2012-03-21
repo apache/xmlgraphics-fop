@@ -79,7 +79,7 @@ public class PDFMetadata extends PDFStream {
      * byte arrays around so much
      * {@inheritDoc}
      */
-    protected int output(java.io.OutputStream stream)
+    public int output(java.io.OutputStream stream)
                 throws java.io.IOException {
         int length = super.output(stream);
         this.xmpMetadata = null; //Release DOM when it's not used anymore

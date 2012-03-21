@@ -423,7 +423,7 @@ public class PDFCMap extends PDFStream {
     }
 
     /** {@inheritDoc} */
-    protected int output(OutputStream stream) throws IOException {
+    public int output(OutputStream stream) throws IOException {
         CMapBuilder builder = createCMapBuilder(getBufferWriter());
         builder.writeCMap();
         return super.output(stream);

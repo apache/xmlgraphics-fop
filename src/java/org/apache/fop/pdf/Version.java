@@ -48,12 +48,13 @@ public enum Version {
     }
 
     /**
-     * Given the PDF version as a String, returns the corresponding enumerated type. The String
-     * should be in the format "1.x" for PDF v1.x.
+     * Given the PDF version as a String, returns the corresponding enumerated type. The
+     * String should be in the format "1.x" for PDF v1.x.
      *
      * @param version a version number
      * @return the corresponding Version instance
-     * @throws IllegalArgumentException if the argument does not correspond to any existing PDF version
+     * @throws IllegalArgumentException if the argument does not correspond to any
+     * existing PDF version
      */
     public static Version getValueOf(String version) {
         for (Version pdfVersion : Version.values()) {

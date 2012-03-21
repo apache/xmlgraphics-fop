@@ -223,8 +223,6 @@ public class PDFEncryptionJCETestCase {
             final String digits = "\\d+";
             final String hexDigits = "\\p{XDigit}+";
 
-            dictionary.mustContain("1" + whitespace + "0" + whitespace + "obj");
-
             dictionary.mustContain("/Filter" + whitespace + "/Standard\\b");
 
             dictionary.mustContain("/V" + whitespace + "(" + digits + ")")

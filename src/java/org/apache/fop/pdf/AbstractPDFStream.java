@@ -29,16 +29,48 @@ import org.apache.fop.util.CloseBlockerOutputStream;
 /**
  * This is an abstract base class for PDF streams.
  */
-public abstract class AbstractPDFStream extends PDFDictionary {
+public abstract class AbstractPDFStream extends PDFObject {
+
+    private final PDFDictionary dictionary;
 
     /** The filters that should be applied */
     private PDFFilterList filters;
 
+    private final boolean encodeOnTheFly;
+
+    protected AbstractPDFStream() {
+        this(true);
+    }
+
+    protected AbstractPDFStream(PDFDictionary dictionary) {
+        this(dictionary, true);
+    }
+
+    protected AbstractPDFStream(boolean encodeOnTheFly) {
+        this(new PDFDictionary(), encodeOnTheFly);
+    }
+
+    protected AbstractPDFStream(PDFDictionary dictionary, boolean encodeOnTheFly) {
+        this.dictionary = dictionary;
+        this.encodeOnTheFly = encodeOnTheFly;
+    }
+
+    protected final PDFDictionary getDictionary() {
+        return dictionary;
+    }
+
+    protected Object get(String key) {
+        return dictionary.get(key);
+    }
+
     /**
-     * Constructor for AbstractPDFStream.
+     * Puts the given object in the dictionary associated to this stream.
+     *
+     * @param key the key in the dictionary
+     * @param value the value to store
      */
-    public AbstractPDFStream() {
-        super();
+    public void put(String key, Object value) {
+        dictionary.put(key, value);
     }
 
     /**
@@ -180,17 +212,16 @@ public abstract class AbstractPDFStream extends PDFDictionary {
      * {@inheritDoc}
      */
     @Override
-    protected int output(OutputStream stream) throws IOException {
+    public int output(OutputStream stream) throws IOException {
         setupFilterList();
 
         CountingOutputStream cout = new CountingOutputStream(stream);
         StringBuilder textBuffer = new StringBuilder(64);
-        textBuffer.append(getObjectID());
 
         StreamCache encodedStream = null;
         PDFNumber refLength = null;
         final Object lengthEntry;
-        if (isEncodingOnTheFly()) {
+        if (encodeOnTheFly) {
             refLength = new PDFNumber();
             getDocumentSafely().registerObject(refLength);
             lengthEntry = refLength;
@@ -200,7 +231,7 @@ public abstract class AbstractPDFStream extends PDFDictionary {
         }
 
         populateStreamDict(lengthEntry);
-        writeDictionary(cout, textBuffer);
+        dictionary.writeDictionary(cout, textBuffer);
 
         //Send encoded stream to target OutputStream
         PDFDocument.flushTextBuffer(textBuffer, cout);
@@ -211,18 +242,14 @@ public abstract class AbstractPDFStream extends PDFDictionary {
             encodedStream.clear(); //Encoded stream can now be discarded
         }
 
-        textBuffer.append("\nendobj\n");
         PDFDocument.flushTextBuffer(textBuffer, cout);
         return cout.getCount();
     }
 
-    /**
-     * Indicates whether encoding may happen without buffering the encoded data. If this method
-     * returns true, the /Length entry will be an indirect object, a direct object otherwise.
-     * @return true if encoding should happen "on the fly"
-     */
-    protected boolean isEncodingOnTheFly() {
-        return getDocument().isEncodingOnTheFly();
+    @Override
+    public void setDocument(PDFDocument doc) {
+        dictionary.setDocument(doc);
+        super.setDocument(doc);
     }
 
     /**
@@ -233,7 +260,7 @@ public abstract class AbstractPDFStream extends PDFDictionary {
     protected void populateStreamDict(Object lengthEntry) {
         put("Length", lengthEntry);
         if (!getFilterList().isDisableAllFilters()) {
-            getFilterList().putFilterDictEntries(this);
+            getFilterList().putFilterDictEntries(dictionary);
         }
     }
 

@@ -192,8 +192,8 @@ public class PDFResources extends PDFDictionary {
         return cs;
     }
 
-    /** {@inheritDoc} */
-    protected int output(OutputStream stream) throws IOException {
+    @Override
+    public int output(OutputStream stream) throws IOException {
         populateDictionary();
         return super.output(stream);
     }

@@ -204,7 +204,7 @@ public abstract class PDFObject implements PDFWritable {
      * @throws IOException if there is an error writing to the stream
      * @return the number of bytes written
      */
-    protected int output(OutputStream stream) throws IOException {
+    public int output(OutputStream stream) throws IOException {
         byte[] pdf = this.toPDF();
         stream.write(pdf);
         return pdf.length;

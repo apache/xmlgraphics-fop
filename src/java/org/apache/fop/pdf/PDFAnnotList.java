@@ -58,22 +58,19 @@ public class PDFAnnotList extends PDFObject {
      */
     public String toPDFString() {
         StringBuffer p = new StringBuffer(128);
-        p.append(getObjectID());
         p.append("[\n");
         for (int i = 0; i < getCount(); i++) {
             p.append(((PDFObject)links.get(i)).referencePDF());
             p.append("\n");
         }
-        p.append("]\nendobj\n");
+        p.append("]");
         return p.toString();
     }
 
     /*
      * example
-     * 20 0 obj
      * [
      * 19 0 R
      * ]
-     * endobj
      */
 }

@@ -31,7 +31,7 @@ import org.apache.fop.util.LanguageTags;
 /**
  * Class representing a PDF Structure Element.
  */
-public class PDFStructElem extends PDFDictionary implements StructureTreeElement {
+public class PDFStructElem extends PDFDictionary implements StructureTreeElement, CompressedObject {
 
     private PDFStructElem parentElement;
 

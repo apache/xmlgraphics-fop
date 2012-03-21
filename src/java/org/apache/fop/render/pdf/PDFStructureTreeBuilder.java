@@ -65,7 +65,7 @@ class PDFStructureTreeBuilder implements StructureTreeEventHandler {
         PDFStructElem parent = ancestors.getFirst();
         String role = attributes.getValue("role");
         PDFStructElem created;
-        created = pdfFactory.makeStructureElement(
+        created = pdfFactory.getDocument().makeStructureElement(
                 FOToPDFRoleMap.mapFormattingObject(name, role, parent, eventBroadcaster), parent);
         parent.addKid(created);
         ancestors.addFirst(created);
@@ -84,7 +84,7 @@ class PDFStructureTreeBuilder implements StructureTreeEventHandler {
         PDFStructElem parent = ancestors.getFirst();
         String role = attributes.getValue("role");
         PDFStructElem created;
-        created = pdfFactory.makeStructureElement(
+        created = pdfFactory.getDocument().makeStructureElement(
                 FOToPDFRoleMap.mapFormattingObject(name, role, parent, eventBroadcaster), parent);
         parent.addKid(created);
         String altTextNode = attributes.getValue(ExtensionElementMapping.URI, "alt-text");
@@ -104,7 +104,7 @@ class PDFStructureTreeBuilder implements StructureTreeEventHandler {
         if ("#PCDATA".equals(name)) {
             created = new PDFStructElem.Placeholder(parent, name);
         } else {
-            created = pdfFactory.makeStructureElement(
+            created = pdfFactory.getDocument().makeStructureElement(
                     FOToPDFRoleMap.mapFormattingObject(name, role, parent,
                             eventBroadcaster), parent);
         }
