@@ -21,7 +21,6 @@ package org.apache.fop.pdf;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.io.output.CountingOutputStream;
@@ -48,7 +47,7 @@ public class PDFArray extends PDFObject {
      * Create a new, empty array object with no parent.
      */
     public PDFArray() {
-        this(null);
+        this((PDFObject) null);
     }
 
     /**
@@ -84,11 +83,20 @@ public class PDFArray extends PDFObject {
      * @param parent the array's parent if any
      * @param values the actual values wrapped by this object
      */
-    public PDFArray(PDFObject parent, Collection<Object> values) {
+    public PDFArray(PDFObject parent, List<?> values) {
         /* generic creation of PDF object */
         super(parent);
 
         this.values.addAll(values);
+    }
+
+    /**
+     * Creates an array object made of the given elements.
+     *
+     * @param elements the array content
+     */
+    public PDFArray(Object... elements) {
+        this(null, elements);
     }
 
     /**
@@ -180,13 +188,9 @@ public class PDFArray extends PDFObject {
 
     /** {@inheritDoc} */
     @Override
-    protected int output(OutputStream stream) throws IOException {
+    public int output(OutputStream stream) throws IOException {
         CountingOutputStream cout = new CountingOutputStream(stream);
         StringBuilder textBuffer = new StringBuilder(64);
-        if (hasObjectNumber()) {
-            textBuffer.append(getObjectID());
-        }
-
         textBuffer.append('[');
         for (int i = 0; i < values.size(); i++) {
             if (i > 0) {
@@ -196,11 +200,6 @@ public class PDFArray extends PDFObject {
             formatObject(obj, cout, textBuffer);
         }
         textBuffer.append(']');
-
-        if (hasObjectNumber()) {
-            textBuffer.append("\nendobj\n");
-        }
-
         PDFDocument.flushTextBuffer(textBuffer, cout);
         return cout.getCount();
     }

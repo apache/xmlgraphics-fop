@@ -124,9 +124,7 @@ public class PDFGoTo extends PDFAction {
         } else {
             dest = "/D [" + this.pageReference + " " + destination + "]\n";
         }
-        return getObjectID()
-                    + "<< /Type /Action\n/S /GoTo\n" + dest
-                    + ">>\nendobj\n";
+        return "<< /Type /Action\n/S /GoTo\n" + dest + ">>";
     }
 
     /*

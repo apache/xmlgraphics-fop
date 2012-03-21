@@ -108,22 +108,11 @@ public class PDFName extends PDFObject {
         return name.hashCode();
     }
 
-
-    /** {@inheritDoc} */
     @Override
-    protected int output(OutputStream stream) throws IOException {
+    public int output(OutputStream stream) throws IOException {
         CountingOutputStream cout = new CountingOutputStream(stream);
         StringBuilder textBuffer = new StringBuilder(64);
-        if (hasObjectNumber()) {
-            textBuffer.append(getObjectID());
-        }
-
         textBuffer.append(toString());
-
-        if (hasObjectNumber()) {
-            textBuffer.append("\nendobj\n");
-        }
-
         PDFDocument.flushTextBuffer(textBuffer, cout);
         return cout.getCount();
     }

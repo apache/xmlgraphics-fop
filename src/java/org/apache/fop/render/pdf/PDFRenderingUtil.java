@@ -385,8 +385,8 @@ class PDFRenderingUtil implements PDFConfigurationConstants {
         if (maxPDFVersion == null) {
             this.pdfDoc = new PDFDocument(producer);
         } else {
-            VersionController controller =
-                    VersionController.getFixedVersionController(maxPDFVersion);
+            VersionController controller
+                    = VersionController.getFixedVersionController(maxPDFVersion);
             this.pdfDoc = new PDFDocument(producer, controller);
         }
         updateInfo();
@@ -411,6 +411,9 @@ class PDFRenderingUtil implements PDFConfigurationConstants {
             log.debug("PDF/A is active. Conformance Level: " + pdfAMode);
             addPDFA1OutputIntent();
         }
+
+        this.pdfDoc.enableAccessibility(userAgent.isAccessibilityEnabled());
+
         return this.pdfDoc;
     }
 

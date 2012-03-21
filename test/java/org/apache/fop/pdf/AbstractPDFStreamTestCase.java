@@ -48,10 +48,10 @@ public class AbstractPDFStreamTestCase extends PDFObjectTestCase {
             encodedBytes[i++] = (byte) (in & 0xff);
         }
     }
-    private String startStream = "1 0 obj\n" +
-                                "<< /Length 5 0 R /Filter /FlateDecode >>\n" +
-                                "stream\n";
-    private String endStream = "endstream\nendobj\n";
+    private String startStream = "<< /Length 5 0 R /Filter /FlateDecode >>\n"
+                + "stream\n";
+
+    private String endStream = "endstream";
 
     @Before
     public void setUp() {

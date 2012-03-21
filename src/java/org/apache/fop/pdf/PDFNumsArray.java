@@ -88,13 +88,9 @@ public class PDFNumsArray extends PDFObject {
 
     /** {@inheritDoc} */
     @Override
-    protected int output(OutputStream stream) throws IOException {
+    public int output(OutputStream stream) throws IOException {
         CountingOutputStream cout = new CountingOutputStream(stream);
         StringBuilder textBuffer = new StringBuilder(64);
-        if (hasObjectNumber()) {
-            textBuffer.append(getObjectID());
-        }
-
         textBuffer.append('[');
         boolean first = true;
         for (Map.Entry<Integer, Object> entry : this.map.entrySet()) {
@@ -107,11 +103,6 @@ public class PDFNumsArray extends PDFObject {
             formatObject(entry.getValue(), cout, textBuffer);
         }
         textBuffer.append(']');
-
-        if (hasObjectNumber()) {
-            textBuffer.append("\nendobj\n");
-        }
-
         PDFDocument.flushTextBuffer(textBuffer, cout);
         return cout.getCount();
     }
