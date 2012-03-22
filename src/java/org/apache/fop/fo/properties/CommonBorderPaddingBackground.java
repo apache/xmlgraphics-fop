@@ -44,7 +44,7 @@ import org.apache.fop.util.CompareUtil;
  * Stores all common border and padding properties.
  * See Sec. 7.7 of the XSL-FO Standard.
  */
-public final class CommonBorderPaddingBackground {
+public class CommonBorderPaddingBackground {
 
     /**
      *  cache holding all canonical instances
@@ -288,7 +288,7 @@ public final class CommonBorderPaddingBackground {
      * @param pList The PropertyList to get properties from.
      * @throws PropertyException if there's an error while binding the properties
      */
-    private CommonBorderPaddingBackground(PropertyList pList) throws PropertyException {
+    CommonBorderPaddingBackground(PropertyList pList) throws PropertyException {
 
         backgroundAttachment = pList.get(Constants.PR_BACKGROUND_ATTACHMENT).getEnum();
 
