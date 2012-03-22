@@ -24,6 +24,7 @@ import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.TableColLength;
+import org.apache.fop.util.CompareUtil;
 
 
 /**
@@ -173,6 +174,7 @@ public class RelativeNumericProperty extends Property implements Length {
      * Cast this numeric as a Length.
      * @return numeric value as length
      */
+    @Override
     public Length getLength() {
         if (dimension == 1) {
             return this;
@@ -182,6 +184,7 @@ public class RelativeNumericProperty extends Property implements Length {
     }
 
     /** @return numeric value */
+    @Override
     public Numeric getNumeric() {
         return this;
     }
@@ -273,6 +276,7 @@ public class RelativeNumericProperty extends Property implements Length {
      * Return a string represention of the expression. Only used for debugging.
      * @return the string representation.
      */
+    @Override
     public String toString() {
         switch (operation) {
         case ADDITION: case SUBTRACTION:
@@ -289,5 +293,31 @@ public class RelativeNumericProperty extends Property implements Length {
         default:
             return "unknown operation " + operation;
         }
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + dimension;
+        result = prime * result + CompareUtil.getHashCode(op1);
+        result = prime * result + CompareUtil.getHashCode(op2);
+        result = prime * result + operation;
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof RelativeNumericProperty)) {
+            return false;
+        }
+        RelativeNumericProperty other = (RelativeNumericProperty) obj;
+        return dimension == other.dimension
+                && CompareUtil.equal(op1, other.op1)
+                && CompareUtil.equal(op2, other.op2)
+                && operation == other.operation;
     }
 }

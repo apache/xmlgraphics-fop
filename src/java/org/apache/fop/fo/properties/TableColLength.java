@@ -22,6 +22,7 @@ package org.apache.fop.fo.properties;
 import org.apache.fop.datatypes.LengthBase;
 import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.FObj;
+import org.apache.fop.util.CompareUtil;
 
 /**
  * A table-column width specification, possibly including some
@@ -111,4 +112,25 @@ public class TableColLength extends LengthProperty {
         return (Double.toString(tcolUnits) + " table-column-units");
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + CompareUtil.getHashCode(column);
+        result = prime * result + CompareUtil.getHashCode(tcolUnits);
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof TableColLength)) {
+            return false;
+        }
+        TableColLength other = (TableColLength) obj;
+        return CompareUtil.equal(column, other.column)
+                && CompareUtil.equal(tcolUnits, other.tcolUnits);
+    }
 }

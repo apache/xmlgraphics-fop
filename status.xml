@@ -62,6 +62,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Code" dev="VH" type="add" fixes-bug="46962" due-to="Alexios Giotis">
+        Fixed deadlock in PropertyCache.
+      </action>
       <action context="Code" dev="VH" type="add" fixes-bug="51385" due-to="Mehdi Houshmand">
         Added configuration option to set the version of the output PDF document.
       </action>

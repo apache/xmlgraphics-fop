@@ -21,9 +21,6 @@ package org.apache.fop.fo.flow;
 
 import java.util.Map;
 
-import org.xml.sax.Attributes;
-import org.xml.sax.Locator;
-
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTreeBuilderContext;
@@ -34,6 +31,8 @@ import org.apache.fop.fo.PropertyListMaker;
 import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.PropertyCache;
+import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
 
 /**
  * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_marker">
@@ -357,8 +356,8 @@ public class Marker extends FObjMixed {
     /** Convenience inner class */
     public static final class MarkerAttribute {
 
-        private static PropertyCache attributeCache
-                = new PropertyCache(MarkerAttribute.class);
+        private static final PropertyCache<MarkerAttribute> CACHE
+                = new PropertyCache<MarkerAttribute>();
 
         /** namespace */
         protected String namespace;
@@ -398,7 +397,7 @@ public class Marker extends FObjMixed {
         private static MarkerAttribute getInstance(
                                             String namespace, String qname,
                                             String name, String value) {
-            return attributeCache.fetch(
+            return CACHE.fetch(
                     new MarkerAttribute(namespace, qname, name, value));
         }
 

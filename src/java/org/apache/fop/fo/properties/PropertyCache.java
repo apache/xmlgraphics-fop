@@ -19,298 +19,87 @@
 
 package org.apache.fop.fo.properties;
 
-import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
-import org.apache.fop.fo.flow.Marker;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
- *  Dedicated cache, meant for storing canonical instances
- *  of property-related classes.
- *  The public access points are overloaded <code>fetch()</code> methods
- *  that each correspond to a cached type.
- *  It is designed especially to be used concurrently by multiple threads,
- *  drawing heavily upon the principles behind Java 1.5's
- *  <code>ConcurrentHashMap</code>.
+ * Thread-safe cache that minimizes the memory requirements by fetching an instance from the cache
+ * that is equal to the given one. Internally the instances are stored in WeakReferences in order to
+ * be reclaimed when they are no longer referenced.
+ * @param <T> The type of values that are cached
  */
-public final class PropertyCache {
+public final class PropertyCache<T> {
 
-    private static final int SEGMENT_COUNT = 32; //0x20
-    private static final int INITIAL_BUCKET_COUNT = SEGMENT_COUNT;
+    private static final Log LOG = LogFactory.getLog(PropertyCache.class);
 
-    /** bitmask to apply to the hash to get to the
-     *  corresponding cache segment */
-    private static final int SEGMENT_MASK = SEGMENT_COUNT - 1; //0x1F
     /**
-     * Indicates whether the cache should be used at all
-     * Can be controlled by the system property:
-     *   org.apache.fop.fo.properties.use-cache
+     * Determines if the cache is used based on the value of the system property
+     * org.apache.fop.fo.properties.use-cache
      */
     private final boolean useCache;
 
-    /** the segments array (length = 32) */
-    private CacheSegment[] segments = new CacheSegment[SEGMENT_COUNT];
-    /** the table of hash-buckets */
-    private CacheEntry[] table = new CacheEntry[INITIAL_BUCKET_COUNT];
-
-    private Class runtimeType;
-
-    private final boolean[] votesForRehash = new boolean[SEGMENT_COUNT];
-
-    /* same hash function as used by java.util.HashMap */
-    private static int hash(Object x) {
-        return hash(x.hashCode());
-    }
-
-    private static int hash(int hashCode) {
-        int h = hashCode;
-        h += ~(h << 9);
-        h ^= (h >>> 14);
-        h += (h << 4);
-        h ^= (h >>> 10);
-        return h;
-    }
-
-    /* shortcut function */
-    private static boolean eq(Object p, Object q) {
-        return (p == q || (p != null && p.equals(q)));
-    }
-
-    /* Class modeling a cached entry */
-    private static class CacheEntry extends WeakReference {
-        private volatile CacheEntry nextEntry;
-        private final int hash;
-
-        /* main constructor */
-        public CacheEntry(Object p, CacheEntry nextEntry, ReferenceQueue refQueue) {
-            super(p, refQueue);
-            this.nextEntry = nextEntry;
-            this.hash = hash(p);
-        }
-
-        /* main constructor */
-        public CacheEntry(Object p, CacheEntry nextEntry) {
-            super(p);
-            this.nextEntry = nextEntry;
-            this.hash = hash(p);
-        }
-
-    }
-
-    /* Wrapper objects to synchronize on */
-    private static final class CacheSegment {
-        CacheSegment() {
-        }
-        private int count = 0;
-        int getCount() {
-            return count;
-        }
-    }
-
-    private void cleanSegment(int segmentIndex) {
-        CacheSegment segment = segments[segmentIndex];
-
-        int oldCount = segment.count;
-
-        /* clean all buckets in this segment */
-        for (int bucketIndex = segmentIndex;
-                    bucketIndex < table.length;
-                    bucketIndex += SEGMENT_COUNT) {
-            CacheEntry prev = null;
-            CacheEntry entry = table[bucketIndex];
-            if (entry == null) {
-                continue;
-            }
-            do {
-                if (entry.get() == null) {
-                    if (prev == null) {
-                        table[bucketIndex] = entry.nextEntry;
-                    } else {
-                        prev.nextEntry = entry.nextEntry;
-                    }
-                    segment.count--;
-                    assert segment.count >= 0;
-                } else {
-                    prev = entry;
-                }
-                entry = entry.nextEntry;
-            } while (entry != null);
-        }
-
-        synchronized (votesForRehash) {
-            if (oldCount > segment.count) {
-                votesForRehash[segmentIndex] = false;
-                return;
-            }
-            /* cleanup had no effect */
-            if (!votesForRehash[segmentIndex]) {
-                /* first time for this segment */
-                votesForRehash[segmentIndex] = true;
-                int voteCount = 0;
-                for (int i = SEGMENT_MASK + 1; --i >= 0;) {
-                    if (votesForRehash[i]) {
-                        voteCount++;
-                    }
-                }
-                if (voteCount > SEGMENT_MASK / 4) {
-                    rehash(SEGMENT_MASK);
-                    /* reset votes */
-                    for (int i = SEGMENT_MASK + 1; --i >= 0;) {
-                        votesForRehash[i] = false;
-                    }
-
-                }
-            }
-        }
-    }
-
-    /*
-     * Puts a new instance in the cache.
-     * If the total number of entries for the corresponding
-     * segment exceeds twice the amount of hash-buckets, a
-     * cleanup will be performed to try and remove obsolete
-     * entries.
+    /**
+     * The underlying map that stores WeakReferences to the cached entries. The map keys are the
+     * hashCode of the cached entries. The map values are a WeakRefence to the cached entries. When
+     * two cached entries have the same hash code, the last one is kept but this should be an
+     * exception case (otherwise the hashCode() method of T needs to be fixed).
      */
-    private void put(Object o) {
-
-        int hash = hash(o);
-        int segmentIndex = hash & SEGMENT_MASK;
-        CacheSegment segment = segments[segmentIndex];
-
-        synchronized (segment) {
-            int index = hash & (table.length - 1);
-            CacheEntry entry = table[index];
-
-            if (entry == null) {
-                entry = new CacheEntry(o, null);
-                table[index] = entry;
-                segment.count++;
-            } else {
-                Object p = entry.get();
-                if (eq(p, o)) {
-                    return;
-                } else {
-                    CacheEntry newEntry = new CacheEntry(o, entry);
-                    table[index] = newEntry;
-                    segment.count++;
-                }
-            }
-
-            if (segment.count > (2 * table.length)) {
-                  cleanSegment(segmentIndex);
-            }
-        }
-    }
-
-
-    /* Gets a cached instance. Returns null if not found */
-    private Object get(Object o) {
-
-        int hash = hash(o);
-        int index = hash & (table.length - 1);
-
-        CacheEntry entry = table[index];
-        Object q;
-
-        /* try non-synched first */
-        for (CacheEntry e = entry; e != null; e = e.nextEntry) {
-            if ( e.hash == hash ) {
-                q = e.get();
-                if ( ( q != null ) &&  eq ( q, o ) ) {
-                    return q;
-                }
-            }
-        }
-
-        /* retry synched, only if the above attempt did not succeed,
-         * as another thread may, in the meantime, have added a
-         * corresponding entry */
-        CacheSegment segment = segments[hash & SEGMENT_MASK];
-        synchronized (segment) {
-            entry = table[index];
-            for (CacheEntry e = entry; e != null; e = e.nextEntry) {
-                if ( e.hash == hash ) {
-                    q = e.get();
-                    if ( ( q != null ) &&  eq ( q, o ) ) {
-                        return q;
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    /*
-     * Recursively acquires locks on all 32 segments,
-     * extends the cache and redistributes the entries.
-     *
-     */
-    private void rehash(int index) {
-
-        CacheSegment seg = segments[index];
-        synchronized (seg) {
-            if (index > 0) {
-                /* need to recursively acquire locks on all segments */
-                rehash(index - 1);
-            } else {
-                /* double the amount of buckets */
-                int newLength = table.length << 1;
-                if (newLength > 0) { //no overflow?
-                    /* reset segment counts */
-                    for (int i = segments.length; --i >= 0;) {
-                        segments[i].count = 0;
-                    }
-
-                    CacheEntry[] newTable = new CacheEntry[newLength];
-
-                    int hash;
-                    int idx;
-                    Object o;
-                    newLength--;
-                    for (int i = table.length; --i >= 0;) {
-                        for (CacheEntry c = table[i]; c != null; c = c.nextEntry) {
-                            o = c.get();
-                            if (o != null) {
-                                hash = c.hash;
-                                idx = hash & newLength;
-                                newTable[idx] = new CacheEntry(o, newTable[idx]);
-                                segments[hash & SEGMENT_MASK].count++;
-                            }
-                        }
-                    }
-                    table = newTable;
-                }
-            }
-        }
-    }
+    private final ConcurrentMap<Integer, WeakReference<T>> map;
 
     /**
-     *  Default constructor.
-     *
-     *  @param c    Runtime type of the objects that will be stored in the cache
+     * Counts the number of entries put in the map in order to periodically check and remove the
+     * entries whose referents have been reclaimed.
      */
-    public PropertyCache(Class c) {
-        this.useCache = Boolean.valueOf(System.getProperty(
-                            "org.apache.fop.fo.properties.use-cache", "true")
-                        ).booleanValue();
+    private final AtomicInteger putCounter;
+
+    /**
+     * Lock to prevent concurrent cleanup of the map.
+     */
+    private final Lock cleanupLock;
+
+    private final AtomicInteger hashCodeCollisionCounter;
+
+    /**
+     * Creates a new cache. The "org.apache.fop.fo.properties.use-cache" system
+     * property is used to determine whether properties should actually be
+     * cached or not. If not, then the {@link #fetch(Object)} method will simply
+     * return its argument. To enable the cache, set this property to "true"
+     * (case insensitive).
+     */
+    public PropertyCache() {
+        this.useCache = Boolean.valueOf(
+                System.getProperty("org.apache.fop.fo.properties.use-cache", "true"))
+                .booleanValue();
         if (useCache) {
-            for (int i = SEGMENT_MASK + 1; --i >= 0;) {
-                segments[i] = new CacheSegment();
-            }
+            map = new ConcurrentHashMap<Integer, WeakReference<T>>();
+            putCounter = new AtomicInteger();
+            cleanupLock = new ReentrantLock();
+            hashCodeCollisionCounter = new AtomicInteger();
+        } else {
+            map = null;
+            putCounter = null;
+            cleanupLock = null;
+            hashCodeCollisionCounter = null;
         }
-        this.runtimeType = c;
     }
 
     /**
-     *  Generic fetch() method.
-     *  Checks if the given <code>Object</code> is present in the cache -
-     *  if so, returns a reference to the cached instance.
-     *  Otherwise the given object is added to the cache and returned.
+     * Returns a cached version of the given object. If the object is not yet in
+     * the cache, it will be added and then returned.
      *
-     *  @param obj   the Object to check for
-     *  @return  the cached instance
+     * @param obj an object
+     * @return a cached version of the object
      */
-    private Object fetch(Object obj) {
+    public T fetch(T obj) {
         if (!this.useCache) {
             return obj;
         }
@@ -319,96 +108,80 @@ public final class PropertyCache {
             return null;
         }
 
-        Object cacheEntry = get(obj);
-        if (cacheEntry != null) {
-            return cacheEntry;
+        Integer hashCode = Integer.valueOf(obj.hashCode());
+
+        WeakReference<T> weakRef = map.get(hashCode);
+        if (weakRef == null) {
+            weakRef = map.putIfAbsent(hashCode, new WeakReference<T>(obj));
+            attemptCleanup();
+
+            if (weakRef == null) {
+                return obj;
+            }
+            // else another thread added a value, continue.
         }
-        put(obj);
+
+        T cached = weakRef.get();
+        if (cached != null) {
+            if (eq(cached, obj)) {
+                return cached;
+            } else {
+                /*
+                 * Log a message when obj.getClass() does not implement correctly the equals() or
+                 * hashCode() method. It is expected that only very few objects will have the
+                 * same hashCode but will not be equal.
+                 */
+                if ((hashCodeCollisionCounter.incrementAndGet() % 10) == 0) {
+                    LOG.info(hashCodeCollisionCounter.get() + " hashCode() collisions for "
+                            + obj.getClass().getName());
+                }
+            }
+
+        }
+
+        // Adds a new or replaces an existing entry with obj that has the same hash code
+        map.put(hashCode, new WeakReference<T>(obj));
+        attemptCleanup();
         return obj;
-    }
 
-    /**
-     *  Checks if the given {@link Property} is present in the cache -
-     *  if so, returns a reference to the cached instance.
-     *  Otherwise the given object is added to the cache and returned.
-     *
-     *  @param prop the Property instance to check for
-     *  @return the cached instance
-     */
-    public Property fetch(Property prop) {
-
-        return (Property) fetch((Object) prop);
-    }
-
-    /**
-     *  Checks if the given {@link CommonHyphenation} is present in the cache -
-     *  if so, returns a reference to the cached instance.
-     *  Otherwise the given object is added to the cache and returned.
-     *
-     *  @param chy the CommonHyphenation instance to check for
-     *  @return the cached instance
-     */
-    public CommonHyphenation fetch(CommonHyphenation chy) {
-
-        return (CommonHyphenation) fetch((Object) chy);
-    }
-
-    /**
-     *  Checks if the given {@link CommonFont} is present in the cache -
-     *  if so, returns a reference to the cached instance.
-     *  Otherwise the given object is added to the cache and returned.
-     *
-     *  @param cf the CommonFont instance to check for
-     *  @return the cached instance
-     */
-    public CommonFont fetch(CommonFont cf) {
-
-        return (CommonFont) fetch((Object) cf);
-    }
-
-    /**
-     *  Checks if the given {@link CommonBorderPaddingBackground} is present in the cache -
-     *  if so, returns a reference to the cached instance.
-     *  Otherwise the given object is added to the cache and returned.
-     *
-     *  @param cbpb the CommonBorderPaddingBackground instance to check for
-     *  @return the cached instance
-     */
-    public CommonBorderPaddingBackground fetch(CommonBorderPaddingBackground cbpb) {
-
-        return (CommonBorderPaddingBackground) fetch((Object) cbpb);
-    }
-
-    /**
-     *  Checks if the given {@link CommonBorderPaddingBackground.BorderInfo} is present
-     *  in the cache - if so, returns a reference to the cached instance.
-     *  Otherwise the given object is added to the cache and returned.
-     *
-     *  @param bi the BorderInfo instance to check for
-     *  @return the cached instance
-     */
-    public CommonBorderPaddingBackground.BorderInfo fetch(
-            CommonBorderPaddingBackground.BorderInfo bi) {
-        return (CommonBorderPaddingBackground.BorderInfo) fetch((Object) bi);
-    }
-
-    /**
-     *  Checks if the given {@link org.apache.fop.fo.flow.Marker.MarkerAttribute} is present
-     *  in the cache - if so, returns a reference to the cached instance.
-     *  Otherwise the given object is added to the cache and returned.
-     *
-     *  @param ma the MarkerAttribute instance to check for
-     *  @return the cached instance
-     */
-    public Marker.MarkerAttribute fetch(
-            Marker.MarkerAttribute ma) {
-        return (Marker.MarkerAttribute) fetch((Object) ma);
-    }
-
-    /** {@inheritDoc} */
-    public String toString() {
-        return super.toString() + "[runtimeType=" + this.runtimeType + "]";
+        /*
+         * Another thread might add first. We could check this using map.replace() instead of
+         * map.put() and then recursively call fetch(obj). But if in the meantime, garbage
+         * collection kicks in, we might end up with a StackOverflowException. Not caching an entry
+         * is tolerable, after all it's configurable.
+         */
     }
 
 
+    private void attemptCleanup() {
+        if ((putCounter.incrementAndGet() % 10000) != 0) {
+            return;
+        }
+
+        // Lock as there is no need for concurrent cleanup and protect us, on JDK5, from
+        // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6312056
+        if (cleanupLock.tryLock()) {
+            try {
+                cleanReclaimedMapEntries();
+            } finally {
+                cleanupLock.unlock();
+            }
+        }
+    }
+
+    private void cleanReclaimedMapEntries() {
+        Iterator<Map.Entry<Integer, WeakReference<T>>> iterator = map.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<Integer, WeakReference<T>> entry = iterator.next();
+            WeakReference<T> weakRef = entry.getValue();
+            T r = weakRef.get();
+            if (r == null) {
+                iterator.remove();
+            }
+        }
+    }
+
+    private boolean eq(Object p, Object q) {
+        return (p == q || p.equals(q));
+    }
 }
