@@ -27,6 +27,7 @@ import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.properties.FixedLength;
 import org.apache.fop.fo.properties.Property;
+import org.apache.fop.util.CompareUtil;
 
 /**
  * A numeric property which hold the final absolute result of an expression
@@ -126,5 +127,26 @@ public class NumericProperty extends Property implements Numeric, Length {
         } else {
             return value + "^" + dim;
         }
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + dim;
+        result = prime * result + CompareUtil.getHashCode(value);
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof NumericProperty)) {
+            return false;
+        }
+        NumericProperty other = (NumericProperty) obj;
+        return dim == other.dim && CompareUtil.equal(value, other.value);
     }
 }

@@ -33,7 +33,7 @@ import org.apache.fop.fo.Constants;
 /**
  * Base class for all property objects
  */
-public class Property {
+public abstract class Property {
 
     /** Logger for all property classes */
     protected static final Log log = LogFactory.getLog(PropertyMaker.class);

@@ -21,7 +21,6 @@ package org.apache.fop.fo.properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
@@ -38,7 +37,8 @@ public final class CommonHyphenation {
     /** Logger */
     private static final Log LOG = LogFactory.getLog(CommonHyphenation.class);
 
-    private static final PropertyCache CACHE = new PropertyCache(CommonHyphenation.class);
+    private static final PropertyCache<CommonHyphenation> CACHE =
+            new PropertyCache<CommonHyphenation>();
 
     private int hash = 0;
 
@@ -118,7 +118,6 @@ public final class CommonHyphenation {
                                 hyphenationRemainCharacterCount);
 
         return CACHE.fetch(instance);
-
     }
 
     private static final char HYPHEN_MINUS = '-';

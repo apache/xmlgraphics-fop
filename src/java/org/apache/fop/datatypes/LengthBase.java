@@ -26,6 +26,7 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.util.CompareUtil;
 
 /**
  * Models a length which can be used as a factor in a percentage length
@@ -143,5 +144,30 @@ public class LengthBase implements PercentBase {
     public Length getBaseLength() {
         return baseLength;
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + CompareUtil.getHashCode(baseLength);
+        result = prime * result + baseType;
+        result = prime * result + CompareUtil.getHashCode(fobj);
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof LengthBase)) {
+            return false;
+        }
+        LengthBase other = (LengthBase) obj;
+        return CompareUtil.equal(baseLength, other.baseLength)
+                && baseType == other.baseType
+                && CompareUtil.equal(fobj, other.fobj);
+    }
+
 }
 

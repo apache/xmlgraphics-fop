@@ -24,6 +24,7 @@ import java.awt.Color;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.util.ColorUtil;
+import org.apache.fop.util.CompareUtil;
 
 /**
  * Class for handling NC Name objects
@@ -79,4 +80,20 @@ public class NCnameProperty extends Property {
         return this.ncName;
     }
 
+    @Override
+    public int hashCode() {
+        return CompareUtil.getHashCode(ncName);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof NCnameProperty)) {
+            return false;
+        }
+        NCnameProperty other = (NCnameProperty) obj;
+        return CompareUtil.equal(ncName, other.ncName);
+    }
 }

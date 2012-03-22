@@ -23,6 +23,7 @@ import org.apache.fop.datatypes.CompoundDatatype;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.util.CompareUtil;
 
 /**
  * Superclass for properties wrapping a LengthPair value
@@ -150,4 +151,24 @@ public class LengthPairProperty extends Property implements CompoundDatatype {
         return this;
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + CompareUtil.getHashCode(bpd);
+        result = prime * result + CompareUtil.getHashCode(ipd);
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof LengthPairProperty)) {
+            return false;
+        }
+        LengthPairProperty other = (LengthPairProperty) obj;
+        return CompareUtil.equal(bpd, other.bpd) && CompareUtil.equal(ipd, other.ipd);
+    }
 }

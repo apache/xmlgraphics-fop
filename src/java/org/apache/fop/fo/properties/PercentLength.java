@@ -22,6 +22,7 @@ package org.apache.fop.fo.properties;
 import org.apache.fop.datatypes.PercentBase;
 import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.util.CompareUtil;
 
 /**
  * a percent specified length quantity in XSL
@@ -38,9 +39,7 @@ public class PercentLength extends LengthProperty {
      * A PercentBase implementation that contains the base length to which the
      * {@link #factor} should be applied to compute the actual length
      */
-    private PercentBase lbase = null;
-
-    private double resolvedValue;
+    private PercentBase lbase;
 
     /**
      * Main constructor. Construct an object based on a factor (the percent,
@@ -88,8 +87,7 @@ public class PercentLength extends LengthProperty {
     /** {@inheritDoc} */
     public double getNumericValue(PercentBaseContext context) {
         try {
-            resolvedValue = factor * lbase.getBaseLength(context);
-            return resolvedValue;
+            return factor * lbase.getBaseLength(context);
         } catch (PropertyException exc) {
             log.error(exc);
             return 0;
@@ -124,4 +122,25 @@ public class PercentLength extends LengthProperty {
         return sb.toString();
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + CompareUtil.getHashCode(factor);
+        result = prime * result + CompareUtil.getHashCode(lbase);
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof PercentLength)) {
+            return false;
+        }
+        PercentLength other = (PercentLength) obj;
+        return CompareUtil.equal(factor, other.factor)
+                && CompareUtil.equal(lbase, other.lbase);
+    }
 }
