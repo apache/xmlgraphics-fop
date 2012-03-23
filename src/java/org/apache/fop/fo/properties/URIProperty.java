@@ -19,8 +19,6 @@
 
 package org.apache.fop.fo.properties;
 
-import static org.apache.fop.fo.Constants.PR_X_XML_BASE;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -29,6 +27,8 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.util.CompareUtil;
+
+import static org.apache.fop.fo.Constants.PR_X_XML_BASE;
 
 /**
  * Class modeling a property that has a value of type &lt;uri-specification>.
