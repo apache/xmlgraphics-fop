@@ -806,7 +806,8 @@ list of possible build targets.
       </junit>
     </sequential>
   </macrodef>
-  <target name="junit-all" depends="junit-compile, junit-transcoder, junit-layout-hyphenation, setup-xml-schema" description="Runs FOP's JUnit basic tests" if="junit.present">
+  <target name="junit-all" depends="junit-compile, junit-transcoder, junit-layout-hyphenation" 
+    description="Runs FOP's JUnit basic tests" if="junit.present">
     <junit dir="${basedir}" haltonfailure="yes" fork="${junit.fork}" forkmode="once" 
       errorproperty="fop.junit.error" failureproperty="fop.junit.failure">
       <sysproperty key="jawa.awt.headless" value="true"/>
@@ -844,25 +845,13 @@ list of possible build targets.
   <target name="junit-area-tree-xml-format" depends="junit-compile" description="Runs FOP's area tree XML format JUnit tests" if="xmlunit.present">
     <junit-run title="area tree XML format" testsuite="org.apache.fop.intermediate.AreaTreeXMLFormatTestSuite" outfile="TEST-area-tree-xml-format"/>
   </target>
-  <target name="junit-intermediate-layout" depends="junit-compile,setup-xml-schema" 
-    if="xmlunit.present">
+  <target name="junit-intermediate-layout" depends="junit-compile" if="xmlunit.present">
     <junit-run title="intermediate format from layout tests" 
       testsuite="org.apache.fop.intermediate.LayoutIFTestSuite" 
       outfile="TEST-intermediate-format-from-layout"/>
   </target>
-  <target name="setup-xml-schema">
-    <local name="cache-dir"/>
-    <property name="cache-dir" value="${basedir}/.cache/junit/intermediate"/>
-    <mkdir dir="${cache-dir}"/>
-    <get src="http://www.w3.org/2001/xml.xsd"
-      dest="${cache-dir}/xml.xsd"
-      usetimestamp="true"/>
-    <copy file="${cache-dir}/xml.xsd" 
-      todir="${build.dir}/test-classes/org/apache/fop/intermediate"/>
-  </target>
 
-  <target name="junit-intermediate-format" 
-    depends="junit-compile,setup-xml-schema,junit-intermediate-layout"
+  <target name="junit-intermediate-format" depends="junit-compile,junit-intermediate-layout"
     description="Runs FOP's intermediate format JUnit tests" if="xmlunit.present">
     <junit-run title="intermediate format" 
       testsuite="org.apache.fop.intermediate.IntermediateFormatTestSuite" 
