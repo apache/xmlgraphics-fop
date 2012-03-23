@@ -21,6 +21,9 @@ package org.apache.fop.fo.flow;
 
 import java.util.Map;
 
+import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOTreeBuilderContext;
@@ -31,8 +34,6 @@ import org.apache.fop.fo.PropertyListMaker;
 import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.PropertyCache;
-import org.xml.sax.Attributes;
-import org.xml.sax.Locator;
 
 /**
  * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_marker">
