@@ -64,7 +64,7 @@ public class PDFICCStream extends PDFStream {
      * {@inheritDoc}
      */
     @Override
-    protected int output(java.io.OutputStream stream)
+    public int output(java.io.OutputStream stream)
                 throws java.io.IOException {
         int length = super.output(stream);
         this.cp = null; //Free ICC stream when it's not used anymore

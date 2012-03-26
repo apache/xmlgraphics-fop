@@ -44,7 +44,7 @@ public class PDFFormXObject extends PDFXObject {
      * @param resources the resource PDF reference
      */
     public PDFFormXObject(int xnumber, PDFStream contents, PDFReference resources) {
-        super();
+        super(contents.getDictionary());
         put("Name", new PDFName("Form" + xnumber));
         this.contents = contents;
 
@@ -160,7 +160,7 @@ public class PDFFormXObject extends PDFXObject {
     }
 
     /** {@inheritDoc} */
-    protected int output(OutputStream stream) throws IOException {
+    public int output(OutputStream stream) throws IOException {
         final int len = super.output(stream);
 
         //Now that the data has been written, it can be discarded.

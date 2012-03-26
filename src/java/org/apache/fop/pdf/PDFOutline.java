@@ -131,7 +131,6 @@ public class PDFOutline extends PDFObject {
     protected byte[] toPDF() {
         ByteArrayOutputStream bout = new ByteArrayOutputStream(128);
         try {
-            bout.write(encode(getObjectID()));
             bout.write(encode("<<"));
             if (parent == null) {
                 // root Outlines object
@@ -164,7 +163,7 @@ public class PDFOutline extends PDFObject {
                     bout.write(encode(" /A " + actionRef + "\n"));
                 }
             }
-            bout.write(encode(">> endobj\n"));
+            bout.write(encode(">>"));
         } catch (IOException ioe) {
             log.error("Ignored I/O exception", ioe);
         }

@@ -76,7 +76,7 @@ public class PDFRoot extends PDFDictionary {
     }
 
     /** {@inheritDoc} */
-    protected int output(OutputStream stream) throws IOException {
+    public int output(OutputStream stream) throws IOException {
         getDocument().getProfile().verifyTaggedPDF();
         return super.output(stream);
     }

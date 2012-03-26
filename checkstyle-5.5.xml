@@ -256,14 +256,6 @@
     <!-- ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... -->
 
     <!-- ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... -->
-    <module name="VisibilityModifier">
-      <property name="packageAllowed" value="false"/>
-      <property name="protectedAllowed" value="true"/>
-      <property name="publicMemberPattern" value="^serialVersionUID"/>
-    </module>
-    <!-- ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... -->
-
-    <!-- ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... -->
     <module name="WhitespaceAfter">
       <property name="tokens" value="COMMA,SEMI"/>                                                              <!-- adding TYPECAST produces 2203 new errors -->
     </module>

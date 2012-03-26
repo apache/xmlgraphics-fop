@@ -40,8 +40,10 @@ public interface PDFEncryption {
     byte[] encrypt(byte[] data, PDFObject refObj);
 
     /**
-     * Returns the trailer entry for encryption.
-     * @return the trailer entry
+     * Returns the /Encrypt entry in the file trailer dictionary.
+     *
+     * @return the string "/Encrypt n g R\n" where n and g are the number and generation
+     * of the document's encryption dictionary
      */
     String getTrailerEntry();
 }

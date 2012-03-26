@@ -21,6 +21,7 @@ package org.apache.fop.pdf;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -47,7 +48,7 @@ public class PDFFilterList {
     /** Key for the filter used for metadata */
     public static final String METADATA_FILTER = "metadata";
 
-    private List filters = new java.util.ArrayList();
+    private List<PDFFilter> filters = new java.util.ArrayList<PDFFilter>();
 
     private boolean ignoreASCIIFilters = false;
 
@@ -197,6 +198,10 @@ public class PDFFilterList {
         }
     }
 
+    List<PDFFilter> getFilters() {
+        return Collections.unmodifiableList(filters);
+    }
+
     /**
      * Apply the filters to the data
      * in the order given and return the /Filter and /DecodeParms
@@ -206,7 +211,7 @@ public class PDFFilterList {
      * @return a String representing the filter list
      */
     protected String buildFilterDictEntries() {
-        if (filters != null && filters.size() > 0) {
+        if (filters.size() > 0) {
             List names = new java.util.ArrayList();
             List parms = new java.util.ArrayList();
 
@@ -229,7 +234,7 @@ public class PDFFilterList {
      * @param dict the PDFDictionary to set the entries on
      */
     protected void putFilterDictEntries(PDFDictionary dict) {
-        if (filters != null && filters.size() > 0) {
+        if (filters.size() > 0) {
             List names = new java.util.ArrayList();
             List parms = new java.util.ArrayList();
 
@@ -358,7 +363,7 @@ public class PDFFilterList {
      */
     public OutputStream applyFilters(OutputStream stream) throws IOException {
         OutputStream out = stream;
-        if (filters != null && !isDisableAllFilters()) {
+        if (!isDisableAllFilters()) {
             for (int count = filters.size() - 1; count >= 0; count--) {
                 PDFFilter filter = (PDFFilter)filters.get(count);
                 out = filter.applyFilter(out);

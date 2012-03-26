@@ -95,15 +95,15 @@ class PDFLogicalStructureHandler {
      */
     PDFLogicalStructureHandler(PDFDocument pdfDoc) {
         this.pdfDoc = pdfDoc;
-        PDFStructTreeRoot structTreeRoot = pdfDoc.getFactory().makeStructTreeRoot(parentTree);
-        rootStructureElement = pdfDoc.getFactory().makeStructureElement(
+        PDFStructTreeRoot structTreeRoot = pdfDoc.makeStructTreeRoot(parentTree);
+        rootStructureElement = pdfDoc.makeStructureElement(
                 FOToPDFRoleMap.mapFormattingObject("root", structTreeRoot), structTreeRoot);
         structTreeRoot.addKid(rootStructureElement);
     }
 
 
     PDFStructElem createPageSequence(Locale language) {
-        PDFStructElem structElemPart = pdfDoc.getFactory().makeStructureElement(
+        PDFStructElem structElemPart = pdfDoc.makeStructureElement(
                 FOToPDFRoleMap.mapFormattingObject("page-sequence", rootStructureElement),
                 rootStructureElement);
         rootStructureElement.addKid(structElemPart);
