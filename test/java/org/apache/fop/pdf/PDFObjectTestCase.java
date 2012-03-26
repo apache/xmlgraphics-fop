@@ -40,10 +40,6 @@ public class PDFObjectTestCase {
     protected final PDFObject parent = new DummyPDFObject();
     /** The test subject */
     protected PDFObject pdfObjectUnderTest;
-    /** The string to begin describing the object <code>"1 0 obj\n"</code> */
-    protected final String beginObj = "1 0 obj\n";
-    /** The string to end describing the object <code>"\nendobj\n"</code> */
-    protected final String endObj = "\nendobj\n";
 
     private static class DummyPDFObject extends PDFObject {
 
@@ -195,8 +191,7 @@ public class PDFObjectTestCase {
         outStream.reset();
         object.setObjectNumber(1);
         // Test the length of the output string is returned correctly.
-        String string = beginObj + expectedString + endObj;
-        assertEquals(string.length(), object.output(outStream));
-        assertEquals(string, outStream.toString());
+        assertEquals(expectedString.length(), object.output(outStream));
+        assertEquals(expectedString, outStream.toString());
     }
 }

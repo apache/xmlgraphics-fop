@@ -69,8 +69,9 @@ public final class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
                     ? new Rev2Engine(encryptionSettings)
                     : new Rev3Engine(encryptionSettings);
             initializationEngine.run();
-            encryptionDictionary = createEncryptionDictionary(getObjectID(), permissions,
-                    initializationEngine.oValue, initializationEngine.uValue);
+            encryptionDictionary = createEncryptionDictionary(permissions,
+                    initializationEngine.oValue,
+                    initializationEngine.uValue);
         }
 
         private void determineEncryptionAlgorithm() {
@@ -91,18 +92,16 @@ public final class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
                     && encryptionParams.isAllowPrintHq();
         }
 
-        private String createEncryptionDictionary(final String objectId, final int permissions,
-                final byte[] oValue, final byte[] uValue) {
-            return objectId
-                    + "<< /Filter /Standard\n"
+        private String createEncryptionDictionary(final int permissions, final byte[] oValue,
+                final byte[] uValue) {
+            return "<< /Filter /Standard\n"
                     + "/V " + version + "\n"
                     + "/R " + revision + "\n"
                     + "/Length " + encryptionLength + "\n"
                     + "/P "  + permissions + "\n"
                     + "/O " + PDFText.toHex(oValue) + "\n"
                     + "/U " + PDFText.toHex(uValue) + "\n"
-                    + ">>\n"
-                    + "endobj\n";
+                    + ">>";
         }
 
     }
@@ -488,14 +487,7 @@ public final class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
 
     /** {@inheritDoc} */
     public String getTrailerEntry() {
-        PDFDocument doc = getDocumentSafely();
-        FileIDGenerator gen = doc.getFileIDGenerator();
-        return "/Encrypt " + getObjectNumber() + " "
-                    + getGeneration() + " R\n"
-                    + "/ID["
-                    + PDFText.toHex(gen.getOriginalFileID())
-                    + PDFText.toHex(gen.getUpdatedFileID())
-                    + "]\n";
+        return "/Encrypt " + getObjectNumber() + " " + getGeneration() + " R\n";
     }
 
     private static byte[] encryptWithKey(byte[] key, byte[] data) {

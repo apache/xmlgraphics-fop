@@ -50,9 +50,8 @@ public class PDFDestination extends PDFObject {
         this.idRef = idRef;
     }
 
-    /** {@inheritDoc} */
     @Override
-    protected int output(OutputStream stream) throws IOException {
+    public int output(OutputStream stream) throws IOException {
         CountingOutputStream cout = new CountingOutputStream(stream);
         StringBuilder textBuffer = new StringBuilder(64);
 

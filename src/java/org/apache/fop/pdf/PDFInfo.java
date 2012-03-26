@@ -169,7 +169,6 @@ public class PDFInfo extends PDFObject {
         PDFProfile profile = getDocumentSafely().getProfile();
         ByteArrayOutputStream bout = new ByteArrayOutputStream(128);
         try {
-            bout.write(encode(getObjectID()));
             bout.write(encode("<<\n"));
             if (title != null && title.length() > 0) {
                 bout.write(encode("/Title "));
@@ -229,7 +228,7 @@ public class PDFInfo extends PDFObject {
                 bout.write(encode("/Trapped /False\n"));
             }
 
-            bout.write(encode(">>\nendobj\n"));
+            bout.write(encode(">>"));
         } catch (IOException ioe) {
             log.error("Ignored I/O exception", ioe);
         }

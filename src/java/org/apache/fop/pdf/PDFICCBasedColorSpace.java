@@ -99,9 +99,7 @@ public class PDFICCBasedColorSpace extends PDFObject implements PDFColorSpace {
     @Override
     protected String toPDFString() {
         StringBuffer sb = new StringBuffer(64);
-        sb.append(getObjectID());
         sb.append("[/ICCBased ").append(getICCStream().referencePDF()).append("]");
-        sb.append("\nendobj\n");
         return sb.toString();
     }
 
