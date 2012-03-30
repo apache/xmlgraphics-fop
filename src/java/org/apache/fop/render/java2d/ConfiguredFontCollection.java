@@ -25,7 +25,6 @@ import javax.xml.transform.Source;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.apache.fop.fonts.CustomFont;
 import org.apache.fop.fonts.EmbedFontInfo;
 import org.apache.fop.fonts.EncodingMode;
@@ -88,8 +87,8 @@ public class ConfiguredFontCollection implements FontCollection {
                     font = new CustomFontMetricsMapper(fontMetrics, fontSource);
                 } else {
                     CustomFont fontMetrics = FontLoader.loadFont(
-                            fontFile, null, true, EncodingMode.AUTO,
-                            configFontInfo.getKerning(), fontResolver);
+                            fontFile, null, true, configFontInfo.getEmbeddingMode(),
+                            EncodingMode.AUTO, configFontInfo.getKerning(), fontResolver);
                     font = new CustomFontMetricsMapper(fontMetrics);
                 }
 

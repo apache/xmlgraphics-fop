@@ -22,14 +22,13 @@ package org.apache.fop.fonts;
 /**
  * This is just a holder class for bfentries, groups of characters of a base font (bf).
  */
-public class BFEntry {
+public final class BFEntry {
 
     //TODO Think about renaming this class to CMapRange or something.
-    //TODO Copy equals() and hashCode() from TTFCmapEntry
 
-    private int unicodeStart;
-    private int unicodeEnd;
-    private int glyphStartIndex;
+    private final int unicodeStart;
+    private final int unicodeEnd;
+    private final int glyphStartIndex;
 
     /**
      * Main constructor.
@@ -41,6 +40,32 @@ public class BFEntry {
         this.unicodeStart = unicodeStart;
         this.unicodeEnd = unicodeEnd;
         this.glyphStartIndex = glyphStartIndex;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        int hc = 17;
+        hc = 31 * hc + unicodeStart;
+        hc = 31 * hc + unicodeEnd;
+        hc = 31 * hc + glyphStartIndex;
+        return hc;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof BFEntry) {
+            BFEntry ce = (BFEntry) o;
+            return ce.unicodeStart == this.unicodeStart
+                && ce.unicodeEnd == this.unicodeEnd
+                && ce.glyphStartIndex == this.glyphStartIndex;
+        }
+        return false;
     }
 
     /**

@@ -27,12 +27,10 @@ import java.util.Set;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
-import org.xml.sax.InputSource;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.apache.fop.apps.FOPException;
+import org.xml.sax.InputSource;
 
 /**
  * This class is used to defer the loading of a font until it is really used.
@@ -45,6 +43,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
     private String fontEmbedPath = null;
     private boolean useKerning = false;
     private EncodingMode encodingMode = EncodingMode.AUTO;
+    private EmbeddingMode embeddingMode = EmbeddingMode.AUTO;
     private boolean embedded = true;
     private String subFontName = null;
 
@@ -65,6 +64,7 @@ public class LazyFont extends Typeface implements FontDescriptor {
         this.fontEmbedPath = fontInfo.getEmbedFile();
         this.useKerning = fontInfo.getKerning();
         this.encodingMode = fontInfo.getEncodingMode();
+        this.embeddingMode = fontInfo.getEmbeddingMode();
         this.subFontName = fontInfo.getSubFontName();
         this.embedded = fontInfo.isEmbedded();
         this.resolver = resolver;
@@ -131,8 +131,9 @@ public class LazyFont extends Typeface implements FontDescriptor {
                     if (fontEmbedPath == null) {
                         throw new RuntimeException("Cannot load font. No font URIs available.");
                     }
-                    realFont = FontLoader.loadFont(fontEmbedPath, this.subFontName,
-                            this.embedded, this.encodingMode, useKerning, resolver);
+                    realFont = FontLoader.loadFont(fontEmbedPath, subFontName,
+                            embedded, embeddingMode, encodingMode,
+                            useKerning, resolver);
                 }
                 if (realFont instanceof FontDescriptor) {
                     realFontDescriptor = (FontDescriptor) realFont;

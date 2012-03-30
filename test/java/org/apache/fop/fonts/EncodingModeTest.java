@@ -21,16 +21,33 @@ package org.apache.fop.fonts;
 
 import junit.framework.TestCase;
 
+/**
+ * Tests the enum org.apache.fop.fonts.EncodingMode.
+ */
 public class EncodingModeTest extends TestCase {
+    /**
+     * Test getName() - tests the getName() method returns the expected String.
+     */
     public void testGetName() {
         assertEquals("auto", EncodingMode.AUTO.getName());
         assertEquals("single-byte", EncodingMode.SINGLE_BYTE.getName());
         assertEquals("cid", EncodingMode.CID.getName());
     }
 
+    /**
+     * Test getValue() - test that getValue() method returns the expected enum value when given
+     * an appropriate String.
+     */
     public void testGetValue() {
-        assertEquals(EncodingMode.AUTO, EncodingMode.getEncodingMode("auto"));
-        assertEquals(EncodingMode.SINGLE_BYTE, EncodingMode.getEncodingMode("single-byte"));
-        assertEquals(EncodingMode.CID, EncodingMode.getEncodingMode("cid"));
+        assertEquals(EncodingMode.AUTO, EncodingMode.getValue("auto"));
+        assertEquals(EncodingMode.SINGLE_BYTE, EncodingMode.getValue("single-byte"));
+        assertEquals(EncodingMode.CID, EncodingMode.getValue("cid"));
+        try {
+            // We expect this to fail
+            assertEquals(EncodingMode.AUTO, EncodingMode.getValue("fail"));
+            fail("Encoding mode fails to throw an appropriate exception");
+        } catch (IllegalArgumentException e) {
+            // PASS
+        }
     }
 }

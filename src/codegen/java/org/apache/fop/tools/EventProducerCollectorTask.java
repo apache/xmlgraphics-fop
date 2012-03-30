@@ -37,18 +37,16 @@ import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.w3c.dom.Node;
-
 import org.apache.commons.io.IOUtils;
+import org.apache.fop.events.model.EventModel;
+import org.apache.fop.events.model.EventProducerModel;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.selectors.FilenameSelector;
-
-import org.apache.fop.events.model.EventModel;
-import org.apache.fop.events.model.EventProducerModel;
+import org.w3c.dom.Node;
 
 /**
  * Ant task which inspects a file set for Java interfaces which extend the

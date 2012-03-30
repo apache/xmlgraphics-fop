@@ -33,6 +33,14 @@ class TTFDirTabEntry {
     private long offset;
     private long length;
 
+    public TTFDirTabEntry() {
+    }
+
+    public TTFDirTabEntry(long offset, long length) {
+        this.offset = offset;
+        this.length = length;
+    }
+
     /**
      * Read Dir Tab, return tag name
      */
