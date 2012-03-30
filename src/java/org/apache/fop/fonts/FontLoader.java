@@ -30,7 +30,6 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.apache.fop.fonts.truetype.TTFFontLoader;
 import org.apache.fop.fonts.type1.Type1FontLoader;
 
@@ -80,15 +79,17 @@ public abstract class FontLoader {
      * @param fontFile the File representation of the font
      * @param subFontName the sub-fontname of a font (for TrueType Collections, null otherwise)
      * @param embedded indicates whether the font is embedded or referenced
+     * @param embeddingMode the embedding mode
      * @param encodingMode the requested encoding mode
      * @param resolver the font resolver to use when resolving URIs
      * @return the newly loaded font
      * @throws IOException In case of an I/O error
      */
     public static CustomFont loadFont(File fontFile, String subFontName,
-            boolean embedded, EncodingMode encodingMode, FontResolver resolver) throws IOException {
+            boolean embedded, EmbeddingMode embeddingMode, EncodingMode encodingMode,
+            FontResolver resolver) throws IOException {
         return loadFont(fontFile.toURI().toURL(), subFontName,
-                embedded, encodingMode, resolver);
+                embedded, embeddingMode, encodingMode, resolver);
     }
 
     /**
@@ -96,16 +97,17 @@ public abstract class FontLoader {
      * @param fontUrl the URL representation of the font
      * @param subFontName the sub-fontname of a font (for TrueType Collections, null otherwise)
      * @param embedded indicates whether the font is embedded or referenced
+     * @param embeddingMode the embedding mode of the font
      * @param encodingMode the requested encoding mode
      * @param resolver the font resolver to use when resolving URIs
      * @return the newly loaded font
      * @throws IOException In case of an I/O error
      */
     public static CustomFont loadFont(URL fontUrl, String subFontName,
-            boolean embedded, EncodingMode encodingMode,
+            boolean embedded, EmbeddingMode embeddingMode, EncodingMode encodingMode,
             FontResolver resolver) throws IOException {
         return loadFont(fontUrl.toExternalForm(), subFontName,
-                embedded, encodingMode, true,
+                embedded, embeddingMode, encodingMode, true,
                 resolver);
     }
 
@@ -114,6 +116,7 @@ public abstract class FontLoader {
      * @param fontFileURI the URI to the font
      * @param subFontName the sub-fontname of a font (for TrueType Collections, null otherwise)
      * @param embedded indicates whether the font is embedded or referenced
+     * @param embeddingMode the embedding mode of the font
      * @param encodingMode the requested encoding mode
      * @param useKerning indicates whether kerning information should be loaded if available
      * @param resolver the font resolver to use when resolving URIs
@@ -121,8 +124,8 @@ public abstract class FontLoader {
      * @throws IOException In case of an I/O error
      */
     public static CustomFont loadFont(String fontFileURI, String subFontName,
-            boolean embedded, EncodingMode encodingMode, boolean useKerning,
-            FontResolver resolver) throws IOException {
+            boolean embedded, EmbeddingMode embeddingMode, EncodingMode encodingMode,
+            boolean useKerning, FontResolver resolver) throws IOException {
         fontFileURI = fontFileURI.trim();
         boolean type1 = isType1(fontFileURI);
         FontLoader loader;
@@ -131,10 +134,14 @@ public abstract class FontLoader {
                 throw new IllegalArgumentException(
                         "CID encoding mode not supported for Type 1 fonts");
             }
+            if (embeddingMode == EmbeddingMode.SUBSET) {
+                throw new IllegalArgumentException(
+                        "Subset embedding for Type 1 fonts is not supported");
+            }
             loader = new Type1FontLoader(fontFileURI, embedded, useKerning, resolver);
         } else {
             loader = new TTFFontLoader(fontFileURI, subFontName,
-                    embedded, encodingMode, useKerning, resolver);
+                    embedded, embeddingMode, encodingMode, useKerning, resolver);
         }
         return loader.getFont();
     }

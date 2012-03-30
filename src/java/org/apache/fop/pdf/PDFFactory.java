@@ -39,9 +39,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import org.apache.xmlgraphics.xmp.Metadata;
-
 import org.apache.fop.fonts.CIDFont;
 import org.apache.fop.fonts.CIDSubset;
 import org.apache.fop.fonts.CodePointMapping;
@@ -59,6 +56,7 @@ import org.apache.fop.fonts.truetype.FontFileReader;
 import org.apache.fop.fonts.truetype.TTFSubSetFile;
 import org.apache.fop.fonts.type1.PFBData;
 import org.apache.fop.fonts.type1.PFBParser;
+import org.apache.xmlgraphics.xmp.Metadata;
 
 /**
  * This class provides method to create and register PDF objects.
@@ -1663,8 +1661,8 @@ public class PDFFactory {
                         FontFileReader reader = new FontFileReader(in);
 
                         TTFSubSetFile subset = new TTFSubSetFile();
-                        byte[] subsetFont = subset.readFont(reader,
-                                             mbfont.getTTCName(), mbfont.getUsedGlyphs());
+                        subset.readFont(reader, mbfont.getTTCName(), mbfont.getUsedGlyphs());
+                        byte[] subsetFont = subset.getFontSubset();
                         // Only TrueType CID fonts are supported now
 
                         embeddedFont = new PDFTTFStream(subsetFont.length);

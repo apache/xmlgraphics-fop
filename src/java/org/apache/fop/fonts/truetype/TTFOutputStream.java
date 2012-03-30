@@ -17,36 +17,35 @@
 
 /* $Id$ */
 
-package org.apache.fop.fonts;
+package org.apache.fop.fonts.truetype;
 
-import java.io.File;
-
-import junit.framework.TestCase;
+import java.io.IOException;
 
 /**
- *
+ * This is an interface for streaming True Type font.
  */
-public class DejaVuLGCSerifTest extends TestCase {
-
-    private FontResolver fontResolver = FontManager.createMinimalFontResolver();
-    private CustomFont font;
+public interface TTFOutputStream {
+    /**
+     * Starts writing the font to file.
+     * @throws IOException file write exception.
+     */
+    void startFontStream() throws IOException;
 
     /**
-     * sets up the testcase by loading the DejaVu Font.
-     *
-     * @throws Exception
-     *             if the test fails.
+     * Returns an object for streaming True Type tables.
+     * @return {@link TTFTableOutputStream}
      */
-    public void setUp() throws Exception {
-        File file = new File("test/resources/fonts/DejaVuLGCSerif.ttf");
-        font = FontLoader.loadFont(file, "", true, EmbeddingMode.AUTO, EncodingMode.AUTO,
-                fontResolver);
-    }
+    TTFTableOutputStream getTableOutputStream();
 
     /**
-     * Simple test to see if font name was detected correctly.
+     * Returns an object for streaming True Type glyphs in the glyf table.
+     * @return {@link TTFGlyphOutputStream}
      */
-    public void testFontName() {
-        assertEquals("DejaVuLGCSerif", font.getFontName());
-    }
+    TTFGlyphOutputStream getGlyphOutputStream();
+
+    /**
+     * Ends writing the font to file.
+     * @throws IOException file write exception.
+     */
+    void endFontStream() throws IOException;
 }

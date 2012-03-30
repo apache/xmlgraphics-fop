@@ -17,36 +17,21 @@
 
 /* $Id$ */
 
-package org.apache.fop.fonts;
+package org.apache.fop.fonts.truetype;
 
-import java.io.File;
-
-import junit.framework.TestCase;
+import java.io.IOException;
 
 /**
- *
+ * An interface for streaming full True Type tables from a TTF file.
  */
-public class DejaVuLGCSerifTest extends TestCase {
-
-    private FontResolver fontResolver = FontManager.createMinimalFontResolver();
-    private CustomFont font;
+public interface TTFTableOutputStream {
 
     /**
-     * sets up the testcase by loading the DejaVu Font.
-     *
-     * @throws Exception
-     *             if the test fails.
+     * Streams a table defined in byteArray at offset of length bytes.
+     * @param byteArray The source of the table to stream from.
+     * @param offset The position in byteArray to begin streaming from.
+     * @param length The number of bytes to stream.
+     * @throws IOException write error.
      */
-    public void setUp() throws Exception {
-        File file = new File("test/resources/fonts/DejaVuLGCSerif.ttf");
-        font = FontLoader.loadFont(file, "", true, EmbeddingMode.AUTO, EncodingMode.AUTO,
-                fontResolver);
-    }
-
-    /**
-     * Simple test to see if font name was detected correctly.
-     */
-    public void testFontName() {
-        assertEquals("DejaVuLGCSerif", font.getFontName());
-    }
+    void streamTable(byte[] byteArray, int offset, int length) throws IOException;
 }
