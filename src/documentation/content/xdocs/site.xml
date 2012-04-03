@@ -151,19 +151,26 @@
       <ant label="Ant Task" href="anttask.html"/>
     </using>
 
+    <!--
+        NOTA BENE NOTA BENE NOTA BENE 
+        The following features should be maintained in alphabetic order by
+        (displayed) label value.
+        NOTA BENE NOTA BENE NOTA BENE 
+    -->
     <features label="Features">
-      <output label="Output Targets" href="output.html"/>
+      <accessibility label="Accessibility" href="accessibility.html"/>
+      <complexscripts label="Complex Scripts" href="complexscripts.html"/>
+      <events label="Events" href="events.html"/>
+      <extensions label="Extensions" href="extensions.html"/>
+      <fonts label="Fonts" href="fonts.html"/>
+      <graphics label="Graphics" href="graphics.html"/>
+      <hyphenation label="Hyphenation" href="hyphenation.html"/>    
       <if label="Intermediate Format" href="intermediate.html"/>
-      <pdfencryption label="PDF Encryption" href="pdfencryption.html"/>
+      <metadata label="Metadata" href="metadata.html"/>
+      <output label="Output Targets" href="output.html"/>
       <pdfa label="PDF/A" href="pdfa.html"/>
       <pdfx label="PDF/X" href="pdfx.html"/>
-      <graphics label="Graphics" href="graphics.html"/>
-      <fonts label="Fonts" href="fonts.html"/>
-      <hyphenation label="Hyphenation" href="hyphenation.html"/>    
-      <extensions label="Extensions" href="extensions.html"/>
-      <events label="Events" href="events.html"/>
-      <metadata label="Metadata" href="metadata.html"/>
-      <accessibility label="Accessibility" href="accessibility.html"/>
+      <pdfencryption label="PDF Encryption" href="pdfencryption.html"/>
     </features>
     
   </trunk>

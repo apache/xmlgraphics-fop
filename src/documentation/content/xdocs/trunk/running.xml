@@ -117,6 +117,7 @@ Fop [options] [-fo|-xml] infile [-xsl file] [-awt|-pdf|-mif|-rtf|-tiff|-png|-pcl
   -q                quiet mode
   -c cfg.xml        use additional configuration file cfg.xml
   -l lang           the language to use for user information
+  -nocs             disable complex script features
   -r                relaxed/less strict validation (where available)
   -dpi xxx          target resolution in dots per inch (dpi) where xxx is a number
   -s                for area tree XML, down to block areas only
