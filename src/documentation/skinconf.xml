@@ -148,6 +148,10 @@ See main/fresh-site/src/documentation/skinconf.xml for details.
     <!-- The normal content should be at natural size -->
     #content { font-size: 100%; }
 
+    .tw30 { width: 30% !important; }
+    .tw70 { width: 70% !important; }
+    .tw80 { width: 80% !important; }
+
     p.quote {
       margin-left: 2em;
       padding: .5em;
