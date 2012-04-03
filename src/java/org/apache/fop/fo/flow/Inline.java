@@ -116,7 +116,8 @@ public class Inline extends InlineLevel {
                 }
             } else if (!isBlockOrInlineItem(nsURI, localName)) {
                 invalidChildError(loc, nsURI, localName);
-            } else if (!canHaveBlockLevelChildren && isBlockItem(nsURI, localName)) {
+            } else if (!canHaveBlockLevelChildren && isBlockItem(nsURI, localName)
+                       && !isNeutralItem(nsURI, localName)) {
                 invalidChildError(loc, getParent().getName(), nsURI, getName(),
                                   "rule.inlineContent");
             } else {

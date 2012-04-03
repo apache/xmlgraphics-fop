@@ -501,7 +501,7 @@ public abstract class FObj extends FONode implements Constants {
      * @param lName local name (i.e., no prefix) of incoming node
      * @return true if a member, false if not
      */
-    boolean isNeutralItem(String nsURI, String lName) {
+    protected boolean isNeutralItem(String nsURI, String lName) {
         return (FO_URI.equals(nsURI)
                 && ("multi-switch".equals(lName)
                         || "multi-properties".equals(lName)
