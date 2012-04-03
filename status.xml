@@ -62,12 +62,15 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Code" dev="GA" type="fix" fixes-bug="53005" due-to="Alberto Simões">
+        Fixed incorrect rejection of fo:wrapper inside fo:inline inside fo:footnote-body.
+      </action>
       <action context="Code" dev="PH,VH" type="add">
         Added support for PDF Object Streams. When accessibility is enabled and PDF version 1.5 
         selected, the structure tree will be stored in object streams in order to reduce the size of 
         the final PDF.
       </action>
-      <action context="Code" dev="VH" type="add" fixes-bug="46962" due-to="Alexios Giotis">
+      <action context="Code" dev="VH" type="fix" fixes-bug="46962" due-to="Alexios Giotis">
         Fixed deadlock in PropertyCache.
       </action>
       <action context="Code" dev="VH" type="add" fixes-bug="51385" due-to="Mehdi Houshmand">
