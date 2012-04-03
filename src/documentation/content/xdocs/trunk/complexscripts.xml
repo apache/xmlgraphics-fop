@@ -80,17 +80,16 @@
         sufficient. In these cases, an author may make use of the following XSL-FO constructs:
       </p>
       <ul>
-        <li>The <code>script</code> property.</li>
-        <li>The <code>language</code> property.</li>
-        <li>The <code>writing-mode</code> property.</li>
+        <li>The <a href="http://www.w3.org/TR/2006/REC-xsl11-20061205/#script"><code>script</code></a> property.</li>
+        <li>The <a href="http://www.w3.org/TR/2006/REC-xsl11-20061205/#language"><code>language</code></a> property.</li>
+        <li>The <a href="http://www.w3.org/TR/2006/REC-xsl11-20061205/#writing-mode"><code>writing-mode</code></a> property.</li>
         <li>The number to string conversion properties:
-          <code>format</code>,
-          <code>grouping-separator</code>,
-          <code>grouping-separator</code>,
-          <code>grouping-size</code>,
-          <code>letter-value</code>,
+          <a href="http://www.w3.org/TR/2006/REC-xsl11-20061205/#format"><code>format</code></a>,
+          <a href="http://www.w3.org/TR/2006/REC-xsl11-20061205/#grouping-separator"><code>grouping-separator</code></a>,
+          <a href="http://www.w3.org/TR/2006/REC-xsl11-20061205/#grouping-size"><code>grouping-size</code></a>,
+          <a href="http://www.w3.org/TR/2006/REC-xsl11-20061205/#letter-value"><code>letter-value</code></a>,
           and <code>fox:number-conversion-features</code>.</li>
-        <li>The <code>fo:bidi-override</code> element.</li>
+        <li>The <a href="http://www.w3.org/TR/2006/REC-xsl11-20061205/#fo_bidi-override"><code>fo:bidi-override</code></a> element.</li>
         <li>Explicit bidirectional control characters: U+200E LRM, U+200F RLM, U+202A LRE,
           U+202B RLE, U+202C PDF, U+202D LRO, U+202E RLO.</li>
         <li>Explicit join control characters: U+200C ZWNJ and U+200D ZWJ.</li>
@@ -364,7 +363,7 @@
       <title>Supported Scripts</title>
       <p>Support for specific complex scripts is enumerated in the following table. Support
         for those marked as not being supported is expected to be added in future revisions.</p>
-      <table class="ForrestTable tw80">
+      <table>
         <colgrp>
           <col style="width: 15%"/>
           <col style="width: 10%"/>
@@ -487,7 +486,7 @@
         font is not listed, then it has not been tested with these complex scripts features.</p>
       <section id="fonts_arabic">
         <title>Arabic Fonts</title>
-        <table class="ForrestTable tw80">
+        <table>
           <colgrp>
             <col style="width: 15%"/>
             <col style="width: 10%"/>
@@ -558,7 +557,7 @@
       </section>
       <section id="devanagari_fonts">
         <title>Devanagari Fonts</title>
-        <table class="ForrestTable tw80">
+        <table>
           <colgrp>
             <col style="width: 15%"/>
             <col style="width: 10%"/>
@@ -620,6 +619,7 @@
       </p>
       <ul>
         <li><a href="http://www.unicode.org/">The Unicode Standard</a></li>
+        <li><a href="http://www.w3.org/TR/2006/REC-xsl11-20061205/#fo_bidi-override">Unicode Bidirectional Algorithm</a></li>
         <li><a href="http://www.microsoft.com/typography/otspec/ttochap1.htm">OpenType Advanced Typographic Extensions</a></li>
         <li><a href="http://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&amp;item_id=CmplxRndExamples">Examples of Complex Rendering</a></li>
       </ul>
