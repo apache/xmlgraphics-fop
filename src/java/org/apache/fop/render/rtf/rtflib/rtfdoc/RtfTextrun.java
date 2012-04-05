@@ -31,9 +31,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * Class which contains a linear text run. It has methods to add attributes,
- * text, paragraph breaks....
- * @author Peter Herweg, pherweg@web.de
+ * <p>Class which contains a linear text run. It has methods to add attributes,
+ * text, paragraph breaks....</p>
+ *
+ * <p>This work was authored by Peter Herweg (pherweg@web.de).</p>
  */
 public class RtfTextrun extends RtfContainer {
 
@@ -271,6 +272,8 @@ public class RtfTextrun extends RtfContainer {
         //add RtfSpaceSplitter to inherit accumulated space
         rtfSpaceManager.pushRtfSpaceSplitter(attrs);
         rtfSpaceManager.setCandidate(attrs);
+        // create a string and add it as a child
+        new RtfString(this, writer, s);
         rtfSpaceManager.popRtfSpaceSplitter();
     }
 
@@ -435,10 +438,16 @@ public class RtfTextrun extends RtfContainer {
         //get last RtfParagraphBreak, which is not followed by any visible child
         RtfParagraphBreak lastParagraphBreak = null;
         if (bLast) {
+            RtfElement aBefore = null;
             for (Iterator it = getChildren().iterator(); it.hasNext();) {
                 final RtfElement e = (RtfElement)it.next();
                 if (e instanceof RtfParagraphBreak) {
-                    lastParagraphBreak = (RtfParagraphBreak)e;
+                    //If the element before was a paragraph break or a bookmark
+                    //they will be hidden and are therefore not considered as visible
+                    if (!(aBefore instanceof RtfParagraphBreak)
+                     && !(aBefore instanceof RtfBookmark)) {
+                      lastParagraphBreak = (RtfParagraphBreak)e;
+                    }
                 } else {
                     if (!(e instanceof RtfOpenGroupMark)
                             && !(e instanceof RtfCloseGroupMark)
@@ -446,6 +455,7 @@ public class RtfTextrun extends RtfContainer {
                         lastParagraphBreak = null;
                     }
                 }
+                aBefore = e;
             }
         }
 
@@ -458,6 +468,7 @@ public class RtfTextrun extends RtfContainer {
 
         //write all children
         boolean bPrevPar = false;
+        boolean bBookmark = false;
         boolean bFirst = true;
         for (Iterator it = getChildren().iterator(); it.hasNext();) {
             final RtfElement e = (RtfElement)it.next();
@@ -482,7 +493,8 @@ public class RtfTextrun extends RtfContainer {
                 && (bPrevPar
                     || bFirst
                     || (bSuppressLastPar && bLast && lastParagraphBreak != null
-                        && e == lastParagraphBreak));
+                        && e == lastParagraphBreak)
+                    || bBookmark);
 
             if (!bHide) {
                 newLine();
@@ -495,6 +507,8 @@ public class RtfTextrun extends RtfContainer {
 
             if (e instanceof RtfParagraphBreak) {
                 bPrevPar = true;
+            } else if (e instanceof RtfBookmark)  {
+                bBookmark = true;
             } else if (e instanceof RtfCloseGroupMark) {
                 //do nothing
             } else if (e instanceof RtfOpenGroupMark) {
@@ -502,6 +516,7 @@ public class RtfTextrun extends RtfContainer {
             } else {
                 bPrevPar = bPrevPar && e.isEmpty();
                 bFirst = bFirst && e.isEmpty();
+                bBookmark = false;
             }
         } //for (Iterator it = ...)
 

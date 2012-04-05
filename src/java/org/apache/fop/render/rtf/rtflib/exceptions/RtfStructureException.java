@@ -26,8 +26,10 @@ package org.apache.fop.render.rtf.rtflib.exceptions;
  * the FOP project.
  */
 
-/**  Thrown when a method call would lead to an invalid RTF document structure.
- *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
+/**
+ * <p>Thrown when a method call would lead to an invalid RTF document structure.</p>
+ *
+ * <p>This work was authored by Bertrand Delacretaz (bdelacretaz@codeconsult.ch).</p>
  */
 public class RtfStructureException
 extends RtfException {

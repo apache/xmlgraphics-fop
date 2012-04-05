@@ -31,6 +31,9 @@ public class AFPPageSetup extends AFPExtensionAttachment {
     /** value attribute */
     protected static final String ATT_VALUE = "value";
 
+    /** placement attribute */
+    protected static final String ATT_PLACEMENT = "placement";
+
     /**
      * the extension content
      */
@@ -40,6 +43,9 @@ public class AFPPageSetup extends AFPExtensionAttachment {
      * the extension value attribute
      */
     protected String value;
+
+    /** defines where to place the extension in the generated file */
+    protected ExtensionPlacement placement = ExtensionPlacement.DEFAULT;
 
     /**
      * Default constructor.
@@ -84,6 +90,26 @@ public class AFPPageSetup extends AFPExtensionAttachment {
         this.content = content;
     }
 
+    /**
+     * Returns the intended placement of the extension inside the generated file.
+     * @return the intended placement
+     */
+    public ExtensionPlacement getPlacement() {
+        return this.placement;
+    }
+
+    /**
+     * Sets the intended placement of the extension inside the generated file.
+     * @param placement the intended placement
+     */
+    public void setPlacement(ExtensionPlacement placement) {
+        if (!AFPElementMapping.NO_OPERATION.equals(getElementName())) {
+            throw new UnsupportedOperationException(
+                    "The attribute 'placement' can currently only be set for NOPs!");
+        }
+        this.placement = placement;
+    }
+
     /** {@inheritDoc} */
     public void toSAX(ContentHandler handler) throws SAXException {
         AttributesImpl atts = new AttributesImpl();
@@ -92,6 +118,9 @@ public class AFPPageSetup extends AFPExtensionAttachment {
         }
         if (value != null && value.length() > 0) {
             atts.addAttribute(null, ATT_VALUE, ATT_VALUE, "CDATA", value);
+        }
+        if (this.placement != ExtensionPlacement.DEFAULT) {
+            atts.addAttribute(null, ATT_PLACEMENT, ATT_PLACEMENT, "CDATA", placement.getXMLValue());
         }
         handler.startElement(CATEGORY, elementName, elementName, atts);
         if (content != null && content.length() > 0) {
@@ -102,8 +131,16 @@ public class AFPPageSetup extends AFPExtensionAttachment {
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
-        return "AFPPageSetup(element-name=" + getElementName()
-            + " name=" + getName() + " value=" + getValue() + ")";
+        StringBuilder sb = new StringBuilder("AFPPageSetup(");
+        sb.append("element-name=").append(getElementName());
+        sb.append(" name=").append(getName());
+        sb.append(" value=").append(getValue());
+        if (getPlacement() != ExtensionPlacement.DEFAULT) {
+            sb.append(" placement=").append(getPlacement());
+        }
+        sb.append(")");
+        return sb.toString();
     }
 }

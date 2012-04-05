@@ -148,7 +148,10 @@ public abstract class AbstractGraphics2DAdapter implements Graphics2DAdapter {
             RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * @deprecated
+     */
     public void paintImage(Graphics2DImagePainter painter,
             RendererContext context,
             int x, int y, int width, int height) throws IOException {

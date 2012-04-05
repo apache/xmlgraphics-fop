@@ -19,6 +19,9 @@
 
 package org.apache.fop;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.OutputStream;
@@ -36,6 +39,8 @@ import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.w3c.dom.Document;
 
 import org.apache.commons.io.IOUtils;
@@ -53,7 +58,7 @@ import org.apache.fop.render.xml.XMLRenderer;
 /**
  * Tests URI resolution facilities.
  */
-public class URIResolutionTestCase extends AbstractFOPTestCase {
+public class URIResolutionTestCase extends AbstractFOPTest {
 
     // configure fopFactory as desired
     private FopFactory fopFactory = FopFactory.newInstance();
@@ -61,11 +66,10 @@ public class URIResolutionTestCase extends AbstractFOPTestCase {
     private SAXTransformerFactory tfactory
             = (SAXTransformerFactory)SAXTransformerFactory.newInstance();
 
-    private File backupDir = new File(getBaseDir(), "build/test-results");
+    private final static File backupDir = new File(getBaseDir(), "build/test-results");
 
-    /** @see junit.framework.TestCase#TestCase(String) */
-    public URIResolutionTestCase(String name) {
-        super(name);
+    @BeforeClass
+    public static void makeDirs() {
         backupDir.mkdirs();
     }
 
@@ -73,6 +77,7 @@ public class URIResolutionTestCase extends AbstractFOPTestCase {
      * Test custom URI resolution with a hand-written URIResolver.
      * @throws Exception if anything fails
      */
+    @Test
     public void testFO1a() throws Exception {
         innerTestFO1(false);
     }
@@ -81,6 +86,7 @@ public class URIResolutionTestCase extends AbstractFOPTestCase {
      * Test custom URI resolution with a hand-written URIResolver.
      * @throws Exception if anything fails
      */
+    @Test
     public void testFO1b() throws Exception {
         innerTestFO1(true);
     }
@@ -112,7 +118,8 @@ public class URIResolutionTestCase extends AbstractFOPTestCase {
      * Test custom URI resolution with a hand-written URIResolver.
      * @throws Exception if anything fails
      */
-    public void DISABLEDtestFO2() throws Exception {
+    @Test
+    public void testFO2() throws Exception {
         //TODO This will only work when we can do URI resolution inside Batik!
         File foFile = new File(getBaseDir(), "test/xml/uri-resolution2.fo");
 
@@ -155,8 +162,7 @@ public class URIResolutionTestCase extends AbstractFOPTestCase {
         TransformerHandler athandler = tfactory.newTransformerHandler();
         athandler.setResult(domres);
 
-        XMLRenderer atrenderer = new XMLRenderer();
-        atrenderer.setUserAgent(ua);
+        XMLRenderer atrenderer = new XMLRenderer(ua);
         atrenderer.setContentHandler(athandler);
         ua.setRendererOverride(atrenderer);
 

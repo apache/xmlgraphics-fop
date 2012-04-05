@@ -72,31 +72,36 @@ public class BackgroundPositionShorthand extends ListProperty {
             return p;
         }
 
+        private static final class Dimension1PercentBase implements PercentBase {
+            /** {@inheritDoc} */
+            public int getBaseLength(PercentBaseContext context) throws PropertyException {
+                return 0;
+            }
+
+            /** {@inheritDoc} */
+            public double getBaseValue() {
+                return 0;
+            }
+
+            /** {@inheritDoc} */
+            public int getDimension() {
+                return 1;
+            }
+        }
+
+        private static final Dimension1PercentBase DIMENSION_1_PERCENT_BASE
+                = new Dimension1PercentBase();
+
         /**
          * {@inheritDoc}
          * Returns a {@link org.apache.fop.datatypes.PercentBase} whose
          * <code>getDimension()</code> returns 1.
          */
         public PercentBase getPercentBase(PropertyList pl) {
-            return new PercentBase() {
-                /** {@inheritDoc} */
-                public int getBaseLength(PercentBaseContext context) throws PropertyException {
-                    return 0;
-                }
-
-                /** {@inheritDoc} */
-                public double getBaseValue() {
-                    return 0;
-                }
-
-                /** {@inheritDoc} */
-                public int getDimension() {
-                    return 1;
-                }
-
-            };
+            return DIMENSION_1_PERCENT_BASE;
         }
     }
+
 
     /**
      * Inner class to provide shorthand parsing capabilities

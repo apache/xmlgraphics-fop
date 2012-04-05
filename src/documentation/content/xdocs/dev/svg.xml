@@ -20,7 +20,7 @@
 
 <document>
   <header>
-    <title>FOP Development: SVG Issues</title>
+    <title>Apache™ FOP Development: SVG Issues</title>
     <version>$Revision$</version>
   </header>
   <body>
@@ -34,7 +34,7 @@ to PDF:
   <table>
     <caption>SVG to PDF examples</caption>
     <tr>
-      <th></th>
+      <th/>
       <th>svg file</th>
       <th>png file</th>
       <th>pdf result</th>
@@ -79,7 +79,7 @@ You will need Acrobat 5.0 to see transparency.
   <table>
     <caption>XSL:FO to PDF examples</caption>
     <tr>
-      <th></th>
+      <th/>
       <th>fo file</th>
       <th>pdf result</th>
     </tr>
@@ -134,4 +134,3 @@ This svg font could be converted into a pdf stroked font
     </section>
   </body>
 </document>
-

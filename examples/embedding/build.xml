@@ -69,7 +69,7 @@
 	<!-- =================================================================== -->
 	<target name="compile" depends="prepare" description="Compiles the examples">
 		<echo message="Compiling the sources"/>
-		<javac srcdir="${src.dir}" destdir="${build.dest}" debug="${debug}" deprecation="${deprecation}" optimize="${optimize}">
+		<javac srcdir="${src.dir}" destdir="${build.dest}" debug="${debug}" deprecation="${deprecation}" optimize="${optimize}" includeAntRuntime="true">
 			<classpath refid="project.class.path"/>
 		</javac>
 	</target>

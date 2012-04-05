@@ -20,13 +20,16 @@
 package org.apache.fop.pdf;
 
 // Java
+import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Iterator;
 import java.util.List;
@@ -39,6 +42,11 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import org.apache.xmlgraphics.java2d.color.ColorUtil;
+import org.apache.xmlgraphics.java2d.color.NamedColorSpace;
+import org.apache.xmlgraphics.xmp.Metadata;
+
 import org.apache.fop.fonts.CIDFont;
 import org.apache.fop.fonts.CIDSubset;
 import org.apache.fop.fonts.CodePointMapping;
@@ -69,6 +77,8 @@ public class PDFFactory {
     private PDFDocument document;
 
     private Log log = LogFactory.getLog(PDFFactory.class);
+
+    private int subsetFontCounter = -1;
 
     /**
      * Creates a new PDFFactory.
@@ -777,23 +787,23 @@ public class PDFFactory {
 
         for (currentPosition = 0; currentPosition < lastPosition;
                 currentPosition++) {    // for every consecutive color pair
-            PDFColor currentColor = (PDFColor)theColors.get(currentPosition);
-            PDFColor nextColor = (PDFColor)theColors.get(currentPosition
-                                 + 1);
-            // colorspace must be consistant
-            if (getDocument().getColorSpace() != currentColor.getColorSpace()) {
-                currentColor.setColorSpace(
-                    getDocument().getColorSpace());
+            Color currentColor = (Color)theColors.get(currentPosition);
+            Color nextColor = (Color)theColors.get(currentPosition + 1);
+
+            // colorspace must be consistent, so we simply convert to sRGB where necessary
+            if (!currentColor.getColorSpace().isCS_sRGB()) {
+                //Convert to sRGB
+                currentColor = ColorUtil.toSRGBColor(currentColor);
+                theColors.set(currentPosition, currentColor);
+            }
+            if (!nextColor.getColorSpace().isCS_sRGB()) {
+                //Convert to sRGB
+                nextColor = ColorUtil.toSRGBColor(nextColor);
+                theColors.set(currentPosition + 1, nextColor);
             }
 
-            if (getDocument().getColorSpace()
-                    != nextColor.getColorSpace()) {
-                nextColor.setColorSpace(
-                    getDocument().getColorSpace());
-            }
-
-            theCzero = currentColor.getVector();
-            theCone = nextColor.getVector();
+            theCzero = toColorVector(currentColor);
+            theCone = toColorVector(nextColor);
 
             myfunc = makeFunction(2, null, null, theCzero, theCone,
                                        interpolation);
@@ -839,6 +849,15 @@ public class PDFFactory {
         myPattern = makePattern(res, 2, myShad, null, null, theMatrix);
 
         return (myPattern);
+    }
+
+    private List toColorVector(Color nextColor) {
+        List vector = new java.util.ArrayList();
+        float[] comps = nextColor.getColorComponents(null);
+        for (int i = 0, c = comps.length; i < c; i++) {
+            vector.add(new Double(comps[i]));
+        }
+        return vector;
     }
 
     /* ============= named destinations and the name dictionary ============ */
@@ -892,35 +911,6 @@ public class PDFFactory {
         getDocument().assignObjectNumber(pageLabels);
         getDocument().addTrailerObject(pageLabels);
         return pageLabels;
-    }
-
-    /**
-     * Creates and returns a StructTreeRoot object. Used for accessibility.
-     * @param parentTree the value of the ParenTree entry
-     * @return structure Tree Root element
-     */
-    public PDFStructTreeRoot makeStructTreeRoot(PDFParentTree parentTree) {
-        PDFStructTreeRoot structTreeRoot = new PDFStructTreeRoot(parentTree);
-        getDocument().assignObjectNumber(structTreeRoot);
-        getDocument().addTrailerObject(structTreeRoot);
-        getDocument().getRoot().setStructTreeRoot(structTreeRoot);
-        return structTreeRoot;
-    }
-
-    /**
-     * Creates and returns a StructElem object.
-     *
-     * @param structureType the structure type of the new element (value for the
-     * S entry)
-     * @param parent the parent of the new structure element in the structure
-     * hierarchy
-     * @return the newly created element
-     */
-    public PDFStructElem makeStructureElement(PDFName structureType, PDFObject parent) {
-        PDFStructElem structElem = new PDFStructElem(parent, structureType);
-        getDocument().assignObjectNumber(structElem);
-        getDocument().addTrailerObject(structElem);
-        return structElem;
     }
 
     /**
@@ -1362,10 +1352,15 @@ public class PDFFactory {
         } else {
             FontType fonttype = metrics.getFontType();
 
-            PDFFontDescriptor pdfdesc = makeFontDescriptor(descriptor);
+            String fontPrefix = descriptor.isSubsetEmbedded() ? createSubsetFontPrefix() : "";
+
+            String subsetFontName = fontPrefix + basefont;
+
+            PDFFontDescriptor pdfdesc = makeFontDescriptor(descriptor, fontPrefix);
 
             PDFFont font = null;
-            font = PDFFont.createFont(fontname, fonttype, basefont, null);
+
+            font = PDFFont.createFont(fontname, fonttype, subsetFontName, null);
             getDocument().registerObject(font);
 
             if (fonttype == FontType.TYPE0) {
@@ -1380,8 +1375,7 @@ public class PDFFactory {
                     = new PDFCIDSystemInfo(cidMetrics.getRegistry(),
                                          cidMetrics.getOrdering(),
                                          cidMetrics.getSupplement());
-                PDFCIDFont cidFont
-                    = new PDFCIDFont(basefont,
+                PDFCIDFont cidFont = new PDFCIDFont(subsetFontName,
                                    cidMetrics.getCIDType(),
                                    cidMetrics.getDefaultWidth(),
                                    getSubsetWidths(cidMetrics), sysInfo,
@@ -1535,18 +1529,35 @@ public class PDFFactory {
         return warray;
     }
 
+    private String createSubsetFontPrefix() {
+        subsetFontCounter++;
+        DecimalFormat counterFormat = new DecimalFormat("00000");
+        String counterString = counterFormat.format(subsetFontCounter);
+
+        // Subset prefix as described in chapter 5.5.3 of PDF 1.4
+        StringBuffer sb = new StringBuffer("E");
+
+        for (char c : counterString.toCharArray()) {
+            // translate numbers to uppercase characters
+            sb.append((char) (c + ('A' - '0')));
+        }
+        sb.append("+");
+        return sb.toString();
+    }
+
     /**
      * make a /FontDescriptor object
      *
      * @param desc the font descriptor
+     * @param fontPrefix the String with which to prefix the font name
      * @return the new PDF font descriptor
      */
-    public PDFFontDescriptor makeFontDescriptor(FontDescriptor desc) {
+    private PDFFontDescriptor makeFontDescriptor(FontDescriptor desc, String fontPrefix) {
         PDFFontDescriptor descriptor = null;
 
         if (desc.getFontType() == FontType.TYPE0) {
             // CID Font
-            descriptor = new PDFCIDFontDescriptor(desc.getEmbedFontName(),
+            descriptor = new PDFCIDFontDescriptor(fontPrefix + desc.getEmbedFontName(),
                                             desc.getFontBBox(),
                                             desc.getCapHeight(),
                                             desc.getFlags(),
@@ -1770,6 +1781,38 @@ public class PDFFactory {
 
         getDocument().registerObject(cs);
 
+        if (res != null) {
+            res.getPDFResources().addColorSpace(cs);
+        } else {
+            getDocument().getResources().addColorSpace(cs);
+        }
+
+        return cs;
+    }
+
+    /**
+     * Create a new Separation color space.
+     * @param res the resource context (may be null)
+     * @param ncs the named color space to map to a separation color space
+     * @return the newly created Separation color space
+     */
+    public PDFSeparationColorSpace makeSeparationColorSpace(PDFResourceContext res,
+            NamedColorSpace ncs) {
+        String colorName = ncs.getColorName();
+        final Double zero = new Double(0d);
+        final Double one = new Double(1d);
+        List theDomain = Arrays.asList(new Double[] {zero, one});
+        List theRange = Arrays.asList(new Double[] {zero, one, zero, one, zero, one});
+        List theCZero = Arrays.asList(new Double[] {one, one, one});
+        List theCOne = new ArrayList();
+        float[] comps = ncs.getRGBColor().getColorComponents(null);
+        for (int i = 0, c = comps.length; i < c; i++) {
+            theCOne.add(new Double(comps[i]));
+        }
+        PDFFunction tintFunction = makeFunction(2, theDomain, theRange,
+                theCZero, theCOne, 1.0d);
+        PDFSeparationColorSpace cs = new PDFSeparationColorSpace(colorName, tintFunction);
+        getDocument().registerObject(cs);
         if (res != null) {
             res.getPDFResources().addColorSpace(cs);
         } else {

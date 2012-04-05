@@ -52,6 +52,30 @@ public class TTFSubSetFile extends TTFFile {
     /** Stores the glyph offsets so that we can end strings at glyph boundaries */
     private int[] glyphOffsets;
 
+    /**
+     * Default Constructor
+     */
+    public TTFSubSetFile() {
+    }
+
+    /**
+     * Constructor
+     * @param useKerning true if kerning data should be loaded
+     * @param useAdvanced true if advanced typographic tables should be loaded
+     */
+    public TTFSubSetFile ( boolean useKerning, boolean useAdvanced ) {
+        super(useKerning, useAdvanced);
+    }
+
+    /**
+     * Initalize the output array
+     */
+    private void init(int size) {
+        output = new byte[size];
+        realSize = 0;
+        currentPos = 0;
+    }
+
     /** The dir tab entries in the new subset font. */
     private Map<TTFTableName, TTFDirTabEntry> newDirTabs
                         = new HashMap<TTFTableName, TTFDirTabEntry>();
@@ -542,64 +566,6 @@ public class TTFSubSetFile extends TTFFile {
 
 
     /**
-     * Scan all the original glyphs for composite glyphs and add those glyphs
-     * to the glyphmapping also rewrite the composite glyph pointers to the new
-     * mapping
-     */
-    private void scanGlyphs(FontFileReader in,
-                            Map<Integer, Integer> glyphs) throws IOException {
-        TTFDirTabEntry entry = dirTabs.get(TTFTableName.GLYF);
-        Map<Integer, Integer> newComposites = null;
-        Map<Integer, Integer> allComposites = new HashMap<Integer, Integer>();
-
-        int newIndex = glyphs.size();
-
-        if (entry != null) {
-            while (newComposites == null || newComposites.size() > 0) {
-                // Inefficient to iterate through all glyphs
-                newComposites = new HashMap<Integer, Integer>();
-
-                for (Map.Entry<Integer, Integer> glyph : glyphs.entrySet()) {
-                    int origIndex = glyph.getKey();
-                    if (in.readTTFShort(entry.getOffset()
-                                        + mtxTab[origIndex].getOffset()) < 0) {
-                        // origIndex is a composite glyph
-                        allComposites.put(origIndex, glyph.getValue());
-                        List<Integer> composites
-                            = getIncludedGlyphs(in, (int)entry.getOffset(),
-                                              origIndex);
-
-                        // Iterate through all composites pointed to
-                        // by this composite and check if they exists
-                        // in the glyphs map, add them if not.
-                        for (Integer cIdx : composites) {
-                            if (glyphs.get(cIdx) == null
-                                    && newComposites.get(cIdx) == null) {
-                                newComposites.put(cIdx, newIndex);
-                                newIndex++;
-                            }
-                        }
-                    }
-                }
-
-                // Add composites to glyphs
-                for (Map.Entry<Integer, Integer> im : newComposites.entrySet()) {
-                    glyphs.put(im.getKey(), im.getValue());
-                }
-            }
-
-            // Iterate through all composites to remap their composite index
-            for (Integer idx : allComposites.keySet()) {
-                remapComposite(in, glyphs, (int)entry.getOffset(),
-                               idx);
-            }
-
-        } else {
-            throw new IOException("Can't find glyf table");
-        }
-    }
-
-    /**
      * Reads a font and creates a subset of the font.
      *
      * @param in FontFileReader to read from
@@ -711,6 +677,17 @@ public class TTFSubSetFile extends TTFFile {
         ttfOut.endFontStream();
     }
 
+    private void scanGlyphs(FontFileReader in, Map<Integer, Integer> subsetGlyphs)
+            throws IOException {
+        TTFDirTabEntry glyfTableInfo = dirTabs.get(TTFTableName.GLYF);
+        if (glyfTableInfo == null) {
+            throw new IOException("Glyf table could not be found");
+        }
+
+        GlyfTable glyfTable = new GlyfTable(in, mtxTab, glyfTableInfo, subsetGlyphs);
+        glyfTable.populateGlyphsWithComposites();
+    }
+
     /**
      * writes a ISO-8859-1 string at the currentPosition
      * updates currentPosition but not realSize
@@ -777,6 +754,32 @@ public class TTFSubSetFile extends TTFFile {
     }
 
     /**
+     * Read a signed short value at given position
+     */
+    private short readShort(int pos) {
+        int ret = readUShort(pos);
+        return (short)ret;
+    }
+
+    /**
+     * Read a unsigned short value at given position
+     */
+    private int readUShort(int pos) {
+        int ret = output[pos];
+        if (ret < 0) {
+            ret += 256;
+        }
+        ret = ret << 8;
+        if (output[pos + 1] < 0) {
+            ret |= output[pos + 1] + 256;
+        } else {
+            ret |= output[pos + 1];
+        }
+
+        return ret;
+    }
+
+    /**
      * Create a padding in the fontfile to align
      * on a 4-byte boundary
      */
@@ -802,6 +805,9 @@ public class TTFSubSetFile extends TTFFile {
         return (i - 1);
     }
 
+    private int log2(int num) {
+        return (int)(Math.log(num) / Math.log(2));
+    }
 
     private void updateCheckSum(int tableStart, int tableSize, TTFTableName tableName) {
         int checksum = getCheckSum(output, tableStart, tableSize);

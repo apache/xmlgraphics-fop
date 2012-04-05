@@ -19,10 +19,12 @@
 
 package org.apache.fop.layoutengine;
 
+import org.apache.fop.check.Check;
+
 /**
  * Defines the interface for check operations.
  */
-public interface LayoutEngineCheck {
+public interface LayoutEngineCheck extends Check {
 
     /**
      * Called to perform the check.

@@ -28,6 +28,7 @@ import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.util.CompareUtil;
 
 /**
  * Class for handling numeric properties
@@ -106,8 +107,8 @@ public final class NumberProperty extends Property implements Numeric {
     }
 
     /** cache holding all canonical NumberProperty instances */
-    private static final PropertyCache CACHE
-        = new PropertyCache(NumberProperty.class);
+    private static final PropertyCache<NumberProperty> CACHE
+            = new PropertyCache<NumberProperty>();
 
     private final Number number;
 
@@ -144,8 +145,7 @@ public final class NumberProperty extends Property implements Numeric {
      * @return  the canonical NumberProperty
      */
     public static NumberProperty getInstance(Double num) {
-        return (NumberProperty)CACHE.fetch(
-                    new NumberProperty(num.doubleValue()));
+        return CACHE.fetch(new NumberProperty(num.doubleValue()));
     }
 
     /**
@@ -155,8 +155,7 @@ public final class NumberProperty extends Property implements Numeric {
      * @return  the canonical NumberProperty
      */
     public static NumberProperty getInstance(Integer num) {
-        return (NumberProperty)CACHE.fetch(
-                    new NumberProperty(num.intValue()));
+        return CACHE.fetch(new NumberProperty(num.intValue()));
     }
 
     /**
@@ -166,8 +165,7 @@ public final class NumberProperty extends Property implements Numeric {
      * @return  the canonical NumberProperty
      */
     public static NumberProperty getInstance(double num) {
-        return (NumberProperty)CACHE.fetch(
-                    new NumberProperty(num));
+        return CACHE.fetch(new NumberProperty(num));
     }
 
     /**
@@ -177,8 +175,7 @@ public final class NumberProperty extends Property implements Numeric {
      * @return  the canonical NumberProperty
      */
     public static NumberProperty getInstance(int num) {
-        return (NumberProperty)CACHE.fetch(
-                    new NumberProperty(num));
+        return CACHE.fetch(new NumberProperty(num));
     }
 
     /**
@@ -269,21 +266,21 @@ public final class NumberProperty extends Property implements Numeric {
     }
 
     /** {@inheritDoc} */
-    public int hashCode() {
-        return number.hashCode();
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof NumberProperty)) {
+            return false;
+        }
+        NumberProperty other = (NumberProperty) obj;
+        return CompareUtil.equal(number, other.number);
     }
 
     /** {@inheritDoc} */
-    public boolean equals(Object o) {
-        if (o == this) {
-            return true;
-        }
-        if (o instanceof NumberProperty) {
-            NumberProperty np = (NumberProperty) o;
-            return (np.number == this.number
-                    || (this.number != null
-                        && this.number.equals(np.number)));
-        }
-        return false;
+    @Override
+    public int hashCode() {
+        return number.hashCode();
     }
 }

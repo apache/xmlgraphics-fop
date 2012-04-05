@@ -19,8 +19,9 @@
 
 package org.apache.fop.render.ps.extensions;
 
-import org.apache.fop.util.ContentHandlerFactory;
 import org.xml.sax.ContentHandler;
+
+import org.apache.fop.util.ContentHandlerFactory;
 
 /**
  * Factory for the ContentHandler that handles serialized PSSetupCode instances.

@@ -1,0 +1,37 @@
+<?xml version="1.0" standalone="no"?>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="page">
+      <fo:region-body />
+    </fo:simple-page-master>
+  </fo:layout-master-set>
+  <fo:page-sequence master-reference="page">
+    <fo:flow flow-name="xsl-region-body">
+      <fo:block>
+        <fo:instream-foreign-object>
+          <svg:svg width="250" height="50">
+            <svg:font horiz-adv-x="1000">
+              <svg:font-face font-family="Missing" units-per-em="1000" underline-position="-100"
+                underline-thickness="50" />
+              <svg:glyph unicode="A" horiz-adv-x="686" d="M162,186l362,0l78,-186l84,0l-308,708l-70,0l-308,-708l84,0M343,624l153,-372l-307,0z" />
+              <svg:glyph unicode="C" horiz-adv-x="704" d="M620,154C567,72 491,48 417,48C235,48 126,191 126,354C126,517 235,660 417,660C492,660 571,613 599,567l63,47C600,693 505,726 417,726C206,726 48,569 48,354C48,139 206,-18 417,-18C534,-18 632,39 679,112z" />
+              <svg:glyph unicode="F" horiz-adv-x="556" d="M168,335l330,0l0,66l-330,0l0,241l355,0l0,66l-427,0l0,-708l72,0z" />
+              <svg:glyph unicode="G" horiz-adv-x="778" d="M673,631C610,694 529,726 417,726C206,726 48,569 48,354C48,139 206,-18 417,-18C503,-18 606,7 685,54l0,347l-241,0l0,-66l169,0l0,-237C560,68 490,48 417,48C235,48 126,191 126,354C126,517 235,660 417,660C504,660 571,629 619,578z" />
+            </svg:font>
+            <svg:font horiz-adv-x="1000">
+              <!-- this is not Helvetica but it is here to increase coverage and show the code takes expected path -->
+              <svg:font-face font-family="Helvetica" units-per-em="1000" underline-position="-100"
+                underline-thickness="50" />
+              <svg:glyph unicode="A" horiz-adv-x="686" d="M162,186l362,0l78,-186l84,0l-308,708l-70,0l-308,-708l84,0M343,624l153,-372l-307,0z" />
+              <svg:glyph unicode="C" horiz-adv-x="704" d="M620,154C567,72 491,48 417,48C235,48 126,191 126,354C126,517 235,660 417,660C492,660 571,613 599,567l63,47C600,693 505,726 417,726C206,726 48,569 48,354C48,139 206,-18 417,-18C534,-18 632,39 679,112z" />
+              <svg:glyph unicode="F" horiz-adv-x="556" d="M168,335l330,0l0,66l-330,0l0,241l355,0l0,66l-427,0l0,-708l72,0z" />
+              <svg:glyph unicode="G" horiz-adv-x="778" d="M673,631C610,694 529,726 417,726C206,726 48,569 48,354C48,139 206,-18 417,-18C503,-18 606,7 685,54l0,347l-241,0l0,-66l169,0l0,-237C560,68 490,48 417,48C235,48 126,191 126,354C126,517 235,660 417,660C504,660 571,629 619,578z" />
+            </svg:font>
+            <svg:text x="20" y="20" font-family="Missing" font-size="12">ACFG</svg:text>
+            <svg:text x="20" y="40" font-family="Helvetica" font-size="12">ACFG</svg:text>
+          </svg:svg>
+        </fo:instream-foreign-object>
+      </fo:block>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>

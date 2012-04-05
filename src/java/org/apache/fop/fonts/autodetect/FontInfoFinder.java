@@ -29,6 +29,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.fonts.CustomFont;
 import org.apache.fop.fonts.EmbedFontInfo;
 import org.apache.fop.fonts.EmbeddingMode;
@@ -149,7 +150,7 @@ public class FontInfoFinder {
             subFontName = ((MultiByteFont)customFont).getTTCName();
         }
         EmbedFontInfo fontInfo = new EmbedFontInfo(null, customFont.isKerningEnabled(),
-                fontTripletList, embedUrl, subFontName);
+                customFont.isAdvancedEnabled(), fontTripletList, embedUrl, subFontName);
         fontInfo.setPostScriptName(customFont.getFontName());
         if (fontCache != null) {
             fontCache.addFont(fontInfo);
@@ -169,6 +170,9 @@ public class FontInfoFinder {
     public EmbedFontInfo[] find(URL fontURL, FontResolver resolver, FontCache fontCache) {
         String embedURL = null;
         embedURL = fontURL.toExternalForm();
+        boolean useKerning = true;
+        boolean useAdvanced = ( resolver != null )
+            ? resolver.isComplexScriptFeaturesEnabled() : true;
 
         long fileLastModified = -1;
         if (fontCache != null) {
@@ -191,14 +195,14 @@ public class FontInfoFinder {
 
         // try to determine triplet information from font file
         CustomFont customFont = null;
-        if (fontURL.toExternalForm().endsWith(".ttc")) {
+        if (fontURL.toExternalForm().toLowerCase().endsWith(".ttc")) {
             // Get a list of the TTC Font names
             List<String> ttcNames = null;
             String fontFileURL = fontURL.toExternalForm().trim();
             InputStream in = null;
             try {
                 in = FontLoader.openFontUri(resolver, fontFileURL);
-                TTFFile ttf = new TTFFile();
+                TTFFile ttf = new TTFFile(false, false);
                 FontFileReader reader = new FontFileReader(in);
                 ttcNames = ttf.getTTCnames(reader);
             } catch (Exception e) {
@@ -220,7 +224,7 @@ public class FontInfoFinder {
                 try {
                     TTFFontLoader ttfLoader = new TTFFontLoader(
                             fontFileURL, fontName, true, EmbeddingMode.AUTO, EncodingMode.AUTO,
-                            true, resolver);
+                            useKerning, useAdvanced, resolver);
                     customFont = ttfLoader.getFont();
                     if (this.eventListener != null) {
                         customFont.setEventListener(this.eventListener);

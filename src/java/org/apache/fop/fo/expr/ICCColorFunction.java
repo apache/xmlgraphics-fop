@@ -41,6 +41,7 @@ class ICCColorFunction extends FunctionBase {
     }
 
     /** {@inheritDoc} */
+    @Override
     public PercentBase getPercentBase() {
         return new ICCPercentBase();
     }
@@ -50,7 +51,9 @@ class ICCColorFunction extends FunctionBase {
                          PropertyInfo pInfo) throws PropertyException {
         // Map color profile NCNAME to src from declarations/color-profile element
         String colorProfileName = args[3].getString();
-        Declarations decls = pInfo.getFO().getRoot().getDeclarations();
+        Declarations decls = (pInfo.getFO() != null
+                ? pInfo.getFO().getRoot().getDeclarations()
+                : null);
         ColorProfile cp = null;
         if (decls == null) {
             //function used in a color-specification
@@ -76,7 +79,9 @@ class ICCColorFunction extends FunctionBase {
         }
         String src = (cp != null ? cp.getSrc() : "");
 
-        float red = 0, green = 0, blue = 0;
+        float red = 0;
+        float green = 0;
+        float blue = 0;
         red = args[0].getNumber().floatValue();
         green = args[1].getNumber().floatValue();
         blue = args[2].getNumber().floatValue();

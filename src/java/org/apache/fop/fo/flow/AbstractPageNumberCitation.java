@@ -20,22 +20,28 @@
 package org.apache.fop.fo.flow;
 
 import java.awt.Color;
+import java.util.Stack;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 
+import org.apache.fop.accessibility.StructureTreeElement;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.complexscripts.bidi.DelimitedTextRange;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
+import org.apache.fop.fo.properties.CommonAccessibility;
+import org.apache.fop.fo.properties.CommonAccessibilityHolder;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonFont;
 import org.apache.fop.fo.properties.CommonTextDecoration;
 import org.apache.fop.fo.properties.SpaceProperty;
-import org.apache.fop.fo.properties.StructurePointerPropertySet;
+import org.apache.fop.fo.properties.StructureTreeElementHolder;
+import org.apache.fop.util.CharUtilities;
 
 /**
  * Common base class for the <a href="http://www.w3.org/TR/xsl/#fo_page-number-citation">
@@ -44,16 +50,17 @@ import org.apache.fop.fo.properties.StructurePointerPropertySet;
  * <code>fo:page-number-citation-last</code></a> objects.
  */
 public abstract class AbstractPageNumberCitation extends FObj
-            implements StructurePointerPropertySet {
+        implements StructureTreeElementHolder, CommonAccessibilityHolder {
 
     // The value of properties relevant for fo:page-number-citation(-last).
+    private CommonAccessibility commonAccessibility;
     private CommonBorderPaddingBackground commonBorderPaddingBackground;
     private CommonFont commonFont;
     private Length alignmentAdjust;
     private int alignmentBaseline;
     private Length baselineShift;
     private int dominantBaseline;
-    private String ptr;  // used for accessibility
+    private StructureTreeElement structureTreeElement;
     // private ToBeImplementedProperty letterSpacing;
     private SpaceProperty lineHeight;
     private String refId;
@@ -61,7 +68,6 @@ public abstract class AbstractPageNumberCitation extends FObj
     private CommonTextDecoration textDecoration;
     // private ToBeImplementedProperty textShadow;
     // Unused but valid items, commented out for performance:
-    //     private CommonAccessibility commonAccessibility;
     //     private CommonAural commonAural;
     //     private CommonMarginInline commonMarginInline;
     //     private CommonRelativePosition commonRelativePosition;
@@ -91,6 +97,7 @@ public abstract class AbstractPageNumberCitation extends FObj
     /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
+        commonAccessibility = CommonAccessibility.getInstance(pList);
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
         commonFont = pList.getFontProps();
         alignmentAdjust = pList.get(PR_ALIGNMENT_ADJUST).getLength();
@@ -99,7 +106,6 @@ public abstract class AbstractPageNumberCitation extends FObj
         dominantBaseline = pList.get(PR_DOMINANT_BASELINE).getEnum();
         // letterSpacing = pList.get(PR_LETTER_SPACING);
         lineHeight = pList.get(PR_LINE_HEIGHT).getSpace();
-        ptr = pList.get(PR_X_PTR).getString();   // used for accessibility
         refId = pList.get(PR_REF_ID).getString();
         textDecoration = pList.getTextDecorationProps();
         // textShadow = pList.get(PR_TEXT_SHADOW);
@@ -129,6 +135,11 @@ public abstract class AbstractPageNumberCitation extends FObj
         }
     }
 
+    /** {@inheritDoc} */
+    public CommonAccessibility getCommonAccessibility() {
+        return commonAccessibility;
+    }
+
     /** @return the {@link CommonFont} */
     public CommonFont getCommonFont() {
         return commonFont;
@@ -144,9 +155,14 @@ public abstract class AbstractPageNumberCitation extends FObj
         return textDecoration;
     }
 
+    @Override
+    public void setStructureTreeElement(StructureTreeElement structureTreeElement) {
+        this.structureTreeElement = structureTreeElement;
+    }
+
     /** {@inheritDoc} */
-    public String getPtr() {
-        return ptr;
+    public StructureTreeElement getStructureTreeElement() {
+        return structureTreeElement;
     }
 
     /** @return the "alignment-adjust" property */
@@ -182,6 +198,19 @@ public abstract class AbstractPageNumberCitation extends FObj
     /** @return the "ref-id" property. */
     public String getRefId() {
         return refId;
+    }
+
+    @Override
+    public boolean isDelimitedTextRangeBoundary ( int boundary ) {
+        return false;
+    }
+
+    @Override
+    protected Stack collectDelimitedTextRanges ( Stack ranges, DelimitedTextRange currentRange ) {
+        if ( currentRange != null ) {
+            currentRange.append ( CharUtilities.OBJECT_REPLACEMENT_CHARACTER, this );
+        }
+        return ranges;
     }
 
 }

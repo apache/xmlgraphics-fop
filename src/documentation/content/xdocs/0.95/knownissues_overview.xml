@@ -1,4 +1,4 @@
-<?xml version="1.0" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -19,7 +19,7 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
 <document xmlns:xi="http://www.w3.org/2001/XInclude">
   <header>
-    <title>Apache FOP: Known Issues</title>
+    <title>Apache™ FOP: Known Issues</title>
     <version>$Revision$</version>
   </header>
 <body>
@@ -30,7 +30,7 @@
   </p>
   <note>
     <p>
-      For additional information on known issues in Apache FOP, please have a look at the following pages, too:
+      For additional information on known issues in Apache™ FOP, please have a look at the following pages, too:
     </p>
     <ul>
       <li><a href="../bugs.html">the bug list in Bugzilla</a></li>
@@ -67,4 +67,3 @@
 </section>
 </body>
 </document>
-

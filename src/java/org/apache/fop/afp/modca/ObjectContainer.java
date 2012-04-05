@@ -107,7 +107,7 @@ public class ObjectContainer extends AbstractDataObject {
 
             ContainerDataDescriptor containerDataDescriptor
                 = factory.createContainerDataDescriptor(
-                        dataWidth, dataHeight, widthRes, heightRes);
+                    dataWidth, dataHeight, widthRes, heightRes);
             getObjectEnvironmentGroup().setDataDescriptor(containerDataDescriptor);
         }
     }

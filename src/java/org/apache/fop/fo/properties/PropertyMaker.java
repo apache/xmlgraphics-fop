@@ -43,7 +43,9 @@ import org.apache.fop.fo.expr.PropertyParser;
 public class PropertyMaker implements Cloneable {
 
     /** Logger instance */
-    private static Log log = LogFactory.getLog(PropertyMaker.class);
+    private static final Log LOG = LogFactory.getLog(PropertyMaker.class);
+
+    private static final boolean IS_LOG_TRACE_ENABLED = LOG.isTraceEnabled();
 
     /** the property ID */
     protected int propId;
@@ -250,8 +252,8 @@ public class PropertyMaker implements Cloneable {
                 throws PropertyException {
         Property p = null;
 
-        if (log.isTraceEnabled()) {
-            log.trace("PropertyMaker.findProperty: "
+        if (IS_LOG_TRACE_ENABLED) {
+            LOG.trace("PropertyMaker.findProperty: "
                   + FOPropertyMapping.getPropertyName(propId)
                   + ", " + propertyList.getFObj().getName());
         }
@@ -377,14 +379,14 @@ public class PropertyMaker implements Cloneable {
      */
     public Property make(PropertyList propertyList) throws PropertyException {
         if (defaultProperty != null) {
-            if (log.isTraceEnabled()) {
-                log.trace("PropertyMaker.make: reusing defaultProperty, "
+            if (IS_LOG_TRACE_ENABLED) {
+                LOG.trace("PropertyMaker.make: reusing defaultProperty, "
                       + FOPropertyMapping.getPropertyName(propId));
             }
             return defaultProperty;
         }
-        if (log.isTraceEnabled()) {
-            log.trace("PropertyMaker.make: making default property value, "
+        if (IS_LOG_TRACE_ENABLED) {
+            LOG.trace("PropertyMaker.make: making default property value, "
                   + FOPropertyMapping.getPropertyName(propId)
                   + ", " + propertyList.getFObj().getName());
         }
@@ -413,7 +415,7 @@ public class PropertyMaker implements Cloneable {
                 if ((propId & Constants.COMPOUND_MASK) != 0) {
                     newProp = getSubprop(newProp, propId & Constants.COMPOUND_MASK);
                 }
-                if (!isInherited() && log.isWarnEnabled()) {
+                if (!isInherited() && LOG.isWarnEnabled()) {
                     /* check whether explicit value is available on the parent
                      * (for inherited properties, an inherited value will always
                      *  be available)
@@ -421,7 +423,7 @@ public class PropertyMaker implements Cloneable {
                     Property parentExplicit = propertyList.getParentPropertyList()
                                                 .getExplicit(getPropId());
                     if (parentExplicit == null) {
-                        log.warn(FOPropertyMapping.getPropertyName(getPropId())
+                        LOG.warn(FOPropertyMapping.getPropertyName(getPropId())
                                 + "=\"inherit\" on " + propertyList.getFObj().getName()
                                 + ", but no explicit value found on the parent FO.");
                     }
@@ -445,7 +447,9 @@ public class PropertyMaker implements Cloneable {
             }
             return newProp;
         } catch (PropertyException propEx) {
-            propEx.setLocator(fo.getLocator());
+            if (fo != null) {
+                propEx.setLocator(fo.getLocator());
+            }
             propEx.setPropertyName(getName());
             throw propEx;
         }
@@ -653,6 +657,7 @@ public class PropertyMaker implements Cloneable {
      * subproperty makers of the generic compound makers.
      * {@inheritDoc}
      */
+    @Override
     public Object clone() {
         try {
             return super.clone();

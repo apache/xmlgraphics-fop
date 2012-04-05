@@ -28,7 +28,9 @@ import java.util.Arrays;
  * <p>
  * This class extends java.awt.Color class keeping track of the original color
  * property values specified by the fo user in a rgb-icc call.
+ * @deprecated Replaced by {@link ColorWithAlternatives}
  */
+@Deprecated
 public final class ColorExt extends Color {
     //
     private static final long serialVersionUID = 1L;
@@ -136,12 +138,14 @@ public final class ColorExt extends Color {
     }
 
     /** {@inheritDoc} */
+    @Override
     public int hashCode() {
         //implementation from the superclass should be good enough for our purposes
         return super.hashCode();
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;

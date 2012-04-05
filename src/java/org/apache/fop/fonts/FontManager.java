@@ -224,16 +224,32 @@ public class FontManager {
         getFontSubstitutions().adjustFontInfo(fontInfo);
     }
 
-    /** @return a new FontResolver to be used by the font subsystem */
-    public static FontResolver createMinimalFontResolver() {
-        return new FontResolver() {
+    /**
+     * Minimum implemenation of FontResolver.
+     */
+    public static class MinimalFontResolver implements FontResolver {
+        private boolean useComplexScriptFeatures;
+        MinimalFontResolver(boolean useComplexScriptFeatures) {
+            this.useComplexScriptFeatures = useComplexScriptFeatures;
+        }
+        /** {@inheritDoc} */
+        public Source resolve(String href) {
+            //Minimal functionality here
+            return new StreamSource(href);
+        }
+        /** {@inheritDoc} */
+        public boolean isComplexScriptFeaturesEnabled() {
+            return useComplexScriptFeatures;
+        }
+    }
 
-            /** {@inheritDoc} */
-            public Source resolve(String href) {
-                //Minimal functionality here
-                return new StreamSource(href);
-            }
-        };
+    /**
+     * Create minimal font resolver.
+     * @param useComplexScriptFeatures true if complex script features enabled
+     * @return a new FontResolver to be used by the font subsystem
+     */
+    public static FontResolver createMinimalFontResolver(boolean useComplexScriptFeatures) {
+        return new MinimalFontResolver ( useComplexScriptFeatures );
     }
 
     /**

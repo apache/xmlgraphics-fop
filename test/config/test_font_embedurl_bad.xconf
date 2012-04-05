@@ -16,7 +16,7 @@
     <renderer mime="application/pdf">
       <fonts>
 		<!-- this font has an embed-url that does not exist on filesystem -->
-		<font metrics-url="test/resources/fonts/glb12.ttf.xml" embed-url="test/resources/fonts/doesnotexist.ttf">
+		<font metrics-url="test/resources/fonts/ttf/glb12.ttf.xml" embed-url="test/resources/fonts/ttf/doesnotexist.ttf">
           <font-triplet name="Gladiator-Ansi" style="normal" weight="normal"/>
         </font>
       </fonts>

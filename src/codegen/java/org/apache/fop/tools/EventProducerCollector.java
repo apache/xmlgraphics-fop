@@ -21,7 +21,6 @@ package org.apache.fop.tools;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -47,10 +46,10 @@ import com.thoughtworks.qdox.model.Type;
 class EventProducerCollector {
 
     private static final String CLASSNAME_EVENT_PRODUCER = EventProducer.class.getName();
-    private static final Map PRIMITIVE_MAP;
+    private static final Map<String, Class<?>> PRIMITIVE_MAP;
 
     static {
-        Map m = new java.util.HashMap();
+        Map<String, Class<?>> m = new java.util.HashMap<String, Class<?>>();
         m.put("boolean", Boolean.class);
         m.put("byte", Byte.class);
         m.put("char", Character.class);
@@ -63,7 +62,7 @@ class EventProducerCollector {
     }
 
     private DocletTagFactory tagFactory;
-    private List models = new ArrayList();
+    private List<EventModel> models = new java.util.ArrayList<EventModel>();
 
     /**
      * Creates a new EventProducerCollector.
@@ -139,7 +138,7 @@ class EventProducerCollector {
             throws EventConventionException, ClassNotFoundException {
         JavaClass clazz = method.getParentClass();
         //Check EventProducer conventions
-        if (!method.getReturns().isVoid()) {
+        if (!method.getReturnType().isVoid()) {
             throw new EventConventionException("All methods of interface "
                     + clazz.getFullyQualifiedName() + " must have return type 'void'!");
         }
@@ -168,10 +167,10 @@ class EventProducerCollector {
         if (params.length > 1) {
             for (int j = 1, cj = params.length; j < cj; j++) {
                 JavaParameter p = params[j];
-                Class type;
+                Class<?> type;
                 JavaClass pClass = p.getType().getJavaClass();
                 if (p.getType().isPrimitive()) {
-                    type = (Class)PRIMITIVE_MAP.get(pClass.getName());
+                    type = PRIMITIVE_MAP.get(pClass.getName());
                     if (type == null) {
                         throw new UnsupportedOperationException(
                                 "Primitive datatype not supported: " + pClass.getName());
@@ -197,7 +196,7 @@ class EventProducerCollector {
      * Returns the event model that has been accumulated.
      * @return the event model.
      */
-    public List getModels() {
+    public List<EventModel> getModels() {
         return this.models;
     }
 

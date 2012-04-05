@@ -20,9 +20,9 @@
 
 <faqs title="FOP FAQ">
   <part id="part-general">
-    <title>General questions</title>
+    <title>Apache™ FOP: General questions</title>
     <faq id="fop-general">
-      <question>What is FOP?</question>
+      <question>What is Apache™ FOP?</question>
       <answer>
       <p>
         FOP is a print formatter for <link href="#XSLFO">XSL formatting
@@ -1013,6 +1013,46 @@ Can I control this?</question>
           font-weight properties on
           <link href="http://www.w3.org/TR/xsl11/#fo_bookmark-title">fo:bookmark-title</link>
           are not yet supported, though.
+        </p>
+      </answer>
+    </faq>
+    <faq id="acrobat-anti-aliasing">
+      <question>How can I get rid of strange single-pixel lines inside table borders or between table cells in Adobe Acrobat?</question>
+      <answer>
+        <p>
+          Since Apache FOP supports the collapsed border model, every border segment consists
+          of two separate shapes. This is due to the fact that each side of the border
+          segment can have a different color. Now, Adobe Acrobat may display thin (1 pixel wide)
+          lines inside the border segment or sometimes even between to adjacent
+          colored rectangles making up the background of a block or table cell.
+          This effect is due to the way Adobe Acrobat does anti-aliasing. Adobe's algorithm
+          seems to cause these artifacts. Other PDF viewers don't have that problem. Or at least
+          we haven't had any reports in that direction.
+        </p>
+        <p>
+          First of all, these artifacts do not appear in print since no anti-aliasing is done
+          by Adobe Acrobat in this case (except maybe if you tell Acrobat to print the page
+          as a bitmap in which case Adobe fully composes the page itself). So, if the artifacts appear
+          on screen, it doesn't mean they have to appear in print, too.
+        </p>
+        <p>
+          To get rid of the artifacts, you can call up the "Preferences" dialog of
+          Adobe Acrobat and select the tab "Page display". Enabling "Enhance thin lines"
+          may help in some situations. Otherwise, you can disable "Smooth line art".
+          You may have to disable "Use 2D graphics acceleration", too, so you can disable
+          "Smooth line art" in the first place.
+        </p>
+        <p>
+          Here an example of how the effect can look like (left: anti-aliasing on, right: anti-aliasing off):
+        </p>
+        <figure src="images/acrobat-anti-aliasing-artifacts.png" alt="Left: anti-aliasing on, Right: off"/>
+        <p>
+          Unfortunately, it is not possible to control the above settings from within the PDF file.
+          The user has to change these settings himself. Improving FOP to avoid this kind of problem
+          would be possible although rather hard to achieve because we'd need to add a considerable
+          amount of code to combine the various line segments. Something like that has been tried already
+          years ago showing that this is a tricky task. Also, the improvement may not justify the amount
+          of effort required.
         </p>
       </answer>
     </faq>

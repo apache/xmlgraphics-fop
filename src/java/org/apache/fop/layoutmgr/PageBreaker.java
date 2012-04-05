@@ -277,9 +277,8 @@ public class PageBreaker extends AbstractBreaker {
             separatorArea.setIPD(
                     pslm.getCurrentPV().getRegionReference(Constants.FO_REGION_BODY).getIPD());
             // create a StaticContentLM for the footnote separator
-            footnoteSeparatorLM = (StaticContentLayoutManager)
-                pslm.getLayoutManagerMaker().makeStaticContentLayoutManager(
-                pslm, footnoteSeparator, separatorArea);
+            footnoteSeparatorLM = pslm.getLayoutManagerMaker().makeStaticContentLayoutManager(
+            pslm, footnoteSeparator, separatorArea);
             footnoteSeparatorLM.doLayout();
         }
 
@@ -367,7 +366,9 @@ public class PageBreaker extends AbstractBreaker {
             // Handle special page-master for last page
             BodyRegion currentBody = pageProvider.getPage(false, currentPageNum)
                     .getPageViewport().getBodyRegion();
-            pageProvider.setLastPageIndex(currentPageNum);
+
+            setLastPageIndex(currentPageNum);
+
             BodyRegion lastBody = pageProvider.getPage(false, currentPageNum)
                     .getPageViewport().getBodyRegion();
             lastBody.getMainReference().setSpans(currentBody.getMainReference().getSpans());
@@ -410,13 +411,18 @@ public class PageBreaker extends AbstractBreaker {
                 //Add areas now...
                 addAreas(alg, restartPoint, partCount - restartPoint, originalList, effectiveList);
                 //...and add a blank last page
-                pageProvider.setLastPageIndex(currentPageNum + 1);
-                pslm.setCurrentPage(pslm.makeNewPage(true, true));
+                setLastPageIndex(currentPageNum + 1);
+                pslm.setCurrentPage(pslm.makeNewPage(true));
                 return;
             }
         }
 
         addAreas(algRestart, optimalPageCount, originalList, effectiveList);
+    }
+
+    private void setLastPageIndex(int currentPageNum) {
+        int lastPageIndex = pslm.getForcedLastPageNum(currentPageNum);
+        pageProvider.setLastPageIndex(lastPageIndex);
     }
 
     /** {@inheritDoc} */
@@ -529,14 +535,14 @@ public class PageBreaker extends AbstractBreaker {
 
             if (forceNewPageWithSpan) {
                 log.trace("Forcing new page with span");
-                curPage = pslm.makeNewPage(false, false);
+                curPage = pslm.makeNewPage(false);
                 curPage.getPageViewport().createSpan(true);
             } else if (pv.getCurrentSpan().hasMoreFlows()) {
                 log.trace("Moving to next flow");
                 pv.getCurrentSpan().moveToNextFlow();
             } else {
                 log.trace("Making new page");
-                /*curPage = */pslm.makeNewPage(false, false);
+                /*curPage = */pslm.makeNewPage(false);
             }
             return;
         default:
@@ -544,11 +550,11 @@ public class PageBreaker extends AbstractBreaker {
                 + " breakVal=" + getBreakClassName(breakVal));
             if (needBlankPageBeforeNew(breakVal)) {
                 log.trace("Inserting blank page");
-                /*curPage = */pslm.makeNewPage(true, false);
+                /*curPage = */pslm.makeNewPage(true);
             }
             if (needNewPage(breakVal)) {
                 log.trace("Making new page");
-                /*curPage = */pslm.makeNewPage(false, false);
+                /*curPage = */pslm.makeNewPage(false);
             }
         }
     }

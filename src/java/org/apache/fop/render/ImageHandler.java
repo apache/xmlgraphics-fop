@@ -23,7 +23,6 @@ import java.awt.Rectangle;
 import java.io.IOException;
 
 import org.apache.xmlgraphics.image.loader.Image;
-import org.apache.xmlgraphics.image.loader.impl.ImageXMLDOM;
 
 /**
  * This interface is a service provider interface for image handlers.

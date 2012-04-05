@@ -29,9 +29,11 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
 import java.io.IOException;
 import java.io.Writer;
 
-/** Specifies rtf control words.  Is the container for page attributes.
- *  Overrides okToWriteRtf.
- *  @author Christopher Scott, scottc@westinghouse.com
+/**
+ * <p>Specifies rtf control words.  Is the container for page attributes.
+ *  Overrides okToWriteRtf.</p>
+ *
+ * <p>This work was authored by Christopher Scott (scottc@westinghouse.com).</p>
  */
 
 public class RtfPage

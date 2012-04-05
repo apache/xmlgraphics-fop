@@ -33,6 +33,9 @@ import org.apache.fop.fo.expr.RelativeNumericProperty;
 import org.apache.fop.fo.flow.table.Table;
 import org.apache.fop.fo.flow.table.TableColumn;
 import org.apache.fop.fo.properties.TableColLength;
+import org.apache.fop.traits.Direction;
+import org.apache.fop.traits.WritingModeTraits;
+import org.apache.fop.traits.WritingModeTraitsGetter;
 
 /**
  * Class holding a number of columns making up the column setup of a row.
@@ -43,6 +46,7 @@ public class ColumnSetup {
     private static Log log = LogFactory.getLog(ColumnSetup.class);
 
     private Table table;
+    private WritingModeTraitsGetter wmTraits;
     private List columns = new java.util.ArrayList();
     private List colWidths = new java.util.ArrayList();
 
@@ -53,7 +57,9 @@ public class ColumnSetup {
      * @param table the table to construct this column setup for
      */
     public ColumnSetup(Table table) {
+        assert table != null;
         this.table = table;
+        this.wmTraits = WritingModeTraits.getWritingModeTraitsGetter ( table );
         prepareColumns();
         initializeColumnWidths();
     }
@@ -232,11 +238,47 @@ public class ColumnSetup {
     }
 
     /**
+     * Determine the X offset of the indicated column, where this
+     * offset denotes the left edge of the column irrespective of writing
+     * mode. If writing mode's column progression direction is right-to-left,
+     * then the first column is the right-most column and the last column is
+     * the left-most column; otherwise, the first column is the left-most
+     * column.
      * @param col column index (1 is first column)
      * @param context the context for percentage based calculations
      * @return the X offset of the requested column
      */
     public int getXOffset(int col, PercentBaseContext context) {
+        // TODO handle vertical WMs [GA]
+        if ( (wmTraits != null) && (wmTraits.getColumnProgressionDirection() == Direction.RL) ) {
+            return getXOffsetRTL(col, context);
+        } else {
+            return getXOffsetLTR(col, context);
+        }
+    }
+
+    /*
+     * Determine x offset by summing widths of columns to left of specified
+     * column; i.e., those columns whose column numbers are greater than the
+     * specified column number.
+     */
+    private int getXOffsetRTL(int col, PercentBaseContext context) {
+        int xoffset = 0;
+        for (int i = col, nc = colWidths.size(); ++i < nc;) {
+            int effCol = i;
+            if (colWidths.get(effCol) != null) {
+                xoffset += ((Length) colWidths.get(effCol)).getValue(context);
+            }
+        }
+        return xoffset;
+    }
+
+    /*
+     * Determine x offset by summing widths of columns to left of specified
+     * column; i.e., those columns whose column numbers are less than the
+     * specified column number.
+     */
+    private int getXOffsetLTR(int col, PercentBaseContext context) {
         int xoffset = 0;
         for (int i = col; --i >= 0;) {
             int effCol;

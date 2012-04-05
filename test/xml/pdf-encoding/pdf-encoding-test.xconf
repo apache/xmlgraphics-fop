@@ -39,7 +39,7 @@
       
       <!-- use a custom font to show encoding problems -->
       <fonts>
-        <font metrics-url="test/resources/fonts/glb12.ttf.xml" embed-url="test/resources/fonts/glb12.ttf">
+        <font metrics-url="test/resources/fonts/ttf/glb12.ttf.xml" embed-url="test/resources/fonts/ttf/glb12.ttf">
           <font-triplet name="Gladiator" style="normal" weight="normal"/>
         </font>
       </fonts>

@@ -19,8 +19,9 @@
 
 package org.apache.fop.layoutengine;
 
-import org.apache.fop.apps.FormattingResults;
 import org.w3c.dom.Node;
+
+import org.apache.fop.apps.FormattingResults;
 
 /**
  * Simple check that requires a result property to evaluate to the expected value
@@ -31,16 +32,6 @@ public class ResultCheck implements LayoutEngineCheck {
     private String property;
 
     /**
-     * Creates a new instance
-     * @param expected expected value
-     * @param property property of which the value needs to be evaluated
-     */
-    public ResultCheck(String expected, String property) {
-        this.expected = expected;
-        this.property = property;
-    }
-
-    /**
      * Creates a new instance from a DOM node.
      * @param node DOM node that defines this check
      */
@@ -49,9 +40,7 @@ public class ResultCheck implements LayoutEngineCheck {
         this.property = node.getAttributes().getNamedItem("property").getNodeValue();
     }
 
-    /* (non-Javadoc)
-     * @see LayoutEngineCheck#check(LayoutResult)
-     */
+    /** {@inheritDoc} */
     public void check(LayoutResult result) {
         FormattingResults results = result.getResults();
         String actual;
@@ -68,7 +57,7 @@ public class ResultCheck implements LayoutEngineCheck {
 
     }
 
-    /** @see java.lang.Object#toString() */
+    @Override
     public String toString() {
         return "Property: " + property;
     }

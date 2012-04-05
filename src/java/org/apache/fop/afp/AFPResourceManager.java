@@ -66,10 +66,12 @@ public class AFPResourceManager {
     private int instreamObjectCount = 0;
 
     /** a mapping of resourceInfo --> include name */
-    private final Map/*<AFPResourceInfo,String>*/ includeNameMap
-        = new java.util.HashMap()/*<AFPResourceInfo,String>*/;
+    private final Map<AFPResourceInfo, String> includeNameMap
+        = new java.util.HashMap<AFPResourceInfo, String>();
 
-    private Map pageSegmentMap = new java.util.HashMap();
+    /** a mapping of resourceInfo --> page segment name */
+    private Map<AFPResourceInfo, String> pageSegmentMap
+        = new java.util.HashMap<AFPResourceInfo, String>();
 
     private AFPResourceLevelDefaults resourceLevelDefaults = new AFPResourceLevelDefaults();
 
@@ -126,6 +128,34 @@ public class AFPResourceManager {
     }
 
     /**
+     * Tries to create an include of a data object that has been previously added to the
+     * AFP data stream. If no such object was available, the method returns false which serves
+     * as a signal that the object has to be created.
+     * @param dataObjectInfo the data object info
+     * @return true if the inclusion succeeded, false if the object was not available
+     * @throws IOException thrown if an I/O exception of some sort has occurred.
+     */
+    public boolean tryIncludeObject(AFPDataObjectInfo dataObjectInfo) throws IOException {
+        AFPResourceInfo resourceInfo = dataObjectInfo.getResourceInfo();
+        updateResourceInfoUri(resourceInfo);
+
+        String objectName = includeNameMap.get(resourceInfo);
+        if (objectName != null) {
+            // an existing data resource so reference it by adding an include to the current page
+            includeObject(dataObjectInfo, objectName);
+            return true;
+        }
+
+        objectName = pageSegmentMap.get(resourceInfo);
+        if (objectName != null) {
+            // an existing data resource so reference it by adding an include to the current page
+            includePageSegment(dataObjectInfo, objectName);
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Creates a new data object in the AFP datastream
      *
      * @param dataObjectInfo the data object info
@@ -133,24 +163,13 @@ public class AFPResourceManager {
      * @throws IOException thrown if an I/O exception of some sort has occurred.
      */
     public void createObject(AFPDataObjectInfo dataObjectInfo) throws IOException {
+        if (tryIncludeObject(dataObjectInfo)) {
+            //Object has already been produced and is available by inclusion, so return early.
+            return;
+        }
+
         AbstractNamedAFPObject namedObj = null;
-
         AFPResourceInfo resourceInfo = dataObjectInfo.getResourceInfo();
-        updateResourceInfoUri(resourceInfo);
-
-        String objectName = (String)includeNameMap.get(resourceInfo);
-        if (objectName != null) {
-            // an existing data resource so reference it by adding an include to the current page
-            includeObject(dataObjectInfo, objectName);
-            return;
-        }
-
-        objectName = (String)pageSegmentMap.get(resourceInfo);
-        if (objectName != null) {
-            // an existing data resource so reference it by adding an include to the current page
-            includePageSegment(dataObjectInfo, objectName);
-            return;
-        }
 
         boolean useInclude = true;
         Registry.ObjectType objectType = null;
@@ -194,7 +213,7 @@ public class AFPResourceManager {
             resourceGroup.addObject(namedObj);
 
             // create the include object
-            objectName = namedObj.getName();
+            String objectName = namedObj.getName();
             if (usePageSegment) {
                 includePageSegment(dataObjectInfo, objectName);
                 pageSegmentMap.put(resourceInfo, objectName);
@@ -223,8 +242,7 @@ public class AFPResourceManager {
 
     private void includeObject(AFPDataObjectInfo dataObjectInfo,
             String objectName) {
-        IncludeObject includeObject
-            = dataObjectFactory.createInclude(objectName, dataObjectInfo);
+        IncludeObject includeObject = dataObjectFactory.createInclude(objectName, dataObjectInfo);
         dataStream.getCurrentPage().addObject(includeObject);
     }
 
@@ -296,7 +314,7 @@ public class AFPResourceManager {
         resourceInfo.setName(resourceName);
         resourceInfo.setUri(uri.toASCIIString());
 
-        String objectName = (String)includeNameMap.get(resourceInfo);
+        String objectName = includeNameMap.get(resourceInfo);
         if (objectName == null) {
             if (log.isDebugEnabled()) {
                 log.debug("Adding included resource: " + resourceName);
@@ -334,7 +352,7 @@ public class AFPResourceManager {
         resourceInfo.setName(resourceName);
         resourceInfo.setUri(uri.toASCIIString());
 
-        String resource = (String)includeNameMap.get(resourceInfo);
+        String resource = includeNameMap.get(resourceInfo);
         if (resource == null) {
 
             ResourceGroup resourceGroup = streamer.getResourceGroup(resourceLevel);
@@ -343,6 +361,7 @@ public class AFPResourceManager {
             //The included resource may already be wrapped in a resource object
             AbstractNamedAFPObject resourceObject = new AbstractNamedAFPObject(null) {
 
+                @Override
                 protected void writeContent(OutputStream os) throws IOException {
                     InputStream inputStream = null;
                     try {
@@ -355,8 +374,10 @@ public class AFPResourceManager {
                 }
 
                 //bypass super.writeStart
+                @Override
                 protected void writeStart(OutputStream os) throws IOException { }
                 //bypass super.writeEnd
+                @Override
                 protected void writeEnd(OutputStream os) throws IOException { }
             };
 

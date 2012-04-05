@@ -19,12 +19,12 @@
 
 package org.apache.fop.render.xml;
 
-import org.apache.fop.render.Renderer;
-import org.apache.fop.render.XMLHandler;
-import org.apache.fop.render.RendererContext;
-import org.apache.fop.util.DOM2SAX;
-
 import org.xml.sax.ContentHandler;
+
+import org.apache.fop.render.Renderer;
+import org.apache.fop.render.RendererContext;
+import org.apache.fop.render.XMLHandler;
+import org.apache.fop.util.DOM2SAX;
 
 /**
  * XML handler for the XML renderer.

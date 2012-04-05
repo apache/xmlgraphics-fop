@@ -19,25 +19,27 @@
 
 package org.apache.fop.traits;
 
+import static org.junit.Assert.assertEquals;
+
 import java.awt.Color;
 
-import junit.framework.TestCase;
-
+import org.apache.xmlgraphics.java2d.color.ColorWithAlternatives;
 import org.apache.xmlgraphics.java2d.color.DeviceCMYKColorSpace;
 
 import org.apache.fop.fo.Constants;
-import org.apache.fop.util.ColorExt;
 import org.apache.fop.util.ColorUtil;
+import org.junit.Test;
 
 /**
  * Tests the BorderProps class.
  */
-public class BorderPropsTestCase extends TestCase {
+public class BorderPropsTestCase {
 
     /**
      * Test serialization and deserialization to/from String.
      * @throws Exception if an error occurs
      */
+    @Test
     public void testSerialization() throws Exception {
         Color col = new Color(1.0f, 1.0f, 0.5f, 1.0f);
         //Normalize: Avoid false alarms due to color conversion (rounding)
@@ -50,10 +52,10 @@ public class BorderPropsTestCase extends TestCase {
         assertEquals(b1, b2);
 
         float[] cmyk = new float[] {1.0f, 1.0f, 0.5f, 1.0f};
-        DeviceCMYKColorSpace cmykCs = DeviceCMYKColorSpace.getInstance();
-        float[] rgb = cmykCs.toRGB(cmyk);
-        col = ColorExt.createFromFoRgbIcc(rgb[0], rgb[1], rgb[2],
-                "#CMYK", null, cmykCs, cmyk);
+        col = DeviceCMYKColorSpace.createCMYKColor(cmyk);
+        //Convert to sRGB with CMYK alternative as constructed by the cmyk() function
+        float[] rgb = col.getRGBColorComponents(null);
+        col = new ColorWithAlternatives(rgb[0], rgb[1], rgb[2], new Color[] {col});
         b1 = new BorderProps(Constants.EN_INSET, 9999,
                 col, BorderProps.SEPARATE);
         ser = b1.toString();

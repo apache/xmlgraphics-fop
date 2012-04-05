@@ -19,21 +19,23 @@
 
 package org.apache.fop.config;
 
+import static org.junit.Assert.fail;
+
 import java.net.MalformedURLException;
 
-import junit.framework.TestCase;
-
 import org.apache.fop.apps.FOURIResolver;
+import org.junit.Test;
 
 /**
  * This tests some aspects of the {@link FOURIResolver} class.
  */
-public class FOURIResolverTestCase extends TestCase {
+public class FOURIResolverTestCase {
 
     /**
      * Checks the {@link FOURIResolver#checkBaseURL(String)} method.
      * @throws Exception if an error occurs
      */
+    @Test
     public void testCheckBaseURI() throws Exception {
         FOURIResolver resolver = new FOURIResolver(true);
         System.out.println(resolver.checkBaseURL("./test/config"));

@@ -25,8 +25,8 @@ import org.xml.sax.Locator;
 import org.xml.sax.helpers.LocatorImpl;
 
 import org.apache.fop.events.Event;
-import org.apache.fop.events.EventFormatter;
 import org.apache.fop.events.EventExceptionManager.ExceptionFactory;
+import org.apache.fop.events.EventFormatter;
 
 /**
  * Exception thrown by FOP if there is a problem while producing new pages.
@@ -38,6 +38,15 @@ public class PageProductionException extends RuntimeException {
     private String localizedMessage;
     private Locator locator;
 
+
+    /**
+     * Creates a new PageProductionException.
+     * @param message the message
+     */
+    public PageProductionException(String message) {
+        super(message);
+    }
+
     /**
      * Creates a new PageProductionException.
      * @param message the message
@@ -48,12 +57,13 @@ public class PageProductionException extends RuntimeException {
         setLocator(locator);
     }
 
+
     /**
      * Set a location associated with the exception.
      * @param locator the locator holding the location.
      */
     public void setLocator(Locator locator) {
-        this.locator = new LocatorImpl(locator);
+        this.locator = locator != null ? new LocatorImpl(locator) : null;
     }
 
 
@@ -98,7 +108,7 @@ public class PageProductionException extends RuntimeException {
         }
 
         /** {@inheritDoc} */
-        public Class getExceptionClass() {
+        public Class<PageProductionException> getExceptionClass() {
             return PageProductionException.class;
         }
 

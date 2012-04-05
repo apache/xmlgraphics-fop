@@ -19,8 +19,6 @@
 
 package org.apache.fop.pdf;
 
-import org.apache.fop.pdf.PDFDestination;
-
 /**
  * Comparator class to enable comparing (and
  * hence sorting) of PDFDestination objects.

@@ -25,18 +25,6 @@ package org.apache.fop.pdf;
 public interface PDFEncryption {
 
     /**
-     * Returns the encryption parameters.
-     * @return the encryption parameters
-     */
-    PDFEncryptionParams getParams();
-
-    /**
-     * Sets the encryption parameters.
-     * @param params The parameterss to set
-     */
-    void setParams(PDFEncryptionParams params);
-
-    /**
      * Adds a PDFFilter to the PDFStream object
      * @param stream the stream to add an encryption filter to
      */
@@ -52,8 +40,10 @@ public interface PDFEncryption {
     byte[] encrypt(byte[] data, PDFObject refObj);
 
     /**
-     * Returns the trailer entry for encryption.
-     * @return the trailer entry
+     * Returns the /Encrypt entry in the file trailer dictionary.
+     *
+     * @return the string "/Encrypt n g R\n" where n and g are the number and generation
+     * of the document's encryption dictionary
      */
     String getTrailerEntry();
 }

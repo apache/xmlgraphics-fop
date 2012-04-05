@@ -19,6 +19,7 @@
 
 package org.apache.fop.fotreetest;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -29,7 +30,7 @@ public class ResultCollector {
 
     private static ResultCollector instance = null;
 
-    private List results = new java.util.ArrayList();
+    private List<String> results = new ArrayList<String>();
 
     /** @return the ResultCollector singleton */
     public static ResultCollector getInstance() {
@@ -70,7 +71,7 @@ public class ResultCollector {
     }
 
     /** @return the list of results */
-    public List getResults() {
+    public List<String> getResults() {
         return Collections.unmodifiableList(results);
     }
 }

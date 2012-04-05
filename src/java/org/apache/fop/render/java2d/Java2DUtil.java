@@ -19,8 +19,6 @@
 
 package org.apache.fop.render.java2d;
 
-import java.awt.Graphics2D;
-
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fonts.FontCollection;
 import org.apache.fop.fonts.FontEventAdapter;
@@ -44,12 +42,12 @@ public final class Java2DUtil {
      */
     public static FontInfo buildDefaultJava2DBasedFontInfo(
             FontInfo fontInfo, FOUserAgent userAgent) {
-        Graphics2D graphics2D = Java2DFontMetrics.createFontMetricsGraphics2D();
+        Java2DFontMetrics java2DFontMetrics = new Java2DFontMetrics();
 
         FontManager fontManager = userAgent.getFactory().getFontManager();
         FontCollection[] fontCollections = new FontCollection[] {
-                new org.apache.fop.render.java2d.Base14FontCollection(graphics2D),
-                new InstalledFontCollection(graphics2D)
+                new org.apache.fop.render.java2d.Base14FontCollection(java2DFontMetrics),
+                new InstalledFontCollection(java2DFontMetrics)
         };
 
         FontInfo fi = (fontInfo != null ? fontInfo : new FontInfo());

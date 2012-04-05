@@ -34,6 +34,7 @@ import org.apache.xmlgraphics.image.loader.ImageSize;
 import org.apache.xmlgraphics.util.QName;
 import org.apache.xmlgraphics.util.UnitConv;
 
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
 import org.apache.fop.area.BlockViewport;
@@ -44,7 +45,7 @@ import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.InlineArea;
-import org.apache.fop.area.inline.Viewport;
+import org.apache.fop.area.inline.InlineViewport;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fonts.FontMetrics;
@@ -57,6 +58,13 @@ import org.apache.fop.traits.BorderProps;
 public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
 
     /**
+     * @param userAgent the user agent that contains configuration details. This cannot be null.
+     */
+    public AbstractPathOrientedRenderer(FOUserAgent userAgent) {
+        super(userAgent);
+    }
+
+    /**
      * Handle block traits.
      * The block could be any sort of block with any positioning
      * so this should render the traits such as border and background
@@ -65,29 +73,31 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
      * @param block the block to render the traits
      */
     protected void handleBlockTraits(Block block) {
-        int borderPaddingStart = block.getBorderAndPaddingWidthStart();
-        int borderPaddingBefore = block.getBorderAndPaddingWidthBefore();
+        float borderPaddingStart = block.getBorderAndPaddingWidthStart() / 1000f;
+        float borderPaddingEnd = block.getBorderAndPaddingWidthEnd() / 1000f;
+        float borderPaddingBefore = block.getBorderAndPaddingWidthBefore() / 1000f;
+        float borderPaddingAfter = block.getBorderAndPaddingWidthAfter() / 1000f;
 
         float startx = currentIPPosition / 1000f;
         float starty = currentBPPosition / 1000f;
         float width = block.getIPD() / 1000f;
         float height = block.getBPD() / 1000f;
 
-        /* using start-indent now
-        Integer spaceStart = (Integer) block.getTrait(Trait.SPACE_START);
-        if (spaceStart != null) {
-            startx += spaceStart.floatValue() / 1000f;
-        }*/
-        startx += block.getStartIndent() / 1000f;
-        startx -= block.getBorderAndPaddingWidthStart() / 1000f;
+        int level = block.getBidiLevel();
+        if ( ( level == -1 ) || ( ( level & 1 ) == 0 ) ) {
+            startx += block.getStartIndent() / 1000f;
+            startx -= borderPaddingStart;
+        } else {
+            startx += block.getEndIndent() / 1000f;
+            startx -= borderPaddingEnd;
+        }
 
-        width += borderPaddingStart / 1000f;
-        width += block.getBorderAndPaddingWidthEnd() / 1000f;
-        height += borderPaddingBefore / 1000f;
-        height += block.getBorderAndPaddingWidthAfter() / 1000f;
+        width += borderPaddingStart;
+        width += borderPaddingEnd;
+        height += borderPaddingBefore;
+        height += borderPaddingAfter;
 
-        drawBackAndBorders(block, startx, starty,
-            width, height);
+        drawBackAndBorders(block, startx, starty, width, height);
     }
 
     /**
@@ -106,7 +116,12 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
 
         // adjust the current position according to region borders and padding
         currentBPPosition = referenceArea.getBorderAndPaddingWidthBefore();
-        currentIPPosition = referenceArea.getBorderAndPaddingWidthStart();
+        int level = region.getBidiLevel();
+        if ( ( level == -1 ) || ( ( level & 1 ) == 0 ) ) {
+            currentIPPosition = referenceArea.getBorderAndPaddingWidthStart();
+        } else {
+            currentIPPosition = referenceArea.getBorderAndPaddingWidthEnd();
+        }
         // draw background (traits are in the RegionViewport)
         // and borders (traits are in the RegionReference)
         drawBackAndBorders(region, referenceArea, startx, starty, width, height);
@@ -153,9 +168,9 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
 
         drawBackground(startx, starty, width, height,
                 (Trait.Background) backgroundArea.getTrait(Trait.BACKGROUND),
-                bpsBefore, bpsAfter, bpsStart, bpsEnd);
+                    bpsBefore, bpsAfter, bpsStart, bpsEnd, backgroundArea.getBidiLevel());
         drawBorders(startx, starty, width, height,
-                bpsBefore, bpsAfter, bpsStart, bpsEnd);
+                    bpsBefore, bpsAfter, bpsStart, bpsEnd, borderArea.getBidiLevel());
     }
 
     /**
@@ -171,11 +186,44 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
      * @param bpsAfter the border-after traits
      * @param bpsStart the border-start traits
      * @param bpsEnd the border-end traits
+     * @param level of bidirectional embedding
      */
     protected void drawBackground(                               // CSOK: ParameterNumber
             float startx, float starty, float width, float height, Trait.Background back,
             BorderProps bpsBefore, BorderProps bpsAfter,
-            BorderProps bpsStart, BorderProps bpsEnd) {
+            BorderProps bpsStart, BorderProps bpsEnd, int level) {
+        BorderProps bpsTop = bpsBefore;
+        BorderProps bpsBottom = bpsAfter;
+        BorderProps bpsLeft;
+        BorderProps bpsRight;
+        if ( ( level == -1 ) || ( ( level & 1 ) == 0 ) ) {
+            bpsLeft = bpsStart;
+            bpsRight = bpsEnd;
+        } else {
+            bpsLeft = bpsEnd;
+            bpsRight = bpsStart;
+        }
+        drawBackground(startx, starty, width, height, back, bpsTop, bpsBottom, bpsLeft, bpsRight);
+    }
+
+    /**
+     * Draw the background.
+     * This draws the background given the position and the traits.
+     *
+     * @param startx the start x position
+     * @param starty the start y position
+     * @param width the width of the area
+     * @param height the height of the area
+     * @param back the background traits
+     * @param bpsTop the border specification on the top edge
+     * @param bpsBottom the border traits associated with bottom edge
+     * @param bpsLeft the border specification on the left edge
+     * @param bpsRight the border specification on the right edge
+     */
+    protected void drawBackground(                               // CSOK: ParameterNumber
+            float startx, float starty, float width, float height, Trait.Background back,
+            BorderProps bpsTop, BorderProps bpsBottom,
+            BorderProps bpsLeft, BorderProps bpsRight) {
         if (back != null) {
             endTextObject();
 
@@ -184,19 +232,19 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
             float sy = starty;
             float paddRectWidth = width;
             float paddRectHeight = height;
-            if (bpsStart != null) {
-                sx += bpsStart.width / 1000f;
-                paddRectWidth -= bpsStart.width / 1000f;
+            if (bpsLeft != null) {
+                sx += bpsLeft.width / 1000f;
+                paddRectWidth -= bpsLeft.width / 1000f;
             }
-            if (bpsBefore != null) {
-                sy += bpsBefore.width / 1000f;
-                paddRectHeight -= bpsBefore.width / 1000f;
+            if (bpsTop != null) {
+                sy += bpsTop.width / 1000f;
+                paddRectHeight -= bpsTop.width / 1000f;
             }
-            if (bpsEnd != null) {
-                paddRectWidth -= bpsEnd.width / 1000f;
+            if (bpsRight != null) {
+                paddRectWidth -= bpsRight.width / 1000f;
             }
-            if (bpsAfter != null) {
-                paddRectHeight -= bpsAfter.width / 1000f;
+            if (bpsBottom != null) {
+                paddRectHeight -= bpsBottom.width / 1000f;
             }
 
             if (back.getColor() != null) {
@@ -256,86 +304,99 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
      * @param starty the start y position
      * @param width the width of the area
      * @param height the height of the area
-     * @param bpsBefore the border-before traits
-     * @param bpsAfter the border-after traits
-     * @param bpsStart the border-start traits
-     * @param bpsEnd the border-end traits
+     * @param bpsBefore the border traits associated with before edge
+     * @param bpsAfter the border traits associated with after edge
+     * @param bpsStart the border traits associated with start edge
+     * @param bpsEnd the border traits associated with end edge
+     * @param level of bidirectional embedding
      */
     protected void drawBorders(                                  // CSOK: ParameterNumber
             float startx, float starty, float width, float height,
             BorderProps bpsBefore, BorderProps bpsAfter,
-            BorderProps bpsStart, BorderProps bpsEnd) {
+            BorderProps bpsStart, BorderProps bpsEnd, int level) {
         Rectangle2D.Float borderRect = new Rectangle2D.Float(startx, starty, width, height);
-        drawBorders(borderRect, bpsBefore, bpsAfter, bpsStart, bpsEnd);
+        BorderProps bpsTop = bpsBefore;
+        BorderProps bpsBottom = bpsAfter;
+        BorderProps bpsLeft;
+        BorderProps bpsRight;
+        if ( ( level == -1 ) || ( ( level & 1 ) == 0 ) ) {
+            bpsLeft = bpsStart;
+            bpsRight = bpsEnd;
+        } else {
+            bpsLeft = bpsEnd;
+            bpsRight = bpsStart;
+        }
+        drawBorders(borderRect, bpsTop, bpsBottom, bpsLeft, bpsRight);
     }
 
-    private static final int BEFORE = 0;
-    private static final int END = 1;
-    private static final int AFTER = 2;
-    private static final int START = 3;
+    private static final int TOP = 0;
+    private static final int RIGHT = 1;
+    private static final int BOTTOM = 2;
+    private static final int LEFT = 3;
 
     /**
      * Draws borders.
      * @param borderRect the border rectangle
-     * @param bpsBefore the border specification on the before side
-     * @param bpsAfter the border specification on the after side
-     * @param bpsStart the border specification on the start side
-     * @param bpsEnd the border specification on the end side
+     * @param bpsTop the border specification on the top edge
+     * @param bpsBottom the border traits associated with bottom edge
+     * @param bpsLeft the border specification on the left edge
+     * @param bpsRight the border specification on the right edge
      */
     protected void drawBorders(                                  // CSOK: MethodLength
             Rectangle2D.Float borderRect,
-            BorderProps bpsBefore, BorderProps bpsAfter, BorderProps bpsStart, BorderProps bpsEnd) {
+            BorderProps bpsTop, BorderProps bpsBottom, BorderProps bpsLeft, BorderProps bpsRight) {
         //TODO generalize each of the four conditions into using a parameterized drawBorder()
         boolean[] border = new boolean[] {
-                (bpsBefore != null), (bpsEnd != null),
-                (bpsAfter != null), (bpsStart != null)};
+                (bpsTop != null), (bpsRight != null),
+                (bpsBottom != null), (bpsLeft != null)};
         float startx = borderRect.x;
         float starty = borderRect.y;
         float width = borderRect.width;
         float height = borderRect.height;
         float[] borderWidth = new float[] {
-            (border[BEFORE] ? bpsBefore.width / 1000f : 0.0f),
-            (border[END] ? bpsEnd.width / 1000f : 0.0f),
-            (border[AFTER] ? bpsAfter.width / 1000f : 0.0f),
-            (border[START] ? bpsStart.width / 1000f : 0.0f)};
+            (border[TOP] ? bpsTop.width / 1000f : 0.0f),
+            (border[RIGHT] ? bpsRight.width / 1000f : 0.0f),
+            (border[BOTTOM] ? bpsBottom.width / 1000f : 0.0f),
+            (border[LEFT] ? bpsLeft.width / 1000f : 0.0f)};
         float[] clipw = new float[] {
-            BorderProps.getClippedWidth(bpsBefore) / 1000f,
-            BorderProps.getClippedWidth(bpsEnd) / 1000f,
-            BorderProps.getClippedWidth(bpsAfter) / 1000f,
-            BorderProps.getClippedWidth(bpsStart) / 1000f};
-        starty += clipw[BEFORE];
-        height -= clipw[BEFORE];
-        height -= clipw[AFTER];
-        startx += clipw[START];
-        width -= clipw[START];
-        width -= clipw[END];
+            BorderProps.getClippedWidth(bpsTop) / 1000f,
+            BorderProps.getClippedWidth(bpsRight) / 1000f,
+            BorderProps.getClippedWidth(bpsBottom) / 1000f,
+            BorderProps.getClippedWidth(bpsLeft) / 1000f};
+
+        starty += clipw[TOP];
+        height -= clipw[TOP];
+        height -= clipw[BOTTOM];
+        startx += clipw[LEFT];
+        width -= clipw[LEFT];
+        width -= clipw[RIGHT];
 
         boolean[] slant = new boolean[] {
-            (border[START] && border[BEFORE]),
-            (border[BEFORE] && border[END]),
-            (border[END] && border[AFTER]),
-            (border[AFTER] && border[START])};
-        if (bpsBefore != null) {
+            (border[LEFT] && border[TOP]),
+            (border[TOP] && border[RIGHT]),
+            (border[RIGHT] && border[BOTTOM]),
+            (border[BOTTOM] && border[LEFT])};
+        if (bpsTop != null) {
             endTextObject();
 
             float sx1 = startx;
-            float sx2 = (slant[BEFORE] ? sx1 + borderWidth[START] - clipw[START] : sx1);
+            float sx2 = (slant[TOP] ? sx1 + borderWidth[LEFT] - clipw[LEFT] : sx1);
             float ex1 = startx + width;
-            float ex2 = (slant[END] ? ex1 - borderWidth[END] + clipw[END] : ex1);
-            float outery = starty - clipw[BEFORE];
-            float clipy = outery + clipw[BEFORE];
-            float innery = outery + borderWidth[BEFORE];
+            float ex2 = (slant[RIGHT] ? ex1 - borderWidth[RIGHT] + clipw[RIGHT] : ex1);
+            float outery = starty - clipw[TOP];
+            float clipy = outery + clipw[TOP];
+            float innery = outery + borderWidth[TOP];
 
             saveGraphicsState();
             moveTo(sx1, clipy);
             float sx1a = sx1;
             float ex1a = ex1;
-            if (bpsBefore.mode == BorderProps.COLLAPSE_OUTER) {
-                if (bpsStart != null && bpsStart.mode == BorderProps.COLLAPSE_OUTER) {
-                    sx1a -= clipw[START];
+            if (bpsTop.mode == BorderProps.COLLAPSE_OUTER) {
+                if (bpsLeft != null && bpsLeft.mode == BorderProps.COLLAPSE_OUTER) {
+                    sx1a -= clipw[LEFT];
                 }
-                if (bpsEnd != null && bpsEnd.mode == BorderProps.COLLAPSE_OUTER) {
-                    ex1a += clipw[END];
+                if (bpsRight != null && bpsRight.mode == BorderProps.COLLAPSE_OUTER) {
+                    ex1a += clipw[RIGHT];
                 }
                 lineTo(sx1a, outery);
                 lineTo(ex1a, outery);
@@ -346,30 +407,30 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
             closePath();
             clip();
             drawBorderLine(sx1a, outery, ex1a, innery, true, true,
-                    bpsBefore.style, bpsBefore.color);
+                    bpsTop.style, bpsTop.color);
             restoreGraphicsState();
         }
-        if (bpsEnd != null) {
+        if (bpsRight != null) {
             endTextObject();
 
             float sy1 = starty;
-            float sy2 = (slant[END] ? sy1 + borderWidth[BEFORE] - clipw[BEFORE] : sy1);
+            float sy2 = (slant[RIGHT] ? sy1 + borderWidth[TOP] - clipw[TOP] : sy1);
             float ey1 = starty + height;
-            float ey2 = (slant[AFTER] ? ey1 - borderWidth[AFTER] + clipw[AFTER] : ey1);
-            float outerx = startx + width + clipw[END];
-            float clipx = outerx - clipw[END];
-            float innerx = outerx - borderWidth[END];
+            float ey2 = (slant[BOTTOM] ? ey1 - borderWidth[BOTTOM] + clipw[BOTTOM] : ey1);
+            float outerx = startx + width + clipw[RIGHT];
+            float clipx = outerx - clipw[RIGHT];
+            float innerx = outerx - borderWidth[RIGHT];
 
             saveGraphicsState();
             moveTo(clipx, sy1);
             float sy1a = sy1;
             float ey1a = ey1;
-            if (bpsEnd.mode == BorderProps.COLLAPSE_OUTER) {
-                if (bpsBefore != null && bpsBefore.mode == BorderProps.COLLAPSE_OUTER) {
-                    sy1a -= clipw[BEFORE];
+            if (bpsRight.mode == BorderProps.COLLAPSE_OUTER) {
+                if (bpsTop != null && bpsTop.mode == BorderProps.COLLAPSE_OUTER) {
+                    sy1a -= clipw[TOP];
                 }
-                if (bpsAfter != null && bpsAfter.mode == BorderProps.COLLAPSE_OUTER) {
-                    ey1a += clipw[AFTER];
+                if (bpsBottom != null && bpsBottom.mode == BorderProps.COLLAPSE_OUTER) {
+                    ey1a += clipw[BOTTOM];
                 }
                 lineTo(outerx, sy1a);
                 lineTo(outerx, ey1a);
@@ -379,30 +440,31 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
             lineTo(innerx, sy2);
             closePath();
             clip();
-            drawBorderLine(innerx, sy1a, outerx, ey1a, false, false, bpsEnd.style, bpsEnd.color);
+            drawBorderLine(innerx, sy1a, outerx, ey1a, false, false,
+                           bpsRight.style, bpsRight.color);
             restoreGraphicsState();
         }
-        if (bpsAfter != null) {
+        if (bpsBottom != null) {
             endTextObject();
 
             float sx1 = startx;
-            float sx2 = (slant[START] ? sx1 + borderWidth[START] - clipw[START] : sx1);
+            float sx2 = (slant[LEFT] ? sx1 + borderWidth[LEFT] - clipw[LEFT] : sx1);
             float ex1 = startx + width;
-            float ex2 = (slant[AFTER] ? ex1 - borderWidth[END] + clipw[END] : ex1);
-            float outery = starty + height + clipw[AFTER];
-            float clipy = outery - clipw[AFTER];
-            float innery = outery - borderWidth[AFTER];
+            float ex2 = (slant[BOTTOM] ? ex1 - borderWidth[RIGHT] + clipw[RIGHT] : ex1);
+            float outery = starty + height + clipw[BOTTOM];
+            float clipy = outery - clipw[BOTTOM];
+            float innery = outery - borderWidth[BOTTOM];
 
             saveGraphicsState();
             moveTo(ex1, clipy);
             float sx1a = sx1;
             float ex1a = ex1;
-            if (bpsAfter.mode == BorderProps.COLLAPSE_OUTER) {
-                if (bpsStart != null && bpsStart.mode == BorderProps.COLLAPSE_OUTER) {
-                    sx1a -= clipw[START];
+            if (bpsBottom.mode == BorderProps.COLLAPSE_OUTER) {
+                if (bpsLeft != null && bpsLeft.mode == BorderProps.COLLAPSE_OUTER) {
+                    sx1a -= clipw[LEFT];
                 }
-                if (bpsEnd != null && bpsEnd.mode == BorderProps.COLLAPSE_OUTER) {
-                    ex1a += clipw[END];
+                if (bpsRight != null && bpsRight.mode == BorderProps.COLLAPSE_OUTER) {
+                    ex1a += clipw[RIGHT];
                 }
                 lineTo(ex1a, outery);
                 lineTo(sx1a, outery);
@@ -412,30 +474,31 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
             lineTo(ex2, innery);
             closePath();
             clip();
-            drawBorderLine(sx1a, innery, ex1a, outery, true, false, bpsAfter.style, bpsAfter.color);
+            drawBorderLine(sx1a, innery, ex1a, outery, true, false,
+                           bpsBottom.style, bpsBottom.color);
             restoreGraphicsState();
         }
-        if (bpsStart != null) {
+        if (bpsLeft != null) {
             endTextObject();
 
             float sy1 = starty;
-            float sy2 = (slant[BEFORE] ? sy1 + borderWidth[BEFORE] - clipw[BEFORE] : sy1);
+            float sy2 = (slant[TOP] ? sy1 + borderWidth[TOP] - clipw[TOP] : sy1);
             float ey1 = sy1 + height;
-            float ey2 = (slant[START] ? ey1 - borderWidth[AFTER] + clipw[AFTER] : ey1);
-            float outerx = startx - clipw[START];
-            float clipx = outerx + clipw[START];
-            float innerx = outerx + borderWidth[START];
+            float ey2 = (slant[LEFT] ? ey1 - borderWidth[BOTTOM] + clipw[BOTTOM] : ey1);
+            float outerx = startx - clipw[LEFT];
+            float clipx = outerx + clipw[LEFT];
+            float innerx = outerx + borderWidth[LEFT];
 
             saveGraphicsState();
             moveTo(clipx, ey1);
             float sy1a = sy1;
             float ey1a = ey1;
-            if (bpsStart.mode == BorderProps.COLLAPSE_OUTER) {
-                if (bpsBefore != null && bpsBefore.mode == BorderProps.COLLAPSE_OUTER) {
-                    sy1a -= clipw[BEFORE];
+            if (bpsLeft.mode == BorderProps.COLLAPSE_OUTER) {
+                if (bpsTop != null && bpsTop.mode == BorderProps.COLLAPSE_OUTER) {
+                    sy1a -= clipw[TOP];
                 }
-                if (bpsAfter != null && bpsAfter.mode == BorderProps.COLLAPSE_OUTER) {
-                    ey1a += clipw[AFTER];
+                if (bpsBottom != null && bpsBottom.mode == BorderProps.COLLAPSE_OUTER) {
+                    ey1a += clipw[BOTTOM];
                 }
                 lineTo(outerx, ey1a);
                 lineTo(outerx, sy1a);
@@ -445,7 +508,7 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
             lineTo(innerx, ey2);
             closePath();
             clip();
-            drawBorderLine(outerx, sy1a, innerx, ey1a, false, true, bpsStart.style, bpsStart.color);
+            drawBorderLine(outerx, sy1a, innerx, ey1a, false, true, bpsLeft.style, bpsLeft.color);
             restoreGraphicsState();
         }
     }
@@ -458,16 +521,16 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
      */
     protected void renderInlineAreaBackAndBorders(InlineArea area) {
         float borderPaddingStart = area.getBorderAndPaddingWidthStart() / 1000f;
+        float borderPaddingEnd = area.getBorderAndPaddingWidthEnd() / 1000f;
         float borderPaddingBefore = area.getBorderAndPaddingWidthBefore() / 1000f;
-        float bpwidth = borderPaddingStart
-                + (area.getBorderAndPaddingWidthEnd() / 1000f);
-        float bpheight = borderPaddingBefore
-                + (area.getBorderAndPaddingWidthAfter() / 1000f);
+        float borderPaddingAfter = area.getBorderAndPaddingWidthAfter() / 1000f;
+        float bpwidth = borderPaddingStart + borderPaddingEnd;
+        float bpheight = borderPaddingBefore + borderPaddingAfter;
 
         float height = area.getBPD() / 1000f;
         if (height != 0.0f || bpheight != 0.0f && bpwidth != 0.0f) {
             float x = currentIPPosition / 1000f;
-            float y = (currentBPPosition + area.getOffset()) / 1000f;
+            float y = (currentBPPosition + area.getBlockProgressionOffset()) / 1000f;
             float width = area.getIPD() / 1000f;
             drawBackAndBorders(area, x, y - borderPaddingBefore
                                 , width + bpwidth
@@ -504,10 +567,16 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
             AffineTransform positionTransform = new AffineTransform();
             positionTransform.translate(bv.getXOffset(), bv.getYOffset());
 
+            int level = bv.getBidiLevel();
             int borderPaddingStart = bv.getBorderAndPaddingWidthStart();
+            int borderPaddingEnd = bv.getBorderAndPaddingWidthEnd();
 
             //"left/"top" (bv.getX/YOffset()) specify the position of the content rectangle
-            positionTransform.translate(-borderPaddingStart, -borderPaddingBefore);
+            if ( ( level == -1 ) || ( ( level & 1 ) == 0 ) ) {
+                positionTransform.translate(-borderPaddingStart, -borderPaddingBefore);
+            } else {
+                positionTransform.translate(-borderPaddingEnd, -borderPaddingBefore);
+            }
 
             //Free transformation for the block-container viewport
             String transf;
@@ -528,21 +597,25 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
 
             //Background and borders
             float borderPaddingWidth
-                = (borderPaddingStart + bv.getBorderAndPaddingWidthEnd()) / 1000f;
+                = (borderPaddingStart + borderPaddingEnd) / 1000f;
             float borderPaddingHeight
                 = (borderPaddingBefore + bv.getBorderAndPaddingWidthAfter()) / 1000f;
             drawBackAndBorders(bv, 0, 0, width + borderPaddingWidth, height + borderPaddingHeight);
 
             //Shift to content rectangle after border painting
             AffineTransform contentRectTransform = new AffineTransform();
-            contentRectTransform.translate(borderPaddingStart, borderPaddingBefore);
+            if ( ( level == -1 ) || ( ( level & 1 ) == 0 ) ) {
+                contentRectTransform.translate(borderPaddingStart, borderPaddingBefore);
+            } else {
+                contentRectTransform.translate(borderPaddingEnd, borderPaddingBefore);
+            }
 
             if (!contentRectTransform.isIdentity()) {
                 establishTransformationMatrix(contentRectTransform);
             }
 
             //Clipping
-            if (bv.getClip()) {
+            if (bv.hasClip()) {
                 clipRect(0f, 0f, width, height);
             }
 
@@ -593,8 +666,8 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
             //Now adjust for border/padding
             currentBPPosition += borderPaddingBefore;
 
-            Rectangle2D clippingRect = null;
-            if (bv.getClip()) {
+            Rectangle clippingRect = null;
+            if (bv.hasClip()) {
                 clippingRect = new Rectangle(currentIPPosition, currentBPPosition,
                         bv.getIPD(), bv.getBPD());
             }
@@ -685,30 +758,33 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
      * This renders an inline viewport by clipping if necessary.
      * @param viewport the viewport to handle
      */
-    public void renderViewport(Viewport viewport) {
-
+    public void renderInlineViewport(InlineViewport viewport) {
+        int level = viewport.getBidiLevel();
         float x = currentIPPosition / 1000f;
-        float y = (currentBPPosition + viewport.getOffset()) / 1000f;
+        float y = (currentBPPosition + viewport.getBlockProgressionOffset()) / 1000f;
         float width = viewport.getIPD() / 1000f;
         float height = viewport.getBPD() / 1000f;
         // TODO: Calculate the border rect correctly.
         float borderPaddingStart = viewport.getBorderAndPaddingWidthStart() / 1000f;
+        float borderPaddingEnd = viewport.getBorderAndPaddingWidthEnd() / 1000f;
         float borderPaddingBefore = viewport.getBorderAndPaddingWidthBefore() / 1000f;
-        float bpwidth = borderPaddingStart
-                + (viewport.getBorderAndPaddingWidthEnd() / 1000f);
-        float bpheight = borderPaddingBefore
-                + (viewport.getBorderAndPaddingWidthAfter() / 1000f);
+        float borderPaddingAfter = viewport.getBorderAndPaddingWidthAfter() / 1000f;
+        float bpwidth = borderPaddingStart + borderPaddingEnd;
+        float bpheight = borderPaddingBefore + borderPaddingAfter;
 
         drawBackAndBorders(viewport, x, y, width + bpwidth, height + bpheight);
 
-        if (viewport.getClip()) {
+        if (viewport.hasClip()) {
             saveGraphicsState();
-
-            clipRect(x + borderPaddingStart, y + borderPaddingBefore, width, height);
+            if ( ( level == -1 ) || ( ( level & 1 ) == 0 ) ) {
+                clipRect(x + borderPaddingStart, y + borderPaddingBefore, width, height);
+            } else {
+                clipRect(x + borderPaddingEnd, y + borderPaddingBefore, width, height);
+            }
         }
-        super.renderViewport(viewport);
+        super.renderInlineViewport(viewport);
 
-        if (viewport.getClip()) {
+        if (viewport.hasClip()) {
             restoreGraphicsState();
         }
     }

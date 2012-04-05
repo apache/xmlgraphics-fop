@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -31,6 +31,7 @@
     <license label="License" href="license.html"/>
     <asf-sponsorship label="ASF Sponsorship Program" href="http://www.apache.org/foundation/sponsorship.html"/>"
     <asf-thanks label="ASF Thanks" href="http://www.apache.org/foundation/thanks.html"/>"
+	<asf-security label="Security" href="http://www.apache.org/security/"/>
     <!--
     <all_site label="Full HTML" href="wholesite.html"/>
     <all_sitePDF label="Full PDF" href="wholesite.pdf"/>
@@ -60,7 +61,7 @@
   <!--
   BEGIN Version 0.95 documentation tab
   -->
-  <trunk label="FOP 0.95" href="0.95/" tab="previousversion">
+  <trunk label="Apache™ FOP 0.95" href="0.95/" tab="previousversion">
     <about label="About" href="index.html"/>
     <release label="Release Notes" href="releaseNotes_0.95.html"/>
     <changes label="Changes (0.95)" href="changes_0.95.html"/>
@@ -68,7 +69,7 @@
     <knownissues label="Known Issues" href="knownissues_overview.html"/>
     <upgrading label="Upgrading" href="upgrading.html"/>
     
-    <using label="Using FOP">
+    <using label="Using Apache™ FOP">
       <build label="Build" href="compiling.html"/>
       <config label="Configure" href="configuration.html"/>
       <run label="Run" href="running.html"/>
@@ -98,14 +99,14 @@
   <!--
   BEGIN Version 1.0 documentation tab
   -->
-  <trunk label="FOP 1.0" href="1.0/" tab="stableversion">
+  <trunk label="Apache™ FOP 1.0" href="1.0/" tab="stableversion">
     <about label="About" href="index.html"/>
     <release label="Release Notes" href="releaseNotes_1.0.html"/>
     <changes label="Changes (1.0)" href="changes_1.0.html"/>
     <knownissues label="Known Issues" href="knownissues_overview.html"/>
     <upgrading label="Upgrading" href="upgrading.html"/>
     
-    <using label="Using FOP">
+    <using label="Using Apache™ FOP">
       <build label="Build" href="compiling.html"/>
       <config label="Configure" href="configuration.html"/>
       <run label="Run" href="running.html"/>
@@ -137,11 +138,11 @@
   <!--
   BEGIN Trunk documentation tab
   -->
-  <trunk label="FOP Trunk (dev)" href="trunk/" tab="develversion">
+  <trunk label="Apache™ FOP Trunk (dev)" href="trunk/" tab="develversion">
     <about label="About" href="index.html"/>
     <upgrading label="Upgrading" href="upgrading.html"/>
     
-    <using label="Using FOP">
+    <using label="Using Apache™ FOP">
       <build label="Build" href="compiling.html"/>
       <config label="Configure" href="configuration.html"/>
       <run label="Run" href="running.html"/>
@@ -211,7 +212,6 @@
   </design>
 
   <develop label="Develop" href="dev/" tab="development">
-    <api-doc label="API Doc" href="api-doc.html"/>
     <walkthru label="Walk-Thru" href="implement.html" tab="development"/>
     <patch label="Patch Queue" href="http://issues.apache.org/bugzilla/buglist.cgi?bug_status=NEW&amp;bug_status=ASSIGNED&amp;bug_status=REOPENED&amp;email1=&amp;emailtype1=substring&amp;emailassigned_to1=1&amp;email2=&amp;emailtype2=substring&amp;emailreporter2=1&amp;bugidtype=include&amp;bug_id=&amp;changedin=&amp;votes=&amp;chfieldfrom=&amp;chfieldto=Now&amp;chfieldvalue=&amp;product=Fop&amp;short_desc=%5BPATCH%5D&amp;short_desc_type=allwordssubstr&amp;long_desc=&amp;long_desc_type=allwordssubstr&amp;bug_file_loc=&amp;bug_file_loc_type=allwordssubstr&amp;keywords=&amp;keywords_type=anywords&amp;field0-0-0=noop&amp;type0-0-0=noop&amp;value0-0-0=&amp;namedcmd=Fop+all&amp;newqueryname=fop+patch+queue&amp;tofooter=1&amp;order=Reuse+same+sort+as+last+time" tab="development"/>
     <conventions label="Conventions" href="conventions.html" tab="development"/>

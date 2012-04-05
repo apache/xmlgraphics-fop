@@ -19,25 +19,24 @@
 
 package org.apache.fop.render.pdf;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.StringTokenizer;
 
 import org.apache.fop.apps.FOUserAgent;
+import org.junit.Ignore;
+import org.junit.Test;
 
 /** Test that characters are correctly encoded in a generated PDF file */
-public class PDFEncodingTestCase extends BasePDFTestCase {
+public class PDFEncodingTestCase extends BasePDFTest {
     private File foBaseDir = new File("test/xml/pdf-encoding");
     private final boolean dumpPDF = Boolean.getBoolean("PDFEncodingTestCase.dumpPDF");
     static final String INPUT_FILE = "test/xml/pdf-encoding/pdf-encoding-test.xconf";
     static final String TEST_MARKER = "PDFE_TEST_MARK_";
 
-    /**
-     * @param name the name of the test case
-     */
-    public PDFEncodingTestCase(String name) {
-        super(name);
-    }
 
     /**
      * create an FOUserAgent for our tests
@@ -57,6 +56,7 @@ public class PDFEncodingTestCase extends BasePDFTestCase {
      * Test using a standard FOP font
      * @throws Exception checkstyle wants a comment here, even a silly one
      */
+    @Test
     public void testPDFEncodingWithStandardFont() throws Exception {
 
         /*  If the PDF encoding is correct, a text dump of the generated PDF file contains this (excerpts)
@@ -82,7 +82,10 @@ public class PDFEncodingTestCase extends BasePDFTestCase {
      * @throws Exception
      *             checkstyle wants a comment here, even a silly one
      */
-    public void DISABLEDtestPDFEncodingWithCustomFont() throws Exception {
+    @Ignore("This should be tested using PDFBox. If PDFBox can extract the text correctly,"
+            + "everything is fine. The tests here are too unstable.")
+    @Test
+    public void testPDFEncodingWithCustomFont() throws Exception {
 
         /*  If the PDF encoding is correct, a text dump of the generated PDF file contains this (excerpts)
          *     ...Tm [(PDFE_TEST_MARK_2:) ( ) (This) ( ) (is) ...(acute:) ( ) (XX_\351_XX) ] TJ

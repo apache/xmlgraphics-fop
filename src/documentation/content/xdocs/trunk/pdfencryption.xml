@@ -1,4 +1,4 @@
-<?xml version="1.0" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -19,7 +19,7 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
 <document>
   <header>
-    <title>PDF encryption.</title>
+    <title>Apache™ FOP: PDF encryption.</title>
     <version>$Revision$</version>
     <authors>
       <person name="J.Pietschmann" email="pietsch@apache.org"/>
@@ -30,7 +30,7 @@
     <section>
       <title>Overview</title>
       <p>
-        FOP supports encryption of PDF output, thanks to Patrick
+        Apache™ FOP supports encryption of PDF output, thanks to Patrick
         C. Lankswert. This feature is commonly used to prevent
         unauthorized viewing, printing, editing, copying text from the
         document and doing annotations. It is also possible to ask the
@@ -69,10 +69,45 @@
         supplied, viewing the content is not restricted.
       </p>
       <p>
-        Further restrictions can be imposed by using the <code>-noprint</code>,
-        <code>-nocopy</code>, <code>-noedit</code> and
-        <code>-noannotations</code> options, which disable printing, copying
-        text, editing in Adobe Acrobat and making annotations, respectively.
+        Further restrictions can be imposed by using the following command-line options:
+        <table>
+          <tr>
+            <th>Option</th>
+            <th>Description</th>
+          </tr>
+          <tr>
+            <td><code>-noprint</code></td>
+            <td>disable printing</td>
+          </tr>
+          <tr>
+            <td><code>-nocopy</code></td>
+            <td>disable copy/paste of content</td>
+          </tr>
+          <tr>
+            <td><code>-noedit</code></td>
+            <td>disable editing in Adobe Acrobat</td>
+          </tr>
+          <tr>
+            <td><code>-noannotations</code></td>
+            <td>disable editing of annotations</td>
+          </tr>
+          <tr>
+            <td><code>-nofillinforms</code></td>
+            <td>disable filling in forms</td>
+          </tr>
+          <tr>
+            <td><code>-noaccesscontent</code></td>
+            <td>disable text and graphics extraction for accessibility purposes</td>
+          </tr>
+          <tr>
+            <td><code>-noassembledoc</code></td>
+            <td>disable assembling documents</td>
+          </tr>
+          <tr>
+            <td><code>-noprinthq</code></td>
+            <td>disable high quality printing</td>
+          </tr>
+        </table>
       </p>
     </section>
     <section>
@@ -87,6 +122,12 @@
           <th>Description</th>
           <th>Values</th>
           <th>Default</th>
+        </tr>
+        <tr>
+          <td>encryption-length</td>
+          <td>The encryption length in bit</td>
+          <td>Any multiple of 8 between 40 and 128</td>
+          <td>40</td>
         </tr>
         <tr>
           <td>ownerPassword</td>
@@ -114,13 +155,37 @@
         </tr>
         <tr>
           <td>allowEditContent</td>
-          <td>Allows/disallows editing of content</td>
+          <td>Allows/disallows editing in Adobe Acrobat</td>
           <td>"TRUE" or "FALSE"</td>
           <td>"TRUE"</td>
         </tr>
         <tr>
           <td>allowEditAnnotations</td>
           <td>Allows/disallows editing of annotations</td>
+          <td>"TRUE" or "FALSE"</td>
+          <td>"TRUE"</td>
+        </tr>
+        <tr>
+          <td>allowFillInForms</td>
+          <td>Allows/disallows filling in forms</td>
+          <td>"TRUE" or "FALSE"</td>
+          <td>"TRUE"</td>
+        </tr>
+        <tr>
+          <td>allowAccessContent</td>
+          <td>Allows/disallows text and graphics extraction for accessibility purposes</td>
+          <td>"TRUE" or "FALSE"</td>
+          <td>"TRUE"</td>
+        </tr>
+        <tr>
+          <td>allowAssembleDocument</td>
+          <td>Allows/disallows assembling document</td>
+          <td>"TRUE" or "FALSE"</td>
+          <td>"TRUE"</td>
+        </tr>
+        <tr>
+          <td>allowPrintHq</td>
+          <td>Allows/disallows high quality printing</td>
           <td>"TRUE" or "FALSE"</td>
           <td>"TRUE"</td>
         </tr>
@@ -151,6 +216,10 @@ Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, userAgent);
         <li>allowCopyContent: true if copying content is allowed</li>
         <li>allowEditContent: true if editing content is allowed</li>
         <li>allowEditAnnotations: true if editing annotations is allowed</li>
+        <li>allowFillInForms: true if filling in forms is allowed.</li>
+        <li>allowAccessContent: true if extracting text and graphics is allowed</li>
+        <li>allowAssembleDocument: true if assembling document is allowed</li>
+        <li>allowPrintHq: true if printing to high quality is allowed</li>
       </ol>
       <p>
         Alternatively, you can set each value separately in the Map provided by 
@@ -163,6 +232,10 @@ Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, userAgent);
         <li>nocopy: Boolean or "true"/"false"</li>
         <li>noedit: Boolean or "true"/"false"</li>
         <li>noannotations: Boolean or "true"/"false"</li>
+        <li>nofillinforms: Boolean or "true"/"false"</li>
+        <li>noaccesscontent: Boolean or "true"/"false"</li>
+        <li>noassembledoc: Boolean or "true"/"false"</li>
+        <li>noprinthq: Boolean or "true"/"false"</li>
       </ol>
     </section>
     <section>

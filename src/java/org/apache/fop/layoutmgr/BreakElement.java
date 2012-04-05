@@ -21,8 +21,6 @@ package org.apache.fop.layoutmgr;
 
 import java.util.List;
 
-import org.apache.fop.fo.Constants;
-
 /**
  * This class represents an unresolved break possibility.
  */

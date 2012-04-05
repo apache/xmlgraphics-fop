@@ -32,6 +32,7 @@ import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.InlineBlockParent;
 import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.datatypes.Length;
+import org.apache.fop.fo.flow.BasicLink;
 import org.apache.fop.fo.flow.Inline;
 import org.apache.fop.fo.flow.InlineLevel;
 import org.apache.fop.fo.flow.Leader;
@@ -77,8 +78,6 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
     private boolean areaCreated = false;
     private LayoutManager lastChildLM = null; // Set when return last breakposs;
 
-    private Position auxiliaryPosition;
-
     private Font font;
 
     /** The alignment adjust property */
@@ -108,11 +107,8 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
         super(node);
     }
 
-    private Inline getInlineFO() {
-        return (Inline) fobj;
-    }
-
     /** {@inheritDoc} */
+    @Override
     public void initialize() {
         InlineLevel fobj = (InlineLevel) this.fobj;
 
@@ -137,6 +133,11 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
             alignmentBaseline = ((Leader)fobj).getAlignmentBaseline();
             baselineShift = ((Leader)fobj).getBaselineShift();
             dominantBaseline = ((Leader)fobj).getDominantBaseline();
+        } else if (fobj instanceof BasicLink) {
+            alignmentAdjust = ((BasicLink)fobj).getAlignmentAdjust();
+            alignmentBaseline = ((BasicLink)fobj).getAlignmentBaseline();
+            baselineShift = ((BasicLink)fobj).getBaselineShift();
+            dominantBaseline = ((BasicLink)fobj).getDominantBaseline();
         }
         if (borderProps != null) {
             padding = borderProps.getPadding(CommonBorderPaddingBackground.BEFORE, false, this);
@@ -150,6 +151,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected MinOptMax getExtraIPD(boolean isNotFirst, boolean isNotLast) {
         int borderAndPadding = 0;
         if (borderProps != null) {
@@ -167,6 +169,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
 
 
     /** {@inheritDoc} */
+    @Override
     protected boolean hasLeadingFence(boolean isNotFirst) {
         return borderProps != null
             && (borderProps.getPadding(CommonBorderPaddingBackground.START, isNotFirst, this) > 0
@@ -175,6 +178,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected boolean hasTrailingFence(boolean isNotLast) {
         return borderProps != null
             && (borderProps.getPadding(CommonBorderPaddingBackground.END, isNotLast, this) > 0
@@ -183,10 +187,12 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected SpaceProperty getSpaceStart() {
         return inlineProps != null ? inlineProps.spaceStart : null;
     }
     /** {@inheritDoc} */
+    @Override
     protected SpaceProperty getSpaceEnd() {
         return inlineProps != null ? inlineProps.spaceEnd : null;
     }
@@ -194,24 +200,35 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
     /**
      * Create and initialize an <code>InlineArea</code>
      *
-     * @param hasInlineParent   true if the parent is an inline
+     * @param isInline   true if the parent is an inline
      * @return the area
      */
-    protected InlineArea createArea(boolean hasInlineParent) {
+    protected InlineArea createArea(boolean isInline) {
         InlineArea area;
-        if (hasInlineParent) {
-            area = new InlineParent();
-            area.setOffset(0);
+        if (isInline) {
+            area = createInlineParent();
+            area.setBlockProgressionOffset(0);
         } else {
             area = new InlineBlockParent();
         }
-        if (fobj instanceof Inline) {
-            TraitSetter.setProducerID(area, getInlineFO().getId());
+        if (fobj instanceof Inline || fobj instanceof BasicLink) {
+            TraitSetter.setProducerID(area, fobj.getId());
         }
         return area;
     }
 
+    /**
+     * Creates the inline area that will contain the areas returned by the
+     * children of this layout manager.
+     *
+     * @return a new inline area
+     */
+    protected InlineParent createInlineParent() {
+        return new InlineParent();
+    }
+
     /** {@inheritDoc} */
+    @Override
     protected void setTraits(boolean isNotFirst, boolean isNotLast) {
         if (borderProps != null) {
             // Add border and padding to current area and set flags (FIRST, LAST ...)
@@ -239,15 +256,16 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
     }
 
     /** {@inheritDoc} */
-    public List getNextKnuthElements                            // CSOK: MethodLength
+    @Override                                                   // CSOK: MethodLength
+    public List getNextKnuthElements
         (LayoutContext context, int alignment) {
         LayoutManager curLM;
 
         // the list returned by child LM
-        List returnedList;
+        List<KnuthSequence> returnedList;
 
         // the list which will be returned to the parent LM
-        List returnList = new LinkedList();
+        List<KnuthSequence> returnList = new LinkedList<KnuthSequence>();
         KnuthSequence lastSequence = null;
 
         if (fobj instanceof Title) {
@@ -328,16 +346,16 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
                     sequence.wrapPositions(this);
                 }
                 int insertionStartIndex = 0;
-                if (lastSequence != null && lastSequence.appendSequenceOrClose
-                        ((KnuthSequence) returnedList.get(0))) {
+                if (lastSequence != null
+                        && lastSequence.appendSequenceOrClose(returnedList.get(0))) {
                     insertionStartIndex = 1;
                 }
                 // add border and padding to the first complete sequence of this LM
                 if (!borderAdded && !returnedList.isEmpty()) {
-                    addKnuthElementsForBorderPaddingStart((KnuthSequence) returnedList.get(0));
+                    addKnuthElementsForBorderPaddingStart(returnedList.get(0));
                     borderAdded = true;
                 }
-                for (Iterator iter = returnedList.listIterator(insertionStartIndex);
+                for (Iterator<KnuthSequence> iter = returnedList.listIterator(insertionStartIndex);
                         iter.hasNext();) {
                     returnList.add(iter.next());
                 }
@@ -368,7 +386,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
                 context.updateKeepWithNextPending(childLC.getKeepWithNextPending());
                 childLC.clearKeepsPending();
             }
-            lastSequence = (KnuthSequence) ListUtil.getLast(returnList);
+            lastSequence = ListUtil.getLast(returnList);
             lastChildLM = curLM;
         }
 
@@ -408,12 +426,40 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
      * by this LayoutManager.
      * @param context layout context.
      */
+    @Override
     public void addAreas(PositionIterator parentIter,
                          LayoutContext context) {
 
         addId();
 
         setChildContext(new LayoutContext(context)); // Store current value
+
+        // "Unwrap" the NonLeafPositions stored in parentIter and put
+        // them in a new list.  Set lastLM to be the LayoutManager
+        // which created the last Position: if the LAST_AREA flag is
+        // set in the layout context, it must be also set in the
+        // layout context given to lastLM, but must be cleared in the
+        // layout context given to the other LMs.
+        List<Position> positionList = new LinkedList<Position>();
+        Position pos;
+        LayoutManager lastLM = null; // last child LM in this iterator
+        Position lastPos = null;
+        while (parentIter.hasNext()) {
+            pos = parentIter.next();
+            if (pos != null && pos.getPosition() != null) {
+                if (isFirst(pos)) {
+                    /*
+                     * If this element is a descendant of a table-header/footer,
+                     * its content may be repeated over pages, so the generation
+                     * of its areas may be restarted.
+                     */
+                    areaCreated = false;
+                }
+                positionList.add(pos.getPosition());
+                lastLM = pos.getPosition().getLM();
+                lastPos = pos;
+            }
+        }
 
         // If this LM has fence, make a new leading space specifier.
         if (hasLeadingFence(areaCreated)) {
@@ -427,28 +473,6 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
             context.getLeadingSpace().addSpace(new SpaceVal(getSpaceStart(), this));
         }
 
-        // "Unwrap" the NonLeafPositions stored in parentIter and put
-        // them in a new list.  Set lastLM to be the LayoutManager
-        // which created the last Position: if the LAST_AREA flag is
-        // set in the layout context, it must be also set in the
-        // layout context given to lastLM, but must be cleared in the
-        // layout context given to the other LMs.
-        List positionList = new LinkedList();
-        NonLeafPosition pos;
-        LayoutManager lastLM = null; // last child LM in this iterator
-        Position lastPos = null;
-        while (parentIter.hasNext()) {
-            pos = (NonLeafPosition) parentIter.next();
-            if (pos != null && pos.getPosition() != null) {
-                positionList.add(pos.getPosition());
-                lastLM = pos.getPosition().getLM();
-                lastPos = pos;
-            }
-        }
-        /*if (pos != null) {
-            lastLM = pos.getPosition().getLM();
-        }*/
-
         addMarkersToPage(
                 true,
                 !areaCreated,
@@ -458,19 +482,19 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
                                         || lastLM instanceof InlineLevelLayoutManager);
         parent.setBPD(alignmentContext.getHeight());
         if (parent instanceof InlineParent) {
-            parent.setOffset(alignmentContext.getOffset());
+            parent.setBlockProgressionOffset(alignmentContext.getOffset());
         } else if (parent instanceof InlineBlockParent) {
             // All inline elements are positioned by the renderers relative to
             // the before edge of their content rectangle
             if (borderProps != null) {
-                parent.setOffset(borderProps.getPaddingBefore(false, this)
+                parent.setBlockProgressionOffset(borderProps.getPaddingBefore(false, this)
                                 + borderProps.getBorderBeforeWidth(false));
             }
         }
         setCurrentArea(parent);
 
-        StackingIter childPosIter
-            = new StackingIter(positionList.listIterator());
+        PositionIterator childPosIter
+            = new PositionIterator(positionList.listIterator());
 
         LayoutManager prevLM = null;
         LayoutManager childLM;
@@ -522,6 +546,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void addChildArea(Area childArea) {
         Area parent = getCurrentArea();
         if (getContext().resolveLeadingSpace()) {
@@ -532,10 +557,11 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
     }
 
     /** {@inheritDoc} */
-    public List getChangedKnuthElements(List oldList, int alignment) {
+    @Override
+    public List getChangedKnuthElements(List oldList, int alignment, int depth) {
         List returnedList = new LinkedList();
         addKnuthElementsForBorderPaddingStart(returnedList);
-        returnedList.addAll(super.getChangedKnuthElements(oldList, alignment));
+        returnedList.addAll(super.getChangedKnuthElements(oldList, alignment, depth));
         addKnuthElementsForBorderPaddingEnd(returnedList);
         return returnedList;
     }
@@ -546,7 +572,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
      */
     protected void addKnuthElementsForBorderPaddingStart(List returnList) {
         //Border and Padding (start)
-        /**
+        /*
          * If the returnlist is a BlockKnuthSequence, the border and padding should be added
          * to the first paragraph inside it, but it is too late to do that now.
          * At least, avoid adding it to the bpd sequence.
@@ -571,7 +597,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
      */
     protected void addKnuthElementsForBorderPaddingEnd(List returnList) {
         //Border and Padding (after)
-        /**
+        /*
          * If the returnlist is a BlockKnuthSequence, the border and padding should be added
          * to the last paragraph inside it, but it is too late to do that now.
          * At least, avoid adding it to the bpd sequence.
@@ -590,13 +616,8 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
         }
     }
 
-    /** @return a cached auxiliary Position instance used for things like spaces. */
+    /** @return an auxiliary {@link Position} instance used for things like spaces. */
     protected Position getAuxiliaryPosition() {
-        //if (this.auxiliaryPosition == null) {
-            //this.auxiliaryPosition = new NonLeafPosition(this, new LeafPosition(this, -1));
-            this.auxiliaryPosition = new NonLeafPosition(this, null);
-        //}
-        return this.auxiliaryPosition;
+        return new NonLeafPosition(this, null);
     }
-
 }

@@ -27,10 +27,12 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import org.apache.xmlgraphics.util.ClasspathResource;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fonts.autodetect.FontFileFinder;
 import org.apache.fop.util.LogUtil;
-import org.apache.xmlgraphics.util.ClasspathResource;
 
 /**
  * Detector of operating system and classpath fonts
@@ -45,17 +47,21 @@ public class FontDetector {
     private final FontManager fontManager;
     private final FontAdder fontAdder;
     private final boolean strict;
+    private final FontEventListener eventListener;
 
     /**
      * Main constructor
      * @param manager the font manager
      * @param adder the font adder
      * @param strict true if an Exception should be thrown if an error is found.
+     * @param listener for throwing font related events
      */
-    public FontDetector(FontManager manager, FontAdder adder, boolean strict) {
+    public FontDetector(FontManager manager, FontAdder adder, boolean strict,
+            FontEventListener listener) {
         this.fontManager = manager;
         this.fontAdder = adder;
         this.strict = strict;
+        this.eventListener = listener;
     }
 
     /**
@@ -66,7 +72,7 @@ public class FontDetector {
     public void detect(List<EmbedFontInfo> fontInfoList) throws FOPException {
         // search in font base if it is defined and
         // is a directory but don't recurse
-        FontFileFinder fontFileFinder = new FontFileFinder();
+        FontFileFinder fontFileFinder = new FontFileFinder(eventListener);
         String fontBaseURL = fontManager.getFontBaseURL();
         if (fontBaseURL != null) {
             try {

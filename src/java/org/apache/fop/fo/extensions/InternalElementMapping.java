@@ -34,11 +34,21 @@ public class InternalElementMapping extends ElementMapping {
     /** The FOP extension namespace URI */
     public static final String URI = "http://xmlgraphics.apache.org/fop/internal";
 
-    private static final Set PROPERTY_ATTRIBUTES = new java.util.HashSet();
+    /** The standard XML prefix for elements and attributes in this namespace. */
+    public static final String STANDARD_PREFIX = "foi";
+
+    /** The "struct-id" attribute, to identify a structure tree element. */
+    public static final String STRUCT_ID = "struct-id";
+
+    /** The "struct-ref" attribute, to refer to a structure tree element. */
+    public static final String STRUCT_REF = "struct-ref";
+
+    private static final Set<String> PROPERTY_ATTRIBUTES = new java.util.HashSet<String>();
 
     static {
         //These are FOP's extension properties for accessibility
-        PROPERTY_ATTRIBUTES.add("ptr");
+        PROPERTY_ATTRIBUTES.add(STRUCT_ID);
+        PROPERTY_ATTRIBUTES.add(STRUCT_REF);
     }
 
     /**
@@ -53,13 +63,13 @@ public class InternalElementMapping extends ElementMapping {
      */
     protected void initialize() {
         if (foObjs == null) {
-            foObjs = new HashMap();
+            foObjs = new HashMap<String, Maker>();
         }
     }
 
     /** {@inheritDoc} */
     public String getStandardPrefix() {
-        return "foi";
+        return STANDARD_PREFIX;
     }
 
     /** {@inheritDoc} */

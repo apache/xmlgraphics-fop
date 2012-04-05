@@ -30,10 +30,12 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Iterator;
 
-/**  Container for RtfTableCell elements
- *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
- *  @author Andreas Putz a.putz@skynamics.com
- *  @author Roberto Marra roberto@link-u.com
+/**
+ * <p>Container for RtfTableCell elements.</p>
+ *
+ * <p>This work was authored by Bertrand Delacretaz (bdelacretaz@codeconsult.ch),
+ * Andreas Putz (a.putz@skynamics.com), and
+ * Roberto Marra (roberto@link-u.com).</p>
  */
 
 public class RtfTableRow extends RtfContainer implements ITableAttributes {

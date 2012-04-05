@@ -292,10 +292,10 @@ public class PSTextPainter extends NativeTextPainter {
 
         public boolean isFontChanging(Font f, char mapped) {
             if (f != getCurrentFont()) {
-                int encoding = mapped / 256;
-                if (encoding != getCurrentFontEncoding()) {
-                    return true; //Font is changing
-                }
+                return true;
+            }
+            if (mapped / 256 != getCurrentFontEncoding()) {
+                return true;
             }
             return false; //Font is the same
         }
@@ -443,7 +443,8 @@ public class PSTextPainter extends NativeTextPainter {
                 if (multiByte) {
                     sb.append(HexEncoder.encode(mapped));
                 } else {
-                    PSGenerator.escapeChar(mapped, sb);
+                    char codepoint = (char) (mapped % 256);
+                    PSGenerator.escapeChar(codepoint, sb);
                 }
             }
             sb.append(multiByte ? '>' : ')');

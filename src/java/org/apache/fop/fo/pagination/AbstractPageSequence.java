@@ -43,6 +43,9 @@ public abstract class AbstractPageSequence extends FObj {
     private char groupingSeparator;
     private int groupingSize;
     private Numeric referenceOrientation; //XSL 1.1
+    private String language;
+    private String country;
+    private String numberConversionFeatures;
     // End of property values
 
     private PageNumberGenerator pageNumberGenerator;
@@ -70,12 +73,16 @@ public abstract class AbstractPageSequence extends FObj {
         groupingSeparator = pList.get(PR_GROUPING_SEPARATOR).getCharacter();
         groupingSize = pList.get(PR_GROUPING_SIZE).getNumber().intValue();
         referenceOrientation = pList.get(PR_REFERENCE_ORIENTATION).getNumeric();
+        language = pList.get(PR_LANGUAGE).getString();
+        country = pList.get(PR_COUNTRY).getString();
+        numberConversionFeatures = pList.get(PR_X_NUMBER_CONVERSION_FEATURES).getString();
     }
 
     /** {@inheritDoc} */
     protected void startOfNode() throws FOPException {
         this.pageNumberGenerator = new PageNumberGenerator(
-                format, groupingSeparator, groupingSize, letterValue);
+                format, groupingSeparator, groupingSize, letterValue,
+                numberConversionFeatures, language, country);
 
     }
 

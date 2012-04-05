@@ -55,9 +55,10 @@ public class FontPatternExtractor {
             UnparsedStructuredField strucField;
             while ((strucField = parser.readNextStructuredField()) != null) {
                 if (strucField.getSfTypeID() == 0xD3EE89) {
+                    byte[] sfData = strucField.getData();
                     println(strucField.toString());
-                    HexDump.dump(strucField.getData(), 0, printStream, 0);
-                    baout.write(strucField.getData());
+                    HexDump.dump(sfData, 0, printStream, 0);
+                    baout.write(sfData);
                 }
             }
 

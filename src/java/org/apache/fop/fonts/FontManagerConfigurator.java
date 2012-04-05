@@ -21,6 +21,7 @@ package org.apache.fop.fonts;
 
 import java.io.File;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -28,6 +29,7 @@ import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fonts.substitute.FontSubstitutions;
 import org.apache.fop.fonts.substitute.FontSubstitutionsConfigurator;
@@ -43,12 +45,24 @@ public class FontManagerConfigurator {
 
     private final Configuration cfg;
 
+    private URI baseURI = null;
+
     /**
      * Main constructor
      * @param cfg the font manager configuration object
      */
     public FontManagerConfigurator(Configuration cfg) {
         this.cfg = cfg;
+    }
+
+    /**
+     * Main constructor
+     * @param cfg the font manager configuration object
+     * @param baseURI the base URI of the configuration
+     */
+    public FontManagerConfigurator(Configuration cfg, URI baseURI) {
+        this.cfg = cfg;
+        this.baseURI = baseURI;
     }
 
     /**
@@ -74,10 +88,26 @@ public class FontManagerConfigurator {
             }
         }
         if (cfg.getChild("font-base", false) != null) {
+            String path = cfg.getChild("font-base").getValue(null);
+            if (baseURI != null) {
+                path = baseURI.resolve(path).normalize().toString();
+            }
             try {
-                fontManager.setFontBaseURL(cfg.getChild("font-base").getValue(null));
+                fontManager.setFontBaseURL(path);
             } catch (MalformedURLException mfue) {
                 LogUtil.handleException(log, mfue, true);
+            }
+        }
+
+        // [GA] permit configuration control over base14 kerning; without this,
+        // there is no way for a user to enable base14 kerning other than by
+        // programmatic API;
+        if (cfg.getChild("base14-kerning", false) != null) {
+            try {
+                fontManager
+                    .setBase14KerningEnabled(cfg.getChild("base14-kerning").getValueAsBoolean());
+            } catch (ConfigurationException e) {
+                LogUtil.handleException(log, e, true);
             }
         }
 

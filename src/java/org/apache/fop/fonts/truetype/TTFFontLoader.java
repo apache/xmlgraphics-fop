@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
+
 import org.apache.fop.fonts.BFEntry;
 import org.apache.fop.fonts.CIDFontType;
 import org.apache.fop.fonts.EmbeddingMode;
@@ -55,7 +56,7 @@ public class TTFFontLoader extends FontLoader {
      * @param resolver the FontResolver for font URI resolution
      */
     public TTFFontLoader(String fontFileURI, FontResolver resolver) {
-        this(fontFileURI, null, true, EmbeddingMode.AUTO, EncodingMode.AUTO, true, resolver);
+        this(fontFileURI, null, true, EmbeddingMode.AUTO, EncodingMode.AUTO, true, true, resolver);
     }
 
     /**
@@ -67,12 +68,13 @@ public class TTFFontLoader extends FontLoader {
      * @param embeddingMode the embedding mode of the font
      * @param encodingMode the requested encoding mode
      * @param useKerning true to enable loading kerning info if available, false to disable
+     * @param useAdvanced true to enable loading advanced info if available, false to disable
      * @param resolver the FontResolver for font URI resolution
      */
     public TTFFontLoader(String fontFileURI, String subFontName,
                 boolean embedded, EmbeddingMode embeddingMode, EncodingMode encodingMode,
-                boolean useKerning, FontResolver resolver) {
-        super(fontFileURI, embedded, true, resolver);
+                boolean useKerning, boolean useAdvanced, FontResolver resolver) {
+        super(fontFileURI, embedded, useKerning, useAdvanced, resolver);
         this.subFontName = subFontName;
         this.encodingMode = encodingMode;
         this.embeddingMode = embeddingMode;
@@ -98,7 +100,7 @@ public class TTFFontLoader extends FontLoader {
     private void read(String ttcFontName) throws IOException {
         InputStream in = openFontUri(resolver, this.fontFileURI);
         try {
-            TTFFile ttf = new TTFFile();
+            TTFFile ttf = new TTFFile(useKerning, useAdvanced);
             FontFileReader reader = new FontFileReader(in);
             boolean supported = ttf.readFont(reader, ttcFontName);
             if (!supported) {
@@ -165,8 +167,17 @@ public class TTFFontLoader extends FontLoader {
         if (useKerning) {
             copyKerning(ttf, isCid);
         }
-        if (this.embedded && ttf.isEmbeddable()) {
-            returnFont.setEmbedFileName(this.fontFileURI);
+        if (useAdvanced) {
+            copyAdvanced(ttf);
+        }
+        if (this.embedded) {
+            if (ttf.isEmbeddable()) {
+                returnFont.setEmbedFileName(this.fontFileURI);
+            } else {
+                String msg = "The font " + this.fontFileURI + " is not embeddable due to a"
+                        + " licensing restriction.";
+                throw new RuntimeException(msg);
+            }
         }
     }
 
@@ -225,4 +236,17 @@ public class TTFFontLoader extends FontLoader {
             returnFont.putKerningEntry(kpx1, h2);
         }
     }
+
+    /**
+     * Copy advanced typographic information.
+     */
+    private void copyAdvanced ( TTFFile ttf ) {
+        if ( returnFont instanceof MultiByteFont ) {
+            MultiByteFont mbf = (MultiByteFont) returnFont;
+            mbf.setGDEF ( ttf.getGDEF() );
+            mbf.setGSUB ( ttf.getGSUB() );
+            mbf.setGPOS ( ttf.getGPOS() );
+        }
+    }
+
 }

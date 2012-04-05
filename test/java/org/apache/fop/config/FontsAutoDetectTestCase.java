@@ -19,15 +19,9 @@
 
 package org.apache.fop.config;
 
-public class FontsAutoDetectTestCase extends BaseConstructiveUserConfigTestCase {
+public class FontsAutoDetectTestCase extends BaseConstructiveUserConfigTest {
 
-    public FontsAutoDetectTestCase(String name) {
-        super(name);
-    }
-
-    /**
-     * @see org.apache.fop.config.BaseUserConfigTestCase#getUserConfigFilename()
-     */
+    @Override
     public String getUserConfigFilename() {
         return "test_fonts_autodetect.xconf";
     }

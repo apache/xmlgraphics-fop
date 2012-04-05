@@ -26,17 +26,17 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
  * the FOP project.
  */
 
-import java.util.LinkedList;
-import java.util.Iterator;
-import java.io.Writer;
 import java.io.IOException;
-//import org.apache.fop.render.rtf.rtflib.jfor.main.JForVersionInfo;
+import java.io.Writer;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 /**
- * RtfListTable: used to make the list table in the header section of the RtfFile.
+ * <p>RtfListTable: used to make the list table in the header section of the RtfFile.
  * This is the method that Word uses to make lists in RTF and the way most RTF readers,
- * esp. Adobe FrameMaker read lists from RTF.
- * @author Christopher Scott, scottc@westinghouse.com
+ * esp. Adobe FrameMaker read lists from RTF.</p>
+ *
+ * <p>This work was authored by Christopher Scott (scottc@westinghouse.com).</p>
  */
 public class RtfListTable extends RtfContainer {
     private LinkedList lists;

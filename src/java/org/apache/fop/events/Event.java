@@ -38,7 +38,7 @@ public class Event extends EventObject {
     private String eventKey;
 
     private EventSeverity severity;
-    private Map params;
+    private Map<String, Object> params;
 
     /**
      * Creates a new Event.
@@ -47,7 +47,8 @@ public class Event extends EventObject {
      * @param severity the severity level
      * @param params the event parameters (a map of name/value pairs)
      */
-    public Event(Object source, String eventID, EventSeverity severity, Map params) {
+    public Event(Object source, String eventID, EventSeverity severity, Map<String, Object> params)
+    {
         super(source);
         int pos = eventID.lastIndexOf('.');
         if (pos < 0 || pos == eventID.length() - 1) {
@@ -122,7 +123,7 @@ public class Event extends EventObject {
      * Returns an unmodifiable {@link java.util.Map} with all event parameters.
      * @return the parameter map
      */
-    public Map getParams() {
+    public Map<String, Object> getParams() {
         return Collections.unmodifiableMap(this.params);
     }
 
@@ -138,7 +139,7 @@ public class Event extends EventObject {
      * This class is a fluent builder class for building up the parameter map.
      */
     public static class ParamsBuilder {
-        private Map params;
+        private Map<String, Object> params;
 
         /**
          * Adds a new parameter (a name/value pair).
@@ -148,7 +149,7 @@ public class Event extends EventObject {
          */
         public ParamsBuilder param(String name, Object value) {
             if (this.params == null) {
-                this.params = new java.util.HashMap();
+                this.params = new java.util.HashMap<String, Object>();
             }
             this.params.put(name, value);
             return this;
@@ -158,7 +159,7 @@ public class Event extends EventObject {
          * Returns the accumulated parameter map.
          * @return the accumulated parameter map
          */
-        public Map build() {
+        public Map<String, Object> build() {
             return this.params;
         }
     }

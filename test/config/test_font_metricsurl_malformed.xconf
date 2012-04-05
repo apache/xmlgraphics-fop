@@ -16,7 +16,7 @@
     <renderer mime="application/pdf">
       <fonts>
 		<!-- this font has a malformed metrics-url -->
-        <font metrics-url="badprotocol:test/resources/fonts/glb12.ttf.xml">
+        <font metrics-url="badprotocol:test/resources/fonts/ttf/glb12.ttf.xml">
           <font-triplet name="Gladiator" style="normal" weight="normal"/>
         </font>
       </fonts>

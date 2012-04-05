@@ -19,15 +19,15 @@
 
 package org.apache.fop.pdf;
 
-import java.io.OutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 /**
- * PDF Filter class.
- * This represents a PDF filter object.
- * Filter implementations should extend this class.
+ * <p>PDF Filter class.
+ * This class represents a PDF filter object.
+ * Filter implementations should extend this class.</p>
  *
- * @author Eric SCHAEFFER, Kelly A. Campbell
+ * <p>This work was authored by Eric Schaeffer and Kelly A. Campbell.</p>
  */
 public abstract class PDFFilter {
     /*

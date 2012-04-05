@@ -19,49 +19,67 @@
 
 package org.apache.fop;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
-import org.apache.fop.fonts.DejaVuLGCSerifTest;
+import org.apache.fop.afp.fonts.CharactersetEncoderTestCase;
+import org.apache.fop.afp.parser.MODCAParserTestCase;
+import org.apache.fop.area.ViewportTestSuite;
+import org.apache.fop.fonts.DejaVuLGCSerifTestCase;
+import org.apache.fop.fonts.FontEventProcessingTestCase;
+import org.apache.fop.fonts.truetype.GlyfTableTestCase;
+import org.apache.fop.fonts.type1.AFMParserTestCase;
+import org.apache.fop.fonts.type1.AdobeStandardEncodingTestCase;
 import org.apache.fop.image.loader.batik.ImageLoaderTestCase;
 import org.apache.fop.image.loader.batik.ImagePreloaderTestCase;
 import org.apache.fop.intermediate.IFMimickingTestCase;
-import org.apache.fop.render.extensions.prepress.PageBoundariesTest;
-import org.apache.fop.render.extensions.prepress.PageScaleTest;
+import org.apache.fop.layoutmgr.PageSequenceLayoutManagerTestCase;
+import org.apache.fop.pdf.PDFLibraryTestSuite;
+import org.apache.fop.render.extensions.prepress.PageBoundariesTestCase;
+import org.apache.fop.render.extensions.prepress.PageScaleTestCase;
 import org.apache.fop.render.pdf.PDFAConformanceTestCase;
 import org.apache.fop.render.pdf.PDFCMapTestCase;
 import org.apache.fop.render.pdf.PDFEncodingTestCase;
 import org.apache.fop.render.pdf.PDFsRGBSettingsTestCase;
+import org.apache.fop.render.pdf.RenderPDFTestSuite;
+import org.apache.fop.render.ps.PSTestSuite;
 import org.apache.fop.render.rtf.RichTextFormatTestSuite;
-import org.apache.fop.traits.MinOptMaxTest;
+import org.apache.fop.traits.MinOptMaxTestCase;
 
 /**
  * Test suite for basic functionality of FOP.
  */
+@RunWith(Suite.class)
+@SuiteClasses({
+        BasicDriverTestSuite.class,
+        UtilityCodeTestSuite.class,
+        PDFAConformanceTestCase.class,
+        PDFEncodingTestCase.class,
+        PDFCMapTestCase.class,
+        PDFsRGBSettingsTestCase.class,
+        DejaVuLGCSerifTestCase.class,
+        RichTextFormatTestSuite.class,
+        ImageLoaderTestCase.class,
+        ImagePreloaderTestCase.class,
+        IFMimickingTestCase.class,
+        PageSequenceLayoutManagerTestCase.class,
+        PageBoundariesTestCase.class,
+        PageScaleTestCase.class,
+        org.apache.fop.afp.AFPTestSuite.class,
+        GlyfTableTestCase.class,
+        ViewportTestSuite.class,
+        RenderPDFTestSuite.class,
+        MODCAParserTestCase.class,
+        CharactersetEncoderTestCase.class,
+        org.apache.fop.render.afp.AFPTestSuite.class,
+        PDFLibraryTestSuite.class,
+        PSTestSuite.class,
+        MinOptMaxTestCase.class,
+        AdobeStandardEncodingTestCase.class,
+        AFMParserTestCase.class,
+        FontEventProcessingTestCase.class,
+        org.apache.fop.render.intermediate.IFStructureTreeBuilderTestCase.class
+})
 public class StandardTestSuite {
-
-    /**
-     * Builds the test suite
-     * @return the test suite
-     */
-    public static Test suite() {
-        TestSuite suite = new TestSuite("Basic functionality test suite for FOP");
-        //$JUnit-BEGIN$
-        suite.addTest(BasicDriverTestSuite.suite());
-        suite.addTest(UtilityCodeTestSuite.suite());
-        suite.addTest(new TestSuite(PDFAConformanceTestCase.class));
-        suite.addTest(new TestSuite(PDFEncodingTestCase.class));
-        suite.addTest(new TestSuite(PDFCMapTestCase.class));
-        suite.addTest(new TestSuite(PDFsRGBSettingsTestCase.class));
-        suite.addTest(new TestSuite(DejaVuLGCSerifTest.class));
-        suite.addTest(RichTextFormatTestSuite.suite());
-        suite.addTest(new TestSuite(ImageLoaderTestCase.class));
-        suite.addTest(new TestSuite(ImagePreloaderTestCase.class));
-        suite.addTest(new TestSuite(IFMimickingTestCase.class));
-        suite.addTest(new TestSuite(PageBoundariesTest.class));
-        suite.addTest(new TestSuite(PageScaleTest.class));
-        suite.addTest(new TestSuite(MinOptMaxTest.class));
-        //$JUnit-END$
-        return suite;
-    }
 }

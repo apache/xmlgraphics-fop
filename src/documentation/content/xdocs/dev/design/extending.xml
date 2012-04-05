@@ -1,4 +1,4 @@
-<?xml version="1.0" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -20,7 +20,7 @@
 
 <document>
   <header>
-    <title>FOP Design: Extensions</title>
+    <title>Apache™ FOP Design: Extensions</title>
     <version>$Revision$</version>
     <authors>
       <person name="Keiron Liddle" email="keiron@aftexsw.com"/>
@@ -31,7 +31,7 @@
 <section id="intro">
   <title>Introduction</title>
 <p>
-FOP provides an extension mechanism to add extra functionality. There
+Apache™ FOP provides an extension mechanism to add extra functionality. There
 are a number of different types of extensions that apply to different
 steps when converting FO into the rendered output.
   </p>
@@ -124,7 +124,7 @@ to result in a text box referencing the following PDF action:</p>
         <title>Work In Progress</title>
         <ul>
           <li>mathml extension</li>
-          <li>another xml -> svg extension</li>
+          <li>another xml -&gt; svg extension</li>
           <li>svg text normal text if that can be handled otherwise stroked this is done automatically</li>
         </ul>
       </section>
@@ -138,4 +138,3 @@ to result in a text box referencing the following PDF action:</p>
     </section>
     </body>
 </document>
-

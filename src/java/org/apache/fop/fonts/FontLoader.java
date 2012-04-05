@@ -42,31 +42,36 @@ public abstract class FontLoader {
     protected static final Log log = LogFactory.getLog(FontLoader.class);
 
     /** URI representing the font file */
-    protected String fontFileURI = null;
+    protected String fontFileURI;
     /** the FontResolver to use for font URI resolution */
-    protected FontResolver resolver = null;
+    protected FontResolver resolver;
     /** the loaded font */
-    protected CustomFont returnFont = null;
+    protected CustomFont returnFont;
 
     /** true if the font has been loaded */
-    protected boolean loaded = false;
+    protected boolean loaded;
     /** true if the font will be embedded, false if it will be referenced only. */
-    protected boolean embedded = true;
-    /** true if kerning information shall be loaded if available. */
-    protected boolean useKerning = true;
+    protected boolean embedded;
+    /** true if kerning information false be loaded if available. */
+    protected boolean useKerning;
+    /** true if advanced typographic information shall be loaded if available. */
+    protected boolean useAdvanced;
 
     /**
      * Default constructor.
      * @param fontFileURI the URI to the PFB file of a Type 1 font
      * @param embedded indicates whether the font is embedded or referenced
      * @param useKerning indicates whether kerning information shall be loaded if available
+     * @param useAdvanced indicates whether advanced typographic information shall be loaded if
+     * available
      * @param resolver the font resolver used to resolve URIs
      */
     public FontLoader(String fontFileURI, boolean embedded, boolean useKerning,
-            FontResolver resolver) {
+            boolean useAdvanced, FontResolver resolver) {
         this.fontFileURI = fontFileURI;
         this.embedded = embedded;
         this.useKerning = useKerning;
+        this.useAdvanced = useAdvanced;
         this.resolver = resolver;
     }
 
@@ -107,7 +112,7 @@ public abstract class FontLoader {
             boolean embedded, EmbeddingMode embeddingMode, EncodingMode encodingMode,
             FontResolver resolver) throws IOException {
         return loadFont(fontUrl.toExternalForm(), subFontName,
-                embedded, embeddingMode, encodingMode, true,
+                embedded, embeddingMode, encodingMode, true, true,
                 resolver);
     }
 
@@ -119,13 +124,15 @@ public abstract class FontLoader {
      * @param embeddingMode the embedding mode of the font
      * @param encodingMode the requested encoding mode
      * @param useKerning indicates whether kerning information should be loaded if available
+     * @param useAdvanced indicates whether advanced typographic information shall be loaded if
+     * available
      * @param resolver the font resolver to use when resolving URIs
      * @return the newly loaded font
      * @throws IOException In case of an I/O error
      */
     public static CustomFont loadFont(String fontFileURI, String subFontName,
             boolean embedded, EmbeddingMode embeddingMode, EncodingMode encodingMode,
-            boolean useKerning, FontResolver resolver) throws IOException {
+            boolean useKerning, boolean useAdvanced, FontResolver resolver) throws IOException {
         fontFileURI = fontFileURI.trim();
         boolean type1 = isType1(fontFileURI);
         FontLoader loader;
@@ -141,7 +148,7 @@ public abstract class FontLoader {
             loader = new Type1FontLoader(fontFileURI, embedded, useKerning, resolver);
         } else {
             loader = new TTFFontLoader(fontFileURI, subFontName,
-                    embedded, embeddingMode, encodingMode, useKerning, resolver);
+                    embedded, embeddingMode, encodingMode, useKerning, useAdvanced, resolver);
         }
         return loader.getFont();
     }

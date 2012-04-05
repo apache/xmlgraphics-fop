@@ -34,6 +34,8 @@ import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.fop.fonts.FontEventListener;
+
 /**
  * Helps to autodetect/locate available operating system fonts.
  */
@@ -44,20 +46,24 @@ public class FontFileFinder extends DirectoryWalker implements FontFinder {
 
     /** default depth limit of recursion when searching for font files **/
     public static final int DEFAULT_DEPTH_LIMIT = -1;
+    private final FontEventListener eventListener;
 
     /**
      * Default constructor
+     * @param listener for throwing font related events
      */
-    public FontFileFinder() {
-        super(getDirectoryFilter(), getFileFilter(), DEFAULT_DEPTH_LIMIT);
+    public FontFileFinder(FontEventListener listener) {
+        this(DEFAULT_DEPTH_LIMIT, listener);
     }
 
     /**
      * Constructor
      * @param depthLimit recursion depth limit
+     * @param listener for throwing font related events
      */
-    public FontFileFinder(int depthLimit) {
+    public FontFileFinder(int depthLimit, FontEventListener listener) {
         super(getDirectoryFilter(), getFileFilter(), depthLimit);
+        eventListener = listener;
     }
 
     /**
@@ -163,6 +169,12 @@ public class FontFileFinder extends DirectoryWalker implements FontFinder {
     public List<URL> find(String dir) throws IOException {
         List<URL> results = new java.util.ArrayList<URL>();
         super.walk(new File(dir), results);
+        File directory = new File(dir);
+        if (!directory.isDirectory()) {
+            eventListener.fontDirectoryNotFound(this, dir);
+        } else {
+            super.walk(directory, results);
+        }
         return results;
     }
 }

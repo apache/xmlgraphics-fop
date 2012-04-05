@@ -38,12 +38,44 @@ public interface PDFConfigurationConstants {
     String NO_EDIT_CONTENT = "noedit";
     /** PDF encryption parameter: Forbids annotations, datatype: Boolean or "true"/"false" */
     String NO_ANNOTATIONS = "noannotations";
+
+    /**
+     * PDF encryption parameter: Forbids filling in existing interactive forms, datatype:
+     * Boolean or "true"/"false"
+     */
+    String NO_FILLINFORMS = "nofillinforms";
+
+    /**
+     * PDF encryption parameter: Forbids extracting text and graphics, datatype: Boolean
+     * or "true"/"false"
+     */
+    String NO_ACCESSCONTENT = "noaccesscontent";
+
+    /**
+     * PDF encryption parameter: Forbids assembling document, datatype: Boolean or
+     * "true"/"false"
+     */
+    String NO_ASSEMBLEDOC = "noassembledoc";
+
+    /**
+     * PDF encryption parameter: Forbids printing to high quality, datatype: Boolean or
+     * "true"/"false"
+     */
+    String NO_PRINTHQ = "noprinthq";
+
+    /**
+     * PDF encryption length parameter: must be a multiple of 8 between 40 and 128,
+     * default value 40, datatype: int.
+     */
+    String ENCRYPTION_LENGTH = "encryption-length";
     /** Rendering Options key for the PDF/A mode. */
     String PDF_A_MODE = "pdf-a-mode";
     /** Rendering Options key for the PDF/X mode. */
     String PDF_X_MODE = "pdf-x-mode";
     /** Rendering Options key for the ICC profile for the output intent. */
     String KEY_OUTPUT_PROFILE = "output-profile";
+    /** PDF version entry: specify the version of the PDF document created, datatype: String */
+    String PDF_VERSION = "version";
     /**
      * Rendering Options key for disabling the sRGB color space (only possible if no PDF/A or
      * PDF/X profile is active).

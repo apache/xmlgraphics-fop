@@ -35,7 +35,7 @@ public class PrintRendererMaker extends AbstractRendererMaker {
 
     /**{@inheritDoc} */
     public Renderer makeRenderer(FOUserAgent userAgent) {
-        return new PrintRenderer();
+        return new PrintRenderer(userAgent);
     }
 
     /** {@inheritDoc} */

@@ -36,7 +36,7 @@ import org.apache.fop.Version;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontSetup;
 import org.apache.fop.pdf.PDFAnnotList;
-import org.apache.fop.pdf.PDFColor;
+import org.apache.fop.pdf.PDFColorHandler;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFFilterList;
 import org.apache.fop.pdf.PDFNumber;
@@ -101,6 +101,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
         this.pdfDoc = new PDFDocument("Apache FOP Version " + Version.getVersion()
                 + ": PDFDocumentGraphics2D");
         this.pdfContext = new PDFContext();
+        this.colorHandler = new PDFColorHandler(this.pdfDoc.getResources());
     }
 
     /**
@@ -112,8 +113,8 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
      * @param textAsShapes set this to true so that text will be rendered
      * using curves and not the font.
      * @param stream the stream that the final document should be written to.
-     * @param width the width of the document
-     * @param height the height of the document
+     * @param width the width of the document (in points)
+     * @param height the height of the document (in points)
      * @throws IOException an io exception if there is a problem
      *         writing to the output stream
      */
@@ -158,7 +159,8 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
         if (fontInfo == null) {
             //Default minimal fonts
             FontInfo fontInfo = new FontInfo();
-            FontSetup.setup(fontInfo);
+            boolean base14Kerning = false;
+            FontSetup.setup(fontInfo, base14Kerning);
             setFontInfo(fontInfo);
         }
     }
@@ -232,15 +234,15 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
      * @param col the background colour to fill
      */
     public void setBackgroundColor(Color col) {
-        Color c = col;
-        PDFColor currentColour = new PDFColor(c.getRed(), c.getGreen(), c.getBlue());
-        currentStream.write("q\n");
-        currentStream.write(currentColour.getColorSpaceOut(true));
+        StringBuffer sb = new StringBuffer();
+        sb.append("q\n");
+        this.colorHandler.establishColor(sb, col, true);
 
-        currentStream.write("0 0 " + width + " " + height + " re\n");
+        sb.append("0 0 ").append(width).append(" ").append(height).append(" re\n");
 
-        currentStream.write("f\n");
-        currentStream.write("Q\n");
+        sb.append("f\n");
+        sb.append("Q\n");
+        currentStream.write(sb.toString());
     }
 
     /**
@@ -249,6 +251,19 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
      */
     public void nextPage() {
         closePage();
+    }
+
+    /**
+     * Is called to prepare the PDFDocumentGraphics2D for the next page to be painted. Basically,
+     * this closes the current page. A new page is prepared as soon as painting starts.
+     * This method allows to start the new page (and following pages) with a different page size.
+     * @param width the width of the new page (in points)
+     * @param height the height of the new page (in points)
+     */
+    public void nextPage(int width, int height) {
+        this.width = width;
+        this.height = height;
+        nextPage();
     }
 
     /**
@@ -275,6 +290,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void preparePainting() {
         if (pdfContext.isPagePending()) {
             return;
@@ -390,7 +406,9 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
      * @return     a new graphics context that is a copy of
      * this graphics context.
      */
+    @Override
     public Graphics create() {
+        preparePainting();
         return new PDFDocumentGraphics2D(this);
     }
 
@@ -402,6 +420,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
      * @param x the x position
      * @param y the y position
      */
+    @Override
     public void drawString(String s, float x, float y) {
         if (super.textAsShapes) {
             Font font = super.getFont();

@@ -20,7 +20,6 @@
 package org.apache.fop.layoutmgr;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -43,16 +42,16 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     private PageProvider pageProvider;
     private PageBreakingLayoutListener layoutListener;
     /** List of PageBreakPosition elements. */
-    private LinkedList pageBreaks = null;
+    private LinkedList<PageBreakPosition> pageBreaks = null;
 
     /** Footnotes which are cited between the currently considered active node (previous
      * break) and the current considered break. Its type is
      * List&lt;List&lt;KnuthElement&gt;&gt;, it contains the sequences of KnuthElement
      * representing the footnotes bodies.
      */
-    private List footnotesList = null;
+    private List<List<KnuthElement>> footnotesList = null;
     /** Cumulated bpd of unhandled footnotes. */
-    private List lengthList = null;
+    private List<Integer> lengthList = null;
     /** Length of all the footnotes which will be put on the current page. */
     private int totalFootnotesLength = 0;
     /**
@@ -64,13 +63,9 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
 
     /** True if footnote citations have been met since the beginning of the page sequence. */
     private boolean footnotesPending = false;
-    /**
-     * True if the elements met after the previous break point contain footnote citations.
-     */
+    /** True if the elements met after the previous break point contain footnote citations. */
     private boolean newFootnotes = false;
-    /**
-     * Index of the first footnote met after the previous break point.
-     */
+    /** Index of the first footnote met after the previous break point. */
     private int firstNewFootnoteIndex = 0;
     /** Index of the last footnote inserted on the current page. */
     private int footnoteListIndex = 0;
@@ -206,6 +201,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void initialize() {
         super.initialize();
         insertedFootnotesLength = 0;
@@ -214,11 +210,12 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     }
 
     /**
-     * {@inheritDoc}
      * Overridden to defer a part to the next page, if it
      * must be kept within one page, but is too large to fit in
      * the last column.
+     * {@inheritDoc}
      */
+    @Override
     protected KnuthNode recoverFromTooLong(KnuthNode lastTooLong) {
 
         if (log.isDebugEnabled()) {
@@ -256,6 +253,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
      * @param node2 The other knuth node.
      * @return the node with the least demerit.
      */
+    @Override
     protected KnuthNode compareNodes(KnuthNode node1, KnuthNode node2) {
 
         /* if either node is null, return the other one */
@@ -281,6 +279,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected KnuthNode createNode(int position,                // CSOK: ParameterNumber
                                    int line, int fitness,
                                    int totalWidth, int totalStretch, int totalShrink,
@@ -294,6 +293,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected KnuthNode createNode(int position, int line, int fitness,
                                    int totalWidth, int totalStretch, int totalShrink) {
         return new KnuthPageNode(position, line, fitness,
@@ -307,11 +307,11 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     }
 
     /**
-     * {@inheritDoc}
      * Page-breaking specific handling of the given box. Currently it adds the footnotes
      * cited in the given box to the list of to-be-handled footnotes.
-     * @param box a block-level element possibly containing foonotes citations
+     * {@inheritDoc}
      */
+    @Override
     protected void handleBox(KnuthBox box) {
         super.handleBox(box);
         if (box instanceof KnuthBlockBox
@@ -325,11 +325,12 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     }
 
     /**
-     * {@inheritDoc}
      * Overridden to consider penalties with value {@link KnuthElement#INFINITE}
      * as legal break-points, if the current keep-context allows this
      * (a keep-*.within-page="always" constraint still permits column-breaks)
+     * {@inheritDoc}
      */
+    @Override
     protected void handlePenaltyAt(KnuthPenalty penalty, int position,
                                    int allowedBreaks) {
         super.handlePenaltyAt(penalty, position, allowedBreaks);
@@ -352,12 +353,12 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
      * @param elementLists list of KnuthElement sequences corresponding to the footnotes
      * bodies
      */
-    private void handleFootnotes(List elementLists) {
+    private void handleFootnotes(List<List<KnuthElement>> elementLists) {
         // initialization
         if (!footnotesPending) {
             footnotesPending = true;
-            footnotesList = new ArrayList();
-            lengthList = new ArrayList();
+            footnotesList = new ArrayList<List<KnuthElement>>();
+            lengthList = new ArrayList<Integer>();
             totalFootnotesLength = 0;
         }
         if (!newFootnotes) {
@@ -366,9 +367,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         }
 
         // compute the total length of the footnotes
-        for (Iterator elementListsIterator = elementLists.iterator();
-                elementListsIterator.hasNext();) {
-            final List noteList = (List) elementListsIterator.next();
+        for (List<KnuthElement> noteList : elementLists) {
 
             //Space resolution (Note: this does not respect possible stacking constraints
             //between footnotes!)
@@ -376,23 +375,23 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
 
             int noteLength = 0;
             footnotesList.add(noteList);
-            for (Iterator noteListIterator = noteList.iterator();
-                    noteListIterator.hasNext();) {
-                final KnuthElement element = (KnuthElement) noteListIterator.next();
+            for (KnuthElement element : noteList) {
                 if (element.isBox() || element.isGlue()) {
                     noteLength += element.getWidth();
                 }
             }
             int prevLength = (lengthList == null || lengthList.isEmpty())
                     ? 0
-                    : ((Integer) ListUtil.getLast(lengthList)).intValue();
-            //TODO: replace with Integer.valueOf() once we switch to Java 5
-            lengthList.add(new Integer(prevLength + noteLength));
+                    : ListUtil.getLast(lengthList);
+            if (lengthList != null) {
+                lengthList.add(prevLength + noteLength);
+            }
             totalFootnotesLength += noteLength;
         }
     }
 
     /** {@inheritDoc} */
+    @Override
     protected int restartFrom(KnuthNode restartingNode, int currentIndex) {
         int returnValue = super.restartFrom(restartingNode, currentIndex);
         newFootnotes = false;
@@ -410,14 +409,14 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         return returnValue;
     }
 
-    private void resetFootnotes(List elementLists) {
+    private void resetFootnotes(List<List<KnuthElement>> elementLists) {
         for (int i = 0; i < elementLists.size(); i++) {
-            /*LinkedList removedList = (LinkedList)*/ListUtil.removeLast(footnotesList);
+            ListUtil.removeLast(footnotesList);
             ListUtil.removeLast(lengthList);
 
             // update totalFootnotesLength
             if (!lengthList.isEmpty()) {
-                totalFootnotesLength = ((Integer) ListUtil.getLast(lengthList)).intValue();
+                totalFootnotesLength = ListUtil.getLast(lengthList);
             } else {
                 totalFootnotesLength = 0;
             }
@@ -429,6 +428,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void considerLegalBreak(KnuthElement element, int elementIdx) {
         if (element.isPenalty()) {
             int breakClass = ((KnuthPenalty) element).getBreakClass();
@@ -457,6 +457,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected boolean elementCanEndLine(KnuthElement element, int line, int difference) {
         if (!(element.isPenalty()) || pageProvider == null) {
             return true;
@@ -489,11 +490,12 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected int computeDifference(KnuthNode activeNode, KnuthElement element,
                                     int elementIndex) {
         KnuthPageNode pageNode = (KnuthPageNode) activeNode;
         int actualWidth = totalWidth - pageNode.totalWidth;
-        int footnoteSplit = 0;
+        int footnoteSplit;
         boolean canDeferOldFN;
         if (element.isPenalty()) {
             actualWidth += element.getWidth();
@@ -562,6 +564,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
      * @param node active node for the preceding page break
      * @param contentElementIndex index of the Knuth element considered for the
      * current page break
+     * @return  true if footnotes can be deferred
      */
     private boolean canDeferOldFootnotes(KnuthPageNode node, int contentElementIndex) {
         return (noBreakBetween(node.position, contentElementIndex)
@@ -668,8 +671,8 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
             // together with all previous, not yet inserted footnotes;
             // but if this is not possible, try adding as much content as possible
             int splitLength = 0;
-            ListIterator noteListIterator = null;
-            KnuthElement element = null;
+            ListIterator<KnuthElement> noteListIterator;
+            KnuthElement element;
             boolean somethingAdded = false;
 
             // prevListIndex and prevElementIndex points to the last footnote element
@@ -687,16 +690,14 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
             if (footnotesList.size() - 1 > listIndex) {
                 // add the previous footnotes: these cannot be broken or deferred
                 if (!canDeferOldFootnotes && newFootnotes && firstNewFootnoteIndex > 0) {
-                    splitLength = ((Integer) lengthList.get(firstNewFootnoteIndex - 1)).intValue()
-                                  - prevLength;
+                    splitLength = lengthList.get(firstNewFootnoteIndex - 1) - prevLength;
                     listIndex = firstNewFootnoteIndex;
                     elementIndex = 0;
                 }
                 // try adding the new footnotes
-                while (((Integer) lengthList.get(listIndex)).intValue() - prevLength
+                while (lengthList.get(listIndex) - prevLength
                        <= availableLength) {
-                    splitLength = ((Integer) lengthList.get(listIndex)).intValue()
-                                  - prevLength;
+                    splitLength = lengthList.get(listIndex) - prevLength;
                     somethingAdded = true;
                     listIndex++;
                     elementIndex = 0;
@@ -727,7 +728,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                     // all footnotes, and we have already tried (and failed) to insert
                     // this whole footnote, the while loop will never reach the end
                     // of the note sequence
-                    element = (KnuthElement) noteListIterator.next();
+                    element = noteListIterator.next();
                     if (element.isBox()) {
                         // element is a box
                         splitLength += element.getWidth();
@@ -774,6 +775,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected double computeAdjustmentRatio(KnuthNode activeNode, int difference) {
         // compute the adjustment ratio
         if (difference > 0) {
@@ -804,6 +806,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected double computeDemerits(KnuthNode activeNode, KnuthElement element,
                                     int fitnessClass, double r) {
         double demerits = 0;
@@ -856,6 +859,8 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         return demerits;
     }
 
+    /** {@inheritDoc} */
+    @Override
     protected void finish() {
         for (int i = startLine; i < endLine; i++) {
             for (KnuthPageNode node = (KnuthPageNode) getNode(i);
@@ -880,7 +885,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
 
         // create pages containing the remaining footnote bodies
         while (insertedFootnotesLength < totalFootnotesLength) {
-            final int tmpLength = ((Integer) lengthList.get(footnoteListIndex)).intValue();
+            final int tmpLength = lengthList.get(footnoteListIndex);
             // try adding some more content
             if ((tmpLength - insertedFootnotesLength) <= availableBPD) {
                 // add a whole footnote
@@ -925,7 +930,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
      * @return a list of {@link PageBreakPosition} elements
      *          corresponding to the computed page- and column-breaks
      */
-    public LinkedList getPageBreaks() {
+    public LinkedList<PageBreakPosition> getPageBreaks() {
         return pageBreaks;
     }
 
@@ -937,7 +942,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
      */
     public void insertPageBreakAsFirst(PageBreakPosition pageBreak) {
         if (pageBreaks == null) {
-            pageBreaks = new LinkedList();
+            pageBreaks = new LinkedList<PageBreakPosition>();
         }
         pageBreaks.addFirst(pageBreak);
     }
@@ -948,19 +953,19 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
      * whole content should be painted as one part.
      */
     public void removeAllPageBreaks() {
-        if (pageBreaks == null) {
+        if (pageBreaks == null || pageBreaks.isEmpty()) {
             return;
         }
-        while (pageBreaks.size() > 1) {
-            pageBreaks.removeFirst();
-        }
+        pageBreaks.subList(0, pageBreaks.size() - 1).clear();
     }
 
     /** {@inheritDoc} */
+    @Override
     public void updateData1(int total, double demerits) {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void updateData2(KnuthNode bestActiveNode,
                             KnuthSequence sequence,
                             int total) {
@@ -1029,6 +1034,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected int filterActiveNodes() {
         // leave only the active node with fewest total demerits
         KnuthNode bestActiveNode = null;
@@ -1058,8 +1064,8 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
      * @param index the index in the list of footnotes
      * @return  the element-list
      */
-    protected final List getFootnoteList(int index) {
-        return (List) footnotesList.get(index);
+    protected final List<KnuthElement> getFootnoteList(int index) {
+        return footnotesList.get(index);
     }
 
     /** @return the associated top-level formatting object. */
@@ -1068,6 +1074,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected int getLineWidth(int line) {
         int bpd;
         if (pageProvider != null) {
@@ -1097,11 +1104,13 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected int getIPDdifference() {
         return ipdDifference;
     }
 
     /** {@inheritDoc} */
+    @Override
     protected int handleIpdChange() {
         log.trace("Best node for ipd change:" + bestNodeForIPDChange);
         // TODO finish()
@@ -1123,6 +1132,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
      * @param line number of the line ending at the node's corresponding breakpoint
      * @param node the active node to add
      */
+    @Override
     protected void addNode(int line, KnuthNode node) {
         if (node.position < par.size() - 1 && line > 0
                 && (ipdDifference = compareIPDs(line - 1)) != 0) {  // CSOK: InnerAssignment
@@ -1153,5 +1163,4 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         }
         return pageProvider.compareIPDs(line);
     }
-
 }

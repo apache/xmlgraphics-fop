@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="page" page-height="3.1cm" page-width="6cm" margin="2mm">
+      <fo:region-body/>
+    </fo:simple-page-master>
+  </fo:layout-master-set>
+  <fo:page-sequence master-reference="page">
+    <fo:flow flow-name="xsl-region-body">
+      <fo:table table-layout="fixed" inline-progression-dimension="100%">
+        <fo:table-column column-width="50%"/>
+        <fo:table-column column-width="50%"/>
+        <fo:table-body>
+          <fo:table-row>
+            <fo:table-cell border="solid 2mm darkblue">
+              <fo:block>Cell 1/1</fo:block>
+            </fo:table-cell>
+            <fo:table-cell border="solid 2mm darkblue">
+              <fo:block>Cell 2/1</fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+          <fo:table-row>
+            <fo:table-cell border="solid 2mm darkblue">
+              <fo:block>Cell 1/2</fo:block>
+            </fo:table-cell>
+            <fo:table-cell border="solid 2mm darkblue">
+              <fo:block>Cell 2/2</fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+        </fo:table-body>
+      </fo:table>
+
+      <fo:table table-layout="fixed" inline-progression-dimension="100%" space-before="2mm">
+        <fo:table-column column-width="50%"/>
+        <fo:table-column column-width="50%"/>
+        <fo:table-body color="white">
+          <fo:table-row>
+            <fo:table-cell background-color="darkgreen">
+              <fo:block>Cell 1/1</fo:block>
+            </fo:table-cell>
+            <fo:table-cell background-color="darkgreen">
+              <fo:block>Cell 2/1</fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+          <fo:table-row>
+            <fo:table-cell background-color="darkgreen">
+              <fo:block>Cell 1/2</fo:block>
+            </fo:table-cell>
+            <fo:table-cell background-color="darkgreen">
+              <fo:block>Cell 2/2</fo:block>
+            </fo:table-cell>
+          </fo:table-row>
+        </fo:table-body>
+      </fo:table>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>

@@ -29,9 +29,10 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
 import java.io.IOException;
 
 /**
- *  Interface for RtfElements that can contain RtfTables
- *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
- *  @author Boris Poudérous
+ * <p>Interface for RtfElements that can contain RtfTables.</p>
+ *
+ * <p>This work was authored by Bertrand Delacretaz (bdelacretaz@codeconsult.ch)
+ * and Boris Poudérous.</p>
  */
 public interface IRtfTableContainer {
    /**

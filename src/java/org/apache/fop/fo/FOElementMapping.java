@@ -24,6 +24,8 @@ import java.util.HashMap;
 
 import org.apache.xmlgraphics.util.QName;
 
+import org.apache.fop.layoutmgr.BlockLevelEventProducer;
+
 /**
  * Element mapping class for all XSL-FO elements.
  */
@@ -31,6 +33,9 @@ public class FOElementMapping extends ElementMapping {
 
     /** The XSL-FO namespace URI */
     public static final String URI = "http://www.w3.org/1999/XSL/Format";
+
+     /** Standard prefix */
+    public static final String STANDARD_PREFIX = "fo";
 
     /**
      * Basic constructor; inititializes the namespace URI for the fo: namespace
@@ -44,7 +49,7 @@ public class FOElementMapping extends ElementMapping {
      */
     protected void initialize() {
         if (foObjs == null) {
-            foObjs = new HashMap();
+            foObjs = new HashMap<String, Maker>();
 
             // Declarations and Pagination and Layout Formatting Objects
             foObjs.put("root", new RootMaker());
@@ -141,7 +146,7 @@ public class FOElementMapping extends ElementMapping {
 
     /** {@inheritDoc} */
     public String getStandardPrefix() {
-        return "fo";
+        return STANDARD_PREFIX;
     }
 
     /** {@inheritDoc} */
@@ -205,7 +210,9 @@ public class FOElementMapping extends ElementMapping {
 
     static class PageSequenceMasterMaker extends ElementMapping.Maker {
         public FONode make(FONode parent) {
-            return new org.apache.fop.fo.pagination.PageSequenceMaster(parent);
+            return new org.apache.fop.fo.pagination.PageSequenceMaster(parent,
+                    BlockLevelEventProducer.Provider.get(
+                            parent.getUserAgent().getEventBroadcaster()));
         }
     }
 

@@ -26,15 +26,18 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
  * the FOP project.
  */
 
+import java.io.IOException;
 import java.io.Writer;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Iterator;
-import java.io.IOException;
+
 import org.apache.fop.render.rtf.rtflib.exceptions.RtfStructureException;
 
-/**  An RtfElement that can contain other elements.
- *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
+/**
+ * <p>An RtfElement that can contain other elements.</p>
+ *
+ * <p>This work was authored by Bertrand Delacretaz (bdelacretaz@codeconsult.ch).</p>
  */
 
 public class RtfContainer extends RtfElement {

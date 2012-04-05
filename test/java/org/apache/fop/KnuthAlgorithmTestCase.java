@@ -19,6 +19,8 @@
 
 package org.apache.fop;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.List;
 
 import org.apache.fop.layoutmgr.BlockKnuthSequence;
@@ -28,17 +30,16 @@ import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthGlue;
 import org.apache.fop.layoutmgr.KnuthPenalty;
 import org.apache.fop.layoutmgr.KnuthSequence;
-
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests the Knuth algorithm implementation.
  */
-public class KnuthAlgorithmTestCase extends TestCase {
+public class KnuthAlgorithmTestCase {
 
-    /** @see junit.framework.TestCase#setUp() */
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() {
         DebugHelper.registerStandardElementListObservers();
     }
 
@@ -67,6 +68,7 @@ public class KnuthAlgorithmTestCase extends TestCase {
      * possibility.
      * @throws Exception if an error occurs
      */
+    @Test
     public void test1() throws Exception {
         MyBreakingAlgorithm algo = new MyBreakingAlgorithm(0, 0, true, true, 0);
         algo.setConstantLineWidth(30000);

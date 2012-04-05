@@ -19,41 +19,43 @@
 
 package org.apache.fop;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
 import org.apache.fop.events.BasicEventTestCase;
+import org.apache.fop.pdf.FileIDGeneratorTestCase;
+import org.apache.fop.pdf.PDFDocumentGraphics2DTestCase;
+import org.apache.fop.pdf.PDFEncryptionJCETestCase;
+import org.apache.fop.pdf.PDFFactoryTestCase;
+import org.apache.fop.pdf.PDFNumberTestCase;
 import org.apache.fop.pdf.PDFObjectTestCase;
 import org.apache.fop.traits.BorderPropsTestCase;
+import org.apache.fop.util.BitmapImageUtilTestCase;
 import org.apache.fop.util.ColorUtilTestCase;
 import org.apache.fop.util.ElementListUtilsTestCase;
 import org.apache.fop.util.HexEncoderTestCase;
-import org.apache.fop.util.PDFNumberTestCase;
 import org.apache.fop.util.XMLResourceBundleTestCase;
 
 /**
  * Test suite for FOP's utility classes.
  */
+@RunWith(Suite.class)
+@SuiteClasses({
+    ColorUtilTestCase.class,
+    BorderPropsTestCase.class,
+    ElementListUtilsTestCase.class,
+    BasicEventTestCase.class,
+    XMLResourceBundleTestCase.class,
+    URIResolutionTestCase.class,
+    FileIDGeneratorTestCase.class,
+    PDFFactoryTestCase.class,
+    PDFEncryptionJCETestCase.class,
+    BitmapImageUtilTestCase.class,
+    PDFDocumentGraphics2DTestCase.class,
+    PDFNumberTestCase.class,
+    PDFObjectTestCase.class,
+    HexEncoderTestCase.class
+})
 public class UtilityCodeTestSuite {
-
-    /**
-     * Builds the test suite
-     * @return the test suite
-     */
-    public static Test suite() {
-        TestSuite suite = new TestSuite(
-            "Test suite for FOP's utility classes");
-        //$JUnit-BEGIN$
-        suite.addTest(new TestSuite(PDFNumberTestCase.class));
-        suite.addTest(new TestSuite(PDFObjectTestCase.class));
-        suite.addTest(new TestSuite(ColorUtilTestCase.class));
-        suite.addTest(new TestSuite(BorderPropsTestCase.class));
-        suite.addTest(new TestSuite(ElementListUtilsTestCase.class));
-        suite.addTest(new TestSuite(BasicEventTestCase.class));
-        suite.addTest(new TestSuite(XMLResourceBundleTestCase.class));
-        suite.addTest(new TestSuite(URIResolutionTestCase.class));
-        suite.addTest(new TestSuite(HexEncoderTestCase.class));
-        //$JUnit-END$
-        return suite;
-    }
 }

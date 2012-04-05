@@ -29,8 +29,10 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
 import java.io.IOException;
 import java.io.Writer;
 
-/**  Model of a text run (a piece of text with attributes) in an RTF document
- *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
+/**
+ * <p>Model of a text run (a piece of text with attributes) in an RTF document.</p>
+ *
+ * <p>This work was authored by Bertrand Delacretaz (bdelacretaz@codeconsult.ch).</p>
  */
 
 public class RtfText extends RtfElement {

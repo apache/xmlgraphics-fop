@@ -61,6 +61,7 @@ public abstract class CustomFont extends Typeface
     private Map<Integer, Map<Integer, Integer>> kerning;
 
     private boolean useKerning = true;
+    private boolean useAdvanced = true;
 
     /** the character map, mapping Unicode ranges to glyph indices. */
     protected BFEntry[] cmap;
@@ -271,7 +272,7 @@ public abstract class CustomFont extends Typeface
         return lastChar;
     }
 
-    /**MutableFont
+    /**
      * Used to determine if kerning is enabled.
      * @return True if kerning is enabled.
      */
@@ -295,6 +296,15 @@ public abstract class CustomFont extends Typeface
         } else {
             return Collections.emptyMap();
         }
+    }
+
+    /**
+     * Used to determine if advanced typographic features are enabled.
+     * By default, this is false, but may be overridden by subclasses.
+     * @return true if enabled.
+     */
+    public boolean isAdvancedEnabled() {
+        return useAdvanced;
     }
 
     /* ---- MutableFont interface ---- */
@@ -444,6 +454,13 @@ public abstract class CustomFont extends Typeface
      */
     public void setKerningEnabled(boolean enabled) {
         this.useKerning = enabled;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setAdvancedEnabled(boolean enabled) {
+        this.useAdvanced = enabled;
     }
 
     /**

@@ -25,11 +25,13 @@ import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.DocumentLoader;
 import org.apache.batik.bridge.UserAgent;
 import org.apache.batik.gvt.TextPainter;
+
+import org.apache.xmlgraphics.image.loader.ImageManager;
+import org.apache.xmlgraphics.image.loader.ImageSessionContext;
+
 import org.apache.fop.afp.AFPGraphics2D;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.svg.AbstractFOPBridgeContext;
-import org.apache.xmlgraphics.image.loader.ImageManager;
-import org.apache.xmlgraphics.image.loader.ImageSessionContext;
 
 /**
  * An AFP specific implementation of a Batik BridgeContext
@@ -79,11 +81,12 @@ public class AFPBridgeContext extends AbstractFOPBridgeContext {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void registerSVGBridges() {
         super.registerSVGBridges();
 
         if (fontInfo != null) {
-            AFPTextHandler textHandler = new AFPTextHandler(fontInfo);
+            AFPTextHandler textHandler = new AFPTextHandler(fontInfo, g2d.getResourceManager());
             g2d.setCustomTextHandler(textHandler);
 
             TextPainter textPainter = new AFPTextPainter(textHandler);
@@ -96,6 +99,7 @@ public class AFPBridgeContext extends AbstractFOPBridgeContext {
     }
 
     /** {@inheritDoc} */
+    @Override
     public BridgeContext createBridgeContext() {
         return new AFPBridgeContext(getUserAgent(), getDocumentLoader(),
                 fontInfo,

@@ -23,7 +23,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Iterator;
 
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.stream.StreamSource;
@@ -44,7 +43,7 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.xmlgraphics.image.writer.ImageWriterUtil;
 
-import org.apache.fop.layoutengine.LayoutEngineTestSuite;
+import org.apache.fop.layoutengine.LayoutEngineTestUtils;
 
 /**
  * This class is used to visually diff bitmap images created through various sources.
@@ -150,8 +149,7 @@ public class BatchDiffer {
                 throw new RuntimeException("source-directory does not exist: " + srcDir);
             }
             final File targetDir = new File(cfg.getChild("target-directory").getValue());
-            targetDir.mkdirs();
-            if (!targetDir.exists()) {
+            if (!targetDir.mkdirs() && !targetDir.exists()) {
                 throw new RuntimeException("target-directory is invalid: " + targetDir);
             }
             context.setTargetDir(targetDir);
@@ -164,7 +162,8 @@ public class BatchDiffer {
             IOFileFilter filter = new SuffixFileFilter(new String[] {".xml", ".fo"});
             //Same filtering as in layout engine tests
             if (cfg.getChild("filter-disabled").getValueAsBoolean(true)) {
-                filter = LayoutEngineTestSuite.decorateWithDisabledList(filter);
+                String disabled = System.getProperty("fop.layoutengine.disabled");
+                filter = LayoutEngineTestUtils.decorateWithDisabledList(filter, disabled);
             }
             String manualFilter = cfg.getChild("manual-filter").getValue(null);
             if (manualFilter != null) {
@@ -176,10 +175,8 @@ public class BatchDiffer {
             }
 
             int maxfiles = cfg.getChild("max-files").getValueAsInteger(-1);
-            Collection files = FileUtils.listFiles(srcDir, filter, null);
-            Iterator i = files.iterator();
-            while (i.hasNext()) {
-                final File f = (File)i.next();
+            Collection<File> files = FileUtils.listFiles(srcDir, filter, null);
+            for (final File f : files) {
                 try {
                     log.info("---=== " + f + " ===---");
                     long[] times = new long[producers.length];
@@ -228,9 +225,6 @@ public class BatchDiffer {
                     break;
                 }
             }
-        } catch (IOException ioe) {
-            log.error("I/O problem while processing", ioe);
-            throw new RuntimeException("I/O problem: " + ioe.getMessage());
         } catch (ConfigurationException e) {
             log.error("Error while configuring BatchDiffer", e);
             throw new RuntimeException("Error while configuring BatchDiffer: " + e.getMessage());
@@ -260,7 +254,7 @@ public class BatchDiffer {
         BitmapProducer[] producers = new BitmapProducer[children.length];
         for (int i = 0; i < children.length; i++) {
             try {
-                Class clazz = Class.forName(children[i].getAttribute("classname"));
+                Class<?> clazz = Class.forName(children[i].getAttribute("classname"));
                 producers[i] = (BitmapProducer)clazz.newInstance();
                 ContainerUtil.configure(producers[i], children[i]);
             } catch (Exception e) {

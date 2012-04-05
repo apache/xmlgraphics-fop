@@ -48,14 +48,15 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfFontManager;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfLeader;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfText;
 
-/**  Converts FO properties to RtfAttributes
- *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
- *  @author Andreas Putz a.putz@skynamics.com
- *  @author Boris Poud&#x00E9;rous boris.pouderous@eads-telecom.com
- *  @author Peter Herweg, pherweg@web.de
- *  @author Normand Mass&#x00E9;
- *  @author Chris Scott
- *  @author rmarra
+/**
+ * <p>Converts FO properties to RtfAttributes.</p>
+ *
+ * <p>This work was authored by Bertrand Delacretaz (bdelacretaz@codeconsult.ch),
+ * Boris Poudérous (boris.pouderous@eads-telecom.com),
+ * Peter Herweg (pherweg@web.de),
+ * Normand Massé,
+ * Christopher Scott (scottc@westinghouse.com), and
+ * Roberto Marra (roberto@link-u.com).</p>
  */
 final class TextAttributesConverter {
 

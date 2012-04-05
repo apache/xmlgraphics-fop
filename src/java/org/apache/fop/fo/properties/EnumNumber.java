@@ -22,6 +22,7 @@ package org.apache.fop.fo.properties;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.util.CompareUtil;
 
 /**
  * A number quantity in XSL which is specified as an enum, such as "no-limit".
@@ -29,8 +30,8 @@ import org.apache.fop.fo.expr.PropertyException;
 public final class EnumNumber extends Property implements Numeric {
 
     /** cache holding all canonical EnumNumber instances */
-    private static final PropertyCache CACHE
-        = new PropertyCache(EnumNumber.class);
+    private static final PropertyCache<EnumNumber> CACHE
+            = new PropertyCache<EnumNumber>();
 
     private final EnumProperty enumProperty;
 
@@ -50,8 +51,7 @@ public final class EnumNumber extends Property implements Numeric {
      * @return  the canonical instance
      */
     public static EnumNumber getInstance(Property enumProperty) {
-        return (EnumNumber)CACHE.fetch(
-                new EnumNumber((EnumProperty) enumProperty));
+        return CACHE.fetch(new EnumNumber((EnumProperty) enumProperty));
     }
 
     /** {@inheritDoc} */
@@ -69,16 +69,20 @@ public final class EnumNumber extends Property implements Numeric {
         return enumProperty.getObject();
     }
 
-    /** {@inheritDoc} */
+    @Override
     public boolean equals(Object obj) {
-        if (obj instanceof EnumNumber) {
-            return (((EnumNumber)obj).enumProperty == this.enumProperty);
-        } else {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof EnumNumber)) {
             return false;
         }
+        EnumNumber other = (EnumNumber) obj;
+        return CompareUtil.equal(enumProperty, other.enumProperty);
     }
 
     /** {@inheritDoc} */
+    @Override
     public int hashCode() {
         return enumProperty.hashCode();
     }

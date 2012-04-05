@@ -19,44 +19,26 @@
 
 package org.apache.fop.render.pdf;
 
-import java.awt.Rectangle;
-import java.io.IOException;
-
 import org.apache.xmlgraphics.image.loader.Image;
 import org.apache.xmlgraphics.image.loader.ImageFlavor;
 import org.apache.xmlgraphics.image.loader.impl.ImageRawCCITTFax;
 
 import org.apache.fop.pdf.PDFImage;
-import org.apache.fop.pdf.PDFXObject;
-import org.apache.fop.render.ImageHandler;
 import org.apache.fop.render.RenderingContext;
 
 /**
  * Image handler implementation which handles CCITT encoded images (CCITT fax group 3/4)
  * for PDF output.
  */
-public class PDFImageHandlerRawCCITTFax implements ImageHandler {
+public class PDFImageHandlerRawCCITTFax extends AbstractPDFImageHandler {
 
     private static final ImageFlavor[] FLAVORS = new ImageFlavor[] {
         ImageFlavor.RAW_CCITTFAX,
     };
 
-    /** {@inheritDoc} */
-    public void handleImage(RenderingContext context, Image image, Rectangle pos)
-                throws IOException {
-        PDFRenderingContext pdfContext = (PDFRenderingContext)context;
-        PDFContentGenerator generator = pdfContext.getGenerator();
-        ImageRawCCITTFax ccitt = (ImageRawCCITTFax)image;
-
-        PDFImage pdfimage = new ImageRawCCITTFaxAdapter(ccitt, image.getInfo().getOriginalURI());
-        PDFXObject xobj = generator.getDocument().addImage(
-                generator.getResourceContext(), pdfimage);
-
-        float x = (float)pos.getX() / 1000f;
-        float y = (float)pos.getY() / 1000f;
-        float w = (float)pos.getWidth() / 1000f;
-        float h = (float)pos.getHeight() / 1000f;
-        generator.placeImage(x, y, w, h, xobj);
+    @Override
+    PDFImage createPDFImage(Image image, String xobjectKey) {
+        return new ImageRawCCITTFaxAdapter((ImageRawCCITTFax) image, xobjectKey);
     }
 
     /** {@inheritDoc} */

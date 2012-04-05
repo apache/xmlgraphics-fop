@@ -19,9 +19,12 @@
 
 package org.apache.fop.area;
 
+import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.util.HashMap;
+
+import org.apache.fop.traits.WritingModeTraitsGetter;
 
 /**
  * Region Viewport area.
@@ -29,7 +32,7 @@ import java.util.HashMap;
  * region-reference-area as its child.  These areas are described
  * in the fo:region-body description in the XSL Recommendation.
  */
-public class RegionViewport extends Area implements Cloneable {
+public class RegionViewport extends Area implements Cloneable, Viewport {
 
     private static final long serialVersionUID = 505781815165102572L;
 
@@ -75,9 +78,18 @@ public class RegionViewport extends Area implements Cloneable {
         clip = c;
     }
 
-    /** @return true if the viewport should be clipped. */
-    public boolean isClip() {
+    /** {@inheritDoc} */
+    public boolean hasClip() {
         return this.clip;
+    }
+
+    /** {@inheritDoc} */
+    public Rectangle getClipRectangle() {
+        if (clip) {
+            return new Rectangle(getIPD(), getBPD());
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -96,7 +108,7 @@ public class RegionViewport extends Area implements Cloneable {
         out.writeFloat((float) viewArea.getWidth());
         out.writeFloat((float) viewArea.getHeight());
         out.writeBoolean(clip);
-        out.writeObject(props);
+        out.writeObject(traits);
         out.writeObject(regionReference);
     }
 
@@ -105,7 +117,7 @@ public class RegionViewport extends Area implements Cloneable {
         viewArea = new Rectangle2D.Float(in.readFloat(), in.readFloat(),
                                          in.readFloat(), in.readFloat());
         clip = in.readBoolean();
-        props = (HashMap)in.readObject();
+        traits = (HashMap)in.readObject();
         setRegionReference((RegionReference) in.readObject());
     }
 
@@ -118,13 +130,25 @@ public class RegionViewport extends Area implements Cloneable {
     public Object clone() {
         RegionViewport rv = new RegionViewport((Rectangle2D)viewArea.clone());
         rv.regionReference = (RegionReference)regionReference.clone();
-        if (props != null) {
-            rv.props = new HashMap(props);
+        if (traits != null) {
+            rv.traits = new HashMap(traits);
         }
         if (foreignAttributes != null) {
             rv.foreignAttributes = new HashMap(foreignAttributes);
         }
         return rv;
     }
+
+    /**
+     * Sets the writing mode traits for the region reference of
+     * this region viewport
+     * @param wmtg a WM traits getter
+     */
+    public void setWritingModeTraits(WritingModeTraitsGetter wmtg) {
+        if (regionReference != null) {
+            regionReference.setWritingModeTraits(wmtg);
+        }
+    }
+
 }
 

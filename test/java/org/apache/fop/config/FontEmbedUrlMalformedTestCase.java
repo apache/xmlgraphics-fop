@@ -22,15 +22,9 @@ package org.apache.fop.config;
 /**
  * this font has a malformed embed-url
  */
-public class FontEmbedUrlMalformedTestCase extends BaseDestructiveUserConfigTestCase {
+public class FontEmbedUrlMalformedTestCase extends BaseDestructiveUserConfigTest {
 
-    public FontEmbedUrlMalformedTestCase(String name) {
-        super(name);
-    }
-
-    /**
-     * @see org.apache.fop.config.BaseUserConfigTestCase#getUserConfigFilename()
-     */
+    @Override
     public String getUserConfigFilename() {
         return "test_font_embedurl_malformed.xconf";
     }

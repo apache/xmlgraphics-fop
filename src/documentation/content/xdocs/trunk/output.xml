@@ -1,4 +1,4 @@
-<?xml version="1.0" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -20,7 +20,7 @@
 <!-- Output Formats: Renderers -->
 <document>
   <header>
-    <title>Apache FOP Output Formats</title>
+    <title>Apache™ FOP Output Formats</title>
     <version>$Revision$</version>
     <authors>
       <person name="Keiron Liddle" email="keiron@aftexsw.com"/>
@@ -30,7 +30,7 @@
 
   <body>
     <p>
-      FOP supports multiple output formats by using a different renderer for each format.
+      Apache™ FOP supports multiple output formats by using a different renderer for each format.
       The renderers do not all have the same set of capabilities, sometimes because of 
       the output format itself, sometimes because some renderers get more development 
       attention than others.
@@ -287,6 +287,7 @@ out = proc.getOutputStream();]]></source>
   <optimize-resources>false</optimize-resources>
   <safe-set-page-device>false</safe-set-page-device>
   <dsc-compliant>true</dsc-compliant>
+  <rendering>quality</rendering>
 </renderer>]]></source>
       <p>
         The default value for the "auto-rotate-landscape" setting is "false". Setting it
@@ -318,6 +319,12 @@ out = proc.getOutputStream();]]></source>
         blank pages are experienced in your postscript output.  This problem is caused by
         the particular postscript implementation issuing unwanted postscript subsystem
         initgraphics/erasepage calls on each setpagedevice call.
+      </p>
+      <p>
+        The default value for the "rendering" setting is "quality". Setting it to "size"
+        optimizes rendering for smaller file sizes which can involve minor compromises in
+        rendering quality. For example, solid borders are then painted as plain rectangles
+        instead of the elaborate painting instructions required for mixed-color borders.
       </p>
     </section>
   <section id="ps-limitations">
@@ -736,6 +743,12 @@ Note that the value of the encoding attribute in the example is the double-byte 
           <a href="fonts.html#embedding"><code>referenced-fonts</code> section of the configuration file</a>.
           However, the default fonts shown above will not be embedded.
         </p>
+        <p>
+          For double byte EBCDIC encoded character sets, there is an optional tag that must be set to prevent
+          characters from being miscoded. This defaults to "false" if not specified.</p>
+          <source><![CDATA[
+        <afp-font type="CIDKeyed" codepage="T10835  " encoding="Cp937" characterset="CZTKAI" ebcdic-dbcs="true"/>]]>
+          </source>
       </section>
       <section id="afp-renderer-resolution-config">
         <title>Output Resolution</title>
@@ -783,6 +796,46 @@ Note that the value of the encoding attribute in the example is the double-byte 
         </p>
         <source><![CDATA[
       <images mode="b+w" bits-per-pixel="1" dithering-quality="maximum"/>]]></source>
+        <p>
+          By default, JPEG images are rasterized to a bitmap and the bitmap is included in the AFP doc.
+          However it is possible to encode in a lossless way to maintain maximum quality. But due
+          to lack of support for compression schemes like LZW (patent concerns), bitmap data is currently
+          not compressed resulting in large AFP files. Using the "allow-embedding" attribute on jpeg child
+          element allows the user to pass the JPEG as is in the document. The default is set to "false" since
+          there are compatibility concerns as some AFP printers don't support JPEG decoding. Using the
+          "bitmap-encoding-quality" attribute it is possible to enable lossy compression (JPEG baseline
+          DCT). The default is "1.0" which means lossless encoding. Setting a value lower than 1.0, JPEG
+          compression is enabled and the setting is used as the quality setting when encoding bitmap data.
+          Note that this setting does not always have an effect. Bi-level (1 bit) bitmaps are not compressed
+          using JPEG. Example:
+        </p>
+        <source><![CDATA[
+      <images mode="color" cmyk="true">
+        <jpeg allow-embedding="false" bitmap-encoding-quality="0.8"/>
+      </images>]]></source>
+      </section>
+      <section id="afp-goca-config">
+        <title>GOCA (Vector Graphics)</title>
+        <p>
+          Not all AFP implementations support GOCA. Some also have bugs related to GOCA. Therefore,
+          it is desirable to have some control over the generation of GOCA graphics.
+        </p>
+        <p>
+          GOCA is enabled by default. You can disable GOCA entirely in which case the AFP support
+          falls back to generating bitmaps for vector graphics. Example:
+        </p>
+        <source><![CDATA[
+      <goca enabled="false"/>]]></source>
+        <p>
+          Some AFP implementations have trouble rendering text in GOCA. You can instruct the AFP
+          support to render text as shapes (i.e. use vector graphics to paint text). Example: 
+        </p>
+        <source><![CDATA[
+      <goca enabled="true" text="shapes"/>]]></source>
+        <p>
+          If you disable GOCA or let text render as shapes, the size of the generated AFP usually
+          increases considerably.
+        </p>
       </section>
       <section id="afp-shading-config">
         <title>Shading</title>
@@ -931,9 +984,20 @@ Note that the value of the encoding attribute in the example is the double-byte 
         </fo:simple-page-master>
       </fo:layout-master-set>
 ]]></source>
-        <p>The no-operation extension element can only occur within a simple-page-master.
-        Multiple no-operation extension elements within a simple-page-master are allowed.
-        The name attribute is mandatory.
+        <p>The no-operation extension element can appear as child of
+        <code>simple-page-master</code> (appears after "Begin Page" BPG),
+        <code>page-sequence</code> (appears after "Begin Named Page Group" BNG
+        and <code>declarations</code> (appears after "Begin Document" BDT).
+        Multiple no-operation extension elements inside the same formatting object are allowed.
+        Each NOP will appear right after the respective "Begin" field indicated above even if it
+        is specified as the last child under its parent. The order inside the parent
+        will be maintained.
+        The "placement" attribute can be used to have the NOP appear before
+        the "End" field of the object rather than after the "Begin" field. Specify
+        <code>placement="before-end"</code> to do that. Please note that, at the moment, this only
+        has an effect for NOPs that are children of the <code>page-sequence</code> formatting
+        object.
+        The "name" attribute is mandatory but will not appear inside the AFP stream.
         </p>
       </section>
       <section id="afp-invoke-medium-map">
@@ -1025,7 +1089,7 @@ Note that the value of the encoding attribute in the example is the double-byte 
         Please refer to the <link href="#afp-resource-level-defaults">Resource Level Defaults</link>
         above to see what is used if the resource-level attribute is not specified.
         </p>
-        <p></p>
+        <p/>
       </section>
     </section>
   </section>
@@ -1314,6 +1378,3 @@ Note that the value of the encoding attribute in the example is the double-byte 
 
   </body>
 </document>
-
-
-

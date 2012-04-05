@@ -24,7 +24,6 @@ import java.io.OutputStream;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 
-import org.apache.fop.afp.ptoca.PtocaBuilder;
 import org.apache.fop.afp.ptoca.PtocaConstants;
 import org.apache.fop.afp.util.BinaryUtils;
 

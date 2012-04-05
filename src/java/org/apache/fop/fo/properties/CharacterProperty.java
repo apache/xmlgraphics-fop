@@ -51,8 +51,8 @@ public final class CharacterProperty extends Property {
     }
 
     /** cache containing all canonical CharacterProperty instances */
-    private static final PropertyCache CACHE
-        = new PropertyCache(CharacterProperty.class);
+    private static final PropertyCache<CharacterProperty> CACHE
+            = new PropertyCache<CharacterProperty>();
 
     private final char character;
 
@@ -69,8 +69,7 @@ public final class CharacterProperty extends Property {
      * @return the character property instance
      */
     public static CharacterProperty getInstance(char character) {
-        return (CharacterProperty) CACHE.fetch(
-                        new CharacterProperty(character));
+        return CACHE.fetch(new CharacterProperty(character));
     }
 
     /**
@@ -94,22 +93,18 @@ public final class CharacterProperty extends Property {
         return new Character(character).toString();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public boolean equals(Object obj) {
         if (obj instanceof CharacterProperty) {
-            return (((CharacterProperty)obj).character == this.character);
+            return (character == ((CharacterProperty) obj).character);
         } else {
             return false;
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public int hashCode() {
-        return (int) character;
+        return character;
     }
 
 }

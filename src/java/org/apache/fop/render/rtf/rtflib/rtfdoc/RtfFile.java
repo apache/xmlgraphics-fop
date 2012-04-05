@@ -26,18 +26,20 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
  * the FOP project.
  */
 
-import org.apache.fop.render.rtf.rtflib.exceptions.RtfStructureException;
-import java.io.Writer;
-import java.io.IOException;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.Writer;
+
+import org.apache.fop.render.rtf.rtflib.exceptions.RtfStructureException;
 
 /**
- * Models the top-level structure of an RTF file.
- * @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
- * @author Andreas Putz a.putz@skynamics.com
- * @author Christopher Scott scottc@westinghouse.com
+ * <p>Models the top-level structure of an RTF file.</p>
+ *
+ * <p>This work was authored by Bertrand Delacretaz (bdelacretaz@codeconsult.ch),
+ * Andreas Putz (a.putz@skynamics.com), and
+ * Christopher Scott (scottc@westinghouse.com).</p>
  */
 
 public class RtfFile

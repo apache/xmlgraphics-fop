@@ -185,7 +185,6 @@ public class PageObject extends AbstractResourceGroupContainer {
 
         getActiveEnvironmentGroup().writeToStream(os);
 
-        writeObjects(tagLogicalElements, os);
         writeObjects(objects, os);
     }
 

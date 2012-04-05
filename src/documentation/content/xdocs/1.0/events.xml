@@ -19,14 +19,14 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
 <document>
   <header>
-    <title>Events/Processing Feedback</title>
+    <title>Apache™ FOP: Events/Processing Feedback</title>
     <version>$Revision$</version>
   </header>
   <body>
     <section id="introduction">
       <title>Introduction</title>
       <p>
-        In versions until 0.20.5, FOP used
+        In versions until 0.20.5, Apache™ FOP used
         <a href="http://excalibur.apache.org/framework/index.html">Avalon-style Logging</a> where
         it was possible to supply a logger per processing run. During the redesign
         the logging infrastructure was switched over to

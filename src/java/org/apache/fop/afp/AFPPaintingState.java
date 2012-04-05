@@ -53,6 +53,9 @@ public class AFPPaintingState extends org.apache.fop.util.AbstractPaintingState 
     /** dithering quality setting (0.0f..1.0f) */
     private float ditheringQuality;
 
+    /** image encoding quality setting (0.0f..1.0f) */
+    private float bitmapEncodingQuality;
+
     /** color image handler */
     private ColorConverter colorConverter = GrayScaleColorConverter.getInstance();
 
@@ -61,6 +64,9 @@ public class AFPPaintingState extends org.apache.fop.util.AbstractPaintingState 
      * format.
      */
     private boolean nativeImagesSupported = false;
+
+    private boolean canEmbedJpeg = false;
+
     /**
      * true if CMYK images (requires IOCA FS45 suppport on the target platform)
      * may be generated
@@ -72,6 +78,11 @@ public class AFPPaintingState extends org.apache.fop.util.AbstractPaintingState 
 
     /** the output resolution */
     private int resolution = 240; // 240 dpi
+
+    /** determines whether GOCA is enabled or disabled  */
+    private boolean gocaEnabled = true;
+    /** determines whether to stroke text in GOCA mode or to use text operators where possible */
+    private boolean strokeGocaText = false;
 
     /** the current page */
     private transient AFPPagePaintingState pagePaintingState = new AFPPagePaintingState();
@@ -215,6 +226,24 @@ public class AFPPaintingState extends org.apache.fop.util.AbstractPaintingState 
     }
 
     /**
+     * Set whether or not JPEG images can be embedded within an AFP document.
+     *
+     * @param canEmbed true if the JPEG image can be embedded
+     */
+    public void setCanEmbedJpeg(boolean canEmbed) {
+        canEmbedJpeg = canEmbed;
+    }
+
+    /**
+     * Returns true if JPEGs can be embedded in an AFP document.
+     *
+     * @return true if JPEG embedding is allowed
+     */
+    public boolean canEmbedJpeg() {
+        return canEmbedJpeg;
+    }
+
+    /**
      * Controls whether CMYK images (IOCA FS45) are enabled. By default, support
      * is disabled for wider compatibility. When disabled, any CMYK image is
      * converted to the selected color format.
@@ -255,6 +284,25 @@ public class AFPPaintingState extends org.apache.fop.util.AbstractPaintingState 
     }
 
     /**
+     * Gets the image encoding quality setting to use when encoding bitmap images.
+     * @return the encoding quality (a value between 0.0f and 1.0f, 1.0 meaning loss-less)
+     */
+    public float getBitmapEncodingQuality() {
+        return this.bitmapEncodingQuality;
+    }
+
+    /**
+     * Sets the image encoding quality setting to use when encoding bitmap images.
+     * @param quality Defines the desired quality level for the conversion.
+     *                  Valid values: a value between 0.0f (lowest) and 1.0f (best, loss-less)
+     */
+    public void setBitmapEncodingQuality(float quality) {
+        quality = Math.max(quality, 0.0f);
+        quality = Math.min(quality, 1.0f);
+        this.bitmapEncodingQuality = quality;
+    }
+
+    /**
      * Sets the output/device resolution
      *
      * @param resolution
@@ -276,12 +324,46 @@ public class AFPPaintingState extends org.apache.fop.util.AbstractPaintingState 
         return this.resolution;
     }
 
+    /**
+     * Controls whether GOCA is enabled or disabled.
+     * @param enabled true if GOCA is enabled, false if it is disabled
+     */
+    public void setGOCAEnabled(boolean enabled) {
+        this.gocaEnabled = enabled;
+    }
+
+    /**
+     * Indicates whether GOCA is enabled or disabled.
+     * @return true if GOCA is enabled, false if GOCA is disabled
+     */
+    public boolean isGOCAEnabled() {
+        return this.gocaEnabled;
+    }
+
+    /**
+     * Controls whether to stroke text in GOCA mode or to use text operators where possible.
+     * @param stroke true to stroke, false to paint with text operators where possible
+     */
+    public void setStrokeGOCAText(boolean stroke) {
+        this.strokeGocaText = stroke;
+    }
+
+    /**
+     * Indicates whether to stroke text in GOCA mode or to use text operators where possible.
+     * @return true to stroke, false to paint with text operators where possible
+     */
+    public boolean isStrokeGOCAText() {
+        return this.strokeGocaText;
+    }
+
     /** {@inheritDoc} */
+    @Override
     protected AbstractData instantiateData() {
         return new AFPData();
     }
 
     /** {@inheritDoc} */
+    @Override
     protected AbstractPaintingState instantiate() {
         return new AFPPaintingState();
     }
@@ -423,6 +505,7 @@ public class AFPPaintingState extends org.apache.fop.util.AbstractPaintingState 
     }
 
     /** {@inheritDoc} */
+    @Override
     public Object clone() {
         AFPPaintingState paintingState = (AFPPaintingState) super.clone();
         paintingState.pagePaintingState = (AFPPagePaintingState) this.pagePaintingState.clone();
@@ -436,6 +519,7 @@ public class AFPPaintingState extends org.apache.fop.util.AbstractPaintingState 
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
         return "AFPPaintingState{" + "portraitRotation=" + portraitRotation
                 + ", landscapeRotation=" + landscapeRotation + ", colorImages=" + colorImages
@@ -548,6 +632,7 @@ public class AFPPaintingState extends org.apache.fop.util.AbstractPaintingState 
         }
 
         /** {@inheritDoc} */
+        @Override
         public Object clone() {
             AFPPagePaintingState state = new AFPPagePaintingState();
             state.width = this.width;
@@ -559,6 +644,7 @@ public class AFPPaintingState extends org.apache.fop.util.AbstractPaintingState 
         }
 
         /** {@inheritDoc} */
+        @Override
         public String toString() {
             return "AFPPagePaintingState{width=" + width + ", height=" + height + ", orientation="
                     + orientation + ", fonts=" + fonts + ", fontCount=" + fontCount + "}";
@@ -577,6 +663,7 @@ public class AFPPaintingState extends org.apache.fop.util.AbstractPaintingState 
         private String imageUri = null;
 
         /** {@inheritDoc} */
+        @Override
         public Object clone() {
             AFPData obj = (AFPData) super.clone();
             obj.filled = this.filled;
@@ -585,12 +672,14 @@ public class AFPPaintingState extends org.apache.fop.util.AbstractPaintingState 
         }
 
         /** {@inheritDoc} */
+        @Override
         public String toString() {
             return "AFPData{" + super.toString() + ", filled=" + filled + ", imageUri=" + imageUri
                     + "}";
         }
 
         /** {@inheritDoc} */
+        @Override
         protected AbstractData instantiate() {
             return new AFPData();
         }

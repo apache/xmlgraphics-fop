@@ -24,10 +24,10 @@ import java.util.ListIterator;
 import java.util.NoSuchElementException;
 
 /** An iterator for layout managers. */
-public class LMiter implements ListIterator {
+public class LMiter implements ListIterator<LayoutManager> {
 
     /** list of layout managers */
-    protected List listLMs;
+    protected List<LayoutManager> listLMs;
     /** current position in iteration */
     protected int curPos = 0;
     /** The LayoutManager to which this LMiter is attached **/
@@ -44,7 +44,7 @@ public class LMiter implements ListIterator {
 
     /** {@inheritDoc} */
     public boolean hasNext() {
-        return (curPos < listLMs.size()) ? true : lp.createNextChildLMs(curPos);
+        return (curPos < listLMs.size()) || lp.createNextChildLMs(curPos);
     }
 
     /** {@inheritDoc} */
@@ -53,7 +53,7 @@ public class LMiter implements ListIterator {
     }
 
     /** {@inheritDoc} */
-    public Object previous() throws NoSuchElementException {
+    public LayoutManager previous() throws NoSuchElementException {
         if (curPos > 0) {
             return listLMs.get(--curPos);
         } else {
@@ -62,7 +62,7 @@ public class LMiter implements ListIterator {
     }
 
     /** {@inheritDoc} */
-    public Object next() throws NoSuchElementException {
+    public LayoutManager next() throws NoSuchElementException {
         if (curPos < listLMs.size()) {
             return listLMs.get(curPos++);
         } else {
@@ -82,12 +82,12 @@ public class LMiter implements ListIterator {
 
 
     /** {@inheritDoc} */
-   public void add(Object o) throws UnsupportedOperationException {
+   public void add(LayoutManager lm) throws UnsupportedOperationException {
         throw new UnsupportedOperationException("LMiter doesn't support add");
     }
 
     /** {@inheritDoc} */
-    public void set(Object o) throws UnsupportedOperationException {
+    public void set(LayoutManager lm) throws UnsupportedOperationException {
         throw new UnsupportedOperationException("LMiter doesn't support set");
     }
 

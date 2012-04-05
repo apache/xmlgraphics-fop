@@ -19,12 +19,17 @@
 
 package org.apache.fop.area;
 
-import org.apache.fop.area.inline.InlineArea;
-import org.apache.fop.fo.Constants;
-
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+
+import org.apache.fop.area.inline.InlineArea;
+
+import static org.apache.fop.fo.Constants.EN_CENTER;
+import static org.apache.fop.fo.Constants.EN_END;
+import static org.apache.fop.fo.Constants.EN_JUSTIFY;
+import static org.apache.fop.fo.Constants.EN_START;
 
 /**
  * The line area.
@@ -59,6 +64,15 @@ public class LineArea extends Area {
             variationFactor = 1.0;
             bAddedToAreaTree = false;
         }
+
+        /** {@inheritDoc} */
+        public String toString() {
+            return getClass().getSimpleName()
+                + ": diff=" + difference
+                + ", variation=" + variationFactor
+                + ", stretch=" + availableStretch
+                + ", shrink=" + availableShrink;
+        }
     }
 
     private LineAdjustingInfo adjustingInfo = null;
@@ -66,7 +80,7 @@ public class LineArea extends Area {
     // this class can contain the dominant char styling info
     // this means that many renderers can optimise a bit
 
-    private List inlineAreas = new ArrayList();
+    private List<InlineArea> inlineAreas = new ArrayList<InlineArea>();
 
     /**
      * default constructor:
@@ -93,11 +107,12 @@ public class LineArea extends Area {
      *
      * @param childArea the inline child area to add
      */
+    @Override
     public void addChildArea(Area childArea) {
         if (childArea instanceof InlineArea) {
             addInlineArea((InlineArea)childArea);
             // set the parent area for the child area
-            ((InlineArea) childArea).setParentArea(this);
+            ((InlineArea)childArea).setParentArea(this);
         }
     }
 
@@ -108,6 +123,24 @@ public class LineArea extends Area {
      */
     public void addInlineArea(InlineArea area) {
         inlineAreas.add(area);
+    }
+
+    /**
+     * <p>Set (en masse) the inline child areas of this line area.</p>
+     * <p> Used by bidirectional processing after line area consituent reordering.</p>
+     * @param inlineAreas the list of inline areas
+     */
+    public void setInlineAreas ( List inlineAreas ) {
+        for ( Iterator<InlineArea> it = inlineAreas.iterator(); it.hasNext();) {
+            InlineArea ia = it.next();
+            Area pa = ia.getParentArea();
+            if ( pa == null ) {
+                ia.setParentArea ( this );
+            } else {
+                assert pa == this;
+            }
+        }
+        this.inlineAreas = inlineAreas;
     }
 
     /**
@@ -135,14 +168,29 @@ public class LineArea extends Area {
     }
 
     /**
+     * Get the end indent of this line area.
+     * The end indent is used for offsetting the end of
+     * the inline areas for alignment or other indents.
+     *
+     * @return the end indent value
+     */
+    public int getEndIndent() {
+        if (hasTrait(Trait.END_INDENT)) {
+            return getTraitAsInteger(Trait.END_INDENT);
+        } else {
+            return 0;
+        }
+    }
+
+    /**
      * Updates the extents of the line area from its children.
      */
     public void updateExtentsFromChildren() {
         int ipd = 0;
         int bpd = 0;
         for (int i = 0, len = inlineAreas.size(); i < len; i++) {
-            ipd = Math.max(ipd, ((InlineArea)inlineAreas.get(i)).getAllocIPD());
-            bpd += ((InlineArea)inlineAreas.get(i)).getAllocBPD();
+            ipd = Math.max(ipd, inlineAreas.get(i).getAllocIPD());
+            bpd += inlineAreas.get(i).getAllocBPD();
         }
         setIPD(ipd);
         setBPD(bpd);
@@ -164,19 +212,23 @@ public class LineArea extends Area {
      * @param ipdVariation the difference between old and new ipd
      */
     public void handleIPDVariation(int ipdVariation) {
+        int si = getStartIndent();
+        int ei = getEndIndent();
         switch (adjustingInfo.lineAlignment) {
-            case Constants.EN_START:
-                // nothing to do in this case
+            case EN_START:
+                // adjust end indent
+                addTrait(Trait.END_INDENT, ei - ipdVariation);
                 break;
-            case Constants.EN_CENTER:
-                // re-compute indent
-                addTrait(Trait.START_INDENT, new Integer(getStartIndent() - ipdVariation / 2));
+            case EN_CENTER:
+                // adjust start and end indents
+                addTrait(Trait.START_INDENT, si - ipdVariation / 2);
+                addTrait(Trait.END_INDENT, ei - ipdVariation / 2);
                 break;
-            case Constants.EN_END:
-                // re-compute indent
-                addTrait(Trait.START_INDENT, new Integer(getStartIndent() - ipdVariation));
+            case EN_END:
+                // adjust start indent
+                addTrait(Trait.START_INDENT, si - ipdVariation);
                 break;
-            case Constants.EN_JUSTIFY:
+            case EN_JUSTIFY:
                 // compute variation factor
                 adjustingInfo.variationFactor *= (float) (adjustingInfo.difference - ipdVariation)
                         / adjustingInfo.difference;
@@ -184,7 +236,7 @@ public class LineArea extends Area {
                 // if the LineArea has already been added to the area tree,
                 // call finalize(); otherwise, wait for the LineLM to call it
                 if (adjustingInfo.bAddedToAreaTree) {
-                    finalise();
+                    finish();
                 }
                 break;
             default:
@@ -197,8 +249,11 @@ public class LineArea extends Area {
      * and destroy the AdjustingInfo object if there are
      * no UnresolvedAreas left
      */
-    public void finalise() {
-        if (adjustingInfo.lineAlignment == Constants.EN_JUSTIFY) {
+    public void finish() {
+        if (adjustingInfo.lineAlignment == EN_JUSTIFY) {
+            if (log.isTraceEnabled()) {
+                log.trace("Applying variation factor to justified line: " + adjustingInfo);
+            }
             // justified line: apply the variation factor
             boolean bUnresolvedAreasPresent = false;
             // recursively apply variation factor to descendant areas

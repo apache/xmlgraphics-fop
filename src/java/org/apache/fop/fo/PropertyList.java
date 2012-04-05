@@ -30,7 +30,6 @@ import org.apache.xmlgraphics.util.QName;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fo.properties.CommonAbsolutePosition;
-import org.apache.fop.fo.properties.CommonAccessibility;
 import org.apache.fop.fo.properties.CommonAural;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonFont;
@@ -47,8 +46,6 @@ import org.apache.fop.fo.properties.PropertyMaker;
  */
 public abstract class PropertyList {
 
-    // writing-mode index
-    private int writingMode;
 
     private static boolean[] inheritableProperty;
 
@@ -221,51 +218,60 @@ public abstract class PropertyList {
     }
 
     /**
-     * Set writing mode for this FO.
-     * Use that from the nearest ancestor, including self, which generates
-     * reference areas, or from root FO if no ancestor found.
-     * @throws PropertyException ...
-     */
-    public void setWritingMode() throws PropertyException {
-        FObj p = fobj.findNearestAncestorFObj();
-        // If this is a reference area or the root, use the property value.
-        if (fobj.generatesReferenceAreas() || p == null) {
-            writingMode = get(Constants.PR_WRITING_MODE).getEnum();
-        } else {
-            // Otherwise get the writing mode value from the parent.
-            writingMode = getParentPropertyList().getWritingMode();
-        }
-    }
-
-    /**
-     * Return the "writing-mode" property value.
-     * @return the "writing-mode" property value.
-     */
-    public int getWritingMode() {
-        return writingMode;
-    }
-
-
-    /**
-     * Uses the stored writingMode.
+     * Select a writing mode dependent property ID based on value of writing mode property.
      * @param lrtb the property ID to return under lrtb writingmode.
      * @param rltb the property ID to return under rltb writingmode.
      * @param tbrl the property ID to return under tbrl writingmode.
+     * @param tblr the property ID to return under tblr writingmode.
      * @return one of the property IDs, depending on the writing mode.
      */
-    public int getWritingMode(int lrtb, int rltb, int tbrl) {
-        switch (writingMode) {
-            case Constants.EN_LR_TB: return lrtb;
-            case Constants.EN_RL_TB: return rltb;
-            case Constants.EN_TB_RL: return tbrl;
+    public int selectFromWritingMode(int lrtb, int rltb, int tbrl, int tblr) {
+        int propID;
+        try {
+            switch (get(Constants.PR_WRITING_MODE).getEnum()) {
+            case Constants.EN_LR_TB:
+                propID = lrtb;
+                break;
+            case Constants.EN_RL_TB:
+                propID = rltb;
+                break;
+            case Constants.EN_TB_RL:
+                propID = tbrl;
+                break;
+            case Constants.EN_TB_LR:
+                propID = tblr;
+                break;
             default:
-                //nop
+            propID = -1;
+                break;
+            }
+        } catch ( PropertyException e ) {
+            propID = -1;
         }
-        return -1;
+        return propID;
+    }
+
+    private String addAttributeToList(Attributes attributes,
+                                    String attributeName) throws ValidationException {
+        String attributeValue = attributes.getValue(attributeName);
+        if ( attributeValue != null ) {
+            convertAttributeToProperty(attributes, attributeName, attributeValue);
+        }
+        return attributeValue;
     }
 
     /**
-     * Adds the attributes, passed in by the parser to the PropertyList
+     * <p>Adds the attributes, passed in by the parser to the PropertyList.</p>
+     * <p>Note that certain attributes are given priority in terms of order of
+     * processing due to conversion dependencies, where the order is as follows:</p>
+     * <ol>
+     * <li>writing-mode</li>
+     * <li>column-number</li>
+     * <li>number-columns-spanned</li>
+     * <li>font</li>
+     * <li>font-size</li>
+     * <li><emph>all others in order of appearance</emph></li>
+     * </ol>
      *
      * @param attributes Collection of attributes passed to us from the parser.
      * @throws ValidationException if there is an attribute that does not
@@ -274,48 +280,44 @@ public abstract class PropertyList {
     public void addAttributesToList(Attributes attributes)
                     throws ValidationException {
         /*
+         * Give writing-mode highest conversion priority.
+         */
+        addAttributeToList(attributes, "writing-mode");
+
+        /*
          * If column-number/number-columns-spanned are specified, then we
          * need them before all others (possible from-table-column() on any
          * other property further in the list...
          */
-        String attributeName = "column-number";
-        String attributeValue = attributes.getValue(attributeName);
-        convertAttributeToProperty(attributes, attributeName,
-            attributeValue);
-        attributeName = "number-columns-spanned";
-        attributeValue = attributes.getValue(attributeName);
-        convertAttributeToProperty(attributes, attributeName,
-            attributeValue);
+        addAttributeToList(attributes, "column-number");
+        addAttributeToList(attributes, "number-columns-spanned");
 
         /*
          * If font-size is set on this FO, must set it first, since
          * other attributes specified in terms of "ems" depend on it.
          */
-        attributeName = "font";
-        attributeValue = attributes.getValue(attributeName);
-        convertAttributeToProperty(attributes, attributeName,
-                attributeValue);
-        if (attributeValue == null) {
+        String checkValue = addAttributeToList(attributes, "font");
+        if (checkValue == null || "".equals(checkValue)) {
             /*
              * font shorthand wasn't specified, so still need to process
              * explicit font-size
              */
-            attributeName = "font-size";
-            attributeValue = attributes.getValue(attributeName);
-            convertAttributeToProperty(attributes, attributeName,
-                    attributeValue);
+            addAttributeToList(attributes, "font-size");
         }
 
         String attributeNS;
+        String attributeName;
+        String attributeValue;
         FopFactory factory = getFObj().getUserAgent().getFactory();
         for (int i = 0; i < attributes.getLength(); i++) {
             /* convert all attributes with the same namespace as the fo element
-             * the "xml:lang" property is a special case */
+             * the "xml:lang" and "xml:base" properties are special cases */
             attributeNS = attributes.getURI(i);
             attributeName = attributes.getQName(i);
             attributeValue = attributes.getValue(i);
             if (attributeNS == null || attributeNS.length() == 0
-                    || "xml:lang".equals(attributeName)) {
+                    || "xml:lang".equals(attributeName)
+                    || "xml:base".equals(attributeName)) {
                 convertAttributeToProperty(attributes, attributeName, attributeValue);
             } else if (!factory.isNamespaceIgnored(attributeNS)) {
                 ElementMapping mapping = factory.getElementMappingRegistry().getElementMapping(
@@ -368,15 +370,14 @@ public abstract class PropertyList {
                                             String attributeValue)
                     throws ValidationException {
 
+        if (attributeName.startsWith("xmlns:")
+                || "xmlns".equals(attributeName)) {
+            /* Ignore namespace declarations if the XML parser/XSLT processor
+             * reports them as 'regular' attributes */
+            return;
+        }
+
         if (attributeValue != null) {
-
-            if (attributeName.startsWith("xmlns:")
-                    || "xmlns".equals(attributeName)) {
-                //Ignore namespace declarations if the XML parser/XSLT processor
-                //reports them as 'regular' attributes
-                return;
-            }
-
             /* Handle "compound" properties, ex. space-before.minimum */
             String basePropertyName = findBasePropertyName(attributeName);
             String subPropertyName = findSubPropertyName(attributeName);
@@ -604,15 +605,6 @@ public abstract class PropertyList {
     }
 
     /**
-     * Constructs a CommonAccessibility object.
-     * @return the CommonAccessibility object
-     * @throws PropertyException if there's a problem while processing the properties
-     */
-    public CommonAccessibility getAccessibilityProps() throws PropertyException {
-        return new CommonAccessibility(this);
-    }
-
-    /**
      * Constructs a CommonAural object.
      * @return the CommonAural object
      * @throws PropertyException if there's a problem while processing the properties
@@ -659,4 +651,3 @@ public abstract class PropertyList {
         return CommonTextDecoration.createFromPropertyList(this);
     }
 }
-

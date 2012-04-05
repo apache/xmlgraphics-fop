@@ -19,13 +19,11 @@
 
 package org.apache.fop.pdf;
 
-// Java
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.IOException;
-import java.io.File;
 
-//Commons
 import org.apache.commons.io.IOUtils;
 
 /**

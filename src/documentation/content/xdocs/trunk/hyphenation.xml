@@ -1,4 +1,4 @@
-<?xml version="1.0" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -19,7 +19,7 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
 <document>
   <header>
-    <title>Apache FOP: Hyphenation</title>
+    <title>Apache™ FOP: Hyphenation</title>
     <version>$Revision$</version>
   </header>
   <body>
@@ -27,13 +27,13 @@
     <title>Hyphenation Support</title>
     <section id="intro">
       <title>Introduction</title>
-      <p>FOP uses Liang's hyphenation algorithm, well known from TeX. It needs
+      <p>Apache™ FOP uses Liang's hyphenation algorithm, well known from TeX. It needs
        language specific pattern and other data for operation.</p>
       <p>Because of <a href="#license-issues">licensing issues</a> (and for 
        convenience), all hyphenation patterns for FOP are made available through 
        the <a class="fork" href="http://offo.sourceforge.net/hyphenation/index.html">Objects For 
        Formatting Objects</a> project.</p>
-      <note>If you have made improvements to an existing FOP hyphenation pattern, 
+      <note>If you have made improvements to an existing Apache™ FOP hyphenation pattern,
        or if you have created one from scratch, please consider contributing these 
        to OFFO so that they can benefit other FOP users as well. 
        Please inquire on the <a href="../maillist.html#fop-user">FOP User
@@ -145,16 +145,16 @@
      confirming their accuracy, or raising specific problems that we can
      address.</warning>
     <ul>
-      <li>The root of the pattern file is the &lt;hyphenation-info> element.</li>
-      <li>&lt;hyphen-char>: its attribute "value" contains the character signalling
-       a hyphen in the &lt;exceptions> section. It has nothing to do with the
+      <li>The root of the pattern file is the &lt;hyphenation-info&gt; element.</li>
+      <li>&lt;hyphen-char&gt;: its attribute "value" contains the character signalling
+       a hyphen in the &lt;exceptions&gt; section. It has nothing to do with the
        hyphenation character used in FOP, use the XSLFO hyphenation-character
        property for defining the hyphenation character there. At some points
        a dash U+002D is hardwired in the code, so you'd better use this too
        (patches to rectify the situation are welcome). There is no default,
        if you declare exceptions with hyphenations, you must declare the
        hyphen-char too.</li>
-      <li>&lt;hyphen-min> contains two attributes:
+      <li>&lt;hyphen-min&gt; contains two attributes:
         <ul>
           <li>before: the minimum number of characters in a word allowed to exist
            on a line immediately preceding a hyphenated word-break.</li>
@@ -164,23 +164,23 @@
         This element is unused and not even read. It should be considered a
         documentation for parameters used during pattern generation.
       </li>
-      <li>&lt;classes> contains whitespace-separated character sets. The members
+      <li>&lt;classes&gt; contains whitespace-separated character sets. The members
        of each set should be treated as equivalent for purposes of hyphenation,
        usually upper and lower case of the same character. The first character
        of the set is the canonical character, the patterns and exceptions
        should only contain these canonical representation characters (except
        digits for weight, the period (.) as word delimiter in the patterns and
        the hyphen char in exceptions, of course).</li>
-      <li>&lt;exceptions> contains whitespace-separated words, each of which
+      <li>&lt;exceptions&gt; contains whitespace-separated words, each of which
        has either explicit hyphen characters to denote acceptable breakage
        points, or no hyphen characters, to indicate that this word should
-       never be hyphenated, or contain explicit &lt;hyp> elements for specifying
-       changes of spelling due to hyphenation (like backen -> bak-ken or
-       Stoffarbe -> Stoff-farbe in the old german spelling). Exceptions override
-       the patterns described below. Explicit &lt;hyp> declarations don't work
+       never be hyphenated, or contain explicit &lt;hyp&gt; elements for specifying
+       changes of spelling due to hyphenation (like backen -&gt; bak-ken or
+       Stoffarbe -&gt; Stoff-farbe in the old german spelling). Exceptions override
+       the patterns described below. Explicit &lt;hyp&gt; declarations don't work
        yet (patches welcome). Exceptions are generally a bit brittle, test
        carefully.</li>
-      <li>&lt;patterns> includes whitespace-separated patterns, which are what
+      <li>&lt;patterns&gt; includes whitespace-separated patterns, which are what
        drive most hyphenation decisions. The characters in these patterns are
        explained as follows:
         <ul>
@@ -219,15 +219,15 @@
      languages and dialects, especially ancient ones, may pose a real problem
      though.</p>
     <p>If you want to generate your own patterns, an open-source utility called
-     patgen is available on many Unix/Linux distributions and every TeX
-     distribution which can be used to assist in
-     creating pattern files from dictionaries. Pattern creation for languages like
-     english or german is an art. If you can, read Frank Liang's original paper
-     "Word Hy-phen-a-tion by Com-pu-ter" (yes, with hyphens). It is not available
-     online. The original patgen.web source, included in the TeX source distributions,
-     contains valuable comments, unfortunately technical details obscure often the
-     high level issues. Another important source is
-     <a class="fork" href="http://www.ctan.org/tex-archive/systems/knuth/tex/texbook.tex">The
+     patgen can be used to assist in creating pattern files from dictionaries.
+     It is available in many Unix/Linux distributions and every TeX distribution.
+     Pattern creation for languages like english or german is an art. Read
+     Frank Liang's original paper <a class="fork" href="http://www.tug.org/docs/liang/">"Word
+     Hy-phen-a-tion by Com-pu-ter"</a> (yes, with hyphens) for details.
+     The original patgen.web source, included in the TeX source distributions,
+     contains valuable comments, unfortunately technical details often obscure the
+     high level issues. Another important source of information is
+     <a class="fork" href="http://mirrors.ctan.org/systems/knuth/dist/tex/texbook.tex">The
      TeX Book</a>, appendix H (either read the TeX source, or run it through
      TeX to typeset it). Secondary articles, for example the works by Petr Sojka,
      may also give some much needed insight into problems arising in automated

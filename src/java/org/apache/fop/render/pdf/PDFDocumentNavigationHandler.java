@@ -31,6 +31,7 @@ import org.apache.fop.pdf.PDFFactory;
 import org.apache.fop.pdf.PDFGoTo;
 import org.apache.fop.pdf.PDFLink;
 import org.apache.fop.pdf.PDFOutline;
+import org.apache.fop.pdf.PDFStructElem;
 import org.apache.fop.render.intermediate.IFDocumentNavigationHandler;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.extensions.AbstractAction;
@@ -111,10 +112,9 @@ public class PDFDocumentNavigationHandler implements IFDocumentNavigationHandler
         PDFLink pdfLink = getPDFDoc().getFactory().makeLink(
                 targetRect2D, pdfAction);
         if (pdfLink != null) {
-            String ptr = link.getAction().getStructurePointer();
-            if (documentHandler.getUserAgent().isAccessibilityEnabled()
-                    && ptr != null && ptr.length() > 0) {
-                documentHandler.getLogicalStructureHandler().addLinkContentItem(pdfLink, ptr);
+            PDFStructElem structure = (PDFStructElem) link.getAction().getStructureTreeElement();
+            if (documentHandler.getUserAgent().isAccessibilityEnabled() && structure != null) {
+                documentHandler.getLogicalStructureHandler().addLinkContentItem(pdfLink, structure);
             }
             documentHandler.currentPage.addAnnotation(pdfLink);
         }
@@ -189,7 +189,7 @@ public class PDFDocumentNavigationHandler implements IFDocumentNavigationHandler
         p2d = new Point2D.Double(
                 action.getTargetLocation().x / 1000.0,
                 (pageRef.getPageDimension().height - action.getTargetLocation().y) / 1000.0);
-        String pdfPageRef = pageRef.getPageRef().toString();
+        String pdfPageRef = pageRef.getPageRef();
         pdfGoTo.setPageReference(pdfPageRef);
         pdfGoTo.setPosition(p2d);
 

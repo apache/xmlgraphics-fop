@@ -73,7 +73,7 @@ public class AFPElementMapping extends ElementMapping {
     protected void initialize() {
 
         if (foObjs == null) {
-            super.foObjs = new java.util.HashMap();
+            super.foObjs = new java.util.HashMap<String, Maker>();
             foObjs.put(
                 TAG_LOGICAL_ELEMENT,
                 new AFPTagLogicalElementMaker());

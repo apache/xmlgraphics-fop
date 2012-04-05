@@ -19,21 +19,18 @@
 
 package org.apache.fop.tools.anttasks;
 
-// Ant
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Task;
-
-// Java
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.URLClassLoader;
-import java.net.URL;
 import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Task;
 
 /**
  * Testing ant task.

@@ -21,7 +21,6 @@ package org.apache.fop.pdf;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.Writer;
 
 /**
  * class representing a rectangle
@@ -78,16 +77,26 @@ public class PDFRectangle implements PDFWritable {
     }
 
     private String format() {
-        return "[" + llx + " " + lly + " " + urx + " " + ury + "]";
+        StringBuilder textBuffer = new StringBuilder(32);
+        format(textBuffer);
+        return textBuffer.toString();
+    }
+
+    private void format(StringBuilder textBuffer) {
+        textBuffer.append('[').append(llx)
+                  .append(' ').append(lly)
+                  .append(' ').append(urx)
+                  .append(' ').append(ury).append(']');
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
         return "PDFRectangle" + format();
     }
 
     /** {@inheritDoc} */
-    public void outputInline(OutputStream out, Writer writer) throws IOException {
-        writer.write(format());
+    public void outputInline(OutputStream out, StringBuilder textBuffer) throws IOException {
+        format(textBuffer);
     }
 }

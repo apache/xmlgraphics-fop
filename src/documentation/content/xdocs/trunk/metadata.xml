@@ -1,4 +1,4 @@
-<?xml version="1.0" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -19,7 +19,7 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "document-v20.dtd">
 <document>
   <header>
-    <title>Metadata</title>
+    <title>Apache™ FOP: Metadata</title>
   </header>
   <body>
     <section id="overview">
@@ -42,7 +42,7 @@
       <title>Embedding XMP in an XSL-FO document</title>
       <p>
         As noted above, there's no officially recommended way to embed metadata in XSL-FO.
-        Apache FOP supports embedding XMP in XSL-FO. Currently, only support for document-level
+        Apache™ FOP supports embedding XMP in XSL-FO. Currently, only support for document-level
         metadata is implemented. Object-level metadata will be implemented when there's
         interest.
       </p>

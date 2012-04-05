@@ -55,8 +55,7 @@ public class PDFUri extends PDFAction {
     /** {@inheritDoc} */
     public String toPDFString() {
         //TODO Convert this class into a dictionary
-        return getObjectID() + getDictString() + "\nendobj\n";
-        //throw new UnsupportedOperationException("This method should not be called");
+        return getDictString();
     }
 
 }

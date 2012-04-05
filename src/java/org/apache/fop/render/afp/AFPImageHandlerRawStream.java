@@ -19,6 +19,12 @@
 
 package org.apache.fop.render.afp;
 
+import java.awt.Rectangle;
+import java.io.IOException;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.apache.xmlgraphics.image.loader.Image;
 import org.apache.xmlgraphics.image.loader.ImageFlavor;
 import org.apache.xmlgraphics.image.loader.impl.ImageRawEPS;
@@ -40,6 +46,9 @@ public class AFPImageHandlerRawStream extends AbstractAFPImageHandlerRawStream {
         ImageFlavor.RAW_EPS,
     };
 
+    /** logging instance */
+    private final Log log = LogFactory.getLog(AFPImageHandlerRawJPEG.class);
+
     /** {@inheritDoc} */
     public int getPriority() {
         return 200;
@@ -56,8 +65,20 @@ public class AFPImageHandlerRawStream extends AbstractAFPImageHandlerRawStream {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected AFPDataObjectInfo createDataObjectInfo() {
         return new AFPDataObjectInfo();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void handleImage(RenderingContext context, Image image, Rectangle pos)
+            throws IOException {
+        if (log.isDebugEnabled()) {
+            log.debug("Embedding undecoded image data (" + image.getInfo().getMimeType()
+                    + ") as data container...");
+        }
+        super.handleImage(context, image, pos);
     }
 
     /** {@inheritDoc} */

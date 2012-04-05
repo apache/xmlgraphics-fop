@@ -81,7 +81,7 @@ public class PDFRendererConfigurator extends PrintRendererConfigurator {
             Configuration encryptionParamsConfig
                 = cfg.getChild(PDFConfigurationConstants.ENCRYPTION_PARAMS, false);
         if (encryptionParamsConfig != null) {
-            PDFEncryptionParams encryptionParams = new PDFEncryptionParams();
+            PDFEncryptionParams encryptionParams = pdfUtil.getEncryptionParams();
             Configuration ownerPasswordConfig = encryptionParamsConfig.getChild(
                     PDFConfigurationConstants.OWNER_PASSWORD, false);
             if (ownerPasswordConfig != null) {
@@ -118,8 +118,35 @@ public class PDFRendererConfigurator extends PrintRendererConfigurator {
             if (noAnnotationsConfig != null) {
                 encryptionParams.setAllowEditAnnotations(false);
             }
-            pdfUtil.setEncryptionParams(encryptionParams);
+            Configuration noFillInForms = encryptionParamsConfig.getChild(
+                    PDFConfigurationConstants.NO_FILLINFORMS, false);
+            if (noFillInForms != null) {
+                encryptionParams.setAllowFillInForms(false);
+            }
+            Configuration noAccessContentConfig = encryptionParamsConfig.getChild(
+                    PDFConfigurationConstants.NO_ACCESSCONTENT, false);
+            if (noAccessContentConfig != null) {
+                encryptionParams.setAllowAccessContent(false);
+            }
+            Configuration noAssembleDocConfig = encryptionParamsConfig.getChild(
+                    PDFConfigurationConstants.NO_ASSEMBLEDOC, false);
+            if (noAssembleDocConfig != null) {
+                encryptionParams.setAllowAssembleDocument(false);
+            }
+            Configuration noPrintHqConfig = encryptionParamsConfig.getChild(
+                    PDFConfigurationConstants.NO_PRINTHQ, false);
+            if (noPrintHqConfig != null) {
+                encryptionParams.setAllowPrintHq(false);
+            }
+            Configuration encryptionLengthConfig = encryptionParamsConfig.getChild(
+                    PDFConfigurationConstants.ENCRYPTION_LENGTH, false);
+            if (encryptionLengthConfig != null) {
+                int encryptionLength = checkEncryptionLength(
+                        Integer.parseInt(encryptionLengthConfig.getValue(null)));
+                encryptionParams.setEncryptionLengthInBits(encryptionLength);
+            }
         }
+
         s = cfg.getChild(PDFConfigurationConstants.KEY_OUTPUT_PROFILE, true).getValue(null);
         if (s != null) {
             pdfUtil.setOutputProfileURI(s);
@@ -129,6 +156,40 @@ public class PDFRendererConfigurator extends PrintRendererConfigurator {
         if (disableColorSpaceConfig != null) {
             pdfUtil.setDisableSRGBColorSpace(
                     disableColorSpaceConfig.getValueAsBoolean(false));
+        }
+
+        setPDFDocVersion(cfg, pdfUtil);
+    }
+
+    private int checkEncryptionLength(int encryptionLength) {
+        int correctEncryptionLength = encryptionLength;
+        if (encryptionLength < 40) {
+            correctEncryptionLength = 40;
+        } else if (encryptionLength > 128) {
+            correctEncryptionLength = 128;
+        } else if (encryptionLength % 8 != 0) {
+            correctEncryptionLength = ((int) Math.round(encryptionLength / 8.0f)) * 8;
+        }
+        if (correctEncryptionLength != encryptionLength) {
+            PDFEventProducer.Provider.get(userAgent.getEventBroadcaster())
+                    .incorrectEncryptionLength(this, encryptionLength, correctEncryptionLength);
+        }
+        return correctEncryptionLength;
+    }
+
+    private void setPDFDocVersion(Configuration cfg, PDFRenderingUtil pdfUtil) throws FOPException {
+        Configuration pdfVersion = cfg.getChild(PDFConfigurationConstants.PDF_VERSION, false);
+        if (pdfVersion != null) {
+            String version = pdfVersion.getValue(null);
+            if (version != null && version.length() != 0) {
+                try {
+                    pdfUtil.setPDFVersion(version);
+                } catch (IllegalArgumentException e) {
+                    throw new FOPException(e.getMessage());
+                }
+            } else {
+                throw new FOPException("The PDF version has not been set.");
+            }
         }
     }
 

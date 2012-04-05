@@ -21,8 +21,6 @@ package org.apache.fop.pdf;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.Writer;
-import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.io.output.CountingOutputStream;
@@ -34,7 +32,7 @@ public class PDFArray extends PDFObject {
     /**
      * List holding the values of this array
      */
-    protected List values = new java.util.ArrayList();
+    protected List<Object> values = new java.util.ArrayList<Object>();
 
     /**
      * Create a new, empty array object
@@ -49,7 +47,7 @@ public class PDFArray extends PDFObject {
      * Create a new, empty array object with no parent.
      */
     public PDFArray() {
-        this(null);
+        this((PDFObject) null);
     }
 
     /**
@@ -62,7 +60,7 @@ public class PDFArray extends PDFObject {
         super(parent);
 
         for (int i = 0, c = values.length; i < c; i++) {
-            this.values.add(new Integer(values[i]));
+            this.values.add(Integer.valueOf(values[i]));
         }
     }
 
@@ -85,11 +83,20 @@ public class PDFArray extends PDFObject {
      * @param parent the array's parent if any
      * @param values the actual values wrapped by this object
      */
-    public PDFArray(PDFObject parent, Collection values) {
+    public PDFArray(PDFObject parent, List<?> values) {
         /* generic creation of PDF object */
         super(parent);
 
         this.values.addAll(values);
+    }
+
+    /**
+     * Creates an array object made of the given elements.
+     *
+     * @param elements the array content
+     */
+    public PDFArray(Object... elements) {
+        this(null, elements);
     }
 
     /**
@@ -180,28 +187,20 @@ public class PDFArray extends PDFObject {
     }
 
     /** {@inheritDoc} */
-    protected int output(OutputStream stream) throws IOException {
+    @Override
+    public int output(OutputStream stream) throws IOException {
         CountingOutputStream cout = new CountingOutputStream(stream);
-        Writer writer = PDFDocument.getWriterFor(cout);
-        if (hasObjectNumber()) {
-            writer.write(getObjectID());
-        }
-
-        writer.write('[');
+        StringBuilder textBuffer = new StringBuilder(64);
+        textBuffer.append('[');
         for (int i = 0; i < values.size(); i++) {
             if (i > 0) {
-                writer.write(' ');
+                textBuffer.append(' ');
             }
             Object obj = this.values.get(i);
-            formatObject(obj, cout, writer);
+            formatObject(obj, cout, textBuffer);
         }
-        writer.write(']');
-
-        if (hasObjectNumber()) {
-            writer.write("\nendobj\n");
-        }
-
-        writer.flush();
+        textBuffer.append(']');
+        PDFDocument.flushTextBuffer(textBuffer, cout);
         return cout.getCount();
     }
 

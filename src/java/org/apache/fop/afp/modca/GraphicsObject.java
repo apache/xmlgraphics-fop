@@ -26,18 +26,21 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.xmlgraphics.java2d.color.ColorConverter;
+import org.apache.xmlgraphics.java2d.color.ColorUtil;
 
 import org.apache.fop.afp.AFPDataObjectInfo;
 import org.apache.fop.afp.AFPObjectAreaInfo;
 import org.apache.fop.afp.Completable;
 import org.apache.fop.afp.Factory;
 import org.apache.fop.afp.StructuredData;
+import org.apache.fop.afp.fonts.CharacterSet;
 import org.apache.fop.afp.goca.GraphicsAreaBegin;
 import org.apache.fop.afp.goca.GraphicsAreaEnd;
 import org.apache.fop.afp.goca.GraphicsBox;
 import org.apache.fop.afp.goca.GraphicsChainedSegment;
 import org.apache.fop.afp.goca.GraphicsCharacterString;
 import org.apache.fop.afp.goca.GraphicsData;
+import org.apache.fop.afp.goca.GraphicsEndProlog;
 import org.apache.fop.afp.goca.GraphicsFillet;
 import org.apache.fop.afp.goca.GraphicsFullArc;
 import org.apache.fop.afp.goca.GraphicsImage;
@@ -61,8 +64,8 @@ public class GraphicsObject extends AbstractDataObject {
     private GraphicsData currentData = null;
 
     /** list of objects contained within this container */
-    protected List/*<GraphicsData>*/ objects
-        = new java.util.ArrayList/*<GraphicsData>*/();
+    protected List<GraphicsData> objects
+        = new java.util.ArrayList<GraphicsData>();
 
     /** the graphics state */
     private final GraphicsState graphicsState = new GraphicsState();
@@ -82,6 +85,7 @@ public class GraphicsObject extends AbstractDataObject {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void setViewport(AFPDataObjectInfo dataObjectInfo) {
         super.setViewport(dataObjectInfo);
 
@@ -93,7 +97,7 @@ public class GraphicsObject extends AbstractDataObject {
         final int leftEdge = 0;
         final int topEdge = 0;
         GraphicsDataDescriptor graphicsDataDescriptor = factory.createGraphicsDataDescriptor(
-                    leftEdge, width, topEdge, height, widthRes, heightRes);
+                leftEdge, width, topEdge, height, widthRes, heightRes);
 
         getObjectEnvironmentGroup().setDataDescriptor(graphicsDataDescriptor);
     }
@@ -145,7 +149,7 @@ public class GraphicsObject extends AbstractDataObject {
      * @param color the active color to use
      */
     public void setColor(Color color) {
-        if (!color.equals(graphicsState.color)) {
+        if (!ColorUtil.isSameColor(color, graphicsState.color)) {
             addObject(new GraphicsSetProcessColor(colorConverter.convert(color)));
             graphicsState.color = color;
         }
@@ -226,9 +230,9 @@ public class GraphicsObject extends AbstractDataObject {
      */
     public void setCharacterSet(int characterSet) {
         if (characterSet != graphicsState.characterSet) {
-            addObject(new GraphicsSetCharacterSet(characterSet));
             graphicsState.characterSet = characterSet;
         }
+        addObject(new GraphicsSetCharacterSet(characterSet));
     }
 
     /**
@@ -321,9 +325,10 @@ public class GraphicsObject extends AbstractDataObject {
      * @param str the string
      * @param x the x coordinate
      * @param y the y coordinate
+     * @param charSet the character set associated with the string
      */
-    public void addString(String str, int x, int y) {
-        addObject(new GraphicsCharacterString(str, x, y));
+    public void addString(String str, int x, int y, CharacterSet charSet) {
+        addObject(new GraphicsCharacterString(str, x, y, charSet));
     }
 
     /**
@@ -340,7 +345,15 @@ public class GraphicsObject extends AbstractDataObject {
         addObject(new GraphicsAreaEnd());
     }
 
+    /**
+     * Ends the prolog.
+     */
+    public void endProlog() {
+        addObject(new GraphicsEndProlog());
+    }
+
     /** {@inheritDoc} */
+    @Override
     public String toString() {
         return "GraphicsObject: " + getName();
     }
@@ -354,16 +367,18 @@ public class GraphicsObject extends AbstractDataObject {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void setComplete(boolean complete) {
-        Iterator it = objects.iterator();
+        Iterator<GraphicsData> it = objects.iterator();
         while (it.hasNext()) {
-            Completable completedObject = (Completable)it.next();
+            Completable completedObject = it.next();
             completedObject.setComplete(true);
         }
         super.setComplete(complete);
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void writeStart(OutputStream os) throws IOException {
         super.writeStart(os);
         byte[] data = new byte[17];
@@ -372,12 +387,14 @@ public class GraphicsObject extends AbstractDataObject {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void writeContent(OutputStream os) throws IOException {
         super.writeContent(os);
         writeObjects(objects, os);
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void writeEnd(OutputStream os) throws IOException {
         byte[] data = new byte[17];
         copySF(data, Type.END, Category.GRAPHICS);

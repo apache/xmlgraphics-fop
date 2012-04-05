@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test verifies correct propagation of bidi resolution. It is based upon skynav/fop
+      ticket #78.
+      [TBD] The test input file could be further simplified.
+      [TBD] Add fop bug corresponding to above ticket then change the above reference.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="odd" page-height="279.40mm" page-width="215.90mm">
+          <fo:region-body region-name="body" margin="22.00mm 21.59mm 20.00mm 38.86mm"/>
+          <fo:region-after region-name="odd-footer" extent="20.00mm"/>
+        </fo:simple-page-master>
+        <fo:simple-page-master master-name="even" page-height="279.40mm" page-width="215.90mm">
+          <fo:region-body region-name="body" margin="22.00mm 38.86mm 20.00mm 21.59mm"/>
+          <fo:region-after region-name="even-footer" extent="20.00mm"/>
+        </fo:simple-page-master>
+        <fo:page-sequence-master master-name="document">
+          <fo:repeatable-page-master-alternatives>
+            <fo:conditional-page-master-reference master-reference="odd" odd-or-even="odd"/>
+            <fo:conditional-page-master-reference master-reference="even" odd-or-even="even"/>
+          </fo:repeatable-page-master-alternatives>
+        </fo:page-sequence-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="document">
+        <fo:flow flow-name="body" line-height="1.1">
+          <fo:block>
+            <fo:list-block provisional-distance-between-starts="4mm" space-after="5mm">
+              <fo:list-item padding-bottom="2mm">
+                <fo:list-item-label>
+                  <fo:block>•
+                  </fo:block>
+                </fo:list-item-label>
+                <fo:list-item-body start-indent="body-start()">
+                  <fo:block>
+                    <fo:block orphans="2" widows="2" space-after="3mm" keep-with-next.within-column="always">
+                      Test
+                    </fo:block>
+                    <fo:table keep-together.within-column="always" width="100%" table-layout="fixed" space-after="5mm" margin-left="1mm" space-before="0mm">
+                      <fo:table-column column-width="20%"/>
+                      <fo:table-column column-width="7%"/>
+                      <fo:table-column column-width="proportional-column-width(1)"/>
+                      <fo:table-body>
+                        <fo:table-row height="7mm">
+                          <fo:table-cell margin-left="0" text-align="right">
+                            <fo:block>
+                              <fo:inline>
+                                <fo:inline><fo:bidi-override unicode-bidi="bidi-override" direction="rtl">X</fo:bidi-override></fo:inline>
+                              </fo:inline>
+                            </fo:block>
+                          </fo:table-cell>
+                        </fo:table-row>
+                      </fo:table-body>
+                    </fo:table>
+                  </fo:block>
+                </fo:list-item-body>
+              </fo:list-item>
+              <fo:list-item padding-bottom="2mm">
+                <fo:list-item-label>
+                  <fo:block>•
+                  </fo:block>
+                </fo:list-item-label>
+                <fo:list-item-body start-indent="body-start()">
+                  <fo:block>
+                    Test
+                    <fo:table keep-together.within-column="always" width="100%" table-layout="fixed" space-after="5mm" margin-left="1mm" space-before="0mm">
+                      <fo:table-column column-width="20%"/>
+                      <fo:table-column column-width="7%"/>
+                      <fo:table-column column-width="proportional-column-width(1)"/>
+                      <fo:table-body>
+                        <fo:table-row height="7mm">
+                          <fo:table-cell margin-left="0" text-align="right">
+                            <fo:block>
+                              <fo:inline>
+                                <fo:inline><fo:bidi-override unicode-bidi="bidi-override" direction="rtl">X</fo:bidi-override></fo:inline>
+                              </fo:inline>
+                            </fo:block>
+                          </fo:table-cell>
+                        </fo:table-row>
+                      </fo:table-body>
+                    </fo:table>
+                  </fo:block>
+                </fo:list-item-body>
+              </fo:list-item>
+            </fo:list-block>
+          </fo:block>
+          <fo:block id="final"/>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="6" xpath="count(//word)"/>
+    <true xpath="not(/descendant::word[1]/@level)"/>
+    <true xpath="not(/descendant::word[2]/@level)"/>
+    <eval expected="1" xpath="/descendant::word[3]/@level"/>
+    <eval expected="true" xpath="/descendant::word[3]/@reversed"/>
+    <true xpath="not(/descendant::word[4]/@level)"/>
+    <true xpath="not(/descendant::word[5]/@level)"/>
+    <eval expected="1" xpath="/descendant::word[6]/@level"/>
+    <eval expected="true" xpath="/descendant::word[6]/@reversed"/>
+  </checks>
+</testcase>
+

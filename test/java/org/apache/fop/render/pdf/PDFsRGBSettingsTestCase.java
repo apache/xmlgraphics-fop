@@ -19,24 +19,19 @@
 
 package org.apache.fop.render.pdf;
 
+import static org.junit.Assert.fail;
+
 import java.io.File;
 
 import org.apache.fop.apps.FOUserAgent;
+import org.junit.Test;
 
 /**
  * Tests the disables-srgb-colorspace setting.
  */
-public class PDFsRGBSettingsTestCase extends BasePDFTestCase {
+public class PDFsRGBSettingsTestCase extends BasePDFTest {
 
     private File foBaseDir = new File("test/xml/pdf-a");
-
-    /**
-     * Main constructor
-     * @param name name of the test case
-     */
-    public PDFsRGBSettingsTestCase(String name) {
-        super(name);
-    }
 
     private FOUserAgent getUserAgent(boolean enablePDFA) {
         final FOUserAgent a = fopFactory.newFOUserAgent();
@@ -51,6 +46,7 @@ public class PDFsRGBSettingsTestCase extends BasePDFTestCase {
      * Verify that the PDFRenderer complains if PDF/A or PDF/X is used when sRGB is disabled.
      * @throws Exception if the test fails
      */
+    @Test
     public void testPDFAWithDisabledSRGB() throws Exception {
         File foFile = new File(foBaseDir, "minimal-pdf-a.fo");
         try {

@@ -47,12 +47,12 @@
   <checks>
     <eval expected="40020" xpath="//flow/block[1]/block[1]/lineArea/inlineparent/@ipd"/>
     <true xpath="not(boolean(//flow/block[1]/block[1]/lineArea/inlineparent/text/@tlsadjust))"/>
-    <eval expected="0" xpath="//flow/block[1]/block[1]/lineArea/inlineparent/text/word/@offset"/>
+    <true xpath="not(boolean(//flow/block[1]/block[1]/lineArea/inlineparent/text/word/@offset))"/>
     <true xpath="not(boolean(//flow/block[1]/block[1]/lineArea/inlineparent/text/word/@letter-adjust))"/>
 
     <eval expected="44020" xpath="//flow/block[2]/block[1]/lineArea/inlineparent/@ipd"/>
     <eval expected="1000" xpath="//flow/block[2]/block[1]/lineArea/inlineparent/text/@tlsadjust"/>
-    <eval expected="0" xpath="//flow/block[2]/block[1]/lineArea/inlineparent/text/word/@offset"/>
+    <true xpath="not(boolean(//flow/block[2]/block[1]/lineArea/inlineparent/text/word/@offset))"/>
     <true xpath="not(boolean(//flow/block[2]/block[1]/lineArea/inlineparent/text/word/@letter-adjust))"/>
   </checks>
 </testcase>
