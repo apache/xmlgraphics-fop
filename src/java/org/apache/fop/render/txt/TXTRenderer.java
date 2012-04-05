@@ -21,6 +21,7 @@ package org.apache.fop.render.txt;
 
 import java.awt.Color;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
@@ -31,6 +32,7 @@ import java.util.Map;
 import org.apache.xmlgraphics.util.UnitConv;
 
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.CTM;
 import org.apache.fop.area.PageViewport;
@@ -41,11 +43,10 @@ import org.apache.fop.render.txt.border.AbstractBorderElement;
 import org.apache.fop.render.txt.border.BorderManager;
 
 /**
- * Renderer that renders areas to plain text.
+ * <p>Renderer that renders areas to plain text.</p>
  *
- * @author Art Welch
- * @author <a href="mailto:mark-fop@inomial.com">Mark Lillywhite</a> (to use
- *         the new Renderer interface)
+ * <p>This work was authored by Art Welch and
+ * Mark Lillywhite (mark-fop@inomial.com) [to use the new Renderer interface].</p>
  */
 public class TXTRenderer extends AbstractPathOrientedRenderer {
 
@@ -108,8 +109,11 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
 
     /**
      * Constructs a newly allocated <code>TXTRenderer</code> object.
+     *
+     * @param userAgent the user agent that contains configuration details. This cannot be null.
      */
-    public TXTRenderer() {
+    public TXTRenderer(FOUserAgent userAgent) {
+        super(userAgent);
     }
 
     /** {@inheritDoc} */
@@ -503,7 +507,8 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
         int borderStartX = bm.getStartX();
         int borderStartY = bm.getStartY();
 
-        int x, y;
+        int x;
+        int y;
         if (horz && startOrBefore) { // BEFORE
             x = borderStartX;
             y = borderStartY;
@@ -518,7 +523,11 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
             y = borderStartY;
         }
 
-        int dx, dy, length, startType, endType;
+        int dx;
+        int dy;
+        int length;
+        int startType;
+        int endType;
         if (horz) {
             length = borderWidth;
             dx = 1;
@@ -560,7 +569,7 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
     /**
      * {@inheritDoc}
      */
-    protected void startVParea(CTM ctm, Rectangle2D clippingRect) {
+    protected void startVParea(CTM ctm, Rectangle clippingRect) {
         currentState.push(ctm);
     }
 

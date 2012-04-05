@@ -19,16 +19,16 @@
 
 package org.apache.fop.tools.anttasks;
 
-import java.util.Date;
-import java.util.List;
-import java.util.StringTokenizer;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.DateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.StringTokenizer;
 
 import org.apache.tools.ant.BuildException;
-import java.text.DateFormat;
 
 /**
  * This class is an extension of Ant, a script utility from
@@ -38,7 +38,8 @@ import java.text.DateFormat;
 
 public class FileCompare {
 
-    private String referenceDirectory, testDirectory;
+    private String referenceDirectory;
+    private String testDirectory;
     private String[] filenameList;
     private String filenames;
 

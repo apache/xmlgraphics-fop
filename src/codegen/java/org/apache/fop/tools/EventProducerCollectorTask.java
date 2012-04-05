@@ -56,7 +56,7 @@ import org.w3c.dom.Node;
  */
 public class EventProducerCollectorTask extends Task {
 
-    private List filesets = new java.util.ArrayList();
+    private List<FileSet> filesets = new java.util.ArrayList<FileSet>();
     private File destDir;
     private File translationFile;
 
@@ -200,7 +200,7 @@ public class EventProducerCollectorTask extends Task {
     protected long processFileSets(EventProducerCollector collector)
             throws IOException, EventConventionException, ClassNotFoundException {
         long lastModified = 0;
-        Iterator iter = filesets.iterator();
+        Iterator<FileSet> iter = filesets.iterator();
         while (iter.hasNext()) {
             FileSet fs = (FileSet)iter.next();
             DirectoryScanner ds = fs.getDirectoryScanner(getProject());

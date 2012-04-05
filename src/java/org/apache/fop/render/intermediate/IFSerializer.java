@@ -31,18 +31,18 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
 import org.apache.xmlgraphics.util.QName;
 import org.apache.xmlgraphics.util.XMLizable;
 
-import org.apache.fop.accessibility.StructureTree;
+import org.apache.fop.accessibility.StructureTreeEventHandler;
+import org.apache.fop.fo.extensions.InternalElementMapping;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.render.PrintRendererConfigurator;
 import org.apache.fop.render.RenderingContext;
+import org.apache.fop.render.intermediate.IFStructureTreeBuilder.IFStructureTreeElement;
 import org.apache.fop.render.intermediate.extensions.AbstractAction;
 import org.apache.fop.render.intermediate.extensions.Bookmark;
 import org.apache.fop.render.intermediate.extensions.BookmarkTree;
@@ -53,8 +53,10 @@ import org.apache.fop.traits.BorderProps;
 import org.apache.fop.traits.RuleStyle;
 import org.apache.fop.util.ColorUtil;
 import org.apache.fop.util.DOM2SAX;
+import org.apache.fop.util.LanguageTags;
 import org.apache.fop.util.XMLConstants;
 import org.apache.fop.util.XMLUtil;
+
 
 /**
  * IFPainter implementation that serializes the intermediate format to XML.
@@ -68,13 +70,12 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     /** Holds the intermediate format state */
     private IFState state;
 
-    /**
-     * Default constructor.
-     */
-    public IFSerializer() {
-    }
+    private String currentID = "";
+
+    private IFStructureTreeBuilder structureTreeBuilder;
 
     /** {@inheritDoc} */
+    @Override
     protected String getMainNamespace() {
         return NAMESPACE;
     }
@@ -101,6 +102,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     }
 
     /** {@inheritDoc} */
+    @Override
     public IFDocumentNavigationHandler getDocumentNavigationHandler() {
         return this;
     }
@@ -145,7 +147,16 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
         }
     }
 
+    @Override
+    public StructureTreeEventHandler getStructureTreeEventHandler() {
+        if (structureTreeBuilder == null) {
+            structureTreeBuilder = new IFStructureTreeBuilder();
+        }
+        return structureTreeBuilder;
+    }
+
     /** {@inheritDoc} */
+    @Override
     public void startDocument() throws IFException {
         super.startDocument();
         try {
@@ -154,13 +165,29 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
             handler.startPrefixMapping(XLINK_PREFIX, XLINK_NAMESPACE);
             handler.startPrefixMapping(DocumentNavigationExtensionConstants.PREFIX,
                     DocumentNavigationExtensionConstants.NAMESPACE);
+            handler.startPrefixMapping(InternalElementMapping.STANDARD_PREFIX,
+                    InternalElementMapping.URI);
             handler.startElement(EL_DOCUMENT);
         } catch (SAXException e) {
             throw new IFException("SAX error in startDocument()", e);
         }
     }
 
+    @Override
+    public void setDocumentLocale(Locale locale) {
+        AttributesImpl atts  = new AttributesImpl();
+        atts.addAttribute(XML_NAMESPACE, "lang", "xml:lang", XMLUtil.CDATA,
+                LanguageTags.toLanguageTag(locale));
+        try {
+            handler.startElement(EL_LOCALE, atts);
+            handler.endElement(EL_LOCALE);
+        } catch (SAXException e) {
+            throw new RuntimeException("Unable to create the " + EL_LOCALE + " element.", e);
+        }
+    }
+
     /** {@inheritDoc} */
+    @Override
     public void startDocumentHeader() throws IFException {
         try {
             handler.startElement(EL_HEADER);
@@ -170,6 +197,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     }
 
     /** {@inheritDoc} */
+    @Override
     public void endDocumentHeader() throws IFException {
         try {
             handler.endElement(EL_HEADER);
@@ -179,6 +207,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     }
 
     /** {@inheritDoc} */
+    @Override
     public void startDocumentTrailer() throws IFException {
         try {
             handler.startElement(EL_TRAILER);
@@ -188,6 +217,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     }
 
     /** {@inheritDoc} */
+    @Override
     public void endDocumentTrailer() throws IFException {
         try {
             handler.endElement(EL_TRAILER);
@@ -217,20 +247,14 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
             Locale lang = getContext().getLanguage();
             if (lang != null) {
                 atts.addAttribute(XML_NAMESPACE, "lang", "xml:lang", XMLUtil.CDATA,
-                        XMLUtil.toRFC3066(lang));
+                        LanguageTags.toLanguageTag(lang));
             }
             XMLUtil.addAttribute(atts, XMLConstants.XML_SPACE, "preserve");
             addForeignAttributes(atts);
             handler.startElement(EL_PAGE_SEQUENCE, atts);
             if (this.getUserAgent().isAccessibilityEnabled()) {
-                StructureTree structureTree = getUserAgent().getStructureTree();
-                handler.startElement(EL_STRUCTURE_TREE); // add structure tree
-                NodeList nodes = structureTree.getPageSequence(pageSequenceIndex++);
-                for (int i = 0, n = nodes.getLength(); i < n; i++) {
-                    Node node = nodes.item(i);
-                    new DOM2SAX(handler).writeFragment(node);
-                }
-                handler.endElement(EL_STRUCTURE_TREE);
+                assert (structureTreeBuilder != null);
+                structureTreeBuilder.replayEventsForPageSequence(handler, pageSequenceIndex++);
             }
         } catch (SAXException e) {
             throw new IFException("SAX error in startPageSequence()", e);
@@ -240,6 +264,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     /** {@inheritDoc} */
     public void endPageSequence() throws IFException {
         try {
+
             handler.endElement(EL_PAGE_SEQUENCE);
         } catch (SAXException e) {
             throw new IFException("SAX error in endPageSequence()", e);
@@ -264,6 +289,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     }
 
     /** {@inheritDoc} */
+    @Override
     public void startPageHeader() throws IFException {
         try {
             handler.startElement(EL_PAGE_HEADER);
@@ -273,6 +299,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     }
 
     /** {@inheritDoc} */
+    @Override
     public void endPageHeader() throws IFException {
         try {
             handler.endElement(EL_PAGE_HEADER);
@@ -296,6 +323,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     public void endPageContent() throws IFException {
         try {
             this.state = null;
+            currentID = "";
             handler.endElement(EL_PAGE_CONTENT);
         } catch (SAXException e) {
             throw new IFException("SAX error in endPageContent()", e);
@@ -303,6 +331,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     }
 
     /** {@inheritDoc} */
+    @Override
     public void startPageTrailer() throws IFException {
         try {
             handler.startElement(EL_PAGE_TRAILER);
@@ -312,6 +341,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     }
 
     /** {@inheritDoc} */
+    @Override
     public void endPageTrailer() throws IFException {
         try {
             commitNavigation();
@@ -405,6 +435,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     /** {@inheritDoc} */
     public void drawImage(String uri, Rectangle rect) throws IFException {
         try {
+            addID();
             AttributesImpl atts = new AttributesImpl();
             addAttribute(atts, XLINK_HREF, uri);
             addAttribute(atts, "x", Integer.toString(rect.x));
@@ -412,7 +443,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
             addAttribute(atts, "width", Integer.toString(rect.width));
             addAttribute(atts, "height", Integer.toString(rect.height));
             addForeignAttributes(atts);
-            addStructurePointerAttribute(atts);
+            addStructureReference(atts);
             handler.element(EL_IMAGE, atts);
         } catch (SAXException e) {
             throw new IFException("SAX error in startGroup()", e);
@@ -433,13 +464,14 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     /** {@inheritDoc} */
     public void drawImage(Document doc, Rectangle rect) throws IFException {
         try {
+            addID();
             AttributesImpl atts = new AttributesImpl();
             addAttribute(atts, "x", Integer.toString(rect.x));
             addAttribute(atts, "y", Integer.toString(rect.y));
             addAttribute(atts, "width", Integer.toString(rect.width));
             addAttribute(atts, "height", Integer.toString(rect.height));
             addForeignAttributes(atts);
-            addStructurePointerAttribute(atts);
+            addStructureReference(atts);
             handler.startElement(EL_IMAGE, atts);
             new DOM2SAX(handler).writeDocument(doc, true);
             handler.endElement(EL_IMAGE);
@@ -489,9 +521,9 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     }
 
     /** {@inheritDoc} */
-    public void drawBorderRect(Rectangle rect, BorderProps before, BorderProps after,
-            BorderProps start, BorderProps end) throws IFException {
-        if (before == null && after == null && start == null && end == null) {
+    public void drawBorderRect(Rectangle rect, BorderProps top, BorderProps bottom,
+            BorderProps left, BorderProps right) throws IFException {
+        if (top == null && bottom == null && left == null && right == null) {
             return;
         }
         try {
@@ -500,17 +532,17 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
             addAttribute(atts, "y", Integer.toString(rect.y));
             addAttribute(atts, "width", Integer.toString(rect.width));
             addAttribute(atts, "height", Integer.toString(rect.height));
-            if (before != null) {
-                addAttribute(atts, "before", before.toString());
+            if (top != null) {
+                addAttribute(atts, "top", top.toString());
             }
-            if (after != null) {
-                addAttribute(atts, "after", after.toString());
+            if (bottom != null) {
+                addAttribute(atts, "bottom", bottom.toString());
             }
-            if (start != null) {
-                addAttribute(atts, "start", start.toString());
+            if (left != null) {
+                addAttribute(atts, "left", left.toString());
             }
-            if (end != null) {
-                addAttribute(atts, "end", end.toString());
+            if (right != null) {
+                addAttribute(atts, "right", right.toString());
             }
             handler.element(EL_BORDER_RECT, atts);
         } catch (SAXException e) {
@@ -522,6 +554,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     public void drawLine(Point start, Point end, int width, Color color, RuleStyle style)
             throws IFException {
         try {
+            addID();
             AttributesImpl atts = new AttributesImpl();
             addAttribute(atts, "x1", Integer.toString(start.x));
             addAttribute(atts, "y1", Integer.toString(start.y));
@@ -538,8 +571,9 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
 
     /** {@inheritDoc} */
     public void drawText(int x, int y, int letterSpacing, int wordSpacing,
-            int[] dx, String text) throws IFException {
+            int[][] dp, String text) throws IFException {
         try {
+            addID();
             AttributesImpl atts = new AttributesImpl();
             addAttribute(atts, "x", Integer.toString(x));
             addAttribute(atts, "y", Integer.toString(y));
@@ -549,10 +583,19 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
             if (wordSpacing != 0) {
                 addAttribute(atts, "word-spacing", Integer.toString(wordSpacing));
             }
-            if (dx != null) {
-                addAttribute(atts, "dx", IFUtil.toString(dx));
+            if (dp != null) {
+                if ( IFUtil.isDPIdentity(dp) ) {
+                    // don't add dx or dp attribute
+                } else if ( IFUtil.isDPOnlyDX(dp) ) {
+                    // add dx attribute only
+                    int[] dx = IFUtil.convertDPToDX(dp);
+                    addAttribute(atts, "dx", IFUtil.toString(dx));
+                } else {
+                    // add dp attribute only
+                    addAttribute(atts, "dp", XMLUtil.encodePositionAdjustments(dp));
+                }
             }
-            addStructurePointerAttribute(atts);
+            addStructureReference(atts);
             handler.startElement(EL_TEXT, atts);
             char[] chars = text.toCharArray();
             handler.characters(chars, 0, chars.length);
@@ -604,7 +647,8 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
                 }
             }
             if (color != null) {
-                changed = !color.equals(state.getTextColor());
+                changed = !org.apache.xmlgraphics.java2d.color.ColorUtil.isSameColor(
+                        color, state.getTextColor());
                 if (changed) {
                     state.setTextColor(color);
                     addAttribute(atts, "color", toString(color));
@@ -651,14 +695,32 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
         XMLUtil.addAttribute(atts, localName, value);
     }
 
-    private void addStructurePointerAttribute(AttributesImpl atts) {
-        String ptr = getContext().getStructurePointer();
-        if (ptr != null) {
-            addAttribute(atts, "ptr", ptr);
+    private void addStructureReference(AttributesImpl atts) {
+        IFStructureTreeElement structureTreeElement
+                = (IFStructureTreeElement) getContext().getStructureTreeElement();
+        if (structureTreeElement != null) {
+            addStructRefAttribute(atts, structureTreeElement.getId());
         }
     }
 
-    // ---=== IFDocumentNavigationHandler ===---
+    private void addStructRefAttribute(AttributesImpl atts, String id) {
+        atts.addAttribute(InternalElementMapping.URI,
+                InternalElementMapping.STRUCT_REF,
+                InternalElementMapping.STANDARD_PREFIX + ":" + InternalElementMapping.STRUCT_REF,
+                XMLConstants.CDATA,
+                id);
+    }
+
+    private void addID() throws SAXException {
+        String id = getContext().getID();
+        if (!currentID.equals(id)) {
+            AttributesImpl atts = new AttributesImpl();
+            addAttribute(atts, "name", id);
+            handler.startElement(EL_ID, atts);
+            handler.endElement(EL_ID);
+            currentID = id;
+        }
+    }
 
     private Map incompleteActions = new java.util.HashMap();
     private List completeActions = new java.util.LinkedList();
@@ -696,7 +758,9 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
             Iterator iter = tree.getBookmarks().iterator();
             while (iter.hasNext()) {
                 Bookmark b = (Bookmark)iter.next();
-                serializeBookmark(b);
+                if (b.getAction() != null) {
+                    serializeBookmark(b);
+                }
             }
             handler.endElement(DocumentNavigationExtensionConstants.BOOKMARK_TREE);
         } catch (SAXException e) {
@@ -716,10 +780,11 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
         Iterator iter = bookmark.getChildBookmarks().iterator();
         while (iter.hasNext()) {
             Bookmark b = (Bookmark)iter.next();
-            serializeBookmark(b);
+            if (b.getAction() != null) {
+                serializeBookmark(b);
+            }
         }
         handler.endElement(DocumentNavigationExtensionConstants.BOOKMARK);
-
     }
 
     /** {@inheritDoc} */
@@ -730,7 +795,8 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
         atts.addAttribute(null, "rect", "rect",
                 XMLConstants.CDATA, IFUtil.toString(link.getTargetRect()));
         if (getUserAgent().isAccessibilityEnabled()) {
-            addAttribute(atts, "ptr", link.getAction().getStructurePointer());
+            addStructRefAttribute(atts,
+                    ((IFStructureTreeElement) link.getAction().getStructureTreeElement()).getId());
         }
         try {
             handler.startElement(DocumentNavigationExtensionConstants.LINK, atts);
@@ -774,5 +840,4 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
             throw new IFException("SAX error serializing object", e);
         }
     }
-
 }

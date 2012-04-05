@@ -26,14 +26,15 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
  * the FOP project.
  */
 
-import java.io.Writer;
 import java.io.IOException;
+import java.io.Writer;
 
 /**
- * RTF Bookmark container implementation.
+ * <p>RTF Bookmark container implementation.
  * Nearly all containers or elements can have a bookmark, that is why the bookmark container is
- * implemented as stand alone.
- * @author <a href="mailto:a.putz@skynamics.com">Andreas Putz</a>
+ * implemented as stand alone.</p>
+ *
+ * <p>This work was authored by Andreas Putz (a.putz@skynamics.com).</p>
  */
 public class RtfBookmarkContainerImpl extends RtfContainer implements IRtfBookmarkContainer {
     //////////////////////////////////////////////////

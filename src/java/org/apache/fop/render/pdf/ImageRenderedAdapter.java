@@ -27,6 +27,7 @@ import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -78,12 +79,14 @@ public class ImageRenderedAdapter extends AbstractImageAdapter {
     }
 
     /** {@inheritDoc} */
+    @Override
     public int getWidth() {
         RenderedImage ri = getImage().getRenderedImage();
         return ri.getWidth();
     }
 
     /** {@inheritDoc} */
+    @Override
     public int getHeight() {
         RenderedImage ri = getImage().getRenderedImage();
         return ri.getHeight();
@@ -94,11 +97,13 @@ public class ImageRenderedAdapter extends AbstractImageAdapter {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected ColorSpace getImageColorSpace() {
         return getEffectiveColorModel().getColorSpace();
     }
 
     /** {@inheritDoc} */
+    @Override
     protected ICC_Profile getEffectiveICCProfile() {
         ColorSpace cs = getImageColorSpace();
         if (cs instanceof ICC_ColorSpace) {
@@ -110,6 +115,7 @@ public class ImageRenderedAdapter extends AbstractImageAdapter {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void setup(PDFDocument doc) {
         RenderedImage ri = getImage().getRenderedImage();
 
@@ -145,6 +151,7 @@ public class ImageRenderedAdapter extends AbstractImageAdapter {
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean isTransparent() {
         ColorModel cm = getEffectiveColorModel();
         if (cm instanceof IndexColorModel) {
@@ -172,7 +179,7 @@ public class ImageRenderedAdapter extends AbstractImageAdapter {
                     i < ((IndexColorModel) cm).getMapSize();
                     i++) {
                 if ((alphas[i] & 0xFF) == 0) {
-                    return new Integer(i);
+                    return Integer.valueOf(i);
                 }
             }
         }
@@ -180,6 +187,7 @@ public class ImageRenderedAdapter extends AbstractImageAdapter {
     }
 
     /** {@inheritDoc} */
+    @Override
     public PDFColor getTransparentColor() {
         ColorModel cm = getEffectiveColorModel();
         if (cm instanceof IndexColorModel) {
@@ -196,11 +204,13 @@ public class ImageRenderedAdapter extends AbstractImageAdapter {
     }
 
     /** {@inheritDoc} */
+    @Override
     public String getMask() {
         return maskRef;
     }
 
     /** {@inheritDoc} */
+    @Override
     public PDFReference getSoftMaskReference() {
         return softMask;
     }
@@ -212,12 +222,18 @@ public class ImageRenderedAdapter extends AbstractImageAdapter {
 
     /** {@inheritDoc} */
     public void outputContents(OutputStream out) throws IOException {
+        long start = System.currentTimeMillis();
         encodingHelper.encode(out);
+        long duration = System.currentTimeMillis() - start;
+        if (log.isDebugEnabled()) {
+            log.debug("Image encoding took " + duration + "ms");
+        }
     }
 
     private static final int MAX_HIVAL = 255;
 
     /** {@inheritDoc} */
+    @Override
     public void populateXObjectDictionary(PDFDictionary dict) {
         ColorModel cm = getEffectiveColorModel();
         if (cm instanceof IndexColorModel) {
@@ -237,7 +253,7 @@ public class ImageRenderedAdapter extends AbstractImageAdapter {
             if (hival > MAX_HIVAL) {
                 throw new UnsupportedOperationException("hival must not go beyond " + MAX_HIVAL);
             }
-            indexed.add(new Integer(hival));
+            indexed.add(Integer.valueOf(hival));
             int[] palette = new int[c];
             icm.getRGBs(palette);
             ByteArrayOutputStream baout = new ByteArrayOutputStream();
@@ -250,6 +266,7 @@ public class ImageRenderedAdapter extends AbstractImageAdapter {
                 baout.write(entry & 0xFF);
             }
             indexed.add(baout.toByteArray());
+            IOUtils.closeQuietly(baout);
 
             dict.put("ColorSpace", indexed);
             dict.put("BitsPerComponent", icm.getPixelSize());

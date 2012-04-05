@@ -36,4 +36,10 @@ public interface FontResolver {
      */
     Source resolve(String href);
 
+    /**
+     * Check whether complex script features are enabled.
+     * @return true if FOP is to use complex script features
+     */
+    boolean isComplexScriptFeaturesEnabled();
+
 }

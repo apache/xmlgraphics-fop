@@ -22,6 +22,7 @@ package org.apache.fop.layoutmgr;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.fop.accessibility.StructureTreeElement;
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Trait;
 import org.apache.fop.datatypes.LengthBase;
@@ -29,9 +30,9 @@ import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.datatypes.SimplePercentBaseContext;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
+import org.apache.fop.fo.properties.CommonBorderPaddingBackground.BorderInfo;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.CommonTextDecoration;
-import org.apache.fop.fo.properties.CommonBorderPaddingBackground.BorderInfo;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.traits.MinOptMax;
@@ -52,36 +53,36 @@ public final class TraitSetter {
      *
      * @param area      area to set the traits on
      * @param bpProps   border and padding properties
-     * @param bNotFirst True if the area is not the first area
-     * @param bNotLast  True if the area is not the last area
+     * @param isNotFirst True if the area is not the first area
+     * @param isNotLast  True if the area is not the last area
      * @param context   Property evaluation context
      */
     public static void setBorderPaddingTraits(Area area,
-            CommonBorderPaddingBackground bpProps, boolean bNotFirst, boolean bNotLast,
+            CommonBorderPaddingBackground bpProps, boolean isNotFirst, boolean isNotLast,
             PercentBaseContext context) {
-        int iBP;
-        iBP = bpProps.getPadding(CommonBorderPaddingBackground.START, bNotFirst, context);
-        if (iBP > 0) {
-            area.addTrait(Trait.PADDING_START, new Integer(iBP));
+        int padding;
+        padding = bpProps.getPadding(CommonBorderPaddingBackground.START, isNotFirst, context);
+        if (padding > 0) {
+            area.addTrait(Trait.PADDING_START, padding);
         }
-        iBP = bpProps.getPadding(CommonBorderPaddingBackground.END, bNotLast, context);
-        if (iBP > 0) {
-            area.addTrait(Trait.PADDING_END, new Integer(iBP));
+        padding = bpProps.getPadding(CommonBorderPaddingBackground.END, isNotLast, context);
+        if (padding > 0) {
+            area.addTrait(Trait.PADDING_END, padding);
         }
-        iBP = bpProps.getPadding(CommonBorderPaddingBackground.BEFORE, false, context);
-        if (iBP > 0) {
-            area.addTrait(Trait.PADDING_BEFORE, new Integer(iBP));
+        padding = bpProps.getPadding(CommonBorderPaddingBackground.BEFORE, false, context);
+        if (padding > 0) {
+            area.addTrait(Trait.PADDING_BEFORE, padding);
         }
-        iBP = bpProps.getPadding(CommonBorderPaddingBackground.AFTER, false, context);
-        if (iBP > 0) {
-            area.addTrait(Trait.PADDING_AFTER, new Integer(iBP));
+        padding = bpProps.getPadding(CommonBorderPaddingBackground.AFTER, false, context);
+        if (padding > 0) {
+            area.addTrait(Trait.PADDING_AFTER, padding);
         }
 
-        addBorderTrait(area, bpProps, bNotFirst,
+        addBorderTrait(area, bpProps, isNotFirst,
                 CommonBorderPaddingBackground.START,
                 BorderProps.SEPARATE, Trait.BORDER_START);
 
-        addBorderTrait(area, bpProps, bNotLast,
+        addBorderTrait(area, bpProps, isNotLast,
                 CommonBorderPaddingBackground.END,
                 BorderProps.SEPARATE, Trait.BORDER_END);
 
@@ -94,7 +95,7 @@ public final class TraitSetter {
                 BorderProps.SEPARATE, Trait.BORDER_AFTER);
     }
 
-    /**
+    /*
      * Sets border traits on an area.
      *
      * @param area    area to set the traits on
@@ -103,13 +104,13 @@ public final class TraitSetter {
      */
     private static void addBorderTrait(Area area,
                                        CommonBorderPaddingBackground bpProps,
-                                       boolean bDiscard, int iSide, int mode,
-                                       Object oTrait) {
-        int iBP = bpProps.getBorderWidth(iSide, bDiscard);
-        if (iBP > 0) {
-            area.addTrait(oTrait,
-                    new BorderProps(bpProps.getBorderStyle(iSide),
-                            iBP, bpProps.getBorderColor(iSide),
+                                       boolean discard, int side, int mode,
+                                       Integer trait) {
+        int borderWidth = bpProps.getBorderWidth(side, discard);
+        if (borderWidth > 0) {
+            area.addTrait(trait,
+                    new BorderProps(bpProps.getBorderStyle(side),
+                            borderWidth, bpProps.getBorderColor(side),
                             mode));
         }
     }
@@ -119,30 +120,30 @@ public final class TraitSetter {
      * Layout managers that create areas with borders can use this to
      * add the borders to the area.
      * @param area the area to set the traits on.
-     * @param bordProps border properties
+     * @param borderProps border properties
      * @param context Property evaluation context
      * @deprecated Call the other addBorders() method and addPadding separately.
      */
-    public static void addBorders(Area area, CommonBorderPaddingBackground bordProps,
+    public static void addBorders(Area area, CommonBorderPaddingBackground borderProps,
                                   PercentBaseContext context) {
-        BorderProps bps = getBorderProps(bordProps, CommonBorderPaddingBackground.BEFORE);
+        BorderProps bps = getBorderProps(borderProps, CommonBorderPaddingBackground.BEFORE);
         if (bps != null) {
             area.addTrait(Trait.BORDER_BEFORE, bps);
         }
-        bps = getBorderProps(bordProps, CommonBorderPaddingBackground.AFTER);
+        bps = getBorderProps(borderProps, CommonBorderPaddingBackground.AFTER);
         if (bps != null) {
             area.addTrait(Trait.BORDER_AFTER, bps);
         }
-        bps = getBorderProps(bordProps, CommonBorderPaddingBackground.START);
+        bps = getBorderProps(borderProps, CommonBorderPaddingBackground.START);
         if (bps != null) {
             area.addTrait(Trait.BORDER_START, bps);
         }
-        bps = getBorderProps(bordProps, CommonBorderPaddingBackground.END);
+        bps = getBorderProps(borderProps, CommonBorderPaddingBackground.END);
         if (bps != null) {
             area.addTrait(Trait.BORDER_END, bps);
         }
 
-        addPadding(area, bordProps, context);
+        addPadding(area, borderProps, context);
     }
 
     /**
@@ -150,30 +151,31 @@ public final class TraitSetter {
      * Layout managers that create areas with borders can use this to
      * add the borders to the area.
      * @param area the area to set the traits on.
-     * @param bordProps border properties
+     * @param borderProps border properties
      * @param discardBefore true if the before border should be discarded
      * @param discardAfter true if the after border should be discarded
      * @param discardStart true if the start border should be discarded
      * @param discardEnd true if the end border should be discarded
      * @param context Property evaluation context
      */
-    public static void addBorders(Area area, CommonBorderPaddingBackground bordProps,
+    //TODO: remove evaluation context; unused, since border-widths are always absolute lengths
+    public static void addBorders(Area area, CommonBorderPaddingBackground borderProps,
                 boolean discardBefore, boolean discardAfter,
                 boolean discardStart, boolean discardEnd,
                 PercentBaseContext context) {
-        BorderProps bps = getBorderProps(bordProps, CommonBorderPaddingBackground.BEFORE);
+        BorderProps bps = getBorderProps(borderProps, CommonBorderPaddingBackground.BEFORE);
         if (bps != null && !discardBefore) {
             area.addTrait(Trait.BORDER_BEFORE, bps);
         }
-        bps = getBorderProps(bordProps, CommonBorderPaddingBackground.AFTER);
+        bps = getBorderProps(borderProps, CommonBorderPaddingBackground.AFTER);
         if (bps != null && !discardAfter) {
             area.addTrait(Trait.BORDER_AFTER, bps);
         }
-        bps = getBorderProps(bordProps, CommonBorderPaddingBackground.START);
+        bps = getBorderProps(borderProps, CommonBorderPaddingBackground.START);
         if (bps != null && !discardStart) {
             area.addTrait(Trait.BORDER_START, bps);
         }
-        bps = getBorderProps(bordProps, CommonBorderPaddingBackground.END);
+        bps = getBorderProps(borderProps, CommonBorderPaddingBackground.END);
         if (bps != null && !discardEnd) {
             area.addTrait(Trait.BORDER_END, bps);
         }
@@ -237,25 +239,25 @@ public final class TraitSetter {
         int padding = bordProps.getPadding(CommonBorderPaddingBackground.BEFORE,
                 discardBefore, context);
         if (padding != 0) {
-            area.addTrait(Trait.PADDING_BEFORE, new java.lang.Integer(padding));
+            area.addTrait(Trait.PADDING_BEFORE, padding);
         }
 
         padding = bordProps.getPadding(CommonBorderPaddingBackground.AFTER,
                 discardAfter, context);
         if (padding != 0) {
-            area.addTrait(Trait.PADDING_AFTER, new java.lang.Integer(padding));
+            area.addTrait(Trait.PADDING_AFTER, padding);
         }
 
         padding = bordProps.getPadding(CommonBorderPaddingBackground.START,
                 discardStart, context);
         if (padding != 0) {
-            area.addTrait(Trait.PADDING_START, new java.lang.Integer(padding));
+            area.addTrait(Trait.PADDING_START, padding);
         }
 
         padding = bordProps.getPadding(CommonBorderPaddingBackground.END,
                 discardEnd, context);
         if (padding != 0) {
-            area.addTrait(Trait.PADDING_END, new java.lang.Integer(padding));
+            area.addTrait(Trait.PADDING_END, padding);
         }
 
     }
@@ -278,9 +280,8 @@ public final class TraitSetter {
         assert borderInfo != null;
         int width = borderInfo.getRetainedWidth();
         if (width != 0) {
-            BorderProps bps = new BorderProps(borderInfo.getStyle(), width, borderInfo.getColor(),
+            return new BorderProps(borderInfo.getStyle(), width, borderInfo.getColor(),
                     (outer ? BorderProps.COLLAPSE_OUTER : BorderProps.COLLAPSE_INNER));
-            return bps;
         } else {
             return null;
         }
@@ -460,24 +461,24 @@ public final class TraitSetter {
                                   int startIndent, int endIndent,
                                   PercentBaseContext context) {
         if (startIndent != 0) {
-            area.addTrait(Trait.START_INDENT, new Integer(startIndent));
+            area.addTrait(Trait.START_INDENT, startIndent);
         }
 
         int spaceStart = startIndent
                 - bpProps.getBorderStartWidth(false)
                 - bpProps.getPaddingStart(false, context);
         if (spaceStart != 0) {
-            area.addTrait(Trait.SPACE_START, new Integer(spaceStart));
+            area.addTrait(Trait.SPACE_START, spaceStart);
         }
 
         if (endIndent != 0) {
-            area.addTrait(Trait.END_INDENT, new Integer(endIndent));
+            area.addTrait(Trait.END_INDENT, endIndent);
         }
         int spaceEnd = endIndent
                 - bpProps.getBorderEndWidth(false)
                 - bpProps.getPaddingEnd(false, context);
         if (spaceEnd != 0) {
-            area.addTrait(Trait.SPACE_END, new Integer(spaceEnd));
+            area.addTrait(Trait.SPACE_END, spaceEnd);
         }
     }
 
@@ -537,7 +538,7 @@ public final class TraitSetter {
             MinOptMax space, double adjust) {
         int effectiveSpace = getEffectiveSpace(adjust, space);
         if (effectiveSpace != 0) {
-            area.addTrait(spaceTrait, new Integer(effectiveSpace));
+            area.addTrait(spaceTrait, effectiveSpace);
         }
     }
 
@@ -561,7 +562,7 @@ public final class TraitSetter {
      */
     public static void addFontTraits(Area area, Font font) {
         area.addTrait(Trait.FONT, font.getFontTriplet());
-        area.addTrait(Trait.FONT_SIZE, new Integer(font.getFontSize()));
+        area.addTrait(Trait.FONT_SIZE, font.getFontSize());
     }
 
     /**
@@ -591,13 +592,15 @@ public final class TraitSetter {
     }
 
     /**
-     * Adds the ptr trait to the area.
+     * Sets the structure tree element associated to the given area.
+     *
      * @param area the area to set the traits on
-     * @param ptr string
+     * @param structureTreeElement the element the area is associated to in the document structure
      */
-    public static void addPtr(Area area, String ptr) {
-        if (ptr != null && ptr.length() > 0) {
-            area.addTrait(Trait.PTR, ptr);
+    public static void addStructureTreeElement(Area area,
+            StructureTreeElement structureTreeElement) {
+        if (structureTreeElement != null) {
+            area.addTrait(Trait.STRUCTURE_TREE_ELEMENT, structureTreeElement);
         }
     }
 

@@ -61,7 +61,7 @@ public class AssertElement extends TestObj {
 
         ResultCollector collector = ResultCollector.getInstance();
         String propName = attlist.getValue("property");
-        String expected = attlist.getValue("expected");        
+        String expected = attlist.getValue("expected");
         String component = null;
         int dotIndex = propName.indexOf('.');
         if (dotIndex >= 0) {

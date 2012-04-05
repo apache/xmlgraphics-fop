@@ -48,4 +48,17 @@ public interface FontEventListener {
      */
     void glyphNotAvailable(Object source, char ch, String fontName);
 
+    /**
+     * An error occurred trying to find the font directory specified in the config file.
+     * @param source the event source
+     * @param dir the directory in the config file
+     */
+    void fontDirectoryNotFound(Object source, String dir);
+
+    /**
+     * The SVG text will be stroked as shapes.
+     * @param source the event source
+     * @param fontFamily the family name of the font that is being stroked
+     */
+    void svgTextStrokedAsShapes(Object source, String fontFamily);
 }

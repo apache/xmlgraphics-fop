@@ -19,13 +19,17 @@
 
 package org.apache.fop.fo.flow.table;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Iterator;
+
+import org.junit.Test;
 
 import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.FObj;
 
 
-public class TableColumnColumnNumberTestCase extends AbstractTableTestCase {
+public class TableColumnColumnNumberTestCase extends AbstractTableTest {
 
     /**
      * A percentBaseContext that mimics the behaviour of TableLM for computing the widths
@@ -47,10 +51,6 @@ public class TableColumnColumnNumberTestCase extends AbstractTableTestCase {
 
     private TablePercentBaseContext percentBaseContext = new TablePercentBaseContext();
 
-    public TableColumnColumnNumberTestCase() throws Exception {
-        super();
-    }
-
     private void checkColumn(Table t, int number, boolean isImplicit, int spans, int repeated, int width) {
         TableColumn c = t.getColumn(number - 1);
         // TODO a repeated column has a correct number only for its first occurrence
@@ -61,6 +61,7 @@ public class TableColumnColumnNumberTestCase extends AbstractTableTestCase {
         assertEquals(width, c.getColumnWidth().getValue(percentBaseContext));
     }
 
+    @Test
     public void testColumnNumber() throws Exception {
         setUp("table/table-column_column-number.fo");
         Iterator tableIter = getTableIterator();
@@ -97,6 +98,7 @@ public class TableColumnColumnNumberTestCase extends AbstractTableTestCase {
         }
     }
 
+    @Test
     public void testImplicitColumns() throws Exception {
         setUp("table/implicit_columns_column-number.fo");
         percentBaseContext.setUnitaryWidth(100000);

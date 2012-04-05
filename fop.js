@@ -223,7 +223,7 @@ function fop_exec() {
 	+ (config.Exists("JAVA_OPTS")?config.Item("JAVA_OPTS") + " ":"")
 	+ (config.Exists("LOGCHOICE")?config.Item("LOGCHOICE") + " ":"")
 	+ (config.Exists("LOGLEVEL")?config.Item("LOGLEVEL") + " ":"")
-	"-classpath \"" + local_classpath + "\" "
+	+ "-classpath \"" + local_classpath + "\" "
 	+ (config.Exists("FOP_OPTS")?config.Item("FOP_OPTS"):"")
 	+ "org.apache.fop.cli.Main " + fop_exec_args;
   if (debug || fop_exec_debug) {

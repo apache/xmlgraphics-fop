@@ -47,10 +47,12 @@
     </fo:root>
   </fo>
   <checks>
-    <eval expected="192000" xpath="//inlineparent[@prod-id='link']/viewport/@ipd"/>
-    <eval expected="192000" xpath="//inlineparent[@prod-id='link']/viewport/@bpd"/>
-    
-    <eval expected="192000" xpath="//inlineparent[@prod-id='link']/@ipd"/>
-    <eval expected="192000" xpath="//inlineparent[@prod-id='link']/@bpd"/>
+    <eval expected="144000" xpath="//inlineparent[@prod-id='link']/@ipd"/>
+    <eval expected="144000" xpath="//inlineparent[@prod-id='link']/@bpd"/>
+    <eval expected="0"      xpath="//inlineparent[@prod-id='link']/@offset"/>
+
+    <eval expected="144000" xpath="//inlineparent[@prod-id='link']/viewport/@ipd"/>
+    <eval expected="144000" xpath="//inlineparent[@prod-id='link']/viewport/@bpd"/>
+    <eval expected="0"      xpath="//inlineparent[@prod-id='link']/viewport/@offset"/>
   </checks>
 </testcase>

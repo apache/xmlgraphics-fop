@@ -41,6 +41,10 @@ public abstract class PDFXObject extends AbstractPDFStream {
         super();
     }
 
+    protected PDFXObject(PDFDictionary dictionary) {
+        super(dictionary);
+    }
+
     /**
      * Returns the XObject's name.
      * @return the name of the XObject

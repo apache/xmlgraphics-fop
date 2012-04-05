@@ -19,8 +19,8 @@
 
 package org.apache.fop.pdf;
 
-import java.util.Map;
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Class representing a /ExtGState object.
@@ -149,12 +149,10 @@ public class PDFGState extends PDFObject {
      */
     public String toPDFString() {
         StringBuffer sb = new StringBuffer(64);
-        sb.append(getObjectID());
         sb.append("<<\n/Type /ExtGState\n");
         appendVal(sb, GSTATE_ALPHA_NONSTROKE);
         appendVal(sb, GSTATE_ALPHA_STROKE);
-
-        sb.append(">>\nendobj\n");
+        sb.append(">>");
         return sb.toString();
     }
 

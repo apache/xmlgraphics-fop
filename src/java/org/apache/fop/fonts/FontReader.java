@@ -52,7 +52,7 @@ import org.apache.fop.fonts.apps.TTFReader;
  */
 public class FontReader extends DefaultHandler {
 
-    private Locator locator = null;
+    // private Locator locator = null; // not used at present
     private boolean isCID = false;
     private CustomFont returnFont = null;
     private MultiByteFont multiFont = null;
@@ -117,6 +117,14 @@ public class FontReader extends DefaultHandler {
     }
 
     /**
+     * Enable/disable use of advanced typographic features for the font
+     * @param enabled true to enable, false to disable
+     */
+    public void setAdvancedEnabled(boolean enabled) {
+        returnFont.setAdvancedEnabled(enabled);
+    }
+
+    /**
      * Sets the font resolver. Needed for URI resolution.
      * @param resolver the font resolver
      */
@@ -155,7 +163,7 @@ public class FontReader extends DefaultHandler {
      */
     @Override
     public void setDocumentLocator(Locator locator) {
-        this.locator = locator;
+        // this.locator = locator; // not used at present
     }
 
     /**
@@ -215,6 +223,7 @@ public class FontReader extends DefaultHandler {
             currentKerning.put(new Integer(attributes.getValue("kpx2")),
                                new Integer(attributes.getValue("kern")));
         }
+
     }
 
     private int getInt(String str) throws SAXException {
@@ -310,6 +319,5 @@ public class FontReader extends DefaultHandler {
     public void characters(char[] ch, int start, int length) {
         text.append(ch, start, length);
     }
+
 }
-
-

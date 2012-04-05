@@ -25,7 +25,7 @@ import java.awt.geom.AffineTransform;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.fop.pdf.PDFColor;
+import org.apache.fop.pdf.PDFColorHandler;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFFilterList;
 import org.apache.fop.pdf.PDFNumber;
@@ -50,6 +50,8 @@ public class PDFContentGenerator {
 
     /** the current stream to add PDF commands to */
     private PDFStream currentStream;
+
+    private PDFColorHandler colorHandler;
 
     /** drawing state */
     protected PDFPaintingState currentState = null;
@@ -80,6 +82,7 @@ public class PDFContentGenerator {
         };
 
         this.currentState = new PDFPaintingState();
+        this.colorHandler = new PDFColorHandler(document.getResources());
     }
 
     /**
@@ -267,10 +270,10 @@ public class PDFContentGenerator {
     /** Indicates the end of a text object. */
     protected void endTextObject() {
         if (textutil.isInTextObject()) {
+            textutil.endTextObject();
             if (this.inMarkedContentSequence) {
                 endMarkedContentSequence();
             }
-            textutil.endTextObject();
         }
     }
 
@@ -344,8 +347,9 @@ public class PDFContentGenerator {
      */
     public void setColor(Color col, boolean fill, PDFStream stream) {
         assert stream != null;
-        PDFColor color = new PDFColor(this.document, col);
-        stream.add(color.getColorSpaceOut(fill));
+        StringBuffer sb = new StringBuffer();
+        setColor(col, fill, sb);
+        stream.add(sb.toString());
     }
 
     /**
@@ -367,8 +371,7 @@ public class PDFContentGenerator {
      */
     protected void setColor(Color col, boolean fill, StringBuffer pdf) {
         if (pdf != null) {
-            PDFColor color = new PDFColor(this.document, col);
-            pdf.append(color.getColorSpaceOut(fill));
+            colorHandler.establishColor(pdf, col, fill);
         } else {
             setColor(col, fill, this.currentStream);
         }

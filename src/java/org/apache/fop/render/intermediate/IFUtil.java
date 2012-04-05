@@ -23,7 +23,6 @@ import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.apps.FopFactory;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.util.DecimalFormatCache;
 
@@ -197,6 +196,185 @@ public final class IFUtil {
             }
         }
         return documentHandler.getMimeType();
+    }
+
+    /**
+     * Convert the general gpos 'dp' adjustments to the older 'dx' adjustments.
+     * This utility method is used to provide backward compatibility in implementations
+     * of IFPainter that have not yet been upgraded to the general position adjustments format.
+     * @param dp an array of 4-tuples, expressing [X,Y] placment
+     * adjustments and [X,Y] advancement adjustments, in that order (may be null)
+     * @param count if <code>dp</code> is not null, then a count of dp values to convert
+     * @return if <code>dp</code> is not null, then an array of adjustments to the current
+     * x position prior to rendering individual glyphs; otherwise, null
+     */
+    public static int[] convertDPToDX ( int[][] dp, int count ) {
+        int[] dx;
+        if ( dp != null ) {
+            dx = new int [ count ];
+            for ( int i = 0, n = count; i < n; i++ ) {
+                dx [ i ] = dp [ i ] [ 0 ];      // xPlaAdjust[i]
+            }
+        } else {
+            dx = null;
+        }
+        return dx;
+    }
+
+    /**
+     * Convert the general gpos 'dp' adjustments to the older 'dx' adjustments.
+     * This utility method is used to provide backward compatibility in implementations
+     * of IFPainter that have not yet been upgraded to the general position adjustments format.
+     * @param dp an array of 4-tuples, expressing [X,Y] placment
+     * adjustments and [X,Y] advancement adjustments, in that order (may be null)
+     * @return if <code>dp</code> is not null, then an array of adjustments to the current
+     * x position prior to rendering individual glyphs; otherwise, null
+     */
+    public static int[] convertDPToDX ( int[][] dp ) {
+        return convertDPToDX ( dp, ( dp != null ) ? dp.length : 0 );
+    }
+
+    /**
+     * Convert the general gpos 'dp' adjustments to the older 'dx' adjustments.
+     * This utility method is used to provide backward compatibility in implementations
+     * of IFPainter that have not yet been upgraded to the general position adjustments format.
+     * @param dx an array of adjustments to the current x position prior to rendering
+     * individual glyphs or null
+     * @param count if <code>dx</code> is not null, then a count of dx values to convert
+     * @return if <code>dx</code> is not null, then an array of 4-tuples, expressing [X,Y]
+     * placment adjustments and [X,Y] advancement adjustments, in that order; otherwise, null
+     */
+    public static int[][] convertDXToDP ( int[] dx, int count ) {
+        int[][] dp;
+        if ( dx != null ) {
+            dp = new int [ count ] [ 4 ];
+            for ( int i = 0, n = count; i < n; i++ ) {
+                int[] pa = dp [ i ];
+                int   d  = dx [ i ];
+                pa [ 0 ] = d;                   // xPlaAdjust[i]
+                pa [ 2 ] = d;                   // xAdvAdjust[i]
+            }
+        } else {
+            dp = null;
+        }
+        return dp;
+    }
+
+    /**
+     * Convert the general gpos 'dp' adjustments to the older 'dx' adjustments.
+     * This utility method is used to provide backward compatibility in implementations
+     * of IFPainter that have not yet been upgraded to the general position adjustments format.
+     * @param dx an array of adjustments to the current x position prior to rendering
+     * individual glyphs or null
+     * @return if <code>dx</code> is not null, then an array of 4-tuples, expressing [X,Y]
+     * placment adjustments and [X,Y] advancement adjustments, in that order; otherwise, null
+     */
+    public static int[][] convertDXToDP ( int[] dx ) {
+        return convertDXToDP ( dx, ( dx != null ) ? dx.length : 0 );
+    }
+
+    /**
+     * Determine if position adjustment is the identity adjustment, i.e., no non-zero adjustment.
+     * @param pa a 4-tuple, expressing [X,Y] placment and [X,Y] advance adjuustments (may be null)
+     * @return true if <code>dp</code> is null or contains no non-zero adjustment
+     */
+    public static boolean isPAIdentity ( int[] pa ) {
+        if ( pa == null ) {
+            return true;
+        } else {
+            for ( int k = 0; k < 4; k++ ) {
+                if ( pa[k] != 0 ) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    /**
+     * Determine if position adjustments is the identity adjustment, i.e., no non-zero adjustment.
+     * @param dp an array of 4-tuples, expressing [X,Y] placment
+     * adjustments and [X,Y] advancement adjustments, in that order (may be null)
+     * @return true if <code>dp</code> is null or contains no non-zero adjustment
+     */
+    public static boolean isDPIdentity ( int[][] dp ) {
+        if ( dp == null ) {
+            return true;
+        } else {
+            for ( int i = 0, n = dp.length; i < n; i++ ) {
+                if ( !isPAIdentity ( dp[i] ) ) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    /**
+     * Determine if position adjustments comprises only DX adjustments as encoded by
+     * {@link #convertDPToDX}. Note that if given a set of all all zero position
+     * adjustments, both this method and {@link #isDPIdentity} will return true;
+     * however, this method may return true when {@link #isDPIdentity} returns false.
+     * @param dp an array of 4-tuples, expressing [X,Y] placment
+     * adjustments and [X,Y] advancement adjustments, in that order (may be null)
+     * @return true if <code>dp</code> is not null and contains only xPlaAdjust
+     * and xAdvAdjust values consistent with the output of {@link #convertDPToDX}.
+     */
+    public static boolean isDPOnlyDX ( int[][] dp ) {
+        if ( dp == null ) {
+            return false;
+        } else {
+            for ( int i = 0, n = dp.length; i < n; i++ ) {
+                int[] pa = dp[i];
+                if ( pa[0] != pa[2] ) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    /**
+     * Adjust a position adjustments array. If both <code>paDst</code> and <code>paSrc</code> are
+     * non-null, then <code>paSrc[i]</code> is added to <code>paDst[i]</code>.
+     * @param paDst a 4-tuple, expressing [X,Y] placment
+     * and [X,Y] advance adjuustments (may be null)
+     * @param paSrc a 4-tuple, expressing [X,Y] placment
+     * and [X,Y] advance adjuustments (may be null)
+     */
+    public static void adjustPA ( int[] paDst, int[] paSrc ) {
+        if ( ( paDst != null ) && ( paSrc != null ) ) {
+            assert paDst.length == 4;
+            assert paSrc.length == 4;
+            for ( int i = 0; i < 4; i++ ) {
+                paDst[i] += paSrc[i];
+            }
+        }
+    }
+
+    /**
+     * Copy entries from position adjustments.
+     * @param dp an array of 4-tuples, expressing [X,Y] placment
+     * adjustments and [X,Y] advancement adjustments, in that order
+     * @param offset starting offset from which to copy
+     * @param count number of entries to copy
+     * @return a deep copy of the count position adjustment entries start at
+     * offset
+     */
+    public static int[][] copyDP ( int[][] dp, int offset, int count ) {
+        if ( ( dp == null ) || ( offset > dp.length ) || ( ( offset + count ) > dp.length ) ) {
+            throw new IllegalArgumentException();
+        } else {
+            int[][] dpNew = new int [ count ] [ 4 ];
+            for ( int i = 0, n = count; i < n; i++ ) {
+                int[] paDst = dpNew [ i ];
+                int[] paSrc = dp [ i + offset ];
+                for ( int k = 0; k < 4; k++ ) {
+                    paDst [ k ] = paSrc [ k ];
+                }
+            }
+            return dpNew;
+        }
     }
 
 }

@@ -19,23 +19,18 @@
 
 package org.apache.fop.afp.fonts;
 
-import java.io.File;
 import java.io.UnsupportedEncodingException;
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
 import java.nio.charset.CharacterCodingException;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetEncoder;
-import java.nio.charset.CodingErrorAction;
-import java.nio.charset.UnsupportedCharsetException;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.afp.AFPConstants;
+import org.apache.fop.afp.AFPEventProducer;
+import org.apache.fop.afp.fonts.CharactersetEncoder.EncodedChars;
 import org.apache.fop.afp.util.ResourceAccessor;
-import org.apache.fop.afp.util.SimpleResourceAccessor;
 import org.apache.fop.afp.util.StringUtils;
 
 /**
@@ -70,59 +65,46 @@ public class CharacterSet {
 
 
     /** The code page to which the character set relates */
-    protected String codePage;
+    protected final String codePage;
 
     /** The encoding used for the code page */
-    protected String encoding;
+    protected final String encoding;
 
-    /** The charset encoder corresponding to this encoding */
-    private CharsetEncoder encoder;
+    /** The characterset encoder corresponding to this encoding */
+    private final CharactersetEncoder encoder;
 
     /** The character set relating to the font */
-    protected String name;
+    protected final String name;
 
     /** The path to the installed fonts */
-    private ResourceAccessor accessor;
+    private final ResourceAccessor accessor;
 
     /** The current orientation (currently only 0 is supported by FOP) */
     private final String currentOrientation = "0";
 
     /** The collection of objects for each orientation */
-    private Map characterSetOrientations = null;
+    private final Map<String, CharacterSetOrientation> characterSetOrientations;
 
     /** The nominal vertical size (in millipoints) for bitmap fonts. 0 for outline fonts. */
-    private int nominalVerticalSize = 0;
+    private int nominalVerticalSize;
 
     /**
-     * Constructor for the CharacterSetMetric object, the character set is used
-     * to load the font information from the actual AFP font.
+     * Constructor for the CharacterSetMetric object, the character set is used to load the font
+     * information from the actual AFP font.
      *
      * @param codePage the code page identifier
      * @param encoding the encoding of the font
-     * @param name the character set name
-     * @param path the path to the installed afp fonts
-     * @deprecated Please use
-     * {@link #CharacterSet(String, String, String, ResourceAccessor)} instead.
-     */
-    public CharacterSet(String codePage, String encoding, String name, String path) {
-        this(codePage, encoding, name,
-                new SimpleResourceAccessor(path != null ? new File(path) : null));
-    }
-
-    /**
-     * Constructor for the CharacterSetMetric object, the character set is used
-     * to load the font information from the actual AFP font.
-     *
-     * @param codePage the code page identifier
-     * @param encoding the encoding of the font
+     * @param isEBDCS if this is an EBCDIC double byte character set.
      * @param name the character set name
      * @param accessor the resource accessor to load resource with
+     * @param eventProducer for handling AFP related events
      */
-     CharacterSet(String codePage, String encoding, String name, ResourceAccessor accessor) {
+    CharacterSet(String codePage, String encoding, boolean isEBDCS, String name,
+            ResourceAccessor accessor, AFPEventProducer eventProducer) {
         if (name.length() > MAX_NAME_LEN) {
             String msg = "Character set name '" + name + "' must be a maximum of "
                 + MAX_NAME_LEN + " characters";
-            LOG.error("Constructor:: " + msg);
+            eventProducer.characterSetNameInvalid(this, msg);
             throw new IllegalArgumentException(msg);
         }
 
@@ -133,17 +115,10 @@ public class CharacterSet {
         }
         this.codePage = codePage;
         this.encoding = encoding;
-        try {
-            this.encoder = Charset.forName(encoding).newEncoder();
-            this.encoder.onUnmappableCharacter(CodingErrorAction.REPLACE);
-        } catch (UnsupportedCharsetException uce) {
-            //No nio-capable encoder available
-            //This may happen with "Cp500" on Sun Java 1.4.2
-            this.encoder = null;
-        }
+        this.encoder = CharactersetEncoder.newInstance(encoding, isEBDCS);
         this.accessor = accessor;
 
-        this.characterSetOrientations = new java.util.HashMap(4);
+        this.characterSetOrientations = new HashMap<String, CharacterSetOrientation>(4);
     }
 
     /**
@@ -152,9 +127,7 @@ public class CharacterSet {
      * @param cso the metrics for the orientation
      */
     public void addCharacterSetOrientation(CharacterSetOrientation cso) {
-        characterSetOrientations.put(
-            String.valueOf(cso.getOrientation()),
-            cso);
+        characterSetOrientations.put(String.valueOf(cso.getOrientation()), cso);
     }
 
     /**
@@ -357,32 +330,8 @@ public class CharacterSet {
      * @return the encoded characters
      * @throws CharacterCodingException if the encoding operation fails
      */
-    public byte[] encodeChars(CharSequence chars) throws CharacterCodingException {
-        if (encoder != null) {
-            ByteBuffer bb;
-            // encode method is not thread safe
-            synchronized (encoder) {
-                bb = encoder.encode(CharBuffer.wrap(chars));
-            }
-            if (bb.hasArray()) {
-                return bb.array();
-            } else {
-                bb.rewind();
-                byte[] bytes = new byte[bb.remaining()];
-                bb.get(bytes);
-                return bytes;
-            }
-        } else {
-            //Sun Java 1.4.2 compatibility
-            byte[] bytes;
-            try {
-                bytes = chars.toString().getBytes(this.encoding);
-                return bytes;
-            } catch (UnsupportedEncodingException uee) {
-                throw new UnsupportedOperationException(
-                        "Unsupported encoding: " + uee.getMessage());
-            }
-        }
+    public EncodedChars encodeChars(CharSequence chars) throws CharacterCodingException {
+        return encoder.encode(chars);
     }
 
     /**

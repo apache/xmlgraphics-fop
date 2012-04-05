@@ -19,14 +19,14 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
 <document>
   <header>
-    <title>Upgrading from an Earlier Version of Apache FOP</title>
+    <title>Upgrading from an Earlier Version of Apache™ FOP</title>
     <version>$Revision$</version>
   </header>
   <body>
     <section id="important">
       <title>Important!</title>
       <p>
-        If you're planning to upgrade to the latest FOP version there are a few very important things
+        If you're planning to upgrade to the latest Apache™ FOP version there are a few very important things
         to consider:
       </p>
       <ul>

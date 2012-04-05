@@ -19,24 +19,14 @@
 
 package org.apache.fop;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
 /**
  * Test suite for basic functionality of FOP's Driver API.
  */
+@RunWith(Suite.class)
+@SuiteClasses({ BasicDriverTestCase.class })
 public class BasicDriverTestSuite {
-
-    /**
-     * Builds the test suite
-     * @return the test suite
-     */
-    public static Test suite() {
-        TestSuite suite = new TestSuite(
-            "Basic functionality test suite for FOP's Driver API");
-        //$JUnit-BEGIN$
-        suite.addTest(new TestSuite(BasicDriverTestCase.class));
-        //$JUnit-END$
-        return suite;
-    }
 }

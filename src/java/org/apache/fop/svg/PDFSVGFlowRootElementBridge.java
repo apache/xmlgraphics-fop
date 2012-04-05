@@ -23,6 +23,7 @@ import org.apache.batik.bridge.svg12.SVGFlowRootElementBridge;
 import org.apache.batik.gvt.GraphicsNode;
 import org.apache.batik.gvt.TextNode;
 import org.apache.batik.gvt.TextPainter;
+
 import org.apache.fop.fonts.FontInfo;
 
 /**

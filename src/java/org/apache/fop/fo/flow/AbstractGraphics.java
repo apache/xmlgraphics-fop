@@ -19,17 +19,24 @@
 
 package org.apache.fop.fo.flow;
 
+import java.util.Stack;
+
+import org.apache.fop.accessibility.StructureTreeElement;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.complexscripts.bidi.DelimitedTextRange;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.GraphicsProperties;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.properties.CommonAccessibility;
+import org.apache.fop.fo.properties.CommonAccessibilityHolder;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.LengthRangeProperty;
 import org.apache.fop.fo.properties.SpaceProperty;
-import org.apache.fop.fo.properties.StructurePointerPropertySet;
+import org.apache.fop.fo.properties.StructureTreeElementHolder;
+import org.apache.fop.util.CharUtilities;
 
 /**
  * Common base class for the <a href="http://www.w3.org/TR/xsl/#fo_instream-foreign-object">
@@ -38,10 +45,11 @@ import org.apache.fop.fo.properties.StructurePointerPropertySet;
  * <code>fo:external-graphic</code></a> flow formatting objects.
  */
 public abstract class AbstractGraphics extends FObj
-        implements GraphicsProperties, StructurePointerPropertySet {
+        implements GraphicsProperties, StructureTreeElementHolder, CommonAccessibilityHolder {
 
     // The value of properties relevant for fo:instream-foreign-object
     // and external-graphics.
+    private CommonAccessibility commonAccessibility;
     private CommonBorderPaddingBackground commonBorderPaddingBackground;
     private Length alignmentAdjust;
     private int alignmentBaseline;
@@ -62,7 +70,8 @@ public abstract class AbstractGraphics extends FObj
     private int scaling;
     private int textAlign;
     private Length width;
-    private String ptr;   // used for accessibility
+    private String altText;
+    private StructureTreeElement structureTreeElement;
     // Unused but valid items, commented out for performance:
     //     private CommonAccessibility commonAccessibility;
     //     private CommonAural commonAural;
@@ -71,8 +80,6 @@ public abstract class AbstractGraphics extends FObj
     //     private String contentType;
     //     private int scalingMethod;
     // End of property values
-
-
 
     /**
      * constructs an instream-foreign-object object (called by Maker).
@@ -85,6 +92,7 @@ public abstract class AbstractGraphics extends FObj
 
     /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
+        commonAccessibility = CommonAccessibility.getInstance(pList);
         commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
         alignmentAdjust = pList.get(PR_ALIGNMENT_ADJUST).getLength();
         alignmentBaseline = pList.get(PR_ALIGNMENT_BASELINE).getEnum();
@@ -97,7 +105,6 @@ public abstract class AbstractGraphics extends FObj
         dominantBaseline = pList.get(PR_DOMINANT_BASELINE).getEnum();
         height = pList.get(PR_HEIGHT).getLength();
         id = pList.get(PR_ID).getString();
-        ptr = pList.get(PR_X_PTR).getString();   // used for accessibility
         inlineProgressionDimension = pList.get(PR_INLINE_PROGRESSION_DIMENSION).getLengthRange();
         keepWithNext = pList.get(PR_KEEP_WITH_NEXT).getKeep();
         keepWithPrevious = pList.get(PR_KEEP_WITH_PREVIOUS).getKeep();
@@ -107,11 +114,16 @@ public abstract class AbstractGraphics extends FObj
         textAlign = pList.get(PR_TEXT_ALIGN).getEnum();
         width = pList.get(PR_WIDTH).getLength();
         if (getUserAgent().isAccessibilityEnabled()) {
-            String altText = pList.get(PR_X_ALT_TEXT).getString();
+            altText = pList.get(PR_X_ALT_TEXT).getString();
             if (altText.equals("")) {
                 getFOValidationEventProducer().altTextMissing(this, getLocalName(), getLocator());
             }
         }
+    }
+
+    /** {@inheritDoc} */
+    public CommonAccessibility getCommonAccessibility() {
+        return commonAccessibility;
     }
 
     /**
@@ -217,9 +229,19 @@ public abstract class AbstractGraphics extends FObj
         return keepWithPrevious;
     }
 
+    @Override
+    public void setStructureTreeElement(StructureTreeElement structureTreeElement) {
+        this.structureTreeElement = structureTreeElement;
+    }
+
     /** {@inheritDoc} */
-    public String getPtr() {
-        return ptr;
+    public StructureTreeElement getStructureTreeElement() {
+        return structureTreeElement;
+    }
+
+    /** @return  the alternative text property. */
+    public String getAltText() {
+        return altText;
     }
 
     /** @return the graphic's intrinsic width in millipoints */
@@ -230,4 +252,18 @@ public abstract class AbstractGraphics extends FObj
 
     /** @return the graphic's intrinsic alignment-adjust */
     public abstract Length getIntrinsicAlignmentAdjust();
+
+    @Override
+    public boolean isDelimitedTextRangeBoundary ( int boundary ) {
+        return false;
+    }
+
+    @Override
+    protected Stack collectDelimitedTextRanges ( Stack ranges, DelimitedTextRange currentRange ) {
+        if ( currentRange != null ) {
+            currentRange.append ( CharUtilities.OBJECT_REPLACEMENT_CHARACTER, this );
+        }
+        return ranges;
+    }
+
 }

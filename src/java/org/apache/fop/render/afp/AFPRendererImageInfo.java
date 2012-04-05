@@ -23,9 +23,10 @@ import java.awt.Point;
 import java.awt.geom.Rectangle2D;
 import java.util.Map;
 
-import org.apache.fop.render.RendererContext;
 import org.apache.xmlgraphics.image.loader.Image;
 import org.apache.xmlgraphics.image.loader.ImageInfo;
+
+import org.apache.fop.render.RendererContext;
 
 /**
  * The AFP image information

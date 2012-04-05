@@ -48,7 +48,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.fop.render.bitmap.BitmapRendererEventProducer;
 import org.apache.fop.render.bitmap.MultiFileRenderingUtil;
 import org.apache.fop.render.intermediate.DelegatingFragmentContentHandler;
-import org.apache.fop.render.intermediate.IFDocumentHandler;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFPainter;
 import org.apache.fop.util.GenerationHelperContentHandler;

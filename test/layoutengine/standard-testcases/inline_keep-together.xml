@@ -38,6 +38,22 @@
             <fo:block keep-together.within-line="always">This is Blah blah blah blah!</fo:block>
             <fo:block>This is <fo:inline keep-together.within-line="always">Blah blah blah blah!</fo:inline></fo:block>
             <fo:block>This is <fo:wrapper keep-together.within-line="always">Blah blah blah blah!</fo:wrapper></fo:block>
+            <fo:block>
+              <fo:inline keep-together.within-line="always">
+                This<fo:inline> entire</fo:inline> sentence
+                <fo:inline>should be </fo:inline>kept 
+                <fo:inline>together
+                  <fo:inline>on
+                    <fo:inline>one
+                      <fo:inline>very,
+                        <fo:inline>very,</fo:inline>
+                        <fo:inline>very,</fo:inline>
+                        <fo:inline>very,</fo:inline>
+                        <fo:inline>long</fo:inline>
+                      </fo:inline></fo:inline></fo:inline>line
+                </fo:inline>
+              </fo:inline>
+            </fo:block>
           </fo:block-container>
         </fo:flow>
       </fo:page-sequence>
@@ -54,6 +70,9 @@
     <!-- The layout engine should warn the user about the overflow in this case. -->
     <eval expected="This is" xpath="//flow/block[1]/block[1]/block[3]/lineArea[1]"/>
     <eval expected="Blah blah blah blah!" xpath="//flow/block[1]/block[1]/block[3]/lineArea[2]"/>
+    
+    <!-- check effect of nested inlines (see Bugzilla #49848) -->
+    <eval expected="1" xpath="count(//flow/block[1]/block[1]/block[4]/lineArea)" />
 
   </checks>
 </testcase>

@@ -60,13 +60,6 @@ public class AFPBorderPainter extends AbstractAFPPainter {
         float y2 = unitConv.pt2units(borderPaintInfo.getY2());
 
         switch (paintingState.getRotation()) {
-        default:
-        case 0:
-            x1 += at.getTranslateX();
-            y1 += at.getTranslateY();
-            x2 += at.getTranslateX();
-            y2 += at.getTranslateY();
-            break;
         case 90:
             x1 += at.getTranslateY();
             y1 += (float) (pageWidth - at.getTranslateX());
@@ -84,6 +77,13 @@ public class AFPBorderPainter extends AbstractAFPPainter {
             y1 += (float) at.getTranslateX();
             x2 += x1;
             y2 += (float) at.getTranslateX();
+            break;
+        case 0:
+        default:
+            x1 += at.getTranslateX();
+            y1 += at.getTranslateY();
+            x2 += at.getTranslateX();
+            y2 += at.getTranslateY();
             break;
         }
 

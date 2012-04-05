@@ -1,4 +1,4 @@
-<?xml version="1.0" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -19,7 +19,7 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
 <document xmlns:xi="http://www.w3.org/2001/XInclude">
   <header>
-    <title>Apache FOP: Known Issues</title>
+    <title>Apache™ FOP: Known Issues</title>
     <version>$Revision$</version>
   </header>
 <body>
@@ -30,7 +30,7 @@
   </p>
   <note>
     <p>
-      For additional information on known issues in Apache FOP, please have a look at the following pages, too:
+      For additional information on known issues in Apache™ FOP, please have a look at the following pages, too:
     </p>
     <ul>
       <li><a href="../bugs.html">the bug list in Bugzilla</a></li>
@@ -38,7 +38,7 @@
     </ul>
   </note>
   <p>
-    Apache FOP has an extensive automated testing infrastructure. Parts of this infrastructure are several 
+    Apache™ FOP has an extensive automated testing infrastructure. Parts of this infrastructure are several
     sets of test cases. When a test case is listed in disabled-testcases.xml it is disabled in the JUnit 
     tests during the normal build process. This indicates a problem in the current codebase. When a bug is 
     fixed or a missing feature is added the entry for the relevant test case(s) are removed.
@@ -67,4 +67,3 @@
 </section>
 </body>
 </document>
-

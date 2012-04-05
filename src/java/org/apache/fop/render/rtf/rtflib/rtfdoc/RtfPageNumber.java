@@ -26,11 +26,13 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
  * the FOP project.
  */
 
-import java.io.Writer;
 import java.io.IOException;
+import java.io.Writer;
 
 /**
- * @author Christopher Scott, scottc@westinghouse.com
+ * <p>Page number container.</p>
+ *
+ * <p>This work was authored by Christopher Scott (scottc@westinghouse.com).</p>
  */
 public class RtfPageNumber extends RtfContainer {
     /* RtfText attributes: fields

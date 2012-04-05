@@ -19,9 +19,13 @@
 
 package org.apache.fop.pdf;
 
-import java.util.Date;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * class representing an /Info object
@@ -165,7 +169,6 @@ public class PDFInfo extends PDFObject {
         PDFProfile profile = getDocumentSafely().getProfile();
         ByteArrayOutputStream bout = new ByteArrayOutputStream(128);
         try {
-            bout.write(encode(getObjectID()));
             bout.write(encode("<<\n"));
             if (title != null && title.length() > 0) {
                 bout.write(encode("/Title "));
@@ -225,12 +228,74 @@ public class PDFInfo extends PDFObject {
                 bout.write(encode("/Trapped /False\n"));
             }
 
-            bout.write(encode(">>\nendobj\n"));
+            bout.write(encode(">>"));
         } catch (IOException ioe) {
             log.error("Ignored I/O exception", ioe);
         }
         return bout.toByteArray();
     }
 
+    /**
+     * Returns a SimpleDateFormat instance for formatting PDF date-times.
+     * @return a new SimpleDateFormat instance
+     */
+    protected static SimpleDateFormat getPDFDateFormat() {
+        SimpleDateFormat df = new SimpleDateFormat("'D:'yyyyMMddHHmmss", Locale.ENGLISH);
+        df.setTimeZone(TimeZone.getTimeZone("GMT"));
+        return df;
+    }
+
+    /**
+     * Formats a date/time according to the PDF specification (D:YYYYMMDDHHmmSSOHH'mm').
+     * @param time date/time value to format
+     * @param tz the time zone
+     * @return the requested String representation
+     */
+    protected static String formatDateTime(Date time, TimeZone tz) {
+        Calendar cal = Calendar.getInstance(tz, Locale.ENGLISH);
+        cal.setTime(time);
+
+        int offset = cal.get(Calendar.ZONE_OFFSET);
+        offset += cal.get(Calendar.DST_OFFSET);
+
+        // DateFormat is operating on GMT so adjust for time zone offset
+        Date dt1 = new Date(time.getTime() + offset);
+        StringBuffer sb = new StringBuffer();
+        sb.append(getPDFDateFormat().format(dt1));
+
+        offset /= (1000 * 60); // Convert to minutes
+
+        if (offset == 0) {
+            sb.append('Z');
+        } else {
+            if (offset > 0) {
+                sb.append('+');
+            } else {
+                sb.append('-');
+            }
+            int offsetHour = Math.abs(offset / 60);
+            int offsetMinutes = Math.abs(offset % 60);
+            if (offsetHour < 10) {
+                sb.append('0');
+            }
+            sb.append(Integer.toString(offsetHour));
+            sb.append('\'');
+            if (offsetMinutes < 10) {
+                sb.append('0');
+            }
+            sb.append(Integer.toString(offsetMinutes));
+            sb.append('\'');
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Formats a date/time according to the PDF specification. (D:YYYYMMDDHHmmSSOHH'mm').
+     * @param time date/time value to format
+     * @return the requested String representation
+     */
+    protected static String formatDateTime(Date time) {
+        return formatDateTime(time, TimeZone.getDefault());
+    }
 }
 

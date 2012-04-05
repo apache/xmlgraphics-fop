@@ -1,4 +1,4 @@
-<?xml version="1.0" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -19,7 +19,7 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
 <document>
   <header>
-    <title>Apache FOP: Configuration</title>
+    <title>Apache™ FOP: Configuration</title>
     <version>$Revision$</version>
   </header>
 
@@ -490,4 +490,3 @@ information it finds. Check if FOP finds what you expect.</li>
         </section>
   </body>
 </document>
-

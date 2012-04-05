@@ -26,9 +26,11 @@ package org.apache.fop.render.rtf.rtflib.tools;
  * the FOP project.
  */
 
-/**  Misc.utilities for images handling
- *  This class belongs to the <fo:external-graphic> tag processing.
- *  @author <a href="mailto:a.putz@skynamics.com">Andreas Putz</a>
+/**
+ * <p>Miscellaneous utilities for images handling.
+ * This class belongs to the <fo:external-graphic> tag processing.</p>
+ *
+ * <p>This work was authored by Andreas Putz (a.putz@skynamics.com).</p>
  */
 public final class ImageUtil {
 

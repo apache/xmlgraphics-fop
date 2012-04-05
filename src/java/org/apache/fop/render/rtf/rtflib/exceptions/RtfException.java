@@ -26,8 +26,10 @@ package org.apache.fop.render.rtf.rtflib.exceptions;
  * the FOP project.
  */
 
-/**  Base class for rtflib exceptions.
- *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
+/**
+ * <p>Base class for rtflib exceptions.</p>
+ *
+ * <p>This work was authored by Bertrand Delacretaz (bdelacretaz@codeconsult.ch).</p>
  */
 public class RtfException extends java.io.IOException {
     /**

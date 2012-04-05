@@ -36,19 +36,9 @@ import org.apache.fop.render.PrintRenderer;
  * Tests the font substitution mechanism
  */
 public class FontsSubstitutionTestCase extends
-        BaseConstructiveUserConfigTestCase {
+        BaseConstructiveUserConfigTest {
 
-    /**
-     * Main constructor
-     * @param name test case name
-     */
-    public FontsSubstitutionTestCase(String name) {
-        super(name);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     protected byte[] convertFO(File foFile, FOUserAgent ua, boolean dumpPdfFile)
             throws Exception {
         PrintRenderer renderer = (PrintRenderer) ua.getRendererFactory()
@@ -58,7 +48,8 @@ public class FontsSubstitutionTestCase extends
         FontManager fontManager = ua.getFactory().getFontManager();
         FontCollection[] fontCollections = new FontCollection[] {
                 new Base14FontCollection(fontManager.isBase14KerningEnabled()),
-                new CustomFontCollection(renderer.getFontResolver(), renderer.getFontList())
+                new CustomFontCollection(renderer.getFontResolver(), renderer.getFontList(),
+                                         ua.isComplexScriptFeaturesEnabled())
         };
         fontManager.setup(fontInfo, fontCollections);
         FontTriplet triplet = new FontTriplet("Times", "italic",
@@ -72,9 +63,7 @@ public class FontsSubstitutionTestCase extends
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public String getUserConfigFilename() {
         return "test_fonts_substitution.xconf";
     }

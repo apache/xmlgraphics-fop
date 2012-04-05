@@ -36,19 +36,17 @@ import org.apache.fop.fo.properties.EnumProperty;
 import org.apache.fop.fo.properties.NumberProperty;
 import org.apache.fop.fo.properties.Property;
 import org.apache.fop.fo.properties.PropertyMaker;
-import org.apache.fop.fo.properties.StructurePointerPropertySet;
 import org.apache.fop.layoutmgr.table.CollapsingBorderModel;
 
 /**
  * Common base class for table-related FOs
  */
-public abstract class TableFObj extends FObj implements StructurePointerPropertySet {
+public abstract class TableFObj extends FObj {
 
     private Numeric borderAfterPrecedence;
     private Numeric borderBeforePrecedence;
     private Numeric borderEndPrecedence;
     private Numeric borderStartPrecedence;
-    private String ptr;
 
     ConditionalBorder borderBefore;             // CSOK: VisibilityModifier
     ConditionalBorder borderAfter;              // CSOK: VisibilityModifier
@@ -74,7 +72,6 @@ public abstract class TableFObj extends FObj implements StructurePointerProperty
         borderBeforePrecedence = pList.get(PR_BORDER_BEFORE_PRECEDENCE).getNumeric();
         borderEndPrecedence = pList.get(PR_BORDER_END_PRECEDENCE).getNumeric();
         borderStartPrecedence = pList.get(PR_BORDER_START_PRECEDENCE).getNumeric();
-        ptr = pList.get(PR_X_PTR).getString();
         if (getNameId() != FO_TABLE //Separate check for fo:table in Table.java
                 && getNameId() != FO_TABLE_CELL
                 && getCommonBorderPaddingBackground().hasPadding(
@@ -239,11 +236,6 @@ public abstract class TableFObj extends FObj implements StructurePointerProperty
                     .getBorderCollapse());
             setCollapsedBorders();
         }
-    }
-
-    /** {@inheritDoc} */
-    public String getPtr() {
-        return ptr;
     }
 
     /**

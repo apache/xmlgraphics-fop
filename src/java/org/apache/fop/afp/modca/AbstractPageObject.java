@@ -27,8 +27,8 @@ import java.util.List;
 import org.apache.fop.afp.AFPLineDataInfo;
 import org.apache.fop.afp.Completable;
 import org.apache.fop.afp.Factory;
-import org.apache.fop.afp.ptoca.PtocaProducer;
 import org.apache.fop.afp.fonts.AFPFont;
+import org.apache.fop.afp.ptoca.PtocaProducer;
 
 /**
  * Pages contain the data objects that comprise a presentation document. Each
@@ -57,11 +57,8 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject implemen
     /** The current presentation text object */
     private PresentationTextObject currentPresentationTextObject = null;
 
-    /** The list of tag logical elements */
-    protected List/*<TagLogicalElement>*/ tagLogicalElements = null;
-
     /** The list of objects within this resource container */
-    protected List/*<AbstractStructuredAFPObject>*/ objects = new java.util.ArrayList();
+    protected List/*<AbstractStructuredObject>*/ objects = new java.util.ArrayList();
 
     /** The page width */
     private int width;
@@ -217,10 +214,10 @@ public abstract class AbstractPageObject extends AbstractNamedAFPObject implemen
      * @return the TLEs
      */
     protected List getTagLogicalElements() {
-        if (tagLogicalElements == null) {
-            this.tagLogicalElements = new java.util.ArrayList/*<TagLogicalElement>*/();
+        if (objects == null) {
+            this.objects = new java.util.ArrayList/*<AbstractStructuredObject>*/();
         }
-        return this.tagLogicalElements;
+        return this.objects;
     }
 
     /**

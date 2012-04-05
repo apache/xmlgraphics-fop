@@ -19,12 +19,12 @@
 
 package org.apache.fop.render.java2d;
 
-import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontCollection;
 import org.apache.fop.fonts.FontInfo;
@@ -38,10 +38,10 @@ public class InstalledFontCollection implements FontCollection {
 
     private static Log log = LogFactory.getLog(InstalledFontCollection.class);
 
-    private static final Set HARDCODED_FONT_NAMES;
+    private static final Set<String> HARDCODED_FONT_NAMES;
 
     static {
-        HARDCODED_FONT_NAMES = new java.util.HashSet();
+        HARDCODED_FONT_NAMES = new java.util.HashSet<String>();
         HARDCODED_FONT_NAMES.add("any");
         HARDCODED_FONT_NAMES.add("sans-serif");
         HARDCODED_FONT_NAMES.add("serif");
@@ -57,15 +57,16 @@ public class InstalledFontCollection implements FontCollection {
         HARDCODED_FONT_NAMES.add("Computer-Modern-Typewriter");
     }
 
-    private Graphics2D graphics2D = null;
+    /** Required by new instances of FontMetricsMapper */
+    private final Java2DFontMetrics java2DFontMetrics;
 
     /**
      * Main constructor
      *
-     * @param graphics2D a graphics 2D
+     * @param java2DFontMetrics required by new instances of FontMetricsMapper
      */
-    public InstalledFontCollection(Graphics2D graphics2D) {
-        this.graphics2D  = graphics2D;
+    public InstalledFontCollection(Java2DFontMetrics java2DFontMetrics) {
+        this.java2DFontMetrics  = java2DFontMetrics;
     }
 
     /**
@@ -98,7 +99,7 @@ public class InstalledFontCollection implements FontCollection {
             num++;
             String fontKey = "F" + num;
             int style = convertToAWTFontStyle(guessedStyle, guessedWeight);
-            addFontMetricsMapper(fontInfo, f.getName(), fontKey, graphics2D, style);
+            addFontMetricsMapper(fontInfo, f.getName(), fontKey, java2DFontMetrics, style);
 
             //Register appropriate font triplets matching the font. Two different strategies:
             //Example: "Arial Bold", normal, normal
@@ -120,8 +121,8 @@ public class InstalledFontCollection implements FontCollection {
     }
 
     private static void addFontMetricsMapper(FontInfo fontInfo, String family, String fontKey,
-            Graphics2D graphics, int style) {
-        FontMetricsMapper metric = new SystemFontMetricsMapper(family, style, graphics);
+            Java2DFontMetrics java2DFontMetrics, int style) {
+        FontMetricsMapper metric = new SystemFontMetricsMapper(family, style, java2DFontMetrics);
         fontInfo.addMetrics(fontKey, metric);
     }
 

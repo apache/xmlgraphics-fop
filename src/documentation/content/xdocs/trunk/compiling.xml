@@ -1,4 +1,4 @@
-<?xml version="1.0" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -19,7 +19,7 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
 <document>
   <header>
-    <title>Apache FOP: Building from Source Code</title>
+    <title>Apache™ FOP: Building from Source Code</title>
     <version>$Revision$</version>
   </header>
   <body>
@@ -35,7 +35,7 @@
 <!-- /text for released versions -->
 <!-- text for trunk -->
       <p>
-        FOP snapshots are either pre-compiled binary or source.
+        Apache™ FOP snapshots are either pre-compiled binary or source.
         If you are using a binary snapshot, it is already built and there is no need to build it again. 
         If you got the source code from a repository snapshot or via Subversion you will need to build FOP.
         See the <a href="../download.html">Download Instructions</a> for information about where to obtain binary or repository snapshots, and whether a 
@@ -145,4 +145,3 @@
     </section>
   </body>
 </document>
-

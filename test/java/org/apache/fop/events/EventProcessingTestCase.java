@@ -19,7 +19,9 @@
 
 package org.apache.fop.events;
 
-import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -29,9 +31,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.Test;
+import org.xml.sax.SAXException;
 
 import org.apache.commons.io.output.NullOutputStream;
 
@@ -39,87 +40,88 @@ import org.apache.xmlgraphics.util.MimeConstants;
 
 import org.apache.fop.ResourceEventProducer;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.area.AreaEventProducer;
 import org.apache.fop.fo.FOValidationEventProducer;
 import org.apache.fop.fo.flow.table.TableEventProducer;
-import org.apache.fop.fonts.FontEventProducer;
 import org.apache.fop.layoutmgr.BlockLevelEventProducer;
 import org.apache.fop.layoutmgr.inline.InlineLevelEventProducer;
 
 /**
  * Tests that the event notification system runs smoothly.
  */
-public class EventProcessingTestCase extends TestCase {
+public class EventProcessingTestCase {
 
     private final FopFactory fopFactory = FopFactory.newInstance();
 
     private final TransformerFactory tFactory = TransformerFactory.newInstance();
 
-    private final File basedir;
+    private static final String BASE_DIR = "test/events/";
 
-    public EventProcessingTestCase(String name) {
-        super(name);
-        String base = System.getProperty("basedir");
-        if (base != null) {
-            basedir = new File(base);
-        } else {
-            basedir = new File(".");
-        }
-    }
+    /** The base directory of configuration files */
+    public static final String CONFIG_BASE_DIR = "test/config/";
 
-    private void doTest(String filename, String expectedEventID)
-            throws FOPException, TransformerException {
-        Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, new NullOutputStream());
+    public void doTest(InputStream inStream, String fopConf, String expectedEventID, String mimeType)
+            throws FOPException, TransformerException, IOException, SAXException {
         EventChecker eventChecker = new EventChecker(expectedEventID);
-        fop.getUserAgent().getEventBroadcaster().addEventListener(eventChecker);
+        if (fopConf != null) {
+            fopFactory.setUserConfig(fopConf);
+        }
+        FOUserAgent userAgent = fopFactory.newFOUserAgent();
+        userAgent.getEventBroadcaster().addEventListener(eventChecker);
+        Fop fop = fopFactory.newFop(mimeType, userAgent, new NullOutputStream());
         Transformer transformer = tFactory.newTransformer();
-        Source src = new StreamSource(new File(basedir, filename));
+        Source src = new StreamSource(inStream);
         Result res = new SAXResult(fop.getDefaultHandler());
         transformer.transform(src, res);
         eventChecker.end();
     }
 
-    public void testArea() throws FOPException, TransformerException {
+    public void doTest(String filename, String expectedEventID) throws
+            FOPException, TransformerException, IOException, SAXException {
+        doTest(new FileInputStream(BASE_DIR + filename), null, expectedEventID,
+                MimeConstants.MIME_PDF);
+    }
+
+    @Test
+    public void testArea() throws TransformerException, IOException, SAXException {
         doTest("area.fo",
                 AreaEventProducer.class.getName() + ".unresolvedIDReferenceOnPage");
     }
 
-    public void testResource() throws FOPException, TransformerException {
+    @Test
+    public void testResource() throws FOPException, TransformerException, IOException,
+            SAXException {
         doTest("resource.fo",
                 ResourceEventProducer.class.getName() + ".imageNotFound");
     }
 
-    public void testValidation() throws FOPException, TransformerException {
+    @Test
+    public void testValidation() throws FOPException, TransformerException, IOException,
+            SAXException {
         doTest("validation.fo",
                 FOValidationEventProducer.class.getName() + ".invalidPropertyValue");
     }
 
-    public void testTable() throws FOPException, TransformerException {
+    @Test
+    public void testTable() throws FOPException, TransformerException, IOException, SAXException {
         doTest("table.fo",
                 TableEventProducer.class.getName() + ".noTablePaddingWithCollapsingBorderModel");
     }
 
-    public void testBlockLevel() throws FOPException, TransformerException {
+    @Test
+    public void testBlockLevel() throws FOPException, TransformerException, IOException,
+            SAXException {
         doTest("block-level.fo",
                 BlockLevelEventProducer.class.getName() + ".overconstrainedAdjustEndIndent");
     }
 
-    public void testInlineLevel() throws FOPException, TransformerException {
+    @Test
+    public void testInlineLevel() throws FOPException, TransformerException, IOException,
+            SAXException {
         doTest("inline-level.fo",
                 InlineLevelEventProducer.class.getName() + ".lineOverflows");
-    }
-
-    public void testFont() throws FOPException, TransformerException {
-        doTest("font.fo",
-                FontEventProducer.class.getName() + ".fontSubstituted");
-    }
-
-
-    public static Test suite() {
-        TestSuite suite = new TestSuite();
-        suite.addTestSuite(EventProcessingTestCase.class);
-        return suite;
     }
 }

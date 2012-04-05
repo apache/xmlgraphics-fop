@@ -22,6 +22,7 @@ package org.apache.fop.fo;
 import org.xml.sax.SAXException;
 
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.FormattingResults;
 import org.apache.fop.fo.extensions.ExternalDocument;
 import org.apache.fop.fo.flow.BasicLink;
 import org.apache.fop.fo.flow.Block;
@@ -35,9 +36,12 @@ import org.apache.fop.fo.flow.InstreamForeignObject;
 import org.apache.fop.fo.flow.Leader;
 import org.apache.fop.fo.flow.ListBlock;
 import org.apache.fop.fo.flow.ListItem;
+import org.apache.fop.fo.flow.ListItemBody;
+import org.apache.fop.fo.flow.ListItemLabel;
 import org.apache.fop.fo.flow.PageNumber;
 import org.apache.fop.fo.flow.PageNumberCitation;
 import org.apache.fop.fo.flow.PageNumberCitationLast;
+import org.apache.fop.fo.flow.Wrapper;
 import org.apache.fop.fo.flow.table.Table;
 import org.apache.fop.fo.flow.table.TableBody;
 import org.apache.fop.fo.flow.table.TableCell;
@@ -47,6 +51,8 @@ import org.apache.fop.fo.flow.table.TableHeader;
 import org.apache.fop.fo.flow.table.TableRow;
 import org.apache.fop.fo.pagination.Flow;
 import org.apache.fop.fo.pagination.PageSequence;
+import org.apache.fop.fo.pagination.Root;
+import org.apache.fop.fo.pagination.StaticContent;
 import org.apache.fop.fonts.FontEventAdapter;
 import org.apache.fop.fonts.FontInfo;
 
@@ -83,6 +89,10 @@ public abstract class FOEventHandler {
         this.fontInfo.setEventListener(new FontEventAdapter(foUserAgent.getEventBroadcaster()));
     }
 
+    /** Constructor for sub-classes that do not need an {@link FOUserAgent} instance. */
+    protected FOEventHandler() {
+    }
+
     /**
      * Returns the User Agent object associated with this FOEventHandler.
      * @return the User Agent object
@@ -111,6 +121,14 @@ public abstract class FOEventHandler {
      * @throws SAXException In case of a problem
      */
     public void endDocument() throws SAXException {
+    }
+
+    /** {@inheritDoc} */
+    public void startRoot(Root root) {
+    }
+
+    /** {@inheritDoc} */
+    public void endRoot(Root root) {
     }
 
     /**
@@ -359,39 +377,45 @@ public abstract class FOEventHandler {
 
     /**
      * Process start of a ListLabel.
+     * @param listItemLabel ListItemLabel that is starting
      */
-    public void startListLabel() {
+    public void startListLabel(ListItemLabel listItemLabel) {
     }
 
     /**
      * Process end of a ListLabel.
+     * @param listItemLabel ListItemLabel that is ending
      */
-    public void endListLabel() {
+    public void endListLabel(ListItemLabel listItemLabel) {
     }
 
     /**
      * Process start of a ListBody.
+     * @param listItemBody ListItemBody that is starting
      */
-    public void startListBody() {
+    public void startListBody(ListItemBody listItemBody) {
     }
 
     /**
      * Process end of a ListBody.
+     * @param listItemBody ListItemBody that is ending
      */
-    public void endListBody() {
+    public void endListBody(ListItemBody listItemBody) {
     }
 
     // Static Regions
     /**
      * Process start of a Static.
+     * @param staticContent StaticContent that is starting
      */
-    public void startStatic() {
+    public void startStatic(StaticContent staticContent) {
     }
 
     /**
      * Process end of a Static.
+     * @param statisContent StaticContent that is ending
      */
-    public void endStatic() {
+    public void endStatic(StaticContent statisContent) {
     }
 
 
@@ -409,15 +433,16 @@ public abstract class FOEventHandler {
 
     /**
      * Process start of a Link.
-     * @param basicLink BasicLink that is ending
+     * @param basicLink BasicLink that is starting
      */
     public void startLink(BasicLink basicLink) {
     }
 
     /**
      * Process end of a Link.
+     * @param basicLink BasicLink that is ending
      */
-    public void endLink() {
+    public void endLink(BasicLink basicLink) {
     }
 
     /**
@@ -434,10 +459,17 @@ public abstract class FOEventHandler {
     }
 
     /**
-     * Process an InstreamForeignObject.
-     * @param ifo InstreamForeignObject to process.
+     * Process the start of an InstreamForeignObject.
+     * @param ifo InstreamForeignObject that is starting
      */
-    public void foreignObject(InstreamForeignObject ifo) {
+    public void startInstreamForeignObject(InstreamForeignObject ifo) {
+    }
+
+    /**
+     * Process the end of an InstreamForeignObject.
+     * @param ifo InstreamForeignObject that is ending
+     */
+    public void endInstreamForeignObject(InstreamForeignObject ifo) {
     }
 
     /**
@@ -469,10 +501,33 @@ public abstract class FOEventHandler {
     }
 
     /**
-     * Process a Leader.
-     * @param l Leader to process.
+     * Process the start of a Leader.
+     * @param l Leader that is starting
      */
-    public void leader(Leader l) {
+    public void startLeader(Leader l) {
+    }
+
+    /**
+     * Process the end of a Leader.
+     * @param l Leader that is ending
+     */
+    public void endLeader(Leader l) {
+    }
+
+    /**
+     * Process the start of a wrapper.
+     *
+     * @param wrapper wrapper that is starting
+     */
+    public void startWrapper(Wrapper wrapper) {
+    }
+
+    /**
+     * Process the ending of a wrapper.
+     *
+     * @param wrapper wrapper that is ending
+     */
+    public void endWrapper(Wrapper wrapper) {
     }
 
     /**
@@ -484,11 +539,9 @@ public abstract class FOEventHandler {
 
     /**
      * Process character data.
-     * @param data Array of characters to process.
-     * @param start Offset for characters to process.
-     * @param length Portion of array to process.
+     * @param foText text to process
      */
-    public void characters(char[] data, int start, int length) {
+    public void characters(FOText foText) {
     }
 
     /**
@@ -503,6 +556,14 @@ public abstract class FOEventHandler {
      * @param document the external-document node
      */
     public void endExternalDocument(ExternalDocument document) {
+    }
+
+    /**
+     * Get formatting results.
+     * @return the FormattingResults instance for this document
+     */
+    public FormattingResults getResults() {
+        return null;
     }
 
 }

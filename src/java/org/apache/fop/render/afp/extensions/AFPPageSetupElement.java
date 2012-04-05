@@ -30,13 +30,11 @@ import org.apache.fop.fo.extensions.ExtensionAttachment;
 
 /**
  * This class extends the org.apache.fop.extensions.ExtensionObj class. The
- * object faciliates extraction of elements from formatted objects based on
+ * object facilitates extraction of elements from formatted objects based on
  * the static list as defined in the AFPElementMapping implementation.
- * <p/>
  */
 public class AFPPageSetupElement extends AbstractAFPExtensionObject {
 
-    private static final String ATT_VALUE = "value";
     private static final String ATT_SRC = "src";
 
     /**
@@ -54,6 +52,7 @@ public class AFPPageSetupElement extends AbstractAFPExtensionObject {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void startOfNode() throws FOPException {
         super.startOfNode();
         if (AFPElementMapping.TAG_LOGICAL_ELEMENT.equals(getLocalName())) {
@@ -63,14 +62,17 @@ public class AFPPageSetupElement extends AbstractAFPExtensionObject {
                     "rule.childOfPageSequenceOrSPM");
             }
         } else {
-            if (parent.getNameId() != Constants.FO_SIMPLE_PAGE_MASTER) {
+            if (parent.getNameId() != Constants.FO_SIMPLE_PAGE_MASTER
+                    && parent.getNameId() != Constants.FO_PAGE_SEQUENCE
+                    && parent.getNameId() != Constants.FO_DECLARATIONS) {
                 invalidChildError(getLocator(), parent.getName(), getNamespaceURI(), getName(),
-                    "rule.childOfSPM");
+                    "rule.childOfSPMorPSorDeclarations");
             }
         }
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void characters(char[] data, int start, int length,
                                  PropertyList pList, Locator locator) throws FOPException {
         StringBuffer sb = new StringBuffer();
@@ -83,6 +85,7 @@ public class AFPPageSetupElement extends AbstractAFPExtensionObject {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void processNode(String elementName, Locator locator,
                             Attributes attlist, PropertyList propertyList)
                                 throws FOPException {
@@ -96,16 +99,21 @@ public class AFPPageSetupElement extends AbstractAFPExtensionObject {
                 missingPropertyError(ATT_SRC);
             }
         } else if (AFPElementMapping.TAG_LOGICAL_ELEMENT.equals(elementName)) {
-            String attr = attlist.getValue(ATT_VALUE);
+            String attr = attlist.getValue(AFPPageSetup.ATT_VALUE);
             if (attr != null && attr.length() > 0) {
                 pageSetup.setValue(attr);
             } else {
-                missingPropertyError(ATT_VALUE);
+                missingPropertyError(AFPPageSetup.ATT_VALUE);
             }
+        }
+        String placement = attlist.getValue(AFPPageSetup.ATT_PLACEMENT);
+        if (placement != null && placement.length() > 0) {
+            pageSetup.setPlacement(ExtensionPlacement.fromXMLValue(placement));
         }
     }
 
     /** {@inheritDoc} */
+    @Override
     protected ExtensionAttachment instantiateExtensionAttachment() {
         return new AFPPageSetup(getLocalName());
     }

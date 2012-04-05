@@ -1,4 +1,4 @@
-<?xml version="1.0" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -20,14 +20,14 @@
 
 <document>
   <header>
-    <title>Examples</title>
+    <title>Apache™ FOP Examples</title>
     <version>$Revision$</version>
   </header>
   <body>
     <section>
-      <title>Example Documents Using FOP</title>
+      <title>Example Documents Using Apache™ FOP</title>
       <p>
-        These examples have been rendered using FOP:
+        These examples have been rendered using Apache™ FOP:
       </p>
     <table>
       <caption>Generated examples</caption>

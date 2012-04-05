@@ -42,18 +42,20 @@ public class ImageHandlerRegistry {
     /** the logger */
     private static Log log = LogFactory.getLog(ImageHandlerRegistry.class);
 
-    private static final Comparator HANDLER_COMPARATOR = new Comparator() {
-        public int compare(Object o1, Object o2) {
-            ImageHandler h1 = (ImageHandler)o1;
-            ImageHandler h2 = (ImageHandler)o2;
+    private static final Comparator<ImageHandler> HANDLER_COMPARATOR
+            = new Comparator<ImageHandler>() {
+        public int compare(ImageHandler o1, ImageHandler o2) {
+            ImageHandler h1 = o1;
+            ImageHandler h2 = o2;
             return h1.getPriority() - h2.getPriority();
         }
     };
 
     /** Map containing image handlers for various {@link Image} subclasses. */
-    private Map handlers = new java.util.HashMap();
+    private Map<Class<? extends Image>, ImageHandler> handlers
+            = new java.util.HashMap<Class<? extends Image>, ImageHandler>();
     /** List containing the same handlers as above but ordered by priority */
-    private List handlerList = new java.util.LinkedList();
+    private List<ImageHandler> handlerList = new java.util.LinkedList<ImageHandler>();
 
     private int handlerRegistrations;
 
@@ -94,14 +96,14 @@ public class ImageHandlerRegistry {
      * @param handler the ImageHandler instance
      */
     public synchronized void addHandler(ImageHandler handler) {
-        Class imageClass = handler.getSupportedImageClass();
+        Class<? extends Image> imageClass = handler.getSupportedImageClass();
         //List
         this.handlers.put(imageClass, handler);
 
         //Sorted insert (sort by priority)
-        ListIterator iter = this.handlerList.listIterator();
+        ListIterator<ImageHandler> iter = this.handlerList.listIterator();
         while (iter.hasNext()) {
-            ImageHandler h = (ImageHandler)iter.next();
+            ImageHandler h = iter.next();
             if (HANDLER_COMPARATOR.compare(handler, h) < 0) {
                 iter.previous();
                 break;
@@ -119,9 +121,7 @@ public class ImageHandlerRegistry {
      * @return the image handler responsible for handling the image or null if none is available
      */
     public ImageHandler getHandler(RenderingContext targetContext, Image image) {
-        ListIterator iter = this.handlerList.listIterator();
-        while (iter.hasNext()) {
-            ImageHandler h = (ImageHandler)iter.next();
+        for (ImageHandler h : this.handlerList) {
             if (h.isCompatible(targetContext, image)) {
                 //Return the first handler in the prioritized list that is compatible
                 return h;
@@ -138,10 +138,8 @@ public class ImageHandlerRegistry {
      */
     public synchronized ImageFlavor[] getSupportedFlavors(RenderingContext context) {
         //Extract all ImageFlavors into a single array
-        List flavors = new java.util.ArrayList();
-        Iterator iter = this.handlerList.iterator();
-        while (iter.hasNext()) {
-            ImageHandler handler = (ImageHandler)iter.next();
+        List<ImageFlavor> flavors = new java.util.ArrayList<ImageFlavor>();
+        for (ImageHandler handler : this.handlerList) {
             if (handler.isCompatible(context, null)) {
                 ImageFlavor[] f = handler.getSupportedImageFlavors();
                 for (int i = 0; i < f.length; i++) {
@@ -149,7 +147,7 @@ public class ImageHandlerRegistry {
                 }
             }
         }
-        return (ImageFlavor[])flavors.toArray(new ImageFlavor[flavors.size()]);
+        return flavors.toArray(new ImageFlavor[flavors.size()]);
     }
 
     /**

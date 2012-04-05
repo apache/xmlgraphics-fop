@@ -155,4 +155,9 @@ public final class TTFTableName {
         return this.name.equals(to.getName());
     }
 
+    @Override
+    public String toString() {
+        return name;
+    }
+
 }

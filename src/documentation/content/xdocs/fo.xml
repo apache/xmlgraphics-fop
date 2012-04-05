@@ -1,4 +1,4 @@
-<?xml version="1.0" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -20,7 +20,7 @@
 
 <document>
   <header>
-    <title>XSL-FO Input</title>
+    <title>Apache™ FOP: XSL-FO Input</title>
     <subtitle>Basic Help for Using XML, XSLT, and XSL-FO</subtitle>
     <version>$Revision$</version>
   </header>
@@ -28,7 +28,7 @@
     <section id="overview">
       <title>Overview</title>
       <p>
-        FOP uses XSL-FO as input.
+        Apache™ FOP uses XSL-FO as input.
 It is the responsibility of the user to make sure that the XSL-FO submitted to FOP is correct.
 The tutorial items presented here are not comprehensive, but are of the FAQ variety. Another
 good FAQ is <fork href="http://www.dpawson.co.uk/xsl/">Dave Pawson's XSL FAQ</fork>.
@@ -79,7 +79,7 @@ For other fonts, use font editing sofware or operating system utilities (such as
         <p>
             The handful of basic XML character entities that do exist are the ampersand, apostrophe, less-than, greater-than, and single-quote characters.
 These are needed to distinguish markup tags from content, and to distinguish character entities from content.
-To avoid parser complaints about illegal characters and entities in your input, ensure that ampersands in text and attributes are written as &amp;amp;, "&lt;" is written as &amp;lt;, and ">" as &amp;gt;.
+To avoid parser complaints about illegal characters and entities in your input, ensure that ampersands in text and attributes are written as &amp;amp;, "&lt;" is written as &amp;lt;, and "&gt;" as &amp;gt;.
 It is not necessary everywhere, but it is wise to do so anyway, just to be sure.
         </p>
         <p>
@@ -95,7 +95,7 @@ It is not necessary everywhere, but it is wise to do so anyway, just to be sure.
           If the parser complains about illegal bytes or characters in the input, or there are unexpected characters in the output, this is usually the result of a character encoding problem.
 See the <link href="http://www.dpawson.co.uk/xsl">XSL FAQ</link> for additional information.
 Many software packages that produce XML, including XSLT processors, use UTF-8 encoding as a default.
-If you view their output with something not aware of the encoding, like Notepad for Win95/98/ME/NT, funny characters are displayed. A &#197; is a giveaway.
+If you view their output with something not aware of the encoding, like Notepad for Win95/98/ME/NT, funny characters are displayed. A � is a giveaway.
         </p>
       </section>
     </section>

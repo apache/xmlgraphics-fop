@@ -46,6 +46,7 @@ import org.apache.xmlgraphics.image.loader.util.ImageUtil;
 import org.apache.fop.ResourceEventProducer;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FopFactory;
+import org.apache.fop.fo.Constants;
 import org.apache.fop.render.ImageHandler;
 import org.apache.fop.render.ImageHandlerRegistry;
 import org.apache.fop.render.ImageHandlerUtil;
@@ -314,32 +315,58 @@ public abstract class AbstractIFPainter implements IFPainter {
     }
 
     /** {@inheritDoc} */
-    public void drawBorderRect(Rectangle rect, BorderProps before, BorderProps after,
-            BorderProps start, BorderProps end) throws IFException {
-        if (before != null) {
+    public void drawBorderRect(Rectangle rect, BorderProps top, BorderProps bottom,
+            BorderProps left, BorderProps right) throws IFException {
+        if (top != null) {
             Rectangle b = new Rectangle(
                     rect.x, rect.y,
-                    rect.width, before.width);
-            fillRect(b, before.color);
+                    rect.width, top.width);
+            fillRect(b, top.color);
         }
-        if (end != null) {
+        if (right != null) {
             Rectangle b = new Rectangle(
-                    rect.x + rect.width - end.width, rect.y,
-                    end.width, rect.height);
-            fillRect(b, end.color);
+                    rect.x + rect.width - right.width, rect.y,
+                    right.width, rect.height);
+            fillRect(b, right.color);
         }
-        if (after != null) {
+        if (bottom != null) {
             Rectangle b = new Rectangle(
-                    rect.x, rect.y + rect.height - after.width,
-                    rect.width, after.width);
-            fillRect(b, after.color);
+                    rect.x, rect.y + rect.height - bottom.width,
+                    rect.width, bottom.width);
+            fillRect(b, bottom.color);
         }
-        if (start != null) {
+        if (left != null) {
             Rectangle b = new Rectangle(
                     rect.x, rect.y,
-                    start.width, rect.height);
-            fillRect(b, start.color);
+                    left.width, rect.height);
+            fillRect(b, left.color);
         }
+    }
+
+    /**
+     * Indicates whether the given border segments (if present) have only solid borders, i.e.
+     * could be painted in a simplified fashion keeping the output file smaller.
+     * @param top the border segment on the top edge
+     * @param bottom the border segment on the bottom edge
+     * @param left the border segment on the left edge
+     * @param right the border segment on the right edge
+     * @return true if any border segment has a non-solid border style
+     */
+    protected boolean hasOnlySolidBorders(BorderProps top, BorderProps bottom,
+            BorderProps left, BorderProps right) {
+        if (top != null && top.style != Constants.EN_SOLID) {
+            return false;
+        }
+        if (bottom != null && bottom.style != Constants.EN_SOLID) {
+            return false;
+        }
+        if (left != null && left.style != Constants.EN_SOLID) {
+            return false;
+        }
+        if (right != null && right.style != Constants.EN_SOLID) {
+            return false;
+        }
+        return true;
     }
 
     /** {@inheritDoc} */

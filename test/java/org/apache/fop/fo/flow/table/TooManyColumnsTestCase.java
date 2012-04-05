@@ -19,33 +19,36 @@
 
 package org.apache.fop.fo.flow.table;
 
+import org.junit.Test;
 
-public class TooManyColumnsTestCase extends ErrorCheckTestCase {
+public class TooManyColumnsTestCase extends ErrorCheckTest {
 
-    public TooManyColumnsTestCase() throws Exception {
-        super();
-    }
-
+    @Test
     public void testBody1() throws Exception {
         launchTest("table/too-many-columns_body_1.fo");
     }
 
+    @Test
     public void testBody2() throws Exception {
         launchTest("table/too-many-columns_body_2.fo");
     }
 
+    @Test
     public void testBody3() throws Exception {
         launchTest("table/too-many-columns_body_3.fo");
     }
 
+    @Test
     public void testBody4() throws Exception {
         launchTest("table/too-many-columns_body_4.fo");
     }
 
+    @Test
     public void testHeader() throws Exception {
         launchTest("table/too-many-columns_header.fo");
     }
 
+    @Test
     public void testFooter() throws Exception {
         launchTest("table/too-many-columns_footer.fo");
     }

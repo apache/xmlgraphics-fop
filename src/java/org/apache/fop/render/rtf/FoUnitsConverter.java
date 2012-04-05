@@ -22,19 +22,16 @@ package org.apache.fop.render.rtf;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.fop.apps.FOPException;
-import org.apache.fop.fo.properties.FixedLength;
 import org.apache.xmlgraphics.util.UnitConv;
 
+import org.apache.fop.apps.FOPException;
+import org.apache.fop.fo.properties.FixedLength;
 
-/**  Converts XSL-FO units to RTF units
+
+/**
+ * <p>Converts XSL-FO units to RTF units.</p>
  *
- *  @author Bertrand Delacretaz <bdelacretaz@codeconsult.ch>
- *  @author putzi
- *  @author Peter Herweg <pherweg@web.de>
- *
- *  This class was originally developed by Bertrand Delacretaz bdelacretaz@codeconsult.ch
- *  for the JFOR project and is now integrated into FOP.
+ * <p>This work was originally developed by Bertrand Delacretaz (bdelacretaz@codeconsult.ch).</p>
  */
 
 final class FoUnitsConverter {

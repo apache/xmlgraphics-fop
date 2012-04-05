@@ -146,16 +146,18 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
 
     private GeneralPath currentPath = null;
 
-    /** Default constructor */
-    public Java2DRenderer() {
-    }
+    /**
+     * Default constructor
+     *
+     * @param userAgent the user agent that contains configuration details. This cannot be null.
+     */
+    public Java2DRenderer(FOUserAgent userAgent) {
+        super(userAgent);
 
-    /** {@inheritDoc} */
-    public void setUserAgent(FOUserAgent foUserAgent) {
-        super.setUserAgent(foUserAgent);
+        // MH: necessary? the caller has access to FOUserAgent
         userAgent.setRendererOverride(this); // for document regeneration
 
-        String s = (String)userAgent.getRendererOptions().get(JAVA2D_TRANSPARENT_PAGE_BACKGROUND);
+        String s = (String) userAgent.getRendererOptions().get(JAVA2D_TRANSPARENT_PAGE_BACKGROUND);
         if (s != null) {
             this.transparentPageBackground = "true".equalsIgnoreCase(s);
         }
@@ -171,12 +173,13 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         //Don't call super.setupFontInfo() here! Java2D needs a special font setup
         // create a temp Image to test font metrics on
         this.fontInfo = inFontInfo;
-        Graphics2D graphics2D = Java2DFontMetrics.createFontMetricsGraphics2D();
+        final Java2DFontMetrics java2DFontMetrics = new Java2DFontMetrics();
 
         FontCollection[] fontCollections = new FontCollection[] {
-                new Base14FontCollection(graphics2D),
-                new InstalledFontCollection(graphics2D),
-                new ConfiguredFontCollection(getFontResolver(), getFontList())
+                new Base14FontCollection(java2DFontMetrics),
+                new InstalledFontCollection(java2DFontMetrics),
+                new ConfiguredFontCollection(getFontResolver(), getFontList(),
+                                             userAgent.isComplexScriptFeaturesEnabled())
         };
         userAgent.getFactory().getFontManager().setup(
                 getFontInfo(), fontCollections);
@@ -445,7 +448,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
     }
 
     /** {@inheritDoc} */
-    protected void startVParea(CTM ctm, Rectangle2D clippingRect) {
+    protected void startVParea(CTM ctm, Rectangle clippingRect) {
 
         saveGraphicsState();
 
@@ -713,7 +716,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         renderInlineAreaBackAndBorders(text);
 
         int rx = currentIPPosition + text.getBorderAndPaddingWidthStart();
-        int bl = currentBPPosition + text.getOffset() + text.getBaselineOffset();
+        int bl = currentBPPosition + text.getBlockProgressionOffset() + text.getBaselineOffset();
         int saveIP = currentIPPosition;
 
         Font font = getFontFromArea(text);
@@ -825,7 +828,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         // TODO Colors do not work on Leaders yet
 
         float startx = (currentIPPosition + area.getBorderAndPaddingWidthStart()) / 1000f;
-        float starty = ((currentBPPosition + area.getOffset()) / 1000f);
+        float starty = ((currentBPPosition + area.getBlockProgressionOffset()) / 1000f);
         float endx = (currentIPPosition + area.getBorderAndPaddingWidthStart()
                 + area.getIPD()) / 1000f;
 

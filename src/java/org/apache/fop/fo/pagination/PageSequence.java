@@ -19,28 +19,35 @@
 
 package org.apache.fop.fo.pagination;
 
-// Java
 import java.util.Map;
+import java.util.Stack;
 
 import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.complexscripts.bidi.DelimitedTextRange;
+import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
+import org.apache.fop.traits.Direction;
+import org.apache.fop.traits.WritingMode;
+import org.apache.fop.traits.WritingModeTraits;
+import org.apache.fop.traits.WritingModeTraitsGetter;
 
 /**
  * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_page-sequence">
  * <code>fo:page-sequence</code></a> object.
  */
-public class PageSequence extends AbstractPageSequence {
+public class PageSequence extends AbstractPageSequence implements WritingModeTraitsGetter {
 
-    // The value of properties relevant for fo:page-sequence.
+    // The value of FO traits (refined properties) that apply to fo:page-sequence.
     private String country;
     private String language;
     private String masterReference;
-    //private int writingMode; //XSL 1.1
-    // End of property values
+    private Numeric referenceOrientation;
+    private WritingModeTraits writingModeTraits;
+    // End of trait values
 
     // There doesn't seem to be anything in the spec requiring flows
     // to be in the order given, only that they map to the regions
@@ -48,7 +55,7 @@ public class PageSequence extends AbstractPageSequence {
     // the set of flows includes StaticContent flows also
 
     /** Map of flows to their flow name (flow-name, Flow) */
-    private Map/*<String, Flow>*/ flowMap;
+    private Map<String, FONode> flowMap;
 
     /**
      * The currentSimplePageMaster is either the page master for the
@@ -86,8 +93,9 @@ public class PageSequence extends AbstractPageSequence {
         country = pList.get(PR_COUNTRY).getString();
         language = pList.get(PR_LANGUAGE).getString();
         masterReference = pList.get(PR_MASTER_REFERENCE).getString();
-        //writingMode = pList.getWritingMode();
-
+        referenceOrientation = pList.get(PR_REFERENCE_ORIENTATION).getNumeric();
+        writingModeTraits = new WritingModeTraits
+            ( WritingMode.valueOf(pList.get(PR_WRITING_MODE).getEnum()) );
         if (masterReference == null || masterReference.equals("")) {
             missingPropertyError("master-reference");
         }
@@ -96,7 +104,7 @@ public class PageSequence extends AbstractPageSequence {
     /** {@inheritDoc} */
     protected void startOfNode() throws FOPException {
         super.startOfNode();
-        flowMap = new java.util.HashMap/*<String, Flow>*/();
+        flowMap = new java.util.HashMap<String, FONode>();
 
         this.simplePageMaster
             = getRoot().getLayoutMasterSet().getSimplePageMaster(masterReference);
@@ -167,7 +175,7 @@ public class PageSequence extends AbstractPageSequence {
             break;
         case FO_STATIC_CONTENT:
             addFlow((StaticContent)child);
-            flowMap.put(((StaticContent)child).getFlowName(), child);
+            flowMap.put(((Flow)child).getFlowName(), (Flow)child);
             break;
         default:
             super.addChildNode(child);
@@ -239,7 +247,7 @@ public class PageSequence extends AbstractPageSequence {
     }
 
     /** @return the flow map for this page-sequence */
-    public Map getFlowMap() {
+    public Map<String, FONode> getFlowMap() {
         return this.flowMap;
     }
 
@@ -270,7 +278,7 @@ public class PageSequence extends AbstractPageSequence {
                     + " isBlank=" + isBlank + ")");
         }
         return pageSequenceMaster.getNextSimplePageMaster(isOddPage,
-            isFirstPage, isLastPage, isBlank);
+            isFirstPage, isLastPage, isBlank, getMainFlow().getFlowName());
     }
 
     /**
@@ -292,8 +300,8 @@ public class PageSequence extends AbstractPageSequence {
     }
 
     /**
-     * Get the value of the <code>master-reference</code> property.
-     * @return the "master-reference" property
+     * Get the value of the <code>master-reference</code> trait.
+     * @return the "master-reference" trait
      */
     public String getMasterReference() {
         return masterReference;
@@ -313,19 +321,117 @@ public class PageSequence extends AbstractPageSequence {
     }
 
     /**
-     * Get the value of the <code>country</code> property.
-     * @return the country property value
+     * Get the value of the <code>country</code> trait.
+     * @return the country trait value
      */
     public String getCountry() {
         return this.country;
     }
 
     /**
-     * Get the value of the <code>language</code> property.
-     * @return the language property value
+     * Get the value of the <code>language</code> trait.
+     * @return the language trait value
      */
     public String getLanguage() {
         return this.language;
+    }
+
+    /**
+     * Get the value of the <code>reference-orientation</code> trait.
+     * @return the reference orientation trait value
+     */
+    public int getReferenceOrientation() {
+        if ( referenceOrientation != null ) {
+            return referenceOrientation.getValue();
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Direction getInlineProgressionDirection() {
+        if ( writingModeTraits != null ) {
+            return writingModeTraits.getInlineProgressionDirection();
+        } else {
+            return Direction.LR;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Direction getBlockProgressionDirection() {
+        if ( writingModeTraits != null ) {
+            return writingModeTraits.getBlockProgressionDirection();
+        } else {
+            return Direction.TB;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Direction getColumnProgressionDirection() {
+        if ( writingModeTraits != null ) {
+            return writingModeTraits.getColumnProgressionDirection();
+        } else {
+            return Direction.LR;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Direction getRowProgressionDirection() {
+        if ( writingModeTraits != null ) {
+            return writingModeTraits.getRowProgressionDirection();
+        } else {
+            return Direction.TB;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Direction getShiftDirection() {
+        if ( writingModeTraits != null ) {
+            return writingModeTraits.getShiftDirection();
+        } else {
+            return Direction.TB;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public WritingMode getWritingMode() {
+        if ( writingModeTraits != null ) {
+            return writingModeTraits.getWritingMode();
+        } else {
+            return WritingMode.LR_TB;
+        }
+    }
+
+
+    @Override
+    protected Stack collectDelimitedTextRanges ( Stack ranges, DelimitedTextRange currentRange ) {
+        // collect ranges from static content flows
+        Map<String, FONode> flows = getFlowMap();
+        if ( flows != null ) {
+            for ( FONode fn : flows.values() ) {
+                if ( fn instanceof StaticContent ) {
+                    ranges = ( (StaticContent) fn ).collectDelimitedTextRanges ( ranges );
+                }
+            }
+        }
+        // collect ranges in main flow
+        Flow main = getMainFlow();
+        if ( main != null ) {
+            ranges = main.collectDelimitedTextRanges ( ranges );
+        }
+        return ranges;
     }
 
     /**

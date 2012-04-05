@@ -19,12 +19,13 @@
 
 package org.apache.fop.layoutmgr.inline;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Collections;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.area.Area;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.fo.FObj;
@@ -48,19 +49,14 @@ import org.apache.fop.traits.MinOptMax;
  * an exception to this rule.)
  * This class can be extended to handle the creation and adding of the
  * inline area.
- * TODO [GA] replace use of hungarian notation with normalized java naming
  */
 public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
                                    implements InlineLevelLayoutManager {
 
-    /**
-     * logging instance
-     */
+    /** logging instance */
     protected static final Log log = LogFactory.getLog(LeafNodeLayoutManager.class);
 
-    /**
-     * The inline area that this leafnode will add.
-     */
+    /** The inline area that this leafnode will add. */
     protected InlineArea curArea = null;
     /** Any border, padding and background properties applying to this area */
     protected CommonBorderPaddingBackground commonBorderPaddingBackground = null;
@@ -68,7 +64,7 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
     protected AlignmentContext alignmentContext = null;
 
     /** Flag to indicate if something was changed as part of the getChangeKnuthElements sequence */
-    protected boolean isSomethingChanged = false;
+    protected boolean somethingChanged = false;
     /** Our area info for the Knuth elements */
     protected AreaInfo areaInfo = null;
 
@@ -77,31 +73,30 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
      */
     protected class AreaInfo {
         /** letter space count */
-        protected short iLScount;
+        protected short letterSpaces;
         /** ipd of area */
         protected MinOptMax ipdArea;
         /** true if hyphenated */
-        protected boolean bHyphenated;
+        protected boolean isHyphenated;
         /** alignment context */
         protected AlignmentContext alignmentContext;
 
         /**
          * Construct an area information item.
-         * @param iLS letter space count
+         * @param letterSpaces letter space count
          * @param ipd inline progression dimension
-         * @param bHyph true if hyphenated
+         * @param isHyphenated true if hyphenated
          * @param alignmentContext an alignment context
          */
-        public AreaInfo(short iLS, MinOptMax ipd, boolean bHyph,
+        public AreaInfo(short letterSpaces, MinOptMax ipd, boolean isHyphenated,
                         AlignmentContext alignmentContext) {
-            iLScount = iLS;
-            ipdArea = ipd;
-            bHyphenated = bHyph;
+            this.letterSpaces = letterSpaces;
+            this.ipdArea = ipd;
+            this.isHyphenated = isHyphenated;
             this.alignmentContext = alignmentContext;
         }
 
     }
-
 
     /**
      * Create a Leaf node layout manager.
@@ -145,18 +140,22 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
     }
 
     /**
-     * This is a leaf-node, so this method is never called.
+     * This is a leaf-node, so this method should never be called.
      * @param childArea the childArea to add
      */
+    @Override
     public void addChildArea(Area childArea) {
+        assert false;
     }
 
     /**
-     * This is a leaf-node, so this method is never called.
+     * This is a leaf-node, so this method should never be called.
      * @param childArea the childArea to get the parent for
      * @return the parent area
      */
+    @Override
     public Area getParentArea(Area childArea) {
+        assert false;
         return null;
     }
 
@@ -185,6 +184,7 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
      * @param posIter the position iterator
      * @param context the layout context for adding the area
      */
+    @Override
     public void addAreas(PositionIterator posIter, LayoutContext context) {
         addId();
 
@@ -225,7 +225,7 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
      * @param context the layout context used for adding the area
      */
     protected void offsetArea(InlineArea area, LayoutContext context) {
-        area.setOffset(alignmentContext.getOffset());
+        area.setBlockProgressionOffset(alignmentContext.getOffset());
     }
 
     /**
@@ -260,6 +260,7 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
     }
 
     /** {@inheritDoc} */
+    @Override
     public List getNextKnuthElements(LayoutContext context, int alignment) {
         curArea = get(context);
 
@@ -297,13 +298,11 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
     }
 
     /**
-     * Remove the word space represented by the given elements
-     *
-     * @param oldList the elements representing the word space
+     * {@inheritDoc}
+     * Only TextLM has a meaningful implementation of this method
      */
-    public void removeWordSpace(List oldList) {
-        // do nothing
-        log.warn(this.getClass().getName() + " should not receive a call to removeWordSpace(list)");
+    public List addALetterSpaceTo(List oldList, int depth) {
+        return addALetterSpaceTo(oldList);
     }
 
     /** {@inheritDoc} */
@@ -321,9 +320,25 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     * Only TextLM has a meaningful implementation of this method
+     */
+    public boolean applyChanges(List oldList, int depth) {
+        return applyChanges(oldList);
+    }
+
+    /**
+     * {@inheritDoc}
+     * No subclass has a meaningful implementation of this method
+     */
+    public List getChangedKnuthElements(List oldList, int alignment, int depth) {
+        return getChangedKnuthElements(oldList, alignment);
+    }
+
     /** {@inheritDoc} */
-    public List getChangedKnuthElements(List oldList,
-                                              int alignment) {
+    @Override
+    public List getChangedKnuthElements(List oldList, int alignment) {
         if (isFinished()) {
             return null;
         }

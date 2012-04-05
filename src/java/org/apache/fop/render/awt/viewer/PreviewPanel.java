@@ -67,12 +67,9 @@ import org.apache.fop.render.awt.AWTRenderer;
  * </p>
  * <pre>
  * FopFactory fopFactory = FopFactory.newInstance();
- * AWTRenderer renderer = new AWTRenderer();
  * FOUserAgent agent = fopFactory.newFOUserAgent();
+ * AWTRenderer renderer = new AWTRenderer(agent);
  * agent.setRendererOverride(renderer);
- * renderer.setPreviewDialogDisplayed(false);
- * renderer.setUserAgent(agent);
- * renderer.setUserAgent(agent);
  * previewPanel = new PreviewPanel(agent, null, renderer);
  * previewPanel = new PreviewPanel(ua);
  * myGui.add(previewPanel);

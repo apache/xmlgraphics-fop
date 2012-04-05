@@ -30,8 +30,10 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Iterator;
 
-/**  A cell in an RTF table, container for paragraphs, lists, etc.
- *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
+/**
+ * <p>A cell in an RTF table, container for paragraphs, lists, etc.</p>
+ *
+ * <p>This work was authored by Bertrand Delacretaz (bdelacretaz@codeconsult.ch).</p>
  */
 
 public class RtfTableCell

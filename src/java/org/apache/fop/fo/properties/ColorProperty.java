@@ -33,8 +33,7 @@ import org.apache.fop.util.ColorUtil;
 public final class ColorProperty extends Property  {
 
     /** cache holding canonical ColorProperty instances */
-    private static final PropertyCache CACHE
-        = new PropertyCache(ColorProperty.class);
+    private static final PropertyCache<ColorProperty> CACHE = new PropertyCache<ColorProperty>();
 
     /**
      * The color represented by this property.
@@ -70,6 +69,7 @@ public final class ColorProperty extends Property  {
          * @throws PropertyException
          *             for invalid or inconsistent FO input
          */
+        @Override
         public Property convertProperty(Property p,
                                         PropertyList propertyList, FObj fo)
                     throws PropertyException {
@@ -103,7 +103,7 @@ public final class ColorProperty extends Property  {
         ColorProperty instance = new ColorProperty(
                                        ColorUtil.parseColorString(
                                                foUserAgent, value));
-        return (ColorProperty)CACHE.fetch(instance);
+        return CACHE.fetch(instance);
     }
 
     /**
@@ -120,11 +120,13 @@ public final class ColorProperty extends Property  {
      * @param foUserAgent FOP user agent
      * @return float the AWT color represented by this ColorType instance
      */
+    @Override
     public Color getColor(FOUserAgent foUserAgent) {
         return color;
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
         return ColorUtil.colorToString(color);
     }
@@ -140,23 +142,27 @@ public final class ColorProperty extends Property  {
     /**
      * @return this.colorType cast as an Object
      */
+    @Override
     public Object getObject() {
         return this;
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
 
         if (o instanceof ColorProperty) {
-            return ((ColorProperty) o).color.equals(this.color);
+            return org.apache.xmlgraphics.java2d.color.ColorUtil.isSameColor(
+                    ((ColorProperty) o).color, this.color);
         }
         return false;
     }
 
     /** {@inheritDoc} */
+    @Override
     public int hashCode() {
         return this.color.hashCode();
     }

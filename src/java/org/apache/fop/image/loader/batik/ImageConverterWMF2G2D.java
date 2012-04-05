@@ -24,10 +24,11 @@ import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Map;
 
-import org.apache.batik.transcoder.wmf.tosvg.WMFPainter;
-import org.apache.batik.transcoder.wmf.tosvg.WMFRecordStore;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import org.apache.batik.transcoder.wmf.tosvg.WMFPainter;
+import org.apache.batik.transcoder.wmf.tosvg.WMFRecordStore;
 
 import org.apache.xmlgraphics.image.loader.Image;
 import org.apache.xmlgraphics.image.loader.ImageFlavor;

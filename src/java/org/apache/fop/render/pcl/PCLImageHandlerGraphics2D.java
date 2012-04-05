@@ -85,6 +85,7 @@ public class PCLImageHandlerGraphics2D implements ImageHandler {
         boolean painted = false;
         ByteArrayOutputStream baout = new ByteArrayOutputStream();
         PCLGenerator tempGen = new PCLGenerator(baout, gen.getMaximumBitmapResolution());
+        tempGen.setDitheringQuality(gen.getDitheringQuality());
         try {
             GraphicContext ctx = (GraphicContext)pclContext.getGraphicContext().clone();
 

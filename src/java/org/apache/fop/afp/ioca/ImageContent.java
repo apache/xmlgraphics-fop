@@ -53,6 +53,9 @@ public class ImageContent extends AbstractStructuredObject {
      */
     public static final byte COMPID_G3_MMR = (byte)0x82;
 
+    /** JPEG algorithms (usually baseline DCT). */
+    public static final byte COMPID_JPEG = (byte)0x83;
+
     /** the image size parameter */
     private ImageSizeParameter imageSizeParameter = null;
 
@@ -66,7 +69,7 @@ public class ImageContent extends AbstractStructuredObject {
     private byte ideSize = 1;
 
     /** the image compression */
-    private byte compression = (byte)0xC0;
+    private byte compression = (byte)0xC0; //Baseline DCT in case of JPEG compression
 
     /** the image data */
     private byte[] data;
@@ -147,6 +150,7 @@ public class ImageContent extends AbstractStructuredObject {
      * @param color    the IDE color model.
      * @deprecated use {@link #setIDEStructureParameter(IDEStructureParameter)} instead
      */
+    @Deprecated
     public void setImageIDEColorModel(byte color) {
         needIDEStructureParameter().setColorModel(color);
     }
@@ -156,6 +160,7 @@ public class ImageContent extends AbstractStructuredObject {
      * @param subtractive true for subtractive mode, false for additive mode
      * @deprecated use {@link #setIDEStructureParameter(IDEStructureParameter)} instead
      */
+    @Deprecated
     public void setSubtractive(boolean subtractive) {
         needIDEStructureParameter().setSubtractive(subtractive);
     }
@@ -172,6 +177,7 @@ public class ImageContent extends AbstractStructuredObject {
     private static final int MAX_DATA_LEN = 65535;
 
     /** {@inheritDoc} */
+    @Override
     protected void writeContent(OutputStream os) throws IOException {
         if (imageSizeParameter != null) {
             imageSizeParameter.writeToStream(os);
@@ -206,6 +212,7 @@ public class ImageContent extends AbstractStructuredObject {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void writeStart(OutputStream os) throws IOException {
         final byte[] startData = new byte[] {
             (byte)0x91, // ID
@@ -216,6 +223,7 @@ public class ImageContent extends AbstractStructuredObject {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void writeEnd(OutputStream os) throws IOException {
         final byte[] endData = new byte[] {
             (byte)0x93, // ID
@@ -234,7 +242,7 @@ public class ImageContent extends AbstractStructuredObject {
             (byte)0x95, // ID
             0x02, // Length
             encoding,
-            0x01, // RECID
+            (byte)(encoding == COMPID_JPEG ? 0xFE : 0x01), // RECID
         };
         return encodingData;
     }
@@ -245,17 +253,17 @@ public class ImageContent extends AbstractStructuredObject {
      * @return byte[] The data stream.
      */
     private byte[] getExternalAlgorithmParameter() {
-        if (encoding == (byte)0x83 && compression != 0) {
+        if (encoding == COMPID_JPEG && compression != 0) {
             final byte[] extAlgData = new byte[] {
-                (byte)0x95, // ID
+                (byte)0x9F, // ID
                       0x00, // Length
                       0x10, // ALGTYPE = Compression Algorithm
                       0x00, // Reserved
-                (byte)0x83, // COMPRID = JPEG
+               COMPID_JPEG, // COMPRID = JPEG
                       0x00, // Reserved
                       0x00, // Reserved
                       0x00, // Reserved
-              compression, // MARKER
+               compression, // MARKER
                       0x00, // Reserved
                       0x00, // Reserved
                       0x00, // Reserved

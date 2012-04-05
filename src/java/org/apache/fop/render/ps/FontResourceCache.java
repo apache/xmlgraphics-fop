@@ -21,10 +21,11 @@ package org.apache.fop.render.ps;
 
 import java.util.Map;
 
+import org.apache.xmlgraphics.ps.PSResource;
+
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.LazyFont;
 import org.apache.fop.fonts.Typeface;
-import org.apache.xmlgraphics.ps.PSResource;
 
 /**
  * A cache for font resource objects.

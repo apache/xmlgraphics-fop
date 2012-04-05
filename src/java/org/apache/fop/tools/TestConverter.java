@@ -26,16 +26,17 @@ import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.apache.fop.apps.FopFactory;
-import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.apps.MimeConstants;
-import org.apache.fop.cli.InputHandler;
-import org.apache.fop.tools.anttasks.FileCompare;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import org.apache.commons.logging.impl.SimpleLog;
+
+import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.FopFactory;
+import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.cli.InputHandler;
+import org.apache.fop.tools.anttasks.FileCompare;
 
 /**
  * TestConverter is used to process a set of tests specified in

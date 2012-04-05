@@ -19,10 +19,9 @@
 
 package org.apache.fop.pdf;
 
-// Java
-import java.util.List;
-import java.io.OutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.util.List;
 
 /**
  * class representing a PDF Function.
@@ -211,13 +210,12 @@ public class PDFPattern extends PDFPathPaint {
      * @throws IOException if there is an error writing to the stream
      * @return the PDF string.
      */
-    protected int output(OutputStream stream) throws IOException {
+    public int output(OutputStream stream) throws IOException {
 
         int vectorSize = 0;
         int tempInt = 0;
         byte[] buffer;
         StringBuffer p = new StringBuffer(64);
-        p.append(getObjectID());
         p.append("<< \n/Type /Pattern \n");
 
         if (this.resources != null) {
@@ -323,10 +321,6 @@ public class PDFPattern extends PDFPathPaint {
         if (pdfStream != null) {
             length += pdfStream.outputStreamData(encodedStream, stream);
         }
-
-        buffer = encode("\nendobj\n");
-        stream.write(buffer);
-        length += buffer.length;
 
         return length;
     }

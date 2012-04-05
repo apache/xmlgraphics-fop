@@ -32,6 +32,10 @@ import org.apache.avalon.framework.configuration.Configurable;
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.avalon.framework.configuration.DefaultConfiguration;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.impl.SimpleLog;
+
 import org.apache.batik.bridge.UserAgent;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.dom.util.DocumentFactory;
@@ -44,8 +48,6 @@ import org.apache.batik.transcoder.keys.BooleanKey;
 import org.apache.batik.transcoder.keys.FloatKey;
 import org.apache.batik.util.ParsedURL;
 import org.apache.batik.util.SVGConstants;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.impl.SimpleLog;
 
 import org.apache.xmlgraphics.image.GraphicsConstants;
 import org.apache.xmlgraphics.image.loader.ImageContext;
@@ -269,7 +271,6 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder implem
             }
 
             public Source resolveURI(String uri) {
-                System.out.println("resolve " + uri);
                 try {
                     ParsedURL url = new ParsedURL(baseURI, uri);
                     InputStream in = url.openStream();

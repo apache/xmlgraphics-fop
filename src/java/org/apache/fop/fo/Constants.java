@@ -26,7 +26,7 @@ package org.apache.fop.fo;
  * <li>Input and output formats</li>
  * <li>Formatting objects (<em>FO_XXX</em>)</li>
  * <li>Formatting properties (<em>PR_XXX</em>)</li>
- * <li>Enumerated values used in formatting properties (<em>EN_XXX</em>)</li>
+ * <li>Enumerated values used in formatting properties and traits (<em>EN_XXX</em>)</li>
  * </ul>
  */
 public interface Constants {
@@ -771,16 +771,22 @@ public interface Constants {
      * multi-column layouts.
      */
     int PR_X_DISABLE_COLUMN_BALANCING = 273;
-    /** Property constant - FOP proprietary: FOP internal use for accessibility */
-    int PR_X_PTR = 274;
     /**
      * Property constant - FOP proprietary: alternative text for e-g and i-f-o.
      * Used for accessibility.
      */
-    int PR_X_ALT_TEXT = 275;
+    int PR_X_ALT_TEXT = 274;
+    /** Property constant - FOP proprietary prototype (in XSL-FO 2.0 Requirements) */
+    int PR_X_XML_BASE = 275;
+    /**
+     * Property constant - FOP proprietary extension (see NumberConverter) used
+     * to perform additional control over number conversion when generating page
+     * numbers.
+     */
+    int PR_X_NUMBER_CONVERSION_FEATURES = 276;
 
     /** Number of property constants defined */
-    int PROPERTY_COUNT = 275;
+    int PROPERTY_COUNT = 276;
 
     // compound property constants
 
@@ -1208,6 +1214,16 @@ public interface Constants {
     int EN_NO_LINK = 199;
     /** Enumeration constant -- XSL 1.1 */
     int EN_ALTERNATE = 200;
+    /** Enumeration constant -- for *-direction traits */
+    int EN_LR = 201; // left to right
+    /** Enumeration constant -- for *-direction traits */
+    int EN_RL = 202; // right to left
+    /** Enumeration constant -- for *-direction traits */
+    int EN_TB = 203; // top to bottom
+    /** Enumeration constant -- for *-direction traits */
+    int EN_BT = 204; // bottom to top
+    /** Enumeration constant */
+    int EN_TB_LR = 205; // for top-to-bottom, left-to-right writing mode
     /** Number of enumeration constants defined */
-    int ENUM_COUNT = 200;
+    int ENUM_COUNT = 205;
 }

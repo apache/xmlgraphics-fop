@@ -87,6 +87,7 @@ public class LineBreakStatus {
 
         /* Initial conversions */
         switch (currentClass) {
+            case 0: // Unassigned codepoint: same treatment as AI
             case LineBreakUtils.LINE_BREAK_PROPERTY_AI:
             case LineBreakUtils.LINE_BREAK_PROPERTY_SG:
             case LineBreakUtils.LINE_BREAK_PROPERTY_XX:

@@ -60,7 +60,9 @@
     <element-list category="breaker">
       <box w="14400"/>
       <penalty w="0" p="INF"/>
-      <box w="28800"/>
+      <box w="14400"/>
+      <penalty w="0" p="INF"/>
+      <box w="14400"/>
       <penalty w="0" p="0"/>
       <box w="14400"/>
       <skip>3</skip>

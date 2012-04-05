@@ -116,8 +116,8 @@ public class InputHandler implements ErrorListener, Renderable {
             String baseURL = null;
 
             try {
-                baseURL = new File(sourcefile.getAbsolutePath()).
-                        getParentFile().toURI().toURL().toExternalForm();
+                baseURL = new File(sourcefile.getAbsolutePath())
+                        .getParentFile().toURI().toURL().toExternalForm();
             } catch (Exception e) {
                 baseURL = "";
             }

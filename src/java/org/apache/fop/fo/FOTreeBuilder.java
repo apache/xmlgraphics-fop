@@ -33,10 +33,10 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.xmlgraphics.util.QName;
 
+import org.apache.fop.accessibility.fo.FO2StructureTreeConverter;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FormattingResults;
-import org.apache.fop.area.AreaTreeHandler;
 import org.apache.fop.fo.ElementMapping.Maker;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fo.pagination.Root;
@@ -53,7 +53,7 @@ import org.apache.fop.util.ContentHandlerFactory.ObjectSource;
 public class FOTreeBuilder extends DefaultHandler {
 
     /** logging instance */
-    protected Log log = LogFactory.getLog(FOTreeBuilder.class);
+    private static final Log LOG = LogFactory.getLog(FOTreeBuilder.class);
 
     /** The registry for ElementMapping instances */
     protected ElementMappingRegistry elementMappingRegistry;
@@ -104,6 +104,10 @@ public class FOTreeBuilder extends DefaultHandler {
         //one of the RTF-, MIF- etc. Handlers.
         foEventHandler = foUserAgent.getRendererFactory().createFOEventHandler(
                 foUserAgent, outputFormat, stream);
+        if (userAgent.isAccessibilityEnabled()) {
+            foEventHandler = new FO2StructureTreeConverter(
+                    foUserAgent.getStructureTreeEventHandler(), foEventHandler);
+        }
         builderContext = new FOTreeBuilderContext();
         builderContext.setPropertyListMaker(new PropertyListMaker() {
             public PropertyList make(FObj fobj, PropertyList parentPropertyList) {
@@ -140,8 +144,8 @@ public class FOTreeBuilder extends DefaultHandler {
         used = true;
         empty = true;
         rootFObj = null;    // allows FOTreeBuilder to be reused
-        if (log.isDebugEnabled()) {
-            log.debug("Building formatting object tree");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Building formatting object tree");
         }
         foEventHandler.startDocument();
         this.mainFOHandler = new MainFOHandler();
@@ -158,8 +162,8 @@ public class FOTreeBuilder extends DefaultHandler {
             eventProducer.emptyDocument(this);
         }
         rootFObj = null;
-        if (log.isDebugEnabled()) {
-            log.debug("Parsing of document complete");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Parsing of document complete");
         }
         foEventHandler.endDocument();
     }
@@ -188,17 +192,17 @@ public class FOTreeBuilder extends DefaultHandler {
 
     /** {@inheritDoc} */
     public void warning(SAXParseException e) {
-        log.warn(e.getLocalizedMessage());
+        LOG.warn(e.getLocalizedMessage());
     }
 
     /** {@inheritDoc} */
     public void error(SAXParseException e) {
-        log.error(e.toString());
+        LOG.error(e.toString());
     }
 
     /** {@inheritDoc} */
     public void fatalError(SAXParseException e) throws SAXException {
-        log.error(e.toString());
+        LOG.error(e.toString());
         throw e;
     }
 
@@ -219,13 +223,7 @@ public class FOTreeBuilder extends DefaultHandler {
      * @return the results of the rendering process.
      */
     public FormattingResults getResults() {
-        if (getEventHandler() instanceof AreaTreeHandler) {
-            return ((AreaTreeHandler) getEventHandler()).getResults();
-        } else {
-            //No formatting results available for output formats no
-            //involving the layout engine.
-            return null;
-        }
+        return getEventHandler().getResults();
     }
 
     /**
@@ -364,7 +362,7 @@ public class FOTreeBuilder extends DefaultHandler {
             }
 
             if (currentFObj.getParent() == null) {
-                log.debug("endElement for top-level " + currentFObj.getName());
+                LOG.debug("endElement for top-level " + currentFObj.getName());
             }
 
             currentFObj = currentFObj.getParent();
@@ -398,7 +396,9 @@ public class FOTreeBuilder extends DefaultHandler {
                 FOValidationEventProducer eventProducer
                     = FOValidationEventProducer.Provider.get(
                         userAgent.getEventBroadcaster());
-                eventProducer.unknownFormattingObject(this, currentFObj.getName(),
+                String name = (currentFObj != null ? currentFObj.getName()
+                                                   : "{" + namespaceURI + "}" + localName);
+                eventProducer.unknownFormattingObject(this, name,
                         new QName(namespaceURI, localName),
                         getEffectiveLocator());
             }

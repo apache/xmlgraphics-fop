@@ -19,8 +19,8 @@
 
 package org.apache.fop.fo.expr;
 
-import org.apache.fop.fo.properties.Property;
 import org.apache.fop.datatypes.PercentBase;
+import org.apache.fop.fo.properties.Property;
 
 /**
  * Interface for managing XSL-FO Functions

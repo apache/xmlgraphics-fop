@@ -19,7 +19,7 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.3//EN" "http://forrest.apache.org/dtd/document-v13.dtd">
 <document>
   <header>
-    <title>FOP Design: Properties</title>
+    <title>Apache™ FOP Design: Properties</title>
     <version>$Revision$</version>
     <authors>
       <person name="Karen Lease" email=""/>
@@ -205,12 +205,12 @@ for all ColorType properties. Since the generic specification doesn't include
 the inherited or default elements, these should be set in each property
 which is based on GenericColor. Here is an example:</p>
         <p>
-          <code>&lt;property type='generic'>
-    &lt;name>background-color&lt;/name>
-    &lt;use-generic>GenericColor&lt;/use-generic>
-    &lt;inherited>false&lt;/inherited>
-    &lt;default>transparent&lt;/default>
-  &lt;/property></code>
+          <code>&lt;property type='generic'&gt;
+    &lt;name&gt;background-color&lt;/name&gt;
+    &lt;use-generic&gt;GenericColor&lt;/use-generic&gt;
+    &lt;inherited&gt;false&lt;/inherited&gt;
+    &lt;default&gt;transparent&lt;/default&gt;
+  &lt;/property&gt;</code>
         </p>
         <p>A generic property specification can include all of the elements
 defined for the property element in the DTD, including the description

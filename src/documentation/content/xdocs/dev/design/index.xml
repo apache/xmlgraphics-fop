@@ -1,4 +1,4 @@
-<?xml version="1.0" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -19,7 +19,7 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.3//EN" "http://forrest.apache.org/dtd/document-v13.dtd">
 <document>
   <header>
-    <title>FOP Design: Introduction</title>
+    <title>Apache™ FOP Design: Introduction</title>
     <version>$Revision$</version>
     <authors>
       <person name="Keiron Liddle" email="keiron@aftexsw.com"/>
@@ -31,9 +31,9 @@ The redesign is mainly focusing on parts of the layout process (converting the F
 Therefore other (non-layout) sections in this document are probably largely accurate for the maintenance branch, but should be used with care in that context.</note>
     <section id="black-box">
       <title>The Black Box View</title>
-      <p>From a user's standpoint, FOP is a black box that an xml file as input, performs some magic, then creates the desired output:</p>
+      <p>From a user's standpoint, Apache™ FOP is a black box that an xml file as input, performs some magic, then creates the desired output:</p>
       <table>
-        <caption>FOP from a User's Standpoint</caption>
+        <caption>Apache� FOP from a User's Standpoint</caption>
         <tr>
           <th>Process</th>
           <th>Result</th>

@@ -98,11 +98,13 @@ public class BorderProps implements Serializable {
     }
 
     /** {@inheritDoc} */
+    @Override
     public int hashCode() {
         return toString().hashCode();
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
@@ -112,7 +114,8 @@ public class BorderProps implements Serializable {
             if (obj instanceof BorderProps) {
                 BorderProps other = (BorderProps)obj;
                 return (style == other.style)
-                        && color.equals(other.color)
+                        && org.apache.xmlgraphics.java2d.color.ColorUtil.isSameColor(
+                                color, other.color)
                         && width == other.width
                         && mode == other.mode;
             }
@@ -163,6 +166,7 @@ public class BorderProps implements Serializable {
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
         StringBuffer sbuf = new StringBuffer();
         sbuf.append('(');

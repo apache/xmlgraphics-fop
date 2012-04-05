@@ -30,8 +30,8 @@ import org.apache.fop.fo.expr.PropertyException;
 public final class KeepProperty extends Property implements CompoundDatatype {
 
     /** class holding all canonical KeepProperty instances*/
-    private static final PropertyCache CACHE
-        = new PropertyCache(KeepProperty.class);
+    private static final PropertyCache<KeepProperty> CACHE
+            = new PropertyCache<KeepProperty>();
 
     private boolean isCachedValue = false;
     private Property withinLine;
@@ -165,7 +165,7 @@ public final class KeepProperty extends Property implements CompoundDatatype {
      *          this property
      */
     public KeepProperty getKeep() {
-        KeepProperty keep = (KeepProperty) CACHE.fetch(this);
+        KeepProperty keep = CACHE.fetch(this);
         /* make sure setComponent() can never alter cached values */
         keep.isCachedValue = true;
         return keep;

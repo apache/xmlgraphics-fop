@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.apache.batik.extension.svg.FlowExtTextPainter;
 import org.apache.batik.gvt.TextNode;
+
 import org.apache.fop.fonts.FontInfo;
 
 /**

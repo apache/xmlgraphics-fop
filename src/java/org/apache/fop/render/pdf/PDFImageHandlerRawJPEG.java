@@ -19,54 +19,30 @@
 
 package org.apache.fop.render.pdf;
 
-import java.awt.Rectangle;
-import java.io.IOException;
-
 import org.apache.xmlgraphics.image.loader.Image;
 import org.apache.xmlgraphics.image.loader.ImageFlavor;
 import org.apache.xmlgraphics.image.loader.impl.ImageRawJPEG;
 
 import org.apache.fop.pdf.PDFImage;
-import org.apache.fop.pdf.PDFXObject;
-import org.apache.fop.render.ImageHandler;
 import org.apache.fop.render.RenderingContext;
-import org.apache.fop.render.pdf.PDFLogicalStructureHandler.MarkedContentInfo;
 
 /**
  * Image handler implementation which handles raw JPEG images for PDF output.
  */
-public class PDFImageHandlerRawJPEG implements ImageHandler {
+public class PDFImageHandlerRawJPEG extends AbstractPDFImageHandler {
 
     private static final ImageFlavor[] FLAVORS = new ImageFlavor[] {
         ImageFlavor.RAW_JPEG,
     };
 
     /** {@inheritDoc} */
-    public void handleImage(RenderingContext context, Image image, Rectangle pos)
-                throws IOException {
-        PDFRenderingContext pdfContext = (PDFRenderingContext)context;
-        PDFContentGenerator generator = pdfContext.getGenerator();
-        ImageRawJPEG imageJPEG = (ImageRawJPEG)image;
-
-        PDFImage pdfimage = new ImageRawJPEGAdapter(imageJPEG, image.getInfo().getOriginalURI());
-        PDFXObject xobj = generator.getDocument().addImage(
-                generator.getResourceContext(), pdfimage);
-
-        float x = (float)pos.getX() / 1000f;
-        float y = (float)pos.getY() / 1000f;
-        float w = (float)pos.getWidth() / 1000f;
-        float h = (float)pos.getHeight() / 1000f;
-        if (context.getUserAgent().isAccessibilityEnabled()) {
-            MarkedContentInfo mci = pdfContext.getMarkedContentInfo();
-            generator.placeImage(x, y, w, h, xobj, mci.tag, mci.mcid);
-        } else {
-            generator.placeImage(x, y, w, h, xobj);
-        }
-    }
-
-    /** {@inheritDoc} */
     public int getPriority() {
         return 100;
+    }
+
+    @Override
+    PDFImage createPDFImage(Image image, String xobjectKey) {
+        return new ImageRawJPEGAdapter((ImageRawJPEG) image, xobjectKey);
     }
 
     /** {@inheritDoc} */

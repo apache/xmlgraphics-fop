@@ -28,6 +28,7 @@ import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.LengthBase;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.datatypes.PercentBaseContext;
+import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.properties.CommonMarginBlock;
@@ -96,7 +97,7 @@ public class RegionBody extends Region {
     }
 
     /** {@inheritDoc} */
-    public Rectangle getViewportRectangle (FODimension reldims, SimplePageMaster spm) {
+    public Rectangle getViewportRectangle (FODimension reldims) {
         /* Special rules apply to resolving margins in the page context.
          * Contrary to normal margins in this case top and bottom margin
          * are resolved relative to the height. In the property subsystem
@@ -113,12 +114,22 @@ public class RegionBody extends Region {
 
         int start;
         int end;
-        if (spm.getWritingMode() == EN_LR_TB) { // Left-to-right
-            start = commonMarginBlock.marginLeft.getValue(pageWidthContext);
-            end = commonMarginBlock.marginRight.getValue(pageWidthContext);
-        } else { // all other supported modes are right-to-left
+        // [TBD] WRITING MODE ALERT
+        switch ( getWritingMode().getEnumValue() ) {
+        case Constants.EN_RL_TB:
             start = commonMarginBlock.marginRight.getValue(pageWidthContext);
             end = commonMarginBlock.marginLeft.getValue(pageWidthContext);
+            break;
+        case Constants.EN_TB_LR:
+        case Constants.EN_TB_RL:
+            start = commonMarginBlock.marginTop.getValue(pageWidthContext);
+            end = commonMarginBlock.marginBottom.getValue(pageWidthContext);
+            break;
+        case Constants.EN_LR_TB:
+        default:
+            start = commonMarginBlock.marginLeft.getValue(pageWidthContext);
+            end = commonMarginBlock.marginRight.getValue(pageWidthContext);
+            break;
         }
         int before = commonMarginBlock.spaceBefore.getOptimum(pageHeightContext)
                         .getLength().getValue(pageHeightContext);

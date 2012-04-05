@@ -45,12 +45,13 @@ import org.apache.fop.area.PageSequence;
 import org.apache.fop.area.PageViewport;
 import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.inline.Image;
-import org.apache.fop.area.inline.Viewport;
+import org.apache.fop.area.inline.InlineViewport;
 import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.datatypes.URISpecification;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.extensions.ExternalDocument;
 import org.apache.fop.layoutmgr.inline.ImageLayout;
+import org.apache.fop.traits.WritingMode;
 
 /**
  * LayoutManager for an external-document extension element.  This class is instantiated by
@@ -92,7 +93,7 @@ public class ExternalDocumentLayoutManager extends AbstractPageSequenceLayoutMan
         FOUserAgent userAgent = pageSeq.getUserAgent();
         ImageManager imageManager = userAgent.getFactory().getImageManager();
 
-        String uri = getExternalDocument().getSrc();
+        String uri = URISpecification.getURL(getExternalDocument().getSrc());
         Integer firstPageIndex = ImageUtil.getPageIndexFromURI(uri);
         boolean hasPageIndex = (firstPageIndex != null);
 
@@ -146,7 +147,6 @@ public class ExternalDocumentLayoutManager extends AbstractPageSequenceLayoutMan
                 } catch (URISyntaxException e) {
                     getResourceEventProducer().uriError(this, uri, e,
                             getExternalDocument().getLocator());
-                    return;
                 }
             }
         } catch (FileNotFoundException fnfe) {
@@ -168,7 +168,7 @@ public class ExternalDocumentLayoutManager extends AbstractPageSequenceLayoutMan
 
     private void makePageForImage(ImageInfo info, ImageLayout layout) {
         this.imageLayout = layout;
-        curPage = makeNewPage(false, false);
+        curPage = makeNewPage(false);
         fillPage(info.getOriginalURI());
         finishPage();
     }
@@ -185,12 +185,12 @@ public class ExternalDocumentLayoutManager extends AbstractPageSequenceLayoutMan
         TraitSetter.setProducerID(imageArea, fobj.getId());
         transferForeignAttributes(imageArea);
 
-        Viewport vp = new Viewport(imageArea);
+        InlineViewport vp = new InlineViewport(imageArea, fobj.getBidiLevel());
         TraitSetter.setProducerID(vp, fobj.getId());
         vp.setIPD(imageSize.width);
         vp.setBPD(imageSize.height);
         vp.setContentPosition(imageLayout.getPlacement());
-        vp.setOffset(0);
+        vp.setBlockProgressionOffset(0);
 
         //Link them all together...
         lineArea.addInlineArea(vp);
@@ -231,8 +231,9 @@ public class ExternalDocumentLayoutManager extends AbstractPageSequenceLayoutMan
             referenceRect = new Rectangle(0, 0, imageSize.height, imageSize.width);
         }
         FODimension reldims = new FODimension(0, 0);
+        // [TBD] BIDI ALERT
         CTM pageCTM = CTM.getCTMandRelDims(pageSeq.getReferenceOrientation(),
-            Constants.EN_LR_TB, referenceRect, reldims);
+                                           WritingMode.LR_TB, referenceRect, reldims);
 
         Page page = new Page(referenceRect, pageNumber, pageNumberString, isBlank);
 

@@ -1,4 +1,4 @@
-<?xml version="1.0" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -20,8 +20,8 @@
 <!-- Status -->
 <document>
   <header>
-    <title>FOP Status</title>
-    <subtitle>Current Status of FOP</subtitle>
+    <title>Apache™ FOP Status</title>
+    <subtitle>Current Status of Apache™ FOP</subtitle>
     <version>$Revision$</version>
   </header>
   <body>
@@ -29,7 +29,7 @@
       <title>Status</title>
       <p>[last updated 5 July 2010]</p>
       <p>
-        FOP version 0.95 was released on 5 August 2008. FOP version 1.0 was released on 21 July 2010.
+        Apache™ FOP version 0.95 was released on 5 August 2008. Apache™ FOP version 1.0 was released on 21 July 2010.
       </p>
     </section>
     <section>

@@ -48,6 +48,7 @@ public class InlineBlockParent extends InlineArea {
      *
      * @param childArea the child area to add
      */
+    @Override
     public void addChildArea(Area childArea) {
         if (child != null) {
             throw new IllegalStateException("InlineBlockParent may have only one child area.");

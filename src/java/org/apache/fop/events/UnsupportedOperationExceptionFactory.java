@@ -36,7 +36,7 @@ public class UnsupportedOperationExceptionFactory implements ExceptionFactory {
     }
 
     /** {@inheritDoc} */
-    public Class getExceptionClass() {
+    public Class<UnsupportedOperationException> getExceptionClass() {
         return UnsupportedOperationException.class;
     }
 

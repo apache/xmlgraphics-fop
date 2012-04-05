@@ -19,7 +19,6 @@
 
 package org.apache.fop.render.bitmap;
 
-import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
@@ -115,13 +114,13 @@ public class BitmapRendererConfigurator extends Java2DRendererConfigurator
     /** {@inheritDoc} */
     public void setupFontInfo(IFDocumentHandler documentHandler, FontInfo fontInfo)
             throws FOPException {
-        FontManager fontManager = userAgent.getFactory().getFontManager();
+        final FontManager fontManager = userAgent.getFactory().getFontManager();
 
-        Graphics2D graphics2D = Java2DFontMetrics.createFontMetricsGraphics2D();
+        final Java2DFontMetrics java2DFontMetrics = new Java2DFontMetrics();
 
-        List fontCollections = new java.util.ArrayList();
-        fontCollections.add(new Base14FontCollection(graphics2D));
-        fontCollections.add(new InstalledFontCollection(graphics2D));
+        final List fontCollections = new java.util.ArrayList();
+        fontCollections.add(new Base14FontCollection(java2DFontMetrics));
+        fontCollections.add(new InstalledFontCollection(java2DFontMetrics));
 
         Configuration cfg = super.getRendererConfig(documentHandler.getMimeType());
         if (cfg != null) {
@@ -129,7 +128,8 @@ public class BitmapRendererConfigurator extends Java2DRendererConfigurator
             FontEventListener listener = new FontEventAdapter(
                     userAgent.getEventBroadcaster());
             List fontList = buildFontList(cfg, fontResolver, listener);
-            fontCollections.add(new ConfiguredFontCollection(fontResolver, fontList));
+            fontCollections.add(new ConfiguredFontCollection(fontResolver, fontList,
+                                userAgent.isComplexScriptFeaturesEnabled()));
         }
 
         fontManager.setup(fontInfo,

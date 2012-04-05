@@ -26,7 +26,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.Image;
 import java.awt.Paint;
@@ -163,6 +162,14 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
      */
     private void setResourceManager(AFPResourceManager resourceManager) {
         this.resourceManager = resourceManager;
+    }
+
+    /**
+     * Returns the AFP resource manager associated with this {@link Graphics2D} instance.
+     * @return the resource manager
+     */
+    public AFPResourceManager getResourceManager() {
+        return this.resourceManager;
     }
 
     /**
@@ -497,12 +504,14 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
     }
 
     /** {@inheritDoc} */
+    @Override
     public void draw(Shape shape) {
         LOG.debug("draw() shape=" + shape);
         doDrawing(shape, false);
     }
 
     /** {@inheritDoc} */
+    @Override
     public void fill(Shape shape) {
         LOG.debug("fill() shape=" + shape);
         doDrawing(shape, true);
@@ -521,6 +530,7 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
     }
 
     /** {@inheritDoc} */
+    @Override
     public void drawString(String str, float x, float y) {
         try {
             if (customTextHandler != null && !textAsShapes) {
@@ -534,21 +544,25 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
     }
 
     /** {@inheritDoc} */
+    @Override
     public GraphicsConfiguration getDeviceConfiguration() {
         return graphicsConfig;
     }
 
     /** {@inheritDoc} */
+    @Override
     public Graphics create() {
         return new AFPGraphics2D(this);
     }
 
     /** {@inheritDoc} */
+    @Override
     public void dispose() {
         this.graphicsObj = null;
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean drawImage(Image img, int x, int y, ImageObserver observer) {
         return drawImage(img, x, y, img.getWidth(observer), img.getHeight(observer), observer);
     }
@@ -595,6 +609,7 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean drawImage(Image img, int x, int y, int width, int height,
             ImageObserver observer) {
         // draw with AWT Graphics2D
@@ -609,6 +624,7 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
     }
 
     /** {@inheritDoc} */
+    @Override
     public void drawRenderedImage(RenderedImage img, AffineTransform xform) {
         int imgWidth = img.getWidth();
         int imgHeight = img.getHeight();
@@ -658,17 +674,20 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
     }
 
     /** {@inheritDoc} */
+    @Override
     public void drawRenderableImage(RenderableImage img, AffineTransform xform) {
         LOG.debug("drawRenderableImage() NYI: img=" + img + ", xform=" + xform);
     }
 
     /** {@inheritDoc} */
+    @Override
     public FontMetrics getFontMetrics(Font f) {
         LOG.debug("getFontMetrics() NYI: f=" + f);
         return null;
     }
 
     /** {@inheritDoc} */
+    @Override
     public void setXORMode(Color col) {
         LOG.debug("setXORMode() NYI: col=" + col);
     }
@@ -681,6 +700,7 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
     }
 
     /** {@inheritDoc} */
+    @Override
     public void copyArea(int x, int y, int width, int height, int dx, int dy) {
         LOG.debug("copyArea() NYI: ");
     }

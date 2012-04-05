@@ -20,7 +20,6 @@
 package org.apache.fop.render.java2d;
 
 // Java
-import java.awt.Graphics2D;
 import java.util.Map;
 import java.util.Set;
 
@@ -42,7 +41,7 @@ public class SystemFontMetricsMapper extends Typeface implements FontMetricsMapp
      * This is a Java2DFontMetrics that does the real calculation.
      * It is only one class that dynamically determines the font-size.
      */
-    private static Java2DFontMetrics metric = null;
+    private final Java2DFontMetrics java2DFontMetrics;
 
     /**
      * The java name of the font.
@@ -60,15 +59,14 @@ public class SystemFontMetricsMapper extends Typeface implements FontMetricsMapp
      * Constructs a new Font-metrics.
      * @param family the family name of the font (java value)
      * @param style the java type style value of the font
-     * @param graphics a Graphics2D object - this is needed  so
-     * that we can get an instance of java.awt.FontMetrics
+     * @param java2DFontMetrics metric calculations delegated to this
      */
-    public SystemFontMetricsMapper(String family, int style, Graphics2D graphics) {
+    public SystemFontMetricsMapper(String family, int style, Java2DFontMetrics java2DFontMetrics) {
         this.family = family;
+
         this.style = style;
-        if (metric == null) {
-            metric = new Java2DFontMetrics(graphics);
-        }
+
+        this.java2DFontMetrics = java2DFontMetrics;
     }
 
     /** {@inheritDoc} */
@@ -104,42 +102,42 @@ public class SystemFontMetricsMapper extends Typeface implements FontMetricsMapp
      * {@inheritDoc}
      */
     public int getMaxAscent(int size) {
-        return metric.getMaxAscent(family, style, size);
+        return java2DFontMetrics.getMaxAscent(family, style, size);
     }
 
     /**
      * {@inheritDoc}
      */
     public int getAscender(int size) {
-        return metric.getAscender(family, style, size);
+        return java2DFontMetrics.getAscender(family, style, size);
     }
 
     /**
      * {@inheritDoc}
      */
     public int getCapHeight(int size) {
-        return metric.getCapHeight(family, style, size);
+        return java2DFontMetrics.getCapHeight(family, style, size);
     }
 
     /**
      * {@inheritDoc}
      */
     public int getDescender(int size) {
-        return metric.getDescender(family, style, size);
+        return java2DFontMetrics.getDescender(family, style, size);
     }
 
     /**
      * {@inheritDoc}
      */
     public int getXHeight(int size) {
-        return metric.getXHeight(family, style, size);
+        return java2DFontMetrics.getXHeight(family, style, size);
     }
 
     /**
      * {@inheritDoc}
      */
     public int getWidth(int i, int size) {
-        return metric.width(i, family, style, size);
+        return java2DFontMetrics.width(i, family, style, size);
     }
 
 
@@ -147,14 +145,14 @@ public class SystemFontMetricsMapper extends Typeface implements FontMetricsMapp
      * {@inheritDoc}
      */
     public int[] getWidths() {
-        return metric.getWidths(family, style, Java2DFontMetrics.FONT_SIZE);
+        return java2DFontMetrics.getWidths(family, style, Java2DFontMetrics.FONT_SIZE);
     }
 
     /**
      * {@inheritDoc}
      */
     public java.awt.Font getFont(int size) {
-        return metric.getFont(family, style, size);
+        return java2DFontMetrics.getFont(family, style, size);
     }
 
     /**
@@ -183,7 +181,7 @@ public class SystemFontMetricsMapper extends Typeface implements FontMetricsMapp
 
     /** {@inheritDoc} */
     public boolean hasChar(char c) {
-        return metric.hasChar(family, style, Java2DFontMetrics.FONT_SIZE, c);
+        return java2DFontMetrics.hasChar(family, style, Java2DFontMetrics.FONT_SIZE, c);
     }
 
 }

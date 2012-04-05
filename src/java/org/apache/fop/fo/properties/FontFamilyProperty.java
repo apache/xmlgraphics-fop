@@ -31,8 +31,8 @@ import org.apache.fop.fo.expr.PropertyException;
 public final class FontFamilyProperty extends ListProperty {
 
     /** cache holding all canonical FontFamilyProperty instances */
-    private static final PropertyCache CACHE
-        = new PropertyCache(FontFamilyProperty.class);
+    private static final PropertyCache<FontFamilyProperty> CACHE
+            = new PropertyCache<FontFamilyProperty>();
 
     private int hash = 0;
 

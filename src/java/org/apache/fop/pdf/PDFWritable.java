@@ -21,7 +21,6 @@ package org.apache.fop.pdf;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.Writer;
 
 /**
  * This interface is implemented by classes that can be serialized to a PDF file either by
@@ -30,13 +29,16 @@ import java.io.Writer;
 public interface PDFWritable {
 
     /**
-     * Writes a "direct object" (inline object) representation to the stream. A Writer is given
-     * for optimized encoding of text content. Since the Writer is buffered, make sure
-     * <code>flush()</code> is called before any direct calls to <code>out</code> are made.
+     * Writes a "direct object" (inline object) representation to the stream. A text buffer is given
+     * for optimized encoding of text content.
+     * <p>
+     * IMPORTANT: If you need to write out binary output, call
+     * {@link PDFDocument#flushTextBuffer(StringBuilder, OutputStream)} before writing any content
+     * to the {@link OutputStream}!
      * @param out the OutputStream (for binary content)
-     * @param writer the Writer (for text content, wraps the above OutputStream)
+     * @param textBuffer the text buffer for text content
      * @throws IOException if an I/O error occurs
      */
-    void outputInline(OutputStream out, Writer writer) throws IOException;
+    void outputInline(OutputStream out, StringBuilder textBuffer) throws IOException;
 
 }

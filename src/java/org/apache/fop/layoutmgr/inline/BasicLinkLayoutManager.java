@@ -21,7 +21,9 @@ package org.apache.fop.layoutmgr.inline;
 
 import org.apache.fop.area.LinkResolver;
 import org.apache.fop.area.Trait;
+import org.apache.fop.area.inline.BasicLinkArea;
 import org.apache.fop.area.inline.InlineArea;
+import org.apache.fop.area.inline.InlineParent;
 import org.apache.fop.datatypes.URISpecification;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.flow.BasicLink;
@@ -57,7 +59,7 @@ public class BasicLinkLayoutManager extends InlineLayoutManager {
     private void setupBasicLinkArea(InlineArea area) {
         BasicLink fobj = (BasicLink) this.fobj;
         // internal destinations take precedence:
-        TraitSetter.addPtr(area, fobj.getPtr()); // used for accessibility
+        TraitSetter.addStructureTreeElement(area, fobj.getStructureTreeElement());
         if (fobj.hasInternalDestination()) {
             String idref = fobj.getInternalDestination();
             PageSequenceLayoutManager pslm = getPSLM();
@@ -67,6 +69,12 @@ public class BasicLinkLayoutManager extends InlineLayoutManager {
             res.resolveIDRef(idref, pslm.getFirstPVWithID(idref));
             if (!res.isResolved()) {
                 pslm.addUnresolvedArea(idref, res);
+                if ( area instanceof BasicLinkArea ) {
+                    // establish back-pointer from BasicLinkArea to LinkResolver to
+                    // handle inline area unflattening during line bidi reordering;
+                    // needed to create internal link trait on synthesized basic link area
+                    ((BasicLinkArea)area).setResolver(res);
+                }
             }
         } else if (fobj.hasExternalDestination()) {
             String url = URISpecification.getURL(fobj.getExternalDestination());
@@ -77,4 +85,10 @@ public class BasicLinkLayoutManager extends InlineLayoutManager {
             }
         }
     }
+
+    @Override
+    protected InlineParent createInlineParent() {
+        return new BasicLinkArea();
+    }
+
 }

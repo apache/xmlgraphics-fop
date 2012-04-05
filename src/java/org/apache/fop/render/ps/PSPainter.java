@@ -52,6 +52,7 @@ import org.apache.fop.render.intermediate.AbstractIFPainter;
 import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFState;
+import org.apache.fop.render.intermediate.IFUtil;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.traits.RuleStyle;
 import org.apache.fop.util.CharUtilities;
@@ -204,7 +205,7 @@ public class PSPainter extends AbstractIFPainter {
             endTextObject();
             generator.defineRect(rect.x / 1000.0, rect.y / 1000.0,
                     rect.width / 1000.0, rect.height / 1000.0);
-            generator.writeln("clip newpath");
+            generator.writeln(generator.mapCommand("clip") + " " + generator.mapCommand("newpath"));
         } catch (IOException ioe) {
             throw new IFException("I/O error in clipRect()", ioe);
         }
@@ -228,7 +229,7 @@ public class PSPainter extends AbstractIFPainter {
                 }
                 generator.defineRect(rect.x / 1000.0, rect.y / 1000.0,
                         rect.width / 1000.0, rect.height / 1000.0);
-                generator.writeln("fill");
+                generator.writeln(generator.mapCommand("fill"));
             } catch (IOException ioe) {
                 throw new IFException("I/O error in fillRect()", ioe);
             }
@@ -236,12 +237,17 @@ public class PSPainter extends AbstractIFPainter {
     }
 
     /** {@inheritDoc} */
-    public void drawBorderRect(Rectangle rect, BorderProps before, BorderProps after,
-            BorderProps start, BorderProps end) throws IFException {
-        if (before != null || after != null || start != null || end != null) {
+    public void drawBorderRect(Rectangle rect, BorderProps top, BorderProps bottom,
+            BorderProps left, BorderProps right) throws IFException {
+        if (top != null || bottom != null || left != null || right != null) {
             try {
                 endTextObject();
-                this.borderPainter.drawBorders(rect, before, after, start, end);
+                if (getPSUtil().getRenderingMode() == PSRenderingMode.SIZE
+                    && hasOnlySolidBorders(top, bottom, left, right)) {
+                    super.drawBorderRect(rect, top, bottom, left, right);
+                } else {
+                    this.borderPainter.drawBorders(rect, top, bottom, left, right);
+                }
             } catch (IOException ioe) {
                 throw new IFException("I/O error in drawBorderRect()", ioe);
             }
@@ -340,9 +346,8 @@ public class PSPainter extends AbstractIFPainter {
 
     /** {@inheritDoc} */
     public void drawText(int x, int y, int letterSpacing, int wordSpacing,
-            int[] dx, String text) throws IFException {
+            int[][] dp, String text) throws IFException {
         try {
-            //Note: dy is currently ignored
             PSGenerator generator = getGenerator();
             generator.useColor(state.getTextColor());
             beginTextObject();
@@ -370,9 +375,9 @@ public class PSPainter extends AbstractIFPainter {
                     + " " + formatMptAsPt(generator, y) + " Tm");
 
             int textLen = text.length();
-            if (singleByteFont != null && singleByteFont.hasAdditionalEncodings()) {
+            int start = 0;
+            if (singleByteFont != null) {
                 //Analyze string and split up in order to paint in different sub-fonts/encodings
-                int start = 0;
                 int currentEncoding = -1;
                 for (int i = 0; i < textLen; i++) {
                     char c = text.charAt(i);
@@ -381,7 +386,7 @@ public class PSPainter extends AbstractIFPainter {
                     if (currentEncoding != encoding) {
                         if (i > 0) {
                             writeText(text, start, i - start,
-                                    letterSpacing, wordSpacing, dx, font, tf, false);
+                                    letterSpacing, wordSpacing, dp, font, tf, false);
                         }
                         if (encoding == 0) {
                             useFont(fontKey, sizeMillipoints);
@@ -392,20 +397,18 @@ public class PSPainter extends AbstractIFPainter {
                         start = i;
                     }
                 }
-                writeText(text, start, textLen - start,
-                        letterSpacing, wordSpacing, dx, font, tf, false);
             } else {
                 useFont(fontKey, sizeMillipoints);
-                writeText(text, 0, textLen,
-                        letterSpacing, wordSpacing, dx, font, tf, tf instanceof MultiByteFont);
             }
+            writeText(text, start, textLen - start, letterSpacing, wordSpacing, dp, font, tf,
+                    tf instanceof MultiByteFont);
         } catch (IOException ioe) {
             throw new IFException("I/O error in drawText()", ioe);
         }
     }
 
     private void writeText(String text, int start, int len,
-            int letterSpacing, int wordSpacing, int[] dx,
+            int letterSpacing, int wordSpacing, int[][] dp,
             Font font, Typeface tf, boolean multiByte) throws IOException {
         PSGenerator generator = getGenerator();
         int end = start + len;
@@ -418,6 +421,7 @@ public class PSPainter extends AbstractIFPainter {
         int lineStart = 0;
         StringBuffer accText = new StringBuffer(initialSize);
         StringBuffer sb = new StringBuffer(initialSize);
+        int[] dx = IFUtil.convertDPToDX ( dp );
         int dxl = (dx != null ? dx.length : 0);
         for (int i = start; i < end; i++) {
             char orgChar = text.charAt(i);
@@ -482,9 +486,9 @@ public class PSPainter extends AbstractIFPainter {
                 spb.append(formatMptAsPt(generator, letterSpacing))
                     .append(" 0 ");
                 sb.insert(0, spb.toString());
-                sb.append(" ashow");
+                sb.append(" " + generator.mapCommand("ashow"));
             } else {
-                sb.append(" show");
+                sb.append(" " + generator.mapCommand("show"));
             }
         }
         generator.writeln(sb.toString());

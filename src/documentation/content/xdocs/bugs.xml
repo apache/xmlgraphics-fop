@@ -1,4 +1,4 @@
-<?xml version="1.0" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -20,7 +20,7 @@
 
 <document>
   <header>
-    <title>FOP: Bugs and Other Trackable Issues</title>
+    <title>Apache™ FOP: Bugs and Other Trackable Issues</title>
     <version>$Revision$</version>
   </header>
   <body>
@@ -64,3 +64,6 @@ sent to the FOP developer discussion list.</li>
     </section>
   </body>
 </document>
+
+
+

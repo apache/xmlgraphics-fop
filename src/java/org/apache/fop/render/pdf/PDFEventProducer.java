@@ -65,4 +65,14 @@ public interface PDFEventProducer extends EventProducer {
      * @event.severity WARN
      */
     void nonStandardStructureType(Object source, String fo, String type, String fallback);
+
+    /**
+     * The encryption length must be a multiple of 8 between 40 and 128.
+     *
+     * @param source the event source
+     * @param originalValue requested encryption length
+     * @param correctedValue corrected encryption length
+     * @event.severity WARN
+     */
+    void incorrectEncryptionLength(Object source, int originalValue, int correctedValue);
 }

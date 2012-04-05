@@ -90,7 +90,7 @@ public abstract class AbstractNamedAFPObject extends AbstractTripletStructuredOb
         return nameBytes;
     }
 
-    /** {@inheritDoc} */
+    @Override
     protected void copySF(byte[] data, byte type, byte category) {
         super.copySF(data, type, category);
         byte[] nameData = getNameBytes();

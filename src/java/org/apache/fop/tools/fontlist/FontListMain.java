@@ -143,6 +143,14 @@ public final class FontListMain {
                 //ignore
             }
 
+            public void fontDirectoryNotFound(Object source, String msg) {
+                //ignore
+            }
+
+            public void svgTextStrokedAsShapes(Object source, String fontFamily) {
+                // ignore
+            }
+
         };
 
         FontListGenerator listGenerator = new FontListGenerator();
