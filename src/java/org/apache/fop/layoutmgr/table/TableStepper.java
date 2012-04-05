@@ -200,7 +200,7 @@ public class TableStepper {
 
             LinkedList footnoteList = new LinkedList();
             //Put all involved grid units into a list
-            List cellParts = new java.util.ArrayList(columnCount);
+            List cellParts = new java.util.ArrayList(activeCells.size());
             for (Iterator iter = activeCells.iterator(); iter.hasNext();) {
                 ActiveCell activeCell = (ActiveCell) iter.next();
                 CellPart part = activeCell.createCellPart();

@@ -62,6 +62,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Code" dev="GA" type="fix" fixes-bug="51807" due-to="Sergey Vladimirov">
+        Fixed small memory waste in rowCells array construction.
+      </action>
       <action context="Code" dev="GA" type="fix" fixes-bug="53005" due-to="Alberto Simões">
         Fixed incorrect rejection of fo:wrapper inside fo:inline inside fo:footnote-body.
       </action>
