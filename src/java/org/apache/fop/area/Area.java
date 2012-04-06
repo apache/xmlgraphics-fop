@@ -390,8 +390,10 @@ public class Area extends AreaTreeObject implements Serializable {
      * @param prop the value of the trait
      */
     public void addTrait(Integer traitCode, Object prop) {
+        // use treemap instead of hashmap since the typical number
+        // of traits are less than four
         if (traits == null) {
-            traits = new java.util.HashMap<Integer, Object>(20);
+            traits = new java.util.TreeMap<Integer, Object>();
         }
         traits.put(traitCode, prop);
     }
@@ -403,7 +405,7 @@ public class Area extends AreaTreeObject implements Serializable {
      */
     public void setTraits ( Map traits ) {
         if ( traits != null ) {
-            this.traits = new java.util.HashMap ( traits );
+            this.traits = new java.util.TreeMap ( traits );
         } else {
             this.traits = null;
         }
