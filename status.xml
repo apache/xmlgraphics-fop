@@ -62,6 +62,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Code" dev="GA" type="fix" fixes-bug="47380" due-to="Georg Datterl">
+        Specified rule-thickness applies only when leader-pattern is rule, otherwise should use default thickness.
+      </action>
       <action context="Code" dev="GA" type="fix" fixes-bug="49302" due-to="Julien Aymé">
         Eliminate duplicate code.
       </action>
