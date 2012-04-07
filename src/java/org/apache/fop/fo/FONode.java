@@ -405,6 +405,27 @@ public abstract class FONode implements Cloneable {
     }
 
     /**
+     * Helper function to obtain standard usage prefix for FOP related
+     * namespace URIs.
+     * @param namespaceURI URI of node found
+     *         (e.g., "http://www.w3.org/1999/XSL/Format")
+     * @return the prefix or null if none
+     */
+    public static String getNodePrefix(String namespaceURI) {
+        if (namespaceURI.equals(FOElementMapping.URI)) {
+            return "fo";
+        } else if (namespaceURI.equals(ExtensionElementMapping.URI)) {
+            return "fox";
+        } else if (namespaceURI.equals(InternalElementMapping.URI)) {
+            return "foi";
+        } else if (namespaceURI.equals(SVGElementMapping.URI)) {
+            return "svg";
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Helper function to standardize the names of all namespace URI - local
      * name pairs in text messages.
      * For readability, using fo:, fox:, svg:, for those namespaces even
@@ -416,14 +437,9 @@ public abstract class FONode implements Cloneable {
      * with the unabbreviated URI otherwise.
      */
     public static String getNodeString(String namespaceURI, String localName) {
-        if (namespaceURI.equals(FOElementMapping.URI)) {
-            return "fo:" + localName;
-        } else if (namespaceURI.equals(ExtensionElementMapping.URI)) {
-            return "fox:" + localName;
-        } else if (namespaceURI.equals(InternalElementMapping.URI)) {
-            return "foi:" + localName;  // used FOP internally for accessibility
-        } else if (namespaceURI.equals(SVGElementMapping.URI)) {
-            return "svg:" + localName;
+        String prefix = getNodePrefix ( namespaceURI );
+        if ( prefix != null ) {
+            return prefix + ":" + localName;
         } else {
             return "(Namespace URI: \"" + namespaceURI + "\", "
                     + "Local Name: \"" + localName + "\")";
@@ -527,16 +543,22 @@ public abstract class FONode implements Cloneable {
      *
      * @param loc org.xml.sax.Locator object of the error (*not* parent node)
      * @param parentName the name of the parent element
-     * @param nsURI namespace URI of incoming invalid node
-     * @param lName local name (i.e., no prefix) of incoming node
+     * @param nsURI namespace URI of incoming offending node
+     * @param lName local name (i.e., no prefix) of incoming offending node
      * @param ruleViolated name of the rule violated (used to lookup a resource in a bundle)
      * @throws ValidationException the validation error provoked by the method call
      */
     protected void invalidChildError(Locator loc, String parentName, String nsURI, String lName,
                 String ruleViolated)
                 throws ValidationException {
-        getFOValidationEventProducer().invalidChild(this, parentName,
-                new QName(nsURI, lName), ruleViolated, loc);
+        String prefix = getNodePrefix ( nsURI );
+        QName qn; // qualified name of offending node
+        if ( prefix != null ) {
+            qn = new QName(nsURI, prefix, lName);
+        } else {
+            qn = new QName(nsURI, lName);
+        }
+        getFOValidationEventProducer().invalidChild(this, parentName, qn, ruleViolated, loc);
     }
 
     /**
