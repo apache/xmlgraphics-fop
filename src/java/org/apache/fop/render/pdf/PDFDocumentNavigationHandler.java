@@ -82,7 +82,7 @@ public class PDFDocumentNavigationHandler implements IFDocumentNavigationHandler
         }
     }
 
-    private void renderBookmark(Bookmark bookmark, PDFOutline parent) {
+    private void renderBookmark(Bookmark bookmark, PDFOutline parent) throws IFException {
         if (parent == null) {
             parent = getPDFDoc().getOutlineRoot();
         }
@@ -141,7 +141,7 @@ public class PDFDocumentNavigationHandler implements IFDocumentNavigationHandler
         }
     }
 
-    private PDFAction getAction(AbstractAction action) {
+    private PDFAction getAction(AbstractAction action) throws IFException {
         if (action == null) {
             return null;
         }
@@ -181,21 +181,27 @@ public class PDFDocumentNavigationHandler implements IFDocumentNavigationHandler
         }
     }
 
-    private void updateTargetLocation(PDFGoTo pdfGoTo, GoToXYAction action) {
+    private void updateTargetLocation(PDFGoTo pdfGoTo, GoToXYAction action)
+      throws IFException {
         PageReference pageRef = this.documentHandler.getPageReference(action.getPageIndex());
-        //Convert target location from millipoints to points and adjust for different
-        //page origin
-        Point2D p2d = null;
-        p2d = new Point2D.Double(
-                action.getTargetLocation().x / 1000.0,
-                (pageRef.getPageDimension().height - action.getTargetLocation().y) / 1000.0);
-        String pdfPageRef = pageRef.getPageRef();
-        pdfGoTo.setPageReference(pdfPageRef);
-        pdfGoTo.setPosition(p2d);
+        if ( pageRef == null ) {
+            throw new
+                IFException("Can't resolve page reference @ index: " + action.getPageIndex(), null);
+        } else {
+            //Convert target location from millipoints to points and adjust for different
+            //page origin
+            Point2D p2d = null;
+            p2d = new Point2D.Double(
+                    action.getTargetLocation().x / 1000.0,
+                    (pageRef.getPageDimension().height - action.getTargetLocation().y) / 1000.0);
+            String pdfPageRef = pageRef.getPageRef();
+            pdfGoTo.setPageReference(pdfPageRef);
+            pdfGoTo.setPosition(p2d);
 
-        //Queue this object now that it's complete
-        getPDFDoc().addObject(pdfGoTo);
-        this.completeActions.put(action.getID(), pdfGoTo);
+            //Queue this object now that it's complete
+            getPDFDoc().addObject(pdfGoTo);
+            this.completeActions.put(action.getID(), pdfGoTo);
+        }
     }
 
 }
