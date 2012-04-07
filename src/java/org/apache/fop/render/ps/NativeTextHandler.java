@@ -31,7 +31,6 @@ import org.apache.xmlgraphics.ps.PSGenerator;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontSetup;
-import org.apache.fop.fonts.FontTriplet;
 
 /**
  * Specialized TextHandler implementation that the PSGraphics2D class delegates to to paint text
