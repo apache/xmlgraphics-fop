@@ -62,6 +62,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Code" dev="GA" type="fix" fixes-bug="49350" due-to="Julien Aymé">
+        Correct coding error in AFPResourceLevel#equals.
+      </action>
       <action context="Code" dev="GA" type="fix" fixes-bug="51836" due-to="Melanie Drake">
         Throw IFException instead of NPE if navigation target (page reference) doesn't exist.
       </action>

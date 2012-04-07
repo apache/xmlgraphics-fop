@@ -186,7 +186,7 @@ public class AFPResourceLevel {
         }
 
         AFPResourceLevel rl = (AFPResourceLevel)obj;
-        return (level == level)
+        return (level == rl.level)
             && (extFilePath == rl.extFilePath
                     || extFilePath != null && extFilePath.equals(rl.extFilePath));
     }
