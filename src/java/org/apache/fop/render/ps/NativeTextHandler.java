@@ -160,19 +160,7 @@ public class NativeTextHandler implements PSTextHandler {
     }
 
     private Font createFont(java.awt.Font f) {
-        String fontFamily = f.getFamily();
-        if (fontFamily.equals("sanserif")) {
-            fontFamily = "sans-serif";
-        }
-        int fontSize = 1000 * f.getSize();
-        String style = f.isItalic() ? "italic" : "normal";
-        int weight = f.isBold() ? Font.WEIGHT_BOLD : Font.WEIGHT_NORMAL;
-
-        FontTriplet triplet = fontInfo.findAdjustWeight(fontFamily, style, weight);
-        if (triplet == null) {
-            triplet = fontInfo.findAdjustWeight("sans-serif", style, weight);
-        }
-        return fontInfo.getFontInstance(triplet, fontSize);
+        return fontInfo.getFontInstanceForAWTFont(f);
     }
 
     private void establishCurrentFont() throws IOException {
