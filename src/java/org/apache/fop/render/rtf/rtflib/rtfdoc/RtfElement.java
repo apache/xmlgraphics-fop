@@ -299,7 +299,7 @@ public abstract class RtfElement {
     /** find the first parent where c.isAssignableFrom(parent.getClass()) is true
      *  @return null if not found
      */
-    RtfElement getParentOfClass(Class c) {
+    public RtfElement getParentOfClass(Class c) {
         RtfElement result = null;
         RtfElement current = this;
         while (current.parent != null) {
