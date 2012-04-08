@@ -166,7 +166,7 @@ public class NativeTextHandler implements PSTextHandler {
         if ((currentFontName != this.font.getFontName())
                 || (currentFontSize != this.font.getFontSize())) {
             PSGenerator gen = getPSGenerator();
-            gen.writeln(this.font.getFontName() + " "
+            gen.writeln("/" + this.font.getFontTriplet().getName() + " "
                     + gen.formatDouble(font.getFontSize() / 1000f) + " F");
             currentFontName = this.font.getFontName();
             currentFontSize = this.font.getFontSize();
