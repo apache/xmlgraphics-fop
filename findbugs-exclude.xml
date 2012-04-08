@@ -189,63 +189,8 @@
    </Match>
    <!-- Automatically generated list of exclusions -->
    <Match>
-      <Class name="org.apache.fop.area.BodyRegion"/>
-      <Method name="clone"/>
-      <Bug pattern="CN_IDIOM_NO_SUPER_CALL"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.area.Page"/>
-      <Method name="clone"/>
-      <Bug pattern="CN_IDIOM_NO_SUPER_CALL"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.area.PageViewport"/>
-      <Method name="clone"/>
-      <Bug pattern="CN_IDIOM_NO_SUPER_CALL"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.area.RegionReference"/>
-      <Method name="clone"/>
-      <Bug pattern="CN_IDIOM_NO_SUPER_CALL"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.area.BodyRegion"/>
-      <!--Neither method nor field-->
-      <Bug pattern="CN_IDIOM_NO_SUPER_CALL"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.area.RegionViewport"/>
-      <Method name="clone"/>
-      <Bug pattern="CN_IDIOM_NO_SUPER_CALL"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.hyphenation.CharVector"/>
-      <Method name="clone"/>
-      <Bug pattern="CN_IDIOM_NO_SUPER_CALL"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.hyphenation.TernaryTree"/>
-      <Method name="clone"/>
-      <Bug pattern="CN_IDIOM_NO_SUPER_CALL"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.hyphenation.HyphenationTree"/>
-      <!--Neither method nor field-->
-      <Bug pattern="CN_IDIOM_NO_SUPER_CALL"/>
-   </Match>
-   <Match>
       <Class name="org.apache.fop.render.intermediate.IFGraphicContext"/>
       <Method name="clone"/>
-      <Bug pattern="CN_IDIOM_NO_SUPER_CALL"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAttributes"/>
-      <Method name="clone"/>
-      <Bug pattern="CN_IDIOM_NO_SUPER_CALL"/>
-   </Match>
-   <Match>
-      <Class name="org.apache.fop.render.rtf.FOPRtfAttributes"/>
-      <!--Neither method nor field-->
       <Bug pattern="CN_IDIOM_NO_SUPER_CALL"/>
    </Match>
    <Match>
@@ -4390,11 +4335,6 @@
    </Match>
    <Match>
       <Class name="org.apache.fop.afp.AFPPaintingState"/>
-      <!--Neither method nor field-->
-      <Bug pattern="RI_REDUNDANT_INTERFACES"/>
-   </Match>
-   <Match>
-      <Class name="java.lang.Cloneable"/>
       <!--Neither method nor field-->
       <Bug pattern="RI_REDUNDANT_INTERFACES"/>
    </Match>

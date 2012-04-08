@@ -54,7 +54,7 @@ import static org.apache.fop.fo.Constants.FO_REGION_START;
  * The page is cloneable so the page master can make copies of
  * the top level page and regions.
  */
-public class Page extends AreaTreeObject implements Serializable, Cloneable {
+public class Page extends AreaTreeObject implements Serializable {
 
     private static final long serialVersionUID = 6272157047421543866L;
 
@@ -72,10 +72,9 @@ public class Page extends AreaTreeObject implements Serializable, Cloneable {
     private boolean fakeNonEmpty = false;
 
     /**
-     *  Empty constructor, for cloning
+     *  Empty constructor
      */
-    public Page() {
-    }
+    public Page() { }
 
     /**
      * Constructor
@@ -258,14 +257,9 @@ public class Page extends AreaTreeObject implements Serializable, Cloneable {
         }
     }
 
-    /**
-     * Clone this page.
-     * This returns a new page with a clone of all the regions.
-     *
-     * @return a new clone of this page
-     */
-    public Object clone() {
-        Page p = new Page();
+    /** {@inheritDoc} */
+    public Object clone() throws CloneNotSupportedException {
+        Page p = (Page) super.clone();
         if (regionBefore != null) {
             p.regionBefore = (RegionViewport)regionBefore.clone();
         }

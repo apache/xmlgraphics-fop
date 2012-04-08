@@ -39,8 +39,8 @@ import org.xml.sax.helpers.AttributesImpl;
  * <p>This work was authored by Bertrand Delacretaz (bdelacretaz@codeconsult.ch).</p>
  */
 
-public class RtfAttributes
-implements java.lang.Cloneable {
+public class RtfAttributes implements Cloneable {
+
     private HashMap values = new HashMap();
 
     /**
@@ -108,12 +108,9 @@ implements java.lang.Cloneable {
         return values.toString() + "(" + super.toString() + ")";
     }
 
-    /**
-     * implement cloning
-     * @return cloned Object
-     */
-    public Object clone() {
-        final RtfAttributes result = new RtfAttributes();
+    /** {@inheritDoc} */
+    public Object clone() throws CloneNotSupportedException {
+        RtfAttributes result = (RtfAttributes) super.clone();
         result.values = (HashMap)values.clone();
 
         // Added by Normand Masse

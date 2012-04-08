@@ -21,6 +21,7 @@ package org.apache.fop.area;
 
 import java.io.Serializable;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -116,9 +117,9 @@ public class Area extends AreaTreeObject implements Serializable {
     protected int bidiLevel = -1;
 
     /**
-     * Traits for this area stored in a HashMap
+     * Traits for this area.
      */
-    protected transient Map<Integer, Object> traits = null;
+    protected TreeMap<Integer, Object> traits;
 
     /**
      * logging instance
@@ -132,6 +133,15 @@ public class Area extends AreaTreeObject implements Serializable {
      */
     public int getAreaClass() {
         return this.areaClass;
+    }
+
+    /** {@inheritDoc} */
+    public Object clone() throws CloneNotSupportedException {
+        Area area = (Area) super.clone();
+        if (traits != null) {
+            area.traits = (TreeMap<Integer, Object>) traits.clone();
+        }
+        return area;
     }
 
     /**
@@ -390,10 +400,9 @@ public class Area extends AreaTreeObject implements Serializable {
      * @param prop the value of the trait
      */
     public void addTrait(Integer traitCode, Object prop) {
-        // use treemap instead of hashmap since the typical number
-        // of traits are less than four
+        // use treemap since the typical number of traits are less than four
         if (traits == null) {
-            traits = new java.util.TreeMap<Integer, Object>();
+            traits = new TreeMap<Integer, Object>();
         }
         traits.put(traitCode, prop);
     }
@@ -405,7 +414,7 @@ public class Area extends AreaTreeObject implements Serializable {
      */
     public void setTraits ( Map traits ) {
         if ( traits != null ) {
-            this.traits = new java.util.TreeMap ( traits );
+            this.traits = new TreeMap<Integer, Object>( traits );
         } else {
             this.traits = null;
         }

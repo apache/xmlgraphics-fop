@@ -29,7 +29,7 @@ import org.apache.fop.fo.pagination.Region;
  * This area is the direct child of a region-viewport-area. It is cloneable
  * so the page master can make copies from the original page and regions.
  */
-public class RegionReference extends Area implements Cloneable {
+public class RegionReference extends Area {
 
     private static final long serialVersionUID = -298980963268244238L;
 
@@ -134,17 +134,10 @@ public class RegionReference extends Area implements Cloneable {
         addChildArea(block);
     }
 
-    /**
-     * Clone this region.
-     * This is used when cloning the page by the page master.
-     *
-     * @return a copy of this region reference area
-     */
-    public Object clone() {
-        RegionReference rr = new RegionReference(regionClass, regionName, regionViewport);
-        rr.ctm = ctm;
-        rr.setIPD(getIPD());
-        rr.blocks = (ArrayList<Area>)blocks.clone();
+    /** {@inheritDoc} */
+    public Object clone() throws CloneNotSupportedException {
+        RegionReference rr = (RegionReference) super.clone();
+        rr.blocks = (ArrayList) blocks.clone();
         return rr;
     }
 
