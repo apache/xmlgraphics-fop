@@ -76,20 +76,26 @@ public final class PropertyCache<T> {
      * (case insensitive).
      */
     public PropertyCache() {
-        this.useCache = Boolean.valueOf(
-                System.getProperty("org.apache.fop.fo.properties.use-cache", "true"))
-                .booleanValue();
-        if (useCache) {
-            map = new ConcurrentHashMap<Integer, WeakReference<T>>();
-            putCounter = new AtomicInteger();
-            cleanupLock = new ReentrantLock();
-            hashCodeCollisionCounter = new AtomicInteger();
-        } else {
-            map = null;
-            putCounter = null;
-            cleanupLock = null;
-            hashCodeCollisionCounter = null;
+        boolean useCache;
+        try {
+            useCache = Boolean.valueOf(
+                    System.getProperty("org.apache.fop.fo.properties.use-cache", "true"))
+                    .booleanValue();
+        } catch ( SecurityException e ) {
+            useCache = false;
         }
+        if ( useCache ) {
+            this.map = new ConcurrentHashMap<Integer, WeakReference<T>>();
+            this.putCounter = new AtomicInteger();
+            this.cleanupLock = new ReentrantLock();
+            this.hashCodeCollisionCounter = new AtomicInteger();
+        } else {
+            this.map = null;
+            this.putCounter = null;
+            this.cleanupLock = null;
+            this.hashCodeCollisionCounter = null;
+        }
+        this.useCache = useCache;
     }
 
     /**
