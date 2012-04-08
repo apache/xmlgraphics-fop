@@ -82,7 +82,9 @@ public final class PropertyCache<T> {
                     System.getProperty("org.apache.fop.fo.properties.use-cache", "true"))
                     .booleanValue();
         } catch ( SecurityException e ) {
-            useCache = false;
+            useCache = true;
+            LOG.info("Unable to access org.apache.fop.fo.properties.use-cache"
+                   + " due to security restriction; defaulting to 'true'.");
         }
         if ( useCache ) {
             this.map = new ConcurrentHashMap<Integer, WeakReference<T>>();
