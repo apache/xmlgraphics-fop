@@ -30,6 +30,8 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Iterator;
 
+import org.apache.fop.apps.FOPException;
+
 /**
  * <p>Container for RtfTableCell elements.</p>
  *
@@ -106,15 +108,20 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
      * @param cellWidth width of new cell
      * @return new RtfTableCell
      * @throws IOException for I/O problems
+     * @throws FOPException if attributes cannot be cloned
      */
     public RtfTableCell newTableCellMergedHorizontally (int cellWidth,
-           RtfAttributes attrs) throws IOException {
+           RtfAttributes attrs) throws IOException, FOPException {
         highestCell++;
         // Added by Normand Masse
         // Inherit attributes from base cell for merge
         RtfAttributes wAttributes = null;
         if (attrs != null) {
-            wAttributes = (RtfAttributes)attrs.clone();
+            try {
+                wAttributes = (RtfAttributes)attrs.clone();
+            } catch (CloneNotSupportedException e) {
+                throw new FOPException(e);
+            }
         }
 
         cell = new RtfTableCell(this, writer, cellWidth, wAttributes, highestCell);

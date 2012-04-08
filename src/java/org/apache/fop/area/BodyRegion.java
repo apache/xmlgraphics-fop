@@ -151,19 +151,11 @@ public class BodyRegion extends RegionReference {
         }
     }
 
-    /**
-     * Clone this object.
-     *
-     * @return a shallow copy of this object
-     */
-    public Object clone() {
-        BodyRegion br = new BodyRegion(getRegionClass(), getRegionName(), regionViewport,
-                getColumnCount(), getColumnGap());
-        br.setCTM(getCTM());
-        br.setIPD(getIPD());
-        br.beforeFloat = beforeFloat;
-        br.mainReference = mainReference;
-        br.footnote = footnote;
+    /** {@inheritDoc} */
+    public Object clone() throws CloneNotSupportedException {
+        BodyRegion br = (BodyRegion) super.clone();
+        br.mainReference = new MainReference(br);
         return br;
     }
+
 }
