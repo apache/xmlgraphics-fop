@@ -62,6 +62,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Code" dev="GA" type="fix" fixes-bug="51007" due-to="Max Aster">
+        RTF tables do not support percent column-widths.
+      </action>
       <action context="Code" dev="GA" type="fix" fixes-bug="50435" due-to="Armin Haaf">
         Access denied (java.util.PropertyPermission org.apache.fop.fo.properties.use-cache read).
       </action>
