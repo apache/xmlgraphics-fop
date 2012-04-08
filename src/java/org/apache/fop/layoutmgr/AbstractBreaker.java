@@ -752,7 +752,7 @@ public abstract class AbstractBreaker {
         Position positionAtBreak = elementAtBreak.getPosition();
         if (!(positionAtBreak instanceof SpaceResolver.SpaceHandlingBreakPosition)) {
             throw new UnsupportedOperationException(
-                    "Don't know how to restart at position" + positionAtBreak);
+                    "Don't know how to restart at position " + positionAtBreak);
         }
         /* Retrieve the original position wrapped into this space position */
         positionAtBreak = positionAtBreak.getPosition();
