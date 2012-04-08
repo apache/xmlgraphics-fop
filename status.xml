@@ -62,6 +62,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Code" dev="GA" type="fix" fixes-bug="50901" due-to="Carsten Pfeiffer">
+        RTF percentage table column width not calculated from table.
+      </action>
       <action context="Code" dev="GA" type="fix" fixes-bug="51009" due-to="Max Aster">
         RTF generates unexpected lines for blocks in tables. Also fix three findbugs issues.
       </action>

@@ -29,6 +29,7 @@ import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.flow.table.Table;
+import org.apache.fop.fo.flow.table.TableColumn;
 import org.apache.fop.fo.pagination.PageSequence;
 
 /**
@@ -59,6 +60,13 @@ public class PercentContext implements PercentBaseContext {
         if (fobj == null) {
             return 0;
         }
+
+        // Special handler for TableColumn width specifications, needs to be
+        // relative to the parent!
+        if ( ( fobj instanceof TableColumn ) && ( fobj.getParent() instanceof FObj ) ) {
+            fobj = (FObj) fobj.getParent();
+        }
+
         switch (lengthBase) {
         case LengthBase.CONTAINING_BLOCK_WIDTH:
         case LengthBase.PARENT_AREA_WIDTH:
