@@ -23,6 +23,7 @@ import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.TreeMap;
 
 import org.apache.fop.traits.WritingModeTraitsGetter;
 
@@ -108,7 +109,7 @@ public class RegionViewport extends Area implements Cloneable, Viewport {
         out.writeFloat((float) viewArea.getWidth());
         out.writeFloat((float) viewArea.getHeight());
         out.writeBoolean(clip);
-        out.writeObject(traits);
+        out.writeObject((TreeMap)traits);
         out.writeObject(regionReference);
     }
 
@@ -117,7 +118,7 @@ public class RegionViewport extends Area implements Cloneable, Viewport {
         viewArea = new Rectangle2D.Float(in.readFloat(), in.readFloat(),
                                          in.readFloat(), in.readFloat());
         clip = in.readBoolean();
-        traits = (HashMap)in.readObject();
+        traits = (TreeMap)in.readObject();
         setRegionReference((RegionReference) in.readObject());
     }
 
@@ -131,7 +132,7 @@ public class RegionViewport extends Area implements Cloneable, Viewport {
         RegionViewport rv = new RegionViewport((Rectangle2D)viewArea.clone());
         rv.regionReference = (RegionReference)regionReference.clone();
         if (traits != null) {
-            rv.traits = new HashMap(traits);
+            rv.traits = new TreeMap(traits);
         }
         if (foreignAttributes != null) {
             rv.foreignAttributes = new HashMap(foreignAttributes);

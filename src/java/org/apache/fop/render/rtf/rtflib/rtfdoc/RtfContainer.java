@@ -112,6 +112,30 @@ public class RtfContainer extends RtfElement {
         return children.size();
     }
 
+    private int findChildren(RtfElement aChild, int iStart) {
+        for (Iterator it = this.getChildren().iterator(); it.hasNext();) {
+          final RtfElement e = (RtfElement)it.next();
+          if (aChild == e) {
+              return iStart;
+          } else if (e instanceof RtfContainer) {
+              int iFound = ((RtfContainer)e).findChildren(aChild, (iStart + 1));
+              if (iFound != -1) {
+                  return iFound;
+              }
+          }
+        }
+        return -1;
+    }
+
+    /**
+     * Find the passed child in the current container
+     * @param aChild the child element
+     * @return the depth (nested level) inside the current container
+     */
+    public int findChildren(RtfElement aChild) {
+        return findChildren(aChild, 0);
+    }
+
     /**
      * Add by Boris Poudérous on 07/22/2002
      * Set the children list
