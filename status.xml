@@ -62,7 +62,10 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
-      <action context="Code" dev="GA" type="fix" fixes-bug="52966" due-to="Lusi Bernardo">
+      <action context="Code" dev="GA" type="fix" fixes-bug="49754" due-to="Simon Pepping">
+        Bring clone() in line with the recommendations in Object.clone().
+      </action>
+      <action context="Code" dev="GA" type="fix" fixes-bug="52966" due-to="Luis Bernardo">
         How to use native text with EPSDocumentGraphics2D.
       </action>
       <action context="Code" dev="GA" type="fix" fixes-bug="51599" due-to="Paul Huemer">
