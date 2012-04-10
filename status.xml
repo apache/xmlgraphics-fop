@@ -62,6 +62,10 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Code" dev="MH" type="fix">
+        Bug in AFP font metrics that performed integer arithmetic when it should have been
+	double arithemetic.
+      </action>
       <action context="Code" dev="GA" type="fix" fixes-bug="49754" due-to="Simon Pepping">
         Bring clone() in line with the recommendations in Object.clone().
       </action>
