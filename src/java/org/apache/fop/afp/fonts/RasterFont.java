@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -39,9 +40,8 @@ public class RasterFont extends AFPFont {
     /** Static logging instance */
     protected static final Log LOG = LogFactory.getLog("org.apache.fop.afp.fonts");
 
-    private final SortedMap/*<Integer,CharacterSet>*/ charSets
-            = new java.util.TreeMap/*<Integer,CharacterSet>*/();
-    private Map/*<Integer,CharacterSet>*/ substitutionCharSets;
+    private final SortedMap<Integer, CharacterSet> charSets = new TreeMap<Integer, CharacterSet>();
+    private Map<Integer, CharacterSet> substitutionCharSets;
 
     private CharacterSet charSet = null;
 
@@ -92,8 +92,8 @@ public class RasterFont extends AFPFont {
             // No match or substitution found, but there exist entries
             // for other sizes
             // Get char set with nearest, smallest font size
-            SortedMap smallerSizes = charSets.headMap(requestedSize);
-            SortedMap largerSizes = charSets.tailMap(requestedSize);
+            SortedMap<Integer, CharacterSet> smallerSizes = charSets.headMap(requestedSize);
+            SortedMap<Integer, CharacterSet> largerSizes = charSets.tailMap(requestedSize);
             int smallerSize = smallerSizes.isEmpty() ? 0
                     : ((Integer)smallerSizes.lastKey()).intValue();
             int largerSize = largerSizes.isEmpty() ? Integer.MAX_VALUE
@@ -112,7 +112,7 @@ public class RasterFont extends AFPFont {
                 // Add the substitute mapping, so subsequent calls will
                 // find it immediately
                 if (substitutionCharSets == null) {
-                    substitutionCharSets = new HashMap();
+                    substitutionCharSets = new HashMap<Integer, CharacterSet>();
                 }
                 substitutionCharSets.put(requestedSize, csm);
                 // do not output the warning if the font size is closer to an integer less than 0.1
@@ -140,9 +140,9 @@ public class RasterFont extends AFPFont {
      * @return the first character in this font.
      */
     public int getFirstChar() {
-        Iterator it = charSets.values().iterator();
+        Iterator<CharacterSet> it = charSets.values().iterator();
         if (it.hasNext()) {
-            CharacterSet csm = (CharacterSet) it.next();
+            CharacterSet csm = it.next();
             return csm.getFirstChar();
         } else {
             String msg = "getFirstChar() - No character set found for font:" + getFontName();
@@ -157,9 +157,9 @@ public class RasterFont extends AFPFont {
      */
     public int getLastChar() {
 
-        Iterator it = charSets.values().iterator();
+        Iterator<CharacterSet> it = charSets.values().iterator();
         if (it.hasNext()) {
-            CharacterSet csm = (CharacterSet) it.next();
+            CharacterSet csm = it.next();
             return csm.getLastChar();
         } else {
             String msg = "getLastChar() - No character set found for font:" + getFontName();

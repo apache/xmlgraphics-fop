@@ -285,12 +285,12 @@ public abstract class CharacterSetBuilder {
                 CharacterSetOrientation[] characterSetOrientations
                     = processFontOrientation(structuredFieldReader);
 
-                int metricNormalizationFactor;
+                double metricNormalizationFactor;
                 if (fontControl.isRelative()) {
                     metricNormalizationFactor = 1;
                 } else {
                     int dpi = fontControl.getDpi();
-                    metricNormalizationFactor = 1000 * 72000
+                    metricNormalizationFactor = 1000.0d * 72000.0d
                         / fontDescriptor.getNominalFontSizeInMillipoints() / dpi;
                 }
 
