@@ -5,7 +5,7 @@
   <taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml">
     <classpath location="${jacocoant.jar}"/>
   </taskdef>
-  <target name="test-coverage" depends="junit-compile, setup-xml-schema">
+  <target name="test-coverage" depends="junit-compile">
     <jacoco:coverage destfile="${jacoco.report.dir}/jacoco.exec">
       <junit dir="${basedir}" haltonfailure="yes" fork="on" forkmode="once">
         <sysproperty key="jawa.awt.headless" value="true"/>
