@@ -62,6 +62,10 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Code" dev="GA" type="fix" fixes-bug="53065">
+        Restore lookup on Event message lookup field part. Add locale field to Event to
+        enable locale dependent deferred bundle load during lookup field part substitution.
+      </action>
       <action context="Code" dev="MH" type="fix">
         Bug in AFP font metrics that performed integer arithmetic when it should have been
 	double arithemetic.
