@@ -90,6 +90,30 @@ public interface AFPCustomizable {
     void setResolution(int resolution);
 
     /**
+     * Sets whether FS11 and FS45 non-inline images should be wrapped in a page segment
+     * @param pSeg true iff images should be wrapped
+     */
+    void setWrapPSeg(boolean pSeg);
+
+    /**
+     * set true if images should be FS45
+     * @param fs45 true iff images should be FS45
+     */
+    void setFS45(boolean fs45);
+
+    /**
+     * gets whether FS11 and FS45 non-inline images should be wrapped in a page segment
+     * @return true iff images should be wrapped
+     */
+    boolean getWrapPSeg();
+
+    /**
+     * gets whether images should be FS45
+     * @return true iff images should be FS45
+     */
+    boolean getFS45();
+
+    /**
      * Returns the output/device resolution.
      *
      * @return the resolution in dpi

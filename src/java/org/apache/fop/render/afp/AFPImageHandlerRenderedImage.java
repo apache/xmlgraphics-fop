@@ -149,6 +149,25 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler implements Ima
 
     private static final class RenderedImageEncoder {
 
+        private enum FunctionSet {
+
+            FS10(MimeConstants.MIME_AFP_IOCA_FS10),
+            FS11(MimeConstants.MIME_AFP_IOCA_FS11),
+            FS45(MimeConstants.MIME_AFP_IOCA_FS45);
+
+            private String mimeType;
+
+            FunctionSet(String mimeType) {
+                this.mimeType  = mimeType;
+            }
+
+            private String getMimeType() {
+                return mimeType;
+            }
+        };
+
+
+
         private ImageRendered imageRendered;
         private Dimension targetSize;
 
@@ -223,7 +242,7 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler implements Ima
                 throws IOException {
 
             RenderedImage renderedImage = imageRendered.getRenderedImage();
-            int functionSet = useFS10 ? 10 : 11;
+            FunctionSet functionSet = useFS10 ? FunctionSet.FS10 : FunctionSet.FS11;
 
             if (usePageSegments) {
                 assert resampledDim != null;
@@ -285,7 +304,7 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler implements Ima
                     log.debug("Encoding image directly...");
                     imageObjectInfo.setBitsPerPixel(encodedColorModel.getPixelSize());
                     if (pixelSize == 32) {
-                        functionSet = 45; //IOCA FS45 required for CMYK
+                        functionSet = FunctionSet.FS45; //IOCA FS45 required for CMYK
                     }
 
                     //Lossy or loss-less?
@@ -315,23 +334,17 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler implements Ima
                 log.debug("Encoding image via RGB...");
                 imageData = encodeViaRGB(renderedImage, imageObjectInfo, paintingState, baos);
             }
-
-            switch (functionSet) {
-            case 10:
-                imageObjectInfo.setMimeType(MimeConstants.MIME_AFP_IOCA_FS10);
-                break;
-            case 11:
-                imageObjectInfo.setMimeType(MimeConstants.MIME_AFP_IOCA_FS11);
-                break;
-            case 45:
-                imageObjectInfo.setMimeType(MimeConstants.MIME_AFP_IOCA_FS45);
-                break;
-            default:
-                throw new IllegalStateException("Invalid IOCA function set: " + functionSet);
+            // Should image be FS45?
+            if (paintingState.getFS45()) {
+                functionSet = FunctionSet.FS45;
             }
-
+            //Wrapping 300+ resolution FS11 IOCA in a page segment is apparently necessary(?)
+            imageObjectInfo.setCreatePageSegment(
+                    (functionSet.equals(FunctionSet.FS11) || functionSet.equals(FunctionSet.FS45))
+                    && paintingState.getWrapPSeg()
+            );
+            imageObjectInfo.setMimeType(functionSet.getMimeType());
             imageObjectInfo.setData(imageData);
-
             return imageObjectInfo;
         }
 
