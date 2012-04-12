@@ -1319,6 +1319,7 @@ Note that the value of the encoding attribute in the example is the double-byte 
     a quick-and-dirty view of the document text. The renderer is very limited,
     so do not be surprised if it gives unsatisfactory results.
   </p>
+  <!-- OBSOLETE  OBSOLETE  OBSOLETE 
   <p>
     The Text renderer works with a fixed size page buffer. The size of this
     buffer is controlled with the textCPI and textLPI public variables.
@@ -1329,6 +1330,7 @@ Note that the value of the encoding attribute in the example is the double-byte 
     Graphic elements (lines, borders, etc) are assigned a lower priority
     than text, so text will overwrite any graphic element representations.
   </p>
+  -->
   <p>
     Because FOP lays the text onto a grid during layout, there are frequently 
     extra or missing spaces between characters and lines, which is generally 
