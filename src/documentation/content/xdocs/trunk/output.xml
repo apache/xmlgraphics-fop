@@ -797,6 +797,17 @@ Note that the value of the encoding attribute in the example is the double-byte 
         <source><![CDATA[
       <images mode="b+w" bits-per-pixel="1" dithering-quality="maximum"/>]]></source>
         <p>
+          When the boolean attribute pseg (default false) is set to true, non-inline FS11 and FS45 IOCA images are wrapped in page segment.
+          This option is provided to support printers/print servers that require this MO:DCA structure. 
+        </p>
+        <source><![CDATA[
+      <images mode="b+w" bits-per-pixel="8" pseg="true"/>]]></source>
+        <p>
+          Setting the boolean attribute fs45 to true (default false) will force all images to FS45.
+        </p>
+        <source><![CDATA[
+      <images mode="b+w" bits-per-pixel="8" fs45="true"/>]]></source>
+        <p>
           By default, JPEG images are rasterized to a bitmap and the bitmap is included in the AFP doc.
           However it is possible to encode in a lossless way to maintain maximum quality. But due
           to lack of support for compression schemes like LZW (patent concerns), bitmap data is currently

@@ -62,6 +62,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Code" dev="PH" type="add" fixes-bug="49893">
+        A global setting to wrap F11 images in page segments.
+    </action>
       <action context="Code" dev="GA" type="fix" fixes-bug="52763">
         Support list-block in marker, thus preventing NPE.
       </action>
