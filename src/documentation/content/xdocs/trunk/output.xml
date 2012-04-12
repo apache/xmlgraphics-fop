@@ -1337,8 +1337,8 @@ Note that the value of the encoding attribute in the example is the double-byte 
   </p>
   <ul>
     <li>font-family="Courier"</li>
-    <li>font-size="7.3pt"</li>
-    <li>line-height="10.5pt"</li>
+    <li>font-size="10pt"</li>
+    <li>line-height="10pt"</li>
   </ul>
 </section>
 <section id="sandbox">
