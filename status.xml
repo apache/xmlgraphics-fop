@@ -65,8 +65,8 @@
       <action context="Code" dev="GA" type="fix" fixes-bug="52114">
         Take leading derived space before/after into account when computing rows for TXT renderer.
       </action>
-      <action context="Code" dev="GA" type="fix" fixes-bug="52763">
-        Support list-block in marker, thus preventing NPE.
+      <action context="Code" dev="PH" type="add" fixes-bug="49893">
+        A global setting to wrap F11 images in page segments.
       </action>
       <action context="Code" dev="GA" type="fix" fixes-bug="52763">
         Support list-block in marker, thus preventing NPE.
@@ -362,9 +362,9 @@
         Bugfix: fix performance issue when adding nodes, if the number of children
         is significantly large.
       </action>
-	  <action context="Config" dev="SP" type="fix">
-		Bugfix: relative URIs in the configuration file (base, font-base, hyphenation-base) are evaluated relative to the base URI of the configuration file.
-	  </action>
+      <action context="Config" dev="SP" type="fix">
+	Bugfix: relative URIs in the configuration file (base, font-base, hyphenation-base) are evaluated relative to the base URI of the configuration file.
+      </action>
       <action context="Layout" dev="AD" type="fix" fixes-bug="49848">
         Bugfix: correct behavior of keep-together.within-line in case there are nested inlines
       </action>
