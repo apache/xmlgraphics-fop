@@ -1063,6 +1063,9 @@ public class PDFFactory {
         } else if (targetLo.startsWith("http://")) {
             // HTTP URL?
             return new PDFUri(target);
+        } else if (targetLo.startsWith("https://")) {
+            // HTTPS URL?
+            return new PDFUri(target);
         } else if (targetLo.startsWith("file://")) {
             // Non PDF files. Try to /Launch them.
             target = target.substring("file://".length());

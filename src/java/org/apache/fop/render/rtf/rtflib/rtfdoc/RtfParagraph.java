@@ -30,6 +30,8 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
 
+import org.apache.fop.apps.FOPException;
+
 /**
  * <p>Model of an RTF paragraph, which can contain RTF text elements.</p>
  *
@@ -93,12 +95,17 @@ implements IRtfTextContainer, IRtfPageBreakContainer, IRtfHyperLinkContainer,
     /**
      * IRtfTextContainer requirement: return a copy of our attributes
      * @return a copy of this paragraphs attributes
+     * @throws FOPException if attributes cannot be cloned
      */
-    public RtfAttributes getTextContainerAttributes() {
+    public RtfAttributes getTextContainerAttributes() throws FOPException {
         if (attrib == null) {
             return null;
         }
-        return (RtfAttributes)this.attrib.clone();
+        try {
+            return (RtfAttributes)this.attrib.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new FOPException(e);
+        }
     }
 
     /**

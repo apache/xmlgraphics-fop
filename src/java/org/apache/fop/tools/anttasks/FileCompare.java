@@ -126,7 +126,7 @@ public class FileCompare {
      */
     private static boolean compareFileSize(File oldFile, File newFile) {
         return oldFile.length() == newFile.length();
-    }    // end: compareBytes
+    }
 
     private boolean filesExist(File oldFile, File newFile) {
         if (!oldFile.exists()) {

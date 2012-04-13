@@ -267,10 +267,15 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
      * @param pageViewport the <code>PageViewport</code> object supplied by
      * the Area Tree
      * @throws IOException In case of an I/O error
+     * @throws FOPException if cloning of pageViewport is not supported
      * @see org.apache.fop.render.Renderer
      */
-    public void renderPage(PageViewport pageViewport) throws IOException {
-        rememberPage((PageViewport)pageViewport.clone());
+    public void renderPage(PageViewport pageViewport) throws IOException, FOPException {
+        try {
+            rememberPage((PageViewport)pageViewport.clone());
+        } catch (CloneNotSupportedException e) {
+            throw new FOPException(e);
+        }
         //The clone() call is necessary as we store the page for later. Otherwise, the
         //RenderPagesModel calls PageViewport.clear() to release memory as early as possible.
         currentPageNumber++;

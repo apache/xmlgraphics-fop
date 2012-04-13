@@ -19,7 +19,9 @@
 
 package org.apache.fop.area;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,13 +32,25 @@ import org.apache.fop.fo.extensions.ExtensionAttachment;
 /**
  * Abstract base class for all area tree objects.
  */
-public abstract class AreaTreeObject {
+public abstract class AreaTreeObject implements Cloneable {
 
     /** Foreign attributes */
     protected Map<QName, String> foreignAttributes = null;
 
     /** Extension attachments */
     protected List<ExtensionAttachment> extensionAttachments = null;
+
+    /** {@inheritDoc} */
+    public Object clone() throws CloneNotSupportedException {
+        AreaTreeObject ato = (AreaTreeObject) super.clone();
+        if (foreignAttributes != null) {
+            ato.foreignAttributes = (Map) ((HashMap) foreignAttributes).clone();
+        }
+        if (extensionAttachments != null) {
+            ato.extensionAttachments = (List) ((ArrayList) extensionAttachments).clone();
+        }
+        return ato;
+    }
 
     /**
      * Sets a foreign attribute.
@@ -45,7 +59,7 @@ public abstract class AreaTreeObject {
      */
     public void setForeignAttribute(QName name, String value) {
         if (this.foreignAttributes == null) {
-            this.foreignAttributes = new java.util.HashMap<QName, String>();
+            this.foreignAttributes = new HashMap<QName, String>();
         }
         this.foreignAttributes.put(name, value);
     }
@@ -88,7 +102,7 @@ public abstract class AreaTreeObject {
 
     private void prepareExtensionAttachmentContainer() {
         if (this.extensionAttachments == null) {
-            this.extensionAttachments = new java.util.ArrayList<ExtensionAttachment>();
+            this.extensionAttachments = new ArrayList<ExtensionAttachment>();
         }
     }
 

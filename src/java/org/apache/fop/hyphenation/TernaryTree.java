@@ -48,7 +48,7 @@ import java.util.Stack;
  * patterns which will be keys in this tree. The strings patterns
  * are usually small (from 2 to 5 characters), but each char in the
  * tree is stored in a node. Thus memory usage is the main concern.
- * We will sacrify 'elegance' to keep memory requirenments to the
+ * We will sacrify 'elegance' to keep memory requirements to the
  * minimum. Using java's char type as pointer (yes, I know pointer
  * it is a forbidden word in java) we can keep the size of the node
  * to be just 8 bytes (3 pointers and the data char). This gives
@@ -406,16 +406,13 @@ public class TernaryTree implements Cloneable, Serializable {
     }
 
     /** {@inheritDoc} */
-    public Object clone() {
-        TernaryTree t = new TernaryTree();
+    public Object clone() throws CloneNotSupportedException {
+        TernaryTree t = (TernaryTree) super.clone();
         t.lo = (char[])this.lo.clone();
         t.hi = (char[])this.hi.clone();
         t.eq = (char[])this.eq.clone();
         t.sc = (char[])this.sc.clone();
         t.kv = (CharVector)this.kv.clone();
-        t.root = this.root;
-        t.freenode = this.freenode;
-        t.length = this.length;
 
         return t;
     }

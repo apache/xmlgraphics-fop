@@ -29,6 +29,8 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
 import java.io.IOException;
 import java.io.Writer;
 
+import org.apache.fop.apps.FOPException;
+
 /**
  * <p>Creates an hyperlink.
  * This class belongs to the <fo:basic-link> tag processing.</p>
@@ -157,12 +159,17 @@ implements IRtfTextContainer,
     /**
      * IRtfTextContainer requirement:
      * @return a copy of our attributes
+     * @throws FOPException if attributes cannot be cloned
      */
-    public RtfAttributes getTextContainerAttributes() {
+    public RtfAttributes getTextContainerAttributes() throws FOPException {
         if (attrib == null) {
             return null;
         }
-        return (RtfAttributes) this.attrib.clone ();
+        try {
+            return (RtfAttributes) this.attrib.clone ();
+        } catch (CloneNotSupportedException e) {
+            throw new FOPException(e);
+        }
     }
 
 

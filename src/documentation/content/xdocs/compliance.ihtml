@@ -3842,10 +3842,10 @@
       "http://www.w3.org/TR/xsl/#page-height">&sect;7.27.13</a></td>
       <td><a name="fo-property-page-height" id="fo-property-page-height">page-height</a></td>
       <td class="basic">Basic</td>
-      <td class="yes">yes</td>
-      <td class="yes">yes</td>
-      <td class="yes">yes</td>
-      <td>&nbsp;</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td>value "indefinite" not yet supported</td>
     </tr>
     <tr>
       <td align="center"><a href=
@@ -3862,10 +3862,10 @@
       "http://www.w3.org/TR/xsl/#page-width">&sect;7.27.15</a></td>
       <td><a name="fo-property-page-width" id="fo-property-page-width">page-width</a></td>
       <td class="basic">Basic</td>
-      <td class="yes">yes</td>
-      <td class="yes">yes</td>
-      <td class="yes">yes</td>
-      <td>&nbsp;</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td>value "indefinite" not yet supported</td>
     </tr>
     <tr>
       <td align="center"><a href=

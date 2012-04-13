@@ -468,6 +468,26 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     }
 
     /** {@inheritDoc} */
+    public void setWrapPSeg(boolean pSeg) {
+        paintingState.setWrapPSeg(pSeg);
+    }
+
+    /** {@inheritDoc} */
+    public void setFS45(boolean fs45) {
+        paintingState.setFS45(fs45);
+    }
+
+    /** {@inheritDoc} */
+    public boolean getWrapPSeg() {
+        return  paintingState.getWrapPSeg();
+    }
+
+    /** {@inheritDoc} */
+    public boolean getFS45() {
+        return  paintingState.getFS45();
+    }
+
+    /** {@inheritDoc} */
     public void setDefaultResourceGroupFilePath(String filePath) {
         resourceManager.setDefaultResourceGroupFilePath(filePath);
     }
