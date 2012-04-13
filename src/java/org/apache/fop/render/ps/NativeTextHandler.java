@@ -31,7 +31,6 @@ import org.apache.xmlgraphics.ps.PSGenerator;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontSetup;
-import org.apache.fop.fonts.FontTriplet;
 
 /**
  * Specialized TextHandler implementation that the PSGraphics2D class delegates to to paint text
@@ -160,26 +159,14 @@ public class NativeTextHandler implements PSTextHandler {
     }
 
     private Font createFont(java.awt.Font f) {
-        String fontFamily = f.getFamily();
-        if (fontFamily.equals("sanserif")) {
-            fontFamily = "sans-serif";
-        }
-        int fontSize = 1000 * f.getSize();
-        String style = f.isItalic() ? "italic" : "normal";
-        int weight = f.isBold() ? Font.WEIGHT_BOLD : Font.WEIGHT_NORMAL;
-
-        FontTriplet triplet = fontInfo.findAdjustWeight(fontFamily, style, weight);
-        if (triplet == null) {
-            triplet = fontInfo.findAdjustWeight("sans-serif", style, weight);
-        }
-        return fontInfo.getFontInstance(triplet, fontSize);
+        return fontInfo.getFontInstanceForAWTFont(f);
     }
 
     private void establishCurrentFont() throws IOException {
         if ((currentFontName != this.font.getFontName())
                 || (currentFontSize != this.font.getFontSize())) {
             PSGenerator gen = getPSGenerator();
-            gen.writeln(this.font.getFontName() + " "
+            gen.writeln("/" + this.font.getFontTriplet().getName() + " "
                     + gen.formatDouble(font.getFontSize() / 1000f) + " F");
             currentFontName = this.font.getFontName();
             currentFontSize = this.font.getFontSize();

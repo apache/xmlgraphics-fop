@@ -119,6 +119,7 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfList;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfListItem;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfListItem.RtfListItemLabel;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfPage;
+import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfParagraphBreak;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfSection;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTable;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTableCell;
@@ -430,8 +431,14 @@ public class RTFHandler extends FOEventHandler {
                     true, this);
 
             RtfTextrun textrun = container.getTextrun();
+            RtfParagraphBreak par = textrun.addParagraphBreak();
 
-            textrun.addParagraphBreak();
+            RtfTableCell cellParent = (RtfTableCell)textrun.getParentOfClass(RtfTableCell.class);
+            if (cellParent != null && par != null) {
+                int iDepth = cellParent.findChildren(textrun);
+                cellParent.setLastParagraph(par, iDepth);
+            }
+
             int breakValue = toRtfBreakValue(bl.getBreakAfter());
             textrun.popBlockAttributes(breakValue);
 
@@ -877,6 +884,14 @@ public class RTFHandler extends FOEventHandler {
     public void endCell(TableCell tc) {
         if (bDefer) {
             return;
+        }
+        try {
+            RtfTableCell cell = (RtfTableCell)builderContext.getContainer(RtfTableCell.class, false, this);
+            cell.finish();
+
+        } catch (Exception e) {
+            log.error("endCell: " + e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
 
         builderContext.popContainer();

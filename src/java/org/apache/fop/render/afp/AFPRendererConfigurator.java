@@ -415,6 +415,14 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
         customizable.canEmbedJpeg(allowEmbedding);
         customizable.setBitmapEncodingQuality(ieq);
 
+        //FS11 and FS45 page segment wrapping
+        boolean pSeg = imagesCfg.getAttributeAsBoolean("pseg", false);
+        customizable.setWrapPSeg(pSeg);
+
+        //FS45 image forcing
+        boolean fs45 = imagesCfg.getAttributeAsBoolean("fs45", false);
+        customizable.setFS45(fs45);
+
         // shading (filled rectangles)
         Configuration shadingCfg = cfg.getChild("shading");
         AFPShadingMode shadingMode = AFPShadingMode.valueOf(

@@ -797,6 +797,17 @@ Note that the value of the encoding attribute in the example is the double-byte 
         <source><![CDATA[
       <images mode="b+w" bits-per-pixel="1" dithering-quality="maximum"/>]]></source>
         <p>
+          When the boolean attribute pseg (default false) is set to true, non-inline FS11 and FS45 IOCA images are wrapped in page segment.
+          This option is provided to support printers/print servers that require this MO:DCA structure. 
+        </p>
+        <source><![CDATA[
+      <images mode="b+w" bits-per-pixel="8" pseg="true"/>]]></source>
+        <p>
+          Setting the boolean attribute fs45 to true (default false) will force all images to FS45.
+        </p>
+        <source><![CDATA[
+      <images mode="b+w" bits-per-pixel="8" fs45="true"/>]]></source>
+        <p>
           By default, JPEG images are rasterized to a bitmap and the bitmap is included in the AFP doc.
           However it is possible to encode in a lossless way to maintain maximum quality. But due
           to lack of support for compression schemes like LZW (patent concerns), bitmap data is currently
@@ -1308,6 +1319,7 @@ Note that the value of the encoding attribute in the example is the double-byte 
     a quick-and-dirty view of the document text. The renderer is very limited,
     so do not be surprised if it gives unsatisfactory results.
   </p>
+  <!-- OBSOLETE  OBSOLETE  OBSOLETE 
   <p>
     The Text renderer works with a fixed size page buffer. The size of this
     buffer is controlled with the textCPI and textLPI public variables.
@@ -1318,6 +1330,7 @@ Note that the value of the encoding attribute in the example is the double-byte 
     Graphic elements (lines, borders, etc) are assigned a lower priority
     than text, so text will overwrite any graphic element representations.
   </p>
+  -->
   <p>
     Because FOP lays the text onto a grid during layout, there are frequently 
     extra or missing spaces between characters and lines, which is generally 
@@ -1326,8 +1339,8 @@ Note that the value of the encoding attribute in the example is the double-byte 
   </p>
   <ul>
     <li>font-family="Courier"</li>
-    <li>font-size="7.3pt"</li>
-    <li>line-height="10.5pt"</li>
+    <li>font-size="10pt"</li>
+    <li>line-height="10pt"</li>
   </ul>
 </section>
 <section id="sandbox">

@@ -48,6 +48,11 @@ public class RtfTableCell
     private boolean setCenter;
     private boolean setRight;
     private int id;
+    private RtfParagraphBreak lastBreak = null;
+    private int lastBreakDepth = Integer.MIN_VALUE;
+
+    private static final String TABLE_CELL_PARAGRAPH = "cell";
+    private static final String TABLE_CELL_NESTED_PARAGRAPH = "nestcell";
 
     /** default cell width (in twips ??) */
     public static final int DEFAULT_CELL_WIDTH = 2000;
@@ -312,7 +317,9 @@ public class RtfTableCell
 
         if (getRow().getTable().isNestedTable()) {
             //nested table
-            writeControlWordNS("nestcell");
+            if (lastBreak == null) {
+                writeControlWordNS("nestcell");
+            }
             writeGroupMark(true);
             writeControlWord("nonesttables");
             writeControlWord("par");
@@ -352,7 +359,9 @@ public class RtfTableCell
                 //writeControlWord("par");
             }
 
-            writeControlWord("cell");
+            if (lastBreak == null) {
+                writeControlWord("cell");
+            }
         }
     }
 
@@ -534,5 +543,39 @@ public class RtfTableCell
         }
 
         return null;
+    }
+
+    /**
+     * The table cell decides whether or not a newly added paragraph break
+     * will be used to write the cell-end control word.
+     * For nested tables it is not necessary.
+     *
+     * @param parBreak the paragraph break element
+     * @param breakDepth The depth is necessary for picking the correct break element.
+     * If it is deeper inside the whole cell it will be used, and if there is something on
+     * the same level (depth) it is also set because the method is called for all breaks
+     * in the correct order.
+     */
+    public void setLastParagraph(RtfParagraphBreak parBreak, int breakDepth) {
+        if (parBreak != null && breakDepth >= lastBreakDepth) {
+            lastBreak = parBreak;
+            lastBreakDepth = breakDepth;
+        }
+    }
+
+    /**
+     * The last paragraph break was just stored before,
+     * now the control word is really switched
+     */
+    public void finish() {
+      //If it is nested and contains another table do not set it
+      if (getRow().getTable().isNestedTable() && table != null) {
+          lastBreak = null;
+      } else if (lastBreak != null) {
+              lastBreak.switchControlWord(
+                                          getRow().getTable().isNestedTable()
+                                          ? TABLE_CELL_NESTED_PARAGRAPH
+                                          : TABLE_CELL_PARAGRAPH);
+      }
     }
 }

@@ -59,7 +59,7 @@ public class Marker extends FObjMixed {
     /** {@inheritDoc} */
     public void bind(PropertyList pList) throws FOPException {
         if (findAncestor(FO_FLOW) < 0) {
-            invalidChildError(locator, getParent().getName(), FO_URI, getName(),
+            invalidChildError(locator, getParent().getName(), FO_URI, getLocalName(),
                 "rule.markerDescendantOfFlow");
         }
 

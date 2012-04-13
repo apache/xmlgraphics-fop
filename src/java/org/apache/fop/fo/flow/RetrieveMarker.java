@@ -60,7 +60,7 @@ public class RetrieveMarker extends AbstractRetrieveMarker {
                             PropertyList pList)
             throws FOPException {
         if (findAncestor(FO_STATIC_CONTENT) < 0) {
-            invalidChildError(locator, getParent().getName(), FO_URI, getName(),
+            invalidChildError(locator, getParent().getName(), FO_URI, getLocalName(),
                 "rule.retrieveMarkerDescendantOfStaticContent");
         } else {
             super.processNode(elementName, locator, attlist, pList);

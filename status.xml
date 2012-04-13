@@ -62,12 +62,80 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Code" dev="GA" type="fix" fixes-bug="50062">
+        Invoke JVM in headless mode from FOP command scripts and JS shell to prevent stealing focus from GUI applications.
+      </action>
+      <action context="Code" dev="GA" type="fix" fixes-bug="52114">
+        Take leading derived space before/after into account when computing rows for TXT renderer.
+      </action>
+      <action context="Code" dev="PH" type="add" fixes-bug="49893">
+        A global setting to wrap F11 images in page segments.
+      </action>
+      <action context="Code" dev="GA" type="fix" fixes-bug="52763">
+        Support list-block in marker, thus preventing NPE.
+      </action>
+      <action context="Code" dev="GA" type="fix">
+        Must use unqualified (local name) when reporting invalid child error.
+      </action>
+      <action context="Code" dev="GA" type="fix" fixes-bug="53065">
+        Restore lookup on Event message lookup field part. Add locale field to Event to
+        enable locale dependent deferred bundle load during lookup field part substitution.
+      </action>
+      <action context="Code" dev="MH" type="fix">
+        Bug in AFP font metrics that performed integer arithmetic when it should have been
+	double arithemetic.
+      </action>
+      <action context="Code" dev="GA" type="fix" fixes-bug="49754" due-to="Simon Pepping">
+        Bring clone() in line with the recommendations in Object.clone().
+      </action>
+      <action context="Code" dev="GA" type="fix" fixes-bug="52966" due-to="Luis Bernardo">
+        How to use native text with EPSDocumentGraphics2D.
+      </action>
+      <action context="Code" dev="GA" type="fix" fixes-bug="51599" due-to="Paul Huemer">
+        Allow https scheme URI for PDF external action target.
+      </action>
+      <action context="Code" dev="GA" type="fix" fixes-bug="50901" due-to="Carsten Pfeiffer">
+        RTF percentage table column width not calculated from table.
+      </action>
+      <action context="Code" dev="GA" type="fix" fixes-bug="51009" due-to="Max Aster">
+        RTF generates unexpected lines for blocks in tables. Also fix three findbugs issues.
+      </action>
+      <action context="Code" dev="GA" type="fix" fixes-bug="51007" due-to="Max Aster">
+        RTF tables do not support percent column-widths.
+      </action>
+      <action context="Code" dev="GA" type="fix" fixes-bug="50435" due-to="Armin Haaf">
+        Access denied (java.util.PropertyPermission org.apache.fop.fo.properties.use-cache read).
+      </action>
+      <action context="Code" dev="GA" type="fix" fixes-bug="49763" due-to="Adrian Buza">
+        Incorrect message when encountering a block in an inline in a footnote.
+      </action>
+      <action context="Code" dev="GA" type="fix" fixes-bug="47380" due-to="Georg Datterl">
+        Specified rule-thickness applies only when leader-pattern is rule, otherwise should use default thickness.
+      </action>
+      <action context="Code" dev="GA" type="fix" fixes-bug="49302" due-to="Julien Aymé">
+        Eliminate duplicate code.
+      </action>
+      <action context="Code" dev="GA" type="fix" fixes-bug="49350" due-to="Julien Aymé">
+        Correct coding error in AFPResourceLevel#equals.
+      </action>
+      <action context="Code" dev="GA" type="fix" fixes-bug="51836" due-to="Melanie Drake">
+        Throw IFException instead of NPE if navigation target (page reference) doesn't exist.
+      </action>
+      <action context="Code" dev="GA" type="fix" fixes-bug="51808" due-to="Sergey Vladimirov">
+        Fixed memory waste in traits map.
+      </action>
+      <action context="Code" dev="GA" type="fix" fixes-bug="51807" due-to="Sergey Vladimirov">
+        Fixed small memory waste in rowCells array construction.
+      </action>
+      <action context="Code" dev="GA" type="fix" fixes-bug="53005" due-to="Alberto Simões">
+        Fixed incorrect rejection of fo:wrapper inside fo:inline inside fo:footnote-body.
+      </action>
       <action context="Code" dev="PH,VH" type="add">
         Added support for PDF Object Streams. When accessibility is enabled and PDF version 1.5 
         selected, the structure tree will be stored in object streams in order to reduce the size of 
         the final PDF.
       </action>
-      <action context="Code" dev="VH" type="add" fixes-bug="46962" due-to="Alexios Giotis">
+      <action context="Code" dev="VH" type="fix" fixes-bug="46962" due-to="Alexios Giotis">
         Fixed deadlock in PropertyCache.
       </action>
       <action context="Code" dev="VH" type="add" fixes-bug="51385" due-to="Mehdi Houshmand">
@@ -297,9 +365,9 @@
         Bugfix: fix performance issue when adding nodes, if the number of children
         is significantly large.
       </action>
-	  <action context="Config" dev="SP" type="fix">
-		Bugfix: relative URIs in the configuration file (base, font-base, hyphenation-base) are evaluated relative to the base URI of the configuration file.
-	  </action>
+      <action context="Config" dev="SP" type="fix">
+	Bugfix: relative URIs in the configuration file (base, font-base, hyphenation-base) are evaluated relative to the base URI of the configuration file.
+      </action>
       <action context="Layout" dev="AD" type="fix" fixes-bug="49848">
         Bugfix: correct behavior of keep-together.within-line in case there are nested inlines
       </action>
