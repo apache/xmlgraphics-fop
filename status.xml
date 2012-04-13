@@ -62,6 +62,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Code" dev="GA" type="fix" fixes-bug="50062">
+        Invoke JVM in headless mode from FOP command scripts and JS shell to prevent stealing focus from GUI applications.
+      </action>
       <action context="Code" dev="GA" type="fix" fixes-bug="52114">
         Take leading derived space before/after into account when computing rows for TXT renderer.
       </action>
