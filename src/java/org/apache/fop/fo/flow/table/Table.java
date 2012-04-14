@@ -147,13 +147,19 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder, Break
             getFOValidationEventProducer().unimplementedFeature(this, getName(),
                     "table-layout=\"auto\"", getLocator());
         }
-        if (!isSeparateBorderModel()
-                && getCommonBorderPaddingBackground().hasPadding(
-                        ValidationPercentBaseContext.getPseudoContext())) {
-            //See "17.6.2 The collapsing border model" in CSS2
-            TableEventProducer eventProducer = TableEventProducer.Provider.get(
-                    getUserAgent().getEventBroadcaster());
-            eventProducer.noTablePaddingWithCollapsingBorderModel(this, getLocator());
+        if (!isSeparateBorderModel()) {
+            if (borderCollapse == EN_COLLAPSE_WITH_PRECEDENCE) {
+                getFOValidationEventProducer().unimplementedFeature(this, getName(),
+                    "border-collapse=\"collapse-with-precedence\"; defaulting to \"collapse\"", getLocator());
+                borderCollapse = EN_COLLAPSE;
+            }
+            if (getCommonBorderPaddingBackground().hasPadding(
+                            ValidationPercentBaseContext.getPseudoContext())) {
+                //See "17.6.2 The collapsing border model" in CSS2
+                TableEventProducer eventProducer = TableEventProducer.Provider.get(
+                        getUserAgent().getEventBroadcaster());
+                eventProducer.noTablePaddingWithCollapsingBorderModel(this, getLocator());
+            }
         }
 
         /* Store reference to the property list, so

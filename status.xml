@@ -62,6 +62,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Code" dev="GA" type="fix" fixes-bug="52572" due-to="Pascal Sancho">
+        Prevent NPE on use of unsupported collapse-with-precedence; fall back to collapse. Fix checkstyle errors from prior commit.
+      </action>
       <action context="Code" dev="GA" type="fix" fixes-bug="52514" due-to="Luis Bernardo">
         Ensure square image is appropriately scaled.
       </action>
