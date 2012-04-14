@@ -195,7 +195,7 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
      */
     protected void renderText(TextArea area) {
         int col = Helper.ceilPosition(this.currentIPPosition, CHAR_WIDTH);
-        int row = Helper.ceilPosition(this.currentBPPosition - LINE_LEADING, CHAR_HEIGHT + 2*LINE_LEADING);
+        int row = Helper.ceilPosition(this.currentBPPosition - LINE_LEADING, CHAR_HEIGHT + 2 * LINE_LEADING);
 
         String s = area.getText();
 
@@ -219,7 +219,7 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
         double height = bounds.getHeight();
 
         pageWidth = Helper.ceilPosition((int) width, CHAR_WIDTH);
-        pageHeight = Helper.ceilPosition((int) height, CHAR_HEIGHT + 2*LINE_LEADING);
+        pageHeight = Helper.ceilPosition((int) height, CHAR_HEIGHT + 2 * LINE_LEADING);
 
         // init buffers
         charData = new StringBuffer[pageHeight];
@@ -463,9 +463,9 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
      */
     public void renderImage(Image image, Rectangle2D pos) {
         int x1 = Helper.ceilPosition(currentIPPosition, CHAR_WIDTH);
-        int y1 = Helper.ceilPosition(currentBPPosition - LINE_LEADING, CHAR_HEIGHT + 2*LINE_LEADING);
+        int y1 = Helper.ceilPosition(currentBPPosition - LINE_LEADING, CHAR_HEIGHT + 2 * LINE_LEADING);
         int width = Helper.ceilPosition((int) pos.getWidth(), CHAR_WIDTH);
-        int height = Helper.ceilPosition((int) pos.getHeight(), CHAR_HEIGHT + 2*LINE_LEADING);
+        int height = Helper.ceilPosition((int) pos.getHeight(), CHAR_HEIGHT + 2 * LINE_LEADING);
 
         fillRect(x1, y1, width, height, IMAGE_CHAR);
     }
@@ -562,9 +562,9 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
     protected void drawBackAndBorders(Area area, float startx, float starty,
             float width, float height) {
         bm.setWidth(Helper.ceilPosition(toMilli(width), CHAR_WIDTH));
-        bm.setHeight(Helper.ceilPosition(toMilli(height), CHAR_HEIGHT + 2*LINE_LEADING));
+        bm.setHeight(Helper.ceilPosition(toMilli(height), CHAR_HEIGHT + 2 * LINE_LEADING));
         bm.setStartX(Helper.ceilPosition(toMilli(startx), CHAR_WIDTH));
-        bm.setStartY(Helper.ceilPosition(toMilli(starty), CHAR_HEIGHT + 2*LINE_LEADING));
+        bm.setStartY(Helper.ceilPosition(toMilli(starty), CHAR_HEIGHT + 2 * LINE_LEADING));
 
         super.drawBackAndBorders(area, startx, starty, width, height);
     }
