@@ -62,6 +62,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Code" dev="GA" type="update" fixes-bug="51617">
+        Add run target for embedded examples. Add increased JVM memory heap flag for example8 in case font cache is rebuilt.
+      </action>
       <action context="Code" dev="GA" type="fix" fixes-bug="53083">
         Update to use of checkstyle-5.5 as default configuration. Remove checkstyle-4.0 configuration. Also, import environment build properties before local properties, so that latter can refer to former.'
       </action>
