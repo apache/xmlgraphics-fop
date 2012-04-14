@@ -146,8 +146,10 @@
 		    <path refid="project.class.path"/>
 		    <pathelement location="${build.dest}"/>
 		  </classpath>
+                  <jvmarg value="-Xmx1024m"/>
 		</java>
 	</target>
+	<target name="run" depends="example1,example2,example3,example4,example5,example5,example7,example8" description="Runs examples"/>
 	<!-- =================================================================== -->
 	<!-- Clean targets                                                       -->
 	<!-- =================================================================== -->
