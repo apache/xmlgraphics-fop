@@ -45,6 +45,7 @@ import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.hyphenation.Hyphenation;
 import org.apache.fop.hyphenation.Hyphenator;
 import org.apache.fop.layoutmgr.Adjustment;
+import org.apache.fop.layoutmgr.BlockLayoutManager;
 import org.apache.fop.layoutmgr.BlockLevelLayoutManager;
 import org.apache.fop.layoutmgr.BreakElement;
 import org.apache.fop.layoutmgr.BreakingAlgorithm;
@@ -389,7 +390,10 @@ public class LineLayoutManager extends InlineStackingLayoutManager
 
             if (log.isWarnEnabled()) {
                 int lack = difference + bestActiveNode.availableShrink;
-                if (lack < 0) {
+                // if this LLM is nested inside a BlockContainerLayoutManager that is constraining
+                // the available width and thus responsible for the overflow then we do not issue
+                // warning event here and instead let the BCLM handle that at a later stage
+                if (lack < 0 && !handleOverflow(-lack)) {
                     InlineLevelEventProducer eventProducer
                         = InlineLevelEventProducer.Provider.get(
                             getFObj().getUserAgent().getEventBroadcaster());
@@ -1635,4 +1639,15 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         return true;
     }
 
+    /**
+     * Whether this LM can handle horizontal overflow error messages (only a BlockContainerLayoutManager can).
+     * @param milliPoints horizontal overflow
+     * @return true if handled by a BlockContainerLayoutManager
+     */
+    public boolean handleOverflow(int milliPoints) {
+        if (getParent() instanceof BlockLayoutManager) {
+            return ((BlockLayoutManager) getParent()).handleOverflow(milliPoints);
+        }
+        return false;
+    }
 }

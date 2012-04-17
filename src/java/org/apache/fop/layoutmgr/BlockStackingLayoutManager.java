@@ -1249,5 +1249,16 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         // TODO startIndent, endIndent
     }
 
+    /**
+     * Whether this LM can handle horizontal overflow error messages (only a BlockContainerLayoutManager can).
+     * @param milliPoints horizontal overflow
+     * @return true if handled by a BlockContainerLayoutManager
+     */
+    public boolean handleOverflow(int milliPoints) {
+        if (getParent() instanceof BlockStackingLayoutManager) {
+            return ((BlockStackingLayoutManager) getParent()).handleOverflow(milliPoints);
+        }
+        return false;
+    }
 }
 

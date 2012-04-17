@@ -86,6 +86,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
     private MinOptMax effSpaceBefore;
     private MinOptMax effSpaceAfter;
 
+    private int horizontalOverflow;
     private double contentRectOffsetX = 0;
     private double contentRectOffsetY = 0;
 
@@ -401,7 +402,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
             BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Provider.get(
                     getBlockContainerFO().getUserAgent().getEventBroadcaster());
             boolean canRecover = (getBlockContainerFO().getOverflow() != EN_ERROR_IF_OVERFLOW);
-            eventProducer.viewportOverflow(this, getBlockContainerFO().getName(),
+            eventProducer.viewportBPDOverflow(this, getBlockContainerFO().getName(),
                     breaker.getOverflowAmount(), needClip(), canRecover,
                     getBlockContainerFO().getLocator());
         }
@@ -553,9 +554,17 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
                 BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Provider.get(
                         getBlockContainerFO().getUserAgent().getEventBroadcaster());
                 boolean canRecover = (getBlockContainerFO().getOverflow() != EN_ERROR_IF_OVERFLOW);
-                eventProducer.viewportOverflow(this, getBlockContainerFO().getName(),
+                eventProducer.viewportBPDOverflow(this, getBlockContainerFO().getName(),
                         breaker.getOverflowAmount(), needClip(), canRecover,
                         getBlockContainerFO().getLocator());
+            }
+            // this handles the IPD (horizontal) overflow
+            if (this.horizontalOverflow > 0) {
+                BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Provider
+                        .get(getBlockContainerFO().getUserAgent().getEventBroadcaster());
+                boolean canRecover = (getBlockContainerFO().getOverflow() != EN_ERROR_IF_OVERFLOW);
+                eventProducer.viewportIPDOverflow(this, getBlockContainerFO().getName(),
+                        this.horizontalOverflow, needClip(), canRecover, getBlockContainerFO().getLocator());
             }
         }
 
@@ -1027,6 +1036,13 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         }
     }
 
+    /** {@inheritDoc} */
+    public boolean handleOverflow(int milliPoints) {
+        if (milliPoints > this.horizontalOverflow) {
+            this.horizontalOverflow = milliPoints;
+        }
+        return true;
+    }
 }
 
 
