@@ -20,11 +20,14 @@
 package org.apache.fop.fo.flow.table;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Stack;
 
 import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.complexscripts.bidi.DelimitedTextRange;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.datatypes.ValidationPercentBaseContext;
 import org.apache.fop.fo.FONode;
@@ -597,4 +600,24 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder, Break
     RowGroupBuilder getRowGroupBuilder() {
         return rowGroupBuilder;
     }
+
+    @Override
+    protected Stack collectDelimitedTextRanges ( Stack ranges, DelimitedTextRange currentRange ) {
+        // header sub-tree
+        TableHeader header = getTableHeader();
+        if ( header != null ) {
+            ranges = header.collectDelimitedTextRanges ( ranges );
+        }
+        // footer sub-tree
+        TableFooter footer = getTableFooter();
+        if ( footer != null ) {
+            ranges = footer.collectDelimitedTextRanges ( ranges );
+        }
+        // body sub-tree
+        for ( Iterator it = getChildNodes(); ( it != null ) && it.hasNext();) {
+            ranges = ( (FONode) it.next() ).collectDelimitedTextRanges ( ranges );
+        }
+        return ranges;
+    }
+
 }
