@@ -19,9 +19,10 @@
 <testcase>
   <info>
     <p>
-      This test checks table column progression with right-to-left writing mode. The first column
-      should be to the right of the second column; the second column should be to the right of the
-      third column. The columns should be colored red, yellow, orange from right to left.
+      This test checks table column progression with right-to-left writing mode when writing-mode
+      is specified on fo:page-sequence. The first column should be to the right of the second column; the
+      second column should be to the right of the third column. The columns should be colored red,
+      yellow, orange from right to left.
     </p>
   </info>
   <fo>

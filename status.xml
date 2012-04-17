@@ -62,7 +62,10 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
-      <action context="Code" dev="GA" type="update" fixes-bug="53094" due-to="Luis Bernardo">
+      <action context="Code" dev="GA" type="fix" fixes-bug="53097">
+        Ensure writing-mode specified on fo:table is used to determine writing mode of table and its descendants.
+      </action>
+      <action context="Code" dev="GA" type="fix" fixes-bug="53094" due-to="Luis Bernardo">
         Convert block container overflow exception to event model, improving overflow property behavior.
       </action>
       <action context="Code" dev="GA" type="update" fixes-bug="51617">
