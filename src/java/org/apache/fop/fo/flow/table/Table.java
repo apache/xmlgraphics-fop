@@ -40,12 +40,16 @@ import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.LengthPairProperty;
 import org.apache.fop.fo.properties.LengthRangeProperty;
 import org.apache.fop.fo.properties.TableColLength;
+import org.apache.fop.traits.Direction;
+import org.apache.fop.traits.WritingMode;
+import org.apache.fop.traits.WritingModeTraits;
+import org.apache.fop.traits.WritingModeTraitsGetter;
 
 /**
  * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_table">
  * <code>fo:table</code></a> object.
  */
-public class Table extends TableFObj implements ColumnNumberManagerHolder, BreakPropertySet,
+public class Table extends TableFObj implements ColumnNumberManagerHolder, BreakPropertySet, WritingModeTraitsGetter,
         CommonAccessibilityHolder {
 
     // The value of FO traits (refined properties) that apply to fo:table.
@@ -64,7 +68,7 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder, Break
     private int tableLayout;
     private int tableOmitFooterAtBreak;
     private int tableOmitHeaderAtBreak;
-    private int writingMode;
+    private WritingModeTraits writingModeTraits;
     // Unused but valid items, commented out for performance:
     //     private CommonAural commonAural;
     //     private CommonRelativePosition commonRelativePosition;
@@ -131,7 +135,8 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder, Break
         tableLayout = pList.get(PR_TABLE_LAYOUT).getEnum();
         tableOmitFooterAtBreak = pList.get(PR_TABLE_OMIT_FOOTER_AT_BREAK).getEnum();
         tableOmitHeaderAtBreak = pList.get(PR_TABLE_OMIT_HEADER_AT_BREAK).getEnum();
-        writingMode = pList.get(PR_WRITING_MODE).getEnum();
+        writingModeTraits = new WritingModeTraits
+            ( WritingMode.valueOf(pList.get(PR_WRITING_MODE).getEnum()) );
 
         //Bind extension properties
         widowContentLimit = pList.get(PR_X_WIDOW_CONTENT_LIMIT).getLength();
@@ -516,9 +521,34 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder, Break
         return borderSeparation;
     }
 
-    /** @return the "writing-mode" FO trait */
-    public int getWritingMode() {
-        return writingMode;
+    /** {@inheritDoc} */
+    public Direction getInlineProgressionDirection() {
+        return writingModeTraits.getInlineProgressionDirection();
+    }
+
+    /** {@inheritDoc} */
+    public Direction getBlockProgressionDirection() {
+        return writingModeTraits.getBlockProgressionDirection();
+    }
+
+    /** {@inheritDoc} */
+    public Direction getColumnProgressionDirection() {
+        return writingModeTraits.getColumnProgressionDirection();
+    }
+
+    /** {@inheritDoc} */
+    public Direction getRowProgressionDirection() {
+        return writingModeTraits.getRowProgressionDirection();
+    }
+
+    /** {@inheritDoc} */
+    public Direction getShiftDirection() {
+        return writingModeTraits.getShiftDirection();
+    }
+
+    /** {@inheritDoc} */
+    public WritingMode getWritingMode() {
+        return writingModeTraits.getWritingMode();
     }
 
     /** @return the "fox:widow-content-limit" extension FO trait */
