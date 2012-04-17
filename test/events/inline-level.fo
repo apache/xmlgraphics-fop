@@ -2,16 +2,14 @@
 <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
   <fo:layout-master-set>
     <fo:simple-page-master master-name="page"
-      page-height="420pt" page-width="320pt" margin="10pt">
+      page-height="420pt" page-width="100pt" margin="10pt">
       <fo:region-body background-color="#F0F0F0"/>
     </fo:simple-page-master>
   </fo:layout-master-set>
   <fo:page-sequence master-reference="page">
     <fo:flow flow-name="xsl-region-body">
       <fo:block>The following line overflows its container:</fo:block>
-      <fo:block-container width="100pt" height="100pt" border="1pt solid black">
-        <fo:block>ThisLineOverflowsItsContainer</fo:block>
-      </fo:block-container>
+      <fo:block border="1pt solid black">ThisLineOverflowsItsContainer</fo:block>
     </fo:flow>
   </fo:page-sequence>
 </fo:root>
