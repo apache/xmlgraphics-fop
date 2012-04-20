@@ -62,6 +62,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Code" dev="GA" type="fix" fixes-bug="53103" due-to="Matthias Reischenbacher">
+        Ensure that table cell spanning works in right-to-left writing mode.
+      </action>
       <action context="Code" dev="GA" type="fix" fixes-bug="53086">
         Ensure that table footer and header are included in bididirectional resolution.
       </action>
