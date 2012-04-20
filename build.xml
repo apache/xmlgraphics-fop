@@ -790,7 +790,8 @@ list of possible build targets.
     <attribute name="classpath" default="standard-junit-classpath"/>
     <sequential>
       <echo message="Running @{title} tests..."/>
-      <junit dir="${basedir}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure" printsummary="${junit.printsummary}">
+      <junit dir="${basedir}" haltonfailure="yes" fork="${junit.fork}" forkmode="once" 
+        errorproperty="fop.junit.error" failureproperty="fop.junit.failure" printsummary="${junit.printsummary}">
         <sysproperty key="basedir" value="${basedir}/@{basedir}"/>
         <sysproperty key="jawa.awt.headless" value="true"/>
         <formatter type="brief" usefile="false" if="junit.formatter.brief.use"/>
@@ -809,7 +810,7 @@ list of possible build targets.
   <target name="junit-all" depends="junit-compile, junit-transcoder, junit-layout-hyphenation" 
     description="Runs FOP's JUnit basic tests" if="junit.present">
     <junit dir="${basedir}" haltonfailure="yes" fork="${junit.fork}" forkmode="once" 
-      errorproperty="fop.junit.error" failureproperty="fop.junit.failure">
+      errorproperty="fop.junit.error" failureproperty="fop.junit.failure" printsummary="${junit.printsummary}">
       <sysproperty key="jawa.awt.headless" value="true"/>
       <formatter type="brief" usefile="false" if="junit.formatter.brief.use"/>
       <formatter type="plain" usefile="true"/>
