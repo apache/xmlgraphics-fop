@@ -245,13 +245,14 @@ public class ColumnSetup {
      * the left-most column; otherwise, the first column is the left-most
      * column.
      * @param col column index (1 is first column)
+     * @param nrColSpan number columns spanned (for calculating offset in rtl mode)
      * @param context the context for percentage based calculations
      * @return the X offset of the requested column
      */
-    public int getXOffset(int col, PercentBaseContext context) {
+    public int getXOffset(int col, int nrColSpan, PercentBaseContext context) {
         // TODO handle vertical WMs [GA]
         if ( (wmTraits != null) && (wmTraits.getColumnProgressionDirection() == Direction.RL) ) {
-            return getXOffsetRTL(col, context);
+            return getXOffsetRTL(col, nrColSpan, context);
         } else {
             return getXOffsetLTR(col, context);
         }
@@ -262,9 +263,9 @@ public class ColumnSetup {
      * column; i.e., those columns whose column numbers are greater than the
      * specified column number.
      */
-    private int getXOffsetRTL(int col, PercentBaseContext context) {
+    private int getXOffsetRTL(int col, int nrColSpan, PercentBaseContext context) {
         int xoffset = 0;
-        for (int i = col, nc = colWidths.size(); ++i < nc;) {
+        for (int i = (col + nrColSpan - 1), nc = colWidths.size(); ++i < nc;) {
             int effCol = i;
             if (colWidths.get(effCol) != null) {
                 xoffset += ((Length) colWidths.get(effCol)).getValue(context);
