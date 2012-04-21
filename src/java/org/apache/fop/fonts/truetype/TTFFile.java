@@ -420,6 +420,19 @@ public class TTFFile {
                             unicodeMappings.add(new UnicodeMapping(glyphIdx, j));
                             mtxTab[glyphIdx].getUnicodeIndex().add(new Integer(j));
 
+                            /*
+                             * Removing this feature, since it violates XSL-FO and Unicode
+                             * semantics. All characters used in an XSL-FO file (once decoded from
+                             * the document encoded) are interpreted as Unicode code points.
+                             * This precludes using Unicode code points in the Basic Latin range
+                             * for any purpose other than use as Basic Latin characters. In
+                             * order to use characters in the Wingding or Symbols font, then
+                             * the user must use the specific Unicode code point that is mapped
+                             * to the desired glyph via the font's cmap tables. What this means
+                             * is that the user must use an appropriate private use character
+                             * as defined by the font manufacturer and supported by some cmap
+                             * provided in the font. [GA] 2012-04-20
+                             * 
                             if (encodingID == 0 && j >= 0xF020 && j <= 0xF0FF) {
                                 //Experimental: Mapping 0xF020-0xF0FF to 0x0020-0x00FF
                                 //Tested with Wingdings and Symbol TTF fonts which map their
@@ -431,6 +444,7 @@ public class TTFFile {
                                     mtxTab[glyphIdx].getUnicodeIndex().add(new Integer(mapped));
                                 }
                             }
+                            */
 
                             // Also add winAnsiWidth
                             List v = (List)ansiIndex.get(new Integer(j));
