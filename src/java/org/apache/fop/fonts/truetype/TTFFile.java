@@ -423,7 +423,7 @@ public class TTFFile {
                             /*
                              * Removing this feature, since it violates XSL-FO and Unicode
                              * semantics. All characters used in an XSL-FO file (once decoded from
-                             * the document encoded) are interpreted as Unicode code points.
+                             * the document encoding) are interpreted as Unicode code points.
                              * This precludes using Unicode code points in the Basic Latin range
                              * for any purpose other than use as Basic Latin characters. In
                              * order to use characters in the Wingding or Symbols font, then
@@ -433,17 +433,17 @@ public class TTFFile {
                              * as defined by the font manufacturer and supported by some cmap
                              * provided in the font. [GA] 2012-04-20
                              * 
-                            if (encodingID == 0 && j >= 0xF020 && j <= 0xF0FF) {
-                                //Experimental: Mapping 0xF020-0xF0FF to 0x0020-0x00FF
-                                //Tested with Wingdings and Symbol TTF fonts which map their
-                                //glyphs in the region 0xF020-0xF0FF.
-                                int mapped = j - 0xF000;
-                                if (!eightBitGlyphs.get(mapped)) {
-                                    //Only map if Unicode code point hasn't been mapped before
-                                    unicodeMappings.add(new UnicodeMapping(glyphIdx, mapped));
-                                    mtxTab[glyphIdx].getUnicodeIndex().add(new Integer(mapped));
-                                }
-                            }
+                             * if (encodingID == 0 && j >= 0xF020 && j <= 0xF0FF) {
+                             *    //Experimental: Mapping 0xF020-0xF0FF to 0x0020-0x00FF
+                             *    //Tested with Wingdings and Symbol TTF fonts which map their
+                             *    //glyphs in the region 0xF020-0xF0FF.
+                             *    int mapped = j - 0xF000;
+                             *    if (!eightBitGlyphs.get(mapped)) {
+                             *        //Only map if Unicode code point hasn't been mapped before
+                             *        unicodeMappings.add(new UnicodeMapping(glyphIdx, mapped));
+                             *        mtxTab[glyphIdx].getUnicodeIndex().add(new Integer(mapped));
+                             *    }
+                             * }
                             */
 
                             // Also add winAnsiWidth
