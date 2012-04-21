@@ -62,6 +62,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Code" dev="GA" type="fix" fixes-bug="51043" due-to="Pascal Sancho">
+        Don't restart layout unless abs(ipd difference) > 1 in order to prevent rounding issues from triggering false restart.
+      </action>
       <action context="Fonts" dev="GA" type="update">
         Removing experimental feature that violates XSL-FO and Unicode semantics by misinterpreting Basic Latin code points. Users must use private use codepoints to access font specific
         character mappings that have no assigned Unicode code point. See bug 50492.
