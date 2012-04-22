@@ -25,7 +25,7 @@ import org.apache.fop.fo.properties.Property;
 /**
  * Implements the cmyk() function.
  */
-class CMYKcolorFunction extends FunctionBase {
+class CMYKColorFunction extends FunctionBase {
 
     /** {@inheritDoc} */
     public int getRequiredArgsCount() {

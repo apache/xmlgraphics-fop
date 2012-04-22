@@ -24,61 +24,43 @@ import org.apache.fop.fo.pagination.ColorProfile;
 import org.apache.fop.fo.pagination.Declarations;
 import org.apache.fop.fo.properties.ColorProperty;
 import org.apache.fop.fo.properties.Property;
-import org.apache.fop.util.ColorUtil;
 
 /**
- * Implements the rgb-icc() function.
+ * Implements the rgb-named-color() function.
+ * @since XSL-FO 2.0
  */
-class ICCColorFunction extends FunctionBase {
+class RGBNamedColorFunction extends FunctionBase {
 
     /** {@inheritDoc} */
     public int getRequiredArgsCount() {
-        return 4;
+        return 5;
     }
 
-    @Override
     /** {@inheritDoc} */
-    public int hasVariableArgs() {
-        return true;
-    }
-
     @Override
-    /** {@inheritDoc} */
     public PercentBase getPercentBase() {
-        return new ICCPercentBase();
+        return new RGBNamedPercentBase();
     }
 
     /** {@inheritDoc} */
     public Property eval(Property[] args, PropertyInfo pInfo) throws PropertyException {
         // Map color profile NCNAME to src from declarations/color-profile element
         String colorProfileName = args[3].getString();
+        String colorName = args[4].getString();
+
         Declarations decls = (pInfo.getFO() != null
                 ? pInfo.getFO().getRoot().getDeclarations()
                 : null);
         ColorProfile cp = null;
-        if (decls == null) {
-            //function used in a color-specification
-            //on a FO occurring:
-            //a) before the fo:declarations,
-            //b) or in a document without fo:declarations?
-            //=> return the sRGB fallback
-            if (!ColorUtil.isPseudoProfile(colorProfileName)) {
-                Property[] rgbArgs = new Property[3];
-                System.arraycopy(args, 0, rgbArgs, 0, 3);
-                return new RGBColorFunction().eval(rgbArgs, pInfo);
-            }
-        } else {
+        if (decls != null) {
             cp = decls.getColorProfile(colorProfileName);
-            if (cp == null) {
-                if (!ColorUtil.isPseudoProfile(colorProfileName)) {
-                    PropertyException pe = new PropertyException("The " + colorProfileName
-                            + " color profile was not declared");
-                    pe.setPropertyInfo(pInfo);
-                    throw pe;
-                }
-            }
         }
-        String src = (cp != null ? cp.getSrc() : "");
+        if (cp == null) {
+            PropertyException pe = new PropertyException("The " + colorProfileName
+                    + " color profile was not declared");
+            pe.setPropertyInfo(pInfo);
+            throw pe;
+        }
 
         float red = 0;
         float green = 0;
@@ -87,32 +69,30 @@ class ICCColorFunction extends FunctionBase {
         green = args[1].getNumber().floatValue();
         blue = args[2].getNumber().floatValue();
         /* Verify rgb replacement arguments */
-        if ((red < 0 || red > 255) || (green < 0 || green > 255) || (blue < 0 || blue > 255)) {
-            throw new PropertyException("Color values out of range. "
-                    + "Arguments to rgb-icc() must be [0..255] or [0%..100%]");
+        if ((red < 0 || red > 255)
+                || (green < 0 || green > 255)
+                || (blue < 0 || blue > 255)) {
+            throw new PropertyException("sRGB color values out of range. "
+                    + "Arguments to rgb-named-color() must be [0..255] or [0%..100%]");
         }
 
-        // rgb-icc is replaced with fop-rgb-icc which has an extra fifth argument containing the
-        // color profile src attribute as it is defined in the color-profile declarations element.
+        // rgb-named-color is replaced with fop-rgb-named-color which has an extra argument
+        // containing the color profile src attribute as it is defined in the color-profile
+        // declarations element.
         StringBuffer sb = new StringBuffer();
-        sb.append("fop-rgb-icc(");
+        sb.append("fop-rgb-named-color(");
         sb.append(red / 255f);
         sb.append(',').append(green / 255f);
         sb.append(',').append(blue / 255f);
-        for (int ix = 3; ix < args.length; ix++) {
-            if (ix == 3) {
-                sb.append(',').append(colorProfileName);
-                sb.append(',').append(src);
-            } else {
-                sb.append(',').append(args[ix]);
-            }
-        }
+        sb.append(',').append(colorProfileName);
+        sb.append(',').append(cp.getSrc());
+        sb.append(", '").append(colorName).append('\'');
         sb.append(")");
 
         return ColorProperty.getInstance(pInfo.getUserAgent(), sb.toString());
     }
 
-    private static final class ICCPercentBase implements PercentBase {
+    private static final class RGBNamedPercentBase implements PercentBase {
 
         /** {@inheritDoc} */
         public int getBaseLength(PercentBaseContext context) throws PropertyException {
