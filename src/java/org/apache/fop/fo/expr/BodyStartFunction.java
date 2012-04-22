@@ -33,7 +33,7 @@ public class BodyStartFunction extends FunctionBase {
 
     /** {@inheritDoc} */
     public int getRequiredArgsCount() {
-        return 1;
+        return 0;
     }
 
     /** {@inheritDoc} */

@@ -30,7 +30,7 @@ import org.apache.fop.fo.properties.TableColLength;
  * Class modelling the proportional-column-width function. See Sec. 5.10.4 of
  * the XSL-FO standard.
  */
-public class PPColWidthFunction extends FunctionBase {
+public class ProportionalColumnWidthFunction extends FunctionBase {
 
     /** {@inheritDoc} */
     public int getRequiredArgsCount() {
@@ -40,7 +40,7 @@ public class PPColWidthFunction extends FunctionBase {
     @Override
     /** {@inheritDoc} */
     public PercentBase getPercentBase() {
-        return new PPColWidthPercentBase();
+        return new ProportionalColumnWidthPercentBase();
     }
 
     /** {@inheritDoc} */
@@ -65,7 +65,7 @@ public class PPColWidthFunction extends FunctionBase {
         return new TableColLength(d.doubleValue(), pInfo.getFO());
     }
 
-    private static class PPColWidthPercentBase implements PercentBase {
+    private static class ProportionalColumnWidthPercentBase implements PercentBase {
 
         /** {@inheritDoc} */
         public int getBaseLength(PercentBaseContext context) throws PropertyException {

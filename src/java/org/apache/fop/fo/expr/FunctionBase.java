@@ -20,6 +20,8 @@
 package org.apache.fop.fo.expr;
 
 import org.apache.fop.datatypes.PercentBase;
+import org.apache.fop.fo.properties.Property;
+import org.apache.fop.fo.properties.StringProperty;
 
 /**
  * Abstract Base class for XSL-FO functions
@@ -32,9 +34,9 @@ public abstract class FunctionBase implements Function {
     }
 
     /** {@inheritDoc} */
-    public Property getOptionalArgDefault(int index, PropertyInfo pi) new PropertyException {
+    public Property getOptionalArgDefault(int index, PropertyInfo pi) throws PropertyException {
         if ( index >= getOptionalArgsCount() ) {
-            PropertyException e = new PropertyException ( new IndexOutOfBoundException ( "illegal optional argument index" ) );
+            PropertyException e = new PropertyException ( new IndexOutOfBoundsException ( "illegal optional argument index" ) );
             e.setPropertyInfo ( pi );
             throw e;
         } else {
@@ -43,7 +45,7 @@ public abstract class FunctionBase implements Function {
     }
 
     /** {@inheritDoc} */
-    public int hasVariableArgs() {
+    public boolean hasVariableArgs() {
         return false;
     }
 
@@ -57,6 +59,6 @@ public abstract class FunctionBase implements Function {
      * @return string property whose value is name of property being evaluated
      */
     protected final Property getPropertyName ( PropertyInfo pi ) {
-        return StringProperty.getInstance ( pi.getPropertMaker().getName() );
+        return StringProperty.getInstance ( pi.getPropertyMaker().getName() );
     }
 }

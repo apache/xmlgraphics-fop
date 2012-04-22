@@ -26,7 +26,7 @@ import org.apache.fop.fo.properties.Property;
  * Class modelling the from-nearest-specified-value function. See Sec. 5.10.4
  * of the XSL-FO standard.
  */
-public class NearestSpecPropFunction extends FunctionBase {
+public class FromNearestSpecifiedValueFunction extends FunctionBase {
 
     /** {@inheritDoc} */
     public int getRequiredArgsCount() {
