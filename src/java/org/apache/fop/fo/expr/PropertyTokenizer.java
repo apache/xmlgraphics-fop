@@ -67,7 +67,7 @@ class PropertyTokenizer {
     }
 
     /**
-     * Return the next token in the expression string.
+     * Parse the next token in the expression string.
      * This sets the following package visible variables:
      * currentToken  An enumerated value identifying the recognized token
      * currentTokenValue  A String containing the token contents

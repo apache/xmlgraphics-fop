@@ -31,11 +31,8 @@ import org.apache.fop.fo.properties.Property;
  */
 class NamedColorFunction extends FunctionBase {
 
-    /**
-     * rgb-named-color() takes a 5 arguments.
-     * {@inheritDoc}
-     */
-    public int nbArgs() {
+    /** {@inheritDoc} */
+    public int getRequiredArgsCount() {
         return 5;
     }
 
@@ -46,8 +43,7 @@ class NamedColorFunction extends FunctionBase {
     }
 
     /** {@inheritDoc} */
-    public Property eval(Property[] args,
-                         PropertyInfo pInfo) throws PropertyException {
+    public Property eval(Property[] args, PropertyInfo pInfo) throws PropertyException {
         // Map color profile NCNAME to src from declarations/color-profile element
         String colorProfileName = args[3].getString();
         String colorName = args[4].getString();

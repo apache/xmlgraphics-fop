@@ -27,17 +27,13 @@ import org.apache.fop.fo.properties.Property;
  */
 class CMYKcolorFunction extends FunctionBase {
 
-    /**
-     * cmyk takes four arguments.
-     * {@inheritDoc}
-     */
-    public int nbArgs() {
+    /** {@inheritDoc} */
+    public int getRequiredArgsCount() {
         return 4;
     }
 
     /** {@inheritDoc} */
-    public Property eval(Property[] args,
-                         PropertyInfo pInfo) throws PropertyException {
+    public Property eval(Property[] args, PropertyInfo pInfo) throws PropertyException {
         StringBuffer sb = new StringBuffer();
         sb.append("cmyk(" + args[0] + "," + args[1] + "," + args[2] + "," + args[3] + ")");
         FOUserAgent ua = (pInfo == null)

@@ -28,22 +28,13 @@ import org.apache.fop.fo.properties.Property;
  */
 public class MaxFunction extends FunctionBase {
 
-    /**
-     * @return 2 (the number of arguments required for the max function)
-     */
-    public int nbArgs() {
+    /** {@inheritDoc} */
+    public int getRequiredArgsCount() {
         return 2;
     }
 
-    /**
-     * Handle "numerics" if no proportional/percent parts
-     * @param args array of arguments to be processed
-     * @param pInfo PropertyInfo to be processed
-     * @return the maximum of the two args elements passed
-     * @throws PropertyException for invalid operands
-     */
-    public Property eval(Property[] args,
-                         PropertyInfo pInfo) throws PropertyException {
+    /** {@inheritDoc} */
+    public Property eval(Property[] args, PropertyInfo pInfo) throws PropertyException {
         Numeric n1 = args[0].getNumeric();
         Numeric n2 = args[1].getNumeric();
         if (n1 == null || n2 == null) {

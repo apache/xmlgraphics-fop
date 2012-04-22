@@ -59,13 +59,11 @@ public final class PropertyParser extends PropertyTokenizer {
         FUNCTION_TABLE.put("rgb", new RGBColorFunction());
         FUNCTION_TABLE.put("system-color", new SystemColorFunction());
         FUNCTION_TABLE.put("from-table-column", new FromTableColumnFunction());
-        FUNCTION_TABLE.put("inherited-property-value",
-                          new InheritedPropFunction());
+        FUNCTION_TABLE.put("inherited-property-value", new InheritedPropFunction());
+        FUNCTION_TABLE.put("from-nearest-specified-value", new NearestSpecPropFunction());
+        FUNCTION_TABLE.put("from-page-master-region", new FromPageMasterRegionFunction());
         FUNCTION_TABLE.put("from-parent", new FromParentFunction());
-        FUNCTION_TABLE.put("from-nearest-specified-value",
-                          new NearestSpecPropFunction());
-        FUNCTION_TABLE.put("proportional-column-width",
-                          new PPColWidthFunction());
+        FUNCTION_TABLE.put("proportional-column-width", new PPColWidthFunction());
         FUNCTION_TABLE.put("label-end", new LabelEndFunction());
         FUNCTION_TABLE.put("body-start", new BodyStartFunction());
         FUNCTION_TABLE.put("rgb-icc", new ICCColorFunction());
@@ -379,7 +377,6 @@ public final class PropertyParser extends PropertyTokenizer {
             next();
         } else {
             while (true) {
-
                 prop = parseAdditiveExpr();
                 if (i < nbArgs) {
                     args[i++] = prop;
