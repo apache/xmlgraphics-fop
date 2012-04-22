@@ -30,22 +30,18 @@ import org.apache.fop.fo.properties.Property;
 class RGBColorFunction extends FunctionBase {
 
     /** {@inheritDoc} */
-    public int nbArgs() {
+    public int getRequiredArgsCount() {
         return 3;
     }
 
-    /**
-     * @return an object which implements the PercentBase interface.
-     * Percents in arguments to this function are interpreted relative
-     * to 255.
-     */
+    @Override
+    /** {@inheritDoc} */
     public PercentBase getPercentBase() {
         return new RGBPercentBase();
     }
 
     /** {@inheritDoc} */
-    public Property eval(Property[] args,
-                         PropertyInfo pInfo) throws PropertyException {
+    public Property eval(Property[] args, PropertyInfo pInfo) throws PropertyException {
       return ColorProperty.getInstance(pInfo.getUserAgent(),
                                        "rgb(" + args[0] + ","
                                        + args[1] + "," + args[2] + ")");

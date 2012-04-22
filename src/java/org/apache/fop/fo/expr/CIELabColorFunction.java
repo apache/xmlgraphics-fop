@@ -30,29 +30,25 @@ import org.apache.fop.fo.properties.Property;
  */
 class CIELabColorFunction extends FunctionBase {
 
-    /**
-     * cie-lab-color() takes 2 times 3 arguments.
-     * {@inheritDoc}
-     */
-    public int nbArgs() {
-        return 2 * 3;
+    /** {@inheritDoc} */
+    public int getRequiredArgsCount() {
+        return 6;
     }
 
+    @Override
+    /** {@inheritDoc} */
     public PercentBase getPercentBase() {
         return new CIELabPercentBase();
     }
 
     /** {@inheritDoc} */
-    public Property eval(Property[] args,
-                         PropertyInfo pInfo) throws PropertyException {
+    public Property eval(Property[] args, PropertyInfo pInfo) throws PropertyException {
 
         float red = args[0].getNumber().floatValue();
         float green = args[1].getNumber().floatValue();
         float blue = args[2].getNumber().floatValue();
         /* Verify sRGB replacement arguments */
-        if ((red < 0 || red > 255)
-                || (green < 0 || green > 255)
-                || (blue < 0 || blue > 255)) {
+        if ((red < 0 || red > 255) || (green < 0 || green > 255) || (blue < 0 || blue > 255)) {
             throw new PropertyException("sRGB color values out of range. "
                     + "Arguments to cie-lab-color() must be [0..255] or [0%..100%]");
         }

@@ -29,13 +29,12 @@ import org.apache.fop.fo.properties.Property;
 class SystemColorFunction extends FunctionBase {
 
     /** {@inheritDoc} */
-    public int nbArgs() {
+    public int getRequiredArgsCount() {
         return 1;
     }
 
     /** {@inheritDoc} */
-    public Property eval(Property[] args,
-                         PropertyInfo pInfo) throws PropertyException {
+    public Property eval(Property[] args, PropertyInfo pInfo) throws PropertyException {
         FOUserAgent ua = (pInfo == null)
                 ? null
                 : (pInfo.getFO() == null ? null : pInfo.getFO().getUserAgent());

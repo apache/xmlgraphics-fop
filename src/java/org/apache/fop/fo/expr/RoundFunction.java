@@ -24,12 +24,14 @@ import org.apache.fop.fo.properties.NumberProperty;
 import org.apache.fop.fo.properties.Property;
 
 class RoundFunction extends FunctionBase {
-    public int nbArgs() {
+
+    /** {@inheritDoc} */
+    public int getRequiredArgsCount() {
         return 1;
     }
 
-    public Property eval(Property[] args,
-                         PropertyInfo pInfo) throws PropertyException {
+    /** {@inheritDoc} */
+    public Property eval(Property[] args, PropertyInfo pInfo) throws PropertyException {
         Number dbl = args[0].getNumber();
         if (dbl == null) {
             throw new PropertyException("Non number operand to round function");

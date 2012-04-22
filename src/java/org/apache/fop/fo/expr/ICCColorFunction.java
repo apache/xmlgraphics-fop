@@ -31,24 +31,25 @@ import org.apache.fop.util.ColorUtil;
  */
 class ICCColorFunction extends FunctionBase {
 
-    /**
-     * rgb-icc takes a variable number of arguments.
-     * At least 4 should be passed - returns -4
-     * {@inheritDoc}
-     */
-    public int nbArgs() {
-        return -4;
+    /** {@inheritDoc} */
+    public int getRequiredArgsCount() {
+        return 4;
     }
 
-    /** {@inheritDoc} */
     @Override
+    /** {@inheritDoc} */
+    public int hasVariableArgs() {
+        return true;
+    }
+
+    @Override
+    /** {@inheritDoc} */
     public PercentBase getPercentBase() {
         return new ICCPercentBase();
     }
 
     /** {@inheritDoc} */
-    public Property eval(Property[] args,
-                         PropertyInfo pInfo) throws PropertyException {
+    public Property eval(Property[] args, PropertyInfo pInfo) throws PropertyException {
         // Map color profile NCNAME to src from declarations/color-profile element
         String colorProfileName = args[3].getString();
         Declarations decls = (pInfo.getFO() != null
@@ -86,9 +87,7 @@ class ICCColorFunction extends FunctionBase {
         green = args[1].getNumber().floatValue();
         blue = args[2].getNumber().floatValue();
         /* Verify rgb replacement arguments */
-        if ((red < 0 || red > 255)
-                || (green < 0 || green > 255)
-                || (blue < 0 || blue > 255)) {
+        if ((red < 0 || red > 255) || (green < 0 || green > 255) || (blue < 0 || blue > 255)) {
             throw new PropertyException("Color values out of range. "
                     + "Arguments to rgb-icc() must be [0..255] or [0%..100%]");
         }
