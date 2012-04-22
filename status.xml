@@ -62,6 +62,10 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Code" dev="GA" type="update">
+        Improve property function argument parsing, specifically, better separate required, optional, and variable arguments and the handling of optional argument defaults.
+        Regularize property function class names.
+      </action>
       <action context="Code" dev="GA" type="fix" fixes-bug="51043" due-to="Pascal Sancho">
         Don't restart layout unless abs(ipd difference) > 1 in order to prevent rounding issues from triggering false restart.
       </action>
