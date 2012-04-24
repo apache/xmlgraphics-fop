@@ -53,6 +53,7 @@
     <context id="Extensions" title="Changes to the Bundled Extensions"/>
     <context id="Images" title="Changes to the Image Support"/>
     <context id="Config" title="Changes to the User Configuration"/>
+    <context id="Test" title="Changes to unit tests or other test code"/>
   </contexts>
 
   <changes>
@@ -62,6 +63,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Test" dev="GA" type="update" fixes-bug="50196" due-to="Matthias Reischenbacher">
+        Add test for basic-link with padding.
+      </action>
       <action context="Code" dev="GA" type="update">
         Improve property function argument parsing, specifically, better separate required, optional, and variable arguments and the handling of optional argument defaults.
         Regularize property function class names.
