@@ -63,6 +63,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Fonts" dev="GA" type="fix" fixes-bug="53143">
+        Ensure fonts are not loaded twice (redundantly).
+      </action>
       <action context="Test" dev="GA" type="update" fixes-bug="50196" due-to="Matthias Reischenbacher">
         Add test for basic-link with padding.
       </action>
