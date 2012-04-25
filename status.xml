@@ -63,7 +63,10 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
-      <action context="Fonts" dev="GA" type="fix" fixes-bug="51484" due-to="Benjamin Riefenstahl">
+      <action context="Fonts" dev="GA" type="fix" fixes-bug="53148" due-to="Tassos Charoulis">
+        Fix performance regression in JDK 1.6 Update 19 due to use of Java Beans API. Fix checkstyle errors.
+      </action>
+      <action context="Renderers" dev="GA" type="fix" fixes-bug="51484" due-to="Benjamin Riefenstahl">
         Don't write final /sect suffix in RTF if section is last section.
       </action>
       <action context="Fonts" dev="GA" type="fix" fixes-bug="53143">

@@ -47,7 +47,7 @@ public interface Function {
      * position is index 0; if no default for a given index, then null is returned
      * @throws PropertyException if index is greater than or equal to optional args count
      */
-    public Property getOptionalArgDefault(int index, PropertyInfo pi) throws PropertyException;
+    Property getOptionalArgDefault(int index, PropertyInfo pi) throws PropertyException;
 
     /**
      * Determine if function allows variable arguments. If it does, then they must appear

@@ -20,11 +20,12 @@
 package org.apache.fop.fonts.type1;
 
 import java.awt.Rectangle;
-import java.beans.Statement;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
@@ -313,20 +314,24 @@ public class AFMParser {
     }
 
     private abstract static class BeanSetter extends AbstractValueHandler {
-        private String method;
+        protected String method;
 
         public BeanSetter(String variable) {
             this.method = "set" + variable;
         }
 
-        protected void setValue(Object target, Object value) {
-            //Uses Java Beans API
-            Statement statement = new Statement(target, method, new Object[] {value});
+        protected void setValue(Object target, Class<?> argType, Object value) {
+            Class<?> c = target.getClass();
+
             try {
-                statement.execute();
-            } catch (Exception e) {
-                //Should never happen
-                throw new RuntimeException("Bean error: " + e.getMessage());
+                Method mth = c.getMethod(method, argType);
+                mth.invoke(target, value);
+            } catch ( NoSuchMethodException e ) {
+                throw new RuntimeException("Bean error: " + e.getMessage(), e);
+            } catch ( IllegalAccessException e ) {
+                throw new RuntimeException("Bean error: " + e.getMessage(), e);
+            } catch ( InvocationTargetException e ) {
+                throw new RuntimeException("Bean error: " + e.getMessage(), e);
             }
         }
     }
@@ -340,7 +345,7 @@ public class AFMParser {
         public void parse(String line, int startpos, Stack<Object> stack) throws IOException {
             String s = getStringValue(line, startpos);
             Object obj = stack.peek();
-            setValue(obj, s);
+            setValue(obj, String.class, s);
         }
     }
 
@@ -353,7 +358,7 @@ public class AFMParser {
         public void parse(String line, int startpos, Stack<Object> stack) throws IOException {
             NamedCharacter ch = new NamedCharacter(getStringValue(line, startpos));
             Object obj = stack.peek();
-            setValue(obj, ch);
+            setValue(obj, NamedCharacter.class, ch);
         }
     }
 
@@ -368,7 +373,7 @@ public class AFMParser {
 
         public void parse(String line, int startpos, Stack<Object> stack) throws IOException {
             Number num = getNumberValue(line, startpos);
-            setValue(getContextObject(stack), num);
+            setValue(getContextObject(stack), Number.class, num);
         }
     }
 
@@ -379,7 +384,7 @@ public class AFMParser {
 
         public void parse(String line, int startpos, Stack<Object> stack) throws IOException {
             int value = getIntegerValue(line, startpos);
-            setValue(getContextObject(stack), new Integer(value));
+            setValue(getContextObject(stack), int.class, new Integer(value));
         }
     }
 
@@ -390,7 +395,7 @@ public class AFMParser {
 
         public void parse(String line, int startpos, Stack<Object> stack) throws IOException {
             double value = getDoubleValue(line, startpos);
-            setValue(getContextObject(stack), new Double(value));
+            setValue(getContextObject(stack), double.class, new Double(value));
         }
     }
 
@@ -424,7 +429,7 @@ public class AFMParser {
 
         public void parse(String line, int startpos, Stack<Object> stack) throws IOException {
             double value = getDoubleValue(line, startpos);
-            setValue(getContextObject(stack), new Double(value));
+            setValue(getContextObject(stack), double.class, new Double(value));
         }
     }
 
@@ -441,14 +446,18 @@ public class AFMParser {
 
         public void parse(String line, int startpos, Stack<Object> stack) throws IOException {
             Boolean b = getBooleanValue(line, startpos);
-            //Uses Java Beans API
-            Statement statement = new Statement(getContextObject(stack),
-                    method, new Object[] {b});
+
+            Object target = getContextObject(stack);
+            Class<?> c = target.getClass();
             try {
-                statement.execute();
-            } catch (Exception e) {
-                //Should never happen
-                throw new RuntimeException("Bean error: " + e.getMessage());
+                Method mth = c.getMethod(method, boolean.class);
+                mth.invoke(target, b);
+            } catch ( NoSuchMethodException e ) {
+                throw new RuntimeException("Bean error: " + e.getMessage(), e);
+            } catch ( IllegalAccessException e ) {
+                throw new RuntimeException("Bean error: " + e.getMessage(), e);
+            } catch ( InvocationTargetException e ) {
+                throw new RuntimeException("Bean error: " + e.getMessage(), e);
             }
         }
     }
