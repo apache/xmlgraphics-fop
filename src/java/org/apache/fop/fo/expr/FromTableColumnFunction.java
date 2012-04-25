@@ -59,7 +59,7 @@ public class FromTableColumnFunction extends FunctionBase {
     }
 
     /** {@inheritDoc} */
-    public Property eval(Property[] args,PropertyInfo pInfo) throws PropertyException {
+    public Property eval(Property[] args, PropertyInfo pInfo) throws PropertyException {
 
         FObj fo = pInfo.getPropertyList().getFObj();
 
