@@ -63,6 +63,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Fonts" dev="GA" type="fix" fixes-bug="51484" due-to="Benjamin Riefenstahl">
+        Don't write final /sect suffix in RTF if section is last section.
+      </action>
       <action context="Fonts" dev="GA" type="fix" fixes-bug="53143">
         Ensure fonts are not loaded twice (redundantly).
       </action>
