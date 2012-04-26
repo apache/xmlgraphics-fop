@@ -193,9 +193,9 @@ implements
      * @throws IOException for I/O problems
      */
     protected void writeRtfSuffix() throws IOException {
-        List siblings = parent.getChildren();
         // write suffix /sect only if this section is not last section (see bug #51484)
-        if ( siblings.listIterator ( siblings.indexOf ( this ) ) .hasNext() ) {
+        List siblings = parent.getChildren();
+        if ( ( siblings.indexOf ( this ) + 1 ) < siblings.size() ) {
             writeControlWord("sect");
         }
     }
