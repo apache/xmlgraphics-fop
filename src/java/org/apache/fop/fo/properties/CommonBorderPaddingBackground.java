@@ -348,9 +348,7 @@ public class CommonBorderPaddingBackground {
      */
     public static CommonBorderPaddingBackground getInstance(PropertyList pList)
         throws PropertyException {
-
-        CommonBorderPaddingBackground newInstance
-                = new CommonBorderPaddingBackground(pList);
+        CommonBorderPaddingBackground newInstance = new CommonBorderPaddingBackground(pList);
         CommonBorderPaddingBackground cachedInstance = null;
         /* if padding-* and background-position-* resolve to absolute lengths
          * the whole instance can be cached */
@@ -368,33 +366,33 @@ public class CommonBorderPaddingBackground {
                     || newInstance.backgroundPositionVertical.isAbsolute())) {
             cachedInstance = CACHE.fetch(newInstance);
         }
-
-        /* for non-cached, or not-yet-cached instances, preload the image */
-        if ((cachedInstance == null
-                || cachedInstance == newInstance)
+        synchronized (newInstance.backgroundImage.intern()) {
+            /* for non-cached, or not-yet-cached instances, preload the image */
+            if ((cachedInstance == null || cachedInstance == newInstance)
                 && !("".equals(newInstance.backgroundImage))) {
-            //Additional processing: preload image
-            String uri = URISpecification.getURL(newInstance.backgroundImage);
-            FObj fobj = pList.getFObj();
-            FOUserAgent userAgent = pList.getFObj().getUserAgent();
-            ImageManager manager = userAgent.getFactory().getImageManager();
-            ImageSessionContext sessionContext = userAgent.getImageSessionContext();
-            ImageInfo info;
-            try {
-                info = manager.getImageInfo(uri, sessionContext);
-                newInstance.backgroundImageInfo = info;
-            } catch (ImageException e) {
-                ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
-                        fobj.getUserAgent().getEventBroadcaster());
-                eventProducer.imageError(fobj, uri, e, fobj.getLocator());
-            } catch (FileNotFoundException fnfe) {
-                ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
-                        fobj.getUserAgent().getEventBroadcaster());
-                eventProducer.imageNotFound(fobj, uri, fnfe, fobj.getLocator());
-            } catch (IOException ioe) {
-                ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
-                        fobj.getUserAgent().getEventBroadcaster());
-                eventProducer.imageIOError(fobj, uri, ioe, fobj.getLocator());
+                //Additional processing: preload image
+                String uri = URISpecification.getURL(newInstance.backgroundImage);
+                FObj fobj = pList.getFObj();
+                FOUserAgent userAgent = pList.getFObj().getUserAgent();
+                ImageManager manager = userAgent.getFactory().getImageManager();
+                ImageSessionContext sessionContext = userAgent.getImageSessionContext();
+                ImageInfo info;
+                try {
+                    info = manager.getImageInfo(uri, sessionContext);
+                    newInstance.backgroundImageInfo = info;
+                } catch (ImageException e) {
+                    ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                            fobj.getUserAgent().getEventBroadcaster());
+                    eventProducer.imageError(fobj, uri, e, fobj.getLocator());
+                } catch (FileNotFoundException fnfe) {
+                    ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                            fobj.getUserAgent().getEventBroadcaster());
+                    eventProducer.imageNotFound(fobj, uri, fnfe, fobj.getLocator());
+                } catch (IOException ioe) {
+                    ResourceEventProducer eventProducer = ResourceEventProducer.Provider.get(
+                            fobj.getUserAgent().getEventBroadcaster());
+                    eventProducer.imageIOError(fobj, uri, ioe, fobj.getLocator());
+                }
             }
         }
 
