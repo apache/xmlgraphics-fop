@@ -63,6 +63,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Code" dev="GA" type="fix" fixes-bug="43940" due-to="Julien Aymé, Ognjen Blagojevic">
+        Use new double format utility to improve thread safety and performance.
+      </action>
       <action context="Fonts" dev="GA" type="fix" fixes-bug="53148" due-to="Tassos Charoulis">
         Fix performance regression in JDK 1.6 Update 19 due to use of Java Beans API. Fix checkstyle errors.
       </action>
