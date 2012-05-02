@@ -63,6 +63,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Code" dev="GA" type="fix" fixes-bug="48723" due-to="R. Meyer">
+        Fix for XGC when rendering PostScript using SVG being drawn upside down when using a custom affine transform.
+      </action>
       <action context="Code" dev="GA" type="fix" fixes-bug="43940" due-to="Julien Aymé, Ognjen Blagojevic">
         Use new double format utility to improve thread safety and performance.
       </action>
