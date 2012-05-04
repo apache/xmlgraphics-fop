@@ -63,7 +63,10 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
-      <action context="Code" dev="GA" type="fix" fixes-bug="48723" due-to="R. Meyer">
+      <action context="Layout" dev="GA" type="fix" fixes-bug="45715" due-to="Luis Bernardo">
+        Break before (break-before) not respected on blocks nested in inlines.
+      </action>
+      <action context="Renderers" dev="GA" type="fix" fixes-bug="48723" due-to="Robert Meyer">
         Fix for XGC when rendering PostScript using SVG being drawn upside down when using a custom affine transform.
       </action>
       <action context="Code" dev="GA" type="fix" fixes-bug="43940" due-to="Julien Aymé, Ognjen Blagojevic">
@@ -85,20 +88,20 @@
         Improve property function argument parsing, specifically, better separate required, optional, and variable arguments and the handling of optional argument defaults.
         Regularize property function class names.
       </action>
-      <action context="Code" dev="GA" type="fix" fixes-bug="51043" due-to="Pascal Sancho">
+      <action context="Layout" dev="GA" type="fix" fixes-bug="51043" due-to="Pascal Sancho">
         Don't restart layout unless abs(ipd difference) > 1 in order to prevent rounding issues from triggering false restart.
       </action>
       <action context="Fonts" dev="GA" type="update">
         Removing experimental feature that violates XSL-FO and Unicode semantics by misinterpreting Basic Latin code points. Users must use private use codepoints to access font specific
         character mappings that have no assigned Unicode code point. See bug 50492.
       </action>
-      <action context="Code" dev="GA" type="fix" fixes-bug="53103" due-to="Matthias Reischenbacher">
+      <action context="Layout" dev="GA" type="fix" fixes-bug="53103" due-to="Matthias Reischenbacher">
         Ensure that table cell spanning works in right-to-left writing mode.
       </action>
-      <action context="Code" dev="GA" type="fix" fixes-bug="53086">
+      <action context="Layout" dev="GA" type="fix" fixes-bug="53086">
         Ensure that table footer and header are included in bididirectional resolution.
       </action>
-      <action context="Code" dev="GA" type="fix" fixes-bug="53097">
+      <action context="Layout" dev="GA" type="fix" fixes-bug="53097">
         Ensure writing-mode specified on fo:table is used to determine writing mode of table and its descendants.
       </action>
       <action context="Code" dev="GA" type="fix" fixes-bug="53094" due-to="Luis Bernardo">
@@ -113,13 +116,13 @@
       <action context="Code" dev="GA" type="fix" fixes-bug="52572" due-to="Pascal Sancho">
         Prevent NPE on use of unsupported collapse-with-precedence; fall back to collapse. Fix checkstyle errors from prior commit.
       </action>
-      <action context="Code" dev="GA" type="fix" fixes-bug="52514" due-to="Luis Bernardo">
+      <action context="Layout" dev="GA" type="fix" fixes-bug="52514" due-to="Luis Bernardo">
         Ensure square image is appropriately scaled.
       </action>
       <action context="Code" dev="GA" type="fix" fixes-bug="50062">
         Invoke JVM in headless mode from FOP command scripts and JS shell to prevent stealing focus from GUI applications.
       </action>
-      <action context="Code" dev="GA" type="fix" fixes-bug="52114">
+      <action context="Renderers" dev="GA" type="fix" fixes-bug="52114">
         Take leading derived space before/after into account when computing rows for TXT renderer.
       </action>
       <action context="Code" dev="PH" type="add" fixes-bug="49893">
