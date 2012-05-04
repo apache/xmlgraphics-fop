@@ -44,8 +44,8 @@ import org.apache.fop.traits.SpaceVal;
 /**
  * LayoutManager for a block-container FO.
  */
-public class BlockContainerLayoutManager extends BlockStackingLayoutManager
-                implements ConditionalElementListener {
+public class BlockContainerLayoutManager extends BlockStackingLayoutManager implements
+        ConditionalElementListener, BreakOpportunity {
 
     /**
      * logging instance
@@ -1043,6 +1043,11 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         }
         return true;
     }
+
+    public int getBreakBefore() {
+        return BreakOpportunityHelper.getBreakBefore(this);
+    }
+
 }
 
 

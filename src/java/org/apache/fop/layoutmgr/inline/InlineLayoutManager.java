@@ -388,6 +388,13 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
             }
             lastSequence = ListUtil.getLast(returnList);
             lastChildLM = curLM;
+            // the context used to create this childLC above was applied a LayoutContext.SUPPRESS_BREAK_BEFORE
+            // in the getNextChildElements() method of the parent BlockLayoutManger; as a consequence all
+            // line breaks in blocks nested inside the inline associated with this ILM are being supressed;
+            // here we revert that supression; we do not need to do that for the first element since that
+            // is handled by the getBreakBefore() method of the wrapping BlockStackingLayoutManager.
+            // Note: this fix seems to work but is far from being the ideal way to do this
+            childLC.setFlags(LayoutContext.SUPPRESS_BREAK_BEFORE, false);
         }
 
         if (lastSequence != null) {
