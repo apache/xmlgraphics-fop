@@ -63,6 +63,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Layout" dev="GA" type="fix" fixes-bug="53185" due-to="Robert Meyer">
+        Unify date formatting between FOP and XGC as well as tidying the date format code.
+      </action>
       <action context="Layout" dev="GA" type="fix" fixes-bug="45715" due-to="Luis Bernardo">
         Break before (break-before) not respected on blocks nested in inlines.
       </action>
