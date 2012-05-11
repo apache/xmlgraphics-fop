@@ -105,9 +105,9 @@ public abstract class CharactersetEncoder {
         @Override
         EncodedChars getEncodedChars(byte[] byteArray, int length) {
             if (byteArray[0] == 0x0E && byteArray[length - 1] == 0x0F) {
-                return new EncodedChars(byteArray, 1, length - 2);
+                return new EncodedChars(byteArray, 1, length - 2, true);
             }
-            return new EncodedChars(byteArray);
+            return new EncodedChars(byteArray, true);
         }
     }
 
@@ -123,7 +123,7 @@ public abstract class CharactersetEncoder {
 
         @Override
         EncodedChars getEncodedChars(byte[] byteArray, int length) {
-            return new EncodedChars(byteArray);
+            return new EncodedChars(byteArray, false);
         }
     }
 
@@ -145,36 +145,25 @@ public abstract class CharactersetEncoder {
     /**
      * A container for encoded character bytes
      */
-    public static final class EncodedChars {
+    public static class EncodedChars {
 
         private final byte[] bytes;
-
         private final int offset;
-
         private final int length;
+        private final boolean isDBCS;
 
-        private EncodedChars(byte[] bytes, int offset, int length) {
-            if (offset < 0) {
+        private EncodedChars(byte[] bytes, int offset, int length, boolean isDBCS) {
+            if (offset < 0 || length < 0 || offset + length > bytes.length) {
                 throw new IllegalArgumentException();
             }
-
-            if (length < 0) {
-                throw new IllegalArgumentException();
-            }
-
-            if (offset + length > bytes.length) {
-                throw new IllegalArgumentException();
-            }
-
             this.bytes = bytes;
-
             this.offset = offset;
-
             this.length = length;
+            this.isDBCS = isDBCS;
         }
 
-        private EncodedChars(byte[] bytes) {
-           this(bytes, 0, bytes.length);
+        private EncodedChars(byte[] bytes, boolean isDBCS) {
+            this(bytes, 0, bytes.length, isDBCS);
         }
 
         /**
@@ -186,18 +175,9 @@ public abstract class CharactersetEncoder {
          * @throws IOException if an I/O error occurs
          */
         public void writeTo(OutputStream out, int offset, int length) throws IOException {
-            if (offset < 0) {
+            if (offset < 0 || length < 0 || offset + length > bytes.length) {
                 throw new IllegalArgumentException();
             }
-
-            if (length < 0) {
-                throw new IllegalArgumentException();
-            }
-
-            if (offset + length > this.length) {
-                throw new IllegalArgumentException();
-            }
-
             out.write(bytes, this.offset + offset, length);
         }
 
@@ -208,6 +188,15 @@ public abstract class CharactersetEncoder {
          */
         public int getLength() {
             return length;
+        }
+
+        /**
+         * Indicates whether or not the EncodedChars object wraps double byte characters.
+         *
+         * @return true if the wrapped characters are double byte (DBCSs)
+         */
+        public boolean isDBCS() {
+            return isDBCS;
         }
 
         /**
