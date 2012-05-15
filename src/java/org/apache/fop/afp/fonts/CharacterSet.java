@@ -94,12 +94,12 @@ public class CharacterSet {
      *
      * @param codePage the code page identifier
      * @param encoding the encoding of the font
-     * @param isEBDCS if this is an EBCDIC double byte character set.
+     * @param charsetType the type of the characterset
      * @param name the character set name
      * @param accessor the resource accessor to load resource with
      * @param eventProducer for handling AFP related events
      */
-    CharacterSet(String codePage, String encoding, boolean isEBDCS, String name,
+    CharacterSet(String codePage, String encoding, CharacterSetType charsetType, String name,
             ResourceAccessor accessor, AFPEventProducer eventProducer) {
         if (name.length() > MAX_NAME_LEN) {
             String msg = "Character set name '" + name + "' must be a maximum of "
@@ -115,7 +115,7 @@ public class CharacterSet {
         }
         this.codePage = codePage;
         this.encoding = encoding;
-        this.encoder = CharactersetEncoder.newInstance(encoding, isEBDCS);
+        this.encoder = CharactersetEncoder.newInstance(encoding, charsetType);
         this.accessor = accessor;
 
         this.characterSetOrientations = new HashMap<String, CharacterSetOrientation>(4);
@@ -306,7 +306,7 @@ public class CharacterSet {
      */
     private CharacterSetOrientation getCharacterSetOrientation() {
         CharacterSetOrientation c
-            = (CharacterSetOrientation) characterSetOrientations.get(currentOrientation);
+            = characterSetOrientations.get(currentOrientation);
         return c;
     }
 

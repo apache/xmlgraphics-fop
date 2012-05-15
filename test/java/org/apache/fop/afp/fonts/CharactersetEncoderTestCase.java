@@ -19,16 +19,16 @@
 
 package org.apache.fop.afp.fonts;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.CharacterCodingException;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test {@link CharactersetEncoder}
@@ -39,8 +39,9 @@ public class CharactersetEncoderTestCase {
 
     @Before
     public void setUp() {
-        singlebyteEncoder = CharactersetEncoder.newInstance("cp500", false);
-        doublebyteEncoder = CharactersetEncoder.newInstance("cp937", true);
+        singlebyteEncoder = CharactersetEncoder.newInstance("cp500", CharacterSetType.SINGLE_BYTE);
+        doublebyteEncoder = CharactersetEncoder.newInstance("cp937",
+                CharacterSetType.DOUBLE_BYTE_LINE_DATA);
     }
 
     // This is just an arbitrary CJK string
@@ -95,7 +96,7 @@ public class CharactersetEncoderTestCase {
 
     @Test
     public void testEncode() throws CharacterCodingException, IOException {
-        CharactersetEncoder.EncodedChars encChars;// = doublebyteEncoder.encode(testCJKText);
+        CharactersetEncoder.EncodedChars encChars; // = doublebyteEncoder.encode(testCJKText);
         ByteArrayOutputStream bOut = new ByteArrayOutputStream();
         // JAVA 1.5 has a bug in the JVM in which these err for some reason... JAVA 1.6 no issues
         /*encChars.writeTo(bOut, 0, encChars.getLength());

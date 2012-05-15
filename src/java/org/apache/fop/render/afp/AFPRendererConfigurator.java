@@ -37,6 +37,7 @@ import org.apache.fop.afp.fonts.AFPFontCollection;
 import org.apache.fop.afp.fonts.AFPFontInfo;
 import org.apache.fop.afp.fonts.CharacterSet;
 import org.apache.fop.afp.fonts.CharacterSetBuilder;
+import org.apache.fop.afp.fonts.CharacterSetType;
 import org.apache.fop.afp.fonts.DoubleByteFont;
 import org.apache.fop.afp.fonts.OutlineFont;
 import org.apache.fop.afp.fonts.RasterFont;
@@ -220,7 +221,7 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
                     }
                 } else {
                     font.addCharacterSet(sizeMpt, CharacterSetBuilder.getSingleByteInstance()
-                                .build(characterset, codepage, encoding, accessor, eventProducer));
+                                .buildSBCS(characterset, codepage, encoding, accessor, eventProducer));
                 }
             }
             return font;
@@ -254,7 +255,7 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
                     log.error(msg);
                 }
             } else {
-                characterSet = CharacterSetBuilder.getSingleByteInstance().build(
+                characterSet = CharacterSetBuilder.getSingleByteInstance().buildSBCS(
                         characterset, codepage, encoding, accessor, eventProducer);
             }
             // Return new font object
@@ -269,10 +270,10 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
             }
             String name = afpFontCfg.getAttribute("name", characterset);
             CharacterSet characterSet = null;
-            boolean ebcdicDBCS = afpFontCfg.getAttributeAsBoolean("ebcdic-dbcs", false);
-
+            CharacterSetType charsetType = afpFontCfg.getAttributeAsBoolean("ebcdic-dbcs", false)
+                    ? CharacterSetType.DOUBLE_BYTE_LINE_DATA : CharacterSetType.DOUBLE_BYTE;
             characterSet = CharacterSetBuilder.getDoubleByteInstance().buildDBCS(characterset,
-                    codepage, encoding, ebcdicDBCS, accessor, eventProducer);
+                    codepage, encoding, charsetType, accessor, eventProducer);
 
             // Create a new font object
             DoubleByteFont font = new DoubleByteFont(name, characterSet);
@@ -322,7 +323,7 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
                 }
                 List<FontTriplet> fontTriplets = afi.getFontTriplets();
                 for (int j = 0; j < fontTriplets.size(); ++j) {
-                    FontTriplet triplet = (FontTriplet) fontTriplets.get(j);
+                    FontTriplet triplet = fontTriplets.get(j);
                     if (log.isDebugEnabled()) {
                         log.debug("  Font triplet "
                                 + triplet.getName() + ", "
