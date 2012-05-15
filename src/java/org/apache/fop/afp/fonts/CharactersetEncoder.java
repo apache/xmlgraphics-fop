@@ -82,13 +82,12 @@ public abstract class CharactersetEncoder {
      *
      * @param chars the character sequence
      * @param encoding the encoding type
-     * @param isEDBCS if this encoding represents a double-byte character set
      * @return encoded data
      * @throws CharacterCodingException if encoding fails
      */
-    public static EncodedChars encodeSBCS(CharSequence chars, String encoding, boolean isEDBCS)
+    public static EncodedChars encodeSBCS(CharSequence chars, String encoding)
             throws CharacterCodingException {
-        CharactersetEncoder encoder = newInstance(encoding, isEDBCS);
+        CharactersetEncoder encoder = newInstance(encoding, CharacterSetType.SINGLE_BYTE);
         return encoder.encode(chars);
     }
 
@@ -98,8 +97,8 @@ public abstract class CharactersetEncoder {
      * sequence it will return its EBCDIC code-point, however, the "Shift In - Shift Out" operators
      * are removed from the sequence of bytes. These are only used in Line Data.
      */
-    private static final class EbcdicDoubleByteEncoder extends CharactersetEncoder {
-        private EbcdicDoubleByteEncoder(String encoding) {
+    private static final class EbcdicDoubleByteLineDataEncoder extends CharactersetEncoder {
+        private EbcdicDoubleByteLineDataEncoder(String encoding) {
             super(encoding);
         }
         @Override
@@ -117,13 +116,16 @@ public abstract class CharactersetEncoder {
      * byte character sets (DBCS).
      */
     private static final class DefaultEncoder extends CharactersetEncoder {
-        private DefaultEncoder(String encoding) {
+        private final boolean isDBCS;
+
+        private DefaultEncoder(String encoding, boolean isDBCS) {
             super(encoding);
+            this.isDBCS = isDBCS;
         }
 
         @Override
         EncodedChars getEncodedChars(byte[] byteArray, int length) {
-            return new EncodedChars(byteArray, false);
+            return new EncodedChars(byteArray, isDBCS);
         }
     }
 
@@ -134,17 +136,21 @@ public abstract class CharactersetEncoder {
      * @param isEbcdicDBCS whether or not this wraps a double-byte EBCDIC code page.
      * @return the CharactersetEncoder
      */
-    static CharactersetEncoder newInstance(String encoding, boolean isEbcdicDBCS) {
-        if (isEbcdicDBCS) {
-            return new EbcdicDoubleByteEncoder(encoding);
-        } else {
-            return new DefaultEncoder(encoding);
+    static CharactersetEncoder newInstance(String encoding, CharacterSetType charsetType) {
+        switch (charsetType) {
+        case DOUBLE_BYTE_LINE_DATA:
+            return new EbcdicDoubleByteLineDataEncoder(encoding);
+        case DOUBLE_BYTE:
+            return new DefaultEncoder(encoding, true);
+        default:
+            return new DefaultEncoder(encoding, false);
         }
     }
 
     /**
      * A container for encoded character bytes
      */
+    // CSOFF: FinalClass - disabling "final" modifier so that this class can be mocked
     public static class EncodedChars {
 
         private final byte[] bytes;
