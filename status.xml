@@ -63,6 +63,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="GA" type="fix" fixes-bug="40699" due-to="Luis Bernardo">
+        Fix for invalid PDF for certain numerical values in SVG lineargradient.
+      </action>
       <action context="Layout" dev="GA" type="fix" fixes-bug="53185" due-to="Robert Meyer">
         Unify date formatting between FOP and XGC as well as tidying the date format code.
       </action>
