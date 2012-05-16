@@ -63,6 +63,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Docs" dev="GA" type="fix" fixes-bug="53247">
+        Fix renderer mime type for PCL output; should be application/x-pcl.
+      </action>
       <action context="Renderers" dev="GA" type="fix" fixes-bug="40699" due-to="Luis Bernardo">
         Fix for invalid PDF for certain numerical values in SVG lineargradient.
       </action>

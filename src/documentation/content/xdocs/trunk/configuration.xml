@@ -443,7 +443,7 @@
       <p>
         Additionally, there are certain settings that control how the renderer handles various elements.
       </p>
-<source><![CDATA[<renderer mime="application/vnd.hp-PCL">
+<source><![CDATA[<renderer mime="application/x-pcl">
   <rendering>quality</rendering>
   <text-rendering>bitmap</text-rendering>
 </renderer>]]></source>
