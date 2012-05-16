@@ -1171,8 +1171,8 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
 
         currentStream.write("q\n");
         writeClip(shape);
-        currentStream.write("" + usrW + " 0 0 " + (-usrH) + " " + usrX
-                            + " " + (usrY + usrH) + " cm\n"
+        currentStream.write("" + PDFNumber.doubleOut(usrW) + " 0 0 " + PDFNumber.doubleOut(-usrH) + " "
+                + PDFNumber.doubleOut(usrX) + " " + PDFNumber.doubleOut(usrY + usrH) + " cm\n"
                             + imageInfo.getName() + " Do\nQ\n");
         return true;
     }
