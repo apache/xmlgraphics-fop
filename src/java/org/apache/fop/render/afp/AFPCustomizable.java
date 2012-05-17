@@ -90,6 +90,13 @@ public interface AFPCustomizable {
     void setResolution(int resolution);
 
     /**
+     * Sets the line width correction
+     *
+     * @param correction the line width multiplying factor correction
+     */
+    void setLineWidthCorrection(float correction);
+
+    /**
      * Sets whether FS11 and FS45 non-inline images should be wrapped in a page segment
      * @param pSeg true iff images should be wrapped
      */
