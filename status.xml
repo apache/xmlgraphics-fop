@@ -63,6 +63,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="GA" type="fix" fixes-bug="53242" due-to="Luis Bernardo">
+        Support fractional line widths in AFP renderer, fixing problem with SVG line drawing.
+      </action>
       <action context="Config" dev="GA" type="fix" fixes-bug="53248" due-to="Luis Bernardo">
         Fix exception thrown from use of -print option in CLI.
       </action>

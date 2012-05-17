@@ -79,6 +79,12 @@ public class AFPPaintingState extends org.apache.fop.util.AbstractPaintingState 
     /** the output resolution */
     private int resolution = 240; // 240 dpi
 
+    /**
+     * A configurable value to correct the line width so that the output matches the expected. Different
+     * devices may need different values.
+     */
+    private float lineWidthCorrection = AFPConstants.LINE_WIDTH_CORRECTION;
+
     /** determines whether GOCA is enabled or disabled  */
     private boolean gocaEnabled = true;
     /** determines whether to stroke text in GOCA mode or to use text operators where possible */
@@ -323,12 +329,32 @@ public class AFPPaintingState extends org.apache.fop.util.AbstractPaintingState 
     }
 
     /**
+     * Sets the line width correction
+     *
+     * @param correction the line width multiplying factor correction
+     */
+    public void setLineWidthCorrection(float correction) {
+        if (log.isDebugEnabled()) {
+            log.debug("line width correction set to: " + correction);
+        }
+        this.lineWidthCorrection = correction;
+    }
+
+    /**
      * Returns the output/device resolution.
      *
      * @return the resolution in dpi
      */
     public int getResolution() {
         return this.resolution;
+    }
+
+    /**
+     * Returns the line width correction.
+     * @return the correction
+     */
+    public float getLineWidthCorrection() {
+        return this.lineWidthCorrection;
     }
 
     /**

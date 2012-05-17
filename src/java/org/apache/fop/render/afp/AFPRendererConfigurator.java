@@ -29,6 +29,7 @@ import java.util.List;
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
 
+import org.apache.fop.afp.AFPConstants;
 import org.apache.fop.afp.AFPEventProducer;
 import org.apache.fop.afp.AFPResourceLevel;
 import org.apache.fop.afp.AFPResourceLevelDefaults;
@@ -444,6 +445,13 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator
         Configuration rendererResolutionCfg = cfg.getChild("renderer-resolution", false);
         if (rendererResolutionCfg != null) {
             customizable.setResolution(rendererResolutionCfg.getValueAsInteger(240));
+        }
+
+        // renderer resolution
+        Configuration lineWidthCorrectionCfg = cfg.getChild("line-width-correction", false);
+        if (lineWidthCorrectionCfg != null) {
+            customizable.setLineWidthCorrection(lineWidthCorrectionCfg
+                    .getValueAsFloat(AFPConstants.LINE_WIDTH_CORRECTION));
         }
 
         // a default external resource group file setting

@@ -25,41 +25,45 @@ import java.io.OutputStream;
 /**
  * Sets the line width to use when stroking GOCA shapes (structured fields)
  */
-public class GraphicsSetLineWidth extends AbstractGraphicsDrawingOrder {
+public class GraphicsSetFractionalLineWidth extends AbstractGraphicsDrawingOrder {
 
     /** line width multiplier */
-    private final int multiplier;
+    private final float multiplier;
 
     /**
      * Main constructor
      *
      * @param multiplier the line width multiplier
      */
-    public GraphicsSetLineWidth(int multiplier) {
+    public GraphicsSetFractionalLineWidth(float multiplier) {
         this.multiplier = multiplier;
     }
 
     /** {@inheritDoc} */
     public int getDataLength() {
-        return 2;
+        return 4;
     }
 
     /** {@inheritDoc} */
     public void writeToStream(OutputStream os) throws IOException {
+        int integral = (int) multiplier;
+        int fractional = (int) ((multiplier - (float) integral) * 256);
         byte[] data = new byte[] {
-           getOrderCode(), // GSLW order code
-           (byte) multiplier // MH (line-width)
+                getOrderCode(), // GSLW order code
+                0x02, // two bytes next
+                (byte) integral, // integral line with
+                (byte) fractional // and fractional
         };
         os.write(data);
     }
 
     /** {@inheritDoc} */
     public String toString() {
-        return "GraphicsSetLineWidth{multiplier=" + multiplier + "}";
+        return "GraphicsSetFractionalLineWidth{multiplier=" + multiplier + "}";
     }
 
     /** {@inheritDoc} */
     byte getOrderCode() {
-        return 0x19;
+        return 0x11;
     }
 }
