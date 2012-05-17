@@ -588,7 +588,7 @@ public class CommandLineOptions {
 
     private int parsePrintOutputOption(String[] args, int i) throws FOPException {
         setOutputMode(MimeConstants.MIME_FOP_PRINT);
-        if ((i + 1 <= args.length)
+        if ((i + 1 < args.length)
                 && (args[i + 1].charAt(0) != '-')) {
             String arg = args[i + 1];
             String[] parts = arg.split(",");
