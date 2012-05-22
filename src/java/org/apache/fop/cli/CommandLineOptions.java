@@ -357,8 +357,11 @@ public class CommandLineOptions {
             } else if (args[i].equals("-a")) {
                 this.renderingOptions.put(Accessibility.ACCESSIBILITY, Boolean.TRUE);
             } else if (args[i].equals("-v")) {
-                /* Currently just print the version */
+                /* verbose mode although users may expect version; currently just print the version */
                 printVersion();
+                if (args.length == 1) {
+                    return false;
+                }
             } else if (args[i].equals("-param")) {
                   if (i + 2 < args.length) {
                       String name = args[++i];
