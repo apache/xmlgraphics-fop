@@ -22,6 +22,8 @@ package org.apache.fop.cli;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
+
 import org.apache.fop.apps.FOPException;
 import org.junit.Before;
 import org.junit.Test;
@@ -49,4 +51,22 @@ public class CommandLineOptionsTestCase {
         assertEquals(clo.getOutputFormat(), "application/X-fop-print");
     }
 
+    @Test
+    public void testVandVersionSwitchs() throws FOPException, IOException {
+        // test -v
+        String cl1 = "-v";
+        String[] cmd1 = cl1.split(" ");
+        CommandLineOptions clo1 = new CommandLineOptions();
+        assertTrue(!clo1.parse(cmd1));
+        // test -version
+        String cl2 = "-version";
+        String[] cmd2 = cl2.split(" ");
+        CommandLineOptions clo2 = new CommandLineOptions();
+        assertTrue(!clo2.parse(cmd2));
+        // test -v + more switches
+        String cl3 = "-v " + commandLine;
+        String[] cmd3 = cl3.split(" ");
+        CommandLineOptions clo3 = new CommandLineOptions();
+        assertTrue(clo3.parse(cmd3));
+    }
 }
