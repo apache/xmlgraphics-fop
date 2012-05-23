@@ -63,6 +63,10 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="VH" type="fix" due-to="Martin Koegler">
+        Stop outputting the Type entry for structure elements in order to create a smaller PDF 
+        ouptut when accessibility is enabled.
+      </action>
       <action context="Config" dev="GA" type="fix" fixes-bug="52144" due-to="Luis Bernardo">
         Fix crash on use of version switch (-v).
       </action>
