@@ -63,6 +63,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Docs" dev="GA" type="update">
+        Update FAQ and New Bug documentation.
+      </action>
       <action context="Code" dev="VH" type="add">
         Added support for the role property on fo:page-sequence, fo:flow and fo:static-content. This 
         allows to change the mapping of those FOs to PDF structure types when enabling 
