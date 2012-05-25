@@ -89,7 +89,8 @@ class StructureTreeEventTrigger extends FOEventHandler {
                 locale = new Locale(pageSeq.getLanguage());
             }
         }
-        structureTreeEventHandler.startPageSequence(locale);
+        String role = pageSeq.getCommonAccessibility().getRole();
+        structureTreeEventHandler.startPageSequence(locale, role);
     }
 
     @Override

@@ -26,16 +26,19 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
+import org.apache.fop.fo.properties.CommonAccessibility;
+import org.apache.fop.fo.properties.CommonAccessibilityHolder;
 
 /**
  * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_flow">
  * <code>fo:flow</code></a> object.
  *
  */
-public class Flow extends FObj {
-    // The value of properties relevant for fo:flow.
+public class Flow extends FObj implements CommonAccessibilityHolder {
+
     private String flowName;
-    // End of property values
+
+    private CommonAccessibility commonAccessibility;
 
     /** used for FO validation */
     private boolean blockItemFound = false;
@@ -52,6 +55,7 @@ public class Flow extends FObj {
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
         flowName = pList.get(PR_FLOW_NAME).getString();
+        commonAccessibility = CommonAccessibility.getInstance(pList);
     }
 
     /** {@inheritDoc} */
@@ -118,6 +122,10 @@ public class Flow extends FObj {
     /** @return "flow-name" property. */
     public String getFlowName() {
         return flowName;
+    }
+
+    public CommonAccessibility getCommonAccessibility() {
+        return commonAccessibility;
     }
 
     /** {@inheritDoc} */

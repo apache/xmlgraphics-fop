@@ -103,9 +103,9 @@ final class FOToPDFRoleMap {
         addStructureType("Formula");
         addStructureType("Form");
 
-        NON_STRUCT = (PDFName) STANDARD_STRUCTURE_TYPES.get("NonStruct");
+        NON_STRUCT = STANDARD_STRUCTURE_TYPES.get("NonStruct");
         assert NON_STRUCT != null;
-        THEAD = (PDFName) STANDARD_STRUCTURE_TYPES.get("THead");
+        THEAD = STANDARD_STRUCTURE_TYPES.get("THead");
         assert THEAD != null;
 
         // Create the standard mappings
@@ -155,7 +155,7 @@ final class FOToPDFRoleMap {
     }
 
     private static void addMapping(String fo, String structureType) {
-        PDFName type = (PDFName) STANDARD_STRUCTURE_TYPES.get(structureType);
+        PDFName type = STANDARD_STRUCTURE_TYPES.get(structureType);
         assert type != null;
         addMapping(fo, new SimpleMapper(type));
     }
@@ -164,21 +164,6 @@ final class FOToPDFRoleMap {
         DEFAULT_MAPPINGS.put(fo, mapper);
     }
 
-
-    /**
-     * Maps a Formatting Object to a PDFName representing the associated structure type.
-     * @param fo the formatting object's local name
-     * @param parent the parent of the structure element to be mapped
-     * @return the structure type or null if no match could be found
-     */
-    public static PDFName mapFormattingObject(String fo, PDFObject parent) {
-        Mapper mapper = (Mapper) DEFAULT_MAPPINGS.get(fo);
-        if (mapper != null) {
-            return mapper.getStructureType(parent);
-        } else {
-            return NON_STRUCT;
-        }
-    }
 
     /**
      * Maps a Formatting Object to a PDFName representing the associated structure type.
@@ -192,17 +177,32 @@ final class FOToPDFRoleMap {
             PDFObject parent, EventBroadcaster eventBroadcaster) {
         PDFName type = null;
         if (role == null) {
-            type = mapFormattingObject(fo, parent);
+            type = getDefaultMappingFor(fo, parent);
         } else {
-            type = (PDFName) STANDARD_STRUCTURE_TYPES.get(role);
+            type = STANDARD_STRUCTURE_TYPES.get(role);
             if (type == null) {
-                type = mapFormattingObject(fo, parent);
+                type = getDefaultMappingFor(fo, parent);
                 PDFEventProducer.Provider.get(eventBroadcaster).nonStandardStructureType(fo,
                         fo, role, type.toString().substring(1));
             }
         }
         assert type != null;
         return type;
+    }
+
+    /**
+     * Maps a Formatting Object to a PDFName representing the associated structure type.
+     * @param fo the formatting object's local name
+     * @param parent the parent of the structure element to be mapped
+     * @return the structure type or NonStruct if no match could be found
+     */
+    private static PDFName getDefaultMappingFor(String fo, PDFObject parent) {
+        Mapper mapper = DEFAULT_MAPPINGS.get(fo);
+        if (mapper != null) {
+            return mapper.getStructureType(parent);
+        } else {
+            return NON_STRUCT;
+        }
     }
 
     private interface Mapper {
@@ -226,14 +226,13 @@ final class FOToPDFRoleMap {
     private static class TableCellMapper implements Mapper {
 
         public PDFName getStructureType(PDFObject parent) {
-            PDFStructElem grandParent = (PDFStructElem)
-                ((PDFStructElem) parent).getParentStructElem();
+            PDFStructElem grandParent = ((PDFStructElem) parent).getParentStructElem();
             //TODO What to do with cells from table-footer? Currently they are mapped on TD.
             PDFName type;
             if (THEAD.equals(grandParent.getStructureType())) {
-               type = (PDFName) STANDARD_STRUCTURE_TYPES.get("TH");
+               type = STANDARD_STRUCTURE_TYPES.get("TH");
             } else {
-                type = (PDFName) STANDARD_STRUCTURE_TYPES.get("TD");
+                type = STANDARD_STRUCTURE_TYPES.get("TD");
             }
             assert type != null;
             return type;
