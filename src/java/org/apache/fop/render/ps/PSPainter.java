@@ -74,10 +74,14 @@ public class PSPainter extends AbstractIFPainter {
      * @param documentHandler the parent document handler
      */
     public PSPainter(PSDocumentHandler documentHandler) {
+        this(documentHandler, IFState.create());
+    }
+
+    protected PSPainter(PSDocumentHandler documentHandler, IFState state) {
         super();
         this.documentHandler = documentHandler;
         this.borderPainter = new PSBorderPainter(documentHandler.gen);
-        this.state = IFState.create();
+        this.state = state;
     }
 
     /** {@inheritDoc} */
@@ -346,6 +350,10 @@ public class PSPainter extends AbstractIFPainter {
     public void drawText(int x, int y, int letterSpacing, int wordSpacing,
             int[][] dp, String text) throws IFException {
         try {
+            //Do not draw text if font-size is 0 as it creates an invalid PostScript file
+            if (state.getFontSize() == 0) {
+                return;
+            }
             PSGenerator generator = getGenerator();
             generator.useColor(state.getTextColor());
             beginTextObject();
