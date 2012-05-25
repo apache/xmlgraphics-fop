@@ -61,7 +61,7 @@ public class IFStructureTreeBuilderTestCase {
             // Expected
         }
 
-        sut.startPageSequence(null);
+        sut.startPageSequence(null, null);
         sut.endPageSequence();
 
         sut.replayEventsForPageSequence(handler, 0);
@@ -89,7 +89,7 @@ public class IFStructureTreeBuilderTestCase {
         final String nodeName = "block";
         final ContentHandler handler = mock(ContentHandler.class);
 
-        sut.startPageSequence(null);
+        sut.startPageSequence(null, null);
         sut.startNode(nodeName, createSimpleAttributes(attributes));
         sut.endPageSequence();
 
@@ -105,7 +105,7 @@ public class IFStructureTreeBuilderTestCase {
         final String nodeName = "block";
         final ContentHandler handler = mock(ContentHandler.class);
 
-        sut.startPageSequence(null);
+        sut.startPageSequence(null, null);
         sut.endNode(nodeName);
         sut.endPageSequence();
 

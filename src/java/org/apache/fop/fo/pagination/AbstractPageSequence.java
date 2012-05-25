@@ -24,6 +24,8 @@ import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
+import org.apache.fop.fo.properties.CommonAccessibility;
+import org.apache.fop.fo.properties.CommonAccessibilityHolder;
 
 /**
  * Abstract base class for the <a href="http://www.w3.org/TR/xsl/#fo_page-sequence">
@@ -31,9 +33,8 @@ import org.apache.fop.fo.PropertyList;
  * <a href="http://xmlgraphics.apache.org/fop/0.95/extensions.html#external-document">
  * <code>fox:external-document</code></a> extension object.
  */
-public abstract class AbstractPageSequence extends FObj {
+public abstract class AbstractPageSequence extends FObj implements CommonAccessibilityHolder {
 
-    // The value of properties relevant for fo:page-sequence.
     /** initial page number */
     protected Numeric initialPageNumber;
     /** forced page count */
@@ -42,11 +43,12 @@ public abstract class AbstractPageSequence extends FObj {
     private int letterValue;
     private char groupingSeparator;
     private int groupingSize;
-    private Numeric referenceOrientation; //XSL 1.1
+    private Numeric referenceOrientation;
     private String language;
     private String country;
     private String numberConversionFeatures;
-    // End of property values
+
+    private CommonAccessibility commonAccessibility;
 
     private PageNumberGenerator pageNumberGenerator;
 
@@ -76,6 +78,7 @@ public abstract class AbstractPageSequence extends FObj {
         language = pList.get(PR_LANGUAGE).getString();
         country = pList.get(PR_COUNTRY).getString();
         numberConversionFeatures = pList.get(PR_X_NUMBER_CONVERSION_FEATURES).getString();
+        commonAccessibility = CommonAccessibility.getInstance(pList);
     }
 
     /** {@inheritDoc} */
@@ -128,6 +131,10 @@ public abstract class AbstractPageSequence extends FObj {
      */
     public String makeFormattedPageNumber(int pageNumber) {
         return pageNumberGenerator.makeFormattedPageNumber(pageNumber);
+    }
+
+    public CommonAccessibility getCommonAccessibility() {
+        return commonAccessibility;
     }
 
     /**
