@@ -63,6 +63,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="GA" type="fix" fixes-bug="53295" due-to="Luis Bernardo">
+        Add extension to place code just before PostScript %PageTrailer.
+      </action>
       <action context="Renderers" dev="GA" type="fix" fixes-bug="53294" due-to="Robert Meyer">
         Fix invalid PostScript file being created when font-size is 0.
       </action>
