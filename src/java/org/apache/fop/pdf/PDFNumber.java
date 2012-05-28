@@ -19,7 +19,7 @@
 
 package org.apache.fop.pdf;
 
-import org.apache.fop.util.DecimalFormatCache;
+import org.apache.xmlgraphics.util.DoubleFormatUtil;
 
 /**
  * This class represents a simple number object. It also contains contains some
@@ -75,7 +75,12 @@ public class PDFNumber extends PDFObject {
      * @return the value as a string
      */
     public static String doubleOut(double doubleDown, int dec) {
-        return DecimalFormatCache.getDecimalFormat(dec).format(doubleDown);
+        if (dec < 0 || dec > 16) {
+            throw new IllegalArgumentException("Parameter dec must be between 1 and 16");
+        }
+        StringBuffer buf = new StringBuffer();
+        DoubleFormatUtil.formatDouble(doubleDown, dec, dec, buf);
+        return buf.toString();
     }
 
     /** {@inheritDoc} */

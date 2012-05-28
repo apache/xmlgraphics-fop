@@ -533,18 +533,6 @@ public class TTFFile {
                             unicodeMappings.add(new UnicodeMapping(glyphIdx, j));
                             mtxTab[glyphIdx].getUnicodeIndex().add(new Integer(j));
 
-                            if (encodingID == 0 && j >= 0xF020 && j <= 0xF0FF) {
-                                //Experimental: Mapping 0xF020-0xF0FF to 0x0020-0x00FF
-                                //Tested with Wingdings and Symbol TTF fonts which map their
-                                //glyphs in the region 0xF020-0xF0FF.
-                                int mapped = j - 0xF000;
-                                if (!eightBitGlyphs.get(mapped)) {
-                                    //Only map if Unicode code point hasn't been mapped before
-                                    unicodeMappings.add(new UnicodeMapping(glyphIdx, mapped));
-                                    mtxTab[glyphIdx].getUnicodeIndex().add(new Integer(mapped));
-                                }
-                            }
-
                             // Also add winAnsiWidth
                             List<Integer> v = ansiIndex.get(new Integer(j));
                             if (v != null) {

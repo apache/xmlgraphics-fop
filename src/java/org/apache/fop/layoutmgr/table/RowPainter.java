@@ -468,7 +468,7 @@ class RowPainter {
         block.addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
         block.setIPD(ipd);
         block.setBPD(bpd);
-        block.setXOffset(tclm.getXOffsetOfGridUnit(colIndex)
+        block.setXOffset(tclm.getXOffsetOfGridUnit(colIndex, 1)
                 + (borderStart.getRetainedWidth() / 2));
         block.setYOffset(getRowOffset(rowIndex)
                 - (borderBefore.getRetainedWidth() / 2));

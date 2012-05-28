@@ -156,7 +156,7 @@ public class IFParser implements IFConstants {
 
         private ContentHandler navParser;
 
-        private ContentHandler structureTreeHandler;
+        private StructureTreeHandler structureTreeHandler;
 
         private Attributes pageSequenceAttributes;
 
@@ -165,12 +165,18 @@ public class IFParser implements IFConstants {
 
         private final class StructureTreeHandler extends DefaultHandler {
 
+            private final Locale pageSequenceLanguage;
+
             private final StructureTreeEventHandler structureTreeEventHandler;
 
             private StructureTreeHandler(StructureTreeEventHandler structureTreeEventHandler,
                     Locale pageSequenceLanguage) throws SAXException {
+                this.pageSequenceLanguage = pageSequenceLanguage;
                 this.structureTreeEventHandler = structureTreeEventHandler;
-                structureTreeEventHandler.startPageSequence(pageSequenceLanguage);
+            }
+
+            void startStructureTree(String type) {
+                structureTreeEventHandler.startPageSequence(pageSequenceLanguage, type);
             }
 
             public void endDocument() throws SAXException {
@@ -263,6 +269,8 @@ public class IFParser implements IFConstants {
 
                     } else if (localName.equals(EL_STRUCTURE_TREE)) {
                         if (userAgent.isAccessibilityEnabled()) {
+                            String type = attributes.getValue("type");
+                            structureTreeHandler.startStructureTree(type);
                             delegate = structureTreeHandler;
                         } else {
                             /* Delegate to a handler that does nothing */

@@ -23,7 +23,6 @@ import java.awt.Color;
 import java.awt.color.ColorSpace;
 import java.awt.color.ICC_ColorSpace;
 import java.awt.color.ICC_Profile;
-import java.text.DecimalFormat;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -36,7 +35,7 @@ import org.apache.xmlgraphics.java2d.color.DeviceCMYKColorSpace;
 import org.apache.xmlgraphics.java2d.color.NamedColorSpace;
 import org.apache.xmlgraphics.java2d.color.profile.ColorProfileUtil;
 
-import org.apache.fop.util.DecimalFormatCache;
+import org.apache.xmlgraphics.util.DoubleFormatUtil;
 
 /**
  * This class handles the registration of color spaces and the generation of PDF code to select
@@ -225,9 +224,9 @@ public class PDFColorHandler {
         if (comps.length != componentCount) {
             throw new IllegalStateException("Color with unexpected component count encountered");
         }
-        DecimalFormat df = DecimalFormatCache.getDecimalFormat(4);
         for (int i = 0, c = comps.length; i < c; i++) {
-            codeBuffer.append(df.format(comps[i])).append(" ");
+            DoubleFormatUtil.formatDouble(comps[i], 4, 4, codeBuffer);
+            codeBuffer.append(" ");
         }
         codeBuffer.append(command).append("\n");
     }

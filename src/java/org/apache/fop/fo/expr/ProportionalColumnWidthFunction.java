@@ -30,34 +30,21 @@ import org.apache.fop.fo.properties.TableColLength;
  * Class modelling the proportional-column-width function. See Sec. 5.10.4 of
  * the XSL-FO standard.
  */
-public class PPColWidthFunction extends FunctionBase {
+public class ProportionalColumnWidthFunction extends FunctionBase {
 
-    /**
-     * @return 1 (the number of arguments for the proportional-column-width
-     * function)
-     */
-    public int nbArgs() {
+    /** {@inheritDoc} */
+    public int getRequiredArgsCount() {
         return 1;
     }
 
-    /**
-     * @return the {@link PercentBase} for the proportional-column-width()
-     *         function
-     */
+    @Override
+    /** {@inheritDoc} */
     public PercentBase getPercentBase() {
-        return new PPColWidthPercentBase();
+        return new ProportionalColumnWidthPercentBase();
     }
-    /**
-     *
-     * @param args array of arguments for this function
-     * @param pInfo PropertyInfo for this function
-     * @return numeric Property containing the units of proportional measure
-     * for this column
-     * @throws PropertyException for non-numeric operand, or if the parent
-     * element is not a table-column
-     */
-    public Property eval(Property[] args,
-                         PropertyInfo pInfo) throws PropertyException {
+
+    /** {@inheritDoc} */
+    public Property eval(Property[] args, PropertyInfo pInfo) throws PropertyException {
         Number d = args[0].getNumber();
         if (d == null) {
             throw new PropertyException("Non numeric operand to "
@@ -78,7 +65,7 @@ public class PPColWidthFunction extends FunctionBase {
         return new TableColLength(d.doubleValue(), pInfo.getFO());
     }
 
-    private static class PPColWidthPercentBase implements PercentBase {
+    private static class ProportionalColumnWidthPercentBase implements PercentBase {
 
         /** {@inheritDoc} */
         public int getBaseLength(PercentBaseContext context) throws PropertyException {

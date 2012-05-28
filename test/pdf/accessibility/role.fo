@@ -19,12 +19,17 @@
 <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" language="en" country="GB">
   <fo:layout-master-set>
     <fo:simple-page-master master-name="page"
-      page-height="220pt" page-width="320pt" margin="10pt">
-      <fo:region-body/>
+      page-height="240pt" page-width="320pt" margin="10pt" margin-bottom="8pt">
+      <fo:region-body margin-bottom="20pt"/>
+      <fo:region-after extent="10pt"/>
     </fo:simple-page-master>
   </fo:layout-master-set>
-  <fo:page-sequence master-reference="page">
-    <fo:flow flow-name="xsl-region-body" hyphenate="true" font-family="sans-serif">
+  <fo:page-sequence master-reference="page" role="Art">
+    <fo:static-content flow-name="xsl-region-after" role="NonStruct" font-size="8pt">
+      <fo:block text-align="center"><fo:page-number/></fo:block>
+    </fo:static-content>
+    <fo:flow flow-name="xsl-region-body" role="NonStruct"  hyphenate="true" 
+      font-family="sans-serif">
       <fo:block role="H1" font-weight="bold" font-size="150%"
         space-before.minimum="1.5em"
         space-before.optimum="2em"

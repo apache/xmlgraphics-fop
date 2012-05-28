@@ -1,5 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FindBugsFilter>
+  <Match>
+    <Class name="org.apache.fop.fo.properties.FontFamilyProperty"/>
+    <Bug pattern="EQ_DOESNT_OVERRIDE_EQUALS"/>
+  </Match>
+  <Match>
+    <Class name="org.apache.fop.fo.properties.CondLengthProperty"/>
+    <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+  </Match>
+  <Match>
+    <Class name="org.apache.fop.pdf.xref.TrailerDictionary$1FileID"/>
+    <Bug pattern="SIC_INNER_SHOULD_BE_STATIC_ANON"/>
+  </Match>
+  <Match>
+    <Class name="org.apache.fop.fo.properties.ToBeImplementedProperty"/>
+    <Bug pattern="EQ_ALWAYS_TRUE"/>
+  </Match>
    <Match>
       <Class name="org.apache.fop.render.intermediate.IFStructureTreeBuilder"/>
       <Field name="delegate"/>

@@ -443,7 +443,7 @@
       <p>
         Additionally, there are certain settings that control how the renderer handles various elements.
       </p>
-<source><![CDATA[<renderer mime="application/vnd.hp-PCL">
+<source><![CDATA[<renderer mime="application/x-pcl">
   <rendering>quality</rendering>
   <text-rendering>bitmap</text-rendering>
 </renderer>]]></source>
@@ -471,6 +471,7 @@
 <source><![CDATA[<renderer mime="application/x-afp">
   <images mode="b+w" bits-per-pixel="8" native="true"/>
   <renderer-resolution>240</renderer-resolution>
+  <line-width-correction>2.5</line-width-correction>
   
   <!-- a default external resource group file -->
   <resource-group-file>resources.afp</resource-group-file>
@@ -481,6 +482,9 @@
       </p>
       <p>
         The default value for the "renderer-resolution" is 240 dpi. 
+      </p>
+      <p>
+        The default line width is device dependent and may need to be fine tuned so that the output matches the expected result. The default correction value is 2.5.
       </p>
  <!--
       <p>

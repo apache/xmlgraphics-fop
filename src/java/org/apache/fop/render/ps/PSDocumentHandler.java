@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +59,7 @@ import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFPainter;
 import org.apache.fop.render.ps.extensions.PSCommentAfter;
 import org.apache.fop.render.ps.extensions.PSCommentBefore;
+import org.apache.fop.render.ps.extensions.PSPageTrailerCodeBefore;
 import org.apache.fop.render.ps.extensions.PSSetPageDevice;
 import org.apache.fop.render.ps.extensions.PSSetupCode;
 
@@ -99,10 +101,11 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
     private PSPageDeviceDictionary pageDeviceDictionary;
 
     /** This is a collection holding all document header comments */
-    private Collection[] comments = new Collection[3];
+    private Collection[] comments = new Collection[4];
     private static final int COMMENT_DOCUMENT_HEADER = 0;
     private static final int COMMENT_DOCUMENT_TRAILER = 1;
     private static final int COMMENT_PAGE_TRAILER = 2;
+    private static final int PAGE_TRAILER_CODE_BEFORE = 3;
 
     private PSEventProducer eventProducer;
 
@@ -448,8 +451,9 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
 
     /** {@inheritDoc} */
     public void startPageTrailer() throws IFException {
-        super.startPageTrailer();
         try {
+            writeExtensions(PAGE_TRAILER_CODE_BEFORE);
+            super.startPageTrailer();
             gen.writeDSCComment(DSCConstants.PAGE_TRAILER);
         } catch (IOException ioe) {
             throw new IFException("I/O error in startPageTrailer()", ioe);
@@ -531,6 +535,11 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
                     comments[targetCollection] = new java.util.ArrayList();
                 }
                 comments[targetCollection].add(extension);
+            } else if (extension instanceof PSPageTrailerCodeBefore) {
+                if (comments[PAGE_TRAILER_CODE_BEFORE] == null) {
+                    comments[PAGE_TRAILER_CODE_BEFORE] = new ArrayList();
+                }
+                comments[PAGE_TRAILER_CODE_BEFORE].add(extension);
             }
         } catch (IOException ioe) {
             throw new IFException("I/O error in handleExtensionObject()", ioe);

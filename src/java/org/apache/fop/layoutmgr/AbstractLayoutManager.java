@@ -41,8 +41,7 @@ import org.apache.fop.fo.flow.RetrieveMarker;
 /**
  * The base class for most LayoutManagers.
  */
-public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager
-        implements Constants {
+public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager implements Constants {
 
     /** logging instance */
     private static Log log = LogFactory.getLog(AbstractLayoutManager.class);
