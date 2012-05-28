@@ -640,7 +640,7 @@ public abstract class BreakingAlgorithm {
                 this.par.add(0, KnuthPenalty.DUMMY_ZERO_PENALTY);
             }
         }
-        
+
         // content would overflow, insert empty line/page and try again
         return createNode(
                 lastTooLong.previous.position, lastTooLong.previous.line + 1, 1,

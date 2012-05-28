@@ -46,9 +46,11 @@ public class PDFDocumentGraphics2DConfigurator {
      * Configures a PDFDocumentGraphics2D instance using an Avalon Configuration object.
      * @param graphics the PDFDocumentGraphics2D instance
      * @param cfg the configuration
+     * @param useComplexScriptFeatures true if complex script features enabled
      * @throws ConfigurationException if an error occurs while configuring the object
      */
-    public void configure(PDFDocumentGraphics2D graphics, Configuration cfg)
+    public void configure(PDFDocumentGraphics2D graphics, Configuration cfg,
+                          boolean useComplexScriptFeatures )
             throws ConfigurationException {
         PDFDocument pdfDoc = graphics.getPDFDocument();
 
@@ -58,7 +60,7 @@ public class PDFDocumentGraphics2DConfigurator {
 
         //Fonts
         try {
-            FontInfo fontInfo = createFontInfo(cfg);
+            FontInfo fontInfo = createFontInfo(cfg, useComplexScriptFeatures);
             graphics.setFontInfo(fontInfo);
         } catch (FOPException e) {
             throw new ConfigurationException("Error while setting up fonts", e);
@@ -68,13 +70,15 @@ public class PDFDocumentGraphics2DConfigurator {
     /**
      * Creates the {@link FontInfo} instance for the given configuration.
      * @param cfg the configuration
+     * @param useComplexScriptFeatures true if complex script features enabled
      * @return the font collection
      * @throws FOPException if an error occurs while setting up the fonts
      */
-    public static FontInfo createFontInfo(Configuration cfg) throws FOPException {
+    public static FontInfo createFontInfo(Configuration cfg, boolean useComplexScriptFeatures)
+        throws FOPException {
         FontInfo fontInfo = new FontInfo();
         final boolean strict = false;
-        FontResolver fontResolver = FontManager.createMinimalFontResolver();
+        FontResolver fontResolver = FontManager.createMinimalFontResolver(useComplexScriptFeatures);
         //TODO The following could be optimized by retaining the FontManager somewhere
         FontManager fontManager = new FontManager();
         if (cfg != null) {
@@ -92,7 +96,8 @@ public class PDFDocumentGraphics2DConfigurator {
                 = new FontInfoConfigurator(cfg, fontManager, fontResolver, listener, strict);
             List/*<EmbedFontInfo>*/ fontInfoList = new java.util.ArrayList/*<EmbedFontInfo>*/();
             fontInfoConfigurator.configure(fontInfoList);
-            fontCollections.add(new CustomFontCollection(fontResolver, fontInfoList));
+            fontCollections.add(new CustomFontCollection(fontResolver, fontInfoList,
+                                fontResolver.isComplexScriptFeaturesEnabled()));
         }
         fontManager.setup(fontInfo,
                 (FontCollection[])fontCollections.toArray(

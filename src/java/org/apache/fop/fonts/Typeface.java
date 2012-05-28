@@ -24,6 +24,7 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.xmlgraphics.fonts.Glyphs;
 
 /**
@@ -143,6 +144,10 @@ public abstract class Typeface implements FontMetrics {
 
     /** {@inheritDoc} */
     public String toString() {
-        return getFullName();
+        StringBuffer sbuf = new StringBuffer(super.toString());
+        sbuf.append('{');
+        sbuf.append(getFullName());
+        sbuf.append('}');
+        return sbuf.toString();
     }
 }

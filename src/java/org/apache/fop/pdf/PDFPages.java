@@ -19,9 +19,8 @@
 
 package org.apache.fop.pdf;
 
-// Java
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * class representing a /Pages object.
@@ -110,10 +109,9 @@ public class PDFPages extends PDFObject {
      */
     public String toPDFString() {
         StringBuffer sb = new StringBuffer(64);
-        sb.append(getObjectID()).
-            append("<< /Type /Pages\n/Count ").
-            append(this.getCount()).
-            append("\n/Kids [");
+        sb.append("<< /Type /Pages\n/Count ")
+                .append(this.getCount())
+                .append("\n/Kids [");
         for (int i = 0; i < kids.size(); i++) {
             Object kid = kids.get(i);
             if (kid == null) {
@@ -121,7 +119,7 @@ public class PDFPages extends PDFObject {
             }
             sb.append(kid).append(" ");
         }
-        sb.append("] >>\nendobj\n");
+        sb.append("] >>");
         return sb.toString();
     }
 

@@ -26,15 +26,16 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
  * the FOP project.
  */
 
-import java.io.Writer;
 import java.io.IOException;
+import java.io.Writer;
+
+import org.apache.fop.apps.FOPException;
 
 /**
- * Creates an hyperlink.
- * This class belongs to the <fo:basic-link> tag processing.
- * @author <a href="mailto:a.putz@skynamics.com">Andreas Putz</a>
+ * <p>Creates an hyperlink.
+ * This class belongs to the <fo:basic-link> tag processing.</p>
  *
- * {\field {\*\fldinst HYPERLINK "http://www.test.de"   }{\fldrslt Joe Smith}}
+ * <p>This work was authored by Andreas Putz (a.putz@skynamics.com).</p>
  */
 public class RtfHyperLink
 extends RtfContainer
@@ -158,12 +159,17 @@ implements IRtfTextContainer,
     /**
      * IRtfTextContainer requirement:
      * @return a copy of our attributes
+     * @throws FOPException if attributes cannot be cloned
      */
-    public RtfAttributes getTextContainerAttributes() {
+    public RtfAttributes getTextContainerAttributes() throws FOPException {
         if (attrib == null) {
             return null;
         }
-        return (RtfAttributes) this.attrib.clone ();
+        try {
+            return (RtfAttributes) this.attrib.clone ();
+        } catch (CloneNotSupportedException e) {
+            throw new FOPException(e);
+        }
     }
 
 

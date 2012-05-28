@@ -19,13 +19,14 @@
 
 package org.apache.fop.fo.properties;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import org.apache.fop.datatypes.URISpecification;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
-
-import java.net.URI;
-import java.net.URISyntaxException;
+import org.apache.fop.util.CompareUtil;
 
 import static org.apache.fop.fo.Constants.PR_X_XML_BASE;
 
@@ -144,5 +145,27 @@ public class URIProperty extends Property {
             return p;
         }
     }
-    
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + CompareUtil.getHashCode(getSpecifiedValue());
+        result = prime * result + CompareUtil.getHashCode(resolvedURI);
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof URIProperty)) {
+            return false;
+        }
+        URIProperty other = (URIProperty) obj;
+        return CompareUtil.equal(getSpecifiedValue(), other.getSpecifiedValue())
+                && CompareUtil.equal(resolvedURI, other.resolvedURI);
+    }
+
 }

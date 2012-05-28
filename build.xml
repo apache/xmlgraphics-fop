@@ -54,9 +54,9 @@ list of possible build targets.
 <project default="all" basedir="." name="fop">
 <!-- See build.properties and build-local.properties for overriding build settings. -->
 <!-- build-local.properties is not stored in SVN and overrides values from build.properties -->
+  <property environment="env"/>
   <property file="${basedir}/build-local.properties"/>
   <property file="${basedir}/build.properties"/>
-  <property environment="env"/>
   <fileset dir="${basedir}" id="dist.bin">
     <include name="conf/**"/>
     <include name="examples/**"/>
@@ -85,12 +85,12 @@ list of possible build targets.
     </patternset>
   </fileset>
   <patternset id="dist.src.lib.tools">
-	<include name="lib/build/asm*"/>
-	<include name="lib/build/backport-util-concurrent*"/>
-	<include name="lib/build/jaxen*"/>
-	<include name="lib/build/pmd*"/>
-	<include name="lib/build/qdox*"/>
-        <include name="lib/build/xmlunit*"/>
+    <include name="lib/build/asm*"/>
+    <include name="lib/build/backport-util-concurrent*"/>
+    <include name="lib/build/jaxen*"/>
+    <include name="lib/build/pmd*"/>
+    <include name="lib/build/qdox*"/>
+    <include name="lib/build/xmlunit*"/>
   </patternset>
   <fileset dir="${basedir}" id="dist.src">
     <include name="src/**"/>
@@ -98,7 +98,7 @@ list of possible build targets.
     <include name="hyph/hyphenation.dtd"/>
     <include name="hyph/readme"/>
     <patternset refid="dist.lib"/>
-	<patternset refid="dist.src.lib.tools"/>
+    <patternset refid="dist.src.lib.tools"/>
     <include name="lib/servlet*"/>
     <include name="test/**"/>
     <include name="examples/**"/>
@@ -153,6 +153,8 @@ list of possible build targets.
   <property name="javac.fork" value="no"/>
   <property name="junit.fork" value="yes"/>
   <property name="junit.haltonfailure" value="off"/>
+  <property name="junit.printsummary" value="off"/>
+  <property name="junit.formatter.brief" value="on"/>
   <property name="javadoc.packages" value="org.apache.fop.*"/>
   <property name="src.dir" value="${basedir}/src"/>
   <property name="src.codegen.dir" value="${src.dir}/codegen"/>
@@ -214,7 +216,10 @@ list of possible build targets.
   </presetdef>
   
   <presetdef name="junit">
-    <junit haltonfailure="${junit.haltonfailure}" fork="${junit.fork}" maxmemory="256m"/>
+    <junit haltonfailure="${junit.haltonfailure}"
+      fork="${junit.fork}"
+      printsummary="${junit.printsummary}"
+      maxmemory="256m"/>
   </presetdef>
   
   <!-- =================================================================== -->
@@ -396,18 +401,18 @@ list of possible build targets.
     <javac destdir="${build.codegen-classes.dir}">
       <src path="${src.codegen.dir}/unicode/java"/>
     </javac>
-	<java classname="org.apache.fop.hyphenation.UnicodeClasses" resultproperty="classes.result" classpath="${build.codegen-classes.dir}">
+    <java classname="org.apache.fop.hyphenation.UnicodeClasses" resultproperty="classes.result" classpath="${build.codegen-classes.dir}">
       <arg value="${src.dir}/java/org/apache/fop/hyphenation/classes.xml"/>
-	</java>
-	<condition property="classes.result.message" value="Generation of classes successful">
-	  <not>
-	  <isfailure code="${classes.result}"/>
-	  </not>
-	</condition>
-	<condition property="classes.result.message" value="Generation of classes failed">
-	  <isfailure code="${classes.result}"/>
-	</condition>
-	<echo message="${classes.result.message}"/>
+    </java>
+    <condition property="classes.result.message" value="Generation of classes successful">
+      <not>
+      <isfailure code="${classes.result}"/>
+      </not>
+    </condition>
+    <condition property="classes.result.message" value="Generation of classes failed">
+      <isfailure code="${classes.result}"/>
+    </condition>
+    <echo message="${classes.result.message}"/>
   </target>
   <!-- =================================================================== -->
   <!-- compiles hyphenation patterns                                       -->
@@ -418,20 +423,20 @@ list of possible build targets.
       <pathelement location="${build.classes.dir}"/>
     </path>
     <mkdir dir="${build.classes.dir}/hyph"/>
-	<java classname="org.apache.fop.hyphenation.SerializeHyphPattern" fork="true" resultproperty="hyph.result" classpathref="hyph-classpath">
-	  <arg value="${user.hyph.dir}"/>
-	  <arg value="${build.classes.dir}/hyph"/>
-	  <jvmarg value="-Xss${hyph.stacksize}"/>
-	</java>
-	<condition property="hyph.result.message" value="Hyphenation successful">
-	  <not>
-	  <isfailure code="${hyph.result}"/>
-	  </not>
-	</condition>
-	<condition property="hyph.result.message" value="Hyphenation failed">
-	  <isfailure code="${hyph.result}"/>
-	</condition>
-	<echo message="${hyph.result.message}"/>
+    <java classname="org.apache.fop.hyphenation.SerializeHyphPattern" fork="true" resultproperty="hyph.result" classpathref="hyph-classpath">
+      <arg value="${user.hyph.dir}"/>
+      <arg value="${build.classes.dir}/hyph"/>
+      <jvmarg value="-Xss${hyph.stacksize}"/>
+    </java>
+    <condition property="hyph.result.message" value="Hyphenation successful">
+      <not>
+      <isfailure code="${hyph.result}"/>
+      </not>
+    </condition>
+    <condition property="hyph.result.message" value="Hyphenation failed">
+      <isfailure code="${hyph.result}"/>
+    </condition>
+    <echo message="${hyph.result.message}"/>
   </target>
   <target name="uptodate-jar-hyphenation" depends="compile-hyphenation">
     <uptodate property="jar.hyphenation.uptodate" targetfile="${build.dir}/fop-hyph.jar">
@@ -551,6 +556,7 @@ list of possible build targets.
       <include name="org/apache/fop/accessibility/StructureTreeElement.class"/>
       <include name="org/apache/fop/apps/Fop.class"/>
       <include name="org/apache/fop/apps/FOPException.class"/>
+      <include name="org/apache/fop/complexscripts/fonts/*.class"/>
       <include name="org/apache/fop/fo/Constants.class"/>
       <include name="org/apache/fop/fo/FOTreeBuilder.class"/>
       <include name="org/apache/fop/area/AreaTreeControl*"/>
@@ -662,10 +668,15 @@ list of possible build targets.
 <!-- =================================================================== -->
 <!-- Testing                                                             -->
 <!-- =================================================================== -->
-  <target name="junit-with-xmlunit" depends="init-avail" if="xmlunit.present">
+  <target name="junit-init" depends="init-avail" if="xmlunit.present">
+    <condition property="junit.formatter.brief.use">
+      <istrue value="${junit.formatter.brief}"/>
+    </condition>
+  </target>
+  <target name="junit-with-xmlunit" depends="junit-init" if="xmlunit.present">
     <patternset id="test-sources"/>
   </target>
-  <target name="junit-without-xmlunit" depends="init-avail" unless="xmlunit.present">
+  <target name="junit-without-xmlunit" depends="junit-init" unless="xmlunit.present">
     <patternset id="test-sources">
       <exclude name="**/intermediate/*"/>
     </patternset>
@@ -705,6 +716,7 @@ list of possible build targets.
         <include name="META-INF/**"/>
         <include name="**/*.xml"/>
         <include name="**/*.fo"/>
+        <include name="**/BidiTestData*.ser"/>
         <include name="**/*.afp"/>
         <include name="**/*.xsl"/>
       </fileset>
@@ -778,29 +790,37 @@ list of possible build targets.
     <attribute name="classpath" default="standard-junit-classpath"/>
     <sequential>
       <echo message="Running @{title} tests..."/>
-      <junit dir="${basedir}" errorproperty="fop.junit.error" failureproperty="fop.junit.failure">
+      <junit dir="${basedir}" haltonfailure="yes" fork="${junit.fork}" forkmode="once" 
+        errorproperty="fop.junit.error" failureproperty="fop.junit.failure" printsummary="${junit.printsummary}">
         <sysproperty key="basedir" value="${basedir}/@{basedir}"/>
         <sysproperty key="jawa.awt.headless" value="true"/>
-        <formatter type="brief" usefile="false"/>
+        <formatter type="brief" usefile="false" if="junit.formatter.brief.use"/>
         <formatter type="plain" usefile="true"/>
         <formatter type="xml" usefile="true"/>
         <classpath>
           <path refid="@{classpath}"/>
         </classpath>
+	<assertions>
+	  <enable/>
+	</assertions>
         <test name="@{testsuite}" todir="${junit.reports.dir}" outfile="@{outfile}"/>
       </junit>
     </sequential>
   </macrodef>
-  <target name="junit-all" depends="junit-compile, junit-transcoder, junit-layout-hyphenation, setup-xml-schema" description="Runs FOP's JUnit basic tests" if="junit.present">
+  <target name="junit-all" depends="junit-compile, junit-transcoder, junit-layout-hyphenation" 
+    description="Runs FOP's JUnit basic tests" if="junit.present">
     <junit dir="${basedir}" haltonfailure="yes" fork="${junit.fork}" forkmode="once" 
-      errorproperty="fop.junit.error" failureproperty="fop.junit.failure">
+      errorproperty="fop.junit.error" failureproperty="fop.junit.failure" printsummary="${junit.printsummary}">
       <sysproperty key="jawa.awt.headless" value="true"/>
-      <formatter type="brief" usefile="false"/>
+      <formatter type="brief" usefile="false" if="junit.formatter.brief.use"/>
       <formatter type="plain" usefile="true"/>
       <formatter type="xml" usefile="true"/>
       <classpath>
         <path refid="standard-junit-classpath"/>
       </classpath>
+      <assertions>
+        <enable/>
+      </assertions>
       <batchtest todir="${junit.reports.dir}">
         <fileset dir="${build.unit.tests.dir}" includes="**/*TestCase.class"/>
       </batchtest>
@@ -826,25 +846,13 @@ list of possible build targets.
   <target name="junit-area-tree-xml-format" depends="junit-compile" description="Runs FOP's area tree XML format JUnit tests" if="xmlunit.present">
     <junit-run title="area tree XML format" testsuite="org.apache.fop.intermediate.AreaTreeXMLFormatTestSuite" outfile="TEST-area-tree-xml-format"/>
   </target>
-  <target name="junit-intermediate-layout" depends="junit-compile,setup-xml-schema" 
-    if="xmlunit.present">
+  <target name="junit-intermediate-layout" depends="junit-compile" if="xmlunit.present">
     <junit-run title="intermediate format from layout tests" 
       testsuite="org.apache.fop.intermediate.LayoutIFTestSuite" 
       outfile="TEST-intermediate-format-from-layout"/>
   </target>
-  <target name="setup-xml-schema">
-    <local name="cache-dir"/>
-    <property name="cache-dir" value="${basedir}/.cache/junit/intermediate"/>
-    <mkdir dir="${cache-dir}"/>
-    <get src="http://www.w3.org/2001/xml.xsd"
-      dest="${cache-dir}/xml.xsd"
-      usetimestamp="true"/>
-    <copy file="${cache-dir}/xml.xsd" 
-      todir="${build.dir}/test-classes/org/apache/fop/intermediate"/>
-  </target>
 
-  <target name="junit-intermediate-format" 
-    depends="junit-compile,setup-xml-schema,junit-intermediate-layout"
+  <target name="junit-intermediate-format" depends="junit-compile,junit-intermediate-layout"
     description="Runs FOP's intermediate format JUnit tests" if="xmlunit.present">
     <junit-run title="intermediate format" 
       testsuite="org.apache.fop.intermediate.IntermediateFormatTestSuite" 
@@ -859,7 +867,10 @@ list of possible build targets.
   <target name="junit-render-pdf" depends="junit-compile">
     <junit-run title="render-pdf" testsuite="org.apache.fop.render.pdf.RenderPDFTestSuite" outfile="TEST-render-pdf"/>
   </target>
-  <target name="junit-reduced" depends="junit-userconfig, junit-basic, junit-transcoder, junit-text-linebreak, junit-fotree, junit-render-pdf"/>
+  <target name="junit-complexscripts" depends="junit-compile">
+    <junit-run title="complexscripts" testsuite="org.apache.fop.complexscripts.ComplexScriptsTestSuite" outfile="TEST-complexscripts"/>
+  </target>
+  <target name="junit-reduced" depends="junit-userconfig, junit-basic, junit-transcoder, junit-text-linebreak, junit-fotree, junit-render-pdf, junit-complexscripts"/>
   <target name="junit" depends="junit-all" description="Runs all of FOP's JUnit tests" 
     if="junit.present">
     <fail><condition><or><isset property="fop.junit.error"/><isset property="fop.junit.failure"/><not><isset property="hyphenation.present"/></not></or></condition>
@@ -1009,28 +1020,34 @@ NOTE:
 <!-- =================================================================== -->
 <!-- Checkstyle                                                          -->
 <!-- =================================================================== -->
+  <property name="checkstyle.location" value="${lib-tools}/checkstyle-5.5-all.jar" />
   <property name="checkstyle.noframes.xslt" value="${basedir}/checkstyle-noframes.xsl" />
+  <property name="checkstyle.config" value="${basedir}/checkstyle-5.5.xml" />
+  <path id="checkstyle-classpath">
+    <path refid="libs-build-classpath"/>
+    <pathelement location="${checkstyle.location}"/>
+  </path>
   <condition property="checkstyle.avail">
-  	<and>
+    <and>
       <available classname="com.puppycrawl.tools.checkstyle.CheckStyleTask">
-        <classpath>
-          <path refid="libs-tools-build-classpath"/>
-        </classpath>
+        <classpath refid="checkstyle-classpath"/>
       </available>
       <available file="${checkstyle.noframes.xslt}"/>
+      <available file="${checkstyle.config}"/>
     </and>
   </condition>
   <target name="checkstyle-avail" unless="checkstyle.avail">
     <echo message="Checkstyle support NOT present. Please download it from http://checkstyle.sf.net/ and"/>
-    <echo message="..copy or link checkstyle-all-5.1.jar to ${lib-tools}"/>
-    <echo message="..copy or link checkstyle-noframes.xsl to ${checkstyle.noframes.xslt}"/>
+    <echo message="... please provide ${checkstyle.location}"/>
+    <echo message="... please provide ${checkstyle.noframes.xslt}"/>
+    <echo message="... please provide ${checkstyle.config}"/>
   </target>
   <target name="checkstyle" depends="package, checkstyle-avail" if="checkstyle.avail" description="Runs Checkstyle for a code quality report">
-    <taskdef name="checkstyle" classname="com.puppycrawl.tools.checkstyle.CheckStyleTask" classpathref="libs-tools-build-classpath"/>
+    <taskdef name="checkstyle" classname="com.puppycrawl.tools.checkstyle.CheckStyleTask" classpathref="checkstyle-classpath"/>
     <mkdir dir="${build.dir}"/>
-    <checkstyle config="checkstyle-5.1.xml" failonviolation="false">
+    <checkstyle config="${checkstyle.config}" failonviolation="false">
       <classpath>
-        <path refid="libs-build-classpath"/>
+        <path refid="checkstyle-classpath"/>
         <pathelement location="${build.classes.dir}"/>
         <pathelement location="${build.sandbox-classes.dir}"/>
         <pathelement location="${build.codegen-classes.dir}"/>
@@ -1246,11 +1263,11 @@ NOTE:
 <!-- Nightly builds                                                      -->
 <!-- =================================================================== -->
   <target name="junit-nightly-build" depends="junit-userconfig,junit-text-linebreak,junit-fotree">
-	<fail>
-	  <condition>
-	    <or>
-	      <isset property="fop.junit.error"/>
-	      <isset property="fop.junit.failure"/>
+    <fail>
+      <condition>
+        <or>
+          <isset property="fop.junit.error"/>
+          <isset property="fop.junit.failure"/>
         </or>
       </condition>
 NOTE:
@@ -1324,19 +1341,69 @@ NOTE:
   </target>
 
   <!-- =================================================================== -->
-  <!-- Helper task to generate source files that have already been checked -->
+  <!-- Helper tasks to generate source files that have already been checked -->
   <!-- into the repository.  For these files, the version in the           -->
   <!-- repository is the official one and may have updates that will *not* -->
   <!-- be generated by below. This target should never be part of the      -->
   <!-- normal build process.                                               -->
   <!-- =================================================================== -->
-  <target name="codegen-unicode" >
+  <target name="codegen-unicode" depends="compile-java">
     <mkdir dir="${build.codegen-classes.dir}"/>
     <javac destdir="${build.codegen-classes.dir}">
       <src path="${src.codegen.dir}/unicode/java"/>
+      <classpath>
+        <path refid="libs-build-classpath"/>
+        <pathelement location="${build.classes.dir}"/>
+        <pathelement location="${build.codegen-classes.dir}"/>
+      </classpath>
     </javac>
     <java classname="org.apache.fop.text.linebreak.GenerateLineBreakUtils" classpath="${build.codegen-classes.dir}">
       <arg line="-o ${src.dir}/java/org/apache/fop/text/linebreak/LineBreakUtils.java"/>
+    </java>
+  </target>
+  <target name="codegen-unicode-bidi" depends="compile-java">
+    <mkdir dir="${build.codegen-classes.dir}"/>
+    <javac destdir="${build.codegen-classes.dir}" includeAntRuntime="true">
+      <src path="${src.codegen.dir}/unicode/java"/>
+      <classpath>
+        <path refid="libs-build-classpath"/>
+        <pathelement location="${build.classes.dir}"/>
+        <pathelement location="${build.codegen-classes.dir}"/>
+      </classpath>
+    </javac>
+    <java classname="org.apache.fop.complexscripts.bidi.GenerateBidiClass" classpath="${build.codegen-classes.dir}">
+      <arg line="-b http://www.unicode.org/Public/6.0.0/ucd/extracted/DerivedBidiClass.txt"/>
+      <arg line="-o ${src.dir}/java/org/apache/fop/complexscripts/bidi/BidiClass.java"/>
+    </java>
+    <delete>
+      <fileset dir="${test.dir}/java/org/apache/fop/complexscripts/bidi">
+        <include name="**/BidiTestData*.ser"/>
+      </fileset>
+    </delete>
+    <java classname="org.apache.fop.text.bidi.GenerateBidiTestData" classpath="${build.codegen-classes.dir}" fork="yes">
+      <arg line="-v"/>
+      <arg line="-i"/>
+      <arg line="-b http://www.unicode.org/Public/6.0.0/ucd/BidiTest.txt"/>
+      <arg line="-d http://www.unicode.org/Public/6.0.0/ucd/UnicodeData.txt"/>
+      <arg line="-o ${test.dir}/java/org/apache/fop/complexscripts/bidi/BidiTestData.java"/>
+    </java>
+  </target>
+  <target name="resgen-complexscripts" depends="compile-java">
+    <mkdir dir="${build.unit.tests.dir}"/>
+    <javac destdir="${build.unit.tests.dir}" includeAntRuntime="true" memoryMaximumSize="1024m">
+      <src path="${test.dir}/java/org/apache/fop/complexscripts/"/>
+      <classpath>
+        <path refid="libs-build-classpath"/>
+        <pathelement location="${build.classes.dir}"/>
+      </classpath>
+    </javac>
+    <java classname="org.apache.fop.complexscripts.scripts.arabic.GenerateArabicTestData">
+      <classpath>
+        <path refid="libs-build-classpath"/>
+        <pathelement location="${build.classes.dir}"/>
+        <pathelement location="${build.unit.tests.dir}"/>
+      </classpath>
+      <arg line="-c"/>
     </java>
   </target>
 <!-- =================================================================== -->
@@ -1355,7 +1422,7 @@ NOTE:
     </fail>
     <echo>All tests passed!</echo>
   </target>
-  <!-- =================================================================== -->
+<!-- =================================================================== -->
 <!-- Clean targets                                                       -->
 <!-- =================================================================== -->
   <target name="clean" description="Cleans the build directory">
@@ -1367,7 +1434,7 @@ NOTE:
     <delete>
       <fileset dir="${basedir}" includes="${name}-*.tar.gz"/>
       <fileset dir="${basedir}" includes="${name}-*.zip"/>
-	  <fileset dir="${basedir}" includes="${name}-bundle.jar"/>
+      <fileset dir="${basedir}" includes="${name}-bundle.jar"/>
     </delete>
   </target>
   <target name="validate-xdocs" description="Validate the xdocs. Point schemas.dir to Forrest's 'schemas' directory.">
@@ -1403,4 +1470,10 @@ NOTE:
       </xmlcatalog>
     </xmlvalidate>
   </target>
+
+<!-- =================================================================== -->
+<!-- Local targets                                                       -->
+<!-- =================================================================== -->
+  <import file="build-local.targets.xml" optional="true"/>
+
 </project>

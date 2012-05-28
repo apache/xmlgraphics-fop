@@ -24,7 +24,6 @@ import java.util.Locale;
 
 import javax.xml.transform.Result;
 
-import org.apache.fop.accessibility.DummyStructureTreeEventHandler;
 import org.apache.fop.accessibility.StructureTreeEventHandler;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.render.intermediate.IFContext;
@@ -98,7 +97,7 @@ public class IFDocumentHandlerProxy implements IFDocumentHandler {
 
     /** {@inheritDoc} */
     public StructureTreeEventHandler getStructureTreeEventHandler() {
-        return DummyStructureTreeEventHandler.INSTANCE;
+        return this.delegate.getStructureTreeEventHandler();
     }
 
     /** {@inheritDoc} */

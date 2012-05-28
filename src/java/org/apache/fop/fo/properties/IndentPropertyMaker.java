@@ -55,6 +55,9 @@ public class IndentPropertyMaker extends CorrespondingPropertyMaker {
      * @param paddingCorresponding the corresping propids.
      */
     public void setPaddingCorresponding(int[] paddingCorresponding) {
+        if ( ( paddingCorresponding == null ) || ( paddingCorresponding.length != 4 ) ) {
+            throw new IllegalArgumentException();
+        }
         this.paddingCorresponding = paddingCorresponding;
     }
 
@@ -63,6 +66,9 @@ public class IndentPropertyMaker extends CorrespondingPropertyMaker {
      * @param borderWidthCorresponding the corresping propids.
      */
     public void setBorderWidthCorresponding(int[] borderWidthCorresponding) {
+        if ( ( borderWidthCorresponding == null ) || ( borderWidthCorresponding.length != 4 ) ) {
+            throw new IllegalArgumentException();
+        }
         this.borderWidthCorresponding = borderWidthCorresponding;
     }
 
@@ -99,7 +105,7 @@ public class IndentPropertyMaker extends CorrespondingPropertyMaker {
         Numeric padding = getCorresponding(paddingCorresponding, propertyList).getNumeric();
         Numeric border = getCorresponding(borderWidthCorresponding, propertyList).getNumeric();
 
-        int marginProp = pList.getWritingMode(lrtb, rltb, tbrl);
+        int marginProp = pList.selectFromWritingMode(lrtb, rltb, tbrl, tblr);
         // Calculate the absolute margin.
         if (propertyList.getExplicitOrShorthand(marginProp) == null) {
             Property indent = propertyList.getExplicit(baseMaker.propId);
@@ -158,7 +164,7 @@ public class IndentPropertyMaker extends CorrespondingPropertyMaker {
         Numeric padding = getCorresponding(paddingCorresponding, propertyList).getNumeric();
         Numeric border = getCorresponding(borderWidthCorresponding, propertyList).getNumeric();
 
-        int marginProp = pList.getWritingMode(lrtb, rltb, tbrl);
+        int marginProp = pList.selectFromWritingMode(lrtb, rltb, tbrl, tblr);
 
         //Determine whether the nearest anscestor indent was specified through
         //start-indent|end-indent or through a margin property.
@@ -208,7 +214,8 @@ public class IndentPropertyMaker extends CorrespondingPropertyMaker {
                 throws PropertyException {
         PropertyList pList = getWMPropertyList(propertyList);
         if (pList != null) {
-            int wmcorr = pList.getWritingMode(corresponding[0], corresponding[1], corresponding[2]);
+            int wmcorr = pList.selectFromWritingMode
+                ( corresponding[0], corresponding[1], corresponding[2], corresponding[3] );
             return propertyList.get(wmcorr);
         } else {
             return null;

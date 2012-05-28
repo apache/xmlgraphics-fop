@@ -1,4 +1,4 @@
-<?xml version="1.0" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -19,15 +19,15 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
 <document>
   <header>
-    <title>Servlets</title>
-    <subtitle>How to use Apache FOP in a Servlet</subtitle>
+    <title>Apache™ FOP: Servlets</title>
+    <subtitle>How to use Apache� FOP in a Servlet</subtitle>
     <version>$Revision$</version>
   </header>
   <body>
     <section id="overview">
       <title>Overview</title>
       <p>
-        This page discusses topic all around using Apache FOP in a servlet environment.
+        This page discusses topic all around using Apache™ FOP in a servlet environment.
       </p>
     </section>
     <section id="example-servlets">

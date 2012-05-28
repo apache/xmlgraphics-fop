@@ -103,8 +103,9 @@ public class AWTRenderer extends Java2DRenderer implements Pageable {
 
     /**
      * {@inheritDoc}
+     * @throws FOPException thrown by java2DRenderer
      */
-    public void renderPage(PageViewport pageViewport) throws IOException {
+    public void renderPage(PageViewport pageViewport) throws IOException, FOPException {
 
         super.renderPage(pageViewport);
         if (statusListener != null) {

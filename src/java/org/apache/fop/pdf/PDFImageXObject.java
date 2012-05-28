@@ -61,7 +61,7 @@ public class PDFImageXObject extends PDFXObject {
      * @throws IOException if there is an error writing the data
      * @return the length of the data written
      */
-    protected int output(OutputStream stream) throws IOException {
+    public int output(OutputStream stream) throws IOException {
         int length = super.output(stream);
 
         // let it gc
@@ -137,7 +137,7 @@ public class PDFImageXObject extends PDFXObject {
             put("SMask", ref);
         }
         //Important: do this at the end so previous values can be overwritten.
-        pdfimage.populateXObjectDictionary(this);
+        pdfimage.populateXObjectDictionary(getDictionary());
     }
 
     /** {@inheritDoc} */

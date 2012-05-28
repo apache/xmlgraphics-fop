@@ -317,16 +317,17 @@ public class TableContentLayoutManager implements PercentBaseContext {
      * @return the requested X offset
      */
     protected int getXOffsetOfGridUnit(PrimaryGridUnit gu) {
-        return getXOffsetOfGridUnit(gu.getColIndex());
+        return getXOffsetOfGridUnit(gu.getColIndex(), gu.getCell().getNumberColumnsSpanned());
     }
 
     /**
      * Returns the X offset of the grid unit in the given column.
      * @param colIndex the column index (zero-based)
+     * @param nrColSpan number columns spanned
      * @return the requested X offset
      */
-    protected int getXOffsetOfGridUnit(int colIndex) {
-        return startXOffset + getTableLM().getColumns().getXOffset(colIndex + 1, getTableLM());
+    protected int getXOffsetOfGridUnit(int colIndex, int nrColSpan) {
+        return startXOffset + getTableLM().getColumns().getXOffset(colIndex + 1, nrColSpan, getTableLM());
     }
 
     /**

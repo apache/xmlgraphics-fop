@@ -45,8 +45,7 @@ public final class FixedLength extends LengthProperty {
     public static final String MPT = "mpt";
 
     /** cache holding all canonical FixedLength instances */
-    private static final PropertyCache CACHE
-        = new PropertyCache(FixedLength.class);
+    private static final PropertyCache<FixedLength> CACHE = new PropertyCache<FixedLength>();
 
     /** canonical zero-length instance */
     public static final FixedLength ZERO_FIXED_LENGTH = new FixedLength(0, FixedLength.MPT, 1.0f);
@@ -82,10 +81,8 @@ public final class FixedLength extends LengthProperty {
         if (numUnits == 0.0) {
             return ZERO_FIXED_LENGTH;
         } else {
-            return (FixedLength)CACHE.fetch(
-                new FixedLength(numUnits, units, sourceResolution));
+            return CACHE.fetch(new FixedLength(numUnits, units, sourceResolution));
         }
-
     }
 
     /**

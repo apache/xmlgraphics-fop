@@ -1,4 +1,4 @@
-<?xml version="1.0" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -19,7 +19,7 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
 <document>
   <header>
-    <title>Running Apache FOP</title>
+    <title>Running Apache™ FOP</title>
     <version>$Revision$</version>
   </header>
 
@@ -32,13 +32,13 @@
           Java 1.4.x or later Runtime Environment.
           <ul>
             <li>
-              Many JREs >=1.4 contain older JAXP implementations (which often contain bugs). It's
+              Many JREs &gt;=1.4 contain older JAXP implementations (which often contain bugs). It's
               usually a good idea to replace them with a current implementation.
             </li>
           </ul>
         </li>
         <li>
-          Apache FOP. The <a href="../download.html">FOP distribution</a> includes all libraries that you will
+          Apache™ FOP. The <a href="../download.html">FOP distribution</a> includes all libraries that you will
           need to run a basic FOP installation. These can be found in the [fop-root]/lib directory. These
           libraries include the following:
           <ul>
@@ -117,6 +117,7 @@ Fop [options] [-fo|-xml] infile [-xsl file] [-awt|-pdf|-mif|-rtf|-tiff|-png|-pcl
   -q                quiet mode
   -c cfg.xml        use additional configuration file cfg.xml
   -l lang           the language to use for user information
+  -nocs             disable complex script features
   -r                relaxed/less strict validation (where available)
   -dpi xxx          target resolution in dots per inch (dpi) where xxx is a number
   -s                for area tree XML, down to block areas only
@@ -209,8 +210,8 @@ Fop [options] [-fo|-xml] infile [-xsl file] [-awt|-pdf|-mif|-rtf|-tiff|-png|-pcl
         <title>Writing your own script</title>
         <p>FOP's entry point for your own scripts is the class
 <code>org.apache.fop.cli.Main</code>. The general pattern for the
-        command line is: <code>java -classpath &lt;CLASSPATH>
-        org.apache.fop.cli.Main &lt;arguments></code>. The arguments
+        command line is: <code>java -classpath &lt;CLASSPATH&gt;
+        org.apache.fop.cli.Main &lt;arguments&gt;</code>. The arguments
         consist of the options and infile and outfile specifications
         as shown above for the standard scripts. You may wish to review
         the standard scripts to make sure that
@@ -221,7 +222,7 @@ Fop [options] [-fo|-xml] infile [-xsl file] [-awt|-pdf|-mif|-rtf|-tiff|-png|-pcl
         <title>Running with java's <code>-jar</code> option</title>
       <p>
         As an alternative to the start scripts you can run <code>java
-        -jar path/to/build/fop.jar &lt;arguments></code>, relying on
+        -jar path/to/build/fop.jar &lt;arguments&gt;</code>, relying on
         FOP to build the classpath for running FOP dynamically, see <a
         href="#dynamical-classpath">below</a>. If you use hyphenation,
         you must put <code>fop-hyph.jar</code> in the <code>lib</code>
@@ -229,7 +230,7 @@ Fop [options] [-fo|-xml] infile [-xsl file] [-awt|-pdf|-mif|-rtf|-tiff|-png|-pcl
       </p>
 
       <p>You can also run <code>java -jar path/to/fop.jar
-      &lt;arguments></code>, relying on the <code>Class-Path</code>
+      &lt;arguments&gt;</code>, relying on the <code>Class-Path</code>
       entry in the manifest file. This works if you put
       <code>fop.jar</code> and all jar files from the <code>lib</code>
       directory in a single directory. If you use hyphenation, you

@@ -20,12 +20,14 @@
 package org.apache.fop.fo.flow;
 
 import java.awt.Color;
+import java.util.Stack;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 
 import org.apache.fop.accessibility.StructureTreeElement;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.complexscripts.bidi.DelimitedTextRange;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
@@ -39,6 +41,7 @@ import org.apache.fop.fo.properties.CommonFont;
 import org.apache.fop.fo.properties.CommonTextDecoration;
 import org.apache.fop.fo.properties.SpaceProperty;
 import org.apache.fop.fo.properties.StructureTreeElementHolder;
+import org.apache.fop.util.CharUtilities;
 
 /**
  * Common base class for the <a href="http://www.w3.org/TR/xsl/#fo_page-number-citation">
@@ -195,6 +198,19 @@ public abstract class AbstractPageNumberCitation extends FObj
     /** @return the "ref-id" property. */
     public String getRefId() {
         return refId;
+    }
+
+    @Override
+    public boolean isDelimitedTextRangeBoundary ( int boundary ) {
+        return false;
+    }
+
+    @Override
+    protected Stack collectDelimitedTextRanges ( Stack ranges, DelimitedTextRange currentRange ) {
+        if ( currentRange != null ) {
+            currentRange.append ( CharUtilities.OBJECT_REPLACEMENT_CHARACTER, this );
+        }
+        return ranges;
     }
 
 }

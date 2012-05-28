@@ -20,7 +20,6 @@
 package org.apache.fop.render.java2d;
 
 // Java
-import java.awt.Graphics2D;
 import java.util.Map;
 import java.util.Set;
 

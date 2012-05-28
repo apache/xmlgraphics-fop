@@ -465,7 +465,6 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
 
     /**
      * Add the areas for the break points.
-     * This sets the offset of each cell as it is added.
      *
      * @param parentIter the position iterator
      * @param layoutContext the layout context for adding areas
@@ -507,12 +506,12 @@ public class ListItemLayoutManager extends BlockStackingLayoutManager
         int bodyFirstIndex = ((ListItemPosition) positionList.getFirst()).getBodyFirstIndex();
         int bodyLastIndex = ((ListItemPosition) positionList.getLast()).getBodyLastIndex();
 
-        //Determine previous break if any
+        //Determine previous break if any (in item label list)
         int previousBreak = ElementListUtils.determinePreviousBreak(labelList, labelFirstIndex);
         SpaceResolver.performConditionalsNotification(labelList,
                 labelFirstIndex, labelLastIndex, previousBreak);
 
-        //Determine previous break if any
+        //Determine previous break if any (in item body list)
         previousBreak = ElementListUtils.determinePreviousBreak(bodyList, bodyFirstIndex);
         SpaceResolver.performConditionalsNotification(bodyList,
                 bodyFirstIndex, bodyLastIndex, previousBreak);

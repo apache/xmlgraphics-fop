@@ -29,7 +29,11 @@ import org.apache.fop.accessibility.StructureTreeEventHandler;
 import org.apache.fop.events.EventBroadcaster;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.pdf.PDFFactory;
+import org.apache.fop.pdf.PDFName;
+import org.apache.fop.pdf.PDFObject;
+import org.apache.fop.pdf.PDFParentTree;
 import org.apache.fop.pdf.PDFStructElem;
+import org.apache.fop.pdf.PDFStructTreeRoot;
 
 class PDFStructureTreeBuilder implements StructureTreeEventHandler {
 
@@ -41,21 +45,42 @@ class PDFStructureTreeBuilder implements StructureTreeEventHandler {
 
     private LinkedList<PDFStructElem> ancestors = new LinkedList<PDFStructElem>();
 
+    private PDFStructElem rootStructureElement;
+
     void setPdfFactory(PDFFactory pdfFactory) {
         this.pdfFactory = pdfFactory;
     }
 
     void setLogicalStructureHandler(PDFLogicalStructureHandler logicalStructureHandler) {
         this.logicalStructureHandler = logicalStructureHandler;
+        createRootStructureElement();
+    }
+
+    private void createRootStructureElement() {
+        assert rootStructureElement == null;
+        PDFParentTree parentTree = logicalStructureHandler.getParentTree();
+        PDFStructTreeRoot structTreeRoot = pdfFactory.getDocument().makeStructTreeRoot(parentTree);
+        rootStructureElement = createStructureElement("root", structTreeRoot, null);
+        structTreeRoot.addKid(rootStructureElement);
     }
 
     void setEventBroadcaster(EventBroadcaster eventBroadcaster) {
         this.eventBroadcaster = eventBroadcaster;
     }
 
-    public void startPageSequence(Locale locale) {
+    public void startPageSequence(Locale language, String role) {
         ancestors = new LinkedList<PDFStructElem>();
-        ancestors.add(logicalStructureHandler.createPageSequence(locale));
+        PDFStructElem structElem = createStructureElement("page-sequence", rootStructureElement, role);
+        if (language != null) {
+            structElem.setLanguage(language);
+        }
+        rootStructureElement.addKid(structElem);
+        ancestors.add(structElem);
+    }
+
+    private PDFStructElem createStructureElement(String name, PDFObject parent, String role) {
+        PDFName structureType = FOToPDFRoleMap.mapFormattingObject(name, role, parent, eventBroadcaster);
+        return pdfFactory.getDocument().makeStructureElement(structureType, parent);
     }
 
     public void endPageSequence() {
@@ -64,12 +89,10 @@ class PDFStructureTreeBuilder implements StructureTreeEventHandler {
     public StructureTreeElement startNode(String name, Attributes attributes) {
         PDFStructElem parent = ancestors.getFirst();
         String role = attributes.getValue("role");
-        PDFStructElem created;
-        created = pdfFactory.makeStructureElement(
-                FOToPDFRoleMap.mapFormattingObject(name, role, parent, eventBroadcaster), parent);
-        parent.addKid(created);
-        ancestors.addFirst(created);
-        return created;
+        PDFStructElem structElem = createStructureElement(name, parent, role);
+        parent.addKid(structElem);
+        ancestors.addFirst(structElem);
+        return structElem;
     }
 
     public void endNode(String name) {
@@ -83,34 +106,30 @@ class PDFStructureTreeBuilder implements StructureTreeEventHandler {
     public StructureTreeElement startImageNode(String name, Attributes attributes) {
         PDFStructElem parent = ancestors.getFirst();
         String role = attributes.getValue("role");
-        PDFStructElem created;
-        created = pdfFactory.makeStructureElement(
-                FOToPDFRoleMap.mapFormattingObject(name, role, parent, eventBroadcaster), parent);
-        parent.addKid(created);
+        PDFStructElem structElem = createStructureElement(name, parent, role);
+        parent.addKid(structElem);
         String altTextNode = attributes.getValue(ExtensionElementMapping.URI, "alt-text");
         if (altTextNode != null) {
-            created.put("Alt", altTextNode);
+            structElem.put("Alt", altTextNode);
         } else {
-            created.put("Alt", "No alternate text specified");
+            structElem.put("Alt", "No alternate text specified");
         }
-        ancestors.addFirst(created);
-        return created;
+        ancestors.addFirst(structElem);
+        return structElem;
     }
 
     public StructureTreeElement startReferencedNode(String name, Attributes attributes) {
         PDFStructElem parent = ancestors.getFirst();
         String role = attributes.getValue("role");
-        PDFStructElem created;
+        PDFStructElem structElem;
         if ("#PCDATA".equals(name)) {
-            created = new PDFStructElem.Placeholder(parent, name);
+            structElem = new PDFStructElem.Placeholder(parent, name);
         } else {
-            created = pdfFactory.makeStructureElement(
-                    FOToPDFRoleMap.mapFormattingObject(name, role, parent,
-                            eventBroadcaster), parent);
+            structElem = createStructureElement(name, parent, role);
         }
-        parent.addKid(created);
-        ancestors.addFirst(created);
-        return created;
+        parent.addKid(structElem);
+        ancestors.addFirst(structElem);
+        return structElem;
     }
 
 }

@@ -95,12 +95,12 @@ import org.apache.fop.render.pdf.ImageRawJPEGAdapter;
 import org.apache.fop.render.pdf.ImageRenderedAdapter;
 
 /**
- * PDF Graphics 2D.
+ * <p>PDF Graphics 2D.
  * Used for drawing into a pdf document as if it is a graphics object.
- * This takes a pdf document and draws into it.
+ * This takes a pdf document and draws into it.</p>
  *
- * @author <a href="mailto:keiron@aftexsw.com">Keiron Liddle</a>
- * @version $Id$
+ * <p>This work was authored by Keiron Liddle (keiron@aftexsw.com).</p>
+ *
  * @see org.apache.batik.ext.awt.g2d.AbstractGraphics2D
  */
 public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHandler {
@@ -965,7 +965,8 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
         preparePainting();
 
         FontInfo specialFontInfo = new FontInfo();
-        FontSetup.setup(specialFontInfo);
+        boolean base14Kerning = false;
+        FontSetup.setup(specialFontInfo, base14Kerning);
 
         PDFResources res = pdfDoc.getFactory().makeResources();
         PDFResourceContext context = new PDFResourceContext(res);
@@ -1063,7 +1064,8 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
         preparePainting();
 
         Shape clip = getClip();
-        Rectangle2D usrClipBounds, usrBounds;
+        Rectangle2D usrClipBounds;
+        Rectangle2D usrBounds;
         usrBounds = shape.getBounds2D();
         if (clip != null) {
             usrClipBounds  = clip.getBounds2D();
@@ -1077,7 +1079,9 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
         double usrW = usrBounds.getWidth();
         double usrH = usrBounds.getHeight();
 
-        Rectangle devShapeBounds, devClipBounds, devBounds;
+        Rectangle devShapeBounds;
+        Rectangle devClipBounds;
+        Rectangle devBounds;
         AffineTransform at = getTransform();
         devShapeBounds = at.createTransformedShape(shape).getBounds();
         if (clip != null) {
@@ -1116,7 +1120,10 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
             final byte[] rgb  = new byte[devW * devH * 3];
             final int[]  line = new int[devW];
             final byte[] mask;
-            int x, y, val, rgbIdx = 0;
+            int x;
+            int y;
+            int val;
+            int rgbIdx = 0;
 
             if (pcm.hasAlpha()) {
                 mask = new byte[devW * devH];
@@ -1164,8 +1171,8 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
 
         currentStream.write("q\n");
         writeClip(shape);
-        currentStream.write("" + usrW + " 0 0 " + (-usrH) + " " + usrX
-                            + " " + (usrY + usrH) + " cm\n"
+        currentStream.write("" + PDFNumber.doubleOut(usrW) + " 0 0 " + PDFNumber.doubleOut(-usrH) + " "
+                + PDFNumber.doubleOut(usrX) + " " + PDFNumber.doubleOut(usrY + usrH) + " cm\n"
                             + imageInfo.getName() + " Do\nQ\n");
         return true;
     }

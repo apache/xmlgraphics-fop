@@ -20,6 +20,7 @@
 package org.apache.fop.fo.properties;
 
 import org.apache.fop.datatypes.PercentBaseContext;
+import org.apache.fop.util.CompareUtil;
 
 /**
  * A length quantity in XSL which is specified as an enum, such as "auto"
@@ -93,5 +94,20 @@ public class EnumLength extends LengthProperty {
         return enumProperty.getObject();
     }
 
+    @Override
+    public int hashCode() {
+        return enumProperty.hashCode();
+    }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof EnumLength)) {
+            return false;
+        }
+        EnumLength other = (EnumLength) obj;
+        return CompareUtil.equal(enumProperty, other.enumProperty);
+    }
 }

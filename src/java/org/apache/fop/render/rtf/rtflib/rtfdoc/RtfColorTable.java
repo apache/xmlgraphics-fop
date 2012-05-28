@@ -26,14 +26,15 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
  * the FOP project.
  */
 
-import java.util.Vector;
-import java.util.Hashtable;
 import java.io.IOException;
+import java.util.Hashtable;
+import java.util.Vector;
 
 /**
- * Singelton of the RTF color table.
- * This class was created for <fo:basic-link> tag processing.
- * @author <a href="mailto:a.putz@skynamics.com">Andreas Putz</a>
+ * <p>Singelton of the RTF color table.
+ * This class was created for <fo:basic-link> tag processing.</p>
+ *
+ * <p>This work was authored by Andreas Putz (a.putz@skynamics.com).</p>
  */
 
 public final class RtfColorTable {

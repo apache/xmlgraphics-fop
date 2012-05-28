@@ -1,4 +1,4 @@
-<?xml version="1.0" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -19,7 +19,7 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.3//EN" "http://forrest.apache.org/dtd/document-v13.dtd">
 <document>
   <header>
-    <title>FOP: Development Team</title>
+    <title>Apache™ FOP: Development Team</title>
     <version>$Revision$</version>
   </header>
   <body>
@@ -31,6 +31,13 @@
       <title>Active Committers</title>
       <note label="Important">Please don't write to any developer directly if you need help on using FOP. Only if you submit questions to the <link href="maillist.html#fop-user">FOP User Mailing List</link> will other FOP users be able to profit from answers given to your question. Another point is that a developer may have gone inactive or is on holidays in which case you may not get an answer in time.</note>
       <ul>
+        <li id="ga"><link href="mailto:gadams@apache.org">Glenn Adams</link> (GA)
+          is an independent consultant. He is former technical director of the Unicode Consortium,
+          and a co-author of the Unicode Standard. He served on ISO JTC1/SC2 
+          (Coded Character Sets) and JTC1/SC18/WG8 (Document Processing) committees, and was actively 
+          involved in the creation of ISO 8879 (SGML), ISO/IEC 9541 (Font Information Interchange), 
+          ISO/IEC 10179 (DSSSL), ISO/IEC 10180 (SPDL), ISO/IEC 10646 (Universal Coded Character Set), 
+          and, within the W3C, on XSL-FO 1.0.</li>
         <li id="cb"><link href="mailto:bowditch_chris@hotmail.com">Chris Bowditch</link> (CB)
             is a Java/VB Programmer from England.</li>
         <li id="ac"><link href="mailto:acumiskey AT apache.org">Adrian Cumiskey</link> (AC)
@@ -42,12 +49,16 @@
         <li id="vh"><link href="mailto:vhennebert@apache.org">Vincent Hennebert</link>
           (VH), a Java developer from France; with an interest in typography, and in using
           Fop as a pdf renderer for book-like documents.</li>
+        <li id="mh"><link href="mailto:mehdi@apache.org">Mehdi Houshmand</link> (MH)
+          is a developer from the UK with a background in Physics. 
+          Worked on Flow Cytometry for research and military uses, Telecoms systems and CMS software. 
+          Programmed in C/C++, Java and currently learning Python</li>
         <li id="cl"><link href="mailto:clay@apache.org">Clay Leeds</link> (CL)
           is a web/WAP/Palm developer from Laguna Beach, California, USA. A 
           recent XML/XSL-FO convert, he has been nit-picking FAQs &amp; assorted web 
           pages since his first webmaster position @brain.com in 1996. Most 
-          important creation? He&apos;s got a couple of cool kids.</li>
-        <li id="jm"><link href="mailto:jeremias@apache.org">Jeremias M&#x00E4;rki</link> (JM)
+          important creation? He's got a couple of cool kids.</li>
+        <li id="jm"><link href="mailto:jeremias@apache.org">Jeremias M�rki</link> (JM)
           is an independent software engineer and consultant from Lucerne, Switzerland. He's also
           the creator of <fork href="http://barcode4j.sourceforge.net">Barcode4J</fork>. 
           See his <fork href="http://www.jeremias-maerki.ch">home page</fork> for more information
@@ -56,7 +67,7 @@
         <li id="sp"><link href="mailto:spepping@apache.org">Simon Pepping</link> (SP) came to FOP
             from the TeX/LaTeX world. See his <fork href="http://www.leverkruid.eu">home
             page</fork> for some of his private projects.</li>
-        <li id="jp"><link href="mailto:pietsch@apache.org">J&#x00F6;rg Pietschmann</link> (JP)</li>
+        <li id="jp"><link href="mailto:pietsch@apache.org">J�rg Pietschmann</link> (JP)</li>
         <li id="ps"><link href="mailto:tcho@club-internet.fr">Pascal Sancho</link> (PS)
 	        is an XML developper from Aix-en-Provence (France). He works on software solutions for 	 
 	        rendering various kind of documents on various supports, more specifically taking care 	 
@@ -70,22 +81,7 @@
           Geneon media solutions gmbh in Nuremberg, Germany. He needs FOP to wrestle gigabytes of 
           electronic data into thousands of printed pages.</li>
         <li id="lm">Louis Masters</li>
-        <li id="mh">Mehdi Houshmand, Young developer from the UK with a background in Physics. 
-          Worked on Flow Cytometry for research and military uses, Telecoms systems and CMS software. 
-          Programmed in C/C++, Java and currently learning Python</li>
-        <li id="vr">Vanukuri Venkat Reddy is a Senior Software Engineer in UK, using XML Graphics
-          Project and FOP for his work, and is committed to contributing more to the Apache to be part
-          a great team.</li>
-        <li id="ga">Dr. Glenn Adams is an independent consultant with 45+ years of professional 
-          software design and development experience in areas ranging from embedded, real-time systems, 
-          including military, marine and consumer electronics process control and digital signal 
-          processing applications, to advanced typographic and multilingual text processing systems. 
-          He is former technical director of the Unicode Consortium, and a co-author of the Unicode Standard. 
-          He has 25+ years experience in developing international standards, serving on ISO JTC1/SC2 
-          (Coded Character Sets) and JTC1/SC18/WG8 (Document Processing) committees, and was actively 
-          involved in the creation of ISO 8879 (SGML), ISO/IEC 9541 (Font Information Interchange), 
-          ISO/IEC 10179 (DSSSL), ISO/IEC 10180 (SPDL), ISO/IEC 10646 (Universal Coded Character Set), 
-          and, within the W3C, on XSL-FO 1.0.</li>
+        <li id="lb">Luis Bernardo</li>
       </ul>
     </section>
     <section id="founder">

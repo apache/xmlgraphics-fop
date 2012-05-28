@@ -76,7 +76,7 @@ public class PDFRoot extends PDFDictionary {
     }
 
     /** {@inheritDoc} */
-    protected int output(OutputStream stream) throws IOException {
+    public int output(OutputStream stream) throws IOException {
         getDocument().getProfile().verifyTaggedPDF();
         return super.output(stream);
     }
@@ -205,7 +205,7 @@ public class PDFRoot extends PDFDictionary {
      * @since PDF 1.4
      */
     public void setMetadata(PDFMetadata meta) {
-        if (getDocumentSafely().getPDFVersion() >= PDFDocument.PDF_VERSION_1_4) {
+        if (getDocumentSafely().getPDFVersion().compareTo(Version.V1_4) >= 0) {
             put("Metadata", meta.makeReference());
         }
     }
@@ -235,7 +235,7 @@ public class PDFRoot extends PDFDictionary {
      * @since PDF 1.4
      */
     public void addOutputIntent(PDFOutputIntent outputIntent) {
-        if (getDocumentSafely().getPDFVersion() >= PDFDocument.PDF_VERSION_1_4) {
+        if (getDocumentSafely().getPDFVersion().compareTo(Version.V1_4) >= 0) {
             PDFArray outputIntents = getOutputIntents();
             if (outputIntents == null) {
                 outputIntents = new PDFArray(this);
@@ -243,6 +243,17 @@ public class PDFRoot extends PDFDictionary {
             }
             outputIntents.add(outputIntent);
         }
+    }
+
+    /**
+     * Sets the "Version" entry. If this version is greater than that specified in the header, this
+     * version takes precedence.
+     *
+     * @param version the PDF document version
+     * @since PDF 1.4
+     */
+    void setVersion(Version version) {
+        put("Version", new PDFName(version.toString()));
     }
 
     /**

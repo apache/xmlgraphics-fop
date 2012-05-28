@@ -25,6 +25,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fop.area.AreaTreeHandler;
 import org.apache.fop.area.AreaTreeModel;
 import org.apache.fop.area.LineArea;
+import org.apache.fop.complexscripts.bidi.BidiResolver;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.PageSequenceMaster;
@@ -78,12 +79,16 @@ public class PageSequenceLayoutManager extends AbstractPageSequenceLayoutManager
     public void activateLayout() {
         initialize();
 
-        LineArea title = null;
+        // perform step 5.8 of refinement process (Unicode BIDI Processing)
+        if ( areaTreeHandler.isComplexScriptFeaturesEnabled() ) {
+            BidiResolver.resolveInlineDirectionality(getPageSequence());
+        }
 
+        LineArea title = null;
         if (getPageSequence().getTitleFO() != null) {
             try {
-                ContentLayoutManager clm = getLayoutManagerMaker().
-                    makeContentLayoutManager(this, getPageSequence().getTitleFO());
+                ContentLayoutManager clm = getLayoutManagerMaker()
+                    .makeContentLayoutManager(this, getPageSequence().getTitleFO());
                 title = (LineArea) clm.getParentArea(null);
             } catch (IllegalStateException e) {
                 // empty title; do nothing
@@ -143,12 +148,18 @@ public class PageSequenceLayoutManager extends AbstractPageSequenceLayoutManager
 
     @Override
     protected Page makeNewPage(boolean isBlank) {
-        Page newPage;
+        Page newPage = super.makeNewPage(isBlank);
 
-        do {
-            newPage = super.makeNewPage(isBlank);
-        } while (!getPageSequence().getMainFlow().getFlowName()
-                .equals(newPage.getSimplePageMaster().getRegion(FO_REGION_BODY).getRegionName()));
+        // Empty pages (pages that have been generated from a SPM that has an un-mapped flow name)
+        // cannot layout areas from the main flow.  Blank pages can be created from empty pages.
+
+        if (!isBlank) {
+            while (!getPageSequence().getMainFlow().getFlowName()
+                    .equals(newPage.getSimplePageMaster()
+                            .getRegion(FO_REGION_BODY).getRegionName())) {
+                newPage = super.makeNewPage(isBlank);
+            }
+        }
 
         return newPage;
     }

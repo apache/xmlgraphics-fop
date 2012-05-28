@@ -1,4 +1,4 @@
-<?xml version="1.0" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -19,7 +19,7 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "document-v20.dtd">
 <document>
   <header>
-    <title>Accessibility</title>
+    <title>Apache™ FOP: Accessibility</title>
   </header>
   <body>
     <section id="overview">
@@ -27,7 +27,7 @@
       <p>
         This page describes the
         <a href="http://en.wikipedia.org/wiki/Accessibility">accessibility</a>
-        features of Apache FOP.
+        features of Apache™ FOP.
         <a href="http://www.section508.gov/">Section 508</a> defines accessibility in the context
         of electronic documents for the USA but other countries have similar requirements.
       </p>

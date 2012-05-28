@@ -103,4 +103,22 @@
       <xs:length value="4"/>
     </xs:restriction>
   </xs:simpleType>
+  <xs:simpleType name="dpListType">
+    <xs:list itemType="mf:dpItemType"/>
+  </xs:simpleType>
+  <xs:simpleType name="dpItemType">
+    <xs:union>
+      <xs:simpleType>
+        <xs:restriction base="mf:lengthType"/>
+      </xs:simpleType>
+      <xs:simpleType>
+        <xs:restriction base="mf:dpZeroesType"/>
+      </xs:simpleType>
+    </xs:union>
+  </xs:simpleType>
+  <xs:simpleType name="dpZeroesType">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="Z(\d)+"/>
+    </xs:restriction>
+  </xs:simpleType>
 </xs:schema>

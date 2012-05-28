@@ -29,9 +29,6 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
 //Java
 import java.io.IOException;
 
-//FOP
-import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfElement;
-
 /**
  * Class to handle text list style.
  */

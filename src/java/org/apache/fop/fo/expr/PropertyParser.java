@@ -20,7 +20,6 @@
 package org.apache.fop.fo.expr;
 
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.xmlgraphics.util.UnitConv;
@@ -59,19 +58,16 @@ public final class PropertyParser extends PropertyTokenizer {
         FUNCTION_TABLE.put("rgb", new RGBColorFunction());
         FUNCTION_TABLE.put("system-color", new SystemColorFunction());
         FUNCTION_TABLE.put("from-table-column", new FromTableColumnFunction());
-        FUNCTION_TABLE.put("inherited-property-value",
-                          new InheritedPropFunction());
+        FUNCTION_TABLE.put("inherited-property-value", new InheritedPropFunction());
+        FUNCTION_TABLE.put("from-nearest-specified-value", new FromNearestSpecifiedValueFunction());
         FUNCTION_TABLE.put("from-parent", new FromParentFunction());
-        FUNCTION_TABLE.put("from-nearest-specified-value",
-                          new NearestSpecPropFunction());
-        FUNCTION_TABLE.put("proportional-column-width",
-                          new PPColWidthFunction());
+        FUNCTION_TABLE.put("proportional-column-width", new ProportionalColumnWidthFunction());
         FUNCTION_TABLE.put("label-end", new LabelEndFunction());
         FUNCTION_TABLE.put("body-start", new BodyStartFunction());
-        FUNCTION_TABLE.put("rgb-icc", new ICCColorFunction());
-        FUNCTION_TABLE.put("rgb-named-color", new NamedColorFunction()); //since XSL-FO 2.0
+        FUNCTION_TABLE.put("rgb-icc", new RGBICCColorFunction());
+        FUNCTION_TABLE.put("rgb-named-color", new RGBNamedColorFunction()); //since XSL-FO 2.0
         FUNCTION_TABLE.put("cie-lab-color", new CIELabColorFunction()); //since XSL-FO 2.0
-        FUNCTION_TABLE.put("cmyk", new CMYKcolorFunction()); //non-standard!!!
+        FUNCTION_TABLE.put("cmyk", new CMYKColorFunction()); //non-standard!!!
 
         /**
          * * NOT YET IMPLEMENTED!!!
@@ -341,12 +337,7 @@ public final class PropertyParser extends PropertyTokenizer {
             next();
             // Push new function (for function context: getPercentBase())
             propInfo.pushFunction(function);
-            if (function.nbArgs() < 0) {
-                // Negative nbArgs --> function with variable number of arguments
-                prop = function.eval(parseVarArgs(function), propInfo);
-            } else {
-                prop = function.eval(parseArgs(function), propInfo);
-            }
+            prop = function.eval(parseArgs(function), propInfo);
             propInfo.popFunction();
             return prop;
 
@@ -362,27 +353,27 @@ public final class PropertyParser extends PropertyTokenizer {
      * Parse a comma separated list of function arguments. Each argument
      * may itself be an expression. This method consumes the closing right
      * parenthesis of the argument list.
-     * @param function The function object for which the arguments are
-     * collected.
-     * @return An array of Property objects representing the arguments
-     * found.
+     * @param function The function object for which the arguments are collected.
+     * @return An array of Property objects representing the arguments found.
      * @throws PropertyException If the number of arguments found isn't equal
-     * to the number expected.
+     * to the number expected or if another argument parsing error occurs.
      */
     Property[] parseArgs(Function function) throws PropertyException {
-        int nbArgs = function.nbArgs();
-        Property[] args = new Property[nbArgs];
-        Property prop;
-        int i = 0;
+        int numReq = function.getRequiredArgsCount();   // # required args
+        int numOpt = function.getOptionalArgsCount();   // # optional args
+        boolean hasVar = function.hasVariableArgs();    // has variable args
+        List<Property> args = new java.util.ArrayList<Property>(numReq + numOpt);
         if (currentToken == TOK_RPAR) {
             // No args: func()
             next();
         } else {
             while (true) {
-
-                prop = parseAdditiveExpr();
-                if (i < nbArgs) {
-                    args[i++] = prop;
+                Property p = parseAdditiveExpr();
+                int i = args.size();
+                if ( ( i < numReq ) || ( ( i - numReq ) < numOpt ) || hasVar ) {
+                    args.add ( p );
+                } else {
+                    throw new PropertyException ( "Unexpected function argument at index " + i );
                 }
                 // ignore extra args
                 if (currentToken != TOK_COMMA) {
@@ -392,65 +383,18 @@ public final class PropertyParser extends PropertyTokenizer {
             }
             expectRpar();
         }
-        if (i == nbArgs - 1 && function.padArgsWithPropertyName()) {
-            args[i++] = StringProperty.getInstance(
-                            propInfo.getPropertyMaker().getName());
-        }
-        if (nbArgs != i) {
-            throw new PropertyException("Expected " + nbArgs
-                                        + ", but got " + i + " args for function");
-        }
-        return args;
-    }
-
-    /**
-     *
-     * Parse a comma separated list of function arguments. Each argument
-     * may itself be an expression. This method consumes the closing right
-     * parenthesis of the argument list.
-     *
-     * The method differs from parseArgs in that it accepts a variable
-     * number of arguments.
-     *
-     * @param function The function object for which the arguments are
-     * collected.
-     * @return An array of Property objects representing the arguments
-     * found.
-     * @throws PropertyException If the number of arguments found isn't equal
-     * to the number expected.
-     *
-     * TODO Merge this with parseArgs?
-     */
-    Property[] parseVarArgs(Function function) throws PropertyException {
-        // For variable argument functions the minimum number of arguments is returned as a
-        // negative integer from the nbArgs method
-        int nbArgs = -function.nbArgs();
-        List args = new LinkedList();
-        Property prop;
-        if (currentToken == TOK_RPAR) {
-            // No args: func()
-            next();
+        int numArgs = args.size();
+        if ( numArgs < numReq ) {
+            throw new PropertyException("Expected " + numReq + " required arguments, but only " + numArgs + " specified");
         } else {
-            while (true) {
-                prop = parseAdditiveExpr();
-                args.add(prop);
-                // ignore extra args
-                if (currentToken != TOK_COMMA) {
-                    break;
+            for ( int i = 0; i < numOpt; i++ ) {
+                if ( args.size() < ( numReq + i + 1 ) ) {
+                    args.add ( function.getOptionalArgDefault ( i, propInfo ) );
                 }
-                next();
             }
-            expectRpar();
         }
-        if (nbArgs > args.size()) {
-            throw new PropertyException("Expected at least " + nbArgs
-                                        + ", but got " + args.size() + " args for function");
-        }
-        Property[] propArray = new Property[args.size()];
-        args.toArray(propArray);
-        return propArray;
+        return (Property[]) args.toArray ( new Property [ args.size() ] );
     }
-
 
     /**
      * Evaluate an addition operation. If either of the arguments is null,

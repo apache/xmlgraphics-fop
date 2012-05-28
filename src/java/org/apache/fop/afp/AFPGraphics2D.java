@@ -26,7 +26,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.Image;
 import java.awt.Paint;
@@ -264,14 +263,6 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
         return length * factor;
     }
 
-    /** IBM's AFP Workbench paints lines that are wider than expected. We correct manually. */
-    private static final double GUESSED_WIDTH_CORRECTION = 1.7;
-
-    private static final double SPEC_NORMAL_LINE_WIDTH = UnitConv.in2pt(0.01); //"approx" 0.01 inch
-    private static final double NORMAL_LINE_WIDTH
-        = SPEC_NORMAL_LINE_WIDTH * GUESSED_WIDTH_CORRECTION;
-
-
     /**
      * Apply the stroke to the AFP graphics object.
      * This takes the java stroke and outputs the appropriate settings
@@ -283,17 +274,11 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
         if (stroke instanceof BasicStroke) {
             BasicStroke basicStroke = (BasicStroke) stroke;
 
-            // set line width
+            // set line width and correct it; NOTE: apparently we need to correct the width so that the
+            // output looks OK since the default with depends on the output device
             float lineWidth = basicStroke.getLineWidth();
-            if (false) {
-                //Old approach. Retained until verified problems with 1440 resolution
-                graphicsObj.setLineWidth(Math.round(lineWidth / 2));
-            } else {
-                double absoluteLineWidth = lineWidth * Math.abs(getTransform().getScaleY());
-                double multiplier = absoluteLineWidth / NORMAL_LINE_WIDTH;
-                graphicsObj.setLineWidth((int)Math.round(multiplier));
-                //TODO Use GSFLW instead of GSLW for higher accuracy?
-            }
+            float correction = paintingState.getLineWidthCorrection();
+            graphicsObj.setLineWidth(lineWidth * correction);
 
             //No line join, miter limit and end cap support in GOCA. :-(
 

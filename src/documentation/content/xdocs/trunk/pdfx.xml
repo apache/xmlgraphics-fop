@@ -1,4 +1,4 @@
-<?xml version="1.0" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   Copyright 2006 The Apache Software Foundation
 
@@ -18,7 +18,7 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "document-v20.dtd">
 <document>
   <header>
-    <title>PDF/X (ISO 15930)</title>
+    <title>Apache™ FOP: PDF/X (ISO 15930)</title>
     <version>$Revision$</version>
     <authors>
       <person name="Jeremias Märki" email="jeremias@apache.org"/>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks table column progression with right-to-left writing mode when writing-mode
+      is specified on fo:page-sequence. The first column should be to the right of the second column; the
+      second column should be to the right of the third column. The columns should be colored red,
+      yellow, orange from right to left.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in" margin="0.5in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal" writing-mode="rl">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:table table-layout="fixed" width="100%">
+            <fo:table-column column-width="1in" background-color="red"/>
+            <fo:table-column column-width="1in" background-color="yellow"/>
+            <fo:table-column column-width="2in" background-color="orange"/>
+            <fo:table-body>
+              <fo:table-row>
+                <fo:table-cell>
+                  <fo:block>cell1</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>cell2</fo:block>
+                </fo:table-cell>
+                <fo:table-cell>
+                  <fo:block>cell3</fo:block>
+                </fo:table-cell>
+              </fo:table-row>
+            </fo:table-body>
+          </fo:table>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <!-- cell 1 background -->
+    <eval expected="#ff0000" xpath="//flow/block[1]/block[1]/@bkg-color"/>
+    <!-- cell 1 -->
+    <eval expected="cell1" xpath="//flow/block[1]/block[2]/block[1]/lineArea/text"/>
+    <eval expected="72000" xpath="//flow/block[1]/block[2]/@ipd"/>
+    <eval expected="216000" xpath="//flow/block[1]/block[2]/@left-offset"/>
+    <!-- cell 2 background -->
+    <eval expected="#ffff00" xpath="//flow/block[1]/block[3]/@bkg-color"/>
+    <!-- cell 2 -->
+    <eval expected="cell2" xpath="//flow/block[1]/block[4]/block[1]/lineArea/text"/>
+    <eval expected="72000" xpath="//flow/block[1]/block[4]/@ipd"/>
+    <eval expected="144000" xpath="//flow/block[1]/block[4]/@left-offset"/>
+    <!-- cell 3 background -->
+    <eval expected="#ffa500" xpath="//flow/block[1]/block[5]/@bkg-color"/>
+    <!-- cell 3 -->
+    <eval expected="cell3" xpath="//flow/block[1]/block[6]/block[1]/lineArea/text"/>
+    <eval expected="144000" xpath="//flow/block[1]/block[6]/@ipd"/>
+    <true xpath="not(boolean(//flow/block[1]/block[6]/@left-offset))"/>
+    <!-- right-to-left offset invariant - cell 2 to the left of cell 1 -->
+    <true xpath="//flow/block[1]/block[4]/@left-offset &lt; //flow/block[1]/block[2]/@left-offset"/>
+    <!-- right-to-left offset invariant - cell 3 to left right of cell 2 -->
+    <true xpath="//flow/block[1]/block[4]/@left-offset &gt; 0"/>
+  </checks>
+</testcase>

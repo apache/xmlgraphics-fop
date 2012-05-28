@@ -26,11 +26,13 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
  * the FOP project.
  */
 
-import java.io.Writer;
 import java.io.IOException;
+import java.io.Writer;
 
-/**  "Model" of an RTF page break
- *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
+/**
+ * <p>Model of an RTF page break.</p>
+ *
+ * <p>This work was authored by Bertrand Delacretaz (bdelacretaz@codeconsult.ch).</p>
  */
 
 public class RtfPageBreak extends RtfElement {

@@ -30,10 +30,10 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.xmlgraphics.java2d.color.profile.ColorProfileUtil;
 
 import org.apache.xmlgraphics.java2d.color.ICCColorSpaceWithIntent;
 import org.apache.xmlgraphics.java2d.color.RenderingIntent;
+import org.apache.xmlgraphics.java2d.color.profile.ColorProfileUtil;
 
 /**
  * Map with cached ICC based ColorSpace objects.

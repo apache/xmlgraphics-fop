@@ -67,6 +67,8 @@ public abstract class FObj extends FONode implements Constants {
     /** Markers added to this element. */
     private Map markers = null;
 
+    private int bidiLevel = -1;
+
     // The value of properties relevant for all fo objects
     private String id = null;
     // End of property values
@@ -118,9 +120,7 @@ public abstract class FObj extends FONode implements Constants {
                     throws FOPException {
         setLocator(locator);
         pList.addAttributesToList(attlist);
-        if (!inMarker()
-                || "marker".equals(elementName)) {
-            pList.setWritingMode();
+        if (!inMarker() || "marker".equals(elementName)) {
             bind(pList);
         }
     }
@@ -501,7 +501,7 @@ public abstract class FObj extends FONode implements Constants {
      * @param lName local name (i.e., no prefix) of incoming node
      * @return true if a member, false if not
      */
-    boolean isNeutralItem(String nsURI, String lName) {
+    protected boolean isNeutralItem(String nsURI, String lName) {
         return (FO_URI.equals(nsURI)
                 && ("multi-switch".equals(lName)
                         || "multi-properties".equals(lName)
@@ -556,6 +556,63 @@ public abstract class FObj extends FONode implements Constants {
     /** {@inheritDoc} */
     public String getNormalNamespacePrefix() {
         return "fo";
+    }
+
+    /** {@inheritDoc} */
+    public boolean isBidiRangeBlockItem() {
+        String ns = getNamespaceURI();
+        String ln = getLocalName();
+        return !isNeutralItem(ns, ln) && isBlockItem(ns, ln);
+    }
+
+    /**
+     * Recursively set resolved bidirectional level of FO (and its ancestors) if
+     * and only if it is non-negative and if either the current value is reset (-1)
+     * or the new value is less than the current value.
+     * @param bidiLevel a non-negative bidi embedding level
+     */
+    public void setBidiLevel(int bidiLevel) {
+        assert bidiLevel >= 0;
+        if ( bidiLevel >= 0 ) {
+            if ( ( this.bidiLevel < 0 ) || ( bidiLevel < this.bidiLevel ) ) {
+                this.bidiLevel = bidiLevel;
+                if ( parent != null ) {
+                    FObj foParent = (FObj) parent;
+                    int parentBidiLevel = foParent.getBidiLevel();
+                    if ( ( parentBidiLevel < 0 ) || ( bidiLevel < parentBidiLevel ) ) {
+                        foParent.setBidiLevel ( bidiLevel );
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Obtain resolved bidirectional level of FO.
+     * @return either a non-negative bidi embedding level or -1
+     * in case no bidi levels have been assigned
+     */
+    public int getBidiLevel() {
+        return bidiLevel;
+    }
+
+    /**
+     * Obtain resolved bidirectional level of FO or nearest FO
+     * ancestor that has a resolved level.
+     * @return either a non-negative bidi embedding level or -1
+     * in case no bidi levels have been assigned to this FO or
+     * any ancestor
+     */
+    public int getBidiLevelRecursive() {
+        for ( FONode fn = this; fn != null; fn = fn.getParent() ) {
+            if ( fn instanceof FObj ) {
+                int level = ( (FObj) fn).getBidiLevel();
+                if ( level >= 0 ) {
+                    return level;
+                }
+            }
+        }
+        return -1;
     }
 
     /**

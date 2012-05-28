@@ -148,11 +148,18 @@ public final class UnicodeClasses {
     }
 
 
-    /**
-     * The column numbers in the UCD file
-     */
-    public static final int UNICODE = 0, GENERAL_CATEGORY = 2, SIMPLE_UPPERCASE_MAPPING = 12,
-    SIMPLE_LOWERCASE_MAPPING = 13, SIMPLE_TITLECASE_MAPPING = 14, NUM_FIELDS = 15;
+    /** The 1st column in the UCD file. */
+    public static final int UNICODE = 0;
+    /** The 3rd column in the UCD file. */
+    public static final int GENERAL_CATEGORY = 2;
+    /** The 13th column in the UCD file. */
+    public static final int SIMPLE_UPPERCASE_MAPPING = 12;
+    /** The 14th column in the UCD file. */
+    public static final int SIMPLE_LOWERCASE_MAPPING = 13;
+    /** The 15th column in the UCD file. */
+    public static final int SIMPLE_TITLECASE_MAPPING = 14;
+    /** The number of columns in the UCD file. */
+    public static final int NUM_FIELDS = 15;
 
     /**
      * Generate classes.xml from Unicode Character Database files
@@ -254,7 +261,8 @@ public final class UnicodeClasses {
                     continue;
                 }
 
-                int uppercode = -1, titlecode = -1;
+                int uppercode = -1;
+                int titlecode = -1;
                 if (!"".equals(fields[SIMPLE_UPPERCASE_MAPPING])) {
                     uppercode = Integer.parseInt(fields[SIMPLE_UPPERCASE_MAPPING], 16);
                 }
@@ -322,8 +330,7 @@ public final class UnicodeClasses {
             if (codes[0].equals("\\l") && codes.length != 2) {
                 ow.write("\"" + line + "\" should have one code");
                 continue;
-            }
-            else if (codes[0].equals("\\L") && codes.length != 4) {
+            } else if (codes[0].equals("\\L") && codes.length != 4) {
                 ow.write("\"" + line + "\" should have three codes");
                 continue;
             }
@@ -352,7 +359,10 @@ public final class UnicodeClasses {
      * @throws URISyntaxException if the input URI is incorrect
      */
     public static void main(String[] args) throws IOException, URISyntaxException {
-        String type = "ucd", prefix = "--", infile = null, outfile = null;
+        String type = "ucd";
+        String prefix = "--";
+        String infile = null;
+        String outfile = null;
         boolean hexcode = false;
         int i;
         for (i = 0; i < args.length && args[i].startsWith(prefix); ++i) {

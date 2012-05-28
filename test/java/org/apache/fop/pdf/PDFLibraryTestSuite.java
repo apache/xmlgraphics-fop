@@ -19,36 +19,30 @@
 
 package org.apache.fop.pdf;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
 
 /**
  * Test suite for FOP's utility classes.
  */
+@RunWith(Suite.class)
+@SuiteClasses({
+        PDFArrayTestCase.class,
+        PDFDictionaryTestCase.class,
+        PDFNumberTestCase.class,
+        PDFObjectTestCase.class,
+        PDFNameTestCase.class,
+        AbstractPDFStreamTestCase.class,
+        PDFDestsTestCase.class,
+        PDFDocumentTestCase.class,
+        PDFNullTestCase.class,
+        PDFNumsArrayTestCase.class,
+        PDFRectangleTestCase.class,
+        PDFReferenceTestCase.class,
+        VersionTestCase.class,
+        VersionControllerTestCase.class
+})
 public class PDFLibraryTestSuite {
-
-    /**
-     * Builds the test suite
-     * @return the test suite
-     */
-    public static Test suite() {
-        TestSuite suite = new TestSuite(
-            "Test suite for FOP's utility classes");
-        //$JUnit-BEGIN$
-        suite.addTest(new TestSuite(PDFArrayTestCase.class));
-        suite.addTest(new TestSuite(PDFDictionaryTestCase.class));
-        suite.addTest(new TestSuite(PDFNumberTestCase.class));
-        suite.addTest(new TestSuite(PDFObjectTestCase.class));
-        suite.addTest(new TestSuite(PDFNameTestCase.class));
-        suite.addTest(new TestSuite(AbstractPDFStreamTestCase.class));
-        suite.addTest(new TestSuite(PDFDestsTestCase.class));
-        suite.addTest(new TestSuite(PDFDocumentTestCase.class));
-        suite.addTest(new TestSuite(PDFNullTestCase.class));
-        suite.addTest(new TestSuite(PDFNumsArrayTestCase.class));
-        suite.addTest(new TestSuite(PDFRectangleTestCase.class));
-        suite.addTest(new TestSuite(PDFReferenceTestCase.class));
-        //$JUnit-END$
-        return suite;
-    }
 }

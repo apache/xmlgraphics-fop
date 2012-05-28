@@ -19,16 +19,14 @@
 
 package org.apache.fop.render.rtf.rtflib.rtfdoc;
 
-//Java
-import java.io.Writer;
 import java.io.IOException;
+import java.io.Writer;
 
-//FOP
-import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTextrun;
-
-/**  Model of an RTF footnote
- *  @author Peter Herweg, pherweg@web.de
- *  @author Marc Wilhelm Kuester
+/**
+ * <p>Model of an RTF footnote.</p>
+ *
+ * <p>This work was authored by Peter Herweg (pherweg@web.de) and
+ *  Marc Wilhelm Kuester.</p>
  */
 public class RtfFootnote extends RtfContainer
         implements IRtfTextrunContainer, IRtfListContainer {

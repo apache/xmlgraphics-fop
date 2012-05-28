@@ -25,11 +25,16 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.fop.complexscripts.fonts.Positionable;
+import org.apache.fop.complexscripts.fonts.Substitutable;
+
+// CSOFF: LineLengthCheck
+
 /**
  * This class holds font state information and provides access to the font
  * metrics.
  */
-public class Font {
+public class Font implements Substitutable, Positionable {
 
     /** Extra Bold font weight */
     public static final int WEIGHT_EXTRA_BOLD = 800;
@@ -189,6 +194,30 @@ public class Font {
     }
 
     /**
+     * Returns the amount of kerning between two characters.
+     *
+     * The value returned measures in pt. So it is already adjusted for font size.
+     *
+     * @param ch1 first character
+     * @param ch2 second character
+     * @return the distance to adjust for kerning, 0 if there's no kerning
+     */
+    public int getKernValue(int ch1, int ch2) {
+        // TODO !BMP
+        if ( ch1 > 0x10000 ) {
+            return 0;
+        } else if ( ( ch1 >= 0xD800 ) && ( ch1 <= 0xE000 ) ) {
+            return 0;
+        } else if ( ch2 > 0x10000 ) {
+            return 0;
+        } else if ( ( ch2 >= 0xD800 ) && ( ch2 <= 0xE000 ) ) {
+            return 0;
+        } else {
+            return getKernValue ( (char) ch1, (char) ch2 );
+        }
+    }
+
+    /**
      * Returns the width of a character
      * @param charnum character to look up
      * @return width of the character
@@ -241,8 +270,8 @@ public class Font {
      */
     @Override
     public String toString() {
-        StringBuffer sbuf = new StringBuffer();
-        sbuf.append('(');
+        StringBuffer sbuf = new StringBuffer(super.toString());
+        sbuf.append('{');
         /*
         sbuf.append(fontFamily);
         sbuf.append(',');*/
@@ -254,7 +283,7 @@ public class Font {
         sbuf.append(fontStyle);
         sbuf.append(',');
         sbuf.append(fontWeight);*/
-        sbuf.append(')');
+        sbuf.append('}');
         return sbuf.toString();
     }
 
@@ -264,7 +293,7 @@ public class Font {
      * This also performs some guessing on widths on various
      * versions of space that might not exists in the font.
      * @param c character to inspect
-     * @return the width of the character
+     * @return the width of the character or -1 if no width available
      */
     public int getCharWidth(char c) {
         int width;
@@ -329,6 +358,23 @@ public class Font {
     }
 
     /**
+     * Helper method for getting the width of a unicode char
+     * from the current fontstate.
+     * This also performs some guessing on widths on various
+     * versions of space that might not exists in the font.
+     * @param c character to inspect
+     * @return the width of the character or -1 if no width available
+     */
+    public int getCharWidth(int c) {
+        if ( c < 0x10000 ) {
+            return getCharWidth ( (char) c );
+        } else {
+            // TODO !BMP
+            return -1;
+        }
+    }
+
+    /**
      * Calculates the word width.
      * @param word text to get width for
      * @return the width of the text
@@ -347,6 +393,59 @@ public class Font {
         return width;
     }
 
+    /** {@inheritDoc} */
+    public boolean performsSubstitution() {
+        if ( metric instanceof Substitutable ) {
+            Substitutable s = (Substitutable) metric;
+            return s.performsSubstitution();
+        } else {
+            return false;
+        }
+    }
+
+    /** {@inheritDoc} */
+    public CharSequence performSubstitution ( CharSequence cs, String script, String language ) {
+        if ( metric instanceof Substitutable ) {
+            Substitutable s = (Substitutable) metric;
+            return s.performSubstitution ( cs, script, language );
+        } else {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    /** {@inheritDoc} */
+    public CharSequence reorderCombiningMarks ( CharSequence cs, int[][] gpa, String script, String language ) {
+        if ( metric instanceof Substitutable ) {
+            Substitutable s = (Substitutable) metric;
+            return s.reorderCombiningMarks ( cs, gpa, script, language );
+        } else {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    /** {@inheritDoc} */
+    public boolean performsPositioning() {
+        if ( metric instanceof Positionable ) {
+            Positionable p = (Positionable) metric;
+            return p.performsPositioning();
+        } else {
+            return false;
+        }
+    }
+
+    /** {@inheritDoc} */
+    public int[][] performPositioning ( CharSequence cs, String script, String language, int fontSize ) {
+        if ( metric instanceof Positionable ) {
+            Positionable p = (Positionable) metric;
+            return p.performPositioning ( cs, script, language, fontSize );
+        } else {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    /** {@inheritDoc} */
+    public int[][] performPositioning ( CharSequence cs, String script, String language ) {
+        return performPositioning ( cs, script, language, fontSize );
+    }
+
 }
-
-

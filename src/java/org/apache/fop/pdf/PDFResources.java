@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.xmlgraphics.java2d.color.profile.ColorProfileUtil;
+
 import org.apache.fop.fonts.FontDescriptor;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.Typeface;
@@ -191,8 +192,8 @@ public class PDFResources extends PDFDictionary {
         return cs;
     }
 
-    /** {@inheritDoc} */
-    protected int output(OutputStream stream) throws IOException {
+    @Override
+    public int output(OutputStream stream) throws IOException {
         populateDictionary();
         return super.output(stream);
     }

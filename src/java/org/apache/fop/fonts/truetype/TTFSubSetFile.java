@@ -22,7 +22,6 @@ package org.apache.fop.fonts.truetype;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
 
 /**
@@ -55,6 +54,22 @@ public class TTFSubSetFile extends TTFFile {
 
     private int checkSumAdjustmentOffset = 0;
     private int locaOffset = 0;
+
+    /**
+     * Default Constructor
+     */
+    public TTFSubSetFile() {
+        this(false, false);
+    }
+
+    /**
+     * Constructor
+     * @param useKerning true if kerning data should be loaded
+     * @param useAdvanced true if advanced typographic tables should be loaded
+     */
+    public TTFSubSetFile ( boolean useKerning, boolean useAdvanced ) {
+        super(useKerning, useAdvanced);
+    }
 
     /**
      * Initalize the output array

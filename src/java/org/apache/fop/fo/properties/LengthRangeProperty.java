@@ -26,6 +26,7 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.traits.MinOptMax;
+import org.apache.fop.util.CompareUtil;
 
 /**
  * Superclass for properties that contain LengthRange values
@@ -314,4 +315,31 @@ public class LengthRangeProperty extends Property implements CompoundDatatype {
         return this;
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + bfSet;
+        result = prime * result + (consistent ? 1231 : 1237);
+        result = prime * result + CompareUtil.getHashCode(minimum);
+        result = prime * result + CompareUtil.getHashCode(optimum);
+        result = prime * result + CompareUtil.getHashCode(maximum);
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof LengthRangeProperty)) {
+            return false;
+        }
+        LengthRangeProperty other = (LengthRangeProperty) obj;
+        return bfSet == other.bfSet
+                && consistent == other.consistent
+                && CompareUtil.equal(minimum, other.minimum)
+                && CompareUtil.equal(optimum, other.optimum)
+                && CompareUtil.equal(maximum, other.maximum);
+    }
 }

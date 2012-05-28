@@ -32,6 +32,7 @@ public abstract class PDFTextUtil extends org.apache.fop.pdf.PDFTextUtil {
     private FontInfo fontInfo;
     private Font[] fonts;
     private Font font;
+    private int encoding;
 
     /**
      * Main constructor.
@@ -74,11 +75,27 @@ public abstract class PDFTextUtil extends org.apache.fop.pdf.PDFTextUtil {
     }
 
     /**
+     * Returns the current encoding.
+     * @return the current encoding
+     */
+    public int getCurrentEncoding() {
+        return this.encoding;
+    }
+
+    /**
      * Sets the current font.
      * @param f the new font to use
      */
     public void setCurrentFont(Font f) {
         this.font = f;
+    }
+
+    /**
+     * Sets the current encoding.
+     * @param encoding the new encoding
+     */
+    public void setCurrentEncoding(int encoding) {
+        this.encoding = encoding;
     }
 
     /**
@@ -98,7 +115,12 @@ public abstract class PDFTextUtil extends org.apache.fop.pdf.PDFTextUtil {
     public void writeTf(Font f) {
         String fontName = f.getFontName();
         float fontSize = (float)f.getFontSize() / 1000f;
-        updateTf(fontName, fontSize, isMultiByteFont(fontName));
+        boolean isMultiByte = isMultiByteFont(fontName);
+        if (!isMultiByte && encoding != 0) {
+            updateTf(fontName + "_" + Integer.toString(encoding), fontSize, isMultiByte);
+        } else {
+            updateTf(fontName, fontSize, isMultiByte);
+        }
     }
 
     /**

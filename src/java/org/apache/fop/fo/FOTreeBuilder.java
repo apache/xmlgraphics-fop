@@ -37,7 +37,6 @@ import org.apache.fop.accessibility.fo.FO2StructureTreeConverter;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FormattingResults;
-import org.apache.fop.area.AreaTreeHandler;
 import org.apache.fop.fo.ElementMapping.Maker;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fo.pagination.Root;
@@ -224,13 +223,7 @@ public class FOTreeBuilder extends DefaultHandler {
      * @return the results of the rendering process.
      */
     public FormattingResults getResults() {
-        if (getEventHandler() instanceof AreaTreeHandler) {
-            return ((AreaTreeHandler) getEventHandler()).getResults();
-        } else {
-            //No formatting results available for output formats no
-            //involving the layout engine.
-            return null;
-        }
+        return getEventHandler().getResults();
     }
 
     /**

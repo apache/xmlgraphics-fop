@@ -33,14 +33,15 @@ import org.apache.fop.fo.pagination.RegionBody;
 import org.apache.fop.fo.pagination.SimplePageMaster;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.layoutmgr.TraitSetter;
+import org.apache.fop.traits.WritingModeTraitsGetter;
 
+import static org.apache.fop.fo.Constants.EN_ERROR_IF_OVERFLOW;
+import static org.apache.fop.fo.Constants.EN_HIDDEN;
 import static org.apache.fop.fo.Constants.FO_REGION_AFTER;
 import static org.apache.fop.fo.Constants.FO_REGION_BEFORE;
 import static org.apache.fop.fo.Constants.FO_REGION_BODY;
 import static org.apache.fop.fo.Constants.FO_REGION_END;
 import static org.apache.fop.fo.Constants.FO_REGION_START;
-import static org.apache.fop.fo.Constants.EN_ERROR_IF_OVERFLOW;
-import static org.apache.fop.fo.Constants.EN_HIDDEN;
 
 /**
  * The page.
@@ -53,7 +54,7 @@ import static org.apache.fop.fo.Constants.EN_HIDDEN;
  * The page is cloneable so the page master can make copies of
  * the top level page and regions.
  */
-public class Page extends AreaTreeObject implements Serializable, Cloneable {
+public class Page extends AreaTreeObject implements Serializable {
 
     private static final long serialVersionUID = 6272157047421543866L;
 
@@ -71,10 +72,9 @@ public class Page extends AreaTreeObject implements Serializable, Cloneable {
     private boolean fakeNonEmpty = false;
 
     /**
-     *  Empty constructor, for cloning
+     *  Empty constructor
      */
-    public Page() {
-    }
+    public Page() { }
 
     /**
      * Constructor
@@ -257,14 +257,9 @@ public class Page extends AreaTreeObject implements Serializable, Cloneable {
         }
     }
 
-    /**
-     * Clone this page.
-     * This returns a new page with a clone of all the regions.
-     *
-     * @return a new clone of this page
-     */
-    public Object clone() {
-        Page p = new Page();
+    /** {@inheritDoc} */
+    public Object clone() throws CloneNotSupportedException {
+        Page p = (Page) super.clone();
         if (regionBefore != null) {
             p.regionBefore = (RegionViewport)regionBefore.clone();
         }
@@ -302,6 +297,29 @@ public class Page extends AreaTreeObject implements Serializable, Cloneable {
      */
     public Map<String, List<Resolvable>> getUnresolvedReferences() {
         return unresolved;
+    }
+
+    /**
+     * Sets the writing mode traits for the region viewports of
+     * this page.
+     * @param wmtg a WM traits getter
+     */
+    public void setWritingModeTraits(WritingModeTraitsGetter wmtg) {
+        if (regionBefore != null) {
+            regionBefore.setWritingModeTraits(wmtg);
+        }
+        if (regionStart != null) {
+            regionStart.setWritingModeTraits(wmtg);
+        }
+        if (regionBody != null) {
+            regionBody.setWritingModeTraits(wmtg);
+        }
+        if (regionEnd != null) {
+            regionEnd.setWritingModeTraits(wmtg);
+        }
+        if (regionAfter != null) {
+            regionAfter.setWritingModeTraits(wmtg);
+        }
     }
 
 }

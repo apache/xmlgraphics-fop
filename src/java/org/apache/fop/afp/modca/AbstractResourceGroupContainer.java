@@ -180,8 +180,7 @@ implements Streamable {
     protected boolean canWrite(AbstractAFPObject obj) {
         if (obj instanceof Completable) {
             return ((Completable)obj).isComplete();
-        }
-        else {
+        } else {
             return this.isComplete();
         }
     }

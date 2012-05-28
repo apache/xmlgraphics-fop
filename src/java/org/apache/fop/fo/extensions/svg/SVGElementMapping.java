@@ -20,16 +20,19 @@
 package org.apache.fop.fo.extensions.svg;
 
 import java.util.HashMap;
+
 import javax.xml.parsers.SAXParserFactory;
 
-import org.apache.fop.fo.FONode;
-import org.apache.fop.fo.ElementMapping;
+import org.w3c.dom.DOMImplementation;
 
-import org.apache.batik.util.XMLResourceDescriptor;
-import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.w3c.dom.DOMImplementation;
+
+import org.apache.batik.dom.svg.SVGDOMImplementation;
+import org.apache.batik.util.XMLResourceDescriptor;
+
+import org.apache.fop.fo.ElementMapping;
+import org.apache.fop.fo.FONode;
 
 /**
  * Setup the SVG element mapping.

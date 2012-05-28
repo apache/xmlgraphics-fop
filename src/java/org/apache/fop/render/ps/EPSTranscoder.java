@@ -23,7 +23,7 @@ import org.apache.xmlgraphics.java2d.ps.AbstractPSDocumentGraphics2D;
 import org.apache.xmlgraphics.java2d.ps.EPSDocumentGraphics2D;
 
 /**
- * This class enables to transcode an input to a EPS document.
+ * <p>This class enables to transcode an input to a EPS document.</p>
  *
  * <p>Two transcoding hints (<code>KEY_WIDTH</code> and
  * <code>KEY_HEIGHT</code>) can be used to respectively specify the image
@@ -46,8 +46,7 @@ import org.apache.xmlgraphics.java2d.ps.EPSDocumentGraphics2D;
  * stylesheet, and <code>KEY_PIXEL_TO_MM</code> to specify the pixel to
  * millimeter conversion factor.
  *
- * @author <a href="mailto:keiron@aftexsw.com">Keiron Liddle</a>
- * @version $Id$
+ * <p>This work was authored by Keiron Liddle (keiron@aftexsw.com).</p>
  */
 public class EPSTranscoder extends AbstractPSTranscoder {
 

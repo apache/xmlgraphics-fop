@@ -19,8 +19,6 @@
 
 package org.apache.fop.fo.properties;
 
-import java.util.Iterator;
-
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
@@ -31,10 +29,8 @@ import org.apache.fop.fo.expr.PropertyException;
 public final class FontFamilyProperty extends ListProperty {
 
     /** cache holding all canonical FontFamilyProperty instances */
-    private static final PropertyCache CACHE
-        = new PropertyCache(FontFamilyProperty.class);
-
-    private int hash = 0;
+    private static final PropertyCache<FontFamilyProperty> CACHE
+            = new PropertyCache<FontFamilyProperty>();
 
     /**
      * Inner class for creating instances of ListProperty
@@ -151,30 +147,4 @@ public final class FontFamilyProperty extends ListProperty {
         }
     }
 
-    /** {@inheritDoc} */
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-
-        if (o instanceof FontFamilyProperty) {
-            FontFamilyProperty ffp = (FontFamilyProperty) o;
-            return (this.list != null
-                    && this.list.equals(ffp.list));
-        }
-        return false;
-    }
-
-    /** {@inheritDoc} */
-    public int hashCode() {
-        if (this.hash == 0) {
-            int hash = 17;
-            for (Iterator i = list.iterator(); i.hasNext();) {
-                Property p = (Property) i.next();
-                hash = 37 * hash + (p == null ? 0 : p.hashCode());
-            }
-            this.hash = hash;
-        }
-        return this.hash;
-    }
 }

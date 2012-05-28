@@ -19,6 +19,7 @@
 
 package org.apache.fop.afp.fonts;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -62,8 +63,8 @@ public abstract class AFPFont extends Typeface {
     }
 
     /** {@inheritDoc} */
-    public Set getFamilyNames() {
-        Set s = new java.util.HashSet();
+    public Set<String> getFamilyNames() {
+        Set<String> s = new HashSet<String>();
         s.add(this.name);
         return s;
     }

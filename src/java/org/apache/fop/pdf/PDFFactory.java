@@ -913,35 +913,6 @@ public class PDFFactory {
     }
 
     /**
-     * Creates and returns a StructTreeRoot object. Used for accessibility.
-     * @param parentTree the value of the ParenTree entry
-     * @return structure Tree Root element
-     */
-    public PDFStructTreeRoot makeStructTreeRoot(PDFParentTree parentTree) {
-        PDFStructTreeRoot structTreeRoot = new PDFStructTreeRoot(parentTree);
-        getDocument().assignObjectNumber(structTreeRoot);
-        getDocument().addTrailerObject(structTreeRoot);
-        getDocument().getRoot().setStructTreeRoot(structTreeRoot);
-        return structTreeRoot;
-    }
-
-    /**
-     * Creates and returns a StructElem object.
-     *
-     * @param structureType the structure type of the new element (value for the
-     * S entry)
-     * @param parent the parent of the new structure element in the structure
-     * hierarchy
-     * @return the newly created element
-     */
-    public PDFStructElem makeStructureElement(PDFName structureType, PDFObject parent) {
-        PDFStructElem structElem = new PDFStructElem(parent, structureType);
-        getDocument().assignObjectNumber(structElem);
-        getDocument().addTrailerObject(structElem);
-        return structElem;
-    }
-
-    /**
      * Make a the head object of the name dictionary (the /Dests object).
      *
      * @param destinationList a list of PDFDestination instances
@@ -1090,6 +1061,9 @@ public class PDFFactory {
             return getActionForEmbeddedFile(filename, newWindow);
         } else if (targetLo.startsWith("http://")) {
             // HTTP URL?
+            return new PDFUri(target);
+        } else if (targetLo.startsWith("https://")) {
+            // HTTPS URL?
             return new PDFUri(target);
         } else if (targetLo.startsWith("file://")) {
             // Non PDF files. Try to /Launch them.

@@ -26,14 +26,15 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
  * the FOP project.
  */
 
-import java.io.Writer;
 import java.io.IOException;
+import java.io.Writer;
 
 /**
- * RTF Bookmark.
+ * <p>RTF Bookmark.
  * Create an RTF bookmark as a child of given container with default attributes.
- * This class belongs to the "id" attribute processing.
- * @author <a href="mailto:a.putz@skynamics.com">Andreas Putz</a>
+ * This class belongs to the "id" attribute processing.</p>
+ *
+ * <p>This work was authored by Andreas Putz (a.putz@skynamics.com).</p>
  */
 public class RtfBookmark extends RtfElement {
     //////////////////////////////////////////////////

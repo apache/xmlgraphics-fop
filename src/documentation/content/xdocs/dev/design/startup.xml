@@ -1,4 +1,4 @@
-<?xml version="1.0" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -19,13 +19,13 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.3//EN" "http://forrest.apache.org/dtd/document-v13.dtd">
 <document>
   <header>
-    <title>FOP Design: Startup, Environment, Control</title>
+    <title>Apache™ FOP Design: Startup, Environment, Control</title>
     <version>$Revision$</version>
   </header>
   <body>
     <section id="intro">
       <title>Introduction</title>
-      <p>Startup is the process of getting FOP bootstrapped and creating basic objects. Environment includes acquiring user options, instantiating any frameworks, setting up logging, etc. Control includes the basic logic for tieing the various subsystems together properly.</p>
+      <p>Startup is the process of getting Apache™ FOP bootstrapped and creating basic objects. Environment includes acquiring user options, instantiating any frameworks, setting up logging, etc. Control includes the basic logic for tieing the various subsystems together properly.</p>
     </section>
     <section id="status">
       <title>Status</title>

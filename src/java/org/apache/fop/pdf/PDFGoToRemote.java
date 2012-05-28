@@ -106,7 +106,6 @@ public class PDFGoToRemote extends PDFAction {
      */
     public String toPDFString() {
         StringBuffer sb = new StringBuffer(64);
-        sb.append(getObjectID());
         sb.append("<<\n/S /GoToR\n/F ");
         sb.append(pdfFileSpec.toString());
         sb.append("\n");
@@ -121,7 +120,7 @@ public class PDFGoToRemote extends PDFAction {
             sb.append("/NewWindow true");
         }
 
-        sb.append(" \n>>\nendobj\n");
+        sb.append("\n>>");
 
         return sb.toString();
     }

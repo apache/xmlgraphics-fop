@@ -28,7 +28,7 @@ import java.io.OutputStream;
 public class GraphicsSetLineWidth extends AbstractGraphicsDrawingOrder {
 
     /** line width multiplier */
-    private int multiplier = 1;
+    private final int multiplier;
 
     /**
      * Main constructor
@@ -48,7 +48,7 @@ public class GraphicsSetLineWidth extends AbstractGraphicsDrawingOrder {
     public void writeToStream(OutputStream os) throws IOException {
         byte[] data = new byte[] {
            getOrderCode(), // GSLW order code
-           (byte)multiplier // MH (line-width)
+           (byte) multiplier // MH (line-width)
         };
         os.write(data);
     }

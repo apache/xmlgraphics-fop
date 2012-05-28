@@ -29,8 +29,12 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
 import java.io.IOException;
 import java.io.Writer;
 
-/**  Container for RtfRow elements
- *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
+import org.apache.fop.apps.FOPException;
+
+/**
+ * <p>Container for RtfRow elements.</p>
+ *
+ * <p>This work was authored by Bertrand Delacretaz (bdelacretaz@codeconsult.ch).</p>
  */
 
 public class RtfTable extends RtfContainer {
@@ -84,11 +88,16 @@ public class RtfTable extends RtfContainer {
      * @param attrs attributs of new RtfTableRow
      * @return new RtfTableRow
      * @throws IOException for I/O problems
+     * @throws FOPException if attributes cannot be cloned
      */
-    public RtfTableRow newTableRow(RtfAttributes attrs) throws IOException {
+    public RtfTableRow newTableRow(RtfAttributes attrs) throws IOException, FOPException {
         RtfAttributes attr = null;
         if (attrib != null) {
-            attr = (RtfAttributes) attrib.clone ();
+            try {
+                attr = (RtfAttributes) attrib.clone ();
+            } catch (CloneNotSupportedException e) {
+                throw new FOPException(e);
+            }
             attr.set (attrs);
         } else {
             attr = attrs;

@@ -124,4 +124,16 @@ public class EventProcessingTestCase {
         doTest("inline-level.fo",
                 InlineLevelEventProducer.class.getName() + ".lineOverflows");
     }
+
+    @Test
+    public void testViewportIPDOverflow() throws FOPException, TransformerException, IOException,
+            SAXException {
+        doTest("viewport-overflow.fo", BlockLevelEventProducer.class.getName() + ".viewportIPDOverflow");
+    }
+
+    @Test
+    public void testViewportBPDOverflow() throws FOPException, TransformerException, IOException,
+            SAXException {
+        doTest("viewport-overflow.fo", BlockLevelEventProducer.class.getName() + ".viewportBPDOverflow");
+    }
 }

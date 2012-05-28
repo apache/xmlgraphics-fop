@@ -22,6 +22,7 @@
 
   <developers>
     <!-- In alphabetical order (last name) -->
+    <person name="Glenn Adams"       email="gadams@apache.org"        id="GA"/>
     <person name="Max Berger"        email="mayberger@apache.org"     id="MB"/>
     <person name="Chris Bowditch"    email="cbowditch@apache.org"     id="CB"/>
     <person name="Jay Bryant"        email="jbryant@apache.org"       id="JB"/>
@@ -32,11 +33,11 @@
     <person name="Christian Geisert" email="chrisg@apache.org"        id="CG"/>
     <person name="Peter Hancock"     email="phancock@apache.org"      id="PH"/>
     <person name="Vincent Hennebert" email="vhennebert@apache.org"    id="VH"/>
+    <person name="Mehdi Houshmand"   email="mehdi@apache.org"         id="MH"/>
     <person name="Clay Leeds"        email="clay@apache.org"          id="CL"/>
     <person name="Manuel Mall"       email="manuel@apache.org"        id="MM"/>
     <person name="Jeremias Märki"    email="jeremias@apache.org"      id="JM"/>
     <person name="Simon Pepping"     email="spepping@apache.org"      id="SP"/>
-    <person name="Mehdi Houshmand"   email="mehdi@apache.org"         id="MH"/>
     <person name="the FOP committers" email="fop-dev@xmlgraphics.apache.org" id="all"/>
     <person name="Volunteer needed"  email="general@xmlgraphics.apache.org" id="open"/>
     <!-- See also src/documentation/content/xdocs/team.xml -->
@@ -51,7 +52,8 @@
     <context id="API" title="Changes to the End-User API"/>
     <context id="Extensions" title="Changes to the Bundled Extensions"/>
     <context id="Images" title="Changes to the Image Support"/>
-	<context id="Config" title="Changes to the User Configuration"/>
+    <context id="Config" title="Changes to the User Configuration"/>
+    <context id="Test" title="Changes to unit tests or other test code"/>
   </contexts>
 
   <changes>
@@ -61,6 +63,200 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Renderers" dev="GA" type="fix" fixes-bug="53304,53306">
+        Add version attribute to AT and IF intermediate formats. Also eliminate redundant use of reversed attribute in AT format.
+      </action>
+      <action context="Renderers" dev="GA" type="fix" fixes-bug="53295" due-to="Luis Bernardo">
+        Add extension to place code just before PostScript %PageTrailer.
+      </action>
+      <action context="Renderers" dev="GA" type="fix" fixes-bug="53294" due-to="Robert Meyer">
+        Fix invalid PostScript file being created when font-size is 0.
+      </action>
+      <action context="Docs" dev="GA" type="update">
+        Update FAQ and New Bug documentation.
+      </action>
+      <action context="Code" dev="VH" type="add">
+        Added support for the role property on fo:page-sequence, fo:flow and fo:static-content. This 
+        allows to change the mapping of those FOs to PDF structure types when enabling 
+        accessibility.
+      </action>
+      <action context="Renderers" dev="VH" type="fix" due-to="Martin Koegler">
+        Stop outputting the Type entry for structure elements in order to create a smaller PDF 
+        ouptut when accessibility is enabled.
+      </action>
+      <action context="Config" dev="GA" type="fix" fixes-bug="52144" due-to="Luis Bernardo">
+        Fix crash on use of version switch (-v).
+      </action>
+      <action context="Renderers" dev="GA" type="fix" fixes-bug="53242" due-to="Luis Bernardo">
+        Support fractional line widths in AFP renderer, fixing problem with SVG line drawing.
+      </action>
+      <action context="Config" dev="GA" type="fix" fixes-bug="53248" due-to="Luis Bernardo">
+        Fix exception thrown from use of -print option in CLI.
+      </action>
+      <action context="Docs" dev="GA" type="fix" fixes-bug="53247">
+        Fix renderer mime type for PCL output; should be application/x-pcl.
+      </action>
+      <action context="Renderers" dev="GA" type="fix" fixes-bug="40699" due-to="Luis Bernardo">
+        Fix for invalid PDF for certain numerical values in SVG lineargradient.
+      </action>
+      <action context="Layout" dev="GA" type="fix" fixes-bug="53185" due-to="Robert Meyer">
+        Unify date formatting between FOP and XGC as well as tidying the date format code.
+      </action>
+      <action context="Layout" dev="GA" type="fix" fixes-bug="45715" due-to="Luis Bernardo">
+        Break before (break-before) not respected on blocks nested in inlines.
+      </action>
+      <action context="Renderers" dev="GA" type="fix" fixes-bug="48723" due-to="Robert Meyer">
+        Fix for XGC when rendering PostScript using SVG being drawn upside down when using a custom affine transform.
+      </action>
+      <action context="Code" dev="GA" type="fix" fixes-bug="43940" due-to="Julien Aymé, Ognjen Blagojevic">
+        Use new double format utility to improve thread safety and performance.
+      </action>
+      <action context="Fonts" dev="GA" type="fix" fixes-bug="53148" due-to="Tassos Charoulis">
+        Fix performance regression in JDK 1.6 Update 19 due to use of Java Beans API. Fix checkstyle errors.
+      </action>
+      <action context="Renderers" dev="GA" type="fix" fixes-bug="51484" due-to="Benjamin Riefenstahl">
+        Don't write final /sect suffix in RTF if section is last section.
+      </action>
+      <action context="Fonts" dev="GA" type="fix" fixes-bug="53143">
+        Ensure fonts are not loaded twice (redundantly).
+      </action>
+      <action context="Test" dev="GA" type="update" fixes-bug="50196" due-to="Matthias Reischenbacher">
+        Add test for basic-link with padding.
+      </action>
+      <action context="Code" dev="GA" type="update">
+        Improve property function argument parsing, specifically, better separate required, optional, and variable arguments and the handling of optional argument defaults.
+        Regularize property function class names.
+      </action>
+      <action context="Layout" dev="GA" type="fix" fixes-bug="51043" due-to="Pascal Sancho">
+        Don't restart layout unless abs(ipd difference) > 1 in order to prevent rounding issues from triggering false restart.
+      </action>
+      <action context="Fonts" dev="GA" type="update">
+        Removing experimental feature that violates XSL-FO and Unicode semantics by misinterpreting Basic Latin code points. Users must use private use codepoints to access font specific
+        character mappings that have no assigned Unicode code point. See bug 50492.
+      </action>
+      <action context="Layout" dev="GA" type="fix" fixes-bug="53103" due-to="Matthias Reischenbacher">
+        Ensure that table cell spanning works in right-to-left writing mode.
+      </action>
+      <action context="Layout" dev="GA" type="fix" fixes-bug="53086">
+        Ensure that table footer and header are included in bididirectional resolution.
+      </action>
+      <action context="Layout" dev="GA" type="fix" fixes-bug="53097">
+        Ensure writing-mode specified on fo:table is used to determine writing mode of table and its descendants.
+      </action>
+      <action context="Code" dev="GA" type="fix" fixes-bug="53094" due-to="Luis Bernardo">
+        Convert block container overflow exception to event model, improving overflow property behavior.
+      </action>
+      <action context="Code" dev="GA" type="update" fixes-bug="51617">
+        Add run target for embedded examples. Add increased JVM memory heap flag for example8 in case font cache is rebuilt.
+      </action>
+      <action context="Code" dev="GA" type="fix" fixes-bug="53083">
+        Update to use of checkstyle-5.5 as default configuration. Remove checkstyle-4.0 configuration. Also, import environment build properties before local properties, so that latter can refer to former.'
+      </action>
+      <action context="Code" dev="GA" type="fix" fixes-bug="52572" due-to="Pascal Sancho">
+        Prevent NPE on use of unsupported collapse-with-precedence; fall back to collapse. Fix checkstyle errors from prior commit.
+      </action>
+      <action context="Layout" dev="GA" type="fix" fixes-bug="52514" due-to="Luis Bernardo">
+        Ensure square image is appropriately scaled.
+      </action>
+      <action context="Code" dev="GA" type="fix" fixes-bug="50062">
+        Invoke JVM in headless mode from FOP command scripts and JS shell to prevent stealing focus from GUI applications.
+      </action>
+      <action context="Renderers" dev="GA" type="fix" fixes-bug="52114">
+        Take leading derived space before/after into account when computing rows for TXT renderer.
+      </action>
+      <action context="Code" dev="PH" type="add" fixes-bug="49893">
+        A global setting to wrap F11 images in page segments.
+      </action>
+      <action context="Code" dev="GA" type="fix" fixes-bug="52763">
+        Support list-block in marker, thus preventing NPE.
+      </action>
+      <action context="Code" dev="GA" type="fix">
+        Must use unqualified (local name) when reporting invalid child error.
+      </action>
+      <action context="Code" dev="GA" type="fix" fixes-bug="53065">
+        Restore lookup on Event message lookup field part. Add locale field to Event to
+        enable locale dependent deferred bundle load during lookup field part substitution.
+      </action>
+      <action context="Code" dev="MH" type="fix">
+        Bug in AFP font metrics that performed integer arithmetic when it should have been
+	double arithemetic.
+      </action>
+      <action context="Code" dev="GA" type="fix" fixes-bug="49754" due-to="Simon Pepping">
+        Bring clone() in line with the recommendations in Object.clone().
+      </action>
+      <action context="Code" dev="GA" type="fix" fixes-bug="52966" due-to="Luis Bernardo">
+        How to use native text with EPSDocumentGraphics2D.
+      </action>
+      <action context="Code" dev="GA" type="fix" fixes-bug="51599" due-to="Paul Huemer">
+        Allow https scheme URI for PDF external action target.
+      </action>
+      <action context="Code" dev="GA" type="fix" fixes-bug="50901" due-to="Carsten Pfeiffer">
+        RTF percentage table column width not calculated from table.
+      </action>
+      <action context="Code" dev="GA" type="fix" fixes-bug="51009" due-to="Max Aster">
+        RTF generates unexpected lines for blocks in tables. Also fix three findbugs issues.
+      </action>
+      <action context="Code" dev="GA" type="fix" fixes-bug="51007" due-to="Max Aster">
+        RTF tables do not support percent column-widths.
+      </action>
+      <action context="Code" dev="GA" type="fix" fixes-bug="50435" due-to="Armin Haaf">
+        Access denied (java.util.PropertyPermission org.apache.fop.fo.properties.use-cache read).
+      </action>
+      <action context="Code" dev="GA" type="fix" fixes-bug="49763" due-to="Adrian Buza">
+        Incorrect message when encountering a block in an inline in a footnote.
+      </action>
+      <action context="Code" dev="GA" type="fix" fixes-bug="47380" due-to="Georg Datterl">
+        Specified rule-thickness applies only when leader-pattern is rule, otherwise should use default thickness.
+      </action>
+      <action context="Code" dev="GA" type="fix" fixes-bug="49302" due-to="Julien Aymé">
+        Eliminate duplicate code.
+      </action>
+      <action context="Code" dev="GA" type="fix" fixes-bug="49350" due-to="Julien Aymé">
+        Correct coding error in AFPResourceLevel#equals.
+      </action>
+      <action context="Code" dev="GA" type="fix" fixes-bug="51836" due-to="Melanie Drake">
+        Throw IFException instead of NPE if navigation target (page reference) doesn't exist.
+      </action>
+      <action context="Code" dev="GA" type="fix" fixes-bug="51808" due-to="Sergey Vladimirov">
+        Fixed memory waste in traits map.
+      </action>
+      <action context="Code" dev="GA" type="fix" fixes-bug="51807" due-to="Sergey Vladimirov">
+        Fixed small memory waste in rowCells array construction.
+      </action>
+      <action context="Code" dev="GA" type="fix" fixes-bug="53005" due-to="Alberto Simões">
+        Fixed incorrect rejection of fo:wrapper inside fo:inline inside fo:footnote-body.
+      </action>
+      <action context="Code" dev="PH,VH" type="add">
+        Added support for PDF Object Streams. When accessibility is enabled and PDF version 1.5 
+        selected, the structure tree will be stored in object streams in order to reduce the size of 
+        the final PDF.
+      </action>
+      <action context="Code" dev="VH" type="fix" fixes-bug="46962" due-to="Alexios Giotis">
+        Fixed deadlock in PropertyCache.
+      </action>
+      <action context="Code" dev="VH" type="add" fixes-bug="51385" due-to="Mehdi Houshmand">
+        Added configuration option to set the version of the output PDF document.
+      </action>
+      <action context="Code" dev="MH" type="fix" fixes-bug="52849" due-to="Luis Bernardo">
+        Fixed bug that caused a configured and installed SVG font to stroked,
+        also added an event indicating when fonts are stroked.
+      </action>
+      <action context="Code" dev="PH" type="fix">
+        Fix of a bug introduced when merging ImproveAccessibility.
+      </action>
+      <action context="Code" dev="PH" type="add">
+          Improved support for empty flow-name mapping (see bugzilla#50391).
+      </action>
+      <action context="Code" dev="GA" type="add" fixes-bug="32789, 49008, 49687" importance="high">
+        Add support for complex scripts, including: full bidi support, support for advanced
+        typographic tables, advanced support for number conversion.
+      </action>
+      <action context="Fonts" dev="GA" type="add">
+        Add support for OpenType advanced typographic tables (GDEF, GSUB, GPOS).
+      </action>
+      <action context="Code" dev="VH" type="fix" fixes-bug="52655" due-to="Luis Bernardo">
+        Fixed rendering of special glyphs when using single-byte encoding mode.
+      </action>
       <action context="Code" dev="PH" type="add" due-to="VH and PH">
         Improvements of the Accessibility feature
       </action>
@@ -265,9 +461,9 @@
         Bugfix: fix performance issue when adding nodes, if the number of children
         is significantly large.
       </action>
-	  <action context="Config" dev="SP" type="fix">
-		Bugfix: relative URIs in the configuration file (base, font-base, hyphenation-base) are evaluated relative to the base URI of the configuration file.
-	  </action>
+      <action context="Config" dev="SP" type="fix">
+	Bugfix: relative URIs in the configuration file (base, font-base, hyphenation-base) are evaluated relative to the base URI of the configuration file.
+      </action>
       <action context="Layout" dev="AD" type="fix" fixes-bug="49848">
         Bugfix: correct behavior of keep-together.within-line in case there are nested inlines
       </action>

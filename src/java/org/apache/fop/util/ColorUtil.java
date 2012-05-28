@@ -183,7 +183,9 @@ public final class ColorUtil {
      */
     private static Color parseAsJavaAWTColor(String value)
             throws PropertyException {
-        float red = 0.0f, green = 0.0f, blue = 0.0f;
+        float red = 0.0f;
+        float green = 0.0f;
+        float blue = 0.0f;
         int poss = value.indexOf("[");
         int pose = value.indexOf("]");
         try {
@@ -315,7 +317,9 @@ public final class ColorUtil {
             } else {
                 alpha = 0xFF;
             }
-            int red = 0, green = 0, blue = 0;
+            int red = 0;
+            int green = 0;
+            int blue = 0;
             if ((len == 4) || (len == 5)) {
                 //multiply by 0x11 = 17 = 255/15
                 red = Integer.parseInt(value.substring(1, 2), 16) * 0x11;

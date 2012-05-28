@@ -19,6 +19,7 @@
 
 package org.apache.fop.area.inline;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.fop.area.Area;
@@ -62,6 +63,7 @@ public class InlineParent extends InlineArea {
         if (autoSize) {
             increaseIPD(childArea.getAllocIPD());
         }
+        updateLevel ( childArea.getBidiLevel() );
         int childOffset = childArea.getVirtualOffset();
         minChildOffset = Math.min(minChildOffset, childOffset);
         maxAfterEdge = Math.max(maxAfterEdge, childOffset + childArea.getVirtualBPD());
@@ -69,7 +71,7 @@ public class InlineParent extends InlineArea {
 
     @Override
     int getVirtualOffset() {
-        return getOffset() + minChildOffset;
+        return getBlockProgressionOffset() + minChildOffset;
     }
 
     @Override
@@ -110,5 +112,37 @@ public class InlineParent extends InlineArea {
         return hasUnresolvedAreas;
     }
 
-}
+    @Override
+    public List collectInlineRuns ( List runs ) {
+        for ( Iterator<InlineArea> it = getChildAreas().iterator(); it.hasNext();) {
+            InlineArea ia = it.next();
+            runs = ia.collectInlineRuns ( runs );
+        }
+        return runs;
+    }
 
+    /**
+     * Reset bidirectionality level of all children to default (-1),
+     * signalling that they will inherit the level of their parent text area.
+     */
+    public void resetChildrenLevel() {
+        for ( Iterator it = inlines.iterator(); it.hasNext();) {
+            ( (InlineArea) it.next() ) .resetBidiLevel();
+        }
+    }
+
+    private void updateLevel ( int newLevel ) {
+        if ( newLevel >= 0 ) {
+            int curLevel = getBidiLevel();
+            if ( curLevel >= 0 ) {
+                if ( newLevel < curLevel ) {
+                    setBidiLevel ( newLevel );
+                }
+            } else {
+                setBidiLevel ( newLevel );
+            }
+        }
+    }
+
+
+}

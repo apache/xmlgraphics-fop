@@ -43,8 +43,8 @@ import org.apache.fop.traits.SpaceVal;
 /**
  * LayoutManager for a block FO.
  */
-public class BlockLayoutManager extends BlockStackingLayoutManager
-            implements ConditionalElementListener {
+public class BlockLayoutManager extends BlockStackingLayoutManager implements ConditionalElementListener,
+        BreakOpportunity {
 
     /** logging instance */
     private static Log log = LogFactory.getLog(BlockLayoutManager.class);
@@ -359,6 +359,8 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
 
             curBlockArea.setIPD(super.getContentAreaIPD());
 
+            curBlockArea.setBidiLevel ( getBlockFO().getBidiLevel() );
+
             TraitSetter.addBreaks(curBlockArea,
                     getBlockFO().getBreakBefore(), getBlockFO().getBreakAfter());
 
@@ -502,5 +504,8 @@ public class BlockLayoutManager extends BlockStackingLayoutManager
         return true;
     }
 
-}
+    public int getBreakBefore() {
+        return BreakOpportunityHelper.getBreakBefore(this);
+    }
 
+}

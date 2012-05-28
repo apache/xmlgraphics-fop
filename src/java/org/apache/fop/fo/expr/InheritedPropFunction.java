@@ -28,30 +28,29 @@ import org.apache.fop.fo.properties.Property;
  */
 public class InheritedPropFunction extends FunctionBase {
 
-    /**
-     * @return 1 (maximum number of arguments for the inherited-property-value
-     * function)
-     */
-    public int nbArgs() {
+    /** {@inheritDoc} */
+    public int getRequiredArgsCount() {
+        return 0;
+    }
+
+    @Override
+    /** {@inheritDoc} */
+    public int getOptionalArgsCount() {
         return 1;
     }
 
-    /**
-     * @return true (allow padding of arglist with property name)
-     */
-    public boolean padArgsWithPropertyName() {
-        return true;
+    @Override
+    /** {@inheritDoc} */
+    public Property getOptionalArgDefault(int index, PropertyInfo pi) throws PropertyException {
+        if ( index == 0 ) {
+            return getPropertyName ( pi );
+        } else {
+            return super.getOptionalArgDefault ( index, pi );
+        }
     }
 
-    /**
-     *
-     * @param args arguments to be evaluated
-     * @param pInfo PropertyInfo object to be evaluated
-     * @return Property satisfying the inherited-property-value
-     * @throws PropertyException for invalid parameter
-     */
-    public Property eval(Property[] args,
-                         PropertyInfo pInfo) throws PropertyException {
+    /** {@inheritDoc} */
+    public Property eval(Property[] args, PropertyInfo pInfo) throws PropertyException {
         String propName = args[0].getString();
         if (propName == null) {
             throw new PropertyException("Incorrect parameter to inherited-property-value function");

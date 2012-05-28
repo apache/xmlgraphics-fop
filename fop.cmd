@@ -27,5 +27,5 @@ goto setupArgs
 rem This label provides a place for the argument list loop to break out 
 :doneStart
 
-call %LOCAL_FOP_HOME%\fop.bat %FOP_CMD_LINE_ARGS%
+call "%LOCAL_FOP_HOME%\fop.bat" %FOP_CMD_LINE_ARGS%
 

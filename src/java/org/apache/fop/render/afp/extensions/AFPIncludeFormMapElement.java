@@ -30,7 +30,6 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
-import org.apache.fop.fo.extensions.ExtensionObj;
 
 /**
  * This class extends the {@link ExtensionObj} class. It represents the "include-form-map"

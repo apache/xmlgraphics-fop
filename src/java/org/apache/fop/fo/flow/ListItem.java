@@ -19,9 +19,12 @@
 
 package org.apache.fop.fo.flow;
 
+import java.util.Stack;
+
 import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.complexscripts.bidi.DelimitedTextRange;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
@@ -201,5 +204,19 @@ public class ListItem extends FObj implements BreakPropertySet, CommonAccessibil
     public int getNameId() {
         return FO_LIST_ITEM;
     }
+
+    @Override
+    protected Stack collectDelimitedTextRanges ( Stack ranges, DelimitedTextRange currentRange ) {
+        ListItemLabel label = getLabel();
+        if ( label != null ) {
+            ranges = label.collectDelimitedTextRanges ( ranges );
+        }
+        ListItemBody body = getBody();
+        if ( body != null ) {
+            ranges = body.collectDelimitedTextRanges ( ranges );
+        }
+        return ranges;
+    }
+
 }
 

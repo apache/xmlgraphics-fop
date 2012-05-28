@@ -20,6 +20,7 @@
 package org.apache.fop.layoutmgr.inline;
 
 import org.apache.fop.fo.Constants;
+import org.apache.fop.traits.WritingMode;
 
 
 /**
@@ -43,7 +44,7 @@ final class ScaledBaselineTable {
 
     private final int dominantBaselineIdentifier;
 
-    private final int writingMode;
+    private final WritingMode writingMode;
 
     private final int dominantBaselineOffset;
 
@@ -66,7 +67,7 @@ final class ScaledBaselineTable {
             int depth,
             int xHeight,
             int dominantBaselineIdentifier,
-            int writingMode) {
+            WritingMode writingMode) {
         this.altitude = altitude;
         this.depth = depth;
         this.xHeight = xHeight;
@@ -89,7 +90,7 @@ final class ScaledBaselineTable {
      * Return the writing mode for this baseline table.
      * @return the writing mode
      */
-    int getWritingMode() {
+    WritingMode getWritingMode() {
         return this.writingMode;
     }
 
@@ -139,7 +140,7 @@ final class ScaledBaselineTable {
     }
 
     private boolean isHorizontalWritingMode() {
-        return writingMode == Constants.EN_LR_TB || writingMode == Constants.EN_RL_TB;
+        return writingMode.isHorizontal();
     }
 
     /**

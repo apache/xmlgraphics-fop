@@ -66,7 +66,8 @@ public class ExampleJava2D2PDF {
                 throws ConfigurationException {
 
         PDFDocumentGraphics2DConfigurator configurator = new PDFDocumentGraphics2DConfigurator();
-        configurator.configure(g2d, cfg);
+        boolean useComplexScriptFeatures = false;
+        configurator.configure(g2d, cfg, useComplexScriptFeatures);
     }
 
     /**

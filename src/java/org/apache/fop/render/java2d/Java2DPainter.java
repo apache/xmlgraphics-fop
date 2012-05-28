@@ -40,8 +40,8 @@ import org.apache.fop.render.RenderingContext;
 import org.apache.fop.render.intermediate.AbstractIFPainter;
 import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFException;
-import org.apache.fop.render.intermediate.IFPainter;
 import org.apache.fop.render.intermediate.IFState;
+import org.apache.fop.render.intermediate.IFUtil;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.traits.RuleStyle;
 import org.apache.fop.util.CharUtilities;
@@ -184,11 +184,11 @@ public class Java2DPainter extends AbstractIFPainter {
     }
 
     /** {@inheritDoc} */
-    public void drawBorderRect(Rectangle rect, BorderProps before, BorderProps after,
-            BorderProps start, BorderProps end) throws IFException {
-        if (before != null || after != null || start != null || end != null) {
+    public void drawBorderRect(Rectangle rect, BorderProps top, BorderProps bottom,
+            BorderProps left, BorderProps right) throws IFException {
+        if (top != null || bottom != null || left != null || right != null) {
             try {
-                this.borderPainter.drawBorders(rect, before, after, start, end);
+                this.borderPainter.drawBorders(rect, top, bottom, left, right);
             } catch (IOException e) {
                 //Won't happen with Java2D
                 throw new IllegalStateException("Unexpected I/O error");
@@ -203,7 +203,7 @@ public class Java2DPainter extends AbstractIFPainter {
     }
 
     /** {@inheritDoc} */
-    public void drawText(int x, int y, int letterSpacing, int wordSpacing, int[] dx, String text)
+    public void drawText(int x, int y, int letterSpacing, int wordSpacing, int[][] dp, String text)
             throws IFException {
         g2dState.updateColor(state.getTextColor());
         FontTriplet triplet = new FontTriplet(
@@ -220,6 +220,7 @@ public class Java2DPainter extends AbstractIFPainter {
         Point2D cursor = new Point2D.Float(0, 0);
 
         int l = text.length();
+        int[] dx = IFUtil.convertDPToDX ( dp );
         int dxl = (dx != null ? dx.length : 0);
 
         if (dx != null && dxl > 0 && dx[0] != 0) {

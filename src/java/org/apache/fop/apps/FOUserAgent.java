@@ -48,7 +48,6 @@ import org.apache.fop.events.EventListener;
 import org.apache.fop.events.FOPEventListenerProxy;
 import org.apache.fop.events.LoggingEventListener;
 import org.apache.fop.fo.FOEventHandler;
-import org.apache.fop.fonts.FontManager;
 import org.apache.fop.render.Renderer;
 import org.apache.fop.render.RendererFactory;
 import org.apache.fop.render.XMLHandlerRegistry;
@@ -651,6 +650,24 @@ public class FOUserAgent {
      */
     public void setConserveMemoryPolicy(boolean conserveMemoryPolicy) {
         this.conserveMemoryPolicy = conserveMemoryPolicy;
+    }
+
+    /**
+     * Check whether complex script features are enabled.
+     *
+     * @return true if FOP is to use complex script features
+     */
+    public boolean isComplexScriptFeaturesEnabled() {
+        return factory.isComplexScriptFeaturesEnabled();
+    }
+
+    /**
+     * Control whether complex script features should be enabled
+     *
+     * @param useComplexScriptFeatures true if FOP is to use complex script features
+     */
+    public void setComplexScriptFeaturesEnabled(boolean useComplexScriptFeatures) {
+        factory.setComplexScriptFeaturesEnabled ( useComplexScriptFeatures );
     }
 
     /**

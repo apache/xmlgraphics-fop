@@ -19,11 +19,13 @@
 
 package org.apache.fop.fo.extensions.xmp;
 
-import org.apache.fop.util.ContentHandlerFactory;
-import org.apache.xmlgraphics.xmp.XMPConstants;
-import org.apache.xmlgraphics.xmp.XMPHandler;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
+
+import org.apache.xmlgraphics.xmp.XMPConstants;
+import org.apache.xmlgraphics.xmp.XMPHandler;
+
+import org.apache.fop.util.ContentHandlerFactory;
 
 /**
  * ContentHandlerFactory for the XMP root element.

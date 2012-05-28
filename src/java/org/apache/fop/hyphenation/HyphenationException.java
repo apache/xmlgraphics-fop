@@ -20,8 +20,10 @@
 package org.apache.fop.hyphenation;
 
 /**
- * An hyphenation exception.
- * @author Carlos Villegas <cav@uniscope.co.jp>
+ * <p>An hyphenation exception.</p>
+ *
+ * <p>This work was authored by Carlos Villegas (cav@uniscope.co.jp).</p>
+ *
  * TODO Derive from FOPException
  */
 public class HyphenationException extends Exception {

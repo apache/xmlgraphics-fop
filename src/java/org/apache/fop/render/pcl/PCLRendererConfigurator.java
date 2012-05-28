@@ -19,7 +19,6 @@
 
 package org.apache.fop.render.pcl;
 
-import java.awt.Graphics2D;
 import java.util.List;
 
 import org.apache.avalon.framework.configuration.Configuration;
@@ -119,7 +118,8 @@ public class PCLRendererConfigurator extends PrintRendererConfigurator
             FontEventListener listener = new FontEventAdapter(
                     userAgent.getEventBroadcaster());
             List fontList = buildFontList(cfg, fontResolver, listener);
-            fontCollections.add(new ConfiguredFontCollection(fontResolver, fontList));
+            fontCollections.add(new ConfiguredFontCollection(fontResolver, fontList,
+                                userAgent.isComplexScriptFeaturesEnabled()));
         }
 
         fontManager.setup(fontInfo,

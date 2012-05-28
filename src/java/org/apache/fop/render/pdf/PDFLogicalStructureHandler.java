@@ -19,8 +19,6 @@
 
 package org.apache.fop.render.pdf;
 
-import java.util.Locale;
-
 import org.apache.fop.pdf.PDFArray;
 import org.apache.fop.pdf.PDFDictionary;
 import org.apache.fop.pdf.PDFDocument;
@@ -29,7 +27,6 @@ import org.apache.fop.pdf.PDFName;
 import org.apache.fop.pdf.PDFPage;
 import org.apache.fop.pdf.PDFParentTree;
 import org.apache.fop.pdf.PDFStructElem;
-import org.apache.fop.pdf.PDFStructTreeRoot;
 
 
 /**
@@ -58,8 +55,6 @@ class PDFLogicalStructureHandler {
      * StructParents entry.
      */
     private PDFArray pageParentTreeArray;
-
-    private PDFStructElem rootStructureElement;
 
     /**
      * Class providing the necessary information for bracketing content
@@ -95,22 +90,10 @@ class PDFLogicalStructureHandler {
      */
     PDFLogicalStructureHandler(PDFDocument pdfDoc) {
         this.pdfDoc = pdfDoc;
-        PDFStructTreeRoot structTreeRoot = pdfDoc.getFactory().makeStructTreeRoot(parentTree);
-        rootStructureElement = pdfDoc.getFactory().makeStructureElement(
-                FOToPDFRoleMap.mapFormattingObject("root", structTreeRoot), structTreeRoot);
-        structTreeRoot.addKid(rootStructureElement);
     }
 
-
-    PDFStructElem createPageSequence(Locale language) {
-        PDFStructElem structElemPart = pdfDoc.getFactory().makeStructureElement(
-                FOToPDFRoleMap.mapFormattingObject("page-sequence", rootStructureElement),
-                rootStructureElement);
-        rootStructureElement.addKid(structElemPart);
-        if (language != null) {
-            structElemPart.setLanguage(language);
-        }
-        return structElemPart;
+    PDFParentTree getParentTree() {
+        return parentTree;
     }
 
     private int getNextParentTreeKey() {

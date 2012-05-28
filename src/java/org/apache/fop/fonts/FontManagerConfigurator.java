@@ -29,6 +29,7 @@ import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fonts.substitute.FontSubstitutions;
 import org.apache.fop.fonts.substitute.FontSubstitutionsConfigurator;
@@ -95,6 +96,18 @@ public class FontManagerConfigurator {
                 fontManager.setFontBaseURL(path);
             } catch (MalformedURLException mfue) {
                 LogUtil.handleException(log, mfue, true);
+            }
+        }
+
+        // [GA] permit configuration control over base14 kerning; without this,
+        // there is no way for a user to enable base14 kerning other than by
+        // programmatic API;
+        if (cfg.getChild("base14-kerning", false) != null) {
+            try {
+                fontManager
+                    .setBase14KerningEnabled(cfg.getChild("base14-kerning").getValueAsBoolean());
+            } catch (ConfigurationException e) {
+                LogUtil.handleException(log, e, true);
             }
         }
 

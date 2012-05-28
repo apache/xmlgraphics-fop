@@ -19,13 +19,13 @@
 
 <html>
 <head>
-  <title>Apache FOP Compliance Page</title>
+  <title>Apache™ FOP Compliance Page</title>
 </head>
 
 <body>
   <h1>W3C XSL-FO 1.1 Standard</h1>
 
-  <p>One of FOP's design goals is conformance to the <a href=
+  <p>One of Apache™ FOP's design goals is conformance to the <a href=
   "http://www.w3.org/TR/xsl/">W3C XSL-FO 1.1 standard</a>, which specifies three
   levels of "conformance": basic, extended, and complete. Although FOP does not currently conform
   to any of these levels, it is nevertheless a useful work-in-progress for many applications. The
@@ -3842,10 +3842,10 @@
       "http://www.w3.org/TR/xsl/#page-height">&sect;7.27.13</a></td>
       <td><a name="fo-property-page-height" id="fo-property-page-height">page-height</a></td>
       <td class="basic">Basic</td>
-      <td class="yes">yes</td>
-      <td class="yes">yes</td>
-      <td class="yes">yes</td>
-      <td>&nbsp;</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td>value "indefinite" not yet supported</td>
     </tr>
     <tr>
       <td align="center"><a href=
@@ -3862,10 +3862,10 @@
       "http://www.w3.org/TR/xsl/#page-width">&sect;7.27.15</a></td>
       <td><a name="fo-property-page-width" id="fo-property-page-width">page-width</a></td>
       <td class="basic">Basic</td>
-      <td class="yes">yes</td>
-      <td class="yes">yes</td>
-      <td class="yes">yes</td>
-      <td>&nbsp;</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td>value "indefinite" not yet supported</td>
     </tr>
     <tr>
       <td align="center"><a href=
@@ -3962,10 +3962,10 @@
       <td><a name="fo-property-border-collapse" id=
       "fo-property-border-collapse">border-collapse</a></td>
       <td class="extended">Extended</td>
-      <td class="yes">yes</td>
-      <td class="yes">yes</td>
-      <td class="yes">yes</td>
-      <td>Some small limitations</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td>value "collapse-with-precedence" not yet supported</td>
     </tr>
     <tr>
       <td align="center"><a href=

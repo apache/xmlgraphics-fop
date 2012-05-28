@@ -51,13 +51,14 @@ public class ConfiguredFontCollection implements FontCollection {
      * Main constructor
      * @param fontResolver a font resolver
      * @param customFonts the list of custom fonts
+     * @param useComplexScriptFeatures true if complex script features enabled
      */
     public ConfiguredFontCollection(FontResolver fontResolver,
-            List/*<EmbedFontInfo>*/ customFonts) {
+            List/*<EmbedFontInfo>*/ customFonts, boolean useComplexScriptFeatures) {
         this.fontResolver = fontResolver;
         if (this.fontResolver == null) {
             //Ensure that we have minimal font resolution capabilities
-            this.fontResolver = FontManager.createMinimalFontResolver();
+            this.fontResolver = FontManager.createMinimalFontResolver(useComplexScriptFeatures);
         }
         this.embedFontInfoList = customFonts;
     }
@@ -89,7 +90,8 @@ public class ConfiguredFontCollection implements FontCollection {
                 } else {
                     CustomFont fontMetrics = FontLoader.loadFont(
                             fontFile, null, true, EncodingMode.AUTO,
-                            configFontInfo.getKerning(), fontResolver);
+                            configFontInfo.getKerning(),
+                            configFontInfo.getAdvanced(), fontResolver);
                     font = new CustomFontMetricsMapper(fontMetrics);
                 }
 

@@ -56,7 +56,7 @@ public class TextDataInfoProducer implements PtocaProducer, PtocaConstants {
         // Add transparent data
         String textString = textDataInfo.getString();
         String encoding = textDataInfo.getEncoding();
-        builder.addTransparentData(CharactersetEncoder.encodeSBCS(textString, encoding, false));
+        builder.addTransparentData(CharactersetEncoder.encodeSBCS(textString, encoding));
     }
 
 }

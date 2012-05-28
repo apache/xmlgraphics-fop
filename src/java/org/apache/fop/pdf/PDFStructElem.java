@@ -21,7 +21,6 @@ package org.apache.fop.pdf;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -32,7 +31,7 @@ import org.apache.fop.util.LanguageTags;
 /**
  * Class representing a PDF Structure Element.
  */
-public class PDFStructElem extends PDFDictionary implements StructureTreeElement {
+public class PDFStructElem extends PDFDictionary implements StructureTreeElement, CompressedObject {
 
     private PDFStructElem parentElement;
 
@@ -51,7 +50,6 @@ public class PDFStructElem extends PDFDictionary implements StructureTreeElement
         if (parent instanceof PDFStructElem) {
             parentElement = (PDFStructElem) parent;
         }
-        put("Type", new PDFName("StructElem"));
         put("S", structureType);
         setParent(parent);
     }

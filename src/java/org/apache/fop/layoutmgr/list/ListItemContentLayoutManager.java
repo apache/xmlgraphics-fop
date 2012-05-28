@@ -20,7 +20,6 @@
 package org.apache.fop.layoutmgr.list;
 
 import java.util.LinkedList;
-import java.util.List;
 
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
@@ -35,8 +34,8 @@ import org.apache.fop.layoutmgr.LayoutManager;
 import org.apache.fop.layoutmgr.NonLeafPosition;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.PositionIterator;
-import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.layoutmgr.SpaceResolver.SpaceHandlingBreakPosition;
+import org.apache.fop.layoutmgr.TraitSetter;
 
 /**
  * LayoutManager for a list-item-label or list-item-body FO.
@@ -45,7 +44,7 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager {
 
     private Block curBlockArea;
 
-    private int xoffset;
+    private int xOffset;
     private int itemIPD;
 
     /**
@@ -80,7 +79,7 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager {
      * @param off the x offset
      */
     public void setXOffset(int off) {
-        xoffset = off;
+        xOffset = off;
     }
 
     /**
@@ -175,7 +174,7 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager {
             curBlockArea = new Block();
             curBlockArea.setPositioning(Block.ABSOLUTE);
             // set position
-            curBlockArea.setXOffset(xoffset);
+            curBlockArea.setXOffset(xOffset);
             //TODO: Check - itemIPD never set?
             curBlockArea.setIPD(itemIPD);
             //curBlockArea.setHeight();

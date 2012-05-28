@@ -19,7 +19,6 @@
 
 package org.apache.fop.render.bitmap;
 
-import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
@@ -129,7 +128,8 @@ public class BitmapRendererConfigurator extends Java2DRendererConfigurator
             FontEventListener listener = new FontEventAdapter(
                     userAgent.getEventBroadcaster());
             List fontList = buildFontList(cfg, fontResolver, listener);
-            fontCollections.add(new ConfiguredFontCollection(fontResolver, fontList));
+            fontCollections.add(new ConfiguredFontCollection(fontResolver, fontList,
+                                userAgent.isComplexScriptFeaturesEnabled()));
         }
 
         fontManager.setup(fontInfo,

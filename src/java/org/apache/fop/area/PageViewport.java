@@ -32,14 +32,16 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.fo.pagination.SimplePageMaster;
+import org.apache.fop.traits.WritingModeTraitsGetter;
 
-import static org.apache.fop.fo.Constants.FO_REGION_BODY;
-import static org.apache.fop.fo.Constants.EN_FSWP;
 import static org.apache.fop.fo.Constants.EN_FIC;
-import static org.apache.fop.fo.Constants.EN_LSWP;
+import static org.apache.fop.fo.Constants.EN_FSWP;
 import static org.apache.fop.fo.Constants.EN_LEWP;
+import static org.apache.fop.fo.Constants.EN_LSWP;
+import static org.apache.fop.fo.Constants.FO_REGION_BODY;
 
 /**
  * Page viewport that specifies the viewport area and holds the page contents.
@@ -49,7 +51,7 @@ import static org.apache.fop.fo.Constants.EN_LEWP;
  * This is the level that creates the page.
  * The page (reference area) is then rendered inside the page object
  */
-public class PageViewport extends AreaTreeObject implements Resolvable, Cloneable {
+public class PageViewport extends AreaTreeObject implements Resolvable {
 
     private Page page;
     private Rectangle viewArea;
@@ -129,8 +131,9 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
     /**
      * Copy constructor.
      * @param original the original PageViewport to copy from
+     * @throws FOPException when cloning of the page is not supported
      */
-    public PageViewport(PageViewport original) {
+    public PageViewport(PageViewport original) throws FOPException {
         if (original.extensionAttachments != null) {
             setExtensionAttachments(original.extensionAttachments);
         }
@@ -140,7 +143,11 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
         this.pageIndex = original.pageIndex;
         this.pageNumber = original.pageNumber;
         this.pageNumberString = original.pageNumberString;
-        this.page = (Page)original.page.clone();
+        try {
+            this.page = (Page) original.page.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new FOPException(e);
+        }
         this.viewArea = new Rectangle(original.viewArea);
         this.simplePageMasterName = original.simplePageMasterName;
         this.blank = original.blank;
@@ -556,13 +563,12 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
         }
     }
 
-    /**
-     * Clone this page.
-     * Used by the page master to create a copy of an original page.
-     * @return a copy of this page and associated viewports
-     */
-    public Object clone() {
-        return new PageViewport(this);
+    /** {@inheritDoc} */
+    public Object clone() throws CloneNotSupportedException {
+        PageViewport pvp = (PageViewport) super.clone();
+        pvp.page = (Page) page.clone();
+        pvp.viewArea = (Rectangle) viewArea.clone();
+        return pvp;
     }
 
     /**
@@ -654,4 +660,15 @@ public class PageViewport extends AreaTreeObject implements Resolvable, Cloneabl
     public RegionReference getRegionReference(int id) {
         return getPage().getRegionViewport(id).getRegionReference();
     }
+
+    /**
+     * Sets the writing mode traits for the page associated with this viewport.
+     * @param wmtg a WM traits getter
+     */
+    public void setWritingModeTraits(WritingModeTraitsGetter wmtg) {
+        if ( page != null ) {
+            page.setWritingModeTraits(wmtg);
+        }
+    }
+
 }

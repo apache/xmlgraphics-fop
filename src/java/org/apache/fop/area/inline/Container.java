@@ -19,11 +19,11 @@
 
 package org.apache.fop.area.inline;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
-
-import java.util.List;
-import java.util.ArrayList;
 
 /**
  * Container area for inline container.

@@ -29,6 +29,7 @@ import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
+import org.apache.fop.util.CompareUtil;
 
 /**
  * Collection of CommonFont properties
@@ -37,11 +38,10 @@ public final class CommonFont {
 
     /** cache holding canonical CommonFont instances (only those with
      *  absolute font-size and font-size-adjust) */
-    private static final PropertyCache CACHE
-        = new PropertyCache(CommonFont.class);
+    private static final PropertyCache<CommonFont> CACHE = new PropertyCache<CommonFont>();
 
     /** hashcode of this instance */
-    private int hash = 0;
+    private int hash = -1;
 
     /** The "font-family" property. */
     private final FontFamilyProperty fontFamily;
@@ -134,10 +134,10 @@ public final class CommonFont {
 
     /** @return an array with the font-family names */
     private String[] getFontFamily() {
-        List lst = fontFamily.getList();
+        List<Property> lst = fontFamily.getList();
         String[] fontFamily = new String[lst.size()];
         for (int i = 0, c = lst.size(); i < c; i++) {
-            fontFamily[i] = ((Property)lst.get(i)).getString();
+            fontFamily[i] = lst.get(i).getString();
         }
         return fontFamily;
     }
@@ -227,48 +227,40 @@ public final class CommonFont {
     }
 
     /** {@inheritDoc} */
-    public boolean equals(Object o) {
-
-        if (o == null) {
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof CommonFont)) {
             return false;
         }
 
-        if (this == o) {
-            return true;
-        }
-
-        if (o instanceof CommonFont) {
-            CommonFont cf = (CommonFont) o;
-            return (cf.fontFamily == this.fontFamily)
-                    && (cf.fontSelectionStrategy == this.fontSelectionStrategy)
-                    && (cf.fontStretch == this.fontStretch)
-                    && (cf.fontStyle == this.fontStyle)
-                    && (cf.fontVariant == this.fontVariant)
-                    && (cf.fontWeight == this.fontWeight)
-                    && (cf.fontSize == this.fontSize)
-                    && (cf.fontSizeAdjust == this.fontSizeAdjust);
-        }
-        return false;
-
+        CommonFont other = (CommonFont) obj;
+        return CompareUtil.equal(fontFamily, other.fontFamily)
+                && CompareUtil.equal(fontSelectionStrategy, other.fontSelectionStrategy)
+                && CompareUtil.equal(fontSize, other.fontSize)
+                && CompareUtil.equal(fontSizeAdjust, other.fontSizeAdjust)
+                && CompareUtil.equal(fontStretch, other.fontStretch)
+                && CompareUtil.equal(fontStyle, other.fontStyle)
+                && CompareUtil.equal(fontVariant, other.fontVariant)
+                && CompareUtil.equal(fontWeight, other.fontWeight);
     }
 
     /** {@inheritDoc} */
     public int hashCode() {
-
         if (this.hash == -1) {
             int hash = 17;
-            hash = 37 * hash + (fontSize == null ? 0 : fontSize.hashCode());
-            hash = 37 * hash + (fontSizeAdjust == null ? 0 : fontSizeAdjust.hashCode());
-            hash = 37 * hash + (fontFamily == null ? 0 : fontFamily.hashCode());
-            hash = 37 * hash + (fontSelectionStrategy == null
-                                ? 0 : fontSelectionStrategy.hashCode());
-            hash = 37 * hash + (fontStretch == null ? 0 : fontStretch.hashCode());
-            hash = 37 * hash + (fontStyle == null ? 0 : fontStyle.hashCode());
-            hash = 37 * hash + (fontVariant == null ? 0 : fontVariant.hashCode());
-            hash = 37 * hash + (fontStretch == null ? 0 : fontStretch.hashCode());
+            hash = 37 * hash + CompareUtil.getHashCode(fontSize);
+            hash = 37 * hash + CompareUtil.getHashCode(fontSizeAdjust);
+            hash = 37 * hash + CompareUtil.getHashCode(fontFamily);
+            hash = 37 * hash + CompareUtil.getHashCode(fontSelectionStrategy);
+            hash = 37 * hash + CompareUtil.getHashCode(fontStretch);
+            hash = 37 * hash + CompareUtil.getHashCode(fontStyle);
+            hash = 37 * hash + CompareUtil.getHashCode(fontVariant);
+            hash = 37 * hash + CompareUtil.getHashCode(fontWeight);
             this.hash = hash;
         }
         return hash;
-
     }
 }

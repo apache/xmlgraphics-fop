@@ -28,6 +28,8 @@ import org.apache.fop.area.inline.Space;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.properties.SpaceProperty;
 import org.apache.fop.layoutmgr.AbstractLayoutManager;
+import org.apache.fop.layoutmgr.BreakOpportunity;
+import org.apache.fop.layoutmgr.BreakOpportunityHelper;
 import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.NonLeafPosition;
@@ -39,8 +41,8 @@ import org.apache.fop.traits.MinOptMax;
  * which stack children in the inline direction, such as Inline or
  * Line. It should not be instantiated directly.
  */
-public abstract class InlineStackingLayoutManager extends AbstractLayoutManager
-                                         implements InlineLevelLayoutManager {
+public abstract class InlineStackingLayoutManager extends AbstractLayoutManager implements
+        InlineLevelLayoutManager, BreakOpportunity {
 
     /**
      * Size of border and padding in BPD (ie, before and after).
@@ -180,6 +182,10 @@ public abstract class InlineStackingLayoutManager extends AbstractLayoutManager
                 //getLogger().debug("Add leading space: " + iAdjust);
                 Space ls = new Space();
                 ls.setIPD(iAdjust);
+                int level = parentArea.getBidiLevel();
+                if ( level >= 0 ) {
+                    ls.setBidiLevel ( level );
+                }
                 parentArea.addChildArea(ls);
             }
         }
@@ -381,4 +387,9 @@ public abstract class InlineStackingLayoutManager extends AbstractLayoutManager
 
         return returnList;
     }
+
+    public int getBreakBefore() {
+        return BreakOpportunityHelper.getBreakBefore(this);
+    }
+
 }

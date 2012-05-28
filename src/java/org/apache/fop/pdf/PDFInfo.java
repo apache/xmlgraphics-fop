@@ -19,9 +19,12 @@
 
 package org.apache.fop.pdf;
 
-import java.util.Date;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Date;
+import java.util.TimeZone;
+
+import org.apache.xmlgraphics.util.DateFormatUtil;
 
 /**
  * class representing an /Info object
@@ -165,7 +168,6 @@ public class PDFInfo extends PDFObject {
         PDFProfile profile = getDocumentSafely().getProfile();
         ByteArrayOutputStream bout = new ByteArrayOutputStream(128);
         try {
-            bout.write(encode(getObjectID()));
             bout.write(encode("<<\n"));
             if (title != null && title.length() > 0) {
                 bout.write(encode("/Title "));
@@ -225,12 +227,30 @@ public class PDFInfo extends PDFObject {
                 bout.write(encode("/Trapped /False\n"));
             }
 
-            bout.write(encode(">>\nendobj\n"));
+            bout.write(encode(">>"));
         } catch (IOException ioe) {
             log.error("Ignored I/O exception", ioe);
         }
         return bout.toByteArray();
     }
 
+    /**
+     * Formats a date/time according to the PDF specification (D:YYYYMMDDHHmmSSOHH'mm').
+     * @param time date/time value to format
+     * @param tz the time zone
+     * @return the requested String representation
+     */
+    protected static String formatDateTime(final Date time, TimeZone tz) {
+        return DateFormatUtil.formatPDFDate(time, tz);
+    }
+
+    /**
+     * Formats a date/time according to the PDF specification. (D:YYYYMMDDHHmmSSOHH'mm').
+     * @param time date/time value to format
+     * @return the requested String representation
+     */
+    protected static String formatDateTime(final Date time) {
+        return formatDateTime(time, TimeZone.getDefault());
+    }
 }
 

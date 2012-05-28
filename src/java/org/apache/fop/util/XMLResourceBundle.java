@@ -117,7 +117,7 @@ public class XMLResourceBundle extends ResourceBundle {
         if (baseName == null) {
             throw new NullPointerException("baseName must not be null");
         }
-
+        assert locale != null;
         ResourceBundle bundle;
         if (!locale.equals(Locale.getDefault())) {
             bundle = handleGetXMLBundle(baseName, "_" + locale, false, loader);
@@ -227,7 +227,9 @@ public class XMLResourceBundle extends ResourceBundle {
     }
 
     private void setLocale(String name) {
-        String language = "", country = "", variant = "";
+        String language = "";
+        String country = "";
+        String variant = "";
         if (name.length() > 1) {
             int nextIndex = name.indexOf('_', 1);
             if (nextIndex == -1) {

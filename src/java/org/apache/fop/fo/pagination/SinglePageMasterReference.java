@@ -159,5 +159,10 @@ public class SinglePageMasterReference extends FObj
         return false;
     }
 
+    /** {@inheritDoc} */
+    public boolean isReusable() {
+        return true;
+    }
+
 }
 

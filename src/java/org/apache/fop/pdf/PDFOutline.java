@@ -24,12 +24,11 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * This represents a single Outline object in a PDF, including the root Outlines
+ * <p>This represents a single Outline object in a PDF, including the root Outlines
  * object. Outlines provide the bookmark bar, usually rendered to the right of
- * a PDF document in user agents such as Acrobat Reader
+ * a PDF document in user agents such as Acrobat Reader.</p>
  *
- * @author Kelly A. Campbell
- *
+ * <p>This work was authored by Kelly A. Campbell.</p>
  */
 public class PDFOutline extends PDFObject {
 
@@ -132,7 +131,6 @@ public class PDFOutline extends PDFObject {
     protected byte[] toPDF() {
         ByteArrayOutputStream bout = new ByteArrayOutputStream(128);
         try {
-            bout.write(encode(getObjectID()));
             bout.write(encode("<<"));
             if (parent == null) {
                 // root Outlines object
@@ -165,7 +163,7 @@ public class PDFOutline extends PDFObject {
                     bout.write(encode(" /A " + actionRef + "\n"));
                 }
             }
-            bout.write(encode(">> endobj\n"));
+            bout.write(encode(">>"));
         } catch (IOException ioe) {
             log.error("Ignored I/O exception", ioe);
         }

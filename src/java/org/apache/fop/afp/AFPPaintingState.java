@@ -79,10 +79,23 @@ public class AFPPaintingState extends org.apache.fop.util.AbstractPaintingState 
     /** the output resolution */
     private int resolution = 240; // 240 dpi
 
+    /**
+     * A configurable value to correct the line width so that the output matches the expected. Different
+     * devices may need different values.
+     */
+    private float lineWidthCorrection = AFPConstants.LINE_WIDTH_CORRECTION;
+
     /** determines whether GOCA is enabled or disabled  */
     private boolean gocaEnabled = true;
     /** determines whether to stroke text in GOCA mode or to use text operators where possible */
     private boolean strokeGocaText = false;
+
+
+    /** use page segment with F11 and F45 images*/
+    private boolean pSeg;
+
+    /** use FS45 images*/
+    private boolean fs45;
 
     /** the current page */
     private transient AFPPagePaintingState pagePaintingState = new AFPPagePaintingState();
@@ -316,12 +329,32 @@ public class AFPPaintingState extends org.apache.fop.util.AbstractPaintingState 
     }
 
     /**
+     * Sets the line width correction
+     *
+     * @param correction the line width multiplying factor correction
+     */
+    public void setLineWidthCorrection(float correction) {
+        if (log.isDebugEnabled()) {
+            log.debug("line width correction set to: " + correction);
+        }
+        this.lineWidthCorrection = correction;
+    }
+
+    /**
      * Returns the output/device resolution.
      *
      * @return the resolution in dpi
      */
     public int getResolution() {
         return this.resolution;
+    }
+
+    /**
+     * Returns the line width correction.
+     * @return the correction
+     */
+    public float getLineWidthCorrection() {
+        return this.lineWidthCorrection;
     }
 
     /**
@@ -355,6 +388,41 @@ public class AFPPaintingState extends org.apache.fop.util.AbstractPaintingState 
     public boolean isStrokeGOCAText() {
         return this.strokeGocaText;
     }
+
+    /**
+     * Whether FS11 and SF45 non-inline images should be wrapped in a page segment
+     * @return true iff images should be wrapped
+     */
+    public boolean getWrapPSeg() {
+        return pSeg;
+    }
+
+    /**
+     * Sets whether FS11 and FS45 non-inline images should be wrapped in a page segment
+     * @param pSeg true iff images should be wrapped
+     */
+    public void setWrapPSeg(boolean pSeg) {
+        this.pSeg = pSeg;
+    }
+
+
+    /**
+     * gets whether images should be FS45
+     * @return true iff images should be FS45
+     */
+    public boolean getFS45() {
+        return fs45;
+    }
+
+    /**
+     * sets whether images should be FS45
+     * @param fs45 true iff images should be FS45
+     */
+    public void setFS45(boolean fs45) {
+        this.fs45 = fs45;
+    }
+
+
 
     /** {@inheritDoc} */
     @Override

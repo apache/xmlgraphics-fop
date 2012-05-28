@@ -21,33 +21,47 @@ package org.apache.fop.events;
 
 import java.util.Collections;
 import java.util.EventObject;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.fop.events.model.EventSeverity;
 
 /**
  * This is the default event class used by this package. Each event has a unique event identifier
- * (a String), a severity indicator and a map of name/value pairs.
+ * (a String), a severity indicator, a locale (for formatting event messages), and a map of
+ * name/value pairs.
  */
 public class Event extends EventObject {
 
     private static final long serialVersionUID = -1310594422868258083L;
 
     private String eventGroupID;
-
     private String eventKey;
-
     private EventSeverity severity;
+    private Locale locale;
     private Map<String, Object> params;
 
     /**
-     * Creates a new Event.
+     * Creates a new Event using default locale.
      * @param source the object that creates the event
      * @param eventID the unique identifier of the event
      * @param severity the severity level
      * @param params the event parameters (a map of name/value pairs)
      */
     public Event(Object source, String eventID, EventSeverity severity, Map<String, Object> params)
+    {
+        this ( source, eventID, severity, Locale.getDefault(), params );
+    }
+
+    /**
+     * Creates a new Event.
+     * @param source the object that creates the event
+     * @param eventID the unique identifier of the event
+     * @param severity the severity level
+     * @param locale to use when formatting event (or null, which means use default locale)
+     * @param params the event parameters (a map of name/value pairs)
+     */
+    public Event(Object source, String eventID, EventSeverity severity, Locale locale, Map<String, Object> params)
     {
         super(source);
         int pos = eventID.lastIndexOf('.');
@@ -58,6 +72,7 @@ public class Event extends EventObject {
             eventKey = eventID.substring(pos + 1);
         }
         setSeverity(severity);
+        this.locale = locale;
         this.params = params;
     }
 
@@ -104,6 +119,14 @@ public class Event extends EventObject {
      */
     public void setSeverity(EventSeverity severity) {
         this.severity = severity;
+    }
+
+    /**
+     * Returns the locale.
+     * @return the locale
+     */
+    public Locale getLocale() {
+        return this.locale;
     }
 
     /**

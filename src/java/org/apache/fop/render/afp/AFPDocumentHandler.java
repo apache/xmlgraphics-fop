@@ -53,7 +53,6 @@ import org.apache.fop.render.afp.extensions.AFPPageSegmentElement;
 import org.apache.fop.render.afp.extensions.AFPPageSetup;
 import org.apache.fop.render.afp.extensions.ExtensionPlacement;
 import org.apache.fop.render.intermediate.AbstractBinaryWritingIFDocumentHandler;
-import org.apache.fop.render.intermediate.IFDocumentHandler;
 import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFPainter;
@@ -444,6 +443,11 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     }
 
     /** {@inheritDoc} */
+    public void setLineWidthCorrection(float correction) {
+        paintingState.setLineWidthCorrection(correction);
+    }
+
+    /** {@inheritDoc} */
     public int getResolution() {
         return paintingState.getResolution();
     }
@@ -466,6 +470,26 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     /** {@inheritDoc} */
     public boolean isStrokeGOCAText() {
         return this.paintingState.isStrokeGOCAText();
+    }
+
+    /** {@inheritDoc} */
+    public void setWrapPSeg(boolean pSeg) {
+        paintingState.setWrapPSeg(pSeg);
+    }
+
+    /** {@inheritDoc} */
+    public void setFS45(boolean fs45) {
+        paintingState.setFS45(fs45);
+    }
+
+    /** {@inheritDoc} */
+    public boolean getWrapPSeg() {
+        return  paintingState.getWrapPSeg();
+    }
+
+    /** {@inheritDoc} */
+    public boolean getFS45() {
+        return  paintingState.getFS45();
     }
 
     /** {@inheritDoc} */

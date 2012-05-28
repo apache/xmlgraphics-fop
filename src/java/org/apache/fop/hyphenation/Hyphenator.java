@@ -29,16 +29,17 @@ import java.util.Map;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
+import org.xml.sax.InputSource;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.xml.sax.InputSource;
 
 /**
- * This class is the main entry point to the hyphenation package.
- * You can use only the static methods or create an instance.
+ * <p>This class is the main entry point to the hyphenation package.
+ * You can use only the static methods or create an instance.</p>
  *
- * @author Carlos Villegas <cav@uniscope.co.jp>
+ * <p>This work was authored by Carlos Villegas (cav@uniscope.co.jp).</p>
  */
 public final class Hyphenator {
 

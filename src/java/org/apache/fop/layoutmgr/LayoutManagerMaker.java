@@ -20,6 +20,9 @@
 package org.apache.fop.layoutmgr;
 
 import java.util.List;
+
+import org.apache.fop.area.AreaTreeHandler;
+import org.apache.fop.area.Block;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.extensions.ExternalDocument;
 import org.apache.fop.fo.pagination.Flow;
@@ -28,8 +31,6 @@ import org.apache.fop.fo.pagination.SideRegion;
 import org.apache.fop.fo.pagination.StaticContent;
 import org.apache.fop.fo.pagination.Title;
 import org.apache.fop.layoutmgr.inline.ContentLayoutManager;
-import org.apache.fop.area.AreaTreeHandler;
-import org.apache.fop.area.Block;
 
 /**
  * The interface for all LayoutManager makers
