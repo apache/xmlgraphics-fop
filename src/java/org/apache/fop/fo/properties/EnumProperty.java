@@ -22,6 +22,7 @@ package org.apache.fop.fo.properties;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.util.CompareUtil;
 
 /**
  * Superclass for properties that wrap an enumeration value
@@ -29,8 +30,8 @@ import org.apache.fop.fo.expr.PropertyException;
 public final class EnumProperty extends Property {
 
     /** cache holding all canonical EnumProperty instances */
-    private static final PropertyCache CACHE
-        = new PropertyCache(EnumProperty.class);
+    private static final PropertyCache<EnumProperty> CACHE
+            = new PropertyCache<EnumProperty>();
 
     /**
      * Inner class for creating EnumProperty instances
@@ -93,8 +94,7 @@ public final class EnumProperty extends Property {
      * @return an enumeration property
      */
     public static EnumProperty getInstance(int explicitValue, String text) {
-        return (EnumProperty) CACHE.fetch(
-                        new EnumProperty(explicitValue, text));
+        return CACHE.fetch(new EnumProperty(explicitValue, text));
     }
 
     /**
@@ -111,24 +111,18 @@ public final class EnumProperty extends Property {
         return text;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public boolean equals(Object obj) {
         if (obj instanceof EnumProperty) {
             EnumProperty ep = (EnumProperty)obj;
-            return (ep.value == this.value)
-                && ((ep.text == this.text)
-                    || (ep.text != null
-                        && ep.text.equals(this.text)));
+            return this.value == ep.value
+                    && CompareUtil.equal(text, ep.text);
         } else {
             return false;
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public int hashCode() {
         return value + text.hashCode();
     }

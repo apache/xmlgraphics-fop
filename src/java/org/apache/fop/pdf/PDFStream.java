@@ -21,6 +21,7 @@ package org.apache.fop.pdf;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Writer;
 
 /**
@@ -44,16 +45,33 @@ public class PDFStream extends AbstractPDFStream {
      * Create an empty stream object
      */
     public PDFStream() {
-        super();
+        setUp();
+    }
+
+    public PDFStream(PDFDictionary dictionary) {
+        super(dictionary);
+        setUp();
+    }
+
+    public PDFStream(PDFDictionary dictionary, boolean encodeOnTheFly) {
+        super(dictionary, encodeOnTheFly);
+        setUp();
+    }
+
+    public PDFStream(boolean encodeOnTheFly) {
+        super(encodeOnTheFly);
+        setUp();
+    }
+
+    private void setUp() {
         try {
             data = StreamCacheFactory.getInstance().createStreamCache();
-            this.streamWriter = new java.io.OutputStreamWriter(
+            this.streamWriter = new OutputStreamWriter(
                     getBufferOutputStream(), PDFDocument.ENCODING);
             //Buffer to minimize calls to the converter
             this.streamWriter = new java.io.BufferedWriter(this.streamWriter);
-        } catch (IOException ex) {
-            //TODO throw the exception and catch it elsewhere
-            ex.printStackTrace();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -136,7 +154,7 @@ public class PDFStream extends AbstractPDFStream {
     /**
      * {@inheritDoc}
      */
-    protected int output(OutputStream stream) throws IOException {
+    public int output(OutputStream stream) throws IOException {
         final int len = super.output(stream);
 
         //Now that the data has been written, it can be discarded.

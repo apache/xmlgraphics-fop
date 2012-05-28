@@ -182,9 +182,7 @@ public class RtfLeader extends RtfContainer {
 
             writeGroupMark(false);
 
-        }
-        // Using white spaces with different underline formats
-        else {
+        } else { // Using white spaces with different underline formats
             writeControlWord(LEADER_IGNORE_STYLE);
             writeControlWord(LEADER_ZERO_WIDTH);
             writeGroupMark(true);

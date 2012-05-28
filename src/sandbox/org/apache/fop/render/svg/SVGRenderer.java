@@ -29,12 +29,13 @@ import java.io.Writer;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 
-import org.apache.batik.dom.GenericDOMImplementation;
-import org.apache.batik.svggen.SVGGeneratorContext;
-import org.apache.batik.svggen.SVGGraphics2D;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import org.apache.batik.dom.GenericDOMImplementation;
+import org.apache.batik.svggen.SVGGeneratorContext;
+import org.apache.batik.svggen.SVGGraphics2D;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;

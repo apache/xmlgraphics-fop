@@ -186,14 +186,24 @@ class PDFTextPainter extends NativeTextPainter {
                 }
             }
             Font f = textUtil.selectFontForChar(ch);
-            if (f != textUtil.getCurrentFont()) {
+            char paintChar = (CharUtilities.isAnySpace(ch) ? ' ' : ch);
+            char mappedChar = f.mapChar(paintChar);
+            boolean encodingChanging = false; // used for single byte
+            if (!textUtil.isMultiByteFont(f.getFontName())) {
+                int encoding = mappedChar / 256;
+                mappedChar = (char) (mappedChar % 256);
+                if (textUtil.getCurrentEncoding() != encoding) {
+                    textUtil.setCurrentEncoding(encoding);
+                    encodingChanging = true;
+                }
+            }
+            if (f != textUtil.getCurrentFont() || encodingChanging) {
                 textUtil.writeTJ();
                 textUtil.setCurrentFont(f);
                 textUtil.writeTf(f);
                 textUtil.writeTextMatrix(localTransform);
             }
-            char paintChar = (CharUtilities.isAnySpace(ch) ? ' ' : ch);
-            textUtil.writeTJChar(paintChar);
+            textUtil.writeTJMappedChar(mappedChar);
 
             //Update last position
             prevPos = glyphPos;

@@ -209,4 +209,15 @@
     <description>The block should cause overflow in the
     last column on the page, rather than be broken.</description>
   </testcase>
+  <testcase>
+    <name>Block Container Reference Orientation Bug</name>
+    <file>block-container_reference-orientation_bug36391.xml</file>
+    <description>An assert is failing</description>
+  </testcase>
+  <testcase>
+    <name>Writing mode problems</name>
+    <file>simple-page-master_writing-mode_rl_region-body_writing-mode-lr.xml</file>
+    <description>Test erroneously depends upon incorrect implementation of writing-mode trait
+    derivation on fo:region-*.</description>
+  </testcase>
 </disabled-testcases>

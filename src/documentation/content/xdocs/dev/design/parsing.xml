@@ -1,4 +1,4 @@
-<?xml version="1.0" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -19,13 +19,13 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.3//EN" "http://forrest.apache.org/dtd/document-v13.dtd">
 <document>
   <header>
-    <title>FOP Design: Input Parsing</title>
+    <title>Apache™ FOP Design: Input Parsing</title>
     <version>$Revision$</version>
   </header>
   <body>
     <section id="intro">
       <title>Introduction</title>
-      <p>Parsing is the process of reading the XSL-FO input and making the information in it available to FOP.</p>
+      <p>Parsing is the process of reading the XSL-FO input and making the information in it available to Apache™ FOP.</p>
     </section>
     <section id="input">
       <title>SAX for Input</title>

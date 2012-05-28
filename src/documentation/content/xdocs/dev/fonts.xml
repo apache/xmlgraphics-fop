@@ -1,4 +1,4 @@
-<?xml version="1.0" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -20,7 +20,7 @@
 
 <document>
   <header>
-    <title>FOP Development: Fonts</title>
+    <title>Apache™ FOP Development: Fonts</title>
     <version>$Revision$</version>
   </header>
   <body>
@@ -29,7 +29,7 @@
       <ul>
         <li>refactor existing font logic for better clarity and to reduce duplication</li>
         <li>parse registered font metric information on-the-fly (to make sure most up-to-date parsing is used??)</li>
-        <li>resolve whether the FontBBox, StemV, and ItalicAngle font metric information is important or not -- if so, parse the .pfb file to extract it when building the FOP xml metric file</li>
+        <li>resolve whether the FontBBox, StemV, and ItalicAngle font metric information is important or not -- if so, parse the .pfb file to extract it when building the Apache� FOP xml metric file</li>
         <li>handle fonts registered at the operating system (through AWT)</li>
         <li>add support for parsing OpenType fonts</li>
       </ul>

@@ -189,11 +189,11 @@ final class IFStructureTreeBuilder implements StructureTreeEventHandler {
         pageSequenceEventRecorders.get(pageSequenceIndex).replay(handler);
     }
 
-    public void startPageSequence(Locale locale) {
+    public void startPageSequence(Locale locale, String role) {
         SAXEventRecorder eventRecorder = new SAXEventRecorder();
         pageSequenceEventRecorders.add(eventRecorder);
         delegate = StructureTree2SAXEventAdapter.newInstance(eventRecorder);
-        delegate.startPageSequence(locale);
+        delegate.startPageSequence(locale, role);
     }
 
     public void endPageSequence() {

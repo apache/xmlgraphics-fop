@@ -20,6 +20,7 @@
 package org.apache.fop.area.inline;
 
 import org.apache.fop.area.Area;
+import org.apache.fop.area.LinkResolver;
 
 /**
  * An inline area produced by an fo:basic-link element. This class implements a different
@@ -33,6 +34,8 @@ public class BasicLinkArea extends InlineParent {
 
     private static final long serialVersionUID = 5183753430412208151L;
 
+    private LinkResolver resolver;
+
     @Override
     public void setParentArea(Area parentArea) {
         super.setParentArea(parentArea);
@@ -42,12 +45,28 @@ public class BasicLinkArea extends InlineParent {
          * called after all of the children areas have been added to this area.
          */
         /* Make this area start at its beforest child. */
-        setOffset(getOffset() + minChildOffset);
+        setBlockProgressionOffset(getBlockProgressionOffset() + minChildOffset);
         /* Update children offsets accordingly. */
         for (InlineArea inline : inlines) {
-            inline.setOffset(inline.getOffset() - minChildOffset);
+            inline.setBlockProgressionOffset(inline.getBlockProgressionOffset() - minChildOffset);
         }
         setBPD(getVirtualBPD());
     }
 
+    /**
+     * Establish (or remove) back-pointer to link resolver.
+     * @param resolver the link resolver that will resolve this basic link or null
+     */
+    public void setResolver(LinkResolver resolver) {
+        assert ( resolver == null ) || ( this.resolver == null );
+        this.resolver = resolver;
+    }
+
+    /**
+     * Obtain back-pointer to link resolver.
+     * @return resolver the link resolver that will resolve this basic link or null
+     */
+    public LinkResolver getResolver() {
+        return this.resolver;
+    }
 }

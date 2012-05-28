@@ -40,15 +40,14 @@ public class ToBeImplementedProperty extends Property {
             super(propId);
         }
 
-        /** {@inheritDoc} */
+        @Override
         public Property convertProperty(Property p,
                                         PropertyList propertyList, FObj fo) {
             if (p instanceof ToBeImplementedProperty) {
                 return p;
             }
 
-            ToBeImplementedProperty val
-                = new ToBeImplementedProperty(getPropId());
+            ToBeImplementedProperty val = new ToBeImplementedProperty(getPropId());
             return val;
         }
     }
@@ -66,6 +65,20 @@ public class ToBeImplementedProperty extends Property {
 //         Log log = Hierarchy.getDefaultHierarchy().getLoggerFor("fop");
 //         log.warn("property - \"" + propName
 //                                + "\" is not implemented yet.");
+    }
+
+    @Override
+    public int hashCode() {
+        return 0;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return true;
+        /*
+         * Since a PropertyCache is not used here, returning true helps the PropertyCache when a non
+         * implemented property is part of an implemented one.
+         */
     }
 }
 

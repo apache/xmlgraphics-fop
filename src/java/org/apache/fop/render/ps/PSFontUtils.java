@@ -30,6 +30,13 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import org.apache.xmlgraphics.fonts.Glyphs;
+import org.apache.xmlgraphics.ps.DSCConstants;
+import org.apache.xmlgraphics.ps.PSGenerator;
+import org.apache.xmlgraphics.ps.PSResource;
+import org.apache.xmlgraphics.ps.dsc.ResourceTracker;
+
 import org.apache.fop.fonts.Base14Font;
 import org.apache.fop.fonts.CustomFont;
 import org.apache.fop.fonts.Font;
@@ -39,11 +46,6 @@ import org.apache.fop.fonts.LazyFont;
 import org.apache.fop.fonts.SingleByteEncoding;
 import org.apache.fop.fonts.SingleByteFont;
 import org.apache.fop.fonts.Typeface;
-import org.apache.xmlgraphics.fonts.Glyphs;
-import org.apache.xmlgraphics.ps.DSCConstants;
-import org.apache.xmlgraphics.ps.PSGenerator;
-import org.apache.xmlgraphics.ps.PSResource;
-import org.apache.xmlgraphics.ps.dsc.ResourceTracker;
 
 /**
  * Utility code for font handling in PostScript.

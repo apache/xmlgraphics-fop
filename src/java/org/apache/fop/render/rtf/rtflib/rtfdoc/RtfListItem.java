@@ -26,14 +26,14 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
  * the FOP project.
  */
 
-import java.io.Writer;
 import java.io.IOException;
+import java.io.Writer;
 
-import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfTextrun;
-
-/**  Model of an RTF list item, which can contain RTF paragraphs
- *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
- *  @author Andreas Putz a.putz@skynamics.com
+/**
+ * <p>Model of an RTF list item, which can contain RTF paragraphs.</p>
+ *
+ * <p>This work was authored by Bertrand Delacretaz (bdelacretaz@codeconsult.ch)
+ * and Andreas Putz (a.putz@skynamics.com).</p>
  */
 public class RtfListItem extends RtfContainer
         implements IRtfTextrunContainer,

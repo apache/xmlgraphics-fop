@@ -130,7 +130,6 @@ public class PDFOutputIntent extends PDFObject {
     public byte[] toPDF() {
         ByteArrayOutputStream bout = new ByteArrayOutputStream(128);
         try {
-            bout.write(encode(getObjectID()));
             bout.write(encode("<<\n"));
             bout.write(encode("/Type /OutputIntent\n"));
 
@@ -164,7 +163,7 @@ public class PDFOutputIntent extends PDFObject {
                 bout.write(encode("/DestOutputProfile " + destOutputProfile.referencePDF() + "\n"));
             }
 
-            bout.write(encode(">>\nendobj\n"));
+            bout.write(encode(">>"));
         } catch (IOException ioe) {
             log.error("Ignored I/O exception", ioe);
         }

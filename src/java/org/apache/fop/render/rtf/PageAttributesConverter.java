@@ -33,9 +33,11 @@ import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAttributes;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfPage;
 
 
-/**  Converts simple-page-master attributes into strings as defined in RtfPage.
- *  @author Christopher Scott, scottc@westinghouse.com
- *  @author Peter Herweg, pherweg@web.de
+/**
+ * <p>Converts simple-page-master attributes into strings as defined in RtfPage.</p>
+ *
+ * <p>This work was authored by Christopher Scott (scottc@westinghouse.com) and
+ * Peter Herweg (pherweg@web.de).</p>
  */
 
 final class PageAttributesConverter {

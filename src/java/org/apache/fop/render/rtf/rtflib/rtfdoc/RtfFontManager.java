@@ -31,8 +31,9 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 /**
- *   RTF font table
- *  @author Andreas Putz a.putz@skynamics.com
+ * <p>RTF font table.</p>
+ *
+ * <p>This work was authored by Andreas Putz (a.putz@skynamics.com).</p>
  */
 public final class RtfFontManager {
     //////////////////////////////////////////////////

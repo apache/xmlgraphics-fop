@@ -1,4 +1,4 @@
-<?xml version="1.0" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -19,7 +19,7 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.3//EN" "http://forrest.apache.org/dtd/document-v13.dtd">
 <document>
   <header>
-    <title>FOP: Mailing List Resources</title>
+    <title>Apache™ FOP: Mailing List Resources</title>
     <version>$Revision$</version>
   </header>
   <body>
@@ -37,7 +37,7 @@ If you are using Microsoft Outlook, this setting can be found at the "Mail Forma
       <p>For help in understanding email acronyms, see the <jump href="http://www.lingo2word.com/lists/acronym_listA.html">Lingo2Word Acronym List</jump>, or the <jump href="http://www.keno.org/web_design/acronyms.htm">Keno Internet Services Internet Glossary</jump>.</p>
     </section>
     <section id="fop-user">
-      <title>FOP Users Mailing List</title>
+      <title>Apache™ FOP Users Mailing List</title>
       <p>Use this forum to discuss topics of interest to FOP users.</p>
       <section id="fop-user-archive">
         <title>Archives</title>
@@ -69,8 +69,7 @@ If you are using Microsoft Outlook, this setting can be found at the "Mail Forma
           <li>To <strong>unsubscribe</strong>: Send email to <link href="mailto:fop-users-unsubscribe@xmlgraphics.apache.org">fop-users-unsubscribe@xmlgraphics.apache.org</link>.</li>
         </ul>
       </section>
-      <note>You can find the developer mailing list on the <link
-href="dev/index.html#mail-fop-dev">Development pages</link>.</note>
+      <note>You can find the developer mailing list on the <link href="dev/index.html#mail-fop-dev">Development pages</link>.</note>
       <section id="fop-user-policy">
         <title>Submitting a Question</title>
         <p>FOP support is primarily <em>self-service</em>. The FOP User Mailing List serves as a backup to the self-service documentation for cases where either the documentation is deficient or where users have unusual circumstances. FOP developers and users are happy to help answer questions that are <em>appropriate to the forum</em> (i.e. FOP-specific), and that are <em>submitted after appropriate preparation</em>. To ensure that your question is not <strong>abusive</strong> of this policy, please use the following checklist:</p>

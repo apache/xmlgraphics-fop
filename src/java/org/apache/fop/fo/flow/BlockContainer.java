@@ -19,6 +19,8 @@
 
 package org.apache.fop.fo.flow;
 
+import org.xml.sax.Locator;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Numeric;
 import org.apache.fop.fo.FONode;
@@ -31,14 +33,17 @@ import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.CommonMarginBlock;
 import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.LengthRangeProperty;
-import org.xml.sax.Locator;
+import org.apache.fop.traits.Direction;
+import org.apache.fop.traits.WritingMode;
+import org.apache.fop.traits.WritingModeTraits;
+import org.apache.fop.traits.WritingModeTraitsGetter;
 
 /**
  * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_block-container">
  * <code>fo:block-container</code></a> object.
  */
-public class BlockContainer extends FObj implements BreakPropertySet {
-    // The value of properties relevant for fo:block-container.
+public class BlockContainer extends FObj implements BreakPropertySet, WritingModeTraitsGetter {
+    // The value of FO traits (refined properties) that apply to fo:block-container.
     private CommonAbsolutePosition commonAbsolutePosition;
     private CommonBorderPaddingBackground commonBorderPaddingBackground;
     private CommonMarginBlock commonMarginBlock;
@@ -55,11 +60,11 @@ public class BlockContainer extends FObj implements BreakPropertySet {
     private Numeric referenceOrientation;
     private int span;
     private int disableColumnBalancing;
-    private int writingMode;
+    private WritingModeTraits writingModeTraits;
     // Unused but valid items, commented out for performance:
     //     private int intrusionDisplace;
     //     private Numeric zIndex;
-    // End of property values
+    // End of FO trait values
 
     /** used for FO validation */
     private boolean blockItemFound = false;
@@ -92,7 +97,8 @@ public class BlockContainer extends FObj implements BreakPropertySet {
         overflow = pList.get(PR_OVERFLOW).getEnum();
         referenceOrientation = pList.get(PR_REFERENCE_ORIENTATION).getNumeric();
         span = pList.get(PR_SPAN).getEnum();
-        writingMode = pList.get(PR_WRITING_MODE).getEnum();
+        writingModeTraits = new WritingModeTraits
+            ( WritingMode.valueOf(pList.get(PR_WRITING_MODE).getEnum()) );
         disableColumnBalancing = pList.get(PR_X_DISABLE_COLUMN_BALANCING).getEnum();
     }
 
@@ -161,58 +167,58 @@ public class BlockContainer extends FObj implements BreakPropertySet {
     }
 
     /**
-     * @return the "block-progression-dimension" property.
+     * @return the "block-progression-dimension" FO trait.
      */
     public LengthRangeProperty getBlockProgressionDimension() {
         return blockProgressionDimension;
     }
 
-    /** @return the "display-align" property. */
+    /** @return the "display-align" FO trait. */
     public int getDisplayAlign() {
         return displayAlign;
     }
 
-    /** @return the "break-after" property. */
+    /** @return the "break-after" FO trait. */
     public int getBreakAfter() {
         return breakAfter;
     }
 
-    /** @return the "break-before" property. */
+    /** @return the "break-before" FO trait. */
     public int getBreakBefore() {
         return breakBefore;
     }
 
-    /** @return the "keep-with-next" property.  */
+    /** @return the "keep-with-next" FO trait.  */
     public KeepProperty getKeepWithNext() {
         return keepWithNext;
     }
 
-    /** @return the "keep-with-previous" property.  */
+    /** @return the "keep-with-previous" FO trait.  */
     public KeepProperty getKeepWithPrevious() {
         return keepWithPrevious;
     }
 
-    /** @return the "keep-together" property.  */
+    /** @return the "keep-together" FO trait.  */
     public KeepProperty getKeepTogether() {
         return keepTogether;
     }
 
-    /** @return the "inline-progression-dimension" property */
+    /** @return the "inline-progression-dimension" FO trait */
     public LengthRangeProperty getInlineProgressionDimension() {
         return inlineProgressionDimension;
     }
 
-    /** @return the "overflow" property */
+    /** @return the "overflow" FO trait */
     public int getOverflow() {
         return overflow;
     }
 
-    /** @return the "reference-orientation" property */
+    /** @return the "reference-orientation" FO trait */
     public int getReferenceOrientation() {
         return referenceOrientation.getValue();
     }
 
-    /** @return the "span" property */
+    /** @return the "span" FO trait */
     public int getSpan() {
         return this.span;
     }
@@ -226,10 +232,52 @@ public class BlockContainer extends FObj implements BreakPropertySet {
         return disableColumnBalancing;
     }
 
+    /**
+     * Obtain inline progression direction.
+     * @return the inline progression direction
+     */
+    public Direction getInlineProgressionDirection() {
+        return writingModeTraits.getInlineProgressionDirection();
+    }
 
-    /** @return the "writing-mode" property */
-    public int getWritingMode() {
-        return writingMode;
+    /**
+     * Obtain block progression direction.
+     * @return the block progression direction
+     */
+    public Direction getBlockProgressionDirection() {
+        return writingModeTraits.getBlockProgressionDirection();
+    }
+
+    /**
+     * Obtain column progression direction.
+     * @return the column progression direction
+     */
+    public Direction getColumnProgressionDirection() {
+        return writingModeTraits.getColumnProgressionDirection();
+    }
+
+    /**
+     * Obtain row progression direction.
+     * @return the row progression direction
+     */
+    public Direction getRowProgressionDirection() {
+        return writingModeTraits.getRowProgressionDirection();
+    }
+
+    /**
+     * Obtain (baseline) shift direction.
+     * @return the (baseline) shift direction
+     */
+    public Direction getShiftDirection() {
+        return writingModeTraits.getShiftDirection();
+    }
+
+    /**
+     * Obtain writing mode.
+     * @return the writing mode
+     */
+    public WritingMode getWritingMode() {
+        return writingModeTraits.getWritingMode();
     }
 
     /** {@inheritDoc} */

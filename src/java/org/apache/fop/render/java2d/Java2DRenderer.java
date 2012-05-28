@@ -178,7 +178,8 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         FontCollection[] fontCollections = new FontCollection[] {
                 new Base14FontCollection(java2DFontMetrics),
                 new InstalledFontCollection(java2DFontMetrics),
-                new ConfiguredFontCollection(getFontResolver(), getFontList())
+                new ConfiguredFontCollection(getFontResolver(), getFontList(),
+                                             userAgent.isComplexScriptFeaturesEnabled())
         };
         userAgent.getFactory().getFontManager().setup(
                 getFontInfo(), fontCollections);
@@ -266,10 +267,15 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
      * @param pageViewport the <code>PageViewport</code> object supplied by
      * the Area Tree
      * @throws IOException In case of an I/O error
+     * @throws FOPException if cloning of pageViewport is not supported
      * @see org.apache.fop.render.Renderer
      */
-    public void renderPage(PageViewport pageViewport) throws IOException {
-        rememberPage((PageViewport)pageViewport.clone());
+    public void renderPage(PageViewport pageViewport) throws IOException, FOPException {
+        try {
+            rememberPage((PageViewport)pageViewport.clone());
+        } catch (CloneNotSupportedException e) {
+            throw new FOPException(e);
+        }
         //The clone() call is necessary as we store the page for later. Otherwise, the
         //RenderPagesModel calls PageViewport.clear() to release memory as early as possible.
         currentPageNumber++;
@@ -715,7 +721,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         renderInlineAreaBackAndBorders(text);
 
         int rx = currentIPPosition + text.getBorderAndPaddingWidthStart();
-        int bl = currentBPPosition + text.getOffset() + text.getBaselineOffset();
+        int bl = currentBPPosition + text.getBlockProgressionOffset() + text.getBaselineOffset();
         int saveIP = currentIPPosition;
 
         Font font = getFontFromArea(text);
@@ -827,7 +833,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         // TODO Colors do not work on Leaders yet
 
         float startx = (currentIPPosition + area.getBorderAndPaddingWidthStart()) / 1000f;
-        float starty = ((currentBPPosition + area.getOffset()) / 1000f);
+        float starty = ((currentBPPosition + area.getBlockProgressionOffset()) / 1000f);
         float endx = (currentIPPosition + area.getBorderAndPaddingWidthStart()
                 + area.getIPD()) / 1000f;
 

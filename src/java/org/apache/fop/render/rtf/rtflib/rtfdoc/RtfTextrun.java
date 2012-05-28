@@ -31,9 +31,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * Class which contains a linear text run. It has methods to add attributes,
- * text, paragraph breaks....
- * @author Peter Herweg, pherweg@web.de
+ * <p>Class which contains a linear text run. It has methods to add attributes,
+ * text, paragraph breaks....</p>
+ *
+ * <p>This work was authored by Peter Herweg (pherweg@web.de).</p>
  */
 public class RtfTextrun extends RtfContainer {
 
@@ -140,30 +141,6 @@ public class RtfTextrun extends RtfContainer {
                     log.warn("Cannot create break-after for a paragraph inside a table.");
                 }
             }
-        }
-    }
-
-    /**  Class which represents a paragraph break.*/
-    private class RtfParagraphBreak extends RtfElement {
-
-        RtfParagraphBreak(RtfContainer parent, Writer w)
-                throws IOException {
-            super(parent, w);
-        }
-
-        /**
-         * @return true if this element would generate no "useful" RTF content
-         */
-        public boolean isEmpty() {
-            return false;
-        }
-
-        /**
-         * write RTF code of all our children
-         * @throws IOException for I/O problems
-         */
-        protected void writeRtfContent() throws IOException {
-            writeControlWord("par");
         }
     }
 
@@ -290,32 +267,35 @@ public class RtfTextrun extends RtfContainer {
      * Inserts paragraph break before all close group marks.
      *
      * @throws IOException  for I/O problems
+     * @return The paragraph break element
      */
-    public void addParagraphBreak() throws IOException {
-      // get copy of children list
-      List children = getChildren();
-      Stack tmp = new Stack();
+    public RtfParagraphBreak addParagraphBreak() throws IOException {
+        // get copy of children list
+        List children = getChildren();
+        Stack tmp = new Stack();
+        RtfParagraphBreak par = null;
 
-      // delete all previous CloseGroupMark
-      int deletedCloseGroupCount = 0;
+        // delete all previous CloseGroupMark
+        int deletedCloseGroupCount = 0;
 
-      ListIterator lit = children.listIterator(children.size());
-      while (lit.hasPrevious()
-              && (lit.previous() instanceof RtfCloseGroupMark)) {
-          tmp.push(Integer.valueOf(((RtfCloseGroupMark)lit.next()).getBreakType()));
-          lit.remove();
-          deletedCloseGroupCount++;
-      }
+        ListIterator lit = children.listIterator(children.size());
+        while (lit.hasPrevious()
+                && (lit.previous() instanceof RtfCloseGroupMark)) {
+            tmp.push(Integer.valueOf(((RtfCloseGroupMark)lit.next()).getBreakType()));
+            lit.remove();
+            deletedCloseGroupCount++;
+        }
 
-      if (children.size() != 0) {
-          // add paragraph break and restore all deleted close group marks
-          setChildren(children);
-          new RtfParagraphBreak(this, writer);
-          for (int i = 0; i < deletedCloseGroupCount; i++) {
-              addCloseGroupMark(((Integer)tmp.pop()).intValue());
-          }
-      }
-  }
+        if (children.size() != 0) {
+            // add paragraph break and restore all deleted close group marks
+            setChildren(children);
+            par = new RtfParagraphBreak(this, writer);
+            for (int i = 0; i < deletedCloseGroupCount; i++) {
+                addCloseGroupMark(((Integer)tmp.pop()).intValue());
+            }
+        }
+        return par;
+    }
 
     /**
      * Inserts a leader.
@@ -443,7 +423,7 @@ public class RtfTextrun extends RtfContainer {
                 if (e instanceof RtfParagraphBreak) {
                     //If the element before was a paragraph break or a bookmark
                     //they will be hidden and are therefore not considered as visible
-                    if (!(aBefore instanceof RtfParagraphBreak) 
+                    if (!(aBefore instanceof RtfParagraphBreak)
                      && !(aBefore instanceof RtfBookmark)) {
                       lastParagraphBreak = (RtfParagraphBreak)e;
                     }
@@ -467,7 +447,7 @@ public class RtfTextrun extends RtfContainer {
 
         //write all children
         boolean bPrevPar = false;
-        boolean bBookmark = false; 
+        boolean bBookmark = false;
         boolean bFirst = true;
         for (Iterator it = getChildren().iterator(); it.hasNext();) {
             final RtfElement e = (RtfElement)it.next();
@@ -485,6 +465,8 @@ public class RtfTextrun extends RtfContainer {
              * child.
              * -If the RtfTextrun is the last child of its parent, write a
              * RtfParagraphBreak only, if it is not the last child.
+             * -If the RtfParagraphBreak can not be hidden (e.g. a table cell requires it)
+             * it is also written
              */
             boolean bHide = false;
             bHide = bRtfParagraphBreak;
@@ -493,7 +475,8 @@ public class RtfTextrun extends RtfContainer {
                     || bFirst
                     || (bSuppressLastPar && bLast && lastParagraphBreak != null
                         && e == lastParagraphBreak)
-                    || bBookmark);
+                    || bBookmark)
+                && ((RtfParagraphBreak)e).canHide();
 
             if (!bHide) {
                 newLine();

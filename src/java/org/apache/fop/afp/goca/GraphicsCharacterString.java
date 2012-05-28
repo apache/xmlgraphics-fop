@@ -84,7 +84,7 @@ public class GraphicsCharacterString extends AbstractGraphicsCoord {
      * @return the text string as an encoded byte array
      * @throws UnsupportedEncodingException, CharacterCodingException
      */
-    private byte[] getStringAsBytes() throws UnsupportedEncodingException, 
+    private byte[] getStringAsBytes() throws UnsupportedEncodingException,
             CharacterCodingException {
         return charSet.encodeChars(str).getBytes();
     }

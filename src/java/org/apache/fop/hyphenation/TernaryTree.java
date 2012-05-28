@@ -19,9 +19,9 @@
 
 package org.apache.fop.hyphenation;
 
+import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.Stack;
-import java.io.Serializable;
 
 /**
  * <h2>Ternary Search Tree.</h2>
@@ -48,7 +48,7 @@ import java.io.Serializable;
  * patterns which will be keys in this tree. The strings patterns
  * are usually small (from 2 to 5 characters), but each char in the
  * tree is stored in a node. Thus memory usage is the main concern.
- * We will sacrify 'elegance' to keep memory requirenments to the
+ * We will sacrify 'elegance' to keep memory requirements to the
  * minimum. Using java's char type as pointer (yes, I know pointer
  * it is a forbidden word in java) we can keep the size of the node
  * to be just 8 bytes (3 pointers and the data char). This gives
@@ -62,7 +62,7 @@ import java.io.Serializable;
  * char value as an index to an array that contains the object
  * values.</p>
  *
- * @author cav@uniscope.co.jp
+ * <p>This work was authored by Carlos Villegas (cav@uniscope.co.jp).</p>
  */
 
 public class TernaryTree implements Cloneable, Serializable {
@@ -271,7 +271,9 @@ public class TernaryTree implements Cloneable, Serializable {
      * @return an integer
      */
     public static int strcmp(String str, char[] a, int start) {
-        int i, d, len = str.length();
+        int i;
+        int d;
+        int len = str.length();
         for (i = 0; i < len; i++) {
             d = (int)str.charAt(i) - a[start + i];
             if (d != 0) {
@@ -404,16 +406,13 @@ public class TernaryTree implements Cloneable, Serializable {
     }
 
     /** {@inheritDoc} */
-    public Object clone() {
-        TernaryTree t = new TernaryTree();
+    public Object clone() throws CloneNotSupportedException {
+        TernaryTree t = (TernaryTree) super.clone();
         t.lo = (char[])this.lo.clone();
         t.hi = (char[])this.hi.clone();
         t.eq = (char[])this.eq.clone();
         t.sc = (char[])this.sc.clone();
         t.kv = (CharVector)this.kv.clone();
-        t.root = this.root;
-        t.freenode = this.freenode;
-        t.length = this.length;
 
         return t;
     }
@@ -448,7 +447,8 @@ public class TernaryTree implements Cloneable, Serializable {
     public void balance() {
         // System.out.print("Before root splitchar = "); System.out.println(sc[root]);
 
-        int i = 0, n = length;
+        int i = 0;
+        int n = length;
         String[] k = new String[n];
         char[] v = new char[n];
         Iterator iter = new Iterator();

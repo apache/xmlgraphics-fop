@@ -42,10 +42,10 @@ public class PDFDocumentTestCase {
         StringBuilder textBuffer = new StringBuilder();
         String testString = "This is a test string, just some arbitrary data.";
         textBuffer.append(testString);
-        
+
         PDFDocument.flushTextBuffer(textBuffer, out);
         assertEquals(testString, out.toString());
-        
+
         // Should reset the textBuffer
         assertEquals(0, textBuffer.length());
         assertEquals("", textBuffer.toString());

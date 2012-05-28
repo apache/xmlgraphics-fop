@@ -26,9 +26,11 @@ package org.apache.fop.render.rtf.rtflib.tools;
  * the FOP project.
  */
 
-/** Here will be defined all supported image formats.
- *  This class belongs to the <fo:external-graphic> tag processing.
- *  @author a.putz@skynamics.com (Andreas Putz)
+/**
+ * <p>Here will be defined all supported image formats.
+ *  This class belongs to the <fo:external-graphic> tag processing.</p>
+ *
+ * <p>This work was authored by Andreas Putz (a.putz@skynamics.com).</p>
  */
 
 public final class ImageConstants {

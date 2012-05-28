@@ -380,8 +380,7 @@ public class PDFFunction extends PDFObject {
         int numberOfFunctions = 0;
         int tempInt = 0;
         StringBuffer p = new StringBuffer(256);
-        p.append(getObjectID()
-                + "<< \n/FunctionType " + this.functionType + " \n");
+        p.append("<< \n/FunctionType " + this.functionType + " \n");
 
         // FunctionType 0
         if (this.functionType == 0) {
@@ -482,15 +481,14 @@ public class PDFFunction extends PDFObject {
                     p.append("] \n");
                 }
             }
-            p.append(">> \n");
+            p.append(">>");
 
             // stream representing the function
             if (this.functionDataStream != null) {
-                p.append("stream\n" + this.functionDataStream
-                         + "\nendstream\n");
+                p.append("\nstream\n" + this.functionDataStream
+                         + "\nendstream");
             }
 
-            p.append("endobj\n");
             // end of if FunctionType 0
 
         } else if (this.functionType == 2) {
@@ -550,7 +548,7 @@ public class PDFFunction extends PDFObject {
                      + PDFNumber.doubleOut(new Double(this.interpolationExponentN))
                      + " \n");
 
-            p.append(">> \nendobj\n");
+            p.append(">>");
 
         } else if (this.functionType
                    == 3) {                       // fix this up when my eyes uncross
@@ -643,10 +641,7 @@ public class PDFFunction extends PDFObject {
                 }
 
             }
-            p.append("] \n");
-
-
-            p.append(">> \nendobj\n");
+            p.append("]\n>>");
         } else if (this.functionType
                    == 4) {                       // fix this up when my eyes uncross
             // DOMAIN
@@ -681,15 +676,14 @@ public class PDFFunction extends PDFObject {
                          + " \n");
             }
 
-            p.append(">> \n");
+            p.append(">>");
 
             // stream representing the function
             if (this.functionDataStream != null) {
-                p.append("stream\n{ " + this.functionDataStream
-                         + " } \nendstream\n");
+                p.append("\nstream\n{ " + this.functionDataStream
+                         + " }\nendstream");
             }
 
-            p.append("endobj\n");
 
         }
 

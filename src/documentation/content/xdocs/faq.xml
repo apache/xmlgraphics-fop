@@ -20,12 +20,12 @@
 
 <faqs title="FOP FAQ">
   <part id="part-general">
-    <title>General questions</title>
+    <title>Apache™ FOP: General questions</title>
     <faq id="fop-general">
-      <question>What is FOP?</question>
+      <question>What is Apache™ FOP?</question>
       <answer>
       <p>
-        FOP is a print formatter for <link href="#XSLFO">XSL formatting
+        FOP is a print formatter for <link href="#xslfo">XSL formatting
         objects</link>.
       </p>
       <p>
@@ -65,16 +65,23 @@
       <question>How does FOP interact with other Apache Projects?</question>
       <answer>
         <p>
-          FOP is distributed with <link
-          href="http://xml.apache.org/cocoon">Cocoon</link> as a PDF serializer
-          for XSL (FO) documents.
+          <link href="http://xmlgraphics.apache.org/commons">XML Graphics Commons</link> is used with
+          FOP to provide graphics functions that are common to a number of Apache projects.
         </p>
         <p>
-          <link href="http://xmlgraphics.apache.org/batik">Batik</link> can be used with
+          <link href="http://xmlgraphics.apache.org/batik">Batik</link> is used with
           FOP to <link
           href="http://xmlgraphics.apache.org/batik/svgrasterizer.html">transcode an SVG
           image</link> into a PDF document.
         </p>
+        <p>FOP also makes use of the following Apache projects:</p>
+        <ul>
+          <li><link href="http://excalibur.apache.org/framework/">Avalon Framework</link></li>
+          <li><link href="http://jakarta.apache.org/commons/io/">Jakarta Commons IO</link></li>
+          <li><link href="http://jakarta.apache.org/commons/logging/">Jakarta Commons Logging</link></li>
+          <li><link href="http://xalan.apache.org/">Xalan-J</link></li>
+          <li><link href="http://xml.apache.org/commons/components/external/">XML Commons Externals</link></li>
+        </ul>
       </answer>
     </faq>
     <faq id="xsl-def">
@@ -83,7 +90,7 @@
         <p>
           XSL is a W3C standard concerned with publishing XML documents. It
           consists of two parts: <link href="#XSLT">XSLT</link> and <link
-          href="#XSLFO">XSL-FO</link>. The acronym expands to
+          href="#xslfo">XSL-FO</link>. The acronym expands to
           e<strong>X</strong>tensible <strong>S</strong>tylesheet
           <strong>L</strong>anguage.
         </p>
@@ -93,7 +100,9 @@
       <question>What is XSL-FO?</question>
       <answer>
         <p>
-          XSLFO (aka XSL-FO) is an XML vocabulary that is used to specify a pagination and
+          XSLFO (aka XSL-FO) is an XML vocabulary, defined by W3C Recommendation
+          <link href="http://www.w3.org/TR/xsl/">Extensible Stylesheet Language (XSL)
+          Version 1.1</link>, that is used to specify a pagination and
           other styling for page layout output. The acronym &#8220;FO&#8221;
           stands for
           <strong>F</strong>ormatting <strong>O</strong>bjects. XSLFO can be
@@ -226,8 +235,7 @@
       <answer>
         <p>
           This is usually caused by an older version of one of the FOP jars or
-          old XML tools in the classpath. Check in particular for parser.jar,
-          jaxp.jar, xml4j.jar or lotusxsl.jar.
+          old XML tools in the classpath.
         </p>
         <p>
           Incompatible versions of Batik may also cause this problem. Use the
@@ -269,8 +277,9 @@
           the <code>file:</code> prefix, for example <code>file.ext</code>,
           <code>path/file.ext</code> or <code>../file.ext</code>. The string
           <code>file:path/file.ext</code> is <em>not</em> a relative URL,
-          in fact, it isn't a valid URL at all. A relative URL is subject to a
-          resolving process, which transforms it into an absolute
+          in fact, it isn't a valid URL at all since the <code>file</code>
+          scheme does not (officially) support relative paths. A relative URL
+          is subject to a resolving process, which transforms it into an absolute
           URL.
         </p>
         <!--p>
@@ -283,31 +292,8 @@
       <question>I get an "[ERROR]: null", or a NullPointerException.</question>
       <answer>
         <p>
-          This is often caused by an invalid FO document. Currently only very
-          common errors are intercepted and produce a comprehensible error
-          message. If you forgot container elements like <code>fo:page-sequence</code> or
-          <code>fo:flow</code> and put blocks and inline elements directly as children of
-          <code>fo:root</code> or <code>fo:page-sequence</code>, you'll only get a
-          NullPointerException. Check whether your FO file has a proper
-          structure. In some cases there are mandatory properties, like the
-          master-reference in <code>fo:conditional-page-master-reference</code>, check also
-          whether you got them right.
-        </p>
-        <p>
-          You may find it helpful to use the <link href="#fo-validate">validation tools</link> to validate your
-          FO document. This will catch most problems, but should not be
-          relied upon to catch all.
-        </p>
-        <p>
-          If you use XSLT, problems in your style sheet and in your
-          source XML also can produce a NullPointerException. <link
-          href="1.0/running.html#check-input">Run the transformation
-          separately</link> to check for this, usually you'll get a
-          detailed error message from the XSLT processor.
-        </p>
-        <p>
-          If you turn on debugging with the "<code>-d</code>" option you may be able to
-          see more detailed information.
+          This is a very likely a bug in FOP. If you encounter this error, please
+          <link href="bugs.html#issues_new">Open a New Bug</link>.
         </p>
       </answer>
     </faq>
@@ -322,9 +308,9 @@
       <answer>
         <p>
           The most likely reason is a known problem with the Java run time
-          environment which is triggered by rendering SVGs. Suns JDK 1.4 does
-          not have this problem. See also <link href="#svghangs">FOP does not
-          exit if a SVG is included</link>.
+          environment which is triggered by rendering SVGs. Sun's JDK 1.4 and
+          later do not have this problem. See also <link href="#svghangs">FOP
+          does not exit if a SVG is included</link>.
         </p>
         <p>
           Another possibility is that FOP went into a non terminating
@@ -339,6 +325,10 @@
           while trying to write log entries to the output pipe. You have to read
           the FOP output regularly to empty the pipe buffer. It is best to avoid
           exec'ing FOP, use the library interface instead.
+        </p>
+        <p>
+          If you can reproduce this problem given a specific input and configuration,
+          then please <link href="bugs.html#issues_new">Open a New Bug</link>.
         </p>
       </answer>
     </faq>
@@ -441,8 +431,7 @@ public class DefaultErrorListener implements ErrorListener {
           To avoid the warning you can simply delete the
           old Font Cache file, which lives in ${base}\conf\font.cache (see <link
           href="1.0/configuration.html#general-elements">font-base
-          configuration</link>). Or you can disable Font Caching altogether using
-          the option "use-cache."
+          configuration</link>).
         </p>
       </answer>
     </faq>
@@ -524,7 +513,7 @@ Check the following:</p>
           HTTP. Possible issues include security settings on the
           server, server configuration, and missing cookies or other
           authorization information. Any easy way to check this is to
-          cut&amp;paste the source URL from the fo:external-graphic
+          cut and paste the source URL from the <code>fo:external-graphic</code>
           into the Location field of a browser <strong>on the machine
           where the FOP process will be running</strong>.</li>
         </ul>
@@ -627,7 +616,7 @@ Check the following:</p>
             explicit wrapping+clipping,
           </li>
           <li>
-            insert zero width spaces (U+200B or &amp;#x200B;) to allow FOP to
+            insert zero width spaces (&amp;#x200B;) to allow FOP to
             wrap.
           </li>
         </ul>
@@ -1281,7 +1270,7 @@ Can I control this?</question>
       <question>Where can I learn how the FOP docs and web site are built?</question>
       <answer>
         <p>
-          See FOP <link href="dev/doc.html">Doc Management</link>. ;-)
+          See FOP <link href="dev/doc.html">Doc Management</link>.
         </p>
       </answer>
     </faq>
@@ -1307,7 +1296,7 @@ Can I control this?</question>
             If you have a runtime exception or other runtime problem:
             <ul>
               <li>
-                double-check the <link href="#part-running">Runtime FAQs</link>.
+                Double check the <link href="#part-running">Runtime FAQs</link>.
               </li>
               <li>
                 ClassNotFoundException, NoSuchMethodException and
@@ -1325,7 +1314,7 @@ Can I control this?</question>
           </li>
           <li>
             In the case where something works properly with another formatter,
-            (AntennaHouse, PassiveTex, etc.) but doesn't work with FOP, please
+            (e.g., AntennaHouse, PassiveTex, etc.) but doesn't work with FOP, please
             check the <!--link href="relnotes.html"-->Release Notes<!--/link-->, the
             <link href="compliance.html">FOP Standards Compliance</link> document,
             and the remaining FAQ in this document. If not found there, look at the
@@ -1348,13 +1337,8 @@ Can I control this?</question>
             Problems specific to a certain XSLT processor, like Xalan, Saxon or
             MSXML, should be handled by processor specific lists. This includes
             problems with deployment, processor specific extensions, suspected
-            bugs and processor specific APIs. Note that JDK 1.4 comes with an
-            XML parser and an XSLT processor which are older versions of
-            Xerces and Xalan, respectively, and both have a number of annoying
-            bugs. See http://java.sun.com/developer/EJTechTips/2003/tt0311.html
-            and http://java.sun.com/j2se/1.4.2/docs/guide/standards/ (or similar
-            pages for later Java releases) for some hints on how to use more
-            recent versions or other packages instead.
+            bugs and processor specific APIs. Note that JDK 1.4 and later come with an
+            XML parser and an XSLT processor which may be the source of the problem.
           </li>
           <li>
             Problems with servlet containers should be asked on the vendor

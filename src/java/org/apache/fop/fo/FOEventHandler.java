@@ -22,6 +22,7 @@ package org.apache.fop.fo;
 import org.xml.sax.SAXException;
 
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.FormattingResults;
 import org.apache.fop.fo.extensions.ExternalDocument;
 import org.apache.fop.fo.flow.BasicLink;
 import org.apache.fop.fo.flow.Block;
@@ -555,6 +556,14 @@ public abstract class FOEventHandler {
      * @param document the external-document node
      */
     public void endExternalDocument(ExternalDocument document) {
+    }
+
+    /**
+     * Get formatting results.
+     * @return the FormattingResults instance for this document
+     */
+    public FormattingResults getResults() {
+        return null;
     }
 
 }

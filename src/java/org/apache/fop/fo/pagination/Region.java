@@ -32,20 +32,21 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
+import org.apache.fop.traits.WritingMode;
 
 /**
  * This is an abstract base class for pagination regions.
  */
 public abstract class Region extends FObj {
-    // The value of properties relevant for fo:region
+    // The value of FO traits (refined properties) that apply to fo:region
     private CommonBorderPaddingBackground commonBorderPaddingBackground;
     // private ToBeImplementedProperty clip
     private int displayAlign;
     private int overflow;
     private String regionName;
     private Numeric referenceOrientation;
-    private int writingMode;
-    // End of property values
+    private WritingMode writingMode;
+    // End of FO trait values
 
     /** the parent {@link SimplePageMaster} */
     protected final SimplePageMaster layoutMaster;
@@ -68,7 +69,7 @@ public abstract class Region extends FObj {
         overflow = pList.get(PR_OVERFLOW).getEnum();
         regionName = pList.get(PR_REGION_NAME).getString();
         referenceOrientation = pList.get(PR_REFERENCE_ORIENTATION).getNumeric();
-        writingMode = pList.getWritingMode();
+        writingMode = WritingMode.valueOf(pList.get(PR_WRITING_MODE).getEnum());
 
         // regions may have name, or default
         if (regionName.equals("")) {
@@ -169,28 +170,28 @@ public abstract class Region extends FObj {
         return commonBorderPaddingBackground;
     }
 
-    /** @return the "region-name" property. */
+    /** @return the "region-name" FO trait. */
     public String getRegionName() {
         return regionName;
     }
 
-    /** @return the "writing-mode" property. */
-    public int getWritingMode() {
-        return writingMode;
-    }
-
-    /** @return the "overflow" property. */
+    /** @return the "overflow" FO trait. */
     public int getOverflow() {
         return overflow;
     }
 
-    /** @return the display-align property. */
+    /** @return the display-align FO trait. */
     public int getDisplayAlign() {
         return displayAlign;
     }
 
-    /** @return the "reference-orientation" property. */
+    /** @return the "reference-orientation" FO trait. */
     public int getReferenceOrientation() {
         return referenceOrientation.getValue();
+    }
+
+    /** @return the "writing-mode" FO trait. */
+    public WritingMode getWritingMode() {
+        return writingMode;
     }
 }

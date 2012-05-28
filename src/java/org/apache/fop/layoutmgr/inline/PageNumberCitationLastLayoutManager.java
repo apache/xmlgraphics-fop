@@ -56,22 +56,24 @@ public class PageNumberCitationLastLayoutManager extends AbstractPageNumberCitat
      */
     private InlineArea getPageNumberCitationLastInlineArea(LayoutManager parentLM) {
         TextArea text = null;
-        resolved = false;
+        int level = getBidiLevel();
         if (!getPSLM().associateLayoutManagerID(fobj.getRefId())) {
             text = new UnresolvedPageNumber(fobj.getRefId(), font, UnresolvedPageNumber.LAST);
             getPSLM().addUnresolvedArea(fobj.getRefId(), (Resolvable)text);
             String str = "MMM"; // reserve three spaces for page number
             int width = getStringWidth(str);
+            text.setBidiLevel(level);
             text.setIPD(width);
+            resolved = false;
         } else {
             PageViewport page = getPSLM().getLastPVWithID(fobj.getRefId());
             String str = page.getPageNumberString();
             // get page string from parent, build area
             text = new TextArea();
             int width = getStringWidth(str);
-            text.addWord(str, 0);
+            text.setBidiLevel(level);
+            text.addWord(str, 0, level);
             text.setIPD(width);
-
             resolved = true;
         }
 

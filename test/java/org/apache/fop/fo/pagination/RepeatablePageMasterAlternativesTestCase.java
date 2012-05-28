@@ -25,21 +25,18 @@ import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import org.junit.Test;
-
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.NumericProperty;
 import org.apache.fop.fo.properties.Property;
 
-
+import org.junit.Test;
 
 /**
  * Unit Test for RepeatablePageMasterAlternatives
  *
  */
-public class RepeatablePageMasterAlternativesTestCase
-implements Constants {
+public class RepeatablePageMasterAlternativesTestCase implements Constants {
 
     /**
      *
@@ -158,6 +155,7 @@ implements Constants {
         when(pList.get(anyInt())).thenReturn(maximumRepeats);
 
         PageSequenceMaster parent = mock(PageSequenceMaster.class);
+        when(parent.getName()).thenReturn("fo:page-sequence-master");
 
         RepeatablePageMasterAlternatives sut = new RepeatablePageMasterAlternatives(parent);
 

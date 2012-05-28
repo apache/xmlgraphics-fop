@@ -64,6 +64,8 @@ import org.apache.fop.pdf.PDFPageLabels;
 import org.apache.fop.pdf.PDFReference;
 import org.apache.fop.pdf.PDFText;
 import org.apache.fop.pdf.PDFXMode;
+import org.apache.fop.pdf.Version;
+import org.apache.fop.pdf.VersionController;
 import org.apache.fop.render.pdf.extensions.PDFEmbeddedFileExtensionAttachment;
 
 /**
@@ -101,6 +103,8 @@ class PDFRenderingUtil implements PDFConfigurationConstants {
 
     /** Optional URI to an output profile to be used. */
     protected String outputProfileURI;
+
+    protected Version maxPDFVersion;
 
 
     PDFRenderingUtil(FOUserAgent userAgent) {
@@ -375,8 +379,16 @@ class PDFRenderingUtil implements PDFConfigurationConstants {
         if (this.pdfDoc != null) {
             throw new IllegalStateException("PDFDocument already set up");
         }
-        this.pdfDoc = new PDFDocument(
-                userAgent.getProducer() != null ? userAgent.getProducer() : "");
+
+        String producer = userAgent.getProducer() != null ? userAgent.getProducer() : "";
+
+        if (maxPDFVersion == null) {
+            this.pdfDoc = new PDFDocument(producer);
+        } else {
+            VersionController controller
+                    = VersionController.getFixedVersionController(maxPDFVersion);
+            this.pdfDoc = new PDFDocument(producer, controller);
+        }
         updateInfo();
         updatePDFProfiles();
         pdfDoc.setFilterMap(filterMap);
@@ -399,6 +411,9 @@ class PDFRenderingUtil implements PDFConfigurationConstants {
             log.debug("PDF/A is active. Conformance Level: " + pdfAMode);
             addPDFA1OutputIntent();
         }
+
+        this.pdfDoc.enableAccessibility(userAgent.isAccessibilityEnabled());
+
         return this.pdfDoc;
     }
 
@@ -482,4 +497,14 @@ class PDFRenderingUtil implements PDFConfigurationConstants {
         nameArray.add(new PDFReference(fileSpec));
     }
 
+    /**
+     * Sets the PDF version of the output document. See {@link Version} for the format of
+     * <code>version</code>.
+     * @param version the PDF version
+     * @throws IllegalArgumentException if the format of version doesn't conform to that specified
+     * by {@link Version}
+     */
+    public void setPDFVersion(String version) {
+        maxPDFVersion = Version.getValueOf(version);
+    }
 }

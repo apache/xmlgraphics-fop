@@ -19,12 +19,12 @@
 
 package org.apache.fop.render.java2d;
 
-import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontCollection;
 import org.apache.fop.fonts.FontInfo;

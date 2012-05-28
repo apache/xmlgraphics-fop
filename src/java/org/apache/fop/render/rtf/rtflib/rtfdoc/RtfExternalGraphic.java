@@ -39,23 +39,27 @@ import org.apache.fop.render.rtf.rtflib.tools.ImageConstants;
 import org.apache.fop.render.rtf.rtflib.tools.ImageUtil;
 
 /**
- * Creates an RTF image from an external graphic file.
- * This class belongs to the <fo:external-graphic> tag processing. <br>
+ * <p>Creates an RTF image from an external graphic file.
+ * This class belongs to the <fo:external-graphic> tag processing.</p>
  *
- * Supports relative path like "../test.gif", too (01-08-24) <br>
+ * <p>Supports relative path like "../test.gif", too (01-08-24)</p>
  *
- * Limitations:
+ * <p>Limitations:</p>
+ * <ul>
  * <li>    Only the image types PNG, JPEG and EMF are supported
  * <li>    The GIF is supported, too, but will be converted to JPG
  * <li>    Only the attributes SRC (required), WIDTH, HEIGHT, SCALING are supported
  * <li>    The SCALING attribute supports (uniform | non-uniform)
+ * </ul>
  *
- * Known Bugs:
+ * <p>Known Bugs:</p>
+ * <ul>
  * <li>    If the emf image has a desired size, the image will be clipped
  * <li>    The emf, jpg & png image will not be displayed in correct size
+ * </ul>
  *
- *  @author <a href="mailto:a.putz@skynamics.com">Andreas Putz</a>
- *  @author Gianugo Rabellino gianugo@rabellino.it
+ * <p>This work was authored by Andreas Putz (a.putz@skynamics.com) and
+ * Gianugo Rabellino (gianugo@rabellino.it).</p>
  */
 
 public class RtfExternalGraphic extends RtfElement {

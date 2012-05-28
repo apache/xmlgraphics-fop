@@ -1,0 +1,45 @@
+<?xml version="1.0" standalone="no"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" 
+  xmlns:fox="http://xmlgraphics.apache.org/fop/extensions" language="en" country="GB">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="page"
+      page-height="220pt" page-width="320pt" margin="10pt">
+      <fo:region-body/>
+    </fo:simple-page-master>
+  </fo:layout-master-set>
+  <fo:page-sequence master-reference="page">
+    <fo:flow flow-name="xsl-region-body" hyphenate="true" text-align="justify">
+      <fo:block>This document contains an image in the SVG format: <fo:external-graphic 
+          src="../../resources/images/circles.svg"
+          inline-progression-dimension.maximum="75pt" content-width="scale-to-fit"
+          fox:alt-text="Nice circles"/>. And here is the same image as an instream-foreign-object: 
+        <fo:instream-foreign-object inline-progression-dimension.maximum="75pt" 
+          content-width="scale-down-to-fit" fox:alt-text="The same nice circles">
+<svg xmlns="http://www.w3.org/2000/svg" width="12cm" height="12cm">
+  <g style="fill-opacity:0.7; stroke:black; stroke-width:0.1cm;">
+    <circle cx="6cm" cy="2cm" r="100" style="fill:red;" transform="translate(0,50)" />
+    <circle cx="6cm" cy="2cm" r="100" style="fill:blue;" transform="translate(70,150)" />
+    <circle cx="6cm" cy="2cm" r="100" style="fill:green;" transform="translate(-70,150)"/>
+  </g>
+</svg>
+      </fo:instream-foreign-object>.</fo:block>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>

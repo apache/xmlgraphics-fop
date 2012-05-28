@@ -19,10 +19,10 @@
 
 package org.apache.fop.fo.properties;
 
+import java.awt.Color;
+
 import java.util.Iterator;
 import java.util.List;
-
-import java.awt.Color;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.Constants;

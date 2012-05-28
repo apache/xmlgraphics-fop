@@ -19,14 +19,13 @@
 
 package org.apache.fop.fo.pagination;
 
-// Java
 import java.awt.Rectangle;
 
-// FOP
-import org.apache.fop.fo.FONode;
 import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.datatypes.LengthBase;
 import org.apache.fop.datatypes.PercentBaseContext;
+import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.FONode;
 
 /**
  * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_region-after">
@@ -52,15 +51,22 @@ public class RegionAfter extends RegionBA {
         PercentBaseContext pageHeightContext = getPageHeightContext(LengthBase.CUSTOM_BASE);
         PercentBaseContext neighbourContext;
         Rectangle vpRect;
-        if (layoutMaster.getWritingMode() == EN_LR_TB
-                || layoutMaster.getWritingMode() == EN_RL_TB) {
-            neighbourContext = pageWidthContext;
-            vpRect = new Rectangle(0, reldims.bpd - getExtent().getValue(pageHeightContext)
-                                   , reldims.ipd, getExtent().getValue(pageHeightContext));
-        } else {
+
+        // [TBD] WRITING MODE ALERT
+        switch ( getWritingMode().getEnumValue() ) {
+        case Constants.EN_TB_LR:
+        case Constants.EN_TB_RL:
             neighbourContext = pageHeightContext;
-            vpRect = new Rectangle(0, reldims.bpd - getExtent().getValue(pageWidthContext)
-                                   , getExtent().getValue(pageWidthContext), reldims.ipd);
+            vpRect = new Rectangle(0, reldims.bpd - getExtent().getValue(pageWidthContext),
+                                   getExtent().getValue(pageWidthContext), reldims.ipd);
+            break;
+        case Constants.EN_LR_TB:
+        case Constants.EN_RL_TB:
+        default:
+            neighbourContext = pageWidthContext;
+            vpRect = new Rectangle(0, reldims.bpd - getExtent().getValue(pageHeightContext),
+                                   reldims.ipd, getExtent().getValue(pageHeightContext));
+            break;
         }
         if (getPrecedence() == EN_FALSE) {
             adjustIPD(vpRect, layoutMaster.getWritingMode(), neighbourContext);

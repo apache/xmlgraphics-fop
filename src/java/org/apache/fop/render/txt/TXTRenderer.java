@@ -43,11 +43,10 @@ import org.apache.fop.render.txt.border.AbstractBorderElement;
 import org.apache.fop.render.txt.border.BorderManager;
 
 /**
- * Renderer that renders areas to plain text.
+ * <p>Renderer that renders areas to plain text.</p>
  *
- * @author Art Welch
- * @author <a href="mailto:mark-fop@inomial.com">Mark Lillywhite</a> (to use
- *         the new Renderer interface)
+ * <p>This work was authored by Art Welch and
+ * Mark Lillywhite (mark-fop@inomial.com) [to use the new Renderer interface].</p>
  */
 public class TXTRenderer extends AbstractPathOrientedRenderer {
 
@@ -72,6 +71,9 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
 
     /** Buffer for background and images. */
     private StringBuffer[] decoData;
+
+    /** Leading of line containing Courier font size of 10pt. */
+    public static final int LINE_LEADING = 1070;
 
     /** Height of one symbol in Courier font size of 10pt. */
     public static final int CHAR_HEIGHT = 7860;
@@ -193,7 +195,7 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
      */
     protected void renderText(TextArea area) {
         int col = Helper.ceilPosition(this.currentIPPosition, CHAR_WIDTH);
-        int row = Helper.ceilPosition(this.currentBPPosition, CHAR_HEIGHT);
+        int row = Helper.ceilPosition(this.currentBPPosition - LINE_LEADING, CHAR_HEIGHT + 2 * LINE_LEADING);
 
         String s = area.getText();
 
@@ -217,7 +219,7 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
         double height = bounds.getHeight();
 
         pageWidth = Helper.ceilPosition((int) width, CHAR_WIDTH);
-        pageHeight = Helper.ceilPosition((int) height, CHAR_HEIGHT);
+        pageHeight = Helper.ceilPosition((int) height, CHAR_HEIGHT + 2 * LINE_LEADING);
 
         // init buffers
         charData = new StringBuffer[pageHeight];
@@ -461,9 +463,9 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
      */
     public void renderImage(Image image, Rectangle2D pos) {
         int x1 = Helper.ceilPosition(currentIPPosition, CHAR_WIDTH);
-        int y1 = Helper.ceilPosition(currentBPPosition, CHAR_HEIGHT);
+        int y1 = Helper.ceilPosition(currentBPPosition - LINE_LEADING, CHAR_HEIGHT + 2 * LINE_LEADING);
         int width = Helper.ceilPosition((int) pos.getWidth(), CHAR_WIDTH);
-        int height = Helper.ceilPosition((int) pos.getHeight(), CHAR_HEIGHT);
+        int height = Helper.ceilPosition((int) pos.getHeight(), CHAR_HEIGHT + 2 * LINE_LEADING);
 
         fillRect(x1, y1, width, height, IMAGE_CHAR);
     }
@@ -508,7 +510,8 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
         int borderStartX = bm.getStartX();
         int borderStartY = bm.getStartY();
 
-        int x, y;
+        int x;
+        int y;
         if (horz && startOrBefore) { // BEFORE
             x = borderStartX;
             y = borderStartY;
@@ -523,7 +526,11 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
             y = borderStartY;
         }
 
-        int dx, dy, length, startType, endType;
+        int dx;
+        int dy;
+        int length;
+        int startType;
+        int endType;
         if (horz) {
             length = borderWidth;
             dx = 1;
@@ -555,9 +562,9 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
     protected void drawBackAndBorders(Area area, float startx, float starty,
             float width, float height) {
         bm.setWidth(Helper.ceilPosition(toMilli(width), CHAR_WIDTH));
-        bm.setHeight(Helper.ceilPosition(toMilli(height), CHAR_HEIGHT));
+        bm.setHeight(Helper.ceilPosition(toMilli(height), CHAR_HEIGHT + 2 * LINE_LEADING));
         bm.setStartX(Helper.ceilPosition(toMilli(startx), CHAR_WIDTH));
-        bm.setStartY(Helper.ceilPosition(toMilli(starty), CHAR_HEIGHT));
+        bm.setStartY(Helper.ceilPosition(toMilli(starty), CHAR_HEIGHT + 2 * LINE_LEADING));
 
         super.drawBackAndBorders(area, startx, starty, width, height);
     }

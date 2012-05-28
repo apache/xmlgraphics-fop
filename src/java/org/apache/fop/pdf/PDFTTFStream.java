@@ -53,7 +53,7 @@ public class PDFTTFStream extends AbstractPDFFontStream {
      * byte arrays around so much
      * {@inheritDoc}
      */
-    protected int output(java.io.OutputStream stream)
+    public int output(java.io.OutputStream stream)
             throws java.io.IOException {
         if (log.isDebugEnabled()) {
             log.debug("Writing " + origLength + " bytes of TTF font data");

@@ -18,6 +18,7 @@
 # Shell script to run FOP, adapted from the Jakarta-Ant project.
 
 rpm_mode=true
+java_exec_args="-Djava.awt.headless=true"
 fop_exec_args=
 no_config=false
 fop_exec_debug=false
@@ -247,7 +248,7 @@ fi
 
 # Execute FOP using eval/exec to preserve spaces in paths,
 # java options, and FOP args
-fop_exec_command="exec \"$JAVACMD\" $LOGCHOICE $LOGLEVEL -classpath \"$LOCALCLASSPATH\" $FOP_OPTS org.apache.fop.cli.Main $fop_exec_args"
+fop_exec_command="exec \"$JAVACMD\" $java_exec_args $LOGCHOICE $LOGLEVEL -classpath \"$LOCALCLASSPATH\" $FOP_OPTS org.apache.fop.cli.Main $fop_exec_args"
 if $fop_exec_debug ; then
     echo $fop_exec_command
 fi

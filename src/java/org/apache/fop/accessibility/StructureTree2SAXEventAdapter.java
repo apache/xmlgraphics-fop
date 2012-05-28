@@ -30,6 +30,7 @@ import org.apache.fop.fo.FOElementMapping;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fo.extensions.InternalElementMapping;
 import org.apache.fop.render.intermediate.IFConstants;
+import org.apache.fop.util.XMLConstants;
 
 /**
  * Converts structure tree events to SAX events.
@@ -52,16 +53,19 @@ public final class StructureTree2SAXEventAdapter implements StructureTreeEventHa
     }
 
     /** {@inheritDoc} */
-    public void startPageSequence(Locale locale) {
+    public void startPageSequence(Locale locale, String role) {
         try {
-
+            AttributesImpl attributes = new AttributesImpl();
+            if (role != null) {
+                attributes.addAttribute("", "type", "type", XMLConstants.CDATA, role);
+            }
             contentHandler.startPrefixMapping(
                     InternalElementMapping.STANDARD_PREFIX, InternalElementMapping.URI);
             contentHandler.startPrefixMapping(
                     ExtensionElementMapping.STANDARD_PREFIX, ExtensionElementMapping.URI);
             contentHandler.startElement(IFConstants.NAMESPACE,
                     IFConstants.EL_STRUCTURE_TREE, IFConstants.EL_STRUCTURE_TREE,
-                    new AttributesImpl());
+                    attributes);
         } catch (SAXException e) {
             throw new RuntimeException(e);
         }

@@ -20,9 +20,10 @@
 package org.apache.fop.fo.expr;
 
 import java.util.List;
+
 import org.apache.fop.fo.Constants;
-import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.FOPropertyMapping;
+import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.flow.table.ColumnNumberManager;
 import org.apache.fop.fo.flow.table.Table;
 import org.apache.fop.fo.flow.table.TableCell;
@@ -36,32 +37,29 @@ import org.apache.fop.fo.properties.Property;
  */
 public class FromTableColumnFunction extends FunctionBase {
 
-    /**
-     * @return 1 (maximum arguments for the from-table-column function)
-     */
-    public int nbArgs() {
+    /** {@inheritDoc} */
+    public int getRequiredArgsCount() {
+        return 0;
+    }
+
+    @Override
+    /** {@inheritDoc} */
+    public int getOptionalArgsCount() {
         return 1;
     }
 
-    /**
-     * @return true (allow padding of arglist with property name)
-     */
-    public boolean padArgsWithPropertyName() {
-        return true;
+    @Override
+    /** {@inheritDoc} */
+    public Property getOptionalArgDefault(int index, PropertyInfo pi) throws PropertyException {
+        if ( index == 0 ) {
+            return getPropertyName ( pi );
+        } else {
+            return super.getOptionalArgDefault ( index, pi );
+        }
     }
 
-    /**
-     *
-     * @param args array of arguments, which should either be empty, or the
-     * first of which should contain an NCName corresponding to a property name
-     * @param pInfo PropertyInfo object to be evaluated
-     * @return the Property corresponding to the property name specified, or, if
-     * none, for the property for which the expression is being evaluated
-     * @throws PropertyException for incorrect arguments, and (for now) in all
-     * cases, because this function is not implemented
-     */
-    public Property eval(Property[] args,
-                         PropertyInfo pInfo) throws PropertyException {
+    /** {@inheritDoc} */
+    public Property eval(Property[] args, PropertyInfo pInfo) throws PropertyException {
 
         FObj fo = pInfo.getPropertyList().getFObj();
 

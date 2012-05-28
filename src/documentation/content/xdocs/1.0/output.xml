@@ -1,4 +1,4 @@
-<?xml version="1.0" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -20,7 +20,7 @@
 <!-- Output Formats: Renderers -->
 <document>
   <header>
-    <title>Apache FOP Output Formats</title>
+    <title>Apache™ FOP Output Formats</title>
     <version>$Revision$</version>
     <authors>
       <person name="Keiron Liddle" email="keiron@aftexsw.com"/>
@@ -30,7 +30,7 @@
 
   <body>
     <p>
-      FOP supports multiple output formats by using a different renderer for each format.
+      Apache™ FOP supports multiple output formats by using a different renderer for each format.
       The renderers do not all have the same set of capabilities, sometimes because of 
       the output format itself, sometimes because some renderers get more development 
       attention than others.
@@ -974,7 +974,7 @@ Note that the value of the encoding attribute in the example is the double-byte 
         Please refer to the <link href="#afp-resource-level-defaults">Resource Level Defaults</link>
         above to see what is used if the resource-level attribute is not specified.
         </p>
-        <p></p>
+        <p/>
       </section>
     </section>
   </section>
@@ -1263,6 +1263,3 @@ Note that the value of the encoding attribute in the example is the double-byte 
 
   </body>
 </document>
-
-
-

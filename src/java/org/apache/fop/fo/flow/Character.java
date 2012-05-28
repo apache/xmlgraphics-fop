@@ -21,11 +21,13 @@ package org.apache.fop.fo.flow;
 
 import java.awt.Color;
 import java.util.NoSuchElementException;
+import java.util.Stack;
 
 import org.xml.sax.Locator;
 
 import org.apache.fop.accessibility.StructureTreeElement;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.complexscripts.bidi.DelimitedTextRange;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.CharIterator;
 import org.apache.fop.fo.FONode;
@@ -231,6 +233,19 @@ public class Character extends FObj implements StructureTreeElementHolder {
      */
     public int getNameId() {
         return FO_CHARACTER;
+    }
+
+    @Override
+    public boolean isDelimitedTextRangeBoundary ( int boundary ) {
+        return false;
+    }
+
+    @Override
+    protected Stack collectDelimitedTextRanges ( Stack ranges, DelimitedTextRange currentRange ) {
+        if ( currentRange != null ) {
+            currentRange.append ( charIterator(), this );
+        }
+        return ranges;
     }
 
     private class FOCharIterator extends CharIterator {

@@ -29,8 +29,10 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
 import java.util.Iterator;
 import java.util.StringTokenizer;
 
-/**  Collapses whitespace of an RtfContainer that contains RtfText elements
- *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
+/**
+ * <p>Collapses whitespace of an RtfContainer that contains RtfText elements.</p>
+ *
+ * <p>This work was authored by Bertrand Delacretaz (bdelacretaz@codeconsult.ch).</p>
  */
 
 final class WhitespaceCollapser {

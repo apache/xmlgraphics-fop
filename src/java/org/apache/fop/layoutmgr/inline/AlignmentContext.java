@@ -24,6 +24,7 @@ import org.apache.fop.datatypes.LengthBase;
 import org.apache.fop.datatypes.SimplePercentBaseContext;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fonts.Font;
+import org.apache.fop.traits.WritingMode;
 
 /**
  * The alignment context is carried within a LayoutContext and as
@@ -173,7 +174,7 @@ public class AlignmentContext implements Constants {
      * @param lineHeight the computed value of the lineHeight property
      * @param writingMode the current writing mode
      */
-    AlignmentContext(Font font, int lineHeight, int writingMode) {
+    AlignmentContext(Font font, int lineHeight, WritingMode writingMode) {
         this.areaHeight = font.getAscender() - font.getDescender();
         this.lineHeight = lineHeight;
         this.xHeight = font.getXHeight();
@@ -297,6 +298,14 @@ public class AlignmentContext implements Constants {
     private int getDominantBaselineIdentifier() {
         return actualBaselineTable.getDominantBaselineIdentifier();
     }
+
+    /**
+     * Return the writing mode.
+     * @return the writing mode
+     */
+/*    public WritingMode getWritingMode() {
+        return scaledBaselineTable.getWritingMode();
+    }*/
 
     /**
      * Calculates the baseline shift value based on the baseline-shift
@@ -503,6 +512,10 @@ public class AlignmentContext implements Constants {
                || (scaledBaselineTable == parentAlignmentContext.getScaledBaselineTable()
                     && parentAlignmentContext.usesInitialBaselineTable());
     }
+
+    /* private boolean isHorizontalWritingMode() {
+        return (getWritingMode() == WritingMode.LR_TB || getWritingMode() == WritingMode.RL_TB);
+    }*/
 
     /** {@inheritDoc} */
     public String toString() {

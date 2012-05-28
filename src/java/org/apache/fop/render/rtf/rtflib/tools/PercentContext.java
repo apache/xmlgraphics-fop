@@ -29,10 +29,11 @@ import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.flow.table.Table;
+import org.apache.fop.fo.flow.table.TableColumn;
 import org.apache.fop.fo.pagination.PageSequence;
 
 /**
- * PercentBaseContext implementation to track base widths for percentage calculations.
+ * <p>PercentBaseContext implementation to track base widths for percentage calculations.</p>
  */
 public class PercentContext implements PercentBaseContext {
     private static Log log = LogFactory.getLog(PercentContext.class);
@@ -59,6 +60,13 @@ public class PercentContext implements PercentBaseContext {
         if (fobj == null) {
             return 0;
         }
+
+        // Special handler for TableColumn width specifications, needs to be
+        // relative to the parent!
+        if ( ( fobj instanceof TableColumn ) && ( fobj.getParent() instanceof FObj ) ) {
+            fobj = (FObj) fobj.getParent();
+        }
+
         switch (lengthBase) {
         case LengthBase.CONTAINING_BLOCK_WIDTH:
         case LengthBase.PARENT_AREA_WIDTH:
@@ -66,12 +74,27 @@ public class PercentContext implements PercentBaseContext {
             Object width = lengthMap.get(fobj);
             if (width != null) {
                 return Integer.parseInt(width.toString());
-            } else {
-                return -1;
+            } else if (fobj.getParent() != null) {
+              // If the object itself has no width the parent width will be used
+              // because it is the base width of this object
+              width = lengthMap.get(fobj.getParent());
+              if (width != null) {
+                return Integer.parseInt(width.toString());
+              }
             }
+            return 0;
         case LengthBase.TABLE_UNITS:
             Object unit = tableUnitMap.get(fobj);
-            return (unit != null) ? ((Integer)unit).intValue() : 0;
+            if (unit != null) {
+                return ((Integer)unit).intValue();
+            } else if (fobj.getParent() != null) {
+              // If the object itself has no width the parent width will be used
+              unit = tableUnitMap.get(fobj.getParent());
+              if (unit != null) {
+                return ((Integer)unit).intValue();
+              }
+            }
+            return 0;
         default:
             log.error(new Exception("Unsupported base type for LengthBase:" + lengthBase));
             return 0;

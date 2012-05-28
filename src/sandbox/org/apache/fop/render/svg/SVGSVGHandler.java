@@ -19,18 +19,20 @@
 
 package org.apache.fop.render.svg;
 
-import org.apache.batik.dom.svg.SVGDOMImplementation;
-import org.apache.batik.dom.util.DOMUtilities;
-import org.apache.batik.dom.util.XMLSupport;
-import org.apache.fop.render.Renderer;
-import org.apache.fop.render.RendererContext;
-import org.apache.fop.render.XMLHandler;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.svg.SVGDocument;
 import org.w3c.dom.svg.SVGElement;
 import org.w3c.dom.svg.SVGSVGElement;
+
+import org.apache.batik.dom.svg.SVGDOMImplementation;
+import org.apache.batik.dom.util.DOMUtilities;
+import org.apache.batik.dom.util.XMLSupport;
+
+import org.apache.fop.render.Renderer;
+import org.apache.fop.render.RendererContext;
+import org.apache.fop.render.XMLHandler;
 
 /** The svg:svg element handler. */
 public class SVGSVGHandler implements XMLHandler, SVGRendererContextConstants {

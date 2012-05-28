@@ -20,8 +20,10 @@
 package org.apache.fop.fo;
 
 // Java
+import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Stack;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
@@ -35,6 +37,7 @@ import org.apache.xmlgraphics.util.QName;
 import org.apache.fop.accessibility.StructureTreeElement;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.complexscripts.bidi.DelimitedTextRange;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fo.extensions.InternalElementMapping;
@@ -402,6 +405,27 @@ public abstract class FONode implements Cloneable {
     }
 
     /**
+     * Helper function to obtain standard usage prefix for FOP related
+     * namespace URIs.
+     * @param namespaceURI URI of node found
+     *         (e.g., "http://www.w3.org/1999/XSL/Format")
+     * @return the prefix or null if none
+     */
+    public static String getNodePrefix(String namespaceURI) {
+        if (namespaceURI.equals(FOElementMapping.URI)) {
+            return "fo";
+        } else if (namespaceURI.equals(ExtensionElementMapping.URI)) {
+            return "fox";
+        } else if (namespaceURI.equals(InternalElementMapping.URI)) {
+            return "foi";
+        } else if (namespaceURI.equals(SVGElementMapping.URI)) {
+            return "svg";
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Helper function to standardize the names of all namespace URI - local
      * name pairs in text messages.
      * For readability, using fo:, fox:, svg:, for those namespaces even
@@ -413,14 +437,9 @@ public abstract class FONode implements Cloneable {
      * with the unabbreviated URI otherwise.
      */
     public static String getNodeString(String namespaceURI, String localName) {
-        if (namespaceURI.equals(FOElementMapping.URI)) {
-            return "fo:" + localName;
-        } else if (namespaceURI.equals(ExtensionElementMapping.URI)) {
-            return "fox:" + localName;
-        } else if (namespaceURI.equals(InternalElementMapping.URI)) {
-            return "foi:" + localName;  // used FOP internally for accessibility
-        } else if (namespaceURI.equals(SVGElementMapping.URI)) {
-            return "svg:" + localName;
+        String prefix = getNodePrefix ( namespaceURI );
+        if ( prefix != null ) {
+            return prefix + ":" + localName;
         } else {
             return "(Namespace URI: \"" + namespaceURI + "\", "
                     + "Local Name: \"" + localName + "\")";
@@ -524,16 +543,22 @@ public abstract class FONode implements Cloneable {
      *
      * @param loc org.xml.sax.Locator object of the error (*not* parent node)
      * @param parentName the name of the parent element
-     * @param nsURI namespace URI of incoming invalid node
-     * @param lName local name (i.e., no prefix) of incoming node
+     * @param nsURI namespace URI of incoming offending node
+     * @param lName local name (i.e., no prefix) of incoming offending node
      * @param ruleViolated name of the rule violated (used to lookup a resource in a bundle)
      * @throws ValidationException the validation error provoked by the method call
      */
     protected void invalidChildError(Locator loc, String parentName, String nsURI, String lName,
                 String ruleViolated)
                 throws ValidationException {
-        getFOValidationEventProducer().invalidChild(this, parentName,
-                new QName(nsURI, lName), ruleViolated, loc);
+        String prefix = getNodePrefix ( nsURI );
+        QName qn; // qualified name of offending node
+        if ( prefix != null ) {
+            qn = new QName(nsURI, prefix, lName);
+        } else {
+            qn = new QName(nsURI, lName);
+        }
+        getFOValidationEventProducer().invalidChild(this, parentName, qn, ruleViolated, loc);
     }
 
     /**
@@ -862,6 +887,122 @@ public abstract class FONode implements Cloneable {
         }
         precedingSibling.siblings[1] = followingSibling;
         followingSibling.siblings[0] = precedingSibling;
+    }
+
+    /**
+     * Determine if node has a delimited text range boundary. N.B. that we report
+     * this to be true by default, while specific subclasses override this method to report false.
+     * @param boundary one of {EN_BEFORE, EN_AFTER, or EN_BOTH} enumeration constants
+     * @return true if indicated boundary (or boundaries) constitute a delimited text range
+     * boundary.
+     */
+    public boolean isDelimitedTextRangeBoundary ( int boundary ) {
+        return true;
+    }
+
+    /**
+     * Collect the sequence of delimited text ranges, where each new
+     * range is pushed onto RANGES.
+     * @param ranges a stack of delimited text ranges
+     * @return the (possibly) updated stack of delimited text ranges
+     */
+    public Stack collectDelimitedTextRanges ( Stack ranges ) {
+        // if boundary before, then push new range
+        if ( isRangeBoundaryBefore() ) {
+            maybeNewRange ( ranges );
+        }
+        // get current range, if one exists
+        DelimitedTextRange currentRange;
+        if ( ranges.size() > 0 ) {
+            currentRange = (DelimitedTextRange) ranges.peek();
+        } else {
+            currentRange = null;
+        }
+        // proceses this node
+        ranges = collectDelimitedTextRanges ( ranges, currentRange );
+        // if boundary after, then push new range
+        if ( isRangeBoundaryAfter() ) {
+            maybeNewRange ( ranges );
+        }
+        return ranges;
+    }
+
+    /**
+     * Collect the sequence of delimited text ranges, where each new
+     * range is pushed onto RANGES, where default implementation collects ranges
+     * of child nodes.
+     * @param ranges a stack of delimited text ranges
+     * @param currentRange the current range or null (if none)
+     * @return the (possibly) updated stack of delimited text ranges
+     */
+    protected Stack collectDelimitedTextRanges ( Stack ranges, DelimitedTextRange currentRange ) {
+        for ( Iterator it = getChildNodes(); ( it != null ) && it.hasNext();) {
+            ranges = ( (FONode) it.next() ).collectDelimitedTextRanges ( ranges );
+        }
+        return ranges;
+    }
+
+    /**
+     * Determine if this node is a new bidi RANGE block item.
+     * @return true if this node is a new bidi RANGE block item
+     */
+    public boolean isBidiRangeBlockItem() {
+        return false;
+    }
+
+    /**
+     * Conditionally add a new delimited text range to RANGES, where new range is
+     * associated with current FONode. A new text range is added unless all of the following are
+     * true:
+     * <ul>
+     * <li>there exists a current range RCUR in RANGES</li>
+     * <li>RCUR is empty</li>
+     * <li>the node of the RCUR is the same node as FN or a descendent node of FN</li>
+     * </ul>
+     * @param ranges stack of delimited text ranges
+     * @return new range (if constructed and pushed onto stack) or current range (if any) or null
+     */
+    private DelimitedTextRange maybeNewRange ( Stack ranges ) {
+        DelimitedTextRange rCur = null; // current range (top of range stack)
+        DelimitedTextRange rNew = null; // new range to be pushed onto range stack
+        if ( ranges.empty() ) {
+            if ( isBidiRangeBlockItem() ) {
+                rNew = new DelimitedTextRange(this);
+            }
+        } else {
+            rCur = (DelimitedTextRange) ranges.peek();
+            if ( rCur != null ) {
+                if ( !rCur.isEmpty() || !isSelfOrDescendent ( rCur.getNode(), this ) ) {
+                    rNew = new DelimitedTextRange(this);
+                }
+            }
+        }
+        if ( rNew != null ) {
+            ranges.push ( rNew );
+        } else {
+            rNew = rCur;
+        }
+        return rNew;
+    }
+
+    private boolean isRangeBoundaryBefore() {
+        return isDelimitedTextRangeBoundary ( Constants.EN_BEFORE );
+    }
+
+    private boolean isRangeBoundaryAfter() {
+        return isDelimitedTextRangeBoundary ( Constants.EN_AFTER );
+    }
+
+    /**
+     * Determine if node N2 is the same or a descendent of node N1.
+     */
+    private static boolean isSelfOrDescendent ( FONode n1, FONode n2 ) {
+        for ( FONode n = n2; n != null; n = n.getParent() ) {
+            if ( n == n1 ) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

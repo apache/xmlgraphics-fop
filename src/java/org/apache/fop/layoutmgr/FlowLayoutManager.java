@@ -215,7 +215,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager
     protected List<ListElement> getNextChildElements(LayoutManager childLM, LayoutContext context,
             LayoutContext childLC, int alignment, Stack<LayoutManager> lmStack,
             Position restartPosition, LayoutManager restartLM) {
-        
+
         List<ListElement> childElements;
         if (lmStack == null) {
             childElements = childLM.getNextKnuthElements(childLC, alignment);

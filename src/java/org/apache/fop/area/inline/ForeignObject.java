@@ -19,9 +19,9 @@
 
 package org.apache.fop.area.inline;
 
-import org.apache.fop.area.Area;
-
 import org.w3c.dom.Document;
+
+import org.apache.fop.area.Area;
 
 // cacheable object
 /**

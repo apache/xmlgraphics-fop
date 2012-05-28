@@ -57,9 +57,10 @@ public final class FontSetup {
     /**
      * Sets up a font info
      * @param fontInfo font info
+     * @param base14Kerning true if base14 kerning applies
      */
-    public static void setup(FontInfo fontInfo) {
-        setup(fontInfo, null, null);
+    public static void setup(FontInfo fontInfo, boolean base14Kerning) {
+        setup(fontInfo, null, null, base14Kerning);
     }
 
     /**
@@ -71,10 +72,10 @@ public final class FontSetup {
      * @param fontInfo the font info object to set up
      * @param embedFontInfoList a list of EmbedFontInfo objects
      * @param resolver the font resolver
+     * @param base14Kerning true if base14 kerning applies
      */
     public static void setup(FontInfo fontInfo, List<EmbedFontInfo> embedFontInfoList,
-            FontResolver resolver) {
-        final boolean base14Kerning = false;
+                             FontResolver resolver, boolean base14Kerning) {
         fontInfo.addMetrics("F1", new Helvetica(base14Kerning));
         fontInfo.addMetrics("F2", new HelveticaOblique(base14Kerning));
         fontInfo.addMetrics("F3", new HelveticaBold(base14Kerning));
@@ -180,7 +181,7 @@ public final class FontSetup {
         final int startNum = 15;
 
         /* Add configured fonts */
-        addConfiguredFonts(fontInfo, embedFontInfoList, startNum, resolver);
+        addConfiguredFonts(fontInfo, embedFontInfoList, startNum, resolver, base14Kerning);
     }
 
     /**
@@ -191,14 +192,17 @@ public final class FontSetup {
      * @param resolver the font resolver
      */
     private static void addConfiguredFonts(FontInfo fontInfo,
-            List<EmbedFontInfo> embedFontInfoList, int num, FontResolver resolver) {
+            List<EmbedFontInfo> embedFontInfoList, int num, FontResolver resolver,
+            boolean base14Kerning) {
         if (embedFontInfoList == null) {
             return; //No fonts to process
         }
 
         if (resolver == null) {
             //Ensure that we have minimal font resolution capabilities
-            resolver = createMinimalFontResolver();
+            //None of the built-in base14 fonts have advanced typographic data
+            boolean useAdvanced = false;
+            resolver = createMinimalFontResolver(useAdvanced);
         }
 
         String internalName = null;
@@ -218,15 +222,31 @@ public final class FontSetup {
         }
     }
 
-    /** @return a new FontResolver to be used by the font subsystem */
-    public static FontResolver createMinimalFontResolver() {
-        return new FontResolver() {
+    /**
+     * Minimum implemenation of FontResolver.
+     */
+    public static class MinimalFontResolver implements FontResolver {
+        private boolean useComplexScriptFeatures;
+        MinimalFontResolver(boolean useComplexScriptFeatures) {
+            this.useComplexScriptFeatures = useComplexScriptFeatures;
+        }
+        /** {@inheritDoc} */
+        public Source resolve(String href) {
+            //Minimal functionality here
+            return new StreamSource(href);
+        }
+        /** {@inheritDoc} */
+        public boolean isComplexScriptFeaturesEnabled() {
+            return useComplexScriptFeatures;
+        }
+    }
 
-            /** {@inheritDoc} */
-            public Source resolve(String href) {
-                //Minimal functionality here
-                return new StreamSource(href);
-            }
-        };
+    /**
+     * Create minimal font resolver.
+     * @param useComplexScriptFeatures true if complex script features enabled
+     * @return a new FontResolver to be used by the font subsystem
+     */
+    public static FontResolver createMinimalFontResolver(boolean useComplexScriptFeatures) {
+        return new MinimalFontResolver ( useComplexScriptFeatures );
     }
 }

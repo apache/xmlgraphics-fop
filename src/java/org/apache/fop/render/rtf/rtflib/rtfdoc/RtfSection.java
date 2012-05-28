@@ -26,11 +26,14 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
  * the FOP project.
  */
 
-import java.io.Writer;
 import java.io.IOException;
+import java.io.Writer;
+import java.util.List;
 
-/**  Models a section in an RTF document
- *  @author Bertrand Delacretaz bdelacretaz@codeconsult.ch
+/**
+ * <p>Models a section in an RTF document</p>
+ *
+ * <p>This work was authored by Bertrand Delacretaz (bdelacretaz@codeconsult.ch).</p>
  */
 
 public class RtfSection
@@ -190,7 +193,11 @@ implements
      * @throws IOException for I/O problems
      */
     protected void writeRtfSuffix() throws IOException {
-        writeControlWord("sect");
+        // write suffix /sect only if this section is not last section (see bug #51484)
+        List siblings = parent.getChildren();
+        if ( ( siblings.indexOf ( this ) + 1 ) < siblings.size() ) {
+            writeControlWord("sect");
+        }
     }
 
     private void closeCurrentTable() throws IOException {

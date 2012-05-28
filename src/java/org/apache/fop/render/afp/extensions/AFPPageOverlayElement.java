@@ -22,14 +22,15 @@ package org.apache.fop.render.afp.extensions;
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 
+import org.apache.xmlgraphics.util.UnitConv;
+
+import org.apache.fop.afp.AFPPaintingState;
+import org.apache.fop.afp.AFPUnitConverter;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.extensions.ExtensionAttachment;
-import org.apache.fop.afp.AFPPaintingState;
-import org.apache.fop.afp.AFPUnitConverter;
-import org.apache.xmlgraphics.util.UnitConv;
 
 /**
  * This class extends the org.apache.fop.render.afp.extensions.AbstractAFPExtensionObject class.

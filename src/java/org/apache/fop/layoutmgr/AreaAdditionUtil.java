@@ -49,7 +49,7 @@ public final class AreaAdditionUtil {
         if (bslm != null) {
             bslm.addId();
         }
-        
+
         // "unwrap" the NonLeafPositions stored in parentIter
         // and put them in a new list;
         LinkedList<Position> positionList = new LinkedList<Position>();

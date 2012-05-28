@@ -21,12 +21,15 @@ package org.apache.fop.fo;
 
 import java.awt.Color;
 import java.nio.CharBuffer;
+import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Stack;
 
 import org.xml.sax.Locator;
 
 import org.apache.fop.accessibility.StructureTreeElement;
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.complexscripts.bidi.DelimitedTextRange;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.flow.Block;
 import org.apache.fop.fo.properties.CommonFont;
@@ -45,7 +48,8 @@ public class FOText extends FONode implements CharSequence {
     /** the <code>CharBuffer</code> containing the text */
     private CharBuffer charBuffer;
 
-    /** properties relevant for #PCDATA */
+    // The value of FO traits (refined properties) that apply to #PCDATA
+    // (aka implicit sequence of fo:character)
     private CommonFont commonFont;
     private CommonHyphenation commonHyphenation;
     private Color color;
@@ -58,6 +62,10 @@ public class FOText extends FONode implements CharSequence {
     private Property wordSpacing;
     private int wrapOption;
     private Length baselineShift;
+    private String country;
+    private String language;
+    private String script;
+    // End of trait values
 
     /**
      * Points to the previous FOText object created within the current
@@ -82,6 +90,12 @@ public class FOText extends FONode implements CharSequence {
 
     private StructureTreeElement structureTreeElement;
 
+    /* bidi levels */
+    private int[] bidiLevels;
+
+    /* advanced script processing state */
+    private Map/*<MapRange,String>*/ mappings;
+
     private static final int IS_WORD_CHAR_FALSE = 0;
     private static final int IS_WORD_CHAR_TRUE = 1;
     private static final int IS_WORD_CHAR_MAYBE = 2;
@@ -98,21 +112,31 @@ public class FOText extends FONode implements CharSequence {
     /** {@inheritDoc} */
     protected void characters(char[] data, int start, int length,
             PropertyList list, Locator locator) throws FOPException {
-
-        if (this.charBuffer == null) {
+        if (charBuffer == null) {
             // buffer not yet initialized, do so now
-            this.charBuffer = CharBuffer.allocate(length);
+            int newLength = ( length < 16 ) ? 16 : length;
+            charBuffer = CharBuffer.allocate(newLength);
         } else {
             // allocate a larger buffer, and transfer contents
-            int newLength = this.charBuffer.limit() + length;
-            CharBuffer newBuffer = CharBuffer.allocate(newLength);
-            this.charBuffer.rewind();
-            newBuffer.put(this.charBuffer);
-            this.charBuffer = newBuffer;
+            int requires = charBuffer.position() + length;
+            int capacity = charBuffer.capacity();
+            if ( requires > capacity ) {
+                int newCapacity = capacity * 2;
+                if ( requires > newCapacity ) {
+                    newCapacity = requires;
+                }
+                CharBuffer newBuffer = CharBuffer.allocate(newCapacity);
+                charBuffer.rewind();
+                newBuffer.put(charBuffer);
+                charBuffer = newBuffer;
+            }
         }
+        // extend limit to capacity
+        charBuffer.limit(charBuffer.capacity());
         // append characters
-        this.charBuffer.put(data, start, length);
-
+        charBuffer.put(data, start, length);
+        // shrink limit to position
+        charBuffer.limit(charBuffer.position());
     }
 
     /**
@@ -135,10 +159,10 @@ public class FOText extends FONode implements CharSequence {
         if (removeChildren) {
             // not really removing, just make sure the char buffer
             // pointed to is really a different one
-            if (this.charBuffer != null) {
-                ft.charBuffer = CharBuffer.allocate(this.charBuffer.limit());
-                this.charBuffer.rewind();
-                ft.charBuffer.put(this.charBuffer);
+            if (charBuffer != null) {
+                ft.charBuffer = CharBuffer.allocate(charBuffer.limit());
+                charBuffer.rewind();
+                ft.charBuffer.put(charBuffer);
                 ft.charBuffer.rewind();
             }
         }
@@ -163,10 +187,16 @@ public class FOText extends FONode implements CharSequence {
         this.wrapOption = pList.get(Constants.PR_WRAP_OPTION).getEnum();
         this.textDecoration = pList.getTextDecorationProps();
         this.baselineShift = pList.get(Constants.PR_BASELINE_SHIFT).getLength();
+        this.country = pList.get(Constants.PR_COUNTRY).getString();
+        this.language = pList.get(Constants.PR_LANGUAGE).getString();
+        this.script = pList.get(Constants.PR_SCRIPT).getString();
     }
 
     /** {@inheritDoc} */
     protected void endOfNode() throws FOPException {
+        if ( charBuffer != null ) {
+            charBuffer.rewind();
+        }
         super.endOfNode();
         getFOEventHandler().characters(this);
     }
@@ -187,20 +217,20 @@ public class FOText extends FONode implements CharSequence {
      */
     public boolean willCreateArea() {
         if (whiteSpaceCollapse == Constants.EN_FALSE
-                && this.charBuffer.limit() > 0) {
+                && charBuffer.limit() > 0) {
             return true;
         }
 
         char ch;
-        this.charBuffer.rewind();
-        while (this.charBuffer.hasRemaining()) {
-            ch = this.charBuffer.get();
+        charBuffer.rewind();
+        while (charBuffer.hasRemaining()) {
+            ch = charBuffer.get();
             if (!((ch == CharUtilities.SPACE)
                     || (ch == CharUtilities.LINEFEED_CHAR)
                     || (ch == CharUtilities.CARRIAGE_RETURN)
                     || (ch == CharUtilities.TAB))) {
                 // not whitespace
-                this.charBuffer.rewind();
+                charBuffer.rewind();
                 return true;
             }
         }
@@ -243,13 +273,13 @@ public class FOText extends FONode implements CharSequence {
             return;
         }
 
-        this.charBuffer.rewind();
-        CharBuffer tmp = this.charBuffer.slice();
+        charBuffer.rewind();
+        CharBuffer tmp = charBuffer.slice();
         char c;
-        int lim = this.charBuffer.limit();
+        int lim = charBuffer.limit();
         int pos = -1;
         while (++pos < lim) {
-            c = this.charBuffer.get();
+            c = charBuffer.get();
             switch (textTransform) {
                 case Constants.EN_UPPERCASE:
                     tmp.put(Character.toUpperCase(c));
@@ -374,25 +404,25 @@ public class FOText extends FONode implements CharSequence {
      * @return The previous FOText node in this Block; null, if this is the
      * first FOText in this Block.
      */
-    public FOText getPrevFOTextThisBlock () {
-        return prevFOTextThisBlock;
-    }
+    //public FOText getPrevFOTextThisBlock () {
+    //    return prevFOTextThisBlock;
+    //}
 
     /**
      * @return The next FOText node in this Block; null if this is the last
      * FOText in this Block; null if subsequent FOText nodes have not yet been
      * processed.
      */
-    public FOText getNextFOTextThisBlock () {
-        return nextFOTextThisBlock;
-    }
+    //public FOText getNextFOTextThisBlock () {
+    //    return nextFOTextThisBlock;
+    //}
 
     /**
      * @return The nearest ancestor block object which contains this FOText.
      */
-    public Block getAncestorBlock () {
-        return ancestorBlock;
-    }
+    //public Block getAncestorBlock () {
+    //    return ancestorBlock;
+    //}
 
     /**
      * Determines whether the input char should be considered part of a
@@ -485,6 +515,9 @@ public class FOText extends FONode implements CharSequence {
         private boolean canRemove = false;
         private boolean canReplace = false;
 
+        public TextCharIterator() {
+        }
+
         /** {@inheritDoc} */
         public boolean hasNext() {
            return (this.currentPosition < charBuffer.limit());
@@ -556,67 +589,88 @@ public class FOText extends FONode implements CharSequence {
     }
 
     /**
-     * @return the "color" property.
+     * @return the "color" trait.
      */
     public Color getColor() {
         return color;
     }
 
     /**
-     * @return the "keep-together" property.
+     * @return the "keep-together" trait.
      */
     public KeepProperty getKeepTogether() {
         return keepTogether;
     }
 
     /**
-     * @return the "letter-spacing" property.
+     * @return the "letter-spacing" trait.
      */
     public Property getLetterSpacing() {
         return letterSpacing;
     }
 
     /**
-     * @return the "line-height" property.
+     * @return the "line-height" trait.
      */
     public SpaceProperty getLineHeight() {
         return lineHeight;
     }
 
     /**
-     * @return the "white-space-treatment" property
+     * @return the "white-space-treatment" trait
      */
     public int getWhitespaceTreatment() {
         return whiteSpaceTreatment;
     }
 
     /**
-     * @return the "word-spacing" property.
+     * @return the "word-spacing" trait.
      */
     public Property getWordSpacing() {
         return wordSpacing;
     }
 
     /**
-     * @return the "wrap-option" property.
+     * @return the "wrap-option" trait.
      */
     public int getWrapOption() {
         return wrapOption;
     }
 
-    /** @return the "text-decoration" property. */
+    /** @return the "text-decoration" trait. */
     public CommonTextDecoration getTextDecoration() {
         return textDecoration;
     }
 
-    /** @return the baseline-shift property */
+    /** @return the baseline-shift trait */
     public Length getBaseLineShift() {
         return baselineShift;
     }
 
+    /** @return the country trait */
+    public String getCountry() {
+        return country;
+    }
+
+    /** @return the language trait */
+    public String getLanguage() {
+        return language;
+    }
+
+    /** @return the script trait */
+    public String getScript() {
+        return script;
+    }
+
     /** {@inheritDoc} */
     public String toString() {
-        return (this.charBuffer == null) ? "" : this.charBuffer.toString();
+        if ( charBuffer == null ) {
+            return "";
+        } else {
+            CharBuffer cb = charBuffer.duplicate();
+            cb.rewind();
+            return cb.toString();
+        }
     }
 
     /** {@inheritDoc} */
@@ -640,26 +694,31 @@ public class FOText extends FONode implements CharSequence {
 
     /** {@inheritDoc} */
     public char charAt(int position) {
-        return this.charBuffer.get(position);
+        return charBuffer.get(position);
     }
 
     /** {@inheritDoc} */
     public CharSequence subSequence(int start, int end) {
-        return this.charBuffer.subSequence(start, end);
+        return charBuffer.subSequence(start, end);
     }
 
     /** {@inheritDoc} */
     public int length() {
-        return this.charBuffer.limit();
+        return charBuffer.limit();
     }
 
     /**
      * Resets the backing <code>java.nio.CharBuffer</code>
      */
     public void resetBuffer() {
-        if (this.charBuffer != null) {
-            this.charBuffer.rewind();
+        if (charBuffer != null) {
+            charBuffer.rewind();
         }
+    }
+
+    @Override
+    public boolean isDelimitedTextRangeBoundary ( int boundary ) {
+        return false;
     }
 
     @Override
@@ -670,6 +729,194 @@ public class FOText extends FONode implements CharSequence {
     /** @return the structure tree element. */
     public StructureTreeElement getStructureTreeElement() {
         return structureTreeElement;
+    }
+
+    /**
+     * Set bidirectional level over interval [start,end).
+     * @param level the resolved level
+     * @param start the starting index of interval
+     * @param end the ending index of interval
+     */
+    public void setBidiLevel ( int level, int start, int end ) {
+        if ( start < end ) {
+            if ( bidiLevels == null ) {
+                bidiLevels = new int [ length() ];
+            }
+            for ( int i = start, n = end; i < n; i++ ) {
+                bidiLevels [ i ] = level;
+            }
+            if ( parent != null ) {
+                ( (FObj) parent ).setBidiLevel ( level );
+            }
+        } else {
+            assert start < end;
+        }
+    }
+
+    /**
+     * Obtain bidirectional level of each character
+     * represented by this FOText.
+     * @return a (possibly empty) array of bidi levels or null
+     * in case no bidi levels have been assigned
+     */
+    public int[] getBidiLevels() {
+        return bidiLevels;
+    }
+
+    /**
+     * Obtain bidirectional level of each character over
+     * interval [start,end).
+     * @param start the starting index of interval
+     * @param end the ending index of interval
+     * @return a (possibly empty) array of bidi levels or null
+     * in case no bidi levels have been assigned
+     */
+    public int[] getBidiLevels ( int start, int end ) {
+        if ( this.bidiLevels != null ) {
+            assert start <= end;
+            int n = end - start;
+            int[] bidiLevels = new int [ n ];
+            for ( int i = 0; i < n; i++ ) {
+                bidiLevels[i] = this.bidiLevels [ start + i ];
+            }
+            return bidiLevels;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Obtain bidirectional level of character at
+     * specified position, which must be a non-negative integer
+     * less than the length of this FO.
+     * @param position an offset position into FO's characters
+     * @return a resolved bidi level or -1 if default
+     * @throws IndexOutOfBoundsException if position is not non-negative integer
+     * or is greater than or equal to length
+     */
+    public int bidiLevelAt ( int position ) throws IndexOutOfBoundsException {
+        if ( ( position < 0 ) || ( position >= length() ) ) {
+            throw new IndexOutOfBoundsException();
+        } else if ( bidiLevels != null ) {
+            return bidiLevels [ position ];
+        } else {
+            return -1;
+        }
+    }
+
+    /**
+     * Add characters mapped by script substitution processing.
+     * @param start index in character buffer
+     * @param end index in character buffer
+     * @param mappedChars sequence of character codes denoting substituted characters
+     */
+    public void addMapping ( int start, int end, CharSequence mappedChars ) {
+        if ( mappings == null ) {
+            mappings = new java.util.HashMap();
+        }
+        mappings.put ( new MapRange ( start, end ), mappedChars.toString() );
+    }
+
+    /**
+     * Determine if characters over specific interval  have a mapping.
+     * @param start index in character buffer
+     * @param end index in character buffer
+     * @return true if a mapping exist such that the mapping's interval is coincident to
+     * [start,end)
+     */
+    public boolean hasMapping ( int start, int end ) {
+        return ( mappings != null ) && ( mappings.containsKey ( new MapRange ( start, end ) ) );
+    }
+
+    /**
+     * Obtain mapping of characters over specific interval.
+     * @param start index in character buffer
+     * @param end index in character buffer
+     * @return a string of characters representing the mapping over the interval
+     * [start,end)
+     */
+    public String getMapping ( int start, int end ) {
+        if ( mappings != null ) {
+            return (String) mappings.get ( new MapRange ( start, end ) );
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Obtain length of mapping of characters over specific interval.
+     * @param start index in character buffer
+     * @param end index in character buffer
+     * @return the length of the mapping (if present) or zero
+     */
+    public int getMappingLength ( int start, int end ) {
+        if ( mappings != null ) {
+            return ( (String) mappings.get ( new MapRange ( start, end ) ) ) .length();
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * Obtain bidirectional levels of mapping of characters over specific interval.
+     * @param start index in character buffer
+     * @param end index in character buffer
+     * @return a (possibly empty) array of bidi levels or null
+     * in case no bidi levels have been assigned
+     */
+    public int[] getMappingBidiLevels ( int start, int end ) {
+        if ( hasMapping ( start, end ) ) {
+            int   nc = end - start;
+            int   nm = getMappingLength ( start, end );
+            int[] la = getBidiLevels ( start, end );
+            if ( la == null ) {
+                return null;
+            } else if ( nm == nc ) {            // mapping is same length as mapped range
+                return la;
+            } else if ( nm > nc ) {             // mapping is longer than mapped range
+                int[] ma = new int [ nm ];
+                System.arraycopy ( la, 0, ma, 0, la.length );
+                for ( int i = la.length,
+                          n = ma.length, l = ( i > 0 ) ? la [ i - 1 ] : 0; i < n; i++ ) {
+                    ma [ i ] = l;
+                }
+                return ma;
+            } else {                            // mapping is shorter than mapped range
+                int[] ma = new int [ nm ];
+                System.arraycopy ( la, 0, ma, 0, ma.length );
+                return ma;
+            }
+        } else {
+            return getBidiLevels ( start, end );
+        }
+    }
+
+    @Override
+    protected Stack collectDelimitedTextRanges ( Stack ranges, DelimitedTextRange currentRange ) {
+        if ( currentRange != null ) {
+            currentRange.append ( charIterator(), this );
+        }
+        return ranges;
+    }
+
+    private static class MapRange {
+        private int start;
+        private int end;
+        MapRange(int start, int end) {
+            this.start = start;
+            this.end = end;
+        }
+        public int hashCode() {
+            return ( start * 31 ) + end;
+        }
+        public boolean equals ( Object o ) {
+            if ( o instanceof MapRange ) {
+                MapRange r = (MapRange) o;
+                return ( r.start == start ) && ( r.end == end );
+            } else {
+                return false;
+            }
+        }
     }
 
 }

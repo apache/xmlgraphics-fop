@@ -48,7 +48,8 @@ public class FontsSubstitutionTestCase extends
         FontManager fontManager = ua.getFactory().getFontManager();
         FontCollection[] fontCollections = new FontCollection[] {
                 new Base14FontCollection(fontManager.isBase14KerningEnabled()),
-                new CustomFontCollection(renderer.getFontResolver(), renderer.getFontList())
+                new CustomFontCollection(renderer.getFontResolver(), renderer.getFontList(),
+                                         ua.isComplexScriptFeaturesEnabled())
         };
         fontManager.setup(fontInfo, fontCollections);
         FontTriplet triplet = new FontTriplet("Times", "italic",

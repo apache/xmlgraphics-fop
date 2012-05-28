@@ -1,4 +1,4 @@
-<?xml version="1.0" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   Copyright 2006 The Apache Software Foundation
 
@@ -18,7 +18,7 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "document-v20.dtd">
 <document>
   <header>
-    <title>PDF/X (ISO 15930)</title>
+    <title>Apache™ FOP: PDF/X (ISO 15930)</title>
     <version>$Revision$</version>
     <authors>
       <person name="Jeremias Märki" email="jeremias@apache.org"/>
@@ -28,8 +28,8 @@
     <section id="overview">
       <title>Overview</title>
       <warning>
-        Support for PDF/X is available beginning with version 0.93. This feature is new and
-        may not be 100% complete, yet. Feedback is welcome.
+        Support for PDF/X is available beginning with Apache™ FOP version 0.93.
+        This feature is new and may not be 100% complete, yet. Feedback is welcome.
       </warning>
       <p>
         PDF/X is a standard which faciliates prepress digital data exchange using PDF.

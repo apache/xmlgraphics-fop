@@ -66,4 +66,9 @@ public class FontEventAdapter implements FontEventListener {
         getEventProducer().fontDirectoryNotFound(source, dir);
     }
 
+    /** {@inheritDoc} */
+    public void svgTextStrokedAsShapes(Object source, String fontFamily) {
+        getEventProducer().svgTextStrokedAsShapes(source, fontFamily);
+    }
+
 }

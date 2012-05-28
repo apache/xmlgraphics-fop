@@ -48,6 +48,7 @@ public abstract class LengthProperty extends Property
         }
 
         /** {@inheritDoc} */
+        @Override
         public Property convertProperty(Property p,
                                         PropertyList propertyList,
                                         FObj fo) throws PropertyException {
@@ -80,16 +81,19 @@ public abstract class LengthProperty extends Property
     }
 
     /** @return this.length cast as a Numeric */
+    @Override
     public Numeric getNumeric() {
         return this;
     }
 
     /** @return this.length */
+    @Override
     public Length getLength() {
         return this;
     }
 
     /** @return this.length cast as an Object */
+    @Override
     public Object getObject() {
         return this;
     }

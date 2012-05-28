@@ -67,7 +67,7 @@ public class IncludeObject extends AbstractNamedAFPObject {
     private int yoaOset = 0;
 
     /** the orientation of the referenced object */
-    private ObjectAreaRotation oaOrent = ObjectAreaRotation.RIGHT_HANDED_0;
+    private AxisOrientation oaOrent = AxisOrientation.RIGHT_HANDED_0;
 
     /** the X-axis origin defined in the object */
     private int xocaOset = -1;
@@ -93,7 +93,7 @@ public class IncludeObject extends AbstractNamedAFPObject {
      *            The orientation (0,90, 180, 270)
      */
     public void setObjectAreaOrientation(int orientation) {
-        this.oaOrent = ObjectAreaRotation.objectAreaRotationFor(orientation);
+        this.oaOrent = AxisOrientation.getRightHandedAxisOrientationFor(orientation);
     }
 
     /**
@@ -232,71 +232,6 @@ public class IncludeObject extends AbstractNamedAFPObject {
      */
     public void setMeasurementUnits(int xRes, int yRes) {
         addTriplet(new MeasurementUnitsTriplet(xRes, xRes));
-    }
-
-    /**
-     * Represents the 4 bytes that specify the area rotation reference coordinate system
-     *
-     */
-    private enum ObjectAreaRotation {
-
-        RIGHT_HANDED_0(Rotation.ROTATION_0, Rotation.ROTATION_90),
-        RIGHT_HANDED_90(Rotation.ROTATION_90, Rotation.ROTATION_180),
-        RIGHT_HANDED_180(Rotation.ROTATION_180, Rotation.ROTATION_270),
-        RIGHT_HANDED_270(Rotation.ROTATION_270, Rotation.ROTATION_0);
-
-        /**
-         * The object area's X-axis rotation from the X axis of the reference coordinate system
-         */
-        private final Rotation xoaOrent;
-        /**
-         * The object area's Y-axis rotation from the Y axis of the reference coordinate system
-         */
-        private final Rotation yoaOrent;
-
-        public void writeTo(byte[] out, int offset) {
-            xoaOrent.writeTo(out, offset);
-            yoaOrent.writeTo(out, offset + 2);
-        }
-
-        ObjectAreaRotation(Rotation xoaOrent, Rotation yoaOrent) {
-            this.xoaOrent = xoaOrent;
-            this.yoaOrent = yoaOrent;
-        }
-
-        private static ObjectAreaRotation objectAreaRotationFor(int orientation) {
-            switch (orientation) {
-                case 0: return RIGHT_HANDED_0;
-                case 90: return RIGHT_HANDED_90;
-                case 180: return RIGHT_HANDED_180;
-                case 270: return RIGHT_HANDED_270;
-                default: throw new IllegalArgumentException(
-                "The orientation must be one of the values 0, 90, 180, 270");
-            }
-        }
-    }
-
-    /**
-     * Represents a rotation value
-     *
-     */
-    private enum Rotation {
-
-        ROTATION_0(0),
-        ROTATION_90(0x2D),
-        ROTATION_180(0x5A),
-        ROTATION_270(0x87);
-
-        private final byte firstByte;
-
-        public void writeTo(byte[] out, int offset) {
-            out[offset] = firstByte;
-            out[offset + 1] = (byte)0;
-        }
-
-        Rotation(int firstByte) {
-            this.firstByte = (byte) firstByte;
-        }
     }
 
 }

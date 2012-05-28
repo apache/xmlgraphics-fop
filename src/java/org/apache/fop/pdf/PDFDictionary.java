@@ -98,19 +98,10 @@ public class PDFDictionary extends PDFObject {
 
     /** {@inheritDoc} */
     @Override
-    protected int output(OutputStream stream) throws IOException {
+    public int output(OutputStream stream) throws IOException {
         CountingOutputStream cout = new CountingOutputStream(stream);
         StringBuilder textBuffer = new StringBuilder(64);
-        if (hasObjectNumber()) {
-            textBuffer.append(getObjectID());
-        }
-
         writeDictionary(cout, textBuffer);
-
-        if (hasObjectNumber()) {
-            textBuffer.append("\nendobj\n");
-        }
-
         PDFDocument.flushTextBuffer(textBuffer, cout);
         return cout.getCount();
     }

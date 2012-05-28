@@ -420,7 +420,7 @@ public abstract class AbstractBreaker {
                 alg.setConstantLineWidth(flowBPD);
                 int optimalPageCount = alg.findBreakingPoints(effectiveList, 1, true,
                         BreakingAlgorithm.ALL_BREAKS);
-                if (alg.getIPDdifference() != 0) {
+                if ( Math.abs ( alg.getIPDdifference() ) > 1 ) {
                     addAreas(alg, optimalPageCount, blockList, effectiveList);
                     // *** redo Phase 1 ***
                     log.trace("IPD changes after page " + optimalPageCount);
@@ -752,7 +752,7 @@ public abstract class AbstractBreaker {
         Position positionAtBreak = elementAtBreak.getPosition();
         if (!(positionAtBreak instanceof SpaceResolver.SpaceHandlingBreakPosition)) {
             throw new UnsupportedOperationException(
-                    "Don't know how to restart at position" + positionAtBreak);
+                    "Don't know how to restart at position " + positionAtBreak);
         }
         /* Retrieve the original position wrapped into this space position */
         positionAtBreak = positionAtBreak.getPosition();

@@ -22,10 +22,8 @@ package org.apache.fop.fonts;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -58,12 +56,6 @@ public class FontInfo {
 
     /** look up a font-name to get a font (that implements FontMetrics at least) */
     private Map<String, Typeface> fonts = null; //(String = font key)
-
-    /**
-     *  a collection of missing fonts; used to make sure the user gets
-     *  a warning for a missing font only once (not every time the font is used)
-     */
-    private Set<FontTriplet> loggedFontKeys = null;
 
     /** Cache for Font instances. */
     private Map<FontTriplet, Map<Integer, Font>> fontInstanceCache = null;
@@ -453,22 +445,19 @@ public class FontInfo {
         return fontTriplets;
     }
 
-    private Set<FontTriplet> getLoggedFontKeys() {
-        if (loggedFontKeys == null) {
-            loggedFontKeys = new HashSet<FontTriplet>();
+    private void notifyFontReplacement(FontTriplet replacedKey, FontTriplet newKey) {
+        if (this.eventListener != null) {
+            this.eventListener.fontSubstituted(this, replacedKey, newKey);
         }
-        return loggedFontKeys;
     }
 
-    private void notifyFontReplacement(FontTriplet replacedKey, FontTriplet newKey) {
-        if (!getLoggedFontKeys().contains(replacedKey)) {
-            getLoggedFontKeys().add(replacedKey);
-            if (this.eventListener != null) {
-                this.eventListener.fontSubstituted(this, replacedKey, newKey);
-            } else {
-                log.warn("Font '" + replacedKey + "' not found. "
-                        + "Substituting with '" + newKey + "'.");
-            }
+    /**
+     * Notify listeners that the SVG text for the given font will be stroked as shapes.
+     * @param fontFamily a SVG font family
+     */
+    public void notifyStrokingSVGTextAsShapes(String fontFamily) {
+        if (this.eventListener != null) {
+            this.eventListener.svgTextStrokedAsShapes(this, fontFamily);
         }
     }
 
@@ -485,7 +474,7 @@ public class FontInfo {
         FontTriplet key = null;
         String f = null;
         int newWeight = weight;
-        if (newWeight <= 400) {
+        if (newWeight < 400) {
             while (f == null && newWeight > 100) {
                 newWeight -= 100;
                 key = createFontKey(family, style, newWeight);
@@ -497,7 +486,7 @@ public class FontInfo {
                 key = createFontKey(family, style, newWeight);
                 f = getInternalFontKey(key);
             }
-        } else if (newWeight == 500) {
+        } else if (newWeight == 400 || newWeight == 500) {
             key = createFontKey(family, style, 400);
             f = getInternalFontKey(key);
         } else if (newWeight > 500) {

@@ -34,6 +34,8 @@ import org.apache.fop.fonts.type1.AdobeStandardEncodingTestCase;
 import org.apache.fop.image.loader.batik.ImageLoaderTestCase;
 import org.apache.fop.image.loader.batik.ImagePreloaderTestCase;
 import org.apache.fop.intermediate.IFMimickingTestCase;
+import org.apache.fop.layoutmgr.PageSequenceLayoutManagerTestCase;
+import org.apache.fop.pdf.PDFLibraryTestSuite;
 import org.apache.fop.render.extensions.prepress.PageBoundariesTestCase;
 import org.apache.fop.render.extensions.prepress.PageScaleTestCase;
 import org.apache.fop.render.pdf.PDFAConformanceTestCase;
@@ -44,7 +46,6 @@ import org.apache.fop.render.pdf.RenderPDFTestSuite;
 import org.apache.fop.render.ps.PSTestSuite;
 import org.apache.fop.render.rtf.RichTextFormatTestSuite;
 import org.apache.fop.traits.MinOptMaxTestCase;
-import org.apache.fop.pdf.PDFLibraryTestSuite;
 
 /**
  * Test suite for basic functionality of FOP.
@@ -62,6 +63,7 @@ import org.apache.fop.pdf.PDFLibraryTestSuite;
         ImageLoaderTestCase.class,
         ImagePreloaderTestCase.class,
         IFMimickingTestCase.class,
+        PageSequenceLayoutManagerTestCase.class,
         PageBoundariesTestCase.class,
         PageScaleTestCase.class,
         org.apache.fop.afp.AFPTestSuite.class,

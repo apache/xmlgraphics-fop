@@ -23,6 +23,7 @@ import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.util.CompareUtil;
 
 /**
  * Base class used for handling properties of the fo:space-before and
@@ -166,6 +167,29 @@ public class SpaceProperty extends LengthRangeProperty {
      */
     public Object getObject() {
         return this;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + CompareUtil.getHashCode(precedence);
+        result = prime * result + CompareUtil.getHashCode(conditionality);
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof SpaceProperty)) {
+            return false;
+        }
+        SpaceProperty other = (SpaceProperty) obj;
+        return super.equals(obj)
+                && CompareUtil.equal(precedence, other.precedence)
+                && CompareUtil.equal(conditionality, other.conditionality);
     }
 
 }

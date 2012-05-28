@@ -49,7 +49,7 @@ class EventProducerCollector {
     private static final Map<String, Class<?>> PRIMITIVE_MAP;
 
     static {
-        Map <String, Class<?>> m = new java.util.HashMap<String, Class<?>>();
+        Map<String, Class<?>> m = new java.util.HashMap<String, Class<?>>();
         m.put("boolean", Boolean.class);
         m.put("byte", Byte.class);
         m.put("char", Character.class);

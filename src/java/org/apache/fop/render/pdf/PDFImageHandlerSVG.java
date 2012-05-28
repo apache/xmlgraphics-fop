@@ -26,13 +26,14 @@ import java.io.IOException;
 
 import org.w3c.dom.Document;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.GVTBuilder;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.gvt.GraphicsNode;
 import org.apache.batik.util.SVGConstants;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import org.apache.xmlgraphics.image.loader.Image;
 import org.apache.xmlgraphics.image.loader.ImageFlavor;
@@ -153,8 +154,8 @@ public class PDFImageHandlerSVG implements ImageHandler {
             MarkedContentInfo mci = pdfContext.getMarkedContentInfo();
             generator.beginMarkedContentSequence(mci.tag, mci.mcid);
         }
-        generator.setColor(Color.black, false);
-        generator.setColor(Color.black, true);
+        generator.updateColor(Color.black, false, null);
+        generator.updateColor(Color.black, true, null);
 
         if (!scaling.isIdentity()) {
             if (log.isTraceEnabled()) {

@@ -22,7 +22,7 @@ package org.apache.fop.render.intermediate;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
-import java.util.List;
+import java.util.ArrayList;
 
 import org.apache.xmlgraphics.java2d.GraphicContext;
 
@@ -33,7 +33,7 @@ public class IFGraphicContext extends GraphicContext {
 
     private static final AffineTransform[] EMPTY_TRANSFORM_ARRAY = new AffineTransform[0];
 
-    private List groupList = new java.util.ArrayList();
+    private ArrayList groupList = new ArrayList();
 
     /**
      * Default constructor.
@@ -48,17 +48,20 @@ public class IFGraphicContext extends GraphicContext {
      */
     protected IFGraphicContext(IFGraphicContext graphicContext) {
         super(graphicContext);
-        //We don't clone groupDepth!
+        // N.B. do not perform deep copy on groupList; doing so causes
+        // a junit regression... have not investigated cause... [GA]
+        // groupList = (ArrayList) graphicContext.groupList.clone();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public Object clone() {
-        return new IFGraphicContext(this);
+        return new IFGraphicContext ( this );
     }
 
     /** @param group a group */
     public void pushGroup(Group group) {
-        //this.groupDepth++;
         this.groupList.add(group);
         for (int i = 0, c = group.getTransforms().length; i < c; i++) {
             transform(group.getTransforms()[i]);

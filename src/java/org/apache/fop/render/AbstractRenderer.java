@@ -25,7 +25,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -57,6 +56,7 @@ import org.apache.fop.area.RegionViewport;
 import org.apache.fop.area.Span;
 import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.Container;
+import org.apache.fop.area.inline.FilledArea;
 import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.Image;
 import org.apache.fop.area.inline.InlineArea;
@@ -402,22 +402,34 @@ public abstract class AbstractRenderer
      * @param mr  The main reference area
      */
     protected void renderMainReference(MainReference mr) {
-        int saveIPPos = currentIPPosition;
-
         Span span = null;
         List spans = mr.getSpans();
         int saveBPPos = currentBPPosition;
         int saveSpanBPPos = saveBPPos;
+        int saveIPPos = currentIPPosition;
         for (int count = 0; count < spans.size(); count++) {
             span = (Span) spans.get(count);
+            int level = span.getBidiLevel();
+            if ( level < 0 ) {
+                level = 0;
+            }
+            if ( ( level & 1 ) == 1 ) {
+                currentIPPosition += span.getIPD();
+                currentIPPosition += mr.getColumnGap();
+            }
             for (int c = 0; c < span.getColumnCount(); c++) {
                 NormalFlow flow = span.getNormalFlow(c);
-
                 if (flow != null) {
                     currentBPPosition = saveSpanBPPos;
+                    if ( ( level & 1 ) == 1 ) {
+                        currentIPPosition -= flow.getIPD();
+                        currentIPPosition -= mr.getColumnGap();
+                    }
                     renderFlow(flow);
-                    currentIPPosition += flow.getIPD();
-                    currentIPPosition += mr.getColumnGap();
+                    if ( ( level & 1 ) == 0 ) {
+                        currentIPPosition += flow.getIPD();
+                        currentIPPosition += mr.getColumnGap();
+                    }
                 }
             }
             currentIPPosition = saveIPPos;
@@ -512,17 +524,10 @@ public abstract class AbstractRenderer
      */
     protected void renderBlocks(Block parent, List blocks) {
         int saveIP = currentIPPosition;
-//        int saveBP = currentBPPosition;
 
         // Calculate the position of the content rectangle.
         if (parent != null && !parent.getTraitAsBoolean(Trait.IS_VIEWPORT_AREA)) {
             currentBPPosition += parent.getBorderAndPaddingWidthBefore();
-            /* This is unnecessary now as we're going to use the *-indent traits
-            currentIPPosition += parent.getBorderAndPaddingWidthStart();
-            Integer spaceStart = (Integer) parent.getTrait(Trait.SPACE_START);
-            if (spaceStart != null) {
-                currentIPPosition += spaceStart.intValue();
-            }*/
         }
 
         // the position of the containing block is used for
@@ -541,15 +546,19 @@ public abstract class AbstractRenderer
                 renderBlock((Block) obj);
                 containingBPPosition = contBP;
                 containingIPPosition = contIP;
-            } else {
+            } else if (obj instanceof LineArea) {
                 // a line area is rendered from the top left position
                 // of the line, each inline object is offset from there
                 LineArea line = (LineArea) obj;
-                currentIPPosition = contIP
-                        + parent.getStartIndent()
-                        + line.getStartIndent();
+                if ( parent != null ) {
+                    int level = parent.getBidiLevel();
+                    if ( ( level == -1 ) || ( ( level & 1 ) == 0 ) ) {
+                        currentIPPosition += parent.getStartIndent();
+                    } else {
+                        currentIPPosition += parent.getEndIndent();
+                    }
+                }
                 renderLineArea(line);
-                //InlineArea child = (InlineArea) line.getInlineAreas().get(0);
                 currentBPPosition += line.getAllocBPD();
             }
             currentIPPosition = saveIP;
@@ -562,6 +571,7 @@ public abstract class AbstractRenderer
      * @param block  The block area
      */
     protected void renderBlock(Block block) {
+        assert block != null;
         List children = block.getChildAreas();
         if (block instanceof BlockViewport) {
             if (children != null) {
@@ -611,11 +621,38 @@ public abstract class AbstractRenderer
         List children = line.getInlineAreas();
         int saveBP = currentBPPosition;
         currentBPPosition += line.getSpaceBefore();
-        for (int count = 0; count < children.size(); count++) {
-            InlineArea inline = (InlineArea) children.get(count);
+        int bl = line.getBidiLevel();
+        if ( bl >= 0 ) {
+            if ( ( bl & 1 ) == 0 ) {
+                currentIPPosition += line.getStartIndent();
+            } else {
+                currentIPPosition += line.getEndIndent();
+                // if line's content overflows line area, then
+                // ensure that overflow is drawn (extends)
+                // outside of left side of line area
+                int overflow = computeInlinesOverflow ( line );
+                if ( overflow > 0 ) {
+                    currentIPPosition -= overflow;
+                }
+            }
+        } else {
+            currentIPPosition += line.getStartIndent();
+        }
+        for (int i = 0, l = children.size(); i < l; i++) {
+            InlineArea inline = (InlineArea) children.get(i);
             renderInlineArea(inline);
         }
         currentBPPosition = saveBP;
+    }
+
+    private int computeInlinesOverflow ( LineArea line ) {
+        List children = line.getInlineAreas();
+        int ipdConsumed = 0;
+        for (int i = 0, l = children.size(); i < l; i++) {
+            InlineArea inline = (InlineArea) children.get(i);
+            ipdConsumed += inline.getIPD();
+        }
+        return ipdConsumed - line.getIPD();
     }
 
     /**
@@ -678,11 +715,12 @@ public abstract class AbstractRenderer
      * @param text the text to render
      */
     protected void renderText(TextArea text) {
+        List children = text.getChildAreas();
         int saveIP = currentIPPosition;
         int saveBP = currentBPPosition;
-        Iterator iter = text.getChildAreas().iterator();
-        while (iter.hasNext()) {
-            renderInlineArea((InlineArea) iter.next());
+        for (int i = 0, l = children.size(); i < l; i++) {
+            InlineArea inline = (InlineArea) children.get(i);
+            renderInlineArea(inline);
         }
         currentIPPosition = saveIP + text.getAllocIPD();
     }
@@ -708,14 +746,39 @@ public abstract class AbstractRenderer
      * @param ip the inline parent to render
      */
     protected void renderInlineParent(InlineParent ip) {
+        int level = ip.getBidiLevel();
+        List children = ip.getChildAreas();
         renderInlineAreaBackAndBorders(ip);
         int saveIP = currentIPPosition;
         int saveBP = currentBPPosition;
-        currentIPPosition += ip.getBorderAndPaddingWidthStart();
-        currentBPPosition += ip.getOffset();
-        Iterator iter = ip.getChildAreas().iterator();
-        while (iter.hasNext()) {
-            renderInlineArea((InlineArea) iter.next());
+        // if inline parent is a filled area (generated by Leader), and if
+        // it is right-to-left, then adjust starting ip position in order to
+        // align children to starting (right) edge of filled area
+        int ipAdjust;
+        if ( ( ip instanceof FilledArea ) && ( ( level & 1 ) != 0 ) ) {
+            int ipdChildren = 0;
+            for (int i = 0, l = children.size(); i < l; i++) {
+                InlineArea inline = (InlineArea) children.get(i);
+                ipdChildren += inline.getAllocIPD();
+            }
+            ipAdjust = ip.getAllocIPD() - ipdChildren;
+        } else {
+            ipAdjust = 0;
+        }
+        // perform inline position adjustments
+        if ( ( level == -1 ) || ( ( level & 1 ) == 0 ) ) {
+            currentIPPosition += ip.getBorderAndPaddingWidthStart();
+        } else {
+            currentIPPosition += ip.getBorderAndPaddingWidthEnd();
+            if ( ipAdjust > 0 ) {
+                currentIPPosition += ipAdjust;
+            }
+        }
+        currentBPPosition += ip.getBlockProgressionOffset();
+        // render children inlines
+        for (int i = 0, l = children.size(); i < l; i++) {
+            InlineArea inline = (InlineArea) children.get(i);
+            renderInlineArea(inline);
         }
         currentIPPosition = saveIP + ip.getAllocIPD();
         currentBPPosition = saveBP;
@@ -726,11 +789,16 @@ public abstract class AbstractRenderer
      * @param ibp the inline block parent to render
      */
     protected void renderInlineBlockParent(InlineBlockParent ibp) {
+        int level = ibp.getBidiLevel();
         renderInlineAreaBackAndBorders(ibp);
-        currentIPPosition += ibp.getBorderAndPaddingWidthStart();
+        if ( ( level == -1 ) || ( ( level & 1 ) == 0 ) ) {
+            currentIPPosition += ibp.getBorderAndPaddingWidthStart();
+        } else {
+            currentIPPosition += ibp.getBorderAndPaddingWidthEnd();
+        }
         // For inline content the BP position is updated by the enclosing line area
         int saveBP = currentBPPosition;
-        currentBPPosition += ibp.getOffset();
+        currentBPPosition += ibp.getBlockProgressionOffset();
         renderBlock(ibp.getChildArea());
         currentBPPosition = saveBP;
     }
@@ -742,7 +810,7 @@ public abstract class AbstractRenderer
     protected void renderInlineViewport(InlineViewport viewport) {
         Area content = viewport.getContent();
         int saveBP = currentBPPosition;
-        currentBPPosition += viewport.getOffset();
+        currentBPPosition += viewport.getBlockProgressionOffset();
         Rectangle2D contpos = viewport.getContentPosition();
         if (content instanceof Image) {
             renderImage((Image) content, contpos);

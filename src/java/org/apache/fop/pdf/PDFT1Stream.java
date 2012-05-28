@@ -46,7 +46,7 @@ public class PDFT1Stream extends AbstractPDFFontStream {
      * byte arrays around so much
      * {@inheritDoc}
      */
-    protected int output(java.io.OutputStream stream)
+    public int output(java.io.OutputStream stream)
             throws java.io.IOException {
         if (pfb == null) {
             throw new IllegalStateException("pfb must not be null at this point");

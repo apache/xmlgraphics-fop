@@ -21,9 +21,6 @@ package org.apache.fop.traits;
 
 import java.io.Serializable;
 
-import org.apache.fop.fo.properties.LengthRangeProperty;
-import org.apache.fop.fo.properties.SpaceProperty;
-
 /**
  * This class holds the resolved (as mpoints) form of a {@link LengthRangeProperty LengthRange} or
  * {@link SpaceProperty Space} type property value.

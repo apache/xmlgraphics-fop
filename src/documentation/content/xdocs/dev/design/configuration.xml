@@ -1,4 +1,4 @@
-<?xml version="1.0" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -17,15 +17,15 @@
 -->
 <!-- $Id$ -->
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.3//EN" "http://forrest.apache.org/dtd/document-v13.dtd" [
-<!ENTITY lsquo   "&#x2018;">
-<!ENTITY rsquo   "&#x2019;">
-<!ENTITY ldquo   "&#x201C;">
-<!ENTITY rdquo   "&#x201D;">
+<!ENTITY lsquo "�">
+<!ENTITY rsquo "�">
+<!ENTITY ldquo "�">
+<!ENTITY rdquo "�">
 ]>
 
 <document>
   <header>
-    <title>FOP: Configuration and Logging</title>
+    <title>Apache™ FOP: Configuration and Logging</title>
     <version>$Revision$</version>
   </header>
 
@@ -33,7 +33,7 @@
 
     <section id="general">
       <title>Configuration File Basics</title>
-      <p>The FOP configuration file is an XML file containing a
+      <p>The Apache™ FOP configuration file is an XML file containing a
 variety of settings that are useful for controlling FOP's
 behavior, and for helping it find resources that you wish it to
 use.</p>
@@ -56,7 +56,7 @@ to find it.</p>
       <section id="command-line">
         <title>From the Command Line</title>
         <p>When you run FOP from the command-line, use the
-&ldquo;<code>-c</code>&rdquo; command-line option with the path to the
+&amp;ldquo;<code>-c</code>&amp;rdquo; command-line option with the path to the
 configuration file as the option value.</p>
       </section>
 
@@ -100,7 +100,7 @@ configuration object with the user agent as described above.</p>
       <title>The Configuration File</title>
       <p>The top-level element is arbitrary. You may give it any name
 that is useful for you, e.g. <code>&lt;fop-configuration
-version="2"></code>.</p>
+version="2"&gt;</code>.</p>
       <p>Inside the top-level element the configuration may contain
 three sections: <code>userAgent</code>, <code>renderers</code>,
 and <code>hyphenation</code>. At the moment of this writing the
@@ -110,7 +110,7 @@ not used by FOP.</p>
 <code>renderer</code>. There may be one subsection for each type
 of renderer. The renderers are identified by their MIME type,
 which is given in the <code>mime</code> attribute. For example:
-<code>&lt;renderer mime="application/pdf"></code>. The content
+<code>&lt;renderer mime="application/pdf"&gt;</code>. The content
 of each <code>renderer</code> subsection depends on the type of
 renderer.</p>
       <p>The PDF renderer (MIME type <code>application/pdf</code>) has
@@ -163,8 +163,7 @@ more information on creating and modifying hyphenation within FOP.</p>
       <p>Font configuration information is included in the FOP
 configuration file as describe above. It is documented in more
 detail at <link href="../fonts.html">FOP: Fonts</link>. Note
-especially the section entitled <link
-href="../fonts.html#register">Register Fonts with FOP</link>.</p>
+especially the section entitled <link href="../fonts.html#register">Register Fonts with FOP</link>.</p>
     </section>
 
     <section id="logging">
@@ -182,7 +181,7 @@ to use. For example:</p>
 systems. On Java 1.4 systems JDK 1.4 is the default.</code></p>
       <p>Secondly, you configure the selected logging package. How
 this is done depends on the logging package. The most important
-feature is the log level. The default is level &ldquo;info&rdquo;. An
+feature is the log level. The default is level &amp;ldquo;info&amp;rdquo;. An
 example configuration file for SimpleLog is:</p>
       <source>
 # logging level for all loggers, default info
@@ -193,7 +192,7 @@ org.apache.commons.logging.simplelog.log.xxxxx=debug
 org.apache.commons.logging.simplelog.log.org.apache.fop.pdf=trace
 </source>
       <p>FOP uses several named loggers. When you set the logging level
-for all loggers to &ldquo;info&rdquo;, you get a decent small amount
+for all loggers to &amp;ldquo;info&amp;rdquo;, you get a decent small amount
 of information
 about application progress. The debugging and especially the trace
 levels produce a lot of output. If you need these logging levels,
@@ -204,4 +203,3 @@ bear the name of their package, their class or of a superclass.</p>
 
   </body>
 </document>
-

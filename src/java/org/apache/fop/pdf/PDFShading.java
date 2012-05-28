@@ -342,8 +342,7 @@ public class PDFShading extends PDFObject {
         int vectorSize;
         int tempInt;
         StringBuffer p = new StringBuffer(128);
-        p.append(getObjectID()
-            + "<< \n/ShadingType " + this.shadingType + " \n");
+        p.append("<<\n/ShadingType " + this.shadingType + " \n");
         if (this.colorSpace != null) {
             p.append("/ColorSpace /"
                      + this.colorSpace.getName() + " \n");
@@ -528,7 +527,7 @@ public class PDFShading extends PDFObject {
 
         }
 
-        p.append(">> \nendobj\n");
+        p.append(">>");
 
         return (p.toString());
     }

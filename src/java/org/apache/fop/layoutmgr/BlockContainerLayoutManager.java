@@ -44,8 +44,8 @@ import org.apache.fop.traits.SpaceVal;
 /**
  * LayoutManager for a block-container FO.
  */
-public class BlockContainerLayoutManager extends BlockStackingLayoutManager
-                implements ConditionalElementListener {
+public class BlockContainerLayoutManager extends BlockStackingLayoutManager implements
+        ConditionalElementListener, BreakOpportunity {
 
     /**
      * logging instance
@@ -86,6 +86,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
     private MinOptMax effSpaceBefore;
     private MinOptMax effSpaceAfter;
 
+    private int horizontalOverflow;
     private double contentRectOffsetX = 0;
     private double contentRectOffsetY = 0;
 
@@ -349,7 +350,12 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         contentRectOffsetX = 0;
         contentRectOffsetY = 0;
 
-        contentRectOffsetX += fo.getCommonMarginBlock().startIndent.getValue(this);
+        int level = fo.getBidiLevel();
+        if ( ( level < 0 ) || ( ( level & 1 ) == 0 ) ) {
+            contentRectOffsetX += fo.getCommonMarginBlock().startIndent.getValue(this);
+        } else {
+            contentRectOffsetX += fo.getCommonMarginBlock().endIndent.getValue(this);
+        }
         contentRectOffsetY += fo.getCommonBorderPaddingBackground().getBorderBeforeWidth(false);
         contentRectOffsetY += fo.getCommonBorderPaddingBackground().getPaddingBefore(false, this);
 
@@ -396,7 +402,7 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
             BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Provider.get(
                     getBlockContainerFO().getUserAgent().getEventBroadcaster());
             boolean canRecover = (getBlockContainerFO().getOverflow() != EN_ERROR_IF_OVERFLOW);
-            eventProducer.viewportOverflow(this, getBlockContainerFO().getName(),
+            eventProducer.viewportBPDOverflow(this, getBlockContainerFO().getName(),
                     breaker.getOverflowAmount(), needClip(), canRecover,
                     getBlockContainerFO().getLocator());
         }
@@ -418,7 +424,8 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
 
         boolean bpDirectionChanges = blockProgressionDirectionChanges();
         Point offset = getAbsOffset();
-        int allocBPD, allocIPD;
+        int allocBPD;
+        int allocIPD;
         if (height.getEnum() == EN_AUTO
                 || (!height.isAbsolute() && getAncestorBlockAreaBPD() <= 0)) {
             //auto height when height="auto" or "if that dimension is not specified explicitly
@@ -547,9 +554,17 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
                 BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Provider.get(
                         getBlockContainerFO().getUserAgent().getEventBroadcaster());
                 boolean canRecover = (getBlockContainerFO().getOverflow() != EN_ERROR_IF_OVERFLOW);
-                eventProducer.viewportOverflow(this, getBlockContainerFO().getName(),
+                eventProducer.viewportBPDOverflow(this, getBlockContainerFO().getName(),
                         breaker.getOverflowAmount(), needClip(), canRecover,
                         getBlockContainerFO().getLocator());
+            }
+            // this handles the IPD (horizontal) overflow
+            if (this.horizontalOverflow > 0) {
+                BlockLevelEventProducer eventProducer = BlockLevelEventProducer.Provider
+                        .get(getBlockContainerFO().getUserAgent().getEventBroadcaster());
+                boolean canRecover = (getBlockContainerFO().getOverflow() != EN_ERROR_IF_OVERFLOW);
+                eventProducer.viewportIPDOverflow(this, getBlockContainerFO().getName(),
+                        this.horizontalOverflow, needClip(), canRecover, getBlockContainerFO().getLocator());
             }
         }
 
@@ -834,10 +849,13 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         if (referenceArea == null) {
             boolean switchedProgressionDirection = blockProgressionDirectionChanges();
             boolean allowBPDUpdate = autoHeight && !switchedProgressionDirection;
+            int level = getBlockContainerFO().getBidiLevel();
 
             viewportBlockArea = new BlockViewport(allowBPDUpdate);
             viewportBlockArea.addTrait(Trait.IS_VIEWPORT_AREA, Boolean.TRUE);
-
+            if ( level >= 0 ) {
+                viewportBlockArea.setBidiLevel ( level );
+            }
             viewportBlockArea.setIPD(getContentAreaIPD());
             if (allowBPDUpdate) {
                 viewportBlockArea.setBPD(0);
@@ -872,6 +890,9 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
 
             referenceArea = new Block();
             referenceArea.addTrait(Trait.IS_REFERENCE_AREA, Boolean.TRUE);
+            if ( level >= 0 ) {
+                referenceArea.setBidiLevel ( level );
+            }
             TraitSetter.setProducerID(referenceArea, getBlockContainerFO().getId());
 
             if (abProps.absolutePosition == EN_ABSOLUTE) {
@@ -1013,6 +1034,18 @@ public class BlockContainerLayoutManager extends BlockStackingLayoutManager
         if (log.isDebugEnabled()) {
             log.debug(this + ": Padding " + side + " -> " + effectiveLength);
         }
+    }
+
+    /** {@inheritDoc} */
+    public boolean handleOverflow(int milliPoints) {
+        if (milliPoints > this.horizontalOverflow) {
+            this.horizontalOverflow = milliPoints;
+        }
+        return true;
+    }
+
+    public int getBreakBefore() {
+        return BreakOpportunityHelper.getBreakBefore(this);
     }
 
 }

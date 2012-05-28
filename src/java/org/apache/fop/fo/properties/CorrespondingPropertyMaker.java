@@ -35,6 +35,8 @@ public class CorrespondingPropertyMaker {
     protected int rltb;
     /** corresponding property for tb-rl writing mode */
     protected int tbrl;
+    /** corresponding property for tb-lr writing mode */
+    protected int tblr;
     /** user parent property list */
     protected boolean useParent;
     private boolean relative;
@@ -48,17 +50,26 @@ public class CorrespondingPropertyMaker {
         baseMaker.setCorresponding(this);
     }
 
+    /**
+     * Set corresponding property values.
+     * @param lrtb a corresponding value
+     * @param rltb a corresponding value
+     * @param tbrl a corresponding value
+     * @param tblr a corresponding value
+     */
 
     /**
      * Set corresponding property identifiers.
      * @param lrtb the property that corresponds with lr-tb writing mode
      * @param rltb the property that corresponds with rl-tb writing mode
      * @param tbrl the property that corresponds with tb-lr writing mode
+     * @param tblr the property that corresponds with tb-lr writing mode
      */
-    public void setCorresponding(int lrtb, int rltb, int tbrl) {
+    public void setCorresponding(int lrtb, int rltb, int tbrl, int tblr) {
         this.lrtb = lrtb;
         this.rltb = rltb;
         this.tbrl = tbrl;
+        this.tblr = tblr;
     }
 
     /**
@@ -72,7 +83,7 @@ public class CorrespondingPropertyMaker {
 
     /**
      * Set relative flag.
-     * @param relative true if relative direction
+     * @param relative true if properties operate on a relative direction
      */
     public void setRelative(boolean relative) {
         this.relative = relative;
@@ -102,7 +113,7 @@ public class CorrespondingPropertyMaker {
 
         PropertyList pList = getWMPropertyList(propertyList);
         if (pList != null) {
-            int correspondingId = pList.getWritingMode(lrtb, rltb, tbrl);
+            int correspondingId = pList.selectFromWritingMode(lrtb, rltb, tbrl, tblr);
 
             if (pList.getExplicit(correspondingId) != null) {
                 return true;
@@ -126,7 +137,7 @@ public class CorrespondingPropertyMaker {
         if (pList == null) {
             return null;
         }
-        int correspondingId = pList.getWritingMode(lrtb, rltb, tbrl);
+        int correspondingId = pList.selectFromWritingMode(lrtb, rltb, tbrl, tblr);
 
         Property p = propertyList.getExplicitOrShorthand(correspondingId);
         if (p != null) {

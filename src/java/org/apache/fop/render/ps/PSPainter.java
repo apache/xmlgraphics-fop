@@ -51,6 +51,7 @@ import org.apache.fop.render.intermediate.AbstractIFPainter;
 import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFState;
+import org.apache.fop.render.intermediate.IFUtil;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.traits.RuleStyle;
 import org.apache.fop.util.CharUtilities;
@@ -73,10 +74,14 @@ public class PSPainter extends AbstractIFPainter {
      * @param documentHandler the parent document handler
      */
     public PSPainter(PSDocumentHandler documentHandler) {
+        this(documentHandler, IFState.create());
+    }
+
+    protected PSPainter(PSDocumentHandler documentHandler, IFState state) {
         super();
         this.documentHandler = documentHandler;
         this.borderPainter = new PSBorderPainter(documentHandler.gen);
-        this.state = IFState.create();
+        this.state = state;
     }
 
     /** {@inheritDoc} */
@@ -234,16 +239,16 @@ public class PSPainter extends AbstractIFPainter {
     }
 
     /** {@inheritDoc} */
-    public void drawBorderRect(Rectangle rect, BorderProps before, BorderProps after,
-            BorderProps start, BorderProps end) throws IFException {
-        if (before != null || after != null || start != null || end != null) {
+    public void drawBorderRect(Rectangle rect, BorderProps top, BorderProps bottom,
+            BorderProps left, BorderProps right) throws IFException {
+        if (top != null || bottom != null || left != null || right != null) {
             try {
                 endTextObject();
                 if (getPSUtil().getRenderingMode() == PSRenderingMode.SIZE
-                    && hasOnlySolidBorders(before, after, start, end)) {
-                    super.drawBorderRect(rect, before, after, start, end);
+                    && hasOnlySolidBorders(top, bottom, left, right)) {
+                    super.drawBorderRect(rect, top, bottom, left, right);
                 } else {
-                    this.borderPainter.drawBorders(rect, before, after, start, end);
+                    this.borderPainter.drawBorders(rect, top, bottom, left, right);
                 }
             } catch (IOException ioe) {
                 throw new IFException("I/O error in drawBorderRect()", ioe);
@@ -343,9 +348,12 @@ public class PSPainter extends AbstractIFPainter {
 
     /** {@inheritDoc} */
     public void drawText(int x, int y, int letterSpacing, int wordSpacing,
-            int[] dx, String text) throws IFException {
+            int[][] dp, String text) throws IFException {
         try {
-            //Note: dy is currently ignored
+            //Do not draw text if font-size is 0 as it creates an invalid PostScript file
+            if (state.getFontSize() == 0) {
+                return;
+            }
             PSGenerator generator = getGenerator();
             generator.useColor(state.getTextColor());
             beginTextObject();
@@ -373,9 +381,9 @@ public class PSPainter extends AbstractIFPainter {
                     + " " + formatMptAsPt(generator, y) + " Tm");
 
             int textLen = text.length();
-            if (singleByteFont != null && singleByteFont.hasAdditionalEncodings()) {
+            int start = 0;
+            if (singleByteFont != null) {
                 //Analyze string and split up in order to paint in different sub-fonts/encodings
-                int start = 0;
                 int currentEncoding = -1;
                 for (int i = 0; i < textLen; i++) {
                     char c = text.charAt(i);
@@ -384,7 +392,7 @@ public class PSPainter extends AbstractIFPainter {
                     if (currentEncoding != encoding) {
                         if (i > 0) {
                             writeText(text, start, i - start,
-                                    letterSpacing, wordSpacing, dx, font, tf);
+                                    letterSpacing, wordSpacing, dp, font, tf);
                         }
                         if (encoding == 0) {
                             useFont(fontKey, sizeMillipoints);
@@ -395,14 +403,11 @@ public class PSPainter extends AbstractIFPainter {
                         start = i;
                     }
                 }
-                writeText(text, start, textLen - start,
-                        letterSpacing, wordSpacing, dx, font, tf);
             } else {
                 //Simple single-font painting
                 useFont(fontKey, sizeMillipoints);
-                writeText(text, 0, textLen,
-                        letterSpacing, wordSpacing, dx, font, tf);
             }
+            writeText(text, start, textLen - start, letterSpacing, wordSpacing, dp, font, tf);
         } catch (IOException ioe) {
             throw new IFException("I/O error in drawText()", ioe);
         }
@@ -410,7 +415,7 @@ public class PSPainter extends AbstractIFPainter {
 
     private void writeText(                                      // CSOK: ParameterNumber
             String text, int start, int len,
-            int letterSpacing, int wordSpacing, int[] dx,
+            int letterSpacing, int wordSpacing, int[][] dp,
             Font font, Typeface tf) throws IOException {
         PSGenerator generator = getGenerator();
         int end = start + len;
@@ -423,6 +428,7 @@ public class PSPainter extends AbstractIFPainter {
         int lineStart = 0;
         StringBuffer accText = new StringBuffer(initialSize);
         StringBuffer sb = new StringBuffer(initialSize);
+        int[] dx = IFUtil.convertDPToDX ( dp );
         int dxl = (dx != null ? dx.length : 0);
         for (int i = start; i < end; i++) {
             char orgChar = text.charAt(i);

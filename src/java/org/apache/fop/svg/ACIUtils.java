@@ -21,19 +21,20 @@ package org.apache.fop.svg;
 
 import java.awt.font.TextAttribute;
 import java.text.AttributedCharacterIterator;
-import java.text.CharacterIterator;
 import java.text.AttributedCharacterIterator.Attribute;
+import java.text.CharacterIterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import org.apache.batik.bridge.SVGFontFamily;
 import org.apache.batik.gvt.font.GVTFont;
 import org.apache.batik.gvt.font.GVTFontFamily;
 import org.apache.batik.gvt.text.GVTAttributedCharacterIterator;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
@@ -95,9 +96,10 @@ public final class ACIUtils {
         }
 
         if (gvtFonts != null) {
+            boolean haveInstanceOfSVGFontFamily = false;
             for (GVTFontFamily fam : gvtFonts) {
                 if (fam instanceof SVGFontFamily) {
-                    return null; //Let Batik paint this text!
+                    haveInstanceOfSVGFontFamily = true;
                 }
                 String fontFamily = fam.getFamilyName();
                 if (fontInfo.hasFont(fontFamily, style, weight)) {
@@ -114,6 +116,14 @@ public final class ACIUtils {
                 if (firstFontFamily == null) {
                     firstFontFamily = fontFamily;
                 }
+            }
+            // SVG fonts are embedded fonts in the SVG document and are rarely used; however if they
+            // are used but the fonts also exists in the system and are known to FOP then FOP should
+            // use them; then the decision whether Batik should stroke the text should be made after
+            // no matching fonts are found
+            if (fonts.isEmpty() && haveInstanceOfSVGFontFamily) {
+                fontInfo.notifyStrokingSVGTextAsShapes(firstFontFamily);
+                return null; // Let Batik paint this text!
             }
         }
         if (fonts.isEmpty()) {

@@ -190,10 +190,10 @@ public abstract class CharacterSetBuilder {
      * @return CharacterSet object
      * @throws IOException if an I/O error occurs
      */
-    public CharacterSet build(String characterSetName, String codePageName, String encoding,
+    public CharacterSet buildSBCS(String characterSetName, String codePageName, String encoding,
             ResourceAccessor accessor, AFPEventProducer eventProducer) throws IOException {
-        return processFont(characterSetName, codePageName, encoding, false, accessor,
-                eventProducer);
+        return processFont(characterSetName, codePageName, encoding, CharacterSetType.SINGLE_BYTE,
+                accessor, eventProducer);
     }
 
     /**
@@ -204,16 +204,16 @@ public abstract class CharacterSetBuilder {
      * @param characterSetName name of the characterset
      * @param codePageName name of the code page file
      * @param encoding encoding name
-     * @param isEDBCS if this is an EBCDIC double byte character set (DBCS)
+     * @param charsetType the characterset type
      * @param accessor used to load codepage and characterset
      * @param eventProducer for handling AFP related events
      * @return CharacterSet object
      * @throws IOException if an I/O error occurs
      */
     public CharacterSet buildDBCS(String characterSetName, String codePageName, String encoding,
-            boolean isEDBCS, ResourceAccessor accessor, AFPEventProducer eventProducer)
+            CharacterSetType charsetType, ResourceAccessor accessor, AFPEventProducer eventProducer)
             throws IOException {
-        return processFont(characterSetName, codePageName, encoding, isEDBCS, accessor,
+        return processFont(characterSetName, codePageName, encoding, charsetType, accessor,
                 eventProducer);
     }
 
@@ -236,7 +236,7 @@ public abstract class CharacterSetBuilder {
     }
 
     private CharacterSet processFont(String characterSetName, String codePageName, String encoding,
-            boolean isEDBCS, ResourceAccessor accessor, AFPEventProducer eventProducer)
+            CharacterSetType charsetType, ResourceAccessor accessor, AFPEventProducer eventProducer)
             throws IOException {
         // check for cached version of the characterset
         String descriptor = characterSetName + "_" + encoding + "_" + codePageName;
@@ -247,7 +247,7 @@ public abstract class CharacterSetBuilder {
         }
 
         // characterset not in the cache, so recreating
-        characterSet = new CharacterSet(codePageName, encoding, isEDBCS, characterSetName,
+        characterSet = new CharacterSet(codePageName, encoding, charsetType, characterSetName,
                 accessor, eventProducer);
 
         InputStream inputStream = null;
@@ -285,12 +285,12 @@ public abstract class CharacterSetBuilder {
                 CharacterSetOrientation[] characterSetOrientations
                     = processFontOrientation(structuredFieldReader);
 
-                int metricNormalizationFactor;
+                double metricNormalizationFactor;
                 if (fontControl.isRelative()) {
                     metricNormalizationFactor = 1;
                 } else {
                     int dpi = fontControl.getDpi();
-                    metricNormalizationFactor = 1000 * 72000
+                    metricNormalizationFactor = 1000.0d * 72000.0d
                         / fontDescriptor.getNominalFontSizeInMillipoints() / dpi;
                 }
 
@@ -465,8 +465,7 @@ public abstract class CharacterSetBuilder {
             }
         }
 
-        return (CharacterSetOrientation[]) orientations
-            .toArray(EMPTY_CSO_ARRAY);
+        return orientations.toArray(EMPTY_CSO_ARRAY);
     }
 
     /**
@@ -570,7 +569,7 @@ public abstract class CharacterSetBuilder {
 
                 String gcgiString = new String(gcgid, AFPConstants.EBCIDIC_ENCODING);
 
-                String idx = (String) codepage.get(gcgiString);
+                String idx = codepage.get(gcgiString);
 
                 if (idx != null) {
 
@@ -748,9 +747,7 @@ public abstract class CharacterSetBuilder {
                                     AFPConstants.EBCIDIC_ENCODING);
                             String charString = new String(charBytes, encoding);
                             codePages.put(gcgiString, charString);
-
-                        }
-                        else {
+                        } else {
                             position++;
                         }
                     }

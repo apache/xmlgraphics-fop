@@ -24,6 +24,7 @@ import java.util.List;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.util.CompareUtil;
 
 /**
  * Superclass for properties that are lists of other properties
@@ -105,4 +106,20 @@ public class ListProperty extends Property {
         return list;
     }
 
+    @Override
+    public int hashCode() {
+        return list.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof ListProperty)) {
+            return false;
+        }
+        ListProperty other = (ListProperty) obj;
+        return CompareUtil.equal(list, other.list);
+    }
 }

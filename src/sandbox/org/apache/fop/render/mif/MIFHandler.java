@@ -19,12 +19,14 @@
 
 package org.apache.fop.render.mif;
 
-// Java
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.xml.sax.SAXException;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.fo.flow.BasicLink;
@@ -51,7 +53,6 @@ import org.apache.fop.fo.pagination.PageSequenceMaster;
 import org.apache.fop.fo.pagination.SimplePageMaster;
 import org.apache.fop.fonts.FontSetup;
 import org.apache.fop.render.DefaultFontResolver;
-import org.xml.sax.SAXException;
 
 // TODO: do we really want every method throwing a SAXException
 
@@ -84,7 +85,8 @@ public class MIFHandler extends FOEventHandler {
     public MIFHandler(FOUserAgent ua, OutputStream os) {
         super(ua);
         outStream = os;
-        FontSetup.setup(fontInfo, null, new DefaultFontResolver(ua));
+        boolean base14Kerning = false; //TODO - FIXME
+        FontSetup.setup(fontInfo, null, new DefaultFontResolver(ua), base14Kerning);
     }
 
     /** {@inheritDoc} */

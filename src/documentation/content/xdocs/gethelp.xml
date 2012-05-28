@@ -1,4 +1,4 @@
-<?xml version="1.0" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -19,12 +19,12 @@
 <!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.3//EN" "http://forrest.apache.org/dtd/document-v13.dtd">
 <document>
   <header>
-    <title>FOP: Getting Help</title>
+    <title>Apache™ FOP: Getting Help</title>
     <subtitle>Checklist for Finding Appropriate Resources</subtitle>
     <version>$Revision$</version>
   </header>
   <body>
-    <p>The FOP developer community is eager to help you maximize the usefulness of FOP.
+    <p>The Apache™ FOP developer community is eager to help you maximize the usefulness of FOP.
 However, to make wise use of its limited resources, support must be primarily self-service.
 Go through the following checklist sequentially to determine what kind of help you need,
 and where to get it:</p>

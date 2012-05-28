@@ -21,19 +21,20 @@ package org.apache.fop.render.rtf.rtflib.tools;
 
 import java.util.List;
 
-import org.apache.commons.logging.impl.SimpleLog;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.impl.SimpleLog;
+
 import org.apache.fop.render.rtf.rtflib.rtfdoc.ITableColumnsInfo;
 import org.apache.fop.render.rtf.rtflib.rtfdoc.RtfAttributes;
 
 
-/** Used when handling fo:table to hold information to build the table.
+/**
+ * <p>Used when handling fo:table to hold information to build the table.</p>
  *
- *  Contributor(s):
- *  @author Bertrand Delacretaz <bdelacretaz@codeconsult.ch>
- *  @author Trembicki-Guy, Ed <GuyE@DNB.com>
- *  @author Boris Poudérous <boris.pouderous@eads-telecom.com>
- *  @author Peter Herweg <pherweg@web.de>
+ * <p>This work was authored by Bertrand Delacretaz (bdelacretaz@codeconsult.ch),
+ * Ed Trembicki-Guy (guye@dnb.com),
+ * Boris Poudérous (boris.pouderous@eads-telecom.com), and
+ * Peter Herweg (pherweg@web.de).</p>
  *
  *  This class was originally developed for the JFOR project and
  *  is now integrated into FOP.

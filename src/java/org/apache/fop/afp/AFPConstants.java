@@ -50,4 +50,15 @@ public interface AFPConstants {
      * 72dpi in millipoints
      */
     int DPI_72_MPTS = DPI_72 * 1000;
+
+    /**
+     * The line width is set as a multiplier of a default line with; the width of the default
+     * line width is implementation defined, which probably means different devices use different
+     * actual widths; this means that the source line width (as specified in, say, a SVG line
+     * element) needs to be corrected by a fudge factor that depends on the output device so that
+     * the final output (print to paper, screen viewer) looks as intended.
+     */
+    float LINE_WIDTH_CORRECTION = 2.5f;
+
 }
+

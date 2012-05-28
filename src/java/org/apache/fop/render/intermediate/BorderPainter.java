@@ -35,35 +35,35 @@ public abstract class BorderPainter {
     /**
      * Draws borders.
      * @param borderRect the border rectangle
-     * @param bpsBefore the border specification on the before side
-     * @param bpsAfter the border specification on the after side
-     * @param bpsStart the border specification on the start side
-     * @param bpsEnd the border specification on the end side
+     * @param bpsTop the border specification on the top side
+     * @param bpsBottom the border specification on the bottom side
+     * @param bpsLeft the border specification on the left side
+     * @param bpsRight the border specification on the end side
      * @throws IOException if an I/O error occurs while creating the borders
      */
     public void drawBorders(Rectangle borderRect,               // CSOK: MethodLength
-            BorderProps bpsBefore, BorderProps bpsAfter,
-            BorderProps bpsStart, BorderProps bpsEnd) throws IOException {
+            BorderProps bpsTop, BorderProps bpsBottom,
+            BorderProps bpsLeft, BorderProps bpsRight) throws IOException {
         int startx = borderRect.x;
         int starty = borderRect.y;
         int width = borderRect.width;
         int height = borderRect.height;
         boolean[] b = new boolean[] {
-            (bpsBefore != null), (bpsEnd != null),
-            (bpsAfter != null), (bpsStart != null)};
+            (bpsTop != null), (bpsRight != null),
+            (bpsBottom != null), (bpsLeft != null)};
         if (!b[0] && !b[1] && !b[2] && !b[3]) {
             return;
         }
         int[] bw = new int[] {
-            (b[0] ? bpsBefore.width : 0),
-            (b[1] ? bpsEnd.width : 0),
-            (b[2] ? bpsAfter.width : 0),
-            (b[3] ? bpsStart.width : 0)};
+            (b[0] ? bpsTop.width : 0),
+            (b[1] ? bpsRight.width : 0),
+            (b[2] ? bpsBottom.width : 0),
+            (b[3] ? bpsLeft.width : 0)};
         int[] clipw = new int[] {
-            BorderProps.getClippedWidth(bpsBefore),
-            BorderProps.getClippedWidth(bpsEnd),
-            BorderProps.getClippedWidth(bpsAfter),
-            BorderProps.getClippedWidth(bpsStart)};
+            BorderProps.getClippedWidth(bpsTop),
+            BorderProps.getClippedWidth(bpsRight),
+            BorderProps.getClippedWidth(bpsBottom),
+            BorderProps.getClippedWidth(bpsLeft)};
         starty += clipw[0];
         height -= clipw[0];
         height -= clipw[2];
@@ -73,7 +73,7 @@ public abstract class BorderPainter {
 
         boolean[] slant = new boolean[] {
             (b[3] && b[0]), (b[0] && b[1]), (b[1] && b[2]), (b[2] && b[3])};
-        if (bpsBefore != null) {
+        if (bpsTop != null) {
             int sx1 = startx;
             int sx2 = (slant[0] ? sx1 + bw[3] - clipw[3] : sx1);
             int ex1 = startx + width;
@@ -86,11 +86,11 @@ public abstract class BorderPainter {
             moveTo(sx1, clipy);
             int sx1a = sx1;
             int ex1a = ex1;
-            if (bpsBefore.mode == BorderProps.COLLAPSE_OUTER) {
-                if (bpsStart != null && bpsStart.mode == BorderProps.COLLAPSE_OUTER) {
+            if (bpsTop.mode == BorderProps.COLLAPSE_OUTER) {
+                if (bpsLeft != null && bpsLeft.mode == BorderProps.COLLAPSE_OUTER) {
                     sx1a -= clipw[3];
                 }
-                if (bpsEnd != null && bpsEnd.mode == BorderProps.COLLAPSE_OUTER) {
+                if (bpsRight != null && bpsRight.mode == BorderProps.COLLAPSE_OUTER) {
                     ex1a += clipw[1];
                 }
                 lineTo(sx1a, outery);
@@ -102,10 +102,10 @@ public abstract class BorderPainter {
             closePath();
             clip();
             drawBorderLine(sx1a, outery, ex1a, innery, true, true,
-                    bpsBefore.style, bpsBefore.color);
+                    bpsTop.style, bpsTop.color);
             restoreGraphicsState();
         }
-        if (bpsEnd != null) {
+        if (bpsRight != null) {
             int sy1 = starty;
             int sy2 = (slant[1] ? sy1 + bw[0] - clipw[0] : sy1);
             int ey1 = starty + height;
@@ -118,11 +118,11 @@ public abstract class BorderPainter {
             moveTo(clipx, sy1);
             int sy1a = sy1;
             int ey1a = ey1;
-            if (bpsEnd.mode == BorderProps.COLLAPSE_OUTER) {
-                if (bpsBefore != null && bpsBefore.mode == BorderProps.COLLAPSE_OUTER) {
+            if (bpsRight.mode == BorderProps.COLLAPSE_OUTER) {
+                if (bpsTop != null && bpsTop.mode == BorderProps.COLLAPSE_OUTER) {
                     sy1a -= clipw[0];
                 }
-                if (bpsAfter != null && bpsAfter.mode == BorderProps.COLLAPSE_OUTER) {
+                if (bpsBottom != null && bpsBottom.mode == BorderProps.COLLAPSE_OUTER) {
                     ey1a += clipw[2];
                 }
                 lineTo(outerx, sy1a);
@@ -133,10 +133,11 @@ public abstract class BorderPainter {
             lineTo(innerx, sy2);
             closePath();
             clip();
-            drawBorderLine(innerx, sy1a, outerx, ey1a, false, false, bpsEnd.style, bpsEnd.color);
+            drawBorderLine(innerx, sy1a, outerx, ey1a, false, false,
+                           bpsRight.style, bpsRight.color);
             restoreGraphicsState();
         }
-        if (bpsAfter != null) {
+        if (bpsBottom != null) {
             int sx1 = startx;
             int sx2 = (slant[3] ? sx1 + bw[3] - clipw[3] : sx1);
             int ex1 = startx + width;
@@ -149,11 +150,11 @@ public abstract class BorderPainter {
             moveTo(ex1, clipy);
             int sx1a = sx1;
             int ex1a = ex1;
-            if (bpsAfter.mode == BorderProps.COLLAPSE_OUTER) {
-                if (bpsStart != null && bpsStart.mode == BorderProps.COLLAPSE_OUTER) {
+            if (bpsBottom.mode == BorderProps.COLLAPSE_OUTER) {
+                if (bpsLeft != null && bpsLeft.mode == BorderProps.COLLAPSE_OUTER) {
                     sx1a -= clipw[3];
                 }
-                if (bpsEnd != null && bpsEnd.mode == BorderProps.COLLAPSE_OUTER) {
+                if (bpsRight != null && bpsRight.mode == BorderProps.COLLAPSE_OUTER) {
                     ex1a += clipw[1];
                 }
                 lineTo(ex1a, outery);
@@ -164,10 +165,11 @@ public abstract class BorderPainter {
             lineTo(ex2, innery);
             closePath();
             clip();
-            drawBorderLine(sx1a, innery, ex1a, outery, true, false, bpsAfter.style, bpsAfter.color);
+            drawBorderLine(sx1a, innery, ex1a, outery, true, false,
+                           bpsBottom.style, bpsBottom.color);
             restoreGraphicsState();
         }
-        if (bpsStart != null) {
+        if (bpsLeft != null) {
             int sy1 = starty;
             int sy2 = (slant[0] ? sy1 + bw[0] - clipw[0] : sy1);
             int ey1 = sy1 + height;
@@ -180,11 +182,11 @@ public abstract class BorderPainter {
             moveTo(clipx, ey1);
             int sy1a = sy1;
             int ey1a = ey1;
-            if (bpsStart.mode == BorderProps.COLLAPSE_OUTER) {
-                if (bpsBefore != null && bpsBefore.mode == BorderProps.COLLAPSE_OUTER) {
+            if (bpsLeft.mode == BorderProps.COLLAPSE_OUTER) {
+                if (bpsTop != null && bpsTop.mode == BorderProps.COLLAPSE_OUTER) {
                     sy1a -= clipw[0];
                 }
-                if (bpsAfter != null && bpsAfter.mode == BorderProps.COLLAPSE_OUTER) {
+                if (bpsBottom != null && bpsBottom.mode == BorderProps.COLLAPSE_OUTER) {
                     ey1a += clipw[2];
                 }
                 lineTo(outerx, ey1a);
@@ -195,7 +197,7 @@ public abstract class BorderPainter {
             lineTo(innerx, ey2);
             closePath();
             clip();
-            drawBorderLine(outerx, sy1a, innerx, ey1a, false, true, bpsStart.style, bpsStart.color);
+            drawBorderLine(outerx, sy1a, innerx, ey1a, false, true, bpsLeft.style, bpsLeft.color);
             restoreGraphicsState();
         }
     }

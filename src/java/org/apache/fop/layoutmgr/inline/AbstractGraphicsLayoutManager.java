@@ -59,6 +59,7 @@ public abstract class AbstractGraphicsLayoutManager extends LeafNodeLayoutManage
         Dimension intrinsicSize = new Dimension(
                 fobj.getIntrinsicWidth(),
                 fobj.getIntrinsicHeight());
+        int bidiLevel = fobj.getBidiLevel();
 
         //TODO Investigate if the line-height property has to be taken into the calculation
         //somehow. There was some code here that hints in this direction but it was disabled.
@@ -67,6 +68,7 @@ public abstract class AbstractGraphicsLayoutManager extends LeafNodeLayoutManage
         Rectangle placement = imageLayout.getPlacement();
 
         CommonBorderPaddingBackground borderProps = fobj.getCommonBorderPaddingBackground();
+        setCommonBorderPaddingBackground(borderProps);
 
         //Determine extra BPD from borders and padding
         int beforeBPD = borderProps.getPadding(CommonBorderPaddingBackground.BEFORE, false, this);
@@ -75,30 +77,35 @@ public abstract class AbstractGraphicsLayoutManager extends LeafNodeLayoutManage
         placement.y += beforeBPD;
 
         //Determine extra IPD from borders and padding
-        int startIPD = borderProps.getPadding(CommonBorderPaddingBackground.START, false, this);
-        startIPD += borderProps.getBorderWidth(CommonBorderPaddingBackground.START, false);
-
-        placement.x += startIPD;
+        if ( ( bidiLevel == -1 ) || ( ( bidiLevel & 1 ) == 0 ) ) {
+            int startIPD = borderProps.getPadding(CommonBorderPaddingBackground.START, false, this);
+            startIPD += borderProps.getBorderWidth(CommonBorderPaddingBackground.START, false);
+            placement.x += startIPD;
+        } else {
+            int endIPD = borderProps.getPadding(CommonBorderPaddingBackground.END, false, this);
+            endIPD += borderProps.getBorderWidth(CommonBorderPaddingBackground.END, false);
+            placement.x += endIPD;
+        }
 
         Area viewportArea = getChildArea();
         TraitSetter.setProducerID(viewportArea, fobj.getId());
         transferForeignAttributes(viewportArea);
 
-        InlineViewport vp = new InlineViewport(viewportArea);
+        InlineViewport vp = new InlineViewport(viewportArea, bidiLevel);
         TraitSetter.addStructureTreeElement(vp, fobj.getStructureTreeElement());
         TraitSetter.setProducerID(vp, fobj.getId());
         vp.setIPD(imageLayout.getViewportSize().width);
         vp.setBPD(imageLayout.getViewportSize().height);
         vp.setContentPosition(placement);
         vp.setClip(imageLayout.isClipped());
-        vp.setOffset(0);
+        vp.setBlockProgressionOffset(0);
 
         // Common Border, Padding, and Background Properties
-        TraitSetter.addBorders(vp, fobj.getCommonBorderPaddingBackground()
+        TraitSetter.addBorders(vp, borderProps
                                 , false, false, false, false, this);
-        TraitSetter.addPadding(vp, fobj.getCommonBorderPaddingBackground()
+        TraitSetter.addPadding(vp, borderProps
                                 , false, false, false, false, this);
-        TraitSetter.addBackground(vp, fobj.getCommonBorderPaddingBackground(), this);
+        TraitSetter.addBackground(vp, borderProps, this);
 
         return vp;
     }

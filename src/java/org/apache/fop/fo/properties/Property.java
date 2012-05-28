@@ -19,8 +19,8 @@
 
 package org.apache.fop.fo.properties;
 
-import java.util.List;
 import java.awt.Color;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,7 +33,7 @@ import org.apache.fop.fo.Constants;
 /**
  * Base class for all property objects
  */
-public class Property {
+public abstract class Property {
 
     /** Logger for all property classes */
     protected static final Log log = LogFactory.getLog(PropertyMaker.class);

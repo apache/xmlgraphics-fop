@@ -207,7 +207,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
         InlineArea area;
         if (isInline) {
             area = createInlineParent();
-            area.setOffset(0);
+            area.setBlockProgressionOffset(0);
         } else {
             area = new InlineBlockParent();
         }
@@ -388,6 +388,13 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
             }
             lastSequence = ListUtil.getLast(returnList);
             lastChildLM = curLM;
+            // the context used to create this childLC above was applied a LayoutContext.SUPPRESS_BREAK_BEFORE
+            // in the getNextChildElements() method of the parent BlockLayoutManger; as a consequence all
+            // line breaks in blocks nested inside the inline associated with this ILM are being supressed;
+            // here we revert that supression; we do not need to do that for the first element since that
+            // is handled by the getBreakBefore() method of the wrapping BlockStackingLayoutManager.
+            // Note: this fix seems to work but is far from being the ideal way to do this
+            childLC.setFlags(LayoutContext.SUPPRESS_BREAK_BEFORE, false);
         }
 
         if (lastSequence != null) {
@@ -482,12 +489,12 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
                                         || lastLM instanceof InlineLevelLayoutManager);
         parent.setBPD(alignmentContext.getHeight());
         if (parent instanceof InlineParent) {
-            parent.setOffset(alignmentContext.getOffset());
+            parent.setBlockProgressionOffset(alignmentContext.getOffset());
         } else if (parent instanceof InlineBlockParent) {
             // All inline elements are positioned by the renderers relative to
             // the before edge of their content rectangle
             if (borderProps != null) {
-                parent.setOffset(borderProps.getPaddingBefore(false, this)
+                parent.setBlockProgressionOffset(borderProps.getPaddingBefore(false, this)
                                 + borderProps.getBorderBeforeWidth(false));
             }
         }
