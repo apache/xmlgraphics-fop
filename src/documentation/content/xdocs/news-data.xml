@@ -17,6 +17,15 @@
 -->
 <!-- $Id$ -->
 <news>
+  <item date="2012-DD-MM" title="Apache™ FOP 1.1 Released">
+    <p>
+      The Apache™ FOP team is delighted to present you a production grade
+      release of the new FOP codebase. This release
+      contains bug fixes and new features. See the <a
+        href="1.1/releaseNotes_1.1.html">Release Notes</a> for a list of
+      the most important changes.
+    </p>
+  </item>
   <item date="2012-02-24" title="New committer">
     <p>Welcome Glenn Adams!</p>
   </item>
