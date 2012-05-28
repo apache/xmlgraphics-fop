@@ -19,36 +19,24 @@
 
 package org.apache.fop.fonts;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
-import org.apache.fop.fonts.truetype.FontFileReaderTest;
-import org.apache.fop.fonts.truetype.TTFFileTest;
-import org.apache.fop.fonts.truetype.TTFSubSetFileTest;
-import org.apache.fop.fonts.truetype.TTFTableNameTest;
+import org.apache.fop.fonts.truetype.FontFileReaderTestCase;
+import org.apache.fop.fonts.truetype.TTFFileTestCase;
+import org.apache.fop.fonts.truetype.TTFSubSetFileTestCase;
+import org.apache.fop.fonts.truetype.TTFTableNameTestCase;
 
 /**
  * A test suite designed for org.apache.fop.fonts.*
  */
+@RunWith(Suite.class)
+@SuiteClasses({
+        EncodingModeTestCase.class,
+        FontFileReaderTestCase.class,
+        TTFFileTestCase.class,
+        TTFSubSetFileTestCase.class,
+        TTFTableNameTestCase.class })
 public final class FOPFontsTestSuite {
-    /**
-     * Constructor
-     */
-    private FOPFontsTestSuite() {
-    }
-    /**
-     * Testing org.apache.fop.fonts.*
-     * @return test
-     */
-    public static Test suite() {
-        TestSuite testSuite = new TestSuite("Test suite for FOPs fonts classes");
-        //$JUnit-BEGIN$
-        testSuite.addTest(new TestSuite(EncodingModeTest.class));
-        testSuite.addTest(new TestSuite(FontFileReaderTest.class));
-        testSuite.addTest(new TestSuite(TTFFileTest.class));
-        testSuite.addTest(new TestSuite(TTFSubSetFileTest.class));
-        testSuite.addTest(new TestSuite(TTFTableNameTest.class));
-        //$JUnit-END$
-        return testSuite;
-    }
 }

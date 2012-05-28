@@ -19,25 +19,26 @@
 
 package org.apache.fop.render.ps.fonts;
 
+import java.io.IOException;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.InOrder;
+
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import java.io.IOException;
-
-import junit.framework.TestCase;
-
-import org.mockito.InOrder;
-
 /**
  * Test class for PSTTFGlyphOutputStream
  */
-public class PSTTFGlyphOutputStreamTest extends TestCase {
+public class PSTTFGlyphOutputStreamTestCase {
     private PSTTFGenerator mockGen;
     private PSTTFGlyphOutputStream glyphOut;
 
-    @Override
+    @Before
     public void setUp() {
         mockGen = mock(PSTTFGenerator.class);
         glyphOut = new PSTTFGlyphOutputStream(mockGen);
@@ -48,6 +49,7 @@ public class PSTTFGlyphOutputStreamTest extends TestCase {
      * PSTTFGenerator.
      * @exception IOException file write error
      */
+    @Test
     public void testStartGlyphStream() throws IOException {
         glyphOut.startGlyphStream();
         verify(mockGen).startString();
@@ -61,6 +63,7 @@ public class PSTTFGlyphOutputStreamTest extends TestCase {
      * 3) if a glyph of size > PSTTFGenerator.MAX_BUFFER_SIZE is attempted, an exception is thrown.
      * @throws IOException file write error.
      */
+    @Test
     public void testStreamGlyph() throws IOException {
         int byteArraySize = 10;
         byte[] byteArray = new byte[byteArraySize];
@@ -98,6 +101,7 @@ public class PSTTFGlyphOutputStreamTest extends TestCase {
      * is called.
      * @throws IOException file write exception
      */
+    @Test
     public void testEndGlyphStream() throws IOException {
         glyphOut.endGlyphStream();
         verify(mockGen).endString();

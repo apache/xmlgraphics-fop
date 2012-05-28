@@ -19,23 +19,23 @@
 
 package org.apache.fop.render.ps.fonts;
 
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.mock;
-
 import java.io.IOException;
 
-import junit.framework.TestCase;
-
+import org.junit.Before;
+import org.junit.Test;
 import org.mockito.InOrder;
+
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
 
 /**
  * Test class for unit testing PSTTFTableOutputStream
  */
-public class PSTTFTableOutputStreamTest extends TestCase {
+public class PSTTFTableOutputStreamTestCase {
     private PSTTFGenerator mockGen;
     private PSTTFTableOutputStream tableOut;
 
-    @Override
+    @Before
     public void setUp() {
         mockGen = mock(PSTTFGenerator.class);
         tableOut = new PSTTFTableOutputStream(mockGen);
@@ -53,6 +53,7 @@ public class PSTTFTableOutputStreamTest extends TestCase {
      * are invoked.
      * @throws IOException file write error.
      */
+    @Test
     public void testStreamTable() throws IOException {
         byte[] byteArray = new byte[PSTTFGenerator.MAX_BUFFER_SIZE * 3];
         tableOut.streamTable(byteArray, 0, 10);

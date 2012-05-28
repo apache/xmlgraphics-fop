@@ -19,20 +19,24 @@
 
 package org.apache.fop.util;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Test case for the conversion of characters into hex-encoded strings.
  */
-public class HexEncoderTestCase extends TestCase {
+public class HexEncoderTestCase {
 
-    private static char successor(char d) {
-        if (d == '9') {
-            return 'A';
-        } else if (d == 'F') {
-            return '0';
-        } else {
-            return (char) (d + 1);
+    /**
+     * Tests that characters are properly encoded into hex strings.
+     */
+    @Test
+    public void testEncodeChar() {
+        char[] digits = new char[] {'0', '0', '0', '0'};
+        for (int c = 0; c <= 0xFFFF; c++) {
+            assertEquals(new String(digits), HexEncoder.encode((char) c));
+            increment(digits);
         }
     }
 
@@ -44,14 +48,13 @@ public class HexEncoderTestCase extends TestCase {
         } while (digits[d] == '0' && d > 0);
     }
 
-    /**
-     * Tests that characters are properly encoded into hex strings.
-     */
-    public void testEncodeChar() {
-        char[] digits = new char[] {'0', '0', '0', '0'};
-        for (int c = 0; c <= 0xFFFF; c++) {
-            assertEquals(new String(digits), HexEncoder.encode((char) c));
-            increment(digits);
+    private static char successor(char d) {
+        if (d == '9') {
+            return 'A';
+        } else if (d == 'F') {
+            return '0';
+        } else {
+            return (char) (d + 1);
         }
     }
 
