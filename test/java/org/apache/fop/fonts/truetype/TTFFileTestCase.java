@@ -22,14 +22,18 @@ package org.apache.fop.fonts.truetype;
 import java.io.IOException;
 import java.util.Map;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.apache.fop.fonts.truetype.TTFFile.PostScriptVersion;
 
 /**
  * Class for testing org.apache.fop.fonts.truetype.TTFFile
  */
-public class TTFFileTest extends TestCase {
+public class TTFFileTestCase {
     // We only want to initialize the FontFileReader once (for performance reasons)
     /** The truetype font file (DejaVuLGCSerif) */
     protected final TTFFile dejavuTTFFile;
@@ -45,12 +49,12 @@ public class TTFFileTest extends TestCase {
      * Constructor initialises FileFontReader to
      * @throws IOException exception
      */
-    public TTFFileTest() throws IOException {
+    public TTFFileTestCase() throws IOException {
         dejavuTTFFile = new TTFFile();
-        dejavuReader = new FontFileReader("test/resources/fonts/DejaVuLGCSerif.ttf");
+        dejavuReader = new FontFileReader("test/resources/fonts/ttf/DejaVuLGCSerif.ttf");
         dejavuTTFFile.readFont(dejavuReader);
         droidmonoTTFFile = new TTFFile();
-        droidmonoReader = new FontFileReader("test/resources/fonts/DroidSansMono.ttf");
+        droidmonoReader = new FontFileReader("test/resources/fonts/ttf/DroidSansMono.ttf");
         droidmonoTTFFile.readFont(droidmonoReader);
     }
 
@@ -58,6 +62,7 @@ public class TTFFileTest extends TestCase {
      * Test convertTTFUnit2PDFUnit() - The units per em retrieved reading the HEAD table from
      * the font file. (DroidSansMono has the same units per em as DejaVu so no point testing it)
      */
+    @Test
     public void testConvertTTFUnit2PDFUnit() {
         // DejaVu has 2048 units per em (PDF works in millipts, thus the 1000)
         // test rational number
@@ -77,6 +82,7 @@ public class TTFFileTest extends TestCase {
      * Test checkTTC()
      * @throws IOException exception
      */
+    @Test
     public void testCheckTTC() throws IOException {
         // DejaVu is not a TTC, thus this returns true
         assertTrue(dejavuTTFFile.checkTTC(""));
@@ -90,6 +96,7 @@ public class TTFFileTest extends TestCase {
     /**
      * Test getAnsiKerning() - Tests values retrieved from the kern table in the font file.
      */
+    @Test
     public void testGetAnsiKerning() {
         Map<Integer, Map<Integer, Integer>> ansiKerning = dejavuTTFFile.getKerning();
         if (ansiKerning.isEmpty()) {
@@ -116,6 +123,7 @@ public class TTFFileTest extends TestCase {
      * 3) The caps height in the OS/2 table
      * Tests values retrieved from analysing the font file.
      */
+    @Test
     public void testGetCapHeight() {
         // DejaVu doesn't have the PCLT table and so these have to be guessed
         // The height is approximated to be the height of the "H" which for
@@ -130,6 +138,7 @@ public class TTFFileTest extends TestCase {
     /**
      * Test getCharSetName() - check that it returns "WinAnsiEncoding".
      */
+    @Test
     public void testGetCharSetName() {
         assertTrue("WinAnsiEncoding".equals(dejavuTTFFile.getCharSetName()));
         assertTrue("WinAnsiEncoding".equals(droidmonoTTFFile.getCharSetName()));
@@ -139,6 +148,7 @@ public class TTFFileTest extends TestCase {
      * Test getCharWidth() - Test values retrieved from the metrics in the glyf table in
      * the font file.
      */
+    @Test
     public void testGetCharWidth() {
         // Arbitrarily test a few values:
         // The width of "H" (Unicode index 0x0048) is 1786
@@ -164,6 +174,7 @@ public class TTFFileTest extends TestCase {
     /**
      * Test getFamilyNames() - Test value retrieved from the name table in the font file.
      */
+    @Test
     public void testGetFamilyNames() {
         assertEquals(1, dejavuTTFFile.getFamilyNames().size());
         for (String name : dejavuTTFFile.getFamilyNames()) {
@@ -178,6 +189,7 @@ public class TTFFileTest extends TestCase {
     /**
      * Test getFirstChar() - TODO: implement a more intelligent test here.
      */
+    @Test
     public void testGetFirstChar() {
         // Not really sure how to test this intelligently
         assertEquals(0, dejavuTTFFile.getFirstChar());
@@ -187,6 +199,7 @@ public class TTFFileTest extends TestCase {
     /**
      * Test getFlags() - Test values retrieved from the POST table in the font file.
      */
+    @Test
     public void testGetFlags() {
         /* DejaVu flags are:
          * italic angle = 0
@@ -214,6 +227,7 @@ public class TTFFileTest extends TestCase {
     /**
      * Test getFontBBox() - Test values retrieved from values in the HEAD table in the font file.
      */
+    @Test
     public void testGetFontBBox() {
         int[] bBox = dejavuTTFFile.getFontBBox();
         /*
@@ -238,6 +252,7 @@ public class TTFFileTest extends TestCase {
     /**
      * Test getFullName() - Test value retrieved from the name table in the font file.
      */
+    @Test
     public void testGetFullName() {
         assertEquals("DejaVu LGC Serif", dejavuTTFFile.getFullName());
         assertEquals("Droid Sans Mono", droidmonoTTFFile.getFullName());
@@ -246,6 +261,7 @@ public class TTFFileTest extends TestCase {
     /**
      * Test getGlyphName - Test value retrieved from the POST table in the font file.
      */
+    @Test
     public void testGetGlyphName() {
         assertEquals("H", dejavuTTFFile.getGlyphName(43));
         assertEquals("H", droidmonoTTFFile.getGlyphName(43));
@@ -254,6 +270,7 @@ public class TTFFileTest extends TestCase {
     /**
      * Test getItalicAngle() - Test value retrieved from the POST table in the font file.
      */
+    @Test
     public void testGetItalicAngle() {
         assertEquals("0", dejavuTTFFile.getItalicAngle());
         assertEquals("0", droidmonoTTFFile.getItalicAngle());
@@ -262,6 +279,7 @@ public class TTFFileTest extends TestCase {
     /**
      * Test getKerning() - Test values retrieved from the kern table in the font file.
      */
+    @Test
     public void testGetKerning() {
         Map<Integer, Map<Integer, Integer>> kerning = dejavuTTFFile.getKerning();
         if (kerning.isEmpty()) {
@@ -282,6 +300,7 @@ public class TTFFileTest extends TestCase {
     /**
      * Test lastChar() - TODO: implement a more intelligent test
      */
+    @Test
     public void testLastChar() {
         assertEquals(0xff, dejavuTTFFile.getLastChar());
         assertEquals(0xff, droidmonoTTFFile.getLastChar());
@@ -293,6 +312,7 @@ public class TTFFileTest extends TestCase {
      * 2) Fall back to values from the OS/2 table
      * Test values retrieved from the font file.
      */
+    @Test
     public void testGetLowerCaseAscent() {
         assertEquals(dejavuTTFFile.convertTTFUnit2PDFUnit(1556),
                 dejavuTTFFile.getLowerCaseAscent());
@@ -304,6 +324,7 @@ public class TTFFileTest extends TestCase {
     /**
      * Test getPostScriptName() - Test values retrieved from the post table in the font file.
      */
+    @Test
     public void testGetPostScriptName() {
         assertEquals(PostScriptVersion.V2, dejavuTTFFile.getPostScriptVersion());
         assertEquals(PostScriptVersion.V2, droidmonoTTFFile.getPostScriptVersion());
@@ -312,6 +333,7 @@ public class TTFFileTest extends TestCase {
     /**
      * Test getStemV() - Undefined.
      */
+    @Test
     public void testGetStemV() {
         // Undefined
         assertEquals("0", dejavuTTFFile.getStemV());
@@ -321,6 +343,7 @@ public class TTFFileTest extends TestCase {
     /**
      * Test getSubFamilyName() - Test values retrieved from the name table in the font file.
      */
+    @Test
     public void testGetSubFamilyName() {
         assertEquals("Book", dejavuTTFFile.getSubFamilyName());
         assertEquals("Regular", droidmonoTTFFile.getSubFamilyName());
@@ -336,6 +359,7 @@ public class TTFFileTest extends TestCase {
     /**
      * Test getWeightClass() - Test value retrieved from the OS/2 table in the font file.
      */
+    @Test
     public void testGetWeightClass() {
         // Retrieved from OS/2 table
         assertEquals(400, dejavuTTFFile.getWeightClass());
@@ -345,6 +369,7 @@ public class TTFFileTest extends TestCase {
     /**
      * Test getWidths() - Test values retrieved from the hmtx table in the font file.
      */
+    @Test
     public void testGetWidths() {
         int[] widths = dejavuTTFFile.getWidths();
         // using the width of 'A' index = 36
@@ -366,6 +391,7 @@ public class TTFFileTest extends TestCase {
      * Fall back:
      * 3) The xheight in the OS/2 table.
      */
+    @Test
     public void testGetXHeight() {
         // Since there's no PCLT table, the height of 'x' is used for both DejaVu and DroidSansMono
         assertEquals(dejavuTTFFile.convertTTFUnit2PDFUnit(1064), dejavuTTFFile.getXHeight());
@@ -375,6 +401,7 @@ public class TTFFileTest extends TestCase {
     /**
      * Test isCFF() - TODO: add test for a CFF font.
      */
+    @Test
     public void testIsCFF() {
         // Neither DejaVu nor DroidSansMono are a compact format font
         assertEquals(false, dejavuTTFFile.isCFF());
@@ -384,6 +411,7 @@ public class TTFFileTest extends TestCase {
     /**
      * Test isEmbeddable() - Test value retrieved from the OS/2 table in the font file.
      */
+    @Test
     public void testIsEmbeddable() {
         // Dejavu and DroidSansMono are both embeddable
         assertEquals(true, dejavuTTFFile.isEmbeddable());

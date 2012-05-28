@@ -23,6 +23,9 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * Tests {@link EncodingMode}.
+ */
 public class EncodingModeTestCase {
 
     @Test
@@ -37,5 +40,10 @@ public class EncodingModeTestCase {
         assertEquals(EncodingMode.AUTO, EncodingMode.getValue("auto"));
         assertEquals(EncodingMode.SINGLE_BYTE, EncodingMode.getValue("single-byte"));
         assertEquals(EncodingMode.CID, EncodingMode.getValue("cid"));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getValueMustCheckForIllegalArguments() {
+        EncodingMode.getValue("fail");
     }
 }

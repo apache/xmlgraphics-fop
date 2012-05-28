@@ -19,27 +19,31 @@
 
 package org.apache.fop.render.ps.fonts;
 
+import java.io.IOException;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-import java.io.IOException;
-
-import junit.framework.TestCase;
+import org.apache.xmlgraphics.ps.PSGenerator;
 
 import org.apache.fop.fonts.truetype.TTFGlyphOutputStream;
 import org.apache.fop.fonts.truetype.TTFTableOutputStream;
-import org.apache.xmlgraphics.ps.PSGenerator;
 
 /**
  * Tests PSTTFOuputStream
  */
-public class PSTTFOutputStreamTest extends TestCase {
+public class PSTTFOutputStreamTestCase {
     private PSGenerator gen;
     private PSTTFOutputStream out;
 
     /**
      * Assigns an OutputStream to the PSGenerator.
      */
+    @Before
     public void setUp() {
         gen = mock(PSGenerator.class);
         out = new PSTTFOutputStream(gen);
@@ -50,6 +54,7 @@ public class PSTTFOutputStreamTest extends TestCase {
      * document (in this case with "/sfnts[")
      * @throws IOException write exception.
      */
+    @Test
     public void testStartFontStream() throws IOException {
         out.startFontStream();
         verify(gen).write("/sfnts[");
@@ -58,6 +63,7 @@ public class PSTTFOutputStreamTest extends TestCase {
     /**
      * Test getTableOutputStream() - we need to test that the inheritance model is properly obeyed.
      */
+    @Test
     public void testGetTableOutputStream() {
         TTFTableOutputStream tableOut = out.getTableOutputStream();
         assertTrue(tableOut instanceof PSTTFTableOutputStream);
@@ -66,6 +72,7 @@ public class PSTTFOutputStreamTest extends TestCase {
     /**
      * Test getGlyphOutputStream() - we need to test that the inheritance model is properly obeyed.
      */
+    @Test
     public void testGetGlyphOutputStream() {
         TTFGlyphOutputStream glyphOut = out.getGlyphOutputStream();
         assertTrue(glyphOut instanceof PSTTFGlyphOutputStream);
@@ -75,6 +82,7 @@ public class PSTTFOutputStreamTest extends TestCase {
      * Test endFontStream()
      * @exception IOException write error.
      */
+    @Test
     public void testEndFontStream() throws IOException {
         out.endFontStream();
         verify(gen).writeln("] def");

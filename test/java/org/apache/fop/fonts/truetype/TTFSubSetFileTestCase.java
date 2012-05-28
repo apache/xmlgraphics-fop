@@ -24,18 +24,23 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+
 /**
  * This class tests TTFSubSetFile
  * TODO: Test with more than just a single font
  */
-public class TTFSubSetFileTest extends TTFFileTest {
+public class TTFSubSetFileTestCase extends TTFFileTestCase {
     private TTFSubSetFile ttfSubset;
     private byte[] subset;
     /**
      * Constructor
      * @throws IOException exception
      */
-    public TTFSubSetFileTest() throws IOException {
+    public TTFSubSetFileTestCase() throws IOException {
         super();
     }
 
@@ -43,6 +48,7 @@ public class TTFSubSetFileTest extends TTFFileTest {
      * setUp()
      * @exception IOException file read error
      */
+    @Before
     public void setUp() throws IOException {
         ttfSubset = new TTFSubSetFile();
         Map<Integer, Integer> glyphs = new HashMap<Integer, Integer>();
@@ -58,6 +64,7 @@ public class TTFSubSetFileTest extends TTFFileTest {
      * create a cmap table, and so the font doesn't contain ALL of the mandatory tables.
      * @throws IOException exception
      */
+    @Test
     public void testReadFont3Args() throws IOException {
 
         ByteArrayInputStream byteArray = new ByteArrayInputStream(subset);

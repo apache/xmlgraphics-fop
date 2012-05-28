@@ -22,14 +22,19 @@ package org.apache.fop.render.ps.fonts;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.apache.xmlgraphics.ps.PSGenerator;
 
 /**
  * The test class for org.apache.fop.render.ps.fonts.PSGenerator
  */
-public class PSTTFGeneratorTest extends TestCase {
+public class PSTTFGeneratorTestCase {
     private PSTTFGenerator ttfGen;
     private ByteArrayOutputStream out = new ByteArrayOutputStream();
     private PSGenerator gen = new PSGenerator(out);
@@ -38,14 +43,14 @@ public class PSTTFGeneratorTest extends TestCase {
     /**
      * Constructor
      */
-    public PSTTFGeneratorTest() {
+    public PSTTFGeneratorTestCase() {
         byteArray = new byte[65536];
         for (int i = 0; i < 65536; i++) {
             byteArray[i] = (byte) i;
         }
     }
 
-    @Override
+    @Before
     public void setUp() {
         ttfGen = new PSTTFGenerator(gen);
     }
@@ -54,6 +59,7 @@ public class PSTTFGeneratorTest extends TestCase {
      * Tests startString() - starts the string in an appropriate way for a PostScript file.
      * @exception IOException write error
      */
+    @Test
     public void testStartString() throws IOException {
         ttfGen.startString();
         assertEquals("<\n", out.toString());
@@ -63,6 +69,7 @@ public class PSTTFGeneratorTest extends TestCase {
      * Test streamBytes() - tests that strings are written to file in the proper format.
      * @throws IOException write error.
      */
+    @Test
     public void testStreamBytes() throws IOException {
         ttfGen.streamBytes(byteArray, 0, 16);
         assertEquals("000102030405060708090A0B0C0D0E0F", out.toString());
@@ -86,6 +93,7 @@ public class PSTTFGeneratorTest extends TestCase {
      * following string streamed to the PS document should be 80 chars long.
      * @throws IOException file write error.
      */
+    @Test
     public void testReset() throws IOException {
         ttfGen.streamBytes(byteArray, 0, 40);
         assertTrue(out.toString().matches("([0-9A-F]{80}\n)"));
@@ -99,6 +107,7 @@ public class PSTTFGeneratorTest extends TestCase {
      * format, a "00" needs to be appended to the end of a string.
      * @throws IOException file write error
      */
+    @Test
     public void testEndString() throws IOException {
         ttfGen.endString();
         assertEquals("00\n> ", out.toString());

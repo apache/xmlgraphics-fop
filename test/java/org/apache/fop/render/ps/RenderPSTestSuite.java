@@ -19,37 +19,25 @@
 
 package org.apache.fop.render.ps;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
-import org.apache.fop.render.ps.fonts.PSTTFGeneratorTest;
-import org.apache.fop.render.ps.fonts.PSTTFGlyphOutputStreamTest;
-import org.apache.fop.render.ps.fonts.PSTTFOutputStreamTest;
-import org.apache.fop.render.ps.fonts.PSTTFTableOutputStreamTest;
+import org.apache.fop.render.ps.fonts.PSTTFGeneratorTestCase;
+import org.apache.fop.render.ps.fonts.PSTTFGlyphOutputStreamTestCase;
+import org.apache.fop.render.ps.fonts.PSTTFOutputStreamTestCase;
+import org.apache.fop.render.ps.fonts.PSTTFTableOutputStreamTestCase;
 
 
 /**
  * A test Suite for org.apache.fop.render.ps.*
  */
+@RunWith(Suite.class)
+@SuiteClasses({
+        PSTTFGeneratorTestCase.class,
+        PSTTFOutputStreamTestCase.class,
+        PSTTFGlyphOutputStreamTestCase.class,
+        PSTTFTableOutputStreamTestCase.class
+})
 public final class RenderPSTestSuite {
-    /**
-     * Constructor.
-     */
-    private RenderPSTestSuite() {
-    }
-
-    /**
-     * Testing org.apache.fop.render.ps.*
-     * @return test
-     */
-    public static Test suite() {
-        TestSuite suite = new TestSuite();
-        //$JUnit-BEGIN$
-        suite.addTest(new TestSuite(PSTTFGeneratorTest.class));
-        suite.addTest(new TestSuite(PSTTFOutputStreamTest.class));
-        suite.addTest(new TestSuite(PSTTFGlyphOutputStreamTest.class));
-        suite.addTest(new TestSuite(PSTTFTableOutputStreamTest.class));
-        //$JUnit-END$
-        return suite;
-    }
 }

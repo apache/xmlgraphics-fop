@@ -19,18 +19,23 @@
 
 package org.apache.fop.fonts.truetype;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * This class tests the enum org.apache.fop.fonts.truetype.TTFTableName
  *
  */
-public class TTFTableNameTest extends TestCase {
+public class TTFTableNameTestCase {
     /**
      * Test getName() - tests that the getName() method returns the expected String as expected in
      * the Directory Table.
      * @exception IllegalAccessException error
      */
+    @Test
     public void testGetName() throws IllegalAccessException {
         assertEquals("dirTable", TTFTableName.DIRECTORY_TABLE.getName());
         assertEquals("EBDT", TTFTableName.EBDT.getName());
@@ -71,6 +76,7 @@ public class TTFTableNameTest extends TestCase {
      * TTFTableNames value when it is given a String (name of a table).
      * @exception IllegalAccessException error
      */
+    @Test
     public void testGetValue() throws IllegalAccessException {
         assertEquals(TTFTableName.EBDT, TTFTableName.getValue("EBDT"));
         assertEquals(TTFTableName.EBLC, TTFTableName.getValue("EBLC"));
@@ -107,6 +113,7 @@ public class TTFTableNameTest extends TestCase {
      * objects and comparing their hash-codes.
      * @exception IllegalAccessException error
      */
+    @Test
     public void testHashCode() throws IllegalAccessException {
         TTFTableName a = TTFTableName.getValue("testObject");
         TTFTableName b = TTFTableName.getValue("testObject");
@@ -124,6 +131,7 @@ public class TTFTableNameTest extends TestCase {
      * 5) check it fails if you put in a null value
      * @throws IllegalAccessException error
      */
+    @Test
     public void testEquals() throws IllegalAccessException {
         // Reflexivity
         TTFTableName a = TTFTableName.getValue("test");

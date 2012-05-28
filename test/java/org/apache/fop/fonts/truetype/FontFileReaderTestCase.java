@@ -25,12 +25,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * A test class for org.apache.fop.truetype.FontFileReader
  */
-public class FontFileReaderTest extends TestCase {
+public class FontFileReaderTestCase {
     private FontFileReader fontReader;
     private final InputStream in;
     private final byte[] byteArray;
@@ -39,7 +44,7 @@ public class FontFileReaderTest extends TestCase {
      * Constructor - initialises an array that only needs to be created once. It creates a byte[]
      * of form { 0x00, 0x01, 0x02, 0x03..., 0xff};
      */
-    public FontFileReaderTest() {
+    public FontFileReaderTestCase() {
         byteArray = new byte[256];
         for (int i = 0; i < 256; i++) {
             byteArray[i] = (byte) i;
@@ -50,6 +55,7 @@ public class FontFileReaderTest extends TestCase {
     /**
      * sets up the test subject object for testing.
      */
+    @Before
     public void setUp() {
         try {
             fontReader = new FontFileReader(in);
@@ -70,6 +76,7 @@ public class FontFileReaderTest extends TestCase {
      * Test readTTFByte()
      * @throws IOException exception
      */
+    @Test
     public void testReadTTFByte() throws IOException {
         for (int i = 0; i < 256; i++) {
             assertEquals((byte) i, fontReader.readTTFByte());
@@ -80,6 +87,7 @@ public class FontFileReaderTest extends TestCase {
      * Test seekSet() - check that it moves to the correct position and enforce a failure case.
      * @throws IOException exception
      */
+    @Test
     public void testSeekSet() throws IOException {
         fontReader.seekSet(10);
         assertEquals(10, fontReader.readTTFByte());
@@ -95,6 +103,7 @@ public class FontFileReaderTest extends TestCase {
      * Test skip() - check that it moves to the correct position and enforce a failure case.
      * @throws IOException exception
      */
+    @Test
     public void testSkip() throws IOException {
         fontReader.skip(100);
         assertEquals(100, fontReader.readTTFByte());
@@ -114,6 +123,7 @@ public class FontFileReaderTest extends TestCase {
      * 3) test with a readTTFByte() (this moves the position by the size of the data being read)
      * @throws IOException exception
      */
+    @Test
     public void testGetCurrentPos() throws IOException {
         fontReader.seekSet(10);
         fontReader.skip(100);
@@ -125,6 +135,7 @@ public class FontFileReaderTest extends TestCase {
     /**
      * Test getFileSize()
      */
+    @Test
     public void testGetFileSize() {
         assertEquals(256, fontReader.getFileSize());
     }
@@ -133,6 +144,7 @@ public class FontFileReaderTest extends TestCase {
      * Test readTTFUByte()
      * @throws IOException exception
      */
+    @Test
     public void testReadTTFUByte() throws IOException {
         for (int i = 0; i < 256; i++) {
             assertEquals(i, fontReader.readTTFUByte());
@@ -143,6 +155,7 @@ public class FontFileReaderTest extends TestCase {
      * Test readTTFShort() - Test positive and negative numbers (two's compliment).
      * @throws IOException exception
      */
+    @Test
     public void testReadTTFShort() throws IOException {
         // 0x0001 = 1
         assertEquals("Should have been 1 (0x0001)", 1, fontReader.readTTFShort());
@@ -158,6 +171,7 @@ public class FontFileReaderTest extends TestCase {
      * Test readTTFUShort() - Test positive and potentially negative numbers (two's compliment).
      * @throws IOException exception
      */
+    @Test
     public void testReadTTFUShort() throws IOException {
         // 0x0001
         assertEquals(1, fontReader.readTTFUShort());
@@ -174,6 +188,7 @@ public class FontFileReaderTest extends TestCase {
      * and in both cases ensure that our current position isn't changed.
      * @throws IOException exception
      */
+    @Test
     public void testReadTTFShortWithArg() throws IOException {
         // 0x6465
         assertEquals(25701, fontReader.readTTFShort(100));
@@ -190,6 +205,7 @@ public class FontFileReaderTest extends TestCase {
      * position and in both cases ensure that our current position isn't changed.
      * @throws IOException exception
      */
+    @Test
     public void testReadTTFUShortWithArg() throws IOException {
         // 0x6465
         assertEquals(25701, fontReader.readTTFUShort(100));
@@ -205,6 +221,7 @@ public class FontFileReaderTest extends TestCase {
      * Test readTTFLong()
      * @throws IOException exception
      */
+    @Test
     public void testReadTTFLong() throws IOException {
         // 0x00010203
         assertEquals(66051, fontReader.readTTFLong());
@@ -218,6 +235,7 @@ public class FontFileReaderTest extends TestCase {
      * Test readTTFULong()
      * @throws IOException exception
      */
+    @Test
     public void testReadTTFULong() throws IOException {
         // 0x00010203
         assertEquals(66051, fontReader.readTTFULong());
@@ -233,6 +251,7 @@ public class FontFileReaderTest extends TestCase {
      * 2) A string not terminated with a null (we expect this to throw an EOFException)
      * @throws IOException exception
      */
+    @Test
     public void testReadTTFString() throws IOException {
         byte[] strByte = {(byte)'t', (byte)'e', (byte)'s', (byte)'t', 0x00};
         fontReader = new FontFileReader(new ByteArrayInputStream(strByte));
@@ -252,6 +271,7 @@ public class FontFileReaderTest extends TestCase {
      * Test readTTFString(int arg)
      * @throws IOException exception
      */
+    @Test
     public void testReadTTFStringIntArg() throws IOException {
         byte[] strByte = {(byte)'t', (byte)'e', (byte)'s', (byte)'t'};
         fontReader = new FontFileReader(new ByteArrayInputStream(strByte));
@@ -276,6 +296,7 @@ public class FontFileReaderTest extends TestCase {
      * Test getBytes()
      * @throws IOException exception
      */
+    @Test
     public void testGetBytes() throws IOException {
         byte[] retrievedBytes = fontReader.getBytes(0, 256);
         assertTrue(Arrays.equals(byteArray, retrievedBytes));
