@@ -66,7 +66,7 @@
                           <fo:table-cell margin-left="0" text-align="right">
                             <fo:block>
                               <fo:inline>
-                                <fo:inline><fo:bidi-override unicode-bidi="bidi-override" direction="rtl">X</fo:bidi-override></fo:inline>
+                                <fo:inline><fo:bidi-override unicode-bidi="bidi-override" direction="rtl">XY</fo:bidi-override></fo:inline>
                               </fo:inline>
                             </fo:block>
                           </fo:table-cell>
@@ -93,7 +93,7 @@
                           <fo:table-cell margin-left="0" text-align="right">
                             <fo:block>
                               <fo:inline>
-                                <fo:inline><fo:bidi-override unicode-bidi="bidi-override" direction="rtl">X</fo:bidi-override></fo:inline>
+                                <fo:inline><fo:bidi-override unicode-bidi="bidi-override" direction="rtl">XY</fo:bidi-override></fo:inline>
                               </fo:inline>
                             </fo:block>
                           </fo:table-cell>

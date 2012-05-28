@@ -97,6 +97,15 @@ import org.apache.fop.util.XMLUtil;
  */
 public class XMLRenderer extends AbstractXMLRenderer {
 
+    /**
+     * Area Tree  (AT) version, used to express an @version attribute
+     * in the root element of the AT document, the initial value of which
+     * is set to '2.0' to signify that something preceded it (but didn't
+     * happen to be marked as such), and that this version is not necessarily
+     * backwards compatible with the unmarked (<2.0) version.
+     */
+    public static final String VERSION = "2.0";
+
     /** XML MIME type */
     public static final String XML_MIME_TYPE = MimeConstants.MIME_FOP_AREA_TREE;
 
@@ -365,7 +374,9 @@ public class XMLRenderer extends AbstractXMLRenderer {
         if (userAgent.getProducer() != null) {
             comment("Produced by " + userAgent.getProducer());
         }
-        startElement("areaTree");
+        atts.clear();
+        addAttribute("version", VERSION);
+        startElement("areaTree", atts);
     }
 
     /** {@inheritDoc} */
@@ -825,11 +836,10 @@ public class XMLRenderer extends AbstractXMLRenderer {
         }
         maybeAddLevelAttribute(word);
         maybeAddPositionAdjustAttribute(word);
-        if ( word.isReversed() ) {
-            addAttribute("reversed", "true");
-        }
+        String text = word.getWord();
+        maybeAddReversedAttribute(word, text);
         startElement("word", atts);
-        characters(word.getWord());
+        characters(text);
         endElement("word");
         super.renderWord(word);
     }
@@ -914,6 +924,12 @@ public class XMLRenderer extends AbstractXMLRenderer {
         int[][] adjustments = w.getGlyphPositionAdjustments();
         if ( adjustments != null ) {
             addAttribute ( "position-adjust", XMLUtil.encodePositionAdjustments ( adjustments ) );
+        }
+    }
+
+    private void maybeAddReversedAttribute ( WordArea w, String text ) {
+        if ( w.isReversed() && ( text.length() > 1 )  ) {
+            addAttribute("reversed", "true");
         }
     }
 
