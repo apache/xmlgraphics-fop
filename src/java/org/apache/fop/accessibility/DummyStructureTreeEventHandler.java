@@ -34,7 +34,7 @@ public final class DummyStructureTreeEventHandler implements StructureTreeEventH
     private DummyStructureTreeEventHandler() { }
 
     /** {@inheritDoc} */
-    public void startPageSequence(Locale locale) {
+    public void startPageSequence(Locale locale, String role) {
     }
 
     /** {@inheritDoc} */

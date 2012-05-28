@@ -406,7 +406,7 @@ out = proc.getOutputStream();]]></source>
       <p>
         The PCL renderer configuration currently allows the following settings:
       </p>
-<source><![CDATA[<renderer mime="application/vnd.hp-PCL">
+<source><![CDATA[<renderer mime="application/x-pcl">
   <rendering>quality</rendering>
   <text-rendering>bitmap</text-rendering>
   <disable-pjl>false</disable-pjl>
@@ -756,6 +756,14 @@ Note that the value of the encoding attribute in the example is the double-byte 
           This can be overridden by the &lt;renderer-resolution/&gt; configuration element. Example:</p>
       <source><![CDATA[
       <renderer-resolution>240</renderer-resolution>]]></source>
+      </section>
+      <section id="afp-line-width-correction-config">
+        <title>Line Width Correction</title>
+        <p>The default line width in AFP is device dependent. This means that a line width specified in, say,
+          a SVG source file may not render the way it was intended. The output AFP line with can be corrected
+          by the &lt;line-width-correction/&gt; configuration element. Example:</p>
+      <source><![CDATA[
+      <line-width-correction>2.5</line-width-correction>]]></source>
       </section>
       <section id="afp-image-config">
         <title>Images</title>

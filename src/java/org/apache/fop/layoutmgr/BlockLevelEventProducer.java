@@ -89,19 +89,30 @@ public interface BlockLevelEventProducer extends EventProducer {
     void overconstrainedAdjustEndIndent(Object source, String elementName, int amount, Locator loc);
 
     /**
-     * Contents overflow a viewport.
+     * Contents IPD overflow a viewport.
      * @param source the event source
      * @param elementName the formatting object
      * @param amount the amount by which the contents overflow (in mpt)
      * @param clip true if the content will be clipped
      * @param canRecover indicates whether FOP can recover from this problem and continue working
      * @param loc the location of the error or null
-     * @throws LayoutException the layout error provoked by the method call
-     * @event.severity FATAL
+     * @event.severity ERROR
      */
-    void viewportOverflow(Object source, String elementName,
-            int amount, boolean clip, boolean canRecover,
-            Locator loc) throws LayoutException;
+    void viewportIPDOverflow(Object source, String elementName, int amount, boolean clip,
+            boolean canRecover, Locator loc);
+
+    /**
+     * Contents BPD overflow a viewport.
+     * @param source the event source
+     * @param elementName the formatting object
+     * @param amount the amount by which the contents overflow (in mpt)
+     * @param clip true if the content will be clipped
+     * @param canRecover indicates whether FOP can recover from this problem and continue working
+     * @param loc the location of the error or null
+     * @event.severity ERROR
+     */
+    void viewportBPDOverflow(Object source, String elementName, int amount, boolean clip,
+            boolean canRecover, Locator loc);
 
     /**
      * Contents overflow a region viewport.

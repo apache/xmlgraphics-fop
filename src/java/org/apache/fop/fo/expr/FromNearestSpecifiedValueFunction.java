@@ -26,32 +26,31 @@ import org.apache.fop.fo.properties.Property;
  * Class modelling the from-nearest-specified-value function. See Sec. 5.10.4
  * of the XSL-FO standard.
  */
-public class NearestSpecPropFunction extends FunctionBase {
+public class FromNearestSpecifiedValueFunction extends FunctionBase {
 
-    /**
-     * @return 1 (maximum number of arguments for from-nearest-specified-value
-     * function)
-     */
-    public int nbArgs() {
+    /** {@inheritDoc} */
+    public int getRequiredArgsCount() {
+        return 0;
+    }
+
+    @Override
+    /** {@inheritDoc} */
+    public int getOptionalArgsCount() {
         return 1;
     }
 
-    /**
-     * @return true (allow padding of arglist with property name)
-     */
-    public boolean padArgsWithPropertyName() {
-        return true;
+    @Override
+    /** {@inheritDoc} */
+    public Property getOptionalArgDefault(int index, PropertyInfo pi) throws PropertyException {
+        if ( index == 0 ) {
+            return getPropertyName ( pi );
+        } else {
+            return super.getOptionalArgDefault ( index, pi );
+        }
     }
 
-    /**
-     *
-     * @param args array of arguments for the function
-     * @param pInfo PropertyInfo for the function
-     * @return Property containing the nearest-specified-value
-     * @throws PropertyException for invalid arguments to the function
-     */
-    public Property eval(Property[] args,
-                         PropertyInfo pInfo) throws PropertyException {
+    /** {@inheritDoc} */
+    public Property eval(Property[] args, PropertyInfo pInfo) throws PropertyException {
         String propName = args[0].getString();
         if (propName == null) {
             throw new PropertyException(

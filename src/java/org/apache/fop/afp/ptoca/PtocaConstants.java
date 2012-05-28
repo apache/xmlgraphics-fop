@@ -64,6 +64,6 @@ public interface PtocaConstants {
     byte NOP = (byte)0xF8;
 
     /** Maximum size of transparent data chunks */
-    int TRANSPARENT_DATA_MAX_SIZE = 253;
+    int TRANSPARENT_DATA_MAX_SIZE = 253; // max length = 255 (minus the ControlSequence length)
 
 }

@@ -48,6 +48,7 @@ import org.apache.fop.afp.goca.GraphicsLine;
 import org.apache.fop.afp.goca.GraphicsSetArcParameters;
 import org.apache.fop.afp.goca.GraphicsSetCharacterSet;
 import org.apache.fop.afp.goca.GraphicsSetCurrentPosition;
+import org.apache.fop.afp.goca.GraphicsSetFractionalLineWidth;
 import org.apache.fop.afp.goca.GraphicsSetLineType;
 import org.apache.fop.afp.goca.GraphicsSetLineWidth;
 import org.apache.fop.afp.goca.GraphicsSetPatternSymbol;
@@ -182,8 +183,21 @@ public class GraphicsObject extends AbstractDataObject {
      * @param lineWidth the line width multiplier
      */
     public void setLineWidth(int lineWidth) {
-        if (lineWidth != graphicsState.lineWidth) {
+        if ((float) lineWidth != graphicsState.lineWidth) {
             addObject(new GraphicsSetLineWidth(lineWidth));
+            graphicsState.lineWidth = (float) lineWidth;
+        }
+    }
+
+    /**
+     * Sets the line width
+     *
+     * @param lineWidth the line width multiplier
+     */
+    public void setLineWidth(float lineWidth) {
+        float epsilon = Float.intBitsToFloat ( 0x00800000 ); // Float.MIN_NORMAL (JDK1.6)
+        if ( Math.abs ( graphicsState.lineWidth - lineWidth ) > epsilon ) {
+            addObject(new GraphicsSetFractionalLineWidth(lineWidth));
             graphicsState.lineWidth = lineWidth;
         }
     }
@@ -414,7 +428,7 @@ public class GraphicsObject extends AbstractDataObject {
         private byte lineType;
 
         /** the current line width */
-        private int lineWidth;
+        private float lineWidth;
 
         /** the current fill pattern */
         private byte patternSymbol;

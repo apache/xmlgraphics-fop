@@ -3962,10 +3962,10 @@
       <td><a name="fo-property-border-collapse" id=
       "fo-property-border-collapse">border-collapse</a></td>
       <td class="extended">Extended</td>
-      <td class="yes">yes</td>
-      <td class="yes">yes</td>
-      <td class="yes">yes</td>
-      <td>Some small limitations</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td class="partial">partial</td>
+      <td>value "collapse-with-precedence" not yet supported</td>
     </tr>
     <tr>
       <td align="center"><a href=

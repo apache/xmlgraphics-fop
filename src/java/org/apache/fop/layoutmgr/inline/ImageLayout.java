@@ -228,6 +228,9 @@ public class ImageLayout implements Constants {
             } else if (rat1 > rat2) {
                 adjusted.width = (int)(rat2 * size.width);
                 adjusted.height = effHeight;
+            } else {
+                adjusted.width = effWidth;
+                adjusted.height = effHeight;
             }
         } else {
             adjusted.width = effWidth;

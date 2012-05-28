@@ -357,8 +357,11 @@ public class CommandLineOptions {
             } else if (args[i].equals("-a")) {
                 this.renderingOptions.put(Accessibility.ACCESSIBILITY, Boolean.TRUE);
             } else if (args[i].equals("-v")) {
-                /* Currently just print the version */
+                /* verbose mode although users may expect version; currently just print the version */
                 printVersion();
+                if (args.length == 1) {
+                    return false;
+                }
             } else if (args[i].equals("-param")) {
                   if (i + 2 < args.length) {
                       String name = args[++i];
@@ -588,7 +591,7 @@ public class CommandLineOptions {
 
     private int parsePrintOutputOption(String[] args, int i) throws FOPException {
         setOutputMode(MimeConstants.MIME_FOP_PRINT);
-        if ((i + 1 <= args.length)
+        if ((i + 1 < args.length)
                 && (args[i + 1].charAt(0) != '-')) {
             String arg = args[i + 1];
             String[] parts = arg.split(",");

@@ -69,6 +69,10 @@ public final class PropertyListMocks {
             final Property borderCollapseProperty = mock(Property.class);
             when(borderCollapseProperty.getEnum()).thenReturn(Constants.EN_SEPARATE);
             when(mockPList.get(Constants.PR_BORDER_COLLAPSE)).thenReturn(borderCollapseProperty);
+
+            final Property writingModeProperty = mock(Property.class);
+            when(writingModeProperty.getEnum()).thenReturn(Constants.EN_LR_TB);
+            when(mockPList.get(Constants.PR_WRITING_MODE)).thenReturn(writingModeProperty);
         } catch (PropertyException e) {
             throw new RuntimeException(e);
         }

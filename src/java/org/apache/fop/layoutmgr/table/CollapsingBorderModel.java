@@ -49,7 +49,7 @@ public abstract class CollapsingBorderModel {
 
     //These statics are used singleton-style. No MT issues here.
     private static CollapsingBorderModel collapse = null;
-    private static CollapsingBorderModel collapseWithPrecedence = null;
+    // private static CollapsingBorderModel collapseWithPrecedence = null;
 
     /**
      * @param borderCollapse border collapse control
@@ -63,10 +63,7 @@ public abstract class CollapsingBorderModel {
                 }
                 return collapse;
             case Constants.EN_COLLAPSE_WITH_PRECEDENCE:
-                if (collapseWithPrecedence == null) {
-                    //collapseWithPrecedence = new CollapsingBorderModelWithPrecedence();
-                }
-                return collapseWithPrecedence;
+                throw new UnsupportedOperationException ( "collapse-with-precedence not yet supported" );
             default:
                 throw new IllegalArgumentException("Illegal border-collapse mode.");
         }

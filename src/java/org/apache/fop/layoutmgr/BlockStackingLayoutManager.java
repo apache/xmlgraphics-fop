@@ -38,7 +38,6 @@ import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.fo.properties.SpaceProperty;
 import org.apache.fop.layoutmgr.inline.InlineLayoutManager;
 import org.apache.fop.traits.MinOptMax;
-import org.apache.fop.util.BreakUtil;
 import org.apache.fop.util.ListUtil;
 
 /**
@@ -1036,7 +1035,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
      * @return true if an element has been added due to a break-before.
      */
     protected boolean addKnuthElementsForBreakBefore(List returnList, LayoutContext context) {
-        int breakBefore = getBreakBefore();
+        int breakBefore = BreakOpportunityHelper.getBreakBefore(this);
         if (breakBefore == EN_PAGE
                 || breakBefore == EN_COLUMN
                 || breakBefore == EN_EVEN_PAGE
@@ -1048,27 +1047,6 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         } else {
             return false;
         }
-    }
-
-    /**
-     * Returns the break-before value of the current formatting object.
-     * @return the break-before value (Constants.EN_*)
-     */
-    private int getBreakBefore() {
-        int breakBefore = EN_AUTO;
-        if (fobj instanceof BreakPropertySet) {
-            breakBefore = ((BreakPropertySet)fobj).getBreakBefore();
-        }
-        if (true /* uncomment to only partially merge: && breakBefore != EN_AUTO*/) {
-            LayoutManager lm = getChildLM();
-            //It is assumed this is only called when the first LM is active.
-            if (lm instanceof BlockStackingLayoutManager) {
-                BlockStackingLayoutManager bslm = (BlockStackingLayoutManager)lm;
-                breakBefore = BreakUtil.compareBreakClasses(
-                        breakBefore, bslm.getBreakBefore());
-            }
-        }
-        return breakBefore;
     }
 
     /**
@@ -1249,5 +1227,16 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
         // TODO startIndent, endIndent
     }
 
+    /**
+     * Whether this LM can handle horizontal overflow error messages (only a BlockContainerLayoutManager can).
+     * @param milliPoints horizontal overflow
+     * @return true if handled by a BlockContainerLayoutManager
+     */
+    public boolean handleOverflow(int milliPoints) {
+        if (getParent() instanceof BlockStackingLayoutManager) {
+            return ((BlockStackingLayoutManager) getParent()).handleOverflow(milliPoints);
+        }
+        return false;
+    }
 }
 

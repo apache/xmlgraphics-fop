@@ -22,9 +22,10 @@ package org.apache.fop.render.intermediate;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 
+import org.apache.xmlgraphics.util.DoubleFormatUtil;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.util.DecimalFormatCache;
 
 /**
  * Utility functions for the intermediate format.
@@ -40,7 +41,9 @@ public final class IFUtil {
             //See http://java.sun.com/docs/books/jls/third_edition/html/typesValues.html#4.2.3
             value = 0.0;
         }
-        return DecimalFormatCache.getDecimalFormat(6).format(value);
+        StringBuffer buf = new StringBuffer();
+        DoubleFormatUtil.formatDouble(value, 6, 6, buf);
+        return buf.toString();
     }
 
     /**

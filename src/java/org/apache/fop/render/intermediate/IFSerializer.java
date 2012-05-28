@@ -64,6 +64,15 @@ import org.apache.fop.util.XMLUtil;
 public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
         implements IFConstants, IFPainter, IFDocumentNavigationHandler {
 
+    /**
+     * Intermediate Format (IF) version, used to express an @version attribute
+     * in the root element of the IF document, the initial value of which
+     * is set to '2.0' to signify that something preceded it (but didn't
+     * happen to be marked as such), and that this version is not necessarily
+     * backwards compatible with the unmarked (<2.0) version.
+     */
+    public static final String VERSION = "2.0";
+
     private IFDocumentHandler mimicHandler;
     private int pageSequenceIndex; // used for accessibility
 
@@ -167,7 +176,9 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
                     DocumentNavigationExtensionConstants.NAMESPACE);
             handler.startPrefixMapping(InternalElementMapping.STANDARD_PREFIX,
                     InternalElementMapping.URI);
-            handler.startElement(EL_DOCUMENT);
+            AttributesImpl atts = new AttributesImpl();
+            addAttribute(atts, "version", VERSION);
+            handler.startElement(EL_DOCUMENT, atts);
         } catch (SAXException e) {
             throw new IFException("SAX error in startDocument()", e);
         }

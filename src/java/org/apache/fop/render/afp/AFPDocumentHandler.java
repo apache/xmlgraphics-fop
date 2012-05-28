@@ -443,6 +443,11 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     }
 
     /** {@inheritDoc} */
+    public void setLineWidthCorrection(float correction) {
+        paintingState.setLineWidthCorrection(correction);
+    }
+
+    /** {@inheritDoc} */
     public int getResolution() {
         return paintingState.getResolution();
     }

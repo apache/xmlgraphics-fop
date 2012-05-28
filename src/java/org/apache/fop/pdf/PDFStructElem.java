@@ -50,7 +50,6 @@ public class PDFStructElem extends PDFDictionary implements StructureTreeElement
         if (parent instanceof PDFStructElem) {
             parentElement = (PDFStructElem) parent;
         }
-        put("Type", new PDFName("StructElem"));
         put("S", structureType);
         setParent(parent);
     }

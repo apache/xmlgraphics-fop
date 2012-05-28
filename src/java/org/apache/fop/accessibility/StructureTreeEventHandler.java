@@ -34,8 +34,9 @@ public interface StructureTreeEventHandler {
      * Starts a page sequence structure tree node.
      *
      * @param locale The locale of the page sequence
+     * @param role the value of the role property. May be null.
      */
-    void startPageSequence(Locale locale);
+    void startPageSequence(Locale locale, String role);
 
     /**
      * Starts a structure tree node.
