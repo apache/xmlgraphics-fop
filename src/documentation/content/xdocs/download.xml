@@ -16,7 +16,7 @@
   limitations under the License.
 -->
 <!-- $Id$ -->
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.3//EN" "http://forrest.apache.org/dtd/document-v13.dtd">
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
 <document>
   <header>
     <title>Apache™ FOP: Downloading A Distribution</title>
@@ -90,6 +90,25 @@
         <tr>
           <td>Repository URL</td>
           <td>
+            <link href="http://svn.apache.org/repos/asf/xmlgraphics/fop/tags/fop-1_1/">
+              <code>http://svn.apache.org/repos/asf/xmlgraphics/fop/tags/fop-1_1/</code>
+            </link>
+          </td>
+        </tr>
+        <tr>
+          <td>Web view</td>
+          <td>
+            <link href="http://svn.apache.org/viewvc/xmlgraphics/fop/tags/fop-1_1/">
+              <code>http://svn.apache.org/viewvc/xmlgraphics/fop/tags/fop-1_1/</code>
+            </link>
+          </td>
+        </tr>
+        <tr>
+          <th colspan="2">Previous Stable Release</th>
+        </tr>
+        <tr>
+          <td>Repository URL</td>
+          <td>
             <link href="http://svn.apache.org/repos/asf/xmlgraphics/fop/tags/fop-1_0/">
               <code>http://svn.apache.org/repos/asf/xmlgraphics/fop/tags/fop-1_0/</code>
             </link>
@@ -100,25 +119,6 @@
           <td>
             <link href="http://svn.apache.org/viewvc/xmlgraphics/fop/tags/fop-1_0/">
               <code>http://svn.apache.org/viewvc/xmlgraphics/fop/tags/fop-1_0/</code>
-            </link>
-          </td>
-        </tr>
-        <tr>
-          <th colspan="2">Previous Stable Release</th>
-        </tr>
-        <tr>
-          <td>Repository URL</td>
-          <td>
-            <link href="http://svn.apache.org/repos/asf/xmlgraphics/fop/tags/fop-0_95/">
-              <code>http://svn.apache.org/repos/asf/xmlgraphics/fop/tags/fop-0_95/</code>
-            </link>
-          </td>
-        </tr>
-        <tr>
-          <td>Web view</td>
-          <td>
-            <link href="http://svn.apache.org/viewvc/xmlgraphics/fop/tags/fop-0_95/">
-              <code>http://svn.apache.org/viewvc/xmlgraphics/fop/tags/fop-0_95/</code>
             </link>
           </td>
         </tr>
@@ -168,9 +168,9 @@
       <title>Archive Download</title>
       <p>
         FOP Archive distributions are linked from the upper portion of the Apache FOP
-        Download Mirror Page and can be downloaded from the FOP Archives
-        <link href="http://archive.apache.org/dist/xmlgraphics/fop/binaries/">binaries</link> &amp;
-        <link href="http://archive.apache.org/dist/xmlgraphics/fop/source/">source</link> links.
+        Download Mirror Page and can be downloaded from the FOP 
+        <link href="http://archive.apache.org/dist/xmlgraphics/fop/binaries/">binaries</link> and
+        <link href="http://archive.apache.org/dist/xmlgraphics/fop/source/">source</link> archives.
       </p>
     </section>
   </body>

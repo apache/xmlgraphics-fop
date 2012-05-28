@@ -22,8 +22,8 @@ Apache FOP is the world's first print formatter driven by XSL formatting
 objects. It is a Java application that reads a formatting object tree 
 conforming to the XSL 1.1 Recommendation (05 December 2006) and then turns it 
 into a PDF document, certain other output formats or allows you to preview it 
-directly on screen. Some parts of the XSL 1.1 specification (work in progress!)
-have also been implemented.
+directly on screen. Note that not all parts of the XSL 1.1 specification
+have yes been implemented.
 
 Apache FOP is part of Apache's XML Graphics project. The homepage of Apache 
 FOP is http://xmlgraphics.apache.org/fop/.
@@ -92,6 +92,46 @@ http://xmlgraphics.apache.org/fop/stable/running.html
 ==============================================================================
   RELEASE NOTES
 ==============================================================================
+
+Version 1.1
+===========
+
+This is a minor (dot) release of Apache FOP, which primarily addresses
+bug fixes and also adds a number of new features. See below for
+details.
+
+Compliance
+----------
+
+This release implements the XSL 1.0 and 1.1 recommendations to a relatively
+high degree of compliance. See the compliance page
+http://xmlgraphics.apache.org/fop/compliance.html for further details.
+
+Known issues
+------------
+
+A detailed list of known issues in this release is available at
+http://xmlgraphics.apache.org/fop/1.1/knownissues_overview.html.
+
+Major Changes in Version 1.1
+----------------------------
+
+* Adds support for complex scripts, in particular those that require
+  either bidirectional processing or advanced typographic tables in
+  fonts (e.g., the GSUB and GPOS tables of OpenType).
+* Adds support for fo:bidi-override and (relatively) full support
+  for writing-mode='tb-rl' (or equivalent).
+* Adds support for Unicode BIDI Control characters: U+200E LEFT-TO-RIGHT
+  MARK (LRM), U+200F RIGHT-TO-LEFT MARK (RLM), U+202A LEFT-TO-RIGHT EMBEDDING
+  (LRE), U+202B RIGHT-TO-LEFT EMBEDDING (RLE), U+202D LEFT-TO-RIGHT OVERRIDE
+  (LRO), U+202E RIGHT-TO-LEFT OVERRIDE (RLO), and U+202C POP DIRECTIONAL
+  FORMATTING (PDF).
+
+A more detailed list of changes in this release is available at
+http://xmlgraphics.apache.org/fop/1.1/changes_1.1.html.
+
+A more detailed list of changes in this and earlier releases is available at
+http://xmlgraphics.apache.org/fop/changes.html.
 
 Version 1.0
 ===========

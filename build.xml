@@ -143,8 +143,8 @@ list of possible build targets.
   <property name="Name" value="Apache FOP"/>
   <property name="name" value="fop"/>
   <property name="NAME" value="FOP"/>
-  <property name="version" value="svn-trunk"/>
-  <property name="year" value="1999-2010"/>
+  <property name="version" value="1.1"/>
+  <property name="year" value="1999-2012"/>
   <property name="javac.debug" value="on"/>
   <property name="javac.optimize" value="off"/>
   <property name="javac.deprecation" value="on"/>
@@ -477,7 +477,7 @@ list of possible build targets.
         <attribute name="Build-Id" value="${ts} (${user.name} [${os.name} ${os.version} ${os.arch}, Java ${java.runtime.version}, Target Java ${javac.target}])"/>
         <section name="org/apache/fop/">
           <attribute name="Specification-Title" value="XSL-FO - Extensible Stylesheet Language"/>
-          <attribute name="Specification-Version" value="1.0"/>
+          <attribute name="Specification-Version" value="1.1"/>
           <attribute name="Specification-Vendor" value="World Wide Web Consortium"/>
           <attribute name="Specification-URL" value="http://www.w3.org/TR/xsl"/>
           <attribute name="Implementation-Title" value="${Name}"/>
