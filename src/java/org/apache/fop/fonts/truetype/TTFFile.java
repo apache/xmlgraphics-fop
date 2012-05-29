@@ -215,8 +215,8 @@ public class TTFFile {
 
     // internal mapping of glyph indexes to unicode indexes
     // used for quick mappings in this class
-    private Map<Integer, Integer> glyphToUnicodeMap = new HashMap<Integer, Integer> ();
-    private Map<Integer, Integer>  unicodeToGlyphMap = new HashMap<Integer, Integer> ();
+    private final Map<Integer, Integer> glyphToUnicodeMap = new HashMap<Integer, Integer> ();
+    private final Map<Integer, Integer> unicodeToGlyphMap = new HashMap<Integer, Integer> ();
 
     private TTFDirTabEntry currentDirTab;
 
