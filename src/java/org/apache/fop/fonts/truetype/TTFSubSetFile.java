@@ -754,32 +754,6 @@ public class TTFSubSetFile extends TTFFile {
     }
 
     /**
-     * Read a signed short value at given position
-     */
-    private short readShort(int pos) {
-        int ret = readUShort(pos);
-        return (short)ret;
-    }
-
-    /**
-     * Read a unsigned short value at given position
-     */
-    private int readUShort(int pos) {
-        int ret = output[pos];
-        if (ret < 0) {
-            ret += 256;
-        }
-        ret = ret << 8;
-        if (output[pos + 1] < 0) {
-            ret |= output[pos + 1] + 256;
-        } else {
-            ret |= output[pos + 1];
-        }
-
-        return ret;
-    }
-
-    /**
      * Create a padding in the fontfile to align
      * on a 4-byte boundary
      */
@@ -805,9 +779,6 @@ public class TTFSubSetFile extends TTFFile {
         return (i - 1);
     }
 
-    private int log2(int num) {
-        return (int)(Math.log(num) / Math.log(2));
-    }
 
     private void updateCheckSum(int tableStart, int tableSize, TTFTableName tableName) {
         int checksum = getCheckSum(output, tableStart, tableSize);
