@@ -19,8 +19,6 @@
 
 package org.apache.fop.accessibility.fo;
 
-import static org.junit.Assert.assertTrue;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -44,6 +42,8 @@ import org.junit.Test;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
+
+import static org.junit.Assert.assertTrue;
 
 import org.apache.fop.accessibility.StructureTree2SAXEventAdapter;
 import org.apache.fop.accessibility.StructureTreeEventHandler;
@@ -97,6 +97,17 @@ public class FO2StructureTreeConverterTestCase {
         foLoader = new FOLoader() {
             public InputStream getFoInputStream() {
                 return new ByteArrayInputStream(transformedFoOutputBytes);
+            }
+        };
+        testConverter();
+    }
+
+    @Test
+    public void testArtifact() throws Exception {
+        foLoader = new FOLoader() {
+
+            public InputStream getFoInputStream() {
+                return getResource("artifact.fo");
             }
         };
         testConverter();
