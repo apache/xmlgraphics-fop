@@ -293,17 +293,6 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
     }
 
     /**
-     * Sets the array of BFEntry instances which constitutes the Unicode to glyph index map for
-     * a font. ("BF" means "base font")
-     * @param entries the Unicode to glyph index map
-     * @deprecated use {@link #setCMap(CMapSegment[])} instead
-     */
-    @Deprecated
-    public void setBFEntries(CMapSegment[] entries) {
-        setCMap(entries);
-    }
-
-    /**
      * Sets the defaultWidth.
      * @param defaultWidth The defaultWidth to set
      */
