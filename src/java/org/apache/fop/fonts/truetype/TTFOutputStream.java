@@ -22,30 +22,28 @@ package org.apache.fop.fonts.truetype;
 import java.io.IOException;
 
 /**
- * This is an interface for streaming True Type font.
+ * An interface for writing a TrueType font to an output stream.
  */
 public interface TTFOutputStream {
+
     /**
-     * Starts writing the font to file.
-     * @throws IOException file write exception.
+     * Starts writing the font.
      */
     void startFontStream() throws IOException;
 
     /**
-     * Returns an object for streaming True Type tables.
-     * @return {@link TTFTableOutputStream}
+     * Returns an object for streaming TrueType tables.
      */
     TTFTableOutputStream getTableOutputStream();
 
     /**
-     * Returns an object for streaming True Type glyphs in the glyf table.
-     * @return {@link TTFGlyphOutputStream}
+     * Returns an object for streaming TrueType glyphs in the glyf table.
      */
     TTFGlyphOutputStream getGlyphOutputStream();
 
     /**
-     * Ends writing the font to file.
-     * @throws IOException file write exception.
+     * Ends writing the font.
      */
     void endFontStream() throws IOException;
+
 }

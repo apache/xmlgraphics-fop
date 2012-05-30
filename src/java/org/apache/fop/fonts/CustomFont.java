@@ -493,9 +493,9 @@ public abstract class CustomFont extends Typeface
     }
 
     /**
-     * Sets the identity character map for this font. It maps all available Unicode characters
+     * Sets the character map for this font. It maps all available Unicode characters
      * to their glyph indices inside the font.
-     * @param cmap the identity character map
+     * @param cmap the character map
      */
     public void setCMap(CMapSegment[] cmap) {
         this.cmap = new CMapSegment[cmap.length];
@@ -503,9 +503,9 @@ public abstract class CustomFont extends Typeface
     }
 
     /**
-     * Returns the identity character map for this font. It maps all available Unicode characters
+     * Returns the character map for this font. It maps all available Unicode characters
      * to their glyph indices inside the font.
-     * @return the identity character map
+     * @return the character map
      */
     public CMapSegment[] getCMap() {
         CMapSegment[] copy = new CMapSegment[cmap.length];

@@ -188,7 +188,7 @@ public class EmbedFontInfo implements Serializable {
     }
 
     /**
-     * Sets the embedding mode for this font, currently not supported for type1 fonts.
+     * Sets the embedding mode for this font, currently not supported for Type 1 fonts.
      * @param embeddingMode the new embedding mode.
      */
     public void setEmbeddingMode(EmbeddingMode embeddingMode) {

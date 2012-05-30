@@ -130,7 +130,7 @@ public class FontType {
         return value;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public String toString() {
         return name;
     }

@@ -27,11 +27,12 @@ import org.apache.fop.fonts.truetype.TTFGlyphOutputStream;
  * This class streams glyphs from the "glyf" table in a True Type font.
  */
 public class PSTTFGlyphOutputStream implements TTFGlyphOutputStream {
+
     /** This counts the total number of bytes written that have been streamed. */
-    private int byteCounter = 0;
+    private int byteCounter;
 
     /** This is a place-holder for the offset of the last string boundary. */
-    private int lastStringBoundary = 0;
+    private int lastStringBoundary;
     private PSTTFGenerator ttfGen;
 
     /**
@@ -42,31 +43,29 @@ public class PSTTFGlyphOutputStream implements TTFGlyphOutputStream {
         this.ttfGen = ttfGen;
     }
 
-    /** {@inheritDoc} */
-    public void startGlyphStream()  throws IOException {
+    public void startGlyphStream() throws IOException {
         ttfGen.startString();
     }
 
-    /** {@inheritDoc} */
-    public void streamGlyph(byte[] byteArray, int offset, int length) throws IOException {
-        if (length > PSTTFGenerator.MAX_BUFFER_SIZE) {
-            throw new UnsupportedOperationException("The glyph is " + length + " there may be an "
-                    + "error in the font file.");
+    public void streamGlyph(byte[] glyphData, int offset, int size) throws IOException {
+        if (size > PSTTFGenerator.MAX_BUFFER_SIZE) {
+            throw new UnsupportedOperationException("The glyph is " + size
+                    + " bytes. There may be an error in the font file.");
         }
 
-        if (length + (byteCounter - lastStringBoundary) < PSTTFGenerator.MAX_BUFFER_SIZE) {
-            ttfGen.streamBytes(byteArray, offset, length);
+        if (size + (byteCounter - lastStringBoundary) < PSTTFGenerator.MAX_BUFFER_SIZE) {
+            ttfGen.streamBytes(glyphData, offset, size);
         } else {
             ttfGen.endString();
             lastStringBoundary = byteCounter;
             ttfGen.startString();
-            ttfGen.streamBytes(byteArray, offset, length);
+            ttfGen.streamBytes(glyphData, offset, size);
         }
-        byteCounter += length;
+        byteCounter += size;
     }
 
-    /** {@inheritDoc} */
     public void endGlyphStream() throws IOException {
         ttfGen.endString();
     }
+
 }

@@ -142,8 +142,9 @@ public class TTFFile {
         "ccaron",           "dcroat"
     };
 
-    /** The FontFileReader used to read this truetype font */
+    /** The FontFileReader used to read this TrueType font. */
     protected FontFileReader fontFile;
+
     /** Set to true to get even more debug output than with level DEBUG */
     public static final boolean TRACE_ENABLED = false;
 
@@ -246,7 +247,7 @@ public class TTFFile {
     }
 
     /**
-     * Key-value helper class (immutable)
+     * Key-value helper class.
      */
     final class UnicodeMapping implements Comparable {
 
@@ -1699,7 +1700,7 @@ public class TTFFile {
 
     /**
      * Streams a font.
-     * @param ttfOut The interface for streaming True Type tables.
+     * @param ttfOut The interface for streaming TrueType tables.
      * @exception IOException file write error
      */
     public void stream(TTFOutputStream ttfOut) throws IOException {
@@ -1737,7 +1738,7 @@ public class TTFFile {
     }
 
     /**
-     * This returns the order in which the tables in a truetype font should be written to file.
+     * Returns the order in which the tables in a TrueType font should be written to file.
      * @param directoryTabs the map that is to be sorted.
      * @return TTFTablesNames[] an array of table names sorted in the order they should appear in
      * the TTF file.

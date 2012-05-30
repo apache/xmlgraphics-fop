@@ -22,27 +22,27 @@ package org.apache.fop.fonts.truetype;
 import java.io.IOException;
 
 /**
- * This is an interface for streaming individual glyphs from the glyf table in a True Type font.
+ * An interface for writing individual glyphs from the glyf table of a TrueType font to an output stream.
  */
 public interface TTFGlyphOutputStream {
+
     /**
      * Begins the streaming of glyphs.
-     * @throws IOException file write exception
      */
     void startGlyphStream() throws IOException;
 
     /**
-     * Streams an individual glyph at offset from a byte array.
-     * @param byteArray byte[] the font byte array.
-     * @param offset int the starting position to stream from.
-     * @param length int the number of bytes to stream.
-     * @throws IOException file write exception.
+     * Streams an individual glyph from the given byte array.
+     *
+     * @param glyphData the source of the glyph data to stream from
+     * @param offset the position in the glyph data where the glyph starts
+     * @param size the size of the glyph data in bytes
      */
-    void streamGlyph(byte[] byteArray, int offset, int length) throws IOException;
+    void streamGlyph(byte[] glyphData, int offset, int size) throws IOException;
 
     /**
      * Ends the streaming of glyphs.
-     * @throws IOException file write exception.
      */
     void endGlyphStream() throws IOException;
+
 }

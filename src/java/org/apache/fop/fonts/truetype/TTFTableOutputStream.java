@@ -22,16 +22,16 @@ package org.apache.fop.fonts.truetype;
 import java.io.IOException;
 
 /**
- * An interface for streaming full True Type tables from a TTF file.
+ * An interface for writing a TrueType table to an output stream.
  */
 public interface TTFTableOutputStream {
 
     /**
-     * Streams a table defined in byteArray at offset of length bytes.
-     * @param byteArray The source of the table to stream from.
-     * @param offset The position in byteArray to begin streaming from.
-     * @param length The number of bytes to stream.
-     * @throws IOException write error.
+     * Streams a table from the given byte array.
+     *
+     * @param ttfData the source of the table to stream from
+     * @param offset the position in the byte array where the table starts
+     * @param size the size of the table in bytes
      */
-    void streamTable(byte[] byteArray, int offset, int length) throws IOException;
+    void streamTable(byte[] ttfData, int offset, int size) throws IOException;
 }
