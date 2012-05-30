@@ -28,7 +28,9 @@ import org.apache.fop.fonts.truetype.TTFTableOutputStream;
  *
  */
 public class PSTTFTableOutputStream implements TTFTableOutputStream  {
+
     private PSTTFGenerator ttfGen;
+
     /**
      * Constructor.
      * @param ttfGen PSGenerator the streamer class used for streaming bytes.
@@ -37,16 +39,15 @@ public class PSTTFTableOutputStream implements TTFTableOutputStream  {
         this.ttfGen = ttfGen;
     }
 
-    /** {@inheritDoc} */
-    public void streamTable(byte[] byteArray, int offset, int length) throws IOException {
+    public void streamTable(byte[] ttfData, int offset, int size) throws IOException {
         int offsetPosition = offset;
         // Need to split the table into MAX_BUFFER_SIZE chunks
-        for (int i = 0; i < length / PSTTFGenerator.MAX_BUFFER_SIZE; i++) {
-            streamString(byteArray, offsetPosition, PSTTFGenerator.MAX_BUFFER_SIZE);
+        for (int i = 0; i < size / PSTTFGenerator.MAX_BUFFER_SIZE; i++) {
+            streamString(ttfData, offsetPosition, PSTTFGenerator.MAX_BUFFER_SIZE);
             offsetPosition += PSTTFGenerator.MAX_BUFFER_SIZE;
         }
-        if (length % PSTTFGenerator.MAX_BUFFER_SIZE > 0) {
-            streamString(byteArray, offsetPosition, length % PSTTFGenerator.MAX_BUFFER_SIZE);
+        if (size % PSTTFGenerator.MAX_BUFFER_SIZE > 0) {
+            streamString(ttfData, offsetPosition, size % PSTTFGenerator.MAX_BUFFER_SIZE);
         }
     }
 

@@ -81,7 +81,7 @@ public class TTFSubSetFile extends TTFFile {
                         = new HashMap<TTFTableName, TTFDirTabEntry>();
 
     private int determineTableCount() {
-        int numTables = 4; //4 req'd tables: head,hhea,hmtx,maxp,
+        int numTables = 4; //4 req'd tables: head,hhea,hmtx,maxp
         if (isCFF()) {
             throw new UnsupportedOperationException(
                     "OpenType fonts with CFF glyphs are not supported");
@@ -126,7 +126,7 @@ public class TTFSubSetFile extends TTFFile {
 
         writeUShort((numTables * 16) - searchRange);
         realSize += 2;
-     // Create space for the table entries (these must be in ASCII alphabetical order[A-Z]then[a-z])
+        // Create space for the table entries (these must be in ASCII alphabetical order[A-Z] then[a-z])
         writeTableName(TTFTableName.OS2);
 
         if (hasCvt()) {
@@ -215,9 +215,6 @@ public class TTFSubSetFile extends TTFFile {
 
     /**
      * Copy the name table as is from the original.
-     * @param in FontFileReader
-     * @return boolean
-     * @throws IOException exception
      */
     private boolean createName(FontFileReader in) throws IOException {
         return copyTable(in, TTFTableName.NAME);
@@ -225,9 +222,6 @@ public class TTFSubSetFile extends TTFFile {
 
     /**
      * Copy the OS/2 table as is from the original.
-     * @param in
-     * @return
-     * @throws IOException
      */
     private boolean createOS2(FontFileReader in) throws IOException {
         return copyTable(in, TTFTableName.OS2);
@@ -389,7 +383,7 @@ public class TTFSubSetFile extends TTFFile {
                     endOffset1 = (currentPos - startPos + glyphLength);
                 }
 
-                // Store the glyph boundary positions relative to the start the font
+                // Store the glyph boundary positions relative to the start of the font
                 glyphOffsets[i] = currentPos;
                 currentPos += glyphLength;
                 realSize += glyphLength;

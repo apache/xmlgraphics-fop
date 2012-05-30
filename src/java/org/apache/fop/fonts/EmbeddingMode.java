@@ -21,10 +21,10 @@ package org.apache.fop.fonts;
 
 /**
  * This enumerates the embedding mode of fonts; full; subset; auto (auto defaults to full for
- * type1 fonts and subset for truetype fonts.
+ * Type 1 fonts and subset for TrueType fonts.
  */
 public enum EmbeddingMode {
-    /** Default option: assumes FULL for type1 fonts and SUBSET for truetype fonts. */
+    /** Default option: assumes FULL for Type 1 fonts and SUBSET for TrueType fonts. */
     AUTO,
     /** Full font embedding: This means the whole of the font is written to file. */
     FULL,
@@ -34,16 +34,16 @@ public enum EmbeddingMode {
 
     /**
      * Returns the name of this embedding mode.
-     * @return String - lower case.
+     * @return the name of this embedding mode in lower case.
      */
     public String getName() {
         return this.toString().toLowerCase();
     }
 
     /**
-     * Returns {@link EmbeddingMode} by name.
-     * @param value String - the name of the embedding mode (not case sensitive).
-     * @return embedding mode constant.
+     * Returns the embedding mode corresponding to the given name.
+     * @param value the name of an embedding mode (not case sensitive)
+     * @return the corresponding embedding mode
      */
     public static EmbeddingMode getValue(String value) {
         for (EmbeddingMode mode : EmbeddingMode.values()) {
