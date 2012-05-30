@@ -26,7 +26,7 @@ import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
 
-import org.apache.fop.fonts.BFEntry;
+import org.apache.fop.fonts.CMapSegment;
 import org.apache.fop.fonts.CIDFontType;
 import org.apache.fop.fonts.EmbeddingMode;
 import org.apache.fop.fonts.EncodingMode;
@@ -181,8 +181,8 @@ public class TTFFontLoader extends FontLoader {
         }
     }
 
-    private BFEntry[] getCMap(TTFFile ttf) {
-        BFEntry[] array = new BFEntry[ttf.getCMaps().size()];
+    private CMapSegment[] getCMap(TTFFile ttf) {
+        CMapSegment[] array = new CMapSegment[ttf.getCMaps().size()];
         return ttf.getCMaps().toArray(array);
     }
 
@@ -192,12 +192,12 @@ public class TTFFontLoader extends FontLoader {
             singleFont.setWidth(i, ttf.getCharWidth(i));
         }
 
-        for (BFEntry ce : ttf.getCMaps()) {
-            if (ce.getUnicodeStart() < 0xFFFE) {
-                for (char u = (char)ce.getUnicodeStart(); u <= ce.getUnicodeEnd(); u++) {
+        for (CMapSegment segment : ttf.getCMaps()) {
+            if (segment.getUnicodeStart() < 0xFFFE) {
+                for (char u = (char)segment.getUnicodeStart(); u <= segment.getUnicodeEnd(); u++) {
                     int codePoint = singleFont.getEncoding().mapChar(u);
                     if (codePoint <= 0) {
-                        int glyphIndex = ce.getGlyphStartIndex() + u - ce.getUnicodeStart();
+                        int glyphIndex = segment.getGlyphStartIndex() + u - segment.getUnicodeStart();
                         String glyphName = ttf.getGlyphName(glyphIndex);
                         if (glyphName == "" && ttf.getPostScriptVersion() != PostScriptVersion.V2) {
                             glyphName = "u" + HexEncoder.encode(u);

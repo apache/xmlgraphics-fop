@@ -43,7 +43,7 @@ import org.apache.fop.complexscripts.fonts.GlyphDefinitionTable;
 import org.apache.fop.complexscripts.fonts.GlyphPositioningTable;
 import org.apache.fop.complexscripts.fonts.GlyphSubstitutionTable;
 import org.apache.fop.complexscripts.fonts.OTFAdvancedTypographicTableReader;
-import org.apache.fop.fonts.BFEntry;
+import org.apache.fop.fonts.CMapSegment;
 import org.apache.fop.fonts.FontUtil;
 
 /**
@@ -161,7 +161,7 @@ public class TTFFile {
     protected Map<TTFTableName, TTFDirTabEntry> dirTabs;
     private Map<Integer, Map<Integer, Integer>> kerningTab; // for CIDs
     private Map<Integer, Map<Integer, Integer>> ansiKerningTab; // For winAnsiEncoding
-    private List<BFEntry> cmaps;
+    private List<CMapSegment> cmaps;
     private Set<UnicodeMapping> unicodeMappings;
 
     private int upem;                                // unitsPerEm from "head" table
@@ -764,7 +764,7 @@ public class TTFFile {
     }
 
     private void createCMaps() {
-        cmaps = new ArrayList<BFEntry>();
+        cmaps = new ArrayList<CMapSegment>();
         int unicodeStart;
         int glyphStart;
         int unicodeEnd;
@@ -781,7 +781,7 @@ public class TTFFile {
             if (((lastMapping.getUnicodeIndex() + 1) != um.getUnicodeIndex())
                     || ((lastMapping.getGlyphIndex() + 1) != um.getGlyphIndex())) {
                 unicodeEnd = lastMapping.getUnicodeIndex();
-                cmaps.add(new BFEntry(unicodeStart, unicodeEnd, glyphStart));
+                cmaps.add(new CMapSegment(unicodeStart, unicodeEnd, glyphStart));
                 unicodeStart = um.getUnicodeIndex();
                 glyphStart = um.getGlyphIndex();
             }
@@ -789,7 +789,7 @@ public class TTFFile {
         }
 
         unicodeEnd = lastMapping.getUnicodeIndex();
-        cmaps.add(new BFEntry(unicodeStart, unicodeEnd, glyphStart));
+        cmaps.add(new CMapSegment(unicodeStart, unicodeEnd, glyphStart));
     }
 
     /**
@@ -1758,10 +1758,11 @@ public class TTFFile {
     }
 
     /**
-     * Return a List with TTFCmapEntry.
-     * @return A list of TTFCmapEntry objects
+     * Returns this font's character to glyph mapping.
+     *
+     * @return the font's cmap
      */
-    public List<BFEntry> getCMaps() {
+    public List<CMapSegment> getCMaps() {
         return cmaps;
     }
 

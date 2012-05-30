@@ -33,7 +33,7 @@ import org.xml.sax.SAXException;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.Version;
-import org.apache.fop.fonts.BFEntry;
+import org.apache.fop.fonts.CMapSegment;
 import org.apache.fop.fonts.FontUtil;
 import org.apache.fop.fonts.truetype.FontFileReader;
 import org.apache.fop.fonts.truetype.TTFFile;
@@ -385,7 +385,7 @@ public class TTFReader extends AbstractFontReader {
 
         el = doc.createElement("bfranges");
         mel.appendChild(el);
-        for (BFEntry ce : ttf.getCMaps()) {
+        for (CMapSegment ce : ttf.getCMaps()) {
             Element el2 = doc.createElement("bf");
             el.appendChild(el2);
             el2.setAttribute("us", String.valueOf(ce.getUnicodeStart()));
