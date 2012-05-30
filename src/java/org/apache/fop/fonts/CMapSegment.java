@@ -20,31 +20,29 @@
 package org.apache.fop.fonts;
 
 /**
- * This is just a holder class for bfentries, groups of characters of a base font (bf).
+ * A segment in a cmap table of format 4. Unicode code points between
+ * {@link #getUnicodeStart()} and {@link #getUnicodeEnd()} map to contiguous glyph indices
+ * starting from {@link #getGlyphStartIndex()}.
  */
-public final class BFEntry {
-
-    //TODO Think about renaming this class to CMapRange or something.
+public final class CMapSegment {
 
     private final int unicodeStart;
     private final int unicodeEnd;
     private final int glyphStartIndex;
 
     /**
-     * Main constructor.
+     * Creates a new segment.
+     *
      * @param unicodeStart Unicode start index
      * @param unicodeEnd Unicode end index
      * @param glyphStartIndex glyph start index
      */
-    public BFEntry(int unicodeStart, int unicodeEnd, int glyphStartIndex) {
+    public CMapSegment(int unicodeStart, int unicodeEnd, int glyphStartIndex) {
         this.unicodeStart = unicodeStart;
         this.unicodeEnd = unicodeEnd;
         this.glyphStartIndex = glyphStartIndex;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int hashCode() {
         int hc = 17;
@@ -54,13 +52,10 @@ public final class BFEntry {
         return hc;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean equals(Object o) {
-        if (o instanceof BFEntry) {
-            BFEntry ce = (BFEntry) o;
+        if (o instanceof CMapSegment) {
+            CMapSegment ce = (CMapSegment) o;
             return ce.unicodeStart == this.unicodeStart
                 && ce.unicodeEnd == this.unicodeEnd
                 && ce.glyphStartIndex == this.glyphStartIndex;
@@ -95,7 +90,7 @@ public final class BFEntry {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("BFEntry: ");
+        StringBuilder sb = new StringBuilder("CMapSegment: ");
         sb.append ( "{ UC[" );
         sb.append ( unicodeStart );
         sb.append ( ',' );

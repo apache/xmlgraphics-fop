@@ -64,7 +64,7 @@ public abstract class CustomFont extends Typeface
     private boolean useAdvanced = true;
 
     /** the character map, mapping Unicode ranges to glyph indices. */
-    protected BFEntry[] cmap;
+    protected CMapSegment[] cmap;
 
     /** {@inheritDoc} */
     public String getFontName() {
@@ -497,8 +497,8 @@ public abstract class CustomFont extends Typeface
      * to their glyph indices inside the font.
      * @param cmap the identity character map
      */
-    public void setCMap(BFEntry[] cmap) {
-        this.cmap = new BFEntry[cmap.length];
+    public void setCMap(CMapSegment[] cmap) {
+        this.cmap = new CMapSegment[cmap.length];
         System.arraycopy(cmap, 0, this.cmap, 0, cmap.length);
     }
 
@@ -507,8 +507,8 @@ public abstract class CustomFont extends Typeface
      * to their glyph indices inside the font.
      * @return the identity character map
      */
-    public BFEntry[] getCMap() {
-        BFEntry[] copy = new BFEntry[cmap.length];
+    public CMapSegment[] getCMap() {
+        CMapSegment[] copy = new CMapSegment[cmap.length];
         System.arraycopy(this.cmap, 0, copy, 0, this.cmap.length);
         return copy;
     }

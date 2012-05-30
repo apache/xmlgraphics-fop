@@ -183,17 +183,17 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
     }
 
     /**
-     * Add a private use mapping {PU,GI} to the existing BFENTRIES map.
+     * Add a private use mapping {PU,GI} to the existing character map.
      * N.B. Does not insert in order, merely appends to end of existing map.
      */
     private synchronized void addPrivateUseMapping ( int pu, int gi ) {
         assert findGlyphIndex ( pu ) == SingleByteEncoding.NOT_FOUND_CODE_POINT;
-        BFEntry[] bfeOld = cmap;
-        int       bfeCnt = bfeOld.length;
-        BFEntry[] bfeNew = new BFEntry [ bfeCnt + 1 ];
-        System.arraycopy ( bfeOld, 0, bfeNew, 0, bfeCnt );
-        bfeNew [ bfeCnt ] = new BFEntry ( pu, pu, gi );
-        cmap = bfeNew;
+        CMapSegment[] oldCmap = cmap;
+        int cmapLength = oldCmap.length;
+        CMapSegment[] newCmap = new CMapSegment [ cmapLength + 1 ];
+        System.arraycopy ( oldCmap, 0, newCmap, 0, cmapLength );
+        newCmap [ cmapLength ] = new CMapSegment ( pu, pu, gi );
+        cmap = newCmap;
     }
 
     /**
@@ -252,11 +252,11 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
     private int findCharacterFromGlyphIndex ( int gi, boolean augment ) {
         int cc = 0;
         for ( int i = 0, n = cmap.length; i < n; i++ ) {
-            BFEntry be = cmap [ i ];
-            int s = be.getGlyphStartIndex();
-            int e = s + ( be.getUnicodeEnd() - be.getUnicodeStart() );
+            CMapSegment segment = cmap [ i ];
+            int s = segment.getGlyphStartIndex();
+            int e = s + ( segment.getUnicodeEnd() - segment.getUnicodeStart() );
             if ( ( gi >= s ) && ( gi <= e ) ) {
-                cc = be.getUnicodeStart() + ( gi - s );
+                cc = segment.getUnicodeStart() + ( gi - s );
                 break;
             }
         }
@@ -296,10 +296,10 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
      * Sets the array of BFEntry instances which constitutes the Unicode to glyph index map for
      * a font. ("BF" means "base font")
      * @param entries the Unicode to glyph index map
-     * @deprecated use {@link #setCMap(BFEntry[])} instead
+     * @deprecated use {@link #setCMap(CMapSegment[])} instead
      */
     @Deprecated
-    public void setBFEntries(BFEntry[] entries) {
+    public void setBFEntries(CMapSegment[] entries) {
         setCMap(entries);
     }
 

@@ -40,7 +40,7 @@ import org.apache.xmlgraphics.ps.PSGenerator;
 import org.apache.xmlgraphics.ps.PSResource;
 import org.apache.xmlgraphics.ps.dsc.ResourceTracker;
 
-import org.apache.fop.fonts.BFEntry;
+import org.apache.fop.fonts.CMapSegment;
 import org.apache.fop.fonts.Base14Font;
 import org.apache.fop.fonts.CIDFontType;
 import org.apache.fop.fonts.CIDSubset;
@@ -314,7 +314,7 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
     }
 
     private static void createType42DictionaryEntries(PSGenerator gen, CustomFont font,
-            BFEntry[] cmap, TTFFile ttfFile) throws IOException {
+            CMapSegment[] cmap, TTFFile ttfFile) throws IOException {
         gen.write("/FontName /");
         gen.write(font.getEmbedFontName());
         gen.writeln(" def");
@@ -354,14 +354,14 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
     }
 
     private static void buildCharStrings(PSGenerator gen, boolean buildCharStrings,
-            BFEntry[] cmap, Set<String> glyphNames, CustomFont font) throws IOException {
+            CMapSegment[] cmap, Set<String> glyphNames, CustomFont font) throws IOException {
         gen.write("/CharStrings ");
         if (!buildCharStrings) {
             gen.write(1);
         } else if (font.getEmbeddingMode() != EmbeddingMode.FULL) {
             int charCount = 1; //1 for .notdef
-            for (BFEntry entry : cmap) {
-                charCount += entry.getUnicodeEnd() - entry.getUnicodeStart() + 1;
+            for (CMapSegment segment : cmap) {
+                charCount += segment.getUnicodeEnd() - segment.getUnicodeStart() + 1;
             }
             gen.write(charCount);
         } else {
@@ -378,9 +378,9 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
         }
         if (font.getEmbeddingMode() != EmbeddingMode.FULL) {
           //Only performed in singly-byte mode, ignored for CID fonts
-            for (BFEntry entry : cmap) {
-                int glyphIndex = entry.getGlyphStartIndex();
-                for (int ch = entry.getUnicodeStart(); ch <= entry.getUnicodeEnd(); ch++) {
+            for (CMapSegment segment : cmap) {
+                int glyphIndex = segment.getGlyphStartIndex();
+                for (int ch = segment.getUnicodeStart(); ch <= segment.getUnicodeEnd(); ch++) {
                     char ch16 = (char)ch; //TODO Handle Unicode characters beyond 16bit
                     String glyphName = Glyphs.charToGlyphName(ch16);
                     if ("".equals(glyphName)) {
@@ -410,10 +410,10 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
         gen.writeln(" def");
     }
 
-    private static int getGlyphIndex(char c, BFEntry[] cmap) {
-        for (BFEntry entry : cmap) {
-            if (entry.getUnicodeStart() <= c && c <= entry.getUnicodeEnd()) {
-                return entry.getGlyphStartIndex() + c - entry.getUnicodeStart();
+    private static int getGlyphIndex(char c, CMapSegment[] cmap) {
+        for (CMapSegment segment : cmap) {
+            if (segment.getUnicodeStart() <= c && c <= segment.getUnicodeEnd()) {
+                return segment.getGlyphStartIndex() + c - segment.getUnicodeStart();
             }
         }
         return 0;
@@ -509,7 +509,7 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
         }
 
 
-        createType42DictionaryEntries(gen, font, new BFEntry[0], ttfFile);
+        createType42DictionaryEntries(gen, font, new CMapSegment[0], ttfFile);
         gen.writeln("CIDFontName currentdict end /CIDFont defineresource pop");
         gen.writeln("end");
         gen.writeln("%%EndResource");
@@ -685,7 +685,7 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
 
     private static PSResource defineDerivedTrueTypeFont(PSGenerator gen,
             PSEventProducer eventProducer, String baseFontName, String fontName,
-            SingleByteEncoding encoding, BFEntry[] cmap) throws IOException {
+            SingleByteEncoding encoding, CMapSegment[] cmap) throws IOException {
         checkPostScriptLevel3(gen, eventProducer);
         PSResource res = new PSResource(PSResource.TYPE_FONT, fontName);
         gen.writeDSCComment(DSCConstants.BEGIN_RESOURCE, res);

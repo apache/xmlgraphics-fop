@@ -64,7 +64,7 @@ public class FontReader extends DefaultHandler {
 
     private Map<Integer, Integer> currentKerning = null;
 
-    private List<BFEntry> bfranges = null;
+    private List<CMapSegment> bfranges = null;
 
     private void createFont(InputSource source) throws FOPException {
         XMLReader parser = null;
@@ -201,9 +201,9 @@ public class FontReader extends DefaultHandler {
             returnFont.putKerningEntry(new Integer(attributes.getValue("kpx1")),
                                         currentKerning);
         } else if ("bfranges".equals(localName)) {
-            bfranges = new ArrayList<BFEntry>();
+            bfranges = new ArrayList<CMapSegment>();
         } else if ("bf".equals(localName)) {
-            BFEntry entry = new BFEntry(getInt(attributes.getValue("us")),
+            CMapSegment entry = new CMapSegment(getInt(attributes.getValue("us")),
                                         getInt(attributes.getValue("ue")),
                                         getInt(attributes.getValue("gi")));
             bfranges.add(entry);
@@ -307,7 +307,7 @@ public class FontReader extends DefaultHandler {
             multiFont.setWidthArray(wds);
 
         } else if ("bfranges".equals(localName)) {
-            multiFont.setCMap(bfranges.toArray(new BFEntry[0]));
+            multiFont.setCMap(bfranges.toArray(new CMapSegment[0]));
         }
         text.setLength(0); //Reset text buffer (see characters())
     }
