@@ -19,6 +19,7 @@
 
 package org.apache.fop.render;
 
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 
 /**
@@ -50,9 +51,8 @@ public abstract class AbstractRendererMaker {
      * @param userAgent user agent
      * @return a config object that can be used to configure the renderer
      */
-    public RendererConfigurator getConfigurator(FOUserAgent userAgent) {
-        return null;
-    }
+    public abstract void configureRenderer(FOUserAgent userAgent, Renderer renderer)
+            throws FOPException;
 
     /**
      * Indicates whether a specific MIME type is supported by this renderer.

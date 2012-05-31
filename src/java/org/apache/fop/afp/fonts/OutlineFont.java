@@ -27,10 +27,11 @@ public class OutlineFont extends AbstractOutlineFont {
     /**
      * Construct outline font with specified name and character set.
      * @param name font's name
+     * @param embeddable whether or not this font is embeddable
      * @param charSet font's character set
      */
-    public OutlineFont(String name, CharacterSet charSet) {
-        super(name, charSet);
+    public OutlineFont(String name, boolean embeddable, CharacterSet charSet) {
+        super(name, embeddable, charSet);
     }
 
 }

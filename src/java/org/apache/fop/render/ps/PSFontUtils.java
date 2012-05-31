@@ -19,14 +19,9 @@
 
 package org.apache.fop.render.ps;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.util.Map;
-
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -226,27 +221,7 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
     private static InputStream getInputStreamOnFont(PSGenerator gen, CustomFont font)
                 throws IOException {
         if (isEmbeddable(font)) {
-            Source source = font.getEmbedFileSource();
-            if (source == null && font.getEmbedResourceName() != null) {
-                source = new StreamSource(PSFontUtils.class
-                        .getResourceAsStream(font.getEmbedResourceName()));
-            }
-            if (source == null) {
-                return null;
-            }
-            InputStream in = null;
-            if (source instanceof StreamSource) {
-                in = ((StreamSource) source).getInputStream();
-            }
-            if (in == null && source.getSystemId() != null) {
-                try {
-                    in = new java.net.URL(source.getSystemId()).openStream();
-                } catch (MalformedURLException e) {
-                    new FileNotFoundException(
-                            "File not found. URL could not be resolved: "
-                                    + e.getMessage());
-                }
-            }
+            InputStream in = font.getInputStream();
             if (in == null) {
                 return null;
             }

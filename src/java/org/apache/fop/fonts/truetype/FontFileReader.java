@@ -19,7 +19,6 @@
 
 package org.apache.fop.fonts.truetype;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -31,38 +30,9 @@ import org.apache.commons.io.IOUtils;
  */
 public class FontFileReader {
 
-    private int fsize;      // file size
+    private final int fsize; // file size
     private int current;    // current position in file
-    private byte[] file;
-
-    /**
-     * Initializes class and reads stream. Init does not close stream.
-     *
-     * @param in InputStream to read from new array with size + inc
-     * @throws IOException In case of an I/O problem
-     */
-    private void init(InputStream in) throws java.io.IOException {
-        this.file = IOUtils.toByteArray(in);
-        this.fsize = this.file.length;
-        this.current = 0;
-    }
-
-    /**
-     * Constructor
-     *
-     * @param fileName filename to read
-     * @throws IOException In case of an I/O problem
-     */
-    public FontFileReader(String fileName) throws IOException {
-        final File f = new File(fileName);
-        InputStream in = new java.io.FileInputStream(f);
-        try {
-            init(in);
-        } finally {
-            in.close();
-        }
-    }
-
+    private final byte[] file;
 
     /**
      * Constructor
@@ -71,7 +41,9 @@ public class FontFileReader {
      * @throws IOException In case of an I/O problem
      */
     public FontFileReader(InputStream in) throws IOException {
-        init(in);
+        this.file = IOUtils.toByteArray(in);
+        this.fsize = this.file.length;
+        this.current = 0;
     }
 
 

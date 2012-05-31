@@ -23,15 +23,13 @@ package embedding;
 import java.io.File;
 import java.io.OutputStream;
 
-//JAXP
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.Source;
-import javax.xml.transform.Result;
-import javax.xml.transform.stream.StreamSource;
 import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.stream.StreamSource;
 
-//FOP
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
@@ -69,7 +67,7 @@ public class ExampleXML2PDF {
             System.out.println("Transforming...");
 
             // configure fopFactory as desired
-            FopFactory fopFactory = FopFactory.newInstance();
+            final FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
 
             FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
             // configure foUserAgent as desired

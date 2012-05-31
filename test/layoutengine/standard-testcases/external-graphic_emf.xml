@@ -33,7 +33,7 @@
         <fo:flow flow-name="xsl-region-body">
           <fo:block>EMF external-graphic</fo:block>
           <fo:block>
-            <fo:external-graphic src="../../resources/images/img.emf"/>EOG
+            <fo:external-graphic src="../resources/images/img.emf"/>EOG
           </fo:block>
           <fo:block>EOF</fo:block>
         </fo:flow>

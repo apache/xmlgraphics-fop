@@ -23,7 +23,7 @@ import static org.junit.Assert.fail;
 
 import java.net.MalformedURLException;
 
-import org.apache.fop.apps.FOURIResolver;
+import org.apache.fop.apps.io.FOURIResolver;
 import org.junit.Test;
 
 /**

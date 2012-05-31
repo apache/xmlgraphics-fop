@@ -19,18 +19,20 @@
 
 package org.apache.fop.config;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
-import org.apache.avalon.framework.configuration.Configuration;
-import org.apache.avalon.framework.configuration.ConfigurationException;
+import org.xml.sax.SAXException;
+
 import org.apache.avalon.framework.configuration.DefaultConfigurationBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.render.pdf.BasePDFTest;
-import org.xml.sax.SAXException;
+
+import static org.apache.fop.FOPTestUtils.getBaseDir;
 
 /**
  * Basic runtime test for FOP's font configuration. It is used to verify that
@@ -44,15 +46,15 @@ public abstract class BaseUserConfigTest extends BasePDFTest {
     protected Log log = LogFactory.getLog(BaseUserConfigTest.class);
 
 
+    public BaseUserConfigTest(InputStream confStream) throws SAXException, IOException {
+        super(confStream);
+    }
+
     /**
      * @see org.apache.fop.render.pdf.BasePDFTest#init()
      */
     protected void init() {
         // do nothing
-    }
-
-    protected void initConfig() throws Exception {
-        fopFactory.setUserConfig(getUserConfig());
     }
 
     protected void convertFO() throws Exception {
@@ -72,46 +74,8 @@ public abstract class BaseUserConfigTest extends BasePDFTest {
         return "test/xml/bugtests/font.fo";
     }
 
-    /**
-     * get test FOP Configuration
-     * @return fo test filepath
-     * @throws IOException
-     * @throws SAXException
-     * @throws ConfigurationException
-     */
-    protected Configuration getUserConfig(String configString) throws ConfigurationException, SAXException, IOException {
-        return cfgBuilder.build(new ByteArrayInputStream(configString.getBytes()));
-    }
-
     /** get base config directory */
-    protected String getBaseConfigDir() {
-        return "test/config";
-    }
-
-    /**
-     * @return user config File
-     */
-    protected abstract String getUserConfigFilename();
-
-    /**
-     * The name of this test.
-     */
-    public String getName() {
-        return getUserConfigFilename();
-    }
-
-    protected File getUserConfigFile() {
-        return new File(getBaseConfigDir() + File.separator + getUserConfigFilename());
-    }
-
-    /**
-     * get test FOP Configuration
-     * @return fo test filepath
-     * @throws IOException
-     * @throws SAXException
-     * @throws ConfigurationException
-     */
-    protected Configuration getUserConfig() throws ConfigurationException, SAXException, IOException {
-        return cfgBuilder.buildFromFile(getUserConfigFile());
+    protected static String getBaseConfigDir() {
+        return "test/config/";
     }
 }

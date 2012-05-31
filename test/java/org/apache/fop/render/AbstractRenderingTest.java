@@ -54,7 +54,7 @@ public abstract class AbstractRenderingTest {
     /** the JAXP TransformerFactory */
     protected TransformerFactory tFactory = TransformerFactory.newInstance();
     /** the FopFactory */
-    protected FopFactory fopFactory = FopFactory.newInstance();
+    protected final FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
 
     /**
      * Renders a test file.

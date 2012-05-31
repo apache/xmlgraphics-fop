@@ -34,36 +34,36 @@
         <fo:flow flow-name="xsl-region-body">
           <fo:block background-color="yellow" margin="2pt 0pt 2pt 0pt" font-size="10pt">
             This is a longer line that provides a context for the line with images aligned on it.
-            Before edge <fo:external-graphic src="url(../../resources/images/arrow_down_small.png)" vertical-align="top" /><fo:external-graphic src="url(../../resources/images/arrow_down_large.png)" vertical-align="top" />,
-            after edge <fo:external-graphic src="url(../../resources/images/arrow_up_small.png)" vertical-align="bottom" /><fo:external-graphic src="url(../../resources/images/arrow_up_medium.png)" vertical-align="bottom" />,
-            middle <fo:external-graphic src="url(../../resources/images/arrow_up_down_small.png)" vertical-align="middle" />,
-            none <fo:external-graphic src="url(../../resources/images/line_medium.png)" />. 
+            Before edge <fo:external-graphic src="url(../resources/images/arrow_down_small.png)" vertical-align="top" /><fo:external-graphic src="url(../resources/images/arrow_down_large.png)" vertical-align="top" />,
+            after edge <fo:external-graphic src="url(../resources/images/arrow_up_small.png)" vertical-align="bottom" /><fo:external-graphic src="url(../resources/images/arrow_up_medium.png)" vertical-align="bottom" />,
+            middle <fo:external-graphic src="url(../resources/images/arrow_up_down_small.png)" vertical-align="middle" />,
+            none <fo:external-graphic src="url(../resources/images/line_medium.png)" />. 
             And this is a line of text that follows the line with the objects aligned on it.
           </fo:block>
           <fo:block background-color="yellow" margin="2pt 0pt 2pt 0pt" font-size="10pt">
             This is a longer line that provides a context for the line with images aligned on it.
-            Before edge <fo:external-graphic src="url(../../resources/images/arrow_down_small.png)" vertical-align="top" /><fo:external-graphic src="url(../../resources/images/arrow_down_large.png)" vertical-align="top" />,
-            after edge <fo:external-graphic src="url(../../resources/images/arrow_up_small.png)" vertical-align="bottom" /><fo:external-graphic src="url(../../resources/images/arrow_up_medium.png)" vertical-align="bottom" />,
-            middle <fo:external-graphic src="url(../../resources/images/arrow_up_down_small.png)" vertical-align="middle" />.
+            Before edge <fo:external-graphic src="url(../resources/images/arrow_down_small.png)" vertical-align="top" /><fo:external-graphic src="url(../resources/images/arrow_down_large.png)" vertical-align="top" />,
+            after edge <fo:external-graphic src="url(../resources/images/arrow_up_small.png)" vertical-align="bottom" /><fo:external-graphic src="url(../resources/images/arrow_up_medium.png)" vertical-align="bottom" />,
+            middle <fo:external-graphic src="url(../resources/images/arrow_up_down_small.png)" vertical-align="middle" />.
             And this is a line of text that follows the line with the objects aligned on it.
           </fo:block>
           <fo:block background-color="yellow" margin="2pt 0pt 2pt 0pt" font-size="10pt">
             This is a longer line that provides a context for the line with images aligned on it.
-            Before edge <fo:external-graphic src="url(../../resources/images/arrow_down_small.png)" vertical-align="top" /><fo:external-graphic src="url(../../resources/images/arrow_down_large.png)" vertical-align="top" />,
-            after edge <fo:external-graphic src="url(../../resources/images/arrow_up_small.png)" vertical-align="bottom" /><fo:external-graphic src="url(../../resources/images/arrow_up_medium.png)" vertical-align="bottom" />.
+            Before edge <fo:external-graphic src="url(../resources/images/arrow_down_small.png)" vertical-align="top" /><fo:external-graphic src="url(../resources/images/arrow_down_large.png)" vertical-align="top" />,
+            after edge <fo:external-graphic src="url(../resources/images/arrow_up_small.png)" vertical-align="bottom" /><fo:external-graphic src="url(../resources/images/arrow_up_medium.png)" vertical-align="bottom" />.
             And this is a line of text that follows the line with the objects aligned on it.
           </fo:block>
           <fo:block background-color="yellow" margin="2pt 0pt 2pt 0pt" font-size="10pt">
             This is a longer line that provides a context for the line with images aligned on it.
-            Before edge <fo:external-graphic src="url(../../resources/images/arrow_down_small.png)" vertical-align="top" /><fo:external-graphic src="url(../../resources/images/arrow_down_medium.png)" vertical-align="top" />,
-            after edge <fo:external-graphic src="url(../../resources/images/arrow_up_small.png)" vertical-align="bottom" /><fo:external-graphic src="url(../../resources/images/arrow_up_large.png)" vertical-align="bottom" />.
+            Before edge <fo:external-graphic src="url(../resources/images/arrow_down_small.png)" vertical-align="top" /><fo:external-graphic src="url(../resources/images/arrow_down_medium.png)" vertical-align="top" />,
+            after edge <fo:external-graphic src="url(../resources/images/arrow_up_small.png)" vertical-align="bottom" /><fo:external-graphic src="url(../resources/images/arrow_up_large.png)" vertical-align="bottom" />.
             And this is a line of text that follows the line with the objects aligned on it.
           </fo:block>
           <fo:block background-color="yellow" margin="2pt 0pt 2pt 0pt" font-size="10pt">
             This is a longer line that provides a context for the line with images aligned on it.
-            Before edge <fo:external-graphic src="url(../../resources/images/arrow_down_small.png)" vertical-align="top" /><fo:external-graphic src="url(../../resources/images/arrow_down_medium.png)" vertical-align="top" />,
-            after edge <fo:external-graphic src="url(../../resources/images/arrow_up_small.png)" vertical-align="bottom" /><fo:external-graphic src="url(../../resources/images/arrow_up_large.png)" vertical-align="bottom" />,
-            middle <fo:external-graphic src="url(../../resources/images/arrow_up_down_small.png)" vertical-align="middle" />.
+            Before edge <fo:external-graphic src="url(../resources/images/arrow_down_small.png)" vertical-align="top" /><fo:external-graphic src="url(../resources/images/arrow_down_medium.png)" vertical-align="top" />,
+            after edge <fo:external-graphic src="url(../resources/images/arrow_up_small.png)" vertical-align="bottom" /><fo:external-graphic src="url(../resources/images/arrow_up_large.png)" vertical-align="bottom" />,
+            middle <fo:external-graphic src="url(../resources/images/arrow_up_down_small.png)" vertical-align="middle" />.
             And this is a line of text that follows the line with the objects aligned on it.
           </fo:block>
         </fo:flow>

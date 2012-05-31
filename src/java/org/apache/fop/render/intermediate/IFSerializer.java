@@ -40,8 +40,9 @@ import org.apache.xmlgraphics.util.XMLizable;
 import org.apache.fop.accessibility.StructureTreeEventHandler;
 import org.apache.fop.fo.extensions.InternalElementMapping;
 import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.render.PrintRendererConfigurator;
 import org.apache.fop.render.RenderingContext;
+import org.apache.fop.render.adobe.AdobeRendererConfigurator;
+import org.apache.fop.render.intermediate.IFRendererConfig.IFRendererConfigParser;
 import org.apache.fop.render.intermediate.IFStructureTreeBuilder.IFStructureTreeElement;
 import org.apache.fop.render.intermediate.extensions.AbstractAction;
 import org.apache.fop.render.intermediate.extensions.Bookmark;
@@ -62,7 +63,7 @@ import org.apache.fop.util.XMLUtil;
  * IFPainter implementation that serializes the intermediate format to XML.
  */
 public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
-        implements IFConstants, IFPainter, IFDocumentNavigationHandler {
+implements IFConstants, IFPainter, IFDocumentNavigationHandler {
 
     /**
      * Intermediate Format (IF) version, used to express an @version attribute
@@ -82,6 +83,10 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     private String currentID = "";
 
     private IFStructureTreeBuilder structureTreeBuilder;
+
+    public IFSerializer(IFContext context) {
+        super(context);
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -106,7 +111,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
         if (this.mimicHandler != null) {
             return getMimickedDocumentHandler().getConfigurator();
         } else {
-            return new PrintRendererConfigurator(getUserAgent());
+            return new AdobeRendererConfigurator(getUserAgent(), new IFRendererConfigParser());
         }
     }
 
@@ -284,7 +289,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
 
     /** {@inheritDoc} */
     public void startPage(int index, String name, String pageMasterName, Dimension size)
-                throws IFException {
+            throws IFException {
         try {
             AttributesImpl atts = new AttributesImpl();
             addAttribute(atts, "index", Integer.toString(index));
@@ -386,7 +391,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
     }
 
     private void startViewport(String transform, Dimension size, Rectangle clipRect)
-                throws IFException {
+            throws IFException {
         try {
             AttributesImpl atts = new AttributesImpl();
             if (transform != null && transform.length() > 0) {
@@ -684,7 +689,7 @@ public class IFSerializer extends AbstractXMLWritingIFDocumentHandler
         } else {
             throw new UnsupportedOperationException(
                     "Extension must implement XMLizable: "
-                    + extension + " (" + extension.getClass().getName() + ")");
+                            + extension + " (" + extension.getClass().getName() + ")");
         }
     }
 

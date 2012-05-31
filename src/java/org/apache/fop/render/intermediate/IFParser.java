@@ -130,7 +130,7 @@ public class IFParser implements IFConstants {
     public ContentHandler getContentHandler(IFDocumentHandler documentHandler,
                     FOUserAgent userAgent) {
         ElementMappingRegistry elementMappingRegistry
-            = userAgent.getFactory().getElementMappingRegistry();
+            = userAgent.getElementMappingRegistry();
         return new Handler(documentHandler, userAgent, elementMappingRegistry);
     }
 
@@ -306,7 +306,7 @@ public class IFParser implements IFConstants {
                     delegate.startElement(uri, localName, qName, attributes);
                 } else {
                     ContentHandlerFactoryRegistry registry
-                            = userAgent.getFactory().getContentHandlerFactoryRegistry();
+                            = userAgent.getContentHandlerFactoryRegistry();
                     ContentHandlerFactory factory = registry.getFactory(uri);
                     if (factory == null) {
                         DOMImplementation domImplementation

@@ -67,8 +67,7 @@ public class ResourceOptimizationTestCase extends AbstractPostScriptTest {
     @Test
     public void testResourceOptimization() throws Exception {
         FOUserAgent ua = fopFactory.newFOUserAgent();
-        PSDocumentHandler handler = new PSDocumentHandler();
-        handler.setContext(new IFContext(ua));
+        PSDocumentHandler handler = new PSDocumentHandler(new IFContext(ua));
         // This is the important part: we're enabling resource optimization
         handler.getPSUtil().setOptimizeResources(true);
         ua.setDocumentHandlerOverride(handler);

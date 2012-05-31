@@ -19,24 +19,23 @@
 
 package org.apache.fop.render.java2d;
 
-import org.apache.avalon.framework.configuration.Configuration;
-
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.render.PrintRendererConfigurator;
 import org.apache.fop.render.Renderer;
+import org.apache.fop.render.RendererConfig.RendererConfigParser;
+import org.apache.fop.render.adobe.AdobeRendererConfigurator;
 
 /**
  * Configurerer for Java 2D renderer
  */
-public class Java2DRendererConfigurator extends PrintRendererConfigurator {
+public class Java2DRendererConfigurator extends AdobeRendererConfigurator {
 
     /**
      * Default constructor
      * @param userAgent user agent
      */
-    public Java2DRendererConfigurator(FOUserAgent userAgent) {
-        super(userAgent);
+    public Java2DRendererConfigurator(FOUserAgent userAgent, RendererConfigParser rendererConfigParser) {
+        super(userAgent, rendererConfigParser);
     }
 
     /**
@@ -45,15 +44,14 @@ public class Java2DRendererConfigurator extends PrintRendererConfigurator {
      * @throws FOPException fop exception
      */
     public void configure(Renderer renderer) throws FOPException {
-        Configuration cfg = super.getRendererConfig(renderer);
-        if (cfg != null) {
-            Java2DRenderer java2dRenderer = (Java2DRenderer)renderer;
-            String value = cfg.getChild(
-                    Java2DRenderer.JAVA2D_TRANSPARENT_PAGE_BACKGROUND, true).getValue(null);
-            if (value != null) {
-                java2dRenderer.setTransparentPageBackground("true".equalsIgnoreCase(value));
+        Java2DRendererConfig config = (Java2DRendererConfig) getRendererConfig(renderer);
+        if (config != null) {
+            Java2DRenderer java2dRenderer = (Java2DRenderer) renderer;
+               //     new Java2DRendererConfigParser(renderer.getMimeType()));
+            if (config.isPageBackgroundTransparent() != null) {
+                java2dRenderer.setTransparentPageBackground(config.isPageBackgroundTransparent());
             }
+            super.configure(renderer);
         }
-        super.configure(renderer);
     }
 }

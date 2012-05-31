@@ -26,9 +26,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.StringTokenizer;
 
-import org.apache.fop.apps.FOUserAgent;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.xml.sax.SAXException;
+
+import org.apache.fop.apps.FOUserAgent;
 
 /** Test that characters are correctly encoded in a generated PDF file */
 public class PDFEncodingTestCase extends BasePDFTest {
@@ -36,6 +38,10 @@ public class PDFEncodingTestCase extends BasePDFTest {
     private final boolean dumpPDF = Boolean.getBoolean("PDFEncodingTestCase.dumpPDF");
     static final String INPUT_FILE = "test/xml/pdf-encoding/pdf-encoding-test.xconf";
     static final String TEST_MARKER = "PDFE_TEST_MARK_";
+
+    public PDFEncodingTestCase() throws SAXException, IOException {
+        super(INPUT_FILE);
+    }
 
 
     /**
@@ -45,11 +51,6 @@ public class PDFEncodingTestCase extends BasePDFTest {
     protected FOUserAgent getUserAgent() {
         final FOUserAgent a = fopFactory.newFOUserAgent();
         return a;
-    }
-
-    /** @return our specific config */
-    protected File getUserConfigFile() {
-        return new File(INPUT_FILE);
     }
 
     /**

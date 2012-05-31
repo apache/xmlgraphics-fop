@@ -23,7 +23,7 @@
     </p>
   </info>
   <variables>
-    <img>../../resources/images/box1.png</img>
+    <img>../resources/images/box1.png</img>
   </variables>
   <fo>
     <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
@@ -97,22 +97,22 @@
   </fo>
   <checks>
     <!-- first container in row 1 -->
-    <eval expected="color=#0000ff,url=../../resources/images/box1.png,repeat=no-repeat,horiz=74991,vertical=0" xpath="//flow/block[1]/@background"/>
+    <eval expected="color=#0000ff,url=../resources/images/box1.png,repeat=no-repeat,horiz=74991,vertical=0" xpath="//flow/block[1]/@background"/>
     <!-- second container in row 1 -->
-    <eval expected="color=#008000,url=../../resources/images/box1.png,repeat=no-repeat,horiz=74991,vertical=27495" xpath="//flow/block[2]/@background"/>
+    <eval expected="color=#008000,url=../resources/images/box1.png,repeat=no-repeat,horiz=74991,vertical=27495" xpath="//flow/block[2]/@background"/>
     <!-- third container in row 1 -->
-    <eval expected="color=#ffff00,url=../../resources/images/box1.png,repeat=no-repeat,horiz=74991,vertical=54991" xpath="//flow/block[3]/@background"/>
+    <eval expected="color=#ffff00,url=../resources/images/box1.png,repeat=no-repeat,horiz=74991,vertical=54991" xpath="//flow/block[3]/@background"/>
     <!-- first container in row 2 -->
-    <eval expected="color=#ffff00,url=../../resources/images/box1.png,repeat=no-repeat,horiz=37495,vertical=0" xpath="//flow/block[4]/@background"/>
+    <eval expected="color=#ffff00,url=../resources/images/box1.png,repeat=no-repeat,horiz=37495,vertical=0" xpath="//flow/block[4]/@background"/>
     <!-- second container in row 2 -->
-    <eval expected="color=#0000ff,url=../../resources/images/box1.png,repeat=no-repeat,horiz=37495,vertical=27495" xpath="//flow/block[5]/@background"/>
+    <eval expected="color=#0000ff,url=../resources/images/box1.png,repeat=no-repeat,horiz=37495,vertical=27495" xpath="//flow/block[5]/@background"/>
     <!-- third container in row 2 -->
-    <eval expected="color=#008000,url=../../resources/images/box1.png,repeat=no-repeat,horiz=37495,vertical=54991" xpath="//flow/block[6]/@background"/>
+    <eval expected="color=#008000,url=../resources/images/box1.png,repeat=no-repeat,horiz=37495,vertical=54991" xpath="//flow/block[6]/@background"/>
     <!-- first container in row 3 -->
-    <eval expected="color=#008000,url=../../resources/images/box1.png,repeat=no-repeat,horiz=0,vertical=0" xpath="//flow/block[7]/@background"/>
+    <eval expected="color=#008000,url=../resources/images/box1.png,repeat=no-repeat,horiz=0,vertical=0" xpath="//flow/block[7]/@background"/>
     <!-- second container in row 3 -->
-    <eval expected="color=#ffff00,url=../../resources/images/box1.png,repeat=no-repeat,horiz=0,vertical=27495" xpath="//flow/block[8]/@background"/>
+    <eval expected="color=#ffff00,url=../resources/images/box1.png,repeat=no-repeat,horiz=0,vertical=27495" xpath="//flow/block[8]/@background"/>
     <!-- third container in row 3 -->
-    <eval expected="color=#0000ff,url=../../resources/images/box1.png,repeat=no-repeat,horiz=0,vertical=54991" xpath="//flow/block[9]/@background"/>
+    <eval expected="color=#0000ff,url=../resources/images/box1.png,repeat=no-repeat,horiz=0,vertical=54991" xpath="//flow/block[9]/@background"/>
   </checks>
 </testcase>

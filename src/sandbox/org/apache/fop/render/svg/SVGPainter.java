@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.w3c.dom.Document;
-
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -191,7 +190,7 @@ public class SVGPainter extends AbstractIFPainter implements SVGConstants {
         try {
             establish(MODE_NORMAL);
 
-            ImageManager manager = getUserAgent().getFactory().getImageManager();
+            ImageManager manager = getUserAgent().getImageManager();
             ImageInfo info = null;
             try {
                 ImageSessionContext sessionContext = getUserAgent().getImageSessionContext();

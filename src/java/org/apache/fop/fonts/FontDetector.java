@@ -17,90 +17,18 @@
 
 /* $Id$ */
 
+
 package org.apache.fop.fonts;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
 import java.util.List;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import org.apache.xmlgraphics.util.ClasspathResource;
-
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.fonts.autodetect.FontFileFinder;
-import org.apache.fop.util.LogUtil;
 
 /**
- * Detector of operating system and classpath fonts
+ * An interface for the font detecting mechanism.
  */
-public class FontDetector {
-    private static Log log = LogFactory.getLog(FontDetector.class);
 
-    private static final String[] FONT_MIMETYPES = {
-        "application/x-font", "application/x-font-truetype"
-    };
-
-    private final FontManager fontManager;
-    private final FontAdder fontAdder;
-    private final boolean strict;
-    private final FontEventListener eventListener;
-
-    /**
-     * Main constructor
-     * @param manager the font manager
-     * @param adder the font adder
-     * @param strict true if an Exception should be thrown if an error is found.
-     * @param listener for throwing font related events
-     */
-    public FontDetector(FontManager manager, FontAdder adder, boolean strict,
-            FontEventListener listener) {
-        this.fontManager = manager;
-        this.fontAdder = adder;
-        this.strict = strict;
-        this.eventListener = listener;
-    }
-
-    /**
-     * Detect installed fonts on the system
-     * @param fontInfoList a list of fontinfo to populate
-     * @throws FOPException thrown if a problem occurred during detection
-     */
-    public void detect(List<EmbedFontInfo> fontInfoList) throws FOPException {
-        // search in font base if it is defined and
-        // is a directory but don't recurse
-        FontFileFinder fontFileFinder = new FontFileFinder(eventListener);
-        String fontBaseURL = fontManager.getFontBaseURL();
-        if (fontBaseURL != null) {
-            try {
-                File fontBase = FileUtils.toFile(new URL(fontBaseURL));
-                if (fontBase != null) {
-                    List<URL> fontURLList = fontFileFinder.find(fontBase.getAbsolutePath());
-                    fontAdder.add(fontURLList, fontInfoList);
-
-                    //Can only use the font base URL if it's a file URL
-                }
-            } catch (IOException e) {
-                LogUtil.handleException(log, e, strict);
-            }
-        }
-
-        // native o/s font directory finding
-        List<URL> systemFontList;
-        try {
-            systemFontList = fontFileFinder.find();
-            fontAdder.add(systemFontList, fontInfoList);
-        } catch (IOException e) {
-            LogUtil.handleException(log, e, strict);
-        }
-
-        // classpath font finding
-        ClasspathResource resource = ClasspathResource.getInstance();
-        for (int i = 0; i < FONT_MIMETYPES.length; i++) {
-            fontAdder.add(resource.listResourcesOfMimeType(FONT_MIMETYPES[i]), fontInfoList);
-        }
-    }
+public interface FontDetector {
+    void detect(FontManager fontManager, FontAdder fontAdder, boolean strict,
+            FontEventListener eventListener, List<EmbedFontInfo> fontInfoList) throws FOPException;
 }

@@ -19,26 +19,22 @@
 
 package org.apache.fop.afp.util;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.net.URL;
-
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
-
-import org.apache.commons.io.IOUtils;
+import java.net.URISyntaxException;
 
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.FopFactory;
+import org.apache.fop.apps.io.URIResolverWrapper;
 
 /**
  * Default implementation of the {@link ResourceAccessor} interface for use inside FOP.
  */
 public class DefaultFOPResourceAccessor extends SimpleResourceAccessor {
 
-    private FOUserAgent userAgent;
-    private String categoryBaseURI;
+    private final URIResolverWrapper resolver;
+    private final String baseURI;
 
     /**
      * Constructor for resource to be accessed via the {@link FOUserAgent}. This contructor
@@ -49,38 +45,32 @@ public class DefaultFOPResourceAccessor extends SimpleResourceAccessor {
      * @param categoryBaseURI the category base URI (may be null)
      * @param baseURI the custom base URI to resolve relative URIs against (may be null)
      */
-    public DefaultFOPResourceAccessor(FOUserAgent userAgent, String categoryBaseURI, URI baseURI) {
-        super(baseURI);
-        this.userAgent = userAgent;
-        this.categoryBaseURI = categoryBaseURI;
+    public DefaultFOPResourceAccessor(URIResolverWrapper resolver, String baseURI) {
+        super(resolver.getBaseURI());
+        this.resolver = resolver;
+        this.baseURI = baseURI;
+    }
+
+    public DefaultFOPResourceAccessor(URIResolverWrapper resolver) {
+        super(resolver.getBaseURI());
+        this.resolver = resolver;
+        this.baseURI = null;
+    }
+
+    private URI getResourceURI(URI uri) {
+        if (baseURI == null) {
+            return uri;
+        }
+        try {
+            URI baseURI = URIResolverWrapper.getBaseURI(this.baseURI);
+            return baseURI.resolve(uri);
+        } catch (URISyntaxException use) {
+            return uri;
+        }
     }
 
     /** {@inheritDoc} */
     public InputStream createInputStream(URI uri) throws IOException {
-        //Step 1: resolve against local base URI --> URI
-        URI resolved = resolveAgainstBase(uri);
-
-        //Step 2: resolve against the user agent --> stream
-        String base = (this.categoryBaseURI != null
-                ? this.categoryBaseURI
-                : this.userAgent.getBaseURL());
-        Source src = userAgent.resolveURI(resolved.toASCIIString(), base);
-
-        if (src == null) {
-            throw new FileNotFoundException("Resource not found: " + uri.toASCIIString());
-        } else if (src instanceof StreamSource) {
-            StreamSource ss = (StreamSource)src;
-            InputStream in = ss.getInputStream();
-            if (in != null) {
-                return in;
-            }
-            if (ss.getReader() != null) {
-                //Don't support reader, retry using system ID below
-                IOUtils.closeQuietly(ss.getReader());
-            }
-        }
-        URL url = new URL(src.getSystemId());
-        return url.openStream();
+        return resolver.resolveIn(getResourceURI(uri));
     }
-
 }

@@ -19,6 +19,7 @@
 
 package org.apache.fop.fonts;
 
+import java.net.URI;
 import java.util.Map;
 import java.util.Set;
 
@@ -49,10 +50,10 @@ public interface MutableFont {
     void setFamilyNames(Set<String> names);
 
     /**
-     * Sets the path to the embeddable font file.
-     * @param path URI to the file
+     * Sets the URI to the embeddable font.
+     * @param path URI to the font
      */
-    void setEmbedFileName(String path);
+    void setEmbedURI(URI path);
 
     /**
      * Sets the resource name of the embeddable font file.

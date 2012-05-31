@@ -52,7 +52,6 @@ import org.apache.fop.fo.pagination.PageSequence;
 import org.apache.fop.fo.pagination.PageSequenceMaster;
 import org.apache.fop.fo.pagination.SimplePageMaster;
 import org.apache.fop.fonts.FontSetup;
-import org.apache.fop.render.DefaultFontResolver;
 
 // TODO: do we really want every method throwing a SAXException
 
@@ -86,7 +85,7 @@ public class MIFHandler extends FOEventHandler {
         super(ua);
         outStream = os;
         boolean base14Kerning = false; //TODO - FIXME
-        FontSetup.setup(fontInfo, null, new DefaultFontResolver(ua), base14Kerning);
+        FontSetup.setup(fontInfo, null, ua.getNewURIResolver(), base14Kerning);
     }
 
     /** {@inheritDoc} */

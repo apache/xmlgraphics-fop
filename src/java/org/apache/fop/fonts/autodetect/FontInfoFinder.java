@@ -20,7 +20,7 @@
 package org.apache.fop.fonts.autodetect;
 
 import java.io.InputStream;
-import java.net.URL;
+import java.net.URI;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -30,6 +30,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.fop.apps.io.URIResolverWrapper;
 import org.apache.fop.fonts.CustomFont;
 import org.apache.fop.fonts.EmbedFontInfo;
 import org.apache.fop.fonts.EncodingMode;
@@ -37,7 +38,6 @@ import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontCache;
 import org.apache.fop.fonts.FontEventListener;
 import org.apache.fop.fonts.FontLoader;
-import org.apache.fop.fonts.FontResolver;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.FontUtil;
 import org.apache.fop.fonts.MultiByteFont;
@@ -133,26 +133,24 @@ public class FontInfoFinder {
 
     /**
      * Attempts to determine FontInfo from a given custom font
-     * @param fontURL the font URL
+     * @param fontUri the font URI
      * @param customFont the custom font
      * @param fontCache font cache (may be null)
      * @return FontInfo from the given custom font
      */
-    private EmbedFontInfo getFontInfoFromCustomFont(
-            URL fontURL, CustomFont customFont, FontCache fontCache) {
+    private EmbedFontInfo getFontInfoFromCustomFont(URI fontUri, CustomFont customFont,
+            FontCache fontCache, URIResolverWrapper resolver) {
         List<FontTriplet> fontTripletList = new java.util.ArrayList<FontTriplet>();
         generateTripletsFromFont(customFont, fontTripletList);
-        String embedUrl;
-        embedUrl = fontURL.toExternalForm();
         String subFontName = null;
         if (customFont instanceof MultiByteFont) {
-            subFontName = ((MultiByteFont)customFont).getTTCName();
+            subFontName = ((MultiByteFont) customFont).getTTCName();
         }
         EmbedFontInfo fontInfo = new EmbedFontInfo(null, customFont.isKerningEnabled(),
-                customFont.isAdvancedEnabled(), fontTripletList, embedUrl, subFontName);
+                customFont.isAdvancedEnabled(), fontTripletList, fontUri, subFontName);
         fontInfo.setPostScriptName(customFont.getFontName());
         if (fontCache != null) {
-            fontCache.addFont(fontInfo);
+            fontCache.addFont(fontInfo, resolver);
         }
         return fontInfo;
     }
@@ -160,32 +158,31 @@ public class FontInfoFinder {
     /**
      * Attempts to determine EmbedFontInfo from a given font file.
      *
-     * @param fontURL font URL. Assumed to be local.
+     * @param fontURI the URI of the font resource
      * @param resolver font resolver used to resolve font
      * @param fontCache font cache (may be null)
      * @return an array of newly created embed font info. Generally, this array
      *         will have only one entry, unless the fontUrl is a TrueType Collection
      */
-    public EmbedFontInfo[] find(URL fontURL, FontResolver resolver, FontCache fontCache) {
-        String embedURL = null;
-        embedURL = fontURL.toExternalForm();
+    public EmbedFontInfo[] find(URI fontURI, URIResolverWrapper resolver, FontCache fontCache) {
+        URI embedUri = resolver.getBaseURI().resolve(fontURI);
+        String embedStr = embedUri.toASCIIString();
         boolean useKerning = true;
-        boolean useAdvanced = ( resolver != null )
-            ? resolver.isComplexScriptFeaturesEnabled() : true;
+        boolean useAdvanced = true;
 
         long fileLastModified = -1;
         if (fontCache != null) {
-            fileLastModified = FontCache.getLastModified(fontURL);
+            fileLastModified = FontCache.getLastModified(fontURI);
             // firstly try and fetch it from cache before loading/parsing the font file
-            if (fontCache.containsFont(embedURL)) {
-                EmbedFontInfo[] fontInfos = fontCache.getFontInfos(embedURL, fileLastModified);
+            if (fontCache.containsFont(embedStr)) {
+                EmbedFontInfo[] fontInfos = fontCache.getFontInfos(embedStr, fileLastModified);
                 if (fontInfos != null) {
                     return fontInfos;
                 }
             // is this a previously failed parsed font?
-            } else if (fontCache.isFailedFont(embedURL, fileLastModified)) {
+            } else if (fontCache.isFailedFont(embedStr, fileLastModified)) {
                 if (log.isDebugEnabled()) {
-                    log.debug("Skipping font file that failed to load previously: " + embedURL);
+                    log.debug("Skipping font file that failed to load previously: " + embedUri);
                 }
                 return null;
             }
@@ -194,19 +191,19 @@ public class FontInfoFinder {
 
         // try to determine triplet information from font file
         CustomFont customFont = null;
-        if (fontURL.toExternalForm().toLowerCase().endsWith(".ttc")) {
+        if (fontURI.toASCIIString().toLowerCase().endsWith(".ttc")) {
             // Get a list of the TTC Font names
             List<String> ttcNames = null;
-            String fontFileURL = fontURL.toExternalForm().trim();
             InputStream in = null;
             try {
-                in = FontLoader.openFontUri(resolver, fontFileURL);
+                in = resolver.resolveIn(fontURI);
                 TTFFile ttf = new TTFFile(false, false);
                 FontFileReader reader = new FontFileReader(in);
                 ttcNames = ttf.getTTCnames(reader);
             } catch (Exception e) {
                 if (this.eventListener != null) {
-                    this.eventListener.fontLoadingErrorAtAutoDetection(this, fontFileURL, e);
+                    this.eventListener.fontLoadingErrorAtAutoDetection(this,
+                            fontURI.toASCIIString(), e);
                 }
                 return null;
             } finally {
@@ -221,23 +218,24 @@ public class FontInfoFinder {
                     log.debug("Loading " + fontName);
                 }
                 try {
-                    TTFFontLoader ttfLoader = new TTFFontLoader(
-                            fontFileURL, fontName, true, EncodingMode.AUTO,
-                            useKerning, useAdvanced, resolver);
+                    TTFFontLoader ttfLoader = new TTFFontLoader(fontURI, fontName, true,
+                            EncodingMode.AUTO, useKerning, useAdvanced, resolver);
                     customFont = ttfLoader.getFont();
                     if (this.eventListener != null) {
                         customFont.setEventListener(this.eventListener);
                     }
                 } catch (Exception e) {
                     if (fontCache != null) {
-                        fontCache.registerFailedFont(embedURL, fileLastModified);
+                        fontCache.registerFailedFont(embedUri.toASCIIString(), fileLastModified);
                     }
                     if (this.eventListener != null) {
-                        this.eventListener.fontLoadingErrorAtAutoDetection(this, embedURL, e);
+                        this.eventListener.fontLoadingErrorAtAutoDetection(this,
+                                embedUri.toASCIIString(), e);
                     }
                     continue;
                 }
-                EmbedFontInfo fi = getFontInfoFromCustomFont(fontURL, customFont, fontCache);
+                EmbedFontInfo fi = getFontInfoFromCustomFont(fontURI, customFont, fontCache,
+                        resolver);
                 if (fi != null) {
                     embedFontInfoList.add(fi);
                 }
@@ -247,20 +245,22 @@ public class FontInfoFinder {
         } else {
             // The normal case
             try {
-                customFont = FontLoader.loadFont(fontURL, null, true, EncodingMode.AUTO, resolver);
+                customFont = FontLoader.loadFont(fontURI, null, true, EncodingMode.AUTO,
+                        useKerning, useAdvanced, resolver);
                 if (this.eventListener != null) {
                     customFont.setEventListener(this.eventListener);
                 }
             } catch (Exception e) {
                 if (fontCache != null) {
-                    fontCache.registerFailedFont(embedURL, fileLastModified);
+                    fontCache.registerFailedFont(embedUri.toASCIIString(), fileLastModified);
                 }
                 if (this.eventListener != null) {
-                    this.eventListener.fontLoadingErrorAtAutoDetection(this, embedURL, e);
+                    this.eventListener.fontLoadingErrorAtAutoDetection(this,
+                            embedUri.toASCIIString(), e);
                 }
                 return null;
             }
-            EmbedFontInfo fi = getFontInfoFromCustomFont(fontURL, customFont, fontCache);
+            EmbedFontInfo fi = getFontInfoFromCustomFont(fontURI, customFont, fontCache, resolver);
             if (fi != null) {
                 return new EmbedFontInfo[] {fi};
             } else {

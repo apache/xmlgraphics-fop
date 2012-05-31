@@ -33,11 +33,11 @@
         <fo:flow flow-name="xsl-region-body">
           <fo:block>height="40pt"</fo:block>
           <fo:block>
-            <fo:external-graphic overflow="hidden" src="../../resources/images/bgimg300dpi.jpg" height="40pt"/>EOG
+            <fo:external-graphic overflow="hidden" src="../resources/images/bgimg300dpi.jpg" height="40pt"/>EOG
           </fo:block>
           <fo:block>width="40pt"</fo:block>
           <fo:block>
-            <fo:external-graphic overflow="hidden" src="../../resources/images/bgimg300dpi.jpg" width="40pt"/>EOG
+            <fo:external-graphic overflow="hidden" src="../resources/images/bgimg300dpi.jpg" width="40pt"/>EOG
           </fo:block>
           <fo:block>EOF</fo:block>
         </fo:flow>

@@ -464,7 +464,6 @@ public abstract class CharacterSetBuilder {
 
             }
         }
-
         return orientations.toArray(EMPTY_CSO_ARRAY);
     }
 

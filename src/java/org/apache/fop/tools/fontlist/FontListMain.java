@@ -64,7 +64,7 @@ public final class FontListMain {
     private static final int GENERATE_FO = 2;
     private static final int GENERATE_RENDERED = 3;
 
-    private FopFactory fopFactory = FopFactory.newInstance();
+    private FopFactory fopFactory;
 
     private File configFile;
     private File outputFile;
@@ -78,7 +78,9 @@ public final class FontListMain {
 
     private void prepare() throws SAXException, IOException {
         if (this.configFile != null) {
-            fopFactory.setUserConfig(this.configFile);
+            fopFactory = FopFactory.newInstance(configFile);
+        } else {
+            fopFactory = FopFactory.newInstance(new File(".").toURI());
         }
     }
 

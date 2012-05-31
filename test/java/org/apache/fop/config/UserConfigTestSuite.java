@@ -28,16 +28,14 @@ import org.junit.runners.Suite.SuiteClasses;
  */
 @RunWith(Suite.class)
 @SuiteClasses({
-    FontBaseBadTestCase.class,
-    FontAttributesMissingTestCase.class,
-    FontTripletAttributeMissingTestCase.class,
-    FontMetricsUrlBadTestCase.class,
-    FontEmbedUrlBadTestCase.class,
-    FontMetricsUrlMalformedTestCase.class,
-    FontsDirectoryRecursiveTestCase.class,
-    FontsAutoDetectTestCase.class,
-    FontsSubstitutionTestCase.class,
-    FOURIResolverTestCase.class
+        FontAttributesMissingTestCase.class,
+        FontTripletAttributeMissingTestCase.class,
+        FontMetricsUrlBadTestCase.class,
+        FontMetricsUrlMalformedTestCase.class,
+        FontsDirectoryRecursiveTestCase.class,
+        FontsAutoDetectTestCase.class,
+        FontsSubstitutionTestCase.class,
+        FOURIResolverTestCase.class
 })
 public class UserConfigTestSuite {
 }

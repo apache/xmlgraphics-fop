@@ -17,6 +17,7 @@
 package org.apache.fop.render.ps;
 
 import java.io.IOException;
+import java.util.Collections;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -24,12 +25,15 @@ import org.mockito.verification.VerificationMode;
 
 import org.apache.xmlgraphics.ps.PSGenerator;
 
+import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFState;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class PSPainterTestCase {
 
@@ -40,7 +44,12 @@ public class PSPainterTestCase {
 
     @Before
     public void setup() {
-        docHandler = new PSDocumentHandler();
+        state = IFState.create();
+        FOUserAgent userAgent = mock(FOUserAgent.class);
+        when(userAgent.getRendererOptions()).thenReturn(Collections.EMPTY_MAP);
+        IFContext context = mock(IFContext.class);
+        when(context.getUserAgent()).thenReturn(userAgent);
+        docHandler = new PSDocumentHandler(context);
         gen = mock(PSGenerator.class);
         docHandler.gen = gen;
         state = IFState.create();

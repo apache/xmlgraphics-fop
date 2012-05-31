@@ -21,9 +21,9 @@ package org.apache.fop.pdf;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -46,33 +46,33 @@ public class PDFResources extends PDFDictionary {
     /**
      * /Font objects keyed by their internal name
      */
-    protected Map fonts = new HashMap();
+    protected Map fonts = new LinkedHashMap();
 
     /**
      * Set of XObjects
      */
-    protected Set xObjects = new HashSet();
+    protected Set xObjects = new LinkedHashSet();
 
     /**
      * Set of patterns
      */
-    protected Set patterns = new HashSet();
+    protected Set patterns = new LinkedHashSet();
 
     /**
      * Set of shadings
      */
-    protected Set shadings = new HashSet();
+    protected Set shadings = new LinkedHashSet();
 
     /**
      * Set of ExtGStates
      */
-    protected Set gstates = new HashSet();
+    protected Set gstates = new LinkedHashSet();
 
     /** Map of color spaces (key: color space name) */
-    protected Map colorSpaces = new HashMap();
+    protected Map colorSpaces = new LinkedHashMap();
 
     /** Map of ICC color spaces (key: ICC profile description) */
-    protected Map iccColorSpaces = new HashMap();
+    protected Map iccColorSpaces = new LinkedHashMap();
 
     /**
      * create a /Resources object.
@@ -205,7 +205,7 @@ public class PDFResources extends PDFDictionary {
             Iterator fontIterator = this.fonts.keySet().iterator();
             while (fontIterator.hasNext()) {
                 String fontName = (String)fontIterator.next();
-                dict.put(fontName, (PDFFont)this.fonts.get(fontName));
+                dict.put(fontName, this.fonts.get(fontName));
             }
             put("Font", dict);
         }

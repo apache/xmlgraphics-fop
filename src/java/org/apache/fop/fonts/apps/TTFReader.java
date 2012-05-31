@@ -19,7 +19,9 @@
 
 package org.apache.fop.fonts.apps;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -220,12 +222,17 @@ public class TTFReader extends AbstractFontReader {
     public TTFFile loadTTF(String fileName, String fontName, boolean useKerning, boolean useAdvanced) throws IOException {
         TTFFile ttfFile = new TTFFile(useKerning, useAdvanced);
         log.info("Reading " + fileName + "...");
-
-        FontFileReader reader = new FontFileReader(fileName);
-        boolean supported = ttfFile.readFont(reader, fontName);
-        if (!supported) {
-            return null;
+        InputStream stream = new FileInputStream(fileName);
+        try {
+            FontFileReader reader = new FontFileReader(stream);
+            boolean supported = ttfFile.readFont(reader, fontName);
+            if (!supported) {
+                return null;
+            }
+        } finally {
+            stream.close();
         }
+
         log.info("Font Family: " + ttfFile.getFamilyNames());
         if (ttfFile.isCFF()) {
             throw new UnsupportedOperationException(
@@ -460,9 +467,9 @@ public class TTFReader extends AbstractFontReader {
 
             Map h2;
             if (isCid) {
-                h2 = (Map)ttf.getKerning().get(kpx1);
+                h2 = ttf.getKerning().get(kpx1);
             } else {
-                h2 = (Map)ttf.getAnsiKerning().get(kpx1);
+                h2 = ttf.getAnsiKerning().get(kpx1);
             }
 
             Iterator iter2 = h2.keySet().iterator();

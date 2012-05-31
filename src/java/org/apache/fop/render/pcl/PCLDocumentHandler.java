@@ -32,17 +32,20 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.xmlgraphics.util.UnitConv;
 
-import org.apache.fop.apps.FopFactoryConfigurator;
+import org.apache.fop.apps.FopFactoryConfig;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.render.intermediate.AbstractBinaryWritingIFDocumentHandler;
 import org.apache.fop.render.intermediate.IFContext;
+import org.apache.fop.render.intermediate.IFDocumentHandler;
 import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFPainter;
 import org.apache.fop.render.java2d.Java2DPainter;
 import org.apache.fop.render.java2d.Java2DUtil;
+import org.apache.fop.render.pcl.PCLRendererConfig.PCLRendererConfigParser;
 import org.apache.fop.render.pcl.extensions.PCLElementMapping;
+
 
 /**
  * {@link IFDocumentHandler} implementation that produces PCL 5.
@@ -73,7 +76,9 @@ public class PCLDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     /**
      * Default constructor.
      */
-    public PCLDocumentHandler() {
+    public PCLDocumentHandler(IFContext context) {
+        super(context);
+        this.pclUtil = new PCLRenderingUtil(context.getUserAgent());
     }
 
     /** {@inheritDoc} */
@@ -87,15 +92,8 @@ public class PCLDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     }
 
     /** {@inheritDoc} */
-    @Override
-    public void setContext(IFContext context) {
-        super.setContext(context);
-        this.pclUtil = new PCLRenderingUtil(context.getUserAgent());
-    }
-
-    /** {@inheritDoc} */
     public IFDocumentHandlerConfigurator getConfigurator() {
-        return new PCLRendererConfigurator(getUserAgent());
+        return new PCLRendererConfigurator(getUserAgent(), new PCLRendererConfigParser());
     }
 
     /** {@inheritDoc} */
@@ -226,7 +224,7 @@ public class PCLDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
 
     private IFPainter createAllBitmapPainter() {
         double scale = gen.getMaximumBitmapResolution()
-                / FopFactoryConfigurator.DEFAULT_TARGET_RESOLUTION;
+                / FopFactoryConfig.DEFAULT_TARGET_RESOLUTION;
         Rectangle printArea = this.currentPageDefinition.getLogicalPageRect();
         int bitmapWidth = (int)Math.ceil(
                 UnitConv.mpt2px(printArea.width, gen.getMaximumBitmapResolution()));

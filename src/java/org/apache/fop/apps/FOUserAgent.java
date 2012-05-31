@@ -21,37 +21,54 @@ package org.apache.fop.apps;
 
 // Java
 import java.io.File;
-import java.net.MalformedURLException;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.Map;
 
 import javax.xml.transform.Source;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.URIResolver;
+import javax.xml.transform.stream.StreamSource;
 
+import org.apache.avalon.framework.configuration.Configuration;
+import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.xmlgraphics.image.loader.ImageContext;
+import org.apache.xmlgraphics.image.loader.ImageManager;
 import org.apache.xmlgraphics.image.loader.ImageSessionContext;
 import org.apache.xmlgraphics.image.loader.impl.AbstractImageSessionContext;
 import org.apache.xmlgraphics.util.UnitConv;
+import org.apache.xmlgraphics.util.uri.CommonURIResolver;
 
 import org.apache.fop.Version;
 import org.apache.fop.accessibility.Accessibility;
 import org.apache.fop.accessibility.DummyStructureTreeEventHandler;
 import org.apache.fop.accessibility.StructureTreeEventHandler;
+import org.apache.fop.apps.io.URIResolverWrapper;
 import org.apache.fop.events.DefaultEventBroadcaster;
 import org.apache.fop.events.Event;
 import org.apache.fop.events.EventBroadcaster;
 import org.apache.fop.events.EventListener;
 import org.apache.fop.events.FOPEventListenerProxy;
 import org.apache.fop.events.LoggingEventListener;
+import org.apache.fop.fo.ElementMappingRegistry;
 import org.apache.fop.fo.FOEventHandler;
+import org.apache.fop.fonts.FontManager;
+import org.apache.fop.hyphenation.HyphenationTreeResolver;
+import org.apache.fop.layoutmgr.LayoutManagerMaker;
+import org.apache.fop.render.ImageHandlerRegistry;
 import org.apache.fop.render.Renderer;
+import org.apache.fop.render.RendererConfig;
+import org.apache.fop.render.RendererConfig.RendererConfigParser;
+import org.apache.fop.render.RendererConfigOptions;
 import org.apache.fop.render.RendererFactory;
 import org.apache.fop.render.XMLHandlerRegistry;
 import org.apache.fop.render.intermediate.IFDocumentHandler;
+import org.apache.fop.util.ColorSpaceCache;
+import org.apache.fop.util.ContentHandlerFactoryRegistry;
 
 /**
  * This is the user agent for FOP.
@@ -75,24 +92,13 @@ import org.apache.fop.render.intermediate.IFDocumentHandler;
  */
 public class FOUserAgent {
 
-    /** Defines the default target resolution (72dpi) for FOP */
-    public static final float DEFAULT_TARGET_RESOLUTION
-            = FopFactoryConfigurator.DEFAULT_TARGET_RESOLUTION;
-
     private static Log log = LogFactory.getLog("FOP");
 
-    private FopFactory factory;
+    private final FopFactory factory;
 
-    /**
-     *  The base URL for all URL resolutions, especially for
-     *  external-graphics.
-     */
-    private String base = null;
+    private final URIResolverWrapper newUriResolver;
 
-    /** A user settable URI Resolver */
-    private URIResolver uriResolver = null;
-
-    private float targetResolution = FopFactoryConfigurator.DEFAULT_TARGET_RESOLUTION;
+    private float targetResolution = FopFactoryConfig.DEFAULT_TARGET_RESOLUTION;
     private Map rendererOptions = new java.util.HashMap();
     private File outputFile = null;
     private IFDocumentHandler documentHandlerOverride = null;
@@ -131,7 +137,7 @@ public class FOUserAgent {
     private ImageSessionContext imageSessionContext = new AbstractImageSessionContext() {
 
         public ImageContext getParentContext() {
-            return getFactory();
+            return factory;
         }
 
         public float getTargetResolution() {
@@ -150,19 +156,56 @@ public class FOUserAgent {
      * @param factory the factory that provides environment-level information
      * @see org.apache.fop.apps.FopFactory
      */
-    public FOUserAgent(FopFactory factory) {
-        if (factory == null) {
-            throw new NullPointerException("The factory parameter must not be null");
-        }
+    FOUserAgent(FopFactory factory, URIResolverWrapper uriResolver) {
         this.factory = factory;
-        setBaseURL(factory.getBaseURL());
+        this.newUriResolver = uriResolver;
         setTargetResolution(factory.getTargetResolution());
         setAccessibility(factory.isAccessibilityEnabled());
     }
 
-    /** @return the associated FopFactory instance */
-    public FopFactory getFactory() {
-        return this.factory;
+    /**
+     * Returns a new {@link Fop} instance. Use this factory method if your output type
+     * requires an output stream and you want to configure this very rendering run,
+     * i.e. if you want to set some metadata like the title and author of the document
+     * you want to render. In that case, create a new {@link FOUserAgent} instance
+     * using {@link #newFOUserAgent()}.
+     * <p>
+     * MIME types are used to select the output format (ex. "application/pdf" for PDF). You can
+     * use the constants defined in {@link MimeConstants}.
+     * @param outputFormat the MIME type of the output format to use (ex. "application/pdf").
+     * @param stream the output stream
+     * @return the new Fop instance
+     * @throws FOPException when the constructor fails
+     */
+    public Fop newFop(String outputFormat, OutputStream stream) throws FOPException {
+        return new Fop(outputFormat, this, stream);
+    }
+
+
+    /**
+     * Returns a new {@link Fop} instance. Use this factory method if you want to configure this
+     * very rendering run, i.e. if you want to set some metadata like the title and author of the
+     * document you want to render. In that case, create a new {@link FOUserAgent}
+     * instance using {@link #newFOUserAgent()}.
+     * <p>
+     * MIME types are used to select the output format (ex. "application/pdf" for PDF). You can
+     * use the constants defined in {@link MimeConstants}.
+     * @param outputFormat the MIME type of the output format to use (ex. "application/pdf").
+     * @return the new Fop instance
+     * @throws FOPException  when the constructor fails
+     */
+    public Fop newFop(String outputFormat) throws FOPException {
+        return newFop(outputFormat, null);
+    }
+
+
+    /**
+     * Returns the URI Resolver.
+     *
+     * @return the URI resolver
+     */
+    public URIResolverWrapper getNewURIResolver() {
+        return newUriResolver;
     }
 
     // ---------------------------------------------- rendering-run dependent stuff
@@ -345,48 +388,13 @@ public class FOUserAgent {
     }
 
     /**
-     * Sets the base URL.
-     * @param baseUrl base URL
-     */
-    public void setBaseURL(String baseUrl) {
-        this.base = baseUrl;
-    }
-
-    /**
-     * Sets font base URL.
-     * @param fontBaseUrl font base URL
-     * @deprecated Use {@link FontManager#setFontBaseURL(String)} instead.
-     */
-    public void setFontBaseURL(String fontBaseUrl) {
-        try {
-            getFactory().getFontManager().setFontBaseURL(fontBaseUrl);
-        } catch (MalformedURLException e) {
-            throw new IllegalArgumentException(e.getMessage());
-        }
-    }
-
-    /**
-     * Returns the base URL.
-     * @return the base URL
-     */
-    public String getBaseURL() {
-        return this.base;
-    }
-
-    /**
-     * Sets the URI Resolver.
-     * @param resolver the new URI resolver
-     */
-    public void setURIResolver(URIResolver resolver) {
-        this.uriResolver = resolver;
-    }
-
-    /**
-     * Returns the URI Resolver.
-     * @return the URI Resolver
-     */
-    public URIResolver getURIResolver() {
-        return this.uriResolver;
+     * Gets the renderer options given an interface representing renderer configuration options.
+     *
+     * @param option the renderer option
+     * @return the value
+    */
+    public Object getRendererOption(RendererConfigOptions option) {
+        return rendererOptions.get(option.getName());
     }
 
     /**
@@ -396,39 +404,27 @@ public class FOUserAgent {
      * @param uri URI to access
      * @return A {@link javax.xml.transform.Source} object, or null if the URI
      * cannot be resolved.
-     * @see org.apache.fop.apps.FOURIResolver
+     * @see org.apache.fop.apps.io.FOURIResolver
      */
     public Source resolveURI(String uri) {
-        return resolveURI(uri, getBaseURL());
-    }
-
-    /**
-     * Attempts to resolve the given URI.
-     * Will use the configured resolver and if not successful fall back
-     * to the default resolver.
-     * @param href URI to access
-     * @param base the base URI to resolve against
-     * @return A {@link javax.xml.transform.Source} object, or null if the URI
-     * cannot be resolved.
-     * @see org.apache.fop.apps.FOURIResolver
-     */
-    public Source resolveURI(String href, String base) {
-        Source source = null;
-        //RFC 2397 data URLs don't need to be resolved, just decode them through FOP's default
-        //URIResolver.
-        boolean bypassURIResolution = href.startsWith("data:");
-        if (!bypassURIResolution && uriResolver != null) {
-            try {
-                source = uriResolver.resolve(href, base);
-            } catch (TransformerException te) {
-                log.error("Attempt to resolve URI '" + href + "' failed: ", te);
+        // TODO: What do we want to do when resources aren't found???
+        try {
+            Source src;
+            // Have to do this so we can resolve data URIs
+            if (uri.startsWith("data:")) {
+                CommonURIResolver uriResolver = new CommonURIResolver();
+                src = uriResolver.resolve(uri, "");
+            } else {
+                URI actualUri = URIResolverWrapper.cleanURI(uri);
+                src = new StreamSource(newUriResolver.resolveIn(actualUri));
+                src.setSystemId(uri);
             }
+            return src;
+        } catch (URISyntaxException use) {
+            return null;
+        } catch (IOException ioe) {
+            return null;
         }
-        if (source == null) {
-            // URI Resolver not configured or returned null, use default resolver from the factory
-            source = getFactory().resolveURI(href, base);
-        }
-        return source;
     }
 
     /**
@@ -498,28 +494,18 @@ public class FOUserAgent {
     //                                                (convenience access to FopFactory methods)
 
     /**
-     * Returns the font base URL.
-     * @return the font base URL
-     * @deprecated Use {@link FontManager#getFontBaseURL()} instead. This method is not used by FOP.
-     */
-    public String getFontBaseURL() {
-        String fontBase = getFactory().getFontManager().getFontBaseURL();
-        return fontBase != null ? fontBase : getBaseURL();
-    }
-
-    /**
      * Returns the conversion factor from pixel units to millimeters. This
      * depends on the desired source resolution.
      * @return float conversion factor
      * @see #getSourceResolution()
      */
     public float getSourcePixelUnitToMillimeter() {
-        return getFactory().getSourcePixelUnitToMillimeter();
+        return factory.getSourcePixelUnitToMillimeter();
     }
 
     /** @return the resolution for resolution-dependant input */
     public float getSourceResolution() {
-        return getFactory().getSourceResolution();
+        return factory.getSourceResolution();
     }
 
     /**
@@ -530,7 +516,7 @@ public class FOUserAgent {
      * @see FopFactory#getPageHeight()
      */
     public String getPageHeight() {
-        return getFactory().getPageHeight();
+        return factory.getPageHeight();
     }
 
     /**
@@ -541,7 +527,7 @@ public class FOUserAgent {
      * @see FopFactory#getPageWidth()
      */
     public String getPageWidth() {
-        return getFactory().getPageWidth();
+        return factory.getPageWidth();
     }
 
     /**
@@ -550,7 +536,7 @@ public class FOUserAgent {
      * @see FopFactory#validateStrictly()
      */
     public boolean validateStrictly() {
-        return getFactory().validateStrictly();
+        return factory.validateStrictly();
     }
 
     /**
@@ -559,21 +545,21 @@ public class FOUserAgent {
      * @see FopFactory#isBreakIndentInheritanceOnReferenceAreaBoundary()
      */
     public boolean isBreakIndentInheritanceOnReferenceAreaBoundary() {
-        return getFactory().isBreakIndentInheritanceOnReferenceAreaBoundary();
+        return factory.isBreakIndentInheritanceOnReferenceAreaBoundary();
     }
 
     /**
      * @return the RendererFactory
      */
     public RendererFactory getRendererFactory() {
-        return getFactory().getRendererFactory();
+        return factory.getRendererFactory();
     }
 
     /**
      * @return the XML handler registry
      */
     public XMLHandlerRegistry getXMLHandlerRegistry() {
-        return getFactory().getXMLHandlerRegistry();
+        return factory.getXMLHandlerRegistry();
     }
 
     /**
@@ -662,12 +648,53 @@ public class FOUserAgent {
     }
 
     /**
-     * Control whether complex script features should be enabled
+     * Returns the renderer configuration object for a particular MIME type.
      *
-     * @param useComplexScriptFeatures true if FOP is to use complex script features
+     * @param mimeType the config MIME type
+     * @param configCreator the parser for creating the config for the first run of parsing.
+     * @return the renderer configuration object
+     * @throws FOPException if an error occurs when creating the config object
      */
-    public void setComplexScriptFeaturesEnabled(boolean useComplexScriptFeatures) {
-        factory.setComplexScriptFeaturesEnabled ( useComplexScriptFeatures );
+    public RendererConfig getRendererConfig(String mimeType, RendererConfigParser configCreator)
+            throws FOPException {
+        return factory.getRendererConfig(this, getRendererConfiguration(mimeType), configCreator);
+    }
+
+    /**
+     * Returns a {@link Configuration} object for which contains renderer configuration for a given
+     * MIME type.
+     *
+     * @param mimeType the renderer configuration MIME type
+     * @return the configuration object
+     */
+    public Configuration getRendererConfiguration(String mimeType) {
+        Configuration cfg = getUserConfig();
+        String type = "renderer";
+        String mime = "mime";
+        if (cfg == null) {
+            if (log.isDebugEnabled()) {
+                log.debug("userconfig is null");
+            }
+            return null;
+        }
+
+        Configuration userConfig = null;
+
+        Configuration[] cfgs = cfg.getChild(type + "s").getChildren(type);
+        for (int i = 0; i < cfgs.length; ++i) {
+            Configuration child = cfgs[i];
+            try {
+                if (child.getAttribute(mime).equals(mimeType)) {
+                    userConfig = child;
+                    break;
+                }
+            } catch (ConfigurationException e) {
+                // silently pass over configurations without mime type
+            }
+        }
+        log.debug((userConfig == null ? "No u" : "U")
+                + "ser configuration found for MIME type " + mimeType);
+        return userConfig;
     }
 
     /**
@@ -712,6 +739,75 @@ public class FOUserAgent {
      */
     public StructureTreeEventHandler getStructureTreeEventHandler() {
         return this.structureTreeEventHandler;
+    }
+
+    /** @see FopFactory#getLayoutManagerMakerOverride() */
+    public LayoutManagerMaker getLayoutManagerMakerOverride() {
+        return factory.getLayoutManagerMakerOverride();
+    }
+
+    /** @see FopFactory#getContentHandlerFactoryRegistry() */
+    public ContentHandlerFactoryRegistry getContentHandlerFactoryRegistry() {
+        return factory.getContentHandlerFactoryRegistry();
+    }
+
+    /** @see FopFactory#getImageManager() */
+    public ImageManager getImageManager() {
+        return factory.getImageManager();
+    }
+
+    /** @see FopFactory#getElementMappingRegistry() */
+    public ElementMappingRegistry getElementMappingRegistry() {
+        return factory.getElementMappingRegistry();
+    }
+
+    /** @see FopFactory#getFontManager() */
+    public FontManager getFontManager() {
+        return factory.getFontManager();
+    }
+
+    /**
+     * Indicates whether a namespace URI is on the ignored list.
+     * @param namespaceURI the namespace URI
+     * @return true if the namespace is ignored by FOP
+     */
+    public boolean isNamespaceIgnored(String namespaceURI) {
+        return factory.isNamespaceIgnored(namespaceURI);
+    }
+
+    /**
+     * Is the user configuration to be validated?
+     * @return if the user configuration should be validated
+     */
+    public boolean validateUserConfigStrictly() {
+        return factory.validateUserConfigStrictly();
+    }
+
+    /**
+     * Get the user configuration.
+     * @return the user configuration
+     */
+    public Configuration getUserConfig() {
+        return factory.getUserConfig();
+    }
+
+    /** @return the image handler registry */
+    public ImageHandlerRegistry getImageHandlerRegistry() {
+        return factory.getImageHandlerRegistry();
+    }
+
+    /** TODO: javadoc*/
+    public ColorSpaceCache getColorSpaceCache() {
+        return factory.getColorSpaceCache();
+    }
+
+    /** @return the HyphenationTreeResolver for resolving user-supplied hyphenation patterns. */
+    public HyphenationTreeResolver getHyphenationTreeResolver() {
+        return factory.getHyphenationTreeResolver();
+    }
+
+    public Map<String, String> getHyphPatNames() {
+        return factory.getHyphPatNames();
     }
 }
 

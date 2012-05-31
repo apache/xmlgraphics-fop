@@ -19,19 +19,23 @@
 
 package org.apache.fop.fonts;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.File;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import org.apache.fop.apps.io.DefaultResourceResolver;
+import org.apache.fop.apps.io.URIResolverWrapper;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  *
  */
 public class DejaVuLGCSerifTestCase {
 
-    private FontResolver fontResolver = FontManager.createMinimalFontResolver(false);
+    private URIResolverWrapper resolver = new URIResolverWrapper(new File(".").toURI(),
+            new DefaultResourceResolver());
     private CustomFont font;
 
     /**
@@ -43,7 +47,8 @@ public class DejaVuLGCSerifTestCase {
     @Before
     public void setUp() throws Exception {
         File file = new File("test/resources/fonts/ttf/DejaVuLGCSerif.ttf");
-        font = FontLoader.loadFont(file, "", true, EncodingMode.AUTO, fontResolver);
+        font = FontLoader.loadFont(file.toURI(), "", true, EncodingMode.AUTO, false, false,
+                resolver);
     }
 
     /**
