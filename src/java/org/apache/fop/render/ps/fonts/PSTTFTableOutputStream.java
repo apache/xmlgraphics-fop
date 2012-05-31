@@ -24,8 +24,7 @@ import java.io.IOException;
 import org.apache.fop.fonts.truetype.TTFTableOutputStream;
 
 /**
- * This class streams a truetype table to a PostScript file.
- *
+ * Streams a TrueType table according to the PostScript format.
  */
 public class PSTTFTableOutputStream implements TTFTableOutputStream  {
 
@@ -33,7 +32,7 @@ public class PSTTFTableOutputStream implements TTFTableOutputStream  {
 
     /**
      * Constructor.
-     * @param ttfGen PSGenerator the streamer class used for streaming bytes.
+     * @param ttfGen the helper object to stream TrueType data
      */
     public PSTTFTableOutputStream(PSTTFGenerator ttfGen) {
         this.ttfGen = ttfGen;
@@ -56,4 +55,5 @@ public class PSTTFTableOutputStream implements TTFTableOutputStream  {
         ttfGen.streamBytes(byteArray, offset, length);
         ttfGen.endString();
     }
+
 }

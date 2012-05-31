@@ -20,7 +20,7 @@
 package org.apache.fop.util;
 
 /**
- * A helper class create to hex-encoded representations of numbers.
+ * A helper class to create hex-encoded representations of numbers.
  */
 public final class HexEncoder {
 

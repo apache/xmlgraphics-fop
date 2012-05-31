@@ -26,7 +26,7 @@ import org.apache.xmlgraphics.util.io.ASCIIHexOutputStream;
 
 /**
  * This is a wrapper for {@link PSGenerator} that contains some members specific for streaming
- * True Type fonts to a PostScript document.
+ * TrueType fonts to a PostScript document.
  */
 public class PSTTFGenerator {
     private PSGenerator gen;
@@ -40,8 +40,8 @@ public class PSTTFGenerator {
     public static final int MAX_BUFFER_SIZE = 32764;
 
     /**
-     * Constructor - initialises the PSGenerator in this wrapper class.
-     * @param gen PSGenerator
+     * Creates a new instance wrapping the given generator.
+     * @param gen the PSGenerator to wrap
      */
     public PSTTFGenerator(PSGenerator gen) {
         this.gen = gen;
@@ -49,8 +49,7 @@ public class PSTTFGenerator {
     }
 
     /**
-     * Begins writing a string by writing '<' to the begin.
-     * @throws IOException file write exception.
+     * Writes the '&lt;' character that starts a string.
      */
     public void startString() throws IOException {
         // We need to reset the streamer so that it starts a new line in the PS document
@@ -59,31 +58,29 @@ public class PSTTFGenerator {
     }
 
     /**
-     * Streams a string to a PostScript document (wraps PSGenerator.write(String)).
-     * @param cmd String
-     * @throws IOException file write exception
+     * Writes the given string to the output.
+     * @param cmd a string
      */
     public void write(String cmd) throws IOException {
         gen.write(cmd);
     }
 
     /**
-     * Streams a string followed by a new line char to a PostScript document (wraps
-     * PSGenerator.writeln(String)).
-     * @param cmd String
-     * @throws IOException file write exception
+     * Writes the given string to the output, followed by a newline.
+     * @param cmd a string
      */
     public void writeln(String cmd) throws IOException {
         gen.writeln(cmd);
     }
 
     /**
-     * Streams the bytes.
-     * @param byteArray byte[] the byte array to stream to file.
-     * @param offset int the starting position in the byte array to stream to file.
-     * @param length the number of bytes to stream to file. This MUST be less than
-     * MAX_BUFFER_SIZE - 1 since strings are suffixed by '00' (as in spec).
-     * @throws IOException file write exception
+     * Writes bytes from the given byte array to the output.
+     *
+     * @param byteArray byte[] a byte array
+     * @param offset the position in the byte array where the streaming must start
+     * @param length the number of bytes to stream. This MUST be less than
+     * {@link MAX_BUFFER_SIZE} - 1 since strings are suffixed by '00' (see Section 4.2 of
+     * Adobe Technical Note #5012, <em>The Type 42 Font Format Specification</em>.).
      */
     public void streamBytes(byte[] byteArray, int offset, int length) throws IOException {
         if (length > MAX_BUFFER_SIZE) {
@@ -95,10 +92,10 @@ public class PSTTFGenerator {
 
     /**
      * Finishes writing a string by appending '00' and '>' to the end.
-     * @throws IOException file write exception
      */
     public void endString() throws IOException {
         /* Appends a '00' to the end of the string as specified in the spec */
         gen.write("00\n> ");
     }
+
 }
