@@ -19,7 +19,6 @@
 
 package org.apache.fop.render.ps;
 
-import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.render.intermediate.AbstractIFDocumentHandlerMaker;
 import org.apache.fop.render.intermediate.IFContext;
@@ -33,19 +32,17 @@ public class PSDocumentHandlerMaker extends AbstractIFDocumentHandlerMaker {
     private static final String[] MIMES = new String[]
                               {MimeConstants.MIME_POSTSCRIPT};
 
-    /** {@inheritDoc} */
-    public IFDocumentHandler makeIFDocumentHandler(FOUserAgent ua) {
-        PSDocumentHandler handler = new PSDocumentHandler();
-        handler.setContext(new IFContext(ua));
-        return handler;
+    @Override
+    public IFDocumentHandler makeIFDocumentHandler(IFContext ifContext) {
+        return new PSDocumentHandler(ifContext);
     }
 
-    /** {@inheritDoc} */
+    @Override
     public boolean needsOutputStream() {
         return true;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public String[] getSupportedMimeTypes() {
         return MIMES;
     }

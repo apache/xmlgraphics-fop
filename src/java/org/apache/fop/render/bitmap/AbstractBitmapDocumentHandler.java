@@ -36,7 +36,7 @@ import org.apache.xmlgraphics.image.writer.ImageWriter;
 import org.apache.xmlgraphics.image.writer.ImageWriterRegistry;
 import org.apache.xmlgraphics.image.writer.MultiImageWriter;
 
-import org.apache.fop.apps.FopFactoryConfigurator;
+import org.apache.fop.apps.FopFactoryConfig;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.render.intermediate.AbstractBinaryWritingIFDocumentHandler;
 import org.apache.fop.render.intermediate.IFContext;
@@ -79,7 +79,14 @@ public abstract class AbstractBitmapDocumentHandler extends AbstractBinaryWritin
     /**
      * Default constructor.
      */
-    public AbstractBitmapDocumentHandler() {
+    public AbstractBitmapDocumentHandler(IFContext context) {
+        super(context);
+        //Set target resolution
+        int dpi = Math.round(context.getUserAgent().getTargetResolution());
+        getSettings().getWriterParams().setResolution(dpi);
+
+        Map renderingOptions = getUserAgent().getRendererOptions();
+        setTargetBitmapSize((Dimension)renderingOptions.get(TARGET_BITMAP_SIZE));
     }
 
     /** {@inheritDoc} */
@@ -95,18 +102,6 @@ public abstract class AbstractBitmapDocumentHandler extends AbstractBinaryWritin
      * @return the default file extension (ex. "png")
      */
     public abstract String getDefaultExtension();
-
-    /** {@inheritDoc} */
-    public void setContext(IFContext context) {
-        super.setContext(context);
-
-        //Set target resolution
-        int dpi = Math.round(context.getUserAgent().getTargetResolution());
-        getSettings().getWriterParams().setResolution(dpi);
-
-        Map renderingOptions = getUserAgent().getRendererOptions();
-        setTargetBitmapSize((Dimension)renderingOptions.get(TARGET_BITMAP_SIZE));
-    }
 
     /** {@inheritDoc} */
     public abstract IFDocumentHandlerConfigurator getConfigurator();
@@ -227,7 +222,7 @@ public abstract class AbstractBitmapDocumentHandler extends AbstractBinaryWritin
             //Normal case: just scale according to the target resolution
             scale = scaleFactor
                 * getUserAgent().getTargetResolution()
-                / FopFactoryConfigurator.DEFAULT_TARGET_RESOLUTION;
+                    / FopFactoryConfig.DEFAULT_TARGET_RESOLUTION;
             bitmapWidth = (int) ((this.currentPageDimensions.width * scale / 1000f) + 0.5f);
             bitmapHeight = (int) ((this.currentPageDimensions.height * scale / 1000f) + 0.5f);
         }

@@ -57,9 +57,8 @@ public class IFMimickingTestCase {
 
     @Before
     public void setUp() throws Exception {
-        fopFactory = FopFactory.newInstance();
         File configFile = new File("test/test-no-xml-metrics.xconf");
-        fopFactory.setUserConfig(configFile);
+        fopFactory = FopFactory.newInstance(configFile);
     }
 
     /**
@@ -111,8 +110,7 @@ public class IFMimickingTestCase {
                 userAgent, mime);
 
         //Setup painter
-        IFSerializer serializer = new IFSerializer();
-        serializer.setContext(new IFContext(userAgent));
+        IFSerializer serializer = new IFSerializer(new IFContext(userAgent));
         serializer.mimicDocumentHandler(targetHandler);
         serializer.setResult(domResult);
 

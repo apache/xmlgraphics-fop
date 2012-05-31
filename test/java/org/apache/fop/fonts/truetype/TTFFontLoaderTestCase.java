@@ -19,17 +19,18 @@
 
 package org.apache.fop.fonts.truetype;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 
 import org.junit.Test;
 
+import org.apache.fop.apps.io.DefaultResourceResolver;
+import org.apache.fop.apps.io.URIResolverWrapper;
 import org.apache.fop.fonts.EncodingMode;
-import org.apache.fop.fonts.FontManager;
-import org.apache.fop.fonts.FontResolver;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test case for {@link TTFFontLoader}.
@@ -40,8 +41,8 @@ public class TTFFontLoaderTestCase {
     public void testUseKerning() throws IOException {
         boolean useComplexScriptFeatures = false;
         File file = new File("test/resources/fonts/ttf/DejaVuLGCSerif.ttf");
-        String absoluteFilePath = file.toURI().toURL().toExternalForm();
-        FontResolver resolver = FontManager.createMinimalFontResolver(useComplexScriptFeatures);
+        URI absoluteFilePath = file.toURI();
+        URIResolverWrapper resolver = DefaultResourceResolver.createDefaultWrapper();
         String fontName = "Deja Vu";
         boolean embedded = false;
         boolean useKerning = true;

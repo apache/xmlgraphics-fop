@@ -19,6 +19,7 @@
 
 package org.apache.fop.render.svg;
 
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.render.AbstractRendererMaker;
@@ -31,20 +32,23 @@ public class SVGRendererMaker extends AbstractRendererMaker {
 
     private static final String[] MIMES = new String[] {MimeConstants.MIME_SVG};
 
-
-    /** {@inheritDoc} */
+    @Override
     public Renderer makeRenderer(FOUserAgent ua) {
         return new SVGRenderer(ua);
     }
 
-    /** {@inheritDoc} */
+    @Override
     public boolean needsOutputStream() {
         return true;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public String[] getSupportedMimeTypes() {
         return MIMES;
     }
 
+    @Override
+    public void configureRenderer(FOUserAgent userAgent, Renderer renderer) throws FOPException {
+        // No-Op
+    }
 }

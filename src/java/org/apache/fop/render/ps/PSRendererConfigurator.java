@@ -19,75 +19,56 @@
 
 package org.apache.fop.render.ps;
 
-import java.util.Locale;
-
-import org.apache.avalon.framework.configuration.Configuration;
-
-import org.apache.xmlgraphics.ps.PSGenerator;
-
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.render.PrintRendererConfigurator;
-import org.apache.fop.render.Renderer;
+import org.apache.fop.render.RendererConfig.RendererConfigParser;
+import org.apache.fop.render.adobe.AdobeRendererConfigurator;
 import org.apache.fop.render.intermediate.IFDocumentHandler;
 import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
+
 
 /**
  * Postscript renderer config
  */
-public class PSRendererConfigurator extends PrintRendererConfigurator
-            implements IFDocumentHandlerConfigurator {
+public class PSRendererConfigurator extends AdobeRendererConfigurator
+        implements IFDocumentHandlerConfigurator {
 
     /**
      * Default constructor
      * @param userAgent user agent
      */
-    public PSRendererConfigurator(FOUserAgent userAgent) {
-        super(userAgent);
+    public PSRendererConfigurator(FOUserAgent userAgent, RendererConfigParser rendererConfigParser) {
+        super(userAgent, rendererConfigParser);
     }
 
-    /**
-     * Throws an UnsupportedOperationException.
-     *
-     * @param renderer not used
-     */
-    public void configure(Renderer renderer) {
-        throw new UnsupportedOperationException();
+    private void configure(PSRenderingUtil psUtil, PSRendererConfig psConfig) {
+        if (psConfig.isAutoRotateLandscape() != null) {
+            psUtil.setAutoRotateLandscape(psConfig.isAutoRotateLandscape());
+        }
+        if (psConfig.getLanguageLevel() != null) {
+            psUtil.setLanguageLevel(psConfig.getLanguageLevel());
+        }
+        if (psConfig.isOptimizeResources() != null) {
+            psUtil.setOptimizeResources(psConfig.isOptimizeResources());
+        }
+        if (psConfig.isSafeSetPageDevice() != null) {
+            psUtil.setSafeSetPageDevice(psConfig.isSafeSetPageDevice());
+        }
+        if (psConfig.isDscComplianceEnabled() != null) {
+            psUtil.setDSCComplianceEnabled(psConfig.isDscComplianceEnabled());
+        }
+        if (psConfig.getRenderingMode() != null) {
+            psUtil.setRenderingMode(psConfig.getRenderingMode());
+        }
     }
 
-    private void configure(PSRenderingUtil psUtil, Configuration cfg) {
-        psUtil.setAutoRotateLandscape(
-            cfg.getChild("auto-rotate-landscape").getValueAsBoolean(false));
-        Configuration child;
-        child = cfg.getChild("language-level");
-        if (child != null) {
-            psUtil.setLanguageLevel(child.getValueAsInteger(
-                    PSGenerator.DEFAULT_LANGUAGE_LEVEL));
-        }
-        child = cfg.getChild("optimize-resources");
-        if (child != null) {
-            psUtil.setOptimizeResources(child.getValueAsBoolean(false));
-        }
-        child = cfg.getChild("rendering");
-        if (child != null) {
-            psUtil.setRenderingMode(PSRenderingMode.valueOf(
-                    child.getValue(psUtil.getRenderingMode().toString())
-                    .toUpperCase(Locale.ENGLISH)));
-        }
-        psUtil.setSafeSetPageDevice(
-            cfg.getChild("safe-set-page-device").getValueAsBoolean(false));
-        psUtil.setDSCComplianceEnabled(
-            cfg.getChild("dsc-compliant").getValueAsBoolean(true));
-    }
-
-    /** {@inheritDoc} */
+    @Override
     public void configure(IFDocumentHandler documentHandler) throws FOPException {
-        Configuration cfg = super.getRendererConfig(documentHandler.getMimeType());
-        if (cfg != null) {
-            PSDocumentHandler psDocumentHandler = (PSDocumentHandler)documentHandler;
-            configure(psDocumentHandler.getPSUtil(), cfg);
+        PSRendererConfig psConfig = (PSRendererConfig) getRendererConfig(documentHandler);
+        if (psConfig != null) {
+            PSDocumentHandler psDocumentHandler = (PSDocumentHandler) documentHandler;
+            PSRenderingUtil psUtil = psDocumentHandler.getPSUtil();
+            configure(psUtil, psConfig);
         }
-
     }
-
 }

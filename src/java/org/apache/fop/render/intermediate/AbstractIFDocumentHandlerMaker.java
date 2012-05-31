@@ -19,7 +19,6 @@
 
 package org.apache.fop.render.intermediate;
 
-import org.apache.fop.apps.FOUserAgent;
 
 /**
  * Base class for factory classes which instantiate {@link IFDocumentHandler}s and provide
@@ -29,10 +28,10 @@ public abstract class AbstractIFDocumentHandlerMaker {
 
     /**
      * Instantiates a new {@link IFDocumentHandler}.
-     * @param userAgent the user agent
+     * @param ifContext the user agent
      * @return the newly instantiated document handler
      */
-    public abstract IFDocumentHandler makeIFDocumentHandler(FOUserAgent userAgent);
+    public abstract IFDocumentHandler makeIFDocumentHandler(IFContext ifContext);
 
     /**
      * @return Indicates whether this document handler requires an OutputStream to work with.

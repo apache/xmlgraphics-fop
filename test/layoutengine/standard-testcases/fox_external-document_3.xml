@@ -30,7 +30,7 @@
           <fo:region-body reference-orientation="90"/>
         </fo:simple-page-master>
       </fo:layout-master-set>
-      <fox:external-document id="img2" src="../../resources/images/multi-page.tiff"/>
+      <fox:external-document id="img2" src="../resources/images/multi-page.tiff"/>
     </fo:root>
   </fo>
   <checks>

@@ -19,17 +19,13 @@
 
 package org.apache.fop.fonts;
 
-import java.io.IOException;
 import java.io.InputStream;
-
-import javax.xml.transform.TransformerException;
+import java.net.URI;
 
 import org.junit.Test;
-import org.xml.sax.SAXException;
 
 import org.apache.xmlgraphics.util.MimeConstants;
 
-import org.apache.fop.apps.FOPException;
 import org.apache.fop.events.EventProcessingTestCase;
 
 /**
@@ -39,27 +35,25 @@ public class FontEventProcessingTestCase {
 
     private EventProcessingTestCase eventsTests = new EventProcessingTestCase();
 
-    private static final String CONFIG_BASE_DIR = EventProcessingTestCase.CONFIG_BASE_DIR;
+    private static final URI CONFIG_BASE_DIR = EventProcessingTestCase.CONFIG_BASE_DIR;
 
     @Test
-    public void testFont() throws FOPException, TransformerException, IOException, SAXException {
+    public void testFont() throws Exception {
         InputStream inStream = getClass().getResourceAsStream("substituted-font.fo");
         eventsTests.doTest(inStream, null, FontEventProducer.class.getName() + ".fontSubstituted",
                 MimeConstants.MIME_PDF);
     }
 
     @Test
-    public void testFontWithBadDirectory() throws FOPException, TransformerException, IOException,
-            SAXException {
+    public void testFontWithBadDirectory() throws Exception {
         InputStream inStream = getClass().getResourceAsStream("substituted-font.fo");
-        eventsTests.doTest(inStream, CONFIG_BASE_DIR + "test_fonts_directory_bad.xconf",
+        eventsTests.doTest(inStream, CONFIG_BASE_DIR.resolve("test_fonts_directory_bad.xconf"),
                 FontEventProducer.class.getName() + ".fontDirectoryNotFound",
                 MimeConstants.MIME_PDF);
     }
 
     @Test
-    public void testSVGFontStrokedAsShapes() throws FOPException, TransformerException, IOException,
-            SAXException {
+    public void testSVGFontStrokedAsShapes() throws Exception {
         // svg-fonts.fo embeds two fonts; one that is present in the system and the other is not; the
         // missing font is stroked as shapes while the fonts that exists is stroked as text
         InputStream inStream = getClass().getResourceAsStream("svg-fonts.fo");

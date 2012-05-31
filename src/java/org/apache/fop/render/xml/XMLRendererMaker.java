@@ -19,12 +19,15 @@
 
 package org.apache.fop.render.xml;
 
+import java.util.List;
+
+import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.fonts.FontCollection;
 import org.apache.fop.render.AbstractRendererMaker;
 import org.apache.fop.render.PrintRendererConfigurator;
 import org.apache.fop.render.Renderer;
-import org.apache.fop.render.RendererConfigurator;
 
 /**
  * RendererMaker for the Area Tree XML Renderer.
@@ -33,22 +36,28 @@ public class XMLRendererMaker extends AbstractRendererMaker {
 
     private static final String[] MIMES = new String[] {MimeConstants.MIME_FOP_AREA_TREE};
 
-    /**{@inheritDoc} */
+    @Override
     public Renderer makeRenderer(FOUserAgent userAgent) {
         return new XMLRenderer(userAgent);
     }
 
-    /**{@inheritDoc} */
-    public RendererConfigurator getConfigurator(FOUserAgent userAgent) {
-        return new PrintRendererConfigurator(userAgent);
+    @Override
+    public void configureRenderer(FOUserAgent userAgent, Renderer renderer) throws FOPException {
+        // TODO what constructor params?
+        new PrintRendererConfigurator(userAgent, null) {
+            @Override
+            protected List<FontCollection> getDefaultFontCollection() {
+                throw new UnsupportedOperationException();
+            }
+        } .configure(renderer);
     }
 
-    /** {@inheritDoc} */
+    @Override
     public boolean needsOutputStream() {
         return true;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public String[] getSupportedMimeTypes() {
         return MIMES;
     }

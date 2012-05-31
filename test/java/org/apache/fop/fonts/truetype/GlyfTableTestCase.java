@@ -19,9 +19,8 @@
 
 package org.apache.fop.fonts.truetype;
 
-import static org.junit.Assert.assertTrue;
-
 import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -30,6 +29,8 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * Tests {@link GlyfTable}.
@@ -55,7 +56,13 @@ public class GlyfTableTestCase {
 
     @Before
     public void setUp() throws IOException {
-        originalFontReader = new FontFileReader("test/resources/fonts/ttf/DejaVuLGCSerif.ttf");
+        FileInputStream fontStream = new FileInputStream(
+                "test/resources/fonts/ttf/DejaVuLGCSerif.ttf");
+        try {
+            originalFontReader = new FontFileReader(fontStream);
+        } finally {
+            fontStream.close();
+        }
     }
 
     /**
@@ -142,8 +149,9 @@ public class GlyfTableTestCase {
     private void setupSubsetReader(Map<Integer, Integer> glyphs) throws IOException {
         TTFSubSetFile fontFile = new TTFSubSetFile();
         byte[] subsetFont = fontFile.readFont(originalFontReader, "Deja", glyphs);
-        InputStream intputStream = new ByteArrayInputStream(subsetFont);
-        subsetReader = new FontFileReader(intputStream);
+        InputStream inputStream = new ByteArrayInputStream(subsetFont);
+        subsetReader = new FontFileReader(inputStream);
+        inputStream.close();
     }
 
     private void readLoca() throws IOException {

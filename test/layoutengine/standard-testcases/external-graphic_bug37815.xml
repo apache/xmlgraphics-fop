@@ -32,10 +32,10 @@
       <fo:page-sequence master-reference="normal" white-space-collapse="true">
         <fo:flow flow-name="xsl-region-body">
           <fo:block>
-            <fo:external-graphic src="../../resources/images/bgimg72dpi.jpg" width="50%" content-width="scale-to-fit" content-height="100%" border="solid 1pt" background-color="yellow"/>EOG
+            <fo:external-graphic src="../resources/images/bgimg72dpi.jpg" width="50%" content-width="scale-to-fit" content-height="100%" border="solid 1pt" background-color="yellow"/>EOG
           </fo:block>
           <fo:block>
-            <fo:external-graphic src="../../resources/images/bgimg300dpi.jpg" width="50%" content-width="scale-to-fit" content-height="100%" border="solid 1pt" background-color="yellow"/>EOG
+            <fo:external-graphic src="../resources/images/bgimg300dpi.jpg" width="50%" content-width="scale-to-fit" content-height="100%" border="solid 1pt" background-color="yellow"/>EOG
           </fo:block>
           <fo:block>EOF</fo:block>
         </fo:flow>

@@ -22,9 +22,7 @@ package org.apache.fop.fonts;
 // FOP (base 14 fonts)
 import java.util.List;
 
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
-
+import org.apache.fop.apps.io.URIResolverWrapper;
 import org.apache.fop.fonts.base14.Courier;
 import org.apache.fop.fonts.base14.CourierBold;
 import org.apache.fop.fonts.base14.CourierBoldOblique;
@@ -74,8 +72,8 @@ public final class FontSetup {
      * @param resolver the font resolver
      * @param base14Kerning true if base14 kerning applies
      */
-    public static void setup(FontInfo fontInfo, List<EmbedFontInfo> embedFontInfoList,
-                             FontResolver resolver, boolean base14Kerning) {
+    public static void setup(FontInfo fontInfo, List embedFontInfoList,
+            URIResolverWrapper resolver, boolean base14Kerning) {
         fontInfo.addMetrics("F1", new Helvetica(base14Kerning));
         fontInfo.addMetrics("F2", new HelveticaOblique(base14Kerning));
         fontInfo.addMetrics("F3", new HelveticaBold(base14Kerning));
@@ -192,18 +190,12 @@ public final class FontSetup {
      * @param resolver the font resolver
      */
     private static void addConfiguredFonts(FontInfo fontInfo,
-            List<EmbedFontInfo> embedFontInfoList, int num, FontResolver resolver,
+            List<EmbedFontInfo> embedFontInfoList, int num, URIResolverWrapper resolver,
             boolean base14Kerning) {
         if (embedFontInfoList == null) {
             return; //No fonts to process
         }
-
-        if (resolver == null) {
-            //Ensure that we have minimal font resolution capabilities
-            //None of the built-in base14 fonts have advanced typographic data
-            boolean useAdvanced = false;
-            resolver = createMinimalFontResolver(useAdvanced);
-        }
+        assert resolver != null;
 
         String internalName = null;
 
@@ -211,7 +203,7 @@ public final class FontSetup {
             internalName = "F" + num;
             num++;
 
-            LazyFont font = new LazyFont(embedFontInfo, resolver);
+            LazyFont font = new LazyFont(embedFontInfo, resolver, false);
             fontInfo.addMetrics(internalName, font);
 
             List<FontTriplet> triplets = embedFontInfo.getFontTriplets();
@@ -220,33 +212,5 @@ public final class FontSetup {
                 fontInfo.addFontProperties(internalName, triplet);
             }
         }
-    }
-
-    /**
-     * Minimum implemenation of FontResolver.
-     */
-    public static class MinimalFontResolver implements FontResolver {
-        private boolean useComplexScriptFeatures;
-        MinimalFontResolver(boolean useComplexScriptFeatures) {
-            this.useComplexScriptFeatures = useComplexScriptFeatures;
-        }
-        /** {@inheritDoc} */
-        public Source resolve(String href) {
-            //Minimal functionality here
-            return new StreamSource(href);
-        }
-        /** {@inheritDoc} */
-        public boolean isComplexScriptFeaturesEnabled() {
-            return useComplexScriptFeatures;
-        }
-    }
-
-    /**
-     * Create minimal font resolver.
-     * @param useComplexScriptFeatures true if complex script features enabled
-     * @return a new FontResolver to be used by the font subsystem
-     */
-    public static FontResolver createMinimalFontResolver(boolean useComplexScriptFeatures) {
-        return new MinimalFontResolver ( useComplexScriptFeatures );
     }
 }

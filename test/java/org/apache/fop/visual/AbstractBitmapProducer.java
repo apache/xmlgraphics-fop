@@ -19,6 +19,8 @@
 
 package org.apache.fop.visual;
 
+import java.net.URI;
+
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 
@@ -32,6 +34,11 @@ public abstract class AbstractBitmapProducer implements BitmapProducer {
 
     /** Logger */
     protected static Log log = LogFactory.getLog(AbstractBitmapProducer.class);
+    final URI baseUri;
+
+    public AbstractBitmapProducer(URI baseUri) {
+        this.baseUri = baseUri;
+    }
 
     /**
      * Returns a new JAXP Transformer based on information in the ProducerContext.

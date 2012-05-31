@@ -20,12 +20,19 @@
 package org.apache.fop.render.bitmap;
 
 import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.render.intermediate.IFContext;
+import org.apache.fop.render.intermediate.IFDocumentHandler;
 import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
 
 /**
  * {@link IFDocumentHandler} implementation that produces PNG files.
  */
 public class PNGDocumentHandler extends AbstractBitmapDocumentHandler {
+
+
+    PNGDocumentHandler(IFContext context) {
+        super(context);
+    }
 
     /** {@inheritDoc} */
     public String getMimeType() {
@@ -39,6 +46,7 @@ public class PNGDocumentHandler extends AbstractBitmapDocumentHandler {
 
     /** {@inheritDoc} */
     public IFDocumentHandlerConfigurator getConfigurator() {
+        // TODO what constructir params?
         return new BitmapRendererConfigurator(getUserAgent());
     }
 

@@ -19,7 +19,6 @@
 
 package org.apache.fop.render.svg;
 
-import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.render.intermediate.AbstractIFDocumentHandlerMaker;
 import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFDocumentHandler;
@@ -32,10 +31,8 @@ public class SVGDocumentHandlerMaker extends AbstractIFDocumentHandlerMaker {
     private static final String[] MIMES = new String[] {SVGConstants.MIME_TYPE};
 
     /** {@inheritDoc} */
-    public IFDocumentHandler makeIFDocumentHandler(FOUserAgent ua) {
-        SVGDocumentHandler handler = new SVGDocumentHandler();
-        handler.setContext(new IFContext(ua));
-        return handler;
+    public IFDocumentHandler makeIFDocumentHandler(IFContext ifContext) {
+        return new SVGDocumentHandler(ifContext);
     }
 
     /** {@inheritDoc} */

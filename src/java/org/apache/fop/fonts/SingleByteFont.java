@@ -31,6 +31,8 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.xmlgraphics.fonts.Glyphs;
 
+import org.apache.fop.apps.io.URIResolverWrapper;
+
 /**
  * Generic SingleByte font
  */
@@ -50,15 +52,16 @@ public class SingleByteFont extends CustomFont {
 
 
     /**
-     * Main constructor.
+     * @param resolver the URI resolver for controlling file access
      */
-    public SingleByteFont() {
+    public SingleByteFont(URIResolverWrapper resolver) {
+        super(resolver);
         setEncoding(CodePointMapping.WIN_ANSI_ENCODING);
     }
 
     /** {@inheritDoc} */
     public boolean isEmbeddable() {
-        return (!(getEmbedFileName() == null
+        return (!(getEmbedFileURI() == null
                 && getEmbedResourceName() == null));
     }
 

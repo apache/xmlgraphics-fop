@@ -91,7 +91,7 @@ public class ExternalDocumentLayoutManager extends AbstractPageSequenceLayoutMan
         initialize();
 
         FOUserAgent userAgent = pageSeq.getUserAgent();
-        ImageManager imageManager = userAgent.getFactory().getImageManager();
+        ImageManager imageManager = userAgent.getImageManager();
 
         String uri = URISpecification.getURL(getExternalDocument().getSrc());
         Integer firstPageIndex = ImageUtil.getPageIndexFromURI(uri);

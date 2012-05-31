@@ -43,7 +43,7 @@ import org.apache.fop.apps.MimeConstants;
 public class ExampleFO2OldStylePrint {
 
     // configure fopFactory as desired
-    private FopFactory fopFactory = FopFactory.newInstance();
+    private final FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
 
     /**
      * Prints an FO file using an old-style PrinterJob.

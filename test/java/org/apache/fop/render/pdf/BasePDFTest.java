@@ -20,6 +20,8 @@
 package org.apache.fop.render.pdf;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -28,45 +30,35 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.xml.sax.SAXException;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.apache.fop.AbstractFOPTest;
+
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.FopConfParser;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
-import org.xml.sax.SAXException;
 
 /**
  * Base class for automated tests that create PDF files
  */
-public class BasePDFTest extends AbstractFOPTest {
+public class BasePDFTest {
 
     /** the FopFactory */
-    protected final FopFactory fopFactory = FopFactory.newInstance();
+    protected final FopFactory fopFactory;
 
     /** the JAXP TransformerFactory */
     protected final TransformerFactory tFactory = TransformerFactory.newInstance();
 
-    /**
-     * Main constructor
-     */
-    protected BasePDFTest() {
-        init();
+    public BasePDFTest(String fopConf) throws SAXException, IOException {
+        fopFactory = FopFactory.newInstance(new File(fopConf));
     }
 
-    /**
-     * initalizes the test
-     */
-    protected void init() {
-        final File uc = getUserConfigFile();
-
-        try {
-            fopFactory.setUserConfig(uc);
-        } catch (Exception e) {
-            throw new RuntimeException("fopFactory.setUserConfig ("
-                    + uc.getAbsolutePath() + ") failed: " + e.getMessage());
-        }
+    public BasePDFTest(InputStream confStream) throws SAXException, IOException {
+        fopFactory = new FopConfParser(confStream, new File(".").toURI()).getFopFactoryBuilder()
+                                                                         .build();
     }
 
     /**
@@ -113,7 +105,7 @@ public class BasePDFTest extends AbstractFOPTest {
      * get FOP config File
      * @return user config file to be used for testing
      */
-    protected File getUserConfigFile() {
-        return new File("test/test.xconf");
+    protected static String getDefaultConfFile() {
+        return "test/test.xconf";
     }
 }

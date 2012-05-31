@@ -20,9 +20,14 @@
 package org.apache.fop.config;
 
 import java.io.File;
+import java.io.IOException;
+
+import org.xml.sax.SAXException;
 
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.FopConfBuilder;
 import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.apps.PDFRendererConfBuilder;
 import org.apache.fop.fonts.CustomFontCollection;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontCollection;
@@ -35,8 +40,21 @@ import org.apache.fop.render.PrintRenderer;
 /**
  * Tests the font substitution mechanism
  */
-public class FontsSubstitutionTestCase extends
-        BaseConstructiveUserConfigTest {
+public class FontsSubstitutionTestCase extends BaseConstructiveUserConfigTest {
+
+    public FontsSubstitutionTestCase() throws SAXException, IOException {
+        super(new FopConfBuilder()
+                    .startFontsConfig()
+                        .substituteFonts("Times", "italic", null, "Gladiator", "normal", "bold")
+                    .endFontsConfig()
+                    .startRendererConfig(PDFRendererConfBuilder.class)
+                        .startFontsConfig()
+                            .startFont(null, "resources/fonts/ttf/glb12.ttf")
+                                .addTriplet("Gladiator", "normal", "bold")
+                            .endFont()
+                        .endFontConfig()
+                    .endRendererConfig().build());
+    }
 
     @Override
     protected byte[] convertFO(File foFile, FOUserAgent ua, boolean dumpPdfFile)
@@ -45,11 +63,11 @@ public class FontsSubstitutionTestCase extends
                 .createRenderer(ua, MimeConstants.MIME_PDF);
         FontInfo fontInfo = new FontInfo();
         renderer.setupFontInfo(fontInfo);
-        FontManager fontManager = ua.getFactory().getFontManager();
+        FontManager fontManager = ua.getFontManager();
         FontCollection[] fontCollections = new FontCollection[] {
                 new Base14FontCollection(fontManager.isBase14KerningEnabled()),
-                new CustomFontCollection(renderer.getFontResolver(), renderer.getFontList(),
-                                         ua.isComplexScriptFeaturesEnabled())
+                new CustomFontCollection(fontManager.getURIResolver(), renderer.getFontList(),
+                        ua.isComplexScriptFeaturesEnabled())
         };
         fontManager.setup(fontInfo, fontCollections);
         FontTriplet triplet = new FontTriplet("Times", "italic",
@@ -61,10 +79,5 @@ public class FontsSubstitutionTestCase extends
             throw new Exception("font substitution failed :" + triplet);
         }
         return null;
-    }
-
-    @Override
-    public String getUserConfigFilename() {
-        return "test_fonts_substitution.xconf";
     }
 }

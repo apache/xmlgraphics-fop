@@ -19,30 +19,153 @@
 
 package org.apache.fop.render.pdf;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.List;
+import java.util.Map;
 
-import org.apache.fop.apps.FOPException;
-import org.apache.fop.apps.FOUserAgent;
+import org.junit.Test;
+import org.xml.sax.SAXException;
+
+import org.apache.xmlgraphics.util.MimeConstants;
+
+import org.apache.fop.apps.AbstractRendererConfiguratorTest;
+import org.apache.fop.apps.FopConfBuilder.RendererConfBuilder;
 import org.apache.fop.apps.FopFactory;
+import org.apache.fop.apps.PDFRendererConfBuilder;
 import org.apache.fop.events.Event;
 import org.apache.fop.events.EventListener;
+import org.apache.fop.pdf.PDFAMode;
 import org.apache.fop.pdf.PDFEncryptionParams;
-import org.junit.Test;
+import org.apache.fop.pdf.PDFXMode;
+import org.apache.fop.pdf.Version;
+import org.apache.fop.render.pdf.PDFRendererConfig.PDFRendererConfigParser;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Tests that encryption length is properly set up.
  */
-public class PDFRendererConfiguratorTestCase {
-
-    private FOUserAgent foUserAgent;
-
-    private PDFDocumentHandler documentHandler;
-
+public class PDFRendererConfiguratorTestCase extends
+        AbstractRendererConfiguratorTest<PDFRendererConfigurator, PDFRendererConfBuilder> {
     private boolean eventTriggered;
+    private PDFRenderingUtil pdfUtil;
+
+    public PDFRendererConfiguratorTestCase() {
+        super(MimeConstants.MIME_PDF, PDFRendererConfBuilder.class, PDFDocumentHandler.class);
+    }
+
+    @Override
+    protected PDFRendererConfigurator createConfigurator() {
+        return new PDFRendererConfigurator(userAgent, new PDFRendererConfigParser());
+    }
+
+    @Override
+    public void setUpDocumentHandler() {
+        pdfUtil = new PDFRenderingUtil(userAgent);
+        when(((PDFDocumentHandler) docHandler).getPDFUtil()).thenReturn(pdfUtil);
+    }
+
+    private void parseConfig(RendererConfBuilder builder, EventListener listener)
+            throws SAXException, IOException {
+        parseConfigWithUtil(builder, listener, false);
+    }
+
+    private void parseConfigWithUtil(RendererConfBuilder builder, EventListener listener,
+            boolean mockUtil) throws SAXException, IOException {
+        userAgent = FopFactory.newInstance(
+                new File(".").toURI(), builder.endRendererConfig().build()).newFOUserAgent();
+        userAgent.getEventBroadcaster().addEventListener(listener);
+        if (mockUtil) {
+            this.pdfUtil = mock(PDFRenderingUtil.class);
+            when(((PDFDocumentHandler) docHandler).getPDFUtil()).thenReturn(pdfUtil);
+        } else {
+            setUpDocumentHandler();
+        }
+        sut = createConfigurator();
+        sut.configure(docHandler);
+    }
+
+    private void parseConfigMockUtil(RendererConfBuilder builder)
+            throws SAXException, IOException {
+        parseConfigWithUtil(builder, null, true);
+    }
+
+    /**
+     * Non-multiple of 8 should be rounded.
+     *
+     * @throws Exception if an error occurs
+     */
+    @Test
+    public void testRoundUp() throws Exception {
+        testEncryptionAndEvent(55, 56);
+    }
+
+    /**
+     * Non-multiple of 8 should be rounded.
+     *
+     * @throws Exception if an error occurs
+     */
+    @Test
+    public void testRoundDown() throws Exception {
+        testEncryptionAndEvent(67, 64);
+    }
+
+    /**
+     * Encryption length must be at least 40.
+     *
+     * @throws Exception if an error occurs
+     */
+    @Test
+    public void testBelow40() throws Exception {
+        testEncryptionAndEvent(32, 40);
+    }
+
+    /**
+     * Encryption length must be at most 128.
+     *
+     * @throws Exception if an error occurs
+     */
+    @Test
+    public void testAbove128() throws Exception {
+        testEncryptionAndEvent(233, 128);
+    }
+
+    /**
+     * A correct value must be properly set up.
+     *
+     * @throws Exception if an error occurs
+     */
+    @Test
+    public void testCorrectValue() throws Exception {
+        runEncryptionTest(128, 128);
+    }
+
+    private void testEncryptionAndEvent(int specifiedEncryptionLength,
+            int actualEncryptionLength) throws Exception {
+        runEncryptionTest(specifiedEncryptionLength, actualEncryptionLength);
+        assertTrue(eventTriggered);
+    }
+
+    private void runEncryptionTest(int specifiedEncryptionLength, int actualEncryptionLength)
+            throws Exception {
+        parseConfig(createBuilder().startEncryptionParams()
+                                       .setEncryptionLength(specifiedEncryptionLength)
+                                   .endEncryptionParams(),
+                new EncryptionEventFilter(specifiedEncryptionLength, actualEncryptionLength));
+        thenEncryptionLengthShouldBe(actualEncryptionLength);
+    }
+
+    private void thenEncryptionLengthShouldBe(int expectedEncryptionLength) {
+        PDFEncryptionParams encryptionParams = pdfUtil.getEncryptionParams();
+        assertEquals(expectedEncryptionLength, encryptionParams.getEncryptionLengthInBits());
+    }
 
     private class EncryptionEventFilter implements EventListener {
 
@@ -64,90 +187,59 @@ public class PDFRendererConfiguratorTestCase {
         }
     }
 
-    /**
-     * Non-multiple of 8 should be rounded.
-     *
-     * @throws Exception if an error occurs
-     */
     @Test
-    public void testRoundUp() throws Exception {
-        runTest("roundUp", 55, 56);
+    public void testFilterMaps() throws Exception {
+        parseConfig(createBuilder().createFilterList("image", "flate", "ascii-85"));
+        OutputStream outStream = mock(OutputStream.class);
+        Map<String, List<String>> filterMap = pdfUtil.setupPDFDocument(outStream).getFilterMap();
+        assertEquals("flate", filterMap.get("image").get(0));
+        assertEquals("ascii-85", filterMap.get("image").get(1));
     }
 
-    /**
-     * Non-multiple of 8 should be rounded.
-     *
-     * @throws Exception if an error occurs
-     */
     @Test
-    public void testRoundDown() throws Exception {
-        runTest("roundDown", 67, 64);
+    public void testPDFAMode() throws Exception {
+        parseConfigMockUtil(createBuilder().setPDFAMode(PDFAMode.DISABLED.getName()));
+        // DISABLED is the default setting, it doesn't need to be set
+        verify(pdfUtil, times(0)).setAMode(PDFAMode.DISABLED);
+
+        parseConfigMockUtil(createBuilder().setPDFAMode(PDFAMode.PDFA_1A.getName()));
+        verify(pdfUtil, times(1)).setAMode(PDFAMode.PDFA_1A);
+
+        parseConfigMockUtil(createBuilder().setPDFAMode(PDFAMode.PDFA_1B.getName()));
+        verify(pdfUtil, times(1)).setAMode(PDFAMode.PDFA_1B);
     }
 
-    /**
-     * Encryption length must be at least 40.
-     *
-     * @throws Exception if an error occurs
-     */
     @Test
-    public void testBelow40() throws Exception {
-        runTest("below40", 32, 40);
+    public void testPDFXMode() throws Exception {
+        parseConfigMockUtil(createBuilder().setPDFXMode(PDFXMode.DISABLED.getName()));
+        // DISABLED is the default setting, it doesn't need to be set
+        verify(pdfUtil, times(0)).setXMode(PDFXMode.DISABLED);
+
+        parseConfigMockUtil(createBuilder().setPDFXMode(PDFXMode.PDFX_3_2003.getName()));
+        verify(pdfUtil, times(1)).setXMode(PDFXMode.PDFX_3_2003);
     }
 
-    /**
-     * Encryption length must be at most 128.
-     *
-     * @throws Exception if an error occurs
-     */
     @Test
-    public void testAbove128() throws Exception {
-        runTest("above128", 233, 128);
+    public void testSetProfile() throws Exception {
+        String testString = "this string is purely for testing and has no contextual meaning";
+        parseConfigMockUtil(createBuilder().setOutputProfile(testString));
+        verify(pdfUtil).setOutputProfileURI(testString);
     }
 
-    /**
-     * A correct value must be properly set up.
-     *
-     * @throws Exception if an error occurs
-     */
     @Test
-    public void testCorrectValue() throws Exception {
-        givenAConfigurationFile("correct", new EventListener() {
+    public void testDisableSRGBColourspace() throws Exception {
+        parseConfigMockUtil(createBuilder().disableSRGBColorSpace(true));
+        verify(pdfUtil).setDisableSRGBColorSpace(true);
 
-            public void processEvent(Event event) {
-                fail("No event was expected");
-            }
-        });
-        whenCreatingAndConfiguringDocumentHandler();
-        thenEncryptionLengthShouldBe(128);
-
+        parseConfigMockUtil(createBuilder().disableSRGBColorSpace(false));
+        verify(pdfUtil, times(0)).setDisableSRGBColorSpace(false);
     }
 
-    private void runTest(String configFilename,
-            final int specifiedEncryptionLength,
-            final int correctedEncryptionLength) throws Exception {
-        givenAConfigurationFile(configFilename,
-                new EncryptionEventFilter(specifiedEncryptionLength, correctedEncryptionLength));
-        whenCreatingAndConfiguringDocumentHandler();
-        assertTrue(eventTriggered);
-    }
-
-    private void givenAConfigurationFile(String filename, EventListener eventListener)
-            throws Exception {
-        FopFactory fopFactory = FopFactory.newInstance();
-        fopFactory.setUserConfig(new File("test/resources/org/apache/fop/render/pdf/"
-                + filename + ".xconf"));
-        foUserAgent = fopFactory.newFOUserAgent();
-        foUserAgent.getEventBroadcaster().addEventListener(eventListener);
-    }
-
-    private void whenCreatingAndConfiguringDocumentHandler() throws FOPException {
-        PDFDocumentHandlerMaker maker = new PDFDocumentHandlerMaker();
-        documentHandler = (PDFDocumentHandler) maker.makeIFDocumentHandler(foUserAgent);
-        new PDFRendererConfigurator(foUserAgent).configure(documentHandler);
-    }
-
-    private void thenEncryptionLengthShouldBe(int expectedEncryptionLength) {
-        PDFEncryptionParams encryptionParams = documentHandler.getPDFUtil().getEncryptionParams();
-        assertEquals(expectedEncryptionLength, encryptionParams.getEncryptionLengthInBits());
+    @Test
+    public void testPDFVersion() throws Exception {
+        for (Version version : Version.values()) {
+            parseConfigMockUtil(createBuilder().setPDFVersion(version.toString()));
+            verify(pdfUtil).setPDFVersion(version);
+        }
     }
 }

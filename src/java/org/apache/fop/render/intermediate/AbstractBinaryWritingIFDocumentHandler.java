@@ -49,6 +49,10 @@ public abstract class AbstractBinaryWritingIFDocumentHandler extends AbstractIFD
     /** Font configuration */
     protected FontInfo fontInfo;
 
+    public AbstractBinaryWritingIFDocumentHandler(IFContext ifContext) {
+        super(ifContext);
+    }
+
     /** {@inheritDoc} */
     public void setResult(Result result) throws IFException {
         if (result instanceof StreamResult) {
@@ -95,7 +99,7 @@ public abstract class AbstractBinaryWritingIFDocumentHandler extends AbstractIFD
 
     /** {@inheritDoc} */
     public void setDefaultFontInfo(FontInfo fontInfo) {
-        FontManager fontManager = getUserAgent().getFactory().getFontManager();
+        FontManager fontManager = getUserAgent().getFontManager();
         FontCollection[] fontCollections = new FontCollection[] {
                 new Base14FontCollection(fontManager.isBase14KerningEnabled())
         };

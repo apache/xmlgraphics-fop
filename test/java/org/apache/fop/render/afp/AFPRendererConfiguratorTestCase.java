@@ -19,12 +19,9 @@
 
 package org.apache.fop.render.afp;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
+import java.io.File;
 import java.io.IOException;
 
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
@@ -32,22 +29,19 @@ import org.apache.fop.afp.AFPPaintingState;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FopFactory;
+import org.apache.fop.render.afp.AFPRendererConfig.AFPRendererConfigParser;
+import org.apache.fop.render.intermediate.IFContext;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 /**
  * Test case for {@link AFPRendererConfigurator}.
  */
 public class AFPRendererConfiguratorTestCase {
-    private static FOUserAgent userAgent;
+    private FOUserAgent userAgent;
 
     private AFPRendererConfigurator sut;
-
-    /**
-     * The FOUserAgent only needs to be created once.
-     */
-    @BeforeClass
-    public static void createUserAgent() {
-        userAgent = FopFactory.newInstance().newFOUserAgent();
-    }
 
     /**
      * Assigns an FOUserAgen with a config file at <code>uri</code>
@@ -57,8 +51,8 @@ public class AFPRendererConfiguratorTestCase {
     private void setConfigFile(String uri) {
         String confTestsDir = "test/resources/conf/afp/";
         try {
-            userAgent.getFactory().setUserConfig(confTestsDir + uri);
-            sut = new AFPRendererConfigurator(userAgent);
+            userAgent = FopFactory.newInstance(new File(confTestsDir + uri)).newFOUserAgent();
+            sut = new AFPRendererConfigurator(userAgent, new AFPRendererConfigParser());
         } catch (IOException ioe) {
             fail("IOException: " + ioe);
         } catch (SAXException se) {
@@ -80,7 +74,7 @@ public class AFPRendererConfiguratorTestCase {
 
     private void testJpegSettings(String uri, float bitmapEncodingQual, boolean canEmbed)
             throws FOPException {
-        AFPDocumentHandler docHandler = new AFPDocumentHandler();
+        AFPDocumentHandler docHandler = new AFPDocumentHandler(new IFContext(userAgent));
 
         setConfigFile(uri);
         sut.configure(docHandler);

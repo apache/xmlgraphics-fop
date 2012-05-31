@@ -21,6 +21,7 @@ package org.apache.fop.fonts.truetype;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -30,11 +31,11 @@ import org.apache.commons.io.IOUtils;
 
 import org.apache.xmlgraphics.fonts.Glyphs;
 
+import org.apache.fop.apps.io.URIResolverWrapper;
 import org.apache.fop.fonts.BFEntry;
 import org.apache.fop.fonts.CIDFontType;
 import org.apache.fop.fonts.EncodingMode;
 import org.apache.fop.fonts.FontLoader;
-import org.apache.fop.fonts.FontResolver;
 import org.apache.fop.fonts.FontType;
 import org.apache.fop.fonts.MultiByteFont;
 import org.apache.fop.fonts.NamedCharacter;
@@ -55,7 +56,7 @@ public class TTFFontLoader extends FontLoader {
      * @param fontFileURI the URI representing the font file
      * @param resolver the FontResolver for font URI resolution
      */
-    public TTFFontLoader(String fontFileURI, FontResolver resolver) {
+    public TTFFontLoader(URI fontFileURI, URIResolverWrapper resolver) {
         this(fontFileURI, null, true, EncodingMode.AUTO, true, true, resolver);
     }
 
@@ -70,9 +71,9 @@ public class TTFFontLoader extends FontLoader {
      * @param useAdvanced true to enable loading advanced info if available, false to disable
      * @param resolver the FontResolver for font URI resolution
      */
-    public TTFFontLoader(String fontFileURI, String subFontName,
+    public TTFFontLoader(URI fontFileURI, String subFontName,
                 boolean embedded, EncodingMode encodingMode, boolean useKerning,
-                boolean useAdvanced, FontResolver resolver) {
+                boolean useAdvanced, URIResolverWrapper resolver) {
         super(fontFileURI, embedded, useKerning, useAdvanced, resolver);
         this.subFontName = subFontName;
         this.encodingMode = encodingMode;
@@ -94,7 +95,7 @@ public class TTFFontLoader extends FontLoader {
      * @throws IOException if an I/O error occurs
      */
     private void read(String ttcFontName) throws IOException {
-        InputStream in = openFontUri(resolver, this.fontFileURI);
+        InputStream in = resolver.resolveIn(this.fontFileURI);
         try {
             TTFFile ttf = new TTFFile(useKerning, useAdvanced);
             FontFileReader reader = new FontFileReader(in);
@@ -122,14 +123,13 @@ public class TTFFontLoader extends FontLoader {
         }
 
         if (isCid) {
-            multiFont = new MultiByteFont();
+            multiFont = new MultiByteFont(resolver);
             returnFont = multiFont;
             multiFont.setTTCName(ttcFontName);
         } else {
-            singleFont = new SingleByteFont();
+            singleFont = new SingleByteFont(resolver);
             returnFont = singleFont;
         }
-        returnFont.setResolver(resolver);
 
         returnFont.setFontName(ttf.getPostScriptName());
         returnFont.setFullName(ttf.getFullName());
@@ -177,7 +177,7 @@ public class TTFFontLoader extends FontLoader {
         }
         if (this.embedded) {
             if (ttf.isEmbeddable()) {
-                returnFont.setEmbedFileName(this.fontFileURI);
+                returnFont.setEmbedURI(this.fontFileURI);
             } else {
                 String msg = "The font " + this.fontFileURI + " is not embeddable due to a"
                         + " licensing restriction.";

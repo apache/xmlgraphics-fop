@@ -232,9 +232,8 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
      * @return the default IFDocumentHandler
      */
     protected IFDocumentHandler createDefaultDocumentHandler() {
-        IFSerializer serializer = new IFSerializer();
         FOUserAgent userAgent = getUserAgent();
-        serializer.setContext(new IFContext(userAgent));
+        IFSerializer serializer = new IFSerializer(new IFContext(userAgent));
         if (userAgent.isAccessibilityEnabled()) {
             userAgent.setStructureTreeEventHandler(serializer.getStructureTreeEventHandler());
         }

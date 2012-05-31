@@ -19,24 +19,23 @@
 
 package org.apache.fop.render.txt;
 
-import org.apache.avalon.framework.configuration.Configuration;
-
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.render.PrintRendererConfigurator;
 import org.apache.fop.render.Renderer;
+import org.apache.fop.render.RendererConfig.RendererConfigParser;
+import org.apache.fop.render.adobe.AdobeRendererConfigurator;
 
 /**
  * TXT Renderer configurator
  */
-public class TXTRendererConfigurator extends PrintRendererConfigurator {
+public class TXTRendererConfigurator extends AdobeRendererConfigurator {
 
     /**
      * Default constructor
      * @param userAgent user agent
      */
-    public TXTRendererConfigurator(FOUserAgent userAgent) {
-        super(userAgent);
+    public TXTRendererConfigurator(FOUserAgent userAgent, RendererConfigParser rendererConfigParser) {
+        super(userAgent, rendererConfigParser);
     }
 
     /**
@@ -45,10 +44,11 @@ public class TXTRendererConfigurator extends PrintRendererConfigurator {
      * @throws FOPException fop exception
      */
     public void configure(Renderer renderer) throws FOPException {
-        Configuration cfg = super.getRendererConfig(renderer);
-        if (cfg != null) {
-            TXTRenderer txtRenderer = (TXTRenderer)renderer;
-            txtRenderer.setEncoding(cfg.getChild("encoding", true).getValue(null));
+        TxtRendererConfig config = (TxtRendererConfig) getRendererConfig(renderer);
+        if (config != null) {
+            TXTRenderer txtRenderer = (TXTRenderer) renderer;
+            txtRenderer.setEncoding(config.getEncoding());
         }
     }
+
 }

@@ -25,20 +25,18 @@ import java.io.Serializable;
 /**
  * Enumeration class for PCL rendering modes.
  */
-public final class PCLRenderingMode implements Serializable {
-
-    private static final long serialVersionUID = 6359884255324755026L;
-
+public enum PCLRenderingMode implements Serializable {
     /** "Quality" rendering (mixed native and bitmap for improved quality) */
-    public static final PCLRenderingMode QUALITY = new PCLRenderingMode("quality", 1.0f);
+    QUALITY("quality", 1.0f),
     /** "Speed" rendering (maximum speed with native rendering, reduced visual quality) */
-    public static final PCLRenderingMode SPEED = new PCLRenderingMode("speed", 0.25f);
+    SPEED("speed", 0.25f),
     /**
      * "Bitmap" rendering (pages are painted entirely as bitmaps, maximum quality,
      * reduced performance)
      */
-    public static final PCLRenderingMode BITMAP = new PCLRenderingMode("bitmap", 1.0f);
+    BITMAP("bitmap", 1.0f);
 
+    private static final long serialVersionUID = 6359884255324755026L;
     private String name;
     private float defaultDitheringQuality;
 
@@ -70,20 +68,17 @@ public final class PCLRenderingMode implements Serializable {
      * @param name the name of the enumeration value
      * @return the enumeration object
      */
-    public static PCLRenderingMode valueOf(String name) {
-        if (QUALITY.getName().equalsIgnoreCase(name)) {
-            return QUALITY;
-        } else if (SPEED.getName().equalsIgnoreCase(name)) {
-            return SPEED;
-        } else if (BITMAP.getName().equalsIgnoreCase(name)) {
-            return BITMAP;
-        } else {
-            throw new IllegalArgumentException("Illegal value for enumeration: " + name);
+    public static PCLRenderingMode getValueOf(String name) {
+        for (PCLRenderingMode mode : PCLRenderingMode.values()) {
+            if (mode.getName().equalsIgnoreCase(name)) {
+                return mode;
+            }
         }
+        throw new IllegalArgumentException("Illegal value for enumeration: " + name);
     }
 
     private Object readResolve() throws ObjectStreamException {
-        return valueOf(getName());
+        return getValueOf(getName());
     }
 
     /** {@inheritDoc} */

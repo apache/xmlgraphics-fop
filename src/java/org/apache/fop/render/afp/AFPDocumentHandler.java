@@ -45,6 +45,7 @@ import org.apache.fop.fonts.FontCollection;
 import org.apache.fop.fonts.FontEventAdapter;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontManager;
+import org.apache.fop.render.afp.AFPRendererConfig.AFPRendererConfigParser;
 import org.apache.fop.render.afp.extensions.AFPElementMapping;
 import org.apache.fop.render.afp.extensions.AFPIncludeFormMap;
 import org.apache.fop.render.afp.extensions.AFPInvokeMediumMap;
@@ -53,6 +54,8 @@ import org.apache.fop.render.afp.extensions.AFPPageSegmentElement;
 import org.apache.fop.render.afp.extensions.AFPPageSetup;
 import org.apache.fop.render.afp.extensions.ExtensionPlacement;
 import org.apache.fop.render.intermediate.AbstractBinaryWritingIFDocumentHandler;
+import org.apache.fop.render.intermediate.IFContext;
+import org.apache.fop.render.intermediate.IFDocumentHandler;
 import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFPainter;
@@ -98,7 +101,8 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     /**
      * Default constructor.
      */
-    public AFPDocumentHandler() {
+    public AFPDocumentHandler(IFContext context) {
+        super(context);
         this.resourceManager = new AFPResourceManager();
         this.paintingState = new AFPPaintingState();
         this.unitConv = paintingState.getUnitConverter();
@@ -116,13 +120,13 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
 
     /** {@inheritDoc} */
     public IFDocumentHandlerConfigurator getConfigurator() {
-        return new AFPRendererConfigurator(getUserAgent());
+        return new AFPRendererConfigurator(getUserAgent(), new AFPRendererConfigParser());
     }
 
     /** {@inheritDoc} */
     @Override
     public void setDefaultFontInfo(FontInfo fontInfo) {
-        FontManager fontManager = getUserAgent().getFactory().getFontManager();
+        FontManager fontManager = getUserAgent().getFontManager();
         FontCollection[] fontCollections = new FontCollection[] {
             new AFPFontCollection(getUserAgent().getEventBroadcaster(), null)
         };
@@ -381,7 +385,7 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
         } else if (extension instanceof AFPIncludeFormMap) {
             AFPIncludeFormMap formMap = (AFPIncludeFormMap)extension;
             ResourceAccessor accessor = new DefaultFOPResourceAccessor(
-                    getUserAgent(), null, null);
+                    getUserAgent().getNewURIResolver());
             try {
                 getResourceManager().createIncludedResource(formMap.getName(),
                         formMap.getSrc(), accessor,

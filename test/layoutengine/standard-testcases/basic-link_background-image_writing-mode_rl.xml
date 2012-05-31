@@ -23,7 +23,7 @@
     </p>
   </info>
   <variables>
-    <img>../../resources/images/bgimg300dpi.jpg</img>
+    <img>../resources/images/bgimg300dpi.jpg</img>
   </variables>
   <fo>
     <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
@@ -44,7 +44,7 @@
   <checks>
     <eval expected="197376" xpath="//flow/block/lineArea/inlineparent/@ipd"/>
     <eval expected="88800" xpath="//flow/block/lineArea/inlineparent/@bpd"/>
-    <eval expected="color=#ffff00,url=../../resources/images/bgimg300dpi.jpg,repeat=no-repeat,horiz=75648,vertical=21360" xpath="//flow/block/lineArea/inlineparent/@background"/>
+    <eval expected="color=#ffff00,url=../resources/images/bgimg300dpi.jpg,repeat=no-repeat,horiz=75648,vertical=21360" xpath="//flow/block/lineArea/inlineparent/@background"/>
   </checks>
   <if-checks xmlns:n="http://xmlgraphics.apache.org/fop/intermediate/document-navigation">
     <eval expected="page-trailer" xpath="local-name(//n:link/..)"/>

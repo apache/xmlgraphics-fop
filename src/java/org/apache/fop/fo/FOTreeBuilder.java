@@ -99,7 +99,7 @@ public class FOTreeBuilder extends DefaultHandler {
             throws FOPException {
 
         this.userAgent = foUserAgent;
-        this.elementMappingRegistry = userAgent.getFactory().getElementMappingRegistry();
+        this.elementMappingRegistry = userAgent.getElementMappingRegistry();
         //This creates either an AreaTreeHandler and ultimately a Renderer, or
         //one of the RTF-, MIF- etc. Handlers.
         foEventHandler = foUserAgent.getRendererFactory().createFOEventHandler(

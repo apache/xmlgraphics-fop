@@ -56,11 +56,13 @@ import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFPainter;
+import org.apache.fop.render.ps.PSRendererConfig.PSRendererConfigParser;
 import org.apache.fop.render.ps.extensions.PSCommentAfter;
 import org.apache.fop.render.ps.extensions.PSCommentBefore;
 import org.apache.fop.render.ps.extensions.PSPageTrailerCodeBefore;
 import org.apache.fop.render.ps.extensions.PSSetPageDevice;
 import org.apache.fop.render.ps.extensions.PSSetupCode;
+
 
 /**
  * {@link IFDocumentHandler} implementation that produces PostScript.
@@ -109,7 +111,9 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
     /**
      * Default constructor.
      */
-    public PSDocumentHandler() {
+    public PSDocumentHandler(IFContext context) {
+        super(context);
+        this.psUtil = new PSRenderingUtil(context.getUserAgent());
     }
 
     /** {@inheritDoc} */
@@ -123,14 +127,8 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
     }
 
     /** {@inheritDoc} */
-    public void setContext(IFContext context) {
-        super.setContext(context);
-        this.psUtil = new PSRenderingUtil(context.getUserAgent());
-    }
-
-    /** {@inheritDoc} */
     public IFDocumentHandlerConfigurator getConfigurator() {
-        return new PSRendererConfigurator(getUserAgent());
+        return new PSRendererConfigurator(getUserAgent(), new PSRendererConfigParser());
     }
 
     PSRenderingUtil getPSUtil() {

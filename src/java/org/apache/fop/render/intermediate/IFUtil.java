@@ -167,7 +167,8 @@ public final class IFUtil {
         }
         IFDocumentHandlerConfigurator configurator = documentHandler.getConfigurator();
         if (configurator != null) {
-            configurator.setupFontInfo(documentHandler, fontInfo);
+            configurator.setupFontInfo(documentHandler.getMimeType(), fontInfo);
+            documentHandler.setFontInfo(fontInfo);
         } else {
             documentHandler.setDefaultFontInfo(fontInfo);
         }

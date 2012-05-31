@@ -21,6 +21,8 @@ package org.apache.fop.fonts;
 
 //Java
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -32,12 +34,12 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
-import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.io.URIResolverWrapper;
 import org.apache.fop.fonts.apps.TTFReader;
 
 /**
@@ -52,19 +54,30 @@ import org.apache.fop.fonts.apps.TTFReader;
  */
 public class FontReader extends DefaultHandler {
 
-    // private Locator locator = null; // not used at present
-    private boolean isCID = false;
-    private CustomFont returnFont = null;
-    private MultiByteFont multiFont = null;
-    private SingleByteFont singleFont = null;
+    private boolean isCID;
+    private CustomFont returnFont;
+    private MultiByteFont multiFont;
+    private SingleByteFont singleFont;
+    private final URIResolverWrapper resolver;
     private StringBuffer text = new StringBuffer();
 
-    private List<Integer> cidWidths = null;
-    private int cidWidthIndex = 0;
+    private List<Integer> cidWidths;
+    //private int cidWidthIndex;
 
-    private Map<Integer, Integer> currentKerning = null;
+    private Map<Integer, Integer> currentKerning;
 
-    private List<BFEntry> bfranges = null;
+    private List<BFEntry> bfranges;
+
+    /**
+     * Construct a FontReader object from a path to a metric.xml file
+     * and read metric data
+     * @param source Source of the font metric file
+     * @throws FOPException if loading the font fails
+     */
+    public FontReader(InputSource source, URIResolverWrapper resolver) throws FOPException {
+        this.resolver = resolver;
+        createFont(source);
+    }
 
     private void createFont(InputSource source) throws FOPException {
         XMLReader parser = null;
@@ -81,11 +94,9 @@ public class FontReader extends DefaultHandler {
         }
 
         try {
-            parser.setFeature("http://xml.org/sax/features/namespace-prefixes",
-                              false);
+            parser.setFeature("http://xml.org/sax/features/namespace-prefixes", false);
         } catch (SAXException e) {
-            throw new FOPException("You need a SAX parser which supports SAX version 2",
-                                   e);
+            throw new FOPException("You need a SAX parser which supports SAX version 2", e);
         }
 
         parser.setContentHandler(this);
@@ -104,8 +115,8 @@ public class FontReader extends DefaultHandler {
      * Sets the path to embed a font. A null value disables font embedding.
      * @param path URI for the embeddable file
      */
-    public void setFontEmbedPath(String path) {
-        returnFont.setEmbedFileName(path);
+    public void setFontEmbedURI(URI path) {
+        returnFont.setEmbedURI(path);
     }
 
     /**
@@ -125,30 +136,11 @@ public class FontReader extends DefaultHandler {
     }
 
     /**
-     * Sets the font resolver. Needed for URI resolution.
-     * @param resolver the font resolver
-     */
-    public void setResolver(FontResolver resolver) {
-        returnFont.setResolver(resolver);
-    }
-
-
-    /**
      * Get the generated font object
      * @return the font
      */
     public Typeface getFont() {
         return returnFont;
-    }
-
-    /**
-     * Construct a FontReader object from a path to a metric.xml file
-     * and read metric data
-     * @param source Source of the font metric file
-     * @throws FOPException if loading the font fails
-     */
-    public FontReader(InputSource source) throws FOPException {
-        createFont(source);
     }
 
     /**
@@ -160,65 +152,62 @@ public class FontReader extends DefaultHandler {
     /**
      * {@inheritDoc}
      */
-    public void setDocumentLocator(Locator locator) {
-        // this.locator = locator; // not used at present
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void startElement(String uri, String localName, String qName,
-                             Attributes attributes) throws SAXException {
+    public void startElement(String uri, String localName, String qName, Attributes attributes)
+            throws SAXException {
         if (localName.equals("font-metrics")) {
             if ("TYPE0".equals(attributes.getValue("type"))) {
-                multiFont = new MultiByteFont();
+                multiFont = new MultiByteFont(resolver);
                 returnFont = multiFont;
                 isCID = true;
                 TTFReader.checkMetricsVersion(attributes);
             } else if ("TRUETYPE".equals(attributes.getValue("type"))) {
-                singleFont = new SingleByteFont();
+                singleFont = new SingleByteFont(resolver);
                 singleFont.setFontType(FontType.TRUETYPE);
                 returnFont = singleFont;
                 isCID = false;
                 TTFReader.checkMetricsVersion(attributes);
             } else {
-                singleFont = new SingleByteFont();
+                singleFont = new SingleByteFont(resolver);
                 singleFont.setFontType(FontType.TYPE1);
                 returnFont = singleFont;
                 isCID = false;
             }
         } else if ("embed".equals(localName)) {
-            returnFont.setEmbedFileName(attributes.getValue("file"));
+            try {
+                returnFont.setEmbedURI(URIResolverWrapper.cleanURI(attributes.getValue("file")));
+            } catch (URISyntaxException e) {
+                // TODO: dunno what to do here?!?!
+            }
             returnFont.setEmbedResourceName(attributes.getValue("class"));
         } else if ("cid-widths".equals(localName)) {
-            cidWidthIndex = getInt(attributes.getValue("start-index"));
+            // This is unused
+            // cidWidthIndex = getInt(attributes.getValue("start-index"));
             cidWidths = new ArrayList<Integer>();
         } else if ("kerning".equals(localName)) {
             currentKerning = new HashMap<Integer, Integer>();
-            returnFont.putKerningEntry(new Integer(attributes.getValue("kpx1")),
-                                        currentKerning);
+            returnFont.putKerningEntry(getInt(attributes.getValue("kpx1")),
+                    currentKerning);
         } else if ("bfranges".equals(localName)) {
             bfranges = new ArrayList<BFEntry>();
         } else if ("bf".equals(localName)) {
             BFEntry entry = new BFEntry(getInt(attributes.getValue("us")),
-                                        getInt(attributes.getValue("ue")),
-                                        getInt(attributes.getValue("gi")));
+                    getInt(attributes.getValue("ue")),
+                    getInt(attributes.getValue("gi")));
             bfranges.add(entry);
         } else if ("wx".equals(localName)) {
-            cidWidths.add(new Integer(attributes.getValue("w")));
-        } else if ("widths".equals(localName)) {
-            //singleFont.width = new int[256];
+            cidWidths.add(getInt(attributes.getValue("w")));
+            // } else if ("widths".equals(localName)) {
+            //    singleFont.width = new int[256];
         } else if ("char".equals(localName)) {
             try {
-                singleFont.setWidth(Integer.parseInt(attributes.getValue("idx")),
-                        Integer.parseInt(attributes.getValue("wdt")));
+                singleFont.setWidth(getInt(attributes.getValue("idx")),
+                        getInt(attributes.getValue("wdt")));
             } catch (NumberFormatException ne) {
-                throw new SAXException("Malformed width in metric file: "
-                                   + ne.getMessage(), ne);
+                throw new SAXException("Malformed width in metric file: " + ne.getMessage(), ne);
             }
         } else if ("pair".equals(localName)) {
-            currentKerning.put(new Integer(attributes.getValue("kpx2")),
-                               new Integer(attributes.getValue("kern")));
+            currentKerning.put(getInt(attributes.getValue("kpx2")),
+                    getInt(attributes.getValue("kern")));
         }
 
     }
@@ -314,5 +303,4 @@ public class FontReader extends DefaultHandler {
     public void characters(char[] ch, int start, int length) {
         text.append(ch, start, length);
     }
-
 }

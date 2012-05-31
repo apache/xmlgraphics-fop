@@ -19,13 +19,24 @@
 
 package org.apache.fop.config;
 
+import java.io.IOException;
+
+import org.xml.sax.SAXException;
+
+import org.apache.fop.apps.FopConfBuilder;
+import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.apps.PDFRendererConfBuilder;
+
 /**
  * tests font directory on system
  */
 public class FontsDirectoryRecursiveTestCase extends BaseConstructiveUserConfigTest {
 
-    @Override
-    protected String getUserConfigFilename() {
-        return "test_fonts_directory_recursive.xconf";
+    public FontsDirectoryRecursiveTestCase() throws SAXException, IOException {
+        super(new FopConfBuilder().startRendererConfig(PDFRendererConfBuilder.class)
+                                      .startFontsConfig()
+                                          .addDirectory("test/resources/fonts", true)
+                                      .endFontConfig()
+                                  .endRendererConfig().build());
     }
 }

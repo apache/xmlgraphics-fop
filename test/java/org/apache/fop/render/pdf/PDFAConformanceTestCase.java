@@ -22,15 +22,22 @@ package org.apache.fop.render.pdf;
 import static org.junit.Assert.fail;
 
 import java.io.File;
+import java.io.IOException;
+
+import org.junit.Test;
+import org.xml.sax.SAXException;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.pdf.PDFConformanceException;
-import org.junit.Test;
 
 /**
  * Tests PDF/A-1 functionality.
  */
 public class PDFAConformanceTestCase extends BasePDFTest {
+
+    public PDFAConformanceTestCase() throws SAXException, IOException {
+        super(getDefaultConfFile());
+    }
 
     private File foBaseDir = new File("test/xml/pdf-a");
     private boolean dumpPDF = Boolean.getBoolean("PDFAConformanceTestCase.dumpPDF");

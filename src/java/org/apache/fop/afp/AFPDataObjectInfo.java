@@ -57,6 +57,8 @@ public class AFPDataObjectInfo {
     /** controls the mapping of the image data into the image area */
     private byte mappingOption = MappingOptionTriplet.SCALE_TO_FILL;
 
+    public static final byte DEFAULT_MAPPING_OPTION = 0x00;
+
     /**
      * Default constructor
      */

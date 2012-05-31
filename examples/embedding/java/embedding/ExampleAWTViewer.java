@@ -23,19 +23,16 @@ package embedding;
 import java.io.File;
 import java.io.IOException;
 
-//JAXP
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.Source;
 import javax.xml.transform.Result;
-import javax.xml.transform.stream.StreamSource;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.stream.StreamSource;
 
-//Avalon
 import org.apache.avalon.framework.ExceptionUtil;
 
-//FOP
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
@@ -47,7 +44,7 @@ import org.apache.fop.apps.MimeConstants;
 public class ExampleAWTViewer {
 
     // configure fopFactory as desired
-    private FopFactory fopFactory = FopFactory.newInstance();
+    private final FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
 
     /**
      * Display an FO file in the AWT Preview.

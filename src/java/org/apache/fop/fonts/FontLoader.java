@@ -19,18 +19,13 @@
 
 package org.apache.fop.fonts;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
+import java.net.URI;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.fop.apps.io.URIResolverWrapper;
 import org.apache.fop.fonts.truetype.TTFFontLoader;
 import org.apache.fop.fonts.type1.Type1FontLoader;
 
@@ -43,9 +38,9 @@ public abstract class FontLoader {
     protected static final Log log = LogFactory.getLog(FontLoader.class);
 
     /** URI representing the font file */
-    protected String fontFileURI;
+    protected final URI fontFileURI;
     /** the FontResolver to use for font URI resolution */
-    protected FontResolver resolver;
+    protected final URIResolverWrapper resolver;
     /** the loaded font */
     protected CustomFont returnFont;
 
@@ -67,8 +62,8 @@ public abstract class FontLoader {
      * available
      * @param resolver the font resolver used to resolve URIs
      */
-    public FontLoader(String fontFileURI, boolean embedded, boolean useKerning,
-            boolean useAdvanced, FontResolver resolver) {
+    public FontLoader(URI fontFileURI, boolean embedded, boolean useKerning,
+            boolean useAdvanced, URIResolverWrapper resolver) {
         this.fontFileURI = fontFileURI;
         this.embedded = embedded;
         this.useKerning = useKerning;
@@ -76,42 +71,8 @@ public abstract class FontLoader {
         this.resolver = resolver;
     }
 
-    private static boolean isType1(String fontURI) {
-        return fontURI.toLowerCase().endsWith(".pfb");
-    }
-
-    /**
-     * Loads a custom font from a File. In the case of Type 1 fonts, the PFB file must be specified.
-     * @param fontFile the File representation of the font
-     * @param subFontName the sub-fontname of a font (for TrueType Collections, null otherwise)
-     * @param embedded indicates whether the font is embedded or referenced
-     * @param encodingMode the requested encoding mode
-     * @param resolver the font resolver to use when resolving URIs
-     * @return the newly loaded font
-     * @throws IOException In case of an I/O error
-     */
-    public static CustomFont loadFont(File fontFile, String subFontName,
-            boolean embedded, EncodingMode encodingMode, FontResolver resolver) throws IOException {
-        return loadFont(fontFile.toURI().toURL(), subFontName,
-                embedded, encodingMode, resolver);
-    }
-
-    /**
-     * Loads a custom font from an URL. In the case of Type 1 fonts, the PFB file must be specified.
-     * @param fontUrl the URL representation of the font
-     * @param subFontName the sub-fontname of a font (for TrueType Collections, null otherwise)
-     * @param embedded indicates whether the font is embedded or referenced
-     * @param encodingMode the requested encoding mode
-     * @param resolver the font resolver to use when resolving URIs
-     * @return the newly loaded font
-     * @throws IOException In case of an I/O error
-     */
-    public static CustomFont loadFont(URL fontUrl, String subFontName,
-            boolean embedded, EncodingMode encodingMode,
-            FontResolver resolver) throws IOException {
-        return loadFont(fontUrl.toExternalForm(), subFontName,
-                embedded, encodingMode, true, true,
-                resolver);
+    private static boolean isType1(URI fontURI) {
+        return fontURI.toASCIIString().toLowerCase().endsWith(".pfb");
     }
 
     /**
@@ -127,10 +88,9 @@ public abstract class FontLoader {
      * @return the newly loaded font
      * @throws IOException In case of an I/O error
      */
-    public static CustomFont loadFont(String fontFileURI, String subFontName,
+    public static CustomFont loadFont(URI fontFileURI, String subFontName,
             boolean embedded, EncodingMode encodingMode, boolean useKerning,
-            boolean useAdvanced, FontResolver resolver) throws IOException {
-        fontFileURI = fontFileURI.trim();
+            boolean useAdvanced, URIResolverWrapper resolver) throws IOException {
         boolean type1 = isType1(fontFileURI);
         FontLoader loader;
         if (type1) {
@@ -144,41 +104,6 @@ public abstract class FontLoader {
                     embedded, encodingMode, useKerning, useAdvanced, resolver);
         }
         return loader.getFont();
-    }
-
-    /**
-     * Opens a font URI and returns an input stream.
-     * @param resolver the FontResolver to use for font URI resolution
-     * @param uri the URI representing the font
-     * @return the InputStream to read the font from.
-     * @throws IOException In case of an I/O error
-     * @throws MalformedURLException If an invalid URL is built
-     */
-    public static InputStream openFontUri(FontResolver resolver, String uri)
-                    throws IOException, MalformedURLException {
-        InputStream in = null;
-        if (resolver != null) {
-            Source source = resolver.resolve(uri);
-            if (source == null) {
-                String err = "Cannot load font: failed to create Source for font file "
-                    + uri;
-                throw new IOException(err);
-            }
-            if (source instanceof StreamSource) {
-                in = ((StreamSource) source).getInputStream();
-            }
-            if (in == null && source.getSystemId() != null) {
-                in = new java.net.URL(source.getSystemId()).openStream();
-            }
-            if (in == null) {
-                String err = "Cannot load font: failed to create InputStream from"
-                    + " Source for font file " + uri;
-                throw new IOException(err);
-            }
-        } else {
-            in = new URL(uri).openStream();
-        }
-        return in;
     }
 
     /**

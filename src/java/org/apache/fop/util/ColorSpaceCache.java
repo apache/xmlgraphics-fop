@@ -21,6 +21,8 @@ package org.apache.fop.util;
 
 import java.awt.color.ColorSpace;
 import java.awt.color.ICC_Profile;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.Map;
 
@@ -34,6 +36,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.xmlgraphics.java2d.color.ICCColorSpaceWithIntent;
 import org.apache.xmlgraphics.java2d.color.RenderingIntent;
 import org.apache.xmlgraphics.java2d.color.profile.ColorProfileUtil;
+
+import org.apache.fop.apps.io.URIResolverWrapper;
 
 /**
  * Map with cached ICC based ColorSpace objects.
@@ -72,6 +76,13 @@ public class ColorSpaceCache {
     public ColorSpace get(String profileName, String base, String iccProfileSrc,
             RenderingIntent renderingIntent) {
         String key = profileName + ":" + base + iccProfileSrc;
+        // TODO: This stuff needs some TLC, fix it!!
+        try {
+            URI uri = URIResolverWrapper.getBaseURI(base);
+            key = uri.resolve(URIResolverWrapper.cleanURI(iccProfileSrc)).toASCIIString();
+        } catch (URISyntaxException e) {
+            // TODO: handle this
+        }
         ColorSpace colorSpace = null;
         if (!colorSpaceMap.containsKey(key)) {
             try {

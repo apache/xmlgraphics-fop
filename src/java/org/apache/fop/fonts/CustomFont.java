@@ -20,13 +20,15 @@
 package org.apache.fop.fonts;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javax.xml.transform.Source;
+import org.apache.fop.apps.io.URIResolverWrapper;
 
 
 /**
@@ -35,32 +37,39 @@ import javax.xml.transform.Source;
 public abstract class CustomFont extends Typeface
             implements FontDescriptor, MutableFont {
 
-    private String fontName = null;
-    private String fullName = null;
-    private Set<String> familyNames = null;
-    private String fontSubName = null;
-    private String embedFileName = null;
-    private String embedResourceName = null;
-    private FontResolver resolver = null;
+    private String fontName;
+    private String fullName;
+    private Set<String> familyNames;
+    private String fontSubName;
+    private URI embedFileURI;
+    private String embedResourceName;
+    private final URIResolverWrapper resolver;
 
-    private int capHeight = 0;
-    private int xHeight = 0;
-    private int ascender = 0;
-    private int descender = 0;
+    private int capHeight;
+    private int xHeight;
+    private int ascender;
+    private int descender;
     private int[] fontBBox = {0, 0, 0, 0};
     private int flags = 4;
-    private int weight = 0; //0 means unknown weight
-    private int stemV = 0;
-    private int italicAngle = 0;
-    private int missingWidth = 0;
+    private int weight; //0 means unknown weight
+    private int stemV;
+    private int italicAngle;
+    private int missingWidth;
     private FontType fontType = FontType.TYPE1;
-    private int firstChar = 0;
+    private int firstChar;
     private int lastChar = 255;
 
     private Map<Integer, Map<Integer, Integer>> kerning;
 
     private boolean useKerning = true;
     private boolean useAdvanced = true;
+
+    /**
+     * @param resolver the URI resolver for controlling file access
+     */
+    public CustomFont(URIResolverWrapper resolver) {
+        this.resolver = resolver;
+    }
 
     /** {@inheritDoc} */
     public String getFontName() {
@@ -103,29 +112,22 @@ public abstract class CustomFont extends Typeface
     }
 
     /**
-     * Returns an URI representing an embeddable font file. The URI will often
-     * be a filename or an URL.
+     * Returns an URI representing an embeddable font file.
+     *
      * @return URI to an embeddable font file or null if not available.
      */
-    public String getEmbedFileName() {
-        return embedFileName;
+    public URI getEmbedFileURI() {
+        return embedFileURI;
     }
 
     /**
-     * Returns a Source representing an embeddable font file.
-     * @return Source for an embeddable font file
+     * Returns an {@link InputStream} representing an embeddable font file.
+     *
+     * @return {@link InputStream} for an embeddable font file
      * @throws IOException if embedFileName is not null but Source is not found
      */
-    public Source getEmbedFileSource() throws IOException {
-        Source result = null;
-        if (resolver != null && embedFileName != null) {
-            result = resolver.resolve(embedFileName);
-            if (result == null) {
-                throw new IOException("Unable to resolve Source '"
-                        + embedFileName + "' for embedded font");
-            }
-        }
-        return result;
+    public InputStream getInputStream() throws IOException {
+        return resolver.resolveIn(embedFileURI);
     }
 
     /**
@@ -323,8 +325,8 @@ public abstract class CustomFont extends Typeface
     /**
      * {@inheritDoc}
      */
-    public void setEmbedFileName(String path) {
-        this.embedFileName = path;
+    public void setEmbedURI(URI path) {
+        this.embedFileURI = path;
     }
 
     /**
@@ -442,14 +444,6 @@ public abstract class CustomFont extends Typeface
      */
     public void setAdvancedEnabled(boolean enabled) {
         this.useAdvanced = enabled;
-    }
-
-    /**
-     * Sets the font resolver. Needed for URI resolution.
-     * @param resolver the font resolver
-     */
-    public void setResolver(FontResolver resolver) {
-        this.resolver = resolver;
     }
 
     /** {@inheritDoc} */

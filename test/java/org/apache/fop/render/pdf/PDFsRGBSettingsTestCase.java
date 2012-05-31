@@ -22,9 +22,12 @@ package org.apache.fop.render.pdf;
 import static org.junit.Assert.fail;
 
 import java.io.File;
+import java.io.IOException;
+
+import org.junit.Test;
+import org.xml.sax.SAXException;
 
 import org.apache.fop.apps.FOUserAgent;
-import org.junit.Test;
 
 /**
  * Tests the disables-srgb-colorspace setting.
@@ -32,6 +35,10 @@ import org.junit.Test;
 public class PDFsRGBSettingsTestCase extends BasePDFTest {
 
     private File foBaseDir = new File("test/xml/pdf-a");
+
+    public PDFsRGBSettingsTestCase() throws SAXException, IOException {
+        super(getDefaultConfFile());
+    }
 
     private FOUserAgent getUserAgent(boolean enablePDFA) {
         final FOUserAgent a = fopFactory.newFOUserAgent();

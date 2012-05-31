@@ -23,10 +23,8 @@ package org.apache.fop.pdf;
 import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,9 +32,6 @@ import java.util.BitSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
@@ -1636,79 +1631,48 @@ public class PDFFactory {
 
         InputStream in = null;
         try {
-            Source source = font.getEmbedFileSource();
-            if (source == null && font.getEmbedResourceName() != null) {
-                source = new StreamSource(this.getClass()
-                        .getResourceAsStream(font.getEmbedResourceName()));
-            }
-            if (source == null) {
-                return null;
-            }
-            if (source instanceof StreamSource) {
-                in = ((StreamSource) source).getInputStream();
-            }
-            if (in == null && source.getSystemId() != null) {
-                try {
-                    in = new java.net.URL(source.getSystemId()).openStream();
-                } catch (MalformedURLException e) {
-                    //TODO: Why construct a new exception here, when it is not thrown?
-                    new FileNotFoundException(
-                            "File not found. URL could not be resolved: "
-                                    + e.getMessage());
-                }
-            }
-            if (in == null) {
-                return null;
-            }
-            //Make sure the InputStream is decorated with a BufferedInputStream
-            if (!(in instanceof java.io.BufferedInputStream)) {
-                in = new java.io.BufferedInputStream(in);
-            }
+            in = font.getInputStream();
             if (in == null) {
                 return null;
             } else {
-                try {
-                    AbstractPDFStream embeddedFont;
-                    if (desc.getFontType() == FontType.TYPE0) {
-                        MultiByteFont mbfont = (MultiByteFont)font;
-                        FontFileReader reader = new FontFileReader(in);
+                AbstractPDFStream embeddedFont;
+                if (desc.getFontType() == FontType.TYPE0) {
+                    MultiByteFont mbfont = (MultiByteFont) font;
+                    FontFileReader reader = new FontFileReader(in);
 
-                        TTFSubSetFile subset = new TTFSubSetFile();
-                        byte[] subsetFont = subset.readFont(reader,
-                                             mbfont.getTTCName(), mbfont.getUsedGlyphs());
-                        // Only TrueType CID fonts are supported now
+                    TTFSubSetFile subset = new TTFSubSetFile();
+                    byte[] subsetFont = subset.readFont(reader,
+                            mbfont.getTTCName(), mbfont.getUsedGlyphs());
+                    // Only TrueType CID fonts are supported now
 
-                        embeddedFont = new PDFTTFStream(subsetFont.length);
-                        ((PDFTTFStream)embeddedFont).setData(subsetFont, subsetFont.length);
-                    } else if (desc.getFontType() == FontType.TYPE1) {
-                        PFBParser parser = new PFBParser();
-                        PFBData pfb = parser.parsePFB(in);
-                        embeddedFont = new PDFT1Stream();
-                        ((PDFT1Stream)embeddedFont).setData(pfb);
-                    } else {
-                        byte[] file = IOUtils.toByteArray(in);
-                        embeddedFont = new PDFTTFStream(file.length);
-                        ((PDFTTFStream)embeddedFont).setData(file, file.length);
-                    }
-
-                    /*
-                    embeddedFont.getFilterList().addFilter("flate");
-                    if (getDocument().isEncryptionActive()) {
-                        getDocument().applyEncryption(embeddedFont);
-                    } else {
-                        embeddedFont.getFilterList().addFilter("ascii-85");
-                    }*/
-
-                    return embeddedFont;
-                } finally {
-                    in.close();
+                    embeddedFont = new PDFTTFStream(subsetFont.length);
+                    ((PDFTTFStream) embeddedFont).setData(subsetFont, subsetFont.length);
+                } else if (desc.getFontType() == FontType.TYPE1) {
+                    PFBParser parser = new PFBParser();
+                    PFBData pfb = parser.parsePFB(in);
+                    embeddedFont = new PDFT1Stream();
+                    ((PDFT1Stream) embeddedFont).setData(pfb);
+                } else {
+                    byte[] file = IOUtils.toByteArray(in);
+                    embeddedFont = new PDFTTFStream(file.length);
+                    ((PDFTTFStream) embeddedFont).setData(file, file.length);
                 }
+
+                /*
+                embeddedFont.getFilterList().addFilter("flate");
+                if (getDocument().isEncryptionActive()) {
+                    getDocument().applyEncryption(embeddedFont);
+                } else {
+                    embeddedFont.getFilterList().addFilter("ascii-85");
+                }*/
+
+                return embeddedFont;
             }
         } catch (IOException ioe) {
-            log.error(
-                    "Failed to embed font [" + desc + "] "
-                    + desc.getEmbedFontName(), ioe);
+            log.error("Failed to embed font [" + desc + "] " + desc.getEmbedFontName(), ioe);
             return null;
+        } finally {
+            IOUtils.closeQuietly(in);
         }
     }
 

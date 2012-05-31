@@ -33,11 +33,11 @@
         <fo:flow flow-name="xsl-region-body">
           <fo:block>plain external-graphic (relative URI)</fo:block>
           <fo:block>
-            <fo:external-graphic src="../../resources/images/bgimg300dpi.jpg"/>EOG
+            <fo:external-graphic src="../resources/images/bgimg300dpi.jpg"/>EOG
           </fo:block>
           <fo:block>plain external-graphic (relative URI with scheme)</fo:block>
           <fo:block>
-            <fo:external-graphic src="file:../../resources/images/bgimg300dpi.jpg"/>EOG
+            <fo:external-graphic src="file:../resources/images/bgimg300dpi.jpg"/>EOG
           </fo:block>
           <!-- Commented out until portable solution found
           <fo:block>plain external-graphic (absolute URI)</fo:block>
@@ -51,7 +51,7 @@
           -->
           <fo:block>plain external-graphic (relative URI using url(...) function)</fo:block>
           <fo:block>
-            <fo:external-graphic src="url(../../resources/images/bgimg300dpi.jpg)"/>EOG
+            <fo:external-graphic src="url(../resources/images/bgimg300dpi.jpg)"/>EOG
           </fo:block>
           <fo:block>plain external-graphic (absolute HTTP URI)</fo:block>
           <fo:block>

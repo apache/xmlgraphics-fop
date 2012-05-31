@@ -62,22 +62,16 @@ public final class FONodeMocks {
 
     private static void mockGetUserAgent(FOEventHandler mockFOEventHandler) {
         FOUserAgent mockFOUserAgent = mock(FOUserAgent.class);
-        mockGetFactory(mockFOUserAgent);
+        mockGetImageManager(mockFOUserAgent);
         when(mockFOEventHandler.getUserAgent()).thenReturn(mockFOUserAgent);
     }
 
-    private static void mockGetFactory(FOUserAgent mockFOUserAgent) {
-        FopFactory mockFopFactory = mock(FopFactory.class);
-        mockGetImageManager(mockFopFactory);
-        when(mockFOUserAgent.getFactory()).thenReturn(mockFopFactory);
-    }
-
-    private static void mockGetImageManager(FopFactory mockFopFactory) {
+    private static void mockGetImageManager(FOUserAgent mockFOUserAgent) {
         try {
             ImageManager mockImageManager = mock(ImageManager.class);
             when(mockImageManager.getImageInfo(anyString(), any(ImageSessionContext.class)))
                     .thenReturn(null);
-            when(mockFopFactory.getImageManager()).thenReturn(mockImageManager);
+            when(mockFOUserAgent.getImageManager()).thenReturn(mockImageManager);
         } catch (ImageException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
