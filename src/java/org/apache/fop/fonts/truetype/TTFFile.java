@@ -1058,7 +1058,7 @@ public class TTFFile {
             String tableName = pd[i].read(fontFile);
             dirTabs.put(TTFTableName.getValue(tableName), pd[i]);
         }
-        dirTabs.put(TTFTableName.DIRECTORY_TABLE,
+        dirTabs.put(TTFTableName.TABLE_DIRECTORY,
                 new TTFDirTabEntry(0L, fontFile.getCurrentPos()));
         log.debug("dir tables: " + dirTabs.keySet());
     }
