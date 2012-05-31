@@ -27,7 +27,7 @@ package org.apache.fop.fonts.truetype;
 public final class TTFTableName {
 
     /** The first table in a TrueType font file containing metadata about other tables. */
-    public static final TTFTableName DIRECTORY_TABLE = new TTFTableName("dirTable");
+    public static final TTFTableName TABLE_DIRECTORY = new TTFTableName("tableDirectory");
 
     /** Embedded bitmap data. */
     public static final TTFTableName EBDT = new TTFTableName("EBDT");

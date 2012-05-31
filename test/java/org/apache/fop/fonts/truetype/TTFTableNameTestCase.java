@@ -37,7 +37,7 @@ public class TTFTableNameTestCase {
      */
     @Test
     public void testGetName() throws IllegalAccessException {
-        assertEquals("dirTable", TTFTableName.DIRECTORY_TABLE.getName());
+        assertEquals("tableDirectory", TTFTableName.TABLE_DIRECTORY.getName());
         assertEquals("EBDT", TTFTableName.EBDT.getName());
         assertEquals("EBLC", TTFTableName.EBLC.getName());
         assertEquals("EBSC", TTFTableName.EBSC.getName());

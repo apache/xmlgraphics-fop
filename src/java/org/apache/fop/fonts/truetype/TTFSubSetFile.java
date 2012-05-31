@@ -146,7 +146,7 @@ public class TTFSubSetFile extends TTFFile {
         if (hasPrep()) {
             writeTableName(TTFTableName.PREP);
         }
-        newDirTabs.put(TTFTableName.DIRECTORY_TABLE, new TTFDirTabEntry(0, currentPos));
+        newDirTabs.put(TTFTableName.TABLE_DIRECTORY, new TTFDirTabEntry(0, currentPos));
     }
 
     private void writeTableName(TTFTableName tableName) {
