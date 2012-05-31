@@ -21,42 +21,40 @@ package org.apache.fop.render.ps.fonts;
 
 import java.io.IOException;
 
+import org.apache.xmlgraphics.ps.PSGenerator;
+
 import org.apache.fop.fonts.truetype.TTFGlyphOutputStream;
 import org.apache.fop.fonts.truetype.TTFOutputStream;
 import org.apache.fop.fonts.truetype.TTFTableOutputStream;
-import org.apache.xmlgraphics.ps.PSGenerator;
 
 /**
- * Implements TTFOutputStream and streams font tables to a PostScript file.
+ * Streams a TrueType font according to the PostScript format.
  */
 public class PSTTFOutputStream implements TTFOutputStream {
-    /** The wrapper class for PSGenerator */
+
     private final PSTTFGenerator ttfGen;
 
     /**
-     * Constructor - assigns a PSGenerator to stream the font.
-     * @param gen PSGenerator.
+     * Creates a new instance wrapping the given generator.
+     *
+     * @param gen the generator to wrap
      */
     public PSTTFOutputStream(PSGenerator gen) {
         this.ttfGen = new PSTTFGenerator(gen);
     }
 
-    /** {@inheritDoc} */
     public void startFontStream() throws IOException {
         ttfGen.write("/sfnts[");
     }
 
-    /** {@inheritDoc} */
     public TTFTableOutputStream getTableOutputStream() {
         return new PSTTFTableOutputStream(ttfGen);
     }
 
-    /** {@inheritDoc} */
     public TTFGlyphOutputStream getGlyphOutputStream() {
         return new PSTTFGlyphOutputStream(ttfGen);
     }
 
-    /** {@inheritDoc} */
     public void endFontStream() throws IOException {
         ttfGen.writeln("] def");
     }

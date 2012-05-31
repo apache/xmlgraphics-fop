@@ -24,15 +24,19 @@ import java.io.IOException;
 import org.apache.fop.fonts.truetype.TTFGlyphOutputStream;
 
 /**
- * This class streams glyphs from the "glyf" table in a True Type font.
+ * Streams glyphs in accordance with the constraints of the PostScript file format.
+ * Mainly, PostScript strings have a limited capacity and the font data may have to be
+ * broken down into several strings; however, this must occur at well-defined places like
+ * table or glyph boundaries. See also Adobe Technical Note #5012, <em>The Type 42 Font
+ * Format Specification</em>.
  */
 public class PSTTFGlyphOutputStream implements TTFGlyphOutputStream {
 
-    /** This counts the total number of bytes written that have been streamed. */
+    /** Total number of bytes written so far. */
     private int byteCounter;
 
-    /** This is a place-holder for the offset of the last string boundary. */
     private int lastStringBoundary;
+
     private PSTTFGenerator ttfGen;
 
     /**
