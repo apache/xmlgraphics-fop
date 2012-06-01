@@ -71,7 +71,7 @@ public class PDFResources extends PDFDictionary {
     protected Map<PDFName, PDFColorSpace> colorSpaces = new LinkedHashMap<PDFName, PDFColorSpace>();
 
     /** Map of ICC color spaces (key: ICC profile description) */
-    protected Map<String, PDFColorSpace> iccColorSpaces = new LinkedHashMap<String, PDFColorSpace>();
+    protected Map<String, PDFICCBasedColorSpace> iccColorSpaces = new LinkedHashMap<String, PDFICCBasedColorSpace>();
 
     /**
      * create a /Resources object.
@@ -167,7 +167,7 @@ public class PDFResources extends PDFDictionary {
             PDFICCBasedColorSpace icc = (PDFICCBasedColorSpace)colorSpace;
             String desc = ColorProfileUtil.getICCProfileDescription(
                     icc.getICCStream().getICCProfile());
-            this.iccColorSpaces.put(desc, colorSpace);
+            this.iccColorSpaces.put(desc, icc);
         }
     }
 
@@ -177,7 +177,7 @@ public class PDFResources extends PDFDictionary {
      * @return the requested color space or null if it wasn't found
      */
     public PDFICCBasedColorSpace getICCColorSpaceByProfileName(String desc) {
-        PDFICCBasedColorSpace cs = (PDFICCBasedColorSpace)this.iccColorSpaces.get(desc);
+        PDFICCBasedColorSpace cs = this.iccColorSpaces.get(desc);
         return cs;
     }
 
@@ -248,7 +248,7 @@ public class PDFResources extends PDFDictionary {
 
         if (!this.colorSpaces.isEmpty()) {
             PDFDictionary dict = new PDFDictionary(this);
-            for (PDFColorSpace colorSpace : iccColorSpaces.values()) {
+            for (PDFColorSpace colorSpace : colorSpaces.values()) {
                 dict.put(colorSpace.getName(), colorSpace);
             }
             put("ColorSpace", dict);
