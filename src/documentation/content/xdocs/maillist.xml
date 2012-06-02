@@ -83,7 +83,7 @@ If you are using Microsoft Outlook, this setting can be found at the "Mail Forma
             source, or other semantic XML? If so, the question is <em>almost certainly not
               appropriate to this list</em>. In general, the only input documents that are
             appropriate on this list are XSL-FO snippets. See <link
-              href="1.1/running.html#check-input">Running Xalan</link> for instructions about capturing the XSL-FO document that is actually submitted to FOP. If you haven't examined the XSL-FO document yourself, then you are not yet prepared to formulate a FOP-specific question.</li>
+              href="1.1rc1/running.html#check-input">Running Xalan</link> for instructions about capturing the XSL-FO document that is actually submitted to FOP. If you haven't examined the XSL-FO document yourself, then you are not yet prepared to formulate a FOP-specific question.</li>
           <li>If you are providing one or more XSL-FO snippets:
             <ul>
               <li>Have you reduced them to the shortest possible complete, <strong>self-contained</strong> document that demonstrates the problem? Please do so.</li>
