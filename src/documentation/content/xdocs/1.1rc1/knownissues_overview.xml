@@ -49,7 +49,7 @@
       This section lists disabled test cases in the test suite for the FO tree tests, at the time
       of the release.
     </p>
-    <xi:include href="cocoon://knownissues-raw-fotree_1.1.xml#xpointer(/document/body/*)"/>
+    <xi:include href="cocoon://knownissues-raw-fotree_1.1rc1.xml#xpointer(/document/body/*)"/>
   </section>
   <section>
     <title>Layout Engine</title>
@@ -57,12 +57,12 @@
       This section lists disabled test cases in the test suite for the layout engine tests, at the
       time of the release.
     </p>
-    <xi:include href="cocoon://knownissues-raw-layoutengine_1.1.xml#xpointer(/document/body/*)"/>
+    <xi:include href="cocoon://knownissues-raw-layoutengine_1.1rc1.xml#xpointer(/document/body/*)"/>
   </section>
   <section>
     <title>Other known issues</title>
     <p>This section lists other known issues.</p>
-    <xi:include href="cocoon://knownissues-raw-static_1.1.xml#xpointer(/document/body/*)"/>
+    <xi:include href="cocoon://knownissues-raw-static_1.1rc1.xml#xpointer(/document/body/*)"/>
   </section>
 </section>
 </body>
