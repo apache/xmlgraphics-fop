@@ -65,12 +65,12 @@
     <upgrading label="Upgrading" href="upgrading.html"/>
     
     <using label="Using Apache™ FOP">
+      <ant label="Ant Task" href="anttask.html"/>
       <build label="Build" href="compiling.html"/>
       <config label="Configure" href="configuration.html"/>
-      <run label="Run" href="running.html"/>
       <embed label="Embed" href="embedding.html"/>
+      <run label="Run" href="running.html"/>
       <servlet label="Servlets" href="servlets.html"/>
-      <ant label="Ant Task" href="anttask.html"/>
     </using>
 
     <features label="Features">
@@ -104,12 +104,12 @@
     <upgrading label="Upgrading" href="upgrading.html"/>
     
     <using label="Using Apache™ FOP">
+      <ant label="Ant Task" href="anttask.html"/>
       <build label="Build" href="compiling.html"/>
       <config label="Configure" href="configuration.html"/>
-      <run label="Run" href="running.html"/>
       <embed label="Embed" href="embedding.html"/>
+      <run label="Run" href="running.html"/>
       <servlet label="Servlets" href="servlets.html"/>
-      <ant label="Ant Task" href="anttask.html"/>
     </using>
 
     <features label="Features">
@@ -141,12 +141,12 @@
     <upgrading label="Upgrading" href="upgrading.html"/>
     
     <using label="Using Apache™ FOP">
+      <ant label="Ant Task" href="anttask.html"/>
       <build label="Build" href="compiling.html"/>
       <config label="Configure" href="configuration.html"/>
-      <run label="Run" href="running.html"/>
       <embed label="Embed" href="embedding.html"/>
+      <run label="Run" href="running.html"/>
       <servlet label="Servlets" href="servlets.html"/>
-      <ant label="Ant Task" href="anttask.html"/>
     </using>
 
     <features label="Features">

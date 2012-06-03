@@ -16,7 +16,7 @@
   limitations under the License.
 -->
 <!-- $Id$ -->
-<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "http://forrest.apache.org/dtd/document-v20.dtd">
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.3//EN" "http://forrest.apache.org/dtd/document-v13.dtd">
 <document>
   <header>
     <title>Apache™ FOP</title>
@@ -25,21 +25,22 @@
   <body>
     <section id="intro">
       <title>Introduction</title>
-      <p>Apache™ FOP (Formatting Objects Processor) is a print formatter driven by XSL
+      <p>
+        Apache™ FOP (Formatting Objects Processor) is a print formatter driven by XSL
         formatting objects (XSL-FO) and an output independent formatter. It is a Java
         application that reads a formatting object (FO) tree and renders the resulting
         pages to a specified output. <link href="1.1rc1/output.html">Output formats</link>
         currently supported include PDF, PS, PCL, AFP, XML (area tree representation),
         Print, AWT and PNG, and to a lesser extent, RTF and TXT. The primary output target is PDF.
       </p>
-      <p>The Apache™ FOP project is part of the <a href="http://www.apache.org">Apache™</a>
-        Software Foundation, which is a wider community of users and developers of open
-		source projects.
+      <p>
+        The Apache™ FOP project is part of the <link href="http://www.apache.org">Apache™</link>
+        Software Foundation, which is a wider community of users and developers of open source projects.
       </p>
-        <figure width="480" height="260" src="images/document.jpg" alt="Render Diagram" />
-    <p>
-      A release candidate (rc1) of the latest version of FOP is available at <link href="1.1rc1/">FOP 1.1rc1</link>.
-    </p>
+      <figure width="480" height="260" src="images/document.jpg" alt="Render Diagram" />
+      <p>
+        A release candidate (rc1) of the latest version of FOP is available at <link href="1.1rc1/">FOP 1.1rc1</link>.
+      </p>
     <p>
       Support for each of the standard's objects and properties is detailed in <link href="compliance.html">FOP Compliance</link>.
       <link href="download.html">Download</link> options include a precompiled version, source code, and many example files to get you started. <link href="resources.html">Resources</link> include links to XSL-FO introductions and many other useful references. A checklist for <link href="gethelp.html">Getting Help</link> will guide you toward maximizing the usefulness of FOP.
