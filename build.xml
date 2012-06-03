@@ -1438,14 +1438,20 @@ NOTE:
     </delete>
   </target>
   <target name="validate-xdocs" description="Validate the xdocs. Point schemas.dir to Forrest's 'schemas' directory.">
-    <property name="schemas.dir" value="../xml-forrest/src/resources/schema"/>
+    <property name="schemas.dir" value="../xml-forrest/main/webapp/resources/schema"/>
     <xmlvalidate failonerror="no">
-      <fileset dir="${xdocs.dir}" includes="**.xml"/>
+      <fileset dir="${xdocs.dir}">
+        <include name="**.xml"/>
+        <exclude name="**/site.xml"/>
+        <exclude name="**/news-data.xml"/>
+      </fileset>
       <xmlcatalog>
         <entity publicId="-//APACHE//DTD Compliance V1.0//EN" location="src/documentation/resources/schema/dtd/compliance-v10.dtd"/>
         <entity publicId="-//APACHE//DTD Documentation V1.1//EN" location="${schemas.dir}/dtd/document-v11.dtd"/>
+        <entity publicId="-//APACHE//DTD Documentation V1.3//EN" location="${schemas.dir}/dtd/document-v13.dtd"/>
         <entity publicId="-//APACHE//DTD Specification V1.1//EN" location="${schemas.dir}/dtd/specification-v11.dtd"/>
         <entity publicId="-//APACHE//DTD FAQ V1.1//EN" location="${schemas.dir}/dtd/faq-v11.dtd"/>
+        <entity publicId="-//APACHE//DTD FAQ V1.3//EN" location="${schemas.dir}/dtd/faq-v13.dtd"/>
         <entity publicId="-//APACHE//DTD Changes V1.1//EN" location="${schemas.dir}/dtd/changes-v11.dtd"/>
         <entity publicId="-//APACHE//DTD Todo V1.1//EN" location="${schemas.dir}/dtd/todo-v11.dtd"/>
         <entity publicId="-//APACHE//DTD Cocoon Documentation Book V1.0//EN" location="${schemas.dir}/dtd/book-cocoon-v10.dtd"/>
