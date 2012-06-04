@@ -360,7 +360,7 @@ public class IndicScriptProcessor extends DefaultScriptProcessor {
     }
 
     /** Abstract syllabizer. */
-    protected abstract static class Syllabizer {
+    protected abstract static class Syllabizer implements Comparable {
         private String script;
         private String language;
         Syllabizer ( String script, String language ) {
