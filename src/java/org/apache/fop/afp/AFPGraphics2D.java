@@ -67,7 +67,7 @@ import org.apache.fop.svg.NativeImageHandler;
 
 /**
  * This is a concrete implementation of {@link AbstractGraphics2D} (and
- * therefore of {@link Graphics2D}) which is able to generate GOCA byte
+ * therefore of {@link java.awt.Graphics2D}) which is able to generate GOCA byte
  * codes.
  *
  * @see org.apache.xmlgraphics.java2d.AbstractGraphics2D
@@ -165,7 +165,7 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
     }
 
     /**
-     * Returns the AFP resource manager associated with this {@link Graphics2D} instance.
+     * Returns the AFP resource manager associated with this {@link java.awt.Graphics2D} instance.
      * @return the resource manager
      */
     public AFPResourceManager getResourceManager() {

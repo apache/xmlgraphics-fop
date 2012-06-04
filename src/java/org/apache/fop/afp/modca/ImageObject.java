@@ -119,7 +119,8 @@ public class ImageObject extends AbstractDataObject {
      * Sets the image IDE color model.
      *
      * @param colorModel    the IDE color model.
-     * @deprecated Use {@link IDEStructureParameter#setColorModel(byte)} instead.
+     * @deprecated Use {@link org.apache.fop.afp.ioca.IDEStructureParameter#setColorModel(byte)}
+     * instead.
      */
     public void setIDEColorModel(byte colorModel) {
         getImageSegment().setIDEColorModel(colorModel);
@@ -128,7 +129,8 @@ public class ImageObject extends AbstractDataObject {
     /**
      * Set either additive or subtractive mode (used for ASFLAG).
      * @param subtractive true for subtractive mode, false for additive mode
-     * @deprecated Use {@link IDEStructureParameter#setSubtractive(boolean)} instead.
+     * @deprecated Use {@link org.apache.fop.afp.ioca.IDEStructureParameter#setSubtractive(boolean)}
+     * instead.
      */
     public void setSubtractive(boolean subtractive) {
         getImageSegment().setSubtractive(subtractive);

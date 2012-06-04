@@ -63,7 +63,8 @@ import org.apache.fop.render.ps.extensions.PSSetPageDevice;
 import org.apache.fop.render.ps.extensions.PSSetupCode;
 
 /**
- * {@link IFDocumentHandler} implementation that produces PostScript.
+ * {@link org.apache.fop.render.intermediate.IFDocumentHandler} implementation
+ * that produces PostScript.
  */
 public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
 
