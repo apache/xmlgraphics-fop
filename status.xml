@@ -63,6 +63,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Code" dev="GA" type="fix">
+        Eliminate javadocs warnings.
+      </action>
       <action context="Code" dev="GA" type="update" fixes-bug="53055">
         Update xmlgraphics common jar to reflect recent fixes in XGC.
       </action>
