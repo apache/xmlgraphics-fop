@@ -145,7 +145,7 @@ public class IFContext {
 
     /**
      * Resets the current structure tree element.
-     * @see #setStructureTreeElement(String)
+     * @see #setStructureTreeElement(StructureTreeElement)
      */
     public void resetStructureTreeElement() {
         setStructureTreeElement(null);
@@ -154,7 +154,7 @@ public class IFContext {
     /**
      * Returns the current structure tree element.
      * @return the structure tree element (or null if no element is active)
-     * @see #setStructureTreeElement(String)
+     * @see #setStructureTreeElement(StructureTreeElement)
      */
     public StructureTreeElement getStructureTreeElement() {
         return this.structureTreeElement;
