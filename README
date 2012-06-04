@@ -93,12 +93,12 @@ http://xmlgraphics.apache.org/fop/stable/running.html
   RELEASE NOTES
 ==============================================================================
 
-Version 1.1
+Version 1.1rc1
 ===========
 
-This is a minor (dot) release of Apache FOP, which primarily addresses
-bug fixes and also adds a number of new features. See below for
-details.
+This is a candidate release of the next,  minor (dot) release of Apache FOP,
+which primarily addresses bug fixes and also adds a number of new features.
+See below for details.
 
 Compliance
 ----------
@@ -113,8 +113,8 @@ Known issues
 A detailed list of known issues in this release is available at
 http://xmlgraphics.apache.org/fop/1.1/knownissues_overview.html.
 
-Major Changes in Version 1.1
-----------------------------
+Major Changes in Version 1.1rc1
+-------------------------------
 
 * Adds support for complex scripts, in particular those that require
   either bidirectional processing or advanced typographic tables in
@@ -128,7 +128,7 @@ Major Changes in Version 1.1
   FORMATTING (PDF).
 
 A more detailed list of changes in this release is available at
-http://xmlgraphics.apache.org/fop/1.1/changes_1.1.html.
+http://xmlgraphics.apache.org/fop/1.1rc1/changes_1.1rc1.html.
 
 A more detailed list of changes in this and earlier releases is available at
 http://xmlgraphics.apache.org/fop/changes.html.
