@@ -25,7 +25,8 @@ import org.apache.fop.render.intermediate.IFDocumentHandler;
 import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
 
 /**
- * {@link IFDocumentHandler} implementation that produces PNG files.
+ * {@link org.apache.fop.render.intermediate.IFDocumentHandler} implementation
+ * that produces PNG files.
  */
 public class PNGDocumentHandler extends AbstractBitmapDocumentHandler {
 
