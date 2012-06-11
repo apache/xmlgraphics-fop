@@ -130,7 +130,7 @@ public class Java2DGraphicsState {
      */
     public boolean updateFont(String name, int size) {
 
-        FontMetricsMapper mapper = (FontMetricsMapper)fontInfo.getMetricsFor(name);
+        FontMetricsMapper mapper = (FontMetricsMapper) fontInfo.getMetricsFor(name);
         boolean updateName = (!mapper.getFontName().equals(
                                     getGraph().getFont().getFontName()));
         boolean updateSize = (size != (getGraph().getFont().getSize() * 1000));

@@ -21,6 +21,7 @@ package org.apache.fop.afp;
 
 import java.awt.Dimension;
 
+import org.apache.fop.afp.AFPResourceLevel.ResourceType;
 
 /**
  * The level at which a resource is to reside in the AFP output
@@ -29,7 +30,7 @@ public class AFPResourceInfo {
 
     /** the general default resource level */
     public static final AFPResourceLevel DEFAULT_LEVEL
-        = new AFPResourceLevel(AFPResourceLevel.PRINT_FILE);
+            = new AFPResourceLevel(ResourceType.PRINT_FILE);
 
     /** the URI of this resource */
     private String uri = null;

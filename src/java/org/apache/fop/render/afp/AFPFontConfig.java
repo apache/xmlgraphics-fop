@@ -38,8 +38,7 @@ import org.apache.fop.afp.fonts.CharacterSetType;
 import org.apache.fop.afp.fonts.DoubleByteFont;
 import org.apache.fop.afp.fonts.OutlineFont;
 import org.apache.fop.afp.fonts.RasterFont;
-import org.apache.fop.afp.util.DefaultFOPResourceAccessor;
-import org.apache.fop.afp.util.ResourceAccessor;
+import org.apache.fop.afp.util.AFPResourceAccessor;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.io.URIResolverWrapper;
 import org.apache.fop.events.EventProducer;
@@ -306,8 +305,8 @@ public final class AFPFontConfig implements FontConfig {
         abstract AFPFontInfo getFontInfo(URIResolverWrapper resolver, AFPEventProducer eventProducer)
                 throws IOException;
 
-        ResourceAccessor getAccessor(URIResolverWrapper resolver) {
-            return new DefaultFOPResourceAccessor(resolver, uri);
+        AFPResourceAccessor getAccessor(URIResolverWrapper resolver) {
+            return new AFPResourceAccessor(resolver, uri);
         }
     }
 
@@ -327,7 +326,7 @@ public final class AFPFontConfig implements FontConfig {
         @Override
         AFPFontInfo getFontInfo(URIResolverWrapper resolver, AFPEventProducer eventProducer)
                 throws IOException {
-            ResourceAccessor accessor = getAccessor(resolver);
+            AFPResourceAccessor accessor = getAccessor(resolver);
             CharacterSet characterSet = CharacterSetBuilder.getDoubleByteInstance().buildDBCS(
                     characterset, super.codePage, super.encoding, charsetType, accessor, eventProducer);
             return getFontInfo(new DoubleByteFont(super.codePage, super.embeddable, characterSet),
@@ -371,7 +370,7 @@ public final class AFPFontConfig implements FontConfig {
                     LOG.error(msg);
                 }
             } else {
-                ResourceAccessor accessor = getAccessor(resolver);
+                AFPResourceAccessor accessor = getAccessor(resolver);
                 characterSet = CharacterSetBuilder.getSingleByteInstance().buildSBCS(
                         characterset, super.codePage, super.encoding, accessor, eventProducer);
             }
@@ -416,7 +415,7 @@ public final class AFPFontConfig implements FontConfig {
                         LOG.error(msg);
                     }
                 } else {
-                    ResourceAccessor accessor = getAccessor(resolver);
+                    AFPResourceAccessor accessor = getAccessor(resolver);
                     rasterFont.addCharacterSet(charset.size,
                             CharacterSetBuilder.getSingleByteInstance().buildSBCS(charset.characterset,
                                     super.codePage, super.encoding, accessor, eventProducer));

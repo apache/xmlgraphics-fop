@@ -17,24 +17,14 @@
 
 /* $Id$ */
 
-package org.apache.fop.afp.util;
+package org.apache.fop.apps.io;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
+import java.io.OutputStream;
 
-/**
- * Defines an interface through which external resource objects can be accessed.
- */
-public interface ResourceAccessor {
+public interface TempResourceResolver {
 
-    /**
-     * Creates a new {@link InputStream} for the given URI that allows read access to an external
-     * resource.
-     * @param uri the URI of an external resource.
-     * @return the new input stream
-     * @throws IOException if an I/O error occurs while opening the resource
-     */
-    InputStream createInputStream(URI uri) throws IOException;
+    Resource getResource(String id) throws IOException;
 
+    OutputStream getOutputStream(String id) throws IOException;
 }

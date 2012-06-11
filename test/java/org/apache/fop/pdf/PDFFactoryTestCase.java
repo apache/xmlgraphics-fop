@@ -19,14 +19,14 @@
 
 package org.apache.fop.pdf;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
 
-import org.apache.fop.apps.io.DefaultResourceResolver;
+import org.apache.fop.apps.io.ResourceResolverFactory;
 import org.apache.fop.apps.io.URIResolverWrapper;
 import org.apache.fop.fonts.CIDSubset;
 import org.apache.fop.fonts.MultiByteFont;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Test case for {@link PDFFactory}.
@@ -56,7 +56,7 @@ public class PDFFactoryTestCase {
         }
         PDFDocument doc = new PDFDocument("Test");
         PDFFactory pdfFactory = new PDFFactory(doc);
-        MockedFont font = new MockedFont(DefaultResourceResolver.createDefaultWrapper());
+        MockedFont font = new MockedFont(ResourceResolverFactory.createDefaultWrapper());
 
         PDFFont pdfDejaVu = pdfFactory.makeFont("DejaVu", "DejaVu", "TTF", font, font);
         assertEquals("/EAAAAA+DejaVu", pdfDejaVu.getBaseFont().toString());

@@ -27,7 +27,7 @@ import java.net.URI;
 import org.apache.commons.io.IOUtils;
 
 import org.apache.fop.afp.util.AFPResourceUtil;
-import org.apache.fop.afp.util.ResourceAccessor;
+import org.apache.fop.afp.util.AFPResourceAccessor;
 
 
 /**
@@ -35,7 +35,7 @@ import org.apache.fop.afp.util.ResourceAccessor;
  */
 public class IncludedResourceObject extends AbstractNamedAFPObject {
 
-    private ResourceAccessor resourceAccessor;
+    private AFPResourceAccessor resourceAccessor;
     private URI uri;
 
     /**
@@ -45,7 +45,7 @@ public class IncludedResourceObject extends AbstractNamedAFPObject {
      * @param uri the URI of the external file
      */
     public IncludedResourceObject(String name,
-            ResourceAccessor resourceAccessor, URI uri) {
+            AFPResourceAccessor resourceAccessor, URI uri) {
         super(name);
         this.resourceAccessor = resourceAccessor;
         this.uri = uri;

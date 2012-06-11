@@ -25,7 +25,7 @@ import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
 
 import org.apache.fop.apps.FOPException;
-import org.apache.fop.apps.io.DefaultResourceResolver;
+import org.apache.fop.apps.io.ResourceResolverFactory;
 import org.apache.fop.apps.io.URIResolverWrapper;
 import org.apache.fop.fonts.DefaultFontConfig;
 import org.apache.fop.fonts.DefaultFontConfigurator;
@@ -85,8 +85,7 @@ public class PDFDocumentGraphics2DConfigurator {
         FontInfo fontInfo = new FontInfo();
         final boolean strict = false;
         if (cfg != null) {
-            //TODO Wire in the FontEventListener
-            URIResolverWrapper resolver = DefaultResourceResolver.createDefaultWrapper();
+            URIResolverWrapper resolver = ResourceResolverFactory.createDefaultWrapper();
             //TODO The following could be optimized by retaining the FontManager somewhere
             FontManager fontManager = new FontManager(resolver, FontDetectorFactory.createDefault(),
                     FontCacheManagerFactory.createDefault());

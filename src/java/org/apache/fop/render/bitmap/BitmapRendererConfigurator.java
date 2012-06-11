@@ -24,11 +24,14 @@ import java.util.List;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.io.URIResolverWrapper;
+import org.apache.fop.fonts.EmbedFontInfo;
 import org.apache.fop.fonts.FontCollection;
 import org.apache.fop.render.RendererConfig.RendererConfigParser;
 import org.apache.fop.render.bitmap.BitmapRendererConfig.BitmapRendererConfigParser;
 import org.apache.fop.render.intermediate.IFDocumentHandler;
 import org.apache.fop.render.java2d.Base14FontCollection;
+import org.apache.fop.render.java2d.ConfiguredFontCollection;
 import org.apache.fop.render.java2d.InstalledFontCollection;
 import org.apache.fop.render.java2d.Java2DFontMetrics;
 import org.apache.fop.render.java2d.Java2DRendererConfigurator;
@@ -44,14 +47,6 @@ public class BitmapRendererConfigurator extends Java2DRendererConfigurator {
      */
     public BitmapRendererConfigurator(FOUserAgent userAgent, RendererConfigParser rendererConfigParser) {
         super(userAgent, rendererConfigParser);
-    }
-
-    /**
-     * Default constructor
-     * @param userAgent user agent
-     */
-    public BitmapRendererConfigurator(FOUserAgent userAgent) {
-        super(userAgent, null);
     }
 
     // ---=== IFDocumentHandler configuration ===---
@@ -87,6 +82,12 @@ public class BitmapRendererConfigurator extends Java2DRendererConfigurator {
         if (config.getColorMode() != null) {
             settings.setBufferedImageType(config.getColorMode());
         }
+    }
+
+    @Override
+    protected FontCollection createCollectionFromFontList(URIResolverWrapper uriResolverWrapper,
+            List<EmbedFontInfo> fontList) {
+        return new ConfiguredFontCollection(uriResolverWrapper, fontList, userAgent.isComplexScriptFeaturesEnabled());
     }
 
     @Override

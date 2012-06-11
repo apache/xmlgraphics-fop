@@ -52,9 +52,9 @@ import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.FopFactoryBuilder;
 import org.apache.fop.apps.MimeConstants;
-import org.apache.fop.apps.io.DefaultResourceResolver;
 import org.apache.fop.apps.io.Resource;
 import org.apache.fop.apps.io.ResourceResolver;
+import org.apache.fop.apps.io.ResourceResolverFactory;
 import org.apache.fop.render.xml.XMLRenderer;
 
 import static org.apache.fop.FOPTestUtils.getBaseDir;
@@ -177,7 +177,7 @@ public class URIResolutionTestCase {
     }
 
     private static final class CustomURIResolver implements ResourceResolver {
-        private final DefaultResourceResolver defaultImpl = new DefaultResourceResolver();
+        private final ResourceResolver defaultImpl =  ResourceResolverFactory.createDefaultResourceResolver();
 
         public Resource getResource(URI uri) throws IOException {
             if (uri.getScheme().equals("funky") && uri.getSchemeSpecificPart().equals("myimage123")) {

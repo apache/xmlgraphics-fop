@@ -15,72 +15,199 @@
  * limitations under the License.
  */
 
-/* $Id$ */
-
 package org.apache.fop.render.afp;
 
-import java.io.File;
-import java.io.IOException;
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Test;
-import org.xml.sax.SAXException;
+import org.mockito.ArgumentCaptor;
 
-import org.apache.fop.afp.AFPPaintingState;
-import org.apache.fop.apps.FOPException;
-import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.apps.FopFactory;
+import org.apache.fop.afp.AFPResourceLevel;
+import org.apache.fop.afp.AFPResourceLevel.ResourceType;
+import org.apache.fop.afp.AFPResourceLevelDefaults;
+import org.apache.fop.apps.AFPRendererConfBuilder;
+import org.apache.fop.apps.AbstractRendererConfiguratorTest;
+import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.render.afp.AFPRendererConfig.AFPRendererConfigParser;
-import org.apache.fop.render.intermediate.IFContext;
+import org.apache.fop.render.afp.AFPRendererConfig.ImagesModeOptions;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.mockito.Mockito.verify;
 
-/**
- * Test case for {@link AFPRendererConfigurator}.
- */
-public class AFPRendererConfiguratorTestCase {
-    private FOUserAgent userAgent;
+public class AFPRendererConfiguratorTestCase extends
+        AbstractRendererConfiguratorTest<AFPRendererConfigurator, AFPRendererConfBuilder> {
 
-    private AFPRendererConfigurator sut;
+    public AFPRendererConfiguratorTestCase() {
+        super(MimeConstants.MIME_AFP, AFPRendererConfBuilder.class, AFPDocumentHandler.class);
+    }
 
-    /**
-     * Assigns an FOUserAgen with a config file at <code>uri</code>
-     *
-     * @param uri the URI of the config file
-     */
-    private void setConfigFile(String uri) {
-        String confTestsDir = "test/resources/conf/afp/";
-        try {
-            userAgent = FopFactory.newInstance(new File(confTestsDir + uri)).newFOUserAgent();
-            sut = new AFPRendererConfigurator(userAgent, new AFPRendererConfigParser());
-        } catch (IOException ioe) {
-            fail("IOException: " + ioe);
-        } catch (SAXException se) {
-            fail("SAXException: " + se);
+    @Override
+    public void setUpDocumentHandler() {
+    }
+
+    @Override
+    protected AFPRendererConfigurator createConfigurator() {
+        return new AFPRendererConfigurator(userAgent, new AFPRendererConfigParser());
+    }
+
+    private AFPDocumentHandler getDocHandler() {
+        return (AFPDocumentHandler) docHandler;
+    }
+
+    @Test
+    public void testColorImages() throws Exception {
+        parseConfig(createBuilder().startImages(ImagesModeOptions.MODE_COLOR)
+                                   .endImages());
+        verify(getDocHandler()).setColorImages(true);
+
+        parseConfig(createBuilder().startImages(ImagesModeOptions.MODE_GRAYSCALE)
+                                   .endImages());
+        verify(getDocHandler()).setColorImages(false);
+    }
+
+    @Test
+    public void testCMYKImagesSupport() throws Exception {
+        parseConfig(createBuilder().startImages(ImagesModeOptions.MODE_COLOR)
+                                       .setModeAttribute("cmyk", "true")
+                                   .endImages());
+        verify(getDocHandler()).setCMYKImagesSupported(true);
+
+        parseConfig(createBuilder().startImages(ImagesModeOptions.MODE_COLOR)
+                                       .setModeAttribute("cmyk", "false")
+                                   .endImages());
+        verify(getDocHandler()).setCMYKImagesSupported(false);
+    }
+
+    @Test
+    public void testBitsPerPixel() throws Exception {
+        for (int bpp = 0; bpp < 40; bpp += 8) {
+            parseConfig(createBuilder().startImages()
+                                       .setModeAttribute("bits-per-pixel", String.valueOf(bpp))
+                                       .endImages());
+            verify(getDocHandler()).setBitsPerPixel(bpp);
         }
     }
 
-    /**
-     * Test several config files relating to JPEG images in AFP.
-     *
-     * @throws FOPException if an error is thrown
-     */
     @Test
-    public void testJpegImageConfig() throws FOPException {
-        testJpegSettings("no_image_config.xconf", 1.0f, false);
-        testJpegSettings("can_embed_jpeg.xconf", 1.0f, true);
-        testJpegSettings("bitmap_encode_quality.xconf", 0.5f, false);
+    public void testDitheringQuality() throws Exception {
+        float ditheringQuality = 100f;
+        parseConfig(createBuilder().startImages()
+                                       .setDitheringQuality(ditheringQuality)
+                                   .endImages());
+        verify(getDocHandler()).setDitheringQuality(ditheringQuality);
+
+        ditheringQuality = 1000f;
+        parseConfig(createBuilder().startImages()
+                                       .setDitheringQuality(ditheringQuality)
+                                   .endImages());
+        verify(getDocHandler()).setDitheringQuality(ditheringQuality);
     }
 
-    private void testJpegSettings(String uri, float bitmapEncodingQual, boolean canEmbed)
-            throws FOPException {
-        AFPDocumentHandler docHandler = new AFPDocumentHandler(new IFContext(userAgent));
+    @Test
+    public void testNativeImagesSupported() throws Exception {
+        parseConfig(createBuilder().startImages()
+                                       .setNativeImageSupport(true)
+                                   .endImages());
+        verify(getDocHandler()).setNativeImagesSupported(true);
 
-        setConfigFile(uri);
-        sut.configure(docHandler);
-
-        AFPPaintingState paintingState = docHandler.getPaintingState();
-        assertEquals(bitmapEncodingQual, paintingState.getBitmapEncodingQuality(), 0.01f);
-        assertEquals(canEmbed, paintingState.canEmbedJpeg());
+        parseConfig(createBuilder().startImages()
+                                       .setNativeImageSupport(false)
+                                   .endImages());
+        verify(getDocHandler()).setNativeImagesSupported(false);
     }
+
+    @Test
+    public void testShadingMode() throws Exception {
+        for (AFPShadingMode mode : AFPShadingMode.values()) {
+            parseConfig(createBuilder().setShading(mode));
+            verify(getDocHandler()).setShadingMode(mode);
+        }
+    }
+
+    @Test
+    public void testRendererResolution() throws Exception {
+        for (int resolution = 0; resolution < 1000; resolution += 100) {
+            parseConfig(createBuilder().setRenderingResolution(resolution));
+            verify(getDocHandler()).setResolution(resolution);
+        }
+    }
+
+    @Test
+    public void testLineWidthCorrection() throws Exception {
+        for (float resolution = 0; resolution < 50; resolution += 5) {
+            parseConfig(createBuilder().setLineWidthCorrection(resolution));
+            verify(getDocHandler()).setLineWidthCorrection(resolution);
+        }
+    }
+
+    @Test
+    public void testResourceGroupURI() throws Exception {
+        URI uri = URI.create("test://URI/just/used/for/testing");
+        parseConfig(createBuilder().setResourceGroupUri(uri.toASCIIString()));
+        verify(getDocHandler()).setDefaultResourceGroupUri(uri);
+    }
+
+    @Test
+    public void testResourceLevelDefaults() throws Exception {
+        testResourceLevelDefault(ResourceType.DOCUMENT);
+    }
+
+    private void testResourceLevelDefault(ResourceType resType) throws Exception {
+        Map<String, String> resourceLevels = new HashMap<String, String>();
+        resourceLevels.put("goca", resType.getName());
+        parseConfig(createBuilder().setDefaultResourceLevels(resourceLevels));
+        ArgumentCaptor<AFPResourceLevelDefaults> argument = ArgumentCaptor.forClass(AFPResourceLevelDefaults.class);
+        verify(getDocHandler()).setResourceLevelDefaults(argument.capture());
+        AFPResourceLevel expectedLevel = new AFPResourceLevel(resType);
+        assertEquals(expectedLevel, argument.getValue().getDefaultResourceLevel((byte) 3));
+    }
+
+    @Test
+    public void testExternalResourceDefault() throws Exception {
+        testResourceLevelDefault(ResourceType.EXTERNAL);
+    }
+
+    @Test
+    public void testInlineResourceDefault() throws Exception {
+        testResourceLevelDefault(ResourceType.INLINE);
+    }
+
+    @Test
+    public void testPageResourceDefault() throws Exception {
+        testResourceLevelDefault(ResourceType.PAGE);
+    }
+
+    @Test
+    public void testPageGroupResourceDefault() throws Exception {
+        testResourceLevelDefault(ResourceType.PAGE_GROUP);
+    }
+
+    @Test
+    public void testPrintFileResourceDefault() throws Exception {
+        testResourceLevelDefault(ResourceType.PRINT_FILE);
+    }
+
+    @Test
+    public void testBitmapEncodeQuality() throws Exception {
+        parseConfig(createBuilder().startImages()
+                                       .setBitmapEncodingQuality(0.5f)
+                                   .endImages());
+        verify(getDocHandler()).setBitmapEncodingQuality(0.5f);
+    }
+
+    @Test
+    public void testCanEmbedJpeg() throws Exception {
+        parseConfig(createBuilder().startImages()
+                                       .setAllowJpegEmbedding(true)
+                                   .endImages());
+        verify(getDocHandler()).canEmbedJpeg(true);
+
+        parseConfig(createBuilder().startImages()
+                                       .setAllowJpegEmbedding(false)
+                                   .endImages());
+        verify(getDocHandler()).canEmbedJpeg(false);
+    }
+
 }

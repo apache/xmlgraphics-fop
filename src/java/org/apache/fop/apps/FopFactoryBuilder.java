@@ -33,9 +33,9 @@ import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.xmlgraphics.image.loader.ImageContext;
 import org.apache.xmlgraphics.image.loader.ImageManager;
 
-import org.apache.fop.apps.io.DefaultResourceResolver;
 import org.apache.fop.apps.io.FOURIResolver;
 import org.apache.fop.apps.io.ResourceResolver;
+import org.apache.fop.apps.io.ResourceResolverFactory;
 import org.apache.fop.fonts.FontManager;
 import org.apache.fop.hyphenation.HyphenationTreeResolver;
 import org.apache.fop.layoutmgr.LayoutManagerMaker;
@@ -70,7 +70,7 @@ public final class FopFactoryBuilder {
      * @param defaultBaseURI the default base URI for resolving URIs against
      */
     public FopFactoryBuilder(URI defaultBaseURI) {
-        this(defaultBaseURI, new DefaultResourceResolver());
+        this(defaultBaseURI, ResourceResolverFactory.createDefaultResourceResolver());
     }
 
     /**
