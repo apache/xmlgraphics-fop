@@ -92,16 +92,12 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator implement
         if (config.getResolution() != null) {
             documentHandler.setResolution(config.getResolution());
         }
-        if (config.getDefaultResourceGroupFilePath() != null) {
-            documentHandler.setDefaultResourceGroupFilePath(config.getDefaultResourceGroupFilePath());
-        }
         if (config.isWrapPseg() != null) {
             documentHandler.setWrapPSeg(config.isWrapPseg());
         }
         if (config.isFs45() != null) {
             documentHandler.setFS45(config.isFs45());
         }
-
         if (config.allowJpegEmbedding() != null) {
             documentHandler.canEmbedJpeg(config.allowJpegEmbedding());
         }
@@ -116,6 +112,9 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator implement
         }
         if (config.isStrokeGocaText() != null) {
             documentHandler.setStrokeGOCAText(config.isStrokeGocaText());
+        }
+        if (config.getDefaultResourceGroupUri() != null) {
+            documentHandler.setDefaultResourceGroupUri(config.getDefaultResourceGroupUri());
         }
         AFPResourceLevelDefaults resourceLevelDefaults = config.getResourceLevelDefaults();
         if (resourceLevelDefaults != null) {

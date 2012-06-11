@@ -23,6 +23,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
+import java.net.URI;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -38,8 +39,7 @@ import org.apache.fop.afp.DataStream;
 import org.apache.fop.afp.fonts.AFPFontCollection;
 import org.apache.fop.afp.fonts.AFPPageFonts;
 import org.apache.fop.afp.modca.ResourceObject;
-import org.apache.fop.afp.util.DefaultFOPResourceAccessor;
-import org.apache.fop.afp.util.ResourceAccessor;
+import org.apache.fop.afp.util.AFPResourceAccessor;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.fonts.FontCollection;
 import org.apache.fop.fonts.FontEventAdapter;
@@ -104,7 +104,7 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
      */
     public AFPDocumentHandler(IFContext context) {
         super(context);
-        this.resourceManager = new AFPResourceManager();
+        this.resourceManager = new AFPResourceManager(context.getUserAgent().getNewURIResolver());
         this.paintingState = new AFPPaintingState();
         this.unitConv = paintingState.getUnitConverter();
     }
@@ -385,7 +385,7 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
             }
         } else if (extension instanceof AFPIncludeFormMap) {
             AFPIncludeFormMap formMap = (AFPIncludeFormMap)extension;
-            ResourceAccessor accessor = new DefaultFOPResourceAccessor(
+            AFPResourceAccessor accessor = new AFPResourceAccessor(
                     getUserAgent().getNewURIResolver());
             try {
                 getResourceManager().createIncludedResource(formMap.getName(),
@@ -497,9 +497,8 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
         return  paintingState.getFS45();
     }
 
-    /** {@inheritDoc} */
-    public void setDefaultResourceGroupFilePath(String filePath) {
-        resourceManager.setDefaultResourceGroupFilePath(filePath);
+    public void setDefaultResourceGroupUri(URI uri) {
+        resourceManager.setDefaultResourceGroupUri(uri);
     }
 
     /** {@inheritDoc} */

@@ -27,7 +27,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import org.apache.fop.apps.io.DefaultResourceResolver;
+import org.apache.fop.apps.io.ResourceResolverFactory;
 import org.apache.fop.area.AreaTreeHandler;
 import org.apache.fop.area.Block;
 import org.apache.fop.fo.FONode;
@@ -67,7 +67,7 @@ public class FopFactoryBuilderTestCase {
 
     @Test(expected = IllegalArgumentException.class)
     public void testNullParamsInConstructor() throws URISyntaxException {
-        new FopFactoryBuilder(null, new DefaultResourceResolver());
+        new FopFactoryBuilder(null, ResourceResolverFactory.createDefaultResourceResolver());
     }
 
     @Test

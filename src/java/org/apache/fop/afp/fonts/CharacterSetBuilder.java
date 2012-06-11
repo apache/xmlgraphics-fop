@@ -19,9 +19,9 @@
 
 package org.apache.fop.afp.fonts;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -38,7 +38,7 @@ import org.apache.xmlgraphics.image.loader.util.SoftMapCache;
 
 import org.apache.fop.afp.AFPConstants;
 import org.apache.fop.afp.AFPEventProducer;
-import org.apache.fop.afp.util.ResourceAccessor;
+import org.apache.fop.afp.util.AFPResourceAccessor;
 import org.apache.fop.afp.util.StructuredFieldReader;
 import org.apache.fop.fonts.Typeface;
 
@@ -138,28 +138,24 @@ public abstract class CharacterSetBuilder {
      * Returns an InputStream to a given file path and filename
      *
      * * @param accessor the resource accessor
-     * @param filename the file name
+     * @param uriStr the URI
      * @param eventProducer for handling AFP related events
      * @return an inputStream
-     *
      * @throws IOException in the event that an I/O exception of some sort has occurred
      */
-    protected InputStream openInputStream(ResourceAccessor accessor, String filename,
+    protected InputStream openInputStream(AFPResourceAccessor accessor, String uriStr,
             AFPEventProducer eventProducer)
             throws IOException {
         URI uri;
         try {
-            uri = new URI(filename.trim());
+            uri = new URI(uriStr.trim());
         } catch (URISyntaxException e) {
-            throw new FileNotFoundException("Invalid filename: "
-                    + filename + " (" + e.getMessage() + ")");
+            throw new MalformedURLException("Invalid uri: " + uriStr + " (" + e.getMessage() + ")");
         }
-
         if (LOG.isDebugEnabled()) {
             LOG.debug("Opening " + uri);
         }
-        InputStream inputStream = accessor.createInputStream(uri);
-        return inputStream;
+        return accessor.createInputStream(uri);
     }
 
     /**
@@ -191,7 +187,7 @@ public abstract class CharacterSetBuilder {
      * @throws IOException if an I/O error occurs
      */
     public CharacterSet buildSBCS(String characterSetName, String codePageName, String encoding,
-            ResourceAccessor accessor, AFPEventProducer eventProducer) throws IOException {
+            AFPResourceAccessor accessor, AFPEventProducer eventProducer) throws IOException {
         return processFont(characterSetName, codePageName, encoding, CharacterSetType.SINGLE_BYTE,
                 accessor, eventProducer);
     }
@@ -211,7 +207,7 @@ public abstract class CharacterSetBuilder {
      * @throws IOException if an I/O error occurs
      */
     public CharacterSet buildDBCS(String characterSetName, String codePageName, String encoding,
-            CharacterSetType charsetType, ResourceAccessor accessor, AFPEventProducer eventProducer)
+            CharacterSetType charsetType, AFPResourceAccessor accessor, AFPEventProducer eventProducer)
             throws IOException {
         return processFont(characterSetName, codePageName, encoding, charsetType, accessor,
                 eventProducer);
@@ -236,7 +232,7 @@ public abstract class CharacterSetBuilder {
     }
 
     private CharacterSet processFont(String characterSetName, String codePageName, String encoding,
-            CharacterSetType charsetType, ResourceAccessor accessor, AFPEventProducer eventProducer)
+            CharacterSetType charsetType, AFPResourceAccessor accessor, AFPEventProducer eventProducer)
             throws IOException {
         // check for cached version of the characterset
         String descriptor = characterSetName + "_" + encoding + "_" + codePageName;
@@ -329,7 +325,7 @@ public abstract class CharacterSetBuilder {
      * @throws IOException if an I/O exception of some sort has occurred.
      */
     protected Map<String, String> loadCodePage(String codePage, String encoding,
-            ResourceAccessor accessor, AFPEventProducer eventProducer) throws IOException {
+            AFPResourceAccessor accessor, AFPEventProducer eventProducer) throws IOException {
 
         // Create the HashMap to store code page information
         Map<String, String> codePages = new HashMap<String, String>();
@@ -337,7 +333,11 @@ public abstract class CharacterSetBuilder {
         InputStream inputStream = null;
         try {
             inputStream = openInputStream(accessor, codePage.trim(), eventProducer);
-
+        } catch (IOException e) {
+            eventProducer.codePageNotFound(this, e);
+            throw e;
+        }
+        try {
             StructuredFieldReader structuredFieldReader = new StructuredFieldReader(inputStream);
             byte[] data = structuredFieldReader.getNext(CHARACTER_TABLE_SF);
 
@@ -367,8 +367,6 @@ public abstract class CharacterSetBuilder {
                     position++;
                 }
             }
-        } catch (FileNotFoundException e) {
-            eventProducer.codePageNotFound(this, e);
         } finally {
             closeInputStream(inputStream);
         }
@@ -709,21 +707,21 @@ public abstract class CharacterSetBuilder {
         }
 
         protected Map<String, String> loadCodePage(String codePage, String encoding,
-                ResourceAccessor accessor, AFPEventProducer eventProducer) throws IOException {
-
+                AFPResourceAccessor accessor, AFPEventProducer eventProducer) throws IOException {
             // Create the HashMap to store code page information
             Map<String, String> codePages = new HashMap<String, String>();
-
             InputStream inputStream = null;
             try {
                 inputStream = openInputStream(accessor, codePage.trim(), eventProducer);
-
-                StructuredFieldReader structuredFieldReader
-                    = new StructuredFieldReader(inputStream);
+            } catch (IOException e) {
+                eventProducer.codePageNotFound(this, e);
+                throw e;
+            }
+            try {
+                StructuredFieldReader structuredFieldReader = new StructuredFieldReader(inputStream);
                 byte[] data;
                 while ((data = structuredFieldReader.getNext(CHARACTER_TABLE_SF)) != null) {
                     int position = 0;
-
                     byte[] gcgiBytes = new byte[8];
                     byte[] charBytes = new byte[2];
                     // Read data, ignoring bytes 0 - 2
@@ -751,12 +749,9 @@ public abstract class CharacterSetBuilder {
                         }
                     }
                 }
-            } catch (FileNotFoundException e) {
-                eventProducer.codePageNotFound(this, e);
             } finally {
                 closeInputStream(inputStream);
             }
-
             return codePages;
         }
 

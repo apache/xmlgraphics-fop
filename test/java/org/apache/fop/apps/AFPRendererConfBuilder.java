@@ -20,6 +20,7 @@
 package org.apache.fop.apps;
 
 
+import java.net.URI;
 import java.util.Map;
 
 import org.w3c.dom.Element;
@@ -33,11 +34,17 @@ import static org.apache.fop.render.afp.AFPRendererConfig.ImagesModeOptions.MODE
 import static org.apache.fop.render.afp.AFPRendererConfig.Options.DEFAULT_RESOURCE_LEVELS;
 import static org.apache.fop.render.afp.AFPRendererConfig.Options.IMAGES;
 import static org.apache.fop.render.afp.AFPRendererConfig.Options.IMAGES_DITHERING_QUALITY;
+import static org.apache.fop.render.afp.AFPRendererConfig.Options.IMAGES_FS45;
+import static org.apache.fop.render.afp.AFPRendererConfig.Options.IMAGES_JPEG;
+import static org.apache.fop.render.afp.AFPRendererConfig.Options.IMAGES_MAPPING_OPTION;
 import static org.apache.fop.render.afp.AFPRendererConfig.Options.IMAGES_MODE;
 import static org.apache.fop.render.afp.AFPRendererConfig.Options.IMAGES_NATIVE;
+import static org.apache.fop.render.afp.AFPRendererConfig.Options.IMAGES_WRAP_PSEG;
+import static org.apache.fop.render.afp.AFPRendererConfig.Options.JPEG_ALLOW_JPEG_EMBEDDING;
+import static org.apache.fop.render.afp.AFPRendererConfig.Options.JPEG_BITMAP_ENCODING_QUALITY;
 import static org.apache.fop.render.afp.AFPRendererConfig.Options.RENDERER_RESOLUTION;
 import static org.apache.fop.render.afp.AFPRendererConfig.Options.LINE_WIDTH_CORRECTION;
-import static org.apache.fop.render.afp.AFPRendererConfig.Options.RESOURCE_GROUP_FILE;
+import static org.apache.fop.render.afp.AFPRendererConfig.Options.RESOURCE_GROUP_URI;
 import static org.apache.fop.render.afp.AFPRendererConfig.Options.SHADING;
 
 /**
@@ -82,12 +89,12 @@ public final class AFPRendererConfBuilder extends RendererConfBuilder {
         return this;
     }
 
-    public AFPRendererConfBuilder setResourceGroupFile(String value) {
-        createTextElement(RESOURCE_GROUP_FILE, value);
+    public AFPRendererConfBuilder setResourceGroupUri(String uri) {
+        createTextElement(RESOURCE_GROUP_URI, uri);
         return this;
     }
 
-    public AFPRendererConfBuilder setResourceResourceLevels(Map<String, String> levels) {
+    public AFPRendererConfBuilder setDefaultResourceLevels(Map<String, String> levels) {
         Element e = createElement(DEFAULT_RESOURCE_LEVELS.getName());
         for (String key : levels.keySet()) {
             e.setAttribute(key, levels.get(key));
@@ -99,6 +106,8 @@ public final class AFPRendererConfBuilder extends RendererConfBuilder {
 
         private final Element el;
 
+        private Element jpeg;
+
         private ImagesBuilder(AFPRendererConfig.ImagesModeOptions mode) {
             el = createElement(IMAGES.getName());
             setAttribute(IMAGES_MODE, mode.getName());
@@ -108,29 +117,58 @@ public final class AFPRendererConfBuilder extends RendererConfBuilder {
             return setAttribute(name, value);
         }
 
+        public ImagesBuilder setAllowJpegEmbedding(boolean value) {
+            getJpeg().setAttribute(JPEG_ALLOW_JPEG_EMBEDDING.getName(), String.valueOf(value));
+            return this;
+        }
+
+        public ImagesBuilder setBitmapEncodingQuality(float value) {
+            getJpeg().setAttribute(JPEG_BITMAP_ENCODING_QUALITY.getName(), String.valueOf(value));
+            return this;
+        }
+
         public ImagesBuilder setDitheringQuality(String value) {
             return setAttribute(IMAGES_DITHERING_QUALITY, value);
         }
 
         public ImagesBuilder setDitheringQuality(float value) {
-            return setAttribute(IMAGES_DITHERING_QUALITY, String.valueOf(value));
+            return setAttribute(IMAGES_DITHERING_QUALITY, value);
+        }
+
+        public ImagesBuilder setFs45(boolean value) {
+            return setAttribute(IMAGES_FS45, value);
+        }
+
+        public ImagesBuilder setMappingOption(String value) {
+            return setAttribute(IMAGES_MAPPING_OPTION, value);
+        }
+
+        public ImagesBuilder setWrapPseg(boolean value) {
+            return setAttribute(IMAGES_WRAP_PSEG, value);
         }
 
         public ImagesBuilder setNativeImageSupport(boolean value) {
-            return setAttribute(IMAGES_NATIVE, String.valueOf(value));
+            return setAttribute(IMAGES_NATIVE, value);
         }
 
         public AFPRendererConfBuilder endImages() {
             return AFPRendererConfBuilder.this.endImages();
         }
 
-        private ImagesBuilder setAttribute(Options options, String value) {
+        private ImagesBuilder setAttribute(Options options, Object value) {
             return setAttribute(options.getName(), value);
         }
 
-        private ImagesBuilder setAttribute(String name, String value) {
-            el.setAttribute(name, value);
+        private ImagesBuilder setAttribute(String name, Object value) {
+            el.setAttribute(name, String.valueOf(value));
             return this;
+        }
+
+        private Element getJpeg() {
+            if (jpeg == null) {
+                jpeg = createElement(IMAGES_JPEG.getName(), el);
+            }
+            return jpeg;
         }
     }
 }

@@ -19,7 +19,7 @@
 
 package org.apache.fop.render.afp;
 
-import java.io.File;
+import java.net.URI;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -46,7 +46,7 @@ public class AFPForeignAttributeReader {
             AFPElementMapping.NAMESPACE, "afp:resource-level");
 
     /** the resource-group-file attribute */
-    public static final QName RESOURCE_GROUP_FILE = new QName(
+    public static final QName RESOURCE_GROUP_URI = new QName(
             AFPElementMapping.NAMESPACE, "afp:resource-group-file");
 
     /**
@@ -64,7 +64,7 @@ public class AFPForeignAttributeReader {
     public AFPResourceInfo getResourceInfo(Map/*<QName, String>*/ foreignAttributes) {
         AFPResourceInfo resourceInfo = new AFPResourceInfo();
         if (foreignAttributes != null && !foreignAttributes.isEmpty()) {
-            String resourceName = (String)foreignAttributes.get(RESOURCE_NAME);
+            String resourceName = (String) foreignAttributes.get(RESOURCE_NAME);
             if (resourceName != null) {
                 resourceInfo.setName(resourceName);
             }
@@ -82,45 +82,20 @@ public class AFPForeignAttributeReader {
      * @param foreignAttributes the foreign attributes
      * @return the resource level
      */
-    public AFPResourceLevel getResourceLevel(Map/*<QName, String>*/ foreignAttributes) {
+    public AFPResourceLevel getResourceLevel(Map<QName, String> foreignAttributes) {
         AFPResourceLevel resourceLevel = null;
         if (foreignAttributes != null && !foreignAttributes.isEmpty()) {
             if (foreignAttributes.containsKey(RESOURCE_LEVEL)) {
-                String levelString = (String)foreignAttributes.get(RESOURCE_LEVEL);
+                String levelString = foreignAttributes.get(RESOURCE_LEVEL);
                 resourceLevel = AFPResourceLevel.valueOf(levelString);
                 // if external get resource group file attributes
                 if (resourceLevel != null && resourceLevel.isExternal()) {
-                    String resourceGroupFile
-                        = (String)foreignAttributes.get(RESOURCE_GROUP_FILE);
-                    if (resourceGroupFile == null) {
-                        String msg = RESOURCE_GROUP_FILE + " not specified";
-                        LOG.error(msg);
+                    String resourceGroupUri = foreignAttributes.get(RESOURCE_GROUP_URI);
+                    if (resourceGroupUri == null) {
+                        String msg = RESOURCE_GROUP_URI + " not specified";
                         throw new UnsupportedOperationException(msg);
                     }
-                    File resourceExternalGroupFile = new File(resourceGroupFile);
-                    SecurityManager security = System.getSecurityManager();
-                    try {
-                        if (security != null) {
-                            security.checkWrite(resourceExternalGroupFile.getPath());
-                        }
-                    } catch (SecurityException ex) {
-                        String msg = "unable to gain write access to external resource file: "
-                        + resourceGroupFile;
-                        LOG.error(msg);
-                    }
-
-                    try {
-                        boolean exists = resourceExternalGroupFile.exists();
-                        if (exists) {
-                            LOG.warn("overwriting external resource file: "
-                                    + resourceGroupFile);
-                        }
-                        resourceLevel.setExternalFilePath(resourceGroupFile);
-                    } catch (SecurityException ex) {
-                        String msg = "unable to gain read access to external resource file: "
-                            + resourceGroupFile;
-                        LOG.error(msg);
-                    }
+                    resourceLevel.setExternalUri(URI.create(resourceGroupUri));
                 }
             }
         }

@@ -24,14 +24,12 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.io.URIResolverWrapper;
 
 /**
- * Default implementation of the {@link ResourceAccessor} interface for use inside FOP.
+ * Defines an interface through which external resource objects can be accessed.
  */
-public class DefaultFOPResourceAccessor extends SimpleResourceAccessor {
+public final class AFPResourceAccessor {
 
     private final URIResolverWrapper resolver;
     private final String baseURI;
@@ -46,14 +44,12 @@ public class DefaultFOPResourceAccessor extends SimpleResourceAccessor {
      * @param categoryBaseURI the category base URI (may be null)
      * @param baseURI the custom base URI to resolve relative URIs against (may be null)
      */
-    public DefaultFOPResourceAccessor(URIResolverWrapper resolver, String baseURI) {
-        super(resolver.getBaseURI());
+    public AFPResourceAccessor(URIResolverWrapper resolver, String baseURI) {
         this.resolver = resolver;
         this.baseURI = baseURI;
     }
 
-    public DefaultFOPResourceAccessor(URIResolverWrapper resolver) {
-        super(resolver.getBaseURI());
+    public AFPResourceAccessor(URIResolverWrapper resolver) {
         this.resolver = resolver;
         this.baseURI = null;
     }
@@ -74,4 +70,5 @@ public class DefaultFOPResourceAccessor extends SimpleResourceAccessor {
     public InputStream createInputStream(URI uri) throws IOException {
         return resolver.resolveIn(getResourceURI(uri));
     }
+
 }

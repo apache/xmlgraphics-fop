@@ -19,8 +19,7 @@
 
 package org.apache.fop.render.afp;
 
-import java.io.File;
-import java.io.IOException;
+import java.net.URI;
 import java.util.EnumMap;
 
 import org.apache.avalon.framework.configuration.Configuration;
@@ -59,7 +58,7 @@ import static org.apache.fop.render.afp.AFPRendererConfig.Options.JPEG_ALLOW_JPE
 import static org.apache.fop.render.afp.AFPRendererConfig.Options.JPEG_BITMAP_ENCODING_QUALITY;
 import static org.apache.fop.render.afp.AFPRendererConfig.Options.LINE_WIDTH_CORRECTION;
 import static org.apache.fop.render.afp.AFPRendererConfig.Options.RENDERER_RESOLUTION;
-import static org.apache.fop.render.afp.AFPRendererConfig.Options.RESOURCE_GROUP_FILE;
+import static org.apache.fop.render.afp.AFPRendererConfig.Options.RESOURCE_GROUP_URI;
 import static org.apache.fop.render.afp.AFPRendererConfig.Options.SHADING;
 
 public final class AFPRendererConfig implements RendererConfig {
@@ -110,7 +109,7 @@ public final class AFPRendererConfig implements RendererConfig {
         JPEG_ALLOW_JPEG_EMBEDDING("allow-embedding", Boolean.class),
         JPEG_BITMAP_ENCODING_QUALITY("bitmap-encoding-quality", Float.class),
         RENDERER_RESOLUTION("renderer-resolution", Integer.class),
-        RESOURCE_GROUP_FILE("resource-group-file", String.class),
+        RESOURCE_GROUP_URI("resource-group-file", URI.class),
         SHADING("shading", AFPShadingMode.class),
         LINE_WIDTH_CORRECTION("line-width-correction", Float.class),
         GOCA("goca", Boolean.class),
@@ -179,8 +178,9 @@ public final class AFPRendererConfig implements RendererConfig {
         return getParam(RENDERER_RESOLUTION, Integer.class);
     }
 
-    public String getDefaultResourceGroupFilePath() {
-        return getParam(RESOURCE_GROUP_FILE, String.class);
+
+    public URI getDefaultResourceGroupUri() {
+        return getParam(RESOURCE_GROUP_URI, URI.class);
     }
 
     public AFPResourceLevelDefaults getResourceLevelDefaults() {
@@ -273,7 +273,7 @@ public final class AFPRendererConfig implements RendererConfig {
 
         private void configure() throws ConfigurationException, FOPException {
             configureImages();
-            setParam(SHADING, AFPShadingMode.valueOf(
+            setParam(SHADING, AFPShadingMode.getValueOf(
                     cfg.getChild(SHADING.getName()).getValue(AFPShadingMode.COLOR.getName())));
             Configuration rendererResolutionCfg = cfg.getChild(RENDERER_RESOLUTION.getName(), false);
             setParam(RENDERER_RESOLUTION, rendererResolutionCfg == null ? 240
@@ -362,25 +362,14 @@ public final class AFPRendererConfig implements RendererConfig {
 
         private void createResourceGroupFile() throws FOPException {
             try {
-                Configuration resourceGroupFileCfg = cfg.getChild(RESOURCE_GROUP_FILE.getName(), false);
-                if (resourceGroupFileCfg != null) {
-                    String resourceGroupDest = null;
-                    resourceGroupDest = resourceGroupFileCfg.getValue();
-                    if (resourceGroupDest != null) {
-                        File resourceGroupFile = new File(resourceGroupDest);
-                        boolean created = resourceGroupFile.createNewFile();
-                        if (created && resourceGroupFile.canWrite()) {
-                            setParam(RESOURCE_GROUP_FILE, resourceGroupDest);
-                        } else {
-                            LOG.warn("Unable to write to default external resource group file '"
-                                    + resourceGroupDest + "'");
-                        }
-                    }
+                Configuration resourceGroupUriCfg = cfg.getChild(RESOURCE_GROUP_URI.getName(), false);
+                if (resourceGroupUriCfg != null) {
+                    URI resourceGroupUri = URI.create(resourceGroupUriCfg.getValue());
+                    // TODO validate?
+                    setParam(RESOURCE_GROUP_URI, resourceGroupUri);
                 }
             } catch (ConfigurationException e) {
                 LogUtil.handleException(LOG, e, strict);
-            } catch (IOException ioe) {
-                throw new FOPException("Could not create default external resource group file", ioe);
             }
         }
 

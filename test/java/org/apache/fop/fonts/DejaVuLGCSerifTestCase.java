@@ -24,7 +24,7 @@ import java.io.File;
 import org.junit.Before;
 import org.junit.Test;
 
-import org.apache.fop.apps.io.DefaultResourceResolver;
+import org.apache.fop.apps.io.ResourceResolverFactory;
 import org.apache.fop.apps.io.URIResolverWrapper;
 
 import static org.junit.Assert.assertEquals;
@@ -35,7 +35,7 @@ import static org.junit.Assert.assertEquals;
 public class DejaVuLGCSerifTestCase {
 
     private URIResolverWrapper resolver = new URIResolverWrapper(new File(".").toURI(),
-            new DefaultResourceResolver());
+            ResourceResolverFactory.createDefaultResourceResolver());
     private CustomFont font;
 
     /**

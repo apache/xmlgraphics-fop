@@ -20,6 +20,7 @@
 package org.apache.fop.render.bitmap;
 
 import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.render.bitmap.PNGRendererConfig.PNGRendererConfigParser;
 import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFDocumentHandler;
 import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
@@ -47,8 +48,7 @@ public class PNGDocumentHandler extends AbstractBitmapDocumentHandler {
 
     /** {@inheritDoc} */
     public IFDocumentHandlerConfigurator getConfigurator() {
-        // TODO what constructir params?
-        return new BitmapRendererConfigurator(getUserAgent());
+        return new BitmapRendererConfigurator(getUserAgent(), new PNGRendererConfigParser());
     }
 
 }

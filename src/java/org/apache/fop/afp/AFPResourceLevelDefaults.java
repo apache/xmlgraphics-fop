@@ -22,6 +22,7 @@ package org.apache.fop.afp;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.fop.afp.AFPResourceLevel.ResourceType;
 import org.apache.fop.afp.modca.ResourceObject;
 
 /**
@@ -58,7 +59,7 @@ public class AFPResourceLevelDefaults {
         // level not explicitly set/changed so default to inline for GOCA graphic objects
         // (due to a bug in the IBM AFP Workbench Viewer (2.04.01.07), hard copy works just fine)
         setDefaultResourceLevel(ResourceObject.TYPE_GRAPHIC,
-                new AFPResourceLevel(AFPResourceLevel.INLINE));
+                new AFPResourceLevel(ResourceType.INLINE));
     }
 
     /**

@@ -30,11 +30,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
 
-import org.w3c.dom.Document;
-
-import org.apache.xmlgraphics.image.loader.ImageProcessingHints;
-import org.apache.xmlgraphics.image.loader.ImageSessionContext;
-
 import org.apache.fop.afp.AFPBorderPainter;
 import org.apache.fop.afp.AFPPaintingState;
 import org.apache.fop.afp.AFPUnitConverter;
@@ -50,8 +45,7 @@ import org.apache.fop.afp.modca.AbstractPageObject;
 import org.apache.fop.afp.modca.PresentationTextObject;
 import org.apache.fop.afp.ptoca.PtocaBuilder;
 import org.apache.fop.afp.ptoca.PtocaProducer;
-import org.apache.fop.afp.util.DefaultFOPResourceAccessor;
-import org.apache.fop.afp.util.ResourceAccessor;
+import org.apache.fop.afp.util.AFPResourceAccessor;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
@@ -66,6 +60,9 @@ import org.apache.fop.render.intermediate.IFUtil;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.traits.RuleStyle;
 import org.apache.fop.util.CharUtilities;
+import org.apache.xmlgraphics.image.loader.ImageProcessingHints;
+import org.apache.xmlgraphics.image.loader.ImageSessionContext;
+import org.w3c.dom.Document;
 
 /**
  * IFPainter implementation that produces AFP (MO:DCA).
@@ -205,7 +202,7 @@ public class AFPPainter extends AbstractIFPainter {
 
             //Do we need to embed an external page segment?
             if (pageSegment.getURI() != null) {
-                ResourceAccessor accessor = new DefaultFOPResourceAccessor (
+                AFPResourceAccessor accessor = new AFPResourceAccessor(
                         documentHandler.getUserAgent().getNewURIResolver());
                 try {
                     URI resourceUri = new URI(pageSegment.getURI());

@@ -38,7 +38,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 public class AFPRendererConfigParserTestCase
-extends AbstractRendererConfigParserTester<AFPRendererConfBuilder, AFPRendererConfig> {
+        extends AbstractRendererConfigParserTester<AFPRendererConfBuilder, AFPRendererConfig> {
 
     public AFPRendererConfigParserTestCase() {
         super(new AFPRendererConfigParser(), AFPRendererConfBuilder.class);
@@ -63,21 +63,22 @@ extends AbstractRendererConfigParserTester<AFPRendererConfBuilder, AFPRendererCo
     @Test
     public void testLineWidthCorrection() throws Exception {
         parseConfig(createRenderer());
-        assertEquals(AFPConstants.LINE_WIDTH_CORRECTION, conf.getLineWidthCorrection().floatValue(), 0.0001f);
+        assertEquals(AFPConstants.LINE_WIDTH_CORRECTION,
+                conf.getLineWidthCorrection().floatValue(), 0.0001f);
         parseConfig(createRenderer().setLineWidthCorrection(1f));
         assertEquals(Float.valueOf(1f), conf.getLineWidthCorrection());
     }
 
     @Test
-    public void testResourceGroupFile() throws Exception {
+    public void testResourceGroupUri() throws Exception {
         parseConfig(createRenderer());
-        assertEquals(null, conf.getDefaultResourceGroupFilePath());
+        assertEquals(null, conf.getDefaultResourceGroupUri());
         // TODO yuck!
         File file = File.createTempFile("AFPRendererConfigParserTestCase", "");
         try {
             file.delete();
-            parseConfig(createRenderer().setResourceGroupFile(file.getAbsolutePath()));
-            assertEquals(file.getAbsolutePath(), conf.getDefaultResourceGroupFilePath());
+            parseConfig(createRenderer().setResourceGroupUri(file.toURI().toASCIIString()));
+            assertEquals(file.toURI(), conf.getDefaultResourceGroupUri());
         } finally {
             file.delete();
         }
@@ -89,7 +90,7 @@ extends AbstractRendererConfigParserTester<AFPRendererConfBuilder, AFPRendererCo
         assertNull(conf.getResourceLevelDefaults());
         Map<String, String> levels = new HashMap<String, String>();
         levels.put("goca", "page");
-        parseConfig(createRenderer().setResourceResourceLevels(levels));
+        parseConfig(createRenderer().setDefaultResourceLevels(levels));
         assertNotNull(conf.getResourceLevelDefaults());
     }
 
@@ -99,23 +100,22 @@ extends AbstractRendererConfigParserTester<AFPRendererConfBuilder, AFPRendererCo
         assertEquals(false, conf.isColorImages());
         assertEquals(Integer.valueOf(8), conf.getBitsPerPixel());
         ImagesModeOptions mode = MODE_GRAYSCALE;
-        parseConfig(createRenderer()
-                .startImages(mode)
-                .setModeAttribute(mode.getModeAttribute(), String.valueOf(1))
-                .endImages());
+        parseConfig(createRenderer().startImages(mode)
+                                    .setModeAttribute(mode.getModeAttribute(), String.valueOf(1))
+                                    .endImages());
         assertEquals(false, conf.isColorImages());
         assertEquals(Integer.valueOf(1), conf.getBitsPerPixel());
         mode = MODE_COLOR;
         parseConfig(createRenderer()
-                .startImages(mode)
-                .setModeAttribute(mode.getModeAttribute(), String.valueOf(false))
-                .endImages());
+                                    .startImages(mode)
+                                    .setModeAttribute(mode.getModeAttribute(),
+                                            String.valueOf(false))
+                                    .endImages());
         assertEquals(true, conf.isColorImages());
         assertEquals(false, conf.isCmykImagesSupported());
-        parseConfig(createRenderer()
-                .startImages(mode)
-                .setModeAttribute(mode.getModeAttribute(), String.valueOf(true))
-                .endImages());
+        parseConfig(createRenderer().startImages(mode)
+                                    .setModeAttribute(mode.getModeAttribute(), String.valueOf(true))
+                                    .endImages());
         assertEquals(true, conf.isColorImages());
         assertEquals(true, conf.isCmykImagesSupported());
     }
@@ -150,6 +150,39 @@ extends AbstractRendererConfigParserTester<AFPRendererConfBuilder, AFPRendererCo
         assertEquals(1.0f, conf.getDitheringQuality(), 0.001f);
         parseConfig(createRenderer().startImages().setDitheringQuality(0.25f).endImages());
         assertEquals(0.25f, conf.getDitheringQuality(), 0.001f);
+    }
+
+    @Test
+    public void testAllowJpegEmbedding() throws Exception {
+        parseConfig();
+        assertEquals(false, conf.allowJpegEmbedding());
+
+        parseConfig(createRenderer().startImages().setAllowJpegEmbedding(true).endImages());
+        assertEquals(true, conf.allowJpegEmbedding());
+    }
+
+    @Test
+    public void testBitmapEncodingQuality() throws Exception {
+        parseConfig();
+        assertEquals(1.0f, conf.getBitmapEncodingQuality(), 0.001f);
+        parseConfig(createRenderer().startImages().setBitmapEncodingQuality(0.5f).endImages());
+        assertEquals(0.5f, conf.getBitmapEncodingQuality(), 0.001f);
+    }
+
+    @Test
+    public void testFS45() throws Exception {
+        parseConfig();
+        assertEquals(false, conf.isFs45());
+        parseConfig(createRenderer().startImages().setFs45(true).endImages());
+        assertEquals(true, conf.isFs45());
+    }
+
+    @Test
+    public void tesPseg() throws Exception {
+        parseConfig();
+        assertEquals(false, conf.isWrapPseg());
+        parseConfig(createRenderer().startImages().setWrapPseg(true).endImages());
+        assertEquals(true, conf.isWrapPseg());
     }
 
     @Test(expected = IllegalArgumentException.class)

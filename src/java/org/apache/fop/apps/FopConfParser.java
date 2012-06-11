@@ -39,8 +39,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.xmlgraphics.image.loader.spi.ImageImplRegistry;
 import org.apache.xmlgraphics.image.loader.util.Penalty;
 
-import org.apache.fop.apps.io.DefaultResourceResolver;
 import org.apache.fop.apps.io.ResourceResolver;
+import org.apache.fop.apps.io.ResourceResolverFactory;
 import org.apache.fop.apps.io.URIResolverWrapper;
 import org.apache.fop.fonts.FontManagerConfigurator;
 import org.apache.fop.hyphenation.HyphenationTreeCache;
@@ -107,7 +107,7 @@ public class FopConfParser {
      */
     public FopConfParser(InputStream fopConfStream, URI defaultBaseURI) throws SAXException,
             IOException {
-        this(fopConfStream, defaultBaseURI, new DefaultResourceResolver());
+        this(fopConfStream, defaultBaseURI, ResourceResolverFactory.createDefaultResourceResolver());
     }
 
     /**
@@ -118,7 +118,7 @@ public class FopConfParser {
      * @throws IOException if an I/O error is thrown while parsing the FOP conf
      */
     public FopConfParser(File fopConfFile) throws SAXException, IOException {
-        this(fopConfFile, new DefaultResourceResolver());
+        this(fopConfFile, ResourceResolverFactory.createDefaultResourceResolver());
     }
 
     /**

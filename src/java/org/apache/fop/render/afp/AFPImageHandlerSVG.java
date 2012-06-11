@@ -42,6 +42,7 @@ import org.apache.fop.afp.AFPObjectAreaInfo;
 import org.apache.fop.afp.AFPPaintingState;
 import org.apache.fop.afp.AFPResourceInfo;
 import org.apache.fop.afp.AFPResourceLevel;
+import org.apache.fop.afp.AFPResourceLevel.ResourceType;
 import org.apache.fop.afp.AFPResourceManager;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.image.loader.batik.BatikImageFlavors;
@@ -142,7 +143,7 @@ public class AFPImageHandlerSVG implements ImageHandler {
         //level not explicitly set/changed so default to inline for GOCA graphic objects
         // (due to a bug in the IBM AFP Workbench Viewer (2.04.01.07), hard copy works just fine)
         if (!resourceInfo.levelChanged()) {
-            resourceInfo.setLevel(new AFPResourceLevel(AFPResourceLevel.INLINE));
+            resourceInfo.setLevel(new AFPResourceLevel(ResourceType.INLINE));
         }
     }
 

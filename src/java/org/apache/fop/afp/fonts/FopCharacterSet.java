@@ -20,7 +20,7 @@
 package org.apache.fop.afp.fonts;
 
 import org.apache.fop.afp.AFPEventProducer;
-import org.apache.fop.afp.util.ResourceAccessor;
+import org.apache.fop.afp.util.AFPResourceAccessor;
 import org.apache.fop.fonts.Typeface;
 
 /**
@@ -42,7 +42,7 @@ public class FopCharacterSet extends CharacterSet {
      */
     public FopCharacterSet(String codePage, String encoding, String name, Typeface charSet,
             AFPEventProducer eventProducer) {
-        super(codePage, encoding, CharacterSetType.SINGLE_BYTE, name, (ResourceAccessor) null,
+        super(codePage, encoding, CharacterSetType.SINGLE_BYTE, name, (AFPResourceAccessor) null,
                 eventProducer);
         this.charSet = charSet;
     }
