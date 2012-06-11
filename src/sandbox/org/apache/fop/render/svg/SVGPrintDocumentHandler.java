@@ -32,7 +32,8 @@ import org.apache.fop.render.intermediate.IFPainter;
 import org.apache.fop.util.XMLUtil;
 
 /**
- * {@link IFDocumentHandler} implementation that writes SVG Print.
+ * {@link org.apache.fop.render.intermediate.IFDocumentHandler} implementation
+ * that writes SVG Print.
  */
 public class SVGPrintDocumentHandler extends AbstractSVGDocumentHandler {
 

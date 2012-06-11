@@ -58,7 +58,8 @@ import org.apache.fop.traits.RuleStyle;
 import org.apache.fop.util.CharUtilities;
 
 /**
- * {@link IFPainter} implementation that produces PCL 5.
+ * {@link org.apache.fop.render.intermediate.IFPainter} implementation
+ * that produces PCL 5.
  */
 public class PCLPainter extends AbstractIFPainter implements PCLConstants {
 

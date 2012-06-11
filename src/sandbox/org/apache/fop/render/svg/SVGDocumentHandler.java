@@ -55,7 +55,8 @@ import org.apache.fop.util.GenerationHelperContentHandler;
 import org.apache.fop.util.XMLUtil;
 
 /**
- * {@link IFDocumentHandler} implementation that writes SVG 1.1.
+ * {@link org.apache.fop.render.intermediate.IFDocumentHandler} implementation
+ * that writes SVG 1.1.
  */
 public class SVGDocumentHandler extends AbstractSVGDocumentHandler {
 
