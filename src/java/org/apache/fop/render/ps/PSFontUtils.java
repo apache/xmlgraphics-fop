@@ -40,10 +40,10 @@ import org.apache.xmlgraphics.ps.PSGenerator;
 import org.apache.xmlgraphics.ps.PSResource;
 import org.apache.xmlgraphics.ps.dsc.ResourceTracker;
 
-import org.apache.fop.fonts.CMapSegment;
 import org.apache.fop.fonts.Base14Font;
 import org.apache.fop.fonts.CIDFontType;
 import org.apache.fop.fonts.CIDSubset;
+import org.apache.fop.fonts.CMapSegment;
 import org.apache.fop.fonts.CustomFont;
 import org.apache.fop.fonts.EmbeddingMode;
 import org.apache.fop.fonts.Font;
@@ -56,9 +56,9 @@ import org.apache.fop.fonts.SingleByteFont;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.fonts.truetype.FontFileReader;
 import org.apache.fop.fonts.truetype.TTFFile;
+import org.apache.fop.fonts.truetype.TTFFile.PostScriptVersion;
 import org.apache.fop.fonts.truetype.TTFOutputStream;
 import org.apache.fop.fonts.truetype.TTFSubSetFile;
-import org.apache.fop.fonts.truetype.TTFFile.PostScriptVersion;
 import org.apache.fop.render.ps.fonts.PSTTFOutputStream;
 import org.apache.fop.util.HexEncoder;
 
@@ -297,16 +297,6 @@ public class PSFontUtils extends org.apache.xmlgraphics.ps.PSFontUtils {
             font.setEmbeddingMode(EmbeddingMode.SUBSET);
         }
         FontFileReader reader = new FontFileReader(fontStream);
-        // TODO is subset-embedding working? In which case the following can be factorized
-        // with what is in composeType0Font
-//      TTFFile ttfFile;
-//      if (font.getEmbeddingMode() != EmbeddingMode.FULL) {
-//          ttfFile = new TTFSubSetFile();
-//          ttfFile.readFont(reader, font.getFullName()(), font.getUsedGlyphs());
-//      } else {
-//          ttfFile = new TTFFile();
-//          ttfFile.readFont(reader, font.getFullName());
-//      }
         TTFFile ttfFile = new TTFFile();
         ttfFile.readFont(reader, font.getFullName());
         createType42DictionaryEntries(gen, font, font.getCMap(), ttfFile);
