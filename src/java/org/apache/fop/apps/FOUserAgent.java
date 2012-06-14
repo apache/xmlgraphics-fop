@@ -400,7 +400,6 @@ public class FOUserAgent {
      * @param uri URI to access
      * @return A {@link javax.xml.transform.Source} object, or null if the URI
      * cannot be resolved.
-     * @see org.apache.fop.apps.io.FOURIResolver
      */
     public Source resolveURI(String uri) {
         // TODO: What do we want to do when resources aren't found???
