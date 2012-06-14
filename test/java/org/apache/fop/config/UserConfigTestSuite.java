@@ -34,8 +34,7 @@ import org.junit.runners.Suite.SuiteClasses;
         FontMetricsUrlMalformedTestCase.class,
         FontsDirectoryRecursiveTestCase.class,
         FontsAutoDetectTestCase.class,
-        FontsSubstitutionTestCase.class,
-        FOURIResolverTestCase.class
+        FontsSubstitutionTestCase.class
 })
 public class UserConfigTestSuite {
 }

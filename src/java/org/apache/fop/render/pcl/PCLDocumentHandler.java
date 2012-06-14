@@ -274,7 +274,6 @@ public class PCLDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     public void endPageContent() throws IFException {
         if (this.currentImage != null) {
             try {
-                //ImageWriterUtil.saveAsPNG(this.currentImage, new java.io.File("D:/page.png"));
                 Rectangle printArea = this.currentPageDefinition.getLogicalPageRect();
                 gen.setCursorPos(0, 0);
                 gen.paintBitmap(this.currentImage, printArea.getSize(), true);

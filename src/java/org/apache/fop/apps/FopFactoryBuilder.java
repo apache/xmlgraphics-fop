@@ -33,11 +33,9 @@ import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.xmlgraphics.image.loader.ImageContext;
 import org.apache.xmlgraphics.image.loader.ImageManager;
 
-import org.apache.fop.apps.io.FOURIResolver;
 import org.apache.fop.apps.io.ResourceResolver;
 import org.apache.fop.apps.io.ResourceResolverFactory;
 import org.apache.fop.fonts.FontManager;
-import org.apache.fop.hyphenation.HyphenationTreeResolver;
 import org.apache.fop.layoutmgr.LayoutManagerMaker;
 
 /**
@@ -190,32 +188,6 @@ public final class FopFactoryBuilder {
     }
 
     /**
-     * Sets the base URI for hyphenation data.
-     *
-     * @param hyphenationBase the hyphenation-base-URI
-     * @return <code>this</code>
-     * @deprecated this will be phased out in favour of a unified URI resolution mechanism
-     */
-    public FopFactoryBuilder setHyphenationBaseURI(URI hyphenationBase) {
-        fopFactoryConfigBuilder.setHyphenationBaseURI(hyphenationBase);
-        return this;
-    }
-
-    /**
-     * Sets the URI resolver specific to Hyphenation data.
-     *
-     * @param hyphResolver the hyphenation-URI-resolver
-     * @return <code>this</code>
-     * @deprecated this will be phased out in favour of a unified URI resolution mechanism
-     */
-    public FopFactoryBuilder setHyphenationTreeResolver(
-            HyphenationTreeResolver hyphResolver) {
-        fopFactoryConfigBuilder.setHyphenationTreeResolver(hyphResolver);
-        return this;
-
-    }
-
-    /**
      * Sets whether to perform strict validation on the FO used.
      *
      * @param validateStrictly true if the FO is to be strictly validated
@@ -362,10 +334,6 @@ public final class FopFactoryBuilder {
 
         private URI baseURI;
 
-        private URI hyphenationBaseURI;
-
-        private HyphenationTreeResolver hyphenationTreeResolver;
-
         private boolean hasStrictFOValidation = true;
 
         private boolean hasStrictUserValidation = FopFactoryConfig.DEFAULT_STRICT_USERCONFIG_VALIDATION;
@@ -410,7 +378,6 @@ public final class FopFactoryBuilder {
             this.enviro = enviro;
             this.baseURI = enviro.getDefaultBaseURI();
             this.imageManager = new ImageManager(new ImageContextImpl(this));
-            this.resolver = new FOURIResolver();
         }
 
         /** {@inheritDoc} */
@@ -436,16 +403,6 @@ public final class FopFactoryBuilder {
         /** {@inheritDoc} */
         public URI getBaseURI() {
             return baseURI;
-        }
-
-        /** {@inheritDoc} */
-        public URI getHyphenationBaseURI() {
-            return hyphenationBaseURI;
-        }
-
-        /** {@inheritDoc} */
-        public HyphenationTreeResolver getHyphenationTreeResolver() {
-            return hyphenationTreeResolver;
         }
 
         /** {@inheritDoc} */
@@ -532,10 +489,6 @@ public final class FopFactoryBuilder {
 
         void setBaseURI(URI baseURI);
 
-        void setHyphenationBaseURI(URI hyphenationBase);
-
-        void setHyphenationTreeResolver(HyphenationTreeResolver hyphResolver);
-
         void setStrictFOValidation(boolean validateStrictly);
 
         void setStrictUserConfigValidation(boolean validateStrictly);
@@ -590,11 +543,6 @@ public final class FopFactoryBuilder {
         }
 
         public void setHyphenationBaseURI(URI hyphenationBase) {
-            throwIllegalStateException();
-        }
-
-        public void setHyphenationTreeResolver(
-                HyphenationTreeResolver hyphResolver) {
             throwIllegalStateException();
         }
 
@@ -675,14 +623,6 @@ public final class FopFactoryBuilder {
 
         public void setBaseURI(URI baseURI) {
             config.baseURI = baseURI;
-        }
-
-        public void setHyphenationBaseURI(URI hyphenationBase) {
-            config.hyphenationBaseURI = hyphenationBase;
-        }
-
-        public void setHyphenationTreeResolver(HyphenationTreeResolver hyphResolver) {
-            config.hyphenationTreeResolver = hyphResolver;
         }
 
         public void setStrictFOValidation(boolean validateStrictly) {

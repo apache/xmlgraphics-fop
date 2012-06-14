@@ -22,10 +22,12 @@ package org.apache.fop.render.ps;
 import java.awt.Dimension;
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
-import java.io.File;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -51,6 +53,7 @@ import org.apache.xmlgraphics.ps.dsc.events.DSCCommentBoundingBox;
 import org.apache.xmlgraphics.ps.dsc.events.DSCCommentHiResBoundingBox;
 
 import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.apps.io.TempResourceURIGenerator;
 import org.apache.fop.render.intermediate.AbstractBinaryWritingIFDocumentHandler;
 import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFDocumentHandlerConfigurator;
@@ -83,7 +86,9 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
     protected PSGenerator gen;
 
     /** the temporary file in case of two-pass processing */
-    private File tempFile;
+    private URI tempURI;
+    private static final TempResourceURIGenerator TEMP_URI_GENERATOR
+            = new TempResourceURIGenerator("ps-optimize");
 
     private int currentPageNumber = 0;
     private PageDefinition currentPageDefinition;
@@ -141,11 +146,10 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
         super.startDocument();
         this.fontResources = new FontResourceCache(getFontInfo());
         try {
-            OutputStream out;
+            final OutputStream out;
             if (psUtil.isOptimizeResources()) {
-                this.tempFile = File.createTempFile("fop", null);
-                out = new java.io.FileOutputStream(this.tempFile);
-                out = new java.io.BufferedOutputStream(out);
+                tempURI = TEMP_URI_GENERATOR.generate();
+                out = new BufferedOutputStream(getUserAgent().getNewURIResolver().resolveOut(tempURI));
             } else {
                 out = this.outputStream;
             }
@@ -252,8 +256,7 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
         log.debug("Processing PostScript resources...");
         long startTime = System.currentTimeMillis();
         ResourceTracker resTracker = gen.getResourceTracker();
-        InputStream in = new java.io.FileInputStream(this.tempFile);
-        in = new java.io.BufferedInputStream(in);
+        InputStream in = new BufferedInputStream(getUserAgent().getNewURIResolver().resolveIn(tempURI));
         try {
             try {
                 ResourceHandler handler = new ResourceHandler(getUserAgent(), this.fontInfo,
@@ -266,10 +269,6 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
             }
         } finally {
             IOUtils.closeQuietly(in);
-            if (!this.tempFile.delete()) {
-                this.tempFile.deleteOnExit();
-                log.warn("Could not delete temporary file: " + this.tempFile);
-            }
         }
         if (log.isDebugEnabled()) {
             long duration = System.currentTimeMillis() - startTime;

@@ -23,15 +23,12 @@ import java.net.URI;
 import java.util.Map;
 import java.util.Set;
 
-import javax.xml.transform.URIResolver;
-
 import org.apache.avalon.framework.configuration.Configuration;
 
 import org.apache.xmlgraphics.image.loader.ImageManager;
 
 import org.apache.fop.apps.io.ResourceResolver;
 import org.apache.fop.fonts.FontManager;
-import org.apache.fop.hyphenation.HyphenationTreeResolver;
 import org.apache.fop.layoutmgr.LayoutManagerMaker;
 
 /**
@@ -78,37 +75,11 @@ public interface FopFactoryConfig {
     ResourceResolver getNewURIResolver();
 
     /**
-     * The URI resolver for controlling file access.
-     *
-     * @return the URI resolver
-     * @deprecated please use the {@link #getNewURIResolver()} method.
-     */
-    URIResolver getURIResolver();
-
-    /**
      * The base URI from which URIs are resolved against.
      *
      * @return the base URI
      */
     URI getBaseURI();
-
-    /**
-     * The base URI of hyphenation data.
-     *
-     * @return the hyphenation-base-URI
-     * @deprecated this intelligence can be configured in the URI resolver set in
-     * {@link #getNewURIResolver()}
-     */
-    URI getHyphenationBaseURI();
-
-    /**
-     * The URI resolver for resolving hyphenation data.
-     *
-     * @return the hyphenation-URI-resolver
-     * @deprecated this intelligence can be configured in the URI resolver set in
-     * {@link #getNewURIResolver()}
-     */
-    HyphenationTreeResolver getHyphenationTreeResolver();
 
     /** @see {@link FopFactory#validateStrictly()} */
     boolean validateStrictly();

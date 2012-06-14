@@ -44,7 +44,6 @@ import static org.junit.Assert.assertTrue;
  */
 public class ColorUtilTestCase {
     private FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
-    private final String thisDirectory = "file:" + new File("./").getAbsolutePath();
 
     /**
      * Test serialization to String.
@@ -131,7 +130,7 @@ public class ColorUtilTestCase {
         FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
         URI sRGBLoc = new URI("src/java/org/apache/fop/pdf/sRGB%20Color%20Space%20Profile.icm");
         ColorSpace cs = fopFactory.getColorSpaceCache().get(
-                "sRGBAlt", thisDirectory, sRGBLoc.toASCIIString(), RenderingIntent.AUTO);
+                "sRGBAlt", sRGBLoc.toASCIIString(), RenderingIntent.AUTO);
         assertNotNull("Color profile not found", cs);
 
         FOUserAgent ua = fopFactory.newFOUserAgent();
@@ -300,7 +299,7 @@ public class ColorUtilTestCase {
         FopFactory fopFactory = FopFactory.newInstance(new File("./").toURI());
         URI ncpLoc = new URI("test/resources/color/ncp-example.icc");
         ColorSpace cs = fopFactory.getColorSpaceCache().get(
-                "NCP", thisDirectory, ncpLoc.toASCIIString(), RenderingIntent.AUTO);
+                "NCP", ncpLoc.toASCIIString(), RenderingIntent.AUTO);
         assertNotNull("Color profile not found", cs);
 
         FOUserAgent ua = fopFactory.newFOUserAgent();

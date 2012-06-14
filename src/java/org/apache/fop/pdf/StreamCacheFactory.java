@@ -24,56 +24,24 @@ import java.io.IOException;
 /**
  * This class is serves as a factory from
  */
-public class StreamCacheFactory {
+public final class StreamCacheFactory {
 
-    private static boolean defaultCacheToFile = false;
-    private static StreamCacheFactory fileInstance = null;
-    private static StreamCacheFactory memoryInstance = null;
-
-    private boolean cacheToFile = false;
+    private static StreamCacheFactory memoryInstance = new StreamCacheFactory();
 
     /**
      * Returns an instance of a StreamCacheFactory with the requested features.
      * @param cacheToFile True if file shall be cached using a temporary file
      * @return StreamCacheFactory the requested factory
      */
-    public static StreamCacheFactory getInstance(boolean cacheToFile) {
-        if (cacheToFile) {
-            if (fileInstance == null) {
-                fileInstance = new StreamCacheFactory(true);
-            }
-            return fileInstance;
-        } else {
-            if (memoryInstance == null) {
-                memoryInstance = new StreamCacheFactory(false);
-            }
-            return memoryInstance;
-        }
-    }
-
-    /**
-     * Returns an instance of a StreamCacheFactory depending on the default
-     * setting for cacheToFile.
-     * @return StreamCacheFactory the requested factory
-     */
     public static StreamCacheFactory getInstance() {
-        return getInstance(defaultCacheToFile);
-    }
-
-    /**
-     * Sets the global default for cacheToFile
-     * @param cacheToFile True if stream caches should be held in files.
-     */
-    public static void setDefaultCacheToFile(boolean cacheToFile) {
-        defaultCacheToFile = cacheToFile;
+        return memoryInstance;
     }
 
     /**
      * Creates a new StreamCacheFactory.
      * @param cacheToFile True if file shall be cached using a temporary file
      */
-    public StreamCacheFactory(boolean cacheToFile) {
-        this.cacheToFile = cacheToFile;
+    private StreamCacheFactory() {
     }
 
     /**
@@ -83,11 +51,7 @@ public class StreamCacheFactory {
      * @return a new StreamCache for caching streams
      */
     public StreamCache createStreamCache() throws IOException {
-        if (this.cacheToFile) {
-            return new TempFileStreamCache();
-        } else {
-            return new InMemoryStreamCache();
-        }
+        return new InMemoryStreamCache();
     }
 
     /**
@@ -98,20 +62,6 @@ public class StreamCacheFactory {
      * @return a new StreamCache for caching streams
      */
     public StreamCache createStreamCache(int hintSize) throws IOException {
-        if (this.cacheToFile) {
-            return new TempFileStreamCache();
-        } else {
-            return new InMemoryStreamCache(hintSize);
-        }
+        return new InMemoryStreamCache(hintSize);
     }
-
-    /**
-     * Get the value of the global cacheToFile flag.
-     * @return the current cache to file flag
-     */
-    public boolean getCacheToFile() {
-        return this.cacheToFile;
-    }
-
-
 }

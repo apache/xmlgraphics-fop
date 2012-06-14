@@ -24,11 +24,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
@@ -36,6 +34,7 @@ import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.afp.modca.ResourceGroup;
 import org.apache.fop.afp.modca.StreamedResourceGroup;
+import org.apache.fop.apps.io.TempResourceURIGenerator;
 import org.apache.fop.apps.io.URIResolverWrapper;
 
 /**
@@ -46,6 +45,9 @@ public class AFPStreamer implements Streamable {
     private static final Log LOG = LogFactory.getLog(AFPStreamer.class);
 
     private static final String DEFAULT_EXTERNAL_RESOURCE_FILENAME = "resources.afp";
+
+    private static final TempResourceURIGenerator TEMP_URI_GENERATOR
+            = new TempResourceURIGenerator("AFPDataStream_");
 
     private final Factory factory;
 
@@ -77,7 +79,7 @@ public class AFPStreamer implements Streamable {
     public AFPStreamer(Factory factory, URIResolverWrapper uriResolverWrapper) {
         this.factory = factory;
         this.uriResolverWrapper = uriResolverWrapper;
-        this.tempUri = TempUriGenerator.INSTANCE.generate();
+        this.tempUri = TEMP_URI_GENERATOR.generate();
         defaultResourceGroupUri = URI.create(DEFAULT_EXTERNAL_RESOURCE_FILENAME);
 
     }
@@ -187,26 +189,5 @@ public class AFPStreamer implements Streamable {
         //TODO this should notify the stream provider that it is safe to delete the temp data
         tempInputStream.close();
         os.flush();
-    }
-
-    private static final class TempUriGenerator {
-
-        private static final TempUriGenerator INSTANCE = new TempUriGenerator();
-
-        private static final String AFPDATASTREAM_TEMP_URL_PREFIX = "tmp:///AFPDataStream_";
-
-        private final AtomicLong counter;
-
-        private TempUriGenerator() {
-            counter = new AtomicLong();
-        }
-
-        public URI generate() {
-            try {
-                return new URI(AFPDATASTREAM_TEMP_URL_PREFIX + counter.getAndIncrement());
-            } catch (URISyntaxException e) {
-                throw new RuntimeException(e);
-            }
-        }
     }
 }

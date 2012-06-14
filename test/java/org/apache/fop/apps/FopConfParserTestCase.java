@@ -87,14 +87,6 @@ public class FopConfParserTestCase {
     }
 
     @Test
-    public void testHyphenationBaseURI() {
-        String hyphBaseURI = "./test/base/uri/";
-        builder.setHyphenationBaseURI(hyphBaseURI);
-        assertEquals(baseURI.resolve(hyphBaseURI),
-                URI.create(buildFactory().getHyphenBaseURI()));
-    }
-
-    @Test
     public void testSourceResolution() {
         float srcRes = 123.456f;
         builder.setSourceResolution(srcRes);

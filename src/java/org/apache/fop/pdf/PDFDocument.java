@@ -21,7 +21,6 @@ package org.apache.fop.pdf;
 
 // Java
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
@@ -716,24 +715,6 @@ public class PDFDocument {
      */
     public Map<String, PDFFont> getFontMap() {
         return this.fontMap;
-    }
-
-    /**
-     * Resolve a URI.
-     *
-     * @param uri the uri to resolve
-     * @throws java.io.FileNotFoundException if the URI could not be resolved
-     * @return the InputStream from the URI.
-     */
-    protected InputStream resolveURI(String uri)
-        throws java.io.FileNotFoundException {
-        try {
-            /* TODO: Temporary hack to compile, improve later */
-            return new java.net.URL(uri).openStream();
-        } catch (Exception e) {
-            throw new java.io.FileNotFoundException(
-                "URI could not be resolved (" + e.getMessage() + "): " + uri);
-        }
     }
 
     /**

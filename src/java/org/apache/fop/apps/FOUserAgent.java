@@ -23,7 +23,6 @@ package org.apache.fop.apps;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.Map;
@@ -41,7 +40,6 @@ import org.apache.xmlgraphics.image.loader.ImageManager;
 import org.apache.xmlgraphics.image.loader.ImageSessionContext;
 import org.apache.xmlgraphics.image.loader.impl.AbstractImageSessionContext;
 import org.apache.xmlgraphics.util.UnitConv;
-import org.apache.xmlgraphics.util.uri.CommonURIResolver;
 
 import org.apache.fop.Version;
 import org.apache.fop.accessibility.Accessibility;
@@ -57,7 +55,6 @@ import org.apache.fop.events.LoggingEventListener;
 import org.apache.fop.fo.ElementMappingRegistry;
 import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.fonts.FontManager;
-import org.apache.fop.hyphenation.HyphenationTreeResolver;
 import org.apache.fop.layoutmgr.LayoutManagerMaker;
 import org.apache.fop.render.ImageHandlerRegistry;
 import org.apache.fop.render.Renderer;
@@ -220,7 +217,6 @@ public class FOUserAgent {
             setStructureTreeEventHandler(documentHandler.getStructureTreeEventHandler());
         }
         this.documentHandlerOverride = documentHandler;
-
     }
 
     /**
@@ -409,16 +405,9 @@ public class FOUserAgent {
     public Source resolveURI(String uri) {
         // TODO: What do we want to do when resources aren't found???
         try {
-            Source src;
             // Have to do this so we can resolve data URIs
-            if (uri.startsWith("data:")) {
-                CommonURIResolver uriResolver = new CommonURIResolver();
-                src = uriResolver.resolve(uri, "");
-            } else {
-                URI actualUri = URIResolverWrapper.cleanURI(uri);
-                src = new StreamSource(newUriResolver.resolveIn(actualUri));
-                src.setSystemId(uri);
-            }
+            Source src = new StreamSource(newUriResolver.resolveIn(uri));
+            src.setSystemId(uri);
             return src;
         } catch (URISyntaxException use) {
             return null;
@@ -799,11 +788,6 @@ public class FOUserAgent {
     /** TODO: javadoc*/
     public ColorSpaceCache getColorSpaceCache() {
         return factory.getColorSpaceCache();
-    }
-
-    /** @return the HyphenationTreeResolver for resolving user-supplied hyphenation patterns. */
-    public HyphenationTreeResolver getHyphenationTreeResolver() {
-        return factory.getHyphenationTreeResolver();
     }
 
     public Map<String, String> getHyphPatNames() {
