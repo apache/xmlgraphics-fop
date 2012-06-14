@@ -171,18 +171,6 @@ public class FopConfParser {
             }
         }
 
-        if (cfg.getChild("hyphenation-base", false) != null) {
-            String path = cfg.getChild("hyphenation-base").getValue(null);
-            if (defaultBaseURI != null) {
-                try {
-                    URI hyphBaseUri = URIResolverWrapper.getBaseURI(path);
-                    fopFactoryBuilder.setHyphenationBaseURI(defaultBaseURI.resolve(hyphBaseUri));
-                } catch (URISyntaxException use) {
-                    LogUtil.handleException(log, use, strict);
-                }
-            }
-        }
-
         // renderer options
         if (cfg.getChild("source-resolution", false) != null) {
             float srcRes = cfg.getChild("source-resolution").getValueAsFloat(

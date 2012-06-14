@@ -21,21 +21,16 @@ package org.apache.fop.util;
 
 import java.awt.color.ColorSpace;
 import java.awt.color.ICC_Profile;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.io.InputStream;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
-
-import javax.xml.transform.Source;
-import javax.xml.transform.URIResolver;
-import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.xmlgraphics.java2d.color.ICCColorSpaceWithIntent;
 import org.apache.xmlgraphics.java2d.color.RenderingIntent;
-import org.apache.xmlgraphics.java2d.color.profile.ColorProfileUtil;
 
 import org.apache.fop.apps.io.URIResolverWrapper;
 
@@ -46,15 +41,14 @@ public class ColorSpaceCache {
     /** logger instance */
     private static Log log = LogFactory.getLog(ColorSpaceCache.class);
 
-    private URIResolver resolver;
-    private Map<String, ColorSpace> colorSpaceMap
-            = Collections.synchronizedMap(new java.util.HashMap<String, ColorSpace>());
+    private URIResolverWrapper resolver;
+    private Map<String, ColorSpace> colorSpaceMap = Collections.synchronizedMap(new HashMap<String, ColorSpace>());
 
     /**
      * Default constructor
      * @param resolver uri resolver
      */
-    public ColorSpaceCache(URIResolver resolver) {
+    public ColorSpaceCache(URIResolverWrapper resolver) {
         this.resolver = resolver;
     }
 
@@ -73,28 +67,21 @@ public class ColorSpaceCache {
      * @param renderingIntent overriding rendering intent
      * @return ICC ColorSpace object or null if ColorSpace could not be created
      */
-    public ColorSpace get(String profileName, String base, String iccProfileSrc,
+    public ColorSpace get(String profileName, String iccProfileSrc,
             RenderingIntent renderingIntent) {
-        String key = profileName + ":" + base + iccProfileSrc;
+        String key = profileName + ":" + iccProfileSrc;
         // TODO: This stuff needs some TLC, fix it!!
-        try {
-            URI uri = URIResolverWrapper.getBaseURI(base);
-            key = uri.resolve(URIResolverWrapper.cleanURI(iccProfileSrc)).toASCIIString();
-        } catch (URISyntaxException e) {
-            // TODO: handle this
-        }
         ColorSpace colorSpace = null;
         if (!colorSpaceMap.containsKey(key)) {
             try {
                 ICC_Profile iccProfile = null;
                 // First attempt to use the FOP URI resolver to locate the ICC
                 // profile
-                Source src = resolver.resolve(iccProfileSrc, base);
-                if (src != null && src instanceof StreamSource) {
+                InputStream stream = resolver.resolveIn(iccProfileSrc);
+                if (stream != null) {
                     // FOP URI resolver found ICC profile - create ICC profile
                     // from the Source
-                    iccProfile = ColorProfileUtil.getICC_Profile(((StreamSource) src)
-                            .getInputStream());
+                    iccProfile = ICC_Profile.getInstance(stream);
                 } else {
                     // TODO - Would it make sense to fall back on VM ICC
                     // resolution

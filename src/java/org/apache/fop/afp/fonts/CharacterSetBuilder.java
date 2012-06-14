@@ -143,7 +143,7 @@ public abstract class CharacterSetBuilder {
      * @return an inputStream
      * @throws IOException in the event that an I/O exception of some sort has occurred
      */
-    protected InputStream openInputStream(AFPResourceAccessor accessor, String uriStr,
+    private InputStream openInputStream(AFPResourceAccessor accessor, String uriStr,
             AFPEventProducer eventProducer)
             throws IOException {
         URI uri;
@@ -163,7 +163,7 @@ public abstract class CharacterSetBuilder {
      *
      * @param inputStream the inputstream to close
      */
-    protected void closeInputStream(InputStream inputStream) {
+    private void closeInputStream(InputStream inputStream) {
         try {
             if (inputStream != null) {
                 inputStream.close();
@@ -381,9 +381,8 @@ public abstract class CharacterSetBuilder {
      * @return a class representing the font descriptor
      * @throws IOException if an I/O exception of some sort has occurred.
      */
-    protected static FontDescriptor processFontDescriptor(
-                StructuredFieldReader structuredFieldReader)
-    throws IOException {
+    private static FontDescriptor processFontDescriptor(
+            StructuredFieldReader structuredFieldReader) throws IOException {
 
         byte[] fndData = structuredFieldReader.getNext(FONT_DESCRIPTOR_SF);
         return new FontDescriptor(fndData);
@@ -397,8 +396,8 @@ public abstract class CharacterSetBuilder {
      * @return the FontControl
      * @throws IOException if an I/O exception of some sort has occurred.
      */
-    protected FontControl processFontControl(StructuredFieldReader structuredFieldReader)
-    throws IOException {
+    private FontControl processFontControl(StructuredFieldReader structuredFieldReader)
+            throws IOException {
 
         byte[] fncData = structuredFieldReader.getNext(FONT_CONTROL_SF);
 
@@ -429,7 +428,7 @@ public abstract class CharacterSetBuilder {
      * @return CharacterSetOrientation array
      * @throws IOException if an I/O exception of some sort has occurred.
      */
-    protected CharacterSetOrientation[] processFontOrientation(
+    private CharacterSetOrientation[] processFontOrientation(
         StructuredFieldReader structuredFieldReader) throws IOException {
 
         byte[] data = structuredFieldReader.getNext(FONT_ORIENTATION_SF);
@@ -477,7 +476,7 @@ public abstract class CharacterSetBuilder {
      *                  font metric values
      * @throws IOException if an I/O exception of some sort has occurred.
      */
-    protected void processFontPosition(StructuredFieldReader structuredFieldReader,
+    private void processFontPosition(StructuredFieldReader structuredFieldReader,
         CharacterSetOrientation[] characterSetOrientations, double metricNormalizationFactor)
             throws IOException {
 
@@ -534,7 +533,7 @@ public abstract class CharacterSetBuilder {
      *                  font metric values
      * @throws IOException if an I/O exception of some sort has occurred.
      */
-    protected void processFontIndex(StructuredFieldReader structuredFieldReader,
+    private void processFontIndex(StructuredFieldReader structuredFieldReader,
             CharacterSetOrientation cso, Map<String, String> codepage,
             double metricNormalizationFactor)
         throws IOException {
@@ -706,13 +705,14 @@ public abstract class CharacterSetBuilder {
             return INSTANCE;
         }
 
+        @Override
         protected Map<String, String> loadCodePage(String codePage, String encoding,
                 AFPResourceAccessor accessor, AFPEventProducer eventProducer) throws IOException {
             // Create the HashMap to store code page information
             Map<String, String> codePages = new HashMap<String, String>();
             InputStream inputStream = null;
             try {
-                inputStream = openInputStream(accessor, codePage.trim(), eventProducer);
+                inputStream = super.openInputStream(accessor, codePage.trim(), eventProducer);
             } catch (IOException e) {
                 eventProducer.codePageNotFound(this, e);
                 throw e;
@@ -750,7 +750,7 @@ public abstract class CharacterSetBuilder {
                     }
                 }
             } finally {
-                closeInputStream(inputStream);
+                super.closeInputStream(inputStream);
             }
             return codePages;
         }

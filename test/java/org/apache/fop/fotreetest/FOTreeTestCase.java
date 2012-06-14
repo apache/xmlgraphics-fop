@@ -28,7 +28,6 @@ import java.util.Set;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import javax.xml.transform.URIResolver;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -52,7 +51,6 @@ import org.apache.fop.apps.FopFactoryConfig;
 import org.apache.fop.apps.io.ResourceResolver;
 import org.apache.fop.fonts.FontManager;
 import org.apache.fop.fotreetest.ext.TestElementMapping;
-import org.apache.fop.hyphenation.HyphenationTreeResolver;
 import org.apache.fop.layoutengine.LayoutEngineTestUtils;
 import org.apache.fop.layoutengine.TestFilesConfiguration;
 import org.apache.fop.layoutmgr.LayoutManagerMaker;
@@ -209,20 +207,8 @@ public class FOTreeTestCase {
             return delegate.getNewURIResolver();
         }
 
-        public URIResolver getURIResolver() {
-            return delegate.getURIResolver();
-        }
-
         public URI getBaseURI() {
             return delegate.getBaseURI();
-        }
-
-        public URI getHyphenationBaseURI() {
-            return delegate.getHyphenationBaseURI();
-        }
-
-        public HyphenationTreeResolver getHyphenationTreeResolver() {
-            return delegate.getHyphenationTreeResolver();
         }
 
         public boolean validateStrictly() {

@@ -1396,10 +1396,9 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         // TextLM which generate the hyphenation buffer,
         // since these properties inherit and could be specified
         // on an inline or wrapper below the block level.
-        Hyphenation hyph
-            = Hyphenator.hyphenate(hyphenationProperties.language.getString(),
+        Hyphenation hyph = Hyphenator.hyphenate(hyphenationProperties.language.getString(),
                                hyphenationProperties.country.getString(),
-                               getFObj().getUserAgent().getHyphenationTreeResolver(),
+                               getFObj().getUserAgent().getNewURIResolver(),
                                getFObj().getUserAgent().getHyphPatNames(),
                                sbChars.toString(),
                                hyphenationProperties.hyphenationRemainCharacterCount.getValue(),

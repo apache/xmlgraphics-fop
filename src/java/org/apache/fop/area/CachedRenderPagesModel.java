@@ -21,13 +21,12 @@ package org.apache.fop.area;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -36,9 +35,9 @@ import org.xml.sax.SAXException;
 
 import org.apache.commons.io.IOUtils;
 
-import org.apache.fop.ResourceEventProducer;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.io.TempResourceURIGenerator;
 import org.apache.fop.fonts.FontInfo;
 
 /**
@@ -49,10 +48,12 @@ import org.apache.fop.fonts.FontInfo;
  */
 public class CachedRenderPagesModel extends RenderPagesModel {
 
-    private Map<PageViewport, String> pageMap = new HashMap<PageViewport, String>();
+    private Map<PageViewport, URI> pageMap = new HashMap<PageViewport, URI>();
 
     /** Base directory to save temporary file in, typically points to the user's temp dir. */
-    protected File baseDir;
+    private final URI tempBaseURI;
+    private static final TempResourceURIGenerator TEMP_URI_GENERATOR
+            = new TempResourceURIGenerator("cached-pages");
 
     /**
      * Main Constructor
@@ -65,8 +66,7 @@ public class CachedRenderPagesModel extends RenderPagesModel {
     public CachedRenderPagesModel (FOUserAgent userAgent, String outputFormat,
             FontInfo fontInfo, OutputStream stream) throws FOPException {
         super(userAgent, outputFormat, fontInfo, stream);
-        //TODO: Avoid System.getProperty()?
-        this.baseDir = new File(System.getProperty("java.io.tmpdir"));
+        tempBaseURI = TEMP_URI_GENERATOR.generate();
     }
 
     /** {@inheritDoc} */
@@ -78,27 +78,19 @@ public class CachedRenderPagesModel extends RenderPagesModel {
                 if (pageViewport != newpage) {
                     try {
                         // load page from cache
-                        String name = pageMap.get(pageViewport);
-                        File tempFile = new File(baseDir, name);
-                        log.debug("Loading page from: " + tempFile);
-                        ObjectInputStream in = new ObjectInputStream(
-                                             new BufferedInputStream(
-                                               new FileInputStream(tempFile)));
+                        URI tempURI = pageMap.get(pageViewport);
+                        log.debug("Loading page from: " + tempURI);
+                        InputStream inStream = renderer.getUserAgent().getNewURIResolver().resolveIn(tempURI);
+                        ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(inStream));
                         try {
                             pageViewport.loadPage(in);
                         } finally {
+                            IOUtils.closeQuietly(inStream);
                             IOUtils.closeQuietly(in);
-                        }
-                        if (!tempFile.delete()) {
-                            ResourceEventProducer eventProducer
-                                = ResourceEventProducer.Provider.get(
-                                        renderer.getUserAgent().getEventBroadcaster());
-                            eventProducer.cannotDeleteTempFile(this, tempFile);
                         }
                         pageMap.remove(pageViewport);
                     } catch (Exception e) {
-                        AreaEventProducer eventProducer
-                            = AreaEventProducer.Provider.get(
+                        AreaEventProducer eventProducer = AreaEventProducer.Provider.get(
                                 renderer.getUserAgent().getEventBroadcaster());
                         eventProducer.pageLoadError(this, pageViewport.getPageNumberString(), e);
                     }
@@ -131,18 +123,17 @@ public class CachedRenderPagesModel extends RenderPagesModel {
             // save page to cache
             ObjectOutputStream tempstream;
             String fname = "fop-page-" + page.getPageIndex() + ".ser";
-            File tempFile = new File(baseDir, fname);
-            tempFile.deleteOnExit();
-            tempstream = new ObjectOutputStream(new BufferedOutputStream(
-                                                new FileOutputStream(tempFile)));
+            URI tempURI = tempBaseURI.resolve(fname);
+            OutputStream outStream = renderer.getUserAgent().getNewURIResolver().resolveOut(tempURI);
+            tempstream = new ObjectOutputStream(new BufferedOutputStream(outStream));
             try {
                 page.savePage(tempstream);
             } finally {
                 IOUtils.closeQuietly(tempstream);
             }
-            pageMap.put(page, fname);
+            pageMap.put(page, tempURI);
             if (log.isDebugEnabled()) {
-                log.debug("Page saved to temporary file: " + tempFile);
+                log.debug("Page saved to temporary file: " + tempURI);
             }
         } catch (IOException ioe) {
             AreaEventProducer eventProducer

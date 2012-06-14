@@ -89,7 +89,7 @@ public final class ResourceResolverFactory {
         }
 
         private static boolean isTempUri(URI uri) {
-            return "tmp".equals(uri.getScheme());
+            return TempResourceURIGenerator.isTempUri(uri);
         }
 
         public Resource getResource(URI uri) throws IOException {

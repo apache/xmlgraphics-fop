@@ -23,7 +23,6 @@ package org.apache.fop.fo.extensions.svg;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.io.File;
 import java.net.URI;
 
 import org.w3c.dom.Element;
@@ -73,7 +72,6 @@ public class SVGElement extends SVGObj {
 
         try {
             URI baseUri = getUserAgent().getNewURIResolver().getBaseURI();
-            baseUri = baseUri == null ? new File("").toURI() : baseUri;
             if (baseUri != null) {
                 SVGOMDocument svgdoc = (SVGOMDocument)doc;
                 svgdoc.setURLObject(baseUri.toURL());

@@ -28,9 +28,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import javax.xml.transform.Source;
-import javax.xml.transform.TransformerException;
-
 import org.xml.sax.SAXException;
 
 import org.apache.avalon.framework.configuration.Configuration;
@@ -45,7 +42,6 @@ import org.apache.fop.apps.io.URIResolverWrapper;
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.ElementMappingRegistry;
 import org.apache.fop.fonts.FontManager;
-import org.apache.fop.hyphenation.HyphenationTreeResolver;
 import org.apache.fop.layoutmgr.LayoutManagerMaker;
 import org.apache.fop.render.ImageHandlerRegistry;
 import org.apache.fop.render.RendererConfig;
@@ -94,7 +90,7 @@ public final class FopFactory implements ImageContext {
         this.config = config;
         this.uriResolverWrapper = new URIResolverWrapper(config.getBaseURI(), config.getNewURIResolver());
         this.elementMappingRegistry = new ElementMappingRegistry(this);
-        this.colorSpaceCache = new ColorSpaceCache(config.getURIResolver());
+        this.colorSpaceCache = new ColorSpaceCache(uriResolverWrapper);
         this.rendererFactory = new RendererFactory(config.preferRenderer());
         this.xmlHandlers = new XMLHandlerRegistry();
         this.imageHandlers = new ImageHandlerRegistry();
@@ -343,15 +339,6 @@ public final class FopFactory implements ImageContext {
         return config.getLayoutManagerMakerOverride();
     }
 
-    /** @return the hyphen base URI */
-    public String getHyphenBaseURI() {
-        return config.getHyphenationBaseURI().toASCIIString();
-    }
-
-    /** @return the HyphenationTreeResolver for resolving user-supplied hyphenation patterns. */
-    public HyphenationTreeResolver getHyphenationTreeResolver() {
-        return config.getHyphenationTreeResolver();
-    }
 
     public Map<String, String> getHyphPatNames() {
         return config.getHyphPatNames();
@@ -463,26 +450,6 @@ public final class FopFactory implements ImageContext {
      */
     public FontManager getFontManager() {
         return config.getFontManager();
-    }
-
-    /**
-     * Attempts to resolve the given URI.
-     * Will use the configured resolver and if not successful fall back
-     * to the default resolver.
-     * @param href URI to access
-     * @param baseUri the base URI to resolve against
-     * @return A {@link javax.xml.transform.Source} object, or null if the URI
-     * cannot be resolved.
-     * @see org.apache.fop.apps.io.FOURIResolver
-     */
-    public Source resolveURI(String href, String baseUri) {
-        Source source = null;
-        try {
-            source = config.getURIResolver().resolve(href, baseUri);
-        } catch (TransformerException e) {
-            log.error("Attempt to resolve URI '" + href + "' failed: ", e);
-        }
-        return source;
     }
 
     /**
