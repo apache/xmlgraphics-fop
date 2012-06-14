@@ -63,6 +63,9 @@
       documents. Example: the fix of marks layering will be such a case when it's done.
     -->
     <release version="FOP Trunk" date="TBD">
+      <action context="Code" dev="GA" type="fix" fixes-bug="53412" due-to="Alexios Giotis">
+        Eliminate incorrect use of object identity which produces excessive property cache collisions.
+      </action>
       <action context="Code" dev="GA" type="fix">
         Eliminate javadocs warnings.
       </action>
